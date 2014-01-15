@@ -2,6 +2,9 @@
 <p>
 <?php _e('Quickly publish your event to allow immediate registrations.', 'event_espresso'); ?><br />
 </p>
+<p class="ee-attention">
+<?php _e('Your event should always have at least a title or description or excerpt. Saving an event without at least one of these fields filled out with information will result in your event not saving correctly. You will then need to recreate your event by clicking on the Add Event button.', 'event_espresso'); ?>
+</p>
 <p>
 <ul>
 <li>
