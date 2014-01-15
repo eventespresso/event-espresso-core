@@ -9,10 +9,10 @@
 					</label>
 					<?php echo $vnu_enable_for_gmap; ?> 
 				</p>
-					<p>
+				<!-- <p>
 					<?php _e('Google Map Link (for email):', 'event_espresso'); ?>
 					<input type="text" name="vnu_google_map_link" value="<?php echo $vnu_google_map_link; ?>" class="all-options" /> 
-				</p>
+				</p> -->
 				<?php } ?>
 				<?php if( ! isset( EE_Registry::instance()->CFG->map_settings ) || ! isset( EE_Registry::instance()->CFG->map_settings->use_google_maps ) || ! EE_Registry::instance()->CFG->map_settings->use_google_maps ) { ?>
 					<p class="ee-notice">
