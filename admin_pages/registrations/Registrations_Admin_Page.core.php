@@ -2173,12 +2173,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	function sanitize_text_field_for_array_walk( &$item, &$key ) {
-	   $item = sanitize_text_field( $item );
-	}
-
-
-
 
 
 
