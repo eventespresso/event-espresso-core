@@ -338,6 +338,7 @@
 .ee-button:visited {
 	display: inline-block;
 	position: relative;
+	top: -2px;
 	margin: 0 0 1em;
 	background-color: #00B1CA;
 	background-image: -moz-linear-gradient( center top , #4EBFDE, #00B1CA );
@@ -798,8 +799,10 @@ input.ee-register-button {
 	vertical-align: text-top;
 }
 
+
 .display-the-hidden,
-.hide-the-displayed {
+.hide-the-displayed,
+.ee-form-cancel-new-state-lnk {
 	cursor: pointer;
 }
 .espresso-txn-status-icon {
@@ -813,6 +816,17 @@ input.ee-register-button {
 }
 .ee-gmap {
 	max-width: 100%;
+}
+
+.ee-form-add-new-state-dv {
+	padding:1.5em 1.5em .5em;
+	background: #f8f8f8;
+	color: #444;
+}
+
+.ee-form-add-new-state-dv li {
+	line-height: 1.2em;
+	margin:0 0 .5em;
 }
 
 /*******************************************************/
