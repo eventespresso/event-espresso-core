@@ -29,7 +29,7 @@
                 <table>
                     <tr>
                         <td>
-                            <h2>Hello, [FNAME]</h2>
+                            <h2>Hello, [FNAME]:</h2>
                             <p class="lead">This is a copy of your registration details!</p>
                             
     
