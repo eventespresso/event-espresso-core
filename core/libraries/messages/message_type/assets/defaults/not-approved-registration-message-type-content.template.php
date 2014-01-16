@@ -27,7 +27,7 @@
                     <tr>
                         <td>
                             <h2>Hello, [FNAME]:</h2>
-                            <p class="lead">Sorry, your registration(s) for the following event was <strong>NOT</strong> approved.</p>    
+                            <p class="lead">Your registration(s) for the following event(s) are awaiting approval.</p>    
                         </td>
                     </tr>
                 </table>
