@@ -2270,6 +2270,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		$this->_template_args['table_url'] = defined( 'DOING_AJAX') ? add_query_arg( array( 'noheader' => 'true', 'route' => $this->_req_action), $this->_admin_base_url ) : add_query_arg( array( 'route' => $this->_req_action), $this->_admin_base_url);
 		$this->_template_args['list_table'] = $this->_list_table_object;
+		$this->_template_args['current_route'] = $this->_req_action;
+		$this->_template_args['list_table_class'] = get_class( $this->_list_table_object );
 		
 		$ajax_sorting_callback = $this->_list_table_object->get_ajax_sorting_callback();	
 		if( ! empty( $ajax_sorting_callback )) {
