@@ -13,10 +13,10 @@
 
 /* TABLE COLUMNS */
 
-.column-REG_ID { width:3%; }
-.column-REG_date { width:12.5%; }
+.column-_REG_ID { width:3%; }
+.column-_REG_date { width:12.5%; }
 
-.column-Reg_status { width:7%; }
+.column-_Reg_status { width:7%; }
 .status-APR, .reg-overview-full-payment-spn { color:#090;  }
 .status-RPP, .reg-overview-part-payment-spn { color:#F93;  }
 .status-NAP, .reg-overview-no-payment-spn { color:#F00;  }

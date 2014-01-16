@@ -44,7 +44,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_start(),
 				),
 			20 => array(
-				'id' => 'REG_ID',
+				'id' => '_REG_ID',
 				'content' => $this->_reg_id_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -53,7 +53,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			30 => array(
-				'id' => 'REG_count',
+				'id' => '_REG_count',
 				'content' => $this->_reg_count_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -71,7 +71,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			50 => array(
-				'id' => 'REG_date',
+				'id' => '_REG_date',
 				'content' => $this->_reg_date_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -98,7 +98,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			80 => array(
-				'id' => 'REG_code',
+				'id' => '_REG_code',
 				'content' => $this->_reg_code_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -107,7 +107,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			90 => array(
-				'id' => 'Reg_status',
+				'id' => '_Reg_status',
 				'content' => $this->_reg_status_stop(),
 				'options' => array(
 					'tipLocation' => 'left',
@@ -116,7 +116,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			100 => array(
-				'id' => 'REG_final_price',
+				'id' => '_REG_final_price',
 				'content' => $this->_txn_total_stop(),
 				'options' => array(
 					'tipLocation' => 'left',
