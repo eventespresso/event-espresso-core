@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Registration_Form_Add_Question_Group_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Add Question Group Tour', 'event_espresso');
+		$this->_label = __('Add New Question Group Tour', 'event_espresso');
 		$this->_slug = $this->_is_caf ? 'add-question-group-caf-joyride' : 'add-question-group-joyride';
 	}
 

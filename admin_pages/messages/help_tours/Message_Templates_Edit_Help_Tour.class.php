@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Message_Templates_Edit_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Msg Editor Tour', 'event_espresso');
+		$this->_label = __('Message Editor Tour', 'event_espresso');
 		$this->_slug = 'messages-templates-edit-joyride';
 	}
 

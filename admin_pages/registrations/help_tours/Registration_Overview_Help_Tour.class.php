@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Registration_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Reg Overview Tour', 'event_espresso');
+		$this->_label = __('Registrations Overview Tour', 'event_espresso');
 		if ( isset( $this->_req_data['event_id'] ) )
 			$this->_slug = 'registration-per-event-overview-joyride';
 		else
