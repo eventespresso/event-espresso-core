@@ -30,7 +30,7 @@
                     <tr>
                         <td>
                             <h2>Hello, [FNAME]:</h2>
-                            <p class="lead">This is a copy of your registration details!</p>
+                            <p class="lead">Sorry, the folowing registration(s) has been <strong>declined</strong>.</p>
                             
     
                         </td>

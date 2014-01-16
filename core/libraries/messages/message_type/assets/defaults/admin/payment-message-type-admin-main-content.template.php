@@ -2,8 +2,7 @@
 <table class="head-wrap" bgcolor="#999999">
     <tr>
         <td></td>
-        <td class="header container">
-            
+        <td class="header container">            
             <div class="content">
             <table bgcolor="#999999" class="">
                 <tr>
@@ -12,7 +11,6 @@
                 </tr>
             </table>
             </div>
-            
         </td>
         <td></td>
     </tr>
@@ -28,14 +26,6 @@
 				<table>
 					<tr>
 						<td>
-							<h3>Registrant Details:</h3>
-							<ul>
-								<li><strong>Name:</strong> [FNAME] [LNAME]</li>
-								<li><strong>Event:</strong> [EVENT_LIST]</li>
-								
-								<li><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></li>
-							</ul>
-							<p>&nbsp;</p>
 							<h3>Payment Details:</h3>
 							<ul>
 								<li><strong>Payment status:</strong> [PAYMENT_STATUS]</li>
@@ -44,10 +34,18 @@
 								<li><strong>Payment Made:</strong> [AMOUNT_PAID]</li>
 								<li><strong>Total Owing:</strong> [TOTAL_OWING]</li>
 							</ul>
+							<p>&nbsp;</p>
+							<h3>Registrant Details:</h3>
+							<ul>
+								<li><strong>Name:</strong> [FNAME] [LNAME]</li>
+								[EVENT_LIST]								
+								<li><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></li>
+							</ul>							
 						</td>
 					</tr>
 				</table>
-			</div></td>
+			</div>
+		</td>
 		<td></td>
 	</tr>
 </table>

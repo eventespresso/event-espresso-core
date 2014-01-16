@@ -3,7 +3,7 @@
 <?php _e('Quickly publish your event to allow immediate registrations.', 'event_espresso'); ?><br />
 </p>
 <p class="ee-attention">
-<?php _e('Your event should always have at least a title or description or excerpt. Saving an event without at least one of these fields filled out with information will result in your event not saving correctly. You will then need to recreate your event by clicking on the Add Event button.', 'event_espresso'); ?>
+<?php _e('Due to a <a href="https://core.trac.wordpress.org/ticket/17115#comment:15">current bug in the WordPress core</a>, your event should always have at least a title or description or excerpt. Saving an event without at least one of these fields filled out with information will result in your event not saving correctly. You will then need to recreate your event by clicking on the Add Event button.', 'event_espresso'); ?>
 </p>
 <p>
 <ul>

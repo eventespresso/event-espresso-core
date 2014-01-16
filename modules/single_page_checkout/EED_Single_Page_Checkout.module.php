@@ -1131,7 +1131,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 										// add relation to new attendee
 										$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
 										$registration->set_attendee_id( $primary_attendee_obj->ID() );
-										echo '$copy_primary attendee: '. $primary_attendee_obj->ID() . '<br/>';
+//										echo '$copy_primary attendee: '. $primary_attendee_obj->ID() . '<br/>';
 									} else {
 										// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
 										$ATT_fname = isset( $attendee_data['ATT_fname'] ) && ! empty( $attendee_data['ATT_fname'] ) ? $attendee_data['ATT_fname'] : '';

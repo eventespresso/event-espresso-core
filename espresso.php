@@ -6,7 +6,7 @@
 
   Reporting features provide a list of events, list of attendees, and excel export.
 
-  Version: 		4.1.230.alpha
+  Version: 		4.1.231.alpha
   Author: 			Seth Shoultes
   Author URI: 		http://www.eventespresso.com
   License: 		GPLv2
@@ -31,7 +31,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.1.230.alpha';
+		return '4.1.231.alpha';
 	}
 } else {
 	add_action( 'admin_notices', 'espresso_duplicate_plugin_error' );
@@ -115,8 +115,16 @@ define('EE_INF_IN_DB', -1);
 
 
 function espresso_load_system( $activation = FALSE ) {
-	espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
-	EE_System::instance($activation);
+//	if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
+		espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
+		EE_System::instance($activation);
+//	} else {
+//		throw new EE_Error( sprintf(
+//			__( 'We\'re sorry, but Event Espresso requires PHP 5.3 or greater in order to operate. For information on how you might be able to simply switch your server over to using PHP 5.3+, go to %s', 'event_espresso' ),
+//			'<a href="http://eventespresso.com/">eventespresso.com/</a>'
+//		));
+//		return;
+//	}
 }
 
 
