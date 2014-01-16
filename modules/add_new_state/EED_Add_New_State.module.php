@@ -337,7 +337,7 @@ class EED_Add_New_State  extends EED_Module {
 			$persistent_admin_notices = get_option( 'espresso_persistent_admin_notices', array() );
 			$new_state_notice = array( 
 				$new_state->country_iso() . '-' . $new_state->abbrev() => sprintf( 
-					__( 'A new State named "%s (%s)" was dynamically added from an Event Espresso form for the Country of "%s".<br/>To verify, edit, and/or delete this new State, please go to the %s and update the States / Provinces section. Check "Yes" if yo uwant this new State added to dropdown select lists in forms.', 'event_espresso' ),
+					__( 'A new State named "%s (%s)" was dynamically added from an Event Espresso form for the Country of "%s".<br/>To verify, edit, and/or delete this new State, please go to the %s and update the States / Provinces section.<br/>Check "Yes" to have this new State added to dropdown select lists in forms.', 'event_espresso' ),
 					'<b>' . $new_state->name() . '</b>',
 					'<b>' . $new_state->abbrev() . '</b>',
 					'<b>' . $new_state->country()->name() . '</b>',
