@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Event_Categories_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Categories Tour', 'event_espresso');
+		$this->_label = __('Event Categories Tour', 'event_espresso');
 		$this->_slug = 'event-categories-joyride';
 	}
 

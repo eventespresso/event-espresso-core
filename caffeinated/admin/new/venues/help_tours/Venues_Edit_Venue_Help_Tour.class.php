@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Venues_Edit_Venue_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Edit Venue Tour', 'event_espresso');
+		$this->_label = __('Venue Editor Tour', 'event_espresso');
 		$this->_slug = 'venue-edit-venue-joyride';
 	}
 
