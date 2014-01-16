@@ -101,18 +101,18 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					echo $ticket_status;
 				} else if ( $tkt_status == EE_Ticket::pending ) {
 				?>	
-				<p class="ticket-pending-pg">
+				<div class="ticket-pending-pg">
 					<span class="ticket-pending"><?php _e( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ); ?></span><br/>
 					<span class="small-text"><?php echo $ticket->start_date( 'M d, Y', ' ' ); ?></span>
-				</p>
+				</div>
 				<?php
 				// min qty purchasable is less than tickets available
 				} else if ( $ticket->min() > $remaining ) {
 				?>	
-				<p class="archived-ticket-pg">
+				<div class="archived-ticket-pg small-text">
 					<span class="archived-ticket"><?php _e( 'Not Available', 'event_espresso' ); ?></span><br/>
 					<span class="small-text"><?php echo _e( 'Insufficient Ticket Quanties Remaining', 'event_espresso' ); ?></span>
-				</p>
+				</div>
 				<?php
 				// if only one attendee is allowed to register at a time
 				} else if ( $max_atndz  == 1 ) {
@@ -178,7 +178,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of tickets that can be purchased per transaction (if available).', 'event_espresso' ); ?></span><br/>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Minimum Quantity:', 'event_espresso' ); ?></span><?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?><br/>
 						<?php //$max = min( $max, $max_atndz );?>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Maximum Quantity:', 'event_espresso' ); ?></span><?php echo $ticket->max() === INF ? __( 'no limit', 'event_espresso' ) : max( $max, 1 ); ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Maximum Quantity:', 'event_espresso' ); ?></span><?php echo $ticket->max() === INF ? __( 'no limit', 'event_espresso' ) : max( $ticket->max(), 1 ); ?><br/>
 						<br/>
 						<?php endif; ?>
 						
@@ -191,10 +191,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									<tr>
 										<th><?php _e( 'Event Date ', 'event_espresso' ); ?></th>
 										<th><?php _e( 'Time ', 'event_espresso' ); ?></th>
-										<th class="cntr"><span class="small-text"><?php _e( 'This Ticket Sold ', 'event_espresso' ); ?></span></th>
-										<th class="cntr"><span class="small-text"><?php _e( 'This Tickets Left ', 'event_espresso' ); ?></span></th>
-										<th class="cntr"><span class="small-text"><?php _e( 'Total Tickets Sold ', 'event_espresso' ); ?></span></th>
-										<th class="cntr"><span class="small-text"><?php _e( 'Total Spaces Left ', 'event_espresso' ); ?></span></th>
+										<th class="cntr"><span class="smaller-text"><?php _e( 'This Ticket<br/>Sold', 'event_espresso' ); ?></span></th>
+										<th class="cntr"><span class="smaller-text"><?php _e( 'This Ticket<br/>Remaining', 'event_espresso' ); ?></span></th>
+										<th class="cntr"><span class="smaller-text"><?php _e( 'Total Tickets<br/>Sold', 'event_espresso' ); ?></span></th>
+										<th class="cntr"><span class="smaller-text"><?php _e( 'Total Spaces<br/>Remaining', 'event_espresso' ); ?></span></th>
 									</tr>
 								</thead>
 								<tbody>
