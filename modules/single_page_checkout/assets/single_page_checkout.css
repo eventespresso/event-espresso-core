@@ -329,13 +329,13 @@ span.ui-icon {
 #single-page-checkout .spco-attendee-wrap-fs .reg-page-form-field-wrap-pg +.espresso-checkbox-options-ul {
 	position: relative; top: -1em; 
 }
-#single-page-checkout .espresso-radio-btn-options-ul li.nano-lbl, 
+/*#single-page-checkout .espresso-radio-btn-options-ul li.nano-lbl, 
 #single-page-checkout .espresso-checkbox-options-ul li.nano-lbl,
 #single-page-checkout .espresso-radio-btn-options-ul li.micro-lbl, 
 #single-page-checkout .espresso-checkbox-options-ul li.micro-lbl {
 	width: 30%; min-width:100px; max-width:100%;
 }
-/*#single-page-checkout .espresso-radio-btn-options-ul li.tiny-lbl, 
+#single-page-checkout .espresso-radio-btn-options-ul li.tiny-lbl, 
 #single-page-checkout .espresso-checkbox-options-ul li.tiny-lbl {
 	width: 12%; min-width:100px; max-width:100%;
 }

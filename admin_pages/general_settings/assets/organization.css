@@ -1,7 +1,3 @@
-.pue-sl-verified {
-	padding-left: 20px;
-	background: transparent url(images/accept.png) no-repeat left;
-}
 #country-details-settings-dv, #country-states-settings-dv {
 	float:left;
 	width:47%;
@@ -32,4 +28,9 @@
 	#country-details-settings-dv, #country-states-settings-dv {
 		width: 100%;
 	}
+}
+
+#site_license_key {
+	width: 90%;
+	margin-right: 10px;
 }

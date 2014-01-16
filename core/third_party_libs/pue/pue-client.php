@@ -437,9 +437,9 @@ class PluginUpdateEngineChecker {
 
 
 		if ( !$this->_use_wp_update ) {
-			$this->json_error = get_site_option('pue_json_error_'.$this->pluginFile);	
+			$this->json_error = get_site_option('pue_json_error_'.$this->pluginFile);
 			if ( !empty($this->json_error) && !$this->_force_premium_upgrade ) {
-				add_action('admin_notices', array($this, 'display_json_error'));
+				add_action('admin_notices', array($this, 'display_json_error'), 10, 3);
 			} else {
 				//no errors so let's get rid of any error option if present
 				delete_site_option( 'pue_verification_error_' . $this->pluginFile );
@@ -699,7 +699,7 @@ class PluginUpdateEngineChecker {
 			<?php
 			$content = ob_get_contents();
 			ob_end_clean();
-			if ( $echo )
+			if ( $echo !== FALSE )
 				echo $content;
 			else
 				return $content;
