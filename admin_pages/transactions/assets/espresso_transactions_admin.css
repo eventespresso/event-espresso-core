@@ -11,7 +11,7 @@
 .datepicker { width:125px; }
 
 /* TABLE COLUMNS */
-#event-espresso_page_transactions-table-frm .widefat td {
+#EE_Admin_Transactions_List_Table-table-frm .widefat td {
 	min-height: 43px;
 }
 
