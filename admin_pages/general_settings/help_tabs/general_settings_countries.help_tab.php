@@ -11,7 +11,8 @@
 </p>
 <h3><?php _e('Country Details', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Fine tune currency and contact data for your own country.', 'event_espresso'); ?>
+<?php _e('Fine tune currency and contact data for your own country.', 'event_espresso'); ?><br />
+<?php _e('Your country selection affects the currency that is used throughout Event Espresso. For example, if your country is currently set to United States, then your currency is USD. If you were to switch your country to United Kingdom, then your currency would change to GBP. If you do change your country, be sure to update your contact information on the Your Organization page. This will ensure that your currency and organization information is up-to-date throughout Event Espresso.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('States / Provinces', 'event_espresso'); ?></h3>
 <p>
