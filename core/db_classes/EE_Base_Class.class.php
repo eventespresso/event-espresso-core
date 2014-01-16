@@ -1484,6 +1484,33 @@ abstract class EE_Base_Class{
 		}
 		
 	}
+
+
+
+
+	/**
+	 * 	property_exists() with fallback for PHP versions < 5.3
+	 * 	@access 	public
+	 * 	@param 	string 	$classname
+	 * 	@param		string 	$property
+	 * 	@return 		boolean
+	 */
+	public static function has_property( $classname = NULL, $property = NULL ) {
+		$classname = ! empty( $classname ) ? $classname : FALSE;
+		if ( version_compare( PHP_VERSION, '5.3.0' ) < 0 && $classname !== FALSE ) {
+			// use reflection for < PHP 5.3, but NOT if classname doesn't exist, cuz that would be like... fatal dude
+			$reflector = new ReflectionClass( $classname );
+			return $reflector->hasProperty( $property );
+		} else {
+			// or try regular property exists method which works as expected in PHP 5.3+
+			return property_exists( $classname, $property );
+		}
+	}
+
+
+
+
+
 	
 }
 
