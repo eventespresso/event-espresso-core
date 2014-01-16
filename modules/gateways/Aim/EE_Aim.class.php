@@ -334,7 +334,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 		<?php if ($this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions']) : ?>
 				<h4 style="color:#ff0000;" title="Payments will not be processed"><?php _e('Authorize.net AIM Debug Mode Is Turned On', 'event_espresso'); ?></h4>
-				<p style="color:#ff0000;">Test credit card # 4007000000027</p><br/>
+				<p style="color:#ff0000;"><?php _e('Test credit card ', 'event_espresso'); ?># 4007000000027</p><br/>
 		<?php endif; ?>
 		
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
