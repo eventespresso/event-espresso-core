@@ -40,7 +40,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
-		$columns = array();
+		$columns['Reg_Status'] = '';
 		if ( !empty( $evt_id ) )
 			$columns['cb'] =  '<input type="checkbox" />'; //Render a checkbox instead of text
 
@@ -51,7 +51,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				'ATT_email' =>  __('Email Address', 'event_espresso'),
 				'REG_date' => __('TXN Date', 'event_espresso'),
 				'REG_code' => __( 'Reg Code', 'event_espresso' ),
-				'Reg_status' => __( 'Reg Status', 'event_espresso' ),
 				'REG_final_price' => __('TKT Price', 'event_espresso'),
 				'TXN_paid' => __('Paid', 'event_espresso'),
 				'TXN_total' => __('Total', 'event_espresso'),
@@ -160,6 +159,13 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
+	function column_Reg_Status( EE_Registration $item ) {
+    	return '<span class="ee-status-strip ee-status-strip-td reg-status-' . $item->status_ID() . '"></span>';
+    }
+
+
+
+
 
 	function column_cb(EE_Registration $item) {
 		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', $item->ID() );
@@ -229,15 +235,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_REG_code(EE_Registration $item){
 		$link = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_registration', '_REG_ID' => $item->ID() ), REG_ADMIN_URL );
 		return '<a href="' . $link . '" title="' . __('View Registration Details', 'event_espresso') .'">' . $item->get('REG_code') . '</a>';
-	}
-
-
-
-	/**
-	 * 		column_Reg_status
-	*/
-   	function column_Reg_status(EE_Registration $item){
-		return '<span class="status-'. $item->status_ID() .'">' . __( $this->_status[ $item->status_ID() ], 'event_espresso' ) . '</span>';
 	}
 
 
