@@ -1,12 +1,12 @@
-#toplevel_page_espresso_events-table-frm .check-column { width: 4%; max-width: 30px; }
-#toplevel_page_espresso_events-table-frm .column-id { width:5%; max-width: 40px; }
-#toplevel_page_espresso_events-table-frm .column-name { width: 20%;  }
-#toplevel_page_espresso_events-table-frm .column-venue  { width:15%; }
-#toplevel_page_espresso_events-table-frm .column-start_date_time { width:15%; }
-#toplevel_page_espresso_events-table-frm .column-reg_begins { width:15%; }
-#toplevel_page_espresso_events-table-frm .column-status  { width:9%; max-width:84px; }
-#toplevel_page_espresso_events-table-frm .column-attendees { width: 5%; max-width: 40px;}
-#toplevel_page_espresso_events-table-frm .column-actions { width: 15%; }
+#Events_Admin_List_Table-table-frm .check-column { width: 4%; max-width: 30px; }
+#Events_Admin_List_Table-table-frm .column-id { width:5%; max-width: 40px; }
+#Events_Admin_List_Table-table-frm .column-name { width: 20%;  }
+#Events_Admin_List_Table-table-frm .column-venue  { width:15%; }
+#Events_Admin_List_Table-table-frm .column-start_date_time { width:15%; }
+#Events_Admin_List_Table-table-frm .column-reg_begins { width:15%; }
+#Events_Admin_List_Table-table-frm .column-status  { width:9%; max-width:84px; }
+#Events_Admin_List_Table-table-frm .column-attendees { width: 5%; max-width: 40px;}
+#Events_Admin_List_Table-table-frm .column-actions { width: 15%; }
 
 
 .remove-item { cursor: pointer; vertical-align: middle; }
