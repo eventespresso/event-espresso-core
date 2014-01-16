@@ -11,7 +11,8 @@
 </p>
 <h3><?php _e('Contact Information', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Enter information about your organization here. Be sure to keep your information up-to-date.', 'event_espresso'); ?>
+<?php _e('Enter information about your organization here. Be sure to keep your information up-to-date.', 'event_espresso'); ?><br />
+<?php _e('Changing your country on this page will also change your country on the Countries page. This will affect your currency options which are used through Event Espresso. For example, if your country is currently set to United States, then your currency is USD. If you were to switch your country to United Kingdom, then your currency would change to GBP.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Company Logo', 'event_espresso'); ?></h3>
 <p>
