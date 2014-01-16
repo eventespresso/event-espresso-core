@@ -176,9 +176,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<?php if ( $ticket->min() &&$ticket->max() ) : ?>
 						<h5><?php _e( 'Purchasable Quantities', 'event_espresso' ); ?></h5>
 						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of tickets that can be purchased per transaction (if available).', 'event_espresso' ); ?></span><br/>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Minimum Quantity:', 'event_espresso' ); ?></span><?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Minimum Qty:', 'event_espresso' ); ?></span><?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?><br/>
 						<?php //$max = min( $max, $max_atndz );?>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Maximum Quantity:', 'event_espresso' ); ?></span><?php echo $ticket->max() === INF ? __( 'no limit', 'event_espresso' ) : max( $ticket->max(), 1 ); ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Maximum Qty:', 'event_espresso' ); ?></span><?php echo $ticket->max() === INF ? __( 'no limit', 'event_espresso' ) : max( $ticket->max(), 1 ); ?><br/>
 						<br/>
 						<?php endif; ?>
 						
