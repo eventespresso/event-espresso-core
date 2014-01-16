@@ -106,7 +106,7 @@ class EE_PUE {
 			$plugin_slug = array(
 				'free' => array( 'lite' => 'event-espresso-core-decaf' ),
 				'premium' => array( 'reg' => 'event-espresso-core-caf' ),
-				'prerelease' => array( 'decaf' => 'event-espresso-core-pr' )
+				'prerelease' => array( 'beta' => 'event-espresso-core-pr' )
 				);
 
 
