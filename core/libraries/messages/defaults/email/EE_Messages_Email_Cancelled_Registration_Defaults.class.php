@@ -40,7 +40,5 @@ class EE_Messages_Email_Cancelled_Registration_Defaults extends EE_Message_Templ
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '';
 		$this->_templates['attendee']['to'] = '[ATTENDEE_EMAIL]';
-		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/cancelled-registration-message-type-admin-main-content.template.php', TRUE );
-		$this->_templates['admin']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/cancelled-registration-message-type-admin-event-list.template.php', TRUE );
 	}
 }

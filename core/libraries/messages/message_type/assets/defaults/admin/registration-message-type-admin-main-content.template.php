@@ -3,7 +3,6 @@
     <tr>
         <td></td>
         <td class="header container">
-            
             <div class="content">
             <table bgcolor="#999999" class="">
                 <tr>
@@ -12,7 +11,6 @@
                 </tr>
             </table>
             </div>
-            
         </td>
         <td></td>
     </tr>
@@ -23,7 +21,6 @@
     <tr>
         <td></td>
         <td class="container" bgcolor="#FFFFFF">
-            
             <!-- content -->
             <div class="content">
                 <h1>Registration Notification</h1>
