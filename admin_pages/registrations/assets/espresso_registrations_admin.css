@@ -46,6 +46,57 @@
 .wp-list-table .column-TXN_total,
 .wp-list-table .column-TXN_paid { width:10%; text-align:right; }
 
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #cb {
+	width: 3%;
+}
+
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #REG_att_checked_in {
+	width: 3%;
+	margin: 0;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #REG_att_checked_in .dashicons {
+	margin-left: 10px;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #REG_count {
+	width: 4%;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_name {
+	width: 11%;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_email {
+	width: 14%;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #REG_date {
+	width: 14%;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #REG_code {
+	width: 8%;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #REG_final_price {
+	width: 6%;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_paid {
+	width: 6%;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_total {
+	width: 6%;
+}
+
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #PRC_name {
+	width: 8%;
+}
+
+
 .reg-pad-rght { display:block; padding-right:1em; }
 
 .wp-list-table .column-actions,
@@ -299,4 +350,8 @@
 	top: -100px;
 	right: 0;
 	padding: 15px 10px 0 10px;
+}
+
+.espresso-admin .wp-list-table .ee-icon-size-22:before {
+	font-size: 22px;
 }

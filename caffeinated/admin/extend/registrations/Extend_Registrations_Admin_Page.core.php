@@ -107,6 +107,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					)	
 				),
 				'help_tour' => array( 'Event_Checkin_Help_Tour' ),	
+				'qtips' => array('Registration_List_Table_Tips' ),
 				'list_table' => 'EE_Event_Registrations_List_Table',
 				'metaboxes' => array(),
 				'require_nonce' => FALSE
@@ -558,7 +559,27 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'view_details' => array(
 				'class' => 'dashicons dashicons-search',
 				'desc' => __('View All Check-in Records for this Registrant', 'event_espresso')
-				),/**/
+				),
+			'approved_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' )
+				),
+            'cancelled_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' )
+				),
+            'declined_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' )
+				),
+			'not_approved' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' )
+				),
+			'pending_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
+				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' )
+				)/**/
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 
