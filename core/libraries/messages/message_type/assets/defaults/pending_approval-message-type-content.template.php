@@ -23,16 +23,13 @@
     <tr>
         <td></td>
         <td class="container" bgcolor="#FFFFFF">
-            
             <!-- content -->
             <div class="content">
                 <table>
                     <tr>
                         <td>
                             <h2>Hello, [FNAME]:</h2>
-                            <p class="lead">Your registration for the following event(s) are pending approval. Your registration for the following events is pending approval. You will be notified if/when your registration is approved.</p>
-                            
-    
+                            <p class="lead">Your registration(s) for the following event(s) are pending approval. You will be notified if/when your registration is approved.</p>    
                         </td>
                     </tr>
                 </table>
@@ -56,11 +53,8 @@
                                 <table align="left" class="column">
                                     <tbody><tr>
                                         <td>                
-                                            
                                             <h5 class="">Connect with Us:</h5>
                                             <p class=""><a href="[CO_FACEBOOK_URL]" class="soc-btn fb">Facebook</a> <a href="[CO_TWITTER_URL]" class="soc-btn tw">Twitter</a> <a href="CO_GOOGLE_URL]" class="soc-btn gp">Google+</a></p>
-
-                                            
                                         </td>
                                     </tr>
                                 </tbody></table><!-- /column 1 -->  
@@ -69,17 +63,14 @@
                                 <table align="left" class="column">
                                     <tbody><tr>
                                         <td>                
-                                                                        
                                             <h5 class="">Contact Info:</h5>                                             
                                             <p>Phone: <strong>[CO_PHONE]</strong><br>
                         Email: <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></p>
-
                                         </td>
                                     </tr>
                                 </tbody></table><!-- /column 2 -->
                                 
                                 <span class="clear"></span> 
-                                
                             </td>
                         </tr>
                     </tbody>
