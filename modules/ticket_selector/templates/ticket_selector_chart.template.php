@@ -190,7 +190,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								<thead>
 									<tr>
 										<th><?php _e( 'Event Date ', 'event_espresso' ); ?></th>
-										<th><?php _e( 'Time ', 'event_espresso' ); ?></th>
+										<th class="cntr"><?php _e( 'Time ', 'event_espresso' ); ?></th>
 										<th class="cntr"><span class="smaller-text"><?php _e( 'This Ticket<br/>Sold', 'event_espresso' ); ?></span></th>
 										<th class="cntr"><span class="smaller-text"><?php _e( 'This Ticket<br/>Remaining', 'event_espresso' ); ?></span></th>
 										<th class="cntr"><span class="smaller-text"><?php _e( 'Total Tickets<br/>Sold', 'event_espresso' ); ?></span></th>
@@ -202,7 +202,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								
 								<tr>
 									<td><?php echo $datetime->start_date('l F jS, Y'); ?></td>
-									<td><?php echo $datetime->time_range(); ?></td>
+									<td class="cntr"><?php echo $datetime->time_range(); ?></td>
 									<td class="cntr"><?php echo $ticket->sold(); ?></td>		
 									<td class="cntr"><?php echo $remaining; ?></td>		
 									<td class="cntr"><?php echo $datetime->sold(); ?></td>		
