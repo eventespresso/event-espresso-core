@@ -196,10 +196,13 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @param int $limit
 	 * @return EE_Datetime[]
 	 */
-	public function get_datetimes_for_event_ordered_by_start_time($EVT_ID, $include_expired = true, $include_deleted= true, $limit = NULL){
+	public function get_datetimes_for_event_ordered_by_start_time($EVT_ID, $include_expired = true, $include_deleted= true, $limit = NULL ){
+		$original_vapbmo = $this->_values_already_prepared_by_model_object;
+		$this->_values_already_prepared_by_model_object = TRUE; //make sure we dont' do conversions on the time in the query because the time in the db IS in GMT.
+
 		$query_params =array(array('Event.EVT_ID'=>$EVT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_start'] = array('>=',current_time('mysql'));
+			$query_params[0]['DTT_EVT_start'] = array('>=',date('Y-m-d H:i:s'));
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
@@ -207,7 +210,11 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		if($limit){
 			$query_params['limit'] = $limit;
 		}
-		return $this->get_all( $query_params );
+		$result = $this->get_all( $query_params );
+
+		//reset _values_already_prepared_by_model_object prop to previous setting.
+		$this->_values_already_prepared_by_model_object = $original_vapbmo;
+		return $result;
 	}
 	
 		/**

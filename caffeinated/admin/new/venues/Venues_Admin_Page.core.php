@@ -620,7 +620,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'VNU_url' => !empty( $this->_req_data['vnu_url'] ) ? $this->_req_data['vnu_url'] : NULL,
 			'VNU_virtual_phone' => !empty( $this->_req_data['vnu_virtual_phone'] ) ? $this->_req_data['vnu_virtual_phone'] : NULL,
 			'VNU_virtual_url' => !empty( $this->_req_data['vnu_virtual_url'] ) ? $this->_req_data['vnu_virtual_url'] : NULL,
-			'VNU_enable_for_gmap' => isset( $this->_req_data['vnu_enable_for_gmap'] ) ? TRUE : FALSE,
+			'VNU_enable_for_gmap' => !empty( $this->_req_data['vnu_enable_for_gmap'] ) ? TRUE : FALSE,
 			'VNU_google_map_link' => !empty( $this->_req_data['vnu_google_map_link'] ) ? $this->_req_data['vnu_google_map_link'] : NULL
 			);
 		

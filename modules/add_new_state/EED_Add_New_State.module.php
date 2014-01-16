@@ -44,6 +44,7 @@ class EED_Add_New_State  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action( 'wp_loaded', array( 'EED_Add_New_State', 'set_definitions' ), 2 );
+//		add_filter( 'FHEE__EEH_Form_Fields__select__before_end_wrapper', array( 'EED_Add_New_State', 'display_add_new_state_micro_form' ), 1, 7 );
 		add_action( 'wp_ajax_espresso_add_new_state', array( 'EED_Add_New_State', 'add_new_state' ));
 		add_action( 'wp_ajax_nopriv_espresso_add_new_state', array( 'EED_Add_New_State', 'add_new_state' ));
 		add_filter( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', array( 'EED_Add_New_State', 'unset_new_state_request_params' ), 10, 1 );
@@ -336,7 +337,7 @@ class EED_Add_New_State  extends EED_Module {
 			$persistent_admin_notices = get_option( 'espresso_persistent_admin_notices', array() );
 			$new_state_notice = array( 
 				$new_state->country_iso() . '-' . $new_state->abbrev() => sprintf( 
-					__( 'A new State named "%s (%s)" was dynamically added from an Event Espresso form for the Country of "%s".<br/>To verify, edit, and/or delete this new State, please go to the %s and update the States / Provinces section. Check "Yes" if yo uwant this new State added to dropdown select lists in forms.', 'event_espresso' ),
+					__( 'A new State named "%s (%s)" was dynamically added from an Event Espresso form for the Country of "%s".<br/>To verify, edit, and/or delete this new State, please go to the %s and update the States / Provinces section.<br/>Check "Yes" to have this new State added to dropdown select lists in forms.', 'event_espresso' ),
 					'<b>' . $new_state->name() . '</b>',
 					'<b>' . $new_state->abbrev() . '</b>',
 					'<b>' . $new_state->country()->name() . '</b>',

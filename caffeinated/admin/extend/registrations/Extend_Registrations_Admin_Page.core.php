@@ -607,7 +607,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = $count ? NULL : array( $offset, $per_page );
-		$query_params = array(array());
+		$query_params = array(array('Event.status'=>array('IN',  array_keys(EEM_Event::instance()->get_status_array()))));
 		if ($EVT_ID){
 			$query_params[0]['EVT_ID']=$EVT_ID;
 		}
@@ -615,11 +615,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			throw new EE_Error("You specified a Category Id for this query. Thats odd because we are now using terms and taxonomies. So did you mean the term taxonomy id o rthe term id?");
 		}
 
-		//if DTT is included we do multiple datetimes.  Otherwise we just do primary datetime
+		//if DTT is included we do multiple datetimes.
 		if ( $DTT_ID ) {
 			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
-		} else {
-			$query_params[0]['Ticket.Datetime.DTT_is_primary'] = 1;
 		}
 
 		$status_ids_array = apply_filters('FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
@@ -627,7 +625,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$query_params[0]['STS_ID']= array('IN', $status_ids_array );
 		
 		if($trash){
-			$query_params[0]['Attendee.ATT_status']=  EEM_CPT_Base::post_status_trashed;
+			$query_params[0]['Attendee.status']=  EEM_CPT_Base::post_status_trashed;
 		}
 
 		if ( isset( $this->_req_data['s'] ) ) {
