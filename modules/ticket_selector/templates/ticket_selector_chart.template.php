@@ -111,7 +111,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				?>	
 				<div class="archived-ticket-pg small-text">
 					<span class="archived-ticket"><?php _e( 'Not Available', 'event_espresso' ); ?></span><br/>
-					<span class="small-text"><?php echo _e( 'Insufficient Ticket Quanties Remaining', 'event_espresso' ); ?></span>
 				</div>
 				<?php
 				// if only one attendee is allowed to register at a time
@@ -179,6 +178,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Minimum Qty:', 'event_espresso' ); ?></span><?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?><br/>
 						<?php //$max = min( $max, $max_atndz );?>
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Maximum Qty:', 'event_espresso' ); ?></span><?php echo $ticket->max() === INF ? __( 'no limit', 'event_espresso' ) : max( $ticket->max(), 1 ); ?><br/>
+						 <?php if ( $ticket->min() > $remaining ) { ?>	
+						<span class="small-text"><?php echo _e( 'Insufficient Ticket Quanties Remaining', 'event_espresso' ); ?></span><br/>
+						<?php } ?>
 						<br/>
 						<?php endif; ?>
 						
