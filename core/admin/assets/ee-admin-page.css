@@ -485,7 +485,7 @@ label.error  { display: block; color: #FE2A00 !important; }
  * other ee wp-list-table styles
  */
 .espresso-admin .wp-list-table .ee-icon:before, .espresso-admin .wp-list-table .dashicons:before, .espresso-admin .wp-list-table .checkin-icons:before {
-	font-size: 18px;
+	font-size: 20px;
  }
 
 .espresso-admin .wp-list-table a {
