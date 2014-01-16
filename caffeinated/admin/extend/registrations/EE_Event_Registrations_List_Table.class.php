@@ -45,7 +45,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			$columns['cb'] =  '<input type="checkbox" />'; //Render a checkbox instead of text
 
 		$this->_columns = array(
-				'REG_att_checked_in' => __('Check-In', 'event_espresso'),
+				'REG_att_checked_in' => '<span class="dashicons dashicons-yes ee-icon-size-18"></span>',
 				'REG_count' => '#',
 				'ATT_name' =>  __('Registrant', 'event_espresso'),
 				'ATT_email' =>  __('Email Address', 'event_espresso'),
@@ -60,7 +60,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_columns = array_merge( $columns, $this->_columns);
 
 		if ( !empty( $evt_id ) ) {
-			$this->_columns['actions'] = __('Actions', 'event_espresso');
 			$this->_bottom_buttons = array(
 			'report'=> array(
 				'route' => 'registrations_report',
@@ -309,13 +308,4 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		}		
 	}
 
-
-
-	function column_actions( EE_Registration $item ) {
-		$view_link_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID()));
-
-		$view_lnk = '<li><a href="' . $view_link_url . '" title="' . __('View Check-in Records', 'event_espresso' ) . '"><div class="dashicons dashicons-search"></div></a></li>';
-
-		return '<ul class="reg-overview-actions-ul">' . $view_lnk . '</ul>';
-	}
 }
