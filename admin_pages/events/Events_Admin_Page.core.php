@@ -1065,9 +1065,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		// publish box
-		$publish_box_extra_args['view_approved_reg_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID(), 'reg_status' => EEM_Registration::status_id_approved ), REG_ADMIN_URL);
-		$publish_box_extra_args['view_not_approved_reg_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID(), 'reg_status' => EEM_Registration::status_id_not_approved ), REG_ADMIN_URL);
-		$publish_box_extra_args['view_pending_payment_reg_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID(), 'reg_status' => EEM_Registration::status_id_pending_payment ), REG_ADMIN_URL);
+		$publish_box_extra_args['view_approved_reg_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID(), '_reg_status' => EEM_Registration::status_id_approved ), REG_ADMIN_URL);
+		$publish_box_extra_args['view_not_approved_reg_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID(), '_reg_status' => EEM_Registration::status_id_not_approved ), REG_ADMIN_URL);
+		$publish_box_extra_args['view_pending_payment_reg_url'] = add_query_arg(array('action' => 'default', 'event_id' => $this->_cpt_model_obj->ID(), '_reg_status' => EEM_Registration::status_id_pending_payment ), REG_ADMIN_URL);
 		$publish_box_extra_args['approved_regs'] = $this->_cpt_model_obj->count_related('Registration', $approved_query_args);
 		$publish_box_extra_args['not_approved_regs'] = $this->_cpt_model_obj->count_related('Registration', $not_approved_query_args);
 		$publish_box_extra_args['pending_payment_regs'] = $this->_cpt_model_obj->count_related('Registration', $pending_payment_query_args);

@@ -51,7 +51,7 @@ jQuery(document).ready(function($) {
 		var itemdata = $(this).data();
 		var thisitem = $(this);
 		var data = {
-			regid : itemdata.regid,
+			_regid : itemdata._regid,
 			dttid : itemdata.dttid,
 			checkinnonce : itemdata.nonce,
 			ee_admin_ajax : true,

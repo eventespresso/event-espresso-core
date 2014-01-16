@@ -344,7 +344,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 */
 	protected function _registration_checkin_list_table() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$reg_id = isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : null;
+		$reg_id = isset( $this->_req_data['_REGID'] ) ? $this->_req_data['_REGID'] : null;
 		$reg = EEM_Registration::instance()->get_one_by_ID($reg_id);
 		$this->_admin_page_title .= $this->get_action_link_or_button('new_registration', 'add-registrant', array('event_id' => $reg->event_ID()), 'add-new-h2');
 
@@ -365,7 +365,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$go_back_url = !empty( $reg_id )  ? EE_Admin_Page::add_query_args_and_nonce(array('action' => 'event_registrations', 'event_id' => EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Event')->ID(), 'DTT_ID' => $dtt_id ), $this->_admin_base_url ) : '';
 		
 		$this->_template_args['before_list_table'] = !empty( $reg_id ) && !empty( $dtt_id ) ? '<h2>' . sprintf(__("%s's check in records for %s at the event, %s", 'event_espresso'), '<span id="checkin-attendee-name">' . EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Attendee')->full_name() . '</span>', '<span id="checkin-dtt"><a href="' . $go_back_url . '">' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->start_date_and_time() . ' - ' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->end_date_and_time() . '</a></span>', '<span id="checkin-event-name">' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->get_first_related('Event')->get('EVT_name') . '</span>' ) . '</h2>' : '';
-		$this->_template_args['list_table_hidden_fields'] = !empty( $reg_id ) ? '<input type="hidden" name="REGID" value="' . $reg_id . '">' : '';
+		$this->_template_args['list_table_hidden_fields'] = !empty( $reg_id ) ? '<input type="hidden" name="_REGID" value="' . $reg_id . '">' : '';
 		$this->_template_args['list_table_hidden_fields'] .= !empty( $dtt_id ) ? '<input type="hidden" name="DTT_ID" value="' . $dtt_id . '">' : '';
 
 		$this->display_admin_list_table_page_with_no_sidebar();
@@ -379,7 +379,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 */
 	public function toggle_checkin_status() {
 		//first make sure we have the necessary data
-		if ( !isset( $this->_req_data['regid'] ) ) {
+		if ( !isset( $this->_req_data['_regid'] ) ) {
 			EE_Error::add_error( __('There must be somethign broken with the html structure because the required data for toggling the Check-in status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_template_args['success'] = FALSE;
 			$this->_template_args['error'] = TRUE;
@@ -429,11 +429,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				$new_status = $this->_toggle_checkin($REG_ID, $DTT_ID);
 			}
 			
-		} elseif ( isset( $this->_req_data['regid'] ) ) {
+		} elseif ( isset( $this->_req_data['_regid'] ) ) {
 			//coming from ajax request
 			$DTT_ID = isset( $this->_req_data['dttid'] ) ? $this->_req_data['dttid'] : NULL;
 			$query_args['DTT_ID'] = $DTT_ID;
-			$new_status = $this->_toggle_checkin($this->_req_data['regid'], $DTT_ID);		
+			$new_status = $this->_toggle_checkin($this->_req_data['_regid'], $DTT_ID);		
 		} else {
 			EE_Error::add_error(__('Missing some required data to toggle the Check-in', 'event_espresso') );
 		}
@@ -478,7 +478,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$query_args = array(
 			'action' => 'registration_checkins',
 			'DTT_ID' => isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0,
-			'REGID' => isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : 0
+			'_REGID' => isset( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : 0
 			);
 		if ( !empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] ) ) {
 			while ( list( $CHK_ID, $value ) = each( $this->_req_data['checkbox'] ) ) {
@@ -511,7 +511,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$query_args = array(
 			'action' => 'registration_checkins',
 			'DTT_ID' => isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0,
-			'REGID' => isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : 0
+			'_REGID' => isset( $this->_req_data['_REGID'] ) ? $this->_req_data['_REGID'] : 0
 			);
 
 		if ( !empty( $this->_req_data['CHK_ID'] ) ) {
@@ -612,7 +612,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
 		
 		switch ($this->_req_data['orderby']) {
-			case 'REG_date':
+			case '_REG_date':
 				$orderby = 'REG_date';
 				break;
 			default :

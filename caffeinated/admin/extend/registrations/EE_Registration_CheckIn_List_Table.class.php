@@ -95,7 +95,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 
 	function column_CHK_timestamp( EE_Checkin $item ) {
 		$actions = array();
-		$delete_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'delete_checkin_row', 'DTT_ID' => $this->_req_data['DTT_ID'], 'REGID' => $this->_req_data['REGID'], 'CHK_ID' => $item->ID() ) );
+		$delete_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'delete_checkin_row', 'DTT_ID' => $this->_req_data['DTT_ID'], '_REGID' => $this->_req_data['_REGID'], 'CHK_ID' => $item->ID() ) );
 		$actions['delete_checkin'] = '<a href="' . $delete_url . '" title="' . __('Click here to delete this check-in record', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
 
 		return sprintf( '%1$s %2$s', $item->get_datetime('CHK_timestamp'), $this->row_actions($actions) );
@@ -114,7 +114,7 @@ class EE_Registration_CheckIn_List_Table extends EE_Admin_List_Table {
 	 * @return EE_Checkin[]|int
 	 */
 	protected function _get_checkins( $per_page = 10, $count = FALSE ) {
-		$REG_ID = isset( $this->_req_data['REGID'] ) ? $this->_req_data['REGID'] : FALSE;
+		$REG_ID = isset( $this->_req_data['_REGID'] ) ? $this->_req_data['_REGID'] : FALSE;
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : FALSE;
 
 		//if no reg id then get out cause need a reg id

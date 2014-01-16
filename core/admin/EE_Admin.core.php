@@ -741,7 +741,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-today-approved',
 				'parent' => 'espresso-toolbar-registrations-today',
 				'title' => 'Approved',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_approved ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_approved ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Approved'),
 						'target' => '',
@@ -767,7 +767,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-today-not-approved',
 				'parent' => 'espresso-toolbar-registrations-today',
 				'title' => 'Not Approved',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_not_approved ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_not_approved ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Not Approved'),
 						'target' => '',
@@ -780,7 +780,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-today-cancelled',
 				'parent' => 'espresso-toolbar-registrations-today',
 				'title' => 'Cancelled',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_cancelled ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_cancelled ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Cancelled'),
 						'target' => '',
@@ -806,7 +806,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-month-approved',
 				'parent' => 'espresso-toolbar-registrations-month',
 				'title' => 'Approved',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>EEM_Registration::status_id_approved ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_approved ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Approved'),
 						'target' => '',
@@ -819,7 +819,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-month-pending',
 				'parent' => 'espresso-toolbar-registrations-month',
 				'title' => 'Pending',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>EEM_Registration::status_id_pending_payment ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_pending_payment ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Pending'),
 						'target' => '',
@@ -832,7 +832,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-month-not-approved',
 				'parent' => 'espresso-toolbar-registrations-month',
 				'title' => 'Not Approved',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>EEM_Registration::status_id_not_approved ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_not_approved ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Not Approved', 'event_espresso' ),
 						'target' => '',
@@ -845,7 +845,7 @@ final class EE_Admin {
 				'id' => 'espresso-toolbar-registrations-month-cancelled',
 				'parent' => 'espresso-toolbar-registrations-month',
 				'title' => 'Cancelled',
-				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', 'reg_status'=>EEM_Registration::status_id_cancelled ), REG_ADMIN_URL ),
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_cancelled ), REG_ADMIN_URL ),
 				'meta' => array(
 						'title' => __('Cancelled'),
 						'target' => '',
