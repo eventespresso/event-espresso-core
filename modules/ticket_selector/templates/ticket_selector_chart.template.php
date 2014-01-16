@@ -204,7 +204,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									<td><?php echo $datetime->start_date('l F jS, Y'); ?></td>
 									<td class="cntr"><?php echo $datetime->time_range(); ?></td>
 									<td class="cntr"><?php echo $ticket->sold(); ?></td>		
-									<td class="cntr"><?php echo $remaining; ?></td>		
+									<td class="cntr"><?php echo $ticket->qty() - $ticket->sold(); ?></td>		
 									<td class="cntr"><?php echo $datetime->sold(); ?></td>		
 									<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
 									<td class="cntr"><?php echo $tkts_left === INF ? __( 'unlimited ', 'event_espresso' ) : $tkts_left; ?></td>
