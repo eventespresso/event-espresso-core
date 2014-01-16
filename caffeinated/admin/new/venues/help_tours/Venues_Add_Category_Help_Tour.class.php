@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Venues_Add_Category_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Add Category Tour', 'event_espresso');
+		$this->_label = __('Add Venue Category Tour', 'event_espresso');
 		$this->_slug = 'venue-add-category-joyride';
 	}
     

@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Event_Edit_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Event Edit Tour', 'event_espresso');
+		$this->_label = __('Event Editor Tour', 'event_espresso');
 		$this->_slug = $this->_is_caf ? 'event-edit-caf-joyride' : 'event-edit-joyride';
 	}
 

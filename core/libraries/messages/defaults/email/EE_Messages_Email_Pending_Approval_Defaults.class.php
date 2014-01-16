@@ -42,6 +42,6 @@ class EE_Messages_Email_Pending_Approval_Defaults extends EE_Message_Template_De
 		$this->_templates['primary_attendee']['to'] = '[PRIMARY_ATTENDEE_EMAIL]';
 		$this->_templates['attendee']['to'] = '';
 		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/pending_approval-message-type-admin-main-content.template.php', TRUE );
-		$this->_templates['admin']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/pending_approval-message-type-admin-event-list.template.php', TRUE );
+		//$this->_templates['admin']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/pending_approval-message-type-event-list.template.php', TRUE );
 	}
 }

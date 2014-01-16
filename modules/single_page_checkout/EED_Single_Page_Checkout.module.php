@@ -999,7 +999,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				unset( $valid_data['primary_attendee'] );
 			}
 			
-//			printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 			EE_Registry::instance()->load_model( 'Attendee' );
 			// attendee counter
@@ -1009,6 +1009,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				if ( $this->_transaction instanceof EE_Transaction && $this->_continue_reg ) {
 					$registrations = $this->_transaction->registrations();
 					if ( ! empty( $registrations )) {
+						$test_attendee_obj = EE_Attendee::new_instance( array( 'ATT_fname' => 'fname', 'ATT_lname' => 'lname', 'ATT_email' => 'email' ));
 						// grab the saved registrations from the transaction				
 						foreach ( $this->_transaction->registrations()  as $registration ) {	
 							// verify object
@@ -1027,6 +1028,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									if ( isset( $valid_data[ $line_item_id ] )) {
 										// filter form input data for this registration
 										$valid_data[ $line_item_id ] = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $line_item_id ] );
+//									printr( $valid_data[ $line_item_id ], '$valid_data[ $line_item_id ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 										// now loop through our array of valid post data && process attendee reg forms
 										foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {											
 											// check for critical inputs
@@ -1079,7 +1081,13 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													$attendee_property = TRUE;
 												break;
 												default :
-													$attendee_property = property_exists( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
+//													$attendee_property = property_exists( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;													
+													$attendee_property = EE_Base_Class::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
+//													try{
+//														$test_attendee_obj->get( 'ATT_' . $form_input );
+//													} catch ( Exception $e ) {
+//														$attendee_property = FALSE;
+//													}
 													$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 											}
 						
@@ -1116,6 +1124,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									} else {
 										EE_Error::add_error( __( 'No form data or invalid data was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 									}
+//									printr( $attendee_data, '$attendee_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 									// this registration does not require additional attendee information ?
 									if ( $copy_primary && $att_nmbr > 1 ) {
@@ -1149,7 +1158,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											unset( $attendee_data['ATT_email'] );
 											// now loop thru what' sleft and add to attendee CPT
 											foreach ( $attendee_data as $property_name => $property_value ) {
-												if ( property_exists( $existing_attendee,  '_' . $property_name )) {
+//												if ( property_exists( $existing_attendee,  '_' . $property_name )) {
+												if ( EE_Base_Class::has_property( 'EE_Attendee', '_' . $property_name )) {
 													$existing_attendee->set( $property_name, $property_value );
 												}												
 											}

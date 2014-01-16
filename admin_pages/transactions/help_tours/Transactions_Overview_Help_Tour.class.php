@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('TXN Overview Tour', 'event_espresso');
+		$this->_label = __('Transactions Overview Tour', 'event_espresso');
 		$this->_slug = 'transaction-overview-joyride';
 	}
 

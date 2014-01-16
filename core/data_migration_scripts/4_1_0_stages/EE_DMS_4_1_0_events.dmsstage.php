@@ -377,7 +377,6 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'EVT_visible_on'=> $this->get_migration_script()->convert_date_string_to_utc($this,$old_event,current_time('mysql'),$old_event['timezone_string']),//don't use the old 'visible_on', as it wasnt ever used
 			'EVT_additional_limit'=> $old_event['allow_multiple'] == 'N' ? 1 : $old_event['additional_limit'],
 			'EVT_default_registration_status' => $default_reg_status,
-			'EVT_require_pre_approval'=>$old_event['require_pre_approval'],
 			'EVT_member_only'=>$old_event['member_only'],
 			'EVT_phone'=> $old_event['phone'],
 			'EVT_allow_overflow' => 'Y' == $old_event['allow_overflow'],
@@ -393,7 +392,6 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'%s',//EVT_visible_on
 			'%d',//EVT_additional_limit
 			'%s',//EVT_default_registration_status
-			'%d',//EVT_rqeuire_pre_approval
 			'%d',//EVT_member_only
 			'%s',//EVT_phone
 			'%d',//EVT_allow_overflow
