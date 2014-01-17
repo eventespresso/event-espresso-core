@@ -1491,15 +1491,18 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	 * @param type $old_event
 	 * @param type $new_cpt_id
 	 * @param  EE_Data_Migration_Script_Stage $migration_stage the stage which called this, where errors should be added
-	 * @return void
+	 * @return boolean whether or not we had to do the big job of creating an image attachment
 	 */
 	public function convert_image_url_to_attachment_and_attach_to_post($guid,$new_cpt_id,  EE_Data_Migration_Script_Stage $migration_stage){
+		$created_attachment_post = false;
+		$guid = $this->_get_original_guid($guid);
 		if($guid){
 			//check for an existing attachment post with this guid
 			$attachment_post_id = $this->_get_image_attachment_id_by_GUID($guid);
 			if( ! $attachment_post_id){
 				//post thumbnail with that GUID doesn't exist, we should create one
 				$attachment_post_id = $this->_create_image_attachment_from_GUID($guid, $migration_stage);
+				$created_attachment_post = true;
 			}
 			//double-check we actually have an attachment post
 			if( $attachment_post_id){
@@ -1507,6 +1510,26 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			}else{
 				$migration_stage->add_error(sprintf(__("Could not update event image %s for CPT with ID %d, but attachments post ID is %d", "event_espresso"),$guid,$new_cpt_id,$attachment_post_id));
 			}
+		}
+		return $created_attachment_post;
+	}
+	
+	/**
+	 * In 3.1, the event thumbnail image DOESN'T point to the orignal image, but instead
+	 * to a large thumbnail (which has nearly the same GUID, except it adds "-{width}x{height}" before the filetype,
+	 * or whatever dimensions it is. Eg 'http://mysite.com/image1-300x400.jpg' instead of 'http://mysite.com/image1.jpg' ). This function attempts to strip that off
+	 * and get the original file, if it exists
+	 * @param string $guid_in_old_event
+	 * @return string either the original guid, or $guid_in_old_event if we couldn't figure out what the original was
+	 */
+	private function _get_original_guid($guid_in_old_event){
+		$original_guid = preg_replace('~-\d*x\d*\.~','.',$guid_in_old_event,1);
+		//do a head request to verify the file exists
+		$head_response = wp_remote_head($original_guid);
+		if( ! $head_response instanceof WP_Error && $head_response['response']['message'] == 'OK'){
+			return $original_guid;
+		}else{
+			return $guid_in_old_event;
 		}
 	}
 	
