@@ -40,18 +40,18 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
-		$columns['Reg_Status'] = '';
+		$columns['_Reg_Status'] = '';
 		if ( !empty( $evt_id ) )
 			$columns['cb'] =  '<input type="checkbox" />'; //Render a checkbox instead of text
 
 		$this->_columns = array(
-				'REG_att_checked_in' => '<span class="dashicons dashicons-yes ee-icon-size-18"></span>',
-				'REG_count' => '#',
+				'_REG_att_checked_in' => '<span class="dashicons dashicons-yes ee-icon-size-18"></span>',
+				'_REG_count' => '#',
 				'ATT_name' =>  __('Registrant', 'event_espresso'),
 				'ATT_email' =>  __('Email Address', 'event_espresso'),
-				'REG_date' => __('TXN Date', 'event_espresso'),
-				'REG_code' => __( 'Reg Code', 'event_espresso' ),
-				'REG_final_price' => __('TKT Price', 'event_espresso'),
+				'_REG_date' => __('TXN Date', 'event_espresso'),
+				'_REG_code' => __( 'Reg Code', 'event_espresso' ),
+				'_REG_final_price' => __('TKT Price', 'event_espresso'),
 				'TXN_paid' => __('Paid', 'event_espresso'),
 				'TXN_total' => __('Total', 'event_espresso'),
 				'PRC_name' => __('TKT Option', 'event_espresso')
@@ -71,8 +71,8 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_sortable_columns = array(
 			 //true means its already sorted
 			'ATT_name' => array( 'ATT_name' => TRUE ),
-			'REG_code' => array( 'REG_code' => TRUE ),
-			'REG_date' => array( 'REG_date' => FALSE )
+			'_REG_code' => array( '_REG_code' => TRUE ),
+			'_REG_date' => array( '_REG_date' => FALSE )
 		);
 
 		$this->_hidden_columns = array();
@@ -158,7 +158,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-	function column_Reg_Status( EE_Registration $item ) {
+	function column__Reg_Status( EE_Registration $item ) {
     	return '<span class="ee-status-strip ee-status-strip-td reg-status-' . $item->status_ID() . '"></span>';
     }
 
@@ -180,13 +180,13 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_REG_att_checked_in
 	*/
-	function column_REG_att_checked_in(EE_Registration $item){
+	function column__REG_att_checked_in(EE_Registration $item){
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0;
 		$checkinstatus = $item->check_in_status_for_datetime($DTT_ID);
 		$nonce = wp_create_nonce('checkin_nonce');
 		$toggle_active = isset ( $this->_req_data['event_id'] ) ? ' clickable trigger-checkin' : '';
 
-		 return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '" data-regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '" data-nonce="' . $nonce . '"></span>';
+		 return '<span class="checkin-icons checkedin-status-' . $checkinstatus . $toggle_active . '" data-_regid="' . $item->ID() . '" data-dttid="' . $DTT_ID . '" data-nonce="' . $nonce . '"></span>';
 	}
 
 
@@ -204,7 +204,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$DTT_ID = empty( $DTT_ID ) && !empty( $this->_req_data['event_id'] ) ? EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID() : $DTT_ID;
 		
 		if ( !empty($DTT_ID) ) {
-			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', 'REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
+			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
 			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('Click here to view all the check-ins and checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
 
@@ -221,7 +221,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_REG_count
 	*/
-	function column_REG_count(EE_Registration $item){
+	function column__REG_count(EE_Registration $item){
 		return sprintf(__( '%s of %s', 'event_espresso' ),$item->count(), $item->group_size());
 	}
 
@@ -231,7 +231,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @param  EE_Registration $item EE_Registration object
 	 * @return string                Registration code
 	 */
-	function column_REG_code(EE_Registration $item){
+	function column__REG_code(EE_Registration $item){
 		$link = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_registration', '_REG_ID' => $item->ID() ), REG_ADMIN_URL );
 		return '<a href="' . $link . '" title="' . __('View Registration Details', 'event_espresso') .'">' . $item->get('REG_code') . '</a>';
 	}
@@ -240,7 +240,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-	function column_REG_date(EE_Registration $item) {
+	function column__REG_date(EE_Registration $item) {
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->get_first_related('Transaction')->ID() ), TXN_ADMIN_URL );	
 		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
 		return $REG_date;	
@@ -262,7 +262,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_REG_final_price
 	*/
-	function column_REG_final_price(EE_Registration $item){
+	function column__REG_final_price(EE_Registration $item){
 		return '<span class="reg-pad-rght">' .  ' ' . $item->pretty_price_paid() . '</span>';	
 	}
 

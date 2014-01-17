@@ -11,6 +11,15 @@ jQuery(document).ready(function($) {
 		lastDTTtoggle: true,
 
 		/**
+		 * This can be one of three values:
+		 * 0 = get out, don't continue with adding a ticket.
+		 * 1 = don't get out, don't update dtt-sold values.
+		 * 2 = don't get out, updated dtt-sold values.
+		 * @type {Boolean}
+		 */
+		updateDTTsold: false,
+
+		/**
 		 * this property is used to indicate whether editing is being done after a "create" so that if cancel is pushed we remove the row that was created in the UI.  Otherwise cancel button just toggles the edit view.
 		 * @type {Boolean}
 		 */
@@ -377,7 +386,7 @@ jQuery(document).ready(function($) {
 					
 					//now we can get the ticket title from the tickets list and simply replace what's in the datetime ticket with it.  Why do we do this instead of just replacing the numbers?  Because the ticket title may have a number in it.
 					tickettitle = tktHelper.getTicketTitle( parentdata.ticketRow );
-					$(this).text(tickettitle + ': 0');
+					$(this).text(tickettitle);
 				}
 
 			});
@@ -690,7 +699,7 @@ jQuery(document).ready(function($) {
 			//..and in all related tkt list rows!
 			$('.datetime-tickets-list').find('li[data-ticket-row="' + tktHelper.ticketRow + '"]').each( function() {
 				if ( $(this).attr('data-context') == 'datetime-ticket' )
-					$('.ticket-list-ticket-name', this).text( TKT_name + ': ' + tktsold );
+					$('.ticket-list-ticket-name', this).text( TKT_name );
 			});
 
 			//other tkt values
@@ -790,7 +799,6 @@ jQuery(document).ready(function($) {
 			new_tkt_list_row = new_tkt_list_row.replace(/TICKETNUM/g, this.ticketRow );
 			//get name for ticket and add to the new li item
 			var TKT_name = this.getTicketTitle();
-			TKT_name += ': 0';
 			new_tkt_list_row = new_tkt_list_row.replace(/TKTNAME/g, TKT_name);
 			default_list_row_for_tkt = new_tkt_list_row; //without DTTNUM replaced.
 			//replace all instance of DTTNUM with  dttrownum
@@ -884,6 +892,70 @@ jQuery(document).ready(function($) {
 			
 			return this;
 		},
+
+
+
+		/**
+		 * purpose is to check when adding or removing a datetime from a ticket that has tickets sold, that doing so won't cause the dtt_sold to go over the dtt_reg_limit.
+		 * @param  {object} itemdata  the data properties from the selected item
+		 * @param  {bool}   selecting whether the ticket is being selected(true) or not
+		 * @return {int}    0 = don't select/deslect, no updates, 1 = select/deslect, don't update dttsold, 2 = select/deselect update dttsold
+		 */
+		verifyDTTsold: function(itemdata, selecting) {
+			var dttSoldProps = this.getDTTsoldinfo( itemdata ); //props are tktSold, dttSold, dttLimit, dttRem
+			var warning = '';
+			//first we need to determine if any checks are even necessary by checking for tkt_sold
+			if ( dttSoldProps.tktSold === 0 )
+				return 1;
+
+			//still here? ok now the next thing to do is get the dtt sold and compare that with the dtt_sold
+			if ( dttSoldProps.tktSold > dttSoldProps.dttRem && selecting ) {
+				warning = itemdata.context == 'datetime-ticket' ? DTT_OVERSELL_WARNING.datetime_ticket : DTT_OVERSELL_WARNING.ticket_datetime;
+				dialogHelper.displayModal().addContent('<p>' + warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.dismiss_button + '</div>');
+				return 0;
+			} else {
+				return 2;
+			}
+		},
+
+
+
+
+		/**
+		 * This will update the dttSold values for all elements related to the given itemdata
+		 * @param  {object} itemdata  the data properties from the selected item
+		 * @param  {bool}   selecting whether the ticket is being selected(true) or not.
+		 * @return void.
+		 */
+		updateDTTsoldValues: function( itemdata, selecting ) {
+			var dttSoldProps = this.getDTTsoldinfo( itemdata );
+			var newDTTsold = 0;
+
+			newDTTsold = selecting ? dttSoldProps.dttSold + dttSoldProps.tktSold : dttSoldProps.dttSold - dttSoldProps.tktSold;
+
+			//update dttSold for datetime!
+			$('.datetime-tickets-sold', '#edit-event-datetime-table-' + itemdata.datetimeRow ).text( newDTTsold );
+		},
+
+
+
+		/**
+		 * This just returns an object containing info about the current state of tkt_sold and dtt_sold for the selected ticket data properties obtained from itemdata.
+		 * @param  {object} itemdata data properties for the selected datetime-ticket
+		 * @return {object}          an object with different info regarding sold values and reg limits etc.
+		 */
+		getDTTsoldinfo: function( itemdata ) {
+			var dttSoldProps = {};
+			//first we need to determine if any checks are even necessary by checking for tkt_sold.
+			var dttLimit = $('.event-datetime-DTT_reg_limit', '#edit-event-datetime-table-' + itemdata.datetimeRow ).val()
+			dttSoldProps.dttLimit = dttLimit === '' ? Infinity : accounting.unformat(dttLimit);
+			dttSoldProps.tktSold = accounting.unformat($('.ticket-display-row-TKT_sold', '#display-ticketrow-' + itemdata.ticketRow ).text());
+			dttSoldProps.dttSold = accounting.unformat( $('.datetime-tickets-sold', '#edit-event-datetime-table-' + itemdata.datetimeRow ).text() );
+			dttSoldProps.dttRem = dttSoldProps.dttLimit - dttSoldProps.dttSold;
+			return dttSoldProps;
+		},
+
+
 
 
 		/**
@@ -1171,6 +1243,13 @@ jQuery(document).ready(function($) {
 			var relateditm = this.itemdata.context == 'datetime-ticket' ? $('.datetime-tickets-list', '#edit-ticketrow-' + this.itemdata.ticketRow).find('li[data-datetime-row="' + this.itemdata.datetimeRow + '"]') : $('.datetime-tickets-list', '#edit-event-datetime-tickets-' + this.itemdata.datetimeRow).find('li[data-ticket-row="' + this.itemdata.ticketRow + '"]');
 			var available_list_row = this.itemdata.context === 'datetime-ticket' ? $('li', '#dtt-existing-available-datetime-list-items-holder').find('[data-datetime-row="'+this.itemdata.datetimeRow+'"]') : $('li', '#dtt-existing-available-ticket-list-items-holder').find('[data-ticket-row="' + this.itemdata.ticketRow +'"]' );
 
+			//let's verify DTT_totals before going further
+			this.updateDTTsold = tktHelper.verifyDTTsold(this.itemdata, selecting);
+
+			//if no updates happen then get out (and we should have a dialog warning.)
+			if ( this.updateDTTsold === 0 ) 
+				return getitm ? rtnitm : this;
+
 			if ( ( !selecting && this.context != 'ticket' ) || ( !selecting && this.context == 'ticket' && this.itemdata.context == 'ticket-datetime' ) ) {
 				this.lastDTTtoggle = tktHelper.verifyLastDTT(this.itemdata.ticketRow);
 			}
@@ -1196,6 +1275,11 @@ jQuery(document).ready(function($) {
 					//update selected tracking in various contexts
 					this.addTicket();
 				}
+
+				//now that tickets have been added etc. let's update dtt totals IF updates are to happen
+				if ( this.updateDTTsold === 2 )
+					this.updateDTTsoldValues( this.itemdata, selecting );
+
 			}
 			return getitm ? rtnitm : this;
 		},
@@ -1397,6 +1481,24 @@ jQuery(document).ready(function($) {
 		},
 
 
+
+
+		/**
+		 * This applies any changes in ticket title to all elements with that title.
+		 * @param {jQuery} titleitem  the jQuery object for the title field.
+		 * @return {tktHelper} this object for chainability.
+		 */
+		applyTKTtitleChange: function(titleitem) {
+			var title = titleitem.val();
+			//now we just update EVERY tktList item with this title!
+			$('.ticket-list-ticket-name', 'li.datetime-ticket[data-ticket-row="' + this.ticketRow + '"]').text(title);
+			return this;
+		},
+
+
+
+
+
 		/**
 		 * applies the total price to all places in the current ticket row that it is displayed
 		 * @return {tktHelper} this object for chainability
@@ -1408,6 +1510,7 @@ jQuery(document).ready(function($) {
 			TKTrow.find('.ticket-price-amount').text(accounting.formatMoney(price_amount.finalTotal));
 			TKTrow.find('.edit-ticket-TKT_price').val(accounting.toFixed(price_amount.subtotal));
 			//$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
+			return TKTrow;
 		},
 
 
@@ -1872,6 +1975,7 @@ jQuery(document).ready(function($) {
 	});
 
 
+
 	/**
 	 * toggle price modifier selection
 	 */
@@ -1914,6 +2018,17 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).parent().parent().find('.trash-icon').data();
 		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
+	});
+
+
+	/**
+	 * Toggle Ticket Name changes in all other ui elements
+	 */
+	$('#event-and-ticket-form-content').on('keyup', '.edit-ticket-TKT_name', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var data = $(this).parent().parent().find('.gear-icon').data();
+		tktHelper.setticketRow(data.ticketRow).applyTKTtitleChange($(this));
 	});
 
 

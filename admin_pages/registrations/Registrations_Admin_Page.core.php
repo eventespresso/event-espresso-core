@@ -710,7 +710,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
-		$reg_status = isset( $this->_req_data['reg_status'] ) ? sanitize_text_field( $this->_req_data['reg_status'] ) : FALSE;
+		$reg_status = isset( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
 		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
 		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
 		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
@@ -723,10 +723,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
 
 		switch ( $this->_req_data['orderby'] ) {
-			case 'REG_ID':
+			case '_REG_ID':
 				$orderby = 'REG_ID';
 				break;
-			case 'Reg_status':
+			case '_Reg_status':
 				$orderby = 'STS_ID';
 				break;
 			case 'ATT_fname':
@@ -1000,11 +1000,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	private function _get_reg_status_buttons() {
 
 		$buttons = array(
-			EEM_Registration::status_id_approved => '<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) . '">',
-			EEM_Registration::status_id_pending_payment => '<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending_payment . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' ) . '">',
-			EEM_Registration::status_id_not_approved => '<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_not_approved . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' ) . '">',
-			EEM_Registration::status_id_declined => '<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_declined . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' ) . '">',
-			EEM_Registration::status_id_cancelled =>'<input type="submit" name="reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_cancelled . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' ) . '">',
+			EEM_Registration::status_id_approved => '<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_approved . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) . '">',
+			EEM_Registration::status_id_pending_payment => '<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_pending_payment . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, FALSE, 'sentence' ) . '">',
+			EEM_Registration::status_id_not_approved => '<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_not_approved . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' ) . '">',
+			EEM_Registration::status_id_declined => '<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_declined . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' ) . '">',
+			EEM_Registration::status_id_cancelled =>'<input type="submit" name="_reg_status_id" class="button-secondary ee-status-strip reg-status-' . EEM_Registration::status_id_cancelled . '" value="' . EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' ) . '">',
 			);
 		return $buttons;
 	}
@@ -1090,12 +1090,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _change_reg_status() {
 		$success = FALSE;
 		$this->_req_data['return'] = 'view_registration';
-		if ( !isset( $this->_req_data['reg_status_id'] ) ) {
+		if ( !isset( $this->_req_data['_reg_status_id'] ) ) {
 			$result['success'] = FALSE;
 			$this->_reg_status_change_return( '', $result );
 		}
 
-		switch ( $this->_req_data['reg_status_id'] ) {
+		switch ( $this->_req_data['_reg_status_id'] ) {
 			case EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' ) :
 				$this->approve_registration();
 				break;
@@ -1231,20 +1231,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		$card_type = isset( $reg_details['card_type'] ) ? ' : ' . $reg_details['card_type'] : '';
-
-		//if method is empty then we'll attempt getting it from the transaction extra meta
-		$reg_details['method'] = !empty( $reg_details['method'] ) ? $reg_details['method'] : $transaction->get_extra_meta('gateway', TRUE);
-		$reg_details['method'] = $reg_details['method'] == 'CC' ? 'Credit Card' . $card_type : $reg_details['method'];
-		$this->_template_args['method']['value'] = $reg_details['method'];
-		$this->_template_args['method']['label'] = __( 'Payment Method', 'event_espresso' );
-		$this->_template_args['method']['class'] = 'regular-text';
-
-		$reg_details['response_msg'] = isset($reg_details['response_msg'] ) ? $reg_details['response_msg'] : '';
-
-		$reg_details['response_msg'] = '<span class="' . $reg_status_class . '">' . $reg_details['response_msg'] . '</span>';
-		$this->_template_args['gateway_response_msg']['value'] = $reg_details['response_msg'];
-		$this->_template_args['gateway_response_msg']['label'] = __( 'Gateway Response Message', 'event_espresso' );
-		$this->_template_args['gateway_response_msg']['class'] = 'regular-text';
 
 		if ( isset( $reg_details['registration_id'] )) {
 			$this->_template_args['reg_details']['registration_id']['value'] = $reg_details['registration_id'];
@@ -1401,7 +1387,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		$success = TRUE;
 		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
-		$REG_ID = isset( $this->_req_data['REG_ID'] ) ? absint( $this->_req_data['REG_ID'] ) : FALSE;
+		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
 		$qstns = apply_filters('FHEE_reg_admin_attendee_registration_form', $qstns);	
 		$success = $this->_save_attendee_registration_form( $REG_ID, $qstns );
 		$what = __('Registration Form', 'event_espresso');

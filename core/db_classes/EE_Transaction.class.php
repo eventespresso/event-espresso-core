@@ -680,15 +680,18 @@ class EE_Transaction extends EE_Base_Class{
 
 	/**
 	 * cycles thru related registrations and calls finalize_registration() on each
+	 *
+	 * @param  bool $from_admin 	 used to indicate the request is initiated by admin
+	 * @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
 	 * @return void
 	 */
-	public function finalize( $from_admin = FALSE ){
+	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ){
 		$reg_msg = array();
 		$new_reg = FALSE;
 		$reg_to_approved = FALSE;
 		$registrations = $this->get_many_related('Registration');
 		foreach ( $registrations as $registration ) {
-			$reg_msg = $registration->finalize( $from_admin );
+			$reg_msg = $registration->finalize( $from_admin, $flip_reg_status );
 			$new_reg = $reg_msg['new_reg'] ? TRUE : $new_reg;
 			$reg_to_approved = $reg_msg['to_approved'] ? TRUE : $reg_to_approved;
 		}

@@ -991,13 +991,13 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						'required' => TRUE,
 						'validation' => TRUE,
 						'value' => NULL,
-						'format' => '%s'
+						'format' => '%d'
 				),
 				'reg-page-billing-country-' . $this->_gateway_name => array(
 						'db-col' => 'country',
 						'label' => __('Country', 'event_espresso'),
 						'input' => EEM_Question::QST_type_dropdown,
-						'options' => array(),//$this->_EEM_Gateways->get_country_ISO2_codes(),
+						'options' => array(),
 						'type' => 'string',
 						'sanitize' => 'no_html',
 						'required' => TRUE,
