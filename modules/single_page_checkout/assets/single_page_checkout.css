@@ -413,6 +413,16 @@ span.ui-icon {
 	border-color:#E34064 !important;
 	border-width:2px !important;
 }
+.needs-value {
+	-webkit-box-shadow: 0px 0px 3px 0 rgba(227, 64, 100, .8);
+	-moz-box-shadow: 0px 0px 3px 0 rgba(227, 64, 100, .8);
+	box-shadow: 0px 0px 3px 0 rgba(227, 64, 100, .8);
+}
+.has-value {
+	-webkit-box-shadow: 0px 0px 3px 0 rgba(0, 177, 202, .8);
+	-moz-box-shadow: 0px 0px 3px 0 rgba(0, 177, 202, .8);
+	box-shadow: 0px 0px 3px 0 rgba(0, 177, 202, .8);
+}
 
 #spco-copy-attendee-dv {
 	position:relative;
