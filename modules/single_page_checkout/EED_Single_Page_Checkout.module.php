@@ -371,8 +371,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		$this->init();
 		// load css and js
-		add_filter( 'FHEE_load_css', '__return_true' );
-		add_filter( 'FHEE_load_js', '__return_true' );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'wp_enqueue_scripts' ), 10 );
 		$this->registration_checkout();
 
