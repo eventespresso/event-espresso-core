@@ -61,13 +61,13 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 
         $this->_sortable_columns = array(
 				// TRUE means its already sorted
-				'TKT_name' => array( 'TKT_name', TRUE ),
-				'TKT_description' => array( 'TKT_description', FALSE ),
-				'TKT_qty' => array( 'TKT_qty', FALSE ),
-				'TKT_uses' => array( 'TKT_uses', FALSE ),
-				'TKT_min' => array( 'TKT_min', FALSE ),
-				'TKT_max' => array( 'TKT_max', FALSE ),
-				'TKT_price' => array( 'TKT_price', FALSE )
+				'TKT_name' => array( 'TKT_name' => TRUE ),
+				'TKT_description' => array( 'TKT_description' => FALSE ),
+				'TKT_qty' => array( 'TKT_qty' => FALSE ),
+				'TKT_uses' => array( 'TKT_uses' => FALSE ),
+				'TKT_min' => array( 'TKT_min' => FALSE ),
+				'TKT_max' => array( 'TKT_max' => FALSE ),
+				'TKT_price' => array( 'TKT_price' => FALSE )
 	        	);
 
         $this->_hidden_columns = array(

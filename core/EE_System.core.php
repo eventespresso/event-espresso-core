@@ -165,8 +165,8 @@ final class EE_System {
 			$model_names[ $shortname ] = $classname;
 				
 		}
-		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
-		EE_Registry::instance()->non_abstract_db_models = apply_filters( 'FHEE__EE_System__parse_implemented_model_names', $non_abstract_db_models );
+		EE_Registry::instance()->models = apply_filters('FHEE__EE_System__parse_model_names', $model_names );		
+		EE_Registry::instance()->non_abstract_db_models = apply_filters('FHEE__EE_System__parse_implemented_model_names', $non_abstract_db_models );
 	}	
 
 
@@ -435,7 +435,7 @@ final class EE_System {
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
-		if ( apply_filters( 'FHEE_load_EE_Session', TRUE )) {
+		if ( apply_filters('FHEE_load_EE_Session', TRUE )) {
 			EE_Registry::instance()->load_core( 'Session' );
 		}
 	}
@@ -458,10 +458,10 @@ final class EE_System {
 	 */
 	public function wp_enqueue_scripts() {
 		// unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE )) {
+		if ( apply_filters('FHEE_load_EE_System_scripts', TRUE )) {
 		
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
+			if ( apply_filters('FHEE_load_jquery_validate', FALSE )) {
 				// load jQuery Validate script from CDN with local fallback
 				$jquery_validate_url = 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'; 
 				// is the URL accessible ?

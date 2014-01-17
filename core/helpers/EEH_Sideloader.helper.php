@@ -120,7 +120,7 @@ class EEH_Sideloader extends EEH_Base {
 
 		do_action( 'AHEE__EEH_Sideloader__sideload__before', $this, $temp_file );
 
-		$wp_remote_args = apply_filters( 'FHEE__EEH_Sideloader__sideload__wp_remote_args', array( 'timeout' => 500, 'stream' => true, 'filename' => $temp_file ), $this, $temp_file );
+		$wp_remote_args = apply_filters('FHEE__EEH_Sideloader__sideload__wp_remote_args', array( 'timeout' => 500, 'stream' => true, 'filename' => $temp_file ), $this, $temp_file );
 
 		$response = wp_safe_remote_get( $this->_upload_from, $wp_remote_args );
 
@@ -144,7 +144,7 @@ class EEH_Sideloader extends EEH_Base {
 		$file = $temp_file;
 
 		//now we have the file, let's get it in the right directory with the right name.
-		$path = apply_filters( 'FHEE__EEH_Sideloader__sideload__new_path', $this->_upload_to . $this->_new_file_name, $this );
+		$path = apply_filters('FHEE__EEH_Sideloader__sideload__new_path', $this->_upload_to . $this->_new_file_name, $this );
 
 		//move file in
 		if ( false === @ rename( $file, $path ) ) {
@@ -154,7 +154,7 @@ class EEH_Sideloader extends EEH_Base {
 		}
 
 		//set permissions
-		$permissions = apply_filters( 'FHEE__EEH_Sideloader__sideload__permissions_applied', $this->_permissions, $this );
+		$permissions = apply_filters('FHEE__EEH_Sideloader__sideload__permissions_applied', $this->_permissions, $this );
 		chmod( $path, $permissions );
 
 		//that's it.  let's allow for actions after file uploaded.

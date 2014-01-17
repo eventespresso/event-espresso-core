@@ -71,13 +71,13 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
-			'default' => array(
+			/*'default' => array(
 				'nav' => array(
 					'label' => __('Installation', 'event_espresso'),
 					'order' => 10),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'require_nonce' => FALSE
-				),
+				),*/
 			/*'resources' => array(
 				'nav' => array(
 					'label' => __('Resources', 'event_espresso'),
@@ -86,7 +86,8 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'metaboxes' => array('_resources_boxes', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'require_nonce' => FALSE
 				),*/
-			'shortcodes' => array(
+			'default' => array(
+			//'shortcodes' => array(
 				'nav' => array(
 					'label' => __('Shortcodes', 'event_espresso'),
 					'order' => 30),

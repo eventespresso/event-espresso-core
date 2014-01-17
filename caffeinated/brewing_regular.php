@@ -79,7 +79,7 @@ class EE_Brewing_Regular extends EE_Base {
 //				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
 //							(6, '" . __('Regional Tax', 'event_espresso') . "', 4,  1, 60, 0),
 //							(7, '" . __('Federal Tax', 'event_espresso') . "', 4,  1, 70, 0);";
-//				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
+//				$SQL = apply_filters('FHEE_default_price_types_activation_sql', $SQL );
 //				$wpdb->query( $SQL );
 				$result = $wpdb->insert($price_type_table,
 						array(
@@ -162,7 +162,7 @@ class EE_Brewing_Regular extends EE_Base {
 //							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
 //							(4, 6, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 0),
 //							(5, 7, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 0);";			
-//				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
+//				$SQL = apply_filters('FHEE_default_prices_activation_sql', $SQL );
 //				$wpdb->query($SQL);			
 ////			}
 //		}	

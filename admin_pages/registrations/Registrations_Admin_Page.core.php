@@ -1248,11 +1248,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['reg_details']['registration_session']['label'] = __( 'Registration Session', 'event_espresso' );
 		$this->_template_args['reg_details']['registration_session']['class'] = 'regular-text';
 
-		$this->_template_args['reg_details']['ip_address']['value'] = $this->_session['ip_address'];
+		$this->_template_args['reg_details']['ip_address']['value'] = isset($this->_session['ip_address']) ? $this->_session['ip_address'] : '';
 		$this->_template_args['reg_details']['ip_address']['label'] = __( 'Registration placed from IP', 'event_espresso' );
 		$this->_template_args['reg_details']['ip_address']['class'] = 'regular-text';
 
-		$this->_template_args['reg_details']['user_agent']['value'] = $this->_session['user_agent'];
+		$this->_template_args['reg_details']['user_agent']['value'] = isset($this->_session['user_agent']) ? $this->_session['user_agent'] : '';
 		$this->_template_args['reg_details']['user_agent']['label'] = __( 'Registrant User Agent', 'event_espresso' );
 		$this->_template_args['reg_details']['user_agent']['class'] = 'large-text';
 		
@@ -2338,7 +2338,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 			$success = $attendee->save();
 
-			$attendee_update_callbacks = apply_filters( 'FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update', array() );
+			$attendee_update_callbacks = apply_filters('FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update', array() );
 			foreach ( $attendee_update_callbacks as $a_callback ) {
 				if ( FALSE === call_user_func_array( $a_callback, array($attendee, $this->_req_data ) ) ) {
 					throw new EE_Error( sprintf( __('The %s callback given for the "FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update" filter is not a valid callback.  Please check the spelling.', 'event_espresso'), $a_callback ) );
