@@ -49,6 +49,7 @@ class EED_Add_New_State  extends EED_Module {
 		add_action( 'wp_ajax_nopriv_espresso_add_new_state', array( 'EED_Add_New_State', 'add_new_state' ));
 		add_filter( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', array( 'EED_Add_New_State', 'unset_new_state_request_params' ), 10, 1 );
 		add_action( 'AHEE__General_Settings_Admin_Page__update_country_settings__state_saved', array( 'EED_Add_New_State', 'update_country_settings' ), 10, 3 );
+		add_action( 'AHEE__General_Settings_Admin_Page__delete_state__state_deleted', array( 'EED_Add_New_State', 'update_country_settings' ), 10, 3 );
 	}
 
 
@@ -364,7 +365,7 @@ class EED_Add_New_State  extends EED_Module {
 	*		@return 		boolean
 	*/	
 	public static function update_country_settings( $CNT_ISO = '', $STA_ID = '', $cols_n_values = array() ) {
-		$STA_abbrev = isset( $cols_n_values['STA_abbrev'] ) ? $cols_n_values['STA_abbrev'] : '';
+		$STA_abbrev = is_array( $cols_n_values ) && isset( $cols_n_values['STA_abbrev'] ) ? $cols_n_values['STA_abbrev'] : FALSE;
 		if ( $persistent_admin_notices = get_option( 'espresso_persistent_admin_notices', FALSE )) {
 			unset( $persistent_admin_notices[ $CNT_ISO . '-' . $STA_abbrev ] );
 		}

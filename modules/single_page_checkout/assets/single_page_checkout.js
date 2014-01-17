@@ -1,4 +1,4 @@
-(function($) {
+jQuery(document).ready(function($) {
 	
 
 	/********** INITIAL SETUP **********/
@@ -53,165 +53,6 @@
 
 
 
-
-	/********** JQUERY EVENT LISTENERS **********/
-
-
-
-	// apply coupon button
-	/**
-	*	copy primary attendee details to this attendee
-	*/
-/*	$('#spco-apply-coupon-btn').on( 'click', function() {
-		var error_msg = eei18n.invalid_coupon;
-		if ( eei18n.wp_debug == 1 ) {
-			error_msg = error_msg + ' (' + getFunctionName( arguments.callee.toString() ) + ' )';
-		}
-		SPCO.scroll_to_top_and_display_messages( SPCO.generate_message_object( '', error_msg ));
-		return false;
-	});
-*/
-
-
-
-	/**
-	*	This is the "more options" link in Step 1 for the "Use Attendee #1's information for ALL attendees" box
-	*/
-	$('#display-more-attendee-copy-options').on( 'click', function() {
-		$('#spco-copy-all-attendee-chk').prop('checked', false);
-	});
-
-
-
-	/**
-	*	if the Copy All option is checked off, trigger click event on all checkboxes 
-	*/
-	$('#spco-copy-all-attendee-chk').on( 'click', function() {
-		if ( $(this).prop('checked')) {
-			SPCO.do_before_sending_ajax();
-			SPCO.reset_validation_vars();
-			$('.spco-copy-attendee-chk').each( function(index) {
-				if ( $('#spco-copy-all-attendee-chk').prop('checked') && $(this).prop('checked') != $('#spco-copy-all-attendee-chk').prop('checked') ) {
-					$(this).trigger('click');
-				}
-			});
-			// any empty or invalid fields that need values ?
-			if ( ! SPCO.validation_errors( 'spco-copy-all-attendee-chk' )) {
-				// display success_msg
-				SPCO.display_messages( SPCO.generate_message_object( eei18n.attendee_info_copied ));				
-			}
-		}
-	});
-
-
-
-	/**
-	*	copy primary attendee details to this attendee
-	*/
-	$('.spco-copy-attendee-chk').on( 'click', function() {
-		SPCO.copy_primary_attendee_information( $(this) );
-	});
-
-
-
-	/**
-	*	remove "requires-value" class if field is no longer empty
-	*/
-	$(':input').change(function() { 
-		inputType = $(this).prop('type');
-		if ( inputType == 'checkbox' || inputType ==  'radio' ) {
-			if ( $(this).prop('checked')) {
-				SPCO.set_multi_input_requires_value_off( $(this) );
-				$('#espresso-ajax-notices-error').stop().fadeOut('fast');
-			}
-		} else {
-			if ( $.trim( this.value ) != '' ){
-				SPCO.set_single_input_requires_value_off( $(this) );
-				$('#espresso-ajax-notices-error').stop().fadeOut('fast');
-			}
-		}
-	});	
-
-
-
-	/**
-	*	go to another step via "edit step" link
-	*/
-	$('#single-page-checkout').on( 'click', '.spco-edit-step-lnk', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		var step = $(this).attr('rel');
-		go_to[ step ]( '' );
-	});
-
-
-
-	/**
-	*	submit registraion form
-	*/
-	$('#single-page-checkout').on( 'click', '.spco-next-step-btn', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		SPCO.process_next_step( $(this) );
-	});
-
-
-
-	/**
-	*	display event questions
-	*/
-	$('#spco-display-event-questions-lnk').on( 'click', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		$('.espresso-question-group-wrap').slideDown();
-		$('#spco-copy-attendee-dv').slideDown();
-		$(this).addClass('hidden');
-	});
-
-
-
-
-	/**
-	*	display method of payment options
-	*/
-	$('.reg-page-payment-option-dv').on( 'click', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		var selected_payment_option = $(this).find('.reg-page-payment-option-lnk');
-		var selected_gateway = selected_payment_option.attr('id');
-
-		$('#reg-page-select-other-gateway-lnk').attr( 'rel', selected_gateway );		
-		$('#methods-of-payment').slideUp( 250, function() {
-			$('.reg-page-payment-option-dv').each(function() {
-					$(this).toggleClass( 'hidden' );
-			});		
-			// get target element from "this" (the control element's) "rel" attribute
-			var gateway_form = 'reg-page-billing-info-' + selected_payment_option.attr("rel"); 	
-			$('#reg-page-selected-gateway').val( selected_payment_option.attr("rel") );
-			$('#'+gateway_form+'-dv').toggleClass( 'hidden' );
-			$('#hide-'+gateway_form).removeClass('hidden');			
-			$('#reg-page-select-other-gateway-lnk').toggleClass( 'hidden' );
-			$('#select-method-of-payment-hdr').toggleClass( 'hidden' );
-			$('#methods-of-payment').slideDown( 500 );
-		});
-	});
-
-
-
-	/**
-	*	select a different method of payment
-	*/
-	$('#reg-page-select-other-gateway-lnk').on( 'click', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		selected_gateway = '#' + $(this).attr('rel');
-		$(this).attr('rel', '');
-		$( selected_gateway ).trigger('click');
-	});
-
-
-
-
 	/********** SPCO CLASS **********/
 
 
@@ -233,6 +74,43 @@
 
 		
 		/**
+		*	set_validation_classes
+		*/
+		set_input_validation_classes : function( input) {
+			inputType = $(input).prop('type');
+			 if( $(input).hasClass('required') ) {
+				if ( $(input).hasClass('email') ) {
+					//var input_value = $(input).inputValue();
+					if ( SPCO.validate_email_address( $(input).inputValue() ) === true ) {
+						SPCO.set_single_input_requires_value_off( $(input) );
+						$(input).addClass('has-value').removeClass('needs-value');
+						$('#espresso-ajax-notices-error').stop().fadeOut('fast');	
+					} else {
+						$(input).addClass('needs-value').removeClass('has-value');
+					}							
+				} else if ( inputType == 'checkbox' || inputType ==  'radio' ) {
+					if ( $(input).prop('checked')) {
+						SPCO.set_multi_input_requires_value_off( $(input) );
+						$(input).addClass('has-value').removeClass('needs-value');
+						$('#espresso-ajax-notices-error').stop().fadeOut('fast');
+					} else {
+						$(input).addClass('needs-value').removeClass('has-value');
+					}
+				} else {					
+					if ( $.trim( input.val() ) != '' ){
+						SPCO.set_single_input_requires_value_off( $(input) );
+						$(input).addClass('has-value').removeClass('needs-value');
+						$('#espresso-ajax-notices-error').stop().fadeOut('fast');	
+					} else {
+						$(input).addClass('needs-value').removeClass('has-value');
+					}
+				}				
+			}
+		},
+
+
+
+		/**
 		*	reset_validation_vars
 		*/
 		reset_validation_vars : function() {
@@ -245,7 +123,7 @@
 		},
 
 
-		
+
 		/**
 		*	copy_primary_attendee_information
 		*	capture values from the primary attendee's form inputs and copy them to the corresponding form inputs of the selected attendee
@@ -294,7 +172,8 @@
 							SPCO.debug( 'copy_primary_attendee_information > new_input_id', new_input_id );
 
 							if ( $(new_input_id).length > 0 ){
-								SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) )						
+								SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) );
+								$(new_input_id).trigger('change');				
 							}							
 						}
 					});
@@ -1025,4 +904,174 @@
 
 
 
-})(jQuery);
+
+
+
+
+
+
+
+	/********** JQUERY EVENT LISTENERS **********/
+
+
+
+	// apply coupon button
+	/**
+	*	copy primary attendee details to this attendee
+	*/
+/*	$('#spco-apply-coupon-btn').on( 'click', function() {
+		var error_msg = eei18n.invalid_coupon;
+		if ( eei18n.wp_debug == 1 ) {
+			error_msg = error_msg + ' (' + getFunctionName( arguments.callee.toString() ) + ' )';
+		}
+		SPCO.scroll_to_top_and_display_messages( SPCO.generate_message_object( '', error_msg ));
+		return false;
+	});
+*/
+
+
+
+	/**
+	*	This is the "more options" link in Step 1 for the "Use Attendee #1's information for ALL attendees" box
+	*/
+	$('#display-more-attendee-copy-options').on( 'click', function() {
+		$('#spco-copy-all-attendee-chk').prop('checked', false);
+	});
+
+
+
+	/**
+	*	if the Copy All option is checked off, trigger click event on all checkboxes 
+	*/
+	$('#spco-copy-all-attendee-chk').on( 'click', function() {
+		if ( $(this).prop('checked')) {
+			SPCO.do_before_sending_ajax();
+			SPCO.reset_validation_vars();
+			$('.spco-copy-attendee-chk').each( function(index) {
+				if ( $('#spco-copy-all-attendee-chk').prop('checked') && $(this).prop('checked') != $('#spco-copy-all-attendee-chk').prop('checked') ) {
+					$(this).trigger('click');
+				}
+			});
+			// any empty or invalid fields that need values ?
+			if ( ! SPCO.validation_errors( 'spco-copy-all-attendee-chk' )) {
+				// display success_msg
+				SPCO.display_messages( SPCO.generate_message_object( eei18n.attendee_info_copied ));				
+			}
+		}
+	});
+
+
+
+	/**
+	*	copy primary attendee details to this attendee
+	*/
+	$('.spco-copy-attendee-chk').on( 'click', function() {
+		SPCO.copy_primary_attendee_information( $(this) );
+	});
+
+
+	/**
+	*	set/remove "requires-value and needs-value" classes on load, if field is no longer empty
+	*/
+	$('#single-page-checkout :input').each( function() { 
+		if ( $(this).attr('type') != 'hidden' ) {			
+			SPCO.set_input_validation_classes( $(this) );
+		}
+	});	
+
+
+	/**
+	*	set/remove "requires-value and needs-value" classes after change, if field is no longer empty
+	*/
+	$('#single-page-checkout :input').change(function() { 
+		SPCO.set_input_validation_classes( $(this) );
+	});	
+
+
+
+	/**
+	*	go to another step via "edit step" link
+	*/
+	$('#single-page-checkout').on( 'click', '.spco-edit-step-lnk', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var step = $(this).attr('rel');
+		go_to[ step ]( '' );
+	});
+
+
+
+	/**
+	*	submit registraion form
+	*/
+	$('#single-page-checkout').on( 'click', '.spco-next-step-btn', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		SPCO.process_next_step( $(this) );
+	});
+
+
+
+	/**
+	*	display event questions
+	*/
+	$('#spco-display-event-questions-lnk').on( 'click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		$('.espresso-question-group-wrap').slideDown();
+		$('#spco-copy-attendee-dv').slideDown();
+		$(this).addClass('hidden');
+	});
+
+
+
+
+	/**
+	*	display method of payment options
+	*/
+	$('.reg-page-payment-option-dv').on( 'click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var selected_payment_option = $(this).find('.reg-page-payment-option-lnk');
+		var selected_gateway = selected_payment_option.attr('id');
+
+		$('#reg-page-select-other-gateway-lnk').attr( 'rel', selected_gateway );		
+		$('#methods-of-payment').slideUp( 250, function() {
+			$('.reg-page-payment-option-dv').each(function() {
+				$(this).toggleClass( 'hidden' );
+				$(this).find( ':input' ).each( function() { 
+					$(this).removeClass('required').removeClass('has-value').removeClass('needs-value');
+				});
+			});		
+			// get target element from "this" (the control element's) "rel" attribute
+			var gateway_form = 'reg-page-billing-info-' + selected_payment_option.attr("rel"); 	
+			$('#reg-page-selected-gateway').val( selected_payment_option.attr("rel") );
+			$('#'+gateway_form+'-dv').toggleClass( 'hidden' );
+			$('#'+gateway_form+'-dv').find( ':input' ).each( function() { 
+				if ( $(this).attr('type') != 'hidden' ) {			
+					SPCO.set_input_validation_classes( $(this) );
+				}
+			});
+			$('#hide-'+gateway_form).removeClass('hidden');			
+			$('#reg-page-select-other-gateway-lnk').toggleClass( 'hidden' );
+			$('#select-method-of-payment-hdr').toggleClass( 'hidden' );
+			$('#methods-of-payment').slideDown( 500 );
+		});
+	});
+
+
+
+	/**
+	*	select a different method of payment
+	*/
+	$('#reg-page-select-other-gateway-lnk').on( 'click', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		selected_gateway = '#' + $(this).attr('rel');
+		$(this).attr('rel', '');
+		$( selected_gateway ).trigger('click');
+	});
+
+
+
+});
