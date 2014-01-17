@@ -1232,20 +1232,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$card_type = isset( $reg_details['card_type'] ) ? ' : ' . $reg_details['card_type'] : '';
 
-		//if method is empty then we'll attempt getting it from the transaction extra meta
-		$reg_details['method'] = !empty( $reg_details['method'] ) ? $reg_details['method'] : $transaction->get_extra_meta('gateway', TRUE);
-		$reg_details['method'] = $reg_details['method'] == 'CC' ? 'Credit Card' . $card_type : $reg_details['method'];
-		$this->_template_args['method']['value'] = $reg_details['method'];
-		$this->_template_args['method']['label'] = __( 'Payment Method', 'event_espresso' );
-		$this->_template_args['method']['class'] = 'regular-text';
-
-		$reg_details['response_msg'] = isset($reg_details['response_msg'] ) ? $reg_details['response_msg'] : '';
-
-		$reg_details['response_msg'] = '<span class="' . $reg_status_class . '">' . $reg_details['response_msg'] . '</span>';
-		$this->_template_args['gateway_response_msg']['value'] = $reg_details['response_msg'];
-		$this->_template_args['gateway_response_msg']['label'] = __( 'Gateway Response Message', 'event_espresso' );
-		$this->_template_args['gateway_response_msg']['class'] = 'regular-text';
-
 		if ( isset( $reg_details['registration_id'] )) {
 			$this->_template_args['reg_details']['registration_id']['value'] = $reg_details['registration_id'];
 			$this->_template_args['reg_details']['registration_id']['label'] = __( 'Registration ID', 'event_espresso' );
