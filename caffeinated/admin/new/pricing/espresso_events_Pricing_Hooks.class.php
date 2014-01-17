@@ -372,6 +372,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			foreach ( $dtts_added as $dttrow ) {
 				$TKT->_add_relation_to($saved_dtts[$dttrow], 'Datetime');
 
+				//now wait a minute.  Does this tkt have any sold?  Cause if it does then we need to add that to the DTT sold because this DTT is getting added.
+				if ( $TKT->get('TKT_sold') > 0 ) {
+					$saved_dtts[$dtt_row]->increase_sold($TKT->get('TKT_sold') );
+					$saved_dtts[$dtt_row]->save();
+				}
+
 				//if we have a new_tkt... let's add to it as well
 				if ( !empty( $new_tkt ) )
 					$new_tkt->_add_relation_to($saved_dtts[$dttrow], 'Datetime' );
@@ -382,6 +388,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//now let's do the remove_relation_to()
 			foreach ( $dtts_removed as $dttrow ) {
 				$TKT->_remove_relation_to($saved_dtts[$dttrow], 'Datetime');
+
+				//now wait a minute.  Does this tkt have any sold? Cause if it does then we need to remove it's sold from the DTT_sold.
+				if ( $TKT->get('TKT_sold') > 0 ) {
+					$saved_dtts[$dttrow]->decrease_sold($TKT->get('TKT_sold') );
+					$saved_dtts[$dttrow]->save();
+				}
 
 				if ( !empty( $new_tkt ) )
 					$new_tkt->_remove_relation_to($saved_dtts[$dttrow], 'Datetime');
