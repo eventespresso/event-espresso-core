@@ -1,18 +1,8 @@
 <div id="admin-primary-mbox-reg-details-dv" class="admin-primary-mbox-dv">
 	
-	<h4 class="admin-primary-mbox-h4"><?php _e( 'Payment Details', 'event_espresso' );?></h4>
 	<?php echo $view_transaction_button; ?>
 	<?php echo $resend_registration_button; ?>
-	<table id="admin-primary-mbox-reg-session-info-tbl" class="form-table skinny-rows">
-		<tbody>
-			<tr>
-				<th><?php echo $method['label'];?> : </th><td><?php echo $method['value'];?></td>
-			</tr>
-			<tr>
-				<th><?php echo $gateway_response_msg['label'];?> : </th><td><?php echo $gateway_response_msg['value'];?></td>
-			</tr>
-		</tbody>
-	</table>	
+	<br/>
 	
 	<h4 class="admin-primary-mbox-h4"><?php _e( 'Registration Items', 'event_espresso' );?></h4>
 
