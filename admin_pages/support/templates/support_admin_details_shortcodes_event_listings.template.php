@@ -1,6 +1,6 @@
 <div class="padding">
 	<p>
-<?php _e('Returns a list of events', 'event_espresso'); ?>
+<?php _e('Displays a list of events based on a set of criteria on a WordPress page or post.', 'event_espresso'); ?>
 		</p>
 		<ul>
 			<li>[ESPRESSO_EVENTS]</li>
@@ -30,8 +30,5 @@
 			state<br />
 			category_id<br />
 			venue_title 
-		</p>
-			<p><strong><?php _e('Attention:', 'event_espresso'); ?></strong><br />
-<?php _e('The [EVENT_LIST] shortcode should not be used as a replacement for the [ESPRESSO_EVENTS] shortcode. Replacing the [ESPRESSO_EVENTS] shortcode will break your registration pages.', 'event_espresso'); ?>
 		</p>
 </div>
