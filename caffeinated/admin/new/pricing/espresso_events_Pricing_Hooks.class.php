@@ -83,6 +83,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					'DTT_ERROR_MSG' => array(
 						'no_ticket_name' => __('General Admission', 'event_espresso'),
 						'dismiss_button' => '<div class="save-cancel-button-container"><button class="button-secondary ee-modal-cancel">' . __('Dismiss', 'event_espresso') . '</button></div>'
+						),
+					'DTT_OVERSELL_WARNING' => array(
+						'datetime_ticket' => __('You cannot add this ticket to this datetime because it has a sold amount that is greater than the amount of spots remaining for this datetime.', 'event_espresso'),
+						'ticket_datetime' => __('You cannot add this datetime to this ticket because the ticket has a sold amount that is greater than the amount of spots remaining on the datetime.', 'event_espresso')
 						)
 					)
 				)
