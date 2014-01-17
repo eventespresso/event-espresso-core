@@ -828,7 +828,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		
 		if($count){
-			return EEM_Registration::instance()->count(array($_where));
+			return $trash ? EEM_Registration::instance()->count_deleted(array($_where) ): EEM_Registration::instance()->count(array($_where) );
 		}else{
 			//make sure we remove default where conditions cause all registrations matching query are returned
 			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ) );
