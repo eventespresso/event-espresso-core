@@ -1673,7 +1673,7 @@ jQuery(document).ready(function($) {
 		setTicketStatus: function() {
 			var status = '';
 			var displayrow = $('#display-ticketrow-'+this.ticketRow);
-			var currentstatusitem = displayrow.find('.ee-tkt-status');
+			var currentstatusitem = displayrow.find('.ee-status-strip');
 
 			//before we go any further lets make sure the ticket isn't sold out.  IF it is then we don't need to change the status and we can exit gracefully.
 			if ( currentstatusitem.hasClass('tkt-status--2') )
@@ -1701,7 +1701,7 @@ jQuery(document).ready(function($) {
 			}
 
 			//we have status so let's set the pip in the display row
-			currentstatusitem.removeClass().addClass('ee-tkt-status ' + status);
+			currentstatusitem.removeClass().addClass('ee-status-strip-td ee-status-strip ' + status);
 
 			//now let's set the status for all datetime-tickets for this ticket
 			tktListItems.each( function () {
@@ -2046,13 +2046,13 @@ jQuery(document).ready(function($) {
 	/**
 	 * Live TKT status pip update
 	 */
-	$('.available-tickets-container').on('focusout', '.ee-datepicker', function(e) {
+	/*$('.available-tickets-container').on('focusout', '.ee-datepicker', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 
 		var id = $(this).parents('.ticket-row').attr('id').replace('display-ticketrow-', '');
 		tktHelper.setticketRow(id).setTicketStatus();
-	});
+	});/**/
 
 
 
@@ -2071,5 +2071,14 @@ jQuery(document).ready(function($) {
 		//@todo: intelligently create min and max values for the ticket dates according to any attached dtts.  This will be tricky tho so leaving for a future iteration.
 
 		dttPickerHelper.resetpicker().picker(start, end, next, doingstart);
+	});
+
+	/**
+	 * Live TKT status pip update
+	 */
+	$(document).on('datepickerclose', function(e) {
+		var id = e.dttinst.id.replace('edit-ticket-TKT_start_date-', '');
+		id = id.replace('edit-ticket-TKT_end_date-', '');
+		tktHelper.setticketRow(id).setTicketStatus();
 	});
 });
