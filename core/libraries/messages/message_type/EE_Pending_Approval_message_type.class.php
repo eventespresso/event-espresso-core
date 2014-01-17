@@ -87,7 +87,7 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Registration Pending Approval';
+			$content[$context] = 'Registration Pending Payment';
 		};
 		return $content;
 	}

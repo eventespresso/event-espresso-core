@@ -144,7 +144,7 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public function wp_enqueue_scripts() {
 		// get some style
-		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && is_single() ) {
+		if ( apply_filters('FHEE_enable_default_espresso_css', TRUE ) && is_single() ) {
 			// first check uploads folder
 			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_events.css' )) {
 				wp_register_style( 'single-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_events.css', array( 'dashicons', 'espresso_default' ) );

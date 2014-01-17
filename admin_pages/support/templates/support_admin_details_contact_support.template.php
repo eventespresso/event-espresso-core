@@ -37,10 +37,10 @@
 	</p>
 
 	<p>
-		<?php _e('<strong>You can purchase support tokens</strong> on <a href="http://eventespresso.com/product/priority-support-tokens/">this page</a>.', 'event_espresso'); ?>
+		<?php echo sprintf( __('%sYou can purchase support tokens%s on %sthis page%s.', 'event_espresso'),'<strong>','</strong>','<a href="http://eventespresso.com/product/priority-support-tokens/" target="_blank">','</a>'); ?>
 	</p>
 
 	<p>
-		<?php echo sprintf( __('Support tokens can be used to schedule live support (phone or IM) or for priority e-mail support. See %sdetails on premium support%s. ', 'event_espresso'), '<a href="http://eventespresso.com/product/priority-support-tokens/">', '</a>' ); ?>
+		<?php echo sprintf( __('Support tokens can be used to schedule live support (phone or IM) or for priority e-mail support. See %sdetails on premium support%s. ', 'event_espresso'), '<a href="http://eventespresso.com/product/priority-support-tokens/" target="_blank">', '</a>' ); ?>
 	</p>
 </div>

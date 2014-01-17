@@ -1048,7 +1048,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				$this->transaction()->is_completed() ? 1 : 0
 			);
 			$new_reg_code = implode( '-', $new_reg_code );
-			$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );	
+			$new_reg_code = apply_filters('FHEE_new_registration_code', $new_reg_code, $this );	
 			$this->set_reg_code( $new_reg_code );
 			return TRUE;
 		}
@@ -1101,13 +1101,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	 * genrerates reg code if that has yet to been done, 
 	 * sets reg status based on transaction status and event pre-approval setting
+	 *
+	 * @param  bool $from_admin 	 used to indicate the request is initiated by admin
+	 * @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
 	 * @return array 	an array with two boolean values, first indicates if new reg, second indicates if regstatus was updated.
 	 */
-	public function finalize( $from_admin = FALSE ) {
+	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
 		$update_reg = FALSE;
 		$new_reg = FALSE;
 		// update reg status if no monies are owing and the REG status is pending payment AND we're not doing this from admin.
-		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment && ! $from_admin ) {
+		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment && $flip_reg_status ) {
 			// automatically toggle status to approved
 			$this->set_status( EEM_Registration::status_id_approved );
 			$update_reg = TRUE;

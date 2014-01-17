@@ -971,7 +971,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 							(3, '" . __('Dollar Discount', 'event_espresso') . "', 2,  0, 30, 0),
 							(4, '" . __('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, 0),
 							(5, '" . __('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, 0);";
-				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
+				$SQL = apply_filters('FHEE_default_price_types_activation_sql', $SQL );
 				$wpdb->query( $SQL );	
 			}
 		}
@@ -1001,7 +1001,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
 							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created.', 1, NULL, 0, 0, 0);";			
-				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
+				$SQL = apply_filters('FHEE_default_prices_activation_sql', $SQL );
 				$wpdb->query($SQL);			
 			}
 		}	
@@ -1027,7 +1027,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				$SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
 					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
-				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
+				$SQL = apply_filters('FHEE_default_tickets_activation_sql', $SQL);
 				$wpdb->query($SQL);
 			}
 		}
@@ -1045,7 +1045,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				( 1, 1, 1 )
 				";
 
-				$SQL = apply_filters( 'FHEE_default_ticket_price_activation_sql', $SQL);
+				$SQL = apply_filters('FHEE_default_ticket_price_activation_sql', $SQL);
 				$wpdb->query($SQL);
 			}
 		}
@@ -1491,15 +1491,18 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	 * @param type $old_event
 	 * @param type $new_cpt_id
 	 * @param  EE_Data_Migration_Script_Stage $migration_stage the stage which called this, where errors should be added
-	 * @return void
+	 * @return boolean whether or not we had to do the big job of creating an image attachment
 	 */
 	public function convert_image_url_to_attachment_and_attach_to_post($guid,$new_cpt_id,  EE_Data_Migration_Script_Stage $migration_stage){
+		$created_attachment_post = false;
+		$guid = $this->_get_original_guid($guid);
 		if($guid){
 			//check for an existing attachment post with this guid
 			$attachment_post_id = $this->_get_image_attachment_id_by_GUID($guid);
 			if( ! $attachment_post_id){
 				//post thumbnail with that GUID doesn't exist, we should create one
 				$attachment_post_id = $this->_create_image_attachment_from_GUID($guid, $migration_stage);
+				$created_attachment_post = true;
 			}
 			//double-check we actually have an attachment post
 			if( $attachment_post_id){
@@ -1507,6 +1510,26 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			}else{
 				$migration_stage->add_error(sprintf(__("Could not update event image %s for CPT with ID %d, but attachments post ID is %d", "event_espresso"),$guid,$new_cpt_id,$attachment_post_id));
 			}
+		}
+		return $created_attachment_post;
+	}
+	
+	/**
+	 * In 3.1, the event thumbnail image DOESN'T point to the orignal image, but instead
+	 * to a large thumbnail (which has nearly the same GUID, except it adds "-{width}x{height}" before the filetype,
+	 * or whatever dimensions it is. Eg 'http://mysite.com/image1-300x400.jpg' instead of 'http://mysite.com/image1.jpg' ). This function attempts to strip that off
+	 * and get the original file, if it exists
+	 * @param string $guid_in_old_event
+	 * @return string either the original guid, or $guid_in_old_event if we couldn't figure out what the original was
+	 */
+	private function _get_original_guid($guid_in_old_event){
+		$original_guid = preg_replace('~-\d*x\d*\.~','.',$guid_in_old_event,1);
+		//do a head request to verify the file exists
+		$head_response = wp_remote_head($original_guid);
+		if( ! $head_response instanceof WP_Error && $head_response['response']['message'] == 'OK'){
+			return $original_guid;
+		}else{
+			return $guid_in_old_event;
 		}
 	}
 	

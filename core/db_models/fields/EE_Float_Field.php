@@ -35,7 +35,7 @@ class EE_Float_Field extends EE_Model_Field_Base{
 	 */
 	function prepare_for_pretty_echoing($value_on_field_to_be_outputted,$schema = null){
 		$EE = EE_Registry::instance();
-		return number_format( $value_on_field_to_be_outputted, max(array(2, $EE->CFG->currency->dec_plc)), $EE->CFG->currency->dec_mrk, $EE->CFG->currency->thsnds) ;
+		return number_format( $value_on_field_to_be_outputted, $EE->CFG->currency->dec_plc, $EE->CFG->currency->dec_mrk, $EE->CFG->currency->thsnds) ;
 	}
 	
 	function prepare_for_set_from_db($value_found_in_db_for_model_object) {

@@ -861,7 +861,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			return;  //no error message, no change requested.
 
 		//made it here dude?  Oh WOW.  K, let's take care of changing the statuses then //note notifications will only get sent if the email notification is toggled.
-		$transaction->finalize(true);
+		$transaction->finalize(true, FALSE);
 	}
 
 

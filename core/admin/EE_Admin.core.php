@@ -419,7 +419,7 @@ final class EE_Admin {
 	 */
 	public function route_admin_request() {
 		// messages loading is turned OFF by default, but prior to the AHEE__EE_Admin_Page__route_admin_request hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
-		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
+		if ( apply_filters('FHEE_load_EE_messages', FALSE )) {
 			EE_Registry::instance()->load_lib( 'Messages_Init' );
 		}
 	}
@@ -459,7 +459,7 @@ final class EE_Admin {
 		wp_register_script('jquery-cookie', EE_THIRD_PARTY_URL . 'joyride/jquery.cookie.js', array('jquery'), '2.1', TRUE );
 
 		// jquery_validate loading is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-		if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
+		if ( apply_filters('FHEE_load_jquery_validate', FALSE )) {
 			// load jQuery Validate script from CDN with local fallback
 			$jquery_validate_url = 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'; 
 			// is the URL accessible ?
@@ -471,7 +471,7 @@ final class EE_Admin {
 		}
 
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
-		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
+		if ( apply_filters('FHEE_load_joyride', FALSE ) ) {
 			$joyride_js = EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js';
 			$joyride_modenizr_js = EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js';
 			$joyride_css = EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css';
@@ -489,7 +489,7 @@ final class EE_Admin {
 		}
 
 		//qtip is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
-		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
+		if ( apply_filters('FHEE_load_qtip', FALSE ) ) {
 			EE_Registry::instance()->load_helper('Qtip_Loader');
 			EEH_Qtip_Loader::instance()->register_and_enqueue();
 		}
@@ -497,7 +497,7 @@ final class EE_Admin {
 
 		//accounting.js library
 		// @link http://josscrowcroft.github.io/accounting.js/
-		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
+		if ( apply_filters('FHEE_load_accounting_js', FALSE ) ) {
 			$acct_js = EE_THIRD_PARTY_URL . 'accounting/accounting.js';
 			wp_register_script( 'ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js', array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_register_script( 'ee-accounting-core', $acct_js, array('underscore'), '0.3.2', TRUE );
@@ -598,7 +598,7 @@ final class EE_Admin {
 		$items['registrations']['text'] = sprintf( _n( '%s Registration', '%s Registrations', $registrations ), number_format_i18n($registrations) );
 		$items['registrations']['title'] = __('Click to view all registrations', 'event_espresso');
 
-		$items = apply_filters( 'FHEE__EE_Admin__dashboard_glance_items__items', $items );
+		$items = apply_filters('FHEE__EE_Admin__dashboard_glance_items__items', $items );
 
 		foreach ( $items as $item ) {
 			$elements[] = sprintf( '<a href="%s" title="%s">%s</a>', $item['url'], $item['title'], $item['text'] );

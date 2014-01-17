@@ -481,7 +481,13 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		}
 		$regs_on_this_row = intval($old_attendee['quantity']);
 		$new_regs = array();
-		for($count = 0; $count < $regs_on_this_row; $count++){
+		//4 cases we need to account for: 
+		//1 old attendee_details row with a quantity of X (no mer)
+		//Y old attendee_details rows with a quantity of 1 (no mer) joined by their common registration_id
+		//Y old attendee_details rows with a quantity of x (because of mer)
+		//Y old attendee_details rows with a quantity of 1 (because of mer) joined by wp_events_multi_event_registration_id_group
+		for($count = 1; $count <= $regs_on_this_row; $count++){
+			//sum regs on older rows
 			$regs_on_this_event_and_txn = $this->_find_count_in_old_txn_using_reg_id($old_attendee['id'],$old_attendee['registration_id']);
 			$cols_n_values = array(
 				'EVT_ID'=>$new_event_id,
@@ -494,7 +500,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'REG_session'=>$old_attendee['attendee_session'],
 				'REG_code'=>$old_attendee['registration_id'],
 				'REG_url_link'=>$old_attendee['registration_id'].'-'.$count,
-				'REG_count'=>$regs_on_this_event_and_txn,
+				'REG_count'=>$regs_on_this_event_and_txn + $count,
 				'REG_group_size'=>$this->_sum_old_attendees_with_registration_id($old_attendee['registration_id']),
 				'REG_att_is_going'=>true,
 				'REG_deleted'=>false
@@ -585,7 +591,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	 */
 	private function _find_count_in_old_txn_using_reg_id($id,$registration_id){
 		global $wpdb;
-		$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(registration_id) FROM ".$this->_old_table." WHERE registration_id=%s AND id<=%d",$registration_id,$id));
+		$count = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s AND id<%d",$registration_id,$id));
 		return intval($count);
 	}
 	private function _insert_new_payment($old_attendee,$new_txn_id){

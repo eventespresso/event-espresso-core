@@ -95,7 +95,7 @@ class EE_Status extends EE_Base_Class{
 	 */
 	function code( $plural = FALSE, $schema = 'upper' ) {
 		$id = $this->get('STS_ID');
-		$code = EEM_Status::instance()->localized_code( array( $id => $this->get('STS_code') ), $plural, $schema );
+		$code = EEM_Status::instance()->localized_status( array( $id => $this->get('STS_code') ), $plural, $schema );
 		return $code[$id];
 	}
 

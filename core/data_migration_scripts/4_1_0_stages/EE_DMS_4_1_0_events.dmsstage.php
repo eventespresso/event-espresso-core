@@ -184,10 +184,13 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	}
 	protected function _migration_step($num_items_to_migrate = 50) {
 		global $wpdb;
+		//because the migration of each event can be a LOT more work, make each step smaller
+		$num_items_to_migrate = max(1,$num_items_to_migrate/5);
 		$events = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d",$this->count_records_migrated(),$num_items_to_migrate),ARRAY_A);
 		$items_migrated_this_step = 0;
 
 		foreach($events as $event_row){
+			$created_attachment_post = false;
 			//insert new 4.1 Attendee object using $wpdb
 			$post_id = $this->_insert_cpt($event_row);
 			if($post_id){
@@ -199,16 +202,22 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$this->_convert_start_end_times($event_row,$post_id);
 				$event_meta = maybe_unserialize($event_row['event_meta']);
 				$guid = isset($event_meta['event_thumbnail_url']) ? $event_meta['event_thumbnail_url'] : null;
-				$this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid,$post_id,$this);
+				$created_attachment_post = $this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid,$post_id,$this);
+				
 				//maybe create a venue from info on the event?
 				$new_venue_id = $this->_maybe_create_venue($event_row);
 				if($new_venue_id){
 					$this->_insert_new_venue_to_event($post_id,$new_venue_id);
 				}
 				$this->_add_post_metas($event_row, $post_id);
-						
+				
 			}
 			$items_migrated_this_step++;
+			if($created_attachment_post){
+				//if we had to create an attachment post (which potentially involved downloading an image from the web)
+				//then let's call it a day (avoid timing out, because this took a long time)
+				break;
+			}
 		}
 		if($this->count_records_migrated() + $items_migrated_this_step >= $this->count_records_to_migrate()){
 			$this->set_status(EE_Data_Migration_Manager::status_completed);

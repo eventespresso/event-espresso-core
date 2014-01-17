@@ -182,6 +182,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 		$num_records_actually_migrated =0;
 		$records_migrated_per_stage = array();
+		//setup the 'stage' variable, which should hold the last run stage of the migration  (or none at all if nothing runs)
+		$stage = null;
 		//get the next stage that isn't complete
 		foreach($this->stages() as $stage){
 			if( $stage->get_status() == EE_Data_Migration_Manager::status_continue){
@@ -204,12 +206,14 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			}
 			//once we've migrated all the number we intended to (possibly from different stages), stop migrating
 			//or if we had a fatal error
-			if ($num_records_actually_migrated >= $num_records_to_migrate_limit || $stage->is_borked()){
+			//or if the current script stopped early- its not done, butit's done all it thinks we shoudl do on this step
+			if ($num_records_actually_migrated >= $num_records_to_migrate_limit || $stage->is_borked() || $stage->has_more_to_do()){
 				break;
 			}
 		}
 		//check if we're all done this data migration...
-		if( $num_records_actually_migrated < $num_records_to_migrate_limit){
+		//which is indicated by being done early AND the last stage claims to be done
+		if( $num_records_actually_migrated < $num_records_to_migrate_limit && $stage!=null && ! $stage->has_more_to_do()){
 			//apparently we're done, because we couldn't migrate the number we intended to
 			$this->set_status(EE_Data_Migration_Manager::status_completed);
 			//do schema changes for after the migration now
@@ -624,6 +628,13 @@ abstract class EE_Data_Migration_Class_Base{
 	 */
 	public function is_completed(){
 		return $this->get_status() == EE_Data_Migration_Manager::status_completed;
+	}
+	/**
+	 * Checks if the current script has more to do or not (ie, if it's status is CONTINUE)
+	 * @return boolean
+	 */
+	public function has_more_to_do(){
+		return $this->get_status() == EE_Data_Migration_Manager::status_continue;
 	}
 	/**
 	 * Marks that we believe this migration thing is completed

@@ -358,7 +358,7 @@ final class EE_Front_Controller {
 	 */
 	public function wp_loaded() {
 		// messages loading is turned OFF by default, but prior to the wp_loaded hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
-		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
+		if ( apply_filters('FHEE_load_EE_messages', FALSE )) {
 			EE_Registry::instance()->load_lib( 'Messages_Init' );
 		}
 
@@ -442,7 +442,7 @@ final class EE_Front_Controller {
 				if ( $current_post == $post_name || $term_exists ) {
 //					d( $post_name );
 					// filter shortcodes so 
-					$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
+					$post_shortcodes = apply_filters('FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
 //					d( $post_shortcodes );
 					// now cycle thru shortcodes
 					foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
@@ -544,7 +544,7 @@ final class EE_Front_Controller {
 	public function wp_enqueue_scripts() {
 		
 		// css is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_css', '__return_false' );
-		if ( apply_filters( 'FHEE_load_css', TRUE )) {
+		if ( apply_filters('FHEE_load_css', TRUE )) {
 			
 			EE_Registry::instance()->CFG->template_settings->enable_default_style = TRUE;
 			//Load the ThemeRoller styles if enabled
@@ -570,7 +570,7 @@ final class EE_Front_Controller {
 		}
 
 		// js is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_js', '__return_false' );
-		if ( apply_filters( 'FHEE_load_js', TRUE )) {
+		if ( apply_filters('FHEE_load_js', TRUE )) {
 
 			wp_enqueue_script( 'jquery' );
 			//let's make sure that all required scripts have been setup
@@ -608,7 +608,7 @@ final class EE_Front_Controller {
 
 
 		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
-		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
+		if ( apply_filters('FHEE_load_qtip', FALSE ) ) {
 			EE_Registry::instance()->load_helper('Qtip_Loader');
 			EEH_Qtip_Loader::instance()->register_and_enqueue();
 		}
@@ -616,7 +616,7 @@ final class EE_Front_Controller {
 
 		//accounting.js library
 		// @link http://josscrowcroft.github.io/accounting.js/
-		if ( apply_filters( 'FHEE_load_accounting_js', FALSE ) ) {
+		if ( apply_filters('FHEE_load_accounting_js', FALSE ) ) {
 			$acct_js = EE_THIRD_PARTY_URL . 'accounting/accounting.js';
 			wp_register_script( 'ee-accounting', EE_GLOBAL_ASSETS_URL . 'scripts/ee-accounting-config.js', array('ee-accounting-core'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_register_script( 'ee-accounting-core', $acct_js, array('underscore'), '0.3.2', TRUE );
@@ -717,7 +717,7 @@ final class EE_Front_Controller {
 //		var_dump(EE_Error::get_notices());
 		
 		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-		if ( apply_filters( 'FHEE_run_EE_the_content', FALSE )) {
+		if ( apply_filters('FHEE_run_EE_the_content', FALSE )) {
 		}
 
 		return $the_content;
@@ -742,7 +742,7 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function display_registration_footer() {
-		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );
+		$url = apply_filters('FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );
 		if ( apply_filters('FHEE__EE_Front__Controller__show_reg_footer',EE_Registry::instance()->CFG->admin->show_reg_footer )) {
 			return apply_filters('FHEE__EE_Front_Controller__display_registration_footer','<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></p>');
 		}

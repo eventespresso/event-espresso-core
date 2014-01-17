@@ -146,7 +146,7 @@ ul.question-list li, ol.datetime-list li {
 	list-style-position: inside;
 	list-style-type: none;
 }
-li.ticket-name em {padding-left: 15px;}
+li.ticket-name em, li.question-item  em {padding-left: 15px;}
 hr {
 	margin: 10px 0;
 }

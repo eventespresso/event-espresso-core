@@ -46,13 +46,14 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
 
 		$new_page_config = array(
-			'faq' => array(
+			//Hiding the FAQ until we actually have relevant content
+			/*'faq' => array(
 				'nav' => array(
 					'label' => __('FAQ', 'event_espresso'),
 					'order' => 50),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 				'require_nonce' => FALSE
-				)
+				)*/
 			);
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 
@@ -63,7 +64,6 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 
 
 	protected function _faq() {
-
 		$template_path = EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH . 'support_admin_details_faq.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, '', TRUE);
 		$this->display_admin_page_with_sidebar();
