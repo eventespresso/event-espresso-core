@@ -910,7 +910,7 @@ jQuery(document).ready(function($) {
 
 			//still here? ok now the next thing to do is get the dtt sold and compare that with the dtt_sold
 			if ( dttSoldProps.tktSold > dttSoldProps.dttRem && selecting ) {
-				warning = itemdata.context == 'datetime-ticket' ? DTT_OVERSELL_WARNING.datetime-ticket : DTT_OVERSELL_WARNING.ticket_datetime;
+				warning = itemdata.context == 'datetime-ticket' ? DTT_OVERSELL_WARNING.datetime_ticket : DTT_OVERSELL_WARNING.ticket_datetime;
 				dialogHelper.displayModal().addContent('<p>' + warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.dismiss_button + '</div>');
 				return 0;
 			} else {
@@ -947,9 +947,10 @@ jQuery(document).ready(function($) {
 		getDTTsoldinfo: function( itemdata ) {
 			var dttSoldProps = {};
 			//first we need to determine if any checks are even necessary by checking for tkt_sold.
+			var dttLimit = $('.event-datetime-DTT_reg_limit', '#edit-event-datetime-table-' + itemdata.datetimeRow ).val()
+			dttSoldProps.dttLimit = dttLimit === '' ? Infinity : accounting.unformat(dttLimit);
 			dttSoldProps.tktSold = accounting.unformat($('.ticket-display-row-TKT_sold', '#display-ticketrow-' + itemdata.ticketRow ).text());
 			dttSoldProps.dttSold = accounting.unformat( $('.datetime-tickets-sold', '#edit-event-datetime-table-' + itemdata.datetimeRow ).text() );
-			dttSoldProps.dttLimit = accounting.unformat( $('.event-datetime-DTT_reg_limit', '#edit-event-datetime-table-' + itemdata.datetimeRow ).text() );
 			dttSoldProps.dttRem = dttSoldProps.dttLimit - dttSoldProps.dttSold;
 			return dttSoldProps;
 		},
@@ -1277,7 +1278,7 @@ jQuery(document).ready(function($) {
 
 				//now that tickets have been added etc. let's update dtt totals IF updates are to happen
 				if ( this.updateDTTsold === 2 )
-					this.updateDTTsoldValues( itemdata, selecting );
+					this.updateDTTsoldValues( this.itemdata, selecting );
 
 			}
 			return getitm ? rtnitm : this;
