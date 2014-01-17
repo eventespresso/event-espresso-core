@@ -783,7 +783,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	public function get_default_tickets( $per_page = 10, $count = FALSE, $trashed = FALSE ) {
 
 		$orderby= empty( $this->_req_data['orderby'] ) ? 'TKT_name' : $this->_req_data['orderby'];
-		$order = empty( $this->_req_data['order'] ) ? 'ASC' : $order;
+		$order = empty( $this->_req_data['order'] ) ? 'ASC' : $this->_req_data['order'];
 
 		switch ( $orderby ) {
 			case 'TKT_name' :
