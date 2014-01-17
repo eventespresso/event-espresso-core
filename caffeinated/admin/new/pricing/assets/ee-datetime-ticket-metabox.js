@@ -1491,7 +1491,7 @@ jQuery(document).ready(function($) {
 		applyTKTtitleChange: function(titleitem) {
 			var title = titleitem.val();
 			//now we just update EVERY tktList item with this title!
-			$('.ticket-list-ticket-name', 'li.datetime-ticket[data-ticket-row="' + this.ticketRow + '"]').text(title);
+			$('li.datetime-ticket[data-ticket-row="' + this.ticketRow + '"]', '.datetime-tickets-edit').find('.ticket-list-ticket-name').text(title);
 			return this;
 		},
 
