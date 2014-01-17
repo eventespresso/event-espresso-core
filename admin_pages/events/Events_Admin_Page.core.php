@@ -656,7 +656,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
-		$event_update_callbacks = apply_filters( 'FHEE_event_editor_update', array( array($this, '_default_venue_update' ), array( $this, '_default_tickets_update') ) );
+		$event_update_callbacks = apply_filters('FHEE_event_editor_update', array( array($this, '_default_venue_update' ), array( $this, '_default_tickets_update') ) );
 
 		$att_success = TRUE;
 
@@ -1187,7 +1187,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['existing_datetime_ids'] = implode(',', $existing_datetime_ids);
 		$template_args['existing_ticket_ids'] = implode(',', $existing_ticket_ids);
 		$template_args['ticket_js_structure'] = $this->_get_ticket_row( EE_Registry::instance()->load_model('Ticket')->create_default_object(), TRUE );
-		$template = apply_filters( 'FHEE__Events_Admin_Page__ticket_metabox__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php' );
+		$template = apply_filters('FHEE__Events_Admin_Page__ticket_metabox__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php' );
 		EEH_Template::display_template($template, $template_args);
 	}
 

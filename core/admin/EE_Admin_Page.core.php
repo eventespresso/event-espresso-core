@@ -1672,9 +1672,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//let's provide the ability to filter the views per PAGE AND ROUTE, per PAGE, and globally
-		$this->_views = apply_filters( 'FHEE_list_table_views_' . $this->page_slug . '_' . $this->_req_action, $this->_views );
-		$this->_views = apply_filters( 'FHEE_list_table_views_' . $this->page_slug, $this->_views );
-		$this->_views = apply_filters( 'FHEE_list_table_views', $this->_views );
+		$this->_views = apply_filters('FHEE_list_table_views_' . $this->page_slug . '_' . $this->_req_action, $this->_views );
+		$this->_views = apply_filters('FHEE_list_table_views_' . $this->page_slug, $this->_views );
+		$this->_views = apply_filters('FHEE_list_table_views', $this->_views );
 		
 		$this->_set_list_table_view();
 		$this->_set_list_table_object();
@@ -2420,8 +2420,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['nav_tabs'] = $this->_nav_tabs;
 		$this->_template_args['admin_page_title'] = $this->_admin_page_title;
 
-		$this->_template_args['before_admin_page_content'] = apply_filters( 'FHEE_before_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['before_admin_page_content'] ) ? $this->_template_args['before_admin_page_content'] : '');
-		$this->_template_args['after_admin_page_content'] = apply_filters( 'FHEE_after_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['after_admin_page_content'] ) ? $this->_template_args['after_admin_page_content'] : '');
+		$this->_template_args['before_admin_page_content'] = apply_filters('FHEE_before_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['before_admin_page_content'] ) ? $this->_template_args['before_admin_page_content'] : '');
+		$this->_template_args['after_admin_page_content'] = apply_filters('FHEE_after_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['after_admin_page_content'] ) ? $this->_template_args['after_admin_page_content'] : '');
 
 		$this->_template_args['after_admin_page_content'] .= $this->_set_help_popup_content();
 
@@ -2637,7 +2637,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$classname = get_class($this);
 		do_action( 'AHEE_redirect_' . $classname . $this->_req_action, $query_args );
 
-		$redirect_url = apply_filters( 'FHEE_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args ); 
+		$redirect_url = apply_filters('FHEE_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args ); 
 
 
 		// check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
@@ -3047,7 +3047,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
-		$success = apply_filters( 'FHEE_process_admin_payment_message', FALSE, $payment );
+		$success = apply_filters('FHEE_process_admin_payment_message', FALSE, $payment );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}

@@ -121,7 +121,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		}
 
 		// filter hook allows outside functions/classes/plugins to change default empty cart
-		$extra_default_session_vars = apply_filters( 'FHEE_default_session_vars', array() );
+		$extra_default_session_vars = apply_filters('FHEE_default_session_vars', array() );
 		array_merge( $this->_default_session_vars, $extra_default_session_vars );
 
 		$this->_set_defaults();

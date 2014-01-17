@@ -207,7 +207,7 @@ final class EE_Config {
 		} else {
 			$CFG = get_option( 'espresso_config', array() );
 		}
-		$CFG = apply_filters( 'FHEE__Config__get_espresso_config__CFG', $CFG );
+		$CFG = apply_filters('FHEE__Config__get_espresso_config__CFG', $CFG );
 		return $CFG;
 	}
 
@@ -342,14 +342,14 @@ final class EE_Config {
 			// grab list of installed widgets
 			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
 			// filter list of modules to register
-			$widgets_to_register = apply_filters( 'FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
+			$widgets_to_register = apply_filters('FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
 			// cycle thru widget folders
 			foreach ( $widgets_to_register as $widget_path ) {
 				// add to list of installed widget modules
 				EE_Config::register_ee_widget( $widget_path );
 			}
 			// filter list of installed modules
-			EE_Registry::instance()->widgets = apply_filters( 'FHEE__EE_Config__register_widgets__installed_widgets', EE_Registry::instance()->widgets );
+			EE_Registry::instance()->widgets = apply_filters('FHEE__EE_Config__register_widgets__installed_widgets', EE_Registry::instance()->widgets );
 		}
 	}
 
@@ -410,14 +410,14 @@ final class EE_Config {
 		// grab list of installed shortcodes
 		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$shortcodes_to_register = apply_filters( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
+		$shortcodes_to_register = apply_filters('FHEE__EE_Config__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
 		// cycle thru shortcode folders
 		foreach ( $shortcodes_to_register as $shortcode_path ) {
 			// add to list of installed shortcode modules
 			EE_Config::register_shortcode( $shortcode_path );
 		}
 		// filter list of installed modules
-		return apply_filters( 'FHEE__EE_Config___register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
+		return apply_filters('FHEE__EE_Config___register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
 	}
 
 
@@ -474,7 +474,7 @@ final class EE_Config {
 		// grab list of installed modules
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$modules_to_register = apply_filters( 'FHEE__EE_Config__register_modules__modules_to_register', $modules_to_register );
+		$modules_to_register = apply_filters('FHEE__EE_Config__register_modules__modules_to_register', $modules_to_register );
 		// loop through folders
 		foreach ( $modules_to_register as $module_path ) {
 			/**TEMPORARILY EXCLUDE gateways from modules for time being**/
@@ -484,7 +484,7 @@ final class EE_Config {
 			}
 		}
 		// filter list of installed modules
-		return apply_filters( 'FHEE__EE_Config___register_modules__installed_modules', EE_Registry::instance()->modules );
+		return apply_filters('FHEE__EE_Config___register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
 
 

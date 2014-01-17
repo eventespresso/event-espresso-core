@@ -213,7 +213,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		$reg_page_billing_inputs = array();
 		// allow others to edit post input array
 		$reg_page_billing_inputs = $this->espresso_reg_page_billing_inputs();
-		$reg_page_billing_inputs = apply_filters( 'FHEE_reg_page_billing_inputs', $reg_page_billing_inputs );
+		$reg_page_billing_inputs = apply_filters('FHEE_reg_page_billing_inputs', $reg_page_billing_inputs );
 
 //printr( $reg_page_billing_inputs, '$reg_page_billing_inputs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 

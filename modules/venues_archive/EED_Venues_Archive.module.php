@@ -68,7 +68,7 @@ class EED_Venues_Archive  extends EED_Module {
 	 */
 	public function wp_enqueue_scripts() {
 		// get some style
-		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && is_archive() ) {
+		if ( apply_filters('FHEE_enable_default_espresso_css', TRUE ) && is_archive() ) {
 			// first check theme folder
 			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_venues.css' )) {
 				wp_register_style( 'archive-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_venues.css', array( 'dashicons', 'espresso_default' ) );

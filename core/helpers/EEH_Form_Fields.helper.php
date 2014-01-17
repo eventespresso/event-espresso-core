@@ -397,8 +397,8 @@ class EEH_Form_Fields {
 	static function generate_question_groups_html( $question_groups = array(), $group_wrapper = 'fieldset' ) {
 			
 		$html = '';
-		$before_question_group_questions = apply_filters( 'FHEE_form_before_question_group_questions', '' );
-		$after_question_group_questions = apply_filters( 'FHEE_form_after_question_group_questions', '' );		
+		$before_question_group_questions = apply_filters('FHEE_form_before_question_group_questions', '' );
+		$after_question_group_questions = apply_filters('FHEE_form_after_question_group_questions', '' );		
 
 		if ( ! empty( $question_groups )) {
 			//printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -448,8 +448,8 @@ class EEH_Form_Fields {
 	static function generate_question_groups_html2( $question_groups = array(), $q_meta = array(), $group_wrapper = 'fieldset' ) {
 			
 		$html = '';
-		$before_question_group_questions = apply_filters( 'FHEE_form_before_question_group_questions', '' );
-		$after_question_group_questions = apply_filters( 'FHEE_form_after_question_group_questions', '' );		
+		$before_question_group_questions = apply_filters('FHEE_form_before_question_group_questions', '' );
+		$after_question_group_questions = apply_filters('FHEE_form_after_question_group_questions', '' );		
 
 		$default_q_meta = array(
 				'att_nmbr' => 1,
@@ -547,7 +547,7 @@ class EEH_Form_Fields {
 		$input_id = $QFI->get('QST_input_id');
 		$input_class = $QFI->get('QST_input_class');
 		$disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';
-		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
+		$required_label = apply_filters('FHEE_required_form_input_label', '<em>*</em>' );
 		$QST_required = $QFI->get('QST_required');
 		$required = $QST_required ? array( 'label' => $required_label, 'class' => 'required', 'title' => $QST_required ) : array();
 		$use_html_entities = $QFI->get_meta( 'htmlentities' );
@@ -623,15 +623,15 @@ class EEH_Form_Fields {
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-text-inp';
 		$class = empty( $class ) ? $txt_class : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
+		$extra = apply_filters('FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = $required_text . "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label><br/>';
 		// filter label but ensure required text comes before it
-		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html, $required_text );
+		$label_html = apply_filters('FHEE_form_field_label_html', $label_html, $required_text );
 		
 		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled .' ' . $extra . '/>';
 		
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
+		$input_html =  apply_filters('FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 		
 	}
@@ -673,15 +673,15 @@ class EEH_Form_Fields {
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-textarea-inp';
 		$class = empty( $class ) ? $txt_class : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
+		$extra = apply_filters('FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = $required_text . "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label><br/>';
 		// filter label but ensure required text comes before it
-		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html, $required_text );
+		$label_html = apply_filters('FHEE_form_field_label_html', $label_html, $required_text );
 
 		$input_html = "\n\t\t\t" . '<textarea name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" rows="' . $dimensions['rows'] . '" cols="' . $dimensions['cols'] . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>' . $answer . '</textarea>';
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
+		$input_html =  apply_filters('FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 		
 	}
@@ -721,11 +721,11 @@ class EEH_Form_Fields {
 		$txt_class = is_admin() ? 'wide' : 'espresso-select-inp';
 		$class = empty( $class ) ? $txt_class : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
+		$extra = apply_filters('FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = $required_text . "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label><br/>';
 		// filter label but ensure required text comes before it
-		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html, $required_text );
+		$label_html = apply_filters('FHEE_form_field_label_html', $label_html, $required_text );
 		
 		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>';
 		// recursively count array elelments, to determine total number of options
@@ -743,9 +743,9 @@ class EEH_Form_Fields {
 
 		$input_html .= "\n\t\t\t" . '</select>';
 		
-		$input_html =  apply_filters( 'FHEE__EEH_Form_Fields__select__before_end_wrapper', $input_html, $question, $answer, $name, $id, $class, $system_ID );
+		$input_html =  apply_filters('FHEE__EEH_Form_Fields__select__before_end_wrapper', $input_html, $question, $answer, $name, $id, $class, $system_ID );
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
+		$input_html =  apply_filters('FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 
 	}
@@ -822,11 +822,11 @@ class EEH_Form_Fields {
 		// ya gots ta have style man!!!
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
 		$class = ! empty( $class ) ? $class : 'espresso-radio-btn-inp';
-		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
+		$extra = apply_filters('FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = $required_text . "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		// filter label but ensure required text comes before it
-		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html, $required_text );
+		$label_html = apply_filters('FHEE_form_field_label_html', $label_html, $required_text );
 		
 		$input_html = "\n\t\t\t" . '<ul id="' . $id . '-ul" class="espresso-radio-btn-options-ul ' . $label_class . ' ' . $class . '-ul">';
 
@@ -856,7 +856,7 @@ class EEH_Form_Fields {
 
 		$input_html .= "\n\t\t\t" . '</ul>';
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
+		$input_html =  apply_filters('FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 
 	}
@@ -899,11 +899,11 @@ class EEH_Form_Fields {
 		// ya gots ta have style man!!!
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
-		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
+		$extra = apply_filters('FHEE_additional_form_field_attributes', '' );
 		
 		$label_html = $required_text . "\n\t\t\t" . '<label class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label> ';
 		// filter label but ensure required text comes before it
-		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html, $required_text );
+		$label_html = apply_filters('FHEE_form_field_label_html', $label_html, $required_text );
 
 		$input_html = "\n\t\t\t" . '<ul id="' . $id . '-ul" class="espresso-checkbox-options-ul ' . $label_class . ' ' . $class . '-ul">';
 
@@ -934,7 +934,7 @@ class EEH_Form_Fields {
 
 		$input_html .= "\n\t\t\t" . '</ul>';
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
+		$input_html =  apply_filters('FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 
 	}
@@ -972,11 +972,11 @@ class EEH_Form_Fields {
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-datepicker-inp';
 		$class = empty( $class ) ? $txt_class : $class;
 		$class .= ! empty( $system_ID ) ? ' ' . $system_ID : '';
-		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
+		$extra = apply_filters('FHEE_additional_form_field_attributes', '' );
 
 		$label_html = $required_text . "\n\t\t\t" . '<label for="' . $name . '" class="' . $label_class . '">' . self::prep_question( $question ) . $required['label'] . '</label><br/>';
 		// filter label but ensure required text comes before it
-		$label_html = apply_filters( 'FHEE_form_field_label_html', $label_html, $required_text );
+		$label_html = apply_filters('FHEE_form_field_label_html', $label_html, $required_text );
 		
 		$input_html = "\n\t\t\t" . '<input type="text" name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . ' datepicker" value="' . $answer . '"  title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '/>';
 		
@@ -985,7 +985,7 @@ class EEH_Form_Fields {
 		wp_enqueue_style( 'espresso-ui-theme');
 		wp_enqueue_script( 'jquery-ui-datepicker' );
 
-		$input_html =  apply_filters( 'FHEE_form_field_input_html', $input_html, $label_html, $id );
+		$input_html =  apply_filters('FHEE_form_field_input_html', $input_html, $label_html, $id );
 		return  $label_html . $input_html;
 
 	}

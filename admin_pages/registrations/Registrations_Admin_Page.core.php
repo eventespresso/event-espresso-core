@@ -2338,7 +2338,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 			$success = $attendee->save();
 
-			$attendee_update_callbacks = apply_filters( 'FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update', array() );
+			$attendee_update_callbacks = apply_filters('FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update', array() );
 			foreach ( $attendee_update_callbacks as $a_callback ) {
 				if ( FALSE === call_user_func_array( $a_callback, array($attendee, $this->_req_data ) ) ) {
 					throw new EE_Error( sprintf( __('The %s callback given for the "FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update" filter is not a valid callback.  Please check the spelling.', 'event_espresso'), $a_callback ) );
