@@ -1936,12 +1936,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 	private function _espresso_links_post_box() {
-		add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), array( $this, 'espresso_links_post_box'), $this->_wp_page_slug, 'side');
+		//Hiding until we actually have content to put in here...
+		//add_meta_box('espresso_links_post_box', __('Helpful Plugin Links', 'event_espresso'), array( $this, 'espresso_links_post_box'), $this->_wp_page_slug, 'side');
 	}
 
 	public function espresso_links_post_box() {
-		   $templatepath = EE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_links.template.php';
-			EEH_Template::display_template( $templatepath );	
+		   //Hiding until we actually have content to put in here...
+		   //$templatepath = EE_ADMIN_TEMPLATE . 'admin_general_metabox_contents_espresso_links.template.php';
+			//EEH_Template::display_template( $templatepath );	
 		}
 
 
