@@ -2044,19 +2044,6 @@ jQuery(document).ready(function($) {
 
 
 	/**
-	 * Live TKT status pip update
-	 */
-	/*$('.available-tickets-container').on('focusout', '.ee-datepicker', function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-
-		var id = $(this).parents('.ticket-row').attr('id').replace('display-ticketrow-', '');
-		tktHelper.setticketRow(id).setTicketStatus();
-	});/**/
-
-
-
-	/**
 	 * Datepicker functionality
 	 */
 	
