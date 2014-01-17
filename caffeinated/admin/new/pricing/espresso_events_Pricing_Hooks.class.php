@@ -374,8 +374,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 				//now wait a minute.  Does this tkt have any sold?  Cause if it does then we need to add that to the DTT sold because this DTT is getting added.
 				if ( $TKT->get('TKT_sold') > 0 ) {
-					$saved_dtts[$dtt_row]->increase_sold($TKT->get('TKT_sold') );
-					$saved_dtts[$dtt_row]->save();
+					$saved_dtts[$dttrow]->increase_sold($TKT->get('TKT_sold') );
+					$saved_dtts[$dttrow]->save();
 				}
 
 				//if we have a new_tkt... let's add to it as well
