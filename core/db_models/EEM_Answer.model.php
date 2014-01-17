@@ -83,7 +83,7 @@ class EEM_Answer extends EEM_Base {
 				$value = $answer_obj->value();
 			}
 		}
-		return apply_filters( 'FHEE__EEM_Answer__get_answer_value_to_question__answer_value', $value, $registration, $question_id );
+		return apply_filters('FHEE__EEM_Answer__get_answer_value_to_question__answer_value', $value, $registration, $question_id );
 	}
 
 
@@ -144,7 +144,7 @@ class EEM_Answer extends EEM_Base {
 					break;				
 			}
 		}
-		return apply_filters( 'FHEE__EEM_Answer__get_attendee_question_answer_value__answer_value', $value, $registration, $question_id );		
+		return apply_filters('FHEE__EEM_Answer__get_attendee_question_answer_value__answer_value', $value, $registration, $question_id );		
 	}
 
 

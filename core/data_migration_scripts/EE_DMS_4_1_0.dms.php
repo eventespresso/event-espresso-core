@@ -971,7 +971,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 							(3, '" . __('Dollar Discount', 'event_espresso') . "', 2,  0, 30, 0),
 							(4, '" . __('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, 0),
 							(5, '" . __('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, 0);";
-				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
+				$SQL = apply_filters('FHEE_default_price_types_activation_sql', $SQL );
 				$wpdb->query( $SQL );	
 			}
 		}
@@ -1001,7 +1001,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
 							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created.', 1, NULL, 0, 0, 0);";			
-				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
+				$SQL = apply_filters('FHEE_default_prices_activation_sql', $SQL );
 				$wpdb->query($SQL);			
 			}
 		}	
@@ -1027,7 +1027,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				$SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
 					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
-				$SQL = apply_filters( 'FHEE_default_tickets_activation_sql', $SQL);
+				$SQL = apply_filters('FHEE_default_tickets_activation_sql', $SQL);
 				$wpdb->query($SQL);
 			}
 		}
@@ -1045,7 +1045,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				( 1, 1, 1 )
 				";
 
-				$SQL = apply_filters( 'FHEE_default_ticket_price_activation_sql', $SQL);
+				$SQL = apply_filters('FHEE_default_ticket_price_activation_sql', $SQL);
 				$wpdb->query($SQL);
 			}
 		}
