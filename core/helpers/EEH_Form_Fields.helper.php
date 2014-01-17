@@ -549,7 +549,7 @@ class EEH_Form_Fields {
 		$disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';
 		$required_label = apply_filters( 'FHEE_required_form_input_label', '<em>*</em>' );
 		$QST_required = $QFI->get('QST_required');
-		$required = $QST_required ? array( 'label' => $required_label, 'class' => 'required', 'title' => $QST_required ) : array();
+		$required = $QST_required ? array( 'label' => $required_label, 'class' => 'required needs-value', 'title' => $QST_required ) : array();
 		$use_html_entities = $QFI->get_meta( 'htmlentities' );
 		$required_text = $QFI->get('QST_required_text') != '' ? $QFI->get('QST_required_text') : 'This field is required';
 		$required_text = $QST_required ? "\n\t\t\t" . '<div class="required-text hidden">' . self::prep_answer( $required_text, $use_html_entities ) . '</div>' : '';
@@ -820,7 +820,7 @@ class EEH_Form_Fields {
 		// set disabled tag
 		$disabled = ! empty( $answer ) ? $disabled : '';
 		// ya gots ta have style man!!!
-		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
+		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;
 		$class = ! empty( $class ) ? $class : 'espresso-radio-btn-inp';
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
@@ -897,7 +897,7 @@ class EEH_Form_Fields {
 		// set disabled tag
 		$disabled = empty( $answer ) ? '' : $disabled;
 		// ya gots ta have style man!!!
-		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;		
+		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
 		$extra = apply_filters( 'FHEE_additional_form_field_attributes', '' );
 		
