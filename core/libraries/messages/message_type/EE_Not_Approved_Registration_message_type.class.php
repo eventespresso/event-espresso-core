@@ -91,7 +91,7 @@ class EE_Not_Approved_Registration_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Your Registration Was Not Approved';
+			$content[$context] = 'Registration Pending Approval';
 		};
 		return $content;
 	}
