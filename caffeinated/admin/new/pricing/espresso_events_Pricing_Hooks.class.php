@@ -301,6 +301,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$dtts_on_existing = $TKT->get_many_related('Datetime');
 
 					//TKT will get archived later b/c we are NOT adding it to the saved_tickets array.
+					
+					//if existing $TKT has sold amount, then we need to adjust the qty for the new TKT to = the remaining available.
+					if ( $TKT->get('TKT_sold') > 0 ) {
+						$new_qty = $TKT->get('TKT_qty') - $TKT->get('TKT_sold');
+						$new_tkt->set_qty($new_qty);
+					}
 
 
 					//create new ticket that's a copy of the existing except a new id of course (and not archived) AND has the new TKT_price associated with it.
