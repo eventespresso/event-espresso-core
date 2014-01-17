@@ -256,7 +256,7 @@ class EE_Register_CPTs {
 		'show_in_menu' => false, 
 		'show_in_nav_menus' => false,
 		'query_var' => true,
-		'rewrite' => array( 'slug' => sanitize_title($plural_name) ),
+		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => sanitize_title($plural_name) ) ),
 		'capability_type' => 'post',
 		'has_archive' => true, 
 		'hierarchical' => true,
