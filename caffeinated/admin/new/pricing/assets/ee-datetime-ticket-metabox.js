@@ -1481,6 +1481,24 @@ jQuery(document).ready(function($) {
 		},
 
 
+
+
+		/**
+		 * This applies any changes in ticket title to all elements with that title.
+		 * @param {jQuery} titleitem  the jQuery object for the title field.
+		 * @return {tktHelper} this object for chainability.
+		 */
+		applyTKTtitleChange: function(titleitem) {
+			var title = titleitem.val();
+			//now we just update EVERY tktList item with this title!
+			$('.ticket-list-ticket-name', 'li.datetime-ticket[data-ticket-row="' + this.ticketRow + '"]').text(title);
+			return this;
+		},
+
+
+
+
+
 		/**
 		 * applies the total price to all places in the current ticket row that it is displayed
 		 * @return {tktHelper} this object for chainability
@@ -1492,6 +1510,7 @@ jQuery(document).ready(function($) {
 			TKTrow.find('.ticket-price-amount').text(accounting.formatMoney(price_amount.finalTotal));
 			TKTrow.find('.edit-ticket-TKT_price').val(accounting.toFixed(price_amount.subtotal));
 			//$('.ticket-display-row-TKT_price',  '#display-ticketrow-' + this.ticketRow).text('$' + price_amount);
+			return TKTrow;
 		},
 
 
@@ -1956,6 +1975,7 @@ jQuery(document).ready(function($) {
 	});
 
 
+
 	/**
 	 * toggle price modifier selection
 	 */
@@ -1998,6 +2018,17 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var data = $(this).parent().parent().find('.trash-icon').data();
 		tktHelper.setticketRow(data.ticketRow).applyTotalPrice();
+	});
+
+
+	/**
+	 * Toggle Ticket Name changes in all other ui elements
+	 */
+	$('#event-and-ticket-form-content').on('keyup', '.edit-ticket-TKT_name', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var data = $(this).parent().parent().find('.gear-icon').data();
+		tktHelper.setticketRow(data.ticketRow).applyTKTtitleChange($(this));
 	});
 
 
