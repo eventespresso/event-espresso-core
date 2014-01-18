@@ -9,6 +9,8 @@ jQuery(document).ready(function($) {
 		itemdata: {},
 		currentDOMElement: {},
 		lastDTTtoggle: true,
+		timeZone: false, //used to hold timezone string
+		offSet: 0, //used to hold the timezone offset.
 
 		/**
 		 * This can be one of three values:
@@ -112,6 +114,49 @@ jQuery(document).ready(function($) {
 			return this;
 		},
 
+
+
+		/**
+		 * This sets the timeZone property
+		 */
+		setTimeZone: function(selector) {
+			if ( this.timeZone !== false )
+				return; //already set
+
+			selector = typeof(selector) === 'undefined' ? '#current_timezone' : selector;
+			this.timeZone = $(selector).text();
+
+			//for incoming times we have to calculate the zone for the incoming timezone and append it to the incoming time string.
+			this.offSet = this.getOffset();
+		},
+
+
+
+		getOffset: function() {
+			var zone = moment.tz(this.timeZone).zone();
+			var positive = zone > 0 ? false : true;  //we have to flip the symbols later.
+			zone = zone/60; //get hours
+			zone = zone > 0 ? zone : zone*-1; //get rid of any possible - sign.
+			zone *= 100; //add zeros
+			zone = zone < 1000 ? '0' + zone.toString() : zone.toString(); //maybe add leading zero and convert to string.
+			zone = positive ? '+' + zone : '-' + zone; //add the symbol
+			return zone; //that's it!
+		},
+
+
+		/**
+		 * this is a wrapper for moment.tz library and returns the moment object for the set timezone.
+		 * @param  {string} time incoming day time string
+		 * @return {moment}      moment object
+		 */
+		eemoment: function(time, format) {
+			this.setTimeZone();
+
+			format = typeof(format) === 'undefined' ? format : format + 'ZZ';
+
+			m = typeof(time) === 'undefined' ? moment().tz(this.timeZone) : moment(time+this.offSet,format).tz(this.timeZone);
+			return m;
+		},
 
 
 		/**
@@ -285,7 +330,7 @@ jQuery(document).ready(function($) {
 
 					case 'event-datetime-DTT_EVT_start' :
 						DTT_start_time = $('#add-new-' + inputid, '#add-event-datetime').val();
-						DTT_start_time = DTT_start_time === '' ? moment().add('weeks', 1).hours(8).minutes(0).format('YYYY-MM-DD h:mm a') : DTT_start_time;
+						DTT_start_time = DTT_start_time === '' ? tktHelper.eemoment().add('weeks', 1).hours(8).minutes(0).format('YYYY-MM-DD h:mm a') : DTT_start_time;
 						$(this).val(DTT_start_time);
 						break;
 
@@ -1090,7 +1135,7 @@ jQuery(document).ready(function($) {
 					if ( $(this).hasClass('add-new-ticket-TKT_start_date') ) {
 						idref = 'add-new-ticket-TKT_start_date';
 						if ( $(this).val() === '' ) {
-							curval = moment().add('hours', 2).format('YYYY-MM-DD h:mm a');
+							curval = tktHelper.eemoment().add('hours', 2).format('YYYY-MM-DD h:mm a');
 						}
 					}
 
@@ -1421,7 +1466,7 @@ jQuery(document).ready(function($) {
 
 			if ( startdate === null || enddate === null )
 				return '';
-			var now = moment();
+			var now = tktHelper.eemoment(); //need to make sure its the right timezone
 
 			if ( startdate.isAfter(now) )
 				return 'Pending';
@@ -1684,11 +1729,10 @@ jQuery(document).ready(function($) {
 			var tktStart = $('.edit-ticket-TKT_start_date', displayrow).val();
 			var tktEnd = $('.edit-ticket-TKT_end_date', displayrow).val();
 			
-			var now = moment();
-
-			tktStart = moment(tktStart, 'YYYY-MM-DD h:mm a');
-			tktEnd = moment(tktEnd, 'YYYY-MM-DD h:mm a');
-
+			var now = tktHelper.eemoment();
+			tktStart = tktHelper.eemoment(tktStart, 'YYYY-MM-DD h:mm a');
+			tktEnd = tktHelper.eemoment(tktEnd, 'YYYY-MM-DD h:mm a');
+			
 			//now we have moment objects to do some calcs and determine what status we're setting.
 			if ( now.isBefore(tktStart) ) {
 				status = 'tkt-status-1'; //pending
