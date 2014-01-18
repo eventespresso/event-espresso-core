@@ -185,13 +185,27 @@ jQuery(document).ready(function($) {
 		$('#'+item_to_hide+'-dv').slideToggle(250, function() {
 			// display the control element that toggles display of this element
 			$('#display-'+item_to_hide).show().fadeIn(50);
-			// set target element's value to an empty string
-			$('#'+item_to_cancel).val('');
+			// find all input's and add css classes: required and needs-value
+			$( '#'+item_to_hide+'-dv' ).find(':input').each( function() {
+				$(this).removeClass('required needs-value').trigger('change');
+			});
 		});
 
 		e.preventDefault();
 		e.stopPropagation();
 		
+	});
+		
+	
+
+	// display add new state microform
+	$('.ee-form-add-new-state-lnk').click(function(e) {
+		// get target element from "this" (the control element's) "rel" attribute
+		var add_new_state_dv = '#'+$(this).attr('rel') +'-dv';
+		// find all input's and add css classes: required and needs-value
+		$( add_new_state_dv ).find(':input').each( function() {
+			$(this).addClass('required needs-value').trigger('change');
+		});
 	});
 
 

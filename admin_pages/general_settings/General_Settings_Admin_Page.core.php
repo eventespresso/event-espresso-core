@@ -59,7 +59,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _ajax_hooks() {
 		add_action('wp_ajax_espresso_display_country_settings', array( $this, 'display_country_settings'));
 		add_action('wp_ajax_espresso_display_country_states', array( $this, 'display_country_states'));
-		add_action('wp_ajax_espresso_delete_state', array( $this, 'delete_state'));
+		add_action('wp_ajax_espresso_delete_state', array( $this, 'delete_state'), 10, 3 );
 		add_action('wp_ajax_espresso_add_new_state', array( $this, 'add_new_state'));
 	}
 
@@ -262,7 +262,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_country_settings() {	
 		//scripts
-		wp_register_script( 'gen_settings_countries', GEN_SET_ASSETS_URL . 'gen_settings_countries.js', array( 'jquery' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'gen_settings_countries', GEN_SET_ASSETS_URL . 'gen_settings_countries.js', array( 'ee_admin_js' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_style( 'organization-css', GEN_SET_ASSETS_URL . 'organization.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script( 'gen_settings_countries' );	
 		wp_enqueue_style( 'organization-css' );
@@ -669,7 +669,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'STA_active' => array( 'type' => 'SINGLE', 'input_name' => 'states[' . $STA_ID . ']', 'options' => $this->_yes_no_values )
 				);
 				$this->_template_args['states'][ $STA_ID ]['inputs'] = EE_Question_Form_Input::generate_question_form_inputs_for_object( $state, $state_input_types );
-				$query_args =  array( 'action' => 'delete_state', 'STA_ID' => $STA_ID, 'CNT_ISO' => $CNT_ISO );
+				$query_args =  array( 'action' => 'delete_state', 'STA_ID' => $STA_ID, 'CNT_ISO' => $CNT_ISO, 'STA_abbrev' => $state->abbrev() );
 				$this->_template_args['states'][ $STA_ID ]['delete_state_url'] = EE_Admin_Page::add_query_args_and_nonce( $query_args, GEN_SET_ADMIN_URL );
 			}	
 		} else {
@@ -747,16 +747,22 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		@return 		void
 	 */
 	public function delete_state() {
+		$CNT_ISO = isset( $this->_req_data['CNT_ISO'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_ISO'] )) : FALSE;
 		$STA_ID = isset( $this->_req_data['STA_ID'] ) ? sanitize_text_field( $this->_req_data['STA_ID'] ) : FALSE;
+		$STA_abbrev = isset( $this->_req_data['STA_abbrev'] ) ? strtoupper( sanitize_text_field( $this->_req_data['STA_abbrev'] )) : FALSE;
+
 		if ( ! $STA_ID ) {
 			EE_Error::add_error( __( 'An error occurred. No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$success = EEM_State::instance()->delete_by_ID( $STA_ID );
-		
+		if ( $success !== FALSE ) {
+			do_action( 'AHEE__General_Settings_Admin_Page__delete_state__state_deleted', $CNT_ISO, $STA_ID, array( 'STA_abbrev' => $STA_abbrev ));
+			EE_Error::add_success( __( 'The State was deleted successfully.', 'event_espresso' )); 
+		}
 		if ( defined( 'DOING_AJAX' )) {
 			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 
-			echo json_encode( array( 'return_data' => true, 'success' => __( 'The State was deleted successfully.', 'event_espresso' ), 'errors' => $notices['errors'] ));
+			echo json_encode( array( 'return_data' => true, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
 			die();
 		} else {
 			$this->_redirect_after_action( $success, 'State', 'deleted', array( 'action' => 'country_settings' ) );

@@ -89,9 +89,16 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage{
 	}
 	private function _insert_new_question($old_question){
 		global $wpdb;
+		//if the question group wasn't made by the normal admin, 
+		//we'd like to keep track of who made it
+		$question_label = $old_question['system_name'] ? $old_question['system_name'] : sanitize_title($old_question['question']);
+		if(intval($old_question['wp_user'])!=1){
+			$username = $wpdb->get_var($wpdb->prepare("SELECT user_nicename FROM ".$wpdb->users." WHERE ID = %d",$old_question['wp_user']));
+			$question_label = $question_label."-by-".$username;
+		}
 		$cols_n_values = array(
 			'QST_display_text'=>stripslashes($old_question['question']),
-			'QST_admin_label'=> $old_question['system_name'] ? $old_question['system_name'] : sanitize_title($old_question['question']),
+			'QST_admin_label'=> $question_label,
 			'QST_system'=>$old_question['system_name'],
 			'QST_type'=>$old_question['question_type'],
 			'QST_required'=> 'Y' == $old_question['required'],

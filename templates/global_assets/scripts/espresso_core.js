@@ -1,31 +1,66 @@
-jQuery(document).ready(function($) {
-
-	// add jQuery function to center elements on screen
-	$.fn.center = function( position ) {
-		position = position !== undefined && position !== '' ? position : 'fixed';
-		var element_top = (( $(window).height() / 2 ) - this.outerHeight() ) / 2;
-		element_top = position == 'fixed' ? element_top : element_top + $(window).scrollTop();
-		element_top = Math.max( 0, element_top );
-		var element_left = ( $(window).width() - this.outerWidth() ) / 2;
-		element_left = position == 'fixed' ? element_left : element_left + $(window).scrollLeft();
-		element_left = Math.max( 0, element_left );
-		this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
-		this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
-		return this;
-	};
-
+(function ( $ ) {
+ 
 	/**
-	*	add jQuery function to return the correct value for a form input regardless of it's type
-	*/	
-	$.fn.inputValue = function () { 
-		var inputType = $(this).prop('type');
-		if ( inputType ==  'checkbox' || inputType == 'radio' ) {
-			return $(this).prop('checked');
-		} else {
-			return $(this).val();
-		}
-	}
+	*	add jQuery functions
+	*/
+	$.fn.extend({
 
+
+		/**
+		*	center elements on screen
+		*/	
+		center : function( position ) {
+			position = position !== undefined && position !== '' ? position : 'fixed';
+			var element_top = (( $( window ).height() / 2 ) - this.outerHeight() ) / 2;
+			element_top = position == 'fixed' ? element_top : element_top + $( window ).scrollTop();
+			element_top = Math.max( 0, element_top );
+			var element_left = ( $( window ).width() - this.outerWidth() ) / 2;
+			element_left = position == 'fixed' ? element_left : element_left + $( window ).scrollLeft();
+			element_left = Math.max( 0, element_left );
+			this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
+			this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
+			return this;
+		},
+
+
+		/**
+		*	return the correct value for a form input regardless of it's type
+		*/	
+		inputValue : function () { 
+			var inputType = this.prop('type');
+			if ( inputType ==  'checkbox' || inputType == 'radio' ) {
+				return this.prop('checked');
+			} else {
+				return this.val();
+			}
+		},
+
+
+		/**
+		*	return an object of URL params
+		*/	
+		getParams : function () { 
+			var urlParams = {}; 
+			var url = this.attr('href');
+			url = url != undefined && url != '' ? url : location.href;
+			url = url.substring( url.indexOf( '?' ) + 1 ).split( '#' );
+			urlParams['hash'] = url[1] != undefined && url[1] != '' ? url[1] : '';
+			var qs = url[0].split( '&' );
+			for( var i = 0; i < qs.length; i++ ) {
+				qs[ i ] = qs[ i ].split( '=' );
+				urlParams[ qs[ i ][0] ] = decodeURIComponent( qs[ i ][1] );
+			}
+			return urlParams;
+		}		
+
+
+
+	});
+ 
+}( jQuery ));
+
+
+jQuery(document).ready(function($) {
 
 	$('.show-if-js').css({ 'display' : 'inline-block' });
 	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );

@@ -5,21 +5,6 @@ jQuery(document).ready(function($) {
 	$(window).unload( function() {}); 
 
 
-	// add jQuery function to center elements on screen
-	$.fn.center = function( position ) {
-		position = position !== undefined && position !== '' ? position : 'fixed';
-		var element_top = (( $(window).height() / 2 ) - this.outerHeight() ) / 2;
-		element_top = position == 'fixed' ? element_top : element_top + $(window).scrollTop();
-		element_top = Math.max( 0, element_top );
-		var element_left = ( $(window).width() - this.outerWidth() ) / 2;
-		element_left = position == 'fixed' ? element_left : element_left + $(window).scrollLeft();
-		element_left = Math.max( 0, element_left );
-		this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
-		this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
-		return this;
-	};
-
-
 
 
 	function validate_form_inputs( submittedForm ) {
@@ -143,41 +128,6 @@ jQuery(document).ready(function($) {
 		$('#'+content_id).show();
 	});
 
-
-	// generic click event for displaying and giving focus to an element and hiding control
-	$('.display-the-hidden').on( 'click', function(e) {
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_display = $(this).attr("rel");
-		//alert( 'item_to_display = ' + item_to_display );
-		// hide the control element
-		$(this).fadeOut(50).hide();
-		// display the target's div container - use slideToggle or removeClass
-		$('#'+item_to_display+'-dv').slideToggle(250, function() {
-			// display the target div's hide link
-			$('#hide-'+item_to_display).fadeIn(50).show();
-			// if hiding/showing a form input, then id of the form input must = item_to_display
-			$('#'+item_to_display).focus(); // add focus to the target
-		});
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	});
-
-	// generic click event for re-hiding an element and displaying it's display control
-	$('.hide-the-displayed').on( 'click', function(e) {
-		// get target element from "this" (the control element's) "rel" attribute
-		var item_to_hide = $(this).attr("rel");
-		// hide the control element
-		$(this).fadeOut(50).hide();
-		// hide the target's div container - use slideToggle or addClass
-		$('#'+item_to_hide+'-dv').slideToggle(250, function() {
-			// display the control element that toggles display of this element
-			$('#display-'+item_to_hide).fadeIn(50).show();
-		});
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	});
 	
 	
 
@@ -199,7 +149,6 @@ jQuery(document).ready(function($) {
 	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
 			
 		$('#espresso-ajax-loading').fadeOut('fast');
-		//alert( response.toSource() );
 		if (( response.success != undefined && response.success != '' ) || ( response.errors != undefined && response.errors != '' )) {
 		
 			if ( closeModal == undefined ) {
@@ -212,13 +161,12 @@ jQuery(document).ready(function($) {
 			if ( response.success != undefined && response.success != '' ) {
 				msg = '<p>' + response.success + '</p>';
 				msg = existing_message.length > 0 ? msg : '<div id="message" class="updated hidden">'+msg+'</div>';
-				//closeModal = true;
 			}
 		
 			if ( response.errors != undefined && response.errors != '' ) {
 				msg = '<p>' + response.errors + '</p>';
 				msg = existing_message.length > 0 ? msg : '<div id="message" class="error hidden">'+msg+'</div>';
-				//closeModal = false;
+				$(existing_message).removeClass('updated').addClass('error');
 				fadeaway = false;
 			}
 			

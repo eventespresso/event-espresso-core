@@ -164,12 +164,12 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 
 
-
 	protected function _shortcodes_boxes() { 
 	$boxes = array(
-			'shortcodes_single_events' => __('Single Events', 'event_espresso'),
+			/*'shortcodes_single_events' => __('Single Events', 'event_espresso'),*/
 			'shortcodes_event_listings' => __('Event Listings', 'event_espresso'),
-			'shortcodes_attendee_listings' => __('Attendee Listings', 'event_espresso'),
+			'shortcodes_ticket_selector' => __('Event Ticket Selector', 'event_espresso'),
+			/*'shortcodes_attendee_listings' => __('Attendee Listings', 'event_espresso'),*/
 			'shortcodes_category' => __('Category Shortcodes', 'event_espresso'),
 			);
 

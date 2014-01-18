@@ -148,13 +148,6 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_EVT_additional_limit;
 	/**
-	 * flag indicating whether to require users to be approved by admin
-	 * before they are approved
-	 * @brent do we still need this? isnt there a global setting for this? from mike
-	 * @var boolean
-	 */
-	protected $_EVT_require_pre_approval;
-	/**
 	 * whether event is for members only
 	 * @var boolean
 	 */
@@ -319,11 +312,6 @@ class EE_Event extends EE_CPT_Base{
 		return $this->get('EVT_order');
 	}
 	
-	
-	function require_pre_approval(){
-		return $this->get('EVT_require_pre_approval');
-	}
-	
 	function default_registration_status() {
 		return $this->get('EVT_default_registration_status');
 	}
@@ -385,10 +373,6 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function set_order($order) {
 		return $this->set('EVT_order', $order);
-	}
-	
-	function set_require_pre_approval($require_pre_approval) {
-		return $this->set('EVT_require_pre_approval', $require_pre_approval);
 	}
 	function set_short_description($short_desc) {
 		return $this->set('EVT_short_desc', $short_desc);

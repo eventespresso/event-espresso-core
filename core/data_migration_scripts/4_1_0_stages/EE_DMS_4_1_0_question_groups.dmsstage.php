@@ -89,9 +89,17 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage{
 		}else{
 			$guess_at_system_number = 0;
 		}
+		//if the question group wasn't made by the normal admin, 
+		//we'd like to keep track of who made it
+		if(intval($old_question_group['wp_user'])!=1){
+			$username = $wpdb->get_var($wpdb->prepare("SELECT user_nicename FROM ".$wpdb->users." WHERE ID = %d",$old_question_group['wp_user']));
+			$identifier = $old_question_group['group_identifier']."-by-".$username;
+		}else{
+			$identifier = $old_question_group['group_identifier'];
+		}
 		$cols_n_values = array(
 			'QSG_name'=>stripslashes($old_question_group['group_name']),
-			'QSG_identifier'=>$old_question_group['group_identifier'],
+			'QSG_identifier'=>$identifier,
 			'QSG_desc'=>stripslashes($old_question_group['group_description']),
 			'QSG_order'=>$old_question_group['group_order'],
 			'QSG_show_group_name'=>$old_question_group['show_group_name'],
