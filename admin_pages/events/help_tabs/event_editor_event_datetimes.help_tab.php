@@ -17,3 +17,13 @@
 <p>
 <?php _e('You can view and create Assigned Tickets by clicking on the Assign Ticket icon<span class="ticket-icon ee-icon ee-icon-tickets"></span>. This will open a panel that shows existing tickets that have been assigned; you\'ll also be able to add a new ticket from this panel.', 'event_espresso'); ?>
 </p>
+<p>
+<?php _e('<strong>Using Datetimes Limit Field & Ticket Quantities</strong><br />', 'event_espresso'); ?>
+<?php _e('You can gain a finer control over ticketing for your events by using the datetimes limit field and ticket quantities together. Lets take a look at an example to understand this powerful feature.', 'event_espresso'); ?>
+</p>
+<p>
+<?php _e('Here is some information that we\'ll use for our example. Lets say that Datetime A has a limit set to 75 and Datetime B has no set limit which means unlimited. Next, our Free Ticket has a quantity set to 50 and our Premium Ticket also has a quantity set to 50. Free Ticket is linked to Datetime A. Premium Ticket is linked to Datetime A and Datetime B.', 'event_espresso'); ?><br />
+<?php _e('Now lets create our scenario and say that both tickets go on sale at the same time and Free Ticket sells out immediately and no Premium Tickets have been sold. This will leave a balance of 25 tickets for Datetime A because we started with a limit (maximum) of 75 tickets and then sold 50 Free Tickets. Any remaining tickets would then be spread between Datetime A (up to 25) or Datetime B (no limit).', 'event_espresso'); ?></p>
+<p>
+<?php _e('The Event Datetimes Limit Field always takes priority over the quantity of tickets available. If you want to only use the ticket quantity then be sure to not put a limit on any datetimes.', 'event_espresso'); ?>
+</p>

@@ -170,7 +170,6 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			EVT_default_registration_status VARCHAR(3),
 			EVT_phone varchar(45) DEFAULT NULL,
 			EVT_additional_limit TINYINT UNSIGNED NULL ,
-			EVT_require_pre_approval TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 			EVT_member_only TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 			EVT_allow_overflow TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 			EVT_timezone_string VARCHAR(45) NULL ,

@@ -148,13 +148,6 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_EVT_additional_limit;
 	/**
-	 * flag indicating whether to require users to be approved by admin
-	 * before they are approved
-	 * @brent do we still need this? isnt there a global setting for this? from mike
-	 * @var boolean
-	 */
-	protected $_EVT_require_pre_approval;
-	/**
 	 * whether event is for members only
 	 * @var boolean
 	 */
@@ -319,11 +312,6 @@ class EE_Event extends EE_CPT_Base{
 		return $this->get('EVT_order');
 	}
 	
-	
-	function require_pre_approval(){
-		return $this->get('EVT_require_pre_approval');
-	}
-	
 	function default_registration_status() {
 		return $this->get('EVT_default_registration_status');
 	}
@@ -385,10 +373,6 @@ class EE_Event extends EE_CPT_Base{
 	}
 	function set_order($order) {
 		return $this->set('EVT_order', $order);
-	}
-	
-	function set_require_pre_approval($require_pre_approval) {
-		return $this->set('EVT_require_pre_approval', $require_pre_approval);
 	}
 	function set_short_description($short_desc) {
 		return $this->set('EVT_short_desc', $short_desc);
@@ -542,7 +526,7 @@ class EE_Event extends EE_CPT_Base{
 	 * 	if NOT, then the event status will get toggled to 'sold_out'
 	 * 
 	 * 	@access public
-	 * 	@return void
+	 * 	@return bool    return the ACTUAL sold out state.
 	 */
 	public function perform_sold_out_status_check() {
 		// set initial value
@@ -550,26 +534,40 @@ class EE_Event extends EE_CPT_Base{
 		//next let's get all datetimes and loop through them 
 		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' )));
 		foreach ( $datetimes as $datetime ) {
+			$dtt_spaces_remaining = (int)$datetime->spaces_remaining(TRUE);
 			// if datetime has unlimited reg limit then the event can never be sold out
-			if ( $datetime->spaces_remaining() === INF ) {
+			if ( $dtt_spaces_remaining === INF ) {
 				return;
 			} else {
-				$spaces_remaining = (int)max( $datetime->spaces_remaining(), $spaces_remaining );
+				$spaces_remaining = max( $dtt_spaces_remaining, $spaces_remaining );
 			}			
 		}
 		if ( $spaces_remaining === 0 ) {
 			$this->set_status( EEM_Event::sold_out );
+			$sold_out = TRUE;
+		} else {
+			$sold_out = FALSE;
 		}
+
+		//note: I considered changing the EEM_Event status away from sold_out if this status check reveals that it's no longer sold out (yet the status is still set as sold out) but the problem is... what do we change the status BACK to?  We can't always assume that the previous event status was 'published' because this status check is always done in the admin and its entirely possible the event admin manually changes to sold_out status from some other status.  We also don't want a draft event to become a "publish event" because the sold out check reveals its NOT sold out. 
+		// So I'll forgo the automatic switch away from sold out status for now and instead just return the $sold out status... so this check can be used to validate the TRUE sold out status regardless of what the Event status is set to.
+
+		return $sold_out;
 	}
 
 
 
 	/**
 	 * Checks if the event is set to sold out
+	 * @param  bool 	$actual  whether or not to perform calculations to not only figure the actual status but also to flip the status if necessary to sold out If false, we just check the existing status of the event
 	 * @return boolean
 	 */
-	public function is_sold_out(){
-		return $this->status() == EEM_Event::sold_out;
+	public function is_sold_out( $actual = FALSE ){
+		if ( ! $actual )
+			return $this->status() == EEM_Event::sold_out;
+		else {
+			return $this->perform_sold_out_status_check();
+		}
 	}
 
 

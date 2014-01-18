@@ -283,7 +283,6 @@ abstract class EE_Messages_incoming_data {
 						'ID' => $eid,
 						'event' => $evtcache[$eid],
 						'name' => $event->name(),
-						'pre_approval' => $event->require_pre_approval(),// $event->require_pre_approval,
 						'total_attendees' => $event_attendee_count[$eid],
 						'reg_objs' => $items['reg_objs'],
 						'tkt_objs' => $items['tkt_objs'],

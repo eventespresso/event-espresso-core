@@ -659,13 +659,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	return the total number of spaces remaining at this venue.
 	 *  This only takes the venue's capacity into account, NOT the tickets available for sale
 	* 
-	* 	@access		public		
+	* 	@access		public
+	* 	@param      bool    $consider_tickets Whether to consider tickets remaining when determining if there are any spaces left (because if all tickets attached to this datetime have no spaces left, then this datetime IS effectively sold out)  However, there are cases where we just want to know the spaces remaining for this particular datetime hence the flag.	
 	*	@return 		int
 	*/	
-	public function spaces_remaining() {
+	public function spaces_remaining( $consider_tickets = FALSE ) {
 		// tickets remaining availalbe for purchase
 		//no need for special checks for infinite, becuase if DTT_reg_limit == INF, then INF - x = INF
-		return $this->_DTT_reg_limit - $this->_DTT_sold ;
+		$dtt_remaining = $this->_DTT_reg_limit - $this->_DTT_sold ;
+
+		if ( ! $consider_tickets ) 
+			return $dtt_remaining;
+
+		$tickets_remaining = $this->tickets_remaining();
+		return min( $dtt_remaining, $tickets_remaining );
 	}
 
 	/**
