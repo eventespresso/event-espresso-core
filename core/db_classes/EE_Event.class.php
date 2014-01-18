@@ -554,7 +554,7 @@ class EE_Event extends EE_CPT_Base{
 			if ( $datetime->spaces_remaining() === INF ) {
 				return;
 			} else {
-				$spaces_remaining = max( $datetime->spaces_remaining(), $spaces_remaining );
+				$spaces_remaining = (int)max( $datetime->spaces_remaining(), $spaces_remaining );
 			}			
 		}
 		if ( $spaces_remaining === 0 ) {
