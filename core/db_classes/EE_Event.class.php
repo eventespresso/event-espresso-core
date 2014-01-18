@@ -684,6 +684,11 @@ class EE_Event extends EE_CPT_Base{
 					$class = 'postponed';
 					break;
 
+				case EE_Datetime::cancelled :
+					$status = __('Cancelled', 'event_espresso');
+					$class = 'cancelled';
+					break;
+
 				default :
 					$status = __('Inactive', 'event_espresso');
 					$class = 'inactive';
