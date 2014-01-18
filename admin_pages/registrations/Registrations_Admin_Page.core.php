@@ -2239,7 +2239,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'ATT_address' => array( 'LIKE', $sstr ),
 				'ATT_address2' => array( 'LIKE', $sstr ),
 				'ATT_city' => array( 'LIKE', $sstr ),
-				'ATT_notes' => array( 'LIKE', $sstr ),
 				'Registration.REG_final_price' => array( 'LIKE', $sstr ),
 				'Registration.REG_code' => array( 'LIKE', $sstr ),
 				'Registration.REG_count' => array( 'LIKE' , $sstr ),
