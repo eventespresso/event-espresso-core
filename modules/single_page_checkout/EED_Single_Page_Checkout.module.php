@@ -998,16 +998,15 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			}
 			
 			//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			
-			EE_Registry::instance()->load_model( 'Attendee' );
+
 			// attendee counter
 			$att_nmbr = 0;
-
 			if ( $this->_continue_reg ) {
 				if ( $this->_transaction instanceof EE_Transaction && $this->_continue_reg ) {
 					$registrations = $this->_transaction->registrations();
 					if ( ! empty( $registrations )) {
-						$test_attendee_obj = EE_Attendee::new_instance( array( 'ATT_fname' => 'fname', 'ATT_lname' => 'lname', 'ATT_email' => 'email' ));
+						EE_Registry::instance()->load_model( 'Attendee' );
+						EE_Registry::instance()->load_helper( 'Class_Tools' );
 						// grab the saved registrations from the transaction				
 						foreach ( $this->_transaction->registrations()  as $registration ) {	
 							// verify object
@@ -1079,13 +1078,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													$attendee_property = TRUE;
 												break;
 												default :
-//													$attendee_property = property_exists( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;													
 													$attendee_property = EEH_Class_Tools::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
-//													try{
-//														$test_attendee_obj->get( 'ATT_' . $form_input );
-//													} catch ( Exception $e ) {
-//														$attendee_property = FALSE;
-//													}
 													$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 											}
 						
