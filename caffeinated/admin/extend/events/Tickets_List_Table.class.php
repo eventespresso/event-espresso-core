@@ -52,7 +52,7 @@ class Tickets_List_Table extends EE_Admin_List_Table {
 				'TKT_name' => __('Name', 'event_espresso'),
 				'TKT_description' => __('Description', 'event_espresso'),
 				'TKT_qty' => __('Quantity', 'event_espresso'),
-				'TKT_uses' => __('Uses', 'event_espresso'),
+				'TKT_uses' => __('Datetimes', 'event_espresso'),
 				'TKT_min' => __('Minimum', 'event_espresso'),
 				'TKT_max' => __('Maximum', 'event_espresso'),
 				'TKT_price' => __('Price', 'event_espresso'),
