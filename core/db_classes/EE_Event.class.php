@@ -430,8 +430,8 @@ class EE_Event extends EE_CPT_Base{
 	 * @return boolean true yes, false no
 	 */
 	private function _has_ID_and_is_published() {
-		// first check if event id is present and not NULL, then check if this event is published 
-		return ( $this->ID() && $this->ID() !== NULL && $this->_status == 'publish' ) ? TRUE : FALSE;		
+		// first check if event id is present and not NULL, then check if this event is published (or any of the equivalent "published" statuses)
+		return ( $this->ID() && $this->ID() !== NULL && ($this->_status == 'publish' || $this->_status == EEM_Event::sold_out || $this->_status == EEM_Event::postponed || $this->_status == EEM_Event::cancelled ) ) ? TRUE : FALSE;		
 	}
 
 
@@ -442,7 +442,7 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	public function is_upcoming() {
 		// check if event id is present and if this event is published
-		if ( ! $this->_has_ID_and_is_published() ) {
+		if ( $this->is_inactive() ) {
 			return FALSE;
 		}
 		// set initial value
@@ -464,7 +464,7 @@ class EE_Event extends EE_CPT_Base{
 
 	public function is_active() {
 		// check if event id is present and if this event is published
-		if ( ! $this->_has_ID_and_is_published() ) {
+		if ( $this->is_inactive() ) {
 			return FALSE;
 		}
 		// set initial value
@@ -486,7 +486,7 @@ class EE_Event extends EE_CPT_Base{
 
 	public function is_expired() {
 		// check if event id is present and if this event is published
-		if ( ! $this->_has_ID_and_is_published() ) {
+		if ( $this->is_inactive() ) {
 			return FALSE;
 		}
 		// set initial value
@@ -506,14 +506,8 @@ class EE_Event extends EE_CPT_Base{
 
 	public function is_inactive() {
 		// check if event id is present and if this event is published
-		if ( ! $this->_has_ID_and_is_published() ) {
+		if ( $this->_has_ID_and_is_published() ) {
 			return FALSE;
-		}
-		//next let's get all datetimes and loop through them 
-		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
-		foreach ( $dtts as $dtt ) {
-			//all we're checking for is expire status cause if its expired then that's what we use.
-			if ( $dtt->is_expired() ) return FALSE;
 		}
 		return TRUE;
 	}
