@@ -562,21 +562,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$prev_event = NULL;
 			
 			foreach ( $this->_transaction->registrations() as $registration ) {
-				
-				$registration->event()->perform_sold_out_status_check();
 
-				if ( $registration->event()->is_sold_out() ) {
+				if ( $registration->event()->is_sold_out() || $registration->event->is_sold_out( TRUE )) {
 					// add event to list of events that are sold out
 					$sold_out_events[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 pink-text"></span>' . $registration->event()->name() . '</li>';
-//					$total_items ++;
-//					continue;
 				} 
 				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
 				if ( ! $payment_required ) {
 					// add event to list of events with pre-approval reg status
 					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' . $registration->event()->name() . '</li>';
-//					$total_items ++;
-//					continue;
 				}
 				
 				$line_item_ID = $registration->reg_url_link();	
