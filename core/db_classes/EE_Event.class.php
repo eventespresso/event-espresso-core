@@ -746,6 +746,39 @@ class EE_Event extends EE_CPT_Base{
 		return EE_Registry::instance()->load_model('Ticket')->get_one($query_params);
 	}
 
+
+
+	
+	/**
+	 * This returns the ticket with the latest end time that is available for this event (across all datetimes attached to the event)
+	 * @return EE_Ticket
+	 */
+	public function get_ticket_with_latest_end_time() {
+		$where['Datetime.EVT_ID'] = $this->ID();
+		$query_params = array( $where, 'order_by' => array( 'TKT_end_date' => 'DESC' ) );
+		return EE_Registry::instance()->load_model('Ticket')->get_one($query_params);
+	}
+
+
+
+
+	/**
+	 * This returns whether there are any tickets on sale for this event.
+	 * @return bool true = YES tickets on sale.
+	 */
+	public function tickets_on_sale() {
+		$earliest_ticket = $this->get_ticket_with_earliest_start_time();
+		$latest_ticket = $this->get_ticket_with_latest_end_time();
+
+		//check on sale for these two tickets.
+		if ( $latest_ticket->is_on_sale() || $earliest_ticket->is_on_sale() )
+			return TRUE;
+		return FALSE;
+	}
+
+
+
+
 	/**
 	 * Gets the URL for viewing this event on the front-end. Overrides parent
 	 * to check for an external URL first
