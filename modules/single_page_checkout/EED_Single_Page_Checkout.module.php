@@ -1080,7 +1080,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 												break;
 												default :
 //													$attendee_property = property_exists( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;													
-													$attendee_property = EE_Base_Class::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
+													$attendee_property = EEH_Class_Tools::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
 //													try{
 //														$test_attendee_obj->get( 'ATT_' . $form_input );
 //													} catch ( Exception $e ) {
@@ -1157,7 +1157,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											// now loop thru what' sleft and add to attendee CPT
 											foreach ( $attendee_data as $property_name => $property_value ) {
 //												if ( property_exists( $existing_attendee,  '_' . $property_name )) {
-												if ( EE_Base_Class::has_property( 'EE_Attendee', '_' . $property_name )) {
+												if ( EEH_Class_Tools::has_property( 'EE_Attendee', '_' . $property_name )) {
 													$existing_attendee->set( $property_name, $property_value );
 												}												
 											}
