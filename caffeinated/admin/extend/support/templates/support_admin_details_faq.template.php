@@ -22,6 +22,7 @@ function my_custom_event_slug( $slug, $post_type ) {
 		$custom_slug = array( 'slug' => 'workshops' );
 		return $custom_slug;
 	}
+	return $slug;
 }</pre>
 		</dd>
 		<dt>
