@@ -101,12 +101,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//partial route/config override
 		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
 		$this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
-		$this->_page_config['create_new']['qtips'] = array(
-					'EE_Event_Editor_Tips'
-					);
-		$this->_page_config['edit']['qtips'] = array( 
-			'EE_Event_Editor_Tips'
-			);
+		$this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
+		$this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 
 		//add tickets tab but only if there are more than one default ticket!
