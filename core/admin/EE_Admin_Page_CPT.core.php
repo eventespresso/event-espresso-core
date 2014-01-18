@@ -534,6 +534,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		require_once( EE_MODELS . $this->_cpt_model_names[$this->_req_action] . '.model.php' );
 		$model = call_user_func( array( $this->_cpt_model_names[$this->_req_action] , 'instance' ) );
 		$this->_cpt_model_obj = !empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
+
+		do_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object');
 	}
 
 
