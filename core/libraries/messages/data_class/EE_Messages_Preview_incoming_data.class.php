@@ -102,8 +102,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				}
 			}
 
-
-			$this->_events[$id]['pre_approval'] = 0; //we're going to ignore the event settings for this.
 			$this->_events[$id]['total_attendees'] = count( $attendees );
 			$this->_events[$id]['att_objs'] = $attendees;
 
