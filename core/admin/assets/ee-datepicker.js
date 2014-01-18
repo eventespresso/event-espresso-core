@@ -40,6 +40,9 @@ var dttPickerHelper = {
 	endDate: {},
 
 
+	timeZone: false, //will hold the timezone string for the set timezone.
+
+
 	setminDateTime: function(date, format) {
 		format = typeof(format) === 'undefined' ? 'YYYY-MM-DD h:mm a' : format;
 		this.dttOptions.minDateTime = moment(date, format);
@@ -54,6 +57,29 @@ var dttPickerHelper = {
 	},
 
 
+	/**
+	 * This sets the timeZone property
+	 */
+	setTimeZone: function(selector) {
+		if ( this.timeZone !== false )
+			return; //already set
+		selector = typeof(selector) === 'undefined' ? '#current_timezone' : selector;
+		this.timeZone = jQuery(selector).text();
+	},
+
+
+	/**
+	 * this is a wrapper for moment.tz library and returns the moment object for the set timezone.
+	 * @param  {string} time incoming day time string
+	 * @return {moment}      moment object
+	 */
+	eemoment: function(time, format) {
+		this.setTimeZone();
+		m = typeof(time) === 'undefined' ? moment().tz(this.timeZone) : moment(time,format).tz(this.timeZone);
+		return m;
+	},
+
+
 
 	picker: function(start, end, next, doingstart) {
 		if ( typeof(doingstart) === 'undefined' ) doingstart = true;
@@ -65,7 +91,7 @@ var dttPickerHelper = {
 
 		this.nextobj = next;
 
-		this.startDate = this.startobj.val() === '' ? moment() : moment(this.startobj.val(), 'YYYY-MM-DD h:mm a');
+		this.startDate = this.startobj.val() === '' ? dttPickerHelper.eemoment() : moment(this.startobj.val(), 'YYYY-MM-DD h:mm a');
 
 		this.endDate = this.endobj instanceof jQuery ? this.endobj.val() : '';
 
