@@ -371,7 +371,7 @@ class EEM_Event  extends EEM_CPT_Base{
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['ans_obj'] = $ANS;
 							
 							if ( $QST->type() == 'SINGLE' || $QST->type() == 'MULTIPLE' || $QST->type() == 'DROPDOWN' ) {
-								$QSOs = $QST->options(true,$answer->value());
+								$QSOs = $QST->options(true,$ANS->value());
 								if ( is_array( $QSOs ) ) {
 									foreach ( $QSOs as $QSO_ID => $QSO ) {					
 										$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_options'][ $QSO_ID ] = $QSO->model_field_array();

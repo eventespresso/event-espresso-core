@@ -562,21 +562,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$prev_event = NULL;
 			
 			foreach ( $this->_transaction->registrations() as $registration ) {
-				
-				$registration->event()->perform_sold_out_status_check();
 
-				if ( $registration->event()->is_sold_out() ) {
+				if ( $registration->event()->is_sold_out() || $registration->event->is_sold_out( TRUE )) {
 					// add event to list of events that are sold out
 					$sold_out_events[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 pink-text"></span>' . $registration->event()->name() . '</li>';
-//					$total_items ++;
-//					continue;
 				} 
 				$payment_required  = $registration->status_ID() == EEM_Registration::status_id_pending_payment || $registration->status_ID() == EEM_Registration::status_id_approved ? TRUE : $payment_required;
 				if ( ! $payment_required ) {
 					// add event to list of events with pre-approval reg status
 					$events_requiring_pre_approval[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' . $registration->event()->name() . '</li>';
-//					$total_items ++;
-//					continue;
 				}
 				
 				$line_item_ID = $registration->reg_url_link();	
@@ -998,16 +992,15 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			}
 			
 			//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			
-			EE_Registry::instance()->load_model( 'Attendee' );
+
 			// attendee counter
 			$att_nmbr = 0;
-
 			if ( $this->_continue_reg ) {
 				if ( $this->_transaction instanceof EE_Transaction && $this->_continue_reg ) {
 					$registrations = $this->_transaction->registrations();
 					if ( ! empty( $registrations )) {
-						$test_attendee_obj = EE_Attendee::new_instance( array( 'ATT_fname' => 'fname', 'ATT_lname' => 'lname', 'ATT_email' => 'email' ));
+						EE_Registry::instance()->load_model( 'Attendee' );
+						EE_Registry::instance()->load_helper( 'Class_Tools' );
 						// grab the saved registrations from the transaction				
 						foreach ( $this->_transaction->registrations()  as $registration ) {	
 							// verify object
@@ -1079,13 +1072,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													$attendee_property = TRUE;
 												break;
 												default :
-//													$attendee_property = property_exists( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;													
-													$attendee_property = EE_Base_Class::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
-//													try{
-//														$test_attendee_obj->get( 'ATT_' . $form_input );
-//													} catch ( Exception $e ) {
-//														$attendee_property = FALSE;
-//													}
+													$attendee_property = EEH_Class_Tools::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
 													$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 											}
 						
@@ -1157,7 +1144,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											// now loop thru what' sleft and add to attendee CPT
 											foreach ( $attendee_data as $property_name => $property_value ) {
 //												if ( property_exists( $existing_attendee,  '_' . $property_name )) {
-												if ( EE_Base_Class::has_property( 'EE_Attendee', '_' . $property_name )) {
+												if ( EEH_Class_Tools::has_property( 'EE_Attendee', '_' . $property_name )) {
 													$existing_attendee->set( $property_name, $property_value );
 												}												
 											}

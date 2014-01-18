@@ -528,7 +528,7 @@ class EE_Event extends EE_CPT_Base{
 		//next let's get all datetimes and loop through them 
 		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' )));
 		foreach ( $datetimes as $datetime ) {
-			$dtt_spaces_remaining = $datetime->spaces_remaining(TRUE);
+			$dtt_spaces_remaining = (int)$datetime->spaces_remaining(TRUE);
 			// if datetime has unlimited reg limit then the event can never be sold out
 			if ( $dtt_spaces_remaining === INF ) {
 				return;
