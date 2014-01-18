@@ -4,7 +4,7 @@
 </p>
 <p>
 <?php _e('<strong>Event Datetimes Limit Field</strong><br />', 'event_espresso'); ?>
-<?php _e('The event datetimes limit field allows you to set a maximum number of tickets that you want to make available for an event. For example, lets say that we had 70 free tickets available and 30 premium tickets available. If we set a limit of 50 using the event datetimes limit field, then the ticket sales will close once any combination of 50 tickets are sold.', 'event_espresso'); ?>
+<?php _e('The event datetimes limit field allows you to set a maximum number of tickets that you want to make available for an event datetime. For example, lets say that we had 70 free tickets available and 30 premium tickets available. If we set a limit of 50 using the event datetimes limit field, then the ticket sales will close once any combination of 50 tickets are sold.', 'event_espresso'); ?>
 </p>
 <p>
 <?php _e('<strong>Event Datetimes Sold</strong><br />', 'event_espresso'); ?>

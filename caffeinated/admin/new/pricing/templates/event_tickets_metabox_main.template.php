@@ -62,7 +62,7 @@
 						<td><span class="TKT_price_label"><?php _e('Price', 'event_espresso'); ?></span></td>
 						<td><span class="TKT_qty_label"><?php _e('Qty', 'event_espresso'); ?></span></td>
 						<!--<td><?php _e('Total', 'event_espresso'); ?></td>-->
-						<td><span class="TTK_sold_label"><?php _e('Sold', 'event_espresso'); ?></span></td>
+						<td><span class="TKT_sold_label"><?php _e('Sold', 'event_espresso'); ?></span></td>
 						<td colspan="2"><span class="TKT_regs_label"><?php _e('Regs', 'event_espresso'); ?></span></td>
 					</tr>
 				</thead>
