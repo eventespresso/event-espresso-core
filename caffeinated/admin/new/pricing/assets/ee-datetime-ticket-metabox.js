@@ -1918,11 +1918,11 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
-				tktHelper.cloneDateTime(data.datetimeRow).DateTimeEditToggle();
+				tktHelper.cloneDateTime(data.datetimeRow);
 				break;
 
 			case 'ticket' :
-				tktHelper.cloneTicket(data.ticketRow).TicketEditToggle();
+				tktHelper.cloneTicket(data.ticketRow);
 				break;
 		}
 		UNSAVED_DATA_MSG.inputChanged=1;
