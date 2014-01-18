@@ -1123,12 +1123,6 @@ class EE_Registration_Config extends EE_Config_Base {
 	 */
 	public $default_STS_ID;
 	  
-	  /**
-	   * Whether attendees need admin approval before their registration is approved
-	   * @var boolean $use_attendee_pre_approval
-	   */
-      public $use_attendee_pre_approval;
-	  
 	/**
 	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
 	 * @var boolean $show_pending_payment_options
@@ -1195,7 +1189,6 @@ class EE_Registration_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default registration settings
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment; 
-		$this->use_attendee_pre_approval = FALSE;
 		$this->show_pending_payment_options = FALSE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_confirmation_last = FALSE;
