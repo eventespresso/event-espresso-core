@@ -635,10 +635,10 @@ jQuery(document).ready(function($) {
 
 				//TKT date fields
 				if( $(this).hasClass('edit-ticket-TKT_start_date' ) )
-					$(this).data('dateFieldContext', '#edit-ticketrow-' + newrownum);
+					$(this).data('dateFieldContext', '#display-ticketrow-' + newrownum);
 
 				if( $(this).hasClass('edit-ticket-TKT_end_date') )
-					$(this).data('dateFieldContext', '#edit-ticketrow-' + newrownum);
+					$(this).data('dateFieldContext', '#display-ticketrow-' + newrownum);
 			});
 
 			//textarea
