@@ -68,6 +68,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 		
 		$this->_event_model = EEM_Event::instance();
+
+		add_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object', array( $this, 'verify_event_edit' ) );
 	}
 
 	protected function _ajax_hooks() {
@@ -525,6 +527,54 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
+
+
+
+
+	/**
+	 * Call this function to verify if an event is public and has tickets for sale.  If it does, then we need to show a warning (via EE_Error::add_error());
+	 *
+	 * @param  EE_Event    $event 	Event object
+	 * @access public
+	 * @return void
+	 */
+	public function verify_event_edit($event = NULL) {
+		if ( empty( $event ) )
+			$event = $this->_cpt_model_obj;
+
+		if ( empty ( $event ) )
+			return;
+
+
+		//first check if event is active.
+		if ( $event->is_expired() || $event->is_inactive() || $event->status() == EEM_Event::cancelled || $event->status() == EEM_Event::postponed )
+			return;
+
+		//made it here so it IS active... next check that any of the tickets are sold.
+		if ( $event->is_sold_out() || $event->is_sold_out(TRUE ) )
+			return;
+
+		//now we need to determine if the event has any tickets on sale.  If not then we dont' show the error
+		if ( ! $event->tickets_on_sale() )
+			return;
+
+		//made it here so show warning
+		EE_Error::add_attention( $this->_edit_event_warning() );
+	}
+
+
+
+
+	/**
+	 * This is the text used for when an event is being edited that is public and has tickets for sale.
+	 * When needed, hook this into a EE_Error::add_error() notice.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function _edit_event_warning() {
+		return __('Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso');
+	}
 
 
 
