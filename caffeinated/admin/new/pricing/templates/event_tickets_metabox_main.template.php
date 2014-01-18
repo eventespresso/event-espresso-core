@@ -56,14 +56,14 @@
 			<table class="ticket-table">
 				<thead>
 					<tr valign="top">
-						<td colspan="2"><?php _e('Ticket', 'event_espresso'); ?></td>
-						<td><?php _e('Goes On Sale', 'event_espresso'); ?></td>
-						<td><?php _e('Sell Until', 'event_espresso'); ?></td>
-						<td><?php _e('Price', 'event_espresso'); ?></td>
-						<td><?php _e('Qty', 'event_espresso'); ?></td>
+						<td colspan="2"><span class="TKT_name_label"><?php _e('Ticket', 'event_espresso'); ?></span></td>
+						<td><span class="TKT_goes_on_sale_label"><?php _e('Goes On Sale', 'event_espresso'); ?></span></td>
+						<td><span class="TKT_sell_until_label"><?php _e('Sell Until', 'event_espresso'); ?></span></td>
+						<td><span class="TKT_price_label"><?php _e('Price', 'event_espresso'); ?></span></td>
+						<td><span class="TKT_qty_label"><?php _e('Qty', 'event_espresso'); ?></span></td>
 						<!--<td><?php _e('Total', 'event_espresso'); ?></td>-->
-						<td><?php _e('Sold', 'event_espresso'); ?></td>
-						<td colspan="2"><?php _e('Regs', 'event_espresso'); ?></td>
+						<td><span class="TTK_sold_label"><?php _e('Sold', 'event_espresso'); ?></span></td>
+						<td colspan="2"><span class="TKT_regs_label"><?php _e('Regs', 'event_espresso'); ?></span></td>
 					</tr>
 				</thead>
 				<tbody>
