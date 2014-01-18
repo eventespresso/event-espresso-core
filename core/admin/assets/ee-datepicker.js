@@ -80,9 +80,7 @@ var dttPickerHelper = {
 			var minDateTime = this.startDate;
 			this.dttOptions.minDateTime = this.dttOptions.minDateTime === null ? minDateTime.toDate() : this.dttOptions.minDateTime;
 			this.dttOptions.maxDateTime = this.dttOptions.maxDateTime === null ? minDateTime.clone().add('years', 100).toDate() : this.dttOptions.maxDateTime;
-		} else {
-			dttPickerHelper.resetpicker();
-		}/**/
+		}
 
 
 		this.dttOptions.onSelect = function(dateText, inst) {
