@@ -736,7 +736,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'datetime_ticket_checked' => in_array($displayrow, $dtt_tkts) ? ' checked="checked"' : '',
 			'ticket_selected' => in_array($displayrow, $dtt_tkts) ? ' ticket-selected' : '',
 			'TKT_name' => $default && empty( $ticket ) ? 'TKTNAME' : $ticket->get('TKT_name'),
-			'tkt_status_class' => $default ? '' : ' tkt-status-' . $ticket->ticket_status(),
+			'tkt_status_class' => $default && empty( $ticket ) ? '' : ' tkt-status-' . $ticket->ticket_status(),
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_dtt_tickets_list.template.php';
