@@ -140,6 +140,11 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 				'target' => '.TD_TKT_max_qty_label',
 				'content' => $this->_get_event_ticket_TD_TKT_max_qty_label_info()
 				),
+			130 => array(
+				'content_id' => 'ticket-lock-icon',
+				'target' => '.ticket-archived .ee-lock-icon',
+				'content' => __('This ticket was automatically locked and archived because it has a sold quantity and the price was modified.  Existing ticket holders of this ticket will still be verified using this ticket details, however, EE has automatically created a new active ticket with the modified price for new registrants.  The lock is so that you don\'t inadvertently trash this ticket. You can still edit certain details of this ticket (non disabled inputs).', 'event_espresso')
+				)
 			);
 	}
 
