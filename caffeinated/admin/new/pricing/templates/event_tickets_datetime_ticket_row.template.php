@@ -53,9 +53,9 @@
 				<table class="basic-ticket-info">
 					<thead>
 						<tr valign="bottom">
-							<td><?php _e('# Datetimes', 'event_espresso'); ?></td>
-							<td><?php _e('Minimum Quantity', 'event_espresso'); ?></td>
-							<td><?php _e('Maximum Quantity', 'event_espresso'); ?></td>
+							<td><label class="TD_TKT_number_datetimes_label"><?php _e('# Datetimes', 'event_espresso'); ?></label></td>
+							<td><label class="TD_TKT_min_qty_label"><?php _e('Minimum Quantity', 'event_espresso'); ?></label></td>
+							<td><label class="TD_TKT_max_qty_label"><?php _e('Maximum Quantity', 'event_espresso'); ?></label></td>
 						</tr>
 					</thead>
 					<tbody>

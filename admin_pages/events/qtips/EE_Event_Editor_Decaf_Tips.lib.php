@@ -85,6 +85,61 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 				'target' => '.TKT_regs_label',
 				'content' => $this->_get_event_ticket_TKT_regs_label_info()
 				),
+			55 => array(
+				'content_id' => 'ant-tkt-name-label',
+				'target' => '.ANT_TKT_name_label',
+				'content' => $this->_get_event_ticket_ANT_TKT_name_label_info()
+				),
+			60 => array(
+				'content_id' => 'ant-tkt-goes-on-sale-label',
+				'target' => '.ANT_TKT_goes_on_sale_label',
+				'content' => $this->_get_event_ticket_ANT_TKT_goes_on_sale_label_info()
+				),
+			65 => array(
+				'content_id' => 'ant-tkt-sell-until-label',
+				'target' => '.ANT_TKT_sell_until_label',
+				'content' => $this->_get_event_ticket_ANT_TKT_sell_until_label_info()
+				),
+			70 => array(
+				'content_id' => 'ant-tkt-price-label',
+				'target' => '.ANT_TKT_price_label',
+				'content' => $this->_get_event_ticket_ANT_TKT_price_label_info()
+				),
+			75 => array(
+				'content_id' => 'ant-tkt-qty-label',
+				'target' => '.ANT_TKT_qty_label',
+				'content' => $this->_get_event_ticket_ANT_TKT_qty_label_info()
+				),
+			80 => array(
+				'content_id' => 'ane-dtt-evt-start-label',
+				'target' => '.add-new-event-datetime-DTT_EVT_start_label',
+				'content' => $this->_get_add_new_event_start_label_info()
+				),
+			85 => array(
+				'content_id' => 'ane-dtt-evt-end-label',
+				'target' => '.add-new-event-datetime-DTT_EVT_end_label',
+				'content' => $this->_get_add_new_event_end_label_info()
+				),
+			90 => array(
+				'content_id' => 'ane_dtt-reg-limit-label',
+				'target' => '.add-new-event-datetime-DTT_reg_limit_label',
+				'content' => $this->_get_add_new_event_datetime_DTT_reg_limit_label_info()
+				),
+			100 => array(
+				'content_id' => 'td-tkt-number-datetimes-label',
+				'target' => '.TD_TKT_number_datetimes_label',
+				'content' => $this->_get_event_ticket_TD_TKT_number_datetimes_label_info()
+				),
+			110 => array(
+				'content_id' => 'td-tkt-min-qty-label',
+				'target' => '.TD_TKT_min_qty_label',
+				'content' => $this->_get_event_ticket_TD_TKT_min_qty_label_info()
+				),
+			120 => array(
+				'content_id' => 'td-tkt-max-qty-label',
+				'target' => '.TD_TKT_max_qty_label',
+				'content' => $this->_get_event_ticket_TD_TKT_max_qty_label_info()
+				),
 			);
 	}
 
@@ -121,5 +176,38 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 	}
 	private function _get_event_ticket_TKT_regs_label_info() {
 		return '<p>' . __('This shows the number of registrations that have occurred from ticket sales.', 'event_espresso') . '</p>';
+	}
+	private function _get_event_ticket_ANT_TKT_name_label_info() {
+		return '<p>' . __('This is the name of this ticket option.', 'event_espresso') . '</p>';
+	}
+	private function _get_event_ticket_ANT_TKT_goes_on_sale_label_info() {
+		return '<p>' . __('This shows when the first ticket is available for sale.', 'event_espresso') . '</p>';
+	}
+	private function _get_event_ticket_ANT_TKT_sell_until_label_info() {
+		return '<p>' . __('This shows the date that ticket sales end for this ticket.', 'event_espresso') . '</p>';
+	}
+	private function _get_event_ticket_ANT_TKT_price_label_info() {
+		return '<p>' . __('This is the price for this ticket.', 'event_espresso') . '</p>';
+	}
+	private function _get_event_ticket_ANT_TKT_qty_label_info() {
+		return '<p>' . __('This field shows the quantity of tickets that are available for this type of ticket.', 'event_espresso') . '</p>';
+	}
+	private function _get_add_new_event_start_label_info() {
+		return '<p>' . __('This shows when this event datetime starts.', 'event_espresso') . '</p>';
+	}
+	private function _get_add_new_event_end_label_info() {
+		return '<p>' . __('This shows when this event datetime ends.', 'event_espresso') . '</p>';
+	}
+	private function _get_add_new_event_datetime_DTT_reg_limit_label_info() {
+		return '<p>' . __('This field allows you to set a maximum number of tickets that you want to make available for an event datetime.', 'event_espresso') . '</p>';
+	}
+	private function _get_event_ticket_TD_TKT_number_datetimes_label_info() {
+		return '<p>' . __('This field allows you to set the number of datetimes that a ticket should have access to.', 'event_espresso') . '</p>';
+	}
+	private function _get_event_ticket_TD_TKT_min_qty_label_info() {
+		return '<p>' . __('This shows the minimum quantity that can be purchased for this ticket.', 'event_espresso') . '</p>';
+	}
+	private function _get_event_ticket_TD_TKT_max_qty_label_info() {
+		return '<p>' . __('This shows the maximum quantity that can be purchased for this ticket.', 'event_espresso') . '</p>';
 	}
 }
