@@ -54,11 +54,11 @@ class Payment_Methods_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Payment Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the payment settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Payment Settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _show_pending_options_stop() {
-		return '<p>' . __('Do you want to provide your registrants with the option to retry payments?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether to provide your registrants with the option to retry payments', 'event_espresso') . '</p>';
 	}
 }
