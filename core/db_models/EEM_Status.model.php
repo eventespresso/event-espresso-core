@@ -163,6 +163,26 @@ class EEM_Status extends EEM_Base {
 	  		EE_Ticket::onsale => array(
 	  			__('on sale', 'event_espresso'),
 	  			__('on sale', 'event_espresso')
+	  			),
+	  		EE_Datetime::cancelled => array(
+	  			__('cancelled', 'event_espresso'),
+	  			__('cancelled', 'event_espresso')
+	  			),
+	  		EE_Datetime::sold_out => array(
+	  			__('sold out', 'event_espresso'),
+	  			__('sold out', 'event_espresso')
+	  			),
+	  		EE_Datetime::expired => array(
+	  			__('expired', 'event_espresso'),
+	  			__('expired', 'event_espresso')
+	  			),
+	  		EE_Datetime::inactive => array(
+	  			__('inactive', 'event_espresso'),
+	  			__('inactive', 'event_espresso')
+	  			),
+	  		EE_Datetime::upcoming => array(
+	  			__('upcoming', 'event_espresso'),
+	  			__('upcoming', 'event_espresso')
 	  			)
 	    );
 
