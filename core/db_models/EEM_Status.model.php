@@ -183,6 +183,14 @@ class EEM_Status extends EEM_Base {
 	  		EE_Datetime::upcoming => array(
 	  			__('upcoming', 'event_espresso'),
 	  			__('upcoming', 'event_espresso')
+	  			),
+	  		EE_Datetime::active => array(
+	  			__('active', 'event_espresso'),
+	  			__('active', 'event_espresso')
+	  			),
+	  		EE_Datetime::postponed => array(
+	  			__('postponed', 'event_espresso'),
+	  			__('postponed', 'event_espresso')
 	  			)
 	    );
 
