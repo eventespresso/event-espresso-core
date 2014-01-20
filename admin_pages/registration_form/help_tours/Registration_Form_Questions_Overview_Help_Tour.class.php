@@ -126,13 +126,13 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Questions Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the questions overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Questions Overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
 
 	protected function _question_id_stop() {
-		return '<p>' . __('View the question id. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View the question ID. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _display_text_stop() {
@@ -160,11 +160,11 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through questions. The following sources will be searched: name of question (display text).', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through questions. The following sources will be searched: Name of Question (display text).', 'event_espresso') . '</p>';
 	}
 
 	protected function _add_new_question_stop() {
-		return '<p>' . __("Click here to add a new question.", 'event_espresso') . '</p>';
+		return '<p>' . __('Click here to add a new question.', 'event_espresso') . '</p>';
 	}
 
 }
