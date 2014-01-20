@@ -339,7 +339,7 @@ class EE_Error extends Exception {
 		$ouput .= '
 </div>';
 
-		$ouput .= self::_print_scripts();		
+		$ouput .= self::_print_scripts( TRUE );		
 
 		if ( defined( 'DOING_AJAX' )) {
 			echo json_encode( array( 'error' => $ouput ));
@@ -673,9 +673,9 @@ class EE_Error extends Exception {
 	*	@access public
 	* 	@return 		void
 	*/
-	private static function _print_scripts() {
+	private static function _print_scripts( $force_print = FALSE ) {
 		
-		if ( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) {
+		if (( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) && ! $force_print ) {
 			if ( wp_script_is( 'ee_error_js', 'enqueued' )) {
 				return;
 			} else if ( wp_script_is( 'ee_error_js', 'registered' )) {
