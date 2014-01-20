@@ -650,7 +650,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			add_action('admin_footer', array( $this, 'admin_footer_' . $this->current_view ), 101 );
 		
 
-		do_action( 'FHEE_admin_load_page_dependencies', $this->page_slug );
+		do_action( 'FHEE__EE_Admin_Page___load_page_dependencies__after_load', $this->page_slug );
 		
 	}
 
@@ -1936,7 +1936,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	  		
 	  		?>
 	  	</div>
-	  	<?php do_action( 'AHEE_news_meta_box_extra_content'); ?>
+	  	<?php do_action( 'AHEE__EE_Admin_Page__espresso_news_post_box__after_content'); ?>
 	  </div>
 		<?php
 	}
@@ -2205,7 +2205,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//custom remove metaboxes hook to add or remove any metaboxes to/from Admin pages.
-		do_action( 'AHEE_metaboxes' );
+		do_action( 'AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes' );
 
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		$this->_template_args['current_page'] = $this->_wp_page_slug;
@@ -2781,7 +2781,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 						return;
 					break;
 				default:
-					$value = apply_filters( 'FHEE_set-screen-option', false, $option, $value );
+					$value = apply_filters( 'FHEE__EE_Admin_Page___set_per_page_screen_options__value', false, $option, $value );
 					if ( false === $value )
 						return;
 					break;
@@ -3041,7 +3041,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = apply_filters( 'FHEE_process_resend_registration_message', FALSE, $this->_req_data );
+		$success = apply_filters( 'FHEE__EE_Admin_Page___process_resend_registration__success', FALSE, $this->_req_data );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}
@@ -3054,7 +3054,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
-		$success = apply_filters( 'FHEE_process_admin_payment_message', FALSE, $payment );
+		$success = apply_filters( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', FALSE, $payment );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}

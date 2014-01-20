@@ -146,8 +146,8 @@ class EE_Brewing_Regular extends EE_Base {
 		/**
 		 * EE_Register_CPTs hooks
 		 */
-		add_filter('FHEE__EE_Register_CPTs__get_taxonomies', array( $this, 'filter_taxonomies' ), 10 );
-		add_filter('FHEE__EE_Register_CPTs__get_CPTs', array( $this, 'filter_cpts' ), 10 );
+		add_filter('FHEE__EE_Register_CPTs__construct__taxonomies', array( $this, 'filter_taxonomies' ), 10 );
+		add_filter('FHEE__EE_Register_CPTs__construct__CPTs', array( $this, 'filter_cpts' ), 10 );
 		add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array( $this, 'nav_metabox_items' ), 10 );
 
 		$this->_messages_caf();

@@ -16,18 +16,18 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * Price_Types_Default_Help_Tour
+ * Pricing_Price_Types_Default_Help_Tour
  *
  * This is the help tour object for the Default Price Types page
  *
  *
- * @package		Price_Types_Default_Help_Tour
+ * @package		Pricing_Price_Types_Default_Help_Tour
  * @subpackage	caffeinated/admin/new/pricing/help_tours/Price_Types_Default_Help_Tour.core.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class Price_Types_Default_Help_Tour extends EE_Help_Tour {
+class Pricing_Price_Types_Default_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
 		$this->_label = __('Price Types Tour', 'event_espresso');
@@ -100,7 +100,7 @@ class Price_Types_Default_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Price Types', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the price types page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Price Types page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -129,7 +129,7 @@ class Price_Types_Default_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through price types. The following source will be searched: price type name.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through price types. The following source will be searched: Price Type Name.', 'event_espresso') . '</p>';
 	}
 
 }

@@ -628,8 +628,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 //					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-				add_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
-				add_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+				add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+				add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
 				$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
 
 				// show this attendee form?
@@ -718,7 +718,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['additional_event_attendees'] = $additional_event_attendees;		
 
 		$grand_total = $this->_cart->get_cart_grand_total();
-		$grand_total = apply_filters( 'espresso_filter_hook_grand_total_after_taxes', $grand_total );
+		$grand_total = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__grand_total', $grand_total );
 		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
 		
 		$cart_total_before_tax = $this->_cart->get_cart_total_before_tax();
@@ -767,7 +767,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				'&amp;'	// %2$s
 			);
 		}		
-		add_action( 'AHEE__SPCO__after_reg_step_form', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
+		add_action( 'AHEE__SPCO_after_reg_step_form', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
 
 		$template_args['from_admin'] = $from_admin;
 

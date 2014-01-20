@@ -262,12 +262,12 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//if this is an extended check (i.e. caf is active) then we will scan the caffeinated/extend directory first and any hook files that are found will be have their reference added to the $_files_hook array property.  Then, we make sure that when we loop through the core decaf directories to find hook files that we skip over any hooks files that have already been set by caf.
 		if ( $extend ) {
-			$hook_files_glob_path = apply_filters( 'FHEE_admin_hook_files_glob_path', EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . DS . '*' . $this->_file_name . '_Hooks_Extend.class.php' );
+			$hook_files_glob_path = apply_filters( 'FHEE__EE_Admin_Page_Init__register_hooks__hook_files_glob_path__extend', EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . DS . '*' . $this->_file_name . '_Hooks_Extend.class.php' );
 			$this->_hook_paths = $this->_register_hook_files( $hook_files_glob_path, $extend );
 		}
 
 		//loop through decaf folders
-		$hook_files_glob_path = apply_filters( 'FHEE_admin_hook_files_glob_path', $this->_folder_path . '*' . $this->_file_name . '_Hooks.class.php' );
+		$hook_files_glob_path = apply_filters( 'FHEE__EE_Admin_Page_Init__register_hooks__hook_files_glob_path', $this->_folder_path . '*' . $this->_file_name . '_Hooks.class.php' );
 		$this->_hook_paths = array_merge( $this->_register_hook_files( $hook_files_glob_path ), $this->_hook_paths );  //making sure any extended hook paths are later in the array than the core hook paths!
 
 		return $this->_hook_paths;
@@ -328,22 +328,22 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//we don't need to do a page_request check here because it's only called via WP menu system.
 		$admin_page = $this->_file_name . '_Admin_Page';
 		$hook_suffix = $this->menu_slug . '_' . $admin_page;
-		$admin_page = apply_filters("filter_hooks_espresso_admin_page_for_{$hook_suffix}", $admin_page);
+		$admin_page = apply_filters("FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__{$hook_suffix}", $admin_page);
 		
 		// define requested admin page class name then load the file and instantiate
 		$path_to_file = str_replace( array( '\\', '/' ), DS, $this->_folder_path . $admin_page . '.core.php' );
-		$path_to_file=apply_filters("filter_hooks_espresso_path_to_{$hook_suffix}",$path_to_file );//so if the file would be in EE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be filter_hooks_espresso_path_to_attendees_Attendee_Admin_Page
+		$path_to_file=apply_filters("FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__{$hook_suffix}",$path_to_file );//so if the file would be in EE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__attendees_Attendee_Admin_Page
 
 		if ( is_readable( $path_to_file )) {					
 			// This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
-			do_action( 'AHEE_before_initialize_admin_page' );
-			do_action( 'AHEE_before_initialize_admin_page_' . $this->menu_slug );
+			do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization' );
+			do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_' . $this->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
 			$this->_loaded_page_object = $a->newInstance( $this->_routing );				
 		}
-		do_action( 'AHEE_after_initialize_admin_page' );
-		do_action( 'AHEE_after_initialize_admin_page_' . $this->menu_slug );
+		do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__after_initialization' );
+		do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__after_initialization_' . $this->menu_slug );
 	}
 
 

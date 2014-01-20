@@ -76,9 +76,9 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 				if ( $input_key == 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ) {
 					
 					// Credit Card MONTH
-					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_billing_cc_month_input_wrap' ), 10, 2 );
-					remove_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
-					remove_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+					add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'reg_form_billing_cc_month_input_wrap' ), 10, 2 );
+					remove_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+					remove_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
 					$output .= EEH_Form_Fields::select( 
 						__('Expiry Date', 'event_espresso'), 
 						$answer, 
@@ -94,19 +94,19 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 						TRUE,
 						FALSE
 					);
-					remove_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_billing_cc_month_input_wrap' ), 10, 2 );
-					add_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
-					add_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+					remove_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'reg_form_billing_cc_month_input_wrap' ), 10, 2 );
+					add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+					add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
 					$output .= "\n\t\t\t" . '&nbsp;/&nbsp;';
 					
 				} elseif ( $input_key == 'reg-page-billing-card-exp-date-year-' . $this->_gateway_name ) {
 					
 					// Credit Card YEAR							
 					// remove label
-					add_filter( 'FHEE_form_field_label_html', array( 'EEH_Form_Fields', 'remove_label_keep_required_msg' ), 10, 2 );
-					add_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_billing_cc_year_input_wrap' ), 10, 2 );
-					remove_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
-					remove_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+					add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EEH_Form_Fields', 'remove_label_keep_required_msg' ), 10, 2 );
+					add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'reg_form_billing_cc_year_input_wrap' ), 10, 2 );
+					remove_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+					remove_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
 					$output .= EEH_Form_Fields::select( 
 						__('Year', 'event_espresso'), 
 						$answer, 
@@ -123,10 +123,10 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 						FALSE
 					);
 					// remove filter that removes label, or else no other inputs will have labels
-					remove_filter( 'FHEE_form_field_label_html', array( 'EEH_Form_Fields', 'remove_label_keep_required_msg' ), 10, 2 );
-					remove_filter( 'FHEE_form_field_input_html', array( $this, 'reg_form_billing_cc_year_input_wrap' ), 10, 2 );
-					add_filter( 'FHEE_form_field_label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
-					add_filter( 'FHEE_form_field_input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
+					remove_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EEH_Form_Fields', 'remove_label_keep_required_msg' ), 10, 2 );
+					remove_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'reg_form_billing_cc_year_input_wrap' ), 10, 2 );
+					add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
+					add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
 					$output .= "\n\t\t\t" . '<span class="small-text lt-grey-text">' . __('(mm/yy)', 'event_espresso') . '</span>';
 					
 				} else {
@@ -213,7 +213,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		$reg_page_billing_inputs = array();
 		// allow others to edit post input array
 		$reg_page_billing_inputs = $this->espresso_reg_page_billing_inputs();
-		$reg_page_billing_inputs = apply_filters( 'FHEE_reg_page_billing_inputs', $reg_page_billing_inputs );
+		$reg_page_billing_inputs = apply_filters( 'FHEE__EE_Onsite_Gateway__process_gateway_selection__reg_page_billing_inputs', $reg_page_billing_inputs );
 
 //printr( $reg_page_billing_inputs, '$reg_page_billing_inputs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 

@@ -462,7 +462,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 				'argnum' => 1,
 				'priority' => 10
 				),
-			'AHEE_metaboxes' => array(
+			'AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes' => array(
 				'type' => 'action',
 				'argnum' => 1,
 				'priority' => 10

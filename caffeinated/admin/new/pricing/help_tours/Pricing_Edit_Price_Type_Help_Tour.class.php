@@ -79,7 +79,7 @@ class Pricing_Edit_Price_Type_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Edit Price Type', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the edit price type page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Edit Price Type page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 

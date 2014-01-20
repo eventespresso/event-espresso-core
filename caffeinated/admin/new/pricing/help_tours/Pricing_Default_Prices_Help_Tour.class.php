@@ -100,7 +100,7 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Default Pricing', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the default pricing page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Default Pricing page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -125,7 +125,7 @@ class Pricing_Default_Prices_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through transactions. The following sources will be searched: price name, price type, price description, and price amount.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through default pricing. The following sources will be searched: Price Name, Price Type, Price Description, and Price Amount.', 'event_espresso') . '</p>';
 	}
 
 }

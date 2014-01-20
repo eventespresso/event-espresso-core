@@ -1,6 +1,6 @@
 <div class="padding">
 	
-	<?php do_action( 'AHEE_general_settings_admin_options_settings_extra_settings', $template_args ); ?>
+	<?php do_action( 'AHEE__admin_option_settings__template__before', $template_args ); ?>
 
 	<?php /* @todo put back once we have a dashboard widget to use 
 	<h4 class="ee-admin-settings-hdr">

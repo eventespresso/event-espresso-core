@@ -154,7 +154,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Transactions Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the transactions overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Transactions Overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -203,7 +203,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through transactions. The following sources will be searched: event name, event description, first name, last name, bio, email, address, comments, notes, registration final price, registration code, registration group size, ticket name, ticket description, payment method, payment gateway, transaction details, and transaction session data.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through transactions. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, Ticket Description, Payment Method, Payment Gateway, Transaction Details, and Transaction Session.', 'event_espresso') . '</p>';
 	}
 
 }
