@@ -44,8 +44,98 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config {
 							)
 						)
 					)
-				)
+				),
+			1 => array(
+				'content_id' => 'ee-event-status-' . EE_Datetime::active,
+				'target' => '.event-status-' . EE_Datetime::active,
+				'content' => $this->_event_status_legend(EE_Datetime::active),
+				'options' => array(
+					'position' => array(
+						'target' => 'mouse'
+						)
+					)
+				),
+			2 => array(
+				'content_id' => 'ee-event-status-' . EE_Datetime::upcoming,
+				'target' => '.event-status-' . EE_Datetime::upcoming,
+				'content' => $this->_event_status_legend(EE_Datetime::upcoming),
+				'options' => array(
+					'position' => array(
+						'target' => 'mouse'
+						)
+					)
+				),
+			3 => array(
+				'content_id' => 'ee-event-status-' . EE_Datetime::postponed,
+				'target' => '.event-status-' . EE_Datetime::postponed,
+				'content' => $this->_event_status_legend(EE_Datetime::postponed),
+				'options' => array(
+					'position' => array(
+						'target' => 'mouse'
+						)
+					)
+				),
+			4 => array(
+				'content_id' => 'ee-event-status-' . EE_Datetime::inactive,
+				'target' => '.event-status-' . EE_Datetime::inactive,
+				'content' => $this->_event_status_legend(EE_Datetime::inactive),
+				'options' => array(
+					'position' => array(
+						'target' => 'mouse'
+						)
+					)
+				),
+			5 => array(
+				'content_id' => 'ee-event-status-' . EE_Datetime::sold_out,
+				'target' => '.event-status-' . EE_Datetime::sold_out,
+				'content' => $this->_event_status_legend(EE_Datetime::sold_out),
+				'options' => array(
+					'position' => array(
+						'target' => 'mouse'
+						)
+					)
+				),
+			6 => array(
+				'content_id' => 'ee-event-status-' . EE_Datetime::expired,
+				'target' => '.event-status-' . EE_Datetime::expired,
+				'content' => $this->_event_status_legend(EE_Datetime::expired),
+				'options' => array(
+					'position' => array(
+						'target' => 'mouse'
+						)
+					)
+				),
+			7 => array(
+				'content_id' => 'ee-event-status-' . EE_Datetime::cancelled,
+				'target' => '.event-status-' . EE_Datetime::cancelled,
+				'content' => $this->_event_status_legend(EE_Datetime::cancelled),
+				'options' => array(
+					'position' => array(
+						'target' => 'mouse'
+						)
+					)
+				),
 			);
+	}
+
+	/**
+	 * output the relevant ee-status-legend with the designated status highlighted.
+	 * @param  EE_Datetime constant $status What status is set (by class)
+	 * @return string         The status legend with the related status highlighted
+	 */
+	private function _event_status_legend( $status ) {
+
+		$status_array = array(
+			'active_status' => EE_Datetime::active,
+			'upcoming_status' => EE_Datetime::upcoming,
+			'postponed_status' => EE_Datetime::postponed,
+			'inactive_status' => EE_Datetime::inactive,
+			'sold_out_status' => EE_Datetime::sold_out,
+			'expired_status' => EE_Datetime::expired,
+			'cancelled_status' => EE_Datetime::cancelled,
+			);
+
+		return EEH_Template::status_legend( $status_array, $status );
 	}
 
 }
