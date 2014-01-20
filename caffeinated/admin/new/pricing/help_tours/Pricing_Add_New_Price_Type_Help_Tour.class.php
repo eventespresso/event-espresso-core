@@ -1,4 +1,4 @@
-<?php
+A<?php
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
@@ -79,7 +79,7 @@ class Pricing_Add_New_Price_Type_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Add New Price Type', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the add new price type page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Add New Price Type page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 	
