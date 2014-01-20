@@ -126,7 +126,7 @@ class Venues_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Venue Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the venues overview page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Venues Overview page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 	

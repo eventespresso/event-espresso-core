@@ -71,13 +71,13 @@ class Venues_Add_Category_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _stop_one() {
-		$content = '<h3>' . __('Add Category', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the add category page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Add New Venue Category', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the Add New Venue Category page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _category_name_stop() {
-		return '<p>' . __('Enter a name for your new category.', 'event_espresso') . '</p>';
+		return '<p>' . __('Enter a name for your new venue category.', 'event_espresso') . '</p>';
 	}
 
 	protected function _category_id_stop() {
