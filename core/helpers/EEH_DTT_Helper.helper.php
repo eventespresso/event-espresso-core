@@ -94,7 +94,7 @@ class EEH_DTT_Helper {
 
 
 	public static function ddtimezone($tz_event = '') {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$timezone_format = _x('Y-m-d G:i:s', 'timezone date format');
 

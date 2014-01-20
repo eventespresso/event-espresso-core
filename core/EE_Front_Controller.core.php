@@ -59,7 +59,7 @@ final class EE_Front_Controller {
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
 		// action hook EE
-		do_action('AHEE__EE_Front_Controller__construct__done',$this);
+		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
 	}
 
 
@@ -475,7 +475,7 @@ final class EE_Front_Controller {
 			}
 		}
 
-		do_action('AHEE__EE_Front_Controller__initialize_shortcodes__end',$this);
+		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__end',$this );
 //		printr( EE_Registry::instance()->shortcodes, 'EE_Registry::instance()->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
@@ -758,13 +758,13 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function display_errors() {
-		do_action('AHEE__EE_Front_Controller__display_errors__begin');
+		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
 		if(apply_filters( 'FHEE__EE_Front_Controller__display_errors',true) ){
 			echo EE_Error::get_notices();
 			EE_Registry::instance()->load_helper( 'Template' );
 			EEH_Template::display_template( EE_TEMPLATES . 'espresso-ajax-notices.template.php' );
 		}
-		do_action('AHEE__EE_Front_Controller__display_errors__end');
+		do_action( 'AHEE__EE_Front_Controller__display_errors__end' );
 	}
 
 

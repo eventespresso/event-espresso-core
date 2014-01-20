@@ -650,7 +650,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			add_action('admin_footer', array( $this, 'admin_footer_' . $this->current_view ), 101 );
 		
 
-		do_action('FHEE_admin_load_page_dependencies', $this->page_slug );
+		do_action( 'FHEE_admin_load_page_dependencies', $this->page_slug );
 		
 	}
 
@@ -2132,7 +2132,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @param boolean $create_func   default is true.  Basically we can say we don't WANT to have the runtime function created but just set our own callback for wp's add_meta_box.
 	 */
 	public function _add_admin_page_meta_box( $action, $title, $callback, $callback_args, $column = 'normal', $priority = 'high', $create_func = true ) {	
-		do_action('AHEE_log', __FILE__, __FUNCTION__, $callback );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, $callback );
 
 		//if we have empty callback args and we want to automatically create the metabox callback then we need to make sure the callback args are generated.
 		if ( empty( $callback_args ) && $create_func ) {
@@ -2205,7 +2205,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//custom remove metaboxes hook to add or remove any metaboxes to/from Admin pages.
-		do_action('AHEE_metaboxes');
+		do_action( 'AHEE_metaboxes' );
 
 		// set current wp page slug - looks like: event-espresso_page_event_categories
 		$this->_template_args['current_page'] = $this->_wp_page_slug;

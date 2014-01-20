@@ -74,7 +74,7 @@ class EEH_Activation {
 		//EEM_Gateway::load_all_gateways()
 		EEM_Gateways::instance(true)->load_all_gateways();
 		//also, check for CAF default db content
-		do_action('AHEE__EEH_Activation__initialize_db_content');		
+		do_action( 'AHEE__EEH_Activation__initialize_db_content' );		
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
@@ -295,7 +295,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ' ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( ! function_exists( 'dbDelta' )) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		}

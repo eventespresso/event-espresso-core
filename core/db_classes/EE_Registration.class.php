@@ -1126,7 +1126,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		$new_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $new_reg;
 		// save the registration?
 		if ( $update_reg || $new_reg ) { 
-			do_action('AHEE__EE_Registration__finalize__update_and_new_reg', $this, $from_admin );
+			do_action( 'AHEE__EE_Registration__finalize__update_and_new_reg', $this, $from_admin );
 			$this->save();
 		}
 		return array('new_reg' => $new_reg, 'to_approved' => $update_reg);			

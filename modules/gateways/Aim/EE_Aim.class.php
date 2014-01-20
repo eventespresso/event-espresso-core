@@ -122,14 +122,14 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Is this an account on the Authorize.net development server? ', 'event_espresso'); ?>
-					<?php do_action('AHEE_help', 'authnet_aim_sandbox'); ?>
+					<?php do_action( 'AHEE_help', 'authnet_aim_sandbox' ); ?>
 				</label></th>
 			<td><?php echo EEH_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
 		<tr>
 			<th><label for="test_transactions">
 					<?php _e('Do you want to submit a test transaction? ', 'event_espresso'); ?>
-					<?php do_action('AHEE_help', 'authnet_test_transactions') ?>
+					<?php do_action( 'AHEE_help', 'authnet_test_transactions' ) ?>
 				</label></th>
 			<td><?php echo EEH_Form_Fields::select_input('test_transactions', $this->_yes_no_options, $this->_payment_settings['test_transactions']); ?></td>
 		</tr>

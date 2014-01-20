@@ -125,7 +125,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	private function __construct() {
-		do_action('AHEE__EE_Config__construct__begin',$this);
+		do_action( 'AHEE__EE_Config__construct__begin',$this );
 		//set defaults
 		$this->core = new EE_Core_Config();
 		$this->organization = new EE_Organization_Config();
@@ -151,7 +151,7 @@ final class EE_Config {
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
 		// construct__end hook
-		do_action('AHEE__EE_Config__construct__end',$this);
+		do_action( 'AHEE__EE_Config__construct__end',$this );
 	}
 
 
@@ -220,7 +220,7 @@ final class EE_Config {
 	 *  @return 	boolean success 
 	 */
 	public function update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
-		do_action('AHEE__EE_Config__update_espresso_config__begin',$this);
+		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
 		// compare existing settings with what's already saved'
 		$saved_config = $this->get_espresso_config();
 		$no_change = $saved_config == $this ? TRUE : FALSE;
@@ -237,7 +237,7 @@ final class EE_Config {
 		} else {
 			$saved = update_option( 'espresso_config', $this );
 		}
-		do_action('AHEE__EE_Config__update_espresso_config__end',$this,$no_change,$saved);
+		do_action( 'AHEE__EE_Config__update_espresso_config__end',$this,$no_change,$saved );
 		// if config remains the same or was updated successfully
 		if ( $no_change || $saved ) {
 			if ( $add_success ) {
@@ -263,7 +263,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function update_post_shortcodes() {
-		do_action('AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes);
+		do_action( 'AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes );
 		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
 		// cycle thru post_shortcodes
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
@@ -430,7 +430,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_shortcode( $shortcode_path = NULL ) {
-		do_action('AHEE__EE_Config__register_shortcode__begin',$shortcode_path);
+		do_action( 'AHEE__EE_Config__register_shortcode__begin',$shortcode_path );
 		$shortcode_ext = '.shortcode.php';
 		// make all separators match
 		$shortcode_path = rtrim( str_replace( '/\\', DS, $shortcode_path ), DS );
@@ -497,7 +497,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_module( $module_path = NULL ) {
-		do_action('AHEE__EE_Config__register_module__begin',$module_path);
+		do_action( 'AHEE__EE_Config__register_module__begin',$module_path );
 		$module_ext = '.module.php';
 		// make all separators match
 		$module_path = rtrim( str_replace( '/\\', DS, $module_path ), DS );
@@ -598,7 +598,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
-		do_action('AHEE__EE_Config__register_route__begin',$route,$module,$method_name);
+		do_action( 'AHEE__EE_Config__register_route__begin',$route,$module,$method_name );
 		$module = str_replace( 'EED_', '', $module );
 		if ( ! isset( EE_Registry::instance()->modules[ $module ] )) {
 			$msg = sprintf( __( 'The module %s has not been registered.', 'event_espresso' ), $module );
@@ -630,7 +630,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_route( $route = NULL ) {
-		do_action('AHEE__EE_Config__get_route__begin',$route);
+		do_action( 'AHEE__EE_Config__get_route__begin',$route );
 		$route = apply_filters( 'FHEE__EE_Config__get_route',$route );
 		if ( isset( EE_Config::$_module_route_map[ $route ] )) {
 			return EE_Config::$_module_route_map[ $route ];
@@ -650,7 +650,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
-		do_action('AHEE__EE_Config__register_forward',$route,$status,$forward);
+		do_action( 'AHEE__EE_Config__register_forward',$route,$status,$forward );
 		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this forward has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -692,7 +692,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_forward( $route = NULL, $status = 0 ) {
-		do_action('AHEE__EE_Config__get_forward__begin',$route,$status);
+		do_action( 'AHEE__EE_Config__get_forward__begin',$route,$status );
 		if ( isset( EE_Config::$_module_forward_map[ $route ][ $status ] )) {
 			return apply_filters( 'FHEE__EE_Config__get_forward',EE_Config::$_module_forward_map[ $route ][ $status ],$route,$status );
 		}
@@ -711,7 +711,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
-		do_action('AHEE__EE_Config__register_view__begin',$route,$status,$view);
+		do_action( 'AHEE__EE_Config__register_view__begin',$route,$status,$view );
 		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this view has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -738,7 +738,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_view( $route = NULL, $status = 0 ) {
-		do_action('AHEE__EE_Config__get_view__begin',$route,$status);
+		do_action( 'AHEE__EE_Config__get_view__begin',$route,$status );
 		if ( isset( EE_Config::$_module_view_map[ $route ][ $status ] )) {
 			return apply_filters( 'FHEE__EE_Config__get_view',EE_Config::$_module_view_map[ $route ][ $status ],$route,$status );
 		}

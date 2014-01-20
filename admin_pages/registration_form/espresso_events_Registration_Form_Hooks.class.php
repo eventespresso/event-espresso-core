@@ -124,7 +124,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 			} else {
 				echo __('There seems to be a problem with your questions. Please contact support@eventespresso.com', 'event_espresso');
 			}
-			do_action('AHEE_event_editor_questions_notice');
+			do_action( 'AHEE_event_editor_questions_notice' );
 			?>
 		</div>
 		<?php

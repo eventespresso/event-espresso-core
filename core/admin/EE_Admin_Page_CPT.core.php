@@ -442,8 +442,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			$this->_template_args['success'] = TRUE;
 		}
 
-		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
-		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_' . get_class( $this ), $this );
+		do_action( 'AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
+		do_action( 'AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_' . get_class( $this ), $this );
 
 		//now let's return json
 		$this->_return_json();		
@@ -535,7 +535,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$model = call_user_func( array( $this->_cpt_model_names[$this->_req_action] , 'instance' ) );
 		$this->_cpt_model_obj = !empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
 
-		do_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object');
+		do_action( 'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object' );
 	}
 
 

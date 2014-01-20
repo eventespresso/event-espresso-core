@@ -47,7 +47,7 @@ class EE_Brewing_Regular extends EE_Base {
 		/**
 		 * note, this action hook is simply for reliably having things run ONLY if EE Regular is running.  This hook is executed at the plugins_loaded (priority 3) hook point. (see EE_System::plugins_loaded)
 		 */
-		do_action('AHEE__EE_Brewing_Regular__run_now');
+		do_action( 'AHEE__EE_Brewing_Regular__run_now' );
 		add_action('AHEE__EEH_Activation__initialize_db_content',array($this,'initialize_caf_db_content'));
 		//make it so the PDF receipt doesn't show our shameless plug
 		add_filter('FHEE_Invoice__send_invoice__shameless_plug','__return_false');

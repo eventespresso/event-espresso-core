@@ -157,7 +157,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			$msg[] = sprintf( __('Events Data: %s', 'event_espresso'), var_export($this->_data->events, TRUE) );
 			$msg[] = sprintf( __('Event IDS: %s', 'event_espresso'), var_export($ids, TRUE) );
 			$msg[] = sprintf( __('Query Results: %s', 'event_espresso'), var_export($admin_details) );
-			do_action('espresso_log_shortcode_parser', __FILE__, __FUNCTION__, implode("\n", $msg) );
+			do_action( 'espresso_log_shortcode_parser', __FILE__, __FUNCTION__, implode("\n", $msg) );
 		}
 
 		foreach ( $admin_details as $admin ) {

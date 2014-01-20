@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
+do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 /**
  * Event Espresso
@@ -289,7 +289,7 @@ abstract class EE_Gateway {
 	}
 	
 	public function gateway() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, ' $this->_gateway_name = ' . $this->_gateway_name );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, ' $this->_gateway_name = ' . $this->_gateway_name );
 		return $this->_gateway_name;
 	}
 

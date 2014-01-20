@@ -227,7 +227,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'site_license_key': 
 			  $c->core->site_license_key = $value;break;
 		  default:
-			  do_action('AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value);
+			  do_action( 'AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value );
 		}
 	}
 	

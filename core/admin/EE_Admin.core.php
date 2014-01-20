@@ -88,7 +88,7 @@ final class EE_Admin {
 		// pew pew pew
 		EE_Registry::instance()->load_core( 'PUE' );
 		
-		do_action('AHEE__EE_Admin__loaded');
+		do_action( 'AHEE__EE_Admin__loaded' );
 	}
 
 

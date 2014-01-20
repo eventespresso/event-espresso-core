@@ -62,7 +62,7 @@ class EED_Ical  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function iCal() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$name = EE_Registry::instance()->REQ->get( 'event_summary' ) . ".ics";
 		$output = "BEGIN:VCALENDAR\n" .
 						"PRODID:-//xyz Corp//NONSGML PDA Calendar Version 1.0//EN\n" .
