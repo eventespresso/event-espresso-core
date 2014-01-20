@@ -376,7 +376,8 @@ final class EE_System {
 	 * Also, caches its result so later parts of the code can also know whether there's been an
 	 * update or not. This way we can add the current version to espresso_db_update,
 	 * but still know if this is a new install or not
-	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'
+	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'. If not provided, this function
+	 * retrieves it from the database... so the parameter only exists for optimization
 	 * @return int one of the consts on EE_System::req_type_*
 	 */
 	public function detect_req_type($espresso_db_update = null){

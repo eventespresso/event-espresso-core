@@ -42,18 +42,26 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Eg, if we were going to change user passwords from plaintext to encoded versions
 	 * during this migration, this would probably add a new column called somethign like
 	 * "encoded_password".
+	 * @param $drop_pre_existing_tables whenever we are adding a new table, whether to make sure it didn't
+	 * exist previously. If set to true, whenever we go to create a new table, we first double-check no
+	 * table by that name exists, and if it does we drop it first. This is useful when we add a new table during a migration,
+	 * but someone restores their DB to a backup which DOESN'T delete this newly-added table. Because when they re-run the migration, 
+	 * we want to nuke the pre-existing table and start from scratch (we do NOT want to merely 'update' the table, because
+	 * we DON'T want any of the pre-existing data to persist- it might be corrupted).
+	 * So in summary, set to TRUE on a brand-new activation of EE, or during a migration script; leave FALSE otherwise
 	 * @return boolean of success
 	 */
-	abstract public function schema_changes_before_migration();
+	abstract public function schema_changes_before_migration($drop_pre_existing_tables = false);
 	/**
 	 * Performs the database schema changes that need to occur AFTER the data has been migrated.
 	 * Usually this will mean we'll be removing old columns. Eg, if we were changing passwords
 	 * from plaintext to encoded versions, and we had added a column called "encoded_password",
 	 * this function would probably remove the old column "password" (which still holds the plaintext password)
 	 * and possibly rename "encoded_password" to "password"
+	 * @param boolean $drop_pre_existing_tables like 
 	 * @return boolean of success
 	 */
-	abstract public function schema_changes_after_migration();
+	abstract public function schema_changes_after_migration($drop_pre_existing_tables = false);
 	
 	/**
 	 * Multi-dimensional array that defines teh mapping from OLD table Primary Keys
@@ -252,9 +260,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			try{
 				ob_start();
 				if($before){
-					$this->schema_changes_before_migration();
+					$this->schema_changes_before_migration(true);
 				}else{
-					$this->schema_changes_after_migration();
+					$this->schema_changes_after_migration(true);
 				}
 				$output = ob_get_contents();
 				ob_end_clean();
@@ -736,10 +744,10 @@ class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
 	public function can_migrate_from_version($version_string) {
 		return false;
 	}
-	public function schema_changes_after_migration() {
+	public function schema_changes_after_migration($drop_pre_existing_tables = false) {
 		return;
 	}
-	public function schema_changes_before_migration() {
+	public function schema_changes_before_migration($drop_pre_existing_tables = false) {
 		return;
 	}
 	public function __construct() {

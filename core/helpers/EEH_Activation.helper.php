@@ -292,15 +292,28 @@ class EEH_Activation {
 	 *
 	 * 	@access public
 	 * 	@static
+	 * @param string $table_name withou the $wpdb->prefix
+	 * @param string $sql SQL for creating the table (contents between brackets in an SQL create table query)
+	 * @param string engine like 'ENGINE=MyISAM' or 'ENGINE=InnoDB'
+	 * @param boolean $drop_table_if_pre_existed set to TRUE when you want to make SURE the table is completely empty
+	 * and new once this function is done (ie, you really do want to CREATE a table, and
+	 * expect it to be empty once you're done)
+	 * leave as FALSE when you just want to verify the table exists and matches this definition (and if it 
+	 * HAS data in it you want to leave it be)
 	 * 	@return void
 	 */
-	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ' ) {
+	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ',$drop_table_if_pre_existed = false ) {
+//		echo "create table $table_name ". ($drop_table_if_pre_existed? 'but first nuke preexisting one' : 'or update it if it exstsi') . "<br>";//die;
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( ! function_exists( 'dbDelta' )) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		}
 		global $wpdb;		
 		$wp_table_name = $wpdb->prefix . $table_name;
+		//		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_t) )
+		if($drop_table_if_pre_existed){
+			$wpdb->query("DROP TABLE IF EXISTS $wp_table_name ");
+		}
 		$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
 		dbDelta( $SQL );
 		// clear any of these out
@@ -412,8 +425,11 @@ class EEH_Activation {
 		//but just define the schema changes methods
 		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_1_0','dms');
 		$current_data_migration_script = new EE_DMS_4_1_0();
-		$current_data_migration_script->schema_changes_before_migration();
-		$current_data_migration_script->schema_changes_after_migration();
+		//decide what to do when tables already exist. Do we nuke them and start fresh? or do we simply modify them?
+		//if this is a new activation, (or if it were run from a data migration script), nuke old tables
+		$drop_pre_existing_tables = EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ? true : false;
+		$current_data_migration_script->schema_changes_before_migration($drop_pre_existing_tables);
+		$current_data_migration_script->schema_changes_after_migration($drop_pre_existing_tables);
 	}
 
 
