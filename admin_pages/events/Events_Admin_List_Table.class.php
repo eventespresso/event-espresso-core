@@ -53,13 +53,13 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 		$this->_columns = array(
+			'status' => __(''),
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
 			'start_date_time' => __('Event Start', 'event_espresso'),
 			'reg_begins' => __('On Sale', 'event_espresso'),
-			'status' => __('Status', 'event_espresso'),
 			'attendees' => '<span class="dashicons dashicons-groups ee-icon-color-ee-green ee-icon-size-20"></span>',
 			//'tkts_sold' => __('Tickets Sold', 'event_espresso'),
 			'actions' => __('Actions', 'event_espresso')
@@ -72,7 +72,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'venue' => array( 'Venue.VNU_name' => false ),
 			'start_date_time' => array('Datetime.DTT_EVT_start' => false),
 			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
-			//'status' => array('Event.status' => false)
 			);
 
 		$this->_hidden_columns = array();
@@ -95,7 +94,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-
+	public function column_status( EE_Event $item ) {
+		return '<span class="ee-status-strip ee-status-strip-td event-status-' . $item->get_active_status() . '"></span>';
+	}/**/
 
 
 
@@ -225,9 +226,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_status($item) {
+	/*public function column_status($item) {
 		$item->pretty_active_status();
-	}
+	}/**/
 
 
 

@@ -148,6 +148,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
 		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
+		//legend item
+		add_filter('FHEE_event_legend_items', array( $this, 'additional_legend_items') );
+
 	}
 
 
@@ -287,12 +290,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-	protected function _event_legend_items() {
-		$items = parent::_event_legend_items();
+	public function additional_legend_items($items) {
 		$items['reports'] = array(
 				'class' => 'dashicons dashicons-chart-bar',
 				'desc' => __('Event Reports', 'event_espresso')
 			);
+		$items['empty'] = array('class'=>'empty', 'desc' => '');
 		return $items;
 	}
 
