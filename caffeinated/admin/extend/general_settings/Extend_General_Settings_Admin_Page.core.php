@@ -69,7 +69,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 
 		//filters and action hooks here
-		add_action('AHEE_general_settings_admin_options_settings_extra_settings', array( $this, 'use_venue_and_staff_manager_settings'), 10 );
+		add_action('AHEE__admin_option_settings__template__before', array( $this, 'use_venue_and_staff_manager_settings'), 10 );
 	}
 
 

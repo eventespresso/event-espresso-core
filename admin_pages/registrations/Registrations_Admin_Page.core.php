@@ -1504,7 +1504,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 //		echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 //		var_dump( $attendee->ID() );
 		// allow others to get in on this awesome fun   :D
-		do_action( 'AHEE_save_attendee_registration_form', $registration, $qstns );
+		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $registration, $qstns );
 		// loop thru questions... FINALLY!!!
 
 		foreach ( $qstns as $QST_ID => $qstn ) {

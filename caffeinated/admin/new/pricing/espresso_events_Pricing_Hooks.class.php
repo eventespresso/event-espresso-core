@@ -93,7 +93,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			);
 
 
-		add_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_Extend_Events_Admin_Page', array( $this, 'autosave_handling' ), 10 );
+		add_action('AHEE__EE_Admin_Page_CPT__do_extra_autosave_stuff__after_Extend_Events_Admin_Page', array( $this, 'autosave_handling' ), 10 );
 		add_filter('FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks', array( $this, 'caf_updates' ), 10 );
 
 	}

@@ -883,7 +883,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		do_action( 'AHEE_venue_deleted' );
+		do_action( 'AHEE__Venues_Admin_Page___delete_or_trash_venue__after_venue_deleted' );
 		return TRUE;
 	}
 

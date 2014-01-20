@@ -336,14 +336,14 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		if ( is_readable( $path_to_file )) {					
 			// This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
-			do_action( 'AHEE_before_initialize_admin_page' );
-			do_action( 'AHEE_before_initialize_admin_page_' . $this->menu_slug );
+			do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization' );
+			do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_' . $this->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
 			$this->_loaded_page_object = $a->newInstance( $this->_routing );				
 		}
-		do_action( 'AHEE_after_initialize_admin_page' );
-		do_action( 'AHEE_after_initialize_admin_page_' . $this->menu_slug );
+		do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__after_initialization' );
+		do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__after_initialization_' . $this->menu_slug );
 	}
 
 

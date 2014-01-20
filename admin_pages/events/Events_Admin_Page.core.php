@@ -1157,7 +1157,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$publish_box_extra_args['pending_payment_regs'] = $this->_cpt_model_obj->count_related('Registration', $pending_payment_query_args);
 		$publish_box_extra_args['misc_pub_section_class'] = apply_filters( 'FHEE_Events_Admin_Page___generate_publish_box_extra_content__misc_pub_section_class', 'misc-pub-section');
 		//$publish_box_extra_args['email_attendees_url'] = add_query_arg(array('event_admin_reports' => 'event_newsletter', 'event_id' => $this->_cpt_model_obj->id), 'admin.php?page=espresso_registrations');
-		$publish_box_extra_args['event_editor_overview_add'] = do_action( 'AHEE_cpt_model_obj_editor_overview_add', $this->_cpt_model_obj );
+		$publish_box_extra_args['event_editor_overview_add'] = do_action( 'AHEE__Events_Admin_Page___generate_publish_box_extra_content__event_editor_overview_add', $this->_cpt_model_obj );
 		// load template
 		EEH_Template::display_template( EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args );
 	}
@@ -1767,7 +1767,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		do_action( 'AHEE_event_permanently_deleted' );
+		do_action( 'AHEE__Events_Admin_Page___permanently_delete_event__after_event_deleted' );
 		return TRUE;
 	}
 

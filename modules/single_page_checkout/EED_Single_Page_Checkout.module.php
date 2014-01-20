@@ -767,7 +767,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				'&amp;'	// %2$s
 			);
 		}		
-		add_action( 'AHEE__SPCO__after_reg_step_form', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
+		add_action( 'AHEE__SPCO_after_reg_step_form', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
 
 		$template_args['from_admin'] = $from_admin;
 
