@@ -382,6 +382,26 @@
 }
 
 
+.ee-status-legend-0 {
+    background-color: #e6e6e6;
+}
+
+.ee-status-legend--1 {
+    background-color: #A39D9C;
+}
+
+.ee-status-legend-1 {
+    background-color: #49afcd;
+}
+
+.ee-status-legend-2 {
+    background-color: #62B660;
+}
+
+.ee-status-legend--2 {
+    background-color: #E44064;
+}
+
 .ticket-fieldset {
     background-color: #F8F8F8;
     border: 1px solid #EEEEEE;
