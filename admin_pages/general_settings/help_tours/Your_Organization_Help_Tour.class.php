@@ -91,20 +91,20 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Organization Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the your organization page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the your Organization Page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _site_license_key_stop() {
-		return '<p>' . __('Insert your license key here to enable one click updates.', 'event_espresso') . '</p>';
+		return '<p>' . __('Enter your support license key here to enable one click updates.', 'event_espresso') . '</p>';
 	}
 
 	protected function _contact_information_stop() {
-		return '<p>' . __('You can change your business information below. Be sure to keep this information updated as it is used in other areas of the site.', 'event_espresso') . '</p>';
+		return '<p>' . __('You can change your business / organization information below. Be sure to keep this information updated as it is used in other areas of the site. Adjusting the country option here will update your currency settings. More options are available in the Countries tab.', 'event_espresso') . '</p>';
 	}
 
 	protected function _upload_image_stop() {
-		return '<p>' . __('Add a logo. This can be used for invoice and tickets.', 'event_espresso') . '</p>';
+		return '<p>' . __('Add a logo. This can be used for invoices and tickets.', 'event_espresso') . '</p>';
 	}
 
 	protected function _organization_facebook_stop() {
