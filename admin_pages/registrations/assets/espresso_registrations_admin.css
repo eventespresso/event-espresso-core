@@ -292,13 +292,6 @@
 }
 
 /** reg status legend **/
-.ee-status-legend {
-	display: inline-block;
-	width: 18px;
-	height: 18px;
-	vertical-align: middle;
-}
-
 .ee-status-legend-RPP {
 	background-color: #00B1CA;
 }
@@ -323,14 +316,6 @@
 .status-RAP { color: #70CC50;}
 .status-RNA { color: #E76700;}
 
-
-.ee-is-reg-status {
-	background-color: #fefa99;
-	padding: 0 4px 3px 4px;
-	color: black;
-	margin-left: -4px;
-	text-shadow: none;
-}
 
 #admin-primary-mbox-reg-details-dv .secondary-button {
 	margin-left: 10px;
