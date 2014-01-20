@@ -142,6 +142,27 @@ class EEM_Status extends EEM_Base {
 	  		EEM_Payment::status_id_failed => array(
 	  			__('failed', 'event_espresso'),
 	  			__('failed', 'event_espresso')
+	  			),
+	  		//following statuses are NOT part of the EEM_Status but to keep things centralized we include in here.
+	  		EE_Ticket::archived => array(
+	  			__('archived', 'event_espresso'),
+	  			__('archived', 'event_espresso')
+	  			),
+	  		EE_Ticket::expired => array(
+	  			__('expired', 'event_espresso'),
+	  			__('expired', 'event_espresso')
+	  			),
+	  		EE_Ticket::sold_out => array(
+	  			__('sold out', 'event_espresso'),
+	  			__('sold out', 'event_espresso')
+	  			),
+	  		EE_Ticket::pending => array(
+	  			__('upcoming', 'event_espresso'),
+	  			__('upcoming', 'event_espresso')
+	  			),
+	  		EE_Ticket::onsale => array(
+	  			__('on sale', 'event_espresso'),
+	  			__('on sale', 'event_espresso')
 	  			)
 	    );
 
