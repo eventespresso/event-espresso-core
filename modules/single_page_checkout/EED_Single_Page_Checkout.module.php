@@ -563,7 +563,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			
 			foreach ( $this->_transaction->registrations() as $registration ) {
 
-				if ( $registration->event()->is_sold_out() || $registration->event->is_sold_out( TRUE )) {
+				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
 					// add event to list of events that are sold out
 					$sold_out_events[ $registration->event()->ID() ] = '<li><span class="dashicons dashicons-marker ee-icon-size-16 pink-text"></span>' . $registration->event()->name() . '</li>';
 				} 
