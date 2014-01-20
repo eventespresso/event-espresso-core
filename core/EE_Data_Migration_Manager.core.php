@@ -136,7 +136,7 @@ class EE_Data_Migration_Manager{
 	 * folder name.
 	 */
 	public function get_data_migration_script_folders(){
-		return  apply_filters('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array(EE_CORE.'data_migration_scripts'));
+		return  apply_filters( 'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array(EE_CORE.'data_migration_scripts') );
 	}
 	
 	/**

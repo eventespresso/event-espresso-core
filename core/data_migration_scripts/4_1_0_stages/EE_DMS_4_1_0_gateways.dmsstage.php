@@ -152,7 +152,7 @@ private function _get_old_gateway_option_name($new_gateway_slug){
 			$option_name = 'espresso_usaepay_onsite'.$normal_option_postfix;
 			break;
 		default:
-			$option_name = apply_filters('FHEE__EE_DMS_4_1_0_gateways__get_old_gateway_option',$normal_option_prefix.$old_gateway_slug.$normal_option_postfix);
+			$option_name = apply_filters( 'FHEE__EE_DMS_4_1_0_gateways__get_old_gateway_option',$normal_option_prefix.$old_gateway_slug.$normal_option_postfix );
 	}
 	return $option_name;
 }

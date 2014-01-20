@@ -166,7 +166,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	protected function _set_capability() {
 		$capability = empty($this->capability) ? 'administrator' : $this->capability;
-		$this->capability = apply_filters('FHEE_' . $this->menu_slug . '_capability', $capability);
+		$this->capability = apply_filters( 'FHEE_' . $this->menu_slug . '_capability', $capability );
 	}
 
 
@@ -262,12 +262,12 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//if this is an extended check (i.e. caf is active) then we will scan the caffeinated/extend directory first and any hook files that are found will be have their reference added to the $_files_hook array property.  Then, we make sure that when we loop through the core decaf directories to find hook files that we skip over any hooks files that have already been set by caf.
 		if ( $extend ) {
-			$hook_files_glob_path = apply_filters('FHEE_admin_hook_files_glob_path', EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . DS . '*' . $this->_file_name . '_Hooks_Extend.class.php' );
+			$hook_files_glob_path = apply_filters( 'FHEE_admin_hook_files_glob_path', EE_CORE_CAF_ADMIN_EXTEND . $this->_folder_name . DS . '*' . $this->_file_name . '_Hooks_Extend.class.php' );
 			$this->_hook_paths = $this->_register_hook_files( $hook_files_glob_path, $extend );
 		}
 
 		//loop through decaf folders
-		$hook_files_glob_path = apply_filters('FHEE_admin_hook_files_glob_path', $this->_folder_path . '*' . $this->_file_name . '_Hooks.class.php' );
+		$hook_files_glob_path = apply_filters( 'FHEE_admin_hook_files_glob_path', $this->_folder_path . '*' . $this->_file_name . '_Hooks.class.php' );
 		$this->_hook_paths = array_merge( $this->_register_hook_files( $hook_files_glob_path ), $this->_hook_paths );  //making sure any extended hook paths are later in the array than the core hook paths!
 
 		return $this->_hook_paths;

@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
+do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 abstract class EE_Onsite_Gateway extends EE_Gateway {
 
@@ -13,14 +13,14 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	abstract public function espresso_reg_page_billing_inputs();
 
 	protected function __construct(EEM_Gateways &$model) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_button_base = 'pay-by-credit-card.png';
 		$this->_btn_img = EE_GATEWAYS_URL .$this->_button_base;
 		parent::__construct($model);
 	}
 	
 	protected function _set_default_properties() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		parent::_set_default_properties();
 		// list of fields required for capturing the billing address 
 		$this->_billing_info_address_fields = array(
@@ -54,7 +54,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 */
 	protected function _generate_billing_info_form_fields( $billing_inputs = array(), $section = FALSE ) {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( empty( $billing_inputs ) || !$section ) {
 			return;
 		}
@@ -208,12 +208,12 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 */
 	public function process_gateway_selection() {
 	
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// set  billing inputs in the individual gateways plz
 		$reg_page_billing_inputs = array();
 		// allow others to edit post input array
 		$reg_page_billing_inputs = $this->espresso_reg_page_billing_inputs();
-		$reg_page_billing_inputs = apply_filters('FHEE_reg_page_billing_inputs', $reg_page_billing_inputs );
+		$reg_page_billing_inputs = apply_filters( 'FHEE_reg_page_billing_inputs', $reg_page_billing_inputs );
 
 //printr( $reg_page_billing_inputs, '$reg_page_billing_inputs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -239,7 +239,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 	 * 		@return array
 	 */
 	public function set_billing_info_for_confirmation( $billing_info ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$confirm_inputs = array(
 				'first name'=>'fname-' . $this->_gateway_name,
 				'last name'=>'lname-' . $this->_gateway_name,

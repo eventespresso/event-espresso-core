@@ -50,7 +50,7 @@ class EE_PUE {
 	public function __construct() {
 //		throw new EE_Error('error');
 		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$ueip_optin = get_option('ee_ueip_optin');
 		$ueip_has_notified = isset($_POST['ueip_optin']) ? TRUE : get_option('ee_ueip_has_notified');

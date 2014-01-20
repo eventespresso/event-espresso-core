@@ -142,10 +142,59 @@ class EEM_Status extends EEM_Base {
 	  		EEM_Payment::status_id_failed => array(
 	  			__('failed', 'event_espresso'),
 	  			__('failed', 'event_espresso')
+	  			),
+	  		//following statuses are NOT part of the EEM_Status but to keep things centralized we include in here.
+	  		EE_Ticket::archived => array(
+	  			__('archived', 'event_espresso'),
+	  			__('archived', 'event_espresso')
+	  			),
+	  		EE_Ticket::expired => array(
+	  			__('expired', 'event_espresso'),
+	  			__('expired', 'event_espresso')
+	  			),
+	  		EE_Ticket::sold_out => array(
+	  			__('sold out', 'event_espresso'),
+	  			__('sold out', 'event_espresso')
+	  			),
+	  		EE_Ticket::pending => array(
+	  			__('upcoming', 'event_espresso'),
+	  			__('upcoming', 'event_espresso')
+	  			),
+	  		EE_Ticket::onsale => array(
+	  			__('on sale', 'event_espresso'),
+	  			__('on sale', 'event_espresso')
+	  			),
+	  		EE_Datetime::cancelled => array(
+	  			__('cancelled', 'event_espresso'),
+	  			__('cancelled', 'event_espresso')
+	  			),
+	  		EE_Datetime::sold_out => array(
+	  			__('sold out', 'event_espresso'),
+	  			__('sold out', 'event_espresso')
+	  			),
+	  		EE_Datetime::expired => array(
+	  			__('expired', 'event_espresso'),
+	  			__('expired', 'event_espresso')
+	  			),
+	  		EE_Datetime::inactive => array(
+	  			__('inactive', 'event_espresso'),
+	  			__('inactive', 'event_espresso')
+	  			),
+	  		EE_Datetime::upcoming => array(
+	  			__('upcoming', 'event_espresso'),
+	  			__('upcoming', 'event_espresso')
+	  			),
+	  		EE_Datetime::active => array(
+	  			__('active', 'event_espresso'),
+	  			__('active', 'event_espresso')
+	  			),
+	  		EE_Datetime::postponed => array(
+	  			__('postponed', 'event_espresso'),
+	  			__('postponed', 'event_espresso')
 	  			)
 	    );
 
-		$translation_array = apply_filters('FHEE__EEM_Status__localized_status__translation_array', $translation_array );
+		$translation_array = apply_filters( 'FHEE__EEM_Status__localized_status__translation_array', $translation_array );
 
 		if ( !is_array($statuses) )
 			throw new EE_Error( __('The incoming statuses argument must be an array with keys as the $status_id and values as the $status_code', 'event_espresso') );

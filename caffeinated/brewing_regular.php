@@ -47,7 +47,7 @@ class EE_Brewing_Regular extends EE_Base {
 		/**
 		 * note, this action hook is simply for reliably having things run ONLY if EE Regular is running.  This hook is executed at the plugins_loaded (priority 3) hook point. (see EE_System::plugins_loaded)
 		 */
-		do_action('AHEE__EE_Brewing_Regular__run_now');
+		do_action( 'AHEE__EE_Brewing_Regular__run_now' );
 		add_action('AHEE__EEH_Activation__initialize_db_content',array($this,'initialize_caf_db_content'));
 		//make it so the PDF receipt doesn't show our shameless plug
 		add_filter('FHEE_Invoice__send_invoice__shameless_plug','__return_false');
@@ -76,11 +76,6 @@ class EE_Brewing_Regular extends EE_Base {
 			$tax_price_type_count = $wpdb->get_var( $SQL );
 			
 			if ( $tax_price_type_count <= 1) {
-//				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
-//							(6, '" . __('Regional Tax', 'event_espresso') . "', 4,  1, 60, 0),
-//							(7, '" . __('Federal Tax', 'event_espresso') . "', 4,  1, 70, 0);";
-//				$SQL = apply_filters('FHEE_default_price_types_activation_sql', $SQL );
-//				$wpdb->query( $SQL );
 				$result = $wpdb->insert($price_type_table,
 						array(
 							'PRT_name'=>  __("Regional Tax", "event_espresso"),
@@ -145,30 +140,6 @@ class EE_Brewing_Regular extends EE_Base {
 		
 	}
 	
-	/**
-	 * Inserts them mostly unconditionally.
-	 * @global type $wpdb
-	 */
-//	private function _insert_caf_prices(){
-//		global $wpdb;
-//		$price_table = $wpdb->prefix."esp_price";
-//		
-//		if ($wpdb->get_var("SHOW TABLES LIKE '$price_table'") == $price_table) {
-//			//we are now assuming we want to insert these tables if this function is called
-////			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
-////			$existing_prices_count = $wpdb->get_var( $SQL );
-////			if ( $existing_prices_count <= 1 ) {
-//				$SQL = "INSERT INTO $price_table
-//							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
-//							(4, 6, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 0),
-//							(5, 7, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 0);";			
-//				$SQL = apply_filters('FHEE_default_prices_activation_sql', $SQL );
-//				$wpdb->query($SQL);			
-////			}
-//		}	
-//	}
-
-
 
 
 	public function on_init(){

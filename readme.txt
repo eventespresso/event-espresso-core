@@ -52,8 +52,6 @@ This plugin is provided "as is" and without any warranty or expectation of funct
 
 == Frequently Asked Questions ==
 
-To display a single event on a page use the [SINGLEEVENT single_event_id="Unique Event ID"]
-
 To display a list of events in sidebar, use the Event Registration Widget. If your theme doesn't use widgets, you can use  <?php display_all_events(); ?> in theme code.
 
 To use, create a new page with only  [ESPRESSO_EVENTS]

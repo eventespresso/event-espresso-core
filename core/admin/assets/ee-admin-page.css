@@ -467,6 +467,21 @@ label.error  { display: block; color: #FE2A00 !important; }
     margin-bottom: 5px;
 }
 
+.ee-status-legend {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+	vertical-align: middle;
+}
+
+.ee-is-active-status {
+	background-color: #fefa99;
+	padding: 0 4px 3px 4px;
+	color: black;
+	margin-left: -4px;
+	text-shadow: none;
+}
+
 .ee-legend-img-container {
    width: 13px;
    height: 13px;

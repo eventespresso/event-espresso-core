@@ -430,8 +430,8 @@ class EE_Event extends EE_CPT_Base{
 	 * @return boolean true yes, false no
 	 */
 	private function _has_ID_and_is_published() {
-		// first check if event id is present and not NULL, then check if this event is published 
-		return ( $this->ID() && $this->ID() !== NULL && $this->_status == 'publish' ) ? TRUE : FALSE;		
+		// first check if event id is present and not NULL, then check if this event is published (or any of the equivalent "published" statuses)
+		return ( $this->ID() && $this->ID() !== NULL && ($this->_status == 'publish' || $this->_status == EEM_Event::sold_out || $this->_status == EEM_Event::postponed || $this->_status == EEM_Event::cancelled ) ) ? TRUE : FALSE;		
 	}
 
 
@@ -442,7 +442,7 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	public function is_upcoming() {
 		// check if event id is present and if this event is published
-		if ( ! $this->_has_ID_and_is_published() ) {
+		if ( $this->is_inactive() ) {
 			return FALSE;
 		}
 		// set initial value
@@ -464,7 +464,7 @@ class EE_Event extends EE_CPT_Base{
 
 	public function is_active() {
 		// check if event id is present and if this event is published
-		if ( ! $this->_has_ID_and_is_published() ) {
+		if ( $this->is_inactive() ) {
 			return FALSE;
 		}
 		// set initial value
@@ -486,7 +486,7 @@ class EE_Event extends EE_CPT_Base{
 
 	public function is_expired() {
 		// check if event id is present and if this event is published
-		if ( ! $this->_has_ID_and_is_published() ) {
+		if ( $this->is_inactive() ) {
 			return FALSE;
 		}
 		// set initial value
@@ -506,14 +506,8 @@ class EE_Event extends EE_CPT_Base{
 
 	public function is_inactive() {
 		// check if event id is present and if this event is published
-		if ( ! $this->_has_ID_and_is_published() ) {
+		if ( $this->_has_ID_and_is_published() ) {
 			return FALSE;
-		}
-		//next let's get all datetimes and loop through them 
-		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
-		foreach ( $dtts as $dtt ) {
-			//all we're checking for is expire status cause if its expired then that's what we use.
-			if ( $dtt->is_expired() ) return FALSE;
 		}
 		return TRUE;
 	}
@@ -534,14 +528,15 @@ class EE_Event extends EE_CPT_Base{
 		//next let's get all datetimes and loop through them 
 		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' )));
 		foreach ( $datetimes as $datetime ) {
-			$dtt_spaces_remaining = (int)$datetime->spaces_remaining(TRUE);
+			$dtt_spaces_remaining = $datetime->spaces_remaining(TRUE);
 			// if datetime has unlimited reg limit then the event can never be sold out
 			if ( $dtt_spaces_remaining === INF ) {
-				return;
+				return FALSE;
 			} else {
 				$spaces_remaining = max( $dtt_spaces_remaining, $spaces_remaining );
 			}			
 		}
+
 		if ( $spaces_remaining === 0 ) {
 			$this->set_status( EEM_Event::sold_out );
 			$sold_out = TRUE;
@@ -614,6 +609,7 @@ class EE_Event extends EE_CPT_Base{
 		foreach ( $dtts as $dtt ) {
 			$status_array[] = $dtt->get_active_status();
 		}
+
 		//now we can conditionally determine status
 		if ( $this->_status == 'publish' ) {
 			
@@ -660,45 +656,7 @@ class EE_Event extends EE_CPT_Base{
 	public function pretty_active_status( $echo = TRUE, $show_all = TRUE ) {
 		$status = '';
 		$active_status = $this->get_active_status();
-		if ( $active_status < 1 || $show_all ) {
-			switch ( $active_status ) {
-				case EE_Datetime::sold_out :
-					$status = __('Sold Out', 'event_espresso');
-					$class = 'sold-out';
-					break;
-				case EE_Datetime::expired :
-					$status = __('Expired', 'event_espresso');
-					$class = 'expired';
-					break;
-				case EE_Datetime::inactive :
-					$status = __('Inactive', 'event_espresso');
-					$class = 'inactive';
-					break;
-
-				case EE_Datetime::upcoming :
-					$status = __('Upcoming', 'event_espresso');
-					$class = 'upcoming';
-					break;
-
-				case EE_Datetime::active : 
-					$status = __('Active', 'event_espresso');
-					$class = 'active';
-					break;
-
-				case EE_Datetime::postponed :
-					$status = __('Postponed', 'event_espresso');
-					$class = 'postponed';
-					break;
-
-				default :
-					$status = __('Inactive', 'event_espresso');
-					$class = 'inactive';
-					break;
-
-			}
-
-			$status = '<span class="ee-status ' . $class . '">' . $status . '</span>';
-		} 
+		$status = '<span class="ee-status event-active-status-' . $active_status . '">' . EEH_Template::pretty_status($active_status, FALSE, 'sentence') . '</span>';
 		
 		if ( $echo ) {
 			echo $status;
@@ -746,6 +704,39 @@ class EE_Event extends EE_CPT_Base{
 		$query_params = array( $where, 'order_by' => array('TKT_start_date' => 'ASC' ) );
 		return EE_Registry::instance()->load_model('Ticket')->get_one($query_params);
 	}
+
+
+
+	
+	/**
+	 * This returns the ticket with the latest end time that is available for this event (across all datetimes attached to the event)
+	 * @return EE_Ticket
+	 */
+	public function get_ticket_with_latest_end_time() {
+		$where['Datetime.EVT_ID'] = $this->ID();
+		$query_params = array( $where, 'order_by' => array( 'TKT_end_date' => 'DESC' ) );
+		return EE_Registry::instance()->load_model('Ticket')->get_one($query_params);
+	}
+
+
+
+
+	/**
+	 * This returns whether there are any tickets on sale for this event.
+	 * @return bool true = YES tickets on sale.
+	 */
+	public function tickets_on_sale() {
+		$earliest_ticket = $this->get_ticket_with_earliest_start_time();
+		$latest_ticket = $this->get_ticket_with_latest_end_time();
+
+		//check on sale for these two tickets.
+		if ( $latest_ticket->is_on_sale() || $earliest_ticket->is_on_sale() )
+			return TRUE;
+		return FALSE;
+	}
+
+
+
 
 	/**
 	 * Gets the URL for viewing this event on the front-end. Overrides parent

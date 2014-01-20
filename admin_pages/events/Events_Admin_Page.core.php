@@ -68,6 +68,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			);
 		
 		$this->_event_model = EEM_Event::instance();
+
+		add_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object', array( $this, 'verify_event_edit' ) );
 	}
 
 	protected function _ajax_hooks() {
@@ -274,6 +276,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tour' => array(
 					'Event_Editor_Help_Tour'
 					),
+				'qtips' => array( 'EE_Event_Editor_Decaf_Tips' ),
 				'require_nonce' => FALSE
 			),
 			'edit' => array(
@@ -329,6 +332,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'help_tour' => array(
 					'Event_Edit_Help_Tour'
 				),
+				'qtips' => array( 'EE_Event_Editor_Decaf_Tips' ),
 				'require_nonce' => FALSE
 			),
 			'default_event_settings' => array(
@@ -529,6 +533,54 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
+	/**
+	 * Call this function to verify if an event is public and has tickets for sale.  If it does, then we need to show a warning (via EE_Error::add_error());
+	 *
+	 * @param  EE_Event    $event 	Event object
+	 * @access public
+	 * @return void
+	 */
+	public function verify_event_edit($event = NULL) {
+		if ( empty( $event ) )
+			$event = $this->_cpt_model_obj;
+
+		if ( empty ( $event ) )
+			return;
+
+
+		//first check if event is active.
+		if ( $event->is_expired() || $event->is_inactive() || $event->status() == EEM_Event::cancelled || $event->status() == EEM_Event::postponed )
+			return;
+
+		//made it here so it IS active... next check that any of the tickets are sold.
+		if ( $event->is_sold_out() || $event->is_sold_out(TRUE ) )
+			return;
+
+		//now we need to determine if the event has any tickets on sale.  If not then we dont' show the error
+		if ( ! $event->tickets_on_sale() )
+			return;
+
+		//made it here so show warning
+		EE_Error::add_attention( $this->_edit_event_warning() );
+	}
+
+
+
+
+	/**
+	 * This is the text used for when an event is being edited that is public and has tickets for sale.
+	 * When needed, hook this into a EE_Error::add_error() notice.
+	 *
+	 * @access protected
+	 * @return string
+	 */
+	protected function _edit_event_warning() {
+		return __('Please be advised that this event has been published and is open for registrations on your website. If you update any registration-related details (i.e. custom questions, messages, tickets, datetimes, etc.) while a registration is in process, the registration process could be interrupted and result in errors for the person registering and potentially incorrect registration or transaction data inside Event Espresso. We recommend editing events during a period of slow traffic, or even temporarily changing the status of an event to "Draft" until your edits are complete.', 'event_espresso');
+	}
+
+
+
+
 	protected function _set_list_table_views_default() {
 		$this->_views = array(
 			'all' => array(
@@ -575,7 +627,39 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'desc' => __('View Registrations for Event', 'event_espresso')
 			)
 		);
-		return apply_filters('FHEE_event_legend_items', $items);
+		$items  = apply_filters( 'FHEE_event_legend_items', $items );
+		$statuses = array( 
+			'active_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::active,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::active, FALSE, 'sentence' )
+			),
+			'upcoming_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::upcoming,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::upcoming, FALSE, 'sentence' )
+			),
+			'postponed_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::postponed,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::postponed, FALSE, 'sentence' )
+			),
+			'inactive_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::inactive,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::inactive, FALSE, 'sentence' )
+			),
+			'sold_out_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::sold_out,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::sold_out, FALSE, 'sentence' )
+			),
+			'expired_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::expired,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::expired, FALSE, 'sentence' )
+			),
+			'cancelled_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::cancelled,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::cancelled, FALSE, 'sentence' )
+			)
+		);
+		$statuses = apply_filters( 'FHEE__Events_Admin_Page__event_legend_items__statuses', $statuses );
+		return array_merge( $items, $statuses );
 	}
 
 
@@ -597,7 +681,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ( !empty( $id ) ) {
 			$post = get_post( $id );
 			$return .= '<a class="button button-small" onclick="prompt(\'Shortcode:\', jQuery(\'#shortcode\').val()); return false;" href="#"  tabindex="-1">' . __('Shortcode', 'event_espresso') . '</a> ';
-			$return .= '<input id="shortcode" type="hidden" value="[SINGLEEVENT single_event_id=\'' . $post->post_name . '\']"">';
+			$return .= '<input id="shortcode" type="hidden" value="[ESPRESSO_TICKET_SELECTOR event_id=\'' . $post->ID . '\']"">';
 		}
 		return $return;
 	}
@@ -613,7 +697,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return string html for generated table
 	 */
 	protected function _events_overview_list_table() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), __("View Event Archive Page", "event_espresso"), 'button' ) .
 		$this->_display_legend($this->_event_legend_items());
 		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
@@ -656,7 +740,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
-		$event_update_callbacks = apply_filters('FHEE_event_editor_update', array( array($this, '_default_venue_update' ), array( $this, '_default_tickets_update') ) );
+		$event_update_callbacks = apply_filters( 'FHEE_event_editor_update', array( array($this, '_default_venue_update' ), array( $this, '_default_tickets_update') ) );
 
 		$att_success = TRUE;
 
@@ -1011,7 +1095,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//handle DECAF venues
 		//we need to make sure that the venue_id gets updated in the form so that future autosaves will properly conntect that venue to the event.
-		if ( $do_venue_autosaves = apply_filters('FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
+		if ( $do_venue_autosaves = apply_filters( 'FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
 			$venue = $event->get_first_related('Venue');
 			$this->_template_args['data']['items']['venue-id'] = $venue->ID();
 		}
@@ -1071,9 +1155,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$publish_box_extra_args['approved_regs'] = $this->_cpt_model_obj->count_related('Registration', $approved_query_args);
 		$publish_box_extra_args['not_approved_regs'] = $this->_cpt_model_obj->count_related('Registration', $not_approved_query_args);
 		$publish_box_extra_args['pending_payment_regs'] = $this->_cpt_model_obj->count_related('Registration', $pending_payment_query_args);
-		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('FHEE_event_editor_email_attendees_class', 'misc-pub-section');
+		$publish_box_extra_args['misc_pub_section_class'] = apply_filters( 'FHEE_event_editor_email_attendees_class', 'misc-pub-section');
 		//$publish_box_extra_args['email_attendees_url'] = add_query_arg(array('event_admin_reports' => 'event_newsletter', 'event_id' => $this->_cpt_model_obj->id), 'admin.php?page=espresso_registrations');
-		$publish_box_extra_args['event_editor_overview_add'] = do_action('AHEE_cpt_model_obj_editor_overview_add', $this->_cpt_model_obj);
+		$publish_box_extra_args['event_editor_overview_add'] = do_action( 'AHEE_cpt_model_obj_editor_overview_add', $this->_cpt_model_obj );
 		// load template
 		EEH_Template::display_template( EVENTS_TEMPLATE_PATH . 'event_publish_box_extras.template.php', $publish_box_extra_args );
 	}
@@ -1138,7 +1222,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : NULL;
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		/**
 		 * 1. Start with retrieving Datetimes
@@ -1187,7 +1271,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['existing_datetime_ids'] = implode(',', $existing_datetime_ids);
 		$template_args['existing_ticket_ids'] = implode(',', $existing_ticket_ids);
 		$template_args['ticket_js_structure'] = $this->_get_ticket_row( EE_Registry::instance()->load_model('Ticket')->create_default_object(), TRUE );
-		$template = apply_filters('FHEE__Events_Admin_Page__ticket_metabox__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php' );
+		$template = apply_filters( 'FHEE__Events_Admin_Page__ticket_metabox__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php' );
 		EEH_Template::display_template($template, $template_args);
 	}
 
@@ -1247,7 +1331,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$template_args = array_merge( $template_args, $price_args );
-		$template = apply_filters('FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
+		$template = apply_filters( 'FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
 		return EEH_Template::display_template($template, $template_args, TRUE);
 	}
 
@@ -1269,7 +1353,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters( 'FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values );
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
 	}
@@ -1683,7 +1767,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		do_action('AHEE_event_permanently_deleted');
+		do_action( 'AHEE_event_permanently_deleted' );
 		return TRUE;
 	}
 

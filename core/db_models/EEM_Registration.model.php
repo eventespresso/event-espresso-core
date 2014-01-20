@@ -102,7 +102,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();
 //		require_once(EE_CLASSES . 'EE_Registration.class.php');
-		$this->_allowed_statuses=apply_filters('FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
+		$this->_allowed_statuses=apply_filters( 'FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
 
 		$this->_tables = array(
 			'Registration'=>new EE_Primary_Table('esp_registration','REG_ID')

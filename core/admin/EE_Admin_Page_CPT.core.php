@@ -246,8 +246,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		wp_enqueue_script('cpt-autosave');/**/ //todo re-enable when we start doing autosave again in 4.2
 
 		//filter _autosave_containers
-		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_setup_autosave_js_containers', $this->_autosave_containers, $this );
-		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_' . get_class($this) . '_setup_autosave_js_containers', $containers, $this );
+		$containers = apply_filters( 'FHEE__EE_Admin_Page_CPT_setup_autosave_js_containers', $this->_autosave_containers, $this );
+		$containers = apply_filters( 'FHEE__EE_Admin_Page_CPT_' . get_class($this) . '_setup_autosave_js_containers', $containers, $this );
 
 		wp_localize_script('event_editor_js', 'EE_AUTOSAVE_IDS', $containers ); //todo once we enable autosaves, this needs to be switched to localize with "cpt-autosave"
 
@@ -442,8 +442,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			$this->_template_args['success'] = TRUE;
 		}
 
-		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
-		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_' . get_class( $this ), $this );
+		do_action( 'AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
+		do_action( 'AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_' . get_class( $this ), $this );
 
 		//now let's return json
 		$this->_return_json();		
@@ -534,6 +534,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		require_once( EE_MODELS . $this->_cpt_model_names[$this->_req_action] . '.model.php' );
 		$model = call_user_func( array( $this->_cpt_model_names[$this->_req_action] , 'instance' ) );
 		$this->_cpt_model_obj = !empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
+
+		do_action( 'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object' );
 	}
 
 

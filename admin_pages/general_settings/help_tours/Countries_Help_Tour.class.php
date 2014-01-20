@@ -72,12 +72,12 @@ class Countries_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Countries Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the countries page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Countries Page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _country_selector_stop() {
-		return '<p>' . __('Add the country where your business is located.', 'event_espresso') . '</p>';
+		return '<p>' . __('Select the country where your business or organization is located. This affects the currency that is used in Event Espresso.', 'event_espresso') . '</p>';
 	}
 
 	protected function _country_details_stop() {
@@ -85,6 +85,6 @@ class Countries_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _country_states_settings_stop() {
-		return '<p>' . __('Used in certain areas of the plugin, here you can define what states/provinces will be displayed in case you do not do business in certain areas.', 'event_espresso') . '</p>';
+		return '<p>' . __('Used in certain areas of the plugin, here you can define what states / provinces will be displayed in case you do not do business in certain areas.', 'event_espresso') . '</p>';
 	}
 }

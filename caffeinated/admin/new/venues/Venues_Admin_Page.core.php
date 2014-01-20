@@ -632,7 +632,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$venue = $this->_venue_model->get_one( array( $get_one_where ) );
 
 		//notice we've applied a filter for venue metabox callbacks but we don't actually have any default venue metaboxes in use.  So this is just here for addons to more easily hook into venue saves.
-		$venue_update_callbacks = apply_filters('FHEE_venue_editor_update', array() );
+		$venue_update_callbacks = apply_filters( 'FHEE_venue_editor_update', array() );
 
 		$att_success = TRUE;
 
@@ -883,7 +883,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		do_action('AHEE_venue_deleted');
+		do_action( 'AHEE_venue_deleted' );
 		return TRUE;
 	}
 

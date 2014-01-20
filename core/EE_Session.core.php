@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
+do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
  *
  * Event Espresso
  *
@@ -95,7 +95,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function __construct() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		define( 'ESPRESSO_SESSION', TRUE );
 
@@ -121,7 +121,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		}
 
 		// filter hook allows outside functions/classes/plugins to change default empty cart
-		$extra_default_session_vars = apply_filters('FHEE_default_session_vars', array() );
+		$extra_default_session_vars = apply_filters( 'FHEE_default_session_vars', array() );
 		array_merge( $this->_default_session_vars, $extra_default_session_vars );
 
 		$this->_set_defaults();
@@ -184,7 +184,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 * @return	array
 	 */
 	public function get_session_data( $key = NULL ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		 if ( ! empty( $key ))  {
 			return  isset( $this->_session_data[ $key ] ) ? $this->_session_data[ $key ] : NULL;
 		}  else  {
@@ -204,7 +204,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	public function set_session_data( $data ) {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// nothing ??? bad data ??? go home!
@@ -242,7 +242,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function _espresso_session() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// first visit ?
 		if ( session_id() === '' ) {
 			// set initial site access time
@@ -315,7 +315,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *		@return TRUE on success, FALSE on fail
 	 */
 	public function update( $new_session = FALSE ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
 		if ( empty( $this->_session_data )) {
@@ -398,7 +398,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function _create_espresso_session( ) {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// use the update function for now with $new_session arg set to TRUE
@@ -417,7 +417,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function _save_session_to_db() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 //		echo printr( $this->_session_data, 'session_data' );
 //		if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) {
@@ -466,7 +466,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	private function _visitor_ip() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$visitor_ip = '0:0:0:0';
 
@@ -519,7 +519,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	public function _get_page_visit() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
 		
@@ -582,7 +582,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 		// if I need to explain the following lines of code, then you shouldn't be looking at this!
 		$user = wp_get_current_user();
 		$this->_wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
-		do_action('AHEE_log', __FILE__, __FUNCTION__, ' wp_user_id = ' . $this->_wp_user_id );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, ' wp_user_id = ' . $this->_wp_user_id );
 		return $this->_wp_user_id;
 	}
 
@@ -612,7 +612,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */
 	public function reset_data( $data_to_reset = FALSE, $show_all_notices = FALSE ) {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 
 		// nothing ??? go home!

@@ -1,5 +1,5 @@
 <div id="single-page-checkout" class="ui-widget">
-	<?php do_action('after_spco-attendee_information-hdr')?>
+	<?php do_action( 'after_spco-attendee_information-hdr' )?>
 	<div id="spco-attendee_information-dv" class="spco-step-dv">
 		
 		<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">

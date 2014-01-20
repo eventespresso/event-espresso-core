@@ -213,7 +213,7 @@ class EEH_Autoloader {
 	public static function load_admin_core( $folder, $className ) {
 
 		$classfile = $className . '.core.php';
-		$paths_to_try = apply_filters('FHEE__EEH_Autoloader__load_admin_core', array( EE_ADMIN_PAGES . $folder . DS, $className ) );
+		$paths_to_try = apply_filters( 'FHEE__EEH_Autoloader__load_admin_core', array( EE_ADMIN_PAGES . $folder . DS, $className ) );
 
 		foreach ( $paths_to_try as $path ) {
 			if ( is_readable( $path . $classfile )) {

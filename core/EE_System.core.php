@@ -98,13 +98,13 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	private function __construct() {
-		do_action('AHEE__EE_System__construct__begin',$this);
+		do_action( 'AHEE__EE_System__construct__begin',$this );
 
 		$this->_load_registry();
 		
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-		do_action('AHEE__EE_System__construct__autoloaders_available',$this);
+		do_action( 'AHEE__EE_System__construct__autoloaders_available',$this );
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		// setup autoloaders
@@ -165,8 +165,8 @@ final class EE_System {
 			$model_names[ $shortname ] = $classname;
 				
 		}
-		EE_Registry::instance()->models = apply_filters('FHEE__EE_System__parse_model_names', $model_names );		
-		EE_Registry::instance()->non_abstract_db_models = apply_filters('FHEE__EE_System__parse_implemented_model_names', $non_abstract_db_models );
+		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
+		EE_Registry::instance()->non_abstract_db_models = apply_filters( 'FHEE__EE_System__parse_implemented_model_names', $non_abstract_db_models );
 	}	
 
 
@@ -231,19 +231,19 @@ final class EE_System {
 		}
 		switch($request_type){
 			case EE_System::req_type_new_activation:
-				
-				do_action('AHEE__EE_System__manage_activation_process__new_activation');
+				 
+				do_action( 'AHEE__EE_System__manage_activation_process__new_activation' );
 				$this->_setup_initialize_db_if_no_migrations_required();	
 //				echo "done activation";die;
 				break;
 			case EE_System::req_type_reactivation:
-				do_action('AHEE__EE_System__manage_activation_process__reactivation');
+				do_action( 'AHEE__EE_System__manage_activation_process__reactivation' );
 					$this->initialize_db_if_no_migrations_required();
 //				echo "done reactivation";die;
 				break;
 			case EE_System::req_type_upgrade:
 //				echo "start upgrade";
-				do_action('AHEE__EE_System__manage_activation_process__upgrade');
+				do_action( 'AHEE__EE_System__manage_activation_process__upgrade' );
 				if( ! EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old()){
 					//so the database doesnt look old (ie, there are no migration scripts
 					//taht say they need to upgrade it)
@@ -254,7 +254,7 @@ final class EE_System {
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
-				do_action('AHEE__EE_System__manage_activation_process__downgrade');
+				do_action( 'AHEE__EE_System__manage_activation_process__downgrade' );
 				
 				break;
 			case EE_System::req_type_normal:
@@ -264,7 +264,7 @@ final class EE_System {
 		if( ! $request_type == EE_System::req_type_normal){
 			$this->update_list_of_installed_versions($espresso_db_update);
 		}
-		do_action('AHEE__EE_System__manage_activation_process__end');
+		do_action( 'AHEE__EE_System__manage_activation_process__end' );
 	}
 
 
@@ -322,8 +322,8 @@ final class EE_System {
 	 * if it needed correction
 	 */
 	private function fix_espresso_db_upgrade_option($espresso_db_update = null){
-		do_action('AHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin');
-		do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin',$espresso_db_update);
+		do_action( 'AHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin' );
+		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin',$espresso_db_update );
 		if( ! $espresso_db_update){
 			$espresso_db_update = get_option( 'espresso_db_update' );
 		}
@@ -361,8 +361,8 @@ final class EE_System {
 			
 		}
 		
-		do_action('AHEE__EE_System__manage_fix_espresso_db_upgrade_option__end');
-		do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__end',$espresso_db_update);
+		do_action( 'AHEE__EE_System__manage_fix_espresso_db_upgrade_option__end' );
+		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__end',$espresso_db_update );
 		return $espresso_db_update;
 	}
 
@@ -435,7 +435,7 @@ final class EE_System {
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
-		if ( apply_filters('FHEE_load_EE_Session', TRUE )) {
+		if ( apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
 			EE_Registry::instance()->load_core( 'Session' );
 		}
 	}
@@ -458,10 +458,10 @@ final class EE_System {
 	 */
 	public function wp_enqueue_scripts() {
 		// unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-		if ( apply_filters('FHEE_load_EE_System_scripts', TRUE )) {
+		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE ) ) {
 		
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-			if ( apply_filters('FHEE_load_jquery_validate', FALSE )) {
+			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
 				// load jQuery Validate script from CDN with local fallback
 				$jquery_validate_url = 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'; 
 				// is the URL accessible ?

@@ -635,10 +635,10 @@ jQuery(document).ready(function($) {
 
 				//TKT date fields
 				if( $(this).hasClass('edit-ticket-TKT_start_date' ) )
-					$(this).data('dateFieldContext', '#edit-ticketrow-' + newrownum);
+					$(this).data('dateFieldContext', '#display-ticketrow-' + newrownum);
 
 				if( $(this).hasClass('edit-ticket-TKT_end_date') )
-					$(this).data('dateFieldContext', '#edit-ticketrow-' + newrownum);
+					$(this).data('dateFieldContext', '#display-ticketrow-' + newrownum);
 			});
 
 			//textarea
@@ -1918,11 +1918,11 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime' :
-				tktHelper.cloneDateTime(data.datetimeRow).DateTimeEditToggle();
+				tktHelper.cloneDateTime(data.datetimeRow);
 				break;
 
 			case 'ticket' :
-				tktHelper.cloneTicket(data.ticketRow).TicketEditToggle();
+				tktHelper.cloneTicket(data.ticketRow);
 				break;
 		}
 		UNSAVED_DATA_MSG.inputChanged=1;

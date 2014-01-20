@@ -599,7 +599,7 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function wp_enqueue_scripts() {
 		// get some style
-		if ( apply_filters('FHEE_enable_default_espresso_css', FALSE )) {
+		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE ) ) {
 			// first check uploads folder
 			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css' )) {
 				wp_register_style( 'archive-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css', array( 'dashicons', 'espresso_default' ));
@@ -645,7 +645,7 @@ class EED_Events_Archive  extends EED_Module {
 	public static function template_settings_form() {
 		$EE = EE_Registry::instance();
 		$EE->CFG->template_settings->EED_Events_Archive = isset( $EE->CFG->template_settings->EED_Events_Archive ) ? $EE->CFG->template_settings->EED_Events_Archive : new EE_Events_Archive_Config();
-		$EE->CFG->template_settings->EED_Events_Archive = apply_filters('FHEE__Event_List__template_settings_form__event_list_config', $EE->CFG->template_settings->EED_Events_Archive );
+		$EE->CFG->template_settings->EED_Events_Archive = apply_filters( 'FHEE__Event_List__template_settings_form__event_list_config', $EE->CFG->template_settings->EED_Events_Archive );
 		EEH_Template::display_template( EVENTS_ARCHIVE_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $EE->CFG->template_settings->EED_Events_Archive );
 	}
 

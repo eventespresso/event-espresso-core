@@ -25,7 +25,7 @@ $event_name = '';
 
 	<div class="ee-attention">
 		<div class="extra-padding">
-			<?php echo apply_filters('FHEE__payment_overview_template__order_conf_desc',__("Full description of your purchases and registration information. Print it, download it, cherish it"))?><br/><br/>
+			<?php echo apply_filters( 'FHEE__payment_overview_template__order_conf_desc',__("Full description of your purchases and registration information. Print it, download it, cherish it") )?><br/><br/>
 			<a class="big-text" href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
 		</div>
 	</div>
@@ -149,10 +149,10 @@ $event_name = '';
 		if ( empty($payments)){
 			
 			if ( $transaction->total() ){
-				echo apply_filters('FHEE__payment_overview_template__no_payments_made',__("No payments have been made yet towards this registration.",'event_espresso'));
+				echo apply_filters( 'FHEE__payment_overview_template__no_payments_made',__("No payments have been made yet towards this registration.",'event_espresso') );
 				echo $gateway_content;
 			}else{
-				 echo apply_filters('FHEE__payment_overview_template__no_payment_required', __("No payment required",'event_espresso'));
+				 echo apply_filters( 'FHEE__payment_overview_template__no_payment_required', __("No payment required",'event_espresso') );
 			}
 			
 		} else {

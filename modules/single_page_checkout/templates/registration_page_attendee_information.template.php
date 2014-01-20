@@ -6,7 +6,7 @@
 	<a id="spco-edit-attendee_information-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="attendee_information"><?php _e('edit', 'event_espresso'); ?></a>
 </h2>
 <?php endif; ?>
-<?php do_action('after_spco-attendee_information-hdr')?>
+<?php do_action( 'after_spco-attendee_information-hdr' )?>
 <div id="spco-attendee_information-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
 	
 	<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">

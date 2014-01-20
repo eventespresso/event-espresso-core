@@ -11,11 +11,11 @@
 		<table class="add-new-ticket-table">
 			<thead>
 				<tr valign="top">
-					<td><?php _e('Ticket Name', 'event_espresso'); ?></td>
-					<td><?php _e('Goes On Sale', 'event_espresso'); ?></td>
-					<td><?php _e('Sell Until', 'event_espresso'); ?></td>
-					<td><?php _e('Price', 'event_espresso'); ?></td>
-					<td><?php _e('Qty', 'event_espresso'); ?></td>
+					<td><span class="ANT_TKT_name_label"><?php _e('Ticket Name', 'event_espresso'); ?></span></td>
+					<td><span class="ANT_TKT_goes_on_sale_label"><?php _e('Goes On Sale', 'event_espresso'); ?></span></td>
+					<td><span class="ANT_TKT_sell_until_label"><?php _e('Sell Until', 'event_espresso'); ?></span></td>
+					<td><span class="ANT_TKT_price_label"><?php _e('Price', 'event_espresso'); ?></span></td>
+					<td><span class="ANT_TKT_qty_label"><?php _e('Qty', 'event_espresso'); ?></span></td>
 					<td></td>
 				</tr>
 			</thead>

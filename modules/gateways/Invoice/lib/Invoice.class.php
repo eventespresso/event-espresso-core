@@ -118,7 +118,7 @@ class Invoice {
 		
 		$template_args['currency_symbol'] = $EE->CFG->currency->sign;
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
-		$template_args['shameless_plug'] = apply_filters('FHEE_Invoice__send_invoice__shameless_plug',true);
+		$template_args['shameless_plug'] = apply_filters( 'FHEE_Invoice__send_invoice__shameless_plug',true );
 		if(isset($_GET['receipt'])){
 			//receipt-specific stuff
 			$events_for_txn = EEM_Event::instance()->get_all(array(array('Registration.TXN_ID'=>$this->transaction->ID())));

@@ -81,7 +81,7 @@ class EE_Messages_Init extends EE_Base {
 		}
 
 		//let's allow hooking into the autoloader to add additional paths
-		$dir_ref = apply_filters('FHEE__EE_Messages_Init__autoload_messages__dir_ref', $dir_ref );
+		$dir_ref = apply_filters( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', $dir_ref );
 
 		//assemble a list of filenames
 		foreach ( $dir_ref as $dir => $types ) {

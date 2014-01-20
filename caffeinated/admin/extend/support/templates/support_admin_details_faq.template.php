@@ -1,16 +1,18 @@
 <div class="padding">
+<p>This page highlights frequently asked questions with Event Espresso.</p>
 	<dl id="faqs">
 		<dt>
-			<?php _e('Why do the events and registrations pages say "Not found"?', 'event_espresso'); ?>
+			<?php _e('<strong>Why do the events and registrations pages say "Not found"?</strong>', 'event_espresso'); ?>
 		</dt>
 		<dd>
-			<?php _e('Usually this means the WordPress Permalink rewrite rules need to be flushed. You can flush the rules by going to Settings>Permalinks', 'event_espresso'); ?>
+			<?php _e('Usually, this means the WordPress Permalink rewrite rules need to be flushed. You can flush the rules by going to Settings --> Permalinks. Then click on the Save Changes button.', 'event_espresso'); ?>
 		<br />	
 			<?php _e('Quick Link:', 'event_espresso'); ?>
 			<a href="<?php echo site_url('/wp-admin/options-permalink.php'); ?>"><?php _e('Permalinks Settings', 'event_espresso'); ?></a>
 		</dd>
+		<br />	
 		<dt>
-			<?php _e('How do I change the part of the URL on the events pages to something other than "events"?', 'event_espresso'); ?>
+			<?php _e('<strong>How do I change the part of the URL on the events pages to something other than "events"?</strong>', 'event_espresso'); ?>
 		</dt>
 		<dd>
 			<?php _e('You can change this by adding a code snippet to your theme\'s functions.php file or in a custom snippet plugin. The following code snippet example shows how to change the URL slug to be "workshops".', 'event_espresso'); ?>
@@ -26,17 +28,17 @@ function my_custom_event_slug( $slug, $post_type ) {
 }</pre>
 		</dd>
 		<dt>
-			<?php _e('How do I add the events page to my website\'s navigation menu?', 'event_espresso'); ?>
+			<?php _e('<strong>How do I add the events page to my website\'s navigation menu?</strong>', 'event_espresso'); ?>
 		</dt>
 		<dd>
-			<?php _e('You can add the events or venues page as items to the navigation menu by going to Appearance>Menus and check the boxes found under the <strong>Event Espresso Pages</strong> section. Then you click "Add to Menu", then "Save Menu"', 'event_espresso'); ?>
+			<?php _e('You can add the events or venues page as items to the navigation menu by going to Appearance --> Menus and check the boxes found under the <strong>Event Espresso Pages</strong> section. Then click the Add to Menu button and finally click on the Save Menu button.', 'event_espresso'); ?>
 		<br />	
 			<?php _e('Quick Link:', 'event_espresso'); ?>
 			<a href="<?php echo site_url('/wp-admin/nav-menus.php'); ?>"><?php _e('Menu Manager', 'event_espresso'); ?></a>
-		</dd>		
-		</dd>
+		</dd>	
+		<br />	
 		<dt>
-			<?php _e('I see the payments for tickets in the PayPal account, but they are not marked as paid in Event Espresso. How to fix?', 'event_espresso'); ?>
+			<?php _e('<strong>I see payments for tickets in my PayPal account, but they are not marked as paid in Event Espresso. How can I fix this issue?</strong>', 'event_espresso'); ?>
 		</dt>
 		<dd>
 			<p>

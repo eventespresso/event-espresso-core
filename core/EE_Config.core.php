@@ -125,7 +125,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	private function __construct() {
-		do_action('AHEE__EE_Config__construct__begin',$this);
+		do_action( 'AHEE__EE_Config__construct__begin',$this );
 		//set defaults
 		$this->core = new EE_Core_Config();
 		$this->organization = new EE_Organization_Config();
@@ -151,7 +151,7 @@ final class EE_Config {
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
 		// construct__end hook
-		do_action('AHEE__EE_Config__construct__end',$this);
+		do_action( 'AHEE__EE_Config__construct__end',$this );
 	}
 
 
@@ -207,7 +207,7 @@ final class EE_Config {
 		} else {
 			$CFG = get_option( 'espresso_config', array() );
 		}
-		$CFG = apply_filters('FHEE__Config__get_espresso_config__CFG', $CFG );
+		$CFG = apply_filters( 'FHEE__Config__get_espresso_config__CFG', $CFG );
 		return $CFG;
 	}
 
@@ -220,7 +220,7 @@ final class EE_Config {
 	 *  @return 	boolean success 
 	 */
 	public function update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
-		do_action('AHEE__EE_Config__update_espresso_config__begin',$this);
+		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
 		// compare existing settings with what's already saved'
 		$saved_config = $this->get_espresso_config();
 		$no_change = $saved_config == $this ? TRUE : FALSE;
@@ -237,7 +237,7 @@ final class EE_Config {
 		} else {
 			$saved = update_option( 'espresso_config', $this );
 		}
-		do_action('AHEE__EE_Config__update_espresso_config__end',$this,$no_change,$saved);
+		do_action( 'AHEE__EE_Config__update_espresso_config__end',$this,$no_change,$saved );
 		// if config remains the same or was updated successfully
 		if ( $no_change || $saved ) {
 			if ( $add_success ) {
@@ -263,7 +263,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public function update_post_shortcodes() {
-		do_action('AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes);
+		do_action( 'AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes );
 		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
 		// cycle thru post_shortcodes
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
@@ -342,14 +342,14 @@ final class EE_Config {
 			// grab list of installed widgets
 			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
 			// filter list of modules to register
-			$widgets_to_register = apply_filters('FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
+			$widgets_to_register = apply_filters( 'FHEE__EE_Config__register_widgets__widgets_to_register', $widgets_to_register );
 			// cycle thru widget folders
 			foreach ( $widgets_to_register as $widget_path ) {
 				// add to list of installed widget modules
 				EE_Config::register_ee_widget( $widget_path );
 			}
 			// filter list of installed modules
-			EE_Registry::instance()->widgets = apply_filters('FHEE__EE_Config__register_widgets__installed_widgets', EE_Registry::instance()->widgets );
+			EE_Registry::instance()->widgets = apply_filters( 'FHEE__EE_Config__register_widgets__installed_widgets', EE_Registry::instance()->widgets );
 		}
 	}
 
@@ -410,14 +410,14 @@ final class EE_Config {
 		// grab list of installed shortcodes
 		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$shortcodes_to_register = apply_filters('FHEE__EE_Config__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
+		$shortcodes_to_register = apply_filters( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', $shortcodes_to_register );
 		// cycle thru shortcode folders
 		foreach ( $shortcodes_to_register as $shortcode_path ) {
 			// add to list of installed shortcode modules
 			EE_Config::register_shortcode( $shortcode_path );
 		}
 		// filter list of installed modules
-		return apply_filters('FHEE__EE_Config___register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
+		return apply_filters( 'FHEE__EE_Config___register_shortcodes__installed_shortcodes', EE_Registry::instance()->shortcodes );
 	}
 
 
@@ -430,7 +430,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_shortcode( $shortcode_path = NULL ) {
-		do_action('AHEE__EE_Config__register_shortcode__begin',$shortcode_path);
+		do_action( 'AHEE__EE_Config__register_shortcode__begin',$shortcode_path );
 		$shortcode_ext = '.shortcode.php';
 		// make all separators match
 		$shortcode_path = rtrim( str_replace( '/\\', DS, $shortcode_path ), DS );
@@ -474,7 +474,7 @@ final class EE_Config {
 		// grab list of installed modules
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$modules_to_register = apply_filters('FHEE__EE_Config__register_modules__modules_to_register', $modules_to_register );
+		$modules_to_register = apply_filters( 'FHEE__EE_Config__register_modules__modules_to_register', $modules_to_register );
 		// loop through folders
 		foreach ( $modules_to_register as $module_path ) {
 			/**TEMPORARILY EXCLUDE gateways from modules for time being**/
@@ -484,7 +484,7 @@ final class EE_Config {
 			}
 		}
 		// filter list of installed modules
-		return apply_filters('FHEE__EE_Config___register_modules__installed_modules', EE_Registry::instance()->modules );
+		return apply_filters( 'FHEE__EE_Config___register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
 
 
@@ -497,7 +497,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_module( $module_path = NULL ) {
-		do_action('AHEE__EE_Config__register_module__begin',$module_path);
+		do_action( 'AHEE__EE_Config__register_module__begin',$module_path );
 		$module_ext = '.module.php';
 		// make all separators match
 		$module_path = rtrim( str_replace( '/\\', DS, $module_path ), DS );
@@ -598,7 +598,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
-		do_action('AHEE__EE_Config__register_route__begin',$route,$module,$method_name);
+		do_action( 'AHEE__EE_Config__register_route__begin',$route,$module,$method_name );
 		$module = str_replace( 'EED_', '', $module );
 		if ( ! isset( EE_Registry::instance()->modules[ $module ] )) {
 			$msg = sprintf( __( 'The module %s has not been registered.', 'event_espresso' ), $module );
@@ -630,8 +630,8 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_route( $route = NULL ) {
-		do_action('AHEE__EE_Config__get_route__begin',$route);
-		$route = apply_filters('FHEE__EE_Config__get_route',$route);
+		do_action( 'AHEE__EE_Config__get_route__begin',$route );
+		$route = apply_filters( 'FHEE__EE_Config__get_route',$route );
 		if ( isset( EE_Config::$_module_route_map[ $route ] )) {
 			return EE_Config::$_module_route_map[ $route ];
 		}
@@ -650,7 +650,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
-		do_action('AHEE__EE_Config__register_forward',$route,$status,$forward);
+		do_action( 'AHEE__EE_Config__register_forward',$route,$status,$forward );
 		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this forward has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -692,9 +692,9 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_forward( $route = NULL, $status = 0 ) {
-		do_action('AHEE__EE_Config__get_forward__begin',$route,$status);
+		do_action( 'AHEE__EE_Config__get_forward__begin',$route,$status );
 		if ( isset( EE_Config::$_module_forward_map[ $route ][ $status ] )) {
-			return apply_filters('FHEE__EE_Config__get_forward',EE_Config::$_module_forward_map[ $route ][ $status ],$route,$status);
+			return apply_filters( 'FHEE__EE_Config__get_forward',EE_Config::$_module_forward_map[ $route ][ $status ],$route,$status );
 		}
 		return NULL;
 	}
@@ -711,7 +711,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
-		do_action('AHEE__EE_Config__register_view__begin',$route,$status,$view);
+		do_action( 'AHEE__EE_Config__register_view__begin',$route,$status,$view );
 		if ( ! isset( EE_Config::$_module_route_map[ $route ] ) ||  empty( $route )) {
 			$msg = sprintf( __( 'The module route %s for this view has not been registered.', 'event_espresso' ), $route );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -738,9 +738,9 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function get_view( $route = NULL, $status = 0 ) {
-		do_action('AHEE__EE_Config__get_view__begin',$route,$status);
+		do_action( 'AHEE__EE_Config__get_view__begin',$route,$status );
 		if ( isset( EE_Config::$_module_view_map[ $route ][ $status ] )) {
-			return apply_filters('FHEE__EE_Config__get_view',EE_Config::$_module_view_map[ $route ][ $status ],$route,$status);
+			return apply_filters( 'FHEE__EE_Config__get_view',EE_Config::$_module_view_map[ $route ][ $status ],$route,$status );
 		}
 		return NULL;
 	}
@@ -755,7 +755,7 @@ final class EE_Config {
 	 *  @return 	array
 	 */
 	public function __sleep() {
-		return apply_filters('FHEE__EE_Config__sleep',array(
+		return apply_filters( 'FHEE__EE_Config__sleep',array(
 			'core',
 			'organization',
 			'currency',
@@ -765,7 +765,7 @@ final class EE_Config {
 			'map_settings',
 			'gateway',
 			'addons'
-		));
+		) );
 	}
 
 

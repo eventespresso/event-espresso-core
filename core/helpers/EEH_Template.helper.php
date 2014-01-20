@@ -255,4 +255,46 @@ class EEH_Template {
 
 
 
+
+	/**
+	 * This is a helper method to generate a status legend for a given status array.
+	 * Note this will only work if the incoming statuses have a key in the EEM_Status->localized_status() methods status_array.
+	 * 
+	 * @param  array $status_array  array of statuses that will make up the legend. In format:
+	 * array(
+	 * 	'status_item' => 'status_name'
+	 * )
+	 * @param  string $active_status This is used to indicate what the active status is IF that is to be highlighted in the legend.
+	 * @return string               html structure for status.
+	 */
+	public static function status_legend( $status_array, $active_status = '' ) {
+		if ( !is_array( $status_array ) )
+			throw new EE_Error( __('The EEH_Template::status_legend helper required the incoming status_array argument to be an array!', 'event_espresso') );
+
+		$setup_array = array();
+		foreach ( $status_array as $item => $status ) {
+			$setup_array[$item] = array(
+					'class' => 'ee-status-legend ee-status-legend-' . $status,
+					'desc' => EEH_Template::pretty_status( $status, FALSE, 'sentence' ),
+					'status' => $status
+				);
+		}
+
+		$content = '<div class="ee-list-table-legend-container">' . "\n";
+		$content .= '<h4>' . __('Status Legend', 'event_espresso') . '</h4>' . "\n";
+		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
+		foreach ( $setup_array as $item => $details ) {
+			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
+			$content .= '<dt id="ee-legend-item-' . $item . '"' . $active_class . '>' . "\n\t\t";
+			$content .= '<span class="' . $details['class'] . '""></span>' . "\n\t\t";
+			$content .= '<span class="ee-legend-description">' . $details['desc'] . '</span>' . "\n\t";
+			$content .= '</dt>' . "\n";
+		}
+		$content .= '</dl>' . "\n";
+		$content .= '</div>' . "\n";
+		return $content;
+	}
+
+
+
 } //end EEH_Template class

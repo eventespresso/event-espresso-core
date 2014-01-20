@@ -594,7 +594,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$event_id = is_object( $evtobj ) ? $evtobj->ID() : NULL;
 		$timezone = is_object( $evtobj ) ? $evtobj->timezone_string() : NULL;
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		/**
 		 * 1. Start with retrieving Datetimes
@@ -736,7 +736,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'datetime_ticket_checked' => in_array($displayrow, $dtt_tkts) ? ' checked="checked"' : '',
 			'ticket_selected' => in_array($displayrow, $dtt_tkts) ? ' ticket-selected' : '',
 			'TKT_name' => $default && empty( $ticket ) ? 'TKTNAME' : $ticket->get('TKT_name'),
-			'tkt_status_class' => $default ? '' : ' tkt-status-' . $ticket->ticket_status(),
+			'tkt_status_class' => $default && empty( $ticket ) ? '' : ' tkt-status-' . $ticket->ticket_status(),
 			);
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_dtt_tickets_list.template.php';
@@ -784,8 +784,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'ticket_price_rows' => '',
 			'TKT_base_price' => $default || ! $base_price instanceof EE_Price ? '' : $base_price->get_pretty('PRC_amount', 'localized_float'),
 			'TKT_base_price_ID' => $default || ! $base_price instanceof EE_Price ? 0 : $base_price->ID(),
-			'show_price_modifier' => count($prices) > 1 || ( $default && $count_price_mods > 1 ) ? '' : ' style="display:none;"',
-			'show_price_mod_button' => count($prices) > 1 || ( $default && $count_price_mods > 1 ) || ( !$default && $ticket->get('TKT_deleted') ) ? ' style="display:none;"' : '',
+			'show_price_modifier' => count($prices) > 1 || ( $default && $count_price_mods > 0 ) ? '' : ' style="display:none;"',
+			'show_price_mod_button' => count($prices) > 1 || ( $default && $count_price_mods > 0 ) || ( !$default && $ticket->get('TKT_deleted') ) ? ' style="display:none;"' : '',
 			'total_price_rows' => count($prices) > 1 ? count($prices) : 1,
 			'ticket_datetimes_list' => $default ? '<li class="hidden"></li>' : '',
 			'starting_ticket_datetime_rows' => $default || $default_dtt ? '' : implode(',', $tkt_dtts),

@@ -108,13 +108,13 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Edit Question', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the edit question page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Edit Question page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
 
 	protected function _qst_display_text_stop() {
-		return '<p>' . __('The question that is displayed to registrants who are signing up for events.', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the question that is displayed to registrants who are signing up for events.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_admin_label_stop() {
@@ -126,7 +126,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _qst_admin_only_stop() {
-		return '<p>' . __('Should this question be shown to only admins?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether this question should be shown only to the admins.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_type_stop() {
@@ -134,7 +134,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _qst_required_stop() {
-		return '<p>' . __('Should this question be required?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether this question should be required.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_required_text_stop() {

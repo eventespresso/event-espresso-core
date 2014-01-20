@@ -300,7 +300,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	*/
 	protected function _update_payment_settings() {	
 		EE_Registry::instance()->CFG->registration->show_pending_payment_options = isset( $this->_req_data['show_pending_payment_options'] ) ? $this->_req_data['show_pending_payment_options'] : FALSE;
-		EE_Registry::instance()->CFG = apply_filters('FHEE_payment_settings_save', EE_Registry::instance()->CFG );	
+		EE_Registry::instance()->CFG = apply_filters( 'FHEE_payment_settings_save', EE_Registry::instance()->CFG );	
 
 		
 		$what = __('Payment Settings','event_espresso');

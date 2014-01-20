@@ -272,9 +272,9 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	public function get_status_array() {
 		$statuses = $this->get_post_statuses();
 		//first the global filter
-		$statuses = apply_filters('FHEE_EEM_CPT_Base__get_status_array', $statuses );
+		$statuses = apply_filters( 'FHEE_EEM_CPT_Base__get_status_array', $statuses );
 		//now the class specific filter
-		$statuses = apply_filters('FHEE_EEM_' . get_class($this) . '__get_status_array', $statuses );
+		$statuses = apply_filters( 'FHEE_EEM_' . get_class($this) . '__get_status_array', $statuses );
 		return $statuses;
 	}
 

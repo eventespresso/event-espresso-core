@@ -126,7 +126,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 	}
 	function __construct() {
 		$this->_pretty_name = __("Organization Options/Config", "event_espresso");
-		$this->_org_options_we_know_how_to_migrate = apply_filters('FHEE__EE_DMS_4_1_0_org_options__org_options_we_know_how_to_migrate',$this->_org_options_we_know_how_to_migrate);
+		$this->_org_options_we_know_how_to_migrate = apply_filters( 'FHEE__EE_DMS_4_1_0_org_options__org_options_we_know_how_to_migrate',$this->_org_options_we_know_how_to_migrate );
 		parent::__construct();
 	}
 
@@ -227,7 +227,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'site_license_key': 
 			  $c->core->site_license_key = $value;break;
 		  default:
-			  do_action('AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value);
+			  do_action( 'AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value );
 		}
 	}
 	
