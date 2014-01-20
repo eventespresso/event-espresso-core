@@ -246,8 +246,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		wp_enqueue_script('cpt-autosave');/**/ //todo re-enable when we start doing autosave again in 4.2
 
 		//filter _autosave_containers
-		$containers = apply_filters( 'FHEE__EE_Admin_Page_CPT_setup_autosave_js_containers', $this->_autosave_containers, $this );
-		$containers = apply_filters( 'FHEE__EE_Admin_Page_CPT_' . get_class($this) . '_setup_autosave_js_containers', $containers, $this );
+		$containers = apply_filters( 'FHEE__EE_Admin_Page_CPT___load_autosave_scripts_styles__containers', $this->_autosave_containers, $this );
+		$containers = apply_filters( 'FHEE__EE_Admin_Page_CPT__' . get_class($this) . '___load_autosave_scripts_styles__containers', $containers, $this );
 
 		wp_localize_script('event_editor_js', 'EE_AUTOSAVE_IDS', $containers ); //todo once we enable autosaves, this needs to be switched to localize with "cpt-autosave"
 

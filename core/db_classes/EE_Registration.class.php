@@ -1048,7 +1048,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				$this->transaction()->is_completed() ? 1 : 0
 			);
 			$new_reg_code = implode( '-', $new_reg_code );
-			$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );	
+			$new_reg_code = apply_filters( 'FHEE__EE_Registration___generate_new_reg_code__new_reg_code', $new_reg_code, $this );	
 			$this->set_reg_code( $new_reg_code );
 			return TRUE;
 		}

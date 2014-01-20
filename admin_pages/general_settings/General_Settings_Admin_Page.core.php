@@ -316,7 +316,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : EE_Registry::instance()->CFG->core->thank_you_page_id;
 		EE_Registry::instance()->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : EE_Registry::instance()->CFG->core->cancel_page_id;
 
-		EE_Registry::instance()->CFG->core = apply_filters( 'FHEE_page_settings_save', EE_Registry::instance()->CFG->core, $this->_req_data );
+		EE_Registry::instance()->CFG->core = apply_filters( 'FHEE__General_Settings_Admin_Page___update_espresso_page_settings__CFG_core', EE_Registry::instance()->CFG->core, $this->_req_data );
 		
 		$what = 'Critical Pages & Shortcodes';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->core, __FILE__, __FUNCTION__, __LINE__ );
@@ -436,8 +436,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				)
 			);
 
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
 
 		//PUE verification stuff
 		$plugin_basename = plugin_basename(EE_PLUGINPATH);
@@ -475,7 +475,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		EE_Registry::instance()->CFG->currency = new EE_Currency_Config( EE_Registry::instance()->CFG->organization->CNT_ISO );
 
-		EE_Registry::instance()->CFG = apply_filters( 'FHEE_your_organization_settings_save', EE_Registry::instance()->CFG );	
+		EE_Registry::instance()->CFG = apply_filters( 'FHEE__General_Settings_Admin_Page___update_your_organization_settings__CFG', EE_Registry::instance()->CFG );	
 		
 		$what = 'Your Organization Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
@@ -521,7 +521,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->admin->affiliate_id = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : EE_Registry::instance()->CFG->admin->affiliate_id;
 		EE_Registry::instance()->CFG->admin->help_tour_activation = isset( $this->_req_data['help_tour_activation'] ) ? absint( $this->_req_data['help_tour_activation'] ) : EE_Registry::instance()->CFG->admin->help_tour_activation;
 		
-		EE_Registry::instance()->CFG->admin = apply_filters( 'FHEE_admin_option_settings_save', EE_Registry::instance()->CFG->admin );	
+		EE_Registry::instance()->CFG->admin = apply_filters( 'FHEE__General_Settings_Admin_Page___update_admin_option_settings__CFG_admin', EE_Registry::instance()->CFG->admin );	
 		
 		$what = 'Admin Options';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->admin, __FILE__, __FUNCTION__, __LINE__ );
@@ -565,8 +565,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			);
 //		printr( $this->_template_args['countries'], 'countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
 		$this->_template_args['country_details_settings'] = $this->display_country_settings();
 		$this->_template_args['country_states_settings'] = $this->display_country_states();
 
@@ -594,10 +594,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		// for ajax
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		remove_all_filters( 'FHEE_form_field_label_html' );
-		remove_all_filters( 'FHEE_form_field_input_html' );
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
+		remove_all_filters( 'FHEE__EEH_Form_Fields__label_html' );
+		remove_all_filters( 'FHEE__EEH_Form_Fields__input_html' );
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
 		$country = EEM_Country::instance()->get_one_by_ID( $CNT_ISO );
 		//printr( $country, '$country  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$country_input_types = array(
@@ -649,10 +649,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		}
 		// for ajax
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		remove_all_filters( 'FHEE_form_field_label_html' );
-		remove_all_filters( 'FHEE_form_field_input_html' );
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'state_form_field_label_wrap' ), 10, 2 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'state_form_field_input__wrap' ), 10, 2 );
+		remove_all_filters( 'FHEE__EEH_Form_Fields__label_html' );
+		remove_all_filters( 'FHEE__EEH_Form_Fields__input_html' );
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'state_form_field_label_wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'state_form_field_input__wrap' ), 10, 2 );
 		$states = FALSE;
 		$states = EEM_State::instance()->get_all_states_for_these_countries( array( $CNT_ISO => $CNT_ISO ));
 		
@@ -803,7 +803,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$cols_n_values['CNT_is_EU'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_is_EU'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_is_EU'] ) : FALSE;
 		$cols_n_values['CNT_active'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) : FALSE;
 		// allow filtering of country data
-		$cols_n_values = apply_filters( 'FHEE_general_settings_country_save', $cols_n_values );
+		$cols_n_values = apply_filters( 'FHEE__General_Settings_Admin_Page___update_country_settings__cols_n_values', $cols_n_values );
 		//printr( $cols_n_values, '$cols_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// where values
 		$where_cols_n_values = array( array( 'CNT_ISO' => $CNT_ISO ));
@@ -814,7 +814,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 //		echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		if ( isset( $this->_req_data['states'] ) && is_array( $this->_req_data['states'] ) && $success !== FALSE ) {
 			// allow filtering of states data
-			$states = apply_filters( 'FHEE_general_settings_states_save', $this->_req_data['states'] );
+			$states = apply_filters( 'FHEE__General_Settings_Admin_Page___update_country_settings__states', $this->_req_data['states'] );
 //			printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru state data ( looks like : states[75][STA_name] )
 			foreach( $states as $STA_ID => $state ) {

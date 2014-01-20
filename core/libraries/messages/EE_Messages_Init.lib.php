@@ -139,8 +139,8 @@ class EE_Messages_Init extends EE_Base {
 	 */
 	private function _do_filters() {
 		//EE_Admin filters
-		add_filter( 'FHEE_process_resend_registration_message', array( $this, 'process_resend' ), 10, 2 );
-		add_filter( 'FHEE_process_admin_payment_message', array( $this, 'process_admin_payment'), 10, 2 );/**/
+		add_filter( 'FHEE__EE_Admin_Page___process_resend_registration__success', array( $this, 'process_resend' ), 10, 2 );
+		add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', array( $this, 'process_admin_payment'), 10, 2 );/**/
 	}
 
 

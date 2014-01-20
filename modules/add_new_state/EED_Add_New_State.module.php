@@ -189,14 +189,14 @@ class EED_Add_New_State  extends EED_Module {
 				)
 			);
 			// add filters for reducing size of State Abbrv text input, and adding an "ADD" button, as well as a "cancel" button
-			add_filter( 'FHEE_additional_form_field_attributes', array( 'EED_Add_New_State', 'set_new_state_input_size' ));
-			add_filter( 'FHEE_form_field_input_html', array( 'EED_Add_New_State', 'add_new_state_submit_button' ), 1, 3 );
-			add_filter( 'FHEE_form_field_input_html', array( 'EED_Add_New_State', 'cancel_new_state' ), 2, 3 );
+			add_filter( 'FHEE__EEH_Form_Fields__additional_form_field_attributes', array( 'EED_Add_New_State', 'set_new_state_input_size' ));
+			add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Add_New_State', 'add_new_state_submit_button' ), 1, 3 );
+			add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Add_New_State', 'cancel_new_state' ), 2, 3 );
 			$output .= EEH_Form_Fields::generate_form_input( $new_state_abbrv );
 			// remove the filters from above so that they don't affect any other inputs
-			remove_filter( 'FHEE_additional_form_field_attributes', array( 'EED_Add_New_State', 'set_new_state_input_size' ));
-			remove_filter( 'FHEE_form_field_input_html', array( 'EED_Add_New_State', 'add_new_state_submit_button' ), 1, 3 );
-			remove_filter( 'FHEE_form_field_input_html', array( 'EED_Add_New_State', 'cancel_new_state' ), 2, 3 );
+			remove_filter( 'FHEE__EEH_Form_Fields__additional_form_field_attributes', array( 'EED_Add_New_State', 'set_new_state_input_size' ));
+			remove_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Add_New_State', 'add_new_state_submit_button' ), 1, 3 );
+			remove_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Add_New_State', 'cancel_new_state' ), 2, 3 );
 			$output .= '</div>';
 		}
 		return $input_html .$output;

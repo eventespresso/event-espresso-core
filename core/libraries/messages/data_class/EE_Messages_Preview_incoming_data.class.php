@@ -341,7 +341,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//HEY, if we have an evt_id then we want to make sure we use that for the preview (because a specific event template is being viewed);
 		$event_ids = isset( $_REQUEST['evt_id'] ) && !empty($_REQUEST['evt_id'] ) ? array( $_REQUEST['evt_id'] ) : array();
 
-		$limit = !empty( $event_ids ) ? NULL : apply_filters( 'FHEE_EE_Messages_Preview_incoming_data_get_some_events_limit', '0,1' );
+		$limit = !empty( $event_ids ) ? NULL : apply_filters( 'FHEE__EE_Messages_Preview_incoming_data___get_some_events__limit', '0,1' );
 
 		$where = !empty($event_ids) ? array('EVT_ID' => array( 'IN', $event_ids ) ) : array();
 
