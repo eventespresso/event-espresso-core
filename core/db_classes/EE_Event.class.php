@@ -654,50 +654,7 @@ class EE_Event extends EE_CPT_Base{
 	public function pretty_active_status( $echo = TRUE, $show_all = TRUE ) {
 		$status = '';
 		$active_status = $this->get_active_status();
-		if ( $active_status < 1 || $show_all ) {
-			switch ( $active_status ) {
-				case EE_Datetime::sold_out :
-					$status = __('Sold Out', 'event_espresso');
-					$class = 'sold-out';
-					break;
-				case EE_Datetime::expired :
-					$status = __('Expired', 'event_espresso');
-					$class = 'expired';
-					break;
-				case EE_Datetime::inactive :
-					$status = __('Inactive', 'event_espresso');
-					$class = 'inactive';
-					break;
-
-				case EE_Datetime::upcoming :
-					$status = __('Upcoming', 'event_espresso');
-					$class = 'upcoming';
-					break;
-
-				case EE_Datetime::active : 
-					$status = __('Active', 'event_espresso');
-					$class = 'active';
-					break;
-
-				case EE_Datetime::postponed :
-					$status = __('Postponed', 'event_espresso');
-					$class = 'postponed';
-					break;
-
-				case EE_Datetime::cancelled :
-					$status = __('Cancelled', 'event_espresso');
-					$class = 'cancelled';
-					break;
-
-				default :
-					$status = __('Inactive', 'event_espresso');
-					$class = 'inactive';
-					break;
-
-			}
-
-			$status = '<span class="ee-status ' . $class . '">' . $status . '</span>';
-		} 
+		$status = '<span class="ee-status event-active-status-' . $active_status . '">' . EEH_Template::pretty_status($active_status, FALSE, 'sentence') . '</span>';
 		
 		if ( $echo ) {
 			echo $status;

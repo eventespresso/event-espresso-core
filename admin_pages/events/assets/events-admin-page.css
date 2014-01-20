@@ -106,10 +106,40 @@
     text-align: left;
 }
 
-.ee-status.sold-out, .ee-status.cancelled, .ee-status.inactive{ background-color: #E44064; }
-.ee-status.expired { background-color: #A39D9C; }
-.ee-status.upcoming, .ee-status.postponed { background-color: #00B1CA; }
-.ee-status.active { background-color: #70CC50; }
+/** cancelled **/
+.event-active-status--3 {
+	background-color: #E44064;
+}
+
+/** sold out **/
+.event-active-status--2 {
+	background-color: #E44064;
+}
+
+/** expired **/
+.event-active-status--1 {
+	background-color: #A39D9C;
+}
+
+/** inactive **/
+.event-active-status-0 {
+	background-color: #E44064;
+}
+
+/** upcoming **/
+.event-active-status-1 {
+	background-color: #00B1CA;
+}
+
+/** active **/
+.event-active-status-2 {
+	background-color: #70CC50;
+}
+
+/** postponed **/
+.event-active-status-3 {
+	background-color: #00B1CA;
+}
 
 
 .inside .ee-status {
