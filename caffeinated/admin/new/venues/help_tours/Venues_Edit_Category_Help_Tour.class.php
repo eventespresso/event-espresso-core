@@ -71,13 +71,13 @@ class Venues_Edit_Category_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _stop_one() {
-		$content = '<h3>' . __('Edit Category', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the edit category page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Edit Venue Category', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the Edit Venue Category page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _category_name_stop() {
-		return '<p>' . __('Edit the name for your category.', 'event_espresso') . '</p>';
+		return '<p>' . __('Edit the name for your venue category.', 'event_espresso') . '</p>';
 	}
 
 	protected function _category_id_stop() {
