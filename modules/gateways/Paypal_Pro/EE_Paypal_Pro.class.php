@@ -775,7 +775,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	 */
 	public function espresso_display_payment_gateways() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		echo $this->_generate_payment_gateway_selection_button();
 		?>

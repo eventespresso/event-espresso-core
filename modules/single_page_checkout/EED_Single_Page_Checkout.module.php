@@ -525,7 +525,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public function registration_checkout( $from_admin = FALSE ) {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		//d($this->_cart);
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		EE_Registry::instance()->load_helper( 'Template' );
@@ -962,7 +962,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 * 	@return 	void (redirect)
 	 */
 	private function _process_attendee_information() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -1352,7 +1352,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 */
 	private function _process_payment_options() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$success_msg = FALSE;
 		$error_msg = FALSE;
@@ -1484,7 +1484,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 */
 	private function _process_finalize_registration() {
 		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		$success_msg = FALSE;
 		$error_msg = FALSE;

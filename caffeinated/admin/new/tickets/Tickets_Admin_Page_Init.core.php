@@ -36,7 +36,7 @@ class Tickets_Admin_Page_Init extends EE_Admin_Page_Init  {
 	 */
 	public function __construct() { 
 		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		define( 'TICKETS_PG_SLUG', 'tickets' );	
 		define( 'TICKETS_LABEL', __('Default Tickets', 'event_espresso'));		

@@ -618,7 +618,7 @@ final class EE_Admin {
 	 */
 	public function espresso_toolbar_items($admin_bar) {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$menu_class = 'espresso_menu_item_class';
 
 		//Top Level

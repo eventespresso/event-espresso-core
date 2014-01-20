@@ -504,7 +504,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function validateIpn() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		$this->ipnData=$_POST;
 		$response_post_data=$_POST + array('cmd'=>'_notify-validate');

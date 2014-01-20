@@ -5,7 +5,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 
 
 	protected function __construct(EEM_Gateways &$model) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		parent::__construct($model);
 	}
 
@@ -15,7 +15,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
 	public function process_gateway_selection() {	
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$msg = $this->_EEM_Gateways->display_name() . __( ' gateway selected.', 'event_espresso' );
 		EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );		
 	}
@@ -29,7 +29,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 * 		@return array
 	 */
 	public function set_billing_info_for_confirmation( $billing_info ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$confirm_data = array();
 		$confirm_data['gateway'] = $this->_EEM_Gateways->display_name();
 		return $confirm_data;
@@ -48,7 +48,7 @@ abstract class EE_Offline_Gateway extends EE_Gateway {
 	 * @return void
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		//check for an existing payment from this gateway
 		$payments = $this->_PAY->get_all(array(array('PAY_gateway'=>$this->gateway(),'TXN_ID'=>$transaction->ID())));
 		//if it already exists, short-circuit updating the transaction

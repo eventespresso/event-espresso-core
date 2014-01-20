@@ -711,7 +711,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _verify_routes() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		if ( !$this->_current_page && !defined( 'DOING_AJAX')) return FALSE;
 
@@ -1201,7 +1201,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return 		void
 	*/
 	private function _check_user_access() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if (( ! function_exists( 'is_admin' ) or ! current_user_can( 'manage_options' )) && ! defined( 'DOING_AJAX')) {
 			wp_redirect( home_url('/') . 'wp-admin/' );
 		}
@@ -1703,7 +1703,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return array
 	*/
 	protected function _set_list_table_view() {		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 
 		// looking at active items or dumpster diving ?
@@ -1738,7 +1738,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	public function get_list_table_view_RLs() {
 	
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$query_args = array();
 
 		if ( empty( $this->_views )) {
@@ -1771,7 +1771,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/
 	protected function _entries_per_page_dropdown( $max_entries = FALSE ) {
 		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$values = array( 10, 25, 50, 100 );
 		$per_page = ( ! empty( $this->_req_data['per_page'] )) ? absint( $this->_req_data['per_page'] ) : 10;
 		
@@ -1837,7 +1837,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	*/
 	private function _add_registered_meta_boxes() {	
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//we only add meta boxes if the page_route calls for it
 		if ( is_array($this->_route_config) && isset( $this->_route_config['metaboxes'] ) && is_array($this->_route_config['metaboxes']) ) {
@@ -2202,7 +2202,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return html           admin_page
 	 */
 	private function _display_admin_page($sidebar = false) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//custom remove metaboxes hook to add or remove any metaboxes to/from Admin pages.
 		do_action('AHEE_metaboxes');
@@ -2420,7 +2420,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/		
 	public function admin_page_wrapper() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');	
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );	
 
 		$this->_nav_tabs = $this->_get_main_nav_tabs();
 
@@ -2473,7 +2473,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*		@return void
 	*/		
 	private function _sort_nav_tabs( $a, $b ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ($a['order'] == $b['order']) {
 	        return 0;
 	    }

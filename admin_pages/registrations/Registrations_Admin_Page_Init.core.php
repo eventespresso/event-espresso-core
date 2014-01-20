@@ -34,7 +34,7 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_CPT_Init  {
 	 * 		@return void
 	 */
 	public function __construct() { 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		define( 'REG_PG_SLUG', 'espresso_registrations' );	
 		define( 'REG_PG_NAME', ucwords( str_replace( '_', '', REG_PG_SLUG )));	

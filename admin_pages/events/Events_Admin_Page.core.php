@@ -697,7 +697,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return string html for generated table
 	 */
 	protected function _events_overview_list_table() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_template_args['after_list_table'] = EEH_Template::get_button_or_link( get_post_type_archive_link('espresso_events'), __("View Event Archive Page", "event_espresso"), 'button' ) .
 		$this->_display_legend($this->_event_legend_items());
 		$this->_admin_page_title .= $this->get_action_link_or_button('create_new', 'add', array(), 'add-new-h2');
@@ -1222,7 +1222,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		$event_id = is_object( $this->_cpt_model_obj ) ? $this->_cpt_model_obj->ID() : NULL;
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		/**
 		 * 1. Start with retrieving Datetimes

@@ -557,7 +557,7 @@ class EE_Error extends Exception {
 	* 	@return 		array
 	*/
 	public static function get_notices( $format_output = TRUE, $save_to_transient = FALSE, $remove_empty = TRUE ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$success_messages = '';
 		$attention_messages = '';
@@ -733,7 +733,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 	//echo '<h4>$line : ' . $line . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$error_code = '';
 		$code_bits = array( 'file' => $file, 'func' => $func, 'line' => $line );

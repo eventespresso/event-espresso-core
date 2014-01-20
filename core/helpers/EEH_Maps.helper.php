@@ -118,7 +118,7 @@ class EEH_Maps {
 	 * @return string (link to map!)
 	 */
 	public static function google_map_link($atts) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		extract($atts);
 
 		$address = "{$address}";

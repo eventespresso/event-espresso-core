@@ -36,7 +36,7 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init  {
 	 */
 	public function __construct() { 
 		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		define( 'PRICING_PG_SLUG', 'pricing' );	
 		define( 'PRICING_LABEL', __('Pricing', 'event_espresso'));	

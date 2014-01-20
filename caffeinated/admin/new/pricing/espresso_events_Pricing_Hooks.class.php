@@ -594,7 +594,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$event_id = is_object( $evtobj ) ? $evtobj->ID() : NULL;
 		$timezone = is_object( $evtobj ) ? $evtobj->timezone_string() : NULL;
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		/**
 		 * 1. Start with retrieving Datetimes

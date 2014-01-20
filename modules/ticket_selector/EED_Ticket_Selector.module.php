@@ -108,7 +108,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return 	string	
 	*/
 	public static function display_ticket_selector( $event = NULL ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');	
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );	
 
 //		d( $event );
 		if ( $event instanceof EE_Event ) {
@@ -234,7 +234,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 		//d( EE_Registry::instance()->SSN );
 		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// do we have an event id?
 		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' )) {
 		
@@ -441,7 +441,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return		array  or FALSE
 	*/
 	private static function _validate_post_data() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		// start with an empty array()
 		$valid_data = array();
@@ -573,7 +573,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/
 	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1 ) {
 	
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// get the number of spaces left for this event
 		$available_spaces = $ticket->remaining();
 		// compare availalbe spaces against the number of tickets being purchased

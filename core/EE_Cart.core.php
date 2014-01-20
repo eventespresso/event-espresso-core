@@ -98,7 +98,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */	
   	private function __construct( EE_Line_Item $grand_total = NULL ) {
  
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		if ( ! defined( 'ESPRESSO_CART' )) {
 			define( 'ESPRESSO_CART', TRUE );	
@@ -444,7 +444,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 */	
 	public function delete_items( $line_item_ids = FALSE ) {
 		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		// check if only a single line_item_id was passed
 		if ( ! empty( $line_item_ids ) && ! is_array( $line_item_ids )) {
@@ -479,7 +479,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );/**
 	 *	@return void
 	 */	
 	public function empty_cart() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );		
 		$this->_grand_total = $this->_create_grand_total();
 		$this->save_cart( TRUE );	
 	}		

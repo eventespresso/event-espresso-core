@@ -319,7 +319,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	public function espresso_display_payment_gateways() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		global $css_class;
 

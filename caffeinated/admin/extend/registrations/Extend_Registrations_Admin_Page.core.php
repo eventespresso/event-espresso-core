@@ -217,7 +217,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	*/
 	protected function _registration_reports() {
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	
 		$page_args = array();
 		

@@ -109,7 +109,7 @@ class EED_Ical  extends EED_Module {
 	 */
 	public static function prepare( $attendee_id ) {
 		global $wpdb;
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$sql = "SELECT ea.event_id, ed.start_date, ed.end_date, ed.event_name, ed.event_desc, ea.event_time, ea.end_time FROM " . EVENTS_ATTENDEE_TABLE . " ea";
 		$sql .= " JOIN " . EVENTS_DETAIL_TABLE . " ed ON ea.event_id = ed.id";
 		$sql .= " WHERE ea.id = '" . $attendee_id . "'";
