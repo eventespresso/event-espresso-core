@@ -528,14 +528,15 @@ class EE_Event extends EE_CPT_Base{
 		//next let's get all datetimes and loop through them 
 		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' )));
 		foreach ( $datetimes as $datetime ) {
-			$dtt_spaces_remaining = (int)$datetime->spaces_remaining(TRUE);
+			$dtt_spaces_remaining = $datetime->spaces_remaining(TRUE);
 			// if datetime has unlimited reg limit then the event can never be sold out
 			if ( $dtt_spaces_remaining === INF ) {
-				return;
+				return FALSE;
 			} else {
 				$spaces_remaining = max( $dtt_spaces_remaining, $spaces_remaining );
 			}			
 		}
+
 		if ( $spaces_remaining === 0 ) {
 			$this->set_status( EEM_Event::sold_out );
 			$sold_out = TRUE;
@@ -608,6 +609,7 @@ class EE_Event extends EE_CPT_Base{
 		foreach ( $dtts as $dtt ) {
 			$status_array[] = $dtt->get_active_status();
 		}
+
 		//now we can conditionally determine status
 		if ( $this->_status == 'publish' ) {
 			
