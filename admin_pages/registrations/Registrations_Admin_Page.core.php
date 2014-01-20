@@ -1388,7 +1388,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$success = TRUE;
 		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
 		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
-		$qstns = apply_filters('FHEE_reg_admin_attendee_registration_form', $qstns);	
+		$qstns = apply_filters( 'FHEE_reg_admin_attendee_registration_form', $qstns );	
 		$success = $this->_save_attendee_registration_form( $REG_ID, $qstns );
 		$what = __('Registration Form', 'event_espresso');
 		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
@@ -2337,7 +2337,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 			$success = $attendee->save();
 
-			$attendee_update_callbacks = apply_filters('FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update', array() );
+			$attendee_update_callbacks = apply_filters( 'FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update', array() );
 			foreach ( $attendee_update_callbacks as $a_callback ) {
 				if ( FALSE === call_user_func_array( $a_callback, array($attendee, $this->_req_data ) ) ) {
 					throw new EE_Error( sprintf( __('The %s callback given for the "FHEE__Registrations_Admin_Page__insert_update_cpt_item__attendee_update" filter is not a valid callback.  Please check the spelling.', 'event_espresso'), $a_callback ) );

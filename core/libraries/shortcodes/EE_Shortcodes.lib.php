@@ -141,10 +141,10 @@ abstract class EE_Shortcodes extends EE_Base {
 			return false; //get out, this parser doesn't handle the incoming shortcode.
 		$this->_data = $data;
 		$this->_extra_data = $extra_data;
-		$parsed = apply_filters('FHEE__' . get_class($this) . '__parser_after', $this->_parser($shortcode), $shortcode, $data, $extra_data );
+		$parsed = apply_filters( 'FHEE__' . get_class($this) . '__parser_after', $this->_parser($shortcode), $shortcode, $data, $extra_data );
 
 		//note the below filter applies to ALL shortcode parsers... be careful!
-		$parsed = apply_filters('FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data );
+		$parsed = apply_filters( 'FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data );
 		return $parsed;
 	}
 
@@ -160,10 +160,10 @@ abstract class EE_Shortcodes extends EE_Base {
 	 * @return array array of shortcodes => description pairs
 	 */
 	public function get_shortcodes() {
-		$this->_shortcodes = apply_filters('FHEE__' . get_class($this) . '__shortcodes', $this->_shortcodes, $this );
+		$this->_shortcodes = apply_filters( 'FHEE__' . get_class($this) . '__shortcodes', $this->_shortcodes, $this );
 
 		//note the below filter applies to ALL shortcode parsers... be careful!
-		$this->_shortcodes = apply_filters('FHEE__EE_Shortcodes__shortcodes', $this->_shortcodes, $this );
+		$this->_shortcodes = apply_filters( 'FHEE__EE_Shortcodes__shortcodes', $this->_shortcodes, $this );
 		
 		return $this->_shortcodes;
 	}

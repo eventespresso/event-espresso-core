@@ -141,7 +141,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( $DTT_ID ) {
 			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
 		}
-		$status_ids_array = apply_filters('FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
+		$status_ids_array = apply_filters( 'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
 
 		$query_params[0]['STS_ID']= array('IN', $status_ids_array );
 		return EEM_Registration::instance()->count($query_params);

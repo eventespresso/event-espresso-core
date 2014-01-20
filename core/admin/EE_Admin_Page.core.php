@@ -512,8 +512,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_extend_page_config_for_cpt();
 
 		//filter routes and page_config so addons can add their stuff. Filtering done per class
-		$this->_page_routes = apply_filters('FHEE__' . get_class($this) . '__page_setup__page_routes', $this->_page_routes, $this );
-		$this->_page_config = apply_filters('FHEE__' . get_class($this) . '__page_setup__page_config', $this->_page_config, $this );
+		$this->_page_routes = apply_filters( 'FHEE__' . get_class($this) . '__page_setup__page_routes', $this->_page_routes, $this );
+		$this->_page_config = apply_filters( 'FHEE__' . get_class($this) . '__page_setup__page_config', $this->_page_config, $this );
 
 		//if AHEE__EE_Admin_Page__route_admin_request_$this->_current_view method is present then we call it hooked into the AHEE__EE_Admin_Page__route_admin_request action
 		if ( method_exists( $this, 'AHEE__EE_Admin_Page__route_admin_request_' . $this->_current_view ) ) {
@@ -553,7 +553,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	private function _do_other_page_hooks() {
-		$registered_pages = apply_filters('FHEE_do_other_page_hooks_' . $this->page_slug, array() );
+		$registered_pages = apply_filters( 'FHEE_do_other_page_hooks_' . $this->page_slug, array() );
 
 		foreach ( $registered_pages as $page ) {
 
@@ -953,7 +953,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 				if ( !method_exists($this, $config['help_sidebar'] ) )
 					throw new EE_Error( sprintf( __('The _page_config array has a callback set for the "help_sidebar" option.  However the callback given (%s) is not a valid callback.  Doublecheck the spelling and make sure this method exists for the class %s', 'event_espresso'), $config['help_sidebar'], get_class($this) ) );
 
-				$content = apply_filters('FHEE__' . get_class($this) . '__add_help_tabs__help_sidebar', call_user_func( array( $this, $config['help_sidebar'] ) ) );
+				$content = apply_filters( 'FHEE__' . get_class($this) . '__add_help_tabs__help_sidebar', call_user_func( array( $this, $config['help_sidebar'] ) ) );
 
 				$content .= $tour_buttons; //add help tour buttons.
 
@@ -1547,7 +1547,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//localize script for ajax lazy loading
-		$lazy_loader_container_ids = apply_filters('FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers', array('espresso_news_post_box_content') );
+		$lazy_loader_container_ids = apply_filters( 'FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers', array('espresso_news_post_box_content') );
 		wp_localize_script( 'ee_admin_js', 'eeLazyLoadingContainers', $lazy_loader_container_ids);
 
 
@@ -1679,9 +1679,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//let's provide the ability to filter the views per PAGE AND ROUTE, per PAGE, and globally
-		$this->_views = apply_filters('FHEE_list_table_views_' . $this->page_slug . '_' . $this->_req_action, $this->_views );
-		$this->_views = apply_filters('FHEE_list_table_views_' . $this->page_slug, $this->_views );
-		$this->_views = apply_filters('FHEE_list_table_views', $this->_views );
+		$this->_views = apply_filters( 'FHEE_list_table_views_' . $this->page_slug . '_' . $this->_req_action, $this->_views );
+		$this->_views = apply_filters( 'FHEE_list_table_views_' . $this->page_slug, $this->_views );
+		$this->_views = apply_filters( 'FHEE_list_table_views', $this->_views );
 		
 		$this->_set_list_table_view();
 		$this->_set_list_table_object();
@@ -1957,7 +1957,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	private function _espresso_sponsors_post_box() {
 
-		$show_sponsors = apply_filters('FHEE_show_sponsors_meta_box', TRUE );
+		$show_sponsors = apply_filters( 'FHEE_show_sponsors_meta_box', TRUE );
 		if ( $show_sponsors )
 			add_meta_box('espresso_sponsors_post_box', __('Event Espresso Highlights', 'event_espresso'), array( $this, 'espresso_sponsors_post_box'), $this->_wp_page_slug, 'side');
 	}
@@ -2427,8 +2427,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['nav_tabs'] = $this->_nav_tabs;
 		$this->_template_args['admin_page_title'] = $this->_admin_page_title;
 
-		$this->_template_args['before_admin_page_content'] = apply_filters('FHEE_before_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['before_admin_page_content'] ) ? $this->_template_args['before_admin_page_content'] : '');
-		$this->_template_args['after_admin_page_content'] = apply_filters('FHEE_after_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['after_admin_page_content'] ) ? $this->_template_args['after_admin_page_content'] : '');
+		$this->_template_args['before_admin_page_content'] = apply_filters( 'FHEE_before_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['before_admin_page_content'] ) ? $this->_template_args['before_admin_page_content'] : '');
+		$this->_template_args['after_admin_page_content'] = apply_filters( 'FHEE_after_admin_page_content' . $this->_current_page . $this->_current_view, isset( $this->_template_args['after_admin_page_content'] ) ? $this->_template_args['after_admin_page_content'] : '');
 
 		$this->_template_args['after_admin_page_content'] .= $this->_set_help_popup_content();
 
@@ -2644,7 +2644,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$classname = get_class($this);
 		do_action( 'AHEE_redirect_' . $classname . $this->_req_action, $query_args );
 
-		$redirect_url = apply_filters('FHEE_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args ); 
+		$redirect_url = apply_filters( 'FHEE_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args ); 
 
 
 		// check if we're doing ajax.  If we are then lets just return the results and js can handle how it wants.
@@ -2781,7 +2781,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 						return;
 					break;
 				default:
-					$value = apply_filters('FHEE_set-screen-option', false, $option, $value);
+					$value = apply_filters( 'FHEE_set-screen-option', false, $option, $value );
 					if ( false === $value )
 						return;
 					break;
@@ -3041,7 +3041,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_resend_registration() {
-		$success = apply_filters('FHEE_process_resend_registration_message', FALSE, $this->_req_data);
+		$success = apply_filters( 'FHEE_process_resend_registration_message', FALSE, $this->_req_data );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}
@@ -3054,7 +3054,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return bool success/fail
 	 */
 	protected function _process_payment_notification( EE_Payment $payment ) {
-		$success = apply_filters('FHEE_process_admin_payment_message', FALSE, $payment );
+		$success = apply_filters( 'FHEE_process_admin_payment_message', FALSE, $payment );
 		$this->_template_args['success'] = $success;
 		return $success;
 	}

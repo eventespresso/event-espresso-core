@@ -244,10 +244,10 @@ abstract class EE_Messages_Base extends EE_Base {
 	 * @return array   an array of valid shortcodes.
 	 */
 	public function get_valid_shortcodes() {
-		$valid_shortcodes = apply_filters('FHEE__' . get_class($this) . '__get_valid_shortcodes', $this->_valid_shortcodes, $this );
+		$valid_shortcodes = apply_filters( 'FHEE__' . get_class($this) . '__get_valid_shortcodes', $this->_valid_shortcodes, $this );
 
 		//The below filter applies to ALL messengers and message types so use with care!
-		$valid_shortcodes = apply_filters('FHEE__EE_Messages_Base__get_valid_shortcodes', $valid_shortcodes, $this );
+		$valid_shortcodes = apply_filters( 'FHEE__EE_Messages_Base__get_valid_shortcodes', $valid_shortcodes, $this );
 		return $valid_shortcodes;
 	}
 
@@ -273,9 +273,9 @@ abstract class EE_Messages_Base extends EE_Base {
 	 * @return array
 	 */
 	public function get_default_field_content() {
-		$default = apply_filters('FHEE__' . get_class($this) . '__get_default_field_content', $this->_default_field_content, $this );
+		$default = apply_filters( 'FHEE__' . get_class($this) . '__get_default_field_content', $this->_default_field_content, $this );
 		//note the below filter will apply to all messengers AND message types.  Use with care.
-		$default = apply_filters('FHEE__EE_Messages_Base__get_default_field_content', $default, $this );
+		$default = apply_filters( 'FHEE__EE_Messages_Base__get_default_field_content', $default, $this );
 
 		return $default;
 	}

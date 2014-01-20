@@ -429,7 +429,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	public function get_columns() {
 		//var_dump($this->screen);
-		$columns = apply_filters('FHEE_manage_'.$this->screen->id.'_columns', $this->_columns);
+		$columns = apply_filters( 'FHEE_manage_'.$this->screen->id.'_columns', $this->_columns );
 		return $this->_columns;
 	}
 

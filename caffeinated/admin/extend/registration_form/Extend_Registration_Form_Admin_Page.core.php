@@ -754,7 +754,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		EE_Registry::instance()->CFG->registration->recaptcha_theme = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
 		EE_Registry::instance()->CFG->registration->recaptcha_language = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
 		
-		EE_Registry::instance()->CFG->registration = apply_filters('FHEE_reg_form_settings_save', EE_Registry::instance()->CFG->registration);	
+		EE_Registry::instance()->CFG->registration = apply_filters( 'FHEE_reg_form_settings_save', EE_Registry::instance()->CFG->registration );	
 		
 		$what = 'Registration Options';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );

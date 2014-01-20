@@ -170,7 +170,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} 
 		
 		// finally, filter the array for good luck
-		self::$_reg_steps = apply_filters('FHEE__Single_Page_Checkout__setup_reg_steps_array__reg_steps', self::$_reg_steps );
+		self::$_reg_steps = apply_filters( 'FHEE__Single_Page_Checkout__setup_reg_steps_array__reg_steps', self::$_reg_steps );
 
 	}
 
@@ -694,10 +694,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// sold_out_events
 		$template_args['sold_out_events'] = implode( $sold_out_events );
-		$template_args['sold_out_events_msg'] = apply_filters('FHEE__Single_Page_Checkout__registration_checkout__sold_out_events_msg', __('It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.', 'event_espresso'));
+		$template_args['sold_out_events_msg'] = apply_filters( 'FHEE__Single_Page_Checkout__registration_checkout__sold_out_events_msg', __('It appears that the event you were about to make a payment for has sold out since you first registered. If you have already made a partial payment towards this event, please contact the event administrator for a refund.', 'event_espresso') );
 		// events_requiring_pre_approval
 		$template_args['events_requiring_pre_approval'] = implode( $events_requiring_pre_approval );
-		$template_args['events_requiring_pre_approval_msg'] = apply_filters('FHEE__Single_Page_Checkout__registration_checkout__sold_out_events_msg', __('The following events do not require payment at this time and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso'));		
+		$template_args['events_requiring_pre_approval_msg'] = apply_filters( 'FHEE__Single_Page_Checkout__registration_checkout__sold_out_events_msg', __('The following events do not require payment at this time and will not be billed during this transaction. Billing will only occur after the attendee has been approved by the event organizer. You will be notified when your registration has been processed. If this is a free event, then no billing will occur.', 'event_espresso') );		
 
 		//  GOT COUPONS ?
 		$template_args['events_that_use_coupon_codes'] = '';
@@ -848,7 +848,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'reg_steps' => self::$_reg_steps,
 			'registration_steps' => $registration_steps,
 			'revisit' => $this->_revisit,
-			'empty_msg' => apply_filters('FHEE__Single_Page_Checkout__registration_checkout__empty_msg', __( 'You need to select at least one event before you can proceed with the registration process.', 'event_espresso' ))
+			'empty_msg' => apply_filters( 'FHEE__Single_Page_Checkout__registration_checkout__empty_msg', __( 'You need to select at least one event before you can proceed with the registration process.', 'event_espresso' ) )
 		);
 //		d( $wrapper_args );
 		EE_Registry::instance()->REQ->add_output( EEH_Template::display_template( $this->_templates['registration_page_wrapper'], $wrapper_args, TRUE ));
@@ -970,7 +970,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		$valid_data = array();
 		
 		if ( EE_Registry::instance()->REQ->is_set( 'qstn' )) {
-			$valid_data = apply_filters('FHEE__EE_Single_Page_Checkout__process_attendee_information__REQ', EE_Registry::instance()->REQ->get( 'qstn' ));			
+			$valid_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__REQ', EE_Registry::instance()->REQ->get( 'qstn' ) );			
 			// loop through post data and sanitize all elements
 			array_walk_recursive( $valid_data, array(  EE_Registry::instance()->REQ, 'sanitize_text_field_for_array_walk' ));
 		}
@@ -1018,7 +1018,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
 									if ( isset( $valid_data[ $line_item_id ] )) {
 										// filter form input data for this registration
-										$valid_data[ $line_item_id ] = apply_filters('FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $line_item_id ] );
+										$valid_data[ $line_item_id ] = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $line_item_id ] );
 //									printr( $valid_data[ $line_item_id ], '$valid_data[ $line_item_id ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 										// now loop through our array of valid post data && process attendee reg forms
 										foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {											
@@ -1133,7 +1133,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											$existing_attendee = NULL;
 										}
 //										printr( $existing_attendee, '$existing_attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-										$existing_attendee = apply_filters('FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration );
+										$existing_attendee = apply_filters( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration );
 										// did we find an already existing record for this attendee ?
 										if ( $existing_attendee instanceof EE_Attendee ) {
 											// update attendee data in case it has changed since last time they registered for an event

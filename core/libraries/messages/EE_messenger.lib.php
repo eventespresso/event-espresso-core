@@ -259,8 +259,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 	public function get_validator_config() {
 		$class = get_class($this);
 
-		$config = apply_filters('FHEE__' . $class . '__get_validator_config', $this->_validator_config, $this );
-		$config = apply_filters('FHEE__EE_messenger__get_validator_config', $config, $this );
+		$config = apply_filters( 'FHEE__' . $class . '__get_validator_config', $this->_validator_config, $this );
+		$config = apply_filters( 'FHEE__EE_messenger__get_validator_config', $config, $this );
 		return $config;
 	}
 
@@ -434,8 +434,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array $this->_template_fields
 	 */
 	public function get_template_fields() {
-		$template_fields = apply_filters('FHEE__' . get_class($this) . '__get_template_fields', $this->_template_fields, $this );
-		$template_fields = apply_filters('FHEE__EE_messenger__get_template_fields', $template_fields, $this );
+		$template_fields = apply_filters( 'FHEE__' . get_class($this) . '__get_template_fields', $this->_template_fields, $this );
+		$template_fields = apply_filters(' FHEE__EE_messenger__get_template_fields', $template_fields, $this );
 		return $template_fields;
 	}
 

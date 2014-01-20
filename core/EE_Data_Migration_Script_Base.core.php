@@ -301,7 +301,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return EE_Data_Migration_Script_Stage[]
 	 */
 	protected function stages(){
-		$stages = apply_filters('FHEE__'.get_class($this).'__stages',$this->_migration_stages);
+		$stages = apply_filters( 'FHEE__'.get_class($this).'__stages',$this->_migration_stages );
 		ksort($stages);
 		return $stages;
 	}

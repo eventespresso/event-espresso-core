@@ -196,7 +196,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 				? sanitize_text_field( $this->_req_data['event_list_map_align'] ) 
 				: EE_Registry::instance()->CFG->map_settings->event_list_map_align;
 
-		EE_Registry::instance()->CFG->map_settings = apply_filters('FHEE_google_map_settings_save', EE_Registry::instance()->CFG->map_settings);	
+		EE_Registry::instance()->CFG->map_settings = apply_filters( 'FHEE_google_map_settings_save', EE_Registry::instance()->CFG->map_settings );	
 		
 		$what = 'Google Map Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->map_settings, __FILE__, __FUNCTION__, __LINE__ );

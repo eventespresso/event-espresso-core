@@ -316,7 +316,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : EE_Registry::instance()->CFG->core->thank_you_page_id;
 		EE_Registry::instance()->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : EE_Registry::instance()->CFG->core->cancel_page_id;
 
-		EE_Registry::instance()->CFG->core = apply_filters('FHEE_page_settings_save', EE_Registry::instance()->CFG->core, $this->_req_data );
+		EE_Registry::instance()->CFG->core = apply_filters( 'FHEE_page_settings_save', EE_Registry::instance()->CFG->core, $this->_req_data );
 		
 		$what = 'Critical Pages & Shortcodes';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->core, __FILE__, __FUNCTION__, __LINE__ );
@@ -343,7 +343,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? EE_Registry::instance()->CFG->template_settings->display_address_in_regform
 				: TRUE;
 		
-		$this->_template_args = apply_filters('FHEE__General_Settings_Admin_Page__template_settings__template_args', $this->_template_args );
+		$this->_template_args = apply_filters( 'FHEE__General_Settings_Admin_Page__template_settings__template_args', $this->_template_args );
 
 		$this->_set_add_edit_form_tags( 'update_template_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -361,7 +361,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				? absint( $this->_req_data['display_address_in_regform'] ) 
 				: EE_Registry::instance()->CFG->template_settings->display_address_in_regform;
 		
-		EE_Registry::instance()->CFG->template_settings = apply_filters('FHEE__General_Settings_Admin_Page__update_template_settings__data', EE_Registry::instance()->CFG->template_settings, $this->_req_data );
+		EE_Registry::instance()->CFG->template_settings = apply_filters( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', EE_Registry::instance()->CFG->template_settings, $this->_req_data );
 		
 		$what = 'Template Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->template_settings, __FILE__, __FUNCTION__, __LINE__ );
@@ -475,7 +475,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		EE_Registry::instance()->CFG->currency = new EE_Currency_Config( EE_Registry::instance()->CFG->organization->CNT_ISO );
 
-		EE_Registry::instance()->CFG = apply_filters('FHEE_your_organization_settings_save', EE_Registry::instance()->CFG );	
+		EE_Registry::instance()->CFG = apply_filters( 'FHEE_your_organization_settings_save', EE_Registry::instance()->CFG );	
 		
 		$what = 'Your Organization Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
@@ -521,7 +521,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->admin->affiliate_id = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : EE_Registry::instance()->CFG->admin->affiliate_id;
 		EE_Registry::instance()->CFG->admin->help_tour_activation = isset( $this->_req_data['help_tour_activation'] ) ? absint( $this->_req_data['help_tour_activation'] ) : EE_Registry::instance()->CFG->admin->help_tour_activation;
 		
-		EE_Registry::instance()->CFG->admin = apply_filters('FHEE_admin_option_settings_save', EE_Registry::instance()->CFG->admin );	
+		EE_Registry::instance()->CFG->admin = apply_filters( 'FHEE_admin_option_settings_save', EE_Registry::instance()->CFG->admin );	
 		
 		$what = 'Admin Options';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->admin, __FILE__, __FUNCTION__, __LINE__ );
@@ -803,7 +803,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$cols_n_values['CNT_is_EU'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_is_EU'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_is_EU'] ) : FALSE;
 		$cols_n_values['CNT_active'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) : FALSE;
 		// allow filtering of country data
-		$cols_n_values = apply_filters('FHEE_general_settings_country_save', $cols_n_values );
+		$cols_n_values = apply_filters( 'FHEE_general_settings_country_save', $cols_n_values );
 		//printr( $cols_n_values, '$cols_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// where values
 		$where_cols_n_values = array( array( 'CNT_ISO' => $CNT_ISO ));
@@ -814,7 +814,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 //		echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		if ( isset( $this->_req_data['states'] ) && is_array( $this->_req_data['states'] ) && $success !== FALSE ) {
 			// allow filtering of states data
-			$states = apply_filters('FHEE_general_settings_states_save', $this->_req_data['states'] );
+			$states = apply_filters( 'FHEE_general_settings_states_save', $this->_req_data['states'] );
 //			printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru state data ( looks like : states[75][STA_name] )
 			foreach( $states as $STA_ID => $state ) {

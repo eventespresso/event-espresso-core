@@ -627,7 +627,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'desc' => __('View Registrations for Event', 'event_espresso')
 			)
 		);
-		$items  = apply_filters('FHEE_event_legend_items', $items);
+		$items  = apply_filters( 'FHEE_event_legend_items', $items );
 		$statuses = array( 
 			'active_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::active,
@@ -658,7 +658,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'desc' => EEH_Template::pretty_status( EE_Datetime::cancelled, FALSE, 'sentence' )
 			)
 		);
-		$statuses = apply_filters('FHEE__Events_Admin_Page__event_legend_items__statuses', $statuses );
+		$statuses = apply_filters( 'FHEE__Events_Admin_Page__event_legend_items__statuses', $statuses );
 		return array_merge( $items, $statuses );
 	}
 
@@ -740,7 +740,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 		//the following are default callbacks for event attachment updates that can be overridden by caffeinated functionality and/or addons.
-		$event_update_callbacks = apply_filters('FHEE_event_editor_update', array( array($this, '_default_venue_update' ), array( $this, '_default_tickets_update') ) );
+		$event_update_callbacks = apply_filters( 'FHEE_event_editor_update', array( array($this, '_default_venue_update' ), array( $this, '_default_tickets_update') ) );
 
 		$att_success = TRUE;
 
@@ -1095,7 +1095,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 		//handle DECAF venues
 		//we need to make sure that the venue_id gets updated in the form so that future autosaves will properly conntect that venue to the event.
-		if ( $do_venue_autosaves = apply_filters('FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
+		if ( $do_venue_autosaves = apply_filters( 'FHEE__Events_Admin_Page__ee_autosave_edit_do_decaf_venue_save', TRUE ) ) {
 			$venue = $event->get_first_related('Venue');
 			$this->_template_args['data']['items']['venue-id'] = $venue->ID();
 		}
@@ -1155,7 +1155,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$publish_box_extra_args['approved_regs'] = $this->_cpt_model_obj->count_related('Registration', $approved_query_args);
 		$publish_box_extra_args['not_approved_regs'] = $this->_cpt_model_obj->count_related('Registration', $not_approved_query_args);
 		$publish_box_extra_args['pending_payment_regs'] = $this->_cpt_model_obj->count_related('Registration', $pending_payment_query_args);
-		$publish_box_extra_args['misc_pub_section_class'] = apply_filters('FHEE_event_editor_email_attendees_class', 'misc-pub-section');
+		$publish_box_extra_args['misc_pub_section_class'] = apply_filters( 'FHEE_event_editor_email_attendees_class', 'misc-pub-section');
 		//$publish_box_extra_args['email_attendees_url'] = add_query_arg(array('event_admin_reports' => 'event_newsletter', 'event_id' => $this->_cpt_model_obj->id), 'admin.php?page=espresso_registrations');
 		$publish_box_extra_args['event_editor_overview_add'] = do_action('AHEE_cpt_model_obj_editor_overview_add', $this->_cpt_model_obj);
 		// load template
@@ -1271,7 +1271,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['existing_datetime_ids'] = implode(',', $existing_datetime_ids);
 		$template_args['existing_ticket_ids'] = implode(',', $existing_ticket_ids);
 		$template_args['ticket_js_structure'] = $this->_get_ticket_row( EE_Registry::instance()->load_model('Ticket')->create_default_object(), TRUE );
-		$template = apply_filters('FHEE__Events_Admin_Page__ticket_metabox__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php' );
+		$template = apply_filters( 'FHEE__Events_Admin_Page__ticket_metabox__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_main.template.php' );
 		EEH_Template::display_template($template, $template_args);
 	}
 
@@ -1331,7 +1331,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		$template_args = array_merge( $template_args, $price_args );
-		$template = apply_filters('FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
+		$template = apply_filters( 'FHEE__Events_Admin_Page__get_ticket_row__template', EVENTS_TEMPLATE_PATH . 'event_tickets_metabox_ticket_row.template.php', $ticket);
 		return EEH_Template::display_template($template, $template_args, TRUE);
 	}
 
@@ -1353,7 +1353,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters( 'FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values );
 		$templatepath = EVENTS_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
 	}
