@@ -38,9 +38,126 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 	protected function _set_tour_stops() {
 		$this->_stops = array(
 			10 => array(
-				'content' => $this->_stop_one(),
+				'content' => $this->_start(),
 				),
-			15 => array(
+            20 => array(
+				'id' => 'id',
+				'content' => $this->_event_id_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -20,
+					'tipAdjustmentY' => -30
+					)
+				),
+			30 => array(
+				'id' => 'name',
+				'content' => $this->_event_name_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -30
+					)
+				),
+			40 => array(
+				'id' => 'venue',
+				'content' => $this->_event_venue_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -30
+					)
+				),
+			50 => array(
+				'id' => 'start_date_time',
+				'content' => $this->_event_start_date_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
+					)
+				),
+			60 => array(
+				'id' => 'reg_begins',
+				'content' => $this->_event_onsale_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -30
+					)
+				),
+            70 => array(
+				'id' => 'attendees',
+				'content' => $this->_event_registrations_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -50
+					)
+				),
+			80 => array(
+				'id' => 'actions',
+				'content' => $this->_actions_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentX' => 0,
+					'tipAdjustmentY' => -50
+					)
+				),
+			90 => array(
+				'class' => 'ee-list-table-legend-container',
+				'content' => $this->_legend_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 15,
+					'tipAdjustmentY' => -30
+					)
+				),
+			100 => array(
+				'id' => 'view-event-archive-page',
+				'content' => $this->_stop_archive_button(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 10
+					)
+				),
+            110 => array(
+				'class' => 'subsubsub',
+				'content' => $this->_views_stop(),
+				'options' => array(
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 15
+					)
+				),
+			120 => array(
+				'class' => 'bulkactions',
+				'content' => $this->_bulkactions_stop(),
+				'options' => array(
+					'tipLocation' => 'bottom',
+					'tipAdjustmentY' => -30,
+					'tipAdjustmentX' => 15
+					)
+				),
+            130 => array(
+				'id' => 'EVT_CAT',
+				'content' => $this->_stop_about_filters(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -40,
+					'tipAdjustmentX' => -5
+					)
+				),
+			140 => array(
+				'id' => 'toplevel_page_espresso_events-search-input',
+				'content' => $this->_search_stop(),
+				'options' => array(
+					'tipLocation' => 'left',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => -15
+					)
+				),
+            150 => array(
 				'id' => 'add-new-event',
 				'content' => $this->_add_new_event_stop(),
 				'options' => array(
@@ -49,131 +166,70 @@ class Event_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => 20
 					)
 				),
-			20 => array(
-				'class' => 'nav-tab-wrapper',
-				'content' => $this->_stop_two(),
-				'options' => array(
-					'tipAdjustmentY' => -20
-					)
-				),
-			30 => array(
-				'class' => 'subsubsub',
-				'content' => $this->_stop_three(),
-				'options' => array(
-					'tipLocation' => 'right',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => 15
-					)
-				),
-			40 => array(
-				'id' => 'month_range',
-				'content' => $this->_stop_about_filters(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -35,
-					'tipAdjustmentX' => 60
-					)
-				),
-			45 => array(
-				'id' => 'toplevel_page_espresso_events-search-input',
-				'content' => $this->_stop_four(),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => -15
-					)
-				),
-			
-			50 => array(
-				'id' => 'start_date',
-				'content' => $this->_stop_five(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -25
-					)
-				),
-			60 => array(
-				'id' => 'reg_begins',
-				'content' => $this->_stop_six(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -25
-					)
-				),
-			70 => array(
-				'id' => 'actions',
-				'content' => $this->_stop_seven(),
-				'options' => array(
-					'tipLocation' => 'left',
-					'tipAdjustmentY' => -25,
-					'tipAdjustmentX' => -15
-					)
-				),
-			80 => array(
-				'class' => 'ee-list-table-legend-container',
-				'content' => $this->_stop_eight(),
-				'options' => array(
-					'tipLocation' => 'right'
-					)
-				),
-			85 => array(
-				'id' => 'view-event-archive-page',
-				'content' => $this->_stop_archive_button(),
-				'options' => array(
-					'tipLocation' => 'right',
-					'tipAdjustmentY' => -45,
-					'tipAdjustmentX' => 5
-					)
-				)
 			);
 	}
-
-
-	protected function _stop_one() {
-		$content = '<h3>' . __('Event Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This short tour of the event overview page will go over different areas of the screen to help you understand how to use Event Espresso.', 'event_espresso') . '</p>';
+    
+    protected function _start() {
+		$content = '<h3>' . __('Events Overview', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the Events Overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
-	
-	protected function _add_new_event_stop() {
-		$content = '<p>' . __('Click here to add a new event.', 'event_espresso') . '</p>';
-		return $content;
-	}
-	
-	protected function _stop_two() {
-		return '<p>You can click on any of these navigation tabs whenever you are on any admin page to visit different sections of that page.</p>';
-	}
 
-	protected function _stop_three() {
-		return '<p>' . __('Quick filtering of events on this page.') . '</p>';
+    
+	protected function _event_id_stop() {
+		return '<p>' . __('View an ID for an event. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
-
-	protected function _stop_four() {
-		return '<p>' . __('Fields that will be searched with the value from the search are: Event Name, Event Description, Event Short Description', 'event_espresso') . '</p>';
+    
+	protected function _event_name_stop() {
+		return '<p>' . __('View the name (title) of an event. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
-
-	protected function _stop_about_filters() {
-		return '<p>' . __('Advanced filters for events in this list, using a combination of event status, month, and/or category. ', 'event_espresso') . '</p>';
+    
+	protected function _event_venue_stop() {
+		return '<p>' . __('View the venue for an event. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
-
-	protected function _stop_five() {
-		return '<p>' . __('Start date for this event.', 'event_espresso') . '</p>';
+    
+	protected function _event_start_date_stop() {
+		return '<p>' . __('View the date and time that an event begins on. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
-
-	protected function _stop_six() {
-		return '<p>' . __('This column lists the earliest "on sale" value for the tickets attached to this event.', 'event_espresso') . '</p>';
+    
+    protected function _event_onsale_stop() {
+		return '<p>' . __('View the datetime that the first ticket for an event is available for purchase. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
-
-
-	protected function _stop_seven() {
-		return '<p>' . __('The actions column lists the various "actions" you can do for each event listed here.', 'event_espresso') . '</p>';
+    
+	protected function _event_registrations_stop() {
+		return '<p>' . __('View the number of approved registrations for an event.', 'event_espresso') . '</p>';
 	}
-
-	protected function _stop_eight() {
-		return '<p>' . __('This is the legend that describes the actions available in the Actions column.', 'event_espresso') . '</p>';
+    
+    protected function _actions_stop() {
+		return '<p>' . __('Perform an action to an event. See legend in bottom left corner.', 'event_espresso') . '</p>';
 	}
-	
+    
+	protected function _legend_stop() {
+		return '<p>' . __('This is the legend that describes the actions available in the actions column. Also shows the statuses that are available for an event.', 'event_espresso') . '</p>';
+	}
+    
 	protected function _stop_archive_button() {
 		return '<p>This button takes you to the event listings page on the front-end of your website.</p>';
 	}
+    
+	protected function _views_stop() {
+		return '<p>' . __('You can select different views by draft, time period, or look at events which have been moved to the trash.') . '</p>';
+	}
+    
+	protected function _bulkactions_stop() {
+		return '<p>' . __('Perform a bulk action to multiple events.', 'event_espresso') . '</p>';
+	}
+    
+	protected function _stop_about_filters() {
+		return '<p>' . __('Events can be filtered by status, date, or category.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _search_stop() {
+		return '<p>' . __('Search through events. The following sources will be searched: Event Name, Event Description, and Event Short Description.', 'event_espresso') . '</p>';
+	}
+    
+    protected function _add_new_event_stop() {
+		return '<p>' . __('Click this button to add a new event.', 'event_espresso') . '</p>';
+	}
+
 }

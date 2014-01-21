@@ -161,7 +161,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			</tr>
 			<tr class="tckt-slctr-tkt-details-tr">
 				<td class="tckt-slctr-tkt-details-td" colspan="4">
-					<div id="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>-dv" class="tckt-slctr-tkt-details-dv hidden">
+					<div id="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>-dv" class="tckt-slctr-tkt-details-dv" style="display: none;">
 						
 						<h3><?php _e( 'Ticket Details', 'event_espresso' ); ?></h3>
 						<p><?php echo $ticket->description(); ?></p>

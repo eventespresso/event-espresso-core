@@ -159,15 +159,15 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _txn_id_stop() {
-		return '<p>' . __('Sort by transaction id in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View transaction ID. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_timestamp_stop() {
-		return '<p>' . __('Sort by transaction date in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View transaction date. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_status_stop() {
-		return '<p>' . __('Sort by transaction status in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View transaction status. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_total_stop() {
@@ -179,15 +179,15 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('Sort by name of registrant in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View name of registrant. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_email_stop() {
-		return '<p>' . __('Sort by email address of primary registrant in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View email address for primary registrant. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _event_name_stop() {
-		return '<p>' . __('Sort by name of event in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View name of event. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _actions_stop() {
