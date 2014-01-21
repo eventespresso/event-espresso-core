@@ -138,7 +138,8 @@ jQuery(document).ready(function($) {
 			zone = zone/60; //get hours
 			zone = zone > 0 ? zone : zone*-1; //get rid of any possible - sign.
 			zone *= 100; //add zeros
-			zone = zone < 1000 ? '0' + zone.toString() : zone.toString(); //maybe add leading zero and convert to string.
+			zone = zone < 1000 && zone !== 0 ? '0' + zone.toString() : zone.toString(); //maybe add leading zero and convert to string.
+			zone = zone === '0' ? '0000' : zone; //possibility that we have UTC+0 so this is the correct format to use in this context.
 			zone = positive ? '+' + zone : '-' + zone; //add the symbol
 			return zone; //that's it!
 		},
@@ -154,7 +155,7 @@ jQuery(document).ready(function($) {
 
 			format = typeof(format) === 'undefined' ? format : format + 'ZZ';
 
-			m = typeof(time) === 'undefined' ? moment().tz(this.timeZone) : moment(time+this.offSet,format).tz(this.timeZone);
+			m = typeof(time) === 'undefined' ? moment().tz(this.timeZone) : moment(time+this.offSet, format).tz(this.timeZone);
 			return m;
 		},
 
@@ -1721,7 +1722,7 @@ jQuery(document).ready(function($) {
 			var currentstatusitem = displayrow.find('.ee-status-strip');
 
 			//before we go any further lets make sure the ticket isn't sold out.  IF it is then we don't need to change the status and we can exit gracefully.
-			if ( currentstatusitem.hasClass('tkt-status--2') )
+			if ( currentstatusitem.hasClass('tkt-status-TKS') )
 				return this;
 
 			var tktListItems = $('.datetime-ticket[data-context="datetime-ticket"][data-ticket-row="' + this.ticketRow + '"]');
@@ -1735,13 +1736,13 @@ jQuery(document).ready(function($) {
 			
 			//now we have moment objects to do some calcs and determine what status we're setting.
 			if ( now.isBefore(tktStart) ) {
-				status = 'tkt-status-1'; //pending
+				status = 'tkt-status-TKP'; //pending
 			} else if ( now.isAfter(tktEnd) ) {
-				status = 'tkt-status--1'; //expired
+				status = 'tkt-status-TKE'; //expired
 			} else if ( now.isAfter(tktStart) && now.isBefore(tktEnd) ) {
-				status = 'tkt-status-2'; //onsale
+				status = 'tkt-status-TKO'; //onsale
 			} else {
-				status = 'tkt-status-0'; //archived
+				status = 'tkt-status-TKA'; //archived
 			}
 
 			//we have status so let's set the pip in the display row
@@ -1750,10 +1751,10 @@ jQuery(document).ready(function($) {
 			//now let's set the status for all datetime-tickets for this ticket
 			tktListItems.each( function () {
 				//make sure any existing tktStatus classes are remove
-				$(this).removeClass('tkt-status-1');
-				$(this).removeClass('tkt-status--1');
-				$(this).removeClass('tkt-status-2');
-				$(this).removeClass('tkt-status-0');
+				$(this).removeClass('tkt-status-TKE');
+				$(this).removeClass('tkt-status-TKA');
+				$(this).removeClass('tkt-status-TKP');
+				$(this).removeClass('tkt-status-TKO');
 
 				//add tktstatus class
 				$(this).addClass(status);

@@ -166,20 +166,7 @@ if ( $event_queue['total_items'] > 0 ) {
 		<?php do_action( 'AHEE__before_spco_whats_next_buttons', 'attendee_information', $next_step ); ?>
 		
 		<div id="spco-attendee_information-whats-next-buttons-dv" class="spco-whats-next-buttons">
-		
-			<a href =""  id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn ee-button ee-register-button huge ee-green hide-if-no-js" rel="attendee_information" >
-				<?php echo $next_step_text; ?>
-			</a>
-
-			<noscript>
-				<input type="submit" 
-					id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
-					class="spco-next-step-btn ee-button ee-register-button huge ee-green no-js-btn"
-					name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
-					value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;"							
-				/>				
-			</noscript>	
-			
+			<?php echo EEH_Form_Fields::submit_button( $edit_lnk_url, 'spco-go-to-step-' . $next_step, 'spco-next-step-btn', $next_step_text, 'spco-go-to-step-' . $next_step, TRUE, 'rel="attendee_information"' ); ?>
 		</div>		
 		<!--end spco-whats-next-buttons-->
 	</form>		

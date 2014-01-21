@@ -25,20 +25,24 @@
     color: #b2b2b2;
 }
 
-.tkt-status-0 {
+.tkt-status-TKA {
     background-color: #e6e6e6;
 }
 
-.tkt-status--1 {
+.tkt-status-TKE {
    background-color: #A39D9C;
 }
 
-.tkt-status-1 {
+.tkt-status-TKP {
     background-color: #49afcd;
 }
 
-.tkt-status-2 {
+.tkt-status-TKO {
     background-color: #62B660;
+}
+
+.tkt-status-TKS {
+    border-color: #E44064;
 }
 
 .add-new-ticket-table td:first-child {

@@ -711,7 +711,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	*	@access public
 	* 	@return 		void
 	*/
-	public function enqueue_error_scripts() {
+	public static function enqueue_error_scripts() {
 		self::_print_scripts();
 	}
 

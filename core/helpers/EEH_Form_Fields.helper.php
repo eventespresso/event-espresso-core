@@ -1422,4 +1422,38 @@ class EEH_Form_Fields {
 
 
 
+	/**
+	 * 	generate a submit button with or without it's own microform
+	 *	this is the only way to create buttons that are compatible across all themes
+	 *
+	 * 	@access 	public
+	 * 	@param 	string 	$url - the form action
+	 * 	@param 	string 	$ID - some kind of unique ID, appended with "-sbmt" for the input and "-frm" for the form
+	 * 	@param 	string 	$class - css classes (separated by spaces if more than one)
+	 * 	@param 	string 	$text - what appears on the button
+	 * 	@param 	string 	$nonce_action - if using nonces
+	 * 	@param 	string 	$input_only - whether to print form header and footer. TRUE returns the input without the form
+	 * 	@param 	string 	$extra_attributes - any extra attributes that need to be attached to the form input
+	 * 	@return 		void
+	 */
+	public static function submit_button( $url = '', $ID = '', $class = '', $text = '', $nonce_action = '', $input_only = FALSE, $extra_attributes = '' ) {
+		$btn = '';
+		if ( empty( $url ) || empty( $ID )) {
+			return $btn;
+		}
+		$text = ! empty( $text ) ? $text : __('Submit', 'event_espresso' );
+		$btn .= '<input id="' . $ID . '-btn" class="' . $class . '" type="submit" value="' . $text . '" ' . $extra_attributes . '/>';
+		if ( ! $input_only ) {
+			$btn_frm .= '<form id="' . $ID . '-frm" method="POST" action="' . $url . '">';
+			$btn_frm .= ! empty( $nonce_action ) ? wp_nonce_field( $nonce_action, $nonce_action . '_nonce', TRUE, FALSE ) : '';
+			$btn_frm .= $btn;
+			$btn_frm .= '</form>';
+			$btn = $btn_frm;
+			unset ( $btn_frm );
+		}
+		return $btn;
+	}
+
+
+
 }//end class EEH_Form_Fields 
