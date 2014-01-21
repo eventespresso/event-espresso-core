@@ -27,11 +27,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	/**
 	 * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
 	 */
-	const sold_out = -2;
-	const expired = -1;
-	const archived = 0;
-	const pending = 1;
-	const onsale = 2;
+	const sold_out = 'TKS';
+	const expired = 'TKE';
+	const archived = 'TKA';
+	const pending = 'TKP';
+	const onsale = 'TKO';
 
 
 	/**
