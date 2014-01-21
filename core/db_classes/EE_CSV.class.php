@@ -322,9 +322,8 @@
 				EE_Error::add_error( __('No table information was specified and/or found, therefore the import could not be completed','event_espresso'));
 				return FALSE;
 			}
-			
+			/* @var $model EEM_Base */
 			$model = EE_Registry::instance()->load_model($model_name);
-		
 			
 			//so without further ado, scanning all the data provided for primary keys and their inital values
 			foreach ( $model_data_from_import as $model_object_data ) {		
@@ -409,8 +408,15 @@
 				}
 				//remove the primary key, if there is one (we don't want it for inserts OR updates)
 				//we'll put it back in if we need it
-				if($model->has_primary_key_field() && $model->get_primary_key_field()->is_auto_increment()){
-					unset($model_object_data[$model->primary_key_name()]);
+				if($model->has_primary_key_field()){
+					if($model->get_primary_key_field()->is_auto_increment()){
+						unset($model_object_data[$model->primary_key_name()]);
+					}elseif($model->exists_by_ID($model_object_data[$model->primary_key_name()])){
+						//it already exists in the DB, but we'll just update it
+						$do_insert = false;
+						//and add a mapping for it to itself
+						$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $id_in_csv;
+					}
 				}
 				if($do_insert){
 					

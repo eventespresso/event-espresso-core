@@ -1133,6 +1133,15 @@ abstract class EEM_Base extends EE_Base{
 		return $this->count($query_params) > 0;
 	}
 	
+	/**
+	 * Wrapper for exists, except ignores default query parameters so we're only considering ID
+	 * @param int|string $id
+	 * @return boolean
+	 */
+	function exists_by_ID($id){
+		return $this->exists(array('default_where_conditions'=>'none', array($this->primary_key_name() => $id)));
+	}
+	
 	
 	/**
 	 * Inserts a new row in $table, using the $cols_n_values which apply to that table.
