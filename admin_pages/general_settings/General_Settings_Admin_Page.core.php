@@ -222,16 +222,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 
-	protected function _add_screen_options() {
-	}
-
-	protected function _add_screen_options_default() {
-		$this->_per_page_screen_option();
-	}
-
-	protected function _add_screen_options_question_groups() {
-		$this->_per_page_screen_option();
-	}
+	protected function _add_screen_options() {}
 
 	protected function _add_feature_pointers() {}
 	public function load_scripts_styles() {

@@ -42,7 +42,7 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	protected function _set_init_properties() {
 		$this->label = __('Help & Support', 'event_espresso');
-		$this->menu_label = __('Help/Support', 'event_espresso');
+		$this->menu_label = __('Help & Support', 'event_espresso');
 		$this->menu_slug = EE_SUPPORT_PG_SLUG;
 	}
 

@@ -372,16 +372,15 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return string html for dropdown
 	 */
 	public function custom_post_stati_dropdown() {
-		global $post;
 		$statuses = $this->_cpt_model_obj->get_custom_post_statuses();
 		$template_args = array(
-			'cur_status' =>  $post->post_status,
+			'cur_status' =>  $this->_cpt_model_obj->status(),
 			'statuses' => $statuses,
-			'cur_status_label' => array_key_exists($post->post_status, $statuses) ? $statuses[$post->post_status] : ''
+			'cur_status_label' => array_key_exists($this->_cpt_model_obj->status(), $statuses) ? $statuses[$this->_cpt_model_obj->status()] : ''
 			);
 
 		//we'll add a trash post status (WP doesn't add one for some reason)
-		if ( $post->post_status == 'trash' ) {
+		if ( $this->_cpt_model_obj->status() == 'trash' ) {
 			$template_args['cur_status_label'] = __('Trashed', 'event_espresso');
 			$statuses['trash'] = __('Trashed', 'event_espresso');
 			$template_args['statuses'] = $statuses;
