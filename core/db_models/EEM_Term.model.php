@@ -61,6 +61,9 @@ class EEM_Term extends EEM_Base {
 		$this->_model_relations = array(
 			'Term_Taxonomy'=>new EE_Has_Many_Relation(),
 		);
+		$this->_indexes = array(
+			'slug'=>new EE_Unique_Index(array('slug'))
+		);
 		
 		parent::__construct();
 	}

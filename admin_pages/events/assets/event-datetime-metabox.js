@@ -47,13 +47,13 @@ jQuery(document).ready(function($) {
 
 		//now we have moment objects to do some calcs and determine what status we're setting.
 		if ( now.isBefore(tktStart) ) {
-			status = 'tkt-status-1';
+			status = 'tkt-status-TKP';
 		} else if ( now.isAfter(tktEnd) ) {
-			status = 'tkt-status--1';
+			status = 'tkt-status-TKE';
 		} else if ( now.isAfter(tktStart) && now.isBefore(tktEnd) ) {
-			status = 'tkt-status-2';
+			status = 'tkt-status-TKO';
 		} else {
-			status = 'tkt-status-0';
+			status = 'tkt-status-TKA';
 		}
 
 		//now we have status so let's set the pip

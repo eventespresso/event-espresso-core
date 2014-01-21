@@ -63,9 +63,9 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_columns = array(
+			'STS_ID' => '',
             'TXN_ID' => __( 'ID', 'event_espresso' ),
 			'TXN_timestamp'	=> __( 'Transaction Date', 'event_espresso' ),
-            'STS_ID' => __( 'Status', 'event_espresso' ),
             'TXN_total' => __( 'Total', 'event_espresso' ),
             'TXN_paid' => __( 'Paid', 'event_espresso' ),
 			'ATT_fname' => __( 'Primary Registrant', 'event_espresso' ),
@@ -75,8 +75,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
         );
 
         $this->_sortable_columns = array(
-          	'TXN_ID' => array( 'TXN_ID' => FALSE ),     
-            'STS_ID' => array( 'STS_ID'=> FALSE ),
+          	'TXN_ID' => array( 'TXN_ID' => FALSE ),
             'event_name' => array( 'event_name'=> FALSE ),
             'ATT_fname'	=> array( 'ATT_fname'=> FALSE ),
            	'TXN_timestamp'	=> array( 'TXN_timestamp'=> TRUE ) //true means its already sorted
@@ -134,6 +133,14 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 
 
+    /**
+	 * 		column_STS_ID
+	*/ 
+    function column_STS_ID($item){
+		return '<span class="ee-status-strip ee-status-strip-td txn-status-' . $item->status_ID() . '"></span>';
+	}
+
+
 
 
 
@@ -155,16 +162,6 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->ID() ), TXN_ADMIN_URL );
 		$txn_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details for TXN #', 'event_espresso' ) . $item->ID() . '">' . $item->get_datetime('TXN_timestamp', 'D M j, Y', 'g:i:s a') .  '</a>'; 
 		return $txn_date;
-	}
-
-
-
-
-	/**
-	 * 		column_STS_ID
-	*/ 
-    function column_STS_ID($item){
-		return '<span class="status-'. $item->get('STS_ID') .'">' . __( $this->_status[ $item->get('STS_ID') ], 'event_espresso' ) . '</span>';
 	}
 
 

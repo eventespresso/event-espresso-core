@@ -164,6 +164,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					),
 				),
 				'help_tour' => array( 'Transactions_Overview_Help_Tour' ),
+				'qtips' => array( 'Transactions_List_Table_Tips' ),
 				'require_nonce' => FALSE
 				),
 			'view_transaction' => array(
@@ -363,7 +364,27 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			'view_registration' => array(
 				'class' => 'ee-icon ee-icon-user-edit',
 				'desc' => __('View Registration Details', 'event_espresso')
-				)
+				),
+			'blank' => array(
+			 	'class' => '',
+			 	'desc' => ''
+			 	),
+			 'complete' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::complete_status_code, FALSE, 'sentence' )
+				),
+			 'incomplete' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
+				),
+			 'open' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::open_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::open_status_code, FALSE, 'sentence' )
+				),
+			 'overpaid' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
+				),
 		);
 		return $items;
 	}
