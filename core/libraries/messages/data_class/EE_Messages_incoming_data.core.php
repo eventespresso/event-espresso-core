@@ -249,7 +249,7 @@ abstract class EE_Messages_incoming_data {
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
 				$attendees[$reg->attendee_ID()]['reg_obj'] = $reg;
 				$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
-				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee()->email();
+				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
 				$attendees[$reg->attendee_ID()]['tkt_objs'][$ticket->ID()] = $ticket;
 				$attendees[$reg->attendee_ID()]['evt_objs'][$evt_id] = $event;
 
