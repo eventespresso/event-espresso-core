@@ -30,6 +30,6 @@
 		<?php _e('A support token can be used towards receiving support for a single incident. Support is provided up to 30 minutes via phone call, instant message, or priority email support. Here are examples of how support tokens can be used: how-to questions, best practices questions, technical issues, advising on custom development.', 'event_espresso'); ?>
 	</p>
 	<p>
-		<?php echo sprintf( __('You can learn more about support tokens and purchase one on %sthis page%s.', 'event_espresso'),'<a href="http://eventespresso.com/product/priority-support-tokens/" target="_blank">','</a>'); ?>
+		<?php echo sprintf( __('You can learn more about support tokens and purchase one on %sthis page%s.', 'event_espresso'),'<a href="http://eventespresso.com/product/priority-support-tokens/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=help_support_tab&utm_content=support_token" target="_blank">','</a>'); ?>
 	</p>
 </div>
