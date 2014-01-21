@@ -146,10 +146,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//filters for event list table
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
+		add_filter('FHEE__Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
 
 		//legend item
-		add_filter('FHEE_event_legend_items', array( $this, 'additional_legend_items') );
+		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
 
 	}
 
@@ -436,7 +436,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
 		$template_args['EVT_default_registration_status'] = EEH_Form_Fields::select_input('EVT_default_registration_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status() );
-		$template_args['additional_registration_options'] = apply_filters( 'FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values );
+		$template_args['additional_registration_options'] = apply_filters( 'FHEE__Events_Admin_Page__registration_options_meta_box__additional_registration_options', '', $template_args, $yes_no_values, $default_reg_status_values );
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
 	}

@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Transaction_Details_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('TXN Details Tour', 'event_espresso');
+		$this->_label = __('Transaction Details Tour', 'event_espresso');
 		$this->_slug = 'transaction-details-joyride';
 	}
 
@@ -118,7 +118,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('View Transaction', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the view transaction page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the View Transaction page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 

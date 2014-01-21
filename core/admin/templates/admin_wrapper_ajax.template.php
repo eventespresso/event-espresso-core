@@ -4,11 +4,11 @@
 
 	<div class="ee-notices"><?php echo isset($ajax_notices) ? $ajax_notices : ''; ?></div>
 	<?php 
-	do_action( 'AHEE_before_admin_page_content' );
+	do_action( 'AHEE__admin_wrapper__template__before_admin_page_content' );
 	echo $before_admin_page_content;
 	echo $admin_page_content; 
 	echo $after_admin_page_content;
-	do_action( 'AHEE_after_admin_page_content' );
+	do_action( 'AHEE__admin_wrapper__template__after_admin_page_content' );
 ?>
 </div>
 <!-- espresso-admin -->

@@ -125,7 +125,7 @@ class EE_Messages_Init extends EE_Base {
 	private function _do_actions() {
 		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', array( $this, 'payment' ), 10, 2 );
 		//add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', array( $this, 'payment_reminder'), 10 );
-		add_action( 'AHEE_process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
+		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
 		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( $this, 'maybe_registration' ), 10, 3 );
 	}
 
@@ -139,8 +139,8 @@ class EE_Messages_Init extends EE_Base {
 	 */
 	private function _do_filters() {
 		//EE_Admin filters
-		add_filter( 'FHEE_process_resend_registration_message', array( $this, 'process_resend' ), 10, 2 );
-		add_filter( 'FHEE_process_admin_payment_message', array( $this, 'process_admin_payment'), 10, 2 );/**/
+		add_filter( 'FHEE__EE_Admin_Page___process_resend_registration__success', array( $this, 'process_resend' ), 10, 2 );
+		add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', array( $this, 'process_admin_payment'), 10, 2 );/**/
 	}
 
 

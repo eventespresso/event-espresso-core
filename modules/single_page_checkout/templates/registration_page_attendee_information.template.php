@@ -6,7 +6,7 @@
 	<a id="spco-edit-attendee_information-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="attendee_information"><?php _e('edit', 'event_espresso'); ?></a>
 </h2>
 <?php endif; ?>
-<?php do_action( 'after_spco-attendee_information-hdr' )?>
+<?php do_action( 'AHEE__registration_page_registration_questions__template__after_spco_attendee_information_header' )?>
 <div id="spco-attendee_information-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
 	
 	<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
@@ -63,7 +63,7 @@ if ( $event_queue['total_items'] > 0 ) {
 
 		<?php 
 			//do an action before the questions output, including the item and count 
-			echo do_action( 'AHEE_registration_page_attendee_information_before_questions', $item, $att_nmbr );
+			echo do_action( 'AHEE__registration_page_registration_questions__template___before_questions', $item, $att_nmbr );
 			echo $item['attendee_questions'];
 			
 			if ( $att_nmbr == 1 ) { ?>
@@ -184,7 +184,7 @@ if ( $event_queue['total_items'] > 0 ) {
 		<!--end spco-whats-next-buttons-->
 	</form>		
 
-	<?php do_action( 'AHEE__SPCO__after_reg_step_form', 'attendee_information', $next_step ); ?>
+	<?php do_action( 'AHEE__SPCO_after_reg_step_form', 'attendee_information', $next_step ); ?>
 <?php endif; //end from_admin conditional ?>
 </div>
 <!--end Step 1-->

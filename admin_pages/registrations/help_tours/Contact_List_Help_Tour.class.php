@@ -154,12 +154,12 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Contact List', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the contact list page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Contact List page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _attendee_id_stop() {
-		return '<p>' . __('Sort by registrant id in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('Sort by registrant ID in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _attendee_name_stop() {
@@ -199,7 +199,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through registrations. The following sources will be searched: event name, event description, first name, last name, bio, email, address, comments, notes, registration final price, registration code.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through registrations. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email address, Address, Comments, Notes, Registration Final Price, and Registration Code.', 'event_espresso') . '</p>';
 	}
 
 	protected function _contact_list_csv_export_stop() {

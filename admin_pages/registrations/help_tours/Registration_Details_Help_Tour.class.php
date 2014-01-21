@@ -54,17 +54,17 @@ class Registration_Details_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_reg_details_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -50,
-					'tipAdjustmentX' => 485
+					'tipAdjustmentY' => -40,
+					'tipAdjustmentX' => 200
 					)
 				),
 			40 => array(
-				'id' => 'admin-primary-mbox-reg-session-info-tbl',
+				'id' => 'display-additional-registration-session-info',
 				'content' => $this->_reg_details_table(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => 35,
-					'tipAdjustmentX' => 45
+					'tipAdjustmentY' => -225,
+					'tipAdjustmentX' => 50
 					)
 				),
 			50 => array(
@@ -100,7 +100,7 @@ class Registration_Details_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Registration Details', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the registration details page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Registration Details page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -109,15 +109,15 @@ class Registration_Details_Help_Tour extends EE_Help_Tour {
 	}
 	
 	protected function _reg_details_stop() {
-		return '<p>' . __('The buttons below allow you to perform an action with a registration. The options are approve, decline, cancel, and resend.', 'event_espresso') . '</p>';
+		return '<p>' . __('The buttons below allow you to perform an action with a registration. The options are Approved, Not Approved, Declined, and Cancelled.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_details_table() {
-		return '<p>' . __('The registration items area displays various information including line item id, event name, event date, ticket option, price, quantity, and line total, sales tax, and the grand total.', 'event_espresso') . '</p>';
+		return '<p>' . __('The registration items area displays various information including Line Item ID, Event Name, Event Date, Ticket Option, Price, Quantity, Line Total, Sales Tax, and the Grand Total.', 'event_espresso') . '</p>';
 	}
 
 	protected function _display_additional_info_stop() {
-		return '<p>' . __('You can view additional information about the registration by clicking on the link below. Examples of available information includes registration id, ip address, and user agent.', 'event_espresso') . '</p>';
+		return '<p>' . __('You can view additional information about the registration by clicking on the link below. Examples of available information includes Registration ID, IP Address, and User Agent.', 'event_espresso') . '</p>';
 	}
 
 	protected function _edit_reg_question_stop() {

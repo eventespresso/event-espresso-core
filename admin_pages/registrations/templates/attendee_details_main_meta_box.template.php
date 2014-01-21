@@ -109,8 +109,8 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 				
 				
 				
-				<?php do_action( 'AHEE_attendee_details_main_meta_box__table_body_end',$attendee );?>
+				<?php do_action( 'AHEE__attendee_details_main_meta_box__template__table_body_end',$attendee );?>
 			</tbody>
 		</table>
-		<?php do_action( 'AHEE_attendee_details_main_meta_box__after_table',$attendee );?>
+		<?php do_action( 'AHEE__attendee_details_main_meta_box__template__after_table',$attendee );?>
 </div>

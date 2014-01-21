@@ -90,7 +90,7 @@ class EED_Events_Archive  extends EED_Module {
 	public static function set_hooks_admin() {
 		add_filter('FHEE__Config__update_config__CFG', array( 'EED_Events_Archive', 'filter_config' ), 10 );
 		add_filter( 'FHEE__EED_Events_Archive__template_settings_form__event_list_config', array( 'EED_Events_Archive', 'set_default_settings' ));
-		add_action( 'AHEE__general_settings_admin__template_settings__before_settings_form', array( 'EED_Events_Archive', 'template_settings_form' ), 10 );
+		add_action( 'AHEE__template_settings__template__before_settings_form', array( 'EED_Events_Archive', 'template_settings_form' ), 10 );
 		add_action( 'wp_loaded', array( 'EED_Events_Archive', 'set_definitions' ), 2 );
 		add_filter( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', array( 'EED_Events_Archive', 'update_template_settings' ), 10, 2 );
 	}

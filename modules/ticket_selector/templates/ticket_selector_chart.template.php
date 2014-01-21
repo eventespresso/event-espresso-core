@@ -247,6 +247,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<p class="smaller-text lt-grey-text">* <?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz );?></p>
 <?php } ?>
 
-	<?php do_action( 'AHEE_after_ticket_selector' ); ?>
+	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector' ); ?>
 
 </div>

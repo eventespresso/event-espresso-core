@@ -913,7 +913,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $TXN_ID = ( ! empty( $this->_req_data['TXN_ID'] )) ? absint( $this->_req_data['TXN_ID'] ) : FALSE;
 		$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
 		$query_args = isset($this->_req_data['redirect_to'] ) ? array('action' => $this->_req_data['redirect_to'], 'TXN_ID' => $this->_req_data['TXN_ID'] ) : array();
-		do_action( 'AHEE_process_admin_payment_reminder', $transaction );
+		do_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', $transaction );
 
 		$this->_redirect_after_action( FALSE, __('payment reminder', 'event_espresso'), __('sent', 'event_espresso'), $query_args, TRUE );
 	}

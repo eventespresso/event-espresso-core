@@ -1,5 +1,5 @@
 <div id="single-page-checkout" class="ui-widget">
-	<?php do_action( 'after_spco-attendee_information-hdr' )?>
+	<?php do_action( 'AHEE__registration_page_registration_questions__template__after_spco_attendee_information_header' )?>
 	<div id="spco-attendee_information-dv" class="spco-step-dv">
 		
 		<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
@@ -41,7 +41,7 @@
 
 			<?php
 				//do an action before the questions output, including the item and count 
-				echo do_action( 'AHEE_registration_page_attendee_information_before_questions', $item, $att_nmbr );
+				echo do_action( 'AHEE__registration_page_registration_questions__template___before_questions', $item, $att_nmbr );
 				echo $item['attendee_questions'];
 				
 				if ( $att_nmbr == 1 && $print_copy_info ) { ?>

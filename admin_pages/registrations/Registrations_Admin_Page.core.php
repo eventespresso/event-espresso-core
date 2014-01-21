@@ -1275,10 +1275,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	*/
 	public function _reg_questions_meta_box() {				
 
-		add_filter( 'FHEE_form_before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
-		add_filter( 'FHEE_form_after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );	
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
+		add_filter( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', array( $this, 'form_before_question_group' ), 10, 1 );
+		add_filter( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', array( $this, 'form_after_question_group' ), 10, 1 );	
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'form_form_field_label_wrap' ), 10, 1 );
+		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'form_form_field_input__wrap' ), 10, 1 );
 		
 		$question_groups = EEM_Event::instance()->assemble_array_of_groups_questions_and_options( $this->_registration, $this->_registration->get('EVT_ID') );
 
@@ -1388,7 +1388,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$success = TRUE;
 		$qstns = isset( $this->_req_data['qstn'] ) ? $this->_req_data['qstn'] : FALSE;
 		$REG_ID = isset( $this->_req_data['_REG_ID'] ) ? absint( $this->_req_data['_REG_ID'] ) : FALSE;
-		$qstns = apply_filters( 'FHEE_reg_admin_attendee_registration_form', $qstns );	
+		$qstns = apply_filters( 'FHEE__Registrations_Admin_Page___update_attendee_registration_form__qstns', $qstns );	
 		$success = $this->_save_attendee_registration_form( $REG_ID, $qstns );
 		$what = __('Registration Form', 'event_espresso');
 		$route = $REG_ID ? array( 'action' => 'view_registration', '_REG_ID' => $REG_ID ) : array( 'action' => 'default' );
@@ -1504,7 +1504,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 //		echo '<h1>$attendee->ID()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 //		var_dump( $attendee->ID() );
 		// allow others to get in on this awesome fun   :D
-		do_action( 'AHEE_save_attendee_registration_form', $registration, $qstns );
+		do_action( 'AHEE__Registrations_Admin_Page___save_attendee_registration_form__after_reg_and_attendee_save', $registration, $qstns );
 		// loop thru questions... FINALLY!!!
 
 		foreach ( $qstns as $QST_ID => $qstn ) {

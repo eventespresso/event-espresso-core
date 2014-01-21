@@ -69,7 +69,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 
 		//filters and action hooks here
-		add_action('AHEE_general_settings_admin_options_settings_extra_settings', array( $this, 'use_venue_and_staff_manager_settings'), 10 );
+		add_action('AHEE__admin_option_settings__template__before', array( $this, 'use_venue_and_staff_manager_settings'), 10 );
 	}
 
 
@@ -196,7 +196,7 @@ class Extend_General_Settings_Admin_Page extends General_Settings_Admin_Page {
 				? sanitize_text_field( $this->_req_data['event_list_map_align'] ) 
 				: EE_Registry::instance()->CFG->map_settings->event_list_map_align;
 
-		EE_Registry::instance()->CFG->map_settings = apply_filters( 'FHEE_google_map_settings_save', EE_Registry::instance()->CFG->map_settings );	
+		EE_Registry::instance()->CFG->map_settings = apply_filters( 'FHEE__Extend_General_Settings_Admin_Page___update_google_map_settings__CFG_map_settings', EE_Registry::instance()->CFG->map_settings );	
 		
 		$what = 'Google Map Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->map_settings, __FILE__, __FUNCTION__, __LINE__ );

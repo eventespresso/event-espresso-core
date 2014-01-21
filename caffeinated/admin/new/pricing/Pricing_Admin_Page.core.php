@@ -239,7 +239,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'filename' => 'pricing_price_types_views_bulk_actions_search'
 							),
 						),
-					'help_tour' => array( 'Price_Types_Default_Help_Tour' ),
+					'help_tour' => array( 'Pricing_Price_Types_Default_Help_Tour' ),
 					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 					'require_nonce' => FALSE
 				),
@@ -1109,7 +1109,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$what = count( $this->_req_data['checkbox'] ) > 1 ? 'Price Types' : 'Price Type';
 			// cycle thru checkboxes 
 			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array(array('PRT_ID' => absint($PRT_ID))))) {
+				if ( ! $PRT->update_by_ID(array('PRT_deleted' => $PRT_deleted), $PRT_ID ) ) {
 					$success = 0;
 				}
 			}
@@ -1117,7 +1117,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$PRT_ID = absint($this->_req_data['id']);
-			if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array(array('PRT_ID' => absint($PRT_ID))))) {
+			if ( ! $PRT->update_by_ID(array('PRT_deleted' => $PRT_deleted), $PRT_ID )) {
 				$success = 0;
 			}
 			$what = 'Price Type';
