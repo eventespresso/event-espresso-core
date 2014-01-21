@@ -142,7 +142,12 @@ class EED_Ticket_Selector extends  EED_Module {
 		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
 		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 
-		return EEH_Template::display_template($templates['ticket_selector'], $template_args, true);
+		$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID() );
+		$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );
+		$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit();
+		$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
+		
+		return $ticket_selector;
 
 	}
 
@@ -157,15 +162,13 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@access 		public
 	* 	@return		string
 	*/	
-	public static function ticket_selector_form_open( $post ) {
-		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), get_permalink( $post->ID ));
+	public static function ticket_selector_form_open( $ID ) {
+		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), get_permalink( $ID ));
 		if ( ! $checkout_url ) {
 			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		echo '
-		<form id="" method="POST" action="' . $checkout_url . '">';
-		wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce' );
+		return '<form id="" method="POST" action="' . $checkout_url . '">' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
 	}
 
 
@@ -181,8 +184,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/	
 	public static function display_ticket_selector_submit() {
 		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) ) {
-			echo '<input id="" class="ee-button ee-register-button ee-green big" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
-			<div class="clear"></div>';
+			return '<input id="" class="" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" /><div class="clear"></div>'; // ee-button ee-register-button ee-green big
 		}
 	}
 
@@ -197,8 +199,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return		string
 	*/	
 	public static function ticket_selector_form_close() {
-		echo '
-		</form>';
+		return '</form>';
 	}
 
 
