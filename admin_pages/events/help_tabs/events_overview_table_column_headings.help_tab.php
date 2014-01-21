@@ -23,10 +23,6 @@
 <?php _e('The date that the first ticket is available for registration.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Status', 'event_espresso'); ?><br />
-<?php _e('An event may have a status of upcoming, active, or inactive.', 'event_espresso'); ?>
-</li>
-<li>
 <?php _e('Registrations', 'event_espresso'); ?><br />
 <?php _e('The number of registrations that have been approved. Clicking on this number will take you to a page that shows you a list of registrants for that event.', 'event_espresso'); ?>
 </li>
