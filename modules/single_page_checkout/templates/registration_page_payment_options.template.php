@@ -117,20 +117,7 @@
 			
 	<?php if ( ! ( $revisit && ( $events_requiring_pre_approval != '' ||  $sold_out_events != '' ))) { ?>
 			<div id="spco-payment_options-whats-next-buttons-dv" class="spco-whats-next-buttons">
-
-				<a href="" id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn ee-button ee-register-button huge ee-green hide-if-no-js" rel="payment_options" >
-					<?php echo $next_step_text; ?>
-				</a>
-
-				<noscript>
-					<input type="submit"
-								id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn"
-								class="spco-next-step-btn ee-button ee-register-button huge ee-green no-js-btn"
-								name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn"
-								value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;"
-						/>
-				</noscript>
-
+				<?php echo EEH_Form_Fields::submit_button( $edit_lnk_url, 'spco-go-to-step-' . $next_step, 'spco-next-step-btn', $next_step_text, 'spco-go-to-step-' . $next_step, TRUE, 'rel="payment_options"' ); ?>
 			</div>
 			<!--end spco-whats-next-buttons-->
 	<?php } ?>
