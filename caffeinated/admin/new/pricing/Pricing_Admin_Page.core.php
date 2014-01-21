@@ -239,7 +239,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'filename' => 'pricing_price_types_views_bulk_actions_search'
 							),
 						),
-					'help_tour' => array( 'Price_Types_Default_Help_Tour' ),
+					'help_tour' => array( 'Pricing_Price_Types_Default_Help_Tour' ),
 					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 					'require_nonce' => FALSE
 				),

@@ -36,7 +36,6 @@ class EED_Event_Single  extends EED_Module {
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		EE_Config::register_route( 'event', 'Event_Single', 'run' );
-		EE_Config::register_view( 'event', 0, EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_events.php' );
 	}
 
 	/**
@@ -57,81 +56,105 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
-//		add_filter( 'FHEE_load_ee_config', '__return_true' );
-//		add_filter( 'FHEE_load_css', '__return_true' );
-//		add_filter( 'FHEE_run_EE_wp', '__return_true' );
-//		add_filter( 'FHEE_load_EE_Session', '__return_true' );
-		add_action( 'wp_loaded', array( $this, 'wp_loaded' ));
-		add_action( 'wp', array( $this, 'wp' ));
-//		add_filter( 'the_content', array( $this, 'the_content' ));
-		// parse_request
-		add_filter( 'request', array( $this, 'filter_request' )); 
-//		remove_all_filters( 'excerpt_length' );
-//		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
-//		add_filter('excerpt_more', array( $this, 'excerpt_more' ), 10 );
-		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
+		// check what template is loaded
+		add_action( 'template_redirect', array( $this, 'template_redirect' ));
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
-//		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
+		// load css
+		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 	}
 
 
 
 	/**
-	 * 	wp_loaded - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
+	 * 	template_redirect
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *  	@access 	public
+	 *  	@return 	void
 	 */
-	public function filter_request(  $req  ) {
-		//d( $req );
-	    return $req;
-	}
-
-
-
-
-	/**
-	 * 	wp_loaded
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function wp_loaded( $WP ) {
-		//d( $WP );
+	public function template_redirect() {
+		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php' ) {
+			add_action( 'loop_start', array( $this, 'loop_start' ));
+			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
+			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
+			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
+			add_action( 'loop_end', array( $this, 'loop_end' ));
+		}
 	}
 
 
 
 	/**
-	 * 	wp
+	 * 	loop_start
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *  	@access 	public
+	 * 	@param		array 	$wp_query_array an array containing the WP_Query object
+	 *  	@return 		void
 	 */
-	public function wp( $WP ) {
-		//d( $WP );
+	public function loop_start( $wp_query_array ) {
+		global $post;
+		do_action( 'AHEE_event_details_before_post', $post );
 	}
 
 
 	/**
-	 * 	excerpt_length
+	 * 	event_details
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
 	 */
-	public function excerpt_length( $length ) {
-		return 28;
+	public function event_details( $content ) {
+		return EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-details.php', array( 'the_content' => $content ), TRUE );
+	}
+
+
+	/**
+	 * 	event_tickets
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
+	 */
+	public function event_tickets( $content ) {
+		return $content . EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-tickets.php', array(), TRUE );
 	}
 
 	/**
-	 * 	excerpt_more
+	 * 	event_datetimes
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
 	 */
-	public function excerpt_more( $more ) {
-		return '&hellip;';
+	public function event_datetimes( $content ) {
+		return $content . EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-datetimes.php', array(), TRUE );
+	}
+
+	/**
+	 * 	event_venues
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
+	 */
+	public function event_venues( $content ) {
+		return $content . EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-venues.php', array(), TRUE );
+	}
+
+
+
+	/**
+	 * 	loop_end
+	 *
+	 *  	@access 	public
+	 * 	@param		array 	$wp_query_array an array containing the WP_Query object
+	 *  	@return 		void
+	 */
+	public function loop_end( $wp_query_array ) {
+		global $post;
+		do_action( 'AHEE_event_details_after_post', $post );
 	}
 
 
@@ -144,19 +167,13 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public function wp_enqueue_scripts() {
 		// get some style
-		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && is_single() ) {
+		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && apply_filters( 'FHEE__EED_Event_Single__wp_enqueue_scripts__enable_css', TRUE )) {
 			// first check uploads folder
-			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_events.css' )) {
-				wp_register_style( 'single-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_events.css', array( 'dashicons', 'espresso_default' ) );
-			} else {
-				wp_register_style( 'single-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_events.css', array( 'dashicons', 'espresso_default' ) );
-			}
 			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_events.js' )) {
 				wp_register_script( 'single-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_events.js', array('espresso_core'), '1.0', TRUE  );
 			} else {
 				wp_register_script( 'single-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_events.js', array('espresso_core'), '1.0', TRUE );
 			}
-			wp_enqueue_style( 'single-espresso_events' );
 			wp_enqueue_script( 'single-espresso_events' );
 			if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
 				EE_Registry::instance()->load_helper( 'Maps' );
@@ -166,45 +183,7 @@ class EED_Event_Single  extends EED_Module {
 	}
 
 
-	/**
-	 * 	template_include
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function template_include( $template_path ) {
-		
-		if ( get_post_type() == 'espresso_events' ) {
-			if ( is_single() ) {
-				// check if the template file exists in the theme first
-				if ( ! $template_path = locate_template( array( 'single-espresso_events.php' ))) {
-					// otherwise get it from 
-					$template_path = EE_TEMPLATES . $this->theme . 'espresso_events' . DS . 'single-espresso_events.php';
-				}
-			} else if ( is_archive() ) {
-				// check if the template file exists in the theme first
-				if ( ! $template_path = locate_template( array( 'archive-espresso_events.php' ))) {
-					// otherwise get it from 
-					$template_path = EE_TEMPLATES . $this->theme . 'espresso_events' . DS . 'archive-espresso_events.php';
-				}
-			} 
-		}
-		return $template_path;
-	}
 
-
-
-	/**
-	 * 	the_content
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function the_content( $content ) {
-		//$content .= printr( EE_Registry::instance(), 'EE_Registry  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$content .= $this->ouput;
-		return $content;
-	}
 
 
 

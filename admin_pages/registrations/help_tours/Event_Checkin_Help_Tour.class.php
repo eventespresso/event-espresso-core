@@ -262,7 +262,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through registrations. The following sources will be searched: event name, event description, first name, last name, bio, email, address, comments, notes, registration final price, registration code, registration group size, ticket name, and ticket description.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through registrations. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, and Ticket Description.', 'event_espresso') . '</p>';
 	}
 
 }

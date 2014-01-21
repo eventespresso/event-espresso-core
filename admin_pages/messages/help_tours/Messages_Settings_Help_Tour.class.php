@@ -90,7 +90,7 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Messages Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the messages settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Messages Settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -103,7 +103,7 @@ class Messages_Settings_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _on_off_toggle_stop() {
-		return '<p>' . __('This toggle will turn ALL messages on or off for this message type.', 'event_espresso') . '</p>';
+		return '<p>' . __('This toggle will turn all messages on or off for this message type.', 'event_espresso') . '</p>';
 	}
 
 	protected function _active_mts_container_stop() {
