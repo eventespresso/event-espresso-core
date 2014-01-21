@@ -50,7 +50,7 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 	public function get_menu_map() {
 		$map = array(
 				'group' => 'management',
-				'menu_order' => 30,
+				'menu_order' => 40,
 				'show_on_menu' => TRUE,
 				'parent_slug' => 'espresso_events'
 			);

@@ -64,7 +64,7 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init  {
 	public function get_menu_map() {
 		$map = array(
 			'group' => 'management',
-			'menu_order' => 20,
+			'menu_order' => 10,
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'espresso_events'
 			);
