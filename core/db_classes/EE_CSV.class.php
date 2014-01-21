@@ -254,19 +254,32 @@
 	
 	
 	/**
-	 *			Given an array of data (usually from a CSV import) attempts to save that data to teh db.
-	 *			If $model_name ISN'T provided, assumes that this is a 3d array, with toplevel keys being model names,
-	 *			next level being numeric indexes adn each value representing a model object, and teh last layer down
-	 *			being keys of model fields and their proposed values.
-	 *			If $model_name IS provided, assumes a 2d array of the bottom two layers previously mentioned.
-	 *			Regarding primary and foreing keys: tries to intelligently decide whether to insert a new
-	 *			model objects or not. If the model object's primary key is provided, checks if it's already in teh DB 
-	 *			and if it is, then just updates that existing model object with the $csv_data_array's values. HOWEVER,
-	 *			there is an exception: if a model object has previously been inserted from $csv_data_array that
-	 *			a model object BELONGS TO, then we will also insert that model object, ignoring its primary key in $csv_data_array.
-	 *			Eg, if we're decidign whether or not to insert a Datetime with DTT_ID=23, and EVT_ID=3, we check if we JUST
-	 *			inserted an event with EVT_ID=3. If so, then this Datetime with DTT_ID=23 should also be new... after all, it depends
-	 *			on Event with ID 3 which we just inserted. 
+	 *	Given an array of data (usually from a CSV import) attempts to save that data to teh db.
+	 *	If $model_name ISN'T provided, assumes that this is a 3d array, with toplevel keys being model names,
+	 *	next level being numeric indexes adn each value representing a model object, and teh last layer down
+	 *	being keys of model fields and their proposed values.
+	 *	If $model_name IS provided, assumes a 2d array of the bottom two layers previously mentioned.
+	 *	If the CSV data says (in the metadata row) that it's from the SAME database,
+	 *	we treat the IDs in the CSV as the normal IDs, and try to update those records. However, if those
+	 *	IDs DON'T exist in the database, they're treated as temporary IDs,
+	 *	which can used elsewhere to refer to the same object. Once an item
+	 *	with a temporary ID gets inserted, we record its mapping from temporary
+	 *	ID to real ID, and use the real ID in place of the temporary ID 
+	 *	when that temporary ID was used as a foreign key.
+	 *	If the CSV data says (in the metadata again) taht it's from a DIFFERENT database,
+	 *	we treat all the IDs in the CSV as temporary ID- eg, if the CSV specifies an event with
+	 *	ID 1, and the database already has an event with ID 1, we assume that's just a coincidence,
+	 *	and insert a new event, and map it's temporary ID of 1 over to its new real ID.
+	 *	An important exception are non-auto-increment primary keys. If one entry in the 
+	 *	CSV file has the same ID as one in the DB, we assume they are meant to be
+	 *	the same item, and instead update the item in the DB with that same ID.
+	 *	Also note, we remember the mappings permanently. So the 2nd, 3rd, and 10000th
+	 *	time you import a CSV from a different site, we remember their mappings, and 
+	 * will try to update the item in teh DB instead of inserting another item (eg
+	 * if we previously imported an event with temporary ID 1, and then it got a 
+	 * real ID of 123, we remember that. So the next time we import an event with
+	 * temporary ID, from the same site, we know that it's real ID is 123, and will
+	 * update that event, instead of adding a new event).
 	 *		  @access public
 	 *			@param array $csv_data_array - the array containing the csv data produced from EE_CSV::import_csv_to_model_data_array()
 	 *			@param array $fields_to_save - an array containing the csv column names as keys with the corresponding db table fields they will be saved to
@@ -322,9 +335,8 @@
 				EE_Error::add_error( __('No table information was specified and/or found, therefore the import could not be completed','event_espresso'));
 				return FALSE;
 			}
-			
+			/* @var $model EEM_Base */
 			$model = EE_Registry::instance()->load_model($model_name);
-		
 			
 			//so without further ado, scanning all the data provided for primary keys and their inital values
 			foreach ( $model_data_from_import as $model_object_data ) {		
@@ -352,8 +364,11 @@
 					//if it's a site-to-site export-and-import, see if this modelobject's id
 					//in the old data that we know of
 					if( isset($old_db_to_new_db_mapping[$model_name][$id_in_csv]) ){
-						$id_in_csv = $old_db_to_new_db_mapping[$model_name][$id_in_csv];
 						$do_insert = false;
+						//and from now on, pretend the mapped ID of this thing is what we've mapped
+						if($model->has_primary_key_field()){
+							$model_object_data[$model->primary_key_name()] = $old_db_to_new_db_mapping[$model_name][$id_in_csv];
+						}
 					}else{
 						//check if this new DB has an exact copy of this model object (eg, a country or state that we don't want to duplicate)
 						$copy_in_db = $model->get_one_copy($model_object_data);
@@ -379,7 +394,7 @@
 								continue;
 							}
 							//now, is that value in the list of PKs that have been inserted?
-							if(is_array($fk_field->get_model_name_pointed_to())){//it points to a bunch of different models. So don't try each
+							if(is_array($fk_field->get_model_name_pointed_to())){//it points to a bunch of different models. We want to try each
 								$model_names_pointed_to = $fk_field->get_model_name_pointed_to();
 							}else{
 								$model_names_pointed_to = array($fk_field->get_model_name_pointed_to());
@@ -407,13 +422,36 @@
 						$do_insert = true;
 					}
 				}
-				//remove the primary key, if there is one (we don't want it for inserts OR updates)
-				//we'll put it back in if we need it
-				if($model->has_primary_key_field() && $model->get_primary_key_field()->is_auto_increment()){
-					unset($model_object_data[$model->primary_key_name()]);
+				//double-check we actually want to insert, if that's what we're planning
+				//based on whether this item would be unique in the DB or not
+				if($do_insert){
+					//we're supposed to be inserting. But wait, will this thing
+					//be acceptable if inserted?
+					$conflicting = $model->get_one_conflicting($model_object_data);
+					if($conflicting){
+						//ok, this item would conflict if inserted. Just update the item that it conflicts with.
+						$do_insert = false;
+						//and if this model has a primary key, remember its mapping
+						if($model->has_primary_key_field()){
+							$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $conflicting->ID();
+							$model_object_data[$model->primary_key_name()] = $conflicting->ID();
+						}else{
+							//we want to update this conflicting item, instead of inserting a conflicting item
+							//so we need to make sure they match entirely (its possible that they only conflicted on one field, but we need them to match on other fields
+							//for the WHERE conditions in the update). At the time of this comment, there were no models like this
+							foreach($model->get_combined_primary_key_fields() as $key_field){
+								$model_object_data[$key_field->get_name()] = $conflicting->get($key_field->get_name());
+							}
+						}
+					}
 				}
 				if($do_insert){
-					
+					//remove the primary key, if there is one (we don't want it for inserts OR updates)
+					//we'll put it back in if we need it
+					if($model->has_primary_key_field() && $model->get_primary_key_field()->is_auto_increment()){
+						$effective_id =$model_object_data[$model->primary_key_name()];	
+						unset($model_object_data[$model->primary_key_name()]);	
+					}
 					//the model takes care of validating the CSV's input
 					try{
 						$new_id = $model->insert($model_object_data);
@@ -423,22 +461,21 @@
 							EE_Error::add_success( sprintf(__("Successfully added new %s (with id %s) with csv data %s", "event_espresso"),$model_name,$new_id, implode(",",$model_object_data)));
 						}else{
 							$total_insert_errors++;
-							$model_object_data[$model->primary_key_name()] = $id_in_csv;
+							$model_object_data[$model->primary_key_name()] = $effective_id;
 							EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s", "event_espresso"),$model_name,http_build_query($model_object_data)));
 						}
 					}catch(EE_Error $e){
 						$total_insert_errors++;
 						if($model->has_primary_key_field()){
-							$model_object_data[$model->primary_key_name()] = $id_in_csv;
+							$model_object_data[$model->primary_key_name()] = $effective_id;
 						}
 						EE_Error::add_error( sprintf(__("Could not insert new %s with the csv data: %s because %s", "event_espresso"),$model_name,implode(",",$model_object_data),$e->getMessage()));
 					}
-				}else{
+				}else{//UPDATING
 					try{
-//						$model->show_next_x_db_queries(1);
-//						echo '<br><br>';
 						if($model->has_primary_key_field()){
-							$conditions = array($model->primary_key_name() => $id_in_csv);
+							$conditions = array($model->primary_key_name() => $model_object_data[$model->primary_key_name()]);
+							unset($model_object_data[$model->primary_key_name()]);
 						}elseif($model->get_combined_primary_key_fields() > 1 ){
 							$conditions = array();
 							foreach($model->get_combined_primary_key_fields() as $key_field){
@@ -457,7 +494,7 @@
 							if( ! $matched_items){
 								//no items were matched (so we shouldn't have updated)... but then we should have inserted? what the heck?
 								$total_update_errors++;
-								EE_Error::add_error( sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason", "event_espresso"),$model_name,implode(",",$model_object_data)));
+								EE_Error::add_error( sprintf(__("Could not update %s with the csv data: '%s' for an unknown reason (using WHERE conditions %s)", "event_espresso"),$model_name,http_build_query($model_object_data),http_build_query($conditions)));
 							}else{
 								$total_updates++;
 								EE_Error::add_success( sprintf(__("%s with csv data '%s' was found in the database and didn't need updating because all the data is identical.", "event_espresso"),$model_name,implode(",",$model_object_data)));
