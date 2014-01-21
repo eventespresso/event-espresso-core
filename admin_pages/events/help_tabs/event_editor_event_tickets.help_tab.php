@@ -15,7 +15,7 @@
 </p>
 <p>
 <strong><?php _e('Datetimes', 'event_espresso'); ?></strong><br />
-<?php _e('The datetimes field allows you to specify the number of datetimes that a ticket has access too. For example, an event may take place across 5 sessions but a registrant who has a datetimes limit of 3 may be permitted to attend only 3 out of the 5 sessions.', 'event_espresso'); ?>
+<?php _e('The datetimes field allows you to specify the number of datetimes that a ticket has access too. For example, an event may take place across 5 sessions but a ticket which has a datetimes limit of 3 will only permit a registrant to attend only 3 out of the 5 sessions.', 'event_espresso'); ?>
 </p>
 <p>
 <?php _e('You can create a new ticket by clicking on the Create Ticket button. Then you will need to set a description, complete the ticket details, and adjust the price modifiers.', 'event_espresso'); ?>
