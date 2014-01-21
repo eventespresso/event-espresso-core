@@ -534,11 +534,14 @@ class EE_Event extends EE_CPT_Base{
 				return FALSE;
 			} else {
 				$spaces_remaining = max( $dtt_spaces_remaining, $spaces_remaining );
-			}			
+			}
 		}
 
 		if ( $spaces_remaining === 0 ) {
 			$this->set_status( EEM_Event::sold_out );
+			if ( ! is_admin() || ( is_admin() && defined( 'DOING_AJAX' ))) {
+				$this->save();
+			}
 			$sold_out = TRUE;
 		} else {
 			$sold_out = FALSE;
