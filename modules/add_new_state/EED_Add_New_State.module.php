@@ -108,7 +108,7 @@ class EED_Add_New_State  extends EED_Module {
 			// add hidden input to indicate that a new state is being added 
 			$output .= EEH_Form_Fields::hidden_input( str_replace( 'state', 'add_new_state', $name ), 0, str_replace( 'state', 'add_new_state', $id ) );
 			$output .= '<a id="display-' . $id . '" class="ee-form-add-new-state-lnk display-the-hidden smaller-text" rel="' . $id . '">' . __('click here to add a new state/province', 'event_espresso') . '</a>';
-			$output .= '<div id="' . $id . '-dv" class="ee-form-add-new-state-dv hidden">';
+			$output .= '<div id="' . $id . '-dv" class="ee-form-add-new-state-dv" style="display: none;">';
 			$output .= '<h6>' . __('If your State/Province does not appear in the list above, you can easily add it by doing the following:', 'event_espresso') .'</h6>';
 			$output .= '<ul>';
 			$output .= sprintf(
