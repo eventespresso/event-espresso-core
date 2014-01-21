@@ -413,7 +413,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return mixed(int|string) status int if the display string isn't requested
 	 */
 	public function ticket_status( $display = FALSE ) {
-		if ( $this->_TKT_qty - $this->_TKT_sold < 1 ) return $display ? __('Sold Out', 'event_espresso') : EE_Ticket::sold_out;
+		if ( ! $this->is_remaining() ) return $display ? __('Sold Out', 'event_espresso') : EE_Ticket::sold_out;
 		if ( $this->_TKT_deleted ) return $display ? __('Archived', 'event_espresso') : EE_Ticket::archived;
 		if ( $this->is_expired() ) return $display ? __('Expired', 'event_espresso') : EE_Ticket::expired;
 		if ( $this->is_pending() ) return $display ? __('Pending', 'event_espresso') : EE_Ticket::pending;
