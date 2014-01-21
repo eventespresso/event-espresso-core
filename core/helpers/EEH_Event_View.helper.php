@@ -235,8 +235,12 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_phone' )) {
-		function espresso_event_phone( $EVT_ID = FALSE ) {
-			echo EEH_Event_View::event_phone( $EVT_ID );
+		function espresso_event_phone( $EVT_ID = FALSE, $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Event_View::event_phone( $EVT_ID );
+			} else {
+				return EEH_Event_View::event_phone( $EVT_ID );
+			}
 		}		
 	}
 
