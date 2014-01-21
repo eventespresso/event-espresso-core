@@ -265,6 +265,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$price_type_query_params = array();
 		$term_query_params  = array();
 		$state_country_query_params = array();
+		$question_group_query_params = array();
+		$question_query_params = array();
 		if ( isset( $this->_req_data['EVT_ID'] )) {
 			// do we have an array of IDs ?
 			
@@ -289,6 +291,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 			$price_type_query_params[0]['Price.Ticket.Datetime.EVT_ID'] = $value_to_equal;
 			$term_query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $value_to_equal;
 			$state_country_query_params[0]['Venue.Event.EVT_ID'] = $value_to_equal;
+			$question_group_query_params[0]['Event.EVT_ID'] = $value_to_equal;
+			$question_query_params[0]['Question_Group.Event.EVT_ID'] = $value_to_equal;
 			
 		} else {
 			$filename = 'all-events';
@@ -311,6 +315,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				'State'=>$state_country_query_params,
 				'Venue'=>$related_models_query_params,
 				'Event_Venue'=>$related_models_query_params,
+				'Question_Group'=>$question_group_query_params,
+				'Event_Question_Group'=>$question_group_query_params,
+				'Question'=>$question_query_params,
+				'Question_Group_Question'=>$question_query_params,
 //				'Transaction'=>$related_through_reg_query_params,
 //				'Registration'=>$related_models_query_params,
 //				'Attendee'=>$related_through_reg_query_params,

@@ -39,7 +39,6 @@ jQuery(document).ready(function($) {
 			display_espresso_ajax_notices( 'In order to proceed, you need to enter an abbreviation for the name of your State/Province.' );
 			return false;
 		}
-		//alert( 'state_country_iso = ' + state_country_iso + '\n' + 'state_name = ' + state_name + '\n' + 'state_abbrv = ' + state_abbrv );
 		return true;
 	}
 		
@@ -50,7 +49,6 @@ jQuery(document).ready(function($) {
 		if ( ! espresso_validate_new_state_data( state_country_iso, state_name, state_abbrv )) {
 			return false;
 		}
-//		alert( 'state_country_iso = ' + state_country_iso + '\n' + 'state_name = ' + state_name + '\n' + 'state_abbrv = ' + state_abbrv + '\n' + 'new_state_rel = ' + new_state_rel );
 		
 		$.ajax({
 			type: "POST",
@@ -75,7 +73,7 @@ jQuery(document).ready(function($) {
 				$('#espresso-ajax-loading').fadeOut('fast');
 				 if ( response.success != undefined && response.success == true ) {
 					display_espresso_ajax_notices( 'The new state was successfully saved to the database.', 'success' );
-					console.log( JSON.stringify( 'response: ' + response, null, 4 ));
+//					console.log( JSON.stringify( 'response: ' + response, null, 4 ));
 					espresso_process_new_state( response, new_state_rel );
 				} else if ( response.error !== undefined && response.error != '' ) {
 					display_espresso_ajax_notices( response.error );
@@ -108,7 +106,6 @@ jQuery(document).ready(function($) {
 			$("#single-page-checkout select[id*='-country']").each( function() {
 				var country_select_id_to_set = $(this).attr('id');
 				var set_selected = country_select_id_to_set == country_select_id ? true : false;
-//				alert( 'country id = ' + $(this).attr('id') + '\n' + 'country_select_id = ' + country_select_id + '\n' + 'set_selected = ' + set_selected );
 				// if country option already exists in Country dropdown
 				if( $(this).find('option[value="' + new_state.country_iso + '"]').size() > 0 && set_selected ) {
 					$('#'+country_select_id).find(':selected').prop('selected', false);
@@ -121,13 +118,9 @@ jQuery(document).ready(function($) {
 			$("#single-page-checkout select[id*='-state']").each( function() {
 				var select_id = $(this).attr('id');
 				var set_selected = $(this).attr('id') == state_select_id ? true : false;
-//				 alert( 'select_id = ' + select_id + '\n' + 'state_select_id = ' + state_select_id + '\n' + 'set_selected = ' + set_selected );
 				// set target select's value to this input's value
 				espresso_add_option_to_dropdown( select_id, new_state.id, new_state.name, set_selected, new_state.country_name );		
-			});
-			// set target select's value to this input's value
-	//		espresso_add_option_to_dropdown( state_select_id, '', new_state_name,  );
-			
+			});			
 			var add_new_state = new_state_rel.replace('new_state', 'add_new_state');
 			$('#'+add_new_state).val('1');
 			// hide the target's div container - use slideToggle or addClass
@@ -143,34 +136,24 @@ jQuery(document).ready(function($) {
 	
 
 	function espresso_add_option_to_dropdown( target_id, new_value, new_text, set_selected, opt_group ) {	
-//		console.log( JSON.stringify( '198) target_id: ' + target_id, null, 4 )); 
 		new_text = new_text != undefined && new_text != '' ? new_text : new_value;
-//		console.log( JSON.stringify( '200) new_text: ' + new_text, null, 4 ));
 		new_value = new_value != undefined && new_value != '' ? new_value : new_text;
-//		console.log( JSON.stringify( '202) new_value: ' + new_value, null, 4 ));
 		opt_group = opt_group != undefined && opt_group != '' ? opt_group : '';
-//		console.log( JSON.stringify( '204) opt_group: ' + opt_group, null, 4 ));
 		
 		if ( opt_group != '' ) {
 			if ( $( '#' + target_id + " optgroup[label='" + opt_group + "']" ).size() == 0 ) {
 				$( '#' + target_id ).find('option[value=""]').after( '<optgroup label="' + opt_group + '"></optgroup>' );
 			} 
 			$( '#' + target_id + " optgroup[label='" + opt_group + "']" ).prepend( '<option value="' + new_value + '">' + new_text + '</option>');
-//			console.log( JSON.stringify( '211) add opt_group', null, 4 ));
 			
 		} else {
 			$( '#' + target_id ).find('option[value=""]').after( '<option value="' + new_value + '">' + new_text + '</option>');
-//			console.log( JSON.stringify(  '215) NO opt_group', null, 4 ));
 		}
 		
 		if ( set_selected === true ) {
-//			console.log( JSON.stringify( '219) set_selected: ' + set_selected, null, 4 ));
 			$( '#' + target_id ).children(':selected').prop('selected', false);
-//			console.log( JSON.stringify( '221) target_id: ' + target_id, null, 4 ));
 			$( '#' + target_id ).val( new_value );
-//			console.log( JSON.stringify( '223) new_value: ' + $( '#' + target_id ).val( new_value ), null, 4 ));
 			$( '#' + target_id  + ' option[value="' + new_value + '"]').prop('selected', true)		
-//			console.log( JSON.stringify( '225) option[value: ' + true, null, 4 ));
 		}
 	}
 		
