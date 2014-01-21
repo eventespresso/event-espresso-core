@@ -574,18 +574,17 @@ final class EE_Front_Controller {
 			//Load the ThemeRoller styles if enabled
 			if ( isset( EE_Registry::instance()->CFG->template_settings->enable_default_style ) && EE_Registry::instance()->CFG->template_settings->enable_default_style ) {
 
-				add_filter( 'FHEE_enable_default_espresso_css', '__return_true' );
-
 				//Load custom style sheet if available
 				if ( isset( EE_Registry::instance()->CFG->style_settings['css_name'] )) {
-					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . EE_Registry::instance()->CFG->style_settings['css_name']);
+					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . EE_Registry::instance()->CFG->style_settings['css_name'], EVENT_ESPRESSO_VERSION );
 					wp_enqueue_style('espresso_custom_css');
 				}
-				
+				//add_filter( 'FHEE_enable_default_espresso_css', '__return_true' );
+
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' )) {
-					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ));
+					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				} else {
-					wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ));
+					wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				}
 				wp_enqueue_style('espresso_default');
 
