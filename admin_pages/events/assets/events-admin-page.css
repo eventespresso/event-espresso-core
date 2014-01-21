@@ -106,60 +106,60 @@
 }
 
 /** cancelled **/
-.event-active-status--3, .ee-status-legend--3 {
+.event-active-status-DTC, .ee-status-legend-DTC {
 	background-color: #CCB714;
 }
 
 /** sold out **/
-.event-active-status--2, .ee-status-legend--2 {
+.event-active-status-DTS, .ee-status-legend-DTS {
 	background-color: #E44064;
 }
 
 /** expired **/
-.event-active-status--1, .ee-status-legend--1 {
+.event-active-status-DTE, .ee-status-legend-DTE {
 	background-color: #AC9D9C;
 }
 
 /** inactive **/
-.event-active-status-0, .ee-status-legend-0 {
+.event-active-status-DTI, .ee-status-legend-DTI {
 	background-color: #403A3A;
 }
 
 /** upcoming **/
-.event-active-status-1, .ee-status-legend-1 {
+.event-active-status-DTU, .ee-status-legend-DTU {
 	background-color: #00B1CA;
 }
 
 /** active **/
-.event-active-status-2, .ee-status-legend-2 {
+.event-active-status-DTA, .ee-status-legend-DTA {
 	background-color: #70CC50;
 }
 
 /** postponed **/
-.event-active-status-3, .ee-status-legend-3 {
+.event-active-status-DTP, .ee-status-legend-DTP {
 	background-color: #E76700;
 }
 
 /**status strips**/
-.event-status--3 {
+.event-status-DTC {
 	border-left-color: #CCB714;
 }
-.event-status--2 {
+.event-status-DTS {
 	border-left-color: #E44064;
 }
-.event-status--1 {
+.event-status-DTE {
 	border-left-color: #AC9D9C;
 }
-.event-status-0 {
+.event-status-DTI {
 	border-left-color: #403A3A;
 }
-.event-status-1 {
+.event-status-DTU {
 	border-left-color: #00B1CA;
 }
-.event-status-2 {
+.event-status-DTA {
 	border-left-color: #70CC50;
 }
-.event-status-3 {
+.event-status-DTP {
 	border-left-color: #E76700;
 }
 
