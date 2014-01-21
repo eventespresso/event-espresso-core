@@ -127,17 +127,14 @@ class EED_Events_Archive  extends EED_Module {
 		EED_Events_Archive::set_type();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		$this->_filter_query_parts();		
+		// check what template is loaded
+		add_action( 'template_redirect', array( $this, 'template_redirect' ));
 		// load other required components
 		$this->_load_assests();
-		// load template
-		EE_Config::register_view( 'events', 0, $this->_get_template('full') );
-		// ad event list filters
-		add_action( 'AHEE__archive_event_list_template__after_header', array( $this, 'event_list_template_filters' ));
-		remove_all_filters( 'excerpt_length' );
-		add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
-		add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );
-//		add_action( 'AHEE_before_event_list', 'get_header' );
-//		add_action( 'AHEE_after_event_list', 'get_footer' );
+		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
+			// load template
+			EE_Config::register_view( 'events', 0, $this->_get_template('full') );
+		}
 	}
 
 
@@ -166,8 +163,6 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _filter_query_parts() {
-		// make sure CPT is set correctly
-		//add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 1 );
 		// build event list query
 		add_filter( 'posts_join', array( $this, 'posts_join' ), 1, 1 );
 		add_filter( 'posts_where', array( $this, 'posts_where' ), 1, 1 );
@@ -247,17 +242,6 @@ class EED_Events_Archive  extends EED_Module {
 //		echo '<h4>$this->_type : ' . $this->_type . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	}
 
-
-	/**
-	 * 	pre_get_posts
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function pre_get_posts( $wp_query ) {
-//		d( $wp_query );
-		//$wp_query->query_vars['post_type'] = 'espresso_events';
-	}
 
 
 	/**
@@ -495,6 +479,100 @@ class EED_Events_Archive  extends EED_Module {
 		//echo '<h4>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return  $SQL;
 	}
+
+
+
+	/**
+	 * 	template_redirect
+	 *
+	 *  	@access 	public
+	 *  	@return 	void
+	 */
+	public function template_redirect() {
+		// add event list filters
+//		add_action( 'loop_start', array( $this, 'event_list_template_filters' ));
+		// and pagination
+		add_action( 'loop_start', array( $this, 'event_list_pagination' ));
+		add_action( 'loop_end', array( $this, 'event_list_pagination' ));
+		// if NOT a custom template
+		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
+			// don't know if theme uses the_excerpt
+			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
+			add_filter( 'the_excerpt', array( $this, 'event_tickets' ), 110 );
+			add_filter( 'the_excerpt', array( $this, 'event_datetimes' ), 120 );
+			add_filter( 'the_excerpt', array( $this, 'event_venues' ), 130 );
+			// or the_content
+			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
+			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
+			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
+		} else {
+			remove_all_filters( 'excerpt_length' );
+			add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
+			add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );			
+		}
+	}
+
+
+
+	/**
+	 * 	event_list_pagination
+	 *
+	 *  	@access 	public
+	 *  	@return 		void
+	 */
+	public function event_list_pagination() {
+		echo '<div class="ee-pagination-dv clear">' . espresso_event_list_pagination() . '</div>';
+	}
+
+
+	/**
+	 * 	event_details
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
+	 */
+	public function event_details( $content ) {
+		return EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-details.php', array( 'the_content' => $content ), TRUE );
+	}
+
+
+	/**
+	 * 	event_tickets
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
+	 */
+	public function event_tickets( $content ) {
+		return $content . EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-tickets.php', array(), TRUE );
+	}
+
+	/**
+	 * 	event_datetimes
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
+	 */
+	public function event_datetimes( $content ) {
+		return $content . EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-datetimes.php', array(), TRUE );
+	}
+
+	/**
+	 * 	event_venues
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
+	 */
+	public function event_venues( $content ) {
+		return $content . EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-venues.php', array(), TRUE );
+	}
+
+
+
 
 
 
@@ -860,7 +938,7 @@ class EED_Events_Archive  extends EED_Module {
 	public static function pagination() {
 		global $wp_query;
 		$big = 999999999; // need an unlikely integer
-		echo paginate_links( array(
+		$pagination = paginate_links( array(
 			'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
 			'format' => '?paged=%#%',
 			'current' => max( 1, get_query_var('paged') ),
@@ -875,6 +953,7 @@ class EED_Events_Archive  extends EED_Module {
 			'add_args'     => FALSE,
 			'add_fragment' => ''
 		));
+		return ! empty( $pagination ) ? '<div class="ee-pagination-dv clear">' . $pagination . '</div>' : '';
 	}
 
 
@@ -942,7 +1021,7 @@ function espresso_display_venue_address_in_event_list() {
 }
 
 function espresso_event_list_pagination() {
-	return EED_Events_Archive::pagination();
+	echo EED_Events_Archive::pagination();
 }
 
 function espresso_event_list_grid_size_btn() {
