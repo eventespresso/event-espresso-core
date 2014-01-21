@@ -102,7 +102,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 				foreach ( $QSGs as $QSG ) {
 
 					$checked = in_array( $QSG->ID(), $EQGids ) ? ' checked="checked" ' : '';
-					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'ID()' => $QSG->ID() ), EE_FORMS_ADMIN_URL );
+					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->ID() ), EE_FORMS_ADMIN_URL );
 
 					$html .= '
 					<p id="event-question-group-' . $QSG->ID() . '">
