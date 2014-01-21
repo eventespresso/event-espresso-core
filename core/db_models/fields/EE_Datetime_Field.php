@@ -152,7 +152,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			$this->_timezone = self::timezone_convert_to_string_from_offset( $offset );
 		}
 
-
 		self::validate_timezone( $this->_timezone ); //just running validation on the timezone.
 	}
 
@@ -468,11 +467,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
         {
                 foreach ($abbr as $city)
                 {
-                        if ($city['offset'] == $offset)
+                        if ($city['offset'] === $offset && $city['dst'] === FALSE )
                         {
-
-                                return $city['timezone_id'];
-                        }
+                   
+                               return $city['timezone_id'];
+                        }/**/
                 }
         }
 

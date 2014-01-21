@@ -65,7 +65,7 @@ class EEH_DTT_Helper {
         {
                 foreach ($abbr as $city)
                 {
-                        if ($city['offset'] == $offset)
+                        if ($city['offset'] === $offset && $city['dst'] === FALSE)
                         {
                                 return $city['timezone_id'];
                         }
