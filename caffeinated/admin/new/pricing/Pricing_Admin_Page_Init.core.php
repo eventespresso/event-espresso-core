@@ -75,7 +75,7 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init  {
 	public function get_menu_map() {
 		$map = array(
 			'group' => 'management',
-			'menu_order' => 10,
+			'menu_order' => 20,
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'events'
 			);

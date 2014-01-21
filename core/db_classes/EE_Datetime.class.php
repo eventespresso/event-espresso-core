@@ -27,31 +27,31 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	/**
 	 * Datetime is cancelled
 	 */
-	const cancelled = -3;
+	const cancelled = 'DTC';
 	/**
 	 * constant used by get_active_status, indicates datetime has no more available spaces
 	 */
-	const sold_out = -2;
+	const sold_out = 'DTS';
 	/**
 	 * constant used by get_active_status, indicates datetime has expired (event is over)
 	 */
-	const expired = -1;
+	const expired = 'DTE';
 	/**
 	 * constant used in various places indicating that an event is INACTIVE (not yet ready to be published)
 	 */
-	const inactive = 0;
+	const inactive = 'DTI';
 	/**
 	 * constant used by get_active_status, indicating the datetime cannot be used for registrations yet, but has not expired
 	 */
-	const upcoming = 1;
+	const upcoming = 'DTU';
 	/**
 	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
 	 */
-	const active = 2;
+	const active = 'DTA';
 	/**
 	 * Datetime is postponed
 	 */
-	const postponed = 3;
+	const postponed = 'DTP';
 	
     /**
     *	Datetime ID
@@ -747,7 +747,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * This returns the active status for whether an event is active, upcoming, or expired
-	 * @return int       return value will be one of four ints: -2 = sold_out, -1 = expired, 0 = upcoming, 1 = active.
+	 * @return int       return value will be one of the EE_Datetime status constants.
 	 */
 	public function get_active_status() {
 		$total_tickets_for_this_dtt = $this->total_tickets_available_at_this_datetime();
