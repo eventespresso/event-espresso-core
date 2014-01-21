@@ -19,23 +19,68 @@
 td.column-TXN_ID { padding: 4px 7px  29px; }
 .column-TXN_timestamp { width:15%; }
 
-#STS_ID {}
-.column-STS_ID { width:8%; /*text-align:center; */}
 /* green text */
-.status-TCM { color:#090; font-size:.85em; font-weight:bold; }
+.status-TCM { color:#70CC50; font-size:.85em; font-weight:bold; }
 .txn-overview-full-payment-spn,
-.txn-admin-payment-status-PAP { color:#090;  }
-/* orange text */
-.status-TPN { color:#F93; font-weight:bold; }
+.txn-admin-payment-status-PAP { color:#70CC50;  }
+/* blue text */
+.status-TPN { color:#00B1CA; font-weight:bold; }
 .txn-overview-part-payment-spn,
-.txn-admin-payment-status-PFL { color:#F93; font-weight:bold;  }
-/* red text */
-.status-TOP { color:#F00; font-weight:bold; }
+.txn-admin-payment-status-PFL { color:#00B1CA; font-weight:bold;  }
+/* orange text */
+.status-TOP { color:#E76700; font-weight:bold; }
 .txn-overview-no-payment-spn,
-.txn-admin-payment-status-PDC { color:#F00; font-weight:bold; }
-/* grey text */
-.status-TIN { color:#999; font-size:.85em; }
-.txn-admin-payment-status-PCN { color:#999;  }
+.txn-admin-payment-status-PDC { color:#E76700; font-weight:bold; }
+/* red text */
+.status-TIN { color:#E44064; font-size:.85em; }
+.txn-admin-payment-status-PCN { color:#E44064;  }
+
+/**
+ * status strips
+ */
+ /*complete*/
+.txn-status-TCM {
+	border-left-color: #70CC50;
+}
+
+/*incomplete*/
+.txn-status-TIN {
+	border-left-color: #E44064;
+}
+
+/*open*/
+.txn-status-TPN {
+	border-left-color: #00B1CA;
+}
+
+/*overpaid*/
+.txn-status-TOP {
+	border-left-color: #E76700;
+}
+
+.widefat td.column-STS_ID, .widefat th.column-STS_ID {
+	width: 2%;
+	padding: 0;
+	margin: 0;
+}
+
+/** txn status legend **/
+.ee-status-legend-TCM {
+	background-color: #70CC50;
+}
+
+.ee-status-legend-TIN {
+	background-color: #E44064;
+}
+
+.ee-status-legend-TPN {
+	background-color: #00B1CA;
+}
+
+.ee-status-legend-TOP {
+	background-color: #E76700;
+}
+
 
 /* #TXN_total, #TXN_paid { text-align:center; } */
 
