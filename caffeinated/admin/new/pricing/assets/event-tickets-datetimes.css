@@ -236,22 +236,27 @@
     border-left: solid 4px #ccc;
 }
 
-.datetime-ticket.ticket-status-0 {
+.datetime-ticket.ticket-status-TKA{
     background-color: transparent;
     border-left: solid 4px #e6e6e6;
 }
 
-.datetime-ticket.ticket-status--1 {
+.datetime-ticket.ticket-status-TKE {
     background-color: transparent;
     border-left: solid 4px #A39D9C;
 }
 
-.datetime-ticket.ticket-status-1 {
+.datetime-ticket.ticket-status-TKP {
     background-color: transparent;
     border-left: solid 4px #49afcd;
 }
 
-.datetime-ticket.ticket-status-2 {
+.datetime-ticket.ticket-status-TKO {
+    background-color: transparent;
+    border-left: solid 4px #62B660;
+}
+
+.datetime-ticket.ticket-status-TKS {
     background-color: transparent;
     border-left: solid 4px #62B660;
 }
@@ -361,44 +366,44 @@
     padding: 50% 0 150% 0;
 }
 
-.tkt-status-0 {
+.tkt-status-TKA{
    border-color: #e6e6e6; /*archived*/
 }
 
-.tkt-status--1 {
+.tkt-status-TKE {
    border-color: #A39D9C; /*expired*/
 }
 
-.tkt-status-1 {
+.tkt-status-TKP {
     border-color: #49afcd; /*pending*/
 }
 
-.tkt-status-2 {
+.tkt-status-TKO {
     border-color: #62B660; /*onsale*/
 }
 
-.tkt-status--2 {
-    border-color: #E44064;
+.tkt-status-TKS {
+    border-color: #E44064; /*soldout*/
 }
 
 
-.ee-status-legend-0 {
+.ee-status-legend-TKA{
     background-color: #e6e6e6;
 }
 
-.ee-status-legend--1 {
+.ee-status-legend-TKE {
     background-color: #A39D9C;
 }
 
-.ee-status-legend-1 {
+.ee-status-legend-TKP {
     background-color: #49afcd;
 }
 
-.ee-status-legend-2 {
+.ee-status-legend-TKO {
     background-color: #62B660;
 }
 
-.ee-status-legend--2 {
+.ee-status-legend-TKS {
     background-color: #E44064;
 }
 

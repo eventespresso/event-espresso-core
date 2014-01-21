@@ -164,6 +164,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					),
 				),
 				'help_tour' => array( 'Transactions_Overview_Help_Tour' ),
+				'qtips' => array( 'Transactions_List_Table_Tips' ),
 				'require_nonce' => FALSE
 				),
 			'view_transaction' => array(
@@ -363,7 +364,27 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			'view_registration' => array(
 				'class' => 'ee-icon ee-icon-user-edit',
 				'desc' => __('View Registration Details', 'event_espresso')
-				)
+				),
+			'blank' => array(
+			 	'class' => '',
+			 	'desc' => ''
+			 	),
+			 'complete' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::complete_status_code, FALSE, 'sentence' )
+				),
+			 'incomplete' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
+				),
+			 'open' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::open_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::open_status_code, FALSE, 'sentence' )
+				),
+			 'overpaid' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
+				),
 		);
 		return $items;
 	}
@@ -519,7 +540,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		}
 		
 		$this->_template_args['edit_payment_url'] = add_query_arg( array( 'action' => 'edit_payment'  ), TXN_ADMIN_URL );
-		$this->_template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'delete_payment' ), TXN_ADMIN_URL );
+		$this->_template_args['delete_payment_url'] = add_query_arg( array( 'action' => 'espresso_delete_payment' ), TXN_ADMIN_URL );
 
 		if ( isset( $txn_details['invoice_number'] )) {
 			$this->_template_args['txn_details']['invoice_number']['value'] = $this->_template_args['REG_code'];
@@ -574,7 +595,8 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$status_array['NAN'] = __('Leave the Same', 'event_espresso');
 		$status_array = array_merge( $status_array, $statuses );
 
-		$this->_template_args['status_change_select'] = EEH_Form_Fields::select_input( 'txn_reg_status_change[reg_status]', $status_array, 'NAN' );
+		$this->_template_args['status_change_select'] = EEH_Form_Fields::select_input( 'txn_reg_status_change[reg_status]', $status_array, 'NAN', '', 'txn-reg-status-change-reg-status' );
+		$this->_template_args['delete_status_change_select'] = EEH_Form_Fields::select_input( 'delete_txn_reg_status_change[reg_status]', $status_array, 'NAN', '', 'delete-txn-reg-status-change-reg-status' );
 
 	}
 
@@ -878,17 +900,24 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	
 		$return_data = array();
 		
-		if ( isset( $this->_req_data['ID'] )) {
-			if ( $payment = EEM_Payment::instance()->get_one_by_ID( $this->_req_data['ID'] )) {
-				if ( $transaction = EEM_Payment::instance()->delete_by_ID( $this->_req_data['ID'] )) {
+		if ( isset( $this->_req_data['delete_txn_admin_payment'] )) {
+			$pymt = $this->_req_data['delete_txn_admin_payment'];
+			if ( $payment = EEM_Payment::instance()->get_one_by_ID( $pymt['PAY_ID'] )) {
+				if ( $transaction = EEM_Payment::instance()->delete_by_ID( $payment->ID() )) {
 					$return_data = array( 
 						'amount' => $payment->amount(), 
 						'total_paid' => $transaction->paid(), 
 						'txn_status' => $transaction->status_ID(),
 						'pay_status' => $payment->STS_ID(),
-						'PAY_ID' => $this->_req_data['ID']
+						'PAY_ID' => $pymt['PAY_ID'],
+						'delete_txn_reg_status_change' => $this->_req_data['delete_txn_reg_status_change']
 					); 						
 				}						
+			}
+			if( isset( $this->_req_data['delete_txn_reg_status_change'] ) ) {
+				$this->_req_data['txn_reg_status_change'] = $this->_req_data['delete_txn_reg_status_change'];
+				$_REQUEST['txn_reg_status_change'] = $this->_req_data['delete_txn_reg_status_change'];
+				$this->_process_registration_status_change( $transaction );
 			}
 		} else {
 			$msg = __( 'An error occurred. The payment form data could not be loaded.', 'event_espresso' );

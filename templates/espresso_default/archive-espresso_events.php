@@ -36,4 +36,68 @@ get_header();
  * archive-espresso_events-text-view.php
 */
 
-get_footer(); 	
+get_header(); 
+?>
+
+	<section id="primary" class="content-area">
+		<div id="content" class="site-content" role="main">
+
+			<?php if ( have_posts() ) : ?>
+
+			<header class="page-header">
+				<h1 class="page-title">
+					<?php
+						if ( is_day() ) :
+							printf( __( 'Today\'s Events: %s', 'twentyfourteen' ), get_the_date() );
+
+						elseif ( is_month() ) :
+							printf( __( 'Events This Month: %s', 'twentyfourteen' ), get_the_date( _x( 'F Y', 'monthly archives date format', 'twentyfourteen' ) ) );
+
+						elseif ( is_year() ) :
+							printf( __( 'Events This Year: %s', 'twentyfourteen' ), get_the_date( _x( 'Y', 'yearly archives date format', 'twentyfourteen' ) ) );
+
+						else :
+							_e( 'Upcoming Events', 'twentyfourteen' );
+
+						endif;
+					?>
+				</h1>
+			</header><!-- .page-header -->
+			
+			<?php do_action( 'AHEE__archive_event_list_template__before_event_list' ); ?>
+			
+			<?php espresso_event_list_pagination(); ?>
+
+			<?php
+					// Start the Loop.
+					while ( have_posts() ) : the_post();
+
+					/*
+					 * Include the post TYPE-specific template for the content.
+					 */
+					get_template_part( 'content', 'espresso_events' );
+
+					endwhile;
+
+			?>
+
+			<?php espresso_event_list_pagination(); ?>
+
+			<?php
+			
+					do_action( 'AHEE__archive_event_list_template__before_event_list' );
+
+				else :
+					// If no content, include the "No posts found" template.
+					get_template_part( 'content', 'none' );
+
+				endif;
+			?>		
+			
+		</div><!-- #content -->
+	</section><!-- #primary -->
+
+<?php
+get_sidebar( 'content' );
+get_sidebar();
+get_footer();

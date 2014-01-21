@@ -44,7 +44,7 @@
 .wp-list-table .column-PRC_amount,
 .wp-list-table .column-_REG_final_price,
 .wp-list-table .column-TXN_total,
-.wp-list-table .column-TXN_paid { width:10%; text-align:right; }
+.wp-list-table .column-TXN_paid { width:10%; text-align:left; }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #cb {
 	width: 3%;

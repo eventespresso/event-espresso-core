@@ -757,7 +757,7 @@ input.ee-register-button {
 	color: #f59200;
 }
 .ee-attention {
-	width:95%;
+	width:94%;
 	padding: .75em 2.5%;
 	margin: 0 auto 1em;
 	background: #fff;
@@ -832,6 +832,11 @@ input.ee-register-button {
 	margin:0 0 .5em;
 }
 
+
+.espresso_events,
+.espresso_venues {
+	margin-bottom: 48px;
+}
 /*******************************************************/
 /****                     -==ATTENTION==-                     ****/
 /****         MOVE THIS FILE BEFORE EDITING         ****/

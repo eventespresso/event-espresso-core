@@ -211,13 +211,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _set_next_step() {
 		reset( self::$_reg_steps );
-		// set pointer to current step 
-		while ( key( self::$_reg_steps ) != $this->_current_step ) {
-			next( self::$_reg_steps );
+		// if there is more than one step
+		if ( count( self::$_reg_steps ) > 1 ) {
+			// advance to the current step and set pointer
+			while ( key( self::$_reg_steps ) != $this->_current_step ) {
+				next( self::$_reg_steps );
+			}
 		}
 		// advance one more spot
-		$this->_next_step = next( self::$_reg_steps ) ? key( self::$_reg_steps ) : 'finalize_registration';			
-		// then back to current step
+		$this->_next_step = next( self::$_reg_steps ) ? key( self::$_reg_steps ) : 'finalize_registration';
+		// then back to current step to reset
 		prev( self::$_reg_steps );
 	}
 
@@ -1256,6 +1259,57 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 
 	/**
+	 * 	_save_all_registration_information
+	 * 	simply loops through the current transaction and saves all data for each registration
+	 *
+	 * 	@access private
+	 * 	@return 	void
+	 */
+	private function _save_all_registration_information() {
+		// verify the transaction
+		if ( $this->_transaction instanceof EE_Transaction ) {
+			$this->_transaction->save();
+			// grab the saved registrations from the transaction
+			foreach ( $this->_transaction->registrations( array(), TRUE ) as $line_item_id => $registration ) {
+				// verify object
+				if ( $registration instanceof EE_Registration ) {
+					//set TXN ID
+					$registration->set_transaction_id( $this->_transaction->ID() );
+					// verify and save the attendee
+					if ( $registration->attendee() instanceof EE_Attendee ) {
+						$registration->attendee()->save();
+						$registration->set_attendee_id( $registration->attendee()->ID() );
+					} else {
+						EE_Error::add_error( __( 'An invalid attendee object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+						return FALSE;
+					}
+					// save so that REG has ID
+					$registration->save();
+					// now save the aswers
+					foreach ( $registration->answers() as $answer ) {	
+						// verify object
+						if ( $answer instanceof EE_Answer ) {
+							$answer->save();
+						} else {
+							EE_Error::add_error( __( 'An invalid answer object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+							return FALSE;
+						}
+					}
+				} else {
+					EE_Error::add_error( __( 'An invalid registration object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					return FALSE;
+				}
+			}		
+		} else {
+			EE_Error::add_error( __( 'A valid transaction was not found when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+
+
+	/**
 	 * 	_finalize_attendee_information
 	 * 	this is the final step after a user  revisits the site to edit their attendee information
 	 * 	this gets called AFTER the _process_attendee_information() method above
@@ -1266,19 +1320,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	private function _finalize_attendee_information( $params = array(), $success_msg = '' ) {
 
 		if ( $this->_transaction instanceof EE_Transaction && $this->_continue_reg ) {
-			// grab the saved registrations from the transaction
-			foreach ( $this->_transaction->registrations()  as $registration ) {	
-				// verify object
-				if ( $registration instanceof EE_Registration ) {
-					$registration->save();
-					foreach ( $registration->answers()  as $answer ) {	
-						// verify object
-						if ( $answer instanceof EE_Answer ) {
-							$answer->save();
-						}
-					}
-				}
-			}
+			// save everything
+			$this->_save_all_registration_information();
 			//grab notices
 			$notices = EE_Error::get_notices(FALSE);
 			// if it's all good...
@@ -1317,14 +1360,15 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		//nonce check was done in admin so no need to do here.
 		//first lets validate the registration form
 		$this->init_for_admin();
-		$success = $this->_process_attendee_information();
-
 		//if failure in processing attendee info then let's get out early
-		if ( !$success )
-			return false;
-
+		if ( ! $this->_process_attendee_information() ) {
+			return FALSE;
+		}
+		// same deal when saving everything
+		if ( ! $this->_save_all_registration_information() ) {
+			return FALSE;
+		}
 		//all is good so let's continue with finalizing the registration.
-		$this->_transaction->save_new_cached_related_model_objs();
 		EE_Registry::instance()->SSN->set_session_data( array( 'transaction', NULL ));
 		$this->_transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data() );
 		$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
@@ -1489,12 +1533,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		$success_msg = FALSE;
 		$error_msg = FALSE;
 
-		if ( $this->_continue_reg ) {
-
-			//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-			$this->_transaction->save_new_cached_related_model_objs();
-			// and save the txn to the db
-			$this->_transaction->save();
+		// save everything
+		if ( $this->_continue_reg && $this->_save_all_registration_information() ) {
 //			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 				

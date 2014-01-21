@@ -441,6 +441,65 @@
 		</form>
 	</div>
 
+	<div id="txn-admin-delete-payment-dv" class="txn-admin-payment-option auto-hide" style="display: none;">
+
+		<h2 id="admin-modal-dialog-delete-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
+			<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/cash-single-add-24x24.png" alt="" />
+			<?php echo __( 'Delete Payment/Refund for Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
+		</h2>
+		
+		<form name="txn-admin-delete-payment-frm" id="txn-admin-delete-payment-frm" action="<?php echo $delete_payment_url; ?>">
+			<div class="admin-modal-dialog-wrap">
+				<div class="admin-modal-dialog-inner">
+					
+					<input  type="hidden" name="espresso_delete_payment_nonce" id="espresso_delete_payment_nonce" value="<?php echo wp_create_nonce( 'espresso_delete_payment_nonce' );?>"/>
+					<input  type="hidden" name="delete_espresso_ajax" id="delete-espresso-ajax" value="0"/>
+					<input  type="hidden" name="delete_noheader" id="delete-txn-admin-noheader-inp" value="0"/>
+					<input  type="hidden" name="delete_txn_admin_payment[PAY_ID]" id="delete-txn-admin-payment-payment-id-inp" class="txn-admin-apply-payment-inp" value="0"/>
+					<input  type="hidden" name="delete_txn_admin_payment[TXN_ID]" id="delete-txn-admin-payment-txn-id-inp" value="<?php echo $txn_nmbr['value']; ?>"/>
+
+					<div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
+						<label for="delete-txn-admin-payment-accounting-inp" class="last"><?php _e( 'Change Registration Status?', 'event_espresso' );?></label>
+						<?php echo $delete_status_change_select; ?>
+						<br/>
+						<br />
+						<p class="description"><?php _e( 'If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. <strong>Note: ALL registrations associated with this transaction will be updated to this new status.</strong>', 'event_espresso' );?></p><br/>
+						<label></label>
+					</div>
+
+					<div class="ee-attention txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
+						<label for="delete-txn-admin-payment-accounting-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
+						<input type="checkbox" value="1" name="delete_txn_reg_status_change[send_notifications]">
+						<br/>
+						<br />
+						<p class="description"><?php _e( 'If you check this box, the system will send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p><br/>
+						<label></label>
+					</div>				
+					<div class="clear"></div>
+
+				</div>	
+			</div>			
+
+			<ul id="del-admin-modal-dialog-options-ul">
+					<a id="txn-admin-modal-dialog-delete-lnk" class="button-primary no-icon" style="display:none;" > 
+						<?php _e( 'Delete', 'event_espresso' );?>
+					</a>
+				</li>
+				<li>
+					<a id="del-txn-admin-modal-dialog-cancel-lnk" class="button-secondary no-icon" >
+						<?php _e( 'Cancel', 'event_espresso' );?>
+					</a>
+				</li>
+				<li>
+					<span id="delete-ee-ajax-processing-text" style="display:none;"><?php _e('Processing...', 'event_espresso'); ?></span>
+				</li>
+			</ul>
+
+			<br class="clear"/>
+									
+		</form>
+	</div>
+
 	<?php endif; // $grand_raw_total > 0?>
 	
 </div>

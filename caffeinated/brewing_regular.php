@@ -236,7 +236,7 @@ class EE_Brewing_Regular extends EE_Base {
 	public function email_messenger_template_fields( $template_fields, EE_Email_messenger $messenger ) {
 		$template_fields['extra']['content']['question_list'] = array(
 						'input' => 'textarea',
-						'label' => __('Questions and Answers List', 'event_espresso'),
+						'label' => '[QUESTION_LIST]',
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,

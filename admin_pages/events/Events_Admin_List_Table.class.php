@@ -185,7 +185,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 		}
 
-		$status = $item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
+		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
 		$content .= $this->row_actions($actions);
 		return $content;

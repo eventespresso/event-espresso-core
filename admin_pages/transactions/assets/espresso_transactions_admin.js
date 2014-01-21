@@ -40,6 +40,7 @@ jQuery(document).ready(function($) {
 
 	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-edit-lnk', function() {
 		display_payments_and_refunds_modal_dialog();
+		$('.txn-reg-status-change-reg-status').val('NAN');
 		// grab payment ID
 		var PAY_ID = $(this).attr('rel');
 		$('#admin-modal-dialog-edit-payment-h2').show();
@@ -66,7 +67,9 @@ jQuery(document).ready(function($) {
 
 	$( "#display-txn-admin-apply-payment" ).on( 'click',  function() {
 		display_payments_and_refunds_modal_dialog();
-		$('#admin-modal-dialog-apply-payment-h2').show();
+		//set reg status to approved by default
+		$('.txn-reg-status-change-reg-status').val('RAP');
+		$('#admin-modal-dialog-delete-payment-h2').show();
 		$('#txn-admin-modal-dialog-apply-payment-lnk').show();
 		$('#txn-admin-modal-dialog-cancel-lnk').show();
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
@@ -75,10 +78,22 @@ jQuery(document).ready(function($) {
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
+	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-delete-lnk', function() {
+		display_delete_payment_modal_dialog();
+		//grab payment ID
+		var PAY_ID = $(this).attr('rel');
+		$('#delete-txn-admin-payment-payment-id-inp').val( PAY_ID );
+		$('.delete-txn-reg-status-change-reg-status').val('NAN');
+		$('#admin-modal-dialog-delete-payment-h2').show();
+		$('#txn-admin-modal-dialog-delete-lnk').show();
+		$('#del-txn-admin-modal-dialog-cancel-lnk').show();
+	});
+
 
 
 	$( "#display-txn-admin-apply-refund" ).on( 'click',  function() {
 		display_payments_and_refunds_modal_dialog();
+		$('.txn-reg-status-change-reg-status').val('RCN');
 		$('#admin-modal-dialog-apply-refund-h2').show();
 		$('#txn-admin-modal-dialog-apply-refund-lnk').show();
 		$('#txn-admin-modal-dialog-cancel-lnk').show();
@@ -154,6 +169,14 @@ jQuery(document).ready(function($) {
 	});
 
 
+	$(document).on( 'click', '#txn-admin-modal-dialog-delete-lnk', function( event ) {
+		event.preventDefault();
+		$('#delete-espresso-ajax').val(1);
+		toggleaAjaxActivity();
+		apply_delete_payment_or_refund();
+	});
+
+
 	
 	
 	function validate_form_inputs() {
@@ -181,7 +204,9 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeIn('fast');
-			$('#txn-admin-modal-dialog-cancel-lnk').fadeIn('fast');
+			$('#txn-admin-modal-dialog-delete-lnk').fadeIn('fast');
+			$('#del-txn-admin-modal-dialog-cancel-lnk').fadeIn('fast');
+			$('#delete-ee-ajax-processing-text').fadeOut('fast');
 			$('#ee-ajax-processing-text').fadeOut('fast');
 		} else {
 			$('#espresso-ajax-loading').center().fadeIn('fast');
@@ -189,6 +214,9 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-cancel-lnk').fadeOut('fast');
+			$('#txn-admin-modal-dialog-delete-lnk').fadeOut('fast');
+			$('#del-txn-admin-modal-dialog-cancel-lnk').fadeOut('fast');
+			$('#delete-ee-ajax-processing-text').fadeIn('fast');
 			$('#ee-ajax-processing-text').fadeIn('fast');
 		}
 	}
@@ -239,25 +267,37 @@ jQuery(document).ready(function($) {
 	}
 
 
+	function display_delete_payment_modal_dialog() {
+		$('#message').hide();
+		dialog_content = $('#txn-admin-delete-payment-dv');
+		d_contents = dialog_content.html();
+		dialog_content.empty();
+		dialogHelper.displayModal().addContent(d_contents);
+		overlay.on('click', function() {
+				//add content back to dom
+				dialog_content.html(d_contents);
+				$('.admin-modal-dialog-h2').hide();
+				$('#del-admin-modal-dialog-options-ul a').hide();
+			});
+	}
 
 
 	// delete a payment
-	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-delete-lnk', function() {
-		toggleaAjaxActivity();
-		$('#espresso-ajax').val(1);
-		var formURL = $('#txn-admin-delete-payment-form-url-inp').val();
-		var PAY_ID = $(this).attr('rel');
-		//alert( 'formURL = ' + formURL + '\n' + 'PAY_ID = ' + PAY_ID );
-		console.log( 'formURL = ' + formURL + '\n' + 'PAY_ID = ' + PAY_ID );
-		var delBtn = $( this );
+	function apply_delete_payment_or_refund() {
 
+		var formURL = $('#txn-admin-delete-payment-frm').attr('action');
+		formURL = formURL + '&noheader=true&ee_admin_ajax=true';
+		$('#delete-txn-admin-noheader-inp').val('true');
+		var formData = $('#txn-admin-delete-payment-frm').serializeFullArray();
+		var PAY_ID = $( '#delete-txn-admin-payment-payment-id-inp' ).val();
+		var delBtn = $( '.txn-admin-payment-action-delete-lnk[rel="' + PAY_ID + '"]');
 		
 		$.ajax({
 					type: "POST",
 					url:  formURL,
-					data: { ID : PAY_ID, espresso_ajax : 1, noheader : 'true', ee_admin_ajax: true },
+					data: formData,
 					dataType: "json",
-					beforeSend: function() {
+					beforeSend: function(jqXHR, obj) {
 						do_before_admin_page_ajax();
 					},
 					success: function(response){
@@ -279,7 +319,7 @@ jQuery(document).ready(function($) {
 						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 					}
 			});
-	});
+	}
 
 
 
@@ -402,6 +442,7 @@ jQuery(document).ready(function($) {
 
 	function process_delete_payment( response ) {
 		toggleaAjaxActivity( true );
+		overlay.trigger('click');
 		// grab PAY ID from return data
 		var PAY_ID = response.return_data.PAY_ID;
 		update_payment_totals( response );
@@ -412,6 +453,10 @@ jQuery(document).ready(function($) {
 
 
 	$(document).on( 'click', '#txn-admin-modal-dialog-cancel-lnk', function() {
+		overlay.trigger('click');
+	});
+
+	$(document).on( 'click', '#del-txn-admin-modal-dialog-cancel-lnk', function() {
 		overlay.trigger('click');
 	});
 	

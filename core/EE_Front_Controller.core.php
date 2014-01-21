@@ -23,6 +23,14 @@
  */
 final class EE_Front_Controller {
 
+
+	/**
+	 * 	instance of the EE_System object
+	 *	@var 	$_instance
+	 * 	@access 	private
+	 */
+	private static $_instance = NULL;
+
 	/**
 	 * 	system registry
 	 *	@var 	EE_Registry		$EE
@@ -31,11 +39,18 @@ final class EE_Front_Controller {
 	private $EE;
 
 	/**
-	 * 	$_view_template
-	 *	@var 	string		$_view_template
+	 * 	$_template_path
+	 *	@var 	string		$_template_path
 	 * 	@access 	public
 	 */
-	private $_view_template = NULL;
+	private $_template_path = NULL;
+
+	/**
+	 * 	$_template
+	 *	@var 	string		$_template
+	 * 	@access 	public
+	 */
+	private $_template = NULL;
 
 
 	/**
@@ -46,14 +61,27 @@ final class EE_Front_Controller {
 	public static $registry;
 
 
+	/**
+	 *	@singleton method used to instantiate class object
+	 *	@access public
+	 *	@return EE_Front_Controller
+	 */
+	public static function instance() {
+		// check if class object is instantiated, and instantiated properly
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof  EE_Front_Controller )) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}
+
 
 	/**
 	 * 	class constructor
 	 *
-	 *  @access 	public
+	 *  @access 	private
 	 *  @return 	void
 	 */
-	public function __construct() {
+	private function __construct() {
 		// early init
 		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
@@ -263,6 +291,7 @@ final class EE_Front_Controller {
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 5 );
 		// header
 		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
+		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
 		// display errors
@@ -497,15 +526,10 @@ final class EE_Front_Controller {
 			// determine module and method for route
 			$module = $Module_Request_Router->resolve_route( $route );
 			// get registered view for route
-			$this->_view_template = $Module_Request_Router->get_view( $route );
+			$this->_template_path = $Module_Request_Router->get_view( $route );
 			// map the routes to the module objects
 			EE_Registry::instance()->modules[ $route ] = $module;
 		}
-		// if a view was registered for the last called route, then hook into template_include
-		if ( ! empty( $this->_view_template )) {
-			add_filter( 'template_include', array( $this, 'template_include' ), 1 );
-		}
-
 	}
 
 
@@ -550,20 +574,25 @@ final class EE_Front_Controller {
 			//Load the ThemeRoller styles if enabled
 			if ( isset( EE_Registry::instance()->CFG->template_settings->enable_default_style ) && EE_Registry::instance()->CFG->template_settings->enable_default_style ) {
 
-				add_filter( 'FHEE_enable_default_espresso_css', '__return_true' );
-
 				//Load custom style sheet if available
 				if ( isset( EE_Registry::instance()->CFG->style_settings['css_name'] )) {
-					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . EE_Registry::instance()->CFG->style_settings['css_name']);
+					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . EE_Registry::instance()->CFG->style_settings['css_name'], EVENT_ESPRESSO_VERSION );
 					wp_enqueue_style('espresso_custom_css');
 				}
-				
+				//add_filter( 'FHEE_enable_default_espresso_css', '__return_true' );
+
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' )) {
-					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ));
+					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				} else {
-					wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ));
+					wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				}
 				wp_enqueue_style('espresso_default');
+
+				if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'style.css' )) {
+					wp_register_style( 'espresso_style', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
+				} else {
+					wp_register_style( 'espresso_style', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
+				}
 				
 			}
 
@@ -782,13 +811,44 @@ final class EE_Front_Controller {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function template_include( $template_path = NULL ) {
+	public function template_include( $template_include_path = NULL ) {
+//		EE_Registry::instance()->CFG->template_settings->use_espresso_templates = TRUE;
+		// get post_type 
+		$post_type = EE_Registry::instance()->REQ->get( 'post_type' );
+		// get array of EE Custom Post Types
+		$EE_CPTs = EE_Register_CPTs::get_CPTs();
 		// check if the template file exists in the theme first by calling locate_template()
-		if ( ! empty( $this->_view_template ) && ! $template_path = locate_template( array( basename( $this->_view_template )))) {
+		if ( ! empty( $this->_template_path ) && ! $template_path = locate_template( array( basename( $this->_template_path )))) {
 			// otherwise get it from 
-			$template_path = $this->_view_template;
+			$template_path = $this->_template_path;
+		// is the current post_type an EE CPT?
+		} else if ( isset( $EE_CPTs[ $post_type ] )) {
+			$archive_or_single =  is_archive() ? 'archive' : '';
+			$archive_or_single =  is_single() ? 'single' : $archive_or_single;
+			// check if the template file exists in the theme first
+			if ( ! $template_path = locate_template( array( $archive_or_single . '-' . $post_type . '.php' ))) {
+				// otherwise get it from 
+				if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
+					$template_path = EE_TEMPLATES . EE_Config::get_current_theme() . DS . '' . $archive_or_single . '-' . $post_type . '.php';
+				}
+			}
 		}
-		return $template_path;
+		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
+		$this->_template = basename( $this->_template_path );
+		return $this->_template_path;
+	}		
+
+
+
+
+	/**
+	 * 	get_selected_template
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function get_selected_template( $with_path = FALSE ) {
+		return $with_path ? $this->_template_path : $this->_template;
 	}
 
 

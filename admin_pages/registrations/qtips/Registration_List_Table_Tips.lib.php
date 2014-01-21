@@ -15,12 +15,12 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  *
  * ------------------------------------------------------------------------
  *
- * EE_Event_Editor_Tips	
+ * Registration_List_Table_Tips	
  *
  * Qtip config for the event editor.
  *
  * @package		Event Espresso
- * @subpackage	/admin_pages/events/qtips/EE_Event_Editor_Tips.helper.php
+ * @subpackage	/admin_pages/registrations/qtips/Registration_List_Table_Tips.lib.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------

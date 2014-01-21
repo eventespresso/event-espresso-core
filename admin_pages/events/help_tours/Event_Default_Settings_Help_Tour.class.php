@@ -61,7 +61,7 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _stop_two() {
-		return '<p>' . sprintf( __('Should the default registration status be set to %s, %s, or %s?', 'event_espresso'), EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, 'lowercase' ), EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, 'lowercase' ), EEH_Template::pretty_status( EEM_Registration::status_id_approved, 'lowercase' ) ) . '</p>';
+		return '<p>' . sprintf( __('Specify whether the default registration status be set to %s, %s, or %s.', 'event_espresso'), EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, 'lowercase' ), EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, 'lowercase' ), EEH_Template::pretty_status( EEM_Registration::status_id_approved, 'lowercase' ) ) . '</p>';
 	}
 
 }

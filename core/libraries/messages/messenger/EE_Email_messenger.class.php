@@ -258,7 +258,7 @@ class EE_Email_messenger extends EE_messenger  {
 					),
 					'event_list' => array(
 						'input' => 'wp_editor',
-						'label' => __('Event List', 'event_espresso'),
+						'label' => '[EVENT_LIST]',
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
@@ -268,7 +268,7 @@ class EE_Email_messenger extends EE_messenger  {
 						),
 					'attendee_list' => array(
 						'input' => 'textarea',
-						'label' => __('Attendee List', 'event_espresso'),
+						'label' => '[ATTENDEE_LIST]',
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
@@ -279,7 +279,7 @@ class EE_Email_messenger extends EE_messenger  {
 					),
 					'ticket_list' => array(
 						'input' => 'textarea',
-						'label' => __('Ticket List', 'event_espresso'),
+						'label' => '[TICKET_LIST]',
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
@@ -290,7 +290,7 @@ class EE_Email_messenger extends EE_messenger  {
 						),
 					'datetime_list' => array(
 						'input' => 'textarea',
-						'label' => __('Datetime List', 'event_espresso'),
+						'label' => '[DATETIME_LIST]',
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
