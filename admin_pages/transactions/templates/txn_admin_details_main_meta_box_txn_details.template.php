@@ -193,7 +193,11 @@
 				</tr>				
 		<?php endif; // $payments?>
 
-				<tr id="txn-admin-payment-empty-row-tr" class="hidden">  
+				<tr id="txn-admin-payment-empty-row-tr" class="hidden"> 
+					<td>
+						<span id="payment-status-PAY_ID" class="ee-status-strip-td ee-status-strip"></span>
+						<div id="payment-STS_ID-PAY_ID" class="hidden"><?php echo $payment->STS_ID();?></div>
+					</td> 
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
@@ -210,12 +214,6 @@
 					</td>
 					<td class=" jst-rght">
 						<div id="payment-id-PAY_ID">PAY_ID</div>
-					</td>
-					<td class=" jst-left">
-						<div id="payment-status-PAY_ID">
-							<span class=""></span>
-							<div id="payment-STS_ID-PAY_ID" class="hidden"></div>
-						</div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-date-PAY_ID"></div>

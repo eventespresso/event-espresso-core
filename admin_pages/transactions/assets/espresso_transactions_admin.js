@@ -352,14 +352,14 @@ jQuery(document).ready(function($) {
 
 	function update_payment_status( PAY_ID, status ) {
 		var status_itm = $('#payment-status-' + PAY_ID);
-		status_itm.removeClass().addClass('ee-status-strip-td ee-status-strip pymt-status-' + PAY_ID);
+		status_itm.removeClass().addClass('ee-status-strip-td ee-status-strip pymt-status-' + status);
 	}
 
 
 
 	function update_payment( PAY_ID, response ) {
 		// payment-status
-		update_payment_status(PAY_ID, status);
+		update_payment_status(PAY_ID, response.return_data.STS_ID);
 		$('#payment-STS_ID-' + PAY_ID).html( response.return_data.pay_status );
 		// payment-date
 		$('#payment-date-' + PAY_ID).html( response.return_data.date );
