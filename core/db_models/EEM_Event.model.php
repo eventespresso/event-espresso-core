@@ -81,52 +81,54 @@ class EEM_Event  extends EEM_CPT_Base{
 		$this->_custom_stati = array(
 			EEM_Event::cancelled => array(
 				'label' => __('Cancelled', 'event_espresso'),
-				'public' => true
+				'public' => TRUE
 				),
 			EEM_Event::postponed => array(
 				'label' => __('Postponed', 'event_espresso'),
-				'public' => true
+				'public' => TRUE
 				),
 			EEM_Event::sold_out => array(
 				'label' => __('Sold Out', 'event_espresso'),
-				'public' => true
+				'public' => TRUE
 				)
 			);
 		
 		$this->_tables = array(
-			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
-			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID')
+			'Event_CPT'=>new EE_Primary_Table( 'posts','ID' ),
+			'Event_Meta'=> new EE_Secondary_Table( 'esp_event_meta', 'EVTM_ID', 'EVT_ID' ) 
 		);
 		
 		$this->_fields = array(
 			'Event_CPT'=>array(
-				'EVT_ID'=>new EE_Primary_Key_Int_Field('ID', __('Post ID for Event','event_espresso')),
-				'EVT_name'=>new EE_Plain_Text_Field('post_title', __('Event Name','event_espresso'), false, ''),
-				'EVT_desc'=>new EE_Simple_HTML_Field('post_content', __("Event Description", "event_espresso"), false, ''),
-				'EVT_slug'=>new EE_Slug_Field('post_name', __("Event Slug", "event_espresso"), false, ''),
-				'EVT_created'=>new EE_Datetime_Field('post_date', __("Date/Time Event Created", "event_espresso"), false, current_time('timestamp')),
-				'EVT_short_desc'=>new EE_Simple_HTML_Field('post_excerpt', __("Event Short Descripiton", "event_espresso"), false,''),
-				'EVT_modified'=>new EE_Datetime_Field('post_modified', __("Dateim/Time Event Modified", "event_espresso"), true, current_time('timestamp')),
-				'EVT_wp_user'=>new EE_Integer_Field('post_author', __("Wordpress User ID", "event_espresso"), false,1),
-				'parent'=>new EE_Integer_Field('post_parent', __("Event Parent ID", "event_espresso"), true),
-				'EVT_order'=>new EE_Integer_Field('menu_order', __("Event Menu Order", "event_espresso"), false, 1),
-				'post_type'=>new EE_Plain_Text_Field('post_type', __("Event Post Type", "event_espresso"), false, 'espresso_events'),
-				'status' => new EE_WP_Post_Status_Field('post_status', __("Event Status", "event_espresso"), false, 'draft', $this->_custom_stati )
+				'EVT_ID'=>new EE_Primary_Key_Int_Field( 'ID', __( 'Post ID for Event','event_espresso' )),
+				'EVT_name'=>new EE_Plain_Text_Field( 'post_title', __( 'Event Name','event_espresso' ), FALSE, '' ),
+				'EVT_desc'=>new EE_Simple_HTML_Field( 'post_content', __( 'Event Description', 'event_espresso' ), FALSE, '' ),
+				'EVT_slug'=>new EE_Slug_Field( 'post_name', __( 'Event Slug', 'event_espresso' ), FALSE, '' ),
+				'EVT_created'=>new EE_Datetime_Field( 'post_date', __( 'Date/Time Event Created', 'event_espresso' ), FALSE, current_time( 'timestamp' )),
+				'EVT_short_desc'=>new EE_Simple_HTML_Field( 'post_excerpt', __( 'Event Short Descripiton', 'event_espresso' ), FALSE,'' ),
+				'EVT_modified'=>new EE_Datetime_Field( 'post_modified', __( 'Date/Time Event Modified', 'event_espresso' ), TRUE, current_time( 'timestamp' )),
+				'EVT_wp_user'=>new EE_Integer_Field( 'post_author', __( 'Wordpress User ID', 'event_espresso'), FALSE, 1 ),
+				'parent'=>new EE_Integer_Field( 'post_parent', __( 'Event Parent ID', 'event_espresso' ), TRUE ),
+				'EVT_order'=>new EE_Integer_Field( 'menu_order', __( 'Event Menu Order', 'event_espresso' ), FALSE, 1 ),
+				'post_type'=>new EE_Plain_Text_Field( 'post_type', __( 'Event Post Type', 'event_espresso' ), FALSE, 'espresso_events' ),
+				'status' => new EE_WP_Post_Status_Field( 'post_status', __( 'Event Status', 'event_espresso' ), FALSE, 'draft', $this->_custom_stati )
 			),
 			'Event_Meta'=>array(
-				'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
-				'EVT_ID_fk'=>new EE_DB_Only_Int_Field('EVT_ID', __("Foreign key to Event ID from Event Meta table", "event_espresso"), false),
-				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
-				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
-				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
-				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true, 10),
-				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending_payment, EEM_Registration::reg_status_array()),
-				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
-				'EVT_phone'=> new EE_Plain_Text_Field('EVT_phone', __('Event Phone Number', 'event_espresso'), false ),
-				'EVT_allow_overflow'=>new EE_Boolean_Field('EVT_allow_overflow', __("Allow Overflow on Event", "event_espresso"), false, false),
-				'EVT_timezone_string'=>new EE_Plain_Text_Field('EVT_timezone_string', __("Timezone (name) for Event times", "event_espresso"), false),
-				'EVT_external_URL'=>new EE_Plain_Text_Field('EVT_external_URL', __("URL of Event Page if hosted elsewhere", "event_espresso"), true),
-				'EVT_donations'=>new EE_Boolean_Field('EVT_donations', __("Accept Donations?", "event_espresso"), false, false)
+				'EVTM_ID'=> new EE_DB_Only_Float_Field( 'EVTM_ID', __( 'Event Meta Row ID','event_espresso' ), FALSE ),
+				'EVT_ID_fk'=>new EE_DB_Only_Int_Field( 'EVT_ID', __( 'Foreign key to Event ID from Event Meta table', 'event_espresso' ), FALSE ),
+				'EVT_display_desc'=>new EE_Boolean_Field( 'EVT_display_desc', __( 'Display Description Flag', 'event_espresso' ), FALSE, 1 ),
+				'EVT_display_reg_form'=>new EE_Boolean_Field( 'EVT_display_reg_form', __( 'Display Registration Form Flag', 'event_espresso' ), FALSE, 1 ),
+				'EVT_visible_on'=>new EE_Datetime_Field( 'EVT_visible_on', __( 'Event Visible Date', 'event_espresso' ), TRUE, current_time( 'timestamp' )),
+				'EVT_additional_limit'=>new EE_Integer_Field( 'EVT_additional_limit', __( 'Limit of Additional Registrations on Same Transaction', 'event_espresso' ), TRUE, 10 ),
+				'EVT_default_registration_status'=>new EE_Enum_Text_Field(
+					'EVT_default_registration_status', __( 'Default Registration Status on this Event', 'event_espresso' ), FALSE, EEM_Registration::status_id_pending_payment, EEM_Registration::reg_status_array()
+				),
+				'EVT_member_only'=>new EE_Boolean_Field( 'EVT_member_only', __( 'Member-Only Event Flag', 'event_espresso' ), FALSE, FALSE ),
+				'EVT_phone'=> new EE_Plain_Text_Field('EVT_phone', __( 'Event Phone Number', 'event_espresso' ), FALSE ),
+				'EVT_allow_overflow'=>new EE_Boolean_Field(  'EVT_allow_overflow', __( 'Allow Overflow on Event', 'event_espresso' ), FALSE, FALSE ),
+				'EVT_timezone_string'=>new EE_Plain_Text_Field( 'EVT_timezone_string', __( 'Timezone (name) for Event times', 'event_espresso' ), FALSE ),
+				'EVT_external_URL'=>new EE_Plain_Text_Field( 'EVT_external_URL', __( 'URL of Event Page if hosted elsewhere', 'event_espresso' ), TRUE ),
+				'EVT_donations'=>new EE_Boolean_Field( 'EVT_donations', __( 'Accept Donations?', 'event_espresso' ), FALSE, FALSE )
 				
 			));
 			
@@ -177,7 +179,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	public function get_all_event_question_groups( $EVT_ID = FALSE ) {
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
 			EE_Error::add_error( __( 'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
+			return FALSE;
 		}
 		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
 			array( 'EVT_ID' => $EVT_ID )
@@ -199,7 +201,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	public function get_event_question_groups( $EVT_ID = FALSE, $for_primary_attendee = TRUE ) {
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
 			EE_Error::add_error( __( 'An error occurred. No Event Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
+			return FALSE;
 		}
 		return EE_Registry::instance()->load_model( 'Event_Question_Group' )->get_all( array(
 			array( 'EVT_ID' => $EVT_ID, 'EQG_primary' => $for_primary_attendee )
@@ -223,7 +225,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		
 		if ( ! isset( $EVT_ID) || ! absint( $EVT_ID )) {
 			EE_Error::add_error( __( 'An error occurred. No Question Groups could be retrieved because an Event ID was not received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
+			return FALSE;
 		}
 
 		$where_params = array(
@@ -256,7 +258,7 @@ class EEM_Event  extends EEM_CPT_Base{
 
 		if ( empty( $QSG_IDs )) {
 			EE_Error::add_error( __( 'An error occurred. No Question Group IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
+			return FALSE;
 		}
 
 		return EE_Registry::instance()->load_model( 'Question' )->get_all( array(
@@ -287,7 +289,7 @@ class EEM_Event  extends EEM_CPT_Base{
 
 		if ( empty( $QST_IDs )) {
 			EE_Error::add_error( __( 'An error occurred. No Question IDs were received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
+			return FALSE;
 		}
 
 		return EE_Registry::instance()->load_model( 'Question_Option' )->get_all( array(
@@ -371,7 +373,7 @@ class EEM_Event  extends EEM_CPT_Base{
 							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['ans_obj'] = $ANS;
 							
 							if ( $QST->type() == 'SINGLE' || $QST->type() == 'MULTIPLE' || $QST->type() == 'DROPDOWN' ) {
-								$QSOs = $QST->options(true,$ANS->value());
+								$QSOs = $QST->options(TRUE,$ANS->value());
 								if ( is_array( $QSOs ) ) {
 									foreach ( $QSOs as $QSO_ID => $QSO ) {					
 										$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_options'][ $QSO_ID ] = $QSO->model_field_array();
