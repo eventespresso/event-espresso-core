@@ -58,11 +58,11 @@ class Venues_Add_Category_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			40 => array(
-				'id' => 'category_desc_tbl',
+				'id' => 'category_desc',
 				'content' => $this->_category_editor_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -45,
+					'tipAdjustmentY' => -75,
                     'tipAdjustmentX' => 250
 					)
 				)
@@ -81,11 +81,11 @@ class Venues_Add_Category_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _category_id_stop() {
-		return '<p>' . __('Enter a unique ID for your new category.', 'event_espresso') . '</p>';
+		return '<p>' . __('Enter a unique ID for your new venue category.', 'event_espresso') . '</p>';
 	}
 
 	protected function _category_editor_stop() {
-		return '<p>' . __('The rich text editor can be used to add information about your category. Images and links can also be added along with your text.', 'event_espresso') . '</p>';
+		return '<p>' . __('The rich text editor can be used to add information about your venue category. Images and links can also be added along with your text.', 'event_espresso') . '</p>';
 	}
 
 }
