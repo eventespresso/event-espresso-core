@@ -678,7 +678,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function set_start_date($start_date) {
-		return $this->set('TKT_start_date', $start_date);
+		return $this->_set_date_time('B', $start_date, 'TKT_start_date');
 	}
 	/**
 	 * Gets end_date
@@ -694,7 +694,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function set_end_date($end_date) {
-		return $this->set('TKT_end_date', $end_date);
+		return $this->_set_date_time('B', $end_date, 'TKT_end_date');
 	}
 	/**
 	 * Gets min
