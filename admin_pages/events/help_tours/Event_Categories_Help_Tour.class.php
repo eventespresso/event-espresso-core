@@ -33,59 +33,110 @@ class Event_Categories_Help_Tour extends EE_Help_Tour {
 		$this->_label = __('Event Categories Tour', 'event_espresso');
 		$this->_slug = 'event-categories-joyride';
 	}
-
-
-	protected function _set_tour_stops() {
+    
+    protected function _set_tour_stops() {
 		$this->_stops = array(
 			10 => array(
-				'content' => $this->_stop_one(),
+				'content' => $this->_start(),
 				),
 			20 => array(
-				'id' => 'toplevel_page_espresso_events-search-input',
-				'content' => $this->_stop_two(),
+				'id' => 'id',
+				'content' => $this->_id_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -20,
+					'tipAdjustmentY' => -30
+					)
+				),
+			30 => array(
+				'id' => 'name',
+				'content' => $this->_name_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -30
+					)
+				),
+			40 => array(
+				'id' => 'shortcode',
+				'content' => $this->_shortcode_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
+					)
+				),
+			50 => array(
+				'id' => 'count',
+				'content' => $this->_count_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 5,
+					'tipAdjustmentY' => -30
+					)
+				),
+			60 => array(
+				'class' => 'bulkactions',
+				'content' => $this->_bulk_actions_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentX' => 25,
+					'tipAdjustmentY' => -35
+					)
+				),
+			70 => array(
+				'id' => 'event-espresso_page_espresso_categories-search-input',
+				'content' => $this->_search_stop(),
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentY' => -50,
 					'tipAdjustmentX' => -15
 					)
 				),
-			30 => array(
-				'id' => 'shortcode',
-				'content' => $this->_stop_three(),
+			80 => array(
+				'id' => 'add-new-category',
+				'content' => $this->_new_category_stop(),
 				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -40
+					'tipLocation' => 'right',
+					'tipAdjustmentY' => -50,
+					'tipAdjustmentX' => 10
 					)
 				),
-			40 => array(
-				'id' => 'count',
-				'content' => $this->_stop_four(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentY' => -40
-					)
-				)
 			);
 	}
 
 
-	protected function _stop_one() {
+	protected function _start() {
 		$content = '<h3>' . __('Event Categories', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This brief tour will go over all the different areas of this screen to help you understand what they are for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Event Categories page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
-
-
-	protected function _stop_two() {
-		return '<p>' . __('Fields that will be searched with the value from the search are: Category Name, Category Description', 'event_espresso') . '</p>';
+	
+	protected function _id_stop() {
+		return '<p>' . __('View the event category ID. Can be sorted by ascending or descending order.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _name_stop() {
+		return '<p>' . __('View the name of each event category. Can be sorted by ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
-	protected function _stop_three() {
-		return '<p>' . __('The category shortcodes can be used to generate a list of events in a particular category. You can place these shortcodes in the HTML view of a page or post.', 'event_espresso') . '</p>';
+	protected function _shortcode_stop() {
+		return '<p>' . __('View the shortcode for an event. This shortcode can be added to a WordPress post or WordPress page. ', 'event_espresso') . '</p>';
 	}
 
-	protected function _stop_four() {
-		return '<p>' . __('This is a count of the events currently assigned to this category. Clicking the number will take you to the list of events for this category.', 'event_espresso') . '</p>';
+	protected function _count_stop() {
+		return '<p>' . __('View the number of events that are associated with an event category.', 'event_espresso') . '</p>';
 	}
 
+	protected function _bulk_actions_stop() {
+		return '<p>' . __('Perform bulk actions to multiple event categories.', 'event_espresso') . '</p>';
+	}
+
+	protected function _search_stop() {
+		return '<p>' . __('Search through event categories. The following sources will be searched: Event Category Name, Event Category Description.', 'event_espresso') . '</p>';
+	}
+	
+	protected function _new_category_stop() {
+		return '<p>' . __('Click here to add a new event category.', 'event_espresso') . '</p>';
+	}
 }
