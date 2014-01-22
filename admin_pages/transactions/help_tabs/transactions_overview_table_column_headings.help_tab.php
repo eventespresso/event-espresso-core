@@ -10,17 +10,20 @@
 </li>
 <li><strong><?php _e('Status', 'event_espresso'); ?></strong> <br />
 <?php _e('The status helps you understand if the transaction was successful or not. Below are available statuses.', 'event_espresso'); ?>
-<ol>
-<li>
+<ul>
+<li style="list-style-type: none;">
 <?php _e('Complete: the payment was successful.', 'event_espresso'); ?>
 </li>
-<li>
-<?php _e('Open: the payment has not yet been attempted. This is the status for incomplete offline payments such as invoices.', 'event_espresso'); ?>
+<li style="list-style-type: none;">
+<?php _e('Failed: the payment did not process correctly.', 'event_espresso'); ?>
 </li>
-<li>
+<li style="list-style-type: none;">
 <?php _e('Incomplete: the payment has not yet been completed. This is the status for online payments that have yet to be processed.', 'event_espresso'); ?>
 </li>
-</ol>
+<li style="list-style-type: none;">
+<?php _e('Overpaid: a payment was made for more than the transaction total.', 'event_espresso'); ?>
+</li>
+</ul>
 </li>
 <li><strong><?php _e('Total', 'event_espresso'); ?></strong><br />
 <?php _e('This is the total amount for that transaction. It will include the total of every ticket purchased even if from separate events.', 'event_espresso'); ?>
@@ -39,15 +42,18 @@
 </li>
 <li><strong><?php _e('Actions', 'event_espresso'); ?></strong><br />
 <?php _e('There are several actions that can be done by clicking the icons:', 'event_espresso'); ?>
-<ol>
-<li>
+<ul>
+<li style="list-style-type: none;">
 <?php _e('View Transaction Details <span class="dashicons dashicons-search"></span>: Takes you to the individual transaction page. Clicking the date also takes you to the individual transaction page.', 'event_espresso'); ?>
 </li>
-<li>
+<li style="list-style-type: none;">
 <?php _e('Download Invoice for Transaction <span class="ee-icon ee-icon-PDF-file-type"></span>: downloads the invoice PDF.', 'event_espresso'); ?>
 </li>
-<li><?php echo sprintf(__('Send Payment Reminder <span class="ee-icon ee-icon-payment-reminder"></span>: Emails the primary registrant the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?> </li>
-<li><?php echo sprintf(__('View Registration Details <span class="ee-icon ee-icon-user-edit"></span>: Clicking this icon will take you to the registration page for this transaction. You can also get there via the %sRegistrations page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_registrations">','</a>'); ?> </li>
-</ol>
+<li style="list-style-type: none;">
+<?php echo sprintf(__('Send Payment Reminder <span class="ee-icon ee-icon-payment-reminder"></span>: Emails the primary registrant the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?> </li>
+<li style="list-style-type: none;">
+<?php echo sprintf(__('View Registration Details <span class="ee-icon ee-icon-user-edit"></span>: Clicking this icon will take you to the registration page for this transaction. You can also get there via the %sRegistrations page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_registrations">','</a>'); ?>
+</li>
+</ul>
 </li>
 </ul>
