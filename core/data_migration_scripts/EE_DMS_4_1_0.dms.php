@@ -597,6 +597,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		//setting up default prices, price types, and tickets is also essential for the price migrations
 		$this->insert_default_price_types();
 		$this->insert_default_prices();
+		$this->insert_default_ticket_template();
 		$this->insert_default_tickets();
 		
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
@@ -1054,6 +1055,31 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				";
 
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL__ticket_price', $SQL );
+				$wpdb->query($SQL);
+			}
+		}
+	}
+	/**
+	 * insert default ticket template
+	 *
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public function insert_default_ticket_template() {
+
+		global $wpdb;
+		$ticket_template_table = $wpdb->prefix."esp_ticket_template";
+		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_template_table'") == $ticket_template_table ) {
+
+			$SQL = 'SELECT COUNT(TTM_ID) FROM ' . $ticket_template_table;
+			$tickets_exist = $wpdb->get_var($SQL);
+
+			if ( ! $tickets_exist ) {
+				$SQL = "INSERT INTO $ticket_template_table
+					( TTM_ID, TTM_name, TTM_description, TTM_file ) VALUES
+					( 1,  '" . __("Default Ticket Template", "event_espresso") . "', '', '');";
+				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_ticket_templates__SQL', $SQL );
 				$wpdb->query($SQL);
 			}
 		}

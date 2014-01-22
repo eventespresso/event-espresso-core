@@ -283,7 +283,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		$end_date = $event_row['registration_end']." ".$this->get_migration_script()->convertTimeFromAMPM($event_row['registration_endT']);
 		$end_date_utc = $this->get_migration_script()->convert_date_string_to_utc($this,$old_price_row,$end_date,$event_row['timezone_string']);
 		$cols_n_values = array(
-			'TTM_ID'=>null,
+			'TTM_ID'=>1,
 			'TKT_name'=>$old_price_row['price_type'],
 			'TKT_description'=>'',
 			'TKT_start_date'=>$start_date_utc,
