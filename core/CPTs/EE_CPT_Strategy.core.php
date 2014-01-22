@@ -30,12 +30,6 @@ class EE_CPT_Strategy extends EE_BASE {
      */
 	private static $_instance = NULL;
 
-	/**
-	 * 	EE_Registry Object
-	 *	@var 	EE_Registry	$EE	
-	 * 	@access 	protected
-	 */
-	protected $EE = NULL;
 
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
@@ -87,8 +81,6 @@ class EE_CPT_Strategy extends EE_BASE {
 	 *  @return 	void
 	 */
 	private function __construct() {
-		// EE registry
-		
 		// get CPT data
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
@@ -200,12 +192,13 @@ class EE_CPT_Strategy extends EE_BASE {
 				// creates classname like:  EE_CPT_Event_Strategy
 				$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
 				// load and instantiate
-				 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'EE' => EE_Registry::instance(), 'CPT' =>$this->CPT ));	
+				 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));	
 
 				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 				add_filter( 'posts_join',	array( $this, 'posts_join' ));
 				add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
 				add_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
+				add_filter( 'get_edit_post_link', array( $this, 'get_edit_post_link' ), 10, 3 );
 			}				
 		}
 	}
@@ -274,6 +267,13 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 
+	function get_edit_post_link( $url, $ID, $context ) {
+		// http://localhost/4.1-DEV/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
+		return wp_nonce_url( add_query_arg( array( 'page' => $this->CPT['post_type'] ), $url ), 'edit', 'edit_nonce' );
+	}
+
+
+
 
 
 }
@@ -296,12 +296,6 @@ class EE_CPT_Strategy extends EE_BASE {
  */
 class EE_CPT_Default_Strategy {
 
-	/**
-	 * 	EE_Registry Object
-	 *	@var 	EE_Registry	$EE	
-	 * 	@access 	protected
-	 */
-	protected $EE = NULL;
 
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
@@ -319,7 +313,7 @@ class EE_CPT_Default_Strategy {
 	 *  @access 	private
 	 *  @return 	void
 	 */
-	private function __construct( EE_Registry $EE, $CPT ) {
+	private function __construct( $CPT ) {
 		
 		$this->CPT = $CPT;
 		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
