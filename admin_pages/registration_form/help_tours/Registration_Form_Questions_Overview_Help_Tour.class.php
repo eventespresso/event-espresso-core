@@ -81,7 +81,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -10,
-					'tipAdjustmentX' => -15
+					'tipAdjustmentX' => -25
 					)
 				),
 			70 => array(
@@ -144,7 +144,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _type_stop() {
-		return '<p>' . __('View the type of question. Available options are text, textarea, single, dropdown, multiple choice, and date.', 'event_espresso') . '</p>';
+		return '<p>' . __('View the type of question. Available options are Text, Textarea, Single, Dropdown, Multiple Choice, and Date.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _values_stop() {

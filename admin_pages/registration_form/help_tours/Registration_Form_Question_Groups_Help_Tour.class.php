@@ -48,7 +48,7 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_id_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -165,
+					'tipAdjustmentY' => -30,
 					'tipAdjustmentX' => -15
 					)
 				);
