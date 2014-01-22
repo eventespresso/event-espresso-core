@@ -1718,7 +1718,8 @@ jQuery(document).ready(function($) {
 		 */
 		updateTicketSoldStatus: function() {
 			var ticketRow = 0;
-			var ticketStatusItem = tktListItems = '';
+			var ticketStatusItem = '';
+			var tktListItems = '';
 			//first is the dtt sold out?
 			var dttsold = parseInt( $('.datetime-tickets-sold', '#edit-event-datetime-table-' + this.dateTimeRow ).text(), 10 );
 			var dttlimit = parseInt( $('#event-datetime-DTT_reg_limit-' + this.dateTimeRow ).val(), 10 );
@@ -1737,6 +1738,20 @@ jQuery(document).ready(function($) {
 				}
 			});
 			return this;
+		},
+
+
+
+		updateTKTTicketSoldStatus: function() {
+			var tktSold = parseInt( $('.ticket-display-row-TKT_sold', '#display-ticketrow-' + this.ticketRow ).text(), 10 );
+			var tktQty = parseInt( $('#edit-ticket-TKT_qty-' + this.ticketRow).val(), 10 );
+			tktQty = isNaN(tktQty) ? Infinity : tktQty;
+			var tktSoldOut = tktQty - tktSold > 0 ? false : true;
+
+			if ( tktSoldOut )
+				this.updateTicketStatus('TKS', this.ticketRow);
+			else
+				this.setTicketStatus(true);
 		},
 
 
@@ -1782,8 +1797,8 @@ jQuery(document).ready(function($) {
 
 
 		updateTicketStatus: function( status, ticketRow ) {
-			ticketStatusItem = $('.ee-status-strip', '#display-ticketrow-' + ticketRow );
-			tktListItems = $('.datetime-ticket[data-context="datetime-ticket"][data-ticket-row="' + ticketRow + '"]');
+			var ticketStatusItem = $('.ee-status-strip', '#display-ticketrow-' + ticketRow );
+			var tktListItems = $('.datetime-ticket[data-context="datetime-ticket"][data-ticket-row="' + ticketRow + '"]');
 			status = 'tkt-status-' + status;
 			ticketStatusItem.removeClass().addClass('ee-status-strip-td ee-status-strip ' + status );
 			tktListItems.each( function() {
@@ -2130,8 +2145,21 @@ jQuery(document).ready(function($) {
 	 * calculating dtt reg limit changes affecting sold out values.
 	 */
 	$('#event-and-ticket-form-content').on('focusout', '.event-datetime-DTT_reg_limit', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
 		var dttrow = $(this).attr('id').replace('event-datetime-DTT_reg_limit-','');
 		tktHelper.setdateTimeRow(dttrow).updateTicketSoldStatus();
+	});
+
+
+	/**
+	 * Calculating tkt qty changes affecting sold out values.
+	 */
+	$('#event-and-ticket-form-content').on('focusout', '.edit-ticket-TKT_qty', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var tktrow = $(this).attr('id').replace('edit-ticket-TKT_qty-', '');
+		tktHelper.setticketRow(tktrow).updateTKTTicketSoldStatus();
 	});
 
 
