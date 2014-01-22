@@ -202,6 +202,20 @@ jQuery(document).ready(function($) {
 		$('#save-post', '#save-action').val( $('#localized_status_save').text() );
 	}
 
+	//if custom stati is selected, let's update the text
+	$('.save-post-status', '#post-status-select').click( function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var selector = $('#post_status');
+		var chngval = $(selector).val();
+		var chnglabel = $('option[value="' + chngval + '"]', selector).text();
+		var cur_stat_id = $('#cur_stat_id').text();
+		var origlabel = $('option[value="' + cur_stat_id + '"]', selector).text();
+		var newlabel = $('#save-post', '#save-action').val().replace(origlabel, chnglabel);
+		$('#save-post', '#save-action').val(newlabel);
+		$('#cur_stat_id').text(chngval);
+	});
+
 	if ( extra_statuses !== '' )
 		$(extra_statuses).appendTo($('#post_status'));
 	
