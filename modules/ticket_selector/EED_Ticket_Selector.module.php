@@ -144,7 +144,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 		$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID() );
 		$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );
-		$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit();
+		$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() );
 		$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
 		
 		return $ticket_selector;
@@ -182,9 +182,9 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@access 		public
 	* 	@return		string
 	*/	
-	public static function display_ticket_selector_submit() {
+	public static function display_ticket_selector_submit( $ID ) {
 		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) ) {
-			return '<input id="" class="" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" /><div class="clear"></div>'; // ee-button ee-register-button ee-green big
+			return '<input id="ticket-selector-submit-'. $ID .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" /><div class="clear"><br/></div>'; // ee-button ee-register-button ee-green big
 		}
 	}
 
