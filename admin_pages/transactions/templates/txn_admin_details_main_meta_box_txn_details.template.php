@@ -196,7 +196,7 @@
 				<tr id="txn-admin-payment-empty-row-tr" class="hidden"> 
 					<td>
 						<span id="payment-status-PAY_ID" class="ee-status-strip-td ee-status-strip"></span>
-						<div id="payment-STS_ID-PAY_ID" class="hidden"><?php echo $payment->STS_ID();?></div>
+						<div id="payment-STS_ID-PAY_ID" class="hidden"></div>
 					</td> 
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
