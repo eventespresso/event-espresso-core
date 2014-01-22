@@ -451,16 +451,18 @@ input.ee-register-button {
 
 .ee-status {
  	display: inline-block;
+	position: relative;
+	float: right;
 	z-index: 10;
-	padding:.5em 1.5em .6em;
-	margin:0;
+	padding:.5em 1.5em .5em;
+	margin:0 0 0 1em;
 	border-bottom: 1px solid rgba(0,0,0,0.1);
 	font-weight: bold;
 	color: #fff !important;
 	text-decoration: none;
 	text-align: center;
 	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
-	font-size: 1em;
+	font-size:.5em;
 	line-height: 1;
 	-moz-border-radius: 0;
 	-webkit-border-radius: 0;
@@ -469,12 +471,21 @@ input.ee-register-button {
 	-webkit-box-shadow: none;
 	box-shadow: none;
 }
-.ee-status.sold-out { background-color: #E44064; }
-.ee-status.expired { background-color: #A39D9C; }
-.ee-status.inactive { background-color: #A39D9C; }
-.ee-status.upcoming { background-color: #00B1CA; } 
-.ee-status.active { background-color: #70CC50; }
+.ee-status.event-active-status-DTC { background-color: #CCB714; }
+.ee-status.event-active-status-DTS { background-color: #E44064; }
+.ee-status.event-active-status-DTE { background-color: #A39D9C; }
+.ee-status.event-active-status-DTI { background-color: #A39D9C; }
+.ee-status.event-active-status-DTU { background-color: #00B1CA; } 
+.ee-status.event-active-status-DTA { background-color: #70CC50; }
+.ee-status.event-active-status-DTP { background-color: #8A549A; }
 
+.ee-status-size-12 { font-size: 12px; }
+.ee-status-size-14 { font-size: 14px; }
+.ee-status-size-16 { font-size: 16px; }
+.ee-status-size-18 { font-size: 18px; }
+.ee-status-size-20 { font-size: 20px; }
+.ee-status-size-22 { font-size: 22px; }
+.ee-status-size-24 { font-size: 24px; }
 
 /******************* AJAX ****************** */
 
