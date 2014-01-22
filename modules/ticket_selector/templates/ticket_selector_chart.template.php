@@ -27,7 +27,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			// and we also want to restrict the minimum number of tickets by the ticket min setting
 			$min = $ticket->min() > 0 ? $ticket->min() : 1;
 		}
-	} 				
+	}
+			
+	$ticket_price = apply_filters( 'FHEE__ticket_selector_chart_template__ticket_price', $ticket->price() );
+	$ticket_price = ! is_float( $ticket_price ) ? $ticket_price : $ticket->get_pretty('TKT_price');
 
 	$tkt_status = $ticket->ticket_status();
 	// check ticket status
@@ -90,7 +93,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 //echo '<br/><b> $ticket->uses() : ' .  $ticket->uses() . '</b>';
 				?>
 				</td>	
-				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket->get_pretty('TKT_price'); ?></td>
+				<td class="tckt-slctr-tbl-td-price"><?php echo $ticket_price; ?></td>
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
 			 	$hidden_input_qty = $max_atndz > 1 ? TRUE : FALSE;

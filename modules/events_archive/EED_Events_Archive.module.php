@@ -128,7 +128,7 @@ class EED_Events_Archive  extends EED_Module {
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		$this->_filter_query_parts();		
 		// check what template is loaded
-		add_action( 'template_redirect', array( $this, 'template_redirect' ));
+		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
 		// load other required components
 		$this->_load_assests();
 		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
@@ -483,20 +483,21 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 * 	template_redirect
+	 * 	template_include
 	 *
 	 *  	@access 	public
 	 *  	@return 	void
 	 */
-	public function template_redirect() {
+	public function template_include( $template ) {
 		// add event list filters
 //		add_action( 'loop_start', array( $this, 'event_list_template_filters' ));
 		// and pagination
-		add_action( 'loop_start', array( $this, 'event_list_pagination' ));
-		add_action( 'loop_end', array( $this, 'event_list_pagination' ));
+//		add_action( 'loop_start', array( $this, 'event_list_pagination' ));
+//		add_action( 'loop_end', array( $this, 'event_list_pagination' ));
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
 			// don't know if theme uses the_excerpt
+			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
 			add_filter( 'the_excerpt', array( $this, 'event_tickets' ), 110 );
 			add_filter( 'the_excerpt', array( $this, 'event_datetimes' ), 120 );
@@ -511,6 +512,8 @@ class EED_Events_Archive  extends EED_Module {
 			add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 			add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );			
 		}
+		
+		return $template;
 	}
 
 
@@ -525,6 +528,19 @@ class EED_Events_Archive  extends EED_Module {
 		echo '<div class="ee-pagination-dv clear">' . espresso_event_list_pagination() . '</div>';
 	}
 
+
+
+	/**
+	 * 	the_title
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$title
+	 *  	@return 		void
+	 */
+	public function the_title( $title = '', $id = '' ) {
+		global $post;
+		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID  ) . $title :  $title;
+	}
 
 	/**
 	 * 	event_details
