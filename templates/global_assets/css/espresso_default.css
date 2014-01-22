@@ -453,7 +453,7 @@ input.ee-register-button {
  	display: inline-block;
 	position: relative;
 	float: right;
-	z-index: 10;
+	z-index: 1;
 	padding:.5em 1.5em .5em;
 	margin:0 0 0 1em;
 	border-bottom: 1px solid rgba(0,0,0,0.1);
