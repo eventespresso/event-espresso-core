@@ -111,7 +111,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_txn_total_stop(),
 				'options' => array(
 					'tipLocation' => 'left',
-					'tipAdjustmentX' => 10,
+					'tipAdjustmentX' => 5,
 					'tipAdjustmentY' => -50
 					)
 				),
@@ -129,7 +129,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_legend_stop(),
 				'options' => array(
 					'tipLocation' => 'right',
-					'tipAdjustmentX' => 0,
+					'tipAdjustmentX' => 15,
 					'tipAdjustmentY' => -40
 					)
 				),
@@ -184,7 +184,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _reg_id_stop() {
-		return '<p>' . __('View the regisration ID. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View the registration ID. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_count_stop() {
@@ -220,7 +220,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _legend_stop() {
-		return '<p>' . __('This is the legend that describes the actions available in the actions column.', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the legend that describes the actions available in the actions column. Also shows available statuses for a registration.', 'event_espresso') . '</p>';
 	}
 
 	protected function _views_stop() {
@@ -236,7 +236,7 @@ class Registration_Overview_Help_Tour extends EE_Help_Tour {
 	}
 	
 	protected function _search_stop() {
-		return '<p>' . __('Search through registrations. The following sources will be searched: Event Name, Event Description, First name, Last Name, Biography, Email address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, and Ticket Description.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through registrations. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, and Ticket Description.', 'event_espresso') . '</p>';
 	}
 
 }
