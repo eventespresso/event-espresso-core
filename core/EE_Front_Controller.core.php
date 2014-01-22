@@ -812,29 +812,16 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function template_include( $template_include_path = NULL ) {
-//		EE_Registry::instance()->CFG->template_settings->use_espresso_templates = TRUE;
-		// get post_type 
-		$post_type = EE_Registry::instance()->REQ->get( 'post_type' );
-		// get array of EE Custom Post Types
-		$EE_CPTs = EE_Register_CPTs::get_CPTs();
-		// check if the template file exists in the theme first by calling locate_template()
-		if ( ! empty( $this->_template_path ) && ! $template_path = locate_template( array( basename( $this->_template_path )))) {
-			// otherwise get it from 
-			$template_path = $this->_template_path;
-		// is the current post_type an EE CPT?
-		} else if ( isset( $EE_CPTs[ $post_type ] )) {
-			$archive_or_single =  is_archive() ? 'archive' : '';
-			$archive_or_single =  is_single() ? 'single' : $archive_or_single;
-			// check if the template file exists in the theme first
-			if ( ! $template_path = locate_template( array( $archive_or_single . '-' . $post_type . '.php' ))) {
-				// otherwise get it from 
-				if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
-					$template_path = EE_TEMPLATES . EE_Config::get_current_theme() . DS . '' . $archive_or_single . '-' . $post_type . '.php';
-				}
-			}
-		}
+		// use our locate_template() method which checks for the template in the following places:
+		// * /wp-content/theme/ (currently active theme)
+		// * /wp-content/uploads/espresso/templates/  
+		// * /wp-content/uploads/espresso/templates/ee-theme/  
+		// * /wp-content/plugins/EE4/templates/espresso_default/ 
+		$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
+		$template_path = EEH_Template::locate_template( $this->_template_path, FALSE );
 		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
 		$this->_template = basename( $this->_template_path );
+//		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return $this->_template_path;
 	}		
 
