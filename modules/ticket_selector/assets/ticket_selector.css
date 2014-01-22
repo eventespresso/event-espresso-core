@@ -258,3 +258,7 @@
 	box-shadow: none !important;
 	box-radius: 0 !important;
 }
+
+.ticket-selector-submit-btn {
+	float: right;
+}
