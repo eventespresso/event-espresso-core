@@ -11,9 +11,6 @@
 .datepicker { width:125px; }
 
 /* TABLE COLUMNS */
-#EE_Admin_Transactions_List_Table-table-frm .widefat td {
-    min-height: 43px;
-}
 
 .column-TXN_ID { width:3%; }
 td.column-TXN_ID { padding: 4px 7px  29px; }
@@ -63,6 +60,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
     padding: 0;
     margin: 0;
     min-height: 50px;
+    height: 100%;
     display: inline-block;
     margin-bottom: -5px;
 }
