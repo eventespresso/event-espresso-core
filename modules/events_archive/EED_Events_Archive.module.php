@@ -129,6 +129,7 @@ class EED_Events_Archive  extends EED_Module {
 		$this->_filter_query_parts();		
 		// check what template is loaded
 		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
+		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		// load other required components
 		$this->_load_assests();
 		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
@@ -550,7 +551,16 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public function event_details( $content ) {
-		return EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-details.php', array( 'the_content' => $content ), TRUE );
+		// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
+		// it uses the_content() for displaying the $post->post_content
+		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
+		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
+		remove_filter( 'the_content', array( $this, 'event_details' ), 100 );
+		// now load our template
+		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
+		//now add our filter back in
+		//add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+		return $template;
 	}
 
 
@@ -562,7 +572,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public function event_tickets( $content ) {
-		return $content . EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-tickets.php', array(), TRUE );
+		return $content . EEH_Template::locate_template( 'content-espresso_events-tickets.php' );
 	}
 
 	/**
@@ -573,7 +583,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public function event_datetimes( $content ) {
-		return $content . EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-datetimes.php', array(), TRUE );
+		return $content . EEH_Template::locate_template( 'content-espresso_events-datetimes.php' );
 	}
 
 	/**
@@ -584,7 +594,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public function event_venues( $content ) {
-		return $content . EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'content-espresso_events-venues.php', array(), TRUE );
+		return $content . EEH_Template::locate_template( 'content-espresso_events-venues.php' );
 	}
 
 
