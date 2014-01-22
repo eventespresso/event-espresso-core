@@ -551,10 +551,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//first check if event is active.
 		if ( $event->is_expired() || $event->is_inactive() || $event->status() == EEM_Event::cancelled || $event->status() == EEM_Event::postponed )
 			return;
-
+		$orig_status = $event->status();
 		//made it here so it IS active... next check that any of the tickets are sold.
-		if ( $event->is_sold_out() || $event->is_sold_out(TRUE ) )
+		if ( $event->is_sold_out() || $event->is_sold_out(TRUE ) ) {
+			if ( $event->status() !== $orig_status && $orig_status !== EEM_Event::sold_out  ) {
+				EE_Error::add_attention( sprintf( __('Please note that the Event Status has automaticallly been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You <em>can</em> change the status back to something else before updating if you wish.', 'event_espresso'), EEH_Template::pretty_status( EEM_Event::sold_out, FALSE, 'sentence' ) ) );
+			}
 			return;
+		}
 
 		//now we need to determine if the event has any tickets on sale.  If not then we dont' show the error
 		if ( ! $event->tickets_on_sale() )
