@@ -88,15 +88,6 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -20
 					)
 				),
-			70 => array(
-				'id' => '_Reg_status',
-				'content' => $this->_reg_status_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentX' => -5,
-					'tipAdjustmentY' => -20
-					)
-				),
 			80 => array(
 				'id' => '_REG_final_price',
 				'content' => $this->_reg_final_price_stop(),
@@ -112,7 +103,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentX' => 0,
-					'tipAdjustmentY' => -30
+					'tipAdjustmentY' => -50
 					)
 				),
 			100 => array(
@@ -121,7 +112,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentX' => 0,
-					'tipAdjustmentY' => -30
+					'tipAdjustmentY' => -50
 					)
 				),
 			110 => array(
@@ -130,7 +121,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentX' => 0,
-					'tipAdjustmentY' => -30
+					'tipAdjustmentY' => -50
 					)
 				),
 			115 => array(
@@ -147,7 +138,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_legend_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentX' => 0,
+					'tipAdjustmentX' => 15,
 					'tipAdjustmentY' => -40
 					)
 				),
@@ -206,7 +197,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('Sort by name of a registrant in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View name of registrant. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _attendee_email_stop() {
@@ -214,15 +205,11 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _reg_date_stop() {
-		return '<p>' . __('Sort by registration date in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View registration date. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_code_stop() {
-		return '<p>' . __('Sort by registration code for a registrant in ascending or descending order.', 'event_espresso') . '</p>';
-	}
-
-	protected function _reg_status_stop() {
-		return '<p>' . __('Sort by registration status for a registrant in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View registration code. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_final_price_stop() {
@@ -246,7 +233,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _legend_stop() {
-		return '<p>' . __('This is the legend that describes the different check-in statuses.', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the legend that describes the different check-in statuses. Also shows available status for registrations.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _bulkactions_stop() {
@@ -262,7 +249,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through registrations. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, and Ticket Description.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through registrations. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, and Ticket Description.', 'event_espresso') . '</p>';
 	}
 
 }

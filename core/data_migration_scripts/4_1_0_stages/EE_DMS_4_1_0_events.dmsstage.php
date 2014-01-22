@@ -212,8 +212,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				
 			}
 			$items_migrated_this_step++;
-			if($created_attachment_post){
-				//if we had to create an attachment post (which potentially involved downloading an image from the web)
+			if($guid){
+				//if we had to check for an image attachment 
 				//then let's call it a day (avoid timing out, because this took a long time)
 				break;
 			}
