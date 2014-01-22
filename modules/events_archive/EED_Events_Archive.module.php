@@ -497,17 +497,12 @@ class EED_Events_Archive  extends EED_Module {
 //		add_action( 'loop_end', array( $this, 'event_list_pagination' ));
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
-			// don't know if theme uses the_excerpt
 			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
+			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
-			add_filter( 'the_excerpt', array( $this, 'event_tickets' ), 110 );
-			add_filter( 'the_excerpt', array( $this, 'event_datetimes' ), 120 );
-			add_filter( 'the_excerpt', array( $this, 'event_venues' ), 130 );
 			// or the_content
 			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
-			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
-			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
-			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
+
 		} else {
 			remove_all_filters( 'excerpt_length' );
 			add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
@@ -555,11 +550,19 @@ class EED_Events_Archive  extends EED_Module {
 		// it uses the_content() for displaying the $post->post_content
 		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
 		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
+		remove_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
 		remove_filter( 'the_content', array( $this, 'event_details' ), 100 );
 		// now load our template
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
-		//now add our filter back in
-		//add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+		//now add our filter back in, plus some others
+		add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
+		add_filter( 'the_excerpt', array( $this, 'event_tickets' ), 110 );
+		add_filter( 'the_excerpt', array( $this, 'event_datetimes' ), 120 );
+		add_filter( 'the_excerpt', array( $this, 'event_venues' ), 130 );
+		add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+		add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
+		add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
+		add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
 		return $template;
 	}
 
