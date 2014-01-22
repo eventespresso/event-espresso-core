@@ -1713,19 +1713,49 @@ jQuery(document).ready(function($) {
 
 
 		/**
+		 * This simply checks all tickets with the current set datetime and updates the sold status if necessary.
+		 * @return {tktHelper} this obj for chainability
+		 */
+		updateTicketSoldStatus: function() {
+			var ticketRow = 0;
+			var ticketStatusItem = tktListItems = '';
+			//first is the dtt sold out?
+			var dttsold = parseInt( $('.datetime-tickets-sold', '#edit-event-datetime-table-' + this.dateTimeRow ).text(), 10 );
+			var dttlimit = parseInt( $('#event-datetime-DTT_reg_limit-' + this.dateTimeRow ).val(), 10 );
+			dttlimit = isNaN(dttlimit) ? Infinity : dttlimit;
+			var dttsoldout = dttlimit - dttsold > 0 ? false : true;
+	
+			$('.datetime-ticket[data-context="ticket-datetime"]').each( function() {
+				if ( $(this).data('datetimeRow') == tktHelper.dateTimeRow && $(this).hasClass('ticket-selected') ) {
+					ticketRow = $(this).data('ticketRow');
+
+					if ( !dttsoldout ) {
+						tktHelper.setticketRow(ticketRow).setTicketStatus(true);
+					} else {
+						tktHelper.updateTicketStatus('TKS', ticketRow);
+					}
+				}
+			});
+			return this;
+		},
+
+
+
+		/**
 		 * use to set the ticket status for items
 		 * @return {tktHelper} this obj for chainability
 		 */
-		setTicketStatus: function() {
+		setTicketStatus: function(skipsoldcheck) {
+
+			skipsoldcheck = typeof(skipsoldcheck) === 'undefined' ? false : true;
+
 			var status = '';
 			var displayrow = $('#display-ticketrow-'+this.ticketRow);
 			var currentstatusitem = displayrow.find('.ee-status-strip');
 
 			//before we go any further lets make sure the ticket isn't sold out.  IF it is then we don't need to change the status and we can exit gracefully.
-			if ( currentstatusitem.hasClass('tkt-status-TKS') )
+			if ( !skipsoldcheck && currentstatusitem.hasClass('tkt-status-TKS') )
 				return this;
-
-			var tktListItems = $('.datetime-ticket[data-context="datetime-ticket"][data-ticket-row="' + this.ticketRow + '"]');
 
 			var tktStart = $('.edit-ticket-TKT_start_date', displayrow).val();
 			var tktEnd = $('.edit-ticket-TKT_end_date', displayrow).val();
@@ -1736,31 +1766,40 @@ jQuery(document).ready(function($) {
 			
 			//now we have moment objects to do some calcs and determine what status we're setting.
 			if ( now.isBefore(tktStart) ) {
-				status = 'tkt-status-TKP'; //pending
+				status = 'TKP'; //pending
 			} else if ( now.isAfter(tktEnd) ) {
-				status = 'tkt-status-TKE'; //expired
+				status = 'TKE'; //expired
 			} else if ( now.isAfter(tktStart) && now.isBefore(tktEnd) ) {
-				status = 'tkt-status-TKO'; //onsale
+				status = 'TKO'; //onsale
 			} else {
-				status = 'tkt-status-TKA'; //archived
+				status = 'TKA'; //archived
 			}
 
-			//we have status so let's set the pip in the display row
-			currentstatusitem.removeClass().addClass('ee-status-strip-td ee-status-strip ' + status);
+			this.updateTicketStatus(status, this.ticketRow);
+			return this;
+		},
 
-			//now let's set the status for all datetime-tickets for this ticket
-			tktListItems.each( function () {
+
+
+		updateTicketStatus: function( status, ticketRow ) {
+			ticketStatusItem = $('.ee-status-strip', '#display-ticketrow-' + ticketRow );
+			tktListItems = $('.datetime-ticket[data-context="datetime-ticket"][data-ticket-row="' + ticketRow + '"]');
+			status = 'tkt-status-' + status;
+			ticketStatusItem.removeClass().addClass('ee-status-strip-td ee-status-strip ' + status );
+			tktListItems.each( function() {
 				//make sure any existing tktStatus classes are remove
 				$(this).removeClass('tkt-status-TKE');
 				$(this).removeClass('tkt-status-TKA');
 				$(this).removeClass('tkt-status-TKP');
 				$(this).removeClass('tkt-status-TKO');
+				$(this).removeClass('tkt-status-TKS');
 
 				//add tktstatus class
 				$(this).addClass(status);
 			});
 			return this;
 		}
+
 
 	};
 
@@ -2086,6 +2125,14 @@ jQuery(document).ready(function($) {
 		tktHelper.setticketRow(tktrow).applyTotalPrice();
 	});
 
+
+	/**
+	 * calculating dtt reg limit changes affecting sold out values.
+	 */
+	$('#event-and-ticket-form-content').on('focusout', '.event-datetime-DTT_reg_limit', function(e) {
+		var dttrow = $(this).attr('id').replace('event-datetime-DTT_reg_limit-','');
+		tktHelper.setdateTimeRow(dttrow).updateTicketSoldStatus();
+	});
 
 
 	/**
