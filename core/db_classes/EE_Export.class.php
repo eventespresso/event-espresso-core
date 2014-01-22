@@ -303,6 +303,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$models_to_export = array( 
 				'Event'=>$event_query_params,
 				'Datetime'=>$related_models_query_params,
+				'Ticket_Template'=>$price_query_params,
 				'Ticket'=>$datetime_ticket_query_params,
 				'Datetime_Ticket'=>$datetime_ticket_query_params,
 				'Price_Type'=>$price_type_query_params,
