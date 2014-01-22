@@ -25,13 +25,6 @@ class EE_CPT_Attendee_Strategy {
 
 
 	/**
-	 * 	EE_Registry Object
-	 *	@var 	EE_Registry	$EE	
-	 * 	@access 	protected
-	 */
-	protected $EE = NULL;
-
-	/**
 	 * $CPT - the current page, if it utilizes CPTs
 	 *	@var 	array	
 	 * 	@access 	protected
@@ -47,11 +40,8 @@ class EE_CPT_Attendee_Strategy {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function __construct( $arguments) {
-		extract($arguments);
-		
+	public function __construct( $CPT) {
 		$this->CPT = $CPT;
-//		printr( $CPT, '$CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
 		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
