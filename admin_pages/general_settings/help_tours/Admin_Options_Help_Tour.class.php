@@ -99,6 +99,6 @@ class Admin_Options_Help_Tour extends EE_Help_Tour {
 	}
 	
 	protected function _help_tour_activation_stop() {
-		return '<p>' . __('Turn these help tours on/off for Event Espresso pages.', 'event_espresso') . '</p>';
+		return '<p>' . __('Turn these help tours on / off for Event Espresso pages.', 'event_espresso') . '</p>';
 	}
 }
