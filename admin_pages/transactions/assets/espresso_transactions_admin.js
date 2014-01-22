@@ -349,13 +349,18 @@ jQuery(document).ready(function($) {
 	}
 
 
+
+	function update_payment_status( PAY_ID, status ) {
+		var status_itm = $('#payment-status-' + PAY_ID);
+		status_itm.removeClass().addClass('ee-status-strip-td ee-status-strip pymt-status-' + PAY_ID);
+	}
+
+
+
 	function update_payment( PAY_ID, response ) {
 		// payment-status
-		$('#payment-status-' + PAY_ID + ' > span').html( response.return_data.status );
+		update_payment_status(PAY_ID, status);
 		$('#payment-STS_ID-' + PAY_ID).html( response.return_data.pay_status );
-		// and the css class for the payment status wrapper
-		$('#payment-status-' + PAY_ID + ' > span').removeClass();
-		$('#payment-status-' + PAY_ID + ' > span').addClass( 'txn-admin-payment-status-'+response.return_data.pay_status );
 		// payment-date
 		$('#payment-date-' + PAY_ID).html( response.return_data.date );
 		// payment-method

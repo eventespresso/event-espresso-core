@@ -93,9 +93,9 @@
 		<table id="txn-admin-payments-tbl" class="admin-primary-mbox-tbl">
 			<thead>
 				<tr>
+					<th></th>
 					<th class="jst-cntr"></th>
 					<th class="jst-cntr"><?php _e( 'ID', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Status', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Date', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Method', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Gateway', 'event_espresso' );?></th>
@@ -112,6 +112,10 @@
 			<?php $payment_total = 0; ?>
 			<?php foreach ( $payments as $PAY_ID => $payment ) : ?>
 				<tr id="txn-admin-payment-tr-<?php echo $PAY_ID;?>">
+					<td>
+						<span id="payment-status-<?php echo $PAY_ID; ?>" class="ee-status-strip-td ee-status-strip pymt-status-<?php echo $payment->STS_ID(); ?>"></span>
+						<div id="payment-STS_ID-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->STS_ID();?></div>
+					</td>
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
@@ -128,12 +132,6 @@
 					</td>
 					<td class=" jst-rght">
 						<div id="payment-id-<?php echo $PAY_ID;?>"><?php echo $PAY_ID;?></div>
-					</td>
-					<td class=" jst-left">
-						<div id="payment-status-<?php echo $PAY_ID;?>">
-							<span class="txn-admin-payment-status-<?php echo $payment->STS_ID();?>"><?php echo $payment_status[ $payment->STS_ID() ];?></span>
-							<div id="payment-STS_ID-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->STS_ID();?></div>
-						</div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-date-<?php echo $PAY_ID;?>" class="payment-date-dv"><?php echo $payment->timestamp('Y-m-d', 'h:i a');?></div>
