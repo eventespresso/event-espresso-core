@@ -57,7 +57,7 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public function run( $WP ) {
 		// check what template is loaded
-		add_action( 'template_redirect', array( $this, 'template_redirect' ));
+		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		// load css
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
@@ -67,20 +67,24 @@ class EED_Event_Single  extends EED_Module {
 
 
 	/**
-	 * 	template_redirect
+	 * 	template_include
 	 *
 	 *  	@access 	public
 	 *  	@return 	void
 	 */
-	public function template_redirect() {
+	public function template_include( $template ) {
+		// not a custom template?
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php' ) {
+			// then add extra event data via hooks
 			add_action( 'loop_start', array( $this, 'loop_start' ));
+			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
 			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
 			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
 			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
 			add_action( 'loop_end', array( $this, 'loop_end' ));
 		}
+		return $template;
 	}
 
 
@@ -95,6 +99,20 @@ class EED_Event_Single  extends EED_Module {
 	public function loop_start( $wp_query_array ) {
 		global $post;
 		do_action( 'AHEE_event_details_before_post', $post );
+	}
+
+
+
+	/**
+	 * 	the_title
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$title
+	 *  	@return 		void
+	 */
+	public function the_title( $title = '', $id = '' ) {
+		global $post;
+		return in_the_loop() && $post->ID == $id ? $title . espresso_event_status_banner( $post->ID ) :  $title; 
 	}
 
 
