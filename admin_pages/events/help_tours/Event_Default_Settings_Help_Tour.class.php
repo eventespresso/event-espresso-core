@@ -55,13 +55,13 @@ class Event_Default_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_one() {
 		$content = '<h3>' . __('Event Default Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This short tour of the default settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Default Settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
-
+    //Options below are showing in full caps. Manually adding statuses and leaving code as is.
 	protected function _stop_two() {
-		return '<p>' . sprintf( __('Specify whether the default registration status be set to %s, %s, or %s.', 'event_espresso'), EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, 'lowercase' ), EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, 'lowercase' ), EEH_Template::pretty_status( EEM_Registration::status_id_approved, 'lowercase' ) ) . '</p>';
+		return '<p>' . sprintf( __('Specify whether the default registration status be set to Approved, Not Approved, or Pending Payment.', 'event_espresso'), EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, 'lowercase' ), EEH_Template::pretty_status( EEM_Registration::status_id_pending_payment, 'lowercase' ), EEH_Template::pretty_status( EEM_Registration::status_id_approved, 'lowercase' ) ) . '</p>';
 	}
 
 }
