@@ -58,15 +58,6 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -30
 					)
 				),
-			40 => array(
-				'id' => 'STS_ID',
-				'content' => $this->_txn_status_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentX' => 0,
-					'tipAdjustmentY' => -30
-					)
-				),
 			50 => array(
 				'id' => 'TXN_total',
 				'content' => $this->_txn_total_stop(),
@@ -126,7 +117,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_legend_stop(),
 				'options' => array(
 					'tipLocation' => 'right',
-					'tipAdjustmentX' => 0,
+					'tipAdjustmentX' => 15,
 					'tipAdjustmentY' => -40
 					)
 				),
@@ -166,10 +157,6 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 		return '<p>' . __('View transaction date. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
-	protected function _txn_status_stop() {
-		return '<p>' . __('View transaction status. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
-	}
-
 	protected function _txn_total_stop() {
 		return '<p>' . __('View total for transaction.', 'event_espresso') . '</p>';
 	}
@@ -179,7 +166,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('View name of registrant. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View name for the primary registrant. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_email_stop() {
@@ -195,7 +182,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _legend_stop() {
-		return '<p>' . __('This legend that describes the actions available in the actions column.', 'event_espresso') . '</p>';
+		return '<p>' . __('This legend that describes the actions available in the actions column. Also shows available statuses for a transaction.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_about_filters() {
