@@ -144,6 +144,18 @@ class EEM_Status extends EEM_Base {
 	  			__('failed', 'event_espresso')
 	  			),
 	  		//following statuses are NOT part of the EEM_Status but to keep things centralized we include in here.
+	  		EEM_Event::sold_out => array(
+	  			__('sold out', 'event_espresso'),
+	  			__('sold out', 'event_espresso')
+	  			),
+	  		EEM_Event::postponed => array(
+	  			__('postponed', 'event_espresso'),
+	  			__('Postponed', 'event_espresso')
+	  			),
+	  		EEM_Event::cancelled => array(
+	  			__('cancelled', 'event_espresso'),
+	  			__('cancelled', 'event_espresso')
+	  			),
 	  		EE_Ticket::archived => array(
 	  			__('archived', 'event_espresso'),
 	  			__('archived', 'event_espresso')
