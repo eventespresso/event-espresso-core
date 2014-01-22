@@ -192,6 +192,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 						'filename' => 'transactions_view_transaction_primary_registrant_billing_information'
 					),
 				),
+				'qtips' => array( 'Transaction_Details_Tips' ),
 				'help_tour' => array( 'Transaction_Details_Help_Tour' ),
 				'metaboxes' => array('_transaction_details_metaboxes'),
 				

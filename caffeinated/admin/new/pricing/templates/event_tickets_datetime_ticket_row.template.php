@@ -31,7 +31,7 @@
 			<input type="hidden" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>">
 			<input type="text" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric" name="archived_ticket[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>" disabled>
 		<?php else : ?>
-			<input type="text" class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>">
+			<input type="text" id="edit-ticket-TKT_qty-<?php echo $tkt_row; ?>"class="edit-ticket-TKT_qty ee-small-text-inp ee-numeric" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_qty]" value="<?php echo $TKT_qty_for_input; ?>">
 		<?php endif; ?>
 	</td>
 	<!--<td><span class="ticket-display-row-TKT_price"><?php echo $TKT_price; ?></span></td>-->

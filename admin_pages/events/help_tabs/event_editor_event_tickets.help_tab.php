@@ -20,3 +20,29 @@
 <p>
 <?php _e('You can create a new ticket by clicking on the Create Ticket button. Then you will need to set a description, complete the ticket details, and adjust the price modifiers.', 'event_espresso'); ?>
 </p>
+<p>
+<strong><?php _e('Ticket Status Labels', 'event_espresso'); ?></strong><br />
+<?php _e('The following statuses are available for tickets: Archived, Expired, Sold Out, Upcoming, and On Sale.', 'event_espresso'); ?>
+</p>
+<ul>
+<li style="list-style-type: none;">
+Archived<br />
+A status of archived occurs when the first ticket is sold. After the first ticket sale, Event Espresso archives the existing ticket to prevent changes which could affect registrants. A new ticket is automatically created for new registrants so that an event admin can modify pricing (if needed).
+</li>
+<li style="list-style-type: none;">
+Expired<br />
+A status of expired occurs once an event has already taken place.
+</li>
+<li style="list-style-type: none;">
+Sold Out<br />
+A status of sold out occurs when the maximum quantity of a certain ticket is purchased. For example, if 50 Premium tickets were available and 50 Premium tickets were immediately purchased, then this ticket would have a status of sold out since no more tickets would be available for purchase.
+</li>
+<li style="list-style-type: none;">
+Upcoming<br />
+A status of upcoming occurs when a ticket is scheduled to go on sale in the future.
+</li>
+<li style="list-style-type: none;">
+On Sale<br />
+A status of on sale means that a ticket is currently available for purchase.
+</li>
+</ul>

@@ -777,7 +777,7 @@ abstract class EE_Base_Class{
 	 * This takes care of setting a date or time independently on a given model object property. This method also verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
 	 *
 	 * @access private
-	 * @param string $what          "T" for time, otherwise Date is assumed
+	 * @param string $what          "T" for time, 'B' for both, 'D' for Date.
 	 * @param string $datetimevalue A valid Date or Time string
 	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
 	 */
@@ -785,7 +785,19 @@ abstract class EE_Base_Class{
 		$field = $this->_get_dtt_field_settings( $fieldname );
 		$attribute_field_name = $this->_get_private_attribute_name($fieldname);
 		$field->set_timezone( $this->_timezone );
-		$this->$attribute_field_name = $what == 'T' ? $field->prepare_for_set_with_new_time($datetimevalue, $this->$attribute_field_name ) : $field->prepare_for_set_with_new_date( $datetimevalue, $this->$attribute_field_name );
+
+		switch ( $what ) {
+			case 'T' :
+				$this->$attribute_field_name = $field->prepare_for_set_with_new_time( $datetimevalue, $this->$attribute_field_name );
+				break;
+			case 'D' :
+				$this->$attribute_field_name = $field->prepare_for_set_with_new_date( $datetime_value, $this->$attribute_field_name );
+				break;
+			case 'B' :
+				$this->$attribute_field_name = $field->prepare_for_set( $datetime_value );
+				break;
+		}
+
 		$this->_clear_cached_property($attribute_field_name);
 	}
 
