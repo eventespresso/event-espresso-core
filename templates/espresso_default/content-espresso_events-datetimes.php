@@ -1,3 +1,4 @@
+<?php //echo '<h1>' . __FILE__ . '</h1>'; ?>
 <?php global $post; ?>
 <?php do_action( 'AHEE_event_details_before_event_date', $post ); ?>
 <div class="event-datetimes">
@@ -9,4 +10,3 @@
 </div>
 <!-- .event-datetimes -->
 <br/>
-

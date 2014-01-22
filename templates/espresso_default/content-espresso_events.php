@@ -15,8 +15,9 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 ?>
 <?php do_action( 'AHEE_event_details_before_post', $post ); ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class( 'espresso-event-details entry-content ' . $wrap_class ); ?>>
+
 	<div id="espresso-event-header-dv" class="">
-		<?php do_action( 'AHEE_event_details_before_featured_img', $post ); ?>
+		<?php do_action( 'AHEE_event_details_before_featured_img', $post ); ?>		
 		<?php				
 		if ( has_post_thumbnail( $post->ID )) :
 			if ( $img_ID = get_post_thumbnail_id( $post->ID )) :
@@ -31,8 +32,9 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 				endif;
 			endif;
 		endif;
-		?>
+		?>		
 		<?php do_action( 'AHEE_event_details_after_featured_img', $post );?>
+		
 		<header class="event-header<?php echo $wrap_class;?>">
 			<h1 id="event-details-h1">
 				<?php the_title(); ?>
@@ -42,24 +44,23 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 				<?php echo $post->EE_Event->primary_datetime()->start_date_and_time(); ?>
 			</p>
 		</header>
-		<!-- .event-header -->
 	</div>
 	
 	<div class="espresso-event-wrapper-dv">
 	
-		<?php get_template_part( 'content', 'espresso_events-description' ); ?>
+		<?php get_template_part( 'content', 'espresso_events-details' ); ?>
 		<?php get_template_part( 'content', 'espresso_events-tickets' ); ?>
-		<?php get_template_part( 'content', 'espresso_events-datetimes.php' ); ?>
-		<?php get_template_part( 'content', 'espresso_events-venues.php' ); ?>
+		<?php get_template_part( 'content', 'espresso_events-datetimes' ); ?>
+		<?php get_template_part( 'content', 'espresso_events-venues' ); ?>
 
 		<footer class="event-meta">
 			<?php do_action( 'AHEE_event_details_footer_top', $post ); ?>
 			<?php espresso_edit_event_link(); ?>
 			<?php do_action( 'AHEE_event_details_footer_bottom', $post ); ?>
 		</footer>
-		<!-- .entry-meta --> 
 		
 	</div>
+	
 </article>
 <!-- #post -->
 <?php do_action( 'AHEE_event_details_after_post', $post );

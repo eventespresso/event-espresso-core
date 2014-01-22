@@ -15,6 +15,7 @@ get_header(); ?>
 		
 			<div id="espresso-event-details-wrap-dv" class="">
 				<div id="espresso-event-details-dv" class="" >
+				
 			<?php
 				// Start the Loop.
 				while ( have_posts() ) : the_post();
