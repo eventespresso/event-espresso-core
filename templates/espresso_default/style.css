@@ -107,6 +107,10 @@
 .espresso-events-list-wrap-dv .event-list-h1 {
 	position: relative;
 	z-index: 10;
+	margin-top: 0;
+}
+.events-list-event-wrap-dv .ee-status {
+	font-size: .8em;
 }
 
 .espresso-event-wrapper-dv  .event-content p {
