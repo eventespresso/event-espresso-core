@@ -192,36 +192,56 @@ jQuery(document).ready(function($) {
 
 
 	/**
-	 * add in our own statuses
+	 * add in our own statuses IF they exist
 	 */
-	var wp_status = $('.ee-status-container', '#misc-publishing-actions').first();
 	var our_status = $('#cur_status').text();
-	var extra_statuses = $('#ee_post_status').html();
-	if ( our_status !== '' ) {
-		$('#post-status-display').text(our_status);
-		$('#save-post', '#save-action').val( $('#localized_status_save').text() );
-	}
-
-	//if custom stati is selected, let's update the text
-	$('.save-post-status', '#post-status-select').click( function(e) {
-		e.preventDefault();
-		e.stopPropagation();
-		var selector = $('#post_status');
-		var chngval = $(selector).val();
-		var chnglabel = $('option[value="' + chngval + '"]', selector).text();
-		var cur_stat_id = $('#cur_stat_id').text();
-		var origlabel = $('option[value="' + cur_stat_id + '"]', selector).text();
-		var newlabel = $('#save-post', '#save-action').val().replace(origlabel, chnglabel);
-		$('#save-post', '#save-action').val(newlabel);
-		$('#cur_stat_id').text(chngval);
-	});
-
-	if ( extra_statuses !== '' )
-		$(extra_statuses).appendTo($('#post_status'));
-	
 	// handle removing "move to trash" text if post_status is trash
 	if ( our_status == 'Trashed' )
 		$('#delete-action').hide();
+	if ( typeof(eeCPTstatuses) !== 'undefined' ) {
+		var wp_status = $('.ee-status-container', '#misc-publishing-actions').first();
+		var extra_statuses = $('#ee_post_status').html();
+		if ( our_status !== '' ) {
+			$('#post-status-display').text(our_status);
+			$('#save-post', '#save-action').val( $('#localized_status_save').text() );
+		}
+
+		//if custom stati is selected, let's update the text
+		$('.save-post-status', '#post-status-select').on('click', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			updatePostStatus();
+			return false;
+		});
+
+
+		updatePostStatus = function(cancel) {
+			cancel = typeof(cancel) === 'undefined' ? false : true;
+			var selector = $('#post_status');
+			var chngval = cancel ? $('#cur_stat_id').text() : $(selector).val();
+			var chnglabel = eeCPTstatuses[chngval].label;
+			$('#save-post', '#save-action').val(eeCPTstatuses[chngval].save_label);
+			$('#cur_stat_id').text(chngval);
+			if ( cancel )
+				selector.val(chngval);
+		};
+
+		$('.cancel-post-status', '#post-status-select').on('click', function(e) {
+			e.preventDefault();
+			e.stopPropagation();
+			updatePostStatus(true);
+			return false;
+		});
+
+		$('#post').on('submit', function(e) {
+			updatePostStatus();
+		});
+
+
+
+		if ( extra_statuses !== '' )
+			$(extra_statuses).appendTo($('#post_status'));
+	}
 
 	/**
 	 * temporarily remove preview button
