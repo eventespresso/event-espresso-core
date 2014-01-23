@@ -2,7 +2,7 @@ jQuery(document).ready(function($) {
 
 	$.ajaxSetup ({ cache: false });
 	// clear firefox and safari cache
-	$(window).unload( function() {}); 
+	$(window).unload( function() {});
 
 
 
@@ -13,17 +13,17 @@ jQuery(document).ready(function($) {
 		var cntr = 1;
 		
 		$( submittedForm ).find('.required').each( function( index ) {
-		    if( $(this).val() == '' || $(this).val() == 0 ) {
-		 		$(this).addClass('requires-value').siblings( '.validation-notice-dv' ).fadeIn();
+			if( $(this).val() === '' || $(this).val() === 0 ) {
+				$(this).addClass('requires-value').siblings( '.validation-notice-dv' ).fadeIn();
 				goodToGo = false;
 			}
 			$(this).on( 'change', function() {
-			    if( $(this).val() != '' || $(this).val() != 0 ) {
-			 		$(this).removeClass('requires-value').siblings( '.validation-notice-dv' ).fadeOut('fast');
+				if( $(this).val() !== '' || $(this).val() !== 0 ) {
+					$(this).removeClass('requires-value').siblings( '.validation-notice-dv' ).fadeOut('fast');
 				}
 			});
-			if ( cntr == 1 ) {
-				var thisPos = $(this).offset();				
+			if ( cntr === 1 ) {
+				var thisPos = $(this).offset();
 				$(window).scrollTop( thisPos.top - 200 );
 			}
 			cntr++;
@@ -37,7 +37,7 @@ jQuery(document).ready(function($) {
 		var submittedForm = $(this).closest('form');
 		if ( validate_form_inputs( submittedForm ) ) {
 			submittedForm.submit();
-		} 	
+		}
 	});
 	
 	$('#admin-recaptcha-settings-slct').change( function() {
@@ -58,7 +58,7 @@ jQuery(document).ready(function($) {
 		
 	function escape_square_brackets( value ) {
 		value = value.replace(/[[]/g,'\\\[');
-		value = value.replace(/]/g,'\\\]'); 
+		value = value.replace(/]/g,'\\\]');
 		return value; 
 	}
 
@@ -71,13 +71,13 @@ jQuery(document).ready(function($) {
 		return false;
 	}
 
-		  
+
 	//Select All
 	function selectAll(x) {
 		for(var i=0,l=x.form.length; i<l; i++) {
 			if(x.form[i].type == 'checkbox' && x.form[i].name != 'sAll') {
 				x.form[i].checked=x.form[i].checked?false:true
-			}			
+			}
 		}
 	}
 		
@@ -92,10 +92,10 @@ jQuery(document).ready(function($) {
 	$('.confirm-delete').click(function() {
 		var what = $(this).attr('rel');
 		var answer = confirm( eei18n.confirm_delete );
-  		return answer;
+		return answer;
 	});
 
-	$('.updated.fade').delay(5000).fadeOut();	
+	$('.updated.fade').delay(5000).fadeOut();
 	
 	/*
 	Floating "Save" and "Save & Close" buttons
@@ -103,7 +103,7 @@ jQuery(document).ready(function($) {
 	$(window).scroll(function() {
 		var scrollTop = $(this).scrollTop();
 		var offset = $('#espresso_major_buttons_wrapper .publishing-action').offset();
-		if( typeof offset !== 'undefined' && offset !== null && offset.top != undefined ) {
+		if( typeof offset !== 'undefined' && offset !== null && offset.top !== 'undefined' ) {
 			if ( (scrollTop+33) > offset.top ) {
 				$('#event-editor-floating-save-btns').removeClass('hidden');
 				$('#espresso_major_buttons_wrapper .button-primary').addClass('hidden');
@@ -136,41 +136,41 @@ jQuery(document).ready(function($) {
 		$('#message').stop().hide();
 		// spinny things pacify the masses
 		var st = $('html').scrollTop();
-		var po = $('#espresso-ajax-loading').parent().offset();		
-		var mal_top = ( st+( parseInt( $(window).height() )/5 )-po.top ) - 15;
+		var po = $('#espresso-ajax-loading').parent().offset();
+		var mal_top = ( st+( parseInt( $(window).height(), 10 )/5 )-po.top ) - 15;
 		var ww = $('#espresso-ajax-loading').parent().width();
 		var mal_left = ( ww/2 ) -15;
 		//alert( 'mal_top = ' + mal_top + '\n' + 'mal_left = ' + mal_left );
-		$('#espresso-ajax-loading').css({ 'top' : mal_top, 'left' : mal_left }).show();	
-	}		
+		$('#espresso-ajax-loading').css({ 'top' : mal_top, 'left' : mal_left }).show();
+	};
 	
 
 
 	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
 			
 		$('#espresso-ajax-loading').fadeOut('fast');
-		if (( response.success != undefined && response.success != '' ) || ( response.errors != undefined && response.errors != '' )) {
+		if (( response.success !== 'undefined' && response.success !== '' ) || ( response.errors !== 'undefined' && response.errors !== '' )) {
 		
-			if ( closeModal == undefined ) {
+			if ( closeModal === 'undefined' ) {
 				closeModal = false;
 			}
 
 			var fadeaway = true;
 			var existing_message = $('#message');
 
-			if ( response.success != undefined && response.success != '' ) {
+			if ( response.success !== 'undefined' && response.success !== '' ) {
 				msg = '<p>' + response.success + '</p>';
 				msg = existing_message.length > 0 ? msg : '<div id="message" class="updated hidden">'+msg+'</div>';
 			}
 		
-			if ( response.errors != undefined && response.errors != '' ) {
+			if ( response.errors !== 'undefined' && response.errors !== '' ) {
 				msg = '<p>' + response.errors + '</p>';
 				msg = existing_message.length > 0 ? msg : '<div id="message" class="error hidden">'+msg+'</div>';
 				$(existing_message).removeClass('updated').addClass('error');
 				fadeaway = false;
 			}
 			
-			if ( beforeWhat == undefined ) {
+			if ( beforeWhat === 'undefined' ) {
 				beforeWhat = '#post-body-content';
 			}
 			
