@@ -12,16 +12,16 @@
 <?php _e('The status helps you understand if the transaction was successful or not. Below are available statuses.', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
-<?php _e('Complete: the payment was successful.', 'event_espresso'); ?>
+<?php _e('<strong>Complete</strong><br />The payment was successful.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<?php _e('Failed: the payment did not process correctly.', 'event_espresso'); ?>
+<?php _e('<strong>Failed</strong><br />The payment did not process correctly.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<?php _e('Incomplete: the payment has not yet been completed. This is the status for online payments that have yet to be processed.', 'event_espresso'); ?>
+<?php _e('<strong>Incomplete</strong><br />The payment has not yet been completed. This is the status for online payments that have yet to be processed.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<?php _e('Overpaid: a payment was made for more than the transaction total.', 'event_espresso'); ?>
+<?php _e('<strong>Overpaid</strong><br />A payment was made for more than the transaction total.', 'event_espresso'); ?>
 </li>
 </ul>
 </li>
@@ -44,15 +44,15 @@
 <?php _e('There are several actions that can be done by clicking the icons:', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
-<?php _e('View Transaction Details <span class="dashicons dashicons-search"></span>: Takes you to the individual transaction page. Clicking the date also takes you to the individual transaction page.', 'event_espresso'); ?>
+<?php _e('<strong>View Transaction Details <span class="dashicons dashicons-search"></span></strong><br />Takes you to the individual transaction page. Clicking the date also takes you to the individual transaction page.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<?php _e('Download Invoice for Transaction <span class="ee-icon ee-icon-PDF-file-type"></span>: downloads the invoice PDF.', 'event_espresso'); ?>
+<?php _e('<strong>Download Invoice for Transaction <span class="ee-icon ee-icon-PDF-file-type"></span></strong><br />Downloads the invoice PDF.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<?php echo sprintf(__('Send Payment Reminder <span class="ee-icon ee-icon-payment-reminder"></span>: Emails the primary registrant the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?> </li>
+<?php echo sprintf(__('<strong>Send Payment Reminder <span class="ee-icon ee-icon-payment-reminder"></span></strong><br /> Emails the primary registrant the Payment Reminder message. This is set up in the %sMessages page%s.', 'event_espresso'),'<a href="admin.php?page=espresso_messages">','</a>'); ?> </li>
 <li style="list-style-type: none;">
-<?php echo sprintf(__('View Registration Details <span class="ee-icon ee-icon-user-edit"></span>: Clicking this icon will take you to the registration page for this transaction. You can also get there via the %sRegistrations page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_registrations">','</a>'); ?>
+<?php echo sprintf(__('<strong>View Registration Details <span class="ee-icon ee-icon-user-edit"></span></strong><br /> Clicking this icon will take you to the registration page for this transaction. You can also get there via the %sRegistrations page%s.', 'event_espresso'), '<a href="admin.php?page=espresso_registrations">','</a>'); ?>
 </li>
 </ul>
 </li>
