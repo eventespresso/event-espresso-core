@@ -479,7 +479,51 @@ abstract class EE_Base_Class{
 		}
 		return $obj_removed;
 	}
-	
+
+
+
+	/**
+	 * update_cache_after_object_save
+	 * Allows a cached item to have it's cache ID (within the array of cached items) reset using the new ID it has obtained after being saved to the db
+	 * 
+	 * @param string $relationName - the type of object that is cached
+	 * @param EE_Base_Class $newly_saved_object - the newly saved object to be recached
+	 * @param string $current_cache_id - the ID that was used when originally caching the object
+	 * @return boolean TRUE on success, FALSE on fail
+	 */
+	public function update_cache_after_object_save( $relationName, EE_Base_Class $newly_saved_object, $current_cache_id = '' ){
+//		echo '<h4>$relationName : ' . $relationName . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$current_cache_id : ' . $current_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		// get the correct relation name for the related item
+		$relationNameClassAttribute = $this->_get_private_attribute_name( $relationName );
+//		echo '<h4>$relationNameClassAttribute : ' . $relationNameClassAttribute . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $this->{$relationNameClassAttribute}, '$this->{$relationNameClassAttribute}  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// verify that incoming object is of the correct type
+		$obj_class = 'EE' . $relationNameClassAttribute;
+		if ( $newly_saved_object instanceof $obj_class ) {
+			// now get the type of relation
+			$relationship_to_model = $this->get_model()->related_settings_for( $relationName );
+//			printr( $relationship_to_model, '$relationship_to_model  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// if this is a 1:1 realtionship
+			if( $relationship_to_model instanceof EE_Belongs_To_Relation ) {
+				// then just replace the cached object with the newly saved object
+				$this->{$relationNameClassAttribute} = $newly_saved_object;
+				return TRUE;
+			// or if it's some kind of sordid feral polyamorous relationship...		
+			} elseif ( is_array( $this->{$relationNameClassAttribute} ) && isset( $this->{$relationNameClassAttribute}[ $current_cache_id ] )) {
+				// then remove the current cached item
+				unset( $this->{$relationNameClassAttribute}[ $current_cache_id ] );
+				// and cache the newly saved object using it's new ID
+				$this->{$relationNameClassAttribute}[ $newly_saved_object->ID() ] = $newly_saved_object;
+				return TRUE;
+			} 
+		}
+//		printr( $newly_saved_object, '$newly_saved_object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		return FALSE;
+	}
+
+
+
 	/**
 	 * Fetches a single EE_Base_Class on that relation. (If the relation is of type
 	 * BelongsTo, it will only ever have 1 object. However, other relations could have an array of objects)
