@@ -423,7 +423,7 @@ abstract class EE_Gateway {
 		if (!$base_url) {
 			return FALSE;
 		}
-		$this->_form_url = add_query_arg(array('e_reg' => 'register', 'step' => 2, 'payment' => $this->_gateway_name), $base_url);
+		$this->_form_url = add_query_arg(array('ee' => '_register', 'step' => 2, 'payment' => $this->_gateway_name), $base_url);
 		$this->_set_session_data();
 		return TRUE;
 	}

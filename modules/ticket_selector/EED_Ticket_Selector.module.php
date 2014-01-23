@@ -293,7 +293,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						} else {
 							EE_Registry::instance()->CART->save_cart();
 							EE_Registry::instance()->SSN->update();
-							wp_safe_redirect( add_query_arg( array( 'ee'=>'register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
+							wp_safe_redirect( add_query_arg( array( 'ee'=>'_register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
 							exit();
 						}
 					} else {

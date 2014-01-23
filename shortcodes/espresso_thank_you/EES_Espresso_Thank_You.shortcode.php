@@ -132,7 +132,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			}
 			// link to SPCO
 			$revisit_spco_url = add_query_arg( 
-				array( 'ee'=>'register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), 
+				array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), 
 				get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )
 			);
 			// link to SPCO payment_options
