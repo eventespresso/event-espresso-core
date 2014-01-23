@@ -216,7 +216,7 @@ final class EE_Registry {
 	 *	@param bool   $load_only      whether or not to just load the file and NOT instantiate, or load AND instantiate (default)
 	 *	@return instantiated class object
 	 */
-	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
+	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = FALSE, $load_only = FALSE ) {
 		// retreive instantiated class
 		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache, $load_only );
 	}
