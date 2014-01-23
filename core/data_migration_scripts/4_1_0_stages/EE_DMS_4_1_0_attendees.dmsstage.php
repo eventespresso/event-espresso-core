@@ -438,7 +438,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		
 		$reg_status_mapping = array(
 				'Completed'=>'RAP',
-				'Pending'=>'RPP',
+				'Pending'=>'RAP',
 				'Payment Declined'=>'RPP',
 				'Incomplete'=>'RPP',
 				'Not Completed'=>'RPP',
