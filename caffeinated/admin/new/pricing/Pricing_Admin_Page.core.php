@@ -742,9 +742,21 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			}
 			
 		}
+		$query_args = array(
+			'action' => 'default'
+			);
+
+		if ( $success ) {
+			if ( $trash ) {
+				$msg = $success == 2 ? __('The Prices have been trashed.', 'event_espresso') : __('The Price has been trashed.', 'event_espresso');
+			} else {
+				$msg = $success == 2 ? __('The Prices have been restored.', 'event_espresso') : __('The Price has been restored.', 'event_espresso');
+			}
+
+			EE_Error::add_success( $msg );
+		}
 		
-		$action_desc = $trash ? 'moved to the trash' : 'restored';
-		$this->_redirect_after_action( $success, 'Prices', $action_desc, array() );
+		$this->_redirect_after_action( FALSE, '',  $action_desc, $query_args, TRUE );
 		
 	}
 
