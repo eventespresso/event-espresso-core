@@ -82,7 +82,7 @@ class Admin_Options_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Admin Options', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the your Admin Options page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Admin Options page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
