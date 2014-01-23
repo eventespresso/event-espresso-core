@@ -221,10 +221,17 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_transaction_table;
 	private $_new_payment_table;
 	private $_new_line_table;
+	private $_old_mer_table;
+	/**
+	 * Rememebrs whether or not the mer table exists
+	 * @var boolean
+	 */
+	private $_mer_tables_exist = NULL;
 	function __construct() {
 		global $wpdb;
 		$this->_pretty_name = __("Attendees", "event_espresso");
 		$this->_old_table = $wpdb->prefix."events_attendee";
+		$this->_old_mer_table = $wpdb->prefix."events_multi_event_registration_id_group";;
 		$this->_new_attendee_cpt_table = $wpdb->posts;
 		$this->_new_attendee_meta_table = $wpdb->prefix."esp_attendee_meta";
 		$this->_new_reg_table = $wpdb->prefix."esp_registration";
@@ -411,7 +418,8 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		}else{//non-primary attendee, so find its primary attendee's transaction
 			$primary_attendee_old_id = $wpdb->get_var($wpdb->prepare("SELECT id FROM ".$this->_old_table." WHERE is_primary=1 and registration_id=%s",$old_attendee['registration_id']));
 			if( ! $primary_attendee_old_id){
-				$primary_attendee_old_id = $this->_find_mer_primary_attendee_using_mer_tables($old_attendee['registration_id']);
+				$primary_attendee = $this->_find_mer_primary_attendee_using_mer_tables($old_attendee['registration_id']);
+				$primary_attendee_old_id = is_array($primary_attendee) ? $primary_attendee['id'] : NULL;
 			}
 			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);			
 			if( ! $txn_id){
@@ -422,6 +430,23 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		}
 		
 		
+	}
+	/**
+	 * Detects if the MER tables exist
+	 * @global type $wpdb
+	 * @return boolean
+	 */
+	private function _mer_tables_exist(){
+		if( $this->_mer_tables_exist === NULL){
+			global $wpdb;
+			
+			if( $wpdb->get_var("SHOW TABLES LIKE '{$this->_old_mer_table}'") != $this->_old_mer_table){
+				$this->_mer_tables_exist = false;
+			}else{
+				$this->_mer_tables_exist = true;
+			}
+		}
+		return $this->_mer_tables_exist;
 	}
 	
 	/**
@@ -488,7 +513,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		//Y old attendee_details rows with a quantity of 1 (because of mer) joined by wp_events_multi_event_registration_id_group
 		for($count = 1; $count <= $regs_on_this_row; $count++){
 			//sum regs on older rows
-			$regs_on_this_event_and_txn = $this->_find_count_in_old_txn_using_reg_id($old_attendee['id'],$old_attendee['registration_id']);
+			$regs_on_this_event_and_txn = $this->_find_count_in_old_txn_using_reg_id($old_attendee,$old_attendee['registration_id']);
 			$cols_n_values = array(
 				'EVT_ID'=>$new_event_id,
 				'ATT_ID'=>$new_attendee_id,
@@ -589,10 +614,25 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	 * @param int $registration_id
 	 * @return int
 	 */
-	private function _find_count_in_old_txn_using_reg_id($id,$registration_id){
+	private function _find_count_in_old_txn_using_reg_id($old_attendee_row,$registration_id){
 		global $wpdb;
-		$count = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s AND id<%d",$registration_id,$id));
-		return intval($count);
+		$id= $old_attendee_row['id'];
+		if( ! $this->_mer_tables_exist()){
+			$count = intval($wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s AND id<%d",$registration_id,$id)));
+		}else{
+			//if MER exists, then its a little tricky.
+			//when users registered by adding items to the cart, and it was a 
+			//group registration requiring additional attendee INFO, then the attendee rows 
+			//DO NOT have the same registration_id (although they probably should have)
+			//they are related just like MER attendee rows are related, through the MER group table
+			//BUT we want to count all the MER attendee rows for the same registration
+			$count_using_registration_id = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s AND id<%d",$registration_id,$id));
+			$primary_attendee = $this->_find_mer_primary_attendee_using_mer_tables($old_attendee_row['registration_id']);
+			
+			$count_using_mer_table = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM {$this->_old_table} att INNER JOIN {$this->_old_mer_table} mer ON att.registration_id = mer.registration_id WHERE att.event_id=%d AND att.id < %d AND mer.primary_registration_id = %s",$old_attendee_row['event_id'],$old_attendee_row['id'],$primary_attendee['registration_id']));
+			$count = max($count_using_mer_table,$count_using_registration_id);
+		}
+		return $count;
 	}
 	private function _insert_new_payment($old_attendee,$new_txn_id){
 		global $wpdb;
@@ -649,16 +689,18 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	}
 	
 	/**
-	 * If MER is active, if you want ot fin dthe other registrations on that 
+	 * If MER is active, if you want ot fin dthe other registrations on that attendee row
 	 * @global type $wpdb
 	 * @param type $old_registration_id
-	 * @return int
+	 * @return array
 	 */
 	private function _find_mer_primary_attendee_using_mer_tables($old_registration_id){
+		if (! $this->_mer_tables_exist()){
+			return false;
+		}
 		global $wpdb;
-		$mer_group_table = $wpdb->prefix."events_multi_event_registration_id_group";
-		$old_att_id_for_primary_reg = $wpdb->get_var($wpdb->prepare("SELECT id FROM $mer_group_table AS mer INNER JOIN {$this->_old_table} AS att ON mer.primary_registration_id = att.registration_id WHERE mer.registration_id=%s LIMIT 1",$old_registration_id));
-return intval($old_att_id_for_primary_reg);
+		$old_att_for_primary_reg = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$this->_old_mer_table} AS mer INNER JOIN {$this->_old_table} AS att ON mer.primary_registration_id = att.registration_id WHERE mer.registration_id=%s LIMIT 1",$old_registration_id),ARRAY_A);
+return $old_att_for_primary_reg;
 	}
 	
 }
