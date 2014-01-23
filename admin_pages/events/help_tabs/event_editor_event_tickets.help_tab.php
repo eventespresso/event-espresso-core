@@ -26,23 +26,23 @@
 </p>
 <ul>
 <li style="list-style-type: none;">
-Archived<br />
+<strong>Archived</strong><br />
 A status of archived occurs when the first ticket is sold. After the first ticket sale, Event Espresso archives the existing ticket to prevent changes which could affect registrants. A new ticket is automatically created for new registrants so that an event admin can modify pricing (if needed).
 </li>
 <li style="list-style-type: none;">
-Expired<br />
+<strong>Expired</strong><br />
 A status of expired occurs once an event has already taken place.
 </li>
 <li style="list-style-type: none;">
-Sold Out<br />
+<strong>Sold Out</strong><br />
 A status of sold out occurs when the maximum quantity of a certain ticket is purchased. For example, if 50 Premium tickets were available and 50 Premium tickets were immediately purchased, then this ticket would have a status of sold out since no more tickets would be available for purchase.
 </li>
 <li style="list-style-type: none;">
-Upcoming<br />
+<strong>Upcoming</strong><br />
 A status of upcoming occurs when a ticket is scheduled to go on sale in the future.
 </li>
 <li style="list-style-type: none;">
-On Sale<br />
+<strong>On Sale</strong><br />
 A status of on sale means that a ticket is currently available for purchase.
 </li>
 </ul>

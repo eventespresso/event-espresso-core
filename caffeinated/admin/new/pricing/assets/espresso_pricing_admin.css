@@ -28,7 +28,6 @@
 .column-active { width:5%; text-align:center; }
 .pad-amnt-rght { padding-right:2em; }
 
-thead .column-amount.sortable a {  padding-left:2.5em; }
 
 .jst-left { text-align:left; }
 .jst-cntr { text-align:center; }

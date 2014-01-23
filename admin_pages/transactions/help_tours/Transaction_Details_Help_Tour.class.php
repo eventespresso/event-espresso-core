@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Transaction_Details_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Transaction Details Tour', 'event_espresso');
+		$this->_label = __('View Transaction Tour', 'event_espresso');
 		$this->_slug = 'transaction-details-joyride';
 	}
 
@@ -127,7 +127,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _txn_status_h2_stop() {
-		return '<p>' . __('View current status of the transaction. You can also perform actions to this transaction by clicking on one of the buttons to the right of the status below.', 'event_espresso') . '</p>';
+		return '<p>' . __('View current status of the transaction. Available statuses are Complete, Failed, Incomplete, and Overpaid.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_amount_due_h2_stop() {
@@ -135,11 +135,11 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _txn_details_metabox_stop() {
-		return '<p>' . __('The transaction details area displays various information including line item id, event name, event date, ticket option, price, quantity, line total, sales tax, and the grand total. You can also view details about any payments made towards this transaction.', 'event_espresso') . '</p>';
+		return '<p>' . __('The transaction details area displays various information including Line Item ID, Event Name, Event Date, Ticket Option, Price, Quantity, Line Total, Sales Tax, and the Grand Total. You can also view details about any payments made towards this transaction.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_session_info_stop() {
-		return '<p>' . __('You can view additional information about the transaction by clicking on the link below. Examples of available information includes ip address and user agent.', 'event_espresso') . '</p>';
+		return '<p>' . __('You can view additional information about the transaction by clicking on the link below. Examples of available information includes IP Address and User Agent.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_attendees_metabox_stop() {

@@ -373,10 +373,12 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function custom_post_stati_dropdown() {
 		$statuses = $this->_cpt_model_obj->get_custom_post_statuses();
+		$cur_status_label = array_key_exists($this->_cpt_model_obj->status(), $statuses) ? $statuses[$this->_cpt_model_obj->status()] : '';
 		$template_args = array(
 			'cur_status' =>  $this->_cpt_model_obj->status(),
 			'statuses' => $statuses,
-			'cur_status_label' => array_key_exists($this->_cpt_model_obj->status(), $statuses) ? $statuses[$this->_cpt_model_obj->status()] : ''
+			'cur_status_label' => $cur_status_label,
+			'localized_status_save' => sprintf( __('Save %s', 'event_espresso'), $cur_status_label )
 			);
 
 		//we'll add a trash post status (WP doesn't add one for some reason)

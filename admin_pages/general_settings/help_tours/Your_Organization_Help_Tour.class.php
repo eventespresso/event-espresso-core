@@ -91,12 +91,12 @@ class Your_Organization_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Organization Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the your Organization Page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Your Organization page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _site_license_key_stop() {
-		return '<p>' . __('Enter your support license key here to enable one click updates.', 'event_espresso') . '</p>';
+		return '<p>' . __('Enter your support license key here to enable one-click updates.', 'event_espresso') . '</p>';
 	}
 
 	protected function _contact_information_stop() {

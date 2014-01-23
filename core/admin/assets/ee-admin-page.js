@@ -197,8 +197,24 @@ jQuery(document).ready(function($) {
 	var wp_status = $('.ee-status-container', '#misc-publishing-actions').first();
 	var our_status = $('#cur_status').text();
 	var extra_statuses = $('#ee_post_status').html();
-	if ( our_status !== '' )
+	if ( our_status !== '' ) {
 		$('#post-status-display').text(our_status);
+		$('#save-post', '#save-action').val( $('#localized_status_save').text() );
+	}
+
+	//if custom stati is selected, let's update the text
+	$('.save-post-status', '#post-status-select').click( function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var selector = $('#post_status');
+		var chngval = $(selector).val();
+		var chnglabel = $('option[value="' + chngval + '"]', selector).text();
+		var cur_stat_id = $('#cur_stat_id').text();
+		var origlabel = $('option[value="' + cur_stat_id + '"]', selector).text();
+		var newlabel = $('#save-post', '#save-action').val().replace(origlabel, chnglabel);
+		$('#save-post', '#save-action').val(newlabel);
+		$('#cur_stat_id').text(chngval);
+	});
 
 	if ( extra_statuses !== '' )
 		$(extra_statuses).appendTo($('#post_status'));
@@ -224,9 +240,6 @@ jQuery(document).ready(function($) {
 		url = 'http://dummyurl.com/' + url;
 		console.log(url);
 		var queryparts = parseUri(url);
-
-		console.log(queryparts);
-		console.log()
 
 		//set dialog window
 		var help_dialog = $( '#' + queryparts.queryKey.inlineId ).draggable();

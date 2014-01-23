@@ -3,10 +3,10 @@
 <p>
 <ul>
 <li>
-<?php _e('Registration Confirmation: triggered by frontend event registrations', 'event_espresso'); ?>
+<?php _e('<strong>Registration Confirmation</strong><br />Triggered by frontend event registrations', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Payment Confirmation: triggered by frontend payments', 'event_espresso'); ?>
+<?php _e('<strong>Payment Confirmation</strong><br />Triggered by frontend payments', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

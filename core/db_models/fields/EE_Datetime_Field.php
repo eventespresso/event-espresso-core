@@ -553,7 +553,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			try{
 				$format = 'd/m/Y H:i';
 				$this->_date = DateTime::createFromFormat($format, $datestring, new DateTimeZone( $timezone ));
-			}catch(Excetion $e){
+			}catch(Exception $e){
 				//ok give up, but dont throw an error
 				$this->_date = new DateTime(null, new DateTimeZone( $timezone ));
 			}

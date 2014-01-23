@@ -87,10 +87,16 @@ function _migration_step($num_items=50){
 			add_post_meta($new_id,'contact',$venue_meta['contact']);
 		}
 		//is there an image on this venue?
-		if(isset($venue_meta['image']) && $venue_meta['image']){
-			$this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($venue_meta['image'],$new_id,$this);
+		$guid = isset($venue_meta['image']) && $venue_meta['image'] ? $venue_meta['image'] : NULL;
+		if($guid){
+			$this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid,$new_id,$this);
 		}
 		$items_actually_migrated++;
+		if($guid){
+			//if there was an image, we may have had to download it etc and it may have taken 
+			//longer, then let's not bother migrating anymore on this step
+			break;
+		}
 	}
 	if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
 		$this->set_completed();

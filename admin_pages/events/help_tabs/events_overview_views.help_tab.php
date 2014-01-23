@@ -5,23 +5,23 @@
 <p>
 <ul>
 <li>
-<?php _e('View All Events', 'event_espresso'); ?><br />
+<?php _e('<strong>View All Events</strong>', 'event_espresso'); ?><br />
 <?php _e('Show all events.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('View Draft Events', 'event_espresso'); ?><br />
+<?php _e('<strong>View Draft Events</strong>', 'event_espresso'); ?><br />
 <?php _e('Show events that are not published and have a status of draft.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('View Trashed Events', 'event_espresso'); ?><br />
+<?php _e('<strong>View Trashed Events</strong>', 'event_espresso'); ?><br />
 <?php _e('Show events that have been moved to the trash.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('View Events for Today', 'event_espresso'); ?><br />
+<?php _e('<strong>View Events for Today</strong>', 'event_espresso'); ?><br />
 <?php _e('Show events that are taking place today.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('View Events for this Month', 'event_espresso'); ?><br />
+<?php _e('<strong>View Events for this Month</strong>', 'event_espresso'); ?><br />
 <?php _e('Show events that fall under the current month.', 'event_espresso'); ?>
 </li>
 </ul>

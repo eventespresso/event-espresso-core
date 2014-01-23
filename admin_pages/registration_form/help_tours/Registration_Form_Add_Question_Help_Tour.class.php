@@ -107,8 +107,8 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Add Question', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the Add Question page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Add New Question', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the Add New Question page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
@@ -130,7 +130,7 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _qst_type_stop() {
-		return '<p>' . __('Select the type of question. Available options are text, textarea, single, multiple, dropdown, and date.', 'event_espresso') . '</p>';
+		return '<p>' . __('Select the type of question. Available options are Text, Textarea, Single, Multiple, Dropdown, and Date.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_required_stop() {

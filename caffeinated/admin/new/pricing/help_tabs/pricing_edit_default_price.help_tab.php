@@ -5,19 +5,19 @@
 <p>
 <ul>
 <li>
-<?php _e('Type', 'event_espresso'); ?><br />
+<?php _e('<strong>Type</strong>', 'event_espresso'); ?><br />
 <?php _e('This is the type of pricing. Available options are Base Price, Percent Discount, Dollar Discount, Percent Surcharge, Dollar Surcharge, Regional Tax, and Federal Tax.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Name', 'event_espresso'); ?><br />
+<?php _e('<strong>Name</strong>', 'event_espresso'); ?><br />
 <?php _e('This is the name of the default pricing.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Description', 'event_espresso'); ?><br />
+<?php _e('<strong>Description</strong>', 'event_espresso'); ?><br />
 <?php _e('This is the description for the default pricing.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Amount', 'event_espresso'); ?><br />
+<?php _e('<strong>Amount</strong>', 'event_espresso'); ?><br />
 <?php _e('This is the value of the default pricing and is shown as a flat amount or a percentage.', 'event_espresso'); ?>
 </li>
 </ul>

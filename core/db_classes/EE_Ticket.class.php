@@ -413,11 +413,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return mixed(int|string) status int if the display string isn't requested
 	 */
 	public function ticket_status( $display = FALSE ) {
-		if ( ! $this->is_remaining() ) return $display ? __('Sold Out', 'event_espresso') : EE_Ticket::sold_out;
-		if ( $this->_TKT_deleted ) return $display ? __('Archived', 'event_espresso') : EE_Ticket::archived;
-		if ( $this->is_expired() ) return $display ? __('Expired', 'event_espresso') : EE_Ticket::expired;
-		if ( $this->is_pending() ) return $display ? __('Pending', 'event_espresso') : EE_Ticket::pending;
-		if ( $this->is_on_sale() ) return $display ? __('On Sale', 'event_espresso') : EE_Ticket::onsale;
+		if ( ! $this->is_remaining() ) return $display ? EEH_Template::pretty_status(EE_Ticket::sold_out, FALSE, 'sentence') : EE_Ticket::sold_out;
+		if ( $this->_TKT_deleted ) return $display ? EEH_Template::pretty_status(EE_Ticket::archived, FALSE, 'sentence') : EE_Ticket::archived;
+		if ( $this->is_expired() ) return $display ? EEH_Template::pretty_status(EE_Ticket::expired, FALSE, 'sentence') : EE_Ticket::expired;
+		if ( $this->is_pending() ) return $display ? EEH_Template::pretty_status(EE_Ticket::pending, FALSE, 'sentence') : EE_Ticket::pending;
+		if ( $this->is_on_sale() ) return $display ? EEH_Template::pretty_status(EE_Ticket::onsale, FALSE, 'sentence') : EE_Ticket::onsale;
+		
 	}
 
 

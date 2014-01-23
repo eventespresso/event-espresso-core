@@ -9,11 +9,11 @@
 <p>
 <ul>
 <li>
-<?php _e('All', 'event_espresso'); ?><br />
+<?php _e('<strong>All</strong>', 'event_espresso'); ?><br />
 <?php _e('Show all question groups.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Trash', 'event_espresso'); ?><br />
+<?php _e('<strong>Trash</strong>', 'event_espresso'); ?><br />
 <?php _e('Show question groups that have been moved to the trash.', 'event_espresso'); ?>
 </li>
 </ul>

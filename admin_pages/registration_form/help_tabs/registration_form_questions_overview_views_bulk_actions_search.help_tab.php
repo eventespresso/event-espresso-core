@@ -9,11 +9,11 @@
 <p>
 <ul>
 <li>
-<?php _e('View All Questions', 'event_espresso'); ?><br />
+<?php _e('<strong>View All Questions</strong>', 'event_espresso'); ?><br />
 <?php _e('Show all questions.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Trash', 'event_espresso'); ?><br />
+<?php _e('<strong>Trash</strong>', 'event_espresso'); ?><br />
 <?php _e('Show questions that have been moved to the trash.', 'event_espresso'); ?>
 </li>
 </ul>

@@ -87,11 +87,11 @@ class Critical_Pages_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _reg_page_id_stop() {
-		return '<p>' . __('This is the page that displays all your events and is required, even if it is not visible in your menus. ', 'event_espresso') . '</p>';
+		return '<p>' . __('This page displays all your events and is required, even if it is not visible in your menus. ', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_page_id_stop() {
-		return '<p>' . __('This processes the payments. It should not be visible on your menus, and the page should not contain anything other than the shortcode.', 'event_espresso') . '</p>';
+		return '<p>' . __('This pages processes payments. It should not be visible on your menus, and the page should not contain anything other than the shortcode.', 'event_espresso') . '</p>';
 	}
 
 	protected function _thank_you_page_id_stop() {
