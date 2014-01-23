@@ -129,7 +129,7 @@ class Event_Edit_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_one() {
 		$content = '<h3>' . __('Event Editor', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This brief tour of the Event Editor will provide an overview of the different areas of the screen to help you understand what they are used for. Let\'s get started on editing your event with Event Espresso!', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Event Editor will provide an overview of the different areas of the screen to help you understand what they are used for. Let\'s get started on editing your event with Event Espresso!', 'event_espresso') . '</p>';
 		return $content;
 	}
 
