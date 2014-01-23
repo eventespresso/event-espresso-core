@@ -8,31 +8,31 @@
 <h3><?php _e('Map Settings for Registration Page & Event List Options', 'event_espresso'); ?></h3>
 <ul>
 <li>
-<?php _e('Set Map Width', 'event_espresso'); ?><br />
+<?php _e('<strong>Set Map Width</strong>', 'event_espresso'); ?><br />
 <?php _e('You may set a pixel width for your map. This should be entered as a numeric value with no other characters. If a value is not set then default ones are used -- registration page single maps are set to 500 pixels and events list maps are set to 200 pixels.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Set Map Height', 'event_espresso'); ?><br />
+<?php _e('<strong>Set Map Height</strong>', 'event_espresso'); ?><br />
 <?php _e('This setting is similar to set map width except it is for the map height. Maps will display best when matching dimensions are used.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Set Map Zoom', 'event_espresso'); ?><br />
+<?php _e('<strong>Set Map Zoom</strong>', 'event_espresso'); ?><br />
 <?php _e('Zoom level is the level of detail that is shown when the map first renders. A smaller value means you zoom out and therefore see a wider area. A higher value means that you zoom in and see the actual address in finer detail. A default value of 12 is recommended.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Set Map Navigation Overlay', 'event_espresso'); ?><br />
+<?php _e('<strong>Set Map Navigation Overlay</strong>', 'event_espresso'); ?><br />
 <?php _e('The navigation overlay are the controls for panning and zooming the map.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Keep Map Navigation Small', 'event_espresso'); ?><br />
+<?php _e('<strong>Keep Map Navigation Small</strong>', 'event_espresso'); ?><br />
 <?php _e('Keep map navigation small tells Google to only load the smaller map overlay regardless of map size. Google changes various options according to the size of a map. If you want to stop this change from happening, you can set this option to yes.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Set Map Type Control', 'event_espresso'); ?><br />
+<?php _e('<strong>Set Map Type Control</strong>', 'event_espresso'); ?><br />
 <?php _e('The map type control is the options bar that Google sets in the top right corner. This can appear as a dropdown or horizontal bar.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Set Map Alignment', 'event_espresso'); ?><br />
+<?php _e('<strong>Set Map Alignment</strong>', 'event_espresso'); ?><br />
 <?php _e('Alignment alows you to move the map left, center, or right within the parent event structure. The default alignment is left.', 'event_espresso'); ?>
 </li>
 </ul>
