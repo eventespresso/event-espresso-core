@@ -1143,9 +1143,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													if ( $answer  instanceof EE_Answer && $answer->question_ID() == $answer_cache_id ) {
 														$answer->set_value( $input_value );
 														$saved = TRUE;
-													} else {
-														EE_Error::add_error( sprintf( __( 'An invalid Answer object was discovered while attempting to process the form input: %s', 'event_espresso' ), $form_input ), __FILE__, __FUNCTION__, __LINE__ );
-													}
+													} 
 												}
 							
 											}
