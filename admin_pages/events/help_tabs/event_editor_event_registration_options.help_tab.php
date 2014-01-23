@@ -7,6 +7,7 @@
 <li>
 <?php _e('<strong>Active Status</strong>', 'event_espresso'); ?><br />
 <?php _e('Shows the current status for an event. A status will appear as Active, Upcoming, Postponed, Inactive, Sold Out, Expired, or Cancelled.', 'event_espresso'); ?>
+<ul>
 <li style="list-style-type: none;">
 <strong>Active</strong><br>
 A status of active means that an event has started and is currently taking place.
@@ -35,7 +36,7 @@ A status of expired means that the event has already taken place.
 <strong>Cancelled</strong><br>
 A status of cancelled means that the event will no longer take place.
 </li>
-</li>
+</ul>
 <li>
 <?php _e('<strong>Maximum number of tickets allowed per order for this event</strong>', 'event_espresso'); ?><br />
 <?php _e('Control how many tickets can be purchased in a single order.', 'event_espresso'); ?>

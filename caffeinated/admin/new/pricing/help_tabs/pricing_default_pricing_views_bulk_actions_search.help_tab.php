@@ -9,11 +9,11 @@
 <p>
 <ul>
 <li>
-<?php _e('View All Defailt Pricing', 'event_espresso'); ?><br />
+<?php _e('<strong>View All Default Pricing</strong>', 'event_espresso'); ?><br />
 <?php _e('Show all default prices.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Trash', 'event_espresso'); ?><br />
+<?php _e('<strong>Trash</strong>', 'event_espresso'); ?><br />
 <?php _e('Show default prices that have been moved to the trash.', 'event_espresso'); ?>
 </li>
 </ul>

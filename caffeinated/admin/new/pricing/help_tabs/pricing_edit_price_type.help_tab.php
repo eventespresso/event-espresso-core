@@ -5,19 +5,19 @@
 <p>
 <ul>
 <li>
-<?php _e('Basic Type', 'event_espresso'); ?><br />
+<?php _e('<strong>Basic Type</strong>', 'event_espresso'); ?><br />
 <?php _e('This is the kind of base type. Available options are Discount, Surcharge, and Tax.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Price Type Name', 'event_espresso'); ?><br />
+<?php _e('<strong>Price Type Name</strong>', 'event_espresso'); ?><br />
 <?php _e('This is the name of the price type.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Percentage or Dollar Amount?', 'event_espresso'); ?><br />
+<?php _e('<strong>Percentage or Dollar Amount?</strong>', 'event_espresso'); ?><br />
 <?php _e('Whether this price type should be applied as a percentage (%) or a dollar amount.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Order of Application', 'event_espresso'); ?><br />
+<?php _e('<strong>Order of Application</strong>', 'event_espresso'); ?><br />
 <?php _e('This is the order in which price types are applied. Higher numbered price types will apply first. For example a price type with a order of application of 50 will apply before one that has an order of application of 20.', 'event_espresso'); ?>
 </li>
 </ul>
