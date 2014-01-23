@@ -158,7 +158,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 */
 	function export_sample(){
 		$event = EEM_Event::instance()->get_one();
-		$this->_req_data['EVT_ID'] = array();//$event->ID();
+		$this->_req_data['EVT_ID'] = $event->ID();
 		$this->export_all_event_data();
 	}
 
