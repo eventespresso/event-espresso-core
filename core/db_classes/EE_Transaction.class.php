@@ -392,8 +392,10 @@ class EE_Transaction extends EE_Base_Class{
 	
 	
 	/**
-	 * Gets registrations on this transaction
-	 * @return EE_Registration[]
+	 * 	Gets registrations on this transaction
+	 *  	@param		array 	$query_params	aray of query paramaters
+	 *  	@param		boolean 	$get_cached 		TRUE to retrieve cached registrations or FALSE to pull from the db
+	 * 	@return EE_Registration[]
 	 */
 	public function registrations( $query_params = array(), $get_cached = FALSE ) {
 		$query_params = ( empty( $query_params ) || ! is_array( $query_params )) && ! $get_cached ? array( 'order_by'=>array( 'Event.EVT_name' =>'ASC', 'Attendee.ATT_lname' =>'ASC', 'Attendee.ATT_fname' =>'ASC' )) : $query_params;
