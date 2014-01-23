@@ -86,18 +86,30 @@ class EEH_Maps {
 				'ee_map_nav_size' => $ee_map_nav_size,
 				'ee_map_type_control' => $ee_map_type_control,
 				'location' => $ee_gmaps_opts['location']
-			);
-			wp_enqueue_script( 'gmap_api' );
-			wp_enqueue_script( 'ee_gmap' );		
-			wp_localize_script( 'ee_gmap', 'ee_gmap_vars', EEH_Maps::$gmap_vars );
+			);		
 			
 			$html = '<div class="ee-gmap-wrapper '.$map_align.';">';
 			$html .= '<div class="ee-gmap" id="map_canvas_' . $ee_gmaps_opts['map_ID'] .'" style="width: '.$ee_map_width.'px; height: '.$ee_map_height.'px;"></div>';  //
 			$html .= '</div>';
+
+			wp_enqueue_script( 'gmap_api' );
+			wp_enqueue_script( 'ee_gmap' );
+			add_action( 'wp_footer', array( 'EEH_Maps', 'footer_enqueue_script' ));	
+
 			return $html;
 			
 		} // end auto map or static url map check
 
+	}
+
+
+
+	/**
+	 * enqueue_script
+	 * @return void
+	 */
+	public static function footer_enqueue_script() {
+		wp_localize_script( 'ee_gmap', 'ee_gmap_vars', EEH_Maps::$gmap_vars );		
 	}
 
 
