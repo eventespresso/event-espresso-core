@@ -5,31 +5,31 @@
 <p>
 <ul>
 <li>
-<?php _e('Status', 'event_espresso'); ?><br />
+<?php _e('<strong>Status</strong>', 'event_espresso'); ?><br />
 <?php _e('The following statuses are available: Published, Pending Review, and Draft. A status of published means that a venue is live and can be associated with one or more events. Pending review will set a venue to draft until an event administrator has approved the venue. A status of draft will save a venue but it will be unpublished.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Visibility', 'event_espresso'); ?><br />
+<?php _e('<strong>Visibility</strong>', 'event_espresso'); ?><br />
 <?php _e('The following visibility options are available: public, password protected, and private. An venue that is set to public will be accessible by anyone. An venue that is set to password protected will only be available to event administrators and individuals who know the password to access the event registration. A venue that is set to private will completely be hidden from public view.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Publish', 'event_espresso'); ?><br />
+<?php _e('<strong>Publish</strong>', 'event_espresso'); ?><br />
 <?php _e('An event can be published immediately or you can schedule it to be published at a later date in the future.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Capacity', 'event_espresso'); ?><br />
+<?php _e('<strong>Capacity</strong>', 'event_espresso'); ?><br />
 <?php _e('Enter the maximum number of registrants that are supported by this venue.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Venue Website', 'event_espresso'); ?><br />
+<?php _e('<strong>Venue Website</strong>', 'event_espresso'); ?><br />
 <?php _e('Enter the URL (website address) for this venue. This field is optional.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Venue Phone #', 'event_espresso'); ?><br />
+<?php _e('<strong>Venue Phone #</strong>', 'event_espresso'); ?><br />
 <?php _e('Enter the phone number for this venue. This field is optional.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Move to Trash', 'event_espresso'); ?><br />
+<?php _e('<strong>Move to Trash</strong>', 'event_espresso'); ?><br />
 <?php _e('Click the Move to Trash link to move a venue to the trash.', 'event_espresso'); ?>
 </li>
 </ul>
