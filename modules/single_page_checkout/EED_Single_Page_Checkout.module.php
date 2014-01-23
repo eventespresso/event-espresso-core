@@ -309,12 +309,23 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->_cart = EE_Registry::instance()->load_core( 'Cart' );
 		}
 		// verify transaction
-		if ( ! $this->_transaction instanceof EE_Transaction ) {
+		if ( $this->_transaction instanceof EE_Transaction ) {
+			// but if this transaction has already been saved to the db... then let's pull that
+			if ( $ID = $this->_transaction->ID() ) {
+				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
+					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					return FALSE;
+				}
+			}			
+		} else {
 			$this->_initialize_transaction();
 		}
-		// and verify registrations have been set
-		if ( $this->_transaction->registrations() == NULL ) {
-			$this->_initialize_registrations();
+		// and verify registrations have been set (first check cached REGs)
+		if ( $this->_transaction->registrations( array(), TRUE ) == NULL ) {
+			// then check the db
+			if ( $this->_transaction->registrations() == NULL ) {
+				$this->_initialize_registrations();
+			}
 		}
 		// don't need payment options for a completed transaction (note: if we ever implement donations, then this will need overriding)
 		if ( $this->_transaction->is_completed() || $this->_transaction->is_overpaid() ) {
@@ -346,14 +357,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 
 		$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
-		if ( ! $this->_transaction instanceof EE_Transaction ) {
+		// verify transaction
+		if ( $this->_transaction instanceof EE_Transaction ) {
+			// but if this transaction has already been saved to the db... then let's pull that
+			if ( $ID = $this->_transaction->ID() ) {
+				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
+					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					return FALSE;
+				}
+			}			
+		} else {
 			$this->_initialize_transaction();
 		}
-
-		//verify registrations have been set
-		$registrations = $this->_transaction->registrations();
-		if ( $registrations == NULL ) {
-			$this->_initialize_registrations();
+		// and verify registrations have been set (first check cached REGs)
+		if ( $this->_transaction->registrations( array(), TRUE ) == NULL ) {
+			// then check the db
+			if ( $this->_transaction->registrations() == NULL ) {
+				$this->_initialize_registrations();
+			}
 		}
 		if ( !defined('SPCO_TEMPLATES_PATH' ) )
 			self::set_definitions();
@@ -555,16 +576,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$event_queue['title'] = __('Registrations', 'event_espresso');
 		$attendee_headings = array();
 		$additional_attendee_forms = FALSE;
-			
+		
+		$registrations  =  $this->_transaction->registrations( array(), TRUE );
 		// grab the saved registrations from teh transaction				
-		if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations() !== NULL ) {
+		if ( $this->_transaction instanceof EE_Transaction && $registrations !== NULL ) {
 			
 			//d( $this->_transaction );
 			$event_queue['has_items'] = TRUE;
 			$attendee_questions = array();
 			$prev_event = NULL;
 			
-			foreach ( $this->_transaction->registrations() as $registration ) {
+			foreach ( $registrations as $registration ) {
 
 				if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
 					// add event to list of events that are sold out
@@ -966,9 +988,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 */
 	private function _process_attendee_information() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$success_msg = FALSE;
-		$error_msg = FALSE;
 		// empty container
 		$valid_data = array();
 		
@@ -1000,12 +1019,12 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			$att_nmbr = 0;
 			if ( $this->_continue_reg ) {
 				if ( $this->_transaction instanceof EE_Transaction && $this->_continue_reg ) {
-					$registrations = $this->_transaction->registrations();
+					$registrations = $this->_transaction->registrations( array(), TRUE );
 					if ( ! empty( $registrations )) {
 						EE_Registry::instance()->load_model( 'Attendee' );
 						EE_Registry::instance()->load_helper( 'Class_Tools' );
 						// grab the saved registrations from the transaction				
-						foreach ( $this->_transaction->registrations()  as $registration ) {	
+						foreach ( $registrations  as $registration ) {	
 							// verify object
 							if ( $registration instanceof EE_Registration ) {
 								// reg_url_link / line item ID exists ?
@@ -1060,8 +1079,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											// $answer_cache_id is the key used to find the EE_Answer we want
 											$answer_cache_id = $this->_reg_url_link ? $form_input : $form_input . '-' . $line_item_id;
 											$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
-//											echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//											echo '<h4>$answer_is_obj : ' . $answer_is_obj . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 										
 											$attendee_property = FALSE;
 											//rename a couple of form_inputs
@@ -1079,8 +1096,10 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 											}
 						
-//echo '<h4>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //echo '<h4>attendee_property: ' . $attendee_property . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>$answer_is_obj : ' . $answer_is_obj . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//echo '<h4>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 											$saved = FALSE;
 											// if this form input has a corresponding attendee property
 											if ( $attendee_property ) {
@@ -1099,9 +1118,11 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 													if ( $answer  instanceof EE_Answer && $answer->question_ID() == $answer_cache_id ) {
 														$answer->set_value( $input_value );
 														$saved = TRUE;
+													} else {
+														EE_Error::add_error( sprintf( __( 'An invalid Answer object was discovered while attempting to process the form input: %s', 'event_espresso' ), $form_input ), __FILE__, __FUNCTION__, __LINE__ );
 													}
 												}
-												
+							
 											}
 											if ( ! $saved )  {
 												EE_Error::add_error( sprintf( __( 'Unable to save registration form data for the form input: %s', 'event_espresso' ), $form_input ), __FILE__, __FUNCTION__, __LINE__ );
@@ -1116,9 +1137,11 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 									// this registration does not require additional attendee information ?
 									if ( $copy_primary && $att_nmbr > 1 ) {
+//										echo '<h1>$copy_primary && $att_nmbr > 1  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 										// add relation to new attendee
 										$registration->_add_relation_to( $primary_attendee_obj, 'Attendee' );
 										$registration->set_attendee_id( $primary_attendee_obj->ID() );
+										$registration->update_cache_after_object_save( 'Attendee', $primary_attendee_obj );
 //										echo '$copy_primary attendee: '. $primary_attendee_obj->ID() . '<br/>';
 									} else {
 										// does this attendee already exist in the db ? we're searching using a combination of first name, last name, AND email address
@@ -1139,6 +1162,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 										$existing_attendee = apply_filters( 'FHEE_EE_Single_Page_Checkout__save_registration_items__find_existing_attendee', $existing_attendee, $registration );
 										// did we find an already existing record for this attendee ?
 										if ( $existing_attendee instanceof EE_Attendee ) {
+//											echo '<h1>$existing_attendee instanceof EE_Attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 											// update attendee data in case it has changed since last time they registered for an event
 											// first remove fname, lname, and email from attendee data
 											unset( $attendee_data['ATT_fname'] );
@@ -1156,6 +1180,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											// add relation to existing attendee
 											$registration->_add_relation_to( $existing_attendee, 'Attendee' );
 											$registration->set_attendee_id( $existing_attendee->ID() );
+											$registration->update_cache_after_object_save( 'Attendee', $existing_attendee );
 
 										} else {
 											// ensure critical details are set for additional attendees
@@ -1183,15 +1208,19 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											$attendee_data['ATT_author'] = $registration->event()->wp_user();
 											// create new attendee object
 											$new_attendee = EE_Attendee::new_instance( $attendee_data );
+											$new_attendee->save();
+//											echo '<h1>$new_attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 											// add relation to new attendee
 											$registration->_add_relation_to( $new_attendee, 'Attendee' );
 											$registration->set_attendee_id( $new_attendee->ID() );
+											$registration->update_cache_after_object_save( 'Attendee', $new_attendee );
 
 										}
 										
 										// who's the man ?
 										if ( $att_nmbr == 1 ) {
 											$primary_attendee_obj = $registration->get_first_related( 'Attendee' );
+//											printr( $primary_attendee_obj, '$primary_attendee_obj  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 										}									
 									}
 
@@ -1206,6 +1235,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 									EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $line_item_id ), __FILE__, __FUNCTION__, __LINE__ );
 								}
 								
+//								printr( $registration->attendee(), '$registration->attendee()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //								printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 							} // end of if ( $registration instanceof EE_Registration )
@@ -1217,20 +1247,19 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					}
 					
 				} else {
-						EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );				
+					EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );				
 				}
 
 			} 
 
 			// grab any errors
 			$notices = EE_Error::get_notices( FALSE, FALSE, TRUE );
-			if ( ! $error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE ) {
-				$success_msg = __('Attendee information submitted successfully.', 'event_espresso');
+			if ( ! isset( $notices['errors'] )) {
+				EE_Error::add_success( __('Attendee information submitted successfully.', 'event_espresso' ));
 			}
 
 		} else {
-			$success_msg = FALSE;
-			$error_msg = __('No valid question responses were received.', 'event_espresso');
+			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );		
 		}
 
 //echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -1238,21 +1267,14 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 		//this might be called while in admin and if it is then we don't want to do our normal steps.
 		if ( is_admin() && ! EE_Registry::instance()->REQ->front_ajax ) {
-			if ( $error_msg ) {
-				EE_Error::add_error($error_msg, __FILE__, __FUNCTION__, __LINE__);
-				return false;
-			} else {
-				EE_Error::add_success($success_msg);
-				return true;
-			}
+			return ! isset( $notices['errors'] ) ? TRUE : FALSE;
 		}
 
-		
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
 		
-		$this->go_to_next_step( $success_msg, $error_msg );
+		$this->go_to_next_step( __FUNCTION__ );
 
 	}
 
@@ -1266,42 +1288,81 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 * 	@return 	void
 	 */
 	private function _save_all_registration_information() {
-		// verify the transaction
+		// verify the transaction		
 		if ( $this->_transaction instanceof EE_Transaction ) {
-			$this->_transaction->save();
-			// grab the saved registrations from the transaction
-			foreach ( $this->_transaction->registrations( array(), TRUE ) as $line_item_id => $registration ) {
-				// verify object
-				if ( $registration instanceof EE_Registration ) {
-					//set TXN ID
-					$registration->set_transaction_id( $this->_transaction->ID() );
-					// verify and save the attendee
-					if ( $registration->attendee() instanceof EE_Attendee ) {
-						$registration->attendee()->save();
-						$registration->set_attendee_id( $registration->attendee()->ID() );
-					} else {
-						EE_Error::add_error( __( 'An invalid attendee object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-						return FALSE;
-					}
-					// save so that REG has ID
-					$registration->save();
-					// now save the aswers
-					foreach ( $registration->answers() as $answer ) {	
-						// verify object
-						if ( $answer instanceof EE_Answer ) {
-							$answer->save();
+//			if ( $ID = $this->_transaction->ID() ) {
+//				if ( $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
+//					// refresh relations
+//					foreach ( $this->_transaction->registrations() as $registration ) {
+//						$registration->attendee();
+//						$registration->event();
+//						$registration->ticket();
+//						foreach ( $registration->answers() as $answer ) {
+//							$answer->question();
+//						}
+//					}			
+//					return TRUE;
+//				}  else {
+//					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+//					return FALSE;
+//				}
+//			}  else {
+				$this->_transaction->save();
+				// grab the saved registrations from the transaction
+				foreach ( $this->_transaction->registrations( array(), TRUE ) as $line_item_id => $registration ) {
+					// verify object
+					if ( $registration instanceof EE_Registration ) {
+						//set TXN ID
+						$registration->set_transaction_id( $this->_transaction->ID() );
+	//					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+						// verify and save the attendee
+						if ( $attendee = $registration->attendee() ) {
+							if ( $attendee instanceof EE_Attendee ) {
+	//							printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+								$attendee->save();
+								$registration->set_attendee_id( $attendee->ID() );
+								if ( ! $registration->update_cache_after_object_save( 'Attendee', $attendee )) {
+									EE_Error::add_error( __( 'The newly saved Attendee object could not be cached on the registration.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+									return FALSE;
+								}
+							} else {
+								EE_Error::add_error( __( 'An invalid Attendee object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+								return FALSE;
+							}
 						} else {
-							EE_Error::add_error( __( 'An invalid answer object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+							EE_Error::add_error( __( 'No Attendee object was found when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 							return FALSE;
 						}
+						// save so that REG has ID
+						$registration->save();
+						// now save the aswers
+						foreach ( $registration->answers() as $cache_key => $answer ) {	
+							// verify object
+							if ( $answer instanceof EE_Answer ) {
+								$answer->set_registration( $registration->ID() );
+								$answer->save();
+								if ( ! $registration->update_cache_after_object_save( 'Answer', $answer, $cache_key )) {
+									EE_Error::add_error( __( 'The newly saved Answer object could not be cached on the registration.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+									return FALSE;
+								}
+							} else {
+								EE_Error::add_error( __( 'An invalid Answer object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+								return FALSE;
+							}
+						}
+						//$registration->save();
+						if ( ! $this->_transaction->update_cache_after_object_save( 'Registration', $registration, $line_item_id )) {
+							EE_Error::add_error( __( 'The newly saved Registration object could not be cached on the Transaction.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+							return FALSE;
+						}					
+					} else {
+						EE_Error::add_error( __( 'An invalid Registration object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+						return FALSE;
 					}
-				} else {
-					EE_Error::add_error( __( 'An invalid registration object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-					return FALSE;
-				}
-			}		
+				}					
+//			}	
 		} else {
-			EE_Error::add_error( __( 'A valid transaction was not found when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
 		return TRUE;
@@ -1339,11 +1400,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					exit(); 
 				}
 			} 
-		} else {
-			//grab notices
-			$notices = EE_Error::get_notices(FALSE);
-		}
-		$this->go_to_next_step( $notices['success'], $notices['errors'] );
+		} 
+		$this->go_to_next_step( __FUNCTION__ );
 	}
 
 
@@ -1385,7 +1443,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 
 
-
+	
 
 
 	/**
@@ -1415,13 +1473,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );	
 			}
 		}
-		
-		//grab notices
-		$notices = EE_Error::get_notices(FALSE);
-		$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
-		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 
-		$this->go_to_next_step( $success_msg, $error_msg );
+		$this->go_to_next_step( __FUNCTION__ );
 
 	}
 
@@ -1461,13 +1514,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			} else {
 				$error_msg = $response['msg']['error'];
 			}
-		} else {
-			$notices = EE_Error::get_notices(FALSE);
-			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
-			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
 		}
-
-		$this->go_to_next_step( $success_msg, $error_msg ); //, $callback = FALSE, $callback_param = FALSE
+		$this->go_to_next_step( __FUNCTION__ ); //, $callback = FALSE, $callback_param = FALSE
 	}
 
 
@@ -1535,7 +1583,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 		// save everything
 		if ( $this->_continue_reg && $this->_save_all_registration_information() ) {
-//			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// save TXN data to the cart
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 				
 			do_action( 'AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
@@ -1584,13 +1632,9 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			} else {
 				$error_msg = $response['msg']['error'];
 			}
-		} else {
-			$notices = EE_Error::get_notices(FALSE);
-			$success_msg = isset( $notices['success'] ) ? $notices['success'] : '';
-			$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : '';
-		}
-
-		$this->go_to_next_step( $success_msg, $error_msg );
+		} 
+		
+		$this->go_to_next_step( __FUNCTION__ );
 		
 	}
 
@@ -1624,9 +1668,9 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	 *   @access public
 	 *   @return void
 	 */
-	public function go_to_next_step( $success_msg = FALSE, $error_msg = FALSE, $callback = FALSE, $callback_param = FALSE ) {
+	public function go_to_next_step( $prev_step = '', $callback = FALSE, $callback_param = FALSE ) {
 		
-		$no_errors = TRUE;
+		$no_errors = TRUE;		
 		switch ( $this->_next_step ) {
 			case 'registration_confirmation' :
 				$callback = '_go_to_registration_confirmation_ajax_response';
@@ -1636,10 +1680,17 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			break;
 		}
 		
+		if ( $prev_step == $callback ) {
+			EE_Error::add_error( __('A recursive loop was detected and the registration process was halted.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		
+		$notices = EE_Error::get_notices(FALSE);
+		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
+		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
 
 		// check for valid callback function
 		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
-//		echo '<h4>$this->_revisit : ' . $this->_revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$prev_step : ' . $prev_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -1647,7 +1698,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 //		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>EE_Registry::instance()->REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		if ( $success_msg ) {
+//		echo '<h4>$this->_revisit : ' . $this->_revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		if ( $success_msg && ! $error_msg ) {
 			// if this is an ajax request AND a callback function exists
 			if ( EE_Registry::instance()->REQ->ajax  && $valid_callback ) {
 				// send data through to the callback function
