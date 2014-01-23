@@ -109,173 +109,6 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function init(){
-//		d(EEM_Registration::instance());
-//		$r = EE_Registration::new_instance(array('ATT_ID'=>5));
-//		d(EEM_Registration::instance());
-//		$r->save();
-//		d(EEM_Registration::instance());
-//		
-//		d($r);
-//		$a = EE_Answer::new_instance_from_db(array('ANS_ID'=>1,'ANS_value'=>1));
-//		
-//		$a2 = EE_Answer::new_instance(array('ANS_ID'=>1,'ANS_value'=>3));
-//		
-//		$a3 = EE_Answer::new_instance_from_db(array('ANS_ID'=>2,'ANS_value'=>4));
-//		$a3->set('ANS_ID',1);
-////		$a2->set_value('new_one');
-//		d($a);
-//		var_dump($a);
-//		d($a2);
-//		var_dump($a2);
-//		d($a3);
-//		var_dump($a3);
-//		EEM_Event::instance()->show_next_x_db_queries(2);
-//		EEM_Event::instance()->get_all(array(array('status'=>'draft'),'order_by'=>array('Venue.VNU_ID'=>'asc')));die;
-//		$ps = EEM_Price::instance()->get_one(array(array('PRC_amount'=>array('>=','$1,00'))));
-//		d($ps);
-//		 $ps->e('PRC_amount');
-//		$p = EE_Price::new_instance(array('PRC_amount'=>'$ 1, 000.458'));
-//		d($p);
-//		$p2 = EE_Price::new_instance(array('PRC_amount'=>32.23));
-//		d($p2);
-//		$l = EE_Line_Item::new_instance(array('LIN_percent'=>'34.90'));
-//		d($l);
-//		$l2 = EE_Line_Item::new_instance(array('LIN_percent'=>' % 34.90 '));
-//		d($l2);
-//		$e = EE_Export::instance();
-//		$e->export_sample();
-//		EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all());
-//		EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all());
-//		$t = EE_Ticket::new_instance(array('TKT_name'=>'prog1',));
-//		$p = EEM_Price::instance()->get_one();
-//		$d = EEM_Datetime::instance()->get_one();
-//		$t->save();
-//		$t->_add_relation_to($p, 'Price');
-//		$t->_add_relation_to($d, 'Datetime');
-//		d($t);
-//		d($t->datetimes());
-//		d($t->prices());
-//		$t->_remove_relations('Datetime');
-//		$t->delete_related_permanently('Price');
-//		$t->delete_permanently();
-//		$em = EEM_Event::instance();
-//		$event = $em->get_one(array(array('Term_Taxonomy.term_taxonomy_id'=>array('IS NOT NULL'))));
-//		d($event);
-//		$taxes = $event->term_taxonomies();
-//		d($taxes);
-//		$a_tax = array_shift($taxes);
-//		$event->remove_relation_to_term_taxonomy($a_tax);
-//		$event->clear_cache('Term_Taxonomy');
-//		d($event->term_taxonomies());
-		////		$ticket = EEM_Ticket::instance()->get_one();
-//		$li = EE_Line_Item::new_instance(array(
-//			'LIN_code'=>'wefaeefaw',
-//			'LIN_name'=>'monkey',
-//			'OBJ_ID'=>$ticket->ID(),
-//			'OBJ_type'=>'Ticket'
-//		));
-//		d($li);
-////		$li->save();
-//		d($li->object());
-				
-		//create basic transactionand payment meta
-//		$pay = EE_Payment::new_instance(array('PAY_amount'=>100));
-//		$pay->save();
-//		$meta = EE_Extra_Meta::new_instance(array('OBJ_ID'=>$pay->ID(),'EXM_type'=>'Payment','EXM_key'=>'numMonkeys','EXM_value'=>'19'));
-//		$meta->save();
-//		echo 'echodump of $meta';
-//		var_dump($meta);
-//		echo 'echodump of $pay->extra_meta()';
-//		var_dump($pay->extra_meta());
-		
-		
-		//create basic promotion
-//		$pro =  EE_Promotion::new_instance(array('PRO_scope'=>'Event'));				
-//		$pro->save();
-//		$ticket = EEM_Ticket::instance()->get_one();
-//		$pro_ticket = EE_Promotion_Object::new_instance(array(
-//			'PRO_ID'=>$pro->ID(),
-//			'OBJ_ID'=>$ticket->ID(),
-//			'POB_type'=>'Ticket',
-//			));
-//		$pro_ticket->save();
-//		$pro_ticket = EEM_Promotion_Object::instance()->get_one(array(array('POB_type'=>'Ticket')));
-//		echo 'echodump of $pro_ticket';
-//		var_dump($pro_ticket);
-//		$obj = $pro_ticket->object();
-//		echo 'echodump of $obj';
-//		var_dump($obj);
-//		$promo = EEM_Promotion_Object::instance()->get_one(array(array('Ticket.TKT_ID'=>1)));
-//		echo 'echodump of $promo';
-//		var_dump($promo);
-//CREATE A BASIC REG, ATTENDEE, AND TRANSACTION
-		//
-//		$txn = EE_Transaction::new_instance(array('TXN_total'=>34.02,'TXN_paid'=>34.02, 'STS_ID'=>'TIN'));
-//////		$txn->save();
-//		$att = EE_Attendee::new_instance(array('ATT_fname'=>'monkey2','ATT_lname'=>'nelson'));
-//////		$att->save();
-//////		$evt = EEM_Event::instance()->get_one();
-////		$reg = EE_Registration::new_instance(array('TKT_ID'=>1,'STS_ID'=>'RCN'));
-//////		$reg->save();
-////		d($txn);
-////		$txn->add_registration($reg);
-////		d($txn);
-//		$reg2 = EE_Registration::new_instance(array('TKT_ID'=>2,'STS_ID'=>'RCN'));
-//		/* @var $reg2 EE_Registration */
-//		$reg2->_add_relation_to($att, 'Attendee');
-//		d($att);
-//		d($reg2);
-//		$txn->add_registration($reg2);
-//		d($txn);
-//		$txn->save_new_cached_related_model_objs();
-//		d($txn);
-//		d($txn);
-//		d($txn->registrations());
-//		$regs = EEM_Registration::instance()->get_all(array(array('Status.STS_open'=>true)));
-//		echo 'echodump of $regs';
-//		var_dump($regs);
-		
-//		$status = EEM_Status::instance()->get_one(array(array('STS_ID'=>'RCN')));
-//		$regs = $status->get_many_related('Registration');
-//		echo 'echodump of $regs';
-//		var_dump($regs);
-//		global $wpdb;
-//		$result = $wpdb->get_var("SELECT option_value from wp_options where option_name='espresso_data_migrations'");
-//		echo $result;die;
-//		$dms = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
-//		echo 'echodump of $dms';
-//		var_dump($dms);
-//		EE_Data_Migration_Manager::instance()->response_to_migration_ajax_request();
-		
-//		var_dump(EEM_Registration::instance()->get_registrations_per_day_report());
-//		$results = EEM_Registration::instance()->get_registrations_per_event_report('-5 months');
-//		$regs = EEM_Registration::instance()->get_all(array('limit'=>4));
-//		$qg = EEM_Question_Group::instance()->get_one();
-//		echo 'echodump of $qg';
-//		var_dump($qg);
-//		$qs = $qg->questions();
-//		$qg->delete_related_permanently('Question', array(array('QST_ID'=>2)));
-//		$r = EEM_Registration::instance()->get_one();
-		
-//		$related_answers = $r->answers();
-//		echo 'echodump of $related_answers';
-//		var_dump($related_answers);
-//		$r->delete_related('Answer');
-//		$related_answers = $r->answers();
-//		echo '<hr><hr>echodump of $related_answers';
-//		var_dump($related_answers);
-		
-		/* @var $r EE_Registration */
-//		$qs = EEM_Question::instance()->get_all();
-//		foreach($qs as $q){
-//			/* @var $q EE_Question */
-//			$ans1 = EE_Answer::new_instance(array('QST_ID'=>$q->ID(),'ANS_value'=>time(),'REG_ID'=>$r->ID()));
-//			$ans1->save();
-//		}
-//		$answers_for_r = $r->answers();
-//		echo 'echodump of $answers_for_r';
-//		var_dump($answers_for_r);
-		
 		// additional hooks get added in the init phase
 		// load other resources and begin to actually run shortcodes and modules
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
@@ -297,47 +130,8 @@ final class EE_Front_Controller {
 		// display errors
 		add_action('wp_footer', array( $this, 'display_errors' ), 2 );			
 		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );
-
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );			
-	
-
-			//random debug code added by mike.
-//			EE_Registry::instance()->load_class('Attendee',false,false,false);
-//			$att = EE_Attendee::new_instance(array('ATT_lname'=>'nelson','ATT_ID'=>15));
-//			echo 'echodump of $att';
-//			var_dump($att);
-//			
-//			$att2 = EE_Attendee::new_instance(array('ATT_lname'=>'wilson'));
-//			$att2->set_city('moscow');
-//			$att2->set('ATT_ID',15);
-//			echo 'echodump of $att2';
-//			var_dump($att2);
-
-		// NOTICES TEST
-//		EE_Error::add_success('WOOT! This is a success message. Now we can dances!!!');
-//		EE_Error::add_error('This is an error message. It means you done bad bad things!!!');
-//		EE_Error::add_attention('This is an attention message. You should prolly read this... but... meh... do whatcha want!');
-//		EE_Error::add_error('Ermehgerd!!! MOAR ERRORS!!! Seff n Garf aw gonna be maaaaad at you!!!');
-
-//		$regs = EEM_Datetime::instance()->get_all( array(
-//			array( 'DTT_reg_limit' => INF ),
-//			'limit'=>1,
-//			'order_by'=>array( 
-//				'DTT_EVT_start'=>'ASC',		
-//				'DTT_is_primary'=>'DESC'
-//			)
-//		));
-//		$reg = reset( $regs );
-//		d( $reg );		
-//		$reg->save();
-//		d( $reg );
-		
-//		$d = EE_Datetime::new_instance(array('DTT_reg_limit'=>-1));
-//		d($d);
-//		$d->save();
-//		d($d);
-		
 	}
 
 
@@ -426,10 +220,8 @@ final class EE_Front_Controller {
 	 */
 	public function _initialize_shortcodes( WP $WP ) {
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this );
-		//d( $this->EE->REQ );
 		// grab post_name from request
 		$current_post = apply_filters( 'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',EE_Registry::instance()->REQ->get( 'post_name' ) );
-//		d( $current_post );
 		// if it's not set, then check if frontpage is blog
 		if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
 			// yup.. this is the posts page, prepare to load all shortcode modules
@@ -443,7 +235,6 @@ final class EE_Front_Controller {
 				if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ))) {
 					// set the current post slug to what it actually is
 					$current_post = $post_slug;
-//					d( $current_post );
 				}					
 			}
 		} else if ( get_option( 'show_on_front' ) == 'page' ) {
@@ -456,23 +247,19 @@ final class EE_Front_Controller {
 				// is the current post the "page_for_posts" ???
 				if ( $current_post_id === $page_for_posts ) {
 					$current_post = 'posts';
-//					d( $current_post );
 				}					
 			}
 		} 
 		// are we on a category page?
 		$term_exists = is_array( term_exists( $current_post, 'category' ));
-//		d( $term_exists );
 		// make sure shortcodes are set
 		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
 			// cycle thru all posts with shortcodes set
 			foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 				// are we on this page ?
 				if ( $current_post == $post_name || $term_exists ) {
-//					d( $post_name );
 					// filter shortcodes so 
 					$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
-//					d( $post_shortcodes );
 					// now cycle thru shortcodes
 					foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 						// verify shortcode is in list of registered shortcodes
@@ -482,7 +269,7 @@ final class EE_Front_Controller {
 							add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 							break;
 						}
-						//is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
+						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
 						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
 							// let's pause to reflect on this...
 							$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
@@ -497,15 +284,12 @@ final class EE_Front_Controller {
 							$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
 							// fire the shortcode class's run method, so that it can activate resources
 							$shortcode->run( $WP );
-//								d( $shortcode );
 						}
 					}
 				}
 			}
 		}
-
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__end',$this );
-//		printr( EE_Registry::instance()->shortcodes, 'EE_Registry::instance()->shortcodes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
@@ -522,7 +306,6 @@ final class EE_Front_Controller {
 		$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
 		// cycle thru module routes
 		while ( $route = $Module_Request_Router->get_route( $WP_Query ) ) {
-//			d( $route );
 			// determine module and method for route
 			$module = $Module_Request_Router->resolve_route( $route );
 			// get registered view for route
@@ -579,7 +362,6 @@ final class EE_Front_Controller {
 					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . EE_Registry::instance()->CFG->style_settings['css_name'], EVENT_ESPRESSO_VERSION );
 					wp_enqueue_style('espresso_custom_css');
 				}
-				//add_filter( 'FHEE_enable_default_espresso_css', '__return_true' );
 
 				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' )) {
 					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
@@ -700,55 +482,9 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function the_content( $the_content ) {
-//		EE_Registry::instance()->load_model('Attendee', false, false, false);
-//		EEM_Attendee::instance()->show_next_x_db_queries(1);
-//		$attendees = EEM_Attendee::instance()->get_all(array(array('Registration.Event.EVT_ID'=>1),'default_where_conditions'=>'all'));
-//		echo 'echodump of $answers';
-//		var_dump($attendees);
-		
-		
-//		
-//		EE_Registry::instance()->load_class('Attendee', false, false, false);
-//		$a1 = EE_Attendee::new_instance(array('ATT_fname'=>'mike','ATT_address'=>'monkey town'));
-//		$a1->save();
-//		
-//		EE_Registry::instance()->load_class('Registration',false,false,false);
-//		$r1 = EE_Registration::new_instance(array('ATT_ID'=>$a1->ID(),'PRC_ID'=>1,'DTT_ID'=>1));
-//		$r1->save();
-//		
-//		$r_result = $r1->delete();
-//		echo 'echodump of registration $r_result';
-//		var_dump($r_result);
-//		$result = $a1->delete();
-//		
-//		echo 'echodump of attendee $result';
-//		var_dump($result);
-//		var_dump( EE_Error::get_notices());
-		
-		
-		
-//		EE_Registry::instance()->load_model('Question',false,false,false);
-//		EEM_Question::instance()->show_next_x_db_queries(1);
-//		$q  = EEM_Question::instance()->get_one_deleted_or_undeleted();
-//		echo 'echodump of $q';
-//		var_dump($q);
-		/* @var $q1 EE_Question  */
-//		$q1 = EEM_Question::instance()->get_one_deleted_or_undeleted();
-//		
-//		echo 'echodump of $q1';
-//		var_dump($q1);
-//		$q1->set_required(false);
-//		$q1->save();
-//		$groups =$q1->question_groups();
-//		$result = $q1->delete();
-//		echo 'echodump of $result';
-//		var_dump($result);
-//		var_dump(EE_Error::get_notices());
-		
 		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 		if ( apply_filters( 'FHEE_run_EE_the_content', FALSE ) ) {
 		}
-
 		return $the_content;
 	}
 
@@ -812,6 +548,8 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function template_include( $template_include_path = NULL ) {
+//		echo '<h4><br/>$template_include_path : ' . $template_include_path . ' </h4>';
+//		echo '<h4>$this->_template_path : ' . $this->_template_path . '</h4>';
 		// use our locate_template() method which checks for the template in the following places:
 		// * /wp-content/theme/ (currently active theme)
 		// * /wp-content/uploads/espresso/templates/  
