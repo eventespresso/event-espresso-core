@@ -222,8 +222,10 @@ jQuery(document).ready(function($) {
 			var chnglabel = eeCPTstatuses[chngval].label;
 			$('#save-post', '#save-action').val(eeCPTstatuses[chngval].save_label);
 			$('#cur_stat_id').text(chngval);
-			if ( cancel )
+			if ( cancel ) {
 				selector.val(chngval);
+				$('#post-status-display').text(chnglabel);
+			}
 		};
 
 		$('.cancel-post-status', '#post-status-select').on('click', function(e) {
@@ -279,7 +281,7 @@ jQuery(document).ready(function($) {
 		var target_help_tab = '#tab-link-' + $(this).attr('id') + ' a';
 		if ( $('#contextual-help-wrap').css('display') == 'none' ) {
 			$('#contextual-help-link').trigger('click');
-		}		
+		}
 		$(target_help_tab).trigger('click');
 	});
 
