@@ -61,35 +61,77 @@ class EE_DMS_4_1_0_question_group_question extends EE_Data_Migration_Script_Stag
 	/**
 	 * Attempts to insert a new question group inthe new format given an old one
 	 * @global type $wpdb
-	 * @param array $old_question_group
+	 * @param array $old_question_group_question
 	 * @return int
 	 */
-	private function _insert_new_question_group_question($old_question_group){
+	private function _insert_new_question_group_question($old_question_group_question){
 		global $wpdb;
-		$new_question_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_question", $old_question_group['question_id'], $wpdb->prefix."esp_question");
-		$new_question_group_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_qst_group", $old_question_group['group_id'], $wpdb->prefix."esp_question_group");
+		$new_question_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_question", $old_question_group_question['question_id'], $wpdb->prefix."esp_question");
+		$new_question_group_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_qst_group", $old_question_group_question['group_id'], $wpdb->prefix."esp_question_group");
 		if( ! $new_question_id){
-			$this->add_error(sprintf(__("Could not find 4.1 question id for 3.1 question #%d.", "event_espresso"),$old_question_group['question_id']));
+			$this->add_error(sprintf(__("Could not find 4.1 question id for 3.1 question #%d.", "event_espresso"),$old_question_group_question['question_id']));
 			return 0;
 		}
 		if( ! $new_question_group_id){
-			$this->add_error(sprintf(__("Could not find 4.1 question group id for 3.1 question group #%d.", "event_espresso"),$old_question_group['group_id']));
+			$this->add_error(sprintf(__("Could not find 4.1 question group id for 3.1 question group #%d.", "event_espresso"),$old_question_group_question['group_id']));
 			return 0;
 		}
-		$cols_n_values = array(
-			'QSG_ID'=>$new_question_group_id,
-			'QST_ID'=>$new_question_id
-		);
-		$datatypes = array(
-			'%d',//QSG_ID
-			'%d',//QST_ID
-		);
-		$success = $wpdb->insert($this->_new_table,$cols_n_values,$datatypes);
-		if ( ! $success){
-			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_question_group, $this->_new_table, $cols_n_values, $datatypes));
+		//if it's a system question, it needs to be in the right system group. otherwise no dice!
+		if(
+				($this->_is_system_question_group($new_question_group_id) == $this->_is_system_question_for_question_group($new_question_id) )
+				||
+				! $this->_is_system_question_for_question_group($new_question_id)
+			){
+			$cols_n_values = array(
+				'QSG_ID'=>$new_question_group_id,
+				'QST_ID'=>$new_question_id
+			);
+			$datatypes = array(
+				'%d',//QSG_ID
+				'%d',//QST_ID
+			);
+			$success = $wpdb->insert($this->_new_table,$cols_n_values,$datatypes);
+			if ( ! $success){
+				$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion($this->_old_table, $old_question_group_question, $this->_new_table, $cols_n_values, $datatypes));
+				return 0;
+			}
+			return $wpdb->insert_id;
+		}else{
+			return false;
+		}
+		
+	}
+	
+	/**
+	 * If this question is a system question, returns the QSG_system number that 
+	 * indicates the question group its permitted in.
+	 * @global type $wpdb
+	 * @param type $new_question_id
+	 * @return int
+	 */
+	private function _is_system_question_for_question_group($new_question_id){
+		global $wpdb;
+		$system_id = $wpdb->get_var($wpdb->prepare("SELECT QST_system FROM ".$wpdb->prefix."esp_question WHERE QST_ID=%d",$new_question_id));
+		if(in_array($system_id, array('fname','lname','email'))){
+			return 1;
+		}elseif($system_id!='' && $system_id){
+			return 2;
+		}else{
 			return 0;
 		}
-		return $wpdb->insert_id;
+	}
+	
+	/**
+	 * Returns the questino group's QSG_system value (1 meaning personal info, 2
+	 * being address info, and 0 being neither)
+	 * @global type $wpdb
+	 * @param type $new_question_group_id
+	 * @return boolean
+	 */
+	private function _is_system_question_group($new_question_group_id){
+		global $wpdb;
+		$system_id = $wpdb->get_var($wpdb->prepare("SELECT QSG_system FROM ".$wpdb->prefix."esp_question_group WHERE QSG_ID=%d",$new_question_group_id));
+		return intval($system_id);
 	}
 
 }
