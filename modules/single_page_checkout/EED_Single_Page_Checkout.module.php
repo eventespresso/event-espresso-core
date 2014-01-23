@@ -89,7 +89,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// configure the reg steps array
 		EED_Single_Page_Checkout::setup_reg_steps_array();
 		// set routing
-		EE_Config::register_route( 'register', 'EED_Single_Page_Checkout', 'run' );
+		EE_Config::register_route( '_register', 'EED_Single_Page_Checkout', 'run' );
 		foreach ( self::$_reg_steps as $reg_step => $reg_step_details ) {
 			EE_Config::register_route( $reg_step, 'EED_Single_Page_Checkout', $reg_step_details['process_func'] );
 		}
@@ -210,16 +210,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _set_next_step() {
+		// set pointer to start of array
 		reset( self::$_reg_steps );
-		// if there is more than one step
-		if ( count( self::$_reg_steps ) > 1 ) {
+//		printr( self::$_reg_steps, 'self::$_reg_steps  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		$current_step = str_replace( 'process_', '', $this->_current_step );
+		// if there is more than one step		
+		if ( count( self::$_reg_steps ) > 1 && $this->_current_step != 'finalize_registration' ) {		
 			// advance to the current step and set pointer
-			while ( key( self::$_reg_steps ) != $this->_current_step ) {
+			while ( key( self::$_reg_steps ) != $current_step ) {
+//				echo '<h4>key( self::$_reg_steps ) : ' . key( self::$_reg_steps ) . '  <br /></h4>';
 				next( self::$_reg_steps );
+//				echo '<h4>key( self::$_reg_steps ) : ' . key( self::$_reg_steps ) . '  <br /></h4>';
 			}
 		}
-		// advance one more spot
+		// advance one more spot ( if it exists )
 		$this->_next_step = next( self::$_reg_steps ) ? key( self::$_reg_steps ) : 'finalize_registration';
+//		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// then back to current step to reset
 		prev( self::$_reg_steps );
 	}
@@ -270,6 +276,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
+//		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// make sure reg steps array is setup
 		if ( empty( self::$_reg_steps )) {
 			EED_Single_Page_Checkout::setup_reg_steps_array();
@@ -285,6 +292,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// grab what step we're on
 		$this->_current_step = ! empty( $this->_current_step )  ? $this->_current_step : 'attendee_information';
 		$this->_current_step = EE_Registry::instance()->REQ->is_set( 'step' ) ? EE_Registry::instance()->REQ->get( 'step' ) : $this->_current_step;
+//		echo '<h4><br/><br/>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// returning from the thank you page ?
 		$this->_reg_url_link = EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' ) ? EE_Registry::instance()->REQ->get( 'e_reg_url_link' ) : FALSE;		
 		// if reg_url_link is present in the request, then we are only being sent back to SPCO to retry the payment 
@@ -331,10 +339,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->_transaction->is_completed() || $this->_transaction->is_overpaid() ) {
 			unset( self::$_reg_steps['payment_options'] );
 		}
+		
 		// and the next step
 		$this->_set_next_step();
 		
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'translate_js_strings' ), 1 );
+
 	}
 
 
@@ -396,7 +406,20 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->init();
 		// load css and js
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'wp_enqueue_scripts' ), 10 );
-		$this->registration_checkout();
+		
+//		echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>EE_Registry::instance()->REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		// convert AJAX requests if  if JS is disabled
+		if ( ! EE_Registry::instance()->REQ->ajax && ( strpos( $this->_current_step, 'process_' ) !== FALSE )) {
+			$process_method = '_' . $this->_current_step;
+//			echo '<h4>$process_method : ' . $process_method . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+			call_user_func( array( $this, $process_method ));
+		} else if ( $this->_current_step == 'finalize_registration' ) {
+			$this->_process_finalize_registration();
+		} else {
+//			echo '<h4>registration_checkout :<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+			$this->registration_checkout();
+		}		
 
 	}
 
@@ -763,7 +786,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		$template_args['return_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
 		$template_args['update_url'] = add_query_arg( array('ee' => 'update_event_queue'), $this->_reg_page_base_url );
-		$template_args['register_url'] = add_query_arg( array('ee' => 'register'), $this->_reg_page_base_url );
+		$template_args['register_url'] = add_query_arg( array('ee' => '_register'), $this->_reg_page_base_url );
 		$template_args['event_queue_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
 		
 		$template_args['confirmation_data'] = $this->_current_step == 'registration_confirmation' ? $this->_registration_confirmation() : '';
@@ -810,10 +833,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// loop through steps
 		while ( $reg_step_details = current( self::$_reg_steps )) {
 			$reg_step = key( self::$_reg_steps );
+//			echo '<br/><h4>$reg_step : ' . $reg_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			$edit_lnk_class = $this->_current_step == $reg_step ? ' hidden' : '';
-			$edit_lnk_url = add_query_arg( array( 'ee' => 'register', 'step' => $reg_step_details['display_func'] ), $this->_reg_page_base_url );
+			$edit_lnk_url = add_query_arg( array( 'ee' => '_register', 'step' => $reg_step_details['display_func'] ), $this->_reg_page_base_url );
 			$step_dv_class = $this->_current_step == $reg_step ? '' : ' hidden';
-			$reg_step_form_url = add_query_arg( array( 'ee' => 'register', 'step' => $reg_step_details['process_func'] ), $this->_reg_page_base_url );
+			$reg_step_form_url = add_query_arg( array( 'ee' => '_register', 'step' => $reg_step_details['process_func'] ), $this->_reg_page_base_url );
 			$next = $this->_get_next_reg_step();
 			//d( $next );
 			$next_step = $next ? $next['display_func'] : 'finalize_registration';
@@ -1729,7 +1754,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		EE_Error::get_notices( FALSE, TRUE, TRUE );
 		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from
 		if ( $next_step = $no_errors ? $this->_next_step : $this->_current_step ) {
-			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => 'register', 'step' => $next_step ));
+			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => '_register', 'step' => $next_step ));
 			$redirect = add_query_arg( $args, $this->_reg_page_base_url );
 		} else {
 			$redirect = $this->_thank_you_page_url;
