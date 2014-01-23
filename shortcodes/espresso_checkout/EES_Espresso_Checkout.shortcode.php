@@ -57,7 +57,7 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 			$EES_Shortcode = '[' . str_replace( 'EES_', '', strtoupper( get_class( $this )));
 			// now check for this shortcode
 			if ( strpos( $post_content, $EES_Shortcode ) !== FALSE ) {	
-				EE_Registry::instance()->REQ->set( 'ee', 'register' );
+				EE_Registry::instance()->REQ->set( 'ee', '_register' );
 			}					
 		}
 	}

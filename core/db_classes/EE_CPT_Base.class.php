@@ -294,4 +294,9 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	public function get_custom_post_statuses() {
 		return $this->get_model()->get_custom_post_statuses();
 	}
+
+
+	public function get_all_post_statuses() {
+		return $this->get_model()->get_status_array();
+	}
 }

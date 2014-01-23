@@ -27,7 +27,7 @@
 			
 			
 			<input id="reg-page-selected-gateway" type="hidden" value="payments_closed" name="selected_gateway">
-			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="reg-page-no-payment-required" value="1" />
+			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
 
 <?php
 		} else if ( $events_requiring_pre_approval != '' ) { ?>
@@ -39,7 +39,7 @@
 			<ul id="spco-pre-approval-events-ul"><?php echo $events_requiring_pre_approval; ?></ul>
 			
 			<input id="reg-page-selected-gateway" type="hidden" value="payments_closed" name="selected_gateway">
-			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="reg-page-no-payment-required" value="1" />
+			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
 
 <?php
 		} else if ( $payment_required ) {
@@ -109,7 +109,7 @@
 		<?php
 				// end  if  $payment_required
 		} else { ?>
-			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="reg-page-no-payment-required" value="1" />
+			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
 			<?php _e('This is a free event, so no billing will occur.', 'event_espresso'); ?>
 	<?php } ?>
 

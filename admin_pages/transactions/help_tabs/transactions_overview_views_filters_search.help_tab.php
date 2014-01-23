@@ -5,7 +5,7 @@
 <p>
 <ul>
 <li>
-<?php _e('View All Transactions', 'event_espresso'); ?><br />
+<?php _e('<strong>View All Transactions</strong>', 'event_espresso'); ?><br />
 <?php _e('Show all transactions that are in Event Espresso.', 'event_espresso'); ?>
 </li>
 </ul>
@@ -17,7 +17,7 @@
 <p>
 <ul>
 <li>
-<?php _e('Filter by Time Period', 'event_espresso'); ?><br />
+<?php _e('<strong>Filter by Time Period</strong>', 'event_espresso'); ?><br />
 <?php _e('Show registrations that fall between a certain date range.', 'event_espresso'); ?>
 </li>
 </ul>

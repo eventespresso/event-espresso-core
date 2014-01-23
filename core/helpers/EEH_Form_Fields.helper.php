@@ -490,7 +490,7 @@ class EEH_Form_Fields {
 						if (  isset( $_GET['qstn'] ) && isset( $q_meta['input_id'] ) && isset( $q_meta['att_nmbr'] )) {
 							// check for answer in $_GET in case we are reprocessing a form after an error
 							if ( isset( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] )) {
-								$answer = sanitize_text_field( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] );
+								$answer = is_array( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] ) ? $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] : sanitize_text_field( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] );
 							}							
 						} else if ( isset( $q_meta['attendee'] ) && $q_meta['attendee'] ) {
 							//attendee data from the session

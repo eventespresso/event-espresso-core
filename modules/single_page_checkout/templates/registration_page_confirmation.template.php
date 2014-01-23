@@ -17,7 +17,7 @@
 				<input type="hidden" id="spco-revisit" name="revisit" value="<?php echo $revisit;?>" />
 
 	<?php	if ( ! $payment_required ) { ?>
-				<input type="hidden" id="reg-page-no-payment-required-registration_confirmation" name="reg-page-no-payment-required" value="1" />
+				<input type="hidden" id="reg-page-no-payment-required-registration_confirmation" name="_reg-page-no-payment-required" value="1" />
 	<?php } ?>
 
 				<div id="reg-page-confirmation-dv">

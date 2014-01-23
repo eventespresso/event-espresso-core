@@ -8,20 +8,20 @@
 </p>
 <ul>
 <li>
-<?php _e('Enable Full Logging', 'event_espresso'); ?><br />
+<?php _e('<strong>Enable Full Logging</strong>', 'event_espresso'); ?><br />
 <?php _e('This option will save all Event Espresso registration form data, and debugging information to a file in the /wp-content/uploads/espresso/logs directory on your server. This will occur each time a page is accessed on your site until this option is turned off.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Enable Remote Logging', 'event_espresso'); ?><br />
+<?php _e('<strong>Enable Remote Logging</strong>', 'event_espresso'); ?><br />
 <?php _e('Every time a page is accessed on your site, this option will send all Event Espresso registration form data, your server details, and debugging information to a remote server.', 'event_espresso'); ?>
 <?php _e(' To see for yourself, make a PostBin at <a href="http://www.postbin.org/" target="_blank">PostBin</a>. Then enter the PostBin URL into the "Remote Logging URL" field and update settings.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Remote Logging URL', 'event_espresso'); ?><br />
+<?php _e('<strong>Remote Logging URL</strong>', 'event_espresso'); ?><br />
 <?php _e('This option sends all Event Espresso debugging data and get / post variables to the specified URL.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Send Login Information (Optional)', 'event_espresso'); ?><br />
+<?php _e('<strong>Send Login Information (Optional)</strong>', 'event_espresso'); ?><br />
 <?php _e('By using constants in th wp-config.php file, you can send a "key" and "pass" parameters in the remote logging action.', 'event_espresso'); ?>
 <?php _e('Add the contants below to your wp-config, above the line that says "That\'s all, stop editing! Happy blogging."', 'event_espresso'); ?>
 <pre>define( 'EELOGGING_PASS', 'YOUR PASSWORD' );
@@ -31,11 +31,11 @@ define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
 <h3><?php _e('Promote Event Espresso', 'event_espresso'); ?></h3>
 <ul>
 <li>
-<?php _e('Link to Event Espresso from your Registration Page footer?', 'event_espresso'); ?><br />
+<?php _e('<strong>Link to Event Espresso from your Registration Page footer?</strong>', 'event_espresso'); ?><br />
 <?php _e('Help spread the word about Event Espresso by allowing us to show a small link in the footer of your registration page.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Event Espresso Affiliate ID', 'event_espresso'); ?><br />
+<?php _e('<strong>Event Espresso Affiliate ID</strong>', 'event_espresso'); ?><br />
 <?php _e(' You can also monetize this link by signing up to our <a href="http://eventespresso.com/affiliates/">affiliate program</a> and adding in your affiliate ID here.', 'event_espresso'); ?>
 </li>
 </ul>

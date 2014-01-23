@@ -93,7 +93,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => -15
 					)
 				),
-			/*80 => array(
+			80 => array(
 				'class' => 'bulkactions',
 				'content' => $this->_bulk_actions_stop(),
 				'options' => array(
@@ -101,7 +101,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -30,
 					'tipAdjustmentX' => -15
 					)
-				),*/
+				),
 			90 => array(
 				'id' => 'event-espresso_page_espresso_registration_form-search-input',
 				'content' => $this->_search_stop(),
@@ -155,9 +155,9 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 		return '<p>' . __('View if a question is required.', 'event_espresso') . '</p>';
 	}
 
-	/* protected function _bulk_actions_stop() {
+	protected function _bulk_actions_stop() {
 		return '<p>' . __('Perform bulk actions to multiple questions.', 'event_espresso') . '</p>';
-	} */
+	}
 
 	protected function _search_stop() {
 		return '<p>' . __('Search through questions. The following sources will be searched: Name of Question (display text).', 'event_espresso') . '</p>';

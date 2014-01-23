@@ -586,7 +586,7 @@ abstract class EEM_Base extends EE_Base{
 	 * is left as FALSE, then EE_Simple_HTML_Field->preapre_for_set($new_value) will be called on it, and every other field, before insertion. We provide this parameter because
 	 * model objects perform their prepare_for_set function on all their values, and so don't need to be called again (and in many cases, shouldn't be called again. Eg: if we
 	 * escape HTML characters in the prepare_for_set method...)
-	 * @return int how many rows got updated
+	 * @return int how many rows got updated or FALSE if something went wrong with the query (wp returns FALSE or num rows affected which *could* include 0 which DOES NOT mean the query was bad)
 	 */
 	function update($fields_n_values, $query_params){
 		global $wpdb;

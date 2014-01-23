@@ -6,23 +6,23 @@
 <?php _e('The number for the registration is shown along with the date of the registration. Next the status of the registration is shown. A registration may have one of the following statuses: Approved, Pending Payment, Not Approved, Declined, or Cancelled.', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
-Approved<br>
+<strong>Approved</strong><br>
 An approved registration allows payments and may have a completed or incompleted transaction status. The registration is marked as active and a space is reserved for the registrant.
 </li>
 <li style="list-style-type: none;">
-Cancelled<br>
+<strong>Cancelled</strong><br>
 A cancelled registration is performed by the registrant. Payments are not allowed, the registration is inactive, and no space is reserved.
 </li>
 <li style="list-style-type: none;">
-Declined<br>
+<strong>Declined</strong><br>
 A declined registration is performed by the event admin. Payments are not allowed, the registration is inactive, and not space is reserved.
 </li>
 <li style="list-style-type: none;">
-Not Approved<br>
+<strong>Not Approved</strong><br>
 A not approved registration is performed by the event admin. Payments are not allowed, the registration is active, and no space is reserved.
 </li>
 <li style="list-style-type: none;">
-Pending Payment<br>
+<strong>Pending Payment</strong><br>
 A pending registration allows payments. The status will be automatically toggled to approved if the payment is made in full by registrant.
 </li>
 </ul>
