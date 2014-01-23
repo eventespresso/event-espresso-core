@@ -157,68 +157,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	 * @return null kills execution
 	 */
 	function export_sample(){
-		$models_to_export = array(
-			'Event',
-			'Datetime',
-			'Ticket',
-			'Datetime_Ticket',
-			'Price',
-			'Price_Type',
-			'Question_Group',
-			'Event_Question_Group',
-			'Question',
-			'Question_Option',
-			'Venue',
-			'Event_Venue',
-			'State',
-			'Country',
-			'Term',
-			'Term_Taxonomy',
-			'Term_Relationship');
-		$model_names_and_impossible_query_params = array();
-		foreach($models_to_export as $model_name){
-			$model_names_and_impossible_query_params[$model_name] = array('limit'=>0);
-		}
-		$table_data = $this->_get_export_data_for_models( $model_names_and_impossible_query_params );
-		//fill in some sample data
-		$event_temp_id = 'my-event-temp-id123';
-		$datetime_temp_id = 'first-datetime-temp-id234';
-		$ticket_temp_id = 'a-ticket-temp-id342';
-		$price_temp_id = 'some-price';
-		
-		$pretend_event = EE_Event::new_instance(array('EVT_name'=>'My Event','EVT_slug'=>'my-site'));
-		$pretend_event_array = $pretend_event->model_field_array();
-		$pretend_event_array['EVT_ID'] = $event_temp_id;
-		$table_data['Event'][0] = $pretend_event_array;
-		
-		$pretend_datetime = EE_Datetime::new_instance();
-		$pretend_datetime_array = $pretend_datetime->model_field_array();
-		$pretend_datetime_array['EVT_ID'] = $event_temp_id;
-		$pretend_datetime_array['DTT_ID'] = $datetime_temp_id;
-		$table_data['Datetime'][0] = $pretend_datetime_array;
-		
-		$pretend_ticket = EE_Ticket::new_instance(array('TKT_name'=>'General Admission','TKT_price'=>12));
-		$pretend_ticket_array = $pretend_ticket->model_field_array();
-		$pretend_ticket_array['TKT_ID'] = $ticket_temp_id;
-		$table_data['Ticket'][0] = $pretend_ticket_array;
-		
-		$a_price_type = EEM_Price_Type::instance()->get_one();
-		$pretend_price = EE_Price::new_instance(array('PRC_name'=>'Normal Price','PRT_ID'=>$a_price_type->ID(), 'PRC_amount'=>12));
-		$pretend_price_array = $pretend_price->model_field_array();
-		$pretend_price_array['PRC_ID'] = $price_temp_id;
-		$table_data['Price'][0] = $pretend_price_array;
-		
-		$table_data['Datetime_Ticket'][0] = array(
-			'DTK_ID'=>'datetime-ticket-temp',
-			'DTT_ID'=>$datetime_temp_id,
-			'TKT_ID'=>$ticket_temp_id);
-		$table_data['Price_Type'][0] = $a_price_type->model_field_array();
-		
-		//done with sample data
-		$filename = $this->generate_filename ( 'sample-export-file' );
-		if ( ! $this->EE_CSV->export_multiple_model_data_to_csv( $filename,$table_data )) {
-			EE_Error::add_error(__("An error occurred and the Event details could not be exported from the database.", "event_espresso"));
-		}
+		$event = EEM_Event::instance()->get_one();
+		$this->_req_data['EVT_ID'] = $event->ID();
+		$this->export_all_event_data();
 	}
 
 

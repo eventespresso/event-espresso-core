@@ -70,7 +70,8 @@ class EE_Ticket_Template extends EE_Base_Class{
 	 * Tickets using this template
 	 * @var EE_Ticket[]
 	 */
-	protected $_EE_Ticket;
+	protected $_Ticket;
+	
 
 
 
