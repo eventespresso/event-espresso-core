@@ -647,6 +647,33 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	public function admin_footer_scripts_global() {
 		$this->_add_admin_page_ajax_loading_img();
 		$this->_add_admin_page_overlay();
+	}
+
+
+
+	/**
+	 * add in any global scripts for cpt routes
+	 * @return void
+	 */
+	public function load_global_scripts_styles() {
+		parent::load_global_scripts_styles();
+
+		//setup custom post status object for localize script
+		$statuses = $this->_cpt_model_obj->get_custom_post_statuses();
+
+		if ( !empty($statuses) ) {
+			//get ALL statuses!
+			$statuses = $this->_cpt_model_obj->get_all_post_statuses();
+			//setup object
+			$ee_cpt_statuses = array();
+			foreach ( $statuses as $status => $label ) {
+				$ee_cpt_statuses[$status] = array(
+					'label' => $label,
+					'save_label' => sprintf( __('Save as %s', 'event_espresso'), $label )
+					);
+			}
+			wp_localize_script('ee_admin_js', 'eeCPTstatuses', $ee_cpt_statuses );
+		}
 	}	
 
 
