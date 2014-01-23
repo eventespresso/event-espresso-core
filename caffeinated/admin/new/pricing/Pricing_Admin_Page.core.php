@@ -1135,16 +1135,18 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$what = 'Price Type';
 			
 		}
-		if($trash){
-			$action_desc = 'trashed';
-			$status = 'trashed';
-		}else{
-			$action_desc = 'restored';
-			$status = 'all';
+
+		$query_args = array( 'action' => 'price_types' );
+		if ( $success ) {
+			if ( $trash ) {
+				$msg = $success > 1 ? __('The Price Types have been trashed.', 'event_espresso') : __('The Price Type has been trashed.', 'event_espresso');
+			} else {
+				$msg = $success > 1 ? __('The Price Types have been restored.', 'event_espresso') : __('The Price Type has been restored.', 'event_espresso');
+			}
+			EE_Error::add_success( $msg );
 		}
-		$action_desc = $trash ? 'trashed' : 'restored';
-		$query_args = array( 'action'=> 'price_types', 'status'=>$status );
-		$this->_redirect_after_action( $success, $what, $action_desc, $query_args );
+
+		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 		
 	}
 
