@@ -80,6 +80,7 @@ Class EEM_Gateways {
 		$this->_load_session_gateway_data();
 		$this->_load_payment_settings();
 		$this->_scan_and_load_all_gateways();
+		$this->set_form_url();
 	}
 
 
