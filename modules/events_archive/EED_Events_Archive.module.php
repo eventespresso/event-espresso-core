@@ -505,6 +505,8 @@ class EED_Events_Archive  extends EED_Module {
 			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
 			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
 			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
+			// don't diplay entry meta because the existing theme will take car of that
+			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 		} else {
 			remove_all_filters( 'excerpt_length' );
 			add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
