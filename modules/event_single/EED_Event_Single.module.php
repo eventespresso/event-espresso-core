@@ -79,6 +79,10 @@ class EED_Event_Single  extends EED_Module {
 			add_action( 'loop_start', array( $this, 'loop_start' ));
 			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
+			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
+			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
+			add_action( 'loop_end', array( $this, 'loop_end' ));
 		}
 		return $template;
 	}
@@ -129,11 +133,8 @@ class EED_Event_Single  extends EED_Module {
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		//now add our filter back in, plus some others
 		add_filter( 'the_content', array( $this, 'event_details' ), 100 );
-		add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
-		add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
-		add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
-		add_action( 'loop_end', array( $this, 'loop_end' ));
-		return $template;
+		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
+		return ! empty( $template ) ? $template : $content;
 	}
 
 

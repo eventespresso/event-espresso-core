@@ -128,7 +128,7 @@ class EE_CPT_Event_Strategy {
 	 *  @return 	void
 	 */
 	public function the_posts( $posts, WP_Query $wp_query ) {
-		// automagically load the event view helper so that it's functions are available
+		// automagically load the EEH_Event_View helper so that it's functions are available
 		EE_Registry::instance()->load_helper('Event_View');
 		return $posts;
 	}

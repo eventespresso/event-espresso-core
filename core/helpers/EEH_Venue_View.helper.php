@@ -113,13 +113,31 @@
 
 	/**
 	 * espresso_venue_address
+	 * @param 	string 	'inline' or 'multiline'
 	 * returns a formatted block of html  for displaying a venue's address
 	 *
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_venue_address' )) {
-		function espresso_venue_address( $type = 'multiline', $VNU_ID = FALSE ) {
-			echo EEH_Venue_View::venue_address( $type, $VNU_ID );
+		function espresso_venue_address( $type = 'multiline', $VNU_ID = FALSE, $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Venue_View::venue_address( $type, $VNU_ID );
+			} else {
+				return EEH_Venue_View::venue_address( $type, $VNU_ID );
+			}
+		}		
+	}
+
+
+	/**
+	 * espresso_venue_has_address
+	 * returns TRUE or FALSE if a Venue has address information
+	 *
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_venue_has_address' )) {
+		function espresso_venue_has_address( $VNU_ID = FALSE ) {
+			return EEH_Venue_View::venue_has_address( $VNU_ID );
 		}		
 	}
 
@@ -131,11 +149,11 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_venue_gmap' )) {
-		function espresso_venue_gmap( $map_ID = FALSE, $gmap = array(), $VNU_ID = FALSE, $echo = TRUE  ) {
+		function espresso_venue_gmap( $VNU_ID = FALSE, $map_ID = FALSE, $gmap = array(), $echo = TRUE  ) {
 			if ( $echo ) {
-				echo EEH_Venue_View::venue_gmap( $map_ID, $gmap, $VNU_ID );
+				echo EEH_Venue_View::venue_gmap( $VNU_ID, $map_ID, $gmap );
 			} else {
-				return EEH_Venue_View::venue_gmap( $map_ID, $gmap, $VNU_ID );
+				return EEH_Venue_View::venue_gmap( $VNU_ID, $map_ID, $gmap );
 			}
 		}		
 	}
@@ -355,6 +373,24 @@ class EEH_Venue_View extends EEH_Base {
 
 
 
+	/**
+	 * 	venue_has_address
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function venue_has_address( $VNU_ID = FALSE ) {
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );
+		if ( $venue instanceof EE_Venue ) {
+			EE_Registry::instance()->load_helper( 'Formatter' );
+			return EEH_Address::format( $venue, 'inline', FALSE, FALSE );
+		}
+		return NULL;
+	}
+
+
+
+
 
 	/**
 	 * 	venue_name
@@ -452,9 +488,9 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @param	array $gmap map options
 	 *  @return 	string
 	 */
-	public static function venue_gmap( $map_ID = FALSE, $gmap = array(), $VNU_ID = FALSE ) {
+	public static function venue_gmap( $VNU_ID = FALSE, $map_ID = FALSE, $gmap = array() ) {
 		
-		static $static_map_id = 1;		
+		static $static_map_id = 0;		
 		
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
@@ -467,9 +503,10 @@ class EEH_Venue_View extends EEH_Base {
 				EE_Registry::instance()->load_helper( 'Formatter' );
 				
 				$details_page = is_single();
-				$options = array();			
-				$options['map_ID'] = $map_ID && $map_ID != $venue->ID() ? $map_ID . '-' . $venue->ID() . '-' . $static_map_id : $venue->ID() . '-' . $static_map_id;
-				$static_map_id++;
+				$options = array();		
+				$options['map_ID'] = $map_ID && $map_ID != $venue->ID() ? $map_ID . '-' . $venue->ID()/* . '-' . $static_map_id*/ : $venue->ID()/* . '-' . $static_map_id*/;
+//				$static_map_id++;
+//				echo '<h1>$static_map_id: ' . $static_map_id  .'  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 
 				$options['location'] = EEH_Address::format( $venue, 'inline', FALSE, FALSE );
 				

@@ -267,9 +267,8 @@ class EEH_Address {
 		$formatter = EEH_Address::_get_formatter( $type );
 		// apply schema.org formatting ?
 		$use_schema = ! is_admin() ? $use_schema : FALSE;
-		$formatted_address = $add_wrapper && ! $use_schema ? '<div class="espresso-address-dv">' : '';
-		$formatted_address .= $use_schema ? EEH_Address::_schema_formatting( $formatter, $obj_with_address ) : EEH_Address::_regular_formatting( $formatter, $obj_with_address, $add_wrapper ) ;
-		$formatted_address .= $add_wrapper && ! $use_schema ? '</div>' : '';
+		$formatted_address = $use_schema ? EEH_Address::_schema_formatting( $formatter, $obj_with_address ) : EEH_Address::_regular_formatting( $formatter, $obj_with_address, $add_wrapper ) ;
+		$formatted_address = $add_wrapper && ! $use_schema ? '<div class="espresso-address-dv">' . $formatted_address . '</div>' : $formatted_address;
 		// return the formated address
 		return $formatted_address;
 	}

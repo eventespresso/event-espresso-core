@@ -268,7 +268,7 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	function get_edit_post_link( $url, $ID, $context ) {
-		// http://localhost/4.1-DEV/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
+		// http://example.com/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
 		return wp_nonce_url( add_query_arg( array( 'page' => $this->CPT['post_type'] ), $url ), 'edit', 'edit_nonce' );
 	}
 
@@ -353,15 +353,6 @@ class EE_CPT_Default_Strategy {
 	 *  @return 	void
 	 */
 	public function the_posts(  $posts, $WP_Query ) {
-//		$EVT = EE_Registry::instance()->load_model( 'Event' );
-//		$EVT_IDs = array();
-//		foreach( $WP_Query->posts as $WP_Post ) {
-//			$EVT_IDs[] = $WP_Post->ID;
-//		}
-//		$events = $EVT->get_all( array( 0 =>array( 'EVT_ID' => array( 'IN', $EVT_IDs ), 'DTT_is_primary' => 1 ), 'force_join' =>array( 'Datetime' )));
-//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $EVT_IDs, '$EVT_IDs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		printr( $events, '$events  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return $posts;
 	}
 
