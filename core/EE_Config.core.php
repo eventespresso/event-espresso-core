@@ -162,7 +162,7 @@ final class EE_Config {
 	 * @return string current theme set.
 	 */
 	public static function get_current_theme() {
-		return isset( self::$_instance->template_settings->current_espresso_theme ) ? self::$_instance->template_settings->current_espresso_theme : 'espresso_default';
+		return isset( self::$_instance->template_settings->current_espresso_theme ) ? self::$_instance->template_settings->current_espresso_theme : 'Espresso_Arabica_2014';
 	}
 
 

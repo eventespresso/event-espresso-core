@@ -1,1 +1,1 @@
- To make customizations to the Event Espresso templates. Please copy the espresso_default folder into your themes folder, then activate it via WP > Appearance > themes.
+ To make customizations to the Event Espresso templates. Please copy the "Espresso_Arabica_2014" folder into your themes folder, then activate it via WP > Appearance > themes.
