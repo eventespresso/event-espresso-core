@@ -513,7 +513,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		//Y old attendee_details rows with a quantity of 1 (because of mer) joined by wp_events_multi_event_registration_id_group
 		for($count = 1; $count <= $regs_on_this_row; $count++){
 			//sum regs on older rows
-			$regs_on_this_event_and_txn = $this->_find_count_in_old_txn_using_reg_id($old_attendee,$old_attendee['registration_id']);
+			$regs_on_this_event_and_txn = $this->_sum_old_attendees_on_old_txn($old_attendee,true);
 			$cols_n_values = array(
 				'EVT_ID'=>$new_event_id,
 				'ATT_ID'=>$new_attendee_id,
@@ -526,7 +526,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'REG_code'=>$old_attendee['registration_id'],
 				'REG_url_link'=>$old_attendee['registration_id'].'-'.$count,
 				'REG_count'=>$regs_on_this_event_and_txn + $count,
-				'REG_group_size'=>$this->_sum_old_attendees_with_registration_id($old_attendee['registration_id']),
+				'REG_group_size'=>$this->_sum_old_attendees_on_old_txn($old_attendee,false),
 				'REG_att_is_going'=>true,
 				'REG_deleted'=>false
 			);
@@ -597,40 +597,29 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		
 	}
 	/**
-	 * Sums all the OLD registration with the $old_registration_id. This takes into account BOTH
-	 * when each row has a quantity of 1, and when a single row has a quantity greater than 1
+	 * Counts all the registrations on this transaction. If $count_only_older is TRUE then returns the number added SO FAR (ie,
+	 * only considers attendee rows with an ID less than this one's), but if $count_only_older is FALSe returns ALL
 	 * @global type $wpdb
-	 * @param type $old_registration_id
+	 * @param array $old_attendee_row 
+	 * @param boolean $count_only_older true if you want the running count (ie, the total up to this row), and false if you want ALL
 	 * @return int
 	 */
-	private function _sum_old_attendees_with_registration_id($old_registration_id){
+	private function _sum_old_attendees_on_old_txn($old_attendee_row,$count_only_older = false){
 		global $wpdb;
-		$count = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s",$old_registration_id));
-		return intval($count);
-	}
-	/**
-	 * Counts all the registrations on this transaction added SO FAR
-	 * @global type $wpdb
-	 * @param int $registration_id
-	 * @return int
-	 */
-	private function _find_count_in_old_txn_using_reg_id($old_attendee_row,$registration_id){
-		global $wpdb;
-		$id= $old_attendee_row['id'];
-		if( ! $this->_mer_tables_exist()){
-			$count = intval($wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s AND id<%d",$registration_id,$id)));
-		}else{
+		$count_only_older_sql = $count_only_older ? $wpdb->prepare(" AND id<%d",$old_attendee_row['id']) : '';
+		$count = intval($wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s $count_only_older_sql",$old_attendee_row['registration_id'])));
+		
+		if( $this->_mer_tables_exist()){
 			//if MER exists, then its a little tricky.
 			//when users registered by adding items to the cart, and it was a 
 			//group registration requiring additional attendee INFO, then the attendee rows 
 			//DO NOT have the same registration_id (although they probably should have)
 			//they are related just like MER attendee rows are related, through the MER group table
 			//BUT we want to count all the MER attendee rows for the same registration
-			$count_using_registration_id = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM ".$this->_old_table." WHERE registration_id=%s AND id<%d",$registration_id,$id));
 			$primary_attendee = $this->_find_mer_primary_attendee_using_mer_tables($old_attendee_row['registration_id']);
 			
-			$count_using_mer_table = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM {$this->_old_table} att INNER JOIN {$this->_old_mer_table} mer ON att.registration_id = mer.registration_id WHERE att.event_id=%d AND att.id < %d AND mer.primary_registration_id = %s",$old_attendee_row['event_id'],$old_attendee_row['id'],$primary_attendee['registration_id']));
-			$count = max($count_using_mer_table,$count_using_registration_id);
+			$count_using_mer_table = $wpdb->get_var($wpdb->prepare("SELECT SUM(quantity) FROM {$this->_old_table} att INNER JOIN {$this->_old_mer_table} mer ON att.registration_id = mer.registration_id WHERE att.event_id=%d AND mer.primary_registration_id = %s $count_only_older_sql",$old_attendee_row['event_id'],$primary_attendee['registration_id']));
+			$count = max($count_using_mer_table,$count);
 		}
 		return $count;
 	}
