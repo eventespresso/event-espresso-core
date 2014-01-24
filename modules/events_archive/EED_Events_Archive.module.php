@@ -490,9 +490,9 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public function template_include( $template ) {
+			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
-			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
 			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
@@ -509,27 +509,12 @@ class EED_Events_Archive  extends EED_Module {
 			remove_all_filters( 'excerpt_length' );
 			add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 			add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );			
-			// add event list filters
-			add_action( 'loop_start', array( $this, 'event_list_template_filters' ));
-			// and pagination
-			add_action( 'loop_start', array( $this, 'event_list_pagination' ));
-			add_action( 'loop_end', array( $this, 'event_list_pagination' ));
+
 		}
 		
 		return $template;
 	}
 
-
-
-	/**
-	 * 	event_list_pagination
-	 *
-	 *  	@access 	public
-	 *  	@return 		void
-	 */
-	public function event_list_pagination() {
-		echo '<div class="ee-pagination-dv clear">' . espresso_event_list_pagination() . '</div>';
-	}
 
 
 
