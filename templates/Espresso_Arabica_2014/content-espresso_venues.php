@@ -52,7 +52,6 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 
 		<footer class="venue-meta">
 			<?php do_action( 'AHEE__content_espresso_venues_template__footer_top', $post ); ?>
-			<!-- .entry-meta -->			
 			<?php do_action( 'AHEE__content_espresso_venues_template__footer_bottom', $post ); ?>
 		</footer>
 		
