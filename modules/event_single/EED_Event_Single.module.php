@@ -73,11 +73,11 @@ class EED_Event_Single  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public function template_include( $template ) {
+		add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 		// not a custom template?
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php' ) {
 			// then add extra event data via hooks
 			add_action( 'loop_start', array( $this, 'loop_start' ));
-			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
 			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
 			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
