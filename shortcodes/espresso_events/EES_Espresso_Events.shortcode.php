@@ -69,7 +69,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 * 	[ESPRESSO_EVENTS category_slug="free-events"]
 	 * 	[ESPRESSO_EVENTS order_by="start_date,id"]
 	 * 	[ESPRESSO_EVENTS sort="ASC"]
-	 * 	[ESPRESSO_EVENTS list_type="grid"]
 	 * 
 	 *  @access 	public
 	 *  @param	array 	$attributes
@@ -85,8 +84,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 			'month' => NULL,
 			'category_slug' => NULL,
 			'order_by' => 'start_date',
-			'sort' => 'ASC',
-			'list_type' =>'text'
+			'sort' => 'ASC'
 		);
 		// allow the defaults to be filtered
 		$default_espresso_events_shortcode_atts = apply_filters( 'EES_Espresso_Events__process_shortcode__default_espresso_events_shortcode_atts', $default_espresso_events_shortcode_atts );

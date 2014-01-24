@@ -26,7 +26,9 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 					$wrap_class .= ' has-img';
 					?>
 		<div id="ee-venue-img-dv-<?php echo $post->ID; ?>" class="ee-venue-img-dv">
-			<img class="ee-venue-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>
+			<a class="" href="<?php the_permalink(); ?>">
+				<img class="ee-venue-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>
+			</a>
 		</div>
 		<?php 
 				endif;
@@ -36,13 +38,10 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 		<?php do_action( 'AHEE__content_espresso_venues_template__after_featured_img', $post );?>
 		
 		<header class="venue-header<?php echo $wrap_class;?>">
-			<h1 id="venue-details-h1">
-				<?php the_title(); ?>
+			<h1 id="venue-details-h1" class="entry-title">
+				<a class="" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 			</h1>
 			<?php if ( has_excerpt( $post->ID )) { the_excerpt(); } ?>
-			<p id="venue-date-p">
-				<?php echo $post->EE_Event->primary_datetime()->start_date_and_time(); ?>
-			</p>
 		</header>
 	</div>
 	
@@ -53,7 +52,6 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 
 		<footer class="venue-meta">
 			<?php do_action( 'AHEE__content_espresso_venues_template__footer_top', $post ); ?>
-			<?php espresso_edit_venue_link(); ?>
 			<?php do_action( 'AHEE__content_espresso_venues_template__footer_bottom', $post ); ?>
 		</footer>
 		

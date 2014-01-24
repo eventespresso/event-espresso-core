@@ -2455,7 +2455,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		$className = $this->_get_class_name();
-		$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_and_values ));
+		$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_and_values ), FALSE, FALSE );
 
 		return $classInstance;
 	}
@@ -2501,12 +2501,12 @@ abstract class EEM_Base extends EE_Base{
 		if ( $primary_key){
 			$classInstance = $this->get_from_entity_map( $primary_key );
 			if( ! $classInstance) {
-				$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE );
+				$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE, FALSE );
 				// add this new object to the entity map
 				$classInstance = $this->add_to_entity_map( $classInstance );
 			}
 		}else{
-			$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE );
+			$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE, FALSE );
 		}
 			
 			//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.

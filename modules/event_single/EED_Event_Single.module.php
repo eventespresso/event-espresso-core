@@ -73,16 +73,18 @@ class EED_Event_Single  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public function template_include( $template ) {
+		add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 		// not a custom template?
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php' ) {
 			// then add extra event data via hooks
 			add_action( 'loop_start', array( $this, 'loop_start' ));
-			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
 			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
 			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
 			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
 			add_action( 'loop_end', array( $this, 'loop_end' ));
+			// don't diplay entry meta because the existing theme will take car of that
+			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 		}
 		return $template;
 	}
@@ -197,12 +199,12 @@ class EED_Event_Single  extends EED_Module {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && apply_filters( 'FHEE__EED_Event_Single__wp_enqueue_scripts__enable_css', TRUE )) {
 			// first check uploads folder
-			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_events.js' )) {
-				wp_register_script( 'single-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_events.js', array('espresso_core'), '1.0', TRUE  );
+			if ( file_exists( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
+				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
 			} else {
-				wp_register_script( 'single-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_events.js', array('espresso_core'), '1.0', TRUE );
+				wp_register_style( $this->theme, EE_TEMPLATES_URL . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
 			}
-			wp_enqueue_script( 'single-espresso_events' );
+			wp_enqueue_script( $this->theme );
 			if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
 				EE_Registry::instance()->load_helper( 'Maps' );
 				add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );

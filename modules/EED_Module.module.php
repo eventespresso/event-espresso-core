@@ -78,7 +78,7 @@ abstract class EED_Module extends EE_Base {
 	*/
 	final public function __construct() {
 		
-		$this->theme = isset( EE_Registry::instance()->CFG->template_settings->current_espresso_theme ) ? EE_Registry::instance()->CFG->template_settings->current_espresso_theme : 'espresso_default';
+		$this->theme = EE_Config::get_current_theme();
 	}
 
 

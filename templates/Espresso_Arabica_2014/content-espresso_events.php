@@ -26,7 +26,9 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 					$wrap_class .= ' has-img';
 					?>
 		<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
-			<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>
+			<a class="" href="<?php the_permalink(); ?>">
+				<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>
+			</a>
 		</div>
 		<?php 
 				endif;
@@ -36,8 +38,8 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 		<?php do_action( 'AHEE_event_details_after_featured_img', $post );?>
 		
 		<header class="event-header<?php echo $wrap_class;?>">
-			<h1 id="event-details-h1">
-				<?php the_title(); ?>
+			<h1 id="event-details-h1" class="entry-title">
+				<a class="" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 			</h1>
 			<?php if (has_excerpt( $post->ID )): the_excerpt(); endif;?>
 			<p id="event-date-p">
@@ -55,7 +57,6 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 
 		<footer class="event-meta">
 			<?php do_action( 'AHEE_event_details_footer_top', $post ); ?>
-			<?php espresso_edit_event_link(); ?>
 			<?php do_action( 'AHEE_event_details_footer_bottom', $post ); ?>
 		</footer>
 		

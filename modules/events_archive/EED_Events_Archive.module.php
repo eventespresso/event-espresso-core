@@ -132,10 +132,10 @@ class EED_Events_Archive  extends EED_Module {
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		// load other required components
 		$this->_load_assests();
-		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
-			// load template
-			EE_Config::register_view( 'events', 0, $this->_get_template('full') );
-		}
+//		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
+//			// load template
+//			EE_Config::register_view( 'events', 0, $this->_get_template('full') );
+//		}
 	}
 
 
@@ -490,9 +490,9 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public function template_include( $template ) {
+			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
-			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
 			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
@@ -505,31 +505,18 @@ class EED_Events_Archive  extends EED_Module {
 			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
 			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
 			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
+			// don't diplay entry meta because the existing theme will take car of that
+			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 		} else {
 			remove_all_filters( 'excerpt_length' );
 			add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 			add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );			
-			// add event list filters
-			add_action( 'loop_start', array( $this, 'event_list_template_filters' ));
-			// and pagination
-			add_action( 'loop_start', array( $this, 'event_list_pagination' ));
-			add_action( 'loop_end', array( $this, 'event_list_pagination' ));
+
 		}
-		
+
 		return $template;
 	}
 
-
-
-	/**
-	 * 	event_list_pagination
-	 *
-	 *  	@access 	public
-	 *  	@return 		void
-	 */
-	public function event_list_pagination() {
-		echo '<div class="ee-pagination-dv clear">' . espresso_event_list_pagination() . '</div>';
-	}
 
 
 
@@ -698,20 +685,20 @@ class EED_Events_Archive  extends EED_Module {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE ) ) {
 			// first check uploads folder
-			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css' )) {
-				wp_register_style( 'archive-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css', array( 'dashicons', 'espresso_default' ));
+			if ( file_exists( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
+				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
 			} else {
-				wp_register_style( 'archive-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css', array( 'dashicons', 'espresso_default' ));
+				wp_register_style( $this->theme, EE_TEMPLATES_URL . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
 			}
-			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.js' )) {
-				wp_register_script( 'archive-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE  );
-			} else {
-				wp_register_script( 'archive-espresso_events', EVENTS_ARCHIVE_ASSETS_URL . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE );
-			}
-			wp_enqueue_style( 'archive-espresso_events' );
-			wp_enqueue_script( 'jquery-masonry' );
-			wp_enqueue_script( 'archive-espresso_events' );
-			add_action( 'wp_footer', array( 'EED_Events_Archive', 'localize_grid_event_lists' ), 1 );
+//			if ( file_exists( get_stylesheet_directory() . $this->theme . DS . 'archive-espresso_events.js' )) {
+//				wp_register_script( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE  );
+//			} else {
+//				wp_register_script( $this->theme, EVENTS_ARCHIVE_ASSETS_URL . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE );
+//			}
+			wp_enqueue_style( $this->theme );
+//			wp_enqueue_script( 'jquery-masonry' );
+//			wp_enqueue_script( $this->theme );
+//			add_action( 'wp_footer', array( 'EED_Events_Archive', 'localize_grid_event_lists' ), 1 );
 		}
 	}
 
@@ -726,7 +713,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function localize_grid_event_lists() {
-		wp_localize_script( 'archive-espresso_events', 'espresso_grid_event_lists', EED_Events_Archive::$espresso_grid_event_lists );
+//		wp_localize_script( 'archive-espresso_events', 'espresso_grid_event_lists', EED_Events_Archive::$espresso_grid_event_lists );
 	}
 
 
@@ -766,7 +753,7 @@ class EED_Events_Archive  extends EED_Module {
 		$CFG->default_type = isset( $CFG->default_type ) && ! empty( $CFG->default_type ) ? $CFG->default_type : 'grid';
 		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
 		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
-		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-grid-view.php';
+		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
 		return $CFG;
 	}
 
@@ -806,14 +793,14 @@ class EED_Events_Archive  extends EED_Module {
 			);
 		
 		switch ( $CFG->EED_Events_Archive->default_type ) {
-			case 'dates' :
-					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-dates-view.php';
-				break;
-			case 'text' :
-					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-text-view.php';
-				break;
+//			case 'dates' :
+//					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-dates-view.php';
+//				break;
+//			case 'text' :
+//					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-text-view.php';
+//				break;
 			default :
-					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-grid-view.php';
+					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
 		}
 		
 		$CFG->EED_Events_Archive = isset( $REQ['reset_event_list_settings'] ) && absint( $REQ['reset_event_list_settings'] ) == 1 ? new EE_Events_Archive_Config() : $CFG->EED_Events_Archive;
@@ -831,16 +818,17 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function get_template_part() {
-		switch ( self::$_type ) {
-			case 'dates' :
-					return 'archive-espresso_events-dates-view.php';
-				break;
-			case 'text' :
-					return 'archive-espresso_events-text-view.php';
-				break;
-			default :
-					return 'archive-espresso_events-grid-view.php';
-		}
+		return 'archive-espresso_events.php';
+//		switch ( self::$_type ) {
+//			case 'dates' :
+//					return 'archive-espresso_events-dates-view.php';
+//				break;
+//			case 'text' :
+//					return 'archive-espresso_events-text-view.php';
+//				break;
+//			default :
+//					return 'archive-espresso_events-grid-view.php';
+//		}
 		
 //		return EE_Registry::instance()->CFG->EED_Events_Archive['templates']['part'];
 	}
@@ -878,10 +866,10 @@ class EED_Events_Archive  extends EED_Module {
 		$EE = EE_Registry::instance();
 		$event_list_css = ! empty( $extra_class ) ? array( $extra_class ) : array();
 		$event_list_css[] = 'espresso-event-list-event';
-		if ( self::$_type == 'grid' ) {
-			$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size : 'medium';
-			$event_list_css[] = $event_list_grid_size . '-event-list-grid';
-		}
+//		if ( self::$_type == 'grid' ) {
+//			$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size : 'medium';
+//			$event_list_css[] = $event_list_grid_size . '-event-list-grid';
+//		}
 		$event_list_css = apply_filters( 'EED_Events_Archive__event_list_css__event_list_css_array', $event_list_css );
 		return implode( ' ', $event_list_css );
 	}
@@ -1073,7 +1061,7 @@ class EE_Event_List_Query extends WP_Query {
 	private $_category_slug = NULL;
 	private $_order_by = NULL;
 	private $_sort = NULL;
-	private $_list_type ='text';	
+//	private $_list_type ='text';	
 
 	function __construct( $args = array() ) {
 		//printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -1096,15 +1084,15 @@ class EE_Event_List_Query extends WP_Query {
 		$this->_sort = in_array( $this->_sort, array( 'ASC', 'asc', 'DESC', 'desc' )) ? strtoupper( $this->_sort ) : 'ASC';
 		
 		// first off, let's remove any filters from previous queries
-		remove_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ));
+//		remove_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ));
 		remove_filter( 'EED_Events_Archive__event_list_title__event_list_title', array( $this, 'event_list_title' )); 
 		remove_all_filters( 'EED_Events_Archive__event_list_css__event_list_css_array' );
 //		remove_all_filters( 'EED_Events_Archive__event_list_css__event_list_css_array', array( $this, 'event_list_css' ));
 
 		//  set view
-		add_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ), 10, 1 );
+//		add_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ), 10, 1 );
 		// have to call this in order to get the above filter applied
-		EED_Events_Archive::set_type();
+//		EED_Events_Archive::set_type();
 		// Event List Title ?
 		add_filter( 'EED_Events_Archive__event_list_title__event_list_title', array( $this, 'event_list_title' ), 10, 1 ); 
 		// add the css class
