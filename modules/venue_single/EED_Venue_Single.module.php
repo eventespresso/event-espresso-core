@@ -73,6 +73,8 @@ class EED_Venue_Single  extends EED_Module {
 			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 			add_filter( 'the_content', array( $this, 'venue_details' ), 100 );
 			add_filter( 'the_content', array( $this, 'venue_location' ), 110 );
+			// don't diplay entry meta because the existing theme will take car of that
+			add_filter( 'FHEE__content_espresso_venues_details_template__display_entry_meta', '__return_false' );
 		}
 		return $template;
 	}
