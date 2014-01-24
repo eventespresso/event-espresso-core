@@ -55,9 +55,25 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 					'tipLocation' => 'right',
 					)
 				),
+			35 => array(
+				'id' => 'espresso_event_editor_tickets',
+				'content' => $this->_event_pricing_stop(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -30,
+					)
+				),
 			40 => array(
 				'id' => 'espresso_events_Venues_Hooks_venue_metabox_metabox',
 				'content' => $this->_event_venues_caf(),
+				'options' => array(
+					'tipLocation' => 'top',
+					'tipAdjustmentY' => -30,
+					)
+				),
+			45 => array(
+				'id' => 'espresso_event_editor_venue',
+				'content' => $this->_event_venues_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentY' => -30,
@@ -142,6 +158,14 @@ class Event_Editor_Help_Tour extends EE_Help_Tour {
 
 	protected function _event_venues_caf() {
 		return '<p>' . __('In this section, you can select the venue that is hosting your event.', 'event_espresso') . '</p>';
+	}
+
+	protected function _event_venues_stop() {
+		return '<p>' . __('In this section, you can enter information about the venue that is hosting your event.', 'event_espresso') . '</p>';
+	}
+
+	protected function _event_pricing_stop() {
+		return '<p>' . __('Use the Event Datetime & Ticket section to enter details about when the event is happening and what tickets you want to offer for access to the event.', 'event_espresso') . '</p>';
 	}
 
 	protected function _event_pricing_caf() {

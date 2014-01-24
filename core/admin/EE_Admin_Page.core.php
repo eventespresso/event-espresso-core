@@ -2234,7 +2234,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	public function display_admin_caf_preview_page() {
 		//let's generate a default preview action button if there isn't one already present.
 		$this->_labels['buttons']['buy_now'] = __('Buy Now', 'event_espresso');
-		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing' ) : $this->_template_args['preview_action_button'];
+		$this->_template_args['preview_action_button'] = !isset($this->_template_args['preview_action_button'] ) ? $this->get_action_link_or_button( '', 'buy_now', array(), 'button-primary button-large', 'http://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=question_groups_tab&utm_content=buy_now_button' ) : $this->_template_args['preview_action_button'];
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_caf_full_page_preview.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 		$this->admin_page_wrapper();
