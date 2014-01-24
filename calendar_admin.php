@@ -89,8 +89,8 @@ class EE_Calendar_Admin {
 			$host_server_url = 'http://eventespresso.com';
 			$plugin_slug = array(
 				'premium' => array('p' => 'espresso-calendar'),
-				'prerelease' => array('b' => 'espresso-calendar-pr')
-				);
+				'prerelease' => array('BETA' => 'espresso-calendar-pr')
+			);
 			$options = array(
 				'apikey' => $api_key,
 				'lang_domain' => 'event_espresso',
@@ -133,6 +133,8 @@ class EE_Calendar_Admin {
 				'weekMode' => 'liquid', // 'fixed', 'liquid', 'variable'
 				'espresso_calendar_height' => '',
 				'enable_calendar_thumbs' => false,
+				'enable_calendar_filters' => false,
+				'enable_category_legend' => false,
 				
 				'show_tooltips' => true,
 				'tooltips_pos_my_1' => 'bottom',
@@ -140,7 +142,6 @@ class EE_Calendar_Admin {
 				'tooltips_pos_at_1' => 'center',
 				'tooltips_pos_at_2' => 'center',
 				'tooltip_style' => 'qtip-light',
-				'tooltip_word_count' => 50,
 				
 				'espresso_use_pickers' => false,
 				'ee_event_background' => '007BAE',
@@ -161,13 +162,6 @@ class EE_Calendar_Admin {
 				'columnFormat_day' => 'dddd M/d',
 				
 		);
-
-		// get saved settings
-		$calendar_settings = get_option( 'espresso_calendar_settings', array() );
-		// override defaults
-		$calendar_settings = array_merge( $calendar_default_settings, $calendar_settings );
-		// resave
-		update_option('espresso_calendar_settings', $calendar_settings);
 	}
 
 

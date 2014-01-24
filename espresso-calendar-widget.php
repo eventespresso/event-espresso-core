@@ -70,8 +70,9 @@ class Espresso_Calendar_Widget extends WP_Widget {
 				);
 
 				// get calendar options
-				$calendar_options = get_option( 'espresso_calendar_settings', array() );
-				if ( isset( $calendar_options['show_tooltips'] ) && $calendar_options['show_tooltips'] ? TRUE : FALSE ) {
+				$calendar_settings = EE_Config::instance()->addons['calendar'];
+				/* @var $calendar_settings EE_Calendar_Config */
+				if (  $calendar_settings->tooltip->show ) {
 					wp_enqueue_style('qtip');
 					wp_enqueue_script('jquery-qtip');
 				}
@@ -111,6 +112,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 				array('id' => false, 'text' => __('No', 'event_espresso')),
 				array('id' => true, 'text' => __('Yes', 'event_espresso')));
 		?>
+
 		<p>
 			<label for="<?php echo $this->get_field_id('title'); ?>">
 				<?php _e('Title:', 'event_espresso'); ?>
@@ -124,18 +126,20 @@ class Espresso_Calendar_Widget extends WP_Widget {
 			<?php echo select_input($this->get_field_name('show_expired'), $values, $instance['show_expired']); ?> </p>
 		<p>
 			<label for="<?php echo $this->get_field_id('category_id'); ?>">
-				<?php _e('Display Single Category?', 'event_espresso'); ?>
+				<?php _e('Single Category Name (optional)', 'event_espresso'); ?>
 			</label>
 			<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
-			<?php
-			if (function_exists('espresso_version')) {
-				if (espresso_version() >= '3.2.P')
-					echo apply_filters('filter_hook_espresso_help', 'display_single_category');
-			}
-			?>
-		</p>
-
-		<?php
+			<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=status_types_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </p>
+		<div id="status_types_info" style="display:none;">
+			<h2>
+				<?php _e('Display a Single Event Category', 'event_espresso'); ?>
+			</h2>
+			<p>
+				<?php _e( 'Enter the Event Category ID from the ', 'event_espresso' ); ?><a href="admin.php?page=event_categories" target="_blank"><?php _e( 'Categories page','event_espresso' ); ?></a>.
+			</p>
+		</div>
+<?php
 	}
 
 }
+

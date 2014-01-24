@@ -3,10 +3,10 @@
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
   Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
-  Version: 2.2.0.DEV
+  Version: 2.2.1.DEV
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
-  Copyright 2012 Event Espresso (email : support@eventespresso.com)
+  Copyright 2013 Event Espresso (email : support@eventespresso.com)
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License, version 2, as
@@ -29,7 +29,7 @@
  *
  * @ package			Event Espresso
  * @ author				Seth Shoultes
- * @ copyright			(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ copyright			(c) 2008-2013 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link				http://www.eventespresso.com
  * @ version		 	3.1
@@ -364,7 +364,7 @@ class EE_Calendar {
    /**
      * 	EE_Calendar Object
      * 	@var EE_Calendar $_instance
-	 * 	@access 	private 	
+	* 	@access 	private 	
      */
 	private static $_instance = NULL;
 
@@ -375,10 +375,17 @@ class EE_Calendar {
 	private $_calendar_config = array();
 
 	/**
-	 * 	@var 	INT	$_event_category_id
+	 * 	@var 		INT	$_event_category_id
 	 *  @access 	private
 	 */
 	private $_event_category_id = 0;
+	
+	/**
+	 * 	@var 	INT	$_event_venue_id
+	 *  @access 	private
+	 */
+	private $_event_venue_id = 0;
+
 
 
 	private $timer = NULL;
@@ -396,10 +403,6 @@ class EE_Calendar {
 		}
 		return self::$_instance;
 	}
-
-
-
-
 
 	/**
 	 * 	class constructor
@@ -460,10 +463,8 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function calendar_version() {
-		return '2.2.0.DEV';
+		return '2.2.1.DEV';
 	}
-
-
 
 	/**
 	 * 	activation
@@ -480,8 +481,6 @@ class EE_Calendar {
 		EE_Calendar_Admin::activation();
 	}
 
-
-
 	/**
 	 * 	plugin_file
 	 *
@@ -496,8 +495,6 @@ class EE_Calendar {
 		return $plugin_file;
 	}
 	
-
-
 	/**
 	 * 	get_calendar_options
 	 *
@@ -509,8 +506,6 @@ class EE_Calendar {
 		$this->_calendar_config = $c;
 		return $this->_calendar_config;
 	}
-
-
 
 	/**
 	 * 	calendar_scripts - Load the scripts and css
@@ -527,17 +522,9 @@ class EE_Calendar {
 		//Load tooltips styles
 		$show_tooltips = $calendar_config->tooltip->show;
 		if ( $show_tooltips ) {
-			// load jQuery qtip script from CDN with local fallback
-			$qtip_js_url = 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.js';
-			// is the URL accessible ?
-			$test_url = @fopen( $qtip_js_url, 'r' );
-			// use CDN URL or local fallback ?
-			$qtip_js_url = $test_url !== FALSE ? $qtip_js_url : ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/jquery.qtip.js';
-			// use CDN URL or local fallback ?
-			$qtip_css_url = $test_url !== FALSE ? 'cdnjs.cloudflare.com/ajax/libs/qtip2/2.1.1/jquery.qtip.min.css' : ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/jquery.qtip.min.css';
 			// register jQuery qtip
-			wp_register_style( 'qtip', $qtip_css_url );
-			wp_register_script( 'jquery-qtip', $qtip_js_url, array('jquery'), '2.1.1', TRUE);			
+			wp_register_style( 'qtip', ESPRESSO_CALENDAR_PLUGINFULLURL . 'css/jquery.qtip.min.css' );
+			wp_register_script( 'jquery-qtip', ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/jquery.qtip.js', array('jquery'), '2.1.1', TRUE);			
 		}
 		
 		// load base calendar style
@@ -555,13 +542,14 @@ class EE_Calendar {
 		wp_register_script( 'espresso_calendar', ESPRESSO_CALENDAR_PLUGINFULLURL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), ESPRESSO_CALENDAR_VERSION, TRUE ); 
 
 		// get the current post
-		global $post;
-		if ( isset( $post->post_content )) {
+		global $post, $is_espresso_calendar;
+		if ( isset( $post->post_content ) || $is_espresso_calendar ) {
 			 // check the post content for the short code
-			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE ) {
+			 if ( strpos( $post->post_content, '[ESPRESSO_CALENDAR') !== FALSE || $is_espresso_calendar ) {
 				if ( $show_tooltips ) {
 					wp_enqueue_style('qtip');
 					wp_enqueue_script('jquery-qtip');
+					wp_enqueue_script('jquery');
 				}
 				wp_enqueue_style('fullcalendar');
 				wp_enqueue_style('espresso_calendar');
@@ -632,9 +620,9 @@ class EE_Calendar {
 				__('Monday', 'event_espresso'),
 				__('Tuesday', 'event_espresso'),
 				__('Wednesday', 'event_espresso'),
-				__('Thursday', 'event_espresso'),
-				__('Friday', 'event_espresso'),
-				__('Saturday', 'event_espresso')
+				__('Thursday', 	'event_espresso'),
+				__('Friday', 	'event_espresso'),
+				__('Saturday', 	'event_espresso')
 			);
 			
 		$ee_calendar_js_options['day_names_short'] = array( 
@@ -647,7 +635,6 @@ class EE_Calendar {
 				__('Sat', 'event_espresso')
 			);
 			
-		global $org_options;
 		$ee_calendar_js_options['theme'] = ! empty( $org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
 		
 //		echo '<h3>$ee_calendar_js_options</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $ee_calendar_js_options, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
@@ -667,12 +654,10 @@ class EE_Calendar {
 		</div>
 	</div>
 	<div style="clear:both;" ></div>
-	<div id="espresso_calendar_images" ></div>
-	'; 
+	<div id="espresso_calendar_images" ></div>'.apply_filters( 'filter_hook_espresso_calendar_output_after','' ); 
+	
 	
 	}
-
-
 
 	/**
 	 * 	get_calendar_events
@@ -710,7 +695,7 @@ class EE_Calendar {
 		if($event_category_id){
 			$where_params['Event.Term_Taxonomy.Term.slug'] = $event_category_id;
 		}
-		$where_params['Event.status'] = 'publish';
+		$where_params['Event.status'] = 'publish';//@todo: how about sold_out, cancelled, etc events?
 		
 		$where_params['DTT_EVT_start*1']= array('>=',$start_datetime);
 		$where_params['DTT_EVT_start*2'] = array('<=',$end_date);
@@ -791,9 +776,9 @@ class EE_Calendar {
 				}
 			}
 
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
-//	$this->timer->start();
+//			$this->timer->stop();
+//			echo $this->timer->get_elapse( __LINE__ );
+//			$this->timer->start();
 
 			if ( $show_tooltips ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
@@ -849,8 +834,8 @@ class EE_Calendar {
 			}
 			$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
 			
-//	$this->timer->stop();
-//	echo $this->timer->get_elapse( __LINE__ );
+//			$this->timer->stop();
+//			echo $this->timer->get_elapse( __LINE__ );
 
 		}
 //		echo '<h3>$events</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
@@ -880,9 +865,6 @@ class EE_Calendar {
 		}
 	}
 
-
-
-
 	/**
 	 *		@ override magic methods
 	 *		@ return void
@@ -897,11 +879,6 @@ class EE_Calendar {
 
 }
 EE_Calendar::instance();
-
-
-
-
-
 
 // http://uniapple.net/blog/?p=274
 /*class Elapse_time {
