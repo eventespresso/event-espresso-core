@@ -615,6 +615,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 
 
+	public function pretty_price() {
+		return $this->get_pretty('TKT_price');
+	}
+
+
 	public function get_ticket_subtotal() {
 		return EE_Taxes::get_subtotal_for_admin($this);
 	}

@@ -352,6 +352,10 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 	}
 
 
+	public function pretty_price() {
+		return $this->get_pretty('PRC_amount');
+	}
+
 
 	public function get_price_without_currency_symbol() {
 		return str_replace( EE_Registry::instance()->CFG->currency->sign, '', $this->get_pretty('PRC_amount'));
