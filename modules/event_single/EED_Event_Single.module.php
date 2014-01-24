@@ -83,6 +83,8 @@ class EED_Event_Single  extends EED_Module {
 			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
 			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
 			add_action( 'loop_end', array( $this, 'loop_end' ));
+			// don't diplay entry meta because the existing theme will take car of that
+			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 		}
 		return $template;
 	}
