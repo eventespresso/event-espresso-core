@@ -816,16 +816,17 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function get_template_part() {
-		switch ( self::$_type ) {
-			case 'dates' :
-					return 'archive-espresso_events-dates-view.php';
-				break;
-			case 'text' :
-					return 'archive-espresso_events-text-view.php';
-				break;
-			default :
-					return 'archive-espresso_events-grid-view.php';
-		}
+		return 'archive-espresso_events.php';
+//		switch ( self::$_type ) {
+//			case 'dates' :
+//					return 'archive-espresso_events-dates-view.php';
+//				break;
+//			case 'text' :
+//					return 'archive-espresso_events-text-view.php';
+//				break;
+//			default :
+//					return 'archive-espresso_events-grid-view.php';
+//		}
 		
 //		return EE_Registry::instance()->CFG->EED_Events_Archive['templates']['part'];
 	}
