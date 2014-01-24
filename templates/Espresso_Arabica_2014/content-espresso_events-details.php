@@ -2,7 +2,7 @@
 <?php global $post; ?>
 <div class="event-content">
 	<div class="entry-meta">
-		<span class="tags-links"><?php espresso_event_categories( $post->ID, TRUE, TRUE ); ?><?php// echo $venue_categories; ?></span>
+		<span class="tags-links"><?php espresso_event_categories( $post->ID, TRUE, TRUE ); ?></span>
 		<?php
 			twentyfourteen_posted_on();
 			if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
