@@ -448,7 +448,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return array
 	 */
 	public function first_datetime() {
-		$datetimes = $this->get_many_related('Datetime');
+		$datetimes = $this->datetimes(array('limit'=>1));
 		return reset( $datetimes );
 	}
 
@@ -457,7 +457,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return array
 	 */
 	public function last_datetime() {
-		$datetimes = $this->get_many_related('Datetime');
+		$datetimes = $this->datetimes(array('limit'=>1,'order_by'=>array('DTT_EVT_start'=>'DESC')));
 		return end( $datetimes );
 	}
 

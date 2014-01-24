@@ -20,11 +20,12 @@
 				</tr>
 			</thead>
 			<tbody>
-		<?php foreach ( $line_items as $item ) : ?>
+		<?php foreach ( $line_items as $item ) : 
+?>
 			<tr>
 				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
-				<td class="jst-left"><?php echo $event_name;?></td>
-				<td class="jst-left"><?php echo $event->primary_datetime()->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a'); ?></td>
+				<td class="jst-left"><?php echo $item->ticket_event_name();?></td>
+				<td class="jst-left"><?php echo $item->ticket_datetime_start('Y-m-d','h:i a'); ?></td>
 				<td class="jst-left"><?php echo $item->get('LIN_name');?></td>
 				<td class="jst-rght"><?php echo EEH_Template::format_currency( $item->get('LIN_unit_price') );?></td>
 				<td class="jst-rght"><?php echo $item->get('LIN_quantity');?></td>
