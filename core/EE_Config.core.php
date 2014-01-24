@@ -152,6 +152,7 @@ final class EE_Config {
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
 		// construct__end hook
 		do_action( 'AHEE__EE_Config__construct__end',$this );
+		$this->template_settings->current_espresso_theme = 'Espresso_Arabica_2014';
 	}
 
 
@@ -1329,7 +1330,7 @@ class EE_Template_Config extends EE_Config_Base {
 		$this->display_address_in_regform = TRUE;
 		$this->display_description_on_multi_reg_page = FALSE;
 		$this->use_custom_templates = FALSE;
-		$this->current_espresso_theme = 'espresso_default';
+		$this->current_espresso_theme = 'Espresso_Arabica_2014';
 	}
 
 }
@@ -1493,7 +1494,7 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 		$this->display_expired_events = FALSE;
 		$this->default_type = 'grid';
 		$this->event_list_grid_size = 'medium';
-		$this->templates = array( 'full'  => EE_TEMPLATES . 'espresso_events' . DS . 'archive-espresso_events.php' );
+		$this->templates = array( 'full'  => EE_TEMPLATES . EE_Config::instance()->get_current_theme() . DS . 'archive-espresso_events.php' );
 	}
 }
 

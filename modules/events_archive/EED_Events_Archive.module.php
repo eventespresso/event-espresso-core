@@ -132,10 +132,10 @@ class EED_Events_Archive  extends EED_Module {
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		// load other required components
 		$this->_load_assests();
-		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
-			// load template
-			EE_Config::register_view( 'events', 0, $this->_get_template('full') );
-		}
+//		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
+//			// load template
+//			EE_Config::register_view( 'events', 0, $this->_get_template('full') );
+//		}
 	}
 
 
@@ -511,7 +511,7 @@ class EED_Events_Archive  extends EED_Module {
 			add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );			
 
 		}
-		
+
 		return $template;
 	}
 
@@ -549,6 +549,7 @@ class EED_Events_Archive  extends EED_Module {
 		remove_filter( 'the_content', array( $this, 'event_details' ), 100 );
 		// now load our template
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
+		echo '<h4>$template : ' . $template . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		//now add our filter back in, plus some others
 		add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
 		add_filter( 'the_content', array( $this, 'event_details' ), 100 );
@@ -683,20 +684,20 @@ class EED_Events_Archive  extends EED_Module {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', FALSE ) ) {
 			// first check uploads folder
-			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css' )) {
-				wp_register_style( 'archive-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css', array( 'dashicons', 'espresso_default' ));
+			if ( file_exists( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
+				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
 			} else {
-				wp_register_style( 'archive-espresso_events', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'archive-espresso_events.css', array( 'dashicons', 'espresso_default' ));
+				wp_register_style( $this->theme, EE_TEMPLATES_URL . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ));
 			}
-			if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.js' )) {
-				wp_register_script( 'archive-espresso_events', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE  );
-			} else {
-				wp_register_script( 'archive-espresso_events', EVENTS_ARCHIVE_ASSETS_URL . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE );
-			}
-			wp_enqueue_style( 'archive-espresso_events' );
-			wp_enqueue_script( 'jquery-masonry' );
-			wp_enqueue_script( 'archive-espresso_events' );
-			add_action( 'wp_footer', array( 'EED_Events_Archive', 'localize_grid_event_lists' ), 1 );
+//			if ( file_exists( get_stylesheet_directory() . $this->theme . DS . 'archive-espresso_events.js' )) {
+//				wp_register_script( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE  );
+//			} else {
+//				wp_register_script( $this->theme, EVENTS_ARCHIVE_ASSETS_URL . 'archive-espresso_events.js', array( 'jquery-masonry' ), '1.0', TRUE );
+//			}
+			wp_enqueue_style( $this->theme );
+//			wp_enqueue_script( 'jquery-masonry' );
+//			wp_enqueue_script( $this->theme );
+//			add_action( 'wp_footer', array( 'EED_Events_Archive', 'localize_grid_event_lists' ), 1 );
 		}
 	}
 

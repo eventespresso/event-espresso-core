@@ -363,7 +363,7 @@ final class EE_Front_Controller {
 					wp_enqueue_style('espresso_custom_css');
 				}
 
-				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css' )) {
+				if ( file_exists( EVENT_ESPRESSO_UPLOAD_DIR . 'css/style.css' )) {
 					wp_register_style( 'espresso_default', EVENT_ESPRESSO_UPLOAD_DIR . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );
 				} else {
 					wp_register_style( 'espresso_default', EE_GLOBAL_ASSETS_URL . 'css/espresso_default.css', array( 'dashicons' ), EVENT_ESPRESSO_VERSION );

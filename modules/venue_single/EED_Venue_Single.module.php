@@ -138,17 +138,17 @@ class EED_Venue_Single  extends EED_Module {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && is_single() ) {
 			// first check theme folder
-			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css' )) {
-				wp_register_style( 'single-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css', array( 'dashicons', 'espresso_default' ) );
-			} else if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css' )) {
-				wp_register_style( 'single-espresso_venues', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css', array( 'dashicons', 'espresso_default' ) );
+			if ( is_readable( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
+				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
+			} else if ( is_readable( EE_TEMPLATES . $this->theme . DS . 'style.css' )) {
+				wp_register_style( $this->theme, EE_TEMPLATES_URL . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
 			}
 //			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js' )) {
 //				wp_register_script( 'single-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js', array('espresso_core'), '1.0', TRUE  );
 //			} else if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js' )) {
 //				wp_register_script( 'single-espresso_venues', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js', array('espresso_core'), '1.0', TRUE );
 //			}
-			wp_enqueue_style( 'single-espresso_venues' );
+			wp_enqueue_style( $this->theme );
 //			wp_enqueue_script( 'single-espresso_venues' );
 			if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
 				EE_Registry::instance()->load_helper( 'Maps' );

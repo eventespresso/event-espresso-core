@@ -39,7 +39,7 @@ class EEH_Template {
 	 * 		/wp-content/theme/(the currently activated theme)
 	 *		/wp-content/uploads/espresso/templates/  
 	 *		/wp-content/uploads/espresso/templates/ee-theme/  
-	 *		/wp-content/plugins/EE4/templates/espresso_default/ 
+	 *		/wp-content/plugins/EE4/templates/(default theme)/ 
 	 *	as soon as the template is found i none of those locations, it will be returned or loaded 
 	 * 
 	 * 	@param  string $template  the template file name including extension
@@ -64,6 +64,8 @@ class EEH_Template {
 				}
 			}
 			$current_theme = EE_Config::get_current_theme();
+			echo '<h4>$current_theme : ' . $current_theme . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+			
 			$tempates = is_array( $template ) ? $template : array( $template );
 			foreach ( $tempates as $tempate ) {
 				// then check the root of the uploads/espresso/templates/ folder
