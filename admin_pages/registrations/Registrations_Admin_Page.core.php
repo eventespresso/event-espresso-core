@@ -1198,9 +1198,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		
 
-		$event = $this->_registration->get_first_related('Event');
-		$this->_template_args['event'] = $event;
-		$this->_template_args['event_name'] = $event->get('EVT_name');
 
 		// process taxes
 		if ( $transaction ) {
