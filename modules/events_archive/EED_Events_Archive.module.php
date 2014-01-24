@@ -711,7 +711,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function localize_grid_event_lists() {
-		wp_localize_script( 'archive-espresso_events', 'espresso_grid_event_lists', EED_Events_Archive::$espresso_grid_event_lists );
+//		wp_localize_script( 'archive-espresso_events', 'espresso_grid_event_lists', EED_Events_Archive::$espresso_grid_event_lists );
 	}
 
 
@@ -751,7 +751,7 @@ class EED_Events_Archive  extends EED_Module {
 		$CFG->default_type = isset( $CFG->default_type ) && ! empty( $CFG->default_type ) ? $CFG->default_type : 'grid';
 		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
 		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
-		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-grid-view.php';
+		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
 		return $CFG;
 	}
 
@@ -791,14 +791,14 @@ class EED_Events_Archive  extends EED_Module {
 			);
 		
 		switch ( $CFG->EED_Events_Archive->default_type ) {
-			case 'dates' :
-					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-dates-view.php';
-				break;
-			case 'text' :
-					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-text-view.php';
-				break;
+//			case 'dates' :
+//					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-dates-view.php';
+//				break;
+//			case 'text' :
+//					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-text-view.php';
+//				break;
 			default :
-					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-grid-view.php';
+					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
 		}
 		
 		$CFG->EED_Events_Archive = isset( $REQ['reset_event_list_settings'] ) && absint( $REQ['reset_event_list_settings'] ) == 1 ? new EE_Events_Archive_Config() : $CFG->EED_Events_Archive;
@@ -864,10 +864,10 @@ class EED_Events_Archive  extends EED_Module {
 		$EE = EE_Registry::instance();
 		$event_list_css = ! empty( $extra_class ) ? array( $extra_class ) : array();
 		$event_list_css[] = 'espresso-event-list-event';
-		if ( self::$_type == 'grid' ) {
-			$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size : 'medium';
-			$event_list_css[] = $event_list_grid_size . '-event-list-grid';
-		}
+//		if ( self::$_type == 'grid' ) {
+//			$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size : 'medium';
+//			$event_list_css[] = $event_list_grid_size . '-event-list-grid';
+//		}
 		$event_list_css = apply_filters( 'EED_Events_Archive__event_list_css__event_list_css_array', $event_list_css );
 		return implode( ' ', $event_list_css );
 	}
@@ -1059,7 +1059,7 @@ class EE_Event_List_Query extends WP_Query {
 	private $_category_slug = NULL;
 	private $_order_by = NULL;
 	private $_sort = NULL;
-	private $_list_type ='text';	
+//	private $_list_type ='text';	
 
 	function __construct( $args = array() ) {
 		//printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -1082,15 +1082,15 @@ class EE_Event_List_Query extends WP_Query {
 		$this->_sort = in_array( $this->_sort, array( 'ASC', 'asc', 'DESC', 'desc' )) ? strtoupper( $this->_sort ) : 'ASC';
 		
 		// first off, let's remove any filters from previous queries
-		remove_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ));
+//		remove_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ));
 		remove_filter( 'EED_Events_Archive__event_list_title__event_list_title', array( $this, 'event_list_title' )); 
 		remove_all_filters( 'EED_Events_Archive__event_list_css__event_list_css_array' );
 //		remove_all_filters( 'EED_Events_Archive__event_list_css__event_list_css_array', array( $this, 'event_list_css' ));
 
 		//  set view
-		add_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ), 10, 1 );
+//		add_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ), 10, 1 );
 		// have to call this in order to get the above filter applied
-		EED_Events_Archive::set_type();
+//		EED_Events_Archive::set_type();
 		// Event List Title ?
 		add_filter( 'EED_Events_Archive__event_list_title__event_list_title', array( $this, 'event_list_title' ), 10, 1 ); 
 		// add the css class
