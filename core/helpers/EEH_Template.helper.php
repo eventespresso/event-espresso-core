@@ -64,7 +64,6 @@ class EEH_Template {
 				}
 			}
 			$current_theme = EE_Config::get_current_theme();
-			echo '<h4>$current_theme : ' . $current_theme . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			
 			$tempates = is_array( $template ) ? $template : array( $template );
 			foreach ( $tempates as $tempate ) {

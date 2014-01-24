@@ -549,7 +549,6 @@ class EED_Events_Archive  extends EED_Module {
 		remove_filter( 'the_content', array( $this, 'event_details' ), 100 );
 		// now load our template
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
-		echo '<h4>$template : ' . $template . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		//now add our filter back in, plus some others
 		add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
 		add_filter( 'the_content', array( $this, 'event_details' ), 100 );
