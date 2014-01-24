@@ -8,26 +8,21 @@
  * @ link			http://www.eventespresso.com
  * @ version		EE4+
  */
-get_header(); ?>
+get_header(); 
+?>
 
 	<div id="primary" class="content-area">
 		<div id="content" class="site-content" role="main">
 		
 			<div id="espresso-event-details-wrap-dv" class="">
-				<div id="espresso-event-details-dv" class="" >
-				
+				<div id="espresso-event-details-dv" class="" >				
 			<?php
 				// Start the Loop.
 				while ( have_posts() ) : the_post();
-
-					/*
-					 * Include the post TYPE-specific template for the content.
-					 */
+					//  Include the post TYPE-specific template for the content.
 					get_template_part( 'content', 'espresso_events' );
-
 					// Previous/next post navigation.
 					twentyfourteen_post_nav();
-
 					// If comments are open or we have at least one comment, load up the comment template.
 					if ( comments_open() || get_comments_number() ) {
 						comments_template();
