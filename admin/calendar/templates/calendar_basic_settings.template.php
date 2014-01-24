@@ -155,6 +155,22 @@
 					</span>
 				</td>
 			</tr>
+			
+			
+			<tr>
+				<th>
+					<label for="enable_calendar_filters">
+						<?php _e('Enable Filters in Calendar', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EEH_Form_Fields::select_input('calendar[enable_calendar_filters]', $values, $calendar_config->enable_calendar_filters, 'id="enable_calendar_filters"'); ?>
+					<br />
+					<span class="description">
+						<?php _e('Filters allow users to filter events based on category and/or venue.', 'event_espresso'); ?>
+					</span>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 	<h4>
