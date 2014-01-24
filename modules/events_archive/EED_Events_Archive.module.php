@@ -490,23 +490,30 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public function template_include( $template ) {
-		// add event list filters
-//		add_action( 'loop_start', array( $this, 'event_list_template_filters' ));
-		// and pagination
-//		add_action( 'loop_start', array( $this, 'event_list_pagination' ));
-//		add_action( 'loop_end', array( $this, 'event_list_pagination' ));
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
 			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
 			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
+			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
+			add_filter( 'the_excerpt', array( $this, 'event_tickets' ), 110 );
+			add_filter( 'the_excerpt', array( $this, 'event_datetimes' ), 120 );
+			add_filter( 'the_excerpt', array( $this, 'event_venues' ), 130 );
 			// or the_content
 			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
-
+			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
+			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
+			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
 		} else {
 			remove_all_filters( 'excerpt_length' );
 			add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
 			add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );			
+			// add event list filters
+			add_action( 'loop_start', array( $this, 'event_list_template_filters' ));
+			// and pagination
+			add_action( 'loop_start', array( $this, 'event_list_pagination' ));
+			add_action( 'loop_end', array( $this, 'event_list_pagination' ));
 		}
 		
 		return $template;
@@ -538,6 +545,8 @@ class EED_Events_Archive  extends EED_Module {
 		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID  ) . $title :  $title;
 	}
 
+
+
 	/**
 	 * 	event_details
 	 *
@@ -546,6 +555,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public function event_details( $content ) {
+		global $post;
 		// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
 		// it uses the_content() for displaying the $post->post_content
 		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
@@ -556,14 +566,9 @@ class EED_Events_Archive  extends EED_Module {
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		//now add our filter back in, plus some others
 		add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
-		add_filter( 'the_excerpt', array( $this, 'event_tickets' ), 110 );
-		add_filter( 'the_excerpt', array( $this, 'event_datetimes' ), 120 );
-		add_filter( 'the_excerpt', array( $this, 'event_venues' ), 130 );
 		add_filter( 'the_content', array( $this, 'event_details' ), 100 );
-		add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
-		add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
-		add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
-		return $template;
+		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
+		return ! empty( $template ) ? $template : $content;
 	}
 
 
@@ -620,7 +625,6 @@ class EED_Events_Archive  extends EED_Module {
 			EE_Registry::instance()->load_helper( 'Maps' );
 			add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
 		}
-		//add_filter( 'the_excerpt', array( $this, 'the_excerpt' ), 999 );
 		EE_Registry::instance()->load_helper( 'Event_View' );
 	}
 
@@ -679,20 +683,6 @@ class EED_Events_Archive  extends EED_Module {
 	public function excerpt_more( $more ) {
 		return '&hellip;';
 	}
-
-
-
-
-	/**
-	 * 	the_excerpt
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-//	public function the_excerpt( $the_excerpt ) {
-//		$display_address = isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive['display_description'] ) ? EE_Registry::instance()->CFG->template_settings->EED_Events_Archive['display_description'] : TRUE;
-//		return $display_address ? $the_excerpt : '';			
-//	}
 
 
 
