@@ -1,11 +1,22 @@
 <?php //echo '<h1>' . __FILE__ . '</h1>'; ?>
 <?php global $post; ?>
 <div class="venue-content">
-	<?php if ( $venue_categories = espresso_venue_categories( $post->ID, TRUE, FALSE )) : ?>
-	<p>
-		<span class="tags-links"><?php echo $venue_categories; ?></span>
-	</p>
-	<?php endif; ?>
+	<div class="entry-meta">
+		<span class="tags-links"><?php espresso_venue_categories( $post->ID, TRUE, TRUE ); ?><?php// echo $venue_categories; ?></span>
+		<?php
+			twentyfourteen_posted_on();
+			if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
+		?>
+		<span class="comments-link"><?php comments_popup_link( __( 'Leave a comment', 'twentyfourteen' ), __( '1 Comment', 'twentyfourteen' ), __( '% Comments', 'twentyfourteen' ) ); ?></span>
+		<?php
+			endif;
+
+			edit_post_link( __( 'Edit', 'twentyfourteen' ), '<span class="edit-link">', '</span>' );
+		?>
+	</div>
+
+	<?php // if ( $venue_categories = espresso_venue_categories( $post->ID, TRUE, FALSE )) : ?>
+	<?php // endif; ?>
 	
 	<h3 class="event-venues-h3 ee-event-h3">
 		<span class="ee-icon ee-icon-venue"></span><?php _e( 'Venue Details', 'event_espresso' ); ?>
