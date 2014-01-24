@@ -1046,7 +1046,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$registration->set_status( $status );
 			$success = $registration->save();
 			//make sure we don't just get 0 updated
-			$success = $success === 0 ? TRUE : FALSE;
+			$success = $success >= 0 ? TRUE : FALSE;
 		} 
 		return array( 'REG_ID' => $REG_ID, 'success' => $success );
 	}
