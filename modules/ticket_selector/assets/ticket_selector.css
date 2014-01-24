@@ -151,8 +151,8 @@
 
 .tckt-slctr-tkt-details-dv {
 	position: relative;
-	padding: 1em 1.5em 1.5em;
-	margin: 1em;
+	padding: 1em;
+	margin: .5em;
 	background: rgba( 128, 128, 128, .1 );
 	border-radius: 2px;
 	text-shadow: 1px 1px 0px #fff;
@@ -180,6 +180,7 @@
 	border-width: 1px;
 	border-color: #eee;
 	text-shadow: 1px 1px 0px #fff;
+	line-height: .8em;
 }
 .tckt-slctr-tkt-details-tbl th {
 	padding: 5px;

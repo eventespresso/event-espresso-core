@@ -685,13 +685,11 @@ input.ee-register-button {
 .hide-if-no-js {
 	display: none;
 }
-.cntr {
-	text-align: center;
-}
 
 .jst-left {
 	text-align: left;
 }
+.cntr,
 .jst-cntr {
 	text-align: center;
 }
