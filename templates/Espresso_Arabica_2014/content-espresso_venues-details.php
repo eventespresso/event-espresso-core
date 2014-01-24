@@ -3,7 +3,7 @@
 <div class="venue-content">
 <?php if ( apply_filters( 'FHEE__content_espresso_venues_details_template__display_entry_meta', TRUE )): ?>
 	<div class="entry-meta">
-		<span class="tags-links"><?php espresso_venue_categories( $post->ID, TRUE, TRUE ); ?><?php// echo $venue_categories; ?></span>
+		<span class="tags-links"><?php espresso_venue_categories( $post->ID, TRUE, TRUE ); ?></span>
 		<?php
 			twentyfourteen_posted_on();
 			if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
