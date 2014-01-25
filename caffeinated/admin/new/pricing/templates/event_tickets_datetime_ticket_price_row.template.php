@@ -32,7 +32,7 @@
 			<span class="ee-lock-icon"></span>
 		<?php else : ?>
 			<!-- <span class="gear-icon dashicons dashicons-admin-generic clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"></span> -->
-			<span class="trash-icon dashicons dashicons-trash clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"<?php echo $show_trash_icon; ?>></span>
+			<span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="price" data-price-row="<?php echo $PRC_order; ?>"<?php echo $show_trash_icon; ?>></span>
 			<button data-ticket-row="<?php echo $tkt_row; ?>" data-price-row="<?php echo $PRC_order; ?>" data-context="price" class="ee-create-button"<?php echo $show_create_button; ?>><strong>+</strong></button>
 		<?php endif; ?>
 	</td>
