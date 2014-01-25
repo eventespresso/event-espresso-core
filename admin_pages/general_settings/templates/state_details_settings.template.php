@@ -21,7 +21,7 @@
 				 } 
 			 ?>
 				<td class="delete-state-td">
-					<a id="delete-state-<?php echo $STA_ID; ?>-lnk" class="dashicons dashicons-trash ee-icon-size-20 delete-state-lnk" rel="<?php echo $STA_ID; ?>" title="Delete State #<?php echo $STA_ID; ?>?" href="<?php echo $state['delete_state_url']; ?>"></a>
+					<a id="delete-state-<?php echo $STA_ID; ?>-lnk" class="dashicons dashicons-post-trash ee-icon-size-20 delete-state-lnk" rel="<?php echo $STA_ID; ?>" title="Delete State #<?php echo $STA_ID; ?>?" href="<?php echo $state['delete_state_url']; ?>"></a>
 				</td>
 			</tr>
 		<?php 
