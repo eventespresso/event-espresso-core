@@ -530,6 +530,19 @@ class EE_Error extends Exception {
 
 
 	/**
+	*	_reset_notices
+	*	@access private
+	*	@return void
+	*/
+    private static function _reset_notices(){
+    	self::$_espresso_notices['success'] = FALSE;
+    	self::$_espresso_notices['attention'] = FALSE;
+    	self::$_espresso_notices['errors'] = FALSE;
+    }
+
+
+
+	/**
 	*	has_errors
 	*	@access public
 	*	@return int
@@ -612,7 +625,7 @@ class EE_Error extends Exception {
 
 			$notices = '<div id="espresso-notices">';
 			
-			$close = is_admin() ? '' : '<a class="close-espresso-notice">&times;</a>';
+			$close = is_admin() ? '' : '<a class="close-espresso-notice hide-if-no-js">&times;</a>';
 
 			if ($success_messages != '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-success';
