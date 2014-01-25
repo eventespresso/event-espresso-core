@@ -141,8 +141,9 @@ Class EE_Bank extends EE_Offline_Gateway {
 		<?php
 	}
 
-	public function espresso_display_payment_gateways() {
+	public function espresso_display_payment_gateways( $selected_gateway = '' ) {
 
+		$this->_css_class = $selected_gateway == $this->_gateway_name ? '' : ' hidden';
 		echo $this->_generate_payment_gateway_selection_button();
 		?>
 

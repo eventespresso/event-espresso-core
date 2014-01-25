@@ -484,7 +484,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 	
 	
 
-	public function espresso_display_payment_gateways() {
+	public function espresso_display_payment_gateways( $selected_gateway = '' ) {
+		$this->_css_class = $selected_gateway == $this->_gateway_name ? '' : ' hidden';
 		echo $this->_generate_payment_gateway_selection_button();
 		?>
 

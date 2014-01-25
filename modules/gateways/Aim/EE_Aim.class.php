@@ -317,8 +317,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 		$this->_additional_line_items[] = implode('<|>', $args);
 	}
 
-	public function espresso_display_payment_gateways() {
+	public function espresso_display_payment_gateways( $selected_gateway = '' ) {
 
+		$this->_css_class = $selected_gateway == $this->_gateway_name ? '' : ' hidden';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		global $css_class;
