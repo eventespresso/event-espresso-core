@@ -212,20 +212,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _set_next_step() {
 		// set pointer to start of array
 		reset( self::$_reg_steps );
-//		printr( self::$_reg_steps, 'self::$_reg_steps  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$current_step = str_replace( 'process_', '', $this->_current_step );
 		// if there is more than one step		
 		if ( count( self::$_reg_steps ) > 1 && $this->_current_step != 'finalize_registration' ) {		
 			// advance to the current step and set pointer
-			while ( key( self::$_reg_steps ) != $current_step ) {
-//				echo '<h4>key( self::$_reg_steps ) : ' . key( self::$_reg_steps ) . '  <br /></h4>';
+			while ( key( self::$_reg_steps ) != $current_step && key( self::$_reg_steps ) != '' ) {
 				next( self::$_reg_steps );
-//				echo '<h4>key( self::$_reg_steps ) : ' . key( self::$_reg_steps ) . '  <br /></h4>';
 			}
 		}
 		// advance one more spot ( if it exists )
 		$this->_next_step = next( self::$_reg_steps ) ? key( self::$_reg_steps ) : 'finalize_registration';
-//		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// then back to current step to reset
 		prev( self::$_reg_steps );
 	}
@@ -868,7 +864,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$payment = sanitize_text_field( EE_Registry::instance()->REQ->get( 'payment' ));
 				}
 				if ( ! empty( $payment )) {				
-					if (EE_Registry::instance()->LIB->EEM_Gateways->selected_gateway() != $payment ) {
+					if ( EE_Registry::instance()->LIB->EEM_Gateways->selected_gateway() != $payment ) {
 						EE_Registry::instance()->LIB->EEM_Gateways->set_selected_gateway( $payment );
 					} else {
 						EE_Registry::instance()->LIB->EEM_Gateways->unset_selected_gateway( $payment );
@@ -880,6 +876,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$step_args['selected_gateway'] = '';
 			}
 			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Single_Page_Checkout', 'display_recaptcha' ), 10, 2 );	
+//			printr( $step_args, '$step_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 //			d( $step_args );
 			$registration_steps .= EEH_Template::display_template( $this->_templates[ $reg_step_details['template'] ], $step_args, TRUE);
@@ -1038,7 +1035,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				unset( $valid_data['primary_attendee'] );
 			}
 			
-			//printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 			// attendee counter
 			$att_nmbr = 0;
@@ -1275,18 +1272,19 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 			} 
 
-			// grab any errors
-			$notices = EE_Error::get_notices( FALSE, FALSE, TRUE );
-			if ( ! isset( $notices['errors'] )) {
-				EE_Error::add_success( __('Attendee information submitted successfully.', 'event_espresso' ));
-			}
-
 		} else {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );		
 		}
 
-//echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		// grab any errors
+		$notices = EE_Error::get_notices( FALSE, FALSE, TRUE );
+		if ( ! isset( $notices['errors'] )) {
+			EE_Error::add_success( __('Attendee information submitted successfully.', 'event_espresso' ));
+		} else {
+//			$this->_next_step = $this->_current_step;
+		}
+
+
 
 		//this might be called while in admin and if it is then we don't want to do our normal steps.
 		if ( is_admin() && ! EE_Registry::instance()->REQ->front_ajax ) {
@@ -1713,15 +1711,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 		// check for valid callback function
 		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
-//		echo '<h4>$prev_step : ' . $prev_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>EE_Registry::instance()->REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_revisit : ' . $this->_revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
 		if ( $success_msg && ! $error_msg ) {
 			// if this is an ajax request AND a callback function exists
 			if ( EE_Registry::instance()->REQ->ajax  && $valid_callback ) {
@@ -1734,7 +1724,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				die();
 			} else {
 				// not ajax
-				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );
+//				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );
 				// return true to advance to next step
 				$no_errors = TRUE;
 			}
@@ -1744,19 +1734,29 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				echo json_encode( array( 'error' => $error_msg ));
 				die();
 			} else {
-				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+//				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 				$no_errors = FALSE;
 			}
 		}
 		// store notices in a transient
 		EE_Error::get_notices( FALSE, TRUE, TRUE );
 		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from
-		if ( $next_step = $no_errors ? $this->_next_step : $this->_current_step ) {
+		if ( $next_step = $no_errors ? $this->_next_step : str_replace( 'process_', '', $this->_current_step )) {
 			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => '_register', 'step' => $next_step ));
 			$redirect = add_query_arg( $args, $this->_reg_page_base_url );
 		} else {
 			$redirect = $this->_thank_you_page_url;
 		}
+//		echo '<h4>$prev_step : ' . $prev_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>EE_Registry::instance()->REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->_revisit : ' . $this->_revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$no_errors : ' . $no_errors . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$next_step : ' . $next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$redirect : ' . $redirect . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		wp_safe_redirect( $redirect );
