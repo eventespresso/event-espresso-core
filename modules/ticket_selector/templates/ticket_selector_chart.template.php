@@ -67,7 +67,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					<b><?php echo $ticket->get_pretty('TKT_name');?></b>
 					<a 
 						id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
-						class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text" 
+						class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" 
 						rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
 						title="<?php _e( 'click to show additional ticket details', 'event_espresso' ); ?>"						
 					>
@@ -75,7 +75,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					</a>
 					<a 
 						id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
-						class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text" 
+						class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js" 
 						rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
 						title="<?php _e( 'click to hide additional ticket details', 'event_espresso' ); ?>"
 						style="display:none;"
@@ -188,7 +188,11 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									<tr>
 										<td class="jst-rght small-text"><?php echo $price_mod->name(); ?></td>
 										<td class="small-text"><?php echo $price_mod->desc(); ?></td>
+									<?php if ( $price_mod->is_percent() ) : ?>
+										<td class="jst-rght small-text"><?php echo $price_mod->amount(); ?>%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+									<?php else : ?>
 										<td class="jst-rght small-text"><?php echo $price_mod->pretty_price(); ?></td>
+									<?php endif; ?>
 									</tr>
 								<?php endforeach; ?>
 								<?php if ( $ticket->taxable() ) : ?>
