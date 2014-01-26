@@ -31,10 +31,9 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		define( 'EVENT_SINGLE_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
-		define( 'EVENT_SINGLE_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
+		add_action( 'wp_loaded', array( 'EED_Event_Single', 'set_definitions' ), 2 );
 		EE_Config::register_route( 'event', 'Event_Single', 'run' );
 	}
 
@@ -45,7 +44,92 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
+		add_filter('FHEE__Config__update_config__CFG', array( 'EED_Event_Single', 'filter_config' ), 10 );
+		add_filter( 'FHEE__EED_Event_Single__template_settings_form__event_list_config', array( 'EED_Event_Single', 'set_default_settings' ));
+		add_action( 'AHEE__template_settings__template__before_settings_form', array( 'EED_Event_Single', 'template_settings_form' ), 10 );
+		add_filter( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', array( 'EED_Event_Single', 'update_template_settings' ), 10, 2 );
+		add_action( 'wp_loaded', array( 'EED_Event_Single', 'set_definitions' ), 2 );
 	}
+
+
+
+
+	/**
+	 * set_definitions
+	 *
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public static function set_definitions() {
+		define( 'EVENT_SINGLE_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
+		define( 'EVENT_SINGLE_TEMPLATES_PATH', plugin_dir_path( __FILE__ ) . 'templates' . DS );
+	}
+
+
+
+
+
+	/**
+	 * 	filter_config
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function filter_config( $CFG ) {
+		return $CFG;
+	}
+
+
+
+
+	/**
+	 * 	set_default_settings
+	 *
+	 *  @access 	public
+	 *  @static
+	 *  @return 	void
+	 */
+	public static function set_default_settings( $CFG ) {
+		$CFG->display_status_banner_single = !empty( $CFG->display_status_banner_single) ? $CFG->display_status_banner_single : FALSE;
+		return $CFG;
+	}
+
+
+
+
+	/**
+	 * 	filter_config
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function update_template_settings( $CFG, $REQ ) {
+		$CFG->EED_Event_Single->display_status_banner_single = !empty( $REQ['display_status_banner_single'] ) && $REQ['display_status_banner_single'] ? TRUE : FALSE;
+		return $CFG;
+	}
+
+
+
+
+
+
+	/**
+	 * 	template_settings_form
+	 *
+	 *  @access 	public
+	 *  @static
+	 *  @return 	void
+	 */
+	public static function template_settings_form() {
+		$EE = EE_Registry::instance();
+		$EE->CFG->template_settings->EED_Event_Single = isset( $EE->CFG->template_settings->EED_Event_Single ) ? $EE->CFG->template_settings->EED_Event_Single : new EE_Event_Single_Config();
+		$EE->CFG->template_settings->EED_Event_Single = apply_filters( 'FHEE__EED_Event_Single__template_settings_form__event_list_config', $EE->CFG->template_settings->EED_Event_Single );
+		EEH_Template::display_template( EVENT_SINGLE_TEMPLATES_PATH . 'admin-event-single-settings.template.php', $EE->CFG->template_settings->EED_Event_Single );
+	}
+
+
+
 
 
 
