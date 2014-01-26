@@ -23,7 +23,7 @@
 </p>
 <h3><?php _e('Event Author', 'event_espresso'); ?></h3>
 <p>
-<?php _e('This is the site member that will be credited for creating this event. The author will receive notifications such as event confirmations', 'event_espresso'); ?>
+<?php _e('This is the site member that will be credited for creating this event. The event author will receive notifications such as event confirmations. Ensure that the event author has a first name and last name filled out in their user profile. This option can be found in Users --> Your Profile.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Event Notifications', 'event_espresso'); ?></h3>
 <p>
