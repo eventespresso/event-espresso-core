@@ -1486,6 +1486,7 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 	public $default_type;
 	public $event_list_grid_size;
 	public $templates;
+	public $display_status_banner;
 	
 	public function __construct(){
 		$this->display_description = 1;
@@ -1495,6 +1496,20 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 		$this->default_type = 'grid';
 		$this->event_list_grid_size = 'medium';
 		$this->templates = array( 'full'  => EE_TEMPLATES . EE_Config::instance()->get_current_theme() . DS . 'archive-espresso_events.php' );
+		$this->display_status_banner = FALSE;
+	}
+}
+
+
+
+/**
+ * Stores Event_Single_Config settings
+ */
+class EE_Event_Single_Config extends EE_Config_Base{
+	public $display_status_banner;
+
+	public function __construct() {
+		$this->display_status_banner = FALSE;
 	}
 }
 

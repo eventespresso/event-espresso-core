@@ -754,6 +754,7 @@ class EED_Events_Archive  extends EED_Module {
 		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
 		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
 		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
+		$CFG->display_status_banner = !empty( $CFG->display_status_banner) ? $CFG->display_status_banner : FALSE;
 		return $CFG;
 	}
 
@@ -804,6 +805,7 @@ class EED_Events_Archive  extends EED_Module {
 		}
 		
 		$CFG->EED_Events_Archive = isset( $REQ['reset_event_list_settings'] ) && absint( $REQ['reset_event_list_settings'] ) == 1 ? new EE_Events_Archive_Config() : $CFG->EED_Events_Archive;
+		$CFG->EED_Events_Archive->display_status_banner = !empty( $REQ['display_status_banner'] ) && $REQ['display_status_banner'] ? TRUE : FALSE;
 		return $CFG;
 	}
 

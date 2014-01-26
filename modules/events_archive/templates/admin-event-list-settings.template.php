@@ -117,5 +117,16 @@ $grid_sizes = array(
 				</td>
 			</tr>
 
+			<tr>
+				<th>
+					<label for="display_status_banner">
+						<?php _e('Display Status Banner', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EEH_Form_Fields::select_input( 'display_status_banner', $values, $display_status_banner, 'id="reset_event_list_settings"' ); ?>
+				</td>
+			</tr>
+
 		</tbody>
 	</table>
