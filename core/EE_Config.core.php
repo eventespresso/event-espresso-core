@@ -1506,10 +1506,10 @@ class EE_Events_Archive_Config extends EE_Config_Base{
  * Stores Event_Single_Config settings
  */
 class EE_Event_Single_Config extends EE_Config_Base{
-	public $display_status_banner;
+	public $display_status_banner_single;
 
 	public function __construct() {
-		$this->display_status_banner = FALSE;
+		$this->display_status_banner_single = FALSE;
 	}
 }
 
