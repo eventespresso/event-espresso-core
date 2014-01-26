@@ -180,7 +180,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 		$admin_ids = array();
 		$admin_events = array();
 		$admin_attendees = array();
-		$addresees = array();
+		$addressees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {

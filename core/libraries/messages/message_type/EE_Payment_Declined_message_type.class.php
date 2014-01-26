@@ -160,7 +160,7 @@ class EE_Payment_Declined_message_type extends EE_message_type {
 	protected function _admin_addressees() {
 		$admin_ids = array();
 		$admin_events = array();
-		$addresees = array();
+		$addressees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {
