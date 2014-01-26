@@ -729,7 +729,7 @@ class EED_Events_Archive  extends EED_Module {
 	public static function template_settings_form() {
 		$EE = EE_Registry::instance();
 		$EE->CFG->template_settings->EED_Events_Archive = isset( $EE->CFG->template_settings->EED_Events_Archive ) ? $EE->CFG->template_settings->EED_Events_Archive : new EE_Events_Archive_Config();
-		$EE->CFG->template_settings->EED_Events_Archive = apply_filters( 'FHEE__Event_List__template_settings_form__event_list_config', $EE->CFG->template_settings->EED_Events_Archive );
+		$EE->CFG->template_settings->EED_Events_Archive = apply_filters( 'FHEE__EED_Events_Archive__template_settings_form__event_list_config', $EE->CFG->template_settings->EED_Events_Archive );
 		EEH_Template::display_template( EVENTS_ARCHIVE_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $EE->CFG->template_settings->EED_Events_Archive );
 	}
 
@@ -766,7 +766,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function filter_config( $CFG ) {
+	public static function filter_config( $CFG ) {
 		return $CFG;
 	}
 
