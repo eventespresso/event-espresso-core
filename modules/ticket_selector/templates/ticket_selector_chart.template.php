@@ -184,33 +184,46 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 										<td class="small-text"><?php echo $ticket->base_price()->desc(); ?></td>
 										<td class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
 									</tr>
+								<?php $running_total = $ticket->base_price()->amount(); ?>
 								<?php foreach ( $ticket->price_modifiers() as $price_mod ) : ?>								
 									<tr>
 										<td class="jst-rght small-text"><?php echo $price_mod->name(); ?></td>
-										<td class="small-text"><?php echo $price_mod->desc(); ?></td>
 									<?php if ( $price_mod->is_percent() ) : ?>
-										<td class="jst-rght small-text"><?php echo $price_mod->amount(); ?>%&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td>
+										<td class="jst-rght small-text"><?php echo $price_mod->amount(); ?>%</td>
+										<?php 
+											$new_sub_total = $running_total * ( $price_mod->amount() / 100 ); 
+											$new_sub_total = $price_mod->is_discount() ? $new_sub_total * -1 : $new_sub_total;
+										?>
+										<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $new_sub_total ); ?></td>
+										<?php $running_total += $new_sub_total; ?>
 									<?php else : ?>
-										<td class="jst-rght small-text"><?php echo $price_mod->pretty_price(); ?></td>
+										<td class="small-text"><?php echo $price_mod->desc(); ?></td>
+										<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount() ); ?></td>
+										<?php $running_total += $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount(); ?>
 									<?php endif; ?>
 									</tr>
 								<?php endforeach; ?>
 								<?php if ( $ticket->taxable() ) : ?>
+									<?php //$ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
 									<tr>
 										<td colspan="2" class="jst-rght small-text"><b><?php _e( 'subtotal', 'event_espresso' ); ?></b></td>
-										<td class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $ticket->get_ticket_subtotal() ); ?></b></td>
+										<td class="jst-rght small-text"><b><?php echo  EEH_Template::format_currency( $running_total ); ?></b></td>
 									</tr>
-								<?php foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) : ?>								
+
+								<?php 								
+								foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) : ?>								
 									<tr>
 										<td class="jst-rght small-text"><?php echo $tax->name(); ?></td>
-										<td class="small-text"><?php echo $tax->desc(); ?></td>
-										<td class="jst-rght small-text"><?php echo $tax->pretty_price(); ?></td>
+										<td class="jst-rght small-text"><?php echo $tax->amount(); ?>%</td>
+										<?php $tax_amount = $running_total * ( $tax->amount() / 100 ); ?>
+										<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $tax_amount ); ?></td>
+										<?php $running_total += $tax_amount; ?>
 									</tr>
 								<?php endforeach; ?>								
 								<?php endif; ?>
 									<tr>
 										<td colspan="2" class="jst-rght small-text"><b><?php _e( 'Total Ticket Price', 'event_espresso' ); ?></b></td>
-										<td class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $ticket->get_ticket_total_with_taxes() ); ?></b></td>
+										<td class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $running_total ); ?></b></td>
 									</tr>
 								</tbody>
 							</table>
