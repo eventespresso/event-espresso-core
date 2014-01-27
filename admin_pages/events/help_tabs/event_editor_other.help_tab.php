@@ -15,7 +15,7 @@
 </p>
 <h3><?php _e('Event Discussion', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Should comments, trackbacks, and pingbacks be allowed for your event? These appear directly after the event description on the event page.', 'event_espresso'); ?>
+<?php _e('Specify if comments, trackbacks, and pingbacks should be allowed for your event. These appear directly after the event description on the event page.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Event Slug', 'event_espresso'); ?></h3>
 <p>

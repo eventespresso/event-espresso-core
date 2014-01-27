@@ -15,11 +15,11 @@
 </p>
 <h3><?php _e('Venue Discussion', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Specify whether comments, trackbacks, and pingbacks be allowed for your venue.', 'event_espresso'); ?>
+<?php _e('Specify if comments, trackbacks, and pingbacks are allowed for your venue.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Venue Slug', 'event_espresso'); ?></h3>
 <p>
-<?php _e('The slug is the customizable portion of the URL for your event. For example, if my venue was called "Annual Parade," then the URL could appear as such: http://example.com/venues/annual-parade -- the slug would be then be annual-parade.', 'event_espresso'); ?>
+<?php _e('The slug is the customizable portion of the URL for your venue. For example, if my venue was called "Annual Parade," then the URL could appear as such: http://example.com/venues/annual-parade -- the slug would be then be annual-parade.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Venue Author', 'event_espresso'); ?></h3>
 <p>

@@ -5,11 +5,11 @@
 <p>
 <ul>
 <li>
-<?php _e('Filter by Event', 'event_espresso'); ?><br />
+<?php _e('<strong>Filter by Event</strong>', 'event_espresso'); ?><br />
 <?php _e('Begin the check-in process by selecting an event and clicking on the Filter button.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Filter by date', 'event_espresso'); ?><br />
+<?php _e('<strong>Filter by date</strong>', 'event_espresso'); ?><br />
 <?php _e('Events that occur on multiple dates will have multiple datetimes available for check-in. Select your date and click on the Filter button.', 'event_espresso'); ?>
 </li>
 </ul>

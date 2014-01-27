@@ -132,7 +132,7 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 		$this->_context_label = array(
 			'label' => __('recipient', 'event_espresso'),
 			'plural' => __('recipients', 'event_espresso'),
-			'description' => __('Recipient\'s are who will recieve the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
+			'description' => __('Recipient\'s are who will receive the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
 			);
 
 		$this->_contexts = array(

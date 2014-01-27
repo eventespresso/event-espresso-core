@@ -36,8 +36,8 @@ class EE_Payment_message_type extends EE_message_type {
 		$this->name = 'payment';
 		$this->description = __('This message type is used for all payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso'); 
 		$this->label = array(
-			'singular' => __('payment recieved', 'event_espresso'),
-			'plural' => __('payments recieved', 'event_espresso')
+			'singular' => __('payment received', 'event_espresso'),
+			'plural' => __('payments received', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -115,7 +115,7 @@ class EE_Payment_message_type extends EE_message_type {
 		$this->_context_label = array(
 			'label' => __('recipient', 'event_espresso'),
 			'plural' => __('recipients', 'event_espresso'),
-			'description' => __('Recipient\'s are who will recieve the template.  You may want different payment details sent out depending on who the recipient is', 'event_espresso')
+			'description' => __('Recipient\'s are who will receive the template.  You may want different payment details sent out depending on who the recipient is', 'event_espresso')
 			);
 
 		$this->_contexts = array(
