@@ -80,7 +80,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 		
-			'default' => '_espresso_page_settings',
+			'critical_pages' => '_espresso_page_settings',
 			'update_espresso_page_settings' => array(
 				'func' => '_update_espresso_page_settings',
 				'noheader' => TRUE,
@@ -97,7 +97,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'func' => '_copy_templates',
 				'noheader' => TRUE,
 				),
-			'your_organization_settings' => '_your_organization_settings',
+			'default' => '_your_organization_settings',
 			
 			'update_your_organization_settings' => array(
 				'func' => '_update_your_organization_settings',
@@ -141,10 +141,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
-			'default' => array(
+			'critical_pages' => array(
 				'nav' => array(
 					'label' => __('Critical Pages'),
-					'order' => 20
+					'order' => 50
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
                 'help_tabs' => array(
@@ -173,10 +173,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Templates_Help_Tour' ),
 				'require_nonce' => FALSE
 				),			
-			'your_organization_settings' => array(
+			'default' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
-					'order' => 50
+					'order' => 20
 					),
                 'help_tabs' => array(
 					'general_settings_your_organization_help_tab' => array(
@@ -236,7 +236,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function admin_footer_scripts() {}
 
 
-	public function load_scripts_styles_your_organization_settings() {	
+	public function load_scripts_styles_default() {	
 		//styles
 		wp_enqueue_style('thickbox');
 		//scripts
@@ -471,7 +471,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$what = 'Your Organization Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
 
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'default' ) );
 		
 	}
 

@@ -134,7 +134,7 @@ class EE_PUE {
 	 */
 	 public static function espresso_data_collection_optin_text( $extra = TRUE ) {
 		 echo '<h4 '. (!$extra ? 'id="UXIP_settings"' : '').'>'.__('User eXperience Improvement Program (UXIP)', 'event_espresso').'</h4>';
-		 $settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'your_organization_settings'), admin_url( 'admin.php?page=espresso_general_settings') );
+		 $settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
 		 $settings_url = $settings_url . '#UXIP_settings';
 		 echo sprintf( __('%sPlease help us make Event Espresso better and vote for your favorite features.%s The %sUser eXperience Improvement Program (UXIP)%s, has been created so when you use Event Espresso you are voting for the features and settings that are important to you. The UXIP helps us understand how you use our products and services, track problems and in what context. If you opt-out of the UXIP you essentially elect for us to disregard how you use Event Espresso as we build new features and make changes. Participation in the program is completely voluntary but it is enabled by default. The end results of the UXIP are software improvements to better meet your needs. The data we collect will never be sold, traded, or misused in any way. %sPlease see our %sPrivacy Policy%s for more information.', 'event_espresso'), '<p><em>', '</em></p>','<a href="http://eventespresso.com/about/user-experience-improvement-program-uxip/" target="_blank">','</a>','<br><br>','<a href="http://eventespresso.com/about/privacy-policy/" target="_blank">','</a>' );
 		 if ( $extra ) {
@@ -147,7 +147,7 @@ class EE_PUE {
 
 	function espresso_data_collection_optin_notice() {
 		$ueip_has_notified = get_option('ee_ueip_has_notified');
-		$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'your_organization_settings'), admin_url( 'admin.php?page=espresso_general_settings') );
+		$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
 		$settings_url = $settings_url . '#UXIP_settings';
 		?>
 		<div class="updated data-collect-optin" id="espresso-data-collect-optin-container">
