@@ -8,7 +8,7 @@
 
 		/**
 		*	center elements on screen
-		*/	
+		*/
 		center : function( position ) {
 			position = position !== undefined && position !== '' ? position : 'fixed';
 			var element_top = (( $( window ).height() / 2 ) - this.outerHeight() ) / 2;
@@ -24,9 +24,44 @@
 
 
 		/**
+		 * Shortcut for adding a window overlay quickly if none exists in the dom
+		 *
+		 * @param {array} opacity allows the setting of the opacity value for the overlay via client. opacity[0] = webkit opacity, opacity[1] = value for alpha(opacity=).
+		 * @return {jQuery}
+		 */
+		addOverlay : function( opacity ) {
+			opacity = typeof(opacity) === 'undefined' ? [0.5, 50] : opacity;
+			var overlay = '<div id="ee-overlay"></div>';
+			$(overlay).appendTo('body').css({
+				'position' : 'fixed',
+				'top' : 0,
+				'left' : 0,
+				'width' : '100%',
+				'height' : '100%',
+				'background' : '#000',
+				'opacity' : opacity[0],
+				'filter' : 'alpha(opacity=' + opacity[1] + ')',
+				'z-index' : 10000
+			});
+			return this;
+		},
+
+
+
+		/**
+		 * Shortcut for removing a window overlay quickly if none exists in the dom (will destroy)
+		 * @return {jQuery}
+		 */
+		removeOverlay : function() {
+			$('#ee-overlay').remove();
+			return this;
+		},
+
+
+		/**
 		*	return the correct value for a form input regardless of it's type
-		*/	
-		inputValue : function () { 
+		*/
+		inputValue : function () {
 			var inputType = this.prop('type');
 			if ( inputType ==  'checkbox' || inputType == 'radio' ) {
 				return this.prop('checked');
