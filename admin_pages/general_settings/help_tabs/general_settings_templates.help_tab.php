@@ -2,6 +2,13 @@
 <p>
 <?php _e('This page shows options for event list pages and registration pages.', 'event_espresso'); ?>
 </p>
+<h3><?php _e('Single Event Pages', 'event_espresso'); ?></h3>
+<ul>
+<li>
+<?php _e('<strong>Display Status Banner</strong>', 'event_espresso'); ?><br />
+<?php _e('Specify whether event status banners should be shown next to the title on the single event page.', 'event_espresso'); ?>
+</li>
+</ul>
 <h3><?php _e('Event List Pages', 'event_espresso'); ?></h3>
 <ul>
 <li>
@@ -35,6 +42,10 @@
 <li>
 <?php _e('<strong>Reset Event List Settings</strong>', 'event_espresso'); ?><br />
 <?php _e('This option allows you to reset your event list settings to defaults.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('<strong>Display Status Banner</strong>', 'event_espresso'); ?><br />
+<?php _e('Specify whether event status banners should be shown next to the title on the event list page.', 'event_espresso'); ?>
 </li>
 </ul>
 <h3><?php _e('Registration Pages', 'event_espresso'); ?></h3>

@@ -99,7 +99,7 @@ class Registration_Form_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Registration Form Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the Registration Form settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Registration Form Settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
