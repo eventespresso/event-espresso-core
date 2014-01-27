@@ -508,6 +508,10 @@ label.error  { display: block; color: #FE2A00 !important; }
 	display: inline-block;
 }
 
+.espresso-admin .form-table th {
+	width: 300px;
+}
+
 
 /** CAFFEINATED PREVIEW CSS **/
 .ee-admin-caf-preview-contents {
