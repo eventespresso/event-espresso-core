@@ -3,7 +3,7 @@
 <ul>
 <li>
 <?php _e('<strong>Event</strong>', 'event_espresso'); ?><br />
-<?php _e('Shows if a message template is in use for all events or a specific events', 'event_espresso'); ?>
+<?php _e('Shows if a message template is in use for all events or a specific events.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('<strong>Message Type</strong>', 'event_espresso'); ?><br />
