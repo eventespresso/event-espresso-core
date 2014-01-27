@@ -59,6 +59,19 @@
 
 
 		/**
+		 * adds a scrollTo action for jQuery
+		 * @return {jQuery}
+		 */
+		scrollTo : function() {
+			var selector = this;
+			$("html,body").animate({
+				scrollTop: selector.offset().top - 80
+			}, 2000);
+			return this;
+		},
+
+
+		/**
 		*	return the correct value for a form input regardless of it's type
 		*/
 		inputValue : function () {
