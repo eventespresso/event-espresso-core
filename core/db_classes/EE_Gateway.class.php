@@ -83,7 +83,7 @@ abstract class EE_Gateway {
 	abstract protected function _default_settings();
 	abstract protected function _update_settings();
 	abstract protected function _display_settings();
-	abstract public function espresso_display_payment_gateways( $selected_gateway );
+	abstract public function espresso_display_payment_gateways( $selected_gateway = '');
 	
 	protected function __construct(EEM_Gateways &$model) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
