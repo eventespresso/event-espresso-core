@@ -43,7 +43,7 @@ jQuery(document).ready(function($) {
 			queryobj.ee_admin_ajax = true;
 
 		
-			$('.ajax-loader-grey').toggle().show();
+			$('#espresso-ajax-loading').center().addOverlay().show();
 
 			//do post
 			$.ajax({
@@ -139,7 +139,7 @@ jQuery(document).ready(function($) {
 			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container') : $('.ee-notices', '.ee-admin-dialog-container');
 			var content_div = where == 'main' ? main_container : dialog_container;
 
-			$('.ajax-loader-grey').toggle().hide();
+			$('#espresso-ajax-loading').removeOverlay().hide();
 			if ( what == 'clear' ) {
 				content_div.html('');
 				content_div.html(content);
