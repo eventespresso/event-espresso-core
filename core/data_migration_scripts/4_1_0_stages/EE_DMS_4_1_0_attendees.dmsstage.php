@@ -459,28 +459,9 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private function _get_reg_status_for_old_payment_status($old_attendee_row){
 		//need event default reg status and if pre_approval was required
 		global $wpdb;
-		$event_required_pre_approval = intval($wpdb->get_var($wpdb->prepare("SELECT require_pre_approval FROM ".$wpdb->prefix."events_detail WHERE id = %d",$old_attendee_row['event_id'])));
-		
-		$reg_status_mapping = array(
-				'Completed'=>'RAP',
-				'Pending'=>'RAP',
-				'Payment Declined'=>'RPP',
-				'Incomplete'=>'RPP',
-				'Not Completed'=>'RPP',
-				'Cancelled'=>'RPP',
-				'Declined'=>'RPP'
-			);
-		
-		if($event_required_pre_approval){			
-			//SO, the event required pre-approval and...
-			if(intval($old_attendee_row['pre_approve'])){
-				//pre_approve = 1 when they HAEV NOT been approved
-				return 'RNA';
-			}
-			//pre_approve = 0 when they HAVE been approved,
-			//so treat in just the same way as if pre-approval WEREN'T required
-		}
-		return isset($reg_status_mapping[$old_attendee_row['payment_status']]) ? $reg_status_mapping[$old_attendee_row['payment_status']] : 'RPP';
+		$event_required_pre_approval = $wpdb->get_var($wpdb->prepare("SELECT require_pre_approval FROM ".$wpdb->prefix."events_detail WHERE id = %d",$old_attendee_row['event_id']));
+		return $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID($old_attendee_row['payment_status'],
+				intval($event_required_pre_approval) && intval($old_attendee_row['pre_approve']));
 	}
 	/**
 	 * Adds however many rgistrations are indicated by the old attendee's QUANTITY field,

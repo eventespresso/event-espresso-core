@@ -1491,27 +1491,31 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	/**
 	 * Converst a 3.1 payment status to its equivalent 4.1 regisration status
 	 * @param string $payment_status possible value for 3.1's evens_attendee.payment_statsu
+	 * @param boolean $this_thing_required_pre_approval whether the thing we're considering (the general setting's default payment status,
+	 * the event's default payment status, or the attendee's payment status) required pre-approval.
 	 * @return string STS_ID for use in 4.1
 	 */
-	public function convert_3_1_payment_status_to_4_1_STS_ID($payment_status){
-		global $org_options;
-		if( ! $org_options){
-			$org_options = get_option('events_organization_settings');
-		}
-		$old_require_approval = $org_options['use_attendee_pre_approval'] == 'Y';
+	public function convert_3_1_payment_status_to_4_1_STS_ID($payment_status, $this_thing_required_pre_approval = false){
+
 		//EE team can read the related discussion: https://app.asana.com/0/2400967562914/9418495544455 
-		if($old_require_approval){
-				$mapping = $default_reg_stati_conversions=array(
-			'Completed'=>'RNA',
-			''=>'RNA',
-			'Incomplete'=>'RNA',
-			'Pending'=>'RNA');
+		if($this_thing_required_pre_approval){
+				return 'RNA';
 		}else{
 				$mapping = $default_reg_stati_conversions=array(
 			'Completed'=>'RAP',
 			''=>'RPP',
 			'Incomplete'=>'RPP',
-			'Pending'=>'RAP');
+			'Pending'=>'RAP',
+			//stati that only occured on 3.1 attendees:
+			'Payment Declined'=>'RPP',
+			'Not Completed'=>'RPP',
+			'Cancelled'=>'RPP',
+			'Declined'=>'RPP'
+					);
+				
+				
+				
+				
 		}
 		
 		return isset($mapping[$payment_status]) ? $mapping[$payment_status] : 'RNA';
