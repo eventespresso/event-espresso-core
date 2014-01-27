@@ -120,11 +120,11 @@ class EED_Events_Archive  extends EED_Module {
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
 		// set config
-		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive ) || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive )) {
 			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
 		}
 		// grid, text or dates ?
-		EED_Events_Archive::set_type();
+//		EED_Events_Archive::set_type();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		$this->_filter_query_parts();		
 		// check what template is loaded
@@ -490,7 +490,10 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public function template_include( $template ) {
+				// display event status banner ?
+		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner ) {
 			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
+		}
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
 			// don't know if theme uses the_excerpt
@@ -750,10 +753,10 @@ class EED_Events_Archive  extends EED_Module {
 		$CFG->display_address = isset( $CFG->display_address ) && ! empty( $CFG->display_address ) ? $CFG->display_address : TRUE;
 		$CFG->display_venue_details = isset( $CFG->display_venue_details ) && ! empty( $CFG->display_venue_details ) ? $CFG->display_venue_details : TRUE;
 		$CFG->display_expired_events = isset( $CFG->display_expired_events ) && ! empty( $CFG->display_expired_events ) ? $CFG->display_expired_events : FALSE;
-		$CFG->default_type = isset( $CFG->default_type ) && ! empty( $CFG->default_type ) ? $CFG->default_type : 'grid';
-		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
-		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
-		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
+//		$CFG->default_type = isset( $CFG->default_type ) && ! empty( $CFG->default_type ) ? $CFG->default_type : 'grid';
+//		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
+//		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
+//		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
 		$CFG->display_status_banner = !empty( $CFG->display_status_banner) ? $CFG->display_status_banner : FALSE;
 		return $CFG;
 	}
@@ -787,22 +790,22 @@ class EED_Events_Archive  extends EED_Module {
 		$CFG->EED_Events_Archive->display_address = isset( $REQ['display_address_in_event_list'] ) ? absint( $REQ['display_address_in_event_list'] ) : TRUE;
 		$CFG->EED_Events_Archive->display_venue_details = isset( $REQ['display_venue_details_in_event_list'] ) ? absint( $REQ['display_venue_details_in_event_list'] ) : TRUE;
 		$CFG->EED_Events_Archive->display_expired_events = isset( $REQ['display_expired_events'] ) ? absint( $REQ['display_expired_events'] ) : FALSE;
-		$CFG->EED_Events_Archive->default_type = isset( $REQ['default_type'] ) ? sanitize_text_field( $REQ['default_type'] ) : 'grid';
-		$CFG->EED_Events_Archive->event_list_grid_size = isset( $REQ['event_list_grid_size'] ) ? sanitize_text_field( $REQ['event_list_grid_size'] ) : 'medium';
-		$CFG->EED_Events_Archive->templates = array(
-				'full'  => EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php'
-			);
+//		$CFG->EED_Events_Archive->default_type = isset( $REQ['default_type'] ) ? sanitize_text_field( $REQ['default_type'] ) : 'grid';
+//		$CFG->EED_Events_Archive->event_list_grid_size = isset( $REQ['event_list_grid_size'] ) ? sanitize_text_field( $REQ['event_list_grid_size'] ) : 'medium';
+//		$CFG->EED_Events_Archive->templates = array(
+//				'full'  => EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php'
+//			);
 		
-		switch ( $CFG->EED_Events_Archive->default_type ) {
+//		switch ( $CFG->EED_Events_Archive->default_type ) {
 //			case 'dates' :
 //					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-dates-view.php';
 //				break;
 //			case 'text' :
 //					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-text-view.php';
 //				break;
-			default :
-					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
-		}
+//			default :
+//					$CFG->EED_Events_Archive->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
+//		}
 		
 		$CFG->EED_Events_Archive = isset( $REQ['reset_event_list_settings'] ) && absint( $REQ['reset_event_list_settings'] ) == 1 ? new EE_Events_Archive_Config() : $CFG->EED_Events_Archive;
 		$CFG->EED_Events_Archive->display_status_banner = !empty( $REQ['display_status_banner'] ) && $REQ['display_status_banner'] ? TRUE : FALSE;
