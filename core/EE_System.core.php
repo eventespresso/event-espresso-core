@@ -218,8 +218,10 @@ final class EE_System {
 	* @return void
 	*/
 	private function _manage_activation_process() {
-		// do NOT do this IF... we're NOT in the admin, OR on the WP login or register screens, OR it's an AJAX request
-		if ( ! is_admin() || ( is_admin() && isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  )) {
+
+		do_action('AHEE__EE_System___manage_activation_process__before');
+
+		if ( ! is_admin() || ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) || ( is_admin() && !is_user_logged_in() ) ) {
 			return;
 		}
 		// check if db has been updated, or if its a brand-new installation		

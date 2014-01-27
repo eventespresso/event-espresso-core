@@ -1483,9 +1483,9 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 	public $display_addresss;
 	public $display_venue_details;
 	public $display_expired_events;
-	public $default_type;
-	public $event_list_grid_size;
-	public $templates;
+//	public $default_type;
+//	public $event_list_grid_size;
+//	public $templates;
 	public $display_status_banner;
 	
 	public function __construct(){
@@ -1493,9 +1493,9 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 		$this->display_address = TRUE;
 		$this->display_venue_details = TRUE;
 		$this->display_expired_events = FALSE;
-		$this->default_type = 'grid';
-		$this->event_list_grid_size = 'medium';
-		$this->templates = array( 'full'  => EE_TEMPLATES . EE_Config::instance()->get_current_theme() . DS . 'archive-espresso_events.php' );
+//		$this->default_type = 'grid';
+//		$this->event_list_grid_size = 'medium';
+//		$this->templates = array( 'full'  => EE_TEMPLATES . EE_Config::instance()->get_current_theme() . DS . 'archive-espresso_events.php' );
 		$this->display_status_banner = FALSE;
 	}
 }
