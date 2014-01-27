@@ -140,6 +140,10 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
+		// set config
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Event_Single )) {
+			EE_Registry::instance()->CFG->template_settings->EED_Event_Single = new EE_Event_Single_Config();
+		}
 		// check what template is loaded
 		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
@@ -157,7 +161,9 @@ class EED_Event_Single  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public function template_include( $template ) {
-		add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
+		if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_status_banner_single ) {
+			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
+		}
 		// not a custom template?
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php' ) {
 			// then add extra event data via hooks
