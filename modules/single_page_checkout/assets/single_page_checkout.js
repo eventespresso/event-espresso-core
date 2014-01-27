@@ -1044,7 +1044,7 @@ jQuery(document).ready(function($) {
 				});
 			});		
 			// get target element from "this" (the control element's) "rel" attribute
-			var gateway_form = 'reg-page-billing-info-' + selected_payment_option.attr("rel"); 	
+			var gateway_form = '_reg-page-billing-info-' + selected_payment_option.attr("rel"); 	
 			$('#reg-page-selected-gateway').val( selected_payment_option.attr("rel") );
 			$('#'+gateway_form+'-dv').toggleClass( 'hidden' );
 			$('#'+gateway_form+'-dv').find( ':input' ).each( function() { 

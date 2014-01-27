@@ -24,24 +24,24 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		parent::_set_default_properties();
 		// list of fields required for capturing the billing address 
 		$this->_billing_info_address_fields = array(
-				'reg-page-billing-fname-' . $this->_gateway_name,
-				'reg-page-billing-lname-' . $this->_gateway_name,
-				'reg-page-billing-email-' . $this->_gateway_name,
-				'reg-page-billing-phone-' . $this->_gateway_name,
-				'reg-page-billing-address-' . $this->_gateway_name,
-				'reg-page-billing-city-' . $this->_gateway_name,
-				'reg-page-billing-state-' . $this->_gateway_name,
-				'reg-page-billing-country-' . $this->_gateway_name,
-				'reg-page-billing-zip-' . $this->_gateway_name
+				'_reg-page-billing-fname-' . $this->_gateway_name,
+				'_reg-page-billing-lname-' . $this->_gateway_name,
+				'_reg-page-billing-email-' . $this->_gateway_name,
+				'_reg-page-billing-phone-' . $this->_gateway_name,
+				'_reg-page-billing-address-' . $this->_gateway_name,
+				'_reg-page-billing-city-' . $this->_gateway_name,
+				'_reg-page-billing-state-' . $this->_gateway_name,
+				'_reg-page-billing-country-' . $this->_gateway_name,
+				'_reg-page-billing-zip-' . $this->_gateway_name
 		);
 
 		// list of fields required for capturing the credit card information
 		$this->_billing_info_credit_card_fields = array(
-				'reg-page-billing-card-type-' . $this->_gateway_name,
-				'reg-page-billing-card-nmbr-' . $this->_gateway_name,
-				'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name,
-				'reg-page-billing-card-exp-date-year-' . $this->_gateway_name,
-				'reg-page-billing-card-ccv-code-' . $this->_gateway_name
+				'_reg-page-billing-card-type-' . $this->_gateway_name,
+				'_reg-page-billing-card-nmbr-' . $this->_gateway_name,
+				'_reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name,
+				'_reg-page-billing-card-exp-date-year-' . $this->_gateway_name,
+				'_reg-page-billing-card-ccv-code-' . $this->_gateway_name
 		);
 	}
 
@@ -73,7 +73,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 				// answer
 				$answer = EE_Registry::instance()->REQ->is_set( $input_key ) ? EE_Registry::instance()->REQ->get( $input_key ) : $billing_input['value'];
 
-				if ( $input_key == 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ) {
+				if ( $input_key == '_reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ) {
 					
 					// Credit Card MONTH
 					add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'reg_form_billing_cc_month_input_wrap' ), 10, 2 );
@@ -99,7 +99,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 					add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
 					$output .= "\n\t\t\t" . '&nbsp;/&nbsp;';
 					
-				} elseif ( $input_key == 'reg-page-billing-card-exp-date-year-' . $this->_gateway_name ) {
+				} elseif ( $input_key == '_reg-page-billing-card-exp-date-year-' . $this->_gateway_name ) {
 					
 					// Credit Card YEAR							
 					// remove label
@@ -253,13 +253,13 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 				);
 		$confirm_data = array();
 		foreach ( $confirm_inputs as $confirm_name=>$billing_name ) {
-			if ( ! empty( $billing_info['reg-page-billing-'.$billing_name]['value'] )) {
-				$confirm_data[$confirm_name] = $billing_info['reg-page-billing-'.$billing_name]['value'];
+			if ( ! empty( $billing_info['_reg-page-billing-'.$billing_name]['value'] )) {
+				$confirm_data[$confirm_name] = $billing_info['_reg-page-billing-'.$billing_name]['value'];
 			}
 		}
-		$confirm_data['credit card #'] = $this->_EEM_Gateways->FormatCreditCard( $billing_info[ 'reg-page-billing-card-nmbr-' . $this->_gateway_name ]['value'] );
-		$confirm_data['expiry date'] = $billing_info[ 'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ]['value'] . '&nbsp;/&nbsp;';
-		$confirm_data['expiry date'] .= $billing_info[ 'reg-page-billing-card-exp-date-year-' . $this->_gateway_name ]['value'];
+		$confirm_data['credit card #'] = $this->_EEM_Gateways->FormatCreditCard( $billing_info[ '_reg-page-billing-card-nmbr-' . $this->_gateway_name ]['value'] );
+		$confirm_data['expiry date'] = $billing_info[ '_reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name ]['value'] . '&nbsp;/&nbsp;';
+		$confirm_data['expiry date'] .= $billing_info[ '_reg-page-billing-card-exp-date-year-' . $this->_gateway_name ]['value'];
 		return $confirm_data;
 	}
 	
