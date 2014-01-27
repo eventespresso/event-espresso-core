@@ -248,7 +248,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			$TKT_values = array(
 				'TKT_ID' => !empty( $tkt['TKT_ID'] ) ? $tkt['TKT_ID'] : NULL,
-				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 1,
+				'TTM_ID' => !empty( $tkt['TTM_ID'] ) ? $tkt['TTM_ID'] : 0,
 				'TKT_name' => !empty( $tkt['TKT_name'] ) ? $tkt['TKT_name'] : '',
 				'TKT_description' => !empty( $tkt['TKT_description'] ) && $tkt['TKT_description'] != __('You can modify this description', 'event_espresso') ? $tkt['TKT_description'] : '',
 				'TKT_start_date' => isset( $tkt['TKT_start_date'] ) ? $tkt['TKT_start_date'] : current_time('mysql'),
@@ -792,7 +792,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'starting_ticket_datetime_rows' => $default || $default_dtt ? '' : implode(',', $tkt_dtts),
 			'ticket_datetime_rows' => $default ? '' : implode(',', $tkt_dtts),
 			'existing_ticket_price_ids' => $default, '', implode(',', array_keys( $prices) ),
-			'ticket_template_id' => $default ? 1 : $ticket->get('TTM_ID'),
+			'ticket_template_id' => $default ? 0 : $ticket->get('TTM_ID'),
 			'TKT_taxable' => !empty( $ticket ) && $ticket->get('TKT_taxable') ? ' checked="checked"' : '',
 			'display_subtotal' => !empty( $ticket ) && $ticket->get('TKT_taxable') ? '' : ' style="display:none"',
 			'price_currency_symbol' => EE_Registry::instance()->CFG->currency->sign,

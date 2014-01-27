@@ -169,7 +169,7 @@
 
 							<!-- these hidden inputs are for tracking changes in prices attached to tickets during a js session, note we only ADD actual price ids to this list.  It only gets updated after a autosave (or manual update)-->
 						<input type="hidden" name="ticket_price_ids[1][]" id="ticket-price-ids-1" class="ticket-price-ids" value="1">
-						<input type="hidden" name="edit_tickets[1][TTM_ID]" class="ticket-template-id" value="1">
+						<input type="hidden" name="edit_tickets[1][TTM_ID]" class="ticket-template-id" value="0">
 
 						</fieldset>
 					</td>
@@ -323,7 +323,7 @@
 
 						<!-- these hidden inputs are for tracking changes in prices attached to tickets during a js session -->
 						<input type="hidden" name="ticket_price_ids[TICKETNUM][]" id="ticket-price-ids-TICKETNUM" class="ticket-price-ids">
-						<input type="hidden" name="edit_tickets[TICKETNUM][TTM_ID]" class="ticket-template-id" value="1">
+						<input type="hidden" name="edit_tickets[TICKETNUM][TTM_ID]" class="ticket-template-id" value="0">
 					</fieldset>
 				</td>
 			</tr>
