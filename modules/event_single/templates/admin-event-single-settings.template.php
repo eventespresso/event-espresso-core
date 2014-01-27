@@ -13,12 +13,12 @@ $values = array(
 		<tbody>
 			<tr>
 				<th>
-					<label for="display_status_banner">
+					<label for="display_status_banner_single">
 						<?php _e('Display Status Banner', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input( 'display_status_banner_single', $values, $display_status_banner_single, 'id="reset_event_list_settings"' ); ?>
+					<?php echo EEH_Form_Fields::select_input( 'display_status_banner_single', $values, $display_status_banner_single, 'id="display_status_banner_single"' ); ?>
 					<p class="description"><?php _e('Selecting "Yes" will instruct Event Espresso to inject an Event Status banner with the title whenever Events are displaying on the single event page.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
