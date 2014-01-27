@@ -108,24 +108,24 @@ $grid_sizes = array(
 
 			<tr>
 				<th>
+					<label for="display_status_banner">
+						<?php _e('Display Status Banner', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EEH_Form_Fields::select_input( 'display_status_banner', $values, $display_status_banner, 'id="display_status_banner"' ); ?>
+					<p class="description"><?php _e('Selecting "Yes" will instruct Event Espresso to inject an Event Status banner with the title whenever Events are displaying on the event list page.', 'event_espresso'); ?></p>
+				</td>
+			</tr>
+
+			<tr>
+				<th>
 					<label for="reset_event_list_settings">
 						<?php _e('Reset Event List Settings', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
 					<?php echo EEH_Form_Fields::select_input( 'reset_event_list_settings', $values, FALSE, 'id="reset_event_list_settings"' ); ?>
-				</td>
-			</tr>
-
-			<tr>
-				<th>
-					<label for="display_status_banner">
-						<?php _e('Display Status Banner', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<?php echo EEH_Form_Fields::select_input( 'display_status_banner', $values, $display_status_banner, 'id="reset_event_list_settings"' ); ?>
-					<p class="description"><?php _e('Selecting "Yes" will instruct Event Espresso to inject an Event Status banner with the title whenever Events are displaying on the event list page.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 
