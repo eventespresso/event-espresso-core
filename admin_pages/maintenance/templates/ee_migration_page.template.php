@@ -62,7 +62,7 @@
 		<?php }?>
 		<?php if ($show_backup_db_text){ ?>
 			<div id='backup_db_text'>
-				<p><?php _e("Before running the data migration, you are REQUIRED to perform a database backup, in case it has an error and your
+				<p class="ee-attention"><?php _e("Before running the data migration, you are REQUIRED to perform a database backup, in case it has an error and your
 					database is left corrupted.", "event_espresso");?></p>
 				<p><b><?php _e("Not sure how?", "event_espresso");?></b> 
 					<?php printf(__('%1$s here is an explanation of how to do it %2$s. Or you can also %3$s search for a database backup plugin %2$s', "event_espresso"),
