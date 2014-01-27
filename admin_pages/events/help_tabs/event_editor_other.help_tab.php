@@ -15,7 +15,7 @@
 </p>
 <h3><?php _e('Event Discussion', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Should comments, trackbacks, and pingbacks be allowed for your event? These appear directly after the event description on the event page.', 'event_espresso'); ?>
+<?php _e('Specify if comments, trackbacks, and pingbacks should be allowed for your event. These appear directly after the event description on the event page.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Event Slug', 'event_espresso'); ?></h3>
 <p>
@@ -23,7 +23,7 @@
 </p>
 <h3><?php _e('Event Author', 'event_espresso'); ?></h3>
 <p>
-<?php _e('This is the site member that will be credited for creating this event. The author will receive notifications such as event confirmations', 'event_espresso'); ?>
+<?php _e('This is the site member that will be credited for creating this event. The event author will receive notifications such as event confirmations. Ensure that the event author has a first name and last name filled out in their user profile. This option can be found in Users --> Your Profile.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Event Notifications', 'event_espresso'); ?></h3>
 <p>

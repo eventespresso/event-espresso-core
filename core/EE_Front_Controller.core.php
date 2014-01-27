@@ -125,10 +125,10 @@ final class EE_Front_Controller {
 		// header
 		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
+		// display errors
+		add_action('loop_start', array( $this, 'display_errors' ), 2 );			
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-		// display errors
-		add_action('wp_footer', array( $this, 'display_errors' ), 2 );			
 		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );			
@@ -523,9 +523,11 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function display_errors() {
+		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if(apply_filters( 'FHEE__EE_Front_Controller__display_errors',true) ){
+		if( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already ){
 			echo EE_Error::get_notices();
+			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );
 			EEH_Template::display_template( EE_TEMPLATES . 'espresso-ajax-notices.template.php' );
 		}

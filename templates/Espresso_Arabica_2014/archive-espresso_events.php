@@ -39,17 +39,13 @@ get_header();
 			<?php 
 					// allow other stuff
 					do_action( 'AHEE__archive_espresso_events_template__before_loop' ); 
-					// add pagination
-					espresso_event_list_pagination();					
 					// Start the Loop.
 					while ( have_posts() ) : the_post();
 						// Include the post TYPE-specific template for the content.
 						get_template_part( 'content', 'espresso_events' );
 					endwhile;
 					// Previous/next page navigation.
-//					twentyfourteen_paging_nav();
-					// moar  pagination
-					espresso_event_list_pagination(); 
+					twentyfourteen_paging_nav();
 					// allow moar other stuff
 					do_action( 'AHEE__archive_espresso_events_template__after_loop' );
 

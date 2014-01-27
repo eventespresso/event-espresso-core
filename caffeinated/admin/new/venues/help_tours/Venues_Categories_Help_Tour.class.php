@@ -121,7 +121,7 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _shortcode_stop() {
-		return '<p>' . __('View the shortcode for a venue. This shortcode can be added to an event, WordPress post, or WordPress page. ', 'event_espresso') . '</p>';
+		return '<p>' . __('View the shortcode for a venue category. This shortcode can be added to an event, WordPress post, or WordPress page. ', 'event_espresso') . '</p>';
 	}
 
 	protected function _count_stop() {

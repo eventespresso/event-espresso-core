@@ -569,6 +569,9 @@ input.ee-register-button {
 /******************* ERRORS AND NOTICES ****************** */
 
 
+.espresso-ajax-notices {
+	display: none;
+}
 #espresso-notices,
 #espresso-ajax-notices {
 	position: absolute;
@@ -576,10 +579,11 @@ input.ee-register-button {
 	width: 800px;
 	max-width: 90%;
 	text-align: center;
+	left: 50%;
+	margin-left:-320px;
 }
 .espresso-notices,
 .espresso-ajax-notices {
-	display: none;
 	position: relative;
 	width: 74.5%;
 	min-width: 200px;
@@ -685,13 +689,11 @@ input.ee-register-button {
 .hide-if-no-js {
 	display: none;
 }
-.cntr {
-	text-align: center;
-}
 
 .jst-left {
 	text-align: left;
 }
+.cntr,
 .jst-cntr {
 	text-align: center;
 }

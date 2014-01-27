@@ -194,6 +194,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 	padding: 0;
 	z-index: 20000;
 	font-size: 48px;
+	color: #000;
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
@@ -505,6 +506,10 @@ label.error  { display: block; color: #FE2A00 !important; }
 
 .espresso-admin .wp-list-table a {
 	display: inline-block;
+}
+
+.espresso-admin .form-table th {
+	width: 300px;
 }
 
 

@@ -59,6 +59,6 @@ class Payment_Methods_Settings_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _show_pending_options_stop() {
-		return '<p>' . __('Specify whether to provide your registrants with the option to retry payments', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether to provide your registrants with the option to retry payments.', 'event_espresso') . '</p>';
 	}
 }

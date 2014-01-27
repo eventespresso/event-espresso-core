@@ -1,24 +1,24 @@
 <h3><?php _e('Primary Registrant', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Shows information about the Registrant.', 'event_espresso'); ?><br />
+<?php _e('Shows information about the primary registrant.', 'event_espresso'); ?><br />
 </p>
 <p>
 <ul>
 <li>
 <?php _e('<strong>Name</strong>', 'event_espresso'); ?><br />
-<?php _e('Shows the name of the registrant.', 'event_espresso'); ?>
+<?php _e('Shows the name of the primary registrant.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('<strong>Email</strong>', 'event_espresso'); ?><br />
-<?php _e('Shows the email for the registrant.', 'event_espresso'); ?>
+<?php _e('Shows the email for the primary registrant.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('<strong>Phone #</strong>', 'event_espresso'); ?><br />
-<?php _e('Shows the phone number for registrant.', 'event_espresso'); ?>
+<?php _e('Shows the phone number for primary registrant.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('<strong>Address</strong>', 'event_espresso'); ?><br />
-<?php _e('Shows the address for the registrant.', 'event_espresso'); ?>
+<?php _e('Shows the address for the primary registrant.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

@@ -83,7 +83,7 @@ abstract class EE_Gateway {
 	abstract protected function _default_settings();
 	abstract protected function _update_settings();
 	abstract protected function _display_settings();
-	abstract public function espresso_display_payment_gateways();
+	abstract public function espresso_display_payment_gateways( $selected_gateway );
 	
 	protected function __construct(EEM_Gateways &$model) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -236,7 +236,7 @@ abstract class EE_Gateway {
 
 	private function _gateways_frontend() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		add_action('AHEE_display_payment_gateways', array(&$this, 'espresso_display_payment_gateways'));
+		add_action( 'AHEE_display_payment_gateways', array( $this, 'espresso_display_payment_gateways'), 10, 1 );
 		// grab session data for this gateway
 		if ( $gateway_data = EE_Registry::instance()->SSN->get_session_data( 'gateway_data' )) {
 			if ( isset( $gateway_data[ $this->_gateway_name ] )) {
@@ -423,7 +423,7 @@ abstract class EE_Gateway {
 		if (!$base_url) {
 			return FALSE;
 		}
-		$this->_form_url = add_query_arg(array('ee' => '_register', 'step' => 2, 'payment' => $this->_gateway_name), $base_url);
+		$this->_form_url = add_query_arg( array( 'ee' => '_register', 'step' => 'payment_options', 'payment' => $this->_gateway_name ), $base_url );
 		$this->_set_session_data();
 		return TRUE;
 	}

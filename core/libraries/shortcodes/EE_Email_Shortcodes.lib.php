@@ -123,7 +123,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 	private function _get_event_admin_emails() {
 
 		if ( !empty( $this->_data->admin_email ) ) {
-			return $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>';
+			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : $this->_data->admin_email;
 		}
 
 		//k this shortcode has been used else where.  Since we don't know what particular event this is for, let's loop through the events and get an array of event admins for the events.  We'll return the formatted list of admin emails and let the messenger make sure we only pick one if this is for a field that can only have ONE!.
@@ -164,7 +164,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			//only add an admin email if it is present.
 			if ( empty( $admin->email ) || $admin->email == '' ) continue;
 
-			$admin_email[] = $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>';
+			$admin_email[] = !empty( $admin->first_name ) ? $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>' : $admin->email;
 		}
 
 		$admin_email = implode( ',', $admin_email );

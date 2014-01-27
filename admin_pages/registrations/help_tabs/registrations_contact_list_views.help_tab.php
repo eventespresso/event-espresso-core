@@ -5,11 +5,11 @@
 <p>
 <ul>
 <li>
-<?php _e('<strong>In Use<\strong>', 'event_espresso'); ?><br />
+<?php _e('<strong>In Use</strong>', 'event_espresso'); ?><br />
 <?php _e('Show all contacts that are in use by Event Espresso.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Trash<\strong>', 'event_espresso'); ?><br />
+<?php _e('<strong>Trash</strong>', 'event_espresso'); ?><br />
 <?php _e('Show contacts that have been moved to the trash.', 'event_espresso'); ?>
 </li>
 </ul>
