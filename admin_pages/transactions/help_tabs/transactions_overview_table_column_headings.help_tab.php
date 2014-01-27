@@ -41,7 +41,7 @@
 <?php _e('The name of the events are shown here. Clicking the name will take you the edit event page.', 'event_espresso'); ?>
 </li>
 <li><strong><?php _e('Actions', 'event_espresso'); ?></strong><br />
-<?php _e('There are several actions that can be done by clicking the icons:', 'event_espresso'); ?>
+<?php _e('There are several actions that can be done by clicking the icons. These are explained below.', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
 <?php _e('<strong>View Transaction Details <span class="dashicons dashicons-search"></span></strong><br />Takes you to the individual transaction page. Clicking the date also takes you to the individual transaction page.', 'event_espresso'); ?>

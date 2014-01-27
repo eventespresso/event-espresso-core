@@ -1887,7 +1887,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$action_desc = $trash ? __('moved to the trash', 'event_espresso') : __('restored', 'event_espresso');
 
+		$action_desc = !empty( $this->_req_data['template_switch'] ) ? __('switched') : $action_desc;
+
 		$item_desc = $all ? _n('Message Template Group', 'Message Template Groups', $success, 'event_espresso') : _n('Message Template Context', 'Message Template Contexts', $success, 'event_espresso');
+
+		$item_desc = !empty( $this->_req_data['template_switch'] ) ? _n('template', 'templates', $success, 'event_espresso') : $item_desc;
 
 		if ( defined('DOING_AJAX') ) {
 			$this->_check_template_switch();

@@ -132,7 +132,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 		$this->_context_label = array(
 			'label' => __('recipient', 'event_espresso'),
 			'plural' => __('recipients', 'event_espresso'),
-			'description' => __('Recipient\'s are who will recieve the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
+			'description' => __('Recipient\'s are who will receive the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
 			);
 
 		$this->_contexts = array(
@@ -180,7 +180,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 		$admin_ids = array();
 		$admin_events = array();
 		$admin_attendees = array();
-		$addresees = array();
+		$addressees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {

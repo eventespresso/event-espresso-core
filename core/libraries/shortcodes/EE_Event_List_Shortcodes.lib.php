@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * 
  * this is a child class for the EE_Shortcodes library.  The EE_Event_List_Shortcodes lists all shortcodes related to Event Lists. 
  *
- * This is a special shortcode parser in that it will actually LOAD other parsers and recieve a template to parse via the Shortcode Parser.
+ * This is a special shortcode parser in that it will actually LOAD other parsers and receive a template to parse via the Shortcode Parser.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
  * 

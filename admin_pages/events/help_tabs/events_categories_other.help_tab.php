@@ -1,6 +1,6 @@
 <h3><?php _e('Event Categories Bulk Actions', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Bulk actions allow you to perform an action to multiple event categories at once. The following bulk actions are supported: Delete Permanently and Export Categories. To use the bulk action feature, place a checkmark next to the events that you want to include. Then select a bulk action from the menu and click on the Apply button.', 'event_espresso'); ?><br />
+<?php _e('Bulk actions allow you to perform an action to multiple event categories at once. The following bulk actions are supported: Delete Permanently and Export Categories. To use the bulk action feature, place a checkmark next to the event categories that you want to include. Then select a bulk action from the menu and click on the Apply button.', 'event_espresso'); ?><br />
 </p>
 <h3><?php _e('Event Categories Search', 'event_espresso'); ?></h3>
 <p>
