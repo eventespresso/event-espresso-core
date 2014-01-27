@@ -42,8 +42,10 @@ jQuery(document).ready(function($) {
 			queryobj.page = 'espresso_events';
 			queryobj.ee_admin_ajax = true;
 
-		
-			$('#espresso-ajax-loading').center().addOverlay().show();
+			if ( action == 'force_switch_template' )
+				$('#espresso-ajax-loading').center().show();
+			else
+				$('#espresso-ajax-loading').center().addOverlay().show();
 
 			//do post
 			$.ajax({
@@ -103,6 +105,7 @@ jQuery(document).ready(function($) {
 				EE_messages_evt_helper.get_template_content('#ee-msg-edit-form','cached_url','force_switch_template');
 				EE_messages_evt_helper.close_modal();
 				$('.messages-change-edit-templates-content', '.ee-admin-dialog-container').html('');
+
 			});
 		},
 
