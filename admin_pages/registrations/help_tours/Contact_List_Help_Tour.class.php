@@ -199,7 +199,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through registrations. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, and Registration Code.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through contacts. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, and Registration Code.', 'event_espresso') . '</p>';
 	}
 
 	protected function _contact_list_csv_export_stop() {

@@ -269,7 +269,9 @@ class EE_CPT_Strategy extends EE_BASE {
 
 	function get_edit_post_link( $url, $ID, $context ) {
 		// http://example.com/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
-		return wp_nonce_url( add_query_arg( array( 'page' => $this->CPT['post_type'] ), $url ), 'edit', 'edit_nonce' );
+		$scheme = is_ssl() ? 'https' : 'http';
+		$url = get_admin_url( EE_Config::instance()->core->current_blog_id, 'admin.php', $scheme );
+		return wp_nonce_url( add_query_arg( array( 'page' => $this->CPT['post_type'], 'post' =>$ID ), $url ), 'edit', 'edit_nonce' );
 	}
 
 

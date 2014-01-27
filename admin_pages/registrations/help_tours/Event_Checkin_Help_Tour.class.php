@@ -185,7 +185,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	protected function _start() {
 		$content = '<h3>' . __('Event Check-in', 'event_espresso') . '</h3>';
 		if ( isset( $this->_req_data['event_id'] ) ) {
-			$content .= '<p>' . __('This tour of the event check-in page will go over different areas of the screen to help you understand what they are used for.<br /><br /> Note: You are currently viewing the check-in for a specific event so you can toggle the check-in status for attendees.', 'event_espresso') . '</p>';
+			$content .= '<p>' . __('This tour of the Event Check-in page will go over different areas of the screen to help you understand what they are used for.<br /><br /> Note: You are currently viewing the check-in for a specific event so you can toggle the check-in status for attendees.', 'event_espresso') . '</p>';
 		} else {
 			$content .= '<p>' . __('This tour of the event check-in page will go over different areas of the screen to help you understand what they are used for. <br /><br /> Note: You must select an event from the dropdown menu before you can toggle the check-in status for an attendee.', 'event_espresso') . '</p>';
 		}
