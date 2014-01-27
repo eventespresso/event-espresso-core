@@ -49,7 +49,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			30 => array(
-				'id' => 'QST_admin_label',
+				'id' => 'QST_admin_label_disabled',
 				'content' => $this->_qst_admin_label_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -58,7 +58,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			40 => array(
-				'id' => 'QST_order',
+				'id' => 'QST_order_disabled',
 				'content' => $this->_qst_order_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -67,7 +67,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			50 => array(
-				'id' => 'QST_admin_only',
+				'id' => 'QST_admin_only_disabled',
 				'content' => $this->_qst_admin_only_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -76,7 +76,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			60 => array(
-				'id' => 'QST_type',
+				'id' => 'QST_type_disabled',
 				'content' => $this->_qst_type_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
