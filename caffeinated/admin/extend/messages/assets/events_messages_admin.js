@@ -100,18 +100,19 @@ jQuery(document).ready(function($) {
 
 		display_modal: function() {
 			var messages_content = $('#messages-change-edit-templates-dv').html();
-			dialogHelper.displayModal().addContent(messages_content);
+			var dialog = dialogHelper.displayModal().addContent(messages_content);
+			$('.ee-admin-dialog-container').scrollTo();
 			overlay.on('click', function() {
 				EE_messages_evt_helper.get_template_content('#ee-msg-edit-form','cached_url','force_switch_template');
 				EE_messages_evt_helper.close_modal();
 				$('.messages-change-edit-templates-content', '.ee-admin-dialog-container').html('');
-
 			});
 		},
 
 
 		close_modal: function() {
 			dialogHelper.closeModal();
+			$('#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox').scrollTo();
 		},
 
 
