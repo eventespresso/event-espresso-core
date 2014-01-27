@@ -45,8 +45,8 @@
 				</th>
 				<td>
 					<input class="small-text" type="text" id="PRT_order" name="PRT_order" value="<?php echo $price_type->order(); ?>"/><p class="description">
-					<?php _e('The order that Price Types are applied. .', 'event_espresso'); ?></p>
-					<p class="description"><?php _e('Price types are applied sequentially according to their Order, where higher ordered Price Types will affect lower ordered Price Types.<br/>Price types with equal Orders will be applied in parrallel to whatever total preceeds them and will not affect each other. Actual Prices will be set to "0" so that they are processed first. Taxes will be always be applied last but their order will still determine if they are applied in parralel or as compound taxes (one tax on top of the other).', 'event_espresso'); ?></p>
+					<?php _e('The order that Price Types are applied.', 'event_espresso'); ?></p>
+					<p class="description"><?php _e('Price types are applied sequentially according to their Order, where higher ordered Price Types will affect lower ordered Price Types.<br/>Price types with equal Orders will be applied in parallel to whatever total precedes them and will not affect each other. Actual Prices will be set to "0" so that they are processed first. Taxes will be always be applied last but their order will still determine if they are applied in parallel or as compound taxes (one tax on top of the other).', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 			
