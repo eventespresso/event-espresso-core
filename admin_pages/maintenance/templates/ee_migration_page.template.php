@@ -88,12 +88,15 @@
 	</div>
 	<?php if ($show_migration_progress){?>
 	<div id='migration-monitor' <?php echo $show_backup_db_text ? "style='display:none'" : ''?>>
+		<?php if( ! $show_continue_current_migration_script){?>
 		<p>
 			<a class="toggle-migration-monitor small-text" style="cursor: pointer;">
 				<span class="dashicons dashicons-arrow-left-alt2" style="top:0px;"></span><?php _e("return to previous screen", "event_espresso");?>			
 			</a>
 			<br/>
+			
 		</p>
+		<?php }?>
 		<div id='progress-area'>
 			<h3><?php echo $show_continue_current_migration_script ? array_shift($script_names) : array_shift($script_names);?></h3>
 			<div class="progress-responsive">
