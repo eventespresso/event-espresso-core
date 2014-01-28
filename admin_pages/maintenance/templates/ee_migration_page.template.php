@@ -133,4 +133,8 @@
 	</form>
 	<?php } ?>
 	
+	<div id="reset_db_div">
+		<h1><a href='<?php echo $reset_db_page_link?>'>Use EE4 without migrating data</a></h1>
+	</div>
+	
 </div>
