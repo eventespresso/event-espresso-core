@@ -966,7 +966,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 	    //make sure our timestampes start and end right at the boundaries for each day
 	    $start_date = date( 'Y-m-d', strtotime( $start_date ) ) . ' 00:00:00';
-	    $end_date = date( 'Y-m-d', strtotime( $end_date ) ) . ' 24:00:00';
+	    $end_date = date( 'Y-m-d', strtotime( $end_date ) ) . ' 23:59:59';
 
 
 	    //convert to timestamps
