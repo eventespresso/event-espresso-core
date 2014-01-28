@@ -110,7 +110,8 @@ var Maintenance_helper = {
 		kickoff_button.unbind('click');
 		kickoff_button.click(function(){
 			document.location.href = document.location.href + '&continue_migration=true';
-		});		
+		});
+		jQuery( '.progress-responsive__percent' ).css({ 'color' : '#fff' });
 		alert(ee_maintenance.click_next_when_ready);
 	},
 	//performs the ajax request, and if successful, calls setup.callback;
@@ -193,11 +194,13 @@ var Maintenance_helper = {
 
 jQuery(function() {
 //	alert("jquery a go");
+	jQuery('#db-backed-up').prop('checked', false);
 	//dynamic page stuff
 	//showing start-button and hiding explanatory text
-	jQuery('#db-backed-up').click(function(){
+	jQuery('.toggle-migration-monitor').click(function(){
 		jQuery('#migration-prep').toggle('slow');
 		jQuery('#migration-monitor').toggle('slow');
+		jQuery('#db-backed-up').prop('checked', false);
 	});
 	
 	//start migration, update start-button to be "migrating..." and disable it 
