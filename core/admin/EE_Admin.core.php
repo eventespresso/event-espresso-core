@@ -126,12 +126,17 @@ final class EE_Admin {
 		if ( ! $main_file ) {
 			$main_file = plugin_basename( EVENT_ESPRESSO_MAIN_FILE );
 		}
-		// compare current plugin to this one
-		if ( $plugin == $main_file ) {
-			$org_settings_link = '<a href="admin.php?page=espresso_general_settings">' . __( 'Settings', 'event_espresso' ) . '</a>';
-			$events_link = '<a href="admin.php?page=espresso_events">' . __( 'Events', 'event_espresso' ) . '</a>';
-			// add before other links
-			array_unshift( $links, $org_settings_link, $events_link );
+		 if ( $plugin == $main_file ) {
+		 	// compare current plugin to this one
+			if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+				$maintenance_link = '<a href="admin.php?page=espresso_maintenance_settings" title="Event Espresso is in maintenance mode.  Click this link to learn why.">' . __('Maintenance Mode Active', 'event_espresso' ) . '</a>';
+				array_unshift( $links, $maintenance_link );
+			} else {
+				$org_settings_link = '<a href="admin.php?page=espresso_general_settings">' . __( 'Settings', 'event_espresso' ) . '</a>';
+				$events_link = '<a href="admin.php?page=espresso_events">' . __( 'Events', 'event_espresso' ) . '</a>';
+				// add before other links
+				array_unshift( $links, $org_settings_link, $events_link );
+			}
 		}
 		return $links;
 	}
