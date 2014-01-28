@@ -163,7 +163,7 @@ final class EE_Admin {
 	 *	@return array
 	 */	
 	public function hide_admin_pages_except_maintenance_mode( $admin_page_folder_names = array() ){
-		return array('maintenance', 'about');
+		return array('maintenance', 'about','support');
 	}
 
 
