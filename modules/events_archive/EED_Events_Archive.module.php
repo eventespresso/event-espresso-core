@@ -128,7 +128,7 @@ class EED_Events_Archive  extends EED_Module {
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		$this->_filter_query_parts();		
 		// check what template is loaded
-		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
+		add_filter( 'template_include',  array( 'EED_Events_Archive', 'template_include' ), 999, 1 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		// load other required components
 		$this->_load_assests();
@@ -489,31 +489,29 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@access 	public
 	 *  	@return 	void
 	 */
-	public function template_include( $template ) {
+	public static function template_include( $template ) {
 				// display event status banner ?
 		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner ) {
-			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
+			add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 		}
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
 			// don't know if theme uses the_excerpt
-			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
-			add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
-			add_filter( 'the_excerpt', array( $this, 'event_tickets' ), 110 );
-			add_filter( 'the_excerpt', array( $this, 'event_datetimes' ), 120 );
-			add_filter( 'the_excerpt', array( $this, 'event_venues' ), 130 );
+			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
+			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
+			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 120 );
+			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130 );
 			// or the_content
-			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
-			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
-			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
-			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
-			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
-			// don't diplay entry meta because the existing theme will take car of that
+			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
+			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
+			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 120 );
+			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130 );
+			// don't diplay entry meta because the existing theme will take care of that
 			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 		} else {
 			remove_all_filters( 'excerpt_length' );
-			add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
-			add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );			
+			add_filter( 'excerpt_length', array( 'EED_Events_Archive', 'excerpt_length' ), 10 );
+			add_filter( 'excerpt_more', array( 'EED_Events_Archive', 'excerpt_more' ), 10 );			
 
 		}
 
@@ -530,7 +528,7 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@param		string 	$title
 	 *  	@return 		void
 	 */
-	public function the_title( $title = '', $id = '' ) {
+	public static function the_title( $title = '', $id = '' ) {
 		global $post;
 		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID  ) . $title :  $title;
 	}
@@ -544,19 +542,19 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@param		string 	$content
 	 *  	@return 		void
 	 */
-	public function event_details( $content ) {
+	public static function event_details( $content ) {
 		global $post;
 		// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
 		// it uses the_content() for displaying the $post->post_content
 		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
 		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
-		remove_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
-		remove_filter( 'the_content', array( $this, 'event_details' ), 100 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
 		// now load our template
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		//now add our filter back in, plus some others
-		add_filter( 'the_excerpt', array( $this, 'event_details' ), 100 );
-		add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
+		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return ! empty( $template ) ? $template : $content;
 	}
@@ -569,7 +567,7 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@param		string 	$content
 	 *  	@return 		void
 	 */
-	public function event_tickets( $content ) {
+	public static function event_tickets( $content ) {
 		return $content . EEH_Template::locate_template( 'content-espresso_events-tickets.php' );
 	}
 
@@ -580,7 +578,7 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@param		string 	$content
 	 *  	@return 		void
 	 */
-	public function event_datetimes( $content ) {
+	public static function event_datetimes( $content ) {
 		return $content . EEH_Template::locate_template( 'content-espresso_events-datetimes.php' );
 	}
 
@@ -591,8 +589,30 @@ class EED_Events_Archive  extends EED_Module {
 	 * 	@param		string 	$content
 	 *  	@return 		void
 	 */
-	public function event_venues( $content ) {
+	public static function event_venues( $content ) {
 		return $content . EEH_Template::locate_template( 'content-espresso_events-venues.php' );
+	}
+
+	/**
+	 * 	remove_all_events_archive_filters
+	 *
+	 *  	@access 	public
+	 *  	@return 		void
+	 */
+	public static function remove_all_events_archive_filters() {
+		remove_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
+		// don't know if theme uses the_excerpt
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 120 );
+		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130 );
+		// or the_content
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 120 );
+		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130 );
+		// don't diplay entry meta because the existing theme will take care of that
+		remove_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 	}
 
 
