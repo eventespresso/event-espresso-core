@@ -180,11 +180,11 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								</thead>
 								<tbody>								
 									<tr>
-										<td class="small-text"><b><?php echo $ticket->base_price()->name(); ?></b></td>
-										<td class="small-text"><?php echo $ticket->base_price()->desc(); ?></td>
-										<td class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
+										<td class="small-text"><b><?php echo $ticket->base_price( TRUE )->name(); ?></b></td>
+										<td class="small-text"><?php echo $ticket->base_price( TRUE )->desc(); ?></td>
+										<td class="jst-rght small-text"><?php echo $ticket->base_price( TRUE )->pretty_price(); ?></td>
 									</tr>
-								<?php $running_total = $ticket->base_price()->amount(); ?>
+								<?php $running_total = $ticket->base_price( TRUE )->amount(); ?>
 								<?php foreach ( $ticket->price_modifiers() as $price_mod ) : ?>								
 									<tr>
 										<td class="jst-rght small-text"><?php echo $price_mod->name(); ?></td>
