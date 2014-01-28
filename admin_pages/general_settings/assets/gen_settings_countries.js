@@ -229,7 +229,7 @@ jQuery(document).ready(function($) {
 	$('#update_country_settings_event_form').on( 'click', '.delete-state-lnk', function( e ){
 		e.preventDefault();
 		e.stopPropagation();
-		var urlParams = $(this).getParams();
+		var urlParams = $(this).eeGetParams();
 		if ( confirm( eei18n.confirm_delete_state )) {
 //			console.log( urlParams );
 			var CNT_ISO = urlParams['CNT_ISO'] != undefined && urlParams['CNT_ISO'] != '' ? urlParams['CNT_ISO'] : '';
