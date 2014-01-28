@@ -12,7 +12,7 @@
 var BG = {
 	update_progress_to: function(items_complete,items_total){
 		bar = jQuery('.progress-responsive__bar');
-		percent_complete = Math.floor((items_complete / items_total)*100) + '%';
+		percent_complete = Math.floor((items_complete / items_total)*100) + '% ('+items_complete+'/'+items_total+')';
 		bar.width(percent_complete);
 		
 		percent_dynamic_text = jQuery('.progress-responsive__percent');
