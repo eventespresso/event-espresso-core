@@ -287,7 +287,24 @@ final class EE_System {
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();
-		}	
+		}
+
+		if ( EE_System::req_type_new_activation || EE_System::req_type_reactivation || EE_System::req_type_upgrade ) {
+			$this->_redirect_to_about_ee();
+		}
+	}
+
+
+
+
+	/**
+	 * This redirects to the about EE page after activation
+	 * @return void
+	 */
+	public function _redirect_to_about_ee() {
+		$url = add_query_arg( array('page' => 'espresso_about'), admin_url( 'admin.php' ) );
+		wp_safe_redirect( $url );
+		exit();
 	}
 
 
