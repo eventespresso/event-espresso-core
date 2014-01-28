@@ -54,7 +54,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function get_menu_map() {
 		$map = array(
-			'group' => 'tools',
+			'group' => 'extras',
 			'menu_order' => 30,
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'espresso_tools'
