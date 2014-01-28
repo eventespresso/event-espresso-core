@@ -50,12 +50,15 @@ jQuery(document).ready(function($) {
 
 	var dialogHelper = {
 
-		displayModal: function() {
+		displayModal: function(overlaystick) {
+			overlaystick = typeof(overlaystick) === 'undefined' ? false : overlaystick;
 			position_overlay();
 			position_dialog();
-			overlay.on('click', function() {
-				dialogHelper.closeModal();
-			});
+			if ( ! overlaystick ) {
+				overlay.on('click', function() {
+					dialogHelper.closeModal();
+				});
+			}
 
 			return this;
 		},
