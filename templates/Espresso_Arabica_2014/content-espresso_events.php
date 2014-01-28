@@ -1,6 +1,6 @@
 <?php
 /**
- * This is template will display a single event - copy it to your theme folder
+ * This template will display a single event - copy it to your theme folder
  *
  * @ package		Event Espresso
  * @ author		Seth Shoultes
@@ -14,7 +14,7 @@ global $post;
 $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 ?>
 <?php do_action( 'AHEE_event_details_before_post', $post ); ?>
-<article id="post-<?php the_ID(); ?>" <?php post_class( 'espresso-event-details entry-content ' . $wrap_class ); ?>>
+<article id="post-<?php the_ID(); ?>" <?php post_class( $wrap_class ); ?>>
 
 	<div id="espresso-event-header-dv" class="">
 		<?php do_action( 'AHEE_event_details_before_featured_img', $post ); ?>		
