@@ -178,14 +178,20 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 										<th width="25%" class="cntr"><span class="small-text"><?php _e( 'Amount', 'event_espresso' ); ?></span></th>
 									</tr>
 								</thead>
-								<tbody>								
+								<tbody>
+									<?php if ( $ticket->base_price() instanceof EE_Price ) : ?>								
 									<tr>
 										<td class="small-text"><b><?php echo $ticket->base_price()->name(); ?></b></td>
 										<td class="small-text"><?php echo $ticket->base_price()->desc(); ?></td>
 										<td class="jst-rght small-text"><?php echo $ticket->base_price()->pretty_price(); ?></td>
 									</tr>
-								<?php $running_total = $ticket->base_price()->amount(); ?>
-								<?php foreach ( $ticket->price_modifiers() as $price_mod ) : ?>								
+									<?php 
+											$running_total = $ticket->base_price()->amount(); 
+										else : 
+											$running_total = 0; 
+										endif; 
+										// now add price modifiers
+										foreach ( $ticket->price_modifiers() as $price_mod ) : ?>								
 									<tr>
 										<td class="jst-rght small-text"><?php echo $price_mod->name(); ?></td>
 									<?php if ( $price_mod->is_percent() ) : ?>
