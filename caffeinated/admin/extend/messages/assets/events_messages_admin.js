@@ -43,7 +43,7 @@ jQuery(document).ready(function($) {
 			queryobj.ee_admin_ajax = true;
 
 			if ( action == 'force_switch_template' )
-				$('#espresso-ajax-loading').center().show();
+				$('#espresso-ajax-loading').center().show().addOverlay();
 			else
 				$('#espresso-ajax-loading').center().addOverlay().show();
 
@@ -102,10 +102,13 @@ jQuery(document).ready(function($) {
 			var messages_content = $('#messages-change-edit-templates-dv').html();
 			var dialog = dialogHelper.displayModal().addContent(messages_content);
 			$('.ee-admin-dialog-container').scrollTo();
-			overlay.on('click', function() {
-				EE_messages_evt_helper.get_template_content('#ee-msg-edit-form','cached_url','force_switch_template');
+			overlay.on('click', function(e) {
+				e.preventDefault();
+				e.stopPropagation();
 				EE_messages_evt_helper.close_modal();
 				$('.messages-change-edit-templates-content', '.ee-admin-dialog-container').html('');
+				EE_messages_evt_helper.get_template_content('#ee-msg-edit-form','cached_url','force_switch_template');
+				/**/
 			});
 		},
 
