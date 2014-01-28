@@ -2,7 +2,7 @@
 		
 	<h1><?php  echo $admin_page_title; ?></h1>
 	<div class="about-text"><?php echo !empty($admin_page_subtitle) ? $admin_page_subtitle : ''; ?></div>
-	<div class="ee-badge"><?php printf( __('Version %s', 'event_esrpesso' ),  EVENT_ESPRESSO_VERSION ); ?></div>
+	<div class="ee-badge"><span class="ee-icon ee-icon-ee-cup-thick"></span><br /><?php printf( __('Version %s', 'event_espresso' ),  EVENT_ESPRESSO_VERSION ); ?></div>
 	
 	<?php echo $nav_tabs; ?>
 

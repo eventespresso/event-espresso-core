@@ -74,7 +74,7 @@ div.TB-ee-frame a {
 
 /**** ee about page *****/
 .ee-badge {
-	background: url('https://ee-screenshots.s3.amazonaws.com/2012/06/logo.png') no-repeat;
+	/*background: url('https://ee-screenshots.s3.amazonaws.com/2012/06/logo.png') no-repeat;*/
 	background-position: center 24px;
 	background-size: 200px 60px;
 	background-color: #0074A2;
@@ -82,12 +82,17 @@ div.TB-ee-frame a {
 	text-align: center;
 	font-weight: 600;
 	margin: 5px 0 0;
-	padding-top: 100px;
-	height: 30px;
+	height: 120px;
+	padding-top: 10px;
 	display: inline-block;
-	width: 220px;
+	width: 120px;
 	color: #FFF;
 	text-rendering: optimizeLegibility;
+}
+
+.ee-badge .ee-icon-ee-cup-thick:before {
+	font-size: 80px;
+	margin-left: 20px;
 }
 
 .about-wrap .ee-badge {
