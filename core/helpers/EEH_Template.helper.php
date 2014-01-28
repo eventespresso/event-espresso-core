@@ -30,6 +30,37 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
 
 
 class EEH_Template {
+	
+	private static $_espresso_themes = array();
+
+
+	/**
+	 * 	is_espresso_theme - returns TRUE or FALSE on whether the currently active WP theme is an espresso theme
+	 * 
+	 * 	@return void
+	 */
+	public static function is_espresso_theme() {
+		return wp_get_theme()->get( 'TextDomain' ) == 'event_espresso' ? TRUE : FALSE;
+	}
+
+	/**
+	 * 	get_espresso_themes - returns an array of Espresso Child themes loacted in the /tmeplates/ directory
+	 * 
+	 * 	@return void
+	 */
+	public static function get_espresso_themes() {
+		if ( empty( EEH_Template::$_espresso_themes )) {
+			$espresso_themes =  glob( EE_TEMPLATES . '*', GLOB_ONLYDIR );
+			if (( $key = array_search( 'global_assets', $espresso_themes )) !== FALSE ) {
+			    unset( $espresso_themes[ $key ] );
+			}
+			EEH_Template::$_espresso_themes = array();
+			foreach ( $espresso_themes as $espresso_theme ) {
+				EEH_Template::$_espresso_themes[ basename( $espresso_theme ) ] = $espresso_theme;
+			}	
+		}
+		return EEH_Template::$_espresso_themes;
+	}
 
 
 	/**

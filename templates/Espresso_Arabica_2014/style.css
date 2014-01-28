@@ -659,12 +659,13 @@
 .espresso_venues .edit-link {
 	display: inline-block;
 }
-.event-content .entry-meta,
-.venue-content .entry-meta {
+.espresso_events .entry-meta,
+.espresso_venues .entry-meta {
+	display: inline-block;
 	max-width: 100%;
 }
-.event-content .entry-meta a,
-.venue-content .entry-meta a {
+.espresso_events .entry-meta a,
+.espresso_venues .entry-meta a {
 	text-decoration: none;
 }
 
