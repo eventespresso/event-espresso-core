@@ -195,7 +195,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 			foreach ( $this->_contexts as $context => $details ) {
 				foreach ( $this->_fields as $field => $field_type ) {
 					if ( $field !== 'extra' )
-						$this->_templates[$context][$field] = ( isset($this->_defaults['mt'][$field][$context]) ? $this->_defaults['mt'][$field][$context] : $this->_defaults['m'][$field] );
+						$this->_templates[$context][$field] = ( is_array($this->_defaults['mt'][$field]) && isset($this->_defaults['mt'][$field][$context]) ? $this->_defaults['mt'][$field][$context] : $this->_defaults['m'][$field] );
 				}
 			}
 
@@ -214,7 +214,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 					foreach ( $this->_contexts as $context => $details ) {
 						foreach ( $this->_fields as $field => $field_type ) {
 							if ( $field !== 'extra' ) {
-								$this->_templates[$context][$field] = ( isset($context_templates[$context][$field] ) ) ? $context_templates[$context][$field]->get('MTP_content') : '';
+								$this->_templates[$context][$field] = ( is_array( $context_templates[$context] ) && isset($context_templates[$context][$field] ) && $context_templates[$context][$field] instanceof EE_Message_Template ) ? $context_templates[$context][$field]->get('MTP_content') : '';
 							}
 						}
 					}
