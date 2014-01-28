@@ -252,6 +252,8 @@ final class EE_System {
 					//THEN, we just want to still give the system a chance to setup new default data
 					//first: double-check if this was called via an activation hook or a normal reqeust
 					$this->_setup_initialize_db_if_no_migrations_required();
+				} else {
+					$this->_maybe_redirect_to_ee_about(); //only on activation!
 				}
 //				echo "done upgrade";die;
 				break;
@@ -280,6 +282,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function initialize_db_if_no_migrations_required(){
+		$request_type = $this->detect_req_type();
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			// set flag for flushing rewrite rules
@@ -287,7 +290,24 @@ final class EE_System {
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();
-		}	
+		}
+
+		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
+			$this->redirect_to_about_ee();
+		}
+	}
+
+
+
+
+	/**
+	 * This redirects to the about EE page after activation
+	 * @return void
+	 */
+	public function redirect_to_about_ee() {
+		$url = add_query_arg( array('page' => 'espresso_about'), admin_url( 'admin.php' ) );
+		wp_safe_redirect( $url );
+		exit();
 	}
 
 
@@ -309,6 +329,16 @@ final class EE_System {
 			//if via a normal request, then we need to wait to run activation-type-code
 			//until we_rewrite is defined by WP (on init hook) otherwise we'll have troubles
 			add_action('init',array($this,'initialize_db_if_no_migrations_required'),2);
+		}
+	}
+
+
+
+	private function _maybe_redirect_to_ee_about() {
+		if( self::$_activation ) {
+			$this->redirect_to_about_ee();
+		} else {
+			add_action('init', array($this, 'redirect_to_about_ee'), 10 );
 		}
 	}
 

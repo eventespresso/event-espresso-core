@@ -425,11 +425,11 @@ abstract class EE_Gateway {
 		}
 		$params = array( 'ee' => '_register', 'step' => 'payment_options', 'payment' => $this->_gateway_name );
 		// returning from the thank you page ?
-		if( EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
+		if( EE_Registry::instance()->REQ instanceof EE_Request_Handler && EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
 			$params['e_reg_url_link'] = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
 		}
 		// are we returning to the page to edit attendee info or retry a payment?
-		if ( EE_Registry::instance()->REQ->is_set( 'revisit' ) ) {
+		if ( EE_Registry::instance()->REQ instanceof EE_Request_Handler && EE_Registry::instance()->REQ->is_set( 'revisit' ) ) {
 			$params['revisit'] = EE_Registry::instance()->REQ->get( 'revisit' ) == 1 ? TRUE : FALSE;
 		}		
 		$this->_form_url = add_query_arg( $params, $base_url );
