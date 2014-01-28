@@ -418,12 +418,21 @@ abstract class EE_Gateway {
 		$this->_display_settings_help();
 	}
 
-	public function set_form_url($base_url = FALSE) {
+	public function set_form_url( $base_url = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if (!$base_url) {
+		if ( ! $base_url ) {
 			return FALSE;
 		}
-		$this->_form_url = add_query_arg( array( 'ee' => '_register', 'step' => 'payment_options', 'payment' => $this->_gateway_name ), $base_url );
+		$params = array( 'ee' => '_register', 'step' => 'payment_options', 'payment' => $this->_gateway_name );
+		// returning from the thank you page ?
+		if( EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
+			$params['e_reg_url_link'] = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
+		}
+		// are we returning to the page to edit attendee info or retry a payment?
+		if ( EE_Registry::instance()->REQ->is_set( 'revisit' ) ) {
+			$params['revisit'] = EE_Registry::instance()->REQ->get( 'revisit' ) == 1 ? TRUE : FALSE;
+		}		
+		$this->_form_url = add_query_arg( $params, $base_url );
 		$this->_set_session_data();
 		return TRUE;
 	}
