@@ -491,11 +491,11 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function template_include( $template ) {
 				// display event status banner ?
-		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner ) {
+		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner && ! EEH_Template::is_espresso_theme() ) {
 			add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 		}
 		// if NOT a custom template
-		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' ) {
+		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' && ! EEH_Template::is_espresso_theme() ) {
 			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
@@ -553,8 +553,8 @@ class EED_Events_Archive  extends EED_Module {
 		// now load our template
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 		//now add our filter back in, plus some others
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
-		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
+//		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
+//		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return ! empty( $template ) ? $template : $content;
 	}
