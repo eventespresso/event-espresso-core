@@ -72,6 +72,40 @@ div.TB-ee-frame a {
 	line-height: 2em;
 }
 
+/**** ee about page *****/
+.ee-badge {
+	/*background: url('https://ee-screenshots.s3.amazonaws.com/2012/06/logo.png') no-repeat;*/
+	background-position: center 24px;
+	background-size: 200px 60px;
+	background-color: #0074A2;
+	font-size: 14px;
+	text-align: center;
+	font-weight: 600;
+	margin: 5px 0 0;
+	height: 120px;
+	padding-top: 10px;
+	display: inline-block;
+	width: 120px;
+	color: #FFF;
+	text-rendering: optimizeLegibility;
+}
+
+.ee-badge .ee-icon-ee-cup-thick:before {
+	font-size: 80px;
+	margin-left: 20px;
+}
+
+.about-wrap .ee-badge {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.espresso-admin .about-text {
+	width: 80%;
+}
+
+
 /******************* DASHICONS ****************** */
 
 @font-face {
@@ -85,7 +119,7 @@ div.TB-ee-frame a {
 	font-style: normal;
 }
 
-.dashicons, .ee-dashicons, .ee-icon:before, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before {
+.dashicons, .ee-dashicons, .ee-icon:before, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
 	position: relative;
 	top: -2px;
 	font-size: inherit;
@@ -95,7 +129,7 @@ div.TB-ee-frame a {
 	width: auto;	
 }
 
-.ee-icon:before, .ee-dashicons, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before {
+.ee-icon:before, .ee-dashicons, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
 	display: inline-block;
 	font-family: 'ee_dashicons' !important; /** using important b/c wp has dashicons setup with important for wp-menu-image and I had to override **/
  	font-style: normal;
@@ -118,7 +152,7 @@ div.TB-ee-frame a {
 	font-family: 'dashicons' !important;
 }
 
-#toplevel_page_espresso_events div.wp-menu-image:before, #wpadminbar .ee-icon:before {
+#toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before, #wpadminbar .ee-icon:before {
 	margin-left: 8px;
 	font-weight: 700 !important; /** using important b/c wp has dashicons setup with important  in wp-menu-image and I had to override **/
 	font-size: 18px;
@@ -169,7 +203,7 @@ div.TB-ee-frame a {
 .ee-icon-ee-cup:before {
 	content: "\e60e";
 }
-.ee-icon-ee-cup-thick:before, #toplevel_page_espresso_events div.wp-menu-image:before {
+.ee-icon-ee-cup-thick:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
 	content: "\e60f";
 }
 .ee-icon-clone:before {
@@ -223,6 +257,26 @@ div.TB-ee-frame a {
 /** icon adjustments **/
 .ee-icon-color-grey:before {
 	color: #888;
+}
+
+.ee-icon-color-ee-grey:before {
+	color: #AC9D9C;
+}
+
+.ee-icon-color-ee-orange:before {
+	color: #E76700;
+}
+
+.ee-icon-color-ee-blue:before {
+	color: #00B1CA;
+}
+
+.ee-icon-color-ee-green:before {
+	color: #70CC50;
+}
+
+.ee-icon-color-ee-red:before {
+	color: #E44064;
 }
 
 .ee-icon-size-12:before {

@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Message_Templates_Edit_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Msg Editor Tour', 'event_espresso');
+		$this->_label = __('Message Template Editor Tour', 'event_espresso');
 		$this->_slug = 'messages-templates-edit-joyride';
 	}
 
@@ -96,19 +96,19 @@ class Message_Templates_Edit_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Edit Message Template Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This screen allows you to customize your messages to both yourself and your clients.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Message Template Editor', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the Message Template Editor page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 
 	protected function _context_switcher_stop() {
-		return '<p>' . __('This dropdown allows you to swap between the different recipients templates that are available in this message type. Don\'t forget to save first before swapping! ', 'event_espresso') . '</p>';
+		return '<p>' . __('This dropdown allows you to swap between the different recipients templates that are available in this message type. Be sure to save changes befor switching to a different context.', 'event_espresso') . '</p>';
 	}
 
 
 	protected function _preview_button_stop() {
-		return '<p>' . __('Clicking this will show you a preview of how your message will look.', 'event_espresso') . '</p>';
+		return '<p>' . __('Clicking this button will show you a preview of how your message will look.', 'event_espresso') . '</p>';
 	}
 
 

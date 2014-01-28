@@ -414,21 +414,32 @@ abstract class EE_Messages_Validator extends EE_Base {
 		if ( empty( $value ) )
 			return $validate;
 
+		//first determine if there ARE any shortcodes.  If there are shortcodes and then later we find that there were no other valid emails but the field isn't empty... that means we've got extra commas that were left after stripping out shortcodes so probably still valid.
+		$has_shortcodes = preg_match('/(\[.+?\])/', $value);
+
 		//first we need to strip out all the shortcodes!
 		$value = preg_replace('/(\[.+?\])/', '', $value);
 
 		//if original value is not empty and new value is, then we've parsed out a shortcode and we now have an empty string which DOES validate. We also validate complete empty field for email because its possible that this message is being "turned off" for a particular context
+		
+
 		if ( !empty($or_val) && empty($value) )
 			return $validate;
 
 		//trim any commas from beginning and end of string ( after whitespace trimmed );
 		$value = trim( trim($value), ',' );
 
+
 		//next we need to split up the string if its comma delimited.
 		$emails = explode(',', $value);
-
+		$empty = FALSE; //used to indicate that there is an empty comma.
 		//now let's loop through the emails and do our checks
 		foreach ( $emails as $email ) {
+			if ( empty($email) ) {
+				$empty = TRUE;
+				continue;
+			}
+
 			//trim whitespace
 			$email = trim($email);
 			//either its of type "bob@whatever.com", or its of type "fname lname <few@few.few>"
@@ -444,6 +455,8 @@ abstract class EE_Messages_Validator extends EE_Base {
 				}
 			}
 		}
+
+		$validate = $empty && !$has_shortcodes ? FALSE : $validate;
 		
 		return $validate;
 

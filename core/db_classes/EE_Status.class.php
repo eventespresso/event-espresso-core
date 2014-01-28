@@ -93,83 +93,10 @@ class EE_Status extends EE_Base_Class{
 	 * Gets code
 	 * @return string
 	 */
-	function code() {
-		$translated_code = '';
-		switch ( $this->get('STS_code' ) ) {
-			case 'ACTIVE' :
-				$translated_code = __('ACTIVE', 'event_espresso');
-				break;
-			case 'REGISTRATION_CLOSED' :
-				$translated_code = __('REGISTRATION CLOSED', 'event_espresso');
-				break;
-			case 'DELETED' :
-				$translated_code = __('DELETED', 'event_espresso');
-				break;
-			case 'DENIED' :
-				$translated_code = __('DENIED', 'event_espresso');
-				break;
-			case 'DRAFT' :
-				$translated_code = __('DRAFT', 'event_espresso');
-				break;
-			case 'SENT' :
-				$translated_code = __('SENT', 'event_espresso');
-				break;
-			case 'EXPIRED' :
-				$translated_code = __('EXPIRED', 'event_espresso');
-				break;
-			case 'NOT_ACTIVE' :
-				$translated_code = __('NOT ACTIVE', 'event_espresso');
-				break;
-			case 'REGISTRATION_NOT_OPEN' :
-				$translated_code = __('REGISTRATION NOT OPEN', 'event_espresso');
-				break;
-			case 'ONGOING' :
-				$translated_code = __('ONGOING', 'event_espresso');
-				break;
-			case 'REGISTRATION_OPEN' :
-				$translated_code = __('REGISTRATION OPEN', 'event_espresso');
-				break;
-			case 'CANCELLED' :
-				$translated_code = __('CANCELLED', 'event_espresso');
-				break;
-			case 'DECLINED' :
-				$translated_code = __('DECLINED', 'event_espresso');
-				break;
-			case 'FAILED' :
-				$translated_code = __('FAILED', 'event_espresso');
-				break;
-			case 'PENDING' :
-				$translated_code = __('PENDING', 'event_espresso');
-				break;
-			case 'APPROVED' :
-				$translated_code = __('APPROVED', 'event_espresso');
-				break;
-			case 'NOT_APPROVED' :
-				$translated_code = __('NOT APPROVED', 'event_espresso');
-				break;
-			case 'SECONDARY' :
-				$translated_code = __('SECONDARY', 'event_espresso');
-				break;
-			case 'COMPLETE' :
-				$translated_code = __('COMPLETE', 'event_espresso');
-				break;
-			case 'INCOMPLETE' :
-				$translated_code = __('INCOMPLETE', 'event_espresso');
-				break;
-			case 'OVERPAID' :
-				$translated_code = __('OVERPAID', 'event_espresso');
-				break;
-			case 'OPEN' :
-				$translated_code = __('OPEN', 'event_espresso');
-				break;
-
-			default :
-				$translated_code = $this->get('STS_code');
-				break;
-	    }
-
-	    //return filtered translated code so if addons add their own code they can make sure it's translatable as well (if they want to do it this way).
-	    return apply_filters('FHEE__EE_Status__code__translated_status_code', $translated_code);
+	function code( $plural = FALSE, $schema = 'upper' ) {
+		$id = $this->get('STS_ID');
+		$code = EEM_Status::instance()->localized_status( array( $id => $this->get('STS_code') ), $plural, $schema );
+		return $code[$id];
 	}
 
 	/**

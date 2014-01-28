@@ -126,7 +126,7 @@ class Venues_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Venue Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the venues overview page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Venues Overview page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 	
@@ -159,7 +159,7 @@ class Venues_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through venues. The following sources will be searched: venue name, venue description, venue short description, venue address, venue city, venue zip / postal code, venue phone, venue URL, venue virtual phone, venue Google map link, event name, event description, event phone, and event external url.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through venues. The following sources will be searched: Venue Name, Venue Description, Venue Short Description, Venue Address, Venue City, Venue Zip / Postal Code, Venue Phone, Venue URL, Venue Virtual Phone, Venue Google Map link, Event Name, Event Description, Event Phone, and Event External URL.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _new_venue_stop() {

@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('TXN Overview Tour', 'event_espresso');
+		$this->_label = __('Transactions Overview Tour', 'event_espresso');
 		$this->_slug = 'transaction-overview-joyride';
 	}
 
@@ -55,15 +55,6 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentX' => 25,
-					'tipAdjustmentY' => -30
-					)
-				),
-			40 => array(
-				'id' => 'STS_ID',
-				'content' => $this->_txn_status_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentX' => 0,
 					'tipAdjustmentY' => -30
 					)
 				),
@@ -126,7 +117,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_legend_stop(),
 				'options' => array(
 					'tipLocation' => 'right',
-					'tipAdjustmentX' => 0,
+					'tipAdjustmentX' => 15,
 					'tipAdjustmentY' => -40
 					)
 				),
@@ -154,20 +145,16 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Transactions Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the transactions overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Transactions Overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _txn_id_stop() {
-		return '<p>' . __('Sort by transaction id in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View transaction ID. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_timestamp_stop() {
-		return '<p>' . __('Sort by transaction date in ascending or descending order.', 'event_espresso') . '</p>';
-	}
-
-	protected function _txn_status_stop() {
-		return '<p>' . __('Sort by transaction status in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View transaction date. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_total_stop() {
@@ -179,15 +166,15 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('Sort by name of attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View name for the primary registrant. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _att_email_stop() {
-		return '<p>' . __('Sort by email address of primary registrant in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View email address for primary registrant. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _event_name_stop() {
-		return '<p>' . __('Sort by name of event in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View name of event. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _actions_stop() {
@@ -195,7 +182,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _legend_stop() {
-		return '<p>' . __('This legend that describes the actions available in the actions column.', 'event_espresso') . '</p>';
+		return '<p>' . __('This legend that describes the actions available in the actions column. Also shows available statuses for a transaction.', 'event_espresso') . '</p>';
 	}
 
 	protected function _stop_about_filters() {
@@ -203,7 +190,7 @@ class Transactions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through transactions. The following sources will be searched: event name, event description, attendee first name, attendee last name, attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration group size, ticket name, ticket description, payment method, payment gateway, transaction details, and transaction session data.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through transactions. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, Ticket Description, Payment Method, Payment Gateway, Transaction Details, and Transaction Session.', 'event_espresso') . '</p>';
 	}
 
 }

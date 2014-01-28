@@ -1,2 +1,1 @@
-<p><em>[QUESTION]</em>
-[ANSWER]</p>
+<li class="question-item">[QUESTION]<br /><em>[ANSWER]</em></li>

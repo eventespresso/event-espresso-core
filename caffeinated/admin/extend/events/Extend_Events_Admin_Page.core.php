@@ -101,12 +101,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//partial route/config override
 		$this->_page_config['import_events']['metaboxes'] = $this->_default_espresso_metaboxes;
 		$this->_page_config['create_new']['metaboxes'][] = '_premium_event_editor_meta_boxes';
-		$this->_page_config['create_new']['qtips'] = array(
-					'EE_Event_Editor_Tips'
-					);
-		$this->_page_config['edit']['qtips'] = array( 
-			'EE_Event_Editor_Tips'
-			);
+		$this->_page_config['create_new']['qtips'][] = 'EE_Event_Editor_Tips';
+		$this->_page_config['edit']['qtips'][] = 'EE_Event_Editor_Tips';
 		$this->_page_config['edit']['metaboxes'][] = '_premium_event_editor_meta_boxes';
 
 		//add tickets tab but only if there are more than one default ticket!
@@ -131,7 +127,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				),
 				'help_tabs' => array(
 					'import_help_tab' => array(
-						'title' => __('Import', 'event_espresso'),
+						'title' => __('Event Espresso Import', 'event_espresso'),
 						'filename' => 'events_import'
 						)
 					),
@@ -150,7 +146,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//filters for event list table
 		add_filter('FHEE__Events_Admin_List_Table__filters', array( $this, 'list_table_filters'), 10, 2);
-		add_filter('FHEE_list_table_events_actions_column_action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
+		add_filter('FHEE__Events_Admin_List_Table__column_actions__action_links', array( $this, 'extra_list_table_actions'), 10, 2 );
+
+		//legend item
+		add_filter('FHEE__Events_Admin_Page___event_legend_items__items', array( $this, 'additional_legend_items') );
 
 	}
 
@@ -291,12 +290,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-	protected function _event_legend_items() {
-		$items = parent::_event_legend_items();
+	public function additional_legend_items($items) {
 		$items['reports'] = array(
 				'class' => 'dashicons dashicons-chart-bar',
 				'desc' => __('Event Reports', 'event_espresso')
 			);
+		$items['empty'] = array('class'=>'empty', 'desc' => '');
 		return $items;
 	}
 
@@ -429,7 +428,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			array('id' => true, 'text' => __('Yes', 'event_espresso')),
 			array('id' => false, 'text' => __('No', 'event_espresso'))
 		);
-		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined));
+		$default_reg_status_values = EEM_Registration::reg_status_array(array(EEM_Registration::status_id_cancelled, EEM_Registration::status_id_declined), TRUE);
 		$template_args['active_status'] = $this->_cpt_model_obj->pretty_active_status(FALSE);
 		$template_args['_event'] = $this->_cpt_model_obj;
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
@@ -437,7 +436,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
 		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
 		$template_args['EVT_default_registration_status'] = EEH_Form_Fields::select_input('EVT_default_registration_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status() );
-		$template_args['additional_registration_options'] = apply_filters('FHEE_additional_registration_options_event_edit_page', '', $template_args, $yes_no_values, $default_reg_status_values);
+		$template_args['additional_registration_options'] = apply_filters( 'FHEE__Events_Admin_Page__registration_options_meta_box__additional_registration_options', '', $template_args, $yes_no_values, $default_reg_status_values );
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
 		EEH_Template::display_template($templatepath, $template_args);
 	}
@@ -688,7 +687,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		}
 
 		$where = array(
-				//'Datetime.DTT_is_primary' => 1,
 		);
 
 		$status = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
@@ -784,7 +782,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	public function get_default_tickets( $per_page = 10, $count = FALSE, $trashed = FALSE ) {
 
 		$orderby= empty( $this->_req_data['orderby'] ) ? 'TKT_name' : $this->_req_data['orderby'];
-		$order = empty( $this->_req_data['order'] ) ? 'ASC' : $order;
+		$order = empty( $this->_req_data['order'] ) ? 'ASC' : $this->_req_data['order'];
 
 		switch ( $orderby ) {
 			case 'TKT_name' :

@@ -246,8 +246,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		wp_enqueue_script('cpt-autosave');/**/ //todo re-enable when we start doing autosave again in 4.2
 
 		//filter _autosave_containers
-		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_setup_autosave_js_containers', $this->_autosave_containers, $this );
-		$containers = apply_filters('FHEE__EE_Admin_Page_CPT_' . get_class($this) . '_setup_autosave_js_containers', $containers, $this );
+		$containers = apply_filters( 'FHEE__EE_Admin_Page_CPT___load_autosave_scripts_styles__containers', $this->_autosave_containers, $this );
+		$containers = apply_filters( 'FHEE__EE_Admin_Page_CPT__' . get_class($this) . '___load_autosave_scripts_styles__containers', $containers, $this );
 
 		wp_localize_script('event_editor_js', 'EE_AUTOSAVE_IDS', $containers ); //todo once we enable autosaves, this needs to be switched to localize with "cpt-autosave"
 
@@ -372,16 +372,18 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return string html for dropdown
 	 */
 	public function custom_post_stati_dropdown() {
-		global $post;
-		$statuses = EEM_CPT_Base::get_custom_post_statuses();
+
+		$statuses = $this->_cpt_model_obj->get_custom_post_statuses();
+		$cur_status_label = array_key_exists($this->_cpt_model_obj->status(), $statuses) ? $statuses[$this->_cpt_model_obj->status()] : '';
 		$template_args = array(
-			'cur_status' =>  $post->post_status,
+			'cur_status' =>  $this->_cpt_model_obj->status(),
 			'statuses' => $statuses,
-			'cur_status_label' => array_key_exists($post->post_status, $statuses) ? $statuses[$post->post_status] : ''
+			'cur_status_label' => $cur_status_label,
+			'localized_status_save' => sprintf( __('Save %s', 'event_espresso'), $cur_status_label )
 			);
 
 		//we'll add a trash post status (WP doesn't add one for some reason)
-		if ( $post->post_status == 'trash' ) {
+		if ( $this->_cpt_model_obj->status() == 'trash' ) {
 			$template_args['cur_status_label'] = __('Trashed', 'event_espresso');
 			$statuses['trash'] = __('Trashed', 'event_espresso');
 			$template_args['statuses'] = $statuses;
@@ -442,8 +444,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			$this->_template_args['success'] = TRUE;
 		}
 
-		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff', $this );
-		do_action('AHEE__EE_Admin_Page_CPT_core_do_extra_autosave_stuff_' . get_class( $this ), $this );
+		do_action( 'AHEE__EE_Admin_Page_CPT__do_extra_autosave_stuff__global_after', $this );
+		do_action( 'AHEE__EE_Admin_Page_CPT__do_extra_autosave_stuff__after_' . get_class( $this ), $this );
 
 		//now let's return json
 		$this->_return_json();		
@@ -499,7 +501,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 				
 		$this->_cpt_route = isset( $this->_cpt_routes[$this->_req_action] ) ? TRUE : FALSE;
-		//add_action('FHEE_admin_load_page_dependencies', array( $this, 'modify_current_screen') );
+		//add_action('FHEE__EE_Admin_Page___load_page_dependencies__after_load', array( $this, 'modify_current_screen') );
 
 
 		if ( empty( $this->_cpt_object ) ) {
@@ -534,6 +536,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		require_once( EE_MODELS . $this->_cpt_model_names[$this->_req_action] . '.model.php' );
 		$model = call_user_func( array( $this->_cpt_model_names[$this->_req_action] , 'instance' ) );
 		$this->_cpt_model_obj = !empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
+
+		do_action( 'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object' );
 	}
 
 
@@ -644,6 +648,35 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	public function admin_footer_scripts_global() {
 		$this->_add_admin_page_ajax_loading_img();
 		$this->_add_admin_page_overlay();
+	}
+
+
+
+	/**
+	 * add in any global scripts for cpt routes
+	 * @return void
+	 */
+	public function load_global_scripts_styles() {
+		parent::load_global_scripts_styles();
+
+		if ( $this->_cpt_model_obj instanceof EE_CPT_Base ) {
+			//setup custom post status object for localize script but only if we've got a cpt object
+			$statuses = $this->_cpt_model_obj->get_custom_post_statuses();
+
+			if ( !empty($statuses) ) {
+				//get ALL statuses!
+				$statuses = $this->_cpt_model_obj->get_all_post_statuses();
+				//setup object
+				$ee_cpt_statuses = array();
+				foreach ( $statuses as $status => $label ) {
+					$ee_cpt_statuses[$status] = array(
+						'label' => $label,
+						'save_label' => sprintf( __('Save as %s', 'event_espresso'), $label )
+						);
+				}
+				wp_localize_script('ee_admin_js', 'eeCPTstatuses', $ee_cpt_statuses );
+			}
+		}
 	}	
 
 

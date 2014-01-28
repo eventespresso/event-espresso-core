@@ -59,7 +59,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _ajax_hooks() {
 		add_action('wp_ajax_espresso_display_country_settings', array( $this, 'display_country_settings'));
 		add_action('wp_ajax_espresso_display_country_states', array( $this, 'display_country_states'));
-		add_action('wp_ajax_espresso_delete_state', array( $this, 'delete_state'));
+		add_action('wp_ajax_espresso_delete_state', array( $this, 'delete_state'), 10, 3 );
 		add_action('wp_ajax_espresso_add_new_state', array( $this, 'add_new_state'));
 	}
 
@@ -80,7 +80,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 		
-			'default' => '_espresso_page_settings',
+			'critical_pages' => '_espresso_page_settings',
 			'update_espresso_page_settings' => array(
 				'func' => '_update_espresso_page_settings',
 				'noheader' => TRUE,
@@ -97,7 +97,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'func' => '_copy_templates',
 				'noheader' => TRUE,
 				),
-			'your_organization_settings' => '_your_organization_settings',
+			'default' => '_your_organization_settings',
 			
 			'update_your_organization_settings' => array(
 				'func' => '_update_your_organization_settings',
@@ -141,10 +141,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
-			'default' => array(
+			'critical_pages' => array(
 				'nav' => array(
 					'label' => __('Critical Pages'),
-					'order' => 20
+					'order' => 50
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
                 'help_tabs' => array(
@@ -173,10 +173,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Templates_Help_Tour' ),
 				'require_nonce' => FALSE
 				),			
-			'your_organization_settings' => array(
+			'default' => array(
 				'nav' => array(
 					'label' => __('Your Organization'),
-					'order' => 50
+					'order' => 20
 					),
                 'help_tabs' => array(
 					'general_settings_your_organization_help_tab' => array(
@@ -222,16 +222,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 
-	protected function _add_screen_options() {
-	}
-
-	protected function _add_screen_options_default() {
-		$this->_per_page_screen_option();
-	}
-
-	protected function _add_screen_options_question_groups() {
-		$this->_per_page_screen_option();
-	}
+	protected function _add_screen_options() {}
 
 	protected function _add_feature_pointers() {}
 	public function load_scripts_styles() {
@@ -245,7 +236,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	public function admin_footer_scripts() {}
 
 
-	public function load_scripts_styles_your_organization_settings() {	
+	public function load_scripts_styles_default() {	
 		//styles
 		wp_enqueue_style('thickbox');
 		//scripts
@@ -262,7 +253,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_country_settings() {	
 		//scripts
-		wp_register_script( 'gen_settings_countries', GEN_SET_ASSETS_URL . 'gen_settings_countries.js', array( 'jquery' ), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'gen_settings_countries', GEN_SET_ASSETS_URL . 'gen_settings_countries.js', array( 'ee_admin_js' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_style( 'organization-css', GEN_SET_ASSETS_URL . 'organization.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script( 'gen_settings_countries' );	
 		wp_enqueue_style( 'organization-css' );
@@ -316,7 +307,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : EE_Registry::instance()->CFG->core->thank_you_page_id;
 		EE_Registry::instance()->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : EE_Registry::instance()->CFG->core->cancel_page_id;
 
-		EE_Registry::instance()->CFG->core = apply_filters( 'FHEE_page_settings_save', EE_Registry::instance()->CFG->core, $this->_req_data );
+		EE_Registry::instance()->CFG->core = apply_filters( 'FHEE__General_Settings_Admin_Page___update_espresso_page_settings__CFG_core', EE_Registry::instance()->CFG->core, $this->_req_data );
 		
 		$what = 'Critical Pages & Shortcodes';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->core, __FILE__, __FUNCTION__, __LINE__ );
@@ -436,13 +427,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				)
 			);
 
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 1 );
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
 
 		//PUE verification stuff
 		$plugin_basename = plugin_basename(EE_PLUGINPATH);
 		$verify_fail = get_option( 'pue_verification_error_' . $plugin_basename );
-		$this->_template_args['site_license_key_verified'] = $verify_fail || empty($verify_fail) ? '<span class"pue-sl-not-verified"></span>' : '<span class="pue-sl-verified"></span>';		
+		$this->_template_args['site_license_key_verified'] = $verify_fail || !empty($verify_fail) ? '<span class="dashicons dashicons-admin-network ee-icon-color-ee-red ee-icon-size-20"></span>' : '<span class="dashicons dashicons-admin-network ee-icon-color-ee-green ee-icon-size-20"></span>';		
 		
 		$this->_set_add_edit_form_tags( 'update_your_organization_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
@@ -475,12 +466,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		
 		EE_Registry::instance()->CFG->currency = new EE_Currency_Config( EE_Registry::instance()->CFG->organization->CNT_ISO );
 
-		EE_Registry::instance()->CFG = apply_filters('FHEE_your_organization_settings_save', EE_Registry::instance()->CFG );	
+		EE_Registry::instance()->CFG = apply_filters( 'FHEE__General_Settings_Admin_Page___update_your_organization_settings__CFG', EE_Registry::instance()->CFG );	
 		
 		$what = 'Your Organization Settings';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
 
-		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'your_organization_settings' ) );
+		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'default' ) );
 		
 	}
 
@@ -521,7 +512,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		EE_Registry::instance()->CFG->admin->affiliate_id = isset( $this->_req_data['affiliate_id'] ) ? sanitize_text_field( $this->_req_data['affiliate_id'] ) : EE_Registry::instance()->CFG->admin->affiliate_id;
 		EE_Registry::instance()->CFG->admin->help_tour_activation = isset( $this->_req_data['help_tour_activation'] ) ? absint( $this->_req_data['help_tour_activation'] ) : EE_Registry::instance()->CFG->admin->help_tour_activation;
 		
-		EE_Registry::instance()->CFG->admin = apply_filters( 'FHEE_admin_option_settings_save', EE_Registry::instance()->CFG->admin );	
+		EE_Registry::instance()->CFG->admin = apply_filters( 'FHEE__General_Settings_Admin_Page___update_admin_option_settings__CFG_admin', EE_Registry::instance()->CFG->admin );	
 		
 		$what = 'Admin Options';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->admin, __FILE__, __FUNCTION__, __LINE__ );
@@ -565,8 +556,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			);
 //		printr( $this->_template_args['countries'], 'countries  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 1 );
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
 		$this->_template_args['country_details_settings'] = $this->display_country_settings();
 		$this->_template_args['country_states_settings'] = $this->display_country_states();
 
@@ -591,12 +582,13 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		if ( ! $CNT_ISO ) {
 			return '';
 		}
+		
 		// for ajax
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		remove_all_filters( 'FHEE_form_field_label_html' );
-		remove_all_filters( 'FHEE_form_field_input_html' );
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'country_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'country_form_field_input__wrap' ), 10, 1 );
+		remove_all_filters( 'FHEE__EEH_Form_Fields__label_html' );
+		remove_all_filters( 'FHEE__EEH_Form_Fields__input_html' );
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'country_form_field_label_wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'country_form_field_input__wrap' ), 10, 2 );
 		$country = EEM_Country::instance()->get_one_by_ID( $CNT_ISO );
 		//printr( $country, '$country  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$country_input_types = array(
@@ -609,9 +601,9 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 			'CNT_cur_plural' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'medium-text' ),
 			'CNT_cur_sign' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text', 'htmlentities' => FALSE ),
 			'CNT_cur_sign_b4' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
-			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '0' ), array( 'id' => 1, 'text' => '1' ), array( 'id' => 2, 'text' => '2' ), array( 'id' => 3, 'text' => '3' ))),
-			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
-			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __(', (comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('. (decimal)', 'event_espresso')))),
+			'CNT_cur_dec_plc' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => 0, 'text' => '' ), array( 'id' => 1, 'text' => '' ), array( 'id' => 2, 'text' => '' ), array( 'id' => 3, 'text' => '' ))),
+			'CNT_cur_dec_mrk' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __('(comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('(decimal)', 'event_espresso')))),
+			'CNT_cur_thsnds' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => array( array( 'id' => ',', 'text' => __('(comma)', 'event_espresso')), array( 'id' => '.', 'text' => __('(decimal)', 'event_espresso')))),
 			'CNT_tel_code' => array( 'type' => 'TEXT', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => 'small-text' ),
 			'CNT_is_EU' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values ),
 			'CNT_active' => array( 'type' => 'SINGLE', 'input_name' => 'cntry[' . $CNT_ISO . ']', 'class' => '', 'options' => $this->_yes_no_values )
@@ -648,10 +640,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		}
 		// for ajax
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		remove_all_filters( 'FHEE_form_field_label_html' );
-		remove_all_filters( 'FHEE_form_field_input_html' );
-		add_filter( 'FHEE_form_field_label_html', array( $this, 'state_form_field_label_wrap' ), 10, 1 );
-		add_filter( 'FHEE_form_field_input_html', array( $this, 'state_form_field_input__wrap' ), 10, 1 );
+		remove_all_filters( 'FHEE__EEH_Form_Fields__label_html' );
+		remove_all_filters( 'FHEE__EEH_Form_Fields__input_html' );
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', array( $this, 'state_form_field_label_wrap' ), 10, 2 );
+		add_filter( 'FHEE__EEH_Form_Fields__input_html', array( $this, 'state_form_field_input__wrap' ), 10, 2 );
 		$states = FALSE;
 		$states = EEM_State::instance()->get_all_states_for_these_countries( array( $CNT_ISO => $CNT_ISO ));
 		
@@ -668,7 +660,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'STA_active' => array( 'type' => 'SINGLE', 'input_name' => 'states[' . $STA_ID . ']', 'options' => $this->_yes_no_values )
 				);
 				$this->_template_args['states'][ $STA_ID ]['inputs'] = EE_Question_Form_Input::generate_question_form_inputs_for_object( $state, $state_input_types );
-				$query_args =  array( 'action' => 'delete_state', 'STA_ID' => $STA_ID, 'CNT_ISO' => $CNT_ISO );
+				$query_args =  array( 'action' => 'delete_state', 'STA_ID' => $STA_ID, 'CNT_ISO' => $CNT_ISO, 'STA_abbrev' => $state->abbrev() );
 				$this->_template_args['states'][ $STA_ID ]['delete_state_url'] = EE_Admin_Page::add_query_args_and_nonce( $query_args, GEN_SET_ADMIN_URL );
 			}	
 		} else {
@@ -746,16 +738,22 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		@return 		void
 	 */
 	public function delete_state() {
+		$CNT_ISO = isset( $this->_req_data['CNT_ISO'] ) ? strtoupper( sanitize_text_field( $this->_req_data['CNT_ISO'] )) : FALSE;
 		$STA_ID = isset( $this->_req_data['STA_ID'] ) ? sanitize_text_field( $this->_req_data['STA_ID'] ) : FALSE;
+		$STA_abbrev = isset( $this->_req_data['STA_abbrev'] ) ? strtoupper( sanitize_text_field( $this->_req_data['STA_abbrev'] )) : FALSE;
+
 		if ( ! $STA_ID ) {
 			EE_Error::add_error( __( 'An error occurred. No State ID or an invalid State ID was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		$success = EEM_State::instance()->delete_by_ID( $STA_ID );
-		
+		if ( $success !== FALSE ) {
+			do_action( 'AHEE__General_Settings_Admin_Page__delete_state__state_deleted', $CNT_ISO, $STA_ID, array( 'STA_abbrev' => $STA_abbrev ));
+			EE_Error::add_success( __( 'The State was deleted successfully.', 'event_espresso' )); 
+		}
 		if ( defined( 'DOING_AJAX' )) {
 			$notices = EE_Error::get_notices( FALSE, FALSE, FALSE ); 
-			echo json_encode( array( 'return_data' => true, 'success' => __( 'The State was deleted successfully.', 'event_espresso' ), 'errors' => $notices['errors'] ));
+			echo json_encode( array( 'return_data' => true, 'success' => $notices['success'], 'errors' => $notices['errors'] ));
 			die();
 		} else {
 			$this->_redirect_after_action( $success, 'State', 'deleted', array( 'action' => 'country_settings' ) );
@@ -772,7 +770,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		@return 		void
 	 */
 	protected function _update_country_settings() {
-		//printr( $this->_req_data, '$this->_req_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $this->_req_data, '$this->_req_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// grab the country ISO code
 		$CNT_ISO = isset( $this->_req_data['country'] ) ? strtoupper( sanitize_text_field( $this->_req_data['country'] )) : FALSE;
 		if ( ! $CNT_ISO ) {
@@ -796,18 +794,19 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$cols_n_values['CNT_is_EU'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_is_EU'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_is_EU'] ) : FALSE;
 		$cols_n_values['CNT_active'] = isset( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) ? absint( $this->_req_data['cntry'][$CNT_ISO]['CNT_active'] ) : FALSE;
 		// allow filtering of country data
-		$cols_n_values = apply_filters( 'FHEE_general_settings_country_save', $cols_n_values );
+		$cols_n_values = apply_filters( 'FHEE__General_Settings_Admin_Page___update_country_settings__cols_n_values', $cols_n_values );
 		//printr( $cols_n_values, '$cols_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// where values
 		$where_cols_n_values = array( array( 'CNT_ISO' => $CNT_ISO ));
 		// run the update
 		$success = EEM_Country::instance()->update( $cols_n_values, $where_cols_n_values );
-		//global $wpdb;
-		//echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		//echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		if ( isset( $this->_req_data['states'] ) && is_array( $this->_req_data['states'] ) && $success ) {
+//		global $wpdb;
+//		echo '<h4>' . $wpdb->last_query . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$success : ' . $success . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		if ( isset( $this->_req_data['states'] ) && is_array( $this->_req_data['states'] ) && $success !== FALSE ) {
 			// allow filtering of states data
-			$states = apply_filters( 'FHEE_general_settings_states_save', $this->_req_data['states'] );
+			$states = apply_filters( 'FHEE__General_Settings_Admin_Page___update_country_settings__states', $this->_req_data['states'] );
+//			printr( $states, '$states  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru state data ( looks like : states[75][STA_name] )
 			foreach( $states as $STA_ID => $state ) {
 				$cols_n_values = array(
@@ -820,8 +819,16 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				$where_cols_n_values = array( array( 'STA_ID' => $STA_ID ));
 				// run the update
 				$success = EEM_State::instance()->update( $cols_n_values, $where_cols_n_values );
+				if ( $success !== FALSE ) {
+					do_action( 'AHEE__General_Settings_Admin_Page__update_country_settings__state_saved', $CNT_ISO, $STA_ID, $cols_n_values );
+				}
 			}
 		}
+		// check if country being edited matchs org option country, and if so, then  update EE_Config with new settings
+		if ( isset( EE_Registry::instance()->CFG->organization->CNT_ISO ) && $CNT_ISO == EE_Registry::instance()->CFG->organization->CNT_ISO ) {
+			EE_Registry::instance()->CFG->currency = new EE_Currency_Config( $CNT_ISO );
+			EE_Registry::instance()->CFG->update_espresso_config();
+		}		
 		$this->_redirect_after_action( $success, 'Countries', 'updated', array( 'action' => 'country_settings', 'country' => $CNT_ISO ));
 	}
 
@@ -836,7 +843,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		@param 		string 		$label
 	 * 		@return 		string
 	 */
-	public function country_form_field_label_wrap( $label ) {
+	public function country_form_field_label_wrap( $label, $required_text ) {
 		return '
 			<tr>
 				<th>
@@ -854,7 +861,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		@param 		string 		$label
 	 * 		@return 		string
 	 */
-	public function country_form_field_input__wrap( $input ) {
+	public function country_form_field_input__wrap( $input, $label ) {
 		return '
 				<td class="general-settings-country-input-td">
 					' . $input . ' 
@@ -870,10 +877,11 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 *
 	 * 		@access 		public
 	 * 		@param 		string 		$label
+	 * 		@param 		string 		$required_text
 	 * 		@return 		string
 	 */
-	public function state_form_field_label_wrap( $label ) {
-		return '';		
+	public function state_form_field_label_wrap( $label, $required_text  ) {		
+		return $required_text;
 	}
 
 
@@ -886,11 +894,12 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	 * 		@param 		string 		$label
 	 * 		@return 		string
 	 */
-	public function state_form_field_input__wrap( $input ) {
+	public function state_form_field_input__wrap( $input, $label ) {
 		return '
 				<td class="general-settings-country-state-input-td">
 					' . $input . ' 
 				</td>';		
+
 	}
 
 

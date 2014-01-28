@@ -3,12 +3,17 @@
 <p>
 <ul>
 <li>
-<?php _e('Registration Confirmation: triggered by frontend event registrations', 'event_espresso'); ?>
+<?php _e('<strong>Registration Confirmation</strong><br />Triggered by frontend event registrations', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Payment Confirmation: triggered by frontend payments', 'event_espresso'); ?>
+<?php _e('<strong>Payment Confirmation</strong><br />Triggered by frontend payments', 'event_espresso'); ?>
 </li>
 </ul>
 </p>
 <h3><?php _e('Contexts', 'event_espresso'); ?></h3>
-<p><?php _e('Each Message Type (kind of message) has different contexts. Contexts are dynamic and typically represent recipients (individuals receiving email notifications). For example, when the Registration Confirmation message type is triggered, it will send out a message to the following recipients: Event Administrator, Primary Attendee, and Additional Attendees. On the other hand, the Payment Message Type has only two recipients: Event Administrator and Primary Attendee.', 'event_espresso'); ?></p>
+<p><?php _e('Each Message Type (kind of message) has different contexts. Contexts are dynamic and typically represent recipients (individuals receiving email notifications). For example, when the Registration Confirmation message type is triggered, it will send out a message to the following recipients: Event Administrator, Primary Registrant, and Additional Registrants. On the other hand, the Payment Message Type has only two recipients: Event Administrator and Primary Registrant.', 'event_espresso'); ?></p>
+<p><?php _e('A message context can be deactivated by removing a recipient from the "TO" field. This will set the field to blank and you can save changes. Deactivated message contexts will appear in grey when viewed in the Messages Overview tab. To re-activate a message context, go to that message context and setup a recipient (using one of the available shortcodes) and save changes. This will reactivate the message context and it will appear as blue in the Messages Overview tab.', 'event_espresso'); ?></p>
+<h3><?php _e('Activation / Deactivation of Message Types', 'event_espresso'); ?></h3>
+<p>
+<?php _e('When a new install of Event Espresso is activated, all message types will be activated except for those for Cancelled and Declined registrations. The message types for Cancelled and Declined registrations can be easily activateed through the Settings tab for Messages. Deactivating and re-activating Event Espresso will keep the current settings saved.', 'event_espresso'); ?>
+</p>

@@ -522,7 +522,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			),
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => __('View All Message Templates', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'trash_message_template' => __('Move to Trash', 'event_espresso')
@@ -588,22 +588,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$MTP = EEM_Message_Template_Group::instance();
 		
-		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
-
-		switch ( $this->_req_data['orderby'] ) {
-			case 'messenger' :
-				$orderby = 'MTP_messenger';
-				break;
-			case 'message_type' :
-				$orderby = 'MTP_message_type';
-				break;
-			case 'user_id' :
-				$orderby = 'MTP_user_id';
-				break;
-			default:
-				$orderby = 'GRP_ID';
-				break; 
-		}
+		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? 'GRP_ID' : $this->_req_data['orderby'];
+		$orderby = $this->_req_data['orderby'];
 
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] ) ) ? $this->_req_data['order'] : 'ASC';
 
@@ -613,7 +599,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$offset = ($current_page-1)*$per_page;
 		$limit = $all ? NULL : array( $offset, $per_page );
 
-
+		
 		//options will match what is in the _views array property
 		switch( $type ) {
 
@@ -1901,7 +1887,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$action_desc = $trash ? __('moved to the trash', 'event_espresso') : __('restored', 'event_espresso');
 
+		$action_desc = !empty( $this->_req_data['template_switch'] ) ? __('switched') : $action_desc;
+
 		$item_desc = $all ? _n('Message Template Group', 'Message Template Groups', $success, 'event_espresso') : _n('Message Template Context', 'Message Template Contexts', $success, 'event_espresso');
+
+		$item_desc = !empty( $this->_req_data['template_switch'] ) ? _n('template', 'templates', $success, 'event_espresso') : $item_desc;
 
 		if ( defined('DOING_AJAX') ) {
 			$this->_check_template_switch();

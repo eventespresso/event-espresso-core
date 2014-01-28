@@ -1,42 +1,41 @@
-<h2><?php _e('Registration Checkout Page', 'event_espresso'); ?></h2>
-<p><?php echo sprintf(__('This is the page that displays all your events and is required, even if it is not visible in your menus. It is very important that this page always contains the %s shortcode.', 'event_espresso'), '<strong>[ESPRESSO_CHECKOUT]</strong>'); ?></p>
-
-<h2><?php _e('Transactions Page', 'event_espresso'); ?></h2>
+<h2><?php _e('Critical Pages', 'event_espresso'); ?></h2>
 <p>
-<?php _e('This processes the payments. It should not be visible on your menus, and the page should NOT contain anything other than the shortcode.', 'event_espresso'); ?>
+<?php _e('This page shows all critical pages that Event Espresso needs to work correctly.', 'event_espresso'); ?>
 </p>
-<p> <?php echo sprintf(__('This page should contain the %s shortcode.', 'event_espresso'), '<strong>[ESPRESSO_TXN_PAGE]</strong>'); ?> </p>
-<p><em class="important"><strong>
-<?php _e('ATTENTION:', 'event_espresso'); ?>
-</strong><br />
-<?php _e('This page should be hidden from from your navigation menu.', 'event_espresso'); ?>
-</em> </p>
-
-<h2><?php _e('Thank You Page', 'event_espresso'); ?></h2>
+<h3><?php _e('Shortcodes', 'event_espresso'); ?></h3>
+<ul>
+<li>
+<?php _e('<strong>Registration Checkout Page</strong>', 'event_espresso'); ?><br />
+<?php _e('This page displays all your events and is required. It is important that this page always contain the <strong>[ESPRESSO_CHECKOUT]</strong> shortcode. It is not required to be in your navigation menu.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('<strong>Transactions Page</strong>', 'event_espresso'); ?><br />
+<?php _e('This page processes the payments and is required. It should only contain the <strong>[ESPRESSO_TXN_PAGE]</strong> shortcode. No other content should be added and it should be hidden from your navigation menu.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('<strong>Thank You Page</strong>', 'event_espresso'); ?><br />
+<?php _e('This page is displayed after a successful transaction and is required. It should contain the <strong>[ESPRESSO_THANK_YOU]</strong> shortcode. Additionally, you may customize this page by adding extra content to the page. It should be hidden from your navigation menu.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('<strong>Cancel / Return Page</strong>', 'event_espresso'); ?><br />
+<?php _e('This page is displayed after an unsuccessful transaction and is required.  It should contain the <strong>[ESPRESSO_CANCELLED]</strong> shortcode. Additionally, you may customize this page by adding extra content to the page. It should be hidden from your navigation menu.', 'event_espresso'); ?>
+</li>
+<li>
+<?php _e('<strong>Event List</strong>', 'event_espresso'); ?><br />
+<?php _e('If you would like to style the look of your events archive page, then follow the WordPress instructions for <a href="http://codex.wordpress.org/Post_Type_Templates">creating a custom template for archive pages</a>.', 'event_espresso'); ?>
+<ul>
+<li style="list-style-type: circle;">
+<?php _e('<strong>Build a template for your events</strong> - create a theme template named <strong>archive-espresso_events.php</strong>. Then place it in your theme\'s root directory. For the default WordPress Twenty Thirteen theme, this location will be wp-content/themes/twenty-fourteen.', 'event_espresso'); ?>
+</li>
+<li style="list-style-type: circle;">
+<?php _e('<strong>Build a template for a single event</strong> - create a theme template named <strong>single-espresso_events.php</strong>. Then place it in your theme\'s root directory. For the default WordPress Twenty Thirteen theme, this location will be wp-content/themes/twenty-fourteen.', 'event_espresso'); ?>
+</li>
+</ul>
+</li>
+</ul>
+</p>
+<?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Critical Pages Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>
+</p>
 <p>
-<?php _e('This page is displayed after a successful transaction. Feel free to add extra content to this page to personalise it!', 'event_espresso'); ?>
+<?php _e('<strong>Screen Options</strong><br /> You can customize the information that is shown on this page by toggling the Screen Options tab. Then you can add or remove checkmarks to hide or show certain content.', 'event_espresso'); ?>
 </p>
-<p><?php echo sprintf(__("This page should contain the %s shortcode.", 'event_espresso'), '<strong>[ESPRESSO_THANK_YOU]</strong>'); ?></p>
-<p><em class="important"><b>
-<?php _e('ATTENTION:', 'event_espresso'); ?>
-</b><br />
-<?php _e('This page should be hidden from from your navigation menu.', 'event_espresso'); ?>
-</em> </p>
-
-<h2><?php _e('Cancel/Return Page', 'event_espresso'); ?></h2>
-<p>
-<?php _e('This page is displayed after an unsuccessful transaction. Feel free to add extra content to this page to personalise it!', 'event_espresso'); ?>
-</p>
-<p>
-<?php echo sprintf(__('This page should contain the %s shortcode.', 'event_espresso'), '<strong>[ESPRESSO_CANCELLED]</strong>'); ?>
-</p>
-<p><em class="important"><strong>
-<?php _e('ATTENTION:', 'event_espresso'); ?>
-</strong><br />
-<?php _e('This page should be hidden from from your navigation menu.', 'event_espresso'); ?>
-</em></p>
-
-<h2><?php _e('Event List Page', 'event_espresso'); ?></h2>
-<p><?php echo sprintf(__('If you would like to style the look of your events archive page, %s follow the Wordpress instructions for creating a custom template for archive pages %s. ', 'event_espresso'), '<a href="http://codex.wordpress.org/Post_Type_Templates">','</a>'); ?></p>
-<p><?php	_e("Note: if you want to create a custom template for your events, you should create template named 'archive-espresso_events.php' and place it in your theme's root directory (eg 'wp-content/themes/twenty-thirteen/')", "event_espresso"); ?></p>
-<p><?php	_e("Likewise, if you want to create a custom template for styling individual events, create a template named 'single-espresso_events.php' and place it in the same folder", "event_espresso"); ?></p>

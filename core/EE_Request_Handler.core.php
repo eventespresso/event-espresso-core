@@ -281,6 +281,17 @@ final class EE_Request_Handler {
 		return isset( $this->_params[ $key ] ) ? TRUE : FALSE;
 	}
 
+	
+	/**
+	 * 	remove param
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function un_set( $key ) {
+		unset( $this->_params[ $key ] );
+	}
+
 
 	
 	/**
@@ -329,6 +340,12 @@ final class EE_Request_Handler {
 		return $this->_output;
 	}
 
+
+
+
+	function sanitize_text_field_for_array_walk( &$item, &$key ) {
+		$item = strpos( $item, 'email' ) !== FALSE ? sanitize_email( $item ) : sanitize_text_field( $item );
+	}
 
 	
 	

@@ -418,6 +418,62 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	*	is_not_approved -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_not_approved
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_not_approved( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_not_approved ? TRUE : FALSE;
+	}
+
+
+	/**
+	*	is_pending_payment -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_pending_payment
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_pending_payment( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_pending_payment ? TRUE : FALSE;
+	}
+
+
+	/**
+	*	is_approved -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_approved
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_approved( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_approved ? TRUE : FALSE;
+	}
+
+
+	/**
+	*	is_cancelled -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_cancelled
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_cancelled( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_cancelled ? TRUE : FALSE;
+	}
+
+
+	/**
+	*	is_declined -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_declined
+	* 
+	* 	@access		public		
+	*	@return 		boolean
+	*/	
+	public function is_declined( $REG_date = FALSE ) {
+		return $this->status_ID() == EEM_Registration::status_id_declined ? TRUE : FALSE;
+	}
+
+
+
+	/**
 	*		Set Registration Date
 	* 
 	* 		@access		public		
@@ -633,11 +689,24 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function payment_overview_url(){
-		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link() ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
+		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'payment_options', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
+	}
+	
+	
+	
+	
+	
+	/**
+	 * Gets the URL of the thank you page with this registraiton REG_url_link added as
+	 * a query parameter
+	 * @return string
+	 */
+	public function edit_attendee_information_url(){
+		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'attendee_information', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
 	}
 
 
-	
+
 	
 	/**
 	*		get  Attendee Number
@@ -723,20 +792,27 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * Returns a nice version of the status for displaying to customers
 	 * @return string
 	 */
-	public function pretty_status(){
-		require_once( EE_MODELS . 'EEM_Registration.model.php');
+	public function pretty_status( $show_icons = FALSE ){
+		$status = EEM_Status::instance()->localized_status( array( $this->status_ID() => __('unknown', 'event_espresso') ), FALSE, 'sentence' );
+		$icon = '';
 		switch($this->status_ID()){
 			case EEM_Registration::status_id_approved:
-				return __("Approved",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-star-filled ee-icon-size-16 green-text"></span>' : '';
+				break;
 			case EEM_Registration::status_id_not_approved:
-				return __("Not Approved",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
+				break;
 			case EEM_Registration::status_id_pending_payment:
-				return __("Pending Approval",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-star-half ee-icon-size-16 orange-text"></span>' : '';
+				break;
 			case EEM_Registration::status_id_cancelled:
-				return __("Cancelled",'event_espresso');
-			default:
-				return __("Unknown",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-grey-text"></span>' : '';
+				break;
+			case EEM_Registration::status_id_declined:
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
+				break;
 		}
+		return $icon . $status[$this->status_ID()];
 	}
 
 	
@@ -745,8 +821,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * Prints out the return value of $this->pretty_status()
 	 * @return void
 	 */
-	public function e_pretty_status(){
-		echo $this->pretty_status();
+	public function e_pretty_status( $show_icons = FALSE ){
+		echo $this->pretty_status( $show_icons );
 	}
 
 
@@ -972,7 +1048,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				$this->transaction()->is_completed() ? 1 : 0
 			);
 			$new_reg_code = implode( '-', $new_reg_code );
-			$new_reg_code = apply_filters( 'FHEE_new_registration_code', $new_reg_code, $this );	
+			$new_reg_code = apply_filters( 'FHEE__EE_Registration___generate_new_reg_code__new_reg_code', $new_reg_code, $this );	
 			$this->set_reg_code( $new_reg_code );
 			return TRUE;
 		}
@@ -1025,23 +1101,35 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	 * genrerates reg code if that has yet to been done, 
 	 * sets reg status based on transaction status and event pre-approval setting
-	 * @return void
+	 *
+	 * @param  bool $from_admin 	 used to indicate the request is initiated by admin
+	 * @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
+	 * @return array 	an array with two boolean values, first indicates if new reg, second indicates if regstatus was updated.
 	 */
-	public function finalize() {
+	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
 		$update_reg = FALSE;
-		// update reg status if no monies are owing and the REG status is pending payment
-		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment ) {
+		$new_reg = FALSE;
+		// update reg status if no monies are owing and the REG status is pending payment AND we're not doing this from admin.
+		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment && $flip_reg_status ) {
 			// automatically toggle status to approved
 			$this->set_status( EEM_Registration::status_id_approved );
 			$update_reg = TRUE;
 		}
+
+		//if we're doing this from admin and we have 'txn_reg_status_change' in the $_REQUEST then let's use that to trigger the status change.
+		if ( $from_admin && isset( $_REQUEST['txn_reg_status_change'] ) && isset($_REQUEST['txn_reg_status_change']['reg_status']) && $_REQUEST['txn_reg_status_change']['reg_status'] != 'NAN' ) {
+			$this->set_status( $_REQUEST['txn_reg_status_change']['reg_status'] );
+			$update_reg = TRUE;
+		}
+
 		// generate REG codes for NEW registrations			
-		$update_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $update_reg;
+		$new_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $new_reg;
 		// save the registration?
-		if ( $update_reg ) { 
+		if ( $update_reg || $new_reg ) { 
+			do_action( 'AHEE__EE_Registration__finalize__update_and_new_reg', $this, $from_admin );
 			$this->save();
 		}
-		return $update_reg;			
+		return array('new_reg' => $new_reg, 'to_approved' => $update_reg);			
 	}
 
 

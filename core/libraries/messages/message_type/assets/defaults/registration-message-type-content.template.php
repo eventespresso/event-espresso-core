@@ -29,10 +29,8 @@
                 <table>
                     <tr>
                         <td>
-                            <h2>Hello, [FNAME]</h2>
-                            <p class="lead">This is a copy of your registration details!</p>
-                            
-    
+                            <h2>Hello, [FNAME]:</h2>
+                            <p class="lead">This is a copy of your registration details!</p>    
                         </td>
                     </tr>
                 </table>
@@ -66,7 +64,7 @@
                                 </tbody></table><!-- /column 1 -->  
                                 
                                 <!-- column 2 -->
-                                <table align="left">
+                                <table align="left" class="column">
                                     <tbody><tr>
                                         <td>                
                                                                         

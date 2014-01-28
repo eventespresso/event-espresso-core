@@ -273,9 +273,9 @@ abstract class EE_Messages_Base extends EE_Base {
 	 * @return array
 	 */
 	public function get_default_field_content() {
-		$default = apply_filters('FHEE__' . get_class($this) . '__get_default_field_content', $this->_default_field_content, $this );
+		$default = apply_filters( 'FHEE__' . get_class($this) . '__get_default_field_content', $this->_default_field_content, $this );
 		//note the below filter will apply to all messengers AND message types.  Use with care.
-		$default = apply_filters('FHEE__EE_Messages_Base__get_default_field_content', $default, $this );
+		$default = apply_filters( 'FHEE__EE_Messages_Base__get_default_field_content', $default, $this );
 
 		return $default;
 	}

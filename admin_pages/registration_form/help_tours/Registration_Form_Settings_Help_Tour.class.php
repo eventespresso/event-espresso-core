@@ -99,13 +99,13 @@ class Registration_Form_Settings_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Registration Form Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the registration form settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Registration Form Settings page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
 
 	protected function _use_recaptcha_stop() {
-		return '<p>' . __('Should reCAPTCHA be enabled?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether reCAPTCHA should be enabled.', 'event_espresso') . '</p>';
 	}
 
 	protected function _recaptcha_public_key_stop() {
@@ -121,11 +121,11 @@ class Registration_Form_Settings_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _recaptcha_language_stop() {
-		return '<p>' . __('What language should reCAPTCHA be set to use?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify the language that should be used for reCAPTCHA.', 'event_espresso') . '</p>';
 	}
 
 	protected function _recaptcha_width_stop() {
-		return '<p>' . __('How wide (in pixels) should the reCAPTCHA form be?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify how wide (in pixels) the reCAPTCHA form should be.', 'event_espresso') . '</p>';
 	}
 
 }

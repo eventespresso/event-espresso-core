@@ -95,11 +95,13 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 		$this->init_access = $this->last_access = '';
 
 		$this->billing = $this->payment->details();
-		EE_Registry::instance()->load_helper('Template');
-		$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
+		// check that the gateways didn't blow up
+		if ( ! $this->billing instanceof EE_Error ) {
+			EE_Registry::instance()->load_helper('Template');
+			$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
+		}
 
 		$this->reg_objs = $this->txn->get_many_related('Registration');
-
 		$this->_assemble_data();
 
 	}

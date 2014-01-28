@@ -72,7 +72,7 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 		$new_question_id = $this->get_migration_script()->get_mapping_new_pk($old_question_table, $old_answer['question_id'], $this->_new_question_table);
 		
 		$question_type = $this->_get_question_type($new_question_id);
-		if(in_array($question_type,array('DROPDOWN','SINGLE','MULTIPLE'))){
+		if(in_array($question_type,array('MULTIPLE'))){
 			$ans_value = serialize(explode(",",stripslashes($old_answer['answer'])));
 		}else{
 			$ans_value = stripslashes($old_answer['answer']);

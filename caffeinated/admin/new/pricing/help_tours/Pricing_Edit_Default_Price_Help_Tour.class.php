@@ -40,7 +40,7 @@ class Pricing_Edit_Default_Price_Help_Tour extends EE_Help_Tour {
 			10 => array(
 				'content' => $this->_start(),
 				),
-			20 => array(
+			/*20 => array(
 				'id' => 'PRT_ID',
 				'content' => $this->_price_type_stop(),
 				'options' => array(
@@ -48,7 +48,7 @@ class Pricing_Edit_Default_Price_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -50,
 					'tipAdjustmentX' => -15
 					)
-				),
+				),*/
 			30 => array(
 				'id' => 'PRC_name',
 				'content' => $this->_price_name_stop(),
@@ -79,7 +79,7 @@ class Pricing_Edit_Default_Price_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Edit Default Price', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the edit default price page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Edit Default Price page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 

@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Event_Add_Category_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Add Category Tour', 'event_espresso');
+		$this->_label = __('Add New Category Tour', 'event_espresso');
 		$this->_slug = 'event-add-category-joyride';
 	}
 
@@ -59,11 +59,11 @@ class Event_Add_Category_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			40 => array(
-				'id' => 'category_desc_tbl',
+				'id' => 'category_desc',
 				'content' => $this->_stop_four(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -45,
+					'tipAdjustmentY' => -75,
                     'tipAdjustmentX' => 250
 					)
 				)
@@ -72,8 +72,8 @@ class Event_Add_Category_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _stop_one() {
-		$content = '<h3>' . __('Add Category', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This brief tour will go over how to add a new category.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Add New Event Category', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the Add New Event Category page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 

@@ -63,7 +63,6 @@ class Extend_Support_Admin_Page extends Support_Admin_Page {
 
 
 	protected function _faq() {
-
 		$template_path = EE_SUPPORT_CAF_ADMIN_TEMPLATE_PATH . 'support_admin_details_faq.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, '', TRUE);
 		$this->display_admin_page_with_sidebar();

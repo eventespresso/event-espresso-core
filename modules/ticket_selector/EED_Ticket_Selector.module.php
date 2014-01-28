@@ -14,7 +14,7 @@
  * ------------------------------------------------------------------------
  */
 function espresso_ticket_selector( $event = NULL ) {
-	if (  ! apply_filters( 'FHEE_disable_espresso_ticket_selector', FALSE )) {
+	if (  ! apply_filters( 'FHEE_disable_espresso_ticket_selector', FALSE ) ) {
 		echo EED_Ticket_Selector::display_ticket_selector( $event );
 	}
 }
@@ -56,7 +56,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
-		add_action( 'AHEE_after_ticket_selector', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
+		add_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
 		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
 	}
@@ -108,7 +108,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return 	string	
 	*/
 	public static function display_ticket_selector( $event = NULL ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');	
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );	
 
 //		d( $event );
 		if ( $event instanceof EE_Event ) {
@@ -129,9 +129,9 @@ class EED_Ticket_Selector extends  EED_Module {
 		
 		$template_args['EVT_ID'] = self::$_event->ID();
 		$template_args['event'] = self::$_event;
-
+		$template_args['event_is_expired'] = self::$_event->is_expired();
 		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
-		$template_args['max_atndz'] = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
+		$template_args['max_atndz'] = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
 		
 		// get all tickets for this event ordered by the datetime
 		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
@@ -142,7 +142,12 @@ class EED_Ticket_Selector extends  EED_Module {
 		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
 		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 
-		return EEH_Template::display_template($templates['ticket_selector'], $template_args, true);
+		$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID() );
+		$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );
+		$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() );
+		$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
+		
+		return $ticket_selector;
 
 	}
 
@@ -157,15 +162,13 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@access 		public
 	* 	@return		string
 	*/	
-	public static function ticket_selector_form_open( $post ) {
-		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), get_permalink( $post->ID ));
+	public static function ticket_selector_form_open( $ID ) {
+		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), get_permalink( $ID ));
 		if ( ! $checkout_url ) {
 			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		echo '
-		<form id="" method="POST" action="' . $checkout_url . '">';
-		wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce' );
+		return '<form id="" method="POST" action="' . $checkout_url . '">' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
 	}
 
 
@@ -179,10 +182,9 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@access 		public
 	* 	@return		string
 	*/	
-	public static function display_ticket_selector_submit() {
-		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE )) {
-			echo '<input id="" class="ee-button ee-register-button ee-green big" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" />
-			<div class="clear"></div>';
+	public static function display_ticket_selector_submit( $ID ) {
+		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) ) {
+			return '<input id="ticket-selector-submit-'. $ID .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" /><div class="clear"><br/></div>'; // ee-button ee-register-button ee-green big
 		}
 	}
 
@@ -197,8 +199,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return		string
 	*/	
 	public static function ticket_selector_form_close() {
-		echo '
-		</form>';
+		return '</form>';
 	}
 
 
@@ -229,12 +230,12 @@ class EED_Ticket_Selector extends  EED_Module {
 		//possibly wrappe din a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
 		// unless otherwise requested, clear the session
-		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE )) {
+		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE ) ) {
 			EE_Registry::instance()->SSN->clear_session();
 		}
 		//d( EE_Registry::instance()->SSN );
 		
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// do we have an event id?
 		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' )) {
 		
@@ -292,7 +293,7 @@ class EED_Ticket_Selector extends  EED_Module {
 						} else {
 							EE_Registry::instance()->CART->save_cart();
 							EE_Registry::instance()->SSN->update();
-							wp_safe_redirect( add_query_arg( array( 'ee'=>'register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
+							wp_safe_redirect( add_query_arg( array( 'ee'=>'_register' ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )));
 							exit();
 						}
 					} else {
@@ -441,7 +442,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return		array  or FALSE
 	*/
 	private static function _validate_post_data() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		// start with an empty array()
 		$valid_data = array();
@@ -573,7 +574,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/
 	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1 ) {
 	
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// get the number of spaces left for this event
 		$available_spaces = $ticket->remaining();
 		// compare availalbe spaces against the number of tickets being purchased
@@ -615,7 +616,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/
 	public static function load_tckt_slctr_assets() {
 		// add some style
-		if ( apply_filters( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', FALSE )) {
+		if ( apply_filters( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', FALSE ) ) {
 			wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
 			wp_enqueue_style('ticket_selector');
 			// make it dance

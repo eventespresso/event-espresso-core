@@ -47,7 +47,7 @@ class EE_Brewing_Regular extends EE_Base {
 		/**
 		 * note, this action hook is simply for reliably having things run ONLY if EE Regular is running.  This hook is executed at the plugins_loaded (priority 3) hook point. (see EE_System::plugins_loaded)
 		 */
-		do_action('AHEE__EE_Brewing_Regular__run_now');
+		do_action( 'AHEE__EE_Brewing_Regular__run_now' );
 		add_action('AHEE__EEH_Activation__initialize_db_content',array($this,'initialize_caf_db_content'));
 		//make it so the PDF receipt doesn't show our shameless plug
 		add_filter('FHEE_Invoice__send_invoice__shameless_plug','__return_false');
@@ -76,11 +76,6 @@ class EE_Brewing_Regular extends EE_Base {
 			$tax_price_type_count = $wpdb->get_var( $SQL );
 			
 			if ( $tax_price_type_count <= 1) {
-//				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
-//							(6, '" . __('Regional Tax', 'event_espresso') . "', 4,  1, 60, 0),
-//							(7, '" . __('Federal Tax', 'event_espresso') . "', 4,  1, 70, 0);";
-//				$SQL = apply_filters( 'FHEE_default_price_types_activation_sql', $SQL );
-//				$wpdb->query( $SQL );
 				$result = $wpdb->insert($price_type_table,
 						array(
 							'PRT_name'=>  __("Regional Tax", "event_espresso"),
@@ -145,38 +140,14 @@ class EE_Brewing_Regular extends EE_Base {
 		
 	}
 	
-	/**
-	 * Inserts them mostly unconditionally.
-	 * @global type $wpdb
-	 */
-//	private function _insert_caf_prices(){
-//		global $wpdb;
-//		$price_table = $wpdb->prefix."esp_price";
-//		
-//		if ($wpdb->get_var("SHOW TABLES LIKE '$price_table'") == $price_table) {
-//			//we are now assuming we want to insert these tables if this function is called
-////			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
-////			$existing_prices_count = $wpdb->get_var( $SQL );
-////			if ( $existing_prices_count <= 1 ) {
-//				$SQL = "INSERT INTO $price_table
-//							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
-//							(4, 6, '7.00', 'Local Sales Tax', 'Locally imposed tax. Example content - delete if you want to', 1, NULL, 40, 0, 0),
-//							(5, 7, '15.00', 'Sales Tax', 'Federally imposed tax. Example content - delete if you want to', 1, NULL, 50, 0, 0);";			
-//				$SQL = apply_filters( 'FHEE_default_prices_activation_sql', $SQL );
-//				$wpdb->query($SQL);			
-////			}
-//		}	
-//	}
-
-
 
 
 	public function on_init(){
 		/**
 		 * EE_Register_CPTs hooks
 		 */
-		add_filter('FHEE__EE_Register_CPTs__get_taxonomies', array( $this, 'filter_taxonomies' ), 10 );
-		add_filter('FHEE__EE_Register_CPTs__get_CPTs', array( $this, 'filter_cpts' ), 10 );
+		add_filter('FHEE__EE_Register_CPTs__construct__taxonomies', array( $this, 'filter_taxonomies' ), 10 );
+		add_filter('FHEE__EE_Register_CPTs__construct__CPTs', array( $this, 'filter_cpts' ), 10 );
 		add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array( $this, 'nav_metabox_items' ), 10 );
 
 		$this->_messages_caf();
@@ -265,7 +236,7 @@ class EE_Brewing_Regular extends EE_Base {
 	public function email_messenger_template_fields( $template_fields, EE_Email_messenger $messenger ) {
 		$template_fields['extra']['content']['question_list'] = array(
 						'input' => 'textarea',
-						'label' => __('Questions and Answers List', 'event_espresso'),
+						'label' => '[QUESTION_LIST]',
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
@@ -280,7 +251,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function email_default_field_content( $default_field_content, EE_Email_messenger $messenger ) {
-		$default_field_content['content']['question_list'] = __('This contains the formatting for each question and answer in a list of questions and answers for an attendee', 'evnt_espresso');
+		$default_field_content['content']['question_list'] = __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'evnt_espresso');
 		return $default_field_content;
 	}
 
@@ -333,7 +304,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function additional_attendee_shortcodes( $shortcodes, $shortcode_parser ) {
-		$shortcodes['[ANSWER_*]'] = __('This is a special dynamic shortcode. Right after the "*", add the exact text of a existing question, and if there is an answer for that question for this attendee, that will take the place of this shortcode.', 'event_espresso');
+		$shortcodes['[ANSWER_*]'] = __('This is a special dynamic shortcode. Right after the "*", add the exact text of a existing question, and if there is an answer for that question for this registrant, that will take the place of this shortcode.', 'event_espresso');
 		return $shortcodes;
 	}
 
@@ -351,7 +322,7 @@ class EE_Brewing_Regular extends EE_Base {
 		//now let's figure out which question has this text.
 		foreach ( $extra_data['data']->questions as $ansid => $question ) {
 			if ( $question->get('QST_display_text') == $shortcode && isset($extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]) )
-				return $extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]->get('ANS_value');
+				return $extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop');
 		}
 
 		//nothing!

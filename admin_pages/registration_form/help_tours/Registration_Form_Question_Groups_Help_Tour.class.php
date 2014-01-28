@@ -48,7 +48,7 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_id_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -165,
+					'tipAdjustmentY' => -30,
 					'tipAdjustmentX' => -15
 					)
 				);
@@ -113,7 +113,7 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 	protected function _start() {
 		$content = '<h3>' . __('Question Groups', 'event_espresso') . '</h3>';
 		if ( $this->_is_caf ) {
-			$content .= '<p>' . __('This tour of the question groups page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+			$content .= '<p>' . __('This tour of the Question Groups page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		} else {
 			$content .= '<p>' . __('Sorry, Event Espresso Decaf does not have this feature. Please purchase a support license to get access to this feature.', 'event_espresso') . '</p>';
 		}
@@ -122,7 +122,7 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _id_stop() {
-		return '<p>' . __('View the id of the question group. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View the ID of the question group. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _name_stop() {
@@ -150,6 +150,6 @@ class Registration_Form_Question_Groups_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _add_new_question_group_stop() {
-		return '<p>' . __("Click here to create a new question group.", 'event_espresso') . '</p>';
+		return '<p>' . __('Click here to create a new question group.', 'event_espresso') . '</p>';
 	}
 }

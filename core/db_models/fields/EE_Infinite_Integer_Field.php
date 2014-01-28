@@ -1,5 +1,4 @@
 <?php
-require_once( EE_MODELS . 'fields/EE_Model_Field_Base.php');
 
 /**
  * For storing integers which can assume the value of INFINITY. They're stored in the DB as -1, 

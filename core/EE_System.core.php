@@ -98,13 +98,13 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	private function __construct() {
-		do_action('AHEE__EE_System__construct__begin',$this);
+		do_action( 'AHEE__EE_System__construct__begin',$this );
 
 		$this->_load_registry();
 		
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-		do_action('AHEE__EE_System__construct__autoloaders_available',$this);
+		do_action( 'AHEE__EE_System__construct__autoloaders_available',$this );
 		// load and setup EE_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		// setup autoloaders
@@ -218,8 +218,10 @@ final class EE_System {
 	* @return void
 	*/
 	private function _manage_activation_process() {
-		// do NOT do this IF... we're NOT in the admin, OR on the WP login or register screens, OR it's an AJAX request
-		if ( ! is_admin() || ( is_admin() && isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  )) {
+
+		do_action('AHEE__EE_System___manage_activation_process__before');
+
+		if ( ! is_admin() || ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) || ( is_admin() && !is_user_logged_in() ) ) {
 			return;
 		}
 		// check if db has been updated, or if its a brand-new installation		
@@ -231,30 +233,32 @@ final class EE_System {
 		}
 		switch($request_type){
 			case EE_System::req_type_new_activation:
-				
-				do_action('AHEE__EE_System__manage_activation_process__new_activation');
+				 
+				do_action( 'AHEE__EE_System__manage_activation_process__new_activation' );
 				$this->_setup_initialize_db_if_no_migrations_required();	
 //				echo "done activation";die;
 				break;
 			case EE_System::req_type_reactivation:
-				do_action('AHEE__EE_System__manage_activation_process__reactivation');
+				do_action( 'AHEE__EE_System__manage_activation_process__reactivation' );
 					$this->initialize_db_if_no_migrations_required();
 //				echo "done reactivation";die;
 				break;
 			case EE_System::req_type_upgrade:
 //				echo "start upgrade";
-				do_action('AHEE__EE_System__manage_activation_process__upgrade');
+				do_action( 'AHEE__EE_System__manage_activation_process__upgrade' );
 				if( ! EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old()){
 					//so the database doesnt look old (ie, there are no migration scripts
 					//taht say they need to upgrade it)
 					//THEN, we just want to still give the system a chance to setup new default data
 					//first: double-check if this was called via an activation hook or a normal reqeust
 					$this->_setup_initialize_db_if_no_migrations_required();
+				} else {
+					$this->_maybe_redirect_to_ee_about(); //only on activation!
 				}
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
-				do_action('AHEE__EE_System__manage_activation_process__downgrade');
+				do_action( 'AHEE__EE_System__manage_activation_process__downgrade' );
 				
 				break;
 			case EE_System::req_type_normal:
@@ -264,7 +268,7 @@ final class EE_System {
 		if( ! $request_type == EE_System::req_type_normal){
 			$this->update_list_of_installed_versions($espresso_db_update);
 		}
-		do_action('AHEE__EE_System__manage_activation_process__end');
+		do_action( 'AHEE__EE_System__manage_activation_process__end' );
 	}
 
 
@@ -278,6 +282,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function initialize_db_if_no_migrations_required(){
+		$request_type = $this->detect_req_type();
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			// set flag for flushing rewrite rules
@@ -285,7 +290,24 @@ final class EE_System {
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();
-		}	
+		}
+
+		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
+			$this->redirect_to_about_ee();
+		}
+	}
+
+
+
+
+	/**
+	 * This redirects to the about EE page after activation
+	 * @return void
+	 */
+	public function redirect_to_about_ee() {
+		$url = add_query_arg( array('page' => 'espresso_about'), admin_url( 'admin.php' ) );
+		wp_safe_redirect( $url );
+		exit();
 	}
 
 
@@ -312,6 +334,16 @@ final class EE_System {
 
 
 
+	private function _maybe_redirect_to_ee_about() {
+		if( self::$_activation ) {
+			$this->redirect_to_about_ee();
+		} else {
+			add_action('init', array($this, 'redirect_to_about_ee'), 10 );
+		}
+	}
+
+
+
 	/**
 	 * standardizes the wp option 'espresso_db_upgrade' which actually stores
 	 * information about what versions of EE have been installed and activated,
@@ -322,8 +354,8 @@ final class EE_System {
 	 * if it needed correction
 	 */
 	private function fix_espresso_db_upgrade_option($espresso_db_update = null){
-		do_action('AHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin');
-		do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin',$espresso_db_update);
+		do_action( 'AHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin' );
+		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin',$espresso_db_update );
 		if( ! $espresso_db_update){
 			$espresso_db_update = get_option( 'espresso_db_update' );
 		}
@@ -361,8 +393,8 @@ final class EE_System {
 			
 		}
 		
-		do_action('AHEE__EE_System__manage_fix_espresso_db_upgrade_option__end');
-		do_action('FHEE__EE_System__manage_fix_espresso_db_upgrade_option__end',$espresso_db_update);
+		do_action( 'AHEE__EE_System__manage_fix_espresso_db_upgrade_option__end' );
+		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__end',$espresso_db_update );
 		return $espresso_db_update;
 	}
 
@@ -376,7 +408,8 @@ final class EE_System {
 	 * Also, caches its result so later parts of the code can also know whether there's been an
 	 * update or not. This way we can add the current version to espresso_db_update,
 	 * but still know if this is a new install or not
-	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'
+	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'. If not provided, this function
+	 * retrieves it from the database... so the parameter only exists for optimization
 	 * @return int one of the consts on EE_System::req_type_*
 	 */
 	public function detect_req_type($espresso_db_update = null){
@@ -435,7 +468,7 @@ final class EE_System {
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
-		if ( apply_filters( 'FHEE_load_EE_Session', TRUE )) {
+		if ( apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
 			EE_Registry::instance()->load_core( 'Session' );
 		}
 	}
@@ -458,10 +491,10 @@ final class EE_System {
 	 */
 	public function wp_enqueue_scripts() {
 		// unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE )) {
+		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE ) ) {
 		
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
-			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE )) {
+			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
 				// load jQuery Validate script from CDN with local fallback
 				$jquery_validate_url = 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'; 
 				// is the URL accessible ?

@@ -53,7 +53,7 @@ class Google_Maps_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_reg_page_map_settings_stop(),
 				'options' => array(
 					'tipLocation' => 'right',
-					'tipAdjustmentY' => -30,
+					'tipAdjustmentY' => -75,
 					'tipAdjustmentX' => 20
 					)
 				),
@@ -62,7 +62,7 @@ class Google_Maps_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_event_list_map_stop(),
 				'options' => array(
 					'tipLocation' => 'right',
-					'tipAdjustmentY' => -30,
+					'tipAdjustmentY' => -80,
 					'tipAdjustmentX' => 20
 					)
 				)
@@ -72,12 +72,12 @@ class Google_Maps_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Google Maps Settings', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the Google maps page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Google Maps page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
 	protected function _use_google_maps_stop() {
-		return '<p>' . __('Turn maps on or off site wide.', 'event_espresso') . '</p>';
+		return '<p>' . __('Turn Google maps on or off site wide for Event Espresso.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_page_map_settings_stop() {

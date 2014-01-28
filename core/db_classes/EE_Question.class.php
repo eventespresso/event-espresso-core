@@ -377,6 +377,16 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function answers(){
 		return $this->get_many_related('Answer');
 	}
+
+
+	/**
+	 * Boolean check for if there are answers on this question in th db
+	 * @return boolean true = has answers, false = no answers.
+	 */
+	public function has_answers() {
+		return $this->count_related('Answer') > 0 ? TRUE : FALSE;
+	}
+
 	
 	/**
 	 * gets an array of EE_Question_Group which relate to thsi question
@@ -388,18 +398,28 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	
 	/**
 	 * Returns all the options for this question. By default, it returns only the not-yet-deleted ones.
-	 * @param boolean $notDeletedOptionsOnly whehter to return ALL options, or only the ones which have not yet been deleleted
+	 * @param boolean $notDeletedOptionsOnly 1
+	 * whehter to return ALL options, or only the ones which have not yet been deleleted
+	 * @param string|array $selected_value_to_always_include, when retrieving options to an ANSWERED question,
+	 * we want to usually only show non-deleted options AND the value that was selected for the answer,
+	 * whether it was trashed or not.
 	 * @return EE_Question_Option[]
 	 */
-	public function options($notDeletedOptionsOnly=true){
+	public function options($notDeletedOptionsOnly=true,$selected_value_to_always_include = NULL){
 		if ( empty( $this->_QST_ID ) )
 			return false;
-
-		if($notDeletedOptionsOnly){
-			return  $this->get_many_related('Question_Option', array(array('QSO_deleted'=>false)));
-		}else{
-			return $this->get_many_related('Question_Option');
+		$query_params = array();
+		if($selected_value_to_always_include){
+			if(is_array($selected_value_to_always_include)){
+				$query_params[0]['OR*options-query']['QSO_value']=array('IN',$selected_value_to_always_include);
+			}else{
+				$query_params[0]['OR*options-query']['QSO_value'] = $selected_value_to_always_include;
+			}
 		}
+		if($notDeletedOptionsOnly){
+			$query_params[0]['OR*options-query']['QSO_deleted'] = false;
+		}
+		return  $this->get_many_related('Question_Option', $query_params);
 	}
 	/**
 	 * returns an array of EE_Question_Options which relate to this question

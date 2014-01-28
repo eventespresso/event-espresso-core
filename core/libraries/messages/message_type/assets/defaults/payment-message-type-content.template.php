@@ -1,5 +1,4 @@
 <!-- HEADER -->
-
 <table class="head-wrap" bgcolor="#999999">
 	<tr>
 		<td></td>
@@ -15,32 +14,31 @@
 	</tr>
 </table>
 <!-- END HEADER --> 
-
 <!-- BODY -->
 <table class="body-wrap">
 	<tr>
 		<td></td>
 		<td class="container" bgcolor="#FFFFFF"><!-- content -->
-			
 			<div class="content">
 				<table>
 					<tr>
-						<td><h2>Hello, [FNAME] [LNAME]</h2>
+						<td><h2>Hello, [FNAME] [LNAME]:</h2>
 							<p class="lead">Thank you for your payment for the following transaction:</p>
-							[TICKET_LIST]
-							<h5>Payment Details</h5>
-							<ol style="list-style-type: none;">
+							
+							<h3>Payment Details:</h3>
+							<ul>
 								<li><strong>Payment status:</strong> [PAYMENT_STATUS]</li>
 								<li><strong>Payment gateway:</strong> [PAYMENT_GATEWAY]</li>
 								<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
 								<li><strong>Payment Made:</strong> [AMOUNT_PAID]</li>
 								<li><strong>Total Owing:</strong> [TOTAL_OWING]</li>
-							</ol>
-							
+							</ul>
 							<!-- Callout Panel -->
-							
 							<p class="callout"> If there is still money owed on your transaction, you can make a payment by <a href="[PAYMENT_URL]">going here &raquo;</a> </p>
-							<!-- /Callout Panel --></td>
+							<!-- /Callout Panel -->
+							<p>&nbsp;</p>
+							[EVENT_LIST]
+						</td>
 					</tr>
 				</table>
 			</div></td>
@@ -48,7 +46,6 @@
 	</tr>
 </table>
 <!-- END BODY --> 
-
 <!-- FOOTER -->
 <table class="footer-wrap">
 	<tr>
@@ -67,10 +64,8 @@
 								</tbody>
 							</table>
 							<!-- /column 1 --> 
-							
 							<!-- column 2 -->
-							
-							<table align="left">
+							<table align="left" class="column">
 								<tbody>
 									<tr>
 										<td><h5 class="">Contact Info:</h5>
@@ -80,7 +75,6 @@
 								</tbody>
 							</table>
 							<!-- /column 2 --> 
-							
 							<span class="clear"></span></td>
 					</tr>
 				</tbody>

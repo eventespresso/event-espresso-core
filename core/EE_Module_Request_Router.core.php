@@ -190,7 +190,7 @@ final class EE_Module_Request_Router {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		// and pass the request object to the run method
+		// and pass the EE_Registry object to the run method
 		$module = $mod_reflector->newInstance( EE_Registry::instance() );
 		// now call whatever action the route was for
 		call_user_func( array( $module, $method ), $this->WP );

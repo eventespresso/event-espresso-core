@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
+do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 /**
  * Event Espresso
@@ -83,10 +83,10 @@ abstract class EE_Gateway {
 	abstract protected function _default_settings();
 	abstract protected function _update_settings();
 	abstract protected function _display_settings();
-	abstract public function espresso_display_payment_gateways();
+	abstract public function espresso_display_payment_gateways( $selected_gateway = '');
 	
 	protected function __construct(EEM_Gateways &$model) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		//echo '<h4>$this->_gateway_name : ' . $this->_gateway_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		
@@ -127,7 +127,7 @@ abstract class EE_Gateway {
 	 * @return array with either index 'success' in case of success, 'error' in case of error
 	 */
 	public function process_payment_start(EE_Line_Item $line_item, $transaction = null){
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return array('success'=>TRUE);
 	}
 	
@@ -150,7 +150,7 @@ abstract class EE_Gateway {
 	}
 
 	protected function _set_default_properties() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// list of options for building Yes or NO dropdown boxes
 		$this->_yes_no_options = array(
 				array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
@@ -159,7 +159,7 @@ abstract class EE_Gateway {
 	}
 
 	private function _handle_payment_settings() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		//handle merging settings if we introduce new settings in the future
 		$all_payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;
 		$saved_settings = isset($all_payment_settings[$this->_gateway_name]) ? $all_payment_settings[$this->_gateway_name] : array();//$this->_EEM_Gateways->payment_settings($this->_gateway_name);
@@ -204,7 +204,7 @@ abstract class EE_Gateway {
 	 * This should probably be done in Payment_Admin_page on a seperate route, not a function called by teh gateway's constructor
 	 */
 	private function _gateways_admin() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//require helpers
 		require_once EE_HELPERS . 'EEH_Template.helper.php';
@@ -235,8 +235,8 @@ abstract class EE_Gateway {
 	
 
 	private function _gateways_frontend() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		add_action('AHEE_display_payment_gateways', array(&$this, 'espresso_display_payment_gateways'));
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		add_action( 'AHEE_display_payment_gateways', array( $this, 'espresso_display_payment_gateways'), 10, 1 );
 		// grab session data for this gateway
 		if ( $gateway_data = EE_Registry::instance()->SSN->get_session_data( 'gateway_data' )) {
 			if ( isset( $gateway_data[ $this->_gateway_name ] )) {
@@ -289,12 +289,12 @@ abstract class EE_Gateway {
 	}
 	
 	public function gateway() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, ' $this->_gateway_name = ' . $this->_gateway_name );
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, ' $this->_gateway_name = ' . $this->_gateway_name );
 		return $this->_gateway_name;
 	}
 
 	public function add_settings_page_meta_box() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		add_meta_box(
 					'espresso_' . $this->_gateway_name . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_espresso_payment_settings', 'normal'
 		);
@@ -314,7 +314,7 @@ abstract class EE_Gateway {
 
 
 	public function settings_meta_box() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		?>
 
 		<a name="<?php echo $this->_gateway_name; ?>" id="<?php echo $this->_gateway_name; ?>"></a>
@@ -345,7 +345,7 @@ abstract class EE_Gateway {
 	}
 
 	private function _display_settings_wrapper() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$form_url = GATEWAYS_ADMIN_URL . '#' . $this->_gateway_name;
 		?>
 			<form method="post" action="<?php echo $form_url; ?>">
@@ -354,11 +354,11 @@ abstract class EE_Gateway {
 						<?php if ( $this->_payment_settings['type'] == 'on-site' ) : ?>
 						<tr>
 							<th>
-								<label><strong style="color:#F00"><?php _e('WARNING !!!', 'event_espresso'); ?></strong></label>
+								<label><strong style="color:#F00"><?php _e('IMPORTANT', 'event_espresso'); ?></strong></label>
 							</th>
 							<td>				
-								<strong><?php _e('You are responsible for your own security and Payment Card Industry Data Security Standards (PCI DSS) compliance.', 'event_espresso');?></strong><br />
-								<?php _e('Click here for more information about ', 'event_espresso');?>
+								<strong><?php _e('You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.', 'event_espresso');?></strong><br />
+								<?php _e('Learn more about ', 'event_espresso');?>
 								<a href="https://www.pcisecuritystandards.org/merchants/index.php">
 									<?php _e('PCI DSS compliance', 'event_espresso');?>
 								</a>
@@ -418,18 +418,27 @@ abstract class EE_Gateway {
 		$this->_display_settings_help();
 	}
 
-	public function set_form_url($base_url = FALSE) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-		if (!$base_url) {
+	public function set_form_url( $base_url = FALSE ) {
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		if ( ! $base_url ) {
 			return FALSE;
 		}
-		$this->_form_url = add_query_arg(array('e_reg' => 'register', 'step' => 2, 'payment' => $this->_gateway_name), $base_url);
+		$params = array( 'ee' => '_register', 'step' => 'payment_options', 'payment' => $this->_gateway_name );
+		// returning from the thank you page ?
+		if( EE_Registry::instance()->REQ instanceof EE_Request_Handler && EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
+			$params['e_reg_url_link'] = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
+		}
+		// are we returning to the page to edit attendee info or retry a payment?
+		if ( EE_Registry::instance()->REQ instanceof EE_Request_Handler && EE_Registry::instance()->REQ->is_set( 'revisit' ) ) {
+			$params['revisit'] = EE_Registry::instance()->REQ->get( 'revisit' ) == 1 ? TRUE : FALSE;
+		}		
+		$this->_form_url = add_query_arg( $params, $base_url );
 		$this->_set_session_data();
 		return TRUE;
 	}
 
 	public function set_selected() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_selected = TRUE;
 		//$this->_update_actions();
 		$this->_css_class = '';
@@ -438,7 +447,7 @@ abstract class EE_Gateway {
 	}
 
 	public function unset_selected() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_css_class = 'hidden';
 		$this->_selected = FALSE;
 		//$this->_update_actions();
@@ -447,7 +456,7 @@ abstract class EE_Gateway {
 	}
 
 	public function set_hidden() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_css_class = 'hidden';
 		$this->_selected = FALSE;
 		//$this->_update_actions();
@@ -456,7 +465,7 @@ abstract class EE_Gateway {
 	}
 
 	private function _set_session_data() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');		
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );		
 		// get existing gateway data
 		$gateway_data = EE_Registry::instance()->SSN->get_session_data( 'gateway_data' );
 		// add this gateway
@@ -470,7 +479,7 @@ abstract class EE_Gateway {
 	}
 
 	public function reset_session_data() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$this->_form_url = NULL;
 		$this->_css_class = 'hidden';
 		$this->_selected = FALSE;
@@ -480,7 +489,7 @@ abstract class EE_Gateway {
 
 
 	protected function _reset_button_url() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway_name);
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway_name]) {
@@ -507,7 +516,7 @@ abstract class EE_Gateway {
 	 * 		@return 		string
 	 */
 	protected function _generate_payment_gateway_selection_button() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return '
 		 <div id="' . $this->_gateway_name . '-payment-option-dv" class="'. $this->_payment_settings['type'] .'-payment-gateway reg-page-payment-option-dv' . $this->_css_link_class . '">
 			<a id="payment-gateway-button-' . $this->_gateway_name . '" class="reg-page-payment-option-lnk" rel="' . $this->_gateway_name . '" href="' . $this->_form_url . '" >

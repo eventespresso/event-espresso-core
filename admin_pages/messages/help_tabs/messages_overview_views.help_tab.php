@@ -5,23 +5,23 @@
 <p>
 <ul>
 <li>
-<?php _e('In Use', 'event_espresso'); ?><br />
+<?php _e('<strong>In Use</strong>', 'event_espresso'); ?><br />
 <?php _e('Show all message templates that are active.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('All', 'event_espresso'); ?><br />
+<?php _e('<strong>View All Message Templates</strong>', 'event_espresso'); ?><br />
 <?php _e('Show every message template that has been created.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Global', 'event_espresso'); ?><br />
+<?php _e('<strong>Global</strong>', 'event_espresso'); ?><br />
 <?php _e('Show message templates that are in use by all events.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Events', 'event_espresso'); ?><br />
+<?php _e('<strong>Events</strong>', 'event_espresso'); ?><br />
 <?php _e('Show message templates that have been customized for a specific event.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('Trash', 'event_espresso'); ?><br />
+<?php _e('<strong>Trash</strong>', 'event_espresso'); ?><br />
 <?php _e('Show message templates that have been moved to the trash.', 'event_espresso'); ?>
 </li>
 </ul>

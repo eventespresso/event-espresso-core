@@ -41,6 +41,14 @@ CREATE TABLE `wp_events_qst_group` (
 class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
 	private $_new_table;
+	/**
+	 * Keeps track of whether or not we've already added a system question group,
+	 * in order to avoid adding more than 1 (basically, in 3.1 this would happen
+	 * with the Roles & Permissions addon, because each user had their own set of
+	 * question groups and questions),
+	 * @var boolean
+	 */
+	private $_already_got_system_question_group_1 = false;
 	function _migration_step($num_items=50){
 		
 		global $wpdb;
@@ -82,16 +90,24 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage{
 		//try to guess what the QST_system int should be... finding the Personal info system
 		//question group is quite easy. But in 3.1 address info WASN'T a system group, it just exitsed by default but
 		//could be easily removed.
-		if($old_question_group['system_group']){
+		if($old_question_group['system_group'] && ! $this->_already_got_system_question_group_1()){
 			$guess_at_system_number = 1;
 		}elseif($old_question_group['id'] == '2' && strpos($old_question_group['group_name'],'Address')!==FALSE){
 			$guess_at_system_number = 2;
 		}else{
 			$guess_at_system_number = 0;
 		}
+		//if the question group wasn't made by the normal admin, 
+		//we'd like to keep track of who made it
+		if(intval($old_question_group['wp_user'])!=1){
+			$username = $wpdb->get_var($wpdb->prepare("SELECT user_nicename FROM ".$wpdb->users." WHERE ID = %d",$old_question_group['wp_user']));
+			$identifier = $old_question_group['group_identifier']."-by-".$username;
+		}else{
+			$identifier = $old_question_group['group_identifier'];
+		}
 		$cols_n_values = array(
 			'QSG_name'=>stripslashes($old_question_group['group_name']),
-			'QSG_identifier'=>$old_question_group['group_identifier'],
+			'QSG_identifier'=>$identifier,
 			'QSG_desc'=>stripslashes($old_question_group['group_description']),
 			'QSG_order'=>$old_question_group['group_order'],
 			'QSG_show_group_name'=>$old_question_group['show_group_name'],
@@ -116,5 +132,21 @@ class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage{
 		}
 		return $wpdb->insert_id;
 	}
-
+	
+	/**
+	 * Checks if we've already added a system question 1 to the new question groups table
+	 * @global type $wpdb
+	 * @return boolean
+	 */
+	private function _already_got_system_question_group_1(){
+		if( ! $this->_already_got_system_question_group_1 ){
+			//check the db
+			global $wpdb;
+			$exists = $wpdb->get_var("SELECT COUNT(*) FROM {$this->_new_table} WHERE QSG_system=1");
+			if(intval($exists)>0){
+				$this->_already_got_system_question_group_1 = true;
+			}
+		}		
+		return $this->_already_got_system_question_group_1;
+	}
 }

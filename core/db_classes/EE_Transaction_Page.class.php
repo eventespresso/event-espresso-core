@@ -30,7 +30,7 @@ class EE_Transaction_Page{
 	 * 		@return class instance
 	 */
 	public static function instance() {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// check if class object is instantiated
 		if (self::$_instance === NULL or !is_object(self::$_instance) or ! ( self::$_instance instanceof EE_Transaction_Page )) {
 			self::$_instance = new self();
@@ -39,7 +39,7 @@ class EE_Transaction_Page{
 	}
 	
 	protected function __construct(){
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		add_action('init',array($this,'handle_ipn'),30);
 		$this->load_classes();
 	}

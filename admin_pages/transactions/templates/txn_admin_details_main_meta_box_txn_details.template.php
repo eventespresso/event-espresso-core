@@ -27,21 +27,21 @@
 				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
 				<td class="jst-left"><?php echo $event_name;?></td>
 				<td class="jst-left"><?php echo $item->get('LIN_name');?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_unit_price') ); ?></td>
+				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_unit_price'), FALSE, FALSE ); ?></td>
 				<td class="jst-rght"><?php echo $item->get('LIN_quantity');?></td>
-				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_total') ); ?></td>
+				<td class="jst-rght"><?php echo EEH_Template::format_currency($item->get('LIN_total'), FALSE, FALSE ); ?></td>
 			</tr>
 		<?php endforeach; // $items?>
 		<?php if ( is_array($taxes) ) : ?>
 			<?php foreach ( $taxes as $tax ) : ?>
 				<tr class="admin-primary-mbox-taxes-tr">
 					<th class=" jst-rght" colspan="5"><?php echo $tax->get('LIN_name');?> (<?php echo $tax->get_pretty('LIN_percent'); ?>%)</th>
-					<th class=" jst-rght"><?php echo EEH_Template::format_currency($tax->get('LIN_total') );?></th>
+					<th class=" jst-rght"><?php echo EEH_Template::format_currency($tax->get('LIN_total'), FALSE, FALSE );?></th>
 				</tr>
 			<?php endforeach; // $taxes?>
 		<?php endif; // $taxes?>
 				<tr class="admin-primary-mbox-total-tr">
-					<th class=" jst-rght" colspan="5"><?php _e( 'Transaction Total', 'event_espresso' );?></th>
+					<th class=" jst-rght" colspan="5"><?php printf( __( 'Transaction Total %s', 'event_espresso' ), '(' . EE_Registry::instance()->CFG->currency->code . ')');?></th>
 					<th class=" jst-rght"><?php echo $grand_total;?></span></th>
 				</tr>
 			</tbody>	
@@ -93,9 +93,9 @@
 		<table id="txn-admin-payments-tbl" class="admin-primary-mbox-tbl">
 			<thead>
 				<tr>
+					<th></th>
 					<th class="jst-cntr"></th>
 					<th class="jst-cntr"><?php _e( 'ID', 'event_espresso' );?></th>
-					<th class="jst-left"><?php _e( 'Status', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Date', 'event_espresso' );?></th>
 					<th class="jst-cntr"><?php _e( 'Method', 'event_espresso' );?></th>
 					<th class="jst-left"><?php _e( 'Gateway', 'event_espresso' );?></th>
@@ -112,6 +112,10 @@
 			<?php $payment_total = 0; ?>
 			<?php foreach ( $payments as $PAY_ID => $payment ) : ?>
 				<tr id="txn-admin-payment-tr-<?php echo $PAY_ID;?>">
+					<td>
+						<span id="payment-status-<?php echo $PAY_ID; ?>" class="ee-status-strip-td ee-status-strip pymt-status-<?php echo $payment->STS_ID(); ?>"></span>
+						<div id="payment-STS_ID-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->STS_ID();?></div>
+					</td>
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
@@ -128,12 +132,6 @@
 					</td>
 					<td class=" jst-rght">
 						<div id="payment-id-<?php echo $PAY_ID;?>"><?php echo $PAY_ID;?></div>
-					</td>
-					<td class=" jst-left">
-						<div id="payment-status-<?php echo $PAY_ID;?>">
-							<span class="txn-admin-payment-status-<?php echo $payment->STS_ID();?>"><?php echo $payment_status[ $payment->STS_ID() ];?></span>
-							<div id="payment-STS_ID-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->STS_ID();?></div>
-						</div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-date-<?php echo $PAY_ID;?>" class="payment-date-dv"><?php echo $payment->timestamp('Y-m-d', 'h:i a');?></div>
@@ -162,7 +160,7 @@
 					<td class=" jst-rght">
 						<?php $payment_class = $payment->amount() > 0 ? 'txn-admin-payment-status-' . $payment->STS_ID() : 'txn-admin-payment-status-PDC'; ?>
 						<span class="<?php echo $payment_class;?>">
-							<div id="payment-amount-<?php echo $PAY_ID;?>" style="display:inline;"><?php echo EEH_Template::format_currency($payment->amount() ); ?></div>
+							<div id="payment-amount-<?php echo $PAY_ID;?>" style="display:inline;"><?php echo EEH_Template::format_currency($payment->amount(), FALSE, FALSE ); ?></div>
 						</span>
 					</td>
 				</tr>
@@ -180,8 +178,8 @@
 					</td>
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr<?php echo $pay_totals_class;?>">
-					<th class=" jst-rght" colspan="10"><span id="payments-total-spn"><?php echo $overpaid . __( 'Payments Total', 'event_espresso' );?></span></th>
-					<th class=" jst-rght"><span id="txn-admin-payment-total"><?php echo EEH_Template::format_currency($payment_total);?></span></th>
+					<th class=" jst-rght" colspan="10"><span id="payments-total-spn"><?php echo $overpaid . sprintf( __( 'Payments Total %s', 'event_espresso' ), '(' . EE_Registry::instance()->CFG->currency->code . ')' );?></span></th>
+					<th class=" jst-rght"><span id="txn-admin-payment-total"><?php echo EEH_Template::format_currency($payment_total, FALSE, FALSE);?></span></th>
 				</tr>			
 		<?php else : ?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
@@ -195,7 +193,11 @@
 				</tr>				
 		<?php endif; // $payments?>
 
-				<tr id="txn-admin-payment-empty-row-tr" class="hidden">  
+				<tr id="txn-admin-payment-empty-row-tr" class="hidden"> 
+					<td>
+						<span id="payment-status-PAY_ID" class="ee-status-strip-td ee-status-strip"></span>
+						<div id="payment-STS_ID-PAY_ID" class="hidden"></div>
+					</td> 
 					<td class=" jst-cntr">
 						<ul class="txn-overview-actions-ul">
 							<li>
@@ -212,12 +214,6 @@
 					</td>
 					<td class=" jst-rght">
 						<div id="payment-id-PAY_ID">PAY_ID</div>
-					</td>
-					<td class=" jst-left">
-						<div id="payment-status-PAY_ID">
-							<span class=""></span>
-							<div id="payment-STS_ID-PAY_ID" class="hidden"></div>
-						</div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-date-PAY_ID"></div>
@@ -385,10 +381,26 @@
 						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Notes / Extra Accounting', 'event_espresso' );?></label>
 						<input name="txn_admin_payment[accounting]" id="txn-admin-payment-accounting-inp" class="txn-admin-apply-payment-inp" type="text" value="<?php echo $REG_code; ?>"/>		<input type="hidden" id="txn-admin-reg-code-inp" value="<?php echo $REG_code; ?>"/>
 						<br/>
-						<p class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes.', 'event_espresso' );?></p><br/>
+						<p class="description"><?php _e( 'An extra field you may use for accounting purposes or simple notes. Defaults to the primary registrant\'s registration code.', 'event_espresso' );?></p><br/>
+					</div>
+
+					<div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
+						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Change Registration Status?', 'event_espresso' );?></label>
+						<?php echo $status_change_select; ?>
+						<br/>
+						<br />
+						<p class="description"><?php _e( 'If you wish to change the status of all the registrations associated with this transaction after submit, then select which status from this dropdown. <strong>Note: ALL registrations associated with this transaction will be updated to this new status.</strong>', 'event_espresso' );?></p><br/>
 						<label></label>
-						<p class="description"><?php _e( 'Defaults to the primary attendee\'s registration code.', 'event_espresso' );?></p>
-					</div>			
+					</div>
+
+					<div class="ee-attention txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
+						<label for="txn-admin-payment-accounting-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
+						<input type="checkbox" value="1" name="txn_reg_status_change[send_notifications]">
+						<br/>
+						<br />
+						<p class="description"><?php _e( 'By default a payment message <strong>is</strong> sent to the primary registrant after submitting this form.  However, if you check this box, the system will also send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p><br/>
+						<label></label>
+					</div>				
 					<div class="clear"></div>
 	
 				</div>	
@@ -415,7 +427,70 @@
 						<?php _e( 'Cancel', 'event_espresso' );?>
 					</a>
 				</li>
-			</ul>	
+				<li>
+					<span id="ee-ajax-processing-text" style="display:none;"><?php _e('Processing...', 'event_espresso'); ?></span>
+				</li>
+			</ul>
+
+			<br class="clear"/>
+									
+		</form>
+	</div>
+
+	<div id="txn-admin-delete-payment-dv" class="txn-admin-payment-option auto-hide" style="display: none;">
+
+		<h2 id="admin-modal-dialog-delete-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
+			<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/cash-single-add-24x24.png" alt="" />
+			<?php echo __( 'Delete Payment/Refund for Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
+		</h2>
+		
+		<form name="txn-admin-delete-payment-frm" id="txn-admin-delete-payment-frm" action="<?php echo $delete_payment_url; ?>">
+			<div class="admin-modal-dialog-wrap">
+				<div class="admin-modal-dialog-inner">
+					
+					<input  type="hidden" name="espresso_delete_payment_nonce" id="espresso_delete_payment_nonce" value="<?php echo wp_create_nonce( 'espresso_delete_payment_nonce' );?>"/>
+					<input  type="hidden" name="delete_espresso_ajax" id="delete-espresso-ajax" value="0"/>
+					<input  type="hidden" name="delete_noheader" id="delete-txn-admin-noheader-inp" value="0"/>
+					<input  type="hidden" name="delete_txn_admin_payment[PAY_ID]" id="delete-txn-admin-payment-payment-id-inp" class="txn-admin-apply-payment-inp" value="0"/>
+					<input  type="hidden" name="delete_txn_admin_payment[TXN_ID]" id="delete-txn-admin-payment-txn-id-inp" value="<?php echo $txn_nmbr['value']; ?>"/>
+
+					<div class="txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
+						<label for="delete-txn-admin-payment-accounting-inp" class="last"><?php _e( 'Change Registration Status?', 'event_espresso' );?></label>
+						<?php echo $delete_status_change_select; ?>
+						<br/>
+						<br />
+						<p class="description"><?php _e( 'If you wish to change the status of all the registrations associated with this transaction after deleting this payment/refund, then select which status from this dropdown. <strong>Note: ALL registrations associated with this transaction will be updated to this new status.</strong>', 'event_espresso' );?></p><br/>
+						<label></label>
+					</div>
+
+					<div class="ee-attention txn-admin-apply-payment-accounting-dv admin-modal-dialog-row">
+						<label for="delete-txn-admin-payment-accounting-inp" class="last"><?php _e( 'Send Related Messages?', 'event_espresso' );?></label>
+						<input type="checkbox" value="1" name="delete_txn_reg_status_change[send_notifications]">
+						<br/>
+						<br />
+						<p class="description"><?php _e( 'If you check this box, the system will send any related messages matching the status of the registrations to each registration for this transaction.', 'event_espresso' );?></p><br/>
+						<label></label>
+					</div>				
+					<div class="clear"></div>
+
+				</div>	
+			</div>			
+
+			<ul id="del-admin-modal-dialog-options-ul">
+					<a id="txn-admin-modal-dialog-delete-lnk" class="button-primary no-icon" style="display:none;" > 
+						<?php _e( 'Delete', 'event_espresso' );?>
+					</a>
+				</li>
+				<li>
+					<a id="del-txn-admin-modal-dialog-cancel-lnk" class="button-secondary no-icon" >
+						<?php _e( 'Cancel', 'event_espresso' );?>
+					</a>
+				</li>
+				<li>
+					<span id="delete-ee-ajax-processing-text" style="display:none;"><?php _e('Processing...', 'event_espresso'); ?></span>
+				</li>
+			</ul>
+
 			<br class="clear"/>
 									
 		</form>

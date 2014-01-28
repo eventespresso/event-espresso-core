@@ -144,6 +144,32 @@
 	margin-right: .25em;
 }
 
+.ee-icon-size-12:before {
+	font-size: 12px;
+}
+.ee-icon-size-14:before {
+	font-size: 14px;
+}
+.ee-icon-size-16:before {
+	font-size: 16px;
+	margin-right:-0.05em;
+}
+.ee-icon-size-18:before {
+	font-size: 18px;
+	margin-right: -0.1em;
+}
+.ee-icon-size-20:before {
+	font-size: 20px;
+	margin-right: -0.15em;
+}
+.ee-icon-size-22:before {
+	font-size: 22px;
+	margin-right: -0.2em;
+}
+.ee-icon-size-24:before {
+	font-size: 24px;
+	margin-right: -0.25em;
+}
 
 .ee-clock-icon-big {
 	min-height: 32px; 
@@ -312,6 +338,7 @@
 .ee-button:visited {
 	display: inline-block;
 	position: relative;
+	top: -2px;
 	margin: 0 0 1em;
 	background-color: #00B1CA;
 	background-image: -moz-linear-gradient( center top , #4EBFDE, #00B1CA );
@@ -424,16 +451,18 @@ input.ee-register-button {
 
 .ee-status {
  	display: inline-block;
-	z-index: 10;
-	padding:.5em 1.5em .6em;
-	margin:0;
+	position: relative;
+	float: right;
+	z-index: 1;
+	padding:.5em 1.5em .5em;
+	margin:0 0 0 1em;
 	border-bottom: 1px solid rgba(0,0,0,0.1);
 	font-weight: bold;
 	color: #fff !important;
 	text-decoration: none;
 	text-align: center;
 	text-shadow: 0 -1px 0px rgba(0,0,0,0.25);
-	font-size: 1em;
+	font-size:.5em;
 	line-height: 1;
 	-moz-border-radius: 0;
 	-webkit-border-radius: 0;
@@ -442,12 +471,21 @@ input.ee-register-button {
 	-webkit-box-shadow: none;
 	box-shadow: none;
 }
-.ee-status.sold-out { background-color: #E44064; }
-.ee-status.expired { background-color: #A39D9C; }
-.ee-status.inactive { background-color: #A39D9C; }
-.ee-status.upcoming { background-color: #00B1CA; } 
-.ee-status.active { background-color: #70CC50; }
+.ee-status.event-active-status-DTC { background-color: #CCB714; }
+.ee-status.event-active-status-DTS { background-color: #E44064; }
+.ee-status.event-active-status-DTE { background-color: #A39D9C; }
+.ee-status.event-active-status-DTI { background-color: #A39D9C; }
+.ee-status.event-active-status-DTU { background-color: #00B1CA; } 
+.ee-status.event-active-status-DTA { background-color: #70CC50; }
+.ee-status.event-active-status-DTP { background-color: #8A549A; }
 
+.ee-status-size-12 { font-size: 12px; }
+.ee-status-size-14 { font-size: 14px; }
+.ee-status-size-16 { font-size: 16px; }
+.ee-status-size-18 { font-size: 18px; }
+.ee-status-size-20 { font-size: 20px; }
+.ee-status-size-22 { font-size: 22px; }
+.ee-status-size-24 { font-size: 24px; }
 
 /******************* AJAX ****************** */
 
@@ -531,6 +569,9 @@ input.ee-register-button {
 /******************* ERRORS AND NOTICES ****************** */
 
 
+.espresso-ajax-notices {
+	display: none;
+}
 #espresso-notices,
 #espresso-ajax-notices {
 	position: absolute;
@@ -538,10 +579,11 @@ input.ee-register-button {
 	width: 800px;
 	max-width: 90%;
 	text-align: center;
+	left: 50%;
+	margin-left:-320px;
 }
 .espresso-notices,
 .espresso-ajax-notices {
-	display: none;
 	position: relative;
 	width: 74.5%;
 	min-width: 200px;
@@ -647,13 +689,11 @@ input.ee-register-button {
 .hide-if-no-js {
 	display: none;
 }
-.cntr {
-	text-align: center;
-}
 
 .jst-left {
 	text-align: left;
 }
+.cntr,
 .jst-cntr {
 	text-align: center;
 }
@@ -692,24 +732,58 @@ input.ee-register-button {
 	letter-spacing: -.75px;
 }
 
+.pink-text {
+	 color: #E44064; 
+}
+.green-text {
+	 color: #70CC50; 
+}
+.red-text {
+	 color: #B4113F; 
+}
+.orange-text {
+	 color: #E76700; 
+}
+.lt-blue-text {
+	 color: #00B1CA;
+}
+.blue-text {
+	 color: #005B9E; 
+}
+.yellow-text {
+	 color: #F8D755; 
+}
 .lt-grey-text {
-	color: #a8a8a8;
+	color: #A39D9C;
 }
 .grey-text {
 	color: #888;
 }
 .drk-grey-text {
-	color: #666;
+	color: #59595B;
+}
+.black-text {
+	color: #2F3334;
 }
 .important-notice {
 	font-weight: bold;
-	color: #f59200;
+	color: #d54e21;
+}
+.ee-attention {
+	width:94%;
+	padding: .75em 2.5%;
+	margin: 0 auto 1em;
+	background: #fff;
+	border: 4px solid #F8D755;
+	font-size: 1em;
+	line-height: 1.6em;
+	text-align: center;
 }
 .highlight-bg {
 	padding:1em;
-	background:#ffffdd;
-	border-color: #F8D755;
+	background:#FEFBDC;
 }
+
 .extra-padding {
 	padding:1em;
 }
@@ -741,8 +815,10 @@ input.ee-register-button {
 	vertical-align: text-top;
 }
 
+
 .display-the-hidden,
-.hide-the-displayed {
+.hide-the-displayed,
+.ee-form-cancel-new-state-lnk {
 	cursor: pointer;
 }
 .espresso-txn-status-icon {
@@ -754,7 +830,26 @@ input.ee-register-button {
 	box-shadow: none !important;
 	border: none;
 }
+.ee-gmap {
+	max-width: 100%;
+}
 
+.ee-form-add-new-state-dv {
+	padding:1.5em 1.5em .5em;
+	background: #f8f8f8;
+	color: #444;
+}
+
+.ee-form-add-new-state-dv li {
+	line-height: 1.2em;
+	margin:0 0 .5em;
+}
+
+
+.espresso_events,
+.espresso_venues {
+	margin-bottom: 48px;
+}
 /*******************************************************/
 /****                     -==ATTENTION==-                     ****/
 /****         MOVE THIS FILE BEFORE EDITING         ****/

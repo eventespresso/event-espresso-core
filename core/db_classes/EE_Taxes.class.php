@@ -114,7 +114,7 @@ class EE_Taxes extends EE_BASE {
 		$this->_grand_total = $grand_total;
 		$this->_taxes = $this->_PRC_MDL->get_all_prices_that_are_taxes();
 		$this->_calculate_taxes();
-		add_filter( 'espresso_filter_hook_grand_total_after_taxes', array( $this, '_grand_total_after_taxes' ), 10, 1 );
+		add_filter( 'FHEE__EED_Single_Page_Checkout__registration_checkout__grand_total', array( $this, '_grand_total_after_taxes' ), 10, 1 );
 		
 	}
 
@@ -251,7 +251,7 @@ class EE_Taxes extends EE_BASE {
 		$subtotal = 0;
 
 		//get all prices
-		$prices = $ticket->get_many_related( 'Price', array('default_where_conditions' => 'none') );
+		$prices = $ticket->get_many_related( 'Price', array('default_where_conditions' => 'none', 'order_by' => array('PRC_order' => 'ASC')) );
 
 		//let's loop through them (base price is always the first item)
 		foreach ( $prices as $price ) {

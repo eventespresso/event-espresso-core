@@ -89,6 +89,17 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage{
 	}
 	private function _insert_new_question($old_question){
 		global $wpdb;
+		//if this pretends to be a 'system' question, check if we already have a 
+		//system question for that string. If so, pretend THAT new question
+		//is what we just isnerted
+		if($old_question['system_name']){
+			$id_of_new_system_question = intval($wpdb->get_var($wpdb->prepare("SELECT QST_ID FROM {$this->_new_table} WHERE QST_system = %s",$old_question['system_name'])));
+			if($id_of_new_system_question){
+				return $id_of_new_system_question;
+			}
+			//ok so this must be the first one. Carry on.
+		}
+		
 		$cols_n_values = array(
 			'QST_display_text'=>stripslashes($old_question['question']),
 			'QST_admin_label'=> $old_question['system_name'] ? $old_question['system_name'] : sanitize_title($old_question['question']),

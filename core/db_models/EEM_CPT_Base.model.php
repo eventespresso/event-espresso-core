@@ -53,7 +53,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 */
 	protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params){
 		$post_status_field_name=$this->post_status_field_name();
-		$query_params[0][$post_status_field_name]=array('IN',array_keys($this->_statuses));
+		$query_params[0][$post_status_field_name]=array('IN',array_keys($this->get_status_array()));
 		return $query_params;
 	}
 	/**
@@ -84,12 +84,21 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 
 
+
+
+
 	/**
-	 * keys are the statuses for posts, values are translatable strings. It's nice having an 
-	 * array of ALL of the statuses, so we can know what statuses are valid, and which are not
-	 * @var array 
+	 * This is an array of custom statuses for the given CPT model (modified by children)
+	 * format:
+	 * array(
+	 * 		'status_name' => array(
+	 * 			'label' => __('Status Name', 'event_espresso'),
+	 * 			'public' => TRUE //whether a public status or not.
+	 * 		)
+	 * )
+	 * @var array
 	 */
-	protected $_statuses = array();
+	protected $_custom_stati = array();
 
 
 	/**
@@ -246,7 +255,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * @global array $wp_post_statuses set in wp core for storing all the post stati
 	 * @return array
 	 */
-	public static function get_post_statuses(){
+	public function get_post_statuses(){
 		global $wp_post_statuses;
 		$statuses = array();
 		foreach($wp_post_statuses as $post_status => $args_object){
@@ -261,7 +270,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * @return array array of statuses.
 	 */
 	public function get_status_array() {
-		$statuses = self::get_post_statuses();
+		$statuses = $this->get_post_statuses();
 		//first the global filter
 		$statuses = apply_filters( 'FHEE_EEM_CPT_Base__get_status_array', $statuses );
 		//now the class specific filter
@@ -274,22 +283,10 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	 * this returns the post statuses that are NOT the default wordpress status
 	 * @return array
 	 */
-	public static function get_custom_post_statuses() {
+	public function get_custom_post_statuses() {
 		$new_stati = array();
-		$statuses = self::get_post_statuses();
-		$defaults = array(
-			'publish',
-			'future',
-			'private',
-			'pending',
-			'auto-draft',
-			'draft',
-			'trash',
-			'inherit'
-			);
-		foreach ( $statuses as $status => $label ) {
-			if ( !in_array( $status, $defaults ) )
-				$new_stati[$status] = $label;
+		foreach ( $this->_custom_stati as $status => $props ) {
+			$new_stati[$status] = $props['label'];
 		}
 		return $new_stati;
 	}

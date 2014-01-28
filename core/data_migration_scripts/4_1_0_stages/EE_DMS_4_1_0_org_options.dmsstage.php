@@ -126,7 +126,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 	}
 	function __construct() {
 		$this->_pretty_name = __("Organization Options/Config", "event_espresso");
-		$this->_org_options_we_know_how_to_migrate = apply_filters('FHEE__EE_DMS_4_1_0_org_options__org_options_we_know_how_to_migrate',$this->_org_options_we_know_how_to_migrate);
+		$this->_org_options_we_know_how_to_migrate = apply_filters( 'FHEE__EE_DMS_4_1_0_org_options__org_options_we_know_how_to_migrate',$this->_org_options_we_know_how_to_migrate );
 		parent::__construct();
 	}
 
@@ -216,8 +216,6 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			  $c->registration->recaptcha_language = $value;break;
 		  case 'espresso_dashboard_widget': 
 			  $c->admin->use_dashboard_widget = ($value == 'Y'); break;
-		  case 'use_attendee_pre_approval': 
-			  $c->registration->use_attendee_pre_approval = ($value == 'Y'); break;
 		  case 'use_personnel_manager': 
 			  $c->admin->use_personnel_manager = ($value == 'Y'); break;
 		  case 'use_event_timezones': 
@@ -229,7 +227,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'site_license_key': 
 			  $c->core->site_license_key = $value;break;
 		  default:
-			  do_action('AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value);
+			  do_action( 'AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value );
 		}
 	}
 	
@@ -336,7 +334,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 	  'recaptcha_language',
 	  'espresso_dashboard_widget',
 	  'time_reg_limit',
-	  'use_attendee_pre_approval',
+//	  'use_attendee_pre_approval', removed in 4.1- instead this is factored into the defautl reg status
 	  'use_personnel_manager',//no equiv
 	  'use_event_timezones',
 	  'full_logging',

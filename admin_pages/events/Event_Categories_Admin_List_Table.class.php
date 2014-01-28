@@ -151,7 +151,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_shortcode($item) {
-		$content = '[EVENT_ESPRESSO_CATEGORY category_id="' . $item->get_first_related('Term')->get('slug') . '"]';
+		$content = '[ESPRESSO_EVENTS category_slug="' . $item->get_first_related('Term')->get('slug') . '"]';
 		return $content;
 	}
 

@@ -13,7 +13,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	private $_time_format = NULL;
 	private $_pretty_date_format = NULL;
 	private $_pretty_time_format = NULL;
-
+	private static $_UTC_DateTimeZone = NULL;
 
 
 	/**
@@ -63,6 +63,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 	public function get_wpdb_data_type() {
 		return '%s';
+	}
+	
+
+	public static function get_UTC_DateTimeZone() {
+		return EE_Datetime_Field::$_UTC_DateTimeZone instanceof DateTimeZone ? EE_Datetime_Field::$_UTC_DateTimeZone : new DateTimeZone( 'UTC' );
 	}
 	
 
@@ -146,7 +151,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			$this->_blog_offset = $offset;
 			$this->_timezone = self::timezone_convert_to_string_from_offset( $offset );
 		}
-
 
 		self::validate_timezone( $this->_timezone ); //just running validation on the timezone.
 	}
@@ -356,7 +360,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		}
 
 		//return to UTC time
-		$this->_date->setTimezone( new DateTimeZone( 'UTC' ) );
+		$this->_date->setTimezone( EE_Datetime_Field::get_UTC_DateTimeZone() );
 
 		//return unix timestamp
 		return $this->_date->format('U');
@@ -412,7 +416,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( !$this->_date )
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 
-		$this->_date->setTimezone( new DateTimeZone('UTC') );
+		$this->_date->setTimezone( EE_Datetime_Field::get_UTC_DateTimeZone() );
 		return $this->_date->format('U');
 
 	}
@@ -428,27 +432,22 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 *
 	 * @static
 	 * @access public
-	 * @param  string $timezone Timezone string to check
-	 * @return bool             Return True if Valid, False if Invalid
+	 * @param  string  	$timezone_string Timezone string to check
+	 * @return boolean	Return True if Valid, False if Invalid
 	 */	
-	public static function validate_timezone( $timezone ) {
-
-		//dang it DateTimeZone::listIdentifiers() is unreliable so lets use timezone_abbreviations_list();
-		
-		$abbarray = timezone_abbreviations_list();
-		
-		$time_string = array();
-		foreach ( $abbarray as $abbr ) {
-			foreach ( $abbr as $city ) {
-				$time_string[] = $city['timezone_id'];
-			}
+	public static function validate_timezone( $timezone_string ) {
+		// easiest way to test a timezone string is just see if it throws an error when you try to create a DateTimeZone object with it
+		try {
+			new DateTimeZone( $timezone_string );
+		} catch ( Exception $e ) {
+			throw new EE_Error( sprintf( 
+				__( 'The timezone given (%s), is invalid, please check with %sthis list%s for what valid timezones can be used', 'event_espresso' ), 
+				$timezone_string, 
+				'<a href="http://www.php.net/manual/en/timezones.php">', 
+				'</a>' 
+			));
 		}
-
-		if ( in_array( $timezone, $time_string ) )
-			return TRUE;
-
-		else
-			throw new EE_Error( sprintf( __('The timezone given (%s), is invalid, please check with %sthis list%s for what valid timezones can be used', 'event_espresso'), $timezone, '<a href="http://www.php.net/manual/en/timezones.php">', '</a>' ) );
+		return TRUE;		
 	}
 
 
@@ -468,11 +467,11 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
         {
                 foreach ($abbr as $city)
                 {
-                        if ($city['offset'] == $offset)
+                        if ($city['offset'] === $offset && $city['dst'] === FALSE )
                         {
-
-                                return $city['timezone_id'];
-                        }
+                   
+                               return $city['timezone_id'];
+                        }/**/
                 }
         }
 
@@ -554,7 +553,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			try{
 				$format = 'd/m/Y H:i';
 				$this->_date = DateTime::createFromFormat($format, $datestring, new DateTimeZone( $timezone ));
-			}catch(Excetion $e){
+			}catch(Exception $e){
 				//ok give up, but dont throw an error
 				$this->_date = new DateTime(null, new DateTimeZone( $timezone ));
 			}

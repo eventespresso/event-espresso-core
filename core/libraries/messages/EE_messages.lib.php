@@ -190,7 +190,7 @@ class EE_messages {
 		}
 		// add a success message
 		if ( ! $error ) {
-			EE_Error::add_success( sprintf( __( 'The %s has been succesfully sent.', 'event_espresso'), str_replace( '_', ' ', $type )), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_success( sprintf( __( 'The %s message has been succesfully sent.', 'event_espresso'), $this->_installed_message_types[$type]->label['singular'] ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 		
 		return $error ? FALSE : TRUE; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.

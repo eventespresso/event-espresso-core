@@ -81,7 +81,7 @@ class EE_Messages_Init extends EE_Base {
 		}
 
 		//let's allow hooking into the autoloader to add additional paths
-		$dir_ref = apply_filters('FHEE__EE_Messages_Init__autoload_messages__dir_ref', $dir_ref );
+		$dir_ref = apply_filters( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', $dir_ref );
 
 		//assemble a list of filenames
 		foreach ( $dir_ref as $dir => $types ) {
@@ -124,9 +124,9 @@ class EE_Messages_Init extends EE_Base {
 	 */
 	private function _do_actions() {
 		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', array( $this, 'payment' ), 10, 2 );
-		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', array( $this, 'payment_reminder'), 10 );
-		add_action( 'AHEE_process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
-		add_action( 'AHEE__EE_Transaction__finalize__new_transaction', array( $this, 'maybe_registration' ), 10 );
+		//add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', array( $this, 'payment_reminder'), 10 );
+		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
+		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( $this, 'maybe_registration' ), 10, 3 );
 	}
 
 
@@ -139,8 +139,8 @@ class EE_Messages_Init extends EE_Base {
 	 */
 	private function _do_filters() {
 		//EE_Admin filters
-		add_filter( 'FHEE_process_resend_registration_message', array( $this, 'process_resend' ), 10, 2 );
-		add_filter( 'FHEE_process_admin_payment_message', array( $this, 'process_admin_payment'), 10, 2 );/**/
+		add_filter( 'FHEE__EE_Admin_Page___process_resend_registration__success', array( $this, 'process_resend' ), 10, 2 );
+		add_filter( 'FHEE__EE_Admin_Page___process_admin_payment_notification__success', array( $this, 'process_admin_payment'), 10, 2 );/**/
 	}
 
 
@@ -186,8 +186,19 @@ class EE_Messages_Init extends EE_Base {
 	 * @param  EE_Transaction $transaction
 	 * @return void                      
 	 */
-	public function maybe_registration( EE_Transaction $transaction ) {
+	public function maybe_registration( EE_Transaction $transaction, $reg_msg, $from_admin ) {
 		$this->_load_controller();
+
+		//for now we're ONLY doing this from frontend UNLESS we have the toggle to send.
+		if ( $from_admin ) {
+			$messages_toggle = !empty( $_REQUEST['txn_reg_status_change']['send_notifications'] ) && $_REQUEST['txn_reg_status_change']['send_notifications'] ? TRUE : FALSE;
+			if ( ! $messages_toggle )
+				return; //no messages sent please.
+		}
+		//next let's only send out notifications if a registration was created OR if the registration status was updated to approved
+		if ( ! $reg_msg['new_reg'] && ! $reg_msg['to_approved'] )
+			return;
+
 		$data = array( $transaction, NULL );
 
 		//let's get the first related reg on the transaction since we can use its status to determine what message type gets sent.
@@ -285,7 +296,6 @@ class EE_Messages_Init extends EE_Base {
 	 */
 	public function process_admin_payment( $success, EE_Payment $payment ) {
 		$success = TRUE;
-		$reg_success = TRUE;
 
 		//we need to get the transaction object
 		$transaction = $payment->transaction();
@@ -294,20 +304,11 @@ class EE_Messages_Init extends EE_Base {
 
 		$this->_load_controller();
 		$success = $this->_EEMSG->send_message( 'payment', $data );
-		//let's trigger a registration confirmation (note this will only actually complete if registration confirmations are delayed until complete payment)
-		$reg_success = $this->_EEMSG->send_message( 'registration', $data );
 
-		if ( $success ) {
-			EE_Error::add_success( __('The payment confirmation has been sent', 'event_espresso') );
-		} else {
+		if ( ! $success ) {
 			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		if ( $reg_success ) {
-			EE_Error::add_success( __('Complete payment has been made for the transaction so registration confirmations have been sent', 'event_espresso') );
-		} else {
-			EE_Error::add_success( __('Registration confirmations are delayed until the amount owing has been completely paid.', 'event_espresso') );
-		}
 		return $success;
 	}
 

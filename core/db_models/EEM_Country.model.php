@@ -59,6 +59,7 @@ class EEM_Country extends EEM_Base {
 		);
 		$this->_fields = array(
 			'Country'=>array(
+				'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Appears in Dropdown Select Lists','event_espresso'), false, true),
 				'CNT_ISO'=> new EE_Primary_Key_String_Field('CNT_ISO', __('Country ISO Code','event_espresso')),
 				'CNT_ISO3'=>new EE_All_Caps_Text_Field('CNT_ISO3', __('Country ISO3 Code','event_espresso'), false,''),
 				'RGN_ID'=>new EE_All_Caps_Text_Field('RGN_ID', __('Region ID','event_espresso'), false,0),//should be a foreign key, but no region table exists yet
@@ -72,12 +73,12 @@ class EEM_Country extends EEM_Base {
 				'CNT_cur_dec_mrk' => new EE_Plain_Text_Field('CNT_cur_dec_mrk', __('Currency Decimal Mark','event_espresso'), false, '.'),
 				'CNT_cur_thsnds' => new EE_Plain_Text_Field('CNT_cur_thsnds', __('Currency Thousands Seperator','event_espresso'), false, ','),
 				'CNT_tel_code' => new EE_Plain_Text_Field('CNT_tel_code', __('Country Telephone Code','event_espresso'), false, ''),
-				'CNT_is_EU' => new EE_Boolean_Field('CNT_is_EU', __('Country is Member of EU','event_espresso'), false, false),
-				'CNT_active' => new EE_Boolean_Field('CNT_active', __('Country Active Flag','event_espresso'), false, true)
+				'CNT_is_EU' => new EE_Boolean_Field('CNT_is_EU', __('Country is Member of EU','event_espresso'), false, false)
 			));
 		$this->_model_relations = array(
 			'Attendee'=>new EE_Has_Many_Relation(),
-			'State'=>new EE_Has_Many_Relation()
+			'State'=>new EE_Has_Many_Relation(),
+			'Venue'=>new EE_Has_Many_Relation(),
 		);
 		
 		parent::__construct();

@@ -46,7 +46,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * Status ID (STS_ID on esp_status table) to indicate an UNAPPROVED registration.
 	 * Payments are NOT allowed. 
 	 * Event Admin must manually toggle STS_ID for it to change
-	 * No space reservced.
+	 * No space reserved.
 	 * Registration is active
 	 */
 	const status_id_not_approved = 'RNA';
@@ -55,7 +55,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	 * Status ID (STS_ID on esp_status table) to indicate registration is PENDING_PAYMENT .
 	 * Payments are allowed. 
 	 * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
-	 * No space reservced.
+	 * No space reserved.
 	 * Registration is active
 	 */
 	const status_id_pending_payment = 'RPP';
@@ -80,7 +80,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	/**
 	 * Status ID (STS_ID on esp_status table) to indicate a registration was DECLINED by the Event Admin
 	 * Payments are NOT allowed. 
-	 * No space reservced.
+	 * No space reserved.
 	 * Registration is NOT active
 	 */
 	const status_id_declined = 'RDC';
@@ -102,7 +102,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$this->plural_item = __('Registrations','event_espresso');
 		$this->_get_registration_status_array();
 //		require_once(EE_CLASSES . 'EE_Registration.class.php');
-		$this->_allowed_statuses=apply_filters('FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
+		$this->_allowed_statuses=apply_filters( 'FHEE__EEM_Registration__allowed_statuses', self::$_reg_status );
 
 		$this->_tables = array(
 			'Registration'=>new EE_Primary_Table('esp_registration','REG_ID')
@@ -173,12 +173,16 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 	/**
 	 * 		get list of registration statuses
-	*		@access private
-	*		@return void
-	*/
-	public static function reg_status_array( $exclude = array() ) {
+	 *
+	 * 
+	 *		@access private
+	 *		@param array $exclude The status ids to exclude from the returned results
+	 *		@param bool  $translated If true will return the values as singular localized strings
+	 *		@return void
+	 */
+	public static function reg_status_array( $exclude = array(), $translated = FALSE ) {
 		call_user_func_array( array( EEM_Registration::instance(), '_get_registration_status_array' ), array($exclude ) );
-		return self::$_reg_status;
+		return $translated ? EEM_Status::instance()->localized_status( self::$_reg_status, FALSE, 'sentence') : self::$_reg_status;
 	}
 
 

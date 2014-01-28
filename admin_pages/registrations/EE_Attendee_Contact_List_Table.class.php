@@ -36,7 +36,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 				'ATT_phone' => __('Phone', 'event_espresso'),
 				'ATT_address' => __('Address', 'event_espresso'),
 				'ATT_city' => __('City', 'event_espresso'),
-				'STA_ID' => __('State', 'event_espresso'),
+				'STA_ID' => __('State / Province', 'event_espresso'),
 				'CNT_ISO' => __('Country', 'event_espresso'),
 			);
 

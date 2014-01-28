@@ -34,8 +34,8 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 		$this->name = 'cancelled_registration';
 		$this->description = __('This message type is for messages sent to attendees when their registration is cancelled.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('cancelled registration', 'event_espresso'),
-			'plural' => __('cancelled registrations', 'event_espresso')
+			'singular' => __('registration cancelled', 'event_espresso'),
+			'plural' => __('registrations cancelled', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -91,7 +91,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Registration Details';
+			$content[$context] = 'Cancelled Registration Details';
 		};
 		return $content;
 	}
@@ -106,10 +106,10 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 		
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-attendee-list.template.php', TRUE );
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-event-list.template.php', TRUE );
-			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-ticket-list.template.php', TRUE );
-			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/cancelled-registration-message-type-datetime-list.template.php', TRUE );
+			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-attendee-list.template.php', TRUE );
+			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-event-list.template.php', TRUE );
+			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-ticket-list.template.php', TRUE );
+			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-datetime-list.template.php', TRUE );
 		}
 
 
@@ -132,7 +132,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 		$this->_context_label = array(
 			'label' => __('recipient', 'event_espresso'),
 			'plural' => __('recipients', 'event_espresso'),
-			'description' => __('Recipient\'s are who will recieve the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
+			'description' => __('Recipient\'s are who will receive the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
 			);
 
 		$this->_contexts = array(
@@ -140,18 +140,14 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 				'label' => __('Event Admin', 'event_espresso'),
 				'description' => __('This template is what event administrators will receive with an cancelled registration', 'event_espresso')
 				),
-			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive with cancelled registration', 'event_espresso')
-				),
 			'attendee' => array(
 				'label' => __('Attendee', 'event_espresso'),
 				'description' => __('This template is what each attendee for the event will receive when their registration is cancelled.', 'event_espresso')
 				)
 			);
 
-		$this->_contexts = apply_filters('FHEE_set_contexts_'. $this->name, $this->_contexts);
-		$this->_contexts = apply_filters('FHEE_set_contexts_all', $this->_contexts);
+		$this->_contexts = apply_filters( 'FHEE_set_contexts_'. $this->name, $this->_contexts );
+		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
 
 
@@ -161,7 +157,6 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
 			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list'),
 			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
 			);
 	}
@@ -179,13 +174,13 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 	 * @return array array of EE_Messages_Addressee objects
 	 */
 	protected function _admin_addressees() {
-		if ( !$this->_single_message )
+		if ( $this->_single_message )
 			return array();
 
 		$admin_ids = array();
 		$admin_events = array();
 		$admin_attendees = array();
-		$addresees = array();
+		$addressees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {
@@ -212,29 +207,6 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 
 		return $addressees;
 	}
-
-
-	/**
-	 * Takes care of setting up the addressee object(s) for the primary attendee.
-	 *
-	 * @access protected
-	 * @return array of EE_Addressee objects
-	 */
-	protected function _primary_attendee_addressees() {
-		if ( !$this->_single_message ) 
-			return array();
-		
-		$aee = $this->_default_addressee_data;
-		$aee['events'] = $this->_data->events;
-		$aee['attendees'] = $this->_data->attendees;
-		$aee['att_obj'] = $this->_data->primary_attendee_data['att_obj'];
-
-		//great now we can instantiate the $addressee object and return (as an array);
-		$add[] = new EE_Messages_Addressee( $aee );
-		return $add;
-	}
-
-
 
 
 

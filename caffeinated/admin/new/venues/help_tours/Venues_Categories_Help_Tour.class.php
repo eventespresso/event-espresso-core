@@ -108,7 +108,7 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Venue Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the venues overview page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Venues Overview page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 	
@@ -121,7 +121,7 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _shortcode_stop() {
-		return '<p>' . __('View the shortcode for a venue. This shortcode can be added to an event, WordPress post, or WordPress page. ', 'event_espresso') . '</p>';
+		return '<p>' . __('View the shortcode for a venue category. This shortcode can be added to an event, WordPress post, or WordPress page. ', 'event_espresso') . '</p>';
 	}
 
 	protected function _count_stop() {
@@ -133,10 +133,10 @@ class Venues_Categories_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through venues categories. The following sources will be searched: venue category id, venue category name, venue shortcode, and venue count.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through venues categories. The following sources will be searched: Venue Category ID, Venue Category Name, Venue Shortcode, and Venue Count.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _new_category_stop() {
-		return '<p>' . __('Click here to add a new category.', 'event_espresso') . '</p>';
+		return '<p>' . __('Click here to add a new venue category.', 'event_espresso') . '</p>';
 	}
 }

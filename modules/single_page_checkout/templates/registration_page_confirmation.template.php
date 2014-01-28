@@ -17,7 +17,7 @@
 				<input type="hidden" id="spco-revisit" name="revisit" value="<?php echo $revisit;?>" />
 
 	<?php	if ( ! $payment_required ) { ?>
-				<input type="hidden" id="reg-page-no-payment-required-registration_confirmation" name="reg-page-no-payment-required" value="1" />
+				<input type="hidden" id="reg-page-no-payment-required-registration_confirmation" name="_reg-page-no-payment-required" value="1" />
 	<?php } ?>
 
 				<div id="reg-page-confirmation-dv">
@@ -46,7 +46,7 @@
 
 			</form>		
 
-			<?php do_action( 'AHEE__SPCO__after_reg_step_form', 'registration_confirmation', $next_step ); ?>
+			<?php do_action( 'AHEE__SPCO_after_reg_step_form', 'registration_confirmation', $next_step ); ?>
 
 		</div>
 	</div>

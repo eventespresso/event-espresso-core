@@ -209,6 +209,14 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'venues_overview_help_tab' => array(
 						'title' => __('Venues Overview', 'event_espresso'),
 						'filename' => 'venues_overview'
+					),
+					'venues_overview_table_column_headings_help_tab' => array(
+						'title' => __('Venues Overview Table Column Headings', 'event_espresso'),
+						'filename' => 'venues_overview_table_column_headings'
+					),
+					'venues_overview_views_bulk_actions_search_help_tab' => array(
+						'title' => __('Venues Overview Views & Bulk Actions & Search', 'event_espresso'),
+						'filename' => 'venues_overview_views_bulk_actions_search'
 					)
 				),
 				'help_tour' => array( 'Venues_Overview_Help_Tour' ),
@@ -222,9 +230,29 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'persistent' => FALSE
 				),
                 'help_tabs' => array(
-					'venues_add_venue_help_tab' => array(
-						'title' => __('Add Venue', 'event_espresso'),
-						'filename' => 'venues_add_venue'
+					'venues_editor_help_tab' => array(
+						'title' => __('Venue Editor', 'event_espresso'),
+						'filename' => 'venues_editor'
+					),
+					'venues_editor_title_richtexteditor_help_tab' => array(
+						'title' => __('Venue Title & Rich Text Editor', 'event_espresso'),
+						'filename' => 'venues_editor_title_richtexteditor'
+					),
+					'venues_editor_tags_categories_help_tab' => array(
+						'title' => __('Venue Tags & Categories', 'event_espresso'),
+						'filename' => 'venues_editor_tags_categories'
+					),
+                'venues_editor_physical_location_google_map_virtual_location_help_tab' => array(
+						'title' => __('Venue Editor Physical Location & Google Map & Virtual Location', 'event_espresso'),
+						'filename' => 'venues_editor_physical_location_google_map_virtual_location'
+					),
+					'venues_editor_save_new_venue_help_tab' => array(
+						'title' => __('Save New Venue', 'event_espresso'),
+						'filename' => 'venues_editor_save_new_venue'
+					),
+					'venues_editor_other_help_tab' => array(
+						'title' => __('Venue Editor Other', 'event_espresso'),
+						'filename' => 'venues_editor_other'
 					)
 				),
                 'help_tour' => array( 'Venues_Add_Venue_Help_Tour' ),
@@ -239,9 +267,29 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'url' => isset($this->_req_data['post']) ? add_query_arg(array('post' => $this->_req_data['post'] ), $this->_current_page_view_url )  : $this->_admin_base_url
 				),
                 'help_tabs' => array(
-					'venues_edit_venue_help_tab' => array(
-						'title' => __('Edit Venue', 'event_espresso'),
-						'filename' => 'venues_edit_venue'
+					'venues_editor_help_tab' => array(
+						'title' => __('Venue Editor', 'event_espresso'),
+						'filename' => 'venues_editor'
+					),
+					'venues_editor_title_richtexteditor_help_tab' => array(
+						'title' => __('Venue Title & Rich Text Editor', 'event_espresso'),
+						'filename' => 'venues_editor_title_richtexteditor'
+					),
+					'venues_editor_tags_categories_help_tab' => array(
+						'title' => __('Venue Tags & Categories', 'event_espresso'),
+						'filename' => 'venues_editor_tags_categories'
+					),
+					'venues_editor_physical_location_google_map_virtual_location_help_tab' => array(
+						'title' => __('Venue Editor Physical Location & Google Map & Virtual Location', 'event_espresso'),
+						'filename' => 'venues_editor_physical_location_google_map_virtual_location'
+					),
+					'venues_editor_save_new_venue_help_tab' => array(
+						'title' => __('Save New Venue', 'event_espresso'),
+						'filename' => 'venues_editor_save_new_venue'
+					),
+					'venues_editor_other_help_tab' => array(
+						'title' => __('Venue Editor Other', 'event_espresso'),
+						'filename' => 'venues_editor_other'
 					)
 				),
                 'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),
@@ -257,7 +305,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'metaboxes' => array('_publish_post_box'),
                 'help_tabs' => array(
 					'venues_add_category_help_tab' => array(
-						'title' => __('Add Venue Category', 'event_espresso'),
+						'title' => __('Add New Venue Category', 'event_espresso'),
 						'filename' => 'venues_add_category'
 					)
 				),
@@ -291,6 +339,18 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 					'venues_categories_help_tab' => array(
 						'title' => __('Venue Categories', 'event_espresso'),
 						'filename' => 'venues_categories'
+					),
+					'venues_categories_table_column_headings_help_tab' => array(
+						'title' => __('Venue Categories Table Column Headings', 'event_espresso'),
+						'filename' => 'venues_categories_table_column_headings'
+					),
+					'venues_categories_views_help_tab' => array(
+						'title' => __('Venue Categories Views', 'event_espresso'),
+						'filename' => 'venues_categories_views'
+					),
+					'venues_categories_other_help_tab' => array(
+						'title' => __('Venue Categories Other', 'event_espresso'),
+						'filename' => 'venues_categories_other'
 					)
 				),
                 'help_tour' => array( 'Venues_Categories_Help_Tour' ),
@@ -401,7 +461,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => __('View All Venues', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					//'restore_venues' => __('Restore_from Trash', 'event_espresso'),
@@ -479,25 +539,34 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	public function venue_address_metabox() {
 
-		//states and countries 
-		$states = EE_Registry::instance()->load_model( 'State' )->get_all_active_states();
-		$countries = EE_Registry::instance()->load_model( 'Country' )->get_all_active_countries();
+		$template_args['_venue'] =$this->_cpt_model_obj;
 
-		//prepare state/country arrays
-		foreach ( $states as $id => $obj ) {
-			$st_ary[$id] = $obj->name();
-		}
-
-		foreach ( $countries as $id => $obj ) {
-			$ctry_ary[$id] = $obj->name();
-		}
-
-
-		$template_args = array(
-			'_venue' => $this->_cpt_model_obj,
-			'states_dropdown' => EEH_Form_Fields::select_input('sta_id', $st_ary, $this->_cpt_model_obj->state_ID(), 'id="sat_id"'),
-			'countries_dropdown' => EEH_Form_Fields::select_input('cnt_iso', $ctry_ary, $this->_cpt_model_obj->country_ID(), 'id="cnt_iso"')
-			);
+		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input( 
+			$QFI = new EE_Question_Form_Input(
+				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'state' )),
+				EE_Answer::new_instance( array(  'ANS_value'=> $this->_cpt_model_obj->state_ID() )),
+				array(
+					'input_name' =>  'sta_id',
+					'input_id' => 'sta_id',
+					'input_class' => '',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE
+				)
+			)
+		);
+		$template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input( 
+			$QFI = new EE_Question_Form_Input(
+				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'country' )),
+				EE_Answer::new_instance( array(  'ANS_value'=> $this->_cpt_model_obj->country_ID() )),
+				array(
+					'input_name' =>  'cnt_iso',
+					'input_id' => 'cnt_iso',
+					'input_class' => '',
+					'input_prefix' => '',
+					'append_qstn_id' => FALSE
+				)
+			)
+		);
 
 		$template = EE_VENUES_TEMPLATE_PATH . 'venue_address_metabox_content.template.php';
 		EEH_Template::display_template( $template, $template_args );
@@ -551,7 +620,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'VNU_url' => !empty( $this->_req_data['vnu_url'] ) ? $this->_req_data['vnu_url'] : NULL,
 			'VNU_virtual_phone' => !empty( $this->_req_data['vnu_virtual_phone'] ) ? $this->_req_data['vnu_virtual_phone'] : NULL,
 			'VNU_virtual_url' => !empty( $this->_req_data['vnu_virtual_url'] ) ? $this->_req_data['vnu_virtual_url'] : NULL,
-			'VNU_enable_for_gmap' => isset( $this->_req_data['vnu_enable_for_gmap'] ) ? TRUE : FALSE,
+			'VNU_enable_for_gmap' => !empty( $this->_req_data['vnu_enable_for_gmap'] ) ? TRUE : FALSE,
 			'VNU_google_map_link' => !empty( $this->_req_data['vnu_google_map_link'] ) ? $this->_req_data['vnu_google_map_link'] : NULL
 			);
 		
@@ -563,7 +632,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$venue = $this->_venue_model->get_one( array( $get_one_where ) );
 
 		//notice we've applied a filter for venue metabox callbacks but we don't actually have any default venue metaboxes in use.  So this is just here for addons to more easily hook into venue saves.
-		$venue_update_callbacks = apply_filters( 'FHEE_venue_editor_update', array() );
+		$venue_update_callbacks = apply_filters( 'FHEE__Venues_Admin_Page___insert_update_cpt_item__venue_update_callbacks', array() );
 
 		$att_success = TRUE;
 
@@ -814,7 +883,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		do_action('AHEE_venue_deleted');
+		do_action( 'AHEE__Venues_Admin_Page___delete_or_trash_venue__after_venue_deleted' );
 		return TRUE;
 	}
 

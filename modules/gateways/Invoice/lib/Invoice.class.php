@@ -95,7 +95,7 @@ class Invoice {
 		$template_args['amount_owed'] = $this->transaction->total() - $this->transaction->paid();
 		$template_args['payments'] = $this->transaction->approved_payments();
 		$template_args['net_total'] = '';
-		$template_args['edit_reg_info_url'] = add_query_arg( array( 'step' => 'attendee_information', 'revisit' => TRUE ), $this->registration->payment_overview_url() );
+		$template_args['edit_reg_info_url'] = add_query_arg( array( 'step' => 'attendee_information', 'revisit' => TRUE ), $this->registration->edit_attendee_information_url() );
 		$template_args['retry_payment_url'] = add_query_arg( array( 'step' => 'payment_options', 'revisit' => TRUE ), $this->registration->payment_overview_url() );
 		$template_args['show_line_item_description'] = $this->check_if_any_line_items_have_a_description($this->transaction->total_line_item());
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
@@ -118,7 +118,7 @@ class Invoice {
 		
 		$template_args['currency_symbol'] = $EE->CFG->currency->sign;
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
-		$template_args['shameless_plug'] = apply_filters('FHEE_Invoice__send_invoice__shameless_plug',true);
+		$template_args['shameless_plug'] = apply_filters( 'FHEE_Invoice__send_invoice__shameless_plug',true );
 		if(isset($_GET['receipt'])){
 			//receipt-specific stuff
 			$events_for_txn = EEM_Event::instance()->get_all(array(array('Registration.TXN_ID'=>$this->transaction->ID())));

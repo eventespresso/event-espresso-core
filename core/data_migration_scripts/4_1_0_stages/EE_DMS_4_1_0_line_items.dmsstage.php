@@ -121,10 +121,11 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table{
 				$line_total += $new_reg['REG_final_price'];
 			}
 			$a_reg = reset($regs);
+			$new_ticket = $this->_get_new_ticket_row($a_reg['TKT_ID']);
 			$reg_line_item_id = $this->_insert_new_line_item(array(
 				'LIN_code'=> md5( 'Ticket' . $ticket_id . time() ),
 				'TXN_ID'=>$transaction['TXN_ID'],
-				'LIN_name'=>$old_attendee['price_option'],
+				'LIN_name'=>$new_ticket['TKT_name'],
 				'LIN_unit_price'=>$a_reg['REG_final_price'],
 				'LIN_is_taxable'=>false,
 				'LIN_total'=>$line_total,
@@ -139,6 +140,17 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table{
 			
 		
 		return $new_line_item_ids;
+	}
+	/**
+	 * Gets the full ticket by ID
+	 * @global type $wpdb
+	 * @param type $new_ticket_id
+	 * @return array
+	 */
+	private function _get_new_ticket_row($new_ticket_id){
+		global $wpdb;
+		$ticket_row = $wpdb->get_row($wpdb->prepare("SELECT * FROM ".$wpdb->prefix."esp_ticket WHERE TKT_ID=%d",$new_ticket_id),ARRAY_A);
+		return $ticket_row;
 	}
 	
 	private function _insert_new_line_item($cols_n_values,$old_attendee){

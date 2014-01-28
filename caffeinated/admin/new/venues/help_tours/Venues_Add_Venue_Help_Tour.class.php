@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Venues_Add_Venue_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Add Venue Tour', 'event_espresso');
+		$this->_label = __('Venue Editor Tour', 'event_espresso');
 		$this->_slug = 'venue-add-venue-joyride';
 	}
 
@@ -110,7 +110,7 @@ class Venues_Add_Venue_Help_Tour extends EE_Help_Tour {
 
 	protected function _stop_one() {
 		$content = '<h3>' . __('Add Venue', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This brief tour of the add venue page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Venue Editor page will provide an overview of the different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		return $content;
 	}
 
@@ -135,7 +135,7 @@ class Venues_Add_Venue_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _venue_gmap_stop() {
-		return '<p>' . __('Enable or disable a Google map for your venue.', 'event_espresso') . '</p>';
+		return '<p>' . __('Enable or disable a Google Map for your venue.', 'event_espresso') . '</p>';
 	}
 
 	protected function _venue_virtual_location_stop() {
@@ -147,7 +147,7 @@ class Venues_Add_Venue_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _stop_publish_box() {
-		return '<p>' . __('Easily control the status of your venue. The main options are Published, Pending Review, and Draft. Additional options are Cancelled, Postponed, and Sold Out.', 'event_espresso') . '</p>';
+		return '<p>' . __('Easily control the status of your venue. The main options are Published, Pending Review, and Draft.', 'event_espresso') . '</p>';
 	}
 	
 }

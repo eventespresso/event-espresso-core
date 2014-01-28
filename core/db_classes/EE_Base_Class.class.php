@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
+do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
 /**
  *
  * Event Espresso
@@ -184,7 +184,10 @@ abstract class EE_Base_Class{
 		$this->_timezone = $timezone;
 		//remember what values were passed to this constructor
 		$this->_props_n_values_provided_in_constructor = $fieldValues;
-
+		//remember in entity mapper
+		if($model->has_primary_key_field() && $this->ID()){
+			$model->add_to_entity_map($this);
+	}
 	}
 
 
@@ -228,6 +231,8 @@ abstract class EE_Base_Class{
 					$this->set($field_obj->get_name(),$obj_in_db->get($field_obj->get_name()));
 				 }
 			 }
+			 //oh this model object has an ID? well make sure its in the entity mapper
+			 $this->get_model()->add_to_entity_map($this);
 		 }
 		 //let's unset any cache for this field_name from the $_cached_properties property.
 		 $this->_clear_cached_property( $privateAttributeName );
@@ -474,7 +479,51 @@ abstract class EE_Base_Class{
 		}
 		return $obj_removed;
 	}
-	
+
+
+
+	/**
+	 * update_cache_after_object_save
+	 * Allows a cached item to have it's cache ID (within the array of cached items) reset using the new ID it has obtained after being saved to the db
+	 * 
+	 * @param string $relationName - the type of object that is cached
+	 * @param EE_Base_Class $newly_saved_object - the newly saved object to be recached
+	 * @param string $current_cache_id - the ID that was used when originally caching the object
+	 * @return boolean TRUE on success, FALSE on fail
+	 */
+	public function update_cache_after_object_save( $relationName, EE_Base_Class $newly_saved_object, $current_cache_id = '' ){
+//		echo '<h4>$relationName : ' . $relationName . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$current_cache_id : ' . $current_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		// get the correct relation name for the related item
+		$relationNameClassAttribute = $this->_get_private_attribute_name( $relationName );
+//		echo '<h4>$relationNameClassAttribute : ' . $relationNameClassAttribute . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $this->{$relationNameClassAttribute}, '$this->{$relationNameClassAttribute}  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// verify that incoming object is of the correct type
+		$obj_class = 'EE' . $relationNameClassAttribute;
+		if ( $newly_saved_object instanceof $obj_class ) {
+			// now get the type of relation
+			$relationship_to_model = $this->get_model()->related_settings_for( $relationName );
+//			printr( $relationship_to_model, '$relationship_to_model  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// if this is a 1:1 realtionship
+			if( $relationship_to_model instanceof EE_Belongs_To_Relation ) {
+				// then just replace the cached object with the newly saved object
+				$this->{$relationNameClassAttribute} = $newly_saved_object;
+				return TRUE;
+			// or if it's some kind of sordid feral polyamorous relationship...		
+			} elseif ( is_array( $this->{$relationNameClassAttribute} ) && isset( $this->{$relationNameClassAttribute}[ $current_cache_id ] )) {
+				// then remove the current cached item
+				unset( $this->{$relationNameClassAttribute}[ $current_cache_id ] );
+				// and cache the newly saved object using it's new ID
+				$this->{$relationNameClassAttribute}[ $newly_saved_object->ID() ] = $newly_saved_object;
+				return TRUE;
+			} 
+		}
+//		printr( $newly_saved_object, '$newly_saved_object  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		return FALSE;
+	}
+
+
+
 	/**
 	 * Fetches a single EE_Base_Class on that relation. (If the relation is of type
 	 * BelongsTo, it will only ever have 1 object. However, other relations could have an array of objects)
@@ -772,7 +821,7 @@ abstract class EE_Base_Class{
 	 * This takes care of setting a date or time independently on a given model object property. This method also verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
 	 *
 	 * @access private
-	 * @param string $what          "T" for time, otherwise Date is assumed
+	 * @param string $what          "T" for time, 'B' for both, 'D' for Date.
 	 * @param string $datetimevalue A valid Date or Time string
 	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
 	 */
@@ -780,7 +829,19 @@ abstract class EE_Base_Class{
 		$field = $this->_get_dtt_field_settings( $fieldname );
 		$attribute_field_name = $this->_get_private_attribute_name($fieldname);
 		$field->set_timezone( $this->_timezone );
-		$this->$attribute_field_name = $what == 'T' ? $field->prepare_for_set_with_new_time($datetimevalue, $this->$attribute_field_name ) : $field->prepare_for_set_with_new_date( $datetimevalue, $this->$attribute_field_name );
+
+		switch ( $what ) {
+			case 'T' :
+				$this->$attribute_field_name = $field->prepare_for_set_with_new_time( $datetimevalue, $this->$attribute_field_name );
+				break;
+			case 'D' :
+				$this->$attribute_field_name = $field->prepare_for_set_with_new_date( $datetime_value, $this->$attribute_field_name );
+				break;
+			case 'B' :
+				$this->$attribute_field_name = $field->prepare_for_set( $datetime_value );
+				break;
+		}
+
 		$this->_clear_cached_property($attribute_field_name);
 	}
 
@@ -803,7 +864,8 @@ abstract class EE_Base_Class{
 	 * @return string timestamp
 	 */
 	public function display_in_my_timezone( $field_name, $callback = 'get_datetime', $args = NULL, $prepend = '', $append = '' ) {
-		$timezone = EEH_DTT_helper::get_timezone();
+		EE_Registry::instance()->load_helper('DTT_Helper');
+		$timezone = EEH_DTT_Helper::get_timezone();
 		
 		if ( $timezone == $this->_timezone )
 			return '';
@@ -885,9 +947,18 @@ abstract class EE_Base_Class{
 		} else {
 			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
 			$results = $this->get_model()->insert( $save_cols_n_values, true);
-			if($results){//if successful, set the primary key
-				$this->set(self::_get_primary_key_name( get_class($this) ),$results);
+			if($results){
+				//if successful, set the primary key
+				//but don't use the normal SET method, because it will check if
+				//an item with the same ID exists in the mapper & db, then 
+				//will find it in the db (because we just added it) and THAT object
+				//will get added to teh mapper before we can add this one!
+				//but if we just avoid using the SET method, all that headache can be avoided
+				$pk_attribute = $this->_get_private_attribute_name(self::_get_primary_key_name( get_class($this)));
+				$this->$pk_attribute = $results;
+				$this->_clear_cached_property($pk_attribute);
 			}
+			$this->get_model()->add_to_entity_map($this);
 		}
 		//restore the old assumption about values being prepared by the model obejct
 		$this->get_model()->assume_values_already_prepared_by_model_object($old_assumption_concerning_value_preparation);
@@ -940,7 +1011,7 @@ abstract class EE_Base_Class{
 				}
 			}
 		}
-
+		
 		return $id;
 	}
 	
@@ -965,11 +1036,19 @@ abstract class EE_Base_Class{
 		return self::_get_model_instance_with_name($modelName, $this->_timezone );
 	}
 
-
-
-
+	protected static function _get_object_from_entity_mapper($props_n_values, $classname){
+		//TODO: will not work for TErm_RElationships because they ahve no PK!
+		$primary_id_ref = self::_get_primary_key_name( $classname );
+		if ( array_key_exists( $primary_id_ref, $props_n_values ) && !empty( $props_n_values[$primary_id_ref] ) ) {
+			$id = $props_n_values[$primary_id_ref];
+			return self::_get_model($classname)->get_from_entity_map($id);
+		}
+		return false;
+	}
+	
 	/**
-	 * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for the primary key (if present in incoming values).  If there is a key in the incoming array that matches the primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not we return false.
+	 * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for the primary key (if present in incoming values).  
+	 * If there is a key in the incoming array that matches the primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not we return false.
 	 * @param  array  $props_n_values incoming array of properties and their values
 	 * @param  string $classname      the classname of the child class
 	 * @return mixed (EE_Base_Class|bool)
@@ -1461,6 +1540,11 @@ abstract class EE_Base_Class{
 		}
 		
 	}
+
+
+
+
+
 	
 }
 

@@ -158,7 +158,8 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
 		$formatted_address = $address;
 		$formatted_address .= ! empty( $address2 ) ? '<br/>' . $address2 : '';
 		$formatted_address .= ! empty( $city ) ? '<br/>' . $city : '';
-		$formatted_address .= ! empty( $state ) ? ', ' . $state : '';
+		$formatted_address .=  ! empty( $city ) && ! empty( $state ) ? ', ' : '';
+		$formatted_address .= ! empty( $state ) ? $state : '';
 		$formatted_address .= ! empty( $zip ) ? '<br/>' . $zip : '';
 		$formatted_address .= ! empty( $country ) ? '<br/>' . $country : '';
 		return $formatted_address;
@@ -185,11 +186,16 @@ class EE_MultiLine_Address_Formatter implements EEI_Address_Formatter {
 class EE_Inline_Address_Formatter implements EEI_Address_Formatter {	
 	public function format( $address, $address2, $city, $state, $country, $zip ) {
 		$formatted_address = $address;
-		$formatted_address .= ! empty( $address2 ) ? ', ' . $address2 : '';
-		$formatted_address .= ! empty( $city ) ? ', ' . $city : '';
-		$formatted_address .= ! empty( $state ) ? ', ' . $state : '';
-		$formatted_address .= ! empty( $zip ) ? ', ' . $zip : '';
-		$formatted_address .= ! empty( $country ) ? ', ' . $country : '';
+		$formatted_address .=  ! empty( $address ) && ! empty( $address2 ) ? ', ' : '';
+		$formatted_address .= ! empty( $address2 ) ? $address2 : '';
+		$formatted_address .=  ( ! empty( $address2 ) && ! empty( $city )) || ( ! empty( $address ) && ! empty( $city )) ? ', ' : '';
+		$formatted_address .= ! empty( $city ) ? $city : '';
+		$formatted_address .=  ! empty( $city ) && ! empty( $state ) ? ', ' : '';
+		$formatted_address .= ! empty( $state ) ? $state : '';
+		$formatted_address .=  ! empty( $state ) && ! empty( $country ) ? ', ' : '';
+		$formatted_address .= ! empty( $country ) ? $country : '';
+		$formatted_address .=  ! empty( $country ) && ! empty( $zip ) ? ', ' : '';
+		$formatted_address .= ! empty( $zip ) ? $zip : '';
 		return $formatted_address;
 	}
 }
@@ -261,9 +267,8 @@ class EEH_Address {
 		$formatter = EEH_Address::_get_formatter( $type );
 		// apply schema.org formatting ?
 		$use_schema = ! is_admin() ? $use_schema : FALSE;
-		$formatted_address = $add_wrapper && ! $use_schema ? '<div class="espresso-address-dv">' : '';
-		$formatted_address .= $use_schema ? EEH_Address::_schema_formatting( $formatter, $obj_with_address ) : EEH_Address::_regular_formatting( $formatter, $obj_with_address, $add_wrapper ) ;
-		$formatted_address .= $add_wrapper && ! $use_schema ? '</div>' : '';
+		$formatted_address = $use_schema ? EEH_Address::_schema_formatting( $formatter, $obj_with_address ) : EEH_Address::_regular_formatting( $formatter, $obj_with_address, $add_wrapper ) ;
+		$formatted_address = $add_wrapper && ! $use_schema ? '<div class="espresso-address-dv">' . $formatted_address . '</div>' : $formatted_address;
 		// return the formated address
 		return $formatted_address;
 	}
@@ -306,11 +311,12 @@ class EEH_Address {
 	*/	
 	private static function _regular_formatting( $formatter, $obj_with_address, $add_wrapper = TRUE ){
 		$formatted_address = $add_wrapper ? '<div>' : '';
+		$state_obj = $obj_with_address->state_obj();
 		$formatted_address .= $formatter->format(
 			$obj_with_address->address(),
 			$obj_with_address->address2(),
 			$obj_with_address->city(),
-			$obj_with_address->state_obj()->abbrev(),
+			$state_obj ? $state_obj->abbrev() : '',
 			$obj_with_address->country_ID(),
 			$obj_with_address->zip()
 		);

@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Add Question Tour', 'event_espresso');
+		$this->_label = __('Add New Question Tour', 'event_espresso');
 		$this->_slug = $this->_is_caf ? 'add-question-caf-joyride' : 'add-question-joyride';
 	}
 
@@ -107,14 +107,14 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour {
 
 
 	protected function _start() {
-		$content = '<h3>' . __('Add Question', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the add question page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content = '<h3>' . __('Add New Question', 'event_espresso') . '</h3>';
+		$content .= '<p>' . __('This tour of the Add New Question page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
 
 	protected function _qst_display_text_stop() {
-		return '<p>' . __('The question that is displayed to registrants who are signing up for events.', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the question that is displayed to registrants who are signing up for events.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_admin_label_stop() {
@@ -126,15 +126,15 @@ class Registration_Form_Add_Question_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _qst_admin_only_stop() {
-		return '<p>' . __('Should this question be shown to only admins?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether this question should be shown only to admins.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_type_stop() {
-		return '<p>' . __('Select the type of question. Available options are text, textarea, single, multiple, dropdown, and date.', 'event_espresso') . '</p>';
+		return '<p>' . __('Select the type of question. Available options are Text, Textarea, Single, Multiple, Dropdown, and Date.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_required_stop() {
-		return '<p>' . __('Should this question be required?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether this question should be required.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_required_text_stop() {

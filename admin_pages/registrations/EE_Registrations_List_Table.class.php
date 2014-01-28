@@ -62,17 +62,17 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		
 		if ( isset( $_GET['event_id'] )) {
 			$this->_columns = array(
-				'Reg_Status' => '',
+				'_Reg_Status' => '',
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-	           	'REG_ID' => __( 'ID', 'event_espresso' ),
-	           	'REG_count' => __('Att #', 'event_espresso'),
+	           	'_REG_ID' => __( 'ID', 'event_espresso' ),
+	           	'_REG_count' => '#',
 	           	'ATT_fname' => __( 'Name', 'event_espresso' ),
 				'ATT_email' =>  __('Email', 'event_espresso'),		
-				'REG_date' => __( 'Reg Date', 'event_espresso' ),
-				'REG_code' => __( 'Reg Code', 'event_espresso' ),
+				'_REG_date' => __( 'Reg Date', 'event_espresso' ),
+				'_REG_code' => __( 'Reg Code', 'event_espresso' ),
 				//'Reg_status' => __( 'Status', 'event_espresso' ),
-	  			'PRC_amount' => __( 'Ticket Price', 'event_espresso' ),
-	  			'REG_final_price' => __( 'Final Price', 'event_espresso' ),
+	  			'PRC_amount' => __( 'TKT Price', 'event_espresso' ),
+	  			'_REG_final_price' => __( 'Final Price', 'event_espresso' ),
 	  			'TXN_total' => __( 'Total Txn', 'event_espresso' ),
  				'TXN_paid' => __('Paid', 'event_espresso'),
 	           	'actions' => __( 'Actions', 'event_espresso' )
@@ -85,29 +85,29 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			);
 		} else {
 			$this->_columns = array(
-				'Reg_Status' => '',
+				'_Reg_Status' => '',
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-	           	'REG_ID' => __( 'ID', 'event_espresso' ),  	
-				'REG_count' => __('Att #', 'event_espresso'),
+	           	'_REG_ID' => __( 'ID', 'event_espresso' ),  	
+				'_REG_count' => '#',
 	           	'ATT_fname' => __( 'Name', 'event_espresso' ),
-				'REG_date' => __( 'TXN Date', 'event_espresso' ),
+				'_REG_date' => __( 'TXN Date', 'event_espresso' ),
 				'event_name' => __( 'Event', 'event_espresso' ),
 	   	       	'DTT_EVT_start' => __( 'Event Date', 'event_espresso' ),
-				'REG_code' => __( 'Reg Code', 'event_espresso' ),
+				'_REG_code' => __( 'Reg Code', 'event_espresso' ),
 				//'Reg_status' => __( 'Status', 'event_espresso' ),
-	  			'REG_final_price' => __( 'Price', 'event_espresso' ),
+	  			'_REG_final_price' => __( 'Price', 'event_espresso' ),
             	'actions' => __( 'Actions', 'event_espresso' )
 	        );			
 		}
 		
 
         $this->_sortable_columns = array(
-          	'REG_date' => array( 'REG_date' => TRUE ),   //true means its already sorted
+          	'_REG_date' => array( '_REG_date' => TRUE ),   //true means its already sorted
            	'ATT_fname' => array( 'ATT_fname' => FALSE ),
            	'event_name' => array( 'event_name' => FALSE ),
            	'DTT_EVT_start'	=> array( 'DTT_EVT_start' => FALSE ),
            	//'Reg_status' => array( 'Reg_status' => FALSE ),
-			'REG_ID' => array( 'REG_ID' => FALSE ),
+			'_REG_ID' => array( '_REG_ID' => FALSE ),
         	);
 
         $this->_hidden_columns = array();
@@ -126,7 +126,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$curstatus = isset( $this->_req_data['status'] ) ? $this->_req_data['status'] : NULL;
 		$cur_date = isset( $this->_req_data['month_range'] ) ? $this->_req_data['month_range'] : '';
 		$cur_category = isset( $this->_req_data['EVT_CAT'] ) ? $this->_req_data['EVT_CAT'] : -1;
-		$reg_status = isset( $this->_req_data['reg_status'] ) ? $this->_req_data['reg_status'] : '';
+		$reg_status = isset( $this->_req_data['_reg_status'] ) ? $this->_req_data['_reg_status'] : '';
 
 		$filters[] = EEH_Form_Fields::generate_registration_months_dropdown( $cur_date, $reg_status, $cur_category );
 		$filters[] = EEH_Form_Fields::generate_event_category_dropdown( $cur_category );
@@ -136,7 +136,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		foreach ( $this->_status as $key => $value ) {
                 $status[] = array( 'id' => $key, 'text' => $value );
             }
-		$filters[] = EEH_Form_Fields::select_input('reg_status', $status, isset($this->_req_data['reg_status']) ? strtoupper(sanitize_key( $this->_req_data['reg_status'] ) ): '');
+		$filters[] = EEH_Form_Fields::select_input('_reg_status', $status, isset($this->_req_data['_reg_status']) ? strtoupper(sanitize_key( $this->_req_data['_reg_status'] ) ): '');
 
 		return $filters;
 	}
@@ -207,7 +207,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-    function column_Reg_Status( EE_Registration $item ) {
+    function column__Reg_Status( EE_Registration $item ) {
     	return '<span class="ee-status-strip ee-status-strip-td reg-status-' . $item->status_ID() . '"></span>';
     }
 
@@ -223,7 +223,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
     }
 
 
-	function column_REG_ID(EE_Registration $item){
+	function column__REG_ID(EE_Registration $item){
 		return $item->ID();
 	}
 
@@ -231,7 +231,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		REG_date
 	*/
-	function column_REG_date(EE_Registration $item){
+	function column__REG_date(EE_Registration $item){
 		
 		//Build row actions
 		$actions = array();
@@ -320,7 +320,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	function column_ATT_email( EE_Registration $item ) {
-		return $item->get_first_related('Attendee')->email();
+		$attendee = $item->get_first_related('Attendee');
+		return ! $attendee instanceof EE_Attendee ? __('Unable to get the email address, something is wrong with this data', 'event_espresso') : $attendee->email();
 	}
 
 
@@ -330,7 +331,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_REG_count
 	*/
-	function column_REG_count(EE_Registration $item){
+	function column__REG_count(EE_Registration $item){
 		return  sprintf(__( '%1$s of %2$s', 'event_espresso' ), $item->count(), $item->group_size());
 	}
 
@@ -341,7 +342,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * @param  EE_Registration $item registration object
 	 * @return string                column contents
 	 */
-	function column_REG_code( EE_Registration $item) {
+	function column__REG_code( EE_Registration $item) {
 		return $item->get('REG_code');
 	}
 
@@ -383,7 +384,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_REG_final_price
 	*/
-	function column_REG_final_price(EE_Registration $item){
+	function column__REG_final_price(EE_Registration $item){
 		return '<span class="reg-pad-rght">' .  $item->pretty_price_paid() . '</span>';			
 		
 	}

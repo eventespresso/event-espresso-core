@@ -101,8 +101,8 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 	public function column_cb(EE_Question $item) {
 		$system_question = $item->is_system_question();
 		$related_answer_count = $item->count_related('Answer');
-		$extra_lock_icon = ( !$system_question && $related_answer_count > 0 && $this->_view == 'trash' ) ? ' ee-alternate-color' : '';
-		return $system_question || (!$system_question && $related_answer_count > 0 && $this->_view == 'trash' ) ? '<span class="ee-lock-icon' . $extra_lock_icon . '"></span>' . sprintf( '<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />', $item->ID() )  : sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
+		$lock_icon = ( !$system_question && $related_answer_count > 0 && $this->_view == 'trash' ) ? 'ee-lock-icon ee-alternate-color' : 'ee-lock-icon ee-system-lock';
+		return $system_question || (!$system_question && $related_answer_count > 0 && $this->_view == 'trash' ) ? '<span class="' . $lock_icon . '"></span>' . sprintf( '<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />', $item->ID() )  : sprintf( '<input type="checkbox" class="QST_ID" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
 	}
 
 

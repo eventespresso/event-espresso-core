@@ -88,7 +88,7 @@ Class EE_Bank extends EE_Offline_Gateway {
 		
 		<tr>
 			<th><label for="account_name">
-					<?php _e('Name on Account', 'event_espresso'); ?>
+					<?php _e('Name on Bank Account', 'event_espresso'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="account_name" id="account_name" size="30" value="<?php echo trim($this->_payment_settings['account_name']); ?>" /></td>
 		</tr>
@@ -141,8 +141,9 @@ Class EE_Bank extends EE_Offline_Gateway {
 		<?php
 	}
 
-	public function espresso_display_payment_gateways() {
+	public function espresso_display_payment_gateways( $selected_gateway = '' ) {
 
+		$this->_css_class = $selected_gateway == $this->_gateway_name ? '' : ' hidden';
 		echo $this->_generate_payment_gateway_selection_button();
 		?>
 

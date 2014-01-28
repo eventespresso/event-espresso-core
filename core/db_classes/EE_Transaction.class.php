@@ -392,11 +392,14 @@ class EE_Transaction extends EE_Base_Class{
 	
 	
 	/**
-	 * Gets registrations on this transaction
-	 * @return EE_Registration[]
+	 * 	Gets registrations on this transaction
+	 *  	@param		array 	$query_params	aray of query paramaters
+	 *  	@param		boolean 	$get_cached 		TRUE to retrieve cached registrations or FALSE to pull from the db
+	 * 	@return EE_Registration[]
 	 */
-	public function registrations(){
-		return $this->get_many_related('Registration');
+	public function registrations( $query_params = array(), $get_cached = FALSE ) {
+		$query_params = ( empty( $query_params ) || ! is_array( $query_params )) && ! $get_cached ? array( 'order_by'=>array( 'Event.EVT_name' =>'ASC', 'Attendee.ATT_lname' =>'ASC', 'Attendee.ATT_fname' =>'ASC' )) : $query_params;
+		return $this->get_many_related( 'Registration', $query_params );
 	}
 	
 	/**
@@ -443,19 +446,24 @@ class EE_Transaction extends EE_Base_Class{
 	 * returns a pretty version of the status, good for displayign to users
 	 * @return string
 	 */
-	public function pretty_status(){
+	public function pretty_status( $show_icons = FALSE ){
+		$status = EEM_Status::instance()->localized_status( array( $this->status_ID() => __('unknown', 'event_espresso') ), FALSE, 'sentence' );
+		$icon = '';
 		switch($this->status_ID()){
 			case EEM_Transaction::complete_status_code:
-				return __("Complete",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>' : '';
+				break;
 			case EEM_Transaction::incomplete_status_code:
-				return __('Incomplete','event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 pink-text"></span>' : '';
+				break;
 			case EEM_Transaction::open_status_code:
-				return __('Pending Payment','event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
+				break;
 			case EEM_Transaction::overpaid_status_code:
-				return __('Overpaid','event_espresso');
-			default:
-				return __('Unknown','event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-plus ee-icon-size-16 pink-text"></span>' : '';
+				break;
 		}
+		return  $icon . $status[$this->status_ID()];
 	}
 	
 	
@@ -463,8 +471,8 @@ class EE_Transaction extends EE_Base_Class{
 	 * echoes $this->pretty_status()
 	 * @return void
 	 */
-	public function e_pretty_status(){
-		echo $this->pretty_status();
+	public function e_pretty_status( $show_icons = FALSE ){
+		echo $this->pretty_status( $show_icons );
 	}
 	
 	
@@ -674,25 +682,38 @@ class EE_Transaction extends EE_Base_Class{
 
 	/**
 	 * cycles thru related registrations and calls finalize_registration() on each
+	 *
+	 * @param  bool $from_admin 	 used to indicate the request is initiated by admin
+	 * @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
 	 * @return void
 	 */
-	public function finalize(){
-		$new_txn = FALSE;
+	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ){
+		$reg_msg = array();
+		$new_reg = FALSE;
+		$reg_to_approved = FALSE;
 		$registrations = $this->get_many_related('Registration');
 		foreach ( $registrations as $registration ) {
-			$new_txn = $registration->finalize() === TRUE ? TRUE : $new_txn;
+			$reg_msg = $registration->finalize( $from_admin, $flip_reg_status );
+			$new_reg = $reg_msg['new_reg'] ? TRUE : $new_reg;
+			$reg_to_approved = $reg_msg['to_approved'] ? TRUE : $reg_to_approved;
 		}
 
-		if ( $new_txn ) {
+		$reg_msg = array(
+			'new_reg' => $new_reg,
+			'to_approved' => $reg_to_approved
+			);
+		//$reg_msg['new_reg'] === TRUE means that new registration was created.  $reg_msg['to_approved'] === TRUE means that registration status was updated to approved.
+
+		if ( $new_reg ) {
 			// remove the transaction from the session before saving it to the db
 			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => NULL ));
 			// save the session (with it's sessionless transaction) back to this transaction... we need to go deeper!
 			$this->set_txn_session_data( EE_Registry::instance()->SSN );
 			// save the transaction to the db
 			$this->save();
-			do_action('AHEE__EE_Transaction__finalize__new_transaction', $this);
+			do_action( 'AHEE__EE_Transaction__finalize__new_transaction', $this, $from_admin );
 		}
-		do_action('AHEE__EE_Transaction__finalize__all_transaction', $this);
+		do_action( 'AHEE__EE_Transaction__finalize__all_transaction', $this, $reg_msg, $from_admin );
 	}
 
 

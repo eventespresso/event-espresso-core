@@ -187,7 +187,7 @@ class EE_Admin_Page_Loader {
 				)
 			);
 
-		$this->_admin_menu_groups = apply_filters( 'FHEE_admin_menu_groups', $groups );
+		$this->_admin_menu_groups = apply_filters( 'FHEE__EE_Admin_Page_Loader___set_menu_groups__admin_menu_groups', $groups );
 	}
 
 
@@ -225,7 +225,7 @@ class EE_Admin_Page_Loader {
 		$installed_refs = $this->_set_caffeinated($installed_refs);
 
 		//allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class) OR hook into EEH_Autoloader::load_admin_page() to add their path.;
-		$installed_refs = apply_filters( 'FHEE_admin_pages_array', $installed_refs );
+		$installed_refs = apply_filters( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', $installed_refs );
 
 		//loop through admin pages and setup the $_installed_pages array.
 		$hooks_ref = array();
@@ -237,9 +237,9 @@ class EE_Admin_Page_Loader {
 			//now that we've got the admin_init objects... lets see if there are any caffeinated pages extending the originals.  If there are then let's hook into the init admin filter and load our extend instead.
 			if ( isset( $this->_caffeinated_extends[$page] ) ) {
 				$this->_current_caf_extend_slug = $page;
-				$path_hook = 'filter_hooks_espresso_path_to_' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
+				$path_hook = 'FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
 				$path_runtime = 'return "' . $this->_caffeinated_extends[$this->_current_caf_extend_slug]["path"] . '";';
-				$page_hook = 'filter_hooks_espresso_admin_page_for_' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
+				$page_hook = 'FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
 				$page_runtime = 'return "' . $this->_caffeinated_extends[$this->_current_caf_extend_slug]["admin_page"] . '";';
 
 				$hook_function_path = create_function( '$path_to_file', $path_runtime);
@@ -312,7 +312,7 @@ class EE_Admin_Page_Loader {
 		global $espresso_manager;
 		//prep the pages (sort, group, set if display etc.)
 		$this->_prep_pages();
-		$parent_slug = apply_filters('FHEE__EE_Admin_Page_Loader__set_menus__parent_slug', 'espresso_events');
+		$parent_slug = apply_filters( 'FHEE__EE_Admin_Page_Loader__set_menus__parent_slug', 'espresso_events' );
 		$add_main_menu = true;
 
 		//loop through prepped pages and hook into WP's menu functions
@@ -329,7 +329,7 @@ class EE_Admin_Page_Loader {
 			//if we've got $add_main_menu || $temp_ref then we need to add_menu_page on current item
 			if ( isset($temp_ref) || $add_main_menu ) {
 				$title = __('Event Espresso', 'event_espresso');
-					$wp_main_page_slug = add_menu_page( $title, $title, apply_filters('FHEE_management_capability', 'administrator', $espresso_manager['espresso_manager_events']), $parent_slug, array($installed_page, 'initialize_admin_page'), 'none');
+					$wp_main_page_slug = add_menu_page( $title, $title, apply_filters( 'FHEE_management_capability', 'administrator', $espresso_manager['espresso_manager_events'] ), $parent_slug, array($installed_page, 'initialize_admin_page'), 'none' );
 				
 				//make sure we add initial header if present
 				if ( isset($temp_ref) ) {

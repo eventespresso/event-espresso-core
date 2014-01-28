@@ -80,8 +80,8 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_values_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentY' => -10,
-					'tipAdjustmentX' => -15
+					'tipAdjustmentX' => -5,
+					'tipAdjustmentY' => -25
 					)
 				),
 			70 => array(
@@ -93,7 +93,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => -15
 					)
 				),
-			80 => array(
+			/*80 => array(
 				'class' => 'bulkactions',
 				'content' => $this->_bulk_actions_stop(),
 				'options' => array(
@@ -101,7 +101,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -30,
 					'tipAdjustmentX' => -15
 					)
-				),
+				),*/
 			90 => array(
 				'id' => 'event-espresso_page_espresso_registration_form-search-input',
 				'content' => $this->_search_stop(),
@@ -126,13 +126,13 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Questions Overview', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the questions overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Questions Overview page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
 
 	protected function _question_id_stop() {
-		return '<p>' . __('View the question id. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View the question ID. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _display_text_stop() {
@@ -144,7 +144,7 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _type_stop() {
-		return '<p>' . __('View the type of question. Available options are text, textarea, single, dropdown, multiple choice, and date.', 'event_espresso') . '</p>';
+		return '<p>' . __('View the type of question. Available options are Text, Textarea, Single, Dropdown, Multiple Choice, and Date.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _values_stop() {
@@ -155,16 +155,16 @@ class Registration_Form_Questions_Overview_Help_Tour extends EE_Help_Tour {
 		return '<p>' . __('View if a question is required.', 'event_espresso') . '</p>';
 	}
 
-	protected function _bulk_actions_stop() {
+	/* protected function _bulk_actions_stop() {
 		return '<p>' . __('Perform bulk actions to multiple questions.', 'event_espresso') . '</p>';
-	}
+	} */
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through questions. The following sources will be searched: name of question (display text).', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through questions. The following sources will be searched: Name of Question (display text).', 'event_espresso') . '</p>';
 	}
 
 	protected function _add_new_question_stop() {
-		return '<p>' . __("Click here to add a new question.", 'event_espresso') . '</p>';
+		return '<p>' . __('Click here to add a new question.', 'event_espresso') . '</p>';
 	}
 
 }

@@ -1,9 +1,9 @@
-<h2>
-<?php _e('Question Groups Overview', 'event_espresso'); ?>
-</h2>
+<h2><?php _e('Question Groups', 'event_espresso'); ?></h2>
 <p>
-<?php _e("Question Groups allow you to create modular registration forms. Each registration form consists of one or more question groups, and these are allocated on a per event basis.", 'event_espresso'); ?>
+<?php _e("This page shows all Question Groups that have been created for Event Espresso. Question Groups allow you to create modular registration forms. Each registration form consists of one or more question groups, and these are allocated on a per event basis.", 'event_espresso'); ?>
+</p>
+<?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Questions Groups Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e("Dragging and dropping the question groups will change their order, and thus the order they are seen in on the registration form.", 'event_espresso'); ?>
+<?php _e('<strong>Screen Options</strong><br /> You can customize the information that is shown on this page by toggling the Screen Options tab. Then you can add or remove checkmarks to hide or show certain content and even adjust the pagination for questions groups.', 'event_espresso'); ?>
 </p>

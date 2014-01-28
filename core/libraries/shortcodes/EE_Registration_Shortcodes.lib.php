@@ -40,24 +40,15 @@ class EE_Registration_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Registration Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes specific to registration related data', 'event_espresso');
 		$this->_shortcodes = array(
-			'[PRIMARY_REGISTRATION_ID]' => __('This will be replaced with the Registration ID for the primary attendee of an event', 'event_espresso'),
-			'[ATTENDEE_REGISTRATION_ID]' => __('this will be replaced with the attendee registration id for the Attendee of an event', 'event_espresso')
+			//'[PRIMARY_REGISTRATION_ID]' => __('This will be replaced with the Registration ID for the primary attendee of an event', 'event_espresso'),
+			//'[ATTENDEE_REGISTRATION_ID]' => __('this will be replaced with the attendee registration id for the Attendee of an event', 'event_espresso')
 			);
 	}
 
 
 
 	protected function _parser( $shortcode ) {
-		switch ( $shortcode ) {
-			case '[PRIMARY_REGISTRATION_ID]' :
-				return $this->_data->primary_registration_id;
-				break;
-
-			case '[ATTENDEE_REGISTRATION_ID]' :
-				$id = !empty($this->_data->attendee_registration_id) ? $this->_data->attendee_registration_id : '';
-				return isset( $this->_data['registration_id'] ) ? $this->_data['registration_id'] : $id;
-				break;
-		}
+		return '';
 	}
 
 	

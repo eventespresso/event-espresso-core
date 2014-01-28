@@ -1,9 +1,9 @@
 <h2><?php _e('Registrations Event Check-In', 'event_espresso'); ?></h2>
 <p>
-<?php _e('This page allows you to check in attendees for an event.', 'event_espresso'); ?>
+<?php _e('This page allows you to check in registrants for an event.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e('Notice: The contents of this page will vary depending on if you are viewing the event check-in page or viewing registrations for a specific event.', 'event_espresso'); ?>
+<?php _e('Notice: The contents of this page will vary depending on if you are viewing the event check-in page or viewing registrations for a specific event. Additionally, only registrations with a status of Approved or Pending Payment are shown in this view.', 'event_espresso'); ?>
 </p>
 <p>
 <?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Event Check-in Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>

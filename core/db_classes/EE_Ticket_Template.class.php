@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
+do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 /**
  * Event Espresso
  *
@@ -70,7 +70,8 @@ class EE_Ticket_Template extends EE_Base_Class{
 	 * Tickets using this template
 	 * @var EE_Ticket[]
 	 */
-	protected $_EE_Ticket;
+	protected $_Ticket;
+	
 
 
 

@@ -180,6 +180,13 @@ abstract class EEM_Base extends EE_Base{
 	protected $_custom_selections = array();
 	
 	/**
+	 * key => value Entity Map using  ID => model object
+	 * caches every model object we've fetched from the DB on this request
+	 * @var EE_Base_Class[]
+	 */
+	protected $_entity_map;
+	
+	/**
 	 * About all child constructors:
 	 * they should define the _tables, _fields and _model_relations arrays. 
 	 * Should ALWAYS be called after child constructor.
@@ -273,9 +280,11 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * retrieve the status details from esp_status table as an array IF this model has the status table as a relation.
+	 *
+	 * @param  boolean $translated return localized strings or JUST the array.
 	 * @return array 
 	 */
-	 public function status_array() {
+	 public function status_array( $translated = FALSE ) {
 	 	if ( !array_key_exists('Status', $this->_model_relations ) )
 	 		return array();
 	 	$model_name = $this->get_this_model_name();
@@ -285,7 +294,7 @@ abstract class EEM_Base extends EE_Base{
 	 	foreach ( $stati as $status ) {
             $status_array[ $status->ID() ] = $status->get('STS_code');
         }
-        return $status_array;
+        return $translated ? EEM_Status::instance()->localized_status($status_array, FALSE, 'sentence') : $status_array;
     }
 
 
@@ -577,7 +586,7 @@ abstract class EEM_Base extends EE_Base{
 	 * is left as FALSE, then EE_Simple_HTML_Field->preapre_for_set($new_value) will be called on it, and every other field, before insertion. We provide this parameter because
 	 * model objects perform their prepare_for_set function on all their values, and so don't need to be called again (and in many cases, shouldn't be called again. Eg: if we
 	 * escape HTML characters in the prepare_for_set method...)
-	 * @return int how many rows got updated
+	 * @return int how many rows got updated or FALSE if something went wrong with the query (wp returns FALSE or num rows affected which *could* include 0 which DOES NOT mean the query was bad)
 	 */
 	function update($fields_n_values, $query_params){
 		global $wpdb;
@@ -809,9 +818,11 @@ abstract class EEM_Base extends EE_Base{
 		if($field_to_count){
 			$field_obj = $this->field_settings_for($field_to_count);
 			$column_to_count = $field_obj->get_qualified_column();
-		}else{
+		}elseif($this->has_primary_key_field ()){
 			$pk_field_obj = $this->get_primary_key_field();
 			$column_to_count = $pk_field_obj->get_qualified_column();
+		}else{//there's no primary key
+			$column_to_count = '*';
 		}
 
 		$column_to_count = $distinct ? "DISTINCT (" . $column_to_count . " )" : $column_to_count;
@@ -1084,12 +1095,78 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	function insert($field_n_values){
-		$main_table = $this->_get_main_table();
-		$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false);
-		foreach($this->_get_other_tables() as $other_table){
-			$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+		if($this->_satisfies_unique_indexes($field_n_values)){
+			$main_table = $this->_get_main_table();
+			$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false);
+			foreach($this->_get_other_tables() as $other_table){
+				$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
+			}
+			return $new_id;
+		}else{
+			return FALSE;
 		}
-		return $new_id;
+	}
+	
+	/**
+	 * Checks that the result would satisfy the unique indexes on this model
+	 * @param array $field_n_values
+	 * @return boolean
+	 */
+	protected function _satisfies_unique_indexes($field_n_values,$action = 'insert'){
+		foreach($this->unique_indexes() as $index_name => $index){
+			$uniqueness_where_params = array_intersect_key($field_n_values, $index->fields());
+			if($this->exists(array($uniqueness_where_params))){
+				EE_Error::add_error(sprintf(__("Could not %s %s. %s uniqueness index failed. Fields %s must form a unique set, but an entry already exists with values %s.", "event_espresso"),$action,$this->_get_class_name(),$index_name,implode(",",$index->field_names()),http_build_query($uniqueness_where_params)));
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	/**
+	 * Checks the database for an item that conflicst (ie, if this item were
+	 * saved to the DB would break some uniqueness requirement, like a primary key 
+	 * or an index primary key set) with the item specified. $id_obj_or_fields_array
+	 * can be either an EE_Base_Class or an array of fields n values
+	 * @param EE_Base_Class|array|int|string $obj_or_fields_array
+	 * @return EE_Base_Class
+	 */
+	public function get_one_conflicting($obj_or_fields_array){
+		if($obj_or_fields_array instanceof EE_Base_Class){
+			$fields_n_values = $obj_or_fields_array->model_field_array();
+		}elseif( is_array($obj_or_fields_array)){
+			$fields_n_values = $obj_or_fields_array;
+		}else{
+			throw new EE_Error(sprintf(__("%s get_all_conflicting should be called with a model object or an array of field names and values, you provided %d", "event_espresso"),get_class($this),$obj_or_fields_array));
+		}
+		$query_params = array();
+		if($this->has_primary_key_field() && isset($fields_n_values[$this->primary_key_name()])){
+			$query_params[0]['OR'][$this->primary_key_name()] = $fields_n_values[$this->primary_key_name()];
+		}
+		foreach($this->unique_indexes() as $unique_index_name=>$unique_index){
+			$uniqueness_where_params = array_intersect_key($fields_n_values, $unique_index->fields());
+			$query_params[0]['OR']['AND*'.$unique_index_name] = $uniqueness_where_params;
+		}
+		return $this->get_one($query_params);
+	}
+	
+	/**
+	 * Like count, but is optimized and returns a boolean instead of an int
+	 * @param array $query_params
+	 * @return boolean
+	 */
+	function exists($query_params){
+		$query_params['limit'] = 1;
+		return $this->count($query_params) > 0;
+	}
+	
+	/**
+	 * Wrapper for exists, except ignores default query parameters so we're only considering ID
+	 * @param int|string $id
+	 * @return boolean
+	 */
+	function exists_by_ID($id){
+		return $this->exists(array('default_where_conditions'=>'none', array($this->primary_key_name() => $id)));
 	}
 	
 	
@@ -1148,8 +1225,32 @@ abstract class EEM_Base extends EE_Base{
 					$wpdb->last_error
 					));
 		}
-		return $wpdb->insert_id;
+		//ok, now what do we return for the ID of the newly-isnerted thing?
+		if($this->has_primary_key_field()){
+			if($this->get_primary_key_field()->is_auto_increment()){
+				return $wpdb->insert_id;
+			}else{
+				//it's not an auto-increment primary key, so
+				//it must have been supplied
+				return $fields_n_values[$this->get_primary_key_field()->get_name()];
+			}
+		}else{
+			//we can't returna  primary key because there is none. instead return
+			//a uniqeu string indicating this model
+			return $this->get_index_primary_key_string($fields_n_values);
+		}
 	}	
+	
+	/**
+	 * Used to build a primary key string (when the model has no primary key),
+	 * which can be used a unique string to identify this model object.
+	 * @param array $cols_n_values keys are field names, values are their values
+	 * @return string
+	 */
+	public function get_index_primary_key_string($cols_n_values){
+		$cols_n_values_for_primary_key_index = array_intersect_key($cols_n_values, $this->get_combined_primary_key_fields());
+		return http_build_query($cols_n_values_for_primary_key_index);
+	}
 	
 	/**
 	 * Consolidates code for preparing  a value supplied to the model for use int eh db. Calls the field's prepare_for_use_in_db method on the value,
@@ -1943,8 +2044,14 @@ abstract class EEM_Base extends EE_Base{
 		foreach($values as $value){
 			$cleaned_values[] = $this->_wpdb_prepare_using_field($value,$field_obj);
 		}
+		//we would just LOVE to leave $cleaned_values as an empty array, and return the value as "()",
+		//but unfortunately that's invalid SQL. So instead we return a string which we KNOW will evaluate to be the empty set
+		//which is effectively equivalent to returning "()". We don't return "(0)" because that only works for auto-incrementing columns
 		if(empty($cleaned_values)){
-			$cleaned_values[] = '0';
+			$all_fields = $this->field_settings();
+			$a_field = array_shift($all_fields);
+			$main_table = $this->_get_main_table();
+			$cleaned_values[] = "SELECT ".$a_field->get_table_column()." FROM ".$main_table->get_table_name()." WHERE FALSE";
 		}
 		return "(".implode(",",$cleaned_values).")";
 	}
@@ -2180,9 +2287,23 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Model_Field_Base
 	 * @throws EE_Error
 	 */
+	public function is_primary_key_field( $field_obj ){
+		return $field_obj instanceof EE_Primary_Key_Field_Base ? TRUE : FALSE;
+	}
+
+
+	
+
+	
+	/**
+	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
+	 * Eg, on EE_Anwer that would be ANS_ID field object
+	 * @return EE_Model_Field_Base
+	 * @throws EE_Error
+	 */
 	public function get_primary_key_field(){
-		foreach($this->field_settings(true) as $field_name=>$field_obj){
-			if($field_obj instanceof EE_Primary_Key_Field_Base){
+		foreach( $this->field_settings( TRUE ) as $field_name=>$field_obj ){
+			if( $this->is_primary_key_field( $field_obj )){
 				return $field_obj;
 			}
 		}
@@ -2334,7 +2455,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		$className = $this->_get_class_name();
-		$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_and_values ));
+		$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_and_values ), FALSE, FALSE );
 
 		return $classInstance;
 	}
@@ -2348,43 +2469,85 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	public function instantiate_class_from_array_or_object($cols_n_values){
-		if(!is_array($cols_n_values) && is_object( $cols_n_values ) ){
-			$cols_n_values=get_object_vars($cols_n_values);
+		if( ! is_array( $cols_n_values ) && is_object( $cols_n_values )) {
+			$cols_n_values = get_object_vars( $cols_n_values );
 		}
+		$primary_key = NULL;
 		//make sure the array only has keys that are fields/columns on this model
 		$this_model_fields_n_values = array();
-		foreach($cols_n_values as $col => $val){
-			foreach($this->field_settings() as $field_name => $field_obj){
+		foreach( $cols_n_values as $col => $val ) {
+			foreach( $this->field_settings() as $field_name => $field_obj ){
 				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"				
 				//does the field on the model relate to this column retrieved from teh db? 
 				//or is it a db-only field? (not relating to the model)
-				if( ($field_obj->get_qualified_column() == $col
-						|| $field_obj->get_table_column() == $col
-						) 
-						&& !$field_obj->is_db_only_field()){
+				if (( $field_obj->get_qualified_column() == $col || $field_obj->get_table_column() == $col ) && ! $field_obj->is_db_only_field() ) {
 					//OK, this field apparently relates to this model.
 					//now we can add it to the array
 					$this_model_fields_n_values[$field_name] = $val;
+					// grab the primary key
+					$primary_key = $this->has_primary_key_field() && $this->is_primary_key_field( $field_obj ) ? $val : $primary_key;
 				}
 			}
 		}
+		$className=$this->_get_class_name();		
 
 		//check we actually foudn results that we can use to build our model object
 		//if not, return null
-		if( ! $this_model_fields_n_values){
-			return null;
+		if( empty( $this_model_fields_n_values )) {
+			return NULL;
 		}
 		
-		//printr( $this_model_fields_n_values, '$this_model_fields_n_values  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-				
-		//get the required info to instantiate the class which relates to this model.
-		$className=$this->_get_class_name();
-		$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE );
-
-		//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
-		$this->set_timezone( $classInstance->get_timezone() );
+		// if there is no primary key or the object doesn't already exist in the entity map, then create a new instance
+		if ( $primary_key){
+			$classInstance = $this->get_from_entity_map( $primary_key );
+			if( ! $classInstance) {
+				$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE, FALSE );
+				// add this new object to the entity map
+				$classInstance = $this->add_to_entity_map( $classInstance );
+			}
+		}else{
+			$classInstance = EE_Registry::instance()->load_class( $className, array( $this_model_fields_n_values, $this->_timezone ), TRUE, FALSE );
+		}
+			
+			//it is entirely possible that the instantiated class object has a set timezone_string db field and has set it's internal _timezone property accordingly (see new_instance_from_db in model objects particularly EE_Event for example).  In this case, we want to make sure the model object doesn't have its timezone string overwritten by any timezone property currently set here on the model so, we intentially override the model _timezone property with the model_object timezone property.
+		$this->set_timezone( $classInstance->get_timezone() );		
 
 		return $classInstance;
+	}
+	/**
+	 * Gets the model object from the  entity map if it exists
+	 * @param int|string $id the ID of the model object
+	 * @return EE_Base_Class
+	 */
+	public function get_from_entity_map( $id ){
+		return isset( $this->_entity_map[ $id ] ) ? $this->_entity_map[ $id ] : FALSE;
+	}
+
+
+
+	/**
+	 * Adds the object to the model's mappings
+	 * @param type $object
+	 * @throws EE_Error
+	 * @return EE_Base_Class
+	 */
+	public function add_to_entity_map( $object ) {
+		
+		$className = $this->_get_class_name();
+		
+		if( ! $object instanceof $className ){
+			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),get_class($object),$className));
+		}
+		if ( ! $object->ID() ){
+			throw new EE_Error(sprintf(__("You tried storing a model object with NO ID in the %s entity mapper.", "event_espresso"),get_class($this)));
+		}
+		// double check it's not already there
+		if ( $classInstance = $this->get_from_entity_map( $object->ID() )) {
+			return $classInstance;
+		} else {
+			$this->_entity_map[ $object->ID() ] = $object;
+			return $object;
+		}
 	}
 	/**
 	 * Gets the EE class that corresponds to this model. Eg, for EEM_Answer that
@@ -2521,6 +2684,19 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function indexes(){
 		return $this->_indexes;
+	}
+	/**
+	 * Gets all the Unique Indexes on this model
+	 * @return EE_Unique_Index[]
+	 */
+	public function unique_indexes(){
+		$unique_indexes = array();
+		foreach($this->_indexes as $name => $index){
+			if($index instanceof EE_Unique_Index){
+				$unique_indexes [$name] = $index;
+			}
+		}
+		return $unique_indexes;
 	}
 	/**
 	 * Gets all the fields which, when combined, make the primary key.

@@ -116,7 +116,6 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
 				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending_payment, EEM_Registration::reg_status_array()),
-				'EVT_require_pre_approval'=>new EE_Boolean_Field('EVT_require_pre_approval', __("Event Requires Pre-Approval before Registration Complete", "event_espresso"), false, false),
 				'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', __("Member-Only Event Flag", "event_espresso"), false, false),
 				'EVT_phone'=> new EE_Plain_Text_Field('EVT_phone', __('Event Phone Number', 'event_espresso'), false ),
 				'EVT_allow_overflow'=>new EE_Boolean_Field('EVT_allow_overflow', __("Allow Overflow on Event", "event_espresso"), false, false),
@@ -184,10 +183,13 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	}
 	protected function _migration_step($num_items_to_migrate = 50) {
 		global $wpdb;
+		//because the migration of each event can be a LOT more work, make each step smaller
+		$num_items_to_migrate = max(1,$num_items_to_migrate/5);
 		$events = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d",$this->count_records_migrated(),$num_items_to_migrate),ARRAY_A);
 		$items_migrated_this_step = 0;
 
 		foreach($events as $event_row){
+			$created_attachment_post = false;
 			//insert new 4.1 Attendee object using $wpdb
 			$post_id = $this->_insert_cpt($event_row);
 			if($post_id){
@@ -199,16 +201,22 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$this->_convert_start_end_times($event_row,$post_id);
 				$event_meta = maybe_unserialize($event_row['event_meta']);
 				$guid = isset($event_meta['event_thumbnail_url']) ? $event_meta['event_thumbnail_url'] : null;
-				$this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid,$post_id,$this);
+				$created_attachment_post = $this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid,$post_id,$this);
+				
 				//maybe create a venue from info on the event?
 				$new_venue_id = $this->_maybe_create_venue($event_row);
 				if($new_venue_id){
 					$this->_insert_new_venue_to_event($post_id,$new_venue_id);
 				}
 				$this->_add_post_metas($event_row, $post_id);
-						
+				
 			}
 			$items_migrated_this_step++;
+			if($guid){
+				//if we had to check for an image attachment 
+				//then let's call it a day (avoid timing out, because this took a long time)
+				break;
+			}
 		}
 		if($this->count_records_migrated() + $items_migrated_this_step >= $this->count_records_to_migrate()){
 			$this->set_status(EE_Data_Migration_Manager::status_completed);
@@ -369,7 +377,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 //	array('id' => 'Pending', 'text' => 'Pending'),
 //	//array('id' => 'Completed', 'text' => 'Completed')
 //);
-		$default_reg_status = $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID(isset($event_meta['default_payment_status']) ? $event_meta['default_payment_status'] : '');
+		$default_reg_status = $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID(isset($event_meta['default_payment_status']) ? $event_meta['default_payment_status'] : '', intval($old_event['require_pre_approval']));
 		$cols_n_values = array(
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
@@ -377,7 +385,6 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'EVT_visible_on'=> $this->get_migration_script()->convert_date_string_to_utc($this,$old_event,current_time('mysql'),$old_event['timezone_string']),//don't use the old 'visible_on', as it wasnt ever used
 			'EVT_additional_limit'=> $old_event['allow_multiple'] == 'N' ? 1 : $old_event['additional_limit'],
 			'EVT_default_registration_status' => $default_reg_status,
-			'EVT_require_pre_approval'=>$old_event['require_pre_approval'],
 			'EVT_member_only'=>$old_event['member_only'],
 			'EVT_phone'=> $old_event['phone'],
 			'EVT_allow_overflow' => 'Y' == $old_event['allow_overflow'],
@@ -393,7 +400,6 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'%s',//EVT_visible_on
 			'%d',//EVT_additional_limit
 			'%s',//EVT_default_registration_status
-			'%d',//EVT_rqeuire_pre_approval
 			'%d',//EVT_member_only
 			'%s',//EVT_phone
 			'%d',//EVT_allow_overflow
@@ -629,7 +635,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'DTT_EVT_end'=> $end_datetime_utc,//DTT_EVT_end
 			'DTT_reg_limit'=>intval($start_end_time_row['reg_limit']) ? $start_end_time_row['reg_limit'] : $old_event_row['reg_limit'],//DTT_reg_limit
 			'DTT_sold'=>$this->count_registrations($old_event_row['id']),//DTT_sold
-			'DTT_is_primary'=> 0 == $existing_datetimes ,//DTT_is_primary... if count==0, then we'll call it the 'primary'
+//			'DTT_is_primary'=> 0 == $existing_datetimes ,//DTT_is_primary... if count==0, then we'll call it the 'primary'
 			'DTT_order'=> $existing_datetimes,//DTT_order, just give it the same order as the count of how many datetimes already exist
 			'DTT_parent'=>0,
 			'DTT_deleted'=>false
@@ -640,7 +646,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'%s',//DTT_EVT_end
 			'%d',//DTT_reg_limit
 			'%d',//DTT_sold
-			'%d',//DTT_is_primary
+//			'%d',//DTT_is_primary
 			'%d',//DTT_order
 			'%d',//DTT_parent
 			'%d',//DTT_deleted

@@ -47,12 +47,12 @@ class EE_Register_CPTs {
 
 	function __construct(){
 		// register taxonomies
-		$taxonomies = apply_filters('FHEE__EE_Register_CPTs__get_taxonomies', self::get_taxonomies() );
+		$taxonomies = apply_filters( 'FHEE__EE_Register_CPTs__construct__taxonomies', self::get_taxonomies() );
 		foreach ( $taxonomies as $taxonomy =>  $tax ) {
 			$this->register_taxonomy( $taxonomy, $tax['singular_name'], $tax['plural_name'], $tax['args'] );
 		}
 		// register CPTs
-		$CPTs = apply_filters('FHEE__EE_Register_CPTs__get_CPTs', self::get_CPTs() );
+		$CPTs = apply_filters( 'FHEE__EE_Register_CPTs__construct__CPTs', self::get_CPTs() );
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
 			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
 		}
@@ -256,7 +256,7 @@ class EE_Register_CPTs {
 		'show_in_menu' => false, 
 		'show_in_nav_menus' => false,
 		'query_var' => true,
-		'rewrite' => array( 'slug' => sanitize_title($plural_name) ),
+		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => sanitize_title($plural_name) ), $post_type ),
 		'capability_type' => 'post',
 		'has_archive' => true, 
 		'hierarchical' => true,

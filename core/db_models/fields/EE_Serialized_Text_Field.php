@@ -20,8 +20,10 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base{
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
 		if(is_string($value_inputted_for_field_on_model_object)){
 			return parent::prepare_for_set($value_inputted_for_field_on_model_object);
-		}else{
+		}elseif(is_array($value_inputted_for_field_on_model_object)){
 			return array_map(array($this,'prepare_for_set'), $value_inputted_for_field_on_model_object);
+		}else{//so they passed NULL or an INT or something wack
+			return $value_inputted_for_field_on_model_object;
 		}
 	}
 	/**

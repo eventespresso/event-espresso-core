@@ -247,9 +247,9 @@ abstract class EE_Messages_incoming_data {
 				$event_attendee_count[$evt_id] = isset( $event_attendee_count[$evt_id] ) ? $event_attendee_count[$evt_id] + 1 : 0;
 				$attendees[$reg->attendee_ID()]['line_ref'][] = $evt_id;
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
-				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->ID()] = $reg;
+				$attendees[$reg->attendee_ID()]['reg_obj'] = $reg;
 				$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
-				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee()->email();
+				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
 				$attendees[$reg->attendee_ID()]['tkt_objs'][$ticket->ID()] = $ticket;
 				$attendees[$reg->attendee_ID()]['evt_objs'][$evt_id] = $event;
 
@@ -283,7 +283,6 @@ abstract class EE_Messages_incoming_data {
 						'ID' => $eid,
 						'event' => $evtcache[$eid],
 						'name' => $event->name(),
-						'pre_approval' => $event->require_pre_approval(),// $event->require_pre_approval,
 						'total_attendees' => $event_attendee_count[$eid],
 						'reg_objs' => $items['reg_objs'],
 						'tkt_objs' => $items['tkt_objs'],

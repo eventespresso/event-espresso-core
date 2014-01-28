@@ -170,9 +170,17 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 						),
 					'list_table' => 'Prices_List_Table',
                     'help_tabs' => array(
-						'default_pricing_help_tab' => array(
+						'pricing_default_pricing_help_tab' => array(
 							'title' => __('Default Pricing', 'event_espresso'),
 							'filename' => 'pricing_default_pricing'
+							),
+						'pricing_default_pricing_table_column_headings_help_tab' => array(
+							'title' => __('Default Pricing Table Column Headings', 'event_espresso'),
+							'filename' => 'pricing_default_pricing_table_column_headings'
+							),
+						'pricing_default_pricing_views_bulk_actions_search_help_tab' => array(
+							'title' => __('Default Pricing Views & Bulk Actions & Search', 'event_espresso'),
+							'filename' => 'pricing_default_pricing_views_bulk_actions_search'
 							)
 						),
 					'help_tour' => array( 'Pricing_Default_Prices_Help_Tour'),
@@ -218,12 +226,20 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 						),
 					'list_table' => 'Price_Types_List_Table',
                     'help_tabs' => array(
-						'price_types_help_tab' => array(
+						'pricing_price_types_help_tab' => array(
 							'title' => __('Price Types', 'event_espresso'),
 							'filename' => 'pricing_price_types'
-							)
+							),
+						'pricing_price_types_table_column_headings_help_tab' => array(
+							'title' => __('Price Types Table Column Headings', 'event_espresso'),
+							'filename' => 'pricing_price_types_table_column_headings'
+							),
+						'pricing_price_types_views_bulk_actions_search_help_tab' => array(
+							'title' => __('Price Types Views & Bulk Actions & Search', 'event_espresso'),
+							'filename' => 'pricing_price_types_views_bulk_actions_search'
+							),
 						),
-					'help_tour' => array( 'Price_Types_Default_Help_Tour' ),
+					'help_tour' => array( 'Pricing_Price_Types_Default_Help_Tour' ),
 					'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box'),
 					'require_nonce' => FALSE
 				),
@@ -332,7 +348,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 					'slug' => 'all',
-					'label' => __('All', 'event_espreso'),
+					'label' => __('View All Default Pricing', 'event_espreso'),
 					'count' => 0,
 					'bulk_action' => array(
 							'trash_price' => __('Move to Trash', 'event_espresso'),
@@ -369,7 +385,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				),
 			'trashed' => array(
 					'slug' => 'trashed',
-					'label' => __('Trash Can', 'event_espreso'),
+					'label' => __('Trash', 'event_espreso'),
 					'count' => 0,
 					'bulk_action' => array(
 							'restore_price_type' => __('Restore from Trash', 'event_espresso'),
@@ -726,9 +742,21 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			}
 			
 		}
+		$query_args = array(
+			'action' => 'default'
+			);
+
+		if ( $success ) {
+			if ( $trash ) {
+				$msg = $success == 2 ? __('The Prices have been trashed.', 'event_espresso') : __('The Price has been trashed.', 'event_espresso');
+			} else {
+				$msg = $success == 2 ? __('The Prices have been restored.', 'event_espresso') : __('The Price has been restored.', 'event_espresso');
+			}
+
+			EE_Error::add_success( $msg );
+		}
 		
-		$action_desc = $trash ? 'moved to the trash' : 'restored';
-		$this->_redirect_after_action( $success, 'Prices', $action_desc, array() );
+		$this->_redirect_after_action( FALSE, '',  $action_desc, $query_args, TRUE );
 		
 	}
 
@@ -1093,7 +1121,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			$what = count( $this->_req_data['checkbox'] ) > 1 ? 'Price Types' : 'Price Type';
 			// cycle thru checkboxes 
 			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
-				if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array(array('PRT_ID' => absint($PRT_ID))))) {
+				if ( ! $PRT->update_by_ID(array('PRT_deleted' => $PRT_deleted), $PRT_ID ) ) {
 					$success = 0;
 				}
 			}
@@ -1101,22 +1129,24 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		} else {
 			// grab single id and delete
 			$PRT_ID = absint($this->_req_data['id']);
-			if ( ! $PRT->update(array('PRT_deleted' => $PRT_deleted), array(array('PRT_ID' => absint($PRT_ID))))) {
+			if ( ! $PRT->update_by_ID(array('PRT_deleted' => $PRT_deleted), $PRT_ID )) {
 				$success = 0;
 			}
 			$what = 'Price Type';
 			
 		}
-		if($trash){
-			$action_desc = 'trashed';
-			$status = 'trashed';
-		}else{
-			$action_desc = 'restored';
-			$status = 'all';
+
+		$query_args = array( 'action' => 'price_types' );
+		if ( $success ) {
+			if ( $trash ) {
+				$msg = $success > 1 ? __('The Price Types have been trashed.', 'event_espresso') : __('The Price Type has been trashed.', 'event_espresso');
+			} else {
+				$msg = $success > 1 ? __('The Price Types have been restored.', 'event_espresso') : __('The Price Type has been restored.', 'event_espresso');
+			}
+			EE_Error::add_success( $msg );
 		}
-		$action_desc = $trash ? 'trashed' : 'restored';
-		$query_args = array( 'action'=> 'price_types', 'status'=>$status );
-		$this->_redirect_after_action( $success, $what, $action_desc, $query_args );
+
+		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 		
 	}
 

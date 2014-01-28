@@ -164,6 +164,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 						'title' => __('Question Groups', 'event_espresso'),
 						'filename' => 'registration_form_question_groups'
 						),
+					'registration_form_question_groups_table_column_headings_help_tab' => array(
+						'title' => __('Question Groups Table Column Headings', 'event_espresso'),
+						'filename' => 'registration_form_question_groups_table_column_headings'
+						),
+					'registration_form_question_groups_views_bulk_actions_search_help_tab' => array(
+						'title' => __('Question Groups Views & Bulk Actions & Search', 'event_espresso'),
+						'filename' => 'registration_form_question_groups_views_bulk_actions_search'
+						),
 					),
 				'help_tour' => array( 'Registration_Form_Question_Groups_Help_Tour'),
 				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
@@ -293,7 +301,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
-				'label' => __('All', 'event_espresso'),
+				'label' => __('View All Questions', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
 					'trash_questions' => __('Trash', 'event_espresso'),
@@ -746,7 +754,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		EE_Registry::instance()->CFG->registration->recaptcha_theme = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
 		EE_Registry::instance()->CFG->registration->recaptcha_language = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
 		
-		EE_Registry::instance()->CFG->registration = apply_filters('FHEE_reg_form_settings_save', EE_Registry::instance()->CFG->registration);	
+		EE_Registry::instance()->CFG->registration = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration', EE_Registry::instance()->CFG->registration );	
 		
 		$what = 'Registration Options';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );

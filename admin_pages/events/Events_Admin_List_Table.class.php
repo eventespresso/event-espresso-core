@@ -35,7 +35,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 	public function __construct( $admin_page ) {
 		parent::__construct($admin_page);
-		require_once( EE_HELPERS . 'EEH_DTT_helper.helper.php' );
+		require_once( EE_HELPERS . 'EEH_DTT_Helper.helper.php' );
 	}
 
 	protected function _setup_data() {
@@ -53,14 +53,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 		$this->_columns = array(
+			'status' => __(''),
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
 			'venue' => __('Venue', 'event_espresso'),
 			'start_date_time' => __('Event Start', 'event_espresso'),
 			'reg_begins' => __('On Sale', 'event_espresso'),
-			'status' => __('Status', 'event_espresso'),
-			'attendees' => '<span class="dashicons dashicons-groups ee-icon-size-20"></span>',
+			'attendees' => '<span class="dashicons dashicons-groups ee-icon-color-ee-green ee-icon-size-20"></span>',
 			//'tkts_sold' => __('Tickets Sold', 'event_espresso'),
 			'actions' => __('Actions', 'event_espresso')
 			);
@@ -72,7 +72,6 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'venue' => array( 'Venue.VNU_name' => false ),
 			'start_date_time' => array('Datetime.DTT_EVT_start' => false),
 			'reg_begins' => array('Datetime.Ticket.TKT_start_date' => false),
-			//'status' => array('Event.status' => false)
 			);
 
 		$this->_hidden_columns = array();
@@ -95,7 +94,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-
+	public function column_status( EE_Event $item ) {
+		return '<span class="ee-status-strip ee-status-strip-td event-status-' . $item->get_active_status() . '"></span>';
+	}/**/
 
 
 
@@ -170,7 +171,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$actions = array(
 			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
-			'attendees' => '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '">' . __('Attendees', 'event_espresso') . '</a>',
+			'attendees' => '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>',
 			'export' => '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>'
 			);
 			
@@ -184,7 +185,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 		}
 
-		$status = $item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
+		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
 		$content .= $this->row_actions($actions);
 		return $content;
@@ -225,9 +226,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_status($item) {
+	/*public function column_status($item) {
 		$item->pretty_active_status();
-	}
+	}/**/
 
 
 
@@ -275,9 +276,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
 		$actionlinks[] = '<div class="dashicons dashicons-search"></div></a>';
 		$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="ee-icon ee-icon-calendar-edit"></div></a>';
-		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Attendees', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
+		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Registrants', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
 
-		$actionlinks = apply_filters('FHEE_list_table_events_actions_column_action_links', $actionlinks, $item );
+		$actionlinks = apply_filters( 'FHEE__Events_Admin_List_Table__column_actions__action_links', $actionlinks, $item );
 
 		$content = '<div style="width:100%;">' . "\n\t";
 		$content .= implode( "\n\t", $actionlinks );

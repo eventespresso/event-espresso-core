@@ -48,7 +48,7 @@ class EE_Messages_Email_Payment_Reminder_Validator extends EE_Messages_Validator
 			'shortcodes' => array('event', 'transaction', 'ticket_list', 'attendee')
 			);
 		$new_config['ticket_list'] = array(
-			'shortcodes' => array('ticket', 'event_list', 'transaction', 'attendee')
+			'shortcodes' => array('ticket', 'event_list', 'transaction')
 			);
 		$new_config['content'] = array(
 			'shortcodes' => array('event_list', 'ticket_list', 'transaction', 'registration', 'organization', 'attendee')

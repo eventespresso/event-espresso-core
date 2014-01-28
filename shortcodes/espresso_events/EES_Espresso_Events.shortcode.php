@@ -69,7 +69,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 * 	[ESPRESSO_EVENTS category_slug="free-events"]
 	 * 	[ESPRESSO_EVENTS order_by="start_date,id"]
 	 * 	[ESPRESSO_EVENTS sort="ASC"]
-	 * 	[ESPRESSO_EVENTS list_type="grid"]
 	 * 
 	 *  @access 	public
 	 *  @param	array 	$attributes
@@ -85,8 +84,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 			'month' => NULL,
 			'category_slug' => NULL,
 			'order_by' => 'start_date',
-			'sort' => 'ASC',
-			'list_type' =>'text'
+			'sort' => 'ASC'
 		);
 		// allow the defaults to be filtered
 		$default_espresso_events_shortcode_atts = apply_filters( 'EES_Espresso_Events__process_shortcode__default_espresso_events_shortcode_atts', $default_espresso_events_shortcode_atts );
@@ -97,20 +95,17 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		global $wp_query;
 		$wp_query = new EE_Event_List_Query( $attributes );
 		//d( $wp_query );
-		// turn on the output buffer
-		ob_start();
+		$template = 'loop-espresso_events.php';
+		// check what template is loaded and load filters accordingly
+		EED_Events_Archive::template_include( $template );	
 		// load our template
-		$template_part = EED_Events_Archive::get_template_part();
-		if ( file_exists( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . $template_part )) {
-			include( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . $template_part );
-		} else {
-			include( EE_TEMPLATES . EE_Config::get_current_theme() . DS . $template_part );
-		}
+		$event_list = EEH_Template::locate_template( $template, TRUE, array(), TRUE );
 		// now reset the query and postdata
 		wp_reset_query();
-		wp_reset_postdata();		
+		wp_reset_postdata();
+		EED_Events_Archive::remove_all_events_archive_filters();
 		// pull our content from the output buffer and return it
-		return ob_get_clean();		
+		echo $event_list;		
 	}	
 	
 	

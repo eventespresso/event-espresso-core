@@ -66,7 +66,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		// don't add HTML labels for EE_Form_Fields generated inputs
-		add_filter( 'FHEE_form_field_label_html', '__return_empty_string' );		
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );		
 		$yes_no_values = array(
 			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
 			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso')))
@@ -242,7 +242,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				$show_dates = isset( $instance['show_dates'] ) ? (bool) absint( $instance['show_dates'] ) : TRUE;
 				// start to build our where clause
 				$where = array(
-					'Datetime.DTT_is_primary' => 1,
+//					'Datetime.DTT_is_primary' => 1,
 					'status' => 'publish' 
 				);
 				// add category

@@ -1,3 +1,11 @@
 .form-table .postbox, .postarea .postbox {
 	border: none;
 }
+
+select.state {
+	width: 100%;
+}
+
+#url-event {
+	width: 100%;
+}

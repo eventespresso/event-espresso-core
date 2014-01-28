@@ -44,7 +44,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_start(),
 				),
 			20 => array(
-				'id' => 'REG_count',
+				'id' => '_REG_count',
 				'content' => $this->_reg_count_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -71,7 +71,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			50 => array(
-				'id' => 'REG_date',
+				'id' => '_REG_date',
 				'content' => $this->_reg_date_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -80,7 +80,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			60 => array(
-				'id' => 'REG_code',
+				'id' => '_REG_code',
 				'content' => $this->_reg_code_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -88,17 +88,8 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -20
 					)
 				),
-			70 => array(
-				'id' => 'Reg_status',
-				'content' => $this->_reg_status_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentX' => -5,
-					'tipAdjustmentY' => -20
-					)
-				),
 			80 => array(
-				'id' => 'REG_final_price',
+				'id' => '_REG_final_price',
 				'content' => $this->_reg_final_price_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -112,7 +103,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentX' => 0,
-					'tipAdjustmentY' => -30
+					'tipAdjustmentY' => -50
 					)
 				),
 			100 => array(
@@ -121,7 +112,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentX' => 0,
-					'tipAdjustmentY' => -30
+					'tipAdjustmentY' => -50
 					)
 				),
 			110 => array(
@@ -130,7 +121,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'options' => array(
 					'tipLocation' => 'left',
 					'tipAdjustmentX' => 0,
-					'tipAdjustmentY' => -30
+					'tipAdjustmentY' => -50
 					)
 				),
 			115 => array(
@@ -147,7 +138,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_legend_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
-					'tipAdjustmentX' => 0,
+					'tipAdjustmentX' => 15,
 					'tipAdjustmentY' => -40
 					)
 				),
@@ -194,7 +185,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	protected function _start() {
 		$content = '<h3>' . __('Event Check-in', 'event_espresso') . '</h3>';
 		if ( isset( $this->_req_data['event_id'] ) ) {
-			$content .= '<p>' . __('This tour of the event check-in page will go over different areas of the screen to help you understand what they are used for.<br /><br /> Note: You are currently viewing the check-in for a specific event so you can toggle the check-in status for attendees.', 'event_espresso') . '</p>';
+			$content .= '<p>' . __('This tour of the Event Check-in page will go over different areas of the screen to help you understand what they are used for.<br /><br /> Note: You are currently viewing the check-in for a specific event so you can toggle the check-in status for attendees.', 'event_espresso') . '</p>';
 		} else {
 			$content .= '<p>' . __('This tour of the event check-in page will go over different areas of the screen to help you understand what they are used for. <br /><br /> Note: You must select an event from the dropdown menu before you can toggle the check-in status for an attendee.', 'event_espresso') . '</p>';
 		}
@@ -202,27 +193,23 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _reg_count_stop() {
-		return '<p>' . __('View registration number for attendee.', 'event_espresso') . '</p>';
+		return '<p>' . __('View registration number.', 'event_espresso') . '</p>';
 	}
 
 	protected function _attendee_name_stop() {
-		return '<p>' . __('Sort by name of attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View name of registrant. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _attendee_email_stop() {
-		return '<p>' . __('View email address for attendee.', 'event_espresso') . '</p>';
+		return '<p>' . __('View email address for a registrant.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_date_stop() {
-		return '<p>' . __('Sort by registration date in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View registration date. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_code_stop() {
-		return '<p>' . __('Sort by registration code for attendee in ascending or descending order.', 'event_espresso') . '</p>';
-	}
-
-	protected function _reg_status_stop() {
-		return '<p>' . __('Sort by registration status for an attendee in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View registration code. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _reg_final_price_stop() {
@@ -230,7 +217,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _txn_paid_stop() {
-		return '<p>' . __('View if attendee has paid for ticket.', 'event_espresso') . '</p>';
+		return '<p>' . __('View if registrant has paid for ticket.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_total_stop() {
@@ -246,7 +233,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _legend_stop() {
-		return '<p>' . __('This is the legend that describes the different check-in statuses.', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the legend that describes the different check-in statuses. Also shows available status for registrations.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _bulkactions_stop() {
@@ -262,7 +249,7 @@ class Event_Checkin_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through registrations. The following sources will be searched: event name, event description, attendee first name, attendee last name, attendee bio, attendee email, attendee address, attendee comments, attendee notes, registration final price, registration code, registration group size, ticket name, and ticket description.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through registrations. The following sources will be searched: Event Name, Event Description, First Name, Last Name, Biography, Email Address, Address, Comments, Notes, Registration Final Price, Registration Code, Registration Group Size, Ticket Name, and Ticket Description.', 'event_espresso') . '</p>';
 	}
 
 }

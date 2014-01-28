@@ -40,6 +40,7 @@ jQuery(document).ready(function($) {
 
 	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-edit-lnk', function() {
 		display_payments_and_refunds_modal_dialog();
+		$('.txn-reg-status-change-reg-status').val('NAN');
 		// grab payment ID
 		var PAY_ID = $(this).attr('rel');
 		$('#admin-modal-dialog-edit-payment-h2').show();
@@ -66,7 +67,9 @@ jQuery(document).ready(function($) {
 
 	$( "#display-txn-admin-apply-payment" ).on( 'click',  function() {
 		display_payments_and_refunds_modal_dialog();
-		$('#admin-modal-dialog-apply-payment-h2').show();
+		//set reg status to approved by default
+		$('.txn-reg-status-change-reg-status').val('RAP');
+		$('#admin-modal-dialog-delete-payment-h2').show();
 		$('#txn-admin-modal-dialog-apply-payment-lnk').show();
 		$('#txn-admin-modal-dialog-cancel-lnk').show();
 		$('#txn-admin-payment-date-inp').val( $('#txn-admin-todays-date-inp').val() );
@@ -75,10 +78,22 @@ jQuery(document).ready(function($) {
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
+	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-delete-lnk', function() {
+		display_delete_payment_modal_dialog();
+		//grab payment ID
+		var PAY_ID = $(this).attr('rel');
+		$('#delete-txn-admin-payment-payment-id-inp').val( PAY_ID );
+		$('.delete-txn-reg-status-change-reg-status').val('NAN');
+		$('#admin-modal-dialog-delete-payment-h2').show();
+		$('#txn-admin-modal-dialog-delete-lnk').show();
+		$('#del-txn-admin-modal-dialog-cancel-lnk').show();
+	});
+
 
 
 	$( "#display-txn-admin-apply-refund" ).on( 'click',  function() {
 		display_payments_and_refunds_modal_dialog();
+		$('.txn-reg-status-change-reg-status').val('RCN');
 		$('#admin-modal-dialog-apply-refund-h2').show();
 		$('#txn-admin-modal-dialog-apply-refund-lnk').show();
 		$('#txn-admin-modal-dialog-cancel-lnk').show();
@@ -130,6 +145,7 @@ jQuery(document).ready(function($) {
 		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
+			toggleaAjaxActivity();
 			apply_payment_or_refund( 'apply' );
 		}
 	});
@@ -138,6 +154,7 @@ jQuery(document).ready(function($) {
 		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
+			toggleaAjaxActivity();
 			apply_payment_or_refund( 'apply' );
 		}
 	});
@@ -146,8 +163,17 @@ jQuery(document).ready(function($) {
 		event.preventDefault();
 		if ( validate_form_inputs() ) {
 			$('#espresso-ajax').val(1);
+			toggleaAjaxActivity();
 			apply_payment_or_refund( 'edit' );
 		}
+	});
+
+
+	$(document).on( 'click', '#txn-admin-modal-dialog-delete-lnk', function( event ) {
+		event.preventDefault();
+		$('#delete-espresso-ajax').val(1);
+		toggleaAjaxActivity();
+		apply_delete_payment_or_refund();
 	});
 
 
@@ -167,6 +193,32 @@ jQuery(document).ready(function($) {
 			});
 		});
 		return goodToGo;
+	}
+
+
+
+	function toggleaAjaxActivity( done ) {
+		done = typeof(done) === 'undefined' ? false : true;
+		if ( done ) {
+			$('#espresso-ajax-loading').center().fadeOut('fast');
+			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeIn('fast');
+			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeIn('fast');
+			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeIn('fast');
+			$('#txn-admin-modal-dialog-delete-lnk').fadeIn('fast');
+			$('#del-txn-admin-modal-dialog-cancel-lnk').fadeIn('fast');
+			$('#delete-ee-ajax-processing-text').fadeOut('fast');
+			$('#ee-ajax-processing-text').fadeOut('fast');
+		} else {
+			$('#espresso-ajax-loading').center().fadeIn('fast');
+			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeOut('fast');
+			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeOut('fast');
+			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeOut('fast');
+			$('#txn-admin-modal-dialog-cancel-lnk').fadeOut('fast');
+			$('#txn-admin-modal-dialog-delete-lnk').fadeOut('fast');
+			$('#del-txn-admin-modal-dialog-cancel-lnk').fadeOut('fast');
+			$('#delete-ee-ajax-processing-text').fadeIn('fast');
+			$('#ee-ajax-processing-text').fadeIn('fast');
+		}
 	}
 
 
@@ -215,25 +267,37 @@ jQuery(document).ready(function($) {
 	}
 
 
+	function display_delete_payment_modal_dialog() {
+		$('#message').hide();
+		dialog_content = $('#txn-admin-delete-payment-dv');
+		d_contents = dialog_content.html();
+		dialog_content.empty();
+		dialogHelper.displayModal().addContent(d_contents);
+		overlay.on('click', function() {
+				//add content back to dom
+				dialog_content.html(d_contents);
+				$('.admin-modal-dialog-h2').hide();
+				$('#del-admin-modal-dialog-options-ul a').hide();
+			});
+	}
 
 
 	// delete a payment
-	$( '#txn-admin-payments-tbl' ).on( 'click', '.txn-admin-payment-action-delete-lnk', function() {
+	function apply_delete_payment_or_refund() {
 
-		$('#espresso-ajax').val(1);
-		var formURL = $('#txn-admin-delete-payment-form-url-inp').val();
-		var PAY_ID = $(this).attr('rel');
-		//alert( 'formURL = ' + formURL + '\n' + 'PAY_ID = ' + PAY_ID );
-		console.log( 'formURL = ' + formURL + '\n' + 'PAY_ID = ' + PAY_ID );
-		var delBtn = $( this );
-
+		var formURL = $('#txn-admin-delete-payment-frm').attr('action');
+		formURL = formURL + '&noheader=true&ee_admin_ajax=true';
+		$('#delete-txn-admin-noheader-inp').val('true');
+		var formData = $('#txn-admin-delete-payment-frm').serializeFullArray();
+		var PAY_ID = $( '#delete-txn-admin-payment-payment-id-inp' ).val();
+		var delBtn = $( '.txn-admin-payment-action-delete-lnk[rel="' + PAY_ID + '"]');
 		
 		$.ajax({
 					type: "POST",
 					url:  formURL,
-					data: { ID : PAY_ID, espresso_ajax : 1, noheader : 'true', ee_admin_ajax: true },
+					data: formData,
 					dataType: "json",
-					beforeSend: function() {
+					beforeSend: function(jqXHR, obj) {
 						do_before_admin_page_ajax();
 					},
 					success: function(response){
@@ -255,14 +319,14 @@ jQuery(document).ready(function($) {
 						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 					}
 			});
-	});
+	}
 
 
 
 
 	function process_return_data( response ) {
 
-		$('#espresso-ajax-loading').fadeOut('fast');
+		toggleaAjaxActivity( true );
 		overlay.trigger('click');
 
 		// grab PAY ID from return data
@@ -285,13 +349,18 @@ jQuery(document).ready(function($) {
 	}
 
 
+
+	function update_payment_status( PAY_ID, status ) {
+		var status_itm = $('#payment-status-' + PAY_ID);
+		status_itm.removeClass().addClass('ee-status-strip-td ee-status-strip pymt-status-' + status);
+	}
+
+
+
 	function update_payment( PAY_ID, response ) {
 		// payment-status
-		$('#payment-status-' + PAY_ID + ' > span').html( response.return_data.status );
+		update_payment_status(PAY_ID, response.return_data.STS_ID);
 		$('#payment-STS_ID-' + PAY_ID).html( response.return_data.pay_status );
-		// and the css class for the payment status wrapper
-		$('#payment-status-' + PAY_ID + ' > span').removeClass();
-		$('#payment-status-' + PAY_ID + ' > span').addClass( 'txn-admin-payment-status-'+response.return_data.pay_status );
 		// payment-date
 		$('#payment-date-' + PAY_ID).html( response.return_data.date );
 		// payment-method
@@ -311,7 +380,7 @@ jQuery(document).ready(function($) {
 		var payment = accounting.formatMoney( response.return_data.amount );
 		$('#payment-amount-' + PAY_ID).html( payment );
 		// update amount span class
-		if ( payment < 0 ) {
+		if ( accounting.unformat(payment) < 0 ) {
 			response.return_data.pay_status = 'PDC';
 		}
 		$('#payment-amount-' + PAY_ID).parent().removeClass().addClass( 'txn-admin-payment-status-'+response.return_data.pay_status );
@@ -377,7 +446,8 @@ jQuery(document).ready(function($) {
 
 
 	function process_delete_payment( response ) {
-
+		toggleaAjaxActivity( true );
+		overlay.trigger('click');
 		// grab PAY ID from return data
 		var PAY_ID = response.return_data.PAY_ID;
 		update_payment_totals( response );
@@ -388,6 +458,10 @@ jQuery(document).ready(function($) {
 
 
 	$(document).on( 'click', '#txn-admin-modal-dialog-cancel-lnk', function() {
+		overlay.trigger('click');
+	});
+
+	$(document).on( 'click', '#del-txn-admin-modal-dialog-cancel-lnk', function() {
 		overlay.trigger('click');
 	});
 	

@@ -48,14 +48,14 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 			0 => array(
 				'page_route' => array( 'edit', 'create_new' ),
 				'func' => 'primary_questions',
-				'label' => __('Questions for Primary Attendee', 'event_espresso'),
+				'label' => __('Questions for Primary Registrant', 'event_espresso'),
 				'priority' => 'default',
 				'context' => 'side'
 				)
 		);
 
 		//hook into the handler for saving question groups
-		add_filter( 'FHEE_event_editor_update', array( $this, 'modify_callbacks'), 10 );
+		add_filter( 'FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks', array( $this, 'modify_callbacks'), 10 );
 
 		//hook into revision restores (we're hooking into the global action because EE_Admin_Hooks classes are already restricted by page)
 		add_action( 'AHEE_EE_Admin_Page_CPT__restore_revision', array($this, 'restore_revision' ), 10, 2 );
@@ -124,7 +124,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 			} else {
 				echo __('There seems to be a problem with your questions. Please contact support@eventespresso.com', 'event_espresso');
 			}
-			do_action('AHEE_event_editor_questions_notice');
+			do_action( 'AHEE_event_editor_questions_notice' );
 			?>
 		</div>
 		<?php

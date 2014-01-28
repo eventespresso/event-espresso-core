@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
+do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 /**
  * Event Espresso
  *
@@ -428,6 +428,44 @@ class EE_Line_Item extends EE_Base_Class{
 		$remove_defaults = array('default_where_conditions' => 'none');
 		$query_params = array_merge($remove_defaults, $query_params);
 		return $this->get_first_related('Ticket', $query_params);
+	}
+	
+	/**
+	 * Gets the event's name that's related to the ticket, if this is for
+	 * a ticket
+	 * @return string
+	 */
+	function ticket_event_name(){
+		$event_name = __("Unknown", "event_espresso");
+		$ticket = $this->ticket();
+		if($ticket){
+			$datetime = $ticket->first_datetime();
+			if($datetime){
+				$event = $datetime->event();
+				if($event){
+					$event_name = $event->name();
+				}
+			}
+		}
+		return $event_name;
+	}
+	
+	/**
+	 * Gets the first datetime for this lien item, assuming it's for a ticket
+	 * @param type $date_format
+	 * @param type $time_format
+	 * @return string
+	 */
+	function ticket_datetime_start($date_format,$time_format){
+		$first_datetime_string = __("Unknown", "event_espresso");
+		$ticket = $this->ticket();
+		if($ticket){
+			$first_datetime = $ticket->first_datetime();
+			if($first_datetime){
+				$first_datetime_string = $first_datetime->start_date_and_time($date_format,$time_format);
+			}
+		}
+		return $first_datetime_string;
 	}
 
 	/**

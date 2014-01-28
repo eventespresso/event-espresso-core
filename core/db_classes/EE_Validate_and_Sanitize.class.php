@@ -56,7 +56,7 @@
 	 */
 	private function __construct() {	
 		// Sidney is watching me...  { : \
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		define( 'EE_Validate_and_Sanitize', TRUE );
 	}
 
@@ -72,7 +72,7 @@
 	*/	
 	public function validate_and_sanitize_post_inputs( $post_inputs = array(), $save_to = 'db' ) {
 		// Sidney is watching me...  { : \
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	
 		// compare $_POST vars against whitelist of expected post vars above and sanitize input values
 		if ( $clean_data = $this->_whitelist_and_sanitize( $post_inputs, 'post' ) ) {		
@@ -99,7 +99,7 @@
 	private function _whitelist_and_sanitize( $input_array = array(), $what = 'get' ) {
 	
 		// Sidney is watching me...  { : \
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		
 		if ( ! isset( $input_array ) or empty( $input_array ) or ! is_array( $input_array )) {
@@ -180,7 +180,7 @@
 	private function _sanitize_this( $value = FALSE, $input_data = array() ) {
 		
 		// Sidney is watching me...  { : \
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $value or empty( $input_data )) {
@@ -348,7 +348,7 @@
 	private function _validate_post_data( $post_inputs = array() ) {
 	
 		// Sidney is watching me...  { : \
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				
 		if ( empty( $post_inputs )) {
 			$msg = __( 'An error occurred! No post data was passed to the validator. Please click your browser\'s back button and try again. If the problem persists, contact customer support.', 'event_espresso' );

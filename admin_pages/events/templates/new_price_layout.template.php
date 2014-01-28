@@ -58,7 +58,7 @@
 					<td><span class="ticket-display-row-TKT_total_amount">$0.00</span></td>
 					<td><span class="ticket-display-row-TKT_qty"></span></td>
 					<td><span class="ticket-display-row-TKT_sold">0</span></td>
-					<td><span class="gear-icon clickable" data-ticket-row="1" data-context="ticket"></span><span class="clone-icon ee-icon ee-icon-clone clickable" data-ticket-row="1" data-context="ticket"><span class="trash-icon dashicons dashicons-trash clickable" data-ticket-row="1" data-context="ticket" style="display:none;"></span></span></td>
+					<td><span class="gear-icon clickable" data-ticket-row="1" data-context="ticket"></span><span class="clone-icon ee-icon ee-icon-clone clickable" data-ticket-row="1" data-context="ticket"><span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="1" data-context="ticket" style="display:none;"></span></span></td>
 				</tr>
 				<tr id="edit-ticketrow-1" class="edit-ticket-row">
 					<td colspan="9">
@@ -135,7 +135,7 @@
 												<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[1][1][PRC_amount]" value="0">
 												<span class="ticket-price-info-display ticket-price-percentage-char-display" style="display:none">%</span>
 											</td>
-											<td><span class="gear-icon clickable" data-ticket-row="1" data-context="price" data-price-row="1"></span><span class="trash-icon dashicons dashicons-trash clickable" data-ticket-row="1" data-context="price" data-price-row="1" style="display:none"></span><button data-ticket-row="1" data-price-row="1" data-context="price" class="ee-create-button"><strong>+</strong></button></td>
+											<td><span class="gear-icon clickable" data-ticket-row="1" data-context="price" data-price-row="1"></span><span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="1" data-context="price" data-price-row="1" style="display:none"></span><button data-ticket-row="1" data-price-row="1" data-context="price" class="ee-create-button"><strong>+</strong></button></td>
 										</tr>
 										<tr id="extra-price-row-1-1">
 											<td colspan="5">
@@ -169,7 +169,7 @@
 
 							<!-- these hidden inputs are for tracking changes in prices attached to tickets during a js session, note we only ADD actual price ids to this list.  It only gets updated after a autosave (or manual update)-->
 						<input type="hidden" name="ticket_price_ids[1][]" id="ticket-price-ids-1" class="ticket-price-ids" value="1">
-						<input type="hidden" name="edit_tickets[1][TTM_ID]" class="ticket-template-id" value="1">
+						<input type="hidden" name="edit_tickets[1][TTM_ID]" class="ticket-template-id" value="0">
 
 						</fieldset>
 					</td>
@@ -196,7 +196,6 @@
 	<div id="edit-datetime-form-holder" class="hidden">
 		<section id="edit-event-datetime-DTTNUM" class="datetime-edit" style="display:none">
 			<input type="hidden" name="edit_event_datetimes[DTTNUM][DTT_ID]" id="event-datetime-DTT_ID-DTTNUM" class="event-datetime-DTT_ID" value="15">
-			<input type="hidden" name="edit_event_datetimes[DTTNUM][DTT_is_primary]" id="event-datetime-DTT_is_primary-DTTNUM" class="event-datetime-DTT_is_primary" value="1">
 			<table id="edit-event-datetime-table-DTTNUM" class="datetime-edit-table">
 				<tr>
 					<td class="event-datetime-column date-column">
@@ -237,7 +236,7 @@
 				<td><span class="ticket-display-row-TKT_total_amount"></span></td>
 				<td><span class="ticket-display-row-TKT_qty"></span></td>
 				<td><span class="ticket-display-row-TKT_sold">0</span></td>
-				<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="trash-icon dashicons dashicons-trash clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span></td>
+				<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="clone-icon clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span><span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="TICKETNUM" data-context="ticket"></span></td>
 			</tr>
 			<tr id="edit-ticketrow-TICKETNUM" class="edit-ticket-row">
 				<td colspan="9">
@@ -324,7 +323,7 @@
 
 						<!-- these hidden inputs are for tracking changes in prices attached to tickets during a js session -->
 						<input type="hidden" name="ticket_price_ids[TICKETNUM][]" id="ticket-price-ids-TICKETNUM" class="ticket-price-ids">
-						<input type="hidden" name="edit_tickets[TICKETNUM][TTM_ID]" class="ticket-template-id" value="1">
+						<input type="hidden" name="edit_tickets[TICKETNUM][TTM_ID]" class="ticket-template-id" value="0">
 					</fieldset>
 				</td>
 			</tr>
@@ -356,7 +355,7 @@
 					<input type="text" size="1" class="edit-price-PRC_amount ee-small-text-inp" name="edit_prices[TICKETNUM][PRICENUM][PRC_amount]" value="50">
 					<span class="ticket-price-info-display ticket-price-percentage-char-display" style="display:none">%</span>
 				</td>
-				<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM"></span><span class="trash-icon dashicons dashicons-trash clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM" style="display:none"></span><button data-ticket-row="TICKETNUM" data-price-row="PRICENUM" data-context="price" class="ee-create-button"><strong>+</strong></button></td>
+				<td><span class="gear-icon clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM"></span><span class="trash-icon dashicons dashicons-post-trash clickable" data-ticket-row="TICKETNUM" data-context="price" data-price-row="PRICENUM" style="display:none"></span><button data-ticket-row="TICKETNUM" data-price-row="PRICENUM" data-context="price" class="ee-create-button"><strong>+</strong></button></td>
 			</tr>
 			<tr id="extra-price-row-TICKETNUM-PRICENUM">
 				<td colspan="5">
@@ -454,7 +453,7 @@
 	<!-- new datetime display content -->
 	<div id="dtt_new_display_row_holder" class="hidden">
 		<section id="display-event-datetime-DTTNUM" class="datetime-summary">
-			<span class="datetime-title"></span><span class="gear-icon clickable" data-datetime-row="DTTNUM" data-context="datetime"></span><span data-datetime-row="DTTNUM"  data-context="datetime" class="ticket-icon ee-icon ee-icon-tickets clickable"></span><span  data-context="datetime" data-datetime-row="DTTNUM" class="clone-icon ee-icon ee-icon-clone clickable"></span><span  data-context="datetime" data-datetime-row="DTTNUM" class="trash-icon dashicons dashicons-trash clickable"></span><span  data-context="datetime" data-datetime-row="DTTNUM" class="datetime-tickets-sold">Total Tickets Sold: 0</span>
+			<span class="datetime-title"></span><span class="gear-icon clickable" data-datetime-row="DTTNUM" data-context="datetime"></span><span data-datetime-row="DTTNUM"  data-context="datetime" class="ticket-icon ee-icon ee-icon-tickets clickable"></span><span  data-context="datetime" data-datetime-row="DTTNUM" class="clone-icon ee-icon ee-icon-clone clickable"></span><span  data-context="datetime" data-datetime-row="DTTNUM" class="trash-icon dashicons dashicons-post-trash clickable"></span><span  data-context="datetime" data-datetime-row="DTTNUM" class="datetime-tickets-sold">Total Tickets Sold: 0</span>
 		</section>
 		<div style="clear:both;"></div>
 	</div>

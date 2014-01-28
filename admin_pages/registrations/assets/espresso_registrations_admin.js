@@ -7,6 +7,19 @@ jQuery(document).ready(function($) {
 	
 	
 	$('#reg-admin-attendee-questions-submit').prop( 'disabled', true );
+
+
+	/**
+	 * datepicker functionality?
+	 */
+	// if datepicker function exists
+	if ( $.fn.datepicker ) {
+		// activate datepicker fields
+		$( '.datepicker' ).datepicker({
+			changeMonth: true,
+			changeYear: true
+		});
+	}
 	
 
 	$('#entries-per-page-slct').change( function() {
@@ -51,7 +64,7 @@ jQuery(document).ready(function($) {
 		var itemdata = $(this).data();
 		var thisitem = $(this);
 		var data = {
-			regid : itemdata.regid,
+			_regid : itemdata._regid,
 			dttid : itemdata.dttid,
 			checkinnonce : itemdata.nonce,
 			ee_admin_ajax : true,

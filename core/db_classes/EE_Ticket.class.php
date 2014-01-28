@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
+do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 /**
  * Event Espresso
  *
@@ -27,11 +27,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	/**
 	 * The following constants are used by the ticket_status() method to indicate whether a ticket is on sale or not.
 	 */
-	const sold_out = -2;
-	const expired = -1;
-	const archived = 0;
-	const pending = 1;
-	const onsale = 2;
+	const sold_out = 'TKS';
+	const expired = 'TKE';
+	const archived = 'TKA';
+	const pending = 'TKP';
+	const onsale = 'TKO';
 
 
 	/**
@@ -413,11 +413,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return mixed(int|string) status int if the display string isn't requested
 	 */
 	public function ticket_status( $display = FALSE ) {
-		if ( $this->_TKT_qty - $this->_TKT_sold < 1 ) return $display ? __('Sold Out', 'event_espresso') : EE_Ticket::sold_out;
-		if ( $this->_TKT_deleted ) return $display ? __('Archived', 'event_espresso') : EE_Ticket::archived;
-		if ( $this->is_expired() ) return $display ? __('Expired', 'event_espresso') : EE_Ticket::expired;
-		if ( $this->is_pending() ) return $display ? __('Pending', 'event_espresso') : EE_Ticket::pending;
-		if ( $this->is_on_sale() ) return $display ? __('On Sale', 'event_espresso') : EE_Ticket::onsale;
+		if ( ! $this->is_remaining() ) return $display ? EEH_Template::pretty_status(EE_Ticket::sold_out, FALSE, 'sentence') : EE_Ticket::sold_out;
+		if ( $this->_TKT_deleted ) return $display ? EEH_Template::pretty_status(EE_Ticket::archived, FALSE, 'sentence') : EE_Ticket::archived;
+		if ( $this->is_expired() ) return $display ? EEH_Template::pretty_status(EE_Ticket::expired, FALSE, 'sentence') : EE_Ticket::expired;
+		if ( $this->is_pending() ) return $display ? EEH_Template::pretty_status(EE_Ticket::pending, FALSE, 'sentence') : EE_Ticket::pending;
+		if ( $this->is_on_sale() ) return $display ? EEH_Template::pretty_status(EE_Ticket::onsale, FALSE, 'sentence') : EE_Ticket::onsale;
+		
 	}
 
 
@@ -447,7 +448,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return array
 	 */
 	public function first_datetime() {
-		$datetimes = $this->get_many_related('Datetime');
+		$datetimes = $this->datetimes(array('limit'=>1));
 		return reset( $datetimes );
 	}
 
@@ -456,7 +457,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return array
 	 */
 	public function last_datetime() {
-		$datetimes = $this->get_many_related('Datetime');
+		$datetimes = $this->datetimes(array('limit'=>1,'order_by'=>array('DTT_EVT_start'=>'DESC')));
 		return end( $datetimes );
 	}
 
@@ -518,14 +519,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * This returns the base price object for the ticket.
 	 *
 	 * @access public
-	 * @param  bool    $array whether to return as an array indexed by price id or just the object.
+	 * @param  bool    $return_array whether to return as an array indexed by price id or just the object.
 	 * @return EE_Price
 	 */
-	public function base_price( $array = FALSE ) {
-		$_where = array(
-			'Price_Type.PBT_ID' => EEM_Price_Type::base_type_base_price
-			);
-		return $array ? $this->get_many_related('Price', array($_where) ) : $this->get_first_related('Price', array($_where));
+	public function base_price( $return_array = FALSE ) {
+		$_where = array( 'Price_Type.PBT_ID' => EEM_Price_Type::base_type_base_price );
+		return $return_array ? $this->get_many_related('Price', array($_where) ) : $this->get_first_related('Price', array($_where));
 	}
 
 
@@ -557,14 +556,27 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Gets all the datetimes this ticket can be used for attending
+	 * Gets all the datetimes this ticket can be used for attending.
+	 * Unless otherwise sepcified, orders datetimes by start date.
 	 * @param array $query_params see EEM_Base::get_all()
 	 * @return EE_Datetime[]
 	 */
 	public function datetimes($query_params = array()){
+		if( ! isset($query_params['order_by'])){
+			$query_params['order_by']['DTT_EVT_start'] = 'ASC';
+		}
 		return $this->get_many_related('Datetime', $query_params);
 	}
 	
+	/**
+	 * Gets all the datetimes from teh db ordered by start time
+	 * @param boolean $show_expired
+	 * @param boolean $show_deleted
+	 * @return EE_Datetime[]
+	 */
+	public function datetimes_ordered($show_expired = true, $show_deleted = false){
+		return EEM_Datetime::instance($this->_timezone)->get_datetimes_for_ticket_ordered_by_start_time($this->ID(),$show_expired,$show_deleted);
+	}
 	/**
 	 * Gets the template for the ticket
 	 * @return EE_Ticket_Template
@@ -598,6 +610,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	public function ticket_price() {
 		return $this->get('TKT_price');
+	}
+
+
+	public function pretty_price() {
+		return $this->get_pretty('TKT_price');
 	}
 
 
@@ -665,7 +682,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function set_start_date($start_date) {
-		return $this->set('TKT_start_date', $start_date);
+		return $this->_set_date_time('B', $start_date, 'TKT_start_date');
 	}
 	/**
 	 * Gets end_date
@@ -681,7 +698,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function set_end_date($end_date) {
-		return $this->set('TKT_end_date', $end_date);
+		return $this->_set_date_time('B', $end_date, 'TKT_end_date');
 	}
 	/**
 	 * Gets min
@@ -744,7 +761,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @param int $sold
 	 * @return boolean
 	 */
-	function set_sold($sold) {
+	function set_sold( $sold ) {
 		return $this->set('TKT_sold', $sold);
 	}
 	
@@ -755,7 +772,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 */
 	function increase_sold( $qty = 1 ) {
 		$sold = $this->_TKT_sold + $qty;
-		return $this->set( 'TKT_sold', $sold );
+		return $this->set_sold( $sold );
 	}
 	
 	/**
@@ -767,7 +784,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		$sold = $this->_TKT_sold - $qty;
 		// sold can not go below zero
 		$sold = max( 0, $sold );
-		return $this->set( 'TKT_sold', $sold );
+		return $this->set_sold( $sold );
 	}
 	
 	/**

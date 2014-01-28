@@ -71,7 +71,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				'func'=>'_send_migration_crash_report',
 				'noheader'=>true
 			),
-			'confirm_migration_crash_report_sent'=>'_confirm_migration_crash_report_sent');
+			'confirm_migration_crash_report_sent'=>'_confirm_migration_crash_report_sent',
+			'reset_db'=>array(
+				'func'=>'_reset_db',
+				'noheader'=>true
+			));
 	}
 	protected function _set_page_config() {
 		$this->_page_config = array(
@@ -168,6 +172,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'script_names'=>$script_names,//array of names of scripts that have run
 			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
 			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL), 
+			'reset_db_page_link'=>EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL),
 		));
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
@@ -247,6 +252,18 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->display_admin_page_with_sidebar();
 	}
 	
+	/**
+	 * Resets the entire EE4 database.
+	 * Currently basically only sets up ee4 database for a fresh install- doesn't
+	 * actually clean out the old wp options, or cpts (although does erase old ee table data)
+	 */
+	public function _reset_db(){
+		EE_Registry::instance()->load_helper('Activation');
+		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+//		EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
+		EE_System::instance()->initialize_db_if_no_migrations_required(true);
+		EE_System::instance()->redirect_to_about_ee();
+	}
 
 	
 	

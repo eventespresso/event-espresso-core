@@ -3,7 +3,7 @@
 			<tr>
 				<th><?php _e( 'Code', 'event_espresso' );?></th>
 				<th><?php _e( 'Name', 'event_espresso' );?></th>
-				<th colspan="2"><?php _e( 'Active', 'event_espresso' );?></th>
+				<th colspan="2"><span class="small-text"><?php _e( 'State Appears in<br/>Dropdown Select Lists ', 'event_espresso' );?></span></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -21,9 +21,7 @@
 				 } 
 			 ?>
 				<td class="delete-state-td">
-					<a id="delete-state-<?php echo $STA_ID; ?>-lnk" class="delete-state-lnk" rel="<?php echo $STA_ID; ?>" title="Delete State #<?php echo $STA_ID; ?>?" href="<?php echo $state['delete_state_url']; ?>">
-						<img width="16" height="16" style="margin-top:3px;" src="<?php echo EE_GLOBAL_ASSETS_URL;?>/images/trash-small-16x16.png" alt="delete state">
-					</a>
+					<a id="delete-state-<?php echo $STA_ID; ?>-lnk" class="dashicons dashicons-post-trash ee-icon-size-20 delete-state-lnk" rel="<?php echo $STA_ID; ?>" title="Delete State #<?php echo $STA_ID; ?>?" href="<?php echo $state['delete_state_url']; ?>"></a>
 				</td>
 			</tr>
 		<?php 
@@ -32,7 +30,7 @@
 		</tbody>
 	</table>
 		<br />
-		<input id="country_settings_save3" class="button-primary save right" type="submit" name="save" value="<?php _e('Save States / Provinces', 'event_espresso'); ?>"><br />
+		<input id="country_settings_save3" class="button-primary save right" type="submit" name="save" value="<?php _e('Save States / Provinces', 'event_espresso'); ?>"/><br />
 		
 	<?php
 		} 

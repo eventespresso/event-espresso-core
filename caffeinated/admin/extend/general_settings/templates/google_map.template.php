@@ -260,4 +260,3 @@
 	</table>
 
 </div>
-<?php include_once( GEN_SET_TEMPLATE_PATH . 'map_confg_help.php' ); ?>

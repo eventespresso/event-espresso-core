@@ -36,8 +36,8 @@ class EE_Payment_message_type extends EE_message_type {
 		$this->name = 'payment';
 		$this->description = __('This message type is used for all payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso'); 
 		$this->label = array(
-			'singular' => __('payment', 'event_espresso'),
-			'plural' => __('payments', 'event_espresso')
+			'singular' => __('payment received', 'event_espresso'),
+			'plural' => __('payments received', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -115,7 +115,7 @@ class EE_Payment_message_type extends EE_message_type {
 		$this->_context_label = array(
 			'label' => __('recipient', 'event_espresso'),
 			'plural' => __('recipients', 'event_espresso'),
-			'description' => __('Recipient\'s are who will recieve the template.  You may want different payment details sent out depending on who the recipient is', 'event_espresso')
+			'description' => __('Recipient\'s are who will receive the template.  You may want different payment details sent out depending on who the recipient is', 'event_espresso')
 			);
 
 		$this->_contexts = array(
@@ -124,13 +124,13 @@ class EE_Payment_message_type extends EE_message_type {
 				'description' => __('This template is what event administrators will receive on a successful payment', 'event_espresso')
 				),
 			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who made the main registration) will receive on successful payment', 'event_espresso')
+				'label' => __('Primary Registrant', 'event_espresso'),
+				'description' => __('This template is what the primary registrant (the person who made the main registration) will receive on successful payment', 'event_espresso')
 				)
 			);
 
-		$this->_contexts = apply_filters('FHEE_set_contexts_'. $this->name, $this->_contexts);
-		$this->_contexts = apply_filters('FHEE_set_contexts_all', $this->_contexts);
+		$this->_contexts = apply_filters( 'FHEE_set_contexts_'. $this->name, $this->_contexts );
+		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
 
 
@@ -159,7 +159,7 @@ class EE_Payment_message_type extends EE_message_type {
 	protected function _admin_addressees() {
 		$admin_ids = array();
 		$admin_events = array();
-		$addresees = array();
+		$addressees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {

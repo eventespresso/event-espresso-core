@@ -1,11 +1,12 @@
 <!--***************  ATTENDEE INFORMATION STEP 	***************-->		
 <?php echo do_action( 'AHEE__registration_page_attendee_information__start', $event_queue );?>
-
+<?php if ( !$from_admin ) : ?>
 <h2 id="spco-attendee_information-hdr" class="spco-step-title-hdr">
 	<?php echo sprintf( __('%s Attendee Information', 'event_espresso'), $step_nmbr ); ?>
 	<a id="spco-edit-attendee_information-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="attendee_information"><?php _e('edit', 'event_espresso'); ?></a>
 </h2>
-<?php do_action('after_spco-attendee_information-hdr')?>
+<?php endif; ?>
+<?php do_action( 'AHEE__registration_page_registration_questions__template__after_spco_attendee_information_header' )?>
 <div id="spco-attendee_information-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
 	
 	<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
@@ -15,7 +16,7 @@
 		'<span class="asterisk">*</span>'
 		);?>		
 	</p>
-
+<?php if ( !$from_admin ) : ?>
 	<form id="spco-registration-attendee_information-frm" action="<?php echo $reg_step_form_url;?>" method="post">
 
 		<input type="hidden" id="spco-attendee_information-action" name="ajax_action" value="espresso_<?php echo $reg_step_ajax_action;?>" />
@@ -25,6 +26,7 @@
 		<input type="hidden" id="spco-revisit" name="revisit" value="<?php echo $revisit;?>" />
 					
 <?php
+endif; //end from admin conditional
 global $css_class;
 
 $att_nmbr = 0;
@@ -61,7 +63,7 @@ if ( $event_queue['total_items'] > 0 ) {
 
 		<?php 
 			//do an action before the questions output, including the item and count 
-			echo do_action( 'AHEE_registration_page_attendee_information_before_questions', $item, $att_nmbr );
+			echo do_action( 'AHEE__registration_page_registration_questions__template___before_questions', $item, $att_nmbr );
 			echo $item['attendee_questions'];
 			
 			if ( $att_nmbr == 1 ) { ?>
@@ -158,33 +160,19 @@ if ( $event_queue['total_items'] > 0 ) {
 	 } // $event_queue['total_items'] 
 ?>
 
-		
+<?php if ( !$from_admin ) : ?>	
 		<div><a id="spco-display-event-questions-lnk" class="act-like-link smaller-text hidden hide-if-no-js float-right" ><?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?></a></div>
 		
 		<?php do_action( 'AHEE__before_spco_whats_next_buttons', 'attendee_information', $next_step ); ?>
 		
 		<div id="spco-attendee_information-whats-next-buttons-dv" class="spco-whats-next-buttons">
-		
-			<a href =""  id="spco-go-to-step-<?php echo $next_step; ?>-btn" class="spco-next-step-btn ee-button ee-register-button huge ee-green hide-if-no-js" rel="attendee_information" >
-				<?php echo $next_step_text; ?>
-			</a>
-
-			<noscript>
-				<input type="submit" 
-					id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
-					class="spco-next-step-btn ee-button ee-register-button huge ee-green no-js-btn"
-					name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
-					value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;"							
-				/>				
-			</noscript>	
-			
+			<?php echo EEH_Form_Fields::submit_button( $edit_lnk_url, 'spco-go-to-step-' . $next_step, 'spco-next-step-btn', $next_step_text, 'spco-go-to-step-' . $next_step, TRUE, 'rel="attendee_information"' ); ?>
 		</div>		
 		<!--end spco-whats-next-buttons-->
-
 	</form>		
 
-	<?php do_action( 'AHEE__SPCO__after_reg_step_form', 'attendee_information', $next_step ); ?>
-
+	<?php do_action( 'AHEE__SPCO_after_reg_step_form', 'attendee_information', $next_step ); ?>
+<?php endif; //end from_admin conditional ?>
 </div>
 <!--end Step 1-->
 

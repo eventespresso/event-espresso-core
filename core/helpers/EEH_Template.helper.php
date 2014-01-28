@@ -30,20 +30,115 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
 
 
 class EEH_Template {
+	
+	private static $_espresso_themes = array();
+
+
+	/**
+	 * 	is_espresso_theme - returns TRUE or FALSE on whether the currently active WP theme is an espresso theme
+	 * 
+	 * 	@return void
+	 */
+	public static function is_espresso_theme() {
+		return wp_get_theme()->get( 'TextDomain' ) == 'event_espresso' ? TRUE : FALSE;
+	}
+
+	/**
+	 * 	get_espresso_themes - returns an array of Espresso Child themes loacted in the /tmeplates/ directory
+	 * 
+	 * 	@return void
+	 */
+	public static function get_espresso_themes() {
+		if ( empty( EEH_Template::$_espresso_themes )) {
+			$espresso_themes =  glob( EE_TEMPLATES . '*', GLOB_ONLYDIR );
+			if (( $key = array_search( 'global_assets', $espresso_themes )) !== FALSE ) {
+			    unset( $espresso_themes[ $key ] );
+			}
+			EEH_Template::$_espresso_themes = array();
+			foreach ( $espresso_themes as $espresso_theme ) {
+				EEH_Template::$_espresso_themes[ basename( $espresso_theme ) ] = $espresso_theme;
+			}	
+		}
+		return EEH_Template::$_espresso_themes;
+	}
+
+
+	/**
+	 * 	locate_template
+	 * 
+	 * 	locate a template file by looking in the following places, in the following order:
+	 * 		/wp-content/theme/(the currently activated theme)
+	 *		/wp-content/uploads/espresso/templates/  
+	 *		/wp-content/uploads/espresso/templates/ee-theme/  
+	 *		/wp-content/plugins/EE4/templates/(default theme)/ 
+	 *	as soon as the template is found i none of those locations, it will be returned or loaded 
+	 * 
+	 * 	@param  string $template  the template file name including extension
+	 * 	@param  boolean $load  whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
+	 * 	@param  array $template_args an array of arguments to be extracted for use in the template
+	 * 	@param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
+	 * 	@return void
+	 */
+	public static function locate_template( $template = '', $load = TRUE, $template_args = array(), $return_string = TRUE ) {
+		// first use WP locate_template to check for template in the current theme folder
+		if ( ! $template_path = locate_template( $template )) {
+			if ( empty( $template )) {
+				// get post_type 
+				$post_type = EE_Registry::instance()->REQ->get( 'post_type' );
+				// get array of EE Custom Post Types
+				$EE_CPTs = EE_Register_CPTs::get_CPTs();
+				// build template name based on request
+				if ( isset( $EE_CPTs[ $post_type ] )) {
+					$archive_or_single =  is_archive() ? 'archive' : '';
+					$archive_or_single =  is_single() ? 'single' : $archive_or_single;
+					$template = $archive_or_single . '-' . $post_type . '.php';
+				}
+			}
+			$current_theme = EE_Config::get_current_theme();
+			
+			$tempates = is_array( $template ) ? $template : array( $template );
+			foreach ( $tempates as $tempate ) {
+				// then check the root of the uploads/espresso/templates/ folder
+				if ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . DS . $template )) {
+					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . DS . $template;
+					break;
+				// or check the uploads/espresso/templates/ folder for an EE theme template file
+				} elseif ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template )) {
+					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template;
+					break;
+				// otherwise get it from our folder within the plugin
+				} else if ( file_exists( EE_TEMPLATES . $current_theme . DS . $template )) {
+					$template_path = EE_TEMPLATES . $current_theme . DS . $template;
+					break;
+				}
+			}
+		}
+		
+		// if we got it and you want to see it...
+		if ( $load && $template_path != '' ) {
+			if ( $return_string ) {
+				return EEH_Template::display_template( $template_path, $template_args, $return_string );
+			} else {
+				EEH_Template::display_template( $template_path, $template_args, $return_string );
+			}			
+		}
+		return $template_path;
+	}
+
 
 
 	/**
 	 * load and display a template
 	 * @param  string $path_to_file  server path to the file to be loaded, including file name and extension
-	 * @param  boolean $template_args an array of arguments to be extracted for use in the template
+	 * @param  array $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
 	 * @return void
 	 */
-	public static function display_template($path_to_file = FALSE, $template_args = FALSE, $return_string = FALSE) {
+	public static function display_template( $path_to_file = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
 		// you gimme nuttin - YOU GET NUTTIN !!
-		if (!$path_to_file) {
+		if ( ! $path_to_file ) {
 			return FALSE;
 		}
 		// if $template_args are not in an array, then make it so
@@ -53,7 +148,7 @@ class EEH_Template {
 
 		extract( (array) $template_args);
 
-		if ($return_string) {
+		if ( $return_string ) {
 			// becuz we want to return a string, we are going to capture the output
 			ob_start();
 			include( $path_to_file );
@@ -140,6 +235,21 @@ class EEH_Template {
 		unset( $EE );
 		// return formatted currency amount
 		return $amount_formatted;
+	}
+
+
+
+
+	/**
+	 * This function is used for outputting the localized label for a given status id in the schema requested (and possibly plural).  The intended use of this function is only for cases where wanting a label outside of a related status model or model object (i.e. in documentation etc.)
+	 * @param  string  $status_id Status ID matching a registered status in the esp_status table.  If there is no match, then 'Unkown' will be returned.
+	 * @param  boolean $plural    Whether to return plural or not
+	 * @param  string  $schema    'UPPER', 'lower', or 'Sentence'
+	 * @return string             The localized label for the status id.
+	 */
+	public static function pretty_status( $status_id, $plural = FALSE, $schema = 'upper' ) {
+		$status = EEM_Status::instance()->localized_status(array( $status_id => __('unknown') ), $plural, $schema );
+		return $status[$status_id];
 	}
 
 
@@ -235,6 +345,48 @@ class EEH_Template {
 		}
 
 		$content .= '</ol>';
+		return $content;
+	}
+
+
+
+
+	/**
+	 * This is a helper method to generate a status legend for a given status array.
+	 * Note this will only work if the incoming statuses have a key in the EEM_Status->localized_status() methods status_array.
+	 * 
+	 * @param  array $status_array  array of statuses that will make up the legend. In format:
+	 * array(
+	 * 	'status_item' => 'status_name'
+	 * )
+	 * @param  string $active_status This is used to indicate what the active status is IF that is to be highlighted in the legend.
+	 * @return string               html structure for status.
+	 */
+	public static function status_legend( $status_array, $active_status = '' ) {
+		if ( !is_array( $status_array ) )
+			throw new EE_Error( __('The EEH_Template::status_legend helper required the incoming status_array argument to be an array!', 'event_espresso') );
+
+		$setup_array = array();
+		foreach ( $status_array as $item => $status ) {
+			$setup_array[$item] = array(
+					'class' => 'ee-status-legend ee-status-legend-' . $status,
+					'desc' => EEH_Template::pretty_status( $status, FALSE, 'sentence' ),
+					'status' => $status
+				);
+		}
+
+		$content = '<div class="ee-list-table-legend-container">' . "\n";
+		$content .= '<h4>' . __('Status Legend', 'event_espresso') . '</h4>' . "\n";
+		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
+		foreach ( $setup_array as $item => $details ) {
+			$active_class = $active_status == $details['status'] ? ' class="ee-is-active-status"' : '';
+			$content .= '<dt id="ee-legend-item-' . $item . '"' . $active_class . '>' . "\n\t\t";
+			$content .= '<span class="' . $details['class'] . '""></span>' . "\n\t\t";
+			$content .= '<span class="ee-legend-description">' . $details['desc'] . '</span>' . "\n\t";
+			$content .= '</dt>' . "\n";
+		}
+		$content .= '</dl>' . "\n";
+		$content .= '</div>' . "\n";
 		return $content;
 	}
 

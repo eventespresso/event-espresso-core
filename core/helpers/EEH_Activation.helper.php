@@ -34,9 +34,6 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function system_initialization() {
-		if ( ! current_user_can( 'activate_plugins' )) {
-			wp_die( __( 'You do not have the required permissions to activate this plugin.', 'event_espresso' ));
-		}
 //		EEH_Activation::CPT_initialization();//dont register taxonomies on activation because they need to happen on INIT hook anyways
 		//which is fired BEFORE activation of plugin anyways
 		EEH_Activation::verify_default_pages_exist();
@@ -74,7 +71,7 @@ class EEH_Activation {
 		//EEM_Gateway::load_all_gateways()
 		EEM_Gateways::instance(true)->load_all_gateways();
 		//also, check for CAF default db content
-		do_action('AHEE__EEH_Activation__initialize_db_content');		
+		do_action( 'AHEE__EEH_Activation__initialize_db_content' );		
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
@@ -196,7 +193,7 @@ class EEH_Activation {
 		if ( $critical_page_problem ) {
 			$msg = sprintf(
 				__('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.', 'event_espresso' ),
-				'<a href="' . admin_url('admin.php?page=espresso_general_settings') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>'
+				'<a href="' . admin_url('admin.php?page=espresso_general_settings&action=critical_pages') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>'
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
@@ -292,15 +289,28 @@ class EEH_Activation {
 	 *
 	 * 	@access public
 	 * 	@static
+	 * @param string $table_name withou the $wpdb->prefix
+	 * @param string $sql SQL for creating the table (contents between brackets in an SQL create table query)
+	 * @param string engine like 'ENGINE=MyISAM' or 'ENGINE=InnoDB'
+	 * @param boolean $drop_table_if_pre_existed set to TRUE when you want to make SURE the table is completely empty
+	 * and new once this function is done (ie, you really do want to CREATE a table, and
+	 * expect it to be empty once you're done)
+	 * leave as FALSE when you just want to verify the table exists and matches this definition (and if it 
+	 * HAS data in it you want to leave it be)
 	 * 	@return void
 	 */
-	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ' ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '' );
+	public static function create_table( $table_name, $sql, $engine = 'ENGINE=MyISAM ',$drop_table_if_pre_existed = false ) {
+//		echo "create table $table_name ". ($drop_table_if_pre_existed? 'but first nuke preexisting one' : 'or update it if it exstsi') . "<br>";//die;
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( ! function_exists( 'dbDelta' )) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		}
 		global $wpdb;		
 		$wp_table_name = $wpdb->prefix . $table_name;
+		//		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_t) )
+		if($drop_table_if_pre_existed){
+			$wpdb->query("DROP TABLE IF EXISTS $wp_table_name ");
+		}
 		$SQL = "CREATE TABLE $wp_table_name ( $sql ) $engine DEFAULT CHARSET=utf8 COLLATE=utf8_general_ci;";
 		dbDelta( $SQL );
 		// clear any of these out
@@ -412,8 +422,11 @@ class EEH_Activation {
 		//but just define the schema changes methods
 		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_1_0','dms');
 		$current_data_migration_script = new EE_DMS_4_1_0();
-		$current_data_migration_script->schema_changes_before_migration();
-		$current_data_migration_script->schema_changes_after_migration();
+		//decide what to do when tables already exist. Do we nuke them and start fresh? or do we simply modify them?
+		//if this is a new activation, (or if it were run from a data migration script), nuke old tables
+		$drop_pre_existing_tables = EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ? true : false;
+		$current_data_migration_script->schema_changes_before_migration($drop_pre_existing_tables);
+		$current_data_migration_script->schema_changes_after_migration($drop_pre_existing_tables);
 	}
 
 

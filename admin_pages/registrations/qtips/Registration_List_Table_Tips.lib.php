@@ -15,12 +15,12 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  *
  * ------------------------------------------------------------------------
  *
- * EE_Event_Editor_Tips	
+ * Registration_List_Table_Tips	
  *
  * Qtip config for the event editor.
  *
  * @package		Event Espresso
- * @subpackage	/admin_pages/events/qtips/EE_Event_Editor_Tips.helper.php
+ * @subpackage	/admin_pages/registrations/qtips/Registration_List_Table_Tips.lib.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -106,45 +106,13 @@ class Registration_List_Table_Tips extends EE_Qtip_Config {
 	private function _registration_status_legend( $status ) {
 
 		$status_array = array(
-			'not_approved' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
-				'desc' => __('Not Approved', 'event_espresso'),
-				'status' => EEM_Registration::status_id_not_approved
-				),
-			'pending_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_pending_payment,
-				'desc' => __('Pending', 'event_espresso'),
-				'status' => EEM_Registration::status_id_pending_payment
-				),
-			'approved_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
-				'desc' => __('Approved', 'event_espresso'),
-				'status' => EEM_Registration::status_id_approved
-				),
-			'cancelled_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
-				'desc' => __('Cancelled', 'event_espresso'),
-				'status' => EEM_Registration::status_id_cancelled
-				),
-			'declined_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
-				'desc' => __('Declined', 'event_espresso'),
-				'status' => EEM_Registration::status_id_declined
-				)
+			'not_approved' => EEM_Registration::status_id_not_approved,
+			'pending_status' => EEM_Registration::status_id_pending_payment,
+			'approved_status' => EEM_Registration::status_id_approved,
+			'cancelled_status' => EEM_Registration::status_id_cancelled,
+			'declined_status' => EEM_Registration::status_id_declined
 			);
 
-		$content = '<div class="ee-list-table-legend-container">' . "\n";
-		$content .= '<h4>' . __('Status Legend', 'event_espresso') . '</h4>' . "\n";
-		$content .= '<dl class="ee-list-table-legend">' . "\n\t";
-		foreach ( $status_array as $item => $details ) {
-			$active_class = $status == $details['status'] ? ' class="ee-is-reg-status"' : '';
-			$content .= '<dt id="ee-legend-item-' . $item . '"' . $active_class . '>' . "\n\t\t";
-			$content .= '<span class="' . $details['class'] . '""></span>' . "\n\t\t";
-			$content .= '<span class="ee-legend-description">' . $details['desc'] . '</span>' . "\n\t";
-			$content .= '</dt>' . "\n";
-		}
-		$content .= '</dl>' . "\n";
-		$content .= '</div>' . "\n";
-		return $content;
+		return EEH_Template::status_legend( $status_array, $status );
 	}
 }

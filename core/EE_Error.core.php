@@ -339,7 +339,7 @@ class EE_Error extends Exception {
 		$ouput .= '
 </div>';
 
-		$ouput .= self::_print_scripts();		
+		$ouput .= self::_print_scripts( TRUE );		
 
 		if ( defined( 'DOING_AJAX' )) {
 			echo json_encode( array( 'error' => $ouput ));
@@ -530,6 +530,19 @@ class EE_Error extends Exception {
 
 
 	/**
+	*	_reset_notices
+	*	@access private
+	*	@return void
+	*/
+    private static function _reset_notices(){
+    	self::$_espresso_notices['success'] = FALSE;
+    	self::$_espresso_notices['attention'] = FALSE;
+    	self::$_espresso_notices['errors'] = FALSE;
+    }
+
+
+
+	/**
 	*	has_errors
 	*	@access public
 	*	@return int
@@ -557,7 +570,7 @@ class EE_Error extends Exception {
 	* 	@return 		array
 	*/
 	public static function get_notices( $format_output = TRUE, $save_to_transient = FALSE, $remove_empty = TRUE ) {
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$success_messages = '';
 		$attention_messages = '';
@@ -612,7 +625,7 @@ class EE_Error extends Exception {
 
 			$notices = '<div id="espresso-notices">';
 			
-			$close = is_admin() ? '' : '<a class="close-espresso-notice">&times;</a>';
+			$close = is_admin() ? '' : '<a class="close-espresso-notice hide-if-no-js">&times;</a>';
 
 			if ($success_messages != '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-success';
@@ -623,14 +636,14 @@ class EE_Error extends Exception {
 
 			if ($attention_messages != '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-attention';
-				$css_class = is_admin() ? 'updated fade' : 'attention fade-away';
+				$css_class = is_admin() ? 'updated' : 'attention fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '"><p>' . $attention_messages . '</p>' . $close . '</div>';
 			}
 			
 			if ($error_messages != '') {
 				$css_id = is_admin() ? 'message' : 'espresso-notices-error';
-				$css_class = is_admin() ? 'error fade' : 'error fade-away';
+				$css_class = is_admin() ? 'error' : 'error fade-away';
 				//showMessage( $error_messages, TRUE );
 				$notices .= '<div id="' . $css_id . '" class="espresso-notices ' . $css_class . '"><p>' . $error_messages . '</p>' . $close . '</div>';
 			}
@@ -673,9 +686,9 @@ class EE_Error extends Exception {
 	*	@access public
 	* 	@return 		void
 	*/
-	private static function _print_scripts() {
+	private static function _print_scripts( $force_print = FALSE ) {
 		
-		if ( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) {
+		if (( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) && ! $force_print ) {
 			if ( wp_script_is( 'ee_error_js', 'enqueued' )) {
 				return;
 			} else if ( wp_script_is( 'ee_error_js', 'registered' )) {
@@ -711,7 +724,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	*	@access public
 	* 	@return 		void
 	*/
-	public function enqueue_error_scripts() {
+	public static function enqueue_error_scripts() {
 		self::_print_scripts();
 	}
 
@@ -733,7 +746,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 	//echo '<h4>$line : ' . $line . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
 
-		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$error_code = '';
 		$code_bits = array( 'file' => $file, 'func' => $func, 'line' => $line );

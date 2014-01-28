@@ -1,6 +1,10 @@
+<h2><?php _e('Questions Overview', 'event_espresso'); ?></h2>
 <p>
-<?php _e("Questions are the heart of your registration form, and Event Espresso makes it easy to control what questions your visitors will see. There are a variety of different question types, from a simple text field, to drop downs and radio buttons.", 'event_espresso'); ?>
+<?php _e('This page shows all questions that have been created with Event Espresso.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e("Dragging and dropping the questions will change their appearance priority, so a question at the top of the list will appear higher up in any question group it is assigned to, and one that is at the bottom of the list will appear lower down.", 'event_espresso'); ?>
+<?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Questions Overview Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>
+</p>
+<p>
+<?php _e('<strong>Screen Options</strong><br /> You can customize the information that is shown on this page by toggling the Screen Options tab. Then you can add or remove checkmarks to hide or show certain content and even adjust the pagination for questions.', 'event_espresso'); ?>
 </p>

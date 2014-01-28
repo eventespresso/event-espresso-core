@@ -20,15 +20,15 @@
 			<table id="add-new-event-datetime-table" class="datetime-edit-table">
 				<tr>
 					<td class="event-datetime-column date-column">
-						<label for="add-new-event-datetime-DTT_EVT_start"><?php _e('Event Start', 'event_espresso'); ?></label>
+						<label class="add-new-event-datetime-DTT_EVT_start_label" for="add-new-event-datetime-DTT_EVT_start"><?php _e('Event Start', 'event_espresso'); ?></label>
 						<input type="text" name="add_new_datetime[DTT_EVT_start]" id="add-new-event-datetime-DTT_EVT_start" class="ee-text-inp ee-datepicker" data-context="start-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_end" data-next-field="#add-new-event-datetime-DTT_EVT_start">
 					</td>
 					<td class="event-datetime-column date-column">
-						<label for="add-new-event-datetime-DTT_EVT_end"><?php _e('Event End', 'event_espresso'); ?></label>
+						<label class="add-new-event-datetime-DTT_EVT_end_label" for="add-new-event-datetime-DTT_EVT_end"><?php _e('Event End', 'event_espresso'); ?></label>
 						<input type="text" name="add_new_datetime[DTT_EVT_end]" id="add-new-event-datetime-DTT_EVT_end" class="ee-text-inp ee-datepicker" data-context="end-dtt" data-date-field-context="#add-event-datetime" data-related-field="#add-new-event-datetime-DTT_EVT_start" data-next-field="#add-new-event-datetime-DTT_reg_limit">
 					</td>
 					<td class="event-datetime-column reg-limit-column">
-						<label for="add-new-event-datetime-DTT_reg_limit"><?php _e('Limit', 'event_espresso'); ?></label>
+						<label class="add-new-event-datetime-DTT_EVT_end_label" for="add-new-event-datetime-DTT_reg_limit"><?php _e('Limit', 'event_espresso'); ?></label>
 						<input type="text" name="add_new_datetime[DTT_reg_limit]" id="add-new-event-datetime-DTT_reg_limit" class="ee-numeric ee-small-text-inp">
 					</td>
 				</tr>
@@ -56,13 +56,14 @@
 			<table class="ticket-table">
 				<thead>
 					<tr valign="top">
-						<td colspan="2"><?php _e('Ticket', 'event_espresso'); ?></td>
-						<td><?php _e('Goes On Sale', 'event_espresso'); ?></td>
-						<td><?php _e('Sell Until', 'event_espresso'); ?></td>
-						<td><?php _e('Price', 'event_espresso'); ?></td>
-						<td><?php _e('Qty', 'event_espresso'); ?></td>
+						<td colspan="2"><span class="TKT_name_label"><?php _e('Ticket', 'event_espresso'); ?></span></td>
+						<td><span class="TKT_goes_on_sale_label"><?php _e('Goes On Sale', 'event_espresso'); ?></span></td>
+						<td><span class="TKT_sell_until_label"><?php _e('Sell Until', 'event_espresso'); ?></span></td>
+						<td><span class="TKT_price_label"><?php _e('Price', 'event_espresso'); ?></span></td>
+						<td><span class="TKT_qty_label"><?php _e('Qty', 'event_espresso'); ?></span></td>
 						<!--<td><?php _e('Total', 'event_espresso'); ?></td>-->
-						<td colspan="2"><?php _e('Sold', 'event_espresso'); ?></td>
+						<td><span class="TKT_sold_label"><?php _e('Sold', 'event_espresso'); ?></span></td>
+						<td colspan="2"><span class="TKT_regs_label"><?php _e('Regs', 'event_espresso'); ?></span></td>
 					</tr>
 				</thead>
 				<tbody>

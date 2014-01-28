@@ -242,7 +242,7 @@ abstract class EE_Help_Tour extends EE_Base {
 				$this->_options['pauseAfter'][] = $ind;
 			}
 		}
-		return apply_filters('FHEE__' . get_class($this) . '__get_options', $this->_options, $this);
+		return apply_filters( 'FHEE__' . get_class($this) . '__get_options', $this->_options, $this );
 	}
 	
 }

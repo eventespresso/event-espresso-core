@@ -45,17 +45,22 @@ class EE_Question_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 		
-		if ( ! $this->_data instanceof EE_Answer || !isset( $this->_extra_data['data'] ) || ! $this->_extra_data['data'] instanceof EE_Messages_Addressee )
+		if ( ! $this->_data instanceof EE_Answer || !isset( $this->_extra_data['data'] ) || ! $this->_extra_data['data'] instanceof EE_Messages_Addressee ) {
 			return '';
-
+		}			
+		
 		switch ( $shortcode ) {
 
 			case '[QUESTION]' :
-				return $this->_extra_data['data']->questions[$this->_data->ID()]->get('QST_display_text');
-				break;
+				if ( isset( $this->_extra_data['data']->questions[$this->_data->ID()] )) {
+					return  $this->_extra_data['data']->questions[$this->_data->ID()]->get_pretty('QST_display_text', 'no_wpautop');
+					break;
+				} else {
+					EE_Error::add_error( __('A valid Question object could not be found while attempting to process message shortcodes', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				}
 
 			case '[ANSWER]' :
-				return $this->_data->get_pretty('ANS_value');
+				return $this->_data->get_pretty('ANS_value', 'no_wpautop');
 				break;
 		}
 		return '';

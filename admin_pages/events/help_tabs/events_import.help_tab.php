@@ -1,9 +1,9 @@
-<h3><?php _e('Import', 'event_espresso'); ?></h3>
+<h2><?php _e('Event Espresso Import', 'event_espresso'); ?></h2>
 <p>
 <?php _e('This page allows you to import information into Event Espresso.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e('Sample Import File', 'event_espresso'); ?><br />
+<?php _e('<strong>Sample Import File</strong>', 'event_espresso'); ?><br />
 <?php _e('Save time by downloading a sample import file. Then customize that file and import it back into Event Espresso.', 'event_espresso'); ?>
 </p>
 <p>

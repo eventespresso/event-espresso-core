@@ -30,7 +30,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class Registration_Form_Add_Question_Group_Help_Tour extends EE_Help_Tour {
 
 	protected function _set_tour_properties() {
-		$this->_label = __('Add Question Group Tour', 'event_espresso');
+		$this->_label = __('Add New Question Group Tour', 'event_espresso');
 		$this->_slug = $this->_is_caf ? 'add-question-group-caf-joyride' : 'add-question-group-joyride';
 	}
 
@@ -99,7 +99,7 @@ class Registration_Form_Add_Question_Group_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Add Question Group', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the add question group page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Add Question group page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
@@ -121,11 +121,11 @@ class Registration_Form_Add_Question_Group_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _qsg_show_group_name_stop() {
-		return '<p>' . __('Should the group name be shown on the registration page?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether the group name should be shown on the registration page.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qsg_show_group_desc_stop() {
-		return '<p>' . __('Should the group description be shown ont the registration page?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether the group description should be shown on the registration page.', 'event_espresso') . '</p>';
 	}
 
 }

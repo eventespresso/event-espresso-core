@@ -1,54 +1,44 @@
-<h2>
-<?php _e('Configuring the Google maps options', 'event_espresso'); ?>
-</h2>
+<h2><?php _e('Google Maps', 'event_espresso'); ?></h2>
 <p>
-<?php _e('The map options allow you to configure how your event map is displayed. You may configure your events lists and event registration pages independently, so, for example, on a registration page you could set a much larger overall size.', 'event_espresso'); ?>
+<?php _e('This page shows options for Google Maps. You can activate Google Maps by setting the toggle to Yes and clicking on the Save button to update settings.', 'event_espresso'); ?>
 </p>
 <p>
-<?php _e('For an event to display a Gmap you must have enabled it to on the event edit or create event pages in the venue box. This allows you to select which events you would like to display with a map.', 'event_espresso'); ?>
+<?php _e('The map options allow you to configure how your event map is displayed. You may configure your events lists and event registration pages independently of each other. For an event to display a Google Map you must have it enabled in the event editor or in the venue metabox. This allows you to select which events you would like to display with a map.', 'event_espresso'); ?>
 </p>
-<p>
-<?php _e('Below is a brief explanation of the options available.', 'events_espreso') ?>
-</p>
+<h3><?php _e('Map Settings for Registration Page & Event List Options', 'event_espresso'); ?></h3>
 <ul>
-<li> <strong>
-<?php _e('Set Map Width', 'event_espresso') ?>
-</strong><br />
-<?php _e('You may set a pixel width for your map, this is set as a simple numeric value and should not contain any other charecters - if a value is not set default ones are used, for list events the maps are set to 200px, for registration page single maps 500px. ', 'event_espresso'); ?>
+<li>
+<?php _e('<strong>Set Map Width</strong>', 'event_espresso'); ?><br />
+<?php _e('You may set a pixel width for your map. This should be entered as a numeric value with no other characters. If a value is not set then default ones are used -- registration page single maps are set to 500 pixels and events list maps are set to 200 pixels.', 'event_espresso'); ?>
 </li>
-<li> <strong>
-<?php _e('Set Map Height', 'event_espresso') ?>
-</strong><br />
-<?php _e('The same as setting the width above but for the map height - maps work best set to equal values i.e square dimensions.', 'event_espresso'); ?>
+<li>
+<?php _e('<strong>Set Map Height</strong>', 'event_espresso'); ?><br />
+<?php _e('This setting is similar to set map width except it is for the map height. Maps will display best when matching dimensions are used.', 'event_espresso'); ?>
 </li>
-<li> <strong>
-<?php _e('Set Map Zoom level: Range: 1 - 19', 'event_espresso') ?>
-</strong><br />
-<?php _e('Zoom level is the level of detail that is shown when the map first renders a low value means you zoom out and see a wider area, a higher value means that you zoom in and see the actual address in finer detail, a default value of 12 is set as a good base value.', 'event_espresso'); ?>
+<li>
+<?php _e('<strong>Set Map Zoom</strong>', 'event_espresso'); ?><br />
+<?php _e('Zoom level is the level of detail that is shown when the map first renders. A smaller value means you zoom out and therefore see a wider area. A higher value means that you zoom in and see the actual address in finer detail. A default value of 12 is recommended.', 'event_espresso'); ?>
 </li>
-<li> <strong>
-<?php _e('Set Map Navigation Overlay', 'event_espresso') ?>
-</strong><br />
+<li>
+<?php _e('<strong>Set Map Navigation Overlay</strong>', 'event_espresso'); ?><br />
 <?php _e('The navigation overlay are the controls for panning and zooming the map.', 'event_espresso'); ?>
 </li>
-<li> <strong>
-<?php _e('Keep Map Navigation Small', 'event_espresso') ?>
-</strong><br />
-<?php _e('Keep map navigation small tells google to only load the smaller map overlay regardless of map size - Google changes various options according to the size of a map, if you want to stop this happening you can set this option to yes.', 'event_espresso'); ?>
+<li>
+<?php _e('<strong>Keep Map Navigation Small</strong>', 'event_espresso'); ?><br />
+<?php _e('Keep map navigation small tells Google to only load the smaller map overlay regardless of map size. Google changes various options according to the size of a map. If you want to stop this change from happening, you can set this option to yes.', 'event_espresso'); ?>
 </li>
-<li> <strong>
-<?php _e('Set Map Type Control', 'event_espresso') ?>
-</strong><br />
-<?php _e('The map type control is the options bar google sets in the top right corner this can take the form of a dropdown or horizontal bar.', 'event_espresso'); ?>
+<li>
+<?php _e('<strong>Set Map Type Control</strong>', 'event_espresso'); ?><br />
+<?php _e('The map type control is the options bar that Google sets in the top right corner. This can appear as a dropdown or horizontal bar.', 'event_espresso'); ?>
 </li>
-<li> <strong>
-<?php _e('Set Map Alignment', 'event_espresso') ?>
-</strong><br />
-<?php _e('Alignment alows you to move the map left, center, or right within whatever parent event structure you have, please note though this option is dependent on your themes layout as to whether it will work as expected. The default alignment is to the left.', 'event_espresso'); ?>
-</li>
-<li> <strong>
-<?php _e('Use map in template files ( No Shortcodes)', 'event_espresso') ?>
-</strong><br />
-<?php _e('Select this option to enable your event map in the template file - this option is used if you are not using venue shortcodes and want map display activated in either event list pages or registration pages.', 'event_espresso') ?>
+<li>
+<?php _e('<strong>Set Map Alignment</strong>', 'event_espresso'); ?><br />
+<?php _e('Alignment alows you to move the map left, center, or right within the parent event structure. The default alignment is left.', 'event_espresso'); ?>
 </li>
 </ul>
+</p>
+<?php _e('<strong>Recommendations</strong><br /> Want to see a tour of this screen? Click on the Google Maps Tour button which appears on the right side of the page. <br />To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.', 'event_espresso'); ?>
+</p>
+<p>
+<?php _e('<strong>Screen Options</strong><br /> You can customize the information that is shown on this page by toggling the Screen Options tab. Then you can add or remove checkmarks to hide or show certain content.', 'event_espresso'); ?>
+</p>

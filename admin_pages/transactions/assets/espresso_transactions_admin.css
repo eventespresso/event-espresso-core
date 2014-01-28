@@ -11,33 +11,92 @@
 .datepicker { width:125px; }
 
 /* TABLE COLUMNS */
-#event-espresso_page_transactions-table-frm .widefat td {
-	min-height: 43px;
-}
 
 .column-TXN_ID { width:3%; }
 td.column-TXN_ID { padding: 4px 7px  29px; }
 .column-TXN_timestamp { width:15%; }
 
-#STS_ID {}
-.column-STS_ID { width:8%; /*text-align:center; */}
 /* green text */
-.status-TCM { color:#090; font-size:.85em; font-weight:bold; }
-.txn-overview-full-payment-spn,
-.txn-admin-payment-status-PAP { color:#090;  }
+.status-TCM { color:#70CC50; font-size:.85em; font-weight:bold; }
+.txn-overview-full-payment-spn { color:#70CC50;  }
+/* blue text */
+.status-TPN { color:#00B1CA; font-weight:bold; }
+.txn-overview-part-payment-spn { color:#00B1CA; font-weight:bold;  }
 /* orange text */
-.status-TPN { color:#F93; font-weight:bold; }
-.txn-overview-part-payment-spn,
-.txn-admin-payment-status-PFL { color:#F93; font-weight:bold;  }
+.status-TOP { color:#E76700; font-weight:bold; }
+.txn-overview-no-payment-spn { color:#E76700; font-weight:bold; }
 /* red text */
-.status-TOP { color:#F00; font-weight:bold; }
-.txn-overview-no-payment-spn,
-.txn-admin-payment-status-PDC { color:#F00; font-weight:bold; }
-/* grey text */
-.status-TIN { color:#999; font-size:.85em; }
-.txn-admin-payment-status-PCN { color:#999;  }
+.status-TIN { color:#E44064; font-size:.85em; }
 
-#TXN_total, #TXN_paid { text-align:center; }
+/**
+ * status strips
+ */
+ /*txn complete, pymt approved*/
+.txn-status-TCM, .pymt-status-PAP {
+    border-left-color: #70CC50;
+}
+
+/*txn incomplete, pymt declined*/
+.txn-status-TIN, .pymt-status-PDC {
+    border-left-color: #E44064;
+}
+
+/*txn open, pymt pending*/
+.txn-status-TPN, .pymt-status-PPN {
+    border-left-color: #00B1CA;
+}
+
+/*txn overpaid, pymt fail*/
+.txn-status-TOP, .pymt-status-PFL {
+    border-left-color: #E76700;
+}
+
+/*pymt cancelled*/
+.pymt-status-PCN {
+    border-left-color: #A39D9C;
+}
+
+.ee-status-strip-td {
+    padding: 0;
+    margin: 0;
+    min-height: 50px;
+    height: 100%;
+    display: inline-block;
+    margin-bottom: -5px;
+}
+
+.widefat td.column-STS_ID, .widefat th.column-STS_ID {
+    width: 2%;
+    padding: 0;
+    margin: 0;
+}
+
+/** txn & pymt status legend **/
+.ee-status-legend-TCM, .ee-status-legend-PAP {
+    background-color: #70CC50;
+}
+
+.ee-status-legend-TIN, .ee-status-legend-PDC {
+    background-color: #E44064;
+}
+
+.ee-status-legend-TPN, .ee-status-legend-PPN {
+    background-color: #00B1CA;
+}
+
+.ee-status-legend-TOP, .ee-status-legend-PFL {
+    background-color: #E76700;
+}
+
+.ee-status-legend-PCN {
+    background-color: #A39D9C;
+}
+
+
+
+
+/* #TXN_total, #TXN_paid { text-align:center; } */
+
 .column-TXN_total, .column-TXN_paid { width:7.5%; text-align:right; }
 .txn-pad-rght { display:block; padding-right:1em; }
 
@@ -47,14 +106,22 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .column-actions { width:15%; }
 
 .txn-overview-free-event-spn {
-	display: block; text-align:center;
+    display: block; text-align:center;
 }
 
 .txn-overview-actions-ul { list-style:none; margin:0; }
 .txn-overview-actions-ul li { display: inline-block; float: left; margin:0; }
-.txn-overview-actions-ul li + li { margin-left:6px; }
+.txn-overview-actions-ul li + li { margin-left:6px; }/**/
+.button-secondary.no-icon {
+    vertical-align: baseline;
+}
 
 #txn-admin-payments-tbl .txn-overview-actions-ul { width:32px; }
+#txn-admin-payments-tbl th:first-child, #txn-admin-payments-tbl td:first-child {
+    margin: 0;
+    padding: 0;
+    width: 0;
+}
 
 .txn-admin-payment-action-edit-lnk,
 .txn-admin-payment-action-delete-lnk { cursor:pointer; }
@@ -71,17 +138,17 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .admin-modal-dialog-wrap,
 .admin-primary-mbox-tbl-wrap,
 .admin-primary-mbox-tbl-wrap-inner {
-	padding:3px; margin:0em 0 2em;
-	background:#fff; border:1px solid #dfdfdf;
-	border-radius:3px; -moz-border-radius:3px;  -webkit-border-radius:3px;
+    padding:3px; margin:0em 0 2em;
+    background:#fff; border:1px solid #dfdfdf;
+    border-radius:3px; -moz-border-radius:3px;  -webkit-border-radius:3px;
 }
 .admin-primary-mbox-tbl {
     width:100%; border-spacing: 0; border-collapse:collapse;
 }
 .admin-primary-mbox-tbl th, .admin-primary-mbox-tbl td {
-	padding:6px 12px; margin: 0;
-	border:1px solid #dfdfdf; background:#fcfcfc;
-	font-family: sans-serif; font-size: 1em; vertical-align:middle;
+    padding:6px 12px; margin: 0;
+    border:1px solid #dfdfdf; background:#fcfcfc;
+    font-family: sans-serif; font-size: 1em; vertical-align:middle;
 }.admin-primary-mbox-tbl.borderless th { padding:6px 6px 0; border:none; background:none; }
 .admin-primary-mbox-tbl.borderless td { padding:0 6px 6px; border:none; background:none; }
 .admin-primary-mbox-tbl tr + tr { border-top:none; }
@@ -103,7 +170,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .truncate-50 { width:50px; height:1em; overflow:hidden; }
 
 #txn-admin-gateway-img {
-	position:absolute; top:0; right:2em;
+    position:absolute; top:0; right:2em;
 }
 
 
@@ -112,26 +179,26 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 #cash-single { position:relative; top:2px; }
 
 #admin-modal-dialog-options-ul,
-#txn-admin-payment-options-ul { float:right; list-style:none; margin:0 .5em 1em; }
+#txn-admin-payment-options-ul, #del-admin-modal-dialog-options-ul { float:right; list-style:none; margin:0 .5em 1em; }
 
 #admin-modal-dialog-options-ul li,
-#txn-admin-payment-options-ul li { display:inline-block; }
+#txn-admin-payment-options-ul li, #del-admin-modal-dialog-options-ul li { display:inline-block; }
 
 #admin-modal-dialog-options-ul li + li,
-#txn-admin-payment-options-ul li + li { margin-left:1em; }
+#txn-admin-payment-options-ul li + li, #del-admin-modal-dialog-options-ul li + li { margin-left:1em; }
 
-#admin-modal-dialog-options-ul .hidden { display:none !important; }
+#admin-modal-dialog-options-ul .hidden, #del-admin-modal-dialog-options-ul .hidden { display:none !important; }
 /*.txn-admin-payment-option-lnk {
-	display:block; width:auto; padding:3px 6px;; margin:0;
-	background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #DFDFDF; border-radius: 3px 3px 3px 3px;
+    display:block; width:auto; padding:3px 6px;; margin:0;
+    background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #DFDFDF; border-radius: 3px 3px 3px 3px;
     color: #666; cursor: pointer; vertical-align:middle;
-	
+    
 }*/
 
 
-#txn-admin-apply-payment-dv {
-	position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
-	background:#fff; border:1px solid #ddd; border-radius:5px;
+#txn-admin-apply-payment-dv, #txn-admin-delete-payment-dv {
+    position:absolute; top:50px; left:25%; width:75%; height:auto; padding:3em 4em 2em; z-index:9999;
+    background:#fff; border:1px solid #ddd; border-radius:5px;
 }
 #txn-admin-apply-payment-frm { }
 
@@ -139,9 +206,9 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 #txn-admin-apply-payment-tbl label { padding-left:3px; }
 
 .admin-modal-dialog-inner {
-	padding:2em 2em 1em; margin: 0;
-	border:1px solid #dfdfdf; background:#fcfcfc;
-	/*font-family: sans-serif; font-size: 1em; vertical-align:middle;*/
+    padding:2em 2em 1em; margin: 0;
+    border:1px solid #dfdfdf; background:#fcfcfc;
+    /*font-family: sans-serif; font-size: 1em; vertical-align:middle;*/
 }
 .admin-modal-dialog-row { clear:both; margin:0 0 1em; }
 .admin-modal-dialog-inner label { display:inline-block; float:left; width:150px; padding-top:.4em; margin:0 1em .5em 0; vertical-align:top; }
@@ -155,9 +222,18 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 
 /*.admin-modal-dialog-inner label.last { margin-bottom:8em; }*/
 
+.ee-attention input[type=checkbox] {
+    margin-top: -10px;
+    padding: 0;
+}
 
-.admin-modal-dialog-inner input,
+
+.admin-modal-dialog-inner input[type=text],
 .admin-modal-dialog-inner select { width:100%; min-width:150px; max-width:250px; }
+.admin-modal-dialog-inner input[type=checkbox] {
+    margin-top: 6px;
+}
+
 /*#txn-admin-payment-amount-inp { max-width:150px; }*/
 
 /*.admin-primary-mbox-tbl-wrap-inner { padding:12px; margin:0; background:#fcfcfc; }
@@ -174,14 +250,14 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 
 
 .jqplot-title {
-	 font-size:24px; text-align:left !important; margin: 1em 0 0 1em;
+     font-size:24px; text-align:left !important; margin: 1em 0 0 1em;
 }
 .jqplot-point-label {
-	padding:0 .5em;
-	background:#fff; border:1px solid #ddd; 
-	border-radius:3px; -moz-border-radius:3px;  -webkit-border-radius:3px;
-	font-size:12px; color:#333;
-	-webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
-	-moz-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
-	box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
+    padding:0 .5em;
+    background:#fff; border:1px solid #ddd; 
+    border-radius:3px; -moz-border-radius:3px;  -webkit-border-radius:3px;
+    font-size:12px; color:#333;
+    -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
+    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
+    box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
 }

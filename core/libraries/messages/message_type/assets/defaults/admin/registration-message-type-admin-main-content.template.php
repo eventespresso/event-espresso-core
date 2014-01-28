@@ -3,7 +3,6 @@
     <tr>
         <td></td>
         <td class="header container">
-            
             <div class="content">
             <table bgcolor="#999999" class="">
                 <tr>
@@ -12,7 +11,6 @@
                 </tr>
             </table>
             </div>
-            
         </td>
         <td></td>
     </tr>
@@ -23,14 +21,19 @@
     <tr>
         <td></td>
         <td class="container" bgcolor="#FFFFFF">
-            
             <!-- content -->
             <div class="content">
                 <h1>Registration Notification</h1>
+                <p>The following attendee(s) have registered for the following event(s).</p>
+                <table>
+                    <tr>
+                        <td>
+                           [EVENT_LIST]
+                        </td>
+                    </tr>
+                </table>
             </div>
-            [EVENT_LIST]
         </td>
         <td></td>
     </tr>
 </table> <!-- END BODY -->
-

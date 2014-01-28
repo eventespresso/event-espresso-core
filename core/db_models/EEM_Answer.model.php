@@ -96,7 +96,7 @@ class EEM_Answer extends EEM_Base {
 	 */
 	public function get_registration_question_answer_object( EE_Registration $registration, $question_id = NULL ){
 		$answer_obj = $this->get_one( array( array( 'QST_ID'=>$question_id, 'REG_ID'=>$registration->ID() )));
-		return apply_filters('FHEE__EEM_Answer__get_registration_question_answer_object__answer_obj', $answer_obj, $registration, $question_id );
+		return apply_filters( 'FHEE__EEM_Answer__get_registration_question_answer_object__answer_obj', $answer_obj, $registration, $question_id );
 	}
 
 

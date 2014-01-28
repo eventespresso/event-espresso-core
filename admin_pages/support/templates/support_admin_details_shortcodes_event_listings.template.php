@@ -1,34 +1,34 @@
 <div class="padding">
 	<p>
-<?php _e('Returns a list of events', 'event_espresso'); ?>
+<?php _e('Displays a list of events based on a set of criteria on a WordPress page or post.', 'event_espresso'); ?>
 		</p>
 		<ul>
-			<li>[EVENT_LIST]</li>
-			<li>[EVENT_LIST limit=1]</li>
-			<li>[EVENT_LIST show_expired=true]</li>
-			<li>[EVENT_LIST show_deleted=true]</li>
-			<li>[EVENT_LIST show_secondary=true]</li>
-			<li>[EVENT_LIST category_identifier=your_category_identifier]</li>
-			<li>[EVENT_LIST staff_id=staff_id_number]</li>
-			<li>[EVENT_LIST order_by=date(start_date),id]</li>
+			<li>[ESPRESSO_EVENTS]</li>
+			<li>[ESPRESSO_EVENTS title="My Super Event"]</li>
+			<li>[ESPRESSO_EVENTS limit=5]</li>
+			<li>[ESPRESSO_EVENTS css_class="my-custom-class"]</li>
+			<li>[ESPRESSO_EVENTS month="October 2104"]</li>
+			<li>[ESPRESSO_EVENTS show_expired=true]</li>
+			<li>[ESPRESSO_EVENTS category_slug="free-events"]</li>
+			<li>[ESPRESSO_EVENTS order_by="start_date,id"]</li>
+			<li>[ESPRESSO_EVENTS sort="ASC"]</li>
+			<li>[ESPRESSO_EVENTS list_type="grid"]</li>
 		</ul>
 		<h4>
-			<?php _e('Order by parameters:', 'event_espresso'); ?>
+			<?php _e('Acceptable Order by parameters:', 'event_espresso'); ?>
 		</h4>
 		<p>
-<?php _e('(comma separated)', 'event_espresso'); ?>
+<?php _e('These parameters (options) are available for the shortcodes above. Multiple parameters should be separated by a comma.', 'event_espresso'); ?>
 		</p>
-		<p>id<br />
-			date(start_date)<br />
-			date(end_date)<br />
-			event_name<br />
-			date(registration_start)<br />
-			date(registration_end)<br />
-			city<br />
-			state<br />
-			category_id<br />
-			venue_title </p>
-			<p><strong><?php _e('Attention:', 'event_espresso'); ?></strong><br />
-<?php _e('The [EVENT_LIST] shortcode should not be used as a replacement for the [ESPRESSO_EVENTS] shortcode. Replacing the [ESPRESSO_EVENTS] shortcode will break your registration pages.', 'event_espresso'); ?>
+            ID<br />
+            start_date<br />
+            end_date<br />
+            event_name<br />
+            category_slug<br />
+            ticket_start<br />
+            ticket_end<br />
+            venue_title<br />
+            city<br />
+            state
 		</p>
 </div>

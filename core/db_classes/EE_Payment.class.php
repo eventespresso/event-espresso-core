@@ -493,31 +493,35 @@ class EE_Payment extends EE_Base_Class{
 	 * returns a pretty version of the status, good for displayign to users
 	 * @return string
 	 */
-	public function pretty_status(){
-		switch($this->STS_ID()){
+	public function pretty_status( $show_icons = FALSE ){
+		$status = EEM_Status::instance()->localized_status( array( $this->STS_ID() =>  __( 'unkown', 'event_espresso' )), FALSE, 'sentence' );
+		$icon = '';
+		switch( $this->STS_ID() ){
 			case EEM_Payment::status_id_approved:
-				return __("Accepted",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>' : '';
+				break;
 			case EEM_Payment::status_id_pending:
-				return __("Pending",'event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-clock ee-icon-size-16 orange-text"></span>' : '';
+				break;
 			case EEM_Payment::status_id_cancelled:
-				return __('Cancelled','event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-grey-text"></span>' : '';
+				break;
 			case EEM_Payment::status_id_declined:
-				return __('Declined','event_espresso');
-			case EEM_Payment::status_id_failed:
-				return __('Failed','event_espresso');
-			default:
-				return __('Unknown','event_espresso');
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
+				break;
 		}
+		return  $icon . $status[ $this->STS_ID() ];
 	}
 	
-	
+
+
 	
 	/**
 	 * echoes $this->pretty_status()
 	 * @return void
 	 */
-	public function e_pretty_status(){
-		echo $this->pretty_status();
+	public function e_pretty_status( $show_icons = FALSE ){
+		echo $this->pretty_status( $show_icons );
 	}
 	
 	

@@ -32,7 +32,7 @@ class EED_Venue_Single  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		EE_Config::register_route( 'venue', 'Venue_Single', 'run' );
-		EE_Config::register_view( 'venue', 0, EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.php' );
+//		EE_Config::register_view( 'venue', 0, EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.php' );
 	}
 
 	/**
@@ -53,9 +53,80 @@ class EED_Venue_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
+		// check what template is loaded
+		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 10 );
 	}
 
+
+
+	/**
+	 * 	template_include
+	 *
+	 *  	@access 	public
+	 *  	@return 	void
+	 */
+	public function template_include( $template ) {
+		// not a custom template?
+		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_venues.php' ) {
+			// then add extra event data via hooks
+			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
+			add_filter( 'the_content', array( $this, 'venue_details' ), 100 );
+			add_filter( 'the_content', array( $this, 'venue_location' ), 110 );
+			// don't diplay entry meta because the existing theme will take car of that
+			add_filter( 'FHEE__content_espresso_venues_details_template__display_entry_meta', '__return_false' );
+		}
+		return $template;
+	}
+
+
+
+	/**
+	 * 	the_title
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$title
+	 *  	@return 		void
+	 */
+	public function the_title( $title = '', $id = '' ) {
+		return $title; 
+//		global $post;
+//		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID ) . $title :  $title; 
+	}
+
+
+	/**
+	 * 	venue_details
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
+	 */
+	public function venue_details( $content ) {
+		global $post;
+		// since the 'content-espresso_venues-details.php' template might be used directly from within a theme,
+		// it uses the_content() for displaying the $post->post_content
+		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
+		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
+		remove_filter( 'the_content', array( $this, 'venue_details' ), 100 );
+		// now load our template
+		$template = EEH_Template::locate_template( 'content-espresso_venues-details.php' );
+		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
+		return ! empty( $template ) ? $template : $content;
+	}
+
+
+
+	/**
+	 * 	venue_location
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
+	 */
+	public function venue_location( $content ) {
+		return $content . EEH_Template::locate_template( 'content-espresso_venues-location.php' );
+	}
 
 
 
@@ -69,18 +140,18 @@ class EED_Venue_Single  extends EED_Module {
 		// get some style
 		if ( apply_filters( 'FHEE_enable_default_espresso_css', TRUE ) && is_single() ) {
 			// first check theme folder
-			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css' )) {
-				wp_register_style( 'single-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css', array( 'dashicons', 'espresso_default' ) );
-			} else if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css' )) {
-				wp_register_style( 'single-espresso_venues', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_venues.css', array( 'dashicons', 'espresso_default' ) );
+			if ( is_readable( get_stylesheet_directory() . $this->theme . DS . 'style.css' )) {
+				wp_register_style( $this->theme, get_stylesheet_directory_uri() . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
+			} else if ( is_readable( EE_TEMPLATES . $this->theme . DS . 'style.css' )) {
+				wp_register_style( $this->theme, EE_TEMPLATES_URL . $this->theme . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
 			}
-			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js' )) {
-				wp_register_script( 'single-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js', array('espresso_core'), '1.0', TRUE  );
-			} else if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js' )) {
-				wp_register_script( 'single-espresso_venues', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js', array('espresso_core'), '1.0', TRUE );
-			}
-			wp_enqueue_style( 'single-espresso_venues' );
-			wp_enqueue_script( 'single-espresso_venues' );
+//			if ( is_readable( get_stylesheet_directory() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js' )) {
+//				wp_register_script( 'single-espresso_venues', get_stylesheet_directory_uri() . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js', array('espresso_core'), '1.0', TRUE  );
+//			} else if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js' )) {
+//				wp_register_script( 'single-espresso_venues', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'single-espresso_venues.js', array('espresso_core'), '1.0', TRUE );
+//			}
+			wp_enqueue_style( $this->theme );
+//			wp_enqueue_script( 'single-espresso_venues' );
 			if ( EE_Registry::instance()->CFG->map_settings->use_google_maps ) {
 				EE_Registry::instance()->load_helper( 'Maps' );
 				add_action('wp_enqueue_scripts', array( 'EEH_Maps', 'espresso_google_map_js' ), 11 );
@@ -88,32 +159,6 @@ class EED_Venue_Single  extends EED_Module {
 		}
 	}
 
-
-	/**
-	 * 	template_include
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function template_include( $template_path ) {
-
-		if ( get_post_type() == 'espresso_venues' ) {
-			if ( is_single() ) {
-				// check if the template file exists in the theme first
-				if ( ! $template_path = locate_template( array( 'single-espresso_venues.php' ))) {
-					// otherwise get it from 
-					$template_path = EVENT_DETAILS_TEMPLATES_PATH . 'single-espresso_venues.php';
-				}
-			} else if ( is_archive() ) {
-				// check if the template file exists in the theme first
-				if ( ! $template_path = locate_template( array( 'archive-espresso_venues.php' ))) {
-					// otherwise get it from 
-					$template_path = EVENT_DETAILS_TEMPLATES_PATH . 'archive-espresso_venues.php';
-				}
-			} 
-		}
-		return $template_path;
-	}
 
 	
 

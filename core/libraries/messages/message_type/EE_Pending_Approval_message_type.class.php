@@ -34,8 +34,8 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 		$this->name = 'pending_approval';
 		$this->description = __('This message type is used for recipients who have Pending Payment registration status.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('pending payment registration', 'event_espresso'),
-			'plural' => __('pending payment registrations', 'event_espresso')
+			'singular' => __('registration pending payment', 'event_espresso'),
+			'plural' => __('registrations pending payment', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -87,7 +87,7 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 	protected function _default_template_field_subject() {
 		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Pending Payment Registration Details';
+			$content[$context] = 'Registration Pending Payment';
 		};
 		return $content;
 	}
@@ -102,10 +102,10 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 		
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/pending_approval-message-type-attendee-list.template.php', TRUE );
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/pending_approval-message-type-event-list.template.php', TRUE );
-			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/pending_approval-message-type-ticket-list.template.php', TRUE );
-			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/pending_approval-message-type-datetime-list.template.php', TRUE );
+			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-attendee-list.template.php', TRUE );
+			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-event-list.template.php', TRUE );
+			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-ticket-list.template.php', TRUE );
+			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-datetime-list.template.php', TRUE );
 		}
 
 
@@ -128,7 +128,7 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 		$this->_context_label = array(
 			'label' => __('recipient', 'event_espresso'),
 			'plural' => __('recipients', 'event_espresso'),
-			'description' => __('Recipient\'s are who will recieve the template.  You may want different pending approval details sent out depending on who the recipient is.  To "turn off" a recipient from receiving message, simply remove any content from the "to" field in the template.', 'event_espresso')
+			'description' => __('Recipient\'s are who will receive the template.  You may want different pending approval details sent out depending on who the recipient is.  To "turn off" a recipient from receiving message, simply remove any content from the "to" field in the template.', 'event_espresso')
 			);
 
 		$this->_contexts = array(
@@ -137,17 +137,13 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 				'description' => __('This template is what event administrators will receive when a message is sent to registrants with the pending payment registration status.', 'event_espresso')
 				),
 			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive on when their registration status is pending payment.', 'event_espresso')
-				),
-			'attendee' => array(
-				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when their registration status is pending payment.', 'event_espresso')
+				'label' => __('Primary Registrant', 'event_espresso'),
+				'description' => __('This template is what the primary registrant (the person who completed the initial transaction) will receive on when their registration status is pending payment.', 'event_espresso')
 				)
 			);
 
-		$this->_contexts = apply_filters('FHEE_set_contexts_'. $this->name, $this->_contexts);
-		$this->_contexts = apply_filters('FHEE_set_contexts_all', $this->_contexts);
+		$this->_contexts = apply_filters( 'FHEE_set_contexts_'. $this->name, $this->_contexts );
+		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
 
 
@@ -157,8 +153,7 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
 			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list'),
-			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
+			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
 			);
 	}
 
@@ -173,13 +168,13 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 	 * @return array array of EE_Messages_Addressee objects
 	 */
 	protected function _admin_addressees() {
-		if ( !$this->_single_message )
+		if ( $this->_single_message )
 			return array();
 
 		$admin_ids = array();
 		$admin_events = array();
 		$admin_attendees = array();
-		$addresees = array();
+		$addressees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {
@@ -215,9 +210,6 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 	 * @return array of EE_Addressee objects
 	 */
 	protected function _primary_attendee_addressees() {
-		if ( !$this->_single_message ) 
-			return array();
-		
 		$aee = $this->_default_addressee_data;
 		$aee['events'] = $this->_data->events;
 		$aee['attendees'] = $this->_data->attendees;
@@ -225,59 +217,6 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 		//great now we can instantiate the $addressee object and return (as an array);
 		$add[] = new EE_Messages_Addressee( $aee );
-		return $add;
-	}
-
-
-
-
-
-	/**
-	 * Takes care of setting up the addresee object(s) for the registered attendees
-	 *
-	 * @access protected
-	 * @return array of EE_Addressee objects
-	 */
-	protected function _attendee_addressees() {
-		$add = array();
-		//we just have to loop through the attendees.  We'll also set the attached events for each attendee.
-		//use to verify unique attendee emails... we don't want to sent multiple copies to the same attendee do we?
-		$already_processed = array();
-		foreach ( $this->_data->attendees as $att_id => $details ) {
-			//set the attendee array to blank on each loop;
-			$aee = array();
-
-			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $att_id ) && $this->_single_message ) continue;
-			
-			if ( in_array( $details['attendee_email'], $already_processed ) )
-				continue;
-
-			$already_processed[] = $details['attendee_email'];
-
-			foreach ( $details as $item => $value ) {
-				$aee[$item] = $value;
-				if ( $item == 'line_ref' ) {
-					foreach ( $value as $event_id ) {
-						$aee['events'][$event_id] = $this->_data->events[$event_id];
-					}
-				}
-
-				if ( $item == 'attendee_email' ) {
-					$aee['attendee_email'] = $value;
-				}
-
-				if ( $item == 'registration_id' ) {
-					$aee['attendee_registration_id'] = $value;
-				}
-			}
-
-			$aee['attendees'] = $this->_data->attendees;
-
-			//merge in the primary attendee data
-			$aee = array_merge( $this->_default_addressee_data, $aee );
-			$add[] = new EE_Messages_Addressee( $aee );
-		}
-	
 		return $add;
 	}
 

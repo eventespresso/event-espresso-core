@@ -49,7 +49,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			30 => array(
-				'id' => 'QST_admin_label',
+				'id' => 'QST_admin_label_disabled',
 				'content' => $this->_qst_admin_label_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -58,7 +58,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			40 => array(
-				'id' => 'QST_order',
+				'id' => 'QST_order_disabled',
 				'content' => $this->_qst_order_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -67,7 +67,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			50 => array(
-				'id' => 'QST_admin_only',
+				'id' => 'QST_admin_only_disabled',
 				'content' => $this->_qst_admin_only_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -76,7 +76,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					)
 				),
 			60 => array(
-				'id' => 'QST_type',
+				'id' => 'QST_type_disabled',
 				'content' => $this->_qst_type_stop(),
 				'options' => array(
 					'tipLocation' => 'top',
@@ -108,13 +108,13 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Edit Question', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the edit question page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Edit Question page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
 
 	protected function _qst_display_text_stop() {
-		return '<p>' . __('The question that is displayed to registrants who are signing up for events.', 'event_espresso') . '</p>';
+		return '<p>' . __('This is the question that is displayed to registrants who are signing up for events.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_admin_label_stop() {
@@ -126,7 +126,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _qst_admin_only_stop() {
-		return '<p>' . __('Should this question be shown to only admins?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether this question should be shown only to the admins.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_type_stop() {
@@ -134,7 +134,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _qst_required_stop() {
-		return '<p>' . __('Should this question be required?', 'event_espresso') . '</p>';
+		return '<p>' . __('Specify whether this question should be required.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_required_text_stop() {

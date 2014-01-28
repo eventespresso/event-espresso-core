@@ -34,8 +34,8 @@ class EE_Registration_message_type extends EE_message_type {
 		$this->name = 'registration';
 		$this->description = __('This message type is for messages sent to attendees when their registration is approved.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('approved registration', 'event_espresso'),
-			'plural' => __('approved registrations', 'event_espresso')
+			'singular' => __('registration approved', 'event_espresso'),
+			'plural' => __('registrations approved', 'event_espresso')
 			);
 
 		parent::__construct();
@@ -132,7 +132,7 @@ class EE_Registration_message_type extends EE_message_type {
 		$this->_context_label = array(
 			'label' => __('recipient', 'event_espresso'),
 			'plural' => __('recipients', 'event_espresso'),
-			'description' => __('Recipient\'s are who will recieve the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
+			'description' => __('Recipient\'s are who will receive the template.  You may want different registration details sent out depending on who the recipient is', 'event_espresso')
 			);
 
 		$this->_contexts = array(
@@ -141,17 +141,17 @@ class EE_Registration_message_type extends EE_message_type {
 				'description' => __('This template is what event administrators will receive with an approved registration', 'event_espresso')
 				),
 			'primary_attendee' => array(
-				'label' => __('Primary Attendee', 'event_espresso'),
-				'description' => __('This template is what the primary attendee (the person who completed the initial transaction) will receive with approved registration', 'event_espresso')
+				'label' => __('Primary Registrant', 'event_espresso'),
+				'description' => __('This template is what the primary registrant (the person who completed the initial transaction) will receive with approved registration', 'event_espresso')
 				),
 			'attendee' => array(
-				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when their registration is approved.', 'event_espresso')
+				'label' => __('Registrant', 'event_espresso'),
+				'description' => __('This template is what each registrant for the event will receive when their registration is approved.', 'event_espresso')
 				)
 			);
 
-		$this->_contexts = apply_filters('FHEE_set_contexts_'. $this->name, $this->_contexts);
-		$this->_contexts = apply_filters('FHEE_set_contexts_all', $this->_contexts);
+		$this->_contexts = apply_filters( 'FHEE_set_contexts_'. $this->name, $this->_contexts );
+		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
 
 
@@ -179,13 +179,13 @@ class EE_Registration_message_type extends EE_message_type {
 	 * @return array array of EE_Messages_Addressee objects
 	 */
 	protected function _admin_addressees() {
-		if ( !$this->_single_message )
+		if ( $this->_single_message )
 			return array();
 
 		$admin_ids = array();
 		$admin_events = array();
 		$admin_attendees = array();
-		$addresees = array();
+		$addressees = array();
 
 		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
 		foreach ( $this->_data->events as $line_ref => $event ) {
@@ -221,7 +221,7 @@ class EE_Registration_message_type extends EE_message_type {
 	 * @return array of EE_Addressee objects
 	 */
 	protected function _primary_attendee_addressees() {
-		if ( !$this->_single_message ) 
+		if ( $this->_single_message ) 
 			return array();
 		
 		$aee = $this->_default_addressee_data;

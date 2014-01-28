@@ -102,8 +102,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				}
 			}
 
-
-			$this->_events[$id]['pre_approval'] = 0; //we're going to ignore the event settings for this.
 			$this->_events[$id]['total_attendees'] = count( $attendees );
 			$this->_events[$id]['att_objs'] = $attendees;
 
@@ -112,7 +110,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				$this->_attendees[$att_key]['line_ref'][] = $id;  //so later it can be determined what events this attendee registered for!
 				$this->_attendees[$att_key]['evt_objs'][] = $event;
 				$this->_attendees[$att_key]['att_obj'] = $attendee;
-				$this->_attendees[$att_key]['reg_objs'] = NULL;
+				$this->_attendees[$att_key]['reg_obj'] = NULL;
 				$this->_attendees[$att_key]['registration_id'] = 0;
 				$this->_attendees[$att_key]['attendee_email'] = $attendee->email();
 				$this->_attendees[$att_key]['tkt_objs'] = $tickets;
@@ -343,7 +341,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//HEY, if we have an evt_id then we want to make sure we use that for the preview (because a specific event template is being viewed);
 		$event_ids = isset( $_REQUEST['evt_id'] ) && !empty($_REQUEST['evt_id'] ) ? array( $_REQUEST['evt_id'] ) : array();
 
-		$limit = !empty( $event_ids ) ? NULL : apply_filters( 'FHEE_EE_Messages_Preview_incoming_data_get_some_events_limit', '0,1' );
+		$limit = !empty( $event_ids ) ? NULL : apply_filters( 'FHEE__EE_Messages_Preview_incoming_data___get_some_events__limit', '0,1' );
 
 		$where = !empty($event_ids) ? array('EVT_ID' => array( 'IN', $event_ids ) ) : array();
 
@@ -433,7 +431,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'REG_ID' => $regid
 						);
 					$REG_OBJ =  EE_Registration::new_instance( $reg_array );
-					$this->_attendees[$key]['reg_objs'][$evtid][] = $REG_OBJ;
+					$this->_attendees[$key]['reg_obj'] = $REG_OBJ;
 					$this->_events[$evtid]['reg_objs'][] = $REG_OBJ;
 					$this->reg_objs[] = $REG_OBJ;
 					$regid++;

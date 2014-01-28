@@ -1,5 +1,5 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
+do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 /**
  * EE_Import class
  *
@@ -82,7 +82,7 @@ do_action('AHEE_log', __FILE__, ' FILE LOADED', '' );
 		<p class="ee-attention">
 			<b><?php _e( 'Attention', 'event_espresso' );?></b><br/>
 			<?php echo sprintf( __( 'Accepts .%s file types only.', 'event_espresso' ), $type ) ;?>	
-			<?php echo __( 'Please note that you may have to experiment with the import/export settings in your particular spreadsheet program before you find ones that work the best for you.', 'event_espresso' );?>	
+			<?php echo __( 'Please only import CSV files exported from Event Espresso, or compatible 3rd-party software.', 'event_espresso' );?>	
 		</p>
 
 	</div>
