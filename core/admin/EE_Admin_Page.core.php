@@ -2193,15 +2193,30 @@ abstract class EE_Admin_Page extends EE_BASE {
 	}
 
 
+
+
+	/**
+	 * generates HTML wrapper for an EE about admin page (no sidebar)
+	 * @access public
+	 * @return void 
+	 */
+	public function display_about_admin_page() {
+		$this->_display_admin_page( FALSE, TRUE );
+	}
+
+
+
+
 	/**
 	 * display_admin_page
 	 * contains the code for actually displaying an admin page
 	 *
 	 * @access private
 	 * @param  boolean $sidebar true with sidebar, false without
+	 * @param  boolean $about   use the about admin wrapper instead of the default.
 	 * @return html           admin_page
 	 */
-	private function _display_admin_page($sidebar = false) {
+	private function _display_admin_page($sidebar = false, $about = FALSE) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//custom remove metaboxes hook to add or remove any metaboxes to/from Admin pages.
@@ -2223,7 +2238,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		// the final template wrapper
-		$this->admin_page_wrapper();
+		$this->admin_page_wrapper($about);
 	}
 
 
@@ -2416,9 +2431,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	*		generates  HTML wrapper with Tabbed nav for an admin page
 	*		@access public
+	*		@param  boolean $about whether to use the special about page wrapper or default.
 	*		@return void
 	*/		
-	public function admin_page_wrapper() {
+	public function admin_page_wrapper($about = FALSE) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );	
 
@@ -2436,6 +2452,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 		
 		// load settings page wrapper template
 		$template_path = !defined( 'DOING_AJAX' ) ? EE_ADMIN_TEMPLATE . 'admin_wrapper.template.php' : EE_ADMIN_TEMPLATE . 'admin_wrapper_ajax.template.php';
+
+		//about page?
+		$template_path = $about ? EE_ADMIN_TEMPLATE . 'about_admin_wrapper.template.php' : $template_path;
 
 
 		if ( defined( 'DOING_AJAX' ) ) {

@@ -72,6 +72,31 @@ div.TB-ee-frame a {
 	line-height: 2em;
 }
 
+/**** ee about page *****/
+.ee-badge {
+	background: url('https://ee-screenshots.s3.amazonaws.com/2012/06/logo.png') no-repeat;
+	background-position: center 24px;
+	background-size: 200px 60px;
+	background-color: #0074A2;
+	font-size: 14px;
+	text-align: center;
+	font-weight: 600;
+	margin: 5px 0 0;
+	padding-top: 100px;
+	height: 30px;
+	display: inline-block;
+	width: 220px;
+	color: #FFF;
+	text-rendering: optimizeLegibility;
+}
+
+.about-wrap .ee-badge {
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+
 /******************* DASHICONS ****************** */
 
 @font-face {
