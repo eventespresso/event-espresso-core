@@ -22,7 +22,7 @@
 				
 				if($most_recent_migration->can_continue()){
 					//tell the user they shoudl continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
-					<p><?php printf(__("Your previous Data Migration Task (%s) is incomplete, and should be resumed", "event_espresso"),$most_recent_migration->pretty_name());?></p>
+					<p class="ee-attention"><?php printf(__("Your previous Data Migration Task (%s) is incomplete, and should be resumed", "event_espresso"),$most_recent_migration->pretty_name());?></p>
 				<?php }elseif($most_recent_migration->is_borked()){
 					//tell the user the migration failed and they should notify EE?>
 					<h2><?php echo $most_recent_migration->get_feedback_message()?></h2>
@@ -30,27 +30,37 @@
 				<?php 
 				//display errors or not of the most recent migration ran
 				if ($most_recent_migration->get_errors()){?>
-					<p><?php printf(__("The following errors occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></p>
+					<div class="ee-attention">
+					<strong><?php printf(__("The following errors occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></strong>
 					<ul>
 					<?php foreach($most_recent_migration->get_errors() as $error){ ?>
 						<li><?php echo $error ?></li>
 					<?php }?>
 					</ul>
+					</div>
 				<?php }else {
 					//there were no errors during the last migration, just say so?>
-					<h2><?php printf(__("The last ran data migration task (%s) had no errors.", "event_espresso"),$most_recent_migration->pretty_name())?></h2>
+					<h2><?php printf(__("The last data migration task (%s) ran successfully without errors.", "event_espresso"),$most_recent_migration->pretty_name())?></h2>
 				<?php }?>
 			<?php }else{
 			}
 ?>
 		<?php }?>
 		<?php if ( $script_names ) {?>
-		<p><?php 
-		_e("Your Event Espresso data needs to be migrated (updated).", "event_espresso");?>
-		<?php echo  _n("The following upgrade task needs to be performed:", "The following %s upgrade tasks need to be performed:",count($script_names), "event_espresso");?></p>
-		<ul>
+		<h3 class="espresso-header"><span class="dashicons dashicons-migrate ee-icon-size-18" style="top:-1px; left:.25em;"></span><?php _e("Your Event Espresso data needs to be migrated (updated).", "event_espresso");?></h3>
+		<p>
+			<?php 
+			echo  _n(
+				"In order to import all of your existing Event Espresso data, the following upgrade task needs to be performed:", 
+				"In order to import all of your existing Event Espresso data, the following %s upgrade tasks need to be performed:",
+				count($script_names), 
+				"event_espresso"
+			);?>	
+		</p>
+		
+		<ul style="list-style: inside;">
 			<?php foreach($script_names as $script_name){?>
-			<li><?php echo $script_name?></li>
+			<li style="margin: 0 0 1em 1em; line-height: 1.1em;"><?php echo $script_name?></li>
 			<?php }?>
 		</ul>
 		<?php if (count($script_names) > 1) {?>
@@ -62,30 +72,42 @@
 		<?php }?>
 		<?php if ($show_backup_db_text){ ?>
 			<div id='backup_db_text'>
-				<p class="ee-attention"><?php printf(__("Before running the data migration, you are %s REQUIRED %s to perform a database backup, in case it has an error and your
-					database is left corrupted.", "event_espresso"),"<b>","</b>");?></p>
+				<p class="ee-attention"><?php printf(__("Because any data migration has the potential to corrupt your information, you are %s REQUIRED %s to perform a database backup before running any Event Espresso data migration scripts.", "event_espresso"),"<b>","</b>");?></p>
 				<p><b><?php _e("Not sure how?", "event_espresso");?></b> 
 					<?php printf(__('%1$s here is an explanation of how to do it %2$s. Or you can also %3$s search for a database backup plugin %2$s', "event_espresso"),
 								"<a href='http://codex.wordpress.org/Backing_Up_Your_Database'>","</a>","<a href='".admin_url('plugin-install.php?tab=search&type=term&s=database+backup&plugin-search-input=Search+Plugins')."'>");?></p>
-				<p class="ee-attention"><b><?php _e("Important note to users with Event Espresso addons: ", "event_espresso");?></b><?php _e("Your Event Espresso 3 (ee3) addons WILL NOT WORK for Event Espresso 4 (ee4, what you have active right now), and their data will NOT BE MIGRATED unless the addon's description states otherwise. If you want to keep using those ee3 addons, you SHOULD NOT USE ee4 and instead continue using ee3 (at least until those addons are made compatible for ee4). To continue using ee3 for now, simply deactivate ee4 and reactivate ee3 NOW.", "event_espresso");	?></p>
+				<p class="ee-attention"><b><?php _e("Important note to users with Event Espresso addons: ", "event_espresso");?></b><br/><?php _e("Your Event Espresso 3 (EE3) addons WILL NOT WORK with this new version of Event Espresso 4 (EE4), and their data will NOT BE MIGRATED unless the addon's description explicitly states that it is EE4 compatible. If you want, or need to keep using your EE3 addons, you SHOULD NOT USE EE4, and instead continue using EE3 until EE4 compatible versions of your addons becaome available. To continue using EE3 for now, simply deactivate EE4 and reactivate EE3.", "event_espresso");	?></p>
 			</div>
 		<div id='migration-confirm-backed-up'>
-			<input type='checkbox' id='db-backed-up'> <label for='db-backed-up' id='db-backed-up-label'><?php _e("I have backed up my database, and am ready to migrate my ee3 data to ee4", "event_espresso");?></label>
+			<label for='db-backed-up' id='db-backed-up-label'>
+				<input type='checkbox' id='db-backed-up' class="toggle-migration-monitor"> <?php _e("I have backed up my database, and am ready to migrate my EE3 data to EE4", "event_espresso");?>				
+			</label>
 		</div>
 		<?php } ?>
 		
 	</div>
 	<?php if ($show_migration_progress){?>
 	<div id='migration-monitor' <?php echo $show_backup_db_text ? "style='display:none'" : ''?>>
-		<div id='migration-start-border'><button id='start-migration' class='button-primary'><?php echo $show_continue_current_migration_script ? sprintf(__("Continue Migration %s", "event_espresso"),array_shift($script_names)) : sprintf(__("Start Migration %s", "event_espresso"),array_shift($script_names));?></button></div>
+		<p>
+			<a class="toggle-migration-monitor small-text" style="cursor: pointer;">
+				<span class="dashicons dashicons-arrow-left-alt2" style="top:0px;"></span><?php _e("return to previous screen", "event_espresso");?>			
+			</a>
+			<br/>
+		</p>
 		<div id='progress-area'>
+			<h3><?php echo $show_continue_current_migration_script ? array_shift($script_names) : array_shift($script_names);?></h3>
 			<div class="progress-responsive">
 				<figure>
 					<div class="progress-responsive__bar"></div>
 					<div class="progress-responsive__percent"></div>
 				</figure>
 			</div><!-- .progress-responsive -->
+			<button id='start-migration' class='button-primary'>
+			<?php echo $show_continue_current_migration_script ? __("Continue Migration", "event_espresso") : __("Begin Migration", "event_espresso");?>				
+			</button>
+			<br class="clear"/>
 		</div>
+		
 		<h2 id='main-message'>
 			<!-- content dynamically added by js -->
 		</h2>
