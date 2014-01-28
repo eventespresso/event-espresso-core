@@ -519,14 +519,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * This returns the base price object for the ticket.
 	 *
 	 * @access public
-	 * @param  bool    $array whether to return as an array indexed by price id or just the object.
+	 * @param  bool    $return_array whether to return as an array indexed by price id or just the object.
 	 * @return EE_Price
 	 */
-	public function base_price( $array = FALSE ) {
-		$_where = array(
-			'Price_Type.PBT_ID' => EEM_Price_Type::base_type_base_price
-			);
-		return $array ? $this->get_many_related('Price', array($_where) ) : $this->get_first_related('Price', array($_where));
+	public function base_price( $return_array = FALSE ) {
+		$_where = array( 'Price_Type.PBT_ID' => EEM_Price_Type::base_type_base_price );
+		return $return_array ? $this->get_many_related('Price', array($_where) ) : $this->get_first_related('Price', array($_where));
 	}
 
 
