@@ -1,4 +1,4 @@
-<p class="about-description"><?php _e('Event Espresso is created by a worlwide team of who want you to have success with your events!', 'event_espresso'); ?></p>
+<p class="about-description"><?php _e('Event Espresso is created by a worldwide team of passionate people with a drive to empower your events!', 'event_espresso'); ?></p>
 <h4 class="wp-people-group"><?php _e('Owners', 'event_espresso'); ?></h4>
 <ul class="wp-people-group" id="ee-people-group-owners">
 	<li class="wp-person" id="ee-person-sshoultes">
