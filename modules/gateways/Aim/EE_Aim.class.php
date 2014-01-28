@@ -207,21 +207,21 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			//start transaction
 			$this->setField('amount', $grand_total);
-			$this->setField('card_num', $billing_info['reg-page-billing-card-nmbr-' . $this->_gateway_name]['value']);
-			$this->setField('exp_date', $billing_info['reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name]['value'] . $billing_info['reg-page-billing-card-exp-date-year-' . $this->_gateway_name]['value']);
-			$this->setField('card_code', $billing_info['reg-page-billing-card-ccv-code-' . $this->_gateway_name]['value']);
-			$this->setField('first_name', $billing_info['reg-page-billing-fname-' . $this->_gateway_name]['value']);
-			$this->setField('last_name', $billing_info['reg-page-billing-lname-' . $this->_gateway_name]['value']);
-			$this->setField('email', $billing_info['reg-page-billing-email-' . $this->_gateway_name]['value']);
-			$this->setField('address', $billing_info['reg-page-billing-address-' . $this->_gateway_name]['value']);
-			$this->setField('city', $billing_info['reg-page-billing-city-' . $this->_gateway_name]['value']);
-			$this->setField('state', $billing_info['reg-page-billing-state-' . $this->_gateway_name]['value']);
-			$this->setField('zip', $billing_info['reg-page-billing-zip-' . $this->_gateway_name]['value']);
+			$this->setField('card_num', $billing_info['_reg-page-billing-card-nmbr-' . $this->_gateway_name]['value']);
+			$this->setField('exp_date', $billing_info['_reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name]['value'] . $billing_info['_reg-page-billing-card-exp-date-year-' . $this->_gateway_name]['value']);
+			$this->setField('card_code', $billing_info['_reg-page-billing-card-ccv-code-' . $this->_gateway_name]['value']);
+			$this->setField('first_name', $billing_info['_reg-page-billing-fname-' . $this->_gateway_name]['value']);
+			$this->setField('last_name', $billing_info['_reg-page-billing-lname-' . $this->_gateway_name]['value']);
+			$this->setField('email', $billing_info['_reg-page-billing-email-' . $this->_gateway_name]['value']);
+			$this->setField('address', $billing_info['_reg-page-billing-address-' . $this->_gateway_name]['value']);
+			$this->setField('city', $billing_info['_reg-page-billing-city-' . $this->_gateway_name]['value']);
+			$this->setField('state', $billing_info['_reg-page-billing-state-' . $this->_gateway_name]['value']);
+			$this->setField('zip', $billing_info['_reg-page-billing-zip-' . $this->_gateway_name]['value']);
 			$this->setField('cust_id', $primary_registrant->ID());
 			//invoice_num would be nice to have itbe unique per SPCO page-load, taht way if users
 			//press back, they don't submit a duplicate. However, we may be keepin gthe user on teh same spco page
 			//in which case, we need to generate teh invoice num per request right here...
-			$this->setField('invoice_num', wp_generate_password(12,false));//$billing_info['reg-page-billing-invoice-'.$this->_gateway_name]['value']);
+			$this->setField('invoice_num', wp_generate_password(12,false));//$billing_info['_reg-page-billing-invoice-'.$this->_gateway_name]['value']);
 
 
 			if ($this->_payment_settings['test_transactions']) {
@@ -347,7 +347,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			<?php echo $this->_generate_billing_info_form_fields($billing_inputs, 'credit_card'); ?>
 	
-			<input type='hidden' id='reg-page-billing-invoice-<?php echo $gw; ?>' name='reg-page-billing-invoice-<?php echo $gw; ?>' value='<?php echo wp_generate_password(12,false) ?>' />
+			<input type='hidden' id='_reg-page-billing-invoice-<?php echo $gw; ?>' name='_reg-page-billing-invoice-<?php echo $gw; ?>' value='<?php echo wp_generate_password(12,false) ?>' />
 
 		</div>
 
@@ -357,7 +357,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	public function espresso_reg_page_billing_inputs() {
 
 		$reg_page_billing_inputs = array(
-			'reg-page-billing-fname-' . $this->_gateway_name => array(
+			'_reg-page-billing-fname-' . $this->_gateway_name => array(
 				'db-col' => 'fname',
 				'label' => __('First Name', 'event_espresso'),
 				'input' => EEM_Question::QST_type_text,
@@ -368,7 +368,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%s'
 			),
-			'reg-page-billing-lname-' . $this->_gateway_name => array(
+			'_reg-page-billing-lname-' . $this->_gateway_name => array(
 				'db-col' => 'lname',
 				'label' => __('Last Name', 'event_espresso'),
 				'input' => EEM_Question::QST_type_text,
@@ -379,7 +379,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%s'
 			),
-			'reg-page-billing-email-' . $this->_gateway_name => array(
+			'_reg-page-billing-email-' . $this->_gateway_name => array(
 				'db-col' => 'email',
 				'label' => __('Email Address', 'event_espresso'),
 				'input' => EEM_Question::QST_type_text,
@@ -390,7 +390,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%s'
 			),
-			'reg-page-billing-address-' . $this->_gateway_name => array(
+			'_reg-page-billing-address-' . $this->_gateway_name => array(
 				'db-col' => 'address',
 				'label' => __('Address', 'event_espresso'),
 				'input' => EEM_Question::QST_type_text,
@@ -401,7 +401,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%s'
 			),
-			'reg-page-billing-city-' . $this->_gateway_name => array(
+			'_reg-page-billing-city-' . $this->_gateway_name => array(
 				'db-col' => 'city',
 				'label' => __('City', 'event_espresso'),
 				'input' => EEM_Question::QST_type_text,
@@ -412,7 +412,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%s'
 			),
-			'reg-page-billing-state-' . $this->_gateway_name => array(
+			'_reg-page-billing-state-' . $this->_gateway_name => array(
 				'db-col' => 'state',
 				'label' => __('State', 'event_espresso'),
 				'input' => EEM_Question::QST_type_dropdown,
@@ -424,7 +424,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%d'
 			),
-			'reg-page-billing-country-' . $this->_gateway_name => array(
+			'_reg-page-billing-country-' . $this->_gateway_name => array(
 					'db-col' => 'country',
 					'label' => __('Country', 'event_espresso'),
 					'input' => EEM_Question::QST_type_dropdown,
@@ -436,7 +436,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					'value' => NULL,
 					'format' => '%s'
 			),
-			'reg-page-billing-zip-' . $this->_gateway_name => array(
+			'_reg-page-billing-zip-' . $this->_gateway_name => array(
 				'db-col' => 'zip',
 				'label' => __('Zip Code', 'event_espresso'),
 				'input' => EEM_Question::QST_type_text,
@@ -447,7 +447,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%s'
 			),
-			'reg-page-billing-card-nmbr-' . $this->_gateway_name => array(
+			'_reg-page-billing-card-nmbr-' . $this->_gateway_name => array(
 				'db-col' => 'card-nmbr',
 				'label' => __('Credit Card Number', 'event_espresso'),
 				'input' => EEM_Question::QST_type_text,
@@ -458,7 +458,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%d'
 			),
-			'reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name => array(
+			'_reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name => array(
 				'db-col' => 'exp-date-mnth',
 				'label' => __('Expiry Date Month', 'event_espresso'),
 				'input' => EEM_Question::QST_type_dropdown,
@@ -469,7 +469,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%s'
 			),
-			'reg-page-billing-card-exp-date-year-' . $this->_gateway_name => array(
+			'_reg-page-billing-card-exp-date-year-' . $this->_gateway_name => array(
 				'db-col' => 'exp-date-year',
 				'label' => __('Expiry Date Year', 'event_espresso'),
 				'input' => EEM_Question::QST_type_dropdown,
@@ -480,7 +480,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				'value' => NULL,
 				'format' => '%s'
 			),
-			'reg-page-billing-card-ccv-code-' . $this->_gateway_name => array(
+			'_reg-page-billing-card-ccv-code-' . $this->_gateway_name => array(
 				'db-col' => 'ccv-code',
 				'label' => __('CCV Code', 'event_espresso'),
 				'input' => EEM_Question::QST_type_text,

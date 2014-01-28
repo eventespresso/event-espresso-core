@@ -377,7 +377,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 //	array('id' => 'Pending', 'text' => 'Pending'),
 //	//array('id' => 'Completed', 'text' => 'Completed')
 //);
-		$default_reg_status = $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID(isset($event_meta['default_payment_status']) ? $event_meta['default_payment_status'] : '');
+		$default_reg_status = $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID(isset($event_meta['default_payment_status']) ? $event_meta['default_payment_status'] : '', intval($old_event['require_pre_approval']));
 		$cols_n_values = array(
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],

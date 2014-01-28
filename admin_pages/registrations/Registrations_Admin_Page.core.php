@@ -1658,49 +1658,49 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 			$this->_template_args['free_event'] = FALSE;
 
-			$this->_template_args['fname']['value'] = ! empty ( $billing_info['reg-page-billing-fname']['value'] ) ? $billing_info['reg-page-billing-fname']['value'] : '';
-			$this->_template_args['fname']['label'] = ! empty ( $billing_info['reg-page-billing-fname']['label'] ) ? $billing_info['reg-page-billing-fname']['label'] :  __( 'First Name', 'event_espresso' );
+			$this->_template_args['fname']['value'] = ! empty ( $billing_info['_reg-page-billing-fname']['value'] ) ? $billing_info['_reg-page-billing-fname']['value'] : '';
+			$this->_template_args['fname']['label'] = ! empty ( $billing_info['_reg-page-billing-fname']['label'] ) ? $billing_info['_reg-page-billing-fname']['label'] :  __( 'First Name', 'event_espresso' );
 			
-			$this->_template_args['lname']['value'] = ! empty ( $billing_info['reg-page-billing-lname']['value'] ) ? $billing_info['reg-page-billing-lname']['value'] : '';
-			$this->_template_args['lname']['label'] = ! empty ( $billing_info['reg-page-billing-lname']['label'] ) ? $billing_info['reg-page-billing-lname']['label'] :  __( 'Last Name', 'event_espresso' );
+			$this->_template_args['lname']['value'] = ! empty ( $billing_info['_reg-page-billing-lname']['value'] ) ? $billing_info['_reg-page-billing-lname']['value'] : '';
+			$this->_template_args['lname']['label'] = ! empty ( $billing_info['_reg-page-billing-lname']['label'] ) ? $billing_info['_reg-page-billing-lname']['label'] :  __( 'Last Name', 'event_espresso' );
 			
-			$this->_template_args['email']['value'] = ! empty ( $billing_info['reg-page-billing-email']['value'] ) ? $billing_info['reg-page-billing-email']['value'] : '';
+			$this->_template_args['email']['value'] = ! empty ( $billing_info['_reg-page-billing-email']['value'] ) ? $billing_info['_reg-page-billing-email']['value'] : '';
 			$this->_template_args['email']['label'] = __( 'Email', 'event_espresso' );
 			
-			$this->_template_args['address']['value'] = ! empty ( $billing_info['reg-page-billing-address']['value'] ) ? $billing_info['reg-page-billing-address']['value'] : '';
-			$this->_template_args['address']['label'] = ! empty ( $billing_info['reg-page-billing-address']['label'] ) ? $billing_info['reg-page-billing-address']['label'] :  __( 'Address', 'event_espresso' );
+			$this->_template_args['address']['value'] = ! empty ( $billing_info['_reg-page-billing-address']['value'] ) ? $billing_info['_reg-page-billing-address']['value'] : '';
+			$this->_template_args['address']['label'] = ! empty ( $billing_info['_reg-page-billing-address']['label'] ) ? $billing_info['_reg-page-billing-address']['label'] :  __( 'Address', 'event_espresso' );
 			
-			$this->_template_args['city']['value'] = ! empty ( $billing_info['reg-page-billing-city']['value'] ) ? $billing_info['reg-page-billing-city']['value'] : '';
-			$this->_template_args['city']['label'] = ! empty ( $billing_info['reg-page-billing-city']['label'] ) ? $billing_info['reg-page-billing-city']['label'] :  __( 'City', 'event_espresso' );
+			$this->_template_args['city']['value'] = ! empty ( $billing_info['_reg-page-billing-city']['value'] ) ? $billing_info['_reg-page-billing-city']['value'] : '';
+			$this->_template_args['city']['label'] = ! empty ( $billing_info['_reg-page-billing-city']['label'] ) ? $billing_info['_reg-page-billing-city']['label'] :  __( 'City', 'event_espresso' );
 			
-			$this->_template_args['state']['value'] = ! empty ( $billing_info['reg-page-billing-state']['value'] ) ? $billing_info['reg-page-billing-state']['value'] : '';
-			$this->_template_args['state']['label'] = ! empty ( $billing_info['reg-page-billing-state']['label'] ) ? $billing_info['reg-page-billing-state']['label'] :  __( 'State', 'event_espresso' );
+			$this->_template_args['state']['value'] = ! empty ( $billing_info['_reg-page-billing-state']['value'] ) ? $billing_info['_reg-page-billing-state']['value'] : '';
+			$this->_template_args['state']['label'] = ! empty ( $billing_info['_reg-page-billing-state']['label'] ) ? $billing_info['_reg-page-billing-state']['label'] :  __( 'State', 'event_espresso' );
 			if ( $state_obj = EEM_State::instance()->get_one_by_ID( $this->_template_args['state']['value'] )) {			
-				$this->_template_args['state']['value'] = $state_obj instanceof EE_State ? $state_obj->name() : $billing_info['reg-page-billing-state']['value'];
+				$this->_template_args['state']['value'] = $state_obj instanceof EE_State ? $state_obj->name() : $billing_info['_reg-page-billing-state']['value'];
 			}
 			
-			$this->_template_args['country']['value'] = ! empty ( $billing_info['reg-page-billing-country']['value'] ) ? $billing_info['reg-page-billing-country']['value'] : '';
-			$this->_template_args['country']['label'] = ! empty ( $billing_info['reg-page-billing-country']['label'] ) ? $billing_info['reg-page-billing-country']['label'] : __( 'Country', 'event_espresso' );
+			$this->_template_args['country']['value'] = ! empty ( $billing_info['_reg-page-billing-country']['value'] ) ? $billing_info['_reg-page-billing-country']['value'] : '';
+			$this->_template_args['country']['label'] = ! empty ( $billing_info['_reg-page-billing-country']['label'] ) ? $billing_info['_reg-page-billing-country']['label'] : __( 'Country', 'event_espresso' );
 			if ( $country_obj = EEM_Country::instance()->get_one_by_ID( $this->_template_args['country']['value'] )) {			
-				$this->_template_args['country']['value'] = $country_obj instanceof EE_Country ? $country_obj->name() : $billing_info['reg-page-billing-country']['value'];
+				$this->_template_args['country']['value'] = $country_obj instanceof EE_Country ? $country_obj->name() : $billing_info['_reg-page-billing-country']['value'];
 			}
 			
-			$this->_template_args['zip']['value'] = ! empty ( $billing_info['reg-page-billing-zip']['value'] ) ? $billing_info['reg-page-billing-zip']['value'] : '';
-			$this->_template_args['zip']['label'] = ! empty ( $billing_info['reg-page-billing-zip']['label'] ) ? $billing_info['reg-page-billing-zip']['label'] :  __( 'Zip Code', 'event_espresso' );
+			$this->_template_args['zip']['value'] = ! empty ( $billing_info['_reg-page-billing-zip']['value'] ) ? $billing_info['_reg-page-billing-zip']['value'] : '';
+			$this->_template_args['zip']['label'] = ! empty ( $billing_info['_reg-page-billing-zip']['label'] ) ? $billing_info['_reg-page-billing-zip']['label'] :  __( 'Zip Code', 'event_espresso' );
 
-			if ( isset( $billing_info['reg-page-billing-card-nmbr'] )) {
+			if ( isset( $billing_info['_reg-page-billing-card-nmbr'] )) {
 
 				$this->_template_args['credit_card_info'] = TRUE;
 
-				$ccard = $billing_info['reg-page-billing-card-nmbr']['value'];
+				$ccard = $billing_info['_reg-page-billing-card-nmbr']['value'];
 				$this->_template_args['card_nmbr']['value'] = substr( $ccard, 0, 4 ) . ' XXXX XXXX ' . substr( $ccard, -4 );
 				$this->_template_args['card_nmbr']['label'] = __('Credit Card', 'event_espresso');
 
-				$this->_template_args['card_exp_date']['value'] = $billing_info['reg-page-billing-card-exp-date-mnth']['value'] . ' / ' . $billing_info['reg-page-billing-card-exp-date-year']['value'];
+				$this->_template_args['card_exp_date']['value'] = $billing_info['_reg-page-billing-card-exp-date-mnth']['value'] . ' / ' . $billing_info['_reg-page-billing-card-exp-date-year']['value'];
 				$this->_template_args['card_exp_date']['label'] = __('mm / yy', 'event_espresso');
 
-				$this->_template_args['card_ccv_code']['value'] = $billing_info['reg-page-billing-card-ccv-code']['value'];
-				$this->_template_args['card_ccv_code']['label'] = $billing_info['reg-page-billing-card-ccv-code']['label'];
+				$this->_template_args['card_ccv_code']['value'] = $billing_info['_reg-page-billing-card-ccv-code']['value'];
+				$this->_template_args['card_ccv_code']['label'] = $billing_info['_reg-page-billing-card-ccv-code']['label'];
 
 			} else {
 				$this->_template_args['credit_card_info'] = FALSE;

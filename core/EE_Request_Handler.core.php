@@ -344,7 +344,7 @@ final class EE_Request_Handler {
 
 
 	function sanitize_text_field_for_array_walk( &$item, &$key ) {
-		$item = sanitize_text_field( $item );
+		$item = strpos( $item, 'email' ) !== FALSE ? sanitize_email( $item ) : sanitize_text_field( $item );
 	}
 
 	

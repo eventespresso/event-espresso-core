@@ -62,12 +62,12 @@
 		<?php }?>
 		<?php if ($show_backup_db_text){ ?>
 			<div id='backup_db_text'>
-				<p class="ee-attention"><?php _e("Before running the data migration, you are REQUIRED to perform a database backup, in case it has an error and your
-					database is left corrupted.", "event_espresso");?></p>
+				<p class="ee-attention"><?php printf(__("Before running the data migration, you are %s REQUIRED %s to perform a database backup, in case it has an error and your
+					database is left corrupted.", "event_espresso"),"<b>","</b>");?></p>
 				<p><b><?php _e("Not sure how?", "event_espresso");?></b> 
 					<?php printf(__('%1$s here is an explanation of how to do it %2$s. Or you can also %3$s search for a database backup plugin %2$s', "event_espresso"),
 								"<a href='http://codex.wordpress.org/Backing_Up_Your_Database'>","</a>","<a href='".admin_url('plugin-install.php?tab=search&type=term&s=database+backup&plugin-search-input=Search+Plugins')."'>");?></p>
-				<p><b><?php _e("Important note to users with Event Espresso addons: ", "event_espresso");?></b><?php _e("Your Event Espresso 3 (ee3) addons WILL NOT WORK for Event Espresso 4 (ee4, what you have active right now), and their data will NOT BE MIGRATED unless the addon's description states otherwise. If you want to keep using those ee3 addons, you SHOULD NOT USE ee4 and instead continue using ee3 (at least until those addons are made compatible for ee4). To continue using ee3, simply deactivate ee4 and reactivate ee3 NOW.", "event_espresso");	?></p>like we mentioned in the previous paragraph.)",
+				<p class="ee-attention"><b><?php _e("Important note to users with Event Espresso addons: ", "event_espresso");?></b><?php _e("Your Event Espresso 3 (ee3) addons WILL NOT WORK for Event Espresso 4 (ee4, what you have active right now), and their data will NOT BE MIGRATED unless the addon's description states otherwise. If you want to keep using those ee3 addons, you SHOULD NOT USE ee4 and instead continue using ee3 (at least until those addons are made compatible for ee4). To continue using ee3 for now, simply deactivate ee4 and reactivate ee3 NOW.", "event_espresso");	?></p>
 			</div>
 		<div id='migration-confirm-backed-up'>
 			<input type='checkbox' id='db-backed-up'> <label for='db-backed-up' id='db-backed-up-label'><?php _e("I have backed up my database, and am ready to migrate my ee3 data to ee4", "event_espresso");?></label>

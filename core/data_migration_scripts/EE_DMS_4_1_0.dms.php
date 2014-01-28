@@ -597,7 +597,6 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		//setting up default prices, price types, and tickets is also essential for the price migrations
 		$this->insert_default_price_types();
 		$this->insert_default_prices();
-		$this->insert_default_ticket_template();
 		$this->insert_default_tickets();
 		
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
@@ -1035,7 +1034,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			if ( ! $tickets_exist ) {
 				$SQL = "INSERT INTO $ticket_table
 					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
-					( 1, 1, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL', $SQL );
 				$wpdb->query($SQL);
 			}
@@ -1055,31 +1054,6 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				";
 
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL__ticket_price', $SQL );
-				$wpdb->query($SQL);
-			}
-		}
-	}
-	/**
-	 * insert default ticket template
-	 *
-	 * @access public
-	 * @static
-	 * @return void
-	 */
-	public function insert_default_ticket_template() {
-
-		global $wpdb;
-		$ticket_template_table = $wpdb->prefix."esp_ticket_template";
-		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_template_table'") == $ticket_template_table ) {
-
-			$SQL = 'SELECT COUNT(TTM_ID) FROM ' . $ticket_template_table;
-			$tickets_exist = $wpdb->get_var($SQL);
-
-			if ( ! $tickets_exist ) {
-				$SQL = "INSERT INTO $ticket_template_table
-					( TTM_ID, TTM_name, TTM_description, TTM_file ) VALUES
-					( 1,  '" . __("Default Ticket Template", "event_espresso") . "', '', '');";
-				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_ticket_templates__SQL', $SQL );
 				$wpdb->query($SQL);
 			}
 		}
@@ -1491,27 +1465,31 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	/**
 	 * Converst a 3.1 payment status to its equivalent 4.1 regisration status
 	 * @param string $payment_status possible value for 3.1's evens_attendee.payment_statsu
+	 * @param boolean $this_thing_required_pre_approval whether the thing we're considering (the general setting's default payment status,
+	 * the event's default payment status, or the attendee's payment status) required pre-approval.
 	 * @return string STS_ID for use in 4.1
 	 */
-	public function convert_3_1_payment_status_to_4_1_STS_ID($payment_status){
-		global $org_options;
-		if( ! $org_options){
-			$org_options = get_option('events_organization_settings');
-		}
-		$old_require_approval = $org_options['use_attendee_pre_approval'] == 'Y';
+	public function convert_3_1_payment_status_to_4_1_STS_ID($payment_status, $this_thing_required_pre_approval = false){
+
 		//EE team can read the related discussion: https://app.asana.com/0/2400967562914/9418495544455 
-		if($old_require_approval){
-				$mapping = $default_reg_stati_conversions=array(
-			'Completed'=>'RNA',
-			''=>'RNA',
-			'Incomplete'=>'RNA',
-			'Pending'=>'RNA');
+		if($this_thing_required_pre_approval){
+				return 'RNA';
 		}else{
 				$mapping = $default_reg_stati_conversions=array(
 			'Completed'=>'RAP',
 			''=>'RPP',
 			'Incomplete'=>'RPP',
-			'Pending'=>'RAP');
+			'Pending'=>'RAP',
+			//stati that only occured on 3.1 attendees:
+			'Payment Declined'=>'RPP',
+			'Not Completed'=>'RPP',
+			'Cancelled'=>'RPP',
+			'Declined'=>'RPP'
+					);
+				
+				
+				
+				
 		}
 		
 		return isset($mapping[$payment_status]) ? $mapping[$payment_status] : 'RNA';
