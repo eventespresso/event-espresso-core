@@ -38,10 +38,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 	protected function _init_page_props() {
 		$this->page_slug = EE_MAINTENANCE_PG_SLUG;
-		$this->page_label = __('Maintenance', 'event_espresso');
+		$this->page_label = EE_MAINTENANCE_LABEL;
 		$this->_admin_base_url = EE_MAINTENANCE_ADMIN_URL;
 		$this->_admin_base_path = EE_MAINTENANCE_ADMIN;
-		$this->_admin_page_title = $this->page_label;
 	}
 
 
@@ -54,7 +53,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _define_page_props() {
-		
+		$this->_admin_page_title = EE_MAINTENANCE_LABEL;
 	}
 
 
@@ -75,7 +74,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'reset_db'=>array(
 				'func'=>'_reset_db',
 				'noheader'=>true
-			));
+			)
+		);
 	}
 	protected function _set_page_config() {
 		$this->_page_config = array(
@@ -84,8 +84,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'label' => __('Maintenance', 'event_espresso'),
 					'order' => 10
 					),
-				'require_nonce' => FALSE
-//				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE,
+				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				////'help_tabs' => $this->_get_maintenance_help_tabs(),
 				),
 			'system_status'=>array(
@@ -93,10 +93,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'label'=>  __("System Status", "event_espresso"),
 					'order'=>20	
 				),
-				'require_nonce' => FALSE
-//				'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce' => FALSE,
+				'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 			)
-			);
+		);
 	}
 
 	/**
@@ -263,7 +263,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 //		EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		EE_System::instance()->initialize_db_if_no_migrations_required(true);
 		EE_System::instance()->redirect_to_about_ee();
-	}
+	}	
+
 
 	
 	

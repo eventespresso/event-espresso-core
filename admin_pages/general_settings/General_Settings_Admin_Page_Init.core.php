@@ -45,7 +45,7 @@ class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	protected function _set_init_properties() {
 		$this->label = GEN_SET_LABEL;
-		$this->menu_label = __('General Settings', 'event_espresso');
+		$this->menu_label = GEN_SET_LABEL;
 		$this->menu_slug = GEN_SET_PG_SLUG;
 		$this->capability = 'administrator';
 	}
@@ -56,7 +56,7 @@ class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init {
 			'menu_order' => 20,
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'espresso_events'
-			);
+		);
 		return $map;
 	}
 }

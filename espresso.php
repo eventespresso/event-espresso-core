@@ -58,6 +58,7 @@ if( ! defined( 'SP' ) ){
 	define('SP',' ');
 }
 
+define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 // define the plugin directory and URL
 define( 'EE_PLUGINPATH', DS . plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) . DS );
 define( 'EE_PLUGIN_DIR_PATH', plugin_dir_path( EVENT_ESPRESSO_MAIN_FILE ));
