@@ -80,8 +80,8 @@ jQuery(document).ready(function($) {
 			inputType = $(input).prop('type');
 			 if( $(input).hasClass('required') ) {
 				if ( $(input).hasClass('email') ) {
-					//var input_value = $(input).inputValue();
-					if ( SPCO.validate_email_address( $(input).inputValue() ) === true ) {
+					//var input_value = $(input).eeInputValue();
+					if ( SPCO.validate_email_address( $(input).eeInputValue() ) === true ) {
 						SPCO.set_single_input_requires_value_off( $(input) );
 						$(input).addClass('has-value').removeClass('needs-value');
 						$('#espresso-ajax-notices-error').stop().fadeOut('fast');	
@@ -162,7 +162,7 @@ jQuery(document).ready(function($) {
 							var line_item_id = input_id_array[1];		 
 							var input_name = input_id_array[2];	
 							var answer_id = input_id_array[3];
-							var input_value = $(this).inputValue();
+							var input_value = $(this).eeInputValue();
 							SPCO.debug( 'copy_primary_attendee_information > input_name', input_name );
 
 							var new_input_id = '#' + trgt_att_input + '-' +  input_name;
@@ -505,7 +505,7 @@ jQuery(document).ready(function($) {
 			$('body, html').animate({ scrollTop: SPCO.offset_from_top }, 'normal', function() {
 				// animation complete
 				$('#espresso-ajax-long-loading').remove();
-				$('#espresso-ajax-notices').center();	
+				$('#espresso-ajax-notices').eeCenter();	
 				$('#espresso-ajax-notices-attention').append( '<span id="espresso-ajax-long-loading" class="ee-spinner ee-spin"></span>' );
 				$('#espresso-ajax-notices-attention > .espresso-notices-msg').html( eei18n.process_registration );
 				$('#espresso-ajax-notices-attention').removeClass('hidden').show();	
@@ -522,7 +522,7 @@ jQuery(document).ready(function($) {
 			fadeOut = fadeOut == undefined || fadeOut < 4000 ? 4000 : fadeOut;
 			// does an actual message exist ?
 			if ( success_msg != undefined && success_msg != '' )  {
-				$('#espresso-ajax-notices').center();	
+				$('#espresso-ajax-notices').eeCenter();	
 				$('#espresso-ajax-notices-success > .espresso-notices-msg').html( success_msg );
 				$('#espresso-ajax-loading').fadeOut('fast');
 				$('#espresso-ajax-notices-success').removeClass('hidden').show().delay(fadeOut).fadeOut();
@@ -540,7 +540,7 @@ jQuery(document).ready(function($) {
 			$('#espresso-ajax-notices-attention').fadeOut('fast');				
 			// does an actual message exist ?
 			if ( error_msg != undefined && error_msg != '' ) {
-				$('#espresso-ajax-notices').center();				
+				$('#espresso-ajax-notices').eeCenter();				
 				$('#espresso-ajax-notices-error > .espresso-notices-msg').html( error_msg );
 				$('#espresso-ajax-loading').fadeOut('fast');
 				$('#espresso-ajax-notices-error').removeClass('hidden').show().delay(10000).fadeOut();

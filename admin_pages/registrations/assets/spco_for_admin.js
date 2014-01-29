@@ -145,7 +145,7 @@
 	function do_before_event_queue_ajax() {
 		// stop any message alerts that are in progress
 		$('.espresso-ajax-notices').stop();
-		$('#espresso-ajax-loading').center().show();
+		$('#espresso-ajax-loading').eeCenter().show();
 	}
 
 
@@ -162,7 +162,7 @@
 			}
 			//alert( 'success_msg'+success_msg);
 
-			$('#espresso-ajax-notices').center();
+			$('#espresso-ajax-notices').eeCenter();
 			$('#espresso-ajax-notices-success > .espresso-notices-msg').html( success_msg );
 			$('#espresso-ajax-loading').fadeOut('fast');
 			$('#espresso-ajax-notices-success').removeClass('hidden').show().delay(4000).fadeOut();
@@ -184,7 +184,7 @@
 				error_msg = error_msg.error;
 			}
 						
-			$('#espresso-ajax-notices').center();
+			$('#espresso-ajax-notices').eeCenter();
 			$('#espresso-ajax-notices-error > .espresso-notices-msg').html( error_msg );
 			$('#espresso-ajax-loading').fadeOut('fast');
 			$('#espresso-ajax-notices-error').removeClass('hidden').show().delay(10000).fadeOut();

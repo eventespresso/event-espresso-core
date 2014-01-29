@@ -200,7 +200,7 @@ jQuery(document).ready(function($) {
 	function toggleaAjaxActivity( done ) {
 		done = typeof(done) === 'undefined' ? false : true;
 		if ( done ) {
-			$('#espresso-ajax-loading').center().fadeOut('fast');
+			$('#espresso-ajax-loading').eeCenter().fadeOut('fast');
 			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeIn('fast');
 			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeIn('fast');
@@ -209,7 +209,7 @@ jQuery(document).ready(function($) {
 			$('#delete-ee-ajax-processing-text').fadeOut('fast');
 			$('#ee-ajax-processing-text').fadeOut('fast');
 		} else {
-			$('#espresso-ajax-loading').center().fadeIn('fast');
+			$('#espresso-ajax-loading').eeCenter().fadeIn('fast');
 			$('#txn-admin-modal-dialog-apply-payment-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-apply-refund-lnk').fadeOut('fast');
 			$('#txn-admin-modal-dialog-edit-payment-lnk').fadeOut('fast');

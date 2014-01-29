@@ -197,7 +197,7 @@ jQuery(document).ready(function($) {
 		type = type !== undefined && type !== '' ? type : 'error';
 		var notice_id = '#espresso-ajax-notices-' + type;
 		$( notice_id + ' .espresso-notices-msg' ).text( message );
-		$( '#espresso-ajax-notices' ).center();
+		$( '#espresso-ajax-notices' ).eeCenter();
 		$( notice_id ).slideDown('fast');
 		$('.espresso-ajax-notices.fade-away').delay(10000).slideUp('fast');
 	}
