@@ -50,7 +50,7 @@ class EE_Load_Textdomain extends EE_Base {
 	 */
 	private static function _maybe_get_langfile() {
 		$lang = get_locale();
-		if ( $has_check = get_option( 'lang_file_check_' . $lang . '_' . EVENT_ESPRESSO_VERSION ) || empty( $lang ) )
+		if ( $has_check = get_option( 'ee_lang_check_' . $lang . '_' . EVENT_ESPRESSO_VERSION ) || empty( $lang ) )
 			return;
 
 		//if lang is en_US or empty then lets just get out.  (Event Espresso core is en_US)
@@ -69,6 +69,6 @@ class EE_Load_Textdomain extends EE_Base {
 		$sideloader = EE_Registry::instance()->load_helper('Sideloader', $sideloader_args, FALSE );
 
 		$success = $sideloader->sideload();
-		update_option( 'lang_file_check_' . $lang . '_' . EVENT_ESPRESSO_VERSION, 1 );
+		update_option( 'ee_lang_check_' . $lang . '_' . EVENT_ESPRESSO_VERSION, 1 );
 	}
 } //end EE_Load_Textdomain
