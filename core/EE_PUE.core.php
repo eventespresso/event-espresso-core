@@ -116,7 +116,7 @@ class EE_PUE {
 
 				$paid_tkt_count = get_option('uxip_ee_paid_tkt_count');
 				if ( !empty( $paid_tkt_count ) )
-					$extra_stats['paid_tkt_count'] = $paid_tkt_count
+					$extra_stats['paid_tkt_count'] = $paid_tkt_count;
 
 				$tkt_sold = get_option('uxip_ee_tkt_sold' );
 				if ( !empty($tkt_sold) )
