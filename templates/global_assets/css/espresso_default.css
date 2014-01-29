@@ -295,39 +295,6 @@
 
 
 
-/******************* PAGINATION ****************** */
-
-
-.ee-pagination-dv {
-	text-align: right;
-}
-.ee-pagination-dv .page-numbers,
-.ee-pagination-dv .page-numbers:visited {
-	display: inline-block;
-	padding: 0 .5em;
-	margin: 0 0 0 .1em;
-	border: 1px solid #EEE;
-	background: #EEE;
-	font-size: .8em;
-	line-height: 2em;
-	color: #736F58;
-	text-decoration: none;
-	font-weight: normal;
-}
-.ee-pagination-dv .page-numbers:hover {
-	border-color: #00B1CA;
-	background: #00B1CA;
-	color: #FFF;
-}
-.ee-pagination-dv .current,
-.ee-pagination-dv .page-numbers.current:hover {
-	border-color: #00B1CA;
-	background: #00B1CA;
-	color: #FFF;
-	font-weight: bold;
-	cursor: default;
-}
-
 
 
 /******************* BUTTONS ****************** */
