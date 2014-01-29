@@ -63,14 +63,14 @@ class EE_Encryption {
 		if ( empty( self::$_encryption_key )) {
 
 			// retreive encryption_key from db
-			self::$_encryption_key = get_option( 'espresso_encryption_key' );
+			self::$_encryption_key = get_option( 'ee_encryption_key' );
 			
 			// WHAT?? No encryption_key in the db ??
 			if ( self::$_encryption_key == FALSE ) {
 				// let's make one. And md5 it to make it just the right size for a key
 				$new_key =  md5( self::generate_random_string() );
 				// now save it to the db for later
-				add_option( 'espresso_encryption_key', $new_key );
+				add_option( 'ee_encryption_key', $new_key );
 				// here's the key - FINALLY !
 				self::$_encryption_key = $new_key;
 			}
