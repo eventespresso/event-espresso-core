@@ -385,7 +385,8 @@ class EEH_Activation {
 	 */
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
-		$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . $table_name );
+		$table_name = strpos( $table_name, $wpdb->prefix ) === FALSE ? $wpdb->prefix . $table_name : $table_name;
+		return $wpdb->query( 'DROP TABLE IF EXISTS '. $table_name );
 	}
 
 
@@ -399,7 +400,7 @@ class EEH_Activation {
 	public static function drop_index( $table_name, $index_name ) {
 		global $wpdb;
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . $table_name . "'" ) == $wpdb->prefix . $table_name ) {
-			$wpdb->query( 'ALTER TABLE '.$wpdb->prefix . $table_name . ' DROP INDEX ' . $index_name );
+			return $wpdb->query( 'ALTER TABLE '.$wpdb->prefix . $table_name . ' DROP INDEX ' . $index_name );
 		}
 	}
 
@@ -934,6 +935,105 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function plugin_uninstall() {
+		global $wpdb;
+		$no_tables = array(
+			'EEM_Base' => TRUE,
+			'EEM_CPT_Base' => TRUE,
+			'EEM_Gateways' => TRUE,
+			'EEM_Soft_Delete_Base' => TRUE,
+			'EEM_System_Status' => TRUE
+		);
+		$undeleted_tables = array();
+		foreach ( EE_Registry::instance()->models as $model ) {
+			if ( ! isset( $no_tables[ $model ] )) {
+				foreach ( $model::instance()->get_tables() as $table ) {
+					if ( strpos( $table->get_table_name(), 'esp_' )) {
+						switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
+							case FALSE :
+								$undeleted_tables[] = $table->get_table_name();
+							break;
+							case 0 :
+//								echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
+							break;
+							default:
+//								echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
+						}
+					}
+				}
+			}
+		}
+		
+		$wp_options_to_delete = array(
+			'espresso_no_ticket_prices' => TRUE,
+			'ee_active_messengers' => TRUE,
+			'espresso_flush_rewrite_rules' => TRUE,
+			'espresso_config' => TRUE,
+			'espresso_data_migration_current_db_state' => TRUE,
+			'espresso_data_migrations' => TRUE,
+			'espresso_notices' => TRUE,
+			'lang_file_check_' => FALSE,
+			'maintenance_mode' => TRUE,
+			'ee_ueip_optin' => TRUE,
+			'ee_ueip_has_notified' => TRUE,
+			'espresso_plugin_activation_errors' => TRUE,
+			'espresso_id_mapping_from' => FALSE,
+			'espresso_persistent_admin_notices' => TRUE,
+			'espresso_encryption_key' => TRUE,
+			'pue_force_upgrade_' => FALSE,
+			'pue_json_error_' => FALSE,
+			'pue_install_key_' => FALSE,
+			'pue_verification_error_' => FALSE,
+			'pu_dismissed_upgrade_' => FALSE,
+			'external_updates-' => FALSE,
+			'ee_extra_data' => TRUE,
+			'EE_SSN_' => FALSE,
+			'esp_rss_' => FALSE,
+			'rte_n_tx_' => FALSE
+		);
+		
+		$undeleted_options = array();
+		foreach ( $wp_options_to_delete as $option_name => $no_wildcard ) {
+			if ( $no_wildcard ) {
+				$SQL = "DELETE FROM $wpdb->options WHERE option_name = '$option_name'";
+			} else {
+				$SQL = "DELETE FROM $wpdb->options WHERE option_name LIKE '%$option_name%'";
+			}
+			switch ( $wpdb->query( $SQL )) {
+				case FALSE :
+					$undeleted_options[] = $option_name;
+				break;
+				case 0 :
+//					echo '<h4 style="color:red;">the option : ' . $option_name . ' was not deleted  <br /></h4>';
+				break;
+				default:
+//					echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
+			}
+		}
+		
+		$errors = '';
+		if ( ! empty( $undeleted_tables )) {
+			$errors .= sprintf( 
+				__( 'The following tables could not be deleted: %s%s', 'event_espresso' ),
+				'<br/>',
+				implode( ',<br/>', $undeleted_tables )
+			);
+		}
+		if ( ! empty( $undeleted_options )) {
+			$errors .= ! empty( $undeleted_tables ) ? '<br/>' : '';
+			$errors .= sprintf( 
+				__( 'The following wp-options could not be deleted: %s%s', 'event_espresso' ),
+				'<br/>',
+				implode( ',<br/>', $undeleted_options )
+			);
+			
+		}
+		if ( $espresso_db_update = get_option( 'espresso_db_update' )) {
+			unset( $espresso_db_update[ espresso_version() ] );
+			update_option( 'espresso_db_update', $espresso_db_update );
+		}
+		if ( $errors != '' ) {
+			echo $errors;
+		}
 	}
 
 
