@@ -936,29 +936,20 @@ class EEH_Activation {
 	 */
 	public static function plugin_uninstall() {
 		global $wpdb;
-		$no_tables = array(
-			'EEM_Base' => TRUE,
-			'EEM_CPT_Base' => TRUE,
-			'EEM_Gateways' => TRUE,
-			'EEM_Soft_Delete_Base' => TRUE,
-			'EEM_System_Status' => TRUE
-		);
 		$undeleted_tables = array();
-		foreach ( EE_Registry::instance()->models as $model ) {
-			if ( ! isset( $no_tables[ $model ] )) {
-				if ( method_exists( $model, 'instance' ) && $model::instance() instanceof EEM_Base ) {
-					foreach ( $model::instance()->get_tables() as $table ) {
-						if ( strpos( $table->get_table_name(), 'esp_' )) {
-							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
-								case FALSE :
-									$undeleted_tables[] = $table->get_table_name();
-								break;
-								case 0 :
-	//								echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
-								break;
-								default:
-	//								echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
-							}
+		foreach ( EE_Registry::instance()->non_abstract_db_models as $model ) {
+			if ( method_exists( $model, 'instance' ) && $model::instance() instanceof EEM_Base ) {
+				foreach ( $model::instance()->get_tables() as $table ) {
+					if ( strpos( $table->get_table_name(), 'esp_' )) {
+						switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
+							case FALSE :
+								$undeleted_tables[] = $table->get_table_name();
+							break;
+							case 0 :
+//								echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
+							break;
+							default:
+//								echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
 						}
 					}
 				}
