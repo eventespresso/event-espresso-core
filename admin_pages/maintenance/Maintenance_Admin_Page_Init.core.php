@@ -34,22 +34,22 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	public function __construct() {
 		//define some page related constants
+		define( 'EE_MAINTENANCE_LABEL', __('Maintenance', 'event_espresso'));	
 		define( 'EE_MAINTENANCE_PG_SLUG', 'espresso_maintenance_settings' );
 		define( 'EE_MAINTENANCE_ADMIN_URL', admin_url( 'admin.php?page=' . EE_MAINTENANCE_PG_SLUG ));
 		define( 'EE_MAINTENANCE_ADMIN', EE_ADMIN_PAGES . 'maintenance' . DS );	
 		define( 'EE_MAINTENANCE_TEMPLATE_PATH', EE_MAINTENANCE_ADMIN . 'templates' . DS );	
 		define( 'EE_MAINTENANCE_ASSETS_URL', EE_ADMIN_PAGES_URL . 'maintenance/assets/' );
-		define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
-
 		//check that if we're in maintenance mode that we tell the admin taht
 		add_action('admin_notices',array($this,'check_maintenance_mode'));
 		parent::__construct();
 	}
 
 	protected function _set_init_properties() {
-		$this->label = __('Maintenance Mode', 'event_espresso');
-		$this->menu_label = __('Maintenance', 'event_espresso');
+		$this->label = EE_MAINTENANCE_LABEL;
+		$this->menu_label = EE_MAINTENANCE_LABEL;
 		$this->menu_slug = EE_MAINTENANCE_PG_SLUG;
+		$this->capability = 'administrator';
 	}
 
 	public function get_menu_map() {
@@ -58,11 +58,11 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 			'menu_order' => 30,
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'espresso_tools'
-			);
+		);
 		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-				$map['group']='main';
-				$map['parent_slug'] = EE_MAINTENANCE_PG_SLUG;
-				add_filter('FHEE__EE_Admin_Page_Loader__set_menus__parent_slug',array($this,'make_maintenance_page_parent_slug'));
+			$map['group']='main';
+			$map['parent_slug'] = EE_MAINTENANCE_PG_SLUG;
+			add_filter('FHEE__EE_Admin_Page_Loader__set_menus__parent_slug',array($this,'make_maintenance_page_parent_slug'));
 		}
 		return $map;
 	}
