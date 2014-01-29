@@ -581,11 +581,11 @@ class EE_Error extends Exception {
 		
 		// either save notices to the db
 		if ( $save_to_transient ) {
-			update_option( 'espresso_notices', self::$_espresso_notices );
+			update_option( 'ee_notices', self::$_espresso_notices );
 			return;
 		} 
 		// grab any notices that have been previously saved
-		if ( $notices = get_option( 'espresso_notices', FALSE )) {
+		if ( $notices = get_option( 'ee_notices', FALSE )) {
 			foreach ( $notices as $type => $notice ) {
 				if ( is_array( $notice ) && ! empty( $notice )) {
 					// make sure that existsing notice type is an array
@@ -596,7 +596,7 @@ class EE_Error extends Exception {
 				}
 			}
 			// now clear any stored notices
-			update_option( 'espresso_notices', FALSE );
+			update_option( 'ee_notices', FALSE );
 		}
 
 		// check for success messages
