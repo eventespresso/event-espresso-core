@@ -112,9 +112,9 @@ final class EE_System {
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
 		// check for activation errors
-		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
+		if ( $activation_errors = get_option( 'ee_plugin_activation_errors', FALSE )) {
 			EE_Error::add_error( $activation_errors );
-			update_option( 'espresso_plugin_activation_errors', FALSE );
+			update_option( 'ee_plugin_activation_errors', FALSE );
 		}
 		// get model names
 		$this->_parse_model_names();
