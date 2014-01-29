@@ -14,7 +14,7 @@
 
 ?>
 <h1><?php _e("Database Migration Manager", "event_espresso");?></h1>
-<div class='main'>
+<div class='padding'>
 	<div id='migration-prep'>
 		<?php if ($show_most_recent_migration){
 			if($most_recent_migration &&
