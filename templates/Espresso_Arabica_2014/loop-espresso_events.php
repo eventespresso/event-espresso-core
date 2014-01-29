@@ -41,7 +41,7 @@
 			get_template_part( 'content', 'espresso_events' );
 		endwhile;
 		// Previous/next page navigation.
-		twentyfourteen_paging_nav();
+		espresso_event_list_pagination();
 		// allow moar other stuff
 		do_action( 'AHEE__archive_espresso_events_template__after_loop' );
 
