@@ -285,6 +285,9 @@ class EE_Data_Migration_Manager{
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 					EEH_Activation::initialize_db_content();
+					//make sure the datetime and ticket total sold are correct
+					EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all(array('default_where_conditions'=>'none')));
+					EEM_Ticket::instance()->update_sold(EEM_Ticket::instance()->get_all(array('default_where_conditions'=>'none')));
 					$this->_save_migrations_ran();
 					return array(
 						'records_to_migrate'=>1,
