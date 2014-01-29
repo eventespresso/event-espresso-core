@@ -207,4 +207,11 @@ jQuery(function() {
 	jQuery('#start-migration').click(function(){
 		Maintenance_helper.begin_migration();		
 	});
+	
+	//start migration, update start-button to be "migrating..." and disable it 
+	jQuery('#do-not-migrate').click(function(){
+		if ( confirm( 'You have chosen to NOT migrate your existing data.\nAre you sure you want to continue?' )) {
+			document.location.href = jQuery(this).val();
+		}		
+	});
 });

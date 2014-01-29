@@ -907,9 +907,9 @@ class EEH_Activation {
 	public static function create_no_ticket_prices_array(){
 		// this creates an array for tracking events that have no active ticket prices created
 		// this allows us to warn admins of the situation so that it can be corrected
-		$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', FALSE );
+		$espresso_no_ticket_prices = get_option( 'ee_no_ticket_prices', FALSE );
 		if ( ! $espresso_no_ticket_prices ) {
-			add_option( 'espresso_no_ticket_prices', array(), '', FALSE );
+			add_option( 'ee_no_ticket_prices', array(), '', FALSE );
 		}	
 	}
 
@@ -936,16 +936,9 @@ class EEH_Activation {
 	 */
 	public static function plugin_uninstall() {
 		global $wpdb;
-		$no_tables = array(
-			'EEM_Base' => TRUE,
-			'EEM_CPT_Base' => TRUE,
-			'EEM_Gateways' => TRUE,
-			'EEM_Soft_Delete_Base' => TRUE,
-			'EEM_System_Status' => TRUE
-		);
 		$undeleted_tables = array();
-		foreach ( EE_Registry::instance()->models as $model ) {
-			if ( ! isset( $no_tables[ $model ] )) {
+		foreach ( EE_Registry::instance()->non_abstract_db_models as $model ) {
+			if ( method_exists( $model, 'instance' ) && $model::instance() instanceof EEM_Base ) {
 				foreach ( $model::instance()->get_tables() as $table ) {
 					if ( strpos( $table->get_table_name(), 'esp_' )) {
 						switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
@@ -964,21 +957,21 @@ class EEH_Activation {
 		}
 		
 		$wp_options_to_delete = array(
-			'espresso_no_ticket_prices' => TRUE,
+			'ee_no_ticket_prices' => TRUE,
 			'ee_active_messengers' => TRUE,
-			'espresso_flush_rewrite_rules' => TRUE,
-			'espresso_config' => TRUE,
-			'espresso_data_migration_current_db_state' => TRUE,
-			'espresso_data_migrations' => TRUE,
-			'espresso_notices' => TRUE,
+			'ee_flush_rewrite_rules' => TRUE,
+			'ee_config' => TRUE,
+			'ee_data_migration_current_db_state' => TRUE,
+			'ee_data_migrations' => TRUE,
+			'ee_notices' => TRUE,
 			'lang_file_check_' => FALSE,
-			'maintenance_mode' => TRUE,
+			'ee_maintenance_mode' => TRUE,
 			'ee_ueip_optin' => TRUE,
 			'ee_ueip_has_notified' => TRUE,
-			'espresso_plugin_activation_errors' => TRUE,
-			'espresso_id_mapping_from' => FALSE,
+			'ee_plugin_activation_errors' => TRUE,
+			'ee_id_mapping_from' => FALSE,
 			'espresso_persistent_admin_notices' => TRUE,
-			'espresso_encryption_key' => TRUE,
+			'ee_encryption_key' => TRUE,
 			'pue_force_upgrade_' => FALSE,
 			'pue_json_error_' => FALSE,
 			'pue_install_key_' => FALSE,
@@ -986,9 +979,9 @@ class EEH_Activation {
 			'pu_dismissed_upgrade_' => FALSE,
 			'external_updates-' => FALSE,
 			'ee_extra_data' => TRUE,
-			'EE_SSN_' => FALSE,
-			'esp_rss_' => FALSE,
-			'rte_n_tx_' => FALSE
+			'ee_ssn_' => FALSE,
+			'ee_rss_' => FALSE,
+			'ee_rte_n_tx_' => FALSE
 		);
 		
 		$undeleted_options = array();

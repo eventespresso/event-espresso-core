@@ -112,9 +112,9 @@ final class EE_System {
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
 		// check for activation errors
-		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
+		if ( $activation_errors = get_option( 'ee_plugin_activation_errors', FALSE )) {
 			EE_Error::add_error( $activation_errors );
-			update_option( 'espresso_plugin_activation_errors', FALSE );
+			update_option( 'ee_plugin_activation_errors', FALSE );
 		}
 		// get model names
 		$this->_parse_model_names();
@@ -286,7 +286,7 @@ final class EE_System {
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			// set flag for flushing rewrite rules
-			update_option( 'espresso_flush_rewrite_rules', TRUE );
+			update_option( 'ee_flush_rewrite_rules', TRUE );
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();

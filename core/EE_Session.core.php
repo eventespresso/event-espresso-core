@@ -263,7 +263,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
 		// now let's retreive what's in the db
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
-		if ( $session_data = get_transient( 'EE_SSN_' . $this->_sid )) {
+		if ( $session_data = get_transient( 'ee_ssn_' . $this->_sid )) {
 			// un-encrypt the data
 			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
 			// unserialize
@@ -430,7 +430,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		// encrypt it if we are using encryption
 		$session_data = $this->_use_encryption ? $this->encryption->encrypt( $session_data ) : $session_data;
 		// we're using the Transient API for storing session data, cuz it's so damn simple -> set_transient(  transient ID, data, expiry )
-		return set_transient( 'EE_SSN_' . $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
+		return set_transient( 'ee_ssn_' . $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
 	}
 	

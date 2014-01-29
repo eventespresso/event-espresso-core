@@ -51,9 +51,11 @@ class EE_PUE {
 //		throw new EE_Error('error');
 		
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$this->_uxip_hooks();
-
+		
+		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
+			$this->_uxip_hooks();
+		}
+		
 		$ueip_optin = get_option('ee_ueip_optin');
 		$ueip_has_notified = isset($_POST['ueip_optin']) ? TRUE : get_option('ee_ueip_has_notified');
 
