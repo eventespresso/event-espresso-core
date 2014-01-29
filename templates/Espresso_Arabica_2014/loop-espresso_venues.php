@@ -27,7 +27,7 @@ if ( have_posts() ) : ?>
 		get_template_part( 'content', 'espresso_venues' );
 	endwhile;
 	// Previous/next page navigation.
-	espresso_venue_list_pagination();
+	espresso_pagination();
 	// allow moar other stuff
 	do_action( 'AHEE__archive_espresso_venues_template__after_loop' ); 
 
