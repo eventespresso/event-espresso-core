@@ -349,6 +349,8 @@ class EE_Data_Migration_Manager{
 						//but dont forget to make sure intial data is there
 						EE_Registry::instance()->load_helper('Activation');
 						EEH_Activation::initialize_db_content();
+						EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all(array('default_where_conditions'=>'none')));
+					EEM_Ticket::instance()->update_sold(EEM_Ticket::instance()->get_all(array('default_where_conditions'=>'none')));
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
 					break;
