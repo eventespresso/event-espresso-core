@@ -583,7 +583,7 @@ final class EE_Admin {
 	 */
 	public function get_persistent_admin_notices() {
 		// check for persistent admin notices
-		if ( $persistent_admin_notices = get_option( 'espresso_persistent_admin_notices', FALSE )) {
+		if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', FALSE )) {
 			foreach( $persistent_admin_notices as $persistent_admin_notice ) {
 				EE_Error::add_attention( $persistent_admin_notice );				
 			}

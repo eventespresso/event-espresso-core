@@ -335,7 +335,7 @@ class EED_Add_New_State  extends EED_Module {
 		$new_state = EE_State::new_instance( $props_n_values );
 		if ( $new_state instanceof EE_State ) {
 			// if not non-ajax admin
-			$persistent_admin_notices = get_option( 'espresso_persistent_admin_notices', array() );
+			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
 			$new_state_notice = array( 
 				$new_state->country_iso() . '-' . $new_state->abbrev() => sprintf( 
 					__( 'A new State named "%s (%s)" was dynamically added from an Event Espresso form for the Country of "%s".<br/>To verify, edit, and/or delete this new State, please go to the %s and update the States / Provinces section.<br/>Check "Yes" to have this new State added to dropdown select lists in forms.', 'event_espresso' ),
@@ -346,7 +346,7 @@ class EED_Add_New_State  extends EED_Module {
 				)
 			);			
 			$persistent_admin_notices = array_merge( $persistent_admin_notices, $new_state_notice );
-			update_option( 'espresso_persistent_admin_notices', $persistent_admin_notices );
+			update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
 //			printr( $new_state, '$new_state  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			$new_state->save();
 			EEM_State::instance()->reset_cached_states();
@@ -366,10 +366,10 @@ class EED_Add_New_State  extends EED_Module {
 	*/	
 	public static function update_country_settings( $CNT_ISO = '', $STA_ID = '', $cols_n_values = array() ) {
 		$STA_abbrev = is_array( $cols_n_values ) && isset( $cols_n_values['STA_abbrev'] ) ? $cols_n_values['STA_abbrev'] : FALSE;
-		if ( $persistent_admin_notices = get_option( 'espresso_persistent_admin_notices', FALSE )) {
+		if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', FALSE )) {
 			unset( $persistent_admin_notices[ $CNT_ISO . '-' . $STA_abbrev ] );
 		}
-		update_option( 'espresso_persistent_admin_notices', $persistent_admin_notices );
+		update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
 	}
 
 
