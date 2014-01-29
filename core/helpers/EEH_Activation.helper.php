@@ -988,7 +988,7 @@ class EEH_Activation {
 			'pu_dismissed_upgrade_' => FALSE,
 			'external_updates-' => FALSE,
 			'ee_extra_data' => TRUE,
-			'EE_SSN_' => FALSE,
+			'ee_ssn_' => FALSE,
 			'esp_rss_' => FALSE,
 			'rte_n_tx_' => FALSE
 		);
