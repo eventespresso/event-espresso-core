@@ -90,7 +90,7 @@ class EE_PUE {
 
 		// PUE Auto Upgrades stuff
 		if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { //include the file 
-			require(EE_THIRD_PARTY . 'pue/pue-client.php' );
+			require_once(EE_THIRD_PARTY . 'pue/pue-client.php' );
 
 			$api_key = isset( EE_Registry::instance()->CFG->site_license_key ) ? EE_Registry::instance()->CFG->site_license_key : '';
 			$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
