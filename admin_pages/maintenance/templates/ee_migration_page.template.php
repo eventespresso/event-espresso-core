@@ -68,20 +68,51 @@
 		<?php }?>
 		
 		<?php }else{?>
-			<h2><?php _e("Your Database is up-to-date", "event_espresso");?></h2>
+		<h2><?php _e("Your Database is up-to-date", "event_espresso");?></h2>
 		<?php }?>
 		<?php if ($show_backup_db_text){ ?>
-			<div id='backup_db_text'>
-				<p class="ee-attention"><?php printf(__("Because any data migration has the potential to corrupt your information, you are %s REQUIRED %s to perform a database backup before running any Event Espresso data migration scripts.", "event_espresso"),"<b>","</b>");?></p>
-				<p><b><?php _e("Not sure how?", "event_espresso");?></b> 
-					<?php printf(__('%1$s here is an explanation of how to do it %2$s. Or you can also %3$s search for a database backup plugin %2$s', "event_espresso"),
-								"<a href='http://codex.wordpress.org/Backing_Up_Your_Database'>","</a>","<a href='".admin_url('plugin-install.php?tab=search&type=term&s=database+backup&plugin-search-input=Search+Plugins')."'>");?></p>
-				<p class="ee-attention"><b><?php _e("Important note to users with Event Espresso addons: ", "event_espresso");?></b><br/><?php _e("Your Event Espresso 3 (EE3) addons WILL NOT WORK with this new version of Event Espresso 4 (EE4), and their data will NOT BE MIGRATED unless the addon's description explicitly states that it is EE4 compatible. If you want, or need to keep using your EE3 addons, you SHOULD NOT USE EE4, and instead continue using EE3 until EE4 compatible versions of your addons becaome available. To continue using EE3 for now, simply deactivate EE4 and reactivate EE3.", "event_espresso");	?></p>
-			</div>
-		<div id='migration-confirm-backed-up'>
-			<label for='db-backed-up' id='db-backed-up-label'>
-				<input type='checkbox' id='db-backed-up' class="toggle-migration-monitor"> <?php _e("I have backed up my database, and am ready to migrate my EE3 data to EE4", "event_espresso");?>				
-			</label>
+		<div id='backup_db_text'>
+			<p class="ee-attention"><?php printf(__("Because any data migration has the potential to corrupt your information, you are %s REQUIRED %s to perform a database backup before running any Event Espresso data migration scripts.", "event_espresso"),"<b>","</b>");?></p>
+			<p>
+			<?php 
+				printf(
+					__('%1$sNot sure how to backup your existing data?%2$s Here is an %3$sexplanation%6$s.%7$sYou can also search the WordPress plugin database for %4$s database backup plugins %6$s, or have one of our dedicated support technicians help you by purchasing a %5$sPriority Support Token%6$s.', "event_espresso"),
+					'<b>',
+					'</b>',
+					"<a href='http://codex.wordpress.org/Backing_Up_Your_Database'>",
+					"<a href='".admin_url('plugin-install.php?tab=search&type=term&s=database+backup&plugin-search-input=Search+Plugins')."'>",
+					"<a href='http://eventespresso.com/product/priority-support-tokens/'>",
+					"</a>",
+					'<br/>'
+				);
+			?>		
+			</p>
+			<p class="ee-attention">
+				<b><?php _e("Important note to users with Event Espresso addons: ", "event_espresso");?></b><br/><?php _e("Your Event Espresso 3 (EE3) addons WILL NOT WORK with this new version of Event Espresso 4 (EE4), and their data will NOT BE MIGRATED unless the addon's description explicitly states that it is EE4 compatible. If you want, or need to keep using your EE3 addons, you SHOULD NOT USE EE4, and instead continue using EE3 until EE4 compatible versions of your addons becaome available. To continue using EE3 for now, simply deactivate EE4 and reactivate EE3.", "event_espresso");	?>
+			</p>
+		</div>
+		<div id="migration-options-dv">
+			<h1><?php _e("Migration Options", "event_espresso");?><span class="tiny-text lt-grey-text"> &nbsp; <?php _e(' to migrate or not to migrate?', "event_espresso");?></span></h1>
+			<p>
+				<label for='db-backed-up' id='db-backed-up-label'>
+					<input type='checkbox' id='db-backed-up' class="toggle-migration-monitor">
+					<?php 
+					echo sprintf( 
+						__("%sI have backed up my database%s, %sunderstand the risks involved%s, and am ready to migrate my existing EE3 data to EE4", "event_espresso"), 
+						'<strong>', 
+						'</strong>',
+						'<a href="http://eventespresso.com/wiki/how-to-back-up-your-site/">',
+						'</a>'
+					);
+					?>
+				</label>
+			</p>
+			<p>	
+				<label for='do-not-migrate' id='do-not-migrate-label'>
+					<input type='checkbox' id='do-not-migrate' class="do-not-migrate" value="<?php echo $reset_db_page_link?>">
+					<?php _e("I do NOT want to migrate my EE3 data to EE4 at this time and just want to use EE4 without migrating data", "event_espresso");?>
+				</label>
+			</p>
 		</div>
 		<?php } ?>
 		
@@ -132,9 +163,5 @@
 		<input type='submit' class="button-primary" value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
 	</form>
 	<?php } ?>
-	
-	<div id="reset_db_div">
-		<h1><a href='<?php echo $reset_db_page_link?>'>Use EE4 without migrating data</a></h1>
-	</div>
-	
+		
 </div>
