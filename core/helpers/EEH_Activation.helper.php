@@ -969,7 +969,7 @@ class EEH_Activation {
 			'ee_no_ticket_prices' => TRUE,
 			'ee_active_messengers' => TRUE,
 			'ee_flush_rewrite_rules' => TRUE,
-			'espresso_config' => TRUE,
+			'ee_config' => TRUE,
 			'espresso_data_migration_current_db_state' => TRUE,
 			'espresso_data_migrations' => TRUE,
 			'espresso_notices' => TRUE,
