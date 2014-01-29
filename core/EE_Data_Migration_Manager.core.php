@@ -31,13 +31,13 @@ class EE_Data_Migration_Manager{
 	/**
 	 * name of the wordpress option which stores an array of data about
 	 */
-	const data_migrations_option_name = 'espresso_data_migrations';
+	const data_migrations_option_name = 'ee_data_migrations';
 	
 	/**
 	 * name of the wordpress option which stores the database' current version. IE, the code may be at version 4.2.0,
 	 * but as migrations are performed the database will progress from 3.1.35 to 4.1.0 etc.
 	 */
-	const current_database_state = 'espresso_data_migration_current_db_state';
+	const current_database_state = 'ee_data_migration_current_db_state';
 	
 	/**
 	 * Special status string returned when we're positive there are no more data migration
@@ -102,7 +102,7 @@ class EE_Data_Migration_Manager{
 		if( ! $this->_data_migrations_ran ){
 			//setup autoloaders for each of the scripts in there
 			$this->get_all_data_migration_scripts_available();
-			 $data_migrations_data = get_option(EE_Data_Migration_Manager::data_migrations_option_name,array());
+			 $data_migrations_data = get_option(EE_Data_Migration_Manager::data_migrations_option_name,get_option('espresso_data_migrations',array()));
 			 $data_migrations_ran = array();
 			 //convert into data migration script classes where possible
 			 foreach($data_migrations_data as $version_string => $data_migration_data){
@@ -285,6 +285,9 @@ class EE_Data_Migration_Manager{
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
 					EEH_Activation::initialize_db_content();
+					//make sure the datetime and ticket total sold are correct
+					EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all(array('default_where_conditions'=>'none')));
+					EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all(array('default_where_conditions'=>'none')));
 					$this->_save_migrations_ran();
 					return array(
 						'records_to_migrate'=>1,
@@ -346,6 +349,8 @@ class EE_Data_Migration_Manager{
 						//but dont forget to make sure intial data is there
 						EE_Registry::instance()->load_helper('Activation');
 						EEH_Activation::initialize_db_content();
+						EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all(array('default_where_conditions'=>'none')));
+					EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all(array('default_where_conditions'=>'none')));
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
 					break;
