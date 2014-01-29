@@ -37,7 +37,7 @@ class EE_Data_Migration_Manager{
 	 * name of the wordpress option which stores the database' current version. IE, the code may be at version 4.2.0,
 	 * but as migrations are performed the database will progress from 3.1.35 to 4.1.0 etc.
 	 */
-	const current_database_state = 'espresso_data_migration_current_db_state';
+	const current_database_state = 'ee_data_migration_current_db_state';
 	
 	/**
 	 * Special status string returned when we're positive there are no more data migration
