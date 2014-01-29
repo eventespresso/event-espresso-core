@@ -936,29 +936,20 @@ class EEH_Activation {
 	 */
 	public static function plugin_uninstall() {
 		global $wpdb;
-		$no_tables = array(
-			'EEM_Base' => TRUE,
-			'EEM_CPT_Base' => TRUE,
-			'EEM_Gateways' => TRUE,
-			'EEM_Soft_Delete_Base' => TRUE,
-			'EEM_System_Status' => TRUE
-		);
 		$undeleted_tables = array();
-		foreach ( EE_Registry::instance()->models as $model ) {
-			if ( ! isset( $no_tables[ $model ] )) {
-				if ( method_exists( $model, 'instance' ) && $model::instance() instanceof EEM_Base ) {
-					foreach ( $model::instance()->get_tables() as $table ) {
-						if ( strpos( $table->get_table_name(), 'esp_' )) {
-							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
-								case FALSE :
-									$undeleted_tables[] = $table->get_table_name();
-								break;
-								case 0 :
-	//								echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
-								break;
-								default:
-	//								echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
-							}
+		foreach ( EE_Registry::instance()->non_abstract_db_models as $model ) {
+			if ( method_exists( $model, 'instance' ) && $model::instance() instanceof EEM_Base ) {
+				foreach ( $model::instance()->get_tables() as $table ) {
+					if ( strpos( $table->get_table_name(), 'esp_' )) {
+						switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
+							case FALSE :
+								$undeleted_tables[] = $table->get_table_name();
+							break;
+							case 0 :
+//								echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
+							break;
+							default:
+//								echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
 						}
 					}
 				}
@@ -970,15 +961,15 @@ class EEH_Activation {
 			'ee_active_messengers' => TRUE,
 			'ee_flush_rewrite_rules' => TRUE,
 			'ee_config' => TRUE,
-			'espresso_data_migration_current_db_state' => TRUE,
-			'espresso_data_migrations' => TRUE,
+			'ee_data_migration_current_db_state' => TRUE,
+			'ee_data_migrations' => TRUE,
 			'ee_notices' => TRUE,
 			'lang_file_check_' => FALSE,
-			'maintenance_mode' => TRUE,
+			'ee_maintenance_mode' => TRUE,
 			'ee_ueip_optin' => TRUE,
 			'ee_ueip_has_notified' => TRUE,
 			'ee_plugin_activation_errors' => TRUE,
-			'espresso_id_mapping_from' => FALSE,
+			'ee_id_mapping_from' => FALSE,
 			'espresso_persistent_admin_notices' => TRUE,
 			'ee_encryption_key' => TRUE,
 			'pue_force_upgrade_' => FALSE,

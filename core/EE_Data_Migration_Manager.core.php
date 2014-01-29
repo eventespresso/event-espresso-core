@@ -321,6 +321,7 @@ class EE_Data_Migration_Manager{
 		try{
 			//do what we came to do!
 			$current_script_class->migration_step(EE_Data_Migration_Manager::step_size);
+	
 			switch($current_script_class->get_status()){
 				case EE_Data_Migration_Manager::status_continue:
 					$response_array = array(
@@ -380,7 +381,14 @@ class EE_Data_Migration_Manager{
 				'script'=>$script_name
 			);
 		}
-		$this->_save_migrations_ran();
+		$succesful_save = $this->_save_migrations_ran();
+		if($succesful_save !== TRUE){
+			//ok so teh current wp option didn't save. that's tricky, because we'd like to update it
+			//and mark it as having a fatal error, but remember- WE CAN'T SAVE THIS WP OPTION!
+			//however, if we throw an exception, and return that, then the next request
+			//won't have as much info in it, and it may be able to save
+			throw new EE_Error(sprintf(__("An error occurred updating the status of the migration. This is a FATAL ERROR, but the error is preventing the system from remembering that. Please contact event espresso support.", "event_espresso")));
+		}
 		return $response_array;
 	}
 	
@@ -520,6 +528,7 @@ class EE_Data_Migration_Manager{
 	}
 	/**
 	 * saves what data migrations have ran to teh database
+	 * @return mixed TRUE if successfully saved migrations ran, string if an error occurred
 	 */
 	protected function _save_migrations_ran(){
 		if($this->_data_migrations_ran == null){
@@ -533,8 +542,16 @@ class EE_Data_Migration_Manager{
 			}else{
 				$array_of_migrations[$version_string] = $array_or_migration_obj;
 			}
+		}		
+
+		$updated = update_option(self::data_migrations_option_name, $array_of_migrations);
+		if( $updated !== TRUE){
+			global $wpdb;
+			return $wpdb->last_error;
+		}else{
+			return TRUE;
 		}
-		update_option(self::data_migrations_option_name, $array_of_migrations);
+//				wp_mail("michael@eventespresso.com", time()." price debug info", "updated: $updated, last error: $last_error, byte length of option: ".strlen(serialize($array_of_migrations)));
 	}
 	
 	/**
