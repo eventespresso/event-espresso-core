@@ -162,6 +162,7 @@
 						<?php echo EEH_Template::get_help_tab_link('event_list_cpt_info'); ?>
 						<br />
 						<a href='<?php echo get_post_type_archive_link('espresso_events') ?>'><?php	_e("View", "event_espresso");?></a>
+					</label>
 				</th>
 				<td>
 					<p class="description">

@@ -13,10 +13,9 @@ Styling the progress bar and migration page
 	color: #444;
 }
 
-/*#main-message,
-#migration-start-border,*/
-#migration-confirm-backed-up {
-	text-align: center;
+
+#migration-options-dv {
+	margin: 3em 0 0;
 }
 
 #start-migration {
@@ -30,13 +29,11 @@ Styling the progress bar and migration page
 .progress-responsive {
 	width: 70%;
 	float: left;
-	/* margin-right:auto;
-	margin-left:auto;*/
+
 }
 /* Progress bar containers */
 figure {
 	position: relative;
-	/*width: 100%;*/
 	height: 25px;
 	border: 2px solid #A39D9C;
 	border-radius: 3px;
@@ -50,7 +47,7 @@ figure div:first-child {
 	border-radius: 2px;
 }
 
-/* Green bar */
+/* blue bar */
 .progress-responsive .progress-responsive__bar {
 	background: #2EA2CC;
 }
