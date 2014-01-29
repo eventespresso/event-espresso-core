@@ -287,7 +287,7 @@ class EE_Data_Migration_Manager{
 					EEH_Activation::initialize_db_content();
 					//make sure the datetime and ticket total sold are correct
 					EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all(array('default_where_conditions'=>'none')));
-					EEM_Ticket::instance()->update_sold(EEM_Ticket::instance()->get_all(array('default_where_conditions'=>'none')));
+					EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all(array('default_where_conditions'=>'none')));
 					$this->_save_migrations_ran();
 					return array(
 						'records_to_migrate'=>1,
@@ -350,7 +350,7 @@ class EE_Data_Migration_Manager{
 						EE_Registry::instance()->load_helper('Activation');
 						EEH_Activation::initialize_db_content();
 						EEM_Datetime::instance()->update_sold(EEM_Datetime::instance()->get_all(array('default_where_conditions'=>'none')));
-					EEM_Ticket::instance()->update_sold(EEM_Ticket::instance()->get_all(array('default_where_conditions'=>'none')));
+					EEM_Ticket::instance()->update_tickets_sold(EEM_Ticket::instance()->get_all(array('default_where_conditions'=>'none')));
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
 					break;
