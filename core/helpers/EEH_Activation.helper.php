@@ -989,7 +989,7 @@ class EEH_Activation {
 			'external_updates-' => FALSE,
 			'ee_extra_data' => TRUE,
 			'ee_ssn_' => FALSE,
-			'esp_rss_' => FALSE,
+			'ee_rss_' => FALSE,
 			'rte_n_tx_' => FALSE
 		);
 		

@@ -1906,7 +1906,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$pre .= '<span id="' . $rss_id . '_url" class="hidden">' . $url . '</span>';
 		$post = '</div>' . "\n";
 
-		$cache_key = 'esp_rss_' . md5( $rss_id );
+		$cache_key = 'ee_rss_' . md5( $rss_id );
 		if ( FALSE != ( $output = get_transient( $cache_key ) ) ) {
 			echo $pre . $output . $post;
 			return TRUE;
