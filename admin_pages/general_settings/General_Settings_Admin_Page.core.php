@@ -71,7 +71,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_admin_page_title = GEN_SET_LABEL;
 		$this->_labels = array(
 			'publishbox' => __('Update Settings', 'event_espresso')
-			);
+		);
 	}
 
 
@@ -147,7 +147,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 50
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                'help_tabs' => array(
+               			'help_tabs' => array(
 					'general_settings_critical_pages_help_tab' => array(
 						'title' => __('Critical Pages', 'event_espresso'),
 						'filename' => 'general_settings_critical_pages'
@@ -164,7 +164,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                'help_tabs' => array(
+                			'help_tabs' => array(
 					'general_settings_templates_help_tab' => array(
 						'title' => __('Templates', 'event_espresso'),
 						'filename' => 'general_settings_templates'
@@ -177,8 +177,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Your Organization'),
 					'order' => 20
-					),
-                'help_tabs' => array(
+				),
+                			'help_tabs' => array(
 					'general_settings_your_organization_help_tab' => array(
 						'title' => __('Your Organization', 'event_espresso'),
 						'filename' => 'general_settings_your_organization'
@@ -194,7 +194,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 60
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                'help_tabs' => array(
+                			'help_tabs' => array(
 					'general_settings_admin_options_help_tab' => array(
 						'title' => __('Admin Options', 'event_espresso'),
 						'filename' => 'general_settings_admin_options'
