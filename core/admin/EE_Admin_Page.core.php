@@ -2843,7 +2843,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//now let's set the string for what kind of transient we're setting
-		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
+		$transient = $notices ? 'ee_rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = $notices ? array( 'notices' => $data ) : $data;
 		//is there already a transient for this route?  If there is then let's ADD to that transient
 		if ( $existing = get_transient( $transient ) ) {
@@ -2864,7 +2864,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _get_transient( $notices = FALSE, $route = FALSE ) {
 		$user_id = get_current_user_id();
 		$route = !$route ? $this->_req_action : $route;
-		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
+		$transient = $notices ? 'ee_rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = get_transient( $transient );
 		//delete transient after retrieval (just in case it hasn't expired);
 		delete_transient( $transient );
