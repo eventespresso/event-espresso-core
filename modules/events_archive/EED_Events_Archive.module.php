@@ -490,7 +490,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public static function template_include( $template ) {
-				// display event status banner ?
+		// display event status banner ?
 		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner && ! EEH_Template::is_espresso_theme() ) {
 			add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 		}
