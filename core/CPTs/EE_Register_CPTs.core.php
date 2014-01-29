@@ -69,9 +69,9 @@ class EE_Register_CPTs {
 		$this->set_default_term( 'espresso_event_type', 'single-event', array('espresso_events') );
 		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
 		// flush_rewrite_rules ?
-		if ( get_option( 'espresso_flush_rewrite_rules', TRUE )) {
+		if ( get_option( 'ee_flush_rewrite_rules', TRUE )) {
 			flush_rewrite_rules();
-			update_option( 'espresso_flush_rewrite_rules', FALSE );
+			update_option( 'ee_flush_rewrite_rules', FALSE );
 		}
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );

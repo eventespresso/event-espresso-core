@@ -1646,12 +1646,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		if ($EVT_ID) {
 			$success = $this->_permanently_delete_event( $EVT_ID );
 			// get list of events with no prices
-			$espresso_no_ticket_prices = get_option('espresso_no_ticket_prices', array());
+			$espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
 			// remove this event from the list of events with no prices
 			if (isset($espresso_no_ticket_prices[$EVT_ID])) {
 				unset($espresso_no_ticket_prices[$EVT_ID]);
 			}
-			update_option('espresso_no_ticket_prices', $espresso_no_ticket_prices);
+			update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
 		} else {
 			$success = FALSE;
 			$msg = __('An error occurred. An event could not be deleted because a valid event ID was not not supplied.', 'event_espresso');
@@ -1671,7 +1671,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _delete_events() {
 		$succes = TRUE;
 		// get list of events with no prices
-		$espresso_no_ticket_prices = get_option('espresso_no_ticket_prices', array());
+		$espresso_no_ticket_prices = get_option('ee_no_ticket_prices', array());
 		//determine the event id and set to array.
 		$EVT_IDs = isset($this->_req_data['EVT_IDs']) ? (array) $this->_req_data['EVT_IDs'] : array();
 		// loop thru events
@@ -1689,7 +1689,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			}
 		}
-		update_option('espresso_no_ticket_prices', $espresso_no_ticket_prices);
+		update_option('ee_no_ticket_prices', $espresso_no_ticket_prices);
 		// in order to force a pluralized result message we need to send back a success status greater than 1
 		$succes = $succes ? 2 : FALSE;
 		$this->_redirect_after_action($succes, 'Events', 'deleted', array('action' => 'default'));

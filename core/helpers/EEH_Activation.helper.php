@@ -907,9 +907,9 @@ class EEH_Activation {
 	public static function create_no_ticket_prices_array(){
 		// this creates an array for tracking events that have no active ticket prices created
 		// this allows us to warn admins of the situation so that it can be corrected
-		$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', FALSE );
+		$espresso_no_ticket_prices = get_option( 'ee_no_ticket_prices', FALSE );
 		if ( ! $espresso_no_ticket_prices ) {
-			add_option( 'espresso_no_ticket_prices', array(), '', FALSE );
+			add_option( 'ee_no_ticket_prices', array(), '', FALSE );
 		}	
 	}
 
@@ -966,9 +966,9 @@ class EEH_Activation {
 		}
 		
 		$wp_options_to_delete = array(
-			'espresso_no_ticket_prices' => TRUE,
+			'ee_no_ticket_prices' => TRUE,
 			'ee_active_messengers' => TRUE,
-			'espresso_flush_rewrite_rules' => TRUE,
+			'ee_flush_rewrite_rules' => TRUE,
 			'espresso_config' => TRUE,
 			'espresso_data_migration_current_db_state' => TRUE,
 			'espresso_data_migrations' => TRUE,
