@@ -322,7 +322,7 @@
 		* the value will be the newly-inserted ID.
 		* If we have already imported data from the same website via CSV, it shoudl be kept in this wp option
 		*/
-	   $old_db_to_new_db_mapping = get_option('espresso_id_mapping_from'.sanitize_title($old_site_url),array());
+	   $old_db_to_new_db_mapping = get_option('ee_id_mapping_from'.sanitize_title($old_site_url),array());
 	   if( $old_db_to_new_db_mapping){
 		   EE_Error::add_attention(sprintf(__("We noticed you have imported data via CSV from %s before. Because of this, IDs in your CSV have been mapped to their new IDs in %s", "event_espresso"),$old_site_url,site_url()));
 	   }
@@ -508,7 +508,7 @@
 			}
 		}
 		//save the mapping from old db to new db in case they try re-importing teh same data from teh same website again
-		update_option('espresso_id_mapping_from'.sanitize_title($old_site_url),$old_db_to_new_db_mapping);
+		update_option('ee_id_mapping_from'.sanitize_title($old_site_url),$old_db_to_new_db_mapping);
 
 		if ( $total_updates > 0 ) {
 			EE_Error::add_success( sprintf(__("%s existing records in the database were updated.", "event_espresso"),$total_updates));
