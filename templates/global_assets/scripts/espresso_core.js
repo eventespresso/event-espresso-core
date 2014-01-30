@@ -16,7 +16,7 @@
 			var element_left = ( $( window ).width() - this.outerWidth() ) / 2;
 			element_left = position == 'fixed' ? element_left : element_left + $( window ).scrollLeft();
 			element_left = Math.max( 0, element_left );
-			this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' , 'margin-left' : 0 });
+			this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' , 'margin' : 0 });
 			return this;
 		},
 
