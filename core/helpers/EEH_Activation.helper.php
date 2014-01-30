@@ -937,32 +937,24 @@ class EEH_Activation {
 	public static function plugin_uninstall() {
 		global $wpdb;
 		$undeleted_tables = array();
-		// load registry
-		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
-			require_once( EE_CORE . 'EE_Registry.core.php' );
-			foreach ( EE_Registry::instance()->non_abstract_db_models as $model ) {
-				if ( method_exists( $model, 'instance' ) && $model::instance() instanceof EEM_Base ) {
-					foreach ( $model::instance()->get_tables() as $table ) {
-						if ( strpos( $table->get_table_name(), 'esp_' )) {
-							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
-								case FALSE :
-									$undeleted_tables[] = $table->get_table_name();
-								break;
-								case 0 :
-									// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
-								break;
-								default:
-									// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
-							}
+		foreach ( EE_Registry::instance()->non_abstract_db_models as $model ) {
+			if ( method_exists( $model, 'instance' ) && $model::instance() instanceof EEM_Base ) {
+				foreach ( $model::instance()->get_tables() as $table ) {
+					if ( strpos( $table->get_table_name(), 'esp_' )) {
+						switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
+							case FALSE :
+								$undeleted_tables[] = $table->get_table_name();
+							break;
+							case 0 :
+//								echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
+							break;
+							default:
+//								echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
 						}
 					}
 				}
 			}
-		} else {
-			$msg = __( 'The EE_Registry could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}		
-
+		}
 		
 		$wp_options_to_delete = array(
 			'ee_no_ticket_prices' => TRUE,
@@ -1003,10 +995,10 @@ class EEH_Activation {
 						$undeleted_options[] = $option_name;
 					break;
 					case 0 :
-						// echo '<h4 style="color:red;">the option : ' . $option_name . ' was not deleted  <br /></h4>';
+	//					echo '<h4 style="color:red;">the option : ' . $option_name . ' was not deleted  <br /></h4>';
 					break;
 					default:
-						// echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
+	//					echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
 				}	
 			}
 		}
