@@ -32,7 +32,7 @@
 				if ($most_recent_migration->get_errors()){?>
 					<div class="ee-attention">
 					<strong><?php printf(__("Warnings occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></strong>
-					<a id="show-hide-migration-warnings" class="display-the-hidden"><?php _e("Show/Hide", 'event_espresso');?></a>
+					<a id="show-hide-migration-warnings" class="display-the-hidden"><?php _e("Show Warnings", 'event_espresso');?></a>
 					<ul class="migration-warnings" style="display:none">
 					<?php foreach($most_recent_migration->get_errors() as $error){ ?>
 						<li><?php echo $error ?></li>
