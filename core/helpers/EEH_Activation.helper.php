@@ -1055,9 +1055,7 @@ class EEH_Activation {
 		}
 		if ( $errors != '' ) {
 			echo $errors;
-		} else {
-			wp_safe_redirect( admin_url( 'plugins.php' ));
-		}
+		} 
 	}
 
 
