@@ -103,32 +103,44 @@ class EE_Data_Migration_Manager{
 		if( ! $this->_data_migrations_ran ){
 			//setup autoloaders for each of the scripts in there
 			$this->get_all_data_migration_scripts_available();
-			 $data_migrations_data = get_option(EE_Data_Migration_Manager::data_migrations_option_name,get_option('espresso_data_migrations',array()));
-			 $data_migrations_ran = array();
-			 //convert into data migration script classes where possible
-			 foreach($data_migrations_data as $version_string => $data_migration_data){
-				 if(isset($data_migration_data['class']) && class_exists($data_migration_data['class'])){
-					 $class = new $data_migration_data['class'];
-					 if($class instanceof EE_Data_Migration_Script_Base){
-						 $class->instantiate_from_array_of_properties($data_migration_data);
-						 $data_migrations_ran[$version_string] = $class;
-					 }else{
-						 //huh, so its an object but not a data migration script?? that shouldn't happen
-						 //just leave it as an array (which'll probably just get ignored)
-						 $data_migrations_ran[$version_string] = $data_migration_data;
-					 }
-				 }else{
-					 //so the data doesn't specify a class. So it must either be a legacy array of info or some array (which we'll probabl yjust ignore)
-					 $data_migrations_ran[$version_string] = $data_migration_data;
-				 }
-			 }
-			 //so here the array of $data_migrations_ran is actually a mix of classes and a few legacy arrays
+			$data_migrations_options = $this->_get_all_migration_script_options();//get_option(EE_Data_Migration_Manager::data_migrations_option_name,get_option('espresso_data_migrations',array()));
+			
+			$data_migrations_ran = array();
+			//convert into data migration script classes where possible
+			foreach($data_migrations_options as $data_migration_option){
+				$version_string = str_replace(EE_Data_Migration_Manager::data_migrations_option_name."_", "", $data_migration_option['option_name']);
+				$data_migration_data = maybe_unserialize($data_migration_option['option_value']);
+				if(isset($data_migration_data['class']) && class_exists($data_migration_data['class'])){
+					$class = new $data_migration_data['class'];
+					if($class instanceof EE_Data_Migration_Script_Base){
+						$class->instantiate_from_array_of_properties($data_migration_data);
+						$data_migrations_ran[$version_string] = $class;
+					}else{
+						//huh, so its an object but not a data migration script?? that shouldn't happen
+						//just leave it as an array (which'll probably just get ignored)
+						$data_migrations_ran[$version_string] = $data_migration_data;
+					}
+				}else{
+					//so the data doesn't specify a class. So it must either be a legacy array of info or some array (which we'll probabl yjust ignore)
+					$data_migrations_ran[$version_string] = $data_migration_data;
+				}
+			}
+			//so here the array of $data_migrations_ran is actually a mix of classes and a few legacy arrays
 			$this->_data_migrations_ran = $data_migrations_ran;
 			 if ( ! $this->_data_migrations_ran || ! is_array($this->_data_migrations_ran) ){
 				$this->_data_migrations_ran = array();
 			}
 		}
 		return $this->_data_migrations_ran;
+	}
+	
+	/**
+	 * Gets all the options containing migration scripts that have been run
+	 * @return array
+	 */
+	 function _get_all_migration_script_options(){
+		global $wpdb;
+		return $wpdb->get_results("SELECT * FROM {$wpdb->options} WHERE option_name like '".EE_Data_Migration_Manager::data_migrations_option_name."_%'",ARRAY_A);
 	}
 	
 	/**
@@ -537,21 +549,28 @@ class EE_Data_Migration_Manager{
 		}
 		$array_of_migrations = array();
 		//now, we don't want to save actual classes to the DB because that's messy
+		$successful_updates = true;
 		foreach($this->_data_migrations_ran as $version_string => $array_or_migration_obj){
 			if($array_or_migration_obj instanceof EE_Data_Migration_Script_Base){
-				$array_of_migrations[$version_string] = $array_or_migration_obj->properties_as_array();
+//				$array_of_migrations[$version_string] = $array_or_migration_obj->properties_as_array();
+				$successful_updates = update_option(self::data_migrations_option_name.'_'.$version_string,$array_or_migration_obj->properties_as_array());
 			}else{
-				$array_of_migrations[$version_string] = $array_or_migration_obj;
+//				$array_of_migrations[$version_string] = $array_or_migration_obj;
+				$successful_updates = update_option(self::data_migrations_option_name.'_'.$version_string,$array_or_migration_obj);
+			}
+			if( ! $successful_updates ){
+					global $wpdb;
+			return $wpdb->last_error;
 			}
 		}		
-
-		$updated = update_option(self::data_migrations_option_name, $array_of_migrations);
-		if( $updated !== TRUE){
-			global $wpdb;
-			return $wpdb->last_error;
-		}else{
-			return TRUE;
-		}
+		return true;
+//		$updated = update_option(self::data_migrations_option_name, $array_of_migrations);
+//		if( $updated !== TRUE){
+//			global $wpdb;
+//			return $wpdb->last_error;
+//		}else{
+//			return TRUE;
+//		}
 //				wp_mail("michael@eventespresso.com", time()." price debug info", "updated: $updated, last error: $last_error, byte length of option: ".strlen(serialize($array_of_migrations)));
 	}
 	
