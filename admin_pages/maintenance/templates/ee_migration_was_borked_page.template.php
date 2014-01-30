@@ -4,7 +4,6 @@
 <h1><?php _e("Data Migration Error", "event_espresso");?></h1>
 <p class='error'><?php printf(__("Your last data migration had a %s FATAL ERROR, and CANNOT be continued%s.", "event_espresso"),"<b>","</b>");?></p>
 <h2><?php _e("Fill out the below form to automatically Send Event Espresso a Crash Report", "event_espresso");?></h2>
-<p><?php _e('Please contact %1$s Event Espresso Support %2$s, and copy-and-paste the below information into your message', "event_espresso"); ?></p>
 <form action='<?php echo EE_Admin_Page::add_query_args_and_nonce(array('action'=>'send_migration_crash_report'), EE_MAINTENANCE_ADMIN_URL);?>' method='post'>
 	<table class='widefat'> 
 		<tr><td><label for='from'><?php _e("From/Reply-To:", "event_espresso");?></label></td><td><input name='from' id='from' type='text' style="width:200px"value='<?php echo get_bloginfo('admin_email','display'); ?>'></td></tr>
