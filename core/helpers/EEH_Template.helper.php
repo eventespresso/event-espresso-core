@@ -44,6 +44,17 @@ class EEH_Template {
 	}
 
 	/**
+	 * 	load_espresso_theme_functions - if current theme is an espresso theme, then load it's functions.php file ( if not already loaded )
+	 * 
+	 * 	@return void
+	 */
+	public static function load_espresso_theme_functions() {
+		if ( ! defined( 'EE_THEME_FUNCTIONS_LOADED' )) {
+			require_once( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'functions.php' );
+		}
+	}
+
+	/**
 	 * 	get_espresso_themes - returns an array of Espresso Child themes loacted in the /tmeplates/ directory
 	 * 
 	 * 	@return void
