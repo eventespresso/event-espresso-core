@@ -31,8 +31,9 @@
 				//display errors or not of the most recent migration ran
 				if ($most_recent_migration->get_errors()){?>
 					<div class="ee-attention">
-					<strong><?php printf(__("The following errors occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></strong>
-					<ul>
+					<strong><?php printf(__("Warnings occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></strong>
+					<a id="show-hide-migration-warnings" class="display-the-hidden"><?php _e("Show Warnings", 'event_espresso');?></a>
+					<ul class="migration-warnings" style="display:none">
 					<?php foreach($most_recent_migration->get_errors() as $error){ ?>
 						<li><?php echo $error ?></li>
 					<?php }?>
