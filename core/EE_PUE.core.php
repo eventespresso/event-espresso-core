@@ -76,7 +76,7 @@ class EE_PUE {
 		//only collect extra stats if the plugin user has opted in.
 		if ( !empty($espresso_data_optin) && $espresso_data_optin == 'yes' ) {
 			//let's only setup extra data if transient has expired
-			if ( false === ( $transient = get_transient('ee_extra_data') ) ) {
+			if ( false === ( $transient = get_transient('ee_extra_data') ) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
 				//active gateways
 				$active_gateways = get_option('event_espresso_active_gateways');
 				if ( !empty($active_gateways ) ) {
@@ -288,8 +288,10 @@ class EE_PUE {
 	 * @return void
 	 */
 	public function _uxip_hooks() {
-		add_action('admin_init', array( $this, 'track_active_theme' ) );
-		add_action('admin_init', array( $this, 'track_event_info' ) );
+		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
+			add_action('admin_init', array( $this, 'track_active_theme' ) );
+			add_action('admin_init', array( $this, 'track_event_info' ) );
+		}
 	}
 
 
