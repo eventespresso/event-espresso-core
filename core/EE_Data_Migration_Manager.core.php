@@ -273,7 +273,6 @@ class EE_Data_Migration_Manager{
 	 * item is a string describing what was done
 	 */
 	public function migration_step(){
-		throw new EE_Error();
 		try{
 			$currently_executing_script = $this->get_last_ran_script();
 
