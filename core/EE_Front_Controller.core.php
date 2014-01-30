@@ -221,7 +221,7 @@ final class EE_Front_Controller {
 	public function _initialize_shortcodes( WP $WP ) {
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this );
 		// grab post_name from request
-		$current_post = apply_filters( 'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',EE_Registry::instance()->REQ->get( 'post_name' ) );
+		$current_post = apply_filters( 'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name', EE_Registry::instance()->REQ->get( 'post_name' ));
 		// if it's not set, then check if frontpage is blog
 		if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
 			// yup.. this is the posts page, prepare to load all shortcode modules
@@ -251,7 +251,7 @@ final class EE_Front_Controller {
 			}
 		} 
 		// are we on a category page?
-		$term_exists = is_array( term_exists( $current_post, 'category' ));
+		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
 		// make sure shortcodes are set
 		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
 			// cycle thru all posts with shortcodes set
@@ -270,7 +270,7 @@ final class EE_Front_Controller {
 							break;
 						}
 						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
+						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists || $current_post == 'posts' ) {
 							// let's pause to reflect on this...
 							$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
 							// ensure that class is actually a shortcode
@@ -281,7 +281,7 @@ final class EE_Front_Controller {
 								break;
 							}
 							// and pass the request object to the run method
-							$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
+							$shortcode = $sc_reflector->newInstance();
 							// fire the shortcode class's run method, so that it can activate resources
 							$shortcode->run( $WP );
 						}

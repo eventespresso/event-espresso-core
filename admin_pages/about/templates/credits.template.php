@@ -1,5 +1,5 @@
-<p class="about-description"><?php _e('Event Espresso is created by a worldwide team of passionate people with a drive to empower your events!', 'event_espresso'); ?></p>
-<h4 class="wp-people-group"><?php _e('Owners', 'event_espresso'); ?></h4>
+<p class="about-description"><?php _e('Event Espresso is created by an international team of passionate individuals with a drive to empower your events!', 'event_espresso'); ?></p>
+<h4 class="wp-people-group"><?php _e('Founders', 'event_espresso'); ?></h4>
 <ul class="wp-people-group" id="ee-people-group-owners">
 	<li class="wp-person" id="ee-person-sshoultes">
 		<a href="<?php esp_gravatar_profile('seth@eventespresso.com'); ?>">
