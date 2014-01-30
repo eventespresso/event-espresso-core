@@ -1624,23 +1624,29 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	/**
 	 * Returns a mysql-formatted datetime in UTC time, given a $datetime_string
 	 * (and optionally a timezone; if none is given, the wp default is used)
-	 * @param EE_Data_Migration_Script_base $script
+	 * @param EE_Data_Migration_Script_base $stage
 	 * @param array $row_of_data, the row from the DB (as an array) we're trying to find the UTC time for
 	 * @param string $datetime_string
 	 * @param string $timezone
 	 * @return string
 	 */
-	public function convert_date_string_to_utc(EE_Data_Migration_Script_Stage$script, $row_of_data, $datetime_string,$timezone = null){
+	public function convert_date_string_to_utc(EE_Data_Migration_Script_Stage $stage, $row_of_data, $datetime_string,$timezone = null){
 		$original_tz = $timezone;
 		if( ! $timezone){
 			$timezone = $this->_get_wp_timezone();
 		}
 		if( ! $timezone){
-			$script->add_error(sprintf(__("Could not find timezone given %s for %s", "event_espresso"),$original_tz,$row_of_data));
+			$stage->add_error(sprintf(__("Could not find timezone given %s for %s", "event_espresso"),$original_tz,$row_of_data));
 			$timezone = 'UTC';
 		}
-		$date_obj = new DateTime( $datetime_string, new DateTimeZone( $timezone ) );
-		$date_obj->setTimezone(new DateTimeZone('UTC'));	
+		try{
+			$date_obj = new DateTime( $datetime_string, new DateTimeZone( $timezone ) );
+			$date_obj->setTimezone(new DateTimeZone('UTC'));	
+		}catch(Exception $e){
+			$stage->add_error(sprintf(__("Could not convert time string '%s' using timezone '%s' into a proper datetime. Using current time instead.", "event_espresso"),$datetime_string,$timezone));
+			$date_obj = new DateTime();
+		}
+		
 		return $date_obj->format('Y-m-d H:i:s');
 	}
 	
