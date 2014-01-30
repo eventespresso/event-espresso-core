@@ -935,29 +935,52 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function plugin_uninstall() {
+		
+	}
+
+
+
+	/**
+	 * plugin_uninstall
+	 *
+	 * 	@access public
+	 * 	@static
+	 * 	@return void
+	 */
+	public static function delete_all_espresso_tables_and_data() {
 		global $wpdb;
 		$undeleted_tables = array();
+
 		// load registry
 		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
 			require_once( EE_CORE . 'EE_Registry.core.php' );
-			foreach ( EE_Registry::instance()->non_abstract_db_models as $model ) {
-				if ( method_exists( $model, 'instance' ) && $model::instance() instanceof EEM_Base ) {
-					foreach ( $model::instance()->get_tables() as $table ) {
+			EE_Registry::instance()->load_helper( 'File' );
+			EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+			//get all the files in the EE_MODELS folder that end in .model.php
+			$models = glob( EE_MODELS.'*.model.php');
+			foreach( $models as $model ){
+				// get model classname
+				$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
+				$reflectionClass = new ReflectionClass( $classname );
+				if( $reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract() ){
+					foreach ( $classname::instance()->get_tables() as $table ) {
 						if ( strpos( $table->get_table_name(), 'esp_' )) {
-							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
-								case FALSE :
-									$undeleted_tables[] = $table->get_table_name();
-								break;
-								case 0 :
-									// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
-								break;
-								default:
-									// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
-							}
+								switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
+									case FALSE :
+										$undeleted_tables[] = $table->get_table_name();
+									break;
+									case 0 :
+										// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
+									break;
+									default:
+										// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
+								}
 						}
 					}
 				}
 			}
+
+
 		} else {
 			$msg = __( 'The EE_Registry could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -997,16 +1020,16 @@ class EEH_Activation {
 			
 			$option_name = $no_wildcard ? "= '$option_name'" : "LIKE '%$option_name%'";
 			
-			if ( $wpdb->query( "SELECT option_id FROM $wpdb->options WHERE option_name $option_name" )) {
+			if ( $option_id = $wpdb->query( "SELECT option_id FROM $wpdb->options WHERE option_name $option_name" )) {
 				switch ( $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name $option_name" )) {
 					case FALSE :
 						$undeleted_options[] = $option_name;
 					break;
 					case 0 :
-						// echo '<h4 style="color:red;">the option : ' . $option_name . ' was not deleted  <br /></h4>';
+	//					echo '<h4 style="color:red;">the option : ' . $option_name . ' was not deleted  <br /></h4>';
 					break;
 					default:
-						// echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
+	//					echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
 				}	
 			}
 		}
