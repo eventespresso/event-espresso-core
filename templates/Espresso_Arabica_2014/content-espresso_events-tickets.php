@@ -8,4 +8,3 @@
 	<?php espresso_ticket_selector( $post ); ?>
 </div>
 <!-- .event-tickets -->
-<br/>
