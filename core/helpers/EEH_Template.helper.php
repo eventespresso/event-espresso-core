@@ -44,7 +44,7 @@ class EEH_Template {
 	}
 
 	/**
-	 * 	load_espresso_theme_functions - if current theme is an espresso theme, then load it's functions.php file ( if not already loaded )
+	 * 	load_espresso_theme_functions - if current theme is an espresso theme, or uses ee theme template parts, then load it's functions.php file ( if not already loaded )
 	 * 
 	 * 	@return void
 	 */
