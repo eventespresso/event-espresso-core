@@ -91,6 +91,7 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _whats_new() {
 		$steps = $this->_get_started_steps();
+		$steps = $steps !== FALSE ? $steps : '';
 		$this->_template_args['admin_page_title'] = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
 		$settings_message = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $steps : '';
 		$this->_template_args['admin_page_subtitle'] = sprintf( __('Thank you for using Event Espresso, the most powerful and free WordPress plugin for Event Management.%s', 'event_espresso'), $settings_message );
@@ -111,6 +112,10 @@ class About_Admin_Page extends EE_Admin_Page {
 		$done_step_one = EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' ? FALSE : TRUE;
 		$done_step_two = count(EE_Registry::instance()->CFG->gateway->active_gateways) < 1 || ( count(EE_Registry::instance()->CFG->gateway->active_gateways) === 1 && !empty( EE_Registry::instance()->CFG->gateway->payment_settings['Invoice'] ) && preg_match( '/123 Onna Road/', EE_Registry::instance()->CFG->gateway->payment_settings['Invoice']['payment_address'] ) ) ? FALSE : TRUE;
 		$done_step_three = EE_Registry::instance()->load_model('Event')->count() > 0 ? TRUE : FALSE;
+
+		//if ALL steps are done, let's just return FALSE so we don't display anything
+		if ( $done_step_one && $done_step_two && $done_step_three )
+			return FALSE;
 
 		//now let's put it together
 		$steps .= sprintf( '%s' . $step_one . '%s', $done_step_one ? '<strike>' : '', $done_step_one ? '</strike>': '' );
