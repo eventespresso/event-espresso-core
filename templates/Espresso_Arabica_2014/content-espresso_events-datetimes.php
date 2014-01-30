@@ -9,4 +9,3 @@
 	<?php do_action( 'AHEE_event_details_after_event_date', $post ); ?>
 </div>
 <!-- .event-datetimes -->
-<br/>
