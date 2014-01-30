@@ -92,7 +92,7 @@ class About_Admin_Page extends EE_Admin_Page {
 	protected function _whats_new() {
 		$this->_template_args['admin_page_title'] = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
 		$settings_message = EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? sprintf( __(' The first thing you should do is visit %syour organization settings%s and add your details.', 'event_espresso'), '<a href="admin.php?page=espresso_general_settings">', '</a>') : '';
-		$this->_template_args['admin_page_subtitle'] = sprintf( __('Thank you for using Event Espresso, the most powerful plugin for Event Management.%s', 'event_espresso'), $settings_message );
+		$this->_template_args['admin_page_subtitle'] = sprintf( __('Thank you for using Event Espresso, the most powerful and free WordPress plugin for Event Management.%s', 'event_espresso'), $settings_message );
 		$template = EE_ABOUT_TEMPLATE_PATH . 'whats_new.template.php';
 		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
 		$this->display_about_admin_page();
@@ -102,7 +102,7 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _credits() {
 		$this->_template_args['admin_page_title'] = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
-		$this->_template_args['admin_page_subtitle'] = __('Thank you for using Event Espresso Decaf, the most powerful free plugin for Event Management.', 'event_espresso');
+		$this->_template_args['admin_page_subtitle'] = __('Thank you for using Event Espresso Decaf, the most powerful and free WordPress plugin for Event Management.', 'event_espresso');
 		$template = EE_ABOUT_TEMPLATE_PATH . 'credits.template.php';
 		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
 		$this->display_about_admin_page();

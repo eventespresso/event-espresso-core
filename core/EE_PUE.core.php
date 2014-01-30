@@ -51,10 +51,15 @@ class EE_PUE {
 //		throw new EE_Error('error');
 		
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+
+		//wp have no MONTH_IN_SECONDS constant.  So we approximate our own assuming all months are 4 weeks long.
+		if ( !defined('MONTH_IN_SECONDS' ) )
+			define( 'MONTH_IN_SECONDS', WEEK_IN_SECONDS * 4 );
 		
 		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
 			$this->_uxip_hooks();
 		}
+
 		
 		$ueip_optin = get_option('ee_ueip_optin');
 		$ueip_has_notified = isset($_POST['ueip_optin']) ? TRUE : get_option('ee_ueip_has_notified');
