@@ -1020,10 +1020,6 @@ class EEH_Activation {
 			);
 			
 		}
-		if ( $espresso_db_update = get_option( 'espresso_db_update' )) {
-			unset( $espresso_db_update[ espresso_version() ] );
-			update_option( 'espresso_db_update', $espresso_db_update );
-		}
 		if ( $errors != '' ) {
 			echo $errors;
 		}

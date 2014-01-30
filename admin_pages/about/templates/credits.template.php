@@ -69,8 +69,8 @@
 		</a>
 	</li>
 	<li class="wp-person" id="ee-person-jwilson">
-		<a href="<?php esp_gravatar_profile('jonathon@eventespresso.com'); ?>">
-			<?php echo esp_gravatar_image( 'jonathon@eventespresso.com', 'Jonathon Wilson' ); ?>
+		<a href="<?php esp_gravatar_profile('jonathan@eventespresso.com'); ?>">
+			<?php echo esp_gravatar_image( 'jonathan@eventespresso.com', 'Jonathan Wilson' ); ?>
 		</a>
 		<a class="web" href="<?php esp_gravatar_profile('jonathon@eventespresso.com'); ?>">
 			Jonathon Wilson
@@ -84,6 +84,23 @@
 			Sidney Harrel
 		</a>
 	</li>
+	<li class="wp-person" id="ee-person-twarwick">
+		<a href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>">
+			<?php echo esp_gravatar_image( 'tony@eventespresso.com', 'Tony Warwick' ); ?>
+		</a>
+		<a class="web" href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>">
+			Tony Warwick
+		</a>
+	</li>
+	<li class="wp-person" id="ee-person-lcaum">
+		<a href="<?php esp_gravatar_profile('lorenzo@eventespresso.com'); ?>">
+			<?php echo esp_gravatar_image( 'lorenzo@eventespresso.com', 'Lorenzo Caum' ); ?>
+		</a>
+		<a class="web" href="<?php esp_gravatar_profile('lorenzo@eventespresso.com'); ?>">
+			Lorenzo Caum
+		</a>
+	</li>
+	
 </ul>
 <h4 class="wp-people-group"><?php _e('External Libraries', 'event_espresso'); ?></h4>
 <p class="description">

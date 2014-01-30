@@ -31,7 +31,7 @@ class About_Admin_Page_Init extends EE_Admin_Page_Init {
 	public function __construct() {
 		//define some events related constants
 		define( 'EE_ABOUT_PG_SLUG', 'espresso_about' );	
-		define( 'EE_ABOUT_LABEL', __('About Event Espresso', 'event_espresso'));	
+		define( 'EE_ABOUT_LABEL', __('About', 'event_espresso'));	
 		define( 'EE_ABOUT_ADMIN', EE_ADMIN_PAGES . 'about' . DS );	
 		define( 'EE_ABOUT_ADMIN_URL', admin_url( 'admin.php?page=' . EE_ABOUT_PG_SLUG ));	
 		define( 'EE_ABOUT_TEMPLATE_PATH', EE_ABOUT_ADMIN . 'templates' . DS );	
