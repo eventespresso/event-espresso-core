@@ -218,4 +218,14 @@ jQuery(function() {
 			document.location.href = jQuery(this).val();
 		}		
 	});
+	
+	//start migration, update start-button to be "migrating..." and disable it 
+	jQuery('#delete-all-data-btn').click(function(){
+		if ( confirm( 'Are you sure you want to permanently delete ALL Event Espresso tables, records and options?\nThis action can NOT be undone.' )) {
+			return true;
+		} else {
+			return false;
+		}
+	});
+	
 });
