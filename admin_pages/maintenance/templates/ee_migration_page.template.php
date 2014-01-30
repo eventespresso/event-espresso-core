@@ -73,7 +73,7 @@
 		<?php }?>
 		<?php if ($show_backup_db_text){ ?>
 		<div id='backup_db_text'>
-			<p class="ee-attention"><?php printf(__("Because any data migration has the potential to corrupt your information, you are %s REQUIRED %s to perform a database backup before running any Event Espresso data migration scripts.", "event_espresso"),"<b>","</b>");?></p>
+			<p class="ee-attention"><?php printf(__("%s Important: %s Before migrating, please back up your database and files.", "event_espresso"),"<b>","</b>");?></p>
 			<p>
 			<?php 
 				printf(

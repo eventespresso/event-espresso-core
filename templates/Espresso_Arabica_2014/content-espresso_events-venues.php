@@ -5,7 +5,7 @@
 
 <h3 class="event-venues-h3 ee-event-h3">
 	<span class="ee-icon ee-icon-venue"></span><?php _e( 'Event Location', 'event_espresso' ); ?>
-</h3><br/>
+</h3>
 <div class="espresso-venue-dv">
 	<h4><strong><?php _e( 'Venue:', 'event_espresso' ); ?></strong>&nbsp;&nbsp; <strong> <?php espresso_venue_name(); ?></strong></h4>	
 	<p><span class="smaller-text tags-links"><?php echo espresso_venue_categories(); ?></span></p>
@@ -29,6 +29,5 @@
 
 </div>
 <!-- .espresso-venue-dv -->
-<br/>
 <?php do_action( 'AHEE_event_details_after_venue_details', $post ); ?>
 <?php endif;  ?>

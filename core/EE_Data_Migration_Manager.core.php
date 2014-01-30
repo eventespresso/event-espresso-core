@@ -61,7 +61,7 @@ class EE_Data_Migration_Manager{
 	 * the number of 'items' (usually DB rows) to migrate on each 'step' (ajax request sent
 	 * during migration)
 	 */
-	const step_size = 50;
+	const step_size = 500;
 	/**
 	 * Array of information concernign data migrations that have ran in the history 
 	 * of this EE installation. Keys should be the name of the version the script upgraded to
@@ -94,6 +94,7 @@ class EE_Data_Migration_Manager{
 		//to be defined, because right now it doesn't get autoloaded on its own
 		EE_Registry::instance()->load_core('Data_Migration_Script_Base');
 	}
+	
 	/**
 	 * Gets the array describing what data migrations have run
 	 * @return EE_Data_Migration_Script_Base[] (but also has a few legacy arrays in there - which should probalby be ignored)
