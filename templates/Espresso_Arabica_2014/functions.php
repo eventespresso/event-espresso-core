@@ -9,6 +9,7 @@
  * @ link			http://www.eventespresso.com
  * @ version		4+
  */
+define( 'EE_THEME_FUNCTIONS_LOADED', TRUE );
  
 /**
  * 	espresso_pagination

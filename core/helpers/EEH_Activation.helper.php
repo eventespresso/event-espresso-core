@@ -963,8 +963,9 @@ class EEH_Activation {
 				$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
 				$reflectionClass = new ReflectionClass( $classname );
 				if( $reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract() ){
-					foreach ( $classname::instance()->get_tables() as $table ) {
-						if ( strpos( $table->get_table_name(), 'esp_' )) {
+					if ( $model_obj = call_user_func( array( $classname, 'instance' ))) {
+						foreach ( $model_obj->get_tables() as $table ) {
+							if ( strpos( $table->get_table_name(), 'esp_' )) {
 								switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
 									case FALSE :
 										$undeleted_tables[] = $table->get_table_name();
@@ -975,6 +976,7 @@ class EEH_Activation {
 									default:
 										// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
 								}
+							}
 						}
 					}
 				}
