@@ -260,7 +260,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	public function _reset_db(){
 		EE_Registry::instance()->load_helper('Activation');
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
-//		EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
+		EEH_Activation::plugin_uninstall();
 		EE_System::instance()->initialize_db_if_no_migrations_required(true);
 		EE_System::instance()->redirect_to_about_ee();
 	}	

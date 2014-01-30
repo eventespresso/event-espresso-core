@@ -65,7 +65,7 @@ class EEM_Venue extends EEM_CPT_Base {
 				'VNU_wp_user'=>new EE_Integer_Field('post_author', __("Venue Creator", "event_espresso"), false, 1),
 				'parent'=>new EE_Integer_Field('post_parent', __("Venue Parent ID", "event_espresso"), false,0),
 				'VNU_order'=>new EE_Integer_Field('menu_order', __("Venue order", "event_espresso"), false, 1),
-				'post_type'=>new EE_Plain_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
+				'post_type'=>new EE_WP_Post_Type_Field('espresso_venues'),// EE_Plain_Text_Field('post_type', __("Venue post type", "event_espresso"), false, 'espresso_venues'),
 				),
 			'Venue_Meta'=>array(
 				'VNUM_ID'=>new EE_DB_Only_Int_Field('VNUM_ID', __("ID of Venue Meta Row", "event_espresso"), false),
