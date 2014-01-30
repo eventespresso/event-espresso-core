@@ -90,10 +90,10 @@ class About_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _whats_new() {
-		$steps = $this->_get_started_steps();
+		$steps = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $this->_get_started_steps() : FALSE;
 		$steps = $steps !== FALSE ? $steps : '';
-		$this->_template_args['admin_page_title'] = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
-		$settings_message = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $steps : '';
+		$this->_admin_page_title = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
+		$settings_message = $steps;
 		$this->_template_args['admin_page_subtitle'] = sprintf( __('Thank you for using Event Espresso, the most powerful and free WordPress plugin for Event Management.%s', 'event_espresso'), $settings_message );
 		$template = EE_ABOUT_TEMPLATE_PATH . 'whats_new.template.php';
 		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
