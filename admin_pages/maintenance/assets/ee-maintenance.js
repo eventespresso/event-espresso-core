@@ -195,6 +195,10 @@ var Maintenance_helper = {
 jQuery(function() {
 //	alert("jquery a go");
 	jQuery('#db-backed-up').prop('checked', false);
+	//show-hide warnings
+	jQuery('#show-hide-migration-warnings').click(function(){
+		jQuery('.migration-warnings').toggle('slow');
+	})
 	//dynamic page stuff
 	//showing start-button and hiding explanatory text
 	jQuery('.toggle-migration-monitor').click(function(){
