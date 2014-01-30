@@ -1562,6 +1562,10 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		//if the file is located remotely, download it to our uploads DIR, because wp_genereate_attachmnet_metadata needs the file to be local
 		if(strpos($guid,$wp_upload_dir['url']) === FALSE){
 			//image is located remotely. download it and place it in the uploads directory
+			if( ! is_readable($guid)){
+				$migration_stage->add_error(sprintf(__("Could not create image attachment from non-existent file: %s", "event_espresso"),$guid));
+				return 0;
+			}
 			$contents= file_get_contents($guid);
 			if($contents === FALSE){
 				$migration_stage->add_error(sprintf(__("Could not read image at %s, and therefore couldnt create an attachment post for it.", "event_espresso"),$guid));
