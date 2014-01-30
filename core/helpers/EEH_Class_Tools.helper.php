@@ -42,10 +42,28 @@ class EEH_Class_Tools {
 				self::$i = 0;
 				self::$file_line = $backtrace[2]['file'] . $backtrace[2]['line'];
 			}
-			$lines = file( $backtrace[2]['file'] );
-			preg_match_all( '/([a-zA-Z0-9\_]+)::' . $backtrace[2]['function'].'/', $lines[$backtrace[2]['line']-1], $matches );
-			return $matches[1][ self::$i ];
+			// was  class method called via call_user_func ?
+			if ( $backtrace[2]['function'] == 'call_user_func' && isset( $backtrace[2]['args'] ) && is_array( $backtrace[2]['args'] )){
+				if ( isset( $backtrace[2]['args'][0] ) && isset( $backtrace[2]['args'][0][0] )) {
+					$called_class = $backtrace[2]['args'][0][0];
+					// is it an EE function ?
+					if ( strpos( $called_class, 'EE' ) === 0 ) {
+						$prefix_chars = strpos( $called_class, '_' ) + 1;
+						$prefix = substr( $called_class, 0, $prefix_chars );
+						$classname = substr( $called_class, $prefix_chars, strlen( $called_class ));
+						$classname = $prefix . str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $classname  ))));
+						return $classname;
+					}
+				}				
+			} else {
+				$lines = file( $backtrace[2]['file'] );
+				preg_match_all( '/([a-zA-Z0-9\_]+)::' . $backtrace[2]['function'] . '/', $lines[$backtrace[2]['line']-1], $matches );
+				if ( isset( $matches[1] ) && isset( $matches[1][ self::$i ] )) {
+					return $matches[1][ self::$i ];
+				}
+			}			
 		}
+		return FALSE;
 	}
 
 
