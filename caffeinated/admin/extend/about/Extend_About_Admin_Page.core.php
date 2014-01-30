@@ -46,6 +46,7 @@ class Extend_About_Admin_Page extends About_Admin_Page {
 
 	protected function _whats_new() {
 		$steps = $this->_get_started_steps();
+		$steps = $steps !== FALSE ? $steps : '';
 		$this->_template_args['admin_page_title'] = sprintf( __('Welcome to Event Espresso %s', 'event_espresso'), EVENT_ESPRESSO_VERSION );
 		$settings_message = EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ? $steps : '';
 		$this->_template_args['admin_page_subtitle'] = sprintf( __('Thank you for choosing Event Espresso, the most powerful WordPress plugin for Event Management.%s', 'event_espresso'), $settings_message );
