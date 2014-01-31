@@ -339,7 +339,6 @@ class EE_Data_Migration_Manager{
 		try{
 			//do what we came to do!
 			$current_script_class->migration_step(EE_Data_Migration_Manager::step_size);
-	
 			switch($current_script_class->get_status()){
 				case EE_Data_Migration_Manager::status_continue:
 					$response_array = array(
@@ -388,6 +387,8 @@ class EE_Data_Migration_Manager{
 			//double-check we have a real script
 			if($current_script_class instanceof EE_Data_Migration_Script_Base){
 				$script_name = $current_script_class->pretty_name();
+				$current_script_class->set_borked();
+				$current_script_class->add_error($e->getMessage());
 			}else{
 				$script_name = __("Error getting Migration Script", "event_espresso");
 			}
@@ -514,22 +515,22 @@ class EE_Data_Migration_Manager{
 	 * @throws EE_Error
 	 */
 	public function add_error_to_migrations_ran($error_message){
-		$data_migrations_ran_data = get_option(self::data_migrations_option_name);
+		//get last-ran migraiton script
+		global $wpdb;
+		$last_migration_script_option = $wpdb->get_row("SELECT * FROM ".$wpdb->options." WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC LIMIT 1",ARRAY_A);
+		
+		$last_ran_migration_script_properties = isset($last_migration_script_option['option_value']) ? maybe_unserialize($last_migration_script_option['option_value']) : null;
 		//now, tread lightly because we're here because a FATAL non-catchable error
 		//was thrown last time when we were tryign to run a data migration script
 		//so the fatal error could have happened while getting the mgiration script
 		//or doing running it...
-		if( is_array($data_migrations_ran_data)){
-			$versions_migrated_to = array_keys($data_migrations_ran_data);
-			$last_version_migrated_to = end($versions_migrated_to);
-		}else{
-			$last_version_migrated_to = null;
-		}
+		$versions_migrated_to = isset($last_migration_script_option['option_name']) ? str_replace(EE_Data_Migration_Manager::data_migration_script_option_prefix,"",$last_migration_script_option['option_name']) : null;
+		
 		//check if it THINKS its a data migration script
-		if(isset($data_migrations_ran_data[$last_version_migrated_to]['class'])){
+		if(isset($last_ran_migration_script_properties['class'])){
 			//ok then just add this error to its list of errors
-			$data_migrations_ran_data[$last_version_migrated_to]['_errors'] = $error_message;
-			$data_migrations_ran_data[$last_version_migrated_to]['_status'] = self::status_fatal_error;
+			$last_ran_migration_script_properties['_errors'] = $error_message;
+			$last_ran_migration_script_properties['_status'] = self::status_fatal_error;
 		}else{
 			//so we don't even know which script was last running
 			//use the data migration error stub, which is designed specifically for this type of thing
@@ -538,10 +539,10 @@ class EE_Data_Migration_Manager{
 			$general_migration_error = new EE_Data_Migration_Script_Error();
 			$general_migration_error->add_error($error_message);
 			$general_migration_error->set_borked();
-			$general_migration_error_data = $general_migration_error->properties_as_array();
-			$data_migrations_ran_data['Unknown'] = $general_migration_error_data;
+			$last_ran_migration_script_properties = $general_migration_error->properties_as_array();
+			$versions_migrated_to = 'Unknown';
 		}
-		update_option(self::data_migrations_option_name,$data_migrations_ran_data);
+		update_option(self::data_migration_script_option_prefix.$versions_migrated_to,$last_ran_migration_script_properties);
 		
 	}
 	/**
