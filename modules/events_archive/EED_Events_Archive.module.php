@@ -496,6 +496,7 @@ class EED_Events_Archive  extends EED_Module {
 		}
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' && ! EEH_Template::is_espresso_theme() ) {
+			EEH_Template::load_espresso_theme_functions();
 			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 110 );

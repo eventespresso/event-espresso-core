@@ -196,15 +196,7 @@ final class EE_Config {
 	 */
 	public function get_espresso_config() {
 		// grab espresso configuration
-		if ( is_multisite() ) {
-			// look for blog specific config
-			if ( ! $CFG = get_blog_option( $this->core->current_blog_id, 'ee_config', array() )) {
-				// if not, then look for network config
-				$CFG = get_site_option( 'ee_config', array() );
-			}
-		} else {
-			$CFG = get_option( 'ee_config', array() );
-		}
+		$CFG = get_option( 'ee_config', array() );
 		$CFG = apply_filters( 'FHEE__Config__get_espresso_config__CFG', $CFG );
 		return $CFG;
 	}
@@ -223,15 +215,8 @@ final class EE_Config {
 		$saved_config = $this->get_espresso_config();
 		$no_change = $saved_config == $this ? TRUE : FALSE;
 		// update
-		if ( is_multisite() ) {
-			// look for blog specific config
-			if ( ! $saved = update_blog_option( $this->core->current_blog_id, 'ee_config', $this )) {
-				// if not, then look for network config
-				$saved = update_site_option( 'ee_config', $this );
-			}
-		} else {
-			$saved = update_option( 'ee_config', $this );
-		}
+		$saved = update_option( 'ee_config', $this );
+
 		do_action( 'AHEE__EE_Config__update_espresso_config__end',$this,$no_change,$saved );
 		// if config remains the same or was updated successfully
 		if ( $no_change || $saved ) {

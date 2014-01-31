@@ -74,6 +74,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'reset_db'=>array(
 				'func'=>'_reset_db',
 				'noheader'=>true
+			),
+			'delete_db'=>array(
+				'func'=>'_delete_db',
+				'noheader'=>true
 			)
 		);
 	}
@@ -226,6 +230,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
 		$this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
 		EE_Registry::instance()->load_helper('Array');
+		$this->_template_args['delete_db_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'delete_db'), EE_MAINTENANCE_ADMIN_URL);
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
@@ -263,6 +268,15 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EEH_Activation::plugin_uninstall();
 		EE_System::instance()->initialize_db_if_no_migrations_required(true);
 		EE_System::instance()->redirect_to_about_ee();
+	}	
+	
+	/**
+	 * Deletes ALL EE tables, Records, and Options from the database.
+	 */
+	public function _delete_db(){
+		EE_Registry::instance()->load_helper('Activation');
+		EEH_Activation::delete_all_espresso_tables_and_data();
+		wp_safe_redirect( admin_url( 'plugins.php' ));
 	}	
 
 
