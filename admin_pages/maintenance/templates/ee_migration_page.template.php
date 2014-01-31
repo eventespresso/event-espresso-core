@@ -222,6 +222,9 @@
 		<div class="ee-table-wrap">
 			<table>
 				<tr>
+					<th align="left">
+						<label for="maintenance_mode_level_off"><?php  _e('Not In Maintenance (normal)', 'event_espresso');?></label>
+					</th>
 					<td width="40px" align="center">
 						<input type="radio" id="maintenance_mode_level_off" name="maintenance_mode_level" value="0" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_0_not_in_maintenance ? 'checked="checked"' : ''?>>
 					</td>
