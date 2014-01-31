@@ -212,7 +212,7 @@
 		<div class="ee-table-wrap">
 			<table>
 				<tr>
-					<th>
+					<th align="left">
 						<label for="maintenance_mode_level_off"><?php  _e('Not In Maintenance (normal)', 'event_espresso');?></label>
 					</th>
 					<td width="40px" align="center">
