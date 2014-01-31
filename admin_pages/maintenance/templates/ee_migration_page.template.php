@@ -48,12 +48,17 @@
 			}
 		} 
  		// END if ( $show_most_recent_migration ) 
+ 		?>
  		
- 		if ( $script_names ) {?>
-		<h3 class="espresso-header"><?php _e("Event Espresso has detected existing Event Data that can be migrated (updated) to work with the New EE4.", "event_espresso");?></h3>		
-		<?php }else{?>
-		<h2><?php _e("Your Database is up-to-date", "event_espresso");?></h2>
-		<?php }?>
+ 		<h3 class="espresso-header">
+ 		<?php 
+ 			if ( $script_names ) {
+ 				 _e("Event Espresso has detected existing Event Data that can be migrated (updated) to work with the New EE4.", "event_espresso");
+ 			 } else {
+ 			 	_e('Event Espresso has determined that your database is "up-to-date" and you are ready to begin using EE4', "event_espresso");
+ 			 }
+ 		?>
+		</h3>
 		
 		<?php if ($show_backup_db_text){ ?>
 		<div id="migration-options-dv">
@@ -202,23 +207,37 @@
 <?php }
 	   if ( $show_maintenance_switch ) {
  ?>
- 		<h3><?php  _e('Change Maintenance Mode', 'event_espresso');?></h3>
-	   	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
-	   		<p>
-	   			<label for="maintenance_mode_level_off">
-	   				<input type="radio" id="maintenance_mode_level_off" name="maintenance_mode_level" value="0" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_0_not_in_maintenance ? 'checked="checked"' : ''?>> <?php  _e('Not In Maintenance (normal)', 'event_espresso');?>
-	   			</label>
-	   		</p>
-	   		<p>
-	   			<label for="maintenance_mode_level_on">
-	   				<input type="radio" id="maintenance_mode_level_on" name="maintenance_mode_level" value="1" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_1_frontend_only_maintenance ? 'checked="checked"' : ''?>> <?php  _e('Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)', 'event_espresso')?>
-	   			</label>
-	   		</p>
-	   		<p class='description'>
-		   		<?php _e("Frontend Maintenance might be handy if you want to debug something on the frontend of your website before allowing non-administrators to see.", "event_espresso");?>
-	   		</p>
-	   		<input type='submit' class="button-primary" value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
-	   	</form>
+	<h2><?php  _e('Change Maintenance Mode', 'event_espresso');?></h2>
+   	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
+		<div class="ee-table-wrap">
+			<table>
+				<tr>
+					<th>
+						<label for="maintenance_mode_level_off"><?php  _e('Not In Maintenance (normal)', 'event_espresso');?></label>
+					</th>
+					<td width="40px" align="center">
+						<input type="radio" id="maintenance_mode_level_off" name="maintenance_mode_level" value="0" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_0_not_in_maintenance ? 'checked="checked"' : ''?>>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<label for="maintenance_mode_level_on"> 
+							<?php  _e('Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)', 'event_espresso')?>
+					   		<p class='description'>
+						   		<?php _e("Frontend Maintenance might be handy if you want to debug something on the frontend of your website before allowing non-administrators to see.", "event_espresso");?>
+					   		</p>
+						</label>
+					</th>
+					<td width="40px" align="center">
+						<input type="radio" id="maintenance_mode_level_on" name="maintenance_mode_level" value="1" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_1_frontend_only_maintenance ? 'checked="checked"' : ''?>>
+					</td>
+				</tr>
+			</table>
+		</div>
+		<p>
+   			<input type='submit' class="button-primary" value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
+   		</p>
+   	</form>
 	   	<?php
 	   } ?>
 
