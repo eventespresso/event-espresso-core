@@ -14,48 +14,17 @@
 
 ?>
 <h1><span class="dashicons dashicons-migrate"></span><?php _e("Database Migration Manager", "event_espresso");?></h1>
-<div class='padding'>
-	<div id='migration-prep'>
-	<?php 
-		if ( $show_most_recent_migration ) {
-			if( $most_recent_migration && $most_recent_migration instanceof EE_Data_Migration_Script_Base ) {
-				if( $most_recent_migration->can_continue() ) {
-					//tell the user they shoudl continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
-					<p class="ee-attention">
-						<?php printf(__("It appears that your previous Data Migration Task (%s) is incomplete, and should be resumed", "event_espresso"),$most_recent_migration->pretty_name());?>
-					</p>
-			<?php } elseif ( $most_recent_migration->is_borked() ) {
-					//tell the user the migration failed and they should notify EE?>
-					<h2><?php echo $most_recent_migration->get_feedback_message()?></h2>
-			<?php } 
-				
-				//display errors or not of the most recent migration ran
-				if ($most_recent_migration->get_errors()){?>
-					<div class="ee-attention">
-					<strong><?php printf(__("Warnings occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></strong>
-					<a id="show-hide-migration-warnings" class="display-the-hidden"><?php _e("Show Warnings", 'event_espresso');?></a>
-					<ul class="migration-warnings" style="display:none">
-					<?php foreach($most_recent_migration->get_errors() as $error){ ?>
-						<li><?php echo $error ?></li>
-					<?php }?>
-					</ul>
-					</div>
-				<?php } else {
-					//there were no errors during the last migration, just say so?>
-					<h2><?php printf(__("The last data migration task (%s) ran successfully without errors.", "event_espresso"),$most_recent_migration->pretty_name())?></h2>
-				<?php }
-				} else {
-			}
-		} 
- 		// END if ( $show_most_recent_migration ) 
- 		?>
- 		
+<div class="padding">
+	<div id="migration-prep">
  		
  		<?php if ( $script_names ) { ?>
  			<h3 class="espresso-header">
  				<span class="dashicons dashicons-flag ee-icon-size-22"></span>
- 				<?php _e("Event Espresso has detected existing Event Data that can be migrated (updated) to work with the New EE4.", "event_espresso");?>
+ 				<?php _e("Event Espresso has detected existing Event Data that can be migrated (updated) to work New EE4.", "event_espresso");?>
  			</h3>
+ 			<p>
+ 			<?php _e("Since you have already been using Event Espresso and have previous Event and Registration Data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with EE4.", "event_espresso");?>
+ 			</p>
  		<?php } else { ?>
  			 <h3 class="espresso-header">
  			 	<span class="dashicons dashicons-awards ee-icon-size-22"></span>
@@ -72,7 +41,11 @@
 		
 		<?php if ($show_backup_db_text){ ?>
 		<div id="migration-options-dv">
-			<h1><?php _e("Migration Options", "event_espresso");?><span class="tiny-text lt-grey-text"> &nbsp; <?php _e(' to migrate or not to migrate?', "event_espresso");?></span></h1>
+			<h2>
+				<span class="dashicons dashicons-admin-tools"></span>
+				<?php _e("Migration Options", "event_espresso");?>
+				<span class="tiny-text lt-grey-text"> &nbsp; <?php _e(' to migrate or not to migrate?', "event_espresso");?></span>
+			</h2>
 			<div class="ee-table-wrap">
 				<table>
 					<tbody>
@@ -132,10 +105,8 @@
 						<tr>
 							<td colspan="3" style="padding: 0">
 								<div id="no-migration-details-dv" style="display: none; padding: 1em;">
-									
-									<span class="reminder-spn"><?php printf(__("%s Important: %s Before migrating, please back up your database and files.", "event_espresso"),"<b>","</b>");?></span>
 									<p>
-									<?php _e("we needs sometin smart to say here :\\", "event_espresso");?>		
+									<?php _e("If your existing Event and Registration Data is no longer relevant nor required, you can just start up EE4 without performing a data migration. Please note, that if you do not migrate your old data, but need to view it at some point in the future, you can simply deactivate EE4, then reactivate EE3 and your old data will still be there.", "event_espresso");?>	
 									</p>
 								</div>										
 							</td>
@@ -148,9 +119,49 @@
 			</p>
 			
 		</div>
-		<?php } ?>
+	<?php } ?>
+
+	<?php 
+		if ( $show_most_recent_migration ) {
+			if( $most_recent_migration && $most_recent_migration instanceof EE_Data_Migration_Script_Base ) {
+				if( $most_recent_migration->can_continue() ) {
+					//tell the user they shoudl continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
+					<h3 class="espresso-header">
+						<span class="dashicons dashicons-star-half ee-icon-size-22"></span>
+						<?php printf(__("It appears that your previous Data Migration Task (%s) is incomplete, and should be resumed", "event_espresso"),$most_recent_migration->pretty_name());?>
+					</h3>
+			<?php } elseif ( $most_recent_migration->is_borked() ) {
+					//tell the user the migration failed and they should notify EE?>
+					<h3 class="espresso-header">
+						<span class="dashicons dashicons-no ee-icon-size-22"></span>
+						<?php echo $most_recent_migration->get_feedback_message()?>
+					</h3>
+			<?php } 
+				
+				//display errors or not of the most recent migration ran
+				if ( $most_recent_migration->get_errors() ){ ?>
+					<div class="ee-attention">
+						<strong><?php printf(__("Warnings occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></strong>
+						<a id="show-hide-migration-warnings" class="display-the-hidden"><?php _e("Show Warnings", 'event_espresso');?></a>
+						<ul class="migration-warnings" style="display:none">
+						<?php foreach($most_recent_migration->get_errors() as $error){ ?>
+							<li><?php echo $error ?></li>
+						<?php }?>
+						</ul>
+					</div>
+				<?php } else {
+					//there were no errors during the last migration, just say so?>
+					<h2><?php printf(__("The last data migration task (%s) ran successfully without errors.", "event_espresso"),$most_recent_migration->pretty_name())?></h2>
+				<?php }
+				} else {
+			}
+		} 
+ 		// end of: if ( $show_most_recent_migration ) 
+ 	?>
 		
 	</div>
+	<!--end of #migration-prep-->
+	
 	<?php if ($show_migration_progress){?>
 	<div id='migration-monitor' <?php echo $show_backup_db_text ? "style='display:none'" : ''?>>
 		<?php if( ! $show_continue_current_migration_script){?>
