@@ -254,7 +254,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			//first double-cehckw ehaven't already done this
 			$this->_maybe_do_schema_changes(false);
 		}else{
-			$this->_update_feedback_message($records_migrated_per_stage);
+			//update feedback message, keeping in mind that we show them with the most recent at the top
+			$this->_update_feedback_message(array_reverse($records_migrated_per_stage));
 		}
 		return $num_records_actually_migrated;
 	}
@@ -619,7 +620,11 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @param string $error a string describing the error that will be useful for debugging. Consider including all the data that led to the error, and a stack trace etc.
 	 */
 	public function add_error($error){
-		$this->_errors[] = $error;
+		if(count($this->_errors) >= 50){
+			$this->_errors[50] = 'More, but limit reached...';
+		}else{
+			$this->_errors[] = $error;
+		}
 	}
 	
 	/**
