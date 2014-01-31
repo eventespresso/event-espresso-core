@@ -40,19 +40,17 @@ figure {
 	background: #fff;
 	margin: 0 0 1em;
 }
-/* Progress bar shape */
-figure div:first-child {
+
+/* blue bar */
+.progress-responsive .progress-responsive__bar {
+	background: #2EA2CC;
 	width: 0;
 	height: 25px;
 	border-radius: 2px;
 }
 
-/* blue bar */
-.progress-responsive .progress-responsive__bar {
-	background: #2EA2CC;
-}
 /* Percent text */
-figure div:last-child {
+figure .progress-responsive__percent {
 	position: absolute;
 	top: 5px;
 	right: 10px;
@@ -71,4 +69,15 @@ textarea.system_status_info{
 	width: 80%;
 	height: 100px;
 	overflow-y: scroll;
+}
+
+#migration-options-dv table td {
+}
+#migration-options-dv .display-the-hidden,
+#migration-options-dv .hide-the-displayed {
+	float: right;
+	margin: .5em 0 0;
+}
+#migration-risks {
+	cursor: pointer;
 }
