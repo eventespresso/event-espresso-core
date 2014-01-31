@@ -208,6 +208,11 @@ jQuery(function() {
 	});
 	
 	//start migration, update start-button to be "migrating..." and disable it 
+	jQuery('#migration-risks').click(function(){
+		jQuery('#display-migration-details').trigger('click');
+	});
+	
+	//start migration, update start-button to be "migrating..." and disable it 
 	jQuery('#start-migration').click(function(){
 		Maintenance_helper.begin_migration();		
 	});
