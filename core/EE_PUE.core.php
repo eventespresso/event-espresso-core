@@ -67,7 +67,7 @@ class EE_PUE {
 		//has optin been selected for datacollection?
 		$espresso_data_optin = !empty($ueip_optin) ? $ueip_optin : NULL;
 
-		if ( empty($ueip_has_notified) ) {
+		if ( empty($ueip_has_notified) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_mode::level_2_complete_maintenance ) {
 			add_action('admin_notices', array( $this, 'espresso_data_collection_optin_notice' ), 10 );
 			add_action('admin_enqueue_scripts', array( $this, 'espresso_data_collection_enqueue_scripts' ), 10 );
 			add_action('wp_ajax_espresso_data_optin', array( $this, 'espresso_data_optin_ajax_handler' ), 10 );
