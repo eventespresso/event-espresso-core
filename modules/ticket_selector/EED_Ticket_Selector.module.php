@@ -150,7 +150,9 @@ class EED_Ticket_Selector extends  EED_Module {
 			$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
 			
 			return $ticket_selector;
-		} 
+		} else {
+			return __( 'All tickets sales have ended because the event is expired.', 'event_espresso' );
+		}
 
 	}
 
