@@ -53,7 +53,7 @@
  		
  		<?php if ( $script_names ) { ?>
  			<h3 class="espresso-header">
- 				<span class="dashicons dashicons-admin-tools ee-icon-size-22"></span>
+ 				<span class="dashicons dashicons-flag ee-icon-size-22"></span>
  				<?php _e("Event Espresso has detected existing Event Data that can be migrated (updated) to work with the New EE4.", "event_espresso");?>
  			</h3>
  		<?php } else { ?>
@@ -63,9 +63,9 @@
  			 </h3>
  			 <p>
  			 	<?php _e("Time to find out about all the great new features EE4 has to offer and what you need to do next.", "event_espresso");?> &nbsp; 
- 			 	<a id="get-started-after-migrate" class="button-primary" href="<?php echo add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' )); ?>">
- 			 		<?php _e("Let's Get Started", "event_espresso");?>
- 			 	</a>
+ 			 	<b><a id="get-started-after-migrate" class="button-primary" href="<?php echo add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' )); ?>">
+ 			 		<?php _e("Let's Get Started", "event_espresso");?>&nbsp;<span class="dashicons dashicons-arrow-right ee-icon-size-22" style="margin:0;"></span>
+ 			 	</a></b>
  			 </p>
  		<?php } ?>
 		
@@ -217,7 +217,7 @@
 <?php }
 	   if ( $show_maintenance_switch ) {
  ?>
-	<h2><?php  _e('Set Maintenance Mode', 'event_espresso');?></h2>
+	<h2><span class="dashicons dashicons-admin-tools"></span><?php  _e('Set Maintenance Mode', 'event_espresso');?></h2>
    	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
 		<div class="ee-table-wrap">
 			<table>
