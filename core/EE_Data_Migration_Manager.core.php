@@ -66,7 +66,7 @@ class EE_Data_Migration_Manager{
 	 * the number of 'items' (usually DB rows) to migrate on each 'step' (ajax request sent
 	 * during migration)
 	 */
-	const step_size = 500;
+	const step_size = 50;
 	/**
 	 * Array of information concernign data migrations that have ran in the history 
 	 * of this EE installation. Keys should be the name of the version the script upgraded to
@@ -337,8 +337,10 @@ class EE_Data_Migration_Manager{
 		}
 		//ok so we definitely have a data migration script
 		try{
+			//how big of a bite do we want to take? Allow users to easily override via their wp-config
+			$step_size = defined('EE_MIGRATION_STEP_SIZE') ? EE_MIGRATION_STEP_SIZE : EE_Data_Migration_Manager::step_size;
 			//do what we came to do!
-			$current_script_class->migration_step(EE_Data_Migration_Manager::step_size);
+			$current_script_class->migration_step($step_size);
 			switch($current_script_class->get_status()){
 				case EE_Data_Migration_Manager::status_continue:
 					$response_array = array(
