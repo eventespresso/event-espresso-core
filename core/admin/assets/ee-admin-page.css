@@ -685,3 +685,26 @@ label.error  { display: block; color: #FE2A00 !important; }
 	display: inline;
 	padding: 400%; /** cancel out any td padding **/
 }
+
+.ee-table-wrap {
+    background: none repeat scroll 0 0 #FFFFFF;
+    border: 1px solid #DFDFDF;
+    border-radius: 3px;
+    margin: 0 0 2em;
+    padding: 3px;
+}
+.ee-table-wrap table {
+    border-collapse: collapse;
+    border-spacing: 0;
+    width: 100%;
+}
+.ee-table-wrap table th, 
+.ee-table-wrap table td {
+    background: none repeat scroll 0 0 #FCFCFC;
+    border: 1px solid #DFDFDF;
+    font-family: sans-serif;
+    font-size: 1em;
+    margin: 0;
+    padding: 6px 12px;
+    vertical-align: middle;
+}
