@@ -1055,7 +1055,7 @@ class EEH_Activation {
 		}
 		if ( $errors != '' ) {
 			echo $errors;
-		}
+		} 
 	}
 
 
