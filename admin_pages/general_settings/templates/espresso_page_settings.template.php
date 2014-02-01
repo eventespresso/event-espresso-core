@@ -166,7 +166,7 @@
 				</th>
 				<td>
 					<p class="description">
-						<?php echo __("Events are custom post types and use Wordpress' normal archive pages for displaying events.", "event_espresso") ?>
+						<?php echo __("Events are custom post types and use WordPress' normal archive pages for displaying events.", "event_espresso") ?>
 					</p>
 					<p class='description'>
 						<?php printf(__("If you would still like your events on a page like in Event Espresso 3.1 or earlier, simply create a page and place a shortcode to display them on the page, as described %s here %s", "event_espresso"),'<a href="admin.php?page=espresso_support&action=shortcodes">','</a>') ?>
