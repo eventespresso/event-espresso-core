@@ -94,19 +94,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return void
 	 */
 	public function set_mapping($old_table,$old_pk,$new_table,$new_pk){
-		if( ! $this->_mappings ){
-			$this->_mappings = get_option(get_class($this)."_mappings");
-		}
-		//if it still doesn't exist, just initialize it to an array
-		if ( ! $this->_mappings){
-			$this->_mappings = array();
-		}
 		//make sure it has the needed keys
-		if( ! isset($this->_mappings[$old_table])){
-			$this->_mappings[$old_table] = array();
-		}
-		if( ! isset($this->_mappings[$old_table][$new_table])){
-			$this->_mappings[$old_table][$new_table] = array();
+		if( ! isset($this->_mappings[$old_table]) || ! isset($this->_mappings[$old_table][$new_table])){
+			$this->_mappings[$old_table][$new_table] = $this->_get_mapping_option($old_table, $new_table);
 		}
 		$this->_mappings[$old_table][$new_table][$old_pk] = $new_pk;
 	}
@@ -120,15 +110,13 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return mixed the primary key on the new table
 	 */
 	public function get_mapping_new_pk($old_table,$old_pk,$new_table){
-		if( ! $this->_mappings ){
-			$this->_mappings = get_option(get_class($this)."_mappings");
+		if( ! isset($this->_mappings[$old_table]) ||
+			! isset($this->_mappings[$old_table][$new_table])){
+			//try fetching the option
+			$this->_mappings[$old_table][$new_table] = $this->_get_mapping_option($old_table, $new_table);
 		}
-		if(is_array($this->_mappings) && isset($this->_mappings[$old_table][$new_table][$old_pk])){
-			return $this->_mappings[$old_table][$new_table][$old_pk];
-		}
-		return null;
+		return isset($this->_mappings[$old_table][$new_table][$old_pk]) ? $this->_mappings[$old_table][$new_table][$old_pk] : null;
 	}
-	
 	/**
 	 * Gets the old primary key, if provided with the OLD table,
 	 * and the new table and the primary key of an item in teh new table
@@ -138,10 +126,12 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return mixed the primary key on the new table
 	 */
 	public function get_mapping_old_pk($old_table,$new_table,$new_pk){
-		if( ! $this->_mappings ){
-			$this->_mappings = get_option(get_class($this)."_mappings");
+		if( ! isset($this->_mappings[$old_table]) ||
+			! isset($this->_mappings[$old_table][$new_table])){
+			//try fetching the option
+			$this->_mappings[$old_table][$new_table] = $this->_get_mapping_option($old_table, $new_table);
 		}
-		if(is_array($this->_mappings) && isset($this->_mappings[$old_table][$new_table])){
+		if(isset($this->_mappings[$old_table][$new_table])){
 			$new_pk_to_old_pk = array_flip($this->_mappings[$old_table][$new_table]);
 			if(isset($new_pk_to_old_pk[$new_pk])){
 				return $new_pk_to_old_pk[$new_pk];
@@ -149,6 +139,42 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return null;
 	}
+	
+	/**
+	 * Gets the mapping array option specified by the table names
+	 * @param type $old_table_name
+	 * @param type $new_table_name
+	 * @return array
+	 */
+	protected function _get_mapping_option($old_table_name,$new_table_name){
+		$option =  get_option($this->_get_mapping_option_name($old_table_name, $new_table_name),array());
+		return $option;
+	}
+	
+	/**
+	 * Updates the mapping option specified by the table names with the array provided
+	 * @param string $old_table_name
+	 * @param string $new_table_name
+	 * @param array $mapping_array
+	 * @return boolean success of updating option
+	 */
+	protected function _set_mapping_option($old_table_name,$new_table_name,$mapping_array){
+//		echo "set mapping for $old_table_name $new_table_name".count($mapping_array)."<br>";
+		$success =  update_option($this->_get_mapping_option_name($old_table_name, $new_table_name),$mapping_array);
+		return $success;
+	}
+	
+	/**
+	 * Gest the option name for this script to map from $old_table_name to $new_table_name
+	 * @param type $old_table_name
+	 * @param type $new_table_name
+	 * @return string
+	 */
+	protected function _get_mapping_option_name($old_table_name,$new_table_name){
+		return EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this)).'_'.$old_table_name.'_'.$new_table_name;
+	}
+	
+	
 	/**
 	 * Counts all the records that will be migrated during this data migration.
 	 * For example, if we were changing old user passwords from plaintext to encoded versions, 
@@ -228,7 +254,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			//first double-cehckw ehaven't already done this
 			$this->_maybe_do_schema_changes(false);
 		}else{
-			$this->_update_feedback_message($records_migrated_per_stage);
+			//update feedback message, keeping in mind that we show them with the most recent at the top
+			$this->_update_feedback_message(array_reverse($records_migrated_per_stage));
 		}
 		return $num_records_actually_migrated;
 	}
@@ -335,6 +362,13 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		foreach($this->_migration_stages as $migration_stage_priority => $migration_stage_class){
 			$properties['_migration_stages'][$migration_stage_priority] = $migration_stage_class->properties_as_array();
 		}
+		unset($properties['_mappings']);
+		
+		foreach($this->_mappings as $old_table_name => $mapping_to_new_table){
+			foreach($mapping_to_new_table as $new_table_name => $mapping){
+				$success = $this->_set_mapping_option($old_table_name, $new_table_name, $mapping);
+			}
+		}
 		return $properties;
 	}
 	
@@ -360,34 +394,6 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 				$stage->instantiate_from_array_of_properties($stage_data);
 			}
 		}
-//		foreach($stages as $stage_priority => $stage_properties_array){
-//			$stage_class_name = $stage_properties_array['class'];
-//			//if the script is done, we just want to preserve old data because it wont run again
-//			//but if it isn't done, then we want to only have valid migration stages on this script
-//			if($this->is_borked() || $this->is_completed()){
-//				$include_invalid_stages = true;
-//			}else{
-//				$include_invalid_stages = false;
-//			}
-//			if( ! class_exists($stage_class_name) ){
-//				if($include_invalid_stages){
-//					$this->_migration_stages[$stage_priority] = $stage_properties_array;
-//				}
-//				//ie, if we're not leaving ivnalid stages alone, we drop it
-//				continue;
-//			}
-//			$stage = new $stage_class_name;
-//			if( ! $stage instanceof EE_Data_Migration_Script_Stage){
-//				if($include_invalid_stages){
-//					$this->_migration_stages[$stage_priority] = $stage;
-//				}
-//				//ie, if we're not leaving invalid srtages alone, we drop it
-//				continue;
-//			}
-//			
-//			$stage->instantiate_from_array_of_properties($stage_properties_array);
-//			$this->_migration_stages[$stage_priority] = $stage;
-//		}
 	}
 	/**
 	 * Gets the migration data from the array $migration_stage_data_arrays (which is an array of arrays, each of which
@@ -614,7 +620,11 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @param string $error a string describing the error that will be useful for debugging. Consider including all the data that led to the error, and a stack trace etc.
 	 */
 	public function add_error($error){
-		$this->_errors[] = $error;
+		if(count($this->_errors) >= 50){
+			$this->_errors[50] = 'More, but limit reached...';
+		}else{
+			$this->_errors[] = $error;
+		}
 	}
 	
 	/**
