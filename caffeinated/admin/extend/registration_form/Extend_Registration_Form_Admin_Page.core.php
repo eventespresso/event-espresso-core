@@ -726,6 +726,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				array('id'  => 'clean','text'=> __('Clean', 'event_espresso'))
 			);
 		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'clean';
+
+		$this->_template_args['recaptcha_example'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) && isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? $this->_display_recaptcha() : '';
 	
 		$this->_template_args['recaptcha_language_options'] = array(
 				array('id'  => 'en','text'=> __('English', 'event_espresso')),
@@ -745,7 +747,39 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->display_admin_page_with_sidebar();	
 	}
 
+
+
+
+	protected function _display_recaptcha() {
+		if (!function_exists('recaptcha_get_html')) {
+			require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
+		}
+		$content = '
+<script type="text/javascript">
+/* <! [CDATA [ */
+var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration->recaptcha_theme . '", lang : "' . EE_Registry::instance()->CFG->registration->recaptcha_language . '" };
+/*  ] ]>  */
+</script>
+<p class="reg-page-form-field-wrap-pg" id="spc-captcha">
+' . recaptcha_get_html( EE_Registry::instance()->CFG->registration->recaptcha_publickey, NULL, is_ssl() ? true : false ) . '
+</p>
+';
+	return $content;
+	}
+
+
+
+
 	protected function _update_reg_form_settings() {
+
+		//userproofing recaptcha settings in here as well.  If Use reCAPTCHA is set to yes but we dont' have public or private keys then set Use reCAPTCHA to no and give error message.
+		if ( isset( $this->_req_data['use_captcha'] ) && $this->_req_data['use_captcha'] ) {
+			if ( empty($this->_req_data['recaptcha_publickey']) || empty($this->_req_data['recaptcha_privatekey']) ) {
+				$this->_req_data['use_captcha'] = 0;
+				EE_Error::add_error( __('The use reCAPTCHA setting has been reset to "no". In order to enable the reCAPTCHA service, you must enter a public key and private key.', 'event_espresso') );
+			}
+		}
+
 
 		EE_Registry::instance()->CFG->registration->use_captcha = isset( $this->_req_data['use_captcha'] ) ? absint( $this->_req_data['use_captcha'] ) : FALSE;
 		EE_Registry::instance()->CFG->registration->recaptcha_publickey = isset( $this->_req_data['recaptcha_publickey'] ) ? sanitize_text_field( $this->_req_data['recaptcha_publickey'] ) : NULL;
