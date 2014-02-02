@@ -76,14 +76,16 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {			
 			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-			EE_Registry::instance()->load_model( 'Gateways' )->thank_you_page_logic( $this->_current_txn );
-			EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
-			add_filter( 'FHEE_load_css', '__return_true' );
-			add_filter( 'FHEE_load_js', '__return_true' );
-			add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
-		} else {
-			//EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
-		}
+			if ( ! $this->_current_txn instanceof EE_Transaction ) {
+				EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			} else {
+				EE_Registry::instance()->load_model( 'Gateways' )->thank_you_page_logic( $this->_current_txn );
+				EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
+				add_filter( 'FHEE_load_css', '__return_true' );
+				add_filter( 'FHEE_load_js', '__return_true' );
+				add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
+			}
+		} 
 	}
 
 
