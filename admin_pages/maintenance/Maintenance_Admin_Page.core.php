@@ -71,6 +71,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				'noheader'=>true
 			),
 			'confirm_migration_crash_report_sent'=>'_confirm_migration_crash_report_sent',
+			'data_reset' => '_data_reset_and_delete',
 			'reset_db'=>array(
 				'func'=>'_reset_db',
 				'noheader'=>true
@@ -89,16 +90,25 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'require_nonce' => FALSE,
-				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				//'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				////'help_tabs' => $this->_get_maintenance_help_tabs(),
+				),
+			'data_reset' => array(
+				'nav' => array(
+					'label' => __('Reset/Delete Data', 'event_espresso'),
+					'order' => 20
+					),
+				'require_nonce' => FALSE,
+				//'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				////'help_tabs' => $this->_get_maintenance_help_tabs(),
 				),
 			'system_status'=>array(
 				'nav'=>array(
 					'label'=>  __("System Status", "event_espresso"),
-					'order'=>20	
+					'order'=>30	
 				),
 				'require_nonce' => FALSE,
-				'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				//'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 			)
 		);
 	}
@@ -193,6 +203,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
+
+
+
 	/**
 	 * returns JSON and executes anotehr step of teh currently-executing data migration (called via ajax)
 	 */
@@ -200,6 +213,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['data'] = EE_Data_Migration_Manager::instance()->response_to_migration_ajax_request();
 		$this->_return_json();
 	}
+
+
+
 	/**
 	 * Can be used by js when it notices a response with HTML in it in order
 	 * to log the malformed response
@@ -209,6 +225,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['data'] = array('ok'=>true);
 		$this->_return_json();
 	}
+
+
+
 	/**
 	 * changes teh maintenane level, provided there are still no migration scripts that shoudl run
 	 */
@@ -223,6 +242,21 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		}
 		$this->_redirect_after_action($success, 'Maintenance Mode', __("Updated", "event_espresso"));
 	}
+
+
+
+	/**
+	 * a tab with options for reseting and/or deleting EE data
+	 */
+	public function _data_reset_and_delete(){
+		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_data_reset_and_delete.template.php';
+		$this->_template_args['delete_db_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'delete_db'), EE_MAINTENANCE_ADMIN_URL);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
+		$this->display_admin_page_with_sidebar();
+	}
+
+
+
 	/**
 	 * shows the big ol' system status page
 	 */
@@ -230,11 +264,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
 		$this->_template_args['system_stati'] = EEM_System_Status::instance()->get_system_stati();
 		EE_Registry::instance()->load_helper('Array');
-		$this->_template_args['delete_db_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'delete_db'), EE_MAINTENANCE_ADMIN_URL);
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
-	
+
+
+
 	public function _send_migration_crash_report(){
 		$from = $this->_req_data['from'];
 		$from_name = $this->_req_data['from_name'];
@@ -248,7 +283,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					));
 		$this->_redirect_after_action($success, __("Migration Crash Report", "event_espresso"), __("sent", "event_espresso"),array('success'=>$success,'action'=>'confirm_migration_crash_report_sent'));
 	}
-	
+
+
+
 	public function _confirm_migration_crash_report_sent(){
 		$success = $this->_req_data['success']=='1' ? true : false;
 		$this->_template_args['success'] = $success;
@@ -256,6 +293,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path,$this->_template_args,TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
+
+
 	
 	/**
 	 * Resets the entire EE4 database.
@@ -269,6 +308,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EE_System::instance()->initialize_db_if_no_migrations_required(true);
 		EE_System::instance()->redirect_to_about_ee();
 	}	
+
+
 	
 	/**
 	 * Deletes ALL EE tables, Records, and Options from the database.
@@ -278,11 +319,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EEH_Activation::delete_all_espresso_tables_and_data();
 		wp_safe_redirect( admin_url( 'plugins.php' ));
 	}	
-
-
-	
-	
-	
 
 
 

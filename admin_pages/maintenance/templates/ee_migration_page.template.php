@@ -12,8 +12,9 @@
  * @var $update_migration_script_page_link string
  */
 
-?>
+if ( $show_backup_db_text ) { ?>
 <h1><span class="dashicons dashicons-migrate"></span><?php _e("Database Migration Manager", "event_espresso");?></h1>
+<?php } ?>
 <div class="padding">
 	<div id="migration-prep">
  		
@@ -25,7 +26,7 @@
  			<p>
  			<?php _e("Since you have already been using Event Espresso and have previous Event and Registration Data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with EE4.", "event_espresso");?>
  			</p>
- 		<?php } else { ?>
+ 		<?php } elseif ( $show_backup_db_text ) { ?>
  			 <h3 class="espresso-header">
  			 	<span class="dashicons dashicons-awards ee-icon-size-22"></span>
  				 <?php _e('Congratulations! Your database is "up-to-date" and you are ready to begin using EE4', "event_espresso");?>
@@ -99,7 +100,7 @@
 								<a  id="hide-no-migration-details" class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"  rel="no-migration-details" style="display:none;" ><?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?></a>
 							</td>
 							<td>
-								<a id="do-not-migrate" class="do-not-migrate button-primary" href='<?php echo $reset_db_page_link?>'><?php _e("Just Start EE4 with No Data", "event_espresso");?></a>
+								<a id="do-not-migrate" class="do-not-migrate button-primary" href="<?php echo $reset_db_page_link;?>"><?php _e("Just Start EE4 with No Data", "event_espresso");?></a>
 							</td>
 						</tr>
 						<tr>
@@ -228,7 +229,7 @@
 <?php }
 	   if ( $show_maintenance_switch ) {
  ?>
-	<h2><span class="dashicons dashicons-admin-tools"></span><?php  _e('Set Maintenance Mode', 'event_espresso');?></h2>
+	<h2><span class="dashicons dashicons-admin-tools"></span><?php  _e('Set Event Espresso Maintenance Mode', 'event_espresso');?></h2>
    	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
 		<div class="ee-table-wrap">
 			<table>
