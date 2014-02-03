@@ -72,8 +72,8 @@
 		<a href="<?php esp_gravatar_profile('jonathan@eventespresso.com'); ?>">
 			<?php echo esp_gravatar_image( 'jonathan@eventespresso.com', 'Jonathan Wilson' ); ?>
 		</a>
-		<a class="web" href="<?php esp_gravatar_profile('jonathon@eventespresso.com'); ?>">
-			Jonathon Wilson
+		<a class="web" href="<?php esp_gravatar_profile('jonathan@eventespresso.com'); ?>">
+			Jonathan Wilson
 		</a>
 	</li>
 	<li class="wp-person" id="ee-person-sharrel">
