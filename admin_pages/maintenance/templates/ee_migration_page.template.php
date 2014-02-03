@@ -20,7 +20,7 @@
  		<?php if ( $script_names ) { ?>
  			<h3 class="espresso-header">
  				<span class="dashicons dashicons-flag ee-icon-size-22"></span>
- 				<?php _e("Event Espresso has detected existing Event Data that can be migrated (updated) to work New EE4.", "event_espresso");?>
+ 				<?php _e("Event Espresso has detected existing Event Data that can be migrated (updated) to work with New EE4.", "event_espresso");?>
  			</h3>
  			<p>
  			<?php _e("Since you have already been using Event Espresso and have previous Event and Registration Data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with EE4.", "event_espresso");?>
@@ -99,7 +99,7 @@
 								<a  id="hide-no-migration-details" class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"  rel="no-migration-details" style="display:none;" ><?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?></a>
 							</td>
 							<td>
-								<a id="do-not-migrate" class="do-not-migrate button-primary"><?php _e("Just Start EE4 with No Data", "event_espresso");?></a>
+								<a id="do-not-migrate" class="do-not-migrate button-primary" href='<?php echo $reset_db_page_link?>'><?php _e("Just Start EE4 with No Data", "event_espresso");?></a>
 							</td>
 						</tr>
 						<tr>

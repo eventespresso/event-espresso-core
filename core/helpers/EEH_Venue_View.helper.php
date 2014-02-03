@@ -51,13 +51,13 @@
 	 * 	espresso_venue_name
 	 *
 	 *  @access 	public
+	 *  @param 	int 		$VNU_ID
 	 *  @param 	string 	$text
-	 *  @param 	int 	$VNU_ID
 	 *  @return 	string
 	 */
 	if ( ! function_exists( 'espresso_venue_link' )) {
 		function espresso_venue_link( $VNU_ID = FALSE, $text = '' ) {
-			return EEH_Venue_View::venue_details_link( $text, $VNU_ID );
+			return EEH_Venue_View::venue_details_link( $VNU_ID, $text );
 		}		
 	}
 
@@ -318,7 +318,7 @@ class EEH_Venue_View extends EEH_Base {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			$excerpt = $venue->excerpt() != NULL && $venue->excerpt() ? $venue->excerpt() : $venue->description();
-			$venue_link = ' ' . EEH_Venue_View::venue_details_link( __( 'more', 'event_espresso' ) . '&hellip;', $venue->ID() );
+			$venue_link = ' ' . EEH_Venue_View::venue_details_link( $venue->ID(), __( 'more', 'event_espresso' ) . '&hellip;' );
 			return ! empty( $excerpt ) ? wp_trim_words( $excerpt, 25, '' ) . $venue_link : '';			
 		}
 		return '';
@@ -407,11 +407,11 @@ class EEH_Venue_View extends EEH_Base {
 			switch( $link_to ) {
 				
 				case 'details' :
-					return EEH_Venue_View::venue_details_link( $venue_name, $venue->ID() );
+					return EEH_Venue_View::venue_details_link( $venue->ID(), $venue_name );
 				break;
 				
 				case 'website' :
-					return EEH_Venue_View::venue_website_link( $venue_name, $venue->ID() );
+					return EEH_Venue_View::venue_website_link( $venue->ID(), $venue_name );
 				break;
 				
 				default :
@@ -431,7 +431,7 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @param	string $text 
 	 *  @return 	string
 	 */
-	public static function venue_details_link( $text = '', $VNU_ID = FALSE ) {
+	public static function venue_details_link( $VNU_ID = FALSE, $text = '' ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			return EEH_Schema::url( get_permalink( $venue->ID() ), $text );
@@ -448,7 +448,7 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @param	string $text 
 	 *  @return 	string
 	 */
-	public static function venue_website_link( $text = '', $VNU_ID = FALSE ) {
+	public static function venue_website_link( $VNU_ID = FALSE, $text = '' ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
@@ -481,7 +481,7 @@ class EEH_Venue_View extends EEH_Base {
 
 
 	/**
-	 * 	venue_website_link
+	 * 	venue_gmap
 	 *
 	 *  @access 	public
 	 *  @param	string $map_ID a unique identifier for this map 
