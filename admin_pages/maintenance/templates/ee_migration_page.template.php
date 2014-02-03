@@ -204,7 +204,7 @@ if ( $show_backup_db_text ) { ?>
 			
 			<div class="progress-responsive">
 				<figure>
-					<div class="progress-responsive__bar"></div>
+					<div class="progress-responsive__bar" style="background:#2EA2CC;"></div>
 					<div class="progress-responsive__percent"></div>
 				</figure>
 			</div>
