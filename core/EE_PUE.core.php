@@ -155,8 +155,8 @@ class EE_PUE {
 			//$plugin_slug['prerelease']['b'] = 'some-pre-release-slug';
 			//..WOULD work!
 			$plugin_slug = array(
-				'free' => array( 'lite' => 'event-espresso-core-decaf' ),
-				'premium' => array( 'reg' => 'event-espresso-core-caf' ),
+				'free' => array( 'decaf' => 'event-espresso-core-decaf' ),
+				'premium' => array( 'reg' => 'event-espresso-core-reg' ),
 				'prerelease' => array( 'beta' => 'event-espresso-core-pr' )
 				);
 
