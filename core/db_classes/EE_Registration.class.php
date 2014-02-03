@@ -924,6 +924,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 		if ( empty( $DTT_ID ) && empty( $checkin ) ) {
 			$datetime = $this->get_related_primary_datetime();
+			if( ! $datetime){
+				return 0;
+			}
 			$DTT_ID = $datetime->ID();
 		}
 
