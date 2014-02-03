@@ -99,7 +99,7 @@
 								<a  id="hide-no-migration-details" class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"  rel="no-migration-details" style="display:none;" ><?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?></a>
 							</td>
 							<td>
-								<a id="do-not-migrate" class="do-not-migrate button-primary"><?php _e("Just Start EE4 with No Data", "event_espresso");?></a>
+								<a id="do-not-migrate" class="do-not-migrate button-primary" href='<?php echo $reset_db_page_link?>'><?php _e("Just Start EE4 with No Data", "event_espresso");?></a>
 							</td>
 						</tr>
 						<tr>

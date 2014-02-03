@@ -558,7 +558,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		if($event){
 			return $event->name();
 		}else{
-			return '';
+			return NULL;
 		}
 	}
 
