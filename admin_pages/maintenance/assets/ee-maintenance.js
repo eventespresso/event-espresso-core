@@ -220,7 +220,10 @@ jQuery(function() {
 	//start migration, update start-button to be "migrating..." and disable it 
 	jQuery('#do-not-migrate').click(function(){
 		if ( confirm( 'You have chosen to NOT migrate your existing data.\nAre you sure you want to continue?' )) {
-			document.location.href = jQuery(this).val();
+//			document.location.href = jQuery(this).val();
+			return true;
+		}else{
+			return false;
 		}		
 	});
 	

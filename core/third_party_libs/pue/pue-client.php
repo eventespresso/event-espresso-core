@@ -461,14 +461,13 @@ class PluginUpdateEngineChecker {
 	function maybe_cleanup_upgrade() {
 		global $wp_filesystem;
 
-		if ( !is_object($wp_filesystem ) ) {
-			require_once( ABSPATH . '/wp-admin/includes/file.php');
-			WP_Filesystem();
-		}
-
-		$chk_file = $wp_filesystem->wp_content_dir(). 'upgrade/' . $this->slug . '/';
+		$chk_file = WP_CONTENT_DIR . '/upgrade/' . $this->slug . '/';
 
 		if ( is_readable($chk_file ) ) {
+			if ( !is_object($wp_filesystem ) ) {
+				require_once( ABSPATH . '/wp-admin/includes/file.php');
+				WP_Filesystem();
+			}
 			$wp_filesystem->delete($chk_file, FALSE, 'd');
 		}
 
