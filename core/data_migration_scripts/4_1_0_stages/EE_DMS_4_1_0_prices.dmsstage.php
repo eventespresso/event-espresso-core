@@ -291,7 +291,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 			'TKT_min'=>0,
 			'TKT_max'=>-1,
 			'TKT_price'=>$final_ticket_price,
-			'TKT_sold'=>  EE_DMS_4_1_0_events::count_registrations($old_price_row['event_id']),//note: this seems to not be workign right and we rely on the tkt_sold amounts getting corrected after all migrations are done
+			'TKT_sold'=> 0,//note: this will get calculated as we actually add registrations during the migration
 			'TKT_qty'=> -1,
 			'TKT_uses'=> 1,
 			'TKT_taxable'=>false,//so by default, old prices are NOT taxable. This way they don't suddenly have a sudden spike in prices
