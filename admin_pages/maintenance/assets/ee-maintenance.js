@@ -10,28 +10,30 @@
 
 //JS FOR HANDLING MIGRATION SCRIPT UPDATING
 var BG = {
-	update_progress_to: function(items_complete,items_total){
-		bar = jQuery('.progress-responsive__bar');
-		percent_complete = Math.floor((items_complete / items_total)*100) + '% ('+items_complete+'/'+items_total+')';
-		bar.width(percent_complete);
-		
-		percent_dynamic_text = jQuery('.progress-responsive__percent');
-		percent_dynamic_text.text(percent_complete);
+	update_progress_to: function( items_complete, items_total ){
+		items_complete = parseInt( items_complete );
+		items_total = parseInt( items_total );
+		percent_complete = items_complete / items_total;
+		bar_size = jQuery('#progress-responsive figure').innerWidth();
+		new_bar_size = percent_complete * parseFloat( bar_size );
+		jQuery('#progress-responsive__bar').width( new_bar_size );
+		percent_complete = Math.floor( percent_complete * 100 ) + '% ('+items_complete+'/'+items_total+')';		
+		jQuery('#progress-responsive__percent').text(percent_complete);
 	}
 }; // BAR GRAPH window object
 
 // RESPONSIVE
-BG.responsive = function(percentage, duration) {
+//BG.responsive = function(percentage, duration) {
 	// Animate bar graph
 //	var count1 = 0,
-//      bar = jQuery('.progress-responsive__bar'),
+//      bar = jQuery('#progress-responsive__bar'),
 //      interval1 = (Math.floor(duration / percentage) / 2),
 //      incrementer1 = setInterval(function() {
 //		(count1 <= percentage) ? (bar.width(count1 + "%"), count1 += 0.5) : clearInterval(incrementer1);
 //	}, interval1);
 //	// Animate percent number
 //	var count2 = 0,
-//      percent = jQuery('.progress-responsive__percent'),
+//      percent = jQuery('#progress-responsive__percent'),
 //      interval2 = Math.floor(duration / percentage),
 //      incrementer2 = setInterval(function() {
 //		(count2 <= percentage) ? (percent.text(count2 + "%"), count2++) : clearInterval(incrementer2);
@@ -45,9 +47,11 @@ BG.responsive = function(percentage, duration) {
 //		alert("response"+response);
 //		
 //	});
-	
-	
-};
+//};
+
+
+
+
 var Maintenance_helper = {
 	begin_migration: function(){
 		BG.update_progress_to(0, 1);
@@ -93,15 +97,15 @@ var Maintenance_helper = {
 		Maintenance_helper.display_content(migration_data.message+'<br>', '#migration-messages', 'prepend');
 		if(migration_data.status === ee_maintenance.status_completed ||
 			migration_data.status === ee_maintenance.status_no_more_migration_scripts){
-			Maintenance_helper.finish();
+			Maintenance_helper.finish( migration_data.records_migrated, migration_data.records_to_migrate );
 		}else if(migration_data.status === ee_maintenance.status_fatal_error){
-			Maintenance_helper.finish();
+			Maintenance_helper.finish( migration_data.records_migrated, migration_data.records_to_migrate );
 		}else{
 			Maintenance_helper.continue_migration();
 		}
 	},
 	//handles what to do once we're done the current migration script
-	finish: function(){
+	finish: function( records_migrated, records_to_migrate ){
 		//change button 
 		//show after-migration options
 		var kickoff_button = jQuery('#start-migration');
@@ -111,7 +115,8 @@ var Maintenance_helper = {
 		kickoff_button.click(function(){
 			document.location.href = document.location.href + '&continue_migration=true';
 		});
-		jQuery( '.progress-responsive__percent' ).css({ 'color' : '#fff' });
+		BG.update_progress_to( records_migrated, records_to_migrate );
+		jQuery( '#progress-responsive__percent' ).css({ 'color' : '#fff' });
 		alert(ee_maintenance.click_next_when_ready);
 	},
 	//performs the ajax request, and if successful, calls setup.callback;
@@ -220,7 +225,6 @@ jQuery(function() {
 	//start migration, update start-button to be "migrating..." and disable it 
 	jQuery('#do-not-migrate').click(function(){
 		if ( confirm( 'You have chosen to NOT migrate your existing data.\nAre you sure you want to continue?' )) {
-//			document.location.href = jQuery(this).val();
 			return true;
 		}else{
 			return false;
