@@ -104,9 +104,10 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function deactivate_event_espresso() {
-		$active_plugins = array_flip( get_option( 'active_plugins' ));
-		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
-		update_option( 'active_plugins', array_flip( $active_plugins ));	
+		deactivate_plugins(EVENT_ESPRESSO_MAIN_FILE);
+//		$active_plugins = array_flip( get_option( 'active_plugins' ));
+//		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
+//		update_option( 'active_plugins', array_flip( $active_plugins ));	
 	}
 
 

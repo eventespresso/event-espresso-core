@@ -222,9 +222,12 @@ class EEM_Payment extends EEM_Base {
 	 * This may be a somewhat expensive operation which could be optimized, but we'll deal with that
 	 * if it's a noticeable problem.
 	 * @param array $query_params lik eEEM_Base::get_all
+	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
+	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
+	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
 	 * @return int number of paymetn deleted
 	 */
-	public function delete($query_params) {
+	public function delete($query_params, $allow_blocking = true) {
 		$payments_to_be_deleted = $this->get_all($query_params);
 		$transactions = array();
 		foreach($payments_to_be_deleted as $payment){
