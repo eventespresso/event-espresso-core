@@ -32,6 +32,7 @@ class EED_Rss_Feeds  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		add_action( 'parse_request', array( 'EED_Rss_Feeds', 'parse_request' ), 10 );
+		define( 'RSS_FEEDS_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 	}
 
 	/**
@@ -64,22 +65,16 @@ class EED_Rss_Feeds  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function parse_request() {
-
-		if ( EE_Registry::instance()->REQ->is_set( 'post_type' )) {
-			define( 'RSS_FEEDS_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
-			switch( EE_Registry::instance()->REQ->get( 'post_type' )) {
-				
+		if ( EE_Registry::instance()->REQ->is_set( 'post_type' )) {		
+			switch( EE_Registry::instance()->REQ->get( 'post_type' )) {			
 				case 'espresso_events' :
-					add_filter( 'the_content', array( 'EED_Rss_Feeds', 'the_event_feed_content' ), 10, 1 );
+					add_filter( 'the_content_feed', array( 'EED_Rss_Feeds', 'the_event_feed_content' ), 10, 1 );
 					break;
-				
 				case 'espresso_venues' :
-					add_filter( 'the_content', array( 'EED_Rss_Feeds', 'the_venue_feed_content' ), 10, 1 );
+					add_filter( 'the_content_feed', array( 'EED_Rss_Feeds', 'the_venue_feed_content' ), 10, 1 );
 					break;
-				
 			}
 		}
-		
 	}
 
 
@@ -94,15 +89,16 @@ class EED_Rss_Feeds  extends EED_Module {
 	public static function the_event_feed_content( $content ) {
 		if ( is_feed() ) {
 			EE_Registry::instance()->load_helper( 'Event_View' );
-//			EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'admin-event-list-settings.template.php', EE_Registry::instance()->CFG->template_settings->EED_Events_Archive );
-			$ID = get_the_ID();  
-			$content .= '<div><h3>Find me on</h3>';  
-			$content .= '<p><strong>Facebook:</strong> ' . get_post_meta($ID, 'facebook_url', true) . '</p>';  
-			$content .= '<p><strong>Google:</strong> ' . get_post_meta($ID, 'google_url', true) . '</p>';  
-			$content .= '<p><strong>Twitter:</strong> ' . get_post_meta($ID, 'twitter_url', true) . '</p>';  
-			$content .= '</div>';  
+			EE_Registry::instance()->load_helper( 'Venue_View' );
+ 			global $post;
+			$template_args = array( 
+				'EVT_ID' => $post->ID,
+				'event_description' => $post->post_content,
+				'event_excerpt' => $post->post_excerpt
+			);
+			$content = EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'espresso_events_feed.template.php', $template_args, TRUE );
 		}  
-		return $content;
+		return  $content;
 	}
 
 
@@ -116,13 +112,15 @@ class EED_Rss_Feeds  extends EED_Module {
 	 */
 	public static function the_venue_feed_content( $content ) {
 		if ( is_feed() ) {
+			EE_Registry::instance()->load_helper( 'Event_View' );
 			EE_Registry::instance()->load_helper( 'Venue_View' );
-			$ID = get_the_ID();  
-			$content .= '<div><h3>Find me on</h3>';  
-			$content .= '<p><strong>Facebook:</strong> ' . get_post_meta($ID, 'facebook_url', true) . '</p>';  
-			$content .= '<p><strong>Google:</strong> ' . get_post_meta($ID, 'google_url', true) . '</p>';  
-			$content .= '<p><strong>Twitter:</strong> ' . get_post_meta($ID, 'twitter_url', true) . '</p>';  
-			$content .= '</div>';  
+ 			global $post;
+			$template_args = array( 
+				'VNU_ID' => $post->ID,
+				'venue_description' => $post->post_content
+			);
+			$content = EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'espresso_venues_feed.template.php', $template_args, TRUE );
+
 		}  
 		return $content;
 	}
