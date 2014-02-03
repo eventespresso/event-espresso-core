@@ -727,7 +727,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			);
 		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'clean';
 
-		$this->_template_args['recaptcha_example'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) && isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? $this->_display_recaptcha() : '';
+		$this->_template_args['recaptcha_example'] = !empty( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? $this->_display_recaptcha() : '';
 	
 		$this->_template_args['recaptcha_language_options'] = array(
 				array('id'  => 'en','text'=> __('English', 'event_espresso')),
