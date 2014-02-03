@@ -51,7 +51,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 		for($i = 0; $i<abs($num_to_checkin_at_this_time); $i++){
 			$new_reg_id = $new_registrations_for_attendee[$i];
 			if( ! $new_reg_id){
-				$this->add_error(sprintf(__('It appears we wanted to check-in more registrations than actually exist. The old attendee record ($s%1) indicated we should check-in $d%2 registrations, but there are only %3$d registrations for that attendee (%4$s)', "event_espresso"),
+				$this->add_error(sprintf(__('It appears we wanted to check-in more registrations than actually exist. The old attendee record (%1$s) indicated we should check-in %2$d registrations, but there are only %3$d registrations for that attendee (%4$s)', "event_espresso"),
 					http_build_query($old_row),abs($num_to_checkin_at_this_time),count($new_registrations_for_attendee),  http_build_query($new_registrations_for_attendee)));
 				break;
 			}
