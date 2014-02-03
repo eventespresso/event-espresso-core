@@ -105,7 +105,7 @@ class EEH_Activation {
 	 */
 	public static function deactivate_event_espresso() {
 		$active_plugins = array_flip( get_option( 'active_plugins' ));
-		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
+		unset( $active_plugins[ plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) ] );
 		update_option( 'active_plugins', array_flip( $active_plugins ));	
 	}
 
@@ -947,7 +947,7 @@ class EEH_Activation {
 	 * 	@static
 	 * 	@return void
 	 */
-	public static function delete_all_espresso_tables_and_data() {
+	public static function delete_all_espresso_tables_and_data( $remove_all = TRUE ) { // FALSE
 		global $wpdb;
 		$undeleted_tables = array();
 
@@ -995,6 +995,8 @@ class EEH_Activation {
 			'ee_flush_rewrite_rules' => TRUE,
 			'ee_config' => TRUE,
 			'ee_data_migration_current_db_state' => TRUE,
+			'ee_data_migration_mapping_' => FALSE,
+			'ee_data_migration_script_' => FALSE,
 			'ee_data_migrations' => TRUE,
 			'ee_notices' => TRUE,
 			'lang_file_check_' => FALSE,
@@ -1034,6 +1036,11 @@ class EEH_Activation {
 	//					echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
 				}	
 			}
+		}
+		
+		if ( $remove_all && $espresso_db_update = get_option( 'espresso_db_update' )) {
+			unset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] );
+			update_option( 'espresso_db_update', $espresso_db_update );
 		}
 		
 		$errors = '';
