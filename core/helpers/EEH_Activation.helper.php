@@ -104,9 +104,10 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function deactivate_event_espresso() {
-		$active_plugins = array_flip( get_option( 'active_plugins' ));
-		unset( $active_plugins[ plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) ] );
-		update_option( 'active_plugins', array_flip( $active_plugins ));	
+		deactivate_plugins(EVENT_ESPRESSO_MAIN_FILE);
+//		$active_plugins = array_flip( get_option( 'active_plugins' ));
+//		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
+//		update_option( 'active_plugins', array_flip( $active_plugins ));	
 	}
 
 
@@ -939,7 +940,25 @@ class EEH_Activation {
 	}
 
 
-
+	public static function delete_all_espresso_cpt_data(){
+		global $wpdb;
+		//get all the CPT post_types
+		$ee_post_types = array();
+		foreach(EE_Registry::instance()->non_abstract_db_models as $model_name){
+			if ( method_exists( $model_name, 'instance' ) && 
+					$model_name::instance() instanceof EEM_CPT_Base &&
+					$model_obj = $model_name::instance()) {
+				$ee_post_types[] = $wpdb->prepare("%s",$model_obj->post_type());
+			}
+		}
+		//get all our CPTs
+		$query = "SELECT ID FROM {$wpdb->posts} WHERE post_type IN (".implode(",",$ee_post_types).")";
+		$cpt_ids = $wpdb->get_col($query);
+		//delete each's post meta and term relations too
+		foreach($cpt_ids as $post_id){
+			wp_delete_post($post_id,true);
+		}
+	}
 	/**
 	 * plugin_uninstall
 	 *
@@ -952,41 +971,28 @@ class EEH_Activation {
 		$undeleted_tables = array();
 
 		// load registry
-		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
-			require_once( EE_CORE . 'EE_Registry.core.php' );
-			EE_Registry::instance()->load_helper( 'File' );
-			EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-			//get all the files in the EE_MODELS folder that end in .model.php
-			$models = glob( EE_MODELS.'*.model.php');
-			foreach( $models as $model ){
-				// get model classname
-				$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
-				$reflectionClass = new ReflectionClass( $classname );
-				if( $reflectionClass->isSubclassOf('EEM_Base') && ! $reflectionClass->isAbstract() ){
-					if ( $model_obj = call_user_func( array( $classname, 'instance' ))) {
-						foreach ( $model_obj->get_tables() as $table ) {
-							if ( strpos( $table->get_table_name(), 'esp_' )) {
-								switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
-									case FALSE :
-										$undeleted_tables[] = $table->get_table_name();
-									break;
-									case 0 :
-										// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
-									break;
-									default:
-										// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
-								}
-							}
+		foreach( EE_Registry::instance()->non_abstract_db_models as $model_name ){
+			if ( method_exists( $model_name, 'instance' ) && 
+					$model_name::instance() instanceof EEM_Base &&
+					$model_obj = $model_name::instance()) {
+//				$items_deleted = $model_obj->delete(array(),true);
+//				echo "$model_name had $items_deleted deleted<br>";
+				foreach ( $model_obj->get_tables() as $table ) {
+					if ( strpos( $table->get_table_name(), 'esp_' )) {
+						switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
+							case FALSE :
+								$undeleted_tables[] = $table->get_table_name();
+							break;
+							case 0 :
+								// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
+							break;
+							default:
+								// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
 						}
 					}
 				}
 			}
-
-
-		} else {
-			$msg = __( 'The EE_Registry could not be loaded.', 'event_espresso' );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}		
+		}
 
 		
 		$wp_options_to_delete = array(

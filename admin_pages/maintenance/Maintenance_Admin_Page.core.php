@@ -316,6 +316,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 */
 	public function _delete_db(){
 		EE_Registry::instance()->load_helper('Activation');
+		EEH_Activation::delete_all_espresso_cpt_data();
 		EEH_Activation::delete_all_espresso_tables_and_data();
 		EEH_Activation::deactivate_event_espresso();
 		wp_safe_redirect( admin_url( 'plugins.php' ));
