@@ -461,7 +461,7 @@ class PluginUpdateEngineChecker {
 	function maybe_cleanup_upgrade() {
 		global $wp_filesystem;
 
-		$chk_file = $wp_filesystem->wp_content_dir(). 'upgrade/' . $this->slug . '/';
+		$chk_file = WP_CONTENT_DIR . '/upgrade/' . $this->slug . '/';
 
 		if ( is_readable($chk_file ) ) {
 			if ( !is_object($wp_filesystem ) ) {
