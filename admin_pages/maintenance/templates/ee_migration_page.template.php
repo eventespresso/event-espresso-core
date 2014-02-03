@@ -202,13 +202,13 @@ if ( $show_backup_db_text ) { ?>
 				<?php printf(__("Depending on the number of events and the complexity of the information in your database, this could take a few minutes.%s%sPlease be patient and do NOT navigate away from this page once the migration has begun%s. If any issues arise due to existing malformed data, an itemized report will be made available to you after the migration has completed.%sClick the button to begin the migration progress.", "event_espresso"), '<br/>', '<strong>', '</strong>', '<br/>' );?>
 			</p>
 			
-			<div class="progress-responsive">
+			<div id="progress-responsive">
 				<figure>
-					<div class="progress-responsive__bar" style="background:#2EA2CC;"></div>
-					<div class="progress-responsive__percent"></div>
+					<div id="progress-responsive__bar" style="background:#2EA2CC;"></div>
+					<div id="progress-responsive__percent"></div>
 				</figure>
 			</div>
-			<!-- .progress-responsive -->
+			<!-- #progress-responsive -->
 			
 			<button id='start-migration' class='button-primary'>
 				<?php echo $show_continue_current_migration_script ? __("Continue Migration", "event_espresso") : __("Begin Migration", "event_espresso");?>				
