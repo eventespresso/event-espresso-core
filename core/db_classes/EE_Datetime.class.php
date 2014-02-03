@@ -793,9 +793,18 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Ticket[]
 	 */
 	public function ticket_types_available_for_purchase($query_params = array()){
-		$query_params[0]['TK_start_date'] = array('<=',current_time('mysql'));
-		$query_params[0]['TKT_end_date'] = array('>=',current_time('mysql'));
-		return $this->tickets($query_params);
+		// first check if datetime is valid
+		if ( ! ( $this->is_upcoming() || $this->is_active() ) || $this->sold_out() ) {
+			return array();
+		}
+		$query_params = array( array(
+			'TKT_start_date' => array('<=',current_time('mysql')),
+			'TKT_end_date' => array('>=',current_time('mysql')),
+			'TKT_deleted' => FALSE
+		));
+//		$query_params[0]['TKT_start_date'] = array('<=',current_time('mysql'));
+//		$query_params[0]['TKT_end_date'] = array('>=',current_time('mysql'));
+		return $this->tickets( $query_params );
 	}
 
 	/**

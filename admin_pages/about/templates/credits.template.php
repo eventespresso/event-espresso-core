@@ -20,7 +20,7 @@
 		<span class="title"><?php _e('Co-Founder', 'event_espresso'); ?></span>
 	</li>
 </ul>
-<h4 class="wp-people-group"><?php _e('Core Developers', 'evnet_espresso'); ?></h4>
+<h4 class="wp-people-group"><?php _e('Core Developers', 'event_espresso'); ?></h4>
 <ul class="wp-people-group" id="ee-people-group-core-developers">
 	<li class="wp-person" id="ee-person-bchristensen">
 		<a href="<?php esp_gravatar_profile('brent@eventespresso.com'); ?>">
@@ -50,7 +50,7 @@
 		<span class="title"><?php _e('Core Developer', 'event_espresso'); ?></span>
 	</li>
 </ul>
-<h4 class="wp-people-group"><?php _e('Support Staff', 'evnet_espresso'); ?></h4>
+<h4 class="wp-people-group"><?php _e('Support Staff', 'event_espresso'); ?></h4>
 <ul class="wp-people-group" id="ee-people-group-support-staff">
 	<li class="wp-person" id="ee-person-jfeck">
 		<a href="<?php esp_gravatar_profile('josh@eventespresso.com'); ?>">
@@ -72,8 +72,8 @@
 		<a href="<?php esp_gravatar_profile('jonathan@eventespresso.com'); ?>">
 			<?php echo esp_gravatar_image( 'jonathan@eventespresso.com', 'Jonathan Wilson' ); ?>
 		</a>
-		<a class="web" href="<?php esp_gravatar_profile('jonathon@eventespresso.com'); ?>">
-			Jonathon Wilson
+		<a class="web" href="<?php esp_gravatar_profile('jonathan@eventespresso.com'); ?>">
+			Jonathan Wilson
 		</a>
 	</li>
 	<li class="wp-person" id="ee-person-sharrel">

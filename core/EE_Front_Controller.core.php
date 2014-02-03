@@ -399,24 +399,7 @@ final class EE_Front_Controller {
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );
 			
-			if ( ! function_exists( 'wp_head' )) {
-				$msg = sprintf( 
-					__( '%sMissing wp_head() function.%sThe WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
-					'<em><br />',
-					'</em>'
-				);
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			}
-			if ( ! function_exists( 'wp_footer' )) {
-				$msg = sprintf( 
-					__( '%sMissing wp_footer() function.%sThe WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
-					'<em><br />',
-					'</em>'
-				);
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			}
 		}
-
 
 		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
@@ -452,6 +435,23 @@ final class EE_Front_Controller {
 					)
 				);
 			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
+		}
+
+		if ( ! function_exists( 'wp_head' )) {
+			$msg = sprintf( 
+				__( '%sMissing wp_head() function.%sThe WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
+				'<em><br />',
+				'</em>'
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
+		if ( ! function_exists( 'wp_footer' )) {
+			$msg = sprintf( 
+				__( '%sMissing wp_footer() function.%sThe WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
+				'<em><br />',
+				'</em>'
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 	}
@@ -525,7 +525,7 @@ final class EE_Front_Controller {
 	public function display_errors() {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already ){
+		if( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && ! is_feed() ){
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );

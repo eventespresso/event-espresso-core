@@ -293,7 +293,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 							}
 							if ( $show_dates ) {
 								echo  '<h6 class="ee-calendar_year-icon-small">' . __('Event Dates: ', 'event_espresso') . '</h6>';
-								echo espresso_list_of_event_dates( 'D M jS, Y', '@ g:i a', $event->ID(), FALSE );
+								echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', '@ g:i a', FALSE );
 							}
 							echo '<br/><br/><br/></li>';
 						}

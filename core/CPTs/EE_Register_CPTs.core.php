@@ -138,12 +138,13 @@ class EE_Register_CPTs {
 				'singular_slug' => __("event", "event_espresso"),
 				'plural_slug' => __("events", "event_espresso"),
 				'args' => array(
-					'show_in_nav_menus' => true,
+					'public'=> TRUE,
+					'show_in_nav_menus' => TRUE,
 					'taxonomies'=> array(
 						'espresso_event_categories',
 						'espresso_event_type',
 						'post_tag'
-						)
+					)
 				)),
 			'espresso_venues' => array(
 				'singular_name' => __("Venue", "event_espresso"),
@@ -151,11 +152,12 @@ class EE_Register_CPTs {
 				'singular_slug' => __("venue", "event_espresso"),
 				'plural_slug' => __("venues", "event_espresso"),
 				'args' => array(
-					'show_in_nav_menus' => false, //by default this doesn't show for decaf
+					'public'=> TRUE,
+					'show_in_nav_menus' => FALSE, //by default this doesn't show for decaf
 					'taxonomies'=> array(
 						'espresso_venue_categories',
 						'post_tag'
-						)
+					)
 				)),
 			/*'espresso_persons' => array(
 				'singular_name' => __("Person", "event_espresso"),

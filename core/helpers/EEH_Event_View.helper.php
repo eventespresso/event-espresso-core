@@ -79,20 +79,12 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_status' )) {
-		function espresso_event_status( $EVT_ID = FALSE ) {
-			switch ( EEH_Event_View::event_active_status( $EVT_ID )) {
-				case EE_Datetime::sold_out :
-					return 'sold-out';
-				case EE_Datetime::expired :
-					return 'expired';
-				case EE_Datetime::upcoming :
-					return 'upcoming';
-				case EE_Datetime::active : 
-					return 'active';
-				case EE_Datetime::inactive :
-				default :
-					return 'inactive';
-			}
+		function espresso_event_status( $EVT_ID = FALSE, $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Event_View::event_active_status( $EVT_ID );
+			} else {
+				return EEH_Event_View::event_active_status( $EVT_ID );
+			}			
 		}		
 	}
 
@@ -113,6 +105,32 @@
 		}		
 	}
 
+
+	/**
+	 * espresso_event_tickets_available
+	* returns the ticket types available for purchase for an event
+	* 
+	 * @return object
+	 */
+	if ( ! function_exists( 'espresso_event_tickets_available' )) {
+		function espresso_event_tickets_available( $EVT_ID = FALSE, $echo = TRUE, $format = TRUE ) {
+			$tickets = EEH_Event_View::event_tickets_available( $EVT_ID );
+			if ( is_array( $tickets ) && ! empty( $tickets )) {
+				$html = $format ? '<ul id="ee-event-tickets-ul-' . $EVT_ID . '" class="ee-event-tickets-ul">' : '';
+				foreach ( $tickets as $ticket ) {
+					$html .= $format ? '<li id="ee-event-tickets-li-' . $ticket->ID() . '" class="ee-event-tickets-li">' : '';
+					$html .= $format ? $ticket->name() . ' ' . EEH_Template::format_currency( $ticket->get_ticket_total_with_taxes() ) : $ticket;	
+					$html .= $format ? '</li>' : ', ';
+				}
+				$html .= $format ? '</ul>' : '';
+				if ( $echo ) {
+					echo $html;
+				} else {
+					return $html;
+				}
+			}
+		}		
+	}
 
 	/**
 	 * espresso_event_date
@@ -147,18 +165,18 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_list_of_event_dates' )) {
-		function espresso_list_of_event_dates( $dt_frmt = 'l F jS, Y', $tm_frmt = '@ g:i a', $EVT_ID = FALSE, $echo = TRUE, $show_expired = NULL) {
+		function espresso_list_of_event_dates( $EVT_ID = FALSE, $dt_frmt = 'l F jS, Y', $tm_frmt = '@ g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE ) {
 			$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID ,$show_expired );
 			//d( $datetimes );
 			if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 				global $post;
-				$html = '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">';
+				$html = $format ? '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">' : '';
 				foreach ( $datetimes as $datetime ) {
-					$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';	
-					$html .= $datetime->start_date_and_time( $dt_frmt, $tm_frmt );	
-					$html .= '</li>';	
+					$html .= $format ? '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">' : '';
+					$html .= $format ? $datetime->start_date_and_time( $dt_frmt, $tm_frmt ) : $datetime;	
+					$html .= $format ? '</li>' : '';
 				}
-				$html .= '</ul>';
+				$html .= $format ? '</ul>' : '';
 				if ( $echo ) {
 					echo $html;
 				} else {
@@ -451,7 +469,26 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function event_active_status( $EVT_ID = FALSE ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
-		return $event instanceof EE_Event ? $event->get_active_status() : EE_Datetime::inactive;
+		return $event instanceof EE_Event ? $event->pretty_active_status() : 'inactive';
+	}
+
+
+
+	/**
+	 * 	event_tickets_available
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function event_tickets_available( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		$tickets_available_for_purchase = array();
+		if( $event instanceof EE_Event ) {
+			foreach( EEH_Event_View::get_all_date_obj( $EVT_ID, FALSE ) as $datetime ) {
+				$tickets_available_for_purchase = array_merge( $tickets_available_for_purchase, $datetime->ticket_types_available_for_purchase() );
+			}			
+		}
+		return $tickets_available_for_purchase;
 	}
 
 
