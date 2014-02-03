@@ -242,11 +242,14 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * Because this will cause a real deletion, related models may block this deletion (ie, add an error
 	 * and abort the delete)
 	 * @param array $query_params like EEM_Base::get_all
+	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
+	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
+	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
 	 * @return boolean success
 	 */
-	public function delete_permanently($query_params = array()){
+	public function delete_permanently($query_params = array(), $allow_blocking = true){
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
-		return parent::delete($query_params);
+		return parent::delete($query_params, $allow_blocking);
 	}
 	
 	/**
@@ -254,13 +257,16 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @param mixed $ID int or string, depending on the table's primary key type. Because this will 
 	 * cause a real deletion, related models may block this deletion (ie, add an error
 	 * and abort the delete)
+	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
+	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
+	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
 	 * @return boolean success
 	 */
-	public function delete_permanently_by_ID($ID=FALSE){
+	public function delete_permanently_by_ID($ID=FALSE, $allow_blocking = true){
 		$query_params = array();
 		$query_params[0] = array($this->get_primary_key_field()->get_name() => $ID);
 		$query_params['limit'] = 1;
-		return $this->delete_permanently($query_params);
+		return $this->delete_permanently($query_params, $allow_blocking);
 	}
 	
 	/**
@@ -311,7 +317,8 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return boolean success
 	 */
-	public function delete($query_params = array()){
+	public function delete($query_params = array(), $block_deletes = false){
+		//no matter what, we WON'T block soft deletes.
 		return $this->delete_or_restore(true, $query_params);
 	}
 	

@@ -651,15 +651,18 @@ abstract class EEM_Base extends EE_Base{
 	 * in EEM_Soft_Delete_Base so that soft-deleted model objects are instead only flagged
 	 * as archived, not actually deleted 
 	 * @param array $query_params very much like EEMerimental_Base::get_all's $query_params
+	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
+	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
+	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
 	 * @return int how many rows got deleted
 	 */
-	function delete($query_params){
+	function delete($query_params,$allow_blocking = true){
 		global $wpdb;
 		//some MySQL databases may be running safe mode, which may restrict
 		//deletion if there is no KEY column used in the WHERE statement of a deletion.
 		//to get around this, we first do a SELECT, get all the IDs, and then run another query
 		//to delete them
-		$deletion_where = $this->_setup_ids_for_delete( $this->_get_all_wpdb_results($query_params) );
+		$deletion_where = $this->_setup_ids_for_delete( $this->_get_all_wpdb_results($query_params), $allow_blocking);
 		if($deletion_where){
 			//echo "objects for deletion:";var_dump($objects_for_deletion);
 			$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -728,51 +731,54 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * This sets up our delete where sql and accounts for if we have secondary tables that will have rows deleted as well.
 	 * @param  array  $objects_for_deletion This should be the values returned by $this->_get_all_wpdb_results()
+	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
+	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
+	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
 	 * @return string 	everything that comes after the WHERE statment.
 	 */
-	protected function _setup_ids_for_delete( $objects_for_deletion ) {
+	protected function _setup_ids_for_delete( $objects_for_deletion, $allow_blocking = true) {
 		if($this->has_primary_key_field()){
-		$primary_table = $this->_get_main_table();
-		$other_tables = $this->_get_other_tables();
-		$deletes = $query = array();
-		foreach ( $objects_for_deletion as $deobj ) {
-			//before we mark this object for deletion, 
-			//make sure there's no related objects blocking its deletion
-			if( $this->delete_is_blocked_by_related_models($deobj[$primary_table->get_fully_qualified_pk_column()]) ){
-				continue;
-			}
-			
-			//primary table deletes
-			if ( isset( $deobj[$primary_table->get_fully_qualified_pk_column()] ) )
-				$deletes[$primary_table->get_fully_qualified_pk_column()][] = $deobj[$primary_table->get_fully_qualified_pk_column()];
+			$primary_table = $this->_get_main_table();
+			$other_tables = $this->_get_other_tables();
+			$deletes = $query = array();
+			foreach ( $objects_for_deletion as $deobj ) {
+				//before we mark this object for deletion, 
+				//make sure there's no related objects blocking its deletion (if we're checking)
+				if( $allow_blocking && $this->delete_is_blocked_by_related_models($deobj[$primary_table->get_fully_qualified_pk_column()]) ){
+					continue;
+				}
 
-			//other tables
-			if ( !empty( $other_tables ) ) {
-				foreach ( $other_tables as $ot ) {
+				//primary table deletes
+				if ( isset( $deobj[$primary_table->get_fully_qualified_pk_column()] ) )
+					$deletes[$primary_table->get_fully_qualified_pk_column()][] = $deobj[$primary_table->get_fully_qualified_pk_column()];
 
-					//first check if we've got the foreign key column here.
-					if ( isset( $deobj[$ot->get_fully_qualified_fk_column()] ) )
-						$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_fk_column()];
+				//other tables
+				if ( !empty( $other_tables ) ) {
+					foreach ( $other_tables as $ot ) {
 
-					//wait! it's entirely possible that we'll have a the primary key for this table in here if it's a foreign key for one of the other secondary tables
-					if ( isset( $deobj[$ot->get_fully_qualified_pk_column()] ) )
-						$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_pk_column()];
+						//first check if we've got the foreign key column here.
+						if ( isset( $deobj[$ot->get_fully_qualified_fk_column()] ) )
+							$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_fk_column()];
 
-					//finally, it is possible that the fk for this table is found in the fully qualified pk column for the fk table, so let's see if that's there!
-					if ( isset( $deobj[$ot->get_fully_qualified_pk_on_fk_table()]) ) 
-						$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_pk_column()];
+						//wait! it's entirely possible that we'll have a the primary key for this table in here if it's a foreign key for one of the other secondary tables
+						if ( isset( $deobj[$ot->get_fully_qualified_pk_column()] ) )
+							$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_pk_column()];
+
+						//finally, it is possible that the fk for this table is found in the fully qualified pk column for the fk table, so let's see if that's there!
+						if ( isset( $deobj[$ot->get_fully_qualified_pk_on_fk_table()]) ) 
+							$deletes[$ot->get_fully_qualified_pk_column()][] = $deobj[$ot->get_fully_qualified_pk_column()];
+					}
 				}
 			}
-		}
-		
-		//we should have deletes now, so let's just go through and setup the where statement
-		foreach ( $deletes as $column => $values ) {
-			//make sure we have unique $values;
-			$values = array_unique($values);
-			$query[] = $column . ' IN(' . implode(",",$values) . ')';
-		}
 
-		return !empty($query) ? implode(' AND ', $query ) : '';
+			//we should have deletes now, so let's just go through and setup the where statement
+			foreach ( $deletes as $column => $values ) {
+				//make sure we have unique $values;
+				$values = array_unique($values);
+				$query[] = $column . ' IN(' . implode(",",$values) . ')';
+			}
+
+			return !empty($query) ? implode(' AND ', $query ) : '';
 		}elseif(count($this->get_combined_primary_key_fields()) > 1){
 			$ways_to_identify_a_row = array();
 			$fields = $this->get_combined_primary_key_fields();
