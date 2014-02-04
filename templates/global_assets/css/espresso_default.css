@@ -548,6 +548,7 @@ input.ee-register-button {
 	text-align: center;
 	left: 50%;
 	margin-left:-320px;
+	z-index: 1000;
 }
 .espresso-notices,
 .espresso-ajax-notices {
