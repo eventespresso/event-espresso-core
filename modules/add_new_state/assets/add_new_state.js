@@ -69,11 +69,9 @@ jQuery(document).ready(function($) {
 			},
 			
 			success: function( response ){
-				
 				$('#espresso-ajax-loading').fadeOut('fast');
 				 if ( response.success != undefined && response.success == true ) {
 					display_espresso_ajax_notices( 'The new state was successfully saved to the database.', 'success' );
-//					console.log( JSON.stringify( 'response: ' + response, null, 4 ));
 					espresso_process_new_state( response, new_state_rel );
 				} else if ( response.error !== undefined && response.error != '' ) {
 					display_espresso_ajax_notices( response.error );

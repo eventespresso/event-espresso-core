@@ -705,7 +705,6 @@ class EE_Error extends Exception {
 	* 	@return 		void
 	*/
 	public static function dismiss_persistent_admin_notice( $pan_name = '' ) {
-		
 		$pan_name = EE_Registry::instance()->REQ->is_set( 'ee_nag_notice' ) ? EE_Registry::instance()->REQ->get( 'ee_nag_notice' ) : $pan_name;
 		if ( ! empty( $pan_name )) {
 			if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() )) {
@@ -714,17 +713,20 @@ class EE_Error extends Exception {
 					EE_Error::add_error( sprintf( __( 'The persistent admin notice for "%s" could not be deleted.', 'event_espresso' ), $pan_name ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
-		}
-		$return_url = EE_Registry::instance()->REQ->is_set( 'return_url' ) ? EE_Registry::instance()->REQ->get( 'return_url' ) : '';
+		}		
 		if ( EE_Registry::instance()->REQ->ajax ) {
-			echo json_encode( array( 'return_url' =>$return_url ));
+			// grab any notices and concatenate into string
+			echo json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
 			exit();
 		} else {
+			// save errors to a transient to be displayed on next request (after redirect)
+			EE_Error::get_notices( FALSE, TRUE ); 
+			$return_url = EE_Registry::instance()->REQ->is_set( 'return_url' ) ? EE_Registry::instance()->REQ->get( 'return_url' ) : '';
 			wp_safe_redirect( urldecode( $return_url ));
 		}
 	}
 
-// http://localhost/EE_3.1.x/wp-admin/admin-ajax.php?action=dismiss_ee_nag_notice&ee_nag_notice=critical_page_problem&no_header=1&dismiss_ee_nag_notice_nonce=d7673ec4c7&return=critical_pages
+
 
 	/**
 	 * 	display_persistent_admin_notices
@@ -737,16 +739,16 @@ class EE_Error extends Exception {
 	 */
 	public static function display_persistent_admin_notices( $pan_name = '', $pan_message = '', $return_url = '' ) {
 		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
-			$ajax_args = array(
-				'action' => 'dismiss_ee_nag_notice',
-				'ee_nag_notice' => $pan_name,
+			$args = array(
+				'nag_notice' => $pan_name,
 				'return_url' => urlencode( $return_url ),
-				'no_header' => TRUE
+				'unknown_error' => __( 'An unknown error has occured on the server while attempting to dissmiss this notice.', 'event_espresso' )
 			);
+			wp_localize_script( 'espresso_core', 'ee_dismiss', $args );
 			return '
-			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice">
+			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix">
 				<p>' . $pan_message . '</p>
-				<a class="dismiss-ee-nag-notice hide-if-no-js" rel="' . $pan_name . '" href="'. EE_Admin_Page::add_query_args_and_nonce( $ajax_args, WP_AJAX_URL ) .'">'.__( 'dismiss', 'event_espresso' ) .'</a>
+				<a class="dismiss-ee-nag-notice hide-if-no-js" >'.__( 'dismiss', 'event_espresso' ) .'</a>
 			</div>';
 		}
 	}

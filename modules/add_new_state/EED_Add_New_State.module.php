@@ -233,7 +233,15 @@ class EED_Add_New_State  extends EED_Module {
 	 */
 	public static function cancel_new_state( $input_html, $label_html, $id ){
 		$id = str_replace( 'new_state_abbrv', 'new_state', $id );
-		return $input_html . '<br/><a id="hide-' . $id . '" class="ee-form-cancel-new-state-lnk smaller-text" rel="' . $id . '">' . sprintf( __('cancel%snew%sstate/province', 'event_espresso'), '&nbsp;', '&nbsp;' ) . '</a>';
+		'http://en.wikipedia.org/wiki/List_of_FIPS_region_codes_(A%E2%80%93C)';
+		$input_html .= '<div class="small-text"><b>' . __('Don\'t know your State/Province Abbreviation?', 'event_espresso') . '</b><br/>';
+		$input_html .= sprintf( 
+			__('You can look here: %s, for a list of Countries and links to their State/Province Abbreviations ("Subdivisions assigned codes" column).', 'event_espresso'), 
+			'<a class="ee-form-add-new-state-wiki-lnk" href="http://en.wikipedia.org/wiki/ISO_3166-2">http://en.wikipedia.org/wiki/ISO_3166-2</a>'
+		); 
+		$input_html .= '</div><br/>';
+		$input_html .= '<a id="hide-' . $id . '" class="ee-form-cancel-new-state-lnk smaller-text" rel="' . $id . '">' . sprintf( __('cancel%snew%sstate/province', 'event_espresso'), '&nbsp;', '&nbsp;' ) . '</a>';
+		return $input_html;
 	}
 
 	
@@ -342,8 +350,8 @@ class EED_Add_New_State  extends EED_Module {
 					'<b>' . $new_state->abbrev() . '</b>',
 					'<b>' . $new_state->country()->name() . '</b>',
 					'<a href="' . add_query_arg( array( 'page' => 'espresso_general_settings', 'action' => 'country_settings', 'country' => $new_state->country_iso() ), admin_url( 'admin.php' )) . '">' . __( 'Event Espresso - General Settings > Countries Tab', 'event_espresso' ) . '</a>'
-			);			
-			EE_Admin::add_persistent_admin_notice( $new_state_key, $new_state_notice );
+			);	
+			EE_Error::add_persistent_admin_notice( $new_state_key, $new_state_notice );
 			$new_state->save();
 			EEM_State::instance()->reset_cached_states();
 			return $new_state;
@@ -376,7 +384,7 @@ class EED_Add_New_State  extends EED_Module {
 		if ( ! $STA_abbrev ) {
 			EE_Error::add_error( __( 'An invalid or missing State Abbreviation was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		EE_Admin::dismiss_persistent_admin_notice( $CNT_ISO . '-' . $STA_abbrev );
+		EE_Error::dismiss_persistent_admin_notice( $CNT_ISO . '-' . $STA_abbrev );
 	}
 
 

@@ -213,22 +213,18 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
 		// compare existing settings with what's already saved'
 		$saved_config = $this->get_espresso_config();
-		$no_change = $saved_config == $this ? TRUE : FALSE;
 		// update
-		$saved = update_option( 'ee_config', $this );
-
-		do_action( 'AHEE__EE_Config__update_espresso_config__end',$this,$no_change,$saved );
+		$saved = $saved_config == $this ? TRUE : update_option( 'ee_config', $this );
+		do_action( 'AHEE__EE_Config__update_espresso_config__end', $this, $saved );
 		// if config remains the same or was updated successfully
-		if ( $no_change || $saved ) {
+		if ( $saved ) {
 			if ( $add_success ) {
-				$msg = __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' );
-				EE_Error::add_succes( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_succes( __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			}
 			return TRUE;
 		} else {
 			if ( $add_error ) {
-				$msg = __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			}
 			return FALSE;
 		}
@@ -785,6 +781,7 @@ class EE_Core_Config extends EE_Config_Base {
 	public $current_blog_id;
 	public $site_license_key;
 	public $ee_ueip_optin;
+	public $ee_ueip_has_notified;
 	/**
 	 * Not to be confused with the 4 critical page variables (See
 	 * get_critical_pages_array()), this is just an array of wp posts that have EE
@@ -816,7 +813,8 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->current_blog_id = get_current_blog_id();
 		$this->current_blog_id = $this->current_blog_id === NULL ? 1 : $this->current_blog_id;
 		$this->site_license_key = NULL;
-		$this->ee_ueip_optin = TRUE;
+		$this->ee_ueip_optin = get_option( 'ee_ueip_optin', TRUE );
+		$this->ee_ueip_has_notified = get_option( 'ee_ueip_has_notified', TRUE );
 		$this->post_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();

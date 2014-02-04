@@ -12,14 +12,6 @@
 <h3><?php _e('Event List Pages', 'event_espresso'); ?></h3>
 <ul>
 <li>
-<?php _e('<strong>Default Event List Type</strong>', 'event_espresso'); ?><br />
-<?php _e('Define how your basic event list will appear.', 'event_espresso'); ?>
-</li>
-<li>
-<?php _e('<strong>Grid Size</strong>', 'event_espresso'); ?><br />
-<?php _e('Select the size of the grid for your event list page. Adjust as needed to create a layout that matches your WordPress theme.', 'event_espresso'); ?>
-</li>
-<li>
 <?php _e('<strong>Display Descriptions</strong>', 'event_espresso'); ?><br />
 <?php _e('Whether descriptions should be shown on the event list page. If yes, you can show a short description or the full description.', 'event_espresso'); ?>
 </li>

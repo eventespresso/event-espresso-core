@@ -1,6 +1,6 @@
 <?php
 /**
- * This template will display The Loop that displays your events 
+ * This template will display The Loop that displays your venues 
  *
  * @ package		Event Espresso
  * @ author		Seth Shoultes

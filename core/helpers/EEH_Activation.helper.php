@@ -941,10 +941,11 @@ class EEH_Activation {
 		//get all the CPT post_types
 		$ee_post_types = array();
 		foreach(EE_Registry::instance()->non_abstract_db_models as $model_name){
-			if ( method_exists( $model_name, 'instance' ) && 
-					$model_name::instance() instanceof EEM_CPT_Base &&
-					$model_obj = $model_name::instance()) {
-				$ee_post_types[] = $wpdb->prepare("%s",$model_obj->post_type());
+			if ( method_exists( $model_name, 'instance' )) {
+				$model_obj = call_user_func( array( $model_name, 'instance' )); 
+				if ( $model_obj instanceof EEM_CPT_Base ) {
+					$ee_post_types[] = $wpdb->prepare("%s",$model_obj->post_type());
+				}
 			}
 		}
 		//get all our CPTs
@@ -968,22 +969,21 @@ class EEH_Activation {
 
 		// load registry
 		foreach( EE_Registry::instance()->non_abstract_db_models as $model_name ){
-			if ( method_exists( $model_name, 'instance' ) && 
-					$model_name::instance() instanceof EEM_Base &&
-					$model_obj = $model_name::instance()) {
-//				$items_deleted = $model_obj->delete(array(),true);
-//				echo "$model_name had $items_deleted deleted<br>";
-				foreach ( $model_obj->get_tables() as $table ) {
-					if ( strpos( $table->get_table_name(), 'esp_' )) {
-						switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
-							case FALSE :
-								$undeleted_tables[] = $table->get_table_name();
-							break;
-							case 0 :
-								// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
-							break;
-							default:
-								// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
+			if ( method_exists( $model_name, 'instance' )) {
+				$model_obj = call_user_func( array( $model_name, 'instance' )); 
+				if ( $model_obj instanceof EEM_CPT_Base ) {
+					foreach ( $model_obj->get_tables() as $table ) {
+						if ( strpos( $table->get_table_name(), 'esp_' )) {
+							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
+								case FALSE :
+									$undeleted_tables[] = $table->get_table_name();
+								break;
+								case 0 :
+									// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
+								break;
+								default:
+									// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
+							}
 						}
 					}
 				}
