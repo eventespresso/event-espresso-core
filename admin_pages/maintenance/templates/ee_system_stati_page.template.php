@@ -49,7 +49,7 @@ function ee_resurse_into_array($data) {
 }
 ?>
 <h1>
-	<?php _e("System Status", "event_espresso");?>
+	<?php _e("System Information", "event_espresso");?>
 </h1>
 <div class="padding">
 	<h3 class="espresso-header"><?php _e("Raw System Data", "event_espresso");?></h3>
