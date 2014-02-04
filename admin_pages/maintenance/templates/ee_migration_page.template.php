@@ -194,14 +194,21 @@ if ( $show_backup_db_text ) { ?>
 			<p><?php _e("Please note: after each task is completed you will need to continue the data migration, or report an error to Event Espresso.", "event_espresso");?></p>
 			<?php }?>
 			
-			<p class="ee-attention">
-				<span class="reminder-spn">
-					<?php _e("Please Note:", "event_espresso");?>
-				</span>
-				<br/>
-				<?php printf(__("Depending on the number of events and the complexity of the information in your database, this could take a few minutes.%s%sPlease be patient and do NOT navigate away from this page once the migration has begun%s. If any issues arise due to existing malformed data, an itemized report will be made available to you after the migration has completed.%sClick the button to begin the migration progress.", "event_espresso"), '<br/>', '<strong>', '</strong>', '<br/>' );?>
-			</p>
-			
+			<div class="ee-attention">
+				<p>
+					<span class="reminder-spn">
+						<strong><?php _e("Please Note:", "event_espresso");?></strong>
+					</span>
+					<br/>
+					<?php _e("Depending on the number of events and the complexity of the information in your database, this could take a few minutes.", "event_espresso");?>
+				</p>
+				<p>
+					<?php printf(__("%sPlease be patient and do NOT navigate away from this page once the migration has begun%s. If any issues arise due to existing malformed data, an itemized report will be made available to you after the migration has completed.", "event_espresso"),'<strong>', '</strong>' );?>
+				</p>
+				<p>
+					<?php _e("Click the button below to begin the migration process.", "event_espresso") ?>
+				</p>
+			</div>
 			<div id="progress-responsive">
 				<figure>
 					<div id="progress-responsive__bar" style="background:#2EA2CC;"></div>
