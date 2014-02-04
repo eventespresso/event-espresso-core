@@ -1044,7 +1044,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					$registrations = $this->_transaction->registrations( array(), TRUE );
 					if ( ! empty( $registrations )) {
 						EE_Registry::instance()->load_model( 'Attendee' );
-						EE_Registry::instance()->load_helper( 'Class_Tools' );
 						// grab the saved registrations from the transaction				
 						foreach ( $registrations  as $registration ) {	
 							// verify object
