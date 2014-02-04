@@ -386,7 +386,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_google'] = isset( EE_Registry::instance()->CFG->organization->google ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->google ) : '';
 		$this->_template_args['organization_instagram'] = isset( EE_Registry::instance()->CFG->organization->instagram ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->instagram ) : '';
 		//UXIP settings
-		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin', TRUE );
+		$this->_template_args['ee_ueip_optin'] = isset( EE_Registry::instance()->CFG->core->ee_ueip_optin ) ? $this->_display_nice( EE_Registry::instance()->CFG->core->ee_ueip_optin ) : TRUE;
 		
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$STA_ID = isset( EE_Registry::instance()->CFG->organization->STA_ID ) ? EE_Registry::instance()->CFG->organization->STA_ID : 4;
