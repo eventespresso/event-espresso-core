@@ -74,7 +74,13 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'data_reset' => '_data_reset_and_delete',
 			'reset_db'=>array(
 				'func'=>'_reset_db',
-				'noheader'=>true
+				'noheader'=>true,
+				'args'=>array('nuke_old_ee4_data'=>true),
+			),
+			'start_with_fresh_ee4_db'=>array(
+				'func'=>'_reset_db',
+				'noheader'=>true,
+				'args'=>array('nuke_old_ee4_data'=>false),
 			),
 			'delete_db'=>array(
 				'func'=>'_delete_db',
@@ -164,6 +170,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				$most_recent_migration->is_borked()
 				){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
+			$this->_template_args['reset_db_page_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL);
 		}elseif($addons_should_be_upgraded_first){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_upgrade_addons_before_migrating.template.php';
 		}else{
@@ -188,6 +195,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'show_maintenance_switch'=> $show_maintenance_switch,//flag for showing the option to change maintenance mode between levels 0 and 1
 			'script_names'=>$script_names,//array of names of scripts that have run
 			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
+			'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'start_with_fresh_ee4_db'), EE_MAINTENANCE_ADMIN_URL),
 			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL), 
 		));
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
@@ -202,7 +210,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'status_fatal_error'=>  EE_Data_Migration_Manager::status_fatal_error,
 			'status_completed'=>  EE_Data_Migration_Manager::status_completed));
 		}
-		$this->_template_args['reset_db_page_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL);
 		$this->_template_args['most_recent_migration'] = $most_recent_migration;//the actual most recently ran migration
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
@@ -304,11 +311,16 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * Resets the entire EE4 database.
 	 * Currently basically only sets up ee4 database for a fresh install- doesn't
 	 * actually clean out the old wp options, or cpts (although does erase old ee table data)
+	 * @param boolean $nuke_old_ee4_data controls whether or not we
+	 * destroy the old ee4 data, or just try initializing ee4 default data
 	 */
-	public function _reset_db(){
+	public function _reset_db($nuke_old_ee4_data = true){
 		EE_Registry::instance()->load_helper('Activation');
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
-		EEH_Activation::plugin_uninstall();
+		if($nuke_old_ee4_data){
+			EEH_Activation::delete_all_espresso_cpt_data();
+			EEH_Activation::delete_all_espresso_tables_and_data(false);
+		}
 		EE_System::instance()->initialize_db_if_no_migrations_required(true);
 		EE_System::instance()->redirect_to_about_ee();
 	}	
