@@ -128,7 +128,7 @@ class EE_Messages_Addressee extends EE_Base {
 	protected function _set_properties() {
 
 		foreach ( $this->_data as $prop => $value ) {
-			if( property_exists( $this, $prop ) )
+			if( EEH_Class_Tools::has_property( $this, $prop ) )
 				$this->$prop = $value;
 		}
 
