@@ -459,7 +459,7 @@ final class EE_Registry {
 			// return newly instantiated class
 			if ( isset( $class_abbreviations[ $class_name ] )) {		
 				$this->$class_abbreviations[ $class_name ] = $class_obj;
-			} else if ( property_exists( $this, $class_name )) {
+			} else if ( EEH_Class_Tools::has_property( $this, $class_name )) {
 				$this->{$class_name} = $class_obj;
 			} else if ( !$from_db && $cache  ) {
 				$this->LIB->$class_name = $class_obj;
