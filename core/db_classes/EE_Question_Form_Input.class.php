@@ -267,7 +267,7 @@ class EE_Question_Form_Input {
 	 */
 	private function _question_form_input_property_exists( $classname, $property ) {
 		// first try regular property exists method which works as expected in PHP 5.3+
-		$prop = property_exists( $classname, $property );
+		$prop = EEH_Class_Tools::has_property( $classname, $property );
 		if ( ! $prop ) {
 			// use reflection for < PHP 5.3 as a double check when property is not found, possible due to access restriction
 			$reflector = new ReflectionClass( $classname );
