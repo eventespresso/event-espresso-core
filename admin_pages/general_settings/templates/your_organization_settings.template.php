@@ -36,7 +36,7 @@
 			<tr>
 				<th>
 					<label for="organization_name">
-						<?php _e('Organization Name:', 'event_espresso'); ?>
+						<?php _e('Organization Name', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
@@ -49,7 +49,7 @@
 			<tr>
 				<th>
 					<label for="organization_address_1">
-						<?php _e('Street Address:', 'event_espresso'); ?>
+						<?php _e('Street Address', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
@@ -59,7 +59,7 @@
 			<tr>
 				<th>
 					<label for="organization_address_2">
-						<?php _e('Street Address 2:', 'event_espresso'); ?>
+						<?php _e('Street Address 2', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
@@ -69,7 +69,7 @@
 			<tr>
 				<th>
 					<label for="organization_city">
-						<?php _e('City:', 'event_espresso'); ?>
+						<?php _e('City', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
@@ -81,7 +81,7 @@
 			<tr>
 				<th>
 					<label for="organization_zip">
-						<?php _e('Zip / Postal Code:', 'event_espresso'); ?>
+						<?php _e('Zip/Postal Code', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
@@ -91,7 +91,7 @@
 			<tr>
 				<th>
 					<label for="organization_email">
-						<?php _e('Primary Contact Email:', 'event_espresso'); ?>
+						<?php _e('Primary Contact Email', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
@@ -104,7 +104,7 @@
 			<tr>
 				<th>
 					<label for="organization_phone">
-						<?php _e('Phone Number:', 'event_espresso'); ?>
+						<?php _e('Phone Number', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
@@ -117,7 +117,7 @@
 			<tr>
 				<th>
 					<label for="organization_vat">
-						<?php _e('VAT/Tax Number:', 'event_espresso'); ?>
+						<?php _e('VAT/Tax Number', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>
