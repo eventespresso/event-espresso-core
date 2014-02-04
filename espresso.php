@@ -159,14 +159,6 @@ register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivat
 
 
 
-function espresso_plugin_uninstall() {
-	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
-	EEH_Activation::plugin_uninstall();
-}
-register_uninstall_hook(    EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_uninstall' );
-
-
-
 function espresso_load_error_handling() {
 	// loaddebugging tools
 	if ( WP_DEBUG === TRUE ) {
