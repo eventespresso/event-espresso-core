@@ -83,8 +83,6 @@ final class EE_Admin {
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 
-		//at a glance dashboard widget
-		add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
 		// pew pew pew
 		EE_Registry::instance()->load_core( 'PUE' );
 		
@@ -188,6 +186,8 @@ final class EE_Admin {
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			// bring out the pidgeons!!!
 			EE_Registry::instance()->load_lib( 'Messages_Init' );
+			//at a glance dashboard widget
+			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
 		}
 		
 		// run the admin page factory but ONLY if we are doing an ee admin ajax request
