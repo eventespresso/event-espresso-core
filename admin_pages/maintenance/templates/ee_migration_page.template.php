@@ -26,7 +26,7 @@ if ( $show_backup_db_text ) { ?>
  			<p>
  			<?php _e("Since you have already been using Event Espresso and have previous Event and Registration Data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with EE4.", "event_espresso");?>
  			</p>
- 		<?php } elseif ( $show_backup_db_text ) { ?>
+ 		<?php } elseif ( $show_most_recent_migration ) { ?>
  			 <h3 class="espresso-header">
  			 	<span class="dashicons dashicons-awards ee-icon-size-22"></span>
  				 <?php _e('Congratulations! Your database is "up-to-date" and you are ready to begin using EE4', "event_espresso");?>

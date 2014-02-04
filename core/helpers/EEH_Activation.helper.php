@@ -157,7 +157,6 @@ class EEH_Activation {
 			if ( EE_Registry::instance()->CFG->core->$critical_page['id'] !== FALSE ) {
 				// attempt to find post by ID
 				$critical_page['post'] = get_post( EE_Registry::instance()->CFG->core->$critical_page['id'] );
-//				printr( $critical_page['post'], '$critical_page[post]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			}
 			// no dice?
 			if ( $critical_page['post'] == NULL ) {
@@ -188,7 +187,7 @@ class EEH_Activation {
 				}					
 			}
 			
-			$critical_page_problem =  ! isset( $critical_page['post']->post_status ) || $critical_page['post']->post_status != 'publish' || strpos( $critical_page['post']->post_content, '[' . $critical_page['code'] ) === FALSE ? TRUE : $critical_page_problem;
+			$critical_page_problem =  ! isset( $critical_page['post']->post_status ) || $critical_page['post']->post_status != 'publish' || strpos( $critical_page['post']->post_content, $critical_page['code'] ) === FALSE ? TRUE : $critical_page_problem;
 
 		}
 						
@@ -197,15 +196,13 @@ class EEH_Activation {
 				__('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.', 'event_espresso' ),
 				'<a href="' . admin_url('admin.php?page=espresso_general_settings&action=critical_pages') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>'
 			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}
-		
-		if ( EE_Error::has_notices() ) {
-			foreach( EE_Error::get_notices( FALSE, FALSE, TRUE ) as $notice ) {
-				EE_Admin::add_persistent_admin_notice( substr( md5( $notice ), 0, 16 ), $notice );
-			}
+			EE_Error::add_persistent_admin_notice( 'critical_page_problem', $msg );
 		}
 
+		if ( EE_Error::has_notices() ) {
+			EE_Error::get_notices( FALSE, TRUE, TRUE );
+		}
+		
 	}
 
 
@@ -1010,7 +1007,7 @@ class EEH_Activation {
 			'ee_ueip_has_notified' => TRUE,
 			'ee_plugin_activation_errors' => TRUE,
 			'ee_id_mapping_from' => FALSE,
-			'ee_pers_admin_notices' => TRUE,
+			'espresso_persistent_admin_notices' => TRUE,
 			'ee_encryption_key' => TRUE,
 			'pue_force_upgrade_' => FALSE,
 			'pue_json_error_' => FALSE,
