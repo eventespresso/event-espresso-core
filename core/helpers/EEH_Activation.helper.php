@@ -933,18 +933,6 @@ class EEH_Activation {
 
 
 	/**
-	 * plugin_uninstall
-	 *
-	 * 	@access public
-	 * 	@static
-	 * 	@return void
-	 */
-	public static function plugin_uninstall() {
-		
-	}
-
-
-	/**
 	 * Finds all our EE4 custom post types, and deletes them and their assocaited data (like post meta or term relations)/
 	 * @global type $wpdb
 	 */
