@@ -187,7 +187,7 @@ class Contact_List_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _sta_id_stop() {
-		return '<p>' . __('View state / province for registrants. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
+		return '<p>' . __('View state/province for registrants. Can be sorted in ascending or descending order.', 'event_espresso') . '</p>';
 	}
 
 	protected function _cnt_iso_stop() {

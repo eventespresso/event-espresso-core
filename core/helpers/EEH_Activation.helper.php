@@ -940,6 +940,10 @@ class EEH_Activation {
 	}
 
 
+	/**
+	 * Finds all our EE4 custom post types, and deletes them and their assocaited data (like post meta or term relations)/
+	 * @global type $wpdb
+	 */
 	public static function delete_all_espresso_cpt_data(){
 		global $wpdb;
 		//get all the CPT post_types
