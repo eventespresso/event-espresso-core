@@ -335,19 +335,15 @@ class EED_Add_New_State  extends EED_Module {
 		$new_state = EE_State::new_instance( $props_n_values );
 		if ( $new_state instanceof EE_State ) {
 			// if not non-ajax admin
-			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
-			$new_state_notice = array( 
-				$new_state->country_iso() . '-' . $new_state->abbrev() => sprintf( 
+			$new_state_key = $new_state->country_iso() . '-' . $new_state->abbrev();
+			$new_state_notice = sprintf( 
 					__( 'A new State named "%s (%s)" was dynamically added from an Event Espresso form for the Country of "%s".<br/>To verify, edit, and/or delete this new State, please go to the %s and update the States / Provinces section.<br/>Check "Yes" to have this new State added to dropdown select lists in forms.', 'event_espresso' ),
 					'<b>' . $new_state->name() . '</b>',
 					'<b>' . $new_state->abbrev() . '</b>',
 					'<b>' . $new_state->country()->name() . '</b>',
 					'<a href="' . add_query_arg( array( 'page' => 'espresso_general_settings', 'action' => 'country_settings', 'country' => $new_state->country_iso() ), admin_url( 'admin.php' )) . '">' . __( 'Event Espresso - General Settings > Countries Tab', 'event_espresso' ) . '</a>'
-				)
 			);			
-			$persistent_admin_notices = array_merge( $persistent_admin_notices, $new_state_notice );
-			update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
-//			printr( $new_state, '$new_state  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			EE_Admin::add_persistent_admin_notice( $new_state_key, $new_state_notice );
 			$new_state->save();
 			EEM_State::instance()->reset_cached_states();
 			return $new_state;
@@ -365,11 +361,25 @@ class EED_Add_New_State  extends EED_Module {
 	*		@return 		boolean
 	*/	
 	public static function update_country_settings( $CNT_ISO = '', $STA_ID = '', $cols_n_values = array() ) {
-		$STA_abbrev = is_array( $cols_n_values ) && isset( $cols_n_values['STA_abbrev'] ) ? $cols_n_values['STA_abbrev'] : FALSE;
-		if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', FALSE )) {
-			unset( $persistent_admin_notices[ $CNT_ISO . '-' . $STA_abbrev ] );
+		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : FALSE;
+		if ( ! $CNT_ISO ) {
+			EE_Error::add_error( __( 'An invalid or missing Country ISO Code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
 		}
-		update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
+		$STA_abbrev = is_array( $cols_n_values ) && isset( $cols_n_values['STA_abbrev'] ) ? $cols_n_values['STA_abbrev'] : FALSE;
+		if (  ! $STA_abbrev && ! empty( $STA_ID )) {
+			if( $state = EEM_State::instance()->get_one_by_ID( $STA_ID )) {
+				if ( $state instanceof EE_State ) {
+					$STA_abbrev = $state->abbrev();
+				}
+			}
+		}
+		if ( ! $STA_abbrev ) {
+			EE_Error::add_error( __( 'An invalid or missing State Abbreviation was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		if( ! EE_Admin::dismiss_persistent_admin_notice( $CNT_ISO . '-' . $STA_abbrev )) {
+			EE_Error::add_error( sprintf( __( 'The persistent admin notice for %s, %s could not be deleted.', 'event_espresso' ), $STA_abbrev, $CNT_ISO ), __FILE__, __FUNCTION__, __LINE__ );
+		}	
 	}
 
 
