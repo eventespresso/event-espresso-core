@@ -258,7 +258,6 @@ final class EE_System {
 		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}
-		echo "request type:$request_type<br>";
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				 
@@ -366,7 +365,7 @@ final class EE_System {
 	 * the ABOUT page; and if so, sets a hook to perform that direct
 	 */
 	private function _maybe_redirect_to_ee_about() {
-		if($this->_should_redirect_to_ee_about_page()){
+		if(is_admin() && $this->_should_redirect_to_ee_about_page()){
 			add_action('init', array($this, 'redirect_to_about_ee'), 10 );
 		}
 	}
