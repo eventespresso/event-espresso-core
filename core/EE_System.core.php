@@ -258,6 +258,7 @@ final class EE_System {
 		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}
+		echo "request type:$request_type<br>";
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				 

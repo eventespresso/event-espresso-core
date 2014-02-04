@@ -5,7 +5,9 @@
 ?>
 <h1>
 	<?php _e( 'Reset and/or Delete EE Data', 'event_espresso' );?>
-</h1>
+</h1><?php
+$url = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'rerun_migration_from_ee3'), EE_MAINTENANCE_ADMIN_URL);
+?><a href='<?php echo $url?>'>remigrate</a>
 <div class="padding">
 	
 	<h3 class="espresso-header"><span class="dashicons dashicons-post-trash ee-icon-size-22"></span><?php _e('Delete ALL Event Espresso Tables and Data', 'event_espresso');?></h3>

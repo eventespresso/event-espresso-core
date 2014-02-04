@@ -79,6 +79,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'delete_db'=>array(
 				'func'=>'_delete_db',
 				'noheader'=>true
+			),
+			'rerun_migration_from_ee3'=>array(
+				'func'=>'_rerun_migration_from_ee3',
+				'noheader'=>true
 			)
 		);
 	}
@@ -323,6 +327,20 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		wp_safe_redirect( admin_url( 'plugins.php' ));
 	}	
 
+	/**
+	 * sets up EE4 to rerun the migrations from ee3 to ee4
+	 */
+	public function _rerun_migration_from_ee3(){
+		EE_Registry::instance()->load_helper('Activation');
+		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+		EEH_Activation::delete_all_espresso_cpt_data();
+		EEH_Activation::delete_all_espresso_tables_and_data(false);
+		//set the db state to something that will require migrations
+		update_option(EE_Data_Migration_Manager::current_database_state, '3.1.36.0');
+		
+		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_2_complete_maintenance);
+		$this->_redirect_after_action(true, __("Database", 'event_espresso'), __("reset", 'event_espresso'));
+	}
 
 
 	//none of the below group are currently used for Gateway Settings
