@@ -215,19 +215,16 @@ final class EE_Config {
 		$saved_config = $this->get_espresso_config();
 		// update
 		$saved = $saved_config == $this ? TRUE : update_option( 'ee_config', $this );
-
-		do_action( 'AHEE__EE_Config__update_espresso_config__end',$this,$no_change,$saved );
+		do_action( 'AHEE__EE_Config__update_espresso_config__end', $this, $saved );
 		// if config remains the same or was updated successfully
 		if ( $saved ) {
 			if ( $add_success ) {
-				$msg = __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' );
-				EE_Error::add_succes( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_succes( __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			}
 			return TRUE;
 		} else {
 			if ( $add_error ) {
-				$msg = __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			}
 			return FALSE;
 		}
