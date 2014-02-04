@@ -104,7 +104,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				),
 			'system_status'=>array(
 				'nav'=>array(
-					'label'=>  __("System Status", "event_espresso"),
+					'label'=>  __("System Information", "event_espresso"),
 					'order'=>30	
 				),
 				'require_nonce' => FALSE,
@@ -258,7 +258,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * shows the big ol' system status page
+	 * shows the big ol' System Information page
 	 */
 	public function _system_status(){
 		$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_system_stati_page.template.php';
