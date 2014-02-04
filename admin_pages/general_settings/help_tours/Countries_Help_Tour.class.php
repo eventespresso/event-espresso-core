@@ -85,6 +85,6 @@ class Countries_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _country_states_settings_stop() {
-		return '<p>' . __('Used in certain areas of the plugin, here you can define what states / provinces will be displayed in case you do not do business in certain areas.', 'event_espresso') . '</p>';
+		return '<p>' . __('Used in certain areas of the plugin, here you can define what states/provinces will be displayed in case you do not do business in certain areas.', 'event_espresso') . '</p>';
 	}
 }
