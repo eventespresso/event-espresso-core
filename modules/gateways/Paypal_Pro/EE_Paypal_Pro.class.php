@@ -146,77 +146,77 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			</th>
 			<td>
 				<select name="currency_format" data-placeholder="Choose a currency..." class="chzn-select wide">
-					<option value="<?php echo $this->_payment_settings['currency_format']; ?>"><?php echo $this->_payment_settings['currency_format']; ?></option>
-					<option value="USD">
+					<?php $currency = $this->_payment_settings['currency_format'];?>
+					<option value="USD" <?php echo $currency=="USD" ? 'selected="selected"' : ''?>>
 						<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
 					</option>
-					<option value="GBP">
+					<option value="GBP" <?php echo $currency=="GBP" ? 'selected="selected"' : ''?>>
 						<?php _e('Pounds Sterling (&pound;)', 'event_espresso'); ?>
 					</option>
-					<option value="CAD">
+					<option value="CAD" <?php echo $currency=="CAD" ? 'selected="selected"' : ''?>>
 						<?php _e('Canadian Dollars (C $)', 'event_espresso'); ?>
 					</option>
-					<option value="AUD">
+					<option value="AUD" <?php echo $currency=="AUD" ? 'selected="selected"' : ''?>>
 						<?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
 					</option>
-					<option value="BRL">
+					<option value="BRL" <?php echo $currency=="BRL" ? 'selected="selected"' : ''?>>
 						<?php _e('Brazilian Real (only for Brazilian users)', 'event_espresso'); ?>
 					</option>
-					<option value="CHF">
+					<option value="CHF" <?php echo $currency=="CHF" ? 'selected="selected"' : ''?>>
 						<?php _e('Swiss Franc', 'event_espresso'); ?>
 					</option>
-					<option value="CZK">
+					<option value="CZK" <?php echo $currency=="CZK" ? 'selected="selected"' : ''?>>
 						<?php _e('Czech Koruna', 'event_espresso'); ?>
 					</option>
-					<option value="DKK">
+					<option value="DKK" <?php echo $currency=="DKK" ? 'selected="selected"' : ''?>>
 						<?php _e('Danish Krone', 'event_espresso'); ?>
 					</option>
-					<option value="EUR">
+					<option value="EUR" <?php echo $currency=="EUR" ? 'selected="selected"' : ''?>>
 						<?php _e('Euros (&#8364;)', 'event_espresso'); ?>
 					</option>
-					<option value="HKD">
+					<option value="HKD" <?php echo $currency=="HKD" ? 'selected="selected"' : ''?>>
 						<?php _e('Hong Kong Dollar ($)', 'event_espresso'); ?>
 					</option>
-					<option value="HUF">
+					<option value="HUF" <?php echo $currency=="HUF" ? 'selected="selected"' : ''?>>
 						<?php _e('Hungarian Forint', 'event_espresso'); ?>
 					</option>
-					<option value="ILS">
+					<option value="ILS" <?php echo $currency=="ILS" ? 'selected="selected"' : ''?>>
 						<?php _e('Israeli Shekel', 'event_espresso'); ?>
 					</option>
-					<option value="JPY">
+					<option value="JPY" <?php echo $currency=="JPY" ? 'selected="selected"' : ''?>>
 						<?php _e('Yen (&yen;)', 'event_espresso'); ?>
 					</option>
-					<option value="MXN">
+					<option value="MXN" <?php echo $currency=="MXN" ? 'selected="selected"' : ''?>>
 						<?php _e('Mexican Peso', 'event_espresso'); ?>
 					</option>
-					<option value="MYR">
+					<option value="MYR" <?php echo $currency=="MYR" ? 'selected="selected"' : ''?>>
 						<?php _e('Malaysian Ringgits (only for Malaysian users)', 'event_espresso'); ?>
 					</option>
-					<option value="NOK">
+					<option value="NOK" <?php echo $currency=="NOK" ? 'selected="selected"' : ''?>>
 						<?php _e('Norwegian Krone', 'event_espresso'); ?>
 					</option>
-					<option value="NZD">
+					<option value="NZD" <?php echo $currency=="NZD" ? 'selected="selected"' : ''?>>
 						<?php _e('New Zealand Dollar ($)', 'event_espresso'); ?>
 					</option>
-					<option value="PHP">
+					<option value="PHP" <?php echo $currency=="PHP" ? 'selected="selected"' : ''?>>
 						<?php _e('Philippine Pesos', 'event_espresso'); ?>
 					</option>
-					<option value="PLN">
+					<option value="PLN" <?php echo $currency=="PLN" ? 'selected="selected"' : ''?>>
 						<?php _e('Polish Zloty', 'event_espresso'); ?>
 					</option>
-					<option value="SEK">
+					<option value="SEK" <?php echo $currency=="SEK" ? 'selected="selected"' : ''?>>
 						<?php _e('Swedish Krona', 'event_espresso'); ?>
 					</option>
-					<option value="SGD">
+					<option value="SGD" <?php echo $currency=="SGD" ? 'selected="selected"' : ''?>>
 						<?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
 					</option>
-					<option value="THB">
+					<option value="THB" <?php echo $currency=="THB" ? 'selected="selected"' : ''?>>
 						<?php _e('Thai Baht', 'event_espresso'); ?>
 					</option>
-					<option value="TRY">
+					<option value="TRY" <?php echo $currency=="TRY" ? 'selected="selected"' : ''?>>
 						<?php _e('Turkish Lira (only for Turkish users)', 'event_espresso'); ?>
 					</option>
-					<option value="TWD">
+					<option value="TWD" <?php echo $currency=="TWD" ? 'selected="selected"' : ''?>>
 						<?php _e('Taiwan New Dollars', 'event_espresso'); ?>
 					</option>
 				</select>
