@@ -32,7 +32,6 @@ class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage{
 	private $_old_table;
 	private $_new_table;
 	function _migration_step($num_items=50){
-		
 		global $wpdb;
 		$start_at_record = $this->count_records_migrated();
 		$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM $this->_old_table LIMIT %d,%d",$start_at_record,$num_items),ARRAY_A);

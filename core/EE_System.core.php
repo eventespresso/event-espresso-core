@@ -365,7 +365,7 @@ final class EE_System {
 	 * the ABOUT page; and if so, sets a hook to perform that direct
 	 */
 	private function _maybe_redirect_to_ee_about() {
-		if($this->_should_redirect_to_ee_about_page()){
+		if(is_admin() && $this->_should_redirect_to_ee_about_page()){
 			add_action('init', array($this, 'redirect_to_about_ee'), 10 );
 		}
 	}

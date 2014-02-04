@@ -79,6 +79,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'delete_db'=>array(
 				'func'=>'_delete_db',
 				'noheader'=>true
+			),
+			'rerun_migration_from_ee3'=>array(
+				'func'=>'_rerun_migration_from_ee3',
+				'noheader'=>true
 			)
 		);
 	}
@@ -179,14 +183,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
 			$this->_template_args = array_merge($this->_template_args,array(
 			'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
-			'most_recent_migration'=> $most_recent_migration,//the actual most recently ran migration
 			'show_migration_progress' => $show_migration_progress,//flag for showing the option to run migrations and see their progress
 			'show_backup_db_text' => $show_backup_db_text,//flag for showing text telling the user to backup their DB
 			'show_maintenance_switch'=> $show_maintenance_switch,//flag for showing the option to change maintenance mode between levels 0 and 1
 			'script_names'=>$script_names,//array of names of scripts that have run
 			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
 			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL), 
-			'reset_db_page_link'=>EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL),
 		));
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
@@ -200,6 +202,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'status_fatal_error'=>  EE_Data_Migration_Manager::status_fatal_error,
 			'status_completed'=>  EE_Data_Migration_Manager::status_completed));
 		}
+		$this->_template_args['reset_db_page_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL);
+		$this->_template_args['most_recent_migration'] = $most_recent_migration;//the actual most recently ran migration
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
 	}
@@ -323,6 +327,20 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		wp_safe_redirect( admin_url( 'plugins.php' ));
 	}	
 
+	/**
+	 * sets up EE4 to rerun the migrations from ee3 to ee4
+	 */
+	public function _rerun_migration_from_ee3(){
+		EE_Registry::instance()->load_helper('Activation');
+		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+		EEH_Activation::delete_all_espresso_cpt_data();
+		EEH_Activation::delete_all_espresso_tables_and_data(false);
+		//set the db state to something that will require migrations
+		update_option(EE_Data_Migration_Manager::current_database_state, '3.1.36.0');
+		
+		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_2_complete_maintenance);
+		$this->_redirect_after_action(true, __("Database", 'event_espresso'), __("reset", 'event_espresso'));
+	}
 
 
 	//none of the below group are currently used for Gateway Settings
