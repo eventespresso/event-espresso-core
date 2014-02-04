@@ -182,8 +182,6 @@ final class EE_Admin {
 			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100);			
 		} else {
 			//ok so we want to enable the entire admin
-			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
-			add_action( 'wp_ajax_event_list_load_state', array( $this, 'event_list_load_state_callback' ));
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
@@ -534,36 +532,6 @@ final class EE_Admin {
 
 
 	/**
-	* event_list_save_state_callback
-	* 
-	* @access public
-	* @return void
-	*/
-	public function event_list_save_state_callback() {
-		check_ajax_referer('event_list_state', 'nonce');
-		update_user_meta($_POST['user'], 'event_list_state', $_POST['data']);
-		die(); // this is required to return a proper result
-	}
-
-
-
-	/**
-	* event_list_load_state_callback
-	* 
-	* @access public
-	* @return void
-	*/
-	public function event_list_load_state_callback() {
-		check_ajax_referer('event_list_state', 'nonce');
-		echo json_encode(get_user_meta($_POST['user'], 'event_list_state', true));
-		die(); // this is required to return a proper result
-	}
-
-
-
-
-
-	/**
 	 * 	display_admin_notices
 	 *
 	 *  @access 	public
@@ -571,103 +539,6 @@ final class EE_Admin {
 	 */
 	public function display_admin_notices() {
 		echo EE_Error::get_notices();
-	}
-
-
-
-
-
-	/**
-	* 	add_persistent_admin_notice
-	*
-	*	@access 	public
-	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
-	* 	@param		string	$pan_name	the message to be stored persistently until dismissed
-	* 	@return 		void
-	*/
-	public static function add_persistent_admin_notice( $pan_name = '', $pan_message ) {
-		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
-			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
-			$persistent_admin_notices[ $pan_name ] = $pan_message;
-			update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
-		}
-	}
-
-
-
-
-
-	/**
-	* 	dismiss_persistent_admin_notice
-	*
-	*	@access 	public
-	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be dismissed
-	* 	@return 		void
-	*/
-	public function dismiss_ee_nag_notice_callback() {
-		if ( EE_Registry::instance()->REQ->is_set( 'ee_nag_notice' )) {
-			EE_Admin_Page::dismiss_persistent_admin_notice( EE_Registry::instance()->REQ->get( 'ee_nag_notice' ));
-		}
-	}
-
-
-
-
-
-	/**
-	* 	dismiss_persistent_admin_notice
-	*
-	*	@access 	public
-	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be dismissed
-	* 	@return 		void
-	*/
-	public static function dismiss_persistent_admin_notice( $pan_name = '' ) {
-		if ( ! empty( $pan_name )) {
-			if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() )) {
-				unset( $persistent_admin_notices[ $pan_name ] );
-				update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
-			}
-		}
-	}
-
-
-
-	/**
-	 * 	display_persistent_admin_notices
-	 *
-	 *  	@access 	public
-	 *  	@return 		string
-	 */
-	public function display_persistent_admin_notices( $pan_name = '', $pan_message ) {
-		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
-			$ajax_args = array(
-				'action' => 'dismiss_ee_nag_notice',
-				'ee_nag_notice' => $pan_name,
-				'no_header' => TRUE
-			);
-			return '
-			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice">
-				<p>' . $pan_message . '</p>
-				<a class="dismiss-ee-nag-notice hide-if-no-js" rel="' . $pan_name . '" href="'. EE_Admin_Page::add_query_args_and_nonce( $ajax_args, WP_AJAX_URL ) .'">'.__( 'dismiss', 'event_espresso' ) .'</a>
-			</div>';
-		}
-	}
-
-
-
-	/**
-	 * 	get_persistent_admin_notices
-	 *
-	 *  	@access 	public
-	 *  	@return 	void
-	 */
-	public function get_persistent_admin_notices() {
-		// check for persistent admin notices
-		if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', FALSE )) {
-			foreach( $persistent_admin_notices as $pan_name => $pan_message ) {
-				$this->display_persistent_admin_notices( $pan_name, $pan_message );
-			}
-		}
 	}
 
 
