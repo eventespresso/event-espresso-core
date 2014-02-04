@@ -941,10 +941,11 @@ class EEH_Activation {
 		//get all the CPT post_types
 		$ee_post_types = array();
 		foreach(EE_Registry::instance()->non_abstract_db_models as $model_name){
-			if ( method_exists( $model_name, 'instance' ) && 
-					$model_name::instance() instanceof EEM_CPT_Base &&
-					$model_obj = $model_name::instance()) {
-				$ee_post_types[] = $wpdb->prepare("%s",$model_obj->post_type());
+			if ( method_exists( $model_name, 'instance' )) {
+				$model_obj = call_user_func( array( $model_name, 'instance' )); 
+				if ( $model_obj instanceof EEM_CPT_Base ) {
+					$ee_post_types[] = $wpdb->prepare("%s",$model_obj->post_type());
+				}
 			}
 		}
 		//get all our CPTs
