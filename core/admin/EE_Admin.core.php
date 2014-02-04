@@ -182,8 +182,6 @@ final class EE_Admin {
 			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100);			
 		} else {
 			//ok so we want to enable the entire admin
-			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
-			add_action( 'wp_ajax_event_list_load_state', array( $this, 'event_list_load_state_callback' ));
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
@@ -530,36 +528,6 @@ final class EE_Admin {
 			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
 		}
 	}
-
-
-
-	/**
-	* event_list_save_state_callback
-	* 
-	* @access public
-	* @return void
-	*/
-	public function event_list_save_state_callback() {
-		check_ajax_referer('event_list_state', 'nonce');
-		update_user_meta($_POST['user'], 'event_list_state', $_POST['data']);
-		die(); // this is required to return a proper result
-	}
-
-
-
-	/**
-	* event_list_load_state_callback
-	* 
-	* @access public
-	* @return void
-	*/
-	public function event_list_load_state_callback() {
-		check_ajax_referer('event_list_state', 'nonce');
-		echo json_encode(get_user_meta($_POST['user'], 'event_list_state', true));
-		die(); // this is required to return a proper result
-	}
-
-
 
 
 

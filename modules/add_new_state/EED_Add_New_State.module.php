@@ -364,7 +364,6 @@ class EED_Add_New_State  extends EED_Module {
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : FALSE;
 		if ( ! $CNT_ISO ) {
 			EE_Error::add_error( __( 'An invalid or missing Country ISO Code was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
 		}
 		$STA_abbrev = is_array( $cols_n_values ) && isset( $cols_n_values['STA_abbrev'] ) ? $cols_n_values['STA_abbrev'] : FALSE;
 		if (  ! $STA_abbrev && ! empty( $STA_ID )) {
@@ -377,9 +376,7 @@ class EED_Add_New_State  extends EED_Module {
 		if ( ! $STA_abbrev ) {
 			EE_Error::add_error( __( 'An invalid or missing State Abbreviation was received.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		if( ! EE_Admin::dismiss_persistent_admin_notice( $CNT_ISO . '-' . $STA_abbrev )) {
-			EE_Error::add_error( sprintf( __( 'The persistent admin notice for %s, %s could not be deleted.', 'event_espresso' ), $STA_abbrev, $CNT_ISO ), __FILE__, __FUNCTION__, __LINE__ );
-		}	
+		EE_Admin::dismiss_persistent_admin_notice( $CNT_ISO . '-' . $STA_abbrev );
 	}
 
 
