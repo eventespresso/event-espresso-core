@@ -9,7 +9,7 @@
 		<tr><td><label for='from'><?php _e("From/Reply-To:", "event_espresso");?></label></td><td><input name='from' id='from' type='text' style="width:200px"value='<?php echo get_bloginfo('admin_email','display'); ?>'></td></tr>
 		<tr><td><label for='from_name'><?php _e("Your Name", "event_espresso");?></label></td><td><input name='from_name' id='from_name' type='text' style="width:200px"value='<?php printf(__("Admin of %s", "event_espresso"),get_bloginfo('name','display'));?>'></td></tr>
 		<tr><td><label for='body'><?php _e("Comments", "event_espresso");?></label></td><td><textarea name="body" id="body" class='system_status_info'><?php _e("Enter any comments about why you think the error may have occurred", "event_espresso");?></textarea>
-			<p class='description'><?php _e("Note: the system status report will also be added to the email's body, which contains information about your Event Espresso, Wordpress, and PHP settings which can be helpful in debugging the problem.", "event_espresso");?></p></td></tr>
+			<p class='description'><?php _e("Note: the System Information report will also be added to the email's body, which contains information about your Event Espresso, Wordpress, and PHP settings which can be helpful in debugging the problem.", "event_espresso");?></p></td></tr>
 		<tr><td colspan="2"><input type="submit" value="<?php _e("Mail Crash Report to Event Espresso", "event_espresso");?>"/></td></tr>
 	</table>
 </form>

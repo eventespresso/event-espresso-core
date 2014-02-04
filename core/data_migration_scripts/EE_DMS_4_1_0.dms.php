@@ -778,7 +778,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				('DO', 'DOM', 0, 'Dominican Republic', 'DOP', 'Peso', 'Pesos', 'RD$', 1, 2, '+849', 0, 0),
 				('DZ', 'DZA', 0, 'Algeria', 'DZD', 'Dinar', 'Dinars', '', 1, 3, '+213', 0, 0),
 				('EC', 'ECU', 0, 'Ecuador', 'USD', 'Dollar', 'Dollars', '$', 1, 2, '+593', 0, 0),
-				('EE', 'EST', 0, 'Estonia', 'EEK', 'Kroon', 'Kroons', 'kr', 1, 2, '+372', 1, 0),
+				('EE', 'EST', 0, 'Estonia', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+372', 1, 0),
 				('EG', 'EGY', 0, 'Egypt', 'EGP', 'Pound', 'Pounds', '£', 1, 2, '+20', 0, 0),
 				('EH', 'ESH', 0, 'Western Sahara', 'MAD', 'Dirham', 'Dirhams', '', 1, 2, '+212', 0, 0),
 				('ER', 'ERI', 0, 'Eritrea', 'ERN', 'Nakfa', 'Nakfas', '', 1, 2, '+291', 0, 0),

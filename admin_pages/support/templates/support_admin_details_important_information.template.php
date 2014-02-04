@@ -24,7 +24,7 @@
 	$system_status_link = EE_Admin_Page::add_query_args_and_nonce($query_args, admin_url('admin.php'));
 
   ?>
-  <a href="<?php echo $system_status_link; ?>" class="button-secondary right"><?php _e('System Status', 'event_espresso'); ?></a>
+  <a href="<?php echo $system_status_link; ?>" class="button-secondary right"><?php _e('System Information', 'event_espresso'); ?></a>
 	<div class="localhost-information">
 		<dl>
 			<dt>
