@@ -285,6 +285,8 @@ table .espresso-radio-btn-options-ul .big-lbl,
 .edited-input { border : 1px solid #d54e21 !important; }
 .reminder-spn  { display: inline-block; color : #d54e21; line-height:1em; }
 
+.hide-if-no-js { display: none; }
+
 .not-bold { font-weight:normal !important; }
 .lt-grey-txt { color:#999 !important;  text-shadow:none; }
 .float-left { float:left; }
@@ -708,3 +710,13 @@ label.error  { display: block; color: #FE2A00 !important; }
     padding: 6px 12px;
     vertical-align: middle;
 }
+
+
+.espresso-notices.ee-nag-notice {
+	border-left: 4px solid #E76700;
+}
+.dismiss-ee-nag-notice {
+	float: right;
+	cursor: pointer;
+}
+
