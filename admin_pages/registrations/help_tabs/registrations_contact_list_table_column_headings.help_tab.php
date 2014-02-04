@@ -30,8 +30,8 @@
 <?php _e('This is the city for a contact.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>State / Province</strong>', 'event_espresso'); ?><br />
-<?php _e('This is the state / province for a contact.', 'event_espresso'); ?>
+<?php _e('<strong>State/Province</strong>', 'event_espresso'); ?><br />
+<?php _e('This is the state/province for a contact.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('<strong>Country</strong>', 'event_espresso'); ?><br />

@@ -150,8 +150,8 @@ final class EE_Admin {
 	 *	@return void
 	 */
 	public function get_request() {
-		EE_Registry::instance()->load_core( 'CPT_Strategy' );
 		EE_Registry::instance()->load_core( 'Request_Handler' );
+		EE_Registry::instance()->load_core( 'CPT_Strategy' );
 	}
 
 
@@ -182,8 +182,7 @@ final class EE_Admin {
 			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100);			
 		} else {
 			//ok so we want to enable the entire admin
-			add_action( 'wp_ajax_event_list_save_state', array( $this, 'event_list_save_state_callback' ));
-			add_action( 'wp_ajax_event_list_load_state', array( $this, 'event_list_load_state_callback' ));
+			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
@@ -376,7 +375,7 @@ final class EE_Admin {
 			'title' => __('Event List', 'event_espresso'),
 			'url' => get_post_type_archive_link( 'espresso_events' ),
 			'description' => __('Archive page for all events.', 'event_espresso')	
-			);
+		);
 		return apply_filters( 'FHEE__EE_Admin__get_extra_nav_menu_pages_items', $menuitems );
 	}
 
@@ -533,36 +532,6 @@ final class EE_Admin {
 
 
 	/**
-	* event_list_save_state_callback
-	* 
-	* @access public
-	* @return void
-	*/
-	public function event_list_save_state_callback() {
-		check_ajax_referer('event_list_state', 'nonce');
-		update_user_meta($_POST['user'], 'event_list_state', $_POST['data']);
-		die(); // this is required to return a proper result
-	}
-
-
-
-	/**
-	* event_list_load_state_callback
-	* 
-	* @access public
-	* @return void
-	*/
-	public function event_list_load_state_callback() {
-		check_ajax_referer('event_list_state', 'nonce');
-		echo json_encode(get_user_meta($_POST['user'], 'event_list_state', true));
-		die(); // this is required to return a proper result
-	}
-
-
-
-
-
-	/**
 	 * 	display_admin_notices
 	 *
 	 *  @access 	public
@@ -574,22 +543,33 @@ final class EE_Admin {
 
 
 
-
 	/**
 	 * 	get_persistent_admin_notices
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 *  	@access 	public
+	 *  	@return 		void
 	 */
 	public function get_persistent_admin_notices() {
-		// check for persistent admin notices
-		if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', FALSE )) {
-			foreach( $persistent_admin_notices as $persistent_admin_notice ) {
-				EE_Error::add_attention( $persistent_admin_notice );				
-			}
-		}
+		// http://www.example.com/wp-admin/admin.php?page=espresso_general_settings&action=critical_pages&critical_pages_nonce=2831ce0f30		
+		$args = array(
+			'page' => EE_Registry::instance()->REQ->is_set( 'page' ) ? EE_Registry::instance()->REQ->get( 'page' ) : '',
+			'action' => EE_Registry::instance()->REQ->is_set( 'action' ) ? EE_Registry::instance()->REQ->get( 'action' ) : '',
+		);
+		$return_url = EE_Admin_Page::add_query_args_and_nonce( $args, EE_ADMIN_URL );
+		echo EE_Error::get_persistent_admin_notices( $return_url );
 	}
 
+
+
+	/**
+	* 	dismiss_persistent_admin_notice
+	*
+	*	@access 	public
+	* 	@return 		void
+	*/
+	public function dismiss_ee_nag_notice_callback() {
+		EE_Error::dismiss_persistent_admin_notice();
+	}
 
 
 

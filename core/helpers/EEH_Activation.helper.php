@@ -196,9 +196,13 @@ class EEH_Activation {
 				__('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.', 'event_espresso' ),
 				'<a href="' . admin_url('admin.php?page=espresso_general_settings&action=critical_pages') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>'
 			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_persistent_admin_notice( 'critical_page_problem', $msg );
 		}
 
+		if ( EE_Error::has_notices() ) {
+			EE_Error::get_notices( FALSE, TRUE, TRUE );
+		}
+		
 	}
 
 
