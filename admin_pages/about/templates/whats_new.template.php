@@ -62,10 +62,6 @@
 	</div>
 </div>
 
-<hr>
-<h3><?php _e('Pick a theme, any theme', 'event_espresso'); ?></h3>
-			<p><?php  _e('We’ve made it super easy to integrate Event Espresso with almost any properly coded WordPress theme, including many of the thousands of themes available on WordPress.org.', 'event_espresso'); ?></p>
-<p><img class="about-overview-img" src="<?php echo EE_ABOUT_ASSETS_URL; ?>multiple-themes.jpg" /></p>
 
 <div class="changelog">
 	<div class="feature-section col two-col">
@@ -81,15 +77,26 @@
 		</div>
 	</div>
 </div>
+<br />
+<hr>
+
 <div class="changelog about-event-espresso">
 	<h2 class="about-headline-callout"><?php _e('Espresso Arabica 2014, a child theme for events', 'event_espresso'); ?></h2>
-	<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>single-event-page.jpg">
-
-	<div class="feature-section col one-col center-col">
+	<div class="feature-section col one-col">
 		<div>
 			<h3><?php _e('Turn your blog into a complete event registration and management system', 'event_espresso'); ?></h3>
 			<p><?php _e('Create a beautiful event page with ticket selection, venue details, and an integrated single page checkout system. With WordPress, Event Espresso, and Espresso Arabica 2014 (based on the "Twenty Fourteen" theme by WordPress), your events will certainly sell out faster than ever!', 'event_espresso'); ?></p>
 			<p><?php _e('With a striking design that does not compromise the simplicity of WordPress and Event Espresso 4, Espresso Arabica 2014 will be the best event theme on the market.', 'event_espresso'); ?></p>
 		</div>
 	</div>
+	<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>single-event-page.jpg">
+
+	
 </div>
+<hr>
+
+<h3><?php _e('Pick a theme, any theme', 'event_espresso'); ?></h3>
+			<p><?php  _e('We’ve made it super easy to integrate Event Espresso with almost any properly coded WordPress theme, including many of the thousands of themes available on WordPress.org.', 'event_espresso'); ?></p>
+<p><img class="about-overview-img" src="<?php echo EE_ABOUT_ASSETS_URL; ?>multiple-themes.jpg" /></p>
+<hr>
+
