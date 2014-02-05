@@ -73,7 +73,7 @@
 		
 			input_id = $(this).attr('id');
 			
-			if ( input_id !== undefined ) {
+			if ( typeof(input_id) !== 'undefined' ) {
 				// split the above var
 				var input_id_array =  input_id.split('-');
 //				console.log( JSON.stringify( 'input_id_array: ' + input_id_array, null, 4 ));
@@ -155,9 +155,9 @@
 	*/
 	function show_event_queue_ajax_success_msg( success_msg ) {
 		
-		if ( success_msg !== undefined && success_msg !== '' )  {
+		if ( typeof(success_msg) !== 'undefined' && success_msg !== '' )  {
 		
-			if ( success_msg.success !== undefined ) {
+			if ( typeof(success_msg.success) !== 'undefined' ) {
 				success_msg = success_msg.success;
 			}
 			//alert( 'success_msg'+success_msg);
@@ -178,9 +178,9 @@
 	*/
 	function show_event_queue_ajax_error_msg( error_msg ) {
 			
-		if ( error_msg !== undefined && error_msg !== '' ) {
+		if ( typeof(error_msg) !== 'undefined' && error_msg !== '' ) {
 			
-			if ( typeof( error_msg ) === 'object' && error_msg.error !== undefined && error_msg.error !== '' ) {
+			if ( typeof( error_msg ) === 'object' && typeof(error_msg.error) !== 'undefined' && error_msg.error !== '' ) {
 				error_msg = error_msg.error;
 			}
 						
