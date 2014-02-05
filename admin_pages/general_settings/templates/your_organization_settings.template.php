@@ -1,14 +1,13 @@
 <div class="padding">
+	<?php
+		//we'll only show site-license keys if this is main_site() (which works for both multi-site and single-site wp installations)
+		if ( is_main_site() ) { ?>
+		<h4 class="ee-admin-settings-hdr" style="width:300px;">
+			<?php _e('Your Event Espresso License Key', 'event_espresso'); ?>
+		</h4>
 
-	<h4 class="ee-admin-settings-hdr" style="width:300px;">
-		<?php _e('Your Event Espresso License Key', 'event_espresso'); ?>
-	</h4>
-
-	<table class="form-table">
-		<tbody>
-			<?php
-			//we'll only show site-license keys if this is main_site() (which works for both multi-site and single-site wp installations)
-			if ( is_main_site() ) { ?>
+		<table class="form-table">
+			<tbody>
 				<tr <?php echo isset($_REQUEST['license_key']) && $_REQUEST['license_key'] == true ? 'class="yellow_alert"' : '' ?>>
 					<th>
 						<label for="site_license_key">
@@ -22,9 +21,10 @@
 						</p>			
 					</td>
 				</tr>
-			<?php } //end is_main_site() condition ?>
-		</tbody>
-	</table>
+			</tbody>
+		</table>
+
+	<?php } //end is_main_site() condition ?>
 
 	
 
