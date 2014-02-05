@@ -3,8 +3,8 @@ jQuery(document).ready(function($) {
 	var ajax_loading = false;
 
 
-	// create object to hold our methods 
-	EE_CNT_STA = {		
+	// create object to hold our methods
+	EE_CNT_STA = {
 		
 		// ------------------------------------------
 		// get_country_details
@@ -17,7 +17,7 @@ jQuery(document).ready(function($) {
 				country: CNT_ISO,
 				noheader : 'true',
 				ee_admin_ajax : true
-			};			
+			};
 			// console.log( JSON.stringify( formData, null, 4 ));
 			$.ajax({
 				type: "POST",
@@ -32,8 +32,8 @@ jQuery(document).ready(function($) {
 					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
 						if ( ajax_loading == false ) {
 							$('#espresso-ajax-loading').fadeOut('fast');
-						}					
-						$('#country-details-dv').html( response.return_data );					
+						}
+						$('#country-details-dv').html( response.return_data );
 						ajax_loading = false;
 					} else if ( response.errors ) {
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
@@ -49,7 +49,7 @@ jQuery(document).ready(function($) {
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
-			});					
+			});
 		},
 	
 		// ------------------------------------------
@@ -79,11 +79,11 @@ jQuery(document).ready(function($) {
 					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
 						if ( ajax_loading == false ) {
 							$('#espresso-ajax-loading').fadeOut('fast');
-						}					
+						}
 						$('#country-states-dv').html( response.return_data );
 						ajax_loading = false;
 					} else if ( response.errors ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );					 
+						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 					} else {
 						response.errors = eei18n.invalid_server_response;
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
 		// add_new_state
 		// adds new state to currently selected country then re-retreives list of states
 		// ------------------------------------------
-		add_new_state : function () {			
+		add_new_state : function () {
 			// post data to be sent
 			var formData = {
 				action: 'espresso_add_new_state',
@@ -113,8 +113,8 @@ jQuery(document).ready(function($) {
 				STA_abbrev: $('#STA_abbrev-XXX').val(),
 				STA_name: $('#STA_name-XXX').val(),
 				ee_admin_ajax: true,
-				noheader : 'true'				
-			};			
+				noheader : 'true'
+			};
 			//console.log( JSON.stringify( formData, null, 4 ));
 			$.ajax({
 				type: "POST",
@@ -142,7 +142,7 @@ jQuery(document).ready(function($) {
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
-			});					
+			});
 		},
 			
 		
@@ -168,8 +168,8 @@ jQuery(document).ready(function($) {
 				STA_ID: STA_ID,
 				STA_abbrev: STA_abbrev,
 				ee_admin_ajax : true,
-				noheader : 'true'				
-			};			
+				noheader : 'true'
+			};
 			//console.log( JSON.stringify( formData, null, 4 ));
 			$.ajax({
 				type: "POST",
@@ -184,13 +184,12 @@ jQuery(document).ready(function($) {
 					if ( response.success != undefined && response.success != '' ) {
 						var row_to_delete = '#state-' + STA_ID + '-tr';
 						$( row_to_delete ).fadeOut().delay(500).remove();
-						$('#espresso-ajax-loading').fadeOut('fast');				
 					} else if ( response.errors != undefined && response.errors != '' ) {
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );					 
 					} else {
 						response.errors = eei18n.invalid_server_response;
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
-					} 
+					}
 				},
 				error: function(response) {
 					//console.log(response);
@@ -199,7 +198,7 @@ jQuery(document).ready(function($) {
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
-			});					
+			});
 		}
 	
 	};
@@ -243,6 +242,5 @@ jQuery(document).ready(function($) {
 	// get the ball rolling on page load
 	$('#country').trigger( 'change' );
 
-	
 
 });
