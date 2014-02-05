@@ -993,7 +993,7 @@ jQuery(document).ready(function($) {
 		getDTTsoldinfo: function( itemdata ) {
 			var dttSoldProps = {};
 			//first we need to determine if any checks are even necessary by checking for tkt_sold.
-			var dttLimit = $('.event-datetime-DTT_reg_limit', '#edit-event-datetime-table-' + itemdata.datetimeRow ).val()
+			var dttLimit = $('.event-datetime-DTT_reg_limit', '#edit-event-datetime-table-' + itemdata.datetimeRow ).val();
 			dttSoldProps.dttLimit = dttLimit === '' ? Infinity : accounting.unformat(dttLimit);
 			dttSoldProps.tktSold = accounting.unformat($('.ticket-display-row-TKT_sold', '#display-ticketrow-' + itemdata.ticketRow ).text());
 			dttSoldProps.dttSold = accounting.unformat( $('.datetime-tickets-sold', '#edit-event-datetime-table-' + itemdata.datetimeRow ).text() );
