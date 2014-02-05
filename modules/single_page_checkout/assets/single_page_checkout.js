@@ -9,7 +9,7 @@ jQuery(document).ready(function($) {
 	$(window).unload( function() {});
 
 	// hide edit step links
-	$('.spco-edit-step-lnk').addClass('hidden');	
+	$('.spco-edit-step-lnk').addClass('hidden');
 
 	// unset all copy attendee info checkboxes
 	$('#spco-copy-all-attendee-chk').prop( 'checked', false );
@@ -25,7 +25,7 @@ jQuery(document).ready(function($) {
 			changeYear: true
 		});
 	}
-	// to internationalize the datepicker, copy the following to somewhere safe, then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key. 
+	// to internationalize the datepicker, copy the following to somewhere safe, then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key.
 	// Multiple languages can be added this way
 /*
 	$.datepicker.regional['fr_FR'] = {
@@ -78,16 +78,16 @@ jQuery(document).ready(function($) {
 		*/
 		set_input_validation_classes : function( input) {
 			inputType = $(input).prop('type');
-			 if( $(input).hasClass('required') ) {
+			if( $(input).hasClass('required') ) {
 				if ( $(input).hasClass('email') ) {
 					//var input_value = $(input).eeInputValue();
 					if ( SPCO.validate_email_address( $(input).eeInputValue() ) === true ) {
 						SPCO.set_single_input_requires_value_off( $(input) );
 						$(input).addClass('has-value').removeClass('needs-value');
-						$('#espresso-ajax-notices-error').stop().fadeOut('fast');	
+						$('#espresso-ajax-notices-error').stop().fadeOut('fast');
 					} else {
 						$(input).addClass('needs-value').removeClass('has-value');
-					}							
+					}
 				} else if ( inputType == 'checkbox' || inputType ==  'radio' ) {
 					if ( $(input).prop('checked')) {
 						SPCO.set_multi_input_requires_value_off( $(input) );
@@ -96,15 +96,15 @@ jQuery(document).ready(function($) {
 					} else {
 						$(input).addClass('needs-value').removeClass('has-value');
 					}
-				} else {					
-					if ( $.trim( input.val() ) != '' ){
+				} else {
+					if ( $.trim( input.val() ) !== '' ){
 						SPCO.set_single_input_requires_value_off( $(input) );
 						$(input).addClass('has-value').removeClass('needs-value');
-						$('#espresso-ajax-notices-error').stop().fadeOut('fast');	
+						$('#espresso-ajax-notices-error').stop().fadeOut('fast');
 					} else {
 						$(input).addClass('needs-value').removeClass('has-value');
 					}
-				}				
+				}
 			}
 		},
 
@@ -137,9 +137,9 @@ jQuery(document).ready(function($) {
 				SPCO.debug( 'copy_primary_attendee_information > trgt_att_input', trgt_att_input );
 				
 				// get all form inputs for the primary attendee
-				var prmry_att_questions = SPCO.prmry_att_questions();				
+				var prmry_att_questions = SPCO.prmry_att_questions();
 				// for each question in the targeted attendee question group
-				$( prmry_att_questions ).each( function() {			
+				$( prmry_att_questions ).each( function() {
 					SPCO.validate_input( $(this) );
 				});
 				if ( SPCO.require_values.length > 0 ) {
@@ -148,39 +148,39 @@ jQuery(document).ready(function($) {
 				} else {
 					// for each question in the targeted attendee question group
 					$( prmry_att_questions ).each( function() {
-						// here we go again...			
+						// here we go again...
 						var input_id = $(this).attr('id');
 						SPCO.debug( 'copy_primary_attendee_information > input_id', input_id, true );
 												
-						if ( input_id != undefined ) {
+						if ( typeof input_id !== 'undefined' ) {
 							// split the above var
 							var input_id_array =  input_id.split('-');
 							SPCO.debug( 'copy_primary_attendee_information > input_id_array', input_id_array );
 				
 							// grab the current input's details
-							var att_nmbr = input_id_array[0];		 
-							var line_item_id = input_id_array[1];		 
-							var input_name = input_id_array[2];	
+							var att_nmbr = input_id_array[0];
+							var line_item_id = input_id_array[1];
+							var input_name = input_id_array[2];
 							var answer_id = input_id_array[3];
 							var input_value = $(this).eeInputValue();
 							SPCO.debug( 'copy_primary_attendee_information > input_name', input_name );
 
 							var new_input_id = '#' + trgt_att_input + '-' +  input_name;
-							if ( answer_id != undefined ) {
+							if ( typeof answer_id !== 'undefined' ) {
 								new_input_id = new_input_id + '-' + answer_id;
 							}
 							SPCO.debug( 'copy_primary_attendee_information > new_input_id', new_input_id );
 
 							if ( $(new_input_id).length > 0 ){
 								SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) );
-								$(new_input_id).trigger('change');				
-							}							
+								$(new_input_id).trigger('change');
+							}
 						}
 					});
 					
 					//SPCO.collapse_question_groups();
 
-				}		
+				}
 			}
 		},
 		// end copy_primary_attendee_information()
@@ -192,19 +192,19 @@ jQuery(document).ready(function($) {
 		*	returns a jQuery object consisting of all of the form inputs assigned to the primary attendee
 		*/
 		copy_primary_attendee_info_to_billing_info : function () {
-			var prmry_att_questions = SPCO.prmry_att_questions();			
+			var prmry_att_questions = SPCO.prmry_att_questions();
 			// for each question in the targeted attendee question group
 			$( prmry_att_questions ).each( function() {
 				input_id = $(this).attr('id');
-				if ( input_id != undefined ) {
+				if ( typeof input_id !== 'undefined' ) {
 					// split the above var
 					var input_id_array =  input_id.split('-');
-					var input_name = input_id_array[2];					
+					var input_name = input_id_array[2];
 					// copy to billing info
-					var billing = $('[id^=reg-page-billing-' + input_name + ']')
+					var billing = $('[id^=reg-page-billing-' + input_name + ']');
 					SPCO.debug( 'copy_primary_attendee_info_to_billing_info > billing', billing );
 					if ( $(billing).length > 0 ){
-						SPCO.copy_form_input_value_from_this( $(billing), $(this) )						
+						SPCO.copy_form_input_value_from_this( $(billing), $(this) );
 					}
 				}
 			});
@@ -221,7 +221,7 @@ jQuery(document).ready(function($) {
 			var prmry_att_qstn_grp = $('#primary-attendee').val();
 			SPCO.debug( 'prmry_att_questions > prmry_att_qstn_grp', prmry_att_qstn_grp, true );
 			// find all of the primaray attendee's questions for this event
-			return $( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find(':input');	
+			return $( '#spco-attendee-wrap-' + prmry_att_qstn_grp ).children( '.espresso-question-group-wrap' ).find(':input');
 		},
 
 
@@ -233,10 +233,10 @@ jQuery(document).ready(function($) {
 		validate_input : function ( input ) {
 			input_id = $(input).attr('id');
 			SPCO.debug( 'validate_input > input_id', input_id, true );
-			if ( input_id != undefined ) {
+			if ( typeof input_id !== 'undefined' ) {
 				var valid_input = true;
 				// get the input type
-				input_type = $(input).prop('type');			
+				input_type = $(input).prop('type');
 				// form inputs whose values are obtained using .val()
 				var uses_val = [ 'text', 'textarea', 'select-one', 'select-multiple' ];
 				// form inputs whose values are obtained using .prop()
@@ -249,18 +249,18 @@ jQuery(document).ready(function($) {
 					SPCO.debug( 'validate_input > input_value', input_value );
 					// find label for this input and grab it's text
 					var lbl_txt = $(input).closest('.reg-page-form-field-wrap-pg').find('label').html();
-					lbl_txt = lbl_txt == undefined ? input_id : lbl_txt;
+					lbl_txt = typeof lbl_txt === 'undefined' ? input_id : lbl_txt;
 					if ( lbl_txt.length && $(input).hasClass( 'required' ) ) {
 						// remove "<em>*</em>" from end
 						lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 					}
-					SPCO.debug( 'validate_input > lbl_txt', lbl_txt );					
+					SPCO.debug( 'validate_input > lbl_txt', lbl_txt );
 					// is it an invalid email addy?
 					if ( $(input).hasClass('email') && $(input).hasClass( 'required' ) && SPCO.validate_email_address( input_value ) !== true ) {
 						valid_input = false;
 						SPCO.error_msgs.push( eei18n.enter_valid_email );
 					// OR is it required and empty ?
-					} else if ( $(input).hasClass( 'required' ) && input_value == '' ) {
+					} else if ( $(input).hasClass( 'required' ) && input_value === '' ) {
 						valid_input = false;
 						SPCO.error_msgs.push( lbl_txt + eei18n.required_field );
 					}
@@ -284,28 +284,28 @@ jQuery(document).ready(function($) {
 						lbl_txt = lbl_txt.substring(0, lbl_txt.length - 10);
 					}
 					SPCO.debug( 'validate_input > lbl_txt', lbl_txt );
-					if ( $(input).hasClass( 'required' ) && input_value == false ) {						
+					if ( $(input).hasClass( 'required' ) && input_value === false ) {
 						// check that this input doesn't already have another option selected
 						if ( ! _.contains( SPCO.multi_inputs_that_do_not_require_values, lbl_txt ) && ! _.contains( SPCO.require_values, lbl_txt )) {
 							SPCO.require_values.push( lbl_txt );
 							SPCO.error_msgs.push( lbl_txt + eei18n.required_multi_field );
 							SPCO.set_multi_input_requires_value_on( $(input) );
 							SPCO.set_offset_from_top( $(input).closest('ul'), -275 );
-						}						
+						}
 					} else {
 						if ( ! _.contains( SPCO.multi_inputs_that_do_not_require_values, lbl_txt )) {
 							// an option has been selected so this question does not requre a value
-							SPCO.multi_inputs_that_do_not_require_values.push( lbl_txt );							
+							SPCO.multi_inputs_that_do_not_require_values.push( lbl_txt );
 						}
 						// remove from list of inputs that require values
-						SPCO.require_values = _.without( SPCO.require_values, lbl_txt );							
+						SPCO.require_values = _.without( SPCO.require_values, lbl_txt );
 						SPCO.set_multi_input_requires_value_off( $(input) );
 						SPCO.error_msgs = _.without( SPCO.error_msgs, lbl_txt + eei18n.required_multi_field );
 					}
 					SPCO.debug( 'validate_input > require_values', SPCO.require_values.join() );
 					SPCO.debug( 'validate_input > multi_inputs_that_do_not_require_values', SPCO.multi_inputs_that_do_not_require_values.join() );
-				}	
-			}		
+				}
+			}
 		},
 
 
@@ -411,7 +411,7 @@ jQuery(document).ready(function($) {
 			// reset
 			SPCO.reset_validation_vars();
 			// no form specified ?
-			whch_form = whch_form != undefined && whch_form != '' ? whch_form : '#spco-registration-' + eei18n.reg_step_1 + '-frm';
+			whch_form = typeof whch_form !== 'undefined' && whch_form !== '' ? whch_form : '#spco-registration-' + eei18n.reg_step_1 + '-frm';
 			SPCO.debug( 'verify_all_questions_answered > whch_form', whch_form, true );
 			
 			// for each question in the targeted attendee question group
@@ -423,7 +423,7 @@ jQuery(document).ready(function($) {
 				return false;
 			} else {
 //				SPCO.collapse_question_groups();
-				return true;	
+				return true;
 			}
 		},
 
@@ -431,7 +431,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	validation_errors
-		*/	
+		*/
 		validation_errors : function( msg_tag, scroll_to_top ) {
 			//remove duplicates
 			SPCO.require_values = _.unique( SPCO.require_values );
@@ -439,7 +439,7 @@ jQuery(document).ready(function($) {
 			if ( SPCO.require_values.length > 0 ) {
 				SPCO.debug( msg_tag +' > require_values', SPCO.require_values.join() );
 				SPCO.debug( msg_tag +' > multi_inputs_that_do_not_require_values', SPCO.multi_inputs_that_do_not_require_values.join() );
-				// add required questions call to action 
+				// add required questions call to action
 				SPCO.error_msgs.push( eei18n.answer_required_questions );
 				//remove duplicates
 				SPCO.error_msgs = _.unique( SPCO.error_msgs );
@@ -450,8 +450,8 @@ jQuery(document).ready(function($) {
 					SPCO.scroll_to_top_and_display_messages( SPCO.generate_message_object( '', error_msg ));
 				} else {
 					SPCO.display_messages( SPCO.generate_message_object( '', error_msg ));
-				}				
-				return true;		
+				}
+				return true;
 			} else {
 				return false;
 			}
@@ -461,9 +461,9 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	collapse_question_groups
-		*/	
+		*/
 		collapse_question_groups : function() {
-			$('.espresso-question-group-wrap').slideUp(); 
+			$('.espresso-question-group-wrap').slideUp();
 			$('#spco-copy-attendee-dv').slideUp();
 			$('#spco-auto-copy-attendee-pg').slideUp();
 			$('#spco-display-event-questions-lnk').removeClass('hidden');
@@ -473,22 +473,22 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	do_before_sending_ajax
-		*/	
+		*/
 		do_before_sending_ajax : function() {
-			// stop any message alerts that are in progress	
+			// stop any message alerts that are in progress
 			$('.espresso-ajax-notices').stop();
 			$('#espresso-ajax-long-loading').remove();
-			$('#espresso-ajax-loading').show();		
+			$('#espresso-ajax-loading').show();
 		},
 
 
 
 		/**
 		*	set_offset_from_top
-		*/	
+		*/
 		set_offset_from_top : function( item, extra ) {
-			if ( SPCO.offset_from_top == 0 ) {
-				extra = extra !== undefined && extra !== '' ? extra : 10;
+			if ( SPCO.offset_from_top === 0 ) {
+				extra = typeof extra !== 'undefined' && extra !== '' ? extra : 10;
 				var top_of_form = $( item ).offset();
 				SPCO.offset_from_top = top_of_form.top + extra;
 				SPCO.offset_from_top = Math.max( 0, SPCO.offset_from_top );
@@ -499,16 +499,16 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	like do_before_sending_ajax() but for the finalize_registration step
-		*/	
-		display_processing_registration_notification : function() {			
+		*/
+		display_processing_registration_notification : function() {
 			SPCO.set_offset_from_top( $('#single-page-checkout') );
 			$('body, html').animate({ scrollTop: SPCO.offset_from_top }, 'normal', function() {
 				// animation complete
 				$('#espresso-ajax-long-loading').remove();
-				$('#espresso-ajax-notices').eeCenter();	
+				$('#espresso-ajax-notices').eeCenter();
 				$('#espresso-ajax-notices-attention').append( '<span id="espresso-ajax-long-loading" class="ee-spinner ee-spin"></span>' );
 				$('#espresso-ajax-notices-attention > .espresso-notices-msg').html( eei18n.process_registration );
-				$('#espresso-ajax-notices-attention').removeClass('hidden').show();	
+				$('#espresso-ajax-notices-attention').removeClass('hidden').show();
 			});
 		},
 
@@ -516,13 +516,13 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	show event queue ajax success msg
-		*/	
+		*/
 		show_event_queue_ajax_success_msg : function( success_msg, fadeOut ) {
 			// make sure fade out time is not too short
-			fadeOut = fadeOut == undefined || fadeOut < 4000 ? 4000 : fadeOut;
+			fadeOut = typeof fadeOut === 'undefined' || fadeOut < 4000 ? 4000 : fadeOut;
 			// does an actual message exist ?
-			if ( success_msg != undefined && success_msg != '' )  {
-				$('#espresso-ajax-notices').eeCenter();	
+			if ( typeof success_msg !== 'undefined' && success_msg !== '' )  {
+				$('#espresso-ajax-notices').eeCenter();
 				$('#espresso-ajax-notices-success > .espresso-notices-msg').html( success_msg );
 				$('#espresso-ajax-loading').fadeOut('fast');
 				$('#espresso-ajax-notices-success').removeClass('hidden').show().delay(fadeOut).fadeOut();
@@ -535,12 +535,12 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	show event queue ajax error msg
-		*/	
+		*/
 		show_event_queue_ajax_error_msg : function( error_msg ) {
-			$('#espresso-ajax-notices-attention').fadeOut('fast');				
+			$('#espresso-ajax-notices-attention').fadeOut('fast');
 			// does an actual message exist ?
-			if ( error_msg != undefined && error_msg != '' ) {
-				$('#espresso-ajax-notices').eeCenter();				
+			if ( typeof error_msg !== 'undefined' && error_msg !== '' ) {
+				$('#espresso-ajax-notices').eeCenter();
 				$('#espresso-ajax-notices-error > .espresso-notices-msg').html( error_msg );
 				$('#espresso-ajax-loading').fadeOut('fast');
 				$('#espresso-ajax-notices-error').removeClass('hidden').show().delay(10000).fadeOut();
@@ -553,7 +553,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	scroll_to_top_and_display_messages
-		*/	
+		*/
 		scroll_to_top_and_display_messages : function( msg ) {
 			SPCO.set_offset_from_top( $('#single-page-checkout') );
 			$('body, html').animate({ scrollTop: SPCO.offset_from_top }, 'normal', function() {
@@ -564,8 +564,8 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 * 	display_messages
-		 **/
+		 * display messages
+		 */
 		display_messages : function( msg ){
 			if ( msg.success ) {
 				SPCO.show_event_queue_ajax_success_msg( msg.success );
@@ -577,13 +577,13 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 * 	Hides the step specified by step_to_hide
-		 **/
+		 * Hides the step specified by step_to_hide
+		 */
 		hide_steps : function(){
-			$('.spco-edit-step-lnk').removeClass('hidden');		
-			$('.spco-step-dv').slideUp( function() {				
+			$('.spco-edit-step-lnk').removeClass('hidden');
+			$('.spco-step-dv').slideUp( function() {
 				$('.spco-step-dv').height(0);
-			});	
+			});
 		},
 
 
@@ -596,11 +596,11 @@ jQuery(document).ready(function($) {
 		 * @return void
 		 **/
 		display_step : function( step_to_show, msg ){
-			$('.spco-step-display-dv').removeClass('active-step').addClass('inactive-step');	
+			$('.spco-step-display-dv').removeClass('active-step').addClass('inactive-step');
 			$('#spco-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
 			$('#spco-edit-'+step_to_show+'-lnk').addClass('hidden');
 			SPCO.debug( 'display_step -> step_to_show', step_to_show );
-			SPCO.debug( 'display_step -> "#spco-edit-'+step_to_show+'-lnk" class', $('#spco-edit-'+step_to_show+'-lnk').attr('class') );	
+			SPCO.debug( 'display_step -> "#spco-edit-'+step_to_show+'-lnk" class', $('#spco-edit-'+step_to_show+'-lnk').attr('class') );
 			$('#espresso-ajax-loading').fadeOut('fast');
 			$('#spco-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
 				SPCO.scroll_to_top_and_display_messages( msg );
@@ -611,11 +611,11 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	get_next_step
-		*/	
+		*/
 		get_next_step : function( step ) {
 			step_index = _.indexOf( eei18n.reg_steps, step );
 			step_index = step_index + 1;
-			return eei18n.reg_steps[ step_index ];	
+			return eei18n.reg_steps[ step_index ];
 		},
 
 
@@ -623,15 +623,15 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	process_selected_gateway
-		*/	
+		*/
 		process_selected_gateway : function() {
 			
 			var selected_gateway = $('#reg-page-selected-gateway').val();
-			if ( selected_gateway == '' ) {
+			if ( selected_gateway === '' ) {
 				return false;
 			}
 			var off_site_gateway = '#reg-page-gateway-off-site-'+selected_gateway;
-			var off_site_payment = $( off_site_gateway ).val(); 
+			var off_site_payment = $( off_site_gateway ).val();
 			var selected_gateway_dv = '#reg-page-billing-info-'+selected_gateway+'-dv';
 
 			SPCO.debug( 'process_selected_gateway -> selected_gateway', selected_gateway, true );
@@ -652,10 +652,10 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	submit a step of registraion form
-		*/	
+		*/
 		process_next_step : function( next_step_btn ) {
 			var step = $(next_step_btn).attr('rel');
-			if ( step != undefined && step != '' && ! $(next_step_btn).hasClass('disabled') ) {
+			if ( typeof step !== 'undefined' && step !== '' && ! $(next_step_btn).hasClass('disabled') ) {
 				next_step = SPCO.get_next_step( step );
 				SPCO.debug( 'process_next_step > step', step, true );
 				SPCO.debug( 'process_next_step > next_step', next_step );
@@ -663,12 +663,12 @@ jQuery(document).ready(function($) {
 				form_to_check = '#spco-registration-'+step+'-frm';
 				if ( step == 'payment_options' ) {
 					form_to_check = SPCO.process_selected_gateway();
-					if ( form_to_check == false ) {
+					if ( form_to_check === false ) {
 						msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'process_next_step > ' + next_step, eei18n.no_payment_method ));
 						SPCO.scroll_to_top_and_display_messages( msg );
 						return false;
 					}
-				} 
+				}
 				SPCO.debug( 'process_next_step > form_to_check', form_to_check );
 				// validate form
 				var good_to_go = SPCO.verify_all_questions_answered( form_to_check );
@@ -678,9 +678,9 @@ jQuery(document).ready(function($) {
 					// not disabled? you are NOW!!!
 					$(next_step_btn).addClass( 'disabled' );
 					// copy billing info?
-					if ( step == 'attendee_information' ) {						
+					if ( step == 'attendee_information' ) {
 						SPCO.copy_primary_attendee_info_to_billing_info();
-					} 
+					}
 					if ( next_step == 'finalize_registration' && _.indexOf( eei18n.reg_steps, 'payment_options' ) !== -1 ) {
 						if ( $('#reg-page-off-site-gateway').val() == 1 ) {
 							SPCO.debug( 'process_next_step -> off-site-gateway', $('#reg-page-off-site-gateway').val() );
@@ -689,24 +689,24 @@ jQuery(document).ready(function($) {
 						SPCO.display_processing_registration_notification();
 					}
 					SPCO.submit_reg_form ( step, next_step, form_to_check );
-				} else {					
-					// validation errors 
+				} else {
+					// validation errors
 					$( form_to_check ).slideDown();
 //					SPCO.scroll_to_top_and_display_messages();
-					return false;					
-				}				
-			}			
+					return false;
+				}
+			}
 		},
 
 
 
 		/**
 		*	submit a step of registraion form
-		*/	
-		submit_reg_form : function( step, next_step, form_to_check ) { 	
+		*/
+		submit_reg_form : function( step, next_step, form_to_check ) {
 
 			$('#spco-'+step+'-noheader').val('true');
-			$('#spco-'+step+'-action').attr( 'name', 'action' );		
+			$('#spco-'+step+'-action').attr( 'name', 'action' );
 			var form_data = $('#spco-registration-'+step+'-frm').serialize();
 			form_data += '&ee_front_ajax=1';
 			form_data += '&step=' + step;
@@ -721,7 +721,7 @@ jQuery(document).ready(function($) {
 				beforeSend: function() {
 					if ( step == 'attendee_information' ) {
 						SPCO.do_before_sending_ajax();
-						SPCO.collapse_question_groups();				
+						SPCO.collapse_question_groups();
 					} else if ( next_step != 'finalize_registration' ) {
 						SPCO.do_before_sending_ajax();
 					}
@@ -731,25 +731,25 @@ jQuery(document).ready(function($) {
 					
 					SPCO.debug( 'submit_reg_form > step', step );
 					SPCO.debug( 'submit_reg_form > next_step', next_step );
-					if ( response != undefined )	 {
+					if ( typeof response !== 'undefined' ) {
 						SPCO.debug( 'submit_reg_form > response.success', response.success );
 						SPCO.debug( 'submit_reg_form > response.error', response.error );
 						for ( key in response.return_data ) {
 							SPCO.debug( 'submit_reg_form > key', response.return_data[key] );
 						}
 						SPCO.enable_submit_buttons();
-						if ( response.recaptcha_reload != undefined ) {
+						if ( typeof response.recaptcha_reload !== 'undefined' ) {
 							$('#recaptcha_reload').trigger('click');
 							SPCO.scroll_to_top_and_display_messages( response );
-						} else if ( response.return_data != undefined ) {
+						} else if ( typeof response.return_data !== 'undefined' ) {
 							SPCO.process_return_data( next_step, response );
 						} else {
-							if ( response.error != '' && response.error != undefined ) {
+							if ( response.error !== '' && typeof(response.error) !== 'undefined' ) {
 								SPCO.scroll_to_top_and_display_messages( response );
 							} else {
 								go_to[ next_step ]( response );
 							}
-						}		
+						}
 					} else {
 						return SPCO.submit_reg_form_server_error( response );
 					}
@@ -760,7 +760,7 @@ jQuery(document).ready(function($) {
 					return SPCO.submit_reg_form_server_error( response );
 				}
 						
-			});	
+			});
 
 			return false;
 					
@@ -770,7 +770,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	submit_reg_form_server_error
-		*/	
+		*/
 		submit_reg_form_server_error : function( response ) {
 			SPCO.debug( 'submit_reg_form_server_error > ajax error response', dump( response ));
 			SPCO.enable_submit_buttons();
@@ -783,7 +783,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	enable_submit_buttons
-		*/	
+		*/
 		enable_submit_buttons : function() {
 			$('.spco-next-step-btn').each( function() {
 				$(this).removeClass( 'disabled' );
@@ -794,7 +794,7 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	process_return_data
-		*/	
+		*/
 		process_return_data : function( next_step, response ) {
 			
 			for ( key in response.return_data ) {
@@ -816,11 +816,11 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	generate_message_object
-		*/	
+		*/
 		generate_message_object : function( success_msg, error_msg ) {
-			msg = new Object();
-			msg.success = success_msg != undefined && success_msg != '' ? success_msg : false;
-			msg.error = error_msg != undefined && error_msg != '' ? error_msg : false;
+			msg = {};
+			msg.success = typeof success_msg !== 'undefined' && success_msg !== '' ? success_msg : false;
+			msg.error = typeof error_msg !== 'undefined' && error_msg !== '' ? error_msg : false;
 			return msg;
 		},
 
@@ -829,7 +829,7 @@ jQuery(document).ready(function($) {
 		/**
 		*	debug
 		*	print to the browser console
-		*/	
+		*/
 		debug : function( item, value, spacer ) {
 			if ( eei18n.wp_debug == 1 && SPCO.display_debug ) {
 				if ( spacer === true ) {
@@ -843,14 +843,14 @@ jQuery(document).ready(function($) {
 
 		/**
 		*	tag_message_for_debugging
-		*/	
+		*/
 		tag_message_for_debugging : function( tag, msg ) {
 			return eei18n.wp_debug == 1 ? msg + ' <span class="smaller-text">(&nbsp;' + tag + '&nbsp;)</span><br/>' : msg;
 		}
 
 
 
-	}	
+	};
 	// end of SPCO object
 	
 	
@@ -861,13 +861,13 @@ jQuery(document).ready(function($) {
 	*	payment_options
 	*	registration_confirmation
 	*	finalize_registration
-	*/	
-	var go_to = {		
+	*/
+	var go_to = {
 		
 		// go to attendee_information
 		attendee_information : function ( response ) {
 			SPCO.hide_steps();
-			// set attendee_information back to auto height 
+			// set attendee_information back to auto height
 			$('#spco-attendee_information-dv').css( 'height', 'auto' );
 			$( '#spco-display-event-questions-lnk' ).trigger('click');
 //			if ( msg == undefined ) { msg =''; }
@@ -880,7 +880,7 @@ jQuery(document).ready(function($) {
 			$('.reg-page-billing-info-dv').addClass('hidden');
 			$('.reg-page-payment-option-dv').removeClass('hidden');
 			$('#spco-payment_options-dv').css({ 'display' : 'none' }).removeClass('hidden');
-			// set payment_options back to auto height 
+			// set payment_options back to auto height
 			$('#spco-payment_options-dv').css( 'height', 'auto' );
 			SPCO.display_step( 'payment_options', response );
 		},
@@ -888,9 +888,9 @@ jQuery(document).ready(function($) {
 		// go to registration_confirmation
 		registration_confirmation : function ( response ) {
 			SPCO.hide_steps();
-			$('#spco-registration_confirmation-dv').css({ 'display' : 'none' }).removeClass('hidden');		
-			// set registration_confirmation back to auto height 
-			$('#spco-registration_confirmation-dv').css( 'height', 'auto' );	
+			$('#spco-registration_confirmation-dv').css({ 'display' : 'none' }).removeClass('hidden');
+			// set registration_confirmation back to auto height
+			$('#spco-registration_confirmation-dv').css( 'height', 'auto' );
 			SPCO.display_step( 'registration_confirmation', response );
 
 		},
@@ -898,9 +898,9 @@ jQuery(document).ready(function($) {
 		// finalize_registration
 		finalize_registration : function ( response ) {
 			SPCO.scroll_to_top_and_display_messages( response );
-		}	
+		}
 
-	}
+	};
 
 
 
@@ -941,7 +941,7 @@ jQuery(document).ready(function($) {
 
 
 	/**
-	*	if the Copy All option is checked off, trigger click event on all checkboxes 
+	*	if the Copy All option is checked off, trigger click event on all checkboxes
 	*/
 	$('#spco-copy-all-attendee-chk').on( 'click', function() {
 		if ( $(this).prop('checked')) {
@@ -955,7 +955,7 @@ jQuery(document).ready(function($) {
 			// any empty or invalid fields that need values ?
 			if ( ! SPCO.validation_errors( 'spco-copy-all-attendee-chk' )) {
 				// display success_msg
-				SPCO.display_messages( SPCO.generate_message_object( eei18n.attendee_info_copied ));				
+				SPCO.display_messages( SPCO.generate_message_object( eei18n.attendee_info_copied ));
 			}
 		}
 	});
@@ -973,19 +973,19 @@ jQuery(document).ready(function($) {
 	/**
 	*	set/remove "requires-value and needs-value" classes on load, if field is no longer empty
 	*/
-	$('#single-page-checkout :input').each( function() { 
-		if ( $(this).attr('type') != 'hidden' ) {			
+	$('#single-page-checkout :input').each( function() {
+		if ( $(this).attr('type') != 'hidden' ) {
 			SPCO.set_input_validation_classes( $(this) );
 		}
-	});	
+	});
 
 
 	/**
 	*	set/remove "requires-value and needs-value" classes after change, if field is no longer empty
 	*/
-	$('#single-page-checkout :input').change(function() { 
+	$('#single-page-checkout :input').change(function() {
 		SPCO.set_input_validation_classes( $(this) );
-	});	
+	});
 
 
 
@@ -1035,24 +1035,24 @@ jQuery(document).ready(function($) {
 		var selected_payment_option = $(this).find('.reg-page-payment-option-lnk');
 		var selected_gateway = selected_payment_option.attr('id');
 
-		$('#reg-page-select-other-gateway-lnk').attr( 'rel', selected_gateway );		
+		$('#reg-page-select-other-gateway-lnk').attr( 'rel', selected_gateway );
 		$('#methods-of-payment').slideUp( 250, function() {
 			$('.reg-page-payment-option-dv').each(function() {
 				$(this).toggleClass( 'hidden' );
-				$(this).find( ':input' ).each( function() { 
+				$(this).find( ':input' ).each( function() {
 					$(this).removeClass('required').removeClass('has-value').removeClass('needs-value');
 				});
-			});		
+			});
 			// get target element from "this" (the control element's) "rel" attribute
-			var gateway_form = '_reg-page-billing-info-' + selected_payment_option.attr("rel"); 	
+			var gateway_form = '_reg-page-billing-info-' + selected_payment_option.attr("rel");
 			$('#reg-page-selected-gateway').val( selected_payment_option.attr("rel") );
 			$('#'+gateway_form+'-dv').toggleClass( 'hidden' );
-			$('#'+gateway_form+'-dv').find( ':input' ).each( function() { 
-				if ( $(this).attr('type') != 'hidden' ) {			
+			$('#'+gateway_form+'-dv').find( ':input' ).each( function() {
+				if ( $(this).attr('type') != 'hidden' ) {
 					SPCO.set_input_validation_classes( $(this) );
 				}
 			});
-			$('#hide-'+gateway_form).removeClass('hidden');			
+			$('#hide-'+gateway_form).removeClass('hidden');
 			$('#reg-page-select-other-gateway-lnk').toggleClass( 'hidden' );
 			$('#select-method-of-payment-hdr').toggleClass( 'hidden' );
 			$('#methods-of-payment').slideDown( 500 );
