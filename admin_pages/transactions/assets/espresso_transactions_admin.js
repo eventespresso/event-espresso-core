@@ -182,12 +182,12 @@ jQuery(document).ready(function($) {
 	function validate_form_inputs() {
 		goodToGo = true;
 		$('#txn-admin-apply-payment-frm .required').each( function( index ) {
-			if( $( this ).val() == false ) {
+			if( $( this ).val() === false ) {
 				$( this ).addClass('requires-value').siblings( '.validation-notice-dv' ).fadeIn();
 				goodToGo = false;
 			}
 			$( this ).on( 'change', function() {
-				if( $( this ).val() != false ) {
+				if( $( this ).val() !== false ) {
 					$( this ).removeClass('requires-value').siblings( '.validation-notice-dv' ).fadeOut('fast');
 				}
 			});
@@ -246,7 +246,7 @@ jQuery(document).ready(function($) {
 					},
 					success: function( response ) {
 						/*console.log(response);/**/
-						if ( response.return_data !== undefined && response.return_data !== false && response.return_data !== null ) {
+						if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
 							response.edit_or_apply = editOrApply;
 							process_return_data( response );
 						} else if ( response.errors ) {
@@ -258,7 +258,7 @@ jQuery(document).ready(function($) {
 					},
 					error: function(response) {
 						/*console.log(response);/**/
-						if ( response.errors === undefined ) {
+						if ( typeof(response.errors) === 'undefined' ) {
 							response.errors = eei18n.error_occurred;
 						}
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -301,7 +301,7 @@ jQuery(document).ready(function($) {
 						do_before_admin_page_ajax();
 					},
 					success: function(response){
-						if ( response.return_data !== undefined && response.return_data !== false && response.return_data !== null ) {
+						if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
 							delBtn.closest('tr').remove();
 							process_delete_payment( response );
 						} else if ( response.errors ) {
@@ -313,7 +313,7 @@ jQuery(document).ready(function($) {
 						}
 					},
 					error: function(response) {
-						if ( response.errors === undefined ) {
+						if ( typeof(response.errors) === 'undefined' ) {
 							response.errors = eei18n.error_occurred;
 						}
 						show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
