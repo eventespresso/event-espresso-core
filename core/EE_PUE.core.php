@@ -143,7 +143,7 @@ class EE_PUE {
 		if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { //include the file 
 			require_once(EE_THIRD_PARTY . 'pue/pue-client.php' );
 
-			$api_key = isset( EE_Registry::instance()->CFG->site_license_key ) ? EE_Registry::instance()->CFG->site_license_key : '';
+			$api_key = isset( EE_Registry::instance()->NET_CFG->core->site_license_key ) ? EE_Registry::instance()->NET_CFG->core->site_license_key : '';
 			$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
 			//Note: PUE uses a simple preg_match to determine what type is currently installed based on version number.  So it's important that you use a key for the version type that is unique and not found in another key.

@@ -10,14 +10,13 @@
  * @ version		4+
  */
  ?>
-<?php  _e( 'Event Organizer: ', 'event_espresso' ) . espresso_organization_name( $EVT_ID ); ?><br/>
+<p><?php  _e( 'Event Organizer: ', 'event_espresso' ) . espresso_organization_name( $EVT_ID ); ?><br/>
 <?php  _e( 'Organizer Email: ', 'event_espresso' ) . espresso_organization_email( $EVT_ID ); ?><br/>
-<?php  _e( 'Event Phone: ', 'event_espresso' ) . espresso_event_phone( $EVT_ID ); ?><br/>
-<?php  _e( 'Event Status: ', 'event_espresso' ) . espresso_event_status( $EVT_ID );?><br/>
-<?php  _e( 'Categories: ', 'event_espresso' ) . espresso_event_categories( $EVT_ID );?><br/>
+<?php  _e( 'Event Phone: ', 'event_espresso' ) . espresso_event_phone( $EVT_ID ); ?></p>
+<p><?php  _e( 'Event Status: ', 'event_espresso' ) . espresso_event_status( $EVT_ID );?></p>
+<p><?php  _e( 'Categories: ', 'event_espresso' ) . espresso_event_categories( $EVT_ID );?></p>
 <?php  _e( 'Dates and Times: ', 'event_espresso' ) . espresso_list_of_event_dates( $EVT_ID );?>
 <?php  _e( 'Available Tickets: ', 'event_espresso' ) . espresso_event_tickets_available( $EVT_ID );?>
-<?php  _e( 'Event Venue: ', 'event_espresso' ) . espresso_venue_name( NULL, FALSE ); ?><br/>
-<?php  _e( 'Description: ', 'event_espresso' ); ?>
-<?php  echo has_excerpt( $EVT_ID ) ? $event_excerpt : $event_description; ?>
+<p><?php  _e( 'Event Venue: ', 'event_espresso' ) . espresso_venue_name( NULL, FALSE ); ?></p>
+<p><?php  echo __( 'Description: ', 'event_espresso' ) . $event_description; ?></p><br/>
  

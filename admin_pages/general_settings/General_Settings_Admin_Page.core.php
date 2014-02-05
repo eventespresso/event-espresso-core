@@ -368,7 +368,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _your_organization_settings() {
 	
-		$this->_template_args['site_license_key'] = isset( EE_Registry::instance()->CFG->core->site_license_key ) ? $this->_display_nice( EE_Registry::instance()->CFG->core->site_license_key ) : '';
+		$this->_template_args['site_license_key'] = isset( EE_Registry::instance()->NET_CFG->core->site_license_key ) ? $this->_display_nice( EE_Registry::instance()->NET_CFG->core->site_license_key ) : '';
 		$this->_template_args['organization_name'] = isset( EE_Registry::instance()->CFG->organization->name ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->name ) : '';
 		$this->_template_args['organization_address_1'] = isset( EE_Registry::instance()->CFG->organization->address_1 ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->address_1 ) : '';
 		$this->_template_args['organization_address_2'] = isset( EE_Registry::instance()->CFG->organization->address_2 ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->address_2 ) : '';
@@ -444,7 +444,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _update_your_organization_settings() {
 		
-		EE_Registry::instance()->CFG->core->site_license_key = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : EE_Registry::instance()->CFG->core->site_license_key;
+		EE_Registry::instance()->NET_CFG->core->site_license_key = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : EE_Registry::instance()->NET_CFG->core->site_license_key;
 		EE_Registry::instance()->CFG->organization->name = isset( $this->_req_data['organization_name'] ) ? sanitize_text_field( $this->_req_data['organization_name'] ) : EE_Registry::instance()->CFG->organization->name;
 		EE_Registry::instance()->CFG->organization->address_1 = isset( $this->_req_data['organization_address_1'] ) ? sanitize_text_field( $this->_req_data['organization_address_1'] ) : EE_Registry::instance()->CFG->organization->address_1;
 		EE_Registry::instance()->CFG->organization->address_2 = isset( $this->_req_data['organization_address_2'] ) ? sanitize_text_field( $this->_req_data['organization_address_2'] ) : EE_Registry::instance()->CFG->organization->address_2;

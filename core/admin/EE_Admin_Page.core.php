@@ -3015,8 +3015,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 			update_option( 'ee_ueip_optin', $config->core->ee_ueip_optin);
 			update_option( 'ee_ueip_has_notified', TRUE );
 		}
-		// and save it
-		if ( EE_Config::instance()->update_espresso_config( FALSE, FALSE ) ) {
+		// and save it (note we're also doing the network save here)
+		if ( EE_Config::instance()->update_espresso_config( FALSE, FALSE ) && EE_Network_Config::instance()->update_config( FALSE, FALSE ) ) {
 			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {

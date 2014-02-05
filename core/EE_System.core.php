@@ -107,8 +107,9 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		do_action( 'AHEE__EE_System__construct__autoloaders_available',$this );
-		// load and setup EE_Config
+		// load and setup EE_Config and EE_Network_Config
 		EE_Registry::instance()->load_core( 'Config' );
+		EE_Registry::instance()->load_core( 'Network_Config' );
 		// setup autoloaders
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain

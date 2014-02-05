@@ -48,6 +48,17 @@ final class EE_Registry {
 	*/
 	public $CFG = NULL;
 
+
+
+	/**
+	 * EE_Network_Config Object
+	 * @access public
+	 * @var EE_Network_Config $NET_CFG
+	 */
+	public $NET_CFG = NULL;
+
+
+
 	/**
 	* 	array for storing library classes in
 	* 	@public LIB
@@ -348,6 +359,7 @@ final class EE_Registry {
 		$class_abbreviations = array(
 			'EE_Cart' => 'CART',
 			'EE_Config' => 'CFG',
+			'EE_Network_Config' => 'NET_CFG',
 			'EE_Request_Handler' => 'REQ',
 			'EE_Session' => 'SSN'
 		);

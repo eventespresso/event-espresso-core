@@ -115,6 +115,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		}
 
 		EE_Config::instance()->update_espresso_config(false,false);
+		EE_Network_Config::instance()->update_config(FALSE,FALSE);
 		if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
 			$this->set_completed();
 		}
@@ -132,6 +133,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 
 	private function _handle_org_option($option_name,$value){
 		$c = EE_Config::instance();
+		$cn = EE_Network_Config::instance();
 		switch($option_name){
 		  case 'organization':  
 			  $c->organization->name = $value;break;
@@ -225,7 +227,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'affiliate_id': 
 			  $c->admin->affiliate_id = $value;break;
 		  case 'site_license_key': 
-			  $c->core->site_license_key = $value;break;
+			  $cn->core->site_license_key = $value;break;
 		  default:
 			  do_action( 'AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value );
 		}

@@ -592,7 +592,7 @@ class EEH_Activation {
 					case 'address2':
 							$QST_values = array( 
 									'QST_display_text' => __( 'Address2', 'event_espresso' ),
-									'QST_admin_label' => __( 'FirAddress2 - System Question', 'event_espresso' ),
+									'QST_admin_label' => __( 'Address2 - System Question', 'event_espresso' ),
 									'QST_system' => 'address2',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
@@ -622,7 +622,7 @@ class EEH_Activation {
 					case 'state':
 							$QST_values = array( 
 									'QST_display_text' => __( 'State / Province', 'event_espresso' ),
-									'QST_admin_label' => __( 'State / Province - System Question', 'event_espresso' ),
+									'QST_admin_label' => __( 'State/Province - System Question', 'event_espresso' ),
 									'QST_system' => 'state',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
@@ -651,8 +651,8 @@ class EEH_Activation {
 						
 					case 'zip':
 							$QST_values = array( 
-									'QST_display_text' => __( 'Zip / Postal Code', 'event_espresso' ),
-									'QST_admin_label' => __( 'Zip / Postal Code - System Question', 'event_espresso' ),
+									'QST_display_text' => __( 'Zip/Postal Code', 'event_espresso' ),
+									'QST_admin_label' => __( 'Zip/Postal Code - System Question', 'event_espresso' ),
 									'QST_system' => 'zip',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
