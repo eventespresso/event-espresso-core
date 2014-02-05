@@ -1293,7 +1293,7 @@ jQuery(document).ready(function($) {
 			this.updateDTTsold = tktHelper.verifyDTTsold(this.itemdata, selecting);
 
 			//if no updates happen then get out (and we should have a dialog warning.)
-			if ( this.updateDTTsold === 0 ) 
+			if ( this.updateDTTsold === 0 )
 				return getitm ? rtnitm : this;
 
 			if ( ( !selecting && this.context != 'ticket' ) || ( !selecting && this.context == 'ticket' && this.itemdata.context == 'ticket-datetime' ) ) {
