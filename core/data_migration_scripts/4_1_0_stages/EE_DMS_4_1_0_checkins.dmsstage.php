@@ -52,7 +52,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 			$new_reg_id = $new_registrations_for_attendee[$i];
 			if( ! $new_reg_id){
 				$this->add_error(sprintf(__('It appears we wanted to check-in more registrations than actually exist. The old attendee record (%1$s) indicated we should check-in %2$d registrations, but there are only %3$d registrations for that attendee (%4$s)', "event_espresso"),
-					http_build_query($old_row),abs($num_to_checkin_at_this_time),count($new_registrations_for_attendee),  http_build_query($new_registrations_for_attendee)));
+					$this->_json_encode($old_row),abs($num_to_checkin_at_this_time),count($new_registrations_for_attendee),  $this->_json_encode($new_registrations_for_attendee)));
 				break;
 			}
 			$new_last_checkin_record = $wpdb->get_row($wpdb->prepare("SELECT * FROM $this->_new_table WHERE REG_ID = %d ORDER BY CHK_ID DESC LIMIT 1",$new_reg_id));
@@ -86,7 +86,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 	
 		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_detail", $old_attendee['event_id'], $wpdb->posts);
 		if ( ! $new_event_id){
-			$this->add_error(sprintf(__("Could nto find new event ID with old event id '%d', on attendee row %s; and because of that couldnt find the correct datetime for Check-in", "event_espresso"),$old_attendee['event_id'],http_build_query($old_attendee)));
+			$this->add_error(sprintf(__("Could nto find new event ID with old event id '%d', on attendee row %s; and because of that couldnt find the correct datetime for Check-in", "event_espresso"),$old_attendee['event_id'],$this->_json_encode($old_attendee)));
 			return 0;
 		}
 		$old_att_start_date = $old_attendee['start_date'];

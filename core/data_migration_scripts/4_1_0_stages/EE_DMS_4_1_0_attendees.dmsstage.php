@@ -429,7 +429,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			}
 			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);			
 			if( ! $txn_id){
-				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  http_build_query($old_attendee),$primary_attendee_old_id));
+				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  $this->_json_encode($old_attendee),$primary_attendee_old_id));
 				$txn_id = 0;
 			}
 			return $txn_id;
@@ -484,12 +484,12 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$STS_ID = $this->_get_reg_status_for_old_payment_status($old_attendee);
 		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix.'events_detail', $old_attendee['event_id'], $wpdb->posts);
 		if( ! $new_event_id){
-			$this->add_error(sprintf(__("Could not find NEW event CPT ID for old event '%d' on old attendee %s", "event_espresso"),$old_attendee['event_id'],http_build_query($old_attendee)));
+			$this->add_error(sprintf(__("Could not find NEW event CPT ID for old event '%d' on old attendee %s", "event_espresso"),$old_attendee['event_id'],$this->_json_encode($old_attendee)));
 		}
 		
 		$ticket_id = $this->_try_to_find_new_ticket_id($old_attendee,$new_event_id);
 		if( ! $ticket_id){
-			$this->add_error(sprintf(__("Could not find a NEW ticket for OLD attendee %s", "event_espresso"),http_build_query($old_attendee)));
+			$this->add_error(sprintf(__("Could not find a NEW ticket for OLD attendee %s", "event_espresso"),$this->_json_encode($old_attendee)));
 		}
 		$regs_on_this_row = intval($old_attendee['quantity']);
 		$new_regs = array();

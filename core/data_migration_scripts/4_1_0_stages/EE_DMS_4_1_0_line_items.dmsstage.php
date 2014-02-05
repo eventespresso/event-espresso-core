@@ -55,7 +55,7 @@ class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table{
 		if(intval($old_row['is_primary'])){
 			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $this->_new_transaction_table);
 			if ( ! $txn_id ){
-				$this->add_error(sprintf(__("Could not find the transaction for the 3.1 attendee %d from row %s", "event_espresso"),$old_row['id'],http_build_query($old_row)));
+				$this->add_error(sprintf(__("Could not find the transaction for the 3.1 attendee %d from row %s", "event_espresso"),$old_row['id'],$this->_json_encode($old_row)));
 				return;
 			}
 			$txn = $this->_get_txn($txn_id);

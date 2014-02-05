@@ -708,6 +708,23 @@ abstract class EE_Data_Migration_Class_Base{
 				'<br/>',
 				$wpdb->last_error);
 	}
+	
+	/* Same as json_encode, just avoids putting
+	 * serialized arrays into the http build query, as that would 
+	* @param type $array_of_data
+	* @return string
+	*/
+	protected function _json_encode($array_of_data){
+		//we'd rather NOT serialize the transaction details
+		$fields_to_include = array();
+		foreach($array_of_data as $name => $value){
+			$unserialized_data = @unserialize($value);
+			if($unserialized_data === FALSE){
+				$fields_to_include[$name] = $value;
+			}
+		}
+		return json_encode($fields_to_include);
+	}
 }
 
 /**
