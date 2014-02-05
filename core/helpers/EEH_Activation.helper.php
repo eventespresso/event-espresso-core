@@ -453,6 +453,7 @@ class EEH_Activation {
 		$drop_pre_existing_tables = EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ? true : false;
 		$current_data_migration_script->schema_changes_before_migration($drop_pre_existing_tables);
 		$current_data_migration_script->schema_changes_after_migration($drop_pre_existing_tables);
+		EE_Data_Migration_Manager::instance()->update_current_database_state_to();
 	}
 
 

@@ -28,7 +28,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.1.288.alpha';
+		return '4.1.289.alpha';
 	}
 } else {
 	add_action( 'admin_notices', 'espresso_duplicate_plugin_error' );
