@@ -370,6 +370,10 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			 	'class' => '',
 			 	'desc' => ''
 			 	),
+			 'overpaid' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
+				),
 			 'complete' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::complete_status_code,
 				'desc' => EEH_Template::pretty_status( EEM_Transaction::complete_status_code, FALSE, 'sentence' )
@@ -378,13 +382,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::incomplete_status_code,
 				'desc' => EEH_Template::pretty_status( EEM_Transaction::incomplete_status_code, FALSE, 'sentence' )
 				),
-			 'open' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::open_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::open_status_code, FALSE, 'sentence' )
-				),
-			 'overpaid' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::overpaid_status_code,
-				'desc' => EEH_Template::pretty_status( EEM_Transaction::overpaid_status_code, FALSE, 'sentence' )
+			 'failed' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EEM_Transaction::failed_status_code,
+				'desc' => EEH_Template::pretty_status( EEM_Transaction::failed_status_code, FALSE, 'sentence' )
 				),
 		);
 		return $items;
