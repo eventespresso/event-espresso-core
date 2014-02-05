@@ -971,7 +971,7 @@ class EEH_Activation {
 		foreach( EE_Registry::instance()->non_abstract_db_models as $model_name ){
 			if ( method_exists( $model_name, 'instance' )) {
 				$model_obj = call_user_func( array( $model_name, 'instance' )); 
-				if ( $model_obj instanceof EEM_CPT_Base ) {
+				if ( $model_obj instanceof EEM_Base ) {
 					foreach ( $model_obj->get_tables() as $table ) {
 						if ( strpos( $table->get_table_name(), 'esp_' )) {
 							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {

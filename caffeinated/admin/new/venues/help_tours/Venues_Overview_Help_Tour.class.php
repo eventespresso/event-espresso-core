@@ -159,7 +159,7 @@ class Venues_Overview_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _search_stop() {
-		return '<p>' . __('Search through venues. The following sources will be searched: Venue Name, Venue Description, Venue Short Description, Venue Address, Venue City, Venue Zip / Postal Code, Venue Phone, Venue URL, Venue Virtual Phone, Venue Google Map link, Event Name, Event Description, Event Phone, and Event External URL.', 'event_espresso') . '</p>';
+		return '<p>' . __('Search through venues. The following sources will be searched: Venue Name, Venue Description, Venue Short Description, Venue Address, Venue City, Venue Zip/Postal Code, Venue Phone, Venue URL, Venue Virtual Phone, Venue Google Map link, Event Name, Event Description, Event Phone, and Event External URL.', 'event_espresso') . '</p>';
 	}
 	
 	protected function _new_venue_stop() {

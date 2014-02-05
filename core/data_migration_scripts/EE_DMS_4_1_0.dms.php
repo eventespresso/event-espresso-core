@@ -1589,7 +1589,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		);
 		$attach_id = wp_insert_attachment( $attachment, $guid );
 		if( ! $attach_id ){
-			$migration_stage->add_error(sprintf(__("Could not create image attachment post from image '%s'. Attachment data was %s.", "event_espresso"),$guid,http_build_query($attachment)));
+			$migration_stage->add_error(sprintf(__("Could not create image attachment post from image '%s'. Attachment data was %s.", "event_espresso"),$guid,$this->_json_encode($attachment)));
 			return $attach_id;
 		}
 		
@@ -1604,7 +1604,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		$metadata_save_result = wp_update_attachment_metadata( $attach_id, $attach_data );
 		if( ! $metadata_save_result ){
-			$migration_stage->add_error(sprintf(__("Could not update attachment metadata for attachment %d with data %s", "event_espresso"),$attach_id,http_build_query($attach_data)));
+			$migration_stage->add_error(sprintf(__("Could not update attachment metadata for attachment %d with data %s", "event_espresso"),$attach_id,$this->_json_encode($attach_data)));
 		}
 		return $attach_id;
 	}
