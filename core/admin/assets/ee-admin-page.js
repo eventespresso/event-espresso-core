@@ -95,7 +95,7 @@ jQuery(document).ready(function($) {
 	$(window).scroll(function() {
 		var scrollTop = $(this).scrollTop();
 		var offset = $('#espresso_major_buttons_wrapper .publishing-action').offset();
-		if( typeof offset !== undefined && offset !== null && offset.top !== undefined ) {
+		if( typeof(offset) !== 'undefined' && offset !== null && typeof(offset.top) !== 'undefined' ) {
 			if ( (scrollTop+33) > offset.top ) {
 				$('#event-editor-floating-save-btns').removeClass('hidden');
 				$('#espresso_major_buttons_wrapper .button-primary').addClass('hidden');
@@ -135,13 +135,13 @@ jQuery(document).ready(function($) {
 	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
 			
 		$('#espresso-ajax-loading').fadeOut('fast');
-		if (( response.success !== undefined && response.success !== '' ) || ( response.errors !== undefined && response.errors !== '' )) {
+		if (( typeof(response.success) !== 'undefined' && response.success !== '' ) || ( typeof(response.errors) !== 'undefined' && response.errors !== '' )) {
 
 			if ( closeModal === undefined ) {
 				closeModal = false;
 			}
 			// if there is no existing message...
-			if ( $('#message').length == 0 ) {
+			if ( $('#message').length === 0 ) {
 				//create one and add it to the DOM
 				$('.nav-tab-wrapper').before( '<div id="message" class="updated hidden"></div>' );
 			}
@@ -149,11 +149,11 @@ jQuery(document).ready(function($) {
 			var fadeaway = true;
 			
 
-			if ( response.success !== undefined && response.success !== '' ) {
+			if ( typeof(response.success) !== 'undefined' && response.success !== '' ) {
 				msg = '<p>' + response.success + '</p>';
 			}
 		
-			if ( response.errors !== undefined && response.errors !== '' ) {
+			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
 				msg = '<p>' + response.errors + '</p>';
 				$(existing_message).removeClass('updated').addClass('error');
 				fadeaway = false;
@@ -162,11 +162,11 @@ jQuery(document).ready(function($) {
 			// set message content
 			$(existing_message).html(msg);
 			//  change location in the DOM if so desired
-			if ( beforeWhat !== undefined ) {
+			if ( typeof(beforeWhat) !== 'undefined' ) {
 				var moved_message = $(existing_message);
 				$(existing_message).remove();
 				$( beforeWhat ).before( moved_message );
-			}			
+			}
 			// and display it
 			if ( fadeaway === true ) {
 				$('#message').removeClass('hidden').show().delay(8000).fadeOut();
@@ -186,7 +186,7 @@ jQuery(document).ready(function($) {
 	// handle removing "move to trash" text if post_status is trash
 	if ( our_status == 'Trashed' )
 		$('#delete-action').hide();
-	if ( typeof(eeCPTstatuses) !== undefined ) {
+	if ( typeof(eeCPTstatuses) !== 'undefined' ) {
 		var wp_status = $('.ee-status-container', '#misc-publishing-actions').first();
 		var extra_statuses = $('#ee_post_status').html();
 		if ( our_status !== '' ) {
@@ -204,7 +204,7 @@ jQuery(document).ready(function($) {
 
 
 		updatePostStatus = function(cancel) {
-			cancel = typeof(cancel) === undefined ? false : true;
+			cancel = typeof(cancel) === 'undefined' ? false : true;
 			var selector = $('#post_status');
 			var chngval = cancel ? $('#cur_stat_id').text() : $(selector).val();
 			var chnglabel = eeCPTstatuses[chngval].label;
@@ -314,19 +314,19 @@ jQuery(document).ready(function($) {
 			dataType: "json",
 			data: {
 				action : 'dismiss_ee_nag_notice',
-				ee_nag_notice: ee_dismiss.nag_notice, 
-				return_url: ee_dismiss.return_url, 
-				noheader : 'true'				
+				ee_nag_notice: ee_dismiss.nag_notice,
+				return_url: ee_dismiss.return_url,
+				noheader : 'true'
 			},
 			beforeSend: function() {
 				window.do_before_admin_page_ajax();
-			},			
+			},
 			success: function( response ){
- 				 if ( response.errors !== undefined && response.errors != '' ) {
- 				 	console.log( response );
+				if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
+					console.log( response );
 					window.show_admin_page_ajax_msg( response );
 				} else {
-					$('#espresso-ajax-loading').fadeOut('fast');		
+					$('#espresso-ajax-loading').fadeOut('fast');
 					$('#'+ee_dismiss.nag_notice).fadeOut('fast');
 				}
 			},
@@ -336,7 +336,7 @@ jQuery(document).ready(function($) {
 				msg.errors = ee_dismiss.unknown_error;
 				console.log( msg );
 				window.show_admin_page_ajax_msg( msg );
-			}					
+			}
 		});
 	});
 	
