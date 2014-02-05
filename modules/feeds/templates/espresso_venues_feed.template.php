@@ -10,11 +10,11 @@
  * @ version		4+
  */
  ?>
-<?php  _e( 'Organizer Name: ', 'event_espresso' ) . espresso_organization_name( $VNU_ID ); ?><br/>
+<p><?php  _e( 'Organizer Name: ', 'event_espresso' ) . espresso_organization_name( $VNU_ID ); ?><br/>
 <?php  _e( 'Organizer Email: ', 'event_espresso' ) . espresso_organization_email( $VNU_ID ); ?><br/>
-<?php  _e( 'Venue Phone: ', 'event_espresso' ) . espresso_venue_phone( $VNU_ID ); ?><br/>
-<?php  _e( 'Categories: ', 'event_espresso' ) . espresso_venue_categories( $VNU_ID );?><br/>
-<?php  _e( 'Address: ', 'event_espresso' ) . espresso_venue_address( $VNU_ID );?><br/>
-<?php  _e( 'Website: ', 'event_espresso' ) . espresso_venue_website( $VNU_ID );?><br/>
-<?php  echo __( 'Description: ', 'event_espresso' )  . espresso_venue_excerpt( $VNU_ID ); ?>
+<?php  _e( 'Venue Phone: ', 'event_espresso' ) . espresso_venue_phone( $VNU_ID ); ?></p>
+<p><?php  _e( 'Categories: ', 'event_espresso' ) . espresso_venue_categories( $VNU_ID );?></p>
+<p><?php  _e( 'Address: ', 'event_espresso' ) . espresso_venue_address( $VNU_ID );?></p>
+<p><?php  _e( 'Website: ', 'event_espresso' ) . espresso_venue_website( $VNU_ID );?></p>
+<p><?php  echo __( 'Description: ', 'event_espresso' )  . $venue_description; ?></p><br/>
  
