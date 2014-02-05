@@ -29,8 +29,8 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 					// console.log(response);
-					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
-						if ( ajax_loading == false ) {
+					if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
+						if ( ajax_loading === false ) {
 							$('#espresso-ajax-loading').fadeOut('fast');
 						}
 						$('#country-details-dv').html( response.return_data );
@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
 				},
 				error: function(response) {
 					//console.log(response);
-					if ( response.errors == undefined ) {
+					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -76,8 +76,8 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 					//console.log(response);
-					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
-						if ( ajax_loading == false ) {
+					if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
+						if ( ajax_loading === false ) {
 							$('#espresso-ajax-loading').fadeOut('fast');
 						}
 						$('#country-states-dv').html( response.return_data );
@@ -91,7 +91,7 @@ jQuery(document).ready(function($) {
 				},
 				error: function(response) {
 					//console.log(response);
-					if ( response.errors == undefined ) {
+					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -126,10 +126,10 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 					//console.log(response);
-					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
+					if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
 						EE_CNT_STA.get_country_states( response.return_data );
 					} else if ( response.errors ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );					 
+						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 					} else {
 						response.errors = eei18n.invalid_server_response;
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -137,7 +137,7 @@ jQuery(document).ready(function($) {
 				},
 				error: function(response) {
 					//console.log(response);
-					if ( response.errors == undefined ) {
+					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -152,11 +152,11 @@ jQuery(document).ready(function($) {
 		// ------------------------------------------
 		delete_state : function( CNT_ISO, STA_ID, STA_abbrev ) {
 			
-			var CNT_ISO = CNT_ISO != undefined && CNT_ISO != '' ? CNT_ISO : '';
-			var STA_ID = STA_ID != undefined && STA_ID != '' ? STA_ID : '';
-			var STA_abbrev = STA_abbrev != undefined && STA_abbrev != '' ? STA_abbrev : '';
+			CNT_ISO = typeof(CNT_ISO) !== 'undefined' && CNT_ISO !== '' ? CNT_ISO : '';
+			STA_ID = typeof(STA_ID) !== 'undefined' && STA_ID !== '' ? STA_ID : '';
+			STA_abbrev = typeof(STA_abbrev) !== 'undefined' && STA_abbrev !== '' ? STA_abbrev : '';
 			
-			if ( CNT_ISO == '' || STA_ID == '' || STA_abbrev == '' ) {
+			if ( CNT_ISO === '' || STA_ID === '' || STA_abbrev === '' ) {
 				response.errors = eei18n.error_occurred;
 				show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				return false;
@@ -181,11 +181,12 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 //					console.log(response);
-					if ( response.success != undefined && response.success != '' ) {
+					if ( typeof(response.success) !== 'undefined' && response.success !== '' ) {
 						var row_to_delete = '#state-' + STA_ID + '-tr';
 						$( row_to_delete ).fadeOut().delay(500).remove();
-					} else if ( response.errors != undefined && response.errors != '' ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );					 
+						$('#espresso-ajax-loading').fadeOut('fast');
+					} else if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
+						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 					} else {
 						response.errors = eei18n.invalid_server_response;
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -193,7 +194,7 @@ jQuery(document).ready(function($) {
 				},
 				error: function(response) {
 					//console.log(response);
-					if ( response.errors == undefined ) {
+					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -209,7 +210,7 @@ jQuery(document).ready(function($) {
 	$('#country').on( 'change', function(){
 		ajax_loading = true;
 		var CNT_ISO = $( this ).val();
-		if ( CNT_ISO != undefined && CNT_ISO != '' ) {
+		if ( typeof( CNT_ISO ) !== 'undefined' && CNT_ISO !== '' ) {
 			EE_CNT_STA.get_country_details( CNT_ISO );
 			EE_CNT_STA.get_country_states( CNT_ISO );
 		}
@@ -231,9 +232,9 @@ jQuery(document).ready(function($) {
 		var urlParams = $(this).eeGetParams();
 		if ( confirm( eei18n.confirm_delete_state )) {
 //			console.log( urlParams );
-			var CNT_ISO = urlParams['CNT_ISO'] != undefined && urlParams['CNT_ISO'] != '' ? urlParams['CNT_ISO'] : '';
-			var STA_ID = urlParams['STA_ID'] != undefined && urlParams['STA_ID'] != '' ? urlParams['STA_ID'] : '';
-			var STA_abbrev = urlParams['STA_abbrev'] != undefined && urlParams['STA_abbrev'] != '' ? urlParams['STA_abbrev'] : '';
+			var CNT_ISO = typeof(urlParams['CNT_ISO']) !== 'undefined' && urlParams['CNT_ISO'] !== '' ? urlParams['CNT_ISO'] : '';
+			var STA_ID = typeof(urlParams['STA_ID']) !== 'undefined' && urlParams['STA_ID'] !== '' ? urlParams['STA_ID'] : '';
+			var STA_abbrev = typeof(urlParams['STA_abbrev']) !== 'undefined' && urlParams['STA_abbrev'] !== '' ? urlParams['STA_abbrev'] : '';
 			EE_CNT_STA.delete_state( CNT_ISO, STA_ID, STA_abbrev );
 		}
 	});
