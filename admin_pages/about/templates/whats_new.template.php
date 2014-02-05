@@ -40,8 +40,8 @@
 		</div>
 		<div class="col-3 last-feature">
 			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>refined-bookkeeping.jpg">
-			<h3><?php  _e('Easy bookkeeping', 'event_espresso'); ?></h3>
-			<p><?php  _e('Registrations, payment, and transactions have been substantially improved in Event Espresso 4.', 'event_espresso'); ?></p>
+			<h3><?php _e('Easy bookkeeping', 'event_espresso'); ?></h3>
+			<p><?php _e('Registrations, payment, and transactions have been substantially improved in Event Espresso 4.', 'event_espresso'); ?></p>
 		</div>
 	</div>
 
@@ -52,7 +52,7 @@
 	<div class="feature-section col two-col">
 		<div>
 			<h3><?php  _e('Higher customer retention', 'event_espresso'); ?></h3>
-			<p>T<?php  _e('The Event Espresso 4 registration process is faster than ever. With quick ticket selections, single page check-out, and customizable notifications! Registration that can scale to your business needs.', 'event_espresso'); ?></p>
+			<p><?php  _e('The Event Espresso 4 registration process is faster than ever. With quick ticket selections, single page check-out, and customizable notifications! Registration that can scale to your business needs.', 'event_espresso'); ?></p>
 			<h4><?php  _e('Ticket selection boxes on any post page or post', 'event_espresso'); ?></h4>
 			<p><?php  _e('Customers can easily register for classes, events, or conferences, in just a few simple steps. No matter how you use it, Event Espresso 4 will adapt to a multitude of different ticketing and pricing scenarios.', 'event_espresso'); ?></p>
 		</div>
