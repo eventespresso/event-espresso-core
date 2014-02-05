@@ -82,52 +82,61 @@ class EE_PUE {
 		if ( !empty($espresso_data_optin) && $espresso_data_optin == 'yes' ) {
 			//let's only setup extra data if transient has expired
 			if ( false === ( $transient = get_transient('ee_extra_data') ) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
+
+				$current_site = is_multisite() ? get_current_site() : NULL;
+				$site_pre = ! is_main_site() && ! empty($current_site) ? trim( preg_replace('/\b\w\S\w\b/', '', $current_site->domain ), '.' ) . '_' : '';
+
+
 				//active gateways
 				$active_gateways = get_option('event_espresso_active_gateways');
 				if ( !empty($active_gateways ) ) {
 					foreach ( (array) $active_gateways as $gateway => $ignore ) {
-						$extra_stats[$gateway . '_gateway_active'] = 1;
+						$extra_stats[$site_pre . $gateway . '_gateway_active'] = 1;
 					}
+				}
+
+				if ( is_multisite() && is_main_site() ) {
+					$extra_stats['is_multisite'] = true;
 				}
 
 				//what is the current active theme?
 				$active_theme = get_option('uxip_ee_active_theme');
 				if ( !empty( $active_theme ) )
-					$extra_stats['active_theme'] = $active_theme;
+					$extra_stats[$site_pre . 'active_theme'] = $active_theme;
 
 				//event info regarding an all event count and all "active" event count
 				$all_events_count = get_option('uxip_ee4_all_events_count');
 				if ( !empty( $all_events_count ) )
-					$extra_stats['ee4_all_events_count'] = $all_events_count;
+					$extra_stats[$site_pre . 'ee4_all_events_count'] = $all_events_count;
 				$active_events_count = get_option('uxip_ee4_active_events_count');
 				if ( !empty( $active_events_count ) )
-					$extra_stats['ee4_active_events_count'] = $active_events_count;
+					$extra_stats[$site_pre . 'ee4_active_events_count'] = $active_events_count;
 
 				//datetime stuff
 				$dtt_count = get_option('uxip_ee_all_dtts_count');
 				if ( !empty( $dtt_count ) )
-					$extra_stats['all_dtts_count'] = $dtt_count;
+					$extra_stats[$site_pre . 'all_dtts_count'] = $dtt_count;
 
 				$dtt_sold = get_option('uxip_ee_dtt_sold');
 				if ( !empty( $dtt_sold ) )
-					$extra_stats['dtt_sold'] = $dtt_sold;
+					$extra_stats[$site_pre . 'dtt_sold'] = $dtt_sold;
 
 				//ticket stuff
 				$all_tkt_count = get_option('uxip_ee_all_tkt_count');
 				if ( !empty( $all_tkt_count ) )
-					$extra_stats['all_tkt_count'] = $all_tkt_count;
+					$extra_stats[$site_pre . 'all_tkt_count'] = $all_tkt_count;
 
 				$free_tkt_count = get_option('uxip_ee_free_tkt_count');
 				if ( !empty( $free_tkt_count ) )
-					$extra_stats['free_tkt_count'] = $free_tkt_count;
+					$extra_stats[$site_pre . 'free_tkt_count'] = $free_tkt_count;
 
 				$paid_tkt_count = get_option('uxip_ee_paid_tkt_count');
 				if ( !empty( $paid_tkt_count ) )
-					$extra_stats['paid_tkt_count'] = $paid_tkt_count;
+					$extra_stats[$site_pre . 'paid_tkt_count'] = $paid_tkt_count;
 
 				$tkt_sold = get_option('uxip_ee_tkt_sold' );
 				if ( !empty($tkt_sold) )
-					$extra_stats['tkt_sold'] = $tkt_sold;
+					$extra_stats[$site_pre . 'tkt_sold'] = $tkt_sold;
 
 				//phpversion checking
 				$extra_stats['phpversion'] = function_exists('phpversion') ? phpversion() : 'unknown';
