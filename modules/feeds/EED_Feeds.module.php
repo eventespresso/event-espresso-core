@@ -82,21 +82,21 @@ class EED_Feeds  extends EED_Module {
 	 */
 	public static function parse_request() {
 		if ( EE_Registry::instance()->REQ->is_set( 'post_type' )) {
-			// where to attach extra EE CPT data - "the_excerpt_rss" or "the_content_feed"
-			$feed_filter = apply_filters( 'FHEE__EED_Feeds__parse_request__feed_hook', 'the_content_feed' );
 			// define path to templates	
 			define( 'RSS_FEEDS_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
 			// what kinda post_type are we dealing with ?
 			switch( EE_Registry::instance()->REQ->get( 'post_type' )) {			
 				case 'espresso_events' :
 					// for rss2, atom, rss, rdf
-					add_filter( $feed_filter, array( 'EED_Feeds', 'the_event_feed' ), 10, 1 );
+					add_filter( 'the_excerpt_rss', array( 'EED_Feeds', 'the_event_feed' ), 10, 1 );
+					add_filter( 'the_content_feed', array( 'EED_Feeds', 'the_event_feed' ), 10, 1 );
 					// for json ( also uses the above filter )
 					add_filter( 'rssjs_feed_item', array( 'EED_Feeds', 'the_event_rssjs_feed' ), 10, 1 );
 					break;
 				case 'espresso_venues' :
 					// for rss2, atom, rss, rdf
-					add_filter( $feed_filter, array( 'EED_Feeds', 'the_venue_feed' ), 10, 1 );
+					add_filter( 'the_excerpt_rss', array( 'EED_Feeds', 'the_venue_feed' ), 10, 1 );
+					add_filter( 'the_content_feed', array( 'EED_Feeds', 'the_venue_feed' ), 10, 1 );
 					// for json ( also uses the above filter )
 					add_filter( 'rssjs_feed_item', array( 'EED_Feeds', 'the_venue_rssjs_feed' ), 10, 1 );
 					break;
@@ -121,8 +121,7 @@ class EED_Feeds  extends EED_Module {
  			global $post;
 			$template_args = array( 
 				'EVT_ID' => $post->ID,
-				'event_description' => $post->post_content,
-				'event_excerpt' => $post->post_excerpt
+				'event_description' => get_option('rss_use_excerpt') ? $post->post_excerpt : $post->post_content
 			);
 			$content = EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'espresso_events_feed.template.php', $template_args, TRUE );
 		}  
@@ -163,7 +162,7 @@ class EED_Feeds  extends EED_Module {
  			global $post;
 			$template_args = array( 
 				'VNU_ID' => $post->ID,
-				'venue_description' => $post->post_content
+				'venue_description' => get_option('rss_use_excerpt') ? $post->post_excerpt : $post->post_content
 			);
 			$content = EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'espresso_venues_feed.template.php', $template_args, TRUE );
 		}  
