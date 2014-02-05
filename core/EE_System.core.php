@@ -101,6 +101,8 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__construct__begin',$this );
 
 		$this->_load_registry();
+		// workarounds for PHP < 5.3
+		$this->_load_class_tools();
 		
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
@@ -145,7 +147,24 @@ final class EE_System {
 		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
 			require_once( EE_CORE . 'EE_Registry.core.php' );
 		} else {
-			$msg = __( 'The EE_Registry could not be loaded.', 'event_espresso' );
+			$msg = __( 'The EE_Registry core class could not be loaded.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			wp_die( EE_Error::get_notices() );
+		}
+	}
+
+
+	/**
+	 * 	_load_registry
+	 *
+	 * 	@access private
+	 * 	@return void
+	 */
+	private function _load_class_tools() {
+		if ( is_readable( EE_HELPERS . 'EEH_Class_Tools.helper.php' )) {
+			require_once( EE_HELPERS . 'EEH_Class_Tools.helper.php' );
+		} else {
+			$msg = __( 'The EEH_Class_Tools helper could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}

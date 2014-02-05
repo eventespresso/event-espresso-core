@@ -1064,7 +1064,7 @@ class EE_Event_List_Query extends WP_Query {
 		foreach ( $args as $key =>$value ) {
 			$property = '_' . $key;
 			// if the arg is a property of this class, then it's an EE shortcode arg
-			if ( property_exists( $this, $property )) {
+			if ( EEH_Class_Tools::has_property( $this, $property )) {
 				// set the property value
 				$this->$property = $value;
 				// then remove it from the array of args that will later be passed to WP_Query() 

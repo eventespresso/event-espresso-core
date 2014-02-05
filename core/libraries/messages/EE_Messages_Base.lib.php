@@ -231,7 +231,7 @@ abstract class EE_Messages_Base extends EE_Base {
 		if ( method_exists($this, '_set_existing_admin_settings') && empty( $this->_existing_admin_settings ) )
 			$this->_set_existing_admin_settings( $messenger );
 
-		return property_exists($this, '_existing_admin_settings') ? $this->_existing_admin_settings : null;
+		return EEH_Class_Tools::has_property($this, '_existing_admin_settings') ? $this->_existing_admin_settings : null;
 	}
 
 

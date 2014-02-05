@@ -66,7 +66,7 @@ class EEH_Sideloader extends EEH_Base {
 		$props = array_merge( $defaults, $init );
 
 		foreach ( $props as $key => $val ) {
-			if ( property_exists( $this, $key ) ) {
+			if ( EEH_Class_Tools::has_property( $this, $key ) ) {
 				$this->$key = $val;
 			}
 		}
