@@ -81,7 +81,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 				
 				<tr valign="top">
 					<th>
-						<label for="STA_ID"><?php _e('State / Province', 'event_espresso'); ?></label>
+						<label for="STA_ID"><?php _e('State/Province', 'event_espresso'); ?></label>
 					</th>
 					<td>
 						<?php echo $state_html?>
@@ -100,7 +100,7 @@ EEH_Template_Validator::verify_instanceof($attendee, '$attendee', 'EE_Attendee')
 				
 				<tr valign="top">
 					<th>
-						<label for="ATT_zip"><?php _e('Zip / Postal Code', 'event_espresso'); ?></label>
+						<label for="ATT_zip"><?php _e('Zip/Postal Code', 'event_espresso'); ?></label>
 					</th>
 					<td>
 						<input class="medium-text" type="text" id="ATT_zip" name="ATT_zip" value="<?php echo $attendee->zip(); ?>"/>

@@ -30,7 +30,7 @@
 		</tbody>
 	</table>
 		<br />
-		<input id="country_settings_save3" class="button-primary save right" type="submit" name="save" value="<?php _e('Save States / Provinces', 'event_espresso'); ?>"/><br />
+		<input id="country_settings_save3" class="button-primary save right" type="submit" name="save" value="<?php _e('Save States/Provinces', 'event_espresso'); ?>"/><br />
 		
 	<?php
 		} 
@@ -38,7 +38,7 @@
 	<table class="form-table add-new-state-tbl">
 		<tbody>
 			<tr>
-				<td colspan="2"><h4><?php _e( 'Add New State / Province', 'event_espresso' );?></h4></td>
+				<td colspan="2"><h4><?php _e( 'Add New State/Province', 'event_espresso' );?></h4></td>
 			</tr>
 		
 			<tr>
@@ -53,7 +53,7 @@
 			</tr>
 			<tr>
 				<td colspan="2">
-					<input  type="submit" id="add-new-state-btn" class="secondary-button button right" value="<?php _e( 'Add New State / Province', 'event_espresso' );?>" />
+					<input  type="submit" id="add-new-state-btn" class="secondary-button button right" value="<?php _e( 'Add New State/Province', 'event_espresso' );?>" />
 					
 				</td>
 			</tr>
