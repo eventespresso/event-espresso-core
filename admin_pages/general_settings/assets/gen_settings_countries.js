@@ -7,10 +7,10 @@ jQuery(document).ready(function($) {
 	EE_CNT_STA = {		
 		
 		// ------------------------------------------
-		// get_coutry_details
+		// get_country_details
 		// retreives country details form based on country selected from main dropdown
 		// ------------------------------------------
-		get_coutry_details : function ( CNT_ISO ) {
+		get_country_details : function ( CNT_ISO ) {
 			// post data to be sent
 			var formData = {
 				action: 'espresso_display_country_settings',
@@ -211,7 +211,7 @@ jQuery(document).ready(function($) {
 		ajax_loading = true;
 		var CNT_ISO = $( this ).val();
 		if ( CNT_ISO != undefined && CNT_ISO != '' ) {
-			EE_CNT_STA.get_coutry_details( CNT_ISO );
+			EE_CNT_STA.get_country_details( CNT_ISO );
 			EE_CNT_STA.get_country_states( CNT_ISO );
 		}
 	});
