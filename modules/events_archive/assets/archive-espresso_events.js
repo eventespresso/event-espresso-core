@@ -10,9 +10,9 @@ jQuery(document).ready(function($) {
 	});
 
 
-	if ( espresso_grid_event_lists !== undefined ) {
+	if ( typeof espresso_grid_event_lists !== 'undefined' ) {
 		//window resize
-		var currentWidth = 0;	
+		var currentWidth = 0;
 		var eventWidth = $('.grid-event-list-dv').first().find('.espresso-event-list-event').first().outerWidth();
 	//	console.log( JSON.stringify( 'eventWidth: ' + eventWidth, null, 4 ));
 		
@@ -28,14 +28,14 @@ jQuery(document).ready(function($) {
 			eventSize = 'large-event-list-img';
 		} else {
 			eventSize = 'huge-event-list-img';
-		} 
+		}
 //		console.log( JSON.stringify( 'eventWidth: ' + eventWidth, null, 4 ));
 //		console.log( JSON.stringify( 'eventSize: ' + eventSize, null, 4 ));
 
 		
 		$('.grid-event-list-dv .espresso-event-list-event').each( function() {
 			$(this).find('.ee-event-img-dv').css({ 'width' : eventWidth, 'min-height' : eventWidth*.618 });
-		});	
+		});
 		eventWidth = eventWidth + 20;
 		
 		var winWidth = $('.grid-event-list-dv').width();
@@ -71,7 +71,7 @@ jQuery(document).ready(function($) {
 		
 		$( espresso_grid_event_lists ).each( function( index, grid_ID ) {
 			var container = $('.grid-event-list-dv #espresso-events-list-dv-' + grid_ID );
-//			console.log( JSON.stringify( '$container.outerwidth(): ' + container.outerWidth(), null, 4 ));	   
+//			console.log( JSON.stringify( '$container.outerwidth(): ' + container.outerWidth(), null, 4 ));
 			container.imagesLoaded( function(){
 				container.masonry({
 					columnWidth: eventWidth,
@@ -79,8 +79,8 @@ jQuery(document).ready(function($) {
 					gutter: 0,
 					isFitWidth: true
 				});
-			});		
-		});				
+			});
+		});
 	}
 	
 
