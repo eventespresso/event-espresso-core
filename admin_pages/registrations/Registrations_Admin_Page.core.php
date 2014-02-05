@@ -1734,6 +1734,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$tickets = array();
 		$dtts = array();
 
+		//if empty _REG_ID then get out because there's nothing to do
+		if ( empty( $this->_req_data['_REG_ID'] ) ) {
+			$msg = $trash ? __('In order to trash registrations you must select which ones you wish to trash by clicking the checkboxes.', 'event_espresso') : __('In order to restore registrations you must select which ones you wish to restore by clicking the checkboxes.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __LINE__, __FUNCTION__ );
+			$this->_redirect_after_action(FALSE, '', '', array(), TRUE );
+		}
+
 		//Checkboxes
 		if (!empty($this->_req_data['_REG_ID']) && is_array($this->_req_data['_REG_ID'])) {
 			// if array has more than one element than success message should be plural
