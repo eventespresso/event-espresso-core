@@ -1008,7 +1008,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
-							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created.', 1, NULL, 0, 0, 0);";			
+							(1, 1, '0.00', 'Free Admission', '', 1, NULL, 0, 0, 0);";			
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_prices__SQL', $SQL );
 				$wpdb->query($SQL);			
 			}
