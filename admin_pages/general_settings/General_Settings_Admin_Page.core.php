@@ -443,8 +443,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _update_your_organization_settings() {
-		
-		EE_Registry::instance()->NET_CFG->core->site_license_key = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : EE_Registry::instance()->NET_CFG->core->site_license_key;
+		if ( is_main_site() )
+			EE_Registry::instance()->NET_CFG->core->site_license_key = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : EE_Registry::instance()->NET_CFG->core->site_license_key;
 		EE_Registry::instance()->CFG->organization->name = isset( $this->_req_data['organization_name'] ) ? sanitize_text_field( $this->_req_data['organization_name'] ) : EE_Registry::instance()->CFG->organization->name;
 		EE_Registry::instance()->CFG->organization->address_1 = isset( $this->_req_data['organization_address_1'] ) ? sanitize_text_field( $this->_req_data['organization_address_1'] ) : EE_Registry::instance()->CFG->organization->address_1;
 		EE_Registry::instance()->CFG->organization->address_2 = isset( $this->_req_data['organization_address_2'] ) ? sanitize_text_field( $this->_req_data['organization_address_2'] ) : EE_Registry::instance()->CFG->organization->address_2;
