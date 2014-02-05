@@ -36,7 +36,7 @@ class EE_Data_Migration_Manager{
 	
 	const data_migration_script_option_prefix = 'ee_data_migration_script_';
 	
-	const data_migration_script_mapping_option_prefix = 'ee_data_migration_mapping_';
+	const data_migration_script_mapping_option_prefix = 'ee_dms_map_';
 	
 	/**
 	 * name of the wordpress option which stores the database' current version. IE, the code may be at version 4.2.0,
