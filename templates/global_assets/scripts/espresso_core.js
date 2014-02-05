@@ -9,7 +9,7 @@
 		*	center elements on screen
 		*/
 		eeCenter : function( position ) {
-			position = position !== undefined && position !== '' ? position : 'fixed';
+			position = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
 			var element_top = (( $( window ).height() / 2 ) - this.outerHeight() ) / 2;
 			element_top = position == 'fixed' ? element_top : element_top + $( window ).scrollTop();
 			element_top = Math.max( 0, element_top );
@@ -88,9 +88,9 @@
 		eeGetParams : function () {
 			var urlParams = {};
 			var url = this.attr('href');
-			url = url !== undefined && url !== '' ? url : location.href;
+			url = typeof url !== 'undefined' && url !== '' ? url : location.href;
 			url = url.substring( url.indexOf( '?' ) + 1 ).split( '#' );
-			urlParams['hash'] = url[1] !== undefined && url[1] !== '' ? url[1] : '';
+			urlParams['hash'] = typeof url[1] !== 'undefined' && url[1] !== '' ? url[1] : '';
 			var qs = url[0].split( '&' );
 			for( var i = 0; i < qs.length; i++ ) {
 				qs[ i ] = qs[ i ].split( '=' );
@@ -122,7 +122,7 @@ jQuery(document).ready(function($) {
 
 
 	function display_espresso_ajax_notices( message, type ) {
-		type = type !== undefined && type !== '' ? type : 'error';
+		type = typeof type !== 'undefined' && type !== '' ? type : 'error';
 		var notice_id = '#espresso-ajax-notices-' + type;
 		$( notice_id + ' .espresso-notices-msg' ).text( message );
 		$( '#espresso-ajax-notices' ).eeCenter();
