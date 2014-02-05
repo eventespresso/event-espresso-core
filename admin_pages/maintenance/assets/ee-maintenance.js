@@ -69,7 +69,7 @@ var Maintenance_helper = {
 			action: 'migration_step',
 			page: 'espresso_maintenance_settings'
 		};
-		Maintenance_helper.do_ajax(data,{'where':'#migration-messages', 'what':'prepend','callback':Maintenance_helper.update_progress});	
+		Maintenance_helper.do_ajax(data,{'where':'#migration-messages', 'what':'prepend','callback':Maintenance_helper.update_progress});
 		
 	},
 	/**
@@ -106,7 +106,7 @@ var Maintenance_helper = {
 	},
 	//handles what to do once we're done the current migration script
 	finish: function( records_migrated, records_to_migrate ){
-		//change button 
+		//change button
 		//show after-migration options
 		var kickoff_button = jQuery('#start-migration');
 		kickoff_button.attr('disabled',false);
@@ -142,7 +142,7 @@ var Maintenance_helper = {
 					var ct = xhr.getResponseHeader("content-type") || "";
 					if (ct.indexOf('html') > -1) {
 						Maintenance_helper.display_content(response,setup.where,setup.what);
-						if( typeof(setup.dont_report)=='undefined'){
+						if( typeof(setup.dont_report) === 'undefined'){
 							Maintenance_helper.report_general_migration_error(response);
 							Maintenance_helper.display_content(ee_maintenance.fatal_error, '#main-message', 'clear');
 							Maintenance_helper.finish();
@@ -173,7 +173,7 @@ var Maintenance_helper = {
 			page: 'espresso_maintenance_settings',
 			message:message
 		};
-		Maintenance_helper.do_ajax(data,{'where':'#migration-messages', 'what':'prepend','dont_report':true});	
+		Maintenance_helper.do_ajax(data,{'where':'#migration-messages', 'what':'prepend','dont_report':true});
 	},
 
 //we actually want to display notices in the same place as all normal ajax messages appear
@@ -203,7 +203,7 @@ jQuery(function() {
 	//show-hide warnings
 	jQuery('#show-hide-migration-warnings').click(function(){
 		jQuery('.migration-warnings').toggle('slow');
-	})
+	});
 	//dynamic page stuff
 	//showing start-button and hiding explanatory text
 	jQuery('.toggle-migration-monitor').click(function(){
@@ -212,26 +212,26 @@ jQuery(function() {
 		jQuery('#db-backed-up').prop('checked', false);
 	});
 	
-	//start migration, update start-button to be "migrating..." and disable it 
+	//start migration, update start-button to be "migrating..." and disable it
 	jQuery('#migration-risks').click(function(){
 		jQuery('#display-migration-details').trigger('click');
 	});
 	
-	//start migration, update start-button to be "migrating..." and disable it 
+	//start migration, update start-button to be "migrating..." and disable it
 	jQuery('#start-migration').click(function(){
-		Maintenance_helper.begin_migration();		
+		Maintenance_helper.begin_migration();
 	});
 	
-	//start migration, update start-button to be "migrating..." and disable it 
+	//start migration, update start-button to be "migrating..." and disable it
 	jQuery('#do-not-migrate').click(function(){
 		if ( confirm( 'You have chosen to NOT migrate your existing data.\nAre you sure you want to continue?' )) {
 			return true;
 		}else{
 			return false;
-		}		
+		}
 	});
 	
-	//start migration, update start-button to be "migrating..." and disable it 
+	//start migration, update start-button to be "migrating..." and disable it
 	jQuery('#delete-all-data-btn').click(function(){
 		if ( confirm( 'Are you sure you want to permanently delete ALL Event Espresso tables, records and options?\nThis action can NOT be undone.' )) {
 			return true;
