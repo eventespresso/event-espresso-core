@@ -119,23 +119,13 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
-		// set config
-		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive )) {
-			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
-		}
-		// grid, text or dates ?
-//		EED_Events_Archive::set_type();
+		// load other required components
+		$this->_load_assests();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		$this->_filter_query_parts();		
 		// check what template is loaded
 		add_filter( 'template_include',  array( 'EED_Events_Archive', 'template_include' ), 999, 1 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
-		// load other required components
-		$this->_load_assests();
-//		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
-//			// load template
-//			EE_Config::register_view( 'events', 0, $this->_get_template('full') );
-//		}
 	}
 
 
@@ -628,6 +618,10 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _load_assests() {
+		// set config
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive )) {
+			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
+		}
 		do_action( 'AHEE__EED_Events_Archive__before_load_assests' );
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
