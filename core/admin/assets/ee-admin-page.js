@@ -332,7 +332,7 @@ jQuery(document).ready(function($) {
 			},
 			error: function( response ) {
 				$('#'+ee_dismiss.nag_notice).fadeOut('fast');
-				msg = new Object();
+				msg = {};
 				msg.errors = ee_dismiss.unknown_error;
 				console.log( msg );
 				window.show_admin_page_ajax_msg( msg );
