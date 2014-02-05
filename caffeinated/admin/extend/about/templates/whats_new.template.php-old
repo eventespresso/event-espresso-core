@@ -1,7 +1,7 @@
 <div class="changelog point-releases">
 	<h3><?php echo _n( 'Major Release', 'Major Releases', 1 ); ?></h3>
 	<p><?php printf( __( '<strong>Version %1$s</strong> is the initial release of the brand new EE4 codebase.', 'event_espresso'), EVENT_ESPRESSO_VERSION ); ?>
-		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/change-log#4.1' ); ?>
+		<?php printf( __( 'For more information, see the <a href="%s" target="_blank">release notes</a> on our website.' ), 'http://eventespresso.com/wiki/change-log#4.1' ); ?>
  	</p>
 </div>
 
@@ -25,24 +25,24 @@
 		<?php
 	}
 	?>	
-	<h2 class="about-headline-callout"><?php _e('Introducing an improved event management system!', 'event_espresso'); ?></h2>
+	<h2 class="about-headline-callout"><?php _e('Introducing an improved event editor!', 'event_espresso'); ?></h2>
 	<p><img class="about-overview-img" src="<?php echo EE_ABOUT_ASSETS_URL; ?>eventeditor-screen.jpg" /></p>
 	<div class="feature-section col three-col about-updates">
 		<div class="col-1">
-			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>publish_meta_box.jpg">
-			<h3>Optimized aesthetic</h3>
-			<p>The new Event Espresso dashboard has a fresh, uncluttered design that embraces clarity and simplicity.</p>
+			<img src="//s.wordpress.org/images/core/3.8/aesthetics.png?1">
+			<h3>Modern aesthetic</h3>
+			<p>The new WordPress dashboard has a fresh, uncluttered design that embraces clarity and simplicity.</p>
 		</div>
 		<div class="col-2">
-			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>registrations-overview.jpg">
-			<h3>Improved management</h3>
-			<p>We’ve made it easier to know who your customers are and how they’ve done business with you over time.</p>
+			<img src="//s.wordpress.org/images/core/3.8/typography.png?1">
+			<h3>Clean typography</h3>
+			<p>The Open Sans typeface provides simple, friendly text that is optimized for both desktop and mobile viewing. It’s even open source, just like WordPress.</p>
 		</div>
 		<div class="col-3 last-feature">
-			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>refined-bookkeeping.jpg">
-			<h3>Refined bookkeeping</h3>
-			<p>Registrations, payment, and transactions have been substantially improved. </p>
+			<img src="//s.wordpress.org/images/core/3.8/contrast.png?1">
+			<h3>Refined contrast</h3>
+			<p>We think beautiful design should never sacrifice legibility. With superior contrast and large, comfortable type, the new design is easy to read and a pleasure to navigate.</p>
 		</div>
 	</div>
-
+</div>
 </div>
