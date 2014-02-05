@@ -6,21 +6,23 @@
 
 	<table class="form-table">
 		<tbody>
-
-			<tr <?php echo isset($_REQUEST['license_key']) && $_REQUEST['license_key'] == true ? 'class="yellow_alert"' : '' ?>>
-				<th>
-					<label for="site_license_key">
-						<?php _e('Support License Key', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('site_license_key_info');?>
-					</label>
-				</th>
-				<td>
-					<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo $site_license_key; ?>" /><?php echo $site_license_key_verified; ?><br/>
-					<p class="description">
-						<?php _e('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons. If this is a Development or Test site, <strong>DO NOT</strong> enter your Support License Key.'); ?>
-					</p>			
-				</td>
-			</tr>
-
+			<?php
+			//we'll only show site-license keys if this is main_site() (which works for both multi-site and single-site wp installations)
+			if ( is_main_site() ) { ?>
+				<tr <?php echo isset($_REQUEST['license_key']) && $_REQUEST['license_key'] == true ? 'class="yellow_alert"' : '' ?>>
+					<th>
+						<label for="site_license_key">
+							<?php _e('Support License Key', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('site_license_key_info');?>
+						</label>
+					</th>
+					<td>
+						<input name="site_license_key" id="site_license_key" size="10" class="regular-text" type="text" value="<?php echo $site_license_key; ?>" /><?php echo $site_license_key_verified; ?><br/>
+						<p class="description">
+							<?php _e('Adding a valid Support License Key will enable automatic update notifications and backend updates for Event Espresso Core and any installed addons. If this is a Development or Test site, <strong>DO NOT</strong> enter your Support License Key.'); ?>
+						</p>			
+					</td>
+				</tr>
+			<?php } //end is_main_site() condition ?>
 		</tbody>
 	</table>
 
