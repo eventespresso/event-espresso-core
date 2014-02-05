@@ -339,7 +339,13 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * @return file 
 	 */
 	protected function _events_export() {
-		$event_ids = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : $this->_req_data['EVT_IDs'];
+		if(isset($this->_req_data['EVT_ID'])){
+			$event_ids = $this->_req_data['EVT_ID'];
+		}elseif(isset($this->_req_data['EVT_IDs'])){
+			$event_ids = $this->_req_data['EVT_IDs'];
+		}else{
+			$event_ids = NULL;
+		}
 		//todo: I don't like doing this but it'll do until we modify EE_Export Class.
 		$new_request_args = array(
 			'export' => 'report',
