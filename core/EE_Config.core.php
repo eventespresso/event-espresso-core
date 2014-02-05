@@ -809,11 +809,13 @@ class EE_Core_Config extends EE_Config_Base {
 	 *  @return 	void
 	 */
 	public function __construct() {
+		$current_network_main_site = is_multisite() ? get_current_site() : NULL;
+		$current_main_site_id = !empty( $current_network_main_site ) ? $current_network_main_site->blog_id : 1;
 		// set default organization settings
 		$this->current_blog_id = get_current_blog_id();
 		$this->current_blog_id = $this->current_blog_id === NULL ? 1 : $this->current_blog_id;
-		$this->ee_ueip_optin = get_option( 'ee_ueip_optin', TRUE );
-		$this->ee_ueip_has_notified = get_option( 'ee_ueip_has_notified', TRUE );
+		$this->ee_ueip_optin = is_main_site() ? get_option( 'ee_ueip_optin', TRUE ) : get_blog_option( $current_main_site_id, 'ee_ueip_optin', TRUE );
+		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', TRUE ) : TRUE;
 		$this->post_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
