@@ -317,17 +317,15 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			$post_status = 'sold_out';
 		}
 //		FYI postponed and cancelled don't exist in 3.1
-		
-		$event_meta = maybe_unserialize($old_event['event_meta']);
 		$cols_n_values = array(
 			'post_title'=>stripslashes($old_event['event_name']),//EVT_name
 			'post_content'=>stripslashes($old_event['event_desc']),//EVT_desc
 			'post_name'=>$this->_find_unique_slug($old_event['event_name']),//$old_event['event_identifier'],//EVT_slug
-			'post_date'=>$event_meta['date_submitted'],//EVT_created NOT $old_event['submitted']
-			'post_date_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
+			'post_date'=>$old_event['submitted'],//EVT_created NOT 
+			'post_date_gmt'=>get_gmt_from_date($old_event['submitted']),
 			'post_excerpt'=>'',//EVT_short_desc
-			'post_modified'=>$event_meta['date_submitted'],//EVT_modified
-			'post_modified_gmt'=>get_gmt_from_date($event_meta['date_submitted']),
+			'post_modified'=>$old_event['submitted'],//EVT_modified
+			'post_modified_gmt'=>get_gmt_from_date($old_event['submitted']),
 			'post_author'=>$old_event['wp_user'],//EVT_wp_user
 			'post_parent'=>null,//parent maybe get this from some REM field?
 			'menu_order'=>null,//EVT_order

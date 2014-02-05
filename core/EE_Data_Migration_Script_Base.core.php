@@ -171,7 +171,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return string
 	 */
 	protected function _get_mapping_option_name($old_table_name,$new_table_name){
-		return EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this)).'_'.$old_table_name.'_'.$new_table_name;
+		global $wpdb;
+		$old_table_name_sans_wp = str_replace($wpdb->prefix,"",$old_table_name);
+		$new_table_name_sans_wp = str_replace($wpdb->prefix,"",$new_table_name);
+		return substr(EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this)).'_'.$old_table_name_sans_wp.'_'.$new_table_name_sans_wp,0,64);
 	}
 	
 	

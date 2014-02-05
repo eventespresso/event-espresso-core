@@ -67,7 +67,8 @@ class EED_Feeds  extends EED_Module {
 	 */
 	public static function default_feed( $type = 'rss2' ) {
 		 //rss2, atom, rss, rdf, rssjs
-		return 'atom';
+		$type = 'rss2';
+		return $type;
 	}
 
 
@@ -88,12 +89,14 @@ class EED_Feeds  extends EED_Module {
 				case 'espresso_events' :
 					// for rss2, atom, rss, rdf
 					add_filter( 'the_excerpt_rss', array( 'EED_Feeds', 'the_event_feed' ), 10, 1 );
+					add_filter( 'the_content_feed', array( 'EED_Feeds', 'the_event_feed' ), 10, 1 );
 					// for json ( also uses the above filter )
 					add_filter( 'rssjs_feed_item', array( 'EED_Feeds', 'the_event_rssjs_feed' ), 10, 1 );
 					break;
 				case 'espresso_venues' :
 					// for rss2, atom, rss, rdf
 					add_filter( 'the_excerpt_rss', array( 'EED_Feeds', 'the_venue_feed' ), 10, 1 );
+					add_filter( 'the_content_feed', array( 'EED_Feeds', 'the_venue_feed' ), 10, 1 );
 					// for json ( also uses the above filter )
 					add_filter( 'rssjs_feed_item', array( 'EED_Feeds', 'the_venue_rssjs_feed' ), 10, 1 );
 					break;
@@ -118,8 +121,7 @@ class EED_Feeds  extends EED_Module {
  			global $post;
 			$template_args = array( 
 				'EVT_ID' => $post->ID,
-				'event_description' => $post->post_content,
-				'event_excerpt' => $post->post_excerpt
+				'event_description' => get_option('rss_use_excerpt') ? $post->post_excerpt : $post->post_content
 			);
 			$content = EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'espresso_events_feed.template.php', $template_args, TRUE );
 		}  
@@ -160,7 +162,7 @@ class EED_Feeds  extends EED_Module {
  			global $post;
 			$template_args = array( 
 				'VNU_ID' => $post->ID,
-				'venue_description' => $post->post_content
+				'venue_description' => get_option('rss_use_excerpt') ? $post->post_excerpt : $post->post_content
 			);
 			$content = EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'espresso_venues_feed.template.php', $template_args, TRUE );
 		}  
