@@ -52,9 +52,9 @@
 	<div class="feature-section col two-col">
 		<div>
 			<h3><?php  _e('Higher customer retention', 'event_espresso'); ?></h3>
-			<p>T<?php  _e('The Event Espresso 4 registration process is faster than ever. With quick ticket selctions, single page check-out, and customizable notifications! Registration that can scale to your business needs.', 'event_espresso'); ?></p>
+			<p>T<?php  _e('The Event Espresso 4 registration process is faster than ever. With quick ticket selections, single page check-out, and customizable notifications! Registration that can scale to your business needs.', 'event_espresso'); ?></p>
 			<h4><?php  _e('Ticket selection boxes on any post page or post', 'event_espresso'); ?></h4>
-			<p><?php  _e('Customers can easily register for classes, events, or donferences, in just a few simple steps. No matter how you use it, Event Espresso 4 will adapt to a multitude of different ticketing and pricing scenarios.', 'event_espresso'); ?></p>
+			<p><?php  _e('Customers can easily register for classes, events, or conferences, in just a few simple steps. No matter how you use it, Event Espresso 4 will adapt to a multitude of different ticketing and pricing scenarios.', 'event_espresso'); ?></p>
 		</div>
 		<div class="last-feature about-colors-img">
 			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>registrtation-page-large.jpg">
@@ -71,7 +71,7 @@
 	<div class="feature-section col two-col">
 		<div>
 			<h3><?php _e('Refined event management', 'event_espresso'); ?></h3>
-			<p><?php _e('The new event management screen lets you survey your events at a glance. Or want more information? Click to view more. Quickly add/edit prices, dates, or information in any event.', 'event_espresso'); ?></p>
+			<p><?php _e('The new event management screen lets you survey your events at a glance. Want more information? Click to view more. Quickly add/edit prices, dates, or information in any event.', 'event_espresso'); ?></p>
 			<h4><?php _e('Smoother price types, taxes, and price modifiers', 'event_espresso'); ?></h4>
 			<p><?php _e('Price Types allow you to create new prices that adjust the default ticket (base) price for your system-default ticket', 'event_espresso'); ?>.</p>
 			<p><?php _e('Easily categorize a price modifier and indicate how that price gets applied to the running total when a transaction occurs.', 'event_espresso'); ?></p>
