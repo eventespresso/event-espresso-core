@@ -16,12 +16,12 @@
  * Event List
  *
  * @package		Event Espresso
- * @subpackage	/modules/rss_feeds/
+ * @subpackage	/modules/feeds/
  * @author		Brent Christensen 
  *
  * ------------------------------------------------------------------------
  */
-class EED_Rss_Feeds  extends EED_Module {
+class EED_Feeds  extends EED_Module {
 
 
 	/**
@@ -31,8 +31,8 @@ class EED_Rss_Feeds  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		add_action( 'parse_request', array( 'EED_Rss_Feeds', 'parse_request' ), 10 );
-		define( 'RSS_FEEDS_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
+		add_action( 'parse_request', array( 'EED_Feeds', 'parse_request' ), 10 );
+		add_filter( 'default_feed', array( 'EED_Feeds', 'default_feed' ), 10, 1  );
 	}
 
 	/**
@@ -59,19 +59,43 @@ class EED_Rss_Feeds  extends EED_Module {
 
 
 	/**
+	 * 	default_feed
+	 *
+	 *  @access 	public
+	 *  @param 	type	rss2, atom, rss, rdf, rssjs
+	 *  @return 	string
+	 */
+	public static function default_feed( $type = 'rss2' ) {
+		 //rss2, atom, rss, rdf, rssjs
+		return 'atom';
+	}
+
+
+
+
+	/**
 	 * 	parse_request
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public static function parse_request() {
-		if ( EE_Registry::instance()->REQ->is_set( 'post_type' )) {		
+		if ( EE_Registry::instance()->REQ->is_set( 'post_type' )) {
+			// define path to templates	
+			define( 'RSS_FEEDS_TEMPLATES_PATH', str_replace( '\\', DS, plugin_dir_path( __FILE__ )) . 'templates' . DS );
+			// what kinda post_type are we dealing with ?
 			switch( EE_Registry::instance()->REQ->get( 'post_type' )) {			
 				case 'espresso_events' :
-					add_filter( 'the_content_feed', array( 'EED_Rss_Feeds', 'the_event_feed_content' ), 10, 1 );
+					// for rss2, atom, rss, rdf
+					add_filter( 'the_excerpt_rss', array( 'EED_Feeds', 'the_event_feed' ), 10, 1 );
+					// for json ( also uses the above filter )
+					add_filter( 'rssjs_feed_item', array( 'EED_Feeds', 'the_event_rssjs_feed' ), 10, 1 );
 					break;
 				case 'espresso_venues' :
-					add_filter( 'the_content_feed', array( 'EED_Rss_Feeds', 'the_venue_feed_content' ), 10, 1 );
+					// for rss2, atom, rss, rdf
+					add_filter( 'the_excerpt_rss', array( 'EED_Feeds', 'the_venue_feed' ), 10, 1 );
+					// for json ( also uses the above filter )
+					add_filter( 'rssjs_feed_item', array( 'EED_Feeds', 'the_venue_rssjs_feed' ), 10, 1 );
 					break;
 			}
 		}
@@ -81,13 +105,14 @@ class EED_Rss_Feeds  extends EED_Module {
 
 
 	/**
-	 * 	the_event_feed_content
+	 * 	the_event_feed
 	 *
 	 *  @access 	public
+	 *  @param 	string 	$content
 	 *  @return 	void
 	 */
-	public static function the_event_feed_content( $content ) {
-		if ( is_feed() ) {
+	public static function the_event_feed( $content ) {
+		if ( is_feed() && is_readable( RSS_FEEDS_TEMPLATES_PATH . 'espresso_events_feed.template.php' )) {
 			EE_Registry::instance()->load_helper( 'Event_View' );
 			EE_Registry::instance()->load_helper( 'Venue_View' );
  			global $post;
@@ -105,13 +130,31 @@ class EED_Rss_Feeds  extends EED_Module {
 
 
 	/**
-	 * 	the_venue_feed_content
+	 * 	the_event_rssjs_feed
 	 *
 	 *  @access 	public
+	 *  @param 	object 	$item
 	 *  @return 	void
 	 */
-	public static function the_venue_feed_content( $content ) {
-		if ( is_feed() ) {
+	public static function the_event_rssjs_feed( $item ) {
+		if ( is_feed() && isset( $item->description )) {
+			$item->description = EED_Feeds::the_event_feed( $item->description );
+		}
+		return $item;
+	}
+
+
+
+
+	/**
+	 * 	the_venue_feed
+	 *
+	 *  @access 	public
+	 *  @param 	string 	$content
+	 *  @return 	void
+	 */
+	public static function the_venue_feed( $content ) {
+		if ( is_feed() && is_readable( RSS_FEEDS_TEMPLATES_PATH . 'espresso_venues_feed.template.php' )) {
 			EE_Registry::instance()->load_helper( 'Event_View' );
 			EE_Registry::instance()->load_helper( 'Venue_View' );
  			global $post;
@@ -120,14 +163,29 @@ class EED_Rss_Feeds  extends EED_Module {
 				'venue_description' => $post->post_content
 			);
 			$content = EEH_Template::display_template( RSS_FEEDS_TEMPLATES_PATH . 'espresso_venues_feed.template.php', $template_args, TRUE );
-
 		}  
 		return $content;
 	}
-	
+
+
+
+
+	/**
+	 * 	the_venue_rssjs_feed
+	 *
+	 *  @access 	public
+	 *  @param 	object 	$item
+	 *  @return 	void
+	 */
+	public static function the_venue_rssjs_feed( $item ) {
+		if ( is_feed() && isset( $item->description )) {
+			$item->description = EED_Feeds::the_venue_feed( $item->description );
+		}
+		return $item;
+	}
 	
 
 
 }
-// End of file EED_Rss_Feeds.module.php
-// Location: /modules/rss_feeds/EED_Rss_Feeds.module.php
+// End of file EED_Feeds.module.php
+// Location: /modules/feeds/EED_Feeds.module.php
