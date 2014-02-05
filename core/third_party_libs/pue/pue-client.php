@@ -926,8 +926,9 @@ class PluginUpdateEngineChecker {
 	 * @return string renamed file and path
 	 */
 	function fixDirName( $source, $remote_source, $wppu ) {
-		global $wp_filesystem;
-		if ( $wppu->skin->plugin == $this->pluginFile ) {
+		global $wp_filesystem; 
+
+		if ( isset( $wppu->skin->plugin ) && $wppu->skin->plugin == $this->pluginFile ) {
 			$new_dir = $wp_filesystem->wp_content_dir() . 'upgrade/' . $this->slug . '/';
 
 			//make new directory if needed.
