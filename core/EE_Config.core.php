@@ -751,6 +751,7 @@ final class EE_Config {
 
 
 
+
 /**
  * Base class used for config classes. These classes should generally not have
  * magic functions in use, except we'll allow them to magically set and get stuff...
@@ -779,7 +780,6 @@ class EE_Config_Base{
 class EE_Core_Config extends EE_Config_Base {
 	
 	public $current_blog_id;
-	public $site_license_key;
 	public $ee_ueip_optin;
 	public $ee_ueip_has_notified;
 	/**
@@ -812,7 +812,6 @@ class EE_Core_Config extends EE_Config_Base {
 		// set default organization settings
 		$this->current_blog_id = get_current_blog_id();
 		$this->current_blog_id = $this->current_blog_id === NULL ? 1 : $this->current_blog_id;
-		$this->site_license_key = NULL;
 		$this->ee_ueip_optin = get_option( 'ee_ueip_optin', TRUE );
 		$this->ee_ueip_has_notified = get_option( 'ee_ueip_has_notified', TRUE );
 		$this->post_shortcodes = array();
@@ -835,6 +834,8 @@ class EE_Core_Config extends EE_Config_Base {
 	}
 
 }
+
+
 
 /**
  * Config class for storing info on the Organization
