@@ -271,10 +271,9 @@ class EE_CPT_Strategy extends EE_BASE {
 		// http://example.com/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
 		
 		//need to make sure we only edit links if our cpt
-		$cpts = array_keys( $this->_CPTs );
-		$post = get_post( $ID );
+		global $post;
 
-		if ( !in_array( $post->post_type, $cpts ) )
+		if ( ! isset( $this->_CPTS[$post->post_type] ) )
 			return $url;
 
 		//k made it here so all is good.
