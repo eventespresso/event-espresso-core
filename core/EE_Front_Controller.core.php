@@ -131,7 +131,10 @@ final class EE_Front_Controller {
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
 		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );
 		//exclude EE critical pages from wp_list_pages
-		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );			
+		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+
+		//exclude our private cpt comments
+		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 2 );			
 	}
 
 
@@ -144,6 +147,25 @@ final class EE_Front_Controller {
 	 */
 	public function remove_pages_from_wp_list_pages( $exclude_array ) {
 		return  array_merge( $exclude_array, EE_Registry::instance()->CFG->core->get_critical_pages_array() );
+	}
+
+
+
+	/**
+	 * This simply makes sure that any "private" EE cpts do not have their comments show up in any wp comment widgets/queries done on frontend
+	 * @param  array           $clauses  array of comment clauses setup by WP_Comment_Query
+	 * @param  WP_Comment_Query $wpc     
+	 * @return array                     array of comment clauses with modifications.
+	 */
+	public function filter_wp_comments( $clauses, WP_Comment_Query $wpc ) {
+		global $wpdb;
+		$comments_where = $clauses['where'];
+		$cpts = EE_Register_CPTs::get_private_CPTs();
+		foreach ( $cpts as $cpt => $details ) {
+			$comments_where .= $wpdb->prepare( " AND $wpdb->posts.post_type != %s", $cpt );
+		}
+		$clauses['where'] = $comments_where;
+		return $clauses;
 	}
 
 
