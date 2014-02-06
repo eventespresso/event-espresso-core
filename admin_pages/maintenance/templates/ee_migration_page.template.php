@@ -32,7 +32,7 @@ if ( $show_backup_db_text ) { ?>
  				 <?php _e('Congratulations! Your database is "up-to-date" and you are ready to begin using EE4', "event_espresso");?>
  			 </h3>
  			 <p>
- 			 	<?php _e("Time to find out about all the great new features EE4 has to offer and what you need to do next.", "event_espresso");?> &nbsp; 
+ 			 	<?php _e("Time to find out about all the great new features EE4 has to offer.", "event_espresso");?> &nbsp; 
  			 	<b><a id="get-started-after-migrate" class="button-primary" href="<?php echo add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' )); ?>">
  			 		<?php _e("Let's Get Started", "event_espresso");?>&nbsp;<span class="dashicons dashicons-arrow-right ee-icon-size-22" style="margin:0;"></span>
  			 	</a></b>
