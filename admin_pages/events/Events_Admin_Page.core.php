@@ -633,6 +633,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		);
 		$items  = apply_filters( 'FHEE__Events_Admin_Page___event_legend_items__items', $items );
 		$statuses = array( 
+			'sold_out_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::sold_out,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::sold_out, FALSE, 'sentence' )
+			),
 			'active_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::active,
 				'desc' => EEH_Template::pretty_status( EE_Datetime::active, FALSE, 'sentence' )
@@ -645,21 +649,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::postponed,
 				'desc' => EEH_Template::pretty_status( EE_Datetime::postponed, FALSE, 'sentence' )
 			),
-			'inactive_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::inactive,
-				'desc' => EEH_Template::pretty_status( EE_Datetime::inactive, FALSE, 'sentence' )
-			),
-			'sold_out_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::sold_out,
-				'desc' => EEH_Template::pretty_status( EE_Datetime::sold_out, FALSE, 'sentence' )
+			'cancelled_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::cancelled,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::cancelled, FALSE, 'sentence' )
 			),
 			'expired_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::expired,
 				'desc' => EEH_Template::pretty_status( EE_Datetime::expired, FALSE, 'sentence' )
 			),
-			'cancelled_status' => array(
-				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::cancelled,
-				'desc' => EEH_Template::pretty_status( EE_Datetime::cancelled, FALSE, 'sentence' )
+			'inactive_status' => array(
+				'class' => 'ee-status-legend ee-status-legend-' . EE_Datetime::inactive,
+				'desc' => EEH_Template::pretty_status( EE_Datetime::inactive, FALSE, 'sentence' )
 			)
 		);
 		$statuses = apply_filters( 'FHEE__Events_Admin_Page__event_legend_items__statuses', $statuses );
