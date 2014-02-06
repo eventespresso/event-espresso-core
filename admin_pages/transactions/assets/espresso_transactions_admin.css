@@ -20,13 +20,13 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .status-TCM { color:#70CC50; font-size:.85em; font-weight:bold; }
 .txn-overview-full-payment-spn { color:#70CC50;  }
 /* blue text */
-.status-TPN { color:#00B1CA; font-weight:bold; }
+.status-TIN { color:#00B1CA; font-size:.85em; font-weight:bold; }
 .txn-overview-part-payment-spn { color:#00B1CA; font-weight:bold;  }
 /* orange text */
-.status-TOP { color:#E76700; font-weight:bold; }
+.status-TOP { color:#E76700; font-size:.85em; font-weight:bold; }
 .txn-overview-no-payment-spn { color:#E76700; font-weight:bold; }
 /* red text */
-.status-TIN { color:#E44064; font-size:.85em; }
+.status-TFL { color:#E44064; font-size:.85em; }
 
 /**
  * status strips
@@ -37,12 +37,12 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 }
 
 /*txn incomplete, pymt declined*/
-.txn-status-TIN, .pymt-status-PDC {
+.txn-status-TFL, .pymt-status-PDC {
     border-left-color: #E44064;
 }
 
 /*txn open, pymt pending*/
-.txn-status-TPN, .pymt-status-PPN {
+.txn-status-TIN, .pymt-status-PPN {
     border-left-color: #00B1CA;
 }
 
@@ -76,11 +76,11 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
     background-color: #70CC50;
 }
 
-.ee-status-legend-TIN, .ee-status-legend-PDC {
+.ee-status-legend-TFL, .ee-status-legend-PDC {
     background-color: #E44064;
 }
 
-.ee-status-legend-TPN, .ee-status-legend-PPN {
+.ee-status-legend-TIN, .ee-status-legend-PPN {
     background-color: #00B1CA;
 }
 

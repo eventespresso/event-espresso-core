@@ -105,13 +105,28 @@
     text-align: left;
 }
 
-/** cancelled **/
-.event-active-status-DTC, .ee-status-legend-DTC {
-	background-color: #CCB714;
-}
-
 /** sold out **/
 .event-active-status-DTS, .ee-status-legend-DTS {
+	background-color: #FCB93C;
+}
+
+/** active **/
+.event-active-status-DTA, .ee-status-legend-DTA {
+	background-color: #70CC50;
+}
+
+/** upcoming **/
+.event-active-status-DTU, .ee-status-legend-DTU {
+	background-color: #00B1CA;
+}
+
+/** postponed **/
+.event-active-status-DTP, .ee-status-legend-DTP {
+	background-color: #8A549A;
+}
+
+/** cancelled **/
+.event-active-status-DTC, .ee-status-legend-DTC {
 	background-color: #E44064;
 }
 
@@ -125,26 +140,22 @@
 	background-color: #403A3A;
 }
 
-/** upcoming **/
-.event-active-status-DTU, .ee-status-legend-DTU {
-	background-color: #00B1CA;
-}
 
-/** active **/
-.event-active-status-DTA, .ee-status-legend-DTA {
-	background-color: #70CC50;
-}
-
-/** postponed **/
-.event-active-status-DTP, .ee-status-legend-DTP {
-	background-color: #E76700;
-}
 
 /**status strips**/
-.event-status-DTC {
-	border-left-color: #CCB714;
-}
 .event-status-DTS {
+	border-left-color: #FCB93C;
+}
+.event-status-DTA {
+	border-left-color: #70CC50;
+}
+.event-status-DTU {
+	border-left-color: #00B1CA;
+}
+.event-status-DTP {
+	border-left-color: #8A549A;
+}
+.event-status-DTC {
 	border-left-color: #E44064;
 }
 .event-status-DTE {
@@ -153,15 +164,8 @@
 .event-status-DTI {
 	border-left-color: #403A3A;
 }
-.event-status-DTU {
-	border-left-color: #00B1CA;
-}
-.event-status-DTA {
-	border-left-color: #70CC50;
-}
-.event-status-DTP {
-	border-left-color: #E76700;
-}
+
+
 
 .widefat td.column-status, .widefat th.column-status {
 	width: 2%;

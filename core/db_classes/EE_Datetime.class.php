@@ -25,13 +25,25 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	
 	/**
-	 * Datetime is cancelled
-	 */
-	const cancelled = 'DTC';
-	/**
 	 * constant used by get_active_status, indicates datetime has no more available spaces
 	 */
 	const sold_out = 'DTS';
+	/**
+	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
+	 */
+	const active = 'DTA';
+	/**
+	 * constant used by get_active_status, indicating the datetime cannot be used for registrations yet, but has not expired
+	 */
+	const upcoming = 'DTU';
+	/**
+	 * Datetime is postponed
+	 */
+	const postponed = 'DTP';
+	/**
+	 * Datetime is cancelled
+	 */
+	const cancelled = 'DTC';
 	/**
 	 * constant used by get_active_status, indicates datetime has expired (event is over)
 	 */
@@ -40,18 +52,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * constant used in various places indicating that an event is INACTIVE (not yet ready to be published)
 	 */
 	const inactive = 'DTI';
-	/**
-	 * constant used by get_active_status, indicating the datetime cannot be used for registrations yet, but has not expired
-	 */
-	const upcoming = 'DTU';
-	/**
-	 * constnats used by get_active_status, indicating datetime is still active (even isnt over, can be registered-for)
-	 */
-	const active = 'DTA';
-	/**
-	 * Datetime is postponed
-	 */
-	const postponed = 'DTP';
 	
     /**
     *	Datetime ID

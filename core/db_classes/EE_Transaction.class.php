@@ -454,13 +454,13 @@ class EE_Transaction extends EE_Base_Class{
 				$icon = $show_icons ? '<span class="dashicons dashicons-yes ee-icon-size-24 green-text"></span>' : '';
 				break;
 			case EEM_Transaction::incomplete_status_code:
-				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 pink-text"></span>' : '';
+				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 lt-blue-text"></span>' : '';
 				break;
-			case EEM_Transaction::open_status_code:
-				$icon = $show_icons ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>' : '';
+			case EEM_Transaction::failed_status_code:
+				$icon = $show_icons ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>' : '';
 				break;
 			case EEM_Transaction::overpaid_status_code:
-				$icon = $show_icons ? '<span class="dashicons dashicons-plus ee-icon-size-16 pink-text"></span>' : '';
+				$icon = $show_icons ? '<span class="dashicons dashicons-plus ee-icon-size-16 orange-text"></span>' : '';
 				break;
 		}
 		return  $icon . $status[$this->status_ID()];
@@ -489,20 +489,8 @@ class EE_Transaction extends EE_Base_Class{
 	
 	
 	/**
-	 * Returns whether this transaction is open
-	 * Useful in templates and other logic for deciding if we should ask for another payment...
-	 * @return boolean
-	 */
-	public function is_open(){
-		return $this->status_ID() == EEM_Transaction::open_status_code ? TRUE : FALSE;
-	}
-	
-	
-	
-	
-	/**
 	 * Returns whether this transaction is incomplete
-	 * meaning that the transaction/registration process was somehow interupted and never completed
+	 * Useful in templates and other logic for deciding if we should ask for another payment...
 	 * @return boolean
 	 */
 	public function is_incomplete(){
@@ -520,6 +508,18 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
+	/**
+	 * Returns whether this transaction failed
+	 * meaning that the transaction/registration process was somehow interupted and never completed
+	 * @return boolean
+	 */
+	public function failed(){
+		return $this->status_ID() == EEM_Transaction::failed_status_code ? TRUE : FALSE;
+	}
+	
+	
+	
+	
 	/**
 	 * This returns the url for the invoice of this transaction
 	 * @param string $type  'download','launch', or 'html' (default is 'launch')
@@ -701,7 +701,7 @@ class EE_Transaction extends EE_Base_Class{
 		$reg_msg = array(
 			'new_reg' => $new_reg,
 			'to_approved' => $reg_to_approved
-			);
+		);
 		//$reg_msg['new_reg'] === TRUE means that new registration was created.  $reg_msg['to_approved'] === TRUE means that registration status was updated to approved.
 
 		if ( $new_reg ) {

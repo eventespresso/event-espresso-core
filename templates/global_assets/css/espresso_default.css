@@ -438,13 +438,14 @@ input.ee-register-button {
 	-webkit-box-shadow: none;
 	box-shadow: none;
 }
-.ee-status.event-active-status-DTC { background-color: #CCB714; }
-.ee-status.event-active-status-DTS { background-color: #E44064; }
-.ee-status.event-active-status-DTE { background-color: #A39D9C; }
-.ee-status.event-active-status-DTI { background-color: #A39D9C; }
-.ee-status.event-active-status-DTU { background-color: #00B1CA; } 
+.ee-status.event-active-status-DTS { background-color: #FCB93C; }
 .ee-status.event-active-status-DTA { background-color: #70CC50; }
+.ee-status.event-active-status-DTU { background-color: #00B1CA; } 
 .ee-status.event-active-status-DTP { background-color: #8A549A; }
+.ee-status.event-active-status-DTC { background-color: #E44064; }
+.ee-status.event-active-status-DTE { background-color: #A39D9C; }
+.ee-status.event-active-status-DTI { background-color: #403A3A; }
+
 
 .ee-status-size-12 { font-size: 12px; }
 .ee-status-size-14 { font-size: 14px; }

@@ -526,19 +526,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 	}
 	
-	/**
-	 * We only really want to exlain to users why they'r epayment is pending, if that's teh case.
-	 * Otherwise, they probably don't want to know anything.
-	 * @param EE_Transaction $transaction
-	 */
-	/*public function get_payment_overview_content(EE_Transaction $transaction){
-			if($transaction->status_ID() == EEM_Transaction::open_status_code){
-				?>
-		<h1><?php _e('Awaiting Payment Response from PayPal...','event_espresso')?></h1>
-		<p><?php _e('PayPal has notified us that your payment is in progress. You will be notified when payment is accepted.')?></p>
-		<?php
-			}
-	}*/
+
 
 }
 

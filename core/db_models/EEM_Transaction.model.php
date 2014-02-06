@@ -29,35 +29,32 @@ class EEM_Transaction extends EEM_Base {
   	// private instance of the Transaction object
 	private static $_instance = NULL;
 
-	
-	
-	/**
-	 * Status ID (STS_ID on esp_status table) to indicate a complete transaction.
-	 */
-	const complete_status_code = 'TCM';
-	
-	
-	
-	/**
-	 * STatus ID(STS_ID on esp_status table) to indicate an incomplete transaction
-	 */
-	const incomplete_status_code = 'TIN';
-	
-	
-	
 	/**
 	 * Status ID(STS_ID on esp_status table) to indicate the transaction is complete,
 	 * but payment is pending. This is the state for transactions where payment is promised
 	 * from an offline gateway. 
 	 */
-	const open_status_code = 'TPN';
+//	const open_status_code = 'TPN';
 
-	
-	
 	/**
-	 *  Status ID(STS_ID on esp_status table) to indicate the transaction is overpaid.
+	 * Status ID(STS_ID on esp_status table) to indicate the transaction failed, either due to a technical reason (server or computer crash during registration),
+	 *  or due to an abandoned cart after registrant was forwarded to an off-site gateway ie: got to PayPal, then bailed
+	 */
+	const failed_status_code = 'TFL';
+
+	/**
+	 * STatus ID(STS_ID on esp_status table) to indicate an incomplete transaction  TXN_paid < TXN_total
+	 */
+	const incomplete_status_code = 'TIN';
+
+	/**
+	 * Status ID (STS_ID on esp_status table) to indicate a complete transaction. TXN_paid == TXN_total
+	 */
+	const complete_status_code = 'TCM';
+
+	/**
+	 *  Status ID(STS_ID on esp_status table) to indicate the transaction is overpaid.  TXN_paid > TXN_total
 	 *  This is the same as complete, but site admins actually owe clients the moneys!
-	 * from an offline gateway. 
 	 */
 	const overpaid_status_code = 'TOP';
 	

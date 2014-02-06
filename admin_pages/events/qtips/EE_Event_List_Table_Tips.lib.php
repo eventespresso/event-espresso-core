@@ -76,9 +76,9 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config {
 					)
 				),
 			4 => array(
-				'content_id' => 'ee-event-status-' . EE_Datetime::inactive,
-				'target' => '.event-status-' . EE_Datetime::inactive,
-				'content' => $this->_event_status_legend(EE_Datetime::inactive),
+				'content_id' => 'ee-event-status-' . EE_Datetime::sold_out,
+				'target' => '.event-status-' . EE_Datetime::sold_out,
+				'content' => $this->_event_status_legend(EE_Datetime::sold_out),
 				'options' => array(
 					'position' => array(
 						'target' => 'mouse'
@@ -86,9 +86,9 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config {
 					)
 				),
 			5 => array(
-				'content_id' => 'ee-event-status-' . EE_Datetime::sold_out,
-				'target' => '.event-status-' . EE_Datetime::sold_out,
-				'content' => $this->_event_status_legend(EE_Datetime::sold_out),
+				'content_id' => 'ee-event-status-' . EE_Datetime::cancelled,
+				'target' => '.event-status-' . EE_Datetime::cancelled,
+				'content' => $this->_event_status_legend(EE_Datetime::cancelled),
 				'options' => array(
 					'position' => array(
 						'target' => 'mouse'
@@ -106,9 +106,9 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config {
 					)
 				),
 			7 => array(
-				'content_id' => 'ee-event-status-' . EE_Datetime::cancelled,
-				'target' => '.event-status-' . EE_Datetime::cancelled,
-				'content' => $this->_event_status_legend(EE_Datetime::cancelled),
+				'content_id' => 'ee-event-status-' . EE_Datetime::inactive,
+				'target' => '.event-status-' . EE_Datetime::inactive,
+				'content' => $this->_event_status_legend(EE_Datetime::inactive),
 				'options' => array(
 					'position' => array(
 						'target' => 'mouse'
@@ -129,11 +129,11 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config {
 			'active_status' => EE_Datetime::active,
 			'upcoming_status' => EE_Datetime::upcoming,
 			'postponed_status' => EE_Datetime::postponed,
-			'inactive_status' => EE_Datetime::inactive,
 			'sold_out_status' => EE_Datetime::sold_out,
-			'expired_status' => EE_Datetime::expired,
 			'cancelled_status' => EE_Datetime::cancelled,
-			);
+			'expired_status' => EE_Datetime::expired,
+			'inactive_status' => EE_Datetime::inactive
+		);
 
 		return EEH_Template::status_legend( $status_array, $status );
 	}
