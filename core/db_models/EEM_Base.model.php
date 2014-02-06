@@ -406,9 +406,10 @@ abstract class EEM_Base extends EE_Base{
 	 *					|	(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
 	 *					|	to avoid future queries
 	 * 
-	 *default_where_conditions| can be set to 'none','other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
+	 *default_where_conditions| can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
 	 *					|	if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
-	 *					|	set it to 'other_models_only'. If you want to use all default where conditions (default), set to 'all'.
+	 *					|	set it to 'other_models_only'. If you only want this model's default where conditions added to teh query, use 'this_model_only'.
+	 *					 |	If you want to use all default where conditions (default), set to 'all'.
 	 * 
 	 * Some full examples: 
 	 * 
@@ -1586,11 +1587,11 @@ abstract class EEM_Base extends EE_Base{
 	 * @return array like $query_params[0], see EEM_Base::get_all for documentation
 	 */
 	private function _get_default_where_conditions_for_models_in_query(EE_Model_Query_Info_Carrier $query_info_carrier,$use_default_where_conditions = 'all',$where_query_params = array()){
-		$allowed_used_default_where_conditions_values = array('all','other_models_only','none');
+		$allowed_used_default_where_conditions_values = array('all','this_model_only', 'other_models_only','none');
 		if( ! in_array($use_default_where_conditions,$allowed_used_default_where_conditions_values)){
 			throw new EE_Error(sprintf(__("You passed an invalid value to the query parameter 'default_where_conditions' of '%s'. Allowed values are %s", "event_espresso"),$use_default_where_conditions,implode(", ",$allowed_used_default_where_conditions_values)));
 		}
-		if($use_default_where_conditions == 'all' ){
+		if( in_array($use_default_where_conditions, array('all','this_model_only')) ){
 			$universal_query_params = $this->_get_default_where_conditions();
 		}else{
 			$universal_query_params = array();
