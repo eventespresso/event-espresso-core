@@ -4,7 +4,7 @@ EE4 core
 ***
 **Current Stable Version:** (not released)
 
-**Current Beta Version:** (not released)
+**Current Beta Version:** 4.1
 
 **Current Alpha Version:** 4.1
 
