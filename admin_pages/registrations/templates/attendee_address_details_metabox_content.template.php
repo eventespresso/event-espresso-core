@@ -36,7 +36,7 @@ EEH_Template_Validator::verify_instanceof( $attendee, '$attendee', 'EE_Attendee'
 		</tr>
 		<tr valign="top">
 			<td>
-				<label for="ATT_zip"><?php _e('Zip / Postal Code', 'event_espresso'); ?></label><br>
+				<label for="ATT_zip"><?php _e('Zip/Postal Code', 'event_espresso'); ?></label><br>
 				<input class="all-options" type="text" id="ATT_zip" name="ATT_zip" value="<?php echo $attendee->zip(); ?>"/>
 			</td>
 		</tr>
