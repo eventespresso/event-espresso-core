@@ -152,18 +152,19 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	protected function _update_settings(){
 		$c = EE_Config::instance()->addons['calendar'];
 		$count=0;
+		//otherwise we assume you want to allow full html
 		foreach($this->_req_data['calendar'] as $top_level_key => $top_level_value){
 			if(is_array($top_level_value)){
 				foreach($top_level_value as $second_level_key => $second_level_value){
 					if(property_exists($c,$top_level_key) && property_exists($c->$top_level_key, $second_level_key)
 						&& $second_level_value != $c->$top_level_key->$second_level_key){
-						$c->$top_level_key->$second_level_key = $second_level_value;
+						$c->$top_level_key->$second_level_key = $this->_sanitize_config_input($top_level_key,$second_level_key,$second_level_value);
 						$count++;	
 					}
 				}
 			}else{
 				if(property_exists($c, $top_level_key) && $top_level_value != $c->$top_level_key){
-					$c->$top_level_key = $top_level_value;
+					$c->$top_level_key = $this->_sanitize_config_input($top_level_key, NULL, $top_level_value);
 					$count++;
 				}
 			}
@@ -172,6 +173,89 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		EE_Config::instance()->update_espresso_config();
 		$this->_redirect_after_action($count, 'Settings', 'updated', array('action' => $this->_req_data['return_action']));
 	}
+	
+	private function _sanitize_config_input($top_level_key,$second_level_key,$value){
+		$sanitization_methods = array(
+			'week_mode'=>'plaintext',
+			'enable_calendar_thumbs'=>'bool',
+			'calendar_height'=>'int',
+			'event_background'=>'int',
+			'enable_calendar_filters'=>'bool',
+			'enable_category_legend'=>'bool',
+			'use_pickers'=>'bool',
+			'event_background'=>'plaintext',
+			'event_text_color'=>'plaintext',
+			'enable_cat_classes'=>'bool',
+			'disable_categories'=>'bool',
+			'show_attendee_limit'=>'bool',
+			'time'=>array(
+				'first_day'=>'int',
+				'weekends'=>'bool',
+				'format'=>'plaintext',
+				'show'=>'bool'),
+			'header'=>array(
+				'left'=>'plaintext',
+				'center'=>'plaintext',
+				'right'=>'plaintext'
+			),
+			'button_text'=>array(
+				'prev'=>'html',
+				'next'=>'html',
+				'prev_year'=>'html',
+				'next_year'=>'html',
+				'today'=>'html',
+				'month'=>'html',
+				'week'=>'html',
+				'day'=>'html',
+			),
+			'tooltip'=>array(
+				'show'=>'bool',
+				'pos_my_1'=>'plaintext',
+				'pos_my_2'=>'plaintext',
+				'pos_at_1'=>'plaintext',
+				'pos_at_2'=>'plaintext',
+				'style'=>'plaintext'
+			),
+			'title_format'=>array(
+				'month'=>'plaintext',
+				'week'=>'plaintext',
+				'day'=>'plaintext',
+			),
+			'column_format'=>array(
+				'month'=>'plaintext',
+				'week'=>'plaintext',
+				'day'=>'plaintext'
+			)
+			);
+		$sanitization_method = NULL;
+		if(isset($sanitization_methods[$top_level_key])){
+			if($second_level_key == NULL && ! is_array($sanitization_methods[$top_level_key]) ){
+				$sanitization_method = $sanitization_methods[$top_level_key];
+					
+			}
+		}elseif(is_array($sanitization_methods[$top_level_key]) && isset($sanitization_methods[$top_level_key][$second_level_key])){
+				$sanitization_method = $sanitization_method[$top_level_key][$second_level_key];
+		}
+//		echo "$top_level_key [$second_level_key] with value $value will be sanitized as a $sanitization_method<br>";
+		switch($sanitization_method){
+			case 'bool':
+				return (boolean)intval($value);
+			case 'plaintext':
+				return wp_strip_all_tags($value);
+			case 'int':
+				return intval($value);
+			case 'html':
+				return $value;
+			default:
+				$input_name = $second_level_key == NULL ? $top_level_key : $top_level_key."[".$second_level_key."]";
+				EE_Error::add_error(sprintf(__("Could not sanitize input '%s' because it has no entry in our sanitization methods array", "event_espresso"),$input_name));
+				return NULL;
+			
+		}
+	}
+		
+		
+	
 	
 
 } //ends Forms_Admin_Page class

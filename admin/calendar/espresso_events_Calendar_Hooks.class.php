@@ -110,9 +110,9 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		$CAT_ID = isset($redirection_query_args['EVT_CAT_ID']) ? $redirection_query_args['EVT_CAT_ID'] :  NULL;
 		if($CAT_ID){
 			$category = EEM_Term::instance()->get_one_by_ID($CAT_ID);
-			$category->update_extra_meta('use_color_picker' , $this->_req_data['use-color-picker-for-calendar']);
-			$category->update_extra_meta('background_color', $this->_req_data['category-background-color-for-calendar']);
-			$category->update_extra_meta('text_color', $this->_req_data['category-text-color-for-calendar']);
+			$category->update_extra_meta('use_color_picker' , intval($this->_req_data['use-color-picker-for-calendar']));
+			$category->update_extra_meta('background_color', wp_strip_all_tags($this->_req_data['category-background-color-for-calendar']));
+			$category->update_extra_meta('text_color', wp_strip_all_tags($this->_req_data['category-text-color-for-calendar']));
 				
 		}
 	}

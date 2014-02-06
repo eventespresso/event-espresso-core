@@ -39,6 +39,7 @@ class EE_Calendar_Config extends EE_Config_Base{
 	public $calendar_height;
 	public $enable_calendar_thumbs;
 	public $enable_calendar_filters;
+	public $enable_category_legend;
 	public $use_pickers;
 	public $event_background;
 	public $event_text_color;
@@ -58,6 +59,7 @@ class EE_Calendar_Config extends EE_Config_Base{
 		$this->calendar_height = '';
 		$this->enable_calendar_thumbs = false;
 		$this->enable_calendar_filters = false;
+		$this->enable_category_legend = false;
 		$this->use_pickers = false;
 		$this->event_background = '007BAE';
 		$this->event_text_color = 'FFFFFF';

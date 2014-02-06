@@ -129,7 +129,7 @@ class Espresso_Calendar_Widget extends WP_Widget {
 				<?php _e('Single Category Name (optional)', 'event_espresso'); ?>
 			</label>
 			<input type="text" id="<?php echo $this->get_field_id('category_id'); ?>" name="<?php echo $this->get_field_name('category_id'); ?>" width="20" value="<?php echo $instance['category_id']; ?>" />
-			<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=status_types_info"><img src="<?php echo EVENT_ESPRESSO_PLUGINFULLURL ?>/images/question-frame.png" width="16" height="16" /></a> </p>
+			<a class="thickbox" href="#TB_inline?height=300&width=400&inlineId=status_types_info"><img src="<?php echo EE_IMAGES_URL ?>question-frame.png" width="16" height="16" /></a> </p>
 		<div id="status_types_info" style="display:none;">
 			<h2>
 				<?php _e('Display a Single Event Category', 'event_espresso'); ?>
