@@ -97,7 +97,9 @@
 
 } 
 article.espresso_venues,
-article.espresso_events {
+article.espresso_events,
+article.espresso_venues.has-post-thumbnail,
+article.espresso_events.has-post-thumbnail {
 	width: auto;
 	padding: 0 2em 2em;
 	margin: 0 auto;
