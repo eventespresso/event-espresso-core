@@ -196,7 +196,9 @@
 }
 
 
-.ee-text-inp, .ee-small-text-inp {
+.ee-text-inp,
+.ee-large-text-inp,
+.ee-small-text-inp {
     width: 100%;
 }
 
@@ -205,9 +207,6 @@
     max-width: 100%;
 }
 
-.ee-large-text-inp {
-    width: 100%;
-}
 
 .ee-full-textarea-inp {
     width: 100%;
@@ -215,7 +214,7 @@
 }
 
 .edit-price-PRC_desc {
-    height: 70px;
+   /* height: 70px;*/
 }
 
 
@@ -236,30 +235,29 @@
     border-left: solid 4px #ccc;
 }
 
+.datetime-ticket.ticket-status-TKS {
+    background-color: transparent;
+    border-left: solid 4px #FCB93C;
+}
+.datetime-ticket.ticket-status-TKO {
+    background-color: transparent;
+    border-left: solid 4px #70CC50;
+}
+.datetime-ticket.ticket-status-TKP {
+    background-color: transparent;
+    border-left: solid 4px #00B1CA;
+}
 .datetime-ticket.ticket-status-TKA{
     background-color: transparent;
-    border-left: solid 4px #e6e6e6;
+    border-left: solid 4px #8A549A;
 }
-
 .datetime-ticket.ticket-status-TKE {
     background-color: transparent;
     border-left: solid 4px #A39D9C;
 }
 
-.datetime-ticket.ticket-status-TKP {
-    background-color: transparent;
-    border-left: solid 4px #49afcd;
-}
 
-.datetime-ticket.ticket-status-TKO {
-    background-color: transparent;
-    border-left: solid 4px #62B660;
-}
 
-.datetime-ticket.ticket-status-TKS {
-    background-color: transparent;
-    border-left: solid 4px #62B660;
-}
 
 .datetime-ticket .gear-icon {
     margin-left: 3px;
@@ -297,27 +295,33 @@
 
 .ticket-table tbody td {
    height: 1.7em;
-   padding-bottom: .3em;
-   padding-right: .4em;
+   padding:.25em;
 }
 
-.ticket-table tbody .ticket-row td:first-child {
-    padding: 0;
-    margin: 0;
-    padding-bottom: .3em;
-}
 
 .ticket-table tbody tr.ticket-row:first-child td {
-    padding-top: .3em;
+    /*padding-top: .3em;*/
 }
 
 .ticket-table tbody tr.edit-ticket-row td {
     height: auto;
 }
+.ticket-table tbody tr.edit-ticket-row td input[type="text"] {
+    height:1;
+}
 
 /*ticket status strip */
 .ticket-table tbody .ticket-row td:first-child {
+    position: relative;
     width: 1%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+}
+.ticket-table tbody .ticket-row td:first-child span {
+   display: block;
+   height:2.8em;
+   padding:0;
 }
 
 /*Ticket Title */
@@ -363,49 +367,46 @@
 }
 
 .ee-status-strip-td {
-    padding: 50% 0 150% 0;
+    /*padding: 50% 0 150% 0;*/
+   /* padding:0;
+    height: 1.4em;*/
 }
 
+.tkt-status-TKS {
+    border-color: #FCB93C; /*soldout*/
+}
+.tkt-status-TKO {
+    border-color: #70CC50; /*onsale*/
+}
+.tkt-status-TKP {
+    border-color: #00B1CA; /*pending*/
+}
 .tkt-status-TKA{
-   border-color: #e6e6e6; /*archived*/
+   border-color: #8A549A; /*archived*/
 }
-
 .tkt-status-TKE {
    border-color: #A39D9C; /*expired*/
 }
 
-.tkt-status-TKP {
-    border-color: #49afcd; /*pending*/
+
+
+.ee-status-legend-TKS {
+    background-color: #FCB93C;
 }
-
-.tkt-status-TKO {
-    border-color: #62B660; /*onsale*/
+.ee-status-legend-TKO {
+    background-color: #70CC50;
 }
-
-.tkt-status-TKS {
-    border-color: #E44064; /*soldout*/
+.ee-status-legend-TKP {
+    background-color: #00B1CA;
 }
-
-
 .ee-status-legend-TKA{
-    background-color: #e6e6e6;
+    background-color: #8A549A;
 }
-
 .ee-status-legend-TKE {
     background-color: #A39D9C;
 }
 
-.ee-status-legend-TKP {
-    background-color: #49afcd;
-}
 
-.ee-status-legend-TKO {
-    background-color: #62B660;
-}
-
-.ee-status-legend-TKS {
-    background-color: #E44064;
-}
 
 .ticket-fieldset {
     background-color: #F8F8F8;
