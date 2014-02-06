@@ -557,6 +557,92 @@ class EE_Calendar {
 			}
 		}
 	}
+	
+	/**
+	 * Gets the HTML for the calendar filters area
+	 * @param array $ee_calendar_js_options mess of options which will eb passed onto js
+	 * which we might want in here. (But using the config object directly might be nice,
+	 * because it's well-defined... however, unfortunately settings in it might be overridden
+	 * by shortcode attributes, which you can access in this array, if you know their key)
+	 * @return string
+	 */
+	private function _get_filter_html($ee_calendar_js_options = array()){
+		$calendar_config = EE_Config::instance()->addons['calendar'];
+		/*@var $calendar_config EE_Calendar_Config */
+		$output_filter = '';
+		if ( !$ee_calendar_js_options['widget']) {
+			// Query for Select box filters
+			$ee_terms = EEM_Term::instance()->get_all(array(array('Term_Taxonomy.taxonomy'=>'espresso_event_categories')));
+			$venues = EEM_Venue::instance()->get_all();
+			
+			if (!empty($venues) || !empty($ee_terms)){
+				
+				ob_start();
+				
+				//Category legend
+				if ( $calendar_config->enable_category_legend ){
+					echo '<div id="espreso-category-legend"><ul id="ee-category-legend-ul">';
+					
+					foreach ($ee_terms as $ee_term) {
+						/*@var $ee_term EE_Term */
+						$catcode = $ee_term->ID();
+						
+						$catmeta = unserialize($ee_term->category_meta);
+						$bg = $ee_term->get_extra_meta('background_color', $calendar_config->event_background);
+						$fontcolor =$ee_term->get_extra_meta('text_color', $calendar_config->event_text_color);
+						$use_bg =$ee_term->get_extra_meta('use_color_picker', true);
+			
+						if($use_bg ) {
+							echo '<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="border-left: 10px solid ' . $bg . ';">';
+						} else {
+							echo '<li id="ee-category-li-'.$catcode.'" class="has-sub" style="border-left: 10px solid #CCC";>';
+						}
+					
+						echo '<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span></a></li>';
+						
+					}
+					//echo '<li class="has-sub" style="border-left:solid 1px #000;"><a href="?event_category_id">'.__('All', 'event_espresso').'</a></li>';
+					echo '</ul></div>';
+				}
+				
+				//Filter dropdowns
+				if ($calendar_config->enable_calendar_filters ){
+					?>
+					<!-- select box filters -->
+					<div class="ee-filter-form">
+					<form name="filter-calendar-form" id="filter-calendar-form" method="post" action="">
+					<?php if(!empty($ee_terms)){?>
+						<select id="ee-category-submit" class="submit-this ee-category-select" name="event_category_id">
+						<option id="option" class="ee_select" value=""><?php echo __('Select a Category', 'event_espresso'); ?></option>
+						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+						<?php
+							foreach($ee_terms as $term) {
+							echo '<option '.(isset($_REQUEST['event_category_id']) && $term->slug() == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$term->slug().'">'.$term->name().'</option>';
+								}?>
+						</select>
+					<?php }?>
+					
+					<?php if(!empty($venues)){?>
+						<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
+						<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
+						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
+						<?php
+							foreach($venues as $venue) {
+							echo '<option'. (isset($_REQUEST['event_venue_id']) && ($venue->ID() == $_REQUEST['event_venue_id'] || $venue->identifier() == $_REQUEST['event_venue_id']) ? ' selected="selected"' :'').' value="'.$venue->ID().'">'.stripslashes($venue->name()).'</option>';
+							}?>
+						</select>
+					<?php }?>
+					</form>
+					</div>
+					<?php
+				}
+				$output_filter = ob_get_contents();
+				ob_end_clean();
+			}
+		}
+
+		return $output_filter;
+	}
 
 
 
@@ -582,6 +668,9 @@ class EE_Calendar {
 		$ee_calendar_js_options = is_array( $ee_calendar_js_options ) ? $ee_calendar_js_options : array( $ee_calendar_js_options );
 		// set default attributes
 		$ee_calendar_js_options = shortcode_atts( $defaults, $ee_calendar_js_options );
+		$output_filter = $this->_get_filter_html($ee_calendar_js_options);
+		
+		
 		// grab some request vars
 		$this->_event_category_id = $ee_calendar_js_options['event_category_id'] = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $ee_calendar_js_options['event_category_id'];
 		// i18n some strings
@@ -646,8 +735,8 @@ class EE_Calendar {
 		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
 		
 		$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
-
-		return '
+		$output_filter = apply_filters( 'filter_hook_espresso_calendar_output_filter', $output_filter );
+		return apply_filters( 'filter_hook_espresso_calendar_output_before', '' ).$output_filter.'
 	<div id="espresso_calendar" class="'. $calendar_class . '">
 		<div id="ee-calendar-ajax-loader-dv">
 			<img id="ee-calendar-ajax-loader-img" class="ee-ajax-loader-img" style="display:none;" src="' . EE_IMAGES_URL . 'ajax-loader.gif">
