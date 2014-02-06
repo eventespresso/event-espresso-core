@@ -151,7 +151,8 @@ class EE_Error extends Exception {
 	#error-page {
 		max-width:90% !important;	
 	}
-	.ee-error-dev-msg-pg {
+	.ee-error-dev-msg-pg,
+	.error .ee-error-dev-msg-pg {
 		padding:1em; 
 		margin:0 0 1em; 
 		border:2px solid #E44064; 
