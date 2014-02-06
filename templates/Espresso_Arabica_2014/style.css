@@ -92,12 +92,14 @@
 .espresso_events a:hover,
 .espresso_venues a:hover { color:#41A61A; }
 
-.post-type-archive-espresso_events .site-content,
-.post-type-archive-espresso_events .entry-content {
 
-} 
+
 article.espresso_venues,
-article.espresso_events {
+article.espresso_events,
+article.espresso_venues.has-post-thumbnail,
+article.espresso_events.has-post-thumbnail,
+.full-width.singular article.espresso_venues.has-post-thumbnail,
+.full-width.singular article.espresso_events.has-post-thumbnail {
 	width: auto;
 	padding: 0 2em 2em;
 	margin: 0 auto;
