@@ -268,17 +268,15 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	function get_edit_post_link( $url, $ID, $context ) {
-		// http://example.com/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
-		
 		//need to make sure we only edit links if our cpt
 		global $post;
-
-		if ( ! isset( $this->_CPTS[$post->post_type] ) )
+		if ( ! isset( $this->_CPTs[ $post->post_type ] )) {
 			return $url;
-
+		}
 		//k made it here so all is good.
 		$scheme = is_ssl() ? 'https' : 'http';
 		$url = get_admin_url( EE_Config::instance()->core->current_blog_id, 'admin.php', $scheme );
+		// http://example.com/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
 		return wp_nonce_url( add_query_arg( array( 'page' => $this->CPT['post_type'], 'post' =>$ID, 'action' =>'edit' ), $url ), 'edit', 'edit_nonce' );
 	}
 

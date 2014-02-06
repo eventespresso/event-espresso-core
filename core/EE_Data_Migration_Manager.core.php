@@ -351,7 +351,7 @@ class EE_Data_Migration_Manager{
 				case EE_Data_Migration_Manager::status_completed:
 					//ok so THAT script has completed
 					$this->update_current_database_state_to($this->script_migrates_to_version($current_script_name, false));
-					$respons_update_current_database_state_toe_array =  array(
+					$response_array =  array(
 							'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
 							'records_migrated'=>$current_script_class->count_records_migrated(),
 							'status'=> EE_Data_Migration_Manager::status_completed,
