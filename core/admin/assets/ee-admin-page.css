@@ -470,6 +470,26 @@ label.error  { display: block; color: #FE2A00 !important; }
     margin-bottom: 5px;
 }
 
+
+.qtip-content .ee-list-table-legend {
+	 padding:0 0 .5em;
+	 margin: 0;   
+}
+.qtip-content .ee-list-table-legend dt {
+	padding:.25em .5em;   
+	 margin: 0;  
+	 line-height: 1em;
+}
+.qtip-content .ee-list-table-legend .ee-is-active-status {
+	background-color: #FEFED3;
+	/*background-color: rgba( 254, 243, 202, .9 );*/
+	border-radius: 2px;
+	color: #403A3A;
+	text-shadow: none;
+	margin:.1em 0 .15em;
+	text-shadow: -1px -1px 0px #fff;
+}
+
 .ee-status-legend {
 	display: inline-block;
 	width: 18px;
@@ -477,13 +497,14 @@ label.error  { display: block; color: #FE2A00 !important; }
 	vertical-align: middle;
 }
 
-.ee-is-active-status {
-	background-color: #fefa99;
+/*.ee-is-active-status {
+	display: block;
+	background-color: #EEEEE6;
 	padding: 0 4px 3px 4px;
 	color: black;
 	margin-left: -4px;
 	text-shadow: none;
-}
+}*/
 
 .ee-legend-img-container {
    width: 13px;
