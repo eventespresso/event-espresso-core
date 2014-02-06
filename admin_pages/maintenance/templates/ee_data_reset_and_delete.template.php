@@ -6,6 +6,8 @@
 <h1>
 	<?php _e( 'Reset/Delete Data for Event Espresso', 'event_espresso' );?>
 </h1>
+<!-- reset DB url is here. Just need to make it look pretty and unhide it-->
+<a style='display:none'href='<?php echo $reset_db_url;?>'>reset</a>
 <div class="padding">
 	<h3 class="espresso-header"><span class="dashicons dashicons-post-trash ee-icon-size-22"></span><?php _e('Delete ALL Event Espresso Tables and Data', 'event_espresso');?></h3>
 	<p><?php _e('If you know for certain that you will no longer be using Event Espresso and you wish to remove ALL traces of the plugin from your system, then perform the following steps. Please note that this is permanent and can NOT be undone.', 'event_espresso');?></p>

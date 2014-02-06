@@ -958,6 +958,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		
 		if ( is_writable( EVENT_ESPRESSO_UPLOAD_DIR.'logs' ) && ! file_exists( $exception_log_file )) {
 			touch( $exception_log_file );
+			self::add_htaccess();
 		}
 		
 		if ( is_writable( $exception_log_file )) {
@@ -968,6 +969,22 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 			echo '<div class="error"><p>'. sprintf( __( 'Your log file is not writable. Check if your server is able to write to %s.', 'event_espresso' ), $exception_log_file ) . '</p></div>';
 		}
 		
+	}
+
+
+
+	/**
+	 * simply adds .htaccess file to log dir.
+	 */
+	public static function add_htaccess() {
+		if ( !file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess' ) ) {
+			if ( file_put_contents(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess', 'deny from all') )
+				do_action('AHEE_log', __FILE__, __FUNCTION__, 'created .htaccess file that blocks direct access to logs folder'); 
+			else
+  				do_action('AHEE_log', __FILE__, __FUNCTION__, 'there was a problem creating .htaccess file to block direct access to logs folder');
+		} else {
+			do_action('AHEE_log', __FILE__, __FUNCTION__, '.htaccess file already exists in logs folder');
+		}
 	}
 
 
