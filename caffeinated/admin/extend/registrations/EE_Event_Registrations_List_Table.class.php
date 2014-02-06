@@ -305,7 +305,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$txn = $item->transaction();
 		$view_txn_url = add_query_arg( array('action' => 'view_transaction', 'TXN_ID' => $txn->ID() ), TXN_ADMIN_URL );	
 		if ( $item->get('REG_count') == 1 ) {
-			return '<a href="' . $view_txn_url . '"><span class="reg-pad-rght">'. $txn->total_line_item()->get_pretty('LIN_total')  .'</span></a>';
+			$line_total_obj = $txn->total_line_item();
+			$txn_total = $line_total_obj instanceof EE_Line_Item ? $line_total_obj->get_pretty('LIN_total') : __('View Transaction', 'event_espresso');
+			return '<a href="' . $view_txn_url . '"><span class="reg-pad-rght">'. $line_total  .'</span></a>';
 		} else {
 			return '<span class="reg-pad-rght"></span>';
 		}		
