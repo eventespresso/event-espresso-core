@@ -101,20 +101,23 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__construct__begin',$this );
 
 		$this->_load_registry();
+		// workarounds for PHP < 5.3
+		$this->_load_class_tools();
 		
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		do_action( 'AHEE__EE_System__construct__autoloaders_available',$this );
-		// load and setup EE_Config
+		// load and setup EE_Config and EE_Network_Config
 		EE_Registry::instance()->load_core( 'Config' );
+		EE_Registry::instance()->load_core( 'Network_Config' );
 		// setup autoloaders
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
 		// check for activation errors
-		if ( $activation_errors = get_option( 'espresso_plugin_activation_errors', FALSE )) {
+		if ( $activation_errors = get_option( 'ee_plugin_activation_errors', FALSE )) {
 			EE_Error::add_error( $activation_errors );
-			update_option( 'espresso_plugin_activation_errors', FALSE );
+			update_option( 'ee_plugin_activation_errors', FALSE );
 		}
 		// get model names
 		$this->_parse_model_names();
@@ -123,7 +126,13 @@ final class EE_System {
 		//we gave addons a chance to register themselves before detecting the request type
 		//and deciding whether or not to set maintenance mode
 		// check for plugin activation/upgrade/installation
-		add_action( 'plugins_loaded', array( $this,'plugins_loaded' ), 7 );
+		if(self::$_activation){
+			//if this is activation (or deactivation), then this will have been called well AFTER
+			//the plugins_loaded hook! so just do this right away then
+			$this->plugins_loaded();
+		}else{
+			add_action( 'plugins_loaded', array( $this,'plugins_loaded' ), 7 );
+		}
 		do_action( 'AHEE__EE_System__construct__end', $this );
 	}
 
@@ -139,7 +148,24 @@ final class EE_System {
 		if ( is_readable( EE_CORE . 'EE_Registry.core.php' )) {
 			require_once( EE_CORE . 'EE_Registry.core.php' );
 		} else {
-			$msg = __( 'The EE_Registry could not be loaded.', 'event_espresso' );
+			$msg = __( 'The EE_Registry core class could not be loaded.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			wp_die( EE_Error::get_notices() );
+		}
+	}
+
+
+	/**
+	 * 	_load_registry
+	 *
+	 * 	@access private
+	 * 	@return void
+	 */
+	private function _load_class_tools() {
+		if ( is_readable( EE_HELPERS . 'EEH_Class_Tools.helper.php' )) {
+			require_once( EE_HELPERS . 'EEH_Class_Tools.helper.php' );
+		} else {
+			$msg = __( 'The EEH_Class_Tools helper could not be loaded.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}
@@ -205,7 +231,28 @@ final class EE_System {
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		do_action( 'AHEE__EE_System__plugins_loaded__end', $this );
 	}
-
+	/**
+	 * Seta a wp option to remember that we want to redirect to the about page on the
+	 * next normal ee request (because it appears we cant do that right after activation,
+	 * because it interferes with activation of the plugin)
+	 */
+	private function _remember_to_redirect_to_ee_about_on_next_request(){
+		update_option('ee_redirect_to_ee_about_on_next_request',true);
+	}
+	/**
+	 * Removes the wp option to remember that we want to redirec tot the about page
+	 * on next request- so that we don't accidentally get into an infinite loop!
+	 */
+	private function _remember_to_NOT_redirect_to_ee_about_on_next_request(){
+		delete_option('ee_redirect_to_ee_about_on_next_request');
+	}
+	/**
+	 * Checks the wp option to see if we should redirect the user to the ee about page or not
+	 * @return boolean
+	 */
+	private function _should_redirect_to_ee_about_page(){
+		return get_option('ee_redirect_to_ee_about_on_next_request',false);
+	}
 
 
 	/**
@@ -244,7 +291,6 @@ final class EE_System {
 //				echo "done reactivation";die;
 				break;
 			case EE_System::req_type_upgrade:
-//				echo "start upgrade";
 				do_action( 'AHEE__EE_System__manage_activation_process__upgrade' );
 				if( ! EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old()){
 					//so the database doesnt look old (ie, there are no migration scripts
@@ -253,7 +299,7 @@ final class EE_System {
 					//first: double-check if this was called via an activation hook or a normal reqeust
 					$this->_setup_initialize_db_if_no_migrations_required();
 				} else {
-					$this->_maybe_redirect_to_ee_about(); //only on activation!
+					$this->_remember_to_redirect_to_ee_about_on_next_request();
 				}
 //				echo "done upgrade";die;
 				break;
@@ -263,6 +309,7 @@ final class EE_System {
 				break;
 			case EE_System::req_type_normal:
 			default:
+				$this->_maybe_redirect_to_ee_about();
 				break;
 		}
 		if( ! $request_type == EE_System::req_type_normal){
@@ -286,14 +333,13 @@ final class EE_System {
 		//only initialize system if we're not in maintenance mode.
 		if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 			// set flag for flushing rewrite rules
-			update_option( 'espresso_flush_rewrite_rules', TRUE );
+			update_option( 'ee_flush_rewrite_rules', TRUE );
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();
 		}
-
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
-			$this->redirect_to_about_ee();
+			$this->_remember_to_redirect_to_ee_about_on_next_request();
 		}
 	}
 
@@ -305,6 +351,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
+		$this->_remember_to_NOT_redirect_to_ee_about_on_next_request();
 		$url = add_query_arg( array('page' => 'espresso_about'), admin_url( 'admin.php' ) );
 		wp_safe_redirect( $url );
 		exit();
@@ -333,11 +380,12 @@ final class EE_System {
 	}
 
 
-
+	/**
+	 * Checks if we've set a wp option to indicate that we ought to redirect to 
+	 * the ABOUT page; and if so, sets a hook to perform that direct
+	 */
 	private function _maybe_redirect_to_ee_about() {
-		if( self::$_activation ) {
-			$this->redirect_to_about_ee();
-		} else {
+		if(is_admin() && $this->_should_redirect_to_ee_about_page()){
 			add_action('init', array($this, 'redirect_to_about_ee'), 10 );
 		}
 	}

@@ -266,7 +266,7 @@ class EE_Qtip extends EE_Base {
 
 	public function __construct( $setup_array ) {
 		foreach ( $setup_array as $prop => $value ) {
-			if ( property_exists( $this, $prop ) )
+			if ( EEH_Class_Tools::has_property( $this, $prop ) )
 				$this->$prop = $value;
 		}
 	}

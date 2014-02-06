@@ -92,15 +92,14 @@
 .espresso_events a:hover,
 .espresso_venues a:hover { color:#41A61A; }
 
-.post-type-archive-espresso_events .site-content,
-.post-type-archive-espresso_events .entry-content {
 
-} 
-.espresso-events-list-wrap-dv {
+
+article.espresso_venues,
+article.espresso_events {
 	width: auto;
-	max-width: 1100px;
-	padding: 0 10px 2em;
-	margin: 0 auto;}
+	padding: 0 2em 2em;
+	margin: 0 auto !important;
+}
 .espresso-events-list-dv {
 	position: relative;
 	padding: 0;
@@ -110,7 +109,7 @@
 	padding: 1em 0 2em;
 	height: auto;
 }
-.espresso-events-list-wrap-dv .event-list-h1 {
+article.espresso_events .event-list-h1 {
 	position: relative;
 	z-index: 10;
 	margin-top: 0;
@@ -157,6 +156,42 @@
 .no-espresso-events-found #s {
 	min-width: 200px;
 	width: 25%;
+}
+
+
+
+/******************* PAGINATION ****************** */
+
+
+.ee-pagination-dv {
+	padding: 2em;
+	text-align: right;
+}
+.ee-pagination-dv .page-numbers,
+.ee-pagination-dv .page-numbers:visited {
+	display: inline-block;
+	padding: 0 .5em;
+	margin: 0 0 0 .1em;
+	border: 1px solid #EEE;
+	background: #EEE;
+	font-size: .8em;
+	line-height: 2em;
+	color: #736F58;
+	text-decoration: none;
+	font-weight: normal;
+}
+.ee-pagination-dv .page-numbers:hover {
+	border-color: #24890D;
+	background: #24890D;
+	color: #FFF;
+}
+.ee-pagination-dv .current,
+.ee-pagination-dv .page-numbers.current:hover {
+	border-color: #24890D;
+	background: #24890D;
+	color: #FFF;
+	font-weight: bold;
+	cursor: default;
 }
 
 

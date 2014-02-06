@@ -769,7 +769,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				('CR', 'CRI', 0, 'Costa Rica', 'CRC', 'Colon', 'Colons', '₡', 1, 2, '+506', 0, 0),
 				('CU', 'CUB', 0, 'Cuba', 'CUP', 'Peso', 'Pesos', '₱', 1, 2, '+53', 0, 0),
 				('CV', 'CPV', 0, 'Cape Verde', 'CVE', 'Escudo', 'Escudos', '', 1, 2, '+238', 0, 0),
-				('CY', 'CYP', 0, 'Cyprus', 'CYP', 'Pound', 'Pounds', '£', 1, 2, '+357', 1, 0),
+				('CY', 'CYP', 0, 'Cyprus', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+357', 1, 0),
 				('CZ', 'CZE', 0, 'Czech Republic', 'CZK', 'Koruna', 'Korunas', 'Kč', 1, 2, '+420', 1, 0),
 				('DE', 'DEU', 0, 'Germany', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+49', 1, 0),
 				('DJ', 'DJI', 0, 'Djibouti', 'DJF', 'Franc', 'Francs', '₣', 1, 0, '+253', 0, 0),
@@ -778,7 +778,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				('DO', 'DOM', 0, 'Dominican Republic', 'DOP', 'Peso', 'Pesos', 'RD$', 1, 2, '+849', 0, 0),
 				('DZ', 'DZA', 0, 'Algeria', 'DZD', 'Dinar', 'Dinars', '', 1, 3, '+213', 0, 0),
 				('EC', 'ECU', 0, 'Ecuador', 'USD', 'Dollar', 'Dollars', '$', 1, 2, '+593', 0, 0),
-				('EE', 'EST', 0, 'Estonia', 'EEK', 'Kroon', 'Kroons', 'kr', 1, 2, '+372', 1, 0),
+				('EE', 'EST', 0, 'Estonia', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+372', 1, 0),
 				('EG', 'EGY', 0, 'Egypt', 'EGP', 'Pound', 'Pounds', '£', 1, 2, '+20', 0, 0),
 				('EH', 'ESH', 0, 'Western Sahara', 'MAD', 'Dirham', 'Dirhams', '', 1, 2, '+212', 0, 0),
 				('ER', 'ERI', 0, 'Eritrea', 'ERN', 'Nakfa', 'Nakfas', '', 1, 2, '+291', 0, 0),
@@ -843,7 +843,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				('LS', 'LSO', 0, 'Lesotho', 'LSL', 'Loti', 'Lotis', '', 1, 2, '+266', 0, 0),
 				('LT', 'LTU', 0, 'Lithuania', 'LTL', 'Litas', 'Litass', 'Lt', 1, 2, '+370', 1, 0),
 				('LU', 'LUX', 0, 'Luxembourg', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+352', 1, 0),
-				('LV', 'LVA', 0, 'Latvia', 'LVL', 'Lat', 'Lats', 'Ls', 1, 2, '+371', 1, 0),
+				('LV', 'LVA', 0, 'Latvia', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+371', 1, 0),
 				('LY', 'LBY', 0, 'Libyan Arab Jamahiriya', 'LYD', 'Dinar', 'Dinars', '', 1, 3, '+218', 0, 0),
 				('MA', 'MAR', 0, 'Morocco', 'MAD', 'Dirham', 'Dirhams', '', 1, 2, '+212', 0, 0),
 				('MC', 'MCO', 0, 'Monaco', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+377', 0, 0),
@@ -859,7 +859,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				('MQ', 'MTQ', 0, 'Martinique', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+596', 0, 0),
 				('MR', 'MRT', 0, 'Mauritania', 'MRO', 'Ouguiya', 'Ouguiyas', '', 1, 2, '+222', 0, 0),
 				('MS', 'MSR', 0, 'Montserrat', 'XCD', 'Dollar', 'Dollars', '$', 1, 2, '+1-664', 0, 0),
-				('MT', 'MLT', 0, 'Malta', 'MTL', 'Lira', 'Liras', '', 1, 2, '+356', 1, 0),
+				('MT', 'MLT', 0, 'Malta', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+356', 1, 0),
 				('MU', 'MUS', 0, 'Mauritius', 'MUR', 'Rupee', 'Rupees', '₨', 1, 2, '+230', 0, 0),
 				('MV', 'MDV', 0, 'Maldives', 'MVR', 'Rufiyaa', 'Rufiyaas', '', 1, 2, '+960', 0, 0),
 				('MW', 'MWI', 0, 'Malawi', 'MWK', 'Kwacha', 'Kwachas', '', 1, 2, '+265', 0, 0),
@@ -906,7 +906,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				('SH', 'SHN', 0, 'Saint Helena', 'SHP', 'Pound', 'Pounds', '£', 1, 2, '+290', 0, 0),
 				('SI', 'SVN', 0, 'Slovenia', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+386', 1, 0),
 				('SJ', 'SJM', 0, 'Svalbard and Jan Mayen', 'NOK', 'Krone', 'Krones', 'kr', 1, 2, '+47', 0, 0),
-				('SK', 'SVK', 0, 'Slovakia', 'SKK', 'Koruna', 'Korunas', '', 1, 2, '+421', 1, 0),
+				('SK', 'SVK', 0, 'Slovakia', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+421', 1, 0),
 				('SL', 'SLE', 0, 'Sierra Leone', 'SLL', 'Leone', 'Leones', '', 1, 2, '+232', 0, 0),
 				('SM', 'SMR', 0, 'San Marino', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+378', 0, 0),
 				('SN', 'SEN', 0, 'Senegal', 'XOF', 'Franc', 'Francs', '₣', 1, 0, '+221', 0, 0),
@@ -1008,7 +1008,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
-							(1, 1, '0.00', 'Free Admission', 'Default Price for all NEW tickets created.', 1, NULL, 0, 0, 0);";			
+							(1, 1, '0.00', 'Free Admission', '', 1, NULL, 0, 0, 0);";			
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_prices__SQL', $SQL );
 				$wpdb->query($SQL);			
 			}
@@ -1562,6 +1562,10 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		//if the file is located remotely, download it to our uploads DIR, because wp_genereate_attachmnet_metadata needs the file to be local
 		if(strpos($guid,$wp_upload_dir['url']) === FALSE){
 			//image is located remotely. download it and place it in the uploads directory
+			if( ! is_readable($guid)){
+				$migration_stage->add_error(sprintf(__("Could not create image attachment from non-existent file: %s", "event_espresso"),$guid));
+				return 0;
+			}
 			$contents= file_get_contents($guid);
 			if($contents === FALSE){
 				$migration_stage->add_error(sprintf(__("Could not read image at %s, and therefore couldnt create an attachment post for it.", "event_espresso"),$guid));
@@ -1585,7 +1589,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		);
 		$attach_id = wp_insert_attachment( $attachment, $guid );
 		if( ! $attach_id ){
-			$migration_stage->add_error(sprintf(__("Could not create image attachment post from image '%s'. Attachment data was %s.", "event_espresso"),$guid,http_build_query($attachment)));
+			$migration_stage->add_error(sprintf(__("Could not create image attachment post from image '%s'. Attachment data was %s.", "event_espresso"),$guid,$this->_json_encode($attachment)));
 			return $attach_id;
 		}
 		
@@ -1600,7 +1604,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		$metadata_save_result = wp_update_attachment_metadata( $attach_id, $attach_data );
 		if( ! $metadata_save_result ){
-			$migration_stage->add_error(sprintf(__("Could not update attachment metadata for attachment %d with data %s", "event_espresso"),$attach_id,http_build_query($attach_data)));
+			$migration_stage->add_error(sprintf(__("Could not update attachment metadata for attachment %d with data %s", "event_espresso"),$attach_id,$this->_json_encode($attach_data)));
 		}
 		return $attach_id;
 	}
@@ -1620,23 +1624,29 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	/**
 	 * Returns a mysql-formatted datetime in UTC time, given a $datetime_string
 	 * (and optionally a timezone; if none is given, the wp default is used)
-	 * @param EE_Data_Migration_Script_base $script
+	 * @param EE_Data_Migration_Script_base $stage
 	 * @param array $row_of_data, the row from the DB (as an array) we're trying to find the UTC time for
 	 * @param string $datetime_string
 	 * @param string $timezone
 	 * @return string
 	 */
-	public function convert_date_string_to_utc(EE_Data_Migration_Script_Stage$script, $row_of_data, $datetime_string,$timezone = null){
+	public function convert_date_string_to_utc(EE_Data_Migration_Script_Stage $stage, $row_of_data, $datetime_string,$timezone = null){
 		$original_tz = $timezone;
 		if( ! $timezone){
 			$timezone = $this->_get_wp_timezone();
 		}
 		if( ! $timezone){
-			$script->add_error(sprintf(__("Could not find timezone given %s for %s", "event_espresso"),$original_tz,$row_of_data));
+			$stage->add_error(sprintf(__("Could not find timezone given %s for %s", "event_espresso"),$original_tz,$row_of_data));
 			$timezone = 'UTC';
 		}
-		$date_obj = new DateTime( $datetime_string, new DateTimeZone( $timezone ) );
-		$date_obj->setTimezone(new DateTimeZone('UTC'));	
+		try{
+			$date_obj = new DateTime( $datetime_string, new DateTimeZone( $timezone ) );
+			$date_obj->setTimezone(new DateTimeZone('UTC'));	
+		}catch(Exception $e){
+			$stage->add_error(sprintf(__("Could not convert time string '%s' using timezone '%s' into a proper datetime. Using current time instead.", "event_espresso"),$datetime_string,$timezone));
+			$date_obj = new DateTime();
+		}
+		
 		return $date_obj->format('Y-m-d H:i:s');
 	}
 	

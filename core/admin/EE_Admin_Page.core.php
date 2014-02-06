@@ -637,11 +637,11 @@ abstract class EE_Admin_Page extends EE_BASE {
 			add_action('admin_enqueue_scripts', array($this, 'load_scripts_styles_' . $this->_current_view ), 15 );
 
 		//admin_print_footer_scripts - global, page child class, and view specific.  NOTE, despite the name, whenever possible, scripts should NOT be loaded using this.  In most cases that's doing_it_wrong().  But adding hidden container elements etc. is a good use case. Notice the late priority we're giving these. 
+		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 1 );
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_global' ), 99 );
 		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts' ), 100 );
 		if ( method_exists( $this, 'admin_footer_scripts_' . $this->_current_view ) )
 			add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_' . $this->_current_view ), 101 );
-		add_action('admin_print_footer_scripts', array( $this, 'admin_footer_scripts_eei18n_js_strings' ), 102 );
 
 		//admin footer scripts
 		add_action('admin_footer', array( $this, 'admin_footer_global' ), 99 );
@@ -1588,6 +1588,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	*/	
 	public function admin_footer_scripts_eei18n_js_strings() {
 		
+		EE_Registry::$i18n_js_strings['ajax_url'] = WP_AJAX_URL;
 		EE_Registry::$i18n_js_strings['confirm_delete'] = __( 'Are you absolutely sure you want to delete this item?\nThis action will delete ALL DATA asscociated with this item!!!\nThis can NOT be undone!!!', 'event_espresso' );
 		
 		EE_Registry::$i18n_js_strings['January'] = __( 'January', 'event_espresso' );
@@ -1630,7 +1631,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		EE_Registry::$i18n_js_strings['Fri'] = __( 'Fri', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['Sat'] = __( 'Sat', 'event_espresso' );
 		
-		wp_localize_script( 'ee_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
+		wp_localize_script( 'espresso_core', 'eei18n', EE_Registry::$i18n_js_strings );
 		wp_localize_script( 'jquery-validate', 'eei18n', EE_Registry::$i18n_js_strings );
 		
 	}
@@ -1906,7 +1907,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$pre .= '<span id="' . $rss_id . '_url" class="hidden">' . $url . '</span>';
 		$post = '</div>' . "\n";
 
-		$cache_key = 'esp_rss_' . md5( $rss_id );
+		$cache_key = 'ee_rss_' . md5( $rss_id );
 		if ( FALSE != ( $output = get_transient( $cache_key ) ) ) {
 			echo $pre . $output . $post;
 			return TRUE;
@@ -2843,7 +2844,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		//now let's set the string for what kind of transient we're setting
-		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
+		$transient = $notices ? 'ee_rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = $notices ? array( 'notices' => $data ) : $data;
 		//is there already a transient for this route?  If there is then let's ADD to that transient
 		if ( $existing = get_transient( $transient ) ) {
@@ -2864,7 +2865,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected function _get_transient( $notices = FALSE, $route = FALSE ) {
 		$user_id = get_current_user_id();
 		$route = !$route ? $this->_req_action : $route;
-		$transient = $notices ? 'rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
+		$transient = $notices ? 'ee_rte_n_tx_' . $route . '_' . $user_id : 'rte_tx_' . $route . '_' . $user_id;
 		$data = get_transient( $transient );
 		//delete transient after retrieval (just in case it hasn't expired);
 		delete_transient( $transient );
@@ -3009,12 +3010,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//remove any options that are NOT going to be saved with the config settings.
 		if ( isset( $config->core->ee_ueip_optin ) ) {
+			$config->core->ee_ueip_has_notified = TRUE;
+			// TODO: remove the following two lines and make sure values are migrated from 3.1
 			update_option( 'ee_ueip_optin', $config->core->ee_ueip_optin);
 			update_option( 'ee_ueip_has_notified', TRUE );
-			unset( $config->core->ee_ueip_optin );
 		}
-		// and save it
-		if ( EE_Config::instance()->update_espresso_config( FALSE, FALSE ) ) {
+		// and save it (note we're also doing the network save here)
+		$net_saved = is_main_site() ? EE_Network_Config::instance()->update_config( FALSE, FALSE ) : TRUE;
+		if ( EE_Config::instance()->update_espresso_config( FALSE, FALSE ) && $net_saved ) {
 			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {

@@ -73,7 +73,7 @@
 		
 			input_id = $(this).attr('id');
 			
-			if ( input_id !== undefined ) {
+			if ( typeof(input_id) !== 'undefined' ) {
 				// split the above var
 				var input_id_array =  input_id.split('-');
 //				console.log( JSON.stringify( 'input_id_array: ' + input_id_array, null, 4 ));
@@ -145,7 +145,7 @@
 	function do_before_event_queue_ajax() {
 		// stop any message alerts that are in progress
 		$('.espresso-ajax-notices').stop();
-		$('#espresso-ajax-loading').center().show();
+		$('#espresso-ajax-loading').eeCenter().show();
 	}
 
 
@@ -155,14 +155,14 @@
 	*/
 	function show_event_queue_ajax_success_msg( success_msg ) {
 		
-		if ( success_msg !== undefined && success_msg !== '' )  {
+		if ( typeof(success_msg) !== 'undefined' && success_msg !== '' )  {
 		
-			if ( success_msg.success !== undefined ) {
+			if ( typeof(success_msg.success) !== 'undefined' ) {
 				success_msg = success_msg.success;
 			}
 			//alert( 'success_msg'+success_msg);
 
-			$('#espresso-ajax-notices').center();
+			$('#espresso-ajax-notices').eeCenter();
 			$('#espresso-ajax-notices-success > .espresso-notices-msg').html( success_msg );
 			$('#espresso-ajax-loading').fadeOut('fast');
 			$('#espresso-ajax-notices-success').removeClass('hidden').show().delay(4000).fadeOut();
@@ -178,13 +178,13 @@
 	*/
 	function show_event_queue_ajax_error_msg( error_msg ) {
 			
-		if ( error_msg !== undefined && error_msg !== '' ) {
+		if ( typeof(error_msg) !== 'undefined' && error_msg !== '' ) {
 			
-			if ( typeof( error_msg ) === 'object' && error_msg.error !== undefined && error_msg.error !== '' ) {
+			if ( typeof( error_msg ) === 'object' && typeof(error_msg.error) !== 'undefined' && error_msg.error !== '' ) {
 				error_msg = error_msg.error;
 			}
 						
-			$('#espresso-ajax-notices').center();
+			$('#espresso-ajax-notices').eeCenter();
 			$('#espresso-ajax-notices-error > .espresso-notices-msg').html( error_msg );
 			$('#espresso-ajax-loading').fadeOut('fast');
 			$('#espresso-ajax-notices-error').removeClass('hidden').show().delay(10000).fadeOut();

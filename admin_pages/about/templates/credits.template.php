@@ -1,5 +1,5 @@
-<p class="about-description"><?php _e('Event Espresso is created by a worldwide team of passionate people with a drive to empower your events!', 'event_espresso'); ?></p>
-<h4 class="wp-people-group"><?php _e('Owners', 'event_espresso'); ?></h4>
+<p class="about-description"><?php _e('Event Espresso is created by an international team of passionate individuals with a drive to empower your events!', 'event_espresso'); ?></p>
+<h4 class="wp-people-group"><?php _e('Founders', 'event_espresso'); ?></h4>
 <ul class="wp-people-group" id="ee-people-group-owners">
 	<li class="wp-person" id="ee-person-sshoultes">
 		<a href="<?php esp_gravatar_profile('seth@eventespresso.com'); ?>">
@@ -20,7 +20,7 @@
 		<span class="title"><?php _e('Co-Founder', 'event_espresso'); ?></span>
 	</li>
 </ul>
-<h4 class="wp-people-group"><?php _e('Core Developers', 'evnet_espresso'); ?></h4>
+<h4 class="wp-people-group"><?php _e('Core Developers', 'event_espresso'); ?></h4>
 <ul class="wp-people-group" id="ee-people-group-core-developers">
 	<li class="wp-person" id="ee-person-bchristensen">
 		<a href="<?php esp_gravatar_profile('brent@eventespresso.com'); ?>">
@@ -50,7 +50,7 @@
 		<span class="title"><?php _e('Core Developer', 'event_espresso'); ?></span>
 	</li>
 </ul>
-<h4 class="wp-people-group"><?php _e('Support Staff', 'evnet_espresso'); ?></h4>
+<h4 class="wp-people-group"><?php _e('Support Staff', 'event_espresso'); ?></h4>
 <ul class="wp-people-group" id="ee-people-group-support-staff">
 	<li class="wp-person" id="ee-person-jfeck">
 		<a href="<?php esp_gravatar_profile('josh@eventespresso.com'); ?>">
@@ -69,11 +69,11 @@
 		</a>
 	</li>
 	<li class="wp-person" id="ee-person-jwilson">
-		<a href="<?php esp_gravatar_profile('jonathon@eventespresso.com'); ?>">
-			<?php echo esp_gravatar_image( 'jonathon@eventespresso.com', 'Jonathon Wilson' ); ?>
+		<a href="<?php esp_gravatar_profile('jonathan@eventespresso.com'); ?>">
+			<?php echo esp_gravatar_image( 'jonathan@eventespresso.com', 'Jonathan Wilson' ); ?>
 		</a>
-		<a class="web" href="<?php esp_gravatar_profile('jonathon@eventespresso.com'); ?>">
-			Jonathon Wilson
+		<a class="web" href="<?php esp_gravatar_profile('jonathan@eventespresso.com'); ?>">
+			Jonathan Wilson
 		</a>
 	</li>
 	<li class="wp-person" id="ee-person-sharrel">
@@ -84,6 +84,23 @@
 			Sidney Harrel
 		</a>
 	</li>
+	<li class="wp-person" id="ee-person-twarwick">
+		<a href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>">
+			<?php echo esp_gravatar_image( 'tony@eventespresso.com', 'Tony Warwick' ); ?>
+		</a>
+		<a class="web" href="<?php esp_gravatar_profile('tony@eventespresso.com'); ?>">
+			Tony Warwick
+		</a>
+	</li>
+	<li class="wp-person" id="ee-person-lcaum">
+		<a href="<?php esp_gravatar_profile('lorenzo@eventespresso.com'); ?>">
+			<?php echo esp_gravatar_image( 'lorenzo@eventespresso.com', 'Lorenzo Caum' ); ?>
+		</a>
+		<a class="web" href="<?php esp_gravatar_profile('lorenzo@eventespresso.com'); ?>">
+			Lorenzo Caum
+		</a>
+	</li>
+	
 </ul>
 <h4 class="wp-people-group"><?php _e('External Libraries', 'event_espresso'); ?></h4>
 <p class="description">

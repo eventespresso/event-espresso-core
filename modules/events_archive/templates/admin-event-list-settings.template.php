@@ -8,18 +8,7 @@ $description = array(
 	array('id' => 1, 'text' => __('excerpt (short desc)', 'event_espresso')),
 	array('id' => 2, 'text' => __('full description', 'event_espresso'))
 );
-$event_list_types = array(
-	array('id' => 'grid', 'text' => __('Grid View', 'event_espresso')),
-	array('id' => 'text', 'text' => __('Text List', 'event_espresso')),
-	array('id' => 'dates', 'text' => __('Dates List', 'event_espresso'))
-);
-$grid_sizes = array(
-	array('id' => 'tiny', 'text' => __('tiny (up to 7 per row)', 'event_espresso')),
-	array('id' => 'small', 'text' => __('small (up to 6 per row)', 'event_espresso')),
-	array('id' => 'medium', 'text' => __('medium (up to 5 per row)', 'event_espresso')),
-	array('id' => 'large', 'text' => __('large (up to 4 per row)', 'event_espresso')),
-	array('id' => 'huge', 'text' => __('huge (up to 3 per row)', 'event_espresso'))
-);
+
 ?>
 
 	<!--*************************   Event Listings  ****************************-->
@@ -28,28 +17,6 @@ $grid_sizes = array(
 	</h4>
 	<table class="form-table">
 		<tbody>
-
-			<tr>
-				<th>
-					<label for="default_type">
-						<?php _e('Default Event List Type', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('template_settings_info');?>
-					</label>
-				</th>
-				<td>
-					<?php echo EEH_Form_Fields::select_input('default_type', $event_list_types, $default_type, 'id="default_type"'); ?>
-				</td>
-			</tr>
-
-			<tr>
-				<th>
-					<label for="event_list_grid_size">
-						<?php _e('Grid Size', 'event_espresso'); ?> <?php echo EEH_Template::get_help_tab_link('grid_size_info');?>
-					</label>
-				</th>
-				<td>
-					<?php echo EEH_Form_Fields::select_input('event_list_grid_size', $grid_sizes, $event_list_grid_size, 'id="event_list_grid_size"'); ?>
-				</td>
-			</tr>
 
 			<tr>
 				<th>

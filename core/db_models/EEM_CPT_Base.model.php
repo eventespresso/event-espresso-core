@@ -349,4 +349,21 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 		
 	}
 	
+	/**
+	 * Gets the post type associated with this 
+	 * @return string
+	 */
+	public function post_type(){
+		$post_type_field = NULL;
+		foreach($this->field_settings(true) as $name=>$field_obj){
+			if($field_obj instanceof EE_WP_Post_Type_Field){
+				$post_type_field = $field_obj;break;
+			}
+		}
+		if($post_type_field == NULL){
+			throw new EE_Error(sprintf(__("CPT Model %s should have a field of type EE_WP_Post_Type, but doesnt", "event_espresso"),get_class($this)));
+		}
+		return $post_type_field->get_default_value();
+	}
+	
 }

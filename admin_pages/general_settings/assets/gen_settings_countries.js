@@ -3,21 +3,21 @@ jQuery(document).ready(function($) {
 	var ajax_loading = false;
 
 
-	// create object to hold our methods 
-	EE_CNT_STA = {		
+	// create object to hold our methods
+	EE_CNT_STA = {
 		
 		// ------------------------------------------
-		// get_coutry_details
+		// get_country_details
 		// retreives country details form based on country selected from main dropdown
 		// ------------------------------------------
-		get_coutry_details : function ( CNT_ISO ) {
+		get_country_details : function ( CNT_ISO ) {
 			// post data to be sent
 			var formData = {
 				action: 'espresso_display_country_settings',
 				country: CNT_ISO,
 				noheader : 'true',
 				ee_admin_ajax : true
-			};			
+			};
 			// console.log( JSON.stringify( formData, null, 4 ));
 			$.ajax({
 				type: "POST",
@@ -29,11 +29,11 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 					// console.log(response);
-					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
-						if ( ajax_loading == false ) {
+					if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
+						if ( ajax_loading === false ) {
 							$('#espresso-ajax-loading').fadeOut('fast');
-						}					
-						$('#country-details-dv').html( response.return_data );					
+						}
+						$('#country-details-dv').html( response.return_data );
 						ajax_loading = false;
 					} else if ( response.errors ) {
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
@@ -44,12 +44,12 @@ jQuery(document).ready(function($) {
 				},
 				error: function(response) {
 					//console.log(response);
-					if ( response.errors == undefined ) {
+					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
-			});					
+			});
 		},
 	
 		// ------------------------------------------
@@ -76,14 +76,14 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 					//console.log(response);
-					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
-						if ( ajax_loading == false ) {
+					if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
+						if ( ajax_loading === false ) {
 							$('#espresso-ajax-loading').fadeOut('fast');
-						}					
+						}
 						$('#country-states-dv').html( response.return_data );
 						ajax_loading = false;
 					} else if ( response.errors ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );					 
+						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 					} else {
 						response.errors = eei18n.invalid_server_response;
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -91,7 +91,7 @@ jQuery(document).ready(function($) {
 				},
 				error: function(response) {
 					//console.log(response);
-					if ( response.errors == undefined ) {
+					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
 		// add_new_state
 		// adds new state to currently selected country then re-retreives list of states
 		// ------------------------------------------
-		add_new_state : function () {			
+		add_new_state : function () {
 			// post data to be sent
 			var formData = {
 				action: 'espresso_add_new_state',
@@ -113,8 +113,8 @@ jQuery(document).ready(function($) {
 				STA_abbrev: $('#STA_abbrev-XXX').val(),
 				STA_name: $('#STA_name-XXX').val(),
 				ee_admin_ajax: true,
-				noheader : 'true'				
-			};			
+				noheader : 'true'
+			};
 			//console.log( JSON.stringify( formData, null, 4 ));
 			$.ajax({
 				type: "POST",
@@ -126,10 +126,10 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 					//console.log(response);
-					if ( response.return_data != undefined && response.return_data != false && response.return_data != null ) {
+					if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
 						EE_CNT_STA.get_country_states( response.return_data );
 					} else if ( response.errors ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );					 
+						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 					} else {
 						response.errors = eei18n.invalid_server_response;
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
@@ -137,12 +137,12 @@ jQuery(document).ready(function($) {
 				},
 				error: function(response) {
 					//console.log(response);
-					if ( response.errors == undefined ) {
+					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
-			});					
+			});
 		},
 			
 		
@@ -152,11 +152,11 @@ jQuery(document).ready(function($) {
 		// ------------------------------------------
 		delete_state : function( CNT_ISO, STA_ID, STA_abbrev ) {
 			
-			var CNT_ISO = CNT_ISO != undefined && CNT_ISO != '' ? CNT_ISO : '';
-			var STA_ID = STA_ID != undefined && STA_ID != '' ? STA_ID : '';
-			var STA_abbrev = STA_abbrev != undefined && STA_abbrev != '' ? STA_abbrev : '';
+			CNT_ISO = typeof(CNT_ISO) !== 'undefined' && CNT_ISO !== '' ? CNT_ISO : '';
+			STA_ID = typeof(STA_ID) !== 'undefined' && STA_ID !== '' ? STA_ID : '';
+			STA_abbrev = typeof(STA_abbrev) !== 'undefined' && STA_abbrev !== '' ? STA_abbrev : '';
 			
-			if ( CNT_ISO == '' || STA_ID == '' || STA_abbrev == '' ) {
+			if ( CNT_ISO === '' || STA_ID === '' || STA_abbrev === '' ) {
 				response.errors = eei18n.error_occurred;
 				show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				return false;
@@ -168,8 +168,8 @@ jQuery(document).ready(function($) {
 				STA_ID: STA_ID,
 				STA_abbrev: STA_abbrev,
 				ee_admin_ajax : true,
-				noheader : 'true'				
-			};			
+				noheader : 'true'
+			};
 			//console.log( JSON.stringify( formData, null, 4 ));
 			$.ajax({
 				type: "POST",
@@ -181,25 +181,25 @@ jQuery(document).ready(function($) {
 				},
 				success: function( response ) {
 //					console.log(response);
-					if ( response.success != undefined && response.success != '' ) {
+					if ( typeof(response.success) !== 'undefined' && response.success !== '' ) {
 						var row_to_delete = '#state-' + STA_ID + '-tr';
 						$( row_to_delete ).fadeOut().delay(500).remove();
-						$('#espresso-ajax-loading').fadeOut('fast');				
-					} else if ( response.errors != undefined && response.errors != '' ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );					 
+						$('#espresso-ajax-loading').fadeOut('fast');
+					} else if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
+						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
 					} else {
 						response.errors = eei18n.invalid_server_response;
 						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
-					} 
+					}
 				},
 				error: function(response) {
 					//console.log(response);
-					if ( response.errors == undefined ) {
+					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
 					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
 				}
-			});					
+			});
 		}
 	
 	};
@@ -210,8 +210,8 @@ jQuery(document).ready(function($) {
 	$('#country').on( 'change', function(){
 		ajax_loading = true;
 		var CNT_ISO = $( this ).val();
-		if ( CNT_ISO != undefined && CNT_ISO != '' ) {
-			EE_CNT_STA.get_coutry_details( CNT_ISO );
+		if ( typeof( CNT_ISO ) !== 'undefined' && CNT_ISO !== '' ) {
+			EE_CNT_STA.get_country_details( CNT_ISO );
 			EE_CNT_STA.get_country_states( CNT_ISO );
 		}
 	});
@@ -229,12 +229,12 @@ jQuery(document).ready(function($) {
 	$('#update_country_settings_event_form').on( 'click', '.delete-state-lnk', function( e ){
 		e.preventDefault();
 		e.stopPropagation();
-		var urlParams = $(this).getParams();
+		var urlParams = $(this).eeGetParams();
 		if ( confirm( eei18n.confirm_delete_state )) {
 //			console.log( urlParams );
-			var CNT_ISO = urlParams['CNT_ISO'] != undefined && urlParams['CNT_ISO'] != '' ? urlParams['CNT_ISO'] : '';
-			var STA_ID = urlParams['STA_ID'] != undefined && urlParams['STA_ID'] != '' ? urlParams['STA_ID'] : '';
-			var STA_abbrev = urlParams['STA_abbrev'] != undefined && urlParams['STA_abbrev'] != '' ? urlParams['STA_abbrev'] : '';
+			var CNT_ISO = typeof(urlParams['CNT_ISO']) !== 'undefined' && urlParams['CNT_ISO'] !== '' ? urlParams['CNT_ISO'] : '';
+			var STA_ID = typeof(urlParams['STA_ID']) !== 'undefined' && urlParams['STA_ID'] !== '' ? urlParams['STA_ID'] : '';
+			var STA_abbrev = typeof(urlParams['STA_abbrev']) !== 'undefined' && urlParams['STA_abbrev'] !== '' ? urlParams['STA_abbrev'] : '';
 			EE_CNT_STA.delete_state( CNT_ISO, STA_ID, STA_abbrev );
 		}
 	});
@@ -243,6 +243,5 @@ jQuery(document).ready(function($) {
 	// get the ball rolling on page load
 	$('#country').trigger( 'change' );
 
-	
 
 });

@@ -43,7 +43,7 @@ class EEH_Debug_Tools{
 		if ( ! defined('DOING_AJAX') || ! isset( $_REQUEST['noheader'] ) || $_REQUEST['noheader'] != 'true' || ! isset( $_REQUEST['TB_iframe'] )) {
 			//add_action( 'shutdown', array($this,'espresso_session_footer_dump') );
 		}
-		add_action( 'activated_plugin',array($this,'espresso_plugin_activation_errors') );
+		add_action( 'activated_plugin',array($this,'ee_plugin_activation_errors') );
 	}
 
 
@@ -132,11 +132,11 @@ class EEH_Debug_Tools{
 	 *
 	 * 	@return void
 	 */
-	public function espresso_plugin_activation_errors() {
+	public function ee_plugin_activation_errors() {
 		if ( WP_DEBUG === TRUE ) {
 			$errors = ob_get_contents();
 			file_put_contents( EVENT_ESPRESSO_UPLOAD_DIR. 'logs/espresso_plugin_activation_errors.html', $errors );
-			update_option( 'espresso_plugin_activation_errors', $errors );
+			update_option( 'ee_plugin_activation_errors', $errors );
 		}	
 	}
 

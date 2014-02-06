@@ -131,7 +131,10 @@ final class EE_Front_Controller {
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
 		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );
 		//exclude EE critical pages from wp_list_pages
-		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );			
+		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+
+		//exclude our private cpt comments
+		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 2 );			
 	}
 
 
@@ -144,6 +147,25 @@ final class EE_Front_Controller {
 	 */
 	public function remove_pages_from_wp_list_pages( $exclude_array ) {
 		return  array_merge( $exclude_array, EE_Registry::instance()->CFG->core->get_critical_pages_array() );
+	}
+
+
+
+	/**
+	 * This simply makes sure that any "private" EE cpts do not have their comments show up in any wp comment widgets/queries done on frontend
+	 * @param  array           $clauses  array of comment clauses setup by WP_Comment_Query
+	 * @param  WP_Comment_Query $wpc     
+	 * @return array                     array of comment clauses with modifications.
+	 */
+	public function filter_wp_comments( $clauses, WP_Comment_Query $wpc ) {
+		global $wpdb;
+		$comments_where = $clauses['where'];
+		$cpts = EE_Register_CPTs::get_private_CPTs();
+		foreach ( $cpts as $cpt => $details ) {
+			$comments_where .= $wpdb->prepare( " AND $wpdb->posts.post_type != %s", $cpt );
+		}
+		$clauses['where'] = $comments_where;
+		return $clauses;
 	}
 
 
@@ -221,7 +243,7 @@ final class EE_Front_Controller {
 	public function _initialize_shortcodes( WP $WP ) {
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this );
 		// grab post_name from request
-		$current_post = apply_filters( 'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name',EE_Registry::instance()->REQ->get( 'post_name' ) );
+		$current_post = apply_filters( 'FHEE__EE_Front_Controller__initialize_shortcodes__current_post_name', EE_Registry::instance()->REQ->get( 'post_name' ));
 		// if it's not set, then check if frontpage is blog
 		if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'posts' ) {
 			// yup.. this is the posts page, prepare to load all shortcode modules
@@ -251,7 +273,7 @@ final class EE_Front_Controller {
 			}
 		} 
 		// are we on a category page?
-		$term_exists = is_array( term_exists( $current_post, 'category' ));
+		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
 		// make sure shortcodes are set
 		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
 			// cycle thru all posts with shortcodes set
@@ -270,7 +292,7 @@ final class EE_Front_Controller {
 							break;
 						}
 						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
-						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists ) {
+						if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $current_post ] ) || $term_exists || $current_post == 'posts' ) {
 							// let's pause to reflect on this...
 							$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
 							// ensure that class is actually a shortcode
@@ -281,7 +303,7 @@ final class EE_Front_Controller {
 								break;
 							}
 							// and pass the request object to the run method
-							$shortcode = $sc_reflector->newInstance( EE_Registry::instance() );
+							$shortcode = $sc_reflector->newInstance();
 							// fire the shortcode class's run method, so that it can activate resources
 							$shortcode->run( $WP );
 						}
@@ -399,24 +421,7 @@ final class EE_Front_Controller {
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );
 			
-			if ( ! function_exists( 'wp_head' )) {
-				$msg = sprintf( 
-					__( '%sMissing wp_head() function.%sThe WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
-					'<em><br />',
-					'</em>'
-				);
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			}
-			if ( ! function_exists( 'wp_footer' )) {
-				$msg = sprintf( 
-					__( '%sMissing wp_footer() function.%sThe WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
-					'<em><br />',
-					'</em>'
-				);
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			}
 		}
-
 
 		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
@@ -452,6 +457,23 @@ final class EE_Front_Controller {
 					)
 				);
 			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
+		}
+
+		if ( ! function_exists( 'wp_head' )) {
+			$msg = sprintf( 
+				__( '%sMissing wp_head() function.%sThe WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
+				'<em><br />',
+				'</em>'
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
+		if ( ! function_exists( 'wp_footer' )) {
+			$msg = sprintf( 
+				__( '%sMissing wp_footer() function.%sThe WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
+				'<em><br />',
+				'</em>'
+			);
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 	}
@@ -525,7 +547,7 @@ final class EE_Front_Controller {
 	public function display_errors() {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already ){
+		if( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && ! is_feed() ){
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );

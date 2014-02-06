@@ -43,9 +43,9 @@ jQuery(document).ready(function($) {
 			queryobj.ee_admin_ajax = true;
 
 			if ( action == 'force_switch_template' )
-				$('#espresso-ajax-loading').center().show().addOverlay();
+				$('#espresso-ajax-loading').eeCenter().show().eeAddOverlay();
 			else
-				$('#espresso-ajax-loading').center().addOverlay().show();
+				$('#espresso-ajax-loading').eeCenter().eeAddOverlay().show();
 
 			//do post
 			$.ajax({
@@ -101,7 +101,7 @@ jQuery(document).ready(function($) {
 		display_modal: function() {
 			var messages_content = $('#messages-change-edit-templates-dv').html();
 			var dialog = dialogHelper.displayModal(true).addContent(messages_content);
-			$('.ee-admin-dialog-container').scrollTo();
+			$('.ee-admin-dialog-container').eeScrollTo();
 			/*overlay.on('click', function(e) {
 				e.preventDefault();
 				e.stopPropagation();
@@ -115,7 +115,7 @@ jQuery(document).ready(function($) {
 
 		close_modal: function() {
 			dialogHelper.closeModal();
-			$('#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox').scrollTo();
+			$('#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox').eeScrollTo();
 		},
 
 
@@ -146,7 +146,7 @@ jQuery(document).ready(function($) {
 			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container') : $('.ee-notices', '.ee-admin-dialog-container');
 			var content_div = where == 'main' ? main_container : dialog_container;
 
-			$('#espresso-ajax-loading').removeOverlay().hide();
+			$('#espresso-ajax-loading').eeRemoveOverlay().hide();
 			if ( what == 'clear' ) {
 				content_div.html('');
 				content_div.html(content);

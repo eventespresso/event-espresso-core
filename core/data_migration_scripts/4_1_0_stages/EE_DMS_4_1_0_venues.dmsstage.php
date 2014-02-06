@@ -176,7 +176,7 @@ function __construct() {
 			$country = $this->get_migration_script()->get_or_create_country(stripslashes($old_venue['country']));
 			$country_iso = $country['CNT_ISO'];
 		}catch(EE_Error $e){
-			$this->add_error(sprintf(__("%s for venue %s", "event_espresso"),$e->getMessage(),http_build_query($old_venue)));
+			$this->add_error(sprintf(__("%s for venue %s", "event_espresso"),$e->getMessage(),$this->_json_encode($old_venue)));
 			$country_iso = null;
 		}
 		//get a state with the same name, if possible
@@ -184,7 +184,7 @@ function __construct() {
 			$state = $this->get_migration_script()->get_or_create_state(stripslashes($old_venue['state']),isset($country['CNT_name']) ? $country['CNT_name'] : strip_tags($old_venue['country']));
 			$state_id = $state['STA_ID'];
 		}catch(EE_Error $e){
-			$this->add_error(sprintf(__("%s for venue %s", "event_espresso"),$e->getMessage(),http_build_query($old_venue)));
+			$this->add_error(sprintf(__("%s for venue %s", "event_espresso"),$e->getMessage(),$this->_json_encode($old_venue)));
 			$state_id = 0;
 		}
 		$meta = maybe_unserialize($old_venue['meta']);

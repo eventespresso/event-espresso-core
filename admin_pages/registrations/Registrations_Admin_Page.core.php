@@ -1734,6 +1734,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$tickets = array();
 		$dtts = array();
 
+		//if empty _REG_ID then get out because there's nothing to do
+		if ( empty( $this->_req_data['_REG_ID'] ) ) {
+			$msg = $trash ? __('In order to trash registrations you must select which ones you wish to trash by clicking the checkboxes.', 'event_espresso') : __('In order to restore registrations you must select which ones you wish to restore by clicking the checkboxes.', 'event_espresso');
+			EE_Error::add_error( $msg, __FILE__, __LINE__, __FUNCTION__ );
+			$this->_redirect_after_action(FALSE, '', '', array(), TRUE );
+		}
+
 		//Checkboxes
 		if (!empty($this->_req_data['_REG_ID']) && is_array($this->_req_data['_REG_ID'])) {
 			// if array has more than one element than success message should be plural
@@ -1978,7 +1985,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			case 'ticket' :
 				$template_args['title'] = __('Step One: Select the Ticket for this registration', 'event_espresso');
 				$template_args['content'] = EED_Ticket_Selector::display_ticket_selector( $this->_reg_event, TRUE );
-				$template_args['step_button_text'] = __('Continue', 'event_espresso');
+				$template_args['step_button_text'] = __('Add Tickets and Continue to Registrant Details', 'event_espresso');
 				$template_args['show_notification_toggle'] = FALSE;
 				break;
 			case 'questions' :
@@ -2330,8 +2337,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'CNT_ISO' => isset( $this->_req_data['CNT_ISO'] ) ? $this->_req_data['CNT_ISO'] : '',
 				'ATT_zip' => isset( $this->_req_data['ATT_zip'] ) ? $this->_req_data['ATT_zip'] : '',
 				'ATT_email' => isset( $this->_req_data['ATT_email'] ) ? $this->_req_data['ATT_email'] : '',
-				'ATT_phone' => isset( $this->_req_data['ATT_phone'] ) ? $this->_req_data['ATT_phone'] : '',
-				'ATT_notes' => isset( $this->_req_data['ATT_notes'] ) ? $this->_req_data['ATT_notes'] : '',
+				'ATT_phone' => isset( $this->_req_data['ATT_phone'] ) ? $this->_req_data['ATT_phone'] : ''
 				);
 			foreach ( $updated_fields as $field => $value ) {
 				$attendee->set($field, $value);

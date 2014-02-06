@@ -166,6 +166,7 @@ class EED_Event_Single  extends EED_Module {
 		}
 		// not a custom template?
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php' ) {
+			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
 			add_action( 'loop_start', array( $this, 'loop_start' ));
 			add_filter( 'the_content', array( $this, 'event_details' ), 100 );

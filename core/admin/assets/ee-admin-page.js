@@ -5,8 +5,6 @@ jQuery(document).ready(function($) {
 	$(window).unload( function() {});
 
 
-
-
 	function validate_form_inputs( submittedForm ) {
 	
 		var goodToGo = true;
@@ -40,6 +38,8 @@ jQuery(document).ready(function($) {
 		}
 	});
 	
+
+	
 	$('#admin-recaptcha-settings-slct').change( function() {
 		if ( $(this).val() == 1 ) {
 			$('.admin-recaptcha-settings-tr').find('.maybe-required').removeClass('maybe-required').addClass('required');
@@ -62,14 +62,6 @@ jQuery(document).ready(function($) {
 		return value; 
 	}
 
-
-	//Confirm Delete
-	function confirmDelete(){
-		if (confirm('Are you sure want to delete?')){
-			return true;
-		}
-		return false;
-	}
 
 
 	//Select All
@@ -103,7 +95,7 @@ jQuery(document).ready(function($) {
 	$(window).scroll(function() {
 		var scrollTop = $(this).scrollTop();
 		var offset = $('#espresso_major_buttons_wrapper .publishing-action').offset();
-		if( typeof offset !== 'undefined' && offset !== null && offset.top !== 'undefined' ) {
+		if( typeof(offset) !== 'undefined' && offset !== null && typeof(offset.top) !== 'undefined' ) {
 			if ( (scrollTop+33) > offset.top ) {
 				$('#event-editor-floating-save-btns').removeClass('hidden');
 				$('#espresso_major_buttons_wrapper .button-primary').addClass('hidden');
@@ -135,13 +127,7 @@ jQuery(document).ready(function($) {
 		// stop any message alerts that are in progress
 		$('#message').stop().hide();
 		// spinny things pacify the masses
-		var st = $('html').scrollTop();
-		var po = $('#espresso-ajax-loading').parent().offset();
-		var mal_top = ( st+( parseInt( $(window).height(), 10 )/5 )-po.top ) - 15;
-		var ww = $('#espresso-ajax-loading').parent().width();
-		var mal_left = ( ww/2 ) -15;
-		//alert( 'mal_top = ' + mal_top + '\n' + 'mal_left = ' + mal_left );
-		$('#espresso-ajax-loading').css({ 'top' : mal_top, 'left' : mal_left }).show();
+		$('#espresso-ajax-loading').eeCenter().show();
 	};
 	
 
@@ -149,37 +135,39 @@ jQuery(document).ready(function($) {
 	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
 			
 		$('#espresso-ajax-loading').fadeOut('fast');
-		if (( response.success !== 'undefined' && response.success !== '' ) || ( response.errors !== 'undefined' && response.errors !== '' )) {
-		
-			if ( closeModal === 'undefined' ) {
+		if (( typeof(response.success) !== 'undefined' && response.success !== '' ) || ( typeof(response.errors) !== 'undefined' && response.errors !== '' )) {
+
+			if ( closeModal === undefined ) {
 				closeModal = false;
 			}
-
-			var fadeaway = true;
+			// if there is no existing message...
+			if ( $('#message').length === 0 ) {
+				//create one and add it to the DOM
+				$('.nav-tab-wrapper').before( '<div id="message" class="updated hidden"></div>' );
+			}
 			var existing_message = $('#message');
+			var fadeaway = true;
+			
 
-			if ( response.success !== 'undefined' && response.success !== '' ) {
+			if ( typeof(response.success) !== 'undefined' && response.success !== '' ) {
 				msg = '<p>' + response.success + '</p>';
-				msg = existing_message.length > 0 ? msg : '<div id="message" class="updated hidden">'+msg+'</div>';
 			}
 		
-			if ( response.errors !== 'undefined' && response.errors !== '' ) {
+			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
 				msg = '<p>' + response.errors + '</p>';
-				msg = existing_message.length > 0 ? msg : '<div id="message" class="error hidden">'+msg+'</div>';
 				$(existing_message).removeClass('updated').addClass('error');
 				fadeaway = false;
 			}
 			
-			if ( beforeWhat === 'undefined' ) {
-				beforeWhat = '#post-body-content';
+			// set message content
+			$(existing_message).html(msg);
+			//  change location in the DOM if so desired
+			if ( typeof(beforeWhat) !== 'undefined' ) {
+				var moved_message = $(existing_message);
+				$(existing_message).remove();
+				$( beforeWhat ).before( moved_message );
 			}
-			
-			// display message
-			if ( existing_message.length > 0 ) {
-				existing_message.html(msg);
-			}else {
-				$( beforeWhat ).before( msg );
-			}
+			// and display it
 			if ( fadeaway === true ) {
 				$('#message').removeClass('hidden').show().delay(8000).fadeOut();
 			} else {
@@ -316,6 +304,44 @@ jQuery(document).ready(function($) {
 		}
 	};
 	espressoAjaxPopulate();
+	
+	
+	$('.dismiss-ee-nag-notice').click(function(event) {
+		event.preventDefault();
+		$.ajax({
+			type: "POST",
+			url:  eei18n.ajax_url,
+			dataType: "json",
+			data: {
+				action : 'dismiss_ee_nag_notice',
+				ee_nag_notice: ee_dismiss.nag_notice,
+				return_url: ee_dismiss.return_url,
+				noheader : 'true'
+			},
+			beforeSend: function() {
+				window.do_before_admin_page_ajax();
+			},
+			success: function( response ){
+				if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
+					console.log( response );
+					window.show_admin_page_ajax_msg( response );
+				} else {
+					$('#espresso-ajax-loading').fadeOut('fast');
+					$('#'+ee_dismiss.nag_notice).fadeOut('fast');
+				}
+			},
+			error: function( response ) {
+				$('#'+ee_dismiss.nag_notice).fadeOut('fast');
+				msg = {};
+				msg.errors = ee_dismiss.unknown_error;
+				console.log( msg );
+				window.show_admin_page_ajax_msg( msg );
+			}
+		});
+	});
+	
+	
+	
 
 
 });

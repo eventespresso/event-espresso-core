@@ -581,11 +581,11 @@ class EE_Error extends Exception {
 		
 		// either save notices to the db
 		if ( $save_to_transient ) {
-			update_option( 'espresso_notices', self::$_espresso_notices );
+			update_option( 'ee_notices', self::$_espresso_notices );
 			return;
 		} 
 		// grab any notices that have been previously saved
-		if ( $notices = get_option( 'espresso_notices', FALSE )) {
+		if ( $notices = get_option( 'ee_notices', FALSE )) {
 			foreach ( $notices as $type => $notice ) {
 				if ( is_array( $notice ) && ! empty( $notice )) {
 					// make sure that existsing notice type is an array
@@ -596,7 +596,7 @@ class EE_Error extends Exception {
 				}
 			}
 			// now clear any stored notices
-			update_option( 'espresso_notices', FALSE );
+			update_option( 'ee_notices', FALSE );
 		}
 
 		// check for success messages
@@ -675,6 +675,102 @@ class EE_Error extends Exception {
 		return $notices;
 	}
 
+
+
+
+
+	/**
+	* 	add_persistent_admin_notice
+	*
+	*	@access 	public
+	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
+	* 	@param		string	$pan_name	the message to be stored persistently until dismissed
+	* 	@return 		void
+	*/
+	public static function add_persistent_admin_notice( $pan_name = '', $pan_message ) {
+		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
+			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
+			$persistent_admin_notices[ $pan_name ] = $pan_message;
+			update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
+		}
+	}
+
+
+
+	/**
+	* 	dismiss_persistent_admin_notice
+	*
+	*	@access 	public
+	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be dismissed
+	* 	@return 		void
+	*/
+	public static function dismiss_persistent_admin_notice( $pan_name = '' ) {
+		$pan_name = EE_Registry::instance()->REQ->is_set( 'ee_nag_notice' ) ? EE_Registry::instance()->REQ->get( 'ee_nag_notice' ) : $pan_name;
+		if ( ! empty( $pan_name )) {
+			if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() )) {
+				unset( $persistent_admin_notices[ $pan_name ] );
+				if ( update_option( 'ee_pers_admin_notices', $persistent_admin_notices ) === FALSE ) {
+					EE_Error::add_error( sprintf( __( 'The persistent admin notice for "%s" could not be deleted.', 'event_espresso' ), $pan_name ), __FILE__, __FUNCTION__, __LINE__ );
+				}
+			}
+		}		
+		if ( EE_Registry::instance()->REQ->ajax ) {
+			// grab any notices and concatenate into string
+			echo json_encode( array( 'errors' => implode( '<br />', EE_Error::get_notices( FALSE ))));
+			exit();
+		} else {
+			// save errors to a transient to be displayed on next request (after redirect)
+			EE_Error::get_notices( FALSE, TRUE ); 
+			$return_url = EE_Registry::instance()->REQ->is_set( 'return_url' ) ? EE_Registry::instance()->REQ->get( 'return_url' ) : '';
+			wp_safe_redirect( urldecode( $return_url ));
+		}
+	}
+
+
+
+	/**
+	 * 	display_persistent_admin_notices
+	 *
+	 *  	@access 	public
+	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
+	* 	@param		string	$pan_name	the message to be stored persistently until dismissed
+	* 	@param		string	$return_url	URL to go back to aftger nag notice is dissmissed 
+	 *  	@return 		string
+	 */
+	public static function display_persistent_admin_notices( $pan_name = '', $pan_message = '', $return_url = '' ) {
+		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
+			$args = array(
+				'nag_notice' => $pan_name,
+				'return_url' => urlencode( $return_url ),
+				'unknown_error' => __( 'An unknown error has occured on the server while attempting to dissmiss this notice.', 'event_espresso' )
+			);
+			wp_localize_script( 'espresso_core', 'ee_dismiss', $args );
+			return '
+			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix">
+				<p>' . $pan_message . '</p>
+				<a class="dismiss-ee-nag-notice hide-if-no-js" >'.__( 'dismiss', 'event_espresso' ) .'</a>
+			</div>';
+		}
+	}
+
+
+
+	/**
+	 * 	get_persistent_admin_notices
+	 *
+	 *  	@access 	public
+	 *  	@return 	void
+	 */
+	public static function get_persistent_admin_notices( $return_url = '' ) {
+		$notices = '';
+		// check for persistent admin notices
+		if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', FALSE )) {
+			foreach( $persistent_admin_notices as $pan_name => $pan_message ) {
+				$notices .= self::display_persistent_admin_notices( $pan_name, $pan_message, $return_url );
+			}
+		}
+		return $notices;
+	}
 
 
 
@@ -861,6 +957,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 		
 		if ( is_writable( EVENT_ESPRESSO_UPLOAD_DIR.'logs' ) && ! file_exists( $exception_log_file )) {
 			touch( $exception_log_file );
+			self::add_htaccess();
 		}
 		
 		if ( is_writable( $exception_log_file )) {
@@ -871,6 +968,22 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 			echo '<div class="error"><p>'. sprintf( __( 'Your log file is not writable. Check if your server is able to write to %s.', 'event_espresso' ), $exception_log_file ) . '</p></div>';
 		}
 		
+	}
+
+
+
+	/**
+	 * simply adds .htaccess file to log dir.
+	 */
+	public static function add_htaccess() {
+		if ( !file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess' ) ) {
+			if ( file_put_contents(EVENT_ESPRESSO_UPLOAD_DIR . 'logs/.htaccess', 'deny from all') )
+				do_action('AHEE_log', __FILE__, __FUNCTION__, 'created .htaccess file that blocks direct access to logs folder'); 
+			else
+  				do_action('AHEE_log', __FILE__, __FUNCTION__, 'there was a problem creating .htaccess file to block direct access to logs folder');
+		} else {
+			do_action('AHEE_log', __FILE__, __FUNCTION__, '.htaccess file already exists in logs folder');
+		}
 	}
 
 

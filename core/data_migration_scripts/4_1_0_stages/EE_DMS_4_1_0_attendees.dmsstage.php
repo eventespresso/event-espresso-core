@@ -222,6 +222,9 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_payment_table;
 	private $_new_line_table;
 	private $_old_mer_table;
+	private $_new_ticket_table;
+	private $_new_ticket_datetime_table;
+	private $_new_datetime_table;
 	/**
 	 * Rememebrs whether or not the mer table exists
 	 * @var boolean
@@ -238,6 +241,9 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$this->_new_transaction_table = $wpdb->prefix."esp_transaction";
 		$this->_new_payment_table = $wpdb->prefix."esp_payment";
 		$this->_new_line_table = $wpdb->prefix."esp_line_item";
+		$this->_new_ticket_table = $wpdb->prefix."esp_ticket";
+		$this->_new_ticket_datetime_table = $wpdb->prefix."esp_datetime_ticket";
+		$this->_new_datetime_table = $wpdb->prefix."esp_datetime";
 		parent::__construct();
 	}
 	
@@ -423,7 +429,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			}
 			$txn_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, intval($primary_attendee_old_id), $this->_new_transaction_table);			
 			if( ! $txn_id){
-				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  http_build_query($old_attendee),$primary_attendee_old_id));
+				$this->add_error(sprintf(__("Could not find primary attendee's new transaction. Current attendee is: %s, we think the 3.1 primary attendee for it has id %d, but there's no 4.1 transaction for that primary attendee id.", "event_espresso"),  $this->_json_encode($old_attendee),$primary_attendee_old_id));
 				$txn_id = 0;
 			}
 			return $txn_id;
@@ -478,12 +484,12 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		$STS_ID = $this->_get_reg_status_for_old_payment_status($old_attendee);
 		$new_event_id = $this->get_migration_script()->get_mapping_new_pk($wpdb->prefix.'events_detail', $old_attendee['event_id'], $wpdb->posts);
 		if( ! $new_event_id){
-			$this->add_error(sprintf(__("Could not find NEW event CPT ID for old event '%d' on old attendee %s", "event_espresso"),$old_attendee['event_id'],http_build_query($old_attendee)));
+			$this->add_error(sprintf(__("Could not find NEW event CPT ID for old event '%d' on old attendee %s", "event_espresso"),$old_attendee['event_id'],$this->_json_encode($old_attendee)));
 		}
 		
 		$ticket_id = $this->_try_to_find_new_ticket_id($old_attendee,$new_event_id);
 		if( ! $ticket_id){
-			$this->add_error(sprintf(__("Could not find a NEW ticket for OLD attendee %s", "event_espresso"),http_build_query($old_attendee)));
+			$this->add_error(sprintf(__("Could not find a NEW ticket for OLD attendee %s", "event_espresso"),$this->_json_encode($old_attendee)));
 		}
 		$regs_on_this_row = intval($old_attendee['quantity']);
 		$new_regs = array();
@@ -535,7 +541,41 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			$cols_n_values['REG_ID'] = $wpdb->insert_id;
 			$new_regs[] = $wpdb->insert_id;
 		}
+		$this->_add_regs_to_ticket_and_datetimes($ticket_id,count($new_regs),$STS_ID);
 		return $new_regs;
+	}
+	
+	/**
+	 * Increments the sold values on the ticket and its related datetimes by the amount sold,
+	 * which should be done directly after adding the rows. Yes this means we're constantly incrementing
+	 * the sold amounts as we go, and is less efficient than a single big query,
+	 * but its safer because we KNOW these regs have been added, rather than inferring
+	 * that they WILL be added (because the attendees stage runs nearly last during
+	 * the migration script)
+	 * @param type $new_ticket_id
+	 * @param type $sold
+	 * @param type $STS_ID
+	 * @return boolean whether they were successfully updated or not
+	 */
+	protected function _add_regs_to_ticket_and_datetimes($new_ticket_id,$quantity_sold,$STS_ID){
+		if($STS_ID != 'RAP'){
+			return true;
+		}
+		global $wpdb;
+		$success = $wpdb->query($wpdb->prepare("UPDATE {$this->_new_ticket_table} SET TKT_sold=TKT_sold+%d WHERE TKT_ID=%d",$quantity_sold,$new_ticket_id));
+		if($success){
+			//get the ticket's datetimes, and increment them too
+			$success_update_dateimtes =  $wpdb->query($wpdb->prepare("UPDATE {$this->_new_ticket_table} TKT 
+				INNER JOIN {$this->_new_ticket_datetime_table} as DTK ON TKT.TKT_ID = DTK.TKT_ID  
+				INNER JOIN {$this->_new_datetime_table} as DTT ON DTK.DTT_ID = DTT.DTT_ID 
+				SET DTT.DTT_sold = DTT.DTT_sold + %d WHERE TKT.TKT_ID = %d",$quantity_sold,$new_ticket_id));
+			if( ! $success_update_dateimtes){
+				$this->add_error(sprintf(__("Could not update datetimes related to ticket with ID %d's TKT_sold by %d because %s", "event_espresso"),$new_ticket_id,$quantity_sold,$wpdb->last_error));
+			}
+		}else{
+			$this->add_error(sprintf(__("Could not update ticket with ID %d's TKT_sold by %d because %s", "event_espresso"),$new_ticket_id,$quantity_sold,$wpdb->last_error));
+		}
+		return true;
 	}
 	/**
 	 * Makes a best guess at which ticket is the one the attendee purchased.
@@ -547,9 +587,9 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 	 */
 	private function _try_to_find_new_ticket_id($old_attendee,$new_event_id){
 		global $wpdb;
-		$tickets_table = $wpdb->prefix."esp_ticket";
-		$datetime_tickets_table = $wpdb->prefix."esp_datetime_ticket";
-		$datetime_table = $wpdb->prefix."esp_datetime";
+		$tickets_table = $this->_new_ticket_table;
+		$datetime_tickets_table = $this->_new_ticket_datetime_table;
+		$datetime_table = $this->_new_datetime_table;
 		
 		$old_att_price_option = $old_attendee['price_option'];
 		$old_att_price = floatval($old_attendee['orig_price']);

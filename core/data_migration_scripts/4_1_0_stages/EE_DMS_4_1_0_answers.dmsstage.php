@@ -48,7 +48,7 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table{
 		$new_reg_table = $wpdb->prefix."esp_registration";
 		$regs = $this->get_migration_script()->get_mapping_new_pk($old_attendee_table, $old_row['attendee_id'], $new_reg_table);
 		if( ! $regs){
-			$this->add_error(sprintf(__("Could not find new registrations for old attendee %d when creating answer %s", "event_espresso"),$old_row['attendee_id'],  http_build_query($old_row)));
+			$this->add_error(sprintf(__("Could not find new registrations for old attendee %d when creating answer %s", "event_espresso"),$old_row['attendee_id'],  $this->_json_encode($old_row)));
 			return false;
 		}
 		//as inefficient as this sounds, we create an answer per REGISTRATION, (even if the registrations use the same attendee)

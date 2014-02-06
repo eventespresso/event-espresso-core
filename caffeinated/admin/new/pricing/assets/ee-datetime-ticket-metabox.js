@@ -993,7 +993,7 @@ jQuery(document).ready(function($) {
 		getDTTsoldinfo: function( itemdata ) {
 			var dttSoldProps = {};
 			//first we need to determine if any checks are even necessary by checking for tkt_sold.
-			var dttLimit = $('.event-datetime-DTT_reg_limit', '#edit-event-datetime-table-' + itemdata.datetimeRow ).val()
+			var dttLimit = $('.event-datetime-DTT_reg_limit', '#edit-event-datetime-table-' + itemdata.datetimeRow ).val();
 			dttSoldProps.dttLimit = dttLimit === '' ? Infinity : accounting.unformat(dttLimit);
 			dttSoldProps.tktSold = accounting.unformat($('.ticket-display-row-TKT_sold', '#display-ticketrow-' + itemdata.ticketRow ).text());
 			dttSoldProps.dttSold = accounting.unformat( $('.datetime-tickets-sold', '#edit-event-datetime-table-' + itemdata.datetimeRow ).text() );
@@ -1293,7 +1293,7 @@ jQuery(document).ready(function($) {
 			this.updateDTTsold = tktHelper.verifyDTTsold(this.itemdata, selecting);
 
 			//if no updates happen then get out (and we should have a dialog warning.)
-			if ( this.updateDTTsold === 0 ) 
+			if ( this.updateDTTsold === 0 )
 				return getitm ? rtnitm : this;
 
 			if ( ( !selecting && this.context != 'ticket' ) || ( !selecting && this.context == 'ticket' && this.itemdata.context == 'ticket-datetime' ) ) {

@@ -410,6 +410,11 @@ class PluginUpdateEngineChecker {
 		}
 		//dashboard message "dismiss upgrade" link
 		add_action( "wp_ajax_".$this->dismiss_upgrade, array($this, 'dashboard_dismiss_upgrade')); 
+
+		if ( !$this->_use_wp_update ) {
+			//maybe clean up any leftover files from upgrades
+			$this->maybe_cleanup_upgrade();
+		}
 	}
 	
 
@@ -433,6 +438,9 @@ class PluginUpdateEngineChecker {
 
 			//Insert our update info into the update array maintained by WP
 			add_filter('site_transient_update_plugins', array( $this,'injectUpdate' ));
+
+			//we need to make sure that the new directory is named correctly
+			add_filter('upgrader_source_selection', array( $this, 'fixDirName'), 10, 3 );
 		}
 
 
@@ -447,6 +455,23 @@ class PluginUpdateEngineChecker {
 		}
 	}
 
+
+
+
+	function maybe_cleanup_upgrade() {
+		global $wp_filesystem;
+
+		$chk_file = WP_CONTENT_DIR . '/upgrade/' . $this->slug . '/';
+
+		if ( is_readable($chk_file ) ) {
+			if ( !is_object($wp_filesystem ) ) {
+				require_once( ABSPATH . '/wp-admin/includes/file.php');
+				WP_Filesystem();
+			}
+			$wp_filesystem->delete($chk_file, FALSE, 'd');
+		}
+
+	}
 
 
 
@@ -728,8 +753,11 @@ class PluginUpdateEngineChecker {
 				$msg = str_replace('%plugin_name%', $this->pluginName, $this->json_error->api_invalid_message);
 				$msg = str_replace('%version%', $this->json_error->version, $msg);
 				$msg = sprintf( __('It appears you\'ve tried entering an api key to upgrade to the premium version of %s, however, the key does not appear to be valid.  This is the message received back from the server:', $this->lang_domain ), $this->pluginName ) . '</p><p>' . $msg;
+					//let's add an option for plugin developers to display some sort of verification message on their options page.
+					update_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
 		} else {
 			$msg = sprintf( __('Congratulations!  You have entered in a valid api key for the premium version of %s.  You can click the button below to upgrade to this version immediately.', $this->lang_domain), $this->pluginName );
+			delete_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
 		}
 
 		//todo add in upgrade button in here.
@@ -885,6 +913,45 @@ class PluginUpdateEngineChecker {
 
 		return $updates;
 	}
+
+
+	/**
+	 * This basically is set to fix the directories for our plugins.
+	 *
+	 * Take incoming remote_source file and rename it to match what it should be.
+	 * 
+	 * @param  string $source        This is usually the same as $remote_source but *may* be something else if this has already been filtered
+	 * @param  string $remote_source What WP has set as the source (ee plugins coming from beta.eventespresso.com will be beta.tmp)
+	 * @param  WPPluginUpgrader $wppu 
+	 * @return string renamed file and path
+	 */
+	function fixDirName( $source, $remote_source, $wppu ) {
+		global $wp_filesystem; 
+
+		if ( isset( $wppu->skin->plugin ) && $wppu->skin->plugin == $this->pluginFile ) {
+			$new_dir = $wp_filesystem->wp_content_dir() . 'upgrade/' . $this->slug . '/';
+
+			//make new directory if needed.
+			if ( !$wp_filesystem->exists( $new_dir ) ) {
+				if ( !$wp_filesystem->mkdir( $new_dir, FS_CHMOD_DIR ) )
+					return new WP_Error( 'mkdir_failed_destination', $wppu->strings['mkdir_failed'], $new_dir );
+			}
+
+			//copy original $source into new source
+			$result = copy_dir( $source, $new_dir );
+			if ( is_wp_error($result ) ) {
+				//something went wrong let's just return the original $source
+				return $source;
+			}
+
+			//everything went okay... new source = new dir
+			$source = $new_dir;
+		}
+		return $source;
+	}
+
+
+
 	
 	/**
 	 * Register a callback for filtering query arguments. 

@@ -119,23 +119,13 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
-		// set config
-		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive )) {
-			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
-		}
-		// grid, text or dates ?
-//		EED_Events_Archive::set_type();
+		// load other required components
+		$this->_load_assests();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		$this->_filter_query_parts();		
 		// check what template is loaded
 		add_filter( 'template_include',  array( 'EED_Events_Archive', 'template_include' ), 999, 1 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
-		// load other required components
-		$this->_load_assests();
-//		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
-//			// load template
-//			EE_Config::register_view( 'events', 0, $this->_get_template('full') );
-//		}
 	}
 
 
@@ -490,12 +480,13 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public static function template_include( $template ) {
-				// display event status banner ?
+		// display event status banner ?
 		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner && ! EEH_Template::is_espresso_theme() ) {
 			add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 		}
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' && ! EEH_Template::is_espresso_theme() ) {
+			EEH_Template::load_espresso_theme_functions();
 			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
@@ -627,6 +618,10 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _load_assests() {
+		// set config
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive )) {
+			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
+		}
 		do_action( 'AHEE__EED_Events_Archive__before_load_assests' );
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
@@ -961,34 +956,6 @@ class EED_Events_Archive  extends EED_Module {
 
 
 
-	/**
-	 * 	pagination
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function pagination() {
-		global $wp_query;
-		$big = 999999999; // need an unlikely integer
-		$pagination = paginate_links( array(
-			'base' => str_replace( $big, '%#%', esc_url( get_pagenum_link( $big ) ) ),
-			'format' => '?paged=%#%',
-			'current' => max( 1, get_query_var('paged') ),
-			'total' => $wp_query->max_num_pages,
-			'show_all'     => TRUE,
-			'end_size'     => 10,
-			'mid_size'     => 6,
-			'prev_next'    => TRUE,
-			'prev_text'    => __( '&lsaquo; PREV', 'event_espresso' ),
-			'next_text'    => __( 'NEXT &rsaquo;', 'event_espresso' ),
-			'type'         => 'plain',
-			'add_args'     => FALSE,
-			'add_fragment' => ''
-		));
-		return ! empty( $pagination ) ? '<div class="ee-pagination-dv clear">' . $pagination . '</div>' : '';
-	}
-
-
 
 
 
@@ -1052,9 +1019,6 @@ function espresso_display_venue_address_in_event_list() {
 	return EED_Events_Archive::display_address();
 }
 
-function espresso_event_list_pagination() {
-	echo EED_Events_Archive::pagination();
-}
 
 function espresso_event_list_grid_size_btn() {
 	switch( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->event_list_grid_size ) {
@@ -1094,7 +1058,7 @@ class EE_Event_List_Query extends WP_Query {
 		foreach ( $args as $key =>$value ) {
 			$property = '_' . $key;
 			// if the arg is a property of this class, then it's an EE shortcode arg
-			if ( property_exists( $this, $property )) {
+			if ( EEH_Class_Tools::has_property( $this, $property )) {
 				// set the property value
 				$this->$property = $value;
 				// then remove it from the array of args that will later be passed to WP_Query() 

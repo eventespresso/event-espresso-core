@@ -13,10 +13,9 @@ Styling the progress bar and migration page
 	color: #444;
 }
 
-/*#main-message,
-#migration-start-border,*/
-#migration-confirm-backed-up {
-	text-align: center;
+
+#migration-options-dv {
+	margin: 3em 0 0;
 }
 
 #start-migration {
@@ -27,35 +26,31 @@ Styling the progress bar and migration page
 
 /* PROGRESS BAR STUFF */
 
-.progress-responsive {
+#progress-responsive {
 	width: 70%;
 	float: left;
-	/* margin-right:auto;
-	margin-left:auto;*/
+
 }
 /* Progress bar containers */
 figure {
 	position: relative;
-	/*width: 100%;*/
 	height: 25px;
 	border: 2px solid #A39D9C;
 	border-radius: 3px;
 	background: #fff;
 	margin: 0 0 1em;
 }
-/* Progress bar shape */
-figure div:first-child {
+
+/* blue bar */
+#progress-responsive__bar {
+	background: #2EA2CC;
 	width: 0;
 	height: 25px;
 	border-radius: 2px;
 }
 
-/* Green bar */
-.progress-responsive .progress-responsive__bar {
-	background: #2EA2CC;
-}
 /* Percent text */
-figure div:last-child {
+#progress-responsive__percent {
 	position: absolute;
 	top: 5px;
 	right: 10px;
@@ -74,4 +69,15 @@ textarea.system_status_info{
 	width: 80%;
 	height: 100px;
 	overflow-y: scroll;
+}
+
+#migration-options-dv table td {
+}
+#migration-options-dv .display-the-hidden,
+#migration-options-dv .hide-the-displayed {
+	float: right;
+	margin: .5em 0 0;
+}
+#migration-risks {
+	cursor: pointer;
 }

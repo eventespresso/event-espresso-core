@@ -104,9 +104,10 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function deactivate_event_espresso() {
-		$active_plugins = array_flip( get_option( 'active_plugins' ));
-		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
-		update_option( 'active_plugins', array_flip( $active_plugins ));	
+		deactivate_plugins(EVENT_ESPRESSO_MAIN_FILE);
+//		$active_plugins = array_flip( get_option( 'active_plugins' ));
+//		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
+//		update_option( 'active_plugins', array_flip( $active_plugins ));	
 	}
 
 
@@ -160,7 +161,7 @@ class EEH_Activation {
 			// no dice?
 			if ( $critical_page['post'] == NULL ) {
 				// attempt to find post by title
-				$critical_page['post'] = get_page_by_title( $critical_page['name'] );
+				$critical_page['post'] = self::get_page_by_ee_shortcode( $critical_page['code'] );
 				// still nothing?
 				if ( $critical_page['post'] == NULL ) {
 					$critical_page = EEH_Activation::create_critical_page( $critical_page );
@@ -195,11 +196,35 @@ class EEH_Activation {
 				__('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.', 'event_espresso' ),
 				'<a href="' . admin_url('admin.php?page=espresso_general_settings&action=critical_pages') . '">' . __('Event Espresso Critical Pages Settings', 'event_espresso') . '</a>'
 			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_persistent_admin_notice( 'critical_page_problem', $msg );
 		}
 
+		if ( EE_Error::has_notices() ) {
+			EE_Error::get_notices( FALSE, TRUE, TRUE );
+		}
+		
 	}
 
+	/**
+	 * REturns the first post which uses the specified shortcode
+	 * @param string $ee_shortcode usually one of the critical pages shortcodes, eg
+	 * ESPRESSO_THANK_YOU. So we will search fora post with the content "[ESPRESSO_THANK_YOU"
+	 * (we don't search for the closing shortcode bracket because they might have added 
+	 * parameter to the shortcode
+	 * @return WP_Post or NULl
+	 */
+	public static function get_page_by_ee_shortcode($ee_shortcode){
+		global $wpdb;
+		$shortcode_and_opening_bracket = '['.$ee_shortcode;
+		$post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_content LIKE '%$shortcode_and_opening_bracket%' LIMIT 1");
+		if($post_id){
+			return get_post($post_id);
+		}else{
+			return NULL;
+		}
+		
+//		return $post_id;
+	}
 
 
 
@@ -385,7 +410,8 @@ class EEH_Activation {
 	 */
 	public static function delete_unused_db_table( $table_name ) {
 		global $wpdb;
-		$wpdb->query( 'DROP TABLE IF EXISTS '. $wpdb->prefix . $table_name );
+		$table_name = strpos( $table_name, $wpdb->prefix ) === FALSE ? $wpdb->prefix . $table_name : $table_name;
+		return $wpdb->query( 'DROP TABLE IF EXISTS '. $table_name );
 	}
 
 
@@ -399,7 +425,7 @@ class EEH_Activation {
 	public static function drop_index( $table_name, $index_name ) {
 		global $wpdb;
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . $table_name . "'" ) == $wpdb->prefix . $table_name ) {
-			$wpdb->query( 'ALTER TABLE '.$wpdb->prefix . $table_name . ' DROP INDEX ' . $index_name );
+			return $wpdb->query( 'ALTER TABLE '.$wpdb->prefix . $table_name . ' DROP INDEX ' . $index_name );
 		}
 	}
 
@@ -427,6 +453,7 @@ class EEH_Activation {
 		$drop_pre_existing_tables = EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ? true : false;
 		$current_data_migration_script->schema_changes_before_migration($drop_pre_existing_tables);
 		$current_data_migration_script->schema_changes_after_migration($drop_pre_existing_tables);
+		EE_Data_Migration_Manager::instance()->update_current_database_state_to();
 	}
 
 
@@ -586,7 +613,7 @@ class EEH_Activation {
 					case 'address2':
 							$QST_values = array( 
 									'QST_display_text' => __( 'Address2', 'event_espresso' ),
-									'QST_admin_label' => __( 'FirAddress2 - System Question', 'event_espresso' ),
+									'QST_admin_label' => __( 'Address2 - System Question', 'event_espresso' ),
 									'QST_system' => 'address2',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
@@ -616,7 +643,7 @@ class EEH_Activation {
 					case 'state':
 							$QST_values = array( 
 									'QST_display_text' => __( 'State / Province', 'event_espresso' ),
-									'QST_admin_label' => __( 'State / Province - System Question', 'event_espresso' ),
+									'QST_admin_label' => __( 'State/Province - System Question', 'event_espresso' ),
 									'QST_system' => 'state',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
@@ -645,8 +672,8 @@ class EEH_Activation {
 						
 					case 'zip':
 							$QST_values = array( 
-									'QST_display_text' => __( 'Zip / Postal Code', 'event_espresso' ),
-									'QST_admin_label' => __( 'Zip / Postal Code - System Question', 'event_espresso' ),
+									'QST_display_text' => __( 'Zip/Postal Code', 'event_espresso' ),
+									'QST_admin_label' => __( 'Zip/Postal Code - System Question', 'event_espresso' ),
 									'QST_system' => 'zip',
 									'QST_type' => 'TEXT',
 									'QST_required' => 0,
@@ -906,9 +933,9 @@ class EEH_Activation {
 	public static function create_no_ticket_prices_array(){
 		// this creates an array for tracking events that have no active ticket prices created
 		// this allows us to warn admins of the situation so that it can be corrected
-		$espresso_no_ticket_prices = get_option( 'espresso_no_ticket_prices', FALSE );
+		$espresso_no_ticket_prices = get_option( 'ee_no_ticket_prices', FALSE );
 		if ( ! $espresso_no_ticket_prices ) {
-			add_option( 'espresso_no_ticket_prices', array(), '', FALSE );
+			add_option( 'ee_no_ticket_prices', array(), '', FALSE );
 		}	
 	}
 
@@ -927,13 +954,138 @@ class EEH_Activation {
 
 
 	/**
+	 * Finds all our EE4 custom post types, and deletes them and their assocaited data (like post meta or term relations)/
+	 * @global type $wpdb
+	 */
+	public static function delete_all_espresso_cpt_data(){
+		global $wpdb;
+		//get all the CPT post_types
+		$ee_post_types = array();
+		foreach(EE_Registry::instance()->non_abstract_db_models as $model_name){
+			if ( method_exists( $model_name, 'instance' )) {
+				$model_obj = call_user_func( array( $model_name, 'instance' )); 
+				if ( $model_obj instanceof EEM_CPT_Base ) {
+					$ee_post_types[] = $wpdb->prepare("%s",$model_obj->post_type());
+				}
+			}
+		}
+		//get all our CPTs
+		$query = "SELECT ID FROM {$wpdb->posts} WHERE post_type IN (".implode(",",$ee_post_types).")";
+		$cpt_ids = $wpdb->get_col($query);
+		//delete each's post meta and term relations too
+		foreach($cpt_ids as $post_id){
+			wp_delete_post($post_id,true);
+		}
+	}
+	/**
 	 * plugin_uninstall
 	 *
 	 * 	@access public
 	 * 	@static
 	 * 	@return void
 	 */
-	public static function plugin_uninstall() {
+	public static function delete_all_espresso_tables_and_data( $remove_all = TRUE ) { // FALSE
+		global $wpdb;
+		$undeleted_tables = array();
+
+		// load registry
+		foreach( EE_Registry::instance()->non_abstract_db_models as $model_name ){
+			if ( method_exists( $model_name, 'instance' )) {
+				$model_obj = call_user_func( array( $model_name, 'instance' )); 
+				if ( $model_obj instanceof EEM_Base ) {
+					foreach ( $model_obj->get_tables() as $table ) {
+						if ( strpos( $table->get_table_name(), 'esp_' )) {
+							switch ( EEH_Activation::delete_unused_db_table( $table->get_table_name() )) {
+								case FALSE :
+									$undeleted_tables[] = $table->get_table_name();
+								break;
+								case 0 :
+									// echo '<h4 style="color:red;">the table : ' . $table->get_table_name() . ' was not deleted  <br /></h4>';
+								break;
+								default:
+									// echo '<h4>the table : ' . $table->get_table_name() . ' was deleted successully <br /></h4>';
+							}
+						}
+					}
+				}
+			}
+		}
+
+		
+		$wp_options_to_delete = array(
+			'ee_no_ticket_prices' => TRUE,
+			'ee_active_messengers' => TRUE,
+			'ee_flush_rewrite_rules' => TRUE,
+			'ee_config' => TRUE,
+			'ee_data_migration_current_db_state' => TRUE,
+			'ee_data_migration_mapping_' => FALSE,
+			'ee_data_migration_script_' => FALSE,
+			'ee_data_migrations' => TRUE,
+			'ee_notices' => TRUE,
+			'lang_file_check_' => FALSE,
+			'ee_maintenance_mode' => TRUE,
+			'ee_ueip_optin' => TRUE,
+			'ee_ueip_has_notified' => TRUE,
+			'ee_plugin_activation_errors' => TRUE,
+			'ee_id_mapping_from' => FALSE,
+			'espresso_persistent_admin_notices' => TRUE,
+			'ee_encryption_key' => TRUE,
+			'pue_force_upgrade_' => FALSE,
+			'pue_json_error_' => FALSE,
+			'pue_install_key_' => FALSE,
+			'pue_verification_error_' => FALSE,
+			'pu_dismissed_upgrade_' => FALSE,
+			'external_updates-' => FALSE,
+			'ee_extra_data' => TRUE,
+			'ee_ssn_' => FALSE,
+			'ee_rss_' => FALSE,
+			'ee_rte_n_tx_' => FALSE
+		);
+		
+		$undeleted_options = array();
+		foreach ( $wp_options_to_delete as $option_name => $no_wildcard ) {
+			
+			$option_name = $no_wildcard ? "= '$option_name'" : "LIKE '%$option_name%'";
+			
+			if ( $option_id = $wpdb->query( "SELECT option_id FROM $wpdb->options WHERE option_name $option_name" )) {
+				switch ( $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name $option_name" )) {
+					case FALSE :
+						$undeleted_options[] = $option_name;
+					break;
+					case 0 :
+	//					echo '<h4 style="color:red;">the option : ' . $option_name . ' was not deleted  <br /></h4>';
+					break;
+					default:
+	//					echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
+				}	
+			}
+		}
+		
+		if ( $remove_all && $espresso_db_update = get_option( 'espresso_db_update' )) {
+			unset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] );
+			update_option( 'espresso_db_update', $espresso_db_update );
+		}
+		
+		$errors = '';
+		if ( ! empty( $undeleted_tables )) {
+			$errors .= sprintf( 
+				__( 'The following tables could not be deleted: %s%s', 'event_espresso' ),
+				'<br/>',
+				implode( ',<br/>', $undeleted_tables )
+			);
+		}
+		if ( ! empty( $undeleted_options )) {
+			$errors .= ! empty( $undeleted_tables ) ? '<br/>' : '';
+			$errors .= sprintf( 
+				__( 'The following wp-options could not be deleted: %s%s', 'event_espresso' ),
+				'<br/>',
+				implode( ',<br/>', $undeleted_options )
+			);
+			
+		}
+		if ( $errors != '' ) {
+			echo $errors;
+		} 
 	}
 
 

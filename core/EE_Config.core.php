@@ -196,18 +196,7 @@ final class EE_Config {
 	 */
 	public function get_espresso_config() {
 		// grab espresso configuration
-		if ( is_multisite() ) {
-			// look for blog specific config
-			if ( ! $CFG = get_blog_option( $this->core->current_blog_id, 'espresso_config', array() )) {
-				// if not, then look for network config
-				if ( ! $CFG = get_site_option( 'espresso_config', array() )) {
-				    // if not, then look for generic config
-					$CFG = get_option( 'espresso_config', array() );
-				}						
-			}
-		} else {
-			$CFG = get_option( 'espresso_config', array() );
-		}
+		$CFG = get_option( 'ee_config', array() );
 		$CFG = apply_filters( 'FHEE__Config__get_espresso_config__CFG', $CFG );
 		return $CFG;
 	}
@@ -224,32 +213,18 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
 		// compare existing settings with what's already saved'
 		$saved_config = $this->get_espresso_config();
-		$no_change = $saved_config == $this ? TRUE : FALSE;
 		// update
-		if ( is_multisite() ) {
-			// look for blog specific config
-			if ( ! $saved = update_blog_option( $this->core->current_blog_id, 'espresso_config', $this )) {
-				// if not, then look for network config
-				if ( ! $saved = update_site_option( 'espresso_config', $this )) {
-				    // if not, then look for generic config
-					$saved = update_option( 'espresso_config', $this );
-				}						
-			}
-		} else {
-			$saved = update_option( 'espresso_config', $this );
-		}
-		do_action( 'AHEE__EE_Config__update_espresso_config__end',$this,$no_change,$saved );
+		$saved = $saved_config == $this ? TRUE : update_option( 'ee_config', $this );
+		do_action( 'AHEE__EE_Config__update_espresso_config__end', $this, $saved );
 		// if config remains the same or was updated successfully
-		if ( $no_change || $saved ) {
+		if ( $saved ) {
 			if ( $add_success ) {
-				$msg = __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' );
-				EE_Error::add_succes( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_success( __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			}
 			return TRUE;
 		} else {
 			if ( $add_error ) {
-				$msg = __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' );
-				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error( __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			}
 			return FALSE;
 		}
@@ -776,6 +751,7 @@ final class EE_Config {
 
 
 
+
 /**
  * Base class used for config classes. These classes should generally not have
  * magic functions in use, except we'll allow them to magically set and get stuff...
@@ -804,8 +780,8 @@ class EE_Config_Base{
 class EE_Core_Config extends EE_Config_Base {
 	
 	public $current_blog_id;
-	public $site_license_key;
 	public $ee_ueip_optin;
+	public $ee_ueip_has_notified;
 	/**
 	 * Not to be confused with the 4 critical page variables (See
 	 * get_critical_pages_array()), this is just an array of wp posts that have EE
@@ -833,11 +809,13 @@ class EE_Core_Config extends EE_Config_Base {
 	 *  @return 	void
 	 */
 	public function __construct() {
+		$current_network_main_site = is_multisite() ? get_current_site() : NULL;
+		$current_main_site_id = !empty( $current_network_main_site ) ? $current_network_main_site->blog_id : 1;
 		// set default organization settings
 		$this->current_blog_id = get_current_blog_id();
 		$this->current_blog_id = $this->current_blog_id === NULL ? 1 : $this->current_blog_id;
-		$this->site_license_key = NULL;
-		$this->ee_ueip_optin = TRUE;
+		$this->ee_ueip_optin = is_main_site() ? get_option( 'ee_ueip_optin', TRUE ) : get_blog_option( $current_main_site_id, 'ee_ueip_optin', TRUE );
+		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', TRUE ) : TRUE;
 		$this->post_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
@@ -858,6 +836,8 @@ class EE_Core_Config extends EE_Config_Base {
 	}
 
 }
+
+
 
 /**
  * Config class for storing info on the Organization

@@ -366,7 +366,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 				$button_query_args = array(
 					'action' => 'edit_message_template',
 					'id' => $template->GRP_ID(),
-					'evt_id' => $event_id,
 					'edit_message_template_nonce' => wp_create_nonce( 'edit_message_template_nonce' )
 					);
 			}

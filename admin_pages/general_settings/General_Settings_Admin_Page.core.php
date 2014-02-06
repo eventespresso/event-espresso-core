@@ -71,7 +71,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_admin_page_title = GEN_SET_LABEL;
 		$this->_labels = array(
 			'publishbox' => __('Update Settings', 'event_espresso')
-			);
+		);
 	}
 
 
@@ -147,7 +147,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 50
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                'help_tabs' => array(
+               			'help_tabs' => array(
 					'general_settings_critical_pages_help_tab' => array(
 						'title' => __('Critical Pages', 'event_espresso'),
 						'filename' => 'general_settings_critical_pages'
@@ -164,7 +164,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 30
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                'help_tabs' => array(
+                			'help_tabs' => array(
 					'general_settings_templates_help_tab' => array(
 						'title' => __('Templates', 'event_espresso'),
 						'filename' => 'general_settings_templates'
@@ -177,8 +177,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 				'nav' => array(
 					'label' => __('Your Organization'),
 					'order' => 20
-					),
-                'help_tabs' => array(
+				),
+                			'help_tabs' => array(
 					'general_settings_your_organization_help_tab' => array(
 						'title' => __('Your Organization', 'event_espresso'),
 						'filename' => 'general_settings_your_organization'
@@ -194,7 +194,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 					'order' => 60
 					),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box' ),
-                'help_tabs' => array(
+                			'help_tabs' => array(
 					'general_settings_admin_options_help_tab' => array(
 						'title' => __('Admin Options', 'event_espresso'),
 						'filename' => 'general_settings_admin_options'
@@ -368,7 +368,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 	protected function _your_organization_settings() {
 	
-		$this->_template_args['site_license_key'] = isset( EE_Registry::instance()->CFG->core->site_license_key ) ? $this->_display_nice( EE_Registry::instance()->CFG->core->site_license_key ) : '';
+		$this->_template_args['site_license_key'] = isset( EE_Registry::instance()->NET_CFG->core->site_license_key ) ? $this->_display_nice( EE_Registry::instance()->NET_CFG->core->site_license_key ) : '';
 		$this->_template_args['organization_name'] = isset( EE_Registry::instance()->CFG->organization->name ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->name ) : '';
 		$this->_template_args['organization_address_1'] = isset( EE_Registry::instance()->CFG->organization->address_1 ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->address_1 ) : '';
 		$this->_template_args['organization_address_2'] = isset( EE_Registry::instance()->CFG->organization->address_2 ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->address_2 ) : '';
@@ -386,7 +386,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['organization_google'] = isset( EE_Registry::instance()->CFG->organization->google ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->google ) : '';
 		$this->_template_args['organization_instagram'] = isset( EE_Registry::instance()->CFG->organization->instagram ) ? $this->_display_nice( EE_Registry::instance()->CFG->organization->instagram ) : '';
 		//UXIP settings
-		$this->_template_args['ee_ueip_optin'] = get_option( 'ee_ueip_optin', TRUE );
+		$this->_template_args['ee_ueip_optin'] = isset( EE_Registry::instance()->CFG->core->ee_ueip_optin ) ? $this->_display_nice( EE_Registry::instance()->CFG->core->ee_ueip_optin ) : TRUE;
 		
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 		$STA_ID = isset( EE_Registry::instance()->CFG->organization->STA_ID ) ? EE_Registry::instance()->CFG->organization->STA_ID : 4;
@@ -443,8 +443,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _update_your_organization_settings() {
-		
-		EE_Registry::instance()->CFG->core->site_license_key = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : EE_Registry::instance()->CFG->core->site_license_key;
+		if ( is_main_site() )
+			EE_Registry::instance()->NET_CFG->core->site_license_key = isset( $this->_req_data['site_license_key'] ) ? sanitize_text_field( $this->_req_data['site_license_key'] ) : EE_Registry::instance()->NET_CFG->core->site_license_key;
 		EE_Registry::instance()->CFG->organization->name = isset( $this->_req_data['organization_name'] ) ? sanitize_text_field( $this->_req_data['organization_name'] ) : EE_Registry::instance()->CFG->organization->name;
 		EE_Registry::instance()->CFG->organization->address_1 = isset( $this->_req_data['organization_address_1'] ) ? sanitize_text_field( $this->_req_data['organization_address_1'] ) : EE_Registry::instance()->CFG->organization->address_1;
 		EE_Registry::instance()->CFG->organization->address_2 = isset( $this->_req_data['organization_address_2'] ) ? sanitize_text_field( $this->_req_data['organization_address_2'] ) : EE_Registry::instance()->CFG->organization->address_2;

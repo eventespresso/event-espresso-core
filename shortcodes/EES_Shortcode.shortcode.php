@@ -65,11 +65,10 @@ abstract class EES_Shortcode extends EE_Base {
 	*	@return 	void
 	*/
 	final public static function fallback_shortcode_processor( $attributes ) { 
-		EE_Registry::instance()->load_helper( 'Class_Tools' );
-		$shortcode_class = get_called_class();
-		$shortcode_obj = new $shortcode_class();
-		//d( $shortcode_obj );
-		$shortcode_obj->process_shortcode( $attributes );
+		if ( $shortcode_class = EEH_Class_Tools::get_called_class() ) {
+			$shortcode_obj = new $shortcode_class();
+			$shortcode_obj->process_shortcode( $attributes );
+		}
 	}
 
 

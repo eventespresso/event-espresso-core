@@ -46,7 +46,7 @@ class EE_Maintenance_Mode {
 	/**
 	 * the nameof the option which stores the current level of maintenance mode
 	 */
-	const option_name_maintenance_mode = 'maintenance_mode';
+	const option_name_maintenance_mode = 'ee_maintenance_mode';
    /**
      * 	EE_Maintenance_Mode Object
      * 	@var EE_Maintenance_Mode $_instance

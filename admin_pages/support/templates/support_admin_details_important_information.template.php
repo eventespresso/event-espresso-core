@@ -24,7 +24,7 @@
 	$system_status_link = EE_Admin_Page::add_query_args_and_nonce($query_args, admin_url('admin.php'));
 
   ?>
-  <a href="<?php echo $system_status_link; ?>" class="button-secondary right"><?php _e('System Status', 'event_espresso'); ?></a>
+  <a href="<?php echo $system_status_link; ?>" class="button-secondary right"><?php _e('System Information', 'event_espresso'); ?></a>
 	<div class="localhost-information">
 		<dl>
 			<dt>
@@ -46,37 +46,9 @@
 			</dt>
 			<dd><?php echo site_url(); ?></dd>
 			<dt>
-<?php _e('WordPress Content Directory:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo WP_CONTENT_DIR; ?></dd>
-			<dt>
 <?php _e('Site address (URL):', 'event_espresso'); ?>
 			</dt>
 			<dd><?php echo home_url(); ?></dd>
-			<dt>
-<?php _e('Event Espresso Plugin URL:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EE_PLUGIN_DIR_URL ?></dd>
-			<dt>
-<?php _e('Event Espresso Plugin Path:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EE_PLUGIN_DIR_PATH; ?></dd>
-			<dt>
-<?php _e('Event Espresso Upload URL:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EVENT_ESPRESSO_UPLOAD_URL; ?></dd>
-			<dt>
-<?php _e('Event Espresso Upload Path:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EVENT_ESPRESSO_UPLOAD_DIR; ?></dd>
-			<dt>
-<?php _e('Event Espresso Template Path:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EVENT_ESPRESSO_TEMPLATE_DIR; ?></dd>
-			<dt>
-<?php _e('Event Espresso Gateway Path:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EVENT_ESPRESSO_GATEWAY_DIR; ?></dd>
 		</dl>
 	</div>
 </div>

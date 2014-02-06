@@ -52,13 +52,22 @@ class EE_PUE {
 		
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
+		//wp have no MONTH_IN_SECONDS constant.  So we approximate our own assuming all months are 4 weeks long.
+		if ( !defined('MONTH_IN_SECONDS' ) )
+			define( 'MONTH_IN_SECONDS', WEEK_IN_SECONDS * 4 );
+		
+		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
+			$this->_uxip_hooks();
+		}
+
+		
 		$ueip_optin = get_option('ee_ueip_optin');
 		$ueip_has_notified = isset($_POST['ueip_optin']) ? TRUE : get_option('ee_ueip_has_notified');
 
 		//has optin been selected for datacollection?
 		$espresso_data_optin = !empty($ueip_optin) ? $ueip_optin : NULL;
 
-		if ( empty($ueip_has_notified) ) {
+		if ( empty($ueip_has_notified) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_mode::level_2_complete_maintenance ) {
 			add_action('admin_notices', array( $this, 'espresso_data_collection_optin_notice' ), 10 );
 			add_action('admin_enqueue_scripts', array( $this, 'espresso_data_collection_enqueue_scripts' ), 10 );
 			add_action('wp_ajax_espresso_data_optin', array( $this, 'espresso_data_optin_ajax_handler' ), 10 );
@@ -72,14 +81,65 @@ class EE_PUE {
 		//only collect extra stats if the plugin user has opted in.
 		if ( !empty($espresso_data_optin) && $espresso_data_optin == 'yes' ) {
 			//let's only setup extra data if transient has expired
-			if ( false === ( $transient = get_transient('ee_extra_data') ) ) {
+			if ( false === ( $transient = get_transient('ee_extra_data') ) && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
+
+				$current_site = is_multisite() ? get_current_site() : NULL;
+				$site_pre = ! is_main_site() && ! empty($current_site) ? trim( preg_replace('/\b\w\S\w\b/', '', $current_site->domain ), '.' ) . '_' : '';
+
+
 				//active gateways
 				$active_gateways = get_option('event_espresso_active_gateways');
 				if ( !empty($active_gateways ) ) {
 					foreach ( (array) $active_gateways as $gateway => $ignore ) {
-						$extra_stats[$gateway . '_gateway_active'] = 1;
+						$extra_stats[$site_pre . $gateway . '_gateway_active'] = 1;
 					}
 				}
+
+				if ( is_multisite() && is_main_site() ) {
+					$extra_stats['is_multisite'] = true;
+				}
+
+				//what is the current active theme?
+				$active_theme = get_option('uxip_ee_active_theme');
+				if ( !empty( $active_theme ) )
+					$extra_stats[$site_pre . 'active_theme'] = $active_theme;
+
+				//event info regarding an all event count and all "active" event count
+				$all_events_count = get_option('uxip_ee4_all_events_count');
+				if ( !empty( $all_events_count ) )
+					$extra_stats[$site_pre . 'ee4_all_events_count'] = $all_events_count;
+				$active_events_count = get_option('uxip_ee4_active_events_count');
+				if ( !empty( $active_events_count ) )
+					$extra_stats[$site_pre . 'ee4_active_events_count'] = $active_events_count;
+
+				//datetime stuff
+				$dtt_count = get_option('uxip_ee_all_dtts_count');
+				if ( !empty( $dtt_count ) )
+					$extra_stats[$site_pre . 'all_dtts_count'] = $dtt_count;
+
+				$dtt_sold = get_option('uxip_ee_dtt_sold');
+				if ( !empty( $dtt_sold ) )
+					$extra_stats[$site_pre . 'dtt_sold'] = $dtt_sold;
+
+				//ticket stuff
+				$all_tkt_count = get_option('uxip_ee_all_tkt_count');
+				if ( !empty( $all_tkt_count ) )
+					$extra_stats[$site_pre . 'all_tkt_count'] = $all_tkt_count;
+
+				$free_tkt_count = get_option('uxip_ee_free_tkt_count');
+				if ( !empty( $free_tkt_count ) )
+					$extra_stats[$site_pre . 'free_tkt_count'] = $free_tkt_count;
+
+				$paid_tkt_count = get_option('uxip_ee_paid_tkt_count');
+				if ( !empty( $paid_tkt_count ) )
+					$extra_stats[$site_pre . 'paid_tkt_count'] = $paid_tkt_count;
+
+				$tkt_sold = get_option('uxip_ee_tkt_sold' );
+				if ( !empty($tkt_sold) )
+					$extra_stats[$site_pre . 'tkt_sold'] = $tkt_sold;
+
+				//phpversion checking
+				$extra_stats['phpversion'] = function_exists('phpversion') ? phpversion() : 'unknown';
 
 				//set transient
 				set_transient( 'ee_extra_data', $extra_stats, WEEK_IN_SECONDS );
@@ -90,9 +150,9 @@ class EE_PUE {
 
 		// PUE Auto Upgrades stuff
 		if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { //include the file 
-			require(EE_THIRD_PARTY . 'pue/pue-client.php' );
+			require_once(EE_THIRD_PARTY . 'pue/pue-client.php' );
 
-			$api_key = isset( EE_Registry::instance()->CFG->site_license_key ) ? EE_Registry::instance()->CFG->site_license_key : '';
+			$api_key = isset( EE_Registry::instance()->NET_CFG->core->site_license_key ) ? EE_Registry::instance()->NET_CFG->core->site_license_key : '';
 			$host_server_url = 'http://eventespresso.com'; //this needs to be the host server where plugin update engine is installed. Note, if you leave this blank then it is assumed the WordPress repo will be used and we'll just check there.
 
 			//Note: PUE uses a simple preg_match to determine what type is currently installed based on version number.  So it's important that you use a key for the version type that is unique and not found in another key.
@@ -104,8 +164,8 @@ class EE_PUE {
 			//$plugin_slug['prerelease']['b'] = 'some-pre-release-slug';
 			//..WOULD work!
 			$plugin_slug = array(
-				'free' => array( 'lite' => 'event-espresso-core-decaf' ),
-				'premium' => array( 'reg' => 'event-espresso-core-caf' ),
+				'free' => array( 'decaf' => 'event-espresso-core-decaf' ),
+				'premium' => array( 'reg' => 'event-espresso-core-reg' ),
 				'prerelease' => array( 'beta' => 'event-espresso-core-pr' )
 				);
 
@@ -228,6 +288,91 @@ class EE_PUE {
 			$update = true;
 
 		return $update;
+	}
+
+
+	/**
+	 * UXIP TRACKING *******
+	 */
+
+
+	/**
+	 * This method contains all the hooks into EE for gathering stats that will be reported with the PUE uxip system
+	 * @public
+	 * @return void
+	 */
+	public function _uxip_hooks() {
+		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
+			add_action('admin_init', array( $this, 'track_active_theme' ) );
+			add_action('admin_init', array( $this, 'track_event_info' ) );
+		}
+	}
+
+
+
+
+	public function track_active_theme() {
+		//we only check this once a month.
+		if ( false === ( $transient = get_transient( 'ee_active_theme_check' ) ) ) {
+			$theme = wp_get_theme();
+			update_option('uxip_ee_active_theme', $theme->get('Name') );
+			set_transient('ee_active_theme_check', 1, MONTH_IN_SECONDS );
+		}
+	}
+
+
+	public function track_event_info() {
+		//we only check this once every couple weeks.
+		if ( false === ( $transient = get_transient( 'ee4_event_info_check') ) ) {
+			//first let's get the number for ALL events
+			$EVT = EE_Registry::instance()->load_model('Event');
+			$DTT = EE_Registry::instance()->load_model('Datetime');
+			$TKT = EE_Registry::instance()->load_model('Ticket');
+			$count = $EVT->count();
+			if ( $count > 0 )
+				update_option('uxip_ee4_all_events_count', $count);
+
+			//next let's just get the number of ACTIVE events
+			$count_active = $EVT->get_active_events(array(), TRUE);
+			if ( $count_active > 0 )
+				update_option('uxip_ee4_active_events_count', $count_active);
+
+			//datetimes!
+			$dtt_count = $DTT->count();
+			if ( $dtt_count > 0 )
+				update_option( 'uxip_ee_all_dtts_count', $dtt_count );
+
+
+			//dttsold
+			$dtt_sold = $DTT->sum(array(), 'DTT_sold');
+			if ( $dtt_sold > 0 )
+				update_option( 'uxip_ee_dtt_sold', $dtt_sold );
+
+			//allticketcount
+			$all_tkt_count = $TKT->count();
+			if ( $all_tkt_count > 0 )
+				update_option( 'uxip_ee_all_tkt_count', $all_tkt_count );
+
+			//freetktcount
+			$_where = array( 'TKT_price' => 0 );
+			$free_tkt_count = $TKT->count(array($_where));
+			if ( $free_tkt_count > 0 )
+				update_option( 'uxip_ee_free_tkt_count', $free_tkt_count );
+
+			//paidtktcount
+			$_where = array( 'TKT_price' => array('>', 0) );
+			$paid_tkt_count = $TKT->count( array( $_where ) );
+			if ( $paid_tkt_count > 0 )
+				update_option( 'uxip_ee_paid_tkt_count', $paid_tkt_count );
+
+			//tktsold
+			$tkt_sold = $TKT->sum( array(), 'TKT_sold' );
+			if( $tkt_sold > 0 )
+				update_option( 'uxip_ee_tkt_sold', $tkt_sold );
+
+
+			set_transient( 'ee4_event_info_check', 1, WEEK_IN_SECONDS * 2 );
+		} 
 	}
 
 }

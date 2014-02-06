@@ -1,18 +1,15 @@
 <?php if ( ! defined('ABSPATH')) exit('No direct script access allowed');
 /*
   Plugin Name: 	Event Espresso
-  Plugin URI: 		http://eventespresso.com/
-  Description: 		Out-of-the-box Events Registration integrated with PayPal IPN for your WordPress blog/website. <a href="admin.php?page=espresso_support" >Support</a>
-
-  Reporting features provide a list of events, list of attendees, and excel export.
-
-  Version: 		4.1.277.alpha
-  Author: 			Seth Shoultes
-  Author URI: 		http://www.eventespresso.com
+  Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
+  Description: 	Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
+  Version: 		4.1.294.alpha
+  Author: 			Event Espresso
+  Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		GPLv2
   TextDomain: 	event_espresso
 
-  Copyright (c) 2008-2011 Event Espresso  All Rights Reserved.
+  Copyright (c) 2008-2014 Event Espresso  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -31,7 +28,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.1.277.alpha';
+		return '4.1.294.alpha';
 	}
 } else {
 	add_action( 'admin_notices', 'espresso_duplicate_plugin_error' );
@@ -58,6 +55,7 @@ if( ! defined( 'SP' ) ){
 	define('SP',' ');
 }
 
+define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 // define the plugin directory and URL
 define( 'EE_PLUGINPATH', DS . plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) . DS );
 define( 'EE_PLUGIN_DIR_PATH', plugin_dir_path( EVENT_ESPRESSO_MAIN_FILE ));
@@ -155,14 +153,6 @@ function espresso_plugin_deactivation() {
 	EEH_Activation::plugin_deactivation();
 }
 register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
-
-
-
-function espresso_plugin_uninstall() {
-	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
-	EEH_Activation::plugin_uninstall();
-}
-register_uninstall_hook(    EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_uninstall' );
 
 
 

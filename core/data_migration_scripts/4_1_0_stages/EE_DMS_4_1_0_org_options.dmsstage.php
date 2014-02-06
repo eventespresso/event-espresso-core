@@ -107,7 +107,10 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		$items_actually_migrated = 0;
 		$old_org_options = get_option('events_organization_settings');
 		foreach($this->_org_options_we_know_how_to_migrate as $option_name){
-			$this->_handle_org_option($option_name, $old_org_options[$option_name]);
+			//only bother migrating if there's a setting to migrate. Otherwise we'll just use the default
+			if(isset($old_org_options[$option_name])){
+				$this->_handle_org_option($option_name, $old_org_options[$option_name]);
+			}
 			if($option_name=='surcharge'){
 				$this->_insert_new_global_surcharge_price($old_org_options);
 			}
@@ -115,6 +118,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		}
 
 		EE_Config::instance()->update_espresso_config(false,false);
+		EE_Network_Config::instance()->update_config(FALSE,FALSE);
 		if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
 			$this->set_completed();
 		}
@@ -132,6 +136,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 
 	private function _handle_org_option($option_name,$value){
 		$c = EE_Config::instance();
+		$cn = EE_Network_Config::instance();
 		switch($option_name){
 		  case 'organization':  
 			  $c->organization->name = $value;break;
@@ -225,7 +230,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		  case 'affiliate_id': 
 			  $c->admin->affiliate_id = $value;break;
 		  case 'site_license_key': 
-			  $c->core->site_license_key = $value;break;
+			  $cn->core->site_license_key = $value;break;
 		  default:
 			  do_action( 'AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value );
 		}

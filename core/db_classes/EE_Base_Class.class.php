@@ -143,7 +143,7 @@ abstract class EE_Base_Class{
 			
 			//verify we have all the attributes required in teh model
 			foreach($model->field_settings() as $fieldName=>$field_obj){
-				if( ! $field_obj->is_db_only_field() && ! property_exists($this,$this->_get_private_attribute_name($fieldName))){
+				if( ! $field_obj->is_db_only_field() && ! EEH_Class_Tools::has_property( $this, $this->_get_private_attribute_name( $fieldName ))){
 					throw new EE_Error( 
 						sprintf(
 							__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add $%s to %s','event_espresso'),
@@ -159,7 +159,7 @@ abstract class EE_Base_Class{
 			//are meant to be related to everything
 			if(get_class($this) !== 'EE_Extra_Meta'){
 				foreach($model->relation_settings() as $relationName=>$relationSettings){
-					if( ! property_exists( $this, $this->_get_private_attribute_name( $relationName ))) {
+					if( ! EEH_Class_Tools::has_property( $this, $this->_get_private_attribute_name( $relationName ))) {
 						throw new EE_Error(
 							sprintf(
 								__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add protected $%s to %s','event_espresso'),
@@ -350,7 +350,7 @@ abstract class EE_Base_Class{
 	 */
 	protected function _set_cached_property( $propertyname, $value, $cache_type = NULL ) {
 		//first make sure this property exists
-		if ( !property_exists( $this, $propertyname ) )
+		if ( !EEH_Class_Tools::has_property( $this, $propertyname ) )
 			throw new EE_Error( sprintf( __('Trying to cache a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
 
 		$cache_type = empty( $cache_type ) ? 'standard' : $cache_type;
@@ -372,7 +372,7 @@ abstract class EE_Base_Class{
 	protected function _get_cached_property( $propertyname, $pretty = FALSE, $extra_cache_ref = NULL ) {
 	
 		//first make sure this property exists
-		if ( !property_exists( $this, $propertyname )) {
+		if ( !EEH_Class_Tools::has_property( $this, $propertyname )) {
 			throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
 		}
 
@@ -1365,7 +1365,7 @@ abstract class EE_Base_Class{
 	 */
 	public function is_set( $field_name ) {
 		$privateAttributeName = $this->_get_private_attribute_name( $field_name );
-		return property_exists( $this, $privateAttributeName ) ? TRUE : FALSE;
+		return EEH_Class_Tools::has_property( $this, $privateAttributeName ) ? TRUE : FALSE;
 	}
 
 
@@ -1379,7 +1379,7 @@ abstract class EE_Base_Class{
 
 		foreach ( (array) $properties as $propertyname ) {
 			//first make sure this property exists
-			if ( !property_exists( $this, $propertyname ) )
+			if ( !EEH_Class_Tools::has_property( $this, $propertyname ) )
 				throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
 		}
 

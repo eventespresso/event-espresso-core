@@ -1044,7 +1044,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					$registrations = $this->_transaction->registrations( array(), TRUE );
 					if ( ! empty( $registrations )) {
 						EE_Registry::instance()->load_model( 'Attendee' );
-						EE_Registry::instance()->load_helper( 'Class_Tools' );
 						// grab the saved registrations from the transaction				
 						foreach ( $registrations  as $registration ) {	
 							// verify object
@@ -1190,7 +1189,6 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 											unset( $attendee_data['ATT_email'] );
 											// now loop thru what' sleft and add to attendee CPT
 											foreach ( $attendee_data as $property_name => $property_value ) {
-//												if ( property_exists( $existing_attendee,  '_' . $property_name )) {
 												if ( EEH_Class_Tools::has_property( 'EE_Attendee', '_' . $property_name )) {
 													$existing_attendee->set( $property_name, $property_value );
 												}												

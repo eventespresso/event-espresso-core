@@ -5,20 +5,18 @@
 	*/
 	$.fn.extend({
 
-
 		/**
 		*	center elements on screen
 		*/
-		center : function( position ) {
-			position = position !== undefined && position !== '' ? position : 'fixed';
+		eeCenter : function( position ) {
+			position = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
 			var element_top = (( $( window ).height() / 2 ) - this.outerHeight() ) / 2;
 			element_top = position == 'fixed' ? element_top : element_top + $( window ).scrollTop();
 			element_top = Math.max( 0, element_top );
 			var element_left = ( $( window ).width() - this.outerWidth() ) / 2;
 			element_left = position == 'fixed' ? element_left : element_left + $( window ).scrollLeft();
 			element_left = Math.max( 0, element_left );
-			this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
-			this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' });
+			this.css({ 'position' : position, 'top' : element_top + 'px', 'left' : element_left + 'px' , 'margin' : 0 });
 			return this;
 		},
 
@@ -29,7 +27,7 @@
 		 * @param {array} opacity allows the setting of the opacity value for the overlay via client. opacity[0] = webkit opacity, opacity[1] = value for alpha(opacity=).
 		 * @return {jQuery}
 		 */
-		addOverlay : function( opacity ) {
+		eeAddOverlay : function( opacity ) {
 			opacity = typeof(opacity) === 'undefined' ? [0.5, 50] : opacity;
 			var overlay = '<div id="ee-overlay"></div>';
 			$(overlay).appendTo('body').css({
@@ -52,7 +50,7 @@
 		 * Shortcut for removing a window overlay quickly if none exists in the dom (will destroy)
 		 * @return {jQuery}
 		 */
-		removeOverlay : function() {
+		eeRemoveOverlay : function() {
 			$('#ee-overlay').remove();
 			return this;
 		},
@@ -62,7 +60,7 @@
 		 * adds a scrollTo action for jQuery
 		 * @return {jQuery}
 		 */
-		scrollTo : function() {
+		eeScrollTo : function() {
 			var selector = this;
 			$("html,body").animate({
 				scrollTop: selector.offset().top - 80
@@ -74,7 +72,7 @@
 		/**
 		*	return the correct value for a form input regardless of it's type
 		*/
-		inputValue : function () {
+		eeInputValue : function () {
 			var inputType = this.prop('type');
 			if ( inputType ==  'checkbox' || inputType == 'radio' ) {
 				return this.prop('checked');
@@ -86,21 +84,20 @@
 
 		/**
 		*	return an object of URL params
-		*/	
-		getParams : function () { 
-			var urlParams = {}; 
+		*/
+		eeGetParams : function () {
+			var urlParams = {};
 			var url = this.attr('href');
-			url = url != undefined && url != '' ? url : location.href;
+			url = typeof url !== 'undefined' && url !== '' ? url : location.href;
 			url = url.substring( url.indexOf( '?' ) + 1 ).split( '#' );
-			urlParams['hash'] = url[1] != undefined && url[1] != '' ? url[1] : '';
+			urlParams['hash'] = typeof url[1] !== 'undefined' && url[1] !== '' ? url[1] : '';
 			var qs = url[0].split( '&' );
 			for( var i = 0; i < qs.length; i++ ) {
 				qs[ i ] = qs[ i ].split( '=' );
 				urlParams[ qs[ i ][0] ] = decodeURIComponent( qs[ i ][1] );
 			}
 			return urlParams;
-		}		
-
+		}
 
 
 	});
@@ -116,7 +113,7 @@ jQuery(document).ready(function($) {
 	
 	
 	function display_espresso_notices() {
-		$('#espresso-notices').center();
+		$('#espresso-notices').eeCenter();
 		$('.espresso-notices').slideDown();
 		$('.espresso-notices.fade-away').delay(10000).slideUp();
 	}
@@ -125,10 +122,10 @@ jQuery(document).ready(function($) {
 
 
 	function display_espresso_ajax_notices( message, type ) {
-		type = type !== undefined && type !== '' ? type : 'error';
+		type = typeof type !== 'undefined' && type !== '' ? type : 'error';
 		var notice_id = '#espresso-ajax-notices-' + type;
 		$( notice_id + ' .espresso-notices-msg' ).text( message );
-		$( '#espresso-ajax-notices' ).center();
+		$( '#espresso-ajax-notices' ).eeCenter();
 		$( notice_id ).slideDown('fast');
 		$('.espresso-ajax-notices.fade-away').delay(10000).slideUp('fast');
 	}

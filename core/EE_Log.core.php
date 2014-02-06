@@ -27,6 +27,7 @@ class espresso_log {
 		}
 		if (!is_dir(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && is_writable(EVENT_ESPRESSO_UPLOAD_DIR)) {
 			mkdir(EVENT_ESPRESSO_UPLOAD_DIR.'logs');
+			EE_Error::add_htaccess();
 		}
 		
 		if (is_writable(EVENT_ESPRESSO_UPLOAD_DIR.'logs') && !file_exists($this->file)) {

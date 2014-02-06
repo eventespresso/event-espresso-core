@@ -126,28 +126,33 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 		
 		$template_args = array();
+		// is the event expired ?
+		if ( ! $template_args['event_is_expired'] = self::$_event->is_expired() ) {
+			
+			$template_args['EVT_ID'] = self::$_event->ID();
+			$template_args['event'] = self::$_event;
+			
+			// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
+			$template_args['max_atndz'] = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
+			
+			// get all tickets for this event ordered by the datetime
+			$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
+				array( 'Datetime.EVT_ID' => self::$_event->ID() ),
+				'order_by' => array( 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' ) 
+			));
 		
-		$template_args['EVT_ID'] = self::$_event->ID();
-		$template_args['event'] = self::$_event;
-		$template_args['event_is_expired'] = self::$_event->is_expired();
-		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
-		$template_args['max_atndz'] = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
-		
-		// get all tickets for this event ordered by the datetime
-		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
-			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-			'order_by' => array( 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' ) 
-		));
-	
-		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
-		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
+			$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
+			$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 
-		$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID() );
-		$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );
-		$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() );
-		$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
-		
-		return $ticket_selector;
+			$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID() );
+			$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );
+			$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() );
+			$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
+			
+			return $ticket_selector;
+		} else {
+			return __( 'All tickets sales have ended because the event is expired.', 'event_espresso' );
+		}
 
 	}
 
@@ -183,8 +188,8 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@return		string
 	*/	
 	public static function display_ticket_selector_submit( $ID ) {
-		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) ) {
-			return '<input id="ticket-selector-submit-'. $ID .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" /><div class="clear"><br/></div>'; // ee-button ee-register-button ee-green big
+		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) && ! is_admin() ) {
+			return '<input id="ticket-selector-submit-'. $ID .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" /><div class="clear"><br/></div>'; 
 		}
 	}
 

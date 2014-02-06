@@ -8,11 +8,6 @@ class EEM_System_Status{
 	// private instance of the EEM_System_Status object
 	private static $_instance = NULL;
 
-	/**
-	 *
-	 * @var EE_Registry
-	 */
-	private $EE;
 
 
 	/**
@@ -131,7 +126,13 @@ class EEM_System_Status{
 	 * @return EE_Data_Migration_Script_Base[]
 	 */
 	function get_ee_migration_history(){
-		return get_option(EE_Data_Migration_Manager::data_migrations_option_name);//EE_Data_Migration_Manager::instance()->get_data_migrations_ran();
+		$options = EE_Data_Migration_Manager::instance()->get_all_migration_script_options();
+		$presentable_migration_scripts = array();
+		foreach($options as $option_array){
+			$presentable_migration_scripts[str_replace(EE_Data_Migration_Manager::data_migration_script_option_prefix,"",$option_array['option_name'])] = maybe_unserialize($option_array['option_value']);
+		}
+		return $presentable_migration_scripts;
+//		return get_option(EE_Data_Migration_Manager::data_migrations_option_name);//EE_Data_Migration_Manager::instance()->get_data_migrations_ran();
 	}
 	
 	/**

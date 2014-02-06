@@ -12,80 +12,157 @@
  * @var $update_migration_script_page_link string
  */
 
-?>
-<h1><?php _e("Database Migration Manager", "event_espresso");?></h1>
-<div class='main'>
-	<div id='migration-prep'>
-		<?php if ($show_most_recent_migration){
-			if($most_recent_migration &&
-					$most_recent_migration instanceof EE_Data_Migration_Script_Base){
-				
-				if($most_recent_migration->can_continue()){
+if ( $show_backup_db_text ) { ?>
+<h1><span class="dashicons dashicons-migrate"></span><?php _e("Database Migration Manager", "event_espresso");?></h1>
+<?php } ?>
+<div class="padding">
+	<div id="migration-prep">
+ 		
+ 		<?php if ( $script_names ) { ?>
+ 			<h3 class="espresso-header">
+ 				<span class="dashicons dashicons-flag ee-icon-size-22"></span>
+ 				<?php _e("Event Espresso has detected existing Event Data that can be migrated (updated) to work with New EE4.", "event_espresso");?>
+ 			</h3>
+ 			<p>
+ 			<?php _e("Since you have already been using Event Espresso and have previous Event and Registration Data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with EE4.", "event_espresso");?>
+ 			</p>
+ 		<?php } elseif ( $show_most_recent_migration ) { ?>
+ 			 <h3 class="espresso-header">
+ 			 	<span class="dashicons dashicons-awards ee-icon-size-22"></span>
+ 				 <?php _e('Congratulations! Your database is "up-to-date" and you are ready to begin using EE4', "event_espresso");?>
+ 			 </h3>
+ 			 <p>
+ 			 	<?php _e("Time to find out about all the great new features EE4 has to offer.", "event_espresso");?> &nbsp; 
+ 			 	<b><a id="get-started-after-migrate" class="button-primary" href="<?php echo add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' )); ?>">
+ 			 		<?php _e("Let's Get Started", "event_espresso");?>&nbsp;<span class="dashicons dashicons-arrow-right ee-icon-size-22" style="margin:0;"></span>
+ 			 	</a></b>
+ 			 </p>
+ 		<?php } ?>
+		
+		
+		<?php if ($show_backup_db_text){ ?>
+		<div id="migration-options-dv">
+			<h2>
+				<span class="dashicons dashicons-admin-tools"></span>
+				<?php _e("Migration Options", "event_espresso");?>
+				<span class="tiny-text lt-grey-text"> &nbsp; <?php _e(' to migrate or not to migrate?', "event_espresso");?></span>
+			</h2>
+			<div class="ee-table-wrap">
+				<table>
+					<tbody>
+						<tr>
+							<td><h3><?php _e('1', 'event_espresso');?></h3></td>
+							<td>
+								<?php 
+								echo sprintf( 
+									__('%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing EE3 data to EE4.', "event_espresso"), 
+									'<strong>', 
+									'</strong>',
+									'<a id="migration-risks" class="" title="' . __('click for more details', "event_espresso") . '">',
+									'</a>'
+								);
+								?>
+								<a id="display-migration-details" class="display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="migration-details" ><?php _e('click for more details', "event_espresso");?>&nbsp;+</a>
+								<a  id="hide-migration-details" class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"  rel="migration-details" style="display:none;" ><?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?></a>
+							</td>
+							<td>
+								<a id="db-backed-up" class="toggle-migration-monitor button-primary"><?php _e("Migrate My EE3 Data to EE4", "event_espresso");?></a>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3" style="padding: 0">
+								<div id="migration-details-dv" style="display: none; padding: 1em;">
+									
+									<span class="reminder-spn"><?php printf(__("%s Important: %s Before migrating, please back up your database and files.", "event_espresso"),"<b>","</b>");?></span>
+									<p>
+									<?php 
+										printf(
+											__('%1$sNot sure how to backup your existing data?%2$s Here is %3$sWordPress\'s explanation%7$s, and here\'s %6$sour explanation%7$s.%8$sYou can also search the WordPress plugin database for %4$s database backup plugins %7$s,%8$sor have one of our dedicated support technicians help you by purchasing a %5$sPriority Support Token%7$s.', "event_espresso"),
+											'<b>',
+											'</b>',
+											"<a href='http://codex.wordpress.org/Backing_Up_Your_Database'>",
+											"<a href='".admin_url('plugin-install.php?tab=search&type=term&s=database+backup&plugin-search-input=Search+Plugins')."'>",
+											"<a href='http://eventespresso.com/product/priority-support-tokens/'>",
+											'<a href="http://eventespresso.com/wiki/how-to-back-up-your-site/">',
+											"</a>",
+											'<br/>'
+										);
+									?>
+									</p>
+								</div>										
+							</td>
+						</tr>
+						<tr>
+							<td><h3><?php _e('2', 'event_espresso');?></h3></td>
+							<td>
+								<?php _e("I do NOT want to migrate my EE3 data to EE4 at this time and just want to use EE4 without migrating data", "event_espresso");?>
+								<a id="display-no-migration-details" class="display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="no-migration-details"><?php _e('click for more details', "event_espresso");?>&nbsp;+</a>
+								<a  id="hide-no-migration-details" class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"  rel="no-migration-details" style="display:none;" ><?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?></a>
+							</td>
+							<td>
+								<a id="do-not-migrate" class="do-not-migrate button-primary" href="<?php echo $reset_db_page_link;?>"><?php _e("Just Start EE4 with No Data", "event_espresso");?></a>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="3" style="padding: 0">
+								<div id="no-migration-details-dv" style="display: none; padding: 1em;">
+									<p>
+									<?php _e("If your existing Event and Registration Data is no longer relevant nor required, you can just start up EE4 without performing a data migration. Please note, that if you do not migrate your old data, but need to view it at some point in the future, you can simply deactivate EE4, then reactivate EE3 and your old data will still be there.", "event_espresso");?>	
+									</p>
+								</div>										
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<p class="ee-attention">
+				<strong><span class="reminder-spn"><?php _e("Important note to those using Event Espresso 3 addons: ", "event_espresso");?></span></strong><br/><?php _e("Unless an addon's description on our website explicitly states that it is compatible with EE4, you should consider it incompatible and know that it WILL NOT WORK correctly with this new version of Event Espresso 4 (EE4). As well, any data for incompatible addons will NOT BE MIGRATED until an updated EE4 compatible version of the addon is available. If you want, or need to keep using your EE3 addons, you should simply continue using EE3 until EE4 compatible versions of your addons become available. To continue using EE3 for now, just deactivate EE4 and reactivate EE3.", "event_espresso");	?>
+			</p>
+			
+		</div>
+	<?php } ?>
+
+	<?php 
+		if ( $show_most_recent_migration ) {
+			if( $most_recent_migration && $most_recent_migration instanceof EE_Data_Migration_Script_Base ) {
+				if( $most_recent_migration->can_continue() ) {
 					//tell the user they shoudl continue their migration because it appears to be unfinished... well, assuming there were no errors ?>
-					<p class="ee-attention"><?php printf(__("Your previous Data Migration Task (%s) is incomplete, and should be resumed", "event_espresso"),$most_recent_migration->pretty_name());?></p>
-				<?php }elseif($most_recent_migration->is_borked()){
+					<h3 class="espresso-header">
+						<span class="dashicons dashicons-star-half ee-icon-size-22"></span>
+						<?php printf(__("It appears that your previous Data Migration Task (%s) is incomplete, and should be resumed", "event_espresso"),$most_recent_migration->pretty_name());?>
+					</h3>
+			<?php } elseif ( $most_recent_migration->is_borked() ) {
 					//tell the user the migration failed and they should notify EE?>
-					<h2><?php echo $most_recent_migration->get_feedback_message()?></h2>
-				<?php } ?>
-				<?php 
+					<h3 class="espresso-header">
+						<span class="dashicons dashicons-no ee-icon-size-22"></span>
+						<?php echo $most_recent_migration->get_feedback_message()?>
+					</h3>
+			<?php } 
+				
 				//display errors or not of the most recent migration ran
-				if ($most_recent_migration->get_errors()){?>
+				if ( $most_recent_migration->get_errors() ){ ?>
 					<div class="ee-attention">
-					<strong><?php printf(__("The following errors occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></strong>
-					<ul>
-					<?php foreach($most_recent_migration->get_errors() as $error){ ?>
-						<li><?php echo $error ?></li>
-					<?php }?>
-					</ul>
+						<strong><?php printf(__("Warnings occurred during your last migration (%s):",'event_espresso'),$most_recent_migration->pretty_name()) ?></strong>
+						<a id="show-hide-migration-warnings" class="display-the-hidden"><?php _e("Show Warnings", 'event_espresso');?></a>
+						<ul class="migration-warnings" style="display:none">
+						<?php foreach($most_recent_migration->get_errors() as $error){ ?>
+							<li><?php echo $error ?></li>
+						<?php }?>
+						</ul>
 					</div>
-				<?php }else {
+				<?php } else {
 					//there were no errors during the last migration, just say so?>
 					<h2><?php printf(__("The last data migration task (%s) ran successfully without errors.", "event_espresso"),$most_recent_migration->pretty_name())?></h2>
-				<?php }?>
-			<?php }else{
+				<?php }
+				} else {
 			}
-?>
-		<?php }?>
-		<?php if ( $script_names ) {?>
-		<h3 class="espresso-header"><span class="dashicons dashicons-migrate ee-icon-size-18" style="top:-1px; left:.25em;"></span><?php _e("Your Event Espresso data needs to be migrated (updated).", "event_espresso");?></h3>
-		<p>
-			<?php 
-			echo  _n(
-				"In order to import all of your existing Event Espresso data, the following upgrade task needs to be performed:", 
-				"In order to import all of your existing Event Espresso data, the following %s upgrade tasks need to be performed:",
-				count($script_names), 
-				"event_espresso"
-			);?>	
-		</p>
-		
-		<ul style="list-style: inside;">
-			<?php foreach($script_names as $script_name){?>
-			<li style="margin: 0 0 1em 1em; line-height: 1.1em;"><?php echo $script_name?></li>
-			<?php }?>
-		</ul>
-		<?php if (count($script_names) > 1) {?>
-			<p><?php _e("Please note: after each task is completed you will need to continue the data migration, or report an error to Event Espresso.", "event_espresso");?></p>
-		<?php }?>
-		
-		<?php }else{?>
-			<h2><?php _e("Your Database is up-to-date", "event_espresso");?></h2>
-		<?php }?>
-		<?php if ($show_backup_db_text){ ?>
-			<div id='backup_db_text'>
-				<p class="ee-attention"><?php printf(__("Because any data migration has the potential to corrupt your information, you are %s REQUIRED %s to perform a database backup before running any Event Espresso data migration scripts.", "event_espresso"),"<b>","</b>");?></p>
-				<p><b><?php _e("Not sure how?", "event_espresso");?></b> 
-					<?php printf(__('%1$s here is an explanation of how to do it %2$s. Or you can also %3$s search for a database backup plugin %2$s', "event_espresso"),
-								"<a href='http://codex.wordpress.org/Backing_Up_Your_Database'>","</a>","<a href='".admin_url('plugin-install.php?tab=search&type=term&s=database+backup&plugin-search-input=Search+Plugins')."'>");?></p>
-				<p class="ee-attention"><b><?php _e("Important note to users with Event Espresso addons: ", "event_espresso");?></b><br/><?php _e("Your Event Espresso 3 (EE3) addons WILL NOT WORK with this new version of Event Espresso 4 (EE4), and their data will NOT BE MIGRATED unless the addon's description explicitly states that it is EE4 compatible. If you want, or need to keep using your EE3 addons, you SHOULD NOT USE EE4, and instead continue using EE3 until EE4 compatible versions of your addons becaome available. To continue using EE3 for now, simply deactivate EE4 and reactivate EE3.", "event_espresso");	?></p>
-			</div>
-		<div id='migration-confirm-backed-up'>
-			<label for='db-backed-up' id='db-backed-up-label'>
-				<input type='checkbox' id='db-backed-up' class="toggle-migration-monitor"> <?php _e("I have backed up my database, and am ready to migrate my EE3 data to EE4", "event_espresso");?>				
-			</label>
-		</div>
-		<?php } ?>
+		} 
+ 		// end of: if ( $show_most_recent_migration ) 
+ 	?>
 		
 	</div>
+	<!--end of #migration-prep-->
+	
 	<?php if ($show_migration_progress){?>
 	<div id='migration-monitor' <?php echo $show_backup_db_text ? "style='display:none'" : ''?>>
 		<?php if( ! $show_continue_current_migration_script){?>
@@ -98,43 +175,102 @@
 		</p>
 		<?php }?>
 		<div id='progress-area'>
-			<h3><?php echo $show_continue_current_migration_script ? array_shift($script_names) : array_shift($script_names);?></h3>
-			<div class="progress-responsive">
+			<h3 class="espresso-header">
+				<?php 
+				echo  _n(
+					"In order to import all of your existing Event Espresso data, the following upgrade task needs to be performed:", 
+					"In order to import all of your existing Event Espresso data, the following %s upgrade tasks need to be performed:",
+					count($script_names), 
+					"event_espresso"
+				);?>	
+			</h3>		
+			<ul style="list-style: inside;">
+				<?php foreach($script_names as $script_name){?>
+				<li style="margin: 0 0 1em 1em; line-height: 1.1em;"><?php echo $script_name?></li>
+				<?php }?>
+			</ul>
+			<br/>
+			<?php if (count($script_names) > 1) {?>
+			<p><?php _e("Please note: after each task is completed you will need to continue the data migration, or report an error to Event Espresso.", "event_espresso");?></p>
+			<?php }?>
+			
+			<div class="ee-attention">
+				<p>
+					<span class="reminder-spn">
+						<strong><?php _e("Please Note:", "event_espresso");?></strong>
+					</span>
+					<br/>
+					<?php _e("Depending on the number of events and the complexity of the information in your database, this could take a few minutes.", "event_espresso");?>
+				</p>
+				<p>
+					<?php printf(__("%sPlease be patient and do NOT navigate away from this page once the migration has begun%s. If any issues arise due to existing malformed data, an itemized report will be made available to you after the migration has completed.", "event_espresso"),'<strong>', '</strong>' );?>
+				</p>
+				<p>
+					<?php _e("Click the button below to begin the migration process.", "event_espresso") ?>
+				</p>
+			</div>
+			<div id="progress-responsive">
 				<figure>
-					<div class="progress-responsive__bar"></div>
-					<div class="progress-responsive__percent"></div>
+					<div id="progress-responsive__bar" style="background:#2EA2CC;"></div>
+					<div id="progress-responsive__percent"></div>
 				</figure>
-			</div><!-- .progress-responsive -->
+			</div>
+			<!-- #progress-responsive -->
+			
 			<button id='start-migration' class='button-primary'>
-			<?php echo $show_continue_current_migration_script ? __("Continue Migration", "event_espresso") : __("Begin Migration", "event_espresso");?>				
+				<?php echo $show_continue_current_migration_script ? __("Continue Migration", "event_espresso") : __("Begin Migration", "event_espresso");?>				
 			</button>
 			<br class="clear"/>
+			
 		</div>
-		
+			
 		<h2 id='main-message'>
 			<!-- content dynamically added by js -->
 		</h2>
 		<div id='migration-messages' style='height:400px;overflow-y:scroll'>
 			<!-- content dynamically added by js -->
 		</div>
-	</div>
-	<?php }
-	if ($show_maintenance_switch){?>
-	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
-	<p>
-		<input type="radio" id="maintenance_mode_level_off" name="maintenance_mode_level" value="0" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_0_not_in_maintenance ? 'checked="checked"' : ''?>>
-		<label for="maintenance_mode_level_off"><?php  _e('Not In Maintenance (normal)', 'event_espresso');?></label>
-	</p>
-	<p><input type="radio" id="maintenance_mode_level_on" name="maintenance_mode_level" value="1" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_1_frontend_only_maintenance ? 'checked="checked"' : ''?>>
-		<label for="maintenance_mode_level_on"><?php  _e('Frontend Maintenance (disables Event Espresso frontend functionality, except to administrators)', 'event_espresso')?></label>
-	</p>
-		<p class='description'><?php _e("Frontend Maintenance might be handy if you want to debug something on the frontend of your website before allowing non-administrators to see.", "event_espresso");?></p>
-		<input type='submit' class="button-primary" value='<?php _e("Update Maintenance Mode Level", "event_espresso");?>'>
-	</form>
-	<?php } ?>
-	
-	<div id="reset_db_div">
-		<h1><a href='<?php echo $reset_db_page_link?>'>Use EE4 without migrating data</a></h1>
+		
 	</div>
 	
+<?php }
+	   if ( $show_maintenance_switch ) {
+ ?>
+	<h2><span class="dashicons dashicons-admin-tools"></span><?php  _e('Set Event Espresso Maintenance Mode', 'event_espresso');?></h2>
+   	<form method='post' action='<?php echo $update_migration_script_page_link?>'>
+		<div class="ee-table-wrap">
+			<table>
+				<tr>
+					<td width="40px" align="center">
+						<input type="radio" id="maintenance_mode_level_off" name="maintenance_mode_level" value="0" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_0_not_in_maintenance ? 'checked="checked"' : ''?>>
+					</td>
+					<th align="left">
+						<label for="maintenance_mode_level_off"><?php  _e('Maintenance Mode OFF', 'event_espresso');?></label>
+				   		<p class='description' style="font-weight: normal;">
+					   		<?php _e("This is the normal operating mode for Event Espresso and allows all functionality to be viewed by all site visitors.", "event_espresso");?>
+				   		</p>
+					</th>
+				</tr>
+				<tr>
+					<td width="40px" align="center">
+						<input type="radio" id="maintenance_mode_level_on" name="maintenance_mode_level" value="1" <?php echo EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_1_frontend_only_maintenance ? 'checked="checked"' : ''?>>
+					</td>
+					<th align="left">
+						<label for="maintenance_mode_level_on"> 
+							<?php  _e('Maintenance Mode ON', 'event_espresso')?>
+						</label>
+				   		<p class='description' style="font-weight: normal;">
+					   		<?php _e("This disables Event Espresso frontend functionality for all site visitors that are not administrators, and allows you to configure and/or test things on the frontend of your website before others can see.", "event_espresso");?>
+				   		</p>
+					</th>
+				</tr>
+			</table>
+		</div>
+		<p>
+   			<input type='submit' class="button-primary" value='<?php _e("Update Maintenance Mode", "event_espresso");?>'>
+   		</p>
+   	</form>
+	   	<?php
+	   } ?>
+
 </div>
