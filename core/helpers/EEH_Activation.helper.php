@@ -824,6 +824,9 @@ class EEH_Activation {
 			wp_mkdir_p($folder);
 			@ chmod($folder, 0755);
 		}
+
+		//add .htaccess to logs
+		EE_Error::add_htaccess();
 	}
 
 
