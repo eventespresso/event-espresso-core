@@ -639,6 +639,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		//if DTT is included we do multiple datetimes.
 		if ( $DTT_ID ) {
 			$query_params[0]['Ticket.Datetime.DTT_ID'] = $DTT_ID;
+			$query_params[0]['OR']= array( 'Ticket.TKT_deleted' => 0, 'Ticket.TKT_deleted*' => 1 );
 		}
 
 		$status_ids_array = apply_filters( 'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
