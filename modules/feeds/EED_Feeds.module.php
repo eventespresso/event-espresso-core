@@ -33,6 +33,7 @@ class EED_Feeds  extends EED_Module {
 	public static function set_hooks() {
 		add_action( 'parse_request', array( 'EED_Feeds', 'parse_request' ), 10 );
 		add_filter( 'default_feed', array( 'EED_Feeds', 'default_feed' ), 10, 1  );
+		add_filter( 'comment_feed_where', array( 'EED_Feeds', 'comment_feed_where' ), 10, 2 );
 	}
 
 	/**
@@ -54,7 +55,6 @@ class EED_Feeds  extends EED_Module {
 	 */
 	public function run( $WP ) {
 	}
-
 
 
 
@@ -102,6 +102,26 @@ class EED_Feeds  extends EED_Module {
 					break;
 			}
 		}
+	}
+
+
+
+
+	/**
+	 * 	comment_feed_where - EVEN THOUGH... our espresso_attendees custom post type is set to NOT PUBLIC
+	 * 	WordPress thought it would be a good idea to display the comments for them in the RSS feeds... we think NOT
+	 * 	so this little snippet of SQL taps into the comment feed query and removes comments for the espresso_attendees post_type
+	 *
+	 *  @access 	public
+	 *  @param 	string 	$SQL	the WHERE clause for the comment feed query
+	 *  @return 	void
+	 */
+	public static function comment_feed_where( $SQL ) {
+		global $wp_query, $wpdb;
+		if ( $wp_query->is_comment_feed ) {	
+			$SQL .= " AND $wpdb->posts.post_type != 'espresso_attendees'";	
+		}
+		return $SQL;
 	}
 
 

@@ -66,7 +66,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table {
 		foreach($datetimes as $datetime){
 			$query_args['DTT_ID'] = $datetime->ID();
 			$checkin_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, REG_ADMIN_URL );
-			$datetime_strings[] = '<a href="' . $checkin_url . '">' . $datetime->start_date_and_time() . '</a>';
+			$datetime_strings[] = '<a href="' . $checkin_url . '" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $datetime->start_date_and_time() . '</a>';
 		}
 		return implode("<br />",$datetime_strings);
     }
