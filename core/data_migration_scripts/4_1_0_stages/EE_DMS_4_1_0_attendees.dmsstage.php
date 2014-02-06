@@ -392,7 +392,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 			//maps 3.1 payment stati onto 4.1 transaction stati
 			$txn_status_mapping = array(
 				'Completed'=>'TCM',
-				'Pending'=>'TPN',
+				'Pending'=>'TIN',
 				'Payment Declined'=>'TIN',
 				'Incomplete'=>'TIN',
 				'Not Completed'=>'TIN',
