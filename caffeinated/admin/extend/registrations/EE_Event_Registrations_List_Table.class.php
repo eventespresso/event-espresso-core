@@ -49,12 +49,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				'_REG_count' => '#',
 				'ATT_name' =>  __('Registrant', 'event_espresso'),
 				'ATT_email' =>  __('Email Address', 'event_espresso'),
-				'_REG_date' => __('TXN Date', 'event_espresso'),
+				'Event' => __('Event', 'event_espresso'),
 				'_REG_code' => __( 'Reg Code', 'event_espresso' ),
-				'_REG_final_price' => __('TKT Price', 'event_espresso'),
+				'PRC_name' => __('TKT Option', 'event_espresso'),
+				'_REG_final_price' => __('Price', 'event_espresso'),
 				'TXN_paid' => __('Paid', 'event_espresso'),
-				'TXN_total' => __('Total', 'event_espresso'),
-				'PRC_name' => __('TKT Option', 'event_espresso')
+				'TXN_total' => __('Total', 'event_espresso')
 			);
 
 		$this->_columns = array_merge( $columns, $this->_columns);
@@ -72,7 +72,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 			 //true means its already sorted
 			'ATT_name' => array( 'ATT_name' => TRUE ),
 			'_REG_code' => array( '_REG_code' => TRUE ),
-			'_REG_date' => array( '_REG_date' => FALSE )
+			'Event' => array( 'Event.EVT.Name' => FALSE )
 		);
 
 		$this->_hidden_columns = array();
@@ -240,10 +240,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 
-	function column__REG_date(EE_Registration $item) {
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->get_first_related('Transaction')->ID() ), TXN_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
-		return $REG_date;	
+	function column_Event(EE_Registration $item) {
+		$event = $this->_evt instanceof EE_Event ? $this->_evt : $item->event();
+		$chkin_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$event->ID() ), REG_ADMIN_URL );	
+		$event_label = '<a href="'.$chkin_lnk_url.'" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>';	
+		return $event_label;	
 	}
 
 
@@ -300,9 +301,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	/**
 	 * 		column_TXN_total
 	*/
-	function column_TXN_total(EE_Registration $item){	
+	function column_TXN_total(EE_Registration $item){
+		$txn = $item->transaction();
+		$view_txn_url = add_query_arg( array('action' => 'view_transaction', 'TXN_ID' => $txn->ID() ), TXN_ADMIN_URL );	
 		if ( $item->get('REG_count') == 1 ) {
-			return '<span class="reg-pad-rght">'. $item->transaction()->pretty_paid()  .'</span>';
+			return '<a href="' . $view_txn_url . '"><span class="reg-pad-rght">'. $txn->total_line_item()->get_pretty('LIN_total')  .'</span></a>';
 		} else {
 			return '<span class="reg-pad-rght"></span>';
 		}		
