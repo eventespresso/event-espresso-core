@@ -46,37 +46,9 @@
 			</dt>
 			<dd><?php echo site_url(); ?></dd>
 			<dt>
-<?php _e('WordPress Content Directory:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo WP_CONTENT_DIR; ?></dd>
-			<dt>
 <?php _e('Site address (URL):', 'event_espresso'); ?>
 			</dt>
 			<dd><?php echo home_url(); ?></dd>
-			<dt>
-<?php _e('Event Espresso Plugin URL:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EE_PLUGIN_DIR_URL ?></dd>
-			<dt>
-<?php _e('Event Espresso Plugin Path:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EE_PLUGIN_DIR_PATH; ?></dd>
-			<dt>
-<?php _e('Event Espresso Upload URL:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EVENT_ESPRESSO_UPLOAD_URL; ?></dd>
-			<dt>
-<?php _e('Event Espresso Upload Path:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EVENT_ESPRESSO_UPLOAD_DIR; ?></dd>
-			<dt>
-<?php _e('Event Espresso Template Path:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EVENT_ESPRESSO_TEMPLATE_DIR; ?></dd>
-			<dt>
-<?php _e('Event Espresso Gateway Path:', 'event_espresso'); ?>
-			</dt>
-			<dd><?php echo EVENT_ESPRESSO_GATEWAY_DIR; ?></dd>
 		</dl>
 	</div>
 </div>
