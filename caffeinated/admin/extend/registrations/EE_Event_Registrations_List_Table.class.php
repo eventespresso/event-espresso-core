@@ -205,7 +205,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		
 		if ( !empty($DTT_ID) ) {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
-			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('Click here to view all the check-ins and checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
+			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('View all the check-ins/checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
 
 		return !empty( $DTT_ID ) ? sprintf( '%1$s %2$s', $name_link, $this->row_actions($actions) ) : $name_link;
@@ -307,7 +307,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( $item->get('REG_count') == 1 ) {
 			$line_total_obj = $txn->total_line_item();
 			$txn_total = $line_total_obj instanceof EE_Line_Item ? $line_total_obj->get_pretty('LIN_total') : __('View Transaction', 'event_espresso');
-			return '<a href="' . $view_txn_url . '"><span class="reg-pad-rght">'. $txn_total  .'</span></a>';
+			return '<a href="' . $view_txn_url . '" title="' . __('View Transaction', 'event_espresso') . '"><span class="reg-pad-rght">'. $txn_total  .'</span></a>';
 		} else {
 			return '<span class="reg-pad-rght"></span>';
 		}		
