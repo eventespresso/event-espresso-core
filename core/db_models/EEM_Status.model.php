@@ -107,6 +107,10 @@ class EEM_Status extends EEM_Base {
 	  			__('declined', 'event_espresso'),
 	  			__('declined', 'event_espresso')
 	  			),
+	  		EEM_Transaction::overpaid_status_code => array(
+	  			__('overpaid', 'event_espresso'),
+	  			__('overpaid', 'event_espresso')
+	  			),
 	  		EEM_Transaction::complete_status_code => array(
 	  			__('complete', 'event_espresso'),
 	  			__('complete', 'event_espresso')
@@ -115,13 +119,9 @@ class EEM_Status extends EEM_Base {
 	  			__('incomplete', 'event_espresso'),
 	  			__('incomplete', 'event_espresso')
 	  			),
-	  		EEM_Transaction::open_status_code => array(
-	  			__('open', 'event_espresso'),
-	  			__('open', 'event_espresso')
-	  			),
-	  		EEM_Transaction::overpaid_status_code => array(
-	  			__('overpaid', 'event_espresso'),
-	  			__('overpaid', 'event_espresso')
+	  		EEM_Transaction::failed_status_code => array(
+	  			__('failed', 'event_espresso'),
+	  			__('failed', 'event_espresso')
 	  			),
 	  		EEM_Payment::status_id_approved => array(
 	  			__('accepted', 'event_espresso'),
