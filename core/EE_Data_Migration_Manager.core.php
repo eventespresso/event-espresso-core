@@ -36,7 +36,7 @@ class EE_Data_Migration_Manager{
 	
 	const data_migration_script_option_prefix = 'ee_data_migration_script_';
 	
-	const data_migration_script_mapping_option_prefix = 'ee_data_migration_mapping_';
+	const data_migration_script_mapping_option_prefix = 'ee_dms_map_';
 	
 	/**
 	 * name of the wordpress option which stores the database' current version. IE, the code may be at version 4.2.0,
@@ -350,7 +350,7 @@ class EE_Data_Migration_Manager{
 					break;
 				case EE_Data_Migration_Manager::status_completed:
 					//ok so THAT script has completed
-					$this->_update_current_database_state_to($this->script_migrates_to_version($current_script_name, false));
+					$this->update_current_database_state_to($this->script_migrates_to_version($current_script_name, false));
 					$response_array =  array(
 							'records_to_migrate'=>$current_script_class->count_records_to_migrate(),
 							'records_migrated'=>$current_script_class->count_records_migrated(),
@@ -446,7 +446,7 @@ class EE_Data_Migration_Manager{
 	 * @param string $version
 	 * @return void
 	 */
-	private function _update_current_database_state_to($version = null){
+	public function update_current_database_state_to($version = null){
 		if( ! $version ){
 			//no version was provided, assume it should be at the current code version
 			$version = espresso_version();

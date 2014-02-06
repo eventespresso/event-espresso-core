@@ -39,7 +39,7 @@
 .wp-list-table #PRC_amount,
 .wp-list-table #REG_final_price,
 .wp-list-table #TXN_total,
-.wp-list-table #TXN_paid { text-align:center; }
+.wp-list-table #TXN_paid { /* text-align:center; */ }
 
 .wp-list-table .column-PRC_amount,
 .wp-list-table .column-_REG_final_price,
@@ -72,7 +72,7 @@
 	width: 14%;
 }
 
-#EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_date {
+#EE_Event_Registrations_List_Table-table-frm .wp-list-table #Event {
 	width: 14%;
 }
 

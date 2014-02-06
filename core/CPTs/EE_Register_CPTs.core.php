@@ -185,6 +185,23 @@ class EE_Register_CPTs {
 
 
 
+	/**
+	 * This basically goes through the CPT array and returns only CPT's that have the ['args']['public'] option set as false 
+	 * @return array
+	 */
+	public static function get_private_CPTs() {
+		$cpts = self::get_CPTs();
+		$pcpts = array();
+		foreach ( $cpts as $cpt => $details ) {
+			if ( empty( $details['args']['public'] ) )
+				$pcpts[$cpt] = $details;
+		}
+		return $pcpts;
+	}
+
+
+
+
 
 	/**
 	 * Registers a custom taxonomy. Should be called before registering custom post types,

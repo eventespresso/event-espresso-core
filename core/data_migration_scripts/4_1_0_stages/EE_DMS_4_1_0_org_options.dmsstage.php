@@ -107,7 +107,10 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		$items_actually_migrated = 0;
 		$old_org_options = get_option('events_organization_settings');
 		foreach($this->_org_options_we_know_how_to_migrate as $option_name){
-			$this->_handle_org_option($option_name, $old_org_options[$option_name]);
+			//only bother migrating if there's a setting to migrate. Otherwise we'll just use the default
+			if(isset($old_org_options[$option_name])){
+				$this->_handle_org_option($option_name, $old_org_options[$option_name]);
+			}
 			if($option_name=='surcharge'){
 				$this->_insert_new_global_surcharge_price($old_org_options);
 			}

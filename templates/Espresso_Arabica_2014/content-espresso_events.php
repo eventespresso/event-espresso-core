@@ -43,7 +43,11 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 			</h1>
 			<?php if (has_excerpt( $post->ID )): the_excerpt(); endif;?>
 			<p id="event-date-p">
-				<?php echo $post->EE_Event->primary_datetime()->start_date_and_time(); ?>
+				<?php 
+				if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
+					echo $post->EE_Event->primary_datetime()->start_date_and_time(); 
+				}				
+				?>
 			</p>
 		</header>
 	</div>

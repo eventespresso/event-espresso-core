@@ -161,7 +161,7 @@ class EEH_Activation {
 			// no dice?
 			if ( $critical_page['post'] == NULL ) {
 				// attempt to find post by title
-				$critical_page['post'] = get_page_by_title( $critical_page['name'] );
+				$critical_page['post'] = self::get_page_by_ee_shortcode( $critical_page['code'] );
 				// still nothing?
 				if ( $critical_page['post'] == NULL ) {
 					$critical_page = EEH_Activation::create_critical_page( $critical_page );
@@ -205,6 +205,26 @@ class EEH_Activation {
 		
 	}
 
+	/**
+	 * REturns the first post which uses the specified shortcode
+	 * @param string $ee_shortcode usually one of the critical pages shortcodes, eg
+	 * ESPRESSO_THANK_YOU. So we will search fora post with the content "[ESPRESSO_THANK_YOU"
+	 * (we don't search for the closing shortcode bracket because they might have added 
+	 * parameter to the shortcode
+	 * @return WP_Post or NULl
+	 */
+	public static function get_page_by_ee_shortcode($ee_shortcode){
+		global $wpdb;
+		$shortcode_and_opening_bracket = '['.$ee_shortcode;
+		$post_id = $wpdb->get_var("SELECT ID FROM {$wpdb->posts} WHERE post_content LIKE '%$shortcode_and_opening_bracket%' LIMIT 1");
+		if($post_id){
+			return get_post($post_id);
+		}else{
+			return NULL;
+		}
+		
+//		return $post_id;
+	}
 
 
 
@@ -433,6 +453,7 @@ class EEH_Activation {
 		$drop_pre_existing_tables = EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ? true : false;
 		$current_data_migration_script->schema_changes_before_migration($drop_pre_existing_tables);
 		$current_data_migration_script->schema_changes_after_migration($drop_pre_existing_tables);
+		EE_Data_Migration_Manager::instance()->update_current_database_state_to();
 	}
 
 
