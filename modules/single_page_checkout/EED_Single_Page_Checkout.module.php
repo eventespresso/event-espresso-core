@@ -489,7 +489,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'TXN_timestamp' => current_time('mysql'),
 			'TXN_total' => $this->_cart->get_cart_grand_total(), 
 			'TXN_paid' => 0, 
-			'STS_ID' => EEM_Transaction::incomplete_status_code,
+			'STS_ID' => EEM_Transaction::failed_status_code,
 		));
 	}
 
@@ -1453,7 +1453,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		if ( $this->_cart->get_grand_total()->total() == EEH_Template::format_currency( 0, TRUE ) ) {
 			$this->_transaction->set_status( EEM_Transaction::complete_status_code );
 		} else {
-			$this->_transaction->set_status( EEM_Transaction::open_status_code );
+			$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 		}
 		$this->_transaction->finalize( TRUE );
 		EE_Registry::instance()->SSN->clear_session();
@@ -1610,7 +1610,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			// if Default REG Status is set to REQUIRES APPROVAL... then payments are NOT allowed
 			if ( EE_Registry::instance()->REQ->is_set('selected_gateway') && EE_Registry::instance()->REQ->get('selected_gateway') == 'payments_closed' ) {
 				// set TXN Status to Open
-				$this->_transaction->set_status( EEM_Transaction::open_status_code );
+//				$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$this->_transaction->save();
 				$this->_transaction->finalize();
 				$notices = EE_Error::get_notices(FALSE);
