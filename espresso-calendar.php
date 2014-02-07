@@ -663,7 +663,13 @@ class EE_Calendar {
 		}
 		// get calendar options
 		$calendar_config = $this->_get_calendar_options();
-		$defaults = array_merge( array( 'event_category_id' => '', 'show_expired' => 'true', 'cal_view' => 'month', 'widget' => FALSE,), $calendar_config->to_flat_array() );
+		$defaults = array_merge( array( 
+				'event_category_id' => isset($_REQUEST['event_category_id']) ? $_REQUEST['event_category_id'] : '', 
+				'event_venue_id'=> isset($_REQUEST['event_venue_id']) ? $_REQUEST['event_venue_id'] : '', 
+				'show_expired' => 'true', 
+				'cal_view' => 'month', 
+				'widget' => FALSE,), 
+			$calendar_config->to_flat_array() );
 		// make sure $atts is an array
 		$ee_calendar_js_options = is_array( $ee_calendar_js_options ) ? $ee_calendar_js_options : array( $ee_calendar_js_options );
 		// set default attributes
@@ -780,9 +786,13 @@ class EE_Calendar {
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';	
 		// set boolean for categories 
 		$use_categories = ! $config->disable_categories;
-		$event_category_id = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
-		if($event_category_id){
-			$where_params['Event.Term_Taxonomy.Term.slug'] = $event_category_id;
+		$event_category_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
+		$venue_id = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : NULL;
+		if($event_category_slug){
+			$where_params['Event.Term_Taxonomy.Term.slug'] = $event_category_slug;
+		}
+		if($venue_id){
+			$where_params['Event.Venue.VNU_ID'] = $venue_id;
 		}
 		$where_params['Event.status'] = 'publish';//@todo: how about sold_out, cancelled, etc events?
 		
