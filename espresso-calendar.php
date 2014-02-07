@@ -419,9 +419,10 @@ class EE_Calendar {
 		// define the plugin directory path and URL
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLPATH', plugin_dir_path( __FILE__ ));
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLURL', plugin_dir_url( __FILE__ ));	
-		
+		define('ESPRESSO_CALENDAR_SHORTCODEFULLPATH',ESPRESSO_CALENDAR_PLUGINFULLPATH."shortcodes/");
 
 		add_action( 'widgets_init', array( $this, 'widget_init' ));
+		add_filter('FHEE__EE_Config__register_shortcodes__shortcodes_to_register', array($this,'add_shortcodes'));
 		add_action( 'AHEE__EE_System__construct__autoloaders_available',array($this,'EE_System__construct__autoloaders_available'));
 		add_action( 'AHEE__EE_System__construct__end', array($this,'EE_System__construct__end') );
 	}
@@ -433,7 +434,6 @@ class EE_Calendar {
 	public function EE_System__construct__autoloaders_available(){
 		EEH_Autoloader::instance()->register_autoloader(
 				array('EE_Calendar_Config'=>ESPRESSO_CALENDAR_PLUGINFULLPATH.'EE_Calendar_Config.php'));
-		
 	}
 	public function EE_System__construct__end(){
 		//check that the EE_Calendar_Config is in the main cnofig file
@@ -450,9 +450,21 @@ class EE_Calendar {
 			add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
 			add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));			
 		} else {
+			//this should probably be happening in the EES_Espresso_Calendar's run method
 			add_action( 'wp_enqueue_scripts', array( $this, 'calendar_scripts' ));
-			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
+//			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
 		}
+	}
+	/**
+	 * Filters the list of shortcodes to add ours.
+	 * @param array $globbed_shortcode_folders array where keys don't matter, 
+	 * and they're just full filepaths to FOLDERS containing a shortcode class file. Eg.
+	 * array('monkeybrains'=>'/public_html/wondersite/wp-content/plugins/ee4/shortcodes/espresso_monkey',...)
+	 * @return array
+	 */
+	public function add_shortcodes($globbed_shortcode_folders){
+		$globbed_shortcode_folders[] = ESPRESSO_CALENDAR_SHORTCODEFULLPATH."espresso_calendar";
+		return $globbed_shortcode_folders;
 	}
 
 
