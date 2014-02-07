@@ -139,7 +139,6 @@ class EE_Calendar_Config_Tooltip  extends EE_Config_Base{
 	public $pos_at_2;
 	public $style;
 	public $show;
-	public $word_count;
 	public function __construct(){
 		$this->show = true;
 		$this->pos_my_1 = 'bottom';
@@ -147,7 +146,6 @@ class EE_Calendar_Config_Tooltip  extends EE_Config_Base{
 		$this->pos_at_1 = 'center';
 		$this->pos_at_2 = 'center';
 		$this->style = 'qtip-light';
-		$this->word_count = 50;
 	}
 }
 class EE_Calendar_Config_Title_Format extends EE_Config_Base{

@@ -306,21 +306,6 @@
 					</span>
 				</td>
 			</tr>
-
-			<tr class="tooltip_word_count">
-				<th>
-					<label for="tooltip_word_count">
-						<?php _e('Tooltip Desc Word Count', 'event_espresso'); ?>
-					</label>
-				</th>
-				<td>
-					<input id="tooltip_word_count" type="text" name="calendar[tooltip][word_count]" value="<?php echo $calendar_config->tooltip->word_count ?>" /><br/>
-					<span class="description">
-						<?php _e('Number of words to show in tooltip event descriptions. Set to "0" for no limit. Default: 50.<br/>Please note that using this feature will strip all formating and images from your tool tip event descriptions.', 'event_espresso'); ?>
-					</span>
-				</td>
-			</tr>
-
 		</tbody>
 	</table>
 </div>

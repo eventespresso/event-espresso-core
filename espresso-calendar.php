@@ -773,7 +773,6 @@ class EE_Calendar {
 			$tooltip_my = $config->tooltip->pos_my_1 . $config->tooltip->pos_my_2;
 			$tooltip_at = $config->tooltip->pos_at_1 . $config->tooltip->pos_at_2;
 			$tooltip_style = $config->tooltip->style;
-			$tooltip_word_count = $config->tooltip->word_count;
 		}
 		$enable_calendar_thumbs = $config->enable_calendar_thumbs;
 
@@ -892,7 +891,7 @@ class EE_Calendar {
 //				}
 				// and just in case it's still too long, or somebody forgot to use the more tag...
 				//if word count is set to 0, set no limit
-				$calendar_datetime->set_description(intval($tooltip_word_count) == 0 ? $description : wp_trim_words($description,$tooltip_word_count));			
+				$calendar_datetime->set_description($description);			
 // tooltip wrapper
 				$tooltip_html = '<div class="qtip_info">';
 				// show time ?
