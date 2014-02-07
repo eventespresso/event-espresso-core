@@ -805,7 +805,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//we should eventually display the event title instead of ID.
 		$event_label = isset($event_name) && !empty($event_name) ? sprintf( __('for Event: %s', 'event_espresso'), $event_name) : '';
-		$title = sprintf( __(' %s %s Template %s %s', 'event_espresso'), ucwords(str_replace('_', ' ', $message_template_group->messenger()) ), ucwords(str_replace('_', ' ', $message_template_group->message_type()) ), $context_label, $event_label );
+		$title = sprintf( __(' %s %s Template %s %s', 'event_espresso'), ucwords($message_template_group->messenger_obj()->label['singular']), ucwords($message_template_group->message_type_obj()->label['singular']), $context_label, $event_label );
 
 		$this->_template_args['GRP_ID'] = $GRP_ID;
 		$this->_template_args['message_template'] = $message_template_group;
