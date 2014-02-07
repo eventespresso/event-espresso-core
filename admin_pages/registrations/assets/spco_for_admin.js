@@ -37,8 +37,10 @@
 			}
 		});
 		var good_to_go = verify_all_questions_answered('#spco-registration-attendee_information-frm');
-		if ( good_to_go !== true ) {
+		if ( good_to_go !== true ) {			
 			show_event_queue_ajax_error_msg( good_to_go );
+		} else {
+			show_event_queue_ajax_error_msg( eei18n.attendee_info_copied );
 		}
 	});
 	
@@ -156,15 +158,12 @@
 	function show_event_queue_ajax_success_msg( success_msg ) {
 		
 		if ( typeof(success_msg) !== 'undefined' && success_msg !== '' )  {
-		
 			if ( typeof(success_msg.success) !== 'undefined' ) {
 				success_msg = success_msg.success;
 			}
-			//alert( 'success_msg'+success_msg);
-
+			$('#espresso-ajax-loading').fadeOut('fast');
 			$('#espresso-ajax-notices').eeCenter();
 			$('#espresso-ajax-notices-success > .espresso-notices-msg').html( success_msg );
-			$('#espresso-ajax-loading').fadeOut('fast');
 			$('#espresso-ajax-notices-success').removeClass('hidden').show().delay(4000).fadeOut();
 		} else {
 			$('#espresso-ajax-loading').fadeOut('fast');
