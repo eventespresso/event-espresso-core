@@ -617,7 +617,8 @@ class EE_Calendar {
 						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
 						<?php
 							foreach($ee_terms as $term) {
-							echo '<option '.(isset($_REQUEST['event_category_id']) && $term->slug() == $_REQUEST['event_category_id'] ? 'selected' :'').' value="'.$term->slug().'">'.$term->name().'</option>';
+								$selected = in_array($ee_calendar_js_options['event_category_id'],array($term->slug(),"{$term->ID()}"), $ee_calendar_js_options);
+							echo '<option '.($selected ? 'selected' :'').' value="'.$term->slug().'">'.$term->name().'</option>';
 								}?>
 						</select>
 					<?php }?>
@@ -628,7 +629,8 @@ class EE_Calendar {
 						<option class="ee_filter_show_all" value=""><?php echo __('Show All', 'event_espresso'); ?></option>
 						<?php
 							foreach($venues as $venue) {
-							echo '<option'. (isset($_REQUEST['event_venue_id']) && ($venue->ID() == $_REQUEST['event_venue_id'] || $venue->identifier() == $_REQUEST['event_venue_id']) ? ' selected="selected"' :'').' value="'.$venue->ID().'">'.stripslashes($venue->name()).'</option>';
+								$selected = in_array($ee_calendar_js_options['event_venue_id'],array($venue->identifier(),"{$venue->ID()}"));
+							echo '<option'. ($selected ? ' selected="selected"' :'').' value="'.$venue->identifier().'">'.stripslashes($venue->name()).'</option>';
 							}?>
 						</select>
 					<?php }?>
@@ -656,7 +658,7 @@ class EE_Calendar {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function espresso_calendar( $ee_calendar_js_options ) {
+	public function espresso_calendar( $shortcode_atts ) {
 		
 		if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) {
 			return '';
@@ -664,16 +666,19 @@ class EE_Calendar {
 		// get calendar options
 		$calendar_config = $this->_get_calendar_options();
 		$defaults = array_merge( array( 
-				'event_category_id' => isset($_REQUEST['event_category_id']) ? $_REQUEST['event_category_id'] : '', 
-				'event_venue_id'=> isset($_REQUEST['event_venue_id']) ? $_REQUEST['event_venue_id'] : '', 
 				'show_expired' => 'true', 
 				'cal_view' => 'month', 
 				'widget' => FALSE,), 
 			$calendar_config->to_flat_array() );
 		// make sure $atts is an array
-		$ee_calendar_js_options = is_array( $ee_calendar_js_options ) ? $ee_calendar_js_options : array( $ee_calendar_js_options );
+		$shortcode_atts = is_array( $shortcode_atts ) ? $shortcode_atts : array( $shortcode_atts );
+		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
+		$overrides = array(
+				'event_category_id' => isset($_REQUEST['event_category_id']) ? $_REQUEST['event_category_id'] : '', 
+				'event_venue_id'=> isset($_REQUEST['event_venue_id']) ? $_REQUEST['event_venue_id'] : '', 
+		);
 		// set default attributes
-		$ee_calendar_js_options = shortcode_atts( $defaults, $ee_calendar_js_options );
+		$ee_calendar_js_options = array_merge(shortcode_atts( $defaults, $shortcode_atts ),$overrides);
 		$output_filter = $this->_get_filter_html($ee_calendar_js_options);
 		
 		
@@ -785,13 +790,15 @@ class EE_Calendar {
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';	
 		// set boolean for categories 
 		$use_categories = ! $config->disable_categories;
-		$event_category_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
-		$venue_id = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : NULL;
-		if($event_category_slug){
-			$where_params['Event.Term_Taxonomy.Term.slug'] = $event_category_slug;
+		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
+		$venue_id_or_slug = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : NULL;
+		if($category_id_or_slug){
+			$where_params['OR*category'] = array('Event.Term_Taxonomy.Term.slug' => $category_id_or_slug,
+												'Event.Term_Taxonomy.Term.term_id'=>$category_id_or_slug);
 		}
-		if($venue_id){
-			$where_params['Event.Venue.VNU_ID'] = $venue_id;
+		if($venue_id_or_slug){
+			$where_params['OR*venue'] = array('Event.Venue.VNU_ID' => $venue_id_or_slug,
+												'Event.Venue.VNU_identifier'=>$venue_id_or_slug);
 		}
 		$where_params['Event.status'] = 'publish';//@todo: how about sold_out, cancelled, etc events?
 		
