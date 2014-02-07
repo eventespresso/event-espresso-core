@@ -1,12 +1,12 @@
 jQuery(document).ready(function($) {
 	
 	// fix this one boolean
-	if ( eeCAL.weekends == undefined || eeCAL.weekends == '' ) {
-		eeCAL.weekends = false;
+	if ( eeCAL.time_weekends == undefined || eeCAL.time_weekends == '' ) {
+		eeCAL.time_weekends = false;
 	}
 	
 	var calendar_width = $('#espresso_calendar').width();
-	if ( eeCAL.weekends ) {
+	if ( eeCAL.time_weekends ) {
 		var day_width = calendar_width / 7;
 	} else {
 		var day_width = calendar_width / 5;
