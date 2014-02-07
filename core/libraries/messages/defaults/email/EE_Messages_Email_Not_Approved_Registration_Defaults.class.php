@@ -40,5 +40,6 @@ class EE_Messages_Email_Not_Approved_Registration_Defaults extends EE_Message_Te
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '';
 		$this->_templates['primary_attendee']['to'] = '[PRIMARY_ATTENDEE_EMAIL]';
+		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/not_approved-message-type-admin-main-content.template.php', TRUE );
 	}
 }
