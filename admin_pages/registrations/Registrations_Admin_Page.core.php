@@ -497,7 +497,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_script('ee-spco-for-admin');
 		add_filter('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 		EED_Ticket_Selector::load_tckt_slctr_assets();
-		EED_Single_Page_Checkout::wp_enqueue_scripts();
+		EED_Single_Page_Checkout::load_css();
 	}
 
 
@@ -2012,8 +2012,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _get_new_registration_questions() {
 		//in theory we should be able to run EED_SPCO at this point because the cart should have been setup properly by the first _process_registration_step run.
-		$SPCO = EED_Single_Page_Checkout::instance();
-		return $SPCO->registration_checkout_for_admin();
+		return EED_Single_Page_Checkout::instance()->registration_checkout_for_admin();
 	}
 
 
