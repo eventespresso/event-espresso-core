@@ -29,7 +29,7 @@
                     <tr>
                         <td>
                             <h2>Hello, [FNAME]:</h2>
-                            <p class="lead">Your registration(s) for the following event(s) are pending approval. You will be notified if/when your registration is approved.</p>    
+                            <p class="lead">Your registration(s) for the following event(s) are pending payment.</p>    
                         </td>
                     </tr>
                 </table>

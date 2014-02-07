@@ -23,8 +23,8 @@
         <td class="container" bgcolor="#FFFFFF">
             <!-- content -->
             <div class="content">
-                <h1>Registration(s) Pending Approval</h1>
-                <p>The following registration(s) are awaiting approval for the following event(s).</p>
+                <h1>Registration(s) Pending Payment</h1>
+                <p>The following registration(s) are awaiting payment for the following event(s).</p>
                 <table>
                     <tr>
                         <td>
