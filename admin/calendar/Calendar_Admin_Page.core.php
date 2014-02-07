@@ -105,8 +105,9 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	protected function _add_screen_options_default() {}
 	protected function _add_feature_pointers() {}
 	public function load_scripts_styles() {
-		wp_register_script('ee-calendar-admin-js', CALENDAR_ADMIN_ASSETS_URL . 'calendar-admin.js', array('jquery','farbtastic'), ESPRESSO_CALENDAR_VERSION, TRUE );
+		wp_register_script('ee-calendar-admin-js', CALENDAR_ADMIN_ASSETS_URL . 'calendar-admin.js', array('jquery','wp-color-picker'), ESPRESSO_CALENDAR_VERSION, TRUE );
 		wp_enqueue_script('ee-calendar-admin-js');
+		wp_enqueue_style( 'wp-color-picker' );
 	}
 
 	public function admin_init() {}
@@ -228,13 +229,12 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 			)
 			);
 		$sanitization_method = NULL;
-		if(isset($sanitization_methods[$top_level_key])){
-			if($second_level_key == NULL && ! is_array($sanitization_methods[$top_level_key]) ){
-				$sanitization_method = $sanitization_methods[$top_level_key];
-					
-			}
+		if(isset($sanitization_methods[$top_level_key]) && 
+				$second_level_key === NULL && 
+				! is_array($sanitization_methods[$top_level_key]) ){
+			$sanitization_method = $sanitization_methods[$top_level_key];	
 		}elseif(is_array($sanitization_methods[$top_level_key]) && isset($sanitization_methods[$top_level_key][$second_level_key])){
-				$sanitization_method = $sanitization_method[$top_level_key][$second_level_key];
+			$sanitization_method = $sanitization_methods[$top_level_key][$second_level_key];
 		}
 //		echo "$top_level_key [$second_level_key] with value $value will be sanitized as a $sanitization_method<br>";
 		switch($sanitization_method){

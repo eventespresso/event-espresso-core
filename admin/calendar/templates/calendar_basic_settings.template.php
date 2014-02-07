@@ -199,34 +199,31 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[use_pickers]', $values,$calendar_config->use_pickers, 'id="espresso_use_pickers"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[use_pickers]', $values,$calendar_config->use_pickers); ?><br />
 					<span class="description">
 						<?php _e('This allows you to customize the event background color and text color.', 'event_espresso'); ?>
 					</span>
 				</td>
 			</tr>
-			<tr class="color-picker-selections">
+			<tr class="color-picker-selections requires-color-pickers">
 				<th class="color-picker-style">
 					<label for="background-color">
 						<?php _e('Event Background Color', 'event_espresso') ?>
 					</label>
 				</th>
 				<td>
-					<input id="background-color"type="text" name="calendar[event_background]" value="<?php echo $calendar_config->event_background ?>" />
-					<div id="colorpicker-1">
-					</div>
+					<input id="background-color" class="color-picker" type="text" name="calendar[event_background]" value="<?php echo $calendar_config->event_background ?>" />
 				</td>
 			</tr>
-			<tr class="color-picker-selections">
+			<tr class="color-picker-selections requires-color-pickers">
 				<th class="color-picker-style">
 					<label for="text-color">
 						<?php _e('Event Text Color', 'event_espresso') ?>
 					</label>
 				</th>
 				<td>
-					<input id="text-color" type="text" name="calendar[event_text_color]" value="<?php echo $calendar_config->event_text_color ?>" />
-					<div id="colorpicker-2">
-					</div>
+					<input id="text-color" class="color-picker" type="text" name="calendar[event_text_color]" value="<?php echo $calendar_config->event_text_color ?>" />
+		
 				</td>
 			</tr>
 
@@ -257,7 +254,7 @@
 				array('id'  => 'right','text'=> __('Right', 'event_espresso'))
 			);
 			?>
-			<tr class="tooltip-position-selections">
+			<tr class="tooltip-position-selections requires-tooltips">
 				<th class="tooltip-positions">
 					<label for="tooltips_pos_my_1">
 						<?php _e('Tooltip Position', 'event_espresso'); ?>
@@ -265,7 +262,7 @@
 				</th>
 				<td>
 					<?php _e('Place Tooltip\'s ', 'event_espresso'); ?>
-					<?php echo EEH_Form_Fields::select_input('calendar[tooltip[pos_my_1]', $values_1, $calendar_config->tooltip->pos_my_1, 'id="tooltips_pos_my_1"'); ?>
+					<?php echo EEH_Form_Fields::select_input('calendar[tooltip][pos_my_1]', $values_1, $calendar_config->tooltip->pos_my_1, 'id="tooltips_pos_my_1"'); ?>
 					<?php echo EEH_Form_Fields::select_input('calendar[tooltip][pos_my_2]', $values_2, $calendar_config->tooltip->pos_my_2, 'id="tooltips_pos_my_2"'); ?>
 					<?php _e('at the Event\'s  ', 'event_espresso'); ?>
 					<?php echo EEH_Form_Fields::select_input('calendar[tooltip][pos_at_1]', $values_1, $calendar_config->tooltip->pos_at_1, 'id="tooltips_pos_at_1"'); ?>
@@ -293,7 +290,7 @@
 			);
 			?>
 
-			<tr class="tooltip_style-selections">
+			<tr class="tooltip_style-selections requires-tooltips">
 				<th class="tooltip_style">
 					<label for="tooltip_style">
 						<?php _e('Tooltip Style', 'event_espresso'); ?>
