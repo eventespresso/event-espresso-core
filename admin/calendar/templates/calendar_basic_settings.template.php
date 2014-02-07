@@ -46,12 +46,12 @@
 						echo ' />&nbsp;<span>' . date_i18n($format) . "</span></label> \n";
 					}
 
-					echo '<div style="display:inline-block; width:230px;"><label style="display:inline-block;">&nbsp;<input type="radio" name="time_format" id="time_format_custom_radio" value="\c\u\s\t\o\m"';
+					echo '<div style="display:inline-block; width:230px;"><label style="display:inline-block;">&nbsp;<input type="radio" name="calendar[time][format]" id="time_format_custom_radio" value="\c\u\s\t\o\m"';
 					checked($custom);
 					echo '/>&nbsp;' . __('Custom:') . '</label>&nbsp;<input type="text" name="time_format_custom" value="' . esc_attr($calendar_config->time->format) . '" class="small-text" /> ';
 					echo '<span class="example"> ' . date_i18n($calendar_config->time->format) . "</span></div>";
 					?>
-					<p><span class="description">``
+					<p><span class="description">
 						<a href="http://codex.wordpress.org/Formatting_Date_and_Time">
 							<?php _e('Documentation on date and time formatting', 'event_espresso'); ?>
 						</a>

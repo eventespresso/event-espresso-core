@@ -1,5 +1,5 @@
 jQuery(document).ready(function($){
-	$("input[name='time_format']").click(function(){
+	$("input[name='calendar[time][format]']").click(function(){
 			if ( "time_format_custom_radio" != $(this).attr("id") )
 			$("input[name='time_format_custom']").val( $(this).val() ).siblings('.example').text( $(this).siblings('span').text() );
 		});
@@ -7,7 +7,7 @@ jQuery(document).ready(function($){
 			$("#time_format_custom_radio").attr("checked", "checked");
 		});
 	// disable color picker & thumb sizes inputs & fade if not use controls true
-	window.scp = $('select#espresso_use_pickers option:selected').val();
+	window.scp = $('select#calendar[use_pickers] option:selected').val();
 	window.ect = $('select#enable-calendar-thumbs option:selected').val();
 	window.ectt = $('select#show_tooltips option:selected').val();
 

@@ -106,7 +106,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	protected function _add_feature_pointers() {}
 	public function load_scripts_styles() {
 		wp_register_script('ee-calendar-admin-js', CALENDAR_ADMIN_ASSETS_URL . 'calendar-admin.js', array('jquery','farbtastic'), ESPRESSO_CALENDAR_VERSION, TRUE );
-		wp_enqueue_script('ee-calendar-admin');
+		wp_enqueue_script('ee-calendar-admin-js');
 	}
 
 	public function admin_init() {}
