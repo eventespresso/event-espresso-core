@@ -8,7 +8,6 @@ jQuery(document).ready(function($){
 		});
 	// disable color picker & thumb sizes inputs & fade if not use controls true
 	window.scp = $('select#calendar[use_pickers] option:selected').val();
-	window.ect = $('select#enable-calendar-thumbs option:selected').val();
 	window.ectt = $('select#show_tooltips option:selected').val();
 
 
@@ -16,16 +15,6 @@ jQuery(document).ready(function($){
 		$('tr#thumbnail-sizes td input').attr('disabled', true);
 		$('tr#thumbnail-sizes').attr('style', "opacity: .3");
 	}
-	$('select#enable-calendar-thumbs').change(function(){
-			window.ect = $('select#enable-calendar-thumbs option:selected').val();
-			if(window.ect == 'false'){
-				$('tr#thumbnail-sizes td input').attr('disabled', true);
-				$('tr#thumbnail-sizes').attr('style', "opacity: .3");
-			}else{
-				$('tr#thumbnail-sizes td input').removeAttr('disabled', true);
-				$('tr#thumbnail-sizes').removeAttr('style', "opacity: .3");
-			}
-		});
 
 	// color picker settings
 	if(window.scp === ''){
