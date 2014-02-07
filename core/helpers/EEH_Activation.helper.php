@@ -642,7 +642,7 @@ class EEH_Activation {
 						
 					case 'state':
 							$QST_values = array( 
-									'QST_display_text' => __( 'State / Province', 'event_espresso' ),
+									'QST_display_text' => __( 'State/Province', 'event_espresso' ),
 									'QST_admin_label' => __( 'State/Province - System Question', 'event_espresso' ),
 									'QST_system' => 'state',
 									'QST_type' => 'TEXT',
