@@ -91,7 +91,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 * This returns the parsed ticket list for main template;
 	 */
 	private function _get_ticket_list_for_main() {
-		$valid_shortcodes = array('ticket', 'event_list', 'attendee_list','datetime_list', 'registration', 'attendee');
+		$valid_shortcodes = array('ticket', 'event_list', 'attendee_list','datetime_list', 'attendee');
 		$template = $this->_data['template'];
 		$data = $this->_data['data'];
 		$tktparsed = '';
