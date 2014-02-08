@@ -203,6 +203,8 @@ class EE_Brewing_Regular extends EE_Base {
 		//shortcode parsers
 		add_filter('FHEE__EE_Attendee_Shortcodes__shortcodes', array( $this, 'additional_attendee_shortcodes'), 10, 2 );
 		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 10, 4 );
+		add_filter('FHEE__EE_Recipient_List_Shortcodes', array( $this, 'additional_recipient_details_shortcodes'), 10, 2 );
+		add_filter('FHEE__EE_Recipient_List__Shortcodes__parser_after', array( $this, 'additional_recipient_details_parser'), 10, 4 );
 	}
 
 
@@ -328,5 +330,58 @@ class EE_Brewing_Regular extends EE_Base {
 		//nothing!
 		return $parsed;
 	}
+
+
+	public function additional_recipient_details_shortcodes( $shortcodes, $shortcode_parser ) {
+		$shortcodes['[RECIPIENT_QUESTION_LIST]'] = __('This is used to indicate where you want the list of questions and answers to show for the person receiving the message.', 'event_espresso');
+		$shortcodes['[PRIMARY_REGISTRANT_QUESTION_LIST]'] = __('This is used to indicate the questions and answers for the primary_registrant. It should be placed in the "[attendee_list]" field', 'event_espresso');
+		return $shortcodes;
+	}
+
+
+	public function additional_recipient_details_parser( $parsed, $shortcode, $data, $extra_data ) {
+		if ( ! isset( $data['data'] ) || ! $data['data'] instanceof EE_Messages_Addressee )
+			return $parsed;
+
+		if ( ! isset( $extra_data['template'] ) ) {
+			return $parsed;
+		}
+		
+		switch ( $shortcode ) {
+			case '[RECIPIENT_QUESTION_LIST]' :
+				if ( ! $data['data']->att_obj instanceof EE_Attendee )
+					return '';
+				$recipient = $data['data']->att_obj;
+				$template = $data['template'];
+				$valid_shortcodes = array('question');
+				$answers = $data['data']->attendees[$recipient->ID()]['ans_objs'];
+				$question_list = '';
+				foreach ( $anwers as $answer ) {
+					$question_list .= $this->_shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $data);
+				}
+				return $question_list;
+				break;
+
+			case '[PRIMARY_REGISTRANT_QUESTION_LIST]' : 
+				if ( ! $data['data']->primary_att_obj instanceof EE_Attendee )
+					return '';
+				$recipient = $data['data']->primary_att_obj;
+				$template = $data['template'];
+				$valid_shortcodes = array('question');
+				$answers = $data['data']->attendees[$recipient->ID()]['ans_objs'];
+				$question_list = '';
+				foreach ( $anwers as $answer ) {
+					$question_list .= $this->_shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $data);
+				}
+				return $question_list;
+				break;
+
+			default :
+				return $parsed;
+				break;
+		}
+	}
+
+
 }
 $brewing = new EE_Brewing_Regular();
