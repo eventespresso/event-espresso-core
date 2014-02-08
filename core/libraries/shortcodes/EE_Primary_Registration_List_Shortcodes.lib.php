@@ -13,19 +13,19 @@
  *
  * ------------------------------------------------------------------------
  *
- * EE_Recipient_List_Shortcodes
+ * EE_Primary_Registration_List_Shortcodes
  * 
- * this is a child class for the EE_Shortcodes library.  The EE_Recipient_List_Shortcodes lists all list type shortcodes related to recipient specific info.  Meaning, that when this is parsed, we're parsing for WHO is receiving the message.
+ * this is a child class for the EE_Shortcodes library.  The EE_Primary_Registration_List_Shortcodes lists all list type shortcodes related to primary registration specific info.  Meaning, that when this is parsed, this only parses for Primary Registrants.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
  * 
  * @package		Event Espresso
- * @subpackage	libraries/shortcodes/EE_Recipient_List_Shortcodes.lib.php
+ * @subpackage	libraries/shortcodes/EE_Primary_Registration_List_Shortcodes.lib.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
+class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes {
 
 	public function __construct() {
 		parent::__construct();
@@ -33,11 +33,11 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _init_props() {
-		$this->label = __('Recipient List Shortcodes', 'event_espresso');
-		$this->description = __('All shortcodes specific to registrant recipients list type data.', 'event_espresso');
+		$this->label = __('Primary Registrant List Shortcodes', 'event_espresso');
+		$this->description = __('All shortcodes specific primary registrant recipients list type data.', 'event_espresso');
 		$this->_shortcodes = array(
-			'[RECIPIENT_TICKET_LIST]' => __('Will output a list of tickets for the recipient of the email. Note, if the recipient is the Event Author, then this is blank.', 'event_espresso'),
-			'[RECIPIENT_DATETIME_LIST]' => __('Will output a list of datetimes that the person recieving this message has been registered for.', 'event_espresso')
+			'[PRIMARY_REGISTRANT_TICKET_LIST]' => __('Will output a list of tickets that the primary registration receieved.', 'event_espresso'),
+			'[PRIMARY_REGISTRANT_DATETIME_LIST]' => __('Will output a list of datetimes that the primary registrant for the transaction has been registered for.', 'event_espresso')
 			);
 	}
 
@@ -45,12 +45,13 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 		switch ( $shortcode ) {
-			case '[RECIPIENT_TICKET_LIST]' :
-				return $this->_get_recipient_ticket_list();
+
+			case '[PRIMARY_REGISTRANT_TICKET_LIST]' :
+				return $this->_get_recipient_ticket_list( TRUE );
 				break;
 
-			case '[RECIPIENT_DATETIME_LIST]' :
-				return $this->_get_recipient_datetime_list();
+			case '[PRIMARY_REGISTRANT_DATETIME_LIST]' :
+				return $this->_get_recipient_datetime_list( TRUE );
 				break;
 		}
 		return '';
@@ -192,4 +193,4 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 	}
 
 	
-} // end EE_Recipient_List_Shortcodes class
+} // end EE_Primary_Registration_List_Shortcodes class
