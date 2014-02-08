@@ -40,13 +40,52 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Recipient Details Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes specific to registrant and primary registrant recipients data', 'event_espresso');
 		$this->_shortcodes = array(
+			'[RECIPIENT_FNAME]' => __('Parses to the first name of the recipient for the message.', 'event_espresso'),
+			'[RECIPIENT_LNAME]' => __('Parses to the last name of the recipient for the message.', 'event_espresso'),
+			'[RECIPIENT_EMAIL]' => __('Parses to the email address of the recipient for the message.', 'event_espresso'),
+			'[RECIPIENT_REGISTRATION_CODE]' => __('Parses to the registration code of the recipient for the message.', 'event_espresso')
 			);
 	}
 
 
 
 	protected function _parser( $shortcode ) {
-		return '';
+
+		//make sure we end up with a copy of the EE_Messages_Addressee object
+		$recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
+		$recipient = ! $recipient instanceof EE_Messages_Addressee && isset( $this->_data['data'] ) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data'] : $recipient;
+		$recipient = ! $recipient instanceof EE_Messages_Addressee && !empty( $this->_extra_dataa['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : $recipient;
+
+		if ( ! $recipient instanceof EE_Messages_Addressee )
+			return '';
+
+		$attendee = $recipient->att_obj;
+		if ( ! $attendee instanceof EE_Attendee )
+			return '';
+
+		switch ( $shortcode ) {
+			case '[RECIPIENT_FNAME]' :
+				return $attendee->fname();
+				break;
+
+			case '[RECIPIENT_LNAME]' :
+				return $attendee->lname();
+				break;
+
+			case '[RECIPIENT_EMAIL]' :
+				return $attendee->email();
+				break;
+
+			case '[RECIPIENT_REGISTRATION_CODE]' :
+				if ( ! $recipient->reg_obj instanceof EE_Registration )
+					return '';
+				return $recipient->reg_obj->reg_code();
+				break;
+
+			default : 
+				return '';
+				break;
+		}
 	}
 
 	
