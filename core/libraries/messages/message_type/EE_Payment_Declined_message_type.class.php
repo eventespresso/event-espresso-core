@@ -135,16 +135,6 @@ class EE_Payment_Declined_message_type extends EE_message_type {
 	}
 
 
-	/**
-	 * see abstract declaration in parent class for details
-	 */
-	protected function _set_valid_shortcodes() {
-		$this->_valid_shortcodes = array(
-			'admin' => array('transaction','event','organization','event_list', 'ticket_list', 'attendee'),
-			'primary_attendee' => array('transaction', 'event', 'organization', 'event_list', 'ticket_list', 'attendee')
-			);
-	}
-
 	
 }
 

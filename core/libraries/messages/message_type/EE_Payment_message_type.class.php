@@ -132,17 +132,6 @@ class EE_Payment_message_type extends EE_message_type {
 		$this->_contexts = apply_filters( 'FHEE_set_contexts_'. $this->name, $this->_contexts );
 		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
-
-
-	/**
-	 * see abstract declaration in parent class for details
-	 */
-	protected function _set_valid_shortcodes() {
-		$this->_valid_shortcodes = array(
-			'admin' => array('transaction','event','organization','event_list', 'ticket_list', 'attendee'),
-			'primary_attendee' => array('transaction', 'event', 'organization', 'event_list', 'ticket_list', 'attendee')
-			);
-	}
 	
 }
 

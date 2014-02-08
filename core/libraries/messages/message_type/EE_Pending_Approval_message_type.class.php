@@ -148,16 +148,6 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 
 	/**
-	 * see abstract declaration in parent class for details
-	 */
-	protected function _set_valid_shortcodes() {
-		$this->_valid_shortcodes = array(
-			'admin' => array('event','venue','organization', 'attendee', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'primary_attendee' => array('event','venue','organization', 'attendee', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
-			);
-	}
-
-	/**
 	 * returns an array of addressee objects for event_admins
 	 *
 	 * @access protected
