@@ -54,8 +54,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
 			'[EVENT_IMAGE]' => __('This will parse to the Feature image for the event.', 'event_espresso'),
 			'[EVENT_FACEBOOK_URL]' => __('This will return the Facebook URL for the event.', 'event_espresso'),
-			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event.', 'event_espresso'),
-			'[EVENT_AUTHOR_EMAIL]' => __('This will return the email for the author of the event.', 'event_espresso')
+			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event.', 'event_espresso')
 			);
 	}
 
