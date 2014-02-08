@@ -264,10 +264,12 @@ abstract class EE_Messages_incoming_data {
 				}
 
 				foreach ( $relateddatetime as $dtt_id => $datetime ) {
+					$eventsetup[$evt_id]['dtt_objs'][$dtt_id] = $datetime;
+					$attendees[$reg->attendee_ID()]['dtt_objs'][$dtt_id] = $datetime;
+					
 					if ( isset( $datetimes[$dtt_id] ) )
 						continue; //already have this info in the datetimes array.
 
-					$eventsetup[$evt_id]['dtt_objs'][$dtt_id] = $datetime;
 					$datetimes[$dtt_id]['tkt_objs'][] = $ticket;
 					$datetimes[$dtt_id]['datetime'] = $datetime;
 					$datetimes[$dtt_id]['evt_objs'][$evt_id] = $event;
