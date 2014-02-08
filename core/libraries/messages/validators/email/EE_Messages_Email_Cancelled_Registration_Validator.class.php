@@ -38,16 +38,12 @@ class EE_Messages_Email_Cancelled_Registration_Validator extends EE_Messages_Val
 	}
 
 	/**
-	 * custom validator (restricting what was originally set by the messenger)
+	 * custom validator (will override what was originally set by the message_type and messenger)
 	 */
 	protected function _modify_validator() {
 		$new_config = $this->_MSGR->get_validator_config();
-		$new_config['to'] = array('email', 'recipient_details', 'primary_registration_details');
-		$new_config['from'] = array('email', 'recipient_details', 'primary_registration_details');
-		$new_config['subject'] = array('email', 'recipient_details', 'primary_registration_details');
-		$new_config['content'] = array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details', 'recipient_list', 'primary_registration_details', 'primary_registration_list');
 		$new_config['event_list'] = array(
-			'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'organization','recipient_details', 'recipient_list', 'event_author'),
+			'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'organization', 'event_author', 'primary_registration_details', 'primary_registration_list', 'recipient_details', 'recipient_list'),
 			'required' => array('[EVENT_LIST]')
 			);
 		$this->_MSGR->set_validator_config( $new_config );

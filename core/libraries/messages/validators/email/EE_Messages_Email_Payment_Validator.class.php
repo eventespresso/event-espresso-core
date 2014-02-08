@@ -45,13 +45,13 @@ class EE_Messages_Email_Payment_Validator extends EE_Messages_Validator {
 
 		//modify just event_list
 		$new_config['event_list'] = array(
-			'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'organization','recipient_details', 'recipient_list', 'event_author')
+			'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'organization','recipient_details', 'recipient_list', 'event_author', 'primary_registration_details', 'primary_registration_list')
 			);
 		$new_config['ticket_list'] = array(
 			'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list', 'recipient_details', 'transaction')
 			);
 		$new_config['content'] = array(
-			'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details', 'recipient_list', 'transaction')
+			'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details', 'recipient_list', 'transaction', 'primary_registration_details', 'primary_registration_list')
 			);
 		$this->_MSGR->set_validator_config( $new_config );
 	}

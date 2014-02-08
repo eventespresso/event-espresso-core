@@ -74,8 +74,8 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_valid_shortcodes() {
 		//remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the message type.
 		$this->_valid_shortcodes = array(
-			'to' => array('email', 'attendee'),
-			'from' => array('email', 'attendee')
+			'to' => array('email','event_author', 'primary_registration_details', 'recipient_details'),
+			'from' => array('email', 'primary_registration_details', 'recipient_details')
 			);
 	}
 
@@ -98,27 +98,27 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->_validator_config = array(
 			'to' => array(
 				'shortcodes' => $valid_shortcodes['to'],
-				'type' => array('email', 'recipient_details', 'primary_registration_details', 'event_author')
+				'type' => 'email'
 				),
 			'from' => array(
 				'shortcodes' => $valid_shortcodes['from'],
-				'type' => array('email', 'recipient_details', 'primary_registration_details', 'event_author')
+				'type' => 'email'
 				),
 			'subject' => array(
-				'shortcodes' => array('organization', 'recipient_details', 'primary_registration_details', 'event_author')
+				'shortcodes' => array('organization', 'primary_registration_details', 'event_author', 'primary_registration_details', 'recipient_details')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details', 'recipient_list', 'primary_registration_details', 'primary_registration_list', 'event_author')
+				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list', 'transaction')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
 				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'recipient_details', 'recipient_list', 'primary_registration_details', 'primary_registration_list', 'event_author')
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list')
 				),
 			'ticket_list' => array(
-				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list', 'recipient_details', 'primary_registration_details'),
+				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'recipient_details'),
 				'required' => array('[TICKET_LIST]')
 				),
 			'datetime_list' => array(

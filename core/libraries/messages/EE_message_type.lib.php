@@ -404,10 +404,17 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * see abstract declaration in parent class for details, children message types can override these valid shortcodes if desired (we include all for all contexts by default).
 	 */
 	protected function _set_valid_shortcodes() {
-		$all_shortcodes = array( 'attendee_list', 'attendee', 'datetime_list', 'datetime', 'event_list', 'event_meta', 'event', 'organization', 'recipient_details', 'recipient_list', 'ticket_list', 'ticket', 'transaction', 'venue', 'primary_registration_details', 'primary_registration_list', 'event_author' );
+		$all_shortcodes = array( 'attendee_list', 'attendee', 'datetime_list', 'datetime', 'event_list', 'event_meta', 'event', 'organization', 'recipient_details', 'recipient_list', 'ticket_list', 'ticket', 'transaction', 'venue', 'primary_registration_details', 'primary_registration_list', 'event_author', 'email' );
 		$contexts = $this->get_contexts();
 		foreach ( $contexts as $context => $details ) {
 			$this->_valid_shortcodes[$context] = $all_shortcodes;
+
+			//make sure non admin context does not include the event_author shortcodes
+			if ( $context != 'admin' ) {
+				if( ($key = array_search('event_author', $this->_valid_shortcodes[$context] ) ) !== false) {
+				    unset($this->_valid_shortcodes[$context][$key]);
+				}
+			}
 		}
 
 		//make sure admin context does not include the recipient_details shortcodes
@@ -418,6 +425,19 @@ abstract class EE_message_type extends EE_Messages_Base {
 		if( ($key = array_search('recipient_list', $this->_valid_shortcodes['admin'] ) ) !== false) {
 			    unset($this->_valid_shortcodes['admin'][$key]);
 			}
+	}
+
+
+
+	/**
+	 * Used by Validators to modify the valid shortcodes.
+	 * @param  array  $new_config array of valid shortcodes (by context)
+	 * @return void               sets valid_shortcodes property
+	 */
+	public function reset_valid_shortcodes_config( $new_config ) {
+		foreach ( $new_config as $context => $shortcodes ) {
+			$this->_valid_shortcodes[$context] = $shortcodes;
+		}
 	}
 
 
