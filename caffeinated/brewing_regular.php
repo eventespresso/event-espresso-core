@@ -203,9 +203,9 @@ class EE_Brewing_Regular extends EE_Base {
 		//shortcode parsers
 		add_filter('FHEE__EE_Attendee_Shortcodes__shortcodes', array( $this, 'additional_attendee_shortcodes'), 10, 2 );
 		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 10, 4 );
-		add_filter('FHEE__EE_Recipient_List_Shortcodes', array( $this, 'additional_recipient_details_shortcodes'), 10, 2 );
+		add_filter('FHEE__EE_Recipient_List_Shortcodes__shortcodes', array( $this, 'additional_recipient_details_shortcodes'), 10, 2 );
 		add_filter('FHEE__EE_Recipient_List__Shortcodes__parser_after', array( $this, 'additional_recipient_details_parser'), 10, 4 );
-		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes', array( $this, 'additional_primary_registration_details_shortcodes'), 10, 2 );
+		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__shortcodes', array( $this, 'additional_primary_registration_details_shortcodes'), 10, 2 );
 		add_filter('FHEE__EE_Primary_Registration_List__Shortcodes__parser_after', array( $this, 'additional_primary_registration_details_parser'), 10, 4 );
 	}
 
