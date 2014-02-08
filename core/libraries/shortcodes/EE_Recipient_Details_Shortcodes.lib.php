@@ -40,8 +40,6 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Recipient Details Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes specific to registrant and primary registrant recipients data', 'event_espresso');
 		$this->_shortcodes = array(
-			//'[PRIMARY_REGISTRATION_ID]' => __('This will be replaced with the Registration ID for the primary attendee of an event', 'event_espresso'),
-			//'[ATTENDEE_REGISTRATION_ID]' => __('this will be replaced with the attendee registration id for the Attendee of an event', 'event_espresso')
 			);
 	}
 

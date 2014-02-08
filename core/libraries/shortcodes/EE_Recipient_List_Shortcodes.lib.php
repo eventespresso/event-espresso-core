@@ -37,7 +37,9 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 		$this->description = __('All shortcodes specific to registrant and primary registrant recipients list type data.', 'event_espresso');
 		$this->_shortcodes = array(
 			'[RECIPIENT_TICKET_LIST]' => __('Will output a list of tickets for the recipient of the email. Note, if the recipient is the Event Author, then this is blank.', 'event_espresso'),
-			'[PRIMARY_REGISTRANT_TICKET_LIST]' => __('Will output a list of tickets that the primary registration receieved.', 'event_espresso')
+			'[PRIMARY_REGISTRANT_TICKET_LIST]' => __('Will output a list of tickets that the primary registration receieved.', 'event_espresso'),
+			'[RECIPIENT_DATETIME_LIST]' => __('Will output a list of datetimes that the person recieving this message has been registered for.', 'event_espresso'),
+			'[PRIMARY_REGISTRANT_DATETIME_LIST]' => __('Will output a list of datetimes that the primary registrant for the transaction has been registered for.', 'event_espresso')
 			);
 	}
 
@@ -51,6 +53,14 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 
 			case '[PRIMARY_REGISTRANT_TICKET_LIST]' :
 				return $this->_get_recipient_ticket_list( TRUE );
+				break;
+
+			case '[RECIPIENT_DATETIME_LIST]' :
+				return $this->_get_recipient_datetime_list();
+				break;
+
+			case '[PRIMARY_REGISTRANT_DATETIME_LIST]' :
+				return $this->_get_recipient_datetime_list( TRUE );
 				break;
 		}
 		return '';
@@ -123,6 +133,73 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 		return $evt_tkts;
 	}
 
+
+
+
+	/**
+	 * figure out what the incoming data is and then return the appropriate parsed value
+	 *
+	 * @param  boolean $primary whether we're getting the primary registrant ticket_list.
+	 * @return string
+	 */
+	private function _get_recipient_datetime_list( $primary = FALSE ) {
+		$this->_validate_list_requirements();
+		$this->_set_shortcode_helper();
+
+		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
+			return $this->_get_recipient_datetime_list_parsed( $this->_data['data'], $primary );
+
+		else if ( $this->_extra_data['data'] instanceof EE_Messages_Addressee )
+			return $this->_get_recipient_datetime_list_parsed( $this->_extra_data['data'], $primary );
+
+		else
+			return '';
+
+		return $this->_get_recipient_datetime_list_parsed( $this->_data['data'], $primary);
+	}
+
+
+	private function _get_recipient_datetime_list_parsed( EE_Messages_Addressee $data, $primary = FALSE ) {
+		$attendee = $primary ? $data->primary_att_obj : $data->att_obj;
+		if ( ! $attendee instanceof EE_Attendee ) return '';
+		//setup valid shortcodes depending on what the status of the $this->_data property is
+		if ( $this->_data['data'] instanceof EE_Messages_Addressee ) {
+			$valid_shortcodes = array('datetime', 'attendee');
+			$template = $this->_data['template'];
+			$dtts = $data->attendees[$attendee->ID()]['dtt_objs'];
+			$data = $this->_data;
+		} elseif ( $this->_data['data'] instanceof EE_Event ) {
+			$valid_shortcodes = array('datetime', 'attendee');
+			$template = is_array($this->_data['template'] ) && isset($this->_data['template']['datetime_list']) ? $this->_data['template']['datetime_list'] : $this->_extra_data['template']['datetime_list'];
+			$dtts = $this->_get_datetimes_from_event( $this->_data['data'], $attendee );
+			$data = $this->_extra_data;
+		} else {
+			return '';
+		}
+
+		$dtt_parsed = '';
+		foreach ( $dtts as $datetime ) {
+			$dtt_parsed .= $this->_shortcode_helper->parse_datetime_list_template( $template, $datetime, $valid_shortcodes, $data );
+		}
+		return $dtt_parsed;
+	}
+
+
+
+	private function _get_datetimes_from_event( EE_Event $event, $att = NULL ) {
+		$evt_dtts = isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['dtt_objs'] : array();
+
+		if ( $att instanceof EE_Attendee && $this->_extra_data['data'] instanceof EE_Messages_Addressee ) {
+			$adj_dtts = array();
+			//return only dtts for the given attendee
+			foreach ( $evt_dtts as $dtt ) {
+				if ( isset( $this->_extra_data['data']->attendees[$attendee->ID()]['dtt_objs'][$dtt->ID()] ) )
+					$adj_dtts = $dtt;
+			}
+			$evt_dtts = $adj_dtts;
+		}
+		return $evt_dtts;
+	}
 
 	
 } // end EE_Recipient_List_Shortcodes class
