@@ -48,6 +48,9 @@ class EE_Messages_Email_Registration_Validator extends EE_Messages_Validator {
 			'required' => array('[EVENT_LIST]')
 			);
 		$this->_MSGR->set_validator_config( $new_config );
+
+		if ( $this->_context != 'admin' )
+			$this->_valid_shortcodes_modifier[$this->_context]['event_list'] = array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'organization', 'event_author', 'primary_registration_details', 'primary_registration_list', 'recipient_details', 'recipient_list');
 	}
 
 } //end class EE_Messages_Email_Registration_Validator
