@@ -98,24 +98,24 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->_validator_config = array(
 			'to' => array(
 				'shortcodes' => $valid_shortcodes['to'],
-				'type' => array('email', 'recipient_details', 'primary_registration_details')
+				'type' => array('email', 'recipient_details', 'primary_registration_details', 'event_author')
 				),
 			'from' => array(
 				'shortcodes' => $valid_shortcodes['from'],
-				'type' => array('email', 'recipient_details', 'primary_registration_details')
+				'type' => array('email', 'recipient_details', 'primary_registration_details', 'event_author')
 				),
 			'subject' => array(
-				'shortcodes' => array('organization', 'recipient_details', 'primary_registration_details')
+				'shortcodes' => array('organization', 'recipient_details', 'primary_registration_details', 'event_author')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details', 'recipient_list', 'primary_registration_details', 'primary_registration_list')
+				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details', 'recipient_list', 'primary_registration_details', 'primary_registration_list', 'event_author')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
 				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'recipient_details', 'recipient_list', 'primary_registration_details', 'primary_registration_list')
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'recipient_details', 'recipient_list', 'primary_registration_details', 'primary_registration_list', 'event_author')
 				),
 			'ticket_list' => array(
 				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list', 'recipient_details', 'primary_registration_details'),

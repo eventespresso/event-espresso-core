@@ -17,19 +17,19 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Recipient_Details_Shortcodes
+ * EE_Event_Author_Shortcodes
  * 
- * this is a child class for the EE_Shortcodes library.  The EE_Recipient_Details_Shortcodes lists all shortcodes related to recipient specific info.  Meaning, that when this is parsed, we're parsing for WHO is receiving the message.  This only parses for Registrants and Primary Registrants as recipients.
+ * this is a child class for the EE_Shortcodes library.  The EE_Event_Author_Shortcodes lists all shortcodes related to event author specific information.  It's important to note that if used in 'TO', 'FROM', 'SUBJECT', or 'main_content' fields, it parses to the event_admin recipient. If used in the [EVENT_LIST] field, then it parses as the author for each event in the list.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
  * 
  * @package		Event Espresso
- * @subpackage	libraries/shortcodes/EE_Recipient_Details_Shortcodes.lib.php
+ * @subpackage	libraries/shortcodes/EE_Event_Author_Shortcodes.lib.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
+class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 
 	public function __construct() {
 		parent::__construct();
@@ -37,13 +37,13 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _init_props() {
-		$this->label = __('Recipient Details Shortcodes', 'event_espresso');
-		$this->description = __('All shortcodes specific to recipient registration data', 'event_espresso');
+		$this->label = __('Event Author Details Shortcodes', 'event_espresso');
+		$this->description = __('All shortcodes specific to event_author data', 'event_espresso');
 		$this->_shortcodes = array(
-			'[RECIPIENT_FNAME]' => __('Parses to the first name of the recipient for the message.', 'event_espresso'),
-			'[RECIPIENT_LNAME]' => __('Parses to the last name of the recipient for the message.', 'event_espresso'),
-			'[RECIPIENT_EMAIL]' => __('Parses to the email address of the recipient for the message.', 'event_espresso'),
-			'[RECIPIENT_REGISTRATION_CODE]' => __('Parses to the registration code of the recipient for the message.', 'event_espresso')
+			'[EVENT_AUTHOR_FNAME]' => __('Parses to the first name of the event author.', 'event_espresso'),
+			'[EVENT_AUTHOR_LNAME]' => __('Parses to the last name of the event author.', 'event_espresso'),
+			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('Parses to a formatted email address of the event author (fname lname <email@address.com>).', 'event_espresso')
+			'[EVENT_AUTHOR_EMAIL]' => __('Parses to the unformatted email address of the event author', 'event_espresso')
 			);
 	}
 
@@ -59,27 +59,21 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 		if ( ! $recipient instanceof EE_Messages_Addressee )
 			return '';
 
-		$attendee = $recipient->att_obj;
-		if ( ! $attendee instanceof EE_Attendee )
-			return '';
-
 		switch ( $shortcode ) {
-			case '[RECIPIENT_FNAME]' :
-				return $attendee->fname();
+			case '[EVENT_AUTHOR_FNAME]' :
+				return $recipient->fname;
 				break;
 
-			case '[RECIPIENT_LNAME]' :
-				return $attendee->lname();
+			case '[EVENT_AUTHOR_LNAME]' :
+				return $recipient->lname();
 				break;
 
-			case '[RECIPIENT_EMAIL]' :
-				return $attendee->email();
+			case '[EVENT_AUTHOR_FORMATTED_EMAIL]' :
+				return $recipient->fname . ' ' . $recipient->lname . '<' . $recipient->admin_email . '>';
 				break;
 
-			case '[RECIPIENT_REGISTRATION_CODE]' :
-				if ( ! $recipient->reg_obj instanceof EE_Registration )
-					return '';
-				return $recipient->reg_obj->reg_code();
+			case '[EVENT_AUTHOR_EMAIL]' :
+				return $recipient->admin_email;
 				break;
 
 			default : 

@@ -404,7 +404,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * see abstract declaration in parent class for details, children message types can override these valid shortcodes if desired (we include all for all contexts by default).
 	 */
 	protected function _set_valid_shortcodes() {
-		$all_shortcodes = array( 'attendee_list', 'attendee', 'datetime_list', 'datetime', 'event_list', 'event_meta', 'event', 'organization', 'recipient_details', 'recipient_list', 'ticket_list', 'ticket', 'transaction', 'venue', 'primary_registration_details', 'primary_registration_list' );
+		$all_shortcodes = array( 'attendee_list', 'attendee', 'datetime_list', 'datetime', 'event_list', 'event_meta', 'event', 'organization', 'recipient_details', 'recipient_list', 'ticket_list', 'ticket', 'transaction', 'venue', 'primary_registration_details', 'primary_registration_list', 'event_author' );
 		$contexts = $this->_get_contexts();
 		foreach ( $contexts as $context => $details ) {
 			$this->_valid_shortcodes[$context] = $all_shortcodes;
