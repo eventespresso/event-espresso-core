@@ -17,19 +17,19 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * ------------------------------------------------------------------------
  *
- * EE_Registration_Shortcodes
+ * EE_Recipient_Details_Shortcodes
  * 
- * this is a child class for the EE_Shortcodes library.  The EE_Registration_Shortcodes lists all shortcodes related to registration specific info. (note, we're making the assumption that registrations do not necessarily require payment)
+ * this is a child class for the EE_Shortcodes library.  The EE_Recipient_Details_Shortcodes lists all shortcodes related to recipient specific info.  Meaning, that when this is parsed, we're parsing for WHO is receiving the message.  This only parses for Registrants and Primary Registrants as recipients.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
  * 
  * @package		Event Espresso
- * @subpackage	libraries/shortcodes/EE_Registration_Shortcodes.lib.php
+ * @subpackage	libraries/shortcodes/EE_Recipient_Details_Shortcodes.lib.php
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-class EE_Registration_Shortcodes extends EE_Shortcodes {
+class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 
 	public function __construct() {
 		parent::__construct();
@@ -37,8 +37,8 @@ class EE_Registration_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _init_props() {
-		$this->label = __('Registration Shortcodes', 'event_espresso');
-		$this->description = __('All shortcodes specific to registration related data', 'event_espresso');
+		$this->label = __('Recipient Details Shortcodes', 'event_espresso');
+		$this->description = __('All shortcodes specific to registrant and primary registrant recipients data', 'event_espresso');
 		$this->_shortcodes = array(
 			//'[PRIMARY_REGISTRATION_ID]' => __('This will be replaced with the Registration ID for the primary attendee of an event', 'event_espresso'),
 			//'[ATTENDEE_REGISTRATION_ID]' => __('this will be replaced with the attendee registration id for the Attendee of an event', 'event_espresso')
