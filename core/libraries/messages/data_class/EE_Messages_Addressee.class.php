@@ -32,11 +32,11 @@ class EE_Messages_Addressee extends EE_Base {
 
 
 	/**
-	 * Identifier properties
+	 * Identifier properties for the recipient
 	 */
 	public $user_id;  //if available we'll use this to set the fname and lname (admin)
-	public $fname; //this will usually only be available for primary_attendees or admin
-	public $lname; //this will ususally only be available for primary_attendees or admin
+	public $fname; //this will always be the admin fname (set later via incoming user_id)
+	public $lname; //this will always be the admin lnmae (set later via incoming user_id)
 	public $primary_registration_id;
 	public $attendee_registration_id;
 
@@ -52,6 +52,8 @@ class EE_Messages_Addressee extends EE_Base {
 	/**
 	 * Attendee related
 	 */
+	public $primary_att_obj; //holds the attendee object for the primary attendee
+	public $primary_reg_obj; //holds the reg object for the primary attendee
 	public $att_obj; //holds the attendee object for an attendee
 	public $reg_obj; //holds the registration object for an attendee
 	public $questions; //EE_Question[] (indexed by EE_Answer->ID())
