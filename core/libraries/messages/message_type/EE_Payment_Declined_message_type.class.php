@@ -134,7 +134,6 @@ class EE_Payment_Declined_message_type extends EE_message_type {
 		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
 
-
 	
 }
 

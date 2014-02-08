@@ -155,15 +155,15 @@ class EE_Registration_message_type extends EE_message_type {
 	}
 
 
-	/**
-	 * see abstract declaration in parent class for details
-	 */
 	protected function _set_valid_shortcodes() {
-		$this->_valid_shortcodes = array(
-			'admin' => array('event','venue','organization', 'attendee', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'primary_attendee' => array('event','venue','organization', 'attendee', 'attendee_list', 'event_list', 'ticket_list','datetime_list'),
-			'attendee' => array('event','venue','organization', 'attendee', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
-			);
+		parent::_set_valid_shortcodes();
+
+		//remove unwanted transaction shortcode
+		foreach ( $this->_valid_shortcodes as $context => $shortcodes ) {
+			if( ($key = array_search('transaction', $shortcodes) ) !== false) {
+			    unset($this->_valid_shortcodes[$context][$key]);
+			}
+		}
 	}
 
 

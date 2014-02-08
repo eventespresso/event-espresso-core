@@ -147,6 +147,18 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 	}
 
 
+	protected function _set_valid_shortcodes() {
+		parent::_set_valid_shortcodes();
+
+		//remove unwanted transaction shortcode
+		foreach ( $this->_valid_shortcodes as $context => $shortcodes ) {
+			if( ($key = array_search('transaction', $shortcodes) ) !== false) {
+			    unset($this->_valid_shortcodes[$context][$key]);
+			}
+		}
+	}
+
+
 	/**
 	 * returns an array of addressee objects for event_admins
 	 *
