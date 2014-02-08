@@ -315,12 +315,11 @@ abstract class EE_Messages_incoming_data {
 
 				//now we can setup the primary_attendee_data array
 				$this->primary_attendee_data = array(
-					'fname' => $primary_reg->attendee()->fname(),
-					'lname' => $primary_reg->attendee()->lname(),
-					'email' => $primary_reg->attendee()->email(),
-					'primary_attendee_email' => $primary_reg->attendee()->email(),
 					'registration_id' => $primary_reg->ID(),
-					'att_obj' => $primary_reg->attendee()
+					'att_obj' => $primary_reg->attendee(),
+					'reg_obj' => $primary_reg,
+					'primary_att_obj' => $primary_reg->attendee(),
+					'primary_reg_obj' => $primary_reg,
 				);
 
 			} else {				
