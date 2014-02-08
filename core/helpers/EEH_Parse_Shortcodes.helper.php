@@ -193,7 +193,9 @@ class EEH_Parse_Shortcodes {
 					'[DATETIME_LIST]',
 					'[QUESTION_LIST]',
 					'[RECIPIENT_TICKET_LIST]',
-					'[PRIMARY_REGISTRANT_TICKET_LIST]'
+					'[PRIMARY_REGISTRANT_TICKET_LIST]',
+					'[RECIPIENT_DATETIME_LIST]',
+					'[PRIMARY_REGISTRANT_DATETIME_LIST]'
 					);
 				
 				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
