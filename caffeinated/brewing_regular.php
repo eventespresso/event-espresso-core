@@ -205,6 +205,8 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 10, 4 );
 		add_filter('FHEE__EE_Recipient_List_Shortcodes', array( $this, 'additional_recipient_details_shortcodes'), 10, 2 );
 		add_filter('FHEE__EE_Recipient_List__Shortcodes__parser_after', array( $this, 'additional_recipient_details_parser'), 10, 4 );
+		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes', array( $this, 'additional_primary_registration_details_shortcodes'), 10, 2 );
+		add_filter('FHEE__EE_Primary_Registration_List__Shortcodes__parser_after', array( $this, 'additional_primary_registration_details_parser'), 10, 4 );
 	}
 
 
@@ -327,7 +329,6 @@ class EE_Brewing_Regular extends EE_Base {
 
 	public function additional_recipient_details_shortcodes( $shortcodes, $shortcode_parser ) {
 		$shortcodes['[RECIPIENT_QUESTION_LIST]'] = __('This is used to indicate where you want the list of questions and answers to show for the person receiving the message.', 'event_espresso');
-		$shortcodes['[PRIMARY_REGISTRANT_QUESTION_LIST]'] = __('This is used to indicate the questions and answers for the primary_registrant. It should be placed in the "[attendee_list]" field', 'event_espresso');
 		return $shortcodes;
 	}
 
@@ -355,6 +356,28 @@ class EE_Brewing_Regular extends EE_Base {
 				return $question_list;
 				break;
 
+			default :
+				return $parsed;
+				break;
+		}
+	}
+
+
+	public function additional_primary_registration_details_shortcodes( $shortcodes, $shortcode_parser ) {
+		$shortcodes['[PRIMARY_REGISTRANT_QUESTION_LIST]'] = __('This is used to indicate the questions and answers for the primary_registrant. It should be placed in the "[attendee_list]" field', 'event_espresso');
+		return $shortcodes;
+	}
+
+
+	public function additional_primary_registration_details_parser( $parsed, $shortcode, $data, $extra_data ) {
+		if ( ! isset( $data['data'] ) || ! $data['data'] instanceof EE_Messages_Addressee )
+			return $parsed;
+
+		if ( ! isset( $extra_data['template'] ) ) {
+			return $parsed;
+		}
+		
+		switch ( $shortcode ) {
 			case '[PRIMARY_REGISTRANT_QUESTION_LIST]' : 
 				if ( ! $data['data']->primary_att_obj instanceof EE_Attendee )
 					return '';
