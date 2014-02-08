@@ -98,27 +98,27 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->_validator_config = array(
 			'to' => array(
 				'shortcodes' => $valid_shortcodes['to'],
-				'type' => 'email'
+				'type' => array('email', 'recipient_details')
 				),
 			'from' => array(
 				'shortcodes' => $valid_shortcodes['from'],
-				'type' => 'email'
+				'type' => array('email', 'recipient_details')
 				),
 			'subject' => array(
-				'shortcodes' => array('organization')
+				'shortcodes' => array('organization', 'recipient_details')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization')
+				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
 				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee')
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'recipient_details')
 				),
 			'ticket_list' => array(
-				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list'),
+				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list', 'recipient_details'),
 				'required' => array('[TICKET_LIST]')
 				),
 			'datetime_list' => array(
