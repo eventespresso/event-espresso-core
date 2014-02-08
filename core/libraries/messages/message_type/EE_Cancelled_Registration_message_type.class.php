@@ -156,8 +156,8 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 	 */
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes = array(
-			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
+			'admin' => array('event','venue','organization', 'attendee', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
+			'attendee' => array('event','venue','organization', 'attendee', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
 			);
 	}
 
