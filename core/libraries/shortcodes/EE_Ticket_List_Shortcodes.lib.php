@@ -143,6 +143,8 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 			$template = str_replace('[ATTENDEE_LIST]', '', $template);
 			$tkts = $this->_get_tickets_from_attendee( $this->_data['data'], $attendee );
 			$data = $this->_extra_data;
+		} else {
+			return '';
 		}
 
 		$tktparsed = '';
