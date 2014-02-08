@@ -45,7 +45,7 @@ class EE_Messages_Email_Declined_Registration_Validator extends EE_Messages_Vali
 
 		//modify just event_list
 		$new_config['event_list'] = array(
-			'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'organization', 'attendee'),
+			'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'organization'),
 			'required' => array('[EVENT_LIST]')
 			);
 		$this->_MSGR->set_validator_config( $new_config );
