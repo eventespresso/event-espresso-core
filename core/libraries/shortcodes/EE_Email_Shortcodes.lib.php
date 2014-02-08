@@ -42,7 +42,8 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Email Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes related to emails', 'event_espresso');
 		$this->_shortcodes = array(
-			'[SITE_ADMIN_EMAIL]' => __('Will be replaced with the admin email for the site that Event Espresso is installed on', 'event_espresso')
+			'[SITE_ADMIN_EMAIL]' => __('Will be replaced with the admin email for the site that Event Espresso is installed on', 'event_espresso'),
+			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the eevnts in a registration', 'event_espresso')
 			);
 	}
 
@@ -53,6 +54,14 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			
 			case '[SITE_ADMIN_EMAIL]' :
 				return $this->_get_site_admin_email();
+				break;
+
+			case '[EVENT_AUTHOR_EMAIL]' :
+				return $this->_get_event_admin_emails();
+				break;
+
+			default :
+				return '';
 				break;
 
 		}
@@ -67,6 +76,58 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_site_admin_email() {
 		return get_bloginfo('admin_email');
+	}
+
+
+	private function _get_event_admin_emails() {
+ 
+		if ( !empty( $this->_data->admin_email ) ) {
+			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : $this->_data->admin_email;
+		}
+ 
+		//k this shortcode has been used else where.  Since we don't know what particular event this is for, let's loop through the events and get an array of event admins for the events.  We'll return the formatted list of admin emails and let the messenger make sure we only pick one if this is for a field that can only have ONE!.
+		
+		$admin_email = array();
+ 
+		//loop through events and set the list of event_ids to retrieve so we can do ONE query.
+		foreach ( $this->_data->events as $event ) {
+			$ids[] = $event['ID'];
+		}
+ 
+		//get all the events
+		$events = EE_Registry::instance()->load_model('Event')->get_all( array(array('EVT_ID' => array('IN', $ids ) ) ) );
+ 
+		//now loop through each event and setup the details
+		$admin_details = array();
+		$cnt = 0;
+		foreach ( $events as $event ) {
+			$user = get_userdata($event->get('EVT_wp_user') );
+			$admin_details[$cnt] = new stdClass();
+			$admin_details[$cnt]->email = $user->user_email;
+			$admin_details[$cnt]->first_name = $user->user_firstname;
+			$admin_details[$cnt]->last_name = $user->user_lastname;
+			$cnt++;
+		}
+ 
+		//results?
+		if ( empty($admin_details) || !is_array($admin_details) ) {
+			$msg[] = __('The admin details could not be retrieved from the database.', 'event_espresso');
+			$msg[] = sprintf( __('Query: %s', 'event_espresso'), $sql );
+			$msg[] = sprintf( __('Events Data: %s', 'event_espresso'), var_export($this->_data->events, TRUE) );
+			$msg[] = sprintf( __('Event IDS: %s', 'event_espresso'), var_export($ids, TRUE) );
+			$msg[] = sprintf( __('Query Results: %s', 'event_espresso'), var_export($admin_details) );
+			do_action( 'espresso_log_shortcode_parser', __FILE__, __FUNCTION__, implode("\n", $msg) );
+		}
+ 
+		foreach ( $admin_details as $admin ) {
+			//only add an admin email if it is present.
+			if ( empty( $admin->email ) || $admin->email == '' ) continue;
+ 
+			$admin_email[] = !empty( $admin->first_name ) ? $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>' : $admin->email;
+		}
+ 
+		$admin_email = implode( ',', $admin_email );
+		return $admin_email;
 	}
 
 
