@@ -220,7 +220,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 	public function email_messenger_validator_config( $validator_config, EE_Email_messenger $messenger ) {
 		$validator_config['attendee_list'] = array(
-				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration', 'question_list'),
+				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'question_list'),
 				'required' => array('[ATTENDEE_LIST]')
 				);
 		$validator_config['question_list'] = array(
