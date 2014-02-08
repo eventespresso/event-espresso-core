@@ -100,11 +100,11 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 			return '';
 		}
 
-		$tktparsed = '';
+		$tkt_parsed = '';
 		foreach ( $tkts as $ticket ) {
 			$tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template( $template, $ticket, $valid_shortcodes, $data );
 		}
-		return $tktparsed;
+		return $tkt_parsed;
 	}
 
 
@@ -115,8 +115,8 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 			$adj_tkts = array();
 			//return only tickets for the given attendee
 			foreach ( $evt_tkts as $tkt ) {
-				if ( isset( $this->_extra_data['data']->attendees[$attendee->ID()]['tkt_objs'][$tkt->ID()] ) )
-					$adj_tkts = $tkt;
+				if ( isset( $this->_extra_data['data']->attendees[$att->ID()]['tkt_objs'][$tkt->ID()] ) )
+					$adj_tkts[] = $tkt;
 			}
 			$evt_tkts = $adj_tkts;
 		}
@@ -183,8 +183,8 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 			$adj_dtts = array();
 			//return only dtts for the given attendee
 			foreach ( $evt_dtts as $dtt ) {
-				if ( isset( $this->_extra_data['data']->attendees[$attendee->ID()]['dtt_objs'][$dtt->ID()] ) )
-					$adj_dtts = $dtt;
+				if ( isset( $this->_extra_data['data']->attendees[$att->ID()]['dtt_objs'][$dtt->ID()] ) )
+					$adj_dtts[] = $dtt;
 			}
 			$evt_dtts = $adj_dtts;
 		}

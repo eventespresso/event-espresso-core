@@ -202,11 +202,11 @@ class EE_Brewing_Regular extends EE_Base {
 
 		//shortcode parsers
 		add_filter('FHEE__EE_Attendee_Shortcodes__shortcodes', array( $this, 'additional_attendee_shortcodes'), 10, 2 );
-		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 10, 4 );
+		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 10, 5 );
 		add_filter('FHEE__EE_Recipient_List_Shortcodes__shortcodes', array( $this, 'additional_recipient_details_shortcodes'), 10, 2 );
-		add_filter('FHEE__EE_Recipient_List__Shortcodes__parser_after', array( $this, 'additional_recipient_details_parser'), 10, 4 );
+		add_filter('FHEE__EE_Recipient_List_Shortcodes__parser_after', array( $this, 'additional_recipient_details_parser'), 10, 5 );
 		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__shortcodes', array( $this, 'additional_primary_registration_details_shortcodes'), 10, 2 );
-		add_filter('FHEE__EE_Primary_Registration_List__Shortcodes__parser_after', array( $this, 'additional_primary_registration_details_parser'), 10, 4 );
+		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__parser_after', array( $this, 'additional_primary_registration_details_parser'), 10, 5 );
 	}
 
 
@@ -307,7 +307,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 
-	public function additional_attendee_parser( $parsed, $shortcode, $data, $extra_data ) {
+	public function additional_attendee_parser( $parsed, $shortcode, $data, $extra_data, $shortcode_parser ) {
 
 		if ( strpos( $shortcode, '[ANSWER_*' ) === FALSE || !isset( $extra_data['data']->questions) || !isset( $extra_data['data']->attendees) )
 			return $parsed;
@@ -333,25 +333,31 @@ class EE_Brewing_Regular extends EE_Base {
 	}
 
 
-	public function additional_recipient_details_parser( $parsed, $shortcode, $data, $extra_data ) {
-		if ( ! isset( $data['data'] ) || ! $data['data'] instanceof EE_Messages_Addressee )
+	public function additional_recipient_details_parser( $parsed, $shortcode, $data, $extra_data, $shortcode_parser ) {
+
+		if ( array($data) && ! isset( $data['data'] ) )
 			return $parsed;
 
-		if ( ! isset( $extra_data['template'] ) ) {
+		$recipient = $data['data'] instanceof EE_Messages_Addressee ? $data['data'] : NULL;
+		$recipient = ! $recipient instanceof EE_Messages_Addressee && array($extra_data) && isset( $extra_data['data'] ) && $extra_data['data'] instanceof EE_Messages_Addressee ? $extra_data['data'] : $recipient;
+
+		if ( ! $recipient instanceof EE_Messages_Addressee )
 			return $parsed;
-		}
+
+		$send_data = ! $data['data'] instanceof EE_Messages_Addressee ? $extra_data : $data;
 		
 		switch ( $shortcode ) {
 			case '[RECIPIENT_QUESTION_LIST]' :
-				if ( ! $data['data']->att_obj instanceof EE_Attendee )
+				if ( ! $recipient->att_obj instanceof EE_Attendee )
 					return '';
-				$recipient = $data['data']->att_obj;
-				$template = $data['template'];
+				$attendee = $recipient->att_obj;
+				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
-				$answers = $data['data']->attendees[$recipient->ID()]['ans_objs'];
+				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
+				$answers = $recipient->attendees[$attendee->ID()]['ans_objs'];
 				$question_list = '';
-				foreach ( $anwers as $answer ) {
-					$question_list .= $this->_shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $data);
+				foreach ( $answers as $answer ) {
+					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 				}
 				return $question_list;
 				break;
@@ -369,25 +375,30 @@ class EE_Brewing_Regular extends EE_Base {
 	}
 
 
-	public function additional_primary_registration_details_parser( $parsed, $shortcode, $data, $extra_data ) {
-		if ( ! isset( $data['data'] ) || ! $data['data'] instanceof EE_Messages_Addressee )
+	public function additional_primary_registration_details_parser( $parsed, $shortcode, $data, $extra_data, $shortcode_parser ) {
+		if ( array($data) && ! isset( $data['data'] ) )
 			return $parsed;
 
-		if ( ! isset( $extra_data['template'] ) ) {
+		$recipient = $data['data'] instanceof EE_Messages_Addressee ? $data['data'] : NULL;
+		$recipient = ! $recipient instanceof EE_Messages_Addressee && array($extra_data) && isset( $extra_data['data'] ) && $extra_data['data'] instanceof EE_Messages_Addressee ? $extra_data['data'] : $recipient;
+
+		if ( ! $recipient instanceof EE_Messages_Addressee )
 			return $parsed;
-		}
+
+		$send_data = ! $data['data'] instanceof EE_Messages_Addressee ? $extra_data : $data;
 		
 		switch ( $shortcode ) {
-			case '[PRIMARY_REGISTRANT_QUESTION_LIST]' : 
-				if ( ! $data['data']->primary_att_obj instanceof EE_Attendee )
+			case '[RECIPIENT_QUESTION_LIST]' :
+				if ( ! $recipient->primary_att_obj instanceof EE_Attendee )
 					return '';
-				$recipient = $data['data']->primary_att_obj;
-				$template = $data['template'];
+				$attendee = $recipient->primary_att_obj;
+				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
-				$answers = $data['data']->attendees[$recipient->ID()]['ans_objs'];
+				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
+				$answers = $recipient->attendees[$attendee->ID()]['ans_objs'];
 				$question_list = '';
-				foreach ( $anwers as $answer ) {
-					$question_list .= $this->_shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $data);
+				foreach ( $answers as $answer ) {
+					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
 				}
 				return $question_list;
 				break;
