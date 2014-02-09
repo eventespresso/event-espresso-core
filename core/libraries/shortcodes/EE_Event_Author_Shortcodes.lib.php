@@ -42,7 +42,7 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[EVENT_AUTHOR_FNAME]' => __('Parses to the first name of the event author.', 'event_espresso'),
 			'[EVENT_AUTHOR_LNAME]' => __('Parses to the last name of the event author.', 'event_espresso'),
-			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('Parses to a formatted email address of the event author (fname lname <email@address.com>).', 'event_espresso'),
+			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('Parses to a formatted email address of the event author (fname lname &lt;email@address.com&gt;).', 'event_espresso'),
 			'[EVENT_AUTHOR_EMAIL]' => __('Parses to the unformatted email address of the event author', 'event_espresso')
 			);
 	}
