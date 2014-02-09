@@ -42,6 +42,17 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function __construct( $CPT ) {
 		$this->CPT = $CPT;
+		// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
+		// here's the list of available filters in the WP_Query object
+		// 'posts_where'
+		// 'posts_where_paged'
+		// 'posts_groupby'
+		// 'posts_join_paged'
+		// 'posts_orderby'
+		// 'posts_distinct'
+		// 'post_limits'
+		// 'posts_fields'
+		// 'posts_join'
 		$this->_add_filters();
 	}
 	
@@ -57,6 +68,7 @@ class EE_CPT_Event_Strategy {
 		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
 		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
 		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
+		add_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1, 2 );
 	}
 
 
@@ -71,6 +83,7 @@ class EE_CPT_Event_Strategy {
 		remove_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
 		remove_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
 		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
+		remove_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1 );
 	}
 
 
@@ -112,10 +125,7 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function posts_where( $SQL ) {
 		global $wpdb;
-		// TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
-		// we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once 
-		// (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
-		$SQL .=" GROUP BY ID";
+//		d( $SQL );
 		return $SQL;
 	}
 
@@ -133,6 +143,24 @@ class EE_CPT_Event_Strategy {
 		return $posts;
 	}
 
+
+
+
+
+	/**
+	 * 	get_EE_post_type_metadata
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function posts_groupby( $SQL ) {
+		// TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
+		// we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once 
+		// (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
+		global $wpdb;
+		$SQL = $wpdb->posts . '.ID';
+		return $SQL;	
+	}
 
 
 

@@ -805,10 +805,18 @@ input.ee-register-button {
 }
 
 
+/******************* TEMPLATE FIXES ****************** */
+
+article .espresso_events,
+article .espresso_venues {
+	margin-top: 0 !important;
+}
+
 .espresso_events,
 .espresso_venues {
 	margin-bottom: 48px;
 }
+
 /*******************************************************/
 /****                     -==ATTENTION==-                     ****/
 /****         MOVE THIS FILE BEFORE EDITING         ****/
