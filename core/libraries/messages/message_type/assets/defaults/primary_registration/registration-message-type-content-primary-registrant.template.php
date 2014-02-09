@@ -33,7 +33,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <h2>Hello, [PRIMARY_REGISTRATION_FNAME]:</h2>
+                                    <h2>Hello, [PRIMARY_REGISTRANT_FNAME]:</h2>
                                     <p class="lead">This is a copy of your registration details!</p>
                                 </td>
                             </tr>
