@@ -50,7 +50,6 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-
 		//make sure we end up with a copy of the EE_Messages_Addressee object
 		$recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
 		$recipient = ! $recipient instanceof EE_Messages_Addressee && is_array($this->_data) && isset( $this->_data['data'] ) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data'] : $recipient;
@@ -65,11 +64,12 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_AUTHOR_LNAME]' :
-				return $recipient->lname();
+				return $recipient->lname;
 				break;
 
 			case '[EVENT_AUTHOR_FORMATTED_EMAIL]' :
-				return $recipient->fname . ' ' . $recipient->lname . '<' . $recipient->admin_email . '>';
+				$email =  !empty( $recipient->fname ) ? $recipient->fname . ' ' . $recipient->lname . '<' . $recipient->admin_email . '>' : $recipient->admin_email;
+				return $email;
 				break;
 
 			case '[EVENT_AUTHOR_EMAIL]' :
