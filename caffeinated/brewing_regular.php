@@ -197,7 +197,7 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 10, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 10, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_default_field_content', array( $this, 'email_default_field_content'), 10, 2 );
-		add_filter('FHEE__EE_Messages_Base__get_default_field_content', array( $this, 'message_types_default_field_content'), 10, 2 );
+		add_filter('FHEE__EE_Message_Template_Defaults___create_new_templates___templates', array( $this, 'message_types_default_field_content'), 10, 4 );
 		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes'), 10, 2 );
 
 		//shortcode parsers
@@ -261,17 +261,20 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 
-	public function message_types_default_field_content( $default_field_content, EE_Messages_Base $msg ) {
+	public function message_types_default_field_content( $default_field_content, $evt_id, $is_global,  EE_Message_Template_Defaults $msg ) {
 
 		switch ( get_class( $msg ) ) {
 
-			case 'EE_Registration_message_type' :
-			case 'EE_Resend_Registration_message_type' :
-				$contexts = array_keys($msg->get_contexts());
-				foreach ( $contexts as $context ) {
-					$default_field_content['content'][$context]['question_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-question-list.template.php', TRUE );
-					$default_field_content['content'][$context]['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
+			case 'EE_Messages_Email_Registration_Defaults' :
+			case 'EE_Messages_Resend_Registration_Defaults' :
+				$contexts = $msg->get_contexts();
+				foreach ( $contexts as $context => $details ) {
+					$default_field_content[$context]['content']['question_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-question-list.template.php', TRUE );
+					$default_field_content[$context]['content']['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
 				}
+				$default_field_content['attendee']['content']['event_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/attendee/registration-message-type-attendee-event-list.template.php', TRUE );
+				$default_field_content['admin']['content']['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/admin/registration-message-type-admin-attendee-list.template.php', TRUE );
+				$default_field_content['attendee']['content']['attendee_list'] = '';
 				break;
 
 			default : 
