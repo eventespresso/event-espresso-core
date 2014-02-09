@@ -357,7 +357,7 @@ class EE_Brewing_Regular extends EE_Base {
 				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
 				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
-				$answers = $recipient->attendees[$attendee->ID()]['ans_objs'];
+				$answers = !empty($recipient->attendees[$attendee->ID()]['ans_objs']) ? $recipient->attendees[$attendee->ID()]['ans_objs'] : array();
 				$question_list = '';
 				foreach ( $answers as $answer ) {
 					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
