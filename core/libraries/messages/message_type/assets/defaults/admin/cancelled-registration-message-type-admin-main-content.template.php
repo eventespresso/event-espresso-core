@@ -32,17 +32,14 @@
 <tbody>
 <tr>
 <td>
-<h2>Hello, [RECIPIENT_FNAME]:</h2>
-<p class="lead">Your registration was cancelled for the following tickets:</p>
+<h2>Hello, [EVENT_AUTHOR_FNAME]:</h2>
+<p class="lead">Registrations were cancelled for the following events.</p>
 </td>
 </tr>
 </tbody>
 </table>
 </div>
-<div class="content">
-    <ul>[RECIPIENT_TICKET_LIST]</ul>
-</div>
-</td>
+[EVENT_LIST]</td>
 <td></td>
 </tr>
 </tbody>
