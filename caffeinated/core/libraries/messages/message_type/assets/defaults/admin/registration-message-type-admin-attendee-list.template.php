@@ -4,4 +4,6 @@
 <li><strong>Tickets:</strong></li>
 </ul>
 <ul>[TICKET_LIST]</ul>
+<strong>Questions & Answers</strong>
+<ul>[QUESTION_LIST]</ul>
 <hr />

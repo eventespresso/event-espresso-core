@@ -38,9 +38,13 @@ class EE_Messages_Email_Registration_Defaults extends EE_Message_Template_Defaul
 
 	protected function _change_templates( $evt_id, $is_global ) {
 		//make sure admin context has correct "To" email address
-		$this->_templates['admin']['to'] = '[EVENT_AUTHOR_EMAIL]';
+		$this->_templates['admin']['to'] = '[EVENT_AUTHOR_FORMATTED_EMAIL]';
 		$this->_templates['primary_attendee']['to'] = '';
 		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/registration-message-type-admin-main-content.template.php', TRUE );
+		$this->_templates['primary_attendee']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/primary_registration/registration-message-type-content-primary-registrant.template.php', TRUE );
 		$this->_templates['admin']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/registration-message-type-admin-event-list.template.php', TRUE );
+		$this->_templates['primary_attendee']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/primary_registration/registration-message-type-primary-registrant-event-list.template.php', TRUE );
+		$this->_templates['attendee']['content']['attendee_list'] = '';
+		$this->_templates['admin']['content']['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/registration-message-type-admin-attendee-list.template.php', TRUE );
 	}
 }

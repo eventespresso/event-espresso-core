@@ -81,9 +81,7 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 		$valid_shortcodes = array('question');
 		$template = is_array( $this->_data['template'] ) && isset($this->_data['template']['question_list']) ? $this->_data['template']['question_list'] : $this->_extra_data['template']['question_list'];
 		$ans_result = '';
-		$most_recent_registration = $this->_data['data'] instanceof EE_Attendee ? $this->_data['data']->get_most_recent_registration() : NULL;
-		$answers = $most_recent_registration instanceof EE_Registration ? $most_recent_registration->answers() : array();
-
+		$answers = $this->_extra_data['data']->attendees[$this->_data['data']->ID()]['ans_objs'];
 		foreach ( $answers as $answer ) {
 			$ans_result .= $this->_shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $this->_extra_data);
 		}

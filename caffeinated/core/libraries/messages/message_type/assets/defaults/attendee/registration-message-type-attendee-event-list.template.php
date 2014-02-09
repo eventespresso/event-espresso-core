@@ -25,6 +25,9 @@ Venue: <a href="[VENUE_URL]" target="_blank">[VENUE_TITLE]</a> ([VENUE_CITY], [V
 	<li><strong>Tickets:</strong></li>
 	<li><ul>[RECIPIENT_TICKET_LIST]</ul></li>
 </ul>
+<strong>Questions &amp; Answers</strong>
+<ul>[RECIPIENT_QUESTION_LIST]</ul>
+
 <hr />
 
 </td>

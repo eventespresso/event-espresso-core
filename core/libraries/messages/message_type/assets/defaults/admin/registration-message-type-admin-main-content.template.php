@@ -1,39 +1,47 @@
 <!-- HEADER -->
 <table class="head-wrap" bgcolor="#999999">
-    <tr>
-        <td></td>
-        <td class="header container">
-            <div class="content">
-            <table bgcolor="#999999" class="">
-                <tr>
-                    <td>[CO_LOGO]</td>
-                    <td align="right"><h6 class="collapse">[COMPANY]</h6></td>
-                </tr>
-            </table>
-            </div>
-        </td>
-        <td></td>
-    </tr>
-</table>  
+    <tbody>
+        <tr>
+            <td></td>
+            <td class="header container">
+                <div class="content">
+                    <table bgcolor="#999999">
+                        <tbody>
+                            <tr>
+                                <td>[CO_LOGO]</td>
+                                    <td align="right">
+                                    <h6 class="collapse">[COMPANY]</h6>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
 <!-- END HEADER -->
 <!-- BODY -->
 <table class="body-wrap">
-    <tr>
+    <tbody>
+        <tr>
         <td></td>
-        <td class="container" bgcolor="#FFFFFF">
-            <!-- content -->
+            <td class="container" bgcolor="#FFFFFF"><!-- content -->
             <div class="content">
                 <h1>Registration Notification</h1>
-                <p>The following attendee(s) have registered for the following event(s).</p>
+                The following attendee(s) have registered for the following event:
                 <table>
-                    <tr>
-                        <td>
-                           [EVENT_LIST]
-                        </td>
-                    </tr>
+                    <tbody>
+                        <tr>
+                            <td>[EVENT_LIST]</td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </td>
         <td></td>
-    </tr>
-</table> <!-- END BODY -->
+        </tr>
+    </tbody>
+</table>
+<!-- END BODY -->
