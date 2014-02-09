@@ -45,6 +45,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[EVENT_ID]' => __('Will be replaced by the event ID of an event', 'event_espresso'),
 			'[EVENT_IDENTIFIER]' => __('Will be replaced with the event identifier of an event', 'event_espresso'),
 			'[EVENT]' => __('The name of the event', 'event_espresso'),
+			'[EVENT_NAME]' => __("This also can be used for the name of the event", 'event_espresso'),
 			'[EVENT_PHONE]' => __('The phone number for the event (usually an info number)', 'event_espresso'),
 			'[EVENT_DESCRIPTION]' => __('The description of the event', 'event_espresso'),
 			'[EVENT_NAME]' => __('The name of the event', 'event_espresso'),
