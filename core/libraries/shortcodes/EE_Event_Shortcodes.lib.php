@@ -45,17 +45,16 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[EVENT_ID]' => __('Will be replaced by the event ID of an event', 'event_espresso'),
 			'[EVENT_IDENTIFIER]' => __('Will be replaced with the event identifier of an event', 'event_espresso'),
 			'[EVENT]' => __('The name of the event', 'event_espresso'),
+			'[EVENT_NAME]' => __("This also can be used for the name of the event", 'event_espresso'),
 			'[EVENT_PHONE]' => __('The phone number for the event (usually an info number)', 'event_espresso'),
 			'[EVENT_DESCRIPTION]' => __('The description of the event', 'event_espresso'),
-			'[EVENT_NAME]' => __('The name of the event', 'event_espresso'),
 			'[EVENT_LINK]' => __('A link associated with the event', 'event_espresso'),
 			'[EVENT_URL]' => __('A link to the event set up on the host site.', 'event_espresso'),
 			'[VIRTUAL_URL]' => __('What was used for the "URL of Event" field in the Venue settings', 'event_espresso'),
 			'[VIRTUAL_PHONE]' => __('An alternate phone number for the event. Typically used as a "call-in" number', 'event_espresso'),
 			'[EVENT_IMAGE]' => __('This will parse to the Feature image for the event.', 'event_espresso'),
 			'[EVENT_FACEBOOK_URL]' => __('This will return the Facebook URL for the event.', 'event_espresso'),
-			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event.', 'event_espresso'),
-			'[EVENT_AUTHOR_EMAIL]' => __('This will return the email for the author of the event.', 'event_espresso')
+			'[EVENT_TWITTER_URL]' => __('This will return the Twitter URL for the event.', 'event_espresso')
 			);
 	}
 

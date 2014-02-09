@@ -32,7 +32,7 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 
 	public function __construct() {
 		$this->name = 'cancelled_registration';
-		$this->description = __('This message type is for messages sent to attendees when their registration is cancelled.', 'event_espresso');
+		$this->description = __('This message type is for messages sent to registrants when their registration is cancelled.', 'event_espresso');
 		$this->label = array(
 			'singular' => __('registration cancelled', 'event_espresso'),
 			'plural' => __('registrations cancelled', 'event_espresso')
@@ -141,8 +141,8 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 				'description' => __('This template is what event administrators will receive with an cancelled registration', 'event_espresso')
 				),
 			'attendee' => array(
-				'label' => __('Attendee', 'event_espresso'),
-				'description' => __('This template is what each attendee for the event will receive when their registration is cancelled.', 'event_espresso')
+				'label' => __('Registrant', 'event_espresso'),
+				'description' => __('This template is what each registrant for the event will receive when their registration is cancelled.', 'event_espresso')
 				)
 			);
 
@@ -151,19 +151,17 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 	}
 
 
-	/**
-	 * see abstract declaration in parent class for details
-	 */
+
 	protected function _set_valid_shortcodes() {
-		$this->_valid_shortcodes = array(
-			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
-			);
+		parent::_set_valid_shortcodes();
+
+		//remove unwanted transaction shortcode
+		foreach ( $this->_valid_shortcodes as $context => $shortcodes ) {
+			if( ($key = array_search('transaction', $shortcodes) ) !== false) {
+			    unset($this->_valid_shortcodes[$context][$key]);
+			}
+		}
 	}
-
-
-
-
 
 
 
@@ -176,87 +174,8 @@ class EE_Cancelled_Registration_message_type extends EE_message_type {
 	protected function _admin_addressees() {
 		if ( $this->_single_message )
 			return array();
-
-		$admin_ids = array();
-		$admin_events = array();
-		$admin_attendees = array();
-		$addressees = array();
-
-		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
-		foreach ( $this->_data->events as $line_ref => $event ) {
-			$admin_id = $this->_get_event_admin_id($event['ID']);
-			//get the user_id for the event
-			$admin_ids[] = $admin_id;
-			//make sure we are just including the events that belong to this admin!
-			$admin_events[$admin_id][$line_ref] = $event;
-		}
-
-		//make sure we've got unique event_admins!
-		$admin_ids = array_unique($admin_ids);
-
-		//k now we can loop through the event_admins and setup the addressee data.
-		foreach ( $admin_ids as $event_admin ) {
-			$aee = array(
-				'user_id' => $event_admin,
-				'events' => $admin_events[$event_admin],
-				'attendees' => $this->_data->attendees
-				);
-			$aee = array_merge( $this->_default_addressee_data, $aee );
-			$addressees[] = new EE_Messages_Addressee( $aee );
-		}
-
-		return $addressees;
+		return parent::_admin_addressees();
 	}
 
-
-
-	/**
-	 * Takes care of setting up the addresee object(s) for the registered attendees
-	 *
-	 * @access protected
-	 * @return array of EE_Addressee objects
-	 */
-	protected function _attendee_addressees() {
-		$add = array();
-		//we just have to loop through the attendees.  We'll also set the attached events for each attendee.
-		//use to verify unique attendee emails... we don't want to sent multiple copies to the same attendee do we?
-		$already_processed = array();
-		foreach ( $this->_data->attendees as $att_id => $details ) {
-			//set the attendee array to blank on each loop;
-			$aee = array();
-
-			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $att_id ) && $this->_single_message ) continue;
-			
-			if ( in_array( $details['attendee_email'], $already_processed ) )
-				continue;
-
-			$already_processed[] = $details['attendee_email'];
-
-			foreach ( $details as $item => $value ) {
-				$aee[$item] = $value;
-				if ( $item == 'line_ref' ) {
-					foreach ( $value as $event_id ) {
-						$aee['events'][$event_id] = $this->_data->events[$event_id];
-					}
-				}
-
-				if ( $item == 'attendee_email' ) {
-					$aee['attendee_email'] = $value;
-				}
-
-				if ( $item == 'registration_id' ) {
-					$aee['attendee_registration_id'] = $value;
-				}
-			}
-
-			$aee['attendees'] = $this->_data->attendees;
-
-			//merge in the primary attendee data
-			$aee = array_merge( $this->_default_addressee_data, $aee );
-			$add[] = new EE_Messages_Addressee( $aee );
-		}
-	
-		return $add;
-	}
 
 } //end EE_Cancelled_Registration_message_type class

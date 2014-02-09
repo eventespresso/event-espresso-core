@@ -1,90 +1,92 @@
 <!-- HEADER -->
 <table class="head-wrap" bgcolor="#999999">
-    <tr>
-        <td></td>
-        <td class="header container">
-            
-            <div class="content">
-            <table bgcolor="#999999" class="">
-                <tr>
-                    <td>[CO_LOGO]</td>
-                    <td align="right"><h6 class="collapse">[COMPANY]</h6></td>
-                </tr>
-            </table>
-            </div>
-            
-        </td>
-        <td></td>
-    </tr>
-</table>  
+<tbody>
+<tr>
+<td></td>
+<td class="header container">
+<div class="content">
+<table bgcolor="#999999">
+<tbody>
+<tr>
+<td>[CO_LOGO]</td>
+<td align="right">
+<h6 class="collapse">[COMPANY]</h6>
+</td>
+</tr>
+</tbody>
+</table>
+</div></td>
+<td></td>
+</tr>
+</tbody>
+</table>
 <!-- END HEADER -->
 <!-- BODY -->
 <table class="body-wrap">
-    <tr>
-        <td></td>
-        <td class="container" bgcolor="#FFFFFF">
-            
-            <!-- content -->
-            <div class="content">
-                <table>
-                    <tr>
-                        <td>
-                            <h2>Hello, [FNAME]:</h2>
-                            <p class="lead">Sorry, the folowing registration(s) has been <strong>declined</strong>.</p>
-                            
-    
-                        </td>
-                    </tr>
-                </table>
-            </div>
-            [EVENT_LIST]
-        </td>
-        <td></td>
-    </tr>
-</table> <!-- END BODY -->
-
+<tbody>
+<tr>
+<td></td>
+<td class="container" bgcolor="#FFFFFF"><!-- content -->
+<div class="content">
+<table>
+<tbody>
+<tr>
+<td>
+<h2>Hello, [RECIPIENT_FNAME]:</h2>
+<p class="lead">Your registration was declined for the following tickets:</p>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="content">
+	<ul>[RECIPIENT_TICKET_LIST]</ul>
+</div>
+</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<!-- END BODY -->
 <!-- FOOTER -->
 <table class="footer-wrap">
-    <tr>
-        <td></td>
-        <td class="container">
-            <table class="social" width="100%">
-                    <tbody>
-                        <tr>
-                            <td>  
-                                <!-- column 1 -->
-                                <table align="left" class="column">
-                                    <tbody><tr>
-                                        <td>                
-                                            
-                                            <h5 class="">Connect with Us:</h5>
-                                            <p class=""><a href="[CO_FACEBOOK_URL]" class="soc-btn fb">Facebook</a> <a href="[CO_TWITTER_URL]" class="soc-btn tw">Twitter</a> <a href="CO_GOOGLE_URL]" class="soc-btn gp">Google+</a></p>
+<tbody>
+<tr>
+<td></td>
+<td class="container">
+<table class="social" width="100%">
+<tbody>
+<tr>
+<td><!-- column 1 -->
+<table class="column" align="left">
+<tbody>
+<tr>
+<td>
+<h5>Connect with Us:</h5>
+<a class="soc-btn fb" href="[CO_FACEBOOK_URL]">Facebook</a> <a class="soc-btn tw" href="[CO_TWITTER_URL]">Twitter</a> <a class="soc-btn gp" href="CO_GOOGLE_URL]">Google+</a></td>
+</tr>
+</tbody>
+</table>
+<!-- /column 1 -->
+<!-- column 2 -->
+<table class="column" align="left">
+<tbody>
+<tr>
+<td>
+<h5>Contact Info:</h5>
+Phone: <strong>[CO_PHONE]</strong>
 
-                                            
-                                        </td>
-                                    </tr>
-                                </tbody></table><!-- /column 1 -->  
-                                
-                                <!-- column 2 -->
-                                <table align="left" class="column">
-                                    <tbody><tr>
-                                        <td>                
-                                                                        
-                                            <h5 class="">Contact Info:</h5>                                             
-                                            <p>Phone: <strong>[CO_PHONE]</strong><br>
-                        Email: <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></p>
-
-                                        </td>
-                                    </tr>
-                                </tbody></table><!-- /column 2 -->
-                                
-                                <span class="clear"></span> 
-                                
-                            </td>
-                        </tr>
-                    </tbody>
-                </table> <!-- end social table -->
-        </td>
-        <td></td>
-    </tr>
-</table><!-- /FOOTER -->
+Email: <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
+</tr>
+</tbody>
+</table>
+<!-- /column 2 --></td>
+</tr>
+</tbody>
+</table>
+<!-- end social table --></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<!-- /FOOTER -->

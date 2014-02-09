@@ -1,29 +1,28 @@
 <!-- content -->
 <div class="content">
-	<table>
-		<tr>
-			<td>
-				<h3>[EVENT_NAME]</h3>
-				<!-- Callout Panel -->
-				<p class="callout"><a href="[EVENT_URL]">View Event &raquo;</a> </p>
-				<!-- /Callout Panel -->
-			</td>
-		</tr>
-	</table>
+<table>
+<tbody>
+<tr>
+<td><!-- Callout Panel -->
+<p class="callout"><strong>Event Name:</strong> <a href="[EVENT_URL]">[EVENT]</a></p>
+<!-- /Callout Panel --></td>
+</tr>
+</tbody>
+</table>
 </div>
 <!-- COLUMN WRAP -->
 <div class="column-wrap">
-	<div class="column-large">
-		<table align="left">
-			<tr>
-				<td>
-					<h3>Registrant(s):</h3>
-						[ATTENDEE_LIST]
-				</td>
-			</tr>
-		</table>
-	</div>
-	
-	<div class="clear"></div>
+<div class="column-large">
+<table align="left">
+<tbody>
+<tr>
+<td>
+<h2>Registrant(s):</h2>
+[ATTENDEE_LIST]</td>
+</tr>
+</tbody>
+</table>
 </div>
-<!-- /COLUMN WRAP --> 
+<div class="clear"></div>
+</div>
+<!-- /COLUMN WRAP -->

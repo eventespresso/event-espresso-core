@@ -49,7 +49,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_GATEWAY]' => __('The payment gateway used for the transaction', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
 			'[TOTAL_OWING]' => __('The total owing on a transaction', 'event_espresso'),
-			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso')
+			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
+			'[TRANSACTION_ADMIN_URL]' => __('The url to the admin page for this transaction', 'event_espresso')
 			);
 	}
 
@@ -58,9 +59,12 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		
 		EE_Registry::instance()->load_helper( 'Template' );
 
+		if ( !$this->_data->txn instanceof EE_Transaction )
+			return '';
+
 		switch ( $shortcode ) {
 			case '[TXN_ID]' :
-				return isset($this->_data->txn->ID) ? $this->_data->txn->ID : '';
+				return $this->_data->txn->ID();
 				break;
 
 			case '[PAYMENT_URL]' :
@@ -107,6 +111,14 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			case "[TKT_QTY_PURCHASED]" :
 				return $this->_data->total_ticket_count;
 				break;
+
+			case "[TRANSACTION_ADMIN_URL]" :
+				require_once EE_CORE . 'admin/EE_Admin_Page.core.php';
+				$query_args = array( 'page' => 'espresso_transaction', 'action' => 'view_transaction', 'TXN_ID' => $this->_data->txn->ID() );
+				$url = EE_Admin_Page::add_query_args_and_nonce( $query_args, admin_url('admin.php') );
+				return $url;
+				break;
+
 		}
 		return '';
 	}

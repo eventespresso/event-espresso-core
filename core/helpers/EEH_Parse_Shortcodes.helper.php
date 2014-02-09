@@ -186,10 +186,22 @@ class EEH_Parse_Shortcodes {
 					continue; //the given shortcode isn't in this object
 				}
 
-
+				$list_type_shortcodes = array(
+					'[ATTENDEE_LIST]',
+					'[EVENT_LIST]',
+					'[TICKET_LIST]',
+					'[DATETIME_LIST]',
+					'[QUESTION_LIST]',
+					'[RECIPIENT_QUESTION_LIST]',
+					'[PRIMARY_REGISTRANT_QUESTION_LIST]',
+					'[RECIPIENT_TICKET_LIST]',
+					'[PRIMARY_REGISTRANT_TICKET_LIST]',
+					'[RECIPIENT_DATETIME_LIST]',
+					'[PRIMARY_REGISTRANT_DATETIME_LIST]'
+					);
 				
 				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
-				if ( $shortcode != '[ATTENDEE_LIST]' && $shortcode != '[EVENT_LIST]' && $shortcode !== '[TICKET_LIST]' && $shortcode !== '[DATETIME_LIST]' && $shortcode !== '[QUESTION_LIST]' ) {
+				if ( ! in_array( $shortcode, $list_type_shortcodes ) ) {
 					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
 				} else {
 					$data_send = $this->_data;

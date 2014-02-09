@@ -43,9 +43,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		$this->description = __('All shortcodes related to emails', 'event_espresso');
 		$this->_shortcodes = array(
 			'[SITE_ADMIN_EMAIL]' => __('Will be replaced with the admin email for the site that Event Espresso is installed on', 'event_espresso'),
-			'[ATTENDEE_EMAIL]' => __('Will be replaced with a properly formatted list of attendee emails who have been registered for an event', 'event_espresso'),
-			'[PRIMARY_ATTENDEE_EMAIL]' => __('This will be replaced with the properly formatted email for the primary registrant of an event', 'event_espresso'),
-			'[EVENT_AUTHOR_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the events in a registration', 'event_espresso')
+			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the eevnts in a registration', 'event_espresso')
 			);
 	}
 
@@ -58,18 +56,14 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 				return $this->_get_site_admin_email();
 				break;
 
-			case '[ATTENDEE_EMAIL]' :
-				return $this->_get_event_attendee_email();
-				break;
-
-			case '[PRIMARY_ATTENDEE_EMAIL]' :
-				return $this->_data->primary_attendee_email;
-				break;
-
-			case '[EVENT_AUTHOR_EMAIL]' :
+			case '[EVENT_AUTHOR_FORMATTED_EMAIL]' :
 				return $this->_get_event_admin_emails();
 				break;
-				
+
+			default :
+				return '';
+				break;
+
 		}
 	}
 
@@ -85,59 +79,24 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 	}
 
 
-
-
-	/**
-	 * Returns the properly formatted attendee emails for a given template request (could be multiple attendees).
-	 *
-	 * @access private
-	 * @return string properly formatted list of email addresses for attendees
-	 */
-	private function _get_event_attendee_email() {
-		//why all the checks?  Because there's possible different sources for the Attendee details depending on 
-
-		$fname = !empty( $this->_data->fname ) ? $this->_data->fname : '';
-		$fname = is_object( $this->_data ) && isset( $this->_data->att_obj ) ? $this->_data->att_obj->fname() : $fname;
-
-		$lname = !empty( $this->_data->lname ) ? $this->_data->lname : '';
-		$lname = is_object( $this->_data ) && isset( $this->_data->att_obj ) ? $this->_data->att_obj->lname() : $lname;
-
-		$email = !empty( $this->_data->attendee_email ) ? $this->_data->attendee_email : '';
-		$email = is_object( $this->_data ) && isset( $this->_data->att_obj ) ? $this->_data->att_obj->email() : $email;
-
-		$attendee_email = $fname . ' ' . $lname . ' <' . $email . '>';
-		return $attendee_email;
-	}
-
-
-
-	/**
-	 * Returns the properly formatted admin email of a given event (or multiple events if present)
-	 *
-	 * If there is more than one event in the incoming data, we will parse the "[EVENT_AUTHOR_EMAIL]" shortcode so it returns the properly formatted list of all event admin emails.
-	 *
-	 *	@todo: once we have a proper event model in place let's make sure that we use it!
-	 * 	@access private
-	 * 	@return string properly formatted list of email addresses for an event admin.
-	 */
 	private function _get_event_admin_emails() {
 
 		if ( !empty( $this->_data->admin_email ) ) {
 			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : $this->_data->admin_email;
 		}
-
+ 
 		//k this shortcode has been used else where.  Since we don't know what particular event this is for, let's loop through the events and get an array of event admins for the events.  We'll return the formatted list of admin emails and let the messenger make sure we only pick one if this is for a field that can only have ONE!.
 		
 		$admin_email = array();
-
+ 
 		//loop through events and set the list of event_ids to retrieve so we can do ONE query.
 		foreach ( $this->_data->events as $event ) {
 			$ids[] = $event['ID'];
 		}
-
+ 
 		//get all the events
 		$events = EE_Registry::instance()->load_model('Event')->get_all( array(array('EVT_ID' => array('IN', $ids ) ) ) );
-
+ 
 		//now loop through each event and setup the details
 		$admin_details = array();
 		$cnt = 0;
@@ -149,7 +108,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			$admin_details[$cnt]->last_name = $user->user_lastname;
 			$cnt++;
 		}
-
+ 
 		//results?
 		if ( empty($admin_details) || !is_array($admin_details) ) {
 			$msg[] = __('The admin details could not be retrieved from the database.', 'event_espresso');
@@ -159,16 +118,17 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			$msg[] = sprintf( __('Query Results: %s', 'event_espresso'), var_export($admin_details) );
 			do_action( 'espresso_log_shortcode_parser', __FILE__, __FUNCTION__, implode("\n", $msg) );
 		}
-
+ 
 		foreach ( $admin_details as $admin ) {
 			//only add an admin email if it is present.
 			if ( empty( $admin->email ) || $admin->email == '' ) continue;
-
+ 
 			$admin_email[] = !empty( $admin->first_name ) ? $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>' : $admin->email;
 		}
-
+ 
 		$admin_email = implode( ',', $admin_email );
 		return $admin_email;
 	}
+
 
 } //end EE_Email_Shortcodes class

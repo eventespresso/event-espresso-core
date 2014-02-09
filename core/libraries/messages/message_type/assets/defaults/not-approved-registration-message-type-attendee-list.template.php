@@ -1,5 +1,7 @@
-<h5 class="attendee-name">[FNAME] [LNAME]</h5>
-		<p><strong>Registration Code:</strong> [REGISTRATION_CODE]</p>
-		<p><strong>Tickets:</strong></p>
-		[TICKET_LIST]		
+<h5>[FNAME] [LNAME]</h5>
+	<ul>
+<li><strong>Registration Code:</strong> [REGISTRATION_CODE]</li>
+		<li><strong>Tickets:</strong></li>
+</ul>
+		<ul><li>[TICKET_LIST]</li></ul>		
 <hr />

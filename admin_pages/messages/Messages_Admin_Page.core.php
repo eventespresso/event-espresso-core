@@ -758,7 +758,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _edit_message_template() {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '');
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
@@ -1169,7 +1168,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//sidebar box
 		if ( defined( 'DOING_AJAX' ) ) {
-			$this->_template_args['sidebar_content'] = $sidebar_fields . '<div class="submitbox" id="submitpost"><div class="publishing-action">' . $this->_template_args['save_buttons'] . '</div></div>';
+			$cancel_button = isset( $this->_req_data['route'] ) && $this->_req_data['route'] == 'add_new_message_template' ? '' : '<button class="button-secondary" id="msg-popup-cancel-button">' . __('Cancel', 'event_espresso') . '</button>';
+			$this->_template_args['sidebar_content'] = $sidebar_fields . '<div class="submitbox" id="submitpost"><div class="publishing-action">' . $this->_template_args['save_buttons'] . $cancel_button . '</div></div>';
 			$this->_template_args['sidebar_description'] = '';
 			$this->_template_args['sidebar_title'] = '';
 			$sidebar_title = __('Other Details', 'event_espresso');
