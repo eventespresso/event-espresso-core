@@ -3,9 +3,9 @@
 <table>
 <tbody>
 <tr>
-<td><!-- Callout Panel -->
-<p class="callout"><strong>Event Name:</strong> <a href="[EVENT_URL]">[EVENT_NAME]</a></p>
-<!-- /Callout Panel --></td>
+<td>
+<h2>Event: [EVENT_NAME]</h2>
+</td>
 </tr>
 </tbody>
 </table>

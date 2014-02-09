@@ -39,7 +39,9 @@ class EE_Messages_Email_Not_Approved_Registration_Defaults extends EE_Message_Te
 	protected function _change_templates( $evt_id, $is_global ) {
 		//make sure admin context has correct "To" email address
 		$this->_templates['admin']['to'] = '';
-		$this->_templates['primary_attendee']['to'] = '[PRIMARY_ATTENDEE_EMAIL]';
+		$this->_templates['primary_attendee']['to'] = '[PRIMARY_REGISTRANT_EMAIL]';
 		$this->_templates['admin']['content']['main'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/not_approved-message-type-admin-main-content.template.php', TRUE );
+		$this->_templates['admin']['content']['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/not-approved-registration-message-type-admin-event-list.template.php', TRUE );
+		$this->_templates['admin']['content']['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/admin/not-approved-registration-message-type-admin-attendee-list.template.php', TRUE );
 	}
 }
