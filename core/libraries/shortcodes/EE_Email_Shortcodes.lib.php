@@ -56,7 +56,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 				return $this->_get_site_admin_email();
 				break;
 
-			case '[EVENT_AUTHOR_EMAIL]' :
+			case '[EVENT_AUTHOR_FORMATTED_EMAIL]' :
 				return $this->_get_event_admin_emails();
 				break;
 
@@ -80,7 +80,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 
 
 	private function _get_event_admin_emails() {
- 
+
 		if ( !empty( $this->_data->admin_email ) ) {
 			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : $this->_data->admin_email;
 		}
