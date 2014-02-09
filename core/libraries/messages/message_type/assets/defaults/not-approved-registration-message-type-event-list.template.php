@@ -4,7 +4,7 @@
 <tbody>
 <tr>
 <td><!-- Callout Panel -->
-<p class="callout"><strong>Event Name:</strong> <a href="[EVENT_URL]">[EVENT_NAME]</a></p>
+<p class="callout"><strong>Event Name:</strong> <a href="[EVENT_URL]">[EVENT]</a></p>
 <!-- /Callout Panel --></td>
 </tr>
 </tbody>

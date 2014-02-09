@@ -4,7 +4,7 @@
 <tbody>
 <tr>
 <td>
-<h2>Event: [EVENT_NAME]</h2>
+<h2>Event: [EVENT]</h2>
 </td>
 </tr>
 </tbody>
