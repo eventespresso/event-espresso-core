@@ -114,7 +114,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 			case "[TRANSACTION_ADMIN_URL]" :
 				require_once EE_CORE . 'admin/EE_Admin_Page.core.php';
-				$query_args = array( 'page' => 'espresso_transaction', 'action' => 'view_transaction', 'TXN_ID' => $this->_data->txn->ID() );
+				$query_args = array( 'page' => 'espresso_transactions', 'action' => 'view_transaction', 'TXN_ID' => $this->_data->txn->ID() );
 				$url = EE_Admin_Page::add_query_args_and_nonce( $query_args, admin_url('admin.php') );
 				return $url;
 				break;
