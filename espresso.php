@@ -158,7 +158,7 @@ register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivat
 
 function espresso_load_error_handling() {
 	// loaddebugging tools
-	if ( WP_DEBUG === TRUE ) {
+	if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
 		require_once( EE_HELPERS . 'EEH_Debug_Tools.helper.php' );
 		EEH_Debug_Tools::instance();
 	}
