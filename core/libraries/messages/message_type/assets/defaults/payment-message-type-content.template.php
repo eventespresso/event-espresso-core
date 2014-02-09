@@ -1,86 +1,102 @@
 <!-- HEADER -->
 <table class="head-wrap" bgcolor="#999999">
-	<tr>
-		<td></td>
-		<td class="header container"><div class="content">
-				<table bgcolor="#999999" class="">
-					<tr>
-						<td>[CO_LOGO]</td>
-						<td align="right"><h6 class="collapse">[COMPANY]</h6></td>
-					</tr>
-				</table>
-			</div></td>
-		<td></td>
-	</tr>
+<tbody>
+<tr>
+<td></td>
+<td class="header container">
+<div class="content">
+<table bgcolor="#999999">
+<tbody>
+<tr>
+<td>[CO_LOGO]</td>
+<td align="right">
+<h6 class="collapse">[COMPANY]</h6>
+</td>
+</tr>
+</tbody>
 </table>
-<!-- END HEADER --> 
+</div></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<!-- END HEADER -->
+
 <!-- BODY -->
 <table class="body-wrap">
-	<tr>
-		<td></td>
-		<td class="container" bgcolor="#FFFFFF"><!-- content -->
-			<div class="content">
-				<table>
-					<tr>
-						<td><h2>Hello, [FNAME] [LNAME]:</h2>
-							<p class="lead">Thank you for your payment for the following transaction:</p>
-							
-							<h3>Payment Details:</h3>
-							<ul>
-								<li><strong>Payment status:</strong> [PAYMENT_STATUS]</li>
-								<li><strong>Payment gateway:</strong> [PAYMENT_GATEWAY]</li>
-								<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
-								<li><strong>Payment Made:</strong> [AMOUNT_PAID]</li>
-								<li><strong>Total Owing:</strong> [TOTAL_OWING]</li>
-							</ul>
-							<!-- Callout Panel -->
-							<p class="callout"> If there is still money owed on your transaction, you can make a payment by <a href="[PAYMENT_URL]">going here &raquo;</a> </p>
-							<!-- /Callout Panel -->
-							<p>&nbsp;</p>
-							[EVENT_LIST]
-						</td>
-					</tr>
-				</table>
-			</div></td>
-		<td></td>
-	</tr>
+<tbody>
+<tr>
+<td></td>
+<td class="container" bgcolor="#FFFFFF"><!-- content -->
+<div class="content">
+<table>
+<tbody>
+<tr>
+<td>
+<h2>Hello, [PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]:</h2>
+<p class="lead">We're just notifying you of a successful payment made for the following transaction and tickets:</p>
+
+<h3>Payment Details:</h3>
+<ul>
+	<li><strong>Payment Status:</strong> [PAYMENT_STATUS]</li>
+	<li><strong>Transaction ID:</strong> [TXN_ID]</li>
+	<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
+	<li><strong>Payment Amount:</strong> [AMOUNT_PAID]</li>
+	<li><strong>Amount Due:</strong> [TOTAL_OWING]</li>
+</ul>
+[EVENT_LIST]
+</td>
+</tr>
+</tbody>
 </table>
-<!-- END BODY --> 
+</div></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<!-- END BODY -->
+
 <!-- FOOTER -->
 <table class="footer-wrap">
-	<tr>
-		<td></td>
-		<td class="container"><table class="social" width="100%">
-				<tbody>
-					<tr>
-						<td><!-- column 1 -->
-							
-							<table align="left" class="column">
-								<tbody>
-									<tr>
-										<td><h5 class="">Connect with Us:</h5>
-											<p class=""><a href="[CO_FACEBOOK_URL]" class="soc-btn fb">Facebook</a> <a href="[CO_TWITTER_URL]" class="soc-btn tw">Twitter</a> <a href="CO_GOOGLE_URL]" class="soc-btn gp">Google+</a></p></td>
-									</tr>
-								</tbody>
-							</table>
-							<!-- /column 1 --> 
-							<!-- column 2 -->
-							<table align="left" class="column">
-								<tbody>
-									<tr>
-										<td><h5 class="">Contact Info:</h5>
-											<p>Phone: <strong>[CO_PHONE]</strong><br>
-												Email: <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></p></td>
-									</tr>
-								</tbody>
-							</table>
-							<!-- /column 2 --> 
-							<span class="clear"></span></td>
-					</tr>
-				</tbody>
-			</table>
-			<!-- end social table --></td>
-		<td></td>
-	</tr>
+<tbody>
+<tr>
+<td class="container">
+<table class="social" width="100%">
+<tbody>
+<tr>
+<td><!-- column 1 -->
+<table class="column" align="left">
+<tbody>
+<tr>
+<td>
+<h3>Connect with Us:</h3>
+<a class="soc-btn fb" href="[CO_FACEBOOK_URL]">Facebook</a> <a class="soc-btn tw" href="[CO_TWITTER_URL]">Twitter</a> <a class="soc-btn gp" href="CO_GOOGLE_URL]">Google+</a></td>
+</tr>
+</tbody>
+</table>
+<!-- /column 1 -->
+
+<!-- column 2 -->
+<table class="column" align="left">
+<tbody>
+<tr>
+<td>
+<h3>Contact Info:</h3>
+Phone: <strong>[CO_PHONE]</strong>
+
+Email: <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
+</tr>
+</tbody>
+</table>
+<!-- /column 2 -->
+
+&nbsp;</td>
+</tr>
+</tbody>
+</table>
+<!-- end social table --></td>
+<td></td>
+</tr>
+</tbody>
 </table>
 <!-- /FOOTER -->
