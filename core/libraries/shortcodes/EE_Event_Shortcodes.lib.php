@@ -48,7 +48,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 			'[EVENT_NAME]' => __("This also can be used for the name of the event", 'event_espresso'),
 			'[EVENT_PHONE]' => __('The phone number for the event (usually an info number)', 'event_espresso'),
 			'[EVENT_DESCRIPTION]' => __('The description of the event', 'event_espresso'),
-			'[EVENT_NAME]' => __('The name of the event', 'event_espresso'),
 			'[EVENT_LINK]' => __('A link associated with the event', 'event_espresso'),
 			'[EVENT_URL]' => __('A link to the event set up on the host site.', 'event_espresso'),
 			'[VIRTUAL_URL]' => __('What was used for the "URL of Event" field in the Venue settings', 'event_espresso'),
