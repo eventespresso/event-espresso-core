@@ -31,10 +31,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes {
 
-	public function __construct() {
-		parent::__construct();
-	}
-
 
 	protected function _init_props() {
 		$this->label = __('Primary_Registration Details Shortcodes', 'event_espresso');
@@ -50,7 +46,6 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-
 		//make sure we end up with a copy of the EE_Messages_Addressee object
 		$primary_registration = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
 		$primary_registration = ! $primary_registration instanceof EE_Messages_Addressee && is_array($this->_data) && isset( $this->_data['data'] ) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data'] : $primary_registration;
@@ -60,6 +55,7 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes {
 			return '';
 
 		$attendee = $primary_registration->primary_att_obj;
+		
 		if ( ! $attendee instanceof EE_Attendee )
 			return '';
 

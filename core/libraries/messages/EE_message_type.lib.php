@@ -389,6 +389,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		if ( is_array( $this->_data->primary_attendee_data ) ) {
 			$this->_default_addressee_data = array_merge( $this->_default_addressee_data, $this->_data->primary_attendee_data );
+			$this->_default_addressee_data['primary_att_obj'] = $this->_data->primary_attendee_data['att_obj'];
+			$this->_default_addressee_data['primary_reg_obj'] = $this->_data->primary_attendee_data['reg_obj'];
 		}
 	}
 
