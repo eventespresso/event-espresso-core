@@ -33,7 +33,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <h2>Hello, [RECIPIENT_FIRST_NAME]:</h2>
+                                    <h2>Hello, [RECIPIENT_FNAME]:</h2>
                                     <p class="lead">Here's a copy of your registration details!</p>
                                 </td>
                             </tr>
