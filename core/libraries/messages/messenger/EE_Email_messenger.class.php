@@ -74,8 +74,8 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_valid_shortcodes() {
 		//remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the message type.
 		$this->_valid_shortcodes = array(
-			'to' => array('email', 'attendee'),
-			'from' => array('email', 'attendee')
+			'to' => array('email','event_author', 'primary_registration_details', 'recipient_details'),
+			'from' => array('email', 'primary_registration_details', 'recipient_details')
 			);
 	}
 
@@ -105,20 +105,20 @@ class EE_Email_messenger extends EE_messenger  {
 				'type' => 'email'
 				),
 			'subject' => array(
-				'shortcodes' => array('organization', 'attendee')
+				'shortcodes' => array('organization', 'primary_registration_details', 'event_author', 'primary_registration_details', 'recipient_details')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'attendee')
+				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list', 'transaction')
 				),
 			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration'),
+				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
 				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee')
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list')
 				),
 			'ticket_list' => array(
-				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'registration', 'datetime_list'),
+				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'recipient_details'),
 				'required' => array('[TICKET_LIST]')
 				),
 			'datetime_list' => array(
@@ -313,8 +313,8 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	protected function _set_default_field_content() {
 		$this->_default_field_content = array(
-			'to' => '[ATTENDEE_EMAIL]',
-			'from' => '[EVENT_AUTHOR_EMAIL]',
+			'to' => '[RECIPIENT_EMAIL]',
+			'from' => '[EVENT_AUTHOR_FORMATTED_EMAIL]',
 			'subject' => '',
 			'content' => array(
 				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),

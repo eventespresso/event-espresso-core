@@ -94,6 +94,14 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 
 
+	/**
+	 * will hold any valid_shortcode modifications made by the _modify_validator() method.
+	 * @var array
+	 */
+	protected $_valid_shortcodes_modifier;
+
+
+
 
 
 
@@ -189,14 +197,14 @@ abstract class EE_Messages_Validator extends EE_Base {
 		$context = $this->_context;
 		$mt_codes = $mt_codes[$context];
 
-
 		//in this first loop we're just getting all shortcode group indexes from the msgr_validator into a single array (so we can get the appropriate shortcode objects for the groups)
-		$shrtcode_grps = $mt_codes; //start off with the mt_codes group.
+		$shrtcode_grps = $mt_codes;
+		$groups_per_field = array();
 		
 		foreach ( $msgr_validator as $field => $config ) {
 			if ( empty($config) || !isset($config['shortcodes']) )
 				continue;  //Nothing to see here.
-
+			$groups_per_field[$field] = array_intersect( $config['shortcodes'], $mt_codes );
 			$shrtcode_grps = array_merge( $config['shortcodes'], $shrtcode_grps );
 		}
 
@@ -234,8 +242,18 @@ abstract class EE_Messages_Validator extends EE_Base {
 			if ( empty($required) )
 				continue;
 
+			//If we have an override then we use it to indicate the codes we want.
+			if ( isset( $this->_valid_shortcodes_modifier[$context][$field] ) ) {
+				$this->_validators[$field]['shortcodes'] = $this->_reassemble_valid_shortcodes_from_group( $this->_valid_shortcodes_modifier[$context][$field], $codes_from_objs );
+			}
+
+			//if we have specific shortcodes for a field then we need to use them
+			else if ( isset( $groups_per_field[$field] ) ) {
+				$this->_validators[$field]['shortcodes'] = $this->_reassemble_valid_shortcodes_from_group($groups_per_field[$field], $codes_from_objs );
+			}
+
 			//if empty config then we're assuming we're just going to use the shortcodes from the message type context
-			if ( empty( $config ) ) {
+			else if ( empty( $config ) ) {
 				$this->_validators[$field]['shortcodes'] = $mt_codes;
 			}
 
@@ -362,6 +380,23 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//return any errors or just TRUE if everything validates
 		return empty( $this->_errors ) ? TRUE : $this->_errors;
+	}
+
+
+
+	/**
+	 * Reassembles and returns an array of valid shortcodes given the array of groups and array of shortcodes indexed by group.	
+	 * @param  array  $groups          array of shortcode groups that we want shortcodes for
+	 * @param  array  $codes_from_objs All the codes available.
+	 * @return array                   an array of actual shortcodes (that will be used for validation).
+	 */
+	private function _reassemble_valid_shortcodes_from_group( $groups, $codes_from_objs ) {
+		$shortcodes = array();
+		foreach ( $groups as $group ) {
+			$shortcodes = array_merge( $shortcodes, $codes_from_objs[$group] );
+		}
+		$shortcodes = array_unique($shortcodes);
+		return $shortcodes;
 	}
 
 

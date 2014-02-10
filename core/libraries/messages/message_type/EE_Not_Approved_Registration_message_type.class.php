@@ -151,20 +151,16 @@ class EE_Not_Approved_Registration_message_type extends EE_message_type {
 	}
 
 
-	/**
-	 * see abstract declaration in parent class for details
-	 */
 	protected function _set_valid_shortcodes() {
-		$this->_valid_shortcodes = array(
-			'admin' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list', 'datetime_list'),
-			'primary_attendee' => array('event','venue','organization', 'attendee', 'registration', 'attendee_list', 'event_list', 'ticket_list','datetime_list')
-			);
+		parent::_set_valid_shortcodes();
+
+		//remove unwanted transaction shortcode
+		foreach ( $this->_valid_shortcodes as $context => $shortcodes ) {
+			if( ($key = array_search('transaction', $shortcodes) ) !== false) {
+			    unset($this->_valid_shortcodes[$context][$key]);
+			}
+		}
 	}
-
-
-
-
-
 
 
 	/**
@@ -176,54 +172,7 @@ class EE_Not_Approved_Registration_message_type extends EE_message_type {
 	protected function _admin_addressees() {
 		if ( $this->_single_message )
 			return array();
-
-		$admin_ids = array();
-		$admin_events = array();
-		$admin_attendees = array();
-		$addressees = array();
-
-		//first we need to get the event admin user id for all the events and setup an addressee object for each unique admin user.
-		foreach ( $this->_data->events as $line_ref => $event ) {
-			$admin_id = $this->_get_event_admin_id($event['ID']);
-			//get the user_id for the event
-			$admin_ids[] = $admin_id;
-			//make sure we are just including the events that belong to this admin!
-			$admin_events[$admin_id][$line_ref] = $event;
-		}
-
-		//make sure we've got unique event_admins!
-		$admin_ids = array_unique($admin_ids);
-
-		//k now we can loop through the event_admins and setup the addressee data.
-		foreach ( $admin_ids as $event_admin ) {
-			$aee = array(
-				'user_id' => $event_admin,
-				'events' => $admin_events[$event_admin],
-				'attendees' => $this->_data->attendees
-				);
-			$aee = array_merge( $this->_default_addressee_data, $aee );
-			$addressees[] = new EE_Messages_Addressee( $aee );
-		}
-
-		return $addressees;
-	}
-
-
-	/**
-	 * Takes care of setting up the addressee object(s) for the primary attendee.
-	 *
-	 * @access protected
-	 * @return array of EE_Addressee objects
-	 */
-	protected function _primary_attendee_addressees() {
-		$aee = $this->_default_addressee_data;
-		$aee['events'] = $this->_data->events;
-		$aee['attendees'] = $this->_data->attendees;
-		$aee['att_obj'] = $this->_data->primary_attendee_data['att_obj'];
-
-		//great now we can instantiate the $addressee object and return (as an array);
-		$add[] = new EE_Messages_Addressee( $aee );
-		return $add;
+		return parent::_admin_addressees();
 	}
 
 } //end EE_Not_Approved_Registration_message_type class

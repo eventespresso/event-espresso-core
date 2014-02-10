@@ -120,6 +120,14 @@ abstract class EE_Shortcodes extends EE_Base {
 	}
 
 
+
+	public function get_shortcode_helper() {
+		if ( ! $this->_shortcode_helper instanceof EEH_Parse_Shortcodes )
+			$this->_set_shortcode_helper();
+		return $this->_shortcode_helper;
+	}
+
+
 	/**
 	 * This is the public method for kicking of the parser included with each child.  It can be overridden by child classes if necessary (see EE_Questions_Answers for example)
 	 * @param  string $shortcode incoming shortcode to be parsed
@@ -141,10 +149,10 @@ abstract class EE_Shortcodes extends EE_Base {
 			return false; //get out, this parser doesn't handle the incoming shortcode.
 		$this->_data = $data;
 		$this->_extra_data = $extra_data;
-		$parsed = apply_filters( 'FHEE__' . get_class($this) . '__parser_after', $this->_parser($shortcode), $shortcode, $data, $extra_data );
+		$parsed = apply_filters( 'FHEE__' . get_class($this) . '__parser_after', $this->_parser($shortcode), $shortcode, $data, $extra_data, $this );
 
 		//note the below filter applies to ALL shortcode parsers... be careful!
-		$parsed = apply_filters( 'FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data );
+		$parsed = apply_filters( 'FHEE__EE_Shortcodes__parser_after', $parsed, $shortcode, $data, $extra_data, $this );
 		return $parsed;
 	}
 

@@ -338,8 +338,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		// and the next step
 		$this->_set_next_step();
-		
-		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'translate_js_strings' ), 1 );
+		// load css and js
+		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'load_css' ), 10 );
+		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'load_js' ), 10 );
 
 	}
 
@@ -398,22 +399,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
-
 		$this->init();
-		// load css and js
-		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'wp_enqueue_scripts' ), 10 );
-		
-//		echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>EE_Registry::instance()->REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		// convert AJAX requests if  if JS is disabled
+		// convert AJAX requests if JS is disabled
 		if ( ! EE_Registry::instance()->REQ->ajax && ( strpos( $this->_current_step, 'process_' ) !== FALSE )) {
 			$process_method = '_' . $this->_current_step;
-//			echo '<h4>$process_method : ' . $process_method . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			call_user_func( array( $this, $process_method ));
 		} else if ( $this->_current_step == 'finalize_registration' ) {
 			$this->_process_finalize_registration();
 		} else {
-//			echo '<h4>registration_checkout :<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			$this->registration_checkout();
 		}		
 
@@ -461,14 +454,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 		wp_enqueue_scripts
+	 * 	load_css
 	 *
-	 * 		@access 		public
-	 * 		@return 		void
+	 * 	@access 		public
+	 * 	@return 		void
 	 */
-	public static function wp_enqueue_scripts() {
+	public static function load_css() {
 		wp_register_style( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style( 'single_page_checkout' );
+	}
+
+
+	/**
+	 * 	load_js
+	 *
+	 * 	@access 		public
+	 * 	@return 		void
+	 */
+	public static function load_js() {
 		wp_enqueue_script( 'underscore' );
 		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
@@ -819,6 +822,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $from_admin ) {
 			//some custom template args
 			$template_args['step_dv_class'] = '';
+			$template_args['revisit'] =$this->_revisit;
 			return EEH_Template::display_template( $this->_templates['registration_page_attendee_information'], $template_args, TRUE );
 		}
 
@@ -946,6 +950,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 	public function registration_checkout_for_admin() {
 
 		$this->_reg_url_link = FALSE;
+		$this->_revisit = FALSE;
 		$this->init_for_admin();
 
 		//do native registration_checkout

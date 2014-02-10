@@ -12,16 +12,16 @@
 <?php _e('The status helps you understand if the transaction was successful or not. Below are available statuses.', 'event_espresso'); ?>
 <ul>
 <li style="list-style-type: none;">
-<?php _e('<strong>Complete</strong><br />The payment was successful.', 'event_espresso'); ?>
+<?php _e('<strong>Overpaid</strong><br />A payment was made for more than the transaction total.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<?php _e('<strong>Failed</strong><br />The payment did not process correctly.', 'event_espresso'); ?>
+<?php _e('<strong>Complete</strong><br />The payment was successful.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
 <?php _e('<strong>Incomplete</strong><br />The payment has not yet been completed. This is the status for online payments that have yet to be processed.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<?php _e('<strong>Overpaid</strong><br />A payment was made for more than the transaction total.', 'event_espresso'); ?>
+<?php _e('<strong>Failed</strong><br />The payment did not process correctly.', 'event_espresso'); ?>
 </li>
 </ul>
 </li>
