@@ -814,10 +814,10 @@ class EE_Calendar {
 		}
 		$where_params['Event.status'] = 'publish';//@todo: how about sold_out, cancelled, etc events?
 		
-		$where_params['DTT_EVT_start*1']= array('>=',$start_datetime);
-		$where_params['DTT_EVT_start*2'] = array('<=',$end_date);
+		$where_params['DTT_EVT_start']= array('<=',$end_date);
+		$where_params['DTT_EVT_end'] = array('>=',$start_datetime);
 		if($show_expired == 'false'){
-			$where_params['DTT_EVT_start*3'] = array('>=',$today);
+			$where_params['DTT_EVT_end*3'] = array('>=',$today);
 			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
 		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
