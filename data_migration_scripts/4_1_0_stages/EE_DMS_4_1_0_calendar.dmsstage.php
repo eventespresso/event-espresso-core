@@ -25,7 +25,7 @@ function __construct() {
 			return;
 		}
 		if(isset($metadata['use_pickers'])){
-			$this->_add_extra_meta_to_term($term_id, 'use_pickers', $metadata['use_pickers'] == 'Y');
+			$this->_add_extra_meta_to_term($term_id, 'use_color_picker', $metadata['use_pickers'] == 'Y');
 		}
 		if(isset($metadata['event_background'])){
 			$this->_add_extra_meta_to_term($term_id, 'background_color', $metadata['event_background']);
