@@ -119,6 +119,8 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
+		// ensure valid EE_Events_Archive_Config() object exists
+		$this->_set_config();
 		// load other required components
 		$this->_load_assests();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
@@ -137,6 +139,8 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function event_list() {	
+		// ensure valid EE_Events_Archive_Config() object exists
+		$this->_set_config();
 		// load other required components
 		$this->_load_assests();
 	}
@@ -148,9 +152,28 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
+	 * 	_set_config
+	 *
+	 *  @access 	private
+	 *  @return 	void
+	 */
+	private function _set_config() {	
+		// set config
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive ) || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
+			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
+		}
+	}
+
+
+
+
+
+
+
+	/**
 	 * 	_filter_query_parts
 	 *
-	 *  @access 	public
+	 *  @access 	private
 	 *  @return 	void
 	 */
 	private function _filter_query_parts() {
@@ -480,9 +503,6 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public static function template_include( $template ) {
-		if ( WP_DEBUG ) {
-			printr( EE_Registry::instance()->CFG->template_settings, 'EE_Registry::instance()->CFG->template_settings  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		}
 		// display event status banner ?
 		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner && ! EEH_Template::is_espresso_theme() ) {
 			add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
@@ -645,10 +665,6 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _load_assests() {
-		// set config
-		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive )) {
-			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
-		}
 		do_action( 'AHEE__EED_Events_Archive__before_load_assests' );
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );
