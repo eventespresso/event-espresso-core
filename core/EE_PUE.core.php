@@ -61,8 +61,8 @@ class EE_PUE {
 		}
 
 		
-		$ueip_optin = get_option('ee_ueip_optin');
-		$ueip_has_notified = isset($_POST['ueip_optin']) ? TRUE : get_option('ee_ueip_has_notified');
+		$ueip_optin = EE_Registry::instance()->CFG->core->ee_ueip_optin;
+		$ueip_has_notified = EE_Registry::instance()->CFG->core->ee_ueip_has_notified;
 
 		//has optin been selected for datacollection?
 		$espresso_data_optin = !empty($ueip_optin) ? $ueip_optin : NULL;
