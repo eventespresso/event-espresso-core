@@ -197,12 +197,16 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 10, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 10, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_default_field_content', array( $this, 'email_default_field_content'), 10, 2 );
-		add_filter('FHEE__EE_Messages_Base__get_default_field_content', array( $this, 'message_types_default_field_content'), 10, 2 );
+		add_filter('FHEE__EE_Message_Template_Defaults___create_new_templates___templates', array( $this, 'message_types_default_field_content'), 10, 4 );
 		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes'), 10, 2 );
 
 		//shortcode parsers
 		add_filter('FHEE__EE_Attendee_Shortcodes__shortcodes', array( $this, 'additional_attendee_shortcodes'), 10, 2 );
-		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 10, 4 );
+		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 10, 5 );
+		add_filter('FHEE__EE_Recipient_List_Shortcodes__shortcodes', array( $this, 'additional_recipient_details_shortcodes'), 10, 2 );
+		add_filter('FHEE__EE_Recipient_List_Shortcodes__parser_after', array( $this, 'additional_recipient_details_parser'), 10, 5 );
+		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__shortcodes', array( $this, 'additional_primary_registration_details_shortcodes'), 10, 2 );
+		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__parser_after', array( $this, 'additional_primary_registration_details_parser'), 10, 5 );
 	}
 
 
@@ -220,7 +224,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 	public function email_messenger_validator_config( $validator_config, EE_Email_messenger $messenger ) {
 		$validator_config['attendee_list'] = array(
-				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'registration', 'question_list'),
+				'shortcodes' => array('attendee', 'event_list', 'ticket_list', 'question_list'),
 				'required' => array('[ATTENDEE_LIST]')
 				);
 		$validator_config['question_list'] = array(
@@ -257,17 +261,20 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 
-	public function message_types_default_field_content( $default_field_content, EE_Messages_Base $msg ) {
+	public function message_types_default_field_content( $default_field_content, $evt_id, $is_global,  EE_Message_Template_Defaults $msg ) {
 
 		switch ( get_class( $msg ) ) {
 
-			case 'EE_Registration_message_type' :
-			case 'EE_Resend_Registration_message_type' :
-				$contexts = array_keys($msg->get_contexts());
-				foreach ( $contexts as $context ) {
-					$default_field_content['content'][$context]['question_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-question-list.template.php', TRUE );
-					$default_field_content['content'][$context]['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
+			case 'EE_Messages_Email_Registration_Defaults' :
+			case 'EE_Messages_Resend_Registration_Defaults' :
+				$contexts = $msg->get_contexts();
+				foreach ( $contexts as $context => $details ) {
+					$default_field_content[$context]['content']['question_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-question-list.template.php', TRUE );
+					$default_field_content[$context]['content']['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
 				}
+				$default_field_content['attendee']['content']['event_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/attendee/registration-message-type-attendee-event-list.template.php', TRUE );
+				$default_field_content['admin']['content']['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/admin/registration-message-type-admin-attendee-list.template.php', TRUE );
+				$default_field_content['attendee']['content']['attendee_list'] = '';
 				break;
 
 			default : 
@@ -282,21 +289,14 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function message_types_valid_shortcodes( $valid_shortcodes, EE_Messages_Base $msg ) {
-		switch( get_class( $msg ) ) {
-
-			case 'EE_Registration_message_type' :
-			case 'EE_Resend_Registration_message_type' :
-				$contexts = array_keys($msg->get_contexts());
+		
+		if ( $msg instanceof EE_message_type ) {
+			$contexts = array_keys($msg->get_contexts());
 				foreach ( $contexts as $context ) {
 					$valid_shortcodes[$context][] = 'question_list';
 				}
-				break;
-
-
-			default :
-				return $valid_shortcodes;
-				break;
 		}
+
 		return $valid_shortcodes;
 	}
 
@@ -310,7 +310,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 
-	public function additional_attendee_parser( $parsed, $shortcode, $data, $extra_data ) {
+	public function additional_attendee_parser( $parsed, $shortcode, $data, $extra_data, $shortcode_parser ) {
 
 		if ( strpos( $shortcode, '[ANSWER_*' ) === FALSE || !isset( $extra_data['data']->questions) || !isset( $extra_data['data']->attendees) )
 			return $parsed;
@@ -328,5 +328,90 @@ class EE_Brewing_Regular extends EE_Base {
 		//nothing!
 		return $parsed;
 	}
+
+
+	public function additional_recipient_details_shortcodes( $shortcodes, $shortcode_parser ) {
+		$shortcodes['[RECIPIENT_QUESTION_LIST]'] = __('This is used to indicate where you want the list of questions and answers to show for the person receiving the message.', 'event_espresso');
+		return $shortcodes;
+	}
+
+
+	public function additional_recipient_details_parser( $parsed, $shortcode, $data, $extra_data, $shortcode_parser ) {
+
+		if ( array($data) && ! isset( $data['data'] ) )
+			return $parsed;
+
+		$recipient = $data['data'] instanceof EE_Messages_Addressee ? $data['data'] : NULL;
+		$recipient = ! $recipient instanceof EE_Messages_Addressee && array($extra_data) && isset( $extra_data['data'] ) && $extra_data['data'] instanceof EE_Messages_Addressee ? $extra_data['data'] : $recipient;
+
+		if ( ! $recipient instanceof EE_Messages_Addressee )
+			return $parsed;
+
+		$send_data = ! $data['data'] instanceof EE_Messages_Addressee ? $extra_data : $data;
+		
+		switch ( $shortcode ) {
+			case '[RECIPIENT_QUESTION_LIST]' :
+				if ( ! $recipient->att_obj instanceof EE_Attendee )
+					return '';
+				$attendee = $recipient->att_obj;
+				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
+				$valid_shortcodes = array('question');
+				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
+				$answers = !empty($recipient->attendees[$attendee->ID()]['ans_objs']) ? $recipient->attendees[$attendee->ID()]['ans_objs'] : array();
+				$question_list = '';
+				foreach ( $answers as $answer ) {
+					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
+				}
+				return $question_list;
+				break;
+
+			default :
+				return $parsed;
+				break;
+		}
+	}
+
+
+	public function additional_primary_registration_details_shortcodes( $shortcodes, $shortcode_parser ) {
+		$shortcodes['[PRIMARY_REGISTRANT_QUESTION_LIST]'] = __('This is used to indicate the questions and answers for the primary_registrant. It should be placed in the "[attendee_list]" field', 'event_espresso');
+		return $shortcodes;
+	}
+
+
+	public function additional_primary_registration_details_parser( $parsed, $shortcode, $data, $extra_data, $shortcode_parser ) {
+		if ( array($data) && ! isset( $data['data'] ) )
+			return $parsed;
+
+		$recipient = $data['data'] instanceof EE_Messages_Addressee ? $data['data'] : NULL;
+		$recipient = ! $recipient instanceof EE_Messages_Addressee && array($extra_data) && isset( $extra_data['data'] ) && $extra_data['data'] instanceof EE_Messages_Addressee ? $extra_data['data'] : $recipient;
+
+		if ( ! $recipient instanceof EE_Messages_Addressee )
+			return $parsed;
+
+		$send_data = ! $data['data'] instanceof EE_Messages_Addressee ? $extra_data : $data;
+		
+		switch ( $shortcode ) {
+			case '[RECIPIENT_QUESTION_LIST]' :
+				if ( ! $recipient->primary_att_obj instanceof EE_Attendee )
+					return '';
+				$attendee = $recipient->primary_att_obj;
+				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
+				$valid_shortcodes = array('question');
+				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
+				$answers = $recipient->attendees[$attendee->ID()]['ans_objs'];
+				$question_list = '';
+				foreach ( $answers as $answer ) {
+					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
+				}
+				return $question_list;
+				break;
+
+			default :
+				return $parsed;
+				break;
+		}
+	}
+
+
 }
 $brewing = new EE_Brewing_Regular();

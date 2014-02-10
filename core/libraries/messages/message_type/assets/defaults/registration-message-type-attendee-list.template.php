@@ -1,7 +1,7 @@
+<h4>[FNAME] [LNAME]</h4>
 <ul>
-	<li><strong>Name:</strong> [FNAME] [LNAME]</li>
 	<li><strong>Registration Code:</strong> [REGISTRATION_CODE]</li>
-	[TICKET_LIST]                           
-	<li><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></li>
+	<li><strong>Tickets:</strong></li>
 </ul>
+<ul>[TICKET_LIST]</ul>
 <hr />

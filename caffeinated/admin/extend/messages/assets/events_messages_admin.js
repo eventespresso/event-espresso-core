@@ -57,7 +57,7 @@ jQuery(document).ready(function($) {
 					var resp = '', isjson = true;
 					if (ct.indexOf('html') > -1) {
 						/*console.log('html');
-						console.log('response');*/
+						console.log('response');/**/
 						//last verification that we definitely DON'T have JSON (possibly via exceptions)
 						try {
 							resp = $.parseJSON(response);
@@ -162,6 +162,12 @@ jQuery(document).ready(function($) {
 	$('#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox').on('click', '.template_picker', function(e) {
 		e.preventDefault();
 		EE_messages_evt_helper.get_template_content(this);
+	});
+
+	$('.ee-admin-dialog-container').on('click', '#msg-popup-cancel-button', function(e){
+		e.preventDefault();
+		e.stopPropagation();
+		EE_messages_evt_helper.close_modal();
 	});
 
 	$('.ee-admin-dialog-container').on('submit', 'form', function(e) {

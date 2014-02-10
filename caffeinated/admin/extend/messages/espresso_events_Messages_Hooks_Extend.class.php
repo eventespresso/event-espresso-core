@@ -73,13 +73,13 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
 		//let's get the active messengers (b/c messenger objects have the active message templates)
 		//convert 'evt_id' to 'EVT_ID'
-		if ( isset( $this->_req_data['post'] ) && !isset( $this->_req_data['EVT_ID'] ) )
-			$this->_req_data['EVT_ID'] = $this->_req_data['post'];
+		$this->_req_data['EVT_ID'] = isset( $this->_req_data['EVT_ID'] ) ? $this->_req_data['EVT_ID'] : NULL;
+		$this->_req_data['EVT_ID'] = isset( $this->_req_data['post'] ) && empty( $this->_req_data['EVT_ID'] ) ? $this->_req_data['post'] : $this->_req_data['EVT_ID'];
 
-		$this->_req_data['EVT_ID'] = !isset($this->_req_data['EVT_ID'] ) ? $this->_req_data['evt_id'] : $this->_req_data['EVT_ID'];
+		$this->_req_data['EVT_ID'] = empty($this->_req_data['EVT_ID'] ) && isset($this->_req_data['evt_id'] ) ? $this->_req_data['evt_id'] : $this->_req_data['EVT_ID'];
 
 		//set flag for whether we are adding or editing an event.
-		$add_event = !isset($this->_req_data['EVT_ID']) ? TRUE : FALSE;
+		$add_event = empty($this->_req_data['EVT_ID']) ? TRUE : FALSE;
 
 		if ( !$add_event ) {
 

@@ -50,7 +50,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			'[FNAME]' => __('First Name of an attendee', 'event_espresso'),
 			'[LNAME]' => __('Last Name of an attendee', 'event_espresso'),
 			'[EDIT_ATTENDEE_LINK]' => __('Edit Registration Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso'),
-			'[REGISTRATION_CODE]' => __('Unique Registration Code for the regsitration', 'event_espresso')
+			'[REGISTRATION_CODE]' => __('Unique Registration Code for the registration', 'event_espresso')
 			);
 	}
 

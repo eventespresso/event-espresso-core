@@ -119,6 +119,8 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
+		// ensure valid EE_Events_Archive_Config() object exists
+		EED_Events_Archive::set_config();
 		// load other required components
 		$this->_load_assests();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
@@ -137,6 +139,8 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function event_list() {	
+		// ensure valid EE_Events_Archive_Config() object exists
+		EED_Events_Archive::set_config();
 		// load other required components
 		$this->_load_assests();
 	}
@@ -148,9 +152,28 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
+	 * 	set_config
+	 *
+	 *  @access 	private
+	 *  @return 	void
+	 */
+	public static function set_config() { 
+		// set config
+		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive ) || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive instanceof EE_Events_Archive_Config ) {
+			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
+		}
+	}
+
+
+
+
+
+
+
+	/**
 	 * 	_filter_query_parts
 	 *
-	 *  @access 	public
+	 *  @access 	private
 	 *  @return 	void
 	 */
 	private function _filter_query_parts() {
@@ -480,35 +503,30 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public static function template_include( $template ) {
+		// ensure valid EE_Events_Archive_Config() object exists
+		EED_Events_Archive::set_config();
 		// display event status banner ?
 		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner && ! EEH_Template::is_espresso_theme() ) {
 			add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 		}
 		// if NOT a custom template
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' && ! EEH_Template::is_espresso_theme() ) {
-			EEH_Template::load_espresso_theme_functions();
+			// load functions.php file for the theme (loaded by WP if using child theme)
+			EEH_Template::load_espresso_theme_functions();			
 			// don't know if theme uses the_excerpt
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
-			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
-			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 120 );
-			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130 );
 			// or the_content
 			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
-			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
-			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 120 );
-			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130 );
 			// don't diplay entry meta because the existing theme will take care of that
 			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 		} else {
 			remove_all_filters( 'excerpt_length' );
 			add_filter( 'excerpt_length', array( 'EED_Events_Archive', 'excerpt_length' ), 10 );
 			add_filter( 'excerpt_more', array( 'EED_Events_Archive', 'excerpt_more' ), 10 );			
-
 		}
 
 		return $template;
 	}
-
 
 
 
@@ -541,14 +559,45 @@ class EED_Events_Archive  extends EED_Module {
 		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
 		remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
+		//now add additional content depending on whether event is using the_excerpt() or the_content()
+		has_excerpt() ? EED_Events_Archive::_add_additional_excerpt_filters() : EED_Events_Archive::_add_additional_content_filters();
 		// now load our template
 		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
-		//now add our filter back in, plus some others
-//		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
-//		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
+		// re-add our main filters (or else the next event won't have them)
+		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100 );
+		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return ! empty( $template ) ? $template : $content;
 	}
+
+
+
+	/**
+	 * 	_add_additional_excerpt_filters
+	 *
+	 *  	@access 	private
+	 *  	@return 		void
+	 */
+	private static function _add_additional_excerpt_filters() {
+		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
+		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 120 );
+		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130 );
+	}
+
+
+
+	/**
+	 * 	_add_additional_content_filters
+	 *
+	 *  	@access 	private
+	 *  	@return 		void
+	 */
+	private static function _add_additional_content_filters() {
+		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
+		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 120 );
+		add_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130 );
+	}
+
 
 
 	/**
@@ -618,10 +667,6 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	private function _load_assests() {
-		// set config
-		if ( ! isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive )) {
-			EE_Registry::instance()->CFG->template_settings->EED_Events_Archive = new EE_Events_Archive_Config();
-		}
 		do_action( 'AHEE__EED_Events_Archive__before_load_assests' );
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_EE_Session', '__return_true' );

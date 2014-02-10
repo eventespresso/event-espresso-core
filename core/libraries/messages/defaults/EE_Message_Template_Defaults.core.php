@@ -266,6 +266,13 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 
 
+	public function get_contexts() {
+		return $this->_contexts;
+	}
+
+
+
+
 	/**
 	 * This just gets the list of valid shortcodes from the messenger and message type and returns them
 	 *
@@ -311,6 +318,9 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 		//allow for child classes to override.
 		$this->_change_templates( $evt_id, $is_global );
+
+		$this->_templates = apply_filters( 'FHEE__' . get_class($this) . '___create_new_templates___templates', $this->_templates, $evt_id, $is_global, $this );
+		$this->_templates = apply_filters( 'FHEE__EE_Message_Template_Defaults___create_new_templates___templates', $this->_templates, $evt_id, $is_global, $this );
 
 		//necessary properties are set, let's save the default templates
 

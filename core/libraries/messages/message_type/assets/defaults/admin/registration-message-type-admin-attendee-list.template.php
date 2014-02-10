@@ -1,7 +1,9 @@
-<h3>Registrant Details:</h3>
-<ul><li><strong>Name:</strong> [FNAME] [LNAME]</li>
-	[TICKET_LIST]
-	<li><strong>Questions and Answers:</strong>
-		<ul>[QUESTION_LIST]</ul>
-	</li>                                
-	<li><a href="[EDIT_ATTENDEE_LINK]">View/Edit Registration</a></li></ul>
+<h4><a href="[EDIT_ATTENDEE_LINK]">[FNAME] [LNAME]</a></h4>
+		<ul>
+<li><strong>Registration Code:</strong> <a href="[EDIT_ATTENDEE_LINK]">[REGISTRATION_CODE]</a></li>
+<li><strong>Tickets:</strong>
+	<ul>[TICKET_LIST]</ul>
+</li>
+</ul>
+
+<hr />

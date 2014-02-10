@@ -1,67 +1,80 @@
 <!-- content -->
-
 <div class="content">
-	<table>
-		<tr>
-			<td>
-				<h3>[EVENT_NAME]</h3>
-				
-				<!-- Callout Panel -->
-				
-				<p class="callout"><a href="[EVENT_URL]">View Event &raquo;</a> </p>
-				<!-- /Callout Panel --></td>
-		</tr>
-	</table>
+<table>
+<tbody>
+<tr>
+<td><!-- Callout Panel -->
+<p class="callout"><strong>Event: [EVENT_LINK]
+Venue: <a href="[VENUE_URL]" target="_blank">[VENUE_TITLE]</a> ([VENUE_CITY], [VENUE_STATE])</strong></p>
+<!-- /Callout Panel --></td>
+</tr>
+</tbody>
+</table>
 </div>
-
 <!-- COLUMN WRAP -->
 <div class="column-wrap">
-	<div class="column">
-		<table align="left">
+<div class="column">
+<table align="left">
+<tbody>
+<tr>
+<td>
+<h3>Registration:</h3>
+<h4>[RECIPIENT_FNAME] [RECIPIENT_LNAME]</h4>
+<ul>
+	<li><strong>Registration Code:</strong> [RECIPIENT_REGISTRATION_CODE]</li>
+	<li><strong>Tickets:</strong></li>
+	<li><ul>[RECIPIENT_TICKET_LIST]</ul></li>
+</ul>
+<hr />
+
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="column">
+	<table align="left">
+		<tbody>
 			<tr>
 				<td>
-					<h3>Registrant(s):</h3>
-						[ATTENDEE_LIST]
+					<ul class="sidebar">
+						<li><h5>Venue »</h5></li>
+						<li>[VENUE_IMAGE]</li>
+						<li>[VENUE_TITLE]</li>
+						<li>[VENUE_ADDRESS]</li>
+						<li>[VENUE_CITY]</li>
+						<li>[VENUE_STATE], [VENUE_ZIP]</li>
+						<li>[GOOGLE_MAP_IMAGE]</li>
+					</ul>
+					<!-- social &#038; contact -->
+					<table class="social" width="100%" bgcolor="">
+						<tbody>
+							<tr>
+								<td>
+									<table width="100%" align="left">
+										<tbody>
+											<tr>
+												<td>
+													<h6>Connect with this Event:</h6>
+													<a class="soc-btn fb" href="[EVENT_FACEBOOK_URL]">Facebook</a> <a class="soc-btn tw" href="[EVENT_TWITTER_URL]">Twitter</a>
+													<h6>Contact Info:</h6>
+													Phone: <strong>[EVENT_PHONE]</strong>
+
+													Email: <strong><a href="[EVENT_AUTHOR_EMAIL]">[EVENT_AUTHOR_EMAIL]</a></strong>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<!-- /social &#038; contact -->
 				</td>
 			</tr>
-		</table>
-	</div>
-	<div class="column">
-		<table align="left">
-			<tr>
-				<td><ul class="sidebar">
-						<li>
-							<h5>Venue &raquo;</h5>
-							[VENUE_IMAGE]<br />
-							<p> [VENUE_TITLE]<br />
-								[VENUE_ADDRESS]<br />
-								[VENUE_CITY]<br />
-								[VENUE_STATE], [VENUE_ZIP]<br />
-							</p>
-							<p>[GOOGLE_MAP_IMAGE]</p>
-						</li>
-					</ul>
-					
-					<!-- social & contact -->
-					
-					<table bgcolor="" class="social" width="100%">
-						<tr>
-							<td><table align="left" width="100%">
-									<tr>
-										<td><h6 class="">Connect with this Event:</h6>
-											<p class=""><a href="[EVENT_FACEBOOK_URL]" class="soc-btn fb">Facebook</a> <a href="[EVENT_TWITTER_URL]" class="soc-btn tw">Twitter</a>
-											
-											<h6 class="">Contact Info:</h6>
-											<p>Phone: <strong>[EVENT_PHONE]</strong><br/>
-												Email: <strong><a href="[EVENT_AUTHOR_EMAIL]">[EVENT_AUTHOR_EMAIL]</a></strong></p></td>
-									</tr>
-								</table></td>
-						</tr>
-					</table>
-					<!-- /social & contact --></td>
-			</tr>
-		</table>
+		</tbody>
+	</table>
 	</div>
 	<div class="clear"></div>
 </div>
-<!-- /COLUMN WRAP --> 
+<!-- /COLUMN WRAP -->

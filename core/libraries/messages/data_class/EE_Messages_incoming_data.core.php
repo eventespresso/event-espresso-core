@@ -264,10 +264,12 @@ abstract class EE_Messages_incoming_data {
 				}
 
 				foreach ( $relateddatetime as $dtt_id => $datetime ) {
+					$eventsetup[$evt_id]['dtt_objs'][$dtt_id] = $datetime;
+					$attendees[$reg->attendee_ID()]['dtt_objs'][$dtt_id] = $datetime;
+					
 					if ( isset( $datetimes[$dtt_id] ) )
 						continue; //already have this info in the datetimes array.
 
-					$eventsetup[$evt_id]['dtt_objs'][$dtt_id] = $datetime;
 					$datetimes[$dtt_id]['tkt_objs'][] = $ticket;
 					$datetimes[$dtt_id]['datetime'] = $datetime;
 					$datetimes[$dtt_id]['evt_objs'][$evt_id] = $event;
@@ -315,12 +317,11 @@ abstract class EE_Messages_incoming_data {
 
 				//now we can setup the primary_attendee_data array
 				$this->primary_attendee_data = array(
-					'fname' => $primary_reg->attendee()->fname(),
-					'lname' => $primary_reg->attendee()->lname(),
-					'email' => $primary_reg->attendee()->email(),
-					'primary_attendee_email' => $primary_reg->attendee()->email(),
 					'registration_id' => $primary_reg->ID(),
-					'att_obj' => $primary_reg->attendee()
+					'att_obj' => $primary_reg->attendee(),
+					'reg_obj' => $primary_reg,
+					'primary_att_obj' => $primary_reg->attendee(),
+					'primary_reg_obj' => $primary_reg,
 				);
 
 			} else {				

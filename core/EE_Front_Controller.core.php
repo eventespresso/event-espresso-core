@@ -159,12 +159,12 @@ final class EE_Front_Controller {
 	 */
 	public function filter_wp_comments( $clauses, WP_Comment_Query $wpc ) {
 		global $wpdb;
-		$comments_where = $clauses['where'];
-		$cpts = EE_Register_CPTs::get_private_CPTs();
-		foreach ( $cpts as $cpt => $details ) {
-			$comments_where .= $wpdb->prepare( " AND $wpdb->posts.post_type != %s", $cpt );
+		if ( strpos( $clauses['join'], $wpdb->posts ) !== FALSE ) {
+			$cpts = EE_Register_CPTs::get_private_CPTs();
+			foreach ( $cpts as $cpt => $details ) {
+				$clauses['where'] .= $wpdb->prepare( " AND $wpdb->posts.post_type != %s", $cpt );
+			}
 		}
-		$clauses['where'] = $comments_where;
 		return $clauses;
 	}
 
@@ -286,9 +286,12 @@ final class EE_Front_Controller {
 					foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 						// verify shortcode is in list of registered shortcodes
 						if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
-							$msg = sprintf( __( 'The %s shortcode has not been properly registered', 'event_espresso' ), $shortcode_class );
-							EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-							add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+							unset( EE_Registry::instance()->shortcodes[ $shortcode_class ] );
+							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
+								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
+								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+							}
 							break;
 						}
 						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
@@ -296,8 +299,8 @@ final class EE_Front_Controller {
 							// let's pause to reflect on this...
 							$sc_reflector = new ReflectionClass( 'EES_' . $shortcode_class );
 							// ensure that class is actually a shortcode
-							if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' )) {
-								$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode".', 'event_espresso' ), $shortcode_class );
+							if ( ! $sc_reflector->isSubclassOf( 'EES_Shortcode' ) && defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
+								$msg = sprintf( __( 'The requested %s shortcode is not of the class "EES_Shortcode". Please check your files.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 								break;

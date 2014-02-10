@@ -85,7 +85,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_event_list_for_main() {
-		$valid_shortcodes = array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'attendee');
+		$valid_shortcodes = array('event', 'attendee_list', 'ticket_list', 'datetime_list', 'venue', 'attendee', 'recipient_list', 'recipient_details', 'primary_registration_list', 'primary_registration_details', 'event_author');
 		$template = $this->_data['template'];
 		$data = $this->_data['data'];
 		$events = '';
@@ -106,7 +106,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_event_list_for_attendee() {
-		$valid_shortcodes = array('event', 'ticket_list', 'datetime_list', 'attendee');
+		$valid_shortcodes = array('event', 'ticket_list', 'datetime_list', 'attendee', 'event_author');
 		$template = is_array( $this->_data['template'] ) && isset($this->_data['template']['event_list']) ? $this->_data['template']['event_list'] : $this->_extra_data['template']['event_list'];
 		$attendee = $this->_data['data'];
 
