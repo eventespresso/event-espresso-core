@@ -75,9 +75,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	protected $_mappings = array();
 	
 	/**
-	 * All chidlren of this must call parent::__construct() or suffer teh consequences!
+	 * All chidlren of this must call parent::__construct() at the end of their constructor or suffer teh consequences!
 	 */
 	public function __construct() {
+		$this->_migration_stages = apply_filters('FHEE__'.get_class($this).'__construct__migration_stages',$this->_migration_stages);
 		foreach($this->_migration_stages as $migration_stage){
 			$migration_stage->_construct_finalize($this);
 		}
