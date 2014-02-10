@@ -420,11 +420,14 @@ class EE_Calendar {
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLPATH', plugin_dir_path( __FILE__ ));
 		define( 'ESPRESSO_CALENDAR_PLUGINFULLURL', plugin_dir_url( __FILE__ ));	
 		define('ESPRESSO_CALENDAR_SHORTCODEFULLPATH',ESPRESSO_CALENDAR_PLUGINFULLPATH."shortcodes/");
-
+		define('ESPRESSO_CALENDAR_DATAMIGRATIONSCRIPTSPATH',ESPRESSO_CALENDAR_PLUGINFULLPATH."data_migration_scripts/");
+		
 		add_action( 'widgets_init', array( $this, 'widget_init' ));
 		add_filter('FHEE__EE_Config__register_shortcodes__shortcodes_to_register', array($this,'add_shortcodes'));
 		add_action( 'AHEE__EE_System__construct__autoloaders_available',array($this,'EE_System__construct__autoloaders_available'));
 		add_action( 'AHEE__EE_System__construct__end', array($this,'EE_System__construct__end') );
+		
+		$this->_setup_migration_script_hooks();
 	}
 	/**
 	 * Runs initialization stuff for the calendar addon, but doesn't run or enqueue any code
@@ -455,6 +458,15 @@ class EE_Calendar {
 //			add_shortcode( 'ESPRESSO_CALENDAR', array( $this, 'espresso_calendar' ));
 		}
 	}
+	
+	/**
+	 * Setup hooks for adding calendar logic to EE4 migrations. Initially only adds
+	 * a stage to teh 4.1.0 migration script
+	 */
+	protected function _setup_migration_script_hooks(){
+		add_filter( 'FHEE__EE_DMS_4_1_0__autoloaded_stages',array($this,'autoload_migration_stage'));
+		add_filter( 'FHEE__EE_DMS_4_1_0__construct__migration_stages',array($this,'add_migration_stage'));
+	}
 	/**
 	 * Filters the list of shortcodes to add ours.
 	 * @param array $globbed_shortcode_folders array where keys don't matter, 
@@ -465,6 +477,24 @@ class EE_Calendar {
 	public function add_shortcodes($globbed_shortcode_folders){
 		$globbed_shortcode_folders[] = ESPRESSO_CALENDAR_SHORTCODEFULLPATH."espresso_calendar";
 		return $globbed_shortcode_folders;
+	}
+	/**
+	 * Add our 4.1.0 migration stage for autoloading
+	 * @param array $classname_to_filepath_array strings are classnames, valuesa re their full paths
+	 * @return arrat
+	 */
+	public function autoload_migration_stage($classname_to_filepath_array){
+		$classname_to_filepath_array['EE_DMS_4_1_0_calendar'] = ESPRESSO_CALENDAR_DATAMIGRATIONSCRIPTSPATH.'4_1_0_stages/EE_DMS_4_1_0_calendar.dmsstage.php';
+		return $classname_to_filepath_array;
+	}
+	/**
+	 * Adds our data migration stage into the list
+	 * @param EE_Data_Migration_Script_Stage[] $migration_stages keys are their priority, values are EE_Data_Migration_Script_Stage
+	 * return EE_Data_Migration_Script_Stage[]
+	 */
+	public function add_migration_stage($migration_stages){
+		$migration_stages[] = new EE_DMS_4_1_0_calendar();
+		return $migration_stages;
 	}
 
 
