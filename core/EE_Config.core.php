@@ -815,7 +815,7 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->current_blog_id = get_current_blog_id();
 		$this->current_blog_id = $this->current_blog_id === NULL ? 1 : $this->current_blog_id;
 		$this->ee_ueip_optin = is_main_site() ? get_option( 'ee_ueip_optin', TRUE ) : get_blog_option( $current_main_site_id, 'ee_ueip_optin', TRUE );
-		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', TRUE ) : TRUE;
+		$this->ee_ueip_has_notified = is_main_site() ? get_option( 'ee_ueip_has_notified', FALSE ) : TRUE;
 		$this->post_shortcodes = array();
 		$this->module_route_map = array();
 		$this->module_forward_map = array();

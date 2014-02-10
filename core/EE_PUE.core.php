@@ -71,6 +71,7 @@ class EE_PUE {
 			add_action('admin_notices', array( $this, 'espresso_data_collection_optin_notice' ), 10 );
 			add_action('admin_enqueue_scripts', array( $this, 'espresso_data_collection_enqueue_scripts' ), 10 );
 			add_action('wp_ajax_espresso_data_optin', array( $this, 'espresso_data_optin_ajax_handler' ), 10 );
+			update_option('ee_ueip_optin', 'yes');
 			$espresso_data_optin = 'yes';
 		}
 
@@ -255,8 +256,7 @@ class EE_PUE {
 		$ueip_optin = isset( $_POST['selection'] ) ? $_POST['selection'] : 'no';
 
 		//update_option('ee_ueip_optin', $ueip_optin);
-		EE_Registry::instance()->CFG->core->ee_ueip_has_notified = TRUE;
-		EE_Config::instance()->update_espresso_config(FALSE, FALSE);
+		update_option('ee_ueip_has_notified', 1);
 		exit();
 	}
 
