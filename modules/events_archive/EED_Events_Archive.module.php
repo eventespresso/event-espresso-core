@@ -480,6 +480,9 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 	void
 	 */
 	public static function template_include( $template ) {
+		if ( WP_DEBUG ) {
+			printr( EE_Registry::instance()->CFG->template_settings, 'EE_Registry::instance()->CFG->template_settings  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		}
 		// display event status banner ?
 		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner && ! EEH_Template::is_espresso_theme() ) {
 			add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
