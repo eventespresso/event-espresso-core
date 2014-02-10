@@ -1,14 +1,15 @@
 EE4 core
 ===================
+Note: for non stable versions. We currently use minor versioning numbers such as (4.1.125) for rapid development occuring.  On stable branches, minor versions represent minor releases i.e. (4.1.1.reg) that typically don't include new features.  Releases including new features bump the secon number (i.e. 4.1.1 -> 4.2.0 ).  The string appended to the end of the version represents what major branch the code is based off.
 
 ***
-**Current Stable Version:** (not released)
+**Current Stable Version:** 4.1.0.reg
 
-**Current Beta Version:** 4.1
+**Current Beta Version:** 4.1.beta
 
-**Current Alpha Version:** 4.1
+**Current Alpha Version:** 4.1.alpha
 
-**Current Development Version:** 4.2
+**Current Development Version:** 4.2.dev
 ***
 
 This is the Core for Event Espresso 4. This README.md file is targeted for display with our Github repo.  For detailed information via traditional readme, see the readme.txt file.
@@ -22,7 +23,7 @@ At Event Espresso we follow a set pattern for releases:
 3. Public testing of upcoming release is done on **beta** branch.
 4. Stable releases are on **master** branch.
 
-> Note: currently EE4 does NOT have a stable branch, do not rely on Master as stable.
+> Note: While we do CURRENTLY have a stable branch (Master), we still consider this a late beta as EE4 gets exposed to a wider user base there are likely to be more fringe bugs uncovered that were dormant during our testing phase.
 
 ## Testing
 For all testers on github, please take note of the following when reporting issues.
