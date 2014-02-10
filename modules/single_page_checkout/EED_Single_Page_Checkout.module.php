@@ -472,6 +472,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return 		void
 	 */
 	public static function load_js() {
+		EED_Single_Page_Checkout::translate_js_strings();
 		wp_enqueue_script( 'underscore' );
 		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'single_page_checkout' );
@@ -1615,7 +1616,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 			// if Default REG Status is set to REQUIRES APPROVAL... then payments are NOT allowed
 			if ( EE_Registry::instance()->REQ->is_set('selected_gateway') && EE_Registry::instance()->REQ->get('selected_gateway') == 'payments_closed' ) {
 				// set TXN Status to Open
-//				$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
+				$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$this->_transaction->save();
 				$this->_transaction->finalize();
 				$notices = EE_Error::get_notices(FALSE);
