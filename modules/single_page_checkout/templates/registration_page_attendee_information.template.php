@@ -160,8 +160,12 @@ if ( $event_queue['total_items'] > 0 ) {
 	 } // $event_queue['total_items'] 
 ?>
 
+		<div class="clearfix">
+			<a id="spco-display-event-questions-lnk" class="act-like-link smaller-text hidden hide-if-no-js float-right" >
+				<?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?>			
+			</a>
+		</div>
 <?php if ( !$from_admin ) : ?>	
-		<div><a id="spco-display-event-questions-lnk" class="act-like-link smaller-text hidden hide-if-no-js float-right" ><?php _e('show&nbsp;event&nbsp;questions', 'event_espresso'); ?></a></div>
 		
 		<?php do_action( 'AHEE__before_spco_whats_next_buttons', 'attendee_information', $next_step ); ?>
 		

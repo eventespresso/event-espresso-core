@@ -50,6 +50,7 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes {
 				return $this->_get_datetime_list();
 				break;
 		}
+		return '';
 	}
 
 
@@ -72,6 +73,7 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes {
 		else
 			return '';
 	}
+
 
 
 	/**
@@ -122,11 +124,11 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes {
 
 
 
-	private function _get_datetimes_from_event( EE_Event $event ) {
-		return isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['dtt_objs'] : array(); 
+	private function _get_datetimes_from_event( EE_Event $event, $att = NULL ) {
+		 return isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['dtt_objs'] : array();
 	}
 
-	private function _get_datetimes_from_ticket( EE_Ticket $ticket ) {
+	private function _get_datetimes_from_ticket( EE_Ticket $ticket, $att = NULL ) {
 		return isset($this->_extra_data['data']->tickets) ? $this->_extra_data['data']->tickets[$ticket->ID()]['dtt_objs'] : array();
 	}
 

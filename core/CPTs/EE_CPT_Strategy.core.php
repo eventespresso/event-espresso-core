@@ -169,6 +169,7 @@ class EE_CPT_Strategy extends EE_BASE {
 			$this->CPT = $this->_CPTs[ $WP_Query->query_vars['post_type'] ];
 			// set post type
 			$this->CPT['post_type'] = $WP_Query->query_vars['post_type'];
+//			echo '<h4>post_type : ' . $this->CPT['post_type'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			// the post or category or term that is triggering EE
 			$this->CPT['espresso_page'] = EE_Registry::instance()->REQ->is_espresso_page();
 			// requested post name
@@ -194,6 +195,16 @@ class EE_CPT_Strategy extends EE_BASE {
 				// load and instantiate
 				 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));	
 
+				// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
+				// here's the list of available filters in the WP_Query object
+				// 'posts_where_paged'
+				// 'posts_groupby'
+				// 'posts_join_paged'
+				// 'posts_orderby'
+				// 'posts_distinct'
+				// 'post_limits'
+				// 'posts_fields'
+				// 'posts_join'
 				add_filter( 'posts_fields', array( $this, 'posts_fields' ));
 				add_filter( 'posts_join',	array( $this, 'posts_join' ));
 				add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
@@ -218,7 +229,7 @@ class EE_CPT_Strategy extends EE_BASE {
 			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->CPT['meta_table']->get_table_name() . '.* ' ;
 		}
-		//d( $SQL );
+//		d( $SQL );
 		return $SQL;
 	}
 
@@ -237,7 +248,7 @@ class EE_CPT_Strategy extends EE_BASE {
 			// adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
 			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON ( ' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID ) ';
 		}
-		//d( $SQL );
+//		d( $SQL );
 		return $SQL;
 	}
 
@@ -325,8 +336,8 @@ class EE_CPT_Default_Strategy {
 		
 		$this->CPT = $CPT;
 		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
-		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
+//		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
+//		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
 
 

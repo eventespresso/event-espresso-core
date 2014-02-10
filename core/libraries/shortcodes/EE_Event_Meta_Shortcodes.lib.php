@@ -51,7 +51,7 @@ class EE_Event_Meta_Shortcodes extends EE_Shortcodes {
 	 * @param  mixed (array|object) $data      incoming data object/array
 	 * @return string            parsed code.
 	 */
-	public function parser( $shortcode, $data ) {
+	public function parser( $shortcode, $data, $extra_data = array() ) {
 		
 		//all shortcodes will be checked in the post_meta table (assuming the shortcode matches the post_meta key);
 		if ( empty( $this->_data['ID'] ) )
