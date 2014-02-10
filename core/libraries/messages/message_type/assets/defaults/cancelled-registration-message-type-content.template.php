@@ -40,6 +40,7 @@
 </table>
 </div>
 <div class="content">
+	<ul>[EVENT_LIST]</ul>
     <ul>[RECIPIENT_TICKET_LIST]</ul>
 </div>
 </td>
