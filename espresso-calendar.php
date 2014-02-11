@@ -446,7 +446,6 @@ class EE_Calendar {
 			$cfg->update_espresso_config();
 		}
 		if ( is_admin() ) {			
-			register_activation_hook(  __FILE__ , array( $this, 'activation' ));
 			require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin.php' );
 			EE_Calendar_Admin::instance();
 			// ajax hooks
@@ -484,7 +483,7 @@ class EE_Calendar {
 	 * @return arrat
 	 */
 	public function autoload_migration_stage($classname_to_filepath_array){
-		$classname_to_filepath_array['EE_DMS_4_1_0_calendar'] = ESPRESSO_CALENDAR_DATAMIGRATIONSCRIPTSPATH.'4_1_0_stages/EE_DMS_4_1_0_calendar.dmsstage.php';
+		$classname_to_filepath_array['EE_DMS_4_1_0_calendar_metadata'] = ESPRESSO_CALENDAR_DATAMIGRATIONSCRIPTSPATH.'4_1_0_stages/EE_DMS_4_1_0_calendar_metadata.dmsstage.php';
 		return $classname_to_filepath_array;
 	}
 	/**
@@ -493,7 +492,7 @@ class EE_Calendar {
 	 * return EE_Data_Migration_Script_Stage[]
 	 */
 	public function add_migration_stage($migration_stages){
-		$migration_stages[] = new EE_DMS_4_1_0_calendar();
+		$migration_stages[] = new EE_DMS_4_1_0_calendar_metadata();
 		return $migration_stages;
 	}
 
@@ -508,20 +507,6 @@ class EE_Calendar {
 		return '2.2.1.DEV';
 	}
 
-	/**
-	 * 	activation
-	 *
-	 *  @return 	void
-	 */
-	function activation() {		
-	    if ( ! current_user_can( 'activate_plugins' )) {
-			 return;
-		}
-	    $plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	    check_admin_referer( "activate-plugin_{$plugin}" );
-	 	require_once( ESPRESSO_CALENDAR_PLUGINFULLPATH . 'calendar_admin.php' );
-		EE_Calendar_Admin::activation();
-	}
 
 	/**
 	 * 	plugin_file
@@ -622,7 +607,7 @@ class EE_Calendar {
 				ob_start();
 				
 				//Category legend
-				if ( $calendar_config->enable_category_legend ){
+				if ( $calendar_config->display->enable_category_legend ){
 					echo '<div id="espreso-category-legend"><ul id="ee-category-legend-ul">';
 					
 					foreach ($ee_terms as $ee_term) {
@@ -630,8 +615,8 @@ class EE_Calendar {
 						$catcode = $ee_term->ID();
 						
 						$catmeta = unserialize($ee_term->category_meta);
-						$bg = $ee_term->get_extra_meta('background_color', $calendar_config->event_background);
-						$fontcolor =$ee_term->get_extra_meta('text_color', $calendar_config->event_text_color);
+						$bg = $ee_term->get_extra_meta('background_color', $calendar_config->display->event_background);
+						$fontcolor =$ee_term->get_extra_meta('text_color', $calendar_config->display->event_text_color);
 						$use_bg =$ee_term->get_extra_meta('use_color_picker', true);
 			
 						if($use_bg ) {
@@ -648,7 +633,7 @@ class EE_Calendar {
 				}
 				
 				//Filter dropdowns
-				if ($calendar_config->enable_calendar_filters ){
+				if ($calendar_config->display->enable_calendar_filters ){
 					?>
 					<!-- select box filters -->
 					<div class="ee-filter-form">
@@ -808,21 +793,13 @@ class EE_Calendar {
 	 *  @return 	void
 	 */
 	public function get_calendar_events() {
-//	$this->timer->start();
-		remove_shortcode('LISTATTENDEES');
 		// get calendar options
 		$config = $this->_get_calendar_options();
-		 $enable_cat_classes = $config->enable_cat_classes;
-		 $show_attendee_limit = $config->show_attendee_limit;
-		 $show_time = $config->time->show;
-		 $show_tooltips = $config->tooltip->show;
-		if ( $show_tooltips ) {
+		if ( $config->tooltip->show ) {
 			$tooltip_my = $config->tooltip->pos_my_1 . $config->tooltip->pos_my_2;
 			$tooltip_at = $config->tooltip->pos_at_1 . $config->tooltip->pos_at_2;
 			$tooltip_style = $config->tooltip->style;
 		}
-		$enable_calendar_thumbs = $config->enable_calendar_thumbs;
-
 		
 		$today = date( 'Y-m-d' );
 		$month = date('m' );
@@ -830,8 +807,6 @@ class EE_Calendar {
 		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
 		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));	
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';	
-		// set boolean for categories 
-		$use_categories = ! $config->disable_categories;
 		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
 		$venue_id_or_slug = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : NULL;
 		if($category_id_or_slug){
@@ -868,7 +843,7 @@ class EE_Calendar {
 				continue;
 			}
 			//Get details about the category of the event
-			if ($use_categories) {
+			if ( ! $config->display->disable_categories) {
 //				echo "using cateogires!";
 				$primary_cat = $event->first_event_category();
 				//any term_taxonmies set for this event?
@@ -881,7 +856,7 @@ class EE_Calendar {
 					}
 					$calendar_datetime->set_eventType($primary_cat->slug());
 //					d($calendar_datetime);
-					if ( $enable_cat_classes ) {
+					if ( $config->display->enable_cat_classes ) {
 						foreach ( $event->term_taxonomies() as $term_taxonomy ) {
 							$calendar_datetime->add_classname($term_taxonomy->taxonomy());
 						}				
@@ -900,7 +875,7 @@ class EE_Calendar {
 			$startTime =  '<span class="event-start-time">' . $datetime->start_time($config->time->format) . '</span>';
 			$endTime = '<span class="event-end-time">' . $datetime->end_time($config->time->format) . '</span>';
 
-			if ( $show_time && $startTime ) {
+			if ( $config->time->show && $startTime ) {
 				$event_time_html = '<span class="time-display-block">' . $startTime;
 				$event_time_html .= $endTime ? ' - ' . $endTime : '';
 				$event_time_html .= '</span>';
@@ -911,7 +886,7 @@ class EE_Calendar {
 			
 					
 			// Add thumb to event
-			if ( $enable_calendar_thumbs ) {
+			if ( $config->display->enable_calendar_thumbs ) {
 				
 				$thumbnail_url = $event->feature_image_url('thumbnail');
 				if ( $thumbnail_url ) { 
@@ -949,7 +924,7 @@ class EE_Calendar {
 				$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
 
 				// add attendee limit if set
-				if ( $show_attendee_limit ) {
+				if ( $config->display->show_attendee_limit ) {
 					$tickets_sold = $datetime->sold();
 					$attendee_limit_text = $datetime->total_tickets_available_at_this_datetime() == -1 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $tickets_sold . ' / ' . $tickets_initially_available_at_datetime;
 					$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';

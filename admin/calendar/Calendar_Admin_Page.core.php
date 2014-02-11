@@ -177,21 +177,10 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	
 	private function _sanitize_config_input($top_level_key,$second_level_key,$value){
 		$sanitization_methods = array(
-			'week_mode'=>'plaintext',
-			'enable_calendar_thumbs'=>'bool',
-			'calendar_height'=>'int',
-			'event_background'=>'int',
-			'enable_calendar_filters'=>'bool',
-			'enable_category_legend'=>'bool',
-			'use_pickers'=>'bool',
-			'event_background'=>'plaintext',
-			'event_text_color'=>'plaintext',
-			'enable_cat_classes'=>'bool',
-			'disable_categories'=>'bool',
-			'show_attendee_limit'=>'bool',
 			'time'=>array(
 				'first_day'=>'int',
 				'weekends'=>'bool',
+				'week_mode'=>'plaintext',
 				'format'=>'plaintext',
 				'show'=>'bool'),
 			'header'=>array(
@@ -226,6 +215,18 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				'month'=>'plaintext',
 				'week'=>'plaintext',
 				'day'=>'plaintext'
+			),
+			'display'=>array(
+				'enable_calendar_thumbs'=>'bool',
+				'calendar_height'=>'int',
+				'enable_calendar_filters'=>'bool',
+				'enable_category_legend'=>'bool',
+				'use_pickers'=>'bool',
+				'event_background'=>'plaintext',
+				'event_text_color'=>'plaintext',
+				'enable_cat_classes'=>'bool',
+				'disable_categories'=>'bool',
+				'show_attendee_limit'=>'bool',
 			)
 			);
 		$sanitization_method = NULL;

@@ -7,10 +7,10 @@ jQuery(document).ready(function($){
 			$("#time_format_custom_radio").attr("checked", "checked");
 		});
 		
-	espresso_calendar_show_hide_inputs('select#calendar\\[use_pickers\\] option:selected','.requires-color-pickers','0');
+	espresso_calendar_show_hide_inputs('select#calendar\\[display\\]\\[use_pickers\\] option:selected','.requires-color-pickers','0');
 	espresso_calendar_show_hide_inputs('select#calendar\\[tooltip\\]\\[show\\] option:selected','.requires-tooltips','0');
-	$('select#calendar\\[use_pickers\\]').change(function(){
-		espresso_calendar_show_hide_inputs('select#calendar\\[use_pickers\\] option:selected','.requires-color-pickers','slow');
+	$('select#calendar\\[display\\]\\[use_pickers\\]').change(function(){
+		espresso_calendar_show_hide_inputs('select#calendar\\[display\\]\\[use_pickers\\] option:selected','.requires-color-pickers','slow');
 	});
 	$('select#calendar\\[tooltip\\]\\[show\\]').change(function(){
 		espresso_calendar_show_hide_inputs('select#calendar\\[tooltip\\]\\[show\\] option:selected','.requires-tooltips','slow');

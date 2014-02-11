@@ -120,7 +120,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[week_mode]', $week_modes, $calendar_config->week_mode, 'id="weekMode"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[time][week_mode]', $week_modes, $calendar_config->week_mode, 'id="weekMode"'); ?><br />
 					<span class="description">
 						<?php _e('Determines the number of weeks displayed in a month view. Also determines each week\'s height.<br/>"fixed" - The calendar will always be 6 weeks tall. The height will always be the same, as determined by the calendar height setting or the aspect ratio.<br/>"liquid" - The calendar will have either 4, 5, or 6 weeks, depending on the month. The height of the weeks will stretch to fill the available height, as determined by the calendar height setting or the aspect ratio.<br/>"variable" - The calendar will have either 4, 5, or 6 weeks, depending on the month. Each week will have the same constant height, meaning the calendar\'s height will change month-to-month.', 'event_espresso'); ?>
 					</span>
@@ -134,7 +134,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="espresso_calendar_height" type="text" name="calendar[calendar_height]" value="<?php echo $calendar_config->calendar_height; ?>" />
+					<input id="espresso_calendar_height" type="text" name="calendar[display][calendar_height]" value="<?php echo $calendar_config->display->calendar_height; ?>" />
 					<br />
 					<span class="description">
 						<?php _e('Will make the entire calendar (including header) a pixel height. Leave blank for an automagical height.', 'event_espresso'); ?>
@@ -148,7 +148,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[enable_calendar_thumbs]', $values, $calendar_config->enable_calendar_thumbs, 'id="enable-calendar-thumbs"'); ?>
+					<?php echo EEH_Form_Fields::select_input('calendar[display][enable_calendar_thumbs]', $values, $calendar_config->display->enable_calendar_thumbs, 'id="enable-calendar-thumbs"'); ?>
 					<br />
 					<span class="description">
 						<?php _e('The "Featured Image" box in the event editor handles the thumbnail image URLs for each event. After setting the "Enable Calendar images" option to "Yes" in the calendar settings, upload an event image in the built-in WordPress media uploader, then click the Insert into post button on the media uploader.', 'event_espresso'); ?>
@@ -164,7 +164,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[enable_calendar_filters]', $values, $calendar_config->enable_calendar_filters, 'id="enable_calendar_filters"'); ?>
+					<?php echo EEH_Form_Fields::select_input('calendar[display][enable_calendar_filters]', $values, $calendar_config->display->enable_calendar_filters, 'id="enable_calendar_filters"'); ?>
 					<br />
 					<span class="description">
 						<?php _e('Filters allow users to filter events based on category and/or venue.', 'event_espresso'); ?>
@@ -186,7 +186,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[enable_cat_classes]', $values,$calendar_config->enable_cat_classes, 'id="enable-cat-classes"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[display][enable_cat_classes]', $values,$calendar_config->display->enable_cat_classes, 'id="enable-cat-classes"'); ?><br />
 					<span class="description">
 						<?php _e('This setting allows you to set each category to display a different color. Set each category color in Event Espresso > Categories.', 'event_espresso'); ?>
 					</span>
@@ -199,7 +199,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[use_pickers]', $values,$calendar_config->use_pickers); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[display][use_pickers]', $values,$calendar_config->display->use_pickers); ?><br />
 					<span class="description">
 						<?php _e('This allows you to customize the event background color and text color.', 'event_espresso'); ?>
 					</span>
@@ -212,7 +212,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="background-color" class="color-picker" type="text" name="calendar[event_background]" value="<?php echo $calendar_config->event_background ?>" />
+					<input id="background-color" class="color-picker" type="text" name="calendar[display][event_background]" value="<?php echo $calendar_config->display->event_background ?>" />
 				</td>
 			</tr>
 			<tr class="color-picker-selections requires-color-pickers">
@@ -222,7 +222,7 @@
 					</label>
 				</th>
 				<td>
-					<input id="text-color" class="color-picker" type="text" name="calendar[event_text_color]" value="<?php echo $calendar_config->event_text_color ?>" />
+					<input id="text-color" class="color-picker" type="text" name="calendar[display][event_text_color]" value="<?php echo $calendar_config->display->event_text_color ?>" />
 		
 				</td>
 			</tr>
