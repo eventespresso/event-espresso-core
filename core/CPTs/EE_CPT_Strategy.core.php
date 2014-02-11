@@ -153,7 +153,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function pre_get_posts( $WP_Query ) {
 		// check that postz-type is set
-		if ( isset( $WP_Query->query_vars['post_type'] )) {
+		if ( $WP_Query instanceof WP_Query && isset( $WP_Query->query_vars['post_type'] )) {
 			// loop thru post_types as array
 			foreach ( (array)$WP_Query->query_vars['post_type'] as $post_type ) {
 				// is current query for an EE CPT ?
