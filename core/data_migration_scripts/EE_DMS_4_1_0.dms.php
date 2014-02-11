@@ -13,6 +13,8 @@ foreach($stages as $filepath){
 	preg_match('~4_1_0_stages/(.*).dmsstage.php~',$filepath,$matches);
 	$class_to_filepath[$matches[1]] = $filepath;
 }
+//give addons a chance to autoload their stages too
+$class_to_filepath = apply_filters('FHEE__EE_DMS_4_1_0__autoloaded_stages',$class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
 /**

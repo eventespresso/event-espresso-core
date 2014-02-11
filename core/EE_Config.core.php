@@ -418,7 +418,7 @@ final class EE_Config {
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
 		if ( ! is_readable( $shortcode_path . DS . $shortcode_class . $shortcode_ext )) {
-			$msg = sprintf( __( 'The requested %s shortcode file could not be found or is not readable due to file permissions.', 'event_espresso' ), $shortcode_class );
+			$msg = sprintf( __( 'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s', 'event_espresso' ), $shortcode_class,$shortcode_path . DS . $shortcode_class . $shortcode_ext );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}

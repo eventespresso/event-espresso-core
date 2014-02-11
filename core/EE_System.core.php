@@ -229,6 +229,13 @@ final class EE_System {
 		// load additional common resources
 		add_action( 'init', array( $this, 'init' ), 3 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
+		/**
+		 * whether on frontend or backend, load EE_Admin's toolbar. but not if its an ajax request
+		 */
+		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance && 
+				! defined('DOING_AJAX')){
+			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
+		}
 		do_action( 'AHEE__EE_System__plugins_loaded__end', $this );
 	}
 	/**
@@ -521,6 +528,256 @@ final class EE_System {
 		}
 	}
 
+	
+	/**
+	 * 	espresso_toolbar_items
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function espresso_toolbar_items($admin_bar) {
+
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		EE_Registry::instance()->load_core('Admin_Page');
+		$menu_class = 'espresso_menu_item_class';
+		//we don't use the constants EVENTS_ADMIN_URL or REG_ADMIN_URL
+		//because they're only defined in each of their respective constructors
+		//and this might be a frontend request, in which case they aren't available
+		$events_admin_url = admin_url("admin.php?page=espresso_events");
+		$reg_admin_url = admin_url("admin.php?page=espresso_registrations");
+
+		//Top Level
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar',
+				'title' => '<span class="ee-icon ee-icon-ee-cup-thick ee-icon-size-20"></span><span class="ab-label">' . _x('Event Espresso', 'admin bar menu group label') . '</span>',
+				'href' => $events_admin_url,
+				'meta' => array(
+						'title' => __('Event Espresso'),
+						'class' => $menu_class . 'first'
+				),
+		));
+
+		//Events
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-events',
+				'parent' => 'espresso-toolbar',
+				'title' => 'Events',
+				'href' => $events_admin_url,
+				'meta' => array(
+						'title' => __('Events'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Events Add New
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-events-new',
+				'parent' => 'espresso-toolbar-events',
+				'title' => 'Add New',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'create_new' ), $events_admin_url ),
+				'meta' => array(
+						'title' => __('Add New'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Events View
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-events-view',
+				'parent' => 'espresso-toolbar-events',
+				'title' => 'View',
+				'href' => $events_admin_url,
+				'meta' => array(
+						'title' => __('View'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Events View All
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-events-all',
+				'parent' => 'espresso-toolbar-events-view',
+				'title' => 'All',
+				'href' => $events_admin_url,
+				'meta' => array(
+						'title' => __('All'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Events View Today
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-events-today',
+				'parent' => 'espresso-toolbar-events-view',
+				'title' => 'Today',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), $events_admin_url ),
+				'meta' => array(
+						'title' => __('Today'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Events View This Month
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-events-month',
+				'parent' => 'espresso-toolbar-events-view',
+				'title' => 'This Month',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), $events_admin_url ),
+				'meta' => array(
+						'title' => __('This Month'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations',
+				'parent' => 'espresso-toolbar',
+				'title' => 'Registrations',
+				'href' => $reg_admin_url,
+				'meta' => array(
+						'title' => __('Registrations'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview Today
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-today',
+				'parent' => 'espresso-toolbar-registrations',
+				'title' => 'Today',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today' ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('Today'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview Today Completed
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-today-approved',
+				'parent' => 'espresso-toolbar-registrations-today',
+				'title' => 'Approved',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_approved ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('Approved'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview Today Pending
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-today-pending',
+				'parent' => 'espresso-toolbar-registrations-today',
+				'title' => 'Pending',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', 'reg_status'=>EEM_Registration::status_id_pending_payment ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('Pending Payment'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview Today Incomplete
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-today-not-approved',
+				'parent' => 'espresso-toolbar-registrations-today',
+				'title' => 'Not Approved',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_not_approved ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('Not Approved'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview Today Incomplete
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-today-cancelled',
+				'parent' => 'espresso-toolbar-registrations-today',
+				'title' => 'Cancelled',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'today', '_reg_status'=>EEM_Registration::status_id_cancelled ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('Cancelled'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview This Month
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-month',
+				'parent' => 'espresso-toolbar-registrations',
+				'title' => 'This Month',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month' ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('This Month'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview This Month Approved
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-month-approved',
+				'parent' => 'espresso-toolbar-registrations-month',
+				'title' => 'Approved',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_approved ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('Approved'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview This Month Pending
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-month-pending',
+				'parent' => 'espresso-toolbar-registrations-month',
+				'title' => 'Pending',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_pending_payment ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('Pending'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+		
+		//Registration Overview This Month Not Approved
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-month-not-approved',
+				'parent' => 'espresso-toolbar-registrations-month',
+				'title' => 'Not Approved',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_not_approved ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('Not Approved', 'event_espresso' ),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+
+		//Registration Overview This Month Cancelled
+		$admin_bar->add_menu(array(
+				'id' => 'espresso-toolbar-registrations-month-cancelled',
+				'parent' => 'espresso-toolbar-registrations-month',
+				'title' => 'Cancelled',
+				'href' => EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'default', 'status'=>'month', '_reg_status'=>EEM_Registration::status_id_cancelled ), $reg_admin_url ),
+				'meta' => array(
+						'title' => __('Cancelled'),
+						'target' => '',
+						'class' => $menu_class
+				),
+		));
+	}
 
 
 
