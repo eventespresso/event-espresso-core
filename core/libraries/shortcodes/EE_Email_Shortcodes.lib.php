@@ -123,7 +123,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 			//only add an admin email if it is present.
 			if ( empty( $admin->email ) || $admin->email == '' ) continue;
  
-			$admin_email[] = !empty( $admin->first_name ) ? $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>' : $admin->email;
+			$admin_email[] = !empty( $admin->first_name ) ? $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>' : EE_Registry::instance()->CFG->organization->name . '<' . $admin->email . '>';
 		}
  
 		$admin_email = implode( ',', $admin_email );
