@@ -225,7 +225,6 @@ final class EE_Front_Controller {
 	 *	@return void
 	 */
 	public function get_request( WP $WP ) {
-//		d( $WP );
 		do_action( 'AHEE__EE_Front_Controller__get_request__before_Request_Handler_loaded' );
 		EE_Registry::instance()->load_core( 'Request_Handler', $WP );	
 		do_action( 'AHEE__EE_Front_Controller__get_request__after_Request_Handler_loaded' );
@@ -327,16 +326,20 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function pre_get_posts( $WP_Query ) {
-		// load module request router
-		$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
-		// cycle thru module routes
-		while ( $route = $Module_Request_Router->get_route( $WP_Query ) ) {
-			// determine module and method for route
-			$module = $Module_Request_Router->resolve_route( $route );
-			// get registered view for route
-			$this->_template_path = $Module_Request_Router->get_view( $route );
-			// map the routes to the module objects
-			EE_Registry::instance()->modules[ $route ] = $module;
+		// only load Module_Request_Router if this is the main query
+		if ( $WP_Query->is_main_query() ) {
+			// load module request router
+			$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
+			// cycle thru module routes
+			while ( $route = $Module_Request_Router->get_route( $WP_Query ) ) {
+				// determine module and method for route
+				$module = $Module_Request_Router->resolve_route( $route );
+				// get registered view for route
+				$this->_template_path = $Module_Request_Router->get_view( $route );
+				// map the routes to the module objects
+				EE_Registry::instance()->modules[ $route ] = $module;
+			}
+
 		}
 	}
 
