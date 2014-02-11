@@ -100,12 +100,12 @@
 		</div>
 
 		<input id="reg-page-selected-gateway" type="hidden" value="<?php echo $selected_gateway; ?>" name="selected_gateway">
-		<!--<input id="reg-page-selected-gateway-name-free" type="hidden" value="free" name="selected_gateway_name[free]">-->
 		<div id="methods-of-payment">
 			<h3 id="select-method-of-payment-hdr"><?php _e('Please select your method of payment:', 'event_espresso'); ?></h3>
 			<?php	do_action( 'AHEE_display_payment_gateways', $selected_gateway ); ?>
 			<a id="reg-page-select-other-gateway-lnk" class="hidden smaller-text right" rel=""><?php _e('select a different method of payment:', 'event_espresso'); ?></a>
-		</div><!-- / .event-display-boxes payment opts -->
+		</div>
+		<!-- end #methods-of-payment -->
 		<?php
 				// end  if  $payment_required
 		} else { ?>
