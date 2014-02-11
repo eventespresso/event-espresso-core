@@ -3,12 +3,16 @@
 /**
  * Converts 3.1's calendar options to a EE4's calendar config
  */
-class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
+class EE_DMS_4_1_0_calendar_options extends EE_Data_Migration_Script_Stage{
 
 	function _migration_step($num_items=50){
 
 		$items_actually_migrated = 0;
-		$old_org_options = get_option('events_organization_settings');
+		$old_org_options = get_option('espresso_calendar_options');
+		//the option's name differened depending on the version of the calendar
+		if( ! $old_org_options){
+			$old_org_options = get_option('espresso_calendar_settings');
+		}
 		foreach($this->_org_options_we_know_how_to_migrate as $option_name){
 			//only bother migrating if there's a setting to migrate. Otherwise we'll just use the default
 			if(isset($old_org_options[$option_name])){
@@ -28,13 +32,18 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		return $count_of_options_to_migrate;
 	}
 	function __construct() {
-		$this->_pretty_name = __("Organization Options/Config", "event_espresso");
-		$this->_org_options_we_know_how_to_migrate = apply_filters( 'FHEE__EE_DMS_4_1_0_org_options__org_options_we_know_how_to_migrate',$this->_org_options_we_know_how_to_migrate );
+		$this->_pretty_name = __("Calendar Options", "event_espresso");
+		$this->_org_options_we_know_how_to_migrate = apply_filters( 'FHEE__EE_DMS_4_1_0_calendaring_options__org_options_we_know_how_to_migrate',$this->_org_options_we_know_how_to_migrate );
 		parent::__construct();
 	}
 
 	private function _handle_org_option($option_name,$value){
-		$c = EE_Config::instance()->addons['calendar'];
+		if(isset(EE_Config::instance()->addons['calendar']) && EE_Config::instance()->addons['calendar'] instanceof EE_Calendar_Config){
+			$c = EE_Config::instance()->addons['calendar'];
+		}else{
+			$c = new EE_Calendar_Config();
+			EE_Config::instance()->addons['calendar'] = $c;
+		}
 		/* @var $c EE_Calendar_Config */
 		switch($option_name){
 			

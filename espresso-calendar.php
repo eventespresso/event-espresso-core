@@ -484,6 +484,7 @@ class EE_Calendar {
 	 */
 	public function autoload_migration_stage($classname_to_filepath_array){
 		$classname_to_filepath_array['EE_DMS_4_1_0_calendar_metadata'] = ESPRESSO_CALENDAR_DATAMIGRATIONSCRIPTSPATH.'4_1_0_stages/EE_DMS_4_1_0_calendar_metadata.dmsstage.php';
+		$classname_to_filepath_array['EE_DMS_4_1_0_calendar_options'] = ESPRESSO_CALENDAR_DATAMIGRATIONSCRIPTSPATH.'4_1_0_stages/EE_DMS_4_1_0_calendar_options.dmsstage.php';
 		return $classname_to_filepath_array;
 	}
 	/**
@@ -493,6 +494,7 @@ class EE_Calendar {
 	 */
 	public function add_migration_stage($migration_stages){
 		$migration_stages[] = new EE_DMS_4_1_0_calendar_metadata();
+		$migration_stages[] = new EE_DMS_4_1_0_calendar_options();
 		return $migration_stages;
 	}
 
