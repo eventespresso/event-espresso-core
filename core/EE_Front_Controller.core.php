@@ -88,6 +88,9 @@ final class EE_Front_Controller {
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
 		// action hook EE
 		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
+
+		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
+		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 2 );
 	}
 
 
@@ -182,6 +185,25 @@ final class EE_Front_Controller {
 		if ( apply_filters( 'FHEE__EE_Front_Controller__employ_CPT_Strategy',true) ){
 			EE_Registry::instance()->load_core( 'CPT_Strategy' );
 		}
+	}
+
+
+
+
+	/**
+	 * this just makes sure that if the site is using ssl that we force that for any admin ajax calls from frontend
+	 * @param  string $url    incoming url
+	 * @param  string $schema current schema
+	 * @return string         final assembled url
+	 */
+	public function maybe_force_admin_ajax_ssl( $url, $schema ) {
+		if ( !is_ssl() )
+			return $url;
+
+		if ( preg_match('/admin-ajax.php/', $url ) ) {
+			$url = preg_replace( '#^.+://#', 'https' . '://', $url );
+		}
+		return $url;
 	}
 
 
