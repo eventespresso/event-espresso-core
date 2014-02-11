@@ -103,7 +103,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
 
 		// retreive session options from db
-		if ( $session_settings = get_option( 'espresso_session_settings' ) !== FALSE ) {
+		if ( $session_settings = get_option( 'ee_session_settings' ) !== FALSE ) {
 			// cycle though existing session options
 			foreach ( $session_settings as $var_name => $session_setting ) {
 				// set values for class properties
@@ -131,9 +131,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			// or just start a new one
 			$this->_create_espresso_session();
 		}
-//		if ( ! isset( $_REQUEST['ee'] ) || $_REQUEST['ee'] != 'process_ticket_selections' ) {
-//			d( $this->_session_data );
-//		}
+
 		// check request for 'clear_session' param
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 10 );
 		// once everything is all said and done,
