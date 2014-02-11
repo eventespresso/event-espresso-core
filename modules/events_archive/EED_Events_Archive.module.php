@@ -788,15 +788,15 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function set_default_settings( $CFG ) {
 		//printr( $CFG, '$CFG  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		$CFG->display_description = isset( $CFG->display_description ) && ! empty( $CFG->display_description ) ? $CFG->display_description : 1;
-		$CFG->display_address = isset( $CFG->display_address ) && ! empty( $CFG->display_address ) ? $CFG->display_address : TRUE;
-		$CFG->display_venue_details = isset( $CFG->display_venue_details ) && ! empty( $CFG->display_venue_details ) ? $CFG->display_venue_details : TRUE;
-		$CFG->display_expired_events = isset( $CFG->display_expired_events ) && ! empty( $CFG->display_expired_events ) ? $CFG->display_expired_events : FALSE;
+		$CFG->display_description = empty( $CFG->display_description ) && $CFG->display_description !== 0 ? 1 : $CFG->display_description;
+		$CFG->display_address = empty( $CFG->display_address ) && $CFG->display_address !== 0  ? TRUE : $CFG->display_address ;
+		$CFG->display_venue_details = empty( $CFG->display_venue_details ) && $CFG->display_venue_details !== 0 ? TRUE : $CFG->display_venue_details;
+		$CFG->display_expired_events = empty( $CFG->display_expired_events ) && $CFG->display_expired_events !== 0 ? FALSE : $CFG->display_expired_events;
 //		$CFG->default_type = isset( $CFG->default_type ) && ! empty( $CFG->default_type ) ? $CFG->default_type : 'grid';
 //		$CFG->event_list_grid_size = isset( $CFG->event_list_grid_size ) && ! empty( $CFG->event_list_grid_size ) ? $CFG->event_list_grid_size : 'medium';
 //		$CFG->templates['full'] = isset( $CFG->templates['full'] ) && ! empty( $CFG->templates['full'] ) ? $CFG->templates['full'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
 //		$CFG->templates['part'] = isset( $CFG->templates['part'] ) && ! empty( $CFG->templates['part'] ) ? $CFG->templates['part'] : EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
-		$CFG->display_status_banner = !empty( $CFG->display_status_banner) ? $CFG->display_status_banner : FALSE;
+		$CFG->display_status_banner = empty( $CFG->display_status_banner) && $CFG->display_status_banner !== 0 ? FALSE : $CFG->display_status_banner;
 		return $CFG;
 	}
 
