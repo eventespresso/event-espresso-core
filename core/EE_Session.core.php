@@ -245,6 +245,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// first visit ?
 		if ( session_id() === '' ) {
+			//starts a new session if one doesn't already exist, or reinitiates an existing one
+			session_start();
 			// set initial site access time
 			$this->_session_data['init_access'] = $this->_time;		
 			// set referer	
@@ -254,8 +256,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = '';
 			}
 		}
-		//starts a new session if one doesn't already exist, or reinitiates an existing one
-		session_start();
 		// grab the session ID
 		$this->_sid = session_id();
 		//d( $this->_sid );
