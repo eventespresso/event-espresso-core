@@ -616,7 +616,6 @@ class EE_Calendar {
 						/*@var $ee_term EE_Term */
 						$catcode = $ee_term->ID();
 						
-						$catmeta = unserialize($ee_term->category_meta);
 						$bg = $ee_term->get_extra_meta('background_color', $calendar_config->display->event_background);
 						$fontcolor =$ee_term->get_extra_meta('text_color', $calendar_config->display->event_text_color);
 						$use_bg =$ee_term->get_extra_meta('use_color_picker', true);

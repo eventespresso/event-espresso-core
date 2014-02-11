@@ -171,6 +171,21 @@
 					</span>
 				</td>
 			</tr>
+			
+			<tr>
+				<th>
+					<label for="enable_category_legend">
+						<?php _e('Enable Category Legend', 'event_espresso'); ?>
+					</label>
+				</th>
+				<td>
+					<?php echo EEH_Form_Fields::select_input('calendar[display][enable_category_legend]', $values, $calendar_config->display->enable_category_legend, 'id="enable_category_legend"'); ?>
+					<br />
+					<span class="description">
+						<?php _e('Shows a legend of all the different event categories', 'event_espresso'); ?>
+					</span>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 	<h4>
