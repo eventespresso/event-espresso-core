@@ -120,7 +120,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[time][week_mode]', $week_modes, $calendar_config->week_mode, 'id="weekMode"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[time][week_mode]', $week_modes, $calendar_config->time->week_mode, 'id="weekMode"'); ?><br />
 					<span class="description">
 						<?php _e('Determines the number of weeks displayed in a month view. Also determines each week\'s height.<br/>"fixed" - The calendar will always be 6 weeks tall. The height will always be the same, as determined by the calendar height setting or the aspect ratio.<br/>"liquid" - The calendar will have either 4, 5, or 6 weeks, depending on the month. The height of the weeks will stretch to fill the available height, as determined by the calendar height setting or the aspect ratio.<br/>"variable" - The calendar will have either 4, 5, or 6 weeks, depending on the month. Each week will have the same constant height, meaning the calendar\'s height will change month-to-month.', 'event_espresso'); ?>
 					</span>
