@@ -43,7 +43,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		$this->description = __('All shortcodes related to emails', 'event_espresso');
 		$this->_shortcodes = array(
 			'[SITE_ADMIN_EMAIL]' => __('Will be replaced with the admin email for the site that Event Espresso is installed on', 'event_espresso'),
-			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the eevnts in a registration', 'event_espresso')
+			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the eevnts in a registration. <strong>NOTE:</strong> If the event author has not filled out their WordPress user profile then the organization name will be used as the "From" name.', 'event_espresso')
 			);
 	}
 
@@ -82,7 +82,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 	private function _get_event_admin_emails() {
 
 		if ( !empty( $this->_data->admin_email ) ) {
-			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : $this->_data->admin_email;
+			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : EE_Registry::instance()->CFG->organization->name . '<' . $this->_data->admin_email . '>';
 		}
  
 		//k this shortcode has been used else where.  Since we don't know what particular event this is for, let's loop through the events and get an array of event admins for the events.  We'll return the formatted list of admin emails and let the messenger make sure we only pick one if this is for a field that can only have ONE!.
