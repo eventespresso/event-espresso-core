@@ -464,7 +464,7 @@ class PluginUpdateEngineChecker {
 		$chk_file = WP_CONTENT_DIR . '/upgrade/' . $this->slug . '/';
 
 		if ( is_readable($chk_file ) ) {
-			if ( !is_object($wp_filesystem ) ) {
+			if ( !is_object( $wp_filesystem ) ) {
 				require_once( ABSPATH . '/wp-admin/includes/file.php');
 				WP_Filesystem();
 			}
@@ -932,7 +932,13 @@ class PluginUpdateEngineChecker {
 			$new_dir = $wp_filesystem->wp_content_dir() . 'upgrade/' . $this->slug . '/';
 
 			//make new directory if needed.
-			if ( !$wp_filesystem->exists( $new_dir ) ) {
+			if ( $wp_filesystem->exists( $new_dir ) ) {
+				//delete the existing dir first because we want to make sure clean install
+				$wp_filesystem->delete($new_dir, FALSE, 'd');
+			}
+
+			//now make sure that we DON'T have the directory and we'll create a new one for this.
+			if ( ! $wp_filesystem->exists( $new_dir ) ) {
 				if ( !$wp_filesystem->mkdir( $new_dir, FS_CHMOD_DIR ) )
 					return new WP_Error( 'mkdir_failed_destination', $wppu->strings['mkdir_failed'], $new_dir );
 			}
@@ -940,7 +946,7 @@ class PluginUpdateEngineChecker {
 			//copy original $source into new source
 			$result = copy_dir( $source, $new_dir );
 			if ( is_wp_error($result ) ) {
-				//something went wrong let's just return the original $source
+				//something went wrong let's just return the original $source as a fallback.
 				return $source;
 			}
 
