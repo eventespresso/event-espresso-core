@@ -43,7 +43,11 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		$this->description = __('All shortcodes related to emails', 'event_espresso');
 		$this->_shortcodes = array(
 			'[SITE_ADMIN_EMAIL]' => __('Will be replaced with the admin email for the site that Event Espresso is installed on', 'event_espresso'),
-			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the eevnts in a registration. <strong>NOTE:</strong> If the event author has not filled out their WordPress user profile then the organization name will be used as the "From" name.', 'event_espresso')
+			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the events in a registration. <strong>NOTE:</strong> If the event author has not filled out their WordPress user profile then the organization name will be used as the "From" name.', 'event_espresso'),
+			'[CO_FORMATTED_EMAIL]' => __('This parses to the formatted email address of the organization name set in Your Organization Settings. "My Organization &lt;myorg@email.com&gt;"', 'event_espresso' ),
+			'[CO_EMAIL]' => __('This will parse to the email address only for the organization set in Your Organization Settings.', 'event_espresso'),
+			'[ESPRESSO_ADMIN_FORMATTED_EMAIL]' => __('This parses to the formatted email address of the organization name set in Your Organization Settings. "My Organization &lt;myorg@email.com&gt;"', 'event_espresso' ),
+			'[ESPRESSO_ADMIN_EMAIL]' => __('This parses to the email address only for the organization set in Your Organization Settings page.', 'event_espresso')
 			);
 	}
 
@@ -58,6 +62,16 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT_AUTHOR_FORMATTED_EMAIL]' :
 				return $this->_get_event_admin_emails();
+				break;
+
+			case '[CO_FORMATTED_EMAIL]' :
+			case '[ESPRESSO_ADMIN_FORMATTED_EMAIL]' :
+				return EE_Registry::instance()->CFG->organization->name . ' <' . EE_Registry::instance()->CFG->organization->email . '>';
+				break;
+
+			case '[CO_EMAIL]' :
+			case '[ESPRESSO_ADMIN_EMAIL]' :
+				return EE_Registry::instance()->CFG->organization->email;
 				break;
 
 			default :
