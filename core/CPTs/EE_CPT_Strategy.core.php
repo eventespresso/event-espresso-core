@@ -186,8 +186,10 @@ class EE_CPT_Strategy extends EE_BASE {
 					$this->_possibly_set_ee_request_var( $post_type );		
 					// make sure CPT name is set or things is gonna break
 					if ( isset( $this->CPT['singular_name'] )) {
+						// convert post_type to model name
+						$model_name = ucwords( rtrim( str_replace( 'espresso_', '', $post_type ), 's' ));
 						// get CPT table data via CPT Model
-						$this->CPT_model = EE_Registry::instance()->load_model( $this->CPT['singular_name'] );
+						$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
 						$this->CPT['tables'] = $this->CPT_model->get_tables();
 						// is there a Meta Table for this CPT?
 						$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;		
