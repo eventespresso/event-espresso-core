@@ -330,7 +330,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 		
 		$this->_template_args['display_address_in_regform'] = 
-				isset( EE_Registry::instance()->CFG->template_settings->display_address_in_regform ) && ! empty( EE_Registry::instance()->CFG->template_settings->display_address_in_regform ) 
+				isset( EE_Registry::instance()->CFG->template_settings->display_address_in_regform )
 				? EE_Registry::instance()->CFG->template_settings->display_address_in_regform
 				: TRUE;
 		

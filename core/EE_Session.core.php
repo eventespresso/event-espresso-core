@@ -103,7 +103,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
 
 		// retreive session options from db
-		if ( $session_settings = get_option( 'espresso_session_settings' ) !== FALSE ) {
+		if ( $session_settings = get_option( 'ee_session_settings' ) !== FALSE ) {
 			// cycle though existing session options
 			foreach ( $session_settings as $var_name => $session_setting ) {
 				// set values for class properties
@@ -131,9 +131,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			// or just start a new one
 			$this->_create_espresso_session();
 		}
-//		if ( ! isset( $_REQUEST['ee'] ) || $_REQUEST['ee'] != 'process_ticket_selections' ) {
-//			d( $this->_session_data );
-//		}
+
 		// check request for 'clear_session' param
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 10 );
 		// once everything is all said and done,
@@ -245,6 +243,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// first visit ?
 		if ( session_id() === '' ) {
+			//starts a new session if one doesn't already exist, or reinitiates an existing one
+			session_start();
 			// set initial site access time
 			$this->_session_data['init_access'] = $this->_time;		
 			// set referer	
@@ -254,8 +254,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = '';
 			}
 		}
-		//starts a new session if one doesn't already exist, or reinitiates an existing one
-		session_start();
 		// grab the session ID
 		$this->_sid = session_id();
 		//d( $this->_sid );
