@@ -80,28 +80,6 @@
 
 
 
-.tkt-slctr-tbl-wrap-dv {
-}
-
-.tkt-slctr-tbl {
-	margin: 0 0 .5em;
-	padding: 0;
-	background: #fff;
-	border-style: none none solid solid;
-	border-width: 1px;
-	border-color: #eee;
-}
-.tkt-slctr-tbl th, .tkt-slctr-tbl td {
-	margin: 0;
-	padding: 1em;
-	border-style: solid solid none none;
-	border-width: 1px;
-	border-color: #eee;
-}
-.tkt-slctr-tbl .tckt-slctr-tkt-details-td {
-	padding: 0 !important;
-}
-
 
 .tkt-slctr-tbl tr.ticket-sales-expired {
 }
@@ -153,9 +131,6 @@
 	position: relative;
 	padding: 1em;
 	margin: .5em;
-	background: rgba( 128, 128, 128, .1 );
-	border-radius: 2px;
-	text-shadow: 1px 1px 0px #fff;
 }
 .tckt-slctr-tkt-details-dv h5 {
 	margin: 1em 0 0;
@@ -168,39 +143,24 @@
 	width: 99%;
 	padding: 3px;
 	margin: .5em 0 0;
-	background: #fff;
-	border-color: #eee;
-	border-radius: 2px;
 }
 .tckt-slctr-tkt-details-tbl-wrap-dv .tckt-slctr-tkt-details-tbl {
 	width: 100%;
 	margin: 0;
-	background: #fcfcfc;
-	border-style: none none solid solid;
 	border-width: 1px;
-	border-color: #eee;
-	text-shadow: 1px 1px 0px #fff;
 	line-height: .8em;
 }
 .tckt-slctr-tkt-details-tbl th {
 	padding: 5px;
 	font-size: 1em;
 }
-/*.tckt-slctr-tkt-details-tbl thead th:first-child,
-.tckt-slctr-tkt-details-tbl thead th:last-child {
-	font-size: 1em;
-}*/
 .tckt-slctr-tkt-details-tbl thead th {
-	font-weight: bold;
-	border-style: solid solid none none;
 	border-width: 1px;
-	border-color: #eee;
+	font-weight: bold;
 }
 .tckt-slctr-tkt-details-tbl td {
 	padding: 5px;
-	border-style: solid solid none none;
 	border-width: 1px;
-	border-color: #eee;
 }
 
 .ticket-details-label-spn {

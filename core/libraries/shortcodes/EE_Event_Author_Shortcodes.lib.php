@@ -42,7 +42,7 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[EVENT_AUTHOR_FNAME]' => __('Parses to the first name of the event author.', 'event_espresso'),
 			'[EVENT_AUTHOR_LNAME]' => __('Parses to the last name of the event author.', 'event_espresso'),
-			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('Parses to a formatted email address of the event author (fname lname &lt;email@address.com&gt;).', 'event_espresso'),
+			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('Parses to a formatted email address of the event author (fname lname &lt;email@address.com&gt;).  <strong>NOTE:</strong> If the event author has not filled out their WordPress user profile then the organization name will be used as the "From" name.', 'event_espresso'),
 			'[EVENT_AUTHOR_EMAIL]' => __('Parses to the unformatted email address of the event author', 'event_espresso')
 			);
 	}
@@ -68,7 +68,7 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[EVENT_AUTHOR_FORMATTED_EMAIL]' :
-				$email =  !empty( $recipient->fname ) ? $recipient->fname . ' ' . $recipient->lname . '<' . $recipient->admin_email . '>' : $recipient->admin_email;
+				$email =  !empty( $recipient->fname ) ? $recipient->fname . ' ' . $recipient->lname . '<' . $recipient->admin_email . '>' : EE_Registry::instance()->CFG->organization->name . '<' . $recipient->admin_email . '>';
 				return $email;
 				break;
 

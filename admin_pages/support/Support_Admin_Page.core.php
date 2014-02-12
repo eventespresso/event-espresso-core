@@ -60,9 +60,9 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_installation',
-			'shortcodes' => '_shortcodes',
-			'resources' => '_resources',
+			'default' => '_shortcodes',
+			//'installation' => '_installation',
+			//'resources' => '_resources',
 			'contact_support' => '_contact_support'
 			);
 	}
@@ -71,7 +71,7 @@ class Support_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_config() {
 		$this->_page_config = array(
-			/*'default' => array(
+			/*'installation' => array(
 				'nav' => array(
 					'label' => __('Installation', 'event_espresso'),
 					'order' => 10),
@@ -87,7 +87,6 @@ class Support_Admin_Page extends EE_Admin_Page {
 				'require_nonce' => FALSE
 				),*/
 			'default' => array(
-			//'shortcodes' => array(
 				'nav' => array(
 					'label' => __('Shortcodes', 'event_espresso'),
 					'order' => 30),

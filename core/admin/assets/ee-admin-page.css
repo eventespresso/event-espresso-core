@@ -287,6 +287,10 @@ table .espresso-radio-btn-options-ul .big-lbl,
 
 .hide-if-no-js { display: none; }
 
+/**override .hide-if-no-js for feature image boxes**/
+#postimagediv .hide-if-no-js {
+	display: inherit;
+}
 .not-bold { font-weight:normal !important; }
 .lt-grey-txt { color:#999 !important;  text-shadow:none; }
 .float-left { float:left; }

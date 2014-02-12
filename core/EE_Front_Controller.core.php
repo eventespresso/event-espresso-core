@@ -88,6 +88,9 @@ final class EE_Front_Controller {
 		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
 		// action hook EE
 		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
+
+		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
+		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 2 );
 	}
 
 
@@ -187,6 +190,25 @@ final class EE_Front_Controller {
 
 
 
+	/**
+	 * this just makes sure that if the site is using ssl that we force that for any admin ajax calls from frontend
+	 * @param  string $url    incoming url
+	 * @param  string $schema current schema
+	 * @return string         final assembled url
+	 */
+	public function maybe_force_admin_ajax_ssl( $url, $schema ) {
+		if ( !is_ssl() )
+			return $url;
+
+		if ( preg_match('/admin-ajax.php/', $url ) ) {
+			$url = str_replace('http://', 'https://', $url);
+		}
+		return $url;
+	}
+
+
+
+
 
 
 	/*********************************************** 		WP_LOADED ACTION HOOK		 ***********************************************/
@@ -225,7 +247,6 @@ final class EE_Front_Controller {
 	 *	@return void
 	 */
 	public function get_request( WP $WP ) {
-//		d( $WP );
 		do_action( 'AHEE__EE_Front_Controller__get_request__before_Request_Handler_loaded' );
 		EE_Registry::instance()->load_core( 'Request_Handler', $WP );	
 		do_action( 'AHEE__EE_Front_Controller__get_request__after_Request_Handler_loaded' );
@@ -327,16 +348,20 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function pre_get_posts( $WP_Query ) {
-		// load module request router
-		$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
-		// cycle thru module routes
-		while ( $route = $Module_Request_Router->get_route( $WP_Query ) ) {
-			// determine module and method for route
-			$module = $Module_Request_Router->resolve_route( $route );
-			// get registered view for route
-			$this->_template_path = $Module_Request_Router->get_view( $route );
-			// map the routes to the module objects
-			EE_Registry::instance()->modules[ $route ] = $module;
+		// only load Module_Request_Router if this is the main query
+		if ( $WP_Query->is_main_query() ) {
+			// load module request router
+			$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
+			// cycle thru module routes
+			while ( $route = $Module_Request_Router->get_route( $WP_Query ) ) {
+				// determine module and method for route
+				$module = $Module_Request_Router->resolve_route( $route );
+				// get registered view for route
+				$this->_template_path = $Module_Request_Router->get_view( $route );
+				// map the routes to the module objects
+				EE_Registry::instance()->modules[ $route ] = $module;
+			}
+
 		}
 	}
 

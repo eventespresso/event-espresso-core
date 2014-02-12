@@ -225,7 +225,6 @@ abstract class EE_Messages_Validator extends EE_Base {
 		}
 
 
-
 		//let's just replace the $mt shortcode group indexes with the actual shortcodes (unique)
 		$final_mt_codes = array();
 		foreach ( $mt_codes as $group ) {
@@ -395,7 +394,6 @@ abstract class EE_Messages_Validator extends EE_Base {
 		foreach ( $groups as $group ) {
 			$shortcodes = array_merge( $shortcodes, $codes_from_objs[$group] );
 		}
-		$shortcodes = array_unique($shortcodes);
 		return $shortcodes;
 	}
 
