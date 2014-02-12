@@ -201,7 +201,7 @@ final class EE_Front_Controller {
 			return $url;
 
 		if ( preg_match('/admin-ajax.php/', $url ) ) {
-			$url = preg_replace( '#^.+://#', 'https' . '://', $url );
+			$url = str_replace('http://', 'https://', $url);
 		}
 		return $url;
 	}
