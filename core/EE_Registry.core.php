@@ -403,7 +403,7 @@ final class EE_Registry {
 				throw new EE_Error (
 					sprintf (
 						__('The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath is correct: %s','event_espresso'),
-						$type,
+						trim( $type, '.' ),
 						$class_name,
 						$file_paths[0]
 					)
