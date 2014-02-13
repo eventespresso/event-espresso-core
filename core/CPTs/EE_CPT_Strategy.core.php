@@ -184,36 +184,33 @@ class EE_CPT_Strategy extends EE_BASE {
 						EE_Registry::instance()->REQ->set( 'ee', $this->CPT['singular_slug'] );
 					}
 					$this->_possibly_set_ee_request_var( $post_type );		
-					// make sure CPT name is set or things is gonna break
-					if ( isset( $this->CPT['singular_name'] )) {
-						// convert post_type to model name
-						$model_name = ucwords( rtrim( str_replace( 'espresso_', '', $post_type ), 's' ));
-						// get CPT table data via CPT Model
-						$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
-						$this->CPT['tables'] = $this->CPT_model->get_tables();
-						// is there a Meta Table for this CPT?
-						$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT['singular_name'] . '_Meta' ] : FALSE;		
-						// creates classname like:  EE_CPT_Event_Strategy
-						$CPT_Strategy_class_name = 'CPT_' . $this->CPT['singular_name'] . '_Strategy';
-						// load and instantiate
-						 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));	
+					// convert post_type to model name
+					$model_name = ucwords( rtrim( str_replace( 'espresso_', '', $post_type ), 's' ));
+					// get CPT table data via CPT Model
+					$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
+					$this->CPT['tables'] = $this->CPT_model->get_tables();
+					// is there a Meta Table for this CPT?
+					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT[ $model_name ] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT[ $model_name ] . '_Meta' ] : FALSE;		
+					// creates classname like:  EE_CPT_Event_Strategy
+					$CPT_Strategy_class_name = 'CPT_' . $this->CPT[ $model_name ] . '_Strategy';
+					// load and instantiate
+					 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));	
 
-						// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
-						// here's the list of available filters in the WP_Query object
-						// 'posts_where_paged'
-						// 'posts_groupby'
-						// 'posts_join_paged'
-						// 'posts_orderby'
-						// 'posts_distinct'
-						// 'post_limits'
-						// 'posts_fields'
-						// 'posts_join'
-						add_filter( 'posts_fields', array( $this, 'posts_fields' ));
-						add_filter( 'posts_join',	array( $this, 'posts_join' ));
-						add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
-						add_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
-						add_filter( 'get_edit_post_link', array( $this, 'get_edit_post_link' ), 10, 3 );
-					}				
+					// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
+					// here's the list of available filters in the WP_Query object
+					// 'posts_where_paged'
+					// 'posts_groupby'
+					// 'posts_join_paged'
+					// 'posts_orderby'
+					// 'posts_distinct'
+					// 'post_limits'
+					// 'posts_fields'
+					// 'posts_join'
+					add_filter( 'posts_fields', array( $this, 'posts_fields' ));
+					add_filter( 'posts_join',	array( $this, 'posts_join' ));
+					add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
+					add_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
+					add_filter( 'get_edit_post_link', array( $this, 'get_edit_post_link' ), 10, 3 );
 				}				
 			}
 		}
