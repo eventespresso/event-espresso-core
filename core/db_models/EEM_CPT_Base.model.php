@@ -320,7 +320,10 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 			return $this->instantiate_class_from_array_or_object($post);
 		}
 	}
-	public function instantiate_class_from_post_object($post){
+	public function instantiate_class_from_post_object( $post = NULL ){
+		if ( empty( $post )) {
+			global $post;
+		}
 		$post = (array)$post;
 		$tables_needing_to_be_queried = array();
 		//check if the post has fields on the meta table already 
@@ -339,9 +342,10 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 				//so we're only missing data from a secondary table. Well thats not too hard to query for
 				global $wpdb; 
 				$table_to_query = reset($tables_needing_to_be_queried);
-				$missing_data = $wpdb->get_row("SELECT * FROM ".$table_to_query->get_table_name()." WHERE ".$table_to_query->get_fk_on_table()."=".$post['ID'],ARRAY_A );
-				array_merge($post,$missing_data);
-			}else{
+				if ( $missing_data = $wpdb->get_row("SELECT * FROM ".$table_to_query->get_table_name()." WHERE ".$table_to_query->get_fk_on_table()."=".$post['ID'],ARRAY_A )) {
+					$post = array_merge($post,$missing_data);
+				}				
+			} else {
 				return $this->get_one_by_ID($post['ID']);
 			}
 		}

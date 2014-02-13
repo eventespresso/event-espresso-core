@@ -83,7 +83,7 @@ class EEH_Autoloader {
 	 *	@param string $class_name - simple class name ie: session
 	 * 	@return 		void
 	 */
-	public function espresso_autoloader( $className ) {
+	public static function espresso_autoloader( $className ) {
 		if ( isset( self::$_autoloaders[ $className ] ) && is_readable( self::$_autoloaders[ $className ] )) {
 			require_once( self::$_autoloaders[ $className ] );
 		} 
