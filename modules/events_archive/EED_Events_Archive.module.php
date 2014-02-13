@@ -564,7 +564,6 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public static function event_details( $content ) {
-		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		global $post;
 		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
 		remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );		
