@@ -343,7 +343,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 				global $wpdb; 
 				$table_to_query = reset($tables_needing_to_be_queried);
 				if ( $missing_data = $wpdb->get_row("SELECT * FROM ".$table_to_query->get_table_name()." WHERE ".$table_to_query->get_fk_on_table()."=".$post['ID'],ARRAY_A )) {
-					array_merge($post,$missing_data);
+					$post = array_merge($post,$missing_data);
 				}				
 			} else {
 				return $this->get_one_by_ID($post['ID']);
