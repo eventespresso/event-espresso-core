@@ -201,7 +201,7 @@ jQuery(document).ready(function($) {
 					var input_id_array =  input_id.split('-');
 					var input_name = input_id_array[2];
 					// copy to billing info
-					var billing = $('[id^=reg-page-billing-' + input_name + ']');
+					var billing = $('[id^=_reg-page-billing-' + input_name + ']');
 					SPCO.debug( 'copy_primary_attendee_info_to_billing_info > billing', billing );
 					if ( $(billing).length > 0 ){
 						SPCO.copy_form_input_value_from_this( $(billing), $(this) );

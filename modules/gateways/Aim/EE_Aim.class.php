@@ -505,7 +505,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	 * @param string $card_num The credit card number
 	 * @param string $exp_date CC expiration date
 	 *
-	 * @return AuthorizeNetAIM_Response
+	 * @return EE_AuthorizeNetAIM_Response
 	 */
 	public function authorizeAndCapture($amount = false, $card_num = false, $exp_date = false) {
 		($amount ? $this->amount = $amount : null);
@@ -553,7 +553,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 		curl_close($curl_request);
 
-		return new AuthorizeNetAIM_Response($response);
+		return new EE_AuthorizeNetAIM_Response($response);
 	}
 
 }
@@ -564,7 +564,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
  * @package	AuthorizeNet
  * @subpackage AuthorizeNetAIM
  */
-class AuthorizeNetAIM_Response {
+class EE_AuthorizeNetAIM_Response {
 
 	const APPROVED = 1;
 	const DECLINED = 2;
