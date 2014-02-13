@@ -438,7 +438,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}else{
 				$success = false;
 			}
-			$action_desc='created';
 		}else{
 			$ID=absint($this->_req_data['QST_ID']);
 			$pk=$this->_question_model->primary_key_name();
@@ -476,7 +475,13 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		$query_args=array('action'=>'edit_question','QST_ID'=>$question->ID());
-		$this->_redirect_after_action($success, $this->_question_model->item_name($success), $action_desc, $query_args);
+
+		if ( $success !== FALSE ) {
+			$msg = $new_question ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_model->item_name() );
+			EE_Error::add_success( $msg );
+		}
+
+		$this->_redirect_after_action(FALSE, '', '', $query_args, TRUE);
 	}
 
 

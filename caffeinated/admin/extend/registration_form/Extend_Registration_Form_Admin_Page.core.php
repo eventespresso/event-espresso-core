@@ -508,14 +508,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			}else{
 				$success=0;
 			}
-			$action_desc='created';
 		}else{
 			$ID=absint($this->_req_data['QSG_ID']);
 			$pk=$this->_question_group_model->primary_key_name();
 			$wheres=array($pk=>$ID);
 			unset($set_column_values[$pk]);
 			$success= $this->_question_group_model->update($set_column_values,array($wheres));
-			$action_desc='updated';
 		}
 		//save the related questions
 		$question_group=$this->_question_group_model->get_one_by_ID($ID);
@@ -538,7 +536,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			}
 		}
 		$query_args=array('action'=>'edit_question_group','QSG_ID'=>$ID);
-		$this->_redirect_after_action($success, $this->_question_group_model->item_name($success), $action_desc, $query_args);
+		if ( $success !== FALSE ) {
+			$msg = $new_question ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
+			EE_Error::add_success( $msg );
+		}
+		$this->_redirect_after_action(FALSE, '', '', $query_args, TRUE);
 		
 	}
 
