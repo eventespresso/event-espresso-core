@@ -190,9 +190,9 @@ class EE_CPT_Strategy extends EE_BASE {
 					$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
 					$this->CPT['tables'] = $this->CPT_model->get_tables();
 					// is there a Meta Table for this CPT?
-					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $this->CPT[ $model_name ] . '_Meta' ] ) ? $this->CPT['tables'][ $this->CPT[ $model_name ] . '_Meta' ] : FALSE;		
+					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $model_name . '_Meta' ] ) ? $this->CPT['tables'][ $model_name . '_Meta' ] : FALSE;		
 					// creates classname like:  EE_CPT_Event_Strategy
-					$CPT_Strategy_class_name = 'CPT_' . $this->CPT[ $model_name ] . '_Strategy';
+					$CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
 					// load and instantiate
 					 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));	
 
