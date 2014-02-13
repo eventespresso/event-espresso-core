@@ -506,11 +506,11 @@ class EED_Events_Archive  extends EED_Module {
 		// ensure valid EE_Events_Archive_Config() object exists
 		EED_Events_Archive::set_config();
 		// display event status banner ?
-		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner && ! EEH_Template::is_espresso_theme() ) {
+		if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner && ! EEH_Template::is_espresso_theme() && ! post_password_required() ) {
 			add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 		}
 		// if NOT a custom template
-		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' && ! EEH_Template::is_espresso_theme() ) {
+		if ( EE_Front_Controller::instance()->get_selected_template() != 'archive-espresso_events.php' && ! EEH_Template::is_espresso_theme() && ! post_password_required() ) {
 			// load functions.php file for the theme (loaded by WP if using child theme)
 			EEH_Template::load_espresso_theme_functions();			
 			// don't know if theme uses the_excerpt
@@ -519,11 +519,7 @@ class EED_Events_Archive  extends EED_Module {
 			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100 );
 			// don't diplay entry meta because the existing theme will take care of that
 			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
-		} else {
-			remove_all_filters( 'excerpt_length' );
-			add_filter( 'excerpt_length', array( 'EED_Events_Archive', 'excerpt_length' ), 10 );
-			add_filter( 'excerpt_more', array( 'EED_Events_Archive', 'excerpt_more' ), 10 );			
-		}
+		} 
 
 		return $template;
 	}
