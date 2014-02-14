@@ -19,10 +19,10 @@
 					printf( __( 'Today\'s Events: %s', 'event_espresso' ), get_the_date() );
 
 				elseif ( is_month() ) :
-					printf( __( 'Events This Month: %s', 'event_espresso' ), get_the_date( _x( 'F Y', 'monthly archives date format', 'twentyfourteen' ) ) );
+					printf( __( 'Events This Month: %s', 'event_espresso' ), get_the_date( _x( 'F Y', 'monthly archives date format', 'event_espresso' ) ) );
 
 				elseif ( is_year() ) :
-					printf( __( 'Events This Year: %s', 'event_espresso' ), get_the_date( _x( 'Y', 'yearly archives date format', 'twentyfourteen' ) ) );
+					printf( __( 'Events This Year: %s', 'event_espresso' ), get_the_date( _x( 'Y', 'yearly archives date format', 'event_espresso' ) ) );
 
 				else :
 					echo apply_filters( 'FHEE__archive_espresso_events_template__upcoming_events_h1', __( 'Upcoming Events', 'event_espresso' ));
@@ -38,7 +38,7 @@
 		// Start the Loop.
 		while ( have_posts() ) : the_post(); 
 			// Include the post TYPE-specific template for the content.
-			espresso_get_template_part( 'content', 'espresso_events' );
+			espresso_get_template_part( 'content', 'event_espresso' );
 		endwhile;
 		// Previous/next page navigation.
 		espresso_pagination();
