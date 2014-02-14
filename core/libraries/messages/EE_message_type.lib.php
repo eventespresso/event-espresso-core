@@ -538,10 +538,13 @@ abstract class EE_message_type extends EE_Messages_Base {
 					$aee['attendee_email'] = $value;
 				}
 
-				if ( $item == 'registration_id' ) {
+				/*if ( $item == 'registration_id' ) {
 					$aee['attendee_registration_id'] = $value;
-				}
+				}/**/
 			}
+
+			//note the FIRST reg object in this array is the one we'll use for this attendee as the primary registration for this attendee.
+			$aee['reg_obj'] = array_shift($this->_data->attendees[$att_id]['reg_obj']);
 
 			$aee['attendees'] = $this->_data->attendees;
 
