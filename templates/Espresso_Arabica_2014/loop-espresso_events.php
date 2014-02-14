@@ -36,9 +36,9 @@
 		// allow other stuff
 		do_action( 'AHEE__archive_espresso_events_template__before_loop' ); 
 		// Start the Loop.
-		while ( have_posts() ) : the_post();
+		while ( have_posts() ) : the_post(); 
 			// Include the post TYPE-specific template for the content.
-			get_template_part( 'content', 'espresso_events' );
+			espresso_get_template_part( 'content', 'espresso_events' );
 		endwhile;
 		// Previous/next page navigation.
 		espresso_pagination();
@@ -47,7 +47,7 @@
 
 	else :
 		// If no content, include the "No posts found" template.
-		get_template_part( 'content', 'none' );
+		espresso_get_template_part( 'content', 'none' );
 		
 	endif;
 	
