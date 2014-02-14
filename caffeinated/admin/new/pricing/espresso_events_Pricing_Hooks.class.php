@@ -502,9 +502,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$ticket->save();
 
 		foreach ( $prices as $row => $prc ) {
+			$prt_id = !empty( $prc['PRT_ID'] ) ? $prc['PRT_ID'] : NULL;
+			if ( empty($prt_id) )
+				continue; //prices MUST have a price type id.
 			$PRC_values = array(
 				'PRC_ID' => !empty( $prc['PRC_ID'] ) ? $prc['PRC_ID'] : NULL,
-				'PRT_ID' => !empty( $prc['PRT_ID'] ) ? $prc['PRT_ID'] : NULL,
+				'PRT_ID' => $prt_id,
 				'PRC_amount' => !empty( $prc['PRC_amount'] ) ? $prc['PRC_amount'] : 0,
 				'PRC_name' => !empty( $prc['PRC_name'] ) ? $prc['PRC_name'] : '',
 				'PRC_desc' => !empty( $prc['PRC_desc'] ) ? $prc['PRC_desc'] : '',
