@@ -587,7 +587,6 @@ class EED_Events_Archive  extends EED_Module {
 
 
 
-
 	/**
 	 * 	_add_additional_content_filters
 	 *
