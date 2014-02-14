@@ -247,7 +247,7 @@ abstract class EE_Messages_incoming_data {
 				$tickets[$ticket->ID()]['count'] = is_array($tickets[$ticket->ID()]) && isset( $tickets[$ticket->ID()]['count'] ) ? $tickets[$ticket->ID()]['count'] + 1 : 1;
 				$tickets[$ticket->ID()]['att_objs'][$reg->attendee_ID()] = $reg->attendee();
 				$tickets[$ticket->ID()]['dtt_objs'] = $relateddatetime;
-				$tickets[$ticket-ID()]['reg_objs'][$reg->ID()] = $reg;
+				$tickets[$ticket->ID()]['reg_objs'][$reg->ID()] = $reg;
 				$event = $reg->event();
 				$evtcache[$evt_id] = $event;
 				$eventsetup[$evt_id]['reg_objs'][$reg->ID()] = $reg;
@@ -289,7 +289,7 @@ abstract class EE_Messages_incoming_data {
 					$datetimes[$dtt_id]['tkt_objs'][] = $ticket;
 					$datetimes[$dtt_id]['datetime'] = $datetime;
 					$datetimes[$dtt_id]['evt_objs'][$evt_id] = $event;
-					$datetimes[$dtt_id]['reg_objs'][$reg_id] = $reg;
+					$datetimes[$dtt_id]['reg_objs'][$reg->ID()] = $reg;
 				}
 			}
 
