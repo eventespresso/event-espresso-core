@@ -110,8 +110,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				$this->_attendees[$att_key]['line_ref'][] = $id;  //so later it can be determined what events this attendee registered for!
 				$this->_attendees[$att_key]['evt_objs'][] = $event;
 				$this->_attendees[$att_key]['att_obj'] = $attendee;
-				$this->_attendees[$att_key]['reg_obj'] = NULL;
-				$this->_attendees[$att_key]['registration_id'] = 0;
+				$this->_attendees[$att_key]['reg_obj'][] = NULL;
+				//$this->_attendees[$att_key]['registration_id'] = 0;
 				$this->_attendees[$att_key]['attendee_email'] = $attendee->email();
 				$this->_attendees[$att_key]['tkt_objs'] = $tickets;
 				if ( $att_key == 999999991 ) {
@@ -220,7 +220,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		return $attendees;
 	}
-
 
 
 
@@ -431,8 +430,12 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'REG_ID' => $regid
 						);
 					$REG_OBJ =  EE_Registration::new_instance( $reg_array );
-					$this->_attendees[$key]['reg_obj'] = $REG_OBJ;
+					$this->_attendees[$key]['reg_obj'][] = $REG_OBJ;
 					$this->_events[$evtid]['reg_objs'][] = $REG_OBJ;
+					$this->_registrations[$regid]['tkt_obj'] = $ticket;
+					$this->_registrations[$reg_id]['evt_obj'] = $this->_events[$evtid]['event'];
+					$this->_registrations[$reg_id]['reg_obj'] = $REG_OBJ;
+					$this->_registrations[$reg_id]['ans_objs'] = $attendee['ans_objs'];
 					$this->reg_objs[] = $REG_OBJ;
 					$regid++;
 				}
@@ -442,6 +445,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//events and attendees
 		$this->events = $this->_events;
 		$this->attendees = $this->_attendees;
+		$this->registrations = $this->_registrations;
 
 		//setup primary attendee property
 		$this->primary_attendee_data = array(
