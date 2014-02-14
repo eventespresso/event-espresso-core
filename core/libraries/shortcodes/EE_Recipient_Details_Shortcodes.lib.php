@@ -43,7 +43,8 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 			'[RECIPIENT_FNAME]' => __('Parses to the first name of the recipient for the message.', 'event_espresso'),
 			'[RECIPIENT_LNAME]' => __('Parses to the last name of the recipient for the message.', 'event_espresso'),
 			'[RECIPIENT_EMAIL]' => __('Parses to the email address of the recipient for the message.', 'event_espresso'),
-			'[RECIPIENT_REGISTRATION_CODE]' => __('Parses to the registration code of the recipient for the message.', 'event_espresso')
+			'[RECIPIENT_REGISTRATION_CODE]' => __('Parses to the registration code of the recipient for the message.', 'event_espresso'),
+			'[RECIPIENT_EDIT_REGISTRATION_LINK]' => __('Parses to a link for frontend editing of the registration for the recipient.', 'event_espresso')
 			);
 	}
 
@@ -80,6 +81,12 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes {
 				if ( ! $recipient->reg_obj instanceof EE_Registration )
 					return '';
 				return $recipient->reg_obj->reg_code();
+				break;
+
+			case '[RECIPIENT_EDIT_REGISTRATION_LINK]' :
+				if ( ! $recipient->reg_obj instanceof EE_Registration )
+					return '';
+				return $recipient->reg_obj->edit_attendee_information_url();
 				break;
 
 			default : 
