@@ -68,7 +68,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			return '';
 
 		//attendee obj for this registration
-		$attendee = $registration->attendee();
+		$attendee = $this->_xtra->registrations[$registration->ID()]['att_obj'];
 
 		switch ( $shortcode ) {
 			

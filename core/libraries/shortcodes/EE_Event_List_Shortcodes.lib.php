@@ -120,7 +120,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 		//we're NOT going to prepare a list of attendees this time around
 		$events = '';
 
-		foreach ( $data->events() as $event ) {
+		foreach ( $events as $event ) {
 			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event, $valid_shortcodes, $this->_extra_data);
 		}
 
@@ -130,7 +130,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 
 
 	private function _get_events_from_registration( EE_Registration $registration ) {
-		return isset( $this->_extra_data['data']->registrations ) ? $this->_extra_data['data']->registrations[$registration->ID()]['evt_obj'] : array();
+		return isset( $this->_extra_data['data']->registrations ) ? array($this->_extra_data['data']->registrations[$registration->ID()]['evt_obj']) : array();
 	}
 
 

@@ -266,6 +266,7 @@ abstract class EE_Messages_incoming_data {
 				$registrations[$reg->ID()]['tkt_obj'] = $ticket;
 				$registrations[$reg->ID()]['evt_obj'] = $event;
 				$registrations[$reg->ID()]['reg_obj'] = $reg;
+				$registrations[$reg->ID()]['att_obj'] = $reg->attendee();
 
 
 				//setup up answer objects

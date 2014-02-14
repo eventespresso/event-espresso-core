@@ -86,7 +86,7 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee ) {
 			$valid_shortcodes = array('ticket', 'event_list', 'attendee_list','datetime_list', 'registration_details', 'attendee');
 			$template = $this->_data['template'];
-			$tkts = (array) $data->registrations[$registration->ID()]['tkt_obj'];
+			$tkts = array($data->registrations[$registration->ID()]['tkt_obj']);
 			$data = $this->_data;
 		} elseif ( $this->_data['data'] instanceof EE_Event ) {
 			$valid_shortcodes = array('ticket', 'attendee_list', 'datetime_list', 'attendee');

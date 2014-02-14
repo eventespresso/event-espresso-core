@@ -715,7 +715,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		$query_args = array(
 			'page' => 'espresso_registrations',
 			'action' => 'view_registration',
-			'_REG_ID' => $REG_ID
+			'_REG_ID' => $this->ID()
 			);
 		EE_Registry::instance()->load_helper('URL');
 		return EEH_URL::add_query_args_and_nonce($query_args, admin_url('admin.php') );

@@ -163,7 +163,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	}
 
 	private function _get_ticket_list_from_registration( EE_Registration $registration, $att = NULL ) {
-		return isset($this->_extra_data['data']->registrations) ? $this->_extra_data['data']->registrations[$registration->ID()]['tkt_obj'] : array();
+		return isset($this->_extra_data['data']->registrations) ? array($this->_extra_data['data']->registrations[$registration->ID()]['tkt_obj']) : array();
 	}
 
 
