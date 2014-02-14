@@ -685,14 +685,16 @@ class EE_Error extends Exception {
 	*
 	*	@access 	public
 	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
-	* 	@param		string	$pan_name	the message to be stored persistently until dismissed
+	* 	@param		string	$pan_message	the message to be stored persistently until dismissed
 	* 	@return 		void
 	*/
 	public static function add_persistent_admin_notice( $pan_name = '', $pan_message ) {
 		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
 			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
-			$persistent_admin_notices[ $pan_name ] = $pan_message;
-			update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
+			if ( ! array_key_exists( $pan_name, $persistent_admin_notices )) {
+				$persistent_admin_notices[ $pan_name ] = $pan_message;
+				update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
+			}
 		}
 	}
 
@@ -709,7 +711,7 @@ class EE_Error extends Exception {
 		$pan_name = EE_Registry::instance()->REQ->is_set( 'ee_nag_notice' ) ? EE_Registry::instance()->REQ->get( 'ee_nag_notice' ) : $pan_name;
 		if ( ! empty( $pan_name )) {
 			if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() )) {
-				unset( $persistent_admin_notices[ $pan_name ] );
+				$persistent_admin_notices[ $pan_name ] = NULL;
 				if ( update_option( 'ee_pers_admin_notices', $persistent_admin_notices ) === FALSE ) {
 					EE_Error::add_error( sprintf( __( 'The persistent admin notice for "%s" could not be deleted.', 'event_espresso' ), $pan_name ), __FILE__, __FUNCTION__, __LINE__ );
 				}
@@ -749,7 +751,7 @@ class EE_Error extends Exception {
 			return '
 			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix">
 				<p>' . $pan_message . '</p>
-				<a class="dismiss-ee-nag-notice hide-if-no-js" >'.__( 'dismiss', 'event_espresso' ) .'</a>
+				<a class="dismiss-ee-nag-notice hide-if-no-js" rel="' . $pan_name . '">'.__( 'dismiss', 'event_espresso' ) .'</a>
 			</div>';
 		}
 	}
