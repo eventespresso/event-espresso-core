@@ -27,7 +27,7 @@
 	<?php endif; ?>
 	<?php 
 	do_action( 'AHEE__content_espresso_venues_details_template__before_the_content', $post ); 
-	if ( is_archive() && has_excerpt( $post->ID ) ) {
+	if ( is_archive() && has_excerpt( $post->ID )) {
 		the_excerpt();
 	} else {
 		the_content();

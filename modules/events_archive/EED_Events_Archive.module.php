@@ -519,8 +519,8 @@ class EED_Events_Archive  extends EED_Module {
 				add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 				// or the_content
 				add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
-				// and just in case they are running get_the_excerpt() which DESTROYS things
-				add_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
+				// and just in case they are running get_the_excerpt() which DESTROYS things, you can copy the following to your functions.php file
+//				add_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
 				// don't diplay entry meta because the existing theme will take care of that
 				add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 			} 
