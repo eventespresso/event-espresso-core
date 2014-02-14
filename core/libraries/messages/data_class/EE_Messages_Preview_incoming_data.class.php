@@ -78,7 +78,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		foreach( $events as $id => $event ) {
 			$this->_events[$id]['ID'] = $id;
 			$this->_events[$id]['name'] = $event->get('EVT_name');
-			$tickets = $event->get_first_related('Datetime')->get_many_related('Ticket');
+			$datetime = $event->get_first_related('Datetime');
+			$tickets = $datetime instanceof EE_Datetime ? $datetime->get_many_related('Ticket', array('default_where_conditions' => 'none') ) : array();
 			$this->_events[$id]['event'] = $event;
 			$this->_events[$id]['reg_objs'] = array();
 			$this->_events[$id]['tkt_objs'] = $tickets;
