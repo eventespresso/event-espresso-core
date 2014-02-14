@@ -75,6 +75,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		
 
 		//we'll actually use the generated line_item identifiers for our loop
+		$dtts = array();
 		foreach( $events as $id => $event ) {
 			$this->_events[$id]['ID'] = $id;
 			$this->_events[$id]['name'] = $event->get('EVT_name');
@@ -83,9 +84,10 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$this->_events[$id]['event'] = $event;
 			$this->_events[$id]['reg_objs'] = array();
 			$this->_events[$id]['tkt_objs'] = $tickets;
+			$this->_events[$id]['dtt_objs'] = array();
 
-			$dtts = array();
 			$dttcache = array();
+			$tkts = array();
 			foreach ( $tickets as $ticket ) {
 				$tkts[$ticket->ID()]['ticket'] = $ticket;
 				$reldatetime = $ticket->get_many_related('Datetime');
@@ -342,7 +344,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		$limit = !empty( $event_ids ) ? NULL : apply_filters( 'FHEE__EE_Messages_Preview_incoming_data___get_some_events__limit', '0,1' );
 
-		$where = !empty($event_ids) ? array('EVT_ID' => array( 'IN', $event_ids ) ) : array();
+		$where = !empty($event_ids) ? array('EVT_ID' => array( 'IN', $event_ids ), 'Datetime.Ticket.TKT_ID' => array('>', 1) ) : array('Datetime.Ticket.TKT_ID' => array('>', 1) );
 
 		$events = EE_Registry::instance()->load_model('Event')->get_all(array($where, 'limit' => $limit ) );
 		
