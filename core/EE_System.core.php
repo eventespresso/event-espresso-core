@@ -99,7 +99,33 @@ final class EE_System {
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_System__construct__begin',$this );
-
+		// check WP version
+		if ( ! espresso_minimum_wp_version_recommended() ) {
+			global $wp_version;
+			EE_Error::add_persistent_admin_notice( 
+				'wp_version_' . str_replace( '.', '-', EE_MIN_WP_VER_RECOMMENDED ) . '_recommended', 
+				sprintf(
+					__( 'Event Espresso recommendeds WordPress version %s or greater in order for everything to operate properly. You are currently running version %s.%sFor information on how to update your version of WordPress, please go to %s.', 'event_espresso' ),
+					EE_MIN_WP_VER_RECOMMENDED,
+					$wp_version,
+					'<br/>',
+					'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
+				)
+			);
+		}
+		// check PHP version
+		if ( ! espresso_minimum_php_version_recommended() ) {
+			EE_Error::add_persistent_admin_notice( 
+				'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended', 
+				sprintf(
+					__( 'Event Espresso recommendeds PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+					EE_MIN_PHP_VER_RECOMMENDED,
+					PHP_VERSION,
+					'<br/>'
+				)
+			);
+		}
+		
 		$this->_load_registry();
 		// workarounds for PHP < 5.3
 		$this->_load_class_tools();
