@@ -588,20 +588,6 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 * 	_add_additional_excerpt_filters
-	 *
-	 *  	@access 	private
-	 *  	@return 		void
-	 */
-	private static function _add_additional_excerpt_filters() {
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 110 );
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 120 );
-		add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130 );
-	}
-
-
-
-	/**
 	 * 	_add_additional_content_filters
 	 *
 	 *  	@access 	private
