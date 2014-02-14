@@ -537,7 +537,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}
 		$query_args=array('action'=>'edit_question_group','QSG_ID'=>$ID);
 		if ( $success !== FALSE ) {
-			$msg = $new_question ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
+			$msg = $new_question_group ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
 			EE_Error::add_success( $msg );
 		}
 		$this->_redirect_after_action(FALSE, '', '', $query_args, TRUE);
