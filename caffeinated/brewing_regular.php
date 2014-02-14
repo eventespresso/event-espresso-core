@@ -289,11 +289,11 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function message_types_valid_shortcodes( $valid_shortcodes, EE_Messages_Base $msg ) {
-		
 		if ( $msg instanceof EE_message_type ) {
 			$contexts = array_keys($msg->get_contexts());
 				foreach ( $contexts as $context ) {
 					$valid_shortcodes[$context][] = 'question_list';
+					$valid_shortcodes[$context][] = 'question';
 				}
 		}
 
