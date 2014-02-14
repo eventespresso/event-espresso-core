@@ -206,7 +206,7 @@ Class EEM_Gateways {
 		}
 		// grab gateway folder names only
 		foreach ($upload_gateways_glob as $upload_gateway) {
-			$sub = basename( $gateway );
+			$sub = basename( $upload_gateway );
 			$upload_gateways[$sub] = TRUE;
 		}
 		
