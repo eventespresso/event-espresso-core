@@ -71,7 +71,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
 			return $this->_get_ticket_list_for_main();
 
-		else if ( $this->_data['data'] instanceof EE_Attendee )
+		else if ( $this->_data['data'] instanceof EE_Registration )
 			return $this->_get_ticket_list_for_attendee();
 
 		else if ( $this->_data['data'] instanceof EE_Event )
@@ -141,14 +141,14 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 		$valid_shortcodes = array('ticket', 'event_list', 'datetime_list', 'attendee');
 		
 		$template = is_array($this->_data['template']) && isset($this->_data['template']['ticket_list']) ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
-		$attendee = $this->_data['data'];
+		$registration = $this->_data['data'];
 
 		//let's remove any existing [ATTENDEE_LIST] shortcode from the ticket list template so that we don't get recursion.
 		$template = str_replace('[ATTENDEE_LIST]', '', $template);
 
 		//here we're setting up the tickets for the ticket list template for THIS attendee.
 		$tkt_parsed = '';
-		$tickets = $this->_get_tickets_from_attendee($attendee);
+		$tickets = $this->_get_ticket_list_from_registration($registration);
 
 		//each ticket in this case should be an ticket object.
 		foreach ( $tickets as $ticket ) {
@@ -162,8 +162,8 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 		return isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['tkt_objs'] : array();
 	}
 
-	private function _get_tickets_from_attendee( EE_Attendee $attendee, $att = NULL ) {
-		return isset($this->_extra_data['data']->attendees) ? $this->_extra_data['data']->attendees[$attendee->ID()]['tkt_objs'] : array();
+	private function _get_ticket_list_from_registration( EE_Registration $registration, $att = NULL ) {
+		return isset($this->_extra_data['data']->registrations) ? array($this->_extra_data['data']->registrations[$registration->ID()]['tkt_obj']) : array();
 	}
 
 

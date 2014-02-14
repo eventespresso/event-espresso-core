@@ -93,6 +93,14 @@ abstract class EE_Messages_incoming_data {
 
 
 	/**
+	 * will hold an array of cached regsitration objects and info assembled from reg_info
+	 * @var array
+	 */
+	public $registrations;
+
+
+
+	/**
 	 * will hold an array of answers assembled from the $reg_info
 	 * @var EE_Answer[]
 	 */
@@ -239,6 +247,7 @@ abstract class EE_Messages_incoming_data {
 				$tickets[$ticket->ID()]['count'] = is_array($tickets[$ticket->ID()]) && isset( $tickets[$ticket->ID()]['count'] ) ? $tickets[$ticket->ID()]['count'] + 1 : 1;
 				$tickets[$ticket->ID()]['att_objs'][$reg->attendee_ID()] = $reg->attendee();
 				$tickets[$ticket->ID()]['dtt_objs'] = $relateddatetime;
+				$tickets[$ticket->ID()]['reg_objs'][$reg->ID()] = $reg;
 				$event = $reg->event();
 				$evtcache[$evt_id] = $event;
 				$eventsetup[$evt_id]['reg_objs'][$reg->ID()] = $reg;
@@ -247,11 +256,18 @@ abstract class EE_Messages_incoming_data {
 				$event_attendee_count[$evt_id] = isset( $event_attendee_count[$evt_id] ) ? $event_attendee_count[$evt_id] + 1 : 0;
 				$attendees[$reg->attendee_ID()]['line_ref'][] = $evt_id;
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
-				$attendees[$reg->attendee_ID()]['reg_obj'] = $reg;
-				$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
+				$attendees[$reg->attendee_ID()]['reg_obj'][$reg->ID()] = $reg;
+				//$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
 				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
 				$attendees[$reg->attendee_ID()]['tkt_objs'][$ticket->ID()] = $ticket;
 				$attendees[$reg->attendee_ID()]['evt_objs'][$evt_id] = $event;
+				
+				//registrations
+				$registrations[$reg->ID()]['tkt_obj'] = $ticket;
+				$registrations[$reg->ID()]['evt_obj'] = $event;
+				$registrations[$reg->ID()]['reg_obj'] = $reg;
+				$registrations[$reg->ID()]['att_obj'] = $reg->attendee();
+
 
 				//setup up answer objects
 				$rel_ans = $reg->get_many_related('Answer');
@@ -260,12 +276,12 @@ abstract class EE_Messages_incoming_data {
 						$questions[$ansid] = $answer->get_first_related('Question');
 					}
 					$answers[$ansid] = $answer;
-					$attendees[$reg->attendee_ID()]['ans_objs'][$ansid] = $answer;
+					$registrations[$reg->ID()]['ans_objs'][$ansid] = $answer;
 				}
 
 				foreach ( $relateddatetime as $dtt_id => $datetime ) {
 					$eventsetup[$evt_id]['dtt_objs'][$dtt_id] = $datetime;
-					$attendees[$reg->attendee_ID()]['dtt_objs'][$dtt_id] = $datetime;
+					$registrations[$reg->ID()]['dtt_objs'][$dtt_id] = $datetime;
 					
 					if ( isset( $datetimes[$dtt_id] ) )
 						continue; //already have this info in the datetimes array.
@@ -273,6 +289,7 @@ abstract class EE_Messages_incoming_data {
 					$datetimes[$dtt_id]['tkt_objs'][] = $ticket;
 					$datetimes[$dtt_id]['datetime'] = $datetime;
 					$datetimes[$dtt_id]['evt_objs'][$evt_id] = $event;
+					$datetimes[$dtt_id]['reg_objs'][$reg->ID()] = $reg;
 				}
 			}
 
@@ -303,6 +320,7 @@ abstract class EE_Messages_incoming_data {
 		$this->questions = $questions;
 		$this->answers = $answers;
 		$this->total_ticket_count = $total_ticket_count;
+		$this->registrations = $registrations;
 
 
 		//setup primary registration
