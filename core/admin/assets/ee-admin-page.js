@@ -303,8 +303,12 @@ jQuery(document).ready(function($) {
 			$.each( eeLazyLoadingContainers, show );
 		}
 	};
-	espressoAjaxPopulate();
+	if ( typeof eeLazyLoadingContainers !== 'undefined' ) {
+		espressoAjaxPopulate();
+	}
 	
+	
+
 	
 	$('.dismiss-ee-nag-notice').click(function(event) {
 		var nag_notice = $(this).attr('rel');
@@ -312,7 +316,7 @@ jQuery(document).ready(function($) {
 			event.preventDefault();
 			$.ajax({
 				type: "POST",
-				url:  eei18n.ajax_url,
+				url:  ee_dismiss.ajax_url,
 				dataType: "json",
 				data: {
 					action : 'dismiss_ee_nag_notice',
@@ -342,9 +346,6 @@ jQuery(document).ready(function($) {
 			});
 		}
 	});
-	
-	
-	
 
 
 });
