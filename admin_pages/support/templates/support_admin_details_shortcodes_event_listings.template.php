@@ -4,7 +4,7 @@
 		</p>
 		<ul>
 			<li>[ESPRESSO_EVENTS]</li>
-			<li>[ESPRESSO_EVENTS title="My Super Event"]</li>
+			<li>[ESPRESSO_EVENTS title="My Super Event List"]</li>
 			<li>[ESPRESSO_EVENTS limit=5]</li>
 			<li>[ESPRESSO_EVENTS css_class="my-custom-class"]</li>
 			<li>[ESPRESSO_EVENTS month="October 2104"]</li>
