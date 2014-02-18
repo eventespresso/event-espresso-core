@@ -356,7 +356,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$new_default = clone $TKT;
 					$new_default->set( 'TKT_ID', 0 );
 					$new_default->set( 'TKT_is_default', 1 );
-					$new_default->set( 'TKT_order', 0 );
 					$new_default->set( 'TKT_row', 1 );
 					$new_default->set( 'TKT_price', $ticket_price );
 					//remove any dtt relations cause we DON'T want dtt relations attached (note this is just removing the cached relations in the object)
@@ -805,7 +804,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? TRUE: FALSE,
 			'ticket_archive_class' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? ' ticket-archived' : '',
 			'trash_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? 'ee-lock-icon ' : 'trash-icon dashicons dashicons-post-trash clickable',
-			'clone_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? '' : 'clone-icon ee-icon ee-icon-clone clickable'
+			'clone_icon' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? '' : 'clone-icon ee-icon ee-icon-clone clickable',
+			'TKT_order' => $ticket instanceof EE_Ticket ? $ticket->get('TKT_order') : 0
 			);
 
 		$template_args['trash_hidden'] = count( $all_tickets ) === 1 && $template_args['trash_icon'] != 'ee-lock-icon' ? ' style="display:none"' : '';
