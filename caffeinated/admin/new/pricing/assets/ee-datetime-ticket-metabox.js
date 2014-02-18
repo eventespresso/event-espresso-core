@@ -1685,12 +1685,18 @@ jQuery(document).ready(function($) {
 		 * @return {tktHelper}
 		 */
 		changeTKTorder: function() {
-			var allTickets = $('.ticket-table tr');
+			var advancedRow, curid;
+			var allTickets = $('.ticket-table tr.ee-ticket-sortable');
 			allTickets.each( function(i) {
 				$('.edit-ticket-TKT_order', this ).val(i);
+				// make sure the corresponding advanced edit row is in the right place.
+				curid = $(this).attr('id').replace('display-ticketrow-', '');
+				advancedRow = $('#edit-ticketrow-' + curid );
+				$(this).after(advancedRow);
 			});
 			return this;
 		},
+
 
 
 
