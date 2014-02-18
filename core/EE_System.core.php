@@ -105,7 +105,7 @@ final class EE_System {
 			EE_Error::add_persistent_admin_notice( 
 				'wp_version_' . str_replace( '.', '-', EE_MIN_WP_VER_RECOMMENDED ) . '_recommended', 
 				sprintf(
-					__( 'Event Espresso recommendeds WordPress version %s or greater in order for everything to operate properly. You are currently running version %s.%sFor information on how to update your version of WordPress, please go to %s.', 'event_espresso' ),
+					__( 'Event Espresso recommends WordPress version %s or greater in order for everything to operate properly. You are currently running version %s.%sFor information on how to update your version of WordPress, please go to %s.', 'event_espresso' ),
 					EE_MIN_WP_VER_RECOMMENDED,
 					$wp_version,
 					'<br/>',
@@ -118,7 +118,7 @@ final class EE_System {
 			EE_Error::add_persistent_admin_notice( 
 				'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended', 
 				sprintf(
-					__( 'Event Espresso recommendeds PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
+					__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
 					EE_MIN_PHP_VER_RECOMMENDED,
 					PHP_VERSION,
 					'<br/>'
