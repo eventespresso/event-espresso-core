@@ -557,7 +557,10 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			//first the trs
+			//make sure the value for the TKT_order field assumes the value of the new row (to ensure order increments).
+			newTKTrow.find('.edit-ticket-TKT_order').val(newrownum);
+
+			//the trs
 			newTKTrow.find('tr').each( function() {
 				curid = $(this).attr('id');
 
