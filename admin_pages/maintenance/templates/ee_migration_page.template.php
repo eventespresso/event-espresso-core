@@ -89,6 +89,9 @@ if ( $show_backup_db_text ) { ?>
 										);
 									?>
 									</p>
+									<p><?php									
+										printf(__("Note: many of your EE3 shortcodes will be changed to EE4 shortcodes during this migration (among many other things). Should you revert to EE3, then you should restore to your backup or manually change the EE4 shortcodes back to their EE3 equivalents", "event_espresso"));
+									?></p>
 								</div>										
 							</td>
 						</tr>
