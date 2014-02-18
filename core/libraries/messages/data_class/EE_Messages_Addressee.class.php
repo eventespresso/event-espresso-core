@@ -68,6 +68,7 @@ class EE_Messages_Addressee extends EE_Base {
 	public $attendees; //holds all the attendees for an event. (EE_Attendee[])
 	public $tickets; //holds all the purchased tickets for an event (EE_Ticket[])
 	public $datetimes; //holds all the datetimes accessed via the tickets purchased for the event (EE_Datetime[])
+	public $registrations; //holds all registrations for a transaction (with cached relations on that registration);
 
 
 

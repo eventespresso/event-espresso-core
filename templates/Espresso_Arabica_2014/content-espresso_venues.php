@@ -47,8 +47,8 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 	
 	<div class="espresso-venue-wrapper-dv">
 	
-		<?php get_template_part( 'content', 'espresso_venues-details' ); ?>
-		<?php get_template_part( 'content', 'espresso_venues-location' ); ?>
+		<?php espresso_get_template_part( 'content', 'espresso_venues-details' ); ?>
+		<?php espresso_get_template_part( 'content', 'espresso_venues-location' ); ?>
 
 		<footer class="venue-meta">
 			<?php do_action( 'AHEE__content_espresso_venues_template__footer_top', $post ); ?>

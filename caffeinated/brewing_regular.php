@@ -289,11 +289,11 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function message_types_valid_shortcodes( $valid_shortcodes, EE_Messages_Base $msg ) {
-		
 		if ( $msg instanceof EE_message_type ) {
 			$contexts = array_keys($msg->get_contexts());
 				foreach ( $contexts as $context ) {
 					$valid_shortcodes[$context][] = 'question_list';
+					$valid_shortcodes[$context][] = 'question';
 				}
 		}
 
@@ -351,13 +351,15 @@ class EE_Brewing_Regular extends EE_Base {
 		
 		switch ( $shortcode ) {
 			case '[RECIPIENT_QUESTION_LIST]' :
-				if ( ! $recipient->att_obj instanceof EE_Attendee )
+				if ( ! $recipient->reg_obj instanceof EE_Registration || ! $recipient->att_obj instanceof EE_Attendee )
 					return '';
+
+				$registration = $recipient->reg_obj;
 				$attendee = $recipient->att_obj;
 				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
 				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
-				$answers = !empty($recipient->attendees[$attendee->ID()]['ans_objs']) ? $recipient->attendees[$attendee->ID()]['ans_objs'] : array();
+				$answers = !empty($recipient->registrations[$registration->ID()]['ans_objs']) ? $recipient->registrations[$registration->ID()]['ans_objs'] : array();
 				$question_list = '';
 				foreach ( $answers as $answer ) {
 					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);
@@ -392,13 +394,14 @@ class EE_Brewing_Regular extends EE_Base {
 		
 		switch ( $shortcode ) {
 			case '[RECIPIENT_QUESTION_LIST]' :
-				if ( ! $recipient->primary_att_obj instanceof EE_Attendee )
+				if ( ! $recipient->primary_att_obj instanceof EE_Attendee || ! $recipient->primary_reg_obj instanceof EE_Registration )
 					return '';
 				$attendee = $recipient->primary_att_obj;
+				$registration = $recipient->primary_reg_obj;
 				$template = is_array($data['template'] ) && isset($data['template']['question_list']) ? $data['template']['question_list'] : $extra_data['template']['question_list'];
 				$valid_shortcodes = array('question');
 				$shortcode_helper = $shortcode_parser->get_shortcode_helper();
-				$answers = $recipient->attendees[$attendee->ID()]['ans_objs'];
+				$answers = $recipient->registrations[$registration->ID()]['ans_objs'];
 				$question_list = '';
 				foreach ( $answers as $answer ) {
 					$question_list .= $shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $send_data);

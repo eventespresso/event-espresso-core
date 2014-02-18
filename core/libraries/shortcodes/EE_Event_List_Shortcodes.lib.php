@@ -70,8 +70,8 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 		if ( $this->_data['data'] instanceof EE_Messages_Addressee )
 			return $this->_get_event_list_for_main();
 
-		else if ( $this->_data['data'] instanceof EE_Attendee )
-			return $this->_get_event_list_for_attendee();
+		else if ( $this->_data['data'] instanceof EE_Registration )
+			return $this->_get_event_list_for_registration();
 
 		//prevent recursive loop
 		else
@@ -105,22 +105,22 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	 * This returns the parsed event list for an attendee
 	 * @return string
 	 */
-	private function _get_event_list_for_attendee() {
+	private function _get_event_list_for_registration() {
 		$valid_shortcodes = array('event', 'ticket_list', 'datetime_list', 'attendee', 'event_author');
 		$template = is_array( $this->_data['template'] ) && isset($this->_data['template']['event_list']) ? $this->_data['template']['event_list'] : $this->_extra_data['template']['event_list'];
-		$attendee = $this->_data['data'];
+		$registration = $this->_data['data'];
 
 		//let's remove any existing [ATTENDEE_LIST] shortcode from the event list template so that we don't get recursion.
 		$template = str_replace('[ATTENDEE_LIST]', '', $template);
 
-		//here we're setting up the events for the event_list template for THIS attendee.
+		//here we're setting up the events for the event_list template for THIS registration.
 		$evt_result = '';
-		$events = $this->_get_events_from_attendee($attendee);
+		$events = $this->_get_events_from_registration($registration);
 
 		//we're NOT going to prepare a list of attendees this time around
 		$events = '';
 
-		foreach ( $data->events() as $event ) {
+		foreach ( $events as $event ) {
 			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event, $valid_shortcodes, $this->_extra_data);
 		}
 
@@ -129,8 +129,8 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 
 
 
-	private function _get_events_from_attendee( EE_Attendee $attendee ) {
-		return isset( $this->_extra_data['data']->attendees ) ? $this->_extra_data['data']->attendees[$attendee->ID()]['evt_objs'] : array();
+	private function _get_events_from_registration( EE_Registration $registration ) {
+		return isset( $this->_extra_data['data']->registrations ) ? array($this->_extra_data['data']->registrations[$registration->ID()]['evt_obj']) : array();
 	}
 
 

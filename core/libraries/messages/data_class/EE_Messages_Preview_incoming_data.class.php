@@ -75,16 +75,19 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		
 
 		//we'll actually use the generated line_item identifiers for our loop
+		$dtts = array();
 		foreach( $events as $id => $event ) {
 			$this->_events[$id]['ID'] = $id;
 			$this->_events[$id]['name'] = $event->get('EVT_name');
-			$tickets = $event->get_first_related('Datetime')->get_many_related('Ticket');
+			$datetime = $event->get_first_related('Datetime');
+			$tickets = $datetime instanceof EE_Datetime ? $datetime->get_many_related('Ticket', array('default_where_conditions' => 'none') ) : array();
 			$this->_events[$id]['event'] = $event;
 			$this->_events[$id]['reg_objs'] = array();
 			$this->_events[$id]['tkt_objs'] = $tickets;
+			$this->_events[$id]['dtt_objs'] = array();
 
-			$dtts = array();
 			$dttcache = array();
+			$tkts = array();
 			foreach ( $tickets as $ticket ) {
 				$tkts[$ticket->ID()]['ticket'] = $ticket;
 				$reldatetime = $ticket->get_many_related('Datetime');
@@ -110,8 +113,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				$this->_attendees[$att_key]['line_ref'][] = $id;  //so later it can be determined what events this attendee registered for!
 				$this->_attendees[$att_key]['evt_objs'][] = $event;
 				$this->_attendees[$att_key]['att_obj'] = $attendee;
-				$this->_attendees[$att_key]['reg_obj'] = NULL;
-				$this->_attendees[$att_key]['registration_id'] = 0;
+				//$this->_attendees[$att_key]['registration_id'] = 0;
 				$this->_attendees[$att_key]['attendee_email'] = $attendee->email();
 				$this->_attendees[$att_key]['tkt_objs'] = $tickets;
 				if ( $att_key == 999999991 ) {
@@ -220,7 +222,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		return $attendees;
 	}
-
 
 
 
@@ -343,7 +344,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		$limit = !empty( $event_ids ) ? NULL : apply_filters( 'FHEE__EE_Messages_Preview_incoming_data___get_some_events__limit', '0,1' );
 
-		$where = !empty($event_ids) ? array('EVT_ID' => array( 'IN', $event_ids ) ) : array();
+		$where = !empty($event_ids) ? array('EVT_ID' => array( 'IN', $event_ids ), 'Datetime.Ticket.TKT_ID' => array('>', 1) ) : array('Datetime.Ticket.TKT_ID' => array('>', 1) );
 
 		$events = EE_Registry::instance()->load_model('Event')->get_all(array($where, 'limit' => $limit ) );
 		
@@ -409,15 +410,18 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//setup reg_objects
 		//note we're seting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
 		$this->reg_objs = array();
+		$regid = 9999990;
 		foreach ( $this->_attendees as $key => $attendee ) {
 			//note we need to setup reg_objects for each event this attendee belongs to
+			$regatt = $attendee['att_obj']->ID();
+			$regtxn = $this->txn->ID();
+			$regcnt = 1;
 			foreach ( $attendee['line_ref'] as $evtid ) {
-				$regid = 9999990;
 				foreach ( $this->_events[$evtid]['tkt_objs'] as $ticket ) {
 					$reg_array = array(
 						'EVT_ID' => $evtid,
-						'ATT_ID' => $attendee['att_obj']->ID(),
-						'TXN_ID' => $this->txn->ID(),
+						'ATT_ID' => $regatt,
+						'TXN_ID' => $regtxn,
 						'TKT_ID' => $ticket->ID(),
 						'STS_ID' => EEM_Registration::status_id_pending_payment,
 						'REG_date' => current_time('mysql'),
@@ -425,23 +429,36 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'REG_session' => 'dummy_session_id',
 						'REG_code' => $regid . '-dummy_generated_reg_code',
 						'REG_url_link' => '#',
-						'REG_count' => $key,
+						'REG_count' => $regcnt,
 						'REG_group_size' => $this->_events[$evtid]['total_attendees'],
 						'REG_att_is_going' => TRUE,
 						'REG_ID' => $regid
 						);
 					$REG_OBJ =  EE_Registration::new_instance( $reg_array );
-					$this->_attendees[$key]['reg_obj'] = $REG_OBJ;
+					$this->_attendees[$key]['reg_obj'][$regid] = $REG_OBJ;
 					$this->_events[$evtid]['reg_objs'][] = $REG_OBJ;
 					$this->reg_objs[] = $REG_OBJ;
+					$regcnt++;
 					$regid++;
 				}
 			}
 		}
 
+		//add additional details for each registration
+		foreach ( $this->reg_objs as $reg ) {
+			$this->_registrations[$reg->ID()]['tkt_obj'] = $this->tickets[$reg->get('TKT_ID')]['ticket'];
+			$this->_registrations[$reg->ID()]['evt_obj'] = $this->_events[$reg->get('EVT_ID')]['event'];
+			$this->_registrations[$reg->ID()]['reg_obj'] = $reg;
+			$this->_registrations[$reg->ID()]['ans_objs'] = $this->_attendees[$reg->get('ATT_ID')]['ans_objs'];
+			$this->_registrations[$reg->ID()]['att_obj'] = $this->_attendees[$reg->get('ATT_ID')]['att_obj'];
+			$this->_registrations[$reg->ID()]['dtt_objs'] = $this->tickets[$reg->get('TKT_ID')]['dtt_objs'];
+		}
+
+
 		//events and attendees
 		$this->events = $this->_events;
 		$this->attendees = $this->_attendees;
+		$this->registrations = $this->_registrations;
 
 		//setup primary attendee property
 		$this->primary_attendee_data = array(

@@ -54,10 +54,10 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 	
 	<div class="espresso-event-wrapper-dv">
 	
-		<?php get_template_part( 'content', 'espresso_events-details' ); ?>
-		<?php get_template_part( 'content', 'espresso_events-tickets' ); ?>
-		<?php get_template_part( 'content', 'espresso_events-datetimes' ); ?>
-		<?php get_template_part( 'content', 'espresso_events-venues' ); ?>
+		<?php espresso_get_template_part( 'content', 'espresso_events-details' ); ?>
+		<?php espresso_get_template_part( 'content', 'espresso_events-tickets' ); ?>
+		<?php espresso_get_template_part( 'content', 'espresso_events-datetimes' ); ?>
+		<?php espresso_get_template_part( 'content', 'espresso_events-venues' ); ?>
 
 		<footer class="event-meta">
 			<?php do_action( 'AHEE_event_details_footer_top', $post ); ?>

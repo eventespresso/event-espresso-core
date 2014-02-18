@@ -707,6 +707,22 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 
+	/**
+	 * Simply generates and returns the appropriate admin_url link to edit this registration
+	 * @return string
+	 */
+	public function get_admin_edit_url() {
+		$query_args = array(
+			'page' => 'espresso_registrations',
+			'action' => 'view_registration',
+			'_REG_ID' => $this->ID()
+			);
+		EE_Registry::instance()->load_helper('URL');
+		return EEH_URL::add_query_args_and_nonce($query_args, admin_url('admin.php') );
+	}
+
+
+
 	
 	/**
 	*		get  Attendee Number
