@@ -1,5 +1,6 @@
-<tr valign="top" class="ticket-row<?php echo $ticket_archive_class; ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
-	<td><span class="ee-status-strip-td ee-status-strip<?php echo $tkt_status_class; ?>"></span></td>
+<tr valign="top" class="ee-ticket-sortable ticket-row<?php echo $ticket_archive_class; ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
+	<!--<td class="ee-tkt-order-field"><span class="dashicons dashicons-sort<?php echo $tkt_status_class; ?>"><input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>" ></span></td>-->
+	<td class="ee-tkt-order-field"><span class="ee-status-strip-td ee-status-strip<?php echo $tkt_status_class; ?>"></span><input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>"></td>
 	<td><input type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="<?php echo $TKT_name; ?>"></td>
 	<td>
 		<?php if ( $disabled ) : ?>
@@ -194,6 +195,7 @@
  * $TKT_price_rows
  * $TKT_base_price
  * $TKT_base_price_ID
+ * $TKT_order
  * $disabled
  * $ticket_archive_class
  * $trash_icon
