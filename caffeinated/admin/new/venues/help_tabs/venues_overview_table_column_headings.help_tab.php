@@ -21,9 +21,10 @@
 <?php _e('<strong>Capacity</strong>', 'event_espresso'); ?><br />
 <?php _e('This is the capacity of the venue. If no limit is set, then the capacity will be set to infinity (&#8734).', 'event_espresso'); ?>
 </li>
+<!--
 <li>
 <?php _e('<strong>Shortcode</strong>', 'event_espresso'); ?><br />
 <?php _e('This shortcode can be used to place a venue on an event page, a WordPress page, or a WordPress post.', 'event_espresso'); ?>
-</li>
+</li> -->
 </ul>
 </p>
