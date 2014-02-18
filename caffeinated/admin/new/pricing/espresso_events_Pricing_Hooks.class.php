@@ -617,7 +617,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$existing_datetime_ids[] = $dttid;
 
 			//tickets attached
-			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none' ) ) : array();
+			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none', 'order_by' => array('TKT_order' => 'ASC' ) ) ) : array();
 
 			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
 			if ( empty ( $related_tickets ) && empty( $event_id ) ) {

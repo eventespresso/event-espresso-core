@@ -110,7 +110,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 * @return EE_Ticket[]
 	 */
 	public function get_all_default_tickets() {
-		$tickets = $this->get_all( array( array('TKT_is_default' => 1)) );
+		$tickets = $this->get_all( array( array('TKT_is_default' => 1), 'order_by' => array('TKT_order' => 'ASC')) );
 
 		//we need to set the start date and end date to today's date and the start of the default dtt
 		return $this->_set_default_dates( $tickets );
