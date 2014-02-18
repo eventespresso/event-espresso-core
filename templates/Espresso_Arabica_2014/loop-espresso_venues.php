@@ -24,7 +24,7 @@ if ( have_posts() ) : ?>
 	// Start the Loop.
 	while ( have_posts() ) : the_post();
 		// Include the post TYPE-specific template for the content.
-		get_template_part( 'content', 'espresso_venues' );
+		espresso_get_template_part( 'content', 'espresso_venues' );
 	endwhile;
 	// Previous/next page navigation.
 	espresso_pagination();
@@ -34,6 +34,6 @@ if ( have_posts() ) : ?>
 
 else :
 	// If no content, include the "No posts found" template.
-	get_template_part( 'content', 'none' );
+	espresso_get_template_part( 'content', 'none' );
 	
 endif;

@@ -65,7 +65,7 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 		$this->_set_shortcode_helper();
 
 		//note this shortcode can only be used within the attendee list field so we'll only have an attendee object for parsing with.
-		if ( $this->_data['data'] instanceof EE_Attendee )
+		if ( $this->_data['data'] instanceof EE_Registration )
 			return $this->_get_question_answer_list_for_attendee();
 		else
 			return '';
@@ -81,7 +81,7 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes {
 		$valid_shortcodes = array('question');
 		$template = is_array( $this->_data['template'] ) && isset($this->_data['template']['question_list']) ? $this->_data['template']['question_list'] : $this->_extra_data['template']['question_list'];
 		$ans_result = '';
-		$answers = ! empty($this->_extra_data['data']->attendees[$this->_data['data']->ID()]['ans_objs']) ? $this->_extra_data['data']->attendees[$this->_data['data']->ID()]['ans_objs'] : array();
+		$answers = ! empty($this->_extra_data['data']->registrations[$this->_data['data']->ID()]['ans_objs']) ? $this->_extra_data['data']->registrations[$this->_data['data']->ID()]['ans_objs'] : array();
 		foreach ( $answers as $answer ) {
 			$ans_result .= $this->_shortcode_helper->parse_question_list_template( $template, $answer, $valid_shortcodes, $this->_extra_data);
 		}

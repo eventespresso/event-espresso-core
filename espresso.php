@@ -3,15 +3,7 @@
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
   Description: 	Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-<<<<<<< HEAD
   Version: 		4.2.001.dev
-=======
-<<<<<<< HEAD
-  Version: 		4.1.296.alpha
-=======
-  Version: 		4.1.2.001.reg
->>>>>>> beta
->>>>>>> alpha
   Author: 			Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		GPLv2
@@ -39,17 +31,15 @@ if ( ! function_exists( 'espresso_version' )) {
 		return '4.2.001.dev';
 	}
 } else {
-	add_action( 'admin_notices', 'espresso_duplicate_plugin_error' );
-	deactivate_plugins( plugin_basename( __FILE__ ));
-	exit();	
+	unset( $_GET['activate'] );
+	add_action( 'admin_notices', 'espresso_duplicate_plugin_error', 1 );
 }
 // define versions
 define( 'EVENT_ESPRESSO_VERSION', espresso_version());
-define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );	
-//Returns the template version
-function espresso_template_version() {
-	return '1.0';
-}
+define( 'EE_MIN_WP_VER_REQUIRED', '3.6' );
+define( 'EE_MIN_WP_VER_RECOMMENDED', '3.8' );
+define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.4' );
+define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
 define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
 
 //used to be DIRECTORY_SEPARATOR, but that caused issues on windows
@@ -121,27 +111,26 @@ define('EE_INF_IN_DB', -1);
 
 
 function espresso_load_system( $activation = FALSE ) {
-//	if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
+	if ( espresso_minimum_wp_version_required() ) {
 		espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 		EE_System::instance($activation);
-//	} else {
-//		throw new EE_Error( sprintf(
-//			__( 'We\'re sorry, but Event Espresso requires PHP 5.3 or greater in order to operate. For information on how you might be able to simply switch your server over to using PHP 5.3+, go to %s', 'event_espresso' ),
-//			'<a href="http://eventespresso.com/">eventespresso.com/</a>'
-//		));
-//		return;
-//	}
+	} else {
+		unset( $_GET['activate'] );
+		add_action( 'admin_notices', 'espresso_minimum_wp_version_error', 1 );
+	}
 }
 
-
-
+/**
+ * 	espresso_regular_request - loads and instantiates EE_System
+ */
 function espresso_regular_request() {
 	espresso_load_system();
 }
 add_action( 'plugins_loaded', 'espresso_regular_request', 1 );
 
-
-
+/**
+ * 	espresso_plugin_activation - loads and instantiates EE_System
+ */
 function espresso_plugin_activation() {
 
 	// check permissions
@@ -154,16 +143,18 @@ function espresso_plugin_activation() {
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
 
-
-
+/**
+ * 	espresso_plugin_deactivation
+ */
 function espresso_plugin_deactivation() {
 	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_deactivation();
 }
 register_deactivation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation' );
 
-
-
+/**
+ * 	espresso_check_wp_version
+ */
 function espresso_load_error_handling() {
 	// loaddebugging tools
 	if ( WP_DEBUG === TRUE ) {
@@ -178,8 +169,9 @@ function espresso_load_error_handling() {
 	}
 }
 
-
-
+/**
+ * 	espresso_check_wp_version
+ */
 function espresso_load_required( $classname, $full_path_to_file ) {
 	espresso_load_error_handling();
 	if ( is_readable( $full_path_to_file )) {
@@ -192,11 +184,69 @@ function espresso_load_required( $classname, $full_path_to_file ) {
 	}
 }
 
+/**
+ * 	espresso_check_wp_version
+ */
+function espresso_check_wp_version( $min_version = EE_MIN_WP_VER_REQUIRED ) {
+	global $wp_version;
+	return version_compare( $wp_version, $min_version, '>=' ) ? TRUE : FALSE;
+}
+
+/**
+ * 	espresso_minimum_wp_version_required
+ */
+function espresso_minimum_wp_version_required() {
+	return espresso_check_wp_version( EE_MIN_WP_VER_REQUIRED );
+}
+
+/**
+ * 	espresso_minimum_wp_version_recommended
+ */
+function espresso_minimum_wp_version_recommended() {
+	return espresso_check_wp_version( EE_MIN_WP_VER_RECOMMENDED );
+}
+
+/**
+ * 	espresso_check_php_version
+ */
+function espresso_check_php_version( $min_version = EE_MIN_PHP_VER_RECOMMENDED ) {
+	return version_compare( PHP_VERSION, $min_version, '>=' ) ? TRUE : FALSE;
+}
+
+/**
+ * 	espresso_minimum_php_version_recommended
+ */
+function espresso_minimum_php_version_recommended() {
+	return espresso_check_php_version( EE_MIN_PHP_VER_RECOMMENDED );
+}
+
+
+function espresso_minimum_wp_version_error() {
+	?>
+	<div class="error">
+	<p>
+	<?php
+	printf(
+		__( 'We\'re sorry, but Event Espresso requires WordPress version %s or greater in order to operate.%sFor information on how to update your version of WordPress, please go to %s', 'event_espresso' ),
+		EE_MIN_WP_VER_REQUIRED,
+		'<br/>',
+		'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
+	);
+	?>        	
+	</p>
+	</div>
+	<?php
+	deactivate_plugins( plugin_basename( __FILE__ ));
+}
+
 
 function espresso_duplicate_plugin_error() {
-    ?>
-    <div class="error">
-        <p><?php _e( 'Can not run multiple versions of Event Espresso!', 'event_espresso' ); ?></p>
-    </div>
-    <?php
+	?>
+	<div class="error">
+	<p><?php _e( 'Can not run multiple versions of Event Espresso! Please deactivate one of the versions.', 'event_espresso' ); ?></p>
+	</div>
+	<?php
+	deactivate_plugins( plugin_basename( __FILE__ ));
 }
+
+

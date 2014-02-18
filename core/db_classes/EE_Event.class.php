@@ -732,6 +732,9 @@ class EE_Event extends EE_CPT_Base{
 		$earliest_ticket = $this->get_ticket_with_earliest_start_time();
 		$latest_ticket = $this->get_ticket_with_latest_end_time();
 
+		if ( ! $latest_ticket instanceof EE_Ticket && !$earliest_ticket instanceof EE_Ticket )
+			return FALSE;
+
 		//check on sale for these two tickets.
 		if ( $latest_ticket->is_on_sale() || $earliest_ticket->is_on_sale() )
 			return TRUE;
