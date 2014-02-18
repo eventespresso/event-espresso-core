@@ -14,6 +14,14 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  * @version		4.0
  *
  * ------------------------------------------------------------------------
+ */
+if ( ! function_exists( 'espresso_get_template_part' )) {
+	function espresso_get_template_part( $slug = NULL, $name = NULL ) {
+		EEH_Template::get_template_part( $slug, $name );
+	}	
+}
+/*
+ * ------------------------------------------------------------------------
  *
  * EEH_Template	
  *
@@ -25,10 +33,6 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  *
  * ------------------------------------------------------------------------
  */
-
-
-
-
 class EEH_Template {
 	
 	private static $_espresso_themes = array();
@@ -74,6 +78,30 @@ class EEH_Template {
 	}
 
 
+
+	/**
+	 * EEH_Template::get_template_part
+	 * basically a copy of the WordPress get_template_part() function but uses EEH_Template::locate_template() instead, and doesn't add base versions of files
+	 * so not a very useful function at all except that it adds familiarity PLUS filtering based off of the entire template part name
+	 * 
+	 * @param string $slug The slug name for the generic template.
+	 * @param string $name The name of the specialised template.
+	 * @return string        the html output for the formatted money value
+	 */
+	public static function get_template_part( $slug = NULL, $name = NULL, $template_args = array(), $return_string = FALSE  ) {
+		do_action( "get_template_part_{$slug}-{$name}", $slug, $name );
+		$templates = array();
+		$name = (string) $name;
+		if ( $name != '' ) {
+			$templates[] = "{$slug}-{$name}.php";
+		}
+		// we do NOT want to find the slug only version of files such as content.php when looking for content-espresso_events.php
+		// $templates[] = "{$slug}.php";
+		EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
+	}
+
+
+
 	/**
 	 * 	locate_template
 	 * 
@@ -84,16 +112,16 @@ class EEH_Template {
 	 *		/wp-content/plugins/EE4/templates/(default theme)/ 
 	 *	as soon as the template is found i none of those locations, it will be returned or loaded 
 	 * 
-	 * 	@param  string $template  the template file name including extension
+	 * 	@param  mixed string | array $templates  the template file name including extension
 	 * 	@param  boolean $load  whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
 	 * 	@param  array $template_args an array of arguments to be extracted for use in the template
 	 * 	@param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
 	 * 	@return void
 	 */
-	public static function locate_template( $template = '', $load = TRUE, $template_args = array(), $return_string = TRUE ) {
+	public static function locate_template( $templates = array(), $load = TRUE, $template_args = array(), $return_string = TRUE ) {
 		// first use WP locate_template to check for template in the current theme folder
-		if ( ! $template_path = locate_template( $template )) {
-			if ( empty( $template )) {
+		if ( ! $template_path = locate_template( $templates )) {
+			if ( empty( $templates )) {
 				// get post_type 
 				$post_type = EE_Registry::instance()->REQ->get( 'post_type' );
 				// get array of EE Custom Post Types
@@ -102,32 +130,30 @@ class EEH_Template {
 				if ( isset( $EE_CPTs[ $post_type ] )) {
 					$archive_or_single =  is_archive() ? 'archive' : '';
 					$archive_or_single =  is_single() ? 'single' : $archive_or_single;
-					$template = $archive_or_single . '-' . $post_type . '.php';
+					$templates = $archive_or_single . '-' . $post_type . '.php';
 				}
 			}
 			$current_theme = EE_Config::get_current_theme();
-			
-			$tempates = is_array( $template ) ? $template : array( $template );
-			foreach ( $tempates as $tempate ) {
+			// loop thru templates
+			foreach ( (array)$templates as $template ) {
 				// then check the root of the uploads/espresso/templates/ folder
-				if ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . DS . $template )) {
-					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . DS . $template;
+				if ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $template )) {
+					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $template; 
 					break;
 				// or check the uploads/espresso/templates/ folder for an EE theme template file
-				} elseif ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template )) {
+				} elseif ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template )) {
 					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template;
 					break;
 				// otherwise get it from our folder within the plugin
-				} else if ( file_exists( EE_TEMPLATES . $current_theme . DS . $template )) {
+				} else if ( is_readable( EE_TEMPLATES . $current_theme . DS . $template )) {
 					$template_path = EE_TEMPLATES . $current_theme . DS . $template;
 					break;
 				}
 			}
 		}
-		
 		// if we got it and you want to see it...
-		if ( $load && $template_path != '' ) {
-			if ( $return_string ) {
+		if ( $template_path != '' && $load ) {
+			if ( $return_string ) {				
 				return EEH_Template::display_template( $template_path, $template_args, $return_string );
 			} else {
 				EEH_Template::display_template( $template_path, $template_args, $return_string );
@@ -140,33 +166,31 @@ class EEH_Template {
 
 	/**
 	 * load and display a template
-	 * @param  string $path_to_file  server path to the file to be loaded, including file name and extension
+	 * @param  string $template_path  server path to the file to be loaded, including file name and extension
 	 * @param  array $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
 	 * @return void
 	 */
-	public static function display_template( $path_to_file = FALSE, $template_args = array(), $return_string = FALSE ) {
+	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
 		// you gimme nuttin - YOU GET NUTTIN !!
-		if ( ! $path_to_file ) {
+		if ( ! $template_path || ! is_readable( $template_path )) {
 			return FALSE;
 		}
 		// if $template_args are not in an array, then make it so
 		if ( ! is_array( $template_args ) && ! is_object( $template_args )) {
 			$template_args = array( $template_args );
 		}
-
 		extract( (array) $template_args);
 
 		if ( $return_string ) {
 			// becuz we want to return a string, we are going to capture the output
 			ob_start();
-			include( $path_to_file );
-			$output = ob_get_clean();
-			return $output;
+			include( $template_path );
+			return ob_get_clean();
 		} else {
-			include( $path_to_file );
+			include( $template_path );
 		}
 	}
 

@@ -91,9 +91,9 @@ class EEH_Parse_Shortcodes {
 	}
 
 
-	public function parse_attendee_list_template( $template, EE_Attendee $attendee, $valid_shortcodes, $extra_data = array() ) {
+	public function parse_attendee_list_template( $template, EE_Registration $registration, $valid_shortcodes, $extra_data = array() ) {
 
-		$this->_init_data( $template, $attendee, $valid_shortcodes, $extra_data );
+		$this->_init_data( $template, $registration, $valid_shortcodes, $extra_data );
 
 		$this->_template = is_array($template) ? $template['attendee_list'] : $template;
 

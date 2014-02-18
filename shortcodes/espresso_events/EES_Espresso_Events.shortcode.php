@@ -75,7 +75,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes ) {
-
 		$default_espresso_events_shortcode_atts = array(
 			'title' => NULL,
 			'limit' => 10,
@@ -90,7 +89,8 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		$default_espresso_events_shortcode_atts = apply_filters( 'EES_Espresso_Events__process_shortcode__default_espresso_events_shortcode_atts', $default_espresso_events_shortcode_atts );
 		// grab attributes and merge with defaults, then extract
 		$attributes = shortcode_atts( $default_espresso_events_shortcode_atts, $attributes );
-
+		// make sure we use the_excerpt()
+		add_filter( 'FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true' );
 		// run the query
 		global $wp_query;
 		$wp_query = new EE_Event_List_Query( $attributes );
@@ -105,7 +105,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		wp_reset_postdata();
 		EED_Events_Archive::remove_all_events_archive_filters();
 		// pull our content from the output buffer and return it
-		echo $event_list;		
+		return $event_list;		
 	}	
 	
 	

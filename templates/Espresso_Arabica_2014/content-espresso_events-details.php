@@ -1,17 +1,15 @@
-<?php //echo '<h1>' . __FILE__ . '</h1>'; ?>
 <?php global $post; ?>
 <div class="event-content">
 <?php if ( apply_filters( 'FHEE__content_espresso_events_details_template__display_entry_meta', TRUE )): ?>
 	<div class="entry-meta">
 		<span class="tags-links"><?php espresso_event_categories( $post->ID, TRUE, TRUE ); ?></span>
 	<?php
-		twentyfourteen_posted_on();
 		if ( ! post_password_required() && ( comments_open() || get_comments_number() ) ) :
 	?>
-	<span class="comments-link"><?php comments_popup_link( __( 'Leave a comment', 'twentyfourteen' ), __( '1 Comment', 'twentyfourteen' ), __( '% Comments', 'twentyfourteen' ) ); ?></span>
+	<span class="comments-link"><?php comments_popup_link( __( 'Leave a comment', 'event_espresso' ), __( '1 Comment', 'event_espresso' ), __( '% Comments', 'event_espresso' ) ); ?></span>
 	<?php
 		endif;
-		edit_post_link( __( 'Edit', 'twentyfourteen' ), '<span class="edit-link">', '</span>' );
+		edit_post_link( __( 'Edit', 'event_espresso' ), '<span class="edit-link">', '</span>' );
 	?>
 	</div>
 <?php endif; ?>
@@ -26,7 +24,7 @@
 <?php endif; ?>
 <?php 
 	do_action( 'AHEE_event_details_before_the_content', $post ); 
-	if ( is_archive() && has_excerpt( $post->ID ) ) {
+	if (( is_archive() && has_excerpt( $post->ID )) || apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) {
 		the_excerpt();
 	} else {
 		the_content();
