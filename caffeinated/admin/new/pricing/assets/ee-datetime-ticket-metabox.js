@@ -1679,6 +1679,21 @@ jQuery(document).ready(function($) {
 
 
 
+
+		/**
+		 * This changes the TKT_order value for all tickets in the dom to reflect the new order after a drag and drop action
+		 * @return {tktHelper}
+		 */
+		changeTKTorder: function() {
+			var allTickets = $('.ticket-table tr');
+			allTickets.each( function(i) {
+				$('.edit-ticket-TKT_order', this ).val(i);
+			});
+			return this;
+		},
+
+
+
 		/**
 		 * This helper method simply removes any matching items from a js array.
 		 * @param  {array} arr js array to remove items from
@@ -1853,6 +1868,19 @@ jQuery(document).ready(function($) {
 				break;
 		}
 		return false;
+	});
+
+
+
+	/**
+	 * reordering tickets
+	 */
+	$('.ticket-table').sortable({
+		cursor: 'move',
+		items: '.ee-ticket-sortable',
+		update: function(event,ui) {
+			tktHelper.changeTKTorder();
+		}
 	});
 
 
