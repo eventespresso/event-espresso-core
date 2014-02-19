@@ -557,7 +557,10 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			//first the trs
+			//make sure the value for the TKT_order field assumes the value of the new row (to ensure order increments).
+			newTKTrow.find('.edit-ticket-TKT_order').val(newrownum);
+
+			//the trs
 			newTKTrow.find('tr').each( function() {
 				curid = $(this).attr('id');
 
@@ -1679,6 +1682,27 @@ jQuery(document).ready(function($) {
 
 
 
+
+		/**
+		 * This changes the TKT_order value for all tickets in the dom to reflect the new order after a drag and drop action
+		 * @return {tktHelper}
+		 */
+		changeTKTorder: function() {
+			var advancedRow, curid;
+			var allTickets = $('.ticket-table tr.ee-ticket-sortable');
+			allTickets.each( function(i) {
+				$('.edit-ticket-TKT_order', this ).val(i);
+				// make sure the corresponding advanced edit row is in the right place.
+				curid = $(this).attr('id').replace('display-ticketrow-', '');
+				advancedRow = $('#edit-ticketrow-' + curid );
+				$(this).after(advancedRow);
+			});
+			return this;
+		},
+
+
+
+
 		/**
 		 * This helper method simply removes any matching items from a js array.
 		 * @param  {array} arr js array to remove items from
@@ -1853,6 +1877,19 @@ jQuery(document).ready(function($) {
 				break;
 		}
 		return false;
+	});
+
+
+
+	/**
+	 * reordering tickets
+	 */
+	$('.ticket-table').sortable({
+		cursor: 'move',
+		items: '.ee-ticket-sortable',
+		update: function(event,ui) {
+			tktHelper.changeTKTorder();
+		}
 	});
 
 

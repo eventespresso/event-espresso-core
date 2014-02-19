@@ -11,10 +11,12 @@
  */
 
 global $post;
-$wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
+$event_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
+$event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $event_class );
+
 ?>
 <?php do_action( 'AHEE_event_details_before_post', $post ); ?>
-<article id="post-<?php the_ID(); ?>" <?php post_class( $wrap_class ); ?>>
+<article id="post-<?php the_ID(); ?>" <?php post_class( $event_class ); ?>>
 
 	<div id="espresso-event-header-dv" class="">
 		<?php do_action( 'AHEE_event_details_before_featured_img', $post ); ?>		
@@ -23,7 +25,7 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 			if ( $img_ID = get_post_thumbnail_id( $post->ID )) :
 				if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'large' )) :
 					$caption = esc_attr( get_post( get_post( $img_ID ))->post_excerpt );
-					$wrap_class .= ' has-img';
+					$event_class .= ' has-img';
 					?>
 		<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 			<a class="" href="<?php the_permalink(); ?>">
@@ -37,7 +39,7 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 		?>		
 		<?php do_action( 'AHEE_event_details_after_featured_img', $post );?>
 		
-		<header class="event-header<?php echo $wrap_class;?>">
+		<header class="event-header<?php echo $event_class;?>">
 			<h1 id="event-details-h1" class="entry-title">
 				<a class="" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 			</h1>

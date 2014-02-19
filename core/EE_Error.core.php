@@ -685,14 +685,16 @@ class EE_Error extends Exception {
 	*
 	*	@access 	public
 	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
-	* 	@param		string	$pan_name	the message to be stored persistently until dismissed
+	* 	@param		string	$pan_message	the message to be stored persistently until dismissed
 	* 	@return 		void
 	*/
 	public static function add_persistent_admin_notice( $pan_name = '', $pan_message ) {
 		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
 			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
-			$persistent_admin_notices[ $pan_name ] = $pan_message;
-			update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
+			if ( ! array_key_exists( $pan_name, $persistent_admin_notices )) {
+				$persistent_admin_notices[ $pan_name ] = $pan_message;
+				update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
+			}
 		}
 	}
 
@@ -705,11 +707,16 @@ class EE_Error extends Exception {
 	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be dismissed
 	* 	@return 		void
 	*/
-	public static function dismiss_persistent_admin_notice( $pan_name = '' ) {
+	public static function dismiss_persistent_admin_notice( $pan_name = '', $purge = FALSE ) {
 		$pan_name = EE_Registry::instance()->REQ->is_set( 'ee_nag_notice' ) ? EE_Registry::instance()->REQ->get( 'ee_nag_notice' ) : $pan_name;
 		if ( ! empty( $pan_name )) {
 			if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() )) {
-				unset( $persistent_admin_notices[ $pan_name ] );
+				// completely delete nag notice, or just NULL message so that it can NOT be added again ?
+				if ( $purge ) {
+					unset( $persistent_admin_notices[ $pan_name ] );
+				} else {
+					$persistent_admin_notices[ $pan_name ] = NULL;
+				}				
 				if ( update_option( 'ee_pers_admin_notices', $persistent_admin_notices ) === FALSE ) {
 					EE_Error::add_error( sprintf( __( 'The persistent admin notice for "%s" could not be deleted.', 'event_espresso' ), $pan_name ), __FILE__, __FUNCTION__, __LINE__ );
 				}
@@ -743,13 +750,17 @@ class EE_Error extends Exception {
 			$args = array(
 				'nag_notice' => $pan_name,
 				'return_url' => urlencode( $return_url ),
+				'ajax_url' => WP_AJAX_URL,
 				'unknown_error' => __( 'An unknown error has occured on the server while attempting to dissmiss this notice.', 'event_espresso' )
 			);
 			wp_localize_script( 'espresso_core', 'ee_dismiss', $args );
 			return '
-			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix">
+			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix" style="border-left: 4px solid #E76700;">
 				<p>' . $pan_message . '</p>
-				<a class="dismiss-ee-nag-notice hide-if-no-js" >'.__( 'dismiss', 'event_espresso' ) .'</a>
+				<a class="dismiss-ee-nag-notice hide-if-no-js dashicons" style="float: right; cursor: pointer;" rel="' . $pan_name . '">
+					<span class="dashicons-dismiss" style="position:relative; top:2px; margin-right:.25em;"></span>'.__( 'Dismiss', 'event_espresso' ) .'
+				</a>
+				<div style="clear:both;"></div>
 			</div>';
 		}
 	}
@@ -766,6 +777,13 @@ class EE_Error extends Exception {
 		$notices = '';
 		// check for persistent admin notices
 		if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', FALSE )) {
+			// load scripts
+			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_register_script('ee-dialog', EE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_register_script( 'ee-parse-uri', EE_GLOBAL_ASSETS_URL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_register_script('ee_admin_js', EE_ADMIN_URL . 'assets/ee-admin-page.js', array( 'espresso_core', 'ee-parse-uri', 'ee-dialog' ), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_enqueue_script( 'ee_admin_js' );
+			// and display notices
 			foreach( $persistent_admin_notices as $pan_name => $pan_message ) {
 				$notices .= self::display_persistent_admin_notices( $pan_name, $pan_message, $return_url );
 			}
@@ -783,8 +801,7 @@ class EE_Error extends Exception {
 	*	@access public
 	* 	@return 		void
 	*/
-	private static function _print_scripts( $force_print = FALSE ) {
-		
+	private static function _print_scripts( $force_print = FALSE ) {				
 		if (( did_action( 'admin_enqueue_scripts' ) || did_action( 'wp_enqueue_scripts' )) && ! $force_print ) {
 			if ( wp_script_is( 'ee_error_js', 'enqueued' )) {
 				return;

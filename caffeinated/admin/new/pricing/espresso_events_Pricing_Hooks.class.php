@@ -356,7 +356,6 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$new_default = clone $TKT;
 					$new_default->set( 'TKT_ID', 0 );
 					$new_default->set( 'TKT_is_default', 1 );
-					$new_default->set( 'TKT_order', 0 );
 					$new_default->set( 'TKT_row', 1 );
 					$new_default->set( 'TKT_price', $ticket_price );
 					//remove any dtt relations cause we DON'T want dtt relations attached (note this is just removing the cached relations in the object)
@@ -617,7 +616,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$existing_datetime_ids[] = $dttid;
 
 			//tickets attached
-			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none' ) ) : array();
+			$related_tickets = $time->ID() > 0 ? $time->get_many_related('Ticket', array( array( 'OR' => array( 'TKT_deleted' => 1, 'TKT_deleted*' => 0 ) ), 'default_where_conditions' => 'none', 'order_by' => array('TKT_order' => 'ASC' ) ) ) : array();
 
 			//if there are no related tickets this is likely a new event so we need to generate the default tickets CAUSE dtts ALWAYS have at least one related ticket!!.
 			if ( empty ( $related_tickets ) && empty( $event_id ) ) {
@@ -627,10 +626,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			//we can't actually setup rows in this loop yet cause we don't know all the unique tickets for this event yet (tickets are linked through all datetimes). So we're going to temporarily cache some of that information.
 
-			//loop through and setup the ticket rows
+			//loop through and setup the ticket rows and make sure the order is set.
+			$order = 0;
 			foreach ( $related_tickets as $ticket ) {
 				$tktid = $ticket->get('TKT_ID');
 				$tktrow = $ticket->get('TKT_row');
+				$ticket->set('TKT_order', $order);
 				//we only want unique tickets in our final display!!
 				if ( !in_array( $tktid, $existing_ticket_ids ) ) {
 					$existing_ticket_ids[] = $tktid;
@@ -764,6 +765,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
+			'TKT_order' => $default ? 'TICKETNUM' : $tktrow, //on initial page load this will always be the correct order.
 			'tkt_status_class' => $default ? ' tkt-status-' . EE_Ticket::onsale : ' tkt-status-' . $ticket->ticket_status(),
 			'display_edit_tkt_row' => ' style="display:none;"', //$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 || $default ? ' style="display:none"' : '',
 			'edit_tkt_expanded' => '', //$this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? '' : ' ee-edit-editing',

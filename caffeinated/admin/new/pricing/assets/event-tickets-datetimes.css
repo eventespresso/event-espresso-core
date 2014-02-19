@@ -299,6 +299,11 @@
 }
 
 
+.ee-ticket-sortable {
+    cursor: move;
+}
+
+
 .ticket-table tbody tr.ticket-row:first-child td {
     /*padding-top: .3em;*/
 }
@@ -322,7 +327,7 @@
    display: block;
    height:2.8em;
    padding:0;
-}
+}/**/
 
 /*Ticket Title */
 .ticket-table tbody .ticket-row td:nth-child(2) {
