@@ -83,11 +83,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'noheader'=>TRUE
 			),
 
-			'espresso_update_question_order' => array(
-				'func' => 'update_question_order',
-				'noheader' => TRUE
-				),	
-
 			'add_question_group' => '_edit_question_group',
 
 			'edit_question_group' => array(
@@ -281,7 +276,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		add_action('wp_ajax_espresso_update_question_order', array( $this, 'update_question_order' ));
 		add_action('wp_ajax_espresso_update_question_group_order', array( $this, 'update_question_group_order' ));
 	}
 
