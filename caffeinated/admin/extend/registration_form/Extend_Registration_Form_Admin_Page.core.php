@@ -473,7 +473,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$this->_set_add_edit_form_tags('insert_question_group');
 		}
 		$this->_template_args['values'] = $this->_yes_no_values;
-		$this->_template_args['all_questions']=$this->_question_model->get_all( array( 'order_by' => array('QST_order' => 'ASC')));
+		$this->_template_args['all_questions']=$questionGroup->questions_in_and_not_in_group();
 		$this->_template_args['QSG_ID']=$ID ? $ID : TRUE;
 		$this->_template_args['question_group']=$questionGroup;
 		
@@ -520,6 +520,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			
 			if(array_key_exists('questions',$this->_req_data) && array_key_exists($question_ID,$this->_req_data['questions'])){
 				$question_group->add_question($question_ID);
+			}elseif ( !empty( $this->_req_data['question_orders'][$question_ID] ) ){
+				//update question order
+				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
+			}elseif ( $question->is_system_question() && $question_group->get('QSG_system') === 1 && isset( $this->_req_data['question_orders'][$question_ID] ) ) {
+				//always make sure we order system questions for the personal group
+				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
+
 			}else{
 				//not found, remove it (but only if not a system question for the personal group)
 				if ( $question->is_system_question() && $question_group->get('QSG_system') === 1  )
@@ -531,6 +538,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		if(array_key_exists('questions',$this->_req_data)){
 			foreach(array_keys($this->_req_data['questions']) as $question_ID){
 				$question_group->add_question($question_ID);
+				if ( isset( $this->_req_data['question_orders'][$question_ID]))
+				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
 			}
 		}
 		$query_args=array('action'=>'edit_question_group','QSG_ID'=>$ID);
