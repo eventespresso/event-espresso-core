@@ -78,39 +78,90 @@
 	 *  @return 	void
 	 */
 	public function __construct() {
+		// calendar_version
+		define( 'EE_CALENDAR_VERSION', '2.2.1.DEV' );
+		// define the plugin directory path and URL
+		define( 'EE_CALENDAR_PLUGINFULLPATH', plugin_dir_path( __FILE__ ));
+		define( 'EE_CALENDAR_PLUGINFULLURL', plugin_dir_url( __FILE__ ));
+		define( 'EE_CALENDAR_PLUGIN_FILE', plugin_basename( __FILE__ ));
+		define( 'EE_CALENDAR_SHORTCODE_PATH', EE_CALENDAR_PLUGINFULLPATH . 'espresso_calendar' . DS );
+		define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PLUGINFULLPATH . 'calendar' . DS );
+		define( 'EE_CALENDAR_DMS_PATH', EE_CALENDAR_PLUGINFULLPATH . 'data_migration_scripts' . DS );
+		// we need cars
+		add_action( 'AHEE__EE_System__construct__autoloaders_available', array( $this, 'register_autoloaders' ));
+		// GO !!!
+		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ));
+	}
+
+
+
+	/**
+	 * 	register_autoloaders
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function register_autoloaders() {
+		EEH_Autoloader::instance()->register_autoloader( array( 
+			'EE_Calendar_Config' =>EE_CALENDAR_SHORTCODE_PATH . 'EE_Calendar_Config.php',
+			'EE_Datetime_In_Calendar' =>EE_CALENDAR_SHORTCODE_PATH . 'EE_Datetime_In_Calendar.class.php',
+			'Calendar_Admin_Page_Init' => EE_CALENDAR_ADMIN . 'Calendar_Admin_Page_Init.core.php'
+		));
+	}
+
+
+
+	/**
+	 * 	plugins_loaded
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function plugins_loaded() {
 		// is EE running and not in M-Mode ?
 		if ( defined( 'EVENT_ESPRESSO_VERSION' ) && ! EE_Maintenance_Mode::instance()->level() ) {
-			// calendar_version
-			define( 'EE_CALENDAR_VERSION', '2.2.1.DEV' );
-			// define the plugin directory path and URL
-			define( 'EE_CALENDAR_PLUGINFULLPATH', plugin_dir_path( __FILE__ ));
-			define( 'EE_CALENDAR_PLUGINFULLURL', plugin_dir_url( __FILE__ ));	
-			define( 'EE_CALENDAR_SHORTCODE_PATH', EE_CALENDAR_PLUGINFULLPATH . 'espresso_calendar' . DS );
-			define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PLUGINFULLPATH . 'calendar' . DS );	
-
+			// calendar settings
+			$this->_set_calendar_config();
 			// activate
 			register_activation_hook(  __FILE__ , array( $this, 'activation' ));
+			// migrate data
+			$this->_setup_migration_script_hooks();
+			// load admin
+			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'calendar_admin' ));
 			// add Calendar to list of shortcodes to be registered
 			add_filter( 'FHEE__EE_Config__register_shortcodes__shortcodes_to_register', array( 'EE_Calendar', 'add_shortcode' ));
-			// we need cars
-			EEH_Autoloader::instance()->register_autoloader( array( 
-				'EE_Calendar_Config' =>EE_CALENDAR_SHORTCODE_PATH . 'EE_Calendar_Config.php',
-				'EE_Datetime_In_Calendar' =>EE_CALENDAR_SHORTCODE_PATH . 'EE_Datetime_In_Calendar.class.php',
-				'Calendar_Admin_Page_Init' => EE_CALENDAR_ADMIN . 'Calendar_Admin_Page_Init.core.php'
-			));
-			//check that the EE_Calendar_Config is in the main config file
-			if( ! isset( EE_Config::instance()->addons['calendar'] ) || ! EE_Config::instance()->addons['calendar'] instanceof EE_Calendar_Config ){
-				EE_Config::instance()->addons['calendar'] = new EE_Calendar_Config();
-				EE_Config::instance()->update_espresso_config();
-			}
-			// load admin
-			if ( is_admin() ) {
-				
-				add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'calendar_admin' ));
-			}			
+			// widget
+			add_action( 'widgets_init', array( $this, 'widget_init' ));		
 		}		
 	}
 
+
+
+	/**
+	 * 	_get_calendar_config
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	private function _set_calendar_config() {
+		//check that the EE_Calendar_Config is in the main config file
+		if( ! isset( EE_Config::instance()->addons['calendar'] ) || ! EE_Config::instance()->addons['calendar'] instanceof EE_Calendar_Config ){
+			EE_Config::instance()->addons['calendar'] = new EE_Calendar_Config();
+			EE_Config::instance()->update_espresso_config();
+		}
+	}
+
+
+	/**
+	 * 	calendar_admin
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function calendar_admin( $installed_refs = array()) {
+		$installed_refs[] = 'calendar';
+		return $installed_refs;
+	}
 
 
 
@@ -129,6 +180,19 @@
 
 
 	/**
+	 * 	widget_init
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function widget_init() {
+		EE_Registry::instance()->load_file( EE_CALENDAR_SHORTCODE_PATH . 'espresso-calendar-widget', 'Espresso_Calendar_Widget', '', array(), TRUE );
+		register_widget( 'Espresso_Calendar_Widget' ); 
+	}
+
+
+
+	/**
 	 * 	activation
 	 *
 	 *  @return 	void
@@ -139,27 +203,44 @@
 		}
 		$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
 		check_admin_referer( "activate-plugin_{$plugin}" );
-		require_once( EE_CALENDAR_ADMIN . 'calendar_admin.php' );
+		EE_Registry::instance()->load_file( EE_CALENDAR_ADMIN . 'calendar_admin', 'EE_Calendar_Admin', '', array(), TRUE );
 		EE_Calendar_Admin::activation();
 	}	 
 
 
 
 	/**
-	 * 	calendar_admin
-	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * Setup hooks for adding calendar logic to EE4 migrations. Initially only adds
+	 * a stage to teh 4.1.0 migration script
 	 */
-	public function calendar_admin( $installed_refs = array()) {
-		$installed_refs[] = 'calendar';
-		return $installed_refs;
+	protected function _setup_migration_script_hooks(){
+		add_filter( 'FHEE__EE_DMS_4_1_0__autoloaded_stages',array($this,'autoload_migration_stage'));
+		add_filter( 'FHEE__EE_DMS_4_1_0__construct__migration_stages',array($this,'add_migration_stage'));
+	}
+	/**
+	 * Add our 4.1.0 migration stage for autoloading
+	 * @param array $classname_to_filepath_array strings are classnames, valuesa re their full paths
+	 * @return arrat
+	 */
+	public function autoload_migration_stage($classname_to_filepath_array){
+		$classname_to_filepath_array['EE_DMS_4_1_0_calendar_metadata'] = EE_CALENDAR_DMS_PATH . '4_1_0_stages' . DS . 'EE_DMS_4_1_0_calendar_metadata.dmsstage.php';
+		$classname_to_filepath_array['EE_DMS_4_1_0_calendar_options'] = EE_CALENDAR_DMS_PATH . '4_1_0_stages' . DS . 'EE_DMS_4_1_0_calendar_options.dmsstage.php';
+		return $classname_to_filepath_array;
+	}
+	/**
+	 * Adds our data migration stage into the list
+	 * @param EE_Data_Migration_Script_Stage[] $migration_stages keys are their priority, values are EE_Data_Migration_Script_Stage
+	 * return EE_Data_Migration_Script_Stage[]
+	 */
+	public function add_migration_stage($migration_stages){
+		$migration_stages[] = new EE_DMS_4_1_0_calendar_metadata();
+		$migration_stages[] = new EE_DMS_4_1_0_calendar_options();
+		return $migration_stages;
 	}
 
 
 
  }
- add_action( 'plugins_loaded', array( 'EE_Calendar', 'instance' ));
-
+ EE_Calendar::instance();
 // End of file espresso-calendar.php
 // Location: /espresso-calendar/espresso-calendar.php
