@@ -83,6 +83,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'noheader'=>TRUE
 			),
 
+			'espresso_update_question_order' => array(
+				'func' => 'update_question_order',
+				'noheader' => TRUE
+				),	
+
 			'add_question_group' => '_edit_question_group',
 
 			'edit_question_group' => array(
@@ -276,7 +281,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		parent::_ajax_hooks();
+		add_action('wp_ajax_espresso_update_question_order', array( $this, 'update_question_order' ));
 		add_action('wp_ajax_espresso_update_question_group_order', array( $this, 'update_question_group_order' ));
 	}
 
@@ -425,18 +430,17 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	 * @return array results array
 	 */	
 	public function update_question_order() {
+
 		$success = __( 'Question order was updated successfully.', 'event_espresso' );
 		
 		// grab our row IDs
 		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
 
-
 		if ( is_array( $row_ids )) {
-			global $wpdb;
 			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
-				//Update the questions when re-ordering
 				$id = absint($row_ids[$i]);
-				if ( EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array( array( 'QST_ID' => $id ) ) ) === FALSE ) {
+				//Update the questions when re-ordering
+				if ( EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array(array( 'QST_ID' => $id ) )) === FALSE ) {
 					$success = FALSE;
 				} 
 			}

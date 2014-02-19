@@ -7,7 +7,7 @@
 */
 #question_options .sample{ display:none; }
 
-#the-list { cursor: move; }
+.question-groups #the-list { cursor: move; }
 
 .questions .column-id { width:5%; }
 .questions .column-order,
