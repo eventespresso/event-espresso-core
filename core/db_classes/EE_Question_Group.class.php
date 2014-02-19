@@ -235,7 +235,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 			$question_IDS_in_group = !empty( $questions ) ? array_keys($questions) : array();
 		}
 
-		$_where = !empty( $questions_IDS_in_group ) ? array( 'QST_ID' => array( 'not_in', $questions_IDS_in_group ) ) : array();
+		$_where = !empty( $question_IDS_in_group ) ? array( 'QST_ID' => array( 'not_in', $question_IDS_in_group ) ) : array();
 
 		return EEM_Question::instance()->get_all( array( $_where, 'order_by' => array('QST_order' => 'ASC') ) );
 	}
