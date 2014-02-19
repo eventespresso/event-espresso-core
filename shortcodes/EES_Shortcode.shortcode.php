@@ -5,7 +5,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author			Seth Shoultes
+ * @ author			Event Espresso
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
@@ -22,6 +22,17 @@
  * ------------------------------------------------------------------------
  */
 abstract class EES_Shortcode extends EE_Base {
+
+
+	/**
+	 * 	name of the instantiated child class accessing this parent class
+	 *
+	 *  @access 	private
+	 *  @var 	$_called_class
+	 */
+	private static $_called_class = NULL;
+
+
 
 	/**
 	 * 	run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
@@ -47,13 +58,30 @@ abstract class EES_Shortcode extends EE_Base {
 
 	
 	/**
-	*	instance - returns $this
+	*	instance - returns intance of child class object
 	*
 	*	@access public
 	*	@return 	void
 	*/
 	final public static function instance() {
-		return $this;
+		$shortcode_class = EES_Shortcode::_get_called_class();
+		$shortcode = str_replace( 'EES_', '', strtoupper( $shortcode_class ));
+		$shortcode_obj = isset( EE_Registry::instance()->shortcodes[ $shortcode ] ) ? EE_Registry::instance()->shortcodes[ $shortcode ] : NULL;
+		return $shortcode_obj instanceof $shortcode_class ? $shortcode_obj : new $shortcode_class();
+	}
+
+	
+	/**
+
+	*
+	*	@access public
+	*	@return 	void
+	*/
+	final private static function _get_called_class() {
+		if ( self::$_called_class === NULL  ) {
+			self::$_called_class = EEH_Class_Tools::get_called_class();
+		}
+		return self::$_called_class;
 	}
 
 	
@@ -64,11 +92,8 @@ abstract class EES_Shortcode extends EE_Base {
 	*	@access public
 	*	@return 	void
 	*/
-	final public static function fallback_shortcode_processor( $attributes ) { 
-		if ( $shortcode_class = EEH_Class_Tools::get_called_class() ) {
-			$shortcode_obj = new $shortcode_class();
-			$shortcode_obj->process_shortcode( $attributes );
-		}
+	final public static function fallback_shortcode_processor( $attributes ) {
+		self::instance()->process_shortcode( $attributes );
 	}
 
 
