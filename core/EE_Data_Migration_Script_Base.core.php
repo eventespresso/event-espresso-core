@@ -754,7 +754,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 	}
 	function _count_records_to_migrate() {
 		global $wpdb;
-		$count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
+		$count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table);
 		return $count;
 	}
 	

@@ -1066,8 +1066,13 @@ class EEH_Activation {
 		}
 		
 		if ( $remove_all && $espresso_db_update = get_option( 'espresso_db_update' )) {
-			unset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] );
-			update_option( 'espresso_db_update', $espresso_db_update );
+			$db_update_sans_ee4 = array();
+			foreach($espresso_db_update as $version => $times_activated){
+				if( $version[0] =='3'){//if its NON EE4
+					$db_update_sans_ee4[$version] = $times_activated;
+				}
+			}
+			update_option( 'espresso_db_update', $db_update_sans_ee4 );
 		}
 		
 		$errors = '';
