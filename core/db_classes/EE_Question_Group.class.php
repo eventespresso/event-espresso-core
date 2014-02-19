@@ -251,7 +251,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 		$questions_in_group = $this->questions();
 		$exclude_question_ids = !empty($questions_in_group) ? array_keys($questions_in_group) : array();
 		$questions_not_in_group = $this->questions_not_in_group($exclude_question_ids);
-		return array_merge( $questions_in_group, $questions_not_in_group );
+		return $questions_in_group + $questions_not_in_group;
 	}
 
 
