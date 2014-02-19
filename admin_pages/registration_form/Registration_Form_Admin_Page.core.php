@@ -476,7 +476,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$offset=($current_page-1)*$per_page;
 		$query_params['limit']=array($offset,$per_page);
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
-		$orderby_field = $model instanceof EEM_Question ? 'QST_ID' : 'QST_ID';
+		$orderby_field = $model instanceof EEM_Question ? 'QST_ID' : 'QSG_order';
 		$field_to_order_by = empty($this->_req_data['orderby']) ? $orderby_field : $this->_req_data['orderby'];	
 		$query_params['order_by']=array( $field_to_order_by => $order );
 		$search_string = array_key_exists('s',$this->_req_data) ? $this->_req_data['s'] : null;
