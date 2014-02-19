@@ -3,6 +3,21 @@
  * meant to convert DBs between 4.1.x to 4.2.0
  * mostly just adds 
  */
+//make sure we have all the stages loaded too
+//unfortunately, this needs to be done upon INCLUSION of this file,
+//instead of construction, because it only gets constructed on first page load 
+//(all other times it gets resurrected from a wordpress option)
+$stages = glob(EE_CORE.'data_migration_scripts/4_2_0_stages/*');
+$class_to_filepath = array();
+foreach($stages as $filepath){
+	$matches = array();
+	preg_match('~4_2_0_stages/(.*).dmsstage.php~',$filepath,$matches);
+	$class_to_filepath[$matches[1]] = $filepath;
+}
+//give addons a chance to autoload their stages too
+$class_to_filepath = apply_filters('FHEE__EE_DMS_4_2_0__autoloaded_stages',$class_to_filepath);
+EEH_Autoloader::register_autoloader($class_to_filepath);
+
 class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 
 	
@@ -10,12 +25,14 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.2.0.P", "event_espresso");
 		$this->_migration_stages = array(
+			new EE_DMS_4_2_0_question_group_questions()
 		);
 		parent::__construct();
 	}
 	public function can_migrate_from_version($version_string) {
+		echo "can dms4.2 migrate $version_string?";
 		if($version_string <= '4.2.003' && $version_string >= '4.1.0' ){
-//			echo "$version_string can be mgirated fro";
+			echo "$version_string can be mgirated fro";
 			return true;
 		}elseif( ! $version_string ){
 //			echo "no version string provided: $version_string";
