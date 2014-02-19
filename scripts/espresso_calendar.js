@@ -247,8 +247,8 @@ jQuery(document).ready(function($) {
 		},
 		// Triggered when event fetching starts/stops.
 		loading: function( bool ) {
-			if ( bool ) $('#ee-calendar-ajax-loader-img').show();
-			else $('#ee-calendar-ajax-loader-img').hide();
+			if ( bool ) $('#espresso-ajax-loading').show();
+			else $('#espresso-ajax-loading').hide();
 		}
 
 	});
