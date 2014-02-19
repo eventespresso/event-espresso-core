@@ -413,7 +413,7 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 		$sql="QGQ_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					QSG_ID INT UNSIGNED NOT NULL ,
 					QST_ID INT UNSIGNED NOT NULL ,
-					QST_order INT UNSIGNED NOT NULL DEFAULT 0 ,
+					QGQ_order INT UNSIGNED NOT NULL DEFAULT 0 ,
 					PRIMARY KEY  (QGQ_ID) ";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
 

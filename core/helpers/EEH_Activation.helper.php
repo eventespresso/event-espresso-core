@@ -542,7 +542,8 @@ class EEH_Activation {
 			'zip', 
 			'phone' 
 		);
-		
+		$order_for_group_1 = 1;
+		$order_for_group_2 = 1;
 		// loop thru what we should have and compare to what we have
 		foreach ( $QST_systems as $QST_system ) {
 			// if we don't have what we should have
@@ -711,12 +712,12 @@ class EEH_Activation {
 				
 				// QUESTION GROUP QUESTIONS 
 				
-				$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;			
+				$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;		
 				// add system questions to groups
 				$wpdb->insert(
 					$wpdb->prefix . 'esp_question_group_question', 
-					array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID ), 
-					array( '%d', '%d' )
+					array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID, 'QGQ_order'=>($QSG_ID==1)? $order_for_group_1++ : $order_for_group_2++ ), 
+					array( '%d', '%d','%d' )
 				);			
 				
 			}
