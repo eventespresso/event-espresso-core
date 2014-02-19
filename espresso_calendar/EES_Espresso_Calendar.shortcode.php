@@ -30,7 +30,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	 * @var 	EE_Calendar_Config	$_calendar_options
 	 *  @access 	private
 	 */
-	private $_calendar_config = array();
+	private $_calendar_config = NULL;
 
 	/**
 	 * 	@var 		INT	$_event_category_id
@@ -61,6 +61,8 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		add_action( 'plugins_loaded', array( EES_Espresso_Calendar::instance(), 'plugins_loaded' ));	
 		add_action( 'widgets_init', array( EES_Espresso_Calendar::instance(), 'widget_init' ));		
 	}
+
+
 
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, modules, etc
@@ -100,30 +102,21 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	}
 
 
+
 	/**
-	 * 	plugin_file
+	 * 	_get_calendar_config
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public static function plugin_file() {
-		static $plugin_file;
-		if ( ! $plugin_file ) {
-		    $plugin_file = plugin_basename( __FILE__ );
-		}
-		return $plugin_file;
-	}
-	
-	/**
-	 * 	get_calendar_options
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	private function _get_calendar_options() {
-		$this->_calendar_config = isset ( EE_Config::instance()->addons['calendar'] ) && EE_Config::instance()->addons['calendar'] instanceof EE_Calendar_Config ? EE_Config::instance()->addons['calendar'] : new EE_Calendar_Config();
+	private function _get_calendar_config() {
+		if ( ! $this->_calendar_config ) {
+			$this->_calendar_config = isset( EE_Config::instance()->addons['calendar'] ) || EE_Config::instance()->addons['calendar'] instanceof EE_Calendar_Config ? EE_Config::instance()->addons['calendar'] : new EE_Calendar_Config();
+		}		
 		return $this->_calendar_config;
 	}
+
+
 
 	/**
 	 * 	calendar_scripts - Load the scripts and css
@@ -133,7 +126,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	 */
 	public function calendar_scripts() {
 		// get calendar options
-		$calendar_config = $this->_get_calendar_options();
+		$calendar_config = $this->_get_calendar_config();
 		//Load tooltips styles
 		$show_tooltips = $calendar_config->tooltip->show;
 		if ( $show_tooltips ) {
@@ -172,7 +165,9 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 			}
 		}
 	}
-	
+
+
+
 	/**
 	 * Gets the HTML for the calendar filters area
 	 * @param array $ee_calendar_js_options mess of options which will eb passed onto js
@@ -182,7 +177,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	 * @return string
 	 */
 	private function _get_filter_html($ee_calendar_js_options = array()){
-		$calendar_config = EE_Config::instance()->addons['calendar'];
+		$calendar_config = $this->_get_calendar_config();
 		/*@var $calendar_config EE_Calendar_Config */
 		$output_filter = '';
 		if ( !$ee_calendar_js_options['widget']) {
@@ -195,16 +190,15 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 				ob_start();
 				
 				//Category legend
-				if ( $calendar_config->enable_category_legend ){
+				if ( $calendar_config->display->enable_category_legend ){
 					echo '<div id="espreso-category-legend"><ul id="ee-category-legend-ul">';
 					
 					foreach ($ee_terms as $ee_term) {
 						/*@var $ee_term EE_Term */
 						$catcode = $ee_term->ID();
 						
-						$catmeta = unserialize($ee_term->category_meta);
-						$bg = $ee_term->get_extra_meta('background_color', $calendar_config->event_background);
-						$fontcolor =$ee_term->get_extra_meta('text_color', $calendar_config->event_text_color);
+						$bg = $ee_term->get_extra_meta('background_color', $calendar_config->display->event_background);
+						$fontcolor =$ee_term->get_extra_meta('text_color', $calendar_config->display->event_text_color);
 						$use_bg =$ee_term->get_extra_meta('use_color_picker', true);
 			
 						if($use_bg ) {
@@ -221,7 +215,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 				}
 				
 				//Filter dropdowns
-				if ($calendar_config->enable_calendar_filters ){
+				if ($calendar_config->display->enable_calendar_filters ){
 					?>
 					<!-- select box filters -->
 					<div class="ee-filter-form">
@@ -279,12 +273,15 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 			return '';
 		}
 		// get calendar options
-		$calendar_config = $this->_get_calendar_options();
-		$defaults = array_merge( array( 
+		$calendar_config = $this->_get_calendar_config();
+		$defaults = array_merge( 
+			array( 
 				'show_expired' => 'true', 
 				'cal_view' => 'month', 
-				'widget' => FALSE,), 
-			$calendar_config->to_flat_array() );
+				'widget' => FALSE,
+			), 
+			$calendar_config->to_flat_array() 
+		);
 		// make sure $atts is an array
 		$shortcode_atts = is_array( $shortcode_atts ) ? $shortcode_atts : array( $shortcode_atts );
 		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
@@ -351,8 +348,6 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 			);
 			
 		$ee_calendar_js_options['theme'] = ! empty( $org_options['style_settings']['enable_default_style'] ) && $org_options['style_settings']['enable_default_style'] == 'Y' ? TRUE : FALSE;
-		
-//		echo '<h3>$ee_calendar_js_options</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $ee_calendar_js_options, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
 
 		// Get current page protocol
 		$protocol = isset($_SERVER["HTTPS"]) ? 'https://' : 'http://';
@@ -363,13 +358,13 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
 		$output_filter = apply_filters( 'filter_hook_espresso_calendar_output_filter', $output_filter );
 		return apply_filters( 'filter_hook_espresso_calendar_output_before', '' ).$output_filter.'
-	<div id="espresso_calendar" class="'. $calendar_class . '">
-	</div>
+	<div id="espresso_calendar" class="'. $calendar_class . '"></div>
 	<div style="clear:both;" ></div>
 	<div id="espresso_calendar_images" ></div>'.apply_filters( 'filter_hook_espresso_calendar_output_after','' ); 
 	
-	
 	}
+
+
 
 	/**
 	 * 	get_calendar_events
@@ -381,18 +376,12 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 //	$this->timer->start();
 		remove_shortcode('LISTATTENDEES');
 		// get calendar options
-		$config = $this->_get_calendar_options();
-		 $enable_cat_classes = $config->enable_cat_classes;
-		 $show_attendee_limit = $config->show_attendee_limit;
-		 $show_time = $config->time->show;
-		 $show_tooltips = $config->tooltip->show;
-		if ( $show_tooltips ) {
+		$config = $this->_get_calendar_config();
+		if ( $config->tooltip->show ) {
 			$tooltip_my = $config->tooltip->pos_my_1 . $config->tooltip->pos_my_2;
 			$tooltip_at = $config->tooltip->pos_at_1 . $config->tooltip->pos_at_2;
 			$tooltip_style = $config->tooltip->style;
 		}
-		$enable_calendar_thumbs = $config->enable_calendar_thumbs;
-
 		
 		$today = date( 'Y-m-d' );
 		$month = date('m' );
@@ -400,8 +389,6 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
 		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));	
 		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';	
-		// set boolean for categories 
-		$use_categories = ! $config->disable_categories;
 		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
 		$venue_id_or_slug = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : NULL;
 		if($category_id_or_slug){
@@ -414,10 +401,10 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 		}
 		$where_params['Event.status'] = 'publish';//@todo: how about sold_out, cancelled, etc events?
 		
-		$where_params['DTT_EVT_start*1']= array('>=',$start_datetime);
-		$where_params['DTT_EVT_start*2'] = array('<=',$end_date);
+		$where_params['DTT_EVT_start']= array('<=',$end_date);
+		$where_params['DTT_EVT_end'] = array('>=',$start_datetime);
 		if($show_expired == 'false'){
-			$where_params['DTT_EVT_start*3'] = array('>=',$today);
+			$where_params['DTT_EVT_end*3'] = array('>=',$today);
 			$where_params['Ticket.TKT_end_date'] = array('>=',$today);
 		}
 		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
@@ -438,7 +425,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 				continue;
 			}
 			//Get details about the category of the event
-			if ($use_categories) {
+			if ( ! $config->display->disable_categories) {
 //				echo "using cateogires!";
 				$primary_cat = $event->first_event_category();
 				//any term_taxonmies set for this event?
@@ -451,7 +438,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 					}
 					$calendar_datetime->set_eventType($primary_cat->slug());
 //					d($calendar_datetime);
-					if ( $enable_cat_classes ) {
+					if ( $config->display->enable_cat_classes ) {
 						foreach ( $event->term_taxonomies() as $term_taxonomy ) {
 							$calendar_datetime->add_classname($term_taxonomy->taxonomy());
 						}				
@@ -470,7 +457,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 			$startTime =  '<span class="event-start-time">' . $datetime->start_time($config->time->format) . '</span>';
 			$endTime = '<span class="event-end-time">' . $datetime->end_time($config->time->format) . '</span>';
 
-			if ( $show_time && $startTime ) {
+			if ( $config->time->show && $startTime ) {
 				$event_time_html = '<span class="time-display-block">' . $startTime;
 				$event_time_html .= $endTime ? ' - ' . $endTime : '';
 				$event_time_html .= '</span>';
@@ -481,7 +468,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 			
 					
 			// Add thumb to event
-			if ( $enable_calendar_thumbs ) {
+			if ( $config->display->enable_calendar_thumbs ) {
 				
 				$thumbnail_url = $event->feature_image_url('thumbnail');
 				if ( $thumbnail_url ) { 
@@ -497,7 +484,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 //			echo $this->timer->get_elapse( __LINE__ );
 //			$this->timer->start();
 
-			if ( $show_tooltips ) {
+			if ( $config->tooltip->show ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 				$description = $event->description_filtered();
 				
@@ -514,12 +501,12 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 // tooltip wrapper
 				$tooltip_html = '<div class="qtip_info">';
 				// show time ?
-				$tooltip_html .= $show_time && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
+				$tooltip_html .= $config->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
 				
 				$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
 
 				// add attendee limit if set
-				if ( $show_attendee_limit ) {
+				if ( $config->display->show_attendee_limit ) {
 					$tickets_sold = $datetime->sold();
 					$attendee_limit_text = $datetime->total_tickets_available_at_this_datetime() == -1 ? __('Available Spaces: unlimited', 'event_espresso') : __('Registrations / Spaces: ', 'event_espresso') . $tickets_sold . ' / ' . $tickets_initially_available_at_datetime;
 					$tooltip_html .= ' <p class="attendee_limit_qtip">' .$attendee_limit_text . '</p>';
@@ -555,32 +542,13 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 //			echo $this->timer->get_elapse( __LINE__ );
 
 		}
-//		echo '<h3>$events</h3><pre style="height:auto;border:2px solid lightblue;">' . print_r( $events, TRUE ) . '</pre><br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>';
+
 		echo json_encode( $calendar_datetimes_for_json );
 		die();
 
 	}
-	
-	
 
 
-
-
-	/**
-	 * 	widget_init
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function widget_init() {
-		if ( ! file_exists( EE_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php' )) {
-			echo 'An error occurred. The file espresso-calendar-widget.php could not be found.';
-		} else {		
-			include_once(EE_CALENDAR_PLUGINFULLPATH . 'espresso-calendar-widget.php');
-			// registers our widget
-			register_widget('Espresso_Calendar_Widget'); 
-		}
-	}
 
 	/**
 	 *		@ override magic methods
@@ -595,24 +563,5 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	public function __destruct() { return FALSE; }		
 
 }
-
-
-// http://uniapple.net/blog/?p=274
-/*class Elapse_time {
-	private $_start = 0;
-	private $_stop = 0;
-	private $_elpase = 0;
-
-	public function start(){
-		$this->_start = array_sum(explode(' ',microtime()));
-	}
-	public function stop(){
-		$this->_stop = array_sum(explode(' ',microtime()));
-	}
-	public function get_elapse( $line_nmbr ){
-		$this->_elpase = $this->_stop - $this->_start;
-		return sprintf( 'L# %d) elpased time : %.3f<br/>', $line_nmbr, $this->_elpase );
-	}
-}*/
 // End of file EES_Espresso_Calendar.shortcode.php
-// Location: /espresso-calendar/inc/EES_Espresso_Calendar.shortcode.php
+// Location: /espresso_calendar/EES_Espresso_Calendar.shortcode.php
