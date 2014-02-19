@@ -39,6 +39,7 @@ $has_answers = $question->has_answers();
 						$id =  ! empty( $QST_system ) ? '_disabled' : '';
 					?>
 					<input type="text" class="regular-text" id="QST_admin_label<?php echo $id?>" name="QST_admin_label<?php echo $id?>" value="<?php $question->f('QST_admin_label')?>"<?php echo $disabled?>/>
+					<input class="QST_order" type="hidden" id="QST_order<?php echo $id; ?>" name = "QST_order<?php echo $id; ?>" value="<?php echo $question->get('QST_order'); ?>" />
 					<?php if ( ! empty( $QST_system )) { ?>
 						<input type="hidden"  id="QST_admin_label" name="QST_admin_label" value="<?php echo $question->admin_label()?>"/>
 					<?php } ?>
@@ -51,15 +52,6 @@ $has_answers = $question->has_answers();
 					<?php } ?>
 						
 					</p>					
-				</td>
-			</tr>
-			<tr>
-				<th>
-					<label for="QST_order"><?php echo $fields['QST_order']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('question_order');?>
-				</th>
-				<td>
-					<input class="QST_order" type="text" id="QST_order<?php echo $id; ?>" name = "QST_order<?php echo $id; ?>" value="<?php echo $question->get('QST_order'); ?>" />
-					<br/>					
 				</td>
 			</tr>
 
