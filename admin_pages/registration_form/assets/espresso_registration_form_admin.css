@@ -28,6 +28,8 @@
 	width: 15%;
 }
 
+.question-group-questions-container { display:inline-block; width: 30%; }
+
 table.question-options-table td, table.question-options-table th{
 	padding:1em 10px 0 3px; line-height: 1em;
 }

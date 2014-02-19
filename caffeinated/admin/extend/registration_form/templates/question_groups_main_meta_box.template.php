@@ -112,14 +112,14 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 	</table>
 </div>
 
-<div class="edit-group padding" style="display: inline-block;">
+<div class="edit-group padding question-group-questions-container">
 	<table class="form-table question-group-questions">
 		<tbody>
 			<tr>				
 				<td>
 					<div class="padding">
 						<h3 class="title" style="padding-left: 0;"><?php _e('Questions that appear in this group.','event_espresso');?></h3>
-						<p class="description"><?php _e('You can reorder the questions for this group via drag and drop. And it will be updated on save.', 'event_espresso'); ?></p>
+						<p><span class="description"><?php _e('You can reorder the questions for this group via drag and drop. And it will be updated on save.', 'event_espresso'); ?></span></p>
 						<ul>
 							<?php 
 							$qcnt = 0;
