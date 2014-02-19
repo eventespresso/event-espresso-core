@@ -1,7 +1,12 @@
 <div class="changelog point-releases">
 	<h3><?php echo _n( 'Minor Release', 'Minor Releases', 1 ); ?></h3>
 	<p><?php printf( __( '<strong>Version %1$s</strong> is a minor bug fix/enhancement release.', 'event_espresso'), EVENT_ESPRESSO_VERSION ); ?>
-		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/ee4-changelog#4.1.3' ); ?>
+		<?php 
+			$ver = explode( '.', EVENT_ESPRESSO_VERSION ); 		
+			array_pop( $ver ); 		
+			$ver = implode( '.', $ver ); 		
+		?>
+		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/ee4-changelog/#' . $ver ); ?>
  	</p>
 </div>
 
