@@ -14,11 +14,11 @@ jQuery(document).ready(function($) {
 	// padding and margin between event and day cell (this could be calculated via js)
 	var day_padding = 16;
 	
-	if ( eeCAL.use_pickers){
+	if ( eeCAL.display_use_pickers){
 		// Sets the background and border colors for all events on the calendar.
-		var ee_eventColor = eeCAL.event_background;
+		var ee_eventColor = eeCAL.display_event_background;
 		// Sets the text color for all events on the calendar.
-		var ee_eventTextColor = eeCAL.event_text_color;
+		var ee_eventTextColor = eeCAL.display_event_text_color;
 	}
 
 	$('#espresso_calendar').fullCalendar({
@@ -39,7 +39,7 @@ jQuery(document).ready(function($) {
 		// Determines the number of weeks displayed in a month view. Also determines each week's height.
 		weekMode: eeCAL.time_week_mode,
 		// Will make the entire calendar (including header) a pixel height.
-		height: !eeCAL.widget ? eeCAL.espresso_calendar_height:'',
+		height: !eeCAL.widget ? eeCAL.display_calendar_height:'',
 		aspectRatio: 1.618,
 		// Triggered when the calendar loads and every time a different date-range is displayed.
 		viewDisplay: function(view) {
@@ -83,9 +83,9 @@ jQuery(document).ready(function($) {
 		},
 		
 		// Sets the background and border colors for all events on the calendar.
-		eventColor: eeCAL.event_background,
+		eventColor: eeCAL.display_event_background,
 		// Sets the text color for all events on the calendar.
-		eventTextColor: eeCAL.event_text_color,
+		eventTextColor: eeCAL.display_event_text_color,
 
 
 		//Full names of months.

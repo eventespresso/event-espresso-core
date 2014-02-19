@@ -107,63 +107,6 @@ class EE_Calendar_Admin {
 
 
 
-	//Install the plugin
-	public static function activation() {
-
-		
-		$calendar_default_settings = array(
-		
-				'espresso_page_post' => "R",
-				
-				'header_left' => 'prev, today',
-				'header_center' => 'title',
-				'header_right' =>'month, agendaWeek, agendaDay, next',
-				
-				'buttonText_prev' => '&lsaquo;',
-				'buttonText_next' => '&rsaquo;',
-				'buttonText_prevYear' => '&laquo;',
-				'buttonText_nextYear' => '&raquo;',
-				'buttonText_today' => 'today',
-				'buttonText_month' => 'month',
-				'buttonText_week' => 'week',
-				'buttonText_day' => 'day',
-
-				'firstDay' => '0',
-				'weekends' => true,
-				'weekMode' => 'liquid', // 'fixed', 'liquid', 'variable'
-				'espresso_calendar_height' => '',
-				'enable_calendar_thumbs' => false,
-				'enable_calendar_filters' => false,
-				'enable_category_legend' => false,
-				
-				'show_tooltips' => true,
-				'tooltips_pos_my_1' => 'bottom',
-				'tooltips_pos_my_2' => 'center',
-				'tooltips_pos_at_1' => 'center',
-				'tooltips_pos_at_2' => 'center',
-				'tooltip_style' => 'qtip-light',
-				
-				'espresso_use_pickers' => false,
-				'ee_event_background' => '007BAE',
-				'ee_event_text_color' => 'FFFFFF',
-				'enable_cat_classes' => false,
-				'time_format' => get_option('time_format'),
-				'show_time' => true,
-
-				'disable_categories' => false,
-				'show_attendee_limit' => false,
-				
-				'titleFormat_month' => 'MMMM yyyy', 
-				'titleFormat_week' => 'MMM dS[ yyyy] - {[ MMM] dS yyyy}', 
-				'titleFormat_day' => 'dddd, MMM dS, yyyy',
-				
-				'columnFormat_month' => 'ddd',
-				'columnFormat_week' => 'ddd M/d',
-				'columnFormat_day' => 'dddd M/d',
-				
-		);
-	}
-
 
 
 

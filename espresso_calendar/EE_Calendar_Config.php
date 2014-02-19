@@ -34,19 +34,12 @@ class EE_Calendar_Config extends EE_Config_Base{
 	 * @var EE_Calendar_Config_Time
 	 */
 	public $time;
+	/**
+	 *
+	 * @var EE_Calendar_Config_Display
+	 */
+	public $display;
 	
-	public $week_mode;
-	public $calendar_height;
-	public $enable_calendar_thumbs;
-	public $enable_calendar_filters;
-	public $enable_category_legend;
-	public $use_pickers;
-	public $event_background;
-	public $event_text_color;
-	public $enable_cat_classes;
-	public $disable_categories;
-	
-	public $show_attendee_limit;
 	
 	public function __construct(){
 		$this->header = new EE_Calendar_Config_Header();
@@ -55,17 +48,7 @@ class EE_Calendar_Config extends EE_Config_Base{
 		$this->title_format = new EE_Calendar_Config_Title_Format();
 		$this->column_format = new EE_Calendar_Config_Column_Format();
 		$this->time = new EE_Calendar_Config_Time();
-		$this->week_mode = 'liquid';//fixed, liquid, variable
-		$this->calendar_height = '';
-		$this->enable_calendar_thumbs = false;
-		$this->enable_calendar_filters = false;
-		$this->enable_category_legend = false;
-		$this->use_pickers = false;
-		$this->event_background = '007BAE';
-		$this->event_text_color = 'FFFFFF';
-		$this->enable_cat_classes = false;
-		$this->disable_categories = false;
-		$this->show_attendee_limit = false;
+		$this->display = new EE_Calendar_Config_Display();
 	}
 	
 	/**
@@ -93,11 +76,13 @@ class EE_Calendar_Config extends EE_Config_Base{
 class EE_Calendar_Config_Time extends EE_Config_Base{
 	public $first_day;
 	public $weekends;
+	public $week_mode;
 	public $format;
 	public $show;
 	public function __construct() {
 		$this->first_day = '0';
 		$this->weekends = true;
+		$this->week_mode = 'liquid';//fixed, liquid, variable
 		$this->format = get_option('time_format');
 		$this->show = true;
 	}
@@ -167,5 +152,33 @@ class EE_Calendar_Config_Column_Format extends EE_Config_Base{
 		$this->month = 'ddd';
 		$this->week = 'ddd M/d';
 		$this->day = 'dddd M/d';
+	}
+}
+/**
+ * contains config info relating to frontend display of teh calendar
+ */
+class EE_Calendar_Config_Display extends EE_Config_Base{
+	public $calendar_height;
+	public $enable_calendar_thumbs;
+	public $enable_calendar_filters;
+	public $enable_category_legend;
+	public $use_pickers;
+	public $event_background;
+	public $event_text_color;
+	public $enable_cat_classes;
+	public $disable_categories;
+	
+	public $show_attendee_limit;
+	public function __construct(){
+		$this->calendar_height = '';
+		$this->enable_calendar_thumbs = false;
+		$this->enable_calendar_filters = false;
+		$this->enable_category_legend = false;
+		$this->use_pickers = false;
+		$this->event_background = '#007BAE';
+		$this->event_text_color = '#FFFFFF';
+		$this->enable_cat_classes = false;
+		$this->disable_categories = false;
+		$this->show_attendee_limit = false;
 	}
 }

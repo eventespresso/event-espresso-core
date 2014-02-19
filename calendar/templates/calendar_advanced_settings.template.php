@@ -120,7 +120,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[show_attendee_limit]', $values, $calendar_config->show_attendee_limit, 'id="show_attendee_limit"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[display][show_attendee_limit]', $values, $calendar_config->display->show_attendee_limit, 'id="show_attendee_limit"'); ?><br />
 					<span class="description">
 						<?php _e('Enabling this setting increases the amount of database queries and may break the calendar on some servers.', 'event_espresso'); ?>
 					</span>
@@ -134,7 +134,7 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('calendar[disable_categories]', $values, $calendar_config->disable_categories, 'id="disable_categories"'); ?><br />
+					<?php echo EEH_Form_Fields::select_input('calendar[display][disable_categories]', $values, $calendar_config->display->disable_categories, 'id="disable_categories"'); ?><br />
 					<span class="description">
 						<?php _e('Disabling categories in the calendar may potentially speed up the calendar and allow you to load more events, but you will not be able to use the category colors and css class options.', 'event_espresso'); ?>
 					</span>
