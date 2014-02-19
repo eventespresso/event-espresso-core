@@ -18,7 +18,7 @@
 							<span><?php _e('State:', 'event_espresso'); ?></span> <?php echo $state_name; ?><br />
 							<span><?php _e('Country:', 'event_espresso'); ?></span> <?php echo $country_name; ?><br />
 							<span><?php _e('Venue ID:', 'event_espresso'); ?></span> <?php echo $venue->ID(); ?><br /></p>
-							<?php printf( __('This venue\'s shortcode: %s[ESPRESSO_VENUE id="%d"]%s', 'event_espresso'), '<strong class="highlight">', $venue->ID(), '</strong>' ); ?><br />
+							<!-- <?php printf( __('This venue\'s shortcode: %s[ESPRESSO_VENUE id="%d"]%s', 'event_espresso'), '<strong class="highlight">', $venue->ID(), '</strong>' ); ?><br /> -->
 							<a href="<?php echo $edit_url; ?>" target="_blank"><?php _e('Edit this Venue', 'event_espresso'); ?></a>
 					</li>	
 				</ul>

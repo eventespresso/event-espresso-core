@@ -292,7 +292,8 @@ final class EE_Front_Controller {
 					$current_post = 'posts';
 				}					
 			}
-		}
+		} 
+		$current_post = basename( $current_post );
 		// are we on a category page?
 		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
 		// make sure shortcodes are set
