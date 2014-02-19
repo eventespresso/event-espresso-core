@@ -289,10 +289,25 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function load_scripts_styles_add_question_group() {
 		$this->load_scripts_styles_forms();
+		$this->load_sortable_question_script();
 	}
 	public function load_scripts_styles_edit_question_group() {
 		$this->load_scripts_styles_forms();
+		$this->load_sortable_question_script();
 	}
+
+
+
+
+	/**
+	 * registers and enqueues script for questions
+	 * @return void
+	 */
+	public function load_sortable_question_script() {
+		wp_register_script('ee-question-sortable', REGISTRATION_FORM_CAF_ASSETS_URL . 'ee_question_order.js', array('jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, true);
+		wp_enqueue_script('ee-question-sortable');
+	}
+
 
 
 
