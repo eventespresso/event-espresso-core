@@ -141,10 +141,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'registration_form_questions_overview_views_bulk_actions_search_help_tab' => array(
 						'title' => __('Question Overview Views & Bulk Actions & Search', 'event_espresso'),
 						'filename' => 'registration_form_questions_overview_views_bulk_actions_search'
-						),
-					'registration_form_questions_overview_other_help_tab' => array(
-						'title' => __('Questions Overview Other', 'event_espresso'),
-						'filename' => 'registration_form_questions_overview_other'
 						)
 					),
 				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),
