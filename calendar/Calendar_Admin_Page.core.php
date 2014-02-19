@@ -8,11 +8,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * Event Registration and Management Plugin for Wordpress
  *
  * @package		Event Espresso
- * @author		Seth Shoultes
- * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
+ * @author		Event Espresso
+ * @copyright	(c)	2009-2014 Event Espresso All Rights Reserved.
  * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link		http://www.eventespresso.com
- * @version		4.1
+ * @link			http://www.eventespresso.com
+ * @version		EE4
  *
  * ------------------------------------------------------------------------
  *
@@ -33,8 +33,8 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	protected function _init_page_props() {
 		$this->page_slug = CALENDAR_PG_SLUG;
 		$this->page_label = CALENDAR_LABEL;
-		$this->_admin_base_url = CALENDAR_ADMIN_URL;
-		$this->_admin_base_path = CALENDAR_ADMIN;
+		$this->_admin_base_url = EE_CALENDAR_ADMIN_URL;
+		$this->_admin_base_path = EE_CALENDAR_ADMIN;
 	}
 
 
@@ -105,7 +105,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	protected function _add_screen_options_default() {}
 	protected function _add_feature_pointers() {}
 	public function load_scripts_styles() {
-		wp_register_script('ee-calendar-admin-js', CALENDAR_ADMIN_ASSETS_URL . 'calendar-admin.js', array('jquery','wp-color-picker'), ESPRESSO_CALENDAR_VERSION, TRUE );
+		wp_register_script('ee-calendar-admin-js', EE_CALENDAR_ADMIN_ASSETS_URL . 'calendar-admin.js', array('jquery','wp-color-picker'), EE_CALENDAR_VERSION, TRUE );
 		wp_enqueue_script('ee-calendar-admin-js');
 		wp_enqueue_style( 'wp-color-picker' );
 	}
@@ -141,13 +141,13 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['return_action'] = $this->_req_action;
 		$this->_set_add_edit_form_tags( 'update_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE);
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( CALENDAR_ADMIN_TEMPLATE_PATH . $template, $this->_template_args, TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . $template, $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();
 	}
 
 
 	protected function _usage() {
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( CALENDAR_ADMIN_TEMPLATE_PATH . 'calendar_usage_info.template.php', array(), TRUE );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'calendar_usage_info.template.php', array(), TRUE );
 		$this->display_admin_page_with_no_sidebar();
 	}
 	protected function _update_settings(){

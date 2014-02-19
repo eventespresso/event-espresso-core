@@ -48,7 +48,7 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 			'registers'=>array(
 				'category-color-for-calendar'=>array(
 					'type'=>'js',
-					'url'=>CALENDAR_ADMIN_ASSETS_URL.'category-color-for-calendar.js',
+					'url'=>EE_CALENDAR_ADMIN_ASSETS_URL.'category-color-for-calendar.js',
 					'depends'=>array('wp-color-picker')
 				)
 				//note: right now we don't have a custom css style, but we DO want the iris styles,
@@ -97,7 +97,7 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		$template_args['text_color'] = $text_color;
 		$template_args['default_background_color'] = $default_background_color;
 		$template_args['default_text_color'] = $default_text_color;
-		 EEH_Template::display_template(CALENDAR_ADMIN_TEMPLATE_PATH."category_color_for_calendar.template.php",$template_args);
+		 EEH_Template::display_template(EE_CALENDAR_ADMIN_TEMPLATE_PATH."category_color_for_calendar.template.php",$template_args);
 	}
 	
 	public function _redirect_action_update_category($redirection_query_args){

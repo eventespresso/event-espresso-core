@@ -38,17 +38,16 @@ class Calendar_Admin_Page_Init extends EE_Admin_Page_Init  {
 		
 		do_action('AHEE_log', __FILE__, __FUNCTION__, '');
 
-		define( 'CALENDAR_PG_SLUG', 'espresso_calendar' );	
-		define( 'CALENDAR_LABEL', __('Calendar', 'event_espresso'));	
-		define( 'CALENDAR_ADMIN', ESPRESSO_CALENDAR_PLUGINFULLPATH . 'admin' . DS . 'calendar' . DS );	
-		define( 'CALENDAR_ADMIN_URL', admin_url( 'admin.php?page=' . CALENDAR_PG_SLUG ));	
-		define( 'CALENDAR_ADMIN_ASSETS_PATH', CALENDAR_ADMIN . 'assets' . DS );		
-		define( 'CALENDAR_ADMIN_ASSETS_URL', ESPRESSO_CALENDAR_PLUGINFULLURL . 'admin/calendar/assets/' );	
-		define( 'CALENDAR_ADMIN_TEMPLATE_PATH', CALENDAR_ADMIN . 'templates' . DS );	
-		define( 'CALENDAR_ADMIN_TEMPLATE_URL', ESPRESSO_CALENDAR_PLUGINFULLURL . 'admin/calendar/templates/' );
+		define( 'CALENDAR_PG_SLUG', 'calendar' );	
+		define( 'CALENDAR_LABEL', __( 'Calendar', 'event_espresso' ));	
+		define( 'EE_CALENDAR_ADMIN_URL', admin_url( 'admin.php?page=' . CALENDAR_PG_SLUG ));	
+		define( 'EE_CALENDAR_ADMIN_ASSETS_PATH', EE_CALENDAR_ADMIN . 'assets' . DS );		
+		define( 'EE_CALENDAR_ADMIN_ASSETS_URL', EE_CALENDAR_PLUGINFULLURL . 'calendar_admin/assets/' );	
+		define( 'EE_CALENDAR_ADMIN_TEMPLATE_PATH', EE_CALENDAR_ADMIN . 'templates' . DS );	
+		define( 'EE_CALENDAR_ADMIN_TEMPLATE_URL', EE_CALENDAR_PLUGINFULLURL . 'calendar_admin/templates/' );
 
 		parent::__construct();
-		$this->_folder_path = CALENDAR_ADMIN;
+		$this->_folder_path = EE_CALENDAR_ADMIN;
 
 	}
 
