@@ -29,6 +29,8 @@
 }
 
 .question-group-questions-container { display:inline-block; width: 30%; }
+.ee-question-sortable { cursor: move;}
+.ee-question-sortable label { cursor: inherit;}
 
 table.question-options-table td, table.question-options-table th{
 	padding:1em 10px 0 3px; line-height: 1em;
