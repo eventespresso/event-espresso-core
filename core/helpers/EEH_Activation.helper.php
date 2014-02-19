@@ -446,8 +446,8 @@ class EEH_Activation {
 		//in order to avoid duplicate. When a new version is released (eg 4.2), use that version's data migration code.
 		//if 4.2 doesn't need to migrate anything, and only needs to add a column, you should still create a migration script for it,
 		//but just define the schema changes methods
-		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_1_0','dms');
-		$current_data_migration_script = new EE_DMS_4_1_0();
+		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_2_0','dms');
+		$current_data_migration_script = new EE_DMS_4_2_0();
 		//decide what to do when tables already exist. Do we nuke them and start fresh? or do we simply modify them?
 		//if this is a new activation, (or if it were run from a data migration script), nuke old tables
 		$drop_pre_existing_tables = EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ? true : false;
