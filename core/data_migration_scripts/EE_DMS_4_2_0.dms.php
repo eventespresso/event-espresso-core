@@ -413,7 +413,7 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 		$sql="QGQ_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					QSG_ID INT UNSIGNED NOT NULL ,
 					QST_ID INT UNSIGNED NOT NULL ,
-					QST_order INT UNSIGN NOT NULL DEFAULT 0,
+					QST_order INT UNSIGNED NOT NULL DEFAULT 0 ,
 					PRIMARY KEY  (QGQ_ID) ";
 		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
 
@@ -533,14 +533,18 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 			KEY CNT_ISO (CNT_ISO)";
 		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);	
 		
+		
+		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_1_0','dms');
+		$script_with_defaults = new EE_DMS_4_1_0();
+		
 		//setting up the default stats and countries is also essential for the data migrations to run
 		//(because many need to convert old string states to foreign keys into the states table)
-		$this->insert_default_states();
-		$this->insert_default_countries();
+		$script_with_defaults->insert_default_states();
+		$script_with_defaults->insert_default_countries();
 		//setting up default prices, price types, and tickets is also essential for the price migrations
-		$this->insert_default_price_types();
-		$this->insert_default_prices();
-		$this->insert_default_tickets();
+		$script_with_defaults->insert_default_price_types();
+		$script_with_defaults->insert_default_prices();
+		$script_with_defaults->insert_default_tickets();
 		
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
 		EE_Config::instance()->update_espresso_config(false, true);

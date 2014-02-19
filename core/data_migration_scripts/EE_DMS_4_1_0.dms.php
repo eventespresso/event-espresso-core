@@ -621,7 +621,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	 * 	@static
 	 * 	@return void
 	 */
-	private function insert_default_states() {
+	public function insert_default_states() {
 		
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
@@ -713,7 +713,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	 * 	@static
 	 * 	@return void
 	 */
-	private function insert_default_countries() {
+	public function insert_default_countries() {
 
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
