@@ -354,7 +354,8 @@ The Buttons and related paraphenalia
  margin: 0 1.5px 3px;
  border: none;
  border-radius: 0;
- background-color:	#007BAE;
+ background-color: #eee;
+ text-shadow: 1px 1px 0px #fff;
  font-size: 85%;
  line-height: 1;
 }
