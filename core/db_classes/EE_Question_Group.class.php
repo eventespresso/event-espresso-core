@@ -287,7 +287,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 	public function update_question_order( $questionObjectOrID, $qst_order ) {
 		$qst_ID = $questionObjectOrID instanceof EE_Question ? $questionObjectOrID->ID() : (int) $questionObjectOrID;
-		return EEM_Question_Group_Question::instance()->update( array('QST_order', $qst_order ), array( array('QST_ID' => $qst_ID, 'QSG_ID' => $this->ID() ) ) );
+		return EEM_Question_Group_Question::instance()->update( array('QST_order' => $qst_order ), array( array('QST_ID' => $qst_ID, 'QSG_ID' => $this->ID() ) ) );
 	}
 
 
