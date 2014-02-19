@@ -215,11 +215,15 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Gets all the questions whicha re part of this question gruop
+	 * Gets all the questions whicha re part of this question group (ordered Question_Group_Question.QST_order)
 	 * @return EE_Question[]
 	 */
 	public function questions(){
-		return !empty($this->_QSG_ID) ? $this->get_many_related('Question') : array();
+		return !empty($this->_QSG_ID) ? $this->get_many_related('Question', array('order_by' => array('Question_Group_Question.QST_order' => 'ASC' ) ) ) : array();
+	}
+
+
+
 		}
 	
 	/**
