@@ -215,11 +215,11 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Gets all the questions whicha re part of this question group (ordered Question_Group_Question.QST_order)
+	 * Gets all the questions whicha re part of this question group (ordered Question_Group_Question.QGQ_order)
 	 * @return EE_Question[]
 	 */
 	public function questions(){
-		return !empty($this->_QSG_ID) ? $this->get_many_related('Question', array('order_by' => array('Question_Group_Question.QST_order' => 'ASC' ) ) ) : array();
+		return !empty($this->_QSG_ID) ? $this->get_many_related('Question', array('order_by' => array('Question_Group_Question.QGQ_order' => 'ASC' ) ) ) : array();
 	}
 
 
@@ -237,14 +237,14 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 		$_where = !empty( $question_IDS_in_group ) ? array( 'QST_ID' => array( 'not_in', $question_IDS_in_group ) ) : array();
 
-		return EEM_Question::instance()->get_all( array( $_where, 'order_by' => array('QST_order' => 'ASC') ) );
+		return EEM_Question::instance()->get_all( array( $_where, 'order_by' => array('QST_ID' => 'ASC') ) );
 	}
 
 
 
 
 	/**
-	 * Gets an array of questions with questions IN the group at the start of the array and questions NOT in the group at the end of the array.  Questions in the group are ordered by Question_Group_Question.QST_order and questions NOT in the group are ordered by Question.QST_order
+	 * Gets an array of questions with questions IN the group at the start of the array and questions NOT in the group at the end of the array.  Questions in the group are ordered by Question_Group_Question.QGQ_order and questions NOT in the group are ordered by Question.QGQ_order
 	 * @return EE_Question[] 
 	 */
 	public function questions_in_and_not_in_group() {
@@ -287,7 +287,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 	public function update_question_order( $questionObjectOrID, $qst_order ) {
 		$qst_ID = $questionObjectOrID instanceof EE_Question ? $questionObjectOrID->ID() : (int) $questionObjectOrID;
-		return EEM_Question_Group_Question::instance()->update( array('QST_order' => $qst_order ), array( array('QST_ID' => $qst_ID, 'QSG_ID' => $this->ID() ) ) );
+		return EEM_Question_Group_Question::instance()->update( array('QGQ_order' => $qst_order ), array( array('QST_ID' => $qst_ID, 'QSG_ID' => $this->ID() ) ) );
 	}
 
 
