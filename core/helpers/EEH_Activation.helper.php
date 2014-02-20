@@ -448,11 +448,8 @@ class EEH_Activation {
 		//but just define the schema changes methods
 		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_2_0','dms');
 		$current_data_migration_script = new EE_DMS_4_2_0();
-		//decide what to do when tables already exist. Do we nuke them and start fresh? or do we simply modify them?
-		//if this is a new activation, (or if it were run from a data migration script), nuke old tables
-		$drop_pre_existing_tables = EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ? true : false;
-		$current_data_migration_script->schema_changes_before_migration($drop_pre_existing_tables);
-		$current_data_migration_script->schema_changes_after_migration($drop_pre_existing_tables);
+		$current_data_migration_script->schema_changes_before_migration();
+		$current_data_migration_script->schema_changes_after_migration();
 		EE_Data_Migration_Manager::instance()->update_current_database_state_to();
 	}
 
