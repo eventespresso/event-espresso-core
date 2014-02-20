@@ -62,7 +62,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 			'address' => __('Address', 'event_espresso'),
 			'city' => __('City', 'event_espresso'),
 			'capacity' => __('Capacity', 'event_espresso'),
-			'shortcode' => __('Shortcode', 'event_espresso'),
+			//'shortcode' => __('Shortcode', 'event_espresso'),
 			);
 
 		$this->_sortable_columns = array(

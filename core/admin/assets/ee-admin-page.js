@@ -149,11 +149,11 @@ jQuery(document).ready(function($) {
 			var fadeaway = true;
 			
 
-			if ( typeof(response.success) !== 'undefined' && response.success !== '' ) {
+			if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
 				msg = '<p>' + response.success + '</p>';
 			}
 		
-			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
+			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
 				msg = '<p>' + response.errors + '</p>';
 				$(existing_message).removeClass('updated').addClass('error');
 				fadeaway = false;
@@ -303,45 +303,49 @@ jQuery(document).ready(function($) {
 			$.each( eeLazyLoadingContainers, show );
 		}
 	};
-	espressoAjaxPopulate();
+	if ( typeof eeLazyLoadingContainers !== 'undefined' ) {
+		espressoAjaxPopulate();
+	}
 	
+	
+
 	
 	$('.dismiss-ee-nag-notice').click(function(event) {
-		event.preventDefault();
-		$.ajax({
-			type: "POST",
-			url:  eei18n.ajax_url,
-			dataType: "json",
-			data: {
-				action : 'dismiss_ee_nag_notice',
-				ee_nag_notice: ee_dismiss.nag_notice,
-				return_url: ee_dismiss.return_url,
-				noheader : 'true'
-			},
-			beforeSend: function() {
-				window.do_before_admin_page_ajax();
-			},
-			success: function( response ){
-				if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
-					console.log( response );
-					window.show_admin_page_ajax_msg( response );
-				} else {
-					$('#espresso-ajax-loading').fadeOut('fast');
-					$('#'+ee_dismiss.nag_notice).fadeOut('fast');
+		var nag_notice = $(this).attr('rel');
+		if ( $('#'+nag_notice).size() ) {
+			event.preventDefault();
+			$.ajax({
+				type: "POST",
+				url:  ee_dismiss.ajax_url,
+				dataType: "json",
+				data: {
+					action : 'dismiss_ee_nag_notice',
+					ee_nag_notice: nag_notice,
+					return_url: ee_dismiss.return_url,
+					noheader : 'true'
+				},
+				beforeSend: function() {
+					window.do_before_admin_page_ajax();
+				},
+				success: function( response ){
+					if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
+						console.log( response );
+						window.show_admin_page_ajax_msg( response );
+					} else {
+						$('#espresso-ajax-loading').fadeOut('fast');
+						$('#'+nag_notice).fadeOut('fast');
+					}
+				},
+				error: function( response ) {
+					$('#'+nag_notice).fadeOut('fast');
+					msg = {};
+					msg.errors = ee_dismiss.unknown_error;
+					console.log( msg );
+					window.show_admin_page_ajax_msg( msg );
 				}
-			},
-			error: function( response ) {
-				$('#'+ee_dismiss.nag_notice).fadeOut('fast');
-				msg = {};
-				msg.errors = ee_dismiss.unknown_error;
-				console.log( msg );
-				window.show_admin_page_ajax_msg( msg );
-			}
-		});
+			});
+		}
 	});
-	
-	
-	
 
 
 });

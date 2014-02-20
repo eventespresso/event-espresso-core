@@ -22,6 +22,14 @@
  * ------------------------------------------------------------------------
  */
 class EE_Load_Textdomain extends EE_Base {
+
+	/**
+	 * holds the current lang in WP
+	 * @var string
+	 */
+	private static $_lang;
+
+
 	/**
 	 * this takes care of retrieving a matching textdomain for event espresso for the current WPLANG from EE github repo (if necessary) and then loading it for translations.
 	 * should only be called in wp plugins_loaded callback
@@ -32,7 +40,7 @@ class EE_Load_Textdomain extends EE_Base {
 		self::_maybe_get_langfile();
 
 		//now load the textdomain
-		if ( !empty($lang) && file_exists(EE_LANGUAGES_SAFE_DIR.'event_espresso-'.$lang.'.mo') ){
+		if ( !empty(self::$_lang) && file_exists(EE_LANGUAGES_SAFE_DIR.'event_espresso-'.self::$_lang.'.mo') ){
 			load_plugin_textdomain('event_espresso', false, EE_LANGUAGES_SAFE_LOC);
 		}else{
 			load_plugin_textdomain('event_espresso', false, dirname(EE_PLUGINPATH) . '/languages/');
@@ -49,26 +57,25 @@ class EE_Load_Textdomain extends EE_Base {
 	 * @return void
 	 */
 	private static function _maybe_get_langfile() {
-		$lang = get_locale();
-		if ( $has_check = get_option( 'ee_lang_check_' . $lang . '_' . EVENT_ESPRESSO_VERSION ) || empty( $lang ) )
+		self::$_lang = get_locale();
+		if ( $has_check = get_option( 'ee_lang_check_' . self::$_lang . '_' . EVENT_ESPRESSO_VERSION ) || empty( self::$_lang ) )
 			return;
 
 		//if lang is en_US or empty then lets just get out.  (Event Espresso core is en_US)
-		if ( empty( $lang ) || $lang == 'en_US' )
+		if ( empty( self::$_lang ) || self::$_lang == 'en_US' )
 			return;
 
 		//made it here so let's get the file from the github repo
-		//@todo: this for now is pointing to the repo for EE3.1.  We'll need to update to the new EE4 languages repo once we've got it working.
 		$sideloader_args = array(
 			'_upload_to' => EE_PLUGIN_DIR_PATH . 'languages/',
-			'_upload_from' => 'https://github.com/eventespresso/languages-ee4/blob/master/event_espresso-' . $lang . '.mo?raw=true',
-			'_new_file_name' => 'event_espresso-' . $lang . '.mo'
+			'_upload_from' => 'https://github.com/eventespresso/languages-ee4/blob/master/event_espresso-' . self::$_lang . '.mo?raw=true',
+			'_new_file_name' => 'event_espresso-' . self::$_lang . '.mo'
 			);
 		
 
 		$sideloader = EE_Registry::instance()->load_helper('Sideloader', $sideloader_args, FALSE );
 
 		$success = $sideloader->sideload();
-		update_option( 'ee_lang_check_' . $lang . '_' . EVENT_ESPRESSO_VERSION, 1 );
+		update_option( 'ee_lang_check_' . self::$_lang . '_' . EVENT_ESPRESSO_VERSION, 1 );
 	}
 } //end EE_Load_Textdomain

@@ -248,12 +248,6 @@ class EED_Events_Archive  extends EED_Module {
 		$this->_elf_month = EED_Events_Archive::_display_month();
 		$this->_elf_category = EED_Events_Archive::_event_category_slug();
 		$this->_show_expired = EED_Events_Archive::_show_expired( TRUE );
-//		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		echo '<h4>$this->_elf_month : ' . $this->_elf_month . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_elf_category : ' . $this->_elf_category . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $this->_elf_category, '$this->_elf_category  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//		echo '<h4>$this->_show_expired : ' . $this->_show_expired . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_type : ' . $this->_type . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	}
 
 
@@ -266,10 +260,8 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function posts_join( $SQL ) {
 		global $wp_query;
-//		d( $wp_query );		
 		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {
 			// Category
-//			$elf_category = EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
 			$SQL .= EED_Events_Archive::posts_join_sql_for_terms( EED_Events_Archive::_event_category_slug() );
 		}
 		return $SQL;
@@ -305,10 +297,9 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function posts_join_for_orderby( $orderby_params = array() ) {
 		$SQL= '';
-		$orderby_params = is_array( $orderby_params ) ? $orderby_params : array( $orderby_params );
-		foreach( $orderby_params as $orderby ) {
+		foreach( (array)$orderby_params as $orderby ) {
 			switch ( $orderby ) {
-				
+					
 				case 'ticket_start' :
 				case 'ticket_end' :
 					$SQL .= ' LEFT JOIN ' . EEM_Datetime_Ticket::instance()->table() . ' ON (' . EEM_Datetime::instance()->table() . '.DTT_ID = ' . EEM_Datetime_Ticket::instance()->table() . '.DTT_ID )';
@@ -330,6 +321,7 @@ class EED_Events_Archive  extends EED_Module {
 				
 			}
 		}
+
 		return  $SQL;
 	}
 
@@ -346,10 +338,8 @@ class EED_Events_Archive  extends EED_Module {
 			// Show Expired ?
 			$SQL .= EED_Events_Archive::posts_where_sql_for_show_expired( EED_Events_Archive::_show_expired() );
 			// Category
-			//$elf_category = EED_Events_Archive::_event_category_slug();
 			$SQL .=  EED_Events_Archive::posts_where_sql_for_event_category_slug( EED_Events_Archive::_event_category_slug() );
 			// Start Date
-			//$elf_month = EED_Events_Archive::_display_month();
 			$SQL .= EED_Events_Archive::posts_where_sql_for_event_list_month( EED_Events_Archive::_display_month() );
 		}
 		return $SQL;
@@ -440,19 +430,15 @@ class EED_Events_Archive  extends EED_Module {
 	public static function posts_orderby_sql( $orderby_params = array(), $sort = 'ASC' ) {
 		global $wpdb;
 		$SQL = '';
-		$cntr = 1;
+		$cntr = 0;
 		$orderby_params = is_array( $orderby_params ) ? $orderby_params : array( $orderby_params );
 		foreach( $orderby_params as $orderby ) {
-			$glue = $cntr == 1 || $cntr == count( $orderby_params ) ? ' ' : ', ';
+			$glue = $cntr == 0 || $cntr == count( $orderby_params ) ? ' ' : ', ';
 			switch ( $orderby ) {
 				
 				case 'id' :
 				case 'ID' :
 					$SQL .= $glue . $wpdb->posts . '.ID ' . $sort;
-					break;
-				
-				case 'start_date' :
-					$SQL .= $glue . EEM_Datetime::instance()->table() . '.DTT_EVT_start ' . $sort;
 					break;
 				
 				case 'end_date' :
@@ -486,11 +472,16 @@ class EED_Events_Archive  extends EED_Module {
 				case 'state' :
 					$SQL .= $glue . EEM_State::instance()->table() . '.STA_name ' . $sort;
 				break;
+
+				case 'start_date' :
+				default :
+					$SQL .= $glue . EEM_Datetime::instance()->table() . '.DTT_EVT_start ' . $sort;
+					break;
+				
 				
 			}
 			$cntr++;
 		}
-		//echo '<h4>$SQL : ' . $SQL . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return  $SQL;
 	}
 
@@ -943,7 +934,6 @@ class EED_Events_Archive  extends EED_Module {
 //			$event_list_grid_size = isset( $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size ) ? $EE->CFG->template_settings->EED_Events_Archive->event_list_grid_size : 'medium';
 //			$event_list_css[] = $event_list_grid_size . '-event-list-grid';
 //		}
-		$event_list_css = apply_filters( 'EED_Events_Archive__event_list_css__event_list_css_array', $event_list_css );
 		return implode( ' ', $event_list_css );
 	}
 
@@ -1019,7 +1009,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function event_list_title() {
-		return apply_filters( 'EED_Events_Archive__event_list_title__event_list_title', __( 'Upcoming Events', 'event_espresso' ));
+		return apply_filters( 'FHEE__archive_espresso_events_template__upcoming_events_h1', __( 'Upcoming Events', 'event_espresso' ));
 	}	
 
 
@@ -1106,7 +1096,7 @@ class EE_Event_List_Query extends WP_Query {
 //	private $_list_type ='text';	
 
 	function __construct( $args = array() ) {
-		//printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// incoming args could be a mix of WP query args + EE shortcode args
 		foreach ( $args as $key =>$value ) {
 			$property = '_' . $key;
@@ -1127,18 +1117,17 @@ class EE_Event_List_Query extends WP_Query {
 		
 		// first off, let's remove any filters from previous queries
 //		remove_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ));
-		remove_filter( 'EED_Events_Archive__event_list_title__event_list_title', array( $this, 'event_list_title' )); 
-		remove_all_filters( 'EED_Events_Archive__event_list_css__event_list_css_array' );
-//		remove_all_filters( 'EED_Events_Archive__event_list_css__event_list_css_array', array( $this, 'event_list_css' ));
+		remove_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' )); 
+		remove_all_filters( 'FHEE__content_espresso_events__event_class', array( $this, 'event_list_css' ));
 
 		//  set view
 //		add_filter( 'EED_Events_Archive__set_type__type', array( $this, 'event_list_type' ), 10, 1 );
 		// have to call this in order to get the above filter applied
 //		EED_Events_Archive::set_type();
 		// Event List Title ?
-		add_filter( 'EED_Events_Archive__event_list_title__event_list_title', array( $this, 'event_list_title' ), 10, 1 ); 
+		add_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ), 10, 1 ); 
 		// add the css class
-		add_filter( 'EED_Events_Archive__event_list_css__event_list_css_array', array( $this, 'event_list_css' ), 10, 1 );
+		add_filter( 'FHEE__content_espresso_events__event_class', array( $this, 'event_list_css' ), 10, 1 );
 
 		// Force these args
 		$args = array_merge( $args, array(
@@ -1249,12 +1238,10 @@ class EE_Event_List_Query extends WP_Query {
 	 *  @return 	array
 	 */
 	public function event_list_css( $event_list_css ) {
-		if ( ! empty( $this->_css_class )) {
-			$event_list_css[] = $this->_css_class;
-		}
-		if ( ! empty( $this->_category_slug )) {
-			$event_list_css[] = $this->_category_slug;
-		}
+		$event_list_css .=  ! empty( $event_list_css ) ? ' ' : '';
+		$event_list_css .=  ! empty( $this->_css_class ) ? $this->_css_class : '';
+		$event_list_css .=  ! empty( $event_list_css ) ? ' ' : '';
+		$event_list_css .=  ! empty( $this->_category_slug ) ? $this->_category_slug : '';
 		return $event_list_css;
 	}
 

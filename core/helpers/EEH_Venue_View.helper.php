@@ -48,7 +48,7 @@
 
 
 	/**
-	 * 	espresso_venue_name
+	 * 	espresso_venue_link
 	 *
 	 *  @access 	public
 	 *  @param 	int 		$VNU_ID
@@ -113,9 +113,9 @@
 
 	/**
 	 * espresso_venue_address
-	 * @param 	string 	'inline' or 'multiline'
 	 * returns a formatted block of html  for displaying a venue's address
 	 *
+	 * @param 	string 	'inline' or 'multiline'
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_venue_address' )) {
