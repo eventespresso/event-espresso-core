@@ -246,6 +246,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		if( $num_records_actually_migrated < $num_records_to_migrate_limit && $stage!=null && ! $stage->has_more_to_do()){
 			//apparently we're done, because we couldn't migrate the number we intended to
 			$this->set_status(EE_Data_Migration_Manager::status_completed);
+			$this->_update_feedback_message(array_reverse($records_migrated_per_stage));
 			//do schema changes for after the migration now
 			//first double-cehckw ehaven't already done this
 			$this->_maybe_do_schema_changes(false);

@@ -1568,9 +1568,12 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _isnt_empty($name,$value){
 		if(empty($value)){
-			$value = is_array($value) ? json_encode($value): $value;
-			$value = $value === NULL ? 'null' : $value;
-			EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf(__("Your query has an empty query parameter. Parameter '%s' should not have an empty value (you provided '%s')", 'event_espresso'),$name,$value), '4.2');
+			//only show warning for empty string. 
+//			if($value === ''){
+//				$value = is_array($value) ? json_encode($value): $value;
+//				EE_Error::doing_it_wrong('EEM_Base::_create_model_query_info_carrier', sprintf(__("Your query has an empty query parameter. Parameter '%s' should not have an empty value (you provided '%s')", 'event_espresso'),$name,$value), '4.2');
+//			}
+			
 			return false;
 		}else{
 			return true;
