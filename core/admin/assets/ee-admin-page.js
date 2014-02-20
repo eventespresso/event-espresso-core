@@ -149,11 +149,11 @@ jQuery(document).ready(function($) {
 			var fadeaway = true;
 			
 
-			if ( typeof(response.success) !== 'undefined' && response.success !== '' ) {
+			if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
 				msg = '<p>' + response.success + '</p>';
 			}
 		
-			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
+			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
 				msg = '<p>' + response.errors + '</p>';
 				$(existing_message).removeClass('updated').addClass('error');
 				fadeaway = false;
