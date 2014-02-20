@@ -16,12 +16,10 @@ class EE_DMS_4_2_0_datetime_fields extends EE_Data_Migration_Script_Stage_Table{
 		//foreach question_group_question entry with this QST_ID, we want to set its
 		//QSG_order equal to this question's QST_order
 		global $wpdb;
-		$date_format = get_option('date_format');
-		$time_format = get_option('time_format');
-		$name = date("$date_format $time_format",strtotime($old_row['DTT_EVT_start']))." UTC";
+		
 		$updated = $wpdb->update($this->_old_table,
 				array(
-					'DTT_name'=>$name,
+					'DTT_name'=>'',
 					'DTT_description'=>'',
 					),
 				array(
@@ -34,7 +32,7 @@ class EE_DMS_4_2_0_datetime_fields extends EE_Data_Migration_Script_Stage_Table{
 					'%d',//DTT_ID
 					));
 		if( FALSE === $updated ){
-			$this->add_error(sprintf(__("Error in updating table {$this->_old_table} setting DTT_name = %s where DTT_ID = %d", 'event_espresso'),$name,$old_row['QST_ID']));
+			$this->add_error(sprintf(__("Error in updating table {$this->_old_table} setting DTT_name = '' and DTT_description = '' where DTT_ID = %d", 'event_espresso'),$old_row['QST_ID']));
 		}
 		//nothing to map really
 	}	
