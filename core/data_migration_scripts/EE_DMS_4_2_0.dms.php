@@ -1,7 +1,9 @@
 <?php
 /**
  * meant to convert DBs between 4.1.x to 4.2.0
- * mostly just adds 
+ * mostly just 
+ * -adds QGQ_order to teh question-group_question table;
+ * -adds DTT_name and DTT_description to the datetime table;
  */
 //make sure we have all the stages loaded too
 //unfortunately, this needs to be done upon INCLUSION of this file,
@@ -25,7 +27,8 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.2.0.P", "event_espresso");
 		$this->_migration_stages = array(
-			new EE_DMS_4_2_0_question_group_questions()
+			new EE_DMS_4_2_0_question_group_questions(),
+			new EE_DMS_4_2_0_datetime_fields(),
 		);
 		parent::__construct();
 	}
@@ -102,6 +105,8 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_datetime';
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID INT UNSIGNED NOT NULL ,
+				  DTT_name VARCHAR(255) NOT NULL,
+				  DTT_description TEXT NOT NULL default '',
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_reg_limit mediumint(8) DEFAULT -1,
