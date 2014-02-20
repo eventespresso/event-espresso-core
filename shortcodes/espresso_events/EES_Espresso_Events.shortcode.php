@@ -64,7 +64,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 * 	[ESPRESSO_EVENTS title="My Super Event"]
 	 * 	[ESPRESSO_EVENTS limit=5]
 	 * 	[ESPRESSO_EVENTS css_class="my-custom-class"]
-	 * 	[ESPRESSO_EVENTS month="October 2104"]
+	 * 	[ESPRESSO_EVENTS month="April 2014"]
 	 * 	[ESPRESSO_EVENTS show_expired=true]
 	 * 	[ESPRESSO_EVENTS category_slug="free-events"]
 	 * 	[ESPRESSO_EVENTS order_by="start_date,id"]
