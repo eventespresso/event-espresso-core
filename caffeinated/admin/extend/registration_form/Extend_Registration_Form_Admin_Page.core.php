@@ -666,13 +666,20 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		// grab our row IDs
 		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
 
+		$perpage = !empty( $this->_req_data['perpage'] ) ? (int) $this->_req_data['perpage'] : NULL;
+		$curpage = !empty( $this->_req_data['curpage'] ) ? (int) $this->_req_data['curpage'] : NULL;
+
 		if ( is_array( $row_ids )) {
+			//figure out where we start the row_id count at for the current page.
+			$qsgcount = empty( $curpage ) ? 0 : ($curpage - 1 ) * $perpage;
+		
 			global $wpdb;
-			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
+			for ( $i = 0; $i < count($row_ids); $i++ ) {
 				//Update the questions when re-ordering
-				if ( EEM_Question_Group::instance()->update ( array( 'QSG_order' => $i+1 ), array(array( 'QSG_ID' => $row_ids[$i] ))) === FALSE ) {
+				if ( EEM_Question_Group::instance()->update ( array( 'QSG_order' => $qsgcount ), array(array( 'QSG_ID' => $row_ids[$i] ))) === FALSE ) {
 					$success = FALSE;
-				} 
+				}
+				$qsgcount++;
 			}
 		} else {
 			$success = FALSE;
