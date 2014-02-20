@@ -74,6 +74,28 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
     *	@var int	
     */
 	protected $_EVT_ID;
+
+
+
+
+	/**
+	 * Datetime Name
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $_DTT_name;
+
+
+
+
+	/**
+	 * Datetime Description
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $_DTT_description;
 	
 	
 	
@@ -211,6 +233,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
+
+	public function set_name( $name ) {
+		return $this->set( 'DTT_name', $name );
+	}
+
+
+
+
+	public function set_description( $description ) {
+		return $this->set( 'DTT_description', $description );
+	}
+
+
+
 	/**
 	*		Set event start date
 	* 
@@ -340,6 +376,27 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		}
 	}
 
+
+
+	/**
+	 * returns the datetime name
+	 * @return string
+	 */
+	public function name() {
+		return $this->get('DTT_name');
+	} 
+
+
+
+
+
+	/**
+	 * returns the datetime description
+	 * @return string 
+	 */
+	public function description() {
+		return $this->get('DTT_description');
+	}
 
 
 
