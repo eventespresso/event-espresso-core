@@ -326,7 +326,7 @@ class EEM_Event  extends EEM_CPT_Base{
 		$qgs = $this->get_question_groups_for_event( $EVT_ID, $registration );
 		if ( !empty( $qgs ) ) {
 			foreach ( $qgs as $qg ) {
-			 	$qsts = $qg->get_many_related('Question', array('order_by' => array('QST_order' => 'ASC' ) ) );
+			 	$qsts = $qg->questions();
 			 	foreach ( $qsts as $qst ) {
 			 		if ( $qst->is_system_question() )
 			 			continue;

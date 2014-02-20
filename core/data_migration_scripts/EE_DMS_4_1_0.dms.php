@@ -90,7 +90,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	public function pretty_name() {
 		return __("Core Data Migration to version 4.1.0", "event_espresso");
 	}
-	public function schema_changes_before_migration($drop_pre_existing_tables = false) {
+	public function schema_changes_before_migration() {
 		//relies on 4.1's EEH_Activation::create_table
 		require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
 		
@@ -100,11 +100,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					QST_ID INT UNSIGNED NOT NULL ,
 					ANS_value TEXT NOT NULL ,
 					PRIMARY KEY  (ANS_ID)";
-		//IMPORTANT if you're modifying: if its acceptable that the table MAY already exist
-		//simply use FALSE for the 3rd arg- otherwise use $drop_pre_existing_table's value
-		//in 4.1.0's migration, ALL these tables should be new. But if we WERE
-		//simply adding a column onto one or something, then we should use FALSE
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 		
 		$table_name = 'esp_attendee_meta';
 		$sql = "ATTM_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
@@ -123,7 +119,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 								KEY ATT_fname (ATT_fname),
 								KEY ATT_lname (ATT_lname),
 								KEY ATT_email (ATT_email)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -144,7 +140,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  CNT_is_EU tinyint(1) DEFAULT '0',
 					  CNT_active tinyint(1) DEFAULT '0',
 					  PRIMARY KEY  (CNT_ISO)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables );
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
 
 
 
@@ -165,7 +161,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		
 		
 		
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables );
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
 		$table_name = 'esp_event_meta';
 		$sql = "
 			EVTM_ID INT NOT NULL AUTO_INCREMENT,
@@ -182,7 +178,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			EVT_external_URL VARCHAR(200) NULL ,
 			EVT_donations TINYINT(1) NULL,
 			PRIMARY KEY  (EVTM_ID)";
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
 		
@@ -192,7 +188,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					QSG_ID INT UNSIGNED NOT NULL ,
 					EQG_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (EQG_ID)";
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
 
@@ -202,7 +198,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				VNU_ID INT(11) NOT NULL ,
 				EVV_primary TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 				PRIMARY KEY  (EVV_ID)";
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
 		
@@ -213,7 +209,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				EXM_key varchar(45) DEFAULT NULL,
 				EXM_value text,
 				PRIMARY KEY  (EXM_ID)";
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 		$table_name='esp_line_item';
 		$sql="LIN_ID int(11) NOT NULL AUTO_INCREMENT,
@@ -232,7 +228,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				OBJ_ID int(11) DEFAULT NULL,
 				OBJ_type varchar(45)DEFAULT NULL,
 				PRIMARY KEY  (LIN_ID)";
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables );
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB' );
 
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -242,7 +238,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					MTP_content text NOT NULL,
 					PRIMARY KEY  (MTP_ID),
 					KEY GRP_ID (GRP_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -259,7 +255,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (GRP_ID),
 					KEY EVT_ID (EVT_ID),
 					KEY MTP_user_id (MTP_user_id)";
-		EEH_Activation::create_table( $table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version( $table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -280,7 +276,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (PAY_ID),
 					KEY TXN_ID (TXN_ID),
 					KEY PAY_timestamp (PAY_timestamp)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 		$table_name = 'esp_promotion';
 		$sql = "PRO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -299,7 +295,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					PRO_order TINYINT UNSIGNED NOT NULL DEFAULT 40 ,
 					PRIMARY KEY  (PRO_ID) ,
 					KEY PRC_ID (PRC_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 		
 		$table_name = 'esp_promotion_object';
 		$sql = "POB_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -310,7 +306,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			PRIMARY KEY  (POB_ID),
 			KEY OBJ_ID (OBJ_ID),
 			KEY PRO_ID (PRO_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 		
 		$table_name = 'esp_promotion_applied';
 		$sql = "PRA_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -320,7 +316,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			PRIMARY KEY  (PRA_ID),
 			KEY OBJ_ID (OBJ_ID),
 			KEY PRO_ID (PRO_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 		
 		$table_name = 'esp_promotion_rule';
 		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -331,7 +327,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (PRR_ID) ,
 					KEY PRO_ID (PRO_ID),
 					KEY RUL_ID (RUL_ID) ";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 		
 		
 		
@@ -347,7 +343,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					RUL_is_active TINYINT(1) NOT NULL DEFAULT 1 ,
 					RUL_archived TINYINT(1) NOT NULL DEFAULT 0 ,
 					PRIMARY KEY  (RUL_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 		
 
 
@@ -371,7 +367,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  TKT_parent int(10) unsigned DEFAULT '0',
 					  TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
 					  PRIMARY KEY  (TKT_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -381,7 +377,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  TKT_ID int(10) unsigned NOT NULL,
 					  PRC_ID int(10) unsigned NOT NULL,
 					  PRIMARY KEY  (TKP_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -391,7 +387,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  DTT_ID int(10) unsigned NOT NULL,
 					  TKT_ID int(10) unsigned NOT NULL,
 					  PRIMARY KEY  (DTK_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -403,7 +399,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  TTM_description text,
 					  TTM_file varchar(45),
 					  PRIMARY KEY  (TTM_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -419,7 +415,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
 					  PRC_parent int(10) unsigned DEFAULT 0,
 					  PRIMARY KEY  (PRC_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -432,7 +428,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
 				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
 				  PRIMARY KEY  (PRT_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 		
@@ -449,7 +445,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					QST_wp_user BIGINT UNSIGNED NULL,
 					QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID)';
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 		
 		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 		
@@ -465,7 +461,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QSG_ID),
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 		
 		
 		
@@ -474,7 +470,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					QSG_ID INT UNSIGNED NOT NULL ,
 					QST_ID INT UNSIGNED NOT NULL ,
 					PRIMARY KEY  (QGQ_ID) ";
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
 		
@@ -485,7 +481,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					QST_ID INT UNSIGNED NOT NULL ,
 					QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 					PRIMARY KEY  (QSO_ID)";
-		EEH_Activation::create_table($table_name,$sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
 
@@ -513,7 +509,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  KEY STS_ID (STS_ID),
 					  KEY REG_url_link (REG_url_link),
 					  KEY REG_code (REG_code)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB ', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 
@@ -525,7 +521,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					CHK_in TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 					CHK_timestamp datetime NOT NULL default '0000-00-00 00:00:00' ,
 					PRIMARY KEY  (CHK_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -536,7 +532,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  STA_name varchar(100) COLLATE utf8_bin NOT NULL,
 					  STA_active tinyint(1) DEFAULT '1',
 					  PRIMARY KEY  (STA_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -549,7 +545,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  STS_open tinyint(1) NOT NULL DEFAULT 1,
 					  UNIQUE KEY STS_ID_UNIQUE (STS_ID),
 					  KEY STS_type (STS_type)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 
@@ -564,7 +560,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (TXN_ID),
 					  KEY TXN_timestamp (TXN_timestamp),
 					  KEY STS_ID (STS_ID)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
 		
@@ -590,7 +586,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			PRIMARY KEY  (VNUM_ID),
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
-		EEH_Activation::create_table($table_name, $sql, 'ENGINE=InnoDB', $drop_pre_existing_tables);	
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');	
 		
 		//setting up the default stats and countries is also essential for the data migrations to run
 		//(because many need to convert old string states to foreign keys into the states table)
@@ -606,11 +602,12 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 		return true;
 	}
 	/**
-	 * 
-	 * @param boolean $drop_pre_existing_tables
+	 * Yes we could have cleaned up the ee3 tables here. But just in case someone
+	 * didn't backup their DB, and decides they want ot keep using EE3, we'll 
+	 * leave them for now. Mayeb remove them in 4.5 or something.
 	 * @return boolean
 	 */
-	public function schema_changes_after_migration($drop_pre_existing_tables = false) {
+	public function schema_changes_after_migration() {
 		return true;
 	}
 	
@@ -621,7 +618,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	 * 	@static
 	 * 	@return void
 	 */
-	private function insert_default_states() {
+	public function insert_default_states() {
 		
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
@@ -713,7 +710,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 	 * 	@static
 	 * 	@return void
 	 */
-	private function insert_default_countries() {
+	public function insert_default_countries() {
 
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";

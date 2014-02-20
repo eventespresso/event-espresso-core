@@ -128,7 +128,7 @@ $tax_total_line_item;
 								<?php foreach($registrations_per_line_item[$line_item_id] as $registration){
 									/* @var $registration EE_Registration */
 									$attendee = $registration->attendee();
-									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.QST_order'=>'desc')));?>
+									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.Question_Group_Question.QGQ_order'=>'desc')));?>
 								<li class="ticket-registration">
 									<table class="registration-details">
 										<tr class="odd">

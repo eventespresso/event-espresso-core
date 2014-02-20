@@ -59,7 +59,8 @@ class EEM_Question_Group_Question extends EEM_Base {
 			'Question_Group_Question'=>array(
 				'QGQ_ID'=>new EE_Primary_Key_Int_Field('QGQ_ID', __('Question Gruop to Question Link ID','event_espresso')),
 				'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('Question Gruop ID','event_espresso'), false, 0, 'Question_Group'),
-				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question Id','event_espresso'), false, 0, 'Question')
+				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question Id','event_espresso'), false, 0, 'Question'),
+				'QGQ_order' => new EE_Integer_Field('QGQ_order', __('Question Group Question Order', 'event_espresso'), false, 0 )
 			)
 		);
 		$this->_model_relations = array(

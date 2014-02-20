@@ -56,16 +56,6 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => 0,
 					'tipAdjustmentY' => -35
 					)
-				),
-			40 => array(
-				'id' => 'QST_order_disabled',
-				'content' => $this->_qst_order_stop(),
-				'options' => array(
-					'tipLocation' => 'top',
-					'tipAdjustmentX' => 0,
-					'tipAdjustmentY' => -35
-					)
-				),
 			50 => array(
 				'id' => 'QST_admin_only_disabled',
 				'content' => $this->_qst_admin_only_stop(),
@@ -119,10 +109,6 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 
 	protected function _qst_admin_label_stop() {
 		return '<p>' . __('Helps you understand the difference between questions that may appear similar but are actually different.', 'event_espresso') . '</p>';
-	}
-
-	protected function _qst_order_stop() {
-		return '<p>' . __('Set the order that you want your question to appear in.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qst_admin_only_stop() {

@@ -48,8 +48,5 @@
 </ul>
 </p>
 <p>
-<?php _e('Dragging and dropping the questions will change the order that they appear in. A question at the top of the list will appear higher up in any question group it is assigned to and one that is at the bottom of the list will appear lower.', 'event_espresso'); ?>
-</p>
-<p>
 <?php _e('<strong>Notice</strong><br />System questions are created by Event Espresso and cannot be deleted. However, they can be edited. Be careful when editing these system questions as they are required for regisrations to work correctly.'); ?>
 </p>

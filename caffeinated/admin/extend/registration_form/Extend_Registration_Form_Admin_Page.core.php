@@ -276,7 +276,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	protected function _ajax_hooks() {
-		parent::_ajax_hooks();
 		add_action('wp_ajax_espresso_update_question_group_order', array( $this, 'update_question_group_order' ));
 	}
 
@@ -290,10 +289,25 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function load_scripts_styles_add_question_group() {
 		$this->load_scripts_styles_forms();
+		$this->load_sortable_question_script();
 	}
 	public function load_scripts_styles_edit_question_group() {
 		$this->load_scripts_styles_forms();
+		$this->load_sortable_question_script();
 	}
+
+
+
+
+	/**
+	 * registers and enqueues script for questions
+	 * @return void
+	 */
+	public function load_sortable_question_script() {
+		wp_register_script('ee-question-sortable', REGISTRATION_FORM_CAF_ASSETS_URL . 'ee_question_order.js', array('jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, true);
+		wp_enqueue_script('ee-question-sortable');
+	}
+
 
 
 
@@ -416,44 +430,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-
-
-		
-	
-	/**
-	 * method for performing updates to question order
-	 * @return array results array
-	 */	
-	public function update_question_order() {
-		$success = __( 'Question order was updated successfully.', 'event_espresso' );
-		
-		// grab our row IDs
-		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
-
-
-		if ( is_array( $row_ids )) {
-			global $wpdb;
-			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
-				//Update the questions when re-ordering
-				$id = absint($row_ids[$i]);
-				if ( EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array( array( 'QST_ID' => $id ) ) ) === FALSE ) {
-					$success = FALSE;
-				} 
-			}
-		} else {
-			$success = FALSE;
-		}
-		
-		$errors = ! $success ? __( 'An error occurred. The question order was not updated.', 'event_espresso' ) : FALSE;
-		
-		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
-		die();
-		
-	}
-
-
-
-
 	/******************************    QUESTION GROUPS    ******************************/
 
 
@@ -475,7 +451,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			$this->_set_add_edit_form_tags('insert_question_group');
 		}
 		$this->_template_args['values'] = $this->_yes_no_values;
-		$this->_template_args['all_questions']=$this->_question_model->get_all( array( 'order_by' => array('QST_order' => 'ASC')));
+		$this->_template_args['all_questions']=$questionGroup->questions_in_and_not_in_group();
 		$this->_template_args['QSG_ID']=$ID ? $ID : TRUE;
 		$this->_template_args['question_group']=$questionGroup;
 		
@@ -522,6 +498,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			
 			if(array_key_exists('questions',$this->_req_data) && array_key_exists($question_ID,$this->_req_data['questions'])){
 				$question_group->add_question($question_ID);
+			}elseif ( !empty( $this->_req_data['question_orders'][$question_ID] ) ){
+				//update question order
+				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
+			}elseif ( $question->is_system_question() && $question_group->get('QSG_system') === 1 && isset( $this->_req_data['question_orders'][$question_ID] ) ) {
+				//always make sure we order system questions for the personal group
+				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
+
 			}else{
 				//not found, remove it (but only if not a system question for the personal group)
 				if ( $question->is_system_question() && $question_group->get('QSG_system') === 1  )
@@ -533,6 +516,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		if(array_key_exists('questions',$this->_req_data)){
 			foreach(array_keys($this->_req_data['questions']) as $question_ID){
 				$question_group->add_question($question_ID);
+				if ( isset( $this->_req_data['question_orders'][$question_ID]))
+				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
 			}
 		}
 		$query_args=array('action'=>'edit_question_group','QSG_ID'=>$ID);
@@ -681,13 +666,20 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		// grab our row IDs
 		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
 
+		$perpage = !empty( $this->_req_data['perpage'] ) ? (int) $this->_req_data['perpage'] : NULL;
+		$curpage = !empty( $this->_req_data['curpage'] ) ? (int) $this->_req_data['curpage'] : NULL;
+
 		if ( is_array( $row_ids )) {
+			//figure out where we start the row_id count at for the current page.
+			$qsgcount = empty( $curpage ) ? 0 : ($curpage - 1 ) * $perpage;
+		
 			global $wpdb;
-			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
+			for ( $i = 0; $i < count($row_ids); $i++ ) {
 				//Update the questions when re-ordering
-				if ( EEM_Question_Group::instance()->update ( array( 'QSG_order' => $i+1 ), array(array( 'QSG_ID' => $row_ids[$i] ))) === FALSE ) {
+				if ( EEM_Question_Group::instance()->update ( array( 'QSG_order' => $qsgcount ), array(array( 'QSG_ID' => $row_ids[$i] ))) === FALSE ) {
 					$success = FALSE;
-				} 
+				}
+				$qsgcount++;
 			}
 		} else {
 			$success = FALSE;

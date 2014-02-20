@@ -645,7 +645,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				));
 				
 				foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
-					$Questions = $Question_Group->get_many_related( 'Question', array( array( 'QST_admin_only' => 0, 'QST_deleted' => 0 ), 'order_by'=>array( 'QST_order' =>'ASC' )));
+					$Questions = $Question_Group->get_many_related( 'Question', array( array( 'QST_admin_only' => 0, 'QST_deleted' => 0 ), 'order_by'=>array( 'Question_Group_Question.QGQ_order' =>'ASC' )));
 					foreach ( $Questions as $Question ) {
 						// if this question was for an attendee detail, then check for that answer
 						$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
