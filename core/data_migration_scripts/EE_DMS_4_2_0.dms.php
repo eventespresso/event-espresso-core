@@ -105,7 +105,7 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_datetime';
 		$sql = "DTT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				  EVT_ID INT UNSIGNED NOT NULL ,
-				  DTT_name VARCHAR(255) NOT NULL,
+				  DTT_name VARCHAR(255) NOT NULL default '',
 				  DTT_description TEXT NOT NULL default '',
 				  DTT_EVT_start datetime NOT NULL default '0000-00-00 00:00:00',
 				  DTT_EVT_end datetime NOT NULL default '0000-00-00 00:00:00',
