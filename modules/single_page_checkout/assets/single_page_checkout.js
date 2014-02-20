@@ -710,6 +710,7 @@ jQuery(document).ready(function($) {
 			var form_data = $('#spco-registration-'+step+'-frm').serialize();
 			form_data += '&ee_front_ajax=1';
 			form_data += '&step=' + step;
+			form_data += '&EESID=' + eei18n.EESID;
 			SPCO.debug( 'submit_reg_form > form_data', form_data, true );
 			//alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
 			$.ajax({
