@@ -49,7 +49,7 @@ if ( $event_queue['total_items'] > 0 ) {
 			<?php if ( $item['ticket']->ID() != $prev_ticket ) { ?>
 				<?php if ( ! $revisit ) { ?>
 			<div class="spco-ticket-info-dv">
-				<h5><?php _e('Ticket Details', 'event_espresso');?></h5>
+				<h4><?php _e('Ticket Details', 'event_espresso');?></h4>
 				<table>
 					<tr>
 						<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
@@ -74,7 +74,7 @@ if ( $event_queue['total_items'] > 0 ) {
 			<?php } ?>	
 			
 			<fieldset id="spco-attendee-wrap-<?php echo $line_item;?>" class="spco-attendee-wrap-fs">
-  				<legend class="spco-attendee-lgnd smaller-text lt-grey-text"><?php echo __('Attendee #', 'event_espresso') . $att_nmbr;?></legend>
+  				<legend class="spco-attendee-lgnd smaller-text"><?php echo __('Attendee #', 'event_espresso') . $att_nmbr;?></legend>
 
 		<?php 
 			//do an action before the questions output, including the item and count 
