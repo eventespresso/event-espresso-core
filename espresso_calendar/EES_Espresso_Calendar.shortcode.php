@@ -92,7 +92,7 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 			'widget' => FALSE
 		);
 		// make sure $atts is an array
-		$shortcode_atts = shortcode_atts( $defaults, (array)$shortcode_atts );
+		$shortcode_atts = array_merge( $defaults, $shortcode_atts );
 		echo EE_Calendar::instance()->display_calendar( $shortcode_atts );
 	}
 	
