@@ -174,8 +174,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								<thead>
 									<tr>
 										<th width="30%" class=""><span class="small-text"><?php _e( 'Name', 'event_espresso' ); ?></span></th>
-										<th width="" class=""><span class="small-text"><?php _e( 'Description', 'event_espresso' ); ?></span></th>
-										<th width="25%" class="cntr"><span class="small-text"><?php _e( 'Amount', 'event_espresso' ); ?></span></th>
+										<th width="" class="jst-cntr"><span class="small-text"><?php _e( 'Description', 'event_espresso' ); ?></span></th>
+										<th width="25%" class="jst-rght"><span class="small-text"><?php _e( 'Amount', 'event_espresso' ); ?></span></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -274,7 +274,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									<td class="small-text"><?php echo $datetime->start_date('l F jS, Y'); ?></td>
 									<td class="cntr small-text"><?php echo $datetime->time_range(); ?></td>
 									<td class="cntr small-text"><?php echo $ticket->sold(); ?></td>		
-									<td class="cntr small-text"><?php echo $ticket->qty() - $ticket->sold(); ?></td>		
+									<td class="cntr small-text"><?php echo $ticket->qty() === INF ? __( 'unlimited ', 'event_espresso' ) : $ticket->qty() - $ticket->sold(); ?></td>		
 									<td class="cntr small-text"><?php echo $datetime->sold(); ?></td>		
 									<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
 									<td class="cntr small-text"><?php echo $tkts_left === INF ? __( 'unlimited ', 'event_espresso' ) : $tkts_left; ?></td>
