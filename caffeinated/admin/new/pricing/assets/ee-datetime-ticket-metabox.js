@@ -305,7 +305,7 @@ jQuery(document).ready(function($) {
 		 * @return {tktHelper obj}  return "this" to allow for possible chaining.
 		 */
 		newDTTrow: function() {
-			var inputid, inputvalue, DTT_start_time, DTT_end_time, newDTTrow;
+			var inputid, inputvalue, DTT_start_time, DTT_end_time, newDTTrow, DTT_name;
 			this.context = 'datetime';
 			var row = this.increaserowcount();
 
@@ -323,6 +323,11 @@ jQuery(document).ready(function($) {
 				switch (inputid) {
 					case 'event-datetime-DTT_ID' :
 						$(this).val('0');
+						break;
+
+					case 'event-datetime-DTT_name' :
+						DTT_name = $('#add-new-' + inputid, '#add-event-datetime').val();
+						$(this).val(DTT_name);
 						break;
 					
 					case 'event-datetime-DTT_is_primary' :
@@ -519,6 +524,13 @@ jQuery(document).ready(function($) {
 						}
 						break;
 				}
+			});
+
+			//update textareas
+			newDTTrow.find('textarea').each( function() {
+				curname = $(this).attr('name');
+				newname = curname.replace(row, newrownum);
+				$(this).attr('name', newname);
 			});
 
 
@@ -1439,6 +1451,13 @@ jQuery(document).ready(function($) {
 		 */
 		DTT_display_text: function(start, end) {
 			var datedisplaytext;
+
+			//first is there a name for the datetime?  If there is we'll use it.
+			var dttname = $('#event-datetime-DTT_name-' + this.dateTimeRow ).val();
+
+			if ( dttname.length > 0 )
+				return dttname;
+
 			var fullstartdate = moment( start, 'YYYY-MM-DD h:mm a' );
 			var fullenddate = moment( end, 'YYYY-MM-DD h:mm a' );
 
@@ -1929,6 +1948,13 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		tktHelper.updateDTTrow(data.datetimeRow);
 	});/**/
+
+
+	$('.event-datetimes-container').on('focusout', '.event-datetime-DTT_name', function(e) {
+		e.preventDefault();
+		var dttrow = $(this).attr('id').replace('event-datetime-DTT_name-', '');
+		tktHelper.updateDTTrow(dttrow);
+	});
 
 
 	/**
