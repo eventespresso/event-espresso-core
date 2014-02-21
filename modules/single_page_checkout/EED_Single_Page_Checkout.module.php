@@ -797,24 +797,29 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->_revisit && $this->_current_step == 'attendee_information' ) {
 			// YES! Save Registration Details
 			$confirmation_btn_text = sprintf( __('Update%1$sRegistration%1$sDetails', 'event_espresso'), '&nbsp;' );
+			$confirmation_btn_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__update_registration_details', $confirmation_btn_text );
 			$step_or_revisit = __('Edit', 'event_espresso');
 		} else if ( $this->_revisit && $this->_current_step == 'payment_options' ) {
 			// YES! Save Registration Details
 			$confirmation_btn_text = sprintf( __('Process%1$sPayment', 'event_espresso'), '&nbsp;' );
+			$confirmation_btn_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__process_payment', $confirmation_btn_text );
 			$step_or_revisit = '';
 		} else {
 			// YES! Finalize Registration
 			$confirmation_btn_text = sprintf( __('Finalize%1$sRegistration', 'event_espresso'), '&nbsp;' );
+			$confirmation_btn_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__finalize_registration', $confirmation_btn_text );
 		}		
 		// grand total less than paid but greater than zero ?
 		if ( $grand_total < $this->_transaction->paid() && $grand_total > 0 ) {
 			// owing money
-			$confirmation_btn_text = $confirmation_btn_text . sprintf( 
+			$proceed_to_payment_btn_text = sprintf( 
 				// & Proceed to Payment
 				__('%1$s%2$s%1$sProceed%1$sto%1$sPayment', 'event_espresso'),
 				'&nbsp;',  // %1$s
 				'&amp;'	// %2$s
 			);
+			$proceed_to_payment_btn_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__and_proceed_to_payment', $proceed_to_payment_btn_text );
+			$confirmation_btn_text .= $confirmation_btn_text;
 		}		
 		add_action( 'AHEE__SPCO_after_reg_step_form', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 ); 
 
@@ -827,6 +832,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$template_args['revisit'] =$this->_revisit;
 			return EEH_Template::display_template( $this->_templates['registration_page_attendee_information'], $template_args, TRUE );
 		}
+		
+		$proceed_to_btn_text = sprintf( __('Proceed%1$sto%1$s', 'event_espresso'), '&nbsp;' );
+		$proceed_to_btn_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__proceed_to', $proceed_to_btn_text );
 
 		$registration_steps = '';
 		$step_nmbr = 1;
@@ -844,7 +852,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$next = $this->_get_next_reg_step();
 			//d( $next );
 			$next_step = $next ? $next['display_func'] : 'finalize_registration';
-			$next_step_text = $next ? sprintf( __('Proceed%1$sto%1$s', 'event_espresso'), '&nbsp;' ) . $next['name'] : $confirmation_btn_text;
+			$next_step_text = $next ? $proceed_to_btn_text . $next['name'] : $confirmation_btn_text;
 			
 			$step_args = array_merge(
 				$template_args, 
