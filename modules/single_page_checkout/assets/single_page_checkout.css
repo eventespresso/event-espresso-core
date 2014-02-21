@@ -211,7 +211,7 @@ span.ui-icon {
 #single-page-checkout .espresso-question-group-wrap + .espresso-question-group-wrap {
 	margin:.5em 0 0;
 }
-#single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-title-h4 {
+#single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-title-h5 {
 	margin:.25em 0 1em;
 }
 #single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-desc-pg {
@@ -255,6 +255,7 @@ span.ui-icon {
 	border: none;
 	-moz-border:none;
 	letter-spacing:1px;
+	font-weight: bold;
 }
 .event_questions + .spco-attendee-lgnd {
 	margin-top:2em;
