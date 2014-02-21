@@ -19,6 +19,9 @@ jQuery(document).ready(function($) {
 		var ee_eventColor = eeCAL.display_event_background;
 		// Sets the text color for all events on the calendar.
 		var ee_eventTextColor = eeCAL.display_event_text_color;
+	} else {
+		var ee_eventColor = '';
+		var ee_eventTextColor = '';
 	}
 
 	$('#espresso_calendar').fullCalendar({
@@ -31,7 +34,7 @@ jQuery(document).ready(function($) {
 			right: eeCAL.header_right
 		},
 		// Enables/disables use of jQuery UI theming.
-		theme: eeCAL.theme,
+		theme: false,
 		// The day that each week begins.
 		firstDay: eeCAL.time_first_day,
 		// Whether to include Saturday/Sunday columns in any of the calendar views.
@@ -83,9 +86,9 @@ jQuery(document).ready(function($) {
 		},
 		
 		// Sets the background and border colors for all events on the calendar.
-		eventColor: eeCAL.display_event_background,
+		eventColor: ee_eventColor,
 		// Sets the text color for all events on the calendar.
-		eventTextColor: eeCAL.display_event_text_color,
+		eventTextColor: ee_eventTextColor,
 
 
 		//Full names of months.
