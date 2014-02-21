@@ -44,6 +44,16 @@ class EE_Calendar_Config extends EE_Config_Base{
 	 * @var boolean
 	 */
 	public $widget;
+	/**
+	 *
+	 * @var string
+	 */
+	public $month;
+	/**
+	 *
+	 * @var int
+	 */
+	public $year;
 	
 	
 	public function __construct(){
@@ -55,6 +65,8 @@ class EE_Calendar_Config extends EE_Config_Base{
 		$this->time = new EE_Calendar_Config_Time();
 		$this->display = new EE_Calendar_Config_Display();
 		$this->widget = FALSE;
+		$this->month = date('n');
+		$this->year = date('Y');
 	}
 	
 	/**
