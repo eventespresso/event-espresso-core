@@ -130,15 +130,16 @@ RESET SELECT
 }
 .ee-filter-form select {
 	display: inline-block;
-	vertical-align: baseline;
-	height: 1.4em;
-	margin: 2px;
-	padding: 0.3em 0.6em 0.3em 0.6em;
-	background: #fff;
-	border: 1px solid #aaa;
-	border-radius: 0.3em;
-	font-size: 0.85em;
 	line-height: 1.6em; /* ticket 4163 */
+	width: auto;
+	height: 1.4em;
+	padding: 0.3em 0.3em 0.3em 0.6em;
+	vertical-align: baseline;
+	margin: 2px;
+	background: #fff;
+	border: 1px solid #ccc;
+	border-radius: 0;
+	font-size: 0.85em;
 	min-height: 18px;
 	color: #777;
 	overflow: hidden;
@@ -280,6 +281,10 @@ The Buttons and related paraphenalia
  font-size: .8em;
  opacity: 1;
  margin-right: 1px;
+ transition: all 0.1s ease-in-out 0s;
+}
+#espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button:hover {
+ border: 1px solid #999;
 }
 #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-prev, #espresso_calendar:not(.ui-widget).calendar_fullsize .fc-button-next {
  padding: 10px 0.6em;
@@ -412,21 +417,30 @@ The Buttons and related paraphenalia
 /* Category Legend Styles
 ---------------------------------------------------------------------------------------------------- */
 
-div#espreso-category-legend {
+#espreso-category-legend {
 	clear: both;
 	margin: 0;
 	padding: 0;
 }
-div#espreso-category-legend ul {
+#espreso-category-legend p {
+	clear: both;
+	margin: 0 0 .5em;
+	padding: 0;
+}
+#espreso-category-legend ul {
 	float:left;
 	margin: 0 0 10px 0;
 	padding: 0;
 }
-div#espreso-category-legend li {
+#espreso-category-legend li {
 	list-style: none;
 	margin: 0 10px 5px 0;
 	padding: 0 7px 0 7px;
 	float:left;
+}
+#espreso-category-legend li a {
+	text-decoration: none;
+	border:none;
 }
 /* Tooltip Styles
 ---------------------------------------------------------------------------------------------------- */
