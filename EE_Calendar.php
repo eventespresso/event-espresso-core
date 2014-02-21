@@ -421,18 +421,31 @@
 	public function display_calendar( $ee_calendar_js_options ) {
 		// get calendar options
 		$calendar_config = EE_Calendar::get_calendar_config()->to_flat_array();
+		// merge incoming shortcode attributes with calendar config
 		$ee_calendar_js_options = shortcode_atts( $calendar_config, $ee_calendar_js_options, 'EE_Calendar' );
 		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
 		$overrides = array(
 			'event_category_id' => isset($_REQUEST['event_category_id']) ? sanitize_key( $_REQUEST['event_category_id'] ) : '', 
 			'event_venue_id'=> isset($_REQUEST['event_venue_id']) ? sanitize_key( $_REQUEST['event_venue_id'] ) : '', 
+			'month'=> isset($_REQUEST['month']) ? sanitize_text_field( $_REQUEST['month'] ) : $ee_calendar_js_options['month'], 
+			'year'=> isset($_REQUEST['year']) ? sanitize_text_field( $_REQUEST['year'] ) : $ee_calendar_js_options['year'], 
 		);
-		// set default attributes
+		// merge overrides into options
 		$ee_calendar_js_options = array_merge( $ee_calendar_js_options, $overrides );
+		// set and format month param
+		if ( ! is_int( $ee_calendar_js_options['month'] ) && strtotime( $ee_calendar_js_options['month'] )) {
+			$ee_calendar_js_options['month'] = date('n', strtotime( $ee_calendar_js_options['month'] ));
+		}
+		// weed out any attempts to use month=potato or something similar
+		$ee_calendar_js_options['month'] = is_int( $ee_calendar_js_options['month'] ) && $ee_calendar_js_options['month'] > 0 && $ee_calendar_js_options['month'] < 13 ? $ee_calendar_js_options['month'] : date('n');
+		// fullcalendar uses 0-based value for month
+		$ee_calendar_js_options['month']--;		
+		// set and format year param
+		$ee_calendar_js_options['year'] = isset( $ee_calendar_js_options['year'] ) && is_int( $ee_calendar_js_options['year'] ) ? date('Y', strtotime( $ee_calendar_js_options['year'] )) : date('Y');
+		// add calendar filters
 		$output_filter = $this->_get_filter_html( $ee_calendar_js_options );
 		// grab some request vars
 		$this->_event_category_id = isset( $ee_calendar_js_options['event_category_id'] ) && ! empty( $ee_calendar_js_options['event_category_id'] ) ? $ee_calendar_js_options['event_category_id'] : '';
-		
 		// i18n some strings
 		$ee_calendar_js_options['month_names'] = array( 
 			__('January', 'event_espresso'),
