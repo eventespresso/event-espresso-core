@@ -505,7 +505,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
-		return $this->_show_datetime( 'T', 'start', NULL, $tm_format ) . $conjunction . $this->_show_datetime( 'T', 'end', NULL, $tm_format );
+		return str_replace( ' ', '&nbsp;', $this->_show_datetime( 'T', 'start', NULL, $tm_format )) . $conjunction . str_replace( ' ', '&nbsp;', $this->_show_datetime( 'T', 'end', NULL, $tm_format ));
 	}
 	public function e_time_range( $tm_format = NULL, $conjunction = ' - ' ) {		
 		echo $this->time_range( $tm_format, $conjunction );
