@@ -2,6 +2,10 @@
 	<input type="hidden" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_ID]" id="event-datetime-DTT_ID-<?php echo $dtt_row; ?>" class="event-datetime-DTT_ID" value="<?php echo $DTT_ID; ?>">
 	<table id="edit-event-datetime-table-<?php echo $dtt_row; ?>" class="datetime-edit-table">
 		<tr>
+			<td class="event-datetime-column date-name-column">
+				<label class="event-datetime-DTT_name_label" for="event-datetime-DTT_name-<?php echo $dtt_row; ?>"><?php _e('Name', 'event_espresso'); ?></label>
+				<input type="text" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_name]" id="event-datetime-DTT_name-<?php echo $dtt_row; ?>" class="ee-large-text-inp event-datetime-DTT_name" value="<?php echo $DTT_name; ?>" placeholder="<?php _e('Add Title (optional)', 'event_espresso'); ?>">
+			</td>
 			<td class="event-datetime-column date-column">
 				<label class="event-datetime-DTT_EVT_start_label" for="event-datetime-DTT_EVT_start-<?php echo $dtt_row; ?>"><?php _e('Event Start', 'event_espresso'); ?></label>
 				<input type="text" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_EVT_start]" id="event-datetime-DTT_EVT_start-<?php echo $dtt_row; ?>" class="ee-text-inp event-datetime-DTT_EVT_start ee-datepicker"  data-datetime-row="<?php echo $dtt_row; ?>" data-context="start-dtt" data-date-field-context="#edit-event-datetime-<?php echo $dtt_row; ?>" data-related-field=".event-datetime-DTT_EVT_end" data-next-field=".event-datetime-DTT_EVT_end" value="<?php echo $DTT_EVT_start; ?>">
@@ -34,6 +38,7 @@
  * $event_datetimes_name
  * $edit_dtt_expanded
  * $DTT_ID
+ * $DTT_name
  * $DTT_EVT_start
  * $DTT_EVT_end
  * $DTT_reg_limit

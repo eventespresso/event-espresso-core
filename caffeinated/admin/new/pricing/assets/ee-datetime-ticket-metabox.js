@@ -305,7 +305,7 @@ jQuery(document).ready(function($) {
 		 * @return {tktHelper obj}  return "this" to allow for possible chaining.
 		 */
 		newDTTrow: function() {
-			var inputid, inputvalue, DTT_start_time, DTT_end_time, newDTTrow;
+			var inputid, inputvalue, DTT_start_time, DTT_end_time, newDTTrow, DTT_name;
 			this.context = 'datetime';
 			var row = this.increaserowcount();
 
@@ -323,6 +323,11 @@ jQuery(document).ready(function($) {
 				switch (inputid) {
 					case 'event-datetime-DTT_ID' :
 						$(this).val('0');
+						break;
+
+					case 'event-datetime-DTT_name' :
+						DTT_name = $('#add-new-' + inputid, '#add-event-datetime').val();
+						$(this).val(DTT_name);
 						break;
 					
 					case 'event-datetime-DTT_is_primary' :
@@ -491,13 +496,16 @@ jQuery(document).ready(function($) {
 				curclass = $(this).attr('class');
 				curid = $(this).attr('id');
 				curname = $(this).attr('name');
+				newid = typeof(curid) !== 'undefined' ? curid.replace(row, newrownum) : '';
+				newname = curname.replace(row, newrownum);
 
 				switch ( curclass ) {
 					case 'event-datetime-DTT_ID' :
 					case 'event-datetime-DTT_is_primary' :
-						newname = curname.replace(row, newrownum);
 						$(this).attr('name', newname);
 						$(this).val('0');
+						if ( newid !== '' )
+							$(this).attr('id', newid);
 						break;
 
 					case 'datetime-ticket-checkbox' :
@@ -505,14 +513,24 @@ jQuery(document).ready(function($) {
 						$(this).attr('name', newname);
 						break;
 
-					default : /* event-datetime-DTT_EVT_start, event-datetime-DTT_EVT_end, event_datetime-DTT_reg_limit */
-						newname = curname.replace(row, newrownum);
-						newid = typeof(curid) !== 'undefined' ? curid.replace(row, newrownum) : '';
+
+					default : /* event-datetime-DTT_EVT_start, event_datetime-DTT_EVT_end,  event_datetime-DTT_reg_limit */
 						$(this).attr('name', newname);
 						if ( newid !== '' )
 							$(this).attr('id', newid);
+						if ( $(this).hasClass('event-datetime-DTT_EVT_start') || $(this).hasClass('event-datetime-DTT_EVT_end') ) {
+							$(this).attr('data-datetime-row', newrownum);
+							$(this).attr('data-date-field-context', '#edit-event-datetime-' + newrownum);
+						}
 						break;
 				}
+			});
+
+			//update textareas
+			newDTTrow.find('textarea').each( function() {
+				curname = $(this).attr('name');
+				newname = curname.replace(row, newrownum);
+				$(this).attr('name', newname);
 			});
 
 
@@ -557,7 +575,10 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-			//first the trs
+			//make sure the value for the TKT_order field assumes the value of the new row (to ensure order increments).
+			newTKTrow.find('.edit-ticket-TKT_order').val(newrownum);
+
+			//the trs
 			newTKTrow.find('tr').each( function() {
 				curid = $(this).attr('id');
 
@@ -782,17 +803,22 @@ jQuery(document).ready(function($) {
 		 */
 		newDTTListRow: function(ticketrowitm) {
 			var ticketrownum = $(ticketrowitm).attr('id').replace('edit-ticketrow-', '');
+			ticketrownum = parseInt(ticketrownum, 10);
+			var active_tkts_on_dtt = [];
 			
 			if ( typeof(ticketrownum) === 'undefined' )
 				return true; //we may have a blank ticket row.
 
 			var new_dtt_list_row = $('#dtt-new-available-datetime-list-items-holder').clone().html();
 
-
-			var active_tkts_on_dtt = $('.datetime-tickets-list', '#event-datetime-' + this.dateTimeRow).find('.ticket-selected').data('ticketRow');
+			var active_tkts = $('.datetime-tickets-list', '#event-datetime-' + this.dateTimeRow).find('.ticket-selected');
+			
+			active_tkts.each( function(i) {
+				active_tkts_on_dtt[i] = parseInt( $(this).data('ticketRow'), 10);
+				});
 			
 			var default_list_row_for_dtt;
-
+			
 			//replace all instances of DTTNUM with dttrow
 			new_dtt_list_row = new_dtt_list_row.replace(/DTTNUM/g, this.dateTimeRow);
 			//get name for dtt and add to the new li item
@@ -802,6 +828,7 @@ jQuery(document).ready(function($) {
 			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
 			new_dtt_list_row = new_dtt_list_row.replace(/TICKETNUM/g,ticketrownum);
+			
 
 			//is this ticketrow in the active tickets list? if so then we toggle.
 			if ( $.inArray(ticketrownum, active_tkts_on_dtt) > -1 || ticketrownum == active_tkts_on_dtt ) {
@@ -1424,6 +1451,13 @@ jQuery(document).ready(function($) {
 		 */
 		DTT_display_text: function(start, end) {
 			var datedisplaytext;
+
+			//first is there a name for the datetime?  If there is we'll use it.
+			var dttname = $('#event-datetime-DTT_name-' + this.dateTimeRow ).val();
+
+			if ( dttname.length > 0 )
+				return dttname;
+
 			var fullstartdate = moment( start, 'YYYY-MM-DD h:mm a' );
 			var fullenddate = moment( end, 'YYYY-MM-DD h:mm a' );
 
@@ -1679,6 +1713,27 @@ jQuery(document).ready(function($) {
 
 
 
+
+		/**
+		 * This changes the TKT_order value for all tickets in the dom to reflect the new order after a drag and drop action
+		 * @return {tktHelper}
+		 */
+		changeTKTorder: function() {
+			var advancedRow, curid;
+			var allTickets = $('.ticket-table tr.ee-ticket-sortable');
+			allTickets.each( function(i) {
+				$('.edit-ticket-TKT_order', this ).val(i);
+				// make sure the corresponding advanced edit row is in the right place.
+				curid = $(this).attr('id').replace('display-ticketrow-', '');
+				advancedRow = $('#edit-ticketrow-' + curid );
+				$(this).after(advancedRow);
+			});
+			return this;
+		},
+
+
+
+
 		/**
 		 * This helper method simply removes any matching items from a js array.
 		 * @param  {array} arr js array to remove items from
@@ -1856,6 +1911,19 @@ jQuery(document).ready(function($) {
 	});
 
 
+
+	/**
+	 * reordering tickets
+	 */
+	$('.ticket-table').sortable({
+		cursor: 'move',
+		items: '.ee-ticket-sortable',
+		update: function(event,ui) {
+			tktHelper.changeTKTorder();
+		}
+	});
+
+
 	/**
 	 * update datetime/ticket
 	 */
@@ -1875,12 +1943,18 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.datetime-edit').on('focusout', '.ee-datepicker', function(e) {
+	$('.event-datetimes-container').on('focusout', '.ee-datepicker', function(e) {
 		e.preventDefault();
-		e.stopPropagation();
 		var data = $(this).data();
 		tktHelper.updateDTTrow(data.datetimeRow);
 	});/**/
+
+
+	$('.event-datetimes-container').on('focusout', '.event-datetime-DTT_name', function(e) {
+		e.preventDefault();
+		var dttrow = $(this).attr('id').replace('event-datetime-DTT_name-', '');
+		tktHelper.updateDTTrow(dttrow);
+	});
 
 
 	/**

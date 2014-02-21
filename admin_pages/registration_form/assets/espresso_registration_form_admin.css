@@ -7,7 +7,7 @@
 */
 #question_options .sample{ display:none; }
 
-#the-list { cursor: move; }
+.question-groups #the-list { cursor: move; }
 
 .questions .column-id { width:5%; }
 .questions .column-order,
@@ -27,6 +27,10 @@
 .questiongroups .column-show_group_desc {
 	width: 15%;
 }
+
+.question-group-questions-container { display:inline-block; width: 30%; }
+.ee-question-sortable { cursor: move;}
+.ee-question-sortable label { cursor: inherit;}
 
 table.question-options-table td, table.question-options-table th{
 	padding:1em 10px 0 3px; line-height: 1em;

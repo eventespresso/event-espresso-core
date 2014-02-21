@@ -138,7 +138,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			// get all tickets for this event ordered by the datetime
 			$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
 				array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-				'order_by' => array( 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' ) 
+				'order_by' => array( 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' ) 
 			));
 		
 			$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';

@@ -130,6 +130,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @var EE_Question_Option[] 
 	 */
 	protected $_Question_Option;
+
+
+	protected $_Question_Group_Question; //for QST_order relation
 	
 
 	

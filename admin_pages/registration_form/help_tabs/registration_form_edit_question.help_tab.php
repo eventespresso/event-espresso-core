@@ -17,7 +17,7 @@
 </li>
 <li>
 <?php _e('<strong>Question Order</strong>', 'event_espresso'); ?><br />
-<?php _e('Questions can be sorted by using the drag and drop feature on the Questions Overview page. Another way to sort questions is to adjust their order of application by using this field. A smaller order of application will be shown first. For example, a question with an order of application of 1 will appear before one that has an order of application of 5.', 'event_espresso'); ?>
+<?php _e('Questions are now sorted per question group.  To order the questions edit a question group and you can reorder the questions attached to that group.', 'event_espresso'); ?>
 </li>
 </li>
 <li>

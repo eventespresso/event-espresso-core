@@ -74,6 +74,28 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
     *	@var int	
     */
 	protected $_EVT_ID;
+
+
+
+
+	/**
+	 * Datetime Name
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $_DTT_name;
+
+
+
+
+	/**
+	 * Datetime Description
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $_DTT_description;
 	
 	
 	
@@ -211,6 +233,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
+
+	public function set_name( $name ) {
+		return $this->set( 'DTT_name', $name );
+	}
+
+
+
+
+	public function set_description( $description ) {
+		return $this->set( 'DTT_description', $description );
+	}
+
+
+
 	/**
 	*		Set event start date
 	* 
@@ -340,6 +376,27 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		}
 	}
 
+
+
+	/**
+	 * returns the datetime name
+	 * @return string
+	 */
+	public function name() {
+		return $this->get('DTT_name');
+	} 
+
+
+
+
+
+	/**
+	 * returns the datetime description
+	 * @return string 
+	 */
+	public function description() {
+		return $this->get('DTT_description');
+	}
 
 
 
@@ -761,9 +818,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * This returns a nice display name for the datetime that is contingent on the span between the dates and times.
+	 *
+	 * @param  boolean $use_dtt_name if TRUE then we'll use DTT->name() if its not empty.
 	 * @return string
 	 */
-	public function get_dtt_display_name() {
+	public function get_dtt_display_name( $use_dtt_name = FALSE ) {
+		if ( $use_dtt_name ) {
+			$dttname = $this->name();
+			if ( !empty( $dttname ) )
+				return $dttname;
+		}
+
 		//first condition is to see if the months are different
 		if ( date('m', $this->_DTT_EVT_start) != date('m', $this->_DTT_EVT_end ) ) {
 			$displaydate = $this->start_date('M j\, Y g:i a') . ' - ' . $this->end_date('M j\, Y g:i a');
