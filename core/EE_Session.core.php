@@ -168,7 +168,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 * @return	array
 	 */
 	public function id() {
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		return $this->_sid;
 	}
 
@@ -241,6 +240,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	private function _espresso_session() {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		// is the SID being passed explicitly ?
+		if( isset( $_REQUEST['EESID'] )) {
+			session_id( sanitize_text_field( $_REQUEST['EESID'] ));
+		}
 		// first visit ?
 		if ( session_id() === '' ) {
 			//starts a new session if one doesn't already exist, or reinitiates an existing one
@@ -248,15 +251,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			// set initial site access time
 			$this->_session_data['init_access'] = $this->_time;		
 			// set referer	
-			if ( isset( $_SERVER['HTTP_REFERER'] )) {
-				$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = esc_attr( $_SERVER['HTTP_REFERER'] );
-			} else {
-				$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = '';
-			}
+			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
 		}
 		// grab the session ID
-		$this->_sid = session_id();
-		//d( $this->_sid );
+		$this->_sid = session_id();		
 		// set the "user agent"
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
 		// now let's retreive what's in the db
@@ -395,13 +393,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *			@return void
 	 */
 	private function _create_espresso_session( ) {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
 		// use the update function for now with $new_session arg set to TRUE
 		return  $this->update( TRUE ) ? TRUE : FALSE;
-
 	}
 
 
@@ -414,15 +408,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *			@return string
 	 */
 	private function _save_session_to_db() {
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-//		echo printr( $this->_session_data, 'session_data' );
-//		if ( EE_Registry::instance()->REQ->get( 'ee' ) != 'process_ticket_selections' ) {
-//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-//		}
-//				
-
 		// first serialize all of our session data
 		$session_data = serialize( $this->_session_data );
 		// encrypt it if we are using encryption
@@ -431,28 +417,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		return set_transient( 'ee_ssn_' . $this->_sid, $session_data, $this->_expiration ) ? TRUE : FALSE;
 
 	}
-	
-	
 
-	
-	/**
-	 *	@attempt to get IP address of current visitor from server
-	 *	@access public
-	 *	@return string
-	* 	TODO: can use this when PHP >+ 5.2 becomes required by WP
-	 */
-//	private function _visitor_ip() {
-//		foreach ( array( 'REMOTE_ADDR', 'HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_X_CLUSTER_CLIENT_IP', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED' ) as $key ) {
-//			if ( isset( $_SERVER[ $key ] )) {
-//				foreach ( explode( ',', $_SERVER[ $key ] ) as $ip ) {
-//					$ip = trim( $ip );
-//					if ( filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) !== FALSE ){
-//						return $ip;
-//					}
-//				}
-//			}
-//		}
-//	}
 
 
 
@@ -675,48 +640,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	}
 
 
-	/**
-	 * implementations from the Serializable PHP interface
-	 */
 
-	/**
-	 * Clean up object before EE_Session is saved to the db
-	 * @return string serialized object
-	 */
-//	public function serialize() {
-//		//first reduce the 'pages_visited' count, we'll only save the last 10 page visits.
-//		$this->_session_data['pages_visited'] = array_slice( $this->_session_data['pages_visited'], -10 );
-//
-//		//data to serialize
-//		$serialized = array(
-//			'sid' => $this->_sid,
-//			'session_data' => $this->_session_data,
-//			'expiration' => $this->_expiration,
-//			'time' => $this->_time,
-//			'use_encryption' => $this->_use_encryption,
-//			'user_agent' => $this->_user_agent,
-//			'ip_address' => $this->_ip_address 
-//			);
-//
-//		return serialize( $serialized );
-//		
-//	}
-
-
-
-
-	/**
-	 * return unserialized object from the db
-	 * @param  string $data serialized object
-	 * @return EE_Session   this object
-	 */
-//	public function unserialize( $data ) {
-//		$serialized = unserialize( $data );
-//		foreach ( $serialized as $prop_name => $prop_value ) {
-//			$prop_name = '_' . $prop_name;
-//			$this->$prop_name = $prop_value;
-//		}
-//	}
 
 
 }
