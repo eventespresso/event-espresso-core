@@ -322,7 +322,7 @@
 	 */
 	private function _get_filter_html($ee_calendar_js_options = array()){
 		$output_filter = '';
-		if ( ! isset( $ee_calendar_js_options['widget'] )) {
+		if ( ! $ee_calendar_js_options['widget'] ) {
 			// Query for Select box filters
 			$ee_terms = EEM_Term::instance()->get_all(array(array('Term_Taxonomy.taxonomy'=>'espresso_event_categories')));
 			$venues = EEM_Venue::instance()->get_all();
@@ -336,23 +336,33 @@
 		
 				//Category legend
 				if ( $calendar_config->display->enable_category_legend ){
-					echo '<div id="espreso-category-legend"><ul id="ee-category-legend-ul">';
+					echo '
+				<div id="espreso-category-legend">
+					<p class="smaller-text lt-grey-txt">' .  __('click to select a category:', 'event_espresso') . '</p>
+					<ul id="ee-category-legend-ul">';
 					
 					foreach ($ee_terms as $ee_term) {
 						/*@var $ee_term EE_Term */
 						$catcode = $ee_term->ID();
 						
-						$bg = $ee_term->get_extra_meta('background_color', $calendar_config->display->event_background);
-						$fontcolor =$ee_term->get_extra_meta('text_color', $calendar_config->display->event_text_color);
-						$use_bg =$ee_term->get_extra_meta('use_color_picker', true);
+						$bg = $ee_term->get_extra_meta( 'background_color', $calendar_config->display->event_background );
+						$fontcolor =$ee_term->get_extra_meta( 'text_color', $calendar_config->display->event_text_color );
+						$use_bg =$ee_term->get_extra_meta( 'use_color_picker', true );
 			
 						if($use_bg ) {
-							echo '<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="border-left: 10px solid ' . $bg . ';">';
+//							echo '<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="border-left: 10px solid ' . $bg . ';">';
+							echo '
+							<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="background: ' . $bg . ';">
+								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'" style="color: ' . $fontcolor . ';">'.$ee_term->name().'</a></span></a>
+							</li>';
 						} else {
-							echo '<li id="ee-category-li-'.$catcode.'" class="has-sub" style="border-left: 10px solid #CCC";>';
+//							echo '<li id="ee-category-li-'.$catcode.'" class="has-sub" style="border-left: 10px solid #CCC";>';
+							echo '
+							<li id="ee-category-li-'.$catcode.'" class="has-sub" style="background: #f3f3f3;" >
+								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span></a>
+							</li>';
 						}
 					
-						echo '<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span></a></li>';
 						
 					}
 					//echo '<li class="has-sub" style="border-left:solid 1px #000;"><a href="?event_category_id">'.__('All', 'event_espresso').'</a></li>';
@@ -411,7 +421,7 @@
 	public function display_calendar( $ee_calendar_js_options ) {
 		// get calendar options
 		$calendar_config = EE_Calendar::get_calendar_config()->to_flat_array();
-		$ee_calendar_js_options = shortcode_atts( $calendar_config, $ee_calendar_js_options );
+		$ee_calendar_js_options = shortcode_atts( $calendar_config, $ee_calendar_js_options, 'EE_Calendar' );
 		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
 		$overrides = array(
 			'event_category_id' => isset($_REQUEST['event_category_id']) ? sanitize_key( $_REQUEST['event_category_id'] ) : '', 
@@ -473,8 +483,7 @@
 				__('Fri', 'event_espresso'),
 				__('Sat', 'event_espresso')
 			);
-			
-		$ee_calendar_js_options['theme'] = isset( EE_Registry::instance()->CFG->template_settings->enable_default_style ) ? EE_Registry::instance()->CFG->template_settings->enable_default_style : FALSE;
+
 
 		// Get current page protocol
 		$protocol = isset( $_SERVER["HTTPS"] ) ? 'https://' : 'http://';
@@ -483,7 +492,7 @@
 //		printr( $ee_calendar_js_options, '$ee_calendar_js_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
 		
-		$calendar_class = isset( $ee_calendar_js_options['widget'] ) ? 'calendar_widget' : 'calendar_fullsize';
+		$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
 		
 		$html = apply_filters( 'FHEE__EE_Calendar__display_calendar__before', '' );
 		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__output_filter', $output_filter );
