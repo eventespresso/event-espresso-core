@@ -491,13 +491,16 @@ jQuery(document).ready(function($) {
 				curclass = $(this).attr('class');
 				curid = $(this).attr('id');
 				curname = $(this).attr('name');
+				newid = typeof(curid) !== 'undefined' ? curid.replace(row, newrownum) : '';
+				newname = curname.replace(row, newrownum);
 
 				switch ( curclass ) {
 					case 'event-datetime-DTT_ID' :
 					case 'event-datetime-DTT_is_primary' :
-						newname = curname.replace(row, newrownum);
 						$(this).attr('name', newname);
 						$(this).val('0');
+						if ( newid !== '' )
+							$(this).attr('id', newid);
 						break;
 
 					case 'datetime-ticket-checkbox' :
@@ -505,12 +508,15 @@ jQuery(document).ready(function($) {
 						$(this).attr('name', newname);
 						break;
 
-					default : /* event-datetime-DTT_EVT_start, event-datetime-DTT_EVT_end, event_datetime-DTT_reg_limit */
-						newname = curname.replace(row, newrownum);
-						newid = typeof(curid) !== 'undefined' ? curid.replace(row, newrownum) : '';
+
+					default : /* event-datetime-DTT_EVT_start, event_datetime-DTT_EVT_end,  event_datetime-DTT_reg_limit */
 						$(this).attr('name', newname);
 						if ( newid !== '' )
 							$(this).attr('id', newid);
+						if ( $(this).hasClass('event-datetime-DTT_EVT_start') || $(this).hasClass('event-datetime-DTT_EVT_end') ) {
+							$(this).attr('data-datetime-row', newrownum);
+							$(this).attr('data-date-field-context', '#edit-event-datetime-' + newrownum);
+						}
 						break;
 				}
 			});
@@ -785,17 +791,22 @@ jQuery(document).ready(function($) {
 		 */
 		newDTTListRow: function(ticketrowitm) {
 			var ticketrownum = $(ticketrowitm).attr('id').replace('edit-ticketrow-', '');
+			ticketrownum = parseInt(ticketrownum, 10);
+			var active_tkts_on_dtt = [];
 			
 			if ( typeof(ticketrownum) === 'undefined' )
 				return true; //we may have a blank ticket row.
 
 			var new_dtt_list_row = $('#dtt-new-available-datetime-list-items-holder').clone().html();
 
-
-			var active_tkts_on_dtt = $('.datetime-tickets-list', '#event-datetime-' + this.dateTimeRow).find('.ticket-selected').data('ticketRow');
+			var active_tkts = $('.datetime-tickets-list', '#event-datetime-' + this.dateTimeRow).find('.ticket-selected');
+			
+			active_tkts.each( function(i) {
+				active_tkts_on_dtt[i] = parseInt( $(this).data('ticketRow'), 10);
+				});
 			
 			var default_list_row_for_dtt;
-
+			
 			//replace all instances of DTTNUM with dttrow
 			new_dtt_list_row = new_dtt_list_row.replace(/DTTNUM/g, this.dateTimeRow);
 			//get name for dtt and add to the new li item
@@ -805,6 +816,7 @@ jQuery(document).ready(function($) {
 			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
 			new_dtt_list_row = new_dtt_list_row.replace(/TICKETNUM/g,ticketrownum);
+			
 
 			//is this ticketrow in the active tickets list? if so then we toggle.
 			if ( $.inArray(ticketrownum, active_tkts_on_dtt) > -1 || ticketrownum == active_tkts_on_dtt ) {
@@ -1912,9 +1924,8 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$('.datetime-edit').on('focusout', '.ee-datepicker', function(e) {
+	$('.event-datetimes-container').on('focusout', '.ee-datepicker', function(e) {
 		e.preventDefault();
-		e.stopPropagation();
 		var data = $(this).data();
 		tktHelper.updateDTTrow(data.datetimeRow);
 	});/**/
