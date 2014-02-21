@@ -81,8 +81,8 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		}
 		
 		$use_color_picker = false;
-		$default_background_color = '#82e0e0';
-		$default_text_color = '#2d2c75';
+		$default_background_color = '#eeeeee';
+		$default_text_color = '#444444';
 		if($category){
 			$use_color_picker = $category->get_extra_meta('use_color_picker',true,false);
 			$background_color = $category->get_extra_meta('background_color', true,$default_background_color);
@@ -97,7 +97,7 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		$template_args['text_color'] = $text_color;
 		$template_args['default_background_color'] = $default_background_color;
 		$template_args['default_text_color'] = $default_text_color;
-		 EEH_Template::display_template(EE_CALENDAR_ADMIN_TEMPLATE_PATH."category_color_for_calendar.template.php",$template_args);
+		EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'category_color_for_calendar.template.php', $template_args );
 	}
 	
 	public function _redirect_action_update_category($redirection_query_args){
