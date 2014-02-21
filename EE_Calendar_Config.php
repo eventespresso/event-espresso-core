@@ -39,6 +39,11 @@ class EE_Calendar_Config extends EE_Config_Base{
 	 * @var EE_Calendar_Config_Display
 	 */
 	public $display;
+	/**
+	 *
+	 * @var boolean
+	 */
+	public $widget;
 	
 	
 	public function __construct(){
@@ -49,6 +54,7 @@ class EE_Calendar_Config extends EE_Config_Base{
 		$this->column_format = new EE_Calendar_Config_Column_Format();
 		$this->time = new EE_Calendar_Config_Time();
 		$this->display = new EE_Calendar_Config_Display();
+		$this->widget = FALSE;
 	}
 	
 	/**
@@ -175,8 +181,8 @@ class EE_Calendar_Config_Display extends EE_Config_Base{
 		$this->enable_calendar_filters = false;
 		$this->enable_category_legend = false;
 		$this->use_pickers = false;
-		$this->event_background = '#007BAE';
-		$this->event_text_color = '#FFFFFF';
+		$this->event_background = '#EEEEEE';
+		$this->event_text_color = '';
 		$this->enable_cat_classes = false;
 		$this->disable_categories = false;
 		$this->show_attendee_limit = false;
