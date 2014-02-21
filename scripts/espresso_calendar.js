@@ -13,6 +13,13 @@ jQuery(document).ready(function($) {
 	}
 	// padding and margin between event and day cell (this could be calculated via js)
 	var day_padding = 16;
+	
+	if ( eeCAL.display_use_pickers){
+		// Sets the background and border colors for all events on the calendar.
+		var ee_eventColor = eeCAL.display_event_background;
+		// Sets the text color for all events on the calendar.
+		var ee_eventTextColor = eeCAL.display_event_text_color;
+	}
 
 	$('#espresso_calendar').fullCalendar({
 		
