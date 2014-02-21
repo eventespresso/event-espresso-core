@@ -223,10 +223,13 @@ span.ui-icon {
 .event-list-display-dv .big-event-title-hdr, #single-page-checkout .big-event-title-hdr {
 	margin:1em 0 0;
 }
-#single-page-checkout .spco-ticket-info-pg {
-	padding:.5em 1em;
+#single-page-checkout .spco-ticket-info-dv {
+	margin:4em 1em .25em;
 	font-size: .9em;
 	color: #999;
+}
+.big-event-title-hdr + .spco-ticket-info-dv {
+	margin-top: 2em!important;
 }
 .spco-steps-pg {
 	margin:0 0 2em;
@@ -261,6 +264,7 @@ span.ui-icon {
 	float:left;
 	clear:none!important;
 	width:32%;
+	margin: 0!important;
 }
 .spco-copy-attendee-hr {
 	clear:both;
@@ -442,7 +446,7 @@ span.ui-icon {
 }
 #spco-copy-attendee-dv label {
 	display: block;
-	padding: 0.5em 10px 1em 0;
+	padding: 0.5em 10px 0.5em 0;
 	cursor: pointer;
 	font-size: .9em;
 	line-height: 1em;
