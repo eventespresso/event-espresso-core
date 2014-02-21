@@ -31,6 +31,7 @@ global $css_class;
 
 $att_nmbr = 0;
 $prev_event = '';
+$prev_ticket = '';
 
 if ( $event_queue['total_items'] > 0 ) {
 	foreach ( $event_queue['items'] as $line_item => $item ) {
@@ -40,23 +41,37 @@ if ( $event_queue['total_items'] > 0 ) {
 
 		<div id="spco-attendee-panel-dv-<?php echo $line_item;?>" class="spco-attendee-panel-dv">		
 			
-			<?php if ( $item['ticket']->name() != $prev_event ) { ?>
-			<h3 id="event_title-<?php echo $item['ticket']->ID() ?>" class="big-event-title-hdr">
+			<?php if ( $item['event']->ID() != $prev_event ) { ?>
+			<h3 id="event_title-<?php echo $item['event']->ID() ?>" class="big-event-title-hdr">
 				<?php echo $item['event']->name(); ?>				
 			</h3>
-				<?php if ( $payment_required && ! $revisit ) { ?>
-			<p class="spco-ticket-info-pg">
-			<?php 
-				echo $item['ticket']->name() . ':  ' . EEH_Template::format_currency( $item['ticket']->price(), FALSE, FALSE );
-				echo $item['ticket']->qty() ? ' &nbsp; x &nbsp; ' . $ticket_count[ $item['ticket']->ID() ] . __(' tickets', 'event_espresso') . ' &nbsp; = &nbsp; ' . EEH_Template::format_currency( $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ] ) : ''; 
-				echo $item['ticket']->description() ? '<br/>' . __('Ticket Details: ', 'event_espresso') . $item['ticket']->description() : ''; 
-			?>				
-			</p>
-
-			<?php 
-					}
-				} 
-			?>
+			<?php } ?>	
+			<?php if ( $item['ticket']->ID() != $prev_ticket ) { ?>
+				<?php if ( ! $revisit ) { ?>
+			<div class="spco-ticket-info-dv">
+				<h5><?php _e('Ticket Details', 'event_espresso');?></h5>
+				<table>
+					<tr>
+						<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
+						<th scope="col" width="5%" class="jst-cntr"><?php _e('Qty', 'event_espresso');?></th>
+						<th scope="col" width="15%" class="jst-rght"><?php _e('Price', 'event_espresso');?></th>
+						<th scope="col" width="15%" class="jst-rght"><?php _e('Total', 'event_espresso');?></th>
+					</tr>
+					<tr>
+						<td>
+						<?php 
+							echo $item['ticket']->name(); 
+							echo $item['ticket']->description() ? '<br/>' . $item['ticket']->description() : ''; 
+						?>							
+						</td>
+						<td class="jst-cntr"><?php echo $ticket_count[ $item['ticket']->ID() ];?></td>
+						<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price(), FALSE, FALSE );?></td>
+						<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ] );?></td>
+					</tr>
+				</table>				
+			</div>
+				<?php } ?>	
+			<?php } ?>	
 			
 			<fieldset id="spco-attendee-wrap-<?php echo $line_item;?>" class="spco-attendee-wrap-fs">
   				<legend class="spco-attendee-lgnd smaller-text lt-grey-text"><?php echo __('Attendee #', 'event_espresso') . $att_nmbr;?></legend>
@@ -155,7 +170,8 @@ if ( $event_queue['total_items'] > 0 ) {
 				}
 			}
 			echo $item['additional_attendee_reg_info'];
-			$prev_event = $item['ticket']->name(); 
+			$prev_event = $item['event']->ID();
+			$prev_ticket = $item['ticket']->ID(); 
 		 } // $event_queue['items'] as $line_item 
 	 } // $event_queue['total_items'] 
 ?>
