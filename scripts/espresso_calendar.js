@@ -90,7 +90,6 @@ jQuery(document).ready(function($) {
 		// Sets the text color for all events on the calendar.
 		eventTextColor: ee_eventTextColor,
 
-
 		//Full names of months.
 		monthNames: eeCAL.month_names,
 		//Abbreviated names of months.
@@ -99,7 +98,11 @@ jQuery(document).ready(function($) {
 		dayNames: eeCAL.day_names,
 		//Abbreviated names of days-of-week.
 		dayNamesShort: eeCAL.day_names_short,
-				
+		
+		// set initial date view
+		year: eeCAL.year,
+		month: eeCAL.month,
+		
 		//Load the events into json srrsy
 		events: function(start, end, callback) {
 			$.ajax({
