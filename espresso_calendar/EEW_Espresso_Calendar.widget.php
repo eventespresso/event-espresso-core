@@ -170,7 +170,7 @@ class EEW_Espresso_Calendar extends WP_Widget {
 					'header_left' => 'prev',
 					'header_center' => 'title',
 					'header_right' =>'next',
-					'titleFormat_month' => 'MMM yyyy',
+					'title_format_month' => 'MMM yyyy',
 					'widget' => TRUE
 				);
 				echo EE_Calendar::instance()->display_calendar( $attributes );
