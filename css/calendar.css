@@ -352,24 +352,16 @@ The Buttons and related paraphenalia
 }
 #espresso_calendar:not(.ui-widget) .fc-event {
  margin: 0 1.5px 3px;
- border: none;
+ border: 1px solid #eee;
  border-radius: 0;
- background-color: #eee;
- text-shadow: 1px 1px 0px #fff;
+ /*background-color: #eee;*/
  font-size: 85%;
  line-height: 1;
-}
-#espresso_calendar.calendar_widget .fc-event {
-	margin: 0 0 2px;
-	padding: 0px;
-	min-height: 15px;
 }
 #espresso_calendar .fc-event a {
 	letter-spacing: -.5px;
 }
-#espresso_calendar .fc-event a:hover {
-	text-shadow: none;
-}
+
 /*#espresso_calendar:not(.ui-widget) .fc-event.expired {
  background: #EEEEE6 !important;
  color: #999 !important;
