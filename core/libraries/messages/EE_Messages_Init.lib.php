@@ -271,7 +271,13 @@ class EE_Messages_Init extends EE_Base {
 			$status_match_array = $this->_get_reg_status_array();
 			$active_mts = $this->_EEMSG->get_active_message_types();
 
-			$success = in_array( $status_match_array[$reg->status_ID()], $active_mts ) ? $this->_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg ) : FALSE;
+			if ( ! in_array( $status_match_array[$reg->status_ID()], $active_mts ) ) {
+				$success = FALSE;
+				EE_Error::add_error( sprintf( __('Cannot resend the message for this registration because the corresponding message type (%s) is not active.  If you wish to send messages for this message type then please activate it by %sgoing here%s.', 'event_espresso'), $status_match_array[$reg->status_ID()], '<a href="' . admin_url('admin.php?page=espresso_messages&action=settings') . '">', '</a>' ) );
+				return $success;
+			}
+
+			$success = $this->_EEMSG->send_message( $status_match_array[$reg->status_ID()], $reg );
 		}
 
 		if ( $success ) {
