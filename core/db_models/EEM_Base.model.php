@@ -1768,8 +1768,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach($this->_model_relations as $valid_related_model_name=>$relation_obj){
 			if(strpos($query_param, $valid_related_model_name.".") === 0){
 				$this->_add_join_to_model($valid_related_model_name, $passed_in_query_info,$original_query_param);
-				
-				$query_param = str_replace($valid_related_model_name.".","",$query_param);
+				$query_param = substr($query_param, strlen($valid_related_model_name."."));
 				if($query_param == ''){
 					//nothing left to $query_param
 					//we should actually end in a field name, not a model like this!
