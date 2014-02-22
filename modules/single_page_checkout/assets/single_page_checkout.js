@@ -739,12 +739,19 @@ jQuery(document).ready(function($) {
 							SPCO.debug( 'submit_reg_form > key', response.return_data[key] );
 						}
 						SPCO.enable_submit_buttons();
+						// hide recaptcha?
+						if ( typeof response.recaptcha_passed !== 'undefined' && response.recaptcha_passed ) {
+							$( '#spco-captcha span' ).html('');
+						} 
+						// or reload recaptcha ?
 						if ( typeof response.recaptcha_reload !== 'undefined' ) {
 							$('#recaptcha_reload').trigger('click');
 							SPCO.scroll_to_top_and_display_messages( response );
+						// process valid reponse data
 						} else if ( typeof response.return_data !== 'undefined' ) {
 							SPCO.process_return_data( next_step, response );
 						} else {
+							// uh-oh spaghettios!
 							if ( response.error !== '' && typeof(response.error) !== 'undefined' ) {
 								SPCO.scroll_to_top_and_display_messages( response );
 							} else {
@@ -797,7 +804,6 @@ jQuery(document).ready(function($) {
 		*	process_return_data
 		*/
 		process_return_data : function( next_step, response ) {
-			
 			for ( key in response.return_data ) {
 				SPCO.debug( 'process_return_data > ' + key, response.return_data[key] );
 				if ( key == 'reg-page-confirmation-dv' ) {
