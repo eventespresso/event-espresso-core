@@ -66,7 +66,7 @@ class EE_CPT_Event_Strategy {
 	protected function _add_filters(){
 		add_filter( 'posts_fields', array( $this, 'posts_fields' ), 10, 1 );
 		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
-		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
+//		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
 		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 		add_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1, 2 );
 	}
@@ -97,6 +97,7 @@ class EE_CPT_Event_Strategy {
 	public function posts_fields( $SQL ) {
 		// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
 		$SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ' ;
+		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 10, 1 );
 		return $SQL;
 	}
 
@@ -112,6 +113,7 @@ class EE_CPT_Event_Strategy {
 		global $wpdb;
 		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
 		$SQL .= ' JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Datetime::instance()->table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
+		remove_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
 		return $SQL;
 	}
 
@@ -125,7 +127,7 @@ class EE_CPT_Event_Strategy {
 	 */
 	public function posts_where( $SQL ) {
 		global $wpdb;
-//		d( $SQL );
+		remove_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
 		return $SQL;
 	}
 
@@ -140,6 +142,7 @@ class EE_CPT_Event_Strategy {
 	public function the_posts( $posts, WP_Query $wp_query ) {
 		// automagically load the EEH_Event_View helper so that it's functions are available
 		EE_Registry::instance()->load_helper('Event_View');
+		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
 		return $posts;
 	}
 
@@ -159,6 +162,7 @@ class EE_CPT_Event_Strategy {
 		// (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
 		global $wpdb;
 		$SQL = $wpdb->posts . '.ID';
+		remove_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1 );
 		return $SQL;	
 	}
 

@@ -42,31 +42,9 @@ class EE_CPT_Attendee_Strategy {
 	 */
 	public function __construct( $CPT) {
 		$this->CPT = $CPT;
-		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
-		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
+//		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
-	
 
-
-
-
-
-	/**
-	 * 	pre_get_posts
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function pre_get_posts(  $WP_Query  ) {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		if ( ! $WP_Query->is_main_query() && ! $WP_Query->is_archive() ) {
-			return;
-		}
-//		$WP_Query->set( 'post_type', array( $this->CPT['post_type'] ));
-//		$WP_Query->set( 'fields', 'ids' );
-//		printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		return $WP_Query;
-	}
 
 
 
