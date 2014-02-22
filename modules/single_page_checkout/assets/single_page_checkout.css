@@ -383,6 +383,9 @@ span.ui-icon {
 	margin:.5em 0 0;
 	cursor:pointer;
 }
+#recaptcha_response_field {
+	padding: 8px 10px 7px;
+}
 .reg-page-form-field-wrap-pg input[type="text"] {
 	display:block;
 	width: 100%;
