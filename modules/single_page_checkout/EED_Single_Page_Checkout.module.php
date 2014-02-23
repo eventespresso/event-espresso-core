@@ -35,7 +35,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_reg_url_link = '';
 	// whether returning to edit attendee information or to retry a payment
 	private $_revisit = FALSE;
-	// pass recaptcha?
+	// is registration allowed to progress or halted for some reason such as failing to pass recaptcha?
 	private $_continue_reg = TRUE;
 	// array of tempate paths
 	private $_templates = array();
@@ -277,12 +277,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( empty( self::$_reg_steps )) {
 			EED_Single_Page_Checkout::setup_reg_steps_array();
 		}
-		$this->_continue_reg = TRUE;
-		// verify recaptcha
-		if ( EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' )) {
-			$this->_continue_reg = $this->process_recaptcha_response();
-		}
-
+		$this->_continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE );
 		$this->set_templates();
 		$this->_reg_page_base_url = get_permalink( EE_Registry::instance()->CFG->core->reg_page_id );
 		// grab what step we're on
@@ -889,7 +884,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			} else  {
 				$step_args['selected_gateway'] = '';
 			}
-			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Single_Page_Checkout', 'display_recaptcha' ), 10, 2 );	
 //			printr( $step_args, '$step_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			
 //			d( $step_args );
@@ -915,38 +909,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Registry::instance()->REQ->add_output( EEH_Template::display_template( $this->_templates['registration_page_wrapper'], $wrapper_args, TRUE ));
 	}
 
-
-
-
-	/**
-	 * display_recaptcha
-	 *
-	 * @access public
-	 * @return string html
-	 */
-	public static function display_recaptcha( $current_step, $next_step ) {
-
-		if ( EE_Registry::instance()->CFG->registration->use_captcha && ( empty($_REQUEST['edit_details']) || $_REQUEST['edit_details'] != 'true') && !is_user_logged_in()) {
-
-			if (!function_exists('recaptcha_get_html')) {
-				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
-			}
-
-			// the error code from reCAPTCHA, if any
-			$error = null;
-			echo '
-<script type="text/javascript">
-/* <! [CDATA [ */
-var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration->recaptcha_theme . '", lang : "' . EE_Registry::instance()->CFG->registration->recaptcha_language . '" };
-/*  ] ]>  */
-</script>
-<p class="reg-page-form-field-wrap-pg" id="spc-captcha">
-' . __('Anti-Spam Measure: Please enter the following phrase', 'event_espresso') . '
-' . recaptcha_get_html( EE_Registry::instance()->CFG->registration->recaptcha_publickey, $error, is_ssl() ? true : false ) . '
-</p>
-';
-		}	
-	}
 
 
 
@@ -1426,6 +1388,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					'success' => isset( $notices['success'] ) ? $notices['success'] : '',
 					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
 				);
+				$response_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $response_data );
 				if ( EE_Registry::instance()->REQ->front_ajax ) {
 					echo json_encode( $response_data );
 					die();
@@ -1537,7 +1500,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				$response_data = array(
 					'success' => $response['msg']['success'],
 					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
-				);			
+				);
+				$response_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $response_data );
 				if ( EE_Registry::instance()->REQ->front_ajax ) {
 					echo json_encode( $response_data );
 					die();
@@ -1554,54 +1518,8 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 
 
 
-	
-	/**
-	 * 	process_recaptcha
-	 *
-	 * 	@access public
-	 * 	@return 	void
-	 */
-	public function process_recaptcha_response() {
-		
-		$response_data = array(
-			//'success' => TRUE,
-			'error' => FALSE
-		);
-		
-		// check recaptcha
-		if ( EE_Registry::instance()->CFG->registration->use_captcha && ! is_user_logged_in() ) {
-			if ( ! function_exists( 'recaptcha_check_answer' )) {
-				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
-			}
-			$response = recaptcha_check_answer(
-				EE_Registry::instance()->CFG->registration->recaptcha_privatekey, 
-				$_SERVER["REMOTE_ADDR"],
-				EE_Registry::instance()->REQ->is_set( 'recaptcha_challenge_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_challenge_field' ) : '',
-				EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_response_field' ) : ''
-			);
-			// ohhh soo sorry... it appears you can't read gibberish chicken scratches !!!
-			if ( ! $response->is_valid ) {
-				$response_data['success'] = FALSE;
-				$response_data['recaptcha_reload'] = TRUE;
-				$response_data['error'] = sprintf( __('Sorry, but you did not enter the correct anti-spam phrase.%sPlease try again with the new phrase that has been generated for you.', 'event_espresso'), '<br/>' );
-				if ( EE_Registry::instance()->REQ->front_ajax ) {
-					echo json_encode( $response_data );
-					die();
-				}
-			}
-		}
-		if ( $response_data['error'] ) {
-			EE_Error::add_error( $response_data['error'], __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		} else {
-			return TRUE;
-		}
-	}
 
 
-
-
-	
 	/**
 	 * 	_process_finalize_registration
 	 *
@@ -1653,6 +1571,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 					'success' => $response['msg']['success'],
 					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
 				);
+				$response_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $response_data );
 				if ( EE_Registry::instance()->REQ->front_ajax ) {
 					echo json_encode( $response_data );
 					die();
@@ -1732,7 +1651,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 				$this->$callback( $callback_param, $success_msg );
 			} elseif ( EE_Registry::instance()->REQ->ajax ) {
 				// just send the ajax
-				echo json_encode( array( 'success' => $success_msg ));
+				echo json_encode( apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'success' => $success_msg )));
 				// to be... or...
 				die();
 			} else {
@@ -1744,7 +1663,7 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		} elseif ( $error_msg ) {
 
 			if ( EE_Registry::instance()->REQ->ajax ) {
-				echo json_encode( array( 'error' => $error_msg ));
+				echo json_encode( apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'error' => $error_msg )));
 				die();
 			} else {
 //				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
