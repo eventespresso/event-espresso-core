@@ -1651,22 +1651,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$this->$callback( $callback_param, $success_msg );
 			} elseif ( EE_Registry::instance()->REQ->ajax ) {
 				// just send the ajax
-				echo json_encode( apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'success' => $success_msg )));
-				// to be... or...
+				$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'success' => $success_msg ));
+				echo json_encode( $json_response );
 				die();
 			} else {
-				// not ajax
-//				EE_Error::add_success( $success_msg, __FILE__, __FUNCTION__, __LINE__ );
-				// return true to advance to next step
+				// not ajax, so return TRUE to advance to next step
 				$no_errors = TRUE;
 			}
 		} elseif ( $error_msg ) {
 
 			if ( EE_Registry::instance()->REQ->ajax ) {
-				echo json_encode( apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'error' => $error_msg )));
+				$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'error' => $error_msg ));
+				echo json_encode( $json_response );
 				die();
 			} else {
-//				EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
+				// not ajax, so return FALSE to repeat the current step while displaying the error notice
 				$no_errors = FALSE;
 			}
 		}
