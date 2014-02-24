@@ -56,6 +56,11 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	abstract public function schema_changes_after_migration();
 	
 	/**
+	 * Place to add hooks and filters for tweaking the migrations page, in order
+	 * to customize it
+	 */
+	abstract public function migration_page_hooks();
+	/**
 	 * Multi-dimensional array that defines teh mapping from OLD table Primary Keys
 	 * to NEW table Primary Keys.
 	 * Top-level array keys are OLD table names (minus the "wp_" part),
@@ -453,6 +458,15 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return null;
 	}
+	/**
+	 * Returns the vresion that this script migrates to, based on the script's name.
+	 * Cannot be overwritten because lots of code needs to know which version a script
+	 * migrates to knowing only its name.
+	 * @return string
+	 */
+	public final function migrates_to_version(){
+		return EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
+	}
 }
 
 
@@ -825,5 +839,8 @@ class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
 		$this->_pretty_name = __("Fatal Uncatchable Error Occurred", "event_espresso");
 //		dd($this);
 		parent::__construct();
+	}
+	public function migration_page_hooks() {
+		
 	}
 }
