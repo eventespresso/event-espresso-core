@@ -580,9 +580,13 @@ jQuery(document).ready(function($) {
 		 * Hides the step specified by step_to_hide
 		 */
 		hide_steps : function(){
-			$('.spco-edit-step-lnk').removeClass('hidden');
-			$('.spco-step-dv').slideUp( function() {
-				$('.spco-step-dv').height(0);
+			$('.spco-edit-step-lnk').each( function() {
+				$(this).removeClass('hidden');
+			});
+			$('.spco-step-dv').each( function() {
+				if ( ! $(this).is( ":hidden" )) {
+					$(this).slideUp( 'fast' ).addClass('hidden');
+				}				
 			});
 		},
 
@@ -596,13 +600,14 @@ jQuery(document).ready(function($) {
 		 * @return void
 		 **/
 		display_step : function( step_to_show, msg ){
+			SPCO.hide_steps();
 			$('.spco-step-display-dv').removeClass('active-step').addClass('inactive-step');
 			$('#spco-step-'+step_to_show+'-display-dv').removeClass('inactive-step').addClass('active-step');
 			$('#spco-edit-'+step_to_show+'-lnk').addClass('hidden');
 			SPCO.debug( 'display_step -> step_to_show', step_to_show );
 			SPCO.debug( 'display_step -> "#spco-edit-'+step_to_show+'-lnk" class', $('#spco-edit-'+step_to_show+'-lnk').attr('class') );
 			$('#espresso-ajax-loading').fadeOut('fast');
-			$('#spco-'+step_to_show+'-dv').css('display','none').removeClass('hidden').slideDown( function() {
+			$('#spco-'+step_to_show+'-dv').css({ 'display' : 'none' }).removeClass('hidden').slideDown( function() {
 				SPCO.scroll_to_top_and_display_messages( msg );
 			});
 		},
@@ -732,7 +737,9 @@ jQuery(document).ready(function($) {
 					
 					SPCO.debug( 'submit_reg_form > step', step );
 					SPCO.debug( 'submit_reg_form > next_step', next_step );
+					
 					if ( typeof response !== 'undefined' ) {
+						
 						SPCO.debug( 'submit_reg_form > response.success', response.success );
 						SPCO.debug( 'submit_reg_form > response.error', response.error );
 						for ( key in response.return_data ) {
@@ -740,8 +747,10 @@ jQuery(document).ready(function($) {
 						}
 						SPCO.enable_submit_buttons();
 						// hide recaptcha?
-						if ( typeof response.recaptcha_passed !== 'undefined' && response.recaptcha_passed ) {
-							$( '#spco-captcha span' ).html('');
+						if ( typeof response.recaptcha_passed !== 'undefined' ) {
+							if ( response.recaptcha_passed ) {
+								$( '#spco-captcha span' ).html('');
+							}							
 						} 
 						// or reload recaptcha ?
 						if ( typeof response.recaptcha_reload !== 'undefined' ) {
@@ -752,7 +761,7 @@ jQuery(document).ready(function($) {
 							SPCO.process_return_data( next_step, response );
 						} else {
 							// uh-oh spaghettios!
-							if ( response.error !== '' && typeof(response.error) !== 'undefined' ) {
+							if ( typeof response.error !== 'undefined' && response.error !== '' ) {
 								SPCO.scroll_to_top_and_display_messages( response );
 							} else {
 								go_to[ next_step ]( response );
@@ -873,31 +882,19 @@ jQuery(document).ready(function($) {
 		
 		// go to attendee_information
 		attendee_information : function ( response ) {
-			SPCO.hide_steps();
-			// set attendee_information back to auto height
-			$('#spco-attendee_information-dv').css( 'height', 'auto' );
 			$( '#spco-display-event-questions-lnk' ).trigger('click');
-//			if ( msg == undefined ) { msg =''; }
 			SPCO.display_step( 'attendee_information', response );
 		},
 
 		// go to payment_options
 		payment_options : function ( response ) {
-			SPCO.hide_steps();
 			$('.reg-page-billing-info-dv').addClass('hidden');
 			$('.reg-page-payment-option-dv').removeClass('hidden');
-			$('#spco-payment_options-dv').css({ 'display' : 'none' }).removeClass('hidden');
-			// set payment_options back to auto height
-			$('#spco-payment_options-dv').css( 'height', 'auto' );
 			SPCO.display_step( 'payment_options', response );
 		},
 
 		// go to registration_confirmation
 		registration_confirmation : function ( response ) {
-			SPCO.hide_steps();
-			$('#spco-registration_confirmation-dv').css({ 'display' : 'none' }).removeClass('hidden');
-			// set registration_confirmation back to auto height
-			$('#spco-registration_confirmation-dv').css( 'height', 'auto' );
 			SPCO.display_step( 'registration_confirmation', response );
 
 		},
