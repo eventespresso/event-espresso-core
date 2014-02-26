@@ -1,5 +1,7 @@
-<?php //echo '<h1>' . __FILE__ . '</h1>'; ?>
-<?php global $post; ?>
+<?php 
+global $post; 
+if ( espresso_display_ticket_selector() ) : 
+?>
 <br/>
 <div class="event-tickets">
 	<h3 class="ticket-selector-h3 ee-event-h3">
@@ -8,3 +10,4 @@
 	<?php espresso_ticket_selector( $post ); ?>
 </div>
 <!-- .event-tickets -->
+<?php endif; ?>
