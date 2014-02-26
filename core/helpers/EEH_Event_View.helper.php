@@ -60,6 +60,20 @@
 
 
 	/**
+	 * espresso_display_ticket_selector
+	 * whether or not to display the Ticket Selector for an event
+	* 
+	 * @return boolean
+	 */
+	if ( ! function_exists( 'espresso_display_ticket_selector' )) {
+		function espresso_display_ticket_selector( $EVT_ID = FALSE ) {
+			return EEH_Event_View::display_ticket_selector( $EVT_ID );
+		}		
+	}
+
+
+
+	/**
 	 * espresso_event_status
 	 * returns a banner showing the event status if it is sold out, expired, or inactive
 	* 
@@ -445,6 +459,19 @@ class EEH_Event_View extends EEH_Base {
 		return EEH_Event_View::$_event;
 	}
 
+
+
+
+	/**
+	 * 	display_ticket_selector
+	 *
+	 *  @access 	public
+	 *  @return 	boolean
+	 */
+	public static function display_ticket_selector( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		return $event instanceof EE_Event ? $event->display_ticket_selector() : FALSE;
+	}
 
 
 
