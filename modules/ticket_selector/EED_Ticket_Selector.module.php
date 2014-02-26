@@ -125,6 +125,10 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 		
+		if ( ! self::$_event->display_ticket_selector() ) {
+			return '';
+		}
+		
 		$template_args = array();
 		// is the event expired ?
 		if ( ! $template_args['event_is_expired'] = self::$_event->is_expired() ) {
