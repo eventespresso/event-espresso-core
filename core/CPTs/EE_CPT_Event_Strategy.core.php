@@ -64,9 +64,9 @@ class EE_CPT_Event_Strategy {
 	 * for event CPTs)
 	 */
 	protected function _add_filters(){
-		add_filter( 'posts_fields', array( $this, 'posts_fields' ), 10, 1 );
-		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
-		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
+		add_filter( 'posts_fields', array( $this, 'posts_fields' ), 10, 2 );
+		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 2 );
+//		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
 		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 		add_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1, 2 );
 	}
@@ -81,7 +81,7 @@ class EE_CPT_Event_Strategy {
 	protected function _remove_filters(){
 		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 10, 1 );
 		remove_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
-		remove_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
+//		remove_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
 		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
 		remove_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1 );
 	}
@@ -94,9 +94,11 @@ class EE_CPT_Event_Strategy {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public function posts_fields( $SQL ) {
-		// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
-		$SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ' ;
+	public function posts_fields( $SQL, WP_Query $wp_query ) {
+		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
+			$SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ' ;
+		}
 		return $SQL;
 	}
 
@@ -108,10 +110,12 @@ class EE_CPT_Event_Strategy {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public function posts_join( $SQL ) {
-		global $wpdb;
-		// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
-		$SQL .= ' JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Datetime::instance()->table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
+	public function posts_join( $SQL, WP_Query $wp_query ) {
+		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+			global $wpdb;
+			// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
+			$SQL .= ' JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Datetime::instance()->table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
+		}
 		return $SQL;
 	}
 
@@ -123,12 +127,31 @@ class EE_CPT_Event_Strategy {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public function posts_where( $SQL ) {
+	public function posts_where( $SQL, WP_Query $wp_query ) {
 		global $wpdb;
-//		d( $SQL );
 		return $SQL;
 	}
 
+
+
+
+
+	/**
+	 * 	posts_groupby
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function posts_groupby( $SQL, WP_Query $wp_query ) {
+		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+			// TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
+			// we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once 
+			// (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
+			global $wpdb;
+			$SQL = $wpdb->posts . '.ID';
+		}
+		return $SQL;	
+	}
 
 
 	/**
@@ -138,29 +161,13 @@ class EE_CPT_Event_Strategy {
 	 *  @return 	void
 	 */
 	public function the_posts( $posts, WP_Query $wp_query ) {
-		// automagically load the EEH_Event_View helper so that it's functions are available
-		EE_Registry::instance()->load_helper('Event_View');
+		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+			// automagically load the EEH_Event_View helper so that it's functions are available
+			EE_Registry::instance()->load_helper('Event_View');
+		}
 		return $posts;
 	}
 
-
-
-
-
-	/**
-	 * 	get_EE_post_type_metadata
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function posts_groupby( $SQL ) {
-		// TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
-		// we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once 
-		// (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
-		global $wpdb;
-		$SQL = $wpdb->posts . '.ID';
-		return $SQL;	
-	}
 
 
 

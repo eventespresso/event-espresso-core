@@ -178,9 +178,9 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	private function _filter_query_parts() {
 		// build event list query
-		add_filter( 'posts_join', array( $this, 'posts_join' ), 1, 1 );
-		add_filter( 'posts_where', array( $this, 'posts_where' ), 1, 1 );
-		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1, 1 );
+		add_filter( 'posts_join', array( $this, 'posts_join' ), 1, 2 );
+		add_filter( 'posts_where', array( $this, 'posts_where' ), 1, 2 );
+		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1, 2 );
 	}
 
 	/**
@@ -258,9 +258,8 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function posts_join( $SQL ) {
-		global $wp_query;
-		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {
+	public function posts_join( $SQL, WP_Query $wp_query ) {
+		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
 			// Category
 			$SQL .= EED_Events_Archive::posts_join_sql_for_terms( EED_Events_Archive::_event_category_slug() );
 		}
@@ -332,8 +331,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function posts_where( $SQL ) {
-		global $wp_query;
+	public function posts_where( $SQL, WP_Query $wp_query ) {
 		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events'  ) {			
 			// Show Expired ?
 			$SQL .= EED_Events_Archive::posts_where_sql_for_show_expired( EED_Events_Archive::_show_expired() );
@@ -395,9 +393,8 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function posts_orderby( $SQL ) {
-		global $wp_query;
-		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {			
+	public function posts_orderby( $SQL, WP_Query $wp_query ) {
+		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {			
 			$SQL = EED_Events_Archive::posts_orderby_sql( array( 'start_date' ));
 		}
 		return $SQL;
