@@ -294,7 +294,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		
          $dl_invoice_lnk = '
 		<li>
-			<a title="Download Transaction Invoice" target="_blank" href="'.$dl_invoice_lnk_url.'">
+			<a title="' . __( 'Download Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'">
 				<span class="ee-icon ee-icon-PDF-file-type"></span>
 			</a>
 		</li>';

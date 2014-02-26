@@ -142,7 +142,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
 			
 			$report_params = array(
-				'title' 		=> 'Total Revenue per Day',
+				'title' 		=> __( 'Total Revenue per Day' ),
 				'id' 			=> $report_ID,
 				'revenue' => $revenue,												
 				'xmin' 		=> $xmin,
@@ -188,7 +188,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			$span = $period == 'week' ? 9 : 33;
 
 			$report_params = array(
-				'title' 		=> 'Total Revenue per Event',
+				'title' 		=> __( 'Total Revenue per Event' ),
 				'id' 			=> $report_ID,
 				'revenue'	=> $revenue,												
 				'span' 		=> $span,
