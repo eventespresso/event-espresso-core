@@ -96,7 +96,7 @@ class EEH_Template {
 			$templates[] = "{$slug}-{$name}.php";
 		}
 		// allow tempalte parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );		
-		if ( apply_filters( "FHEE__{$slug}_{$name}_template__display_{$name}", TRUE )) {
+		if ( apply_filters( "FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", TRUE )) {
 			EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
 		}		
 	}
