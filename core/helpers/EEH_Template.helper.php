@@ -95,9 +95,10 @@ class EEH_Template {
 		if ( $name != '' ) {
 			$templates[] = "{$slug}-{$name}.php";
 		}
-		// we do NOT want to find the slug only version of files such as content.php when looking for content-espresso_events.php
-		// $templates[] = "{$slug}.php";
-		EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
+		// allow tempalte parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );		
+		if ( apply_filters( "FHEE__{$slug}_{$name}_template__display_{$name}", TRUE )) {
+			EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
+		}		
 	}
 
 
