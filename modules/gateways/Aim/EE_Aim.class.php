@@ -313,7 +313,14 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	 * @param string $item_taxable
 	 */
 	public function addLineItem($item_id, $item_name, $item_description, $item_quantity, $item_unit_price, $item_taxable) {
-		$args = func_get_args();
+		$args = array(
+			substr($item_id, 0, 31),
+			substr($item_name, 0, 31),
+			substr($item_description, 0, 255),
+			number_format(abs($item_quantity), 2, '.', ''),
+			number_format(abs($item_unit_price), 2, '.', ''),
+			$item_taxable == 'N' ? 'N' : 'Y'
+			);
 		$this->_additional_line_items[] = implode('<|>', $args);
 	}
 
