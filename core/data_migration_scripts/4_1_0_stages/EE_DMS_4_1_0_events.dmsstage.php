@@ -112,7 +112,7 @@ CREATE TABLE `wp_events_detail` (
 				'EVTM_ID'=> new EE_DB_Only_Float_Field('EVTM_ID', __('Event Meta Row ID','event_espresso'), false),
 				'EVT_ID_fk'=>new EE_DB_Only_Int_Field('EVT_ID', __("Foreign key to Event ID from Event Meta table", "event_espresso"), false),
 				'EVT_display_desc'=>new EE_Boolean_Field('EVT_display_desc', __("Display Description Flag", "event_espresso"), false, 1),
-				'EVT_display_reg_form'=>new EE_Boolean_Field('EVT_display_reg_form', __("Display Registration Form Flag", "event_espresso"), false, 1),
+				'EVT_display_ticket_selector'=>new EE_Boolean_Field('EVT_display_ticket_selector', __("Display Display Ticket Selector Flag", "event_espresso"), false, 1),
 				'EVT_visible_on'=>new EE_Datetime_Field('EVT_visible_on', __("Event Visible Date", "event_espresso"), true, current_time('timestamp')),
 				'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', __("Limit of Additional Registrations on Same Transaction", "event_espresso"), true),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', __("Default Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending_payment, EEM_Registration::reg_status_array()),
@@ -382,7 +382,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$cols_n_values = array(
 			'EVT_ID'=>$new_cpt_id,//EVT_ID_fk
 			'EVT_display_desc'=> 'Y' == $old_event['display_desc'],
-			'EVT_display_reg_form'=> 'Y'== $old_event['display_reg_form'],
+			'EVT_display_ticket_selector'=> 'Y'== $old_event['display_reg_form'],
 			'EVT_visible_on'=> $this->get_migration_script()->convert_date_string_to_utc($this,$old_event,current_time('mysql'),$old_event['timezone_string']),//don't use the old 'visible_on', as it wasnt ever used
 			'EVT_additional_limit'=> $old_event['allow_multiple'] == 'N' ? 1 : $old_event['additional_limit'],
 			'EVT_default_registration_status' => $default_reg_status,
@@ -397,7 +397,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$datatypes = array(
 			'%s',//EVT_ID
 			'%d',//EVT_display_desc
-			'%d',//EVT_display_reg_form
+			'%d',//EVT_display_ticket_selector
 			'%s',//EVT_visible_on
 			'%d',//EVT_additional_limit
 			'%s',//EVT_default_registration_status

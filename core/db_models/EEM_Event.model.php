@@ -117,7 +117,7 @@ class EEM_Event  extends EEM_CPT_Base{
 				'EVTM_ID'=> new EE_DB_Only_Float_Field( 'EVTM_ID', __( 'Event Meta Row ID','event_espresso' ), FALSE ),
 				'EVT_ID_fk'=>new EE_DB_Only_Int_Field( 'EVT_ID', __( 'Foreign key to Event ID from Event Meta table', 'event_espresso' ), FALSE ),
 				'EVT_display_desc'=>new EE_Boolean_Field( 'EVT_display_desc', __( 'Display Description Flag', 'event_espresso' ), FALSE, 1 ),
-				'EVT_display_reg_form'=>new EE_Boolean_Field( 'EVT_display_reg_form', __( 'Display Registration Form Flag', 'event_espresso' ), FALSE, 1 ),
+				'EVT_display_ticket_selector'=>new EE_Boolean_Field( 'EVT_display_ticket_selector', __( 'Display Ticket Selector Flag', 'event_espresso' ), FALSE, 1 ),
 				'EVT_visible_on'=>new EE_Datetime_Field( 'EVT_visible_on', __( 'Event Visible Date', 'event_espresso' ), TRUE, current_time( 'timestamp' )),
 				'EVT_additional_limit'=>new EE_Integer_Field( 'EVT_additional_limit', __( 'Limit of Additional Registrations on Same Transaction', 'event_espresso' ), TRUE, 10 ),
 				'EVT_default_registration_status'=>new EE_Enum_Text_Field(

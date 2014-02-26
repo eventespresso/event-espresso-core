@@ -127,7 +127,7 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 			EVTM_ID INT NOT NULL AUTO_INCREMENT,
 			EVT_ID int(11) unsigned NOT NULL,
 			EVT_display_desc TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
-			EVT_display_reg_form TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
+			EVT_display_ticket_selector TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 			EVT_visible_on datetime NOT NULL default '0000-00-00 00:00:00',
 			EVT_default_registration_status VARCHAR(3),
 			EVT_phone varchar(45) DEFAULT NULL,
