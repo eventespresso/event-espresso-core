@@ -155,7 +155,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			
 			return $ticket_selector;
 		} else {
-			return __( 'All tickets sales have ended because the event is expired.', 'event_espresso' );
+			return '<p><span class="important-notice">' . __( 'We\'re sorry, but all tickets sales have ended because the event is expired.', 'event_espresso' ) . '</span></p>';
 		}
 
 	}
