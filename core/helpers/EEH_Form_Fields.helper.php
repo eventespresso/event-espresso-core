@@ -783,8 +783,9 @@ class EEH_Form_Fields {
 	 * @return string 
 	 */
 	private static function _generate_select_option( $key, $value, $answer, $only_option = FALSE ){
-			$value = self::prep_answer( $value );
 			$key = self::prep_answer( $key );
+			$value = self::prep_answer( $value );
+			$value = ! empty( $value ) ? $value : $key;
 			$selected = ( $answer == $key || $only_option ) ? ' selected="selected"' : '';
 			//echo '<h4>' . $answer . ' = ' . $key . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			return "\n\t\t\t\t" . '<option value="' . self::prep_option_value( $key ) . '"' . $selected . '> ' . $value . '&nbsp;&nbsp;&nbsp;</option>';					
