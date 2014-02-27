@@ -179,16 +179,30 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_list_of_event_dates' )) {
-		function espresso_list_of_event_dates( $EVT_ID = FALSE, $dt_frmt = 'l F jS, Y', $tm_frmt = '@ g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE ) {
+		function espresso_list_of_event_dates( $EVT_ID = FALSE, $dt_frmt = 'l F jS, Y', $tm_frmt = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE ) {
 			$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID ,$show_expired );
 			//d( $datetimes );
 			if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 				global $post;
 				$html = $format ? '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">' : '';
 				foreach ( $datetimes as $datetime ) {
-					$html .= $format ? '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">' : '';
-					$html .= $format ? $datetime->start_date_and_time( $dt_frmt, $tm_frmt ) : $datetime;	
-					$html .= $format ? '</li>' : '';
+					if ( $datetime instanceof EE_Datetime ) {
+						if ( $format ) {
+							$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';
+							$datetime_name = $datetime->name();
+							$html .= ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b>' : '';
+							$datetime_description = $datetime->description();
+							$html .= ! empty( $datetime_name ) && ! empty( $datetime_description ) ? ' - ' : '';
+							$html .= ! empty( $datetime_description ) ? $datetime_description : '';
+							$html .= ! empty( $datetime_name ) || ! empty( $datetime_description ) ? '<br/>' : '';
+							$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $dt_frmt ) . ' &nbsp; &nbsp; ';
+							$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $tm_frmt ) . '<br/><br/>';
+							$html .= '</li>';
+
+						} else {
+							$html .= $datetime;
+						}
+					}
 				}
 				$html .= $format ? '</ul>' : '';
 				if ( $echo ) {
