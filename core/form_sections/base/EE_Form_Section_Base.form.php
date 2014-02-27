@@ -97,17 +97,6 @@ abstract class EE_Form_Section_Base{
 		return implode(", ",$validation_error_messages);
 	}
 	
-	/**
-	 * Usually $_POST or $_GET data submitted. Extracts the request data which is
-	 * relevant to this form section and stores it, after having validated and sanitized it.
-	 * The form section will take care
-	 * of deciding which data pertains to it, and what data does not.
-	 * @param array $_req_data
-	 */
-	public function handle_request($req_data){
-		$this->_sanitize($req_data);
-		$this->_validate($req_data);
-	}
 	
 	
 	/**

@@ -547,6 +547,7 @@ final class EE_System {
 	 */
 	public function init() {
 //		$f = new EE_Sample_Form();
+//		$f->handle_request($req_data);
 //		if($_SERVER['REQUEST_METHOD'] == 'post'){
 //			$f->receive_form_submission($_POST);
 //			if($f->is_valid()){
@@ -555,7 +556,7 @@ final class EE_System {
 //				echo "invalido";
 //			}
 //		}
-//		echo "<form method='post'>"
+//		echo "<form method='post'>";
 //		echo $f->get_html_and_js();
 //		echo '<input type="submit">';
 //		echo "</form>";
