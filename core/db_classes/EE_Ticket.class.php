@@ -463,10 +463,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * This returns the chronologically last datetime that this ticket is associated with
+	 * @param	string	$dt_format - string representation of date format defaults to WP settings
+	 * @param	string	$conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
 	 * @return array
 	 */
-	public function date_range( $dt_frmt = NULL ) {
-		return $this->first_datetime()->start_date( $dt_frmt ) . ' - ' . $this->last_datetime()->end_date( $dt_frmt );
+	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {
+		return $this->first_datetime()->start_date( $dt_frmt ) . $conjunction . $this->last_datetime()->end_date( $dt_frmt );
 	}
 
 
