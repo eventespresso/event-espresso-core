@@ -125,7 +125,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		wp_localize_script('ee_form_section_validation','ee_form_section_vars',array(
 			'form_section_id'=>'#'.$form_section_id,
 			'validation_rules'=>$validation_rules,
-			'localized_error_messages'=>$this->_get_localied_error_messages()));
+			'localized_error_messages'=>$this->_get_localized_error_messages()));
 	}
 	
 	/**
@@ -133,7 +133,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * is that the key here should be the same as the custom validation rule put in the JS file
 	 * @return array keys are custom validation rules, and values are internationalized strings
 	 */
-	private function _get_localied_error_messages(){
+	private function _get_localized_error_messages(){
 		return array(
 			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://mysite.com/monkey.jpg", "event_espresso")
 		);
