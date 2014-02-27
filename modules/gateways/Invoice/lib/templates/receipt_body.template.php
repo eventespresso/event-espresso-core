@@ -28,7 +28,7 @@ $tax_total_line_item;
 						</div>
 						<!-- adr -->
 						<div class="email">[email]</div>
-						<div class="vat">VAT/Tax Number: [vat]</div>
+						<div class="vat"><?php _e('VAT/Tax Number:', 'event_espresso')?> [vat]</div>
 					</div>
 				</td>
 				<td>

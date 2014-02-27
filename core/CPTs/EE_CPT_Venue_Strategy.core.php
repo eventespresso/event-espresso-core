@@ -42,27 +42,7 @@ class EE_CPT_Venue_Strategy {
 	 */
 	public function __construct( $CPT) {
 		$this->CPT = $CPT;
-//		printr( $CPT, '$CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
 		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
-	}
-	
-
-
-
-
-
-	/**
-	 * 	pre_get_posts
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function pre_get_posts(  $WP_Query  ) {
-//		if ( ! $WP_Query->is_main_query() && ! $WP_Query->is_archive() ) {
-//			return;
-//		}
-		return $WP_Query;
 	}
 
 
@@ -81,6 +61,7 @@ class EE_CPT_Venue_Strategy {
 			EE_Registry::instance()->load_helper( 'Maps' );
 			EEH_Maps::espresso_google_map_js();
 		}
+		remove_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 		return $posts;
 	}
 

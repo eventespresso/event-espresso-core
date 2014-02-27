@@ -1460,23 +1460,19 @@ class EE_Gateway_Config extends EE_Config_Base{
 class EE_Events_Archive_Config extends EE_Config_Base{
 
 	public $display_description;
-	public $display_addresss;
+	public $display_datetimes;
 	public $display_venue_details;
 	public $display_expired_events;
-//	public $default_type;
-//	public $event_list_grid_size;
-//	public $templates;
 	public $display_status_banner;
+	public $display_ticket_selector;
 	
 	public function __construct(){
 		$this->display_description = 1;
-		$this->display_address = TRUE;
-		$this->display_venue_details = TRUE;
+		$this->display_datetimes = TRUE;
+		$this->display_venue = FALSE;
 		$this->display_expired_events = FALSE;
-//		$this->default_type = 'grid';
-//		$this->event_list_grid_size = 'medium';
-//		$this->templates = array( 'full'  => EE_TEMPLATES . EE_Config::instance()->get_current_theme() . DS . 'archive-espresso_events.php' );
 		$this->display_status_banner = FALSE;
+		$this->display_ticket_selector = FALSE;
 	}
 }
 
@@ -1487,9 +1483,11 @@ class EE_Events_Archive_Config extends EE_Config_Base{
  */
 class EE_Event_Single_Config extends EE_Config_Base{
 	public $display_status_banner_single;
+	public $display_venue;
 
 	public function __construct() {
 		$this->display_status_banner_single = FALSE;
+		$this->display_venue = TRUE;
 	}
 }
 

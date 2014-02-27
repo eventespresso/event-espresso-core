@@ -440,7 +440,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
-		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
+		$template_args['display_ticket_selector'] = EEH_Form_Fields::select_input('display_ticket_selector', $yes_no_values, $this->_cpt_model_obj->display_ticket_selector(), '', '', false);
 		$template_args['EVT_default_registration_status'] = EEH_Form_Fields::select_input('EVT_default_registration_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status() );
 		$template_args['additional_registration_options'] = apply_filters( 'FHEE__Events_Admin_Page__registration_options_meta_box__additional_registration_options', '', $template_args, $yes_no_values, $default_reg_status_values );
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';

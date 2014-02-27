@@ -409,7 +409,7 @@ class EEH_Form_Fields {
 					// use fieldsets
 					$html .= "\n\t" . '<' . $group_wrapper . ' class="espresso-question-group-wrap" id="' . $QSG['QSG_identifier'] . '">';
 					// group_name
-					$html .= $QSG['QSG_show_group_name'] ? "\n\t\t" . '<h4 class="espresso-question-group-title-h4 section-title">' . self::prep_answer( $QSG['QSG_name'] ) . '</h4>' : '';
+					$html .= $QSG['QSG_show_group_name'] ? "\n\t\t" . '<h5 class="espresso-question-group-title-h5 section-title">' . self::prep_answer( $QSG['QSG_name'] ) . '</h5>' : '';
 					// group_desc
 					$html .= $QSG['QSG_show_group_desc'] && ! empty( $QSG['QSG_desc'] ) ? '<div class="espresso-question-group-desc-pg">' . self::prep_answer( $QSG['QSG_desc'] ) . '</div>' : '';
 					
@@ -472,7 +472,7 @@ class EEH_Form_Fields {
 					$html .= "\n\t" . '<' . $group_wrapper . ' class="espresso-question-group-wrap" id="' . $QSG->get( 'QSG_identifier' ) . '">';
 					// group_name
 					if ( $QSG->show_group_name() ) {
-						$html .=  "\n\t\t" . '<h4 class="espresso-question-group-title-h4 section-title">' . $QSG->get_pretty( 'QSG_name' ) . '</h4>';					
+						$html .=  "\n\t\t" . '<h5 class="espresso-question-group-title-h5 section-title">' . $QSG->get_pretty( 'QSG_name' ) . '</h5>';					
 					}
 					// group_desc
 					if ( $QSG->show_group_desc() ) {

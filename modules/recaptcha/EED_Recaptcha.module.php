@@ -32,9 +32,11 @@ class EED_Recaptcha  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 2 );	
-		add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'recaptcha_passed' ), 10 );
-		add_filter( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
+		if ( EE_Registry::instance()->CFG->registration->use_captcha ) {
+			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 2 );	
+			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'recaptcha_passed' ), 10 );
+			add_filter( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
+		}
 	}
 
 
@@ -46,8 +48,10 @@ class EED_Recaptcha  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-		add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'recaptcha_passed' ), 10 );
-		add_filter( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
+		if ( EE_Registry::instance()->CFG->registration->use_captcha ) {
+			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'recaptcha_passed' ), 10 );
+			add_filter( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
+		}
 	}
 
 
@@ -74,13 +78,19 @@ class EED_Recaptcha  extends EED_Module {
 	 * @return boolean
 	 */
 	public static function recaptcha_passed() {
+		// logged in means you have already passed a turing test of sorts
+		if ( is_user_logged_in() ) {
+			return TRUE;
+		}
+		// was test already passed?
+		$recaptcha_passed = EE_Registry::instance()->SSN->get_session_data( 'recaptcha_passed' );
 		// verify recaptcha
-		if ( ! EE_Registry::instance()->SSN->get_session_data( 'recaptcha_passed' ) && EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' )) {
+		if ( ! $recaptcha_passed && EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' )) {
 			$recaptcha_passed = EED_Recaptcha::_process_recaptcha_response();
 			EE_Registry::instance()->SSN->set_session_data( array( 'recaptcha_passed' => $recaptcha_passed ));
 			EE_Registry::instance()->SSN->update();
 		}
-		return EE_Registry::instance()->SSN->get_session_data( 'recaptcha_passed' );
+		return $recaptcha_passed;
 	}
 
 
@@ -95,7 +105,7 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	public static function recaptcha_response( $recaptcha_response = array() ) {
 		// verify recaptcha
-		$recaptcha_response['recaptcha_passed'] = EED_Recaptcha::recaptcha_passed();
+		$recaptcha_response['recaptcha_passed'] = EED_Recaptcha::recaptcha_passed() === TRUE ? TRUE : FALSE;
 		return $recaptcha_response;
 	}
 
@@ -110,9 +120,8 @@ class EED_Recaptcha  extends EED_Module {
 	 * @return string html
 	 */
 	public static function display_recaptcha( $current_step, $next_step ) {
-		// don't display if an admin  is editing the page
-		$not_editing = ! EE_Registry::instance()->REQ->is_set( 'edit_details' ) || EE_Registry::instance()->REQ->get( 'edit_details' ) != 'true' ? TRUE : FALSE;
-		if ( EE_Registry::instance()->CFG->registration->use_captcha && ! is_user_logged_in() && $not_editing ) {
+		// don't display if not using recaptcha or user is logged in
+		if ( EE_Registry::instance()->CFG->registration->use_captcha && ! is_user_logged_in() ) {
 			// verify library is loaded
 			if ( ! function_exists( 'recaptcha_get_html' )) {
 				// EE_Registry::instance()->load_file( EE_THIRD_PARTY . 'recaptchalib.php', '', '' );

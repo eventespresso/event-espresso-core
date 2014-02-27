@@ -1533,10 +1533,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		wp_localize_script( 'ee_admin_js', 'eeLazyLoadingContainers', $lazy_loader_container_ids);
 
 
-		/** remove filters **/
-		remove_all_filters('mce_external_plugins');
-
-
 		/**
 		 * help tour stuff
 		 */

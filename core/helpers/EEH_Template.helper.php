@@ -95,9 +95,10 @@ class EEH_Template {
 		if ( $name != '' ) {
 			$templates[] = "{$slug}-{$name}.php";
 		}
-		// we do NOT want to find the slug only version of files such as content.php when looking for content-espresso_events.php
-		// $templates[] = "{$slug}.php";
-		EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
+		// allow tempalte parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );		
+		if ( apply_filters( "FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", TRUE )) {
+			EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
+		}		
 	}
 
 
@@ -106,10 +107,12 @@ class EEH_Template {
 	 * 	locate_template
 	 * 
 	 * 	locate a template file by looking in the following places, in the following order:
-	 * 		/wp-content/theme/(the currently activated theme)
+	 *		/wp-content/theme/(the currently activated WP theme)
+	 *		/wp-content/uploads/espresso/templates/(current EE theme)/  
 	 *		/wp-content/uploads/espresso/templates/  
-	 *		/wp-content/uploads/espresso/templates/ee-theme/  
-	 *		/wp-content/plugins/EE4/templates/(default theme)/ 
+	 *		/wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ 
+	 *		/wp-content/plugins/(EE4 folder)/(relative path)
+	 *		(absolute server path)
 	 *	as soon as the template is found i none of those locations, it will be returned or loaded 
 	 * 
 	 * 	@param  mixed string | array $templates  the template file name including extension
@@ -134,19 +137,27 @@ class EEH_Template {
 				}
 			}
 			$current_theme = EE_Config::get_current_theme();
-			// loop thru templates
+			// loop thru templates and check each location (or relative to it) for the specified file 
 			foreach ( (array)$templates as $template ) {
-				// then check the root of the uploads/espresso/templates/ folder
-				if ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $template )) {
-					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $template; 
-					break;
-				// or check the uploads/espresso/templates/ folder for an EE theme template file
-				} elseif ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template )) {
+				// first check the uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
+				if ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template )) {
 					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template;
 					break;
-				// otherwise get it from our folder within the plugin
+				// then in the root of the uploads/espresso/templates/ folder 
+				} else if ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $template )) {
+					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $template; 
+					break;
+				// in the /templates/(current EE theme)/ folder within the plugin
 				} else if ( is_readable( EE_TEMPLATES . $current_theme . DS . $template )) {
 					$template_path = EE_TEMPLATES . $current_theme . DS . $template;
+					break;
+				// or maybe relative from the plugin root
+				} else if ( is_readable( EE_PLUGIN_DIR_PATH . DS . $template )) {
+					$template_path = EE_PLUGIN_DIR_PATH . DS . $template;
+					break;
+				// otherwise assume it's an absolute server path				
+				} else if ( is_readable( $template )) {
+					$template_path = $template;
 					break;
 				}
 			}
