@@ -116,9 +116,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * This needs to be called AFTER we've called $this->_enqueue_jquery_validate_script,
 	 * but before the wordpress hook wp_loaded
 	 */
-	protected function _enqueue_and_localize_form_js(){
-		wp_enqueue_script('ee_form_section_validation', EVENT_ESPRESSO_PLUGINFULLURL.'/scripts/form_section_validation.js', array('jquery-validate'));
-		
+	public function _enqueue_and_localize_form_js(){
+		wp_register_script('jquery-validate', EVENT_ESPRESSO_PLUGINFULLURL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);	
+		wp_enqueue_script('ee_form_section_validation', EVENT_ESPRESSO_PLUGINFULLURL.'scripts/form_section_validation.js', array('jquery-validate'),
+				'1',true);
 		$validation_rules = $this->get_jquery_validation_rules();
 		$form_section_id = $this->html_id();
 		wp_localize_script('ee_form_section_validation','ee_form_section_vars',array(
