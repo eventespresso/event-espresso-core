@@ -1,6 +1,6 @@
 <?php //echo '<h1>' . __FILE__ . '</h1>'; ?>
 <?php global $post; ?>
-<?php  if ( espresso_display_venue_address_in_event_details() ) : ?>
+<?php  if ( is_single() && espresso_display_venue_address_in_event_details() ) : ?>
 <?php do_action( 'AHEE_event_details_before_venue_details', $post );?> 
 
 <h3 class="event-venues-h3 ee-event-h3">
