@@ -71,6 +71,7 @@ define( 'EE_ADMIN', EE_CORE . 'admin' . DS );
 define( 'EE_CPTS', EE_CORE . 'CPTs' . DS );
 define( 'EE_CLASSES', EE_CORE . 'db_classes' . DS );
 define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
+define( 'EE_FORM_SECTIONS',EE_CORE  .'form_sections' . DS);
 define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
 define( 'EE_LIBRARIES', EE_CORE . 'libraries' . DS );
 define( 'EE_THIRD_PARTY', EE_CORE . 'third_party_libs' . DS );

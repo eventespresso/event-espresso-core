@@ -141,6 +141,14 @@ class EEH_Autoloader {
 		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'relations' );
 		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'strategies' );
 		$this->_register_autoloaders_for_each_file_in_folder( EE_CLASSES );
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS);
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'base');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'helpers');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'inputs');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/display');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/sanitization');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/validation');
 	}
 
 
