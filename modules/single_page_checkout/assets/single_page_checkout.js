@@ -22,7 +22,8 @@ jQuery(document).ready(function($) {
 		// activate datepicker fields
 		$( '.datepicker' ).datepicker({
 			changeMonth: true,
-			changeYear: true
+			changeYear: true,
+			yearRange: "-80:+20"
 		});
 	}
 	// to internationalize the datepicker, copy the following to somewhere safe, then edit and use the language code returned from the WP PHP function: get_bloginfo( 'language' ) for the array key.

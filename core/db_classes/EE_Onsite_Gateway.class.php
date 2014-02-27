@@ -288,12 +288,14 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 		$billing_input_field_settings = $this->espresso_reg_page_billing_inputs();
 		$billing_info_ready_for_saving = array();
 		foreach($billing_input_field_settings as $field_name => $settings){
-			if(in_array($settings['sanitize'],array('ccv','ccard'))){
-				//dont save ccv or credit card data
-				continue;
-			}
 			$cleaned_value = isset( $billing_info[$field_name]) && isset($billing_info[$field_name]['value']) ? $billing_info[$field_name]['value'] : null;
-			$billing_info_ready_for_saving[$field_name] = $cleaned_value;
+			if($settings['sanitize'] == 'ccv'){
+				//dont save ccv data
+			}elseif($settings['sanitize'] == 'ccard'){
+				$billing_info_ready_for_saving[$field_name] = EEM_Gateways::instance()->MaskCreditCard($cleaned_value);
+			}else{//all others save normally
+				$billing_info_ready_for_saving[$field_name] = $cleaned_value;
+			}
 		}
 		
 		$success = update_post_meta($attendee_id, 'billing_info_'.$this->_gateway_name, $billing_info_ready_for_saving);
