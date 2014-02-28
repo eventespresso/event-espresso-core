@@ -235,43 +235,60 @@ class EEH_Venue_View extends EEH_Base {
 	private static function get_venue( $VNU_ID = FALSE ) {
 		$VNU_ID = absint( $VNU_ID );
 		// do we already have the Venue you are looking for?
-		if ( EEH_Venue_View::$_venue instanceof EE_Venue && $VNU_ID ==  EEH_Venue_View::$_venue->ID() ) {
+		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->ID() == $VNU_ID ) {
 			return EEH_Venue_View::$_venue;
 		}
 		// international newspaper?
 		global $post;
-		// if this is being called from an EE_Venue post, then we can just grab the attached EE_Venue object
-		if ( $post->post_type == 'espresso_venues' ) {
-			// let's try to get our EE model object
-			EEH_Venue_View::$_venue = isset( $post->EE_Venue ) ? $post->EE_Venue : $post;
-			// grab this for later in case we need it
-			$VNU_ID = $post->ID;
-		
-		} else if ( isset( $post->post_type ) && $post->post_type == 'espresso_events' || $VNU_ID ) {
-			// grab the events related venues
-			$venues = EEH_Venue_View::get_event_venues();
-			// make sure the result is an array
-			$venues = is_array( $venues ) ? $venues : array();
-			// do we have an ID for a specific venue?
-			if ( $VNU_ID ) {
-				// loop thru the related venues
-				foreach( $venues as $venue ) {
-					// untill we find the venue we're looking for
-					if ( $venue->ID() == $VNU_ID ) {
-						EEH_Venue_View::$_venue = $venue;
-						break;
+		switch ( $post->post_type ) {
+			// if this is being called from an EE_Venue post,
+			// and the EE_Venue post corresponds to the EE_Venue that is being asked for,
+			// then we can try to just grab the attached EE_Venue object
+			case 'espresso_venues':
+				// the post already contains the related EE_Venue object AND one of the following is TRUE:
+				// the requested Venue ID matches the post ID OR...
+				// there was no specific Venue ID requested
+				if ( isset( $post->EE_Venue ) && ( $VNU_ID == $post->ID || ! $VNU_ID )) {
+					// use existing related EE_Venue object
+					EEH_Venue_View::$_venue =  $post->EE_Venue;
+				} else if ( $VNU_ID ) {
+					// there WAS a specific Venue ID requested, but it's NOT the current post object
+					EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
+				} else {
+					// no specific Venue ID requested, so use post ID to generate EE_Venue object
+					EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $post->ID );
+				}				
+				break;
+			case 'espresso_events':
+				// grab the events related venues
+				$venues = EEH_Venue_View::get_event_venues();
+				// make sure the result is an array
+				$venues = is_array( $venues ) ? $venues : array();
+				// do we have an ID for a specific venue?
+				if ( $VNU_ID ) {
+					// loop thru the related venues
+					foreach( $venues as $venue ) {
+						// untill we find the venue we're looking for
+						if ( $venue->ID() == $VNU_ID ) {
+							EEH_Venue_View::$_venue = $venue;
+							break;
+						}
+						// if the venue being asked for is not related to the global event post,
+						// still return the venue being asked for
 					}
+				// no venue ID ?
+				// then the global post is an events post and this function was called with no argument
+				} else {
+					// just grab the first related event venue
+					EEH_Venue_View::$_venue = reset( $venues );		
 				}
-			// no venue ID ?				
-			} else {
-				// just grab the first related event venue
-				EEH_Venue_View::$_venue = reset( $venues );		
-			}
-			// now if we STILL do NOT have an EE_Venue model object, BUT we have a Venue ID...
-			if ( ! EEH_Venue_View::$_venue instanceof EE_Venue && $VNU_ID ) {
-				// sigh... pull it from the db
-				EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
-			}
+				break;
+			
+		}
+		// now if we STILL do NOT have an EE_Venue model object, BUT we have a Venue ID...
+		if ( ! EEH_Venue_View::$_venue instanceof EE_Venue && $VNU_ID ) {
+			// sigh... pull it from the db
+			EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
 		}
 		return EEH_Venue_View::$_venue;
 	}
