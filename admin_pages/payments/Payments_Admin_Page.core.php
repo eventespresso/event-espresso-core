@@ -164,7 +164,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_script('ee_admin_js');
 		wp_enqueue_media();
 		wp_enqueue_script('media-upload');
-		wp_enqueue_script('ee-payments',EE_PAYMENTS_ASSETS_URL.'/ee-payments.js');
+		wp_enqueue_script('ee-payments',EE_GLOBAL_ASSETS_URL.'scripts/ee-media-uploader.js');
 	}
 
 

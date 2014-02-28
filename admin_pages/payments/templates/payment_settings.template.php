@@ -19,3 +19,22 @@
 		<?php _e("If a payment is marked as 'Pending Payment', or if payment is deferred (ie, an offline gateway like Check, Bank, or Invoice is used), then give registrants the option to retry payment. ", 'event_espresso'); ?>
 	</p>
 </div>
+
+<?php echo "<hr>SAMPLE FORM<hr>";
+		$f = new EE_Sample_Form();
+		
+		if($_SERVER['REQUEST_METHOD'] == 'POST'){
+			$f->receive_form_submission($_POST);
+			if($f->is_valid()){
+				echo "valido!";
+			}else{
+				echo "invalido";
+			}
+		}else{
+			$f->populate_defaults(array('name'=>'munchpower','shirt_size'=>'','email'=>'enter it here'));
+		}
+		echo "<form method='post' action=''>";
+		echo $f->get_html_and_js();
+		echo '<input type="submit">';
+		echo "</form>";
+		

@@ -11,7 +11,7 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			'year_4'=>new EE_Year_Input(true, 0,10,array('default'=>'2017')),
 			'yes_no'=>new EE_Yes_No_Input(array('html_label_text'=>  __("Yes or No", "event_espresso"))),
 			'credit_card'=>new EE_Credit_Card_Input(),
-//			'image_1'=>new EE_Admin_File_Uploader_Input(),
+			'image_1'=>new EE_Admin_File_Uploader_Input(),
 //			'image_2'=>new EE_Admin_File_Uploader_Input()
 		);
 		$this->_layout_strategy = new EE_Div_Per_Section_Layout();
