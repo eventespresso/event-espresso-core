@@ -1062,7 +1062,7 @@ class EE_Currency_Config extends EE_Config_Base {
 	 */
 	public function __construct( $CNT_ISO = NULL ) {
 		// get country code from organization settings or use default
-		$ORG_CNT = EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
+		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
 		// so if that all went well
