@@ -37,7 +37,7 @@
 			}
 		});
 		var good_to_go = verify_all_questions_answered('#spco-registration-attendee_information-frm');
-		if ( good_to_go !== true ) {			
+		if ( good_to_go !== true ) {
 			show_event_queue_ajax_error_msg( good_to_go );
 		} else {
 			show_event_queue_ajax_error_msg( eei18n.attendee_info_copied );

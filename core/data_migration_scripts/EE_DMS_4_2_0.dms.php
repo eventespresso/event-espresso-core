@@ -574,7 +574,9 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 		return true;
 	}
 	
-
+	public function migration_page_hooks(){
+		
+	}
 }
 
 

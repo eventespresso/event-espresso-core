@@ -21,18 +21,18 @@ if ( $show_backup_db_text ) { ?>
  		<?php if ( $script_names ) { ?>
  			<h3 class="espresso-header">
  				<span class="dashicons dashicons-flag ee-icon-size-22"></span>
- 				<?php _e("Event Espresso has detected existing Event Data that can be migrated (updated) to work with New EE4.", "event_espresso");?>
+ 				<?php echo apply_filters('FHEE__ee_migration_page__header',  sprintf(__("Event Espresso has detected Event Data from version %s that can be migrated (updated) to work with version %s.", "event_espresso"),$current_db_state,$next_db_state),$current_db_state,$next_db_state);?>
  			</h3>
  			<p>
- 			<?php _e("Since you have already been using Event Espresso and have previous Event and Registration Data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with EE4.", "event_espresso");?>
+ 			<?php echo apply_filters('FHEE__ee_migration_page__p_after_header',sprintf(__("Since you have already been using Event Espresso and have previous Event and Registration Data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with %s.", "event_espresso"),$next_db_state),$next_db_state);?>
  			</p>
  		<?php } elseif ( $show_most_recent_migration ) { ?>
  			 <h3 class="espresso-header">
  			 	<span class="dashicons dashicons-awards ee-icon-size-22"></span>
- 				 <?php _e('Congratulations! Your database is "up-to-date" and you are ready to begin using EE4', "event_espresso");?>
+ 				 <?php echo apply_filters('FHEE__ee_migration_page__done_migration_header',sprintf(__('Congratulations! Your database is "up-to-date" and you are ready to begin using %s', "event_espresso"),$ultimate_db_state));?>
  			 </h3>
  			 <p>
- 			 	<?php _e("Time to find out about all the great new features EE4 has to offer.", "event_espresso");?> &nbsp; 
+ 			 	<?php echo apply_filters('FHEE__ee_migration_page__p_after_done_migration_header',sprintf(__("Time to find out about all the great new features %s has to offer.", "event_espresso"),$ultimate_db_state));?> &nbsp; 
  			 	<b><a id="get-started-after-migrate" class="button-primary" href="<?php echo add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' )); ?>">
  			 		<?php _e("Let's Get Started", "event_espresso");?>&nbsp;<span class="dashicons dashicons-arrow-right ee-icon-size-22" style="margin:0;"></span>
  			 	</a></b>
@@ -54,19 +54,21 @@ if ( $show_backup_db_text ) { ?>
 							<td><h3><?php _e('1', 'event_espresso');?></h3></td>
 							<td>
 								<?php 
-								echo sprintf( 
-									__('%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing EE3 data to EE4.', "event_espresso"), 
+								echo apply_filters('FHEE__ee_migration_page__option_1_main',sprintf( 
+									__('%1$sYes. I have backed up my database%2$s, %3$sunderstand the risks involved%4$s, and am ready to migrate my existing %5$s data to %6$s.', "event_espresso"), 
 									'<strong>', 
 									'</strong>',
 									'<a id="migration-risks" class="" title="' . __('click for more details', "event_espresso") . '">',
-									'</a>'
-								);
+									'</a>',
+									$current_db_state,
+									$next_db_state
+								),$current_db_state,$next_db_state);
 								?>
 								<a id="display-migration-details" class="display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="migration-details" ><?php _e('click for more details', "event_espresso");?>&nbsp;+</a>
 								<a  id="hide-migration-details" class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"  rel="migration-details" style="display:none;" ><?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?></a>
 							</td>
 							<td>
-								<a id="db-backed-up" class="toggle-migration-monitor button-primary"><?php _e("Migrate My EE3 Data to EE4", "event_espresso");?></a>
+								<a id="db-backed-up" class="toggle-migration-monitor button-primary"><?php echo apply_filters('FHEE__ee_migration_page__option_1_button_text',sprintf(__("Migrate My %s Data to %s", "event_espresso"),$current_db_state,$next_db_state),$current_db_state,$next_db_state);?></a>
 							</td>
 						</tr>
 						<tr>
@@ -89,28 +91,26 @@ if ( $show_backup_db_text ) { ?>
 										);
 									?>
 									</p>
-									<p><?php									
-										printf(__("Note: many of your EE3 shortcodes will be changed to EE4 shortcodes during this migration (among many other things). Should you revert to EE3, then you should restore to your backup or manually change the EE4 shortcodes back to their EE3 equivalents", "event_espresso"));
-									?></p>
+									<?php do_action('AHEE__ee_migration_page__option_1_extra_details');?>
 								</div>										
 							</td>
 						</tr>
 						<tr>
 							<td><h3><?php _e('2', 'event_espresso');?></h3></td>
 							<td>
-								<?php _e("I do NOT want to migrate my EE3 data to EE4 at this time and just want to use EE4 without migrating data", "event_espresso");?>
+								<?php echo apply_filters('FHEE__ee_migration_page__option_2_main',sprintf(__('I do NOT want to migrate my %1$s data to %2$s at this time and just want to use %3$s without migrating data', "event_espresso"),$current_db_state,$next_db_state,$ultimate_db_state),$current_db_state,$next_db_state,$ultimate_db_state);?>
 								<a id="display-no-migration-details" class="display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="no-migration-details"><?php _e('click for more details', "event_espresso");?>&nbsp;+</a>
 								<a  id="hide-no-migration-details" class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"  rel="no-migration-details" style="display:none;" ><?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?></a>
 							</td>
 							<td>
-								<a id="do-not-migrate" class="do-not-migrate button-primary" href="<?php echo $reset_db_page_link;?>"><?php _e("Just Start EE4 with No Data", "event_espresso");?></a>
+								<a id="do-not-migrate" class="do-not-migrate button-primary" href="<?php echo $reset_db_page_link;?>"><?php echo apply_filters('FHEE__ee_migration_page__option_2_button_text',sprintf(__("Just Start %s with No Data", "event_espresso"),$ultimate_db_state),$ultimate_db_state);?></a>
 							</td>
 						</tr>
 						<tr>
 							<td colspan="3" style="padding: 0">
 								<div id="no-migration-details-dv" style="display: none; padding: 1em;">
 									<p>
-									<?php _e("If your existing Event and Registration Data is no longer relevant nor required, you can just start up EE4 without performing a data migration. Please note, that if you do not migrate your old data, but need to view it at some point in the future, you can simply deactivate EE4, then reactivate EE3 and your old data will still be there.", "event_espresso");?>	
+									<?php echo apply_filters('FHEE__ee_migration_page__option_2_details',sprintf(__("If your existing Event and Registration Data is no longer relevant nor required, you can just start up %s without performing a data migration.", "event_espresso"),$ultimate_db_state),$ultimate_db_state);?>	
 									</p>
 								</div>										
 							</td>
@@ -118,10 +118,7 @@ if ( $show_backup_db_text ) { ?>
 					</tbody>
 				</table>
 			</div>
-			<p class="ee-attention">
-				<strong><span class="reminder-spn"><?php _e("Important note to those using Event Espresso 3 addons: ", "event_espresso");?></span></strong><br/><?php _e("Unless an addon's description on our website explicitly states that it is compatible with EE4, you should consider it incompatible and know that it WILL NOT WORK correctly with this new version of Event Espresso 4 (EE4). As well, any data for incompatible addons will NOT BE MIGRATED until an updated EE4 compatible version of the addon is available. If you want, or need to keep using your EE3 addons, you should simply continue using EE3 until EE4 compatible versions of your addons become available. To continue using EE3 for now, just deactivate EE4 and reactivate EE3.", "event_espresso");	?>
-			</p>
-			
+			<?php do_action('AHEE__ee_migration_page__after_migration_options_table');?>			
 		</div>
 	<?php } ?>
 
@@ -168,7 +165,7 @@ if ( $show_backup_db_text ) { ?>
 	
 	<?php if ($show_migration_progress){?>
 	<div id='migration-monitor' <?php echo $show_backup_db_text ? "style='display:none'" : ''?>>
-		<?php if( ! $show_continue_current_migration_script){?>
+		<?php if( $show_backup_db_text){?>
 		<p>
 			<a class="toggle-migration-monitor small-text" style="cursor: pointer;">
 				<span class="dashicons dashicons-arrow-left-alt2" style="top:0px;"></span><?php _e("return to previous screen", "event_espresso");?>			
