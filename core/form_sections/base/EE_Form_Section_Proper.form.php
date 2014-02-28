@@ -59,11 +59,81 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	/**
 	 * After the form section is initially created, call this to sanitize the data in the submission
 	 * which relates to this form section, validate it, and set it as properties on the form.
-	 * @param array $req_data 
+	 * @param array $req_data should usually be $_REQUEST (the default). However, you CAN
+	 * supply a different array. Consider using set_defaults() instead however.
+	 * @return void
 	 */
-	public function receive_form_submission($req_data){
+	public function receive_form_submission($req_data = NULL){
+		if( $req_data === NULL){
+			$req_data = $_REQUEST;
+		}
 		$this->_sanitize($req_data);
 		$this->_validate();
+	}
+	/**
+	 * Populates the default data for the form, given an array where keys are
+	 * the input names, and values are their values (preferably normalized to be their
+	 * proper PHP types, not all strings... although that should be ok too).
+	 * Proper subsections are sub-arrays, the key being the subsection's name, and
+	 * the value being an array formatted in teh same way
+	 * @param array $default_data
+	 */
+	public function populate_defaults($default_data){
+		foreach($this->subsections() as $subsection_name => $subsection){
+			if(isset($default_data[$subsection_name])){
+				if($subsection instanceof EE_Form_Input_Base){
+					$subsection->set_default($default_data[$subsection_name]);
+				}elseif($subsection instanceof EE_Form_Section_Proper){
+					$subsection->populate_defaults($default_data[$subsection_name]);
+				}
+			}
+		}
+	}
+	/**
+	 * Gets the subsection specified by its name (could be an input or proper subsection)
+	 * @param string $name
+	 * @return EE_Form_Section_Base
+	 */
+	public function get_subsection($name){
+		return isset($this->_subsections[$name]) ? $this->_subsections[$name] : NULL;
+	}
+	/**
+	 * Gets an input by the given name. If not found, or if its not an EE_FOrm_Input_Base child,
+	 * throw an EE_Error.
+	 * @param string $name
+	 * @return EE_Form_Input_Base
+	 * @throws EE_Error
+	 */
+	public function get_input($name){
+		$subsection = $this->get_subsection($name);
+		if( ! $subsection instanceof EE_Form_Input_Base){
+			throw new EE_Error(sprintf(__("Subsection '%'s is not an intanceof EE_Form_Input_Base on form '%s'", 'event_espresso'),$name, get_class($this)));
+		}
+		return $subsection;
+	}
+	/**
+	 * Like get_input(), gets the proper subsection of the form given the name,
+	 * otherwise throws an EE_Error
+	 * @param string $name
+	 * @return EE_Form_Section_Proper
+	 * @throws EE_Error
+	 */
+	public function get_proper_subsection($name){
+		$subsection = $this->get_subsection($name);
+		if( ! $subsection instanceof EE_Form_Section_Proper){
+			throw new EE_Error(sprintf(__("Subsection '%'s is not an intanceof EE_Form_Section_Proper on form '%s'", 'event_espresso'),$name, get_class($this)));
+		}
+		return $subsection;
+	}
+	/**
+	 * Gets the value of the specified input. Should be called after receive_form_submission()
+	 * or populate_defaults() on the form, where the normalized value on the input is set.
+	 * @param string $name
+	 * @return mixed depending on the input's type and its sanitization strategy
+	 */
+	public function get_input_value($name){
+		$input = $this->get_input($name);
+		return $input->normalized_value();
 	}
 	/**
 	 * Checks if this form section itself is valid, and then checks its subsections

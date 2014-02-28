@@ -20,13 +20,13 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_input($input) {
-		return $html.='<div>'.$input->get_html_for_label().'<br/>'.$input->get_html_for_input().$input->get_html_for_errors().'</div>';
+		return '<div>'.$input->get_html_for_label().'<br/>'.$input->get_html_for_input().$input->get_html_for_errors().'</div>';
 	}
 	/**
 	 * Lays out a row for the subsection
 	 * @param EE_Form_Section_Proper $formsection
 	 */
 	public function layout_proper_subsection($formsection){
-		return $html.='<div>'.$$formsection->get_html_and_js().'</div>';
+		return '<div>'.$$formsection->get_html_and_js().'</div>';
 	}
 }

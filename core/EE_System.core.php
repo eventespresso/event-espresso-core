@@ -546,21 +546,23 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function init() {
-		echo "<hr><hr>";
-		$f = new EE_Sample_Form();
-		
-		if($_SERVER['REQUEST_METHOD'] == 'POST'){
-			$f->receive_form_submission($_POST);
-			if($f->is_valid()){
-				echo "valido!";
-			}else{
-				echo "invalido";
-			}
-		}
-		echo "<form method='post' action=''>";
-		echo $f->get_html_and_js();
-		echo '<input type="submit">';
-		echo "</form>";
+//		echo "<hr><hr>";
+//		$f = new EE_Sample_Form();
+//		
+//		if($_SERVER['REQUEST_METHOD'] == 'POST'){
+//			$f->receive_form_submission($_POST);
+//			if($f->is_valid()){
+//				echo "valido!";
+//			}else{
+//				echo "invalido";
+//			}
+//		}else{
+//			$f->populate_defaults(array('name'=>'munchpower','shirt_size'=>'','email'=>'enter it here'));
+//		}
+//		echo "<form method='post' action=''>";
+//		echo $f->get_html_and_js();
+//		echo '<input type="submit">';
+//		echo "</form>";
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );

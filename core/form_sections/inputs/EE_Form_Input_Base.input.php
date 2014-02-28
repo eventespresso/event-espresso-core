@@ -300,4 +300,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		return $jquery_validation_js;
 	}
 	
+	/**
+	 * Sets the input's default value for use in displaying in the form (note: does NOT
+	 * perform sanitization or normalization on this value, as the programmer should be providing it)
+	 * @param mixed $value
+	 * @return void
+	 */
+	function set_default($value){
+		$this->_sanitized_value = $value;
+	}
+	
 }
