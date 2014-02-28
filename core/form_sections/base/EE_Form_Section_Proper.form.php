@@ -37,10 +37,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @param array $req_data 
 	 */
 	public function receive_form_submission($req_data){
-		foreach($this->_subsections as $subsection){
-			$subsection->_sanitize($req_data);
-			$subsection->_validate();
-		}
+		$this->_sanitize($req_data);
+		$this->_validate();
 	}
 	/**
 	 * Checks if this form section itself is valid, and then checks its subsections
@@ -104,6 +102,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 */
 	public function get_html(){
 		$content = "<div id='{$this->html_id()}' class='{$this->html_class()}' style='{$this->html_style()}'>";
+		$content .= "<label id='{$this->html_id()}-errors' class='error' for='{$this->html_id()}'>".
+				$this->get_validation_error_string().
+				"</label>";
 		foreach($this->_subsections as $subsection){
 			$content.= $subsection->get_html()."<br>";
 		}
@@ -161,11 +162,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		}
 	}
 	/**
-	 * 
+	 * Performs validation on thsi form section and its subsections. For each subsection,
+	 * calls _validate_{subsection_name} on THIS form (if the function exists) and passes it the subsection, then calls _validate on that subsection.
+	 * If you need to perform validation on the form as a whole (considering multiple) you would be best to override this _validate method,
+	 * calling parent::_validate() first.
 	 * @param type $req_data
 	 */
 	protected function _validate() {
-		foreach($this->_subsections as $subsection){
+		foreach($this->_subsections as $subsection_name => $subsection){
+			if(method_exists($this,'_validate_'.$subsection_name)){
+				call_user_func_array(array($this,'_validate_'.$subsection_name), array($subsection));
+			}
 			$subsection->_validate();
 		}
 	}
