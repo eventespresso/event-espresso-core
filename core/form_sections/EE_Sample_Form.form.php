@@ -14,6 +14,7 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			'image_1'=>new EE_Admin_File_Uploader_Input(),
 			'image_2'=>new EE_Admin_File_Uploader_Input()
 		);
+		$this->_layout_strategy = new EE_Div_Per_Section_Layout();
 		parent::__construct();
 	}
 	

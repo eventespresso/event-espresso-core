@@ -172,11 +172,34 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		$this->_validation_strategies[] = $validation_strategy;
 	}
 	/**
-	 * Gets the HTML, JS, and CSS necessary to display this field
+	 * Gets the HTML, JS, and CSS necessary to display this field according
+	 * to the parent form's layotu strategy
 	 * @return string
 	 */
 	public function get_html(){
-		return $this->_get_display_strategy()->display();	
+		return $this->_parent_section->get_html_for_input($this);
+	}
+	/**
+	 * Gets the HTML for the input itself (no label or errors).
+	 * Makes sure the JS and CSS are enqueued for it
+	 * @return string
+	 */
+	public function get_html_for_input(){
+		return  $this->_get_display_strategy()->display();
+	}
+	/**
+	 * Gets the HTML for displaying the label
+	 * @return string
+	 */
+	public function get_html_for_label(){
+		return $this->_get_display_strategy()->display_label();
+	}
+	/**
+	 * Gets the HTML for dislpaying the errors section
+	 * @return string	 
+	 */
+	public function get_html_for_errors(){
+		return $this->_get_display_strategy()->display_errors();
 	}
 	/**
 	 * Validates the input's sanitized value (assumes _sanitize() has already been called)

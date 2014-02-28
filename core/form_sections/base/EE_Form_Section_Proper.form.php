@@ -14,6 +14,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 */
 	protected $_subsections;
 	
+	/**
+	 * Strategy for laying out the form
+	 * @var EE_Form_Section_Layout_Base
+	 */
+	protected $_layout_strategy;
 	
 	/**
 	 * when constructing a proper form section, calls _construct_finalize on children
@@ -25,10 +30,30 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		foreach($this->_subsections as $name => $subsection){
 			$subsection->_construct_finalize($this, $name);
 		}
-		
+		if( ! $this->_layout_strategy){
+			$this->_layout_strategy = new EE_Two_Column_Layout();
+		}
+		$this->_layout_strategy->_construct_finalize($this);
 		parent::__construct($options_array);
 		
+		
 		$this->_enqueue_jquery_validate_script();
+	}
+	/**
+	 * Gets the layotu strategy for this form section
+	 * @return EE_Form_Section_Layout_Base
+	 */
+	public function get_layout_strategy(){
+		return $this->_layout_strategy;
+	}
+	/**
+	 * Gets the HTML for a single input for this form section according
+	 * to the layout strategy
+	 * @param type $input
+	 * @return string
+	 */
+	public function get_html_for_input($input){
+		return $this->_layout_strategy->layout_input($input);
 	}
 	
 	/**
@@ -101,15 +126,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @return string
 	 */
 	public function get_html(){
-		$content = "<div id='{$this->html_id()}' class='{$this->html_class()}' style='{$this->html_style()}'>";
-		$content .= "<label id='{$this->html_id()}-errors' class='error' for='{$this->html_id()}'>".
-				$this->get_validation_error_string().
-				"</label>";
-		foreach($this->_subsections as $subsection){
-			$content.= $subsection->get_html()."<br>";
-		}
-		$content.="</div>";
-		return $content;
+		return $this->_layout_strategy->layout_form();
 	}
 	
 	/**
@@ -175,5 +192,40 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 			}
 			$subsection->_validate();
 		}
+	}
+	
+	/**
+	 * Gets all the inputs on this form section
+	 * @return EE_Form_Input_Base[]
+	 */
+	public function inputs(){
+		$inputs = array();
+		foreach($this->_subsections as $name=>$obj){
+			if($obj instanceof EE_Form_Input_Base){
+				$inputs[$name] = $obj;
+			}
+		}
+		return $inputs;
+	}
+	/**
+	 * Gets all the subsections whcih are a proper form
+	 * @return EE_Form_Section_Proper[]
+	 */
+	public function subforms(){
+		$form_sections = array();
+		foreach($this->_subsections as $name=>$obj){
+			if($obj instanceof EE_Form_Section_Proper){
+				$form_sections[$name] = $obj;
+			}
+		}
+		return $form_sections;
+	}
+	/**
+	 * Gets all the subsections. Consider using inputs() or subforms()
+	 * if you only want form inputs or proper form sections.
+	 * @return EE_Form_Section[]
+	 */
+	public function subsections(){
+		return $this->_subsections;
 	}
 }
