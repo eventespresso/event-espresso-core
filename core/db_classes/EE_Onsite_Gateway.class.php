@@ -291,6 +291,7 @@ abstract class EE_Onsite_Gateway extends EE_Gateway {
 			$cleaned_value = isset( $billing_info[$field_name]) && isset($billing_info[$field_name]['value']) ? $billing_info[$field_name]['value'] : null;
 			if($settings['sanitize'] == 'ccv'){
 				//dont save ccv data
+				continue;
 			}elseif($settings['sanitize'] == 'ccard'){
 				$billing_info_ready_for_saving[$field_name] = EEM_Gateways::instance()->MaskCreditCard($cleaned_value);
 			}else{//all others save normally
