@@ -234,13 +234,14 @@ class EEH_Venue_View extends EEH_Base {
 		}
 		// international newspaper?
 		global $post;
-		switch ($post->post_type) {
+		switch ( $post->post_type ) {
 			// if this is being called from an EE_Venue post,
 			// and the EE_Venue post corresponds to the EE_Venue that is being asked for,
 			// then we can try to just grab the attached EE_Venue object
 			case 'espresso_venues':
-				if ( $post->ID == $VNU_ID && isset( $post->EE_Venue ) )
+				if ( $post->ID == $VNU_ID && isset( $post->EE_Venue )) {
 					EEH_Venue_View::$_venue =  $post->EE_Venue;
+				}					
 				break;
 			case 'espresso_events':
 				// grab the events related venues
