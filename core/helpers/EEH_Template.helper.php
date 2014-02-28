@@ -424,11 +424,11 @@ class EEH_Template {
 
 } //end EEH_Template class
 
-function convert_zero_to_free( $amount, $return_raw ) {
-	// we don't want to mess with requests for unformated values because those may get used in calculations
-	if ( ! $return_raw ) {
-		$amount = __( 'free', 'event_espresso' );
-	}
-	return $amount;
-}
+//function convert_zero_to_free( $amount, $return_raw ) {
+//	// we don't want to mess with requests for unformated values because those may get used in calculations
+//	if ( ! $return_raw ) {
+//		$amount = __( 'free', 'event_espresso' );
+//	}
+//	return $amount;
+//}
 //add_filter( 'FHEE__EEH_Template__format_currency__amount', 'convert_zero_to_free', 10, 2 );
