@@ -819,9 +819,9 @@ Class EEM_Gateways {
 			} catch( EE_Error $e ) {
 				$response = array( 'msg'=>array( 'error'=>$e->getMessage() ));
 			}
+			//make sure we remove the credit card and other sensitive data, as we dont want to store that in teh db
+			$this->_clean_billing_info_in_session($transaction);
 		}
-		//make sure we remove the credit card and other sensitive data, as we dont want to store that in teh db
-		$this->_clean_billing_info_in_session($transaction);
 		// add return URL
 		$response['forward_url'] = $this->_get_return_page_url( $transaction );		
 		return $response;
