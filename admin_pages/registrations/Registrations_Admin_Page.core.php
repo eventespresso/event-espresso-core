@@ -1810,6 +1810,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			// cycle thru checkboxes 
 			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
 				$REG = $REG_MDL->get_one_by_ID($REG_ID);
+				if ( ! $REG instanceof EE_Registration )
+					continue;
 				$deleted = $this->_delete_registration($REG);
 				if ( !$deleted ) {
 					$success = 0;

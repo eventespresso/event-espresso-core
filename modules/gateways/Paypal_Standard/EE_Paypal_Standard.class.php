@@ -359,14 +359,14 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		foreach($total_line_item->get_items() as $line_item){
 			
-			$this->addField('item_name_' . $item_num, $line_item->name());
+			$this->addField('item_name_' . $item_num, substr($line_item->name(),0,127));
 			$this->addField('amount_' . $item_num, $line_item->unit_price());
 			$this->addField('quantity_' . $item_num, $line_item->quantity());
 			$item_num++;
 		}
 		
 		foreach ($total_line_item->tax_descendants() as  $tax_line_item) {
-			$this->addField('item_name_' . $item_num, $tax_line_item->name());
+			$this->addField('item_name_' . $item_num, substr($tax_line_item->name(),0,127));
 			$this->addField('amount_' . $item_num, $tax_line_item->total());
 			$this->addField('quantity_' . $item_num, '1');
 			$item_num++;
