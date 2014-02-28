@@ -211,7 +211,7 @@ span.ui-icon {
 #single-page-checkout .espresso-question-group-wrap + .espresso-question-group-wrap {
 	margin:.5em 0 0;
 }
-#single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-title-h4 {
+#single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-title-h5 {
 	margin:.25em 0 1em;
 }
 #single-page-checkout .spco-attendee-wrap-fs .espresso-question-group-desc-pg {
@@ -223,10 +223,13 @@ span.ui-icon {
 .event-list-display-dv .big-event-title-hdr, #single-page-checkout .big-event-title-hdr {
 	margin:1em 0 0;
 }
-#single-page-checkout .spco-ticket-info-pg {
-	padding:.5em 1em;
+#single-page-checkout .spco-ticket-info-dv {
+	margin:4em 1em .25em;
 	font-size: .9em;
 	color: #999;
+}
+.big-event-title-hdr + .spco-ticket-info-dv {
+	margin-top: 2em!important;
 }
 .spco-steps-pg {
 	margin:0 0 2em;
@@ -252,6 +255,7 @@ span.ui-icon {
 	border: none;
 	-moz-border:none;
 	letter-spacing:1px;
+	font-weight: bold;
 }
 .event_questions + .spco-attendee-lgnd {
 	margin-top:2em;
@@ -261,6 +265,7 @@ span.ui-icon {
 	float:left;
 	clear:none!important;
 	width:32%;
+	margin: 0!important;
 }
 .spco-copy-attendee-hr {
 	clear:both;
@@ -383,6 +388,9 @@ span.ui-icon {
 	margin:.5em 0 0;
 	cursor:pointer;
 }
+#recaptcha_response_field {
+	padding: 8px 10px 7px;
+}
 .reg-page-form-field-wrap-pg input[type="text"] {
 	display:block;
 	width: 100%;
@@ -442,7 +450,7 @@ span.ui-icon {
 }
 #spco-copy-attendee-dv label {
 	display: block;
-	padding: 0.5em 10px 1em 0;
+	padding: 0.5em 10px 0.5em 0;
 	cursor: pointer;
 	font-size: .9em;
 	line-height: 1em;

@@ -1061,11 +1061,16 @@ class EE_Currency_Config extends EE_Config_Base {
 	 *  @return 	void
 	 */
 	public function __construct( $CNT_ISO = NULL ) {
-		
-		if ( $CNT_ISO ) {
-			if ( $country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( EE_Registry::instance()->CFG->organization->CNT_ISO )) {
+		// get country code from organization settings or use default
+		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
+		// but override if requested
+		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
+		// so if that all went well
+		if ( ! empty( $CNT_ISO )) {
+			// retreive the country settings from the db, just in case they have been customized
+			if ( $country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO )) {
 				if ( $country instanceof EE_Country ) {
-					$this->code = $country->currency_code(); 			// currency code: USD, CAD, EUR
+					$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR
 					$this->name = $country->currency_name_single();	// Dollar
 					$this->plural = $country->currency_name_plural(); 	// Dollars
 					$this->sign =  $country->currency_sign(); 			// currency sign: $
@@ -1075,7 +1080,9 @@ class EE_Currency_Config extends EE_Config_Base {
 					$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
 				}
 			}			
-		} else {
+		} 
+		// fallback to hardcoded defaults, in case the above failed
+		if ( empty( $this->code )) {
 			// set default currency settings
 			$this->code = 'USD'; 	// currency code: USD, CAD, EUR
 			$this->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
@@ -1460,23 +1467,19 @@ class EE_Gateway_Config extends EE_Config_Base{
 class EE_Events_Archive_Config extends EE_Config_Base{
 
 	public $display_description;
-	public $display_addresss;
+	public $display_datetimes;
 	public $display_venue_details;
 	public $display_expired_events;
-//	public $default_type;
-//	public $event_list_grid_size;
-//	public $templates;
 	public $display_status_banner;
+	public $display_ticket_selector;
 	
 	public function __construct(){
 		$this->display_description = 1;
-		$this->display_address = TRUE;
-		$this->display_venue_details = TRUE;
+		$this->display_datetimes = TRUE;
+		$this->display_venue = FALSE;
 		$this->display_expired_events = FALSE;
-//		$this->default_type = 'grid';
-//		$this->event_list_grid_size = 'medium';
-//		$this->templates = array( 'full'  => EE_TEMPLATES . EE_Config::instance()->get_current_theme() . DS . 'archive-espresso_events.php' );
 		$this->display_status_banner = FALSE;
+		$this->display_ticket_selector = FALSE;
 	}
 }
 
@@ -1487,9 +1490,11 @@ class EE_Events_Archive_Config extends EE_Config_Base{
  */
 class EE_Event_Single_Config extends EE_Config_Base{
 	public $display_status_banner_single;
+	public $display_venue;
 
 	public function __construct() {
 		$this->display_status_banner_single = FALSE;
+		$this->display_venue = TRUE;
 	}
 }
 

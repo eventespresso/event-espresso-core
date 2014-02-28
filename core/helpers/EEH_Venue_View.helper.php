@@ -170,9 +170,11 @@
 				echo EEH_Venue_View::venue_phone( $VNU_ID );
 			} else {
 				return EEH_Venue_View::venue_phone( $VNU_ID );
-			}			
-		}		
+			}
+		}
 	}
+
+
 
 	/**
 	 * espresso_venue_website
@@ -180,8 +182,12 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_venue_website' )) {
-		function espresso_venue_website( $VNU_ID = FALSE ) {
-			echo EEH_Venue_View::venue_website_link( $VNU_ID );
+		function espresso_venue_website( $VNU_ID = FALSE, $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Venue_View::venue_website_link( $VNU_ID );
+			} else {
+				return EEH_Venue_View::venue_website_link( $VNU_ID );
+			}
 		}		
 	}
 

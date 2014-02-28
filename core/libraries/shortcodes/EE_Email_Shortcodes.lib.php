@@ -44,6 +44,7 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		$this->_shortcodes = array(
 			'[SITE_ADMIN_EMAIL]' => __('Will be replaced with the admin email for the site that Event Espresso is installed on', 'event_espresso'),
 			'[EVENT_AUTHOR_FORMATTED_EMAIL]' => __('This will be replaced with a properly formatted list of Event Creator emails for the events in a registration. <strong>NOTE:</strong> If the event author has not filled out their WordPress user profile then the organization name will be used as the "From" name.', 'event_espresso'),
+			'[EVENT_AUTHOR_EMAIL]' => __('This is the same as [EVENT_AUTHOR_FORMATTED_EMAIL] shrotcode except it is just a list of emails (not fancy headers).', 'event_espresso'),
 			'[CO_FORMATTED_EMAIL]' => __('This parses to the formatted email address of the organization name set in Your Organization Settings. "My Organization &lt;myorg@email.com&gt;"', 'event_espresso' ),
 			'[CO_EMAIL]' => __('This will parse to the email address only for the organization set in Your Organization Settings.', 'event_espresso'),
 			'[ESPRESSO_ADMIN_FORMATTED_EMAIL]' => __('This parses to the formatted email address of the organization name set in Your Organization Settings. "My Organization &lt;myorg@email.com&gt;"', 'event_espresso' ),
@@ -62,6 +63,10 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT_AUTHOR_FORMATTED_EMAIL]' :
 				return $this->_get_event_admin_emails();
+				break;
+
+			case '[EVENT_AUTHOR_EMAIL]' :
+				return $this->_get_event_admin_emails( FALSE );
 				break;
 
 			case '[CO_FORMATTED_EMAIL]' :
@@ -93,9 +98,11 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 	}
 
 
-	private function _get_event_admin_emails() {
+	private function _get_event_admin_emails( $fancy_headers = TRUE ) {
 
 		if ( !empty( $this->_data->admin_email ) ) {
+			if ( ! $fancy_headers )
+				return $this->_data->admin_email;
 			return !empty( $this->_data->fname ) ? $this->_data->fname . ' ' . $this->_data->lname . ' <' . $this->_data->admin_email . '>' : EE_Registry::instance()->CFG->organization->name . ' <' . $this->_data->admin_email . '>';
 		}
  
@@ -136,6 +143,11 @@ class EE_Email_Shortcodes extends EE_Shortcodes {
 		foreach ( $admin_details as $admin ) {
 			//only add an admin email if it is present.
 			if ( empty( $admin->email ) || $admin->email == '' ) continue;
+
+			if ( ! $fancy_headers ) {
+				$admin_email[] = $admin->email;
+				continue;
+			}
  
 			$admin_email[] = !empty( $admin->first_name ) ? $admin->first_name . ' ' . $admin->last_name . ' <' . $admin->email . '>' : EE_Registry::instance()->CFG->organization->name . ' <' . $admin->email . '>';
 		}

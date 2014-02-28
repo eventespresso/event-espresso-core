@@ -135,7 +135,7 @@ class EE_Event extends EE_CPT_Base{
 	 * @brent: yeah what is this field for? from mike
 	 * @var boolean
 	 */
-	protected $_EVT_display_reg_form;
+	protected $_EVT_display_ticket_selector;
 	/**
 	 * indicates time when event should be visible
 	 * @var int 
@@ -289,8 +289,8 @@ class EE_Event extends EE_CPT_Base{
 	function display_description(){
 		return $this->get('EVT_display_desc');
 	}
-	function display_reg_form(){
-		return $this->get('EVT_display_reg_form');
+	function display_ticket_selector(){
+		return $this->get('EVT_display_ticket_selector');
 	}
 	function external_url(){
 		return $this->get('EVT_external_URL');
@@ -353,8 +353,8 @@ class EE_Event extends EE_CPT_Base{
 	function set_display_description($display_desc) {
 		return $this->set('EVT_display_desc', $display_desc);
 	}
-	function set_display_reg_form($display_reg_form) {
-		return $this->set('EVT_display_reg_form', $display_reg_form);
+	function set_display_ticket_selector($display_ticket_selector) {
+		return $this->set('EVT_display_ticket_selector', $display_ticket_selector);
 	}
 	function set_external_url($external_url) {
 		return $this->set('EVT_external_url', $external_url);

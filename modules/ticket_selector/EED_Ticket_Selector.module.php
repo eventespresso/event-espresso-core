@@ -125,6 +125,10 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 		
+		if ( ! self::$_event->display_ticket_selector() ) {
+			return '';
+		}
+		
 		$template_args = array();
 		// is the event expired ?
 		if ( ! $template_args['event_is_expired'] = self::$_event->is_expired() ) {
@@ -138,7 +142,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			// get all tickets for this event ordered by the datetime
 			$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
 				array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-				'order_by' => array( 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' ) 
+				'order_by' => array( 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' ) 
 			));
 		
 			$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
@@ -151,7 +155,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			
 			return $ticket_selector;
 		} else {
-			return __( 'All tickets sales have ended because the event is expired.', 'event_espresso' );
+			return '<p><span class="important-notice">' . __( 'We\'re sorry, but all tickets sales have ended because the event is expired.', 'event_espresso' ) . '</span></p>';
 		}
 
 	}

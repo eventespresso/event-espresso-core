@@ -74,6 +74,28 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
     *	@var int	
     */
 	protected $_EVT_ID;
+
+
+
+
+	/**
+	 * Datetime Name
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $_DTT_name;
+
+
+
+
+	/**
+	 * Datetime Description
+	 *
+	 * @access protected
+	 * @var string
+	 */
+	protected $_DTT_description;
 	
 	
 	
@@ -211,6 +233,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
+
+	public function set_name( $name ) {
+		return $this->set( 'DTT_name', $name );
+	}
+
+
+
+
+	public function set_description( $description ) {
+		return $this->set( 'DTT_description', $description );
+	}
+
+
+
 	/**
 	*		Set event start date
 	* 
@@ -342,6 +378,27 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
+	/**
+	 * returns the datetime name
+	 * @return string
+	 */
+	public function name() {
+		return $this->get('DTT_name');
+	} 
+
+
+
+
+
+	/**
+	 * returns the datetime description
+	 * @return string 
+	 */
+	public function description() {
+		return $this->get('DTT_description');
+	}
+
+
 
 
 
@@ -449,12 +506,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		get date_range - meaning the start AND end date
 	* 
 	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+	* 		@param		string		$dt_format - string representation of date format defaults to WP settings
 	* 		@param		string		$conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {		
-		return $this->_show_datetime( 'D', 'start', $dt_frmt ) . $conjunction . $this->_show_datetime( 'D', 'end', $dt_frmt );
+		$start = $this->_show_datetime( 'D', 'start', $dt_frmt );
+		$end = $this->_show_datetime( 'D', 'end', $dt_frmt );
+		return $start != $end ? $start . $conjunction . $end : $start;
+
 	}
 	public function e_date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {		
 		echo $this->date_range( $dt_frmt, $conjunction );
@@ -505,7 +565,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
-		return $this->_show_datetime( 'T', 'start', NULL, $tm_format ) . $conjunction . $this->_show_datetime( 'T', 'end', NULL, $tm_format );
+		$start = str_replace( ' ', '&nbsp;', $this->_show_datetime( 'T', 'start', NULL, $tm_format ));
+		$end = str_replace( ' ', '&nbsp;', $this->_show_datetime( 'T', 'end', NULL, $tm_format ));
+		return $start != $end ? $start . $conjunction . $end : $start;
 	}
 	public function e_time_range( $tm_format = NULL, $conjunction = ' - ' ) {		
 		echo $this->time_range( $tm_format, $conjunction );
@@ -761,9 +823,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * This returns a nice display name for the datetime that is contingent on the span between the dates and times.
+	 *
+	 * @param  boolean $use_dtt_name if TRUE then we'll use DTT->name() if its not empty.
 	 * @return string
 	 */
-	public function get_dtt_display_name() {
+	public function get_dtt_display_name( $use_dtt_name = FALSE ) {
+		if ( $use_dtt_name ) {
+			$dttname = $this->name();
+			if ( !empty( $dttname ) )
+				return $dttname;
+		}
+
 		//first condition is to see if the months are different
 		if ( date('m', $this->_DTT_EVT_start) != date('m', $this->_DTT_EVT_end ) ) {
 			$displaydate = $this->start_date('M j\, Y g:i a') . ' - ' . $this->end_date('M j\, Y g:i a');

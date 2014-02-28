@@ -14,6 +14,8 @@ Note: for non stable versions. We currently use minor versioning numbers such as
 
 This is the Core for Event Espresso 4. This README.md file is targeted for display with our Github repo.  For detailed information via traditional readme, see the readme.txt file.
 
+> Extra:  The code structure and phpdoc parsed documentation can be found at http://code.eventespresso.com
+
 
 ## Event Espresso Releases
 At Event Espresso we follow a set pattern for releases:

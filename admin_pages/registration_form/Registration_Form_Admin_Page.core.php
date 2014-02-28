@@ -78,9 +78,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _ajax_hooks() {
-		add_action('wp_ajax_espresso_update_question_order', array( $this, 'update_question_order' ));
-	}
+	protected function _ajax_hooks() {}
 
 
 
@@ -115,11 +113,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				'args' => array('new_question' => FALSE ),
 				'noheader' => TRUE,
 				),
-
-			'espresso_update_question_order' => array(
-				'func' => 'update_question_order',
-				'noheader' => TRUE
-				),	
 			);
 	}
 
@@ -148,10 +141,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					'registration_form_questions_overview_views_bulk_actions_search_help_tab' => array(
 						'title' => __('Question Overview Views & Bulk Actions & Search', 'event_espresso'),
 						'filename' => 'registration_form_questions_overview_views_bulk_actions_search'
-						),
-					'registration_form_questions_overview_other_help_tab' => array(
-						'title' => __('Questions Overview Other', 'event_espresso'),
-						'filename' => 'registration_form_questions_overview_other'
 						)
 					),
 				'help_tour' => array( 'Registration_Form_Questions_Overview_Help_Tour'),
@@ -227,9 +216,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function load_scripts_styles_default() {
-		wp_enqueue_script( 'espresso_ajax_table_sorting' );	
-	}
+	public function load_scripts_styles_default() {}
 
 
 
@@ -344,40 +331,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	protected function _questions_overview_list_table() {
 		$this->_search_btn_label = __('Questions', 'event_espresso');
 		$this->display_admin_list_table_page_with_sidebar();
-	}
-
-
-
-
-
-	/**
-	 * method for performing updates to question order
-	 * @return array results array
-	 */	
-	public function update_question_order() {
-
-		$success = __( 'Question order was updated successfully.', 'event_espresso' );
-		
-		// grab our row IDs
-		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
-
-		if ( is_array( $row_ids )) {
-			for ( $i = 0; $i < count( $row_ids ); $i++ ) {
-				$id = absint($row_ids[$i]);
-				//Update the questions when re-ordering
-				if ( EEM_Question::instance()->update ( array( 'QST_order' => $i+1 ), array(array( 'QST_ID' => $id ) )) === FALSE ) {
-					$success = FALSE;
-				} 
-			}
-		} else {
-			$success = FALSE;
-		}
-		
-		$errors = ! $success ? __( 'An error occurred. The question order was not updated.', 'event_espresso' ) : FALSE;
-		
-		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
-		die();
-		
 	}
 
 
@@ -523,7 +476,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$offset=($current_page-1)*$per_page;
 		$query_params['limit']=array($offset,$per_page);
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
-		$orderby_field = $model instanceof EEM_Question ? 'QST_order' : 'QSG_order';
+		$orderby_field = $model instanceof EEM_Question ? 'QST_ID' : 'QSG_order';
 		$field_to_order_by = empty($this->_req_data['orderby']) ? $orderby_field : $this->_req_data['orderby'];	
 		$query_params['order_by']=array( $field_to_order_by => $order );
 		$search_string = array_key_exists('s',$this->_req_data) ? $this->_req_data['s'] : null;
@@ -551,7 +504,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$QST = EEM_Question::instance();
 		$query_params = $this->get_query_params($QST, $per_page, $current_page);
 		if ($count){
-			$query_params['limit'] = NULL;
 			$results = $QST->count($query_params);
 		}else{
 			$results = $QST->get_all($query_params);

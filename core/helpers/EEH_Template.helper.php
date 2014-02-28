@@ -95,9 +95,10 @@ class EEH_Template {
 		if ( $name != '' ) {
 			$templates[] = "{$slug}-{$name}.php";
 		}
-		// we do NOT want to find the slug only version of files such as content.php when looking for content-espresso_events.php
-		// $templates[] = "{$slug}.php";
-		EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
+		// allow tempalte parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );		
+		if ( apply_filters( "FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", TRUE )) {
+			EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
+		}		
 	}
 
 
@@ -106,10 +107,12 @@ class EEH_Template {
 	 * 	locate_template
 	 * 
 	 * 	locate a template file by looking in the following places, in the following order:
-	 * 		/wp-content/theme/(the currently activated theme)
+	 *		/wp-content/theme/(the currently activated WP theme)
+	 *		/wp-content/uploads/espresso/templates/(current EE theme)/  
 	 *		/wp-content/uploads/espresso/templates/  
-	 *		/wp-content/uploads/espresso/templates/ee-theme/  
-	 *		/wp-content/plugins/EE4/templates/(default theme)/ 
+	 *		/wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ 
+	 *		/wp-content/plugins/(EE4 folder)/(relative path)
+	 *		(absolute server path)
 	 *	as soon as the template is found i none of those locations, it will be returned or loaded 
 	 * 
 	 * 	@param  mixed string | array $templates  the template file name including extension
@@ -134,19 +137,27 @@ class EEH_Template {
 				}
 			}
 			$current_theme = EE_Config::get_current_theme();
-			// loop thru templates
+			// loop thru templates and check each location (or relative to it) for the specified file 
 			foreach ( (array)$templates as $template ) {
-				// then check the root of the uploads/espresso/templates/ folder
-				if ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $template )) {
-					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $template; 
-					break;
-				// or check the uploads/espresso/templates/ folder for an EE theme template file
-				} elseif ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template )) {
+				// first check the uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
+				if ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template )) {
 					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template;
 					break;
-				// otherwise get it from our folder within the plugin
+				// then in the root of the uploads/espresso/templates/ folder 
+				} else if ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $template )) {
+					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $template; 
+					break;
+				// in the /templates/(current EE theme)/ folder within the plugin
 				} else if ( is_readable( EE_TEMPLATES . $current_theme . DS . $template )) {
 					$template_path = EE_TEMPLATES . $current_theme . DS . $template;
+					break;
+				// or maybe relative from the plugin root
+				} else if ( is_readable( EE_PLUGIN_DIR_PATH . DS . $template )) {
+					$template_path = EE_PLUGIN_DIR_PATH . DS . $template;
+					break;
+				// otherwise assume it's an absolute server path				
+				} else if ( is_readable( $template )) {
+					$template_path = $template;
 					break;
 				}
 			}
@@ -215,59 +226,43 @@ class EEH_Template {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
-
 		//ensure amount is float
 		$amount = (float) $amount;
-
-		// load registray
-		$EE = EE_Registry::instance();
-		$mny = new EE_Currency_Config();
-		// first set default config country currency settings
-		if ( isset( $EE->CFG->currency->code )) {
-			$mny = $EE->CFG->currency;
-		} else {
-			// manually set defaults
-			$mny->code = 'USD';
-			$mny->dec_plc = 2;
-			$mny->dec_mrk = '.';
-			$mny->thsnds = ',';
-			$mny->sign = '$';
-			$mny->sign_b4 = TRUE;			
-		}
-		// was a country ISO code passed ?
-		if ( $CNT_ISO ) {			
-			// get country
-			if ( $cntry = $EE->load_model( 'Country' )->get_one_by_ID( $CNT_ISO )) {	
-				// overwrite default settings
-				$mny->code = $cntry->get('CNT_cur_code');
-				$mny->dec_plc = $cntry->get('CNT_cur_dec_plc');
-				$mny->dec_mrk = $cntry->get('CNT_cur_dec_mrk');
-				$mny->thsnds = $cntry->get('CNT_cur_thsnds');
-				$mny->sign = $cntry->get('CNT_cur_sign');
-				$mny->sign_b4 =$cntry->get('CNT_cur_sign_b4');			
-			}			
-		}		
-		// format float
-		$amount_formatted = number_format( $amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds );
-		if ( ! $return_raw ) {
-			// add currency sign
-			if( $mny->sign_b4 ){
-				if( $amount >= 0 ){
-					$amount_formatted = $mny->sign . $amount_formatted;
+		// filter raw amount (allows 0.00 to be changed to "free" for example)
+		$amount_formatted = apply_filters( 'FHEE__EEH_Template__format_currency__amount', $amount, $return_raw );
+		// still a number or was amount converted to a string like "free" ?
+		if ( is_float( $amount_formatted )) {
+			// was a country ISO code passed ? if so generate currency cofing object for that country
+			$mny = $CNT_ISO !== FALSE ? new EE_Currency_Config( $CNT_ISO ) : NULL;
+			// verify results
+			if ( ! $mny instanceof EE_Currency_Config ) {
+				// set default config country currency settings
+				$mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config ? EE_Registry::instance()->CFG->currency : new EE_Currency_Config();			
+			}	
+			// format float
+			$amount_formatted = number_format( $amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds );
+			// add formatting ?
+			if ( ! $return_raw ) {
+				// add currency sign
+				if( $mny->sign_b4 ){
+					if( $amount >= 0 ){
+						$amount_formatted = $mny->sign . $amount_formatted;
+					}else{
+						$amount_formatted = '-' . $mny->sign . str_replace( '-', '', $amount_formatted );
+					}
+					
 				}else{
-					$amount_formatted = '-' . $mny->sign . str_replace( '-', '', $amount_formatted );
+					$amount_formatted =  $amount_formatted . $mny->sign;
 				}
 				
-			}else{
-				$amount_formatted =  $amount_formatted . $mny->sign;
+				// add currency code ?
+				$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;			
 			}
-			
-			// add currency code ?
-			$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;			
+			// filter results
+			$amount_formatted = apply_filters( 'FHEE__EEH_Template__format_currency__amount_formatted', $amount_formatted, $mny, $return_raw );
 		}
 		// clean up vars
 		unset( $mny );
-		unset( $EE );
 		// return formatted currency amount
 		return $amount_formatted;
 	}
@@ -428,3 +423,12 @@ class EEH_Template {
 
 
 } //end EEH_Template class
+
+//function convert_zero_to_free( $amount, $return_raw ) {
+//	// we don't want to mess with requests for unformated values because those may get used in calculations
+//	if ( ! $return_raw ) {
+//		$amount = __( 'free', 'event_espresso' );
+//	}
+//	return $amount;
+//}
+//add_filter( 'FHEE__EEH_Template__format_currency__amount', 'convert_zero_to_free', 10, 2 );

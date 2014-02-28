@@ -174,8 +174,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								<thead>
 									<tr>
 										<th width="30%" class=""><span class="small-text"><?php _e( 'Name', 'event_espresso' ); ?></span></th>
-										<th width="" class=""><span class="small-text"><?php _e( 'Description', 'event_espresso' ); ?></span></th>
-										<th width="25%" class="cntr"><span class="small-text"><?php _e( 'Amount', 'event_espresso' ); ?></span></th>
+										<th width="" class="jst-cntr"><span class="small-text"><?php _e( 'Description', 'event_espresso' ); ?></span></th>
+										<th width="25%" class="jst-rght"><span class="small-text"><?php _e( 'Amount', 'event_espresso' ); ?></span></th>
 									</tr>
 								</thead>
 								<tbody>
@@ -252,6 +252,12 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<br/>
 						<?php endif; ?>
 						
+						<?php if ( $ticket->uses() !== INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) : ?>							
+						<h5><?php _e( 'Event Date Ticket Uses', 'event_espresso' ); ?></h5>
+						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of separate event datetimes (see table below) that this ticket can be used to gain admittance to.<br/> <strong>Admission is always one person per ticket.</strong>', 'event_espresso' ); ?></span><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# Datetimes:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
+						<?php endif; ?>
+						
 						<?php if ( $datetimes = $ticket->datetimes_ordered($event_is_expired,false)) : ?>
 						<h5><?php _e( 'Event Access', 'event_espresso' ); ?></h5>
 						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. "Remaining" shows the number of this ticket type left:', 'event_espresso' ); ?></span>
@@ -259,37 +265,57 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 							<table class="tckt-slctr-tkt-details-tbl">
 								<thead>
 									<tr>
-										<th><span class="small-text"><?php _e( 'Event Date ', 'event_espresso' ); ?></span></th>
-										<th class="cntr"><span class="small-text"><?php _e( 'Time ', 'event_espresso' ); ?></span></th>
-										<th class="cntr"><span class="smaller-text"><?php _e( 'This Ticket<br/>Sold', 'event_espresso' ); ?></span></th>
-										<th class="cntr"><span class="smaller-text"><?php _e( 'This Ticket<br/>Remaining', 'event_espresso' ); ?></span></th>
-										<th class="cntr"><span class="smaller-text"><?php _e( 'Total Tickets<br/>Sold', 'event_espresso' ); ?></span></th>
-										<th class="cntr"><span class="smaller-text"><?php _e( 'Total Spaces<br/>Remaining', 'event_espresso' ); ?></span></th>
+										<th valign="middle">
+											<span class="dashicons dashicons-calendar"></span><span class="small-text"><?php _e( 'Event Date ', 'event_espresso' ); ?></span>
+										</th>
+										<th width="15%" valign="middle" class="">
+											<span class="dashicons dashicons-clock"></span><span class="small-text"><?php _e( 'Time ', 'event_espresso' ); ?></span>
+										</th>
+										<th width="12.5%" valign="middle" class="cntr">
+											<span class="smaller-text"><?php _e( 'This Ticket<br/>Sold', 'event_espresso' ); ?></span>
+										</th>
+										<th width="12.5%" valign="middle" class="cntr">
+											<span class="smaller-text"><?php _e( 'This Ticket<br/>Left', 'event_espresso' ); ?></span>
+										</th>
+										<th width="12.5%" valign="middle" class="cntr">
+											<span class="smaller-text"><?php _e( 'Total Tickets<br/>Sold', 'event_espresso' ); ?></span>
+										</th>
+										<th width="12.5%" valign="middle" class="cntr">
+											<span class="smaller-text"><?php _e( 'Total Spaces<br/>Left', 'event_espresso' ); ?></span>
+										</th>
 									</tr>
 								</thead>
 								<tbody>
 								<?php foreach ( $datetimes as $datetime ) : ?>
-								
+					
 								<tr>
-									<td class="small-text"><?php echo $datetime->start_date('l F jS, Y'); ?></td>
-									<td class="cntr small-text"><?php echo $datetime->time_range(); ?></td>
-									<td class="cntr small-text"><?php echo $ticket->sold(); ?></td>		
-									<td class="cntr small-text"><?php echo $ticket->qty() - $ticket->sold(); ?></td>		
-									<td class="cntr small-text"><?php echo $datetime->sold(); ?></td>		
-									<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
-									<td class="cntr small-text"><?php echo $tkts_left === INF ? __( 'unlimited ', 'event_espresso' ) : $tkts_left; ?></td>
+									<td class="small-text">
+										<?php $datetime_name = $datetime->name(); ?>										
+										<?php echo ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b><br/>' : ''; ?>										
+										<?php echo $datetime->date_range( 'l F jS, Y', __( ' to  ', 'event_espresso' )); ?>										
+									</td>
+									<td class="cntr small-text">
+										<?php echo $datetime->time_range( NULL, __( ' to  ', 'event_espresso' )); ?>			
+									</td>
+									<td class="cntr small-text">
+										<?php echo $ticket->sold(); ?>										
+									</td>		
+									<td class="cntr small-text">
+										<?php echo $ticket->qty() === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $ticket->qty() - $ticket->sold(); ?>
+									</td>		
+									<td class="cntr small-text">
+										<?php echo $datetime->sold(); ?>										
+									</td>		
+							<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out smaller-text">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
+									<td class="cntr small-text">
+										<?php echo $tkts_left === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $tkts_left; ?>		
+									</td>
 								</tr>
 								<?php endforeach; ?>
 								</tbody>
 							</table>
 						</div>
 						<br/>
-						<?php endif; ?>
-						
-						<?php if ( $ticket->uses() !== INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) : ?>							
-						<h5><?php _e( 'Event Date Ticket Uses', 'event_espresso' ); ?></h5>
-						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of separate event datetimes (see table above) that this ticket can be used to gain admittance to.<br/> <strong>Admission is always one person per ticket.</strong>', 'event_espresso' ); ?></span><br/>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# Datetimes:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
 						<?php endif; ?>
 						
 						

@@ -292,8 +292,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 								echo  '<h6 class="">' . __('Event Details: ', 'event_espresso') . '</h6><p>' . $desc . '</p>';
 							}
 							if ( $show_dates ) {
-								echo  '<h6 class="ee-calendar_year-icon-small">' . __('Event Dates: ', 'event_espresso') . '</h6>';
-								echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', '@ g:i a', FALSE );
+								echo  '<h6 class="">' . __('Event Dates: ', 'event_espresso') . '</h6>';
+								echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', 'g:i a', FALSE, NULL, TRUE, TRUE );
 							}
 							echo '<br/><br/><br/></li>';
 						}

@@ -129,20 +129,32 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 			$surcharge_price_id = 0;
 			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_price_table, array($new_price_id));
 		}
-		//create ticket
-		$ticket_id = $this->_insert_new_ticket($old_row);
-		if($ticket_id){
-			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_ticket_table, $ticket_id);
-			//associate to the prices
-			$this->_insert_ticket_price_relation($ticket_id, $new_price_id);
-			$this->_insert_ticket_price_relation($ticket_id, $surcharge_price_id);
-			//associate to datetimes for the event
-			foreach($this->_get_datetime_ids_for_old_event_id($old_row['event_id']) as $new_datetime_id){
-				$this->_insert_datetime_ticket_relation($new_datetime_id, $ticket_id);
-			}
-		}
 		//associate the ticket to all datetimes for event (ie, this ONE ticket grants access to ALL datetimes, not just one of the attendee's choice.
 		//if the latter were the case, then we'd create a seperate ticket for each datetime and ahve their association be one-to-one)
+		//create ticket
+//		$ticket_id = $this->_insert_new_ticket($old_row);
+//		if($ticket_id){
+//			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_ticket_table, $ticket_id);
+//			//associate to the prices
+//			$this->_insert_ticket_price_relation($ticket_id, $new_price_id);
+//			$this->_insert_ticket_price_relation($ticket_id, $surcharge_price_id);
+//			//associate to datetimes for the event
+//			foreach($this->_get_datetime_ids_for_old_event_id($old_row['event_id']) as $new_datetime_id){
+//				$this->_insert_datetime_ticket_relation($new_datetime_id, $ticket_id);
+//			}
+//		}
+		//create a ticket for each old price -old datetime combo
+		$tickets_for_old_price = array();
+		foreach($this->_get_datetime_ids_for_old_event_id($old_row['event_id']) as $new_datetime_id){
+			$ticket_id = $this->_insert_new_ticket($old_row);
+			$tickets_for_old_price[] = $ticket_id;
+			//associate to old prices
+			$this->_insert_ticket_price_relation($ticket_id, $new_price_id);
+			$this->_insert_ticket_price_relation($ticket_id, $surcharge_price_id);
+			$this->_insert_datetime_ticket_relation($new_datetime_id, $ticket_id);
+		}
+		$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_ticket_table, $tickets_for_old_price);
+		
 	}
 	/**
 	 * Creates a 4.1 price base type

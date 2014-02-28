@@ -231,7 +231,7 @@ class EE_CPT_Strategy extends EE_BASE {
 			// adds something like ", wp_esp_event_meta.* " to WP Query SELECT statement
 			$SQL .= ', ' . $this->CPT['meta_table']->get_table_name() . '.* ' ;
 		}
-//		d( $SQL );
+		remove_filter( 'posts_fields', array( $this, 'posts_fields' ));
 		return $SQL;
 	}
 
@@ -250,7 +250,7 @@ class EE_CPT_Strategy extends EE_BASE {
 			// adds something like " LEFT JOIN wp_esp_event_meta ON ( wp_esp_event_meta.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
 			$SQL .= ' LEFT JOIN ' . $this->CPT['meta_table']->get_table_name() . ' ON ( ' . $this->CPT['meta_table']->get_table_name() . '.' . $this->CPT['meta_table']->get_fk_on_table() . ' = ' . $wpdb->posts . '.ID ) ';
 		}
-//		d( $SQL );
+		remove_filter( 'posts_join',	array( $this, 'posts_join' ));
 		return $SQL;
 	}
 
@@ -273,7 +273,8 @@ class EE_CPT_Strategy extends EE_BASE {
 					$post->$CPT_class = $this->CPT_model->instantiate_class_from_post_object( $post );
 				}
 			}
-		}		
+		}
+		remove_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
 		return $wp_query->posts;
 	}
 

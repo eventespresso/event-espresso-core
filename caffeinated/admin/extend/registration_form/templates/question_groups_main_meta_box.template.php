@@ -112,29 +112,33 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 	</table>
 </div>
 
-<div class="edit-group padding" style="display: inline-block;">
-	<table class="form-table">
+<div class="edit-group padding question-group-questions-container">
+	<table class="form-table question-group-questions">
 		<tbody>
 			<tr>				
 				<td>
 					<div class="padding">
 						<h3 class="title" style="padding-left: 0;"><?php _e('Questions that appear in this group.','event_espresso');?></h3>
+						<p><span class="description"><?php _e('You can reorder the questions for this group via drag and drop. And it will be updated on save.', 'event_espresso'); ?></span></p>
 						<ul>
 							<?php 
+							$qcnt = 0;
 							foreach( $all_questions as $question_ID=>$question ){
 								/*@var $question EE_Question*/
 								$checked = array_key_exists( $question_ID, $question_group->questions() ) ? ' checked="checked"' : '';
 								$disabled = $question->get('QST_system') && $QSG_system !== 2 ? ' disabled="disabled"' : '';
+								$question_order = $qcnt;
 								if ( ($QSG_system === 1 && $question->get('QST_system' ) && empty( $checked ) ) || ( $QSG_system == 2 && in_array( $question_ID, array(1,2,3) ) ) || ( $QSG_system === 0 && $question->get('QST_system' ) !== "" ) )
 									continue; //skip over system question not assigned to this group except for the address system group cause we want the address questions to display even if they aren't selected (but still not show the personal system questions).  The third condition checks if we're displaying a non system question group and the question is a system question, then we skip because for non-system question groups we only want to show non-system questions.
 							?>
-							<li>
+							<li class="ee-question-sortable">
 								<label for="question-<?php echo $question_ID?>">
 									<input type="checkbox" name="questions[<?php echo $question_ID;?>]" id="question-<?php echo $question_ID; ?>" value="<?php echo $question_ID;?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
-									 &nbsp; <?php echo $question->display_text()?>				
+									 &nbsp; <?php echo $question->display_text()?>
+									 <input class="question-group-QGQ_order" type="hidden" name="question_orders[<?php echo $question_ID; ?>]" value="<?php echo $question_order; ?>">
 								</label>
 							</li>
-							<?php }?>
+							<?php $qcnt++; }?>
 						</ul>
 					</div>
 				</td>				

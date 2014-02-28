@@ -6,6 +6,7 @@ class EE_Question_Group_Question extends EE_Base_Class{
 	protected $_QGQ_ID;
 	protected $_QSG_ID;
 	protected $_QST_ID;
+	protected $_QGQ_order;
 	protected $_Question;
 	protected $_Question_Group;
 	

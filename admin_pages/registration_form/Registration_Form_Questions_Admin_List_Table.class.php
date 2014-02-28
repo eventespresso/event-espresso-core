@@ -78,8 +78,6 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_hidden_columns = array(
 			);
 
-		$this->_ajax_sorting_callback = 'update_question_order';
-
 	}
 
 

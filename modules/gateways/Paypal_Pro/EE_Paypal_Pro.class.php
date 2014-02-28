@@ -475,9 +475,9 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			foreach ($total_line_item->get_items() as $line_item) {	
 				$Item = array(
 							// Item Name.  127 char max.
-							'l_name' => $line_item->name(),
+							'l_name' => substr($line_item->name(),0,127),
 							// Item description.  127 char max.
-							'l_desc' => $line_item->desc(),
+							'l_desc' => substr($line_item->desc(),0,127),
 							// Cost of individual item.
 							'l_amt' => $line_item->unit_price(),
 							// Item Number.  127 char max.
