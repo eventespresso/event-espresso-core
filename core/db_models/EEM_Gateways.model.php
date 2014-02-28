@@ -840,7 +840,7 @@ Class EEM_Gateways {
 					
 					$session_data['billing_info'][$name]['value'] = $this->MaskCreditCard($billing_input_array['value']);
 				}elseif($billing_input_array['sanitize'] == 'ccv'){
-					$billing_input_array['billing_info'][$name]['value'] = '';
+					$session_data['billing_info'][$name]['value'] = '';
 				}
 			}
 		}
