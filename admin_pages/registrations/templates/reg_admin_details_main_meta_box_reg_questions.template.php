@@ -1,5 +1,5 @@
 <div id="admin-primary-mbox-questions-dv" class="admin-primary-mbox-dv">
-	<p><?php _e('This displays the custom questions and answers for this registrant.  Please note that any answers to system questions have been saved with the registration record.  You can edit those answers via the "View/Edit this Registration" link in the Registration Details metabox in the sidebar.', 'event_espresso'); ?></p>
+	<p><?php _e('This displays the custom questions and answers for this registrant.  Please note that any answers to system questions have been saved with the contact record.  You can edit those answers via the "View/Edit this Contact" link in the Contact Details metabox in the sidebar.', 'event_espresso'); ?></p>
 	
 	<form name="reg-admin-attendee-questions-frm" id="reg-admin-attendee-questions-frm" action="<?php echo REG_ADMIN_URL; ?>">
 		<?php wp_nonce_field( $reg_questions_form_action . '_nonce', $reg_questions_form_action . '_nonce' ); ?>
