@@ -20,7 +20,7 @@
 	</p>
 </div>
 
-<?php echo "<hr>SAMPLE FORM<hr>";
+<?php echo "</form><hr>SAMPLE FORM<hr>";
 		$f = new EE_Sample_Form();
 		
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){

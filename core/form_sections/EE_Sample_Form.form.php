@@ -12,7 +12,8 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			'yes_no'=>new EE_Yes_No_Input(array('html_label_text'=>  __("Yes or No", "event_espresso"))),
 			'credit_card'=>new EE_Credit_Card_Input(),
 			'image_1'=>new EE_Admin_File_Uploader_Input(),
-//			'image_2'=>new EE_Admin_File_Uploader_Input()
+			'image_2'=>new EE_Admin_File_Uploader_Input(),
+			'skillz'=>new EE_Checkbox_Multi_Input(array('php'=>'PHP','mysql'=>'MYSQL'), 'string',array('default'=>array('php'))),
 		);
 		$this->_layout_strategy = new EE_Div_Per_Section_Layout();
 		parent::__construct();

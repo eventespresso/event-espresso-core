@@ -16,7 +16,7 @@ class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base{
 	}
 	
 	/**
-	 * just checks the field isn't blank
+	 * Check that the value is in the allowed list
 	 * @return boolean
 	 */
 	function validate() {
