@@ -35,7 +35,7 @@ $event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $eve
 		</footer>		
 	</div>
 	
-<?php else if ( is_archive() ) : ?>
+<?php elseif ( is_archive() ) : ?>
 
 	<div id="espresso-event-list-header-dv-<?php echo $post->ID;?>" class="espresso-event-header-dv">
 		<?php espresso_get_template_part( 'content', 'espresso_events-thumbnail' ); ?>
