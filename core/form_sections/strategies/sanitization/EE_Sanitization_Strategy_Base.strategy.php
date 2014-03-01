@@ -33,6 +33,7 @@ abstract class EE_Sanitization_Strategy_Base extends EE_Form_Input_Strategy_Base
 	 * uses the sanitized value on the field to get the normalized value, and return it.
 	 * Eg, if the input is meant to hold integers, and the field's sanitized value is '123', this should return 123.
 	 * If, however, the field's sanitized value is 'jabberwacky', this function should throw a validation error
+	 * (and the sanitized value will continue to hold 'jabberwacky')
 	 * @return mixed
 	 */
 	abstract function normalize();
