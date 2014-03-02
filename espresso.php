@@ -25,6 +25,21 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+
+/**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @package			Event Espresso
+ * @author			Seth Shoultes
+ * @copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @link			{@link http://www.eventespresso.com}
+ * @since		 	4.0
+ *
+ */
+
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
