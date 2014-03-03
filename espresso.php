@@ -125,36 +125,28 @@ define('EE_INF_IN_DB', -1);
 
 
 
-function espresso_load_system( $activation = FALSE ) {
+function espresso_load_system() {
 	if ( espresso_minimum_wp_version_required() ) {
 		espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
-		EE_System::instance($activation);
+		EE_System::instance();
 	} else {
 		unset( $_GET['activate'] );
 		add_action( 'admin_notices', 'espresso_minimum_wp_version_error', 1 );
 	}
 }
-
-/**
- * 	espresso_regular_request - loads and instantiates EE_System
- */
-function espresso_regular_request() {
-	espresso_load_system();
-}
-add_action( 'plugins_loaded', 'espresso_regular_request', 1 );
+add_action( 'plugins_loaded', 'espresso_load_system', 1 );
 
 /**
  * 	espresso_plugin_activation - loads and instantiates EE_System
  */
 function espresso_plugin_activation() {
-
 	// check permissions
 	if ( ! current_user_can( 'activate_plugins' )) {
-		throw new EE_Error( __( 'You do not have the required permissions to activate this plugin.', 'event_espresso' ));
 		return;
 	}
-	espresso_load_system( TRUE );
-	
+	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	check_admin_referer( "activate-plugin_{$plugin}" );
+	update_option( 'ee_espresso_activation', TRUE );
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
 
@@ -162,6 +154,12 @@ register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation'
  * 	espresso_plugin_deactivation
  */
 function espresso_plugin_deactivation() {
+	// check permissions
+	if ( ! current_user_can( 'activate_plugins' )) {
+		return;
+	}
+	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	check_admin_referer( "deactivate-plugin_{$plugin}" );
 	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_deactivation();
 }
