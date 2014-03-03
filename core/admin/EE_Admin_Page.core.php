@@ -471,7 +471,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		global $ee_menu_slugs;
 		$ee_menu_slugs = (array) $ee_menu_slugs;
 
-		if ( !$this->_current_page && !defined( 'DOING_AJAX') || ! in_array( $this->_current_page, $ee_menu_slugs ) ) return FALSE;
+		if ( !$this->_current_page && !defined( 'DOING_AJAX') || ! isset( $ee_menu_slugs[$this->_current_page] ) ) return FALSE;
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();

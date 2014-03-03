@@ -237,7 +237,7 @@ class EE_Admin_Page_Loader {
 		$hooks_ref = array();
 		foreach ( $installed_refs as $page ) {
 			$this->_installed_pages[$page] = $this->_load_admin_page( $page );
-			$this->_menu_slugs[$page] = $this->_installed_pages[$page]->menu_slug;
+			$this->_menu_slugs[$this->_installed_pages[$page]->menu_slug] = $page;
 
 			$extend = FALSE; //flag for register hooks on extended pages b/c extended pages use the default INIT.
 
