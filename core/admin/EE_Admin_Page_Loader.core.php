@@ -38,6 +38,12 @@ class EE_Admin_Page_Loader {
 
 
 
+	/**
+	 * this is used to hold the registry of menu slugs for all the installed admin pages
+	 * @var array
+	 */
+	private $_menu_slugs = array();
+
 
 	/**
 	 * _caffeinated_extends
@@ -231,6 +237,7 @@ class EE_Admin_Page_Loader {
 		$hooks_ref = array();
 		foreach ( $installed_refs as $page ) {
 			$this->_installed_pages[$page] = $this->_load_admin_page( $page );
+			$this->_menu_slugs[$page] = $this->_installed_pages[$page]->menu_slug;
 
 			$extend = FALSE; //flag for register hooks on extended pages b/c extended pages use the default INIT.
 
@@ -263,6 +270,10 @@ class EE_Admin_Page_Loader {
 		foreach ( $hooks_ref as $path ) {
 			require_once( $path );
 		}
+
+		//make sure we have menu slugs constant setup
+		global $ee_menu_slugs;
+		$ee_menu_slugs = $this->_menu_slugs;
 
 		//we need to loop again to run any early code
 		foreach ( $installed_refs as $page ) {

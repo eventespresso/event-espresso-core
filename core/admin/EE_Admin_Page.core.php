@@ -468,8 +468,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 		$this->page_folder = strtolower( str_replace( '_Admin_Page', '', str_replace( 'Extend_', '', get_class($this) ) ) );
 
-		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
+		global $ee_menu_slugs;
+		$ee_menu_slugs = (array) $ee_menu_slugs;
 
+		if ( !$this->_current_page && !defined( 'DOING_AJAX') || ! in_array( $this->_current_page, $ee_menu_slugs ) ) return FALSE;
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
