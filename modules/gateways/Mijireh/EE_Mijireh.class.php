@@ -42,11 +42,11 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		$this->_button_base = 'paypal-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
 		parent::__construct($model);
-		if(!$this->_payment_settings['use_sandbox']){
-			$this->_gatewayUrl = 'https://www.paypal.com/cgi-bin/webscr';
-		}else{
-			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-		}
+//		if(!$this->_payment_settings['use_sandbox']){
+		$this->_gatewayUrl = 'https://secure.mijireh.com/api/1/orders';
+//		}else{
+//			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
+//		}
 	}
 
 	protected function _default_settings() {
@@ -331,55 +331,62 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		</div>
 		<?php
 	}
+	protected function _format_float($float){
+		return number_format($float, 2);
+	}
 
 	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
-
-		$paypal_settings = $this->_payment_settings;
-		$access_key = $paypal_settings['access_key'];
-		$paypal_cur = $paypal_settings['currency_format'];
-		$no_shipping = $paypal_settings['no_shipping'];
-
-		$item_num = 1;
-		
+		$mijireh_settings = $this->_payment_settings;
+		$access_key = $mijireh_settings['access_key'];
+//		$paypal_cur = $mijireh_settings['currency_format'];
+//		$no_shipping = $mijireh_settings['no_shipping'];
+				
 		/* @var $transaction EE_Transaction */
 		if( ! $transaction){
 			$transaction = $total_line_item->transaction();
 		}
+		//get any of the current registrations, 
+		$primary_registrant = $transaction->primary_registration();
+		$primary_attendee = $primary_registrant->attendee();
+		$order = array(
+			'total'=>$this->_format_float($transaction->total()),
+			'return_url'=>$this->_get_return_url($primary_registrant),
+			'items'=>array(),
+			'email'=>$primary_attendee->email(),
+			'first_name'=>$primary_attendee->fname(),
+			'last_name'=>$primary_attendee->lname(),
+			'tax'=>$this->_format_float($total_line_item->get_total_tax()));
 		foreach($total_line_item->get_items() as $line_item){
-			
-			$this->addField('item_name_' . $item_num, $line_item->name());
-			$this->addField('amount_' . $item_num, $line_item->unit_price());
-			$this->addField('quantity_' . $item_num, $line_item->quantity());
-			$item_num++;
+			$order['items'][] = array(
+				'name'=>$line_item->name(),
+				'price'=>$this->_format_float($line_item->total()),
+				'sku'=>$line_item->code(),
+				'quantity'=>$line_item->quantity()
+			);
 		}
 		
 		foreach ($total_line_item->tax_descendants() as  $tax_line_item) {
-			$this->addField('item_name_' . $item_num, $tax_line_item->name());
-			$this->addField('amount_' . $item_num, $tax_line_item->total());
-			$this->addField('quantity_' . $item_num, '1');
-			$item_num++;
+			$order['items'][] = array(
+				'name'=>$tax_line_item->name(),
+				'price'=>$this->_format_float($tax_line_item->total()),
+				'sku'=>$tax_line_item->code()
+			);
 		}
-		//get any of the current registrations, 
-		$primary_registrant = $transaction->primary_registration();
-		if($paypal_settings['use_sandbox']){
-			$this->addField('item_name_'.$item_num,'DEBUG INFO (this item only added in sandbox mode)');
-			$this->addField('amount_'.$item_num,0);
-			$this->addField('on0_'.$item_num,'NOTIFY URL');
-			$this->addField('os0_'.$item_num,$this->_get_notify_url($primary_registrant));
-		}
-		$this->addField('business', $access_key);
-		$this->addField('return',  $this->_get_return_url($primary_registrant));
-		$this->addField('cancel_return', $this->_get_cancel_url());
-		$this->addField('notify_url', $this->_get_notify_url($primary_registrant));
-		$this->addField('cmd', '_cart');
-		$this->addField('upload', '1');
-		$this->addField('currency_code', $paypal_cur);
-		$this->addField('image_url', empty($paypal_settings['image_url']) ? '' : $paypal_settings['image_url']);
-		$this->addField('no_shipping ', $no_shipping);
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
-		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 		
-		$this->redirect_after_reg_step_3($transaction,$paypal_settings['use_sandbox']);
+	
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
+//		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
+		d($order);
+				$args = array(
+		'headers' => array(
+		'Authorization' => 'Basic ' . base64_encode( $access_key . ':' ),
+		'body'=>  json_encode($order)
+		)
+		);
+		d($args);
+		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
+		dd($response);
+		$this->redirect_after_reg_step_3($transaction,$mijireh_settings['use_sandbox']);
 	}
 
 
