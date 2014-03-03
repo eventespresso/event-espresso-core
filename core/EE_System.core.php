@@ -114,7 +114,7 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		// load EE_Config, EE Textdomain, etc
-		add_action( 'plugins_loaded', array( $this,'load_configuration' ), 5 );
+		add_action( 'plugins_loaded', array( $this,'load_configuration' ), 3 );
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this,'activate_or_initialize' ), 7 );
 		// ALL EE Addons should use the following hookpoint to attach their initial setup too
@@ -206,6 +206,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function load_configuration(){
+		do_action( 'AHEE__EE_System__load_configuration__begin', $this );
 		// load and setup EE_Config and EE_Network_Config
 		EE_Registry::instance()->load_core( 'Config' );
 		EE_Registry::instance()->load_core( 'Network_Config' );
@@ -222,7 +223,7 @@ final class EE_System {
 		$this->_parse_model_names();
 		//load caf stuff a chance to play during the activation process too.
 		$this->_maybe_brew_regular();
-
+		do_action( 'AHEE__EE_System__load_configuration__complete', $this );
 	}
 
 
@@ -270,6 +271,7 @@ final class EE_System {
 	 * @return void
 	 */
 	public function activate_or_initialize(){
+		do_action( 'AHEE__EE_System__activate_or_initialize__begin', $this );
 		// detect whether install or upgrade
 		$this->_manage_activation_process();		
 		// let's get it started		
@@ -288,7 +290,7 @@ final class EE_System {
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance && ! defined( 'DOING_AJAX' )){
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 		}
-		do_action( 'AHEE__EE_System__plugins_loaded__complete', $this );
+		do_action( 'AHEE__EE_System__activate_or_initialize__complete', $this );
 	}
 	/**
 	 * Seta a wp option to remember that we want to redirect to the about page on the
@@ -325,7 +327,7 @@ final class EE_System {
 	*/
 	private function _manage_activation_process() {
 
-		do_action('AHEE__EE_System___manage_activation_process__before');
+		do_action('AHEE__EE_System___manage_activation_process__begin');
 
 		if ( ! is_admin() || ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) || ( is_admin() && ! is_user_logged_in() )) {
 			return;
@@ -371,7 +373,7 @@ final class EE_System {
 		if( ! $request_type == EE_System::req_type_normal){
 			$this->update_list_of_installed_versions($espresso_db_update);
 		}
-		do_action( 'AHEE__EE_System__manage_activation_process__end' );
+		do_action( 'AHEE__EE_System__manage_activation_process__complete' );
 	}
 
 
@@ -437,8 +439,7 @@ final class EE_System {
 	 * if it needed correction
 	 */
 	private function fix_espresso_db_upgrade_option($espresso_db_update = null){
-		do_action( 'AHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin' );
-		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin',$espresso_db_update );
+		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__begin', $espresso_db_update );
 		if( ! $espresso_db_update){
 			$espresso_db_update = get_option( 'espresso_db_update' );
 		}
@@ -476,8 +477,7 @@ final class EE_System {
 			
 		}
 		
-		do_action( 'AHEE__EE_System__manage_fix_espresso_db_upgrade_option__end' );
-		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__end',$espresso_db_update );
+		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__complete', $espresso_db_update );
 		return $espresso_db_update;
 	}
 
