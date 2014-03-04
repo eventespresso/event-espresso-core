@@ -106,7 +106,7 @@ class EEH_Activation {
 	public static function deactivate_event_espresso() {
 		// check permissions 
 		if ( current_user_can( 'activate_plugins' )) {
-			deactivate_plugins( EE_PLUGINPATH, TRUE );
+			deactivate_plugins( EE_PLUGIN_BASENAME, TRUE );
 		}
 	}
 
