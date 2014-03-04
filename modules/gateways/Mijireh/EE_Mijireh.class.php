@@ -67,7 +67,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
 		$this->_payment_settings['no_shipping'] = $_POST['no_shipping'];
 		$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
-		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';		
 	}
 
 
@@ -365,28 +365,50 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			);
 		}
 		
-		foreach ($total_line_item->tax_descendants() as  $tax_line_item) {
-			$order['items'][] = array(
-				'name'=>$tax_line_item->name(),
-				'price'=>$this->_format_float($tax_line_item->total()),
-				'sku'=>$tax_line_item->code()
-			);
-		}
-		
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
-//		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
-		d($order);
 				$args = array(
 		'headers' => array(
-		'Authorization' => 'Basic ' . base64_encode( $access_key . ':' ),
+			'Authorization' => 'Basic ' . base64_encode( $access_key . ':' ),
+			'Accept'=>'application/json'
+			),
 		'body'=>  json_encode($order)
-		)
 		);
-		d($args);
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
-		dd($response);
+		if(! empty($response['body'])){
+			$response_body = json_decode($response['body']);
+			$this->_gatewayUrl = $response_body->checkout_url;
+			$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
+			$payment = EE_Payment::new_instance(array(
+				'TXN_ID' => $transaction->ID(), 
+				'STS_ID' => EEM_Payment::status_id_failed, 
+				'PAY_timestamp' => $transaction->datetime(), 
+				'PAY_method' => 'CART', 
+				'PAY_amount' => $transaction->total(), 
+				'PAY_gateway' => $this->_gateway_name, 
+				'PAY_gateway_response' => null, 
+				'PAY_txn_id_chq_nmbr' => $response_body->order_number, 
+				'PAY_po_number' => NULL, 
+				'PAY_extra_accntng'=>$primary_registrant->reg_code(),
+				'PAY_via_admin' => false, 
+				'PAY_details' => $response_body
+			));
+			$payment->save();
+		}else{
+			throw new EE_Error(__("No response from Mijireh Gateway", 'event_espresso'));
+		}
 		$this->redirect_after_reg_step_3($transaction,$mijireh_settings['use_sandbox']);
+	}
+	
+	/**
+	 * 
+	 * Override's parent to only change the FORM's method to a GET instead of a POST
+	 * @return array
+	 */
+	public function submitPayment() {
+		$parents_result = parent::submitPayment();
+		$parents_result['form'] = str_replace("<form method=\"POST\"", "<form method=\"GET\"", $parents_result['form']);
+		return $parents_result;
 	}
 
 
@@ -399,81 +421,8 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function handle_ipn_for_transaction(EE_Transaction $transaction){
-		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".($transaction instanceof EE_Transaction)?$transaction->ID():'unknown');
-		
-		
-		//verify there's payment data that's been sent
-		if(empty($_POST['payment_status']) || empty($_POST['txn_id'])){
-			return false;
-		}
-		$this->_debug_log( "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id']);
-		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
-		if(!$this->validateIpn()){
-			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
-			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
-			EE_Error::add_error(__("PayPal IPN Validation failed!", "event_espresso"));
-			return false;
-		}
-		//if the transaction's just an ID, swap it for a real EE_Transaction
-		$transaction = $this->_TXN->ensure_is_obj($transaction);
-		//verify the transaction exists
-		if(empty($transaction)){
-			return false;
-		}
-		
-		
-		//ok, well let's process this payment then!
-		if($_POST['payment_status']=='Completed'){ //the old code considered 'Pending' as completed too..
-			$status = EEM_Payment::status_id_approved;//approved
-			$gateway_response = __('Your payment is approved.', 'event_espresso');
-		}elseif($_POST['payment_status']=='Pending'){
-			$status = EEM_Payment::status_id_pending;//approved
-			$gateway_response = __('Your payment is in progress. Another message will be sent when payment is approved.', 'event_espresso');
-		}else{
-			$status = EEM_Payment::status_id_declined;//declined
-			$gateway_response = __('Your payment has been declined.', 'event_espresso');
-		}
-		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
-		//check if we've already processed this payment
-		
-		$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
-		if(!empty($payment)){
-			//payment exists. if this has the exact same status and amount, don't bother updating. just return
-			if($payment->STS_ID() == $status && $payment->amount() == $_POST['mc_gross']){
-				//echo "duplicated ipn! dont bother updating transaction foo!";
-				$this->_debug_log( "<hr>Duplicated IPN! ignore it...");
-				return false;
-			}else{
-				$this->_debug_log( "<hr>Existing IPN for this paypal transaction, but it\'s got some new info. Old status:".$payment->STS_ID().", old amount:".$payment->amount());
-				$payment->set_status($status);
-				$payment->set_amount($_POST['mc_gross']);
-				$payment->set_gateway_response($gateway_response);
-				$payment->set_details($_POST);
-			}
-		}else{
-			$this->_debug_log( "<hr>No Previous IPN payment received. Create a new one");
-			//no previous payment exists, create one
-			$primary_registrant = $transaction->primary_registration();
-			$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
-			
-			$payment = EE_Payment::new_instance(array(
-				'TXN_ID' => $transaction->ID(), 
-				'STS_ID' => $status, 
-				'PAY_timestamp' => $transaction->datetime(), 
-				'PAY_method' => sanitize_text_field($_POST['txn_type']), 
-				'PAY_amount' => floatval($_REQUEST['mc_gross']), 
-				'PAY_gateway' => $this->_gateway_name, 
-				'PAY_gateway_response' => $gateway_response, 
-				'PAY_txn_id_chq_nmbr' => $_POST['txn_id'], 
-				'PAY_po_number' => NULL, 
-				'PAY_extra_accntng'=>$primary_registration_code,
-				'PAY_via_admin' => false, 
-				'PAY_details' => $_POST
-			));
-		
-		}
-		$payment->save();
-		return $this->update_transaction_with_payment($transaction,$payment);	
+		//mijireh actually doesnt handle IPNs. Instead, when we load the thank you page we just retrieve the payment's status in mijireh and updated our payment and transaction etc
+		return true;
 	}
 	
 	
@@ -492,33 +441,44 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 
 		<?php
 	}
-
 	/**
-	 * Validate the IPN notification
-	 *
-	 * @param none
-	 * @return boolean
+	 * For mijireh, the thank you page is actually where we updated our payment and transaction. This is because mijireh does not send an IPN, even though its an offsite gateway.
+	 * @param EE_Transaction $transaction
+	 * @throws EE_Error
 	 */
-	public function validateIpn() {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		
-		$this->ipnData=$_POST;
-		$response_post_data=$_POST + array('cmd'=>'_notify-validate');
-		$result= wp_remote_post($this->_gatewayUrl, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
-		
-		if (!is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) { 
-//			echo "eepaypalstandard success!";
-			$this->ipnResponse = $result['body'];
-			return true;
-		}else{
-			$this->lastError = "IPN Validation Failed . $this->_gatewayUrl with response:".print_r($result['body'],true);
-//			echo "eepaypalstandard error:".is_wp_error($result).", body equals VERIFIED:".(strcmp($result['body'], "VERIFIED") == 0);
-			$this->ipnResponse=$result['body'];
-			if($this->_debug_mode){
-				echo "error!".print_r($this->lastError,true);
+	public function thank_you_page_logic(EE_Transaction $transaction) {
+		$payment = EEM_Payment::instance()->get_one(array(array('TXN_ID'=>$transaction,'PAY_gateway'=>$this->_gateway_name),'order_by'=>array('PAY_ID'=>'DESC')));
+		if($payment && $payment instanceof EE_Payment){
+			$mijireh_settings = $this->_payment_settings;
+			$access_key = $mijireh_settings['access_key'];
+			$url = 'https://secure.mijireh.com/api/1/orders/'.$payment->txn_id_chq_nmbr();
+			$response = wp_remote_get($url,
+					array('headers' => array(
+			'Authorization' => 'Basic ' . base64_encode( $access_key . ':' ),
+			'Accept'=>'application/json'
+			)));
+			if($response && isset($response['body']) && $response_body = json_decode($response['body'])){
+				switch($response_body->status){
+					case 'paid':
+						$payment->set_status(EEM_Payment::status_id_approved);
+						break;
+					case 'pending':
+						$payment->set_status(EEM_Payment::status_id_pending);
+						break;
+					default:
+						$payment->set_status(EEM_Payment::status_id_declined);
+				}
+				
+				$payment->save();
+				$this->update_transaction_with_payment($transaction, $payment);
 			}
-			return false;
+		}else{
+			throw new EE_Error(sprintf(__("Could not find Mijireh payment for transaction %s",'event_espresso'),$transaction->ID()));
 		}
+		
+		parent::thank_you_page_logic($transaction);
 	}
+	
+	
 }
 	
