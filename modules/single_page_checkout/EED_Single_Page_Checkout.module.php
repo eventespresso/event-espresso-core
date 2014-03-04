@@ -268,6 +268,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function init() {
+		 // prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		 remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');		
 		// load classes
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
