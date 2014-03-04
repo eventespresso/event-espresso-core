@@ -1,15 +1,18 @@
 <?php
-$values = array(
-	array('id' => TRUE, 'text' => __('Yes', 'event_espresso')),
-	array('id' => FALSE, 'text' => __('No', 'event_espresso'))
-);
-$description = array(
-	array('id' => 0, 'text' => __('none', 'event_espresso')),
-	array('id' => 1, 'text' => __('excerpt (short desc)', 'event_espresso')),
-	array('id' => 2, 'text' => __('full description', 'event_espresso'))
-);
+$values = EEH_Form_Fields::prep_answer_options( array(
+	array( 'id' => TRUE, 'text' => __('Yes', 'event_espresso')),
+	array( 'id' => FALSE, 'text' => __('No', 'event_espresso'))
+));
 
+$description = EEH_Form_Fields::prep_answer_options( array(
+	array( 'id' => 0, 'text' => __('none', 'event_espresso')),
+	array( 'id' => 1, 'text' => __('excerpt (short desc)', 'event_espresso')),
+	array( 'id' => 2, 'text' => __('full description', 'event_espresso'))
+));
+
+add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' ); 
 ?>
+
 
 	<!--*************************   Event Listings  ****************************-->
 	<h4 class="ee-admin-settings-hdr">
@@ -25,7 +28,8 @@ $description = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('display_description_in_event_list', $description, $display_description, 'id="display_description_in_event_list"'); ?>
+					<?php echo EEH_Form_Fields::select( 'description', $display_description, $description, 'display_description_in_event_list', 'display_description_in_event_list', '', FALSE, '', '', TRUE );?>
+					<p class="description"><?php _e('This option has been tempoarily disabled, but is fixed in the upcoming EE 4.2 release', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 
@@ -36,7 +40,8 @@ $description = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('display_address_in_event_list', $values, $display_address, 'id="display_address_in_event_list"'); ?>
+					<?php echo EEH_Form_Fields::select( 'address', $display_address, $values, 'display_address_in_event_list', 'display_address_in_event_list', '', FALSE, '', '', TRUE );?>
+					<p class="description"><?php _e('This option has been tempoarily disabled, but is fixed in the upcoming EE 4.2 release', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 
@@ -47,7 +52,8 @@ $description = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('display_venue_details_in_event_list', $values, $display_venue_details, 'id="display_venue_details_in_event_list"'); ?>
+					<?php echo EEH_Form_Fields::select( 'venue_details', $display_venue_details, $values, 'display_venue_details_in_event_list', 'display_venue_details_in_event_list', '', FALSE, '', '', TRUE );?>
+					<p class="description"><?php _e('This option has been tempoarily disabled, but is fixed in the upcoming EE 4.2 release', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 
@@ -58,7 +64,8 @@ $description = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('display_expired_events', $values, $display_expired_events, 'id="display_expired_events"'); ?>
+					<?php echo EEH_Form_Fields::select( 'expired_events', $display_expired_events, $values, 'display_expired_events', 'display_expired_events', '', FALSE, '', '', TRUE );?>
+					<p class="description"><?php _e('This option has been tempoarily disabled, but is fixed in the upcoming EE 4.2 release', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 			
@@ -80,7 +87,7 @@ $description = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input( 'display_status_banner', $values, $display_status_banner, 'id="display_status_banner"' ); ?>
+					<?php echo EEH_Form_Fields::select( 'status_banner', $display_status_banner, $values, 'display_status_banner', 'display_status_banner', '', FALSE, '', '', FALSE );?>
 					<p class="description"><?php _e('Selecting "Yes" will instruct Event Espresso to inject an Event Status banner with the title whenever Events are displaying on the event list page.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
@@ -92,7 +99,7 @@ $description = array(
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input( 'reset_event_list_settings', $values, FALSE, 'id="reset_event_list_settings"' ); ?>
+					<?php echo EEH_Form_Fields::select( 'reset_event_list_settings', FALSE, $values, 'reset_event_list_settings', 'reset_event_list_settings' );?>
 				</td>
 			</tr>
 
