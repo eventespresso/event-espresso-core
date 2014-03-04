@@ -292,28 +292,7 @@ final class EE_System {
 		}
 		do_action( 'AHEE__EE_System__activate_or_initialize__complete', $this );
 	}
-//	/**
-//	 * Seta a wp option to remember that we want to redirect to the about page on the
-//	 * next normal ee request (because it appears we cant do that right after activation,
-//	 * because it interferes with activation of the plugin)
-//	 */
-//	private function _remember_to_redirect_to_ee_about_on_next_request(){
-//		update_option( 'ee_redirect_to_ee_about_on_next_request', TRUE );
-//	}
-//	/**
-//	 * Removes the wp option to remember that we want to redirec tot the about page
-//	 * on next request- so that we don't accidentally get into an infinite loop!
-//	 */
-//	private function _remember_to_NOT_redirect_to_ee_about_on_next_request(){
-//		delete_option( 'ee_redirect_to_ee_about_on_next_request' );
-//	}
-//	/**
-//	 * Checks the wp option to see if we should redirect the user to the ee about page or not
-//	 * @return boolean
-//	 */
-//	private function _should_redirect_to_ee_about_page(){
-//		return get_option( 'ee_redirect_to_ee_about_on_next_request', FALSE );
-//	}
+
 
 
 	/**
