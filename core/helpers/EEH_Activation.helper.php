@@ -104,10 +104,10 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function deactivate_event_espresso() {
-		// check permissions 
-		if ( current_user_can( 'activate_plugins' )) {
-			deactivate_plugins( EE_PLUGINPATH, TRUE );
-		}		
+		deactivate_plugins(EVENT_ESPRESSO_MAIN_FILE);
+//		$active_plugins = array_flip( get_option( 'active_plugins' ));
+//		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
+//		update_option( 'active_plugins', array_flip( $active_plugins ));	
 	}
 
 
@@ -446,13 +446,10 @@ class EEH_Activation {
 		//in order to avoid duplicate. When a new version is released (eg 4.2), use that version's data migration code.
 		//if 4.2 doesn't need to migrate anything, and only needs to add a column, you should still create a migration script for it,
 		//but just define the schema changes methods
-		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_1_0','dms');
-		$current_data_migration_script = new EE_DMS_4_1_0();
-		//decide what to do when tables already exist. Do we nuke them and start fresh? or do we simply modify them?
-		//if this is a new activation, (or if it were run from a data migration script), nuke old tables
-		$drop_pre_existing_tables = EE_System::instance()->detect_req_type() == EE_System::req_type_new_activation ? true : false;
-		$current_data_migration_script->schema_changes_before_migration($drop_pre_existing_tables);
-		$current_data_migration_script->schema_changes_after_migration($drop_pre_existing_tables);
+		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_2_0','dms');
+		$current_data_migration_script = new EE_DMS_4_2_0();
+		$current_data_migration_script->schema_changes_before_migration();
+		$current_data_migration_script->schema_changes_after_migration();
 		EE_Data_Migration_Manager::instance()->update_current_database_state_to();
 	}
 
@@ -542,7 +539,8 @@ class EEH_Activation {
 			'zip', 
 			'phone' 
 		);
-		
+		$order_for_group_1 = 1;
+		$order_for_group_2 = 1;
 		// loop thru what we should have and compare to what we have
 		foreach ( $QST_systems as $QST_system ) {
 			// if we don't have what we should have
@@ -711,12 +709,12 @@ class EEH_Activation {
 				
 				// QUESTION GROUP QUESTIONS 
 				
-				$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;			
+				$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;		
 				// add system questions to groups
 				$wpdb->insert(
 					$wpdb->prefix . 'esp_question_group_question', 
-					array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID ), 
-					array( '%d', '%d' )
+					array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID, 'QGQ_order'=>($QSG_ID==1)? $order_for_group_1++ : $order_for_group_2++ ), 
+					array( '%d', '%d','%d' )
 				);			
 				
 			}
@@ -1065,8 +1063,13 @@ class EEH_Activation {
 		}
 		
 		if ( $remove_all && $espresso_db_update = get_option( 'espresso_db_update' )) {
-			unset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] );
-			update_option( 'espresso_db_update', $espresso_db_update );
+			$db_update_sans_ee4 = array();
+			foreach($espresso_db_update as $version => $times_activated){
+				if( $version[0] =='3'){//if its NON EE4
+					$db_update_sans_ee4[$version] = $times_activated;
+				}
+			}
+			update_option( 'espresso_db_update', $db_update_sans_ee4 );
 		}
 		
 		$errors = '';
