@@ -18,10 +18,9 @@
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Form_Fields::select_input('display_address_in_regform', $values, $display_address_in_regform, 'id="display_address_in_regform"'); ?>
-					<p class="description">
-						<?php _e('Do not use this if you are using the venue shortcodes in your event description.', 'event_espresso'); ?>
-					</p>
+					<?php $values = EEH_Form_Fields::prep_answer_options( $values );?>
+					<?php echo EEH_Form_Fields::select( 'display_address', $display_address_in_regform, $values, 'display_address_in_regform', 'display_address_in_regform', '', FALSE, '', '', TRUE );?>
+					<p class="description"><?php _e('This option has been tempoarily disabled, but is fixed in the upcoming EE 4.2 release', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 
