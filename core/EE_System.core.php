@@ -292,28 +292,28 @@ final class EE_System {
 		}
 		do_action( 'AHEE__EE_System__activate_or_initialize__complete', $this );
 	}
-	/**
-	 * Seta a wp option to remember that we want to redirect to the about page on the
-	 * next normal ee request (because it appears we cant do that right after activation,
-	 * because it interferes with activation of the plugin)
-	 */
-	private function _remember_to_redirect_to_ee_about_on_next_request(){
-		update_option( 'ee_redirect_to_ee_about_on_next_request', TRUE );
-	}
-	/**
-	 * Removes the wp option to remember that we want to redirec tot the about page
-	 * on next request- so that we don't accidentally get into an infinite loop!
-	 */
-	private function _remember_to_NOT_redirect_to_ee_about_on_next_request(){
-		delete_option( 'ee_redirect_to_ee_about_on_next_request' );
-	}
-	/**
-	 * Checks the wp option to see if we should redirect the user to the ee about page or not
-	 * @return boolean
-	 */
-	private function _should_redirect_to_ee_about_page(){
-		return get_option( 'ee_redirect_to_ee_about_on_next_request', FALSE );
-	}
+//	/**
+//	 * Seta a wp option to remember that we want to redirect to the about page on the
+//	 * next normal ee request (because it appears we cant do that right after activation,
+//	 * because it interferes with activation of the plugin)
+//	 */
+//	private function _remember_to_redirect_to_ee_about_on_next_request(){
+//		update_option( 'ee_redirect_to_ee_about_on_next_request', TRUE );
+//	}
+//	/**
+//	 * Removes the wp option to remember that we want to redirec tot the about page
+//	 * on next request- so that we don't accidentally get into an infinite loop!
+//	 */
+//	private function _remember_to_NOT_redirect_to_ee_about_on_next_request(){
+//		delete_option( 'ee_redirect_to_ee_about_on_next_request' );
+//	}
+//	/**
+//	 * Checks the wp option to see if we should redirect the user to the ee about page or not
+//	 * @return boolean
+//	 */
+//	private function _should_redirect_to_ee_about_page(){
+//		return get_option( 'ee_redirect_to_ee_about_on_next_request', FALSE );
+//	}
 
 
 	/**
@@ -342,36 +342,36 @@ final class EE_System {
 		switch($request_type){
 			case EE_System::req_type_new_activation:				 
 				do_action( 'AHEE__EE_System__manage_activation_process__new_activation' );
-				add_action('init',array($this,'initialize_db_if_no_migrations_required'),2);
+				add_action( 'init', array( $this,'initialize_db_if_no_migrations_required' ), 2 );
 //				echo "done activation";die;
+				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__manage_activation_process__reactivation' );
-				add_action('init',array($this,'initialize_db_if_no_migrations_required'),2);
+				add_action( 'init', array( $this,'initialize_db_if_no_migrations_required' ), 2 );
 //				echo "done reactivation";die;
+				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__manage_activation_process__upgrade' );
 				if( ! EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old()){
 					// so the database doesnt look old (ie, there are no migration scripts that say they need to upgrade it)
 					// THEN, we just want to still give the system a chance to setup new default data
-					add_action( 'init', array( $this, 'initialize_db_if_no_migrations_required' ), 2 );
+					add_action( 'init', array( $this,'initialize_db_if_no_migrations_required' ), 2 );
 				} else {
-					$this->_remember_to_redirect_to_ee_about_on_next_request();
+					add_action( 'init', array( $this, 'redirect_to_about_ee'), 10 );
 				}
+				$this->update_list_of_installed_versions( $espresso_db_update );
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
 				do_action( 'AHEE__EE_System__manage_activation_process__downgrade' );
-				
+				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
 			case EE_System::req_type_normal:
 			default:
-				$this->_maybe_redirect_to_ee_about();
+//				$this->_maybe_redirect_to_ee_about();
 				break;
-		}
-		if( ! $request_type == EE_System::req_type_normal){
-			$this->update_list_of_installed_versions($espresso_db_update);
 		}
 		do_action( 'AHEE__EE_System__manage_activation_process__complete' );
 	}
@@ -397,7 +397,7 @@ final class EE_System {
 			EEH_Activation::initialize_db_content();
 		}
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
-			$this->_remember_to_redirect_to_ee_about_on_next_request();
+			add_action( 'init', array( $this, 'redirect_to_about_ee' ), 10 );
 		}
 	}
 
@@ -409,21 +409,10 @@ final class EE_System {
 	 * @return void
 	 */
 	public function redirect_to_about_ee() {
-		$this->_remember_to_NOT_redirect_to_ee_about_on_next_request();
-		$url = add_query_arg( array('page' => 'espresso_about'), admin_url( 'admin.php' ) );
-		wp_safe_redirect( $url );
-		exit();
-	}
-
-
-
-	/**
-	 * Checks if we've set a wp option to indicate that we ought to redirect to 
-	 * the ABOUT page; and if so, sets a hook to perform that direct
-	 */
-	private function _maybe_redirect_to_ee_about() {
-		if(is_admin() && $this->_should_redirect_to_ee_about_page()){
-			add_action('init', array($this, 'redirect_to_about_ee'), 10 );
+		if( is_admin() ){
+			$url = add_query_arg( array( 'page' => 'espresso_about' ), admin_url( 'admin.php' ) );
+			wp_safe_redirect( $url );
+			exit();
 		}
 	}
 
@@ -509,7 +498,7 @@ final class EE_System {
 					// its not an update. maybe a reactivation?
 					if( get_option( 'ee_espresso_activation', FALSE )){
 						$this->_req_type = EE_System::req_type_reactivation;
-						update_option( 'ee_espresso_activation', FALSE );
+						delete_option( 'ee_espresso_activation' );
 					} else {
 						//its not a new install, not an upgrade, and not even a reactivation. its nothing special
 						$this->_req_type = EE_System::req_type_normal;
