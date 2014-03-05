@@ -659,9 +659,10 @@ abstract class EE_Base_Class{
 	 * @param  mixed(null|string) $time_format Same as above except this is for time format
 	 * @param string $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time. 
 	 * @param  boolean $echo        Whether the dtt is echoing using pretty echoing or just returned using vanilla get
+	 * @param boolean $translate    Whether to translate the datetime or not for the set locale.
 	 * @return mixed               string on success, FALSE on fail, or EE_Error Exception is thrown if field is not a valid dtt field
 	 */
-	protected function _get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $date_or_time = NULL, $echo = FALSE ) {
+	protected function _get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $date_or_time = NULL, $echo = FALSE, $translate = FALSE ) {
 		
 		$in_dt_frmt = empty($dt_frmt) ? $this->_dt_frmt : $dt_frmt;
 		$in_tm_frmt = empty($tm_frmt) ? $this->_tm_frmt : $tm_frmt;
@@ -674,7 +675,7 @@ abstract class EE_Base_Class{
 		if ( $dt_frmt !== NULL ) {
 			$this->_clear_cached_property( $var_name, $date_or_time );
 		}
-		if ( $echo )
+		if ( $translate )
 			$field->set_pretty_date_format( $in_dt_frmt );
 		else 
 			$field->set_date_format( $in_dt_frmt );
@@ -682,7 +683,7 @@ abstract class EE_Base_Class{
 		if ( $tm_frmt !== NULL ) {
 			$this->_clear_cached_property( $var_name, $date_or_time );
 		}
-		if ( $echo )
+		if ( $translate )
 			$field->set_pretty_time_format( $in_tm_frmt );
 		else
 			$field->set_time_format( $in_tm_frmt );
@@ -707,9 +708,18 @@ abstract class EE_Base_Class{
 
 
 		if ( $echo ) {
-			$this->e( ltrim( $var_name, '_' ), $date_or_time );
-		 } else
-			return $this->get( ltrim( $var_name, '_' ), $date_or_time );
+			if ( $translate ) {
+				$this->e( ltrim( $var_name, '_' ), $date_or_time );
+			} else {
+				echo $this->get( ltrim( $var_name, '_' ), $date_or_time );
+			}
+		 } else {
+		 	if ( $translate ) {
+		 		return $this->get_pretty( ltrim( $var_name.'_'). $date_or_time );
+		 	} else {
+				return $this->get( ltrim( $var_name, '_' ), $date_or_time );
+			}
+		}
 	}
 
 
@@ -717,13 +727,14 @@ abstract class EE_Base_Class{
 	 * below are wrapper functions for the various datetime outputs that can be obtained for JUST returning the date portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the other echoes the pretty value for dtt)
 	 * @param  string $field_name name of model object datetime field holding the value
 	 * @param  string $format     format for the date returned (if NULL we use default in dt_frmt property)
+	 * @param  bool   $translate   indicate whether to return the translated datetime or not
 	 * @return string            datetime value formatted
 	 */
-	public function get_date( $field_name, $format = NULL ) {
-		return $this->_get_datetime( $field_name, $format, NULL, 'D' );
+	public function get_date( $field_name, $format = NULL, $translate = FALSE ) {
+		return $this->_get_datetime( $field_name, $format, NULL, 'D', FALSE, $translate );
 	}
-	public function e_date( $field_name, $format = NULL ) {
-		$this->_get_datetime( $field_name, $format, NULL, 'D', TRUE );
+	public function e_date( $field_name, $format = NULL, $translate = TRUE ) {
+		$this->_get_datetime( $field_name, $format, NULL, 'D', TRUE, $translate );
 	}
 
 
@@ -731,13 +742,14 @@ abstract class EE_Base_Class{
 	 * below are wrapper functions for the various datetime outputs that can be obtained for JUST returning the time portion of a datetime value. (note the only difference between get_ and e_ is one returns the value and the other echoes the pretty value for dtt)
 	 * @param  string $field_name name of model object datetime field holding the value
 	 * @param  string $format     format for the time returned ( if NULL we use default in tm_frmt property)
+	 * @param  bool   $translate   indicate whether to return the translated datetime or not
 	 * @return string             datetime value formatted
 	 */
-	public function get_time( $field_name, $format = NULL ) {
-		return $this->_get_datetime( $field_name, NULL, $format, 'T' );
+	public function get_time( $field_name, $format = NULL, $translate = FALSE ) {
+		return $this->_get_datetime( $field_name, NULL, $format, 'T', FALSE, $translate );
 	}
-	public function e_time( $field_name, $format = NULL ) {
-		$this->_get_datetime( $field_name, NULL, $format, 'T', TRUE );
+	public function e_time( $field_name, $format = NULL, $translate = TRUE ) {
+		$this->_get_datetime( $field_name, NULL, $format, 'T', TRUE, $translate );
 	}
 
 
@@ -748,13 +760,14 @@ abstract class EE_Base_Class{
 	 * @param  string $field_name name of model object datetime field holding the value
 	 * @param  string $dt_frmt    format for the date returned (if NULL we use default in dt_frmt property)
 	 * @param  string $tm_frmt    format for the time returned (if NULL we use default in tm_frmt property)
+	 * @param  bool   $translate   indicate whether to return the translated datetime or not
 	 * @return string             datetime value formatted
 	 */
-	public function get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL ) {
-		return $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt );
+	public function get_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $translate = FALSE ) {
+		return $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, FALSE, $translate );
 	}
-	public function e_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL ) {
-		$this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, NULL, TRUE);
+	public function e_datetime( $field_name, $dt_frmt = NULL, $tm_frmt = NULL, $translate = TRUE ) {
+		$this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, NULL, TRUE, $translate);
 	}
 
 
