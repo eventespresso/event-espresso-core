@@ -323,12 +323,27 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 */
 	private function _convert_to_timezone_from_utc_unix_timestamp( $dtvalue, $format ) {
 		$dtvalue = (int) $dtvalue;
-		$datetime = date( 'Y-m-d H:i:s', $dtvalue );
-		$this->_set_date_obj( $datetime, 'UTC' );
-		$this->_date->setTimezone( new DateTimeZone( $this->_timezone ));
-		return date_i18n( $format, $this->_date->format('U') );
+		//wp also localized the timezone string if that is in the format to be outputted (i.e. using one of the timezone_formats that php date() accepts). So we need to make sure that whatever WP is using for the timezone_string in this process is what we have set as the timezone string.
+		add_filter( 'pre_option_timezone_string', array( $this, 'inject_set_timezone_for_wp_timezone_string'), 10 );	
+		//make sure WP date_i18n() uses our timezone (not assumes UTC).
+		date_default_timezone_set( $this->_timezone );
+		$converted = date_i18n( $format, $dtvalue );
+		date_default_timezone_set('UTC');
+		remove_filter( 'pre_option_timezone_string', array( $this, 'inject_set_timezone_for_wp_timezone_string'), 10 );
+		return $converted;
 	}
 
+
+
+
+	/**
+	 * This is the callback used for replacing what is returned by get_option('timezone_string') when the wp function date_i18n() uses that consider that if timezone is included in the date format string.  We want to make sure that our models internal timezone string is used instead of the one set for the website.
+	 * 	
+	 * @return string  timezone_string
+	 */
+	public function inject_set_timezone_for_wp_timezone_string() {
+		return $this->_timezone;
+	}
 
 
 
@@ -396,7 +411,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( !$datetime )
 			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
 
-		//return to defautl for PHP
+		//return to defautl for WP
 		date_default_timezone_set('UTC');
 
 		//now that we have the string we can send this over to our string value conversion
