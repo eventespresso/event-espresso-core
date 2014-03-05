@@ -546,7 +546,8 @@ class EEH_Form_Fields {
 		$answer = EE_Registry::instance()->REQ->is_set( $input_name ) ? EE_Registry::instance()->REQ->get( $input_name ) : $QFI->get('ANS_value');
 		$input_id = $QFI->get('QST_input_id');
 		$input_class = $QFI->get('QST_input_class');
-		$disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';
+//		$disabled = $QFI->get('QST_disabled') ? ' disabled="disabled"' : '';
+		$disabled = $QFI->get('QST_disabled') ? TRUE : FALSE;
 		$required_label = apply_filters(' FHEE__EEH_Form_Fields__generate_form_input__required_label', '<em>*</em>' );
 		$QST_required = $QFI->get('QST_required');
 		$required = $QST_required ? array( 'label' => $required_label, 'class' => 'required needs-value', 'title' => $QST_required ) : array();
@@ -608,7 +609,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function text( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
+	static function text( $question = FALSE, $answer = NULL, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
@@ -618,7 +619,7 @@ class EEH_Form_Fields {
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
-		$disabled = empty( $answer ) ? '' : $disabled;
+		$disabled = $answer === NULL || ! $disabled  ? '' : ' disabled="disabled"';
 		// ya gots ta have style man!!!
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-text-inp';
 		$class = empty( $class ) ? $txt_class : $class;
@@ -654,7 +655,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function textarea( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
+	static function textarea( $question = FALSE, $answer = NULL, $name = FALSE, $id = '', $class = '', $dimensions = FALSE, $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
@@ -668,7 +669,7 @@ class EEH_Form_Fields {
 		// and set some defaults
 		$dimensions = array_merge( array( 'rows' => 3, 'cols' => 40 ), $dimensions );
 		// set disabled tag
-		$disabled = empty( $answer ) ? '' : $disabled;
+		$disabled = $answer === NULL || ! $disabled  ? '' : ' disabled="disabled"';
 		// ya gots ta have style man!!!
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-textarea-inp';
 		$class = empty( $class ) ? $txt_class : $class;
@@ -705,7 +706,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function select( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE, $add_please_select_option = TRUE ) {
+	static function select( $question = FALSE, $answer = NULL, $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $system_ID = FALSE, $use_html_entities = TRUE, $add_please_select_option = TRUE ) {
 				
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
@@ -716,7 +717,7 @@ class EEH_Form_Fields {
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
-		$disabled = empty( $answer ) ? '' : $disabled;
+		$disabled = $answer === NULL || ! $disabled  ? '' : ' disabled="disabled"';
 		// ya gots ta have style man!!!
 		$txt_class = is_admin() ? 'wide' : 'espresso-select-inp';
 		$class = empty( $class ) ? $txt_class : $class;
@@ -727,7 +728,7 @@ class EEH_Form_Fields {
 		// filter label but ensure required text comes before it
 		$label_html = apply_filters( 'FHEE__EEH_Form_Fields__label_html', $label_html, $required_text );
 		
-		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '" ' . $disabled . ' ' . $extra . '>';
+		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '"' . $disabled . ' ' . $extra . '>';
 		// recursively count array elelments, to determine total number of options
 		$only_option = count( $options, 1 ) == 1 ? TRUE : FALSE;
 		if ( ! $only_option ) {
@@ -735,7 +736,7 @@ class EEH_Form_Fields {
 			$selected = empty( $answer ) ? ' selected="selected"' : '';
 			$input_html .= $add_please_select_option ? "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>' : '';
 		}
-		//printr( $options, '$options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+
 		foreach ( $options as $key => $value ) {
 			// if value is an array, then create option groups, else create regular ol' options
 			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->value(), $value->desc(), $answer, $only_option );
@@ -809,7 +810,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function radio( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE, $label_b4 = FALSE ) {
+	static function radio( $question = FALSE, $answer = NULL, $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $system_ID = FALSE, $use_html_entities = TRUE, $label_b4 = FALSE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -819,7 +820,7 @@ class EEH_Form_Fields {
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
-		$disabled = ! empty( $answer ) ? $disabled : '';
+		$disabled = $answer === NULL || ! $disabled  ? '' : ' disabled="disabled"';
 		// ya gots ta have style man!!!
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;
 		$class = ! empty( $class ) ? $class : 'espresso-radio-btn-inp';
@@ -881,7 +882,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function checkbox( $question = FALSE, $answer = '', $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $label_b4 = FALSE, $system_ID = FALSE, $use_html_entities = TRUE ) {
+	static function checkbox( $question = FALSE, $answer = NULL, $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $label_b4 = FALSE, $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
 			return NULL;
@@ -896,7 +897,7 @@ class EEH_Form_Fields {
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
-		$disabled = empty( $answer ) ? '' : $disabled;
+		$disabled = $answer === NULL || ! $disabled  ? '' : ' disabled="disabled"';
 		// ya gots ta have style man!!!
 		$rdio_class = is_admin() ? 'ee-admin-radio-lbl' : $label_class;
 		$class = empty( $class ) ? 'espresso-radio-btn-inp' : $class;
@@ -958,7 +959,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function datepicker( $question = FALSE, $answer = '', $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = '', $system_ID = FALSE, $use_html_entities = TRUE ) {
+	static function datepicker( $question = FALSE, $answer = NULL, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $system_ID = FALSE, $use_html_entities = TRUE ) {
 		// need these
 		if ( ! $question || ! $name ) {
 			return NULL;
@@ -968,7 +969,7 @@ class EEH_Form_Fields {
 		// prep the required array
 		$required = self::prep_required( $required );
 		// set disabled tag
-		$disabled = empty( $answer ) ? '' : $disabled;
+		$disabled = $answer === NULL || ! $disabled  ? '' : ' disabled="disabled"';
 		// ya gots ta have style man!!!
 		$txt_class = is_admin() ? 'regular-text' : 'espresso-datepicker-inp';
 		$class = empty( $class ) ? $txt_class : $class;
@@ -1062,14 +1063,14 @@ class EEH_Form_Fields {
 	 * 	@param array $QSOs  array of EE_Question_Option objects
 	 * 	@return array 
 	 */
-	static function prep_answer_options( $QSOs = array() ){
+	public static function prep_answer_options( $QSOs = array() ){
 		$options = array();
 		if ( is_array( $QSOs ) && ! empty( $QSOs )) {
 			foreach( $QSOs as $key => $QSO ) {
 				if ( ! $QSO instanceof EE_Question_Option ) {
 					$QSO = EE_Question_Option::new_instance( array( 
-						'QSO_value' => $key,
-						'QSO_desc' => $QSO
+						'QSO_value' => isset( $QSO['id'] ) ? $QSO['id'] : $key,
+						'QSO_desc' => isset( $QSO['text'] ) ? $QSO['text'] : $QSO
 					));
 				}
 				if ( $QSO->opt_group() ) {
