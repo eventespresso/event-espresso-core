@@ -16,7 +16,9 @@
  * Mijireh slurping-related module. Coordinates with the mijireh gateway and depends on it (whereas the
  * mijireh gateway functions independently of whether this module is active).
  * When a special admin page is requested, adds a wp page for slurping, and adds
- * a metabox to that page for easy slurping
+ * a metabox to that page for easy slurping.
+ * Everything relating to slurping is in this file, except for some help tab content, 
+ * which is contained in admin_pages/payments/help_tabs/...mijireh.help_tab.php
  *
  * @package			Event Espresso
  * @subpackage	/modules/csv/
@@ -80,7 +82,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	}
 	
 	/**
-	 * Gets teh post id which has the {{mijireh-checkout-form}} "shortcode" in it, otherwise null
+	 * Gets teh post id which has the {{mj-checkout-form}} "shortcode" in it, otherwise null
 	 * @return int
 	 */
 	public static function find_slurp_page(){
@@ -110,7 +112,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
   }
 
   /**
-   * adds the callback to adding the slurp page metabox, which shoudl only appear on a page with the {{mijireh-checkout-form}} "shortcode"
+   * adds the callback to adding the slurp page metabox, which shoudl only appear on a page with the {{mj-checkout-form}} "shortcode"
    * @return void
    */
    public static function add_slurp_page_metabox() { 
