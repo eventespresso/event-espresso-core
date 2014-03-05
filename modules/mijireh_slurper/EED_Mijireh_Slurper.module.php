@@ -65,7 +65,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 						));
 			
 			}
-			wp_redirect(add_query_arg('post',$slurp_page_id,admin_url('page.php')));
+			wp_redirect(add_query_arg(array('post'=>$slurp_page_id,'action'=>'edit'),admin_url('post.php')));
 		}
 	}
 	
