@@ -30,7 +30,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 
 	public static function instance(EEM_Gateways &$model) {
 		// check if class object is instantiated
-		if (self::$_instance === NULL or !is_object(self::$_instance) or ! ( self::$_instance instanceof  EE_Paypal_Standard )) {
+		if (self::$_instance === NULL or !is_object(self::$_instance) or ! ( self::$_instance instanceof  EE_Mijireh )) {
 			self::$_instance = new self($model);
 			//echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		}
@@ -39,22 +39,14 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 
 	protected function __construct(EEM_Gateways &$model) {
 		$this->_gateway_name = 'Mijireh';
-		$this->_button_base = 'paypal-logo.png';
+		$this->_button_base = 'mijireh-checkout-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
 		parent::__construct($model);
-//		if(!$this->_payment_settings['use_sandbox']){
-		$this->_gatewayUrl = 'https://secure.mijireh.com/api/1/orders';
-//		}else{
-//			$this->_gatewayUrl = 'https://www.sandbox.paypal.com/cgi-bin/webscr';
-//		}
+		$this->_gatewayUrl = '';//this needs to be dynamically calculated anyways
 	}
 
 	protected function _default_settings() {
 		$this->_payment_settings['access_key'] = '';
-		$this->_payment_settings['image_url'] = '';
-		$this->_payment_settings['currency_format'] = 'USD';
-		$this->_payment_settings['use_sandbox'] = false;
-		$this->_payment_settings['no_shipping'] = '0';
 		$this->_payment_settings['type'] = 'off-site';
 		$this->_payment_settings['display_name'] = __('Mijireh','event_espresso');
 		$this->_payment_settings['current_path'] = '';
@@ -63,10 +55,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 
 	protected function _update_settings() {
 		$this->_payment_settings['access_key'] = $_POST['access_key'];
-		$this->_payment_settings['image_url'] = $_POST['image_url'];
-		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
-		$this->_payment_settings['no_shipping'] = $_POST['no_shipping'];
-		$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
+		$this->_payment_settings['display_name'] = $_POST['display_name'];
 		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';		
 	}
 
@@ -88,14 +77,6 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			</h2>
 			<p>
 				<?php _e('Please enter a decimal number indicating a percent surcharge. For example, if you enter 3.00, 3% will be added to the final price of the event during the checkout. If the event price is initially $100, the price with the surcharge will be $103.<br /> This surcharge will apply to all new events.  However, you will have the ability to change this value during the event creation.', 'event_espresso'); ?>
-			</p>
-		</div>
-		<div id="no_shipping">
-			<h2>
-				<?php _e('Shipping Address', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('By default, PayPal will display shipping address information on the PayPal payment screen. If you plan on shipping items to a registrant (shirts, invoices, etc) then use this option. Otherwise it should not be used, as it will require a shipping address when someone registers for an event.', 'event_espresso'); ?>
 			</p>
 		</div>
 		<div id="sandbox_info">
@@ -127,17 +108,6 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			<p><?php _e('Current Button Image', 'event_espresso'); ?></p>
 			<p><?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?></p>
 		</div>
-		<div id="paypal_image_url_info">
-			<h2>
-				<?php _e('PayPal Image URL (logo for payment page)', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('The URL of the 150x50-pixel image displayed as your logo in the upper left corner of the PayPal checkout pages.', 'event_espresso'); ?>
-			</p>
-			<p>
-				<?php _e('Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account.', 'event_espresso'); ?>
-			</p>
-		</div>
 		<?php
 		$content = ob_get_contents();
 		ob_end_clean();
@@ -148,7 +118,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		?>
 		<tr>
 			<th><label for="access_key">
-					<?php _e('Access Key', 'event_espresso'); ?>
+					<?php _e('Mijireh Access Key', 'event_espresso'); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="access_key" size="35" id="access_key" value="<?php echo $this->_payment_settings['access_key']; ?>">
 				<br />
@@ -156,133 +126,15 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 					<?php _e('eg. 234twat4e3rwegr4w', 'event_espresso'); ?>
 				</span></td>
 		</tr>
-		
 		<tr>
-			<th><label for="currency_format">
-					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+			<th><label for="display_name">
+					<?php _e('Display Name', 'event_espresso'); ?>
 				</label></th>
-			<td><select name="currency_format" data-placeholder="Choose a currency...">
-				<?php $currency = $this->_payment_settings['currency_format'];?>
-					<option value="USD" <?php echo $currency=="USD" ? 'selected="selected"' : ''?>>
-						<?php _e('U.S. Dollars ($)', 'event_espresso'); ?>
-					</option>
-					<option value="GBP" <?php echo $currency=="GBP" ? 'selected="selected"' : ''?>>
-						<?php _e('Pounds Sterling (&pound;)', 'event_espresso'); ?>
-					</option>
-					<option value="CAD" <?php echo $currency=="CAD" ? 'selected="selected"' : ''?>>
-						<?php _e('Canadian Dollars (C $)', 'event_espresso'); ?>
-					</option>
-					<option value="AUD" <?php echo $currency=="AUD" ? 'selected="selected"' : ''?>>
-						<?php _e('Australian Dollars (A $)', 'event_espresso'); ?>
-					</option>
-					<option value="BRL" <?php echo $currency=="BRL" ? 'selected="selected"' : ''?>>
-						<?php _e('Brazilian Real (only for Brazilian users)', 'event_espresso'); ?>
-					</option>
-					<option value="CHF" <?php echo $currency=="CHF" ? 'selected="selected"' : ''?>>
-						<?php _e('Swiss Franc', 'event_espresso'); ?>
-					</option>
-					<option value="CZK" <?php echo $currency=="CZK" ? 'selected="selected"' : ''?>>
-						<?php _e('Czech Koruna', 'event_espresso'); ?>
-					</option>
-					<option value="DKK" <?php echo $currency=="DKK" ? 'selected="selected"' : ''?>>
-						<?php _e('Danish Krone', 'event_espresso'); ?>
-					</option>
-					<option value="EUR" <?php echo $currency=="EUR" ? 'selected="selected"' : ''?>>
-						<?php _e('Euros (&#8364;)', 'event_espresso'); ?>
-					</option>
-					<option value="HKD" <?php echo $currency=="HKD" ? 'selected="selected"' : ''?>>
-						<?php _e('Hong Kong Dollar ($)', 'event_espresso'); ?>
-					</option>
-					<option value="HUF" <?php echo $currency=="HUF" ? 'selected="selected"' : ''?>>
-						<?php _e('Hungarian Forint', 'event_espresso'); ?>
-					</option>
-					<option value="ILS" <?php echo $currency=="ILS" ? 'selected="selected"' : ''?>>
-						<?php _e('Israeli Shekel', 'event_espresso'); ?>
-					</option>
-					<option value="JPY" <?php echo $currency=="JPY" ? 'selected="selected"' : ''?>>
-						<?php _e('Yen (&yen;)', 'event_espresso'); ?>
-					</option>
-					<option value="MXN" <?php echo $currency=="MXN" ? 'selected="selected"' : ''?>>
-						<?php _e('Mexican Peso', 'event_espresso'); ?>
-					</option>
-					<option value="MYR" <?php echo $currency=="MYR" ? 'selected="selected"' : ''?>>
-						<?php _e('Malaysian Ringgits (only for Malaysian users)', 'event_espresso'); ?>
-					</option>
-					<option value="NOK" <?php echo $currency=="NOK" ? 'selected="selected"' : ''?>>
-						<?php _e('Norwegian Krone', 'event_espresso'); ?>
-					</option>
-					<option value="NZD" <?php echo $currency=="NZD" ? 'selected="selected"' : ''?>>
-						<?php _e('New Zealand Dollar ($)', 'event_espresso'); ?>
-					</option>
-					<option value="PHP" <?php echo $currency=="PHP" ? 'selected="selected"' : ''?>>
-						<?php _e('Philippine Pesos', 'event_espresso'); ?>
-					</option>
-					<option value="PLN" <?php echo $currency=="PLN" ? 'selected="selected"' : ''?>>
-						<?php _e('Polish Zloty', 'event_espresso'); ?>
-					</option>
-					<option value="SEK" <?php echo $currency=="SEK" ? 'selected="selected"' : ''?>>
-						<?php _e('Swedish Krona', 'event_espresso'); ?>
-					</option>
-					<option value="SGD" <?php echo $currency=="SGD" ? 'selected="selected"' : ''?>>
-						<?php _e('Singapore Dollar ($)', 'event_espresso'); ?>
-					</option>
-					<option value="THB" <?php echo $currency=="THB" ? 'selected="selected"' : ''?>>
-						<?php _e('Thai Baht', 'event_espresso'); ?>
-					</option>
-					<option value="TRY" <?php echo $currency=="TRY" ? 'selected="selected"' : ''?>>
-						<?php _e('Turkish Lira (only for Turkish users)', 'event_espresso'); ?>
-					</option>
-					<option value="TWD" <?php echo $currency=="TWD" ? 'selected="selected"' : ''?>>
-						<?php _e('Taiwan New Dollars', 'event_espresso'); ?>
-					</option>
-				</select></td>
-		</tr>
-
-		<tr>
-			<th>
-				<label for="pp_image_url">
-					<?php _e('Image URL', 'event_espresso'); ?>
-					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
-				</label>
-			</th>
-			<td>
-				<span class='ee_media_uploader_area'>
-					<img class="ee_media_image" src="<?php echo $this->_payment_settings['image_url']; ?>" />
-					<input class="ee_media_url" type="text" name="image_url" size='34' value="<?php echo $this->_payment_settings['image_url']; ?>">
-					<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
-				</span><br/>
+			<td><input class="regular-text" type="text" name="display_name" size="35" id="display_name" value="<?php echo $this->_payment_settings['display_name']; ?>">
+				<br />
 				<span class="description">
-					<?php _e('Used for your business/personal logo on the PayPal page', 'event_espresso'); ?>
-				</span>
-			</td>
-		</tr>
-		
-		<tr>
-			<th><label for="use_sandbox">
-					<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
-					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
-				</label></th>
-			<td><?php echo EEH_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
-		</tr>
-		
-		<tr>
-			<th>
-				<label for="no_shipping">
-					<?php _e('Shipping Address Options', 'event_espresso'); ?>
-					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
-				</label>
-			</th>
-			<td>
-			<?php
-				$shipping_values = array(
-						array('id' => '1', 'text' => __('Do not prompt for an address', 'event_espresso')),
-						array('id' => '0', 'text' => __('Prompt for an address, but do not require one', 'event_espresso')),
-						array('id' => '2', 'text' => __('Prompt for an address, and require one', 'event_espresso'))
-					);
-				echo EEH_Form_Fields::select_input('no_shipping', $shipping_values, $this->_payment_settings['no_shipping']);
-			?>
-			</td>
+					<?php _e('The name of this payment choice you want to display to registrants', 'event_espresso'); ?>
+				</span></td>
 		</tr>
 		<?php
 		do_action('AHEE__EE_Mijireh__settings_end');
@@ -319,28 +171,22 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			<p><?php _e('Current Button Image', 'event_espresso'); ?></p>
 			<p><?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?></p>
 		</div>
-		<div id="paypal_image_url_info" style="display:none">
-			<h2>
-				<?php _e('PayPal Image URL (logo for payment page)', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('The URL of the 150x50-pixel image displayed as your logo in the upper left corner of the PayPal checkout pages.', 'event_espresso'); ?>
-			</p>
-			<p>
-				<?php _e('Default - Your business name, if you have a Business account, or your email address, if you have Premier or Personal account.', 'event_espresso'); ?>
-			</p>
-		</div>
 		<?php
 	}
 	protected function _format_float($float){
 		return number_format($float, 2);
 	}
-
+	/**
+	 * Sends a direct request to mijireh, informing them of the order, and they return the URL to send teh user to.
+	 * Also, in order to later be able to find the status of the gateway's transaction, we immediately create an ee payment
+	 * on this function and give it the mijireh's transaction ID.
+	 * @param EE_Line_Item $total_line_item
+	 * @param string $transaction
+	 * @throws EE_Error
+	 */
 	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
 		$mijireh_settings = $this->_payment_settings;
 		$access_key = $mijireh_settings['access_key'];
-//		$paypal_cur = $mijireh_settings['currency_format'];
-//		$no_shipping = $mijireh_settings['no_shipping'];
 				
 		/* @var $transaction EE_Transaction */
 		if( ! $transaction){
@@ -392,13 +238,13 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				'PAY_po_number' => NULL, 
 				'PAY_extra_accntng'=>$primary_registrant->reg_code(),
 				'PAY_via_admin' => false, 
-				'PAY_details' => $response_body
+				'PAY_details' => (array)$response_body
 			));
 			$payment->save();
 		}else{
 			throw new EE_Error(__("No response from Mijireh Gateway", 'event_espresso'));
 		}
-		$this->redirect_after_reg_step_3($transaction,$mijireh_settings['use_sandbox']);
+		$this->redirect_after_reg_step_3();
 	}
 	
 	/**
@@ -416,13 +262,12 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 
 
 	/**
-	 * Handles a paypal IPN, verifies we haven't already processed this IPN, creates a payment (regardless of success or not)
-	 * and updates the provided transaction, and saves to DB
+	 * mijireh actually doesnt do IPNs. Instead, when we load the thank you page we just retrieve the payment's status in mijireh and updated our payment and transaction etc
 	 * @param EE_Transaction or ID $transaction
 	 * @return boolean
 	 */
 	public function handle_ipn_for_transaction(EE_Transaction $transaction){
-		//mijireh actually doesnt handle IPNs. Instead, when we load the thank you page we just retrieve the payment's status in mijireh and updated our payment and transaction etc
+		//mijireh actually doesnt do IPNs. Instead, when we load the thank you page we just retrieve the payment's status in mijireh and updated our payment and transaction etc
 		return true;
 	}
 	
@@ -432,12 +277,12 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 	public function espresso_display_payment_gateways( $selected_gateway = '' ) {
 		$this->_css_class = $selected_gateway == $this->_gateway_name ? '' : ' hidden';
 		echo $this->_generate_payment_gateway_selection_button();
+		$display_name = $this->_payment_settings['display_name'];
 		?>
 
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
-			<h3><?php _e('You have selected "PayPal" as your method of payment', 'event_espresso'); ?></h3>
-			<p><?php _e('After finalizing your registration, you will be transferred to the PayPal.com website where your payment will be securely processed.', 'event_espresso'); ?></p>
+			<h3><?php printf(__('You have selected %s as your method of payment', 'event_espresso'),$display_name); ?></h3>
 		</div>
 
 		<?php
