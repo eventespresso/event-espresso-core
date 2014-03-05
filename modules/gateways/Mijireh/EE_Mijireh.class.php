@@ -479,6 +479,12 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		parent::thank_you_page_logic($transaction);
 	}
 	
-	
+	/**
+	 * Gets the array of settings for this gateway
+	 * @return array
+	 */
+	public function settings(){
+		return $this->_payment_settings;
+	}
 }
 	
