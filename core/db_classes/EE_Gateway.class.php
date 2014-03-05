@@ -301,12 +301,18 @@ abstract class EE_Gateway {
 		
 	}
 
-
+	/**
+	 * deprecated. Probably should be used but isn't for makign help tab contnt
+	 * @return string
+	 */
 	protected function _help_content() {
 		return '';
 	}
 
-
+	/**
+	 * deprecated. Probably should be used but isn't for makign help tab contnt
+	 * @return string
+	 */
 	public function get_help_tab_content() {
 		return $this->_help_content();
 	}

@@ -60,65 +60,14 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 	}
 
 
-	protected function _help_content() {
-		ob_start();
-		?>
-		<div id="currency_info">
-			<h2>
-				<?php _e('PayPal Currency', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('PayPal uses 3-character ISO-4217 codes for specifying currencies in fields and variables. </p><p>The default currency code is US Dollars (USD). If you want to require or accept payments in other currencies, select the currency you wish to use. The dropdown lists all currencies that PayPal (currently) supports.', 'event_espresso'); ?>
-			</p>
-		</div>
-		<div id="surcharge">
-			<h2>
-				<?php _e('Payment Surcharge', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('Please enter a decimal number indicating a percent surcharge. For example, if you enter 3.00, 3% will be added to the final price of the event during the checkout. If the event price is initially $100, the price with the surcharge will be $103.<br /> This surcharge will apply to all new events.  However, you will have the ability to change this value during the event creation.', 'event_espresso'); ?>
-			</p>
-		</div>
-		<div id="sandbox_info">
-			<h2>
-				<?php _e('PayPal Sandbox', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('In addition to using the PayPal Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all PayPal variables.', 'event_espresso'); ?>
-			</p>
-			<hr />
-			<p>
-				<?php _e('The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?>
-			</p>
-			<hr />
-			<p><strong><?php _e('Helpful Links', 'event_espresso'); ?></strong></p>
-			<ul>
-				<li><a href="https://developer.paypal.com/" target="_blank"><?php _e('PayPal Sandbox Login', 'event_espresso'); ?></a></li>
-				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox" target="_blank"><?php _e('Sandbox Tutorial', 'event_espresso'); ?></a></li>
-				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" target="_blank"><?php _e('Getting Started with PayPal Sandbox', 'event_espresso'); ?></a></li>
-			</ul>
-		</div>
-		<div id="paypal_button_image">
-			<h2>
-				<?php _e('Button Image URL', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso'); ?>
-			</p>
-			<p><?php _e('Current Button Image', 'event_espresso'); ?></p>
-			<p><?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?></p>
-		</div>
-		<?php
-		$content = ob_get_contents();
-		ob_end_clean();
-		return $content;
-	}
+	
+	
 
 	protected function _display_settings() {
 		?>
 		<tr>
 			<th><label for="access_key">
-					<?php _e('Mijireh Access Key', 'event_espresso'); ?>
+					<?php _e('Mijireh Access Key', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link( 'ee_Mijireh_help' ); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="access_key" size="35" id="access_key" value="<?php echo $this->_payment_settings['access_key']; ?>">
 				<br />
@@ -141,37 +90,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 	}
 
 	protected function _display_settings_help() {
-		?>		
-		<div id="sandbox_info" style="display:none">
-			<h2>
-				<?php _e('PayPal Sandbox', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('In addition to using the PayPal Sandbox fetaure. The debugging feature will also output the form varibales to the payment page, send an email to the admin that contains the all PayPal variables.', 'event_espresso'); ?>
-			</p>
-			<hr />
-			<p>
-				<?php _e('The PayPal Sandbox is a testing environment that is a duplicate of the live PayPal site, except that no real money changes hands. The Sandbox allows you to test your entire integration before submitting transactions to the live PayPal environment. Create and manage test accounts, and view emails and API credentials for those test accounts.', 'event_espresso'); ?>
-			</p>
-			<hr />
-			<p><strong><?php _e('Helpful Links', 'event_espresso'); ?></strong></p>
-			<ul>
-				<li><a href="https://developer.paypal.com/" target="_blank"><?php _e('PayPal Sandbox Login', 'event_espresso'); ?></a></li>
-				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox" target="_blank"><?php _e('Sandbox Tutorial', 'event_espresso'); ?></a></li>
-				<li><a href="https://cms.paypal.com/us/cgi-bin/?&amp;cmd=_render-content&amp;content_ID=developer/howto_testing_sandbox_get_started" target="_blank"><?php _e('Getting Started with PayPal Sandbox', 'event_espresso'); ?></a></li>
-			</ul>
-		</div>
-		<div id="paypal_button_image" style="display:none">
-			<h2>
-				<?php _e('Button Image URL', 'event_espresso'); ?>
-			</h2>
-			<p>
-				<?php _e('A default payment button is provided. A custom payment button may be used, choose your image or upload a new one, and just copy the "file url" here (optional.)', 'event_espresso'); ?>
-			</p>
-			<p><?php _e('Current Button Image', 'event_espresso'); ?></p>
-			<p><?php echo '<img src="' . $this->_payment_settings['button_url'] . '" />'; ?></p>
-		</div>
-		<?php
+		//does nothign because this has been deprecated
 	}
 	protected function _format_float($float){
 		return number_format($float, 2);
