@@ -335,7 +335,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 			remove_filter( 'pre_option_timezone_string', array( $this, 'inject_set_timezone_for_wp_timezone_string'), 10 );
 			return $converted;
 		} else {
-			var_dump('not_tranlsated');
 			$datetime = date( 'Y-m-d H:i:s', $dtvalue );
 			$this->_set_date_obj( $datetime, 'UTC' );
 			$this->_date->setTimezone( new DateTimeZone( $this->_timezone ) );
