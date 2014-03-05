@@ -24,7 +24,7 @@
  * ------------------------------------------------------------------------
  */
 class EED_Mijireh_Slurper  extends EED_Module {
-
+	const mijireh_slurper_shortcode = '{{mj-checkout-form}}';
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
 	 *
@@ -42,9 +42,39 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_action('add_meta_boxes',array('EED_Mijireh_Slurper','add_slurp_page_metabox'));
-		add_action('add_meta_boxes',array('EED_Mijireh_Slurper','slurp_or_not'));
+		add_action('add_meta_boxes',array('EED_Mijireh_Slurper','slurp_or_not'));//probably not the best hook, but it works
+		add_action('admin_init',array('EED_Mijireh_Slurper','check_for_edit_slurp_page'));//alsoo not the best hook, but it works
+		add_action('AHEE__EE_Mijireh__settings_end',array('EED_Mijireh_Slurper','add_slurp_link_to_gateway'));
+	}
+	
+	public static function add_slurp_link_to_gateway(){
+		EEH_Template::display_template(EE_MODULES.'mijireh_slurper/templates/additional_content_on_gateway.template.php', array());
 	}
 
+	public static function check_for_edit_slurp_page(){
+		if(isset($_GET['mijireh_edit_slurp_page']) && $_GET['mijireh_edit_slurp_page'] == 'true'){
+			//check if we already have a slurping page
+			$slurp_page_id = self::find_slurp_page();
+			if( ! $slurp_page_id){
+				//if no slurp page yet, make one
+				$slurp_page_id = wp_insert_post(
+						array(
+							'post_title'=>  __("Mijireh Slurping Page", 'event_espresso'),
+							'post_content'=>  EED_Mijireh_Slurper::mijireh_slurper_shortcode,
+							'post_type'=>'page'
+						));
+			
+			}
+			wp_redirect(add_query_arg('post',$slurp_page_id,admin_url('page.php')));
+		}
+	}
+	
+	public static function find_slurp_page(){
+		global $wpdb;
+		$page_id = $wpdb->get_var("SELECT id FROM {$wpdb->posts} WHERE post_content LIKE '%".EED_Mijireh_Slurper::mijireh_slurper_shortcode."%'");
+		return $page_id;
+		
+	}
 	/**
    * Return true if the current page is the mijireh checkout page, otherwise return false.
    * 
@@ -55,7 +85,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
     $isSlurp = false;
     if(isset($post) && is_object($post)) {
       $content = $post->post_content;
-      if(strpos($content, '{{mj-checkout-form}}') !== false) {
+      if(strpos($content, EED_Mijireh_Slurper::mijireh_slurper_shortcode ) !== false) {
         $isSlurp = true;
       }
     }
@@ -100,6 +130,10 @@ class EED_Mijireh_Slurper  extends EED_Module {
   }
   public static function slurp_now(){
 	  global $post;
+	  //make sure the post is published at least while slurping
+	  $current_status = $post->post_status;
+	  $post->post_status = 'publish';
+	  wp_update_post($post);
 	   $mijireh_gateway = EEM_Gateways::instance()->get_gateway('Mijireh');
 	   $mijireh_settings = $mijireh_gateway->settings();
 //	   $return_url = add_query_arg( $wp->query_string, '', home_url( $wp->request ) );
@@ -114,12 +148,16 @@ class EED_Mijireh_Slurper  extends EED_Module {
 			'Authorization' => 'Basic ' . base64_encode( $access_key . ':' ),
 			'Accept'=>'application/json'
 			),
-						'body'=>array(
+						'body'=>json_encode(array(
 							'url'=>  get_permalink($post->ID),
 							'page_id'=>$post->ID,
 							'return_url'=>''
-						));
+						)));
 			$response = wp_remote_post($url,$args);
+			//restore the post to whatever it was before
+			$post->post_stauts = $current_status;
+			wp_update_post($post);
+			//now redirect the user back to the same page
 			$redirect_args = $_GET;
 			unset($redirect_args['mijireh_slurp_now']);
 			$url = add_query_arg($redirect_args,admin_url('post.php'));

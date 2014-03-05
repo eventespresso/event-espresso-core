@@ -285,6 +285,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			</td>
 		</tr>
 		<?php
+		do_action('AHEE__EE_Mijireh__settings_end');
 	}
 
 	protected function _display_settings_help() {
