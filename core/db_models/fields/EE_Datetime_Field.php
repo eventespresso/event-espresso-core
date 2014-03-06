@@ -325,8 +325,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$dtvalue = (int) $dtvalue;
 		$datetime = date( 'Y-m-d H:i:s', $dtvalue );
 		$this->_set_date_obj( $datetime, 'UTC' );
-		$this->_date->setTimezone( new DateTimeZone( $this->_timezone ));
-		return date_i18n( $format, $this->_date->format('U') );
+		$this->_date->setTimezone( new DateTimeZone( $this->_timezone ) );
+		
+		return $this->_date->format( $format );
 	}
 
 
