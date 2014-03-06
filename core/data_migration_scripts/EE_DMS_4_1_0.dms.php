@@ -167,7 +167,7 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			EVTM_ID INT NOT NULL AUTO_INCREMENT,
 			EVT_ID int(11) unsigned NOT NULL,
 			EVT_display_desc TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
-			EVT_display_reg_form TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
+			EVT_display_ticket_selector TINYINT(1) UNSIGNED NOT NULL DEFAULT 1 ,
 			EVT_visible_on datetime NOT NULL default '0000-00-00 00:00:00',
 			EVT_default_registration_status VARCHAR(3),
 			EVT_phone varchar(45) DEFAULT NULL,
@@ -1687,14 +1687,32 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
         return FALSE;
 	}
 	
+	public function migration_page_hooks(){
+		add_filter('FHEE__ee_migration_page__header',array($this,'_migrate_page_hook_simplify_version_strings'),10,3);
+		add_filter('FHEE__ee_migration_page__p_after_header',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
+		add_filter('FHEE__ee_migration_page__option_1_main',array($this,'_migrate_page_hook_simplify_version_strings'),10,3);
+		add_filter('FHEE__ee_migration_page__option_1_button_text',array($this,'_migrate_page_hook_simplify_version_strings'),10,3);
+		add_action('AHEE__ee_migration_page__option_1_extra_details',array($this,'_migration_page_hook_option_1_extra_details'),10,3);
+		add_filter('FHEE__ee_migration_page__option_2_main',array($this,'_migrate_page_hook_simplify_version_strings'),10,4);
+		add_filter('FHEE__ee_migration_page__option_2_button_text',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
+		add_filter('FHEE__ee_migration_page__option_2_details',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
+		add_action('AHEE__ee_migration_page__after_migration_options_table',array($this,'_migration_page_hook_after_migration_options_table'));
+		add_filter('FHEE__ee_migration_page__done_migration_header',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
+		add_filter('FHEE__ee_migration_page__p_after_done_migration_header',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
+	}
+	
+	public function _migrate_page_hook_simplify_version_strings($old_content,$current_db_state,$next_db_state,$ultimate_db_state = NULL){
+		return str_replace(array($current_db_state,$next_db_state,$ultimate_db_state),array(__('EE3','event_espresso'),__('EE4','event_espresso'),  __("EE4", 'event_espresso')),$old_content);
+	}
+	public function _migration_page_hook_simplify_next_db_state($old_content,$next_db_state){
+		return str_replace($next_db_state,  __("EE4", 'event_espresso'),$old_content);
+	}
+	public function _migration_page_hook_option_1_extra_details(){
+		?><p><?php	printf(__("Note: many of your EE3 shortcodes will be changed to EE4 shortcodes during this migration (among many other things). Should you revert to EE3, then you should restore to your backup or manually change the EE4 shortcodes back to their EE3 equivalents", "event_espresso"));?></p><?php
+	}
+	public function _migration_page_hook_after_migration_options_table(){
+		?><p class="ee-attention">
+				<strong><span class="reminder-spn"><?php _e("Important note to those using Event Espresso 3 addons: ", "event_espresso");?></span></strong><br/><?php _e("Unless an addon's description on our website explicitly states that it is compatible with EE4, you should consider it incompatible and know that it WILL NOT WORK correctly with this new version of Event Espresso 4 (EE4). As well, any data for incompatible addons will NOT BE MIGRATED until an updated EE4 compatible version of the addon is available. If you want, or need to keep using your EE3 addons, you should simply continue using EE3 until EE4 compatible versions of your addons become available. To continue using EE3 for now, just deactivate EE4 and reactivate EE3.", "event_espresso");	?>
+			</p><?php
+	}
 }
-
-
-
-
-
-
-
-
-
-

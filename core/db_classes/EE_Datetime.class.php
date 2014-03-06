@@ -506,12 +506,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		get date_range - meaning the start AND end date
 	* 
 	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
+	* 		@param		string		$dt_format - string representation of date format defaults to WP settings
 	* 		@param		string		$conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {		
-		return $this->_show_datetime( 'D', 'start', $dt_frmt ) . $conjunction . $this->_show_datetime( 'D', 'end', $dt_frmt );
+		$start = $this->_show_datetime( 'D', 'start', $dt_frmt );
+		$end = $this->_show_datetime( 'D', 'end', $dt_frmt );
+		return $start != $end ? $start . $conjunction . $end : $start;
+
 	}
 	public function e_date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {		
 		echo $this->date_range( $dt_frmt, $conjunction );
@@ -562,7 +565,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
-		return $this->_show_datetime( 'T', 'start', NULL, $tm_format ) . $conjunction . $this->_show_datetime( 'T', 'end', NULL, $tm_format );
+		$start = str_replace( ' ', '&nbsp;', $this->_show_datetime( 'T', 'start', NULL, $tm_format ));
+		$end = str_replace( ' ', '&nbsp;', $this->_show_datetime( 'T', 'end', NULL, $tm_format ));
+		return $start != $end ? $start . $conjunction . $end : $start;
 	}
 	public function e_time_range( $tm_format = NULL, $conjunction = ' - ' ) {		
 		echo $this->time_range( $tm_format, $conjunction );

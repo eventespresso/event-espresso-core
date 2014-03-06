@@ -157,13 +157,19 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				$scripts_needing_to_run = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 				$addons_should_be_upgraded_first = EE_Data_Migration_Manager::instance()->addons_need_updating();
 				$script_names = array();
+				$current_script = NULL;
 				foreach($scripts_needing_to_run as $script){
-					if($script instanceof EE_Data_Migration_Script_Base)
-					$script_names[] = $script->pretty_name();
+					if($script instanceof EE_Data_Migration_Script_Base){
+						if( ! $current_script){
+							$current_script = $script;
+							$current_script->migration_page_hooks();
+						}
+						$script_names[] = $script->pretty_name();
+					}
 				}
-				
 				break;
 		}
+		$current_db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
 		$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
 		if($most_recent_migration && 
 				$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
@@ -197,6 +203,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
 			'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'start_with_fresh_ee4_db'), EE_MAINTENANCE_ADMIN_URL),
 			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL), 
+			'current_db_state'=>  sprintf(__("EE%s", "event_espresso"),$current_db_state),
+			'next_db_state'=>isset($current_script) ? sprintf(__("EE%s", 'event_espresso'),$current_script->migrates_to_version()) : NULL,
+			'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
 		));
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
@@ -315,14 +324,14 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * @param boolean $nuke_old_ee4_data controls whether or not we
 	 * destroy the old ee4 data, or just try initializing ee4 default data
 	 */
-	public function _reset_db($nuke_old_ee4_data = true){
+	public function _reset_db( $nuke_old_ee4_data = TRUE ){
 		EE_Registry::instance()->load_helper('Activation');
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
-		if($nuke_old_ee4_data){
+		if( $nuke_old_ee4_data ){
 			EEH_Activation::delete_all_espresso_cpt_data();
-			EEH_Activation::delete_all_espresso_tables_and_data(false);
+			EEH_Activation::delete_all_espresso_tables_and_data( FALSE );
 		}
-		EE_System::instance()->initialize_db_if_no_migrations_required(true);
+		EE_System::instance()->initialize_db_if_no_migrations_required();
 		EE_System::instance()->redirect_to_about_ee();
 	}	
 

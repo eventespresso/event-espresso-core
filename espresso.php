@@ -3,7 +3,7 @@
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
   Description: 	Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 		4.2.005.dev
+  Version: 		4.2.012.alpha
   Author: 			Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		GPLv2
@@ -25,10 +25,25 @@
   along with this program; if not, write to the Free Software
   Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
  */
+
+/**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @package			Event Espresso
+ * @author			Seth Shoultes
+ * @copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @link			{@link http://www.eventespresso.com}
+ * @since		 	4.0
+ *
+ */
+
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.2.005.dev';
+		return '4.2.012.alpha';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -55,7 +70,7 @@ if( ! defined( 'SP' ) ){
 
 define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 // define the plugin directory and URL
-define( 'EE_PLUGINPATH', DS . plugin_basename( EVENT_ESPRESSO_MAIN_FILE ) . DS );
+define( 'EE_PLUGIN_BASENAME', plugin_basename( EVENT_ESPRESSO_MAIN_FILE ));
 define( 'EE_PLUGIN_DIR_PATH', plugin_dir_path( EVENT_ESPRESSO_MAIN_FILE ));
 define( 'EE_PLUGIN_DIR_URL', plugin_dir_url( EVENT_ESPRESSO_MAIN_FILE ));
 // main root folder paths
@@ -110,36 +125,28 @@ define('EE_INF_IN_DB', -1);
 
 
 
-function espresso_load_system( $activation = FALSE ) {
+function espresso_load_system() {
 	if ( espresso_minimum_wp_version_required() ) {
 		espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
-		EE_System::instance($activation);
+		EE_System::instance();
 	} else {
 		unset( $_GET['activate'] );
 		add_action( 'admin_notices', 'espresso_minimum_wp_version_error', 1 );
 	}
 }
-
-/**
- * 	espresso_regular_request - loads and instantiates EE_System
- */
-function espresso_regular_request() {
-	espresso_load_system();
-}
-add_action( 'plugins_loaded', 'espresso_regular_request', 1 );
+add_action( 'plugins_loaded', 'espresso_load_system', 1 );
 
 /**
  * 	espresso_plugin_activation - loads and instantiates EE_System
  */
 function espresso_plugin_activation() {
-
 	// check permissions
 	if ( ! current_user_can( 'activate_plugins' )) {
-		throw new EE_Error( __( 'You do not have the required permissions to activate this plugin.', 'event_espresso' ));
 		return;
 	}
-	espresso_load_system( TRUE );
-	
+	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	check_admin_referer( "activate-plugin_{$plugin}" );
+	update_option( 'ee_espresso_activation', TRUE );
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
 
@@ -147,6 +154,12 @@ register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation'
  * 	espresso_plugin_deactivation
  */
 function espresso_plugin_deactivation() {
+	// check permissions
+	if ( ! current_user_can( 'activate_plugins' )) {
+		return;
+	}
+	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
+	check_admin_referer( "deactivate-plugin_{$plugin}" );
 	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_deactivation();
 }

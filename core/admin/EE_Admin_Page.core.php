@@ -468,8 +468,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_current_page = !empty( $_GET['page'] ) ? sanitize_key( $_GET['page'] ) : FALSE;
 		$this->page_folder = strtolower( str_replace( '_Admin_Page', '', str_replace( 'Extend_', '', get_class($this) ) ) );
 
-		if ( !$this->_current_page && !defined( 'DOING_AJAX') ) return FALSE;
+		global $ee_menu_slugs;
+		$ee_menu_slugs = (array) $ee_menu_slugs;
 
+		if ( !$this->_current_page && !defined( 'DOING_AJAX') || ! isset( $ee_menu_slugs[$this->_current_page] ) ) return FALSE;
 
 		//next let's just check user_access and kill if no access
 		$this->_check_user_access();
@@ -1531,10 +1533,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		//localize script for ajax lazy loading
 		$lazy_loader_container_ids = apply_filters( 'FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers', array('espresso_news_post_box_content') );
 		wp_localize_script( 'ee_admin_js', 'eeLazyLoadingContainers', $lazy_loader_container_ids);
-
-
-		/** remove filters **/
-		remove_all_filters('mce_external_plugins');
 
 
 		/**

@@ -28,7 +28,7 @@ $tax_total_line_item;
 						</div>
 						<!-- adr -->
 						<div class="email">[email]</div>
-						<div class="vat">VAT/Tax Number: [vat]</div>
+						<div class="vat"><?php _e('VAT/Tax Number:', 'event_espresso')?> [vat]</div>
 					</div>
 				</td>
 				<td>
@@ -128,7 +128,7 @@ $tax_total_line_item;
 								<?php foreach($registrations_per_line_item[$line_item_id] as $registration){
 									/* @var $registration EE_Registration */
 									$attendee = $registration->attendee();
-									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.Question_Group_Question.QGQ_order'=>'desc')));?>
+									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group_Question.QGQ_order'=>'desc')));?>
 								<li class="ticket-registration">
 									<table class="registration-details">
 										<tr class="odd">

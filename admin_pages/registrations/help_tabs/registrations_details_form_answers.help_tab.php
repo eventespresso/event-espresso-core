@@ -1,8 +1,8 @@
 <h3><?php _e('Registration Form Answers', 'event_espresso'); ?></h3>
 <p>
-<?php _e('This area shows the custom questions and answers for this registrant. Any answers to system questions have been saved with the registration record. Those answers can be edited by clicking on the the link for View/Edit this Registration which appears in the Registration Details metabox in the sidebar.', 'event_espresso'); ?>
+<?php _e('This area shows the custom questions and answers for this registrant. Any answers to system questions have been saved with the contact record for this registrant. Those answers can be edited by clicking on the the link for View/Edit this Contact which appears in the Contact Details metabox in the sidebar.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Existing Questions are Linked to a Registrant', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Questions that have already been asked will be shown as part of a registrant record. This accounts for both existing registrants and future registrants where an event admin may decide to remove certain questions. The future registrant records will only display the questions that they are asked and answer. Questions are displayed in this order: questions that have received answers, by the question group order, and by the question order.', 'event_espresso'); ?>
+<?php _e('Questions that have already been asked will be shown as part of a registrant record. This accounts for both existing registrants and future registrants where an event admin may decide to remove certain questions. The future registrant records will only display the questions that they are asked and answer. Questions are displayed in this order: Question Group, then by set question order in the group.', 'event_espresso'); ?>
 </p>

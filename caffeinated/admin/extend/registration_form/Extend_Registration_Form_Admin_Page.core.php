@@ -754,7 +754,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration->recaptcha_theme . '", lang : "' . EE_Registry::instance()->CFG->registration->recaptcha_language . '" };
 /*  ] ]>  */
 </script>
-<p class="reg-page-form-field-wrap-pg" id="spc-captcha">
+<p id="spco-captcha" class="reg-page-form-field-wrap-pg">
 ' . recaptcha_get_html( EE_Registry::instance()->CFG->registration->recaptcha_publickey, NULL, is_ssl() ? true : false ) . '
 </p>
 ';
