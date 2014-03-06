@@ -673,7 +673,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return string
 	 */
 	function start_date( $dt_frmt = NULL, $tm_frmt = NULL ) {
-		return $this->_get_datetime( 'TKT_start_date', $dt_frmt, $tm_frmt );
+		$dtt = $this->_get_datetime( 'TKT_start_date', $dt_frmt, $tm_frmt );		
+		return date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( $dtt ));
 	}
 
 	/**
@@ -689,7 +690,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return string
 	 */
 	function end_date( $dt_frmt = NULL, $tm_frmt = NULL ) {
-		return $this->_get_datetime( 'TKT_end_date', $dt_frmt, $tm_frmt );
+		$dtt = $this->_get_datetime( 'TKT_end_date', $dt_frmt, $tm_frmt );
+		return date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( $dtt ));
 	}
 
 	/**
