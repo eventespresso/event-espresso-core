@@ -258,8 +258,7 @@ final class EE_System {
 		/**
 		 * whether on frontend or backend, load EE_Admin's toolbar. but not if its an ajax request
 		 */
-		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance && 
-				! defined('DOING_AJAX') && current_user_can('administrator')){
+		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance && ! defined( 'DOING_AJAX' ) && current_user_can( 'administrator' )) {
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 		}
 		do_action( 'AHEE__EE_System__plugins_loaded__end', $this );
