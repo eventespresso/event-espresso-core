@@ -1466,20 +1466,20 @@ class EE_Gateway_Config extends EE_Config_Base{
  */
 class EE_Events_Archive_Config extends EE_Config_Base{
 
-	public $display_description;
-	public $display_datetimes;
-	public $display_venue_details;
-	public $display_expired_events;
 	public $display_status_banner;
+	public $display_description;
 	public $display_ticket_selector;
+	public $display_datetimes;
+	public $display_venue;
+	public $display_expired_events;
 	
 	public function __construct(){
+		$this->display_status_banner = 0;
 		$this->display_description = 1;
-		$this->display_datetimes = TRUE;
-		$this->display_venue = FALSE;
-		$this->display_expired_events = FALSE;
-		$this->display_status_banner = FALSE;
-		$this->display_ticket_selector = FALSE;
+		$this->display_ticket_selector = 0;
+		$this->display_datetimes = 1;
+		$this->display_venue = 0;
+		$this->display_expired_events = 0;
 	}
 }
 
@@ -1493,8 +1493,8 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public $display_venue;
 
 	public function __construct() {
-		$this->display_status_banner_single = FALSE;
-		$this->display_venue = TRUE;
+		$this->display_status_banner_single = 0;
+		$this->display_venue = 1;
 	}
 }
 
