@@ -146,7 +146,7 @@ class EE_Calendar_Config_Tooltip  extends EE_Config_Base{
 		$this->show = true;
 		$this->pos_my_1 = 'bottom';
 		$this->pos_my_2 = 'center';
-		$this->pos_at_1 = 'center';
+		$this->pos_at_1 = 'top';
 		$this->pos_at_2 = 'center';
 		$this->style = 'qtip-light';
 	}
