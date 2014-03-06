@@ -566,7 +566,7 @@ class EEH_Form_Fields {
 				break;
 
 			case 'DROPDOWN' :
-					return EEH_Form_Fields::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities );
+					return EEH_Form_Fields::select( $display_text, $answer, $options, $input_name, $input_id, $input_class, $required, $required_text, $label_class, $disabled, $system_ID, $use_html_entities, TRUE );
 				break;
 
 			case 'SINGLE' :
@@ -706,7 +706,7 @@ class EEH_Form_Fields {
 	 * @param string $disabled 		disabled="disabled" or null
 	 * @return string HTML
 	 */
-	static function select( $question = FALSE, $answer = NULL, $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $system_ID = FALSE, $use_html_entities = TRUE, $add_please_select_option = TRUE ) {
+	static function select( $question = FALSE, $answer = NULL, $options = FALSE, $name = FALSE, $id = '', $class = '', $required = FALSE, $required_text = '', $label_class = '', $disabled = FALSE, $system_ID = FALSE, $use_html_entities = TRUE, $add_please_select_option = FALSE ) {
 				
 		// need these
 		if ( ! $question || ! $name || ! $options || empty( $options ) || ! is_array( $options )) {
@@ -733,7 +733,7 @@ class EEH_Form_Fields {
 		$only_option = count( $options, 1 ) == 1 ? TRUE : FALSE;
 		if ( ! $only_option ) {
 			// if there is NO answer set and there are multiple options to choose from, then set the "please select" message as selected
-			$selected = empty( $answer ) ? ' selected="selected"' : '';
+			$selected = $answer === NULL ? ' selected="selected"' : '';
 			$input_html .= $add_please_select_option ? "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>' : '';
 		}
 
@@ -784,12 +784,11 @@ class EEH_Form_Fields {
 	 * @return string 
 	 */
 	private static function _generate_select_option( $key, $value, $answer, $only_option = FALSE ){
-			$key = self::prep_answer( $key );
-			$value = self::prep_answer( $value );
-			$value = ! empty( $value ) ? $value : $key;
-			$selected = ( $answer == $key || $only_option ) ? ' selected="selected"' : '';
-			//echo '<h4>' . $answer . ' = ' . $key . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-			return "\n\t\t\t\t" . '<option value="' . self::prep_option_value( $key ) . '"' . $selected . '> ' . $value . '&nbsp;&nbsp;&nbsp;</option>';					
+		$key = self::prep_answer( $key );
+		$value = self::prep_answer( $value );
+		$value = ! empty( $value ) ? $value : $key;
+		$selected = ( $answer == $key || $only_option ) ? ' selected="selected"' : '';
+		return "\n\t\t\t\t" . '<option value="' . self::prep_option_value( $key ) . '"' . $selected . '> ' . $value . '&nbsp;&nbsp;&nbsp;</option>';					
 	}
 
 
@@ -1090,7 +1089,7 @@ class EEH_Form_Fields {
 	 * @return string 
 	 */
 	static function prep_option_value( $option_value ){
-		return trim( stripslashes( str_replace( '&#039;', "'", $option_value )));
+		return trim( stripslashes( $option_value ));
 	}
 
 
