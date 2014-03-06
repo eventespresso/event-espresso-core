@@ -409,9 +409,12 @@ class PluginUpdateEngineChecker {
 			wp_clear_scheduled_hook($cronHook);
 		}
 		//dashboard message "dismiss upgrade" link
-		add_action( "wp_ajax_".$this->dismiss_upgrade, array($this, 'dashboard_dismiss_upgrade')); 
+		add_action( "wp_ajax_".$this->dismiss_upgrade, array($this, 'dashboard_dismiss_upgrade'));
+
 
 		if ( !$this->_use_wp_update ) {
+			//we need to make sure that the new directory is named correctly
+			add_filter('upgrader_source_selection', array( $this, 'fixDirName'), 10, 3 );
 			//maybe clean up any leftover files from upgrades
 			$this->maybe_cleanup_upgrade();
 		}
@@ -439,8 +442,6 @@ class PluginUpdateEngineChecker {
 			//Insert our update info into the update array maintained by WP
 			add_filter('site_transient_update_plugins', array( $this,'injectUpdate' ));
 
-			//we need to make sure that the new directory is named correctly
-			add_filter('upgrader_source_selection', array( $this, 'fixDirName'), 10, 3 );
 		}
 
 
@@ -928,7 +929,19 @@ class PluginUpdateEngineChecker {
 	function fixDirName( $source, $remote_source, $wppu ) {
 		global $wp_filesystem; 
 
-		if ( isset( $wppu->skin->plugin ) && $wppu->skin->plugin == $this->pluginFile ) {
+		//get out early if this doesn't have a plugin updgrader object.
+		if ( !$wppu instanceof Plugin_Upgrader )
+			return $source;
+
+		//if this is a bulk update then we need an alternate method to verify this is an update we need to modify.
+		if ( $wppu->bulk ) {
+			$url_to_check = $wppu->skin->options['url'];
+			$is_good = strpos( $url_to_check, url_encode($this->pluginFile) ) === FALSE ? FALSE : TRUE;
+		} else {
+			$is_good = isset( $wppu->skin->plugin ) && $wppu->skin->plugin == $this->pluginFile ? TRUE : FALSE;
+		}
+
+		if ( $is_good ) {
 			$new_dir = $wp_filesystem->wp_content_dir() . 'upgrade/' . $this->slug . '/';
 
 			//make new directory if needed.
