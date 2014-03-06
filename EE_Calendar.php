@@ -44,6 +44,7 @@
  *
  * ------------------------------------------------------------------------
  */
+ add_action( 'AHEE__EE_System__construct__complete', array( 'EE_Calendar', 'instance' ));
  class EE_Calendar {
  
 
@@ -114,9 +115,7 @@
 		define( 'EE_CALENDAR_ADMIN', EE_CALENDAR_PATH . 'admin' . DS );
 		define( 'EE_CALENDAR_DMS_PATH', EE_CALENDAR_PATH . 'data_migration_scripts' . DS );
 		// we need cars
-		add_action( 'AHEE__EE_System__construct__autoloaders_available', array( $this, 'register_autoloaders' ));
-		// activate
-//		register_activation_hook(  __FILE__ , array( $this, 'activation' ));
+		$this->register_autoloaders();
 		// GO !!!
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ));
 		// migrate data
@@ -667,7 +666,7 @@
 				}
 
 				//add link
-				$regButtonText = $event->display_reg_form() ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
+				$regButtonText = $event->display_ticket_selector() ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
 				// reg open
 				if ( $event->is_sold_out() || $datetime->sold_out() || $datetime->total_tickets_available_at_this_datetime() == 0) {
 					$tooltip_html .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';				
@@ -717,6 +716,5 @@
 	public function __destruct() { return FALSE; }	
 
  }
- EE_Calendar::instance();
 // End of file espresso-calendar.php
 // Location: /espresso-calendar/espresso-calendar.php
