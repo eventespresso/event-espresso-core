@@ -65,21 +65,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			<tr class="tckt-slctr-tbl-tr <?php echo $status_class; ?>">		
 				<td class="tckt-slctr-tbl-td-name">
 					<b><?php echo $ticket->get_pretty('TKT_name');?></b>
-					<a 
-						id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
-						class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" 
-						rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
-						title="<?php _e( 'click to show additional ticket details', 'event_espresso' ); ?>"						
-					>
+					<a id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php _e( 'click to show additional ticket details', 'event_espresso' ); ?>">
 						<?php echo sprintf( __( 'show%1$sdetails%1$s+', 'event_espresso' ), '&nbsp;' ); ?>						
 					</a>
-					<a 
-						id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
-						class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js" 
-						rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" 
-						title="<?php _e( 'click to hide additional ticket details', 'event_espresso' ); ?>"
-						style="display:none;"
-					>
+					<a id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php _e( 'click to hide additional ticket details', 'event_espresso' ); ?>" style="display:none;">
 						<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>
 					</a>
 				<?php
@@ -120,14 +109,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					// display submit button since we have tickets availalbe
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 			?>
-				<input 
-					type="radio" 
-					name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" 
-					id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" 
-					class="ticket-selector-tbl-qty-slct"
-					value="<?php echo $row . '-'; ?>1"
-					<?php echo $row == 1 ? ' checked="checked"' : ''; ?>
-				/>
+				<input type="radio" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct" value="<?php echo $row . '-'; ?>1" <?php echo $row == 1 ? ' checked="checked"' : ''; ?> />
 		<?php
 					$hidden_input_qty = FALSE;
 					
@@ -292,7 +274,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# Datetimes:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
 						<?php endif; ?>
 						
-						
 					</div>					
 				</td>
 			</tr>
@@ -301,9 +282,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 	}
 
-?>				
-						
-		</tbody>	
+?>
+
+		</tbody>
 	</table>
 
 	<input type="hidden" name="noheader" value="true" />
@@ -317,6 +298,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<p class="smaller-text lt-grey-text">* <?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz );?></p>
 <?php } ?>
 
-	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector' ); ?>
+	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID ); ?>
 
 </div>
