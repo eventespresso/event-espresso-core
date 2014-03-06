@@ -281,7 +281,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	public function prepare_for_pretty_echoing( $datetimevalue, $schema = null ) {
 		$timezone_string = $this->_display_timezone() ? '<span class="ee_dtt_timezone_string">(' . self::get_timezone_abbrev($this->_timezone) . ')</span>' : '';
 		$format_string = $this->_get_date_time_output( TRUE );
-		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string, true) . $timezone_string;
+		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string ) . $timezone_string;
 	}
 
 
@@ -319,29 +319,18 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * Takes an incoming unix timestamp which is assumed to be GMT, converts it to the timezone as exists in the _timezone property and then returns.
 	 * @param  int    $dtvalue  unixtimestamp in utc
 	 * @param  string $format   format for final date/time string
-	 * @param  bool   $translate  This indicates whether to use date_i18n or not for translated dates.
 	 * @return string           final converted date-time-zone.
 	 */
-	private function _convert_to_timezone_from_utc_unix_timestamp( $dtvalue, $format, $translate = FALSE ) {
+	private function _convert_to_timezone_from_utc_unix_timestamp( $dtvalue, $format ) {
 		$dtvalue = (int) $dtvalue;
-
-		if ( $translate ) {
-			//wp also localized the timezone string if that is in the format to be outputted (i.e. using one of the timezone_formats that php date() accepts). So we need to make sure that whatever WP is using for the timezone_string in this process is what we have set as the timezone string.
-			add_filter( 'pre_option_timezone_string', array( $this, 'inject_set_timezone_for_wp_timezone_string'), 10 );	
-			//make sure WP date_i18n() uses our timezone (not assumes UTC).
-			date_default_timezone_set( $this->_timezone );
-			$converted = date_i18n( $format, $dtvalue );
-			date_default_timezone_set('UTC');
-			remove_filter( 'pre_option_timezone_string', array( $this, 'inject_set_timezone_for_wp_timezone_string'), 10 );
-			return $converted;
-		} else {
-			var_dump('not_tranlsated');
-			$datetime = date( 'Y-m-d H:i:s', $dtvalue );
-			$this->_set_date_obj( $datetime, 'UTC' );
-			$this->_date->setTimezone( new DateTimeZone( $this->_timezone ) );
-			
-			return $this->_date->format( $format );
-		}
+		//wp also localized the timezone string if that is in the format to be outputted (i.e. using one of the timezone_formats that php date() accepts). So we need to make sure that whatever WP is using for the timezone_string in this process is what we have set as the timezone string.
+		add_filter( 'pre_option_timezone_string', array( $this, 'inject_set_timezone_for_wp_timezone_string'), 10 );	
+		//make sure WP date_i18n() uses our timezone (not assumes UTC).
+		date_default_timezone_set( $this->_timezone );
+		$converted = date_i18n( $format, $dtvalue );
+		date_default_timezone_set('UTC');
+		remove_filter( 'pre_option_timezone_string', array( $this, 'inject_set_timezone_for_wp_timezone_string'), 10 );
+		return $converted;
 	}
 
 
