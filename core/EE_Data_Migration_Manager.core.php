@@ -287,7 +287,6 @@ class EE_Data_Migration_Manager{
 		
 		$current_database_state = $this->ensure_current_database_state_is_set();
 		//determine which have already been run
-		
 		foreach($script_class_and_filespaths_available as $classname => $filepath){
 			list($script_converts_plugin_slug,$script_converts_to_version) = $this->script_migrates_to_version($classname);
 			//check if this version script is DONE or not; or if it's never been ran
@@ -313,7 +312,8 @@ class EE_Data_Migration_Manager{
 				}
 			}else{
 				//it exists but it's not  a proper data migration script
-				throw new EE_Error(sprintf(__("%s is not a proper data migration script, but its in your list of data migration scripts that have ran", "event_espresso"),get_class($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version])));
+				//maybe the script got renamed? or was simply removed from EE?
+				//either way, its certainly not runnable!
 			}
 		}
 		ksort($script_classes_that_should_run);
