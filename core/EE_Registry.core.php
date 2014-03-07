@@ -220,7 +220,7 @@ final class EE_Registry {
 	 *	loads data_migration_scripts
 	 * 
 	 * 	@access 	public
-	 *	@param string $class_name - class name for the DMS ie: EE_DMS_4_2_0
+	 *	@param string $class_name - class name for the DMS ie: EE_DMS_Core_4_2_0
 	 *	@return instantiated class object
 	 */	
 	public function load_dms ( $class_name, $arguments = array() ) {

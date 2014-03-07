@@ -32,7 +32,7 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  * --a function named update_espresso_config() which saves the EE_Config object to teh database
  * --...and all its subclasses... really, you're best off copying the whole thin gwhen 4.1 is released into this file and wrapping its declaration in if( ! class_exists()){...}
  */
-class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
+class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 	
 	
@@ -73,7 +73,8 @@ class EE_DMS_4_1_0 extends EE_Data_Migration_Script_Base{
 			return false;
 		}
 	}
-	public function can_migrate_from_version($version_string) {
+	public function can_migrate_from_version($version_array) {
+		$version_string = $version_array['Core'];
 		if($version_string < '4.0.0' && $version_string > '3.1.26' ){
 //			echo "$version_string can be mgirated fro";
 			return true;
