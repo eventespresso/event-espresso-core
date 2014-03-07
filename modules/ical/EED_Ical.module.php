@@ -30,7 +30,10 @@ class EED_Ical  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		add_action('AHEE_display_add_to_calendar', array( 'EED_Ical', 'espresso_ical_prepare' ), 10, 1 );
+		// create download buttons
+		add_filter( 'FHEE__espresso_list_of_event_dates__datetime_html', array( 'EED_Ical', 'generate_add_to_iCal_button' ), 10, 2 );
+		 // process ics download request
+		EE_Config::register_route( 'download_ics_file', 'EED_Ical', 'download_ics_file' );
 	}
 
 	/**
@@ -55,6 +58,44 @@ class EED_Ical  extends EED_Module {
 
 
 
+	/**
+	 * 	generate_add_to_iCal_button
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function generate_add_to_iCal_button( $html, $datetime ) {
+		if ( $datetime instanceof EE_Datetime ) {
+			$action = add_query_arg( array( 'ee' => 'download_ics_file', 'ics_id' => $datetime->ID() ), site_url() );
+			$ical = '<form id="download_iCal_" action="' . $action . '" method="post" >';
+			$ical .= '<input type="submit" value="<span class="dashicons dashicons-calendar"></span>' . __( 'Download iCal', 'event_espresso' ) . '"/>';
+			$ical .= '</form>';
+		}
+		return $html;
+	}
+
+
+
+
+	/**
+	 * 	download_ics_file
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public static function download_ics_file() {
+		if ( EE_Registry::instance()->REQ->is_set( 'ics_id' )) {
+			$DTT_ID = EE_Registry::instance()->REQ->get( 'ics_id' );
+			EE_Registry::instance()->load_model( 'Datetime' );
+			if ( $datetime = EEM_Datetime::instance()->get_one_by_ID( $DTT_ID )) {
+				printr( $datetime, '$datetime  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			}
+		}
+	}
+
+
+
+ 
 	/**
 	 * 	iCal
 	 *
@@ -151,7 +192,27 @@ class EED_Ical  extends EED_Module {
 		echo $output;
 	}
 
-	
+	// Converts a unix timestamp to an ics-friendly format
+	// NOTE: "Z" means that this timestamp is a UTC timestamp. If you need
+	// to set a locale, remove the "\Z" and modify DTEND, DTSTAMP and DTSTART
+	// with TZID properties (see RFC 5545 section 3.3.5 for info)
+	//
+	// Also note that we are using "H" instead of "g" because iCalendar's Time format
+	// requires 24-hour time (see RFC 5545 section 3.3.12 for info).
+	function dateToCal($timestamp) {
+		return date('Ymd\THis\Z', $timestamp);
+	}
+
+	/**
+	 * 	_escape_ICal_data
+	 *
+	 *	@access 	public
+	 *  	@param	string $string
+	 *  	@return	string
+	 */
+	private function _escape_ICal_data( $string ) {
+		return preg_replace( '/([\,;])/', '\\\$1', $string );
+	}	
 	
 
 
