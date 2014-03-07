@@ -705,11 +705,20 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @static
 	 *  @return 	void
 	 */
-	public static function template_settings_form() {
+	public static function template_settings_form() {	
 		$template_settings = EE_Registry::instance()->CFG->template_settings;
 		$template_settings->EED_Events_Archive = isset( $template_settings->EED_Events_Archive ) ? $template_settings->EED_Events_Archive : new EE_Events_Archive_Config();
 		$template_settings->EED_Events_Archive = apply_filters( 'FHEE__EED_Events_Archive__template_settings_form__event_list_config', $template_settings->EED_Events_Archive );
-		EEH_Template::display_template( EVENTS_ARCHIVE_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $template_settings->EED_Events_Archive );
+		$events_archive_settings = array(
+			'display_status_banner' => 0,
+			'display_description' => 1,
+			'display_ticket_selector' => 0,
+			'display_datetimes' => 1,
+			'display_venue' => 0,
+			'display_expired_events' => 0
+		);
+		$events_archive_settings = array_merge( $events_archive_settings, (array)$template_settings->EED_Events_Archive );
+		EEH_Template::display_template( EVENTS_ARCHIVE_TEMPLATES_PATH . 'admin-event-list-settings.template.php', $events_archive_settings );
 	}
 
 
@@ -728,13 +737,13 @@ class EED_Events_Archive  extends EED_Module {
 	public static function update_template_settings( $CFG, $REQ ) {
 		$CFG->EED_Events_Archive = new EE_Events_Archive_Config();
 		// unless we are resetting the config...
-		if ( ! isset( $REQ['reset_event_list_settings'] ) || absint( $REQ['reset_event_list_settings'] ) !== 1 ) {
+		if ( ! isset( $REQ['EED_Events_Archive_reset_event_list_settings'] ) || absint( $REQ['EED_Events_Archive_reset_event_list_settings'] ) !== 1 ) {
+			$CFG->EED_Events_Archive->display_status_banner = isset( $REQ['EED_Events_Archive_display_status_banner'] ) ? absint( $REQ['EED_Events_Archive_display_status_banner'] ) : 0;
 			$CFG->EED_Events_Archive->display_description = isset( $REQ['EED_Events_Archive_display_description'] ) ? absint( $REQ['EED_Events_Archive_display_description'] ) : 1;
-			$CFG->EED_Events_Archive->display_ticket_selector = isset( $REQ['EED_Events_Archive_display_ticket_selector'] ) ? absint( $REQ['EED_Events_Archive_display_ticket_selector'] ) : FALSE;
-			$CFG->EED_Events_Archive->display_datetimes = isset( $REQ['EED_Events_Archive_display_datetimes'] ) ? absint( $REQ['EED_Events_Archive_display_datetimes'] ) : TRUE;
-			$CFG->EED_Events_Archive->display_venue = isset( $REQ['EED_Events_Archive_display_venue'] ) ? absint( $REQ['EED_Events_Archive_display_venue'] ) : TRUE;
-			$CFG->EED_Events_Archive->display_expired_events = isset( $REQ['EED_Events_Archive_display_expired_events'] ) ? absint( $REQ['EED_Events_Archive_display_expired_events'] ) : FALSE;				$CFG->EED_Events_Archive->display_status_banner = isset( $REQ['EED_Events_Archive_display_status_banner'] ) ? absint( $REQ['EED_Events_Archive_display_status_banner'] ) : FALSE;
-		}
+			$CFG->EED_Events_Archive->display_ticket_selector = isset( $REQ['EED_Events_Archive_display_ticket_selector'] ) ? absint( $REQ['EED_Events_Archive_display_ticket_selector'] ) : 0;
+			$CFG->EED_Events_Archive->display_datetimes = isset( $REQ['EED_Events_Archive_display_datetimes'] ) ? absint( $REQ['EED_Events_Archive_display_datetimes'] ) : 1;
+			$CFG->EED_Events_Archive->display_venue = isset( $REQ['EED_Events_Archive_display_venue'] ) ? absint( $REQ['EED_Events_Archive_display_venue'] ) : 0;
+			$CFG->EED_Events_Archive->display_expired_events = isset( $REQ['EED_Events_Archive_display_expired_events'] ) ? absint( $REQ['EED_Events_Archive_display_expired_events'] ) : 0;			}
 		return $CFG;
 	}
 
@@ -809,7 +818,7 @@ class EED_Events_Archive  extends EED_Module {
 	public static function display_venue() {
 		$EE = EE_Registry::instance();
 		$EE->load_helper( 'Venue_View' );
-		$display_venue = isset( $EE->CFG->template_settings->EED_Events_Archive->display_venue ) ? $EE->CFG->template_settings->EED_Events_Archive->display_venue : TRUE;
+		$display_venue = isset( $EE->CFG->template_settings->EED_Events_Archive->display_venue ) ? $EE->CFG->template_settings->EED_Events_Archive->display_venue : FALSE;
 		$venue_name = EEH_Venue_View::venue_name();
 		return $display_venue && ! empty( $venue_name ) ? TRUE : FALSE;
 	}

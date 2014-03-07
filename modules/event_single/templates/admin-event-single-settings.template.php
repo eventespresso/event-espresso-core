@@ -20,7 +20,7 @@ $values = array(
 				</th>
 				<td>
 					<?php echo EEH_Form_Fields::select_input( 'display_status_banner_single', $values, $display_status_banner_single, 'id="display_status_banner_single"' ); ?>
-					<p class="description"><?php _e('Selecting "Yes" will instruct Event Espresso to inject an Event Status banner with the title whenever Events are displaying on the single event page.', 'event_espresso'); ?></p>
+					<p class="description"><?php _e('Selecting "Yes" will inject an Event Status banner with the title whenever Events are displaying on the single event page.', 'event_espresso'); ?></p>
 				</td>
 			</tr>
 
