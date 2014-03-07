@@ -541,7 +541,8 @@ class EED_Events_Archive  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public static function event_details( $content ) {
-		if ( ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) {
+		global $post;
+		if ( $post->post_type == 'espresso_events' && ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) {
 			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
 			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );		
 			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );		
@@ -553,8 +554,15 @@ class EED_Events_Archive  extends EED_Module {
 			// re-add our main filters (or else the next event won't have them)
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
-			// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
+			// but remove the other filters so that they don't get applied to the next post
+			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 110, 1 );
+			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 120, 1 );
+			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
+			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_tickets' ), 110, 1 );
+			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_datetimes' ), 120, 1 );
+			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_venues' ), 130, 1 );
 		}
+		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return ! empty( $template ) ? $template : $content;
 	}
 
