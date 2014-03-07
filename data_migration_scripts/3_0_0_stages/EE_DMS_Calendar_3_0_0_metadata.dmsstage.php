@@ -19,7 +19,11 @@ function __construct() {
 }
 
 	protected function _migrate_old_row($old_row) {
-		$term_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $this->_new_table);
+		$term_id = EE_Data_Migration_Manager::instance()->get_mapping_new_pk('Core_4_1_0',$this->_old_table, $old_row['id'], $this->_new_table);
+		if( ! $term_id){
+			$this->add_error(sprintf(__("Could not migrate metadata for old category '%s' with id '%d' because there is no EE4 category (term) for it.", "event_espresso"),$old_row['category_name'],$old_row['id']));
+			return false;
+		}
 		$metadata = maybe_unserialize($old_row['category_meta']);
 		if( ! is_array($metadata)){
 			return;
