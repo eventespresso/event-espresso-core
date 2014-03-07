@@ -596,7 +596,7 @@ class EE_Data_Migration_Manager{
 		$versions_migrated_to = isset($last_migration_script_option['option_name']) ? str_replace(EE_Data_Migration_Manager::data_migration_script_option_prefix,"",$last_migration_script_option['option_name']) : null;
 		
 		//check if it THINKS its a data migration script
-		if(isset($last_ran_migration_script_properties['class'])){
+		if(isset($last_ran_migration_script_properties['class']) && isset($last_ran_migration_script_properties['_status']) && $last_ran_migration_script_properties['_status'] != self::status_completed){
 			//ok then just add this error to its list of errors
 			$last_ran_migration_script_properties['_errors'] = $error_message;
 			$last_ran_migration_script_properties['_status'] = self::status_fatal_error;
@@ -609,7 +609,7 @@ class EE_Data_Migration_Manager{
 			$general_migration_error->add_error($error_message);
 			$general_migration_error->set_borked();
 			$last_ran_migration_script_properties = $general_migration_error->properties_as_array();
-			$versions_migrated_to = 'Unknown';
+			$versions_migrated_to = 'Unknown.Unknown';
 		}
 		update_option(self::data_migration_script_option_prefix.$versions_migrated_to,$last_ran_migration_script_properties);
 		
