@@ -41,15 +41,24 @@ class EED_Mijireh_Slurper  extends EED_Module {
 
 	/**
 	 * 	set_hooks_admin - for hooking into EE Admin Core, other modules, etc
-	 *
+	 *	MIjireh Slurper module mostly just detects a special request on the EE payment methods page
+	 *	to perform a redirect to a slurping page; detects a special request on the post.php editing page to
+	 *	initiate slurping into mijireh; and adds a metabox to the post.php editing page when mijireh's special
+	 *	shortcode is present
 	 *  @access 	public
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-		add_action('add_meta_boxes',array('EED_Mijireh_Slurper','add_slurp_page_metabox'));
-		add_action('add_meta_boxes',array('EED_Mijireh_Slurper','slurp_or_not'));//probably not the best hook, but it works
-		add_action('admin_init',array('EED_Mijireh_Slurper','check_for_edit_slurp_page'));//alsoo not the best hook, but it works
+		add_action('load-post.php',array('EED_Mijireh_Slurper','set_edit_post_page_hooks'));
+		add_action('load-admin.php',array('EED_Mijireh_Slurper','check_for_edit_slurp_page'));
 		add_action('AHEE__EE_Mijireh__settings_end',array('EED_Mijireh_Slurper','add_slurp_link_to_gateway'));
+	}
+	/**
+	 * Merely used to avoid even bothering to add these hooks on pages besides admin's post.php
+	 */
+	public static function set_edit_post_page_hooks(){
+		add_action('add_meta_boxes',array('EED_Mijireh_Slurper','add_slurp_page_metabox'));
+		add_action('posts_selection',array('EED_Mijireh_Slurper','slurp_or_not'));
 	}
 
 	/**
