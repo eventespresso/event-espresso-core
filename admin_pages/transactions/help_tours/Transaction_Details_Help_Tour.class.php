@@ -147,7 +147,7 @@ class Transaction_Details_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _txn_primary_reg_metabox_stop() {
-		return '<p>' . __('View details on the primary registrant who is linked to this transaction.', 'event_espresso') . '</p>';
+		return '<p>' . __('View contact details on the primary registrant who is linked to this transaction.', 'event_espresso') . '</p>';
 	}
 
 	protected function _txn_billing_metabox_stop() {
