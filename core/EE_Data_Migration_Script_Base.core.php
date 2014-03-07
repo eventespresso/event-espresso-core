@@ -58,7 +58,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Place to add hooks and filters for tweaking the migrations page, in order
 	 * to customize it
 	 */
-	abstract public function migration_page_hooks();
+	public function migration_page_hooks(){
+		//by default none are added because we normally like the default look of the migration page
+	}
 	/**
 	 * Multi-dimensional array that defines teh mapping from OLD table Primary Keys
 	 * to NEW table Primary Keys.

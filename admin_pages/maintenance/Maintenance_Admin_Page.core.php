@@ -136,7 +136,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 //		$dm = EE_Data_Migration_Manager::instance()->_instantiate_script_from_properties_array($p);
 //		dd($dm);
 		//it all depends if we're in maintenance model level 1 (frontend-only) or
-		//level 2 (everything except maintenance page)
+		//level 2 (everything except maintenance page
 		switch(EE_Maintenance_Mode::instance()->level()){
 			case EE_Maintenance_Mode::level_0_not_in_maintenance:
 			case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
