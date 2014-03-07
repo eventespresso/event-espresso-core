@@ -28,7 +28,7 @@
  */
 class EED_Mijireh_Slurper  extends EED_Module {
 	
-	const mijireh_slurper_shortcode = '{{Espresso-Mijireh-checkout-form}}';
+	const mijireh_slurper_shortcode = '{{mj-checkout-form}}';
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
