@@ -119,7 +119,7 @@
 		// GO !!!
 		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ));
 		// migrate data
-		$this->_setup_dara_migration_script_hooks();
+		$this->_setup_data_migration_script_hooks();
 	}
 
 
@@ -229,33 +229,21 @@
 
 
 	/**
-	 * _setup_dara_migration_script_hooks
+	 * _setup_data_migration_script_hooks
 	 * Setup hooks for adding calendar logic to EE4 migrations. Initially only adds
 	 * a stage to teh 4.1.0 migration script
 	 */
-	protected function _setup_dara_migration_script_hooks(){
-		add_filter( 'FHEE__EE_DMS_4_1_0__autoloaded_stages',array($this,'autoload_migration_stage'));
-		add_filter( 'FHEE__EE_DMS_4_1_0__construct__migration_stages',array($this,'add_migration_stage'));
+	protected function _setup_data_migration_script_hooks(){
+		add_filter('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array($this,'add_calendar_migrations'));
 	}
 	/**
-	 * Add our 4.1.0 migration stage for autoloading
-	 * @param array $classname_to_filepath_array strings are classnames, valuesa re their full paths
-	 * @return arrat
+	 * Adds our data migration script folder
+	 * @param array $folders_with_migration_scripts 
+	 * return array
 	 */
-	public function autoload_migration_stage($classname_to_filepath_array){
-		$classname_to_filepath_array['EE_DMS_4_1_0_calendar_metadata'] = EE_CALENDAR_DMS_PATH . '4_1_0_stages' . DS . 'EE_DMS_4_1_0_calendar_metadata.dmsstage.php';
-		$classname_to_filepath_array['EE_DMS_4_1_0_calendar_options'] = EE_CALENDAR_DMS_PATH . '4_1_0_stages' . DS . 'EE_DMS_4_1_0_calendar_options.dmsstage.php';
-		return $classname_to_filepath_array;
-	}
-	/**
-	 * Adds our data migration stage into the list
-	 * @param EE_Data_Migration_Script_Stage[] $migration_stages keys are their priority, values are EE_Data_Migration_Script_Stage
-	 * return EE_Data_Migration_Script_Stage[]
-	 */
-	public function add_migration_stage($migration_stages){
-		$migration_stages[] = new EE_DMS_4_1_0_calendar_metadata();
-		$migration_stages[] = new EE_DMS_4_1_0_calendar_options();
-		return $migration_stages;
+	public function add_calendar_migrations($folders_with_migration_scripts){
+		$folders_with_migration_scripts[] = EE_CALENDAR_DMS_PATH;
+		return $folders_with_migration_scripts;
 	}
 
 
