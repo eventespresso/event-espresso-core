@@ -66,13 +66,3 @@ class EE_DMS_Calendar_3_0_0 extends EE_Data_Migration_Script_Base{
 		return true;
 	}
 }
-
-
-
-
-
-
-
-
-
-

@@ -44,9 +44,12 @@
  *
  * ------------------------------------------------------------------------
  */
+//if ee4 core is active, run the calendar
  add_action( 'AHEE__EE_System__construct__complete', array( 'EE_Calendar', 'instance' ));
+ //we need to register our activation hook before init or plugins_loaded (where we load teh calendar)
+ register_activation_hook(__FILE__, array('EE_Calendar','register_activation_hook'));
  class EE_Calendar {
- 
+	 const activation_indicator_option_name = 'ee_espresso_activation';
 
 	/**
 	 * instance of the EE_Calendar object
@@ -122,8 +125,14 @@
 		$this->_setup_data_migration_script_hooks();
 	}
 
-
-
+	/**
+	 * Until we do something better, we'll just check for migration scripts upon
+	 * plugin activation only. In the future, we'll want to do it on plugin updates too
+	 */
+	public static function register_activation_hook(){
+		//let's just handle this on the next request, ok? right now we're just not really ready
+		add_option(EE_Calendar::activation_indicator_option_name,true);
+	}
 	/**
 	 * 	register_autoloaders
 	 *
@@ -148,6 +157,13 @@
 	 *  @return 	void
 	 */
 	public function plugins_loaded() {
+		//if core is also active, then get core to check for migration scripts 
+		//and set maintneance mode is necessary
+		if(get_option(EE_Calendar::activation_indicator_option_name)){
+			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+			delete_option(EE_Calendar::activation_indicator_option_name);
+		}
+		
 		// is EE running and not in M-Mode ?
 		if ( defined( 'EVENT_ESPRESSO_VERSION' ) && ! EE_Maintenance_Mode::instance()->level() ) {
 			// calendar settings
@@ -230,8 +246,7 @@
 
 	/**
 	 * _setup_data_migration_script_hooks
-	 * Setup hooks for adding calendar logic to EE4 migrations. Initially only adds
-	 * a stage to teh 4.1.0 migration script
+	 * Adds the calendar migraiton scripts folder to core's
 	 */
 	protected function _setup_data_migration_script_hooks(){
 		add_filter('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array($this,'add_calendar_migrations'));
