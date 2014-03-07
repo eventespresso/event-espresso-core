@@ -241,14 +241,14 @@ class EE_Data_Migration_Manager{
 	 * @return string of current db state
 	 */
 	public function ensure_current_database_state_is_set(){
-		$espresso_db_update = get_option( 'espresso_db_update', array() );
+		$espresso_db_core_updates = get_option( 'espresso_db_update', array() );
 		$db_state = get_option(EE_Data_Migration_Manager::current_database_state);
 		if( ! $db_state ){
 			//mark teh DB as being in teh state as teh last version in there.
 			//this is done to trigger maintenance mode and do data migration scripts
 			//if the admin installed this version of EE over 3.1.x or 4.0.x
 			//otherwise, the normal maintenance mode code is fine
-			$previous_versions_installed = array_keys($espresso_db_update);
+			$previous_versions_installed = array_keys($espresso_db_core_updates);
 			$previous_version_installed = end($previous_versions_installed);
 			if(version_compare('4.1.0', $previous_version_installed)){
 				//last installed version was less than 4.1
@@ -504,7 +504,8 @@ class EE_Data_Migration_Manager{
 	public function update_current_database_state_to($slug_and_version = null){
 		if( ! $slug_and_version ){
 			//no version was provided, assume it should be at the current code version
-			$slug_and_version = espresso_version();
+			
+			$slug_and_version = array('Core',espresso_version());
 		}
 		$current_database_state = get_option(self::current_database_state);
 		$current_database_state[$slug_and_version[0]]=$slug_and_version[1];
