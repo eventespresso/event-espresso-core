@@ -551,7 +551,7 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');	
 		
 		
-		$script_with_defaults = EE_Registry::instance()->load_dms( 'EE_DMS_Core_4_1_0' );		
+		$script_with_defaults = EE_Registry::instance()->load_dms( 'Core_4_1_0' );		
 		//setting up the default stats and countries is also essential for the data migrations to run
 		//(because many need to convert old string states to foreign keys into the states table)
 		$script_with_defaults->insert_default_states();

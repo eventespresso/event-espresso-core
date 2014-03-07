@@ -446,7 +446,7 @@ class EEH_Activation {
 		//in order to avoid duplicate. When a new version is released (eg 4.2), use that version's data migration code.
 		//if 4.2 doesn't need to migrate anything, and only needs to add a column, you should still create a migration script for it,
 		//but just define the schema changes methods
-		$current_data_migration_script = EE_Registry::instance()->load_dms( 'EE_DMS_Core_4_2_0' );
+		$current_data_migration_script = EE_Registry::instance()->load_dms( 'Core_4_2_0' );
 		$current_data_migration_script->schema_changes_before_migration();
 		$current_data_migration_script->schema_changes_after_migration();
 		EE_Data_Migration_Manager::instance()->update_current_database_state_to();

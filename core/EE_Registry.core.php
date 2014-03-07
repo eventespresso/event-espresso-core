@@ -221,11 +221,11 @@ final class EE_Registry {
 	 * 
 	 * 	@access 	public
 	 *	@param string $class_name - class name for the DMS ie: EE_DMS_Core_4_2_0
-	 *	@return instantiated class object
+	 *	@return EE_Data_Migration_Script_Base
 	 */	
 	public function load_dms ( $class_name, $arguments = array() ) {
 		// retreive instantiated class
-		return $this->_load( EE_CORE . 'data_migration_scripts' . DS, 'EE_' , $class_name, 'dms', $arguments, FALSE, FALSE, FALSE );
+		return $this->_load( EE_CORE . 'data_migration_scripts' . DS, 'EE_DMS_' , $class_name, 'dms', $arguments, FALSE, FALSE, FALSE );
 	}
 
 

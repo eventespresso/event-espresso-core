@@ -198,6 +198,19 @@ class EE_Data_Migration_Manager{
 		}
 		return $this->_data_migrations_ran;
 	}
+	/**
+	 * 
+	 * @param string $script_name eg 'DMS_Core_4_1_0'
+	 * @param string $old_table eg 'wp_events_detail'
+	 * @param string $old_pk eg 'wp_esp_posts'
+	 * @param string $new_pk eg 12
+	 * @return mixed string or int
+	 */
+	public function get_mapping_new_pk($script_name,$old_table,$old_pk,$new_table){
+		$script = EE_Registry::instance()->load_dms($script_name);
+		$mapping = $script->get_mapping_new_pk($old_table, $old_pk, $new_table);
+		return $mapping;
+	}
 	
 	/**
 	 * Gets all the options containing migration scripts that have been run
