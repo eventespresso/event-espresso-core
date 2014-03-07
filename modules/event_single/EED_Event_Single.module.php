@@ -217,15 +217,21 @@ class EED_Event_Single  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public function event_details( $content ) {
-		// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
-		// it uses the_content() for displaying the $post->post_content
-		// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
-		// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
-		remove_filter( 'the_content', array( $this, 'event_details' ), 100 );
-		// now load our template
-		$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
-		//now add our filter back in, plus some others
-		add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+		global $post;
+		if ( $post->post_type == 'espresso_events' ) {
+			// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
+			// it uses the_content() for displaying the $post->post_content
+			// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
+			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
+			remove_filter( 'the_content', array( $this, 'event_details' ), 100 );
+			// now load our template
+			$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
+			//now add our filter back in, plus some others
+			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
+			remove_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
+			remove_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
+			remove_filter( 'the_content', array( $this, 'event_venues' ), 130 );
+		}
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return ! empty( $template ) ? $template : $content;
 	}
