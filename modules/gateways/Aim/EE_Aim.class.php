@@ -189,9 +189,11 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			if(!$transaction){
 				$transaction = $total_line_item->transaction();
 			}
+			$order_description = '';
 			$primary_registrant = $transaction->primary_registration();
 			foreach ($total_line_item->get_items() as $line_item) {
 				$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');
+				$order_description .= $line_item->desc().', ';
 //				$attendee = $registration->attendee();
 //				$attendee_full_name = $attendee ? $attendee->full_name() : '';
 //				$ticket = $registration->ticket();
@@ -207,6 +209,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 			//start transaction
 			$this->setField('amount', $grand_total);
+			$this->setField('description',substr(rtrim($order_description, ', '), 0, 255));
 			$this->setField('card_num', $billing_info['_reg-page-billing-card-nmbr-' . $this->_gateway_name]['value']);
 			$this->setField('exp_date', $billing_info['_reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name]['value'] . $billing_info['_reg-page-billing-card-exp-date-year-' . $this->_gateway_name]['value']);
 			$this->setField('card_code', $billing_info['_reg-page-billing-card-ccv-code-' . $this->_gateway_name]['value']);

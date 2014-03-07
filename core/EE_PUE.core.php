@@ -178,7 +178,7 @@ class EE_PUE {
 				'checkPeriod' => '24', //(optional) - use this parameter to indicate how often you want the client's install to ping your server for update checks.  The integer indicates hours.  If you don't include this parameter it will default to 12 hours.
 				'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
 				'options_page_slug' => 'espresso_general_settings',
-				'plugin_basename' => plugin_basename(EE_PLUGINPATH),
+				'plugin_basename' => EE_PLUGIN_BASENAME,
 				'use_wp_update' => FALSE, //if TRUE then you want FREE versions of the plugin to be updated from WP
 				'extra_stats' => $extra_stats
 			);
@@ -269,8 +269,8 @@ class EE_PUE {
 	 * @return boolean           True if update available, false if not.
 	 */
 	public static function is_update_available($basename = '') {
-		if ( empty($basename) )
-			$basename = plugin_basename(EE_PLUGINPATH);
+
+		$basename = ! empty( $basename ) ? $basename : EE_PLUGIN_BASENAME;
 
 		$update = false;
 

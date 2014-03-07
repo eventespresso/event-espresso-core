@@ -324,14 +324,14 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * @param boolean $nuke_old_ee4_data controls whether or not we
 	 * destroy the old ee4 data, or just try initializing ee4 default data
 	 */
-	public function _reset_db($nuke_old_ee4_data = true){
+	public function _reset_db( $nuke_old_ee4_data = TRUE ){
 		EE_Registry::instance()->load_helper('Activation');
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
-		if($nuke_old_ee4_data){
+		if( $nuke_old_ee4_data ){
 			EEH_Activation::delete_all_espresso_cpt_data();
-			EEH_Activation::delete_all_espresso_tables_and_data(false);
+			EEH_Activation::delete_all_espresso_tables_and_data( FALSE );
 		}
-		EE_System::instance()->initialize_db_if_no_migrations_required(true);
+		EE_System::instance()->initialize_db_if_no_migrations_required();
 		EE_System::instance()->redirect_to_about_ee();
 	}	
 

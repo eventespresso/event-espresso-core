@@ -104,10 +104,10 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function deactivate_event_espresso() {
-		deactivate_plugins(EVENT_ESPRESSO_MAIN_FILE);
-//		$active_plugins = array_flip( get_option( 'active_plugins' ));
-//		unset( $active_plugins[ EVENT_ESPRESSO_MAIN_FILE ] );
-//		update_option( 'active_plugins', array_flip( $active_plugins ));	
+		// check permissions 
+		if ( current_user_can( 'activate_plugins' )) {
+			deactivate_plugins( EE_PLUGIN_BASENAME, TRUE );
+		}
 	}
 
 
@@ -446,8 +446,7 @@ class EEH_Activation {
 		//in order to avoid duplicate. When a new version is released (eg 4.2), use that version's data migration code.
 		//if 4.2 doesn't need to migrate anything, and only needs to add a column, you should still create a migration script for it,
 		//but just define the schema changes methods
-		EE_Registry::instance()->load_file(EE_CORE . 'data_migration_scripts','EE_DMS_4_2_0','dms');
-		$current_data_migration_script = new EE_DMS_4_2_0();
+		$current_data_migration_script = EE_Registry::instance()->load_dms( 'EE_DMS_4_2_0' );
 		$current_data_migration_script->schema_changes_before_migration();
 		$current_data_migration_script->schema_changes_after_migration();
 		EE_Data_Migration_Manager::instance()->update_current_database_state_to();
