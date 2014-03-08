@@ -141,7 +141,7 @@ jQuery(document).ready(function($) {
 
 
 	// submit form
-	$('.submit-this-form').click(function() {
+	$('.submit-this-form').click(function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		$(this).closest('form').submit();
