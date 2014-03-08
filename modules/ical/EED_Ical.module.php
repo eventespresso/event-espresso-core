@@ -122,8 +122,11 @@ class EED_Ical  extends EED_Module {
 				// get first related venue and convert to CSV string
 				$venue = $event->venues(array( 'limit'=>1 ));
 				if ( is_array( $venue ) && ! empty( $venue )) {
-					 EE_Registry::instance()->load_helper( 'Venue_View' );
-					$location = espresso_venue_address( 'inline', $venue->ID(), FALSE );
+					$venue = array_shift( $venue );
+					if ( $venue instanceof EE_Venue ) {
+						 EE_Registry::instance()->load_helper( 'Venue_View' );
+						$location = espresso_venue_raw_address( 'inline', $venue->ID(), FALSE );
+					}
 				}
 				// set variables, escape strings, convert timestamps to ics format, etc
 				$filename = $event->slug() . '-' . $datetime->start_date( 'Y-m-d' ) . '.ics';
