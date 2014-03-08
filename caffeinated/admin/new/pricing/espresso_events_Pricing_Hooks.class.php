@@ -373,10 +373,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			//now we just have to add the ticket to all the datetimes its supposed to be with and removing the ticket from datetimes it got removed from.
 			
+
 			//first let's do the add_relation_to()
 			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && ( isset( $dtts_added[0] ) && $dtts_added[0] == '' ) ) ? array() : $dtts_added;
 
 			foreach ( $dtts_added as $dttrow ) {
+				$dttrow = (int) $dttrow;
 				$TKT->_add_relation_to($saved_dtts[$dttrow], 'Datetime');
 
 				//now wait a minute.  Does this tkt have any sold?  Cause if it does then we need to add that to the DTT sold because this DTT is getting added.
@@ -395,6 +397,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	
 			//now let's do the remove_relation_to()
 			foreach ( $dtts_removed as $dttrow ) {
+				$dttrow = (int) $dttrow;
 				//its entirely possible that a datetime got deleted (instead of just removed from relationship.  So make sure we skip over this if the dtt isn't in the saved_dtts array)
 				if ( empty($saved_dtts[$dttrow] ) || ! $saved_dtts[$dttrow] instanceof EE_Datetime )
 					continue;
