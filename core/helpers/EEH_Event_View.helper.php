@@ -193,16 +193,19 @@
 							$html .= ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b>' : '';
 							$html .= $add_breaks ? '<br />' : '';
 							$datetime_description = $datetime->description();
-							$html .= ! empty( $datetime_name ) && ! empty( $datetime_description ) && ! $add_breaks ? ' - ' : '';
-							$html .= ! empty( $datetime_description ) ? $datetime_description : '';
-							$html .= ! empty( $datetime_name ) || ! empty( $datetime_description ) ? '<br/>' : '';
+							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
 							$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $dt_frmt ) . ' &nbsp; &nbsp; ';
-							$html .= $add_breaks ? '<br />' : '';
-							$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $tm_frmt ) . '<br/><br/>';
+							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
+							$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $tm_frmt );
+							$datetime_description = $datetime->description();
+							$html .= ! empty( $datetime_description ) ? '<br/> - ' . $datetime_description : '';
+							$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
+							$html .= '<br/><br/>';
 							$html .= '</li>';
 
 						} else {
 							$html .= $datetime;
+							$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
 						}
 					}
 				}
