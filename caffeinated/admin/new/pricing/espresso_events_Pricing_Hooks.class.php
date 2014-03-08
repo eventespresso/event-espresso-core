@@ -390,10 +390,15 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$new_tkt->_add_relation_to($saved_dtts[$dttrow], 'Datetime' );
 			}
 
+
 			$dtts_removed = empty( $dtts_removed ) || ( is_array( $dtts_removed ) && isset( $dtts_removed[0] ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
 	
 			//now let's do the remove_relation_to()
 			foreach ( $dtts_removed as $dttrow ) {
+				//its entirely possible that a datetime got deleted (instead of just removed from relationship.  So make sure we skip over this if the dtt isn't in the saved_dtts array)
+				if ( empty($saved_dtts[$dttrow] ) || ! $saved_dtts[$dttrow] instanceof EE_Datetime )
+					continue;
+
 				$TKT->_remove_relation_to($saved_dtts[$dttrow], 'Datetime');
 
 				//now wait a minute.  Does this tkt have any sold? Cause if it does then we need to remove it's sold from the DTT_sold.
