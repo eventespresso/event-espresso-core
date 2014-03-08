@@ -203,7 +203,6 @@
 						} else {
 							$html .= $datetime;
 						}
-						$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
 					}
 				}
 				$html .= $format ? '</ul>' : '';
