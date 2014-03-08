@@ -20,7 +20,7 @@
 			<table id="add-new-event-datetime-table" class="datetime-edit-table">
 				<tr>
 					<td class="event-datetime-column date-name-column">
-						<label class="add-new-event-datetime-DTT_name_label" for="add-new-event-datetime-DTT_name-<?php echo $dtt_row; ?>"><?php _e('Name', 'event_espresso'); ?></label>
+						<label class="add-new-event-datetime-DTT_name_label" for="add-new-event-datetime-DTT_name"><?php _e('Name', 'event_espresso'); ?></label>
 						<input type="text" name="add_new_datetime[DTT_name]" id="add-new-event-datetime-DTT_name" class="ee-large-text-inp"  placeholder="<?php _e('Add Title (optional)', 'event_espresso'); ?>">
 					</td>
 					<td class="event-datetime-column date-column">
