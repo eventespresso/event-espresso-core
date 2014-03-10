@@ -1,7 +1,30 @@
 <?php
-
-/*
+/**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author				Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.2
+ *
+ * ------------------------------------------------------------------------
+ *
+ * EE_Payment_Method_Manager
+ *
  * CLass for detecting all payment method types, loading them, and returning them all.
+ *
+ * @package			Event Espresso
+ * @subpackage		core/libraries/payment_methods
+ * @author			Mike Nelson
+ *
+ * ------------------------------------------------------------------------
+ */
+/*
+ * 
  */
 class EE_Payment_Method_Manager{
 	/**
