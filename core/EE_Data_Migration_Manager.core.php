@@ -598,7 +598,8 @@ class EE_Data_Migration_Manager{
 		//or doing running it...
 		$versions_migrated_to = isset($last_migration_script_option['option_name']) ? str_replace(EE_Data_Migration_Manager::data_migration_script_option_prefix,"",$last_migration_script_option['option_name']) : null;
 		
-		//check if it THINKS its a data migration script
+		//check if it THINKS its a data migration script and especially if it's one that HASN'T finished yet
+		//because if it has finished, then it obviously couldn't be the cause of this error, right? (because its all done)
 		if(isset($last_ran_migration_script_properties['class']) && isset($last_ran_migration_script_properties['_status']) && $last_ran_migration_script_properties['_status'] != self::status_completed){
 			//ok then just add this error to its list of errors
 			$last_ran_migration_script_properties['_errors'] = $error_message;
