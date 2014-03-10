@@ -208,10 +208,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 */
 	protected function _validate() {
 		$is_valid = true;
-		foreach($this->_validation_strategies as $validation_strategy){
-			$valid = $validation_strategy->validate();
-			if( ! $valid){
-				$is_valid = false;
+		if(is_array($this->_validation_strategies)){
+			foreach($this->_validation_strategies as $validation_strategy){
+				$valid = $validation_strategy->validate();
+				if( ! $valid){
+					$is_valid = false;
+				}
 			}
 		}
 		return $is_valid;
