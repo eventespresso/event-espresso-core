@@ -124,11 +124,22 @@ class EE_Data_Migration_Manager{
 	
 	
 	private function __construct(){
-		
-		$this->stati_that_indicate_to_continue_migrations = array(self::status_continue,self::status_completed);
-		$this->stati_that_indicate_to_stop_migrations = array(self::status_fatal_error,self::status_no_more_migration_scripts);
-		$this->stati_that_indicate_to_continue_single_migration_script = array(self::status_continue);
-		$this->stati_that_indicate_to_stop_single_migration_script = array(self::status_completed,self::status_fatal_error);//note: status_no_more_migration_scripts doesn't apply
+		$this->stati_that_indicate_to_continue_migrations = array(
+			self::status_continue,
+			self::status_completed
+		);
+		$this->stati_that_indicate_to_stop_migrations = array(
+			self::status_fatal_error,
+			self::status_no_more_migration_scripts
+		);
+		$this->stati_that_indicate_to_continue_single_migration_script = array(
+			self::status_continue
+		);
+		$this->stati_that_indicate_to_stop_single_migration_script = array(
+			self::status_completed,
+			self::status_fatal_error
+			//note: status_no_more_migration_scripts doesn't apply
+		);
 		//make sure we've included teh base migration script, because we may need the EE_Data_Migration_Script_Error class
 		//to be defined, because right now it doesn't get autoloaded on its own
 		EE_Registry::instance()->load_core('Data_Migration_Script_Base');
