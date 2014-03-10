@@ -413,12 +413,107 @@ class PluginUpdateEngineChecker {
 
 
 		if ( !$this->_use_wp_update ) {
+			add_filter( 'upgrader_pre_install', array( $this, 'pre_upgrade_setup'), 10, 2 );
+			add_filter( 'upgrader_post_install', array( $this, 'tidy_up_after_upgrade'), 10, 3 );
+		}
+	}
+
+
+	/**
+	 * This is where we'll hook in to set filters for handling bulk and regular updates (i.e. making sure directory names are setup properly etc.)
+	 * @param  boolean $continue   return true or WP aborts current upgrade process.
+	 * @param  array   $hook_extra This will contain the plugin basename in a 'plugin' key
+	 * @return boolean             We always make sure to return true otherwise wp aborts.
+	 */
+	function pre_upgrade_setup( $continue, $hook_extra ) {
+		if ( !empty( $hook_extra['plugin'] ) && $hook_extra['plugin'] == $this->pluginFile ) {
 			//we need to make sure that the new directory is named correctly
 			add_filter('upgrader_source_selection', array( $this, 'fixDirName'), 10, 3 );
+		}
+		return TRUE;
+	}
+
+
+
+
+	/**
+	 * Tidy's up our plugin upgrade stuff after update is complete so other plugins aren't affected.
+	 *
+	 * @uses
+	 * @param  boolean $continue       return true so wp doesn't abort.
+	 * @param  array   $hook_extra     contains the plugin_basename with the 'plugin' 
+	 *                                 index which we can use to indicate if this is 
+	 *                                 where we want our stuff run
+	 * @param  array   $install_result WP sends off all the things that have been done in 
+	 *                                 an array (post install)
+	 * @return boolean				   if wp_error object is returned then wp aborts.
+	 */
+	function tidy_up_after_upgrade( $continue, $hook_extra, $install_result ) {
+		if ( !empty( $hook_extra['plugin'] ) && $hook_extra['plugin'] == $this->pluginFile ) {
+			//gotta make sure bulk updates for other files don't get messed up!!
+			remove_filter('upgrader_source_selection', array( $this, 'fixDirName'), 10);
 			//maybe clean up any leftover files from upgrades
 			$this->maybe_cleanup_upgrade();
 		}
+		return true;
 	}
+
+
+
+	/**
+	 * This basically is set to fix the directories for our plugins.
+	 *
+	 * Take incoming remote_source file and rename it to match what it should be.
+	 * 
+	 * @param  string $source        This is usually the same as $remote_source but *may* be something else if this has already been filtered
+	 * @param  string $remote_source What WP has set as the source (ee plugins coming from beta.eventespresso.com will be beta.tmp)
+	 * @param  WPPluginUpgrader $wppu 
+	 * @return string renamed file and path
+	 */
+	function fixDirName( $source, $remote_source, $wppu ) {
+		global $wp_filesystem;
+
+		//get out early if this doesn't have a plugin updgrader object.
+		if ( !$wppu instanceof Plugin_Upgrader )
+			return $source;
+
+		//if this is a bulk update then we need an alternate method to verify this is an update we need to modify.
+		if ( $wppu->bulk ) {
+			$url_to_check = $wppu->skin->options['url'];
+			$is_good = strpos( $url_to_check, urlencode($this->pluginFile) ) === FALSE ? FALSE : TRUE;
+		} else {
+			$is_good = isset( $wppu->skin->plugin ) && $wppu->skin->plugin == $this->pluginFile ? TRUE : FALSE;
+		}
+
+		if ( $is_good ) {
+			$new_dir = $wp_filesystem->wp_content_dir() . 'upgrade/' . $this->slug . '/';
+
+			//make new directory if needed.
+			if ( $wp_filesystem->exists( $new_dir ) ) {
+				//delete the existing dir first because we want to make sure clean install
+				$wp_filesystem->delete($new_dir, FALSE, 'd');
+			}
+
+			//now make sure that we DON'T have the directory and we'll create a new one for this.
+			if ( ! $wp_filesystem->exists( $new_dir ) ) {
+				if ( !$wp_filesystem->mkdir( $new_dir, FS_CHMOD_DIR ) )
+					return new WP_Error( 'mkdir_failed_destination', $wppu->strings['mkdir_failed'], $new_dir );
+			}
+
+			//copy original $source into new source
+			$result = copy_dir( $source, $new_dir );
+			if ( is_wp_error($result ) ) {
+				//something went wrong let's just return the original $source as a fallback.
+				return $source;
+			}
+
+			//everything went okay... new source = new dir
+			$source = $new_dir;
+		}
+		return $source;
+	}
+
+
 	
 
 	function hook_into_wp_update_api() {
@@ -914,62 +1009,6 @@ class PluginUpdateEngineChecker {
 
 		return $updates;
 	}
-
-
-	/**
-	 * This basically is set to fix the directories for our plugins.
-	 *
-	 * Take incoming remote_source file and rename it to match what it should be.
-	 * 
-	 * @param  string $source        This is usually the same as $remote_source but *may* be something else if this has already been filtered
-	 * @param  string $remote_source What WP has set as the source (ee plugins coming from beta.eventespresso.com will be beta.tmp)
-	 * @param  WPPluginUpgrader $wppu 
-	 * @return string renamed file and path
-	 */
-	function fixDirName( $source, $remote_source, $wppu ) {
-		global $wp_filesystem; 
-
-		//get out early if this doesn't have a plugin updgrader object.
-		if ( !$wppu instanceof Plugin_Upgrader )
-			return $source;
-
-		//if this is a bulk update then we need an alternate method to verify this is an update we need to modify.
-		if ( $wppu->bulk ) {
-			$url_to_check = $wppu->skin->options['url'];
-			$is_good = strpos( $url_to_check, urlencode($this->pluginFile) ) === FALSE ? FALSE : TRUE;
-		} else {
-			$is_good = isset( $wppu->skin->plugin ) && $wppu->skin->plugin == $this->pluginFile ? TRUE : FALSE;
-		}
-
-		if ( $is_good ) {
-			$new_dir = $wp_filesystem->wp_content_dir() . 'upgrade/' . $this->slug . '/';
-
-			//make new directory if needed.
-			if ( $wp_filesystem->exists( $new_dir ) ) {
-				//delete the existing dir first because we want to make sure clean install
-				$wp_filesystem->delete($new_dir, FALSE, 'd');
-			}
-
-			//now make sure that we DON'T have the directory and we'll create a new one for this.
-			if ( ! $wp_filesystem->exists( $new_dir ) ) {
-				if ( !$wp_filesystem->mkdir( $new_dir, FS_CHMOD_DIR ) )
-					return new WP_Error( 'mkdir_failed_destination', $wppu->strings['mkdir_failed'], $new_dir );
-			}
-
-			//copy original $source into new source
-			$result = copy_dir( $source, $new_dir );
-			if ( is_wp_error($result ) ) {
-				//something went wrong let's just return the original $source as a fallback.
-				return $source;
-			}
-
-			//everything went okay... new source = new dir
-			$source = $new_dir;
-		}
-		return $source;
-	}
-
-
 
 	
 	/**
