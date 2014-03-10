@@ -936,7 +936,7 @@ class PluginUpdateEngineChecker {
 		//if this is a bulk update then we need an alternate method to verify this is an update we need to modify.
 		if ( $wppu->bulk ) {
 			$url_to_check = $wppu->skin->options['url'];
-			$is_good = strpos( $url_to_check, url_encode($this->pluginFile) ) === FALSE ? FALSE : TRUE;
+			$is_good = strpos( $url_to_check, urlencode($this->pluginFile) ) === FALSE ? FALSE : TRUE;
 		} else {
 			$is_good = isset( $wppu->skin->plugin ) && $wppu->skin->plugin == $this->pluginFile ? TRUE : FALSE;
 		}
