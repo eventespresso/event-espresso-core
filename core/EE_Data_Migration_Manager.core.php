@@ -128,8 +128,11 @@ class EE_Data_Migration_Manager{
 	}
 	
 	/**
-	 * Deciphers, from an option's name, what plugin and version it relates to
-	 * @param type $option_name
+	 * Deciphers, from an option's name, what plugin and version it relates to (see _save_migrations_ran to see what the option names are like, but generally they're like
+	 * 'ee_data_migration_script_Core.4.1.0' in 4.2 or 'ee_data_migration_script_4.1.0' befor ethat).
+	 * The option name shouldn't ever be like 'ee_data_migration_script_Core.4.1.0.reg' because it's derived, indirectly, from the data migration's classname,
+	 * which should always be like EE_DMS_%s_%d_%d_%d.dms.php (eg EE_DMS_Core_4_1_0.dms.php)
+	 * @param type $option_name (see 
 	 * @return array where the first item is the plugin slug (eg 'Core','Calendar',etc) and the 2nd is the version of that plugin (eg '4.1.0')
 	 */
 	private function _get_plugin_slug_and_version_string_from_dms_option_name($option_name){
