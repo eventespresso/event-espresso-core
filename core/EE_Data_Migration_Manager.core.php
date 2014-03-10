@@ -102,6 +102,27 @@ class EE_Data_Migration_Manager{
 	var $stati_that_indicate_to_stop_migrations = array();
 	var $stati_that_indicate_to_continue_single_migration_script = array();
 	var $stati_that_indicate_to_stop_single_migration_script = array();
+	
+	/**
+     * 	@var EE_Data_Migration_Manager $_instance
+	 * 	@access 	private 	
+     */
+	private static $_instance = NULL;
+	
+	/**
+	 *@singleton method used to instantiate class object
+	 *@access public
+	 *@return EE_Data_Migratino_Manager instance
+	 */	
+	public static function instance() {
+		// check if class object is instantiated
+		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Data_Migration_Manager )) {
+			self::$_instance = new self();
+		}
+		return self::$_instance;
+	}	
+	
+	
 	private function __construct(){
 		
 		$this->stati_that_indicate_to_continue_migrations = array(self::status_continue,self::status_completed);
@@ -553,24 +574,7 @@ class EE_Data_Migration_Manager{
 		return $this->_data_migration_class_to_filepath_map;
 	}
 	
-	/**
-     * 	@var EE_Data_Migration_Manager $_instance
-	 * 	@access 	private 	
-     */
-	private static $_instance = NULL;
 	
-	/**
-	 *@singleton method used to instantiate class object
-	 *@access public
-	 *@return EE_Data_Migratino_Manager instance
-	 */	
-	public static function instance() {
-		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Data_Migration_Manager )) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}	
 	
 	/**
 	 * Once we have an addon that works with EE4.1, we will actually want to fetch the PUE slugs
