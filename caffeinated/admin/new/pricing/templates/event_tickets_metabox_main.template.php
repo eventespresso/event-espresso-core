@@ -26,6 +26,7 @@
 				<?php echo $datetime_rows; ?>
 			</tbody>
 		</table>
+		<div style="clear:both"></div>
 	</div> <!-- end .event-datetimes-container -->
 	<div id="add-event-datetime" class="event-datetime-row add-dtt-row" style="display:none;">
 		<h5 class="datetime-tickets-heading"><?php _e('Add New Datetime', 'event_espresso'); ?></h5><?php echo $add_new_dtt_help_link; ?>
