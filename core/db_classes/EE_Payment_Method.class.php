@@ -53,8 +53,22 @@ class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
 	protected $_PMD_button_url = NULL;
 	/** Preferred Currency @var PMD_preferred_currency*/ 
 	protected $_PMD_preferred_currency = NULL;
-
-
+	
+	/**
+	 * Surcharge for using this payment method
+	 * @var EE_Price
+	 */
+	protected $_Price = NULL;
+	/**
+	 * ALl events that allow the use of this gateway
+	 * @var EE_Event[]
+	 */
+	protected $_Event = array();
+	/**
+	 * Payments made using this gateway
+	 * @var EE_Payment[]
+	 */
+	protected $_Payment = array();
 
 
 

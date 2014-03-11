@@ -141,6 +141,18 @@ class EE_Payment extends EE_Base_Class{
     *	@var string
     */
 	protected $_PAY_details = NULL;
+	
+	/**
+	 * URL where payment shoudl take place if it's offsite
+	 * @var string
+	 */
+	protected $_PAY_redirect_url = NULL;
+	
+	/**
+	 * like args passed to http_remote_get
+	 * @var array
+	 */
+	protected $_PAY_redirect_args = array();
 
 	
 	
@@ -158,6 +170,12 @@ class EE_Payment extends EE_Base_Class{
 	 * @var EE_Status
 	 */
 	protected $_Status = NULL;
+	
+	/**
+	 *
+	 * @var EE_Payment_Method
+	 */
+	protected $_Payment_Method = NULL;
 
 	
 
@@ -664,6 +682,40 @@ class EE_Payment extends EE_Base_Class{
 	public function extra_meta($query_params = array()){
 		return $this->get_many_related('Extra_Meta', $query_params);
 	}
+	
+	/**
+	 * Gets redirect_url
+	 * @return string
+	 */
+	function redirect_url() {
+		return $this->get('PAY_redirect_url');
+	}
+
+	/**
+	 * Sets redirect_url
+	 * @param string $redirect_url
+	 * @return boolean
+	 */
+	function set_redirect_url($redirect_url) {
+		return $this->set('PAY_redirect_url', $redirect_url);
+	}
+	/**
+	 * Gets redirect_args
+	 * @return array
+	 */
+	function redirect_args() {
+		return $this->get('PAY_redirect_args');
+	}
+
+	/**
+	 * Sets redirect_args
+	 * @param array $redirect_args
+	 * @return boolean
+	 */
+	function set_redirect_args($redirect_args) {
+		return $this->set('PAY_redirect_args', $redirect_args);
+	}
+
 	
 
 }

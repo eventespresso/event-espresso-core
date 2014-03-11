@@ -86,18 +86,21 @@ class EEM_Payment extends EEM_Base {
 				'PAY_timestamp'=> new EE_Datetime_Field('PAY_timestamp', __('Timestamp of when payment was attemped','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'PAY_method'=>new EE_All_Caps_Text_Field('PAY_method', __('User-friendly description of payment','event_espresso'), false, 'CART'),
 				'PAY_amount'=>new EE_Money_Field('PAY_amount', __('Amount Payment should be for','event_espresso'), false, 0),
-				'PAY_gateway'=>new EE_Plain_Text_Field('PAY_gateway', __('Gateway name used for payment','event_espresso'), false, __('Unspecified','event_espresso')),
+				'PMD_ID'=>new EE_Foreign_Key_Int_Field('PMD_ID', __("Payment Method ID", 'event_espresso'), false, NULL, 'Payment_Method'),
 				'PAY_gateway_response'=>new EE_Plain_Text_Field('PAY_gateway_response', __('Response from Gateway about the payment','event_espresso'), false, ''),
 				'PAY_txn_id_chq_nmbr'=>new EE_Plain_Text_Field('PAY_txn_id_chq_nmbr', __('Gateway Transaction ID or Cheque Number','event_espresso'), true, ''),
 				'PAY_po_number'=>new EE_Plain_Text_Field('PAY_po_number', __('Purchase or Sales Number','event_espresso'), true, ''),
 				'PAY_extra_accntng'=>new EE_Simple_HTML_Field('PAY_extra_accntng', __('Extra Account Info','event_espresso'), true, ''),
 				'PAY_via_admin'=>new EE_Boolean_Field('PAY_via_admin', __('Whehter payment made via admin','event_espresso'), false, false),
-				'PAY_details'=>new EE_Serialized_Text_Field('PAY_details', __('Full Gateway response about payment','event_espresso'), true, '')
+				'PAY_details'=>new EE_Serialized_Text_Field('PAY_details', __('Full Gateway response about payment','event_espresso'), true, ''),
+				'PAY_redirect_url'=>new EE_Plain_Text_Field('PAY_redirect_url', __("Redirect URL", 'event_espresso'), true),
+				'PAY_redirect_args'=>new EE_Serialized_Text_Field('PAY_redirect_args', __("Redirection Arguments", 'event_espresso'), true)
 			)
 		);
 		$this->_model_relations = array(
 			'Transaction'=> new EE_Belongs_To_Relation(),
-			'Status'=> new EE_Belongs_To_Relation()
+			'Status'=> new EE_Belongs_To_Relation(),
+			'Payment_Method'=>new EE_Belongs_To_Relation(),
 		);
 		parent::__construct( $timezone );
 	}
