@@ -44,31 +44,40 @@
     float: left;
 }
 
+#datetime-editing-dtts-table {
+    border-collapse: collapse; 
+}
+
+#datetime-editing-dtts-table thead {
+    border-bottom: 2px solid #eee;
+    font-weight: bold;
+}
+
 #add-new-event-datetime-table {
     width: 77%;
 }
 
-.datetime-edit-table td:first-child {
+.datetime-edit-table .datetime-editing-dtts-tbody td:first-child {
     width: 30%;
 }
 
-.datetime-edit-table td:nth-child(2), .datetime-edit-table td:nth-child(3) {
+.datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(2), .datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(3) {
     width: 20%;
 }
 
 
-.datetime-edit-table td:nth-child(4) {
+.datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(4) {
     width: 5%;
 }
 
-.datetime-edit-table td:nth-child(5) {
+.datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(5) {
    width: 5%;
    text-align: right;
    line-height: 1.8em;
    padding-bottom: 5px;
 }
 
-.datetime-edit .datetime-edit-table td:last-child {
+.datetime-edit .datetime-edit-table .datetime-editing-dtts-tbody td:last-child {
     padding-top: 20px;
     width: 20%;
 }
@@ -552,15 +561,23 @@
     }
 }
 
-.add-new-ticket-table td:first-child {
-    width: 40%;
+.add-new-ticket-table .add-new-ticket-shortcut-row td:first-child {
+    width: 30%;
 }
 
-.add-new-ticket-table td:nth-child(2), .add-new-ticket-table td:nth-child(3) {
+.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(2), .add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(3) {
     width: 20%
 }
 
-.add-new-ticket-table td:nth-child(4), .add-new-ticket-table td:nth-child(5) {
+.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(4) {
+    width: 15%;
+}
+
+.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(5) {
+    width: 5%;
+}
+
+.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(6) {
     width: 10%;
 }
 
