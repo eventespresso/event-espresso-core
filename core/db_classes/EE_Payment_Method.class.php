@@ -78,11 +78,12 @@ class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
 	/**
 	 * Checks if there is a payment method class of the given 'PMD_type', and if so returns the classname.
 	 * Otherwise returns a normal EE_Payment_Method
-	 * @param array $props_n_values
+	 * @param array $props_n_values where 'PMD_type' is a gateway name like 'Paypal_Standard','Invoice',etc (basically
+	 * the classname minus 'EEPM_')
 	 * @return string
 	 */
 	private static function _payment_method_type($props_n_values){
-		$type_string = isset($props_n_values['PMD_type']) ? $props_n_values['PMD_type'] : NULL;
+		$type_string = isset($props_n_values['PMD_type']) ? 'EEPM_'.$props_n_values['PMD_type'] : NULL;
 		if(class_exists($type_string)){
 			return $type_string;
 		}else{
