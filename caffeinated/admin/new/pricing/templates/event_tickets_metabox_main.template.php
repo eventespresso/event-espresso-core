@@ -11,8 +11,21 @@
 
 		<!-- this is used by js to calculate what the next datetime row will be and is incremented when a new datetime is "saved". -->
 		<input type="hidden" name="datetime_total_rows" id="datetime-total-rows" value="<?php echo $total_dtt_rows; ?>">
-
-		<?php echo $datetime_rows; ?>
+		<table id="datetime-editing-dtts-table" class="datetime-edit-table">
+			<thead>
+				<tr valign="top">
+					<td><span class="DTT_name_label"><?php _e('Name', 'event_espresso'); ?></span></td>
+					<td><span class="DTT_EVT_start_label"><?php _e('Event Start', 'event_espresso'); ?></span></td>
+					<td><span class="DTT_EVT_end_label"><?php _e('Event End', 'event_espresso'); ?></span></td>
+					<td><span class="DTT_reg_limit_label"><?php _e('Limit', 'event_espresso'); ?></span></td>
+					<td><span class="DTT_sold_label"><?php _e('Sold', 'event_espresso'); ?></span></td>
+					<td></td>
+				</tr>
+			</thead>
+			<tbody class="datetime-editing-dtts-tbody">
+				<?php echo $datetime_rows; ?>
+			</tbody>
+		</table>
 	</div> <!-- end .event-datetimes-container -->
 	<div id="add-event-datetime" class="event-datetime-row add-dtt-row" style="display:none;">
 		<h5 class="datetime-tickets-heading"><?php _e('Add New Datetime', 'event_espresso'); ?></h5><?php echo $add_new_dtt_help_link; ?>

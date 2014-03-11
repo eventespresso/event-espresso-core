@@ -1,11 +1,9 @@
-<div id="edit-datetime-form-container-holder">
-		<div id="event-datetime-DTTNUM" class="event-datetime-row edit-dtt-row"></div>
-</div>
-
 <!-- edit datetime base form -->
-<div id="edit-datetime-form-holder" class="hidden">
-	<?php echo $default_datetime_edit_row; ?>
-</div>
+<table id="edit-datetime-form-holder" class="hidden">
+	<tbody>
+		<?php echo $default_datetime_edit_row; ?>
+	</tbody>
+</table>
 
 
 <!-- retrieved by js to set a new ticket row -->
@@ -45,9 +43,11 @@
 </div>
 
 <!-- available tickets for datetime html -->
-<div id="edit-datetime-available-tickets-holder" class="hidden">
-	<?php echo $default_available_tickets_for_datetime; ?>
-</div>
+<table id="edit-datetime-available-tickets-holder" class="hidden">
+	<tbody>
+		<?php echo $default_available_tickets_for_datetime; ?>
+	</tbody>
+</table>
 
 
 <!-- this will always have existing tickets listed here.  When we create a new ticket they get added to this container so that if a new datetime is created it just pulls from here. -->
