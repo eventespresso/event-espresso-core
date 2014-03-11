@@ -279,6 +279,8 @@ final class EE_Config {
 		EE_Registry::instance()->shortcodes =$this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
 		EE_Registry::instance()->modules = $this->_register_modules();
+		//allow addons to add paymetn methods
+		EE_Registry::instance()->payment_methods = $this->_register_payment_methods();
 	}
 
 
@@ -462,6 +464,24 @@ final class EE_Config {
 		// filter list of installed modules
 		return apply_filters( 'FHEE__EE_Config___register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
+	/**
+	 * 		_register_modules
+	 *
+	 * 		@access private
+	 * 		@return void
+	 */
+	private function _register_payment_methods() {
+		// grab list of installed modules
+		$pm_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
+		// filter list of modules to register
+		$pm_to_register = apply_filters( 'FHEE__EE_Config__register_payment_methods__modules_to_register', $pm_to_register );
+		// loop through folders
+		foreach ( $pm_to_register as $pm_path ) {
+				EE_Config::register_payment_method( $pm_path );
+		}
+		// filter list of installed modules
+		return apply_filters( 'FHEE__EE_Config___register_payment_methods__installed_payment_methods', EE_Registry::instance()->payment_methods );
+	}
 
 
 
@@ -504,7 +524,45 @@ final class EE_Config {
 		return TRUE;
 	}
 	
-
+	/**
+	 * 	register_payment_method- makes core aware of this paymetn method
+	 *
+	 *  @access 	public
+	 *  @param 	string 		$$payment_method_path - full path up to and including module folder
+	 *  @return 	void
+	 */
+	public static function register_payment_method( $payment_method_path = NULL ) {
+		do_action( 'AHEE__EE_Config__register_payment_method__begin',$payment_method_path );
+		$module_ext = '.pm.php';
+		// make all separators match
+		$payment_method_path = rtrim( str_replace( '/\\', DS, $payment_method_path ), DS );
+		// grab and sanitize module name
+		$module_dir = basename( $payment_method_path );
+		// create classname from module directory name
+		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
+		// add class prefix
+		$module_class = 'EEPM_' . $module;
+		// does the module exist ?
+		if ( ! is_readable( $payment_method_path . DS . $module_class . $module_ext )) {
+			$msg = sprintf( __( 'The requested %s payment method file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
+		// load the module class file
+		require_once( $payment_method_path . DS . $module_class . $module_ext );
+		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->stop_timer("Requiring payment method $module_class"); }
+		// verfiy that class exists
+		if ( ! class_exists( $module_class )) {
+			$msg = sprintf( __( 'The requested %s module class does not exist.', 'event_espresso' ), $module_class );
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		// add to array of registered modules
+		EE_Registry::instance()->payment_methods[ $module ] = $payment_method_path . DS . $module_class . $module_ext;
+		return TRUE;
+	}
+	
 
 	/**
 	 * 	_initialize_shortcodes

@@ -92,7 +92,12 @@ final class EE_Registry {
 	 *	@var 	array	$modules
 	 */
 	public $modules = array();
-
+	/**
+	 * Array of payment methods. Keys are their shortnames (eg 'Paypal_Standard', classnames without 'EEPM_')
+	 * and values are their paths
+	 * @var array
+	 */
+	public $payment_methods = array();
 	/**
 	 * 	$widgets
 	 * 	@access 	public
