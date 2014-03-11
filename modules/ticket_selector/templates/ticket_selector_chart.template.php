@@ -14,8 +14,8 @@ $row = 1;
 $ticket_count = count( $tickets );
 foreach ( $tickets as $TKT_ID => $ticket ) {
 //	d( $ticket );
-	$max = 0;
-	$min = 0;
+	$max = $ticket->max();
+	$min = $ticket->min();
 	$remaining = $ticket->remaining();
 	if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 		if ( $max_atndz > 1 ) { 
@@ -25,7 +25,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			// however, the max still can't be higher than what was just set above
 			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
 			// and we also want to restrict the minimum number of tickets by the ticket min setting
-			$min = $ticket->min() > 0 ? $ticket->min() : 1;
+			$min = $ticket->min() > 0 ? $ticket->min() : 0;
 		}
 	}
 			
@@ -85,6 +85,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<?php
 //echo '<br/><b>$max_atndz : ' . $max_atndz . '</b>';
 //echo '<br/><b>$max : ' . $max . '</b>';
+//echo '<br/><b>$min : ' . $min . '</b>';
 //echo '<br/><b>$ticket->is_on_sale() : ' . $ticket->is_on_sale() . '</b>';
 //echo '<br/><b>$ticket->available() : ' . $ticket->available() . '</b>';
 //echo '<br/><b>$remaining : ' . $remaining . '</b>';
@@ -137,7 +138,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 			?>
 				<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
-					<option value="0">&nbsp;0&nbsp;</option>
 				<?php
 					// offer ticket quantities from the min to the max
 					for ( $i = $min; $i <= $max; $i++) { 

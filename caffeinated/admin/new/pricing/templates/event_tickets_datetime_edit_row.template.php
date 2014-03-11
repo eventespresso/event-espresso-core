@@ -23,7 +23,7 @@
 				<span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="datetime-tickets-sold ee-numeric"><?php echo $dtt_sold; ?></span>
 			</td>
 			<td>
-				<div class="ee-editing-container<?php echo $edit_dtt_expanded; ?>"><span data-datetime-row="<?php echo $dtt_row; ?>"  data-context="datetime" class="ticket-icon ee-icon ee-icon-tickets clickable"></span></div><span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $clone_icon; ?>"></span><span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $trash_icon; ?>"<?php echo $show_trash; ?>></span>
+				<div class="ee-editing-container<?php echo $edit_dtt_expanded; ?>"><span data-datetime-row="<?php echo $dtt_row; ?>"  data-context="datetime" class="ticket-icon dashicons dashicons-admin-generic clickable"></span></div><span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $clone_icon; ?>"></span><span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $trash_icon; ?>"<?php echo $show_trash; ?>></span>
 			</td>
 		</tr>
 	</table>

@@ -171,6 +171,11 @@
     padding: 0;
 }
 
+
+.datetime-edit-table .dashicons-admin-generic {
+    margin:0;
+}
+
 .datetime-tickets-sold {
     font-size: 1em;
 }
