@@ -49,6 +49,8 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
+		echo "mijire slurper added hooks';";
+		define('EED_MIJIREH_SLURPER_PATH',EE_CAFF_PATH.'modules'.DS.'Mijireh_Slurper'.DS);
 		add_action('load-post.php',array('EED_Mijireh_Slurper','set_edit_post_page_hooks'));
 		add_action('load-admin.php',array('EED_Mijireh_Slurper','check_for_edit_slurp_page'));
 		add_action('AHEE__EE_Mijireh__settings_end',array('EED_Mijireh_Slurper','add_slurp_link_to_gateway'));
@@ -66,7 +68,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	 * the gateway works fine independent of this module)
 	 */
 	public static function add_slurp_link_to_gateway(){
-		EEH_Template::display_template( EE_MODULES.'mijireh_slurper/templates/additional_content_on_gateway.template.php', array() );
+		EEH_Template::display_template( EED_MIJIREH_SLURPER_PATH.'templates/additional_content_on_gateway.template.php', array() );
 	}
 
 	/**
