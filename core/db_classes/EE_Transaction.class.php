@@ -398,7 +398,8 @@ class EE_Transaction extends EE_Base_Class{
 	 * 	@return EE_Registration[]
 	 */
 	public function registrations( $query_params = array(), $get_cached = FALSE ) {
-		$query_params = ( empty( $query_params ) || ! is_array( $query_params )) && ! $get_cached ? array( 'order_by'=>array( 'Event.EVT_name' =>'ASC', 'Attendee.ATT_lname' =>'ASC', 'Attendee.ATT_fname' =>'ASC' )) : $query_params;
+		$query_params = ( empty( $query_params ) || ! is_array( $query_params )) ? array( 'order_by'=>array( 'Event.EVT_name' =>'ASC', 'Attendee.ATT_lname' =>'ASC', 'Attendee.ATT_fname' =>'ASC' )) : $query_params;
+		$query_params = $get_cached ? array() : $query_params;
 		return $this->get_many_related( 'Registration', $query_params );
 	}
 	
