@@ -121,38 +121,42 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
 	    $TXN = EEM_Transaction::instance();
-	 	
-		if( $results = $TXN->get_revenue_per_day_report( $period ) ) {	
-			//printr( $results, '$registrations_per_day' );
-			$revenue = array();
-			$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
-			$xmax = 0;
-			$ymax = 0;
 
-			foreach ( $results as $result ) {
-				$revenue[] = array( $result->txnDate, (float)$result->revenue );
-				$xmin = strtotime( $result->txnDate ) < strtotime( $xmin ) ? $result->txnDate : $xmin;
-				$xmax = strtotime( $result->txnDate ) > strtotime( $xmax ) ? $result->txnDate : $xmax;
-				$ymax = $result->revenue > $ymax ? $result->revenue : $ymax;
-			}
-			
-			$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
-			$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
-			// calculate # days between our min and max dates				
-			$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
-			
-			$report_params = array(
-				'title' 		=> __( 'Total Revenue per Day' ),
-				'id' 			=> $report_ID,
-				'revenue' => $revenue,												
-				'xmin' 		=> $xmin,
-				'xmax' 		=> $xmax,
-				'ymax' 		=> ceil($ymax * 1.25),
-				'span' 		=> $span,
-				'width'		=> ceil(900 / $span)												
-			);
-			wp_localize_script( $report_JS, 'txnRevPerDay', $report_params );
+	    $results = $TXN->get_revenue_per_day_report( $period );	
+		//printr( $results, '$registrations_per_day' );
+		$revenue = array();
+		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
+		$xmax = 0;
+		$ymax = 0;
+
+		$results = (array) $results;
+
+		foreach ( $results as $result ) {
+			$revenue[] = array( $result->txnDate, (float)$result->revenue );
+			$xmin = strtotime( $result->txnDate ) < strtotime( $xmin ) ? $result->txnDate : $xmin;
+			$xmax = strtotime( $result->txnDate ) > strtotime( $xmax ) ? $result->txnDate : $xmax;
+			$ymax = $result->revenue > $ymax ? $result->revenue : $ymax;
 		}
+		
+		$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
+		$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
+		// calculate # days between our min and max dates				
+		$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
+
+		$report_title = __( 'Total Revenue per Day' );
+		
+		$report_params = array(
+			'title' 		=> $report_title,
+			'id' 			=> $report_ID,
+			'revenue' => $revenue,												
+			'xmin' 		=> $xmin,
+			'xmax' 		=> $xmax,
+			'ymax' 		=> ceil($ymax * 1.25),
+			'span' 		=> $span,
+			'width'		=> ceil(900 / $span),
+			'noTxnMsg'	=> sprintf( __('<h2>%s</h2><p>There are currently no transaction records in the last month for this report.</p>', 'event_espresso'), $report_title )											
+		);
+		wp_localize_script( $report_JS, 'txnRevPerDay', $report_params );
 											
 		return $report_ID;
 	}
@@ -175,27 +179,31 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
 	    $TXN = EEM_Transaction::instance();
-	 
-		if( $results = $TXN->get_revenue_per_event_report( $period ) ) {		
-			//printr( $results, '$registrations_per_event' );
-			$revenue = array();
-			foreach ( $results as $result ) {
-				$event_name = stripslashes( html_entity_decode( $result->event_name, ENT_QUOTES, 'UTF-8' ));
-				$event_name = wp_trim_words( $event_name, 5, '...' );				
-				$revenue[] = array( $event_name, (float)$result->revenue );
-			}	
 
-			$span = $period == 'week' ? 9 : 33;
+	    $results = $TXN->get_revenue_per_event_report( $period );
+	 	
+		//printr( $results, '$registrations_per_event' );
+		$revenue = array();
+		$results = (array) $results;
+		foreach ( $results as $result ) {
+			$event_name = stripslashes( html_entity_decode( $result->event_name, ENT_QUOTES, 'UTF-8' ));
+			$event_name = wp_trim_words( $event_name, 5, '...' );				
+			$revenue[] = array( $event_name, (float)$result->revenue );
+		}	
 
-			$report_params = array(
-				'title' 		=> __( 'Total Revenue per Event' ),
-				'id' 			=> $report_ID,
-				'revenue'	=> $revenue,												
-				'span' 		=> $span,
-				'width'		=> ceil(900 / $span)								
-			);
-			wp_localize_script( $report_JS, 'revenuePerEvent', $report_params );		
-		}
+		$span = $period == 'week' ? 9 : 33;
+
+		$report_title = __( 'Total Revenue per Event' );
+
+		$report_params = array(
+			'title' 		=> $report_title,
+			'id' 			=> $report_ID,
+			'revenue'	=> $revenue,												
+			'span' 		=> $span,
+			'width'		=> ceil(900 / $span),
+			'noTxnMsg'	=> sprintf( __('<h2>%s</h2><p>There are currently no transaction records in the last month for this report.</p>', 'event_espresso'), $report_title )							
+		);
+		wp_localize_script( $report_JS, 'revenuePerEvent', $report_params );
 
 		return $report_ID;
 	}
