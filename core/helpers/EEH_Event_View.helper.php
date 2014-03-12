@@ -275,6 +275,24 @@
 
 
 
+	/**
+	 * 	espresso_event_has_content_or_excerpt
+	 *
+	 *  @access 	public
+	 *  @return 	boolean
+	 */
+	if ( ! function_exists( 'espresso_event_has_content_or_excerpt' )) {
+		function espresso_event_has_content_or_excerpt() {
+			global $post;
+			if ( $post instanceof WP_Post ) {
+				return $post->post_content != '' && $post->post_excerpt != '' ? TRUE : FALSE;
+			}
+			return FALSE;
+		}
+	}
+
+
+
 
 	/**
 	 * espresso_event_content_or_excerpt	 
