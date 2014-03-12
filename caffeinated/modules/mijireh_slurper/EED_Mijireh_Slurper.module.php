@@ -27,7 +27,7 @@
  * ------------------------------------------------------------------------
  */
 class EED_Mijireh_Slurper  extends EED_Module {
-	
+	const slurp_started_transient_name = 'ee_mijireh_slurp_started';
 	const mijireh_slurper_shortcode = '{{mj-checkout-form}}';
 
 	/**
@@ -60,6 +60,10 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	public static function set_edit_post_page_hooks(){
 		add_action('add_meta_boxes',array('EED_Mijireh_Slurper','add_slurp_page_metabox'));
 		add_action('posts_selection',array('EED_Mijireh_Slurper','slurp_or_not'));
+		if(get_transient(EED_Mijireh_Slurper::slurp_started_transient_name)){
+			add_action( 'admin_notices', array('EED_Mijireh_Slurper', 'slurping_in_progress_notice') );
+			delete_transient(EED_Mijireh_Slurper::slurp_started_transient_name);
+		}
 	}
 
 	/**
@@ -68,6 +72,9 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	 */
 	public static function add_slurp_link_to_gateway(){
 		EEH_Template::display_template( EED_MIJIREH_SLURPER_PATH.'templates/additional_content_on_gateway.template.php', array() );
+	}
+	public static function slurping_in_progress_notice(){
+		EEH_Template::display_template( EED_MIJIREH_SLURPER_PATH.'templates/slurping_in_progress_notice.template.php', array() );
 	}
 
 	/**
@@ -211,10 +218,11 @@ class EED_Mijireh_Slurper  extends EED_Module {
 		$redirect_args = $_GET;
 		unset($redirect_args['mijireh_slurp_now']);
 		$url = add_query_arg($redirect_args,admin_url('post.php'));
+		set_transient(EED_Mijireh_Slurper::slurp_started_transient_name,true);
 		// echo "redirect to $url";
 		wp_redirect($url);
 	}
-
+	
 	/**
 	 * 	run - initial module setup
 	 *
