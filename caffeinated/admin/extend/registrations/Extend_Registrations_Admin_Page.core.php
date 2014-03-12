@@ -286,7 +286,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'ymax' 	=> ceil($ymax * 1.25),
 				'span' 	=> $span,
 				'width'	=> ceil(900 / $span),
-				'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no records of registrations in the last month for this report.</p>', 'event_espresso'), $report_title )											
+				'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )											
 			);
 		wp_localize_script( $report_JS, 'regPerDay', $report_params );
 												
@@ -334,7 +334,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'ymax' 	=> ceil($ymax * 1.25),
 			'span' 	=> $span,
 			'width'	=> ceil(900 / $span),
-			'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no records of registrations in the last month for this report.</p>', 'event_espresso'), $report_title )								
+			'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )								
 		);
 		wp_localize_script( $report_JS, 'regPerEvent', $report_params );		
 
