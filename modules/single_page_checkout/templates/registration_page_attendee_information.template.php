@@ -36,7 +36,6 @@ $prev_ticket = '';
 if ( $event_queue['total_items'] > 0 ) {
 	foreach ( $event_queue['items'] as $line_item => $item ) {
 		$att_nmbr++;			
-		if ( $item['attendee_questions'] != '' ) { 
 ?>
 
 		<div id="spco-attendee-panel-dv-<?php echo $line_item;?>" class="spco-attendee-panel-dv">		
@@ -77,9 +76,18 @@ if ( $event_queue['total_items'] > 0 ) {
   				<legend class="spco-attendee-lgnd smaller-text"><?php echo __('Attendee #', 'event_espresso') . $att_nmbr;?></legend>
 
 		<?php 
-			//do an action before the questions output, including the item and count 
-			echo do_action( 'AHEE__registration_page_registration_questions__template___before_questions', $item, $att_nmbr );
-			echo $item['attendee_questions'];
+			if ( $item['attendee_questions'] ) {
+				//do an action before the questions output, including the item and count 
+				echo do_action( 'AHEE__registration_page_registration_questions__template___before_questions', $item, $att_nmbr );
+				echo $item['attendee_questions'];
+			} else {
+			?>
+				<p id="spco-auto-copy-attendee-pg" class="smaller-text lt-grey-text">
+					<?php _e('This ticket type does not require any information for additional attendees, so attendee #1\'s information will be used for it\'s registration purposes.', 'event_espresso'); ?>
+				</p>						
+			<?php	
+				
+			}
 			
 			if ( $att_nmbr == 1 ) { ?>
 					<input type="hidden" id="primary-attendee" name="qstn[primary_attendee]" value="<?php echo $prmy_att_input_name ?>" />
@@ -147,28 +155,6 @@ if ( $event_queue['total_items'] > 0 ) {
 			
 		</div>			
 <?php	
-					
-				} else {
-					 if ( $att_nmbr == 1 ) {
-			?>
-		<div id="spco-attendee-panel-dv-<?php echo $line_item;?>" class="spco-attendee-panel-dv">		
-			<h3 id="event_title-<?php echo $item['ticket']->ID() ?>" class="big-event-title-hdr">
-				<?php echo $item['event']->name(); ?>				
-			</h3>
-			<fieldset id="spco-attendee-wrap-<?php echo $line_item;?>" class="spco-attendee-wrap-fs">
- 				<h6><?php _e('No information is required to attend this event. Please proceed to the next Step', 'event_espresso'); ?></h6>
-				<input
-						type="hidden"
-						id="no-questions"
-						name="qstn[]"
-						value="0"
-				/>					
-			</fieldset>			
-		</div>			
-		<?php
-					
-				}
-			}
 			echo $item['additional_attendee_reg_info'];
 			$prev_event = $item['event']->ID();
 			$prev_ticket = $item['ticket']->ID(); 
