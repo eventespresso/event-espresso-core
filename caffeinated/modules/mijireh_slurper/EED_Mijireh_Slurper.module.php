@@ -151,7 +151,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 		$settings = $mijireh_gateway->settings();
 		$access_key = $settings['access_key'];
 		EEH_Template::display_template(
-			EE_MODULES.'mijireh_slurper/templates/mijireh_slurp_page_metabox.template.php', 
+			EED_MIJIREH_SLURPER_PATH.'templates/mijireh_slurp_page_metabox.template.php', 
 			 array(
 				 'mijireh_image_url'=>EE_GATEWAYS_URL.'Mijireh/lib/mijireh-checkout-logo.png',
 				 'access_key'=>$access_key,
