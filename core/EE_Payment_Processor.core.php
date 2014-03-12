@@ -44,7 +44,7 @@ class EE_Payment_Processor{
 	}	
 	/**
 	 * Using the selected gateway, processes the payment for that transaction. 
-	 * @param int $payment_method_id ID of the payment method to use
+	 * @param int $payment_method ID of the payment method to use
 	 * @param EE_Transaction $transaction
 	 * @param array $billing_info array of simple-key-value-pairs for cc details, billing address, etc
 	 * @param string $success_url string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
@@ -54,20 +54,17 @@ class EE_Payment_Processor{
 	 * @return EE_Payment
 	 * @throws EE_Error
 	 */
-	public function process_payment($payment_method_id,$transaction, $billing_info = null, $success_url = null,$fail_url = null, $method = 'CART', $amount = null ){
-		$payment = EE_Payment::new_instance(array(
-								'TXN_ID' => $transaction->ID(),
-								'STS_ID' => EEM_Payment::status_id_failed,
-								'PAY_timestamp' => current_time('mysql',false),
-								'PAY_method' => $method,
-								'PAY_amount' => $amount !== NULL ? $amount : $transaction->total(),
-								'PMD_ID' => $payment_method_name,
-								'PAY_gateway_response' => $message,
-								'PAY_txn_id_chq_nmbr' => isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null,
-								'PAY_po_number' => NULL,
-								'PAY_extra_accntng' => $primary_registration_code,
-								'PAY_via_admin' => false,
-								'PAY_details' => (array) $PayPalResult));
+	public function process_payment($payment_method,$transaction, $billing_info = null, $success_url = null,$fail_url = null, $method = 'CART', $amount = null ){
+		if(is_int($payment_method)){
+			$payment_method = EEM_Payment_Method::instance()->get_one_by_ID($payment_method);
+		}elseif(is_string($payment_method)){
+			$payment_method = EEM_Payment_Method::instance()->get_one(array(array('PAY_slug'=>$payment_method)));
+		}elseif($payment_method instanceof EEPM_Base){
+			//just leave it as-is. It's fine.
+		}else{
+			throw new EE_Error(sprintf(__("Payment Processor is expected to be passed a payment method ID, slug, or instance. It was none of those ('%s')", "event_espresso"),$payment_method));
+		}
+		return $payment_method->process_payment($transaction,$billing_info,$success_url,$fail_url,$method,$amount);
 	}
 	
 	public function get_ipn_url_for_gateway($gateway_name){

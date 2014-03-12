@@ -93,12 +93,6 @@ final class EE_Registry {
 	 */
 	public $modules = array();
 	/**
-	 * Array of payment methods. Keys are their shortnames (eg 'Paypal_Standard', classnames without 'EEPM_')
-	 * and values are their paths
-	 * @var array
-	 */
-	public $payment_methods = array();
-	/**
 	 * 	$widgets
 	 * 	@access 	public
 	 *	@var 	array	$widgets
@@ -288,7 +282,8 @@ final class EE_Registry {
 			EE_LIBRARIES,
 			EE_LIBRARIES . 'messages' . DS,
 			EE_LIBRARIES . 'shortcodes' . DS,
-			EE_LIBRARIES . 'qtips' . DS
+			EE_LIBRARIES . 'qtips' . DS,
+			EE_LIBRARIES . 'payment_methods' . DS,
 		);
 		// retreive instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'lib', $arguments, FALSE, TRUE, $load_only );

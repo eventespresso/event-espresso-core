@@ -189,6 +189,9 @@ abstract class EE_Base_Class{
 			$model->add_to_entity_map($this);
 	}
 	}
+	public function get_class($obj){
+		return get_class($obj);
+	}
 
 
 

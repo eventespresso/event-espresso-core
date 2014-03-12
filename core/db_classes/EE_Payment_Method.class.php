@@ -40,7 +40,7 @@ class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
 	/** Surcharge Price @var PRC_ID*/ 
 	protected $_PRC_ID = NULL;
 	/** Debug Mode On? @var PMD_debug_model*/ 
-	protected $_PMD_debug_model = NULL;
+	protected $_PMD_debug_mode = NULL;
 	/** Logging On? @var PMD_logging*/ 
 	protected $_PMD_logging = NULL;
 	/** User ID @var PMD_wp_user_id*/ 
@@ -69,25 +69,29 @@ class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
 	 * @var EE_Payment[]
 	 */
 	protected $_Payment = array();
-
+	/**
+	 * Payment Method type object, which has all the info about this type of payment method,
+	 * including functions for processing payments, to get settings forms, etc.
+	 * @var EEPM_Base
+	 */
+	protected $_type_obj = NULL;
 
 
 	/**
 	 * 
 	 * @param type $props_n_values
+	 * @param type $timezone
 	 * @return EE_Payment_Method
 	 */
 	public static function new_instance( $props_n_values = array()) {
 		$classname = __CLASS__;
-		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );
-		$classname = self::_payment_method_type($props_n_values);
-		return $has_object ? $has_object : new $classname( $props_n_values, FALSE, $timezone );
+		$has_object = parent::_check_for_object( $props_n_values, $classname );
+		return $has_object ? $has_object : new self( $props_n_values, FALSE );
 	}
 
 	
-	public static function new_instance_from_db ( $props_n_values = array(), $timezone = NULL ) {
-		$classname = self::_payment_method_type($props_n_values);
-		return new $classname( $props_n_values, TRUE, $timezone );
+	public static function new_instance_from_db ( $props_n_values = array()) {
+		return new self( $props_n_values, TRUE );
 	}
 	/**
 	 * Checks if there is a payment method class of the given 'PMD_type', and if so returns the classname.
@@ -97,9 +101,10 @@ class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
 	 * @return string
 	 */
 	private static function _payment_method_type($props_n_values){
-		$type_string = isset($props_n_values['PMD_type']) ? 'EEPM_'.$props_n_values['PMD_type'] : NULL;
-		if(class_exists($type_string)){
-			return $type_string;
+		EE_Registry::instance()->load_lib('Payment_Method_Manager');
+		$type_string = isset($props_n_values['PMD_type']) ? $props_n_values['PMD_type'] : NULL;
+		if(EE_Payment_Method_Manager::instance()->payment_method_exists($type_string)){
+			return 'EEPM_'.$type_string;
 		}else{
 			return __CLASS__;
 		}
@@ -297,5 +302,56 @@ class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
 	function set_wp_user_id($wp_user_id) {
 		return $this->set('PMD_wp_user_id', $wp_user_id);
 	}
-
+//	/**
+//	 * If a model name is provided (eg Registration), gets the model classname for that model.
+//	 * Also works if a model class's classname is provided (eg EE_Registration).
+//	 * @return string like EEM_Attendee
+//	 */
+//	private static function _get_model_classname( $model_name = null){
+//		return 'EEM_Payment_Method';
+//	}
+//	/**
+//	 * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
+//	 * @param string $model_classname
+//	 * @return EEM_Base
+//	 */
+//	protected static function _get_model_instance_with_name($model_classname, $timezone = NULL){
+//		$model_classname = str_replace( 'EEM_', '', $model_classname );
+//		$model = EE_Registry::instance()->load_model( $model_classname );
+//		$model->set_timezone( $timezone );
+//		return $model;
+//	}
+//	
+//	public function get_model() {
+//		return EEM_Payment_Method::instance();
+//	}
+//	/**
+//	 * returns the name of the primary key attribute
+//	 * @return string
+//	 */
+//	protected static function _get_primary_key_name( $classname = NULL ){
+//		if( ! $classname){
+//			throw new EE_Error(sprintf(__("What were you thinking calling _get_primary_key_name(%s)", "event_espresso"),$classname));
+//		}
+//		return self::_get_model( $classname )->get_primary_key_field()->get_name();
+//	}
+	
+	/**
+	 * Gets the payment method type for this payment method instance
+	 * @return EEPM_Base
+	 * @throws EE_Error
+	 */
+	public function type_obj(){
+		if( ! $this->_type_obj){
+			EE_Registry::instance()->load_lib('Payment_Method_Manager');
+			if(EE_Payment_Method_Manager::instance()->payment_method_exists($this->type())){
+				$class_name = 'EEPM_'.$this->type();
+				$r = new ReflectionClass($class_name);
+				$this->_type_obj = $r->newInstanceArgs(array($this));
+			}else{
+				throw new EE_Error(__("payment method of type '%s' doesnt exist","event_espresso"),$type_string);
+			}
+		}
+		return $this->_type_obj;
+	}	
 }

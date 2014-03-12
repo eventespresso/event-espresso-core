@@ -546,6 +546,11 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function init() {
+//		$pms = EEM_Payment_Method::instance()->get_all();
+//		d($pms);
+//		foreach($pms as $pm){
+//			d($pm->type_obj());
+//		}
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
