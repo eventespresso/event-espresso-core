@@ -15,20 +15,25 @@ global $post;
 		edit_post_link( __( 'Edit', 'event_espresso' ), '<span class="edit-link">', '</span>' );
 	?>
 	</div>
-<?php endif;  ?>
+<?php 
+endif; 
+$event_phone = espresso_event_phone( $post->ID, FALSE );
+if ( espresso_event_has_content_or_excerpt() || $event_phone != '' ) : ?>
 
 	<h3 class="about-event-h3 ee-event-h3">
 		<span class="ee-icon ee-icon-event"></span><?php _e( 'Event Details', 'event_espresso' ); ?>
 	</h3>
-	<?php if ( espresso_event_phone( $post->ID, FALSE ) != '' ) : ?>
+	<?php endif;  ?>
+	<?php if ( $event_phone != '' ) : ?>
 	<p>
-		<span class="small-text"><strong><?php _e( 'Event Phone:', 'event_espresso' ); ?> </strong></span> <?php espresso_event_phone( $post->ID ); ?>
+		<span class="small-text"><strong><?php _e( 'Event Phone:', 'event_espresso' ); ?> </strong></span> <?php echo $event_phone; ?>
 	</p>
 <?php endif;  ?>
 <?php 
 	do_action( 'AHEE_event_details_before_the_content', $post );	
 	espresso_event_content_or_excerpt();
 	do_action( 'AHEE_event_details_after_the_content', $post ); 
-  ?>
+ ?>
+
 </div>
 <!-- .event-content -->
