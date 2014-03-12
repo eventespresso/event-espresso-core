@@ -725,6 +725,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	
 	/**
+	*	is_primary_registrant?
+	* 		@access		public
+	*/	
+	public function is_primary_registrant() {
+		return $this->get('REG_count') == 1 ? TRUE : FALSE;
+	}
+
+
+	
+	/**
 	*		get  Attendee Number
 	* 		@access		public
 	*/	

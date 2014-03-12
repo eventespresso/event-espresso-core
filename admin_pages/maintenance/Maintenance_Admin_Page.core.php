@@ -137,44 +137,53 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 //		dd($dm);
 		//it all depends if we're in maintenance model level 1 (frontend-only) or
 		//level 2 (everything except maintenance page)
-		switch(EE_Maintenance_Mode::instance()->level()){
-			case EE_Maintenance_Mode::level_0_not_in_maintenance:
-			case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
-				$show_maintenance_switch = true;
-				$show_backup_db_text = false;
-				$show_migration_progress = false;
-				$script_names = array();
-				$addons_should_be_upgraded_first = false;
-				break;
-			case EE_Maintenance_Mode::level_2_complete_maintenance:
-				$show_maintenance_switch = false;
-				$show_migration_progress = true;
-				if(isset($this->_req_data['continue_migration'])){
+		try{
+			//in case an exception is thrown while trying to handle migrations
+			switch(EE_Maintenance_Mode::instance()->level()){
+				case EE_Maintenance_Mode::level_0_not_in_maintenance:
+				case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
+					$show_maintenance_switch = true;
 					$show_backup_db_text = false;
-				}else{
-					$show_backup_db_text = true;
-				}
-				$scripts_needing_to_run = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
-				$addons_should_be_upgraded_first = EE_Data_Migration_Manager::instance()->addons_need_updating();
-				$script_names = array();
-				$current_script = NULL;
-				foreach($scripts_needing_to_run as $script){
-					if($script instanceof EE_Data_Migration_Script_Base){
-						if( ! $current_script){
-							$current_script = $script;
-							$current_script->migration_page_hooks();
-						}
-						$script_names[] = $script->pretty_name();
+					$show_migration_progress = false;
+					$script_names = array();
+					$addons_should_be_upgraded_first = false;
+					break;
+				case EE_Maintenance_Mode::level_2_complete_maintenance:
+					$show_maintenance_switch = false;
+					$show_migration_progress = true;
+					if(isset($this->_req_data['continue_migration'])){
+						$show_backup_db_text = false;
+					}else{
+						$show_backup_db_text = true;
 					}
-				}
-				break;
+					$scripts_needing_to_run = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
+					$addons_should_be_upgraded_first = EE_Data_Migration_Manager::instance()->addons_need_updating();
+					$script_names = array();
+					$current_script = NULL;
+					foreach($scripts_needing_to_run as $script){
+						if($script instanceof EE_Data_Migration_Script_Base){
+							if( ! $current_script){
+								$current_script = $script;
+								$current_script->migration_page_hooks();
+							}
+							$script_names[] = $script->pretty_name();
+						}
+					}
+					break;
+			}
+			$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
+			$exception_thrown = false;
+		}catch(EE_Error $e){
+			$most_recent_migration = new EE_Data_Migration_Script_Error();
+			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
+			$exception_thrown = true;
 		}
 		$current_db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
-		$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
-		if($most_recent_migration && 
-				$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
-				$most_recent_migration->is_borked()
-				){
+		if($exception_thrown || 
+				(	$most_recent_migration && 
+					$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
+					$most_recent_migration->is_borked()
+				)){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_was_borked_page.template.php';
 			$this->_template_args['reset_db_page_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'reset_db'), EE_MAINTENANCE_ADMIN_URL);
 		}elseif($addons_should_be_upgraded_first){
@@ -193,6 +202,14 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				$show_most_recent_migration = false;
 				$show_continue_current_migration_script = false;
 			}
+		
+			if(isset($current_script)){
+				list($plugin_slug,$new_version) = $current_script->migrates_to_version();
+				$this->_template_args = array_merge($this->_template_args,array(
+					'current_db_state'=>  sprintf(__("EE%s (%s)", "event_espresso"), isset($current_db_state[$plugin_slug]) ? $current_db_state[$plugin_slug] : 3,$plugin_slug),
+					'next_db_state'=>isset($current_script) ? sprintf(__("EE%s (%s)", 'event_espresso'),$new_version,$plugin_slug) : NULL));
+			}
+			
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
 			$this->_template_args = array_merge($this->_template_args,array(
 			'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
@@ -203,8 +220,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
 			'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'start_with_fresh_ee4_db'), EE_MAINTENANCE_ADMIN_URL),
 			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL), 
-			'current_db_state'=>  sprintf(__("EE%s", "event_espresso"),$current_db_state),
-			'next_db_state'=>isset($current_script) ? sprintf(__("EE%s", 'event_espresso'),$current_script->migrates_to_version()) : NULL,
 			'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
 		));
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't

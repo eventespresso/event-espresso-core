@@ -90,7 +90,8 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 					break;
 				case EE_Maintenance_Mode::level_2_complete_maintenance:
 						echo '<div class="error">
-						<p>'. sprintf(__("Event Espresso is in COMPLETE MAINTENANCE MODE because your database needs to migrated. This means Event Espresso is disabled (both wp-admin pages and frontend event registration) until you run the migrations. Visit the %s Maintenance Page %s.", "event_espresso"),"<a href='$maintenance_page_url'>","</a>").
+						<p>'. sprintf(__("As part of the process for updating Event Espresso, your database also
+needs to be updated. Event Espresso is in COMPLETE MAINTENANCE MODE (both WordPress admin pages and front-end event registration pages are disabled) until you run the database update script. %s Visit the Maintenance Page to get started,%s it only takes a moment.", "event_espresso"),"<a href='$maintenance_page_url'>","</a>").
 					'</div>';
 					break;
 			}

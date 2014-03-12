@@ -241,6 +241,11 @@
 	background: url('../images/external-link.png') top right no-repeat;
 }
 
+.ee-icon-only-lnk {
+	margin: 0 1em;
+	border: none !important;
+	outline: none !important;
+}
 
 /******************* UPCOMING EVENTS WIDGET ****************** */
 
@@ -328,7 +333,7 @@
 	background-color: #4EBFDE;
 	color: #fff !important;
 }
-
+.ee-button:active { top:-1px; }
 
 /* REGISTER BUTTON */
 
@@ -774,7 +779,7 @@ input.ee-register-button {
 	vertical-align: text-top;
 }
 
-
+.submit-this-form,
 .display-the-hidden,
 .hide-the-displayed,
 .ee-form-cancel-new-state-lnk {
@@ -815,6 +820,56 @@ article .espresso_venues {
 .espresso_events,
 .espresso_venues {
 	margin-bottom: 48px;
+}
+
+
+/******************* iCal ****************** */
+
+.ee-ical-lnk,
+.ee-ical-lnk:active,
+.ee-ical-lnk:visited {
+	margin:0 1em;
+	text-decoration: none;
+	border:none !important;
+	line-height: 1.25em;
+	font-size:1.25em!important;
+	outline: none !important;
+}
+.ee-ical-btn,
+.ee-ical-btn:active,
+.ee-ical-btn:visited {
+	padding: .1em .25em .03em !important;
+	margin:.1em 1em 0;
+	text-decoration: none;
+	line-height: 1.2em;
+	font-size:1em!important;
+}
+.ee-ical-btn span { margin:0  !important; }
+
+.ee-ical-btn {
+}
+
+.download-iCal-frm {
+	display: inline-block;
+	margin:0 1em;
+}
+
+.ee-ical-sbmt {
+	display: inline-block;
+	font-family: 'dashicons' !important;
+	font-size: .9em;
+ 	font-style: normal;
+	font-weight: 400;
+	font-variant: normal;
+	line-height: 1;
+	padding:.25em .4em !important;
+	speak: none;
+    	text-align: center;
+    	text-decoration: inherit;
+	text-transform: none !important;
+	vertical-align: middle;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;	
 }
 
 /*******************************************************/

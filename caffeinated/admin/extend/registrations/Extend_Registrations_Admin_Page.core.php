@@ -254,37 +254,41 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
-	 
-		if( $results = $REG->get_registrations_per_day_report( $period ) ) {		
-			//printr( $results, '$registrations_per_day' );
-			$regs = array();
-			$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
-			$xmax = 0;
-			$ymax = 0;
-			foreach ( $results as $result ) {
-				$regs[] = array( $result->regDate, (int)$result->total );
-				$xmin = strtotime( $result->regDate ) < strtotime( $xmin ) ? $result->regDate : $xmin;
-				$xmax = strtotime( $result->regDate ) > strtotime( $xmax ) ? $result->regDate : $xmax;
-				$ymax = $result->total > $ymax ? $result->total : $ymax;
-			}
-			
-			$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
-			$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
-			// calculate # days between our min and max dates				
-			$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
-			
-			$report_params = array(
-					'title' 	=> __( 'Total Registrations per Day', 'event_espresso' ),
-					'id' 		=> $report_ID,
-					'regs' 	=> $regs,												
-					'xmin' 	=> $xmin,
-					'xmax' 	=> $xmax,
-					'ymax' 	=> ceil($ymax * 1.25),
-					'span' 	=> $span,
-					'width'	=> ceil(900 / $span)												
-				);
-			wp_localize_script( $report_JS, 'regPerDay', $report_params );
+
+	    $results = $REG->get_registrations_per_day_report( $period );
+
+		//printr( $results, '$registrations_per_day' );
+		$regs = array();
+		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
+		$xmax = 0;
+		$ymax = 0;
+		$results = (array) $results;
+		foreach ( $results as $result ) {
+			$regs[] = array( $result->regDate, (int)$result->total );
+			$xmin = strtotime( $result->regDate ) < strtotime( $xmin ) ? $result->regDate : $xmin;
+			$xmax = strtotime( $result->regDate ) > strtotime( $xmax ) ? $result->regDate : $xmax;
+			$ymax = $result->total > $ymax ? $result->total : $ymax;
 		}
+		
+		$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
+		$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
+		// calculate # days between our min and max dates				
+		$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
+
+		$report_title = __( 'Total Registrations per Day', 'event_espresso' );
+		
+		$report_params = array(
+				'title' 	=> $report_title,
+				'id' 		=> $report_ID,
+				'regs' 	=> $regs,												
+				'xmin' 	=> $xmin,
+				'xmax' 	=> $xmax,
+				'ymax' 	=> ceil($ymax * 1.25),
+				'span' 	=> $span,
+				'width'	=> ceil(900 / $span),
+				'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )											
+			);
+		wp_localize_script( $report_JS, 'regPerDay', $report_params );
 												
 		return $report_ID;
 	}
@@ -308,28 +312,31 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
-	 
-		if( $results = $REG->get_registrations_per_event_report( $period ) ) {		
-			//printr( $results, '$registrations_per_event' );
-			$regs = array();
-			$ymax = 0;
-			foreach ( $results as $result ) {
-				$regs[] = array( $result->event_name, (int)$result->total );
-				$ymax = $result->total > $ymax ? $result->total : $ymax;
-			}	
 
-			$span = $period == 'week' ? 9 : 33;
+	    $results = $REG->get_registrations_per_event_report( $period );
+		//printr( $results, '$registrations_per_event' );
+		$regs = array();
+		$ymax = 0;
+		$results = (array) $results;
+		foreach ( $results as $result ) {
+			$regs[] = array( $result->event_name, (int)$result->total );
+			$ymax = $result->total > $ymax ? $result->total : $ymax;
+		}	
 
-			$report_params = array(
-				'title' 	=> __( 'Total Registrations per Event', 'event_espresso' ),
-				'id' 		=> $report_ID,
-				'regs' 	=> $regs,												
-				'ymax' 	=> ceil($ymax * 1.25),
-				'span' 	=> $span,
-				'width'	=> ceil(900 / $span)								
-			);
-			wp_localize_script( $report_JS, 'regPerEvent', $report_params );		
-		}
+		$span = $period == 'week' ? 9 : 33;
+
+		$report_title = __( 'Total Registrations per Event', 'event_espresso' );
+
+		$report_params = array(
+			'title' 	=> $report_title,
+			'id' 		=> $report_ID,
+			'regs' 	=> $regs,												
+			'ymax' 	=> ceil($ymax * 1.25),
+			'span' 	=> $span,
+			'width'	=> ceil(900 / $span),
+			'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )								
+		);
+		wp_localize_script( $report_JS, 'regPerEvent', $report_params );		
 
 		return $report_ID;
 	}
