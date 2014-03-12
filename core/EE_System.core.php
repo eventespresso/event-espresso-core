@@ -113,6 +113,7 @@ final class EE_System {
 		// load a few helper files
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// load EE_Config, EE Textdomain, etc
 		add_action( 'plugins_loaded', array( $this,'load_configuration' ), 3 );
 		// you wanna get going? I wanna get going... let's get going!
