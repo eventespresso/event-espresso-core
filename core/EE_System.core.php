@@ -287,7 +287,7 @@ final class EE_System {
 		add_action( 'init', array( $this, 'init' ), 3 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		// whether on frontend or backend, load EE_Admin's toolbar. but not if its an ajax request
-		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance && ! defined( 'DOING_AJAX' )){
+		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance && ! defined( 'DOING_AJAX' ) && current_user_can( 'administrator' )) {
 			add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 		}
 		do_action( 'AHEE__EE_System__activate_or_initialize__complete', $this );
