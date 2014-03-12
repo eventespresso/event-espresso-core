@@ -254,37 +254,38 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
-	 
-		if( $results = $REG->get_registrations_per_day_report( $period ) ) {		
-			//printr( $results, '$registrations_per_day' );
-			$regs = array();
-			$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
-			$xmax = 0;
-			$ymax = 0;
-			foreach ( $results as $result ) {
-				$regs[] = array( $result->regDate, (int)$result->total );
-				$xmin = strtotime( $result->regDate ) < strtotime( $xmin ) ? $result->regDate : $xmin;
-				$xmax = strtotime( $result->regDate ) > strtotime( $xmax ) ? $result->regDate : $xmax;
-				$ymax = $result->total > $ymax ? $result->total : $ymax;
-			}
-			
-			$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
-			$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
-			// calculate # days between our min and max dates				
-			$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
-			
-			$report_params = array(
-					'title' 	=> __( 'Total Registrations per Day', 'event_espresso' ),
-					'id' 		=> $report_ID,
-					'regs' 	=> $regs,												
-					'xmin' 	=> $xmin,
-					'xmax' 	=> $xmax,
-					'ymax' 	=> ceil($ymax * 1.25),
-					'span' 	=> $span,
-					'width'	=> ceil(900 / $span)												
-				);
-			wp_localize_script( $report_JS, 'regPerDay', $report_params );
+
+	    $results = $REG->get_registrations_per_day_report( $period );
+
+		//printr( $results, '$registrations_per_day' );
+		$regs = array();
+		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
+		$xmax = 0;
+		$ymax = 0;
+		$results = (array) $results;
+		foreach ( $results as $result ) {
+			$regs[] = array( $result->regDate, (int)$result->total );
+			$xmin = strtotime( $result->regDate ) < strtotime( $xmin ) ? $result->regDate : $xmin;
+			$xmax = strtotime( $result->regDate ) > strtotime( $xmax ) ? $result->regDate : $xmax;
+			$ymax = $result->total > $ymax ? $result->total : $ymax;
 		}
+		
+		$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
+		$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
+		// calculate # days between our min and max dates				
+		$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
+		
+		$report_params = array(
+				'title' 	=> __( 'Total Registrations per Day', 'event_espresso' ),
+				'id' 		=> $report_ID,
+				'regs' 	=> $regs,												
+				'xmin' 	=> $xmin,
+				'xmax' 	=> $xmax,
+				'ymax' 	=> ceil($ymax * 1.25),
+				'span' 	=> $span,
+				'width'	=> ceil(900 / $span)												
+			);
+		wp_localize_script( $report_JS, 'regPerDay', $report_params );
 												
 		return $report_ID;
 	}
