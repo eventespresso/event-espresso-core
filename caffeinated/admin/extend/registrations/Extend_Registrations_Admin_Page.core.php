@@ -284,7 +284,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'ymax' 	=> ceil($ymax * 1.25),
 				'span' 	=> $span,
 				'width'	=> ceil(900 / $span),
-				'no_reg_message' => __('<p>There are currently no records of registrations in the last month.</p>', 'event_espresso')												
+				'noRegsMsg' => __('<p>There are currently no records of registrations in the last month for this report.</p>', 'event_espresso')												
 			);
 		wp_localize_script( $report_JS, 'regPerDay', $report_params );
 												
@@ -310,28 +310,29 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
-	 
-		if( $results = $REG->get_registrations_per_event_report( $period ) ) {		
-			//printr( $results, '$registrations_per_event' );
-			$regs = array();
-			$ymax = 0;
-			foreach ( $results as $result ) {
-				$regs[] = array( $result->event_name, (int)$result->total );
-				$ymax = $result->total > $ymax ? $result->total : $ymax;
-			}	
 
-			$span = $period == 'week' ? 9 : 33;
+	    $results = $REG->get_registrations_per_event_report( $period );
+		//printr( $results, '$registrations_per_event' );
+		$regs = array();
+		$ymax = 0;
+		$results = (array) $results;
+		foreach ( $results as $result ) {
+			$regs[] = array( $result->event_name, (int)$result->total );
+			$ymax = $result->total > $ymax ? $result->total : $ymax;
+		}	
 
-			$report_params = array(
-				'title' 	=> __( 'Total Registrations per Event', 'event_espresso' ),
-				'id' 		=> $report_ID,
-				'regs' 	=> $regs,												
-				'ymax' 	=> ceil($ymax * 1.25),
-				'span' 	=> $span,
-				'width'	=> ceil(900 / $span)								
-			);
-			wp_localize_script( $report_JS, 'regPerEvent', $report_params );		
-		}
+		$span = $period == 'week' ? 9 : 33;
+
+		$report_params = array(
+			'title' 	=> __( 'Total Registrations per Event', 'event_espresso' ),
+			'id' 		=> $report_ID,
+			'regs' 	=> $regs,												
+			'ymax' 	=> ceil($ymax * 1.25),
+			'span' 	=> $span,
+			'width'	=> ceil(900 / $span),
+			'noRegsMsg' => __('<p>There are currently no records of registrations in the last month for this report.</p>', 'event_espresso')								
+		);
+		wp_localize_script( $report_JS, 'regPerEvent', $report_params );		
 
 		return $report_ID;
 	}
