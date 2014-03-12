@@ -113,9 +113,8 @@ final class EE_System {
 		// load a few helper files
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// detect whether install or upgrade
-		add_action( 'plugins_loaded', array( $this, 'detect_and_process_request_type' ), 3 );
+		add_action( 'plugins_loaded', array( $this, 'detect_if_activation_or_upgrade' ), 3 );
 		// load EE_Config, EE Textdomain, etc
 		add_action( 'plugins_loaded', array( $this, 'load_configuration' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
@@ -204,7 +203,7 @@ final class EE_System {
 
 
 	/**
-	* detect_and_process_request_type
+	* detect_if_activation_or_upgrade
 	* 
 	* Takes care of detecting whether this is a brand new install or code upgrade,
 	* and either setting up the DB or setting up maintenance mode etc.
@@ -212,13 +211,15 @@ final class EE_System {
 	* @access private
 	* @return void
 	*/
-	public function detect_and_process_request_type() {
+	public function detect_if_activation_or_upgrade() {
 
-		do_action('AHEE__EE_System___detect_and_process_request_type__begin');
+		do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
 
 		if ( ! is_admin() || ( isset( $GLOBALS['pagenow'] ) && in_array( $GLOBALS['pagenow'], array( 'wp-login.php', 'wp-register.php' ))) || ( is_admin() && defined('DOING_AJAX') && DOING_AJAX  ) || ( is_admin() && ! is_user_logged_in() )) {
 			return;
 		}
+		// load M-Mode class
+		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// check if db has been updated, or if its a brand-new installation		
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type = $this->detect_req_type($espresso_db_update);
@@ -228,19 +229,19 @@ final class EE_System {
 		}
 		switch($request_type){
 			case EE_System::req_type_new_activation:				 
-				do_action( 'AHEE__EE_System__detect_and_process_request_type__new_activation' );
+				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
 				add_action( 'init', array( $this,'initialize_db_if_no_migrations_required' ), 2 );
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
 			case EE_System::req_type_reactivation:
-				do_action( 'AHEE__EE_System__detect_and_process_request_type__reactivation' );
+				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
 				add_action( 'init', array( $this,'initialize_db_if_no_migrations_required' ), 2 );
 //				echo "done reactivation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
 			case EE_System::req_type_upgrade:
-				do_action( 'AHEE__EE_System__detect_and_process_request_type__upgrade' );
+				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
 				if( ! EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old()){
 					// so the database doesnt look old (ie, there are no migration scripts that say they need to upgrade it)
 					// THEN, we just want to still give the system a chance to setup new default data
@@ -252,7 +253,7 @@ final class EE_System {
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
-				do_action( 'AHEE__EE_System__detect_and_process_request_type__downgrade' );
+				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__downgrade' );
 				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
 			case EE_System::req_type_normal:
@@ -260,7 +261,7 @@ final class EE_System {
 //				$this->_maybe_redirect_to_ee_about();
 				break;
 		}
-		do_action( 'AHEE__EE_System__detect_and_process_request_type__complete' );
+		do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__complete' );
 	}
 
 
