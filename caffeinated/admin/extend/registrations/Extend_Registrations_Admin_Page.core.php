@@ -274,9 +274,11 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
 		// calculate # days between our min and max dates				
 		$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
+
+		$report_title = __( 'Total Registrations per Day', 'event_espresso' );
 		
 		$report_params = array(
-				'title' 	=> __( 'Total Registrations per Day', 'event_espresso' ),
+				'title' 	=> $report_title,
 				'id' 		=> $report_ID,
 				'regs' 	=> $regs,												
 				'xmin' 	=> $xmin,
@@ -284,7 +286,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'ymax' 	=> ceil($ymax * 1.25),
 				'span' 	=> $span,
 				'width'	=> ceil(900 / $span),
-				'noRegsMsg' => __('<p>There are currently no records of registrations in the last month for this report.</p>', 'event_espresso')												
+				'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no records of registrations in the last month for this report.</p>', 'event_espresso'), $report_title )											
 			);
 		wp_localize_script( $report_JS, 'regPerDay', $report_params );
 												
@@ -323,14 +325,16 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$span = $period == 'week' ? 9 : 33;
 
+		$report_title = __( 'Total Registrations per Event', 'event_espresso' );
+
 		$report_params = array(
-			'title' 	=> __( 'Total Registrations per Event', 'event_espresso' ),
+			'title' 	=> $report_title,
 			'id' 		=> $report_ID,
 			'regs' 	=> $regs,												
 			'ymax' 	=> ceil($ymax * 1.25),
 			'span' 	=> $span,
 			'width'	=> ceil(900 / $span),
-			'noRegsMsg' => __('<p>There are currently no records of registrations in the last month for this report.</p>', 'event_espresso')								
+			'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no records of registrations in the last month for this report.</p>', 'event_espresso'), $report_title )								
 		);
 		wp_localize_script( $report_JS, 'regPerEvent', $report_params );		
 
