@@ -79,7 +79,7 @@ abstract class EES_Shortcode extends EE_Base {
 	*/
 	final private static function _get_called_class() {
 		if ( self::$_called_class === NULL  ) {
-			self::$_called_class = EEH_Class_Tools::get_called_class();
+			self::$_called_class = version_compare( PHP_VERSION, '5.3.0' ) < 0 ? EEH_Class_Tools::get_called_class() : get_called_class();
 		}
 		return self::$_called_class;
 	}
