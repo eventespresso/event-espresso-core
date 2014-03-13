@@ -106,8 +106,12 @@ $tax_total_line_item;
 							<div class="ticket-time-details">
 								<h4 class="sub-section-title no-bottom-margin"><img class="icon" src="<?php echo EE_IMAGES_URL.'clock-16x16.png';?>"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h4>
 								<ul class="event-dates">
-									<?php foreach($ticket->datetimes_ordered() as $datetime){?>
-									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
+									<?php foreach($ticket->datetimes_ordered() as $datetime){
+										/* @var $datetime EE_Datetime */ ?>
+									<li><?php 
+										echo $datetime->name() ? '<b>'.$datetime->name().' </b>' : '' ;
+										echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); 
+										echo $datetime->description() ? '<p class="ticket-note">'.$datetime->description().'</p>' : '' ?></li>
 									<?php }?>
 								</ul>
 							</div>
