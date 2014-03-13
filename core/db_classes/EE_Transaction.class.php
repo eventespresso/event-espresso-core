@@ -786,6 +786,16 @@ class EE_Transaction extends EE_Base_Class{
 	function set_payment_method_ID($PMD_ID) {
 		return $this->set('PMD_ID', $PMD_ID);
 	}
+	
+	/**
+	 * Gets the last-used payment method on this transaction
+	 * (we COULD just use the last-made payment, but some payment methods, namely
+	 * offline ones, dont' create payments)
+	 * @return EE_Payment_Method
+	 */
+	function payment_method(){
+		return $this->get_first_related('Payment_Method');
+	}
 
 		
 	/**

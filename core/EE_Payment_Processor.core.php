@@ -126,6 +126,22 @@ class EE_Payment_Processor{
 		}
 	}
 	/**
+	 * Should be called just before displaying the payment attempt results to the user, 
+	 * when the payment attempt has finished. Some payment methods may have special
+	 * logic to perform here. For example, if process_payment() happens on a special request 
+	 * and then the user is redirected to a page that displays the payment's status, this
+	 * should be called while loading the page that displays the payment's status. If the user is
+	 * sent to an offsite paymetn provider, this should be called upon returning from that offsite payment
+	 * provider.
+	 * @param EE_Transaction $transaction
+	 * @return void
+	 */
+	public function finalize_payment_for($transaction){
+		$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
+		$last_payment_method = $transaction->payment_method();
+		$last_payment_method->type_obj()->finalize_payment_for($transaction);
+	}
+	/**
 	 * 
 	 * @param type $payment_method_name
 	 * @param type $payment_to_refund
