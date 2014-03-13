@@ -135,9 +135,30 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 		if ( ! $EVT_ID ) { // on add_new_event event_id gets set to 0
 			return $this->create_new_blank_datetime();
 		}
-		$results =  $this->get_datetimes_for_event_ordered_by_start_time($EVT_ID);
+		$results =  $this->get_datetimes_for_event_ordered_by_DTT_order($EVT_ID);
 		return $results;
 	}
+
+
+
+
+
+	/**
+	 * get all datetimes attached to an event ordered by the DTT_order field
+	 * @public
+	 * @param  int   			$EVT_ID event id
+	 * @param  int 				$limit If included then limit the count of results by 
+	 *                        	the given number
+	 * @return EE_Datetime[]
+	 */
+	public function get_datetimes_for_event_ordered_by_DTT_order( $EVT_ID, $limit = NULL ) {
+		$where_params = array( 'Event.EVT_ID' => $EVT_ID );
+		$query_params = ! empty( $limit ) ? array( $where_params, 'limit' => $limit, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' ) : array( $where_params, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' );
+		return $this->get_all( $query_params );
+	}
+
+
+
 
 	/**
 	 * Gets the datetimes for the event (with the given limit), and orders them by "importance". By importance, we mean
