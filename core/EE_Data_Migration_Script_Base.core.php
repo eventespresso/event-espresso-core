@@ -4,8 +4,7 @@
  * 
  */
 abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Base{
-	
-	
+
 	
 	
 	/**
@@ -59,7 +58,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Place to add hooks and filters for tweaking the migrations page, in order
 	 * to customize it
 	 */
-	abstract public function migration_page_hooks();
+	public function migration_page_hooks(){
+		//by default none are added because we normally like the default look of the migration page
+	}
 	/**
 	 * Multi-dimensional array that defines teh mapping from OLD table Primary Keys
 	 * to NEW table Primary Keys.
@@ -172,7 +173,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		global $wpdb;
 		$old_table_name_sans_wp = str_replace($wpdb->prefix,"",$old_table_name);
 		$new_table_name_sans_wp = str_replace($wpdb->prefix,"",$new_table_name);
-		return substr(EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this)).'_'.$old_table_name_sans_wp.'_'.$new_table_name_sans_wp,0,64);
+		list($plugin_slug,$version) = EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
+		return substr(EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.$plugin_slug.'_'.$version.'_'.$old_table_name_sans_wp.'_'.$new_table_name_sans_wp,0,64);
 	}
 	
 	
@@ -362,6 +364,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 */
 	public function get_errors(){
 		$all_errors = $this->_errors;
+		if( ! is_array($all_errors)){
+			$all_errors = array();
+		}
 		foreach($this->stages() as $stage){
 			$all_errors = array_merge($stage->get_errors(),$all_errors);
 		}
@@ -462,7 +467,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Returns the vresion that this script migrates to, based on the script's name.
 	 * Cannot be overwritten because lots of code needs to know which version a script
 	 * migrates to knowing only its name.
-	 * @return string
+	 * @return array where the first key is the plugin's slug, the 2nd is the version of that plugin
+	 * that will be updated to. Eg array('Core','4.1.0')
 	 */
 	public final function migrates_to_version(){
 		return EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));

@@ -109,6 +109,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'title' => __('PayPal Standard Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_paypalstandard'
 						),
+					'payment_methods_overview_mijireh_help_tab' => array(
+						'title' => __("Mijireh Settings", 'event_espresso'),
+						'filename' => 'payment_methods_overview_mijireh'
+						),
 					/*'payment_methods_overview_2checkout_help_tab' => array(
 						'title' => __('2Checkout Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_2checkout'

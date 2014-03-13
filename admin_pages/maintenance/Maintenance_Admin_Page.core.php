@@ -172,7 +172,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 					break;
 			}
 			$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
-		$exception_thrown = false;
+			$exception_thrown = false;
 		}catch(EE_Error $e){
 			$most_recent_migration = new EE_Data_Migration_Script_Error();
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
@@ -202,6 +202,14 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				$show_most_recent_migration = false;
 				$show_continue_current_migration_script = false;
 			}
+		
+			if(isset($current_script)){
+				list($plugin_slug,$new_version) = $current_script->migrates_to_version();
+				$this->_template_args = array_merge($this->_template_args,array(
+					'current_db_state'=>  sprintf(__("EE%s (%s)", "event_espresso"), isset($current_db_state[$plugin_slug]) ? $current_db_state[$plugin_slug] : 3,$plugin_slug),
+					'next_db_state'=>isset($current_script) ? sprintf(__("EE%s (%s)", 'event_espresso'),$new_version,$plugin_slug) : NULL));
+			}
+			
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
 			$this->_template_args = array_merge($this->_template_args,array(
 			'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
@@ -212,8 +220,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
 			'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'start_with_fresh_ee4_db'), EE_MAINTENANCE_ADMIN_URL),
 			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL), 
-			'current_db_state'=>  sprintf(__("EE%s", "event_espresso"),$current_db_state),
-			'next_db_state'=>isset($current_script) ? sprintf(__("EE%s", 'event_espresso'),$current_script->migrates_to_version()) : NULL,
 			'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
 		));
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
@@ -231,9 +237,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['most_recent_migration'] = $most_recent_migration;//the actual most recently ran migration
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template($this->_template_path, $this->_template_args, TRUE);
 		$this->display_admin_page_with_sidebar();
-//	}catch(EE_Error $e){
-//		
-//	}
 	}
 
 

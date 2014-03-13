@@ -20,7 +20,7 @@ foreach($stages as $filepath){
 $class_to_filepath = apply_filters('FHEE__EE_DMS_4_2_0__autoloaded_stages',$class_to_filepath);
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
-class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
+class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base{
 
 	
 	
@@ -32,7 +32,8 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 		);
 		parent::__construct();
 	}
-	public function can_migrate_from_version($version_string) {
+	public function can_migrate_from_version($version_array) {
+		$version_string = $version_array['Core'];
 		if($version_string <= '4.2.003' && $version_string >= '4.1.0' ){
 //			echo "$version_string can be mgirated fro";
 			return true;
@@ -550,7 +551,7 @@ class EE_DMS_4_2_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');	
 		
 		
-		$script_with_defaults = EE_Registry::instance()->load_dms( 'EE_DMS_4_1_0' );		
+		$script_with_defaults = EE_Registry::instance()->load_dms( 'Core_4_1_0' );		
 		//setting up the default stats and countries is also essential for the data migrations to run
 		//(because many need to convert old string states to foreign keys into the states table)
 		$script_with_defaults->insert_default_states();

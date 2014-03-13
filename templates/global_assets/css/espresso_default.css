@@ -241,6 +241,11 @@
 	background: url('../images/external-link.png') top right no-repeat;
 }
 
+.ee-icon-only-lnk {
+	margin: 0 1em;
+	border: none !important;
+	outline: none !important;
+}
 
 /******************* UPCOMING EVENTS WIDGET ****************** */
 
