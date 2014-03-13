@@ -147,7 +147,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
 				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
-				'DTT_order' => $row,
+				'DTT_order' => !isset( $dtt['DTT_order'] ) ? $row : $dtt['DTT_order'],
 				);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
@@ -178,7 +178,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$datetimes_start_times[$DTT->start_date_and_time('Y-m-d','H:i:s')] = $DTT->ID();
 			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
 			$saved_dtts[$DTT->ID()] = $DTT;
-			$saved_dtt_objs[$DTT->get('DTT_order')] = $DTT;
+			$saved_dtt_objs[$row] = $DTT;
 
 			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message. //todod this is actually sucky we need a better error message but this is what it is for now.
 		}
@@ -707,6 +707,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
 			'DTT_EVT_end' => $default ? '' : $dtt->end_date( 'Y-m-d h:i a'),
 			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input'),
+			'DTT_order' => $default ? 'DTTNUM' : $dttrow,
 			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
 			'clone_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? '' : 'clone-icon ee-icon ee-icon-clone clickable',
 			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'ee-lock-icon' : 'trash-icon dashicons dashicons-post-trash clickable'
