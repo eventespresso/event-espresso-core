@@ -1,7 +1,7 @@
-<tr id="event-datetime-<?php echo $dtt_row; ?>" class="datetime-edit event-datetime-row edit-dtt-row">
+<tr valign="top" id="event-datetime-<?php echo $dtt_row; ?>" class="datetime-edit event-datetime-row edit-dtt-row ee-dtt-sortable">
 	<td class="event-datetime-column date-name-column">
 		<input type="hidden" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_ID]" id="event-datetime-DTT_ID-<?php echo $dtt_row; ?>" class="event-datetime-DTT_ID" value="<?php echo $DTT_ID; ?>">
-		<input type="hidden" name="<?Php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_order]" id="event-datetime-DTT_order-<?php echo $dtt_row; ?>" class="event-datetime-DTT_order" value="<?php echo $DTT_order; ?>">
+		<input type="hidden" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_order]" id="event-datetime-DTT_order-<?php echo $dtt_row; ?>" class="event-datetime-DTT_order" value="<?php echo $DTT_order; ?>">
 		<input type="text" name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_name]" id="event-datetime-DTT_name-<?php echo $dtt_row; ?>" class="ee-large-text-inp event-datetime-DTT_name" value="<?php echo $DTT_name; ?>" placeholder="<?php _e('Add Title (optional)', 'event_espresso'); ?>">
 	</td>
 	<td class="event-datetime-column date-column">
@@ -18,6 +18,7 @@
 	</td>
 	<td>
 		<div class="ee-editing-container<?php echo $edit_dtt_expanded; ?>"><span data-datetime-row="<?php echo $dtt_row; ?>"  data-context="datetime" class="ticket-icon dashicons dashicons-admin-generic clickable"></span></div><span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $clone_icon; ?>"></span><span  data-context="datetime" data-datetime-row="<?php echo $dtt_row; ?>" class="<?php echo $trash_icon; ?>"<?php echo $show_trash; ?>></span>
+		<span class="dashicons dashicons-image-flip-vertical sortable-drag-handle"></span>
 	</td>
 </tr>
 <?php 

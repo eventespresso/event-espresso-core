@@ -345,6 +345,10 @@ jQuery(document).ready(function($) {
 						$(this).val(DTT_end_time);
 						break;
 
+					case 'event-datetime-DTT_order' :
+						//this is already set so let's leave alone
+						break;
+
 					default :
 						inputvalue = $('#add-new-' + inputid, '#add-event-datetime').val();
 						$(this).val(inputvalue);
@@ -1730,6 +1734,24 @@ jQuery(document).ready(function($) {
 
 
 
+		/**
+		 * This changes the DTT_order value for all datetimes in the dom to reflect the new order after a drag and drop action.
+		 * @return {tktHelper}
+		 */
+		changeDTTorder: function() {
+			var advancedEditRow, curid;
+			var allDTTs = $('#datetime-editing-dtts-table tr.ee-dtt-sortable');
+			allDTTs.each( function(i) {
+				$('.event-datetime-DTT_order', this ).val(i);
+				//make sure corresponding advanced edit row is in the right place.
+				curid = $(this).attr('id').replace('event-datetime-', '');
+				advancedEditRow = $('#advanced-dtt-edit-row-' + curid);
+				$(this).after(advancedEditRow);
+			});
+		},
+
+
+
 
 		/**
 		 * This helper method simply removes any matching items from a js array.
@@ -1921,11 +1943,11 @@ jQuery(document).ready(function($) {
 	});
 
 
-	/*$('.ticket-table').sortable({
+	$('#datetime-editing-dtts-table').sortable({
 		cursor: 'move',
-		items: '.ee-ticket-sortable',
+		items: '.ee-dtt-sortable',
 		update: function(event,ui) {
-			tktHelper.changeTKTorder();
+			tktHelper.changeDTTorder();
 		}
 	});/**/
 
