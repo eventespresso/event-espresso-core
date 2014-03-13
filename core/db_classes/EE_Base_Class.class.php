@@ -1543,6 +1543,35 @@ abstract class EE_Base_Class{
 		}
 		
 	}
+	/**
+	 * Returns a simple array of all the extra meta associated with this model object.
+	 * If $one_of_each_key is true (Default), it will be an array of simple key-value pairs, key sbeing the 
+	 * extra meta's key, and teh value being its value. However, if there are duplicate extra meta rows with
+	 * the same key, only one will be used. (eg array('foo'=>'bar','monkey'=>123)) 
+	 * If $one_of_each_key is false, it will return an array with the top-level keys being 
+	 * the extra meta keys, but their values are also arrays, which have the extra-meta's ID as their sub-key, and
+	 * finally the extra meta's value as each sub-value. (eg arrya('foo'=>array(1=>'bar',2=>'bill'),'monkey'=>array(3=>123)))
+	 * @param boolean $one_of_each_key
+	 * @return array
+	 */
+	public function all_extra_meta_array($one_of_each_key = true){
+		$return_array = array();
+		if($one_of_each_key){
+			$extra_meta_objs = $this->get_many_related('Extra_Meta', array('group_by'=>'EXM_key'));
+			foreach($extra_meta_objs as $extra_meta_obj){
+				$return_array[$extra_meta_obj->key()] = $extra_meta_obj->value();
+			}
+		}else{
+			$extra_meta_objs = $this->get_many_related('Extra_Meta');
+			foreach($extra_meta_objs as $extra_meta_obj){
+				if( ! isset($return_array[$extra_meta_obj->key()])){
+					$return_array[$extra_meta_obj->key()] = array();
+				}
+				$return_array[$extra_meta_obj->key()][$extra_meta_obj->ID()] = $extra_meta_obj->value();
+			}
+		}
+		return $return_array;
+	}
 
 
 
