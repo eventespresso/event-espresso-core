@@ -139,7 +139,6 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		//level 2 (everything except maintenance page)
 		try{
 			//in case an exception is thrown while trying to handle migrations
-			throw new EE_Error("weeek");
 			switch(EE_Maintenance_Mode::instance()->level()){
 				case EE_Maintenance_Mode::level_0_not_in_maintenance:
 				case EE_Maintenance_Mode::level_1_frontend_only_maintenance:
