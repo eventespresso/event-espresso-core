@@ -29,7 +29,7 @@ class EE_Offsite_Gateway extends EE_Gateway{
 		$this->_supports_receiving_refunds = true;
 		parent::__construct();
 	}
-	public abstract function set_redirection_info($payment,$billing_info = array());
+	public abstract function set_redirection_info($payment,$billing_info = array(),$success_url = NULL, $fail_url = NULL);
 	/**
 	 * Often used for IPNs. But applies the info in $update_info to the payment.
 	 * What is $update_info? Often the contents of $_REQUEST, but not necessarily. Whatever

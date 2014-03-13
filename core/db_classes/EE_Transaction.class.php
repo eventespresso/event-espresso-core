@@ -107,6 +107,13 @@ class EE_Transaction extends EE_Base_Class{
     */
 	protected $_TXN_hash_salt = NULL;		
 
+	/**
+	 * ID of the last-used payment methd. If all gateways made payments (even 'in-progress' payments)
+	 * we wouldn't need this. But as-is, offline gateways don't make payments and so this is necessary
+	 * to remember what payment method was last used
+	 * @var int
+	 */
+	protected $_PMD_ID = NULL;
 
 
 
@@ -157,7 +164,11 @@ class EE_Transaction extends EE_Base_Class{
 	 */
 	protected $_Line_Item = NULL;
 
-
+	/**
+	 * The last -used payment method on this transaction
+	 * @var EE_Payment_Method
+	 */
+	protected $_Payment_Method = NULL;
 
 	/**
 	 * 
@@ -759,9 +770,24 @@ class EE_Transaction extends EE_Base_Class{
 		return $attendee->billing_info_for_gateway($gateway_name);
 	}
 
+	/**
+	 * Gets PMD_ID
+	 * @return int
+	 */
+	function payment_method_ID() {
+		return $this->get('PMD_ID');
+	}
 
+	/**
+	 * Sets PMD_ID
+	 * @param int $PMD_ID
+	 * @return boolean
+	 */
+	function set_payment_method_ID($PMD_ID) {
+		return $this->set('PMD_ID', $PMD_ID);
+	}
 
-	
+		
 	/**
 	 * process EE_Transaction object prior to serialization
 	 * @return array

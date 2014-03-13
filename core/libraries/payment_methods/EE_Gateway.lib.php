@@ -43,6 +43,13 @@ class EE_Gateway{
 	 */
 	protected $_supports_receiving_refunds = false;
 	/**
+	 * Simple key-value pairs containing all the gateway's settings.
+	 * In EE, this will be all the payment method's fields (but removing the 'PMD_' prefix), and all the
+	 * extra meta entries' keys.
+	 * @var array
+	 */
+	protected $_settings = array();
+	/**
 	 * Returns whether or not this gateway shoudl support SENDING refunds
 	 * see $_supports_sending_refunds
 	 * @return boolean
@@ -57,6 +64,10 @@ class EE_Gateway{
 	 */
 	public function supports_receiving_refunds(){
 		return $this->_supports_receiving_refunds;
+	}
+	
+	public function _set_settings($settings_array){
+		$this->_settings = $settings_array;
 	}
 	
 	

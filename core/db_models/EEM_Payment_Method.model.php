@@ -96,4 +96,40 @@ class EEM_Payment_Method extends EEM_Base {
 		);
 		parent::__construct();
 	}
+	/**
+	 * Gets one by the slug provided
+	 * @param string $slug
+	 * @return EE_Payment_Method
+	 */
+	public function get_one_by_slug($slug){
+		return $this->get_one(array(array('PMD_slug'=>$slug)));
+	}
+	/**
+	 * Gets all active gateways
+	 * @return EE_Payment_Method[]
+	 */
+	public function get_all_active(){
+		return $this->get_all(array(array('PMD_active'=>true)));
+	}
+	
+	/**
+	 * Overrides parent to also allow $base_class_obj_or_id to be the paymetn method's slug
+	 * @param mixed $base_class_obj_or_id can be ID, slug, or object itself
+	 * @param boolean $ensure_is_in_db
+	 * @return EE_Payment_Method
+	 * @throws EE_Error
+	 */
+	public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false) {
+		try{
+			$base_class_obj_or_id = parent::ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db);
+		}catch(EE_Error $e){
+			//also try to find based on slug
+			$base_class_obj_or_id = $this->get_one(array(array('PMD_slug'=>$base_class_obj_or_id)));
+			if($base_class_obj_or_id instanceof EE_Payment_Method){
+				return $base_class_obj_or_id;
+			}else{
+				throw $e;
+			}
+		}
+	}
 }

@@ -354,4 +354,24 @@ class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
 		}
 		return $this->_type_obj;
 	}	
+	
+	/**
+	 * Returns a simple arrya of key-value pairs combining the payment method's fields (without the 'PMD_' prefix) 
+	 * and the extra meta. Mostly used for passing off ot gateways.	 * 
+	 * @return array
+	 */
+	public function settings_array(){
+		$fields = $this->model_field_array();
+		$extra_metas = $this->all_extra_meta_array();
+		//remove the model's prefix from the fields
+		$combined_settings_array = array();
+		foreach($fields as $key => $value){
+			if(strpos($key, 'PMD_')!==FALSE){
+				$key_sans_model_prefix = str_replace('PMD_', '', $key);
+				$combined_settings_array [$key_sans_model_prefix] = $value;
+			}
+		}
+		$combined_settings_array = array_merge($extra_metas,$fields);
+		return $combined_settings_array;
+	}
 }

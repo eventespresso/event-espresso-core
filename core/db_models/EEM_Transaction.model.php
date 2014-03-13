@@ -84,7 +84,8 @@ class EEM_Transaction extends EEM_Base {
 				'TXN_paid'=>new EE_Money_Field('TXN_paid', __('Amount paid towards transaction to date','event_espresso'), false, 0),
 				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('Status ID','event_espresso'), false, EEM_Transaction::incomplete_status_code, 'Status'),
 				'TXN_session_data'=>new EE_Serialized_Text_Field('TXN_session_data', __('Serialized session data','event_espresso'), true, ''),
-				'TXN_hash_salt'=>new EE_Plain_Text_Field('TXN_hash_salt', __('Transaction Hash Salt','event_espresso'), true, '')
+				'TXN_hash_salt'=>new EE_Plain_Text_Field('TXN_hash_salt', __('Transaction Hash Salt','event_espresso'), true, ''),
+				'PMD_ID'=>new EE_Foreign_Key_Int_Field('PMD_ID', __("Last Used Payment Method", 'event_espresso'), true, NULL, 'Payment_Method'),
 			)
 		);
 		$this->_model_relations = array(
@@ -93,6 +94,7 @@ class EEM_Transaction extends EEM_Base {
 			'Status'=>new EE_Belongs_To_Relation(),
 			'Promotion_Object'=>new EE_Has_Many_Any_Relation(),
 			'Line_Item'=>new EE_Has_Many_Relation(false),//you can delete a transaction without needing to delete its line items
+			'Payment_Method'=>new EE_Belongs_To_Relation(),
 		);
 		parent::__construct( $timezone );
 
