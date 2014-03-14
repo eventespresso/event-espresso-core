@@ -12,7 +12,11 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	 */
 	protected $_model = NULL;
 	
-	protected $_bound_model_object = NULL;
+	/**
+	 *
+	 * @var EE_Base_Class
+	 */
+	protected $_model_object = NULL;
 	
 	//@todo: allow to specify fields
 	//@todo: or allow to instead exclude certain fields
@@ -22,6 +26,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	//@todo: have get_model_object method
 	//@todo: allow for overriding default fields
 	public function __construct($options_array = array()){
+		if(isset($options_array['model']) && $options_array['model'] instanceof EEM_Base){
+			$this->_model = $options_array['model'];
+		}
 		if( ! $this->_model || ! $this->_model instanceof EEM_Base ){
 			throw new EE_Error(sprintf(__("Model Form Sections must first specify the _model property to be a subcalss of EEM_Base", "event_espresso")));
 		}
@@ -41,6 +48,10 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		}
 		//calculate what fields to include
 		$this->_subsections = array_merge($this->_subsections,$this->_convert_model_fields_to_inputs($model_fields_to_include));
+		parent::__construct($options_array);
+		if(isset($options_array['model_object']) && $options_array['model_object'] instanceof EE_Base_Class){
+			$this->populate_model_obj($options_array['model_object']);
+		}
 	}
 	/**
 	 * Changes model fields into form section inputs
@@ -90,6 +101,8 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 					break;
 				case 'EE_Integer_Field':
+					$input_class = 'EE_Text_Input';
+					break;
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 					break;
 				case 'EE_Maybe_Serialized_Text_Field':
@@ -102,9 +115,13 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					$input_class = 'EE_Text_Input';
 					break;
 				case 'EE_Primary_Key_Int_Field':
+					$input_class = 'EE_Text_Input';
+					break;
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 					break;
 				case 'EE_Primary_Key_String_Field':
+					$input_class = 'EE_Text_Input';
+					break;
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 					break;
 				case 'EE_Serialized_Text_Field':
@@ -136,13 +153,13 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	}
 	/**
 	 * Mostly the same as populate_defaults , except takes a model object as input, not an array,
-	 * and also sets the form's _bound_model_object
+	 * and also sets the form's _model_object
 	 * @param EE_Base_Class $model_obj
 	 * @return void
 	 */
 	public function populate_model_obj($model_obj){
 		$model_obj = $this->_model->ensure_is_obj($model_obj);
-		$this->_bound_model_object = $model_obj;
+		$this->_model_object = $model_obj;
 		$this->populate_defaults($model_obj->model_field_array());
 	}
 }

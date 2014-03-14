@@ -12,7 +12,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * Subsections
 	 * @var EE_Form_Section_Base[]
 	 */
-	protected $_subsections;
+	protected $_subsections = array();
 	
 	/**
 	 * Strategy for laying out the form

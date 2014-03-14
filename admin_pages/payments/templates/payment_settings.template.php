@@ -20,9 +20,14 @@
 	</p>
 </div>
 
-<?php echo "</form><hr>SAMPLE FORM<hr>";
-		$f = new EE_Sample_Form();
-		
+<?php 
+
+echo "</form><hr>SAMPLE FORM<hr>";
+//		$f = new EE_Sample_Form();
+		$f = new EE_Model_Form_Section(array(
+			'model'=>EEM_Country::instance(),
+			'model_object'=>EEM_Country::instance()->get_one()
+		));
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$f->receive_form_submission($_POST);
 			if($f->is_valid()){
