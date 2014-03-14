@@ -107,7 +107,7 @@ $tax_total_line_item;
 								<h4 class="sub-section-title no-bottom-margin"><img class="icon" src="<?php echo EE_IMAGES_URL.'clock-16x16.png';?>"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h4>
 								<ul class="event-dates">
 									<?php foreach($ticket->datetimes_ordered() as $datetime){?>
-									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); ?></li>
+									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time('l F jS, Y',' g:i a'),$datetime->end_date_and_time('l F jS, Y',' g:i a'),$datetime->get_timezone()); ?></li>
 									<?php }?>
 								</ul>
 							</div>
