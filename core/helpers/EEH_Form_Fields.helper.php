@@ -1068,11 +1068,13 @@ class EEH_Form_Fields {
 		if ( is_array( $QSOs ) && ! empty( $QSOs )) {
 			foreach( $QSOs as $key => $QSO ) {
 				if ( ! $QSO instanceof EE_Question_Option ) {
+					var_dump($key);
+					var_dump($QSO);
 					$QSO = EE_Question_Option::new_instance( array( 
-						'QSO_value' =>$key,
-						'QSO_desc' => $QSO
-//						'QSO_value' => isset( $QSO['id'] ) ? $QSO['id'] : $key,
-//						'QSO_desc' => isset( $QSO['text'] ) ? $QSO['text'] : $QSO
+//						'QSO_value' =>(string)$key,
+//						'QSO_desc' => $QSO
+						'QSO_value' => isset( $QSO['id'] ) ? (string)$QSO['id'] : (string)$key,
+						'QSO_desc' => isset( $QSO['text'] ) ? (string)$QSO['text'] : (string)$QSO
 					));
 				}
 				if ( $QSO->opt_group() ) {
@@ -1239,9 +1241,11 @@ class EEH_Form_Fields {
 	public static function two_digit_months_dropdown_options() {
 		$options = array();
 		for ( $x = 1; $x <= 12; $x++ ) {
-			$mm = (string)sprintf( '%02d', $x );
-			$options[ $mm ] = $mm;											
+//			$mm = (string)sprintf( '%02d', $x );
+			$mm = str_pad( $x, 2, '0', STR_PAD_LEFT );
+			$options[ (string)$mm ] = (string)$mm;											
 		}
+		printr( $options, '$options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return EEH_Form_Fields::prep_answer_options( $options );
 	}
 
@@ -1258,8 +1262,9 @@ class EEH_Form_Fields {
 		$current_year = date('y');
 		$next_decade = $current_year + 10;
 		for ( $x = $current_year; $x <= $next_decade; $x++ ) {
-			$yy = (string)sprintf( '%02d', $x );											
-			$options[ $yy ] = $yy;											
+//			$yy = (string)sprintf( '%02d', $x );											
+			$yy = str_pad( $x, 2, '0', STR_PAD_LEFT );
+			$options[ (string)$yy ] = (string)$yy;											
 		}
 		return EEH_Form_Fields::prep_answer_options( $options );
 	}
