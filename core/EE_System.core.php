@@ -114,11 +114,11 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		// detect whether install or upgrade
-		add_action( 'plugins_loaded', array( $this, 'detect_if_activation_or_upgrade' ), 3 );
+		add_action( 'ee_plugins_loaded_3', array( $this, 'detect_if_activation_or_upgrade' ));
 		// load EE_Config, EE Textdomain, etc
-		add_action( 'plugins_loaded', array( $this, 'load_configuration' ), 7 );
+		add_action( 'ee_plugins_loaded_7', array( $this, 'load_configuration' ));
 		// you wanna get going? I wanna get going... let's get going!
-		add_action( 'plugins_loaded', array( $this, 'load_main_controllers_and_initialize' ), 9 );
+		add_action( 'ee_plugins_loaded_9', array( $this, 'load_main_controllers_and_initialize' ));
 		// ALL EE Addons should use the following hookpoint to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
@@ -341,7 +341,7 @@ final class EE_System {
 			EEH_Activation::initialize_db_content();
 		}
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
-			add_action( 'init', array( $this, 'redirect_to_about_ee' ), 10 );
+			add_action( 'ee_init_10', array( $this, 'redirect_to_about_ee' ));
 		}
 	}
 
@@ -406,7 +406,7 @@ final class EE_System {
 
 
 	/**
-	 * load_configuration - runs during the WP plugins_loaded action at priority 5
+	 * load_configuration - runs during the WP plugins_loaded action at priority 7
 	 * 
 	 * @return void
 	 */
@@ -471,7 +471,7 @@ final class EE_System {
 
 
 	/**
-	 * load_main_controllers_and_initialize - runs during the WP plugins_loaded action at priority 7
+	 * load_main_controllers_and_initialize - runs during the WP plugins_loaded action at priority 9
 	 * 
 	 * @return void
 	 */
@@ -487,7 +487,7 @@ final class EE_System {
 			EE_Registry::instance()->load_core( 'Front_Controller' );
 		}
 		// load additional common resources
-		add_action( 'init', array( $this, 'init' ), 3 );
+		add_action( 'ee_init_3', array( $this, 'init' ));
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		// whether on frontend or backend, load EE_Admin's toolbar. but not if its an ajax request
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance && ! defined( 'DOING_AJAX' ) && current_user_can( 'administrator' )) {
