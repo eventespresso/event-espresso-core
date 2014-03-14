@@ -49,6 +49,9 @@
 			
 			<!--<div class="total-price-container"><?php printf( __('Total Final Price: %s', 'event_espresso'), '<span class="ticket-price-amount">' . $TKT_price . '</span>'); ?> </div>-->
 			<textarea name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"><?php echo $TKT_description; ?></textarea>
+
+			<?php do_action( 'AHEE__EE_Admin_Page_after_ticket_desc', $tkt_row, $TKT_ID ); ?>
+			
 			<div class="basic-ticket-container">
 				<h5 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h5>
 				<table class="basic-ticket-info">
