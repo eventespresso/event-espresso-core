@@ -252,7 +252,20 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	public function get_datetimes_for_ticket_ordered_by_start_time($TKT_ID, $include_expired = true, $include_deleted= true, $limit = NULL){
 		$query_params =array(array('Ticket.TKT_ID'=>$TKT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_start'] = array('>=',current_time('mysql'));
+			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql'));
+		}
+		if( $include_deleted){
+			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
+		}
+		if($limit){
+			$query_params['limit'] = $limit;
+		}
+		return $this->get_all( $query_params );
+	}
+
+
+
+
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
