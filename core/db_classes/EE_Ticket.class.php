@@ -577,7 +577,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return EE_Datetime[]
 	 */
 	public function datetimes_ordered($show_expired = true, $show_deleted = false){
-		return EEM_Datetime::instance($this->_timezone)->get_datetimes_for_ticket_ordered_by_start_time($this->ID(),$show_expired,$show_deleted);
+		return EEM_Datetime::instance($this->_timezone)->get_datetimes_for_ticket_ordered_by_DTT_order($this->ID(),$show_expired,$show_deleted);
 	}
 	/**
 	 * Gets the template for the ticket

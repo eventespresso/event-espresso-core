@@ -252,7 +252,34 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	public function get_datetimes_for_ticket_ordered_by_start_time($TKT_ID, $include_expired = true, $include_deleted= true, $limit = NULL){
 		$query_params =array(array('Ticket.TKT_ID'=>$TKT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_start'] = array('>=',current_time('mysql'));
+			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql'));
+		}
+		if( $include_deleted){
+			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
+		}
+		if($limit){
+			$query_params['limit'] = $limit;
+		}
+		return $this->get_all( $query_params );
+	}
+
+
+
+
+	/**
+	 * Gets all the datetimes for a ticket (including trashed ones, fo rnow), ordered by the DTT_order for the datetimes.
+	 * @param  int     $TKT_ID          ID of ticket to retrieve the datetimes for
+	 * @param  boolean $include_expired whether to include expired datetimes or not
+	 * @param  boolean $include_deleted whether to include trashed datetimes or not.
+	 * @param  int|null  $limit         if null, no limit, if int then limit results by 
+	 *                                  that number
+	 * @return EE_Datetime[]
+	 */
+	public function get_datetimes_for_ticket_ordered_by_DTT_order( $TKT_ID, $include_expired = true, $include_deleted = true, $limit = NULL ) {
+		$where_params = array( 'Ticket.TKT_ID' => $TKT_ID );
+		$query_params = array( $where_params, 'order_by' => array( 'DTT_order' => 'ASC' ) );
+		if( ! $include_expired){
+			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql'));
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));

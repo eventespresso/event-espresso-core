@@ -526,7 +526,7 @@ jQuery(document).ready(function($) {
 							$(this).attr('id', newid);
 						if ( $(this).hasClass('event-datetime-DTT_EVT_start') || $(this).hasClass('event-datetime-DTT_EVT_end') ) {
 							$(this).attr('data-datetime-row', newrownum);
-							$(this).attr('data-date-field-context', '#edit-event-datetime-' + newrownum);
+							$(this).attr('data-date-field-context', '#event-datetime-' + newrownum);
 						}
 						break;
 				}
