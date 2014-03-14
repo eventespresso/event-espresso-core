@@ -736,9 +736,6 @@ class EEH_Form_Fields {
 			$selected = empty( $answer ) ? ' selected="selected"' : '';
 			$input_html .= $add_please_select_option ? "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>' : '';
 		}
-			if ( strpos( $class, 'ee-credit-card-month' ) !== FALSE ) {
-				printr( $options, '$options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			}
 		foreach ( $options as $key => $value ) {
 			// if value is an array, then create option groups, else create regular ol' options
 			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->value(), $value->desc(), $answer, $only_option );
@@ -1070,13 +1067,7 @@ class EEH_Form_Fields {
 		if ( is_array( $QSOs ) && ! empty( $QSOs )) {
 			foreach( $QSOs as $key => $QSO ) {
 				if ( ! $QSO instanceof EE_Question_Option ) {
-					var_dump($key);
-					echo "<br />";
-					var_dump($QSO);
-					echo "<br /><br />";
 					$QSO = EE_Question_Option::new_instance( array( 
-//						'QSO_value' =>(string)$key,
-//						'QSO_desc' => $QSO
 						'QSO_value' => is_array( $QSO ) && isset( $QSO['id'] ) ? (string)$QSO['id'] : (string)$key,
 						'QSO_desc' => is_array( $QSO ) && isset( $QSO['text'] ) ? (string)$QSO['text'] : (string)$QSO
 					));
@@ -1245,11 +1236,9 @@ class EEH_Form_Fields {
 	public static function two_digit_months_dropdown_options() {
 		$options = array();
 		for ( $x = 1; $x <= 12; $x++ ) {
-//			$mm = (string)sprintf( '%02d', $x );
 			$mm = str_pad( $x, 2, '0', STR_PAD_LEFT );
 			$options[ (string)$mm ] = (string)$mm;											
 		}
-		printr( $options, '$options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return EEH_Form_Fields::prep_answer_options( $options );
 	}
 
@@ -1266,7 +1255,6 @@ class EEH_Form_Fields {
 		$current_year = date('y');
 		$next_decade = $current_year + 10;
 		for ( $x = $current_year; $x <= $next_decade; $x++ ) {
-//			$yy = (string)sprintf( '%02d', $x );											
 			$yy = str_pad( $x, 2, '0', STR_PAD_LEFT );
 			$options[ (string)$yy ] = (string)$yy;											
 		}
