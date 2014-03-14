@@ -1069,8 +1069,10 @@ class EEH_Form_Fields {
 			foreach( $QSOs as $key => $QSO ) {
 				if ( ! $QSO instanceof EE_Question_Option ) {
 					$QSO = EE_Question_Option::new_instance( array( 
-						'QSO_value' => isset( $QSO['id'] ) ? $QSO['id'] : $key,
-						'QSO_desc' => isset( $QSO['text'] ) ? $QSO['text'] : $QSO
+						'QSO_value' =>$key,
+						'QSO_desc' => $QSO
+//						'QSO_value' => isset( $QSO['id'] ) ? $QSO['id'] : $key,
+//						'QSO_desc' => isset( $QSO['text'] ) ? $QSO['text'] : $QSO
 					));
 				}
 				if ( $QSO->opt_group() ) {
