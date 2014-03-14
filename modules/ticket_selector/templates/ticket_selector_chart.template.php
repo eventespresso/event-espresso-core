@@ -248,7 +248,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						</section>
 						<br/>
 
-						<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_date', $ticket ); ?>
+						<?php do_action( 'AHEE__ticket_selector_chart_template__after_ticket_date', $ticket ); ?>
 							
 						<?php if ( $ticket->min() &&$ticket->max() ) : ?>
 						<section class="tckt-slctr-tkt-quantities-sctn">
