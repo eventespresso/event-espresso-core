@@ -39,12 +39,4 @@ class EE_Onsite_Gateway extends EE_Gateway{
 	 * @return EE_Payment updated
 	 */
 	public abstract function do_direct_payment($payment,$billing_info = null);
-	/**
-	 * Tries to refund the payment specified. Note: 
-	 * @param type $payment
-	 * @param type $refund_info
-	 * @return EE_Payment for the refund
-	 * @throws EE_Error
-	 */
-	public abstract function do_direct_refund($payment,$refund_info);
 }

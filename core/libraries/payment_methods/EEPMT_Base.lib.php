@@ -144,4 +144,29 @@ abstract class EEPMT_Base{
 	 */
 	public function finalize_payment_for($transaction){
 	}
+	
+	/**
+	 * Whether or not this payment method's gateway supports sending refund requests
+	 * @return boolean
+	 */
+	public function supports_sending_refunds(){
+		if($this->_gateway && $this->_gateway instanceof EE_Gateway){
+			return $this->_gateway->supports_sending_refunds();
+		}else{
+			return false;
+		}
+	}
+	/**
+	 * 
+	 * @param type $payment
+	 * @param type $refund_info
+	 * @return EE_Payment
+	 */
+	public function process_refund($payment, $refund_info = array()){
+		if($this->_gateway && $this->_gateway instanceof EE_Gateway){
+			return $this->_gateway->do_direct_refund();
+		}else{
+			throw new EE_Error(sprintf(__("Payment Method Type '%s' does not support sending refund requests", "event_espresso"),get_class($this)));
+		}
+	}
 }

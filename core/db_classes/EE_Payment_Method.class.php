@@ -338,7 +338,7 @@ class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
 	
 	/**
 	 * Gets the payment method type for this payment method instance
-	 * @return EEPM_Base
+	 * @return EEPMT_Base
 	 * @throws EE_Error
 	 */
 	public function type_obj(){

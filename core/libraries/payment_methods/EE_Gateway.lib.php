@@ -66,6 +66,19 @@ class EE_Gateway{
 		return $this->_supports_receiving_refunds;
 	}
 	
+	/**
+	 * Tries to refund the payment specified, taking into account the extra
+	 * refund info. Note that if the gateway's _supports_sending_refunds is false, 
+	 * this should just throw an exception.
+	 * @param EE_Payment $payment
+	 * @param array $refund_info
+	 * @return EE_Payment for the refund
+	 * @throws EE_Error
+	 */
+	public function do_direct_refund($payment,$refund_info = null){
+		return NULL;
+	}
+	
 	public function _set_settings($settings_array){
 		$this->_settings = $settings_array;
 	}

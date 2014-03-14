@@ -143,12 +143,15 @@ class EE_Payment_Processor{
 	}
 	/**
 	 * 
-	 * @param type $payment_method_name
+	 * @param EE_Payment_Method $payment_method
 	 * @param type $payment_to_refund
 	 * @param type $amount
 	 * @return EE_Payment
 	 */
-	public function process_refund($payment_method_name,$payment_to_refund,$amount = null){
-		throw new EE_Error("processing of refund not yet implemented. Should intake a payment object, then send off ot the gatewya for the refund, and be return the refund 'payment'");
+	public function process_refund($payment_method,$payment_to_refund,$refund_info = array()){
+		$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
+		if($payment_method->type_obj()->supports_sending_refunds()){
+			$payment_method->do_direct_refund($payment_to_refund,$refund_info);
+		}
 	}
 }
