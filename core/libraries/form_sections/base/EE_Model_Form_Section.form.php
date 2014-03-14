@@ -95,7 +95,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 					break;
 				case 'EE_Full_HTML_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Text_Area_Input';
 					break;
 				case 'EE_Infinite_Integer':
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
@@ -106,7 +106,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 					break;
 				case 'EE_Maybe_Serialized_Text_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Text_Area_Input';
 					break;
 				case 'EE_Money_Field':
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
@@ -125,10 +125,10 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 					break;
 				case 'EE_Serialized_Text_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Text_Area_Input';
 					break;
 				case 'EE_Simple_HTML_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Text_Area_Input';
 					break;
 				case 'EE_Slug_Field':
 					$input_class = 'EE_Text_Input';
