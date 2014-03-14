@@ -302,4 +302,16 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	public function subsections(){
 		return $this->_subsections;
 	}
+	/**
+	 * Returns a simple array where keys are input names, and values are their normalized
+	 * values. (Similar to calling get_input_value on inputs)
+	 * @return array
+	 */
+	public function input_values(){
+		$input_values = array();
+		foreach($this->inputs() as $name => $input_obj){
+			$input_values[$name] = $input_obj->normalized_value();
+		}
+		return $input_values;
+	}
 }

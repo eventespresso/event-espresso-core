@@ -6,7 +6,7 @@ class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 * @return boolean
 	 */
 	function validate() {
-		if( ! $this->_input->sanitized_value()){
+		if( $this->_input->sanitized_value() === '' || $this->_input->sanitized_value() === 'NULL'){
 			$this->_input->add_validation_error(__("This field is required", "event_espresso"), 'required');
 			return false;
 		}else{
