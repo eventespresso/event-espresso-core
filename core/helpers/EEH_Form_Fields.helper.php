@@ -1237,7 +1237,7 @@ class EEH_Form_Fields {
 	public static function two_digit_months_dropdown_options() {
 		$options = array();
 		for ( $x = 1; $x <= 12; $x++ ) {
-			$mm = $x < 10 ? '0' . $x : $x;											
+			$mm = sprintf( '%02d', $x );
 			$options[ $mm ] = $mm;											
 		}
 		return EEH_Form_Fields::prep_answer_options( $options );
