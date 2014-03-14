@@ -736,11 +736,10 @@ class EEH_Form_Fields {
 			$selected = empty( $answer ) ? ' selected="selected"' : '';
 			$input_html .= $add_please_select_option ? "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>' : '';
 		}
-		foreach ( $options as $key => $value ) {
 			if ( strpos( $class, 'ee-credit-card-month' ) !== FALSE ) {
-				var_dump( $key ) . "\n";
-				var_dump( $value ) . "\n\n";
+				printr( $options, '$options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			}
+		foreach ( $options as $key => $value ) {
 			// if value is an array, then create option groups, else create regular ol' options
 			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->value(), $value->desc(), $answer, $only_option );
 		}
@@ -1071,8 +1070,8 @@ class EEH_Form_Fields {
 		if ( is_array( $QSOs ) && ! empty( $QSOs )) {
 			foreach( $QSOs as $key => $QSO ) {
 				if ( ! $QSO instanceof EE_Question_Option ) {
-					var_dump($key) . "\n";
-					var_dump($QSO) . "\n\n";
+					var_dump($key) . "<br />";
+					var_dump($QSO) . "<br /><br />";
 					$QSO = EE_Question_Option::new_instance( array( 
 //						'QSO_value' =>(string)$key,
 //						'QSO_desc' => $QSO
