@@ -20,7 +20,7 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_input($input) {
-		return $html.='<tr><th>'.$input->get_html_for_label().'</th><td>'.$input->get_html_for_input().$input->get_html_for_errors().'</td></tr>';
+		return '<tr><th>'.$input->get_html_for_label().'</th><td>'.$input->get_html_for_input().$input->get_html_for_errors().'</td></tr>';
 	}
 	/**
 	 * Lays out a row for the subsection
