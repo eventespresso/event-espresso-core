@@ -1237,7 +1237,7 @@ class EEH_Form_Fields {
 	public static function two_digit_months_dropdown_options() {
 		$options = array();
 		for ( $x = 1; $x <= 12; $x++ ) {
-			$mm = sprintf( '%02d', $x );
+			$mm = (string)sprintf( '%02d', $x );
 			$options[ $mm ] = $mm;											
 		}
 		return EEH_Form_Fields::prep_answer_options( $options );
@@ -1256,7 +1256,7 @@ class EEH_Form_Fields {
 		$current_year = date('y');
 		$next_decade = $current_year + 10;
 		for ( $x = $current_year; $x <= $next_decade; $x++ ) {
-			$yy = $x < 10 ? '0' . $x : $x;											
+			$yy = (string)sprintf( '%02d', $x );											
 			$options[ $yy ] = $yy;											
 		}
 		return EEH_Form_Fields::prep_answer_options( $options );
