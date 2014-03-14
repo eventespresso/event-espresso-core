@@ -38,7 +38,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 		$this->_run_now();
-		add_action( 'init', array( $this, 'on_init' ), 2 );
+		add_action( 'ee_init_2', array( $this, 'on_init' ));
 		add_action( 'wp_enqueue_scripts', array( $this, 'on_wp_enqueue_scripts'), 10 );
 	}
 
