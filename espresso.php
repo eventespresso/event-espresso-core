@@ -134,7 +134,7 @@ function espresso_load_system() {
 		add_action( 'admin_notices', 'espresso_minimum_wp_version_error', 1 );
 	}
 }
-add_action( 'plugins_loaded', 'espresso_load_system', 1 );
+add_action( 'ee_plugins_loaded_1', 'espresso_load_system', 1 );
 
 /**
  * 	espresso_plugin_activation - loads and instantiates EE_System
@@ -264,3 +264,48 @@ function espresso_duplicate_plugin_error() {
 }
 
 
+
+// because we need precise control over when things execute
+// and the hooking system in WP core has a 3 year old (imho: critical) bug in it ( see: https://core.trac.wordpress.org/ticket/17817 )
+// we are going to create a bunch of callbacks that hook into WP that we can use
+// which avoids having hooks getting added to future priorities of the same hook (nested hooks)
+add_action( 'plugins_loaded', 'ee_pl_1', 1 );
+add_action( 'plugins_loaded', 'ee_pl_2', 2 );
+add_action( 'plugins_loaded', 'ee_pl_3', 3 );
+add_action( 'plugins_loaded', 'ee_pl_4', 4 );
+add_action( 'plugins_loaded', 'ee_pl_5', 5 );
+add_action( 'plugins_loaded', 'ee_pl_6', 6 );
+add_action( 'plugins_loaded', 'ee_pl_7', 7 );
+add_action( 'plugins_loaded', 'ee_pl_8', 8 );
+add_action( 'plugins_loaded', 'ee_pl_9', 9 );
+add_action( 'plugins_loaded', 'ee_pl_10', 10 );
+function ee_pl_1() { do_action( 'ee_plugins_loaded_1' ); }
+function ee_pl_2() { do_action( 'ee_plugins_loaded_2' ); }
+function ee_pl_3() { do_action( 'ee_plugins_loaded_3' ); }
+function ee_pl_4() { do_action( 'ee_plugins_loaded_4' ); }
+function ee_pl_5() { do_action( 'ee_plugins_loaded_5' ); }
+function ee_pl_6() { do_action( 'ee_plugins_loaded_6' ); }
+function ee_pl_7() { do_action( 'ee_plugins_loaded_7' ); }
+function ee_pl_8() { do_action( 'ee_plugins_loaded_8' ); }
+function ee_pl_9() { do_action( 'ee_plugins_loaded_9' ); }
+function ee_pl_10() { do_action( 'ee_plugins_loaded_10' ); }
+add_action( 'init', 'ee_in_1', 1 );
+add_action( 'init', 'ee_in_2', 2 );
+add_action( 'init', 'ee_in_3', 3 );
+add_action( 'init', 'ee_in_4', 4 );
+add_action( 'init', 'ee_in_5', 5 );
+add_action( 'init', 'ee_in_6', 6 );
+add_action( 'init', 'ee_in_7', 7 );
+add_action( 'init', 'ee_in_8', 8 );
+add_action( 'init', 'ee_in_9', 9 );
+add_action( 'init', 'ee_in_10', 10 );
+function ee_in_1() { do_action( 'ee_init_1' ); }
+function ee_in_2() { do_action( 'ee_init_2' ); }
+function ee_in_3() { do_action( 'ee_init_3' ); }
+function ee_in_4() { do_action( 'ee_init_4' ); }
+function ee_in_5() { do_action( 'ee_init_5' ); }
+function ee_in_6() { do_action( 'ee_init_6' ); }
+function ee_in_7() { do_action( 'ee_init_7' ); }
+function ee_in_8() { do_action( 'ee_init_8' ); }
+function ee_in_9() { do_action( 'ee_init_9' ); }
+function ee_in_10() { do_action( 'ee_init_10' ); }
