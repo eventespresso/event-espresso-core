@@ -618,3 +618,9 @@ span.ui-icon {
 	line-height:1.25em;
 	font-size:1em;
 }
+
+.ee-credit-card-year,
+.ee-credit-card-month {
+	width:auto !important;
+	min-width:60px;
+}
