@@ -174,7 +174,7 @@ final class EE_Registry {
 		$this->load_core( 'Base' );
 		// class library
 		$this->LIB = new StdClass();
-		add_action( 'init', array( $this, 'init' ), 1 );
+		add_action( 'ee_init_1', array( $this, 'init' ));
 	}
 
 
