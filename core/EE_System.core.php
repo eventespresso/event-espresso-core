@@ -230,13 +230,13 @@ final class EE_System {
 		switch($request_type){
 			case EE_System::req_type_new_activation:				 
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
-				add_action( 'init', array( $this,'initialize_db_if_no_migrations_required' ), 2 );
+				add_action( 'ee_init_2', array( $this,'initialize_db_if_no_migrations_required' ));
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
-				add_action( 'init', array( $this,'initialize_db_if_no_migrations_required' ), 2 );
+				add_action( 'ee_init_2', array( $this,'initialize_db_if_no_migrations_required' ));
 //				echo "done reactivation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
@@ -245,9 +245,9 @@ final class EE_System {
 				if( ! EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old()){
 					// so the database doesnt look old (ie, there are no migration scripts that say they need to upgrade it)
 					// THEN, we just want to still give the system a chance to setup new default data
-					add_action( 'init', array( $this,'initialize_db_if_no_migrations_required' ), 2 );
+					add_action( 'ee_init_2', array( $this,'initialize_db_if_no_migrations_required' ));
 				} else {
-					add_action( 'init', array( $this, 'redirect_to_about_ee'), 10 );
+					add_action( 'ee_init_10', array( $this, 'redirect_to_about_ee'));
 				}
 				$this->update_list_of_installed_versions( $espresso_db_update );
 //				echo "done upgrade";die;
