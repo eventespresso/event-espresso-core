@@ -145,9 +145,9 @@ final class EE_Config {
 		// load existing EE site settings
 		$this->_load_config();
 		//  register shortcodes and modules
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
+		add_action( 'ee_plugins_loaded_5', array( $this, 'plugins_loaded' ));
 		//  initialize shortcodes and modules
-		add_action( 'init', array( $this, 'init' ), 10 );
+		add_action( 'ee_init_10', array( $this, 'init' ));
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
 		// construct__end hook
