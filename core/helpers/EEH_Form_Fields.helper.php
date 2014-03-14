@@ -1070,13 +1070,15 @@ class EEH_Form_Fields {
 		if ( is_array( $QSOs ) && ! empty( $QSOs )) {
 			foreach( $QSOs as $key => $QSO ) {
 				if ( ! $QSO instanceof EE_Question_Option ) {
-					var_dump($key) . "<br />";
-					var_dump($QSO) . "<br /><br />";
+					var_dump($key);
+					echo "<br />";
+					var_dump($QSO);
+					echo "<br /><br />";
 					$QSO = EE_Question_Option::new_instance( array( 
 //						'QSO_value' =>(string)$key,
 //						'QSO_desc' => $QSO
-						'QSO_value' => isset( $QSO['id'] ) ? (string)$QSO['id'] : (string)$key,
-						'QSO_desc' => isset( $QSO['text'] ) ? (string)$QSO['text'] : (string)$QSO
+						'QSO_value' => is_array( $QSO ) && isset( $QSO['id'] ) ? (string)$QSO['id'] : (string)$key,
+						'QSO_desc' => is_array( $QSO ) && isset( $QSO['text'] ) ? (string)$QSO['text'] : (string)$QSO
 					));
 				}
 				if ( $QSO->opt_group() ) {
