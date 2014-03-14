@@ -27,6 +27,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	public function __construct($options_array = array()){
 		$this->_set_default_name_if_empty();
 		$this->_set_default_html_id_if_empty();
+		//if they've included subsections in the constructor, add them now
+		if(isset($options_array['subsections'])){
+			$this->_subsections = array_merge($this->_subsections,$options_array['subsections']);
+		}
 		foreach($this->_subsections as $name => $subsection){
 			$subsection->_construct_finalize($this, $name);
 		}
