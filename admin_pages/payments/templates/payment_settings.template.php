@@ -30,8 +30,10 @@ echo "</form><hr>SAMPLE FORM<hr>";
 		));
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$f->receive_form_submission($_POST);
+//			dd($f->get_model_object());
 			if($f->is_valid()){
 				echo "valido!";
+				$f->save();
 			}else{
 				echo "invalido";
 			}

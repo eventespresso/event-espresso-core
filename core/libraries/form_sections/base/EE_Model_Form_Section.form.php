@@ -162,4 +162,76 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		$this->_model_object = $model_obj;
 		$this->populate_defaults($model_obj->model_field_array());
 	}
+	/**
+	 * Gets all the input values that correspond to model fields. Keys are the input/field names,
+	 * values are their normalized values
+	 * @return array
+	 */
+	public function inputs_values_corresponding_to_model_fields(){
+		return array_intersect_key($this->input_values(),$this->_model->field_settings());
+	}
+	public function receive_form_submission($req_data = NULL) {
+		parent::receive_form_submission($req_data);
+		//create or set the model object, if it isn't already
+		if( ! $this->_model_object ){
+			//check to see if the form indicates a PK, in which case we want to only retrieve it and update it
+			$pk_name = $this->_model->primary_key_name();
+			$model_obj = $this->_model->get_one_by_ID($this->get_input_value($pk_name));
+			if($model_obj){
+				$this->_model_object = $model_obj;
+			}else{
+				$this->_model_object = EE_Registry::instance()->load_class($this->_model->get_this_model_name(), $this->inputs_values_corresponding_to_model_fields() );
+			}
+		}else{
+			//ok so the model object is already set. Just set it with the submitted form data (don't save yet though)
+			foreach($this->inputs_values_corresponding_to_model_fields() as $field_name=>$field_value){
+				//only set the non-primary key
+				if($field_name != $this->_model->primary_key_name()){
+					$this->_model_object->set($field_name,$field_value);
+				}
+			}
+		}
+	}
+	/**
+	 * After this form has been initialized and is verified to be valid,
+	 * either creates a model object from its data and saves it, or updates
+	 * the model object its data represents
+	 * @return int, 1 on a successful update, the ID of
+	 *					the new entry on insert; 0 on failure	
+	 */
+	public function save(){
+		if( ! $this->_model_object){
+			throw new EE_Error(sprintf(__("Cannot save the model form's model object (model is '%s') because there is no model object set. You must either set it, or call receive_form_submission where it is set automatically", "event_espresso"),get_class($this->_model)));
+		}
+		return $this->_model_object->save();
+	}
+	/**
+	 * Gets the model of this model form
+	 * @return EEM_Base
+	 */
+	public function get_model(){
+		return $this->_model;
+	}
+	/**
+	 * Sets the model object. Probably good to use this for permissions considerations,
+	 * so that users don't change the hidden primary key input in the form and thus
+	 * change an entry they shouldn't have access to
+	 * @param mixed $model_object EE_Base_Class or its ID
+	 * @return void
+	 */
+	public function set_model_object($model_object){
+		$model_object = $this->_model->ensure_is_obj($model_object);
+		$this->_model_object = $model_object;
+	}
+	/**
+	 * Gets the model object for this model form, which was either set
+	 * upon construction (using the $options_array arg 'model_object'), by using
+	 * set_model_object($model_obj), or implicitly
+	 * when receive_form_submission($req_data) was called.
+	 * @return EE_Base_Class
+	 */
+	public function get_model_object(){
+		return $this->_model_object;
+	}
+	
 }
