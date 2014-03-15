@@ -225,7 +225,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 		$query_params =array(array('Event.EVT_ID'=>$EVT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
 		if( ! $include_expired){
-			$query_params[0]['DTT_EVT_start'] = array('>=',date('Y-m-d H:i:s'));
+			$query_params[0]['DTT_EVT_end'] = array('>=',date('Y-m-d H:i:s'));
 		}
 		if( $include_deleted){
 			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
