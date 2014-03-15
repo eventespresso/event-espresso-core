@@ -571,7 +571,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Gets all the datetimes from teh db ordered by start time
+	 * Gets all the datetimes from teh db ordered by DTT_order
 	 * @param boolean $show_expired
 	 * @param boolean $show_deleted
 	 * @return EE_Datetime[]
