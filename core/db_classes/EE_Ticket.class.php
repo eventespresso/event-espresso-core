@@ -565,7 +565,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 */
 	public function datetimes($query_params = array()){
 		if( ! isset($query_params['order_by'])){
-			$query_params['order_by']['DTT_EVT_start'] = 'ASC';
+			$query_params['order_by']['DTT_order'] = 'ASC';
 		}
 		return $this->get_many_related('Datetime', $query_params);
 	}
