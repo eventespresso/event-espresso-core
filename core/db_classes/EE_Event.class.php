@@ -222,8 +222,7 @@ class EE_Event extends EE_CPT_Base{
 
 
 	/**
-	 * Gets all the datetimes for this event, first the primary datetime, and
-	 * then ordered by date (earliest first)
+	 * Gets all the datetimes for this event, ordered by the DTT_order on the datetime.
 	 * @darren, we should probably UNSET timezone on the EEM_Datetime model
 	 * after running our query, so that this timezone isn't set for EVERY query
 	 * on EEM_Datetime for the rest of the requeset, no?
@@ -232,7 +231,7 @@ class EE_Event extends EE_CPT_Base{
 	 * @return EE_Datetime[]
 	 */
 	public function datetimes_ordered($show_expired = TRUE, $show_deleted = FALSE){
-		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_start_time($this->_EVT_ID,$show_expired,$show_deleted);
+		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order($this->_EVT_ID,$show_expired,$show_deleted);
 	}
 	
 	/**

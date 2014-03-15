@@ -147,14 +147,34 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * get all datetimes attached to an event ordered by the DTT_order field
 	 * @public
 	 * @param  int   			$EVT_ID event id
+	 * @param bolean 			$include_expired
+	 * @param boolean 			$inlude_deleted
 	 * @param  int 				$limit If included then limit the count of results by 
 	 *                        	the given number
 	 * @return EE_Datetime[]
 	 */
-	public function get_datetimes_for_event_ordered_by_DTT_order( $EVT_ID, $limit = NULL ) {
+	public function get_datetimes_for_event_ordered_by_DTT_order( $EVT_ID, $include_expired = TRUE, $include_deleted= TRUE, $limit = NULL  ) {
+
+		$original_vapbmo = $this->_values_already_prepared_by_model_object;
+		$this->_values_already_prepared_by_model_object = TRUE; //make sure we dont' do conversions on the time in the query because the time in the db IS in GMT.
+
 		$where_params = array( 'Event.EVT_ID' => $EVT_ID );
+
 		$query_params = ! empty( $limit ) ? array( $where_params, 'limit' => $limit, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' ) : array( $where_params, 'order_by' => array( 'DTT_order' => 'ASC' ), 'default_where_conditions' => 'none' );
-		return $this->get_all( $query_params );
+
+		if( ! $include_expired){
+			$query_params[0]['DTT_EVT_end'] = array('>=',date('Y-m-d H:i:s'));
+		}
+		if( $include_deleted){
+			$query_params[0]['DTT_deleted'] = array('IN',array(true,false));
+		}
+
+		$result = $this->get_all( $query_params );
+
+		//reset _values_already_prepared_by_model_object prop to previous setting.
+		$this->_values_already_prepared_by_model_object = $original_vapbmo;
+
+		return $result;
 	}
 
 
