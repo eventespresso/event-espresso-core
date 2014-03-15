@@ -427,14 +427,14 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				//add new ticket to array
 				$saved_tickets[$new_tkt->ID()] = $new_tkt;
 
-				do_action( 'AHEE__espresso_events_Pricing_Hooks___update_tkts_new_ticket', $new_tkt->ID(), $new_tkt, $row, $tkt, $data );
+				do_action( 'AHEE__espresso_events_Pricing_Hooks___update_tkts_new_ticket', $new_tkt, $row, $tkt, $data );
 
 			} else {
 				//add tkt to saved tkts
 				//save existing TKT
 				$saved_tickets[$TKT->ID()] = $TKT;
 
-				do_action( 'AHEE__espresso_events_Pricing_Hooks___update_tkts_update_ticket', $TKT->ID(), $TKT, $row, $tkt, $data );
+				do_action( 'AHEE__espresso_events_Pricing_Hooks___update_tkts_update_ticket', $TKT, $row, $tkt, $data );
 			}
 			
 		}
@@ -472,7 +472,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//need to do the same for prices (except these prices can also be deleted because again, tickets can only be trashed if they don't have any TKTs sold (otherwise they are just archived))
 			$tkt_to_remove->delete_related_permanently('Price');
 			
-			do_action( 'AHEE__espresso_events_Pricing_Hooks___update_tkts_delete_ticket', $tkt_to_remove->ID(), $tkt_to_remove );
+			do_action( 'AHEE__espresso_events_Pricing_Hooks___update_tkts_delete_ticket', $tkt_to_remove );
 
 			//finally let's delete this ticket (which should not be blocked at this point b/c we've removed all our relationships)
 			$tkt_to_remove->delete_permanently();
