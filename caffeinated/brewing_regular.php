@@ -228,6 +228,12 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Recipient_List_Shortcodes__parser_after', array( $this, 'additional_recipient_details_parser'), 10, 5 );
 		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__shortcodes', array( $this, 'additional_primary_registration_details_shortcodes'), 10, 2 );
 		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__parser_after', array( $this, 'additional_primary_registration_details_parser'), 10, 5 );
+
+		/**
+		 * @since 4.2
+		 */
+		add_filter( 'FHEE__EE_Datetime_Shortcodes__shortcodes', array( $this, 'additional_datetime_shortcodes'), 10, 2 );
+		add_filter( 'FHEE__EE_Datetime_Shortcodes__parser_after', array( $this, 'additional_datetime_parser'), 10, 5 );
 	}
 
 
@@ -349,6 +355,66 @@ class EE_Brewing_Regular extends EE_Base {
 		//nothing!
 		return $parsed;
 	}
+
+
+
+
+	/**
+	 * Callback for additional shortcodes filter for adding additional datetime shortcodes.
+	 *
+	 * @since  4.2
+	 * @param  array  					$shortcodes       	array of shortcodes and 
+	 *                                       				descriptions
+	 * @param  EE_Datetime_Shortcodes 	$shortcode_parser 	EE_Shortcodes object
+	 * @return array                   						array of shortcodes and 
+	 *                                             			descriptions
+	 */
+	public function additional_datetime_shortcodes( $shortcodes, $shortcode_parser ) {
+		$shortcodes['[DTT_NAME]'] = __('This will be parsed to the Title given for a Datetime', 'event_espresso');
+		$shortcodes['[DTT_DESCRIPTION]'] = __('This will be parsed to the description for a Datetime', 'event_espresso');
+		$shortcodes['[DTT_NAME_OR_DATES]'] = __('When parsed, if the Datetime has a name, it is used, otherwise a formatted string including the start date and end date will be used.', 'event_espresso');
+		return $shortcodes;
+	}
+
+
+
+	/**
+	 * Callback for additional shortcodes parser filter used for adding parser for new 
+	 * Datetime shortcodes
+	 *
+	 * @since  4.2
+	 * @param  string $parsed           The finished parsed string for the given shortcode.
+	 * @param  string $shortcode        The shortcode being parsed.
+	 * @param  object $data             The incoming data object for the Shortcode Parser.
+	 * @param  object $extra_data       The incoming extra date object for the Shortcode 
+	 *                                  Parser.
+	 * @param  EE_Datetime_Shortcodes $shortcode_parser 
+	 * @return string                   The new parsed string.
+	 */
+	public function additional_datetime_parser( $parsed, $shortcode, $data, $extra_data, $shortcode_parser ) {
+
+		if ( ! $data instanceof EE_Datetime ) {
+			return ''; //get out because we can only parse with the datetime object.
+		}
+
+		switch ( $shortcode ) {
+			case '[DTT_NAME]' :
+				return $data->name();
+				break;
+			case '[DTT_DESCRIPTION]' :
+				return $data->description();
+				break;
+			case '[DTT_NAME_OR_DATES]' :
+				return $data->get_dtt_display_name( TRUE );
+				break;
+			default :
+				return $parsed;
+				break;
+		}
+	}
+
+
+
 
 
 	public function additional_recipient_details_shortcodes( $shortcodes, $shortcode_parser ) {
