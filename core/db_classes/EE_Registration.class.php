@@ -795,10 +795,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Gets the ticket this registration is for
+	 *
+	 * @param boolean $include_archived whether to include archived tickets or not.
 	 * @return EE_Ticket
 	 */
-	public function ticket(){
-		return $this->get_first_related('Ticket');
+	public function ticket( $include_archived = TRUE ){
+		$query_params = array();
+		if ( $include_archived ) {
+			$query_params['default_where_conditions'] = 'none';
+		}
+
+		return $this->get_first_related('Ticket', $query_params);
 	}
 	
 
