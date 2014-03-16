@@ -16,6 +16,16 @@ jQuery(document).ready(function($) {
 		espresso_maybe_switch_required(this);
 	});
 	
+
+	$('#post-body').on('keydown', '.question-options-table input', function(e) {
+		var keyPressed = e.which;
+		if ( keyPressed == 13 ) { //enter key
+			e.preventDefault();
+			e.stopPropagation();
+			espresso_reg_forms_add_option();
+		}
+	});
+
 	espresso_reg_forms_show_or_hide_question_options();
 	
 	
