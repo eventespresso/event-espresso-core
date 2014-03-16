@@ -56,14 +56,20 @@ function espresso_reg_forms_add_option(){
 	var newRow=sampleRow.clone(true);
 	var newRowName=newRow.find('.option-value');
 	var newRowValue=newRow.find('.option-desc');
+	var newRowOrder = newRow.find('.QSO_order');
 	var name=newRowName.attr('name');
 	newRowName.attr('name',name.replace("xxcountxx",count));
 	var value=newRowValue.attr('name');
 	newRowValue.attr('name', value.replace("xxcountxx",count));
+	var order=newRowOrder.attr('name');
+	newRowOrder.attr('name', order.replace("xxcountxx",count));
+	newRowOrder.val(count);
 	newRow.removeClass('sample');
+	newRow.addClass('ee-options-sortable');
 	jQuery('#question_options tr:last').after(newRow);
 	//add new count to dom.
 	jQuery('#question_options_count').val(count);
+	newRow.find('input[type="text"]').focus();
 }
 
 function espresso_reg_forms_show_option_desc(show){
