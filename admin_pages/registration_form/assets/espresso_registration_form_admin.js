@@ -76,10 +76,14 @@ function espresso_reg_forms_show_option_desc(show){
 	if(show){
 		jQuery('.option-desc-cell').show();
 		jQuery('.option-desc-header').show();
-		
+		jQuery('.option-value-header').css('width', '45%');
+		jQuery('.option-value-cell').css('width','45%');
+
 	}else{
 		jQuery('.option-desc-cell').hide();
 		jQuery('.option-desc-header').hide();
+		jQuery('.option-value-header').css('width', '90%');
+		jQuery('.option-value-cell').css('width', '90%');
 	}
 }
 
