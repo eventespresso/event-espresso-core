@@ -15,6 +15,7 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			'image_2'=>new EE_Admin_File_Uploader_Input(),
 			'skillz'=>new EE_Checkbox_Multi_Input(array('php'=>'PHP','mysql'=>'MYSQL'), 'string',array('default'=>array('php'))),
 			'float'=>new EE_Float_Input(),
+			'essay'=>new EE_Text_Area_Input(),
 			);
 		$this->_layout_strategy = new EE_Div_Per_Section_Layout();
 		parent::__construct();
