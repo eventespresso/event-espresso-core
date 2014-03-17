@@ -57,7 +57,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_sold' => new EE_Integer_Field('TKT_sold', __('Number of this ticket sold', 'event_espresso'), false, 0),
 				'TKT_qty'=>new EE_Infinite_Integer_Field('TKT_qty', __('Quantity of this ticket that is available','event_espresso'), false, INF),
 				'TKT_uses'=>new EE_Infinite_Integer_Field('TKT_uses', __('Number of datetimes this ticket can be used at', 'event_espresso'), false, INF ),
-				'TKT_required'=>new EE_Boolean_Field('TKT_required', __("Flag indicating whether this ticket must be purchased with a transaction", "event_espresso", false, false ) ),
+				'TKT_required'=>new EE_Boolean_Field('TKT_required', __("Flag indicating whether this ticket must be purchased with a transaction", "event_espresso"), false, false ),
 				'TKT_taxable'=>new EE_Boolean_Field('TKT_taxable', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
 				'TKT_is_default'=>new EE_Boolean_Field('TKT_is_default', __('Flag indicating that this ticket is a default ticket', 'event_espresso'), false, false ),
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed in the editor (used for autosaves when the form doesn\'t have the ticket ID yet)', 'event_espresso'), false, 0),
