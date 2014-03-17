@@ -1540,6 +1540,25 @@ abstract class EE_Base_Class{
 		}
 		
 	}
+	/**
+	 * Gets a pretty nice displayable nice for this model object. Often overriden
+	 * @return string
+	 */
+	public function name(){
+		//find a field that's not a text field
+		$field_we_can_use = $this->get_model()->get_a_field_of_type('EE_Text_Field_Base');
+		if($field_we_can_use){
+			return $this->get($field_we_can_use->get_name());
+		}else{
+			$first_few_properties = $this->model_field_array();
+			$first_few_properties = array_slice($first_few_properties,0,3);
+			$name_parts = array();
+			foreach($field_we_can_use as $name=> $value){
+				$name_parts[] = "$name:$value";
+			}
+			return implode(",",$name_parts);
+		}
+	}
 
 
 

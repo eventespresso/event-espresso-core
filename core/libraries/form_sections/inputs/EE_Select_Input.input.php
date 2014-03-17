@@ -2,7 +2,7 @@
 
 class EE_Select_Input extends EE_Form_Input_Base{
 	
-	function __construct($select_options,$select_option_values_type = 'string', $options = array()){
+	function __construct($select_options, $options = array()){
 		$this->_set_display_strategy(new EE_Select_Display_Strategy($select_options));
 		//get teh first item in teh select options. Depending on what it is, use a different normalization strategy
 		$select_option_keys = array_keys($select_options);
