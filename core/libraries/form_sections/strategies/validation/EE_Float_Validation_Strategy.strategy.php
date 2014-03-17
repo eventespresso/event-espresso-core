@@ -1,6 +1,7 @@
 <?php
 
 class EE_Float_Validation_Strategy extends EE_Validation_Strategy_Base{
+	
 	/**
 	 * 
 	 * @return boolean

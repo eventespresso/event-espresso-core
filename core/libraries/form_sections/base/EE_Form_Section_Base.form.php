@@ -121,9 +121,9 @@ abstract class EE_Form_Section_Base{
 	/**
 	 * Sanitizes input for this form section
 	 * @param $req_data is the full request data like $_POST
-	 * @return boolean of whether a sanitization error occurred
+	 * @return boolean of whether a normalization error occurred
 	 */
-	abstract protected function _sanitize($req_data);
+	abstract protected function _normalize($req_data);
 	
 	/**
 	 * Returns the HTML, JS, and CSS necessary to display this form section on a page.

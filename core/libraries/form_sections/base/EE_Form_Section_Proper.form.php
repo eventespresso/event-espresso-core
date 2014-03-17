@@ -71,7 +71,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		if( $req_data === NULL){
 			$req_data = $_REQUEST;
 		}
-		$this->_sanitize($req_data);
+		$this->_normalize($req_data);
 		$this->_validate();
 	}
 	/**
@@ -133,7 +133,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * Gets the value of the specified input. Should be called after receive_form_submission()
 	 * or populate_defaults() on the form, where the normalized value on the input is set.
 	 * @param string $name
-	 * @return mixed depending on the input's type and its sanitization strategy
+	 * @return mixed depending on the input's type and its normalization strategy
 	 */
 	public function get_input_value($name){
 		$input = $this->get_input($name);
@@ -247,9 +247,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * Sanitizes all the data and sets the sanitized value of each field
 	 * @param array $req_data like $_POST
 	 */
-	protected function _sanitize($req_data) {
+	protected function _normalize($req_data) {
 		foreach($this->_subsections as $subsection){
-			$subsection->_sanitize($req_data);
+			$subsection->_normalize($req_data);
 		}
 	}
 	/**

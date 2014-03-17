@@ -54,10 +54,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	private $_validation_strategies;
 	
 	/**
-	 * The sanitization and normalization strategy for this field
-	 * @var EE_Sanitization_Strategy_Base
+	 * The normalization strategy for this field
+	 * @var EE_Validation_Strategy_Base
 	 */
-	private $_sanitization_strategy;
+	private $_normalization_strategy;
 	
 	public function __construct($options_array = array()){
 		if(isset($options_array['html_name'])){
@@ -94,7 +94,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 				$validation_strategy->_construct_finalize($this);
 			}
 		}
-		$this->_sanitization_strategy->_construct_finalize($this);
+		$this->_normalization_strategy->_construct_finalize($this);
 		
 		parent::__construct($options_array);
 	}
@@ -145,10 +145,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	
 	/**
 	 * Sets the sanitization strategy
-	 * @param EE_Sanitization_Strategy_Base $strategy
+	 * @param EE_Normalization_Strategy_Base $strategy
 	 */
-	protected function _set_sanitization_strategy(EE_Sanitization_Strategy_Base $strategy){
-		$this->_sanitization_strategy = $strategy;
+	protected function _set_normalization_strategy(EE_Normalization_Strategy_Base $strategy){
+		$this->_normalization_strategy = $strategy;
 	}
 	
 	/**
@@ -207,16 +207,16 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * @return boolean
 	 */
 	protected function _validate() {
-		$is_valid = true;
 		if(is_array($this->_validation_strategies)){
 			foreach($this->_validation_strategies as $validation_strategy){
-				$valid = $validation_strategy->validate();
-				if( ! $valid){
-					$is_valid = false;
-				}
+				$validation_strategy->validate($this->normalized_value());
 			}
 		}
-		return $is_valid;
+		if( $this->get_validation_errors()){
+			return false;
+		}else{
+			return true;
+		}
 	}
 	
 	
@@ -227,13 +227,23 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * @param array $req_data like $_POST
 	 * @return boolean whether or not there was an error
 	 */
-	protected function _sanitize($req_data) {
+	protected function _normalize($req_data) {
 		try{
-			$this->_sanitized_value = $this->_sanitization_strategy->sanitize($req_data);
-			$this->_normalized_value = $this->_sanitization_strategy->normalize();
+			$raw_input = $this->find_form_data_for_this_section($req_data);
+			//super simple sanitization for now
+			if(is_array($raw_input)){
+				foreach($raw_input as $key => $value){
+					$this->_sanitized_value[$key] = sanitize_text_field($value);
+				}
+			}else{
+				$this->_sanitized_value = sanitize_text_field($raw_input);
+			}
+			//we want ot mostly leave the input alone in case we need to re-display it to the user
+			//but we're just removing anything really nasty
+			$this->_normalized_value = $this->_normalization_strategy->normalize($this->sanitized_value());
 		}catch(EE_Validation_Error $e){
 			$this->add_validation_error(
-					sprintf(__("Could not normalize data into proper data type. Submitted form data with name %s had value %s, which is not allowed for sanitization strategies of type %s", "event_espresso"),$this->html_name(),$req_data,get_class($this->_sanitization_strategy)),
+					sprintf(__("Could not normalize data into proper data type. Submitted form data with name %s had value %s, which is not allowed for sanitization strategies of type %s", "event_espresso"),$this->html_name(),$req_data,get_class($this->_normalization_strategy)),
 					'SANITIZATION_ERROR', 
 					$e);
 		}

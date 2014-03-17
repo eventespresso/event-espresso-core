@@ -1,0 +1,36 @@
+<?php
+/**
+ * For validation on an input which has an ARRAY of values, instead of a single value. The
+ * individual item validation strategies will be applied to EACH item in the array
+ */
+class EE_Many_Valued_Validation_Strategy extends EE_Validation_Strategy_Base{
+	protected $_individual_item_validation_strategies = array();
+	/**
+	 * 
+	 * @param EE_Validation_Strategy_Base[] $individual_item_validation_strategies (or a single EE_Validation_Strategy_Base)
+	 */
+	public function __construct($individual_item_validation_strategies) {	
+		if( ! is_array($individual_item_validation_strategies)){
+			$individual_item_validation_strategies = array($individual_item_validation_strategies);
+		}
+		$this->_individual_item_validation_strategies = $individual_item_validation_strategies;
+		parent::__construct();
+	}
+	/**
+	 * Applies all teh indivudla item validation strategies on each item in the array
+	 * @param array $normalized_value
+	 * @return boolean
+	 */
+	function validate($normalized_value) {
+		if( is_array($normalized_value)){
+			$items_to_validate = $normalized_value;
+		}else{
+			$items_to_validate = array($normalized_value);
+		}
+		foreach($items_to_validate as $individual_item){
+			foreach($this->_individual_item_validation_strategies as $validation_strategy){
+				$validation_strategy->validate($individual_item);
+			}
+		}
+	}	
+}
