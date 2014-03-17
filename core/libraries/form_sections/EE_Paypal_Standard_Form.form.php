@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -16,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * EE_Text_Area
+ * EE_Paypal_Standard_Form
  *
  * @package			Event Espresso
  * @subpackage		
@@ -24,12 +25,15 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EE_Text_Area_Input extends EE_Form_Input_Base{
+class EE_Paypal_Standard_Form extends EE_Payment_Method_Form{
 	public function __construct($options_array = array()) {
-		$this->_set_display_strategy(new EE_Text_Area_Display_Strategy());
-		$this->_set_normalization_strategy(new EE_Text_Normalization());
+		$this->_extra_meta_inputs = array(
+			'paypal_email'=>new EE_Email_Input(),
+			'shipping_override'=>new EE_Yes_No_Input(),
+		);
+		$this->_subsections = array_merge($this->_subsections,$this->_extra_meta_inputs);
 		parent::__construct($options_array);
 	}
 }
 
-// End of file EE_Text_Area.input.php
+// End of file EE_Paypal_Standard_Form.form.php

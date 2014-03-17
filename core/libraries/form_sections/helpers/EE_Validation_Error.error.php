@@ -15,12 +15,12 @@ class EE_Validation_Error extends Exception{
 	
 	/**
 	 * When creating a validation error, we need to know which field the error relates to.
-	 * @param EE_Form_Section_Base $form_section
 	 * @param string $message message you want to display about this error
 	 * @param string $string_code a code for uniquely identifying the exception
+	 * @param EE_Form_Section_Base $form_section
 	 * @param Exception $previous if there was an exception that caused this exception
 	 */
-	function __construct($form_section, $message = null, $string_code = null, $previous = null){
+	function __construct( $message = null, $string_code = null,$form_section = null, $previous = null){
 		$this->_form_section = $form_section;
 		$this->_string_code = $string_code;
 		parent::__construct($message, 500, $previous);
@@ -32,6 +32,14 @@ class EE_Validation_Error extends Exception{
 	 */
 	public function get_form_section(){
 		return $this->_form_section;
+	}
+	/**
+	 * Sets teh form seciton of the error, in case it wasnt set previously
+	 * @param EE_Form_Section_Base $form_section
+	 * @return void
+	 */
+	public function set_form_section($form_section){
+		$this->_form_section = $form_section;
 	}
 	
 }

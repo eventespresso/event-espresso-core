@@ -1,7 +1,7 @@
 <?php
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
-
 /**
  * Event Espresso
  *
@@ -16,7 +16,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * EE_Text_Area
+ * EE_Text_Normalization
+ * Really does nothing to the input. It came in a string and we leave it as-such
  *
  * @package			Event Espresso
  * @subpackage		
@@ -24,12 +25,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EE_Text_Area_Input extends EE_Form_Input_Base{
-	public function __construct($options_array = array()) {
-		$this->_set_display_strategy(new EE_Text_Area_Display_Strategy());
-		$this->_set_normalization_strategy(new EE_Text_Normalization());
-		parent::__construct($options_array);
+class EE_Text_Normalization extends EE_Normalization_Strategy_Base{
+	public function normalize($value_to_normalize) {
+		return $value_to_normalize;
 	}
 }
 
-// End of file EE_Text_Area.input.php
+// End of file EE_Text_Normalization.strategy.php

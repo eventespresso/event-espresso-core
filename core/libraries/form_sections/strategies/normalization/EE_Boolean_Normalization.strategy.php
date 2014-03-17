@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -16,7 +17,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * EE_Text_Area
+ * EE_Boolean_Normalization
+ * Just casts it to a boolean (so we're assuming that we're only receiving 0 and 1s as
+ * inputs. DOes not handle stuff like 'yes','true','money',whatever. 1s and 0s.
+ * Does not growl because the only reason they would NOT have a 1 or 0, using something like
+ * a select or checkbox, is because they hacked the form
  *
  * @package			Event Espresso
  * @subpackage		
@@ -24,12 +29,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EE_Text_Area_Input extends EE_Form_Input_Base{
-	public function __construct($options_array = array()) {
-		$this->_set_display_strategy(new EE_Text_Area_Display_Strategy());
-		$this->_set_normalization_strategy(new EE_Text_Normalization());
-		parent::__construct($options_array);
+class EE_Boolean_Normalization extends EE_Normalization_Strategy_Base{
+	public function normalize($value_to_normalize) {
+		return (boolean)intval($value_to_normalize);
 	}
 }
 
-// End of file EE_Text_Area.input.php
+// End of file EE_Boolean_Normalization.strategy.php

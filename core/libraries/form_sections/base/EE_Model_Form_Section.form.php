@@ -89,13 +89,25 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					$input_class = 'EE_Float_Input';
 					break;
 				case 'EE_Foreign_Key_Int_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
-					break;
 				case 'EE_Foreign_Key_String_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$models_pointed_to = $model_field->get_model_name_pointed_to();
+					if(is_array($models_pointed_to)){
+						$input_class = 'EE_Text_Field';
+					}else{
+						if($model_field->is_nullable()){
+							$model_names = array(0=>  __("Please Select", 'event_espresso'));
+						}
+						//so its just one model
+						$model = $models_pointed_to;
+						$model = 'EEM_'.$model;
+						$model_names = array_merge($model_names,$model::instance()->get_all_names(array('limit'=>10)));
+						$input_constructor_args[1] = $input_constructor_args[0];
+						$input_constructor_args[0] = $model_names;
+						$input_class = 'EE_Select_Input';
+					}					
 					break;
 				case 'EE_Full_HTML_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Text_Area_Input';
 					break;
 				case 'EE_Infinite_Integer':
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
@@ -106,7 +118,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 					break;
 				case 'EE_Maybe_Serialized_Text_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Text_Area_Input';
 					break;
 				case 'EE_Money_Field':
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
@@ -125,10 +137,10 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
 					break;
 				case 'EE_Serialized_Text_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Text_Area_Input';
 					break;
 				case 'EE_Simple_HTML_Field':
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Text_Area_Input';
 					break;
 				case 'EE_Slug_Field':
 					$input_class = 'EE_Text_Input';

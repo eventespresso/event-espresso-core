@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -16,20 +17,17 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * EE_Text_Area
+ * EE_Text_Validation_Strategy
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage	Expression package is undefined on line 19, column 19 in Templates/Scripting/PHPClass.php.
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
-class EE_Text_Area_Input extends EE_Form_Input_Base{
-	public function __construct($options_array = array()) {
-		$this->_set_display_strategy(new EE_Text_Area_Display_Strategy());
-		$this->_set_normalization_strategy(new EE_Text_Normalization());
-		parent::__construct($options_array);
+class EE_Text_Validation_Strategy extends EE_Validation_Strategy_Base{
+	public function validate($normalized_value) {
 	}
 }
 
-// End of file EE_Text_Area.input.php
+// End of file EE_FUll_HTML_Validation_Strategy.strategy.php

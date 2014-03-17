@@ -452,7 +452,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @global type $wpdb
 	 * @param array $query_params like EEMerimental_Base::get_all's $query_params
 	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
-	 * @param boolean $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
+	 * @param mixed $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
 	 * and the models we joined to in the query. However, you can override this and set the select to "*", or a specific column name, like "ATT_ID", etc.
 	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
 	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
@@ -2809,5 +2809,20 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			throw new EE_Error(sprintf(__("The operator '%s' is not in the list of valid operators: %s", "event_espresso"),$operator_supplied,implode(",",array_keys($this->_valid_operators))));
 		}
+	}
+	
+	/**
+	 * Gets an array where keys are the primary keys and values are their 'names'
+	 * (as determined by the model object's name() function, which is oftne overridden) 
+	 * @param array $query_params like get_all's
+	 * @return string[]
+	 */
+	public function get_all_names($query_params = array()){
+		$objs = $this->get_all($query_params);
+		$names = array();
+		foreach($objs as $obj){
+			$names[$obj->ID()] = $obj->name();
+		}
+		return $names;
 	}
 }

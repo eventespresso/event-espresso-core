@@ -1,16 +1,13 @@
 <?php
 
-class EE_Email_Validation_Strategy extends EE_Validation_Strategy_Base{
+class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
 	/**
 	 * just checks the field isn't blank
 	 * @return boolean
 	 */
-	function validate() {
-		if( $this->_input->sanitized_value() && ! $this->_validate_email($this->_input->sanitized_value())){
-			$this->_input->add_validation_error(__("Please enter a valid email address", "event_espresso"), 'required');
-			return false;
-		}else{
-			return true;
+	function validate($normalized_value) {
+		if( $normalized_value && ! $this->_validate_email($normalized_value)){
+			throw new EE_Validation_Error(__("Please enter a valid email address", "event_espresso"), 'required');
 		}
 	}
 	

@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -16,7 +17,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * EE_Text_Area
+ * EE_Int_Normalization
+ * Casts the string to an int. If the user inputs anything but numbers, we growl at them
  *
  * @package			Event Espresso
  * @subpackage		
@@ -24,12 +26,15 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EE_Text_Area_Input extends EE_Form_Input_Base{
-	public function __construct($options_array = array()) {
-		$this->_set_display_strategy(new EE_Text_Area_Display_Strategy());
-		$this->_set_normalization_strategy(new EE_Text_Normalization());
-		parent::__construct($options_array);
+class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
+	public function normalize($value_to_normalize) {
+		$value_string_with_only_numbers = preg_replace( "/[^0-9]/", "",$value_to_normalize);
+		if(strlen($value_to_normalize) > strlen($value_string_with_only_numbers)){
+			throw new EE_Validation_Error(sprintf(__("Only numeric characters, please!", "event_espresso")), 'numeric_only');
+		}else{
+			return intval($value_string_with_only_numbers);
+		}
 	}
 }
 
-// End of file EE_Text_Area.input.php
+// End of file EE_Int_Normalization.strategy.php

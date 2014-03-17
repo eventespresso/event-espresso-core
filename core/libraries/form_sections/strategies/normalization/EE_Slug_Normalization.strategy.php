@@ -1,4 +1,5 @@
 <?php
+
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
@@ -16,7 +17,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * EE_Text_Area
+ * EE_Slug_Normalization
+ * Simply converts the string into a slug. DOes not add any errors if its bad.
  *
  * @package			Event Espresso
  * @subpackage		
@@ -24,12 +26,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EE_Text_Area_Input extends EE_Form_Input_Base{
-	public function __construct($options_array = array()) {
-		$this->_set_display_strategy(new EE_Text_Area_Display_Strategy());
-		$this->_set_normalization_strategy(new EE_Text_Normalization());
-		parent::__construct($options_array);
+class EE_Slug_Normalization extends EE_Normalization_Strategy_Base{
+	public function normalize($value_to_normalize) {
+		return sanitize_title($value_to_normalize);
 	}
 }
 
-// End of file EE_Text_Area.input.php
+// End of file EE_Slug_Normalization.strategy.php

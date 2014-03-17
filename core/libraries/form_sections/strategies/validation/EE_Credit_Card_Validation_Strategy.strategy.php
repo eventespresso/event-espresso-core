@@ -1,16 +1,13 @@
 <?php
 
-class EE_Credit_Card_Validation_Strategy extends EE_Validation_Strategy_Base{
+class EE_Credit_Card_Validation_Strategy extends EE_Text_Validation_Strategy{
 	/**
 	 * just checks the field isn't blank
-	 * @return boolean
+	 * @return void
 	 */
-	function validate() {
-		if( $this->_input->sanitized_value() && ! $this->verify_is_credit_card($this->_input->sanitized_value())){
-			$this->_input->add_validation_error(__("Please enter a valid credit card number", "event_espresso"), 'required');
-			return false;
-		}else{
-			return true;
+	function validate($normalized_value) {
+		if( $normalized_value && ! $this->verify_is_credit_card($normalized_value)){
+			throw new EE_Validation_Error(__("Please enter a valid credit card number", "event_espresso"), 'required');
 		}
 	}
 	

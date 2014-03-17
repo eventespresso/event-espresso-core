@@ -4,12 +4,16 @@ abstract class EE_Validation_Strategy_Base extends EE_Form_Input_Strategy_Base{
 	
 	/**
 	 * Performs validation on the request data that corresponds to this field.
-	 * If validation fails, should call the $this->_input->add_validation_error, and return false.
-	 * Note: most validate() functions should allow $this->_input->sanitized_value() to be empty, 
+	 * If validation fails, should throw an EE_Validation_Error.
+	 * Note: most validate() functions should allow $normalized_value to be empty, 
 	 * as its the job of the EE_Required_Validation_STrategy to ensure that the field isn't empty.
-	 * @return boolean
+	 * @parameter mixed $normalized_value ready for validation. May very well be NULL (which, unless
+	 * this validation strategy is the 'required' validation strategy, most should be OK with a null, empty string, etc)
+	 * @return void if the input isn't valid, it should just add a validation error using $this->_input->add_validation_error($msg,$code)
 	 */
-	abstract function validate();
+	function validate($normalized_value){
+		//by default, the validation strategy does no validation. this hsould be implemented
+	}
 	
 	/**
 	 * Gets the JS code for use in the jQuery validation js corresponding to this field when displaying.

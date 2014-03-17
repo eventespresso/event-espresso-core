@@ -24,10 +24,14 @@
 
 echo "</form><hr>SAMPLE FORM<hr>";
 //		$f = new EE_Sample_Form();
-		$f = new EE_Model_Form_Section(array(
-			'model'=>EEM_Country::instance(),
-			'model_object'=>EEM_Country::instance()->get_one()
-		));
+//		$f = new EE_Model_Form_Section(array(
+//			'model'=>EEM_Country::instance(),
+//			'model_object'=>EEM_Country::instance()->get_one(),
+//			'subsections'=>array(
+//				'textarea'=>new EE_Text_Area_Input(),
+//			)
+//		));
+$f = new EE_Paypal_Standard_Form();
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$f->receive_form_submission($_POST);
 //			dd($f->get_model_object());
