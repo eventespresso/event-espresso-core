@@ -614,13 +614,13 @@ final class EE_System {
 		add_action( 'init', array( $this, 'perform_activations_upgrades_and_migrations' ), 3 );
 		add_action( 'init', array( $this, 'load_CPTs_and_session' ), 5 );
 		add_action( 'init', array( $this, 'load_controllers' ), 7 );
+		add_action( 'init', array( $this, 'core_loaded_and_ready' ), 9 );
 		// check if M-mode is engaged
 		if ( EE_Maintenance_Mode::instance()->level() ) {
 			// shut 'er down down for maintenance ?
 			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 999 );
 		} else {
-			// begin running client code
-			add_action( 'init', array( $this, 'core_loaded_and_ready' ), 9 );
+			add_action( 'init', array( $this, 'initialize' ), 10 );
 			add_action( 'init', array( $this, 'initialize_last' ), 100 );
 			add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		}
@@ -700,13 +700,27 @@ final class EE_System {
 	/**
 	* core_loaded_and_ready
 	* 
-	* this is the best place to begin initializing client code 
+	* all of the basic EE core should be loaded at this point and available regardless of M-Mode
 	* 
 	* @access public
 	* @return void
 	*/
 	public function core_loaded_and_ready() {
 		do_action( 'AHEE__EE_System__core_loaded_and_ready' );
+	}
+
+
+
+	/**
+	* initialize
+	* 
+	* this is the best place to begin initializing client code 
+	* 
+	* @access public
+	* @return void
+	*/
+	public function initialize() {
+		do_action( 'AHEE__EE_System__initialize' );
 		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
 	}
 
