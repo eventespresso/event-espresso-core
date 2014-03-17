@@ -240,7 +240,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 * @return EE_Datetime[]
 	 */
 	public function get_datetimes_for_event_ordered_by_start_time($EVT_ID, $include_expired = true, $include_deleted= true, $limit = NULL ){
-		echo "time provided:".current_time('mysql')."<br>"; //(should be in local timezone)
+//		echo "time provided:".current_time('mysql')."<br>"; //(should be in local timezone)
 		$query_params =array(array('Event.EVT_ID'=>$EVT_ID),'order_by'=>array('DTT_EVT_start'=>'asc'));
 		if( ! $include_expired){
 			$query_params[0]['DTT_EVT_end'] = array('>=',current_time('mysql'));

@@ -516,11 +516,11 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function init() {
-		$e = EEM_Event::instance()->get_one();
-		EEM_Datetime::instance()->show_next_x_db_queries();
-		$ds = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_start_time($e->ID(),false);
-		
-				d($ds);
+//		$e = EEM_Event::instance()->get_one();
+//		EEM_Datetime::instance()->show_next_x_db_queries();
+//		$ds = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_start_time($e->ID(),false);
+//		
+//				d($ds);
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
