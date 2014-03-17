@@ -3,7 +3,7 @@
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
   Description: 	Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 		4.3.004.dev
+  Version: 		4.3.005.dev
   Author: 			Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 		GPLv2
@@ -43,7 +43,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.3.004.dev';
+		return '4.3.005.dev';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -188,9 +188,9 @@ function espresso_load_error_handling() {
 function espresso_load_required( $classname, $full_path_to_file ) {
 	espresso_load_error_handling();
 	if ( is_readable( $full_path_to_file )) {
-		require_once( $full_path_to_file );		
+		require_once( $full_path_to_file );
 	} else {
-		throw new EE_Error ( sprintf ( 
+		throw new EE_Error ( sprintf (
 			__( 'The %s class file could not be located or is not readable due to file permissions.', 'event_espresso' ),
 			$classname
 		));
@@ -246,7 +246,7 @@ function espresso_minimum_wp_version_error() {
 		'<br/>',
 		'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
 	);
-	?>        	
+	?>
 	</p>
 	</div>
 	<?php
