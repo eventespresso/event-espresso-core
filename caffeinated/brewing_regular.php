@@ -1,4 +1,4 @@
-<?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * the purpose of this file is to simply contain any action/filter hook callbacks etc for specific aspects of EE related to caffeinated (regular) use.  Before putting any code in here, First be certain that it isn't better to define and use the hook in a specific caffeinated/whatever class or file.
  */
@@ -24,37 +24,30 @@
  *
  * ------------------------------------------------------------------------
  */
-EE_Registry::instance(); //makes sure EE_Base gets loaded.
 class EE_Brewing_Regular extends EE_Base {
 
 	public function __construct() {
-		//defined some new constants related to caffeinated folder
-		if ( !defined('EE_CAF_PATH') ) {
-			define('EE_CAF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS);
+		// defined some new constants related to caffeinated folder
+		if ( defined( 'EE_CAFF_PATH' )) {
 			define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/' );
-			define('EE_CAF_CORE', EE_CAF_PATH . 'core' . DS);
+			define('EE_CAF_CORE', EE_CAFF_PATH . 'core' . DS);
 			define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries' . DS);
+			// activation 
+			add_action( 'AHEE__EEH_Activation__initialize_db_content', array( $this, 'initialize_caf_db_content' ));
+			// load caff init
+			add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'caffeinated_init' ));			
+			// make it so the PDF receipt doesn't show our shameless plug
+			add_filter( 'FHEE_Invoice__send_invoice__shameless_plug', '__return_false' );
+			// add caffeinated modules 
+			add_filter( 'FHEE__EE_Config__register_modules__modules_to_register', array( $this, 'caffeinated_modules_to_register' ));
+			// load caff scripts
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_caffeinated_scripts'), 10 );
+			// caffeinated constructed
+			do_action( 'AHEE__EE_Brewing_Regular__construct__complete' );
 		}
-
-
-		$this->_run_now();
-		add_action( 'ee_init_2', array( $this, 'on_init' ));
-		add_action( 'wp_enqueue_scripts', array( $this, 'on_wp_enqueue_scripts'), 10 );
 	}
 
 
-	private function _run_now(){
-		/**
-		 * note, this action hook is simply for reliably having things run ONLY if EE Regular is running.  This hook is executed at the plugins_loaded (priority 3) hook point. (see EE_System::plugins_loaded)
-		 */
-		do_action( 'AHEE__EE_Brewing_Regular__run_now' );
-		add_action('AHEE__EEH_Activation__initialize_db_content',array($this,'initialize_caf_db_content'));
-		//make it so the PDF receipt doesn't show our shameless plug
-		add_filter('FHEE_Invoice__send_invoice__shameless_plug','__return_false');
-		// add caffeinated modules 
-		add_filter( 'FHEE__EE_Config__register_modules__modules_to_register', array( $this, 'caffeinated_modules_to_register' ));
-
-	}
 	
 	/**
 	 * Upon brand-new activation, if this is a new activation of CAF, we want to add
@@ -152,8 +145,8 @@ class EE_Brewing_Regular extends EE_Base {
 	 *  	@return array
 	 */
 	public function caffeinated_modules_to_register( $modules_to_register = array() ){
-		if ( is_readable( EE_CAF_PATH . 'modules' )) {
-			$caffeinated_modules_to_register = glob( EE_CAF_PATH . 'modules' . DS . '*', GLOB_ONLYDIR );
+		if ( is_readable( EE_CAFF_PATH . 'modules' )) {
+			$caffeinated_modules_to_register = glob( EE_CAFF_PATH . 'modules' . DS . '*', GLOB_ONLYDIR );
 			if ( is_array( $caffeinated_modules_to_register ) && ! empty( $caffeinated_modules_to_register )) {
 				$modules_to_register = array_merge( $modules_to_register, $caffeinated_modules_to_register );
 			}
@@ -163,20 +156,21 @@ class EE_Brewing_Regular extends EE_Base {
 	
 
 
-	public function on_init(){
-		/**
-		 * EE_Register_CPTs hooks
-		 */
+	public function caffeinated_init(){
+		// EE_Register_CPTs hooks
 		add_filter('FHEE__EE_Register_CPTs__construct__taxonomies', array( $this, 'filter_taxonomies' ), 10 );
 		add_filter('FHEE__EE_Register_CPTs__construct__CPTs', array( $this, 'filter_cpts' ), 10 );
 		add_filter('FHEE__EE_Admin__get_extra_nav_menu_pages_items', array( $this, 'nav_metabox_items' ), 10 );
-
 		$this->_messages_caf();
+		// caffeinated_init__complete hook
+		do_action( 'AHEE__EE_Brewing_Regular__caffeinated_init__complete' );
 	}
 
 
 
-	public function on_wp_enqueue_scripts(){}
+	public function enqueue_caffeinated_scripts(){
+		// sound of crickets...
+	}
 
 
 	/**
