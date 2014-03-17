@@ -647,3 +647,8 @@
 #event-and-ticket-form-content .dashicons, #event-and-ticket-form-content .ee-icon {
     margin-right: 0;
 }
+
+.ticket-is-required-container {
+    float:right;
+    margin-top: 10px;
+}
