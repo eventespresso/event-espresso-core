@@ -39,7 +39,7 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base{
 			$normalized_value = preg_replace( "/[^0-9,. ]/", "", $normalized_value);
 		}
 		if(strlen($value_to_normalize) > strlen($normalized_value)){
-			$this->_input->add_validation_error(sprintf(__("Only numeric characters, commas, periods, and spaces, please!", "event_espresso")), 'float_only');
+			throw new EE_Validation_Error(sprintf(__("Only numeric characters, commas, periods, and spaces, please!", "event_espresso")), 'float_only');
 		}else{
 			return floatval($normalized_value);
 		}

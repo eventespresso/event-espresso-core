@@ -7,7 +7,7 @@ class EE_Email_Validation_Strategy extends EE_Text_Validation_Strategy{
 	 */
 	function validate($normalized_value) {
 		if( $normalized_value && ! $this->_validate_email($normalized_value)){
-			$this->_input->add_validation_error(__("Please enter a valid email address", "event_espresso"), 'required');
+			throw new EE_Validation_Error(__("Please enter a valid email address", "event_espresso"), 'required');
 		}
 	}
 	

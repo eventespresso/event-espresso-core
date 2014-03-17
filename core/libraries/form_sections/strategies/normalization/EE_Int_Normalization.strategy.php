@@ -30,7 +30,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 	public function normalize($value_to_normalize) {
 		$value_string_with_only_numbers = preg_replace( "/[^0-9]/", "",$value_to_normalize);
 		if(strlen($value_to_normalize) > strlen($value_string_with_only_numbers)){
-			$this->_input->add_validation_error(sprintf(__("Only numeric characters, please!", "event_espresso")), 'numeric_only');
+			throw new EE_Validation_Error(sprintf(__("Only numeric characters, please!", "event_espresso")), 'numeric_only');
 		}else{
 			return intval($value_string_with_only_numbers);
 		}

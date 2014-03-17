@@ -7,7 +7,7 @@ class EE_URL_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 */
 	function validate($normalized_value) {
 		if (filter_var($normalized_value, FILTER_VALIDATE_URL) !== false){
-			$this->_input->add_validation_error (sprintf (__ ("Please enter a valid URL", "event_espresso")), 'invalid_url');
+			throw new EE_Validation_Error(sprintf (__ ("Please enter a valid URL", "event_espresso")), 'invalid_url');
 		}
 	}
 	

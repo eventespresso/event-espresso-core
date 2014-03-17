@@ -148,15 +148,22 @@ abstract class EE_Form_Section_Base{
 		return $this->_name;
 	}
 	/**
-	 * Creates a validation error from the arguments provided, and adds it to the form section's list
+	 * Creates a validation error from the arguments provided, and adds it to the form section's list.
+	 * If such an EE_Validation_Error object is passed in as the first arg, simply sets this as its form section, and adds
+	 * it to the list of validation errors
 	 * of errors
-	 * @param string $message internationalized string describing the validation error
+	 * @param mixed string $message internationalized string describing the validation error; or it could be a proper EE_Validation_Error object
 	 * @param string $error_code a short key which can be used to uniquely identify the error
 	 * @param Exception $previous_exception if there was an exception that caused the error, that exception
 	 * @return void
 	 */
-	function add_validation_error($message, $error_code = null,$previous_exception = null){
-		$validation_error = new EE_Validation_Error($this, $message, $error_code, $previous_exception);
+	function add_validation_error($message_or_object, $error_code = null,$previous_exception = null){
+		if($message_or_object instanceof EE_Validation_Error){
+			$validation_error= $message_or_object;
+			$validation_error->set_form_section($this);
+		}else{
+			$validation_error = new EE_Validation_Error($message_or_object, $error_code, $this, $previous_exception);
+		}
 		$this->_validation_errors[] = $validation_error;
 	}
 	

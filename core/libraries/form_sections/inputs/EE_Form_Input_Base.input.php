@@ -209,7 +209,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	protected function _validate() {
 		if(is_array($this->_validation_strategies)){
 			foreach($this->_validation_strategies as $validation_strategy){
+				try{
 				$validation_strategy->validate($this->normalized_value());
+				}catch(EE_Validation_Error $e){
+					$this->add_validation_error($e);
+				}
 			}
 		}
 		if( $this->get_validation_errors()){
@@ -242,10 +246,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 			//but we're just removing anything really nasty
 			$this->_normalized_value = $this->_normalization_strategy->normalize($this->sanitized_value());
 		}catch(EE_Validation_Error $e){
-			$this->add_validation_error(
-					sprintf(__("Could not normalize data into proper data type. Submitted form data with name %s had value %s, which is not allowed for sanitization strategies of type %s", "event_espresso"),$this->html_name(),$req_data,get_class($this->_normalization_strategy)),
-					'SANITIZATION_ERROR', 
-					$e);
+			$this->add_validation_error($e);
 		}
 	}
 	
