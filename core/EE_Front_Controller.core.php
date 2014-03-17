@@ -85,7 +85,7 @@ final class EE_Front_Controller {
 	 */
 	private function __construct() {
 		// determine how to integrate WP_Query with the EE models
-		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'employ_CPT_Strategy' ));
+		add_action( 'AHEE__EE_System__initialize', array( $this, 'employ_CPT_Strategy' ));
 		// load other resources and begin to actually run shortcodes and modules
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
 		// analyse the incoming WP request
