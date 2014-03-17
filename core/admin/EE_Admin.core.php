@@ -65,16 +65,13 @@ final class EE_Admin {
      * class constructor
      */
 	protected function __construct() {
-		// grab registry
-		
 		// define global EE_Admin constants
 		$this->_define_all_constants();
-		
 		// admin hooks
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
 		// load EE_Request_Handler early
-		add_action( 'init', array( $this, 'get_request' ), 4 );
-		add_action( 'init', array( $this, 'init' ), 100 );
+		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'get_request' ));
+		add_action( 'AHEE__EE_System__initialize_last', array( $this, 'init' ), 100 );
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
@@ -82,7 +79,6 @@ final class EE_Admin {
 		add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
-
 		// pew pew pew
 		EE_Registry::instance()->load_core( 'PUE' );
 		
