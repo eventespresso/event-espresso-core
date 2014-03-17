@@ -140,6 +140,15 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 
+	/**
+	 * This is a flag used to indicate if this ticket must be purchased in a transaction
+	 * @var boolean
+	 */
+	protected $_TKT_required;
+
+
+
+
 
 	/**
 	 * Whether the ticket is taxable or not
@@ -821,6 +830,31 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	function set_uses($uses) {
 		return $this->set('TKT_uses', $uses);
 	}
+
+
+
+	/**
+	 * returns whether ticket is required or not.
+	 * @return boolean
+	 */
+	public function required() {
+		return $this->get('TKT_required');
+	}
+
+
+
+
+	/**
+	 * sets the TKT_required property
+	 * @param boolean $required
+	 * @return boolean
+	 */
+	public function set_required( $required ) {
+		return $this->set( 'TKT_required', $required );
+	}
+
+
+
 	/**
 	 * Gets taxable
 	 * @return boolean
