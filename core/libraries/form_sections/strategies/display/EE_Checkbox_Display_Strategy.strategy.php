@@ -9,7 +9,7 @@ class EE_Checkbox_Display_Strategy extends EE_Select_Display_Strategy{
 		$input = $this->_input;		
 		$html='';
 		foreach($this->_options as $value => $display_text){
-			if($input->sanitized_value() && in_array("$value", $input->sanitized_value())){
+			if($input->raw_value() && in_array("$value", $input->raw_value())){
 				$selected_attr = 'checked';
 			}else{
 				$selected_attr ='';

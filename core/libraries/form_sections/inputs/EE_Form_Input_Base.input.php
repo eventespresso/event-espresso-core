@@ -37,7 +37,19 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 */
 	protected $_html_label;
 	
-	protected $_sanitized_value;
+	/**
+	 * The raw data submitted fo rthis, like in teh $_POST superglobal.
+	 * Generally unsafe for usage in client code
+	 * @var mixed string or array
+	 */
+	protected $_raw_value;
+	
+	/**
+	 * Value normalized according to the input's normalization strategy.
+	 * The normalization strategy dictates whether this is a string, int, float,
+	 * boolean, or array of any of those.
+	 * @var mixed
+	 */
 	protected $_normalized_value;
 	
 	/**
@@ -79,7 +91,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 			$this->_html_label = $options_array['html_label'];
 		}
 		if(isset($options_array['default'])){
-			$this->_sanitized_value = $options_array['default'];
+			$this->_raw_value = $options_array['default'];
 		}
 		if(isset($options_array['required']) && in_array($options_array['required'], array('true',true))){
 			$this->_add_validation_strategy(new EE_Required_Validation_Strategy());
@@ -222,6 +234,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 			return true;
 		}
 	}
+	/**
+	 * Performs basic sanitization on this value. But what sanitization can be performed anyways?
+	 * This value MIGHT be allowed to have tags, so we can't really remove them.
+	 * @param string $value
+	 */
+	private function _sanitize($value){
+		return stripslashes(html_entity_decode($value));//don't sanitize_text_field
+	}
 	
 	
 	/**
@@ -237,14 +257,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 			//super simple sanitization for now
 			if(is_array($raw_input)){
 				foreach($raw_input as $key => $value){
-					$this->_sanitized_value[$key] = sanitize_text_field($value);
+					$this->_raw_value[$key] = $this->_sanitize($value);
 				}
 			}else{
-				$this->_sanitized_value = sanitize_text_field($raw_input);
+				$this->_raw_value = $this->_sanitize($raw_input);
 			}
 			//we want ot mostly leave the input alone in case we need to re-display it to the user
 			//but we're just removing anything really nasty
-			$this->_normalized_value = $this->_normalization_strategy->normalize($this->sanitized_value());
+			$this->_normalized_value = $this->_normalization_strategy->normalize($this->raw_value());
 		}catch(EE_Validation_Error $e){
 			$this->add_validation_error($e);
 		}
@@ -267,14 +287,25 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		return $this->_html_label_text;
 	}
 	/**
-	 * returns the value after it's been cleaned, but it's still a string.
+	 * returns the raw, UNSAFE, input, almost exactly as the user submitted it. 
+	 * Please note that almost all client code should instead use the normalized_value;
+	 * or possibly raw_value_in_form (which prepares the string for displaying in an HTML attribute on a tag,
+	 * mostly by escaping quotes) 
 	 * Note, we do not store the exact original value sent in the user's request because
 	 * it may have malicious content, and we MIGHT want to store the form input in a transient or something...
 	 * in which case, we would have stored the malicious content to our database.
 	 * @return string
 	 */
-	function sanitized_value(){
-		return $this->_sanitized_value;
+	function raw_value(){
+		return $this->_raw_value;
+	}
+	/**
+	 * Returns a string safe to usage in form inputs when displaying, because
+	 * it escapes all html entities
+	 * @return string
+	 */
+	function raw_value_in_form(){
+		return htmlentities($this->raw_value(),ENT_QUOTES, 'UTF-8');
 	}
 	/**
 	 * returns the value after it's been sanitized, and then converted into it's proper type
@@ -320,7 +351,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * @return void
 	 */
 	function set_default($value){
-		$this->_sanitized_value = $value;
+		$this->_raw_value = $value;
 	}
 	
 }

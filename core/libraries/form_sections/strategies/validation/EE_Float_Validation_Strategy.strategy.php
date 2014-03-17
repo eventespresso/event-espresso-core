@@ -8,12 +8,6 @@ class EE_Float_Validation_Strategy extends EE_Validation_Strategy_Base{
 	 */
 	function validate() {
 		return true;
-//		if( ! $this->_input->sanitized_value() || ! $this->verify_is_credit_card($this->_input->sanitized_value())){
-//			throw new EE_Validation_Error(__("Please enter a valid credit card number", "event_espresso"), 'required');
-//			return false;
-//		}else{
-//			return true;
-//		}
 	}
 	
 	function get_jquery_validation_rule_array(){

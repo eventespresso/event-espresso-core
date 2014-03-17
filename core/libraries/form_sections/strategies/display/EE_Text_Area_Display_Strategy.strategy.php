@@ -6,7 +6,7 @@ class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base{
 	 */
 	function display(){
 		$input = $this->_input;		
-		return "<textarea type='text' id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}'>{$input->sanitized_value()}</textarea>";
+		return "<textarea type='text' id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}'>{$input->raw_value()}</textarea>";
 	}
 	
 }

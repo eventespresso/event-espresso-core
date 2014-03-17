@@ -17,7 +17,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		$input = $this->_input;		
 		$html= "<select id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}'/>";
 		foreach($this->_options as $value => $display_text){
-			if("{$input->sanitized_value()}" == "$value"){
+			if("{$input->raw_value()}" == "$value"){
 				$selected_attr = 'selected="selected"';
 			}else{
 				$selected_attr ='';

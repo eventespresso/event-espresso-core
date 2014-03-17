@@ -25,15 +25,15 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 	 * @param EE_Text_Input $form_input
 	 */
 	function _validate_name($form_input){
-		if($form_input->sanitized_value() != 'Mike'){
+		if($form_input->raw_value() != 'Mike'){
 			$form_input->add_validation_error(__("You are not mike. You must be brent or darren. Thats ok, I guess", 'event_espresso'), 'not-mike');
 		}
 	}
 	
 	function _validate(){
 		parent::_validate();
-		if($this->_subsections['shirt_size']->sanitized_value() =='s'
-				&& $this->_subsections['year_4']->sanitized_value() < 2010){
+		if($this->_subsections['shirt_size']->normalized_value() =='s'
+				&& $this->_subsections['year_4']->normalized_value() < 2010){
 			$this->add_validation_error(__("If you want a small shirt, you should be born after 2010. Otherwise theyre just too big", 'event_espresso'), 'too-old');
 		}
 	}

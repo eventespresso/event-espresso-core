@@ -5,7 +5,7 @@ abstract class EE_Validation_Strategy_Base extends EE_Form_Input_Strategy_Base{
 	/**
 	 * Performs validation on the request data that corresponds to this field.
 	 * If validation fails, should throw an EE_Validation_Error.
-	 * Note: most validate() functions should allow $this->_input->sanitized_value() to be empty, 
+	 * Note: most validate() functions should allow $normalized_value to be empty, 
 	 * as its the job of the EE_Required_Validation_STrategy to ensure that the field isn't empty.
 	 * @parameter mixed $normalized_value ready for validation. May very well be NULL (which, unless
 	 * this validation strategy is the 'required' validation strategy, most should be OK with a null, empty string, etc)
