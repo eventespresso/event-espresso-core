@@ -62,7 +62,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	}
 
 ?>
-			<tr class="tckt-slctr-tbl-tr <?php echo $status_class; ?>">		
+			<tr class="tckt-slctr-tbl-tr <?php echo $status_class . ' ' . espresso_get_object_css_class( $ticket ); ?>">		
 				<td class="tckt-slctr-tbl-td-name">
 					<b><?php echo $ticket->get_pretty('TKT_name');?></b>
 					<a 
@@ -161,7 +161,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 				</td>
 			</tr>
-			<tr class="tckt-slctr-tkt-details-tr">
+			<tr class="tckt-slctr-tkt-details-tr <?php echo espresso_get_object_css_class( $ticket, '', 'details' );?>">
 				<td class="tckt-slctr-tkt-details-td" colspan="4" style="padding: 0;border-top:none;">
 					<div id="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>-dv" class="tckt-slctr-tkt-details-dv" style="display: none;">
 						

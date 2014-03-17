@@ -15,11 +15,43 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  *
  * ------------------------------------------------------------------------
  */
+ 
+ 
+ 
+/**
+ * espresso_get_template_part
+ * basically a copy of the WordPress get_template_part() function but uses EEH_Template::locate_template() instead, and doesn't add base versions of files
+ * so not a very useful function at all except that it adds familiarity PLUS filtering based off of the entire template part name
+ * 
+ * @param string $slug The slug name for the generic template.
+ * @param string $name The name of the specialised template.
+ * @return string        the html output for the formatted money value
+ */ 
 if ( ! function_exists( 'espresso_get_template_part' )) {
 	function espresso_get_template_part( $slug = NULL, $name = NULL ) {
 		EEH_Template::get_template_part( $slug, $name );
 	}	
 }
+
+
+
+/**
+ * espresso_get_object_css_class - attempts to generate a css class based on the type of EE object passed
+ *
+ *
+ * @param EE_Base_Class $object the EE object the css class is being generated for
+ * @param  string $prefix added to the beginning of the generated class
+ * @param  string $suffix added to the end of the generated class
+ * @return string
+ */
+if ( ! function_exists( 'espresso_get_object_css_class' )) {
+	function espresso_get_object_css_class( $object = NULL, $prefix = '', $suffix = '' ) {
+		return EEH_Template::get_object_css_class( $object, $prefix, $suffix );
+	}	
+}
+
+
+
 /*
  * ------------------------------------------------------------------------
  *
@@ -203,6 +235,40 @@ class EEH_Template {
 		} else {
 			include( $template_path );
 		}
+	}
+
+
+
+
+
+	/**
+	 * get_object_css_class - attempts to generate a css class based on the type of EE object passed
+	 *
+	 *
+	 * @param EE_Base_Class $object the EE object the css class is being generated for
+	 * @param  string $prefix added to the beginning of the generated class
+	 * @param  string $suffix added to the end of the generated class
+	 * @return string
+	 */
+	public static function get_object_css_class( $object = NULL, $prefix = '', $suffix = '' ) {
+		// in the beginning...
+		$prefix = ! empty( $prefix ) ? rtrim( $prefix, '-' ) . '-' : '';
+		// the end
+		$suffix = ! empty( $suffix ) ? '-' . ltrim( $suffix, '-' ) : '';
+		// is the passed object an EE object ?
+		if ( $object instanceof EE_Base_Class ) {
+			// grab the exact type of object
+			$obj_class = get_class( $object );
+			// depending on the type of object...
+			switch ( $obj_class ) {
+				// no specifics just yet...
+				default :
+					$class = strtolower( str_replace( '_', '-', $obj_class ));
+					$class .= method_exists( $obj_class, 'name' ) ? '-' . sanitize_title( $object->name() ) : '';
+				
+			}
+		}
+		return $prefix . $class . $suffix;
 	}
 
 
