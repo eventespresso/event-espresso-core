@@ -5,32 +5,25 @@
  */
 class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	/**
-	 * where array keys are the values, and array values are internationalized strings for displaying in teh select OR a multidimensional-array, where the top-level keys are i18n string ot show for option groups,
-	 * and then the values are arrays with keys being the HTML values, and values being what ot display
-	 * @var array
-	 */
-	protected $_options;
-	function __construct($options) {
-		$this->_options = $options;
-		parent::__construct();
-	}
-	/**
 	 * 
 	 * @return string of html to display the field
 	 */
 	function display(){
 		$input = $this->_input;		
+		if( ! $input instanceof EE_Form_Input_With_Options_Base){
+			throw new EE_Error(sprintf(__("Cannot use Select Display Strategy with an input that doesn't ahve options", "event_espresso")));
+		}
 		$html= "<select id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}'/>";
 		EE_Registry::instance()->load_helper('Array');
-		if(EEH_Array::is_multi_dimensional_array($this->_options)){
-			foreach($this->_options as $opt_group_label => $opt_group){
+		if(EEH_Array::is_multi_dimensional_array($input->options())){
+			foreach($input->options() as $opt_group_label => $opt_group){
 				$opt_group_label = esc_attr($opt_group_label);
 				$html.="<optgroup label='{$opt_group_label}'>";
 				$html.=$this->_display_options($opt_group);
 				$html.="</optgroup>";
 			}
 		}else{
-			$html.=$this->_display_options($this->_options);
+			$html.=$this->_display_options($input->options());
 		}
 		
 		$html.="</select>";
@@ -44,7 +37,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	protected function _display_options($options){
 		$html = '';
 		foreach($options as $value => $display_text){
-			if("{$this->_input->raw_value()}" == "$value"){
+			if("{$this->_input->normalized_value()}" == "$value"){
 				$selected_attr = 'selected="selected"';
 			}else{
 				$selected_attr ='';

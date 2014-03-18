@@ -7,9 +7,12 @@ class EE_Checkbox_Display_Strategy extends EE_Select_Display_Strategy{
 	 */
 	function display(){
 		$input = $this->_input;		
+		if( ! $input instanceof EE_Form_Input_With_Options_Base){
+			throw new EE_Error(sprintf(__("Cannot use Checkbox Display Strategy with an input that doesn't ahve options", "event_espresso")));
+		}
 		$html='';
-		foreach($this->_options as $value => $display_text){
-			if($input->raw_value() && in_array("$value", $input->raw_value())){
+		foreach($input->options() as $value => $display_text){
+			if($input->normalized_value() && in_array("$value", $input->normalized_value())){
 				$selected_attr = 'checked';
 			}else{
 				$selected_attr ='';

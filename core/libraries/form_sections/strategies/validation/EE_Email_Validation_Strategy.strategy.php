@@ -77,11 +77,12 @@ private function _validate_email($email)
             $isValid = false;
          }
       }
-      if ($isValid && !(checkdnsrr($domain,"MX") || checkdnsrr($domain,"A")))
-      {
-         // domain not found in DNS
-         $isValid = false;
-      }
+	  //don't check the DNS records... just personal preference
+//      if ($isValid && !(checkdnsrr($domain,"MX") || checkdnsrr($domain,"A")))
+//      {
+//         // domain not found in DNS
+//         $isValid = false;
+//      }
    }
    return $isValid;
 }

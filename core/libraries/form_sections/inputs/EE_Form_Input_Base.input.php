@@ -188,6 +188,21 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	}
 	
 	/**
+	 * Gets the display strategy for this input
+	 * @return EE_Display_Strategy_Base
+	 */
+	public function get_display_strategy(){
+		return $this->_display_strategy;
+	}
+	/**
+	 * Gets the normalization strategy set on this input
+	 * @return EE_Normalization_Strategy_Base
+	 */
+	public function get_normalization_strategy(){
+		return $this->_normalization_strategy;
+	}
+	
+	/**
 	 * Returns all teh validation strategies which apply to this field, numerically indexed
 	 * @return EE_Validation_Strategy_Base[]
 	 */
