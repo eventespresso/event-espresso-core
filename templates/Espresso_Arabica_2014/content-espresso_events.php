@@ -43,7 +43,6 @@ $event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $eve
 			<h1 id="event-details-h1" class="entry-title">
 				<a class="" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
 			</h1>
-			<?php if (has_excerpt( $post->ID )): the_excerpt(); endif;?>
 			<p id="event-date-p">
 				<?php 
 				if ( isset( $post->EE_Event ) && $post->EE_Event instanceof EE_Event ) {
