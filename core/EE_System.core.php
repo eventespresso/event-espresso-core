@@ -620,12 +620,6 @@ final class EE_System {
 		add_action( 'init', array( $this, 'initialize' ), 10 );
 		add_action( 'init', array( $this, 'initialize_last' ), 100 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
-		// check if M-mode is engaged
-		if ( EE_Maintenance_Mode::instance()->level() ) {
-			// shut 'er down down for maintenance ?
-			add_filter( 'the_content', array( 'EE_Maintenance_Mode', 'the_content' ), 999 );
-		} 
-
 		add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
 	}
