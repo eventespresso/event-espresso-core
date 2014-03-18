@@ -75,6 +75,24 @@ class EEH_Array extends EEH_Base {
 		reset($arr);
 		return $item;
 	}
+	/**
+	 * Detects if this is a multi-dimensional array (meaning that the top-leve
+	 * values are themselves array. Eg array(array(...),...)
+	 * @param mixed $arr
+	 * @return boolean
+	 */
+	public static function is_multi_dimensional_array($arr){
+		if(is_array($arr)){
+			$first_item = reset($arr);
+			if(is_array($first_item)){
+				return true;//yep, there's at least 2 levels to this array
+			}else{
+				return false;//nope, only 1 level
+			}
+		}else{
+			return false;//its not an array at all!
+		}
+	}
 
 
 } //end EEH_Template class
