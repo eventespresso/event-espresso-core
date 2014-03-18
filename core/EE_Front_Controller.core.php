@@ -106,7 +106,7 @@ final class EE_Front_Controller {
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
 		// add powered by EE msg
-		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );
+		add_action( 'wp_footer', array( $this, 'display_registration_footer' ));
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
 		//exclude our private cpt comments
@@ -545,9 +545,9 @@ final class EE_Front_Controller {
 	 *  @return 	string
 	 */
 	public function display_registration_footer() {
-		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );
-		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer',EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
-			return apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></p>' );
+		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );		
+		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer', EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
+			echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></div>' );
 		}
 	}
 
