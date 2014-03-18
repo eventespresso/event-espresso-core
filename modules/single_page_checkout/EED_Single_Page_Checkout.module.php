@@ -68,7 +68,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */	
 	public static function instance ( ) {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EED_Single_Page_Checkout )) {
+		if ( ! self::$_instance instanceof EED_Single_Page_Checkout ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -84,7 +84,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		add_action( 'wp_loaded', array( 'EED_Single_Page_Checkout', 'set_definitions' ), 2 );
+		EED_Single_Page_Checkout::set_definitions();
 		add_filter( 'FHEE_load_EE_messages', '__return_true');
 		// configure the reg steps array
 		EED_Single_Page_Checkout::setup_reg_steps_array();
@@ -105,7 +105,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-		add_action( 'wp_loaded', array( 'EED_Single_Page_Checkout', 'set_definitions' ), 2 );
+		EED_Single_Page_Checkout::set_definitions();
 		add_filter( 'FHEE_load_EE_messages', '__return_true');
 		// configure the reg steps array
 		EED_Single_Page_Checkout::setup_reg_steps_array();

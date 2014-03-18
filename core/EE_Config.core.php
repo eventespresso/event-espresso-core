@@ -145,9 +145,9 @@ final class EE_Config {
 		// load existing EE site settings
 		$this->_load_config();
 		//  register shortcodes and modules
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ), 5 );
+		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons', array( $this, 'register_shortcodes_and_modules' ));
 		//  initialize shortcodes and modules
-		add_action( 'init', array( $this, 'init' ), 10 );
+		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'initialize_shortcodes_and_modules' ));
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
 		// construct__end hook
@@ -266,15 +266,16 @@ final class EE_Config {
 
 
 	/**
-	 * 	plugins_loaded.
-	 * At this point, it's too early to tell if we're maintenance mode or not.
-	 * In fact, this is where we give modules a chance to let core know they exist
-	 * so they can help trigger maintenance mode if it's needed
+	 * 	register_shortcodes_and_modules.
+	 * 	
+	 * 	At this point, it's too early to tell if we're maintenance mode or not.
+	 * 	In fact, this is where we give modules a chance to let core know they exist
+	 * 	so they can help trigger maintenance mode if it's needed
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function plugins_loaded() {
+	public function register_shortcodes_and_modules() {
 		// allow shortcodes to register with WP and to set hooks for the rest of the system
 		EE_Registry::instance()->shortcodes =$this->_register_shortcodes();
 		// allow modules to set hooks for the rest of the system
@@ -283,22 +284,17 @@ final class EE_Config {
 
 
 	/**
-	 * 	init. At this point we should know if we're in maintenance mode or not, 
-	 * so we can check for that, and if not, put the modules and shortcodes
-	 * in high gear (meaning they can start adding their hooks to get stuff done,
-	 * not just have us acknowledge their presence)
+	 * 	initialize_shortcodes_and_modules
+	 * 	meaning they can start adding their hooks to get stuff done
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function init() {
-		//only initialize shortcodes if we're not in maintenance mode
-		if( ! EE_Maintenance_Mode::instance()->level()){
-			// allow shortcodes to set hooks for the rest of the system
-			$this->_initialize_shortcodes();
-			// allow modules to set hooks for the rest of the system
-			$this->_initialize_modules();
-		}
+	public function initialize_shortcodes_and_modules() {
+		// allow shortcodes to set hooks for the rest of the system
+		$this->_initialize_shortcodes();
+		// allow modules to set hooks for the rest of the system
+		$this->_initialize_modules();
 	}
 
 
@@ -473,7 +469,7 @@ final class EE_Config {
 	 *  @return 	void
 	 */
 	public static function register_module( $module_path = NULL ) {
-		do_action( 'AHEE__EE_Config__register_module__begin',$module_path );
+		do_action( 'AHEE__EE_Config__register_module__begin', $module_path );
 		$module_ext = '.module.php';
 		// make all separators match
 		$module_path = rtrim( str_replace( '/\\', DS, $module_path ), DS );
@@ -501,6 +497,7 @@ final class EE_Config {
 		}
 		// add to array of registered modules
 		EE_Registry::instance()->modules[ $module ] = $module_path . DS . $module_class . $module_ext;
+		do_action( 'AHEE__EE_Config__register_module__complete', $module, EE_Registry::instance()->modules[ $module ] );
 		return TRUE;
 	}
 	
@@ -526,7 +523,7 @@ final class EE_Config {
 				call_user_func( array( $shortcode_class, 'set_hooks_admin' ));
 			} else {
 				// delay until other systems are online
-				add_action( 'wp_loaded', array( $shortcode_class,'set_hooks' ), 1 );
+				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $shortcode_class,'set_hooks' ));
 				// convert classname to UPPERCASE and create WP shortcode. 
 				// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes() 
 				add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
@@ -544,9 +541,9 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	private function _initialize_modules() {
+		//printr( EE_Registry::instance()->modules, 'EE_Registry::instance()->modules  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// cycle thru shortcode folders
 		foreach ( EE_Registry::instance()->modules as $module => $module_path ) {
-			//echo '<h4>' . $module . ' : ' . $module_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			// add class prefix
 			$module_class = 'EED_' . $module;
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
@@ -556,7 +553,7 @@ final class EE_Config {
 				call_user_func( array( $module_class, 'set_hooks_admin' ));
 			} else {
 				// delay until other systems are online
-				add_action( 'wp_loaded', array( $module_class,'set_hooks' ), 1 );
+				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $module_class,'set_hooks' ));
 			}
 		}
 	}
@@ -592,8 +589,6 @@ final class EE_Config {
 			return FALSE;
 		}
 		EE_Config::$_module_route_map[ $route ] = array( 'EED_' . $module, $method_name );
-//		echo '<br /><br /><h4>$route : ' . $route . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( EE_Config::$_module_route_map[ $route ], 'EE_Config::$_module_route_map[ $route ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
