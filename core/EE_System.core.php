@@ -530,9 +530,7 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__load_core_configuration__begin', $this );
 		// load and setup EE_Config and EE_Network_Config
 		EE_Registry::instance()->load_core( 'Config' );
-		if ( is_multisite() ) {
-			EE_Registry::instance()->load_core( 'Network_Config' );
-		}		
+		EE_Registry::instance()->load_core( 'Network_Config' );
 		// setup autoloaders
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain
@@ -567,7 +565,6 @@ final class EE_System {
 				$non_abstract_db_models[$shortname] = $classname;
 			}
 			$model_names[ $shortname ] = $classname;
-				
 		}
 		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
 		EE_Registry::instance()->non_abstract_db_models = apply_filters( 'FHEE__EE_System__parse_implemented_model_names', $non_abstract_db_models );
