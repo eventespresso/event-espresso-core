@@ -815,6 +815,7 @@ input.ee-register-button {
 	background: rgba( 213, 78, 33, .95 );
 	font-size: 12px;
 	font-weight: bold;
+	line-height: 1;
 	color: #fff; 
 	text-align: center;
 	text-shadow:0 -1px 0px rgba( 0, 0, 0, 0.4 );
@@ -834,6 +835,18 @@ input.ee-register-button {
 #ee-m-mode-admin-notice-dv a:active {
 	color: #F8D755; 
 	text-shadow:0 -1px 0px rgba( 0, 0, 0, 0.4 );
+}
+
+#espresso-registration-footer-dv {
+	padding:.5em 1em;
+	font-size: 10px;
+	letter-spacing: 1px;
+	line-height: 1;
+	text-align: center;	
+}
+#espresso-registration-footer-dv a {
+	text-decoration: none;
+	border-bottom: 1px dotted #999;
 }
 
 /******************* TEMPLATE FIXES ****************** */
