@@ -33,6 +33,8 @@ echo "</form><hr>SAMPLE FORM<hr>";
 //		));
 //$f = new EE_Paypal_Standard_Form();
 $f = new EE_Billing_Info_Form();
+$a = EEM_Attendee::instance()->get_one();
+$f->populate_from_attendee($a);
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$f->receive_form_submission($_POST);
 //			dd($f->get_model_object());
@@ -43,7 +45,7 @@ $f = new EE_Billing_Info_Form();
 				echo "invalido";
 			}
 		}else{
-			$f->populate_defaults(array('name'=>'munchpower','shirt_size'=>'','email'=>'enter it here'));
+//			$f->populate_defaults(array('name'=>'munchpower','shirt_size'=>'','email'=>'enter it here'));
 		}
 		echo "<form method='post' action=''>";
 		echo $f->get_html_and_js();

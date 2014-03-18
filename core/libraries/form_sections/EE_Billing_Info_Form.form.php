@@ -51,15 +51,17 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 			'city'=>new EE_Text_Input(),
 			'state'=>new EE_Select_Input($states_organized),
 			'country'=>new EE_Select_Input($country_options),
-			'zip'=>new EE_Text_Input()
+			'zip'=>new EE_Text_Input(),
+			'phone'=>new EE_Text_Input(),
 		);
 		parent::__construct($options_array);
 	}
 	/**
-	 * 
+	 * Sets the defaults for the billing form according to the attendee's details
 	 * @param EE_Attendee $attendee
 	 */
 	public function populate_from_attendee($attendee){
+		$attendee = EEM_Attendee::instance()->ensure_is_obj($attendee);
 		$state = $attendee->state_obj();
 		$country = $attendee->country_obj();
 		$this->populate_defaults(array(
@@ -72,6 +74,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 			'state'=> $state ? $attendee->state_obj()->name() : '',
 			'country'=> $country ? $attendee->country_obj()->name() : '',
 			'zip'=>$attendee->zip(),
+			'phone'=>$attendee->phone(),
 		));
 	}
 }
