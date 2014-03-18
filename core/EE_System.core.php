@@ -530,7 +530,9 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__load_core_configuration__begin', $this );
 		// load and setup EE_Config and EE_Network_Config
 		EE_Registry::instance()->load_core( 'Config' );
-		EE_Registry::instance()->load_core( 'Network_Config' );
+		if ( is_multisite() ) {
+			EE_Registry::instance()->load_core( 'Network_Config' );
+		}		
 		// setup autoloaders
 		EE_Registry::instance()->load_core( 'EE_Load_Textdomain' );
 		//load textdomain
