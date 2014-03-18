@@ -30,10 +30,10 @@ final class EE_System {
 	 * 	@access 	private
 	 */
 	private static $_instance = NULL;
-	
+
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation. So examples of this
-	 * would be a normal GET request on teh frontend or backcend, or a POST, etc. 
+	 * would be a normal GET request on teh frontend or backcend, or a POST, etc.
 	 */
 	const req_type_normal = 0;
 	/**
@@ -53,7 +53,7 @@ final class EE_System {
 	 * TODO: will detect that EE has been DOWNGRADED. We probably don't want to run in this case...
 	 */
 	const req_type_downgrade = 4;
-	
+
 	/**
 	 * Stores which type of request this is, options being one of the consts on EE_System starting with
 	 * req_type_*. It can be a brand-new activation, a reactivation, an upgrade, a downgrade, or a normal request.
@@ -223,8 +223,8 @@ final class EE_System {
 	 */
 	private function _display_minimum_recommended_wp_version_notice() {
 		global $wp_version;
-		EE_Error::add_persistent_admin_notice( 
-			'wp_version_' . str_replace( '.', '-', EE_MIN_WP_VER_RECOMMENDED ) . '_recommended', 
+		EE_Error::add_persistent_admin_notice(
+			'wp_version_' . str_replace( '.', '-', EE_MIN_WP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
 				__( 'Event Espresso recommends WordPress version %s or greater in order for everything to operate properly. You are currently running version %s.%sFor information on how to update your version of WordPress, please go to %s.', 'event_espresso' ),
 				EE_MIN_WP_VER_RECOMMENDED,
@@ -244,8 +244,8 @@ final class EE_System {
 	 * 	@return void
 	 */
 	private function _display_minimum_recommended_php_version_notice() {
-		EE_Error::add_persistent_admin_notice( 
-			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended', 
+		EE_Error::add_persistent_admin_notice(
+			'php_version_' . str_replace( '.', '-', EE_MIN_PHP_VER_RECOMMENDED ) . '_recommended',
 			sprintf(
 				__( 'Event Espresso recommends PHP version %s or greater in order for everything to operate properly. You are currently running version %s.%sIn order to update your version of PHP, you will need to contact your current hosting provider.', 'event_espresso' ),
 				EE_MIN_PHP_VER_RECOMMENDED,
@@ -307,10 +307,10 @@ final class EE_System {
 
 	/**
 	* detect_if_activation_or_upgrade
-	* 
+	*
 	* Takes care of detecting whether this is a brand new install or code upgrade,
 	* and either setting up the DB or setting up maintenance mode etc.
-	* 
+	*
 	* @access private
 	* @return void
 	*/
@@ -323,7 +323,7 @@ final class EE_System {
 		}
 		// load M-Mode class
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
-		// check if db has been updated, or if its a brand-new installation		
+		// check if db has been updated, or if its a brand-new installation
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type = $this->detect_req_type($espresso_db_update);
 //		echo "request type:".$request_type;
@@ -331,7 +331,7 @@ final class EE_System {
 			EE_Registry::instance()->load_helper('Activation');
 		}
 		switch($request_type){
-			case EE_System::req_type_new_activation:				 
+			case EE_System::req_type_new_activation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done activation";die;
@@ -375,7 +375,7 @@ final class EE_System {
 	 * standardizes the wp option 'espresso_db_upgrade' which actually stores
 	 * information about what versions of EE have been installed and activated,
 	 * NOT necessarily the state of the database
-	 * @param array $espresso_db_update_value teh value of the wordpress option. 
+	 * @param array $espresso_db_update_value teh value of the wordpress option.
 	 * If not supplied, fetches it from teh options table
 	 * @return array the correct value of 'espresso_db_upgrade', after saving it
 	 * if it needed correction
@@ -416,16 +416,16 @@ final class EE_System {
 			}
 			$espresso_db_update = $corrected_db_update;
 			update_option( 'espresso_db_update', $espresso_db_update );
-			
+
 		}
-		
+
 		do_action( 'FHEE__EE_System__manage_fix_espresso_db_upgrade_option__complete', $espresso_db_update );
 		return $espresso_db_update;
 	}
 
 
 
-	
+
 	/**
 	 * Does the traditional work of setting up the plugin's database and adding default data.
 	 * If migration script/process didn't exist, this is what woudl happen on every activation/reactivation/upgrade.
@@ -453,7 +453,7 @@ final class EE_System {
 	/**
 	 * Adds teh current code version to the saved wp option which stores a list
 	 * of all ee versions ever installed.
-	 * @param array $espresso_db_update_value teh value of the wordpress option. 
+	 * @param array $espresso_db_update_value teh value of the wordpress option.
 	 * If not supplied, fetches it from teh options table
 	 * @return boolean success as to whether or not this option was changed
 	 */
@@ -467,9 +467,9 @@ final class EE_System {
 
 
 	/**
-	 * Detects if the current version indicated in the has existed in the list of 
+	 * Detects if the current version indicated in the has existed in the list of
 	 * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
-	 * @param array $espresso_db_update_value teh value of the wordpress option. 
+	 * @param array $espresso_db_update_value teh value of the wordpress option.
 	 * If not supplied, fetches it from teh options table.
 	 * Also, caches its result so later parts of the code can also know whether there's been an
 	 * update or not. This way we can add the current version to espresso_db_update,
@@ -479,7 +479,7 @@ final class EE_System {
 	 * @return int one of the consts on EE_System::req_type_*
 	 */
 	public function detect_req_type( $espresso_db_update = NULL ){
-		
+
 		if ( $this->_req_type === NULL ){
 			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
 			if( $espresso_db_update ){
@@ -550,7 +550,7 @@ final class EE_System {
 
 	/**
 	 * cycles through all of the models/*.model.php files, and assembles an array of model names
-	 * 
+	 *
 	 * @return void
 	 */
 	private function _parse_model_names(){
@@ -566,9 +566,9 @@ final class EE_System {
 			}
 			$model_names[ $shortname ] = $classname;
 		}
-		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );		
+		EE_Registry::instance()->models = apply_filters( 'FHEE__EE_System__parse_model_names', $model_names );
 		EE_Registry::instance()->non_abstract_db_models = apply_filters( 'FHEE__EE_System__parse_implemented_model_names', $non_abstract_db_models );
-	}	
+	}
 
 
 
@@ -975,7 +975,7 @@ final class EE_System {
 						'class' => $menu_class
 				),
 		));
-		
+
 		//Registration Overview This Month Not Approved
 		$admin_bar->add_menu(array(
 				'id' => 'espresso-toolbar-registrations-month-not-approved',
@@ -1023,14 +1023,9 @@ final class EE_System {
 		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE ) ) {		
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
-				// load jQuery Validate script from CDN with local fallback
-				$jquery_validate_url = 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'; 
-				// is the URL accessible ?
-				$test_url = @fopen( $jquery_validate_url, 'r' );
-				// use CDN URL or local fallback ?
-				$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EE_PLUGIN_DIR_URL . 'scripts/jquery.validate.min.js';
+				$jquery_validate_url = EE_PLUGIN_DIR_URL . 'scripts/jquery.validate.min.js';
 				// register jQuery Validate
-				wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);			
+				wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);
 			}
 		}
 	}
