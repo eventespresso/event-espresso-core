@@ -421,6 +421,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			}
 		}
 
+		do_action( 'AHEE__Extend_Events_Admin_Page___duplicate_event__after', $new_event);
+
 		//now let's redirect to the edit page for this duplicated event if we have a new event id.
 		if ( $new_event->ID() ) {
 			$redirect_args = array(
