@@ -29,8 +29,13 @@ echo "</form><hr>SAMPLE FORM<hr>";
 			'model_object'=>EEM_Country::instance()->get_one(),
 			'subsections'=>array(
 				'textarea'=>new EE_Text_Area_Input(),
-			)
+			),
+//			'include'=>array('CNT_cur_sign', 'CNT_ISO'),
 		));
+//$f = new EE_Paypal_Standard_Form();
+//$f = new EE_Billing_Info_Form();
+//$a = EEM_Attendee::instance()->get_one();
+//$f->populate_from_attendee($a);
 		if($_SERVER['REQUEST_METHOD'] == 'POST'){
 			$f->receive_form_submission($_POST);
 //			dd($f->get_model_object());

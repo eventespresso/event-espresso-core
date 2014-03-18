@@ -17,14 +17,14 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	 * @var EE_Base_Class
 	 */
 	protected $_model_object = NULL;
-	
-	//@todo: allow to specify fields
-	//@todo: or allow to instead exclude certain fields
-	//@todo: convert model fields to form inputs
-	//@todo: allow to be bound to a particular instance
-	//@todo: have save method
-	//@todo: have get_model_object method
-	//@todo: allow for overriding default fields
+	/**
+	 * 
+	 * @param array $options_array keys: <ul>
+	 * <li>'model' which should be an EEM_Base child;</li>
+	 * <li>'model_object' which is a EE_Base_Class (providing this is equivalent to constructing and then calling set_model_object)</li>
+	 * <li>and parent's keys too</li></ul>
+	 * @throws EE_Error
+	 */
 	public function __construct($options_array = array()){
 		if(isset($options_array['model']) && $options_array['model'] instanceof EEM_Base){
 			$this->_model = $options_array['model'];
@@ -32,26 +32,15 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		if( ! $this->_model || ! $this->_model instanceof EEM_Base ){
 			throw new EE_Error(sprintf(__("Model Form Sections must first specify the _model property to be a subcalss of EEM_Base", "event_espresso")));
 		}
-		//don't allow 'fields_to_include' AND 'fields_to_exclude'
-		if(isset($options_array['fields_to_include']) && isset($options_array['fields_to_exclude'])){
-			throw new EE_Error(sprintf(__("When creating a model form section, you cannot include BOTH fields_to_include AND fields_to_exclude)", "event_espresso")));
-		}
+		
 		$model_fields = $this->_model->field_settings();
-		if(isset($options_array['fields_to_include'])){
-			$fields_to_include = $options_array['fields_to_include'];
-			$model_fields_to_include = array_intersect_key($model_fields, array_flip($fields_to_include));
-		}elseif(isset($options_array['fields_to_exclude'])){
-			$fields_to_exclude = array_merge($this->_fields_to_exclude,$options_array['fields_to_exclude']);
-			$model_fields_to_include = array_diff_key($model_fields, array_flip($fields_to_exclude));
-		}else{
-			$model_fields_to_include = $model_fields;
-		}
 		//calculate what fields to include
-		$this->_subsections = array_merge($this->_subsections,$this->_convert_model_fields_to_inputs($model_fields_to_include));
+		$this->_subsections = array_merge($this->_subsections,$this->_convert_model_fields_to_inputs($model_fields));
 		parent::__construct($options_array);
 		if(isset($options_array['model_object']) && $options_array['model_object'] instanceof EE_Base_Class){
 			$this->populate_model_obj($options_array['model_object']);
 		}
+		parent::__construct($options_array);
 	}
 	/**
 	 * Changes model fields into form section inputs
