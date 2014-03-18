@@ -194,7 +194,7 @@ class EE_Maintenance_Mode {
 	 */
 	public function display_maintenance_mode_notice() {
 		// check if M-mode is engaged and for EE shortcode
-		if ( get_option( self::option_name_maintenance_mode, 0 ) && current_user_can( 'administrator' )) {
+		if ( get_option( self::option_name_maintenance_mode, 0 ) && current_user_can( 'administrator' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )) {
 			printf( 
 				__( '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s', 'event_espresso' ),
 				'<div id="ee-m-mode-admin-notice-dv" class=""><a class="close-espresso-notice" title="',
