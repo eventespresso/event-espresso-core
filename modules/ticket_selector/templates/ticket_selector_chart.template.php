@@ -94,7 +94,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				?>	
 				<div class="ticket-pending-pg">
 					<span class="ticket-pending"><?php _e( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ); ?></span><br/>
-					<span class="small-text"><?php echo $ticket->start_date( 'M d, Y', ' ' ); ?></span>
+					<span class="small-text"><?php echo date_i18n( 'M d, Y', strtotime( $ticket->start_date() )); ?></span>
 				</div>
 				<?php
 				// min qty purchasable is less than tickets available
@@ -220,8 +220,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 							
 						<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
 						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><?php echo $ticket->start_date('l F jS, Y @') ; ?><br/>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><?php echo $ticket->end_date('l F jS, Y @') ; ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><?php echo date_i18n( 'l F jS, Y @', strtotime( $ticket->start_date() )) ; ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><?php echo date_i18n( 'l F jS, Y @', strtotime( $ticket->end_date() )) ; ?><br/>
 						<br/>
 						
 						<?php if ( $ticket->min() &&$ticket->max() ) : ?>
@@ -253,7 +253,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 								<?php foreach ( $datetimes as $datetime ) : ?>
 								
 								<tr>
-									<td class="small-text"><?php echo $datetime->start_date('l F jS, Y'); ?></td>
+									<td class="small-text"><?php echo date_i18n( 'l F jS, Y', strtotime( $datetime->start_date() )); ?></td>
 									<td class="cntr small-text"><?php echo $datetime->time_range(); ?></td>
 									<td class="cntr small-text"><?php echo $ticket->sold(); ?></td>		
 									<td class="cntr small-text"><?php echo $ticket->qty() === INF ? __( 'unlimited ', 'event_espresso' ) : $ticket->qty() - $ticket->sold(); ?></td>		
