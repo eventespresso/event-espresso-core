@@ -26,6 +26,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
 			// and we also want to restrict the minimum number of tickets by the ticket min setting
 			$min = $ticket->min() > 0 ? $ticket->min() : 0;
+			// and if the ticket is required, then make sure that min qty is at least 1
+			$min = $ticket->required() ? max( $min, 1 ) : $min;
 		}
 	}
 			
@@ -82,6 +84,11 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					>
 						<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>
 					</a>
+				<?php if ( $ticket->required() ) { ?>
+					<div class="ticket-required-dv">
+						<span class="ticket-required"><?php _e( 'This ticket is required and must be purchased for each attendee registering for this event.', 'event_espresso' ); ?></span>
+					</div>		
+				<?php } ?>
 				<?php
 //echo '<br/><b>$max_atndz : ' . $max_atndz . '</b>';
 //echo '<br/><b>$max : ' . $max . '</b>';
