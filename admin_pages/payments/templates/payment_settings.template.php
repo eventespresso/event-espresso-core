@@ -31,7 +31,9 @@ echo "</form><hr>SAMPLE FORM<hr>";
 //				'textarea'=>new EE_Text_Area_Input(),
 //			)
 //		));
+$pm = EEM_Payment_Method::instance()->get_one();
 $f = new EE_Paypal_Standard_Form();
+//$f->populate_model_obj($pm);
 //$f = new EE_Billing_Info_Form();
 //$a = EEM_Attendee::instance()->get_one();
 //$f->populate_from_attendee($a);

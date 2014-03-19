@@ -51,7 +51,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		$inputs = array();
 		foreach($model_fields as $field_name=>$model_field){
 			$input_constructor_args = array(array(
-				'required'=> ! $model_field->is_nullable(),
+				'required'=> ! $model_field->is_nullable() && $model_field->get_default_value() === NULL,
 				'html_label_text'=>$model_field->get_nicename(),
 				'default'=>$model_field->get_default_value(),
 			));
@@ -212,17 +212,6 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	 */
 	public function get_model(){
 		return $this->_model;
-	}
-	/**
-	 * Sets the model object. Probably good to use this for permissions considerations,
-	 * so that users don't change the hidden primary key input in the form and thus
-	 * change an entry they shouldn't have access to
-	 * @param mixed $model_object EE_Base_Class or its ID
-	 * @return void
-	 */
-	public function set_model_object($model_object){
-		$model_object = $this->_model->ensure_is_obj($model_object);
-		$this->_model_object = $model_object;
 	}
 	/**
 	 * Gets the model object for this model form, which was either set

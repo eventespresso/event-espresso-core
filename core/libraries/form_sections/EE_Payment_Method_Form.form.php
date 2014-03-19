@@ -22,9 +22,13 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	public function __construct($options_array){
 		$this->_model = EEM_Payment_Method::instance();
 		if(isset($options_array['extra_meta_inputs'])){
-			$this->_subsections = array_merge($this->_subsections,$options_array['extra_meta_inputs']);
+			$this->_extra_meta_inputs = array_merge($this->_extra_meta_inputs,$options_array['extra_meta_inputs']);
+		}
+		if($this->_extra_meta_inputs){
+			$this->_subsections = array_merge($this->_subsections,$this->_extra_meta_inputs);
 		}
 		parent::__construct($options_array);
+		
 	}
 	
 	/**
@@ -39,5 +43,20 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			}
 		}
 		return $id_or_save;
+	}
+	/**
+	 * Overrides parentt's populate_model_obj to also populate the extra meta fields
+	 * @param EE_Base_Class $model_obj
+	 */
+	public function populate_model_obj($model_obj) {
+		$model_obj = $this->_model->ensure_is_obj($model_obj);
+		parent::populate_model_obj($model_obj);
+		$extra_metas = $model_obj->all_extra_meta_array();
+		d($extra_metas);
+		foreach($this->_extra_meta_inputs as $input_name => $extra_meta_input){
+			if(isset($extra_metas[$input_name])){
+				$extra_meta_input->set_default($extra_metas[$input_name]);
+			}
+		}
 	}
 }

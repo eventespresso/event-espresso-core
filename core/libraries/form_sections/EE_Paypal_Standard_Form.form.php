@@ -31,7 +31,6 @@ class EE_Paypal_Standard_Form extends EE_Payment_Method_Form{
 			'paypal_email'=>new EE_Email_Input(),
 			'shipping_override'=>new EE_Yes_No_Input(),
 		);
-		$this->_subsections = array_merge($this->_subsections,$this->_extra_meta_inputs);
 		parent::__construct($options_array);
 	}
 }

@@ -37,7 +37,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	protected function _display_options($options){
 		$html = '';
 		foreach($options as $value => $display_text){
-			if("{$this->_input->normalized_value()}" == "$value"){
+			if($this->_input->normalized_value() == $value){
 				$selected_attr = 'selected="selected"';
 			}else{
 				$selected_attr ='';
