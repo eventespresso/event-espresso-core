@@ -10,4 +10,6 @@ if ( espresso_display_ticket_selector() && ( is_single() || ( is_archive() && es
 	<?php espresso_ticket_selector( $post ); ?>
 </div>
 <!-- .event-tickets -->
+<?php else : ?>
+<?php espresso_view_details_btn( $post ); ?>
 <?php endif; ?>
