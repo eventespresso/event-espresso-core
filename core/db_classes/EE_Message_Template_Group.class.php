@@ -180,6 +180,16 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	}
 
 
+	/**
+	 * This simply returns a count of all related events to this message template group
+	 * @return int
+	 */
+	public function count_events() {
+		return $this->count_related('Event');
+	}
+
+
+
 
 	/**
 	 * get Message Messenger
@@ -189,8 +199,6 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	public function messenger() {
 		return $this->get('MTP_messenger');
 	}
-
-
 
 
 	/**
