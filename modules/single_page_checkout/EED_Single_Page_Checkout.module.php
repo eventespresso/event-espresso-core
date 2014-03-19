@@ -94,6 +94,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			EE_Config::register_route( $reg_step, 'EED_Single_Page_Checkout', $reg_step_details['process_func'] );
 		}
 		//EE_Config::register_route( 'finalize_registration', 'EED_Single_Page_Checkout', 'finalize_registration' );
+		// add powered by EE msg
+		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 	}
 
 
@@ -1593,6 +1595,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 	}
 
+
+
+
+
+	/**
+	 * 	display_registration_footer
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function display_registration_footer() {
+		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );		
+		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer', EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
+			echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></div>' );
+		}
+	}
 
 
 
