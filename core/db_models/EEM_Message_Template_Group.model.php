@@ -16,7 +16,7 @@
  *
  * EEM_Message_Template_Group
  *
- * 
+ *
  *
  * @package		Event Espresso
  * @subpackage	includes/models/EEM_Message_Template_Group.model.php
@@ -35,12 +35,12 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 *
 	 *		@access public
 	 *		@return EEM_Question instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Message_Template_Group already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Message_Template_Group object
@@ -57,8 +57,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			);
 		$this->_fields = array(
 			'Message_Template_Group' => array(
-				'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso')), 
-				'EVT_ID'=> new EE_Foreign_Key_Int_Field('EVT_ID',__('Event ID', 'event_espresso'),FALSE,0, 'Event' ),
+				'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso')),
 				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, 1 ),
 				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email' ),
 				'MTP_message_type'=>new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'),false,'registration'),
@@ -70,7 +69,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			);
 		$this->_model_relations = array(
 			'Message_Template' => new EE_Has_Many_Relation(),
-			'Event' => new EE_Belongs_To_Relation()
+			'Event' => new EE_HABTM_Relation('Event_Message_Template')
 			);
 
 		parent::__construct();
@@ -97,7 +96,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 * @access  public
 	 * @return  array all active (non trashed, active) message template group objects for the given messenger
 	 */
-	public function get_all_active_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC') {	
+	public function get_all_active_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC') {
 		$query_params = array(array('MTP_messenger' => $messenger, 'MTP_is_active' => true), 'order_by' => array($orderby => $order ) );
 		return $this->get_all($query_params);
 	}
@@ -106,7 +105,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 	/**
 	 * get_all_message_templates_by_messenger
-	 * 
+	 *
 	 * @access public
 	 * @return array all (including trashed or inactive) message template group objects for the given messenger
 	 */
@@ -161,11 +160,11 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	public function get_all_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
 
 		$_where = $this->_maybe_mtp_filters();
-		
+
 		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
 
 		$r_templates = $count ? $this->count_deleted_and_undeleted($query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted_and_undeleted( $query_params );
-		
+
 		return $r_templates;
 	}
 
@@ -188,7 +187,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * get_all_event_message_templates 
+	 * get_all_event_message_templates
 	 * @access public
 	 * @return EE_Message_Template_Group[] all message template groups that are non-global and are event specific
 	 */
@@ -205,7 +204,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	/**
 	 * get_all_trashed_grouped_message_templates
 	 * this returns ONLY the template groups where ALL contexts are trashed and none of the group are non-trashed
-	 * 
+	 *
 	 * @access public
 	 * @return EE_Message_Template_Group[] message template groups.
 	 */
@@ -213,7 +212,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 		$_where = $this->_maybe_mtp_filters( array('MTP_is_active' => true) );
 
 		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
-		
+
 		return $count ? $this->count_deleted($query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted( $query_params );
 	}
 
@@ -222,10 +221,10 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 	/**
 	 * this returns the message template group for a given event, messenger, and message template
-	 * @param  string  $messenger    
-	 * @param  string  $message_type 
+	 * @param  string  $messenger
+	 * @param  string  $message_type
 	 * @param  string  $orderby      pointless at this point but still included
-	 * @param  string  $order        
+	 * @param  string  $order
 	 * @param  mixed (array|null) $limit array($offset, $num)
 	 * @param  bool   $count        true = just return count, false = objects
 	 * @param  bool   $active  		ignore "active" or not. (default only return active)
@@ -282,7 +281,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	/**
 	 * This sends things to the validator for the given messenger and message type.
 	 *
-	 * 
+	 *
 	 * @param  array $fields the incoming fields to check.  Note this array is in the formatted fields from the form fields setup.  So we need to reformat this into an array of expected field refs by the validator.  Note also that this is not only the fields for the Message Template Group but ALSO for Message Template.
 	 * @param string $context The context the fields were obtained from.
 	 * @param string $messenger The messenger we are validating
@@ -292,7 +291,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	public function validate($fields, $context, $messenger, $message_type) {
 
 		$assembled_fields = array();
-		
+
 		//let's loop through all the fields and set them up in the right format
 		foreach ( $fields as $index => $value ) {
 			//first let's figure out if the value['content'] in the current index is an array.  If it is then this is special fields that are used in parsing special shortcodes (i.e. 'attendee_list').
