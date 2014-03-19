@@ -33,13 +33,6 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	protected $_GRP_ID = 0;
 
 
-	/**
-	 * Event ID that the template is for (optional)
-	 * @var integer
-	 */
-	protected $_EVT_ID = 0;
-
-
 
 	/**
 	 * user who created the message template
@@ -113,10 +106,10 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * If this is message tempalte is a non-global template but rather event specific, then this property is for holding the related Event object for the group.
-	 * @var EE_Event
+	 * This property holds all related events cached (using) this Message Template.
+	 * @var EE_Event[]
 	 */
-	protected $_Event = NULL;
+	protected $_Event = array();
 
 
 
@@ -177,31 +170,6 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * get Event ID
-	 * @access public
-	 * @return int 
-	 */
-	public function event() {
-		return $this->get('EVT_ID');
-	}
-	
-
-
-
-	/**
-	 * this returns the event_name for the event attached to the group
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function event_name() {
-		if ( empty( $this->_EVT_ID ) ) return '';
-		return $this->get_first_related('Event')->get('EVT_name');
-	}
-
-
-
-	/**
 	 * get User ID
 	 * @access public
 	 * @return int
@@ -252,7 +220,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * get Message Type
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -353,7 +321,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * This will return an array of shortcodes => labels from the messenger and message_type objecst associated with this template.
-	 * 
+	 *
 	 * @access public
 	 * @param string $context what context we're going to return shortcodes for
 	 * @param array $fields what fields we're returning valid shortcodes for.  If empty then we assume all fields are to be returned.
@@ -463,7 +431,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 * @return array 	an array of EE_Shortcode objects
 	 */
 	private function _get_shortcode_objects( $sc_refs ) {
-		
+
 		$sc_objs = array();
 
 		EE_Messages_Init::set_autoloaders();
