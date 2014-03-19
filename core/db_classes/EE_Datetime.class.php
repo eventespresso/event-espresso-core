@@ -395,7 +395,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	private function _show_datetime( $date_or_time = NULL, $start_or_end = 'start', $dt_frmt = NULL, $tm_frmt = NULL, $echo = FALSE ) {
 		$field_name = "DTT_EVT_{$start_or_end}";
 		$dtt = $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, $date_or_time, $echo );
-		$dtt = date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( $dtt ));
 		if ( !$echo ) return $dtt;
 	}
 
