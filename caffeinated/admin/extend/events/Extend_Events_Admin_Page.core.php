@@ -45,6 +45,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 		$new_page_routes = array(
+			'duplicate_event' => array(
+				'func' => '_duplicate_event',
+				'noheader' => TRUE
+				),
 			'ticket_list_table' => '_tickets_overview_list_table',
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
@@ -161,6 +165,19 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
+	public function extra_permalink_field_buttons( $return, $id, $new_title, $new_slug ) {
+		$return = parent::extra_permalink_field_buttons( $return, $id, $new_title, $new_slug );
+		//make sure this is only when editing
+		if ( !empty( $id ) ) {
+			$href = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'duplicate_event', 'EVT_ID' => $id), $this->_admin_base_url );
+			$title = __('Duplicate Event', 'event_espresso');
+			$return .= '<a href="' . $href . '" title="' . $title . '" id="ee-duplicate-event-button" class="button button-small"  value="duplicate_event">' . $title  . '</button>';
+		}
+		return $return;
+	}
+
+
+
 
 	public function _set_list_table_views_ticket_list_table() {
 		$this->_views = array(
@@ -193,9 +210,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		add_filter('FHEE_load_accounting_js', '__return_true');
 
 		//styles
-		wp_enqueue_style('espresso-ui-theme');		
+		wp_enqueue_style('espresso-ui-theme');
 		wp_enqueue_script('event_editor_js');
-		
+
 		$new_strings = array(
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
 			'event_starts_on' => __('Event Starts on', 'event_espresso'),
@@ -301,8 +318,132 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
+	/**
+	 * This is the callback method for the duplicate event route
+	 *
+	 * Method looks for 'EVT_ID' in the request and retrieves that event and its details and duplicates them
+	 * into a new event.  We add a hook so that any plugins that add extra event details can hook into this
+	 * action.  Note that the dupe will have **DUPLICATE** as its title and slug.
+	 * After duplication the redirect is to the new event edit page.
+	 * @return void
+	 * @access protected
+	 * @throws EE_Error If EE_Event is not available with given ID
+	 */
+	protected function _duplicate_event() {
+		//first make sure the ID for the event is in the request.  If it isnt' then we need to bail and redirect back to overview list table (cause how did we get here?)
+		if ( !isset( $this->_req_data['EVT_ID'] ) ) {
+			EE_Error::add_error( __('In order to duplicate an event an Event ID is required.  None was given.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_redirect_after_action( FALSE, '', '', array(), TRUE );
+			return;
+		}
+
+		//k we've got EVT_ID so let's use that to get the event we'll duplicate
+		$orig_event = EEM_Event::instance()->get_one_by_ID( $this->_req_data['EVT_ID'] );
+
+		if ( ! $orig_event instanceof EE_Event )
+			throw new EE_Error( sprintf( __('An EE_Event object could not be retrieved for the given ID (%s)', 'event_espresso '), $this->_req_data['EVT_ID'] ) );
+
+		//original datetimes
+		$orig_datetimes = $orig_event->get_many_related('Datetime');
+
+		//cache relations we want to include in the clone.
+		$orig_event->get_many_related('Question_Group');
+		$orig_event->get_many_related('Promotion_Object');
+		$orig_event->get_many_related('Venue');
+
+		//k now let's clone the $orig_event
+		$new_event = clone $orig_event;
+
+		//reset the ID and modify other details to make it clear this is a dupe
+		$new_event->set( 'EVT_ID', 0 );
+		$new_name = $new_event->name() . ' ' . __('**DUPLICATE**', 'event_espresso');
+		$new_event->set( 'EVT_name',  $new_name );
+		$new_event->set( 'EVT_slug',  sanitize_title_with_dashes( $new_name ) );
+
+		//let's remove relations on this event for datetimes to prevent any sharing of datetimes between events because related datetimes might be cached.
+		$new_event->_remove_relations('Datetime');
+
+		//save the new event
+		$new_event->save();
+
+
+		//k now that we have the new event saved we can loop through the datetimes and start adding relations.
+		$cloned_tickets = array();
+		foreach ( $orig_datetimes as $orig_dtt ) {
+			$orig_tkts = $orig_dtt->tickets();
+			$new_dtt = clone $orig_dtt;
+			//remove relations we don't want included in clone .
+			$new_dtt->_remove_relations('Ticket');
+
+			//save new dtt then add to event
+			$new_dtt->set('DTT_ID', 0);
+			$new_dtt->set('DTT_sold', 0);
+			$new_dtt->save();
+			$new_event->_add_relation_to( $new_dtt, 'Datetime');
+			$new_event->save();
+
+			//now let's get the ticket relations setup.
+			foreach ( (array) $orig_tkts as $orig_tkt ) {
+				//it's possible a datetime will have no tickets so let's verify we HAVE a ticket first.
+				if ( ! $orig_tkt instanceof EE_Ticket )
+					continue;
+
+				//get relations on the $orig_tkt that we need to setup.
+				$orig_prices = $orig_tkt->prices();
+
+				//does this original ticket already exist in the clone_tickets cache?  If so we'll just use the new ticket from it.
+				if ( isset( $cloned_tickets[$orig_tkt->ID()] ) ) {
+					$new_tkt = $cloned_tickets[$orig_tkt->ID()];
+				} else {
+					$new_tkt = clone $orig_tkt;
+					$new_tkt->set('TKT_ID', 0);
+					$new_tkt->set('TKT_sold', 0);
+
+					//reset relations on the new ticket
+					$new_tkt->_remove_relations('Price');
+
+					$new_tkt->save(); //make sure new ticket has ID.
+
+					//price relations on new ticket need to be setup.
+					foreach ( $orig_prices as $orig_price ) {
+						$new_price = clone $orig_price;
+						$new_price->set('PRC_ID', 0);
+						$new_price->save();
+						$new_tkt->_add_relation_to($new_price, 'Price');
+						$new_tkt->save();
+					}
+				}
+
+				//k now we can add the new ticket as a relaion to the new datetime and make sure its added to our cached $cloned_tickets array for use with later datetimes that have the same ticket.
+				$new_dtt->_add_relation_to($new_tkt, 'Ticket');
+				$new_dtt->save();
+				$cloned_tickets[$orig_tkt->ID()] = $new_tkt;
+			}
+		}
+
+		do_action( 'AHEE__Extend_Events_Admin_Page___duplicate_event__after', $new_event);
+
+		//now let's redirect to the edit page for this duplicated event if we have a new event id.
+		if ( $new_event->ID() ) {
+			$redirect_args = array(
+				'post' => $new_event->ID(),
+				'action' => 'edit'
+			);
+			EE_Error::add_success( __('Event successfully duplicated.  Please review the details below and make any necessary edits', 'event_espresso') );
+		} else {
+			$redirect_args = array(
+				'action' => 'default'
+				);
+			EE_Error::add_error( __('Not able to duplicate event.  Something went wrong.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		}
+
+		$this->_redirect_after_action(FALSE, '', '', $redirect_args, TRUE );
+	}
+
+
+
 	protected function _import_page(){
-		
+
 		$title = __('Import', 'event_espresso');
 		$intro = __('If you have a previously exported Event Espresso 4 information in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
 		$form_url = EVENTS_ADMIN_URL;
@@ -310,8 +451,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$type = 'csv';
 		$this->_template_args['form'] = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
 		$this->_template_args['sample_file_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'sample_export_file'),$this->_admin_base_url);
-		$content = EEH_Template::display_template(EVENTS_CAF_TEMPLATE_PATH . 'import_page.template.php',$this->_template_args,true); 
-		
+		$content = EEH_Template::display_template(EVENTS_CAF_TEMPLATE_PATH . 'import_page.template.php',$this->_template_args,true);
+
 
 		$this->_template_args['admin_page_content'] = $content;
 		$this->display_admin_page_with_sidebar();
@@ -319,14 +460,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	/**
 	 * _import_events
 	 * This handles displaying the screen and running imports for importing events.
-	 * 	
+	 *
 	 * @return string html
 	 */
 	protected function _import_events() {
 		require_once(EE_CLASSES . 'EE_Import.class.php');
 		$success = EE_Import::instance()->import();
 		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
-		
+
 	}
 
 
@@ -334,9 +475,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	/**
 	 * _events_export
 	 * Will export all (or just the given event) to a Excel compatible file.
-	 * 
+	 *
 	 * @access protected
-	 * @return file 
+	 * @return file
 	 */
 	protected function _events_export() {
 		if(isset($this->_req_data['EVT_ID'])){
@@ -388,7 +529,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	}
 
 
-	
+
 	/**
 	 * Creates a sample CSV file for importing
 	 */
@@ -404,7 +545,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * add all metaboxes related to the event_editor
 	 *
 	 * @access protected
-	 * @return void 
+	 * @return void
 	 */
 	protected function _premium_event_editor_meta_boxes() {
 
@@ -536,7 +677,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * wp_list_table_mods for caf
 	 * ============================
 	 */
-	
+
 
 	/**
 	 * hook into list table filters and provide filters for caffeinated list table
@@ -559,8 +700,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//category filter
 		$filters[] = $this->category_dropdown();
-		
-		
+
+
 		return array_merge($oldfilters, $filters);
 	}
 
@@ -568,9 +709,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-	
+
 	/**
-	 * espresso_event_months_dropdown			
+	 * espresso_event_months_dropdown
 	 *
 	 * @access public
 	 * @return string                dropdown listing month/year selections for events.
@@ -626,7 +767,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * get total number of events today
 	 *
 	 * @access public
-	 * @return int 
+	 * @return int
 	 */
 	public function total_events_today() {
 		$start = ' 00:00:00';
@@ -644,7 +785,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * get total number of events this month
 	 *
 	 * @access public
-	 * @return int 
+	 * @return int
 	 */
 	public function total_events_this_month() {
 		//Dates
@@ -719,7 +860,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
 			$where['Term_Taxonomy.term_id'] = $category;
 		}
-		
+
 		//date where conditions
 		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
 			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
@@ -892,12 +1033,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'action' => 'ticket_list_table',
 			'status' => $trash ? '' : 'trashed'
 			);
-		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args ); 
+		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args );
 	}
 
 
 
-	
+
 
 	protected function _delete_ticket() {
 		$success = 1;
@@ -911,7 +1052,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 			//cycle thru the boxes
 			while ( list( $TKT_ID, $value ) = each( $this->_req_data['checkbox'] ) ) {
-				//delete 
+				//delete
 				if ( ! $this->_delete_the_ticket( $TKT_ID ) ) {
 					$success = 0;
 				}
@@ -933,7 +1074,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//failsafe.  If the default ticket count === 1 then we need to redirect to event overview.
 		if ( EEM_Ticket::instance()->count_deleted_and_undeleted( array( array( 'TKT_is_default' => 1 ) ), 'TKT_ID', TRUE ) )
 			$query_args = array();
-		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args ); 
+		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args );
 	}
 
 
@@ -953,7 +1094,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 require_once ABSPATH . 'wp-admin/includes/template.php';
 class Walker_Radio_Checklist extends Walker_Category_Checklist {
-	
+
 	function start_el( &$output, $category, $depth = 0, $args = array(), $id = 0 ) {
 		extract($args);
 		if ( empty($taxonomy) )

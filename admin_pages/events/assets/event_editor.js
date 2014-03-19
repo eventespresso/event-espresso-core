@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-	
+
 	window.onbeforeunload = function(){
 		var mce = typeof(tinymce) != 'undefined' ? tinymce.activeEditor : false, title, content;
 
