@@ -236,7 +236,7 @@ class EE_DMS_Core_4_4_0 extends EE_Data_Migration_Script_Base{
 		$sql = "EMT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					EVT_ID BIGINT(20) unsigned NOT NULL DEFAULT 0,
 					GRP_ID INT(10) unsigned NOT NULL DEFAULT 0,
-					PRIMARY KEY (GRP_ID),
+					PRIMARY KEY (EMT_ID),
 					KEY EVT_ID (EVT_ID),
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_is_new_in_this_version( $table_name, $sql, 'ENGINE=InnoDB');
