@@ -249,8 +249,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			}
 		}
 		//check if we're all done this data migration...
-		//which is indicated by being done early AND the last stage claims to be done
-		if( $num_records_actually_migrated < $num_records_to_migrate_limit && $stage!=null && ! $stage->has_more_to_do()){
+		//which is indicated by being done early AND the last stage claims to be done; or if there was simply no records to migrate (ie, this is a migration script which only involves db column/table changes)
+		if( ($num_records_actually_migrated < $num_records_to_migrate_limit && $stage!=null && ! $stage->has_more_to_do())
+				|| $this->count_records_to_migrate() == 0){
 			//apparently we're done, because we couldn't migrate the number we intended to
 			$this->set_status(EE_Data_Migration_Manager::status_completed);
 			$this->_update_feedback_message(array_reverse($records_migrated_per_stage));
