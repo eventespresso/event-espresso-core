@@ -220,7 +220,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * this returns the message template group for a given event, messenger, and message template
+	 * this returns the message template group(s) for a given event, messenger, and message template
 	 * @param  string  $messenger
 	 * @param  string  $message_type
 	 * @param  string  $orderby      pointless at this point but still included
@@ -228,7 +228,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 * @param  mixed (array|null) $limit array($offset, $num)
 	 * @param  bool   $count        true = just return count, false = objects
 	 * @param  bool   $active  		ignore "active" or not. (default only return active)
-	 * @return mixed (int|array)                depending on $count.
+	 * @return mixed (int|EE_Message_Template_Group[])                depending on $count.
 	 */
 	public function get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
 
