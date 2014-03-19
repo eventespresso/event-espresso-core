@@ -18,7 +18,6 @@ class EE_Month_Input extends EE_Select_Input{
 			'11'=>'11',
 			'12'=>'12'
 			);
-			parent::__construct($select_options,'string',$options);
 		}else{
 			$select_options = array(
 				1=>'01',
@@ -34,7 +33,7 @@ class EE_Month_Input extends EE_Select_Input{
 				11=>'11',
 				12=>'12'
 			);
-			parent::__construct($select_options,'int',$options);
 		}
+		parent::__construct($select_options,$options);
 	}
 }

@@ -181,7 +181,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 			if($model_obj){
 				$this->_model_object = $model_obj;
 			}else{
-				$this->_model_object = EE_Registry::instance()->load_class($this->_model->get_this_model_name(), $this->inputs_values_corresponding_to_model_fields() );
+				$this->_model_object = EE_Registry::instance()->load_class($this->_model->get_this_model_name(), array($this->inputs_values_corresponding_to_model_fields()) );
 			}
 		}else{
 			//ok so the model object is already set. Just set it with the submitted form data (don't save yet though)

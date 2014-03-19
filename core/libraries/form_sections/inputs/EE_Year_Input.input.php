@@ -13,6 +13,6 @@ class EE_Year_Input extends EE_Select_Input{
 				$select_options[$start] = $start;
 			}
 		
-		parent::__construct($select_options,'string',$options);
+		parent::__construct($select_options,$options);
 	}
 }
