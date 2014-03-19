@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Venues_Admin_Page
  *
- * This contains the logic for setting up the Event Venue related admin pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This contains the logic for setting up the Event Venue related admin pages.  Any methods without phpdoc comments have inline docs with parent class.
  *
  *
  * @package		Venues_Admin_Page
@@ -103,7 +103,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'editor_title' => array(
 				'espresso_venues' => __('Enter Venue name here')
 				),
-			'publishbox' => array( 
+			'publishbox' => array(
 				'create_new' => __('Save New Venue', 'event_espresso'),
 				'edit' => __('Update Venue', 'event_espresso'),
 				'add_category' => __('Save New Category', 'event_espresso'),
@@ -146,11 +146,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'noheader' => TRUE
 				),
 			'delete_venues' => array(
-				'func' => '_delete_venues', 
-				'noheader' => TRUE 
+				'func' => '_delete_venues',
+				'noheader' => TRUE
 				),
 			'delete_venue' => array(
-				'func' => '_delete_venue', 
+				'func' => '_delete_venue',
 				'noheader' => TRUE
 				),
 			//venue category tab related
@@ -163,12 +163,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'args' => array('edit')
 				),
 			'delete_categories' => array(
-				'func' => '_delete_categories', 
-				'noheader' => TRUE 
+				'func' => '_delete_categories',
+				'noheader' => TRUE
 				),
 
 			'delete_category' => array(
-				'func' => '_delete_categories', 
+				'func' => '_delete_categories',
 				'noheader' => TRUE
 				),
 
@@ -424,13 +424,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	public function load_scripts_styles_edit_category() {
-		//scripts
-		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
-		EE_Registry::$i18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
-		wp_localize_script( 'ee_cat_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
-
-	}
+	public function load_scripts_styles_edit_category() {}
 
 
 
@@ -441,15 +435,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_style('espresso-ui-theme');
 		wp_register_style( 'espresso_venues', EE_VENUES_ASSETS_URL . 'ee-venues-admin.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_venues');
-
-		//scripts
-		wp_register_script('espresso_venue_admin', EE_VENUES_ASSETS_URL . 'ee-venues-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script('espresso_venue_admin');
-
-		;
-		EE_Registry::$i18n_js_strings['required'] = __( 'This is a required field. Please add a value in order to continue.', 'event_espresso' );
-		wp_localize_script( 'espresso_venue_admin', 'eei18n', EE_Registry::$i18n_js_strings );
-
 	}
 
 
@@ -541,7 +526,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		$template_args['_venue'] =$this->_cpt_model_obj;
 
-		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input( 
+		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input(
 			$QFI = new EE_Question_Form_Input(
 				EE_Question::new_instance( array( 'QST_display_text' => 'State', 'QST_system' => 'state' )),
 				EE_Answer::new_instance( array(  'ANS_value'=> $this->_cpt_model_obj->state_ID() )),
@@ -554,7 +539,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				)
 			)
 		);
-		$template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input( 
+		$template_args['countries_dropdown'] = EEH_Form_Fields::generate_form_input(
 			$QFI = new EE_Question_Form_Input(
 				EE_Question::new_instance( array( 'QST_display_text' => 'Country', 'QST_system' => 'country' )),
 				EE_Answer::new_instance( array(  'ANS_value'=> $this->_cpt_model_obj->country_ID() )),
@@ -623,7 +608,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'VNU_enable_for_gmap' => !empty( $this->_req_data['vnu_enable_for_gmap'] ) ? TRUE : FALSE,
 			'VNU_google_map_link' => !empty( $this->_req_data['vnu_google_map_link'] ) ? $this->_req_data['vnu_google_map_link'] : NULL
 			);
-		
+
 		//update venue
 		$success = $this->_venue_model->update( $venue_values, array( $wheres ) );
 
@@ -646,7 +631,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error( __('Venue Details saved successfully but something went wrong with saving attachments.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		} else if ( $success === FALSE ) {
 			EE_Error::add_error( __('Venue Details did not save successfully.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}	
+		}
 	}
 
 
@@ -760,8 +745,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	 * //todo this is pretty much the same as the corresponding change_event_status method in Events_Admin_Page.  We should probably abstract this up to the EE_Admin_Page_CPT (or even EE_Admin_Page) and make this a common method accepting a certain number of params.
 	 *
 	 * @access  private
-	 * @param  int $event_id 
-	 * @param  string $event_status 
+	 * @param  int $event_id
+	 * @param  string $event_status
 	 * @return void
 	 */
 	private function _change_venue_status( $VNU_ID = FALSE, $venue_status = FALSE ) {
@@ -782,7 +767,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		
+
 		// was event trashed or restored ?
 		switch ($venue_status) {
 			case 'draft' :
@@ -800,7 +785,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		//use class to change status
 		$this->_cpt_model_obj->set_status( $venue_status );
 		$success = $this->_cpt_model_obj->save();
-		
+
 		if ($success === FALSE) {
 			$msg = sprintf(__('An error occurred. The venue could not be %s.', 'event_espresso'), $action);
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
@@ -868,7 +853,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
 		}
-		
+
 
 		$venue = EEM_Venue::instance()->get_one_by_ID($VNU_ID);
 		//first need to remove all term relationships
@@ -887,7 +872,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		return TRUE;
 	}
 
-	
+
 
 
 	/***********/
@@ -978,7 +963,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		//set default category object
 		$this->_set_empty_category_object();
-		
+
 		//only set if we've got an id
 		if ( !isset($this->_req_data['VEN_CAT_ID'] ) ) {
 			return;
@@ -1091,7 +1076,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$cat_id = $new_category ? $this->_insert_category() : $this->_insert_category( TRUE );
 		$success = 0; //we already have a success message so lets not send another.
 		$query_args = array(
-			'action' => 'edit_category', 
+			'action' => 'edit_category',
 			'VEN_CAT_ID' => $cat_id
 		);
 		$this->_redirect_after_action( $success, '','', $query_args, TRUE );
@@ -1105,17 +1090,17 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$cat_id = $update ? $this->_req_data['VEN_CAT_ID'] : '';
 		$category_name= $this->_req_data['category_name'];
 		$category_identifier = $this->_req_data['category_identifier'];
-		$category_desc= $this->_req_data['category_desc']; 
+		$category_desc= $this->_req_data['category_desc'];
 
 
-	
+
 		$term_args=array(
-			'name'=>$category_name, 
-			'slug'=>$category_identifier, 
+			'name'=>$category_name,
+			'slug'=>$category_identifier,
 			'description'=>$category_desc,
 			//'parent'=>$espresso_wp_user //eventually this will be added.
 		);
-		
+
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_venue_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_venue_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
@@ -1126,7 +1111,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			$msg = sprintf ( __('The category %s was successfuly created', 'event_espresso'), $category_name );
 			EE_Error::add_success( $msg );
 		}
-		
+
 		return $cat_id;
 	}
 
@@ -1201,5 +1186,5 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 	/**************/
 
 
-	
+
 } //end Venues_Admin_Page class

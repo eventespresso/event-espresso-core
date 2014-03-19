@@ -88,6 +88,10 @@ class EE_Maintenance_Mode {
 	 *@return void
 	 */	
 	private function __construct() {
+		// shut 'er down down for maintenance ?
+		add_filter( 'the_content', array( $this, 'the_content' ), 999 );
+		// add powered by EE msg
+		add_action( 'shutdown', array( $this, 'display_maintenance_mode_notice' ), 10 );
 	}
 
 
@@ -146,7 +150,7 @@ class EE_Maintenance_Mode {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	function template_include() {
+	public static function template_include() {
 		if ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . 'maintenance_mode.template.php' )) {
 			return EVENT_ESPRESSO_TEMPLATE_DIR . 'maintenance_mode.template.php';
 		} else if ( file_exists( EE_PLUGIN_DIR_PATH . 'templates/maintenance_mode.template.php' )) {
@@ -164,18 +168,43 @@ class EE_Maintenance_Mode {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public static function the_content( $the_content ) {
-		// check for EE shortcode
-		if ( strpos( $the_content, '[ESPRESSO_' )) {
+	public function the_content( $the_content ) {
+		// check if M-mode is engaged and for EE shortcode
+		if ( $this->level() && strpos( $the_content, '[ESPRESSO_' )) {
 			// this can eventually be moved to a template, or edited via admin. But for now...
-			$the_content = __( ' 
-			<h2>Maintenance Mode</h2>
-			<p>Event Registration has been temporarily closed while system maintenance is being performed. We\'re sorry for any inconveniences this may have caused. Please try back again later.</p>
-			', 'event_espresso' );
+			$the_content = sprintf( 
+				__( '%sMaintenance Mode%sEvent Registration has been temporarily closed while system maintenance is being performed. We\'re sorry for any inconveniences this may have caused. Please try back again later.%s', 'event_espresso' ),
+				'<h2>',
+				'</h2><p>',
+				'</p>'
+			);
 		}
 		return $the_content;
 	}
 
+
+
+	/**
+	 * 	display_maintenance_mode_notice
+	 * 
+	 * 	displays message on frontend of site notifying admin that EE has been temporarily placed into maintenace mode
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function display_maintenance_mode_notice() {
+		// check if M-mode is engaged and for EE shortcode
+		if ( get_option( self::option_name_maintenance_mode, 0 ) && current_user_can( 'administrator' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )) {
+			printf( 
+				__( '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s', 'event_espresso' ),
+				'<div id="ee-m-mode-admin-notice-dv" class=""><a class="close-espresso-notice" title="',
+				'">&times;</a><p>',
+				' &raquo; <a href="' . add_query_arg( array( 'page' => 'espresso_maintenance_settings' ), admin_url( 'admin.php' )) . '">',
+				'</a></p></div>'
+			);
+		}
+	}
+// espresso-notices important-notice ee-attention
 
 
 

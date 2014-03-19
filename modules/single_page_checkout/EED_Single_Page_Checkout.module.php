@@ -68,7 +68,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */	
 	public static function instance ( ) {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EED_Single_Page_Checkout )) {
+		if ( ! self::$_instance instanceof EED_Single_Page_Checkout ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -84,7 +84,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks() {
-		add_action( 'wp_loaded', array( 'EED_Single_Page_Checkout', 'set_definitions' ), 2 );
+		EED_Single_Page_Checkout::set_definitions();
 		add_filter( 'FHEE_load_EE_messages', '__return_true');
 		// configure the reg steps array
 		EED_Single_Page_Checkout::setup_reg_steps_array();
@@ -94,6 +94,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			EE_Config::register_route( $reg_step, 'EED_Single_Page_Checkout', $reg_step_details['process_func'] );
 		}
 		//EE_Config::register_route( 'finalize_registration', 'EED_Single_Page_Checkout', 'finalize_registration' );
+		// add powered by EE msg
+		add_action( 'AHEE__SPCO__reg_form_footer', array( 'EED_Single_Page_Checkout', 'display_registration_footer' ));
 	}
 
 
@@ -105,7 +107,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_hooks_admin() {
-		add_action( 'wp_loaded', array( 'EED_Single_Page_Checkout', 'set_definitions' ), 2 );
+		EED_Single_Page_Checkout::set_definitions();
 		add_filter( 'FHEE_load_EE_messages', '__return_true');
 		// configure the reg steps array
 		EED_Single_Page_Checkout::setup_reg_steps_array();
@@ -1593,6 +1595,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 	}
 
+
+
+
+
+	/**
+	 * 	display_registration_footer
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function display_registration_footer() {
+		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );		
+		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer', EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
+			echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></div>' );
+		}
+	}
 
 
 

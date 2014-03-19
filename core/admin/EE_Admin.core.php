@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/core/admin/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -50,7 +50,7 @@ final class EE_Admin {
 	 *@ singleton method used to instantiate class object
 	 *@ access public
 	 *@ return class instance
-	 */	
+	 */
 	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Admin )) {
@@ -60,32 +60,28 @@ final class EE_Admin {
 	}
 
 
-	
+
    /**
      * class constructor
      */
 	protected function __construct() {
-		// grab registry
-		
 		// define global EE_Admin constants
 		$this->_define_all_constants();
-		
+
 		// admin hooks
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
 		// load EE_Request_Handler early
-		add_action( 'init', array( $this, 'get_request' ), 4 );
-		add_action( 'init', array( $this, 'init' ), 100 );
+		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'get_request' ));
+		add_action( 'AHEE__EE_System__initialize_last', array( $this, 'init' ));
 		add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'route_admin_request' ), 100, 2 );
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 100 );
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
-		add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
-
 		// pew pew pew
 		EE_Registry::instance()->load_core( 'PUE' );
-		
+
 		do_action( 'AHEE__EE_Admin__loaded' );
 	}
 
@@ -143,7 +139,7 @@ final class EE_Admin {
 
 	/**
 	 *	_get_request
-	 * 
+	 *
 	 *	@access public
 	 *	@return void
 	 */
@@ -156,10 +152,10 @@ final class EE_Admin {
 
 	/**
 	 *	hide_admin_pages_except_maintenance_mode
-	 * 
+	 *
 	 *	@access public
 	 *	@return array
-	 */	
+	 */
 	public function hide_admin_pages_except_maintenance_mode( $admin_page_folder_names = array() ){
 		return array('maintenance', 'about','support');
 	}
@@ -168,27 +164,28 @@ final class EE_Admin {
 
 	/**
 	* init- should fire after shortcode, module,  addon, other plugin (default priority), and even EE_Front_Controller's init phases have run
-	* 
+	*
 	* @access public
 	* @return void
 	*/
 	public function init() {
-		
+
 		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
 		//however, we want to make use of the admin infrastructure still
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100);			
+			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100);
 		} else {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
+			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
 			// bring out the pidgeons!!!
 			EE_Registry::instance()->load_lib( 'Messages_Init' );
 			//at a glance dashboard widget
 			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
 		}
-		
+
 		// run the admin page factory but ONLY if we are doing an ee admin ajax request
 		if ( !defined('DOING_AJAX') || EE_ADMIN_AJAX ) {
 			try {
@@ -196,7 +193,7 @@ final class EE_Admin {
 				EE_Registry::instance()->load_core( 'Admin_Page_Loader' );
 			} catch ( EE_Error $e ) {
 				$e->get_error();
-			}			
+			}
 		}
 
 		//make sure our cpts and custom taxonomy metaboxes get shown for first time users
@@ -290,7 +287,7 @@ final class EE_Admin {
 		$walker = new Walker_Nav_Menu_Checklist( $db_fields );
 		$current_tab = 'event-archives';
 		$page_links = array();
-		
+
 		/*if ( ! empty( $_REQUEST['quick-search-posttype-' . $post_type_name] ) ) {
 			$current_tab = 'search';
 		}/**/
@@ -364,7 +361,7 @@ final class EE_Admin {
 
 
 	/**
-	 * Returns an array of event archive nav items.  
+	 * Returns an array of event archive nav items.
 	 *
 	 * @todo  for now this method is just in place so when it gets abstracted further we can substitue in whatever method we use for getting the extra nav menu items
 	 * @return array
@@ -373,7 +370,7 @@ final class EE_Admin {
 		$menuitems[] = array(
 			'title' => __('Event List', 'event_espresso'),
 			'url' => get_post_type_archive_link( 'espresso_events' ),
-			'description' => __('Archive page for all events.', 'event_espresso')	
+			'description' => __('Archive page for all events.', 'event_espresso')
 		);
 		return apply_filters( 'FHEE__EE_Admin__get_extra_nav_menu_pages_items', $menuitems );
 	}
@@ -382,7 +379,7 @@ final class EE_Admin {
 
 	/**
 	 * Setup nav menu walker item for usage in the event archive nav menu metabox.  It receives a menu_item array with the properites and converts it to the menu item object.
-	 * 
+	 *
 	 * @see wp_setup_nav_menu_item() in wp-includes/nav-menu.php
 	 * @return stdClass
 	 */
@@ -440,11 +437,11 @@ final class EE_Admin {
 
 	/**
 	* admin_init
-	* 
+	*
 	* @access public
 	* @return void
 	*/
-	public function admin_init() {	
+	public function admin_init() {
 	}
 
 
@@ -463,14 +460,9 @@ final class EE_Admin {
 
 		// jquery_validate loading is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 		if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
-			// load jQuery Validate script from CDN with local fallback
-			$jquery_validate_url = 'http://ajax.aspnetcdn.com/ajax/jquery.validate/1.11.1/jquery.validate.min.js'; 
-			// is the URL accessible ?
-			$test_url = @fopen( $jquery_validate_url, 'r' );
-			// use CDN URL or local fallback ?
-			$jquery_validate_url = $test_url !== FALSE ? $jquery_validate_url : EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js';
+			$jquery_validate_url = EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js';
 			// register jQuery Validate
-			wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);			
+			wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);
 		}
 
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
@@ -549,7 +541,7 @@ final class EE_Admin {
 	 *  	@return 		void
 	 */
 	public function get_persistent_admin_notices() {
-		// http://www.example.com/wp-admin/admin.php?page=espresso_general_settings&action=critical_pages&critical_pages_nonce=2831ce0f30		
+		// http://www.example.com/wp-admin/admin.php?page=espresso_general_settings&action=critical_pages&critical_pages_nonce=2831ce0f30
 		$args = array(
 			'page' => EE_Registry::instance()->REQ->is_set( 'page' ) ? EE_Registry::instance()->REQ->get( 'page' ) : '',
 			'action' => EE_Registry::instance()->REQ->is_set( 'action' ) ? EE_Registry::instance()->REQ->get( 'action' ) : '',
@@ -594,7 +586,7 @@ final class EE_Admin {
 
 
 
-	
+
 
 
 	/**
@@ -629,12 +621,12 @@ final class EE_Admin {
 					// and to frontpage in case it's displaying latest posts (don't need to track IDs for this)
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
 					$update_post_shortcodes = TRUE;
-				} 
+				}
 			}
-			
+
 			if ( $update_post_shortcodes ) {
 				EE_Registry::instance()->CFG->update_post_shortcodes();
-			}			
+			}
 		}
 	}
 
@@ -659,7 +651,7 @@ final class EE_Admin {
 	 *  @return 	void
 	 */
 	public function espresso_admin_footer() {
-		return sprintf( 
+		return sprintf(
 			__( 'Event Registration and Ticketing Powered by %sEvent Registration Powered by Event Espresso%s', 'event_espresso' ),
 			'<a href="http://eventespresso.com/" title="',
 			'">' . EVENT_ESPRESSO_POWERED_BY . '</a>'
@@ -672,7 +664,7 @@ final class EE_Admin {
 	 * @param  array  $config array of configuration settings for registering the admin page in the following format:
 	 * @return [type]         [description]
 	 */
-	
+
 	/**
 	 * The purpose of this method is to provide an easy way for addons to register their admin pages (using the EE Admin Page loader system).
 	 * @param  string $page_basename This string represents the basename of the Admin Page init.  The init file must use this basename in its name and class (i.e. {page_basename}_Admin_Page_Init.core.php).
