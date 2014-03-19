@@ -153,7 +153,7 @@
 	 */
 	if ( ! function_exists( 'espresso_event_date' )) {
 		function espresso_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
-			echo EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID );
+			echo date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID )));
 		}		
 	}
 
@@ -173,7 +173,7 @@
 				$html = $format ? '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">' : '';
 				foreach ( $datetimes as $datetime ) {
 					$html .= $format ? '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">' : '';
-					$html .= $format ? $datetime->start_date_and_time( $dt_frmt, $tm_frmt ) : $datetime;	
+					$html .= $format ? date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( $datetime->start_date_and_time() )) : $datetime;	
 					$html .= $format ? '</li>' : '';
 				}
 				$html .= $format ? '</ul>' : '';
@@ -195,7 +195,7 @@
 	 */
 	if ( ! function_exists( 'espresso_event_end_date' )) {
 		function espresso_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
-			echo EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID );
+			echo date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID )));
 		}		
 	}
 
@@ -207,12 +207,12 @@
 	 */
 	if ( ! function_exists( 'espresso_event_date_range' )) {
 		function espresso_event_date_range( $dt_frmt = 'M jS', $tm_frmt = ' ', $single_dt_frmt = 'D M jS @ ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
-			$the_event_date = EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID );
-			$the_event_end_date = EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID );
+			$the_event_date = date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID )));
+			$the_event_end_date = date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID )));
 			if ( $the_event_date != $the_event_end_date ) {
-				echo $the_event_date . __( ' - ', 'event_espresso' ) . EEH_Event_View::the_event_end_date( $dt_frmt . ', Y', $tm_frmt, $EVT_ID );
+				echo $the_event_date . __( ' - ', 'event_espresso' ) . date_i18n( $dt_frmt . ', Y' . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_end_date( $dt_frmt . ', Y', $tm_frmt, $EVT_ID )));
 			} else {
-				echo EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt, $EVT_ID );
+				echo date_i18n( $single_dt_frmt . ' ' . $single_tm_frmt, strtotime( EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt, $EVT_ID )));
 			}
 		}		
 	}
@@ -558,8 +558,8 @@ class EEH_Event_View extends EEH_Base {
 		if ( $datetime = EEH_Event_View::get_primary_date_obj( $EVT_ID )) {
 	?>
 		<div class="event-date-calendar-page-dv">
-			<div class="event-date-calendar-page-month-dv"><?php echo $datetime->start_date('M');?></div>
-			<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
+			<div class="event-date-calendar-page-month-dv"><?php echo date_i18n( 'M', strtotime( $datetime->start_date()));?></div>
+			<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date( 'd' );?></div>
 		</div>
 	<?php	
 		}
