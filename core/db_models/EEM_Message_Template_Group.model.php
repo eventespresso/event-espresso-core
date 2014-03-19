@@ -96,7 +96,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 * @access  public
 	 * @return  array all active (non trashed, active) message template group objects for the given messenger
 	 */
-	public function get_all_active_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC') {
+	public function get_all_active_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC' ) {
 		$query_params = array(array('MTP_messenger' => $messenger, 'MTP_is_active' => true), 'order_by' => array($orderby => $order ) );
 		return $this->get_all($query_params);
 	}
@@ -140,8 +140,10 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 * @access public
 	 * @return array  all active (non_trashed, active) message template objects
 	 */
-	public function get_all_active_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-		$_where = $this->_maybe_mtp_filters(array('MTP_is_active' => true));
+	public function get_all_active_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $global = TRUE ) {
+		$_where = $global ? array('MTP_is_global' => TRUE ) : array('MTP_is_global' => FALSE );
+		$_where['MTP_is_active'] = TRUE;
+		$_where = $this->_maybe_mtp_filters($_where);
 
 		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
 
@@ -187,12 +189,12 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * get_all_event_message_templates
+	 * get_all_custom_message_templates
 	 * @access public
 	 * @return EE_Message_Template_Group[] all message template groups that are non-global and are event specific
 	 */
-	public function get_all_event_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
-		$_where = $this->_maybe_mtp_filters( array( 'EVT_ID' => array('>', 0) ) );
+	public function get_all_custom_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE ) {
+		$_where = $this->_maybe_mtp_filters( array( 'MTP_is_global' => FALSE  ) );
 
 		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
 		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all($query_params);
@@ -208,8 +210,10 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 * @access public
 	 * @return EE_Message_Template_Group[] message template groups.
 	 */
-	public function get_all_trashed_grouped_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
-		$_where = $this->_maybe_mtp_filters( array('MTP_is_active' => true) );
+	public function get_all_trashed_grouped_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $global = TRUE) {
+		$_where = $global ? array('MTP_is_global' => TRUE ) : array('MTP_is_global' => FALSE );
+		$_where['MTP_is_active'] = TRUE;
+		$_where = $this->_maybe_mtp_filters($_where);
 
 		$query_params = array( $_where, 'order_by' => array($orderby => $order), 'limit' => $limit );
 
