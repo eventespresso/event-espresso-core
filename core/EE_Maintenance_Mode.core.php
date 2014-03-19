@@ -98,6 +98,16 @@ class EE_Maintenance_Mode {
 
 
 	/**
+	 * retrieves the maintenance mode option value from the db
+	 * @return int
+	 */
+	private function _real_level(){
+		return get_option( self::option_name_maintenance_mode, EE_Maintenance_Mode::level_0_not_in_maintenance );
+	}
+
+
+
+	/**
 	 * Determines whether or not we're in maintenance mode and what level. 
 	 * EE_Maintenance_Mode::level_0_not_in_maintenance => not in maintenance mode (in normal mode)
 	 * EE_Maintenance_Mode::level_1_frontend_only_maintenance=> frontend-only mainteannce mode
@@ -105,7 +115,7 @@ class EE_Maintenance_Mode {
 	 * @return int
 	 */
 	public function level(){
-		$real_maintenance_mode_level = get_option(self::option_name_maintenance_mode,0);
+		$real_maintenance_mode_level = $this->_real_level();
 		//if this is an admin request, we'll be honest... except if it's ajax, because that might be from the frontend
 		if( ( ! is_admin() || (defined('DOING_AJAX') && DOING_AJAX)) && //only on frontend or ajax requests
 			current_user_can('administrator') && //when the user is an admin
@@ -194,12 +204,12 @@ class EE_Maintenance_Mode {
 	 */
 	public function display_maintenance_mode_notice() {
 		// check if M-mode is engaged and for EE shortcode
-		if ( get_option( self::option_name_maintenance_mode, 0 ) && current_user_can( 'administrator' ) && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )) {
+		if ( $this->_real_level() && current_user_can( 'administrator' ) && ! is_admin() && ! ( defined( 'DOING_AJAX' ) && DOING_AJAX )) {
 			printf( 
 				__( '%sclose%sEvent Registration is currently disabled because Event Espresso has been placed into Maintenance Mode. To change Maintenance Mode settings, click here %sEE Maintenance Mode Admin Page%s', 'event_espresso' ),
-				'<div id="ee-m-mode-admin-notice-dv" class=""><a class="close-espresso-notice" title="',
-				'">&times;</a><p>',
-				' &raquo; <a href="' . add_query_arg( array( 'page' => 'espresso_maintenance_settings' ), admin_url( 'admin.php' )) . '">',
+				'<div id="ee-m-mode-admin-notice-dv" class="" style="position: fixed; z-index: 999999; top: 0; left: 0; width: 100%; padding: .5em; background: #d54e21; background: rgba( 213, 78, 33, .95 ); font-size: 12px; font-weight: bold; line-height: 1; color: #fff;  text-align: center; text-shadow:0 -1px 0px rgba( 0, 0, 0, 0.4 ); -webkit-box-sizing: border-box; -moz-box-sizing: border-box; box-sizing: border-box;"><a class="close-espresso-notice" title=" style="position: absolute; top: 3px; right: 3px; cursor: pointer; width: 14px; height: 14px; padding: 0 0 0 .5px; font-weight: bold; font-size: 14px; line-height: 14px; text-align: center; color:#999;"',
+				'">&times;</a><p style="">',
+				' &raquo; <a href="' . add_query_arg( array( 'page' => 'espresso_maintenance_settings' ), admin_url( 'admin.php' )) . '" style="color:#FEDF6C; text-shadow:0 1px 1px rgba( 0, 0, 0, 0.4 );">',
 				'</a></p></div>'
 			);
 		}
