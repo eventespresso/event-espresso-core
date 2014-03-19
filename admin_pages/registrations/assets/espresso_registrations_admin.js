@@ -17,7 +17,8 @@ jQuery(document).ready(function($) {
 		// activate datepicker fields
 		$( '.datepicker' ).datepicker({
 			changeMonth: true,
-			changeYear: true
+			changeYear: true,
+			yearRange: "-80:+20"
 		});
 	}
 	

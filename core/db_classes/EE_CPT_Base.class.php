@@ -8,7 +8,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * This is a property for holding cached feature images on CPT objects.  Cache's are set on the first "feature_image()" method call.  Each key in the array corresponds to the requested size.  
+	 * This is a property for holding cached feature images on CPT objects.  Cache's are set on the first "feature_image()" method call.  Each key in the array corresponds to the requested size.
 	 * @var array
 	 */
 	protected $_feature_image = array();
@@ -39,7 +39,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 
 
-	
+
 	/**
 	 * Terms (in context of a particular taxonomy) which apply to this cpt
 	 * @var EE_Term_Taxonomy[]
@@ -57,7 +57,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	function add_event_category($category_name,$category_description=null,$parent_term_taxonomy_id = null){
 		return $this->get_model()->add_event_category($this,$category_name,$category_description,$parent_term_taxonomy_id);
 	}
-	
+
 	/**
 	 * Removes the event category by specified name from beign related ot this event
 	 * @param string $category_name
@@ -66,9 +66,9 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	function remove_event_category($category_name){
 		return $this->get_model()->remove_event_category($this,$category_name);
 	}
-	
+
 	/**
-	 * Removes the relation to the specified term taxonomy, and maintains the 
+	 * Removes the relation to the specified term taxonomy, and maintains the
 	 * data integrity of the term taxonomy rpovided
 	 * @param EE_Term_Taxonomy $term_taxonomy
 	 * @return EE_Base_Class the relation was removedfrom
@@ -168,7 +168,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 		$attachment =  wp_get_attachment_image_src( get_post_thumbnail_id( $this->ID() ), $size );
 		return !empty($attachment) ? $attachment[0] : false;
 	}
-	
+
 
 
 
@@ -179,7 +179,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	 * @param  string|array $related_obj_names if included this will be used to restore for related obj if not included then we just do restore on the meta.  We will accept an array of related_obj_names for restoration here.
 	 * @param  int    $revision_id      ID of the revision we're gettting data from
 	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.  This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names sent);
-	 * @return void                   
+	 * @return void
 	 */
 	public function restore_revision( $revision_id, $related_obj_names = array(), $where_query = array() ) {
 		//get revision object
@@ -200,14 +200,14 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 		foreach ( $related_obj_names as $related_name ) {
 			//related_obj_name so we're saving a revision on an object related to this object
-			
+
 			//do we have $where_query params for this related object?  If we do then we include that.
 			$cols_n_values = isset( $where_query[$related_name] ) ? $where_query[$related_name] : array();
 			$where_params = !empty($cols_n_values) ? array($cols_n_values) : array();
 
 			$related_objs = $this->get_many_related($related_name, $where_params);
 			$revision_related_objs = $revision_obj->get_many_related($related_name, $where_params);
-			
+
 			//load helper
 			EE_Registry::instance()->load_helper('Array');
 
@@ -230,7 +230,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 
 
-	
+
 	/**
 	 * Wrapper for get_post_meta, http://codex.wordpress.org/Function_Reference/get_post_meta
 	 * @param string $meta_key
@@ -241,9 +241,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	 */
 	public function get_post_meta($meta_key = null,$single = false){
 		return get_post_meta($this->ID(), $meta_key, $single);
-
 	}
-	
+
 	/**
 	 * Wrapper for update_post_meta, http://codex.wordpress.org/Function_Reference/update_post_meta
 	 * @param string $meta_key
@@ -257,7 +256,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 		}
 		return update_post_meta($this->ID(),$meta_key,$meta_value,$prev_value);
 	}
-	
+
 	/**
 	 * Wrapper for add_post_meta, http://codex.wordpress.org/Function_Reference/add_post_meta
 	 * @param type $meta_key
@@ -271,7 +270,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 		}
 		return add_post_meta($this->ID(),$meta_key,$meta_value,$unique);
 	}
-	
+
 	/**
 	 * Gets the URL for viewing this event on the front-end
 	 * @return string
@@ -279,7 +278,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	public function get_permalink(){
 		return get_permalink($this->ID());
 	}
-	
+
 	/**
 	 * Gets all the term-taxonomies for thsi CPT
 	 * @param array $query_params

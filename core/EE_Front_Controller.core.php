@@ -328,9 +328,9 @@ final class EE_Front_Controller {
 								break;
 							}
 							// and pass the request object to the run method
-							$shortcode = $sc_reflector->newInstance();
+							EE_Registry::instance()->shortcodes[ $shortcode_class ] = $sc_reflector->newInstance();
 							// fire the shortcode class's run method, so that it can activate resources
-							$shortcode->run( $WP );
+							EE_Registry::instance()->shortcodes[ $shortcode_class ]->run( $WP );
 						}
 					}
 				}

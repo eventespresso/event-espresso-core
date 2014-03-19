@@ -38,12 +38,11 @@ class EE_Load_Textdomain extends EE_Base {
 	 */
 	public static function load_textdomain() {
 		self::_maybe_get_langfile();
-
 		//now load the textdomain
-		if ( !empty(self::$_lang) && file_exists(EE_LANGUAGES_SAFE_DIR.'event_espresso-'.self::$_lang.'.mo') ){
-			load_plugin_textdomain('event_espresso', false, EE_LANGUAGES_SAFE_LOC);
-		}else{
-			load_plugin_textdomain('event_espresso', false, dirname(EE_PLUGINPATH) . '/languages/');
+		if ( ! empty( self::$_lang ) && file_exists( EE_LANGUAGES_SAFE_DIR . 'event_espresso-' . self::$_lang . '.mo' )) {
+			load_plugin_textdomain( 'event_espresso', FALSE, EE_LANGUAGES_SAFE_LOC );
+		} else {
+			load_plugin_textdomain( 'event_espresso', FALSE, dirname( EE_PLUGIN_BASENAME ) . '/languages/');
 		}
 	}
 

@@ -367,13 +367,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_PRC_amount
 	*/
 	function column_PRC_amount(EE_Registration $item){
+		$content = isset( $_GET['event_id'] ) ? '<span class="TKT_name">' . $item->ticket()->name() . '</span><br />' : '';
 		
 		if ( $item->price_paid() > 0 ) {
-			return '<span class="reg-pad-rght">' . $item->pretty_price_paid() . '</span>';			
+			$content .= '<span class="reg-pad-rght">' . $item->pretty_price_paid() . '</span>';			
 		} else {
 			// free event
-			return '<span class="reg-overview-free-event-spn reg-pad-rght">' . __( 'free', 'event_espresso' ) . '</span>';
+			$content .= '<span class="reg-overview-free-event-spn reg-pad-rght">' . __( 'free', 'event_espresso' ) . '</span>';
 		}
+
+		return $content;
 		
 	}
 
@@ -386,7 +389,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_REG_final_price
 	*/
 	function column__REG_final_price(EE_Registration $item){
-		return '<span class="reg-pad-rght">' .  $item->pretty_price_paid() . '</span>';			
+		$content = isset( $_GET['event_id'] ) ? '' : '<span class="TKT_name">' . $item->ticket()->name() . '</span><br />';
+
+		$content .= '<span class="reg-pad-rght">' .  $item->pretty_price_paid() . '</span>';	
+		return $content;		
 		
 	}
 

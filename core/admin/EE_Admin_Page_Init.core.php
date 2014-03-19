@@ -200,7 +200,13 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		if ( !is_object($this->_loaded_page_object) ) {
 			$msg[] = __('We can\'t load the page because we\'re missing a valid page object that tells us what to load', 'event_espresso');
-			$msg[] = $msg[0] . "\r\n" . sprintf( __('The custom slug you have set for this page is %s. This means we\'re looking for the class %s_Admin_Page (found in %s_Admin_Page.core.php) within your %s directory', 'event_espresso'), $this->_file_name, $this->_file_name, $this->_file_name, $this->menu_label);
+			$msg[] = $msg[0] . "\r\n" . sprintf( 
+				__('The custom slug you have set for this page is %s. This means we\'re looking for the class %s_Admin_Page (found in %s_Admin_Page.core.php) within your %s directory', 'event_espresso'),
+				 $this->_file_name, 
+				 $this->_file_name, 
+				 $this->_folder_path . $this->_file_name, 
+				 $this->menu_label
+			);
 			throw new EE_Error( implode( '||', $msg) );
 		}
 

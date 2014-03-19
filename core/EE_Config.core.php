@@ -1061,11 +1061,16 @@ class EE_Currency_Config extends EE_Config_Base {
 	 *  @return 	void
 	 */
 	public function __construct( $CNT_ISO = NULL ) {
-		
-		if ( $CNT_ISO ) {
-			if ( $country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( EE_Registry::instance()->CFG->organization->CNT_ISO )) {
+		// get country code from organization settings or use default
+		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
+		// but override if requested
+		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
+		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode)
+		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() ) {
+			// retreive the country settings from the db, just in case they have been customized
+			if ( $country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO )) {
 				if ( $country instanceof EE_Country ) {
-					$this->code = $country->currency_code(); 			// currency code: USD, CAD, EUR
+					$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR
 					$this->name = $country->currency_name_single();	// Dollar
 					$this->plural = $country->currency_name_plural(); 	// Dollars
 					$this->sign =  $country->currency_sign(); 			// currency sign: $
@@ -1075,7 +1080,9 @@ class EE_Currency_Config extends EE_Config_Base {
 					$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
 				}
 			}			
-		} else {
+		} 
+		// fallback to hardcoded defaults, in case the above failed
+		if ( empty( $this->code )) {
 			// set default currency settings
 			$this->code = 'USD'; 	// currency code: USD, CAD, EUR
 			$this->name = __( 'Dollar', 'event_espresso' ); 	// Dollar
@@ -1459,20 +1466,20 @@ class EE_Gateway_Config extends EE_Config_Base{
  */
 class EE_Events_Archive_Config extends EE_Config_Base{
 
-	public $display_description;
-	public $display_datetimes;
-	public $display_venue_details;
-	public $display_expired_events;
 	public $display_status_banner;
+	public $display_description;
 	public $display_ticket_selector;
+	public $display_datetimes;
+	public $display_venue;
+	public $display_expired_events;
 	
 	public function __construct(){
+		$this->display_status_banner = 0;
 		$this->display_description = 1;
-		$this->display_datetimes = TRUE;
-		$this->display_venue = FALSE;
-		$this->display_expired_events = FALSE;
-		$this->display_status_banner = FALSE;
-		$this->display_ticket_selector = FALSE;
+		$this->display_ticket_selector = 0;
+		$this->display_datetimes = 1;
+		$this->display_venue = 0;
+		$this->display_expired_events = 0;
 	}
 }
 
@@ -1486,8 +1493,8 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public $display_venue;
 
 	public function __construct() {
-		$this->display_status_banner_single = FALSE;
-		$this->display_venue = TRUE;
+		$this->display_status_banner_single = 0;
+		$this->display_venue = 1;
 	}
 }
 

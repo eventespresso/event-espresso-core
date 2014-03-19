@@ -1134,6 +1134,9 @@ abstract class EE_Base_Class{
 	}
 	/**
 	 * Gets the value of the primary key.
+	 * If the object hasn't yet been saved, it should be whatever the model field's default was
+	 * (eg, if this were the EE_Event class, look at the primary key field on EEM_Event and see what its default value is.
+	 * Usually defaults for integer primary keys are 0; string primary keys are usually NULL).
 	 * @return mixed, if the primary key is of type INT it'll be an int. Otherwise it could be a string
 	 */
 	public function ID(){

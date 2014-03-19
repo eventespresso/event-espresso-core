@@ -819,13 +819,35 @@ Class EEM_Gateways {
 			} catch( EE_Error $e ) {
 				$response = array( 'msg'=>array( 'error'=>$e->getMessage() ));
 			}
+			//make sure we remove the credit card and other sensitive data, as we dont want to store that in teh db
+			$this->_clean_billing_info_in_session($transaction);
 		}
 		// add return URL
 		$response['forward_url'] = $this->_get_return_page_url( $transaction );		
 		return $response;
 	}	
-
-
+	
+	/**
+	 * Cleans the session so that it doesn't store the credit card or CVV to the DB
+	 * @param EE_Transaction $transaction to also update
+	 * @return void
+	 */
+	protected function _clean_billing_info_in_session($transaction){
+		$session_data = EE_Registry::instance()->SSN->get_session_data();
+		if ( isset( $session_data['billing_info'] ) && is_array( $session_data['billing_info'] )) {
+			foreach( $session_data['billing_info'] as $name => $billing_input_array ){
+				if ( $billing_input_array['sanitize'] == 'ccard' ){
+					$session_data['billing_info'][$name]['value'] = $this->MaskCreditCard( $billing_input_array['value'] );
+				} elseif ( $billing_input_array['sanitize'] == 'ccv' ){
+					$session_data['billing_info'][$name]['value'] = '';
+				}
+			}
+		}
+		$success = EE_Registry::instance()->SSN->update($session_data);
+		unset($session_data['transaction']);
+		$transaction->set_txn_session_data($session_data);
+		$transaction->save();
+	}
 
 	/**
 	 * 		get thank you page url

@@ -179,7 +179,7 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_list_of_event_dates' )) {
-		function espresso_list_of_event_dates( $EVT_ID = FALSE, $dt_frmt = 'l F jS, Y', $tm_frmt = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = FALSE ) {
+		function espresso_list_of_event_dates( $EVT_ID = FALSE, $dt_frmt = 'l F jS, Y', $tm_frmt = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE ) {
 			$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID ,$show_expired );
 			//d( $datetimes );
 			if ( is_array( $datetimes ) && ! empty( $datetimes )) {
@@ -193,16 +193,19 @@
 							$html .= ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b>' : '';
 							$html .= $add_breaks ? '<br />' : '';
 							$datetime_description = $datetime->description();
-							$html .= ! empty( $datetime_name ) && ! empty( $datetime_description ) && ! $add_breaks ? ' - ' : '';
-							$html .= ! empty( $datetime_description ) ? $datetime_description : '';
-							$html .= ! empty( $datetime_name ) || ! empty( $datetime_description ) ? '<br/>' : '';
+							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
 							$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $dt_frmt ) . ' &nbsp; &nbsp; ';
-							$html .= $add_breaks ? '<br />' : '';
-							$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $tm_frmt ) . '<br/><br/>';
+							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
+							$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $tm_frmt );
+							$datetime_description = $datetime->description();
+							$html .= ! empty( $datetime_description ) ? '<br/> - ' . $datetime_description : '';
+							$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
+							$html .= '<br/><br/>';
 							$html .= '</li>';
 
 						} else {
 							$html .= $datetime;
+							$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
 						}
 					}
 				}
@@ -272,6 +275,24 @@
 		function espresso_event_link_url( $EVT_ID = FALSE ) {
 			echo EEH_Event_View::event_link_url( $EVT_ID );
 		}		
+	}
+
+
+
+	/**
+	 * 	espresso_event_has_content_or_excerpt
+	 *
+	 *  @access 	public
+	 *  @return 	boolean
+	 */
+	if ( ! function_exists( 'espresso_event_has_content_or_excerpt' )) {
+		function espresso_event_has_content_or_excerpt() {
+			global $post;
+			if ( $post instanceof WP_Post ) {
+				return $post->post_content != '' && $post->post_excerpt != '' ? TRUE : FALSE;
+			}
+			return FALSE;
+		}
 	}
 
 

@@ -565,19 +565,19 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 */
 	public function datetimes($query_params = array()){
 		if( ! isset($query_params['order_by'])){
-			$query_params['order_by']['DTT_EVT_start'] = 'ASC';
+			$query_params['order_by']['DTT_order'] = 'ASC';
 		}
 		return $this->get_many_related('Datetime', $query_params);
 	}
 	
 	/**
-	 * Gets all the datetimes from teh db ordered by start time
+	 * Gets all the datetimes from teh db ordered by DTT_order
 	 * @param boolean $show_expired
 	 * @param boolean $show_deleted
 	 * @return EE_Datetime[]
 	 */
 	public function datetimes_ordered($show_expired = true, $show_deleted = false){
-		return EEM_Datetime::instance($this->_timezone)->get_datetimes_for_ticket_ordered_by_start_time($this->ID(),$show_expired,$show_deleted);
+		return EEM_Datetime::instance($this->_timezone)->get_datetimes_for_ticket_ordered_by_DTT_order($this->ID(),$show_expired,$show_deleted);
 	}
 	/**
 	 * Gets the template for the ticket

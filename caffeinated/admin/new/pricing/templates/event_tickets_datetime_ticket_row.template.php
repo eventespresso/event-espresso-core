@@ -38,7 +38,9 @@
 	<!--<td><span class="ticket-display-row-TKT_price"><?php echo $TKT_price; ?></span></td>-->
 	<td><span class="ticket-display-row-TKT_sold"><?php echo $TKT_sold; ?></span></td>
 	<td><span class="ticket-display-row-TKT_registrations"><?php echo $TKT_registrations; ?></span></td>
-	<td><div class="ee-editing-container <?php echo $edit_tkt_expanded; ?>"><span class="gear-icon dashicons dashicons-admin-generic clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span></div><span class="<?php echo $clone_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="<?php echo $trash_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"<?php echo $trash_hidden; ?>></span></td>
+	<td><div class="ee-editing-container <?php echo $edit_tkt_expanded; ?>"><span class="gear-icon dashicons dashicons-admin-generic clickable" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span></div><span class="<?php echo $clone_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"></span><span class="<?php echo $trash_icon; ?>" data-ticket-row="<?php echo $tkt_row; ?>" data-context="ticket"<?php echo $trash_hidden; ?>></span>
+		<span class="dashicons dashicons-image-flip-vertical sortable-drag-handle"></span>
+	</td>
 </tr>
 <tr id="edit-ticketrow-<?php echo $tkt_row; ?>" class="edit-ticket-row">
 	<td colspan="9">

@@ -23,6 +23,15 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	/**
 	 * when constructing a proper form section, calls _construct_finalize on children
 	 * so that they know who their parent is, and what name they've been given.
+	 * @param array $options_array keys:<ul>
+	 * <li>'subsections' shoudl be EE_Form_Section_Base[], which will be merged with whatever was already
+	 * defined in child constructors;</li>
+	 * <li>'include' should be an array where values are all subsections to be included, and in that order. This is handy if you want
+	 * the subsections to be ordered differently than the default, and if you override which fields are shown</li>
+	 * <li>'exclude' should be an array where values are subsections to be excluded. This is handy if you want
+	 * to remove certain default subsections</li>
+	 * (note: you can only specificy 'include' OR 'exclude', not both)
+	 * <li>and parent's keys too</li></ul>
 	 */
 	public function __construct($options_array = array()){
 		$this->_set_default_name_if_empty();
@@ -30,6 +39,25 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		//if they've included subsections in the constructor, add them now
 		if(isset($options_array['subsections'])){
 			$this->_subsections = array_merge($this->_subsections,$options_array['subsections']);
+		}
+		//don't allow 'include' AND 'exclude'
+		if(isset($options_array['include']) && isset($options_array['exclude'])){
+			throw new EE_Error(sprintf(__("When creating a form section, you cannot include BOTH include AND exclude", "event_espresso")));
+		}
+		if(isset($options_array['include'])){
+			$include = $options_array['include'];
+			//we are going to make sure we ONLY have those those subsections to include
+			//AND we are going to make sure they're in that specified order
+			$reordered_subsections = array();
+			foreach($options_array['include'] as $input_name){
+				if(isset($this->_subsections[$input_name])){
+					$reordered_subsections[$input_name] = $this->_subsections[$input_name];
+				}
+			}
+			$this->_subsections = $reordered_subsections;
+		}elseif(isset($options_array['exclude'])){
+			$exclude = $options_array['exclude'];
+			$this->_subsections = array_diff_key($this->_subsections, array_flip($exclude));
 		}
 		foreach($this->_subsections as $name => $subsection){
 			$subsection->_construct_finalize($this, $name);
@@ -42,6 +70,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		
 		
 		$this->_enqueue_jquery_validate_script();
+		parent::__construct($options_array);
 	}
 	/**
 	 * Gets the layotu strategy for this form section

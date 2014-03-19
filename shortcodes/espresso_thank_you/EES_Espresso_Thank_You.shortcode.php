@@ -28,6 +28,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * @var EE_Transaction $_current_txn
 	 */
 	protected $_current_txn = NULL;
+	
+	/**
+	 * The reg_url_link passed from the Request, or from the Session
+	 * @var string $_reg_url_link
+	 */
+	protected $_reg_url_link = NULL;
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, modules, etc
@@ -74,7 +80,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function run( WP $WP ) {
 		
 		// only do thank you page stuff if we have a REG_url_link in the url
-		if ( EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {			
+		if ( EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {		
+			$this->_reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
 			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
 			if ( ! $this->_current_txn instanceof EE_Transaction ) {
 				EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -103,23 +110,27 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
 			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		} else {
-			//prepare variables for displaying
+			//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
+			$this->_current_txn = EE_Registry::instance()->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
+			$primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
+			//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			// registrations
 			$registrations = $this->_current_txn->registrations();
 			$event_names = array();
 			foreach( $registrations as $registration ){
-				$event_names[ $registration->event_name() ] = $registration->event_name();
-			}
-			$primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
-			//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
-			$this->_current_txn = EE_Registry::instance()->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
-			//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				if ( $registration instanceof EE_Registration && ( ! $this->_revisit || ( $this->_revisit && $this->_reg_url_link == $registration->reg_url_link() ))) {
+					$event_names[ $registration->event_name() ] = $registration->event_name();					
+				}
+			}			
+			
+			//prepare variables for displaying
 			$template_args = array();
-			//update the trsansaction, in case we just updated it.
 			$template_args['transaction'] = $this->_current_txn;
-			//get payments, but order with newest at teh top, so users see taht first
+			$template_args['reg_url_link'] = $this->_reg_url_link;
+			$template_args['is_primary'] = $primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
+						//get payments, but order with newest at teh top, so users see taht first
 			$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
 			$template_args['primary_registrant'] = $primary_registrant;
-			$template_args['event_names'] = $event_names;
 			
 			// txn status ? 
 			if( $this->_current_txn->is_completed() ){
@@ -137,10 +148,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), 
 				get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )
 			);
+
+			$template_args['event_names'] = $event_names;			
 			// link to SPCO payment_options
 			$template_args['SPCO_payment_options_url'] = $primary_registrant ? $primary_registrant->payment_overview_url() : add_query_arg(  array('step'=>'payment_options' ), $revisit_spco_url );
 			// link to SPCO attendee_information
-			$template_args['SPCO_attendee_information_url'] = $primary_registrant ? $primary_registrant->edit_attendee_information_url() : add_query_arg( array( 'step'=>'attendee_information' ), $revisit_spco_url );
+			$template_args['SPCO_attendee_information_url'] =$primary_registrant ? $primary_registrant->edit_attendee_information_url() : FALSE;
 			$template_args['gateway_content'] = '';			
 			//create a hackey payment object, but dont save it
 			$gateway_name = $this->_current_txn->get_extra_meta('gateway', true,  __("Unknown", "event_espresso"));
