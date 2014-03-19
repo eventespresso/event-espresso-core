@@ -27,12 +27,20 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 
-class Messages_Template_List_Table extends EE_Admin_List_Table {
+class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
+
+
+	public function __construct( $admin_page ) {
+		//Set parent defaults
+		parent::__construct($admin_page);
+	}
+
+
 
 
 	protected function _setup_data() {
-		$this->_data = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, FALSE);
-		$this->_all_data_count = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, TRUE, TRUE );
+		$this->_data = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, FALSE, FALSE, FALSE );
+		$this->_all_data_count = $this->_admin_page->get_message_templates( $this->_per_page, $this->_view, TRUE, TRUE, FALSE );
 	}
 
 
@@ -48,10 +56,11 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			);
 
 		$this->_columns = array(
-			//'cb' => '<input type="checkbox" />', //no deleting default (global) templates!
+			'cb' => '<input type="checkbox" />',
 			'message_type' => __('Message Type', 'event_espresso'),
 			'messenger' => __( 'Messenger', 'event_espresso'),
-			'description' => __( 'Description', 'event_espresso' )
+			'description' => __( 'Description', 'event_espresso' ),
+			'events' => __( 'Events', 'event_espresso'), //count of events using this template.
 			//'messages_sent' => __( 'Total Sent', 'event_espresso' ) //todo this will come later when we've got message tracking in place.
 			);
 
@@ -62,10 +71,6 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 		$this->_hidden_columns = array();
 	}
-
-
-
-
 
 
 
@@ -138,14 +143,14 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		foreach ( $this->_views as $view => $args )  {
-			$this->_views[$view]['count'] = $this->_admin_page->get_message_templates( $this->_per_page, $view, TRUE, TRUE );
+			$this->_views[$view]['count'] = $this->_admin_page->get_message_templates( $this->_per_page, $view, TRUE, TRUE, FALSE );
 		}
 	}
 
 
 
 	public function column_cb( $item ) {
-		return '';
+		return sprintf( '<input type="checkbox" name="checkbox[%s] value="1" />', $item->GRP_ID() );
 	}
 
 
@@ -181,10 +186,24 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		// edit link but only if item isn't trashed.
 		if ( !$item->get('MTP_deleted') ) {
 			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID() ), EE_MSG_ADMIN_URL );
-			$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
+			$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 		}
 
-		$name_link = ! $item->get('MTP_deleted') ? '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>' : ucwords( $item->messenger_obj()->label['singular'] );
+		$name_link = ! $item->get('MTP_deleted') ? '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>' : ucwords( $item->messenger_obj()->label['singular'] );
+		$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
+		// restore link
+		$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
+		// delete price link
+		$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
+
+		if ( !$item->get('MTP_deleted') ) {
+			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Template Group to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
+		} else {
+			$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Message Template', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
+
+			if ( $this->_view == 'trashed' )
+				$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Template Group Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
+		}
 
 		//we want to display the contexts in here so we need to set them up
 		$c_label = $item->context_label();
@@ -209,6 +228,17 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 										/* %4$s */ $ctx_content,
 										/* $3%s */ $this->row_actions( $actions )
 		);
+	}
+
+	/**
+	 * column_event
+	 * This provides a count of events using this custom template
+	 *
+	 * @param  array $item message_template group data
+	 * @return string column output
+	 */
+	function column_event($item) {
+		return $item->count_events();
 	}
 
 	/**
