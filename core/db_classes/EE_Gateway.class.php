@@ -294,19 +294,27 @@ abstract class EE_Gateway {
 	}
 
 	public function add_settings_page_meta_box() {
+		global $current_screen;
+		$current_screen = get_current_screen();
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		add_meta_box(
-					'espresso_' . $this->_gateway_name . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), 'event-espresso_page_espresso_payment_settings', 'normal'
+					'espresso_' . $this->_gateway_name . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), $current_screen->id, 'normal'
 		);
 		
 	}
 
-
+	/**
+	 * deprecated. Probably should be used but isn't for makign help tab contnt
+	 * @return string
+	 */
 	protected function _help_content() {
 		return '';
 	}
 
-
+	/**
+	 * deprecated. Probably should be used but isn't for makign help tab contnt
+	 * @return string
+	 */
 	public function get_help_tab_content() {
 		return $this->_help_content();
 	}

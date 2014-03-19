@@ -56,6 +56,7 @@ class Registration_Form_Edit_Question_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentX' => 0,
 					'tipAdjustmentY' => -35
 					)
+				),
 			50 => array(
 				'id' => 'QST_admin_only_disabled',
 				'content' => $this->_qst_admin_only_stop(),

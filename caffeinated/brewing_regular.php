@@ -51,6 +51,9 @@ class EE_Brewing_Regular extends EE_Base {
 		add_action('AHEE__EEH_Activation__initialize_db_content',array($this,'initialize_caf_db_content'));
 		//make it so the PDF receipt doesn't show our shameless plug
 		add_filter('FHEE_Invoice__send_invoice__shameless_plug','__return_false');
+		// add caffeinated modules 
+		add_filter( 'FHEE__EE_Config__register_modules__modules_to_register', array( $this, 'caffeinated_modules_to_register' ));
+
 	}
 	
 	/**
@@ -138,6 +141,24 @@ class EE_Brewing_Regular extends EE_Base {
 		}
 		
 		
+	}
+	
+
+	/**
+	 * 	caffeinated_modules_to_register
+	 *
+	 * 	@access public
+	 *  	@param array $modules_to_register
+	 *  	@return array
+	 */
+	public function caffeinated_modules_to_register( $modules_to_register = array() ){
+		if ( is_readable( EE_CAF_PATH . 'modules' )) {
+			$caffeinated_modules_to_register = glob( EE_CAF_PATH . 'modules' . DS . '*', GLOB_ONLYDIR );
+			if ( is_array( $caffeinated_modules_to_register ) && ! empty( $caffeinated_modules_to_register )) {
+				$modules_to_register = array_merge( $modules_to_register, $caffeinated_modules_to_register );
+			}
+		}
+		return $modules_to_register;
 	}
 	
 

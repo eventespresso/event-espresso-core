@@ -74,7 +74,7 @@ if ( $event_queue['total_items'] > 0 ) {
 			<?php } ?>	
 			
 			<fieldset id="spco-attendee-wrap-<?php echo $line_item;?>" class="spco-attendee-wrap-fs">
-  				<legend class="spco-attendee-lgnd smaller-text"><?php echo __('Attendee #', 'event_espresso') . $att_nmbr;?></legend>
+  				<legend class="spco-attendee-lgnd smaller-text"><?php echo __('Attendee #', 'event_espresso') . $item['reg_count'];?></legend>
 
 		<?php 
 			//do an action before the questions output, including the item and count 
@@ -85,7 +85,7 @@ if ( $event_queue['total_items'] > 0 ) {
 					<input type="hidden" id="primary-attendee" name="qstn[primary_attendee]" value="<?php echo $prmy_att_input_name ?>" />
 			<?php } ?>	
 
-			<?php if ( $att_nmbr == 1 && $print_copy_info ) { ?>
+			<?php if (  ! $revisit && $att_nmbr == 1 && $print_copy_info ) { ?>
 
 					<div id="spco-copy-attendee-dv" class="hide-if-no-js">
 					

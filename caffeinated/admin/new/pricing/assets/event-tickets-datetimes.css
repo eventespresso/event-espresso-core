@@ -44,32 +44,49 @@
     float: left;
 }
 
+#datetime-editing-dtts-table {
+    border-collapse: collapse; 
+}
+
+#datetime-editing-dtts-table thead {
+    border-bottom: 2px solid #eee;
+    font-weight: bold;
+}
+
 #add-new-event-datetime-table {
     width: 77%;
 }
 
-.datetime-edit-table td:first-child {
+
+
+.datetime-edit-table .datetime-editing-dtts-tbody td:first-child {
     width: 30%;
 }
 
-.datetime-edit-table td:nth-child(2), .datetime-edit-table td:nth-child(3) {
+.datetime-edit-table .datetime-editing-dtts-tbody td {
+    height: 1.7em;
+    padding: .25em;
+}
+
+.datetime-edit-table .datetime-editing-dtts-tbody tr.advanced-dtt-edit-row td {
+    height: auto;
+}
+
+.datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(2), .datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(3) {
     width: 20%;
 }
 
 
-.datetime-edit-table td:nth-child(4) {
+.datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(4) {
     width: 5%;
 }
 
-.datetime-edit-table td:nth-child(5) {
+.datetime-edit-table .datetime-editing-dtts-tbody td:nth-child(5) {
    width: 5%;
    text-align: right;
-   line-height: 1.8em;
-   padding-bottom: 5px;
 }
 
-.datetime-edit .datetime-edit-table td:last-child {
-    padding-top: 20px;
+.datetime-edit .datetime-edit-table .datetime-editing-dtts-tbody td:last-child {
     width: 20%;
 }
 
@@ -122,11 +139,11 @@
 }
 
 
-.ticket-table .ticket-row .trash-icon, .ticket-table .ticket-row .clone-icon:before {
+.ticket-table .ticket-row .trash-icon, .ticket-table .ticket-row .clone-icon:before, .datetime-editing-dtts-tbody .trash-icon, .datetime-editing-dtts-tbody .clone-icon:before {
    margin-top: 6px;
 }
 
-.ticket-table .ticket-row .gear-icon {
+.ticket-table .ticket-row .gear-icon, .datetime-editing-dtts-tbody .ticket-icon {
     margin-top: 5px;
     margin-right: 0;
     margin-left: 0;
@@ -139,14 +156,6 @@
 
 .ee-editing-container {
     display: inline-block;
-}
-
-.datetime-edit-table td {
-    height: 1em;
-}
-
-.datetime-edit-table {
-    border-spacing: 3px;
 }
 
 .ee-edit-editing {
@@ -162,7 +171,7 @@
    margin-left: 9px;
    font-size: 18px;
    vertical-align: middle;
-}
+}/**/
 
 .ticket-icon:before, .clone-icon:before, .trash-icon:before, .gear-icon:before {
     font-size: 18px;
@@ -171,9 +180,6 @@
     padding: 0;
 }
 
-.datetime-tickets-sold {
-    font-size: 1em;
-}
 
 .datetime-tickets-edit h5 {
     margin-top: 1em;
@@ -184,15 +190,16 @@
     border: 1px solid #EEEEEE;
     border-radius: 3px 3px 3px 3px;
     padding: 1em 1.5em 2em;
-    margin-top: -5px;
+    margin-top: -8px;
+    margin-bottom: 15px;
 }
 
 .datetime-edit .ee-edit-editing {
-    height: 35px;
+    /*height: 35px;
     margin-top: 9px;
     padding-top: 3px;
     padding-left: 0;
-    padding-right: 6px;
+    padding-right: 6px;/**/
 }
 
 .button-column {
@@ -303,7 +310,7 @@
 }
 
 
-.ee-ticket-sortable {
+.ee-ticket-sortable, .ee-dtt-sortable {
     cursor: move;
 }
 
@@ -370,7 +377,7 @@
 }
 
 
-.ticket-table .ticket-display-row-TKT_sold, .ticket-table .ticket-display-row-TKT_registrations {
+.ticket-table .ticket-display-row-TKT_sold, .ticket-table .ticket-display-row-TKT_registrations, .datetime-tickets-sold {
     display:block;
     margin-top: 4px;
 }
@@ -547,15 +554,23 @@
     }
 }
 
-.add-new-ticket-table td:first-child {
-    width: 40%;
+.add-new-ticket-table .add-new-ticket-shortcut-row td:first-child {
+    width: 30%;
 }
 
-.add-new-ticket-table td:nth-child(2), .add-new-ticket-table td:nth-child(3) {
+.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(2), .add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(3) {
     width: 20%
 }
 
-.add-new-ticket-table td:nth-child(4), .add-new-ticket-table td:nth-child(5) {
+.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(4) {
+    width: 15%;
+}
+
+.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(5) {
+    width: 5%;
+}
+
+.add-new-ticket-table .add-new-ticket-shortcut-row td:nth-child(6) {
     width: 10%;
 }
 
@@ -620,4 +635,15 @@
 .available-tickets-container .ee-create-ticket-button {
     margin-top: -20px;
     float:right;
+}
+
+.sortable-drag-handle {
+    float: right;
+    padding-top: 8px;
+    font-size: 14px;
+    cursor: move;
+}
+
+#event-and-ticket-form-content .dashicons, #event-and-ticket-form-content .ee-icon {
+    margin-right: 0;
 }

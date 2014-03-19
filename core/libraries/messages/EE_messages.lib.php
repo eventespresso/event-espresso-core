@@ -28,7 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 class EE_messages {
- 
+
 	private $_active_messengers = array();
 	private $_active_message_types = array();
 	private $_installed_message_types = array();
@@ -42,11 +42,11 @@ class EE_messages {
 	private $_EEM_data;
 	// main controller
 	function __construct() {
-		
+
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
-		$this->_set_installed_message_types();	
+		$this->_set_installed_message_types();
 	}
 
 	/**
@@ -80,7 +80,7 @@ class EE_messages {
 
 	/**
 	 * get active types from db and load the related files.  They don't get instantiated till $this->send_message.
-	 * 
+	 *
 	 */
 	private function _set_installed_message_types() {
 		//get installed
@@ -93,8 +93,8 @@ class EE_messages {
 
 	/**
 	 * load the active files needed (key word... NEEDED)
-	 * @param string $kind indicates what kind of files we are loading. 
-	 * @param array $actives indicates what active types of the $kind are actually to be loaded. 
+	 * @param string $kind indicates what kind of files we are loading.
+	 * @param array $actives indicates what active types of the $kind are actually to be loaded.
 	 */
 	private function _load_files($kind, $actives) {
 		$active_names = array();
@@ -117,10 +117,10 @@ class EE_messages {
 				return EE_Error::add_error( sprintf( __("missing messenger file set as active: (%s) %s \nMessenger has been made inactive.", 'event_espresso'), $load_file), __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}
-		return $active_names; 
+		return $active_names;
 	}
 
-	
+
 
 
 	/**
@@ -129,7 +129,7 @@ class EE_messages {
 	 * @access private
 	 * @param  string $active_name name of messenger or message type
 	 * @param  string $kind        messenger or message_type?
-	 * @return void              
+	 * @return void
 	 */
 	private function _unset_active( $active_name, $kind ) {
 		global $espresso_wp_user;
@@ -146,7 +146,7 @@ class EE_messages {
 	 * delegates message sending to messengers
 	 * @param  string  $type    What type of message are we sending (corresponds to message types)
 	 * @param  array  $vars    Data being sent for parsing in the message
-	 * @return void           
+	 * @return void
 	 */
 	public function send_message( $type, $vars ) {
 		$success = FALSE;
@@ -192,7 +192,7 @@ class EE_messages {
 		if ( ! $error ) {
 			EE_Error::add_success( sprintf( __( 'The %s message has been succesfully sent.', 'event_espresso'), $this->_installed_message_types[$type]->label['singular'] ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		
+
 		return $error ? FALSE : TRUE; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.
 	}
 
@@ -269,7 +269,7 @@ class EE_messages {
 		//do we have the necessary objects loaded?
 		if ( empty( $this->_messenger) || empty($this->_message_type) )
 			throw new EE_Error( sprintf( __(' The %s messenger or the %s message_type are not active. Are you sure they exist?', 'event_espresso'), $messenger, $message_type ) );
-		
+
 		//is given message_type valid for given messenger (if this is not a global save)
 		$types_to_check = array();
 		if ( !$is_global ) {
@@ -288,14 +288,14 @@ class EE_messages {
 	/**
 	 * This is a wrapper for the protected _create_new_templates function
 	 * @param  string $message_type message type that the templates are being created for
-	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned. 
+	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned.
 	 */
 	public function create_new_templates( $messenger, $message_type, $evt_id, $is_global = false ) {
 		$valid_mt = false;
 		$evt_id = absint($evt_id);
 
 		$valid_mt = $this->_validate_setup($messenger, $message_type, $is_global);
-		
+
 		if ( is_wp_error($valid_mt) && $is_global ) {
 			//we're setting up a brand new global templates (with messenger activation) so we're assuming that the message types sent in are valid.
 			$valid_mt = true;
@@ -357,7 +357,7 @@ class EE_messages {
 		foreach ( $this->_message_type->get_contexts() as $context => $details ) {
 			foreach ( $this->_messenger->get_template_fields() as $field => $value ) {
 				$template_fields[$context][$field] = $value;
-			} 
+			}
 		}
 
 		if ( empty($template_fields) ) {
@@ -370,7 +370,7 @@ class EE_messages {
 
 	/**
 	 * gets an array of installed messengers and message types objects.
-	 * 
+	 *
 	 * @access public
 	 * @param string $type we can indicate just returning installed message types or messengers (or both) via this parameter.
 	 * @return array multidimensional array of messenger and message_type objects (messengers index, and message_type index);
@@ -395,7 +395,7 @@ class EE_messages {
 
 	/**
 	 * _get_installed
-	 * takes an array of filenames and returns an array of objects instantiated from the class name found in the filename. 	
+	 * takes an array of filenames and returns an array of objects instantiated from the class name found in the filename.
 	 * @param  array $filenames and array of filenames
 	 * @return array       array of objects
 	 */
@@ -406,7 +406,7 @@ class EE_messages {
 		$replace = ".class.php";
 		foreach ( $filenames as $filename ) {
 			$classname = preg_match("/" . $replace . "/", $filename ) ? str_replace($replace, "", $filename) : false;
-			
+
 			//no classname? no match? move along, nothing to see here. note, the stripos is checking to make sure the filename (classname) begins with EE.
 			if ( !$classname || 0 !== stripos($classname, 'EE') ) continue;
 
@@ -443,7 +443,7 @@ class EE_messages {
 	public function get_installed_message_types() {
 		return $this->_installed_message_types;
 	}
-} 
+}
 //end EE_messages class
 
 // end of file:	includes/core/messages/EE_messages.core.php

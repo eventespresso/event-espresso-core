@@ -179,7 +179,7 @@ if ( $show_backup_db_text ) { ?>
 				<?php 
 				echo  _n(
 					"In order to import all of your existing Event Espresso data, the following upgrade task needs to be performed:", 
-					"In order to import all of your existing Event Espresso data, the following %s upgrade tasks need to be performed:",
+					"In order to import all of your existing Event Espresso data, the following upgrade tasks need to be performed:",
 					count($script_names), 
 					"event_espresso"
 				);?>	

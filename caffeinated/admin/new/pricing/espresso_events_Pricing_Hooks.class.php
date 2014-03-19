@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * espresso_events_Pricing_Hooks
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
  * Commenting/docs common to all children classes is found in the EE_Admin_Hooks parent.
- * 
+ *
  *
  * @package		espresso_events_Pricing_Hooks
  * @subpackage	caffeinated/admin/new/pricing/espresso_events_Pricing_Hooks.class.php
@@ -28,6 +28,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
+
+	/**
+	 * This property is just used to hold the status of whether an event is currently being created (true) or edited (false)
+	 * @access protected
+	 * @var bool
+	 */
+	protected $_is_creating_event;
 
 	protected function _set_hooks_properties() {
 		$this->_name = 'pricing';
@@ -147,11 +154,11 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
 				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
-				'DTT_order' => $row,
+				'DTT_order' => !isset( $dtt['DTT_order'] ) ? $row : $dtt['DTT_order'],
 				);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
-			
+
 			if ( !empty( $dtt['DTT_ID'] ) ) {
 				$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) )->get_one_by_ID($dtt['DTT_ID'] );
 				foreach ( $datetime_values as $field => $value ) {
@@ -163,10 +170,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			} else {
 				$DTM = EE_Registry::instance()->load_class('Datetime', array( $datetime_values, $timezone ), FALSE, FALSE );
 			}
-			
-			$DTM->save();			
+
+			$DTM->save();
 			$DTT = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
-			
+
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
 			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
@@ -178,7 +185,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$datetimes_start_times[$DTT->start_date_and_time('Y-m-d','H:i:s')] = $DTT->ID();
 			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
 			$saved_dtts[$DTT->ID()] = $DTT;
-			$saved_dtt_objs[$DTT->get('DTT_order')] = $DTT;
+			$saved_dtt_objs[$row] = $DTT;
 
 			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message. //todod this is actually sucky we need a better error message but this is what it is for now.
 		}
@@ -201,7 +208,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				foreach ( $related_tickets as $tkt ) {
 					$dtt_to_remove->_remove_relation_to($tkt, 'Ticket');
 				}
-				 
+
 
 				$evt_obj->_remove_relation_to( $id, 'Datetime' );
 			}
@@ -277,7 +284,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//if we have a TKT_ID then we need to get that existing TKT_obj and update it
 			//we actually do our saves ahead of doing any add_relations to because its entirely possible that this ticket didn't removed or added to any datetime in the session but DID have it's items modified.
 			//keep in mind that if the TKT has been sold (and we have changed pricing information), then we won't be updating the tkt but instead a new tkt will be created and the old one archived.
-			
+
 			if ( !empty( $TKT_values['TKT_ID'] ) ) {
 				$TKT = EE_Registry::instance()->load_model( 'Ticket', array( $timezone ) )->get_one_by_ID( $tkt['TKT_ID'] );
 
@@ -294,16 +301,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				//make sure price is set if it hasn't been already
 				$TKT->set( 'TKT_price', $ticket_price );
 
-				//if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket. 
+				//if $create_new_TKT is false then we can safely update the existing ticket.  Otherwise we have to create a new ticket.
 				if ( $create_new_TKT ) {
 					//@TODO need to move this logic into its own method that just receives the ticket object (and other necessary info)
 					$new_tkt = clone($TKT);
 
-					//we also need to make sure this new ticket gets the same datetime attachments as the archived ticket 
+					//we also need to make sure this new ticket gets the same datetime attachments as the archived ticket
 					$dtts_on_existing = $TKT->get_many_related('Datetime');
 
 					//TKT will get archived later b/c we are NOT adding it to the saved_tickets array.
-					
+
 					//if existing $TKT has sold amount, then we need to adjust the qty for the new TKT to = the remaining available.
 					if ( $TKT->get('TKT_sold') > 0 ) {
 						$new_qty = $TKT->get('TKT_qty') - $TKT->get('TKT_sold');
@@ -327,7 +334,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 						$new_tkt->_add_relation_to( $adddtt, 'Datetime' );
 					}
 
-				} 
+				}
 
 			} else {
 				//no TKT_id so a new TKT
@@ -372,11 +379,13 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			}
 
 			//now we just have to add the ticket to all the datetimes its supposed to be with and removing the ticket from datetimes it got removed from.
-			
+
+
 			//first let's do the add_relation_to()
 			$dtts_added = empty( $dtts_added ) || ( is_array( $dtts_added ) && ( isset( $dtts_added[0] ) && $dtts_added[0] == '' ) ) ? array() : $dtts_added;
 
 			foreach ( $dtts_added as $dttrow ) {
+				$dttrow = (int) $dttrow;
 				$TKT->_add_relation_to($saved_dtts[$dttrow], 'Datetime');
 
 				//now wait a minute.  Does this tkt have any sold?  Cause if it does then we need to add that to the DTT sold because this DTT is getting added.
@@ -390,10 +399,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$new_tkt->_add_relation_to($saved_dtts[$dttrow], 'Datetime' );
 			}
 
+
 			$dtts_removed = empty( $dtts_removed ) || ( is_array( $dtts_removed ) && isset( $dtts_removed[0] ) && $dtts_removed[0] == '' ) ? array() : $dtts_removed;
-	
+
 			//now let's do the remove_relation_to()
 			foreach ( $dtts_removed as $dttrow ) {
+				$dttrow = (int) $dttrow;
+				//its entirely possible that a datetime got deleted (instead of just removed from relationship.  So make sure we skip over this if the dtt isn't in the saved_dtts array)
+				if ( empty($saved_dtts[$dttrow] ) || ! $saved_dtts[$dttrow] instanceof EE_Datetime )
+					continue;
+
 				$TKT->_remove_relation_to($saved_dtts[$dttrow], 'Datetime');
 
 				//now wait a minute.  Does this tkt have any sold? Cause if it does then we need to remove it's sold from the DTT_sold.
@@ -408,7 +423,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 			//DO ALL dtt relationships for both current tickets and any archived tickets for the given dtt that are related to the current ticket. TODO... not sure exactly how we're going to do this considering we don't know what current ticket the archived tickets are related to (and TKT_parent is used for autosaves so that's not a field we can reliably use).
-			
+
 
 			//let's assign any tickets that have been setup to the saved_tickets tracker
 			//save existing TKT
@@ -423,7 +438,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				//save existing TKT
 				$saved_tickets[$TKT->ID()] = $TKT;
 			}
-			
+
 		}
 
 		//now we need to handle tickets actually "deleted permanently".  There are cases where we'd want this to happen (i.e. autosaves are happening and then in between autosaves the user trashes a ticket).  Or a draft event was saved and in the process of editing a ticket is trashed.  No sense in keeping all the related data in the db!
@@ -458,7 +473,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			//need to do the same for prices (except these prices can also be deleted because again, tickets can only be trashed if they don't have any TKTs sold (otherwise they are just archived))
 			$tkt_to_remove->delete_related_permanently('Price');
-			
+
 
 			//finally let's delete this ticket (which should not be blocked at this point b/c we've removed all our relationships)
 			$tkt_to_remove->delete_permanently();
@@ -555,7 +570,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 	public function autosave_handling( $event_admin_obj ) {
 		return $event_admin_obj; //doing nothing for the moment.
 		//todo when I get to this remember that I need to set the template args on the $event_admin_obj (use the set_template_args() method)
-		
+
 		/**
 		 * need to remember to handle TICKET DEFAULT saves correctly:  I've got two input fields in the dom:
 		 *
@@ -568,7 +583,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 * On Autosave:
 		 * 1. If TKT_is_default is true: we create a new TKT, send back the new id and add id to related elements, then set the TKT_is_default to false.
 		 * 2. If TKT_is_default_selector is true: we create/edit existing ticket (following conditions above as well).  We do NOT create a new default ticket.  The checkbox stays selected after autosave.
-		 * 3. only on MANUAL update do we check for the selection and if selected create the new default ticket. 
+		 * 3. only on MANUAL update do we check for the selection and if selected create the new default ticket.
 		 */
 	}
 
@@ -579,6 +594,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$existing_datetime_ids = $existing_ticket_ids = $datetime_tickets = $ticket_datetimes = array();
 
 		$evtobj = $this->_adminpage_obj->get_cpt_model_obj();
+
+		//set is_creating_event property.
+		$this->_is_creating_event = $evtobj->ID() > 0 ? FALSE : TRUE;
 
 		//default main template args
 		$main_template_args = array(
@@ -605,12 +623,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		 * 2. For each datetime get related tickets
 		 * 3. For each ticket get related prices
 		 */
-		
+
 		$DTM = EE_Registry::instance()->load_model('Datetime', array($timezone) );
 		$times = $DTM->get_all_event_dates( $event_id );
-		
-		
-		
+
+
+
 		$main_template_args['total_dtt_rows'] = count($times);
 		foreach ( $times as $time ) {
 			$dttid = $time->get('DTT_ID');
@@ -639,7 +657,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 					$existing_ticket_ids[] = $tktid;
 					$all_tickets[] = $ticket;
 				}
-				
+
 				//temporary cache of this ticket info for this datetime for later processing of datetime rows.
 				$datetime_tickets[$dttid][] = $tktrow;
 
@@ -684,11 +702,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_row_wrapper.template.php';
 		return EEH_Template::display_template( $template, $dtt_display_template_args, TRUE);
-	}	
+	}
 
 
 
 	private function _get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ) {
+
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
@@ -699,6 +718,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
 			'DTT_EVT_end' => $default ? '' : $dtt->end_date( 'Y-m-d h:i a'),
 			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input'),
+			'DTT_order' => $default ? 'DTTNUM' : $dttrow,
 			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
 			'clone_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? '' : 'clone-icon ee-icon ee-icon-clone clickable',
 			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'ee-lock-icon' : 'trash-icon dashicons dashicons-post-trash clickable'
@@ -706,12 +726,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'ee-lock-icon' ? ' style="display:none"' : '';
 
+		//allow filtering of template args at this point.
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_dtt_edit_row__template_args', $template_args, $dttrow, $dtt, $default, $all_dtts, $this->_is_creating_event );
+
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_edit_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
 	private function _get_dtt_attached_tickets_row( $dttrow, $dtt, $datetime_tickets, $all_tickets, $default ) {
+
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
@@ -729,6 +753,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$tktrow++;
 			}
 		}
+
+		//filter template args at this point
+		$template_args = apply_filters( 'FHEE__espresso_evnts_Pricing_Hooks___get_dtt_attached_ticket_row__template_args', $template_args, $dttrow, $dtt, $datetime_tickets, $all_tickets, $default, $this->_is_creating_event );
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_attached_tickets_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
@@ -749,6 +776,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'tkt_status_class' => $default && empty( $ticket ) ? ' tkt-status-' . EE_Ticket::onsale : ' tkt-status-' . $ticket->ticket_status(),
 			);
 
+		//filter template args
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_datetime_tickets_list_item__template_args', $template_args, $dttrow, $tktrow, $dtt, $ticket, $datetime_tickets, $default, $this->_is_creating_event );
+
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_dtt_tickets_list.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -767,7 +797,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$ticket_subtotal = !empty( $ticket ) ? $ticket->get_ticket_subtotal() : 0;
 		$base_price = $ticket instanceof EE_Ticket ? $ticket->base_price() : NULL;
 		$count_price_mods = EEM_Price::instance()->get_all_default_prices(TRUE);
-		
+
 
 		$template_args = array(
 			'tkt_row' => $default ? 'TICKETNUM' : $tktrow,
@@ -857,6 +887,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$prcrow++;
 		}
 
+		//filter $template_args
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_ticket_row__template_args', $template_args, $tktrow, $ticket, $ticket_datetimes, $all_dtts, $default, $all_tickets, $this->_is_creating_event );
+
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -882,6 +915,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				);
 			$tax_rows .= EEH_Template::display_template( $template, $template_args, TRUE );
 		}
+
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_tax_rows__template_args', $template_args, $tktrow, $ticket, $this->_is_creating_event  );
 
 		return $tax_rows;
 	}
@@ -918,6 +953,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? TRUE : FALSE
 			);
 
+	$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks__get_ticket_price_row__template_args', $template_args, $tktrow, $prcrow, $price, $default, $ticket, $show_trash, $show_create, $this->_is_creating_event );
+
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_price_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -943,6 +980,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'price_selected_is_percent' => 0
 			);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_type_base.template.php';
+
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_base_price_template__template_args', $template_args, $tktrow, $prcrow, $price, $default, $this->_is_creating_event );
 
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -988,6 +1027,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'disabled' => $disabled
 			);
 
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_price_modifier_template__template_args', $template_args, $tktrow, $prcrow, $price, $default, $disabled, $this->_is_creating_event );
+
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_modifier_selector.template.php';
 
 		return EEH_Template::display_template( $template, $template_args, TRUE );
@@ -1008,6 +1049,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'tkt_status_class' => '',
 			);
 
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_ticket_datetime_list_item__template_args', $template_args, $dttrow, $tktrow, $dtt, $ticket, $ticket_datetimes, $default, $this->_is_creating_event );
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_datetimes_list_item.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -1036,7 +1078,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$template_args['existing_available_datetime_tickets_list'] .= $this->_get_datetime_tickets_list_item( 'DTTNUM', $tktrow, NULL, $ticket, array(), TRUE );
 			$tktrow++;
 		}
-		
+
 
 		$dttrow = 1;
 		foreach ( $all_dtts as $dtt ) {
@@ -1060,6 +1102,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$prcrow++;
 		}
 
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_ticket_js_structure__template_args', $template_args, $all_dtts, $all_tickets, $this->_is_creating_event );
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_js_structure.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );

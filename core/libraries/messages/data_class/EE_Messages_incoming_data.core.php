@@ -241,7 +241,7 @@ abstract class EE_Messages_incoming_data {
 			foreach ( $this->reg_objs as $reg ) {
 				$evt_id = $reg->event_ID();
 				$ticket = $reg->get_first_related('Ticket');
-				$relateddatetime = $ticket->get_many_related('Datetime');
+				$relateddatetime = $ticket->datetimes();
 				$total_ticket_count++;
 				$tickets[$ticket->ID()]['ticket'] = $ticket;
 				$tickets[$ticket->ID()]['count'] = is_array($tickets[$ticket->ID()]) && isset( $tickets[$ticket->ID()]['count'] ) ? $tickets[$ticket->ID()]['count'] + 1 : 1;
