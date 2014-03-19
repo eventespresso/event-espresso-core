@@ -393,23 +393,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	private function _show_datetime( $date_or_time = NULL, $start_or_end = 'start', $dt_frmt = NULL, $tm_frmt = NULL, $echo = FALSE ) {
-
-		$dtt = $this->_get_datetime( "DTT_EVT_{$start_or_end}", 'F j, Y', 'g:i a', NULL, $echo );
-		
-		switch ( $date_or_time ) {
-			case 'D' :
-				$final_form = ! empty( $dt_frmt ) ? $dt_frmt : $this->_dt_frmt;
-			break;
-			case 'T' :
-				$final_form = ! empty( $tm_frmt ) ? $tm_frmt : $this->_tm_frmt;
-			break;
-			default :
-				$final_form = ! empty( $dt_frmt ) ? $dt_frmt : $this->_dt_frmt;
-				$final_form .= ' ';
-				$final_form .= ! empty( $tm_frmt ) ? $tm_frmt : $this->_tm_frmt;
-		}
-		
-		$dtt = date_i18n( $final_form, strtotime( $dtt ));
+		$field_name = "DTT_EVT_{$start_or_end}";
+		$dtt = $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, $date_or_time, $echo );
+		$dtt = date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( $dtt ));
 		if ( !$echo ) return $dtt;
 	}
 
