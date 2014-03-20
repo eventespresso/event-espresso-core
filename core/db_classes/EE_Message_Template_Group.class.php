@@ -232,7 +232,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 * @return EE_Message_Template[]
 	 */
 	public function message_templates( $query_params = array() ) {
-		$this->get_many_related( 'Message_Template', $query_params );
+		return $this->get_many_related( 'Message_Template', $query_params );
 	}
 
 

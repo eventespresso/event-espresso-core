@@ -173,7 +173,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 				'default'=> '_ee_default_messages_overview_list_table',
 				'custom_mtps' => '_ee_custom_messages_overview_list_table',
-				'add_new_message_template'	=> '_add_message_template',
+				'add_new_message_template'	=>array(
+					 'func' => '_add_message_template',
+					 'noheader' => TRUE
+					),
 				'edit_message_template'	=> '_edit_message_template',
 				'preview_message' => '_preview_message',
 				'insert_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => TRUE ), 'noheader' => TRUE ),

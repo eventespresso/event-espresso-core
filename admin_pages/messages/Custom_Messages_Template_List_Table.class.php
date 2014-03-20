@@ -62,6 +62,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 			'messenger' => __( 'Messenger', 'event_espresso'),
 			'description' => __( 'Description', 'event_espresso' ),
 			'events' => __( 'Events', 'event_espresso'), //count of events using this template.
+			'actions' => ''
 			//'messages_sent' => __( 'Total Sent', 'event_espresso' ) //todo this will come later when we've got message tracking in place.
 			);
 
@@ -178,6 +179,19 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 
 	function column_description( $item ) {
 		return '<p>' . $item->description() . '</p>';
+	}
+
+
+
+	function column_actions( $item ) {
+		$create_args = array(
+			'GRP_ID' => $item->ID(),
+			'messenger' => $item->messenger(),
+			'message_type' => $item->message_type(),
+			'action' => 'add_new_message_template'
+			);
+		$create_link = EE_Admin_Page::add_query_args_and_nonce( $create_args, EE_MSG_ADMIN_URL );
+		return sprintf( '<p><a href="%s" class="button button-small">%s</a></p>', $create_link, __('Create Custom', 'event_espresso') );
 	}
 
 

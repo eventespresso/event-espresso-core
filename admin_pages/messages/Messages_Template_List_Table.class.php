@@ -51,7 +51,8 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			//'cb' => '<input type="checkbox" />', //no deleting default (global) templates!
 			'message_type' => __('Message Type', 'event_espresso'),
 			'messenger' => __( 'Messenger', 'event_espresso'),
-			'description' => __( 'Description', 'event_espresso' )
+			'description' => __( 'Description', 'event_espresso' ),
+			'actions' => ''
 			//'messages_sent' => __( 'Total Sent', 'event_espresso' ) //todo this will come later when we've got message tracking in place.
 			);
 
@@ -225,6 +226,17 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	function column_messages_sent($item) {
 		//todo: we need to obtain the messages sent and the link to the messages report table and output
 		return __('feature in progress', 'event_espresso');
+	}
+
+	function column_actions( $item ) {
+		$create_args = array(
+			'GRP_ID' => $item->ID(),
+			'messenger' => $item->messenger(),
+			'message_type' => $item->message_type(),
+			'action' => 'add_new_message_template'
+			);
+		$create_link = EE_Admin_Page::add_query_args_and_nonce( $create_args, EE_MSG_ADMIN_URL );
+		return sprintf( '<a href="%s" class="button button-small">%s</a>', $create_link, __('Create Custom', 'event_espresso') );
 	}
 
 }
