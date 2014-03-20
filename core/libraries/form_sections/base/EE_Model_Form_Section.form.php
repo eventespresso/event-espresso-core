@@ -58,6 +58,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 			switch(get_class($model_field)){
 				case 'EE_All_Caps_Text_Field':
 				case 'EE_Any_Foreign_Model_Name_Field':
+					$input_class = 'EE_Text_Input';
 					break;
 				case 'EE_Boolean_Field':
 					$input_class = 'EE_Yes_No_Input';
@@ -116,14 +117,11 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					$input_class = 'EE_Text_Input';
 					break;
 				case 'EE_Primary_Key_Int_Field':
-					$input_class = 'EE_Text_Input';
-					break;
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Hidden_Input';
+					$input_constructor_args['normalization_strategy'] = new EE_Int_Normalization();
 					break;
 				case 'EE_Primary_Key_String_Field':
-					$input_class = 'EE_Text_Input';
-					break;
-					throw new EE_Error(sprintf(__("Model field '%s' does not yet have a known conversion to form input", "event_espresso"),get_class($model_field)));
+					$input_class = 'EE_Hidden_Input';
 					break;
 				case 'EE_Serialized_Text_Field':
 					$input_class = 'EE_Text_Area_Input';
