@@ -19,6 +19,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @var EE_Form_Section_Layout_Base
 	 */
 	protected $_layout_strategy;
+	/**
+	 * Whether or not this form has received and validated a form submission yet
+	 * @var boolean
+	 */
+	protected $_received_submission = FALSE;
 	
 	/**
 	 * when constructing a proper form section, calls _construct_finalize on children
@@ -99,6 +104,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		}
 		$this->_normalize($req_data);
 		$this->_validate();
+		$this->_received_submission = TRUE;
 	}
 	/**
 	 * Populates the default data for the form, given an array where keys are
@@ -170,6 +176,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @return boolean
 	 */
 	public function is_valid() {
+		if( ! $this->has_received_submission()){
+			throw new EE_Error(sprintf(__("You cannot check if a form is valid before receiving the form submission using receive_form_submission", "event_espresso")));
+		}
 		if( ! parent::is_valid()){
 			return false;
 		}
@@ -339,5 +348,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 			$input_values[$name] = $input_obj->normalized_value();
 		}
 		return $input_values;
+	}
+	/**
+	 * Indicates whether or not this form has received a submission yet 
+	 * (ie, had receive_form_submission called on it yet)
+	 * @return boolean
+	 */
+	public function has_received_submission(){
+		return $this->_received_submission;
 	}
 }
