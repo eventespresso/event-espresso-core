@@ -147,6 +147,8 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['reset_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=> 'reset_settings','return_action'=>$this->_req_action), EE_CALENDAR_ADMIN_URL);
 		$this->_set_add_edit_form_tags( 'update_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE);
+		$this->_template_args['publish_box_extra_content'] = "<a class='button button-small calendar-reset-button' href='{$this->_template_args['reset_url'] }'>". __("Reset Now", 'event_espresso')."</a>";
+			
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . $template, $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();
 	}
