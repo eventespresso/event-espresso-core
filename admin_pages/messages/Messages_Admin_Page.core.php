@@ -766,7 +766,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			$action = 'update_message_template';
 			$button_both = !defined( 'DOING_AJAX' ) ? TRUE : FALSE;
-			$event_name = $message_template_group->event_name();
 			$button_text = array();
 			$button_actions = array();
 			$referrer = $this->_admin_base_url;
@@ -785,9 +784,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//we need to assemble the title from Various details
 		$context_label = sprintf( __('(%s %s)', 'event_espresso'), $c_config[$context]['label'], ucwords($c_label['label'] ));
 
-		//we should eventually display the event title instead of ID.
-		$event_label = isset($event_name) && !empty($event_name) ? sprintf( __('for Event: %s', 'event_espresso'), $event_name) : '';
-		$title = sprintf( __(' %s %s Template %s %s', 'event_espresso'), ucwords($message_template_group->messenger_obj()->label['singular']), ucwords($message_template_group->message_type_obj()->label['singular']), $context_label, $event_label );
+		$title = sprintf( __(' %s %s Template %s', 'event_espresso'), ucwords($message_template_group->messenger_obj()->label['singular']), ucwords($message_template_group->message_type_obj()->label['singular']), $context_label );
 
 		$this->_template_args['GRP_ID'] = $GRP_ID;
 		$this->_template_args['message_template'] = $message_template_group;
@@ -1729,7 +1726,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param  string $context      what context being tested
 	 * @param  string $messenger  	messenger being tested
 	 * @param  string $message_type message type being tested
-	 * @param  int $event_id     	event_id (if present) being tested
 	 * @return void
 	 */
 	protected function _do_test_send( $context, $messenger, $message_type ) {
