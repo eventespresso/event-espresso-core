@@ -16,6 +16,11 @@ jQuery(document).ready(function($){
 		espresso_calendar_show_hide_inputs('select#calendar\\[tooltip\\]\\[show\\] option:selected','.requires-tooltips','slow');
 	});
 	 $('.color-picker').wpColorPicker();
+	 $('a.calendar-reset-button').click(function(){
+		 //before going to the reset calendar data link, use a confirm popup to confirm
+		 //they really want to do that
+		 return confirm(ee_calendar.confirm_reset_text);
+	 })
 	// disable color picker & thumb sizes inputs & fade if not use controls true
 //	window.scp = $('select#calendar-use_pickers option:selected').val();
 //	window.ectt = $('select#calendar-tooltip-show option:selected').val();

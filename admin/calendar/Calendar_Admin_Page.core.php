@@ -64,7 +64,11 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				'func' => '_update_settings',
 				'noheader' => TRUE
 				),
-			'usage' => '_usage'
+			'usage' => '_usage',
+			'reset_settings'=> array(
+				'func' => '_reset_settings',
+				'noheader' => TRUE
+				),
 			);
 	}
 
@@ -108,6 +112,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		wp_register_script('ee-calendar-admin-js', EE_CALENDAR_ADMIN_ASSETS_URL . 'calendar-admin.js', array('jquery','wp-color-picker'), EE_CALENDAR_VERSION, TRUE );
 		wp_enqueue_script('ee-calendar-admin-js');
 		wp_enqueue_style( 'wp-color-picker' );
+		wp_localize_script('ee-calendar-admin-js','ee_calendar',array('confirm_reset_text'=>  __("Are you sure you want to reset ALL your Event Espresso Calendar Information? This cannot be undone.", 'event_espresso')));
 	}
 
 	public function admin_init() {}
@@ -139,6 +144,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				array('id' => true, 'text' => __('Yes', 'event_espresso'))
 		);
 		$this->_template_args['return_action'] = $this->_req_action;
+		$this->_template_args['reset_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=> 'reset_settings','return_action'=>$this->_req_action), EE_CALENDAR_ADMIN_URL);
 		$this->_set_add_edit_form_tags( 'update_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE);
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . $template, $this->_template_args, TRUE );
@@ -175,6 +181,14 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		$this->_redirect_after_action($count, 'Settings', 'updated', array('action' => $this->_req_data['return_action']));
 	}
 	
+	/**
+	 * resets the calend data and redirects to where they came from
+	 */
+	protected function _reset_settings(){
+		EE_Config::instance()->addons['calendar'] = new EE_Calendar_Config();
+		EE_Config::instance()->update_espresso_config();
+		$this->_redirect_after_action(1, 'Settings', 'reset', array('action' => $this->_req_data['return_action']));
+	}
 	private function _sanitize_config_input($top_level_key,$second_level_key,$value){
 		$sanitization_methods = array(
 			'time'=>array(
