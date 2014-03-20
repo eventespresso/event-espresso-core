@@ -44,7 +44,7 @@
  *
  * ------------------------------------------------------------------------
  */
- add_action( 'AHEE__EE_System__construct__complete', array( 'EE_Calendar', 'instance' ));
+ add_action( 'AHEE__EE_System__load_espresso_addons', array( 'EE_Calendar', 'instance' ));
  class EE_Calendar {
  
 
@@ -117,7 +117,7 @@
 		// we need cars
 		$this->register_autoloaders();
 		// GO !!!
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ));
+		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons', array( $this, 'plugins_loaded' ));
 		// migrate data
 		$this->_setup_dara_migration_script_hooks();
 	}
