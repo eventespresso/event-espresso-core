@@ -207,6 +207,38 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * returns the name saved in the db for this template
+	 * @return string
+	 */
+	public function name() {
+		return $this->get('MTP_name');
+	}
+
+
+
+
+	/**
+	 * Returns the description saved in the db for this template group
+	 * @return string
+	 */
+	public function description() {
+		return $this->get('MTP_description');
+	}
+
+
+	/**
+	 * returns all related EE_Message_Template objects
+	 * @param  array  $query_params like EEM_Base::get_all()
+	 * @return EE_Message_Template[]
+	 */
+	public function message_templates( $query_params = array() ) {
+		$this->get_many_related( 'Message_Template', $query_params );
+	}
+
+
+
+
+	/**
 	 * get Message Messenger
 	 * @access public
 	 * @return string
