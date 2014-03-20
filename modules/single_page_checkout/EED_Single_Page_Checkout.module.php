@@ -854,20 +854,46 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['print_copy_info'] = $additional_attendee_forms;
 		
 //		d($additional_event_attendees);
-		$template_args['additional_event_attendees'] = $additional_event_attendees;		
-
+		$template_args['additional_event_attendees'] = $additional_event_attendees;
+		// total monies paid to date
+		$total_payments = 0;
+		// the original total
+		$cart_total_before_tax = $this->_cart->get_cart_total_before_tax();
+		// get cart total
 		$grand_total = $this->_cart->get_cart_grand_total();
 		$grand_total = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__grand_total', $grand_total );
-		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
-		
-		$cart_total_before_tax = $this->_cart->get_cart_total_before_tax();
+		// check if monies are potentially owing
 		$template_args['payment_required'] = $cart_total_before_tax > 0 ? $payment_required : FALSE;
-		if ( ! $template_args['payment_required'] ) { 
+		// not a free event?
+		if ( $template_args['payment_required'] ) { 
+			//check for any previous payments
+			if ( $payments = $this->_transaction->approved_payments() ) {
+				foreach ( $payments as $payment ) {
+					if ( $payment instanceof EE_Payment ) {
+						// grab some payment details
+						$template_args['payments_received'][ $payment->timestamp() ] = array( 'method' => $payment->method(), 'amount' => $payment->amount() );
+						// increment total payments
+						$total_payments += $payment->amount();
+					}
+				}
+			}
+			// what's left to pay?
+			$amount_owing = $grand_total - $total_payments;
+			$amount_owing = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__amount_owing', $amount_owing );
+			$template_args['amount_owing'] = EEH_Template::format_currency( $amount_owing );
+			
+		} else {			
 			//unset( self::$_reg_steps['payment_options'] );
 			EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => 'no payment required' ));
+			$template_args['payments_received'] = array();
+			$template_args['amount_owing'] = FALSE;
 		}
+		
 		$template_args['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
 		$template_args['taxes'] = $this->_cart->get_taxes_line_item()->children();
+		
+		$grand_total = $template_args['amount_owing'] !== FALSE ? $amount_owing : $grand_total;
+		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
 		
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 //	d( $event_queue );
