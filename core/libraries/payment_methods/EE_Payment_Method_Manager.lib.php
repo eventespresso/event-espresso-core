@@ -31,6 +31,7 @@ class EE_Payment_Method_Manager {
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Payment_Method_Manager )) {
 			self::$_instance = new self();
 		}
+		EE_Registry::instance()->load_lib('PMT_Base');
 		return self::$_instance;
 	}
 	
@@ -50,7 +51,7 @@ class EE_Payment_Method_Manager {
 				$this->register_payment_method( $pm_path );
 		}
 		// filter list of installed modules
-		return apply_filters( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods', EE_Registry::instance()->payment_methods );
+		return apply_filters( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__installed_payment_methods', $this->_payment_method_types );
 	}
 	/**
 	 * 	register_payment_method- makes core aware of this paymetn method
@@ -69,7 +70,7 @@ class EE_Payment_Method_Manager {
 		// create classname from module directory name
 		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
 		// add class prefix
-		$module_class = 'EEPM_' . $module;
+		$module_class = 'EE_PMT_' . $module;
 		// does the module exist ?
 		if ( ! is_readable( $payment_method_path . DS . $module_class . $module_ext )) {
 			$msg = sprintf( __( 'The requested %s payment method file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
@@ -99,12 +100,50 @@ class EE_Payment_Method_Manager {
 		if( ! $this->_payment_method_types){
 			$this->register_payment_methods();
 		}
-		d($this->_payment_method_types);
 		if(isset($this->_payment_method_types[$payment_method_name])){
 			require_once($this->_payment_method_types[$payment_method_name]);
 			return true;
 		}else{
 			return false;
 		}
+	}
+	/**
+	 * Returns all the classnames of the various payment method types
+	 * @return array
+	 */
+	public function payment_method_types($with_prefixes = FALSE){
+		if( ! $this->_payment_method_types){
+			$this->register_payment_methods();
+		}
+		if($with_prefixes){
+			return array_keys($this->_payment_method_types);
+		}else{
+			$classnames = array_keys($this->_payment_method_types);
+			$payment_methods = array();
+			foreach($classnames as $classname){
+				$payment_methods[] = $this->payment_method_type_sans_class_prefix($classname);
+			}
+			return $payment_methods;
+		}
+		
+	}
+	
+	/**
+	 * Changes the payment method's classname into the payment method type's name
+	 * (as used on the payment method's table's PMD_type field)
+	 * @param string $classname
+	 * @return string
+	 */
+	public function payment_method_type_sans_class_prefix($classname){
+		return str_replace("EE_PMT_","",$classname);
+	}
+	
+	/**
+	 * Does the opposite of payment-method_type_sans_prefix
+	 * @param string $type
+	 * @return string
+	 */
+	public function payment_method_class_from_type($type){
+		return "EE_PMT_".$type;
 	}
 }

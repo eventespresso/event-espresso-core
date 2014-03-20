@@ -338,14 +338,17 @@ class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
 	
 	/**
 	 * Gets the payment method type for this payment method instance
-	 * @return EEPMT_Base
+	 * @return EE_PMT_Base
 	 * @throws EE_Error
 	 */
 	public function type_obj(){
 		if( ! $this->_type_obj){
 			EE_Registry::instance()->load_lib('Payment_Method_Manager');
 			if(EE_Payment_Method_Manager::instance()->payment_method_exists($this->type())){
-				$class_name = 'EEPM_'.$this->type();
+				$class_name = EE_Payment_Method_Manager::instance()->payment_method_class_from_type($this->type());
+				if ( ! class_exists($class_name)){
+					throw new EE_Error(sprintf(__("There is no payment method type of class '%s', did you deactivate a EE addon?", "event_espresso"),$class_name));
+				}
 				$r = new ReflectionClass($class_name);
 				$this->_type_obj = $r->newInstanceArgs(array($this));
 			}else{

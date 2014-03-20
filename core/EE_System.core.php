@@ -516,6 +516,22 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function init() {
+//		EE_Registry::instance()->load_lib('Payment_Method_Manager');
+//		$pmts = EE_Payment_Method_Manager::instance()->payment_method_types(true);
+//		$pms = array();
+//		foreach($pmts as $pmt){
+//			$type = EE_Payment_Method_Manager::instance()->payment_method_type_sans_class_prefix($pmt);
+//			$pm = EEM_Payment_Method::instance()->get_one_of_type($type);
+//			if( ! $pm ){
+//				$pm = EE_Payment_Method::new_instance(array('PMD_type'=>$type));
+//			}
+//			if($pm->type_obj()){
+//				$f = $pm->type_obj()->settings_form();
+//				d($f);
+//			}
+//			$pms[] = $pm;
+//		}
+//		$pms is now an array of payment methods, one of each payment method type.
 //		$pms = EEM_Payment_Method::instance()->get_all();
 //		d($pms);
 //		foreach($pms as $pm){

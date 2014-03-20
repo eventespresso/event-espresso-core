@@ -1,5 +1,5 @@
 <?php 
-abstract class EEPMT_Base{
+abstract class EE_PMT_Base{
 	/**
 	 *
 	 * @var EE_Payment_Method

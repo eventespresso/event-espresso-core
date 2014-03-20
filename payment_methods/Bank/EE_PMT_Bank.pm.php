@@ -25,7 +25,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EEPMT_Bank extends EEPMT_Base{
+class EE_PMT_Bank extends EE_PMT_Base{
 	public function __construct($pm_instance){
 		$this->_settings_form = new EE_Payment_Method_Form(array(
 			'subsections'=>array(

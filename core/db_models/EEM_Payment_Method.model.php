@@ -27,7 +27,7 @@
  * ------------------------------------------------------------------------
  */
 
-class EEM_Payment_Method extends EEM_Base {
+class EEM_Payment_Method extends EEM_Soft_Delete_Base {
 
 	/**
 	 *
@@ -110,6 +110,15 @@ class EEM_Payment_Method extends EEM_Base {
 	 */
 	public function get_all_active(){
 		return $this->get_all(array(array('PMD_active'=>true)));
+	}
+	
+	/**
+	 * Gets one payment method of that type, regardless of whether its active or not
+	 * @param string $type
+	 * @return EE_Payment_Method
+	 */
+	public function get_one_of_type($type){
+		return $this->get_one_deleted_or_undeleted(array(array('PMD_type'=>$type)));
 	}
 	
 }
