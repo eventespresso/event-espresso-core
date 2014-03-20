@@ -219,21 +219,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 
-	protected function _gateway_settings() {
-
-//		require_once(EE_MODELS . 'EEM_Gateways.model.php');
-//		$EEM_Gateways = EEM_Gateways::instance();
-		
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
-		
-//		$gateway_instances = $EEM_Gateways->get_gateway_instances();
-//		$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta($current_user->ID, 'payment_settings', true);
-//		//lets add all the metaboxes
-//		foreach( $gateway_instances as $gate_obj ) {
-//			$gate_obj->add_settings_page_meta_box();
-//		}
-		
+	protected function _gateway_settings() {		
+		EE_Registry::instance()->load_helper( 'Tabbed_Content' );		
 		EE_Registry::instance()->load_lib('Payment_Method_Manager');
+		//setup tabs, one for each payment method type
 		$tabs = array();
 		foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_name){
 			//check for any active pms of that type
@@ -261,17 +250,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				);
 		}
 		
-		
-		
-//		if ( ! $selected_gateway_name ) {
-////			$default = !empty( $gateway_data['active_gateways'] ) ? key($gateway_data['active_gateways']) : 'Paypal_Standard';
-//			$selected_gateway_name = !empty( $gateways ) ? key($gateways) : 'Paypal_Standard';
-//		}
-
-		//$gateways = isset( $gateways ) ? $gateways : array();
-		//printr( $gateways, '$gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		
-		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'gateway_links', '|', 'Paypal_Standard' );
+		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', 'Paypal_Standard' );
 		$this->display_admin_page_with_sidebar();
 
 	}
@@ -283,14 +262,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 */
 	public function payment_method_settings_meta_box($post_obj_which_is_null,$metabox){
 		$payment_method = isset($metabox['args']) && isset($metabox['args']['payment_method']) ? $metabox['args']['payment_method'] : NULL;
-		if ( $payment_method){
+		if ( ! $payment_method){
 			throw new EE_Error(sprintf(__("Payment method metabox setup incorrectly. No Payment method object was supplied", "event_espresso")));
 		}
 		$template_args = array(
 			'payment_method'=>$payment_method
 		);
 		//if the payment method really exists show its form, otherwise the activation template
-		if( ! $payment_method->ID()){
+		if( $payment_method->ID()){
 			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('edit_payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
 			$template_args['deactivate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('deactivate_payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
 			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_edit.template.php', $template_args);
