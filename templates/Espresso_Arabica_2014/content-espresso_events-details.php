@@ -1,4 +1,7 @@
-<?php global $post; ?>
+<?php 
+//echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
+global $post; 
+?>
 <div class="event-content">
 <?php if ( apply_filters( 'FHEE__content_espresso_events_details_template__display_entry_meta', TRUE )): ?>
 	<div class="entry-meta">
