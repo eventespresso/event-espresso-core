@@ -674,7 +674,7 @@ final class EE_Admin {
 	 */
 	public static function register_ee_admin_page( $page_basename, $page_path, $config = array() ) {
 
-		if ( !did_action('AHEE__EE_Admin__loaded') || did_action('init' ) ) {
+		if ( ! did_action( 'AHEE__EE_Admin__loaded' ) || did_action( 'AHEE__EE_System__initialize_last' )) {
 			EE_Error::doing_it_wrong('EE_Admin::register_ee_admin_page', __('Should be only called on the "AHEE__EE_Admin__loaded" hook.','event_espresso'), '4.1' );
 		}
 
