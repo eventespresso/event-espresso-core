@@ -1,5 +1,6 @@
 <?php //echo '<h1>' . __FILE__ . '</h1>'; ?>
 <?php global $post; ?>
+<?php $event_class = has_post_thumbnail( $post->ID ) ? ' has-img' : '';?>
 <header class="event-header<?php echo $event_class;?>">
 	<h1 id="event-details-h1-<?php echo $post->ID; ?>" class="entry-title">
 		<a class="" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>

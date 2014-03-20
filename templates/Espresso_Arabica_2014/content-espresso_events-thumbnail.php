@@ -6,7 +6,6 @@ if ( has_post_thumbnail( $post->ID )) :
 	if ( $img_ID = get_post_thumbnail_id( $post->ID )) :
 		if ( $featured_img = wp_get_attachment_image_src( $img_ID, 'large' )) :
 			$caption = esc_attr( get_post( get_post( $img_ID ))->post_excerpt );
-			$event_class .= ' has-img';
 			?>
 <div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
 	<a class="" href="<?php the_permalink(); ?>">
