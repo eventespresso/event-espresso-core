@@ -318,6 +318,15 @@
 					</span>
 				</td>
 			</tr>
+			<tr>
+				<th><?php					_e("Calendar Configuration Reset", 'event_espresso');?></th>
+				<td>
+					<a class="button button-small calendar-reset-button" href="<?php echo $reset_url?>"><?php _e("Reset Now", 'event_espresso');?></a><br/>
+					<span class="description">
+						<?php _e('Resets all basic and advanced Event Espresso calendar settings to their plugin defaults', 'event_espresso'); ?>
+					</span>
+				</td>
+			</tr>
 		</tbody>
 	</table>
 </div>

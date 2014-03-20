@@ -44,9 +44,12 @@
  *
  * ------------------------------------------------------------------------
  */
+//if ee4 core is active, run the calendar
  add_action( 'AHEE__EE_System__load_espresso_addons', array( 'EE_Calendar', 'instance' ));
+ //we need to register our activation hook before init or plugins_loaded (where we load teh calendar)
+ register_activation_hook(__FILE__, array('EE_Calendar','register_activation_hook'));
  class EE_Calendar {
- 
+	 const activation_indicator_option_name = 'ee_espresso_activation';
 
 	/**
 	 * instance of the EE_Calendar object
@@ -119,11 +122,17 @@
 		// GO !!!
 		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons', array( $this, 'plugins_loaded' ));
 		// migrate data
-		$this->_setup_dara_migration_script_hooks();
+		$this->_setup_data_migration_script_hooks();
 	}
 
-
-
+	/**
+	 * Until we do something better, we'll just check for migration scripts upon
+	 * plugin activation only. In the future, we'll want to do it on plugin updates too
+	 */
+	public static function register_activation_hook(){
+		//let's just handle this on the next request, ok? right now we're just not really ready
+		add_option(EE_Calendar::activation_indicator_option_name,true);
+	}
 	/**
 	 * 	register_autoloaders
 	 *
@@ -148,6 +157,13 @@
 	 *  @return 	void
 	 */
 	public function plugins_loaded() {
+		//if core is also active, then get core to check for migration scripts 
+		//and set maintneance mode is necessary
+		if(get_option(EE_Calendar::activation_indicator_option_name)){
+			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+			delete_option(EE_Calendar::activation_indicator_option_name);
+		}
+		
 		// is EE running and not in M-Mode ?
 		if ( defined( 'EVENT_ESPRESSO_VERSION' ) && ! EE_Maintenance_Mode::instance()->level() ) {
 			// calendar settings
@@ -229,33 +245,20 @@
 
 
 	/**
-	 * _setup_dara_migration_script_hooks
-	 * Setup hooks for adding calendar logic to EE4 migrations. Initially only adds
-	 * a stage to teh 4.1.0 migration script
+	 * _setup_data_migration_script_hooks
+	 * Adds the calendar migraiton scripts folder to core's
 	 */
-	protected function _setup_dara_migration_script_hooks(){
-		add_filter( 'FHEE__EE_DMS_4_1_0__autoloaded_stages',array($this,'autoload_migration_stage'));
-		add_filter( 'FHEE__EE_DMS_4_1_0__construct__migration_stages',array($this,'add_migration_stage'));
+	protected function _setup_data_migration_script_hooks(){
+		add_filter('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array($this,'add_calendar_migrations'));
 	}
 	/**
-	 * Add our 4.1.0 migration stage for autoloading
-	 * @param array $classname_to_filepath_array strings are classnames, valuesa re their full paths
-	 * @return arrat
+	 * Adds our data migration script folder
+	 * @param array $folders_with_migration_scripts 
+	 * return array
 	 */
-	public function autoload_migration_stage($classname_to_filepath_array){
-		$classname_to_filepath_array['EE_DMS_4_1_0_calendar_metadata'] = EE_CALENDAR_DMS_PATH . '4_1_0_stages' . DS . 'EE_DMS_4_1_0_calendar_metadata.dmsstage.php';
-		$classname_to_filepath_array['EE_DMS_4_1_0_calendar_options'] = EE_CALENDAR_DMS_PATH . '4_1_0_stages' . DS . 'EE_DMS_4_1_0_calendar_options.dmsstage.php';
-		return $classname_to_filepath_array;
-	}
-	/**
-	 * Adds our data migration stage into the list
-	 * @param EE_Data_Migration_Script_Stage[] $migration_stages keys are their priority, values are EE_Data_Migration_Script_Stage
-	 * return EE_Data_Migration_Script_Stage[]
-	 */
-	public function add_migration_stage($migration_stages){
-		$migration_stages[] = new EE_DMS_4_1_0_calendar_metadata();
-		$migration_stages[] = new EE_DMS_4_1_0_calendar_options();
-		return $migration_stages;
+	public function add_calendar_migrations($folders_with_migration_scripts){
+		$folders_with_migration_scripts[] = EE_CALENDAR_DMS_PATH;
+		return $folders_with_migration_scripts;
 	}
 
 

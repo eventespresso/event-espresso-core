@@ -3,7 +3,7 @@
 /**
  * Converts 3.1's calendar options to a EE4's calendar config
  */
-class EE_DMS_4_1_0_calendar_options extends EE_Data_Migration_Script_Stage{
+class EE_DMS_Calendar_3_0_0_options extends EE_Data_Migration_Script_Stage{
 
 	function _migration_step($num_items=50){
 

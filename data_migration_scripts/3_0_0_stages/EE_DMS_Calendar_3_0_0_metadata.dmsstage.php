@@ -5,7 +5,7 @@
  * that core wouldn't have migrated the category_meta into the ee4's extra meta table.
  * So taht's what this does.
  */
-class EE_DMS_4_1_0_calendar_metadata extends EE_Data_Migration_Script_Stage_Table{
+class EE_DMS_Calendar_3_0_0_metadata extends EE_Data_Migration_Script_Stage_Table{
 	protected $_old_table;
 	protected $_new_table;
 	protected $_new_meta_table;
@@ -19,7 +19,11 @@ function __construct() {
 }
 
 	protected function _migrate_old_row($old_row) {
-		$term_id = $this->get_migration_script()->get_mapping_new_pk($this->_old_table, $old_row['id'], $this->_new_table);
+		$term_id = EE_Data_Migration_Manager::instance()->get_mapping_new_pk('Core_4_1_0',$this->_old_table, $old_row['id'], $this->_new_table);
+		if( ! $term_id){
+			$this->add_error(sprintf(__("Could not migrate metadata for old category '%s' with id '%d' because there is no EE4 category (term) for it.", "event_espresso"),$old_row['category_name'],$old_row['id']));
+			return false;
+		}
 		$metadata = maybe_unserialize($old_row['category_meta']);
 		if( ! is_array($metadata)){
 			return;
