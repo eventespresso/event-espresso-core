@@ -379,7 +379,7 @@ class EE_messages {
 		//now we have what we need to setup the new template
 		$new_mtg = clone $mtg;
 		$new_mtg->set('GRP_ID', 0);
-		$new_mtg->set('MTP_is_global', FALSE),
+		$new_mtg->set('MTP_is_global', FALSE);
 		$new_mtg->set('MTP_name', __('New Custom Template', 'event_espresso') );
 		$new_mtg->set('MTP_description', sprintf( __('This is a custom template that was created for the % messenger and % message type.', 'event_espresso' ), $new_mtg->messenger_obj()->label['singular'], $new_mtg->message_type_obj()->label['singular'] ) );
 		$new_mtg->save();
