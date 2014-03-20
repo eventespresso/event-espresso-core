@@ -30,7 +30,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * the subsections to be ordered differently than the default, and if you override which fields are shown</li>
 	 * <li>'exclude' should be an array where values are subsections to be excluded. This is handy if you want
 	 * to remove certain default subsections</li>
-	 * (note: you can only specificy 'include' OR 'exclude', not both)
+	 * (note: if you specify BOTH 'include' AND 'exclude', the inclusions will be applied first, and the exclusions will exclude items from that list of inclusions)
 	 * <li>and parent's keys too</li></ul>
 	 */
 	public function __construct($options_array = array()){
@@ -40,12 +40,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		if(isset($options_array['subsections'])){
 			$this->_subsections = array_merge($this->_subsections,$options_array['subsections']);
 		}
-		//don't allow 'include' AND 'exclude'
-		if(isset($options_array['include']) && isset($options_array['exclude'])){
-			throw new EE_Error(sprintf(__("When creating a form section, you cannot include BOTH include AND exclude", "event_espresso")));
-		}
+		
 		if(isset($options_array['include'])){
-			$include = $options_array['include'];
 			//we are going to make sure we ONLY have those those subsections to include
 			//AND we are going to make sure they're in that specified order
 			$reordered_subsections = array();
@@ -55,7 +51,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 				}
 			}
 			$this->_subsections = $reordered_subsections;
-		}elseif(isset($options_array['exclude'])){
+		}
+		if(isset($options_array['exclude'])){
 			$exclude = $options_array['exclude'];
 			$this->_subsections = array_diff_key($this->_subsections, array_flip($exclude));
 		}
