@@ -258,8 +258,29 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'slug' => $payment_method->slug()
 				);
 		}
+		//decide which payment method tab to open first, as dictated by the request's 'current_pm'
+		if( isset($this->_req_data['current_pm']) ){
+			//if they provided the current payment method, use it
+			$current_pm_slug = sanitize_key($this->_req_data['current_pm']);
+			//double-check it exists
+			if( ! EEM_Payment_Method::instance()->get_one(array(array('PMD_slug'=>$current_pm_slug)))){
+				$current_pm_slug = FALSE;
+			}
+		}else{
+			$current_pm_slug = FALSE;
+		}
+		//if that didn't work or wasn't provided, find another way to select the currrent pm
+		if( ! $current_pm_slug){
+			//otherwise, look for an active one
+			$an_active_pm = EEM_Payment_Method::instance()->get_one(array(array('PMD_active'=>true)));
+			if($an_active_pm){
+				$current_pm_slug = $an_active_pm->slug();
+			}else{
+				$current_pm_slug = 'paypal_standard';
+			}
+		}
 		
-		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', 'Paypal_Standard' );
+		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', $current_pm_slug );
 		$this->display_admin_page_with_sidebar();
 
 	}
@@ -309,7 +330,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$payment_method->set_active(true);
 				$payment_method->save();
 			}
-			$this->_redirect_after_action(1, 'Payment Method', 'activated', array('action' => 'default'));
+			$this->_redirect_after_action(1, 'Payment Method', 'activated', array('action' => 'default','current_pm'=>$payment_method->slug()));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
 		}
@@ -324,7 +345,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
 			//deactivate it
 			$count_updated = EEM_Payment_Method::instance()->update(array('PMD_active'=>false),array(array('PMD_slug'=>$payment_method_slug)));
-			$this->_redirect_after_action($count_updated, 'Payment Method', 'deactivated', array('action' => 'default'));
+			$this->_redirect_after_action($count_updated, 'Payment Method', 'deactivated', array('action' => 'default','current_pm'=>$payment_method_slug));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'deactivated', array('action' => 'default'));
 		}
