@@ -1278,7 +1278,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$query_args = array(
 			'id' => $this->_req_data['msg_id'],
 			'context' => $this->_req_data['context'],
-			'evt_id' => isset($this->_req_data['evt_id']) ? $this->_req_data['evt_id'] : '',
 			'action' => 'edit_message_template'
 			);
 		$go_back_url = parent::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
@@ -1325,8 +1324,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$extra_args = array(
 			'msgr' => $this->_message_template_group->messenger(),
 			'mt' => $this->_message_template_group->message_type(),
-			'GRP_ID' => $this->_message_template_group->GRP_ID(),
-			'EVT_ID' => $this->_message_template_group->event()
+			'GRP_ID' => $this->_message_template_group->GRP_ID()
 			);
 
 		$button = $this->get_action_link_or_button( 'reset_to_default', 'reset', $extra_args, 'button-primary reset-default-button' );
@@ -1552,7 +1550,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$set_column_values = array(
 			'MTP_ID' => absint($this->_req_data['MTP_template_fields'][$index]['MTP_ID']),
-			'EVT_ID' => absint($this->_req_data['EVT_ID']),
 			'GRP_ID' => absint($this->_req_data['GRP_ID']),
 			'MTP_user_id' => absint($this->_req_data['MTP_user_id']),
 			'MTP_messenger'	=> strtolower($this->_req_data['MTP_messenger']),
@@ -1673,7 +1670,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 					//we can use the last set_column_values for the MTPG update (because its the same for all of these specific MTPs)
 					$mtpg_fields = array(
-						'EVT_ID' => $set_column_values['EVT_ID'],
 						'MTP_user_id' => $set_column_values['MTP_user_id'],
 						'MTP_messenger' => $set_column_values['MTP_messenger'],
 						'MTP_message_type' => $set_column_values['MTP_message_type'],
@@ -1710,14 +1706,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//was a test send triggered?
 		if ( isset( $this->_req_data['test_button'] ) ) {
 			EE_Error::overwrite_success();
-			$this->_do_test_send( $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type'], $this->_req_data['EVT_ID'] );
+			$this->_do_test_send( $this->_req_data['MTP_context'],  $this->_req_data['MTP_messenger'], $this->_req_data['MTP_message_type'] );
 			$override = TRUE;
 		}
 
 		if ( empty( $query_args ) ) {
 			$query_args = array(
 				'id' => $this->_req_data['GRP_ID'],
-				'evt_id' => $this->_req_data['EVT_ID'],
 				'context' => $this->_req_data['MTP_context'],
 				'action' => 'edit_message_template'
 				);
@@ -1737,13 +1732,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @param  int $event_id     	event_id (if present) being tested
 	 * @return void
 	 */
-	protected function _do_test_send( $context, $messenger, $message_type, $event_id = NULL ) {
+	protected function _do_test_send( $context, $messenger, $message_type ) {
 		//set things up for preview
 		$this->_req_data['messenger'] = $messenger;
 		$this->_req_data['message_type'] = $message_type;
 		$this->_req_data['context'] = $context;
 		$this->_req_data['msg_id'] = isset($this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : '';
-		$this->_req_data['evt_id'] = $event_id;
 
 		//let's save any existing fields that might be required by the messenger
 		if ( isset( $this->_req_data['test_settings_fld'] ) ) {
@@ -1771,8 +1765,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _check_template_switch($force = FALSE) {
 		if ( $force ) $this->_req_data['template_switch'] = TRUE;
 		if ( defined('DOING_AJAX') && isset($this->_req_data['template_switch']) && $this->_req_data['template_switch'] ) {
-			if ( isset($this->_req_data['evt_id'] ) && !isset($this->_req_data['EVT_ID']) )
-				$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
 			$this->_template_args['admin_page_content'] = $this->_hook_obj->messages_metabox('', array());
 			$this->_template_args['data']['what'] = 'clear';
 			$this->_template_args['data']['where'] = 'main';
