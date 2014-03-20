@@ -116,14 +116,14 @@ class EE_Payment_Method_Manager {
 			$this->register_payment_methods();
 		}
 		if($with_prefixes){
-			return array_keys($this->_payment_method_types);
-		}else{
 			$classnames = array_keys($this->_payment_method_types);
 			$payment_methods = array();
 			foreach($classnames as $classname){
-				$payment_methods[] = $this->payment_method_type_sans_class_prefix($classname);
+				$payment_methods[] = $this->payment_method_class_from_type($classname);
 			}
 			return $payment_methods;
+		}else{
+			return array_keys($this->_payment_method_types);
 		}
 		
 	}
@@ -135,7 +135,9 @@ class EE_Payment_Method_Manager {
 	 * @return string
 	 */
 	public function payment_method_type_sans_class_prefix($classname){
-		return str_replace("EE_PMT_","",$classname);
+		$pmt_name = str_replace("EE_PMT_","",$classname);
+		echo "payment metho dtype snas class prefix fed $class and returns ".$pmt_name;	
+		return $pmt_name;
 	}
 	
 	/**

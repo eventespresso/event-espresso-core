@@ -26,7 +26,26 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Invoice extends EE_PMT_Base{
-	
+	public function __construct($pm_instance) {
+		$this->_settings_form = new EE_Payment_Method_Form(array(
+			'subsections'=>array(
+//				'title'=> new EE_Text_Input(array(
+//					'default'=>  __("Check/Money Order Payments", 'event_espresso'),
+//				)),
+//				'payment_instructions'=>new EE_Text_Area_Input(array(
+//					'default'=> __("Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
+//				)),
+//				'payable_to'=>new EE_Text_Input(array(
+//					'default'=>$organization
+//				)),
+//				'address_to_send_payment'=>new EE_Text_Area_Input(array(
+//					'default'=>$default_address
+//				))
+			),
+			'exclude'=>array('PMD_debug_mode')
+		));
+		parent::__construct($pm_instance);
+	}
 }
 
 // End of file EE_PMT_Invoice.pm.php
