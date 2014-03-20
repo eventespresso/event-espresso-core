@@ -335,7 +335,7 @@ class EE_messages {
 		$DFLT = $a->newInstance( $this );
 
 		//generate templates
-		$success = $DFLT->create_new_templates($evt_id, $is_global);
+		$success = $DFLT->create_new_templates();
 
 		/**
 		 * $success is in an array in the following format

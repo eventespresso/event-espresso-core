@@ -104,7 +104,7 @@ class EEH_MSG_Template {
 		//what method we use depends on whether we have an evt_id or not
 		$count = !empty( $GRP_ID ) ? $MTP->get_one_by_ID( $GRP_ID ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE, 'all' );
 
-		self::_update_to_active( $messenger, $message_type );
+		self::update_to_active( $messenger, $message_type );
 
 		return ( $count > 0 ) ? TRUE : FALSE;
 	}
@@ -117,9 +117,10 @@ class EEH_MSG_Template {
 	 *
 	 * @param  string $messenger    	Messenger slug
 	 * @param  string $message_type  Message type slug
+	 * @static
 	 * @return  int 						count of updated records.
 	 */
-	public function update_to_active( $messenger, $message_type ) {
+	public static function update_to_active( $messenger, $message_type ) {
 		return EEM_Message_Template_Group::instance()->update( array('MTP_is_active' => 1), array(array('MTP_messenger' => $messenger, 'MTP_message_type' => $message_type )) );
 	}
 

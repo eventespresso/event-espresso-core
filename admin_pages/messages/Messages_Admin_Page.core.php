@@ -2436,7 +2436,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			//okay let's update the message templates that match this messenger so that they are deactivated in the database as well.
 			$update_array = array(
-				$where_col => $messenger);
+				'MTP_messenger' => $messenger);
 
 			if ( $message_type ) {
 				$update_array['MTP_message_type'] = $message_type;
