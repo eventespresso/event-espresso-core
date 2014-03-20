@@ -57,6 +57,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array(
 			'cb' => '<input type="checkbox" />',
+			'name' => __('Template Name', 'event_espresso'),
 			'message_type' => __('Message Type', 'event_espresso'),
 			'messenger' => __( 'Messenger', 'event_espresso'),
 			'description' => __( 'Description', 'event_espresso' ),
@@ -168,8 +169,15 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 
+	function column_name( $item ) {
+		return '<p>' . $item->name() . '</p>';
+	}
+
+
+
+
 	function column_description( $item ) {
-		return '<p>' . $item->message_type_obj()->description . '</p>';
+		return '<p>' . $item->description() . '</p>';
 	}
 
 
