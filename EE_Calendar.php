@@ -45,7 +45,7 @@
  * ------------------------------------------------------------------------
  */
 //if ee4 core is active, run the calendar
- add_action( 'AHEE__EE_System__construct__complete', array( 'EE_Calendar', 'instance' ));
+ add_action( 'AHEE__EE_System__load_espresso_addons', array( 'EE_Calendar', 'instance' ));
  //we need to register our activation hook before init or plugins_loaded (where we load teh calendar)
  register_activation_hook(__FILE__, array('EE_Calendar','register_activation_hook'));
  class EE_Calendar {
@@ -120,7 +120,7 @@
 		// we need cars
 		$this->register_autoloaders();
 		// GO !!!
-		add_action( 'plugins_loaded', array( $this, 'plugins_loaded' ));
+		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons', array( $this, 'plugins_loaded' ));
 		// migrate data
 		$this->_setup_data_migration_script_hooks();
 	}

@@ -85,18 +85,15 @@ class EES_Espresso_Calendar  extends EES_Shortcode {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function process_shortcode( $shortcode_atts ) {
-		if( ! $shortcode_atts ){//shortcode atts might be NULL
-			$shortcode_atts = array();
-		}
+	public function process_shortcode( $attributes = array() ) {
 		$defaults = array( 
 			'show_expired' => 'true', 
 			'cal_view' => 'month', 
 			'widget' => FALSE
 		);
 		// make sure $atts is an array
-		$shortcode_atts = array_merge( $defaults, $shortcode_atts );
-		echo EE_Calendar::instance()->display_calendar( $shortcode_atts );
+		$attributes = array_merge( $defaults, (array)$attributes );
+		echo EE_Calendar::instance()->display_calendar( $attributes );
 	}
 	
 
