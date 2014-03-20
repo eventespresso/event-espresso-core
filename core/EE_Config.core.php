@@ -145,7 +145,7 @@ final class EE_Config {
 		// load existing EE site settings
 		$this->_load_config();
 		//  register shortcodes and modules
-		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons', array( $this, 'register_shortcodes_and_modules' ));
+		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons', array( $this, 'register_shortcodes_and_modules' ), 999 );
 		//  initialize shortcodes and modules
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'initialize_shortcodes_and_modules' ));
 		// register widgets
