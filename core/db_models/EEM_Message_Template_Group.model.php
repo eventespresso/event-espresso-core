@@ -58,6 +58,8 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 		$this->_fields = array(
 			'Message_Template_Group' => array(
 				'GRP_ID' => new EE_Primary_Key_Int_Field('GRP_ID', __('Message Template Group ID', 'event_espresso')),
+				'MTP_name' => new EE_Plain_Text_Field( 'MTP_name', __('The name of the temlpate group', 'event_espresso'), FALSE, '' ),
+				'MTP_description' => new EE_Simple_HTML_Field( 'MTP_description', __('A brief description about this template.', 'event_esrpresso' ), FALSE, '' ),
 				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, 1 ),
 				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email' ),
 				'MTP_message_type'=>new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'),false,'registration'),

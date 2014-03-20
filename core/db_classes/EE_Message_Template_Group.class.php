@@ -33,6 +33,21 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	protected $_GRP_ID = 0;
 
 
+	/**
+	 * The name of the template group
+	 * @var string
+	 */
+	protected $_MTP_name = '';
+
+
+
+	/**
+	 * A brief description for the template.
+	 * @var string
+	 */
+	protected $_MTP_description = '';
+
+
 
 	/**
 	 * user who created the message template
