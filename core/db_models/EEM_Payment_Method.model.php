@@ -27,7 +27,7 @@
  * ------------------------------------------------------------------------
  */
 
-class EEM_Payment_Method extends EEM_Soft_Delete_Base {
+class EEM_Payment_Method extends EEM_Base {
 
 	/**
 	 *
@@ -118,7 +118,7 @@ class EEM_Payment_Method extends EEM_Soft_Delete_Base {
 	 * @return EE_Payment_Method
 	 */
 	public function get_one_of_type($type){
-		return $this->get_one_deleted_or_undeleted(array(array('PMD_type'=>$type)));
+		return $this->get_one(array(array('PMD_type'=>$type)));
 	}
 	
 }

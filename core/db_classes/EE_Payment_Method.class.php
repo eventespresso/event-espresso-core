@@ -23,7 +23,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  *
  * ------------------------------------------------------------------------
  */
-class EE_Payment_Method extends EE_Soft_Delete_Base_Class{
+class EE_Payment_Method extends EE_Base_Class{
 	
 	/** ID @var PMD_ID*/ 
 	protected $_PMD_ID = NULL;

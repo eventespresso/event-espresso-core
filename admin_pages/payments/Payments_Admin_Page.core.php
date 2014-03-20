@@ -64,9 +64,18 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => '_gateway_settings',
 			'payment_settings' => '_payment_settings',
+			'activate_payment_method'=>array(
+				'func'=>'_activate_payment_method',
+				'noheader'=>TRUE
+				),
+			'deactivate_payment_method'=>array(
+				'func'=>'_deactivate_payment_method',
+				'noheader'=>TRUE
+				),
 			'update_payment_settings' => array(
 				'func'=>'_update_payment_settings',
-				'noheader'=>TRUE)
+				'noheader'=>TRUE
+				),
 			);
 	}
 
@@ -269,13 +278,55 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'payment_method'=>$payment_method
 		);
 		//if the payment method really exists show its form, otherwise the activation template
-		if( $payment_method->ID()){
-			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('edit_payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
-			$template_args['deactivate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('deactivate_payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
+		if( $payment_method->ID() && $payment_method->active()){
+			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'edit_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
+			$template_args['deactivate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'deactivate_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
 			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_edit.template.php', $template_args);
 		}else{
-			$template_args['activate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('activate_payment_method'=>$payment_method->type()), EE_PAYMENTS_ADMIN_URL);
+			$template_args['activate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'activate_payment_method', 'payment_method_type'=>$payment_method->type()), EE_PAYMENTS_ADMIN_URL);
 			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_activate.template.php', $template_args);
+		}
+	}
+	
+	/**
+	 * Activates a payment method of that type. MOstly assuming there is only 1 of that type (or none so far)
+	 * @global type $current_user
+	 */
+	protected function _activate_payment_method(){
+		if(isset($this->_req_data['payment_method_type'])){
+			$payment_method_type = sanitize_text_field($this->_req_data['payment_method_type']);
+			//see if one exists
+			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
+			if( ! $payment_method){
+				global $current_user;
+				$payment_method = EE_Payment_Method::new_instance(array(
+					'PMD_type'=>$payment_method_type,
+					'PMD_name'=>$payment_method_type,
+					'PMD_slug'=>$payment_method_type,
+					'PMD_wp_user_id'=>$current_user->ID));
+				$payment_method->save();
+			}else{
+				$payment_method->set_active(true);
+				$payment_method->save();
+			}
+			$this->_redirect_after_action(1, 'Payment Method', 'activated', array('action' => 'default'));
+		}else{
+			$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
+		}
+		
+	}
+	
+	/**
+	 * Deactivates the payment method with the specified slug, and redirects.
+	 */
+	protected function _deactivate_payment_method(){
+		if(isset($this->_req_data['payment_method'])){
+			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
+			//deactivate it
+			$count_updated = EEM_Payment_Method::instance()->update(array('PMD_active'=>false),array(array('PMD_slug'=>$payment_method_slug)));
+			$this->_redirect_after_action($count_updated, 'Payment Method', 'deactivated', array('action' => 'default'));
+		}else{
+			$this->_redirect_after_action(FALSE, 'Payment Method', 'deactivated', array('action' => 'default'));
 		}
 	}
 
