@@ -713,7 +713,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * _add_message_template
 	 *
-	 * For now this is ONLY used when creating custom event templates.
+	 * This is used when creating a custom template. All Custom Templates start based off another template.
 	 *
 	 * @access  protected
 	 * @return void
@@ -722,65 +722,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//we need messenger and message type.  They should be coming from the event editor. If not here then return error
 		if ( !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['message_type'] ) )
-			throw new EE_error('Sorry, but we can\'t create new templates because we\'re missing the messenger or message type', 'event_espresso');
+			throw new EE_error(__('Sorry, but we can\'t create new templates because we\'re missing the messenger or message type', 'event_espresso'));
 
-		$EVT_ID = isset( $this->_req_data['evt_id'] ) && !empty( $this->_req_data['evt_id'] ) ? absint( $this->_req_data['evt_id'] ) : FALSE;
+		//we need the GRP_ID for the template being used as the base for the new template
+		if ( empty( $this->_req_data['GRP_ID'] ) )
+			throw new EE_Error( __('In order to create a custom message template the GRP_ID of the template being used as a base is needed', 'event_espresso' ) );
 
-		//if we've got an empty EVT_ID then we need to get out
-		if ( empty($EVT_ID ) ) {
-			throw new EE_Error('Sorry, but we can\'t create a custom template for this event because no event id is given', 'event_espresso');
-			//$events = $this->_get_active_events();
-		}
-
-		/** remove the below for now because its not needed **/
-		/*
-		$this->_template_args['EVT_ID'] = $EVT_ID ? $EVT_ID : FALSE;
-		$this->_template_args['event_name'] = $EVT_ID ? $this->_event_name($EVT_ID) : FALSE;
-		$this->_template_args['active_messengers'] = $this->_active_messengers;
-		$this->_template_args['active_message_types'] = $this->_active_message_types;
-		$this->_template_args['active_events'] = $events;
-		$this->_template_args['action'] = 'insert_message_template';
-		$this->_template_args['edit_message_template_form_url'] = add_query_arg( array( 'action' => 'insert_message_template', 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
-		$this->_template_args['learn_more_about_message_templates_link'] = $this->_learn_more_about_message_templates_link();
-		$this->_template_args['action_message'] = __('Before we generate the new templates we need to ask you what messenger and message type you want the templates for');
-
-		$hidden_inputs['ee-msg-route'] = array(
-				'name' => 'action',
-				'input' => 'hidden',
-				'type' => 'string',
-				'value' => 'insert_message_template'
-				);
-
-		$hidden_inputs['ee-msg-evt-nonce'] = array(
-			'name' => 'insert_message_template_nonce',
-			'input' => 'hidden',
-			'type' => 'string',
-			'value' => wp_create_nonce( 'insert_message_template_nonce')
-			);
-
-		$this->_template_args['hidden_fields'] = $this->_generate_admin_form_fields( $hidden_inputs );
-
-
-		//generate metabox
-		$this->_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
-
-
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $this->_template_path, $this->_template_args, TRUE );
-
-
-		//final template wrapper
-		$this->display_admin_page_with_sidebar();
-		/**/
-
-
-		//let's just make sure the tempalte gets generated!
+		//let's just make sure the template gets generated!
 
 		//we need to reassign some variables for what the insert is expecting
 		$this->_req_data['MTP_messenger'] = $this->_req_data['messenger'];
 		$this->_req_data['MTP_message_type'] = $this->_req_data['message_type'];
-		$this->_req_data['EVT_ID'] = $this->_req_data['evt_id'];
 		$this->_insert_or_update_message_template(TRUE);
-
 	}
 
 
@@ -793,9 +746,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _edit_message_template() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '');
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
-
-		$EVT_ID = isset( $this->_req_data['evt_id'] ) && !empty( $this->_req_data['evt_id'] ) ? absint( $this->_req_data['evt_id'] ) : FALSE;
-
 
 		$this->_set_shortcodes(); //this also sets the _message_template property.
 		$message_template_group = $this->_message_template_group;
@@ -1015,18 +965,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'format' => '%s',
 					'db-col' => 'MTP_context'
 				);
-			$template_form_fields['ee-msg-event'] = array(
-					'name' => 'EVT_ID',
-					'label' => null,
-					'input' => 'hidden',
-					'type' => 'int',
-					'required' => FALSE,
-					'validation' => TRUE,
-					'value' => $EVT_ID,
-					'css_class' => '',
-					'format' => '%d',
-					'db-col' => 'EVT_ID'
-				);
 
 			$template_form_fields['ee-msg-grp-id'] = array(
 					'name' => 'GRP_ID',
@@ -1143,13 +1081,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'type' => 'int',
 				'value' => $GRP_ID
 				);
-
-			$sidebar_form_fields['ee-msg-evt-id'] = array(
-				'name' => 'evt_id',
-				'input' => 'hidden',
-				'type' => 'int',
-				'value' => $EVT_ID
-				);
 			$sidebar_form_fields['ee-msg-evt-nonce'] = array(
 				'name' => $action . '_nonce',
 				'input' => 'hidden',
@@ -1184,7 +1115,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
 
 		//add preview button
-		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'evt_id' => $EVT_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
+		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
 		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
 
 
@@ -1193,7 +1124,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'page' => 'espresso_messages',
 			'action' => 'edit_message_template',
 			'id' => $GRP_ID,
-			'evt_id' => $EVT_ID,
 			'context' => $context,
 			'extra' => $preview_button
 		);
@@ -1216,7 +1146,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['sidebar_box_id'] = 'details';
 		$this->_template_args['action'] = $action;
 		$this->_template_args['context'] = $context;
-		$this->_template_args['EVT_ID'] = $EVT_ID;
 		$this->_template_args['edit_message_template_form_url'] = $edit_message_template_form_url;
 		$this->_template_args['learn_more_about_message_templates_link'] = $this->_learn_more_about_message_templates_link();
 
@@ -1273,22 +1202,28 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _reset_to_default_template() {
 		$success = TRUE;
 		$templates = array();
+		$GRP_ID = !empty( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
 		//we need to make sure we've got the info we need.
 		if ( !isset( $this->_req_data['msgr'] ) && !isset( $this->_req_data['mt'] ) && !isset( $this->_req_data['GRP_ID'] ) ) {
 			EE_Error::add_error( __('In order to reset the template to its default we require the messenger, message type, and message template GRP_ID to know what is being reset.  At least one of these is missing.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 
-		$EVT_ID = isset( $this->_req_data['EVT_ID'] ) ? $this->_req_data['EVT_ID'] : NULL;
-		$global = empty( $EVT_ID ) ? TRUE : FALSE;
+		//all templates will be reset to whatever the defaults are for the global template matching the messenger and message type.
+		$success = !empty( $GRP_ID ) ? TRUE : FALSE;
 
 		if ( $success ) {
 
-			$success = isset( $this->_req_data['GRP_ID'] ) ? $this->_delete_mtp_permanently($this->_req_data['GRP_ID'] ) : FALSE;
+			//let's first determine if the incoming template is a global template, if it isn't then we need to get the global template matching messenger and message type.
+			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
+
+			$global = $MTPG->is_global();
+
+			$success = $this->_delete_mtp_permanently( $GRP_ID );
 
 			//if successfully deleted, lets generate the new ones
 			if ( $success ) {
-				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $EVT_ID, $global );
+				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, $global );
 			}
 		}
 
@@ -1309,12 +1244,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$query_args = array(
 			'id' => isset( $templates['GRP_ID'] ) ? $templates['GRP_ID'] : NULL,
-			'evt_id' => isset( $templates['EVT_ID'] ) ? $templates['EVT_ID'] : NULL,
 			'context' => isset( $templates['MTP_context'] ) ? $templates['MTP_context'] : NULL,
 			'action' => isset( $templates['GRP_ID'] ) ? 'edit_message_template' : 'default'
 			);
 
-		$this->_redirect_after_action( FALSE, '', '', $query_args );
+		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 	}
 
 
@@ -1651,7 +1585,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$messenger = !empty($this->_req_data['MTP_messenger']) ? ucwords(str_replace('_', ' ', $this->_req_data['MTP_messenger'] ) ) : false;
 		$message_type = !empty($this->_req_data['MTP_message_type']) ? ucwords(str_replace('_', ' ', $this->_req_data['MTP_message_type'] ) ) : false;
 		$context = !empty($this->_req_data['MTP_context']) ? ucwords(str_replace('_', ' ', $this->_req_data['MTP_context'] ) ) : false;
-		$evt_id = !empty($this->_req_data['EVT_ID']) ? (int) $this->_req_data['EVT_ID'] : NULL;
 
 		$item_desc = $messenger ? $messenger . ' ' . $message_type . ' ' . $context . ' ' : '';
 		$item_desc .= 'Message Template';
@@ -1660,7 +1593,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//if this is "new" then we need to generate the default contexts for the selected messenger/message_type for user to edit.
 		if ( $new ) {
-			if ( $edit_array = $this->_generate_new_templates($messenger, $message_type, $evt_id) ) {
+			$GRP_ID = !empty( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
+			if ( $edit_array = $this->_generate_new_templates($messenger, $message_type, $GRP_ID ) ) {
 				if ( empty($edit_array) ) {
 					$success = 0;
 				} else {
@@ -1668,7 +1602,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$edit_array = $edit_array[0];
 					$query_args = array(
 						'id' => $edit_array['GRP_ID'],
-						'evt_id' => $edit_array['EVT_ID'],
 						'context' => $edit_array['MTP_context'],
 						'action' => 'edit_message_template'
 						);
@@ -1862,15 +1795,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @access protected
 	 * @param  string  $messenger the messenger we are generating templates for
 	 * @param array $message_types array of message types that the templates are generated for.
-	 * @param int $evt_id If templates are event specific then we are also including the event_id
-	 * @param bool $global true indicates generating templates on messenger activation. false requires evt_id for event specific template generation.
+	 * @param int $GRP_ID If this is a custom template being generated then a GRP_ID needs to be included to indicate the message_template_group being used as the base.
 	 * @return array|error_object array of data required for the redirect to the correct edit page or error object if encountering problems.
 	 */
-	protected function _generate_new_templates($messenger, $message_types, $evt_id = NULL, $global = FALSE) {
+	protected function _generate_new_templates($messenger, $message_types, $GRP_ID = 0, $global = FALSE) {
 
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
-		return EEH_MSG_Template::generate_new_templates($messenger, $message_types, $evt_id, $global);
+		return EEH_MSG_Template::generate_new_templates($messenger, $message_types, $GRP_ID,  $global);
 
 	}
 

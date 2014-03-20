@@ -290,9 +290,9 @@ class EE_messages {
 	 * @param  string $message_type message type that the templates are being created for
 	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned.
 	 */
-	public function create_new_templates( $messenger, $message_type, $evt_id, $is_global = false ) {
+	public function create_new_templates( $messenger, $message_type, $GRP_ID = 0, $is_global = false ) {
 		$valid_mt = false;
-		$evt_id = absint($evt_id);
+		$evt_id = absint($GRP_ID);
 
 		$valid_mt = $this->_validate_setup($messenger, $message_type, $is_global);
 
@@ -306,16 +306,15 @@ class EE_messages {
 			return $valid_mt;
 		}
 
-		if ( !$is_global && empty($evt_id) ) {
-			EE_Error::add_error( __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
-		}
-
 		//whew made it this far!  Okay, let's go ahead and create the templates then
-		return $this->_create_new_templates($evt_id, $is_global);
+		return $this->_create_new_templates($GRP_ID, $is_global);
 	}
 
-	protected function _create_new_templates($evt_id, $is_global) {
+	protected function _create_new_templates($GRP_ID, $is_global) {
+
+		//if we're creating a custom template then we don't need to use the defaults class
+		if ( ! $is_global )
+			return $this->_create_custom_template_group( $GRP_ID );
 
 		//assemble class name
 		$messenger = ucwords( str_replace( '_', ' ', $this->_messenger->name ) );
@@ -337,8 +336,73 @@ class EE_messages {
 
 		//generate templates
 		$success = $DFLT->create_new_templates($evt_id, $is_global);
+
+		/**
+		 * $success is in an array in the following format
+		 * array(
+		 * 	'GRP_ID' => $new_grp_id,
+		 * 	'MTP_context' => $first_context_in_new_templates,
+		 * )
+		 */
 		return $success;
 	}
+
+
+
+	/**
+	 * This creates a custom template using the incoming GRP_ID
+	 *
+	 * @param  int     $GRP_ID GRP_ID for the template_group being used as the base
+	 * @return  array $success             This will be an array in the format:
+	 *                                     			array(
+	 *                                     				'GRP_ID' => $new_grp_id,
+	 *                                     				'MTP_context' => $first_context_in_created_template
+	 *                                     			)
+	 * @access private
+	 */
+	private function _create_custom_template_group( $GRP_ID ) {
+		//defaults
+		$success = array( 'GRP_ID' => NULL, 'MTP_context' => '' );
+
+		//get the template group to use as a template from the db.  If $GRP_ID is empty then we'll assume the base will be the global template matching the messenger and message type.
+		$mtg = empty( $GRP_ID ) ? EEM_Message_Template_Group::instance()->get_one( array( array( 'MTP_messenger' => $this->_messenger->name, 'MTP_message_type' => $this->_message_type->name, 'MTP_is_global' => TRUE ) ) ) : EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
+
+		//if we don't have a mtg at this point then we need to bail.
+		if ( ! $mtg instanceof EE_Message_Template_Group ) {
+			EE_Error::add_error( sprintf( __('Something went wrong with generating the custom template from this group id: %s.  This usually happens when there is no matching message template group in the db.', 'event_espresso'), $GRP_ID ), __FILE__, __FUNCTION__, __LINE__ );
+			return $success;
+		}
+
+		//let's get all the related message_template objects for this group.
+		$mtts = $mtg->message_templates();
+
+		//now we have what we need to setup the new template
+		$new_mtg = clone $mtg;
+		$new_mtg->set('GRP_ID', 0);
+		$new_mtg->set('MTP_is_global', FALSE),
+		$new_mtg->set('MTP_name', __('New Custom Template', 'event_espresso') );
+		$new_mtg->set('MTP_description', sprintf( __('This is a custom template that was created for the % messenger and % message type.', 'event_espresso' ), $new_mtg->messenger_obj()->label['singular'], $new_mtg->message_type_obj()->label['singular'] ) );
+		$new_mtg->save();
+		$success['GRP_ID'] = $new_mtg->ID();
+
+		//add new message templates and add relation to.
+		foreach ( $mtts as $mtt ) {
+			if ( ! $mtt instanceof EE_Message_Template )
+				continue;
+			$nmtt = clone $mtt;
+			$nmtt->set('MTP_ID', 0);
+			$nmtt->set( 'GRP_ID', $new_mtg->ID() ); //relation
+			$nmtt->save();
+			if ( empty( $success['MTP_context'] ) )
+				$success['MTP_context'] = $nmtt->get('MTP_context');
+		}
+
+		return $success;
+
+	}
+
+
+
 
 	/**
 	 * get_fields

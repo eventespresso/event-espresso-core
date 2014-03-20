@@ -43,11 +43,11 @@ class EEH_MSG_Template {
 	 * @access protected
 	 * @param  string  $messenger the messenger we are generating templates for
 	 * @param array $message_types array of message types that the templates are generated for.
-	 * @param int $evt_id If templates are event specific then we are also including the event_id
+	 * @param int $GRP_ID If a non global template is being generated then it is expected we'll have a GRP_ID to use as the base for the new generated template.
 	 * @param bool $global true indicates generating templates on messenger activation. false requires evt_id for event specific template generation.
 	 * @return array|error_object array of data required for the redirect to the correct edit page or error object if encountering problems.
 	 */
-	public static function generate_new_templates($messenger, $message_types, $evt_id = NULL, $global = FALSE) {
+	public static function generate_new_templates($messenger, $message_types, $GRP_ID = 0,  $global = FALSE) {
 
 		//make sure message_type is an array.
 		$message_types = (array) $message_types;
@@ -69,12 +69,13 @@ class EEH_MSG_Template {
 		$MSG = new EE_messages();
 
 		foreach ( $message_types as $message_type ) {
-			//first let's determine if we already HAVE global templates for this messenger and message_type combination.  If we do then NO generation!!
-			if ( self::already_generated($messenger, $message_type, $evt_id ) ) {
+			//if this is global template generation. First let's determine if we already HAVE global templates for this messenger and message_type combination.  If we do then NO generation!!
+			if ( $global && self::already_generated($messenger, $message_type  ) ) {
 				$templates = TRUE;
 				continue; //get out we've already got generated templates for this.
 			}
-			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $evt_id, $global);
+
+			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $GRP_ID, $global);
 			if ( !$new_message_template_group ) {
 				$success = FALSE;
 				continue;
@@ -82,7 +83,7 @@ class EEH_MSG_Template {
 			if ( $templates === TRUE ) $templates = array();
 			$templates[] = $new_message_template_group;
 		}
-		
+
 		return ($success) ? $templates : $success;
 	}
 
@@ -107,7 +108,7 @@ class EEH_MSG_Template {
 		if ( $count > 0 ) {
 			$MTP->update( array('MTP_is_active' => 1), array(array('MTP_messenger' => $messenger, 'MTP_message_type' => $message_type )) );
 		}
-		
+
 		return ( $count > 0 ) ? TRUE : FALSE;
 	}
 
