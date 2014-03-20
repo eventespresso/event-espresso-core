@@ -29,6 +29,7 @@ class EE_PMT_Check extends EE_PMT_Base{
 	public function __construct($pm_instance){
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
 			$organization = EE_Registry::instance()->CFG->organization;
+			$organization_name = $organization->name;
 			$default_address = $organization->address_1 != '' ? $organization->address_1 . '<br />' : '';
 			$default_address .= $organization->address_2 != '' ? $organization->address_2 . '<br />' : '';
 			$default_address .= $organization->city != '' ? $organization->city : '';
@@ -40,7 +41,7 @@ class EE_PMT_Check extends EE_PMT_Base{
 			$default_address .= $organization->zip != '' ? $organization->zip : '';
 		}else{
 			$default_address = 'unknown';
-			$organization = 'unknown';
+			$organization_name = 'unknown';
 		}
 		$this->_settings_form = new EE_Payment_Method_Form(array(
 			'subsections'=>array(
@@ -51,7 +52,7 @@ class EE_PMT_Check extends EE_PMT_Base{
 					'default'=> __("Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
 				)),
 				'payable_to'=>new EE_Text_Input(array(
-					'default'=>$organization
+					'default'=>$organization_name
 				)),
 				'address_to_send_payment'=>new EE_Text_Area_Input(array(
 					'default'=>$default_address

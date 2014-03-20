@@ -344,6 +344,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * @return string
 	 */
 	function raw_value_in_form(){
+		if(is_object($this->raw_value())){
+			d($this->raw_value());
+		}
 		return htmlentities($this->raw_value(),ENT_QUOTES, 'UTF-8');
 	}
 	/**
