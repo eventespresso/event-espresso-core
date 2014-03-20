@@ -676,7 +676,7 @@
 				} else if($event->is_cancelled()){
 					$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';				
 				}else{
-					'<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';				
+					$tooltip_html .= '<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';				
 				}
 
 				$tooltip_html .= '<div class="clear"></div>';
