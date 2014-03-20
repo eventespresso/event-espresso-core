@@ -4,24 +4,37 @@
 
 /** overview table styles **/
 
-.column-messenger {
+#Custom_Messages_Template_List_Table-table-frm .column-name {
 	width: 14%;
 }
 
-.column-event {
+#Messages_Template_List_Table-table-frm .column-messenger, #Custom_Messages_Template_List_Table-table-frm .column-messenger {
+	width: 14%;
+}
+
+#Messages_Template_List_Table-table-frm .column-message_type, #Custom_Messages_Template_List_Table-table-frm .column-message_type {
 	width: 12%;
 }
 
-.column-message_type {
-	width: 12%;
-}
-
-.column-messages_sent {
+#Messages_Template_List_Table-table-frm .column-messages_sent, #Custom_Messages_Template_List_Table-table-frm .column-messages_sent {
 	width: 10%;
 }
 
-.column-description {
+#Messages_Template_List_Table-table-frm .column-description {
 	width: 52%;
+}
+
+#Custom_Messages_Template_List_Table-table-frm .column-description {
+	width: 40%;
+}
+
+#Messages_Template_List_Table-table-frm .column-actions, #Custom_Messages_Template_List_Table-table-frm .column-actions {
+	width: 10%;
+}
+
+#Custom_Messages_Template_List_Table-table-frm .column-events {
+	width: 10%;
+	text-align: center;
 }
 
 #mtp_valid_shortcodes .shortcode-field-table {

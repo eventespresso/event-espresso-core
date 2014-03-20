@@ -253,13 +253,13 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 	}
 
 	/**
-	 * column_event
+	 * column_events
 	 * This provides a count of events using this custom template
 	 *
 	 * @param  array $item message_template group data
 	 * @return string column output
 	 */
-	function column_event($item) {
+	function column_events($item) {
 		return $item->count_events();
 	}
 
