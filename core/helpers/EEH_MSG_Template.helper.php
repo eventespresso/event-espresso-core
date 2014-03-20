@@ -76,6 +76,7 @@ class EEH_MSG_Template {
 			}
 
 			$new_message_template_group = $MSG->create_new_templates($messenger, $message_type, $GRP_ID, $global);
+
 			if ( !$new_message_template_group ) {
 				$success = FALSE;
 				continue;
@@ -92,24 +93,34 @@ class EEH_MSG_Template {
 	 * The purpose of this method is to determine if there are already generated templates in the database for the given variables.
 	 * @param  string $messenger     messenger
 	 * @param  string $message_type message type
-	 * @param  int $evt_id        Event ID ( if an event specific template)
+	 * @param  int $GRP_ID        GRP ID ( if a custom template) (if not provided then we're just doing global template check)
 	 * @return bool                true = generated, false = hasn't been generated.
 	 */
-	public static function already_generated( $messenger, $message_type, $evt_id = NULL ) {
+	public static function already_generated( $messenger, $message_type, $GRP_ID = 0 ) {
 		self::_set_autoloader();
 		$MTP = EEM_Message_Template_Group::instance();
 
 
 		//what method we use depends on whether we have an evt_id or not
-		$count = !empty( $evt_id) ? $MTP->get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, 'GRP_ID', 'ASC', NULL, TRUE, FALSE ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE, 'all' );
+		$count = !empty( $GRP_ID ) ? $MTP->get_one_by_ID( $GRP_ID ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE, 'all' );
 
-
-		//if the count is greater than 0 then we need to update the templates so they are active.
-		if ( $count > 0 ) {
-			$MTP->update( array('MTP_is_active' => 1), array(array('MTP_messenger' => $messenger, 'MTP_message_type' => $message_type )) );
-		}
+		self::_update_to_active( $messenger, $message_type );
 
 		return ( $count > 0 ) ? TRUE : FALSE;
+	}
+
+
+
+
+	/**
+	 * Updates all message templates matching the incoming messenger and message type to active status.
+	 *
+	 * @param  string $messenger    	Messenger slug
+	 * @param  string $message_type  Message type slug
+	 * @return  int 						count of updated records.
+	 */
+	public function update_to_active( $messenger, $message_type ) {
+		return EEM_Message_Template_Group::instance()->update( array('MTP_is_active' => 1), array(array('MTP_messenger' => $messenger, 'MTP_message_type' => $message_type )) );
 	}
 
 

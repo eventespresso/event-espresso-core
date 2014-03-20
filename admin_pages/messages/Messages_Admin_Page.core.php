@@ -2417,7 +2417,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 			//generate new templates (if necessary)
-			$templates = $this->_generate_new_templates( $messenger, $default_types, '', TRUE );
+			$templates = $this->_generate_new_templates( $messenger, $default_types, 0, TRUE );
 
 			EE_Error::overwrite_success();
 
@@ -2437,43 +2437,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			$MTP = EEM_Message_Template_Group::instance();
 
-			//first lets make sure that there are NO existing event templates for the given messenger.  If there ARE then we need to drop out with an error message, prevent deactivation and display warning.
-			$where_col = 'MTP_messenger';
-			$_where = array(
-				$where_col => $messenger,
-				'MTP_is_global' => FALSE
-				);
-
-			//if this is a message type deactivation then let's setup the message type as well
-			if ( $message_type ) {
-				$_where['MTP_message_type'] = $message_type;
-			}
-
-			$event_templates = $MTP->get_all( array($_where, 'group_by' => 'EVT_ID' ) );
-
-			if ( $event_templates && count($event_templates) > 0 ) {
-				$m_label_pl = __('Messengers', 'event_espresso');
-				$m_label_sg = __('messenger', 'event_espresso');
-				$warning_msg = $message_type ? sprintf( __('<strong>Warning:</strong> Message Types cannot be deactivated if there are any Events currently using a custom template for that message type and messenger. Before you can deactivate the "%s" message type, you must switch the following events to use global templates:', 'event_espresso' ), ucwords($this->_m_mt_settings['message_type_tabs'][$messenger]['active'][$message_type]['obj']->label['singular']) ) : sprintf( __('<strong>Warning:</strong> %s cannot be deactivated if there are any Events currently using a custom template for it. Before you can deactivate the "%s" %s, you must switch the following events to use global templates (for all message types):', 'event_espresso' ), $m_label_pl, $this->_active_messengers[$messenger]['obj']->label['singular'], $m_label_sg  );
-				$warning_msg .= '<ul>';
-
-				//output list of events
-				$base_event_admin_url = admin_url( 'admin.php?page=espresso_events' );
-				foreach ( $event_templates as $template ) {
-					$event_name = $template->event_name();
-					$query_args = array(
-						'action' => 'edit',
-						'post' => $template->event()
-						);
-					$edit_event_url = self::add_query_args_and_nonce( $query_args, $base_event_admin_url );
-					$warning_msg .= "\n" . '<li><a href="' . $edit_event_url . '" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a></li>';
-				}
-
-				$warning_msg .= '</ul>';
-				$warning_msg .= $message_type ? '<br />' . __('Remember, deactivating message types does NOT delete any templates or any customization you have done.  All it does is "deactivate" them. Should you activate the message type later your templates will be restored.', 'event_espresso') : '<br />' . __('Remember, deactivating messengers does NOT delete any templates or any customization you have done.  All it does is "deactivate" them. Should you activate the message type or messenger later your templates will be restored.', 'event_espresso');
-				EE_Error::add_error($warning_msg);
-				return false;
-			}
 
 			//okay let's update the message templates that match this messenger so that they are deactivated in the database as well.
 			$update_array = array(
