@@ -222,6 +222,8 @@ class EE_DMS_Core_4_4_0 extends EE_Data_Migration_Script_Base{
 		$table_name = 'esp_message_template_group';
 		$sql = "GRP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					MTP_user_id int(10) NOT NULL DEFAULT '1',
+					MTP_name varchar(245) NOT NULL DEFAULT '',
+					MTP_description varchar(245) NOT NULL DEFAULT '',
 					MTP_messenger varchar(30) NOT NULL,
 					MTP_message_type varchar(50) NOT NULL,
 					MTP_is_global tinyint(1) NOT NULL DEFAULT '0',

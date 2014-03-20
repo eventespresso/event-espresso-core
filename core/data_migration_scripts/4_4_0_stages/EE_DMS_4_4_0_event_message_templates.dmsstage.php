@@ -44,8 +44,8 @@
  			$inserted = $wpdb->insert(
  				$this->_emt_table,
  				array(
- 					'EVT_ID' => $old_row['EVT_ID'],
- 					'GRP_ID' => $old_row['GRP_ID'],
+ 					'EVT_ID' => (int) $old_row['EVT_ID'],
+ 					'GRP_ID' => (int) $old_row['GRP_ID'],
  					),
  				array( '%d', '%d' )
  				);
