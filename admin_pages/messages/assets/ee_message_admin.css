@@ -68,3 +68,16 @@
 .mtp-inactive {
 	color: #AC9D93;
 }
+
+/** editor styles **/
+#ee-msg-non-global-fields-MTP_description {
+	height: 150px;px;
+}
+
+.non-global-mtp-fields {
+	background-color: #ffd84d;
+	padding: 10px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}

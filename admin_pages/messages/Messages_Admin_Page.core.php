@@ -1156,6 +1156,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$this->_template_path = $this->_template_args['GRP_ID'] ? EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_edit_meta_box.template.php' : EE_MSG_TEMPLATE_PATH . 'ee_msg_details_main_add_meta_box.template.php';
 
+		//send along EE_Message_Template_Group object for further template use.
+		$this->_template_args['MTP'] = $message_template_group;
 
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $this->_template_path, $this->_template_args, TRUE );
 
@@ -1676,8 +1678,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						'MTP_is_global' => $set_column_values['MTP_is_global'],
 						'MTP_is_override' => $set_column_values['MTP_is_override'],
 						'MTP_deleted' => $set_column_values['MTP_deleted'],
-						'MTP_is_active' => $set_column_values['MTP_is_active']
+						'MTP_is_active' => $set_column_values['MTP_is_active'],
+						'MTP_name' => !empty( $this->_req_data['ee_msg_non_global_fields']['MTP_name'] ) ? $this->_req_data['ee_msg_non_global_fields']['MTP_name'] : '',
+						'MTP_description' => !empty( $this->_req_data['ee_msg_non_global_fields']['MTP_description'] ) ? $this->_req_data['ee_msg_non_global_fields']['MTP_description'] : ''
 						);
+
 					$mtpg_where = array('GRP_ID' => $set_column_values['GRP_ID'] );
 					$updated = $MTPG->update( $mtpg_fields, array($mtpg_where) );
 
