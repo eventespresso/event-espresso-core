@@ -1997,17 +1997,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		global $wpdb;
 		$cat_id = $update ? $this->_req_data['EVT_CAT_ID'] : '';
 		$category_name= $this->_req_data['category_name'];
-		$category_identifier = $this->_req_data['category_identifier'];
 		$category_desc= $this->_req_data['category_desc'];
 
 
 		$term_args=array(
 			'name'=>$category_name,
-			'slug'=>$category_identifier,
 			'description'=>$category_desc,
 			//'parent'=>$espresso_wp_user //eventually this will be added.
 		);
-
+		//was the category_identifier input disabled?
+		if(isset($this->_req_data['category_identifier'])){
+			$term_args['slug'] = $this->_req_data['category_identifier'];
+		}
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
