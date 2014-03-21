@@ -3,7 +3,9 @@
 		<thead>
 			<tr>
 				<th scope="col" width=""><?php _e( 'Available Tickets', 'event_espresso' ); ?></th>
+				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_column', TRUE )) { ?>
 				<th scope="col" width="22.5%"><?php _e( 'Price', 'event_espresso' ); ?> </th>
+				<?php } ?>
 				<th scope="col" width="12.5%" class="cntr"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
 			</tr>
 		</thead>
@@ -104,9 +106,12 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 //echo '<br/><b> $ticket->ticket_status() : ' .  $tkt_status . '</b>';
 //echo '<br/><b> $ticket->uses() : ' .  $ticket->uses() . '</b>';
 				?>
-				</td>	
+				</td>
+				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_column', TRUE )) { ?>
 				<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?> <span class="smaller-text no-bold"><?php
-					echo $ticket_bundle ? __( ' / bundle', 'event_espresso' ) : __( ' / ticket', 'event_espresso' );?></span> &nbsp;</td>
+					echo $ticket_bundle ? __( ' / bundle', 'event_espresso' ) : __( ' / ticket', 'event_espresso' );?></span> &nbsp;
+				</td>
+				<?php } ?>
 				<td class="tckt-slctr-tbl-td-qty cntr">
 			<?php 
 			 	$hidden_input_qty = $max_atndz > 1 ? TRUE : FALSE;
@@ -146,10 +151,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
 				<?php 
 					// this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
-					if ( ! $ticket->required() && $min !== 0 ) : 
+					if ( ! $ticket->required() && $min !== 0 ) {
 				?>
 					<option value="0">&nbsp;0&nbsp;</option>
-				<?php endif;
+				<?php }
 					// offer ticket quantities from the min to the max
 					for ( $i = $min; $i <= $max; $i++) { 
 				?>
