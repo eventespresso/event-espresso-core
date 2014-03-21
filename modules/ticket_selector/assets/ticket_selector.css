@@ -108,6 +108,13 @@
 	font-weight: bold;
 	color: #E53248;
 }
+.tkt-slctr-tbl td .ticket-required-pg {
+	font-size: .85em;
+	font-weight: bold;
+	color: #d54e21;
+	line-height: 1em;
+	margin: 0;
+}
 
 .tckt-slctr-cal-img {
 	display: inline-block;
