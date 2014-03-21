@@ -2,7 +2,7 @@
 
 	<h2 id="spco-payment_options-hdr" class="spco-step-title-hdr">
 		<?php echo sprintf( __('%s Payment Options', 'event_espresso'), $step_nmbr ); ?>
-		<a id="spco-edit-payment_options-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="payment_options"><?php _e('edit', 'event_espresso'); ?></a>
+		<a id="spco-edit-payment_options-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="payment_options"><?php apply_filters( 'FHEE__registration_page_payment_options__edit_link_text', __( 'edit', 'event_espresso' )); ?></a>
 	</h2>
 
 	<div id="spco-payment_options-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
@@ -15,8 +15,8 @@
 			<input type="hidden" id="spco-reg_url_link" name="e_reg_url_link" value="<?php echo $reg_url_link;?>" />
 			<input type="hidden" id="spco-revisit" name="revisit" value="<?php echo $revisit;?>" />
 
-<?php
-		if ( $sold_out_events != '' ) { ?>
+	<?php if ( $sold_out_events != '' ) { ?>
+	
 			<br/><span class="ee-status sold-out"><?php _e('Sold Out', 'event_espresso');?></span><br/><br/>
 			<ul id="spco-sold-out-events-ul"><?php echo $sold_out_events; ?></ul>
 			<h6 class="pink-text"><?php _e("We're Sorry", 'event_espresso');?></h6>
@@ -24,13 +24,11 @@
 				<?php echo $sold_out_events_msg; ?>				
 			</p>
 			
-			
-			
 			<input id="reg-page-selected-gateway" type="hidden" value="payments_closed" name="selected_gateway">
 			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
 
-<?php
-		} else if ( $events_requiring_pre_approval != '' ) { ?>
+	<?php } else if ( $events_requiring_pre_approval != '' ) { ?>
+	
 			<h4 class="orange-text"><?php _e('Important Notice:', 'event_espresso');?></h4>
 			<p id="events-requiring-pre-approval-pg" class="small-text drk-grey-text">
 				<?php echo $events_requiring_pre_approval_msg; ?>				
@@ -74,29 +72,81 @@
 			<span class="drk-grey-text"><?php _e('Billable Registrations:', 'event_espresso'); ?></span> <?php echo $total_items;?>
 		</h4>
 
-<?php	if ( $sub_total != $grand_total ) { ?>
-		<div class="reg-page-totals-spn">
-			<span class="lt-grey-text"><?php echo __('Sub Total: ', 'event_espresso');?></span>
-			<span class="reg-page-total-spn"><?php echo$sub_total;?></span>
-		</div>
-<?php	} ?>
-<?php 	if ( $taxes ) {
+		<div class="spco-payment-info-dv">
+			<table>
+				<tr>
+					<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
+					<th scope="col" width="5%" class="jst-cntr"><?php _e('Qty', 'event_espresso');?></th>
+					<th scope="col" width="15%" class="jst-cntr"><?php _e('Price', 'event_espresso');?></th>
+					<th scope="col" width="15%" class="jst-cntr"><?php _e('Total', 'event_espresso');?></th>
+				</tr>	
+<?php 	
+		$prev_ticket = NULL;
+		foreach ( $event_queue['items'] as $line_item => $item ) { 
+			if ( $item['ticket'] instanceof EE_Ticket && $prev_ticket != $item['ticket']->ID() ) {
+?>
+				<tr>
+					<td>
+					<?php 
+						echo $item['ticket']->name(); 
+						echo $item['ticket']->description() ? '<br/>' . $item['ticket']->description() : ''; 
+					?>							
+					</td>
+					<td class="jst-rght"><?php echo $ticket_count[ $item['ticket']->ID() ];?></td>
+					<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price() );?></td>
+					<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ] );?></td>
+				</tr>
+<?php	
+				$prev_ticket = $item['ticket']->ID();
+			}
+		}
+		if ( $sub_total != ( $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ] )) { 
+?>
+				<tr class="reg-page-totals-spn">
+					<td class="jst-rght"><?php echo __('Sub Total: ', 'event_espresso');?></td>
+					<td colspan="3" class="jst-rght"><?php echo EEH_Template::format_currency( $sub_total );?></td>
+				</tr>
+<?php	
+		}
+		if ( $taxes ) {
 			foreach ( $taxes as $tax ){
 				if( (float)$tax->total() > 0 ) {
 ?>
-		<div class="reg-page-totals-spn">
-			<span class="lt-grey-text"><?php echo $tax->percent() . '% ' . $tax->name();?></span>
-			<span class="reg-page-total-spn"><?php echo EEH_Template::format_currency( $tax->total() );?></span>
-		</div>
-
+				<tr class="reg-page-totals-spn">
+					<td class="jst-rght"><?php echo $tax->percent() . '% ' . $tax->name();?></td>
+					<td colspan="3" class="jst-rght"><?php echo EEH_Template::format_currency( $tax->total() );?></td>
+				</tr>
 <?php
 				}
 			}
 		}
+		if ( $payments ) {
+			foreach ( $payments as $payment ){
+				if ( $payment instanceof EE_Payment ) {
 ?>
-		<div id="reg-page-grand-total-dv" class="reg-page-totals-spn">
-			<span class="drk-grey-text"><?php echo __('Total Amount Due: ', 'event_espresso');?></span>
-			<span class="reg-page-total-spn"><?php echo $grand_total;?></span>
+				<tr class="reg-page-totals-spn">
+					<td class="jst-rght"><?php echo __('Payment: ', 'event_espresso') . date_i18n( $pay_date_frmt, (int)$payment->timestamp() ); ?></td>
+					<td colspan="3" class="jst-rght"><?php echo EEH_Template::format_currency( $payment->amount() );?></td>
+				</tr>
+<?php
+				}
+			}
+		}
+		if ( $grand_total != $amount_owing ) { 
+?>
+				<tr class="reg-page-totals-spn">
+					<td class="jst-rght"><?php echo __('Grand Total: ', 'event_espresso');?></td>
+					<td colspan="3" class="jst-rght"><?php echo EEH_Template::format_currency( $grand_total );?></td>
+				</tr>
+<?php	
+		}
+?>
+				<tr id="reg-page-grand-total-dv" class="reg-page-totals-spn">
+					<td class="jst-rght"><?php echo __('Total Amount Due: ', 'event_espresso');?></td>
+					<td colspan="3" class="jst-rght"><?php echo EEH_Template::format_currency( $amount_owing );?></td>
+				</tr>
+		
+			</table>				
 		</div>
 
 		<input id="reg-page-selected-gateway" type="hidden" value="<?php echo $selected_gateway; ?>" name="selected_gateway">
