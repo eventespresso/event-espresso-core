@@ -3,7 +3,7 @@
 <?php if ( !$from_admin ) : ?>
 <h2 id="spco-attendee_information-hdr" class="spco-step-title-hdr">
 	<?php echo sprintf( __('%s Attendee Information', 'event_espresso'), $step_nmbr ); ?>
-	<a id="spco-edit-attendee_information-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="attendee_information"><?php _e('edit', 'event_espresso'); ?></a>
+	<a id="spco-edit-attendee_information-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="attendee_information"><?php apply_filters( 'FHEE__registration_page_attendee_information__edit_link_text', __( 'edit', 'event_espresso' )); ?></a>
 </h2>
 <?php endif; ?>
 <?php do_action( 'AHEE__registration_page_registration_questions__template__after_spco_attendee_information_header' )?>
@@ -65,7 +65,7 @@ if ( $event_queue['total_items'] > 0 ) {
 						?>							
 						</td>
 						<td class="jst-cntr"><?php echo $ticket_count[ $item['ticket']->ID() ];?></td>
-						<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price(), FALSE, FALSE );?></td>
+						<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price() );?></td>
 						<td class="jst-rght"><?php echo EEH_Template::format_currency( $item['ticket']->price() * $ticket_count[ $item['ticket']->ID() ] );?></td>
 					</tr>
 				</table>				
