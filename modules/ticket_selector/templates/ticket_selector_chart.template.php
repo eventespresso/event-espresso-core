@@ -3,7 +3,7 @@
 		<thead>
 			<tr>
 				<th scope="col" width=""><?php _e( 'Available Tickets', 'event_espresso' ); ?></th>
-				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_column', TRUE )) { ?>
+				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
 				<th scope="col" width="22.5%"><?php _e( 'Price', 'event_espresso' ); ?> </th>
 				<?php } ?>
 				<th scope="col" width="12.5%" class="cntr"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
@@ -107,7 +107,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 //echo '<br/><b> $ticket->uses() : ' .  $ticket->uses() . '</b>';
 				?>
 				</td>
-				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_column', TRUE )) { ?>
+				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
 				<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?> <span class="smaller-text no-bold"><?php
 					echo $ticket_bundle ? __( ' / bundle', 'event_espresso' ) : __( ' / ticket', 'event_espresso' );?></span> &nbsp;
 				</td>
@@ -183,7 +183,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						
 						<h3><?php _e( 'Ticket Details', 'event_espresso' ); ?></h3>
 						<p><?php echo $ticket->description(); ?></p>
-							
+						
+						<?php if ( $ticket_price != 0 && apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) : ?>
 						<h5><?php _e( 'Ticket Price Breakdown', 'event_espresso' ); ?></h5>
 						<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
 							<table class="tckt-slctr-tkt-details-tbl">
@@ -251,6 +252,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 							</table>
 						</div>
 						<br/>
+						<?php endif; ?>
 							
 						<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
 						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
