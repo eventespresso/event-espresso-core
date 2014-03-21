@@ -347,8 +347,8 @@
 						/*@var $ee_term EE_Term */
 						$catcode = $ee_term->ID();
 						
-						$bg = $ee_term->get_extra_meta( 'background_color', $calendar_config->display->event_background );
-						$fontcolor =$ee_term->get_extra_meta( 'text_color', $calendar_config->display->event_text_color );
+						$bg = $ee_term->get_extra_meta( 'background_color',true, $calendar_config->display->event_background );
+						$fontcolor =$ee_term->get_extra_meta( 'text_color',true, $calendar_config->display->event_text_color );
 						$use_bg =$ee_term->get_extra_meta( 'use_color_picker', true );
 			
 						if($use_bg ) {
@@ -583,11 +583,13 @@
 			//Get details about the category of the event
 			if ( ! $config->display->disable_categories) {
 //				echo "using cateogires!";
-				$primary_cat = $event->first_event_category();
+				 $categories= $event->get_all_event_categories();
+				 
 				//any term_taxonmies set for this event?
 //				d($primary_cat);
-				if ( $primary_cat ) {
+				if ( $categories ) {
 //					d($primary_cat->get_extra_meta('use_color_picker',true,false));
+					$primary_cat = reset($categories);
 					if($primary_cat->get_extra_meta('use_color_picker',true,false)){
 						$calendar_datetime->set_color($primary_cat->get_extra_meta('background_color',true,null));
 						$calendar_datetime->set_textColor($primary_cat->get_extra_meta('text_color',true,null));
@@ -595,8 +597,8 @@
 					$calendar_datetime->set_eventType($primary_cat->slug());
 //					d($calendar_datetime);
 					if ( $config->display->enable_cat_classes ) {
-						foreach ( $event->term_taxonomies() as $term_taxonomy ) {
-							$calendar_datetime->add_classname($term_taxonomy->taxonomy());
+						foreach ( $categories as $category ) {
+							$calendar_datetime->add_classname($category->slug());
 						}				
 					} else {
 						$calendar_datetime->add_classname($primary_cat->slug());
