@@ -273,13 +273,23 @@ class EE_Data_Migration_Manager{
 	 * @throws EE_Error
 	 */
 	public function script_migrates_to_version($migration_script_name){
-		preg_match('~EE_DMS_(.*)_([0-9]*)_([0-9]*)_([0-9]*)~',$migration_script_name,$matches);
-			if( ! $matches || ! (isset($matches[1]) && isset($matches[2]) && isset($matches[3]))){
+		$dms_info = $this->parse_dms_classname($migration_script_name);
+		return array($dms_info['slug'], $dms_info['major_version'].".".$dms_info['minor_version'].".".$dms_info['micro_version']);
+	}
+	
+	/**
+	 * Gets the juicy details out of a dms filename like 'EE_DMS_Core_4_1_0'
+	 * @param string $filename
+	 * @return array with keys 'slug','major_version','minor_version', and 'micro_version' (the last 3 are ints)
+	 * @throws EE_Error
+	 */
+	public function parse_dms_classname($filename){
+		$matches = array();
+		preg_match('~EE_DMS_(.*)_([0-9]*)_([0-9]*)_([0-9]*)~',$filename,$matches);
+		if( ! $matches || ! (isset($matches[1]) && isset($matches[2]) && isset($matches[3]))){
 				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w is either 'Core' or the slug of an addon and x, y and z are numbers, ", "event_espresso"),$migration_script_name));
-			}
-		$plugin_slug = $matches[1];
-		$version =   $matches[2].".".$matches[3].".".$matches[4]; 
-		return array($plugin_slug,$version);
+		}
+		return array('slug'=>$matches[1],'major_version'=>intval($matches[2]),'minor_version'=>intval($matches[3]),'micro_version'=>intval($matches[4]));
 	}
 	/**
 	 * Ensures that the option indicating the current DB version is set. This should only be 
@@ -697,5 +707,33 @@ class EE_Data_Migration_Manager{
 		}
 		$class->instantiate_from_array_of_properties($properties_array);
 		return $class;
+	}
+	
+	/**
+	 * Gets the classname for the most up-to-date DMS (ie, the one that will finally
+	 * leave teh DB in a state usable by the current plugin code).
+	 * @return string
+	 */
+	public function get_most_up_to_date_dms(){
+		$class_to_filepath_map = $this->get_all_data_migration_scripts_available();
+		$most_up_to_date_dms_classname = NULL;
+		foreach($class_to_filepath_map as $classname => $filepath){
+			if($most_up_to_date_dms_classname === NULL){
+				list($plugin_slug,$version_string) = $this->script_migrates_to_version($classname);
+//				$details = $this->parse_dms_classname($classname);
+				if($plugin_slug == 'Core'){//if it's for core, it wins
+					$most_up_to_date_dms_classname = $classname;
+				}//if it wasn't for core, we must keep searching for one that is!
+				continue;
+			}else{
+				list($champion_slug,$champion_version) = $this->script_migrates_to_version($most_up_to_date_dms_classname);
+				list($contender_slug,$contender_version) = $this->script_migrates_to_version($classname);
+				if($contender_slug == 'Core' && version_compare($champion_version, $contender_version, '<')){
+					//so the contenders version is higher and its for Core
+					$most_up_to_date_dms_classname = $classname;
+				}
+			}
+		}
+		return $most_up_to_date_dms_classname;
 	}
 }
