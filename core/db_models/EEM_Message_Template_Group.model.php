@@ -86,7 +86,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 * @return array   message template objects that are attached to a specific event.
 	 */
 	public function get_all_trashed_message_templates_by_event($EVT_ID, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE) {
-		$query_params = array( array('EVT_ID' => $EVT_ID), 'order_by' => array($orderby => $order), 'limit' => $limit );
+		$query_params = array( array('Event.EVT_ID' => $EVT_ID), 'order_by' => array($orderby => $order), 'limit' => $limit );
 		return $count ? $this->count_deleted( $query_params, 'GRP_ID', TRUE ) : $this->get_all_deleted( $query_params );
 	}
 
@@ -204,6 +204,19 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 
 
 
+	/**
+	 * This gets all the custom templates attached to a specific event
+	 * @param  int      $EVT_ID       	event id
+	 * @param  array  $query_params same as EEM_Base::get_all()
+	 * @return  EE_Message_Template_Group[]
+	 */
+	public function get_all_custom_templates_by_event( $EVT_ID, $query_params = array() ) {
+		$_where = array( 'Event.EVT_ID' => $EVT_ID );
+		return $this->get_all( array( $_where ) );
+	}
+
+
+
 
 	/**
 	 * get_all_trashed_grouped_message_templates
@@ -241,7 +254,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 		$_where = array(
 			'MTP_messenger' => $messenger,
 			'MTP_message_type' => $message_type,
-			'EVT_ID' => $evt_id,
+			'Event.EVT_ID' => $evt_id,
 			'MTP_is_global' => TRUE,
 			'MTP_is_active' => $active
 			);
@@ -279,6 +292,26 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 		$query_params = array( $_where, 'order_by' => array( $orderby => $order ), 'limit' => $limit );
 
 		return $count ? $this->count( $query_params, 'GRP_ID', TRUE ) : $this->get_all( $query_params );
+	}
+
+
+
+
+	/**
+	 * get all custom message template groups for the given messenger and message type
+	 * @param  string $messenger    messenger
+	 * @param  string $message_type messagetype
+	 * @param  array  $query_params same as EEM_Base->get_all()
+	 * @return EE_Message_Template_Group[]
+	 */
+	public function get_custom_message_template_by_m_and_mt( $messenger, $message_type, $query_params = array() ) {
+		$_where = array(
+			'MTP_is_global' => FALSE,
+			'MTP_messenger' => $messenger,
+			'MTP_message_type' => $message_type
+			);
+
+		return $this->get_all( array( $_where ) );
 	}
 
 
