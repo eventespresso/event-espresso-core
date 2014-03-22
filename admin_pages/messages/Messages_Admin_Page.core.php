@@ -181,7 +181,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'preview_message' => '_preview_message',
 				'insert_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => TRUE ), 'noheader' => TRUE ),
 				'update_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE ), 'noheader' => TRUE ),
-				'force_switch_template' => array( 'func' => '_check_template_switch', 'args' => array('force' => TRUE ), 'noheader' => TRUE ),
 				'trash_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE, 'all' => TRUE ), 'noheader' => TRUE ),
 				'trash_message_template_context' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE ), 'noheader' => TRUE ),
 				'restore_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE, 'all' => TRUE ), 'noheader' => TRUE ),
@@ -265,9 +264,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array(),
 				'require_nonce' => FALSE
 			),
-			'force_switch_template' => array(
-				'require_nonce' => FALSE
-				),
 			'add_new_message_template' => array(
 				'nav' => array(
 					'label' => __('Add New Message Templates', 'event_espresso'),
@@ -768,7 +764,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$edit_message_template_form_url = add_query_arg( array( 'action' => $action, 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 		} else {
 			$action = 'update_message_template';
-			$button_both = !defined( 'DOING_AJAX' ) ? TRUE : FALSE;
+			$button_both = TRUE;
 			$button_text = array();
 			$button_actions = array();
 			$referrer = $this->_admin_base_url;
@@ -780,7 +776,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 		//Do we have any validation errors?
-		$validators = defined('DOING_AJAX') ? $this->_get_transient(FALSE, 'edit_message_template') : $this->_get_transient();
+		$validators = $this->_get_transient();
 		$v_fields = !empty($validators) ? array_keys($validators) : array();
 
 
@@ -847,16 +843,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 							$template_form_fields[$field_id]['db-col'] = 'MTP_content';
 
-							//if doing ajax and the extra field input type is wp_editor, let's change back to text area and also change class.
 							if ( isset( $extra_array['input'] ) && $extra_array['input'] == 'wp_editor' ) {
-
-								if ( defined('DOING_AJAX') ) {
-									$template_form_fields[$field_id]['input'] = 'textarea';
-									$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array($extra_field, $v_fields) && ( is_array($validators[$extra_field] ) && isset( $validators[$extra_field]['msg'] ) ) ? 'large-text validate-error' : 'large-text';
-									$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
-								}
-
-								//with or without ajax we want to decode the entities
+								//we want to decode the entities
 								$template_form_fields[$field_id]['value'] = stripslashes( html_entity_decode( $template_form_fields[$field_id]['value'], ENT_QUOTES, "UTF-8") );
 
 							}/**/
@@ -905,15 +893,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$css_class = isset($field_setup_array['css_class']) ? $field_setup_array['css_class'] : '';
 					$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) && isset( $validators[$template_field]['msg'] ) ? 'validate-error ' . $css_class : $css_class;
 
-					//if doing ajax and the extra field input type is wp_editor, let's change to text area and also change class.
 					if ( isset( $field_setup_array['input'] ) && $field_setup_array['input'] == 'wp_editor' ) {
-						if ( defined('DOING_AJAX') ) {
-							$template_form_fields[$field_id]['input'] = 'textarea';
-							$template_form_fields[$field_id]['css_class'] = !empty( $v_fields ) && in_array( $template_field, $v_fields ) ? 'large-text validate-error' : 'large-text';
-							$template_form_fields[$field_id]['label'] = $extra_array['label'] . '&nbsp;' . __('(Basic HTML tags allowed)', 'event_espresso');
-						}
-
-						//with or without ajax we want to decode the entities
+						//we want to decode the entities
 						$template_form_fields[$field_id]['value'] = $template_form_fields[$field_id]['value'];
 					}/**/
 				}
@@ -1111,9 +1092,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['publish_box_extra_content'] = $sidebar_fields;
 		$this->_set_publish_post_box_vars( 'id', $GRP_ID );
 
-		if ( defined('DOING_AJAX') )
-			$this->_set_save_buttons($button_both, $button_text, $button_actions, $referrer);
-
 		//add preview button
 		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
 		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
@@ -1128,18 +1106,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			'extra' => $preview_button
 		);
 		$this->_set_context_switcher($message_template_group, $context_switcher_args);
-
-		//sidebar box
-		if ( defined( 'DOING_AJAX' ) ) {
-			$cancel_button = isset( $this->_req_data['route'] ) && $this->_req_data['route'] == 'add_new_message_template' ? '' : '<button class="button-secondary" id="msg-popup-cancel-button">' . __('Cancel', 'event_espresso') . '</button>';
-			$this->_template_args['sidebar_content'] = $sidebar_fields . '<div class="submitbox" id="submitpost"><div class="publishing-action">' . $this->_template_args['save_buttons'] . $cancel_button . '</div></div>';
-			$this->_template_args['sidebar_description'] = '';
-			$this->_template_args['sidebar_title'] = '';
-			$sidebar_title = __('Other Details', 'event_espresso');
-			$sidebar_action = 'update_message_template_sidebar';
-			/**/
-			$sidebar_template_path = EE_MSG_TEMPLATE_PATH . 'ee_msg_details_sidebar_edit_meta_box.template.php';
-		}
 
 		//main box
 		$this->_template_args['template_fields'] = $template_fields;
@@ -1160,12 +1126,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['MTP'] = $message_template_group;
 
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $this->_template_path, $this->_template_args, TRUE );
-
-		//sidebar metabox (if we are editing and doing_ajax)
-		if ( $this->_template_args['GRP_ID'] && defined('DOING_AJAX') ) {
-			$this->_template_path = $sidebar_template_path;
-				$this->_template_args['admin_page_content'] .= EEH_Template::display_template( $this->_template_path, $this->_template_args, TRUE );
-		}
 
 
 		//finally, let's set the admin_page title
@@ -1636,17 +1596,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 							EE_Error::add_error( $error['msg'], __FILE__, __FUNCTION__, __LINE__ );
 					}
 
-					if ( defined( 'DOING_AJAX' ) ) {
-						//trigger reload of edit message form
-						$new = TRUE;
-						$this->_template_args['data'] = array(
-						'close' => FALSE,
-						'what' => 'clear',
-						'where' => 'dialog'
-						);
-						$this->_template_args['ajax_notices'] = EE_Error::get_notices();
-					}
-
 				} else {
 					foreach ( $this->_req_data['MTP_template_fields'] as $template_field => $content ) {
 						$set_column_values = $this->_set_message_template_column_values($template_field);
@@ -1695,16 +1644,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				}
 			}
 
-		}
-
-		if ( defined('DOING_AJAX') && $new ) {
-			$this->_req_data = array_merge($this->_req_data, $query_args);
-			$this->_req_data['template_switch'] = TRUE;
-			$this->_edit_message_template();
-		}
-
-		if ( defined('DOING_AJAX') ) {
-			$this->_check_template_switch();
 		}
 
 
@@ -1756,28 +1695,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_error( __('The test message was not sent', 'event_espresso' ) );
 		}
 	}
-
-
-
-
-	/**
-	 * This ajax method is called during ajax requests and checks to see if a template switch has been triggered (via edit_event notifications meta box.  If it has then we want to regenerate the switching ui to reflect the change and assign that to the 'admin_page_content' template arg key
-	 *
-	 * @param bool  $force just allows us to skip the normal check for the _req_data['template_switch'] param.
-	 * @return void
-	 */
-	protected function _check_template_switch($force = FALSE) {
-		if ( $force ) $this->_req_data['template_switch'] = TRUE;
-		if ( defined('DOING_AJAX') && isset($this->_req_data['template_switch']) && $this->_req_data['template_switch'] ) {
-			$this->_template_args['admin_page_content'] = $this->_hook_obj->messages_metabox('', array());
-			$this->_template_args['data']['what'] = 'clear';
-			$this->_template_args['data']['where'] = 'main';
-
-			if ( $force )
-				$this->_return_json();
-		}
-	}
-
 
 
 
@@ -1853,10 +1770,6 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$item_desc = $all ? _n('Message Template Group', 'Message Template Groups', $success, 'event_espresso') : _n('Message Template Context', 'Message Template Contexts', $success, 'event_espresso');
 
 		$item_desc = !empty( $this->_req_data['template_switch'] ) ? _n('template', 'templates', $success, 'event_espresso') : $item_desc;
-
-		if ( defined('DOING_AJAX') ) {
-			$this->_check_template_switch();
-		}
 
 		$this->_redirect_after_action( $success, $item_desc, $action_desc, array() );
 
