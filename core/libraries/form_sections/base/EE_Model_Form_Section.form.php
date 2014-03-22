@@ -28,6 +28,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	public function __construct($options_array = array()){
 		if(isset($options_array['model']) && $options_array['model'] instanceof EEM_Base){
 			$this->_model = $options_array['model'];
+			$this->_name = str_replace("EEM_","",get_class($options_array['model']));
 		}
 		if( ! $this->_model || ! $this->_model instanceof EEM_Base ){
 			throw new EE_Error(sprintf(__("Model Form Sections must first specify the _model property to be a subcalss of EEM_Base", "event_espresso")));
@@ -80,17 +81,17 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					break;
 				case 'EE_Foreign_Key_Int_Field':
 				case 'EE_Foreign_Key_String_Field':
-					$models_pointed_to = $model_field->get_model_name_pointed_to();
-					if(is_array($models_pointed_to)){
-						$input_class = 'EE_Text_Field';
+					$models_pointed_to = $model_field->get_model_class_names_pointed_to();
+					if(true || is_array($models_pointed_to) && count($models_pointed_to) > 1){
+						$input_class = 'EE_Text_Input';
 					}else{
 						if($model_field->is_nullable()){
 							$model_names = array(0=>  __("Please Select", 'event_espresso'));
 						}
 						//so its just one model
-						$model = $models_pointed_to;
-						$model = 'EEM_'.$model;
-						$model_names = array_merge($model_names,$model::instance()->get_all_names(array('limit'=>10)));
+						$model_name = is_array($models_pointed_to) ? reset($models_pointed_to) : $models_pointed_to;
+						$model = EE_Registry::instance()->load_model($model_name);
+						$model_names = $model->get_all_names(array('limit'=>10));
 						$input_constructor_args[1] = $input_constructor_args[0];
 						$input_constructor_args[0] = $model_names;
 						$input_class = 'EE_Select_Input';

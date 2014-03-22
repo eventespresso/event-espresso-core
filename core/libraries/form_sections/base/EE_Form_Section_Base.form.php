@@ -202,5 +202,15 @@ abstract class EE_Form_Section_Base{
 		}
 		return isset($array_of_parent[$this->name()]) ? $array_of_parent[$this->name()] : null;
 	}
-	
+	/**
+	 * Checks if this form section's data is present in the req data specified
+	 * @param array $req_data usually $_POST, if null that's what's used
+	 * @return boolean
+	 */
+	public function form_data_present_in($req_data = NULL){
+		if($req_data === NULL){
+			$req_data = $_POST;
+		}
+		return $this->find_form_data_for_this_section($req_data) !== NULL;
+	}
 }
