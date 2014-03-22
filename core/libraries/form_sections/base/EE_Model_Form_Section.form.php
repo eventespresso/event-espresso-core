@@ -28,6 +28,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	public function __construct($options_array = array()){
 		if(isset($options_array['model']) && $options_array['model'] instanceof EEM_Base){
 			$this->_model = $options_array['model'];
+			$this->_name = str_replace("EEM_","",get_class($options_array['model']));
 		}
 		if( ! $this->_model || ! $this->_model instanceof EEM_Base ){
 			throw new EE_Error(sprintf(__("Model Form Sections must first specify the _model property to be a subcalss of EEM_Base", "event_espresso")));
@@ -81,11 +82,13 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				case 'EE_Foreign_Key_Int_Field':
 				case 'EE_Foreign_Key_String_Field':
 					$models_pointed_to = $model_field->get_model_class_names_pointed_to();
-					if(count($models_pointed_to) > 1){
-						$input_class = 'EE_Text_Field';
+					if(true || is_array($models_pointed_to) && count($models_pointed_to) > 1){
+						$input_class = 'EE_Text_Input';
 					}else{
 						//so its just one model
-						$model = reset($models_pointed_to);
+						$model_name = is_array($models_pointed_to) ? reset($models_pointed_to) : $models_pointed_to;
+						d($model_name);
+						$model = EE_Registry::instance()->load_model($model_name);
 						$model_names = $model->get_all_names(array('limit'=>10));
 						$input_constructor_args[1] = $input_constructor_args[0];
 						$input_class[0] = $model_names;
