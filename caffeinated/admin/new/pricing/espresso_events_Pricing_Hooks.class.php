@@ -596,7 +596,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		$evtobj = $this->_adminpage_obj->get_cpt_model_obj();
 
 		//set is_creating_event property.
-		$this->_is_creating_event = $evtobj->ID() > 0 ? FALSE : TRUE;
+		$evtID = $evtobj->ID();
+		$this->_is_creating_event = absint($evtID) != 0 ? TRUE : FALSE;
 
 		//default main template args
 		$main_template_args = array(
