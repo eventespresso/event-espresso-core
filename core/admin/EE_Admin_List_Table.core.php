@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
@@ -135,7 +135,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	/**
 	 * _ajax_sorting_callback
-	 * callback method used to perform AJAX row reordering 
+	 * callback method used to perform AJAX row reordering
 	 * @var string
 	 */
 	protected $_ajax_sorting_callback = NULL;
@@ -178,7 +178,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	/**
 	 * _nonce_action_ref
 	 * the reference string for the nonce_action
-	 * 
+	 *
 	 * @var string
 	 */
 	protected $_nonce_action_ref;
@@ -193,12 +193,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @var array
 	 */
 	protected $_req_data;
-	
+
 
 
 	// yes / no array for admin form fields
-	protected $_yes_no = array();	
-	
+	protected $_yes_no = array();
+
 	/**
 	 * Array describing buttons that should appear at teh bottom of the page
 	 * Keys are strings that represent the button's function (specifically a key in _labels['buttons']), and the values are another array with the following keys
@@ -225,7 +225,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 		$this->_yes_no = array(  __('No', 'event_espresso'), __('Yes', 'event_espresso'));
 
 		$this->_per_page = $this->get_items_per_page( $this->_screen . '_per_page', 10 );
-		
+
 		$this->_setup_data();
 		$this->_add_view_counts();
 
@@ -242,7 +242,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 
 	/**
 	 * _setup_data
-	 * this method is used to setup the $_data, $_all_data_count, and _per_page properties 
+	 * this method is used to setup the $_data, $_all_data_count, and _per_page properties
 	 * @uses $this->_admin_page
 	 * @return void
 	 */
@@ -260,21 +260,21 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * _hidden_columns = columns that are hidden (array)
 	 * _default_orderby = the default orderby for sorting.
 	 *
-	 * 
+	 *
 	 * @abstract
 	 * @access protected
 	 * @return void
 	 */
 	abstract protected function _set_properties();
 
-	
+
 
 
 
 	/**
 	 * _get_table_filters
 	 * We use this to assemble and return any filters that are associated with this table that help further refine what get's shown in the table.
-	 * 
+	 *
 	 * @abstract
 	 * @access protected
 	 * @return html string
@@ -307,14 +307,17 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * @return html string
 	 */
 	protected function _get_hidden_fields() {
+		$action = isset( $this->_req_data['route'] ) ? $this->_req_data['route'] : '';
+		$action = empty( $action ) && isset( $this->_req_data['action'] ) ? $this->_req_data['action'] : $action;
 		$field = '<input type="hidden" name="page" value="' . $this->_req_data['page'] . '" />' . "\n";
+		$field .= '<input type="hidden" name="route" value="'. $action .'" />' . "\n";/**/
 		$field .= '<input type="hidden" name="perpage" value="' . $this->_per_page . '" />' . "\n";
-		
+
 		$bulk_actions = $this->_get_bulk_actions();
 		foreach ( $bulk_actions as $bulk_action => $label ) {
 			$field .= '<input type="hidden" name="' . $bulk_action . '_nonce" value="' . wp_create_nonce  ( $bulk_action . '_nonce' ) . '" />' . "\n";
 		}
-		
+
 		return $field;
 	}
 
@@ -325,7 +328,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	 * we're using this to set the column headers property.
 	 *
 	 * @access protected
-	 * @return void 
+	 * @return void
 	 */
 	protected function _set_column_info() {
 		$columns = $this->get_columns();
@@ -388,7 +391,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	private function _filters() {
 		$classname = get_class($this);
 		$filters = apply_filters( "FHEE__{$classname}__filters", (array) $this->_get_table_filters(), $this );
-		
+
 		if ( empty($filters) )
 			return;
 
@@ -449,7 +452,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 			$count = isset($view['count'] ) && !empty($view['count']) ? absint( $view['count'] )  : 0;
 			$views[ $view['slug'] ] = "\t<li class='" . $view['class'] . "'>" . '<a href="' . $view['url'] . '">' . $view['label'] . '</a> <span class="count">(' . $count . ')</span>';
 		}
-		
+
 		echo implode( " |</li>\n", $views ) . "</li>\n";
 		echo "</ul>";
 	}
