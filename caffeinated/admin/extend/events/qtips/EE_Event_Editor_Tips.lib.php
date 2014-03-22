@@ -15,7 +15,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  *
  * ------------------------------------------------------------------------
  *
- * EE_Event_Editor_Tips	
+ * EE_Event_Editor_Tips
  *
  * Qtip config for the event editor.
  *
@@ -146,7 +146,19 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config {
 						)
 					)
 				),
-
+			12 => array(
+				'content_id' => 'sortable-drag-handle-tip',
+				'target' => '.sortable-drag-handle',
+				'content' => __('You can click and drag this element', 'event_espresso'),
+				'options' => array(
+					'position' => array(
+						'adjust' => array(
+							'mouse' => false,
+							'y' => 5
+							)
+						)
+					)
+				)
 			);
 	}
 
