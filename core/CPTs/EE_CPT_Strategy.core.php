@@ -33,22 +33,28 @@ class EE_CPT_Strategy extends EE_BASE {
 
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
-	 *	@var 	array	
-	 * 	@access 	protected
+	 *@var 	array	
+	 * @access 	protected
 	 */
 	protected $CPT = NULL;
 
 	/**
-	 * 	@var 	array 	$_CPTs
-	 *  @access 	protected
+	 * @var 	array 	$_CPTs
+	 * @access 	protected
 	 */
 	protected $_CPTs = array();
 
 	/**
-	 * 	@var 	array 	$_CPT_endpoints
-	 *  @access 	protected
+	 * @var 	array 	$_CPT_endpoints
+	 * @access 	protected
 	 */
 	protected $_CPT_endpoints = array();
+
+	/**
+	 * @var 	array 	$_CPT_taxonomies
+	 * @access 	protected
+	 */
+	protected $_CPT_taxonomies = array();
 
 	/**
 	 * $CPT_model
@@ -84,6 +90,10 @@ class EE_CPT_Strategy extends EE_BASE {
 		// get CPT data
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
+		$this->_CPT_taxonomies = EE_Register_CPTs::get_taxonomies();
+//		d( $this->_CPTs );
+//		d( $this->_CPT_endpoints );
+//		d( $this->_CPT_taxonomies );
 		// load EE_Request_Handler
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
 	}
@@ -153,7 +163,35 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function pre_get_posts( $WP_Query ) {
 		// check that postz-type is set
-		if ( $WP_Query instanceof WP_Query && isset( $WP_Query->query_vars['post_type'] )) {
+		if ( ! $WP_Query instanceof WP_Query ) {
+			return;
+		}
+
+		// grab queried object 
+		if ( $WP_Query->get_queried_object() instanceof stdClass ) {
+			// check if it has a taxonomy property set for it and if THAT taxonomy is one of ours
+			if ( isset( $WP_Query->get_queried_object()->taxonomy ) && isset( $this->_CPT_taxonomies[ $WP_Query->get_queried_object()->taxonomy ] )) {
+				// this category belongs to us
+				$CPT_taxonomy = $WP_Query->get_queried_object()->taxonomy;
+				// but which one??? hmmm... guess we gotta go looping
+				foreach ( $this->_CPTs as $post_type => $CPT ) {
+					// verify our CPT has args, is public and has taxonomies set
+					if ( isset( $CPT['args'] ) && $CPT['args']['public'] && ! empty( $CPT['args']['taxonomies'] )) {
+						// does the captured taxonomy belong to this CPT ?
+						if ( in_array( $CPT_taxonomy, $CPT['args']['taxonomies'] )) {
+							// if so, then add this CPT post_type to the current query's array of post_types'
+							$WP_Query->query_vars['post_type'][] = $post_type;
+						}						
+					}
+				}
+			}
+		}
+
+//		d( $this->_CPTs );
+//		d( $CPT_taxonomy );
+//		d( $WP_Query );
+
+		if ( isset( $WP_Query->query_vars['post_type'] )) {
 			// loop thru post_types as array
 			foreach ( (array)$WP_Query->query_vars['post_type'] as $post_type ) {
 				// is current query for an EE CPT ?
@@ -161,7 +199,7 @@ class EE_CPT_Strategy extends EE_BASE {
 					// is EE on or off ?
 					if ( EE_Maintenance_Mode::instance()->level() ) {
 						// reroute CPT template view to maintenance_mode.template.php
-						if( ! has_filter('template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
+						if( ! has_filter( 'template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
 							add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
 						}
 						return;
@@ -170,14 +208,14 @@ class EE_CPT_Strategy extends EE_BASE {
 					$this->CPT = $this->_CPTs[ $post_type ];
 					// set post type
 					$this->CPT['post_type'] = $post_type;
-		//			echo '<h4>post_type : ' . $this->CPT['post_type'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//					echo '<h4>post_type : ' . $this->CPT['post_type'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 					// the post or category or term that is triggering EE
 					$this->CPT['espresso_page'] = EE_Registry::instance()->REQ->is_espresso_page();
 					// requested post name
 					$this->CPT['post_name'] = EE_Registry::instance()->REQ->get( 'post_name' );
 		//			d( $this->CPT );
 					// add support for viewing 'private', 'draft', or 'pending' posts
-					if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {			
+					if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {
 						// we can just inject directly into the WP_Query object
 						$WP_Query->query['post_status'] = array( 'publish', 'private', 'draft', 'pending' );
 						// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)

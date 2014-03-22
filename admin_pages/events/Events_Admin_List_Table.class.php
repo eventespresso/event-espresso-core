@@ -107,7 +107,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$regs = $item->count_related('Registration');
         return $regs > 0 && $this->_view == 'trash' ? '<span class="ee-lock-icon"></span>' : sprintf(
             '<input type="checkbox" name="EVT_IDs[]" value="%s" />', $item->ID()
-        );    
+        );
     }
 
 
@@ -174,10 +174,10 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			'attendees' => '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>',
 			'export' => '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>'
 			);
-			
+
 		switch ( $item->get( 'status' ) ) {
 			case 'trash' :
-					$actions['restore from trash'] = '<a href="' . $restore_event_link . '" title="' . __('Restore from Trash', 'event_espresso') . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
+					$actions['restore_from_trash'] = '<a href="' . $restore_event_link . '" title="' . __('Restore from Trash', 'event_espresso') . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
 					if ( $item->count_related('Registration') === 0 )
 						$actions['delete permanently'] = '<a href="' . $delete_event_link . '" title="' . __('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 				break;
@@ -193,11 +193,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	}
 
 
-	
 
 
 
-	
+
+
 	public function column_venue($item) {
 		$venue = $item->get_first_related( 'Venue' );
 		return !empty( $venue ) ? $venue->name() : '';
@@ -238,8 +238,8 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 				'action' => 'default',
 				'event_id' => $item->ID()
 			);
-		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );	
-		$registered_attendees = EEM_Registration::instance()->get_event_registration_count( $item->ID() ); 
+		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
+		$registered_attendees = EEM_Registration::instance()->get_event_registration_count( $item->ID() );
 		return '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>';
 	}
 
@@ -283,7 +283,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		$content = '<div style="width:100%;">' . "\n\t";
 		$content .= implode( "\n\t", $actionlinks );
 		//todo: we need to put back in a email attendees link via the new messages system
-		$content .= "\n" . '</div>' . "\n";	
+		$content .= "\n" . '</div>' . "\n";
 		return $content;
 	}
 
