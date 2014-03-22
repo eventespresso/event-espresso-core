@@ -352,7 +352,7 @@
 
 /* Price */
 .ticket-table tbody .ticket-row td:nth-child(5) {
-    width: 10%;
+    width: 5%;
 }
 
     .ticket-table tbody .ticket-row td:nth-child(5) input {
@@ -373,7 +373,8 @@
 
 /* Actions */
 .ticket-table tbody .ticket-row td:nth-child(9) {
-    width: 15%;
+    width: 20%;
+    min-width: 120px;
 }
 
 
@@ -629,7 +630,7 @@
 }
 
 .ticket-fieldset .ee-price-create-button {
-    margin-top: 20px;
+    margin-top: 10px;
     float:right;
 }
 
