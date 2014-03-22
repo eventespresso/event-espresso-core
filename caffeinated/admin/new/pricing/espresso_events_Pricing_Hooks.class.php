@@ -954,7 +954,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? TRUE : FALSE
 			);
 
-	$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks__get_ticket_price_row__template_args', $template_args, $tktrow, $prcrow, $price, $default, $ticket, $show_trash, $show_create, $this->_is_creating_event );
+	$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_ticket_price_row__template_args', $template_args, $tktrow, $prcrow, $price, $default, $ticket, $show_trash, $show_create, $this->_is_creating_event );
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_price_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
