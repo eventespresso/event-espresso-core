@@ -1,5 +1,5 @@
 (function ( $ ) {
- 
+
 	/**
 	*	add jQuery functions
 	*/
@@ -97,11 +97,33 @@
 				urlParams[ qs[ i ][0] ] = decodeURIComponent( qs[ i ][1] );
 			}
 			return urlParams;
+		},
+
+
+		/**
+		 * Set element visibility to hidden
+		 *
+		 */
+		eeInvisible: function() {
+			return this.each( function() {
+				$(this).css("visibility", "hidden");
+			});
+		},
+
+
+		/**
+		 * Set element visibility to visible
+		 *
+		 */
+		eeVisible: function() {
+			return this.each( function() {
+				$(this).css("visibility", "visible");
+			});
 		}
 
 
 	});
- 
+
 }( jQuery ));
 
 
@@ -110,8 +132,8 @@ jQuery(document).ready(function($) {
 	$('.show-if-js').css({ 'display' : 'inline-block' });
 	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
 
-	
-	
+
+
 	function display_espresso_notices() {
 		$('#espresso-notices').eeCenter();
 		$('.espresso-notices').slideDown();
@@ -186,8 +208,8 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		return false;
 	});
-		
-	
+
+
 
 	// generic click event for resetting a form input - can be coupled with the "hide_the_displayed" function above
 	$('.cancel').click(function() {
@@ -226,15 +248,15 @@ jQuery(document).ready(function($) {
 function dump(arr,level) {
 	var dumped_text = "";
 	if(!level) level = 0;
-	
+
 	//The padding given at the beginning of the line.
 	var level_padding = "";
 	for(var j=0;j<level+1;j++) level_padding += "    ";
-	
+
 	if(typeof(arr) == 'object') { //Array/Hashes/Objects
 		for(var item in arr) {
 			var value = arr[item];
-			
+
 			if(typeof(value) == 'object') { //If it is an array,
 				dumped_text += level_padding + "'" + item + "' ...\n";
 				dumped_text += dump(value,level+1);

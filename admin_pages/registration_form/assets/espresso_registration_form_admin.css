@@ -1,4 +1,4 @@
-/* 
+/*
     Document   : espresso_registration_forms_admin
     Created on : 29-Jan-2013, 10:30:18 AM
     Author     : mnelson4
@@ -50,4 +50,9 @@ table.question-options-table td:first-child, table.question-options-table td:nth
 
 table.question-options-table td:last-child {
 	width: 10%;
+}
+
+
+.sortable-drag-handle {
+	cursor: move;
 }

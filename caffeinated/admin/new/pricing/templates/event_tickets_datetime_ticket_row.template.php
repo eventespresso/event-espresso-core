@@ -48,11 +48,12 @@
 			<legend></legend>
 			<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_ID]" class="edit-ticket-TKT_ID" value="<?php echo $TKT_ID; ?>">
 			<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_row]" class="edit-ticket-TKT_row" value="<?php echo $tkt_row; ?>">
-			
+
 			<!--<div class="total-price-container"><?php printf( __('Total Final Price: %s', 'event_espresso'), '<span class="ticket-price-amount">' . $TKT_price . '</span>'); ?> </div>-->
 			<textarea name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"><?php echo $TKT_description; ?></textarea>
 			<div class="basic-ticket-container">
 				<h5 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h5>
+				<div style="clear:both"></div>
 				<table class="basic-ticket-info">
 					<thead>
 						<tr valign="bottom">
@@ -90,10 +91,28 @@
 						</tr>
 					</tbody>
 				</table>
-			</div>
-			<button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button" data-ticket-row="<?php echo $tkt_row; ?>"<?php echo $show_price_mod_button; ?>>
+				<button data-context="price-create" class="button-secondary ee-create-button ee-price-create-button" data-ticket-row="<?php echo $tkt_row; ?>"<?php echo $show_price_mod_button; ?>>
 					<?php _e('Add Price Modifier', 'event_espresso'); ?>
-			</button>
+				</button>
+				<div class="ticket-is-required-container">
+					<input type="checkbox" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_required]" class="edit-ticket-TKT_required" value="1"<?php echo $TKT_required ? ' checked="checked"' : ''; ?><?php echo $disabled ? ' disabled' : ''; ?>>
+					<label for="edit-ticket-TKT_required"><?php _e('Should this ticket be required?', 'event_espresso'); ?></label>
+				</div>
+				<div class="ticket-is-taxable-container">
+					<?php if ( !empty($tax_rows) ) { ?>
+						<?php if ( $disabled ) : ?>
+							<?php
+								$tax_value = !empty( $TKT_taxable ) ? 1 : 0;
+							?>
+							<input class="TKT-taxable-checkbox" type="hidden" name="<?php echo $edit_tickets_name;?>[<?php echo $tkt_row; ?>][TKT_taxable]" value="<?php echo $tax_value; ?>">
+							<input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>" type="checkbox" name="archived_ticket[<?php echo $tkt_row; ?>][TKT_taxable]" value="1"<?php echo $TKT_taxable; ?> disabled>
+						<?php else : ?>
+							<input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>" type="checkbox" name="<?php echo $edit_tickets_name;?>[<?php echo $tkt_row; ?>][TKT_taxable]" value="1"<?php echo $TKT_taxable; ?>>
+						<?php endif; ?>
+						<label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php _e('This ticket is taxable.', 'event_espresso'); ?>
+					<?php } //end tax_rows check ?>
+				</div>
+			</div>
 			<div class="price-table-container">
 				<h5 class="tickets-heading price-table-info"<?php echo $show_price_modifier; ?>><?php _e('Price Modifiers', 'event_espresso'); ?></h5>
 				<table class="price-table">
@@ -125,21 +144,7 @@
 						</tr>
 						<?php echo $tax_rows; ?>
 						<tr class="price-total-row">
-							<td>
-								<?php if ( !empty($tax_rows) ) { ?>
-									<?php if ( $disabled ) : ?>
-										<?php 
-											$tax_value = !empty( $TKT_taxable ) ? 1 : 0;
-										?>
-										<input class="TKT-taxable-checkbox" type="hidden" name="<?php echo $edit_tickets_name;?>[<?php echo $tkt_row; ?>][TKT_taxable]" value="<?php echo $tax_value; ?>">
-										<input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>" type="checkbox" name="archived_ticket[<?php echo $tkt_row; ?>][TKT_taxable]" value="1"<?php echo $TKT_taxable; ?> disabled>
-									<?php else : ?>
-										<input class="TKT-taxable-checkbox" id="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>" type="checkbox" name="<?php echo $edit_tickets_name;?>[<?php echo $tkt_row; ?>][TKT_taxable]" value="1"<?php echo $TKT_taxable; ?>>
-									<?php endif; ?>
-									<label for="edit-ticket-TKT_taxable-<?php echo $tkt_row; ?>"> <?php _e('This ticket is taxable.', 'event_espresso'); ?>
-								<?php } //end tax_rows check ?>
-							</td>
-							<td colspan="3" class="ee-numeric">	
+							<td colspan="4" class="ee-numeric">
 								<strong><?php _e('Total', 'event_espresso'); ?></strong>
 							</td>
 							<td class="ee-numeric" >
@@ -161,7 +166,7 @@
 			<div class="save-cancel-button-container">
 				<label for="edit-ticket-TKT_is_default_selector"><?php _e('use this new ticket as a default ticket for any new events', 'event_espresso'); ?></label>
 				<input type="checkbox" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default_selector]" class="edit-ticket-TKT_is_default_selector" value="1"<?php echo $disabled ? ' disabled' : ''; ?>>
-				<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default]" class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>"> 
+				<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_is_default]" class="edit-ticket-TKT_is_default" value="<?php echo $TKT_is_default; ?>">
 				<!--<button class="button-primary ee-save-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Update Ticket', 'event_espresso'); ?></button>--><button class="button-secondary ee-cancel-button" data-context="ticket" data-ticket-row="<?php echo $tkt_row; ?>"><?php _e('Close', 'event_espresso'); ?></button>
 			</div>
 			<!-- these hidden inputs are for tracking changes in dtts attached to tickets during a js session -->
@@ -174,7 +179,7 @@
 		</fieldset>
 	</td>
 </tr>
-<?php 
+<?php
 /**
  * template args in use
  *
@@ -205,7 +210,7 @@
  * $clone_icon
  * $display_edit_tkt_row
  * $edit_tkt_expanded
- * 
+ *
  * $TKT_taxable
  * $display_subtotal
  * $TKT_subtotal_amount

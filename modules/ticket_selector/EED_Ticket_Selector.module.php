@@ -149,7 +149,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 
 			$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID() );
-			$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );
+			$ticket_selector .= EEH_Template::locate_template( $templates['ticket_selector'], TRUE, $template_args, TRUE );
 			$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() );
 			$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
 			
