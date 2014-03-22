@@ -4,7 +4,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 abstract class EE_Offsite_Gateway extends EE_Gateway {
 
 	protected $_gatewayUrl = NULL;
-	
+	protected $fields = array();
 	
 	
 	
