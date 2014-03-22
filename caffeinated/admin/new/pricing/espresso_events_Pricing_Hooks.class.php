@@ -756,7 +756,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 		}
 
 		//filter template args at this point
-		$template_args = apply_filters( 'FHEE__espresso_evnts_Pricing_Hooks___get_dtt_attached_ticket_row__template_args', $template_args, $dttrow, $dtt, $datetime_tickets, $all_tickets, $default, $this->_is_creating_event );
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_dtt_attached_ticket_row__template_args', $template_args, $dttrow, $dtt, $datetime_tickets, $all_tickets, $default, $this->_is_creating_event );
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_attached_tickets_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
