@@ -103,16 +103,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
-	/**
-	 * holds all the active templates saved in the database
-	 * @access public
-	 * @var array
-	 */
-	public $active_templates = array();
-
-
-
-
 
 
 	public function __construct() {
@@ -122,7 +112,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 		parent::__construct();
 
 		$this->_set_test_settings_fields();
-		$this->_set_templates();
 		$this->_set_template_fields();
 		$this->_set_default_message_types();
 		$this->_set_validator_config();
@@ -359,16 +348,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
-
-
-
-	/**
-	 * This sets the active template groups for the messenger.
-	 * @access protected
-	 */
-	protected function _set_templates() {
-		$this->active_templates = $this->_EEM_data->get_all_active_message_templates_by_messenger($this->name);
-	}
 
 	/** SETUP METHODS **/
 

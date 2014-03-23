@@ -273,10 +273,9 @@ class EE_messages {
 		//is given message_type valid for given messenger (if this is not a global save)
 		$types_to_check = array();
 		if ( !$is_global ) {
-			foreach ( $this->_messenger->active_templates as $template ) {
-				$types_to_check[] = $template->message_type();
-			}
-			if ( !in_array($message_type, $types_to_check ) ) {
+			$has_active = EEM_Message_Template_Group::instance()->count( array( 'MTP_is_actiive' => TRUE, 'MTP_messenger' => $this->_messenger->name, 'MTP_message_type' => $message_type ) );
+
+			if ( $has_active == 0 ) {
 				EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $message_type, $messenger), __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
