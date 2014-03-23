@@ -29,6 +29,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hooks {
 
+
+	public function __construct( EE_Admin_Page $adminpage ) {
+		add_filter('FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks', array( $this, 'caf_updates' ), 10 );
+		parent::__construct( $adminpage );
+	}
+
 	/**
 	 * extending the properties set in espresso_events_Messages_Hooks
 	 *
@@ -67,6 +73,35 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 				)
 			); /**/
 	}
+
+
+	public function caf_updates( $update_callbacks ) {
+		$update_callbacks[] = array( $this, 'attach_evt_message_templates' );
+		return $update_callbacks;
+	}
+
+
+
+
+	/**
+	 * Handles attaching Message Templates to the Event on save.
+	 * @param  EE_Event $evtobj EE event object
+	 * @param  array       $data   The request data from the form
+	 * @return bool         success or fail
+	 */
+	public function attach_evt_message_templates( $evtobj, $data ) {
+		//first we remove all existing relations on the Event for message types.
+		$evtobj->_remove_relations('Message_Template_Group');
+
+		//now let's just loop throught the selected templates and add relations!
+		foreach( $data['event_message_templates_relation'] as $grp_ID ) {
+			$evtobj->_add_relation_to( $grp_ID, 'Message_Template_Group' );
+		}
+
+		//now save
+		return $evtobj->save();
+	}
+
 
 
 	public function messages_metabox($event, $callback_args) {
