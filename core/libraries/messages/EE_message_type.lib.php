@@ -576,28 +576,34 @@ abstract class EE_message_type extends EE_Messages_Base {
 			}
 		}
 
-		$template_qa = array(
-			'MTP_is_active' => TRUE,
-			'MTP_messenger' => $this->_active_messenger->name,
-			'MTP_message_type' => $this->name,
-			'MTP_is_global' => TRUE
-			);
+		//if this is a preview then we just get whatever message group is for the preview and skip this part!
+		if ( $this->_preview && !empty( $_POST['msg_id'] )  ) {
+			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['msg_id'] );
+		} else {
+			//not a preview or test send so lets continue on our way!
+			$template_qa = array(
+				'MTP_is_active' => TRUE,
+				'MTP_messenger' => $this->_active_messenger->name,
+				'MTP_message_type' => $this->name,
+				'MTP_is_global' => TRUE
+				);
 
-		//this gets the current global template (message template group) for the active messenger and message type.
-		$global_mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+			//this gets the current global template (message template group) for the active messenger and message type.
+			$global_mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
 
-		//If the global template is NOT an override, then we'll use whatever is attached to the event (if there is an evt_ID.  If it IS an override then we just use the global_mtpg
+			//If the global template is NOT an override, then we'll use whatever is attached to the event (if there is an evt_ID.  If it IS an override then we just use the global_mtpg
 
-		if ( !empty( $EVT_ID ) && ! $global_mtpg->get('MTP_is_override') ) {
-			$evt_qa = array(
-				'Event.EVT_ID' => $EVT_ID
-			);
-			unset( $template_qa['MTP_is_global'] );
-			$qa = array_merge( $template_qa, $evt_qa );
-			$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $qa ) );
+			if ( !empty( $EVT_ID ) && ! $global_mtpg->get('MTP_is_override') ) {
+				$evt_qa = array(
+					'Event.EVT_ID' => $EVT_ID
+				);
+				unset( $template_qa['MTP_is_global'] );
+				$qa = array_merge( $template_qa, $evt_qa );
+				$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $qa ) );
+			}
+
+			$mtpg = $mtpg instanceof EE_Message_Template_Group ? $mtpg : $global_mtpg;
 		}
-
-		$mtpg = $mtpg instanceof EE_Message_Template_Group ? $mtpg : $global_mtpg;
 
 		$templates = $mtpg->context_templates();
 

@@ -1249,6 +1249,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
+		$_POST['msg_id'] = $this->_req_data['msg_id']; //make sure post global has the msg_id param for later use.
+
 		$MSG = new EE_messages();
 
 		//get the preview!
