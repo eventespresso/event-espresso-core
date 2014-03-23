@@ -4,7 +4,29 @@ jQuery(document).ready(function($) {
 	var EE_messages_evt_helper = {
 
 		selectedCache : {},
-		
+		messageType : '',
+		messenger : '',
+		formContent: '',
+		grpID : 0,
+
+
+		/**
+		 * Executes loading the form used for creating a custom template
+		 * @param  {jQuery} $clickedbutton jQuery object for the lcicked button
+		 * @return {void}
+		 */
+		createTemplateForm: function( clickedButton ) {
+			this.messageType = clickedButton.data('messagetype');
+			this.messenger = clickedButton.data('messenger');
+			this.grpID = clickedButton.data('grpid');
+
+			//display the modal
+			this.display_modal();
+
+			//modify the form in the modal
+			$('#custom-message-template-grpID').val( this.grpID );
+		},
+
 		parseurl: function(url, mode) {
 			if ( typeof(mode) === 'undefined' ) mode = 'loose';
 			if ( mode == 'strict' ) {
@@ -13,39 +35,16 @@ jQuery(document).ready(function($) {
 			return parseUri(url);
 		},
 
-		get_template_content: function(selected, type, action) {
-			var queryparts = {};
-			switch ( type ) {
-				case 'form' :
-					queryparts = $(selected).serializeFullArray();
-					break;
-
-				case 'cached_url' :
-					queryparts = this.parseurl($(this.selectedCache).attr('href'));
-					break;
-
-				default :
-					this.selectedCache = selected;
-					queryparts = this.parseurl($(selected).attr('href'));
-					break;
-			}
-
-			queryobj = type != 'form' && type != 'cached' ? queryparts.queryKey : queryparts;
-
-			//if action is set then we define that for th queryobj.route.  Otherwise we leave alone
-			queryobj.action = typeof(action) !== 'undefined' ? action : queryobj.action;
-
-
-			//lets reset and add a couple of new vars to the queryKey object
-			queryobj.route = queryobj.action !== 'undefined' ? queryobj.action : '';
-			queryobj.action = 'ee_msgs_switch_template';
+		submitForm: function(selected, type, action) {
+			var queryobj = $(selected).serializeFullArray();
+			queryobj.action = 'ee_msgs_create_new_custom';
 			queryobj.page = 'espresso_events';
+			queryobj.messageType = this.messageType;
+			queryobj.messenger = this.messenger;
+			queryobj.group_ID = this.grpID;
 			queryobj.ee_admin_ajax = true;
 
-			if ( action == 'force_switch_template' )
-				$('#espresso-ajax-loading').eeCenter().show().eeAddOverlay();
-			else
-				$('#espresso-ajax-loading').eeCenter().eeAddOverlay().show();
+			$('#espresso-ajax-loading').eeCenter().eeAddOverlay().show();
 
 			//do post
 			$.ajax({
@@ -66,7 +65,7 @@ jQuery(document).ready(function($) {
 							EE_messages_evt_helper.display_content(response, 'dialog', 'clear');
 							isjson = false;
 						}
-						
+
 					}
 
 					if ( ct.indexOf('json') > -1 || isjson ) {
@@ -86,8 +85,9 @@ jQuery(document).ready(function($) {
 							EE_messages_evt_helper.display_notices(resp.notices, resp.data.where);
 							EE_messages_evt_helper.display_content(resp.error, resp.data.where, resp.data.what);
 						} else {
-							EE_messages_evt_helper.display_notices(resp.notices, resp.data.where);
-							EE_messages_evt_helper.display_content(resp.content, resp.data.where, resp.data.what);
+							EE_messages_evt_helper.updateSelectorRow(resp.data);
+							EE_messages_evt_helper.close_modal();
+							EE_messages_evt_helper.display_notices(resp.notices, 'main', resp.data.what);
 						}
 						if ( resp.data.close ) {
 							EE_messages_evt_helper.close_modal();
@@ -98,24 +98,35 @@ jQuery(document).ready(function($) {
 			return false;
 		},
 
+
+		/**
+		 * This simply gets the form for creating the custom Template (if it's not already set in the formContent proprty)
+		 * @return {string} form content html string
+		 */
+		getForm:function() {
+			if ( this.formContent === '' ) {
+				this.formContent = $('#messages-change-edit-templates-dv').html();
+				$('#messages-change-edit-templates-dv').html('');
+			}
+			//make sure all formContent is empty.
+			return this.formContent;
+		},
+
 		display_modal: function() {
-			var messages_content = $('#messages-change-edit-templates-dv').html();
+			var messages_content = this.getForm();
+			//reset all form data
+			$('input', messages_content).each(function(index, el) {
+				$(this).val('');
+			});
 			var dialog = dialogHelper.displayModal(true).addContent(messages_content);
-			$('.ee-admin-dialog-container').eeScrollTo();
-			/*overlay.on('click', function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				EE_messages_evt_helper.close_modal();
-				$('.messages-change-edit-templates-content', '.ee-admin-dialog-container').html('');
-				EE_messages_evt_helper.get_template_content('#ee-msg-edit-form','cached_url','force_switch_template');
-				
-			});/**/
+			//replace the content so that
+			$('.ee-admin-dialog-container').eeScrollTo(400);
 		},
 
 
 		close_modal: function() {
 			dialogHelper.closeModal();
-			$('#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox').eeScrollTo();
+			$('#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox').eeScrollTo(400);
 		},
 
 
@@ -141,7 +152,7 @@ jQuery(document).ready(function($) {
 			//if content is empty let's get out
 			if ( ( content === '' || typeof(content) === 'undefined' ) && type != 'notices' )
 				return;
-			
+
 			var main_container = type == 'content' ? $('.messages-tabs-content', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox') : $('.ee-notices', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox');
 			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container') : $('.ee-notices', '.ee-admin-dialog-container');
 			var content_div = where == 'main' ? main_container : dialog_container;
@@ -155,34 +166,78 @@ jQuery(document).ready(function($) {
 			} else if ( what == 'prepend' ) {
 				content_div.prepend(content);
 			}
+		},
+
+
+
+		/**
+		 * updates the selector row with new grpID and response info
+		 * @param  {object} resp json object
+		 * @return {void}
+		 */
+		updateSelectorRow: function(resp) {
+			var grpID = resp.grpID;
+			var templateName = resp.templateName;
+			//add new option to selector and make sure its selected.
+			var newOption = '<option value="' + grpID + '">' + templateName + '</option>';
+			newOption = $('.message-template-selector', '#' + this.messenger + '-message-selector-row-' + this.messageType).append(newOption);
+			$('.message-template-selector', '#' + this.messenger + '-message-selector-row-' + this.messageType).val(grpID);
+
+			//update the edit and create buttons to work with new option!
+			this.updateButtons(grpID);
+		},
+
+
+
+		updateButtons: function (grpID, messageType, messenger) {
+			messageType = typeof(messageType) === 'undefined'  ? this.messageType : messageType;
+			messenger = typeof(messenger) === 'undefined' ? this.messenger : messenger;
+			grpID = typeof(grpID) === 'undefined' ? this.grpID : grpID;
+
+			//setup vars
+			var createButton = $('.create-mtpg-button', '#' + messenger + '-message-selector-row-' + messageType);
+			var editButton = $('.edit-mtpg-button', '#' + messenger + '-message-selector-row-' + messageType);
+			var oldGrpID = createButton.data('grpid');
+			var hrefreplace = '';
+
+			//replace old grpID with new grpID
+			createButton.data('grpid', grpID);
+			editButton.data('grpid', grpID);
+
+			hrefreplace = createButton.attr('href').replace('GRP_ID=' + oldGrpID, 'GRP_ID=' +grpID);
+			createButton.attr('href', hrefreplace);
+			hrefreplace = editButton.attr('href').replace('id='+oldGrpID, 'id='+grpID);
+			editButton.attr('href', hrefreplace);
+
 		}
 	};
 
-
-	$('#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox').on('click', '.template_picker', function(e) {
+	$('.create-mtpg-button', '.messages-custom-template-switcher').on('click', function(e) {
 		e.preventDefault();
-		EE_messages_evt_helper.get_template_content(this);
+		e.stopPropagation();
+		EE_messages_evt_helper.createTemplateForm( $(this) );
 	});
 
-	$('.ee-admin-dialog-container').on('click', '#msg-popup-cancel-button', function(e){
+
+	//listener for submit on create template form
+	$('.ee-admin-dialog-container').on('submit', 'form', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		EE_messages_evt_helper.submitForm( this );
+	});
+
+	//listener for selecting template to update create and edit buttons with selection
+	$('.message-template-selector', '.messages-custom-template-switcher').on('change', function(e) {
+		e.preventDefault();
+		e.stopPropagation();
+		var data = $(this).data();
+		var grpID = $(this).val();
+		EE_messages_evt_helper.updateButtons( grpID, data.messagetype, data.messenger );
+	});
+
+	$('.ee-admin-dialog-container').on('click', '.cancel-create-template', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		EE_messages_evt_helper.close_modal();
 	});
-
-	$('.ee-admin-dialog-container').on('submit', 'form', function(e) {
-		e.preventDefault();
-		EE_messages_evt_helper.get_template_content(this, 'form');
-	});
-
-	$('.ee-admin-dialog-container').on('click', '.messages-preview-button', function(e) {
-		e.preventDefault();
-		EE_messages_evt_helper.get_template_content(this);
-	});
-
-	$('.ee-admin-dialog-container').on('click', '.messages-preview-go-back-button', function(e) {
-		e.preventDefault();
-		EE_messages_evt_helper.get_template_content(this);
-	});
-
 });

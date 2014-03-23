@@ -376,14 +376,18 @@ class EE_messages {
 		//let's get all the related message_template objects for this group.
 		$mtts = $mtg->message_templates();
 
+		$template_name = defined('DOING_AJAX') && !empty( $_POST['templateName'] ) ? $_POST['templateName'] : __('New Custom Template', 'event_espresso');
+		$template_description = defined("DOING_AJAX") && !empty( $_POST['templateDescription'] ) ? $_POST['templateDescription'] : sprintf( __('This is a custom template that was created for the %s messenger and %s message type.', 'event_espresso' ), $new_mtg->messenger_obj()->label['singular'], $new_mtg->message_type_obj()->label['singular'] );
+
 		//now we have what we need to setup the new template
 		$new_mtg = clone $mtg;
 		$new_mtg->set('GRP_ID', 0);
 		$new_mtg->set('MTP_is_global', FALSE);
-		$new_mtg->set('MTP_name', __('New Custom Template', 'event_espresso') );
-		$new_mtg->set('MTP_description', sprintf( __('This is a custom template that was created for the %s messenger and %s message type.', 'event_espresso' ), $new_mtg->messenger_obj()->label['singular'], $new_mtg->message_type_obj()->label['singular'] ) );
+		$new_mtg->set('MTP_name', $template_name );
+		$new_mtg->set('MTP_description', $template_description );
 		$new_mtg->save();
 		$success['GRP_ID'] = $new_mtg->ID();
+		$success['template_name'] = $template_name;
 
 		//add new message templates and add relation to.
 		foreach ( $mtts as $mtt ) {

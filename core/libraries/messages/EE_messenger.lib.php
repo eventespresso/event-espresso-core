@@ -325,12 +325,14 @@ abstract class EE_messenger extends EE_Messages_Base {
 			$default_value = empty( $default_value ) ? $mtpgID : $default_value;
 
 			$edit_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'edit_message_template', 'id' => $default_value), admin_url('admin.php') );
-			$create_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'add_new_message_tempalte', 'GRP_ID' => $default_value ) );
+			$create_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'add_new_message_template', 'GRP_ID' => $default_value ) );
 
 			$st_args['mt_name'] = ucwords( $mtpg->message_type_obj()->label['singular'] );
-			$st_args['selector'] = EEH_Form_Fields::select_input( 'event_message_templates_relation[]', $select_values, $default_value );
-			$st_args['create_button'] = '<a target="_new" href="' . $create_url . '" class="button button-small">' . __('Create New Custom', 'event_espresso') . '</a>';
-			$st_args['edit_button'] = '<a target="_new" href="' . $edit_url . '" class="button button-small">' . __('Edit', 'event_espresso') . '</a>';
+			$st_args['mt_slug'] = $mtpg->message_type();
+			$st_args['messenger_slug'] = $this->name;
+			$st_args['selector'] = EEH_Form_Fields::select_input( 'event_message_templates_relation[' . $mtpgID . ']', $select_values, $default_value, 'data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '"', 'message-template-selector' );
+			$st_args['create_button'] = '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_new" href="' . $create_url . '" class="button button-small create-mtpg-button">' . __('Create New Custom', 'event_espresso') . '</a>';
+			$st_args['edit_button'] = '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_new" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __('Edit', 'event_espresso') . '</a>';
 			$selector_rows .= EEH_Template::display_template( $template_row_path, $st_args, TRUE );
 		}
 

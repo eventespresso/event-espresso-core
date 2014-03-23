@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * espresso_events_Messages_Hooks_Extend
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
  * Commenting/docs common to all children classes is found in the EE_Admin_Hooks parent.
- * 
+ *
  *
  * @package		espresso_events_Messages_Hooks_Extend
  * @subpackage	caffeinated/admin/extend/messages/espresso_events_Messages_Hooks_Extend.class.php
@@ -33,12 +33,12 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	 * extending the properties set in espresso_events_Messages_Hooks
 	 *
 	 * @access protected
-	 * @return void 
+	 * @return void
 	 */
 	protected function _extend_properties() {
 		define( 'EE_MSGS_EXTEND_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/' );
 		$this->_ajax_func = array(
-			'ee_msgs_switch_template' => 'switch_template'
+			'ee_msgs_create_new_custom' => 'create_new_custom'
 			);
 		$this->_metaboxes = array(
 			0 => array(
@@ -48,7 +48,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 				'priority' => 'high'
 				)
 			);
-		
+
 		//see explanation for layout in EE_Admin_Hooks
 		$this->_scripts_styles = array(
 			'registers' => array(
@@ -95,15 +95,12 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 				$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
 				$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
 
-				if ( defined('DOING_AJAX') )
-					return $error_content . $intenral_content;
-
 				echo $error_content;
 				echo $internal_content;
 				return;
 			}
-			
-			
+
+
 			//get content for active messengers
 			foreach ( $active_messengers as $name => $messenger ) {
 				$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
@@ -129,25 +126,32 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 			return $tabbed_content;
 
 		echo $notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>';
-		
+
 	}
 
 
 	/**
-	 * This takes the incoming ajax request to switch an events template from whatever it is currently using to global.  If the request is to switch to a custom event template that hasn't been created yet, then we need to walk through the process of setting up the custom event template.
+	 * Ajax callback for ee_msgs_create_new_custom ajax request.
+	 * Takes incoming GRP_ID and name and description values from ajax request to create a new custom template based off of the incoming GRP_ID.
 	 *
 	 * @access public
 	 * @return string either an html string will be returned or a success message
 	 */
-	public function switch_template() {
+	public function create_new_custom() {
+
+		//let's clean up the _POST global a bit for downstream usage of name and description.
+		$_POST['templateName'] = !empty( $this->_req_data['custom_template_args']['MTP_name'] ) ? $this->_req_data['custom_template_args']['MTP_name'] : '';
+		$_POST['templateDescription'] = !empty( $this->_req_data['custom_template_args']['MTP_description'] ) ? $this->_req_data['custom_template_args']['MTP_description'] : '';
+
+		//below is old content that possible will be ignored?
+
 		//set EE_Admin_Page object (see method details in EE_Admin_Hooks parent
 		$this->_set_page_object();
 
 		//is this a template switch if so EE_Admin_Page child needs this object
 		$this->_page_object->set_hook_object( $this );
 
-		//let's route according to the sent page route
-		$this->_page_object->route_admin_request();
+		$this->_page_object->add_message_template( $this->_req_data['messageType'], $this->_req_data['messenger'], $this->_req_data['group_ID'] );
 	}
 
 
@@ -157,14 +161,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	 * @return string (admin_footer contents)
 	 */
 	public function edit_admin_footer() {
-		//dialog container
-		$d_cont = '<div id="messages-change-edit-templates-dv" class="messages-change-edit-templates-option auto-hide hidden">' . "\n";
-		// $d_cont .= '<div class="ajax-loader-grey"></div>';	
-		$d_cont .= '<div class="messages-change-edit-templates-content"></div>';		
-		$d_cont .= '</div>';
-
-		$notices = '<div class="ee-notices"></div>';
-		echo $notices . $d_cont;
+		$template_path = EE_CORE_CAF_ADMIN_EXTEND . 'messages/templates/create_custom_template_form.template.php';
+		EEH_Template::display_template($template_path, array());
 	}
 
 } //end class espresso_events_Messages_Hooks_Extend

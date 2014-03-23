@@ -717,22 +717,44 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @access  protected
 	 * @return void
 	 */
-	protected function _add_message_template() {
+	protected function _add_message_template(  $message_type = '', $messenger='', $GRP_ID = '' ) {
+		//set values override any request data
+		$message_type = !empty( $message_type ) ? $message_type : '';
+		$message_type = empty( $message_type ) && !empty( $this->_req_data['message_type'] ) ? $this->_req_data['message_type'] : $message_type;
+
+		$messenger = !empty( $messenger ) ? $messenger : '';
+		$messenger = empty( $messenger ) && !empty( $this->_req_data['messenger'] ) ? $this->_req_data['messenger'] : $messenger;
+
+		$GRP_ID = !empty( $GRP_ID ) ? $GRP_ID : '';
+		$GRP_ID = empty( $GRP_ID ) && !empty( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : $GRP_ID;
 
 		//we need messenger and message type.  They should be coming from the event editor. If not here then return error
-		if ( !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['message_type'] ) )
+		if ( empty( $message_type ) || empty( $messenger )  )
 			throw new EE_error(__('Sorry, but we can\'t create new templates because we\'re missing the messenger or message type', 'event_espresso'));
 
 		//we need the GRP_ID for the template being used as the base for the new template
-		if ( empty( $this->_req_data['GRP_ID'] ) )
+		if ( empty( $GRP_ID ) )
 			throw new EE_Error( __('In order to create a custom message template the GRP_ID of the template being used as a base is needed', 'event_espresso' ) );
 
 		//let's just make sure the template gets generated!
 
 		//we need to reassign some variables for what the insert is expecting
-		$this->_req_data['MTP_messenger'] = $this->_req_data['messenger'];
-		$this->_req_data['MTP_message_type'] = $this->_req_data['message_type'];
+		$this->_req_data['MTP_messenger'] = $messenger;
+		$this->_req_data['MTP_message_type'] = $message_type;
+		$this->_req_data['GRP_ID'] = $GRP_ID;
 		$this->_insert_or_update_message_template(TRUE);
+	}
+
+
+
+	/**
+	 * public wrapper for the _add_message_template method
+	 * @param string $message_type message type slug
+	 * @param string $messenger    messenger slug
+	 * @param int      $GRP_ID         GRP_ID for the related message template group this new template will be based off of.
+	 */
+	public function add_message_template( $message_type, $messenger, $GRP_ID ) {
+		$this->_add_message_template( $message_type, $messenger, $GRP_ID );
 	}
 
 
@@ -1644,6 +1666,23 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				}
 			}
 
+		}
+
+		//we return things differently if doing ajax
+		if ( defined('DOING_AJAX') && DOING_AJAX ) {
+			$this->_template_args['success'] = $success;
+			$this->_template_args['error'] = ! $success ? TRUE : FALSE;
+			$this->_template_args['content'] = '';
+			$this->_template_args['data'] = array(
+				'grpID' => $edit_array['GRP_ID'],
+				'templateName' => $edit_array['template_name']
+				);
+			if ( $success ) {
+				EE_Error::overwrite_success();
+				EE_Error::add_success( __('The new template has been created and automatically selected for this event.  You can edit the new template by clicking the edit button.  Note before this template is assigned to this event, the event must be saved.', 'event_espresso') );
+			}
+
+			$this->_return_json();
 		}
 
 
