@@ -229,6 +229,12 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	}
 
 	function column_actions( $item ) {
+
+		//first we consider whether this template has override set.  If it does then that means no custom templates can be created from this template as a base.  So let's just skip the button creation.
+		if ( $item->get('MTP_is_override' ) )
+			return '';
+
+
 		$create_args = array(
 			'GRP_ID' => $item->ID(),
 			'messenger' => $item->messenger(),

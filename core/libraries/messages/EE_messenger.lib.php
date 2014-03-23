@@ -301,13 +301,18 @@ abstract class EE_messenger extends EE_Messages_Base {
 			$default_value = '';
 			$select_values = array();
 			$select_values[$mtpgID] = __('Global', 'event_espresso');
-			$default_value = array_key_exists( $mtpgID, $templates_for_event ) ? $mtpgID : NULL;
-			//any custom templates for this message type?
-			$custom_templates = EEM_Message_Template_Group::instance()->get_custom_message_template_by_m_and_mt( $this->name, $mtpg->message_type() );
+			$default_value = array_key_exists( $mtpgID, $templates_for_event ) && ! $mtpg->get('MTP_is_override' ) ? $mtpgID : NULL;
 
-			foreach( $custom_templates as $cmtpgID => $cmtpg ) {
-				$select_values[$cmtpgID] = $cmtpg->name();
-				$default_value = array_key_exists( $cmtpgID, $templates_for_event ) ? $cmtpgID : $default_value;
+			//if the override has been set for the global template, then that means even if there are custom templates already created we ignore them because of the set override.
+
+			if ( ! $mtpg->get('MTP_is_override' ) ) {
+				//any custom templates for this message type?
+				$custom_templates = EEM_Message_Template_Group::instance()->get_custom_message_template_by_m_and_mt( $this->name, $mtpg->message_type() );
+
+				foreach( $custom_templates as $cmtpgID => $cmtpg ) {
+					$select_values[$cmtpgID] = $cmtpg->name();
+					$default_value = array_key_exists( $cmtpgID, $templates_for_event ) ? $cmtpgID : $default_value;
+				}
 			}
 
 			//if there is no $default_value then we set it as the global
@@ -320,7 +325,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 			$st_args['mt_slug'] = $mtpg->message_type();
 			$st_args['messenger_slug'] = $this->name;
 			$st_args['selector'] = EEH_Form_Fields::select_input( 'event_message_templates_relation[' . $mtpgID . ']', $select_values, $default_value, 'data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '"', 'message-template-selector' );
-			$st_args['create_button'] = '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_new" href="' . $create_url . '" class="button button-small create-mtpg-button">' . __('Create New Custom', 'event_espresso') . '</a>';
+
+			//note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
+			$st_args['create_button'] =  $mtpg->get('MTP_is_override') ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_new" href="' . $create_url . '" class="button button-small create-mtpg-button">' . __('Create New Custom', 'event_espresso') . '</a>';
 			$st_args['edit_button'] = '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_new" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __('Edit', 'event_espresso') . '</a>';
 			$selector_rows .= EEH_Template::display_template( $template_row_path, $st_args, TRUE );
 		}
