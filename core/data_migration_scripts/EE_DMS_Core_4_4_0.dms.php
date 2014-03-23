@@ -235,7 +235,7 @@ class EE_DMS_Core_4_4_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously( $table_name, $sql, 'ENGINE=InnoDB');
 
 		$table_name = 'esp_event_message_template';
-		$sql = "EMT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+		$sql = "EMT_ID BIGINT(20) unsigned NOT NULL AUTO_INCREMENT,
 					EVT_ID BIGINT(20) unsigned NOT NULL DEFAULT 0,
 					GRP_ID INT(10) unsigned NOT NULL DEFAULT 0,
 					PRIMARY KEY (EMT_ID),
