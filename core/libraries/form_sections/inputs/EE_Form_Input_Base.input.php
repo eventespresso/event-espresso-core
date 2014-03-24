@@ -71,6 +71,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 */
 	private $_normalization_strategy;
 	
+	/**
+	 * Stores whether or not this input's response is required.
+	 * Because certain styling elements may also want to know that this
+	 * input is required etc.
+	 * @var boolean
+	 */
+	protected $_required;
+	
 	public function __construct($options_array = array()){
 		if(isset($options_array['html_name'])){
 			$this->_html_name = $options_array['html_name'];
@@ -94,7 +102,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 			$this->_raw_value = $options_array['default'];
 		}
 		if(isset($options_array['required']) && in_array($options_array['required'], array('true',true))){
-			$this->_add_validation_strategy(new EE_Required_Validation_Strategy());
+			$this->set_required(true);
 		}
 		if(isset($options_array['display_strategy'])){
 			if(is_array($options_array['display_strategy'])){
@@ -205,7 +213,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * @return void
 	 */
 	protected function _add_validation_strategy(EE_Validation_Strategy_Base $validation_strategy){
-		$this->_validation_strategies[] = $validation_strategy;
+		$this->_validation_strategies[get_class($validation_strategy)] = $validation_strategy;
 	}
 	/**
 	 * Gets the HTML, JS, and CSS necessary to display this field according
@@ -378,4 +386,23 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		$this->_raw_value = $value;
 	}
 	
+	/**
+	 * Sets whether or no tthis field is required, and adjusts the validation strategy
+	 * @param boolean $required
+	 */
+	function set_required($required = true){
+		if($required){
+			$this->_add_validation_strategy(new EE_Required_Validation_Strategy());
+		}else{
+			unset($this->_validation_strategies[get_class(new EE_Required_Validation_Strategy())]);
+		}
+		$this->_required = $required;
+	}
+	/**
+	 * Returns whether or not this field is required
+	 * @return boolean
+	 */
+	public function required(){
+		return $this->_required;
+	}
 }

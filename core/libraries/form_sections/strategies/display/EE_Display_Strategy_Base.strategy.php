@@ -12,7 +12,11 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
 	 */
 	public function display_label(){
 		$input = $this->_input;
-		return "<label id='{$input->html_label_id()}' class='{$input->html_label_class()}' style='{$input->html_label_style()}' for='{$input->html_id()}'>".
+		$classes = $input->html_label_class();
+		if($input->required()){
+			$class = 'required-label '.$class;
+		}
+		return "<label id='{$input->html_label_id()}' class='$class' style='{$input->html_label_style()}' for='{$input->html_id()}'>".
 				$input->html_label_text().
 				"</label>";
 	}
