@@ -64,11 +64,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				'func' => '_update_settings',
 				'noheader' => TRUE
 				),
-			'usage' => '_usage',
-			'reset_settings'=> array(
-				'func' => '_reset_settings',
-				'noheader' => TRUE
-				),
+			'usage' => '_usage'
 			);
 	}
 
@@ -146,9 +142,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['return_action'] = $this->_req_action;
 		$this->_template_args['reset_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=> 'reset_settings','return_action'=>$this->_req_action), EE_CALENDAR_ADMIN_URL);
 		$this->_set_add_edit_form_tags( 'update_settings' );
-		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE);
-		$this->_template_args['publish_box_extra_content'] = "<a class='button button-small calendar-reset-button' href='{$this->_template_args['reset_url'] }'>". __("Reset Now", 'event_espresso')."</a>";
-			
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE);	
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . $template, $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();
 	}
@@ -159,24 +153,29 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		$this->display_admin_page_with_no_sidebar();
 	}
 	protected function _update_settings(){
-		$c = EE_Config::instance()->addons['calendar'];
-		$count=0;
-		//otherwise we assume you want to allow full html
-		foreach($this->_req_data['calendar'] as $top_level_key => $top_level_value){
-			if(is_array($top_level_value)){
-				foreach($top_level_value as $second_level_key => $second_level_value){
-					if(property_exists($c,$top_level_key) && property_exists($c->$top_level_key, $second_level_key)
-						&& $second_level_value != $c->$top_level_key->$second_level_key){
-						$c->$top_level_key->$second_level_key = $this->_sanitize_config_input($top_level_key,$second_level_key,$second_level_value);
-						$count++;	
+		if(isset($_POST['reset']) && $_POST['reset'] == '1'){
+			$c = new EE_Calendar_Config();
+			$count = 1;
+		}else{
+			$c = EE_Config::instance()->addons['calendar'];
+			$count=0;
+			//otherwise we assume you want to allow full html
+			foreach($this->_req_data['calendar'] as $top_level_key => $top_level_value){
+				if(is_array($top_level_value)){
+					foreach($top_level_value as $second_level_key => $second_level_value){
+						if(property_exists($c,$top_level_key) && property_exists($c->$top_level_key, $second_level_key)
+							&& $second_level_value != $c->$top_level_key->$second_level_key){
+							$c->$top_level_key->$second_level_key = $this->_sanitize_config_input($top_level_key,$second_level_key,$second_level_value);
+							$count++;	
+						}
+					}
+				}else{
+					if(property_exists($c, $top_level_key) && $top_level_value != $c->$top_level_key){
+						$c->$top_level_key = $this->_sanitize_config_input($top_level_key, NULL, $top_level_value);
+						$count++;
 					}
 				}
-			}else{
-				if(property_exists($c, $top_level_key) && $top_level_value != $c->$top_level_key){
-					$c->$top_level_key = $this->_sanitize_config_input($top_level_key, NULL, $top_level_value);
-					$count++;
-				}
-			}
+			}	
 		}
 		EE_Config::instance()->addons['calendar'] = $c;
 		EE_Config::instance()->update_espresso_config();
@@ -186,11 +185,11 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 	/**
 	 * resets the calend data and redirects to where they came from
 	 */
-	protected function _reset_settings(){
-		EE_Config::instance()->addons['calendar'] = new EE_Calendar_Config();
-		EE_Config::instance()->update_espresso_config();
-		$this->_redirect_after_action(1, 'Settings', 'reset', array('action' => $this->_req_data['return_action']));
-	}
+//	protected function _reset_settings(){
+//		EE_Config::instance()->addons['calendar'] = new EE_Calendar_Config();
+//		EE_Config::instance()->update_espresso_config();
+//		$this->_redirect_after_action(1, 'Settings', 'reset', array('action' => $this->_req_data['return_action']));
+//	}
 	private function _sanitize_config_input($top_level_key,$second_level_key,$value){
 		$sanitization_methods = array(
 			'time'=>array(
