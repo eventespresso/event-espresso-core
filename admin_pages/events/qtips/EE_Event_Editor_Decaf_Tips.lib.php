@@ -30,7 +30,12 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 
 	protected function _set_tips_array() {
 		$this->_qtipsa = array(
-			0 => array(
+			2 => array(
+				'content_id' => 'dtt-evt-name-label',
+				'target' => '.event-datetime-DTT_name_label',
+				'content' => $this->_get_event_name_label_info()
+				),
+			3 => array(
 				'content_id' => 'dtt-evt-start-label',
 				'target' => '.event-datetime-DTT_EVT_start_label',
 				'content' => $this->_get_event_start_label_info()
@@ -153,7 +158,9 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 			);
 	}
 
-
+	private function _get_event_name_label_info() {
+		return '<p>' . __('This is the name or title for an event datetime.', 'event_espresso') . '</p>';
+	}
 	private function _get_event_start_label_info() {
 		return '<p>' . __('This shows when this event datetime starts.', 'event_espresso') . '</p>';
 	}
