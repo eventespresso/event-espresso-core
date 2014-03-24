@@ -723,8 +723,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		} else {
 			// grab single id and delete
-			$PRC_ID = absint($this->_req_data['id']);
-			if ( ! $PRC->update_by_ID(array('PRC_deleted' => $PRC_deleted), $PRC_ID) ) {
+			$PRC_ID = isset( $this->_req_data['id'] ) ? absint($this->_req_data['id']) : 0;
+			if ( empty( $PRC_ID ) || ! $PRC->update_by_ID(array('PRC_deleted' => $PRC_deleted), $PRC_ID) ) {
 				$success = 0;
 			} else {
 				$PR = EEM_Price::instance()->get_one_by_ID($PRC_ID);
@@ -754,7 +754,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_success( $msg );
 		}
 
-		$this->_redirect_after_action( FALSE, '',  $action_desc, $query_args, TRUE );
+		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 
 	}
 
@@ -1126,8 +1126,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		} else {
 			// grab single id and delete
-			$PRT_ID = absint($this->_req_data['id']);
-			if ( ! $PRT->update_by_ID(array('PRT_deleted' => $PRT_deleted), $PRT_ID )) {
+			$PRT_ID = isset( $this->_req_data['id'] ) ? absint($this->_req_data['id']) : 0;
+			if ( empty( $PRT_ID ) || ! $PRT->update_by_ID(array('PRT_deleted' => $PRT_deleted), $PRT_ID )) {
 				$success = 0;
 			}
 			$what = 'Price Type';
