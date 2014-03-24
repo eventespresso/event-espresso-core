@@ -555,9 +555,8 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return string
 	 */
 	public function payment_overview_url() {
-		$REG = $this->primary_registration();
-		if ( empty($REG) ) return false;
-		return $REG->payment_overview_url();
+		$primary_registration = $this->primary_registration();
+		return $primary_registration instanceof EE_Registration ? $primary_registration->payment_overview_url() : FALSE;
 	}
 	
 	
