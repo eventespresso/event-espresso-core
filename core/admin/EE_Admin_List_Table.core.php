@@ -309,6 +309,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	protected function _get_hidden_fields() {
 		$action = isset( $this->_req_data['route'] ) ? $this->_req_data['route'] : '';
 		$action = empty( $action ) && isset( $this->_req_data['action'] ) ? $this->_req_data['action'] : $action;
+		//if action is STILL empty, then we set it to default
+		$action = empty( $action ) ? 'default' : $action;
 		$field = '<input type="hidden" name="page" value="' . $this->_req_data['page'] . '" />' . "\n";
 		$field .= '<input type="hidden" name="route" value="'. $action .'" />' . "\n";/**/
 		$field .= '<input type="hidden" name="perpage" value="' . $this->_per_page . '" />' . "\n";
