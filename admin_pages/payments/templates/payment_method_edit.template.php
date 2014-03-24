@@ -23,7 +23,7 @@
 						</tr>
 						<?php endif; ?>
 					
-						<?php $form = $payment_method->type_obj()->settings_form(); echo $form->get_html();?>
+						<?php $form = $payment_method->type_obj()->settings_form(); echo $form->get_html_and_js();?>
 						
 					
 						

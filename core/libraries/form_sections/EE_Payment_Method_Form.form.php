@@ -56,7 +56,6 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 		$model_obj = $this->_model->ensure_is_obj($model_obj);
 		parent::populate_model_obj($model_obj);
 		$extra_metas = $model_obj->all_extra_meta_array();
-		d($extra_metas);
 		foreach($this->_extra_meta_inputs as $input_name => $extra_meta_input){
 			if(isset($extra_metas[$input_name])){
 				$extra_meta_input->set_default($extra_metas[$input_name]);
