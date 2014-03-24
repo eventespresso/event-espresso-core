@@ -1,4 +1,4 @@
-<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');		
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
  * Event Espresso
  *
@@ -16,7 +16,7 @@
  * Pricing_Admin_Page class
  *
  * @package			Event Espresso
- * @subpackage		includes/core/admin/pricing/Pricing_Admin_Page.core.php 
+ * @subpackage		includes/core/admin/pricing/Pricing_Admin_Page.core.php
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
@@ -29,7 +29,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	 * 	@access public
 	 * 	@return void
 	 */
-	public function __construct( $routing = TRUE ) {		
+	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
 	}
 
@@ -78,82 +78,82 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	 * 		an array for storing request actions and their corresponding methods
 	*		@access private
 	*		@return void
-	*/	
+	*/
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => array( 
+			'default' => array(
 					'func' => '_price_overview_list_table'
 				),
-			'add_new_price'	=> array( 
-					'func' => '_edit_price_details', 
+			'add_new_price'	=> array(
+					'func' => '_edit_price_details',
 					'args' => array( 'new_price' => TRUE )
 				),
-			'edit_price'	=> array( 
-					'func' => '_edit_price_details', 
+			'edit_price'	=> array(
+					'func' => '_edit_price_details',
 					'args' => array( 'new_price' => FALSE )
 				),
-			'insert_price'	=> array( 
-					'func' => '_insert_or_update_price', 
-					'args' => array( 'new_price' => TRUE ), 
-					'noheader' => TRUE 
+			'insert_price'	=> array(
+					'func' => '_insert_or_update_price',
+					'args' => array( 'new_price' => TRUE ),
+					'noheader' => TRUE
 				),
-			'update_price'	=> array( 
-					'func' => '_insert_or_update_price', 
-					'args' => array( 'new_price' => FALSE ), 
-					'noheader' => TRUE 
+			'update_price'	=> array(
+					'func' => '_insert_or_update_price',
+					'args' => array( 'new_price' => FALSE ),
+					'noheader' => TRUE
 				),
-			'trash_price'	=> array( 
+			'trash_price'	=> array(
 					'func' => '_trash_or_restore_price',
-					'args' => array( 'trash' => TRUE ), 
-					'noheader' => TRUE 
+					'args' => array( 'trash' => TRUE ),
+					'noheader' => TRUE
 				),
-			'restore_price'	=> array( 
-					'func' => '_trash_or_restore_price', 
-					'args' => array( 'trash' => FALSE ), 
-					'noheader' => TRUE 
+			'restore_price'	=> array(
+					'func' => '_trash_or_restore_price',
+					'args' => array( 'trash' => FALSE ),
+					'noheader' => TRUE
 				),
-			'delete_price'	=> array( 
+			'delete_price'	=> array(
 					'func' => '_delete_price',
-					'noheader' => TRUE 
+					'noheader' => TRUE
 				),
 			'espresso_update_price_order' => array(
 				'func' => 'update_price_order',
 				'noheader' => TRUE
 				),
 			// price types
-			'price_types'	=> array( 
+			'price_types'	=> array(
 					'func' => '_price_types_overview_list_table'
 				),
-			'add_new_price_type'	=> array( 
+			'add_new_price_type'	=> array(
 					'func' => '_edit_price_type_details'
 				),
-			'edit_price_type'	=> array( 
+			'edit_price_type'	=> array(
 					'func' => '_edit_price_type_details'
 				),
-			'insert_price_type'	=> array( 
-					'func' => '_insert_or_update_price_type', 
+			'insert_price_type'	=> array(
+					'func' => '_insert_or_update_price_type',
 					'args' => array( 'new_price_type' => TRUE ),
 					'noheader' => TRUE
 				),
-			'update_price_type' => array( 
-					'func' => '_insert_or_update_price_type', 
+			'update_price_type' => array(
+					'func' => '_insert_or_update_price_type',
 					'args' => array( 'new_price_type' => FALSE ),
 					'noheader' => TRUE
 				),
-			'trash_price_type'	=> array( 
-					'func' => '_trash_or_restore_price_type', 
+			'trash_price_type'	=> array(
+					'func' => '_trash_or_restore_price_type',
 					'args' => array( 'trash' => TRUE ),
 					'noheader' => TRUE
 				),
-			'restore_price_type'	=> array( 
-					'func' => '_trash_or_restore_price_type', 
+			'restore_price_type'	=> array(
+					'func' => '_trash_or_restore_price_type',
 					'args' => array( 'trash' => FALSE ),
 					'noheader' => TRUE
 				),
 			'delete_price_type'	=> array(
 					'func' => '_delete_price_type',
 					'noheader' => TRUE
-				)			
+				)
 		);
 	}
 
@@ -161,7 +161,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_config() {
-		
+
 		$this->_page_config = array(
 			'default' => array(
 					'nav' => array(
@@ -273,7 +273,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 						),
                     'help_tour' => array( 'Pricing_Edit_Price_Type_Help_Tour' ),
 					'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_price_type_details_meta_boxes' ),
-					
+
 					'require_nonce' => FALSE
 				)
 		);
@@ -309,7 +309,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	public function load_scripts_styles() {
 		//styles
 		wp_enqueue_style('espresso-ui-theme');
-		wp_register_style( 'espresso_PRICING', PRICING_ASSETS_URL . 'espresso_pricing_admin.css', array(), EVENT_ESPRESSO_VERSION );		
+		wp_register_style( 'espresso_PRICING', PRICING_ASSETS_URL . 'espresso_pricing_admin.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_PRICING');
 
 		//scripts
@@ -320,7 +320,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		//wp_enqueue_script('jquery-ui-draggable');
 		//wp_enqueue_script('jquery-ui-datepicker');
 		wp_register_script( 'espresso_PRICING', PRICING_ASSETS_URL . 'espresso_pricing_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script( 'espresso_PRICING' );	
+		wp_enqueue_script( 'espresso_PRICING' );
 	}
 
 
@@ -351,8 +351,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'label' => __('View All Default Pricing', 'event_espreso'),
 					'count' => 0,
 					'bulk_action' => array(
-							'trash_price' => __('Move to Trash', 'event_espresso'),
-							'export_price' => __('Export Prices', 'event_espresso')
+							'trash_price' => __('Move to Trash', 'event_espresso')
 						)
 				),
 			'trashed' => array(
@@ -379,8 +378,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'label' => __('All', 'event_espreso'),
 					'count' => 0,
 					'bulk_action' => array(
-							'trash_price_type' => __('Move to Trash', 'event_espresso'),
-							'export_price_type' => __('Export Price Types', 'event_espresso')
+							'trash_price_type' => __('Move to Trash', 'event_espresso')
 						)
 				),
 			'trashed' => array(
@@ -414,26 +412,26 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	*	retrieve data for Prices List table 
+	*	retrieve data for Prices List table
 	*	@access public
 	* 	@param  int  $per_page    how many prices displayed per page
 	* 	@param  boolean $count   return the count or objects
 	* 	@param  boolean $trashed   whether the current view is of the trash can - eww yuck!
 	* 	@return mixed (int|array)  int = count || array of price objects
 	*/
-	public function get_prices_overview_data( $per_page = 10, $count = FALSE, $trashed = FALSE ) {  
+	public function get_prices_overview_data( $per_page = 10, $count = FALSE, $trashed = FALSE ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
 		$event_pricing = array();
-		
+
 		require_once( PRICING_ADMIN . 'Prices_List_Table.class.php' );
 		require_once(EE_MODELS . 'EEM_Price.model.php');
 		//$PRC = EEM_Price::instance();
-		
+
 		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
-		
+
 		switch ($this->_req_data['orderby']) {
 			case 'name':
 				$orderby = array('PRC_name'=>$order);
@@ -446,7 +444,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				break;
 			default:
 				$orderby = array( 'PRC_order'=>$order, 'Price_Type.PRT_order'=>$order, 'PRC_ID'=>$order);
-		}		
+		}
 
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
@@ -458,7 +456,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		$offset = ($current_page-1)*$per_page;
 		$limit = array( $offset, $per_page );
-		
+
 		if ( isset( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';
 			$_where['OR'] = array(
@@ -480,7 +478,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			return EEM_Price::instance()->count_deleted_and_undeleted(array($_where));
 		}else{
 			return EEM_Price::instance()->get_all_deleted_and_undeleted($query_params);
-		}		
+		}
 	}
 
 
@@ -493,33 +491,33 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@access protected
 	*		@return void
 	*/
-	protected function _edit_price_details() {	
+	protected function _edit_price_details() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// grab price ID
 		$PRC_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		// change page title based on request action
 		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
-		// add PRC_ID to title if editing 
+		// add PRC_ID to title if editing
 		$this->_admin_page_title = $PRC_ID ? $this->_admin_page_title . ' # ' . $PRC_ID : $this->_admin_page_title;
-		
+
 		// get prices
 		require_once(EE_MODELS . 'EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
 
 		if ( $PRC_ID ) {
 			$price = $PRC->get_one_by_ID( $PRC_ID );
-			$additional_hidden_fields = array( 
+			$additional_hidden_fields = array(
 					'PRC_ID' => array( 'type' => 'hidden', 'value' => $PRC_ID )
 				);
 			$this->_set_add_edit_form_tags( 'update_price', $additional_hidden_fields );
 		} else {
 			$price = $PRC->get_new_price();
 			$this->_set_add_edit_form_tags( 'insert_price' );
-		}		
-		
+		}
+
 		$this->_template_args['PRC_ID'] = $PRC_ID;
 		$this->_template_args['price'] = $price;
-	
+
 		// get price types
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
@@ -542,7 +540,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		$this->_set_publish_post_box_vars( 'id', $PRC_ID );
 		// the details template wrapper
-		$this->display_admin_page_with_sidebar();	
+		$this->display_admin_page_with_sidebar();
 	}
 
 
@@ -555,8 +553,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@access protected
 	*		@return void
 	*/
-	protected function _price_details_meta_boxes() {		
-		add_meta_box( 'edit-price-details-mbox', __( 'Default Price Details', 'event_espresso' ), array( $this, '_edit_price_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
+	protected function _price_details_meta_boxes() {
+		add_meta_box( 'edit-price-details-mbox', __( 'Default Price Details', 'event_espresso' ), array( $this, '_edit_price_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 	}
 
 
@@ -569,8 +567,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@access public
 	*		@return void
 	*/
-	public function _edit_price_details_meta_box() {		
-		echo EEH_Template::display_template( PRICING_TEMPLATE_PATH . 'pricing_details_main_meta_box.template.php', $this->_template_args, TRUE );		
+	public function _edit_price_details_meta_box() {
+		echo EEH_Template::display_template( PRICING_TEMPLATE_PATH . 'pricing_details_main_meta_box.template.php', $this->_template_args, TRUE );
 	}
 
 
@@ -583,9 +581,9 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return array
 	*/
 	protected function set_price_column_values() {
-	
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-	
+
 		$set_column_values = array(
 				'PRT_ID' => absint($this->_req_data['PRT_ID']),
 				'PRC_amount' => $this->_req_data['PRC_amount'],
@@ -613,7 +611,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _insert_or_update_price( $insert = FALSE ) {
-		
+
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -671,13 +669,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 			$action_desc = 'updated';
 		}
-		
+
 		$query_args = array( 'action' => 'edit_price', 'id' => $PRC_ID );
-		
+
 		$this->_redirect_after_action( $success, 'Prices', $action_desc, $query_args );
-			
+
 	}
- 
+
 
 
 
@@ -689,23 +687,23 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _trash_or_restore_price( $trash = TRUE ) {
-	
+
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EE_MODELS . 'EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
-	
+
 		$success = 1;
 		$PRC_deleted = $trash ? TRUE : FALSE;
-		
+
 		//get base ticket for updating
 		$ticket = EEM_Ticket::instance()->get_one_by_ID(1);
 		//Checkboxes
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
-			// cycle thru checkboxes 
+			// cycle thru checkboxes
 			while (list( $PRC_ID, $value ) = each($this->_req_data['checkbox'])) {
 				if ( ! $PRC->update_by_ID(array('PRC_deleted' => $PRC_deleted), absint($PRC_ID) ) ) {
 					$success = 0;
@@ -722,7 +720,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					}
 				}
 			}
-			
+
 		} else {
 			// grab single id and delete
 			$PRC_ID = absint($this->_req_data['id']);
@@ -740,7 +738,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					$ticket->save();
 				}
 			}
-			
+
 		}
 		$query_args = array(
 			'action' => 'default'
@@ -755,9 +753,9 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 			EE_Error::add_success( $msg );
 		}
-		
+
 		$this->_redirect_after_action( FALSE, '',  $action_desc, $query_args, TRUE );
-		
+
 	}
 
 
@@ -771,13 +769,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _delete_price() {
-	
+
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EE_MODELS . 'EEM_Price.model.php');
 		$PRC = EEM_Price::instance();
-		
+
 		$success = 1;
 		//Checkboxes
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
@@ -789,18 +787,18 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					$success = 0;
 				}
 			}
-	
+
 		} else {
 			// grab single id and delete
 			$PRC_ID = absint($this->_req_data['id']);
 			if ( ! $PRC->delete_permanently_by_ID($PRC_ID)) {
 				$success = 0;
 			}
-			
+
 		}
-		
+
 		$this->_redirect_after_action( $success, 'Prices', 'deleted', array() );
-		
+
 	}
 
 
@@ -808,7 +806,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 	public function update_price_order() {
 		$success = __( 'Price order was updated successfully.', 'event_espresso' );
-		
+
 		// grab our row IDs
 		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
 
@@ -818,14 +816,14 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				$id = absint($row_ids[$i]);
 				if ( EEM_Price::instance()->update ( array( 'PRC_order' => $i+1 ), array(array( 'PRC_ID' => $id ) )) === FALSE ) {
 					$success = FALSE;
-				} 
+				}
 			}
 		} else {
 			$success = FALSE;
 		}
-		
+
 		$errors = ! $success ? __( 'An error occurred. The price order was not updated.', 'event_espresso' ) : FALSE;
-		
+
 		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();
 	}
@@ -862,21 +860,21 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	*	retrieve data for Price Types List table 
+	*	retrieve data for Price Types List table
 	*	@access public
 	* 	@param  int  $per_page    how many prices displayed per page
 	* 	@param  boolean $count   return the count or objects
 	* 	@param  boolean $trashed   whether the current view is of the trash can - eww yuck!
 	* 	@return mixed (int|array)  int = count || array of price objects
 	*/
-	public function get_price_types_overview_data( $per_page = 10, $count = FALSE, $trashed = FALSE ) {  
+	public function get_price_types_overview_data( $per_page = 10, $count = FALSE, $trashed = FALSE ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// start with an empty array
-		
+
 		require_once( PRICING_ADMIN . 'Price_Types_List_Table.class.php' );
 		require_once( EE_MODELS . 'EEM_Price_Type.model.php' );
-		
+
 		$this->_req_data['orderby'] = empty($this->_req_data['orderby']) ? '' : $this->_req_data['orderby'];
 		$order = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 		switch ($this->_req_data['orderby']) {
@@ -885,9 +883,9 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				break;
 			default:
 				$orderby = array( 'PRT_order' => $order);
-		}		
+		}
 
-		
+
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
 		$per_page = isset( $this->_req_data['perpage'] ) && !empty( $this->_req_data['perpage'] ) ? $this->_req_data['perpage'] : $per_page;
 
@@ -911,8 +909,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		}else{
 			return EEM_Price_Type::instance()->get_all_deleted_and_undeleted($query_params);
 		}
-				
-		//printr( $price_types, '$price_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );		
+
+		//printr( $price_types, '$price_types  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 	}
 
 
@@ -926,8 +924,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@access protected
 	*		@return void
 	*/
-	protected function _edit_price_type_details() {		
-	
+	protected function _edit_price_type_details() {
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 
@@ -935,12 +933,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$PRT_ID = isset( $this->_req_data['id'] ) && ! empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 		// change page title based on request action
 		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
-		// add PRT_ID to title if editing 
+		// add PRT_ID to title if editing
 		$this->_admin_page_title = $PRT_ID ? $this->_admin_page_title . ' # ' . $PRT_ID : $this->_admin_page_title;
-		
+
 //		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
-	
-		if ( $PRT_ID ) {		
+
+		if ( $PRT_ID ) {
 			$price_type = EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID );
 			$additional_hidden_fields = array( 'PRT_ID' => array( 'type' => 'hidden', 'value' => $PRT_ID ));
 			$this->_set_add_edit_form_tags( 'update_price_type', $additional_hidden_fields );
@@ -958,20 +956,20 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				array('id' => 'Surcharge', 'text' 	=> __('Surcharge', 'event_espresso') . '&nbsp;&nbsp;' ),
 				array('id' => 'Tax', 'text' 		=> __('Tax', 'event_espresso') . '&nbsp;&nbsp;' )
 			);
-		$set_value = 'Price';						
+		$set_value = 'Price';
 		foreach ( $values as $value ) {
 			if ( strpos( $price_type->name(), $value['id'] ) !== FALSE ) {
 				$set_value = $value['id'];
 			}
 		}
-		
-		$this->_template_args['base_type_select'] = EEH_Form_Fields::select_input('base_type', $values, $set_value, 'id="price-type-base-type-slct"'); 		
+
+		$this->_template_args['base_type_select'] = EEH_Form_Fields::select_input('base_type', $values, $set_value, 'id="price-type-base-type-slct"');
 		$this->_template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
 		$redirect_URL = add_query_arg( array( 'action' => 'price_types'), $this->_admin_base_url );
 		$this->_set_publish_post_box_vars( 'id', $PRT_ID, FALSE, $redirect_URL );
 		// the details template wrapper
-		$this->display_admin_page_with_sidebar();	
-		
+		$this->display_admin_page_with_sidebar();
+
 	}
 
 
@@ -984,8 +982,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@access protected
 	*		@return void
 	*/
-	protected function _price_type_details_meta_boxes() {	
-		add_meta_box( 'edit-price-details-mbox', __( 'Price Type Details', 'event_espresso' ), array( $this, '_edit_price_type_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );		
+	protected function _price_type_details_meta_boxes() {
+		add_meta_box( 'edit-price-details-mbox', __( 'Price Type Details', 'event_espresso' ), array( $this, '_edit_price_type_details_meta_box' ), $this->wp_page_slug, 'normal', 'high' );
 	}
 
 
@@ -997,8 +995,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@access public
 	*		@return void
 	*/
-	public function _edit_price_type_details_meta_box() {		
-		echo EEH_Template::display_template( PRICING_TEMPLATE_PATH . 'pricing_type_details_main_meta_box.template.php', $this->_template_args, TRUE );		
+	public function _edit_price_type_details_meta_box() {
+		echo EEH_Template::display_template( PRICING_TEMPLATE_PATH . 'pricing_type_details_main_meta_box.template.php', $this->_template_args, TRUE );
 	}
 
 
@@ -1010,27 +1008,27 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function set_price_type_column_values() {
-	
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$base_type = $this->_req_data['base_type'];
-	
+
 		switch ($base_type) {
-	
+
 			case 'Price' :
 				$this->_req_data['PBT_ID'] = 1;
 				$this->_req_data['PRT_is_percent'] = 0;
 				$this->_req_data['PRT_order'] = 0;
 				break;
-	
+
 			case 'Discount' :
 				$this->_req_data['PBT_ID'] = 2;
 				break;
-	
+
 			case 'Surcharge' :
 				$this->_req_data['PBT_ID'] = 3;
 				break;
-	
+
 			case 'Tax' :
 				$this->_req_data['PBT_ID'] = 4;
 				$this->_req_data['PRT_is_percent'] = 1;
@@ -1044,8 +1042,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				'PRT_order' => absint($this->_req_data['PRT_order']),
 				'PRT_deleted' => 0
 		);
-	
-		return $set_column_values;	
+
+		return $set_column_values;
 	}
 
 
@@ -1061,7 +1059,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _insert_or_update_price_type( $new_price_type = FALSE ) {
-		
+
 //		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -1077,7 +1075,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			// run the insert
 			if ( $PRT_ID = $PRT->insert( $set_column_values )) {
 				$success = 1;
-			} 
+			}
 			$action_desc = 'created';
 		} else {
 			$PRT_ID = absint($this->_req_data['PRT_ID']);
@@ -1088,12 +1086,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			}
 			$action_desc = 'updated';
 		}
-		
+
 		$query_args = array( 'action'=> 'edit_price_type', 'id' => $PRT_ID );
 		$this->_redirect_after_action( $success, 'Price Type', $action_desc, $query_args );
-			
+
 	}
- 
+
 
 
 
@@ -1105,13 +1103,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _trash_or_restore_price_type( $trash = TRUE ) {
-	
+
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		require_once(EE_MODELS . 'EEM_Price_Type.model.php');
 		$PRT = EEM_Price_Type::instance();
-	
+
 		$success = 1;
 		$PRT_deleted = $trash ? TRUE : FALSE;
 		//Checkboxes
@@ -1119,13 +1117,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			// if array has more than one element than success message should be plural
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			$what = count( $this->_req_data['checkbox'] ) > 1 ? 'Price Types' : 'Price Type';
-			// cycle thru checkboxes 
+			// cycle thru checkboxes
 			while (list( $PRT_ID, $value ) = each($this->_req_data['checkbox'])) {
 				if ( ! $PRT->update_by_ID(array('PRT_deleted' => $PRT_deleted), $PRT_ID ) ) {
 					$success = 0;
 				}
 			}
-			
+
 		} else {
 			// grab single id and delete
 			$PRT_ID = absint($this->_req_data['id']);
@@ -1133,7 +1131,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				$success = 0;
 			}
 			$what = 'Price Type';
-			
+
 		}
 
 		$query_args = array( 'action' => 'price_types' );
@@ -1147,7 +1145,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		}
 
 		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
-		
+
 	}
 
 
@@ -1161,12 +1159,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _delete_price_type() {
-	
+
 		//echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		$PRT = EEM_Price_Type::instance();
-		
+
 		$success = 1;
 		//Checkboxes
 		if (!empty($this->_req_data['checkbox'])) {
@@ -1179,13 +1177,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					$success = 0;
 				}
 			}
-	
+
 		}
 
-		
+
 		$query_args = array( 'action'=> 'price_types' );
 		$this->_redirect_after_action( $success, $what, 'deleted', $query_args );
-		
+
 	}
 
 
