@@ -255,7 +255,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			<th>
 				<label for="pp_image_url">
 					<?php _e('Image URL', 'event_espresso'); ?>
-					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+					<?php echo EEH_Template::get_help_tab_link(payment_methods_overview_paypalstandard_help_tab); ?>
 				</label>
 			</th>
 			<td>

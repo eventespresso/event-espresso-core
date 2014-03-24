@@ -174,8 +174,12 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
 			$exception_thrown = false;
 		}catch(EE_Error $e){
-			$most_recent_migration = new EE_Data_Migration_Script_Error();
+			
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
+			//now, just so we can display the page correctly, make a error migraiton script stage object
+			//and also put the error on it. It only persists for the duration of this request
+			$most_recent_migration = new EE_Data_Migration_Script_Error();
+			$most_recent_migration->add_error($e->getMessage());
 			$exception_thrown = true;
 		}
 		$current_db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();

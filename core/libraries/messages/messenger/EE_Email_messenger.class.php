@@ -40,7 +40,7 @@ class EE_Email_messenger extends EE_messenger  {
 	protected $_content;
 	/**
 	 * constructor
-	 * 
+	 *
 	 * @access public
 	 * @return void
 	 */
@@ -140,7 +140,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	public function get_inline_css_template( $url = FALSE, $type = FALSE ) {
 		switch ( $type ) {
-			
+
 			case 'preview' :
 				$base = 'messages/messenger/assets/email/email-messenger-inline-preview-css.template.css';
 				break;
@@ -153,8 +153,8 @@ class EE_Email_messenger extends EE_messenger  {
 				$base = 'messages/messenger/assets/email/email-messenger-inline-css.template.css';
 				break;
 		}
-		
-		return $url ? EE_PLUGIN_DIR_URL . 'core/libraries/' . $base : EE_LIBRARIES . $base;
+
+		return $url ? apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $type )  : apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $type );
 	}
 
 
@@ -205,12 +205,12 @@ class EE_Email_messenger extends EE_messenger  {
 
 
 
-	
+
 
 	/**
 	 * _set_template_fields
 	 * This sets up the fields that a messenger requires for the message to go out.
-	 * 
+	 *
 	 * @access  protected
 	 * @return void
 	 */
@@ -225,7 +225,7 @@ class EE_Email_messenger extends EE_messenger  {
 				'validation' => TRUE,
 				'css_class' => 'large-text',
 				'format' => '%s'
-			),	
+			),
 			'from' => array(
 				'input' => 'text',
 				'label' => __('From', 'event_espresso'),
@@ -301,13 +301,13 @@ class EE_Email_messenger extends EE_messenger  {
 						)
 				)
 			)
-		);	
+		);
 	}
 
 	/**
 	 * _set_default_field_content
 	 * set the _default_field_content property (what gets added in the default templates).
-	 * 
+	 *
 	 * @access protected
 	 * @return void
 	 */
@@ -354,14 +354,14 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_admin_settings_fields() {}
 
 	/**
-	 * We just deliver the messages don't kill us!!  
+	 * We just deliver the messages don't kill us!!
 	 * @return void
 	 * @return bool|error_object true if message delivered, false if it didn't deliver OR bubble up any error object if present.
 	 */
 	protected function _send_message() {
-		
+
 		$success = wp_mail(html_entity_decode($this->_to, ENT_QUOTES, "UTF-8"), stripslashes_deep(html_entity_decode($this->_subject, ENT_QUOTES, "UTF-8")), $this->_body(), $this->_headers());
-		
+
 		return $success;
 
 	}
@@ -383,7 +383,7 @@ class EE_Email_messenger extends EE_messenger  {
 
 	/**
 	 * Setup headers for email
-	 * 
+	 *
 	 * @access protected
 	 * @return string formatted header for email
 	 */

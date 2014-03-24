@@ -487,7 +487,6 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	private static function get_event( $EVT_ID = FALSE ) {
 		$EVT_ID = absint( $EVT_ID );
-//		d( $EVT_ID );
 		// do we already have the Event  you are looking for?
 		if ( EEH_Event_View::$_event instanceof EE_Event && $EVT_ID && EEH_Event_View::$_event->ID() === $EVT_ID ) {
 			return EEH_Event_View::$_event;
@@ -499,7 +498,7 @@ class EEH_Event_View extends EEH_Base {
 		 if ( isset( $post->post_type ) && $post->post_type == 'espresso_events' || $EVT_ID ) {
 //			d( $post );
 			// grab the event we're looking for
-			if ( isset( $post->EE_Event ) && (( $EVT_ID && $post->EE_Event->ID() === $EVT_ID ) || ! $EVT_ID )) {
+			if ( isset( $post->EE_Event ) && ( $EVT_ID == 0 || ( $EVT_ID == $post->ID ))) {
 				EEH_Event_View::$_event = $post->EE_Event;
 //				d( EEH_Event_View::$_event );
 			}
