@@ -165,9 +165,8 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( ! $WP_Query instanceof WP_Query ) {
 			return;
 		}
-
 		// grab queried object 
-		if ( $WP_Query->get_queried_object() instanceof stdClass ) {
+		if ( isset( $WP_Query->post ) && $WP_Query->get_queried_object() instanceof stdClass ) {
 			// check if it has a taxonomy property set for it and if THAT taxonomy is one of ours
 			if ( isset( $WP_Query->get_queried_object()->taxonomy ) && isset( $this->_CPT_taxonomies[ $WP_Query->get_queried_object()->taxonomy ] )) {
 				// this category belongs to us
