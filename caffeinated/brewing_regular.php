@@ -32,13 +32,13 @@ class EE_Brewing_Regular extends EE_Base {
 			define('EE_CAF_URL', EE_PLUGIN_DIR_URL . 'caffeinated/' );
 			define('EE_CAF_CORE', EE_CAFF_PATH . 'core' . DS);
 			define('EE_CAF_LIBRARIES', EE_CAF_CORE . 'libraries' . DS);
-			// activation 
+			// activation
 			add_action( 'AHEE__EEH_Activation__initialize_db_content', array( $this, 'initialize_caf_db_content' ));
 			// load caff init
-			add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'caffeinated_init' ));			
+			add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'caffeinated_init' ));
 			// make it so the PDF receipt doesn't show our shameless plug
 			add_filter( 'FHEE_Invoice__send_invoice__shameless_plug', '__return_false' );
-			// add caffeinated modules 
+			// add caffeinated modules
 			add_filter( 'FHEE__EE_Config__register_modules__modules_to_register', array( $this, 'caffeinated_modules_to_register' ));
 			// load caff scripts
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_caffeinated_scripts'), 10 );
@@ -47,19 +47,6 @@ class EE_Brewing_Regular extends EE_Base {
 		}
 	}
 
-
-	
-		/**
-		 * note, this action hook is simply for reliably having things run ONLY if EE Regular is running.  This hook is executed at the plugins_loaded (priority 3) hook point. (see EE_System::plugins_loaded)
-		 */
-		do_action( 'AHEE__EE_Brewing_Regular__run_now' );
-		add_action('AHEE__EEH_Activation__initialize_db_content',array($this,'initialize_caf_db_content'));
-		//make it so the PDF receipt doesn't show our shameless plug
-		add_filter('FHEE_Invoice__send_invoice__shameless_plug','__return_false');
-		// add caffeinated modules
-		add_filter( 'FHEE__EE_Config__register_modules__modules_to_register', array( $this, 'caffeinated_modules_to_register' ));
-
-	}
 
 	/**
 	 * Upon brand-new activation, if this is a new activation of CAF, we want to add
@@ -165,7 +152,7 @@ class EE_Brewing_Regular extends EE_Base {
 		}
 		return $modules_to_register;
 	}
-	
+
 
 
 	public function caffeinated_init(){
@@ -369,10 +356,10 @@ class EE_Brewing_Regular extends EE_Base {
 	 * Callback for additional shortcodes filter for adding additional datetime shortcodes.
 	 *
 	 * @since  4.2
-	 * @param  array  					$shortcodes       	array of shortcodes and 
+	 * @param  array  					$shortcodes       	array of shortcodes and
 	 *                                       				descriptions
 	 * @param  EE_Datetime_Shortcodes 	$shortcode_parser 	EE_Shortcodes object
-	 * @return array                   						array of shortcodes and 
+	 * @return array                   						array of shortcodes and
 	 *                                             			descriptions
 	 */
 	public function additional_datetime_shortcodes( $shortcodes, $shortcode_parser ) {
@@ -385,16 +372,16 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	/**
-	 * Callback for additional shortcodes parser filter used for adding parser for new 
+	 * Callback for additional shortcodes parser filter used for adding parser for new
 	 * Datetime shortcodes
 	 *
 	 * @since  4.2
 	 * @param  string $parsed           The finished parsed string for the given shortcode.
 	 * @param  string $shortcode        The shortcode being parsed.
 	 * @param  object $data             The incoming data object for the Shortcode Parser.
-	 * @param  object $extra_data       The incoming extra date object for the Shortcode 
+	 * @param  object $extra_data       The incoming extra date object for the Shortcode
 	 *                                  Parser.
-	 * @param  EE_Datetime_Shortcodes $shortcode_parser 
+	 * @param  EE_Datetime_Shortcodes $shortcode_parser
 	 * @return string                   The new parsed string.
 	 */
 	public function additional_datetime_parser( $parsed, $shortcode, $data, $extra_data, $shortcode_parser ) {
