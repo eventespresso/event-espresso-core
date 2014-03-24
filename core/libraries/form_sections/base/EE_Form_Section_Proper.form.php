@@ -24,6 +24,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @var boolean
 	 */
 	protected $_received_submission = FALSE;
+	/**
+	 * Stores all the data that will localized for form validation
+	 * @var array
+	 */
+	static protected $_js_localization = array();
 	
 	/**
 	 * when constructing a proper form section, calls _construct_finalize on children
@@ -243,23 +248,35 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * but before the wordpress hook wp_loaded
 	 */
 	public function _enqueue_and_localize_form_js(){
+		$validation_rules = $this->get_jquery_validation_rules();
+		$form_section_id = $this->html_id();
+		//actually, we don't want to localize jsut yet. There may be other forms on the page.
+		//so we need to add our form section data to a static variable accessible by all form sections
+		//and localize it just before the footer
+		EE_Form_Section_Proper::$_js_localization['form_data'][] =array(
+			'form_section_id'=>'#'.$form_section_id,
+			'validation_rules'=>$validation_rules);
+		add_action('get_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
+		add_action('admin_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
+	}
+	
+	/**
+	 * passes all the form data required by the JS to the JS, and enqueues the few required JS files.
+	 * Should be setup by each form during the _enqueues_and_localize_form_js
+	 */
+	public static function localize_script_for_all_forms(){
+		EE_Form_Section_Proper::$_js_localization['localized_error_messages'] = EE_Form_Section_Proper::_get_localized_error_messages();
 		wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);	
 		wp_enqueue_script('ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'),
 				'1',true);
-		$validation_rules = $this->get_jquery_validation_rules();
-		$form_section_id = $this->html_id();
-		wp_localize_script('ee_form_section_validation','ee_form_section_vars',array(
-			'form_section_id'=>'#'.$form_section_id,
-			'validation_rules'=>$validation_rules,
-			'localized_error_messages'=>$this->_get_localized_error_messages()));
+		wp_localize_script('ee_form_section_validation','ee_form_section_vars', EE_Form_Section_Proper::$_js_localization);
 	}
-	
 	/**
 	 * Gets the hard-coded validation error messages to be used in the JS. The convention
 	 * is that the key here should be the same as the custom validation rule put in the JS file
 	 * @return array keys are custom validation rules, and values are internationalized strings
 	 */
-	private function _get_localized_error_messages(){
+	private static function _get_localized_error_messages(){
 		return array(
 			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://mysite.com/monkey.jpg", "event_espresso")
 		);
