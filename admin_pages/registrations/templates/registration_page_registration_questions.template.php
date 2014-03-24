@@ -117,12 +117,7 @@
 			</h3>
 			<fieldset id="spco-attendee-wrap-<?php echo $line_item;?>" class="spco-attendee-wrap-fs">
  				<h6><?php _e('No information is required to attend this event. Please proceed to the next Step', 'event_espresso'); ?></h6>
-				<input
-						type="hidden"
-						id="no-questions"
-						name="qstn[]"
-						value="0"
-				/>					
+				<input type="hidden" id="no-questions" name="qstn[]" value="0" />					
 			</fieldset>			
 		</div>			
 		<?php

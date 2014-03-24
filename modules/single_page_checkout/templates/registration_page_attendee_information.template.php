@@ -18,7 +18,6 @@
 	</p>
 <?php if ( !$from_admin ) : ?>
 	<form id="spco-registration-attendee_information-frm" action="<?php echo $reg_step_form_url;?>" method="post">
-
 		<input type="hidden" id="spco-attendee_information-action" name="ajax_action" value="espresso_<?php echo $reg_step_ajax_action;?>" />
 		<input type="hidden" id="spco-attendee_information-noheader" name="noheader" value="" />
 		<input type="hidden" id="spco-attendee_information-next-step" name="next_step" value="<?php echo $next_step; ?>" />
@@ -123,11 +122,7 @@ if ( $event_queue['total_items'] > 0 ) {
 
 							<p class="event_form_field spco-copy-attendee-chk-pg">
 								<label><?php echo __('Attendee #', 'event_espresso') . $attendee['att_nmbr'];?>
-									<input 	type="checkbox" 
-													id="spco-copy-attendee-chk-<?php echo $attendee['input_id'];?>" 
-													class="spco-copy-attendee-chk <?php echo $css_class;?>" 
-													value="<?php echo $attendee['input_id'];?>" 
-											/>
+									<input 	type="checkbox" id="spco-copy-attendee-chk-<?php echo $attendee['input_id'];?>" class="spco-copy-attendee-chk <?php echo $css_class;?>" value="<?php echo $attendee['input_id'];?>" />
 								</label>
 							</p>			
 																
@@ -155,6 +150,23 @@ if ( $event_queue['total_items'] > 0 ) {
 			
 		</div>			
 <?php	
+					
+				} else {
+					 if ( $att_nmbr == 1 ) {
+			?>
+		<div id="spco-attendee-panel-dv-<?php echo $line_item;?>" class="spco-attendee-panel-dv">		
+			<h3 id="event_title-<?php echo $item['ticket']->ID() ?>" class="big-event-title-hdr">
+				<?php echo $item['event']->name(); ?>				
+			</h3>
+			<fieldset id="spco-attendee-wrap-<?php echo $line_item;?>" class="spco-attendee-wrap-fs">
+ 				<h6><?php _e('No information is required to attend this event. Please proceed to the next Step', 'event_espresso'); ?></h6>
+				<input type="hidden" id="no-questions" name="qstn[]" value="0" />					
+			</fieldset>			
+		</div>			
+		<?php
+					
+				}
+			}
 			echo $item['additional_attendee_reg_info'];
 			$prev_event = $item['event']->ID();
 			$prev_ticket = $item['ticket']->ID(); 
