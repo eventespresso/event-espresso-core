@@ -26,8 +26,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Paypal_Pro extends EE_PMT_Base{
-	public function __construct() {
+	public function __construct($pm_instance = NULL) {
 		$this->_settings_form = new EE_Payment_Method_Form(array(
+			'name'=>'Paypal_Pro_Form',
 			'extra_meta_inputs'=>array(
 				'paypal_email'=>new EE_Email_Input(),
 				'paypal_api_username'=>new EE_Text_Input(),
@@ -47,6 +48,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				'cvv'=>new EE_Text_Input(),
 			)
 		));
+		parent::__construct($pm_instance);
 	}
 	public function billing_form() {
 		$cc_type_input = $this->_billing_form->get_input('credit_card_type');

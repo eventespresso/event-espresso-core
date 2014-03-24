@@ -26,9 +26,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Check extends EE_PMT_Base{
-	public function __construct($pm_instance){
+	public function __construct($pm_instance = NULL){
 		
 		$this->_settings_form = new EE_Payment_Method_Form(array(
+			'name'=>'Check_Form',
 			'subsections'=>array(
 				'title'=> new EE_Text_Input(array(
 					'default'=>  __("Check/Money Order Payments", 'event_espresso'),

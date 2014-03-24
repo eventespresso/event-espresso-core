@@ -45,7 +45,9 @@ abstract class EE_Form_Section_Base{
 	protected $_validation_errors;
 	
 	function __construct($options_array = array()){
-		
+		if(isset($options_array['name'])){
+			$this->_name = $options_array['name'];
+		}
 	}
 	protected function _construct_finalize($parent_form_section, $name){
 		$this->_parent_section = $parent_form_section;

@@ -111,7 +111,7 @@ class EE_Payment_Method_Manager {
 	 * Returns all the classnames of the various payment method types
 	 * @return array
 	 */
-	public function payment_method_types($with_prefixes = FALSE){
+	public function payment_method_type_names($with_prefixes = FALSE){
 		if( ! $this->_payment_method_types){
 			$this->register_payment_methods();
 		}
@@ -125,7 +125,21 @@ class EE_Payment_Method_Manager {
 		}else{
 			return array_keys($this->_payment_method_types);
 		}
-		
+	}
+	/**
+	 * Gets an object of each payment method type, none of which are bound to a 
+	 * payment method instance
+	 * @return EE_PMT_Base[]
+	 */
+	public function payment_method_types(){
+		if( ! $this->_payment_method_types){
+			$this->register_payment_methods();
+		}
+		$pmt_objs = array();
+		foreach($this->payment_method_type_names(true) as $classname){
+			$pmt_objs[] = new $classname;
+		}
+		return $pmt_objs;
 	}
 	
 	/**

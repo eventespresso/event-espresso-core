@@ -24,10 +24,21 @@ abstract class EE_PMT_Base{
 	 * 
 	 * @param EE_Payment_Method $pm_instance
 	 */
-	function __construct($pm_instance) {
-		$this->_pm_instance = $pm_instance;
+	function __construct($pm_instance = NULL) {
+		if($pm_instance){
+			$this->set_instance($pm_instance);
+		}
+	}
+	/**
+	 * Sets the payment method instance this payment method type is for.
+	 * Its important teh paymetn method instance is set before
+	 * @param EE_Payment_Method $payment_method_instance
+	 */
+	function set_instance($payment_method_instance){
+		$this->_pm_instance = $payment_method_instance;
+		$this->_settings_form->populate_model_obj($payment_method_instance);
 		if($this->_gateway && $this->_gateway instanceof EE_Gateway){
-			$this->_gateway->_set_settings($pm_instance->settings_array());
+			$this->_gateway->_set_settings($payment_method_instance->settings_array());
 		}
 	}
 	//two forms
@@ -37,7 +48,7 @@ abstract class EE_PMT_Base{
 	
 	/**
 	 * Gets teh form for displaying to admins where they setup the payment method
-	 * @return EE_Form_Section_Proper
+	 * @return EE_Payment_Method_Form
 	 */
 	function settings_form(){
 		return $this->_settings_form;

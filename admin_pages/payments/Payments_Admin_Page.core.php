@@ -62,7 +62,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_gateway_settings',
+			'default' => array(
+				'func'=>'_gateway_settings',
+				'noheader'=>TRUE
+			),
 			'payment_settings' => '_payment_settings',
 			'activate_payment_method'=>array(
 				'func'=>'_activate_payment_method',
@@ -224,16 +227,50 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		return $help_tabs;
 	}
+	
+	
 
 
-
-
-	protected function _gateway_settings() {		
+	protected function _gateway_settings() {
+		//do early processing if its a post and we haven't already
+		if( ! isset($this->_req_data['early_processing'])){
+			$this->_req_data['early_processing'] = TRUE;
+			if( $_SERVER['REQUEST_METHOD'] == 'POST'){
+				
+	//			echo "early processing ran";return;
+				//ok let's find which gateway form to use based on the form input
+				EE_Registry::instance()->load_lib('Payment_Method_Manager');
+				$correct_pmt_form_to_use = NULL;
+				foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
+					//get the form and simplify it, like what we do when we display it
+					$pmt_form = $pmt_obj->settings_form();
+					$this->_simplify_form($pmt_form);
+					if($pmt_form->form_data_present_in($this->_req_data)){
+						$correct_pmt_form_to_use = $pmt_form;
+						break;
+					}
+				}
+				//if we couldn't find the correct payment method type...
+				if( ! $correct_pmt_form_to_use ){
+					EE_Error::add_error(__("We could not find which payment metho type your form submission related to. Please contact support", 'event_espresso'));
+					$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
+				}
+				$correct_pmt_form_to_use->receive_form_submission($this->_req_data);
+				if($correct_pmt_form_to_use->is_valid()){
+					$correct_pmt_form_to_use->save();
+					$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
+				}
+			}
+			return;
+		}
+		
+		//ok now start normal rendering of the page. realizing this MIGHT be a post request
+		//with an invalid form, or it might be a simple get.
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );		
 		EE_Registry::instance()->load_lib('Payment_Method_Manager');
 		//setup tabs, one for each payment method type
 		$tabs = array();
-		foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_name){
+		foreach(EE_Payment_Method_Manager::instance()->payment_method_type_names() as $pmt_name){
 			//check for any active pms of that type
 			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($pmt_name);
 			if( ! $payment_method ){
@@ -254,33 +291,33 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'label' => $payment_method->name(),
 				'class' =>  $payment_method->active() ? 'gateway-active' : '',
 				'href' => 'espresso_' . $pmt_name . '_payment_settings',
-				'title' => __('Modify this Gateway', 'event_espresso'),
+				'title' => __('Modify this Payment Method', 'event_espresso'),
 				'slug' => $payment_method->slug()
 				);
 		}
-		//decide which payment method tab to open first, as dictated by the request's 'current_pm'
-		if( isset($this->_req_data['current_pm']) ){
+		//decide which payment method tab to open first, as dictated by the request's 'payment_method'
+		if( isset($this->_req_data['payment_method']) ){
 			//if they provided the current payment method, use it
-			$current_pm_slug = sanitize_key($this->_req_data['current_pm']);
+			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
 			//double-check it exists
-			if( ! EEM_Payment_Method::instance()->get_one(array(array('PMD_slug'=>$current_pm_slug)))){
-				$current_pm_slug = FALSE;
+			if( ! EEM_Payment_Method::instance()->get_one(array(array('PMD_slug'=>$payment_method_slug)))){
+				$payment_method_slug = FALSE;
 			}
 		}else{
-			$current_pm_slug = FALSE;
+			$payment_method_slug = FALSE;
 		}
 		//if that didn't work or wasn't provided, find another way to select the currrent pm
-		if( ! $current_pm_slug){
+		if( ! $payment_method_slug){
 			//otherwise, look for an active one
 			$an_active_pm = EEM_Payment_Method::instance()->get_one(array(array('PMD_active'=>true)));
 			if($an_active_pm){
-				$current_pm_slug = $an_active_pm->slug();
+				$payment_method_slug = $an_active_pm->slug();
 			}else{
-				$current_pm_slug = 'paypal_standard';
+				$payment_method_slug = 'paypal_standard';
 			}
 		}
 		
-		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', $current_pm_slug );
+		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', $payment_method_slug );
 		$this->display_admin_page_with_sidebar();
 
 	}
@@ -298,15 +335,38 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$template_args = array(
 			'payment_method'=>$payment_method
 		);
+		//modify the form so we only have/show fields that will be implemented for this version
+		$form = $payment_method->type_obj()->settings_form();
+		$this->_simplify_form($form);
+		if($form->form_data_present_in($this->_req_data)){
+			$form->receive_form_submission($this->_req_data);
+		}
 		//if the payment method really exists show its form, otherwise the activation template
 		if( $payment_method->ID() && $payment_method->active()){
-			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'edit_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
+			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'default', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
 			$template_args['deactivate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'deactivate_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
 			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_edit.template.php', $template_args);
 		}else{
 			$template_args['activate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'activate_payment_method', 'payment_method_type'=>$payment_method->type()), EE_PAYMENTS_ADMIN_URL);
 			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_activate.template.php', $template_args);
 		}
+	}
+	
+	/**
+	 * Simplifies the form to merely reproduce 4.1's gateway settings functionality
+	 * @param EE_Payment_Method_Form $form_section
+	 */
+	protected function _simplify_form($form_section){
+		//we don't want them to be monkeying with the type or activeness
+		$form_section->exclude(array(
+			'PMD_type',
+			'PMD_active',
+			'PMD_order',
+			'PMD_slug',
+			'PRC_ID',
+			'PMD_wp_user_id',
+		));
+		
 	}
 	
 	/**
@@ -330,11 +390,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$payment_method->set_active(true);
 				$payment_method->save();
 			}
-			$this->_redirect_after_action(1, 'Payment Method', 'activated', array('action' => 'default','current_pm'=>$payment_method->slug()));
+			$this->_redirect_after_action(1, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$payment_method->slug()));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
 		}
-		
 	}
 	
 	/**
@@ -345,7 +404,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
 			//deactivate it
 			$count_updated = EEM_Payment_Method::instance()->update(array('PMD_active'=>false),array(array('PMD_slug'=>$payment_method_slug)));
-			$this->_redirect_after_action($count_updated, 'Payment Method', 'deactivated', array('action' => 'default','current_pm'=>$payment_method_slug));
+			$this->_redirect_after_action($count_updated, 'Payment Method', 'deactivated', array('action' => 'default','payment_method'=>$payment_method_slug));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'deactivated', array('action' => 'default'));
 		}

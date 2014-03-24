@@ -20,6 +20,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	 * </ul>
 	 */
 	public function __construct($options_array){
+		//set the name according to the classname
 		$this->_model = EEM_Payment_Method::instance();
 		if(isset($options_array['extra_meta_inputs'])){
 			$this->_extra_meta_inputs = array_merge($this->_extra_meta_inputs,$options_array['extra_meta_inputs']);
@@ -27,6 +28,9 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 		if($this->_extra_meta_inputs){
 			$this->_subsections = array_merge($this->_subsections,$this->_extra_meta_inputs);
 		}
+		$this->_subsections['PMD_button_url'] = new EE_Admin_File_Uploader_Input(array(
+			'html_label_text'=>  __("Button URL", 'event_espresso')
+		));
 		parent::__construct($options_array);
 		
 	}
@@ -57,6 +61,16 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			if(isset($extra_metas[$input_name])){
 				$extra_meta_input->set_default($extra_metas[$input_name]);
 			}
+		}
+	}
+	/**
+	 * gets teh default name of this form section if none is specified
+	 * @return string
+	 */
+	protected function _set_default_name_if_empty(){
+		if( ! $this->_name ){
+			$default_name = str_replace("EEM_", "", get_class($this->_model)) . "_Model_Form";
+			$this->_name =  $default_name;
 		}
 	}
 }

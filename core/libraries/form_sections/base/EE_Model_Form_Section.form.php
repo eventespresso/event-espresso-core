@@ -28,7 +28,6 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	public function __construct($options_array = array()){
 		if(isset($options_array['model']) && $options_array['model'] instanceof EEM_Base){
 			$this->_model = $options_array['model'];
-			$this->_name = str_replace("EEM_","",get_class($options_array['model']));
 		}
 		if( ! $this->_model || ! $this->_model instanceof EEM_Base ){
 			throw new EE_Error(sprintf(__("Model Form Sections must first specify the _model property to be a subcalss of EEM_Base", "event_espresso")));
@@ -36,7 +35,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		
 		$model_fields = $this->_model->field_settings();
 		//calculate what fields to include
-		$this->_subsections = array_merge($this->_subsections,$this->_convert_model_fields_to_inputs($model_fields));
+		$this->_subsections = array_merge($this->_convert_model_fields_to_inputs($model_fields),$this->_subsections);
 		parent::__construct($options_array);
 		if(isset($options_array['model_object']) && $options_array['model_object'] instanceof EE_Base_Class){
 			$this->populate_model_obj($options_array['model_object']);
@@ -221,6 +220,17 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	 */
 	public function get_model_object(){
 		return $this->_model_object;
+	}
+	
+	/**
+	 * gets teh default name of this form section if none is specified
+	 * @return string
+	 */
+	protected function _set_default_name_if_empty(){
+		if( ! $this->_name ){
+			$default_name = str_replace("EEM_", "", get_class($this->_model)) . "_Model_Form";
+			$this->_name =  $default_name;
+		}
 	}
 	
 }

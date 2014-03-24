@@ -39,6 +39,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * <li>and parent's keys too</li></ul>
 	 */
 	public function __construct($options_array = array()){
+		//call parent first, as it may be setting the name
+		parent::__construct($options_array);
 		$this->_set_default_name_if_empty();
 		$this->_set_default_html_id_if_empty();
 		//if they've included subsections in the constructor, add them now
@@ -68,11 +70,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 			$this->_layout_strategy = new EE_Two_Column_Layout();
 		}
 		$this->_layout_strategy->_construct_finalize($this);
-		parent::__construct($options_array);
-		
 		
 		$this->_enqueue_jquery_validate_script();
-		parent::__construct($options_array);
 	}
 	/**
 	 * Gets the layotu strategy for this form section
@@ -356,5 +355,24 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 */
 	public function has_received_submission(){
 		return $this->_received_submission;
+	}
+	/**
+	 * Equivalent to passing 'exclude' in the constructor's options array.
+	 * Removes the listed inputs from the form
+	 * @param array $inputs_to_exclude values are the input names
+	 * @return void
+	 */
+	public function exclude($inputs_to_exclude = array()){
+		foreach($inputs_to_exclude as $input_to_exclude_name){
+			unset($this->_subsections[$input_to_exclude_name]);
+		}
+	}
+	
+	public function hide($inputs_to_hide= array()){
+		foreach($inputs_to_hide as $input_to_hide){
+			$input = $this->get_input($input_to_hide);
+			
+			$input->set_display_strategy(new EE_Hidden_Display_Strategy());
+		}
 	}
 }

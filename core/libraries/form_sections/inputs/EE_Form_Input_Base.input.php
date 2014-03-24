@@ -195,11 +195,27 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		return $this->_display_strategy;
 	}
 	/**
+	 * Overwrites the display strategy
+	 * @param EE_Display_Strategy_Base $display_strategy
+	 */
+	public function set_display_strategy($display_strategy){
+		$this->_display_strategy = $display_strategy;
+		$this->_display_strategy->_construct_finalize($this);
+	}
+	/**
 	 * Gets the normalization strategy set on this input
 	 * @return EE_Normalization_Strategy_Base
 	 */
 	public function get_normalization_strategy(){
 		return $this->_normalization_strategy;
+	}
+	/**
+	 * Overwrites the normalization strategy
+	 * @param EE_Normalization_Strategy_Base $normalization_strategy
+	 */
+	public function set_normalization_strategy($normalization_strategy){
+		$this->_normalization_strategy = $normalization_strategy;
+		$this->_normalization_strategy->_construct_finalize($this);
 	}
 	
 	/**
