@@ -776,12 +776,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// show this attendee form?
 				if ( empty( $attendee_questions )) {				
 					$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '
-						<input
-								type="hidden"
-								id="' . $line_item_ID . '-additional_attendee_reg_info"
-								name="qstn[' . $line_item_ID . '][additional_attendee_reg_info]"
-								value="0"
-						/>' . "\n";
+	<input type="hidden" id="' . $line_item_ID . '-additional_attendee_reg_info" name="qstn[' . $line_item_ID . '][additional_attendee_reg_info]" value="0" />' . "\n";
 				} else {
 					$additional_attendee_forms = $registration->count() == 1 ? FALSE : TRUE;
 					$event_queue['items'][ $line_item_ID ]['additional_attendee_reg_info'] = '';

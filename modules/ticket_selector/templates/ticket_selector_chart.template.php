@@ -17,7 +17,7 @@ $ticket_count = count( $tickets );
 foreach ( $tickets as $TKT_ID => $ticket ) {
 //	d( $ticket );
 	$max = $ticket->max();
-	$min = $ticket->min();
+	$min = 0;
 	$remaining = $ticket->remaining();
 	if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 		if ( $max_atndz > 1 ) {
@@ -76,21 +76,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			<tr class="tckt-slctr-tbl-tr <?php echo $status_class . ' ' . espresso_get_object_css_class( $ticket ); ?>">
 				<td class="tckt-slctr-tbl-td-name">
 					<b><?php echo $ticket->get_pretty('TKT_name');?></b>
-					<a
-						id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>"
-						class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js"
-						rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>"
-						title="<?php _e( 'click to show additional ticket details', 'event_espresso' ); ?>"
-					>
-						<?php echo sprintf( __( 'show%1$sdetails%1$s+', 'event_espresso' ), '&nbsp;' ); ?>
+					<a id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php _e( 'click to show additional ticket details', 'event_espresso' ); ?>">
+						<?php echo sprintf( __( 'show%1$sdetails%1$s+', 'event_espresso' ), '&nbsp;' ); ?>						
 					</a>
-					<a
-						id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>"
-						class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js"
-						rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>"
-						title="<?php _e( 'click to hide additional ticket details', 'event_espresso' ); ?>"
-						style="display:none;"
-					>
+					<a id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php _e( 'click to hide additional ticket details', 'event_espresso' ); ?>" style="display:none;">
 						<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>
 					</a>
 				<?php if ( $ticket->required() ) { ?>
@@ -124,7 +113,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				?>
 				<div class="ticket-pending-pg">
 					<span class="ticket-pending"><?php _e( 'Goes&nbsp;On&nbsp;Sale', 'event_espresso' ); ?></span><br/>
-					<span class="small-text"><?php echo $ticket->start_date( 'M d, Y', ' ' ); ?></span>
+					<span class="small-text"><?php echo date_i18n( 'M d, Y', strtotime( $ticket->start_date() )); ?></span>
 				</div>
 				<?php
 				// min qty purchasable is less than tickets available
@@ -259,8 +248,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<section class="tckt-slctr-tkt-sale-dates-sctn">
 							<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
 							<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
-							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><?php echo $ticket->start_date('l F jS, Y @') ; ?><br/>
-							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><?php echo $ticket->end_date('l F jS, Y @') ; ?><br/>
+							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->start_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->start_date() )) ; ?><br/>
+							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->end_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->end_date() )) ; ?><br/>
 						</section>
 						<br/>
 
@@ -371,6 +360,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	<p class="smaller-text lt-grey-text">* <?php echo sprintf( __( 'Please note that a maximum number of %d tickets can be purchased for this event per order.', 'event_espresso' ), $max_atndz );?></p>
 <?php } ?>
 
-	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector' ); ?>
+	<?php do_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', $EVT_ID ); ?>
 
 </div>
