@@ -1,11 +1,11 @@
 <!--***************  ATTENDEE INFORMATION STEP 	***************-->		
 <?php echo do_action( 'AHEE__registration_page_attendee_information__start', $event_queue );?>
-<?php if ( !$from_admin ) : ?>
+<?php if ( ! $from_admin ) : ?>
 <h2 id="spco-attendee_information-hdr" class="spco-step-title-hdr">
 	<?php echo sprintf( __('%s Attendee Information', 'event_espresso'), $step_nmbr ); ?>
 	<a id="spco-edit-attendee_information-lnk" class="spco-edit-step-lnk <?php echo $edit_lnk_class; ?>"  href="<?php echo $edit_lnk_url; ?>" rel="attendee_information"><?php _e('edit', 'event_espresso'); ?></a>
 </h2>
-<?php endif; ?>
+<?php endif; //  ! $from_admin ?>
 <?php do_action( 'AHEE__registration_page_registration_questions__template__after_spco_attendee_information_header' )?>
 <div id="spco-attendee_information-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
 	
@@ -16,7 +16,7 @@
 		'<span class="asterisk">*</span>'
 		);?>		
 	</p>
-<?php if ( !$from_admin ) : ?>
+<?php if ( ! $from_admin ) : ?>
 	<form id="spco-registration-attendee_information-frm" action="<?php echo $reg_step_form_url;?>" method="post">
 		<input type="hidden" id="spco-attendee_information-action" name="ajax_action" value="espresso_<?php echo $reg_step_ajax_action;?>" />
 		<input type="hidden" id="spco-attendee_information-noheader" name="noheader" value="" />
@@ -25,7 +25,7 @@
 		<input type="hidden" id="spco-revisit" name="revisit" value="<?php echo $revisit;?>" />
 					
 <?php
-endif; //end from admin conditional
+endif; // ! $from_admin
 global $css_class;
 
 $att_nmbr = 0;
@@ -150,23 +150,6 @@ if ( $event_queue['total_items'] > 0 ) {
 			
 		</div>			
 <?php	
-					
-				} else {
-					 if ( $att_nmbr == 1 ) {
-			?>
-		<div id="spco-attendee-panel-dv-<?php echo $line_item;?>" class="spco-attendee-panel-dv">		
-			<h3 id="event_title-<?php echo $item['ticket']->ID() ?>" class="big-event-title-hdr">
-				<?php echo $item['event']->name(); ?>				
-			</h3>
-			<fieldset id="spco-attendee-wrap-<?php echo $line_item;?>" class="spco-attendee-wrap-fs">
- 				<h6><?php _e('No information is required to attend this event. Please proceed to the next Step', 'event_espresso'); ?></h6>
-				<input type="hidden" id="no-questions" name="qstn[]" value="0" />					
-			</fieldset>			
-		</div>			
-		<?php
-					
-				}
-			}
 			echo $item['additional_attendee_reg_info'];
 			$prev_event = $item['event']->ID();
 			$prev_ticket = $item['ticket']->ID(); 
