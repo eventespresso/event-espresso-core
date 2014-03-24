@@ -510,11 +510,11 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	* 		@param		string		$conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
-	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {		
-		$start = $this->_show_datetime( 'D', 'start', $dt_frmt );
-		$end = $this->_show_datetime( 'D', 'end', $dt_frmt );
+	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {
+		$dt_frmt = ! empty( $dt_frmt ) ? $dt_frmt : $this->_dt_frmt;
+		$start = str_replace( ' ', '&nbsp;', date_i18n( $dt_frmt, strtotime( $this->_show_datetime( 'D', 'start', NULL, NULL ))));
+		$end = str_replace( ' ', '&nbsp;', date_i18n( $dt_frmt, strtotime( $this->_show_datetime( 'D', 'end', NULL, NULL ))));
 		return $start != $end ? $start . $conjunction . $end : $start;
-
 	}
 	public function e_date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {		
 		echo $this->date_range( $dt_frmt, $conjunction );
@@ -565,8 +565,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		@return 		mixed		string on success, FALSE on fail
 	*/	
 	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
-		return str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'start', NULL, NULL )))) . $conjunction . str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'end', NULL, NULL ))));
-//		return str_replace( ' ', '&nbsp;', $this->_show_datetime( 'T', 'start', NULL, $tm_format )) . $conjunction . str_replace( ' ', '&nbsp;', $this->_show_datetime( 'T', 'end', NULL, $tm_format ));
+		$tm_format = ! empty( $tm_format ) ? $tm_format : $this->_tm_frmt;
+		$start = str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'start', NULL, NULL ))));
+		$end = str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'end', NULL, NULL ))));
+		return $start != $end ? $start . $conjunction . $end : $start;
 	}
 	public function e_time_range( $tm_format = NULL, $conjunction = ' - ' ) {		
 		echo $this->time_range( $tm_format, $conjunction );

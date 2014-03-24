@@ -15,7 +15,7 @@ $ticket_count = count( $tickets );
 foreach ( $tickets as $TKT_ID => $ticket ) {
 //	d( $ticket );
 	$max = $ticket->max();
-	$min = $ticket->min();
+	$min = 0;
 	$remaining = $ticket->remaining();
 	if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
 		if ( $max_atndz > 1 ) { 
@@ -25,7 +25,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			// however, the max still can't be higher than what was just set above
 			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
 			// and we also want to restrict the minimum number of tickets by the ticket min setting
-			$min = $ticket->min() > 0 ? $ticket->min() : 0;
+			//$min = $ticket->min() > 0 ? $ticket->min() : 0;
 		}
 	}
 			
@@ -225,8 +225,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<section class="tckt-slctr-tkt-sale-dates-sctn">
 							<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
 							<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
-							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><?php echo date_i18n( 'l F jS, Y @', strtotime( $ticket->start_date() )) ; ?><br/>
-							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><?php echo date_i18n( 'l F jS, Y @', strtotime( $ticket->end_date() )) ; ?><br/>
+							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->start_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->start_date() )) ; ?><br/>
+							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->end_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->end_date() )) ; ?><br/>
 						</section>
 						<br/>
 
