@@ -213,7 +213,6 @@ final class EE_Front_Controller {
 		if ( apply_filters( 'FHEE_load_EE_messages', FALSE ) ) {
 			EE_Registry::instance()->load_lib( 'Messages_Init' );
 		}
-
 	}
 
 
@@ -545,7 +544,7 @@ final class EE_Front_Controller {
 	public function display_errors() {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && ! is_feed() ){
+		if ( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && ! is_feed() && in_the_loop() ) {
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );

@@ -108,7 +108,6 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	private function _set_CPT_endpoints() {
 		$_CPT_endpoints = array();
-		//printr( $CPTs, '$CPTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( is_array( $this->_CPTs )) {
 			foreach ( $this->_CPTs as $CPT_type => $CPT ) {
 				$_CPT_endpoints [ $CPT['singular_slug'] ] = $CPT_type;
@@ -213,7 +212,7 @@ class EE_CPT_Strategy extends EE_BASE {
 					$this->CPT['espresso_page'] = EE_Registry::instance()->REQ->is_espresso_page();
 					// requested post name
 					$this->CPT['post_name'] = EE_Registry::instance()->REQ->get( 'post_name' );
-		//			d( $this->CPT );
+					//d( $this->CPT );
 					// add support for viewing 'private', 'draft', or 'pending' posts
 					if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {
 						// we can just inject directly into the WP_Query object
@@ -223,13 +222,13 @@ class EE_CPT_Strategy extends EE_BASE {
 					}
 					$this->_possibly_set_ee_request_var( $post_type );		
 					// convert post_type to model name
-					$model_name = ucwords( rtrim( str_replace( 'espresso_', '', $post_type ), 's' ));
+					$model_name = str_replace( 'EE_', '', $this->CPT['class_name'] );
 					// get CPT table data via CPT Model
 					$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
 					$this->CPT['tables'] = $this->CPT_model->get_tables();
 					// is there a Meta Table for this CPT?
 					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $model_name . '_Meta' ] ) ? $this->CPT['tables'][ $model_name . '_Meta' ] : FALSE;		
-					// creates classname like:  EE_CPT_Event_Strategy
+					// creates classname like:  CPT_Event_Strategy
 					$CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
 					// load and instantiate
 					 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));	
@@ -303,7 +302,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function the_posts( $posts, WP_Query $wp_query ) {
 //		d( $wp_query );
-		$CPT_class = 'EE_' . $this->CPT['singular_name'];
+		$CPT_class = $this->CPT['class_name'];
 		// loop thru posts
 		if ( isset( $wp_query->posts )) {
 			foreach( $wp_query->posts as $key => $post ) {
