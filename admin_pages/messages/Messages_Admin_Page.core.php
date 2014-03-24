@@ -1795,9 +1795,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				}
 			} else {
 				//grab single GRP_ID and handle
-				$GRP_ID = absint($this->_req_data['id']);
-				$trashed_or_restored = $trash ? $MTP->delete_by_ID( $GRP_ID ) : $MTP->restore_by_ID( $GRP_ID );
-				if ( ! $trashed_or_restored ) {
+				$GRP_ID = isset( $this->_req_data['id'] ) ? absint($this->_req_data['id']) : 0;
+				if ( ! empty( $GRP_ID ) ) {
+					$trashed_or_restored = $trash ? $MTP->delete_by_ID( $GRP_ID ) : $MTP->restore_by_ID( $GRP_ID );
+					if ( ! $trashed_or_restored ) {
+						$success = 0;
+					}
+				} else {
 					$success = 0;
 				}
 			}
