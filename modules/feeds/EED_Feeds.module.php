@@ -33,6 +33,7 @@ class EED_Feeds  extends EED_Module {
 	public static function set_hooks() {
 		add_action( 'parse_request', array( 'EED_Feeds', 'parse_request' ), 10 );
 		add_filter( 'default_feed', array( 'EED_Feeds', 'default_feed' ), 10, 1  );
+		add_filter( 'comment_feed_join', array( 'EED_Feeds', 'comment_feed_join' ), 10, 2 );
 		add_filter( 'comment_feed_where', array( 'EED_Feeds', 'comment_feed_where' ), 10, 2 );
 	}
 
@@ -108,6 +109,27 @@ class EED_Feeds  extends EED_Module {
 
 
 	/**
+	 * 	comment_feed_join - EVEN THOUGH... our espresso_attendees custom post type is set to NOT PUBLIC
+	 * 	WordPress thought it would be a good idea to display the comments for them in the RSS feeds... we think NOT
+	 * 	so this little snippet of SQL taps into the comment feed query and removes comments for the espresso_attendees post_type
+	 *
+	 *  @access 	public
+	 *  @param 	string 	$SQL	the JOIN clause for the comment feed query
+	 *  @return 	void
+	 */
+	public static function comment_feed_join( $SQL ) {
+		global $wpdb;
+		// check for wp_posts table in JOIN clause
+		if ( strpos( $SQL, $wpdb->posts ) !== FALSE ) {	
+			add_filter( 'EED_Feeds__comment_feed_where__espresso_attendees', '__return_true' );
+		}
+		return $SQL;
+	}
+
+
+
+
+	/**
 	 * 	comment_feed_where - EVEN THOUGH... our espresso_attendees custom post type is set to NOT PUBLIC
 	 * 	WordPress thought it would be a good idea to display the comments for them in the RSS feeds... we think NOT
 	 * 	so this little snippet of SQL taps into the comment feed query and removes comments for the espresso_attendees post_type
@@ -118,7 +140,7 @@ class EED_Feeds  extends EED_Module {
 	 */
 	public static function comment_feed_where( $SQL ) {
 		global $wp_query, $wpdb;
-		if ( $wp_query->is_comment_feed ) {	
+		if ( $wp_query->is_comment_feed && apply_filters( 'EED_Feeds__comment_feed_where__espresso_attendees', FALSE )) {	
 			$SQL .= " AND $wpdb->posts.post_type != 'espresso_attendees'";	
 		}
 		return $SQL;

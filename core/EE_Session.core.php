@@ -99,9 +99,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		define( 'ESPRESSO_SESSION', TRUE );
 
-		// remove the default espresso session init
-		remove_action( 'plugins_loaded', 'espresso_init_session', 1 );
-
 		// retreive session options from db
 		if ( $session_settings = get_option( 'ee_session_settings' ) !== FALSE ) {
 			// cycle though existing session options
@@ -133,9 +130,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		}
 
 		// check request for 'clear_session' param
-		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 10 );
+		add_action( 'AHEE__EE_Request_Handler__construct__complete', array( $this, 'wp_loaded' ));
 		// once everything is all said and done,
-		add_action( 'shutdown', array( $this, 'update' ), 100);
+		add_action( 'shutdown', array( $this, 'update' ), 100 );
 
 	}
 

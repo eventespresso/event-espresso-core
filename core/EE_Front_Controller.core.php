@@ -77,42 +77,15 @@ final class EE_Front_Controller {
 
 	/**
 	 * 	class constructor
+	 * 
+	 * 	should fire after shortcode, module, addon, or other plugin's default priority init phases have run
 	 *
 	 *  @access 	private
 	 *  @return 	void
 	 */
 	private function __construct() {
-		// early init
-		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
-		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
-		// action hook EE
-		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
-
-		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
-		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 2 );
-	}
-
-
-
-
-
-
-
-	/*********************************************** 		INIT ACTION HOOK		 ***********************************************/
-
-
-
-
-
-	/**
-	 * 	init - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function init(){
-		// additional hooks get added in the init phase
+		add_action( 'AHEE__EE_System__initialize', array( $this, 'employ_CPT_Strategy' ));
 		// load other resources and begin to actually run shortcodes and modules
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
 		// analyse the incoming WP request
@@ -132,13 +105,25 @@ final class EE_Front_Controller {
 		add_action('loop_start', array( $this, 'display_errors' ), 2 );			
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
-
 		//exclude our private cpt comments
-		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 2 );			
+		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 2 );	
+		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
+		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 2 );
+		// action hook EE
+		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
 	}
+
+
+
+
+
+
+
+	/*********************************************** 		INIT ACTION HOOK		 ***********************************************/
+
+
 
 
 	/**
@@ -247,9 +232,9 @@ final class EE_Front_Controller {
 	 *	@return void
 	 */
 	public function get_request( WP $WP ) {
-		do_action( 'AHEE__EE_Front_Controller__get_request__before_Request_Handler_loaded' );
+		do_action( 'AHEE__EE_Front_Controller__get_request__start' );
 		EE_Registry::instance()->load_core( 'Request_Handler', $WP );	
-		do_action( 'AHEE__EE_Front_Controller__get_request__after_Request_Handler_loaded' );
+		do_action( 'AHEE__EE_Front_Controller__get_request__complete' );
 	}
 
 
@@ -547,22 +532,6 @@ final class EE_Front_Controller {
 
 	/*********************************************** 		WP_FOOTER		 ***********************************************/
 
-
-
-
-
-	/**
-	 * 	display_registration_footer
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public function display_registration_footer() {
-		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );
-		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer',EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
-			return apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></p>' );
-		}
-	}
 
 
 

@@ -756,14 +756,25 @@ class EE_Event extends EE_CPT_Base{
 		}
 	}
 	/**
-	 * Gets teh first term taxonomy we can find
+	 * Gets teh first term for 'espresso_event_categories' we can find
 	 * @param array $query_params like EEM_Base::get_all
-	 * @return EE_Term_Taxonomy
+	 * @return EE_Term
 	 */
 	public function first_event_category($query_params = array()){
 		$query_params[0]['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
 		$query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $this->ID();
 		return EEM_Term::instance()->get_one($query_params);
+	}
+	
+	/**
+	 * Gets all terms for 'espresso_event_categories' we can find
+	 * @param type $query_params
+	 * @return EE_Term
+	 */
+	public function get_all_event_categories($query_params = array()){
+		$query_params[0]['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+		$query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $this->ID();
+		return EEM_Term::instance()->get_all($query_params);
 	}
 
 

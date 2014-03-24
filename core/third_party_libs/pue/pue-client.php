@@ -64,6 +64,7 @@ class PluginUpdateEngineChecker {
 	private $_installed_version = ''; //this will just hold what installed version we have of the plugin right now.
 	private $_is_premium = FALSE; //this is a flag used for setting whether the premium version is installed or not.
 	private $_is_prerelease = FALSE; //optional, this flag is used to indicate whether this is a pre-release version or not.
+	private $_is_freerelease = FALSE; //this is used to indicate whether this is a free release or not.
 	private $_plugin_basename = '';
 	private $_use_wp_update = FALSE; //flag for indicating if free downloads are updated from wp or not.
 	private $_incoming_slug = '';
@@ -135,7 +136,6 @@ class PluginUpdateEngineChecker {
 		if ( $this->_is_premium && isset($this->_incoming_slug['free'] ) ) {
 			delete_site_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])]);
 		} else {
-
 			$force_upgrade = get_site_option( 'pue_force_upgrade_' . $this->slug );
 			$this->_force_premium_upgrade = !empty($force_upgrade) ? TRUE : FALSE;
 			$this->_is_premium = !empty( $force_upgrade ) ? TRUE : FALSE;
@@ -315,6 +315,10 @@ class PluginUpdateEngineChecker {
 		//set pre-release flag
 		$pr_search_ref = is_array($slug) && isset( $slug['prerelease'] ) ? key( $slug['prerelease'] ) : NULL;
 		$this->_is_prerelease = !empty( $pr_search_ref ) && preg_match("/$pr_search_ref/i", $this->_installed_version ) ? TRUE : FALSE;
+
+		//free_release?
+		$fr_search_ref = is_array($slug) && isset( $slug['free'] ) ? key( $slug['free'] ) : NULL;
+		$this->_is_freerelease = !empty( $fr_search_ref ) && preg_match("/$fr_search_ref/", $this->_installed_version ) ? TRUE : FALSE;
 
 
 		//set slug we use
@@ -544,8 +548,8 @@ class PluginUpdateEngineChecker {
 			$this->json_error = get_site_option('pue_json_error_'.$this->pluginFile);
 			if ( !empty($this->json_error) && !$this->_force_premium_upgrade ) {
 				add_action('admin_notices', array($this, 'display_json_error'), 10, 3);
-			} else {
-				//no errors so let's get rid of any error option if present
+			} else if ( empty( $this->json_error ) ) {
+				//no errors so let's get rid of any error option if present BUT ONLY if there are no json_errors!
 				delete_site_option( 'pue_verification_error_' . $this->pluginFile );
 			}
 		}
@@ -598,11 +602,14 @@ class PluginUpdateEngineChecker {
 			$this->api_secret_key = $value;
 			$this->set_api($this->api_secret_key);
 
+			//reset force_upgrade flag
+			delete_site_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])]);
+
 			//now let's reset some flags if necessary?  in other words IF the user has entered a premium key and the CURRENT version is a free version (NOT a prerelease version) then we need to make sure that we ping for the right version
 			$free_key_match = '/FREE/i';
 
 			//if this condition matches then that means we've got a free active key in place (or a free version from wp WITHOUT an active key) and the user has entered a NON free API key which means they intend to check for premium access.
-			if ( !preg_match( $free_key_match, $this->api_secret_key ) && !empty($this->api_secret_key) && !$this->_is_premium && !$this->_is_prerelease ) {
+			if ( !preg_match( $free_key_match, $this->api_secret_key ) && !empty($this->api_secret_key) && !$this->_is_premium && !$this->_is_prerelease && $this->_is_freerelease ) {
 				$this->_use_wp_update = FALSE;
 				$this->slug = $this->_incoming_slug['premium'][key($this->_incoming_slug['premium'])];
 				$this->_is_premium = TRUE;
@@ -809,7 +816,8 @@ class PluginUpdateEngineChecker {
 			ob_start();
 			?>
 				<div class="updated" style="padding:15px; position:relative;" id="pu_dashboard_message"><?php echo $msg ?>
-				<a href="javascript:void(0);" onclick="PUDismissUpgrade();" style='float:right;'><?php _e("Dismiss") ?></a>
+				<a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" style='float:right;'><?php _e("Dismiss") ?></a>
+				<div style="clear:both;"></div>
             </div>
             <script type="text/javascript">
                 function PUDismissUpgrade(){
@@ -844,13 +852,20 @@ class PluginUpdateEngineChecker {
 		//check if we're on the wp update page.  If so get out
 		if ( $current_screen->id == 'update' )
 			return;
+
+		$update_dismissed = get_site_option($this->dismiss_upgrade);
+		$is_dismissed = !empty($update_dismissed) && !empty( $this->json_error ) && in_array( $this->json_error->version, $update_dismissed ) ? true : false;
+
 		//first any json errors?
 		if ( !empty( $this->json_error ) && isset($this->json_error->api_invalid) ) {
+				if ( $is_dismissed )
+					return;
 				$msg = str_replace('%plugin_name%', $this->pluginName, $this->json_error->api_invalid_message);
 				$msg = str_replace('%version%', $this->json_error->version, $msg);
 				$msg = sprintf( __('It appears you\'ve tried entering an api key to upgrade to the premium version of %s, however, the key does not appear to be valid.  This is the message received back from the server:', $this->lang_domain ), $this->pluginName ) . '</p><p>' . $msg;
-					//let's add an option for plugin developers to display some sort of verification message on their options page.
-					update_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
+				//let's add an option for plugin developers to display some sort of verification message on their options page.
+				update_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
+
 		} else {
 			$msg = sprintf( __('Congratulations!  You have entered in a valid api key for the premium version of %s.  You can click the button below to upgrade to this version immediately.', $this->lang_domain), $this->pluginName );
 			delete_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
@@ -862,7 +877,14 @@ class PluginUpdateEngineChecker {
 
 		$content = '<div class="updated" style="padding:15px; position:relative;" id="pue_update_now_container"><p>' . $msg . '</p>';
 		$content .= empty($this->json_error) ? $button : '';
-		$content .= '</div>';
+		$content .= '<a class="button-secondary" href="javascript:void(0);" onclick="PUDismissUpgrade();" style="float:right;">' . __("Dismiss") . '</a>';
+		$content .= '<div style="clear:both;"></div></div>';
+		$content .= '<script type="text/javascript">
+			function PUDismissUpgrade(){
+				jQuery("#pue_update_now_container").slideUp();
+				jQuery.post( ajaxurl, {action:"' . $this->dismiss_upgrade .'", version:"' . $this->json_error->version . '", cookie: encodeURIComponent(document.cookie)});
+			}
+			</script>';
 
 		echo $content;
 	}
