@@ -386,10 +386,11 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 			}else{
 				throw new EE_Error(sprintf(__("Thats impossible!!", "event_espresso")));
 			}
-			$this->addField('item_name_'.$item_num,  sprintf(__("Amount owing for registration %s", 'event_espresso'),$primary_registrant->code()));
+			$this->addField('item_name_'.$item_num,  sprintf(__("Amount owing for registration %s", 'event_espresso'),$primary_registrant->reg_code()));
 			$this->addField('amount_'.$item_num,$total_to_pay);
 			$this->addField('on0_'.$item_num,  __("Amount Owing:", 'event_espresso'));
 			$this->addField('os0_'.$item_num,  $description);
+			$item_num++;
 		}
 		
 		if($paypal_settings['use_sandbox']){

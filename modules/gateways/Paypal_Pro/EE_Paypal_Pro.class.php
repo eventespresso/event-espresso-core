@@ -343,10 +343,11 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		$primary_registrant = $transaction->primary_registration();
 		if ($billing_info != 'no payment required') {
 			$this->_save_billing_info_to_attendee($billing_info, $transaction);
+			$OrderItems = array();
 			if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount and nothing has been paid yet
 				$grand_total = $total_line_item->total();
 				$description = 'Event Registrations from ' . get_bloginfo('name');
-				$OrderItems = array();
+
 
 				$item_num = 1;
 				/* @var $transaction EE_Transaction */
@@ -374,6 +375,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 						// add to array of all items
 					array_push($OrderItems, $Item);
 				}
+				$item_amount = $total_line_item->get_items_total();
+				$tax_amount = $total_line_item->get_total_tax();
 			}else{
 				if($total_to_charge){
 					$grand_total = $total_to_charge;
@@ -384,6 +387,21 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				}else{
 					throw new EE_Error(sprintf(__("An unexpected error has occured. Amount to charge passed to paypal was invalid'%s'", "event_espresso"),$total_line_item));
 				}
+				$item_amount = $grand_total;
+				$tax_amount = 0;
+				array_push($OrderItems,array(
+					// Item Name.  127 char max.
+							'l_name' => sprintf(__("Partial payment for registration: %s", 'event_espresso'),$primary_registrant->reg_code()),
+							// Item description.  127 char max.
+							'l_desc' => $description,
+							// Cost of individual item.
+							'l_amt' => $grand_total,
+							// Item Number.  127 char max.
+							'l_number' => 1,
+							// Item quantity.  Must be any positive integer.
+							'l_qty' => 1,
+				));
+				
 			}
 
 			// Populate data arrays with order data.
@@ -462,13 +480,13 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					// Required.  Three-letter currency code.  Default is USD.
 					'currencycode' => $this->_payment_settings['currency_format'],
 					// Required if you include itemized cart details. (L_AMTn, etc.)  Subtotal of items not including S&H, or tax.
-					'itemamt' => EEH_Template::format_currency($total_line_item->get_items_total(),true),//
+					'itemamt' => EEH_Template::format_currency($item_amount,true),//
 					// Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
 					'shippingamt' => '',
 					// Total handling costs for the order.  If you specify handlingamt, you must also specify itemamt.
 					'handlingamt' => '',
 					// Required if you specify itemized cart tax details. Sum of tax for all items on the order.  Total sales tax.
-					'taxamt' => EEH_Template::format_currency($total_line_item->get_total_tax(),true),
+					'taxamt' => EEH_Template::format_currency($tax_amount,true),
 					// Description of the order the customer is purchasing.  127 char max.
 					'desc' => $description,
 					// Free-form field for your own use.  256 char max.
@@ -488,11 +506,9 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					'PayerName' => $PayerName,
 					'BillingAddress' => $BillingAddress,
 					'PaymentDetails' => $PaymentDetails,
+					'OrderItems' => $OrderItems,
 			);
-			if(isset($OrderItems)){
-				$PayPalRequestData['OrderItems'] = $OrderItems;
-			}
-
+//			var_dump($PayPalRequestData);die;
 			// Pass the master array into the PayPal class function
 			try{
 				$PayPalResult = $this->DoDirectPayment($PayPalRequestData);
