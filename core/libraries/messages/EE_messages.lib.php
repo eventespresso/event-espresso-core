@@ -450,6 +450,10 @@ class EE_messages {
 		$messenger_files = $type == 'all' || $type == 'messengers' ? scandir( $message_base . "messenger", 1) : NULL;
 		$messagetype_files = $type == 'all' || $type == 'message_types' ? scandir( $message_base . "message_type", 1) : NULL;
 
+		//allow plugins to filter in their messenger/message_type files
+		$messenger_files = apply_filters('FHEE__EE_messages__get_installed__messenger_files', $messenger_files, $type );
+		$messagetype_files = apply_filters('FHEE__EE_messages__get_installed__messagetype_files', $messagetype_files, $type );
+
 		$installed['messengers'] = !empty($messenger_files ) ? $this->_get_installed($messenger_files) : '';
 		$installed['message_types'] = !empty($messagetype_files) ? $this->_get_installed($messagetype_files) : '';
 
