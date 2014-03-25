@@ -1697,7 +1697,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// Default REG Status is set to PENDING PAYMENT OR APPROVED, and payments are allowed
 			} else {
 				// attempt to perform transaction via payment gateway
-				$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
+				$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction );
 				$this->_thank_you_page_url = $response['forward_url'];
 			}
 			
