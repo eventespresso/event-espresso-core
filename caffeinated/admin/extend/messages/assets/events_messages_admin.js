@@ -4,7 +4,7 @@ jQuery(document).ready(function($) {
 	var EE_messages_evt_helper = {
 
 		selectedCache : {},
-		
+
 		parseurl: function(url, mode) {
 			if ( typeof(mode) === 'undefined' ) mode = 'loose';
 			if ( mode == 'strict' ) {
@@ -66,7 +66,7 @@ jQuery(document).ready(function($) {
 							EE_messages_evt_helper.display_content(response, 'dialog', 'clear');
 							isjson = false;
 						}
-						
+
 					}
 
 					if ( ct.indexOf('json') > -1 || isjson ) {
@@ -108,7 +108,7 @@ jQuery(document).ready(function($) {
 				EE_messages_evt_helper.close_modal();
 				$('.messages-change-edit-templates-content', '.ee-admin-dialog-container').html('');
 				EE_messages_evt_helper.get_template_content('#ee-msg-edit-form','cached_url','force_switch_template');
-				
+
 			});/**/
 		},
 
@@ -141,10 +141,13 @@ jQuery(document).ready(function($) {
 			//if content is empty let's get out
 			if ( ( content === '' || typeof(content) === 'undefined' ) && type != 'notices' )
 				return;
-			
+
 			var main_container = type == 'content' ? $('.messages-tabs-content', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox') : $('.ee-notices', '#espresso_events_Messages_Hooks_Extend_messages_metabox_metabox');
 			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container') : $('.ee-notices', '.ee-admin-dialog-container');
 			var content_div = where == 'main' ? main_container : dialog_container;
+
+			/** show any notices **/
+			$('.espresso-notices').show();
 
 			$('#espresso-ajax-loading').eeRemoveOverlay().hide();
 			if ( what == 'clear' ) {

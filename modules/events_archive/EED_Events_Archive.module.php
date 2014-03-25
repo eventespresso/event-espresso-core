@@ -1133,13 +1133,16 @@ class EE_Event_List_Query extends WP_Query {
 		add_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ), 10, 1 ); 
 		// add the css class
 		add_filter( 'FHEE__content_espresso_events__event_class', array( $this, 'event_list_css' ), 10, 1 );
-
+		// the current "page" we are viewing
+		$paged = max( 1, get_query_var( 'paged' ));
 		// Force these args
 		$args = array_merge( $args, array(
 			'post_type' => 'espresso_events',
 			'posts_per_page' => $this->_limit,
 			'update_post_term_cache' => FALSE,
-			'update_post_meta_cache' => FALSE
+			'update_post_meta_cache' => FALSE,
+			'paged' => $paged,
+			'offset' => ( $paged - 1 ) * $this->_limit
 		));
 		// filter the query parts
 		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );

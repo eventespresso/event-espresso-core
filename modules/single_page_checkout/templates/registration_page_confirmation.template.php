@@ -33,12 +33,7 @@
 					</a>
 
 					<noscript>
-						<input type="submit" 
-									id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
-									class="spco-next-step-btn ee-button ee-register-button huge ee-green no-js-btn"
-									name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" 
-									value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;" 
-							/>				
+						<input type="submit" id="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" class="spco-next-step-btn ee-button ee-register-button huge ee-green no-js-btn" name="spco-go-to-step-<?php echo $next_step; ?>-sbmt-btn" value="&nbsp;<?php echo $next_step_text; ?>&nbsp;&raquo;" />				
 					</noscript>	
 
 				</div>		

@@ -135,9 +135,8 @@ final class EE_Front_Controller {
 		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
-
 		//exclude our private cpt comments
-		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 2 );			
+		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 2 );
 	}
 
 
@@ -228,7 +227,6 @@ final class EE_Front_Controller {
 		if ( apply_filters( 'FHEE_load_EE_messages', FALSE ) ) {
 			EE_Registry::instance()->load_lib( 'Messages_Init' );
 		}
-
 	}
 
 
@@ -576,7 +574,7 @@ final class EE_Front_Controller {
 	public function display_errors() {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && ! is_feed() ){
+		if ( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && ! is_feed() && in_the_loop() ) {
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );
