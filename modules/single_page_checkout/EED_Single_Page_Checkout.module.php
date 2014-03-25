@@ -1671,6 +1671,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		// save everything
 		if ( $this->_continue_reg && $this->_save_all_registration_information() ) {
+//			echo '<h2 style="color:#E76700;">_process_finalize_registration<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			// save TXN data to the cart
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 				
@@ -1678,6 +1679,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			
 			// if Default REG Status is set to REQUIRES APPROVAL... then payments are NOT allowed
 			if ( EE_Registry::instance()->REQ->is_set('selected_gateway') && EE_Registry::instance()->REQ->get('selected_gateway') == 'payments_closed' ) {
+//				echo '<h2 style="color:#E76700;">payments_closed<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 				// set TXN Status to Open
 				$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$this->_transaction->save();
@@ -1700,27 +1702,28 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction );
 				$this->_thank_you_page_url = $response['forward_url'];
 			}
-			
-			
+						
 			if ( isset( $response['msg']['success'] )) {
 				$response_data = array(
 					'success' => $response['msg']['success'],
 					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
 				);
 				$response_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $response_data );
+//				printr( $response_data, '$response_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//				echo '<h4>thank_you_page_url : ' . $this->_thank_you_page_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+				
 				if ( EE_Registry::instance()->REQ->front_ajax ) {
 					echo json_encode( $response_data );
 					die();
 				} else {
-//					printr( $response_data, '$response_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//					echo '<h4>$this->_thank_you_page_url : ' . $this->_thank_you_page_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 					wp_safe_redirect( $this->_thank_you_page_url );
 					exit(); 
 				}			
 			
 			} else {
-				$error_msg = $response['msg']['error'];
+				EE_Error::add_error( $response['msg']['error'], __FILE__, __FUNCTION__, __LINE__ );
 			}
+//			printr( $response, '$response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		} 
 		
 		$this->go_to_next_step( __FUNCTION__ );
@@ -1768,7 +1771,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$callback = $this->_revisit ? '_finalize_' . $this->_current_step : '_process_finalize_registration';
 			break;
 		}
-		
+
 		if ( $prev_step == $callback ) {
 			EE_Error::add_error( __('A recursive loop was detected and the registration process was halted.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
