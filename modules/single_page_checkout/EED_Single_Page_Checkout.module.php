@@ -1646,7 +1646,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					exit();
 				}		
 			} else {
-				$error_msg = $response['msg']['error'];
+				EE_Error::add_error( $response['msg']['error'],__FILE__,__FUNCTION__,__LINE__);
 			}
 		}
 		$this->go_to_next_step( __FUNCTION__ ); //, $callback = FALSE, $callback_param = FALSE
