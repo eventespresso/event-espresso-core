@@ -556,7 +556,7 @@ class EEH_Event_View extends EEH_Base {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		$has_content_or_excerpt = FALSE;
 		if ( $event instanceof EE_Event ) {
-			$has_content_or_excerpt = $event->description() != '' && $event->short_description( NULL, NULL, TRUE ) != '' ? TRUE : FALSE;
+			$has_content_or_excerpt = $event->description() != '' || $event->short_description( NULL, NULL, TRUE ) != '' ? TRUE : FALSE;
 		}
 		if ( is_archive() && ! ( espresso_display_full_description_in_event_list() || espresso_display_excerpt_in_event_list() )) {
 			$has_content_or_excerpt = FALSE;
