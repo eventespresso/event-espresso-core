@@ -25,7 +25,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			// however, the max still can't be higher than what was just set above
 			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
 			// and we also want to restrict the minimum number of tickets by the ticket min setting
-			//$min = $ticket->min() > 0 ? $ticket->min() : 0;
+			$min = $ticket->min() > 0 ? $ticket->min() : 0;
 		}
 	}
 			
@@ -120,9 +120,12 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 			?>
 				<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
+				<?php if ( $min != 0 ) { ?>
+					<option value="0">&nbsp;0&nbsp;</option>
+				<?php } ?>
 				<?php
 					// offer ticket quantities from the min to the max
-					for ( $i = $min; $i <= $max; $i++) { 
+					for ( $i = $min; $i <= $max; $i++) {
 				?>
 					<option value="<?php echo $i; ?>">&nbsp;<?php echo $i; ?>&nbsp;</option>
 				<?php } ?>
