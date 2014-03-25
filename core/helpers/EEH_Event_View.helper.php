@@ -284,10 +284,12 @@
 	if ( ! function_exists( 'espresso_event_has_content_or_excerpt' )) {
 		function espresso_event_has_content_or_excerpt() {
 			global $post;
+			$has_content_or_excerpt = FALSE;
 			if ( $post instanceof WP_Post ) {
-				return $post->post_content != '' && $post->post_excerpt != '' ? TRUE : FALSE;
+				$has_content_or_excerpt = $post->post_content != '' && $post->post_excerpt != '' ? TRUE : FALSE;
 			}
-			return FALSE;
+			echo '<h5 style="color:#2EA2CC;">espresso_event_has_content_or_excerpt : <span style="color:#E76700">' . $has_content_or_excerpt . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+			return $has_content_or_excerpt;
 		}
 	}
 
