@@ -596,7 +596,8 @@ class EEH_Event_View extends EEH_Base {
 			} else {
 				$content =  get_the_content();				
 			}
-			echo apply_filters( 'the_content', $content );
+//			echo apply_filters( 'the_content', $content );
+			echo $content;
 		} else {
 //echo '<h2 style="color:#E76700;">nothing<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			echo apply_filters( 'the_content', $content );			

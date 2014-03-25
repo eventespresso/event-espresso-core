@@ -600,20 +600,23 @@ article.espresso_events .event-list-h1 {
 	width: 97.1%;
 }
 
-.event-header.has-img {
+.has-excerpt {
+	
+}
+
+.has-post-thumbnail .event-header {
 	position: absolute;
 	bottom: 0;
 	left: 0;
 	padding: 1.5%;
 	text-shadow: 1px 1px 0 #FFFFFF;
 	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.9);
-	
 }
-.event-header.has-img h1 {
+.has-post-thumbnail .event-header h1 {
 	margin: 0;
 }
-.event-header.has-img p,
-.event-header.has-excerpt p {
+.has-post-thumbnail .event-header p,
+.has-excerpt .event-header p {
 	margin:10px 0 0;
 }
 
