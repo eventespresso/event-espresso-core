@@ -586,12 +586,12 @@ article.espresso_events .event-list-h1 {
 
 
 
-#espresso-event-header-dv {
+.espresso-event-header-dv {
 	position: relative;
 	margin: 0 0 20px;
 }
 
-.espresso-event-details.has-excerpt #espresso-event-header-dv {
+.espresso-event-details.has-excerpt .espresso-event-header-dv {
 	/*min-height: 80px;*/
 }
 
