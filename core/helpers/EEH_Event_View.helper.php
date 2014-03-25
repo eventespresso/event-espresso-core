@@ -282,14 +282,8 @@
 	 *  @return 	boolean
 	 */
 	if ( ! function_exists( 'espresso_event_has_content_or_excerpt' )) {
-		function espresso_event_has_content_or_excerpt() {
-			global $post;
-			$has_content_or_excerpt = FALSE;
-			if ( $post instanceof WP_Post ) {
-				$has_content_or_excerpt = $post->post_content != '' && $post->post_excerpt != '' ? TRUE : FALSE;
-			}
-			echo '<h5 style="color:#2EA2CC;">espresso_event_has_content_or_excerpt : <span style="color:#E76700">' . $has_content_or_excerpt . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-			return $has_content_or_excerpt;
+		function espresso_event_has_content_or_excerpt( $EVT_ID = FALSE ) {
+			return EEH_Event_View::event_has_content_or_excerpt( $EVT_ID );
 		}
 	}
 
@@ -548,6 +542,27 @@ class EEH_Event_View extends EEH_Base {
 	public static function event_active_status( $EVT_ID = FALSE ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		return $event instanceof EE_Event ? $event->pretty_active_status() : 'inactive';
+	}
+
+
+
+	/**
+	 * 	event_has_content_or_excerpt
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function event_has_content_or_excerpt( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		$has_content_or_excerpt = FALSE;
+		if ( $event instanceof EE_Event ) {
+			$has_content_or_excerpt = $event->description() != '' && $event->short_description( NULL, NULL, TRUE ) != '' ? TRUE : FALSE;
+		}
+		echo '<h5 style="color:#2EA2CC;">espresso_event_has_content_or_excerpt : <span style="color:#E76700">' . $has_content_or_excerpt . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		if ( is_archive() && ! ( espresso_display_full_description_in_event_list() || espresso_display_excerpt_in_event_list() )) {
+			return FALSE;
+		}
+		return $has_content_or_excerpt;		
 	}
 
 
