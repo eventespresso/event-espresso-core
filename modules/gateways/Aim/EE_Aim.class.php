@@ -169,7 +169,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	 * @param EE_Line_Item $line_item
 	 * @return boolean
 	 */
-	public function process_payment_start(EE_Line_Item $total_line_item, $transaction=null) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction=null, $total_to_charge = null) {
 		$session_data = EE_Registry::instance()->SSN->get_session_data();
 		$billing_info = $session_data['billing_info'];
 		

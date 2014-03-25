@@ -344,7 +344,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		<?php
 	}
 
-	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null,$total_to_pay = NULL) {
 
 		$paypal_settings = $this->_payment_settings;
 		$paypal_id = $paypal_settings['paypal_id'];
@@ -357,22 +357,41 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway {
 		if( ! $transaction){
 			$transaction = $total_line_item->transaction();
 		}
-		foreach($total_line_item->get_items() as $line_item){
-			
-			$this->addField('item_name_' . $item_num, substr($line_item->name(),0,127));
-			$this->addField('amount_' . $item_num, $line_item->unit_price());
-			$this->addField('quantity_' . $item_num, $line_item->quantity());
-			$item_num++;
+		$primary_registrant = $transaction->primary_registration();
+		if( $total_to_pay === NULL && //they didn't specify an amount to charge
+			$total_to_pay != $transaction->total() && //and even if they did, it wasn't for the entire transaction
+			! $transaction->paid()){//and there have been no payments on the transaction yet anyways
+			//so let's create a nice looking invoice including everything
+			foreach($total_line_item->get_items() as $line_item){
+				$this->addField('item_name_' . $item_num, substr($line_item->name(),0,127));
+				$this->addField('amount_' . $item_num, $line_item->unit_price());
+				$this->addField('quantity_' . $item_num, $line_item->quantity());
+				$item_num++;
+			}
+
+			foreach ($total_line_item->tax_descendants() as  $tax_line_item) {
+				$this->addField('item_name_' . $item_num, substr($tax_line_item->name(),0,127));
+				$this->addField('amount_' . $item_num, $tax_line_item->total());
+				$this->addField('quantity_' . $item_num, '1');
+				$item_num++;
+			}
+		}else{//we're only charging for part of the transaction's total
+			if( $total_to_pay){
+				//client code specified how much to charge
+				$description = sprintf(__("Partial payment of %s", "event_espresso"),$total_to_pay);
+			}elseif($transaction->paid()){
+				//they didn't specify how much, but there has already been a payment, so let's just charge on what's left
+				$total_to_pay = $transaction->remaining();
+				$description = sprintf(__("Total paid to date: %s, and this charge is for the balance.", "event_espresso"),$transaction->get_pretty('TXN_paid'));
+			}else{
+				throw new EE_Error(sprintf(__("Thats impossible!!", "event_espresso")));
+			}
+			$this->addField('item_name_'.$item_num,  sprintf(__("Amount owing for registration %s", 'event_espresso'),$primary_registrant->code()));
+			$this->addField('amount_'.$item_num,$total_to_pay);
+			$this->addField('on0_'.$item_num,  __("Amount Owing:", 'event_espresso'));
+			$this->addField('os0_'.$item_num,  $description);
 		}
 		
-		foreach ($total_line_item->tax_descendants() as  $tax_line_item) {
-			$this->addField('item_name_' . $item_num, substr($tax_line_item->name(),0,127));
-			$this->addField('amount_' . $item_num, $tax_line_item->total());
-			$this->addField('quantity_' . $item_num, '1');
-			$item_num++;
-		}
-		//get any of the current registrations, 
-		$primary_registrant = $transaction->primary_registration();
 		if($paypal_settings['use_sandbox']){
 			$this->addField('item_name_'.$item_num,'DEBUG INFO (this item only added in sandbox mode)');
 			$this->addField('amount_'.$item_num,0);

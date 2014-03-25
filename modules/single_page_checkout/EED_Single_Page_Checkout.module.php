@@ -1629,7 +1629,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
 			// attempt to perform transaction via payment gateway
-			$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
+			$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction );
 			$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
 			
 			if ( isset( $response['msg']['success'] )) {

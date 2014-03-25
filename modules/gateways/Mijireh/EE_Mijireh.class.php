@@ -103,7 +103,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 	 * @param string $transaction
 	 * @throws EE_Error
 	 */
-	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null, $total_to_charge = null) {
 		$mijireh_settings = $this->_payment_settings;
 		$access_key = $mijireh_settings['access_key'];
 				
@@ -115,20 +115,23 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		$primary_registrant = $transaction->primary_registration();
 		$primary_attendee = $primary_registrant->attendee();
 		$order = array(
-			'total'=>$this->_format_float($transaction->total()),
+			'total'=>$this->_format_float($total_to_charge === NULL ? $transaction->remaining() : $total_to_charge),
 			'return_url'=>$this->_get_return_url($primary_registrant),
 			'items'=>array(),
 			'email'=>$primary_attendee->email(),
 			'first_name'=>$primary_attendee->fname(),
 			'last_name'=>$primary_attendee->lname(),
 			'tax'=>$this->_format_float($total_line_item->get_total_tax()));
-		foreach($total_line_item->get_items() as $line_item){
-			$order['items'][] = array(
-				'name'=>$line_item->name(),
-				'price'=>$this->_format_float($line_item->total()),
-				'sku'=>$line_item->code(),
-				'quantity'=>$line_item->quantity()
-			);
+		//if we're are charging for the full amount, show the normal line items
+		if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount
+			foreach($total_line_item->get_items() as $line_item){
+				$order['items'][] = array(
+					'name'=>$line_item->name(),
+					'price'=>$this->_format_float($line_item->total()),
+					'sku'=>$line_item->code(),
+					'quantity'=>$line_item->quantity()
+				);
+			}
 		}
 		
 	
