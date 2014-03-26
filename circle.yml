@@ -38,4 +38,4 @@ dependencies:
 ##tests override
 test:
   override:
-    - phpunit $plugin_dir/tests
+    - phpunit $plugin_dir
