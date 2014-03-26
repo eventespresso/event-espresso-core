@@ -12,7 +12,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
 	 */
 	public function display_label(){
 		$input = $this->_input;
-		$classes = $input->html_label_class();
+		$class = $input->html_label_class();
 		if($input->required()){
 			$class = 'required-label '.$class;
 		}
@@ -29,5 +29,16 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base{
 		return "<label id='{$input->html_id()}-errors' class='error' for='{$input->html_id()}'>".
 				$input->get_validation_error_string().
 				"</label>";
+	}
+	
+	/**
+	 * Displays the help span
+	 * @return string
+	 */
+	public function display_help_text(){
+		$input = $this->_input;
+		return "<span id='{$input->html_id()}-help' class='{$input->html_help_class()}' style='{$input->html_help_style()}'>".
+				$input->html_help_text().
+				"</span>";
 	}
 }

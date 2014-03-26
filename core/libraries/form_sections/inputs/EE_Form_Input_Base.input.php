@@ -36,6 +36,30 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * @var string
 	 */
 	protected $_html_label;
+	/**
+	 * HTML to use for help text (normally placed below form input), in a span which normally
+	 * has a class of 'description'
+	 * @var string
+	 */
+	protected $_html_help_text;
+	/**
+	 * CSS classes for displaying the help span
+	 * @var string
+	 */
+	protected $_html_help_class = 'description';
+	/**
+	 * CSS to put in the style attribute on the help span
+	 * @var string
+	 */
+	protected $_html_help_style;
+	
+	/**
+	 * the HREF property to put inside the a tag. If you want use a different
+	 * image than the standard help icon, you might be best to just change the entire 
+	 * html_label_text
+	 * @var string 
+	 */
+	protected $_html_help_link;
 	
 	/**
 	 * The raw data submitted fo rthis, like in teh $_POST superglobal.
@@ -98,12 +122,26 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		if(isset($options_array['html_label'])){
 			$this->_html_label = $options_array['html_label'];
 		}
+		if(isset($options_array['html_help_text'])){
+			$this->_html_help_text = $options_array['html_help_text'];
+		}
+		if(isset($options_array['html_help_link'])){
+			$this->_html_help_link = $options_array['html_help_link'];
+		}
+		if(isset($options_array['html_help_class'])){
+			$this->_html_help_class = $options_array['html_help_class'];
+		}
+		if(isset($options_array['html_help_style'])){
+			$this->_html_help_style = $options_array['html_help_style'];
+		}
+		
 		if(isset($options_array['default'])){
 			$this->_raw_value = $options_array['default'];
 		}
 		if(isset($options_array['required']) && in_array($options_array['required'], array('true',true))){
 			$this->set_required(true);
 		}
+		
 		if(isset($options_array['display_strategy'])){
 			if(is_array($options_array['display_strategy'])){
 				$display_strategy = $options_array['display_strategy'];
@@ -246,6 +284,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		return $this->_get_display_strategy()->display_errors();
 	}
 	/**
+	 * Gets the HTML for displaying the help text about this form section
+	 * @return string
+	 */
+	public function get_html_for_help(){
+		return $this->_get_display_strategy()->display_help_text();
+	}
+	/**
 	 * Validates the input's sanitized value (assumes _sanitize() has already been called)
 	 * and returns whether or not the form input's submitted value is value
 	 * @return boolean
@@ -317,6 +362,15 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	}
 	function html_label_text(){
 		return $this->_html_label_text;
+	}
+	function html_help_text(){
+		return $this->_html_help_text;
+	}
+	function html_help_class(){
+		return $this->_html_help_class;
+	}
+	function html_help_style(){
+		return $this->_html_style;
 	}
 	/**
 	 * returns the raw, UNSAFE, input, almost exactly as the user submitted it. 
