@@ -97,7 +97,7 @@ class EE_Messages_Init extends EE_Base {
 		foreach ( $filenames as $filename ) {
 			if ( is_readable( $filename )) {
 				require_once( $filename );
-			}				
+			}
 		}
 	}
 
@@ -107,7 +107,7 @@ class EE_Messages_Init extends EE_Base {
 	 * The purpose of this method is to load the EE_MSG controller and assign it to the $_EEMSG property.  We only need to load it on demand.
 	 *
 	 * @access private
-	 * @return void 
+	 * @return void
 	 */
 	private function _load_controller() {
 		self::set_autoloaders();
@@ -157,7 +157,7 @@ class EE_Messages_Init extends EE_Base {
 
 	/**
 	 * Any messages triggers for after successful gateway payments should go in here.
-	 * @param  EE_Transaction object 
+	 * @param  EE_Transaction object
 	 * @param  EE_Payment object
 	 * @return void
 	 */
@@ -172,7 +172,7 @@ class EE_Messages_Init extends EE_Base {
 		$active_mts = $this->_EEMSG->get_active_message_types();
 
 		$message_type = in_array( $message_type, $active_mts ) ? $message_type : 'payment';
-		
+
 
 		$this->_EEMSG->send_message( $message_type, $data);
 	}
@@ -184,7 +184,7 @@ class EE_Messages_Init extends EE_Base {
 	 * Trigger for Registration messages
 	 * Note that what registration message type is sent depends on what the reg status is for the registrations on the incoming transaction.
 	 * @param  EE_Transaction $transaction
-	 * @return void                      
+	 * @return void
 	 */
 	public function maybe_registration( EE_Transaction $transaction, $reg_msg, $from_admin ) {
 		$this->_load_controller();
@@ -221,10 +221,10 @@ class EE_Messages_Init extends EE_Base {
 
 	/**
 	 * Simply returns an array indexed by Registration Status ID and the related message_type name assoicated with that status id.
-	 * @return array 
+	 * @return array
 	 */
 	private function _get_reg_status_array() {
-		
+
 		$status_match_array = array(
 			EEM_Registration::status_id_approved => 'registration',
 			EEM_Registration::status_id_pending_payment => 'pending_approval',
@@ -286,7 +286,7 @@ class EE_Messages_Init extends EE_Base {
 		} else {
 			EE_Error::add_error( __('Something went wrong and the message for this registration was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		
+
 		return $success;
 	}
 
