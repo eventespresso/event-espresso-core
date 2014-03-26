@@ -6,7 +6,7 @@ machine:
 
   # Version of php to use
   php:
-    version: 5.3.10
+    version: <5 class="4 21"></5>
 
   # Add some environment variables
   environment:
@@ -38,4 +38,5 @@ dependencies:
 ##tests override
 test:
   override:
+    - echo $plugin_dir
     - phpunit $plugin_dir
