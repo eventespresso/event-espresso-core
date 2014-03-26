@@ -12,6 +12,7 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 			}
 		}
 		$html .= '</table>';
+		$html = $this->add_form_section_hooks_and_filters( $html );
 		return $html;
 	}
 	/**
