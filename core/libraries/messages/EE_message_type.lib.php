@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_message_type class
  *
- * Abstract class for message types. 
+ * Abstract class for message types.
  * Different types can be setup by extending this class and adding them to the /includes/core/messages/types' directory. View examples there.
  *
  * @package			Event Espresso
@@ -28,7 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 abstract class EE_message_type extends EE_Messages_Base {
-	
+
 
 
 	/**
@@ -53,8 +53,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	protected $_context_label;
 
-	
-	/** MESSAGE ASSEMBLING PROPERTIES **/	
+
+	/** MESSAGE ASSEMBLING PROPERTIES **/
 
 	/**
 	 * This parameter simply holds all the message objects for retrieval by the controller and sending to the messenger.
@@ -67,7 +67,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @var array
 	 */
 	protected $_templates;
-	
+
 
 	/** OTHER INFO PROPERTIES **/
 	/**
@@ -80,7 +80,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * This will hold the active messenger object that is passed to the type so the message_type knows what template files to process.  IT is possible that the active_messenger sent along actually doesn't HAVE a template (or maybe turned off) for the given message_type.
 	 * @var object
 	 */
-	protected $_active_messenger; 
+	protected $_active_messenger;
 
 	/**
 	 * This will hold the shortcode_replace instance for handling replacement of shortcodes in the various templates
@@ -168,19 +168,19 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 	/**
 	 * This method simply takes care of setting up message objects and returning them in an array.
-	 * 
+	 *
 	 * @access public
 	 * @param  array|object $data       Data to be parsed for messenger/message_type
 	 * @param  string $active_messenger The active messenger being used
 	 * @param  mixed (bool|string) $context if present then this is a preview being generated, so we'll make sure we ONLY do the preview for the given context and set up the message
-	 * @return void      
+	 * @return void
 	 */
 	public function set_messages($data, $active_messenger, $context = FALSE ) {
 
 		$this->_active_messenger = $active_messenger;
 		$this->_data = $data;
 
-		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send). 
+		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send).
 		$exit = $this->_trigger_exit();
 		if ( $exit && !$context ) return FALSE;
 
@@ -188,7 +188,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		//get shortcode_replace instance- set when _get_messages is called in child...
 		$this->_shortcode_replace = new EEH_Parse_Shortcodes();
-		
+
 
 		//if there is a context available then we're going to reset the datahandler to the Preview_incoming_data handler
 		$this->_set_data_handler();
@@ -213,7 +213,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
 	}
-	
+
 
 
 
@@ -237,7 +237,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * _set_contexts
 	 * This sets up the contexts associated with the message_type
-	 * 
+	 *
 	 * @abstract
 	 * @access  protected
 	 * @return  void
@@ -254,9 +254,9 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * this public method accepts a page slug (for an EE_admin page) and will return the response from the child class callback function if that page is registered via the `_admin_registered_page` property set by the child class.
 	 *
-	 * * 
+	 * *
 	 * @param string $page the slug of the EE admin page
-	 * @param array  $messengers an array of active messenger objects 
+	 * @param array  $messengers an array of active messenger objects
 	 * @param string $action the page action (to allow for more specific handling - i.e. edit vs. add pages)
 	 * @param array $extra  This is just an extra argument that can be used to pass additional data for setting up page content.
 	 * @access public
@@ -304,12 +304,12 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * The main purpose of this function is to setup the various parameters within the message_type.  $this->addressees, $this->_templates, $this->count, and any extra stuff to the data object that can come from the message_type template options.
 	 * Child classes might overwrite this if they aren't expecting EE_Session as the incoming data object.
-	 * 
+	 *
 	 * @return void
 	 * @access protected
 	 */
 	protected function _init_data() {
-		
+
 		/**
 		 * first let's make sure that incoming data isn't empty!
 		 */
@@ -329,7 +329,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		//check that the class exists
 		if ( !class_exists( $classname ) ) {
-			
+
 			$msg[] = __('uhoh, Something went wrong and no data handler is found', 'event_espresso');
 			$msg[] = sprintf( __('The %s class has set the "$_data_handler" property but the string included (%s) does not match any existing "EE_Messages_incoming_data" classes (found in "/includes/core/messages/data_class"', 'event_espresso'), __CLASS__, $this->_data_handler );
 			throw new EE_error( implode('||', $msg) );
@@ -346,7 +346,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
-	 * processes the data object so we get 
+	 * processes the data object so we get
 	 * @return void
 	 */
 	protected function _process_data() {
@@ -358,7 +358,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$xpctd_method = '_' . $context . '_addressees';
 			if ( !method_exists( $this, $xpctd_method ) )
 				throw new EE_Error( sprintf( __('The data for %1$s message type cannot be prepared because there is no set method for doing so.  The expected method name is "%2$s" please doublecheck the %1$s message type class and make sure that method is present', 'event_espresso'), $this->label['singular'], $xpctd_method) );
-			 $this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) ); 
+			 $this->_addressees[$context] = call_user_func( array( $this, $xpctd_method ) );
 		}
 		return FALSE; //DON'T EXIT
 	}
@@ -398,7 +398,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/********************
-	 * setup default shared addressee object/contexts 
+	 * setup default shared addressee object/contexts
 	 * These can be utilized simply by defining the context in the child message type.  They can also be overridden if a specific message type needs to do something different for that context.
 	 ****************/
 
@@ -520,7 +520,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$aee = array();
 
 			if ( isset( $this->_data->reg_obj ) && ( $this->_data->reg_obj->attendee_ID() != $att_id ) && $this->_single_message ) continue;
-			
+
 			if ( in_array( $details['attendee_email'], $already_processed ) )
 				continue;
 
@@ -552,7 +552,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$aee = array_merge( $this->_default_addressee_data, $aee );
 			$add[] = new EE_Messages_Addressee( $aee );
 		}
-	
+
 		return $add;
 	}
 
@@ -638,17 +638,17 @@ abstract class EE_message_type extends EE_Messages_Base {
 				$message = $this->_setup_message_object($context, $addressee);
 				//only assign message if everything went okay
 				if ( $message )
-					$this->messages[] = $this->_setup_message_object($context, $addressee);
+					$this->messages[] = $message;
 			}
 		}
 	}
-	
+
 	/**
 	 * This function setups up and returns the message object
-	 * 
+	 *
 	 * @return void
 	 * @access protected
-	 * 
+	 *
 	 */
 	protected function _setup_message_object($context, $addressee) {
 		$message = new stdClass();
@@ -680,5 +680,5 @@ abstract class EE_message_type extends EE_Messages_Base {
 	}
 
 
-} 
+}
 //end EE_message_type class
