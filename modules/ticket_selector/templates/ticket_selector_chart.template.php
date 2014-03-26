@@ -220,8 +220,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 							
 						<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
 						<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><?php echo date_i18n( 'l F jS, Y @', strtotime( $ticket->start_date() )) ; ?><br/>
-						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><?php echo date_i18n( 'l F jS, Y @', strtotime( $ticket->end_date() )) ; ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><?php echo date_i18n( 'l F jS, Y @ g:i a', strtotime( $ticket->start_date() )) ; ?><br/>
+						<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><?php echo date_i18n( 'l F jS, Y @ g:i a', strtotime( $ticket->end_date() )) ; ?><br/>
 						<br/>
 						
 						<?php if ( $ticket->min() &&$ticket->max() ) : ?>
