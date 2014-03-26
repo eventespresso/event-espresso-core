@@ -6,7 +6,7 @@ machine:
 
   # Version of php to use
   php:
-    version: <5 class="4 21"></5>
+    version: 5.4.21
 
   # Add some environment variables
   environment:
