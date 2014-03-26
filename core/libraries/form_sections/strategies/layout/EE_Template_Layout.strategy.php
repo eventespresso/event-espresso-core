@@ -50,7 +50,7 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	}
 	public function layout_form() {
 		EE_Registry::instance()->load_helper('Template');
-		return EEH_Template::locate_template($this->_layout_templatet_file, true, $this->_form_section, true);
+		return EEH_Template::locate_template($this->_layout_templatet_file, true, array('form'=>$this->_form_section,'layout_strategy'=>$this), true);
 	}
 	/**
 	 * If an input_template_file was provided upon construction, uses that to layout the input. Otherwise uses parent.
