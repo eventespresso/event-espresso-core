@@ -39,4 +39,4 @@ dependencies:
 test:
   override:
     - echo $plugin_dir
-    - phpunit $plugin_dir
+    - phpunit $plugin_dir/
