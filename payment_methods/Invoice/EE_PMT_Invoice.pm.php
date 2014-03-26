@@ -43,7 +43,8 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 //					'default'=>$default_address
 //				))
 			),
-			'exclude'=>array('PMD_debug_mode')
+			'exclude'=>array('PMD_debug_mode'),
+			'layout_strategy'=>new EE_Template_Layout('payment_methods/Invoice/templates/invoice_settings_layout.template.php'),
 		));
 		parent::__construct($pm_instance);
 	}
