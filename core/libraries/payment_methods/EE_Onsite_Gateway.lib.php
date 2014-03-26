@@ -24,7 +24,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Onsite_Gateway extends EE_Gateway{
+abstract class EE_Onsite_Gateway extends EE_Gateway{
 	public function __construct() {
 		$this->_supports_sending_refunds = true;
 		parent::__construct();
