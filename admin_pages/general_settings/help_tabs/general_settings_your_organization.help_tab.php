@@ -2,12 +2,12 @@
 <p>
 <?php _e('This page shows various options for your organization.', 'event_espresso'); ?>
 </p>
-<h3><?php _e('Site License Key', 'event_espresso'); ?></h3>
+<h3><?php _e('Support License Key', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Enter your site license key in this field to benefit from one-click updates. To manage your site license key, please <a href="http://eventespresso.com/wp-login.php">login to your Event Espresso account</a>. Then click on Edit Account Details which appears in the left sidebar menu.', 'event_espresso'); ?>
+<?php _e('Enter your support license key in this field to benefit from one-click updates. To manage your support license key, please <a href="http://eventespresso.com/wp-login.php">login to your Event Espresso account</a>. Then click on Edit Account Details which appears in the left sidebar menu.', 'event_espresso'); ?>
 </p>
 <p class="ee-attention">
-<?php _e('Your site license key should only be entered on live / production sites. If this is a development or test site, <strong>do not</strong> enter your site license key.', 'event_espresso'); ?>
+<?php _e('Site license keys are now called support license keys. Your support license key should only be entered on live/production sites. If this is a development or test site, <strong>do not</strong> enter your support license key.', 'event_espresso'); ?>
 </p>
 <h3><?php _e('Contact Information', 'event_espresso'); ?></h3>
 <p>

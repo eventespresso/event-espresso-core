@@ -11,6 +11,6 @@ if ( espresso_display_ticket_selector( $post->ID ) && ( is_single() || ( is_arch
 	<?php espresso_ticket_selector( $post ); ?>
 </div>
 <!-- .event-tickets -->
-<?php else : ?>
+<?php elseif ( ! is_single() ) : ?>
 <?php espresso_view_details_btn( $post ); ?>
 <?php endif; ?>

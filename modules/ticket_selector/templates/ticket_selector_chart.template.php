@@ -27,9 +27,10 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			// however, the max still can't be higher than what was just set above
 			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
 			// and we also want to restrict the minimum number of tickets by the ticket min setting
-//			$min = $ticket->min() > 0 ? $ticket->min() : 0;
+			$min = $ticket->min() > 0 ? $ticket->min() : 0;
 			// and if the ticket is required, then make sure that min qty is at least 1
 			$min = $ticket->required() ? max( $min, 1 ) : $min;
+
 		}
 	}
 
@@ -138,6 +139,9 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 			?>
 				<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
+				<?php if ( $min != 0 ) { ?>
+					<option value="0">&nbsp;0&nbsp;</option>
+				<?php } ?>
 				<?php
 					// this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
 					if ( ! $ticket->required() && $min !== 0 ) {

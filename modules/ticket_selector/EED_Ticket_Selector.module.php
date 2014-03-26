@@ -131,7 +131,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 		
 		if ( ! self::$_event->display_ticket_selector() || $view_details ) {
-			return EED_Ticket_Selector::display_view_details_btn( self::$_event );
+			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
 		}
 		
 		$template_args = array();

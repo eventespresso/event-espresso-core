@@ -21,10 +21,10 @@ if ( $show_backup_db_text ) { ?>
  		<?php if ( $script_names ) { ?>
  			<h3 class="espresso-header">
  				<span class="dashicons dashicons-flag ee-icon-size-22"></span>
- 				<?php echo apply_filters('FHEE__ee_migration_page__header',  sprintf(__("Event Espresso has detected Event Data from version %s that can be migrated (updated) to work with version %s.", "event_espresso"),$current_db_state,$next_db_state),$current_db_state,$next_db_state);?>
+ 				<?php echo apply_filters('FHEE__ee_migration_page__header',  sprintf(__("Event Espresso has detected event data from version %s that can be migrated (updated) to work with version %s.", "event_espresso"),$current_db_state,$next_db_state),$current_db_state,$next_db_state);?>
  			</h3>
  			<p>
- 			<?php echo apply_filters('FHEE__ee_migration_page__p_after_header',sprintf(__("Since you have already been using Event Espresso and have previous Event and Registration Data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with %s.", "event_espresso"),$next_db_state),$next_db_state);?>
+ 			<?php echo apply_filters('FHEE__ee_migration_page__p_after_header',sprintf(__("Since you have already been using Event Espresso and have previous event and registration data in your database, you have the option to migrate, or copy over, this existing data into a format that is compatible with %s.", "event_espresso"),$next_db_state),$next_db_state);?>
  			</p>
  		<?php } elseif ( $show_most_recent_migration ) { ?>
  			 <h3 class="espresso-header">

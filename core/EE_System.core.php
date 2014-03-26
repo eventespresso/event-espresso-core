@@ -97,7 +97,7 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	private function __construct() {
-		do_action( 'AHEE__EE_System__construct__begin',$this );	
+		do_action( 'AHEE__EE_System__construct__begin',$this );
 		// check required WP version
 		if ( ! $this->_minimum_wp_version_required() ) {
 			unset( $_GET['activate'] );
@@ -206,7 +206,7 @@ final class EE_System {
 			'<br/>',
 			'<a href="http://codex.wordpress.org/Updating_WordPress">http://codex.wordpress.org/Updating_WordPress</a>'
 		);
-		?>        	
+		?>
 		</p>
 		</div>
 		<?php
@@ -293,9 +293,9 @@ final class EE_System {
 
 	/**
 	* load_espresso_addons
-	* 
+	*
 	* allow addons to load first so that they can set hooks for running DMS's, etc
-	* 
+	*
 	* @access public
 	* @return void
 	*/
@@ -523,7 +523,7 @@ final class EE_System {
 
 	/**
 	 * load_core_configuration - runs during the WP plugins_loaded action at priority 5
-	 * 
+	 *
 	 * @return void
 	 */
 	public function load_core_configuration(){
@@ -542,6 +542,8 @@ final class EE_System {
 		}
 		// get model names
 		$this->_parse_model_names();
+		//load_messages controller
+		EE_Registry::instance()->load_lib( 'Messages_Init' );
 		//load caf stuff a chance to play during the activation process too.
 		$this->_maybe_brew_regular();
 		do_action( 'AHEE__EE_System__load_core_configuration__complete', $this );
@@ -586,9 +588,9 @@ final class EE_System {
 
 	/**
 	* register_shortcodes_modules_and_addons
-	* 
+	*
 	* generate lists of shortcodes and modules, then verify paths and classes
-	* 
+	*
 	* @access public
 	* @return void
 	*/
@@ -600,10 +602,10 @@ final class EE_System {
 
 	/**
 	 * brew_espresso
-	 * 
+	 *
 	 * begins the process of setting hooks for initializing EE in the order
 	 * runs during the WP plugins_loaded action at priority 9
-	 * 
+	 *
 	 * @return void
 	 */
 	public function brew_espresso(){
@@ -673,10 +675,10 @@ final class EE_System {
 
 	/**
 	* load_controllers
-	* 
-	* this is the best place to load any additional controllers that needs access to EE core. 
+	*
+	* this is the best place to load any additional controllers that needs access to EE core.
 	* it is expected that all basic core EE systems, that are not dependant on the current request are loaded at this time
-	* 
+	*
 	* @access public
 	* @return void
 	*/
@@ -695,9 +697,9 @@ final class EE_System {
 
 	/**
 	* core_loaded_and_ready
-	* 
+	*
 	* all of the basic EE core should be loaded at this point and available regardless of M-Mode
-	* 
+	*
 	* @access public
 	* @return void
 	*/
@@ -710,9 +712,9 @@ final class EE_System {
 
 	/**
 	* initialize
-	* 
-	* this is the best place to begin initializing client code 
-	* 
+	*
+	* this is the best place to begin initializing client code
+	*
 	* @access public
 	* @return void
 	*/
@@ -724,9 +726,9 @@ final class EE_System {
 
 	/**
 	* initialize_last
-	* 
+	*
 	* this is run really late during the WP init hookpoint, and ensures that mostly everything else that needs to initialize has done so
-	* 
+	*
 	* @access public
 	* @return void
 	*/
@@ -739,10 +741,10 @@ final class EE_System {
 
 	/**
 	* set_hooks_for_shortcodes_modules_and_addons
-	* 
+	*
 	* this is the best place for other systems to set callbacks for hooking into other parts of EE
 	* this happens at the very beginning of the wp_loaded hookpoint
-	* 
+	*
 	* @access public
 	* @return void
 	*/
@@ -751,7 +753,7 @@ final class EE_System {
 	}
 
 
-	
+
 	/**
 	 * 	espresso_toolbar_items
 	 *
@@ -759,7 +761,7 @@ final class EE_System {
 	 *  @return 	void
 	 */
 	public function espresso_toolbar_items( $admin_bar ) {
-		
+
 		// if in full M-Mode, or its an AJAX request, or user is NOT an admin
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance || defined( 'DOING_AJAX' ) || ! current_user_can( 'administrator' )) {
 			return;
@@ -1024,7 +1026,7 @@ final class EE_System {
 	 */
 	public function wp_enqueue_scripts() {
 		// unlike other systems, EE_System_scripts loading is turned ON by default, but prior to the init hook, can be turned off via: add_filter( 'FHEE_load_EE_System_scripts', '__return_false' );
-		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE ) ) {		
+		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE ) ) {
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
 				$jquery_validate_url = EE_PLUGIN_DIR_URL . 'scripts/jquery.validate.min.js';
