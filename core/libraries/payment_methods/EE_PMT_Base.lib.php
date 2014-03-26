@@ -25,7 +25,7 @@ abstract class EE_PMT_Base{
 	 * @param EE_Payment_Method $pm_instance
 	 */
 	function __construct($pm_instance = NULL) {
-		if($pm_instance){
+		if ( $pm_instance instanceof EE_Payment_Method ){
 			$this->set_instance($pm_instance);
 		}
 	}

@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	core/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -78,41 +78,14 @@ final class EE_Front_Controller {
 	/**
 	 * 	class constructor
 	 *
+	 * 	should fire after shortcode, module, addon, or other plugin's default priority init phases have run
+	 *
 	 *  @access 	private
 	 *  @return 	void
 	 */
 	private function __construct() {
-		// early init
-		add_action( 'init', array( $this, 'init' ), 5 );
 		// determine how to integrate WP_Query with the EE models
-		add_action( 'init', array( $this, 'employ_CPT_Strategy' ), 10 );
-		// action hook EE
-		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
-
-		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
-		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 2 );
-	}
-
-
-
-
-
-
-
-	/*********************************************** 		INIT ACTION HOOK		 ***********************************************/
-
-
-
-
-
-	/**
-	 * 	init - should fire after shortcode, module, addon, or other plugin's default priority init phases have run
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public function init(){
-		// additional hooks get added in the init phase
+		add_action( 'AHEE__EE_System__initialize', array( $this, 'employ_CPT_Strategy' ));
 		// load other resources and begin to actually run shortcodes and modules
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
 		// analyse the incoming WP request
@@ -129,16 +102,28 @@ final class EE_Front_Controller {
 		add_action('wp_head', array( $this, 'header_meta_tag' ), 5 );
 		add_filter( 'template_include', array( $this, 'template_include' ), 1 );
 		// display errors
-		add_action('loop_start', array( $this, 'display_errors' ), 2 );			
+		add_action('loop_start', array( $this, 'display_errors' ), 2 );
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-		add_action('wp_footer', array( $this, 'display_registration_footer' ), 10 );
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
-
 		//exclude our private cpt comments
-		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 2 );			
+		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 2 );
+		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
+		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 2 );
+		// action hook EE
+		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
 	}
+
+
+
+
+
+
+
+	/*********************************************** 		INIT ACTION HOOK		 ***********************************************/
+
+
 
 
 	/**
@@ -157,7 +142,7 @@ final class EE_Front_Controller {
 	/**
 	 * This simply makes sure that any "private" EE cpts do not have their comments show up in any wp comment widgets/queries done on frontend
 	 * @param  array           $clauses  array of comment clauses setup by WP_Comment_Query
-	 * @param  WP_Comment_Query $wpc     
+	 * @param  WP_Comment_Query $wpc
 	 * @return array                     array of comment clauses with modifications.
 	 */
 	public function filter_wp_comments( $clauses, WP_Comment_Query $wpc ) {
@@ -224,11 +209,6 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp_loaded() {
-		// messages loading is turned OFF by default, but prior to the wp_loaded hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
-		if ( apply_filters( 'FHEE_load_EE_messages', FALSE ) ) {
-			EE_Registry::instance()->load_lib( 'Messages_Init' );
-		}
-
 	}
 
 
@@ -242,14 +222,14 @@ final class EE_Front_Controller {
 
 	/**
 	 *	_get_request
-	 * 
+	 *
 	 *	@access public
 	 *	@return void
 	 */
 	public function get_request( WP $WP ) {
-		do_action( 'AHEE__EE_Front_Controller__get_request__before_Request_Handler_loaded' );
-		EE_Registry::instance()->load_core( 'Request_Handler', $WP );	
-		do_action( 'AHEE__EE_Front_Controller__get_request__after_Request_Handler_loaded' );
+		do_action( 'AHEE__EE_Front_Controller__get_request__start' );
+		EE_Registry::instance()->load_core( 'Request_Handler', $WP );
+		do_action( 'AHEE__EE_Front_Controller__get_request__complete' );
 	}
 
 
@@ -278,10 +258,10 @@ final class EE_Front_Controller {
 				if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ))) {
 					// set the current post slug to what it actually is
 					$current_post = $post_slug;
-				}					
+				}
 			}
 		} else if ( get_option( 'show_on_front' ) == 'page' ) {
-			// we're not on the homepage, but some "other" page is set as the posts page... 
+			// we're not on the homepage, but some "other" page is set as the posts page...
 			if ( $page_for_posts = get_option( 'page_for_posts' )) {
 				// better get the ID for the current post
 				global $wpdb;
@@ -290,9 +270,9 @@ final class EE_Front_Controller {
 				// is the current post the "page_for_posts" ???
 				if ( $current_post_id === $page_for_posts ) {
 					$current_post = 'posts';
-				}					
+				}
 			}
-		} 
+		}
 		$current_post = basename( $current_post );
 		// are we on a category page?
 		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
@@ -302,7 +282,7 @@ final class EE_Front_Controller {
 			foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 				// are we on this page ?
 				if ( $current_post == $post_name || $term_exists ) {
-					// filter shortcodes so 
+					// filter shortcodes so
 					$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
 					// now cycle thru shortcodes
 					foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
@@ -400,10 +380,10 @@ final class EE_Front_Controller {
 	 *  @return 	void
 	 */
 	public function wp_enqueue_scripts() {
-		
+
 		// css is turned ON by default, but prior to the wp_enqueue_scripts hook, can be turned OFF  via:  add_filter( 'FHEE_load_css', '__return_false' );
 		if ( apply_filters( 'FHEE_load_css', TRUE ) ) {
-			
+
 			EE_Registry::instance()->CFG->template_settings->enable_default_style = TRUE;
 			//Load the ThemeRoller styles if enabled
 			if ( isset( EE_Registry::instance()->CFG->template_settings->enable_default_style ) && EE_Registry::instance()->CFG->template_settings->enable_default_style ) {
@@ -426,7 +406,7 @@ final class EE_Front_Controller {
 				} else {
 					wp_register_style( 'espresso_style', EE_TEMPLATES_URL . EE_Config::get_current_theme() . DS . 'style.css', array( 'dashicons', 'espresso_default' ) );
 				}
-				
+
 			}
 
 		}
@@ -438,7 +418,7 @@ final class EE_Front_Controller {
 			//let's make sure that all required scripts have been setup
 			if ( function_exists( 'wp_script_is' )) {
 				if ( ! wp_script_is( 'jquery' )) {
-					$msg = sprintf( 
+					$msg = sprintf(
 						__( '%sJquery is not loaded!%sEvent Espresso is unable to load Jquery due to a conflict with your theme or another plugin.', 'event_espresso' ),
 						'<em><br />',
 						'</em>'
@@ -449,7 +429,7 @@ final class EE_Front_Controller {
 			// load core js
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 			wp_enqueue_script( 'espresso_core' );
-			
+
 		}
 
 		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
@@ -489,7 +469,7 @@ final class EE_Front_Controller {
 		}
 
 		if ( ! function_exists( 'wp_head' )) {
-			$msg = sprintf( 
+			$msg = sprintf(
 				__( '%sMissing wp_head() function.%sThe WordPress function wp_head() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
 				'<em><br />',
 				'</em>'
@@ -497,7 +477,7 @@ final class EE_Front_Controller {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 		if ( ! function_exists( 'wp_footer' )) {
-			$msg = sprintf( 
+			$msg = sprintf(
 				__( '%sMissing wp_footer() function.%sThe WordPress function wp_footer() seems to be missing in your theme. Please contact the theme developer to make sure this is fixed before using Event Espresso.', 'event_espresso' ),
 				'<em><br />',
 				'</em>'
@@ -552,22 +532,6 @@ final class EE_Front_Controller {
 
 
 	/**
-	 * 	display_registration_footer
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public function display_registration_footer() {
-		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );
-		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer',EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
-			return apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<p style="font-size: 12px;"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></p>' );
-		}
-	}
-
-
-
-
-	/**
 	 * 	display_errors
 	 *
 	 *  @access 	public
@@ -576,7 +540,7 @@ final class EE_Front_Controller {
 	public function display_errors() {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && ! is_feed() ){
+		if ( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && ! is_feed() && in_the_loop() ) {
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );
@@ -605,16 +569,16 @@ final class EE_Front_Controller {
 //		echo '<h4>$this->_template_path : ' . $this->_template_path . '</h4>';
 		// use our locate_template() method which checks for the template in the following places:
 		// * /wp-content/theme/ (currently active theme)
-		// * /wp-content/uploads/espresso/templates/  
-		// * /wp-content/uploads/espresso/templates/ee-theme/  
-		// * /wp-content/plugins/EE4/templates/espresso_default/ 
+		// * /wp-content/uploads/espresso/templates/
+		// * /wp-content/uploads/espresso/templates/ee-theme/
+		// * /wp-content/plugins/EE4/templates/espresso_default/
 		$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
 		$template_path = EEH_Template::locate_template( $this->_template_path, FALSE );
 		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
 		$this->_template = basename( $this->_template_path );
 //		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return $this->_template_path;
-	}		
+	}
 
 
 
@@ -633,8 +597,8 @@ final class EE_Front_Controller {
 
 
 
-	
-	
+
+
 
 
 }

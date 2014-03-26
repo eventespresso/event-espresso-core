@@ -33,22 +33,28 @@ class EE_CPT_Strategy extends EE_BASE {
 
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
-	 *	@var 	array	
-	 * 	@access 	protected
+	 *@var 	array	
+	 * @access 	protected
 	 */
 	protected $CPT = NULL;
 
 	/**
-	 * 	@var 	array 	$_CPTs
-	 *  @access 	protected
+	 * @var 	array 	$_CPTs
+	 * @access 	protected
 	 */
 	protected $_CPTs = array();
 
 	/**
-	 * 	@var 	array 	$_CPT_endpoints
-	 *  @access 	protected
+	 * @var 	array 	$_CPT_endpoints
+	 * @access 	protected
 	 */
 	protected $_CPT_endpoints = array();
+
+	/**
+	 * @var 	array 	$_CPT_taxonomies
+	 * @access 	protected
+	 */
+	protected $_CPT_taxonomies = array();
 
 	/**
 	 * $CPT_model
@@ -84,6 +90,10 @@ class EE_CPT_Strategy extends EE_BASE {
 		// get CPT data
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
+		$this->_CPT_taxonomies = EE_Register_CPTs::get_taxonomies();
+//		d( $this->_CPTs );
+//		d( $this->_CPT_endpoints );
+//		d( $this->_CPT_taxonomies );
 		// load EE_Request_Handler
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
 	}
@@ -98,7 +108,6 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	private function _set_CPT_endpoints() {
 		$_CPT_endpoints = array();
-		//printr( $CPTs, '$CPTs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( is_array( $this->_CPTs )) {
 			foreach ( $this->_CPTs as $CPT_type => $CPT ) {
 				$_CPT_endpoints [ $CPT['singular_slug'] ] = $CPT_type;
@@ -153,7 +162,34 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function pre_get_posts( $WP_Query ) {
 		// check that postz-type is set
-		if ( $WP_Query instanceof WP_Query && isset( $WP_Query->query_vars['post_type'] )) {
+		if ( ! $WP_Query instanceof WP_Query ) {
+			return;
+		}
+		// grab queried object 
+		if ( isset( $WP_Query->post ) && $WP_Query->get_queried_object() instanceof stdClass ) {
+			// check if it has a taxonomy property set for it and if THAT taxonomy is one of ours
+			if ( isset( $WP_Query->get_queried_object()->taxonomy ) && isset( $this->_CPT_taxonomies[ $WP_Query->get_queried_object()->taxonomy ] )) {
+				// this category belongs to us
+				$CPT_taxonomy = $WP_Query->get_queried_object()->taxonomy;
+				// but which one??? hmmm... guess we gotta go looping
+				foreach ( $this->_CPTs as $post_type => $CPT ) {
+					// verify our CPT has args, is public and has taxonomies set
+					if ( isset( $CPT['args'] ) && $CPT['args']['public'] && ! empty( $CPT['args']['taxonomies'] )) {
+						// does the captured taxonomy belong to this CPT ?
+						if ( in_array( $CPT_taxonomy, $CPT['args']['taxonomies'] )) {
+							// if so, then add this CPT post_type to the current query's array of post_types'
+							$WP_Query->query_vars['post_type'][] = $post_type;
+						}						
+					}
+				}
+			}
+		}
+
+//		d( $this->_CPTs );
+//		d( $CPT_taxonomy );
+//		d( $WP_Query );
+
+		if ( isset( $WP_Query->query_vars['post_type'] )) {
 			// loop thru post_types as array
 			foreach ( (array)$WP_Query->query_vars['post_type'] as $post_type ) {
 				// is current query for an EE CPT ?
@@ -161,7 +197,7 @@ class EE_CPT_Strategy extends EE_BASE {
 					// is EE on or off ?
 					if ( EE_Maintenance_Mode::instance()->level() ) {
 						// reroute CPT template view to maintenance_mode.template.php
-						if( ! has_filter('template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
+						if( ! has_filter( 'template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
 							add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
 						}
 						return;
@@ -170,14 +206,14 @@ class EE_CPT_Strategy extends EE_BASE {
 					$this->CPT = $this->_CPTs[ $post_type ];
 					// set post type
 					$this->CPT['post_type'] = $post_type;
-		//			echo '<h4>post_type : ' . $this->CPT['post_type'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//					echo '<h4>post_type : ' . $this->CPT['post_type'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 					// the post or category or term that is triggering EE
 					$this->CPT['espresso_page'] = EE_Registry::instance()->REQ->is_espresso_page();
 					// requested post name
 					$this->CPT['post_name'] = EE_Registry::instance()->REQ->get( 'post_name' );
-		//			d( $this->CPT );
+					//d( $this->CPT );
 					// add support for viewing 'private', 'draft', or 'pending' posts
-					if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {			
+					if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {
 						// we can just inject directly into the WP_Query object
 						$WP_Query->query['post_status'] = array( 'publish', 'private', 'draft', 'pending' );
 						// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
@@ -185,13 +221,13 @@ class EE_CPT_Strategy extends EE_BASE {
 					}
 					$this->_possibly_set_ee_request_var( $post_type );		
 					// convert post_type to model name
-					$model_name = ucwords( rtrim( str_replace( 'espresso_', '', $post_type ), 's' ));
+					$model_name = str_replace( 'EE_', '', $this->CPT['class_name'] );
 					// get CPT table data via CPT Model
 					$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
 					$this->CPT['tables'] = $this->CPT_model->get_tables();
 					// is there a Meta Table for this CPT?
 					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $model_name . '_Meta' ] ) ? $this->CPT['tables'][ $model_name . '_Meta' ] : FALSE;		
-					// creates classname like:  EE_CPT_Event_Strategy
+					// creates classname like:  CPT_Event_Strategy
 					$CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
 					// load and instantiate
 					 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));	
@@ -265,7 +301,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 */
 	public function the_posts( $posts, WP_Query $wp_query ) {
 //		d( $wp_query );
-		$CPT_class = 'EE_' . $this->CPT['singular_name'];
+		$CPT_class = $this->CPT['class_name'];
 		// loop thru posts
 		if ( isset( $wp_query->posts )) {
 			foreach( $wp_query->posts as $key => $post ) {

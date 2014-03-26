@@ -105,7 +105,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @param		array 	$attributes
 	 *  @return 	void
 	 */
-	public function process_shortcode( $attributes ) {
+	public function process_shortcode( $attributes = array() ) {
 
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
 			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );

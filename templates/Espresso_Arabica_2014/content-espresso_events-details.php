@@ -1,4 +1,7 @@
-<?php global $post; ?>
+<?php 
+//echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
+global $post; 
+?>
 <div class="event-content">
 <?php if ( apply_filters( 'FHEE__content_espresso_events_details_template__display_entry_meta', TRUE )): ?>
 	<div class="entry-meta">
@@ -15,7 +18,7 @@
 <?php 
 endif; 
 $event_phone = espresso_event_phone( $post->ID, FALSE );
-if ( espresso_event_has_content_or_excerpt() || $event_phone != '' ) : ?>
+if ( espresso_event_has_content_or_excerpt( $post->ID ) || $event_phone != '' ) : ?>
 
 	<h3 class="about-event-h3 ee-event-h3">
 		<span class="ee-icon ee-icon-event"></span><?php _e( 'Event Details', 'event_espresso' ); ?>

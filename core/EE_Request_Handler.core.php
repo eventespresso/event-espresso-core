@@ -78,6 +78,7 @@ final class EE_Request_Handler {
 		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? TRUE : FALSE;
 		$this->get_request_vars( $wp );
 //		d( $this->_params );
+		do_action( 'AHEE__EE_Request_Handler__construct__complete' );
 	}
 
 

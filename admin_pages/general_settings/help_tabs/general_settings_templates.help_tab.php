@@ -24,6 +24,10 @@
 	<?php _e('Event List Pages', 'event_espresso'); ?>
 </h3>
 <ul>
+    <li>
+		<?php _e('<strong>Event Listings URL</strong>', 'event_espresso'); ?><br />
+		<?php _e('This is the URL (website address) for your event list page.', 'event_espresso'); ?>
+	</li>
 	<li>
 		<?php _e('<strong>Display Status Banner</strong>', 'event_espresso'); ?><br />
 		<?php _e('Specify whether event status banners should be shown next to the title on the event list page. Notice: Some themes do not use the_title() tag correctly and this may cause things to appear broken (stray html). You can use this option to test your theme.', 'event_espresso'); ?>
@@ -37,8 +41,8 @@
 		<?php _e('Whether the ticket options table (Ticket Selector) should be shown on the event list page.', 'event_espresso'); ?>
 	</li>
 	<li>
-		<?php _e('<strong>Display Dates & Times</strong>', 'event_espresso'); ?><br />
-		<?php _e('Whether the event dates & times should be shown on the event list page.', 'event_espresso'); ?>
+		<?php _e('<strong>Display Datetimes</strong>', 'event_espresso'); ?><br />
+		<?php _e('Whether the event datetimes should be shown on the event list page.', 'event_espresso'); ?>
 	</li>
 	<li>
 		<?php _e('<strong>Display Venue Details</strong>', 'event_espresso'); ?><br />
@@ -47,10 +51,6 @@
 	<li>
 		<?php _e('<strong>Display Expired Events</strong>', 'event_espresso'); ?><br />
 		<?php _e('Whether expired events should be shown on the event list page.', 'event_espresso'); ?>
-	</li>
-	<li>
-		<?php _e('<strong>Event Listings URL</strong>', 'event_espresso'); ?><br />
-		<?php _e('This is the URL (website address) for your event list page.', 'event_espresso'); ?>
 	</li>
 	<li>
 		<?php _e('<strong>Reset Event List Settings</strong>', 'event_espresso'); ?><br />

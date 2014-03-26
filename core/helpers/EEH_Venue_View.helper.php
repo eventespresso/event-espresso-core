@@ -535,12 +535,14 @@ class EEH_Venue_View extends EEH_Base {
 	public static function venue_gmap( $VNU_ID = FALSE, $map_ID = FALSE, $gmap = array() ) {
 		
 		static $static_map_id = 0;		
-		
-		$venue = EEH_Venue_View::get_venue( $VNU_ID );
+		$venue = EEH_Venue_View::get_venue( $VNU_ID );		
 		if ( $venue instanceof EE_Venue ) {
-			
+			// check for global espresso_events post and use it's ID if no map_ID is set
+			global $post;
+			$map_ID = empty( $map_ID ) && $post->post_type == 'espresso_events' ? $post->ID : $map_ID;
+			// grab map settings
 			$map_cfg = EE_Registry::instance()->CFG->map_settings;
-			
+			// are maps enabled ?
 			if ( $map_cfg->use_google_maps && $venue->enable_for_gmap() ) {
 				
 				EE_Registry::instance()->load_helper( 'Maps' );

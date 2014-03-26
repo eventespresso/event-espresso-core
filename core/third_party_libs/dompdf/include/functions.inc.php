@@ -410,12 +410,13 @@ if ( !function_exists("mb_strlen") ) {
   function mb_strtoupper( $str ) {
 	return strtoupper($str);
   }
-  
-  function mb_substr($string, $start, $length = null, $encoding = 'iso-8859-1') {
-	if ( is_null($length) )
-	  return substr($string, $start);
-	else
-	  return substr($string, $start, $length);
+  if( ! function_exists('mb_substr')){
+	function mb_substr($string, $start, $length = null, $encoding = 'iso-8859-1') {
+	  if ( is_null($length) )
+		return substr($string, $start);
+	  else
+		return substr($string, $start, $length);
+	}
   }
   
   function mb_substr_count($haystack, $needle, $encoding = 'iso-8859-1') {

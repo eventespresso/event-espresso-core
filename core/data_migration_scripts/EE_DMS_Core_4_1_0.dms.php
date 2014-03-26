@@ -4,7 +4,7 @@
  */
 //make sure we have all the stages loaded too
 //unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load 
+//instead of construction, because it only gets constructed on first page load
 //(all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE.'data_migration_scripts/4_1_0_stages/*');
 $class_to_filepath = array();
@@ -18,11 +18,11 @@ $class_to_filepath = apply_filters('FHEE__EE_DMS_4_1_0__autoloaded_stages',$clas
 EEH_Autoloader::register_autoloader($class_to_filepath);
 
 /**
- * Organizes all the various stages of the migration from 3.1 (but only versions above 3.1.26, 
- * lower versions need to eb upgraded to 3.1.26 normally) to 4.1.0.P. 
+ * Organizes all the various stages of the migration from 3.1 (but only versions above 3.1.26,
+ * lower versions need to eb upgraded to 3.1.26 normally) to 4.1.0.P.
  * It adds the database tables on some of the first migration_steps, then migrates the data within
  * each stage.
- * 
+ *
  * External Dependencies:
  * -function EEH_Activation::create_table($table_name,$table_sql,$engine)
  * -class EE_Config with attributes and function:
@@ -34,8 +34,8 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  */
 class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
-	
-	
+
+
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.1.0P", "event_espresso");
 		$this->_migration_stages = array(
@@ -81,7 +81,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}elseif( ! $version_string ){
 //			echo "no version string provided: $version_string";
 			//no version string provided... this must be pre 4.1
-			//because since 4.1 we're 
+			//because since 4.1 we're
 			return false;//changed mind. dont want people thinking they should migrate yet because they cant
 		}else{
 //			echo "$version_string doesnt apply";
@@ -94,7 +94,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	public function schema_changes_before_migration() {
 		//relies on 4.1's EEH_Activation::create_table
 		require_once( EE_HELPERS . 'EEH_Activation.helper.php' );
-		
+
 		$table_name='esp_answer';
 		$sql=" ANS_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					REG_ID INT UNSIGNED NOT NULL ,
@@ -102,7 +102,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 					ANS_value TEXT NOT NULL ,
 					PRIMARY KEY  (ANS_ID)";
 		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
-		
+
 		$table_name = 'esp_attendee_meta';
 		$sql = "ATTM_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
 						ATT_ID int(10) unsigned NOT NULL,
@@ -159,9 +159,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 						PRIMARY KEY  (DTT_ID),
 						KEY EVT_ID (EVT_ID),
 						KEY DTT_is_primary (DTT_is_primary)";
-		
-		
-		
+
+
+
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
 		$table_name = 'esp_event_meta';
 		$sql = "
@@ -182,7 +182,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
-		
+
 		$table_name='esp_event_question_group';
 		$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					EVT_ID INT UNSIGNED NOT NULL ,
@@ -202,7 +202,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
-		
+
 		$table_name='esp_extra_meta';
 		$sql="EXM_ID int(11) NOT NULL AUTO_INCREMENT,
 				OBJ_ID int(11) DEFAULT NULL,
@@ -297,7 +297,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (PRO_ID) ,
 					KEY PRC_ID (PRC_ID)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
-		
+
 		$table_name = 'esp_promotion_object';
 		$sql = "POB_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 			PRO_ID INT UNSIGNED NOT NULL,
@@ -308,7 +308,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			KEY OBJ_ID (OBJ_ID),
 			KEY PRO_ID (PRO_ID)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
-		
+
 		$table_name = 'esp_promotion_applied';
 		$sql = "PRA_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 			PRO_ID INT UNSIGNED NOT NULL,
@@ -318,7 +318,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			KEY OBJ_ID (OBJ_ID),
 			KEY PRO_ID (PRO_ID)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
-		
+
 		$table_name = 'esp_promotion_rule';
 		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					PRO_ID INT UNSIGNED NOT NULL ,
@@ -329,9 +329,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 					KEY PRO_ID (PRO_ID),
 					KEY RUL_ID (RUL_ID) ";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
-		
-		
-		
+
+
+
 		$table_name = 'esp_rule';
 		$sql = "RUL_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					RUL_name VARCHAR(45) NOT NULL ,
@@ -345,10 +345,10 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 					RUL_archived TINYINT(1) NOT NULL DEFAULT 0 ,
 					PRIMARY KEY  (RUL_ID)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
-		
 
 
-		$table_name = "esp_ticket";  
+
+		$table_name = "esp_ticket";
 		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_ID int(10) unsigned NOT NULL,
 					  TKT_name varchar(100) NOT NULL DEFAULT '',
@@ -373,7 +373,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_ticket_price";  
+		$table_name = "esp_ticket_price";
 		$sql = "TKP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TKT_ID int(10) unsigned NOT NULL,
 					  PRC_ID int(10) unsigned NOT NULL,
@@ -383,7 +383,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_datetime_ticket";  
+		$table_name = "esp_datetime_ticket";
 		$sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  DTT_ID int(10) unsigned NOT NULL,
 					  TKT_ID int(10) unsigned NOT NULL,
@@ -394,7 +394,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_ticket_template";  
+		$table_name = "esp_ticket_template";
 		$sql = "TTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_name varchar(45) NOT NULL,
 					  TTM_description text,
@@ -404,7 +404,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_price";  
+		$table_name = "esp_price";
 		$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  PRT_ID tinyint(3) unsigned NOT NULL,
 					  PRC_amount decimal(10,3) NOT NULL DEFAULT '0.00',
@@ -432,7 +432,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
-		
+
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 					QST_display_text TEXT NOT NULL,
@@ -447,9 +447,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 					QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID)';
 		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
-		
+
 		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
-		
+
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 					QSG_name VARCHAR(255) NOT NULL,
@@ -463,9 +463,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (QSG_ID),
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
 		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
-		
-		
-		
+
+
+
 		$table_name='esp_question_group_question';
 		$sql="QGQ_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					QSG_ID INT UNSIGNED NOT NULL ,
@@ -474,7 +474,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_is_new_in_this_version($table_name,$sql, 'ENGINE=InnoDB');
 
 
-		
+
 		$table_name='esp_question_option';
 		$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					QSO_value VARCHAR(255) NOT NULL ,
@@ -564,8 +564,8 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
 
 
-		
-		
+
+
 
 
 		$table_name = 'esp_venue_meta';
@@ -587,8 +587,8 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			PRIMARY KEY  (VNUM_ID),
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
-		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');	
-		
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+
 		//setting up the default stats and countries is also essential for the data migrations to run
 		//(because many need to convert old string states to foreign keys into the states table)
 		$this->insert_default_states();
@@ -597,21 +597,21 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$this->insert_default_price_types();
 		$this->insert_default_prices();
 		$this->insert_default_tickets();
-		
+
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
 		EE_Config::instance()->update_espresso_config(false, true);
 		return true;
 	}
 	/**
 	 * Yes we could have cleaned up the ee3 tables here. But just in case someone
-	 * didn't backup their DB, and decides they want ot keep using EE3, we'll 
+	 * didn't backup their DB, and decides they want ot keep using EE3, we'll
 	 * leave them for now. Mayeb remove them in 4.5 or something.
 	 * @return boolean
 	 */
 	public function schema_changes_after_migration() {
 		return true;
 	}
-	
+
 	/**
 	 * insert_default_states
 	 *
@@ -620,15 +620,15 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	 * 	@return void
 	 */
 	public function insert_default_states() {
-		
+
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $state_table . "'") == $state_table ) {
-			
+
 			$SQL = "SELECT COUNT('STA_ID') FROM " . $state_table;
 			$states = $wpdb->get_var($SQL);
 			if ( ! $states ) {
-				$SQL = "INSERT INTO " . $state_table . " 
+				$SQL = "INSERT INTO " . $state_table . "
 				(STA_ID, CNT_ISO, STA_abbrev, STA_name, STA_active) VALUES
 				(1, 'US', 'AK', 'Alaska', 1),
 				(2, 'US', 'AL', 'Alabama', 1),
@@ -699,11 +699,11 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 				(67, 'CA', 'PE', 'Prince Edward Island', 1),
 				(68, 'CA', 'QC', 'Quebec', 1),
 				(69, 'CA', 'SK', 'Saskatchewan', 1);";
-				$wpdb->query($SQL);		
+				$wpdb->query($SQL);
 			}
 		}
 	}
-	
+
 	/**
 	 * insert_default_countries
 	 *
@@ -716,11 +716,11 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		global $wpdb;
 		$country_table = $wpdb->prefix."esp_country";
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $country_table . "'") == $country_table ) {
-			
+
 			$SQL = "SELECT COUNT('CNT_ISO') FROM " . $country_table;
 			$countries = $wpdb->get_var($SQL);
 			if ( ! $countries ) {
-				$SQL = "INSERT INTO " . $country_table . " 
+				$SQL = "INSERT INTO " . $country_table . "
 				(CNT_ISO, CNT_ISO3, RGN_ID, CNT_name, CNT_cur_code, CNT_cur_single, CNT_cur_plural, CNT_cur_sign, CNT_cur_sign_b4, CNT_cur_dec_plc, CNT_tel_code, CNT_is_EU, CNT_active) VALUES
 				('AD', 'AND', 0, 'Andorra', 'EUR', 'Euro', 'Euros', '€', 1, 2, '+376', 0, 0),
 				('AE', 'ARE', 0, 'United Arab Emirates', 'AED', 'Dirham', 'Dirhams', 'د.إ', 1, 2, '+971', 0, 0),
@@ -947,14 +947,14 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 				('YE', 'YEM', 0, 'Yemen', 'YER', 'Rial', 'Rials', '﷼', 1, 2, '+967', 0, 0),
 				('ZA', 'ZAF', 0, 'South Africa', 'ZAR', 'Rand', 'Rands', 'R', 1, 2, '+27', 0, 0),
 				('ZM', 'ZMB', 0, 'Zambia', 'ZMK', 'Kwacha', 'Kwachas', '', 1, 2, '+260', 0, 0),
-				('ZW', 'ZWE', 0, 'Zimbabwe', 'ZWD', 'Dollar', 'Dollars', 'Z$', 1, 2, '+263', 0, 0);";		
-				$wpdb->query($SQL);			
+				('ZW', 'ZWE', 0, 'Zimbabwe', 'ZWD', 'Dollar', 'Dollars', 'Z$', 1, 2, '+263', 0, 0);";
+				$wpdb->query($SQL);
 			}
-		
+
 		}
-		
+
 	}
-	
+
 	/**
 	 * insert_default_price_types
 	 *
@@ -971,7 +971,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table;
 			$price_types_exist = $wpdb->get_var( $SQL );
-			
+
 			if ( ! $price_types_exist ) {
 				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_deleted ) VALUES
 							(1, '" . __('Base Price', 'event_espresso') . "', 1,  0, 0, 0),
@@ -980,15 +980,15 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 							(4, '" . __('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, 0),
 							(5, '" . __('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, 0);";
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_price_types__SQL', $SQL );
-				$wpdb->query( $SQL );	
+				$wpdb->query( $SQL );
 			}
 		}
 	}
-	
+
 	/**
 	 * insert_default_prices. We assume we're upgrading to regular here.
 	 * If we're INSTALLING 4.1 CAF, then we add a few extra default prices
-	 * when EEH_Activaion's initialize_db_content is called via  ahook in 
+	 * when EEH_Activaion's initialize_db_content is called via  ahook in
 	 * EE_BRewing_regular
 	 *
 	 * 	@access public
@@ -999,22 +999,22 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 		global $wpdb;
 		$price_table = $wpdb->prefix."esp_price";
-		
+
 		if ($wpdb->get_var("SHOW TABLES LIKE '$price_table'") == $price_table) {
-			
+
 			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
 			$prices_exist = $wpdb->get_var( $SQL );
-			
+
 			if ( ! $prices_exist ) {
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_order, PRC_deleted, PRC_parent ) VALUES
-							(1, 1, '0.00', 'Free Admission', '', 1, NULL, 0, 0, 0);";			
+							(1, 1, '0.00', 'Free Admission', '', 1, NULL, 0, 0, 0);";
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_prices__SQL', $SQL );
-				$wpdb->query($SQL);			
+				$wpdb->query($SQL);
 			}
-		}	
+		}
 	}
-	
+
 	/**
 	 * insert default ticket
 	 *
@@ -1033,8 +1033,8 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 			if ( ! $tickets_exist ) {
 				$SQL = "INSERT INTO $ticket_table
-					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
-					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
+					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL', $SQL );
 				$wpdb->query($SQL);
 			}
@@ -1049,7 +1049,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			if ( ! $ticket_prc_exist ) {
 
 				$SQL = "INSERT INTO $ticket_price_table
-				( TKP_ID, TKT_ID, PRC_ID ) VALUES 
+				( TKP_ID, TKT_ID, PRC_ID ) VALUES
 				( 1, 1, 1 )
 				";
 
@@ -1058,7 +1058,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets a country entry as an array, or creates one if none is found. Much like EEM_Country::instance()->get_one(), but is independent of
 	 * outside code which can change in future versions of EE. Also, $country_name CAN be a 3.1 country ID (int), a 2-letter ISO, 3-letter ISO, or name
@@ -1075,9 +1075,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		if(is_int($country_name)){
 			$country_name = $this->get_iso_from_3_1_country_id($country_name);
 		}
-		$country = $wpdb->get_row($wpdb->prepare("SELECT * FROM $country_table WHERE 
+		$country = $wpdb->get_row($wpdb->prepare("SELECT * FROM $country_table WHERE
 			CNT_ISO LIKE %s OR
-			CNT_ISO3 LIKE %s OR 
+			CNT_ISO3 LIKE %s OR
 			CNT_name LIKE %s LIMIT 1",$country_name,$country_name,$country_name),ARRAY_A);
 		if( ! $country ){
 			//insert a new one then
@@ -1119,7 +1119,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 					$cols_n_values,
 					$data_types);
 			if( ! $success){
-				throw new EE_Error($this->_create_error_message_for_db_insertion('N/A', array('country_id'=>$country_name), $country_table, $cols_n_values, $data_types)); 
+				throw new EE_Error($this->_create_error_message_for_db_insertion('N/A', array('country_id'=>$country_name), $country_table, $cols_n_values, $data_types));
 			}
 			$country = $cols_n_values;
 		}
@@ -1139,7 +1139,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}while(intval($country_with_that_iso));
 		return $current_iso;
 	}
-	
+
 	/**
 	 * Gets a state entry as an array, or creates one if none is found. Much like EEM_State::instance()->get_one(), but is independent of
 	 * outside code which can change in future versions of EE
@@ -1159,7 +1159,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		global $wpdb;
 		$state_table = $wpdb->prefix."esp_state";
-		$state = $wpdb->get_row($wpdb->prepare("SELECT * FROM $state_table WHERE 
+		$state = $wpdb->get_row($wpdb->prepare("SELECT * FROM $state_table WHERE
 			(STA_abbrev LIKE %s OR
 			STA_name LIKE %s) AND
 			CNT_ISO LIKE %s LIMIT 1",$state_name,$state_name,$country_iso),ARRAY_A);
@@ -1177,7 +1177,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 				'%s',//STA_name
 				'%d',//STA_active
 			);
-			$success = $wpdb->insert($state_table,$cols_n_values,$data_types);		
+			$success = $wpdb->insert($state_table,$cols_n_values,$data_types);
 			if ( ! $success ){
 				throw new EE_Error($this->_create_error_message_for_db_insertion('N/A', array('state'=>$state_name,'country_id'=>$country_name), $state_table, $cols_n_values, $data_types));
 			}
@@ -1209,7 +1209,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$minutes = str_pad( "$minutes", 2, '0',STR_PAD_LEFT);
 		return "$hour:$minutes";
 	}
-	
+
 	/**
 	 * Gets teh ISO3 fora country given its 3.1 country ID.
 	 * @param int $country_id
@@ -1439,7 +1439,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			array(223, 'Yemen', 'YE', 'YEM', 1),
 			array(225, 'Zambia', 'ZM', 'ZMB', 1),
 			array(226, 'Zimbabwe', 'ZW', 'ZWE', 1));
-		
+
 		$country_iso = 'US';
 		foreach($old_countries as $country_array){
 			//note: index 0 is the 3.1 country ID
@@ -1451,9 +1451,9 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		return $country_iso;
 	}
-	
+
 	/**
-	 * Gets the ISO3 for the 
+	 * Gets the ISO3 for the
 	 * @return string
 	 */
 	public function get_default_country_iso(){
@@ -1461,7 +1461,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		$iso = $this->get_iso_from_3_1_country_id($old_org_options['organization_country']);
 		return $iso;
 	}
-	
+
 	/**
 	 * Converst a 3.1 payment status to its equivalent 4.1 regisration status
 	 * @param string $payment_status possible value for 3.1's evens_attendee.payment_statsu
@@ -1471,7 +1471,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	 */
 	public function convert_3_1_payment_status_to_4_1_STS_ID($payment_status, $this_thing_required_pre_approval = false){
 
-		//EE team can read the related discussion: https://app.asana.com/0/2400967562914/9418495544455 
+		//EE team can read the related discussion: https://app.asana.com/0/2400967562914/9418495544455
 		if($this_thing_required_pre_approval){
 				return 'RNA';
 		}else{
@@ -1486,17 +1486,17 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			'Cancelled'=>'RPP',
 			'Declined'=>'RPP'
 					);
-				
-				
-				
-				
+
+
+
+
 		}
-		
+
 		return isset($mapping[$payment_status]) ? $mapping[$payment_status] : 'RNA';
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Makes sure the 3.1's image url is converted to an image attachment post to the 4.1 CPT event
 	 * and sets it as teh featured image on the CPT event
@@ -1525,7 +1525,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		return $created_attachment_post;
 	}
-	
+
 	/**
 	 * In 3.1, the event thumbnail image DOESN'T point to the orignal image, but instead
 	 * to a large thumbnail (which has nearly the same GUID, except it adds "-{width}x{height}" before the filetype,
@@ -1544,7 +1544,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			return $guid_in_old_event;
 		}
 	}
-	
+
 	/**
 	 * Creates an image attachment post for the GUID. If teh GUID points to a remote image,
 	 * we download it to our uploads directory so that it can be properly processed (eg, creates different sizes of thumbnails)
@@ -1574,14 +1574,14 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			$local_filepath  = $wp_upload_dir['path'].DS.basename($guid);
 			$savefile = fopen($local_filepath, 'w');
 			fwrite($savefile, $contents);
-			fclose($savefile);			
-			$guid = str_replace($wp_upload_dir['path'],$wp_upload_dir['url'],$local_filepath); 
+			fclose($savefile);
+			$guid = str_replace($wp_upload_dir['path'],$wp_upload_dir['url'],$local_filepath);
 		}else{
 			$local_filepath = str_replace($wp_upload_dir['url'],$wp_upload_dir['path'],$guid);
 		}
-		
+
 		$attachment = array(
-		   'guid' => $guid, 
+		   'guid' => $guid,
 		   'post_mime_type' => $wp_filetype['type'],
 		   'post_title' => preg_replace('/\.[^.]+$/', '', basename($guid)),
 		   'post_content' => '',
@@ -1592,11 +1592,11 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			$migration_stage->add_error(sprintf(__("Could not create image attachment post from image '%s'. Attachment data was %s.", "event_espresso"),$guid,$this->_json_encode($attachment)));
 			return $attach_id;
 		}
-		
+
 		// you must first include the image.php file
 		// for the function wp_generate_attachment_metadata() to work
 		require_once(ABSPATH . 'wp-admin/includes/image.php');
-		
+
 		$attach_data = wp_generate_attachment_metadata( $attach_id, $local_filepath );
 		if( ! $attach_data){
 			$migration_stage->add_error(sprintf(__("Coudl not genereate attachment metadata for attachment post %d with filepath %s and GUID %s. Please check the file was downloaded properly.", "event_espresso"),$attach_id,$local_filepath,$guid));
@@ -1608,7 +1608,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		return $attach_id;
 	}
-	
+
 	/**
 	 * Finds the attachment post containing info about an image attachment given teh GUID (link to the image itself),
 	 * and returns its ID.
@@ -1641,15 +1641,15 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		}
 		try{
 			$date_obj = new DateTime( $datetime_string, new DateTimeZone( $timezone ) );
-			$date_obj->setTimezone(new DateTimeZone('UTC'));	
+			$date_obj->setTimezone(new DateTimeZone('UTC'));
 		}catch(Exception $e){
 			$stage->add_error(sprintf(__("Could not convert time string '%s' using timezone '%s' into a proper datetime. Using current time instead.", "event_espresso"),$datetime_string,$timezone));
 			$date_obj = new DateTime();
 		}
-		
+
 		return $date_obj->format('Y-m-d H:i:s');
 	}
-	
+
 	/**
 	 * Gets the default timezone string from wordpress (even if they set a gmt offset)
 	 * @return string
@@ -1687,7 +1687,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
         return FALSE;
 	}
-	
+
 	public function migration_page_hooks(){
 		add_filter('FHEE__ee_migration_page__header',array($this,'_migrate_page_hook_simplify_version_strings'),10,3);
 		add_filter('FHEE__ee_migration_page__p_after_header',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
@@ -1701,7 +1701,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 		add_filter('FHEE__ee_migration_page__done_migration_header',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
 		add_filter('FHEE__ee_migration_page__p_after_done_migration_header',array($this,'_migration_page_hook_simplify_next_db_state'),10,2);
 	}
-	
+
 	public function _migrate_page_hook_simplify_version_strings($old_content,$current_db_state,$next_db_state,$ultimate_db_state = NULL){
 		return str_replace(array($current_db_state,$next_db_state,$ultimate_db_state),array(__('EE3','event_espresso'),__('EE4','event_espresso'),  __("EE4", 'event_espresso')),$old_content);
 	}

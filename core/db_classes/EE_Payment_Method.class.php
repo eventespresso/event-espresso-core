@@ -27,9 +27,9 @@ class EE_Payment_Method extends EE_Base_Class{
 	
 	/** ID @var PMD_ID*/ 
 	protected $_PMD_ID = NULL;
-	/** Payment Method Type @var PMD_type*/ 
+	/** Payment Method Type @var PMD_type - a name used for public display */ 
 	protected $_PMD_type = NULL;
-	/** Name @var PMD_name*/ 
+	/** Name @var PMD_name - a name used for interal (admin) display only*/ 
 	protected $_PMD_name = NULL;
 	/** Description @var PMD_desc*/ 
 	protected $_PMD_desc = NULL;
@@ -347,12 +347,12 @@ class EE_Payment_Method extends EE_Base_Class{
 			if(EE_Payment_Method_Manager::instance()->payment_method_exists($this->type())){
 				$class_name = EE_Payment_Method_Manager::instance()->payment_method_class_from_type($this->type());
 				if ( ! class_exists($class_name)){
-					throw new EE_Error(sprintf(__("There is no payment method type of class '%s', did you deactivate a EE addon?", "event_espresso"),$class_name));
+					throw new EE_Error(sprintf(__("There is no payment method type of class '%s', did you deactivate an EE addon?", "event_espresso"),$class_name));
 				}
 				$r = new ReflectionClass($class_name);
 				$this->_type_obj = $r->newInstanceArgs(array($this));
 			}else{
-				throw new EE_Error(__("payment method of type '%s' doesnt exist","event_espresso"),$type_string);
+				throw new EE_Error(__("A payment method of type '%s' does not exist","event_espresso"),$type_string);
 			}
 		}
 		return $this->_type_obj;
