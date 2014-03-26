@@ -32,6 +32,9 @@ class EE_Hidden_Input extends EE_Form_Input_Base{
 		$this->_set_normalization_strategy(new EE_Text_Normalization());
 		parent::__construct($options);
 	}
+	public function get_html_for_label() {
+		return '';
+	}
 }
 
 // End of file EE_Hidden_Input.input.php
