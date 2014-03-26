@@ -38,6 +38,4 @@ dependencies:
 ##tests override
 test:
   override:
-    - echo $plugin_dir
-    - pwd
-    - phpunit $plugin_dir
+    - cd $plugin_dir; phpunit
