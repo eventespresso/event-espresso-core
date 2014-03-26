@@ -54,19 +54,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	protected $_html_help_style;
 	
 	/**
-	 * the HREF property to put inside the a tag. If you want use a different
-	 * image than the standard help icon, you might be best to just change the entire 
-	 * html_label_text
-	 * @var string 
-	 */
-	protected $_html_help_link_href;
-	/**
-	 * the src property on the image
-	 * @var string
-	 */
-	protected $_html_help_img_src;
-	
-	/**
 	 * The raw data submitted fo rthis, like in teh $_POST superglobal.
 	 * Generally unsafe for usage in client code
 	 * @var mixed string or array
@@ -129,9 +116,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		}
 		if(isset($options_array['html_help_text'])){
 			$this->_html_help_text = $options_array['html_help_text'];
-		}
-		if(isset($options_array['html_help_link'])){
-			$this->_html_help_link = $options_array['html_help_link'];
 		}
 		if(isset($options_array['html_help_class'])){
 			$this->_html_help_class = $options_array['html_help_class'];
