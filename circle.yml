@@ -15,8 +15,7 @@ machine:
     WP_MULTISITE: 0
     WP_CORE_DIR: /tmp/wordpress
     WP_TESTS_DIR: /tmp/wordpress-tests
-    plugin_slug: $CIRCLE_PROJECT_REPO_NAME
-    plugin_loc: /home/ubuntu/$CIRCLE_PROJECT_REPO_NAME
+    plugin_slug: $CIRCLE_PROJECT_REPONAME
     plugin_dir: $WP_CORE_DIR/wp-content/plugins/$plugin_slug
 
 
