@@ -27,6 +27,6 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 * @param EE_Form_Section_Proper $formsection
 	 */
 	public function layout_proper_subsection($formsection){
-		return '<div>'.$$formsection->get_html_and_js().'</div>';
+		return '<div>'.$formsection->get_html_and_js().'</div>';
 	}
 }
