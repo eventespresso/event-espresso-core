@@ -64,8 +64,11 @@ if ( ! defined( 'DS' )) {
 if ( ! defined( 'PS' )) {
 	define( 'PS', PATH_SEPARATOR );
 }
-if( ! defined( 'SP' ) ){
-	define('SP',' ');
+if( ! defined( 'SP' )){
+	define( 'SP', ' ' );
+}
+if( ! defined( 'EENL' )){
+	define( 'EENL', "\n" );
 }
 
 define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
