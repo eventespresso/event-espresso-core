@@ -59,7 +59,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * html_label_text
 	 * @var string 
 	 */
-	protected $_html_help_link;
+	protected $_html_help_link_href;
+	/**
+	 * the src property on the image
+	 * @var string
+	 */
+	protected $_html_help_img_src;
 	
 	/**
 	 * The raw data submitted fo rthis, like in teh $_POST superglobal.
@@ -262,7 +267,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		return $this->_parent_section->get_html_for_input($this);
 	}
 	/**
-	 * Gets the HTML for the input itself (no label or errors).
+	 * Gets the HTML for the input itself (no label or errors) according to the
+	 * input's display strategy
 	 * Makes sure the JS and CSS are enqueued for it
 	 * @return string
 	 */
@@ -270,25 +276,28 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		return  $this->_get_display_strategy()->display();
 	}
 	/**
-	 * Gets the HTML for displaying the label
+	 * Gets the HTML for displaying the label for this form input
+	 * according to the form section's layout strategy
 	 * @return string
 	 */
 	public function get_html_for_label(){
-		return $this->_get_display_strategy()->display_label();
+		return $this->_parent_section->get_layout_strategy()->display_label($this);
 	}
 	/**
-	 * Gets the HTML for dislpaying the errors section
+	 * Gets the HTML for dislpaying the errors section for this form input
+	 * according to the form section's layout strategy
 	 * @return string	 
 	 */
 	public function get_html_for_errors(){
-		return $this->_get_display_strategy()->display_errors();
+		return $this->_parent_section->get_layout_strategy()->display_errors($this);
 	}
 	/**
-	 * Gets the HTML for displaying the help text about this form section
+	 * Gets the HTML for displaying the help text for this form input
+	 * according to the form section's layout strategy
 	 * @return string
 	 */
 	public function get_html_for_help(){
-		return $this->_get_display_strategy()->display_help_text();
+		return $this->_parent_section->get_layout_strategy()->display_help_text($this);
 	}
 	/**
 	 * Validates the input's sanitized value (assumes _sanitize() has already been called)

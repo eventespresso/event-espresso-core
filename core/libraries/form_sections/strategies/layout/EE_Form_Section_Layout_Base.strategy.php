@@ -52,7 +52,44 @@ abstract class EE_Form_Section_Layout_Base{
 	 * loop to layout each proper subsection. Unlike layout_input(), however, it is assumed
 	 * that the proper subsection will layout its container, label, etc on its own.
 	 * @param EE_Form_Section_Proper $subsection
+	 * @param EE_Form_Input_Base $input
 	 * @return string html
 	 */
 	abstract function layout_proper_subsection($subsection);
+	
+	/**
+	 * Gets the HTML for the label tag and its contents for the input
+	 * @param EE_Form_Input_Base $input
+	 * @return string
+	 */
+	public function display_label($input){
+		$class = $input->html_label_class();
+		if($input->required()){
+			$class = 'required-label '.$class;
+		}
+		return "<label id='{$input->html_label_id()}' class='$class' style='{$input->html_label_style()}' for='{$input->html_id()}'>".
+				$input->html_label_text().
+				"</label>";
+	}
+	/**
+	 * returns the HTML for the errors for the specified input
+	 * @param EE_Form_Input_Base $input
+	 * @return string
+	 */
+	public function display_errors($input){
+		return "<label id='{$input->html_id()}-errors' class='error' for='{$input->html_id()}'>".
+				$input->get_validation_error_string().
+				"</label>";
+	}
+	
+	/**
+	 * Displays the help span for the specified input
+	 * @param EE_Form_Input_Base $input
+	 * @return string
+	 */
+	public function display_help_text($input){
+		return "<span id='{$input->html_id()}-help' class='{$input->html_help_class()}' style='{$input->html_help_style()}'>".
+				$input->html_help_text().
+				"</span>";
+	}
 }
