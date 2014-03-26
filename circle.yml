@@ -34,6 +34,8 @@ dependencies:
     - cd $WP_TESTS_DIR && cp wp-tests-config-sample.php wp-tests-config.php && sed -i "s:dirname( __FILE__ ) . '/wordpress/':'$WP_CORE_DIR':" wp-tests-config.php && sed -i "s/yourdbnamehere/wordpress_test/" wp-tests-config.php && sed -i "s/yourusernamehere/root/" wp-tests-config.php && sed -i "s/yourpasswordhere//" wp-tests-config.php;
     # set up database
     - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
+  post:
+    - pear install --force 'pear.phpunit.de/PHPUnit-3.7.32'
 
 ##tests override
 test:
