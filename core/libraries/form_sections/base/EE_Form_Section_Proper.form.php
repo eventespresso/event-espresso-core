@@ -247,6 +247,15 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	}
 	
 	/**
+	 * returns HTML for generating an HTML form submit button
+	 * @return string
+	 */
+	public function form_submit_button( $value = 'Update', $primary = TRUE, $btn_size = 'large', $other_attributes = '' ) {
+		$primary = $primary === TRUE ? 'primary' : 'secondary';
+		return EENL . '<input id="ee-' . $this->html_id() . '-submit" class="button button-' . $primary . ' button-' . $btn_size . '" type="submit" value="' . $value . '" name="ee_' . $this->html_id() . '_submit" ' . $other_attributes . '/>' . EENL;
+	}
+	
+	/**
 	 * returns HTML for generating the closing form HTML tag (</form>)
 	 * @return string
 	 */
