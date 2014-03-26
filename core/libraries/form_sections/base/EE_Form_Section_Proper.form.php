@@ -243,7 +243,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @return string
 	 */
 	public function form_open( $action = NULL, $method = 'POST', $other_attributes = '' ) {
-		return EENL . '<form id="ee-' . $this->html_id() . '-form" action="' . $action . '" method="' . $method . '"' . $other_attributes . '>' . EENL;
+		return ee_newline(1) . '<form id="ee-' . $this->html_id() . '-form" action="' . $action . '" method="' . $method . '"' . $other_attributes . '>';
 	}
 	
 	/**
@@ -252,7 +252,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 */
 	public function form_submit_button( $value = 'Update', $primary = TRUE, $btn_size = 'large', $other_attributes = '' ) {
 		$primary = $primary === TRUE ? 'primary' : 'secondary';
-		return EENL . '<input id="ee-' . $this->html_id() . '-submit" class="button button-' . $primary . ' button-' . $btn_size . '" type="submit" value="' . $value . '" name="ee_' . $this->html_id() . '_submit" ' . $other_attributes . '/>' . EENL;
+		return ee_newline() . '<input id="ee-' . $this->html_id() . '-submit" class="button button-' . $primary . ' button-' . $btn_size . '" type="submit" value="' . $value . '" name="ee_' . $this->html_id() . '_submit" ' . $other_attributes . '/>';
 	}
 	
 	/**
@@ -260,8 +260,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @return string
 	 */
 	public function form_close() {
-		return EENL . '</form>' . EENL . '<!-- end of ee-' . $this->html_id() . '-form -->' . EENL . EENL;
+		return ee_newline(-1) . '</form>' . ee_newline() . '<!-- end of ee-' . $this->html_id() . '-form -->' . ee_newline();
 	}
+
 	
 	/**
 	 * gets the variables used by form_section_validation.js.
@@ -374,4 +375,17 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		}
 		return $input_values;
 	}
+}
+	
+/**
+ * @return string - newline character plus # of indents passed (can be + or -)
+ */
+function ee_newline( $indent = 0 ) {
+	static $tabs = 0;
+	$tabs += $indent;		
+	$html = EENL;
+	for ( $x = 0; $x <= $tabs; $x++ ) {
+		$html .= "\t";
+	}
+	return $html;
 }
