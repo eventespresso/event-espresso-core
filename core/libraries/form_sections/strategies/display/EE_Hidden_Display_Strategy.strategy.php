@@ -34,9 +34,6 @@ class EE_Hidden_Display_Strategy extends EE_Display_Strategy_Base{
 		$input = $this->_input;		
 		return "<input type='hidden' id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}' value='{$input->raw_value_in_form()}'/>";
 	}
-	function display_label() {
-		return '';
-	}
 }
 
 // End of file EE_Hidden_Display_Strategy.strategy.php
