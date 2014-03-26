@@ -15,6 +15,7 @@ machine:
     WP_MULTISITE: 0
     WP_CORE_DIR: /tmp/wordpress
     WP_TESTS_DIR: /tmp/wordpress-tests
+    plugin_loc: /home/ubuntu/$CIRCLE_PROJECT_REPONAME
     plugin_slug: $CIRCLE_PROJECT_REPONAME
     plugin_dir: $WP_CORE_DIR/wp-content/plugins/$plugin_slug
 
@@ -27,7 +28,7 @@ dependencies:
     - mkdir -p $WP_CORE_DIR
     - tar --strip-components=1 -zxmf /tmp/wordpress.tar.gz -C $WP_CORE_DIR
     - cd ..
-    - mv $plugin_slug $plugin_dir
+    - mv $plugin_loc $plugin_dir
     # set up testing suite
     - svn co --ignore-externals http://unit-tests.svn.wordpress.org/trunk/ $WP_TESTS_DIR
     - cd $WP_TESTS_DIR
