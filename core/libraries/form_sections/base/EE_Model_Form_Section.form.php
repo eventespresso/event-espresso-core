@@ -87,7 +87,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 					}else{
 						//so its just one model
 						$model_name = is_array($models_pointed_to) ? reset($models_pointed_to) : $models_pointed_to;
-						d($model_name);
+//						d($model_name);
 						$model = EE_Registry::instance()->load_model($model_name);
 						$model_names = $model->get_all_names(array('limit'=>10));
 						$input_constructor_args[1] = $input_constructor_args[0];
