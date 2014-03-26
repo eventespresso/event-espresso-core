@@ -44,7 +44,9 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 //				))
 			),
 			'exclude'=>array('PMD_debug_mode'),
-			'layout_strategy'=>new EE_Template_Layout('payment_methods/Invoice/templates/invoice_settings_layout.template.php'),
+			'layout_strategy'=>new EE_Template_Layout(
+					'payment_methods/Invoice/templates/invoice_settings_layout.template.php',
+					'payment_methods/Invoice/templates/invoice_settings_input_layout.template.php'),
 		));
 		parent::__construct($pm_instance);
 	}

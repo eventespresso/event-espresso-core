@@ -24,7 +24,19 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-?>
-monkeys
-<?php
+?><table class='<?php echo $form->html_class();?>' id='<?php echo $form->html_id();?>' style='<?php echo $form->html_style();?>'>
+	<tr>
+		<th><h4><?php _e("Invoice Display Settings", 'event_espresso');?></h4></th>
+		<td>						
+			<span class="description"><?php _e("The following settings affect the content and/or appearance of the downloadable PDF invoice.", 'event_espresso');?></span>
+		</td>
+	</tr><?php
+	foreach($form->subsections() as $name=>$subsection){
+		if($subsection instanceof EE_Form_Input_Base){
+			echo $layout_strategy->layout_input($subsection);
+		}elseif($subsection instanceof EE_Form_Section_Proper){
+			echo $layout_strategy->layout_proper_subsection($subsection);
+		}
+	}
+?></table><?php
 // End of file invoice_settings_layout.template.php
