@@ -20,7 +20,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_input($input) {
-		return '<div>'.$input->get_html_for_label().'<br/>'.$input->get_html_for_input().$input->get_html_for_errors().'</div>';
+		return '<div>'.$input->get_html_for_label().'<br/>'.$input->get_html_for_input().$input->get_html_for_help().$input->get_html_for_errors().'</div>';
 	}
 	/**
 	 * Lays out a row for the subsection

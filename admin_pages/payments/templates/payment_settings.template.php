@@ -24,16 +24,17 @@
 
 echo "</form><hr>SAMPLE FORM<hr>";
 //		$f = new EE_Sample_Form();
-//		$f = new EE_Model_Form_Section(array(
-//			'model'=>EEM_Country::instance(),
-//			'model_object'=>EEM_Country::instance()->get_one(),
-//			'subsections'=>array(
-//				'textarea'=>new EE_Text_Area_Input(),
-//			)
-//		));
-$pm = EEM_Payment_Method::instance()->get_one();
-$f = new EE_Paypal_Standard_Form();
-//$f->populate_model_obj($pm);
+		$f = new EE_Model_Form_Section(array(
+			'model'=>EEM_Country::instance(),
+			'model_object'=>EEM_Country::instance()->get_one(),
+			'subsections'=>array(
+				'CNT_ISO3'=>new EE_Text_Input(array('html_help_text'=>'this is where we describe the input, if we want')),
+				'textarea'=>new EE_Text_Area_Input(),
+			),
+//			'layout_strategy'=>new EE_Div_Per_Section_Layout(),
+//			'include'=>array('CNT_cur_sign', 'CNT_ISO'),
+		));
+//$f = new EE_Paypal_Standard_Form();
 //$f = new EE_Billing_Info_Form();
 //$a = EEM_Attendee::instance()->get_one();
 //$f->populate_from_attendee($a);

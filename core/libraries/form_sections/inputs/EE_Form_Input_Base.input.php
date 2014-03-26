@@ -36,6 +36,22 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * @var string
 	 */
 	protected $_html_label;
+	/**
+	 * HTML to use for help text (normally placed below form input), in a span which normally
+	 * has a class of 'description'
+	 * @var string
+	 */
+	protected $_html_help_text;
+	/**
+	 * CSS classes for displaying the help span
+	 * @var string
+	 */
+	protected $_html_help_class = 'description';
+	/**
+	 * CSS to put in the style attribute on the help span
+	 * @var string
+	 */
+	protected $_html_help_style;
 	
 	/**
 	 * The raw data submitted fo rthis, like in teh $_POST superglobal.
@@ -71,6 +87,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 */
 	private $_normalization_strategy;
 	
+	/**
+	 * Stores whether or not this input's response is required.
+	 * Because certain styling elements may also want to know that this
+	 * input is required etc.
+	 * @var boolean
+	 */
+	protected $_required;
+	
 	public function __construct($options_array = array()){
 		if(isset($options_array['html_name'])){
 			$this->_html_name = $options_array['html_name'];
@@ -90,12 +114,23 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		if(isset($options_array['html_label'])){
 			$this->_html_label = $options_array['html_label'];
 		}
+		if(isset($options_array['html_help_text'])){
+			$this->_html_help_text = $options_array['html_help_text'];
+		}
+		if(isset($options_array['html_help_class'])){
+			$this->_html_help_class = $options_array['html_help_class'];
+		}
+		if(isset($options_array['html_help_style'])){
+			$this->_html_help_style = $options_array['html_help_style'];
+		}
+		
 		if(isset($options_array['default'])){
 			$this->_raw_value = $options_array['default'];
 		}
 		if(isset($options_array['required']) && in_array($options_array['required'], array('true',true))){
-			$this->_add_validation_strategy(new EE_Required_Validation_Strategy());
+			$this->set_required(true);
 		}
+		
 		if(isset($options_array['display_strategy'])){
 			if(is_array($options_array['display_strategy'])){
 				$display_strategy = $options_array['display_strategy'];
@@ -236,7 +271,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * @return void
 	 */
 	protected function _add_validation_strategy(EE_Validation_Strategy_Base $validation_strategy){
-		$this->_validation_strategies[] = $validation_strategy;
+		$this->_validation_strategies[get_class($validation_strategy)] = $validation_strategy;
 	}
 	/**
 	 * Gets the HTML, JS, and CSS necessary to display this field according
@@ -247,7 +282,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		return $this->_parent_section->get_html_for_input($this);
 	}
 	/**
-	 * Gets the HTML for the input itself (no label or errors).
+	 * Gets the HTML for the input itself (no label or errors) according to the
+	 * input's display strategy
 	 * Makes sure the JS and CSS are enqueued for it
 	 * @return string
 	 */
@@ -255,18 +291,28 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		return  $this->_get_display_strategy()->display();
 	}
 	/**
-	 * Gets the HTML for displaying the label
+	 * Gets the HTML for displaying the label for this form input
+	 * according to the form section's layout strategy
 	 * @return string
 	 */
 	public function get_html_for_label(){
-		return $this->_get_display_strategy()->display_label();
+		return $this->_parent_section->get_layout_strategy()->display_label($this);
 	}
 	/**
-	 * Gets the HTML for dislpaying the errors section
+	 * Gets the HTML for dislpaying the errors section for this form input
+	 * according to the form section's layout strategy
 	 * @return string	 
 	 */
 	public function get_html_for_errors(){
-		return $this->_get_display_strategy()->display_errors();
+		return $this->_parent_section->get_layout_strategy()->display_errors($this);
+	}
+	/**
+	 * Gets the HTML for displaying the help text for this form input
+	 * according to the form section's layout strategy
+	 * @return string
+	 */
+	public function get_html_for_help(){
+		return $this->_parent_section->get_layout_strategy()->display_help_text($this);
 	}
 	/**
 	 * Validates the input's sanitized value (assumes _sanitize() has already been called)
@@ -341,6 +387,15 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	function html_label_text(){
 		return $this->_html_label_text;
 	}
+	function html_help_text(){
+		return $this->_html_help_text;
+	}
+	function html_help_class(){
+		return $this->_html_help_class;
+	}
+	function html_help_style(){
+		return $this->_html_style;
+	}
 	/**
 	 * returns the raw, UNSAFE, input, almost exactly as the user submitted it. 
 	 * Please note that almost all client code should instead use the normalized_value;
@@ -412,4 +467,23 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 		$this->_raw_value = $value;
 	}
 	
+	/**
+	 * Sets whether or no tthis field is required, and adjusts the validation strategy
+	 * @param boolean $required
+	 */
+	function set_required($required = true){
+		if($required){
+			$this->_add_validation_strategy(new EE_Required_Validation_Strategy());
+		}else{
+			unset($this->_validation_strategies[get_class(new EE_Required_Validation_Strategy())]);
+		}
+		$this->_required = $required;
+	}
+	/**
+	 * Returns whether or not this field is required
+	 * @return boolean
+	 */
+	public function required(){
+		return $this->_required;
+	}
 }

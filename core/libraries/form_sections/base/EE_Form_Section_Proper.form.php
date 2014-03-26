@@ -71,6 +71,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		foreach($this->_subsections as $name => $subsection){
 			$subsection->_construct_finalize($this, $name);
 		}
+		if(isset($options_array['layout_strategy'])){
+			$this->_layout_strategy = $options_array['layout_strategy'];
+		}
 		if( ! $this->_layout_strategy){
 			$this->_layout_strategy = new EE_Two_Column_Layout();
 		}
