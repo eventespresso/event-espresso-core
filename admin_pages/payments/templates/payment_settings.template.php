@@ -52,6 +52,6 @@ echo "<hr>SAMPLE FORM<hr>";
 		}
 		echo $f->form_open();
 		echo $f->get_html_and_js();
-		echo '<input type="submit">';
+		echo $f->form_submit_button( 'Save Country Details', FALSE, 'small', 'accesskey="p"' );
 		echo $f->form_close();
 		
