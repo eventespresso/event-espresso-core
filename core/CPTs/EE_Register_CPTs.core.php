@@ -137,6 +137,7 @@ class EE_Register_CPTs {
 				'plural_name' => __("Events", "event_espresso"),
 				'singular_slug' => __("event", "event_espresso"),
 				'plural_slug' => __("events", "event_espresso"),
+				'class_name' => 'EE_Event',
 				'args' => array(
 					'public'=> TRUE,
 					'show_in_nav_menus' => TRUE,
@@ -151,6 +152,7 @@ class EE_Register_CPTs {
 				'plural_name' => __("Venues", "event_espresso"),
 				'singular_slug' => __("venue", "event_espresso"),
 				'plural_slug' => __("venues", "event_espresso"),
+				'class_name' => 'EE_Venue',
 				'args' => array(
 					'public'=> TRUE,
 					'show_in_nav_menus' => FALSE, //by default this doesn't show for decaf
@@ -171,6 +173,7 @@ class EE_Register_CPTs {
 				'plural_name' => __("Contacts", "event_espresso"),
 				'singular_slug' => __("contact", "event_espresso"),
 				'plural_slug' => __("contacts", "event_espresso"),
+				'class_name' => 'EE_Attendee',
 				'args' => array(
 					'public'=> FALSE,
 					'publicly_queryable'=> FALSE,

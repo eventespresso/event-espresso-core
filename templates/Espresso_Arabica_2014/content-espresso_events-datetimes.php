@@ -1,4 +1,6 @@
 <?php 
+//echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
+
 if ( is_single() || is_archive() && espresso_display_datetimes_in_event_list() ) :
 global $post;
 do_action( 'AHEE_event_details_before_event_date', $post ); 

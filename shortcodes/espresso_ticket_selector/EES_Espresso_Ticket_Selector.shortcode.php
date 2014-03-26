@@ -58,7 +58,7 @@ class EES_Espresso_Ticket_Selector  extends EES_Shortcode {
 	 *  @param		array 	$attributes
 	 *  @return 	void
 	 */
-	public function process_shortcode( $attributes ) {
+	public function process_shortcode( $attributes = array() ) {
 		extract( $attributes );
 		$event = get_post( $event_id );
 		ob_start();

@@ -24,10 +24,6 @@
  *
  * ------------------------------------------------------------------------
  */
-//if EE_Config isn't found then let's load it because we need it for the EE_Config_Base.
-if ( !class_exists( 'EE_Config' ) )
-	require_once EE_CORE . 'EE_Config.core.php';
-
 final class EE_Network_Config {
 
 

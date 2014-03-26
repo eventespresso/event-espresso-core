@@ -477,7 +477,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		wp_enqueue_style('event-editor-css');
 
 		//scripts
-		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon', 'jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE);
+		wp_register_script('event_editor_js', EVENTS_ASSETS_URL . 'event_editor.js', array('ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'), EVENT_ESPRESSO_VERSION, TRUE);
 		wp_register_script('event-datetime-metabox', EVENTS_ASSETS_URL . 'event-datetime-metabox.js', array('event_editor_js', 'ee-datepicker'), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_script('event_editor_js');
 		wp_enqueue_script('event-datetime-metabox');
@@ -496,17 +496,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 
-	public function load_scripts_styles_edit_category() {
-		//styles
-		//wp_enqueue_style('espresso-ui-theme');
-
-		//scripts
-		wp_enqueue_script( 'ee_cat_admin_js', EVENTS_ASSETS_URL . 'ee-cat-admin.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
-
-		EE_Registry::$i18n_js_strings['add_cat_name'] = __('Category Name is a required field. Please enter a value in order to continue.', 'event_espresso');
-		wp_localize_script( 'ee_cat_admin_js', 'eei18n', EE_Registry::$i18n_js_strings );
-
-	}
+	public function load_scripts_styles_edit_category() {}
 
 
 
@@ -2008,17 +1998,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		global $wpdb;
 		$cat_id = $update ? $this->_req_data['EVT_CAT_ID'] : '';
 		$category_name= $this->_req_data['category_name'];
-		$category_identifier = $this->_req_data['category_identifier'];
 		$category_desc= $this->_req_data['category_desc'];
 
 
 		$term_args=array(
 			'name'=>$category_name,
-			'slug'=>$category_identifier,
 			'description'=>$category_desc,
 			//'parent'=>$espresso_wp_user //eventually this will be added.
 		);
-
+		//was the category_identifier input disabled?
+		if(isset($this->_req_data['category_identifier'])){
+			$term_args['slug'] = $this->_req_data['category_identifier'];
+		}
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_event_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_event_categories', $term_args );
 
 		if ( !is_array( $insert_ids ) ) {
