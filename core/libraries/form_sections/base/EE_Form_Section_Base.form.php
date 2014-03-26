@@ -47,7 +47,7 @@ abstract class EE_Form_Section_Base{
 	function __construct($options_array = array()){
 		
 	}
-	protected function _construct_finalize($parent_form_section, $name){
+	protected function _construct_finalize( $parent_form_section, $name ){
 		$this->_parent_section = $parent_form_section;
 		$this->_name = $name;
 		$this->_set_default_html_id_if_empty();
@@ -63,10 +63,10 @@ abstract class EE_Form_Section_Base{
 	 */
 	protected function _set_default_html_id_if_empty(){
 		if( ! $this->_html_id ){
-			if( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper){
-				$this->_html_id = $this->_parent_section->html_id() . "-" . $this->_name;
+			if( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper ){
+				$this->_html_id = $this->_parent_section->html_id() . '-' . strtolower( str_replace( '_', '-', $this->_name ));
 			}else{
-				$this->_html_id = $this->_name;
+				$this->_html_id = strtolower( str_replace( '_', '-', $this->_name ));
 			}
 		}
 	}
