@@ -236,6 +236,25 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	}
 	
 	/**
+	 * returns HTML for generating the opening form HTML tag (<form>)
+	 * @param string $action the URL the form is submitted to
+	 * @param string $method POST (default) or GET
+	 * @param string $other_attributes anything else added to the form open tag, MUST BE VALID HTML
+	 * @return string
+	 */
+	public function form_open( $action = NULL, $method = 'POST', $other_attributes = '' ) {
+		return EENL . '<form id="ee-' . $this->html_id() . '-form" action="' . $action . '" method="' . $method . '"' . $other_attributes . '>' . EENL;
+	}
+	
+	/**
+	 * returns HTML for generating the closing form HTML tag (</form>)
+	 * @return string
+	 */
+	public function form_close() {
+		return EENL . '</form>' . EENL . '<!-- end of ee-' . $this->html_id() . '-form -->' . EENL . EENL;
+	}
+	
+	/**
 	 * gets the variables used by form_section_validation.js.
 	 * This needs to be called AFTER we've called $this->_enqueue_jquery_validate_script,
 	 * but before the wordpress hook wp_loaded
