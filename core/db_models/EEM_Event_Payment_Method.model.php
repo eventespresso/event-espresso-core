@@ -39,7 +39,7 @@ class EEM_Event_Payment_Method extends EEM_Base {
 	 * 		@access public
 	 * 		@return EEM_Event_Payment_Method instance
 	 */
-	public static function instance( $timezone ) {
+	public static function instance( $timezone = NULL ) {
 
 		// check if instance of EEM_Checkin already exists
 		if (self::$_instance === NULL) {
