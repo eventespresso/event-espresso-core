@@ -31,6 +31,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 			<span class="description"><?php _e("The following settings affect the content and/or appearance of the downloadable PDF invoice.", 'event_espresso');?></span>
 		</td>
 	</tr><?php
+//	$inputs_to_show = array('')
 	foreach($form->subsections() as $name=>$subsection){
 		if($subsection instanceof EE_Form_Input_Base){
 			echo $layout_strategy->layout_input($subsection);

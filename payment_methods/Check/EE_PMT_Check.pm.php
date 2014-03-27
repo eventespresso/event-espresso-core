@@ -28,20 +28,6 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_PMT_Check extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL){
 		
-		$this->_settings_form = new EE_Payment_Method_Form(array(
-			'name'=>'Check_Form',
-			'subsections'=>array(
-				'title'=> new EE_Text_Input(array(
-					'default'=>  __("Check/Money Order Payments", 'event_espresso'),
-				)),
-				'payment_instructions'=>new EE_Text_Area_Input(array(
-					'default'=> __("Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
-				)),
-				'payable_to'=>new EE_Text_Input(),
-				'address_to_send_payment'=>new EE_Text_Area_Input(),
-			),
-			'exclude'=>array('PMD_debug_mode')
-		));
 		parent::__construct($pm_instance);
 	}
 	
@@ -50,7 +36,7 @@ class EE_PMT_Check extends EE_PMT_Base{
 	 * @return EE_Form_Section_Proper
 	 */
 	public function settings_form() {
-		if( ! $this->_settings_form->has_received_submission()){
+		if( ! $this->_settings_form){
 			if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
 				$organization = EE_Registry::instance()->CFG->organization;
 				$organization_name = $organization->name;
@@ -67,11 +53,32 @@ class EE_PMT_Check extends EE_PMT_Base{
 				$default_address = 'unknown';
 				$organization_name = 'unknown';
 			}
-			$this->_settings_form->populate_defaults(array(
-				'payable_to'=>$organization_name,
-				'address_to_send_payment'=>$default_address,
-			));
+			$this->_settings_form = new EE_Payment_Method_Form(array(
+			'name'=>'Check_Form',
+			'subsections'=>array(
+				'title'=> new EE_Text_Input(array(
+					'default'=>  __("Check/Money Order Payments", 'event_espresso'),
+				)),
+				'payment_instructions'=>new EE_Text_Area_Input(array(
+					'default'=> __("Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
+				)),
+				'payable_to'=>new EE_Text_Input(array(
+					'default'=>$organization_name
+				)),
+				'address_to_send_payment'=>new EE_Text_Area_Input(array(
+					'default'=>$default_address
+				)),
+			),
+			'exclude'=>array('PMD_debug_mode')
+		));
 		}
+//		if( ! $this->_settings_form->has_received_submission()){
+//			
+//			$this->_settings_form->populate_defaults(array(
+//				'payable_to'=>,
+//				'address_to_send_payment'=>$default_address,
+//			));
+//		}
 		return parent::settings_form();
 	}
 }
