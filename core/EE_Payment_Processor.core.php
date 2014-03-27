@@ -79,8 +79,8 @@ class EE_Payment_Processor{
 			$transaction->save();
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 			
-		}else{
-			$payment = EEM_Payment::instance()->ensure_is_obj($payment,true);
+		} else {
+			$payment = EEM_Payment::instance()->ensure_is_obj( $payment, TRUE );
 			//ok, now process the transaction according to the payment
 			$transaction->update_based_on_payments();//also saves transaction
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
