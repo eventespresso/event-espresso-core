@@ -39,8 +39,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 */
 	public function set_redirection_info($payment,$billing_info = array(),$success_url = NULL, $fail_url = NULL, $cancel_url = NULL){
 		$payment->set_redirect_url('http://google.com');
-		$payment->set_redirect_args(array('method'=>'get', 'body'=>array('arg1'=>'foo','arg2'=>'bar')));
-		return $url;
+		$payment->set_redirect_args(array('arg1'=>'foo','arg2'=>'bar'));
+		return $payment;
 	}
 	/**
 	 * Often used for IPNs. But applies the info in $update_info to the payment.
