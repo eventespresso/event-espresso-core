@@ -309,7 +309,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 
 		EE_Registry::instance()->CFG->core = apply_filters( 'FHEE__General_Settings_Admin_Page___update_espresso_page_settings__CFG_core', EE_Registry::instance()->CFG->core, $this->_req_data );
 
-		$what = 'Critical Pages & Shortcodes';
+		$what = __('Critical Pages & Shortcodes', 'event_espresso');
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG->core, __FILE__, __FUNCTION__, __LINE__ );
 		$query_args = array(
 			'action' => 'critical_pages'
