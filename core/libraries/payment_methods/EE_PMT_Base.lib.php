@@ -97,15 +97,15 @@ abstract class EE_PMT_Base{
 	/**
 	 * 
 	 * @param EE_Transaction $transaction
+	 * @param type $amount
 	 * @param type $billing_info
 	 * @param type $success_url
 	 * @param type $fail_url
 	 * @param type $method
 	 * @param type $by_admin
-	 * @param type $amount
 	 * @throws EE_Error
 	 */
-	function process_payment($transaction, $billing_info = null, $success_url = null,$fail_url = null, $method = 'CART', $by_admin = false, $amount = null ){
+	function process_payment( $transaction, $amount = NULL, $billing_info = NULL, $success_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
 		//@todo: add surcharge for the payment method, if any
 		if($this->_gateway){
 			//there is a gateway, so we're going to create a payment object
@@ -134,6 +134,7 @@ abstract class EE_PMT_Base{
 			}
 		}else{//no gateway provided
 			//so create no payment. The payment processor will know how to handle this
+			$payment = NULL; // <<<<<  added by brent as interm solution so that $payment is defined for return below
 		}
 		return $payment;
 	}

@@ -1,7 +1,7 @@
 <div id="single-page-checkout" class="ui-widget">
 
 <?php if ( ! $empty_cart ) { ?>
-	<?php if ( ! $revisit ) { ?>
+	<?php if ( ! $revisit && apply_filters( 'FHEE__registration_page_wrapper_template__steps_display', TRUE )) { ?>
 
 	<h2 id="spco-steps-big-hdr" class="spco-steps-big-hdr"><?php _e(' Steps', 'event_espresso'); ?></h2>
 	

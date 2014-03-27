@@ -352,7 +352,7 @@ class EE_Payment_Method extends EE_Base_Class{
 				$r = new ReflectionClass($class_name);
 				$this->_type_obj = $r->newInstanceArgs(array($this));
 			}else{
-				throw new EE_Error(__("A payment method of type '%s' does not exist","event_espresso"),$type_string);
+				throw new EE_Error( sprintf( __("A payment method of type '%s' does not exist","event_espresso"), $this->type() ));
 			}
 		}
 		return $this->_type_obj;
@@ -384,7 +384,7 @@ class EE_Payment_Method extends EE_Base_Class{
 	 * @param string $css_class
 	 * @return string of HTML for displaying the button
 	 */
-	public function button_html($url, $css_class = ''){
+	public function button_html( $url = '', $css_class = '' ){
 		$payment_occurs = $this->type_obj()->payment_occurs();
 		return '
 		 <div id="' . $this->slug() . '-payment-option-dv" class="'. $payment_occurs .'-payment-gateway reg-page-payment-option-dv' . $css_class . '">

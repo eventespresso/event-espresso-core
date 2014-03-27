@@ -26,7 +26,7 @@
 			
 			
 			
-			<input id="reg-page-selected-gateway" type="hidden" value="payments_closed" name="selected_gateway">
+			<input id="reg-page-selected-method-of-payment" type="hidden" value="payments_closed" name="selected_method_of_payment">
 			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
 
 <?php
@@ -38,7 +38,7 @@
 			<h6><?php _e('Events Requiring Pre-Approval:', 'event_espresso');?></h6>
 			<ul id="spco-pre-approval-events-ul"><?php echo $events_requiring_pre_approval; ?></ul>
 			
-			<input id="reg-page-selected-gateway" type="hidden" value="payments_closed" name="selected_gateway">
+			<input id="reg-page-selected-method-of-payment" type="hidden" value="payments_closed" name="selected_method_of_payment">
 			<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
 
 <?php
@@ -99,11 +99,18 @@
 			<span class="reg-page-total-spn"><?php echo $grand_total;?></span>
 		</div>
 
-		<input id="reg-page-selected-gateway" type="hidden" value="<?php echo $selected_gateway; ?>" name="selected_gateway">
+		<input id="reg-page-selected-method-of-payment" type="hidden" value="<?php echo $selected_method_of_payment; ?>" name="selected_method_of_payment">
 		<div id="methods-of-payment">
 			<h3 id="select-method-of-payment-hdr"><?php _e('Please select your method of payment:', 'event_espresso'); ?></h3>
-			<?php	do_action( 'AHEE_display_payment_gateways', $selected_gateway ); ?>
-			<a id="reg-page-select-other-gateway-lnk" class="hidden smaller-text right" rel=""><?php _e('select a different method of payment:', 'event_espresso'); ?></a>
+			<?php 
+				foreach( $available_payment_methods as $available_payment_method ) {
+//					d( $available_payment_method );
+					if ( $available_payment_method instanceof EE_Payment_Method ) {
+						echo $available_payment_method->button_html( $available_payment_method->button_url() );
+					}
+				}
+			 ?>
+			<a id="reg-page-select-other-method-of-payment-lnk" class="hidden smaller-text right" rel=""><?php _e('select a different method of payment:', 'event_espresso'); ?></a>
 		</div>
 		<!-- end #methods-of-payment -->
 		<?php
