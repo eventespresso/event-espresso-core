@@ -94,7 +94,7 @@ class EEM_Payment extends EEM_Base {
 				'PAY_via_admin'=>new EE_Boolean_Field('PAY_via_admin', __('Whehter payment made via admin','event_espresso'), false, false),
 				'PAY_details'=>new EE_Serialized_Text_Field('PAY_details', __('Full Gateway response about payment','event_espresso'), true, ''),
 				'PAY_redirect_url'=>new EE_Plain_Text_Field('PAY_redirect_url', __("Redirect URL", 'event_espresso'), true),
-				'PAY_redirect_args'=>new EE_Serialized_Text_Field('PAY_redirect_args', __("Redirection Arguments", 'event_espresso'), true)
+				'PAY_redirect_args'=>new EE_Serialized_Text_Field('PAY_redirect_args', __("Key-Value POST vars to send along with redirect", 'event_espresso'), true)
 			)
 		);
 		$this->_model_relations = array(

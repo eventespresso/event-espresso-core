@@ -179,17 +179,17 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 			if($model_obj){
 				$this->_model_object = $model_obj;
 			}else{
-				$this->_model_object = EE_Registry::instance()->load_class($this->_model->get_this_model_name(), array($this->inputs_values_corresponding_to_model_fields()) );
-			}
-		}else{
-			//ok so the model object is already set. Just set it with the submitted form data (don't save yet though)
-			foreach($this->inputs_values_corresponding_to_model_fields() as $field_name=>$field_value){
-				//only set the non-primary key
-				if($field_name != $this->_model->primary_key_name()){
-					$this->_model_object->set($field_name,$field_value);
-				}
+				$this->_model_object = EE_Registry::instance()->load_class($this->_model->get_this_model_name() );
 			}
 		}
+		//ok so the model object is set. Just set it with the submitted form data (don't save yet though)
+		foreach($this->inputs_values_corresponding_to_model_fields() as $field_name=>$field_value){
+			//only set the non-primary key
+			if($field_name != $this->_model->primary_key_name()){
+				$this->_model_object->set($field_name,$field_value);
+			}
+		}
+		
 	}
 	/**
 	 * After this form has been initialized and is verified to be valid,

@@ -377,4 +377,21 @@ class EE_Payment_Method extends EE_Base_Class{
 		$combined_settings_array = array_merge($extra_metas,$fields);
 		return $combined_settings_array;
 	}
+	
+	/**
+	 * Gets the HTML for displaying the payment method on a page.
+	 * @param string $url
+	 * @param string $css_class
+	 * @return string of HTML for displaying the button
+	 */
+	public function button_html($url, $css_class = ''){
+		$payment_occurs = $this->type_obj()->payment_occurs();
+		return '
+		 <div id="' . $this->slug() . '-payment-option-dv" class="'. $payment_occurs .'-payment-gateway reg-page-payment-option-dv' . $css_class . '">
+			<a id="payment-gateway-button-' . $this->slug() . '" class="reg-page-payment-option-lnk" rel="' . $this->slug() . '" href="' . $url . '" >
+				<img src="' . $this->button_url() . '" alt="Pay using ' . $this->get_pretty('PMD_name','form_input') . '" />
+			</a>
+		</div>
+';
+	}
 }

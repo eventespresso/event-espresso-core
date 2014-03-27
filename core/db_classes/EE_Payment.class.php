@@ -149,7 +149,7 @@ class EE_Payment extends EE_Base_Class{
 	protected $_PAY_redirect_url = NULL;
 	
 	/**
-	 * like args passed to http_remote_get
+	 * key-value pairs for a POST form submission
 	 * @var array
 	 */
 	protected $_PAY_redirect_args = array();
@@ -714,6 +714,47 @@ class EE_Payment extends EE_Base_Class{
 	 */
 	function set_redirect_args($redirect_args) {
 		return $this->set('PAY_redirect_args', $redirect_args);
+	}
+	
+	/**
+	 * Gets the HTML for redirecting the user to an offsite gateway
+	 * You can pass it special content to put inside the form, or use
+	 * the default inner content (or possibly generate this all yourself using
+	 * redirect_url() and redirect_args() or redirect_args_as_inputs()).
+	 * Creates a POST request by default, but if no redirect args are specified, creates a GET request instead.
+	 * @param string $inside_form_hmtl
+	 * @return string html
+	 */
+	function redirect_form($inside_form_hmtl = NULL){
+		if($this->redirect_args()){
+			$method = 'POST';
+		}else{
+			$method = 'GET';
+		}
+		if($inside_form_hmtl === NULL){
+			$inside_form_hmtl = "<p style=\"text-align:center;\"><br/>";
+			$inside_form_hmtl .= __("If you are not automatically redirected to the payment website within 10 seconds...", 'event_espresso');
+			$inside_form_hmtl .= "<br/><br/>\n<input type=\"submit\" value='".  __("Click Here", 'event_espresso')."'></p>\n";
+		}
+		
+		$form = "<form method='$method' name='gateway_form' action='" . $this->redirect_url() . "'>\n";
+		$form .= $this->redirect_args_as_inputs();
+		$form .= $inside_form_hmtl;
+		$form .= "</form>\n";
+		return $form;
+	}
+	/**
+	 * Changes all the name-value pairs of 
+	 * @return string
+	 */
+	function redirect_args_as_inputs(){
+		$html = '';
+		if($this->redirect_args() !== NULL && is_array($this->redirect_args())){
+			foreach($this->redirect_args() as $name => $value){
+				$html .= "<input type='hidden' name='$name' value='".esc_attr($value)."'/>";
+			}
+		}
+		return $html;
 	}
 
 	

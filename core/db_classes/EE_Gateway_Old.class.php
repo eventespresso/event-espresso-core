@@ -23,7 +23,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_Gateway {
+abstract class EE_Gateway_Old {
 
 	private $_session_gateway_data = NULL;
 	protected $_payment_settings = array();

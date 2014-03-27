@@ -1,4 +1,7 @@
 <?php 
+EE_Registry::instance()->load_lib('Gateway');
+EE_Registry::instance()->load_lib('Onsite_Gateway');
+EE_Registry::instance()->load_lib('Offsite_Gateway');
 abstract class EE_PMT_Base{
 	/**
 	 *
@@ -21,6 +24,12 @@ abstract class EE_PMT_Base{
 	 */
 	protected $_billing_form = NULL;
 	/**
+	 * String of the absolute path to the folder containing this file, with a trailing slash.
+	 * eg '/public_html/wp-site/wp-content/plugins/event-espresso/payment_methods/Invoice/'
+	 * @var string
+	 */
+	protected $_file_folder = NULL;
+	/**
 	 * 
 	 * @param EE_Payment_Method $pm_instance
 	 */
@@ -28,6 +37,23 @@ abstract class EE_PMT_Base{
 		if ( $pm_instance instanceof EE_Payment_Method ){
 			$this->set_instance($pm_instance);
 		}
+		$this->_set_file_folder();
+	}
+	
+	/**
+	 * sets the file_folder property
+	 */
+	protected function _set_file_folder(){
+		$reflector = new ReflectionClass(get_class($this));
+		$fn = $reflector->getFileName();
+		$this->_file_folder =  dirname($fn).DS;
+	}
+	/**
+	 * Returns the folder containing the PMT child class, witha trailing slash
+	 * @return string
+	 */
+	public function file_folder(){
+		return $this->_file_folder;
 	}
 	/**
 	 * Sets the payment method instance this payment method type is for.
@@ -36,7 +62,7 @@ abstract class EE_PMT_Base{
 	 */
 	function set_instance($payment_method_instance){
 		$this->_pm_instance = $payment_method_instance;
-		$this->_settings_form->populate_model_obj($payment_method_instance);
+		$this->settings_form()->populate_model_obj($payment_method_instance);
 		if($this->_gateway && $this->_gateway instanceof EE_Gateway){
 			$this->_gateway->_set_settings($payment_method_instance->settings_array());
 		}
@@ -179,6 +205,27 @@ abstract class EE_PMT_Base{
 			return $this->_gateway->do_direct_refund();
 		}else{
 			throw new EE_Error(sprintf(__("Payment Method Type '%s' does not support sending refund requests", "event_espresso"),get_class($this)));
+		}
+	}
+	
+	const onsite = 'on-site';
+	const offsite = 'off-site';
+	const offline = 'off-line';
+	/**
+	 * Returns one the class's consts onsite,offsite, or offline, depending on this
+	 * payment method's gateway.
+	 * @return string
+	 * @throws EE_Error
+	 */
+	public function payment_occurs(){
+		if( ! $this->_gateway){
+			return EE_PMT_Base::offline;
+		}elseif($this->_gateway instanceof EE_Onsite_Gateway){
+			return EE_PMT_Base::onsite;
+		}elseif($this->_gateway instanceof EE_Offsite_Gateway){
+			return EE_PMT_Base::offsite;
+		}else{
+			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isnt an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
 		}
 	}
 }

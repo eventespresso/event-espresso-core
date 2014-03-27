@@ -23,7 +23,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Gateway{
+abstract class EE_Gateway{
 	/**
 	 * Where keys currency codes, values i18n strings for the currency
 	 * @var array
@@ -49,6 +49,12 @@ class EE_Gateway{
 	 * @var array
 	 */
 	protected $_settings = array();
+	/**
+	 * 
+	 */
+	public function __construct(){
+		
+	}
 	/**
 	 * Returns whether or not this gateway shoudl support SENDING refunds
 	 * see $_supports_sending_refunds

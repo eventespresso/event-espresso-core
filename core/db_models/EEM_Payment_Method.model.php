@@ -120,5 +120,26 @@ class EEM_Payment_Method extends EEM_Base {
 	public function get_one_of_type($type){
 		return $this->get_one(array(array('PMD_type'=>$type)));
 	}
+	/**
+	 * Overrides parent ot also check by the slug
+	 * @see EEM_Base::ensure_is_obj()
+	 * @param string|int|EE_Payment_Method $base_class_obj_or_id
+	 * @param boolean $ensure_is_in_db 
+	 * @return EE_Payment_Method
+	 * @throws EE_Error
+	 */
+	public function ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false) {
+		try{
+			return parent::ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db);
+		}catch(EE_Error $e){
+			//last ditch-try to find one by the slug
+			$obj = $this->get_one_by_slug($base_class_obj_or_id);
+			if($obj){
+				return $obj;
+			}else{
+				throw new EE_Error(sprintf(__("'%s' is neither a Payment Method ID, slug, nor object.", "event_espresso"),$base_class_obj_or_id));
+			}
+		}
+	}
 	
 }

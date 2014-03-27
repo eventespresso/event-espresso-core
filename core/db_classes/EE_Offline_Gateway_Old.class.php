@@ -1,7 +1,7 @@
 <?php if (!defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-abstract class EE_Offline_Gateway extends EE_Gateway {
+abstract class EE_Offline_Gateway_Old extends EE_Gateway_Old {
 
 
 	protected function __construct(EEM_Gateways &$model) {
