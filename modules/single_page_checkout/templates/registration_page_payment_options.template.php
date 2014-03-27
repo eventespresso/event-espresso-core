@@ -104,9 +104,10 @@
 			<h3 id="select-method-of-payment-hdr"><?php _e('Please select your method of payment:', 'event_espresso'); ?></h3>
 			<?php 
 				foreach( $available_payment_methods as $available_payment_method ) {
-					echo $available_payment_method->name();
-					echo $available_payment_method->slug() == $selected_method_of_payment ? '  <span class="dashicons dashicons-star-empty"></span>pre-selected' : '';
-					echo '<br />';
+//					d( $available_payment_method );
+					if ( $available_payment_method instanceof EE_Payment_Method ) {
+						echo $available_payment_method->button_html( $available_payment_method->button_url() );
+					}
 				}
 			 ?>
 			<a id="reg-page-select-other-method-of-payment-lnk" class="hidden smaller-text right" rel=""><?php _e('select a different method of payment:', 'event_espresso'); ?></a>
