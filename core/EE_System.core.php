@@ -719,6 +719,8 @@ final class EE_System {
 	* @return void
 	*/
 	public function initialize() {
+//		$p = EE_Payment_Processor::instance()->process_payment('paypal_pro', EE_Transaction::new_instance());
+//		d($p);
 		do_action( 'AHEE__EE_System__initialize' );
 	}
 

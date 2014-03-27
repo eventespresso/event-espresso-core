@@ -1,4 +1,7 @@
 <?php 
+EE_Registry::instance()->load_lib('Gateway');
+EE_Registry::instance()->load_lib('Onsite_Gateway');
+EE_Registry::instance()->load_lib('Offsite_Gateway');
 abstract class EE_PMT_Base{
 	/**
 	 *
@@ -21,6 +24,12 @@ abstract class EE_PMT_Base{
 	 */
 	protected $_billing_form = NULL;
 	/**
+	 * String of the absolute path to the folder containing this file, with a trailing slash.
+	 * eg '/public_html/wp-site/wp-content/plugins/event-espresso/payment_methods/Invoice/'
+	 * @var string
+	 */
+	protected $_file_folder = NULL;
+	/**
 	 * 
 	 * @param EE_Payment_Method $pm_instance
 	 */
@@ -28,6 +37,23 @@ abstract class EE_PMT_Base{
 		if ( $pm_instance instanceof EE_Payment_Method ){
 			$this->set_instance($pm_instance);
 		}
+		$this->_set_file_folder();
+	}
+	
+	/**
+	 * sets the file_folder property
+	 */
+	protected function _set_file_folder(){
+		$reflector = new ReflectionClass(get_class($this));
+		$fn = $reflector->getFileName();
+		$this->_file_folder =  dirname($fn).DS;
+	}
+	/**
+	 * Returns the folder containing the PMT child class, witha trailing slash
+	 * @return string
+	 */
+	public function file_folder(){
+		return $this->_file_folder;
 	}
 	/**
 	 * Sets the payment method instance this payment method type is for.

@@ -49,6 +49,8 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 			)
 		));
 		parent::__construct($pm_instance);
+		require_once($this->file_folder().'EEG_Paypal_Pro.gateway.php');
+		$this->_gateway = new EEG_Paypal_Pro();
 	}
 	public function billing_form() {
 		$cc_type_input = $this->_billing_form->get_input('credit_card_type');
