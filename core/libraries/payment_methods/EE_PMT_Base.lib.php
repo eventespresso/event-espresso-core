@@ -206,4 +206,25 @@ abstract class EE_PMT_Base{
 			throw new EE_Error(sprintf(__("Payment Method Type '%s' does not support sending refund requests", "event_espresso"),get_class($this)));
 		}
 	}
+	
+	const onsite = 'on-site';
+	const offsite = 'off-site';
+	const offline = 'off-line';
+	/**
+	 * Returns one the class's consts onsite,offsite, or offline, depending on this
+	 * payment method's gateway.
+	 * @return string
+	 * @throws EE_Error
+	 */
+	public function payment_occurs(){
+		if( ! $this->_gateway){
+			return EE_PMT_Base::offline;
+		}elseif($this->_gateway instanceof EE_Onsite_Gateway){
+			return EE_PMT_Base::onsite;
+		}elseif($this->_gateway instanceof EE_Offsite_Gateway){
+			return EE_PMT_Base::offsite;
+		}else{
+			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isnt an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
+		}
+	}
 }

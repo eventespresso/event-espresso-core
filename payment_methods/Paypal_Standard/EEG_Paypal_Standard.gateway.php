@@ -25,7 +25,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-class EEG_Paypal_Standard {
+class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	/**
 	 * @param EE_Payment $payment to process
 	 * @param string $success_url URL to send the user to after a successful payment on the payment provider's website
