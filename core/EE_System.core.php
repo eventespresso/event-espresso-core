@@ -725,6 +725,8 @@ final class EE_System {
 //		foreach($pms as $pm){
 //			echo $pm->button_html('ee');
 //		}
+//		$p = EE_Payment::new_instance(array('PAY_redirect_url'=>'http://google.com','PAY_redirect_args'=>array('key'=>'val','foo'=>'bar')));
+//		echo $p->redirect_form();
 		do_action( 'AHEE__EE_System__initialize' );
 	}
 
