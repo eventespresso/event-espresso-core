@@ -1829,11 +1829,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// all good ?
 		if ( $success_msg && ! $error_msg && ! $attention_msg ) {
-//			unset( $json_response['error'] );
-//			unset( $json_response['attention'] );
+			unset( $json_response['error'] );
+			unset( $json_response['attention'] );
 		// DERP!!!
 		} elseif ( $error_msg || $attention_msg ) {
-//			unset( $json_response['success'] );
+			unset( $json_response['success'] );
 		}
 		// if this is an ajax request AND a callback function exists
 		if ( EE_Registry::instance()->REQ->ajax  && $valid_callback ) {
