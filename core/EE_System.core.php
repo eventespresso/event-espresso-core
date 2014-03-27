@@ -721,10 +721,10 @@ final class EE_System {
 	public function initialize() {
 //		$p = EE_Payment_Processor::instance()->process_payment('paypal_pro', EE_Transaction::new_instance());
 //		d($p);
-		$pms = EEM_Payment_Method::instance()->get_all_active();
-		foreach($pms as $pm){
-			echo $pm->button_html('ee');
-		}
+//		$pms = EEM_Payment_Method::instance()->get_all_active();
+//		foreach($pms as $pm){
+//			echo $pm->button_html('ee');
+//		}
 		do_action( 'AHEE__EE_System__initialize' );
 	}
 
