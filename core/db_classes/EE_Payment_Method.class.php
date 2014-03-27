@@ -352,7 +352,7 @@ class EE_Payment_Method extends EE_Base_Class{
 				$r = new ReflectionClass($class_name);
 				$this->_type_obj = $r->newInstanceArgs(array($this));
 			}else{
-				throw new EE_Error(__("A payment method of type '%s' does not exist","event_espresso"), $this->type() );
+				throw new EE_Error( sprintf( __("A payment method of type '%s' does not exist","event_espresso"), $this->type() ));
 			}
 		}
 		return $this->_type_obj;
