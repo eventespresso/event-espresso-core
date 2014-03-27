@@ -11,6 +11,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 			}
 		}
 		$html .= ee_newline(-1) . '</div>';
+		$html = $this->add_form_section_hooks_and_filters( $html );
 		return $html;
 	}
 	/**
