@@ -56,14 +56,15 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 				'name'=>'Invoice_Form',
 				'subsections'=>array(
 					'pdf_stylesheet'=>new EE_Select_Input(array('simple.css'), array(
-						'help_text'=>  __("Load a custom/pre-made style sheet 
+						'html_help_text'=>  __("Load a custom/pre-made style sheet 
 	to change the look of your invoices.", 'event_espresso'),
 					)),
 					'pdf_instructions'=>new EE_Text_Area_Input(array(
 						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso')
 					)),
 					'pdf_logo_image'=>new EE_Admin_File_Uploader_Input(array(
-						'default'=>  EE_Config::instance()->organization->logo_url
+						'default'=>  EE_Config::instance()->organization->logo_url,
+						'html_help_text'=>  __("(Logo for the top left of the invoice)", 'event_espresso'),
 					)),
 					'page_title'=>new EE_Text_Input(array(
 						'default'=>  __("Invoice Payments", 'event_espresso')
