@@ -41,32 +41,48 @@ class EE_Payment_Processor{
 			self::$_instance = new self();
 		}
 		return self::$_instance;
-	}	
+	}
+
+
+
+	/**
+	 *private constructor to prevent direct creation
+	 *@Constructor
+	 *@access private
+	 *@return void
+	 */	
+	private function __construct() {
+		do_action( 'AHEE__EE_Payment_Processor__construct' );
+	}
+
+
+
 	/**
 	 * Using the selected gateway, processes the payment for that transaction. 
 	 * @param int $payment_method ID of the payment method to use
 	 * @param EE_Transaction $transaction
+	 * @param float $amount if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
 	 * @param array $billing_info array of simple-key-value-pairs for cc details, billing address, etc
 	 * @param string $success_url string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
 	 * @param string $fail_url similar to $success_url, except used by some gateways in case of failure
 	 * @param string $method like 'CART', indicates who the client who called this was
-	 * @param float $amount if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
 	 * @return EE_Payment
 	 * @throws EE_Error (espeically if the specified payment method's type is no longer defined)
 	 */
-	public function process_payment($payment_method,$transaction, $billing_info = null, $success_url = null,$fail_url = null, $method = 'CART', $by_admin = false, $amount = null ){
-		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj($payment_method,true);
+	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_info = NULL, $success_url = NULL, $fail_url = NULL, $method = 'CART', $by_admin = FALSE ) {
+		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
+		EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$transaction->set_payment_method_ID($payment_method->ID());
-		$payment = $payment_method->type_obj()->process_payment($transaction,$billing_info,$success_url,$fail_url,$method,$by_admin,$amount);
-		if(empty($payment)){
-			$transaction->set_status(EEM_Transaction::incomplete_status_code);
+		$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_info, $success_url, $fail_url, $method, $by_admin );
+		if ( empty( $payment )) {
+			$transaction->set_status( EEM_Transaction::incomplete_status_code );
 			$transaction->save();
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 			
-		}else{
-			$payment = $this->_PAY->ensure_is_obj($payment,true);
-			//ok, now process the transaction according to the payment
-			$transaction->update_based_on_payments();//also saves transaction
+		} else {
+			$payment = $this->_PAY->ensure_is_obj( $payment, TRUE );
+			//ok, now process the transaction according to the payment - also saves transaction
+			$transaction->update_based_on_payments();
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		}
 		return $payment;
