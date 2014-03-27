@@ -299,6 +299,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * Should be setup by each form during the _enqueues_and_localize_form_js
 	 */
 	public static function localize_script_for_all_forms(){
+		//allow inputs and stuff to hook in their JS and stuff here
+		do_action('AHEE__EE_Form_Section_Proper__localize_script_for_all_forms__begin');
 		EE_Form_Section_Proper::$_js_localization['localized_error_messages'] = EE_Form_Section_Proper::_get_localized_error_messages();
 		wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);	
 		wp_enqueue_script('ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'),
