@@ -823,12 +823,13 @@ jQuery(document).ready(function($) {
 				} else if ( key == 'redirect-to-thank-you-page' ) {
 					window.location.replace( response.return_data[key] );
 					return;
-				} else if ( key == 'off-site-redirect') {
-//					alert( 'response.return_data[key] = ' + response.return_data[key] );
-//					$( '#espresso-ajax-notices-attention .espresso-notices-msg' ).append( response.return_data[key] );
+				} else if ( key == 'off-site-redirect' ) {
 					$( '#espresso-ajax-notices-attention' ).append( response.return_data[key] );
-//					$( '#spco-extra-finalize_registration-inputs-dv' ).html( response.return_data[key] );
 					document.forms['gateway_form'].submit();
+				} else if ( key == 'plz-select-method-of-payment' ) {
+					$( '#methods-of-payment' ).addClass( 'plz-select-method-of-payment' );
+					SPCO.scroll_to_top_and_display_messages( response );
+					return;
 				}
 			}
 			go_to[ next_step ]( response );
@@ -1044,7 +1045,7 @@ jQuery(document).ready(function($) {
 		e.stopPropagation();
 		var selected_payment_option = $(this).find('.reg-page-payment-option-lnk');
 		var selected_gateway = selected_payment_option.attr('id');
-
+		$( '#methods-of-payment' ).removeClass( 'plz-select-method-of-payment' );
 		$('#reg-page-select-other-method-of-payment-lnk').attr( 'rel', selected_gateway );
 		$('#methods-of-payment').slideUp( 250, function() {
 			$('.reg-page-payment-option-dv').each(function() {
