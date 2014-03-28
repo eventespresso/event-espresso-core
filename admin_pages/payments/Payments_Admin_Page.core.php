@@ -275,7 +275,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			//check for any active pms of that type
 			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($pmt_name);
 			if( ! $payment_method ){
-				$payment_method = EE_Payment_Method::new_instance(array('PMD_type'=>$pmt_name,'PMD_active'=>false,'PMD_name'=>str_replace("_"," ",$pmt_name),'PMD_slug'=>sanitize_key($pmt_name)));
+				$new_name = str_replace("_"," ",$pmt_name);
+				$payment_method = EE_Payment_Method::new_instance(array('PMD_type'=>$pmt_name,'PMD_active'=>false,'PMD_name'=>$new_name,'PMD_admin_name'=>$new_name, 'PMD_slug'=>sanitize_key($pmt_name)));
 			}			
 			add_meta_box(
 						'espresso_' . $pmt_name . '_payment_settings', //html id

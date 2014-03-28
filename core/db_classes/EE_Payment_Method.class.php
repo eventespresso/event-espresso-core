@@ -27,12 +27,17 @@ class EE_Payment_Method extends EE_Base_Class{
 	
 	/** ID @var PMD_ID*/ 
 	protected $_PMD_ID = NULL;
-	/** Payment Method Type @var PMD_type - a name used for public display */ 
+	/** @var PMD_type string pointing to which PMT_Base child that holds all the payment-processing funcitonality of 
+	 * the particular payment method. Eg Paypal_Standard, which indicates the type object is EE_PMT_Paypal_Standard */ 
 	protected $_PMD_type = NULL;
-	/** Name @var PMD_name - a name used for interal (admin) display only*/ 
+	/** Name @var PMD_name - a name used for external (frontend) display only*/ 
 	protected $_PMD_name = NULL;
-	/** Description @var PMD_desc*/ 
+	/** Description @var PMD_desc description for external (frontend) description*/ 
 	protected $_PMD_desc = NULL;
+	/** Name @var PMD_admin_name - a name used for interal (admin) display only*/ 
+	protected $_PMD_admin_name = NULL;
+	/** Description @var PMD_admin_desc description used for internal (admin) display only*/ 
+	protected $_PMD_admin_desc = NULL;
 	/** Slug @var PMD_slug*/ 
 	protected $_PMD_slug = NULL;
 	/** Order @var PMD_order*/ 
@@ -302,6 +307,40 @@ class EE_Payment_Method extends EE_Base_Class{
 	function set_wp_user_id($wp_user_id) {
 		return $this->set('PMD_wp_user_id', $wp_user_id);
 	}
+	
+	/**
+	 * Gets admin_name
+	 * @return string
+	 */
+	function admin_name() {
+		return $this->get('PMD_admin_name');
+	}
+
+	/**
+	 * Sets admin_name
+	 * @param string $admin_name
+	 * @return boolean
+	 */
+	function set_admin_name($admin_name) {
+		return $this->set('PMD_admin_name', $admin_name);
+	}
+	/**
+	 * Gets admin_desc
+	 * @return string
+	 */
+	function admin_desc() {
+		return $this->get('PMD_admin_desc');
+	}
+
+	/**
+	 * Sets admin_desc
+	 * @param string $admin_desc
+	 * @return boolean
+	 */
+	function set_admin_desc($admin_desc) {
+		return $this->set('PMD_admin_desc', $admin_desc);
+	}
+
 //	/**
 //	 * If a model name is provided (eg Registration), gets the model classname for that model.
 //	 * Also works if a model class's classname is provided (eg EE_Registration).

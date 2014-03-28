@@ -76,6 +76,8 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_type'=>new EE_Plain_Text_Field('PMD_type', __("Payment Method Type", 'event_espresso'), false),
 				'PMD_name'=>new EE_Plain_Text_Field('PMD_name', __("Name", 'event_espresso'), false),
 				'PMD_desc'=>new EE_Simple_HTML_Field('PMD_desc', __("Description", 'event_espresso'), false, ''),
+				'PMD_admin_name'=>new EE_Plain_Text_Field('PMD_admin_name', __("Admin-Only Name", 'event_espresso'), true),
+				'PMD_admin_desc'=>new EE_Simple_HTML_Field('PMD_admin_desc', __("Admin-Only Description", 'event_espresso'), true),
 				'PMD_slug'=>new EE_Slug_Field('PMD_slug', __("Slug", 'event_espresso'), false),
 				'PMD_order'=>new EE_Integer_Field('PMD_order', __("Order", 'event_espresso'), false, 0),
 				'PRC_ID'=>new EE_Foreign_Key_Int_Field('PRC_ID', __("Surcharge Price", 'event_espresso'), true, NULL, 'Price'),
