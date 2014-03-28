@@ -1619,7 +1619,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 				}
 
+			} else {
+				// not a payment
+				EE_Error::add_error( 
+					sprintf( 
+						__( 'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+						'<br/>',
+						EE_Registry::instance()->CFG->organization->email 
+					), __FILE__, __FUNCTION__, __LINE__ 
+				);			
 			}
+		} else {
+			// not a payment
+			EE_Error::add_error( 
+				sprintf( 
+					__( 'The selected method of payment could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+					'<br/>',
+					EE_Registry::instance()->CFG->organization->email 
+				), __FILE__, __FUNCTION__, __LINE__ 
+			);			
 		}
 
 	}
