@@ -30,6 +30,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		$this->_gateway = new EEG_Paypal_Standard();
 	}
 	public function billing_form() {
+		return NULL;
 		$cc_type_input = $this->_billing_form->get_input('credit_card_type');
 		$allowed_types = $this->_pm_instance->get_extra_meta('credit_card_types');
 		
