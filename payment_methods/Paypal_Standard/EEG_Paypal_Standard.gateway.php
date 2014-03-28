@@ -38,7 +38,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return EE_Payment
 	 */
 	public function set_redirection_info($payment,$billing_info = array(),$success_url = NULL, $fail_url = NULL, $cancel_url = NULL){
-		$payment->set_redirect_url('http://google.com');
+		$payment->set_redirect_url('https://www.paypal.com/cgi-bin/webscr');
 		$payment->set_redirect_args(array('arg1'=>'foo','arg2'=>'bar'));
 		return $payment;
 	}
