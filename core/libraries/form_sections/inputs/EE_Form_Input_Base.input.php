@@ -165,6 +165,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 				$validation_strategy->_construct_finalize($this);
 			}
 		}
+		if( ! $this->_normalization_strategy){
+			$this->_normalization_strategy = new EE_Text_Normalization();
+		}
 		$this->_normalization_strategy->_construct_finalize($this);
 		
 		parent::__construct($options_array);
@@ -341,7 +344,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * @param string $value
 	 */
 	private function _sanitize($value){
-		return stripslashes(html_entity_decode($value));//don't sanitize_text_field
+		return $value !== NULL ?stripslashes(html_entity_decode($value)) : NULL;//don't sanitize_text_field
 	}
 	
 	
@@ -364,7 +367,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 				$this->_raw_value = $this->_sanitize($raw_input);
 			}
 			//we want ot mostly leave the input alone in case we need to re-display it to the user
-			//but we're just removing anything really nasty
 			$this->_normalized_value = $this->_normalization_strategy->normalize($this->raw_value());
 		}catch(EE_Validation_Error $e){
 			$this->add_validation_error($e);

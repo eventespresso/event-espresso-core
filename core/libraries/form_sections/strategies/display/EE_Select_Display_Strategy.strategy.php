@@ -38,13 +38,13 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		$html = '';
 		foreach($options as $value => $display_text){
 			$cntr = 0;
-			if($this->_input->normalized_value() == $value){
+			if($this->_input->raw_value() == "$value"){
 				$selected_attr = 'selected="selected"';
 			}else{
 				$selected_attr ='';
 			}
 			$tabs = $cntr == 0 ? 1 : 0;
-				$value = esc_attr($value);
+			$value = esc_attr($value);
 			$html.= ee_newline($tabs) . "<option value='$value' $selected_attr>$display_text</option>";
 			$cntr++;
 		}

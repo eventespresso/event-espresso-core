@@ -29,12 +29,29 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	protected $_options = array();
 	public function __construct($select_options = array(), $options_array = array()) {
-		$this->_options = $select_options;
+		$this->set_select_options($select_options);
 		parent::__construct($options_array);
 	}
-	
+	/**
+	 * Sets the allowed options for this input. Also has the side-effect of 
+	 * updating the normalization strategy to match the keys provided in the array
+	 * @param array $select_options
+	 * @return null just has the side-effect of setting the options for this input
+	 */
 	public function set_select_options($select_options){
 		$this->_options = $select_options;
+		//get teh first item in teh select options. Depending on what it is, use a different normalization strategy
+		if($select_options){
+			$flat_select_options = $this->_flatten_select_options($select_options);
+			$select_option_keys = array_keys($flat_select_options);
+			$first_key = reset($select_option_keys);
+			if(is_int($first_key)){
+				$normalization = new EE_Int_Normalization();
+			}elseif(is_string($first_key)){
+				$normalization = new EE_Text_Normalization();
+			}
+			$this->_set_normalization_strategy($normalization);
+		}
 	}
 	public function options(){
 		return $this->_options;

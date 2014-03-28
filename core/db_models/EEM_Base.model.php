@@ -641,8 +641,11 @@ abstract class EEM_Base extends EE_Base{
 		$cols_n_values = array();
 		foreach($fields_n_values as $field_name => $value){
 			$field_obj = $this->field_settings_for($field_name);
-			$cols_n_values[] = $field_obj->get_qualified_column()."=".$wpdb->prepare($field_obj->get_wpdb_data_type(),
+			//if the value is NULL, we want to assign the value to that.
+			//wpdb->prepare doesn't really handle that properly
+			$value_sql = $value===NULL ? 'NULL' : $wpdb->prepare($field_obj->get_wpdb_data_type(),
 							$this->_prepare_value_for_use_in_db($value, $field_obj));
+			$cols_n_values[] = $field_obj->get_qualified_column()."=".$value_sql;
 		}
 		return implode(",",$cols_n_values);
 		

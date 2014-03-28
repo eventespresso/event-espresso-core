@@ -42,7 +42,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		$this->_billing_form = new EE_Billing_Info_Form(array(
 			'subsections'=>array(
 				'credit_card'=>new EE_Credit_Card_Input(),
-//				'credit_card_type'=>new EE_Select_Input(array()),//the options are set dynamically
+				'credit_card_type'=>new EE_Select_Input(array()),//the options are set dynamically
 				'exp_month'=>new EE_Month_Input(true),
 				'exp_year'=>new EE_Year_Input(false),
 				'cvv'=>new EE_Text_Input(),
@@ -54,9 +54,12 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 	}
 	public function billing_form() {
 		$cc_type_input = $this->_billing_form->get_input('credit_card_type');
-		$allowed_types = $this->_pm_instance->get_extra_meta('credit_card_types');
-		throw new EE_Error('not finished paypal standard illing info');
-		parent::billing_form();
+		$allowed_types = $this->_pm_instance->get_extra_meta('credit_card_types',true);
+		if( ! $allowed_types){//if allowed types is a string or empty array or null...
+			$allowed_types = array();
+		}
+		$cc_type_input->set_select_options(array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(),array_flip($allowed_types)));
+		return parent::billing_form();
 	}
 	/**
 	 * Returns an array of all the payment cards possibly supported by paypal pro.

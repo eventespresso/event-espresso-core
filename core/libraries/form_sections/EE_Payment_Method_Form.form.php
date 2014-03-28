@@ -40,13 +40,13 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	 * @return int ID of the payment method inserted, or true on update
 	 */
 	public function save(){
-		$id_or_save = parent::save();
-		if($id_or_save && $this->_model_object){
+		$parent_save_val = parent::save();
+		if( $this->_model_object && $this->_model_object->ID()){
 			foreach($this->_extra_meta_inputs as $input_name => $input){
 				$this->_model_object->update_extra_meta($input_name, $input->normalized_value());
 			}
 		}
-		return $id_or_save;
+		return $parent_save_val;
 	}
 	/**
 	 * Overrides parentt's populate_model_obj to also populate the extra meta fields

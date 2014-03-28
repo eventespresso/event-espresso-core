@@ -33,4 +33,16 @@ class EE_Many_Valued_Validation_Strategy extends EE_Validation_Strategy_Base{
 			}
 		}
 	}	
+	/**
+	 * Extends parent's _construct_finalize so we ALSO set the input
+	 * on each sub-validation-strategy
+	 * @param \EE_Form_Input_Base $form_input
+	 */
+	function _construct_finalize(\EE_Form_Input_Base $form_input) {
+		parent::_construct_finalize($form_input);
+		foreach($this->_individual_item_validation_strategies as $item_validation_strategy){
+			$item_validation_strategy->_construct_finalize($form_input);
+		}
+	}
+	
 }

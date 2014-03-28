@@ -12,13 +12,14 @@ class EE_Checkbox_Display_Strategy extends EE_Select_Display_Strategy{
 		}
 		$html='';
 		foreach($input->options() as $value => $display_text){
-			if($input->normalized_value() && in_array("$value", $input->normalized_value())){
+			if($input->raw_value() && in_array("$value", $input->raw_value())){
 				$selected_attr = 'checked';
 			}else{
 				$selected_attr ='';
 			}
 			$slugified_value = sanitize_key($value);
-			$html.="<input id='{$input->html_id()}-{$slugified_value}' name='{$input->html_name()}[]' class='{$input->html_class()}' style='{$input->html_style()}' type='checkbox' value='$value' $selected_attr><label for='{$input->html_id()}-{$slugified_value}'>$display_text</label>";
+			$value_inside_attribute = esc_attr($value);
+			$html.="<input id='{$input->html_id()}-{$slugified_value}' name='{$input->html_name()}[]' class='{$input->html_class()}' style='{$input->html_style()}' type='checkbox' value='$value_inside_attribute' $selected_attr><label for='{$input->html_id()}-{$slugified_value}'>$display_text</label>";
 		}
 		return $html;
 	}

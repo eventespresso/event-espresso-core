@@ -150,7 +150,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	public function get_input($name){
 		$subsection = $this->get_subsection($name);
 		if( ! $subsection instanceof EE_Form_Input_Base){
-			throw new EE_Error(sprintf(__("Subsection '%'s is not an intanceof EE_Form_Input_Base on form '%s'", 'event_espresso'),$name, get_class($this)));
+			throw new EE_Error(sprintf(__("Subsection '%s' is not an intanceof EE_Form_Input_Base on form '%s'", 'event_espresso'),$name, get_class($this)));
 		}
 		return $subsection;
 	}
