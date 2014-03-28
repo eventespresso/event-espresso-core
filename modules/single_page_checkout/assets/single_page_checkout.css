@@ -627,3 +627,18 @@ span.ui-icon {
 	width:auto !important;
 	min-width:60px;
 }
+
+.plz-select-method-of-payment {
+	width:100%;
+	padding: .75em 2.5%;
+	margin: 0 auto 1em;
+	background: #fff;
+	border: 4px solid #E44064;
+	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
+	box-sizing: border-box; 
+}
+/*.plz-select-method-of-payment h3 {
+	color: #E44064;
+	font-weight: bold;	
+}*/
