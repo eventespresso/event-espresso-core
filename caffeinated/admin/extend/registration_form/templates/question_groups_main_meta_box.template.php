@@ -34,7 +34,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 					</label>
 				</th>
 				<td>
-					<input name="QSG_name" value="<?php  $question_group->f('QSG_name')?>" type="text" class="regular-text"><br/>
+					<input id="QSG_name" name="QSG_name" value="<?php  $question_group->f('QSG_name')?>" type="text" class="regular-text"><br/>
 					
 				</td>
 			</tr>
@@ -46,7 +46,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 					</label>
 				</th>
 				<td>
-					<input name="QSG_identifier<?php echo $id; ?>" value="<?php echo $question_group->identifier()?>" type="text" class="regular-text"<?php echo $disabled; ?>>
+					<input id="QSG_identifier" name="QSG_identifier<?php echo $id; ?>" value="<?php echo $question_group->identifier()?>" type="text" class="regular-text"<?php echo $disabled; ?>>
 					<?php if ( ! empty( $QSG_system )) { ?>
 					<p><span class="description" style="color:#D54E21;">
 							<?php _e('System question group! This field cannot be changed.','event_espresso')?>
@@ -62,7 +62,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 					</label>
 				</th>
 				<td>
-					<textarea name="QSG_desc"  class="regular-text" rows="1" cols="50"><?php echo $question_group->desc()?></textarea>
+					<textarea id="QSG_desc" name="QSG_desc"  class="regular-text" rows="1" cols="50"><?php echo $question_group->desc()?></textarea>
 				</td>
 			</tr>
 
@@ -73,7 +73,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
 					</label>
 				</th>
 				<td>
-					<input name="QSG_order"  class="regular-text" value="<?php echo $question_group->get('QSG_order'); ?>" />
+					<input id="QSG_order" name="QSG_order"  class="regular-text" value="<?php echo $question_group->get('QSG_order'); ?>" />
 				</td>
 			</tr>
 
