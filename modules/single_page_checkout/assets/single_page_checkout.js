@@ -1045,7 +1045,7 @@ jQuery(document).ready(function($) {
 		var selected_payment_option = $(this).find('.reg-page-payment-option-lnk');
 		var selected_gateway = selected_payment_option.attr('id');
 
-		$('#reg-page-select-other-gateway-lnk').attr( 'rel', selected_gateway );
+		$('#reg-page-select-other-method-of-payment-lnk').attr( 'rel', selected_gateway );
 		$('#methods-of-payment').slideUp( 250, function() {
 			$('.reg-page-payment-option-dv').each(function() {
 				$(this).toggleClass( 'hidden' );
@@ -1055,7 +1055,7 @@ jQuery(document).ready(function($) {
 			});
 			// get target element from "this" (the control element's) "rel" attribute
 			var gateway_form = 'reg-page-billing-info-' + selected_payment_option.attr("rel");
-			$('#reg-page-selected-gateway').val( selected_payment_option.attr("rel") );
+			$('#reg-page-selected-method-of-payment').val( selected_payment_option.attr("rel") );
 			$('#'+gateway_form+'-dv').toggleClass( 'hidden' );
 			$('#'+gateway_form+'-dv').find( ':input' ).each( function() {
 				if ( $(this).attr('type') != 'hidden' ) {
@@ -1063,7 +1063,7 @@ jQuery(document).ready(function($) {
 				}
 			});
 			$('#hide-'+gateway_form).removeClass('hidden');
-			$('#reg-page-select-other-gateway-lnk').toggleClass( 'hidden' );
+			$('#reg-page-select-other-method-of-payment-lnk').toggleClass( 'hidden' );
 			$('#select-method-of-payment-hdr').toggleClass( 'hidden' );
 			$('#methods-of-payment').slideDown( 500 );
 		});
@@ -1074,7 +1074,7 @@ jQuery(document).ready(function($) {
 	/**
 	*	select a different method of payment
 	*/
-	$('#reg-page-select-other-gateway-lnk').on( 'click', function(e) {
+	$('#reg-page-select-other-method-of-payment-lnk').on( 'click', function(e) {
 		e.preventDefault();
 		e.stopPropagation();
 		selected_gateway = '#' + $(this).attr('rel');
