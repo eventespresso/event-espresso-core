@@ -148,7 +148,7 @@ abstract class EE_PMT_Base{
 	public function handle_ipn($req_data,$transaction){
 		$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
 		if( ! $this->_gateway instanceof EE_Offsite_Gateway){
-			throw new EE_Error(sprintf(__("Could not handle IPN because '%s' is not an offsite gateway", "event_espresso"),print_r($this->_gatewaymtrue)));
+			throw new EE_Error(sprintf(__("Could not handle IPN because '%s' is not an offsite gateway", "event_espresso"), print_r( $this->_gateway, TRUE )));
 			
 		}
 		$payment = $transaction->last_payment();
