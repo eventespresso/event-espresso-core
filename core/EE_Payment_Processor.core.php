@@ -66,23 +66,24 @@ class EE_Payment_Processor{
 	 * @param string $success_url string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
 	 * @param string $fail_url similar to $success_url, except used by some gateways in case of failure
 	 * @param string $method like 'CART', indicates who the client who called this was
+	 * @param boolean $save_txn whether or not to save the transaction as part of this function call
 	 * @return EE_Payment
 	 * @throws EE_Error (espeically if the specified payment method's type is no longer defined)
 	 */
-	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_info = NULL, $success_url = NULL, $fail_url = NULL, $method = 'CART', $by_admin = FALSE ) {
+	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_info = NULL, $success_url = NULL, $fail_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$transaction->set_payment_method_ID($payment_method->ID());
 		$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_info, $success_url, $fail_url, $method, $by_admin );
 		if ( empty( $payment )) {
 			$transaction->set_status( EEM_Transaction::incomplete_status_code );
-			$transaction->save();
+			if($save_txn) $transaction->save();
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 			
 		} else {
 			$payment = EEM_Payment::instance()->ensure_is_obj( $payment, TRUE );
 			//ok, now process the transaction according to the payment
-			$transaction->update_based_on_payments();//also saves transaction
+			$transaction->update_based_on_payments($save_txn);//also saves transaction
 			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
 		}
 		return $payment;

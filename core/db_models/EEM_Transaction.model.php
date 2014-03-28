@@ -332,9 +332,10 @@ class EEM_Transaction extends EEM_Base {
 	 * Updates teh provided EE_Transaction with all the applicable payments 
 	 * (or fetche the EE_Transaction from its ID)
 	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
+	 * @param boolean $save_txn whether or not to save the transaction during this funciton call
 	 * @return boolean success
 	 */
-	public function update_based_on_payments($transaction_obj_or_id){
+	public function update_based_on_payments($transaction_obj_or_id,$save_txn = TRUE){
 		$transaction = $this->ensure_is_obj($transaction_obj_or_id);
 		$PAY = EE_Registry::instance()->load_model( 'Payment' );
 		$total_paid = $PAY->recalculate_total_payments_for_transaction( $transaction->ID(),  EEM_Payment::status_id_approved );
@@ -350,7 +351,11 @@ class EEM_Transaction extends EEM_Base {
 		}
 		
 		// update transaction and return results
-		return $transaction->save();
+		if($save_txn){
+			return $transaction->save();
+		}else{
+			return NULL;
+		}
 	}
 
 
