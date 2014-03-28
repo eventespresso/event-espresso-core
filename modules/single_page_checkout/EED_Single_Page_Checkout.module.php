@@ -29,6 +29,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_thank_you_page_url = '';
 	// go to thank you page ?
 	private $_redirect_to_thank_you_page = FALSE;
+	// array of data to be passed back to the client during AJAX requests
+	private $_json_response = array();
 	// where we are in the reg process
 	private $_current_step = '';
 	// where we are going next in the reg process
@@ -314,7 +316,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		$this->_continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE );
 		$this->set_templates();
-		$this->_reg_page_base_url = get_permalink( EE_Registry::instance()->CFG->core->reg_page_id );
+		$this->_reg_page_base_url = EE_Registry::instance()->CFG->core->reg_page_url();
+		$this->_thank_you_page_url = EE_Registry::instance()->CFG->core->thank_you_page_url();
 		// grab what step we're on
 		$this->_current_step = ! empty( $this->_current_step )  ? $this->_current_step : 'attendee_information';
 		$this->_current_step = EE_Registry::instance()->REQ->is_set( 'step' ) ? EE_Registry::instance()->REQ->get( 'step' ) : $this->_current_step;
@@ -1500,27 +1503,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return 	void (redirect)
 	 */
 	private function _finalize_attendee_information( $params = array(), $success_msg = '' ) {
-
 		if ( $this->_transaction instanceof EE_Transaction && $this->_continue_reg ) {
 			// save everything
-			$this->_save_all_registration_information();
-			//grab notices
-			$notices = EE_Error::get_notices(FALSE);
-			// if it's all good...
-			if ( ! isset( $notices['errors'] ) || empty( $notices['errors'] )) {
-				$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
-				$response_data = array(
-					'success' => isset( $notices['success'] ) ? $notices['success'] : '',
-					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
-				);
-				$response_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $response_data );
-				if ( EE_Registry::instance()->REQ->front_ajax ) {
-					echo json_encode( $response_data );
-					die();
-				} else {
-					wp_safe_redirect( $this->_thank_you_page_url );
-					exit();
-				}
+			if ( $this->_save_all_registration_information() ) {
+				$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), $this->_thank_you_page_url );
+				$this->_redirect_to_thank_you_page = TRUE;
 			}
 		}
 		$this->go_to_next_step( __FUNCTION__ );
@@ -1576,72 +1563,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _process_payment() {
 		
-		echo '<br/><h5 style="color:#2EA2CC;">'. __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		
-		if ( $selected_method_of_payment = EE_Registry::instance()->SSN->get_session_data( 'selected_method_of_payment' )) {
-			$payment = EE_Registry::instance()->load_core( 'Payment_Processor' )->process_payment( 
-				EE_Registry::instance()->load_model( 'Payment_Method' )->get_one_by_slug( $selected_method_of_payment ), 
-				$this->_transaction,
-				EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ), 
-				EE_Registry::instance()->SSN->get_session_data( 'billing_info' ), 
-				$this->_thank_you_page_url, 
-				$this->_thank_you_page_url
-			);
-			// validate payment
-			if ( ! $payment instanceof EE_Payment ) {
-				// not a payment
-				EE_Error::add_error( 
-					sprintf( 
-						__( 'A valid payment was not generated due to a technical issue.%sPlease try again or contact %s for assistence.', 'event_espresso' ),
-						'<br/>',
-						EE_Registry::instance()->CFG->organization->email 
-					), __FILE__, __FUNCTION__, __LINE__ 
-				);
-				return FALSE;	
-			}
-			$success = FALSE;
-			// check results
-			switch ( $payment->status() ) {
-				// good payment
-				case EEM_Payment::status_id_approved :
-					EE_Error::add_success( __( 'Your payment was processed successfully.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-					$success = TRUE;
-					break;
-				// slow payment	
-				case EEM_Payment::status_id_pending :
-					EE_Error::add_success( __( 'Your payment appears to have been processed successfully, but the Instant Payment Notification has not yet been received. It should arrive shortly.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-					$success = TRUE;
-					break;
-				// don't wanna payment	
-				case EEM_Payment::status_id_cancelled :
-					EE_Error::add_attention( __( 'Your payment was cancelled, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-					break;
-				// bad payment
-				case EEM_Payment::status_id_declined :
-					EE_Error::add_attention( __( 'We\'re sorry but your payment was declined, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-					break;
-				// brokked payment
-				case EEM_Payment::status_id_failed :
-					EE_Error::add_error( 
-						sprintf( 
-							__( 'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistence.', 'event_espresso' ),
-							'<br/>',
-							EE_Registry::instance()->CFG->organization->email 
-						), 
-						__FILE__, __FUNCTION__, __LINE__ 
-					);
-					break;
-			}
-			
-			if ( $success ) {
-				$this->_thank_you_page_url = $payment->redirect_url();
-				$this->_redirect_to_thank_you_page = TRUE;
-//				$this->_next_step = FALSE;
-			}
-
-			return $payment;	
-			
-		} else {
+		$selected_method_of_payment = EE_Registry::instance()->SSN->get_session_data( 'selected_method_of_payment' );
+		if ( empty( $selected_method_of_payment )) {
 			EE_Error::add_error(
 				sprintf( 
 					__( 'The selected method of payment could not be determined.%sPlease try again or contact %s for assistence.', 'event_espresso' ),
@@ -1651,9 +1574,120 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				__FILE__, __FUNCTION__, __LINE__ 
 			);
 		}
+		// attempt payment
+		$payment = EE_Registry::instance()->load_core( 'Payment_Processor' )->process_payment( 
+			EE_Registry::instance()->load_model( 'Payment_Method' )->get_one_by_slug( $selected_method_of_payment ), 
+			$this->_transaction,
+			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ), 
+			EE_Registry::instance()->SSN->get_session_data( 'billing_info' ), 
+			$this->_thank_you_page_url, 
+			$this->_thank_you_page_url
+		);		
 		
-		return FALSE;	
+		// verify payment
+		if ( ! $payment instanceof EE_Payment ) {
+			// not a payment
+			EE_Error::add_error( 
+				sprintf( 
+					__( 'A valid payment was not generated due to a technical issue.%sPlease try again or contact %s for assistence.', 'event_espresso' ),
+					'<br/>',
+					EE_Registry::instance()->CFG->organization->email 
+				), __FILE__, __FUNCTION__, __LINE__ 
+			);
+			return FALSE;	
+		}
+//		printr( $payment->payment_method(), '$payment->payment_method()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
+		if ( $payment->payment_method()->type_obj() instanceof EE_PMT_Base ) {
+			// where does the payment take place ?
+			switch ( $payment->payment_method()->type_obj()->payment_occurs() ) {
+				
+				// HERE
+				case EE_PMT_Base::onsite :
+					// check payment status
+					if ( $this->_onsite_payment_successfull() ) {
+						$redirect_url = $payment->redirect_url();
+						$this->_thank_you_page_url = ! empty( $redirect_url ) ? $redirect_url : $this->_thank_you_page_url;
+						$this->_json_response['redirect-to-thank-you-page'] = $this->_thank_you_page_url;
+						$this->_redirect_to_thank_you_page = TRUE;
+						$this->_next_step = FALSE;
+					}					
+					break;
+					
+				// THERE
+				case EE_PMT_Base::offsite :
+					$redirect_url = $payment->redirect_url();
+					if ( ! empty( $redirect_url )) {
+						$this->_json_response['return_data'] = array( 'off-site-redirect' => $payment->redirect_form() );  
+						$this->_next_step = FALSE;
+					}
+					break;
+					
+				// ewwww.... the REAL world  {:p
+				case EE_PMT_Base::offline :
+					$this->_redirect_to_thank_you_page = TRUE;
+					$this->_next_step = FALSE;
+					break;
+	
+			}
 
+		}
+		// meh...why not?
+		return $payment;	
+
+	}
+
+
+
+
+
+
+	/**
+	 * 	_onsite_payment_successfull
+	 *
+	 * 	@access private
+	 * 	@return 	boolean
+	 */
+	private function _onsite_payment_successfull() {
+		// check results
+		switch ( $payment->status() ) {
+							
+			// good payment
+			case EEM_Payment::status_id_approved :
+				EE_Error::add_success( __( 'Your payment was processed successfully.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return TRUE;
+				break;
+				
+			// slow payment	
+			case EEM_Payment::status_id_pending :
+				EE_Error::add_success( __( 'Your payment appears to have been processed successfully, but the Instant Payment Notification has not yet been received. It should arrive shortly.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return TRUE;
+				break;
+				
+			// don't wanna payment	
+			case EEM_Payment::status_id_cancelled :
+				EE_Error::add_attention( __( 'Your payment was cancelled, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				break;
+				
+			// bad payment
+			case EEM_Payment::status_id_declined :
+				EE_Error::add_attention( __( 'We\'re sorry but your payment was declined, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				break;
+				
+			// brokked payment
+			case EEM_Payment::status_id_failed :
+				EE_Error::add_error( 
+					sprintf( 
+						__( 'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistence.', 'event_espresso' ),
+						'<br/>',
+						EE_Registry::instance()->CFG->organization->email 
+					), 
+					__FILE__, __FUNCTION__, __LINE__ 
+				);
+				break;
+				
+		}		
+		return FALSE;
 	}
 
 
@@ -1669,7 +1703,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _process_payment_options() {
 		
-		echo '<br/><h5 style="color:#2EA2CC;">'. __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+//		echo '<br/><h5 style="color:#2EA2CC;">'. __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
@@ -1687,7 +1721,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				} else {
 					$selected_method_of_payment = sanitize_text_field( EE_Registry::instance()->REQ->get( 'selected_method_of_payment' ));
 					EE_Registry::instance()->SSN->set_session_data( array( 'selected_method_of_payment' => $selected_method_of_payment ));
-					EE_Error::add_success( __( 'Payment method selected.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 			// FREE EVENT !!! YEAH : )						
 			} else if (  ! $this->_reg_url_link ) {
@@ -1716,10 +1749,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 
 			do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
-			// attempt to perform transaction via payment method
-			$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
 			// attempt payment
 			$payment = $this->_process_payment();
+			// attempt to perform transaction via payment method
+			$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), $this->_thank_you_page_url );
 			
 		}
 		
@@ -1738,12 +1771,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _process_finalize_registration() {
 		
-		echo '<br/><h5 style="color:#2EA2CC;">'. __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		// save everything
 		if ( $this->_continue_reg && $this->_save_all_registration_information() ) {
+			
+//		echo '<br/><h5 style="color:#2EA2CC;">'. __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+
 			// save TXN data to the cart
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 
@@ -1757,7 +1791,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$this->_transaction->finalize();
 				$this->_thank_you_page_url = add_query_arg(
 					array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ),
-					get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id )
+					$this->_thank_you_page_url
 				);
 
 			// Default REG Status is set to PENDING PAYMENT OR APPROVED, and payments are allowed
@@ -1811,29 +1845,48 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$callback = $this->_revisit ? '_finalize_' . $this->_current_step : '_process_finalize_registration';
 			break;
 		}
+		// check for valid callback function
+		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
 		// check for recursion
 		if ( $prev_step == $callback ) {
 			EE_Error::add_error( __('A recursive loop was detected and the registration process was halted.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$valid_callback = FALSE;
 		}
-		// check for valid callback function
-		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
 		// grab notices
-		$notices = EE_Error::get_notices(FALSE);
+		$notices = EE_Error::get_notices( FALSE );		
 		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
 		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
 		$attention_msg = isset( $notices['attention'] ) ? $notices['attention'] : FALSE;
 		// set JSON response
-		$json_response = array( 'success' => $success_msg,  'error' => $error_msg, 'attention' => $attention_msg );
-		if ( $this->_redirect_to_thank_you_page ) {
-			$json_response['redirect-to-thank-you-page'] = $this->_thank_you_page_url;
-		}
+		$this->_json_response = array_merge( $this->_json_response, $notices ); 
+		//array( 'success' => $success_msg,  'error' => $error_msg, 'attention' => $attention_msg );
+		
+//		if ( $this->_redirect_to_thank_you_page ) {
+//			$this->_json_response['redirect-to-thank-you-page'] = $this->_thank_you_page_url;
+//		}
+
+//		echo '<h4>$prev_step : ' . $prev_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$this->_revisit : ' . $this->_revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>EE_Registry::instance()->REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( $this->_json_response, '$this->_json_response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		
 		// all good ?
-		if ( $success_msg && ! $error_msg && ! $attention_msg ) {
-			unset( $json_response['error'] );
-			unset( $json_response['attention'] );
+		if ( $success_msg && ! ( $error_msg || $attention_msg )) {
+			unset( $this->_json_response['error'] );
+			unset( $this->_json_response['attention'] );
+			// if not ajax, then return TRUE to advance to next step
+			$no_errors = TRUE;
 		// DERP!!!
 		} elseif ( $error_msg || $attention_msg ) {
-			unset( $json_response['success'] );
+			unset( $this->_json_response['success'] );
+			// if not ajax, then return FALSE to repeat the current step while displaying the error notice
+			$no_errors = FALSE;
 		}
 		// if this is an ajax request AND a callback function exists
 		if ( EE_Registry::instance()->REQ->ajax  && $valid_callback ) {
@@ -1841,12 +1894,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->$callback( $callback_param, $success_msg );
 		} else if ( EE_Registry::instance()->REQ->ajax ) {
 			// just send the ajax
-			$json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $json_response );
-			echo json_encode( $json_response );
+			$this->_json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->_json_response );
+			echo json_encode( $this->_json_response );
 			die();
-		} else {
-			// not ajax, so return TRUE to advance to next step
-			$no_errors = TRUE;
 		}
 
 		// store notices in a transient
@@ -1858,19 +1908,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} else {
 			$redirect = $this->_thank_you_page_url;
 		}
-		echo '<h4>$prev_step : ' . $prev_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$this->_next_step : ' . $this->_next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>EE_Registry::instance()->REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$this->_revisit : ' . $this->_revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$no_errors : ' . $no_errors . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$next_step : ' . $next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		echo '<h4>$redirect : ' . $redirect . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		echo '<h4>$no_errors : ' . $no_errors . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$next_step : ' . $next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$redirect : ' . $redirect . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		wp_safe_redirect( $redirect );
 		exit();
 	}
