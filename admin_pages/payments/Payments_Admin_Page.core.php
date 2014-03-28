@@ -280,7 +280,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			}			
 			add_meta_box(
 						'espresso_' . $pmt_name . '_payment_settings', //html id
-					sprintf(__('%s Settings', 'event_espresso'),$payment_method->name()), //title
+					sprintf(__('%s Settings', 'event_espresso'),$payment_method->admin_name()), //title
 					array($this, 'payment_method_settings_meta_box'), //callback
 					NULL, //post type
 					'normal',//context
@@ -290,7 +290,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					));
 			//setup for tabbed content
 			$tabs[$pmt_name] = array(
-				'label' => $payment_method->name(),
+				'label' => $payment_method->admin_name(),
 				'class' =>  $payment_method->active() ? 'gateway-active' : '',
 				'href' => 'espresso_' . $pmt_name . '_payment_settings',
 				'title' => __('Modify this Payment Method', 'event_espresso'),

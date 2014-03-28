@@ -34,14 +34,14 @@
 											class="button-primary" 
 											type="submit" 
 											name="Submit" 
-											value="<?php printf(__("Update %s Payment Settings", "event_espresso"),$payment_method->name());?>" 
+											value="<?php printf(__("Update %s Payment Settings", "event_espresso"),$payment_method->admin_name());?>" 
 											style="margin:1em 4em 2em 0"
 										/>
 							</th>
 							<td>
 								<p>
 									<a id="deactivate_<?php echo $payment_method->slug(); ?>" class="espresso-button button-secondary" type="submit" href="<?php echo $deactivate_url?>">
-										<?php printf(__("Deactivate %s Payments?", "event_espresso"),$payment_method->name()); ?>
+										<?php printf(__("Deactivate %s Payments?", "event_espresso"),$payment_method->admin_name()); ?>
 									</a>
 								</p>
 							</td>
