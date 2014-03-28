@@ -103,10 +103,25 @@
 		<div id="methods-of-payment">
 			<h3 id="select-method-of-payment-hdr"><?php _e('Please select your method of payment:', 'event_espresso'); ?></h3>
 			<?php 
-				foreach( $available_payment_methods as $available_payment_method ) {
+				foreach( $available_payment_methods as $payment_method ) {
 //					d( $available_payment_method );
-					if ( $available_payment_method instanceof EE_Payment_Method ) {
-						echo $available_payment_method->button_html( $available_payment_method->button_url() );
+					if ( $payment_method instanceof EE_Payment_Method ) {
+						echo $payment_method->button_html( $payment_method->button_url() );
+						$pm_css_class = $payment_method->open_by_default() ? '' : 'hidden';
+?>
+			<div id="reg-page-billing-info-<?php echo $payment_method->slug(); ?>-dv" class="reg-page-billing-info-dv <?php echo $pm_css_class; ?>">
+				<?php 
+				$selected_payment_method = apply_filters(
+					'FHEE__registration_page_payment_options_template__selected_payment_method', 
+					sprintf( __('You have selected "%s" as your method of payment', 'event_espresso' ), $payment_method->name() )
+				); 
+				?>
+				<h3><?php echo $selected_payment_method; ?></h3>
+				<p><?php echo $payment_method->description(); ?></p>
+				<?php echo $payment_method->type_obj()->billing_form(); ?>
+			</div>
+
+<?php						
 					}
 				}
 			 ?>
