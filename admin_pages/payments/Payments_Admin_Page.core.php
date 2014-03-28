@@ -258,7 +258,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$correct_pmt_form_to_use->receive_form_submission($this->_req_data);
 				if($correct_pmt_form_to_use->is_valid()){
 					$correct_pmt_form_to_use->save();
-					$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
+					$pm = $correct_pmt_form_to_use->get_model_object();
+					$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$pm->slug()));
 				}
 			}
 			return;

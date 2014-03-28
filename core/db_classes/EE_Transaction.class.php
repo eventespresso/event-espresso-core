@@ -577,10 +577,11 @@ class EE_Transaction extends EE_Base_Class{
 	/**
 	 * Updates the transaction's status and total_paid based on all the payments
 	 * taht apply to it
-	 * @return boolean success of the application
+	 * @param boolean $save_txn whether or not to save the transaction during this function call
+	 * @return boolean success of the application (or NULL if $save_txn = false)
 	 */
-	public function update_based_on_payments(){
-		return $this->get_model()->update_based_on_payments($this);
+	public function update_based_on_payments($save_txn = true){
+		return $this->get_model()->update_based_on_payments($this,$save_txn);
 	}
 
 
