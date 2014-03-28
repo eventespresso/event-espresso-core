@@ -398,6 +398,13 @@ class EE_Payment extends EE_Base_Class{
 	*		get Payment Status
 	* 		@access		public
 	*/
+	public function status() {
+		return $this->get('STS_ID');
+	}
+	/**
+	*		get Payment Status
+	* 		@access		public
+	*/
 	public function STS_ID() {
 		return $this->get('STS_ID');
 	}
@@ -682,6 +689,19 @@ class EE_Payment extends EE_Base_Class{
 	public function extra_meta($query_params = array()){
 		return $this->get_many_related('Extra_Meta', $query_params);
 	}
+
+
+	
+	/**
+	 * Gets the last-used payment method on this transaction
+	 * (we COULD just use the last-made payment, but some payment methods, namely
+	 * offline ones, dont' create payments)
+	 * @return EE_Payment_Method
+	 */
+	function payment_method(){
+		return $this->get_first_related('Payment_Method');
+	}
+	
 	
 	/**
 	 * Gets redirect_url
@@ -725,23 +745,26 @@ class EE_Payment extends EE_Base_Class{
 	 * @param string $inside_form_hmtl
 	 * @return string html
 	 */
-	function redirect_form($inside_form_hmtl = NULL){
-		if($this->redirect_args()){
-			$method = 'POST';
-		}else{
-			$method = 'GET';
+	function redirect_form( $inside_form_hmtl = NULL ) {
+		$redirect_url = $this->redirect_url();
+		if ( ! empty( $redirect_url )) {
+			$method = $this->redirect_args() ? 'POST' : 'GET';
+			if( $inside_form_hmtl === NULL ) {
+				$inside_form_hmtl = ee_newline(0) . '<p style="text-align:center;"><br/>';
+				$inside_form_hmtl .= ee_newline(1) . __("If you are not automatically redirected to the payment website within 10 seconds...", 'event_espresso');
+				$inside_form_hmtl .= ee_newline(0) . '<br/><br/><input type="submit" value="'.  __('Click Here', 'event_espresso').'">';
+				$inside_form_hmtl .= ee_newline(-1) . '</p>';
+			}
+			
+			$form = ee_newline(1) . '<form method="' . $method . '" name="gateway_form" action="' . $redirect_url . '">';
+			$form .= ee_newline(1) . $this->redirect_args_as_inputs();
+			$form .= $inside_form_hmtl;
+			$form .= ee_newline(-1) . '</form>' . ee_newline(-1);
+			return $form;
+		} else {
+			return NULL;
 		}
-		if($inside_form_hmtl === NULL){
-			$inside_form_hmtl = "<p style=\"text-align:center;\"><br/>";
-			$inside_form_hmtl .= __("If you are not automatically redirected to the payment website within 10 seconds...", 'event_espresso');
-			$inside_form_hmtl .= "<br/><br/>\n<input type=\"submit\" value='".  __("Click Here", 'event_espresso')."'></p>\n";
-		}
-		
-		$form = "<form method='$method' name='gateway_form' action='" . $this->redirect_url() . "'>\n";
-		$form .= $this->redirect_args_as_inputs();
-		$form .= $inside_form_hmtl;
-		$form .= "</form>\n";
-		return $form;
+
 	}
 	/**
 	 * Changes all the name-value pairs of 
@@ -749,9 +772,9 @@ class EE_Payment extends EE_Base_Class{
 	 */
 	function redirect_args_as_inputs(){
 		$html = '';
-		if($this->redirect_args() !== NULL && is_array($this->redirect_args())){
+		if( $this->redirect_args() !== NULL && is_array( $this->redirect_args() )) {
 			foreach($this->redirect_args() as $name => $value){
-				$html .= "<input type='hidden' name='$name' value='".esc_attr($value)."'/>";
+				$html .= ee_newline(0) . '<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>';
 			}
 		}
 		return $html;
