@@ -736,7 +736,6 @@ class EEH_Form_Fields {
 			$selected = $answer === NULL ? ' selected="selected"' : '';
 			$input_html .= $add_please_select_option ? "\n\t\t\t\t" . '<option value=""' . $selected . '>' . __(' - please select - ', 'event_espresso') . '</option>' : '';
 		}
-
 		foreach ( $options as $key => $value ) {
 			// if value is an array, then create option groups, else create regular ol' options
 			$input_html .= is_array( $value ) ? self::_generate_select_option_group( $key, $value, $answer ) : self::_generate_select_option( $value->value(), $value->desc(), $answer, $only_option );
@@ -1068,8 +1067,8 @@ class EEH_Form_Fields {
 			foreach( $QSOs as $key => $QSO ) {
 				if ( ! $QSO instanceof EE_Question_Option ) {
 					$QSO = EE_Question_Option::new_instance( array( 
-						'QSO_value' => isset( $QSO['id'] ) ? $QSO['id'] : $key,
-						'QSO_desc' => isset( $QSO['text'] ) ? $QSO['text'] : $QSO
+						'QSO_value' => is_array( $QSO ) && isset( $QSO['id'] ) ? (string)$QSO['id'] : (string)$key,
+						'QSO_desc' => is_array( $QSO ) && isset( $QSO['text'] ) ? (string)$QSO['text'] : (string)$QSO
 					));
 				}
 				if ( $QSO->opt_group() ) {
@@ -1236,8 +1235,8 @@ class EEH_Form_Fields {
 	public static function two_digit_months_dropdown_options() {
 		$options = array();
 		for ( $x = 1; $x <= 12; $x++ ) {
-			$mm = $x < 10 ? '0' . $x : $x;											
-			$options[ $mm ] = $mm;											
+			$mm = str_pad( $x, 2, '0', STR_PAD_LEFT );
+			$options[ (string)$mm ] = (string)$mm;											
 		}
 		return EEH_Form_Fields::prep_answer_options( $options );
 	}
@@ -1255,8 +1254,8 @@ class EEH_Form_Fields {
 		$current_year = date('y');
 		$next_decade = $current_year + 10;
 		for ( $x = $current_year; $x <= $next_decade; $x++ ) {
-			$yy = $x < 10 ? '0' . $x : $x;											
-			$options[ $yy ] = $yy;											
+			$yy = str_pad( $x, 2, '0', STR_PAD_LEFT );
+			$options[ (string)$yy ] = (string)$yy;											
 		}
 		return EEH_Form_Fields::prep_answer_options( $options );
 	}

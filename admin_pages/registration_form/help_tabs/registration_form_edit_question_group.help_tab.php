@@ -33,7 +33,7 @@
 </li>
 <li>
 <?php _e('<strong>Questions that appear in this group</strong>', 'event_espresso'); ?><br />
-<?php _e('This shows all available custom questions. If checked, then that question will appear with this question group.', 'event_espresso'); ?>
+<?php _e('This shows all available custom questions. If checked, then that question will appear with this question group. Questions that appear here can also be sorted using drag and drop.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

@@ -1,4 +1,5 @@
 <?php
+//echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
 /**
  * This template will display a single event - copy it to your theme folder
  *

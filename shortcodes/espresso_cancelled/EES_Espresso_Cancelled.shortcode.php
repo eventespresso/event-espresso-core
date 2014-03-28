@@ -60,7 +60,7 @@ class EES_Espresso_Cancelled  extends EES_Shortcode {
 	 *  @param		array 	$attributes
 	 *  @return 	void
 	 */
-	public function process_shortcode( $attributes ) {
+	public function process_shortcode( $attributes = array() ) {
 		return EE_Registry::instance()->REQ->get_output();		
 	}
 

@@ -25,7 +25,7 @@ $event_name = '';
 
 	<div class="ee-attention">
 		<div class="extra-padding">
-			<?php echo apply_filters( 'FHEE__payment_overview_template__order_conf_desc',__("Full description of your purchases and registration information. Print it, download it, cherish it") )?><br/><br/>
+			<?php echo apply_filters( 'FHEE__payment_overview_template__order_conf_desc', sprintf ( __( 'Full description of your purchases and registration information.%sPrint it, download it, cherish it' ), '<br />' ))?><br/>
 			<a class="big-text" href="<?php echo $transaction->receipt_url('html');?>"><?php _e("View Full Order Confirmation", "event_espresso");?></a>
 		</div>
 	</div>
@@ -122,7 +122,7 @@ $event_name = '';
 					<td>
 						<?php $transaction->e_pretty_status( TRUE ); 
 						if ( $show_try_pay_again_link && ! $transaction->is_completed() ) { ?>
-						 &nbsp; <span class="small-text"><a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a></span>
+						 &nbsp; <span class="small-text"><a href='<?php echo $SPCO_payment_options_url?>'><?php _e('View Payment Options', 'event_espresso'); ?></a></span>
 						<?php } ?>
 					</td>
 				</tr>

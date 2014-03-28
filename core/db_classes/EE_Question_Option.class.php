@@ -23,54 +23,67 @@
  */
 require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
 class EE_Question_Option extends EE_Soft_Delete_Base_Class{
-	
+
 	/**
 	 * Answer ID
-	 * 
+	 *
 	 * @access protected
 	 * @var int
 	 */
 	protected $_QSO_ID=FALSE;
-	
+
 	/**
 	 * Question Option description
-	 * 
+	 *
 	 * @access protected
 	 * @var string
 	 */
 	protected $_QSO_desc=FALSE;
-	
+
 	/**
 	 * Question Option Value
-	 * 
+	 *
 	 * @access protected
 	 * @var int
 	 */
 	protected $_QSO_value=FALSE;
-	
+
 	/**
 	 * Question ID
-	 * 
+	 *
 	 * @access protected
 	 * @var int
 	 */
 	protected $_QST_ID=FALSE;
-	
+
 	/**
 	 * Whether teh question has been deleted or not
 	 * @access protected
 	 * @var boolean
 	 */
 	protected $_QSO_deleted=FALSE;
-	
+
+
+
+
+	/**
+	 * The order for this Question Option when displayed
+	 *
+	 * @access protected
+	 * @var integer
+	 */
+	protected $_QSO_order = 0;
+
+
+
 	/**
 	 * Question Option Opt Group Name
-	 * 
+	 *
 	 * @access protected
 	 * @var string
 	 */
 	protected $_QSO_opt_group=NULL;
-	
+
 	/**
 	 * The question whcih relates to this question option
 	 *@access protected
@@ -79,8 +92,8 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	protected $_Question;
 
 
-	
-	
+
+
 
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
@@ -95,8 +108,8 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 		return new self( $props_n_values, TRUE );
 	}
 
-	
-	
+
+
 	/**
 	 * Sets the option's key value
 	 * @param strig $value
@@ -106,13 +119,27 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 		return $this->set('QSO_value',$value);
 	}
 	/**
-	 * Sets the option's Display Text 
+	 * Sets the option's Display Text
 	 * @param string $text
 	 * @return bool success
 	 */
 	public function set_desc($text){
 		return $this->set('QSO_desc',$text);
 	}
+
+
+	/**
+	 * Sets the order for this option
+	 *
+	 * @access public
+	 * @param integer $order
+	 * @return bool      $success
+	 */
+	public function set_order( $order ) {
+		return $this->set( 'QSO_order', $order );
+	}
+
+
 	/**
 	 * Sets the ID of the related questino
 	 * @param int $question_ID
@@ -129,7 +156,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	public function set_opt_group($text){
 		return $this->_QSO_opt_group = $text;
 	}
-	
+
 	/**
 	 * Gets the option's key value
 	 * @return string
@@ -153,6 +180,20 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	public function deleted(){
 		return $this->get('QSO_deleted');
 	}
+
+
+
+	/**
+	 * Returns the order or the Question Option
+	 *
+	 * @access public
+	 * @return integer
+	 */
+	public function order() {
+		return $this->get('QSO_option');
+	}
+
+
 	/**
 	 * Gets the related question's ID
 	 * @return int
@@ -160,7 +201,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	public function question_ID(){
 		return $this->get('QST_ID');
 	}
-	
+
 	/**
 	 * Returns the question related to this question option
 	 * @return EE_Question
@@ -168,7 +209,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	public function question(){
 		return $this->_get_first_related('Question');
 	}
-	
+
 	/**
 	 * Gets the option's opt_group
 	 * @return string
