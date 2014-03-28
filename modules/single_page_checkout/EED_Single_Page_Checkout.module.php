@@ -965,7 +965,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				EE_Registry::instance()->load_model( 'Payment_Method' );
 				// has method_of_payment been set by no-js user?
 				$payment = EE_Registry::instance()->REQ->is_set( 'payment' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'payment' )) : NULL;
-				$payment = 'paypal_standard';
+//				$payment = 'paypal_standard';
 //				$selected_method_of_payment = ! empty( $payment ) ? EE_Registry::instance()->LIB->EEM_Payment_Method->get_one_by_slug( $payment ) : NULL;
 //				$step_args['selected_method_of_payment'] = $selected_method_of_payment->slug();
 				$step_args['selected_method_of_payment'] = $payment;
@@ -1599,6 +1599,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		printr( $payment->payment_method(), '$payment->payment_method()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		
 		if ( $payment->payment_method()->type_obj() instanceof EE_PMT_Base ) {
+//echo '<h5 style="color:#2EA2CC;">payment_occurs : <span style="color:#E76700">' . $payment->payment_method()->type_obj()->payment_occurs() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 			// where does the payment take place ?
 			switch ( $payment->payment_method()->type_obj()->payment_occurs() ) {
 				
@@ -1608,7 +1609,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					if ( $this->_onsite_payment_successfull() ) {
 						$redirect_url = $payment->redirect_url();
 						$this->_thank_you_page_url = ! empty( $redirect_url ) ? $redirect_url : $this->_thank_you_page_url;
-						$this->_json_response['redirect-to-thank-you-page'] = $this->_thank_you_page_url;
+						$this->_json_response['return_data'] = array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url ); 
 						$this->_redirect_to_thank_you_page = TRUE;
 						$this->_next_step = FALSE;
 					}					
@@ -1632,6 +1633,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 
 		}
+//		printr( $this->_json_response, '$this->_json_response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// meh...why not?
 		return $payment;	
 
@@ -1857,13 +1859,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
 		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
 		$attention_msg = isset( $notices['attention'] ) ? $notices['attention'] : FALSE;
-		// set JSON response
+		// set JSON response and merge in notices
 		$this->_json_response = array_merge( $this->_json_response, $notices ); 
-		//array( 'success' => $success_msg,  'error' => $error_msg, 'attention' => $attention_msg );
-		
-//		if ( $this->_redirect_to_thank_you_page ) {
-//			$this->_json_response['redirect-to-thank-you-page'] = $this->_thank_you_page_url;
-//		}
 
 //		echo '<h4>$prev_step : ' . $prev_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$this->_current_step : ' . $this->_current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
