@@ -11,7 +11,7 @@
 		eeCenter : function( position ) {
 			position = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
 			var element_top = (( $( window ).height() / 2 ) - this.outerHeight() ) / 2;
-			element_top = position == 'fixed' ? element_top : element_top + $( window ).scrollTop();
+			element_top = position == 'fixed' ? element_top + $( window ).height() / 8 : element_top + $( window ).scrollTop();
 			element_top = Math.max( 0, element_top );
 			var element_left = ( $( window ).width() - this.outerWidth() ) / 2;
 			element_left = position == 'fixed' ? element_left : element_left + $( window ).scrollLeft();
