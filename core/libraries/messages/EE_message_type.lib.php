@@ -625,7 +625,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 				$message = $this->_setup_message_object($context, $addressee);
 				//only assign message if everything went okay
 				if ( $message )
-					$this->messages[] = $this->_setup_message_object($context, $addressee);
+					$this->messages[] = $message;
 			}
 		}
 	}

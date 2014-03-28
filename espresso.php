@@ -1,7 +1,7 @@
 <?php if ( ! defined('ABSPATH')) exit('No direct script access allowed');
 /*
-  Plugin Name: 	Event Espresso
-  Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
+  Plugin Name: Event Espresso
+  Plugin URI:  	http://wordpress.org/plugins/event-espresso-free/
   Description: 	Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
   Version: 		4.3.010.dev
   Author: 			Event Espresso

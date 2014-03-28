@@ -18,7 +18,7 @@ global $post;
 <?php 
 endif; 
 $event_phone = espresso_event_phone( $post->ID, FALSE );
-if ( espresso_event_has_content_or_excerpt() || $event_phone != '' ) : ?>
+if ( espresso_event_has_content_or_excerpt( $post->ID ) || $event_phone != '' ) : ?>
 
 	<h3 class="about-event-h3 ee-event-h3">
 		<span class="ee-icon ee-icon-event"></span><?php _e( 'Event Details', 'event_espresso' ); ?>

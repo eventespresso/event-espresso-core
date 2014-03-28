@@ -689,7 +689,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function payment_overview_url(){
-		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'payment_options', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
+		return add_query_arg( 
+			array( 
+				'ee'=>'_register', 
+				'e_reg_url_link'=>$this->reg_url_link(), 
+				'step'=>'payment_options', 
+				'revisit'=>TRUE 
+			), 
+			get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )
+		);
 	}
 	
 	
@@ -702,7 +710,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function edit_attendee_information_url(){
-		return add_query_arg( array('e_reg_url_link'=>$this->reg_url_link(), 'step'=>'attendee_information', 'revisit'=>TRUE ), get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ));
+		return add_query_arg( 
+			array( 
+				'ee'=>'_register', 
+				'e_reg_url_link'=>$this->reg_url_link(), 
+				'step'=>'attendee_information', 
+				'revisit'=>TRUE 
+			), 
+			get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )
+		);
 	}
 
 
@@ -712,13 +728,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function get_admin_edit_url() {
-		$query_args = array(
-			'page' => 'espresso_registrations',
-			'action' => 'view_registration',
-			'_REG_ID' => $this->ID()
-			);
 		EE_Registry::instance()->load_helper('URL');
-		return EEH_URL::add_query_args_and_nonce($query_args, admin_url('admin.php') );
+		return EEH_URL::add_query_args_and_nonce(
+			array(
+				'page' => 'espresso_registrations',
+				'action' => 'view_registration',
+				'_REG_ID' => $this->ID()
+			), 
+			admin_url('admin.php') 
+		);
 	}
 
 

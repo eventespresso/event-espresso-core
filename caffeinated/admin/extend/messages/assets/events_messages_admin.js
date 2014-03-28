@@ -157,6 +157,9 @@ jQuery(document).ready(function($) {
 			var dialog_container = type == 'content' ? $('.messages-change-edit-templates-content', '.ee-admin-dialog-container') : $('.ee-notices', '.ee-admin-dialog-container');
 			var content_div = where == 'main' ? main_container : dialog_container;
 
+			/** show any notices **/
+			$('.espresso-notices').show();
+
 			$('#espresso-ajax-loading').eeRemoveOverlay().hide();
 			if ( what == 'clear' ) {
 				content_div.html('');

@@ -167,7 +167,7 @@
 	 */
 	if ( ! function_exists( 'espresso_event_date' )) {
 		function espresso_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
-			echo EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID );
+			echo date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID )));
 		}		
 	}
 
@@ -228,7 +228,7 @@
 	 */
 	if ( ! function_exists( 'espresso_event_end_date' )) {
 		function espresso_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
-			echo EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID );
+			echo date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID )));
 		}		
 	}
 
@@ -240,12 +240,12 @@
 	 */
 	if ( ! function_exists( 'espresso_event_date_range' )) {
 		function espresso_event_date_range( $dt_frmt = 'M jS', $tm_frmt = ' ', $single_dt_frmt = 'D M jS @ ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
-			$the_event_date = EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID );
-			$the_event_end_date = EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID );
+			$the_event_date = date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID )));
+			$the_event_end_date = date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID )));
 			if ( $the_event_date != $the_event_end_date ) {
-				echo $the_event_date . __( ' - ', 'event_espresso' ) . EEH_Event_View::the_event_end_date( $dt_frmt . ', Y', $tm_frmt, $EVT_ID );
+				echo $the_event_date . __( ' - ', 'event_espresso' ) . date_i18n( $dt_frmt . ', Y' . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_end_date( $dt_frmt . ', Y', $tm_frmt, $EVT_ID )));
 			} else {
-				echo EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt, $EVT_ID );
+				echo date_i18n( $single_dt_frmt . ' ' . $single_tm_frmt, strtotime( EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt, $EVT_ID )));
 			}
 		}		
 	}
@@ -286,12 +286,8 @@
 	 *  @return 	boolean
 	 */
 	if ( ! function_exists( 'espresso_event_has_content_or_excerpt' )) {
-		function espresso_event_has_content_or_excerpt() {
-			global $post;
-			if ( $post instanceof WP_Post ) {
-				return $post->post_content != '' && $post->post_excerpt != '' ? TRUE : FALSE;
-			}
-			return FALSE;
+		function espresso_event_has_content_or_excerpt( $EVT_ID = FALSE ) {
+			return EEH_Event_View::event_has_content_or_excerpt( $EVT_ID );
 		}
 	}
 
@@ -555,6 +551,26 @@ class EEH_Event_View extends EEH_Base {
 
 
 	/**
+	 * 	event_has_content_or_excerpt
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function event_has_content_or_excerpt( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		$has_content_or_excerpt = FALSE;
+		if ( $event instanceof EE_Event ) {
+			$has_content_or_excerpt = $event->description() != '' || $event->short_description( NULL, NULL, TRUE ) != '' ? TRUE : FALSE;
+		}
+		if ( is_archive() && ! ( espresso_display_full_description_in_event_list() || espresso_display_excerpt_in_event_list() )) {
+			$has_content_or_excerpt = FALSE;
+		}
+		return $has_content_or_excerpt;		
+	}
+
+
+
+	/**
 	 * 	event_active_status
 	 *
 	 *  @access 	public
@@ -567,13 +583,13 @@ class EEH_Event_View extends EEH_Base {
 		
 		ob_start();
 		if (( is_single() ) || ( is_archive() && espresso_display_full_description_in_event_list() )) {
-//			echo '<h1>the_content</h1>';
+//echo '<h2 style="color:#E76700;">the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			the_content();
 		} else if (( is_archive() && has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() ) || apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) {
-//			echo '<h1>the_excerpt</h1>';
+//echo '<h2 style="color:#E76700;">the_excerpt<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			the_excerpt();
 		} else if (( is_archive() && ! has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() )) {
-//			echo '<h1>get_the_content</h1>';
+//echo '<h2 style="color:#E76700;">get_the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			if ( ! empty( $num_words )) {
 				if ( empty( $more )) {
 					$more = ' <a href="' . get_permalink() . '" class="more-link">' . __( '(more&hellip;)' ) . '</a>';
@@ -584,9 +600,10 @@ class EEH_Event_View extends EEH_Base {
 			} else {
 				$content =  get_the_content();				
 			}
-			echo apply_filters( 'the_content', $content );
+//			echo apply_filters( 'the_content', $content );
+			echo $content;
 		} else {
-//			echo '<h1>nothing</h1>';
+//echo '<h2 style="color:#E76700;">nothing<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			echo apply_filters( 'the_content', $content );			
 		}
 		return ob_get_clean();
@@ -678,8 +695,8 @@ class EEH_Event_View extends EEH_Base {
 		if ( $datetime = EEH_Event_View::get_primary_date_obj( $EVT_ID )) {
 	?>
 		<div class="event-date-calendar-page-dv">
-			<div class="event-date-calendar-page-month-dv"><?php echo $datetime->start_date('M');?></div>
-			<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date('d');?></div>
+			<div class="event-date-calendar-page-month-dv"><?php echo date_i18n( 'M', strtotime( $datetime->start_date()));?></div>
+			<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date( 'd' );?></div>
 		</div>
 	<?php	
 		}
