@@ -77,8 +77,7 @@ class EE_Payment_Processor{
 		if ( empty( $payment )) {
 			$transaction->set_status( EEM_Transaction::incomplete_status_code );
 			$transaction->save();
-			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
-			
+			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );		
 		} else {
 			$payment = EEM_Payment::instance()->ensure_is_obj( $payment, TRUE );
 			//ok, now process the transaction according to the payment
@@ -100,9 +99,13 @@ class EE_Payment_Processor{
 			throw new EE_Error(sprintf(__("Cannot get IPN URL for transaction with ID %d because it has no primary registration", "event_espresso"),$transaction->ID()));
 		}
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj($payment_method,true);
-		$url=add_query_arg(array('e_reg_url_link'=>$primary_reg->reg_url_link(),
-					'ee_payment_method'=>$payment_method->slug()),
-				get_permalink(EE_Registry::instance()->CFG->core->txn_page_id));
+		$url = add_query_arg(
+			array(
+				'e_reg_url_link'=>$primary_reg->reg_url_link(),
+				'ee_payment_method'=>$payment_method->slug()
+			),
+			EE_Registry::instance()->CFG->core->txn_page_url()
+		);
 		return $url;
 	}
 	
