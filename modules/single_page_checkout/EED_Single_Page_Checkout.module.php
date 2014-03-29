@@ -982,7 +982,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// has gateway been set by no-js user?
 				if ( EE_Registry::instance()->REQ->is_set( 'payment' )) {
 					if ( $payment = sanitize_text_field( EE_Registry::instance()->REQ->get( 'payment' ))) {
-						d( $payment );	
+//						d( $payment );	
 						if ( EE_Registry::instance()->LIB->EEM_Gateways->selected_gateway() != $payment ) {
 							EE_Registry::instance()->LIB->EEM_Gateways->set_selected_gateway( $payment );
 						} else {
