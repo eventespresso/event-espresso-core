@@ -332,7 +332,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 	 * 		@return void
 	 */
 //	public function espresso_gateway_process_step_3() {
-	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null, $total_to_charge = NULL) {
 
 		$session_data = EE_Registry::instance()->SSN->get_session_data();
 
@@ -343,8 +343,66 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		$primary_registrant = $transaction->primary_registration();
 		if ($billing_info != 'no payment required') {
 			$this->_save_billing_info_to_attendee($billing_info, $transaction);
-			$grand_total = $total_line_item->total();//$session_data['_cart_grand_total_amount'];
-			
+			$OrderItems = array();
+			if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount and nothing has been paid yet
+				$grand_total = $total_line_item->total();
+				$description = 'Event Registrations from ' . get_bloginfo('name');
+
+
+				$item_num = 1;
+				/* @var $transaction EE_Transaction */
+				foreach ($total_line_item->get_items() as $line_item) {	
+					$Item = array(
+							// Item Name.  127 char max.
+							'l_name' => substr($line_item->name(),0,127),
+							// Item description.  127 char max.
+							'l_desc' => substr($line_item->desc(),0,127),
+							// Cost of individual item.
+							'l_amt' => $line_item->unit_price(),
+							// Item Number.  127 char max.
+							'l_number' => $item_num++,
+							// Item quantity.  Must be any positive integer.
+							'l_qty' => $line_item->quantity(),
+							// Item's sales tax amount.
+							'l_taxamt' => '',
+							// eBay auction number of item.
+							'l_ebayitemnumber' => '',
+							// eBay transaction ID of purchased item.
+							'l_ebayitemauctiontxnid' => '',
+							// eBay order ID for the item.
+							'l_ebayitemorderid' => ''
+					);
+						// add to array of all items
+					array_push($OrderItems, $Item);
+				}
+				$item_amount = $total_line_item->get_items_total();
+				$tax_amount = $total_line_item->get_total_tax();
+			}else{
+				if($total_to_charge){
+					$grand_total = $total_to_charge;
+					$description = sprintf(__("Partial payment of %s", "event_espresso"),$total_to_charge);
+				}elseif($transaction->paid()){//transaction is partially paid
+					$grand_total = $transaction->remaining();
+					$description = sprintf(__("Total paid to date: %s, and this charge is for the balance.", "event_espresso"),$transaction->get_pretty('TXN_paid'));
+				}else{
+					throw new EE_Error(sprintf(__("An unexpected error has occured. Amount to charge passed to paypal was invalid'%s'", "event_espresso"),$total_line_item));
+				}
+				$item_amount = $grand_total;
+				$tax_amount = 0;
+				array_push($OrderItems,array(
+					// Item Name.  127 char max.
+							'l_name' => sprintf(__("Partial payment for registration: %s", 'event_espresso'),$primary_registrant->reg_code()),
+							// Item description.  127 char max.
+							'l_desc' => $description,
+							// Cost of individual item.
+							'l_amt' => $grand_total,
+							// Item Number.  127 char max.
+							'l_number' => 1,
+							// Item quantity.  Must be any positive integer.
+							'l_qty' => 1,
+				));
+				
+			}
 
 			// Populate data arrays with order data.
 			$DPFields = array(
@@ -422,15 +480,15 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					// Required.  Three-letter currency code.  Default is USD.
 					'currencycode' => $this->_payment_settings['currency_format'],
 					// Required if you include itemized cart details. (L_AMTn, etc.)  Subtotal of items not including S&H, or tax.
-					'itemamt' => EEH_Template::format_currency($total_line_item->get_items_total(),true),//
+					'itemamt' => EEH_Template::format_currency($item_amount,true),//
 					// Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
 					'shippingamt' => '',
 					// Total handling costs for the order.  If you specify handlingamt, you must also specify itemamt.
 					'handlingamt' => '',
 					// Required if you specify itemized cart tax details. Sum of tax for all items on the order.  Total sales tax.
-					'taxamt' => EEH_Template::format_currency($total_line_item->get_total_tax(),true),
+					'taxamt' => EEH_Template::format_currency($tax_amount,true),
 					// Description of the order the customer is purchasing.  127 char max.
-					'desc' => 'Event Registrations from ' . get_bloginfo('name'),
+					'desc' => $description,
 					// Free-form field for your own use.  256 char max.
 					'custom' => $primary_registrant ? $primary_registrant->ID() : '',
 					// Your own invoice or tracking number
@@ -441,66 +499,6 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 
 
-			$OrderItems = array();
-
-//			foreach ($reg_info['items'] as $item) {
-//				foreach ($item['attendees'] as $attendee) {
-//					$Item = array(
-//							// Item Name.  127 char max.
-//							'l_name' => $attendee['fname'] . ' ' . $attendee['lname'] . ' : ' . stripslashes($item['name']),
-//							// Item description.  127 char max.
-//							'l_desc' => $item['options']['date'] . ' ' . $item['options']['time'] . ', ' . $item['options']['price_desc'],
-//							// Cost of individual item.
-//							'l_amt' => $item['price'],
-//							// Item Number.  127 char max.
-//							'l_number' => $item['line_item'],
-//							// Item quantity.  Must be any positive integer.
-//							'l_qty' => 1,
-//							// Item's sales tax amount.
-//							'l_taxamt' => '',
-//							// eBay auction number of item.
-//							'l_ebayitemnumber' => '',
-//							// eBay transaction ID of purchased item.
-//							'l_ebayitemauctiontxnid' => '',
-//							// eBay order ID for the item.
-//							'l_ebayitemorderid' => ''
-//					);
-//					// add to array of all items
-//					array_push($OrderItems, $Item);
-//				}
-//			}
-			/////////
-			$item_num = 1;
-			/* @var $transaction EE_Transaction */
-			foreach ($total_line_item->get_items() as $line_item) {	
-				$Item = array(
-							// Item Name.  127 char max.
-							'l_name' => substr($line_item->name(),0,127),
-							// Item description.  127 char max.
-							'l_desc' => substr($line_item->desc(),0,127),
-							// Cost of individual item.
-							'l_amt' => $line_item->unit_price(),
-							// Item Number.  127 char max.
-							'l_number' => $item_num++,
-							// Item quantity.  Must be any positive integer.
-							'l_qty' => $line_item->quantity(),
-							// Item's sales tax amount.
-							'l_taxamt' => '',
-							// eBay auction number of item.
-							'l_ebayitemnumber' => '',
-							// eBay transaction ID of purchased item.
-							'l_ebayitemauctiontxnid' => '',
-							// eBay order ID for the item.
-							'l_ebayitemorderid' => ''
-					);
-					// add to array of all items
-					array_push($OrderItems, $Item);
-					
-//				$this->addLineItem(
-//						$item_num++, substr($attendee_full_name, 0, 31), substr($attendee_full_name . " attending " . $registration->event_name() . " with ticket " . $ticket->name_and_info(), 0, 255), 1, $registration->price_paid(), 'N');
-			}
-
-
 			// Wrap all data arrays into a single, "master" array which will be passed into the class function.
 			$PayPalRequestData = array(
 					'DPFields' => $DPFields,
@@ -508,11 +506,9 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					'PayerName' => $PayerName,
 					'BillingAddress' => $BillingAddress,
 					'PaymentDetails' => $PaymentDetails,
-					'OrderItems' => $OrderItems
+					'OrderItems' => $OrderItems,
 			);
-			
-			$primary_registrant = $transaction->primary_registration();
-
+//			var_dump($PayPalRequestData);die;
 			// Pass the master array into the PayPal class function
 			try{
 				$PayPalResult = $this->DoDirectPayment($PayPalRequestData);

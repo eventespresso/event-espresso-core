@@ -801,7 +801,7 @@ Class EEM_Gateways {
 	 *		@param EE_Transaction $transaction
 	 * 		@return 	mixed	void or FALSE on fail
 	 */
-	public function process_payment_start( EE_Line_Item $line_item, EE_Transaction $transaction = NULL ) {
+	public function process_payment_start( EE_Line_Item $line_item, EE_Transaction $transaction = NULL, $total_to_charge = NULL ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( empty( $transaction )){
 			$transaction = $line_item->transaction();
@@ -815,7 +815,7 @@ Class EEM_Gateways {
 			$response = array( 'msg' => array( 'success'=>TRUE ));
 		} else {
 			try{
-				$response = array( 'msg' => $this->selected_gateway_obj()->process_payment_start( $line_item, $transaction ));
+				$response = array( 'msg' => $this->selected_gateway_obj()->process_payment_start( $line_item, $transaction, $total_to_charge ));
 			} catch( EE_Error $e ) {
 				$response = array( 'msg'=>array( 'error'=>$e->getMessage() ));
 			}
