@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso 
+ * Event Espresso
  *
  * Event Registration and Management Plugin for WordPress
  *
@@ -23,120 +23,120 @@
  */
 require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
 class EE_Question extends EE_Soft_Delete_Base_Class{
-	
-	
+
+
 	/**
 	 * question's id
 	 * @access protected
 	 * @var int
 	 */
 	protected $_QST_ID=FALSE;
-	
-	
-	/** 
+
+
+	/**
 	 * how the question is displayed.eg, "What is your name?"
 	 * @access protected
 	 * @var string
 	 */
 	protected $_QST_display_text=NULL;
-	
-	
-	/** 
+
+
+	/**
 	 * An administrative label to help differentiate between two questions that have the same display text
 	 * @access protected
 	 * @var string
 	 */
 	protected $_QST_admin_label=NULL;
-	
-	
+
+
 	/**
 	 * If it's a system name, the column of the attendee column to which this question corresponds
 	 * @access protected
 	 * @var string
 	 */
 	protected $_QST_system=NULL;
-	
-	
+
+
 	/**
-	 * Whether the question's textfield, radio button list, etc.  
+	 * Whether the question's textfield, radio button list, etc.
 	 * valid values are: TEXT, TEXTAREA, SINGLE, DROPDOWN, MULTIPLE, DATE
 	 * @access protected
-	 * @var string 
+	 * @var string
 	 */
 	protected $_QST_type=NULL;
-	
-	
+
+
 	/**
 	 * Indictes whether the question must be answered if presented in a form
 	 * @access protected
 	 * @var boolean
 	 */
 	protected $_QST_required=NULL;
-	
-	
+
+
 	/**
 	 *Text to show when the field isn't entered in a form when it's required
 	 * @access protected
 	 * @var string
 	 */
 	protected $_QST_required_text=NULL;
-	
-	
+
+
 	/**
 	 * Number to indicate where this question ought to appear in the order of questions
 	 * @access protected
 	 * @var int
 	 */
 	protected $_QST_order=NULL;
-	
-	
+
+
 	/**
 	 * Indicates whether this question is for administrators only
 	 * @access protected
 	 * @var boolena
 	 */
 	protected $_QST_admin_only=NULL;
-	
+
 	/**
-	 * 
+	 *
 	 * ID of the WP USEr who created this question
 	 * @access protected
 	 * @var int
 	 */
 	protected $_QST_wp_user=NULL;
-	
+
 	/**
 	 * Boolean to indicate whether this question
 	 * has been deleted or not
 	 * @access private
-	 * @var boolean 
+	 * @var boolean
 	 */
 	protected $_QST_deleted=NULL;
-	
+
 	/**
 	 * realted answers, lazy-loaded
-	 * @var EE_Answer[] 
+	 * @var EE_Answer[]
 	 */
 	protected $_Answer;
-	
+
 	/**
 	 * related question groups, lazy-loaded
-	 * @var EE_Question_Group[] 
+	 * @var EE_Question_Group[]
 	 */
 	protected $_Question_Group;
-	
+
 	/**
 	 * related question options, lazy-loaded
-	 * @var EE_Question_Option[] 
+	 * @var EE_Question_Option[]
 	 */
 	protected $_Question_Option;
 
 
 	protected $_Question_Group_Question; //for QST_order relation
-	
 
-	
-	
+
+
+
 
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
@@ -156,48 +156,48 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		Set	Question display text
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_display_text
-	*/	
+	*/
 	public function set_display_text( $QST_display_text = FALSE ) {
 		return $this->set('QST_display_text',$QST_display_text);
 	}
-	
-	
-	
+
+
+
 	/**
 	*		Set	Question admin text
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_admin_label
-	*/	
+	*/
 	public function set_admin_label( $QST_admin_label = FALSE ) {
 		return $this->set('QST_admin_label',$QST_admin_label);
 	}
-	
-	
-	
+
+
+
 	/**
 	*		Set	system name
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_system
-	*/	
+	*/
 	public function set_system_ID( $QST_system = NULL ) {
 		return $this->set('QST_system',$QST_system);
 	}
-	
+
 	/**
 	*		Set	question's type
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_type
-	*/	
+	*/
 	public function set_question_type( $QST_type = FALSE ) {
 		return $this->set('QST_type',$QST_type);
 	}
-	
+
 	/**
 	 * Retrieves the list of allowedquestion types from the model.
 	 * @return string[]
@@ -207,63 +207,63 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 		/* @var $questionModel EEM_Question*/
 		return $questionModel->allowed_question_types();
 	}
-	
+
 	/**
 	*		Sets whether this question must be answered when presented in a form
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_required
-	*/	
+	*/
 	public function set_required( $QST_required = FALSE ) {
 		return $this->set('QST_required',$QST_required);
 	}
-	
+
 	/**
 	*		Set	Question display text
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_required_text
-	*/	
+	*/
 	public function set_required_text( $QST_required_text = FALSE ) {
 		return $this->set('QST_required_text',$QST_required_text);
 	}
-	
-	
-	
+
+
+
 	/**
 	*		Sets the order of this question when placed in a sequence of questions
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_order
-	*/	
+	*/
 	public function set_order( $QST_order = FALSE ) {
 		return $this->set('QST_order',$QST_order);
 	}
-	
-	
-	
+
+
+
 	/**
 	*		Sets whether the question is admin-only
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_admin_only
-	*/	
+	*/
 	public function set_admin_only( $QST_admin_only = FALSE ) {
 		return $this->set('QST_admin_only',$QST_admin_only);
 	}
-	
-	
-	
+
+
+
 	/**
 	*		Sets the wordpress user ID on the question
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_wp_user
-	*/	
+	*/
 	public function set_wp_user( $QST_wp_user = FALSE ) {
 		return $this->set('QST_wp_user',$QST_wp_user);
 	}
-	
+
 	/**
 	*		Sets whether teh question has been deleted
 	*		(we use this boolean isntead of actually
@@ -271,15 +271,15 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	*		they really want to remove the question from future
 	*		forms, BUT keep their old answers which depend
 	*		on this record actually existing.
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$QST_wp_user
-	*/	
+	*/
 	public function set_deleted( $QST_deleted = FALSE ) {
 		return $this->set('QST_deleted',$QST_deleted);
 	}
-	
-	
+
+
 	/**
 	 * returns the text for displaying the question to users
 	 * @access public
@@ -288,8 +288,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function display_text(){
 		return $this->get('QST_display_text');
 	}
-	
-	
+
+
 	/**
 	 * returns the text for the administrative label
 	 * @access public
@@ -298,7 +298,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function admin_label(){
 		return $this->get('QST_admin_label');
 	}
-	
+
 	/**
 	 * returns the attendee column name for this question
 	 * @access public
@@ -307,7 +307,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function system_ID(){
 		return $this->get('QST_system');
 	}
-	
+
 	/**
 	 * returns either a string of 'text', 'textfield', etc.
 	 * @access public
@@ -316,9 +316,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function required(){
 		return $this->get('QST_required');
 	}
-	
+
 	/**
-	 * returns the text which should be displayed when a user 
+	 * returns the text which should be displayed when a user
 	 * doesn't answer this question in a form
 	 * @access public
 	 * @return string
@@ -334,7 +334,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function type(){
 		return $this->get('QST_type');
 	}
-	
+
 	/**
 	 * returns an integer showing where this questino should
 	 * be placed in a sequence of questions
@@ -344,7 +344,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function order(){
 		return $this->get('QST_order');
 	}
-	
+
 	/**
 	 * returns whether this question should only appears to admins,
 	 * or to everyone
@@ -354,7 +354,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function admin_only(){
 		return $this->get('QST_admin_only');
 	}
-	
+
 	/**
 	 * returns the id the wordpress user who created this question
 	 * @access public
@@ -363,7 +363,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function wp_user(){
 		return $this->get('QST_wp_user');
 	}
-	
+
 	/**
 	 * returns whether this question has been marked as 'deleted'
 	 * @access public
@@ -372,7 +372,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function deleted(){
 		return $this->get('QST_deleted');
 	}
-	
+
 	/**
 	 * Gets an array of related EE_Answer  to this EE_Question
 	 * @return EE_Answer[]
@@ -390,7 +390,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 		return $this->count_related('Answer') > 0 ? TRUE : FALSE;
 	}
 
-	
+
 	/**
 	 * gets an array of EE_Question_Group which relate to thsi question
 	 * @return EE_Question_Group[]
@@ -398,7 +398,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	public function question_groups(){
 		return $this->get_many_related('Question_Group');
 	}
-	
+
 	/**
 	 * Returns all the options for this question. By default, it returns only the not-yet-deleted ones.
 	 * @param boolean $notDeletedOptionsOnly 1
@@ -422,6 +422,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 		if($notDeletedOptionsOnly){
 			$query_params[0]['OR*options-query']['QSO_deleted'] = false;
 		}
+
+		//order by QSO_order
+		$query_params['order_by'] = array( 'QSO_order' => 'ASC' );
 		return  $this->get_many_related('Question_Option', $query_params);
 	}
 	/**
@@ -448,7 +451,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 */
 	public function add_temp_option( EE_Question_Option $option ){
 		return $this->_Question_Option[] = $option;
-	}	
+	}
 	/**
 	 * Marks the option as deleted.
 	 * @param EE_Question_Option $option
@@ -476,6 +479,6 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 		$latest_order++;
 		$this->set('QST_order', $latest_order );
 	}
-	
+
 
 }

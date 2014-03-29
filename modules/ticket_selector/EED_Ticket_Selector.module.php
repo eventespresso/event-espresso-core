@@ -18,6 +18,11 @@ function espresso_ticket_selector( $event = NULL ) {
 		echo EED_Ticket_Selector::display_ticket_selector( $event );
 	}
 }
+function espresso_view_details_btn( $event = NULL ) {
+	if (  ! apply_filters( 'FHEE_disable_espresso_view_details_btn', FALSE ) ) {
+		echo EED_Ticket_Selector::display_ticket_selector( $event, TRUE );
+	}
+}
  /**
  * ------------------------------------------------------------------------
  *
@@ -56,7 +61,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		add_action( 'wp_loaded', array( 'EED_Ticket_Selector', 'set_definitions' ), 2 );
 		add_action( 'AHEE_event_details_before_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_open' ), 10, 1 );
 		add_action( 'AHEE_event_details_header_bottom', array( 'EED_Ticket_Selector', 'display_ticket_selector' ), 10, 1 );
-		add_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 11, 1 );
+		add_action( 'AHEE__ticket_selector_chart__template__after_ticket_selector', array( 'EED_Ticket_Selector', 'display_ticket_selector_submit' ), 10, 1 );
 		add_action( 'AHEE_event_details_after_post', array( 'EED_Ticket_Selector', 'ticket_selector_form_close' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Ticket_Selector', 'load_tckt_slctr_assets' ), 10 );
 	}
@@ -107,7 +112,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@param	object 		$event  
 	* 	@return 	string	
 	*/
-	public static function display_ticket_selector( $event = NULL ) {
+	public static function display_ticket_selector( $event = NULL, $view_details = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );	
 
 //		d( $event );
@@ -125,8 +130,8 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 		
-		if ( ! self::$_event->display_ticket_selector() ) {
-			return '';
+		if ( ! self::$_event->display_ticket_selector() || $view_details ) {
+			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
 		}
 		
 		$template_args = array();
@@ -149,7 +154,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
 
 			$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID() );
-			$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );
+			$ticket_selector .= EEH_Template::locate_template( $templates['ticket_selector'], TRUE, $template_args, TRUE );
 			$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() );
 			$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
 			
@@ -191,9 +196,10 @@ class EED_Ticket_Selector extends  EED_Module {
 	* 	@access 		public
 	* 	@return		string
 	*/	
-	public static function display_ticket_selector_submit( $ID ) {
+	public static function display_ticket_selector_submit() {
 		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) && ! is_admin() ) {
-			return '<input id="ticket-selector-submit-'. $ID .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . __('Register Now', 'event_espresso' ) . '" /><div class="clear"><br/></div>'; 
+			$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text', __('Register Now', 'event_espresso' ));
+			return '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div>'; 
 		}
 	}
 
@@ -209,6 +215,29 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/	
 	public static function ticket_selector_form_close() {
 		return '</form>';
+	}
+
+
+
+
+	
+	/**
+	* 	display_ticket_selector_submit
+	* 
+	*	@access public
+	* 	@access 		public
+	* 	@return		string
+	*/	
+	public static function display_view_details_btn() {
+		if ( ! self::$_event->get_permalink() ) {
+			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
+		$view_details_btn = '<form id="" method="POST" action="' . self::$_event->get_permalink() . '">';
+		$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_view_details_btn__btn_text', __('View Details', 'event_espresso' ));
+		$view_details_btn .= '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div>'; 
+		$view_details_btn .= '</form>';
+		return $view_details_btn;
 	}
 
 

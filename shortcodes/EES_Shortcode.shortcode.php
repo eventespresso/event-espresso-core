@@ -53,7 +53,7 @@ abstract class EES_Shortcode extends EE_Base {
 	 *  @param		array 	$attributes
 	 *  @return 	void
 	 */
-	public abstract function process_shortcode( $attributes );
+	public abstract function process_shortcode( $attributes = array() );
 
 
 	

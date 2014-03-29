@@ -45,7 +45,7 @@
 }
 
 #datetime-editing-dtts-table {
-    border-collapse: collapse; 
+    border-collapse: collapse;
 }
 
 #datetime-editing-dtts-table thead {
@@ -352,7 +352,7 @@
 
 /* Price */
 .ticket-table tbody .ticket-row td:nth-child(5) {
-    width: 10%;
+    width: 5%;
 }
 
     .ticket-table tbody .ticket-row td:nth-child(5) input {
@@ -373,7 +373,8 @@
 
 /* Actions */
 .ticket-table tbody .ticket-row td:nth-child(9) {
-    width: 15%;
+    width: 20%;
+    min-width: 120px;
 }
 
 
@@ -544,11 +545,11 @@
     .datetime-edit-table, #add-new-event-datetime-table {
         width: 100%;
     }
-    
+
     .save-cancel-button-container {
         margin-top: -10px;
     }
-    
+
     .th-adjust, #add-new-event-datetime-table {
         margin-top: 10px;
     }
@@ -630,6 +631,7 @@
 
 .ticket-fieldset .ee-price-create-button {
     margin-top: 10px;
+    float:right;
 }
 
 .available-tickets-container .ee-create-ticket-button {
@@ -646,4 +648,8 @@
 
 #event-and-ticket-form-content .dashicons, #event-and-ticket-form-content .ee-icon {
     margin-right: 0;
+}
+
+.ticket-is-required-container {
+    margin-top: 10px;
 }

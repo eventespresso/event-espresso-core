@@ -18,7 +18,7 @@
 
 	<section id="primary" class="content-area">
 		<div id="content" class="site-content" role="main">
-			<?php get_template_part( 'loop', 'espresso_venues' ); ?>			
+			<?php espresso_get_template_part( 'loop', 'espresso_venues' ); ?>			
 		</div><!-- #content -->
 	</section><!-- #primary -->
 

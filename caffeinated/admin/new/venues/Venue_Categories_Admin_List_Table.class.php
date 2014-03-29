@@ -55,7 +55,7 @@ class Venue_Categories_Admin_List_Table extends EE_Admin_List_Table {
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
 			'name' => __('Name', 'event_espresso'),
-			'shortcode' => __('Shortcode', 'event_espresso'),
+			//'shortcode' => __('Shortcode', 'event_espresso'),
 			'count' => __('Venues', 'event_espresso')
 			);
 

@@ -75,7 +75,7 @@
 <tr>
 <td>
 <h3>Connect with Us:</h3>
-<a class="soc-btn fb" href="[CO_FACEBOOK_URL]">Facebook</a> <a class="soc-btn tw" href="[CO_TWITTER_URL]">Twitter</a> <a class="soc-btn gp" href="CO_GOOGLE_URL]">Google+</a></td>
+<a class="soc-btn fb" href="[CO_FACEBOOK_URL]">Facebook</a> <a class="soc-btn tw" href="[CO_TWITTER_URL]">Twitter</a> <a class="soc-btn gp" href="[CO_GOOGLE_URL]">Google+</a></td>
 </tr>
 </tbody>
 </table>

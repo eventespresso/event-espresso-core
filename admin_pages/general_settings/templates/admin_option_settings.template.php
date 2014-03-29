@@ -127,7 +127,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 			<tr>
 				<th>
 					<label>
-						<?php _e('Link to Event Espresso from your Registration Page footer?', 'event_espresso'); ?>
+						<?php _e('Link to Event Espresso in your Registration Page?', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>

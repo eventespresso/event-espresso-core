@@ -147,7 +147,16 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			'email'=>$primary_attendee->email(),
 			'first_name'=>$primary_attendee->fname(),
 			'last_name'=>$primary_attendee->lname(),
-			'tax'=>$this->_format_float($tax_total));
+			'tax'=>$this->_format_float($tax_total)),
+			'partner_id'=>'ee');
+		foreach($total_line_item->get_items() as $line_item){
+			$order['items'][] = array(
+				'name'=>$line_item->name(),
+				'price'=>$this->_format_float($line_item->total()),
+				'sku'=>$line_item->code(),
+				'quantity'=>$line_item->quantity()
+			);
+		}
 		
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
@@ -163,21 +172,31 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			$response_body = json_decode($response['body']);
 			$this->_gatewayUrl = $response_body->checkout_url;
 			$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
-			$payment = EE_Payment::new_instance(array(
+			//chek if we already have an identical payment
+			$duplicate_properties = array(
 				'TXN_ID' => $transaction->ID(), 
 				'STS_ID' => EEM_Payment::status_id_failed, 
-				'PAY_timestamp' => $transaction->datetime(), 
 				'PAY_method' => 'CART', 
 				'PAY_amount' => $total_to_charge, 
 				'PAY_gateway' => $this->_gateway_name, 
 				'PAY_gateway_response' => null, 
-				'PAY_txn_id_chq_nmbr' => $response_body->order_number, 
 				'PAY_po_number' => NULL, 
 				'PAY_extra_accntng'=>$primary_registrant->reg_code(),
 				'PAY_via_admin' => false, 
+			);
+			$unique_properties = array(
+				'PAY_txn_id_chq_nmbr' => $response_body->order_number, 
+				'PAY_timestamp' => $transaction->datetime(), 				
 				'PAY_details' => (array)$response_body
-			));
-			$payment->save();
+			);
+			$properties = array_merge($unique_properties,$duplicate_properties);
+			$duplicate_payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
+			if($duplicate_payment){
+				$payment = $duplicate_payment; 
+			}else{
+				$payment = EE_Payment::new_instance();
+			}
+			$payment->save($properties);
 		}else{
 			throw new EE_Error(__("No response from Mijireh Gateway", 'event_espresso'));
 		}

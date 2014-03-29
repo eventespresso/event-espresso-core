@@ -74,7 +74,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @param	array 	$attributes
 	 *  @return 	void
 	 */
-	public function process_shortcode( $attributes ) {
+	public function process_shortcode( $attributes = array() ) {
 		$default_espresso_events_shortcode_atts = array(
 			'title' => NULL,
 			'limit' => 10,
