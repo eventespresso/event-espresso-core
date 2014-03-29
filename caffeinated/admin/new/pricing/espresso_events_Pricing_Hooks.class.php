@@ -479,7 +479,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 			//need to do the same for prices (except these prices can also be deleted because again, tickets can only be trashed if they don't have any TKTs sold (otherwise they are just archived))
 			$tkt_to_remove->delete_related_permanently('Price');
-			
+
 			do_action( 'AHEE__espresso_events_Pricing_Hooks___update_tkts_delete_ticket', $tkt_to_remove );
 
 			//finally let's delete this ticket (which should not be blocked at this point b/c we've removed all our relationships)
@@ -818,7 +818,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_start_date' => $default ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
 			'TKT_end_date' => $default ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ),
 			'TKT_status' => $default ? EEH_Template::pretty_status(EE_Ticket::onsale, FALSE, 'sentence') : $ticket->ticket_status(TRUE),
-			'TKT_price' => $default ? '' : EEH_Template::format_currency($ticket->get_ticket_total_with_taxes()),
+			'TKT_price' => $default ? '' : EEH_Template::format_currency($ticket->get_ticket_total_with_taxes(), FALSE, FALSE),
+			'TKT_price_code' => EE_Registry::instance()->CFG->currency->code,
 			'TKT_price_amount' => $default ? 0 : $ticket_subtotal,
 			'TKT_qty' => $default ? '' : $ticket->get_pretty('TKT_qty','symbol'),
 			'TKT_qty_for_input'=> $default ? '' : $ticket->get_pretty('TKT_qty','input'),
