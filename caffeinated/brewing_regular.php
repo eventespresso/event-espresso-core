@@ -42,10 +42,28 @@ class EE_Brewing_Regular extends EE_Base {
 			add_filter( 'FHEE__EE_Config__register_modules__modules_to_register', array( $this, 'caffeinated_modules_to_register' ));
 			// load caff scripts
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_caffeinated_scripts'), 10 );
+
+			add_filter( 'FHEE__EE_Registry__load_helper__helper_paths', array( $this, 'caf_helper_paths' ), 10 );
+
+			//Make EE Plugin API helper available
+			EE_Registry::instance()->load_helper('Plugin_API');
+
 			// caffeinated constructed
 			do_action( 'AHEE__EE_Brewing_Regular__construct__complete' );
 		}
 	}
+
+
+	/**
+	 * callback for the FHEE__EE_Registry__load_helper__helper_paths filter to add the caffeinated paths
+	 * @param array  $paths original helper paths array
+	 * @return array             new array of paths
+	 */
+	public function caf_helper_paths( $paths ) {
+		$paths[] = EE_CAF_CORE . 'helpers' . DS;
+		return $paths;
+	}
+
 
 
 	/**
