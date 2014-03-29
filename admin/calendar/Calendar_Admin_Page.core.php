@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Calendar_Admin_Page
  *
- * This contains the logic for setting up the Calendar Addon Admin related pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This contains the logic for setting up the Calendar Addon Admin related pages.  Any methods without phpdoc comments have inline docs with parent class.
  *
  *
  * @package		Calendar_Admin_Page (calendar addon)
@@ -57,7 +57,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_routes() {
-		$this->_page_routes = array(		
+		$this->_page_routes = array(
 			'default' => '_basic_settings',
 			'advanced' => '_advanced_settings',
 			'update_settings' => array(
@@ -73,13 +73,14 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_config() {
+
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
 					'label' => __('Basic Settings', 'event_espresso'),
 					'order' => 10
 					),
-				'metaboxes' => array( '_publish_post_box'),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box') ),
 				'require_nonce' => FALSE
 				),
 			'advanced' => array(
@@ -87,7 +88,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 					'label' => __('Advanced Settings', 'event_espresso'),
 					'order' => 20
 					),
-				'metaboxes' => array( '_publish_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'require_nonce' => FALSE
 				),
 			'usage' => array(
@@ -99,7 +100,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				)
 			);
 	}
-	
+
 
 	protected function _add_screen_options() {}
 	protected function _add_screen_options_default() {}
@@ -142,7 +143,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['return_action'] = $this->_req_action;
 		$this->_template_args['reset_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=> 'reset_settings','return_action'=>$this->_req_action), EE_CALENDAR_ADMIN_URL);
 		$this->_set_add_edit_form_tags( 'update_settings' );
-		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE);	
+		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE);
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . $template, $this->_template_args, TRUE );
 		$this->display_admin_page_with_sidebar();
 	}
@@ -166,7 +167,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 						if(property_exists($c,$top_level_key) && property_exists($c->$top_level_key, $second_level_key)
 							&& $second_level_value != $c->$top_level_key->$second_level_key){
 							$c->$top_level_key->$second_level_key = $this->_sanitize_config_input($top_level_key,$second_level_key,$second_level_value);
-							$count++;	
+							$count++;
 						}
 					}
 				}else{
@@ -175,13 +176,13 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 						$count++;
 					}
 				}
-			}	
+			}
 		}
 		EE_Config::instance()->addons['calendar'] = $c;
 		EE_Config::instance()->update_espresso_config();
 		$this->_redirect_after_action($count, 'Settings', 'updated', array('action' => $this->_req_data['return_action']));
 	}
-	
+
 	/**
 	 * resets the calend data and redirects to where they came from
 	 */
@@ -245,10 +246,10 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 			)
 			);
 		$sanitization_method = NULL;
-		if(isset($sanitization_methods[$top_level_key]) && 
-				$second_level_key === NULL && 
+		if(isset($sanitization_methods[$top_level_key]) &&
+				$second_level_key === NULL &&
 				! is_array($sanitization_methods[$top_level_key]) ){
-			$sanitization_method = $sanitization_methods[$top_level_key];	
+			$sanitization_method = $sanitization_methods[$top_level_key];
 		}elseif(is_array($sanitization_methods[$top_level_key]) && isset($sanitization_methods[$top_level_key][$second_level_key])){
 			$sanitization_method = $sanitization_methods[$top_level_key][$second_level_key];
 		}
@@ -266,12 +267,12 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				$input_name = $second_level_key == NULL ? $top_level_key : $top_level_key."[".$second_level_key."]";
 				EE_Error::add_error(sprintf(__("Could not sanitize input '%s' because it has no entry in our sanitization methods array", "event_espresso"),$input_name));
 				return NULL;
-			
+
 		}
 	}
-		
-		
-	
-	
+
+
+
+
 
 } //ends Forms_Admin_Page class
