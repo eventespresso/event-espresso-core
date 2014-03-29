@@ -157,13 +157,11 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args['SPCO_attendee_information_url'] =$primary_registrant ? $primary_registrant->edit_attendee_information_url() : FALSE;
 			$template_args['gateway_content'] = '';			
 			//create a hackey payment object, but dont save it
-			$gateway_name = $this->_current_txn->get_extra_meta('gateway', true,  __("Unknown", "event_espresso"));
 			$payment = EE_Payment::new_instance( array(
 				'TXN_ID'=>$this->_current_txn->ID(), 
 				'STS_ID'=>EEM_Payment::status_id_pending, 
 				'PAY_timestamp'=>current_time('timestamp'), 
-				'PAY_amount'=>$this->_current_txn->total(), 
-				'PAY_gateway'=>$gateway_name
+				'PAY_amount'=>$this->_current_txn->total()
 			));
 
 			$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name,$payment );
