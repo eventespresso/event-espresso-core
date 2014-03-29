@@ -32,27 +32,27 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 		$this->_qtipsa = array(
 			2 => array(
 				'content_id' => 'dtt-evt-name-label',
-				'target' => '.event-datetime-DTT_name_label',
+				'target' => '.DTT_name_label',
 				'content' => $this->_get_event_name_label_info()
 				),
 			3 => array(
 				'content_id' => 'dtt-evt-start-label',
-				'target' => '.event-datetime-DTT_EVT_start_label',
+				'target' => '.DTT_EVT_start_label',
 				'content' => $this->_get_event_start_label_info()
 				),
 			5 => array(
 				'content_id' => 'dtt-evt-end-label',
-				'target' => '.event-datetime-DTT_EVT_end_label',
+				'target' => '.DTT_EVT_end_label',
 				'content' => $this->_get_event_end_label_info()
 				),
 			10 => array(
 				'content_id' => 'dtt-reg-limit-label',
-				'target' => '.event-datetime-DTT_reg_limit_label',
+				'target' => '.DTT_reg_limit_label',
 				'content' => $this->_get_event_datetime_DTT_reg_limit_label_info()
 				),
 			15 => array(
 				'content_id' => 'dtt-sold-label',
-				'target' => '.event-datetime-DTT_sold_label',
+				'target' => '.DTT_sold_label',
 				'content' => $this->_get_event_datetime_DTT_sold_label_info()
 				),
 			20 => array(
