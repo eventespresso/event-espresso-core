@@ -148,83 +148,83 @@ class EE_Event_Editor_Decaf_Tips extends EE_Qtip_Config {
 			130 => array(
 				'content_id' => 'ticket-lock-icon',
 				'target' => '.ticket-archived .ee-lock-icon',
-				'content' => __('<p>This ticket was automatically locked and archived because it has a sold quantity and the price was modified. Existing ticket holders will still be verified using these ticket details. However, Event Espresso has automatically created a new active ticket with the modified price for new registrants. This lock is meant to prevent accidental trashing of this ticket. Certain details of this ticket can still be edited (non disabled inputs).</p>', 'event_espresso')
+				'content' => __('This ticket was automatically locked and archived because it has a sold quantity and the price was modified. Existing ticket holders will still be verified using these ticket details. However, Event Espresso has automatically created a new active ticket with the modified price for new registrants. This lock is meant to prevent accidental trashing of this ticket. Certain details of this ticket can still be edited (non disabled inputs).', 'event_espresso')
 				),
             135 => array(
 				'content_id' => 'ticket-lock-icon-event-editor',
 				'target' => '.ee-lock-icon',
-				'content' => __('<p>This datetime can no longer be duplicated or deleted because tickets associated with this datetime have already been sold.</p>', 'event_espresso')
+				'content' => __('This datetime can no longer be duplicated or deleted because tickets associated with this datetime have already been sold.', 'event_espresso')
 				)
 			);
 	}
 
 	private function _get_event_name_label_info() {
-		return '<p>' . __('This is the name or title for an event datetime.', 'event_espresso') . '</p>';
+		return __('This is the name or title for an event datetime.', 'event_espresso');
 	}
 	private function _get_event_start_label_info() {
-		return '<p>' . __('This shows when this event datetime starts.', 'event_espresso') . '</p>';
+		return __('This shows when this event datetime starts.', 'event_espresso');
 	}
 	private function _get_event_end_label_info() {
-		return '<p>' . __('This shows when this event datetime ends.', 'event_espresso') . '</p>';
+		return __('This shows when this event datetime ends.', 'event_espresso');
 	}
 	private function _get_event_datetime_DTT_reg_limit_label_info() {
-		return '<p>' . __('This field allows you to set a maximum number of tickets that you want to make available for an event datetime.', 'event_espresso') . '</p>';
+		return __('This field allows you to set a maximum number of tickets that you want to make available for an event datetime.', 'event_espresso');
 	}
 	private function _get_event_datetime_DTT_sold_label_info() {
-		return '<p>' . __('This shows the number of tickets that have been sold that have access to this event datetime.', 'event_espresso') . '</p>';
+		return __('This shows the number of tickets that have been sold that have access to this event datetime.', 'event_espresso');
 	}
 	private function _get_event_ticket_TKT_name_label_info() {
-		return '<p>' . __('This is the name of this ticket option.', 'event_espresso') . '</p>';
+		return __('This is the name of this ticket option.', 'event_espresso');
 	}
 	private function _get_event_ticket_TKT_goes_on_sale_label_info() {
-		return '<p>' . __('This shows when the first ticket is available for sale.', 'event_espresso') . '</p>';
+		return __('This shows when the first ticket is available for sale.', 'event_espresso');
 	}
 	private function _get_event_ticket_TKT_sell_until_label_info() {
-		return '<p>' . __('This shows the date that ticket sales end for this ticket.', 'event_espresso') . '</p>';
+		return __('This shows the date that ticket sales end for this ticket.', 'event_espresso');
 	}
 	private function _get_event_ticket_TKT_price_label_info() {
-		return '<p>' . __('This is the price for this ticket.', 'event_espresso') . '</p>';
+		return __('This is the price for this ticket.', 'event_espresso');
 	}
 	private function _get_event_ticket_TKT_qty_label_info() {
-		return '<p>' . __('This field shows the quantity of tickets that are available for this type of ticket.', 'event_espresso') . '</p>';
+		return __('This field shows the quantity of tickets that are available for this type of ticket.', 'event_espresso');
 	}
 	private function _get_event_ticket_TKT_sold_label_info() {
-		return '<p>' . __('This shows the number of tickets that have been sold for this ticket.', 'event_espresso') . '</p>';
+		return __('This shows the number of tickets that have been sold for this ticket.', 'event_espresso');
 	}
 	private function _get_event_ticket_TKT_regs_label_info() {
-		return '<p>' . __('This shows the number of registrations that have occurred from ticket sales.', 'event_espresso') . '</p>';
+		return __('This shows the number of registrations that have occurred from ticket sales.', 'event_espresso');
 	}
 	private function _get_event_ticket_ANT_TKT_name_label_info() {
-		return '<p>' . __('This is the name of this ticket option.', 'event_espresso') . '</p>';
+		return __('This is the name of this ticket option.', 'event_espresso');
 	}
 	private function _get_event_ticket_ANT_TKT_goes_on_sale_label_info() {
-		return '<p>' . __('This shows when the first ticket is available for sale.', 'event_espresso') . '</p>';
+		return __('This shows when the first ticket is available for sale.', 'event_espresso');
 	}
 	private function _get_event_ticket_ANT_TKT_sell_until_label_info() {
-		return '<p>' . __('This shows the date that ticket sales end for this ticket.', 'event_espresso') . '</p>';
+		return __('This shows the date that ticket sales end for this ticket.', 'event_espresso');
 	}
 	private function _get_event_ticket_ANT_TKT_price_label_info() {
-		return '<p>' . __('This is the price for this ticket.', 'event_espresso') . '</p>';
+		return __('This is the price for this ticket.', 'event_espresso');
 	}
 	private function _get_event_ticket_ANT_TKT_qty_label_info() {
-		return '<p>' . __('This field shows the quantity of tickets that are available for this type of ticket.', 'event_espresso') . '</p>';
+		return __('This field shows the quantity of tickets that are available for this type of ticket.', 'event_espresso');
 	}
 	private function _get_add_new_event_start_label_info() {
-		return '<p>' . __('This shows when this event datetime starts.', 'event_espresso') . '</p>';
+		return __('This shows when this event datetime starts.', 'event_espresso');
 	}
 	private function _get_add_new_event_end_label_info() {
-		return '<p>' . __('This shows when this event datetime ends.', 'event_espresso') . '</p>';
+		return __('This shows when this event datetime ends.', 'event_espresso');
 	}
 	private function _get_add_new_event_datetime_DTT_reg_limit_label_info() {
-		return '<p>' . __('This field allows you to set a maximum number of tickets that you want to make available for an event datetime.', 'event_espresso') . '</p>';
+		return __('This field allows you to set a maximum number of tickets that you want to make available for an event datetime.', 'event_espresso');
 	}
 	private function _get_event_ticket_TD_TKT_number_datetimes_label_info() {
-		return '<p>' . __('This field allows you to set the number of datetimes that a ticket should have access to.', 'event_espresso') . '</p>';
+		return __('This field allows you to set the number of datetimes that a ticket should have access to.', 'event_espresso');
 	}
 	private function _get_event_ticket_TD_TKT_min_qty_label_info() {
-		return '<p>' . __('This shows the minimum quantity that can be purchased for this ticket.', 'event_espresso') . '</p>';
+		return __('This shows the minimum quantity that can be purchased for this ticket.', 'event_espresso');
 	}
 	private function _get_event_ticket_TD_TKT_max_qty_label_info() {
-		return '<p>' . __('This shows the maximum quantity that can be purchased for this ticket.', 'event_espresso') . '</p>';
+		return __('This shows the maximum quantity that can be purchased for this ticket.', 'event_espresso');
 	}
 }
