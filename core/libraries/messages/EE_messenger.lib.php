@@ -219,7 +219,14 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array
 	 */
 	public function get_default_message_types() {
-		return $this->_default_message_types;
+		$class = get_class( $this );
+
+		//messenger specific filter
+		$default_types = apply_filters( 'FHEE__' . $class . '__get_default_message_types__default_types', $this->_default_message_types, $this );
+
+		//all messengers filter
+		$default_types = apply_filters( 'FHEE__EE_messenger__get_default_message_types__default_types', $default_types, $this );
+		return $default_types;
 	}
 
 
