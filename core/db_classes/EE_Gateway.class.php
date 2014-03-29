@@ -124,9 +124,10 @@ abstract class EE_Gateway {
 	/**
 	 * @param EE_Line_item $line_item
 	 * @param EE_Transaction $transaction
+	 * @param float $total_to_charge if different from the amoutn remaining
 	 * @return array with either index 'success' in case of success, 'error' in case of error
 	 */
-	public function process_payment_start(EE_Line_Item $line_item, $transaction = null){
+	public function process_payment_start(EE_Line_Item $line_item, $transaction = null,$total_to_charge = NULL){
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return array('success'=>TRUE);
 	}

@@ -103,7 +103,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 	 * @param string $transaction
 	 * @throws EE_Error
 	 */
-	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null, $total_to_charge = null) {
 		$mijireh_settings = $this->_payment_settings;
 		$access_key = $mijireh_settings['access_key'];
 				
@@ -114,14 +114,40 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		//get any of the current registrations, 
 		$primary_registrant = $transaction->primary_registration();
 		$primary_attendee = $primary_registrant->attendee();
+		$items = array();
+		//if we're are charging for the full amount, show the normal line items
+		if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount
+			$total_to_charge = $transaction->total();
+			$tax_total = $total_line_item->get_total_tax();
+			foreach($total_line_item->get_items() as $line_item){
+				$items[] = array(
+					'name'=>$line_item->name(),
+					'price'=>$this->_format_float($line_item->total()),
+					'sku'=>$line_item->code(),
+					'quantity'=>$line_item->quantity()
+				);
+			}
+		}else{//its a partial payment
+			if( ! $total_to_charge){//they didn't set teh total to charge, so it must have a balance
+				$total_to_charge = $transaction->remaining();
+			}
+			$tax_total = 0;
+			//partial payment, so just add 1 item
+			$items[] = array(
+				'name'=>  sprintf(__("Partial payment for registration %s", 'event_espresso'),$primary_registrant->reg_code()),
+				'price'=> $this->_format_float($total_to_charge),
+				'sku'=>$primary_registrant->reg_code(),
+				'quantity'=>1
+			);
+		}
 		$order = array(
-			'total'=>$this->_format_float($transaction->total()),
+			'total'=>$this->_format_float($total_to_charge),
 			'return_url'=>$this->_get_return_url($primary_registrant),
-			'items'=>array(),
+			'items'=>$items,
 			'email'=>$primary_attendee->email(),
 			'first_name'=>$primary_attendee->fname(),
 			'last_name'=>$primary_attendee->lname(),
-			'tax'=>$this->_format_float($total_line_item->get_total_tax()),
+			'tax'=>$this->_format_float($tax_total)),
 			'partner_id'=>'ee');
 		foreach($total_line_item->get_items() as $line_item){
 			$order['items'][] = array(
@@ -151,7 +177,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				'TXN_ID' => $transaction->ID(), 
 				'STS_ID' => EEM_Payment::status_id_failed, 
 				'PAY_method' => 'CART', 
-				'PAY_amount' => $transaction->total(), 
+				'PAY_amount' => $total_to_charge, 
 				'PAY_gateway' => $this->_gateway_name, 
 				'PAY_gateway_response' => null, 
 				'PAY_po_number' => NULL, 

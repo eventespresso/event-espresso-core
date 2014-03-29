@@ -40,40 +40,40 @@ class Registration_Form_Edit_Question_Group_Help_Tour extends EE_Help_Tour {
 				'content' => $this->_start(),
 				),
 			20 => array(
-				/*'id' => 'QSG_name',*/
+				'id' => 'QSG_name',
 				'content' => $this->_qsg_name_stop(),
-				/*'options' => array(
+				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentX' => 0,
 					'tipAdjustmentY' => -35
-					)*/
+					)
 				),
 			30 => array(
-				/*'id' => 'QSG_identifier',*/
+				'id' => 'QSG_identifier',
 				'content' => $this->_qsg_identifier_stop(),
-				/*'options' => array(
+				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentX' => 0,
 					'tipAdjustmentY' => -35
-					)*/
+					)
 				),
 			40 => array(
-				/*'id' => 'QSG_desc',*/
+				'id' => 'QSG_desc',
 				'content' => $this->_qsg_desc_stop(),
-				/*'options' => array(
+				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentX' => 0,
 					'tipAdjustmentY' => -35
-					)*/
+					)
 				),
 			50 => array(
-				/*'id' => 'QSG_order',*/
+				'id' => 'QSG_order',
 				'content' => $this->_qsg_order_stop(),
-				/*'options' => array(
+				'options' => array(
 					'tipLocation' => 'top',
 					'tipAdjustmentX' => -20,
 					'tipAdjustmentY' => -35
-					)*/
+					)
 				),
 			60 => array(
 				'id' => 'QSG_show_group_name',
@@ -99,25 +99,25 @@ class Registration_Form_Edit_Question_Group_Help_Tour extends EE_Help_Tour {
 
 	protected function _start() {
 		$content = '<h3>' . __('Edit Question Group', 'event_espresso') . '</h3>';
-		$content .= '<p>' . __('This tour of the Edit Question group page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
+		$content .= '<p>' . __('This tour of the Edit Question Group page will go over different areas of the screen to help you understand what they are used for.', 'event_espresso') . '</p>';
 		
 		return $content;
 	}
 
 	protected function _qsg_name_stop() {
-		return '<p>' . __('Group name: The name of the question group.', 'event_espresso') . '</p>';
+		return '<p>' . __('The name of the question group.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qsg_identifier_stop() {
-		return '<p>' . __('Group identifier: A unique name for your question group.', 'event_espresso') . '</p>';
+		return '<p>' . __('A unique name for your question group.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qsg_desc_stop() {
-		return '<p>' . __('Group description: A description of the question group.', 'event_espresso') . '</p>';
+		return '<p>' . __('A description of the question group.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qsg_order_stop() {
-		return '<p>' . __('Question group order: Set the order that you want your question group to appear in.', 'event_espresso') . '</p>';
+		return '<p>' . __('Set the order that you want your question group to appear in.', 'event_espresso') . '</p>';
 	}
 
 	protected function _qsg_show_group_name_stop() {

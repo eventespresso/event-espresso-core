@@ -327,66 +327,39 @@ class EEM_Event  extends EEM_CPT_Base{
 		if ( !empty( $qgs ) ) {
 			foreach ( $qgs as $qg ) {
 			 	$qsts = $qg->questions();
+			 	$questions[ $qg->ID() ] = $qg->model_field_array();
+			 	$questions[ $qg->ID() ]['QSG_questions'] = array();
 			 	foreach ( $qsts as $qst ) {
 			 		if ( $qst->is_system_question() )
 			 			continue;
 			 		$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID' => $qst->ID(), 'REG_ID' => $registration->ID() ) ) );
-		 			$QSTs[$qst->ID()]['obj'] = $qst;
-		 			$QSTs[$qst->ID()]['ans_obj'] = $answer instanceof EE_Answer ? $answer : EEM_Answer::instance()->create_default_object();
+			 		$answer = $answer instanceof EE_Answer ? $answer : EEM_Answer::instance()->create_default_object();
+			 		$qst_name = $qstn_id = $qst->ID();
+			 		$ans_id = $answer->ID();
+			 		$qst_name = !empty( $ans_id ) ?  '[' . $qst_name . '][' . $ans_id . ']' : '[' . $qst_name . ']';
+			 		$input_name = '';
+			 		$input_id = sanitize_key( $qst->display_text() );
+			 		$input_class = '';
+			 		$questions[$qg->ID()]['QSG_questions'][$qst->ID()] = $qst->model_field_array();
+		 			$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_input_name'] = 'qstn' . $input_name . $qst_name;
+					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_input_id'] = $input_id . '-' . $qstn_id;
+					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_input_class'] = $input_class;
+					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_options'] = array();
+					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['qst_obj'] = $qst;
+					$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['ans_obj'] = $answer;
 
-			 	}
-
-			 	$QSGs[$qg->ID()] = $qg;
-			}
-		}
-
-		// now interlace everything into one big array where quetions groups have questions and questions have options
-
-		if ( is_array( $QSGs )) {
-			foreach ( $QSGs as $QSG_ID => $QSG ) {
-				$questions[ $QSG_ID ] = $QSG->model_field_array();
-				$questions[ $QSG_ID ]['QSG_questions'] = array();
-
-				if ( is_array( $QSTs )) {
-					foreach ( $QSTs as $QST ) {
-						$ANS = $QST['ans_obj'];
-						$QST = $QST['obj'];
-						$ans_id = $ANS->ID();
-						if ( $QST->get_first_related( 'Question_Group' )->ID() == $QSG_ID ) {
-
-							$qst_name = $qstn_id = $QST->is_system_question() ? $QST->system_ID() : $QST->ID();
-							//echo '<h4>$qst_name : ' . $qst_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-
-							$qst_name = ! empty( $ans_id ) ? '[' . $qst_name . '][' . $ans_id . ']' : '[' . $qst_name . ']';
-							//echo '<h4>$qst_name : ' . $qst_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-							$input_name = '';
-							$input_id = sanitize_key( $QST->display_text() );
-							$input_class = '';
-
-							//printr( $QST, '$QST  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ] = $QST->model_field_array();
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_input_name'] = 'qstn' . $input_name . $qst_name;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_input_id'] = $input_id . '-' . $qstn_id;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_input_class'] = $input_class;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_options'] = array();
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['qst_obj'] = $QST;
-							$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['ans_obj'] = $ANS;
-
-							if ( $QST->type() == 'SINGLE' || $QST->type() == 'MULTIPLE' || $QST->type() == 'DROPDOWN' ) {
-								$QSOs = $QST->options(TRUE,$ANS->value());
-								if ( is_array( $QSOs ) ) {
-									foreach ( $QSOs as $QSO_ID => $QSO ) {
-										$questions[ $QSG_ID ]['QSG_questions'][ $QST->ID() ]['QST_options'][ $QSO_ID ] = $QSO->model_field_array();
-									}
-								}
+					if ( $qst->type() == 'SINGLE' || $qst->type() == 'MULTIPLE' || $qst->type() == 'DROPDOWN' ) {
+						$QSOs = $qst->options(TRUE,$answer->value());
+						if ( is_array( $QSOs ) ) {
+							foreach ( $QSOs as $QSO_ID => $QSO ) {
+								$questions[ $qg->ID() ]['QSG_questions'][ $qst->ID() ]['QST_options'][ $QSO_ID ] = $QSO->model_field_array();
 							}
 						}
 					}
-				}
+
+			 	}
 			}
 		}
-
-
 		return $questions;
 	}
 

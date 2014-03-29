@@ -849,20 +849,42 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 //		d($additional_event_attendees);
 		$template_args['additional_event_attendees'] = $additional_event_attendees;
-
-		$grand_total = $this->_cart->get_cart_grand_total();
-		$grand_total = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__grand_total', $grand_total );
-		$template_args['grand_total'] = EEH_Template::format_currency( $grand_total );
-
+		// total monies paid to date
+		$total_payments = 0;
+		// the original total
 		$cart_total_before_tax = $this->_cart->get_cart_total_before_tax();
+		// get cart total
+		$grand_total = $this->_cart->get_cart_grand_total();
+		$template_args['grand_total'] = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__grand_total', $grand_total );
+		// check if monies are potentially owing
 		$template_args['payment_required'] = $cart_total_before_tax > 0 ? $payment_required : FALSE;
-		if ( ! $template_args['payment_required'] ) {
+		// not a free event?
+		if ( $template_args['payment_required'] ) { 
+			//check for any previous payments
+			if ( $template_args['payments'] = $this->_transaction->approved_payments() ) {
+				foreach ( $template_args['payments'] as $payment ) {
+					if ( $payment instanceof EE_Payment ) {
+						// increment total payments
+						$total_payments += $payment->amount();
+					}
+				}
+				$template_args['pay_date_frmt'] = get_option('date_format') . ' ' . get_option('time_format');
+			}	
+		} else {			
 			//unset( self::$_reg_steps['payment_options'] );
 			EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => 'no payment required' ));
+			$template_args['payments'] = array();
 		}
-		$template_args['sub_total'] = EEH_Template::format_currency( $cart_total_before_tax );
+		
+		$template_args['sub_total'] = $cart_total_before_tax;
 		$template_args['taxes'] = $this->_cart->get_taxes_line_item()->children();
 
+		// what's left to pay?
+		$amount_owing = $grand_total - $total_payments;
+		$template_args['amount_owing'] = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__amount_owing', $amount_owing );
+		
+		//$template_args['grand_total'] = $template_args['amount_owing'] !== FALSE ? $amount_owing : $grand_total;
+		
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 //	d( $event_queue );
 		$template_args['event_queue'] = $event_queue;
@@ -959,13 +981,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				EE_Registry::instance()->load_model( 'Gateways' );
 				// has gateway been set by no-js user?
 				if ( EE_Registry::instance()->REQ->is_set( 'payment' )) {
-					$payment = sanitize_text_field( EE_Registry::instance()->REQ->get( 'payment' ));
-				}
-				if ( ! empty( $payment )) {
-					if ( EE_Registry::instance()->LIB->EEM_Gateways->selected_gateway() != $payment ) {
-						EE_Registry::instance()->LIB->EEM_Gateways->set_selected_gateway( $payment );
-					} else {
-						EE_Registry::instance()->LIB->EEM_Gateways->unset_selected_gateway( $payment );
+					if ( $payment = sanitize_text_field( EE_Registry::instance()->REQ->get( 'payment' ))) {
+//						d( $payment );	
+						if ( EE_Registry::instance()->LIB->EEM_Gateways->selected_gateway() != $payment ) {
+							EE_Registry::instance()->LIB->EEM_Gateways->set_selected_gateway( $payment );
+						} else {
+							EE_Registry::instance()->LIB->EEM_Gateways->unset_selected_gateway( $payment );
+						}
 					}
 				}
 				$step_args['selected_gateway'] = EE_Registry::instance()->LIB->EEM_Gateways->selected_gateway();
@@ -976,7 +998,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			printr( $step_args, '$step_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 //			d( $step_args );
-			$registration_steps .= EEH_Template::display_template( $this->_templates[ $reg_step_details['template'] ], $step_args, TRUE);
+			$registration_steps .= EEH_Template::locate_template( $this->_templates[ $reg_step_details['template'] ], TRUE, $step_args, TRUE );
 			// pass step info to js
 			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step_details['display_func'];
 			next( self::$_reg_steps );
@@ -995,7 +1017,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'empty_msg' => apply_filters( 'FHEE__Single_Page_Checkout__registration_checkout__empty_msg', __( 'You need to select at least one event before you can proceed with the registration process.', 'event_espresso' ) )
 		);
 //		d( $wrapper_args );
-		EE_Registry::instance()->REQ->add_output( EEH_Template::display_template( $this->_templates['registration_page_wrapper'], $wrapper_args, TRUE ));
+		EE_Registry::instance()->REQ->add_output( EEH_Template::locate_template( $this->_templates['registration_page_wrapper'], TRUE, $wrapper_args, TRUE ));
 	}
 
 
@@ -1601,7 +1623,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
 			// attempt to perform transaction via payment gateway
-			$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
+			$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction );
 			$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ));
 
 			if ( isset( $response['msg']['success'] )) {
@@ -1618,7 +1640,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					exit();
 				}
 			} else {
-				$error_msg = $response['msg']['error'];
+				EE_Error::add_error( $response['msg']['error'],__FILE__,__FUNCTION__,__LINE__);
 			}
 		}
 		$this->go_to_next_step( __FUNCTION__ ); //, $callback = FALSE, $callback_param = FALSE
@@ -1643,6 +1665,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 		// save everything
 		if ( $this->_continue_reg && $this->_save_all_registration_information() ) {
+//			echo '<h2 style="color:#E76700;">_process_finalize_registration<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			// save TXN data to the cart
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 
@@ -1650,6 +1673,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			// if Default REG Status is set to REQUIRES APPROVAL... then payments are NOT allowed
 			if ( EE_Registry::instance()->REQ->is_set('selected_gateway') && EE_Registry::instance()->REQ->get('selected_gateway') == 'payments_closed' ) {
+//				echo '<h2 style="color:#E76700;">payments_closed<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 				// set TXN Status to Open
 				$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$this->_transaction->save();
@@ -1669,32 +1693,33 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// Default REG Status is set to PENDING PAYMENT OR APPROVED, and payments are allowed
 			} else {
 				// attempt to perform transaction via payment gateway
-				$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction, $this->_reg_url_link );
+				$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction );
 				$this->_thank_you_page_url = $response['forward_url'];
 			}
-
-
+						
 			if ( isset( $response['msg']['success'] )) {
 				$response_data = array(
 					'success' => $response['msg']['success'],
 					'return_data' => array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url )
 				);
 				$response_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $response_data );
+//				printr( $response_data, '$response_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//				echo '<h4>thank_you_page_url : ' . $this->_thank_you_page_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+				
 				if ( EE_Registry::instance()->REQ->front_ajax ) {
 					echo json_encode( $response_data );
 					die();
 				} else {
-//					printr( $response_data, '$response_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-//					echo '<h4>$this->_thank_you_page_url : ' . $this->_thank_you_page_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 					wp_safe_redirect( $this->_thank_you_page_url );
 					exit();
 				}
 
 			} else {
-				$error_msg = $response['msg']['error'];
+				EE_Error::add_error( $response['msg']['error'], __FILE__, __FUNCTION__, __LINE__ );
 			}
-		}
-
+//			printr( $response, '$response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		} 
+		
 		$this->go_to_next_step( __FUNCTION__ );
 
 	}

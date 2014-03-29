@@ -99,7 +99,7 @@
 				</button>
 				<div class="ticket-is-required-container">
 					<input type="checkbox" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_required]" class="edit-ticket-TKT_required" value="1"<?php echo $TKT_required ? ' checked="checked"' : ''; ?><?php echo $disabled ? ' disabled' : ''; ?>>
-					<label for="edit-ticket-TKT_required"><?php _e('Should this ticket be required?', 'event_espresso'); ?></label>
+					<label for="edit-ticket-TKT_required"><?php _e('This ticket is required.', 'event_espresso'); ?></label>
 				</div>
 				<div class="ticket-is-taxable-container">
 					<?php if ( !empty($tax_rows) ) { ?>
@@ -154,7 +154,7 @@
 								<span id="price-total-amount-<?php echo $tkt_row; ?>"><?php echo $TKT_price; ?></span>
 								<input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_price]" class="edit-ticket-TKT_price" value="<?php echo $TKT_price_amount; ?>">
 							</td>
-							<td></td>
+							<td><?php echo $TKT_price_code; ?></td>
 							<td><input type="hidden" name="price_total_rows_ticket[<?php echo $tkt_row; ?>]" id="price-total-rows-<?php echo $tkt_row; ?>" value="<?php echo $total_price_rows; ?>"></td>
 						</tr>
 					</tfoot>

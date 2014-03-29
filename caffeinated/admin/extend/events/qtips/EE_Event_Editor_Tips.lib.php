@@ -54,32 +54,32 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config {
 			1 => array(
 				'content_id' => 'ticket-icon-help',
 				'target' => '.ticket-icon',
-				'content' => '<p>' . __('Assigned Tickets', 'event_espresso') . '</p>'
+				'content' => __('Assigned Tickets', 'event_espresso')
 				),
 			2 => array(
 				'content_id' => 'clone-icon-help',
 				'target' => '.clone-icon',
-				'content' => '<p>' . __('Duplicate this Item', 'event_espresso') . '</p>'
+				'content' => __('Duplicate this Item', 'event_espresso')
 				),
 			3 => array(
 				'content_id' => 'trash-datetime-help',
 				'target' => '.datetime-edit-table .trash-icon',
-				'content' => '<p>' . __('Trash Datetime', 'event_espresso') . '</p>'
+				'content' => __('Trash Datetime', 'event_espresso')
 				),
 			4 => array(
 				'content_id' => 'trash-ticket-help',
 				'target' => '.ticket-row .trash-icon',
-				'content' => '<p>' . __('Trash Ticket', 'event_espresso') . '</p>'
+				'content' => __('Trash Ticket', 'event_espresso')
 				),
 			5 => array(
 				'content_id' => 'trash-price-modifier-help',
 				'target' => '.ticket-price-rows .trash-icon',
-				'content' => '<p>' . __('Trash Price Modifier', 'event_espresso') . '</p>'
+				'content' => __('Trash Price Modifier', 'event_espresso')
 				),
 			6 => array(
 				'content_id' => 'gear-icon-help',
 				'target' => '.gear-icon',
-				'content' => '<p>' . __('Advanced Settings', 'event_espresso') . '</p>'
+				'content' =>  __('Advanced Settings', 'event_espresso')
 				),
 			7 => array(
 				'content_id' => 'tkt-status-archived',
@@ -147,9 +147,22 @@ class EE_Event_Editor_Tips extends EE_Qtip_Config {
 					)
 				),
 			12 => array(
-				'content_id' => 'sortable-drag-handle-tip',
-				'target' => '.sortable-drag-handle',
-				'content' => __('You can click and drag this element', 'event_espresso'),
+				'content_id' => 'sortable-tkt-drag-handle-tip',
+				'target' => '.ee-ticket-sortable .sortable-drag-handle',
+				'content' => __('Click and drag-n-drop to reorder tickets.', 'event_espresso'),
+				'options' => array(
+					'position' => array(
+						'adjust' => array(
+							'mouse' => false,
+							'y' => 5
+							)
+						)
+					)
+				),
+			13 => array(
+				'content_id' => 'sortable-dtt-drag-handle-tip',
+				'target' => '.ee-dtt-sortable .sortable-drag-handle',
+				'content' => __('Click and drag-n-drop to reorder datetimes.', 'event_espresso'),
 				'options' => array(
 					'position' => array(
 						'adjust' => array(
