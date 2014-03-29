@@ -24,7 +24,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-Class EE_Paypal_Standard extends EE_Offsite_Gateway {
+Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 
 	private static $_instance = NULL;
 

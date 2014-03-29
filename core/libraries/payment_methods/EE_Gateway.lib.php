@@ -43,13 +43,6 @@ abstract class EE_Gateway{
 	 */
 	protected $_supports_receiving_refunds = false;
 	/**
-	 * Simple key-value pairs containing all the gateway's settings.
-	 * In EE, this will be all the payment method's fields (but removing the 'PMD_' prefix), and all the
-	 * extra meta entries' keys.
-	 * @var array
-	 */
-	protected $_settings = array();
-	/**
 	 * 
 	 */
 	public function __construct(){
@@ -84,9 +77,16 @@ abstract class EE_Gateway{
 	public function do_direct_refund($payment,$refund_info = null){
 		return NULL;
 	}
-	
-	public function _set_settings($settings_array){
-		$this->_settings = $settings_array;
+	/**
+	 * Sets the paymetn method's settings so the gateway knows where to send the request
+	 * etc
+	 * @param array $settings_array
+	 */
+	public function set_settings($settings_array){
+		foreach($settings_array as $name => $value){
+			$property_name = "_".$name;
+			$this->$property_name = $value;
+		}
 	}
 	
 	

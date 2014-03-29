@@ -64,7 +64,7 @@ abstract class EE_PMT_Base{
 		$this->_pm_instance = $payment_method_instance;
 		$this->settings_form()->populate_model_obj($payment_method_instance);
 		if($this->_gateway && $this->_gateway instanceof EE_Gateway){
-			$this->_gateway->_set_settings($payment_method_instance->settings_array());
+			$this->_gateway->set_settings($payment_method_instance->settings_array());
 		}
 	}
 	//two forms
