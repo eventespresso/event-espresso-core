@@ -883,12 +883,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		$template_args['sub_total'] = $cart_total_before_tax;
 		$template_args['taxes'] = $this->_cart->get_taxes_line_item()->children();
-		
-		EE_Registry::instance()->SSN->set_session_data( array( 'payment_amount' => $grand_total ));
 
 		// what's left to pay?
 		$amount_owing = $grand_total - $total_payments;
 		$template_args['amount_owing'] = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__amount_owing', $amount_owing );
+		
+		EE_Registry::instance()->SSN->set_session_data( array( 'payment_amount' => $amount_owing ));
 		
 		//$template_args['grand_total'] = $template_args['amount_owing'] !== FALSE ? $amount_owing : $grand_total;
 		
