@@ -70,8 +70,12 @@ class EEH_Plugin_API {
             'config' => $config
             );
 
-        add_filter('FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( 'EEH_Plugin_API', 'set_page_basename' ), 10 );
-        add_filter('FHEE__EEH_Autoloader__load_admin_core', array( 'EEH_Plugin_API', 'set_page_path' ), 10 );
+        //add filters but only if they haven't already been added otherwise we'll get duplicate filters added - not good.
+        if ( ! has_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( 'EEH_Plugin_API', 'set_page_basename') ) ) {
+
+            add_filter('FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( 'EEH_Plugin_API', 'set_page_basename' ), 10 );
+            add_filter('FHEE__EEH_Autoloader__load_admin_core', array( 'EEH_Plugin_API', 'set_page_path' ), 10 );
+        }
 
     }
 
@@ -137,10 +141,12 @@ class EEH_Plugin_API {
             'messengers_to_activate_with' => (array) $messengers_to_activate_with
             );
 
-        //hook into related filters
-        add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EE_Plugin_API', 'register_messagetype_files'), 10, 2 );
-        add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EE_Plugin_API', 'register_mt_autoload_paths'), 10 );
-        add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EE_Plugin_API', 'register_messengers_to_activate_mt_with'), 10, 2 );
+        //add filters but only if they haven't already been added otherwise we'll get duplicate filters added - not good.
+        if ( ! has_filter( 'FHEE__EE_messages__get_installed__messagetype_files', array( 'EEH_Plugin_API', 'register_messagetype_files') ) ) {
+            add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EE_Plugin_API', 'register_messagetype_files'), 10, 2 );
+            add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EE_Plugin_API', 'register_mt_autoload_paths'), 10 );
+            add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EE_Plugin_API', 'register_messengers_to_activate_mt_with'), 10, 2 );
+        }
     }
 
 
