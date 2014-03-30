@@ -75,11 +75,6 @@ class EE_Newsletter_message_type extends EE_message_type {
 
         foreach ( $this->_contexts as $context => $details ) {
             $tcontent[$context]['main'] = $content;
-            $tcontent[$context]['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/templates/newsletter-message-type-attendee-list.template.php', TRUE );
-            $tcontent[$context]['event_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/templates/newsletter-message-type-event-list.template.php', TRUE );
-            $tcontent[$context]['ticket_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/templates/newsletter-message-type-ticket-list.template.php', TRUE );
-            $tcontent[$context]['datetime_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/templates/newsletter-message-type-datetime-list.template.php', TRUE );
-            $tcontent[$context]['datetime_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/templates/newsletter-message-type-question-list.template.php', TRUE );
         }
 
 
@@ -101,6 +96,33 @@ class EE_Newsletter_message_type extends EE_message_type {
                 'description' => __('This template goes to selected registrants.')
                 )
             );
+    }
+
+
+
+
+    /**
+     * used to set the valid shortcodes.
+     *
+     * For the newsletter message type we only have two valid shortcode libraries in use, recipient details and organization.  That's it!
+     *
+     * @since   4.4.0
+     *
+     * @return  void
+     */
+    protected function _set_valid_shortcodes() {
+        parent::_set_valid_shortcodes();
+
+        $included_shortcodes = array(
+            'recipient_details', 'organization'
+            );
+
+        foreach ( $this->_valid_shortcodes as $context => $shortcodes ) {
+            foreach ( $shortcodes as $key => $shortcode ) {
+                if ( !in_array( $shortcode, $included_shortcodes ) )
+                    unset( $this->_valid_shortcodes[$context][$key] );
+            }
+        }
     }
 
 
