@@ -35,6 +35,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	 * @return string
 	 */
 	protected function _display_options($options){
+		EE_Registry::instance()->load_helper('Formatter');
 		$html = '';
 		foreach($options as $value => $display_text){
 			$cntr = 0;
@@ -45,10 +46,10 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 			}
 			$tabs = $cntr == 0 ? 1 : 0;
 			$value = esc_attr($value);
-			$html.= ee_newline($tabs) . "<option value='$value' $selected_attr>$display_text</option>";
+			$html.= EEH_Formatter::nl($tabs) . "<option value='$value' $selected_attr>$display_text</option>";
 			$cntr++;
 		}
-		$html.= ee_newline(-1) . "</select>";
+		$html.= EEH_Formatter::nl(-1) . "</select>";
 		return $html;
 	}
 }

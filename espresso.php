@@ -220,17 +220,3 @@ function espresso_load_required( $classname, $full_path_to_file ) {
 espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 EE_System::instance();
 
-/**
- * no I don't think this should neessarily stay here. but just placing here until brent
- * decides where he wants it so that it's easily accessible (do a global search ot see where its used).
- * @return string - newline character plus # of indents passed (can be + or -)
- */
-function ee_newline( $indent = 0 ) {
-	static $tabs = 0;
-	$tabs += $indent;		
-	$html = EENL;
-	for ( $x = 0; $x <= $tabs; $x++ ) {
-		$html .= "\t";
-	}
-	return $html;
-}

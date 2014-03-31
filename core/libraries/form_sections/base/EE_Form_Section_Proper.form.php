@@ -44,6 +44,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * <li>and parent's keys too</li></ul>
 	 */
 	public function __construct($options_array = array()){
+		EE_Registry::instance()->load_helper('Formatter');
 		//call parent first, as it may be setting the name
 		parent::__construct($options_array);
 		$this->_set_default_name_if_empty();
@@ -253,7 +254,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @return string
 	 */
 	public function form_open( $action = NULL, $method = 'POST', $other_attributes = '' ) {
-		return ee_newline(1) . '<form id="ee-' . $this->html_id() . '-form" action="' . $action . '" method="' . $method . '"' . $other_attributes . '>';
+		return EEH_Formatter::nl(1) . '<form id="ee-' . $this->html_id() . '-form" action="' . $action . '" method="' . $method . '"' . $other_attributes . '>';
 	}
 	
 	/**
@@ -262,7 +263,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 */
 	public function form_submit_button( $value = 'Update', $primary = TRUE, $btn_size = 'large', $other_attributes = '' ) {
 		$primary = $primary === TRUE ? 'primary' : 'secondary';
-		return ee_newline() . '<input id="ee-' . $this->html_id() . '-submit" class="button button-' . $primary . ' button-' . $btn_size . '" type="submit" value="' . $value . '" name="ee_' . $this->html_id() . '_submit" ' . $other_attributes . '/>';
+		return EEH_Formatter::nl() . '<input id="ee-' . $this->html_id() . '-submit" class="button button-' . $primary . ' button-' . $btn_size . '" type="submit" value="' . $value . '" name="ee_' . $this->html_id() . '_submit" ' . $other_attributes . '/>';
 	}
 	
 	/**
@@ -270,7 +271,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @return string
 	 */
 	public function form_close() {
-		return ee_newline(-1) . '</form>' . ee_newline() . '<!-- end of ee-' . $this->html_id() . '-form -->' . ee_newline();
+		return EEH_Formatter::nl(-1) . '</form>' . EEH_Formatter::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_Formatter::nl();
 	}
 
 	

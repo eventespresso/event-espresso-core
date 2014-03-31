@@ -463,6 +463,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					QSO_value VARCHAR(100) NOT NULL ,
 					QSO_desc TEXT NOT NULL ,
 					QST_ID INT UNSIGNED NOT NULL ,
+					QSO_order INT UNSIGNED NOT NULL DEFAULT 0,
 					QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
 					PRIMARY KEY  (QSO_ID)";
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');

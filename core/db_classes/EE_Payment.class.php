@@ -748,18 +748,19 @@ class EE_Payment extends EE_Base_Class{
 	function redirect_form( $inside_form_hmtl = NULL ) {
 		$redirect_url = $this->redirect_url();
 		if ( ! empty( $redirect_url )) {
+			EE_Registry::instance()->load_helper('Formatter');
 			$method = $this->redirect_args() ? 'POST' : 'GET';
 			if( $inside_form_hmtl === NULL ) {
-				$inside_form_hmtl = ee_newline(0) . '<p style="text-align:center;"><br/>';
-				$inside_form_hmtl .= ee_newline(1) . __("If you are not automatically redirected to the payment website within 10 seconds...", 'event_espresso');
-				$inside_form_hmtl .= ee_newline(0) . '<br/><br/><input type="submit" value="'.  __('Click Here', 'event_espresso').'">';
-				$inside_form_hmtl .= ee_newline(-1) . '</p>';
+				$inside_form_hmtl = EEH_Formatter::nl(0) . '<p style="text-align:center;"><br/>';
+				$inside_form_hmtl .= EEH_Formatter::nl(1) . __("If you are not automatically redirected to the payment website within 10 seconds...", 'event_espresso');
+				$inside_form_hmtl .= EEH_Formatter::nl(0) . '<br/><br/><input type="submit" value="'.  __('Click Here', 'event_espresso').'">';
+				$inside_form_hmtl .= EEH_Formatter::nl(-1) . '</p>';
 			}
 			
-			$form = ee_newline(1) . '<form method="' . $method . '" name="gateway_form" action="' . $redirect_url . '">';
-			$form .= ee_newline(1) . $this->redirect_args_as_inputs();
+			$form = EEH_Formatter::nl(1) . '<form method="' . $method . '" name="gateway_form" action="' . $redirect_url . '">';
+			$form .= EEH_Formatter::nl(1) . $this->redirect_args_as_inputs();
 			$form .= $inside_form_hmtl;
-			$form .= ee_newline(-1) . '</form>' . ee_newline(-1);
+			$form .= EEH_Formatter::nl(-1) . '</form>' . EEH_Formatter::nl(-1);
 			return $form;
 		} else {
 			return NULL;
@@ -773,8 +774,9 @@ class EE_Payment extends EE_Base_Class{
 	function redirect_args_as_inputs(){
 		$html = '';
 		if( $this->redirect_args() !== NULL && is_array( $this->redirect_args() )) {
+			EE_Registry::instance()->load_helper('Formatter');
 			foreach($this->redirect_args() as $name => $value){
-				$html .= ee_newline(0) . '<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>';
+				$html .= EEH_Formatter::nl(0) . '<input type="hidden" name="' . $name . '" value="' . esc_attr( $value ) . '"/>';
 			}
 		}
 		return $html;

@@ -122,6 +122,20 @@ class EEH_Formatter {
 			return date_i18n( $format, strtotime( $date )); 
 		}
 	}
+	
+	/**
+	 * return a newline and tabs ("nl" stands for "new line")
+	* @return string - newline character plus # of indents passed (can be + or -)
+	*/
+   public static function nl( $indent = 0 ) {
+	   static $tabs = 0;
+	   $tabs += $indent;		
+	   $html = EENL;
+	   for ( $x = 0; $x <= $tabs; $x++ ) {
+		   $html .= "\t";
+	   }
+	   return $html;
+   }
 
 
 
