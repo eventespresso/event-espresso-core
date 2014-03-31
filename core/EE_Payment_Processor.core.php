@@ -64,17 +64,16 @@ class EE_Payment_Processor{
 	 * @param float $amount if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
 	 * @param array $billing_info array of simple-key-value-pairs for cc details, billing address, etc
 	 * @param string $success_url string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
-	 * @param string $fail_url similar to $success_url, except used by some gateways in case of failure
 	 * @param string $method like 'CART', indicates who the client who called this was
 	 * @param boolean $save_txn whether or not to save the transaction as part of this function call
 	 * @return EE_Payment
 	 * @throws EE_Error (espeically if the specified payment method's type is no longer defined)
 	 */
-	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_info = NULL, $success_url = NULL, $fail_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
+	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_info = NULL, $success_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$transaction->set_payment_method_ID($payment_method->ID());
-		$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_info, $success_url, $fail_url, $method, $by_admin );
+		$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_info, $success_url, $method, $by_admin );
 		if ( empty( $payment )) {
 			$transaction->set_status( EEM_Transaction::incomplete_status_code );
 			if($save_txn) $transaction->save();

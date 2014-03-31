@@ -99,14 +99,12 @@ abstract class EE_PMT_Base{
 	 * @param EE_Transaction $transaction
 	 * @param type $amount
 	 * @param type $billing_info
-	 * @param type $success_url
-	 * @param type $fail_url
+	 * @param type $return_url
 	 * @param type $method
 	 * @param type $by_admin
 	 * @throws EE_Error
 	 */
-	function process_payment( $transaction, $amount = NULL, $billing_info = NULL, $success_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
-		//@todo: add surcharge for the payment method, if any
+	function process_payment( $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){		//@todo: add surcharge for the payment method, if any
 		if($this->_gateway){
 			//there is a gateway, so we're going to create a payment object
 			$payment = EE_Payment::new_instance(array(
@@ -123,7 +121,7 @@ abstract class EE_PMT_Base{
 								'PAY_via_admin' => $by_admin,
 								'PAY_details' => NULL));
 			if($this->_gateway instanceof EE_Offsite_Gateway){
-				$payment = $this->_gateway->set_redirection_info($payment,$billing_info,$success_url,$fail_url);
+				$payment = $this->_gateway->set_redirection_info($payment,$billing_info,$return_url,EE_Config::instance()->core->cancel_page_url());
 			}elseif($this->_gateway instanceof EE_Onsite_Gateway){
 				$payment = $this->_gateway->do_direct_payment($payment,$billing_info);
 				$payment->save();

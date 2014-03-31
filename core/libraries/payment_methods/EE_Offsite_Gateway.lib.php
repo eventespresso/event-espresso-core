@@ -31,7 +31,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	}
 	/**
 	 * @param EE_Payment $payment to process
-	 * @param string $success_url URL to send the user to after a successful payment on the payment provider's website
+	 * @param string $return_url URL to send the user to after a successful payment on the payment provider's website
 	 * @param string $fail_url URL to send the user to after a failed payment attempt on teh payment provider's website
 	 * @param string $cancel_url URL to send the user to after a cancelled payment attempt on teh payment provider's website
 	 * @param boolean $send_full_itemized_list whether or not to try itemizing all the items purchased when
@@ -40,7 +40,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	 * so its usually set to FALSE in that case
 	 * @return EE_Payment
 	 */
-	public abstract function set_redirection_info($payment,$billing_info = array(),$success_url = NULL, $fail_url = NULL, $cancel_url = NULL);
+	public abstract function set_redirection_info($payment,$billing_info = array(),$return_url = NULL, $cancel_url = NULL);
 	/**
 	 * Often used for IPNs. But applies the info in $update_info to the payment.
 	 * What is $update_info? Often the contents of $_REQUEST, but not necessarily. Whatever
