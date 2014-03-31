@@ -430,15 +430,3 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	}
 }
 	
-/**
- * @return string - newline character plus # of indents passed (can be + or -)
- */
-function ee_newline( $indent = 0 ) {
-	static $tabs = 0;
-	$tabs += $indent;		
-	$html = EENL;
-	for ( $x = 0; $x <= $tabs; $x++ ) {
-		$html .= "\t";
-	}
-	return $html;
-}

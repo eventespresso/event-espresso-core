@@ -114,49 +114,35 @@ class EE_Payment_Processor{
 	 * Process the IPN. Firstly, we'll hope we put the standard args into the IPN URL so 
 	 * we can easily find what registration the IPN is for and what paymetn method.
 	 * However, if not, we'll give all payment methods a chance to claim it and process it.
-	 * @param EE_Transaction $transaction optional
+	 * @param EE_Transaction $transaction optional (or a transactions id)
+	 * @param EE_Payment_Method $payment_method (or a slug or id of one)
 	 * @return EE_Payment
 	 * @throws EE_Error
 	 */
-	public function process_ipn( $_req_data, $transaction = NULL ){
+	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL ){
 		//do_action('AHEE__log',__FILE__,__FUNCTION__,  sprintf("Logged IPN for payment method %s, registration_url_link '%s'", ))
+		wp_mail('michael@eventespresso.com', 'ipn received', print_r($_req_data,true)."<hr>".print_r($transaction)."<hr>".print_r($payment_method));
 		try{
 			$payment = NULL;
-			//payment processor knows who this is for!
-			if ( $transaction instanceof EE_Transaction ){
-				// get EE_Payment_Method object
-				$payment_method = $transaction->payment_method();
-				// verify $payment_method
-				if ( $payment_method instanceof EE_Payment_Method ) {
-					// and verify it has a valid Payment_Method Type object
-					if ( $payment_method->type_obj() instanceof EE_PMT_Base ) {
+			if($transaction && $payment_method){
+				$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
+				$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
+				if ( $payment_method->type_obj() instanceof EE_PMT_Base ) {
 						$payment = $payment_method->type_obj()->handle_ipn( $_req_data, $transaction );
-					} else {
-						// not a payment
-						EE_Error::add_error( 
-							sprintf( 
-								__( 'A valid payment method could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.', 'event_espresso' ),
-								'<br/>',
-								EE_Registry::instance()->CFG->organization->email 
-							), 
-							__FILE__, __FUNCTION__, __LINE__ 
-						);			
-					}
-
 				} else {
 					// not a payment
 					EE_Error::add_error( 
 						sprintf( 
-							__( 'The transaction\'s method of payment could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.', 'event_espresso' ),
+							__( 'A valid payment method could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.', 'event_espresso' ),
 							'<br/>',
 							EE_Registry::instance()->CFG->organization->email 
 						), 
 						__FILE__, __FUNCTION__, __LINE__ 
 					);			
 				}
-				
-			} else {
-				// ya... payment processor doesn't have enough info to figure out who this ipn is for
+			}else{
+				//that's actually pretty ok. The IPN just wasn't able
+				//to identify which transaction or payment method this was for
 				// give all active payment methods a chance to claim it
 				$active_pms = EEM_Payment_Method::instance()->get_all_active();
 				foreach( $active_pms as $payment_method ){
@@ -167,6 +153,7 @@ class EE_Payment_Processor{
 						//that's fine- it apparently couldn't handle the IPN
 					}
 				}
+				
 			}
 			return $payment;
 			

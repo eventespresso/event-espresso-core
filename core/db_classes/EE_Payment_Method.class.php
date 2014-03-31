@@ -408,12 +408,12 @@ class EE_Payment_Method extends EE_Base_Class{
 		//remove the model's prefix from the fields
 		$combined_settings_array = array();
 		foreach($fields as $key => $value){
-			if(strpos($key, 'PMD_')!==FALSE){
+			if(strpos($key, 'PMD_')===0){
 				$key_sans_model_prefix = str_replace('PMD_', '', $key);
 				$combined_settings_array [$key_sans_model_prefix] = $value;
 			}
 		}
-		$combined_settings_array = array_merge($extra_metas,$fields);
+		$combined_settings_array = array_merge($extra_metas,$combined_settings_array);
 		return $combined_settings_array;
 	}
 	
