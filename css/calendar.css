@@ -33,7 +33,7 @@ General Styles
 
 #espresso_calendar {
 	position: relative !important;
-	z-index: 100;
+	z-index: 1;
 	margin: 1em 0 0;
 	width: 100% !important;
 }
