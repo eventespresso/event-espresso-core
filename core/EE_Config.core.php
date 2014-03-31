@@ -858,27 +858,38 @@ class EE_Core_Config extends EE_Config_Base {
 	}
 	/**
 	 *  gets/returns URL for EE txn_page
+	 * @param array $query_args like what gets passed to
+	 * add_query_arg() as the first argument
 	 *
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public function txn_page_url() {
+	public function txn_page_url($query_args = array()) {
 		if ( ! $this->txn_page_url ) {
 			$this->txn_page_url = get_permalink( $this->txn_page_id );
 		}
-		return $this->txn_page_url;
+		if($query_args){
+			return add_query_arg($query_args,$this->thank_you_page_url);
+		}else{
+			return $this->txn_page_url;
+		}
 	}
 	/**
 	 *  gets/returns URL for EE thank_you_page
-	 *
+	 *  @param array $query_args like what gets passed to
+	 * add_query_arg() as the first argument
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public function thank_you_page_url() {
+	public function thank_you_page_url($query_args = array()) {
 		if ( ! $this->thank_you_page_url ) {
 			$this->thank_you_page_url = get_permalink( $this->thank_you_page_id );
 		}
-		return $this->thank_you_page_url;
+		if($query_args){
+			return add_query_arg($query_args,$this->thank_you_page_url);
+		}else{
+			return $this->thank_you_page_url;
+		}
 	}
 	/**
 	 *  gets/returns URL for EE cancel_page
