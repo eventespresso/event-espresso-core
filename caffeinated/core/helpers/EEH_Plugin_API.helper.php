@@ -1,6 +1,6 @@
 <?php
 /**
- * This file contains the EE_Plugin_API helper class.
+ * This file contains the EEH_Plugin_API helper class.
  * @package      Event Espresso
  * @subpackage helpers
  * @since           4.4.0
@@ -116,36 +116,70 @@ class EEH_Plugin_API {
      *
      * @since   4.4.0
      *
-     * @param  string $mtname                               Whatever is defined for the $name property
-     *                                                                       of the message type you are registering (eg.
-     *                                                                       declined_registration)
-     * @param  string $mtfilename                          The filename of the message type being
-     *                                                                       registered.  This will be the main
-     *                                                                       EE_{Messagetype_Name}_message_type class. (
-     *                                                                       eg. EE_Declined_Registration_message_type.
-     *                                                                       class.php)
-     * @param  array  $autoloadpaths                      An array of paths to add to the messages
-     *                                                                       autoloader for the new message type.
-     * @param  array  $messengers_to_activate_with  An array of messengers that this message
-     *                                                                         type should activate with. Each value in the
-     *                                                                         array should match the name property of a
-     *                                                                         EE_messenger.
+     * @param  array  $setup_args  {
+     *        An array of arguments provided for registering the message type.
+     *
+     *        @type string $mtname                               Whatever is defined for the $name property of
+     *                                                                          the message type you are registering (eg.
+     *                                                                          declined_registration). Required.
+     *        @type string $mtfilename                          The filename of the message type being
+     *                                                                          registered.  This will be the main
+     *                                                                          EE_{Messagetype_Name}_message_type class. (
+     *                                                                          eg. EE_Declined_Registration_message_type.
+     *                                                                          class.php). Required.
+     *        @type array $autoloadpaths                       An array of paths to add to the messages
+     *                                                                          autoloader for the new message type. Required.
+     *        @type array $messengers_to_activate_with An array of messengers that this message
+     *                                                                          type should activate with. Each value in the
+     *                                                                          array should match the name property of a
+     *                                                                          EE_messenger. Optional.
+     *        @type array $template_fields {
+     *              An array of arguments for any extra template fields this message type needs to
+     *              register. Each key in the array corresponds to the name of the messenger the field is
+     *              used with.
+     *              @type array $messenger {
+     *                    Each key in this array corresponds to the name of the field being added.  Note,
+     *                    that it's possible this could be a nested array itself (e.g.
+     *                    ['extra']['content']['some_list'])
+     *                    @type array $fieldname {
+     *                          @see EEH_Form_Fields::get_form_fields() for detailed descripion the keys.
+     *                          @type string $input                         What type of input ('textarea', 'text' etc.)
+     *                          @type string $label                         What is used for the label of the field.
+     *                          @type string $type                          Data type for the field
+     *                          @type bool   $required                    If required.
+     *                          @type bool   $validation                  Do validation?
+     *                          @type string $format                      '%s' or '%d' or '%f'
+     *                          @type string $css_class                   what to use for css class
+     *                          @type string $rows                         If text area then how many rows?
+     *                          @type array  $shortcodes_required An array of shortcodes that must be
+     *                                                                                available for this template in order for this
+     *                                                                                field to show.
+     *                    }
+     *              }
+     *        }
+     * }
      * @return void
      */
-    public static function register_new_message_type( $mtname= '', $mtfilename = '', $autoloadpaths = array(), $messengers_to_activate_with = array()  ) {
+    public static function register_new_message_type( $setup_args = array()  ) {
+        //required fields MUST be present, so let's make sure they are.
+        if ( ! is_array( $setup_args ) || empty( $setup_args['mtname'] ) || empty( $setup_args['mtfilename'] ) || empty( $setup_args['autoload_paths'] ) )
+            throw new EE_Error( __( 'In order to register a message type with EEH_Plugin_API::register_new_message_type, you must include an array that contains the following keys: "mtname", "mtfilename", "autoload_paths"', 'event_espresso' ) );
+
+        $mtname = (string) $setup_args['mtname'];
         //setup $__ee_message_type_registry array from incoming values.
-        self::$_ee_message_type_registry[] = array(
-            'mtname' => (string) $mtname,
-            'mtfilename' => (string) $mtfilename,
-            'autoloadpaths' => (array) $autoloadpaths,
-            'messengers_to_activate_with' => (array) $messengers_to_activate_with
+        self::$_ee_message_type_registry[$mtname] = array(
+            'mtfilename' => (string) $setup_args['mtfilename'],
+            'autoloadpaths' => (array) $setup_args['autoloadpaths'],
+            'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array(),
+            'template_fields' => ! empty( $setup_args['template_fields'] ) ? (array) $setup_args['template_fields'] : array();
             );
 
         //add filters but only if they haven't already been added otherwise we'll get duplicate filters added - not good.
         if ( ! has_filter( 'FHEE__EE_messages__get_installed__messagetype_files', array( 'EEH_Plugin_API', 'register_messagetype_files') ) ) {
-            add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EE_Plugin_API', 'register_messagetype_files'), 10, 2 );
-            add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EE_Plugin_API', 'register_mt_autoload_paths'), 10 );
-            add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EE_Plugin_API', 'register_messengers_to_activate_mt_with'), 10, 2 );
+            add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EEH_Plugin_API', 'register_messagetype_files'), 10, 2 );
+            add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EEH_Plugin_API', 'register_mt_autoload_paths'), 10 );
+            add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EEH_Plugin_API', 'register_messengers_to_activate_mt_with'), 10, 2 );
+            add_filter( 'FHEE__EE_messenger__get_template_fields', array( 'EEH_Plugin_API', 'register_messenger_template_fields'), 10, 2 );
         }
     }
 
@@ -218,19 +252,48 @@ class EEH_Plugin_API {
         if ( empty( self::$_ee_message_type_registry ) )
             return $default_types;
 
-        foreach ( self::$_ee_message_type_registry as $mt_reg ) {
+        foreach ( self::$_ee_message_type_registry as $mtname => $mt_reg ) {
             if ( empty( $mt_reg['messengers_to_activate_with'] ) || empty( $mt_reg['mtfilenames'] ) )
                 continue;
 
             //loop through each of the messengers and if it matches the loaded class then we add this message type to the
             foreach ( $mt_reg['messengers_to_activate_with'] as $msgr ) {
                 if ( $messenger->name == $msgr ) {
-                    $default_types[] = $mt_reg['mtname'];
+                    $default_types[] = $mtname;
                 }
             }
         }
 
         return $default_types;
+    }
+
+
+
+    /**
+     * callback for FHEE__EE_messenger__get_template_fields filter.
+     *
+     * This is used to add any additional template fields to the messenger for template generation.
+     *
+     * @since    4.4.0
+     *
+     * @param  array               $template_fields the original array of template fields.
+     * @param  EE_messenger $messenger        EE_messenger object.
+     * @return  array                                          new array of template fields.
+     */
+    public static function register_messenger_template_fields( $template_fields, EE_messenger $messenger ) {
+        if ( empty( self::$_ee_message_type_registry ) )
+            return $template_fields;
+
+        //loop through each registry item and if there is a template_field array matching this messenger then we add fields.
+        foreach ( self::$_ee_message_type_registry as $mtname => $mtreg ) {
+            if ( empty( $mtreg['template_fields'] ) )
+                continue;
+            foreach ( $mtreg['template_fields'] as $msgr_name => $new_fields ) {
+                if ($msgr_name == $messenger->name )
+                    $template_fields = array_merge( $template_fields, $new_fields );
+            }
+        }
+        return $template_fields;
     }
 
 
