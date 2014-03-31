@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Calendar_Admin_Page
  *
- * This contains the logic for setting up the Calendar Addon Admin related pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This contains the logic for setting up the Calendar Addon Admin related pages.  Any methods without phpdoc comments have inline docs with parent class.
  *
  *
  * @package		Calendar_Admin_Page (calendar addon)
@@ -57,18 +57,14 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_routes() {
-		$this->_page_routes = array(		
+		$this->_page_routes = array(
 			'default' => '_basic_settings',
 			'advanced' => '_advanced_settings',
 			'update_settings' => array(
 				'func' => '_update_settings',
 				'noheader' => TRUE
 				),
-			'usage' => '_usage',
-			'reset_settings'=> array(
-				'func' => '_reset_settings',
-				'noheader' => TRUE
-				),
+			'usage' => '_usage'
 			);
 	}
 
@@ -77,13 +73,14 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_config() {
+
 		$this->_page_config = array(
 			'default' => array(
 				'nav' => array(
 					'label' => __('Basic Settings', 'event_espresso'),
 					'order' => 10
 					),
-				'metaboxes' => array( '_publish_post_box'),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box') ),
 				'require_nonce' => FALSE
 				),
 			'advanced' => array(
@@ -91,7 +88,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 					'label' => __('Advanced Settings', 'event_espresso'),
 					'order' => 20
 					),
-				'metaboxes' => array( '_publish_post_box' ),
+				'metaboxes' => array_merge( $this->_default_espresso_metaboxes, array( '_publish_post_box' ) ),
 				'require_nonce' => FALSE
 				),
 			'usage' => array(
@@ -103,7 +100,7 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				)
 			);
 	}
-	
+
 
 	protected function _add_screen_options() {}
 	protected function _add_screen_options_default() {}
@@ -157,22 +154,27 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		$this->display_admin_page_with_no_sidebar();
 	}
 	protected function _update_settings(){
-		$c = EE_Config::instance()->addons['calendar'];
-		$count=0;
-		//otherwise we assume you want to allow full html
-		foreach($this->_req_data['calendar'] as $top_level_key => $top_level_value){
-			if(is_array($top_level_value)){
-				foreach($top_level_value as $second_level_key => $second_level_value){
-					if(property_exists($c,$top_level_key) && property_exists($c->$top_level_key, $second_level_key)
-						&& $second_level_value != $c->$top_level_key->$second_level_key){
-						$c->$top_level_key->$second_level_key = $this->_sanitize_config_input($top_level_key,$second_level_key,$second_level_value);
-						$count++;	
+		if(isset($_POST['reset']) && $_POST['reset'] == '1'){
+			$c = new EE_Calendar_Config();
+			$count = 1;
+		}else{
+			$c = EE_Config::instance()->addons['calendar'];
+			$count=0;
+			//otherwise we assume you want to allow full html
+			foreach($this->_req_data['calendar'] as $top_level_key => $top_level_value){
+				if(is_array($top_level_value)){
+					foreach($top_level_value as $second_level_key => $second_level_value){
+						if(property_exists($c,$top_level_key) && property_exists($c->$top_level_key, $second_level_key)
+							&& $second_level_value != $c->$top_level_key->$second_level_key){
+							$c->$top_level_key->$second_level_key = $this->_sanitize_config_input($top_level_key,$second_level_key,$second_level_value);
+							$count++;
+						}
 					}
-				}
-			}else{
-				if(property_exists($c, $top_level_key) && $top_level_value != $c->$top_level_key){
-					$c->$top_level_key = $this->_sanitize_config_input($top_level_key, NULL, $top_level_value);
-					$count++;
+				}else{
+					if(property_exists($c, $top_level_key) && $top_level_value != $c->$top_level_key){
+						$c->$top_level_key = $this->_sanitize_config_input($top_level_key, NULL, $top_level_value);
+						$count++;
+					}
 				}
 			}
 		}
@@ -180,15 +182,15 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 		EE_Config::instance()->update_espresso_config();
 		$this->_redirect_after_action($count, 'Settings', 'updated', array('action' => $this->_req_data['return_action']));
 	}
-	
+
 	/**
 	 * resets the calend data and redirects to where they came from
 	 */
-	protected function _reset_settings(){
-		EE_Config::instance()->addons['calendar'] = new EE_Calendar_Config();
-		EE_Config::instance()->update_espresso_config();
-		$this->_redirect_after_action(1, 'Settings', 'reset', array('action' => $this->_req_data['return_action']));
-	}
+//	protected function _reset_settings(){
+//		EE_Config::instance()->addons['calendar'] = new EE_Calendar_Config();
+//		EE_Config::instance()->update_espresso_config();
+//		$this->_redirect_after_action(1, 'Settings', 'reset', array('action' => $this->_req_data['return_action']));
+//	}
 	private function _sanitize_config_input($top_level_key,$second_level_key,$value){
 		$sanitization_methods = array(
 			'time'=>array(
@@ -244,10 +246,10 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 			)
 			);
 		$sanitization_method = NULL;
-		if(isset($sanitization_methods[$top_level_key]) && 
-				$second_level_key === NULL && 
+		if(isset($sanitization_methods[$top_level_key]) &&
+				$second_level_key === NULL &&
 				! is_array($sanitization_methods[$top_level_key]) ){
-			$sanitization_method = $sanitization_methods[$top_level_key];	
+			$sanitization_method = $sanitization_methods[$top_level_key];
 		}elseif(is_array($sanitization_methods[$top_level_key]) && isset($sanitization_methods[$top_level_key][$second_level_key])){
 			$sanitization_method = $sanitization_methods[$top_level_key][$second_level_key];
 		}
@@ -265,12 +267,12 @@ class Calendar_Admin_Page extends EE_Admin_Page {
 				$input_name = $second_level_key == NULL ? $top_level_key : $top_level_key."[".$second_level_key."]";
 				EE_Error::add_error(sprintf(__("Could not sanitize input '%s' because it has no entry in our sanitization methods array", "event_espresso"),$input_name));
 				return NULL;
-			
+
 		}
 	}
-		
-		
-	
-	
+
+
+
+
 
 } //ends Forms_Admin_Page class

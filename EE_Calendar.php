@@ -347,8 +347,8 @@
 						/*@var $ee_term EE_Term */
 						$catcode = $ee_term->ID();
 						
-						$bg = $ee_term->get_extra_meta( 'background_color', $calendar_config->display->event_background );
-						$fontcolor =$ee_term->get_extra_meta( 'text_color', $calendar_config->display->event_text_color );
+						$bg = $ee_term->get_extra_meta( 'background_color',true, $calendar_config->display->event_background );
+						$fontcolor =$ee_term->get_extra_meta( 'text_color',true, $calendar_config->display->event_text_color );
 						$use_bg =$ee_term->get_extra_meta( 'use_color_picker', true );
 			
 						if($use_bg ) {
@@ -425,14 +425,14 @@
 		// get calendar options
 		$calendar_config = EE_Calendar::get_calendar_config()->to_flat_array();
 		// merge incoming shortcode attributes with calendar config
-		$ee_calendar_js_options = shortcode_atts( $calendar_config, $ee_calendar_js_options, 'EE_Calendar' );
+		$ee_calendar_js_options = array_merge( $calendar_config, $ee_calendar_js_options );
 		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
 		$overrides = array(
-			'event_category_id' => isset($_REQUEST['event_category_id']) ? sanitize_key( $_REQUEST['event_category_id'] ) : '', 
-			'event_venue_id'=> isset($_REQUEST['event_venue_id']) ? sanitize_key( $_REQUEST['event_venue_id'] ) : '', 
+			'event_category_id' => isset($_REQUEST['event_category_id']) ? sanitize_key( $_REQUEST['event_category_id'] ) : isset($ee_calendar_js_options['event_category_id']) ? $ee_calendar_js_options['event_category_id'] : NULL, 
+			'event_venue_id'=> isset($_REQUEST['event_venue_id']) ? sanitize_key( $_REQUEST['event_venue_id'] ) : isset($ee_calendar_js_options['event_venue_id']) ? $ee_calendar_js_options['event_venue_id'] : NULL, 
 			'month'=> isset($_REQUEST['month']) ? sanitize_text_field( $_REQUEST['month'] ) : $ee_calendar_js_options['month'], 
 			'year'=> isset($_REQUEST['year']) ? sanitize_text_field( $_REQUEST['year'] ) : $ee_calendar_js_options['year'], 
-		);
+		);		
 		// merge overrides into options
 		$ee_calendar_js_options = array_merge( $ee_calendar_js_options, $overrides );
 		// set and format month param
@@ -584,11 +584,13 @@
 			//Get details about the category of the event
 			if ( ! $config->display->disable_categories) {
 //				echo "using cateogires!";
-				$primary_cat = $event->first_event_category();
+				 $categories= $event->get_all_event_categories();
+				 
 				//any term_taxonmies set for this event?
 //				d($primary_cat);
-				if ( $primary_cat ) {
+				if ( $categories ) {
 //					d($primary_cat->get_extra_meta('use_color_picker',true,false));
+					$primary_cat = reset($categories);
 					if($primary_cat->get_extra_meta('use_color_picker',true,false)){
 						$calendar_datetime->set_color($primary_cat->get_extra_meta('background_color',true,null));
 						$calendar_datetime->set_textColor($primary_cat->get_extra_meta('text_color',true,null));
@@ -596,8 +598,8 @@
 					$calendar_datetime->set_eventType($primary_cat->slug());
 //					d($calendar_datetime);
 					if ( $config->display->enable_cat_classes ) {
-						foreach ( $event->term_taxonomies() as $term_taxonomy ) {
-							$calendar_datetime->add_classname($term_taxonomy->taxonomy());
+						foreach ( $categories as $category ) {
+							$calendar_datetime->add_classname($category->slug());
 						}				
 					} else {
 						$calendar_datetime->add_classname($primary_cat->slug());
@@ -677,7 +679,7 @@
 				} else if($event->is_cancelled()){
 					$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';				
 				}else{
-					'<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';				
+					$tooltip_html .= '<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';				
 				}
 
 				$tooltip_html .= '<div class="clear"></div>';

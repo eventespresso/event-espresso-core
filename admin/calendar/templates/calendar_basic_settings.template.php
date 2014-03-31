@@ -319,11 +319,11 @@
 				</td>
 			</tr>
 			<tr>
-				<th><?php					_e("Calendar Configuration Reset", 'event_espresso');?></th>
+				<th><?php					_e("Reset Calendar Settings?", 'event_espresso');?></th>
 				<td>
-					<a class="button button-small calendar-reset-button" href="<?php echo $reset_url?>"><?php _e("Reset Now", 'event_espresso');?></a><br/>
+					<?php echo EEH_Form_Fields::select_input('reset', array(TRUE=>  __("Yes", 'event_espresso'),FALSE=>  __("No", 'event_espresso')), 0);?><br/>
 					<span class="description">
-						<?php _e('Resets all basic and advanced Event Espresso calendar settings to their plugin defaults', 'event_espresso'); ?>
+						<?php _e('Set to \'Yes\' and then click \'Save\' to confirm reset all basic and advanced Event Espresso calendar settings to their plugin defaults.', 'event_espresso'); ?>
 					</span>
 				</td>
 			</tr>
