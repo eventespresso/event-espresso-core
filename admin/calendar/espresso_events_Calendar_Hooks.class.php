@@ -100,14 +100,14 @@ class espresso_events_Calendar_Hooks extends EE_Admin_Hooks {
 		EEH_Template::display_template( EE_CALENDAR_ADMIN_TEMPLATE_PATH . 'category_color_for_calendar.template.php', $template_args );
 	}
 
-	public function _redirect_action_update_category($redirection_query_args){
+	public function _redirect_action_early_update_category($redirection_query_args){
 		$this->_save_calendar_color_settings($redirection_query_args);
 	}
-	public function _redirect_action_insert_category($redirection_query_args){
+	public function _redirect_action_early_insert_category($redirection_query_args){
 		$this->_save_calendar_color_settings($redirection_query_args);
 	}
 	protected function _save_calendar_color_settings($redirection_query_args){
-		$CAT_ID = isset($this->_req_data['EVT_CAT_ID']) ? $this->_req_data['EVT_CAT_ID'] :  NULL;
+		$CAT_ID = isset($redirection_query_args['EVT_CAT_ID']) ? $redirection_query_args['EVT_CAT_ID'] :  NULL;
 		if($CAT_ID){
 			$category = EEM_Term::instance()->get_one_by_ID($CAT_ID);
 			$category->update_extra_meta('use_color_picker' , intval($this->_req_data['use-color-picker-for-calendar']));
