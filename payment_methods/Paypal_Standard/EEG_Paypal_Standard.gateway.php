@@ -50,7 +50,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return EE_Payment
 	 */
 	public function set_redirection_info($payment,$billing_info = array(),$return_url = NULL, $notify_url = NULL, $cancel_url = NULL){
-		
 		$redirect_args = array();
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();

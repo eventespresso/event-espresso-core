@@ -168,7 +168,10 @@
 				?>
 				<h3><?php echo $selected_payment_method; ?></h3>
 				<p><?php echo $payment_method->description(); ?></p>
-				<?php echo $payment_method->type_obj()->billing_form(); ?>
+				<?php $billing_form = $payment_method->type_obj()->billing_form();
+				if($billing_form){
+					echo $billing_form->get_html_and_js(); 
+				}?>
 			</div>
 
 <?php						

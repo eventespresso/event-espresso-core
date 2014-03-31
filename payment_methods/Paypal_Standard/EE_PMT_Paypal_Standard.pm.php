@@ -25,8 +25,9 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 			)
 		);
 		$this->_billing_form = NULL;//NO billing info entered onsite at all
-		parent::__construct($pm_instance);
 		require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
 		$this->_gateway = new EEG_Paypal_Standard();
+		parent::__construct($pm_instance);
+		
 	}
 }
