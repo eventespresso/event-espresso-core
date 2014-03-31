@@ -9,7 +9,16 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	const shipping_info_optional = 'optional';
 	const shipping_info_required = 'required';
 	public function __construct($pm_instance = NULL) {
-		$this->_settings_form = new EE_Payment_Method_Form(array(
+		require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
+		$this->_gateway = new EEG_Paypal_Standard();
+		parent::__construct($pm_instance);
+		
+	}
+	public function generate_new_billing_form() {
+		return NULL;
+	}
+	public function generate_new_settings_form() {
+		return new EE_Payment_Method_Form(array(
 			'name'=>'Paypal_Standard_Form',
 			'extra_meta_inputs'=>array(
 				'paypal_id'=>new EE_Text_Input(),
@@ -24,10 +33,5 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 				)
 			)
 		);
-		$this->_billing_form = NULL;//NO billing info entered onsite at all
-		require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
-		$this->_gateway = new EEG_Paypal_Standard();
-		parent::__construct($pm_instance);
-		
 	}
 }

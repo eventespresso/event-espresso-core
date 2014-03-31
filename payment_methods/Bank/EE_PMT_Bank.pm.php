@@ -26,8 +26,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Bank extends EE_PMT_Base{
-	public function __construct($pm_instance = NULL){
-		$this->_settings_form = new EE_Payment_Method_Form(array(
+	public function generate_new_billing_form() {
+		return NULL;
+	}
+	public function generate_new_settings_form() {
+		return new EE_Payment_Method_Form(array(
 			'name'=>'Bank_Form',
 			'subsections'=>array(
 				'page_title'=>new EE_Text_Input(array(
@@ -43,7 +46,6 @@ class EE_PMT_Bank extends EE_PMT_Base{
 			),
 			'exclude'=>array('PMD_debug_mode')
 		));
-		parent::__construct($pm_instance);
 	}
 }
 

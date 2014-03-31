@@ -62,30 +62,68 @@ abstract class EE_PMT_Base{
 	 */
 	function set_instance($payment_method_instance){
 		$this->_pm_instance = $payment_method_instance;
-		$this->settings_form()->populate_model_obj($payment_method_instance);
+		//if they have already requeste dthe settings form, make sure its
+		//data matches this model object
+		if($this->_settings_form){
+			$this->settings_form()->populate_model_obj($payment_method_instance);
+		}
 		if($this->_gateway && $this->_gateway instanceof EE_Gateway){
 			$this->_gateway->set_settings($payment_method_instance->settings_array());
 		}
 	}
-	//two forms
-	//requires https
-	//how to get gateway
-	//functions
 	
 	/**
 	 * Gets teh form for displaying to admins where they setup the payment method
 	 * @return EE_Payment_Method_Form
 	 */
 	function settings_form(){
+		if( ! $this->_settings_form){
+			$this->_settings_form = $this->generate_new_settings_form();
+			//if we have already assigned a model object to this pmt, make
+			//sure its reflected in teh form we just generated
+			if($this->_pm_instance){
+				$this->_settings_form->populate_model_obj($this->_pm_instance);
+			}
+		}
 		return $this->_settings_form;
+	}
+	/**
+	 * Gets the form for all the settings related to this payment method type
+	 * @return EE_Payment_Method_Form
+	 */
+	abstract function generate_new_settings_form();
+	/**
+	 * Sets the form for settings. This may be useful if we have already received
+	 * a form submission and have form data it in, and want to use it anytime we're showing
+	 * this paymennt method type's settings form later in the request
+	 * @param EE_Payment_Method_Form $form
+	 */
+	public function set_settings_form($form){
+		$this->_settings_form = $form;
 	}
 	/**
 	 * Gets the form for displaying to attendees where they can enter their billing info
 	 * which will be sent to teh gateway (can be null)
 	 * @return EE_Form_Section_Proper
 	 */
-	function billing_form(){
+	public function billing_form(){
+		if( ! $this->_billing_form){
+			$this->_billing_form = $this->generate_new_billing_form();
+		}
 		return $this->_billing_form;
+	}
+	/**
+	 * Creates the billing form fo rthis payment method type
+	 * @return EE_Form_Section_Proper
+	 */
+	abstract function generate_new_billing_form();
+	/**
+	 * Sets the billing form for this paymetn method type. You may want to use this
+	 * if you have form
+	 * @param EE_Payment_Method $form
+	 */
+	public function set_billing_form($form){
+		$this->_billing_form = $form;
 	}
 	/**
 	 * Returns whether or not this payment method requires HTTPS to be used

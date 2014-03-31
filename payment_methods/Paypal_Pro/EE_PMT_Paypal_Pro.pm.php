@@ -27,7 +27,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
-		$this->_settings_form = new EE_Payment_Method_Form(array(
+		require_once($this->file_folder().'EEG_Paypal_Pro.gateway.php');
+		$this->_gateway = new EEG_Paypal_Pro();
+		parent::__construct($pm_instance);
+	}
+	public function generate_new_settings_form() {
+		return new EE_Payment_Method_Form(array(
 			'name'=>'Paypal_Pro_Form',
 			'extra_meta_inputs'=>array(
 				'paypal_email'=>new EE_Email_Input(),
@@ -39,27 +44,22 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				)
 			)
 		);
-		$this->_billing_form = new EE_Billing_Info_Form(array(
-			'subsections'=>array(
-				'credit_card'=>new EE_Credit_Card_Input(),
-				'credit_card_type'=>new EE_Select_Input(array()),//the options are set dynamically
-				'exp_month'=>new EE_Month_Input(true),
-				'exp_year'=>new EE_Year_Input(false),
-				'cvv'=>new EE_Text_Input(),
-			)
-		));
-		parent::__construct($pm_instance);
-		require_once($this->file_folder().'EEG_Paypal_Pro.gateway.php');
-		$this->_gateway = new EEG_Paypal_Pro();
 	}
-	public function billing_form() {
-		$cc_type_input = $this->_billing_form->get_input('credit_card_type');
+	public function generate_new_billing_form() {
 		$allowed_types = $this->_pm_instance->get_extra_meta('credit_card_types',true);
 		if( ! $allowed_types){//if allowed types is a string or empty array or null...
 			$allowed_types = array();
 		}
-		$cc_type_input->set_select_options(array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(),array_flip($allowed_types)));
-		return parent::billing_form();
+		$billing_form = new EE_Billing_Info_Form(array(
+			'subsections'=>array(
+				'credit_card'=>new EE_Credit_Card_Input(),
+				'credit_card_type'=>new EE_Select_Input(array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(),array_flip($allowed_types))),//the options are set dynamically
+				'exp_month'=>new EE_Month_Input(true),
+				'exp_year'=>new EE_Year_Input(false),
+				'cvv'=>new EE_Text_Input(),
+			)
+		));	
+		return $billing_form;
 	}
 	/**
 	 * Returns an array of all the payment cards possibly supported by paypal pro.

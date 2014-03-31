@@ -26,17 +26,14 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Check extends EE_PMT_Base{
-	public function __construct($pm_instance = NULL){
-		
-		parent::__construct($pm_instance);
+	public function generate_new_billing_form() {
+		return ;
 	}
-	
 	/**
 	 * Overrides parent to dynamically set some defaults, but only when the form is requested
 	 * @return EE_Form_Section_Proper
 	 */
-	public function settings_form() {
-		if( ! $this->_settings_form){
+	public function generate_new_settings_form() {
 			if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
 				$organization = EE_Registry::instance()->CFG->organization;
 				$organization_name = $organization->name;
@@ -53,7 +50,7 @@ class EE_PMT_Check extends EE_PMT_Base{
 				$default_address = 'unknown';
 				$organization_name = 'unknown';
 			}
-			$this->_settings_form = new EE_Payment_Method_Form(array(
+			return new EE_Payment_Method_Form(array(
 			'name'=>'Check_Form',
 			'subsections'=>array(
 				'title'=> new EE_Text_Input(array(
@@ -71,14 +68,6 @@ class EE_PMT_Check extends EE_PMT_Base{
 			),
 			'exclude'=>array('PMD_debug_mode')
 		));
-		}
-//		if( ! $this->_settings_form->has_received_submission()){
-//			
-//			$this->_settings_form->populate_defaults(array(
-//				'payable_to'=>,
-//				'address_to_send_payment'=>$default_address,
-//			));
-//		}
 		return parent::settings_form();
 	}
 }

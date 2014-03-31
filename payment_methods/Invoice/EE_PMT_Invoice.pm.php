@@ -26,17 +26,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Invoice extends EE_PMT_Base{
-	public function __construct($pm_instance = NULL) {
-		
-			
-		parent::__construct($pm_instance);
+	public function generate_new_billing_form() {
+		return NULL;
 	}
-	/**
-	 * beacuse creating this form can be rather expensive, we only bother doing it when requested
-	 */
-	public function settings_form() {
-		if( ! $this->_settings_form){
-			if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
+	public function generate_new_settings_form() {
+		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
 				$organization = EE_Registry::instance()->CFG->organization;
 				$organization_name = $organization->name;
 				$default_address = $organization->address_1 != '' ? $organization->address_1 . '<br />' : '';
@@ -52,7 +46,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 				$default_address = 'unknown';
 				$organization_name = 'unknown';
 			}
-			$this->_settings_form = new EE_Payment_Method_Form(array(
+		return new EE_Payment_Method_Form(array(
 				'name'=>'Invoice_Form',
 				'subsections'=>array(
 					'pdf_stylesheet'=>new EE_Select_Input(array('simple.css'), array(
@@ -84,9 +78,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					'payment_methods/Invoice/templates/invoice_settings_layout.template.php',
 					'payment_methods/Invoice/templates/invoice_settings_input_layout.template.php'),
 			));
-		}
-		return parent::settings_form();
-	}
+ }
 }
 
 // End of file EE_PMT_Invoice.pm.php
