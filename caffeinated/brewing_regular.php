@@ -241,10 +241,17 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__parser_after', array( $this, 'additional_primary_registration_details_parser'), 10, 5 );
 
 		/**
-		 * @since 4.2
+		 * @since 4.2.0
 		 */
 		add_filter( 'FHEE__EE_Datetime_Shortcodes__shortcodes', array( $this, 'additional_datetime_shortcodes'), 10, 2 );
 		add_filter( 'FHEE__EE_Datetime_Shortcodes__parser_after', array( $this, 'additional_datetime_parser'), 10, 5 );
+
+		/**
+		 * @since 4.4.0
+		 */
+		//eat our own dogfood!
+		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_newsletter_message_type' ) );
+		do_action('EE_Brewing_Regular___messages_caf');
 	}
 
 
@@ -511,6 +518,38 @@ class EE_Brewing_Regular extends EE_Base {
 				return $parsed;
 				break;
 		}
+	}
+
+
+
+	/**
+	 * Takes care of registering the newsletter message type that is only available in caffeinated EE.
+	 *
+	 * @since   4.4.0
+	 *
+	 * @return  void
+	 */
+	public function register_newsletter_message_type() {
+		//setup array for registering
+		$setup_args = array(
+			'mtname' => 'newsletter',
+			'mtfilename' => 'EE_Newsletter_message_type.class.php',
+			'autoloadpaths' => array(
+				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
+				),
+			'messengers_to_activate_with' => array( 'email' )
+			);
+		$setup_args['template_fields']['email']['extra']['content']['newsletter_content'] = array(
+			'input' => 'wpeditor',
+			'label' => '[NEWSLETTER_CONTENT]',
+			'type' => 'string',
+			'required' => TRUE,
+			'validation' => TRUE,
+			'format' => '%s',
+			'rows' => '15',
+			'shortcodes_required' => array('[NEWSLETTER_CONTENT]')
+			);
+		EEH_Plugin_API::register_new_message_type($setup_args);
 	}
 
 
