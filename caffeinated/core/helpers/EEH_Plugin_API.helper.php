@@ -161,6 +161,11 @@ class EEH_Plugin_API {
      * @return void
      */
     public static function register_new_message_type( $setup_args = array()  ) {
+        //make sure this was called in the right place!
+        if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__load_core_configuration__complete' )) {
+            EE_Error::doing_it_wrong('EEH_Plugin_API::register_new_message_type', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.4' );
+        }
+
         //required fields MUST be present, so let's make sure they are.
         if ( ! is_array( $setup_args ) || empty( $setup_args['mtname'] ) || empty( $setup_args['mtfilename'] ) || empty( $setup_args['autoload_paths'] ) )
             throw new EE_Error( __( 'In order to register a message type with EEH_Plugin_API::register_new_message_type, you must include an array that contains the following keys: "mtname", "mtfilename", "autoload_paths"', 'event_espresso' ) );
@@ -171,7 +176,7 @@ class EEH_Plugin_API {
             'mtfilename' => (string) $setup_args['mtfilename'],
             'autoloadpaths' => (array) $setup_args['autoloadpaths'],
             'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array(),
-            'template_fields' => ! empty( $setup_args['template_fields'] ) ? (array) $setup_args['template_fields'] : array();
+            'template_fields' => ! empty( $setup_args['template_fields'] ) ? (array) $setup_args['template_fields'] : array()
             );
 
         //add filters but only if they haven't already been added otherwise we'll get duplicate filters added - not good.
