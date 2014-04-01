@@ -130,7 +130,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 
-		if ( ! self::$_event->display_ticket_selector() || ( ! is_admin() && $view_details ) ) {
+		if ( ! self::$_event->display_ticket_selector() || $view_details || ! is_admin() ) {
 			return ! is_single() ? EED_Ticket_Selector::display_view_details_btn( self::$_event ) : '';
 		}
 
