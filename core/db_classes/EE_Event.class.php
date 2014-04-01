@@ -357,7 +357,7 @@ class EE_Event extends EE_CPT_Base{
 		return $this->set('EVT_display_reg_form', $display_reg_form);
 	}
 	function set_external_url($external_url) {
-		return $this->set('EVT_external_url', $external_url);
+		return $this->set('EVT_external_URL', $external_url);
 	}
 	function set_member_only($member_only) {
 		return $this->set('EVT_member_only', $member_only);
