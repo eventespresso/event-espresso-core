@@ -1163,14 +1163,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								if ( ! $this->_revisit || $this->_primary_revisit || ( $this->_revisit && $this->_reg_url_link == $registration->reg_url_link() )) {
 									// reg_url_link / line item ID exists ?
 									if ( $line_item_id = $registration->reg_url_link() ) {
+//										echo '<h5 style="color:#2EA2CC;">$line_item_id : <span style="color:#E76700">' . $line_item_id . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 										// Houston, we have a registration!
 										$att_nmbr++;
 										// grab related answer objects
 										$answers = $registration->answers();
-	//									printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//										printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 										$attendee_data = array();
 										// do we need to copy basic info from primary attendee ?
 										$copy_primary = isset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) && absint( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] ) === 0 ? TRUE  : FALSE;
+//										echo '<h5 style="color:#2EA2CC;">$copy_primary : <span style="color:#E76700">' . $copy_primary . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 										unset( $valid_data[ $line_item_id ]['additional_attendee_reg_info'] );
 										if ( isset( $valid_data[ $line_item_id ] )) {
 											// filter form input data for this registration
@@ -1267,10 +1269,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 											}  // end of foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) 
 											
-										} else {
-											EE_Error::add_error( __( 'No form data or invalid data was encountered while attempting to process the registration form.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+										} /*else {
+											EE_Error::add_error( sprintf( __( 'It appears that no form data, or invalid data, for attendee #%s was received while attempting to process the registration form.', 'event_espresso' ), $att_nmbr ), __FILE__, __FUNCTION__, __LINE__ );
 											$success = FALSE;
-										}
+										}*/
 	//									printr( $attendee_data, '$attendee_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 										// this registration does not require additional attendee information ?

@@ -547,8 +547,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _set_list_table_views_default() {
 
 		//for notification related bulk actions we need to make sure only active messengers have an option.
-		$EEMSGINIT = EE_Registry::instance()->load_lib('Messages_Init', array(), TRUE );
-		$EEMSGINIT::set_autoloaders();
+		EE_Messages_Init::set_autoloaders();
 		$EEMSG = EE_Registry::instance()->load_lib('messages');
 		$active_mts = $EEMSG->get_active_message_types();
 		//key= bulk_action_slug, value= message type.

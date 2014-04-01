@@ -147,7 +147,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			'email'=>$primary_attendee->email(),
 			'first_name'=>$primary_attendee->fname(),
 			'last_name'=>$primary_attendee->lname(),
-			'tax'=>$this->_format_float($tax_total)),
+			'tax'=>$this->_format_float($tax_total),
 			'partner_id'=>'ee');
 		foreach($total_line_item->get_items() as $line_item){
 			$order['items'][] = array(
