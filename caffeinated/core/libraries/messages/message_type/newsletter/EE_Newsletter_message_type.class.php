@@ -114,7 +114,7 @@ class EE_Newsletter_message_type extends EE_message_type {
         parent::_set_valid_shortcodes();
 
         $included_shortcodes = array(
-            'recipient_details', 'organization'
+            'recipient_details', 'organization', 'newsletter'
             );
 
         foreach ( $this->_valid_shortcodes as $context => $shortcodes ) {
