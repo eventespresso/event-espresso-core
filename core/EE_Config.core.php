@@ -869,7 +869,7 @@ class EE_Core_Config extends EE_Config_Base {
 			$this->txn_page_url = get_permalink( $this->txn_page_id );
 		}
 		if($query_args){
-			return add_query_arg($query_args,$this->thank_you_page_url);
+			return add_query_arg($query_args,$this->txn_page_url);
 		}else{
 			return $this->txn_page_url;
 		}
