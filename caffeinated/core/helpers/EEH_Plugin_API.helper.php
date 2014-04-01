@@ -147,7 +147,7 @@ class EEH_Plugin_API {
      */
     public static function register_new_message_type( $setup_args = array()  ) {
         //make sure this was called in the right place!
-        if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__load_core_configuration__complete' )) {
+        if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
             EE_Error::doing_it_wrong('EEH_Plugin_API::register_new_message_type', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.4.0' );
         }
 
@@ -302,7 +302,7 @@ class EEH_Plugin_API {
      */
     public static function register_messages_shortcode_library( $name, $setup_args = array() ) {
         //make sure this was called in the right place!
-        if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__load_core_configuration__complete' )) {
+        if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
             EE_Error::doing_it_wrong('EEH_Plugin_API::register_message_shortcode_library', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.4.0' );
         }
 
