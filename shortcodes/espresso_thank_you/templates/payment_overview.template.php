@@ -199,10 +199,11 @@ $event_name = '';
 					</tbody>
 				</table>
 			<?php }
-					if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
-						echo $gateway_content;
-					 }
-			}?>
+			}
+			if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
+				echo $gateway_content;
+			 }	
+			?>
 	</div>
 	<br/>	
 
