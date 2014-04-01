@@ -41,6 +41,14 @@ class EEH_Plugin_API {
 
 
     /**
+     * holds values for registered messages shortcode libraries
+     * @var array
+     */
+    protected static $_ee_messages_shortcode_registry = array();
+
+
+
+    /**
      * The purpose of this method is to provide an easy way for addons to register their admin pages (
      * using the EE Admin Page loader system).
      *
@@ -133,37 +141,14 @@ class EEH_Plugin_API {
      *                                                                          type should activate with. Each value in the
      *                                                                          array should match the name property of a
      *                                                                          EE_messenger. Optional.
-     *        @type array $template_fields {
-     *              An array of arguments for any extra template fields this message type needs to
-     *              register. Each key in the array corresponds to the name of the messenger the field is
-     *              used with.
-     *              @type array $messenger {
-     *                    Each key in this array corresponds to the name of the field being added.  Note,
-     *                    that it's possible this could be a nested array itself (e.g.
-     *                    ['extra']['content']['some_list'])
-     *                    @type array $fieldname {
-     *                          @see EEH_Form_Fields::get_form_fields() for detailed descripion the keys.
-     *                          @type string $input                         What type of input ('textarea', 'text' etc.)
-     *                          @type string $label                         What is used for the label of the field.
-     *                          @type string $type                          Data type for the field
-     *                          @type bool   $required                    If required.
-     *                          @type bool   $validation                  Do validation?
-     *                          @type string $format                      '%s' or '%d' or '%f'
-     *                          @type string $css_class                   what to use for css class
-     *                          @type string $rows                         If text area then how many rows?
-     *                          @type array  $shortcodes_required An array of shortcodes that must be
-     *                                                                                available for this template in order for this
-     *                                                                                field to show.
-     *                    }
-     *              }
-     *        }
+     *
      * }
      * @return void
      */
     public static function register_new_message_type( $setup_args = array()  ) {
         //make sure this was called in the right place!
         if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__load_core_configuration__complete' )) {
-            EE_Error::doing_it_wrong('EEH_Plugin_API::register_new_message_type', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.4' );
+            EE_Error::doing_it_wrong('EEH_Plugin_API::register_new_message_type', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.4.0' );
         }
 
         //required fields MUST be present, so let's make sure they are.
@@ -175,16 +160,16 @@ class EEH_Plugin_API {
         self::$_ee_message_type_registry[$mtname] = array(
             'mtfilename' => (string) $setup_args['mtfilename'],
             'autoloadpaths' => (array) $setup_args['autoloadpaths'],
-            'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array(),
-            'template_fields' => ! empty( $setup_args['template_fields'] ) ? (array) $setup_args['template_fields'] : array()
+            'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array()
             );
 
         //add filters but only if they haven't already been added otherwise we'll get duplicate filters added - not good.
+        if ( ! has_filter( 'FHEE__EE_messages__get_installed__messagetype_files',  array( 'EEH_Plugin_API', 'register_msgs_autoload_paths') ) )
+            add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EEH_Plugin_API', 'register_msgs_autoload_paths'), 10 );
+
         if ( ! has_filter( 'FHEE__EE_messages__get_installed__messagetype_files', array( 'EEH_Plugin_API', 'register_messagetype_files') ) ) {
             add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EEH_Plugin_API', 'register_messagetype_files'), 10, 2 );
-            add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EEH_Plugin_API', 'register_mt_autoload_paths'), 10 );
             add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EEH_Plugin_API', 'register_messengers_to_activate_mt_with'), 10, 2 );
-            add_filter( 'FHEE__EE_messenger__get_template_fields', array( 'EEH_Plugin_API', 'register_messenger_template_fields'), 10, 2 );
         }
     }
 
@@ -225,14 +210,23 @@ class EEH_Plugin_API {
      * @param array $paths array of paths to be checked by EE_messages autoloader.
      * @return array
      */
-    public static function register_mt_autoload_paths( $paths ) {
-        if ( empty( self::$_ee_message_type_registry ) )
-            return $paths;
+    public static function register_msgs_autoload_paths( $paths  ) {
 
-        foreach ( self::$_ee_message_type_registry as $mt_reg ) {
-            if ( empty( $mt_reg['autoloadpaths'] ) )
-                continue;
-            $paths = array_merge( $paths, $mt_reg['autoloadpaths'] );
+        //first message type registry autoloaders?
+        if ( ! empty( self::$_ee_message_type_registry ) ) {
+            foreach ( self::$_ee_message_type_registry as $mt_reg ) {
+                if ( empty( $mt_reg['autoloadpaths'] ) )
+                    continue;
+                $paths = array_merge( $paths, $mt_reg['autoloadpaths'] );
+            }
+        }
+
+        if ( !empty( self::$_ee_messages_shortcode_registry ) ) {
+             foreach ( self::$_ee_messages_shortcode_registry as $st_reg ) {
+                if ( empty( $st_reg['autoloadpaths'] ) )
+                    continue;
+                $paths = array_merge( $paths, $st_reg['autoloadpaths'] );
+            }
         }
 
         return $paths;
@@ -274,32 +268,67 @@ class EEH_Plugin_API {
 
 
 
+
+
+
     /**
-     * callback for FHEE__EE_messenger__get_template_fields filter.
+     * Helper method for registring a new shortcodes library class for the messages system.
      *
-     * This is used to add any additional template fields to the messenger for template generation.
+     * Note this is not used for adding shortcodes to existing libraries.  It's for registering anything
+     * related to registering a new EE_{shortcode_library_name}_Shortcodes.lib.php class.
      *
      * @since    4.4.0
      *
-     * @param  array               $template_fields the original array of template fields.
-     * @param  EE_messenger $messenger        EE_messenger object.
-     * @return  array                                          new array of template fields.
+     * @param  array  $setup_args {
+     *       An array of arguments provided for registering the new messages shortcode library.
+     *
+     *       @type string $name                                         What is the name of this shortcode library
+     *                                                                              (e.g. 'question_list');
+     *       @type array  $autoloadpaths                          An array of paths to add to the messages
+     *                                                                              autoloader for the new shortcode library
+     *                                                                              class file.
+     *       @type string $msgr_validator_callback            Callback for a method that will register the
+     *                                                                              library with the messenger
+     *                                                                              _validator_config. Optional.
+     *       @type string $msgr_template_fields_callback  Callback for changing adding the
+     *                                                                              _template_fields property for messenger.
+     *                                                                              For example, the shortcode library may add
+     *                                                                              a new field to the message templates.
+     *                                                                              Optional.
+     *       @type string $valid_shortcodes_callback         Callback for message types
+     *                                                                              _valid_shortcodes array setup. Optional.
+     * }
+     * @return void
      */
-    public static function register_messenger_template_fields( $template_fields, EE_messenger $messenger ) {
-        if ( empty( self::$_ee_message_type_registry ) )
-            return $template_fields;
-
-        //loop through each registry item and if there is a template_field array matching this messenger then we add fields.
-        foreach ( self::$_ee_message_type_registry as $mtname => $mtreg ) {
-            if ( empty( $mtreg['template_fields'] ) )
-                continue;
-            foreach ( $mtreg['template_fields'] as $msgr_name => $new_fields ) {
-                if ($msgr_name == $messenger->name )
-                    $template_fields = array_merge( $template_fields, $new_fields );
-            }
+    public static function register_messages_shortcode_library( $name, $setup_args = array() ) {
+        //make sure this was called in the right place!
+        if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__load_core_configuration__complete' )) {
+            EE_Error::doing_it_wrong('EEH_Plugin_API::register_message_shortcode_library', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.4.0' );
         }
-        return $template_fields;
-    }
 
+        //required fields MUST be present, so let's make sure they are.
+        if ( ! is_array( $setup_args ) || empty( $setup_args['autoloadpaths'] ) ) {
+            throw new EE_Error( __( 'In order to register a messages shortcode library with EEH_Plugin_API::register_messages_shortcode_library, you must include an array that contains the following key: "autoload_paths"', 'event_espresso' ) );
+        }
+
+        $name = (string) $name;
+        self::$_ee_messages_shortcode_registry[$name] = array(
+            'autoloadpaths' => (array) $setup_args['autoloadpaths']
+            );
+
+         //add filters but only if they haven't already been added otherwise we'll get duplicate filters added - not good.
+        if ( ! has_filter( 'FHEE__EE_messages__get_installed__messagetype_files',  array( 'EEH_Plugin_API', 'register_msgs_autoload_paths') ) )
+            add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EEH_Plugin_API', 'register_msgs_autoload_paths'), 10 );
+
+        //add below filters if the required callback is provided.
+        if ( !empty( $setup_args['msgr_validator_callback'] ) )
+            add_filter( 'FHEE__EE_Email_messenger__get_validator_config', $setup_args['msgr_validator_callback'], 10, 2 );
+
+        if ( !empty( $setup_args['msgr_template_fields_callback'] ) )
+            add_filter( 'FHEE__EE_messenger__get_template_fields', $setup_args['msgr_template_fields_callback'], 10, 2 );
+
+        if ( !empty( $setup_args['valid_shortcodes_callback'] ) )
+            add_filter( 'FHEE__EE_Messages_Base__get_valid_shortcodes', $setup_args['valid_shortcodes_callback'], 10, 2 );
+    }
 
 }
