@@ -418,12 +418,11 @@ class EEH_Event_View extends EEH_Base {
 	 * 	get_event
 	* 	attempts to retrieve an EE_Event object any way it can
 	 *
-	 *  @access 	private
+	 *  @access 	public
 	 *  @return 	object
 	 */
-	private static function get_event( $EVT_ID = FALSE ) {
-		$EVT_ID = absint( $EVT_ID );
-//		d( $EVT_ID );
+	public static function get_event( $EVT_ID = FALSE ) {
+		$EVT_ID = $EVT_ID instanceof WP_Post ? $EVT_ID->ID : absint( $EVT_ID );
 		// do we already have the Event  you are looking for?
 		if ( EEH_Event_View::$_event instanceof EE_Event && $EVT_ID && EEH_Event_View::$_event->ID() === $EVT_ID ) {
 			return EEH_Event_View::$_event;
