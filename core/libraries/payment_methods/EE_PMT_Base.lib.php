@@ -191,7 +191,7 @@ abstract class EE_PMT_Base{
 			
 		}
 		$payment = $transaction->last_payment();
-		$payment = $this->_gateway->handle_payment_update($req_data,$payment,$this->_pm_instance->settings_array());
+		$payment = $this->_gateway->handle_payment_update($req_data,$payment);
 		return $payment;
 	}
 	

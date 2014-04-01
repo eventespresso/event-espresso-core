@@ -86,6 +86,8 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 		}
 		if($req->is_set('ee_payment_method') ){			
 			$payment_method_slug = $req->get('ee_payment_method') ;
+		}else{
+			$payment_method_slug = NULL;
 		}
 		EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$this->_current_txn,$payment_method_slug);
 		

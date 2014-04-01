@@ -116,17 +116,22 @@ class EE_Payment_Processor{
 	 * However, if not, we'll give all payment methods a chance to claim it and process it.
 	 * @param EE_Transaction $transaction optional (or a transactions id)
 	 * @param EE_Payment_Method $payment_method (or a slug or id of one)
+	 * @param boolean $save_txn whether to save the associated transaction or not
 	 * @return EE_Payment
 	 * @throws EE_Error
 	 */
-	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL ){
+	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $save_txn = true ){
 		//do_action('AHEE__log',__FILE__,__FUNCTION__,  sprintf("Logged IPN for payment method %s, registration_url_link '%s'", ))
-		$this->log("processing ipn. raw request data sent:".'paymetn method:'.print_r($transaction,true).'\n'.print_r($_req_data,true), $transaction,$payment_method);
+		echo "process ipn<hr>";
+		$this->log("processing ipn. raw request data sent:".print_r($_req_data,true), $transaction,$payment_method);
 		try{
+			/**
+			 * @var EE_Payment $payment
+			 */
 			$payment = NULL;
 			if($transaction && $payment_method){
 				$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
-				$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
+				$payment_method = EEM_Payment_Method::instance()->ensure_is_obj($payment_method);
 				if ( $payment_method->type_obj() instanceof EE_PMT_Base ) {
 						$payment = $payment_method->type_obj()->handle_ipn( $_req_data, $transaction );
 				} else {
@@ -154,6 +159,10 @@ class EE_Payment_Processor{
 					}
 				}
 				
+			}
+			$payment->save();
+			if($save_txn){
+				$payment->transaction()->update_based_on_payments();
 			}
 			return $payment;
 			

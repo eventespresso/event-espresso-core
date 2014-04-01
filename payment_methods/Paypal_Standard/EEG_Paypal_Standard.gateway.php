@@ -108,11 +108,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * Often used for IPNs. But applies the info in $update_info to the payment.
 	 * What is $update_info? Often the contents of $_REQUEST, but not necessarily. Whatever
 	 * the payment method passes in.
-	 * @param EE_Payment $payment
 	 * @param array $update_info of whatever
+	 * @param EE_Payment $payment
 	 * @return EE_Payment updated
 	 */
-	public function handle_payment_update($payment,$update_info){
+	public function handle_payment_update($update_info, $payment){
 		$payment->set_status(EEM_Payment::status_id_approved);
 		$payment->set_gateway_response('IPN received a-ok');
 		return $payment;

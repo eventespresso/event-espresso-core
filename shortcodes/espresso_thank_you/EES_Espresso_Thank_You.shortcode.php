@@ -83,11 +83,17 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		if ( EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
 			$this->_reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
 			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-			$this->_payment_method = EE_Registry::instance()->REQ->get('ee_payment_method');
+			
 			if ( ! $this->_current_txn instanceof EE_Transaction ) {
 				EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 			} else {
-				EE_Registry::instance()->load_core( 'Payment_Processor' )->process_ipn( $_REQUEST, $this->_current_txn,$this->_payment_method );
+				//assume the payment method is the most-recently used one
+				$payment_method = $this->_current_txn->payment_method();
+				if($payment_method && 
+						$payment_method->type_obj() instanceof EE_PMT_Base && 
+						$payment_method->type_obj()->payment_occurs() == EE_PMT_Base::offsite){
+					EE_Registry::instance()->load_core( 'Payment_Processor' )->process_ipn( $_REQUEST, $this->_current_txn,$payment_method );
+				}
 				add_filter( 'FHEE_load_css', '__return_true' );
 				add_filter( 'FHEE_load_js', '__return_true' );
 				add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
