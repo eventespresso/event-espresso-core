@@ -72,9 +72,11 @@ class EE_Newsletter_message_type extends EE_message_type {
 
     protected function _default_template_field_content() {
         $content = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/newsletter/templates/newsletter-message-type-content.template.php', TRUE );
+        $news_content_field = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/newsletter/templates/newsletter-message-type-newsletter-content-field.template.php', TRUE );
 
         foreach ( $this->_contexts as $context => $details ) {
             $tcontent[$context]['main'] = $content;
+            $tcontent[$context]['newsletter_content'] = $news_content_field;
         }
 
 

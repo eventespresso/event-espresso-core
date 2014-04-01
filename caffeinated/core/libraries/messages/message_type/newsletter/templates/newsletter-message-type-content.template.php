@@ -35,13 +35,13 @@
                                 <td>
                                     <h2>Hello, [RECIPIENT_FNAME]:</h2>
                                     <p class="lead">We've got a few things we want to share with you!</p>
+                                    <div>
+                                        [NEWSLETTER_CONTENT]
+                                    </div>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
-                </div>
-                <div>
-                    [NEWSLETTER_CONTENT]
                 </div>
             </td>
             <td></td>

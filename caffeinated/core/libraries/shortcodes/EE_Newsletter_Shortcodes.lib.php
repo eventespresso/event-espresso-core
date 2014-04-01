@@ -95,6 +95,7 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
             'rows' => '15',
             'shortcodes_required' => array('[NEWSLETTER_CONTENT]')
             );
+        return $template_fields;
     }
 
 } //end class EE_Newsletter_Shortcodes

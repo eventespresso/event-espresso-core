@@ -356,7 +356,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 */
 	public function get_template_fields() {
 		$template_fields = apply_filters( 'FHEE__' . get_class($this) . '__get_template_fields', $this->_template_fields, $this );
-		$template_fields = apply_filters(' FHEE__EE_messenger__get_template_fields', $template_fields, $this );
+		$template_fields = apply_filters( 'FHEE__EE_messenger__get_template_fields', $template_fields, $this );
 		return $template_fields;
 	}
 
