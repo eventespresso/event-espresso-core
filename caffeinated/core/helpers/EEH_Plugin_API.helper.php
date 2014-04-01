@@ -152,8 +152,8 @@ class EEH_Plugin_API {
         }
 
         //required fields MUST be present, so let's make sure they are.
-        if ( ! is_array( $setup_args ) || empty( $setup_args['mtname'] ) || empty( $setup_args['mtfilename'] ) || empty( $setup_args['autoload_paths'] ) )
-            throw new EE_Error( __( 'In order to register a message type with EEH_Plugin_API::register_new_message_type, you must include an array that contains the following keys: "mtname", "mtfilename", "autoload_paths"', 'event_espresso' ) );
+        if ( ! is_array( $setup_args ) || empty( $setup_args['mtname'] ) || empty( $setup_args['mtfilename'] ) || empty( $setup_args['autoloadpaths'] ) )
+            throw new EE_Error( __( 'In order to register a message type with EEH_Plugin_API::register_new_message_type, you must include an array that contains the following keys: "mtname", "mtfilename", "autoloadpaths"', 'event_espresso' ) );
 
         $mtname = (string) $setup_args['mtname'];
         //setup $__ee_message_type_registry array from incoming values.
@@ -164,7 +164,7 @@ class EEH_Plugin_API {
             );
 
         //add filters but only if they haven't already been added otherwise we'll get duplicate filters added - not good.
-        if ( ! has_filter( 'FHEE__EE_messages__get_installed__messagetype_files',  array( 'EEH_Plugin_API', 'register_msgs_autoload_paths') ) )
+        if ( ! has_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref',  array( 'EEH_Plugin_API', 'register_msgs_autoload_paths') ) )
             add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EEH_Plugin_API', 'register_msgs_autoload_paths'), 10 );
 
         if ( ! has_filter( 'FHEE__EE_messages__get_installed__messagetype_files', array( 'EEH_Plugin_API', 'register_messagetype_files') ) ) {
@@ -190,7 +190,7 @@ class EEH_Plugin_API {
             return $messagetype_files;
 
         foreach ( self::$_ee_message_type_registry as $mt_reg ) {
-            if ( empty( $mt_reg['mtfilenames' ] ) )
+            if ( empty( $mt_reg['mtfilename' ] ) )
                 continue;
             $messagetype_files[] = $mt_reg['mtfilename'];
         }
@@ -317,7 +317,7 @@ class EEH_Plugin_API {
             );
 
          //add filters but only if they haven't already been added otherwise we'll get duplicate filters added - not good.
-        if ( ! has_filter( 'FHEE__EE_messages__get_installed__messagetype_files',  array( 'EEH_Plugin_API', 'register_msgs_autoload_paths') ) )
+        if ( ! has_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref',  array( 'EEH_Plugin_API', 'register_msgs_autoload_paths') ) )
             add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EEH_Plugin_API', 'register_msgs_autoload_paths'), 10 );
 
         //add below filters if the required callback is provided.

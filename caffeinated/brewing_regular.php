@@ -540,6 +540,7 @@ class EE_Brewing_Regular extends EE_Base {
 				),
 			'messengers_to_activate_with' => array( 'email' )
 			);
+		EEH_Plugin_API::register_new_message_type( $setup_args );
 	}
 
 

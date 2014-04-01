@@ -420,14 +420,16 @@ abstract class EE_message_type extends EE_Messages_Base {
 			}
 		}
 
-		//make sure admin context does not include the recipient_details shortcodes
-		if( ($key = array_search('recipient_details', $this->_valid_shortcodes['admin'] ) ) !== false) {
-			    unset($this->_valid_shortcodes['admin'][$key]);
-			}
-		//make sure admin context does not include the recipient_details shortcodes
-		if( ($key = array_search('recipient_list', $this->_valid_shortcodes['admin'] ) ) !== false) {
-			    unset($this->_valid_shortcodes['admin'][$key]);
-			}
+		//make sure admin context does not include the recipient_details shortcodes IF we have admin context hooked in message types might not have that context.
+		if ( !empty( $this->_valid_shortcodes['admin'] ) ) {
+			if( ($key = array_search('recipient_details', $this->_valid_shortcodes['admin'] ) ) !== false) {
+				    unset($this->_valid_shortcodes['admin'][$key]);
+				}
+			//make sure admin context does not include the recipient_details shortcodes
+			if( ($key = array_search('recipient_list', $this->_valid_shortcodes['admin'] ) ) !== false) {
+				    unset($this->_valid_shortcodes['admin'][$key]);
+				}
+		}
 	}
 
 
