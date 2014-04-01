@@ -160,9 +160,11 @@ class EE_Payment_Processor{
 				}
 				
 			}
-			$payment->save();
-			if($save_txn){
-				$payment->transaction()->update_based_on_payments();
+			if($payment && $payment instanceof EE_Payment){
+				$payment->save();
+				if($save_txn){
+					$payment->transaction()->update_based_on_payments();
+				}
 			}
 			return $payment;
 			
