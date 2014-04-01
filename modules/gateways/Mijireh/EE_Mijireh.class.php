@@ -213,6 +213,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 			<h3><?php printf(__('You have selected %s as your method of payment', 'event_espresso'),$display_name); ?></h3>
+			<p><?php _e('After finalizing your registration, you will be transferred to the payment page where your transaction will be securely processed.', 'event_espresso'); ?></p>
 		</div>
 
 		<?php
