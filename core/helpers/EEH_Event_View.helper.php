@@ -196,8 +196,8 @@
 							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
 							$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $tm_frmt );
 							$datetime_description = $datetime->description();
-							$html .= ! empty( $datetime_description ) ? '<br/> - ' . $datetime_description : '';
-							$html .= '<br/><br/>';
+							$html .= ! empty( $datetime_description ) ? '<br/> - ' . $datetime_description . '<br/>' : '';
+							$html .= '<br/>';
 							$html .= '</li>';
 
 						} else {
@@ -206,11 +206,13 @@
 					}
 				}
 				$html .= $format ? '</ul>' : '';
-				if ( $echo ) {
-					echo $html;
-				} else {
-					return $html;
-				}
+			} else {
+				$html = $format ?  '<p><span class="dashicons dashicons-marker pink-text"></span>' . __( 'There are no upcoming dates for this event.', 'event_espresso' ) . '</p><br/>' : '';
+			}
+			if ( $echo ) {
+				echo $html;
+			} else {
+				return $html;
 			}
 		}		
 	}
@@ -296,7 +298,7 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_content_or_excerpt' )) {
-		function espresso_event_content_or_excerpt( $num_words = NULL, $more = NULL, $echo = TRUE ) {
+		function espresso_event_content_or_excerpt( $num_words = 55, $more = NULL, $echo = TRUE ) {
 			if ( $echo ) {
 				echo EEH_Event_View::event_content_or_excerpt( $num_words, $more );
 			} else {
@@ -596,8 +598,8 @@ class EEH_Event_View extends EEH_Base {
 			} else {
 				$content =  get_the_content();				
 			}
-//			echo apply_filters( 'the_content', $content );
-			echo $content;
+			echo apply_filters( 'the_content', $content );
+
 		} else {
 //echo '<h2 style="color:#E76700;">nothing<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			echo apply_filters( 'the_content', $content );			
