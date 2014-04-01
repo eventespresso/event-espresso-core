@@ -28,7 +28,7 @@ $event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $eve
 					$event_class .= ' has-img';
 					?>
 		<div id="ee-event-img-dv-<?php echo $post->ID; ?>" class="ee-event-img-dv">
-			<a class="" href="<?php the_permalink(); ?>">
+			<a class="" href="<?php espresso_event_link_url( $post->ID ); ?>">
 				<img class="ee-event-img" src="<?php echo $featured_img[0]; ?>" width="<?php echo $featured_img[1]; ?>" height="<?php echo $featured_img[2]; ?>" alt="<?php echo $caption; ?>"/>
 			</a>
 		</div>
@@ -41,7 +41,7 @@ $event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $eve
 		
 		<header class="event-header<?php echo $event_class;?>">
 			<h1 id="event-details-h1" class="entry-title">
-				<a class="" href="<?php the_permalink(); ?>"><?php the_title(); ?></a>
+				<a class="" href="<?php espresso_event_link_url( $post->ID ); ?>"><?php the_title(); ?></a>
 			</h1>
 			<p id="event-date-p">
 				<?php 
