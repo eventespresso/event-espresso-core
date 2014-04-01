@@ -144,4 +144,18 @@ class EEM_Payment_Method extends EEM_Base {
 		}
 	}
 	
+	/**
+	 * Gets the ID of this object, or if its a string finds the object's id
+	 * assocaited with that slug
+	 * @param type $base_obj_or_id_or_slug
+	 * @return int
+	 */
+	function ensure_is_ID($base_obj_or_id_or_slug){
+		if(is_string($base_obj_or_id_or_slug)){
+			//assume it's a slug
+			$base_obj_or_id_or_slug =  $this->get_one_by_slug($base_obj_or_id_or_slug);	
+		}
+		return parent::ensure_is_ID($base_obj_or_id_or_slug);
+		
+	}
 }

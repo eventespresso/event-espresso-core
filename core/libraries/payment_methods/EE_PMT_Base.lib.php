@@ -161,7 +161,7 @@ abstract class EE_PMT_Base{
 			if($this->_gateway instanceof EE_Offsite_Gateway){
 				$core_config = EE_Config::instance()->core;
 				$payment = $this->_gateway->set_redirection_info($payment,$billing_info,$return_url,
-						$core_config->txn_page_url(array('e_reg_url_link'=>$transaction->primary_registration()->reg_url_link(),'payment_method'=>$this->_pm_instance->slug())),
+						$core_config->txn_page_url(array('e_reg_url_link'=>$transaction->primary_registration()->reg_url_link(),'ee_payment_method'=>$this->_pm_instance->slug())),
 						$core_config->cancel_page_url());
 			}elseif($this->_gateway instanceof EE_Onsite_Gateway){
 				$payment = $this->_gateway->do_direct_payment($payment,$billing_info);

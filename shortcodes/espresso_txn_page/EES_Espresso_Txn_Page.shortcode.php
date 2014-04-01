@@ -28,6 +28,12 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 * @var EE_Transaction $_current_txn
 	 */
 	protected $_current_txn = NULL;
+	
+	/**
+	 * The current payment method for the IPN
+	 * @var EE_Payment_Method $_current_pm
+	 */
+	protected $_current_pm = NULL;
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, modules, etc
@@ -73,11 +79,16 @@ class EES_Espresso_Txn_Page  extends EES_Shortcode {
 	 */
 	public function run( WP $WP ) {
 		$req = EE_Registry::instance()->REQ;
-		if ( $req->is_set('e_reg_url_link' ) && $req->is_set('ee_gateway') ){			
+		if ( $req->is_set('e_reg_url_link' )){
 			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
-			EEM_Gateways::instance()->set_selected_gateway($req->get('ee_gateway') );
-			EEM_Gateways::instance()->handle_ipn_for_transaction($this->_current_txn);
+		}else{
+			$this->_current_txn = NULL;
 		}
+		if($req->is_set('ee_payment_method') ){			
+			$payment_method_slug = $req->get('ee_payment_method') ;
+		}
+		EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$this->_current_txn,$payment_method_slug);
+		
 	}
 
 
