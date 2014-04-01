@@ -251,6 +251,7 @@ class EE_Brewing_Regular extends EE_Base {
 		 */
 		//eat our own dogfood!
 		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_newsletter_message_type' ) );
+		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_newsletter_shortcodes' ) );
 		do_action('EE_Brewing_Regular___messages_caf');
 	}
 
@@ -535,7 +536,7 @@ class EE_Brewing_Regular extends EE_Base {
 			'mtname' => 'newsletter',
 			'mtfilename' => 'EE_Newsletter_message_type.class.php',
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
+				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/' => array('class')
 				),
 			'messengers_to_activate_with' => array( 'email' )
 			);
@@ -550,6 +551,29 @@ class EE_Brewing_Regular extends EE_Base {
 			'shortcodes_required' => array('[NEWSLETTER_CONTENT]')
 			);
 		EEH_Plugin_API::register_new_message_type($setup_args);
+	}
+
+
+
+
+	/**
+	 * Takes care of registering the newsletter shortcode library and set up related items.
+	 *
+	 * @since   4.4.0
+	 *
+	 * @return void
+	 */
+	public function register_newsletter_shortcodes() {
+		$name = 'newsletter';
+		$setup_args = array(
+			'autoloadpaths' => array(
+				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/shortcodes/' => array( 'lib' )
+				),
+			'msgr_validator_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_validator_config' ),
+			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),
+			'valid_shortcodes_callback' => array( 'EE_Newsletter_Shortcodes', 'valid_shortcodes' )
+			);
+		EEH_Plugin_API::register_messages_shortcode_library( $name, $setup_args );
 	}
 
 
