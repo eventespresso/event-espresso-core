@@ -298,7 +298,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 			'MTP_message_type' => $this->_message_type->name,
 			'MTP_is_override' => 0,
 			'MTP_deleted' => 0,
-			'MTP_is_global' => $is_global,
+			'MTP_is_global' => 1,
 			'MTP_user_id' => get_current_user_id(),
 			'MTP_is_active' => 1,
 			);
