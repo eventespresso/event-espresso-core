@@ -179,7 +179,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function ticket_selector_form_open( $ID, $external_url = FALSE ) {
 		// if redirecting, we don't need any anything else
 		if ( $external_url ) {
-			return '<form id="" method="POST" action="' . $external_url . '">';		
+			return '<form id="" method="GET" action="' . $external_url . '">';		
 		}
 		$checkout_url = espresso_event_link_url( $ID, FALSE );
 		if ( ! $checkout_url ) {
@@ -193,9 +193,10 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+
 	
 	/**
-	* 	display_ticket_selector_submit
+	* 	display_ticket_selector_redirect
 	* 
 	*	@access public
 	* 	@access 		public
