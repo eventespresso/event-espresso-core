@@ -122,7 +122,6 @@ class EE_Payment_Processor{
 	 */
 	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $save_txn = true ){
 		//do_action('AHEE__log',__FILE__,__FUNCTION__,  sprintf("Logged IPN for payment method %s, registration_url_link '%s'", ))
-		echo "process ipn<hr>";
 		$this->log("processing ipn. raw request data sent:".print_r($_req_data,true), $transaction,$payment_method);
 		try{
 			/**
