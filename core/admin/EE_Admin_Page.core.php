@@ -61,7 +61,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_list_table_object;
 
 	//bools
-	protected $_is_UI_request;
+	protected $_is_UI_request = NULL; //this starts at null so we can have no header routes progress through two states.
 	protected $_routing;
 
 	//list table args
@@ -752,12 +752,20 @@ abstract class EE_Admin_Page extends EE_BASE {
 			throw new EE_Error( $error_msg );
 		}
 
-		//lets set if this is a UI request or not.
-		$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' ) ? TRUE : FALSE;
+		//first lets' catch if the UI request has EVER been set.
+		if ( $this->_is_UI_request === NULL ) {
+			//lets set if this is a UI request or not.
+			$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' ) ? TRUE : FALSE;
 
 
-		//wait a minute... we might have a noheader in the route array
-		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
+			//wait a minute... we might have a noheader in the route array
+			$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
+		}
+
+		//now if UI request is FALSE and noheader is true AND we have a headers_sent_func in the route array then let's set UI_request to true because the no header route has a second func after headers have been sent.
+		if ( $this->_is_UI_request === FALSE && ! empty( $this->_route['headers_sent_func'] ) ) {
+			$this->_is_UI_request == TRUE;
+		}
 
 		$this->_set_current_labels();
 
@@ -831,10 +839,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$nonce = isset($this->_req_data[ $this->_req_nonce  ]) ? sanitize_text_field( $this->_req_data[ $this->_req_nonce  ] ) : '';
 			$this->_verify_nonce( $nonce, $this->_req_nonce );
 		}
-		//set the nav_tabs array
-		$this->_set_nav_tabs();
+		//set the nav_tabs array but ONLY if this is  UI_request
+		if ( $this->_is_UI_request )
+			$this->_set_nav_tabs();
+
 		// grab callback function
 		$func = is_array( $this->_route ) ? $this->_route['func'] : $this->_route;
+
+		//wait a minute... it's possible this is a noheader route with a sent_headers_func. So let's use that instead
+		$func = $this->_is_UI_request && is_array( $this->_route ) && !empty( $this->_route['sent_headers_func'] ) ? $this->_route['sent_headers_func'] : $func;
+
 		// check if callback has args
 		$args = is_array( $this->_route ) && isset( $this->_route['args'] ) ? $this->_route['args'] : array();
 
