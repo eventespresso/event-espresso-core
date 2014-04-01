@@ -1626,6 +1626,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						
 					// THERE
 					case EE_PMT_Base::offsite :
+						// update thank you page url cuz it's used as the redirect after payment
+						$this->_thank_you_page_url = add_query_arg( 
+							array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ), 
+							$this->_thank_you_page_url 
+						);
 						// k... attempt to make the actual payment
 						$payment = $this->_attempt_payment( $payment_method );
 						$redirect_url = $payment->redirect_url();
