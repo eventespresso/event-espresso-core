@@ -540,17 +540,6 @@ class EE_Brewing_Regular extends EE_Base {
 				),
 			'messengers_to_activate_with' => array( 'email' )
 			);
-		$setup_args['template_fields']['email']['extra']['content']['newsletter_content'] = array(
-			'input' => 'wpeditor',
-			'label' => '[NEWSLETTER_CONTENT]',
-			'type' => 'string',
-			'required' => TRUE,
-			'validation' => TRUE,
-			'format' => '%s',
-			'rows' => '15',
-			'shortcodes_required' => array('[NEWSLETTER_CONTENT]')
-			);
-		EEH_Plugin_API::register_new_message_type($setup_args);
 	}
 
 
@@ -567,11 +556,10 @@ class EE_Brewing_Regular extends EE_Base {
 		$name = 'newsletter';
 		$setup_args = array(
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/shortcodes/' => array( 'lib' )
+				EE_CAF_LIBRARIES . 'shortcodes/' => array( 'lib' )
 				),
 			'msgr_validator_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_validator_config' ),
-			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),
-			'valid_shortcodes_callback' => array( 'EE_Newsletter_Shortcodes', 'valid_shortcodes' )
+			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' )
 			);
 		EEH_Plugin_API::register_messages_shortcode_library( $name, $setup_args );
 	}
