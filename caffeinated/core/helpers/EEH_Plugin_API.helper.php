@@ -322,7 +322,7 @@ class EEH_Plugin_API {
 
         //add below filters if the required callback is provided.
         if ( !empty( $setup_args['msgr_validator_callback'] ) )
-            add_filter( 'FHEE__EE_Email_messenger__get_validator_config', $setup_args['msgr_validator_callback'], 10, 2 );
+            add_filter( 'FHEE__EE_messenger__get_validator_config', $setup_args['msgr_validator_callback'], 10, 2 );
 
         if ( !empty( $setup_args['msgr_template_fields_callback'] ) )
             add_filter( 'FHEE__EE_messenger__get_template_fields', $setup_args['msgr_template_fields_callback'], 10, 2 );
