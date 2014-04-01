@@ -17,7 +17,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  * @since            4.4.0
  * @author          Darren Ethier
  */
-class EE_Messages_Newsletter_Defaults extends EE_Message_Template_Defaults {
+class EE_Messages_Email_Newsletter_Defaults extends EE_Message_Template_Defaults {
     protected function _set_props() {
         $this->_m_name = 'email';
         $this->_mt_name = 'newsletter';
