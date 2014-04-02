@@ -25,9 +25,9 @@
  * ------------------------------------------------------------------------
  */
 abstract class EE_Offsite_Gateway extends EE_Gateway{
-	public function __construct() {
+	public function __construct($model) {
 		$this->_supports_receiving_refunds = true;
-		parent::__construct();
+		parent::__construct($model);
 	}
 	/**
 	 * @param EE_Payment $payment to process
@@ -45,9 +45,9 @@ abstract class EE_Offsite_Gateway extends EE_Gateway{
 	 * Often used for IPNs. But applies the info in $update_info to the payment.
 	 * What is $update_info? Often the contents of $_REQUEST, but not necessarily. Whatever
 	 * the payment method passes in.
-	 * @param EE_Payment $payment
 	 * @param array $update_info of whatever
-	 * @return EE_Payment updated
+	 * @param EEI_Transaction $transaction
+	 * @return EEI_Payment updated
 	 */
-	public abstract function handle_payment_update($payment,$update_info);
+	public abstract function handle_payment_update($update_info,$transaction);
 }

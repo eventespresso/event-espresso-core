@@ -23,7 +23,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  *
  * ------------------------------------------------------------------------
  */
-class EE_Line_Item extends EE_Base_Class{
+class EE_Line_Item extends EE_Base_Class implements EEI_Line_Item{
 	
 	
 	/** ID", "event_espresso @var LIN_ID*/ 

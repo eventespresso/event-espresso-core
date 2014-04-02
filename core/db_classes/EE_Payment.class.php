@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EE_Payment extends EE_Base_Class{
+class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
     /**

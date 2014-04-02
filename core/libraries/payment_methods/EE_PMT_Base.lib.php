@@ -190,11 +190,20 @@ abstract class EE_PMT_Base{
 			throw new EE_Error(sprintf(__("Could not handle IPN because '%s' is not an offsite gateway", "event_espresso"), print_r( $this->_gateway, TRUE )));
 			
 		}
-		$payment = $transaction->last_payment();
-		$payment = $this->_gateway->handle_payment_update($req_data,$payment);
+		$payment = $this->_gateway->handle_payment_update($req_data);
 		return $payment;
 	}
 	
+	/**
+	 * Gets the payment this IPN is for. Children may often want to 
+	 * override this to inspect the request
+	 * @param array $req_data
+	 * @param EE_Transaction $transaction
+	 * @return EE_Payment
+	 */
+	protected function find_payment_for_ipn($req_data,$transaction){
+		return $transaction->last_payment();
+	}
 	/**
 	 * In case generic code cannot provide the paymetn processor with a specific payment method
 	 * and transaction, it will try calling this method on each activate payment method.

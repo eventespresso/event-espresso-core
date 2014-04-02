@@ -22,7 +22,7 @@
  * ------------------------------------------------------------------------
  */
 require_once ( EE_MODELS . 'EEM_Base.model.php' );
-class EEM_Payment extends EEM_Base {
+class EEM_Payment extends EEM_Base implements EEMI_Payment{
 
   	// private instance of the Payment object
 	private static $_instance = NULL;
@@ -304,6 +304,40 @@ class EEM_Payment extends EEM_Base {
 //echo '<h3>$start_date : ' . $start_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
 //echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
 		return $this->get_all(array(array('PAY_timestamp'=>array('>=',$start_date),'PAY_timestamp*'=>array('<=',$end_date))));
+	}
+	
+	/**
+	 * methods for EEMI_Payment
+	 */
+	/**
+	 * REturns a string for the approved status
+	 */
+	function approved_status(){
+		return self::status_id_approved;
+	}
+	/**
+	 * REturns a string for the pending status
+	 */
+	function pending_status(){
+		return self::status_id_pending;
+	}
+	/**
+	 * REturns a string for the cancelled status
+	 */
+	function cancelled_status(){
+		return self::status_id_cancelled;
+	}
+	/**
+	 * REturns a string for the failed status
+	 */
+	function failed_status(){
+		return self::status_id_failed;
+	}
+	/**
+	 * REturns a string for the declined status
+	 */
+	function declined_status(){
+		return self::status_id_declined;
 	}
 }
 

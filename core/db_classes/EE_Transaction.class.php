@@ -22,7 +22,7 @@
  * ------------------------------------------------------------------------
  */
 require_once( EE_CLASSES . 'EE_Base_Class.class.php');
-class EE_Transaction extends EE_Base_Class{
+class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	
     /**
     *	Transaction ID

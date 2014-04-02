@@ -50,5 +50,4 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		//so in case teh IPN is arriving later, let's try to process an IPN!
 		EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$transaction,$this->_pm_instance);
 	}
-	
 }

@@ -43,10 +43,15 @@ abstract class EE_Gateway{
 	 */
 	protected $_supports_receiving_refunds = false;
 	/**
-	 * 
+	 * Model for querying for existing payments
+	 * @var EEMI_Payment
 	 */
-	public function __construct(){
-		
+	protected $_pay_model = NULL;
+	/**
+	 * @param EEMI_Payment $model
+	 */
+	public function __construct($model){
+		$this->_pay_model = $model;
 	}
 	/**
 	 * Returns whether or not this gateway shoudl support SENDING refunds

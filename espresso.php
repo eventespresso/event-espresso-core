@@ -220,3 +220,159 @@ function espresso_load_required( $classname, $full_path_to_file ) {
 espresso_load_required( 'EE_System', EE_CORE . 'EE_System.core.php' );
 EE_System::instance();
 
+
+
+
+
+
+
+
+/**
+ * Interface which allows gateways to be used by different systems other than Event Espresso
+ */
+interface EEI_Payment{
+	
+	/**
+	 * @return string indicating which the payment is approved, pending, cancelled or failed
+	 */
+	function status();
+	/**
+	 * @return float returns the amount the payment is for (wehther or not its approved)
+	 */
+	function amount();
+	
+	/**
+	 * 
+	 * @param string $status
+	 */
+	function set_status($status);
+	
+	/**
+	 * Sets the response from the gateway, which is displayable to the user. 
+	 * Eg, 'payment was approved', 'payment failed because invalid date', etc.
+	 * @param string $response
+	 */
+	function set_gateway_response($response);
+	
+	/**
+	 * Sets the response details, usually the entire contents of an IPN request,
+	 * or data about the direct paymetn data sent
+	 * @param array $response_details
+	 */
+	function set_details($response_details);
+	
+	/**
+	 * 
+	 * @return EEI_Transaction
+	 */
+	function transaction();
+}
+
+/**
+ * interface representing a model (for querying to get EEI_Payment objects).
+ * It's probably best if its a singleton to save on resources but still allow it
+ * to have some state
+ */
+interface EEMI_Payment{
+	/**
+	 * REturns a string for the approved status
+	 */
+	function approved_status();
+	/**
+	 * REturns a string for the pending status
+	 */
+	function pending_status();
+	/**
+	 * REturns a string for the cancelled status
+	 */
+	function cancelled_status();
+	/**
+	 * REturns a string for the failed status
+	 */
+	function failed_status();
+	/**
+	 * REturns a string for the declined status
+	 */
+	function declined_status();
+	
+	
+	/**
+	 * Function that returns an instance of this class.
+	 * @return EEMI_Payment
+	 */
+	public static function instance();
+	
+	/**
+	 * Gets a payment by the transaction ID or cheque number
+	 * @param int $txn_id
+	 * @return EEI_Payment
+	 */
+	function get_payment_by_txn_id_chq_nmbr($txn_id);
+}
+
+interface EEI_Transaction{
+	/**
+	 * 
+	 * @return EEI_Payment
+	 */
+	function last_payment();
+	/**
+	 * Gets the toal that should eb paid for this transaction
+	 * @return float
+	 */
+	function total();
+	
+	/**
+	 * Get the line item that represents the total for the transaction
+	 * @return EEI_Line_Item
+	 */
+	function total_line_item();
+	
+	/**
+	 * Gets the primary registration for this transaction
+	 * @return EEI_Registration
+	 */
+	function primary_registration();
+}
+
+interface EEI_Line_Item{
+	/**
+	 * @return string
+	 */
+	function name();
+	/**
+	 * The unit price for the items of this line item
+	 * @return float
+	 */
+	function unit_price();
+	
+	/**
+	 * Returns the number of items in this line item
+	 * @return int
+	 */
+	function quantity();
+	/**
+	 * Returns the total amount due for this line item 
+	 * (usually quantity x unit_price)
+	 * @return float
+	 */
+	function total();
+	/**
+	 * Gets all teh children line items of type 'line-item'
+	 * @return EEI_Line_Item[]
+	 */
+	function get_items();
+	/**
+	 * Gets all the chilren line items of type 'tax'
+	 * @return EEI_Line_Item[]
+	 */
+	function tax_descendants();
+}
+
+interface EEI_Registration{
+	/**
+	 * Gets the registration code
+	 * @return string
+	 */
+	function reg_code();
+}
