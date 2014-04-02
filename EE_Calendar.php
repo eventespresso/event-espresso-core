@@ -49,7 +49,7 @@
  //we need to register our activation hook before init or plugins_loaded (where we load teh calendar)
  register_activation_hook(__FILE__, array('EE_Calendar','register_activation_hook'));
  class EE_Calendar {
-	 const activation_indicator_option_name = 'ee_espresso_activation';
+	 const activation_indicator_option_name = 'ee_espresso_calendar_activation';
 
 	/**
 	 * instance of the EE_Calendar object
@@ -131,7 +131,7 @@
 	 */
 	public static function register_activation_hook(){
 		//let's just handle this on the next request, ok? right now we're just not really ready
-		add_option(EE_Calendar::activation_indicator_option_name,true);
+		update_option(EE_Calendar::activation_indicator_option_name,true);
 	}
 	/**
 	 * 	register_autoloaders

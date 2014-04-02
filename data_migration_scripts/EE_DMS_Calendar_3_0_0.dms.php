@@ -40,9 +40,15 @@ class EE_DMS_Calendar_3_0_0 extends EE_Data_Migration_Script_Base{
 		}else{
 			$an_ee3_table_exists = true;
 		}
+		if(get_option('ee_data_migration_script_Core.4.1.0')){
+			$core_4_1_0_migrations_ran = true;
+		}else{
+			$core_4_1_0_migrations_ran = false;
+		}
 		if($core_version_string >= '4.1.0' &&//only run it if core is at least at 4.1.0
 				$calendar_version_string < '3.0.0' && //and if calendar data ISN'T at 3.0.0 or greater already
-				$an_ee3_table_exists //and the EE3 calendar tables exist
+				$an_ee3_table_exists && //and the EE3 calendar tables exist
+				$core_4_1_0_migrations_ran //and the 3.1 core data was migrated to at least 4.1 (this migration requires data from THAT migration)
 				){
 			return true;
 		}else{
