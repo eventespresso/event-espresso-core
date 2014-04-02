@@ -356,6 +356,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$payment_method = EE_Payment_Method::new_instance(array(
 					'PMD_type'=>$payment_method_type,
 					'PMD_name'=>$payment_method_type,
+					'PMD_admin_name'=>$payment_method_type,
 					'PMD_slug'=>$payment_method_type,
 					'PMD_wp_user_id'=>$current_user->ID));
 				$payment_method->save();
