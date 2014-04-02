@@ -41,6 +41,20 @@
  		//foreach row that has an evt_id ..let's create an equivalent entry in the new event_messages_template table to link the message template to the event (since EVT_ID is no longer referenced in esp_message_template_groups )
  		global $wpdb;
  		if ( $old_row['EVT_ID'] > 0 ) {
+                                    //let's get the EVT for this id so we can update the custom name on the old row.
+                                    $event_name = 'Custom Template for ' . $wpdb->get_var( $wpdb->prepare( "SELECT post_title from $wpdb->posts WHERE post_id = %d", absint( $old_row['EVT_ID'] ) ) );
+
+                                    //update name
+                                    $updates = $wpdb->update(
+                                        $this->_old_table,
+                                        array(
+                                            'MTP_name' =>$event_name
+                                            ),
+                                        array( 'MTP_ID' => $old_row['MTP_ID'] ),
+                                        array( '%s' ),
+                                        array( '%d' )
+                                        );
+
  			$inserted = $wpdb->insert(
  				$this->_emt_table,
  				array(
@@ -49,8 +63,13 @@
  					),
  				array( '%d', '%d' )
  				);
+
+                                    if ( FALSE === $updated ) {
+                                        $this->add_error( sprintf( __("Error in updating the row in %s setting 'MTP_name = %d", 'event_espresso'), $this->_old_table, $event_name ) );
+                                    }
+
  			if ( FALSE === $inserted ) {
- 				$this->add_error( sprintf( __("Error in inserting a row into {$this->_emt_table} setting EVT_ID = %d and GRP_ID = %d", "event_espresso"), $old_row['EVT_ID'], $old_row['GRP_ID'] ) );
+ 				$this->add_error( sprintf( __("Error in inserting a row into  setting EVT_ID = %d and GRP_ID = %d", "event_espresso"), $this->_emt_table, $old_row['EVT_ID'], $old_row['GRP_ID'] ) );
  			}
  		}
  	}
