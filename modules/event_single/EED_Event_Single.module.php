@@ -165,18 +165,15 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public function template_include( $template ) {
 		if ( EE_Registry::instance()->CFG->template_settings->EED_Event_Single->display_status_banner_single ) {
-			add_filter( 'the_title', array( $this, 'the_title' ), 100, 2 );
+			add_filter( 'the_title', array( 'EED_Event_Single', 'the_title' ), 100, 2 );
 		}
 		// not a custom template?
 		if ( EE_Front_Controller::instance()->get_selected_template() != 'single-espresso_events.php' && ! post_password_required() ) {
 			EEH_Template::load_espresso_theme_functions();
 			// then add extra event data via hooks
-			add_action( 'loop_start', array( $this, 'loop_start' ));
-			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
-			add_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
-			add_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
-			add_filter( 'the_content', array( $this, 'event_venues' ), 130 );
-			add_action( 'loop_end', array( $this, 'loop_end' ));
+			add_action( 'loop_start', array( 'EED_Event_Single', 'loop_start' ));
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
+			add_action( 'loop_end', array( 'EED_Event_Single', 'loop_end' ));
 			// don't diplay entry meta because the existing theme will take car of that
 			add_filter( 'FHEE__content_espresso_events_details_template__display_entry_meta', '__return_false' );
 		}
@@ -192,7 +189,7 @@ class EED_Event_Single  extends EED_Module {
 	 * 	@param		array 	$wp_query_array an array containing the WP_Query object
 	 *  	@return 		void
 	 */
-	public function loop_start( $wp_query_array ) {
+	public static function loop_start( $wp_query_array ) {
 		global $post;
 		do_action( 'AHEE_event_details_before_post', $post );
 	}
@@ -206,7 +203,7 @@ class EED_Event_Single  extends EED_Module {
 	 * 	@param		string 	$title
 	 *  	@return 		void
 	 */
-	public function the_title( $title = '', $id = '' ) {
+	public static function the_title( $title = '', $id = '' ) {
 		global $post;
 		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID ) . $title :  $title; 
 	}
@@ -219,25 +216,30 @@ class EED_Event_Single  extends EED_Module {
 	 * 	@param		string 	$content
 	 *  	@return 		void
 	 */
-	public function event_details( $content ) {
+	public static function event_details( $content ) {
 		global $post;
 		if ( $post->post_type == 'espresso_events' ) {
 			// since the 'content-espresso_events-details.php' template might be used directly from within a theme,
 			// it uses the_content() for displaying the $post->post_content
 			// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
 			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
-			remove_filter( 'the_content', array( $this, 'event_details' ), 100 );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
+			//now add additional content 
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 110, 1 );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 120, 1 );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130, 1 );
 			// now load our template
 			$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 			//now add our filter back in, plus some others
-			add_filter( 'the_content', array( $this, 'event_details' ), 100 );
-			remove_filter( 'the_content', array( $this, 'event_tickets' ), 110 );
-			remove_filter( 'the_content', array( $this, 'event_datetimes' ), 120 );
-			remove_filter( 'the_content', array( $this, 'event_venues' ), 130 );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 110 );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 120 );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130 );
 		}
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
 		return ! empty( $template ) ? $template : $content;
 	}
+
 
 
 	/**
@@ -247,7 +249,7 @@ class EED_Event_Single  extends EED_Module {
 	 * 	@param		string 	$content
 	 *  	@return 		void
 	 */
-	public function event_tickets( $content ) {
+	public static function event_tickets( $content ) {
 		return $content . EEH_Template::locate_template( 'content-espresso_events-tickets.php' );
 	}
 
@@ -258,7 +260,7 @@ class EED_Event_Single  extends EED_Module {
 	 * 	@param		string 	$content
 	 *  	@return 		void
 	 */
-	public function event_datetimes( $content ) {
+	public static function event_datetimes( $content ) {
 		return $content . EEH_Template::locate_template( 'content-espresso_events-datetimes.php' );
 	}
 
@@ -269,7 +271,7 @@ class EED_Event_Single  extends EED_Module {
 	 * 	@param		string 	$content
 	 *  	@return 		void
 	 */
-	public function event_venues( $content ) {
+	public static function event_venues( $content ) {
 		return $content . EEH_Template::locate_template( 'content-espresso_events-venues.php' );
 	}
 
@@ -282,7 +284,7 @@ class EED_Event_Single  extends EED_Module {
 	 * 	@param		array 	$wp_query_array an array containing the WP_Query object
 	 *  	@return 		void
 	 */
-	public function loop_end( $wp_query_array ) {
+	public static function loop_end( $wp_query_array ) {
 		global $post;
 		do_action( 'AHEE_event_details_after_post', $post );
 	}

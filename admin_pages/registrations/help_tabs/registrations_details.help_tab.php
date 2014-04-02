@@ -7,7 +7,7 @@
 <ul>
 <li style="list-style-type: none;">
 <strong>Approved</strong><br>
-An approved registration allows payments and may have a completed or incompleted transaction status. The registration is marked as active and a space is reserved for the registrant.
+An approved registration allows payments and may have a transaction status of incomplete or complete. The registration is marked as active and a space is reserved for the registrant.
 </li>
 <li style="list-style-type: none;">
 <strong>Cancelled</strong><br>
