@@ -376,3 +376,16 @@ interface EEI_Registration{
 	 */
 	function reg_code();
 }
+interface EEI_Payment_Method{
+	
+}
+interface EEMI_Payment_Log{
+	/**
+	 * Logs a message
+	 * @param string $message
+	 * @param EEI_Transaction $transaction
+	 * @param EEI_Payment_Method $payment_method
+	 * @return void
+	 */
+	function log($message,$transaction,$payment_method);
+}

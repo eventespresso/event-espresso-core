@@ -122,7 +122,7 @@ class EE_Payment_Processor{
 	 */
 	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $save_txn = true ){
 		//do_action('AHEE__log',__FILE__,__FUNCTION__,  sprintf("Logged IPN for payment method %s, registration_url_link '%s'", ))
-		$this->log("processing ipn. raw request data sent:".print_r($_req_data,true), $transaction,$payment_method);
+		EEM_Payment_Log::instance()->log("processing ipn. raw request data sent:".print_r($_req_data,true), $transaction,$payment_method);
 		try{
 			/**
 			 * @var EE_Payment $payment
@@ -208,30 +208,4 @@ class EE_Payment_Processor{
 			$payment_method->do_direct_refund($payment_to_refund,$refund_info);
 		}
 	}
-	
-	/**
-	 * Adds this item to the paymetn methods log
-	 * @param string $message
-	 * @param mixed $transaction ID or object
-	 * @param mixed $payment_method payment method ID or objec
-	 */
-	public function log($message,$transaction = NULL, $payment_method = NULL){
-		try{
-			$pm_obj = EEM_Payment_Method::instance()->ensure_is_obj($payment_method);
-			if($pm_obj && ! $pm_obj->logging()){
-				return;	
-			}
-			$pm = $pm_obj->ID();
-		}catch(EE_Error $e){
-			$pm = 0;
-		}
-		try{
-			$transaction = EEM_Transaction::instance()->ensure_is_ID($transaction);
-		}catch(EE_Error $e){
-			$transaction = 0;
-		}
-		add_option(self::log_transient_key_prefix.'/p'.$pm.'/t'.$transaction.'/d'.current_time('mysql'),$message,NULL,false);
-	}
-	
-	const log_transient_key_prefix = 'ee_pm_log_';
 }

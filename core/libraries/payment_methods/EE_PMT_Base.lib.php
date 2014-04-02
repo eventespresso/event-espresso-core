@@ -40,6 +40,7 @@ abstract class EE_PMT_Base{
 		$this->_set_file_folder();
 		if($this->_gateway){
 			$this->_gateway->set_payment_model(EEM_Payment::instance());
+			$this->_gateway->set_payment_log(EEM_Payment_Log::instance());
 		}
 	}
 	
@@ -193,7 +194,7 @@ abstract class EE_PMT_Base{
 			throw new EE_Error(sprintf(__("Could not handle IPN because '%s' is not an offsite gateway", "event_espresso"), print_r( $this->_gateway, TRUE )));
 			
 		}
-		$payment = $this->_gateway->handle_payment_update($req_data);
+		$payment = $this->_gateway->handle_payment_update($req_data,$transaction);
 		return $payment;
 	}
 	

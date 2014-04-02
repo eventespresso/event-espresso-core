@@ -49,6 +49,18 @@ abstract class EE_Gateway{
 	protected $_pay_model = NULL;
 	
 	/**
+	 * Model used for adding to the payments log
+	 * @var EEMI_Payment_Log
+	 */
+	protected $_pay_log = NULL;
+	
+	/**
+	 * The ID of the payment method using this gateway
+	 * @var int
+	 */
+	protected $_ID;
+	
+	/**
 	 * @param EEMI_Payment $model
 	 */
 	public function __construct(){
@@ -100,6 +112,15 @@ abstract class EE_Gateway{
 	public function set_payment_model($payment_model){
 		$this->_pay_model = $payment_model;
 	}
+	/**
+	 * Sets the payment log
+	 * @param EEMI_Payment_Log $payment_log_model
+	 */
+	public function set_payment_log($payment_log_model){
+		$this->_pay_log = $payment_log_model;
+	}
 	
-	
+	protected function log($message,$transaction){
+		$this->_pay_log->log($message,$transaction,$this->_ID);
+	}
 }

@@ -124,7 +124,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 */
 	public function handle_payment_update($update_info,$transaction){
 		//verify there's payment data that's been sent
-		if(empty($update_info['payment_status']) || $update_info($_POST['txn_id'])){
+		$this->log('paypal standards handle payment update called with '.print_r($update_info,true).', on transaction '.print_r($transaction,true),$transaction);
+		if(empty($update_info['payment_status']) || empty($update_info['txn_id'])){
 			return NULL;
 		}
 		$payment =  $this->_pay_model->get_payment_by_txn_id_chq_nmbr($update_info['txn_id']);
@@ -135,6 +136,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if( ! $this->validate_ipn($update_info,$payment)){
 			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
 			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
+			$this->log(sprintf(__("IPN failed validation", "event_espresso")), $transaction);
 			return $payment;
 		}
 		//verify the transaction exists
