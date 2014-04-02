@@ -297,6 +297,12 @@ class EEH_Plugin_API {
      *                                                                              Optional.
      *       @type string $valid_shortcodes_callback         Callback for message types
      *                                                                              _valid_shortcodes array setup. Optional.
+     *       @type array  $list_type_shortcodes                 If there are any specific shortcodes with this
+     *                                                                             message shortcode library that should be
+     *                                                                             considered "list type" then include them in an
+     *                                                                             array.  List Type shortcodes are shortcodes that
+     *                                                                             have a corresponding field that indicates how
+     *                                                                             they are parsed. Optional.
      * }
      * @return void
      */
@@ -313,7 +319,8 @@ class EEH_Plugin_API {
 
         $name = (string) $name;
         self::$_ee_messages_shortcode_registry[$name] = array(
-            'autoloadpaths' => (array) $setup_args['autoloadpaths']
+            'autoloadpaths' => (array) $setup_args['autoloadpaths'],
+            'list_type_shortcodes' => !empty( $setup_args['list_type_shortcodes'] ) ? (array) $setup_args['list_type_shortcodes'] : array()
             );
 
          //add filters but only if they haven't already been added otherwise we'll get duplicate filters added - not good.
@@ -329,6 +336,32 @@ class EEH_Plugin_API {
 
         if ( !empty( $setup_args['valid_shortcodes_callback'] ) )
             add_filter( 'FHEE__EE_Messages_Base__get_valid_shortcodes', $setup_args['valid_shortcodes_callback'], 10, 2 );
+
+        if ( !empty( $setup_args['list_type_shortcodes'] ) )
+            add_filter( 'FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes', array( 'EEH_Plugin_API', 'register_list_type_shortcodes'), 10 );
+    }
+
+
+
+    /**
+     * This is the callback for the FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes
+     * filter which is used to add additional list type shortcodes.
+     *
+     * @since 4.4.0
+     *
+     * @param  array $original_shortcodes
+     * @return  array                                   Modifications to original shortcodes.
+     */
+    public static function register_list_type_shortcodes( $original_shortcodes ) {
+        if ( empty( self::$_ee_messages_shortcode_registry ) )
+            return $original_shortcodes;
+
+        foreach ( self::$_ee_messages_shortcode_registry as $name => $sc_reg ) {
+            if ( !empty( $sc_reg['list_type_shortcodes'] ) )
+                $original_shortcodes = array_merge( $original_shortcodes, $sc_reg['list_type_shortcodes'] );
+        }
+
+        return $original_shortcodes;
     }
 
 }

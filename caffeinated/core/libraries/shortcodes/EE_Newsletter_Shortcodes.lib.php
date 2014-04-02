@@ -37,7 +37,7 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
             $valid_shortcodes = array('recipient_details', 'organization');
             $template = $this->_data['template']['newsletter_content'];
             $data = $this->_data;
-            return $this->_shortcode_helper->parse_message_template( $template, $data, $valid_shortcodes );
+            return $this->_shortcode_helper->parse_message_template( $template, $data['data'], $valid_shortcodes );
         }
     }
 

@@ -571,7 +571,8 @@ class EE_Brewing_Regular extends EE_Base {
 				EE_CAF_LIBRARIES . 'shortcodes/' => array( 'lib' )
 				),
 			'msgr_validator_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_validator_config' ),
-			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' )
+			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),
+			'list_type_shortcodes' => array( '[NEWSLETTER_CONTENT]' )
 			);
 		EEH_Plugin_API::register_messages_shortcode_library( $name, $setup_args );
 	}
