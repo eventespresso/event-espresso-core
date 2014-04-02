@@ -154,7 +154,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 	/**
 	 * Custom message for when there are no items found.
 	 *
-	 * @since 4.4.0
+	 * @since 4.3.0
 	 *
 	 * @return string
 	 */

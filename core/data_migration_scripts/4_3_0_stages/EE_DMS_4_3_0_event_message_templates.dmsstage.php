@@ -1,24 +1,24 @@
 <?php
 /**
- * Contains stage for 4.4.0 migrations
+ * Contains stage for 4.3.0 migrations
  * @package 		Event Espresso
  * @subpackage 	migrations
- * @since 			4.4
+ * @since 			4.3
  */
  if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 
 /**
- * EE_DMS_4_4_0_event_message_templates
+ * EE_DMS_4_3_0_event_message_templates
  *
- * This is the migration stage for converting any custom event message templates in EE < EE4.4 to the new system in EE > 4.4
+ * This is the migration stage for converting any custom event message templates in EE < EE4.3 to the new system in EE > 4.3
  *
  * @package 		Event Espresso
  * @subpackage 	migrations
- * @since 			4.4
+ * @since 			4.3
  * @author 			Darren Ethier
  */
- class EE_DMS_4_4_0_event_message_templates extends EE_Data_Migration_Script_Stage_Table {
+ class EE_DMS_4_3_0_event_message_templates extends EE_Data_Migration_Script_Stage_Table {
 
  	/**
  	 * This property will hold the table name for event_message_templates
