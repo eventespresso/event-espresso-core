@@ -316,7 +316,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 		//if the payment method really exists show its form, otherwise the activation template
 		if( $payment_method->ID() && $payment_method->active()){
-			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'default', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
+			$template_args['edit_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'update_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
 			$template_args['deactivate_url'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'deactivate_payment_method', 'payment_method'=>$payment_method->slug()), EE_PAYMENTS_ADMIN_URL);
 			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_edit.template.php', $template_args);
 		}else{
@@ -414,7 +414,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
 			}
 			$correct_pmt_form_to_use->receive_form_submission($this->_req_data);
-			if($correct_pmt_form_to_use->is_valid()){
+			if($correct_pmt_form_to_use->is_valid()){				
 				$correct_pmt_form_to_use->save();
 				$pm = $correct_pmt_form_to_use->get_model_object();
 				$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$pm->slug()));
