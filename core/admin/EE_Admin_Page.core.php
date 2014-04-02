@@ -730,7 +730,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 			throw new EE_Error( $error_msg );
 		}
 
-
 		// and that the requested page route exists
 		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
 			$this->_route = $this->_page_routes[ $this->_req_action ];
@@ -2612,6 +2611,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
+		//class name for actions/filters.
+		$classname = get_class($this);
 
 		//set redirect url. Note if there is a "page" index in the $query_args then we go with vanilla admin.php route, otherwise we go with whatever is set as the _admin_base_url
 		$redirect_url = isset( $query_args['page'] ) ? admin_url('admin.php') : $this->_admin_base_url;
@@ -2633,6 +2634,17 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( ! is_array( $query_args )) {
 			$query_args = array();
 		}
+
+		/**
+		 * Allow injecting actions before the query_args are modified for possible different
+		 * redirections on save and close actions
+		 *
+		 * @since 4.2.0
+		 *
+		 * @param array $query_args   The original query_args array coming into the
+		 *                          		method.
+		 */
+		do_action( 'AHEE__' . $classname . '___redirect_after_action__before_redirect_modification_' . $this->_req_action, $query_args );
 
 		//calculate where we're going (if we have a "save and close" button pushed)
 		if ( isset($this->_req_data['save_and_close'] ) && isset($this->_req_data['save_and_close_referrer'] ) ) {
@@ -2656,7 +2668,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		//we're adding some hooks and filters in here for processing any things just before redirects (example: an admin page has done an insert or update and we want to run something after that).
-		$classname = get_class($this);
 		do_action( 'AHEE_redirect_' . $classname . $this->_req_action, $query_args );
 
 		$redirect_url = apply_filters( 'FHEE_redirect_' . $classname . $this->_req_action, self::add_query_args_and_nonce( $query_args, $redirect_url ), $query_args );

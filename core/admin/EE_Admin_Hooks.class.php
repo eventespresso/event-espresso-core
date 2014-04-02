@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Admin_Hooks
  * This is the abstract parent class used by children to contains any hooks that run on different EE Admin pages.
- * 
+ *
  *
  * @abstract
  * @package		EE_Admin_Hooks
@@ -48,7 +48,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	/**
-	 * child classes MUST set this property so that the page object can be loaded correctly	
+	 * child classes MUST set this property so that the page object can be loaded correctly
 	 * @var string
 	 */
 	protected $_name;
@@ -91,7 +91,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * )
 	 *
 	 * Why are we indexing numerically?  Because it's possible there may be more than one metabox per page_route.
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_metaboxes;
@@ -210,7 +210,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @param EE_Admin_Page $admin_page the calling admin_page_object
 	 */
 	public function __construct( EE_Admin_Page $adminpage ) {
-		
+
 		$this->_adminpage_obj = $adminpage;
 		$this->_req_data = array_merge($_GET, $_POST);
 		$this->_set_defaults();
@@ -234,7 +234,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		add_action( 'admin_enqueue_scripts', array($this, 'remove_metaboxes'), 15 );
 
 		$this->_ajax_hooks();
-		
+
 	}
 
 
@@ -268,7 +268,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * The hooks for enqueue_scripts and enqueue_styles will be run in here.  Child classes need to define their scripts and styles in the relevant $_scripts and $_styles properties.  Child classes must have also already registered the scripts and styles using wp_register_script and wp_register_style functions.
 	 *
 	 * @access public
-	 * @return void 
+	 * @return void
 	 */
 	public function enqueue_scripts_styles() {
 
@@ -366,7 +366,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		//first make sure $this->_name is set
 		if ( empty( $this->_name ) ) {
 			$msg[] = __('We can\'t load the page object', 'event_espresso');
-			$msg[] = sprintf( __("This is because the %s child class has not set the 
+			$msg[] = sprintf( __("This is because the %s child class has not set the
 				'_name' property", 'event_espresso'), $this->caller );
 			throw new EE_Error( implode( '||', $msg ) );
 		}
@@ -383,7 +383,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		if ( $this->_extend ) {
 			require_once( EE_CORE_CAF_ADMIN_EXTEND . $this->_name . DS . 'Extend_' . $ref . '.core.php' );
 		}
-		
+
 
 		//if we've got an extended class we use that!
 		$ref = $this->_extend ? 'Extend_' . $ref : $ref;
@@ -407,17 +407,22 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	private function _load_custom_methods() {
-		
+
 		//these run before the Admin_Page route executes.
 		if ( method_exists( $this, $this->_current_route ) ) {
 			call_user_func( array( $this, $this->_current_route) );
 		}
 
 
-		//these run via the _redirect_after_action method in EE_Admin_Page which usually happens after non_UI methods in EE_Admin_Page classes.
+		//these run via the _redirect_after_action method in EE_Admin_Page which usually happens after non_UI methods in EE_Admin_Page classes.  There are two redirect actions, the first fires before $query_args might be manipulated by "save and close" actions and the seond fires right before the actual redirect happens.
 		//first the actions
-		//note that this action hook will have the $query_args value available.
+		//note that these action hooks will have the $query_args value available.
 		$admin_class_name = get_class( $this->_adminpage_obj );
+
+		if ( method_exists( $this, '_redirect_action_early_' . $this->_current_route ) ) {
+			add_action( 'AHEE__' . $admin_class_name . '___redirect_after_action__before_redirect_modification_' . $this->_current_route, array( $this, '_redirect_action_early_' . $this->_current_route ), 10 );
+		}
+
 		if ( method_exists( $this, '_redirect_action_' . $this->_current_route ) ) {
 			add_action( 'AHEE_redirect_' . $admin_class_name . $this->_current_route, array( $this, '_redirect_action_' . $this->_current_route ), 10 );
 		}
@@ -435,7 +440,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * This method will search for a corresponding method with a name matching the route and the wp_hook to run.  This allows child hook classes to target hooking into a specific wp action or filter hook ONLY on a certain route.  just remember, methods MUST be public
 	 *
 	 * Future hooks should be added in here to be access by child classes.
-	 * 
+	 *
 	 * @return void
 	 */
 	private function _load_routed_hooks() {
@@ -483,7 +488,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		}
 
 	}
-	
+
 
 	/**
 	 * Loop throught the $_ajax_func array and add_actions for the array.
@@ -548,7 +553,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		if ( empty( $this->_metaboxes ) )
 			return; //get out we don't have any metaboxes to set for this connection
 
-		$this->_handle_metabox_array( $this->_metaboxes );		
+		$this->_handle_metabox_array( $this->_metaboxes );
 
 	}
 
@@ -584,7 +589,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * Loop through the _remove_metaboxes property and remove metaboxes accordingly.
 	 *
 	 * @access public
-	 * @return void 
+	 * @return void
 	 */
 	public function remove_metaboxes() {
 
