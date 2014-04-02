@@ -120,7 +120,7 @@ abstract class EE_Gateway{
 		$this->_pay_log = $payment_log_model;
 	}
 	
-	protected function log($message,$transaction){
+	public function log($message,$transaction){
 		$this->_pay_log->log($message,$transaction,$this->_ID);
 	}
 }

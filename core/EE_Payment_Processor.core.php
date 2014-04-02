@@ -159,6 +159,7 @@ class EE_Payment_Processor{
 				}
 				
 			}
+// 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
 			if($payment && $payment instanceof EE_Payment){
 				$payment->save();
 				if($save_txn){
