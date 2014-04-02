@@ -526,7 +526,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 				$extra_request = isset( $action['extra_request'] ) ? $action['extra_request'] : '';
 				echo $this->_admin_page->get_action_link_or_button($route, $type, $extra_request);
 			}
-			do_action( 'AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons' );
+			do_action( 'AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this );
 		}
 		//echo $this->_entries_per_page_dropdown;
 	}
