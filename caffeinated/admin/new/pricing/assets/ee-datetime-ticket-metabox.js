@@ -168,7 +168,7 @@ jQuery(document).ready(function($) {
 			var rowcountobj;
 
 			fordecrease = typeof(fordecrease) === 'undefined' ? false : true;
-			
+
 			switch ( this.context ) {
 				case 'datetime' :
 					rowcountobj = fordecrease ?  $('.event-datetime-row') : $('#datetime-total-rows');
@@ -328,7 +328,7 @@ jQuery(document).ready(function($) {
 						DTT_name = $('#add-new-' + inputid, '#add-event-datetime').val();
 						$(this).val(DTT_name);
 						break;
-					
+
 					case 'event-datetime-DTT_is_primary' :
 						$(this).val(row === 1 ? '1' : '0');
 						break;
@@ -376,7 +376,7 @@ jQuery(document).ready(function($) {
 				tktHelper.newDTTListRow( this );
 			});
 
-			
+
 			//on brand new events the ticket-container is hidden (making sure a datetime gets created first).  let's show that now
 			if ( $('.event-tickets-container').is(':hidden') )
 				$('.event-tickets-container').fadeIn();
@@ -424,7 +424,7 @@ jQuery(document).ready(function($) {
 			newDTTrow.find('span').each( function() {
 				curclass = $(this).attr('class');
 				tktHelper.itemdata = $(this).data();
-				
+
 				//handle data-datetime-row properties
 				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.datetimeRow) !== 'undefined' ) {
 					$(this).attr( 'data-datetime-row', newrownum ); //not using jquery .data() to set the value because that doesn't change the actual data attribute.
@@ -440,7 +440,7 @@ jQuery(document).ready(function($) {
 				if ( curclass == 'ticket-list-ticket-name' ) {
 					//find out what ticket we are looking at.
 					var parentdata = $(this).parent().data();
-					
+
 					//now we can get the ticket title from the tickets list and simply replace what's in the datetime ticket with it.  Why do we do this instead of just replacing the numbers?  Because the ticket title may have a number in it.
 					tickettitle = tktHelper.getTicketTitle( parentdata.ticketRow );
 					$(this).text(tickettitle);
@@ -611,6 +611,9 @@ jQuery(document).ready(function($) {
 				if ( curclass === 'ticket-display-row-TKT_sold' )
 					$(this).text('0');
 
+				if( curclass === 'ticket-display-row-TKT_registrations' )
+					$(this).text('0');
+
 				if ( typeof(tktHelper.itemdata) !== 'undefined' && typeof(tktHelper.itemdata.ticketRow) !== 'undefined' ) {
 					$(this).attr('data-ticket-row', newrownum);
 					$(this).data('ticketRow', newrownum);
@@ -655,8 +658,6 @@ jQuery(document).ready(function($) {
 				if ( $(this).hasClass('edit-ticket-TKT_row') )
 					$(this).val(newrownum);
 
-				if ( $(this).hasClass('ticket-datetime-rows') )
-					$(this).val('');
 
 				if ( $(this).hasClass('starting-ticket-datetime-rows') )
 					$(this).val('');
@@ -777,7 +778,7 @@ jQuery(document).ready(function($) {
 
 			//other tkt values
 			tktsold = $('.ticket-display-row-TKT_sold', '#display-ticket-row-' + this.ticketRow).text();
-			
+
 			$('.basic-ticket-info', '#edit-ticketrow-' + this.ticketRow).find('input').each( function() {
 				displayRowName = displayRowPrefix + $(this).attr('class').split(' ')[0].replace('edit-ticket-', '');
 				if ( $(displayRowName, displayRowContext).length > 0 )
@@ -811,20 +812,20 @@ jQuery(document).ready(function($) {
 			var ticketrownum = $(ticketrowitm).attr('id').replace('edit-ticketrow-', '');
 			ticketrownum = parseInt(ticketrownum, 10);
 			var active_tkts_on_dtt = [];
-			
+
 			if ( typeof(ticketrownum) === 'undefined' )
 				return true; //we may have a blank ticket row.
 
 			var new_dtt_list_row = $('#dtt-new-available-datetime-list-items-holder').clone().html();
 
 			var active_tkts = $('.datetime-tickets-list', '#advanced-dtt-edit-row-' + this.dateTimeRow).find('.ticket-selected');
-			
+
 			active_tkts.each( function(i) {
 				active_tkts_on_dtt[i] = parseInt( $(this).data('ticketRow'), 10);
 				});
-			
+
 			var default_list_row_for_dtt;
-			
+
 			//replace all instances of DTTNUM with dttrow
 			new_dtt_list_row = new_dtt_list_row.replace(/DTTNUM/g, this.dateTimeRow);
 			//get name for dtt and add to the new li item
@@ -834,7 +835,7 @@ jQuery(document).ready(function($) {
 			default_list_row_for_dtt = new_dtt_list_row; //without TICKET_NUM replaced.
 			//replace all instances of TICKETNUM with ticketrownum
 			new_dtt_list_row = new_dtt_list_row.replace(/TICKETNUM/g,ticketrownum);
-			
+
 
 			//is this ticketrow in the active tickets list? if so then we toggle.
 			if ( $.inArray(ticketrownum, active_tkts_on_dtt) > -1 || ticketrownum == active_tkts_on_dtt ) {
@@ -963,7 +964,7 @@ jQuery(document).ready(function($) {
 					//recalculate totals and apply.
 					this.applyTotalPrice();
 			}
-			
+
 			return this;
 		},
 
@@ -1045,7 +1046,7 @@ jQuery(document).ready(function($) {
 				var warning = this.itemdata.context == 'datetime-ticket' ? DTT_TRASH_BLOCK.single_warning_from_dtt : DTT_TRASH_BLOCK.single_warning_from_tkt;
 				var htmlcontent = '<p>' + warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.dismiss_button + '</div>';
 
-			
+
 				dialogHelper.displayModal().addContent(htmlcontent);
 				return false;
 			}
@@ -1083,7 +1084,7 @@ jQuery(document).ready(function($) {
 			//otherwise let's throw up the dialog and prompt
 			var htmlcontent = '<p>' + DTT_TRASH_BLOCK.main_warning + ' <strong>' + singleDTTTKTs.join('</strong>, <strong>') + '</strong></p>' + '<p>' + DTT_TRASH_BLOCK.after_warning + '</p><div class="save-cancel-button-container">' + DTT_TRASH_BLOCK.cancel_button + '</div>';
 
-			
+
 			dialogHelper.displayModal().addContent(htmlcontent);
 			return false;
 		},
@@ -1230,7 +1231,7 @@ jQuery(document).ready(function($) {
 				);/**/
 
 			//add li items
-			
+
 			this.applyExistingTKTorDTTitems(newTKTrow.find('.datetime-tickets-list'));
 
 
@@ -1415,7 +1416,7 @@ jQuery(document).ready(function($) {
 			}
 			if ( curitems )
 				curitems = curitems.join(',');
-		
+
 			$(changeid).val(curitems);
 
 			return this;
@@ -1799,7 +1800,7 @@ jQuery(document).ready(function($) {
 			var dttlimit = parseInt( $('#event-datetime-DTT_reg_limit-' + this.dateTimeRow ).val(), 10 );
 			dttlimit = isNaN(dttlimit) ? Infinity : dttlimit;
 			var dttsoldout = dttlimit - dttsold > 0 ? false : true;
-	
+
 			$('.datetime-ticket[data-context="ticket-datetime"]').each( function() {
 				if ( $(this).data('datetimeRow') == tktHelper.dateTimeRow && $(this).hasClass('ticket-selected') ) {
 					ticketRow = $(this).data('ticketRow');
@@ -1848,11 +1849,11 @@ jQuery(document).ready(function($) {
 
 			var tktStart = $('.edit-ticket-TKT_start_date', displayrow).val();
 			var tktEnd = $('.edit-ticket-TKT_end_date', displayrow).val();
-			
+
 			var now = tktHelper.eemoment();
 			tktStart = tktHelper.eemoment(tktStart, 'YYYY-MM-DD h:mm a');
 			tktEnd = tktHelper.eemoment(tktEnd, 'YYYY-MM-DD h:mm a');
-			
+
 			//now we have moment objects to do some calcs and determine what status we're setting.
 			if ( now.isBefore(tktStart) ) {
 				status = 'TKP'; //pending
@@ -2040,7 +2041,7 @@ jQuery(document).ready(function($) {
 			case 'ticket' :
 				tktHelper.setcontext('ticket').setticketRow(data.ticketRow).TicketEditToggle();
 				break;
-			
+
 			case 'short-ticket' :
 				tktHelper.setcontext('short-ticket').setdateTimeRow(data.datetimeRow).setticketRow(data.ticketRow).newTicketRow().DateTimeEditToggle().setcontext('ticket').setTicketStatus().TicketEditToggle().scrollTo();
 				break;
@@ -2200,7 +2201,7 @@ jQuery(document).ready(function($) {
 		} else {
 			$('.ticket-price-minus', parentContainer).show();
 		}
-		
+
 		if ( is_percent )
 			$('.ticket-price-percentage-char-display', parentContainer).show();
 		else
@@ -2268,7 +2269,7 @@ jQuery(document).ready(function($) {
 	/**
 	 * Datepicker functionality
 	 */
-	
+
 	$('#event-and-ticket-form-content').on('focusin', '.ee-datepicker', function(e) {
 		e.preventDefault();
 		var data = $(this).data();

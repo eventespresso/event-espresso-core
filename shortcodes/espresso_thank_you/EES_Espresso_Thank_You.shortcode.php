@@ -110,6 +110,14 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
 			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		} else {
+			
+			//prepare variables for displaying
+			$registrations = $this->_current_txn->registrations();
+			$event_names = array();
+			foreach( $registrations as $registration ){
+				$event_names[ $registration->event_name() ] = $registration->event_name();
+			}
+			$primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 			//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
 			$this->_current_txn = EE_Registry::instance()->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
 			$primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
@@ -156,7 +164,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args['SPCO_attendee_information_url'] =$primary_registrant ? $primary_registrant->edit_attendee_information_url() : FALSE;
 			$template_args['gateway_content'] = '';			
 			//create a hackey payment object, but dont save it
-			$gateway_name = $this->_current_txn->get_extra_meta('gateway', true,  __("Unknown", "event_espresso"));
+			$gateway_name = $this->_current_txn->selected_gateway();
 			$payment = EE_Payment::new_instance( array(
 				'TXN_ID'=>$this->_current_txn->ID(), 
 				'STS_ID'=>EEM_Payment::status_id_pending, 

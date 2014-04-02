@@ -3,7 +3,7 @@
  * Contains definition for EE_Event_Message_Template model object
  * @package 		Event Espresso
  * @subpackage 	models
- * @since 			4.4
+ * @since 			4.3.0
  */
  if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -14,7 +14,7 @@
  * @package 		Event Espresso
  * @subpackage 	models
  * @author 			Darren Ethier
- * @since 			4.4
+ * @since 			4.3.0
  */
 class EE_Event_Message_Template extends EE_Base_Class {
 

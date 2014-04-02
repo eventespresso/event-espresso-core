@@ -943,12 +943,11 @@ Class EEM_Gateways {
 	 */
 	public function get_payment_overview_content($gateway_name, EE_Payment $payment){
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if (!empty($gateway_name)
-						&& !empty($this->_gateway_instances[ $gateway_name ])) {
-				ob_start();
-				$this->_gateway_instances[ $gateway_name ]->get_payment_overview_content($payment);
-				$output = ob_get_clean();
-				return $output;
+		if ( ! empty( $gateway_name ) && ! empty( $this->_gateway_instances[ $gateway_name ] )) {
+			ob_start();
+			$this->_gateway_instances[ $gateway_name ]->get_payment_overview_content($payment);
+			$output = ob_get_clean();
+			return $output;
 		}
 		return '';
 	}

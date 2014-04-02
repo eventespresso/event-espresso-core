@@ -1,6 +1,8 @@
 <div class="padding">
-<p>
+    <p>
 <?php _e('Displays a list of events from a specific category on a WordPress page or post.', 'event_espresso'); ?>
-</p>
-<p>[ESPRESSO_EVENTS category_slug="free-events"]</p>
+    </p>
+    <ul>
+        <li>[ESPRESSO_EVENTS category_slug="free-events"]</li>
+    </ul>
 </div>
