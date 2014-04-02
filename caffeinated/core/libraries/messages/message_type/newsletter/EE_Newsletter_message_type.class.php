@@ -124,7 +124,9 @@ class EE_Newsletter_message_type extends EE_message_type {
                 if ( !in_array( $shortcode, $included_shortcodes ) )
                     unset( $this->_valid_shortcodes[$context][$key] );
             }
+            $this->_valid_shortcodes[$context][] = 'newsletter';
         }
+
     }
 
 
