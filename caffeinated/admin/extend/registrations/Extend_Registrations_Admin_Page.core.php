@@ -69,7 +69,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 30
 					),
-                'help_tabs' => array(
+				 'help_tabs' => array(
 					'registrations_reports_help_tab' => array(
 						'title' => __('Registration Reports', 'event_espresso'),
 						'filename' => 'registrations_reports'
@@ -84,7 +84,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'order' => 10,
 					'persistent' => true
 					),
-                'help_tabs' => array(
+					'help_tabs' => array(
 					'registrations_event_checkin_help_tab' => array(
 						'title' => __('Registrations Event Check-In', 'event_espresso'),
 						'filename' => 'registrations_event_checkin'
@@ -131,6 +131,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 		$this->_page_config['contact_list']['list_table'] = 'Extend_EE_Attendee_Contact_List_Table';
 		$this->_page_config['default']['list_table'] = 'Extend_EE_Registrations_List_Table';
+
+		//hook in buttons for newsletter message type trigger.
+		add_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', array( $this, 'add_newsletter_action_buttons'), 10 );
 	}
 
 
@@ -208,6 +211,28 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'bulk_action' => array( 'delete_checkin_rows' => __('Delete Check-In Rows', 'event_espresso') )
 				),
 			);
+	}
+
+
+
+	/**
+	 * callback for AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons action
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param EE_Admin_List_Table $list_table
+	 * @return string html string for extra buttons
+	 */
+	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
+		$routes_to_add_to = array(
+			'contact_list',
+			'event_registrations',
+			'default'
+			);
+		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to ) ) {
+			$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send_selected_newsletter">0</span>' );
+			echo '<button class="button secondary-button"><span class="dashicons dashicons-email "></span>' . $button_text . '</button>';
+		}
 	}
 
 
