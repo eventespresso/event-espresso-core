@@ -63,8 +63,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => array(
-				'func'=>'_gateway_settings',
-				'noheader'=>TRUE
+				'func'=>'_payment_methods_list'
 			),
 			'payment_settings' => '_payment_settings',
 			'activate_payment_method'=>array(
@@ -75,9 +74,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'func'=>'_deactivate_payment_method',
 				'noheader'=>TRUE
 				),
+			'update_payment_method'=>array(
+				'func'=>'_update_payment_method',
+				'noheader'=>TRUE,
+				'headers_sent_func'=>'_payment_methods_list'
+			),
 			'update_payment_settings' => array(
 				'func'=>'_update_payment_settings',
-				'noheader'=>TRUE
+				'noheader'=>TRUE,
 				),
 			);
 	}
@@ -231,40 +235,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	
 
 
-	protected function _gateway_settings() {
-		//do early processing if its a post and we haven't already
-		if( ! isset($this->_req_data['early_processing'])){
-			$this->_req_data['early_processing'] = TRUE;
-			if( $_SERVER['REQUEST_METHOD'] == 'POST'){
-				
-	//			echo "early processing ran";return;
-				//ok let's find which gateway form to use based on the form input
-				EE_Registry::instance()->load_lib('Payment_Method_Manager');
-				$correct_pmt_form_to_use = NULL;
-				foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
-					//get the form and simplify it, like what we do when we display it
-					$pmt_form = $pmt_obj->settings_form();
-					$this->_simplify_form($pmt_form);
-					if($pmt_form->form_data_present_in($this->_req_data)){
-						$correct_pmt_form_to_use = $pmt_form;
-						break;
-					}
-				}
-				//if we couldn't find the correct payment method type...
-				if( ! $correct_pmt_form_to_use ){
-					EE_Error::add_error(__("We could not find which payment metho type your form submission related to. Please contact support", 'event_espresso'));
-					$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
-				}
-				$correct_pmt_form_to_use->receive_form_submission($this->_req_data);
-				if($correct_pmt_form_to_use->is_valid()){
-					$correct_pmt_form_to_use->save();
-					$pm = $correct_pmt_form_to_use->get_model_object();
-					$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$pm->slug()));
-				}
-			}
-			return;
-		}
-		
+	protected function _payment_methods_list() {		
 		//ok now start normal rendering of the page. realizing this MIGHT be a post request
 		//with an invalid form, or it might be a simple get.
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );		
@@ -327,7 +298,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 * 
 	 * @param NULL $post_obj_which_is_null is an object containing the current post (as a $post object)
 	 * @param array $metabox is an array with metabox id, title, callback, and args elements. 
-	 * the value at 'args' has key 'payment_method', as set within _gateway_settings
+	 * the value at 'args' has key 'payment_method', as set within _payment_methods_list
 	 */
 	public function payment_method_settings_meta_box($post_obj_which_is_null,$metabox){
 		$payment_method = isset($metabox['args']) && isset($metabox['args']['payment_method']) ? $metabox['args']['payment_method'] : NULL;
@@ -410,6 +381,46 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'deactivated', array('action' => 'default'));
 		}
+	}
+	
+	/**
+	 * Processes the payment method form that was submitted. This is slightly trickier than usual form
+	 * processing because we first need to identify WHICH form was processed and which paymetn method
+	 * it corresponds to. Once we have done that, we see if the form is valid. If it is, the
+	 * form's data is saved and we redirect to the default payment methods page, setting the updated payment method
+	 * as the currently-selected one. If it DOESN'T validate, we render the page with the form's errors (in the
+	 * susbequently called 'headers_sent_func' which is _payment_methods_list)
+	 * @return void
+	 */
+	protected function _update_payment_method(){
+		if( $_SERVER['REQUEST_METHOD'] == 'POST'){
+
+			//echo "early processing ran";return;
+			//ok let's find which gateway form to use based on the form input
+			EE_Registry::instance()->load_lib('Payment_Method_Manager');
+			$correct_pmt_form_to_use = NULL;
+			foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
+				//get the form and simplify it, like what we do when we display it
+				$pmt_form = $pmt_obj->settings_form();
+				$this->_simplify_form($pmt_form);
+				if($pmt_form->form_data_present_in($this->_req_data)){
+					$correct_pmt_form_to_use = $pmt_form;
+					break;
+				}
+			}
+			//if we couldn't find the correct payment method type...
+			if( ! $correct_pmt_form_to_use ){
+				EE_Error::add_error(__("We could not find which payment metho type your form submission related to. Please contact support", 'event_espresso'));
+				$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
+			}
+			$correct_pmt_form_to_use->receive_form_submission($this->_req_data);
+			if($correct_pmt_form_to_use->is_valid()){
+				$correct_pmt_form_to_use->save();
+				$pm = $correct_pmt_form_to_use->get_model_object();
+				$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$pm->slug()));
+			}
+		}
+		return;
 	}
 
 

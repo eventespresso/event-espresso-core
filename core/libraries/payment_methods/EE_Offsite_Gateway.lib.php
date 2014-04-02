@@ -25,9 +25,9 @@
  * ------------------------------------------------------------------------
  */
 abstract class EE_Offsite_Gateway extends EE_Gateway{
-	public function __construct($model) {
+	public function __construct() {
 		$this->_supports_receiving_refunds = true;
-		parent::__construct($model);
+		parent::__construct();
 	}
 	/**
 	 * @param EE_Payment $payment to process

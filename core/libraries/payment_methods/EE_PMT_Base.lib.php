@@ -38,6 +38,9 @@ abstract class EE_PMT_Base{
 			$this->set_instance($pm_instance);
 		}
 		$this->_set_file_folder();
+		if($this->_gateway){
+			$this->_gateway->set_payment_model(EEM_Payment::instance());
+		}
 	}
 	
 	/**

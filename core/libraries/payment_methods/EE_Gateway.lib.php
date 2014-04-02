@@ -47,11 +47,11 @@ abstract class EE_Gateway{
 	 * @var EEMI_Payment
 	 */
 	protected $_pay_model = NULL;
+	
 	/**
 	 * @param EEMI_Payment $model
 	 */
-	public function __construct($model){
-		$this->_pay_model = $model;
+	public function __construct(){
 	}
 	/**
 	 * Returns whether or not this gateway shoudl support SENDING refunds
@@ -92,6 +92,13 @@ abstract class EE_Gateway{
 			$property_name = "_".$name;
 			$this->$property_name = $value;
 		}
+	}
+	/**
+	 * Sets the model which is used for querying for existing payments
+	 * @param EEMI_Payment $payment_model
+	 */
+	public function set_payment_model($payment_model){
+		$this->_pay_model = $payment_model;
 	}
 	
 	
