@@ -658,8 +658,6 @@ jQuery(document).ready(function($) {
 				if ( $(this).hasClass('edit-ticket-TKT_row') )
 					$(this).val(newrownum);
 
-				if ( $(this).hasClass('ticket-datetime-rows') )
-					$(this).val('');
 
 				if ( $(this).hasClass('starting-ticket-datetime-rows') )
 					$(this).val('');
