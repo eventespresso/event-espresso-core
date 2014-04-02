@@ -46,7 +46,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		}
 	}
 	public function pretty_name() {
-		return __("Core Data Migration to version 4.5qq3``.0", "event_espresso");
+		return __("Core Data Migration to version 4.5.0", "event_espresso");
 	}
 	public function schema_changes_before_migration() {
 		//relies on 4.1's EEH_Activation::create_table
