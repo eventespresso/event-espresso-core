@@ -178,7 +178,6 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 		$_POST['templateName'] = !empty( $this->_req_data['custom_template_args']['MTP_name'] ) ? $this->_req_data['custom_template_args']['MTP_name'] : '';
 		$_POST['templateDescription'] = !empty( $this->_req_data['custom_template_args']['MTP_description'] ) ? $this->_req_data['custom_template_args']['MTP_description'] : '';
 
-		//below is old content that possible will be ignored?
 
 		//set EE_Admin_Page object (see method details in EE_Admin_Hooks parent
 		$this->_set_page_object();
