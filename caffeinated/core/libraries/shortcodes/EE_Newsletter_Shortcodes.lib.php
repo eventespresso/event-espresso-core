@@ -59,7 +59,7 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
 
         $validator_config['content']['shortcodes'][] = 'newsletter';
         $validator_config['newsletter_content'] = array(
-            'shortcodes' => array('recipeint_details', 'organization'),
+            'shortcodes' => array('recipient_details', 'organization'),
             'required' => array('[NEWSLETTER_CONTENT]')
             );
         return $validator_config;
@@ -86,7 +86,7 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
             return $template_fields;
 
         $template_fields['extra']['content']['newsletter_content'] = array(
-            'input' => 'wpeditor',
+            'input' => 'wp_editor',
             'label' => '[NEWSLETTER_CONTENT]',
             'type' => 'string',
             'required' => TRUE,
