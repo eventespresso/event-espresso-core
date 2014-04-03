@@ -149,14 +149,6 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			'last_name'=>$primary_attendee->lname(),
 			'tax'=>$this->_format_float($tax_total),
 			'partner_id'=>'ee');
-		foreach($total_line_item->get_items() as $line_item){
-			$order['items'][] = array(
-				'name'=>$line_item->name(),
-				'price'=>$this->_format_float($line_item->total()),
-				'sku'=>$line_item->code(),
-				'quantity'=>$line_item->quantity()
-			);
-		}
 		
 	
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
@@ -170,6 +162,14 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
 		if(! empty($response['body'])){
 			$response_body = json_decode($response['body']);
+			if( ! isset($response_body->checkout_url)){
+				$response_body_as_array = (array)$response_body;
+				$problems_string = '';
+				foreach($response_body_as_array as $problem_parameter => $problems){
+					$problems_string.= sprintf(__('\nProblems with %s: %s','event_espresso'),$problem_parameter,implode(", ",$problems));					
+				}	
+				throw new EE_Error(sprintf(__('Errors occured communicating with Mijireh: %s','event_espresso'),$problems_string));
+			}
 			$this->_gatewayUrl = $response_body->checkout_url;
 			$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
 			//chek if we already have an identical payment
