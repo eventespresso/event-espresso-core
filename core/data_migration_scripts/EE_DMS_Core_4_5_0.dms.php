@@ -201,10 +201,13 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 
 
+		EEH_Activation::drop_index( 'esp_message_template_group', 'EVT_ID' );
+
 		$table_name = 'esp_message_template_group';
 		$sql = "GRP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-					EVT_ID int(10) unsigned DEFAULT NULL,
 					MTP_user_id int(10) NOT NULL DEFAULT '1',
+					MTP_name varchar(245) NOT NULL DEFAULT '',
+					MTP_description varchar(245) NOT NULL DEFAULT '',
 					MTP_messenger varchar(30) NOT NULL,
 					MTP_message_type varchar(50) NOT NULL,
 					MTP_is_global tinyint(1) NOT NULL DEFAULT '0',
@@ -212,9 +215,17 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					MTP_deleted tinyint(1) NOT NULL DEFAULT '0',
 					MTP_is_active tinyint(1) NOT NULL DEFAULT '1',
 					PRIMARY KEY  (GRP_ID),
-					KEY EVT_ID (EVT_ID),
 					KEY MTP_user_id (MTP_user_id)";
 		$this->_table_should_exist_previously( $table_name, $sql, 'ENGINE=InnoDB');
+
+		$table_name = 'esp_event_message_template';
+		$sql = "EMT_ID BIGINT(20) unsigned NOT NULL AUTO_INCREMENT,
+					EVT_ID BIGINT(20) unsigned NOT NULL DEFAULT 0,
+					GRP_ID INT(10) unsigned NOT NULL DEFAULT 0,
+					PRIMARY KEY (EMT_ID),
+					KEY EVT_ID (EVT_ID),
+					KEY GRP_ID (GRP_ID)";
+		$this->_table_is_new_in_this_version( $table_name, $sql, 'ENGINE=InnoDB');
 
 
 
