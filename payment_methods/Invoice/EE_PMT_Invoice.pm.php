@@ -60,6 +60,9 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'default'=>  EE_Config::instance()->organization->logo_url,
 						'html_help_text'=>  __("(Logo for the top left of the invoice)", 'event_espresso'),
 					)),
+					'show_on_page'=>new EE_Yes_No_Input(array(
+						'html_help_text'=>  __("Show as an option on your payment page?", 'event_espresso'),
+					)),
 					'page_title'=>new EE_Text_Input(array(
 						'default'=>  __("Invoice Payments", 'event_espresso')
 					)),
@@ -79,6 +82,31 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					'payment_methods/Invoice/templates/invoice_settings_input_layout.template.php'),
 			));
  }
+ /**
+	 * For adding any html output ab ove the payment overview.
+	 * Many gateways won't want ot display anything, so this function just returns an empty string.
+	 * Other gateways may want to override this, such as offline gateways.
+	 * @return string
+	 */
+	public function payment_overview_content(EE_Payment $payment){
+		EE_Registry::instance()->load_helper('Template');
+		$extra_meta_for_payment_method = $this->_pm_instance->all_extra_meta_array();
+		$transaction = $payment->transaction();
+		$template_vars = array_merge(
+						array(
+							'payment_method'=>$this->_pm_instance,
+							'payment'=>$payment,
+							'show_on_page'=>true,
+							'page_title'=>'',
+							'page_instructions'=>'',
+							'page_payable_to'=>'',
+							'page_address_payable'=>'',
+							),
+						$extra_meta_for_payment_method);
+		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'invoice_payment_details_content.template.php', 
+				$template_vars,
+				true);
+	}
 }
 
 // End of file EE_PMT_Invoice.pm.php

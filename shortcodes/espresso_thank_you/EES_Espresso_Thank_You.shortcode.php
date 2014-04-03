@@ -181,7 +181,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				EE_Error::add_error(sprintf(__("Payment Method is no longer active and we cannot show its custom content", "event_espresso")),__FILE__,__FUNCTION__,__LINE__);
 				$template_args['gateway_content'] = '<div class="error">'.__("Payment Method is no longer active and we cannot show itsi custom content", 'event_espresso').'</div>';
 			}
-//			echo $template_args['gateway_content'];die;
 // 			$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name,$payment );
 
 			

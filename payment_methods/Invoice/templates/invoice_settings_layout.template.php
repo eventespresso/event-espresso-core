@@ -48,7 +48,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 		</td>
 	</tr>
 	<?php
-	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array('page_title','page_instructions','page_payable_to','page_address_payable')));
+	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array('show_on_page', 'page_title','page_instructions','page_payable_to','page_address_payable')));
 	foreach($inputs_to_show as $input){
 		echo $layout_strategy->layout_input($input);
 	}
