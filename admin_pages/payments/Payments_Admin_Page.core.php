@@ -77,7 +77,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'update_payment_method'=>array(
 				'func'=>'_update_payment_method',
 				'noheader'=>TRUE,
-				'headers_sent_func'=>'_payment_methods_list'
+				'headers_sent_func'=>'_payment_methods_list',
 			),
 			'update_payment_settings' => array(
 				'func'=>'_update_payment_settings',
@@ -89,8 +89,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_config() {
-		$this->_page_config = array(
-			'default' => array(
+		$payment_method_list_config = array(
 				'nav' => array(
 					'label' => __('Payment Methods', 'event_espresso'),
 					'order' => 10
@@ -148,7 +147,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					),
 				'help_tour' => array( 'Payment_Methods_Selection_Help_Tour' ),
 				'require_nonce' => FALSE
-				),
+				);
+		$this->_page_config = array(
+			'default' => $payment_method_list_config,
+			'update_payment_method'=>$payment_method_list_config,
 			'payment_settings' => array(
 				'nav' => array(
 					'label' => __('Settings', 'event_espresso'),
@@ -235,7 +237,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	
 
 
-	protected function _payment_methods_list() {		
+	protected function _payment_methods_list() {
 		//ok now start normal rendering of the page. realizing this MIGHT be a post request
 		//with an invalid form, or it might be a simple get.
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );		
