@@ -3,7 +3,7 @@
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
   Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
-  Version: 3.0.0.alpha
+  Version: 3.0.0.beta
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
   Copyright 2013 Event Espresso (email : support@eventespresso.com)
@@ -40,7 +40,7 @@
  *
  * @package			Event Espresso
  * @subpackage		espresso-calendar
- * @author			Seth Shoultes, Chris Reynolds, Brent Christensen, Michael Nelson 
+ * @author			Seth Shoultes, Chris Reynolds, Brent Christensen, Michael Nelson
  *
  * ------------------------------------------------------------------------
  */
@@ -69,7 +69,7 @@
 	 * @access 	private
 	 */
 	private $_event_category_id = 0;
-	
+
 	/**
 	 * @var 	INT	$_event_venue_id
 	 * @access 	private
@@ -109,7 +109,7 @@
 	 */
 	public function __construct() {
 		// calendar_version
-		define( 'EE_CALENDAR_VERSION', '3.0.0.alpha' );
+		define( 'EE_CALENDAR_VERSION', '3.0.0.beta' );
 		// define the plugin directory path and URL
 		define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
 		define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
@@ -140,7 +140,7 @@
 	 *  @return 	void
 	 */
 	public function register_autoloaders() {
-		EEH_Autoloader::instance()->register_autoloader( array( 
+		EEH_Autoloader::instance()->register_autoloader( array(
 			'EE_Calendar_Config' =>EE_CALENDAR_PATH . 'EE_Calendar_Config.php',
 			'EE_Datetime_In_Calendar' =>EE_CALENDAR_PATH . 'EE_Datetime_In_Calendar.class.php',
 			'EE_Calendar_Admin' => EE_CALENDAR_ADMIN . 'EE_Calendar_Admin.class.php',
@@ -157,13 +157,13 @@
 	 *  @return 	void
 	 */
 	public function plugins_loaded() {
-		//if core is also active, then get core to check for migration scripts 
+		//if core is also active, then get core to check for migration scripts
 		//and set maintneance mode is necessary
 		if(get_option(EE_Calendar::activation_indicator_option_name)){
 			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 			delete_option(EE_Calendar::activation_indicator_option_name);
 		}
-		
+
 		// is EE running and not in M-Mode ?
 		if ( defined( 'EVENT_ESPRESSO_VERSION' ) && ! EE_Maintenance_Mode::instance()->level() ) {
 			// calendar settings
@@ -176,10 +176,10 @@
 			if ( is_admin() ) {
 				// ajax hooks
 				add_action( 'wp_ajax_get_calendar_events', array( $this, 'get_calendar_events' ));
-				add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));			
+				add_action( 'wp_ajax_nopriv_get_calendar_events', array( $this, 'get_calendar_events' ));
 				 new EE_Calendar_Admin();
 			}
-		}		
+		}
 	}
 
 
@@ -209,7 +209,7 @@
 	public static function get_calendar_config() {
 		if ( ! EE_Calendar::$_calendar_config ) {
 			EE_Calendar::$_calendar_config = isset( EE_Config::instance()->addons['calendar'] ) || EE_Config::instance()->addons['calendar'] instanceof EE_Calendar_Config ? EE_Config::instance()->addons['calendar'] : new EE_Calendar_Config();
-		}		
+		}
 		return EE_Calendar::$_calendar_config;
 	}
 
@@ -253,7 +253,7 @@
 	}
 	/**
 	 * Adds our data migration script folder
-	 * @param array $folders_with_migration_scripts 
+	 * @param array $folders_with_migration_scripts
 	 * return array
 	 */
 	public function add_calendar_migrations($folders_with_migration_scripts){
@@ -278,22 +278,22 @@
 		if ( $show_tooltips ) {
 			// register jQuery qtip
 			wp_register_style( 'qtip', EE_CALENDAR_URL . 'css/jquery.qtip.min.css' );
-			wp_register_script( 'jquery-qtip', EE_CALENDAR_URL . 'scripts/jquery.qtip.js', array('jquery'), '2.1.1', TRUE);			
+			wp_register_script( 'jquery-qtip', EE_CALENDAR_URL . 'scripts/jquery.qtip.js', array('jquery'), '2.1.1', TRUE);
 		}
-		
+
 		// load base calendar style
-		wp_register_style('fullcalendar', EE_CALENDAR_URL . 'css/fullcalendar.css'); 
+		wp_register_style('fullcalendar', EE_CALENDAR_URL . 'css/fullcalendar.css');
 		//Check to see if the calendar css file exists in the '/uploads/espresso/' directory
 		if ( is_readable( EVENT_ESPRESSO_UPLOAD_DIR . "css/calendar.css")) {
 			//This is the url to the css file if available
-			wp_register_style('espresso_calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css/calendar.css'); 
+			wp_register_style('espresso_calendar', EVENT_ESPRESSO_UPLOAD_URL . 'css/calendar.css');
 		} else {
 			// EE calendar style
-			wp_register_style('espresso_calendar', EE_CALENDAR_URL . 'css/calendar.css'); 
+			wp_register_style('espresso_calendar', EE_CALENDAR_URL . 'css/calendar.css');
 		}
 		//core calendar script
-		wp_register_script( 'fullcalendar-min-js', EE_CALENDAR_URL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.2', TRUE ); 
-		wp_register_script( 'espresso_calendar', EE_CALENDAR_URL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), EE_CALENDAR_VERSION, TRUE ); 
+		wp_register_script( 'fullcalendar-min-js', EE_CALENDAR_URL . 'scripts/fullcalendar.min.js', array('jquery'), '1.6.2', TRUE );
+		wp_register_script( 'espresso_calendar', EE_CALENDAR_URL . 'scripts/espresso_calendar.js', array('fullcalendar-min-js'), EE_CALENDAR_VERSION, TRUE );
 
 		// get the current post
 		global $post, $is_espresso_calendar;
@@ -307,7 +307,7 @@
 				}
 				wp_enqueue_style('fullcalendar');
 				wp_enqueue_style('espresso_calendar');
-				wp_enqueue_script('espresso_calendar');	
+				wp_enqueue_script('espresso_calendar');
 			}
 		}
 	}
@@ -328,29 +328,29 @@
 			// Query for Select box filters
 			$ee_terms = EEM_Term::instance()->get_all(array(array('Term_Taxonomy.taxonomy'=>'espresso_event_categories')));
 			$venues = EEM_Venue::instance()->get_all();
-			
+
 			if ( ! empty( $venues ) || !empty( $ee_terms )){
-				
+
 				ob_start();
-				
+
 				//@var $calendar_config EE_Calendar_Config
 				$calendar_config = EE_Calendar::get_calendar_config();
-		
+
 				//Category legend
 				if ( $calendar_config->display->enable_category_legend ){
 					echo '
 				<div id="espreso-category-legend">
 					<p class="smaller-text lt-grey-txt">' .  __('click to select a category:', 'event_espresso') . '</p>
 					<ul id="ee-category-legend-ul">';
-					
+
 					foreach ($ee_terms as $ee_term) {
 						/*@var $ee_term EE_Term */
 						$catcode = $ee_term->ID();
-						
+
 						$bg = $ee_term->get_extra_meta( 'background_color',true, $calendar_config->display->event_background );
 						$fontcolor =$ee_term->get_extra_meta( 'text_color',true, $calendar_config->display->event_text_color );
 						$use_bg =$ee_term->get_extra_meta( 'use_color_picker', true );
-			
+
 						if($use_bg ) {
 //							echo '<li id="ee-category-legend-li-'.$catcode.'" class="has-sub" style="border-left: 10px solid ' . $bg . ';">';
 							echo '
@@ -364,13 +364,13 @@
 								<span class="ee-category"><a href="?event_category_id='.$ee_term->slug().'">'.$ee_term->name().'</a></span></a>
 							</li>';
 						}
-					
-						
+
+
 					}
 					//echo '<li class="has-sub" style="border-left:solid 1px #000;"><a href="?event_category_id">'.__('All', 'event_espresso').'</a></li>';
 					echo '</ul></div>';
 				}
-				
+
 				//Filter dropdowns
 				if ($calendar_config->display->enable_calendar_filters ){
 					?>
@@ -389,7 +389,7 @@
 						?>
 						</select>
 					<?php }?>
-					
+
 					<?php if ( ! empty( $venues )) { ?>
 						<select id="ee-venue-submit" class="submit-this ee-venue-select" name="event_venue_id">
 						<option class="ee_select" value=""><?php echo __('Select a Venue', 'event_espresso'); ?></option>
@@ -428,11 +428,11 @@
 		$ee_calendar_js_options = array_merge( $calendar_config, $ee_calendar_js_options );
 		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
 		$overrides = array(
-			'event_category_id' => isset($_REQUEST['event_category_id']) ? sanitize_key( $_REQUEST['event_category_id'] ) : isset($ee_calendar_js_options['event_category_id']) ? $ee_calendar_js_options['event_category_id'] : NULL, 
-			'event_venue_id'=> isset($_REQUEST['event_venue_id']) ? sanitize_key( $_REQUEST['event_venue_id'] ) : isset($ee_calendar_js_options['event_venue_id']) ? $ee_calendar_js_options['event_venue_id'] : NULL, 
-			'month'=> isset($_REQUEST['month']) ? sanitize_text_field( $_REQUEST['month'] ) : $ee_calendar_js_options['month'], 
-			'year'=> isset($_REQUEST['year']) ? sanitize_text_field( $_REQUEST['year'] ) : $ee_calendar_js_options['year'], 
-		);		
+			'event_category_id' => isset($_REQUEST['event_category_id']) ? sanitize_key( $_REQUEST['event_category_id'] ) : isset($ee_calendar_js_options['event_category_id']) ? $ee_calendar_js_options['event_category_id'] : NULL,
+			'event_venue_id'=> isset($_REQUEST['event_venue_id']) ? sanitize_key( $_REQUEST['event_venue_id'] ) : isset($ee_calendar_js_options['event_venue_id']) ? $ee_calendar_js_options['event_venue_id'] : NULL,
+			'month'=> isset($_REQUEST['month']) ? sanitize_text_field( $_REQUEST['month'] ) : $ee_calendar_js_options['month'],
+			'year'=> isset($_REQUEST['year']) ? sanitize_text_field( $_REQUEST['year'] ) : $ee_calendar_js_options['year'],
+		);
 		// merge overrides into options
 		$ee_calendar_js_options = array_merge( $ee_calendar_js_options, $overrides );
 		// set and format month param
@@ -442,7 +442,7 @@
 		// weed out any attempts to use month=potato or something similar
 		$ee_calendar_js_options['month'] = is_int( $ee_calendar_js_options['month'] ) && $ee_calendar_js_options['month'] > 0 && $ee_calendar_js_options['month'] < 13 ? $ee_calendar_js_options['month'] : date('n');
 		// fullcalendar uses 0-based value for month
-		$ee_calendar_js_options['month']--;		
+		$ee_calendar_js_options['month']--;
 		// set and format year param
 		$ee_calendar_js_options['year'] = isset( $ee_calendar_js_options['year'] ) && is_int( $ee_calendar_js_options['year'] ) ? date('Y', strtotime( $ee_calendar_js_options['year'] )) : date('Y');
 		// add calendar filters
@@ -450,7 +450,7 @@
 		// grab some request vars
 		$this->_event_category_id = isset( $ee_calendar_js_options['event_category_id'] ) && ! empty( $ee_calendar_js_options['event_category_id'] ) ? $ee_calendar_js_options['event_category_id'] : '';
 		// i18n some strings
-		$ee_calendar_js_options['month_names'] = array( 
+		$ee_calendar_js_options['month_names'] = array(
 			__('January', 'event_espresso'),
 			__('February', 'event_espresso'),
 			__('March', 'event_espresso'),
@@ -464,8 +464,8 @@
 			__('November', 'event_espresso'),
 			__('December', 'event_espresso')
 		);
-			
-		$ee_calendar_js_options['month_names_short'] =array( 
+
+		$ee_calendar_js_options['month_names_short'] =array(
 				__('Jan', 'event_espresso'),
 				__('Feb', 'event_espresso'),
 				__('Mar', 'event_espresso'),
@@ -479,8 +479,8 @@
 				__('Nov', 'event_espresso'),
 				__('Dec', 'event_espresso')
 			);
-				
-		$ee_calendar_js_options['day_names'] = array( 
+
+		$ee_calendar_js_options['day_names'] = array(
 				__('Sunday', 'event_espresso'),
 				__('Monday', 'event_espresso'),
 				__('Tuesday', 'event_espresso'),
@@ -489,8 +489,8 @@
 				__('Friday', 	'event_espresso'),
 				__('Saturday', 	'event_espresso')
 			);
-			
-		$ee_calendar_js_options['day_names_short'] = array( 
+
+		$ee_calendar_js_options['day_names_short'] = array(
 				__('Sun', 'event_espresso'),
 				__('Mon', 'event_espresso'),
 				__('Tue', 'event_espresso'),
@@ -507,18 +507,18 @@
 		$ee_calendar_js_options['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
 //		printr( $ee_calendar_js_options, '$ee_calendar_js_options  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		wp_localize_script( 'espresso_calendar', 'eeCAL', $ee_calendar_js_options );
-		
+
 		$calendar_class = $ee_calendar_js_options['widget'] ? 'calendar_widget' : 'calendar_fullsize';
-		
+
 		$html = apply_filters( 'FHEE__EE_Calendar__display_calendar__before', '' );
 		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__output_filter', $output_filter );
 		$html .= '
 	<div id="espresso_calendar" class="'. $calendar_class . '"></div>
 	<div style="clear:both;" ></div>
 	<div id="espresso_calendar_images" ></div>';
-		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__after', '' ); 
+		$html .= apply_filters( 'FHEE__EE_Calendar__display_calendar__after', '' );
 		return $html;
-	
+
 	}
 
 
@@ -539,13 +539,13 @@
 			$tooltip_at = $config->tooltip->pos_at_1 . $config->tooltip->pos_at_2;
 			$tooltip_style = $config->tooltip->style;
 		}
-		
+
 		$today = date( 'Y-m-d' );
 		$month = date('m' );
 		$year = date('Y' );
 		$start_datetime = isset( $_REQUEST['start_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['start_date'] )) : date('Y-m-d H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
-		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));	
-		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';	
+		$end_date = isset( $_REQUEST['end_date'] ) ? date( 'Y-m-d H:i:s', absint( $_REQUEST['end_date'] )) : date('Y-m-t H:i:s', mktime( 0, 0, 0, $month, 1, $year ));
+		$show_expired = isset( $_REQUEST['show_expired'] ) ? sanitize_key( $_REQUEST['show_expired'] ) : 'true';
 		$category_id_or_slug = isset( $_REQUEST['event_category_id'] ) && ! empty( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $this->_event_category_id;
 		$venue_id_or_slug = isset( $_REQUEST['event_venue_id'] ) && ! empty( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : NULL;
 		if($category_id_or_slug){
@@ -557,7 +557,7 @@
 												'Event.Venue.VNU_identifier'=>$venue_id_or_slug);
 		}
 		$where_params['Event.status'] = 'publish';//@todo: how about sold_out, cancelled, etc events?
-		
+
 		$where_params['DTT_EVT_start']= array('<=',$end_date);
 		$where_params['DTT_EVT_end'] = array('>=',$start_datetime);
 		if($show_expired == 'false'){
@@ -566,10 +566,10 @@
 		}
 		$datetime_objs = EEM_Datetime::instance()->get_all(array($where_params,'order_by'=>array('DTT_EVT_start'=>'ASC')));
 		/* @var $datetime_objs EE_Datetime[] */
-				
+
 //	$this->timer->stop();
 //	echo $this->timer->get_elapse( __LINE__ );
-		
+
 		$calendar_datetimes_for_json = array();
 		foreach ( $datetime_objs as $datetime ) {
 			/* @var $datetime EE_Datetime */
@@ -585,7 +585,7 @@
 			if ( ! $config->display->disable_categories) {
 //				echo "using cateogires!";
 				 $categories= $event->get_all_event_categories();
-				 
+
 				//any term_taxonmies set for this event?
 //				d($primary_cat);
 				if ( $categories ) {
@@ -600,18 +600,18 @@
 					if ( $config->display->enable_cat_classes ) {
 						foreach ( $categories as $category ) {
 							$calendar_datetime->add_classname($category->slug());
-						}				
+						}
 					} else {
 						$calendar_datetime->add_classname($primary_cat->slug());
 					}
 				}
-				
+
 			}
 
 			if ( $datetime->is_expired() ) {
 				$calendar_datetime->set_classname('expired');
 			}
-			
+
 
 			$startTime =  '<span class="event-start-time">' . $datetime->start_time($config->time->format) . '</span>';
 			$endTime = '<span class="event-end-time">' . $datetime->end_time($config->time->format) . '</span>';
@@ -624,13 +624,13 @@
 				$event_time_html = FALSE;
 			}
 			$calendar_datetime->set_event_time($event_time_html);
-			
-					
+
+
 			// Add thumb to event
 			if ( $config->display->enable_calendar_thumbs ) {
-				
+
 				$thumbnail_url = $event->feature_image_url('thumbnail');
-				if ( $thumbnail_url ) { 
+				if ( $thumbnail_url ) {
 					$calendar_datetime->set_event_img_thumb( '
 					<span class="thumb-wrap">
 						<img id="ee-event-thumb-' . $datetime->ID() . '" class="ee-event-thumb" src="' . $thumbnail_url . '" alt="image of ' . $event->name() . '" />
@@ -646,7 +646,7 @@
 			if ( $config->tooltip->show ) {
 				//Gets the description of the event. This can be used for hover effects such as jQuery Tooltips or QTip
 				$description = $event->description_filtered();
-				
+
 				//Supports 3.1 short descriptions
 //				if ( false ){// isset( $org_options['display_short_description_in_event_list'] ) && $org_options['display_short_description_in_event_list'] == 'Y' ) {
 				$desciption_parts =  explode( '<!--more-->', $description);
@@ -656,12 +656,12 @@
 //				}
 				// and just in case it's still too long, or somebody forgot to use the more tag...
 				//if word count is set to 0, set no limit
-				$calendar_datetime->set_description($description);			
+				$calendar_datetime->set_description($description);
 // tooltip wrapper
 				$tooltip_html = '<div class="qtip_info">';
 				// show time ?
 				$tooltip_html .= $config->time->show && $startTime ? '<p class="time_cal_qtip">' . __('Event Time: ', 'event_espresso') . $startTime . ' - ' . $endTime . '</p>' : '';
-				
+
 				$tickets_initially_available_at_datetime = $datetime->sum_tickets_initially_available();
 
 				// add attendee limit if set
@@ -675,18 +675,18 @@
 				$regButtonText = $event->display_ticket_selector() ?  __('Register Now', 'event_espresso') :  __('View Details', 'event_espresso');
 				// reg open
 				if ( $event->is_sold_out() || $datetime->sold_out() || $datetime->total_tickets_available_at_this_datetime() == 0) {
-					$tooltip_html .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';				
+					$tooltip_html .= '<div class="sold-out-dv">' . __('Sold Out', 'event_espresso') . '</div>';
 				} else if($event->is_cancelled()){
-					$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';				
+					$tooltip_html .= '<div class="sold-out-dv">' . __('Registration Closed', 'event_espresso') . '</div>';
 				}else{
-					$tooltip_html .= '<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';				
+					$tooltip_html .= '<a class="reg-now-btn" href="' . $event->get_permalink() . '">' . $regButtonText . '</a>';
 				}
 
 				$tooltip_html .= '<div class="clear"></div>';
 				$tooltip_html .= '</div>';
 				$calendar_datetime->set_tooltip($tooltip_html);
-				
-				
+
+
 				// Position my top left...
 				$calendar_datetime->set_tooltip_my($tooltip_my);
 				$calendar_datetime->set_tooltip_at($tooltip_at);
@@ -696,7 +696,7 @@
 				$calendar_datetime->set_show_tooltips(FALSE);
 			}
 			$calendar_datetimes_for_json [] = $calendar_datetime->to_array_for_json();
-			
+
 //			$this->timer->stop();
 //			echo $this->timer->get_elapse( __LINE__ );
 
@@ -712,14 +712,14 @@
 	/**
 	 *		@ override magic methods
 	 *		@ return void
-	 */	
+	 */
 	public function __set($a,$b) { return FALSE; }
 	public function __get($a) { return FALSE; }
 	public function __isset($a) { return FALSE; }
 	public function __unset($a) { return FALSE; }
 	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }	
-	public function __destruct() { return FALSE; }	
+	public function __wakeup() { return FALSE; }
+	public function __destruct() { return FALSE; }
 
  }
 // End of file espresso-calendar.php
