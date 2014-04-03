@@ -60,11 +60,12 @@
 		 * adds a scrollTo action for jQuery
 		 * @return {jQuery}
 		 */
-		eeScrollTo : function() {
+		eeScrollTo : function( speed ) {
 			var selector = this;
+			speed = typeof(speed) === 'undefined' ? 2000 : speed;
 			$("html,body").animate({
 				scrollTop: selector.offset().top - 80
-			}, 2000);
+			}, speed);
 			return this;
 		},
 

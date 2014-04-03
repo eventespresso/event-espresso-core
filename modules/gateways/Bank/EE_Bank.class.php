@@ -148,7 +148,7 @@ Class EE_Bank extends EE_Offline_Gateway {
 		?>
 
 		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
-			<?php _e('After finalizing your registration, you will be transferred to the payment overview where you can view details of how to complete your bank transfer.', 'event_espresso'); ?>
+			<p><?php _e('After finalizing your registration, you will be transferred to the payment overview where you can view details of how to complete your bank transfer.', 'event_espresso'); ?></p>
 		</div>
 
 		<?php

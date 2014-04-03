@@ -34,10 +34,18 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * Event ID that the template is for (optional)
-	 * @var integer
+	 * The name of the template group
+	 * @var string
 	 */
-	protected $_EVT_ID = 0;
+	protected $_MTP_name = '';
+
+
+
+	/**
+	 * A brief description for the template.
+	 * @var string
+	 */
+	protected $_MTP_description = '';
 
 
 
@@ -113,10 +121,10 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * If this is message tempalte is a non-global template but rather event specific, then this property is for holding the related Event object for the group.
-	 * @var EE_Event
+	 * This property holds all related events cached (using) this Message Template.
+	 * @var EE_Event[]
 	 */
-	protected $_Event = NULL;
+	protected $_Event = array();
 
 
 
@@ -177,31 +185,6 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * get Event ID
-	 * @access public
-	 * @return int 
-	 */
-	public function event() {
-		return $this->get('EVT_ID');
-	}
-	
-
-
-
-	/**
-	 * this returns the event_name for the event attached to the group
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function event_name() {
-		if ( empty( $this->_EVT_ID ) ) return '';
-		return $this->get_first_related('Event')->get('EVT_name');
-	}
-
-
-
-	/**
 	 * get User ID
 	 * @access public
 	 * @return int
@@ -210,6 +193,48 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 		$user_id = $this->get('MTP_user_id');
 		return empty( $user_id ) ? get_current_user_id() : $user_id;
 	}
+
+
+	/**
+	 * This simply returns a count of all related events to this message template group
+	 * @return int
+	 */
+	public function count_events() {
+		return $this->count_related('Event');
+	}
+
+
+
+
+	/**
+	 * returns the name saved in the db for this template
+	 * @return string
+	 */
+	public function name() {
+		return $this->get('MTP_name');
+	}
+
+
+
+
+	/**
+	 * Returns the description saved in the db for this template group
+	 * @return string
+	 */
+	public function description() {
+		return $this->get('MTP_description');
+	}
+
+
+	/**
+	 * returns all related EE_Message_Template objects
+	 * @param  array  $query_params like EEM_Base::get_all()
+	 * @return EE_Message_Template[]
+	 */
+	public function message_templates( $query_params = array() ) {
+		return $this->get_many_related( 'Message_Template', $query_params );
+	}
+
 
 
 
@@ -221,8 +246,6 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	public function messenger() {
 		return $this->get('MTP_messenger');
 	}
-
-
 
 
 	/**
@@ -252,7 +275,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * get Message Type
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -353,7 +376,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * This will return an array of shortcodes => labels from the messenger and message_type objecst associated with this template.
-	 * 
+	 *
 	 * @access public
 	 * @param string $context what context we're going to return shortcodes for
 	 * @param array $fields what fields we're returning valid shortcodes for.  If empty then we assume all fields are to be returned.
@@ -463,7 +486,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 * @return array 	an array of EE_Shortcode objects
 	 */
 	private function _get_shortcode_objects( $sc_refs ) {
-		
+
 		$sc_objs = array();
 
 		EE_Messages_Init::set_autoloaders();

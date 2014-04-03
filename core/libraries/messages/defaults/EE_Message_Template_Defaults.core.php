@@ -60,7 +60,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	protected $_message_type;
 
 
-	
+
 	/**
 	 * holds the fields used (this is retrieved from the messenger)
 	 *
@@ -139,7 +139,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 		//set the model object
 		$this->_EEM_data = EEM_Message_Template_Group::instance();
-		
+
 		$this->_set_props();
 
 		//make sure required props have been set
@@ -170,57 +170,30 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	 * Child classes can make modifications to the _templates property using this method.  If no changes are necessary then child classes can just set an empty method.
 	 *
 	 * @access protected
-	 * @return void 
+	 * @return void
 	 */
-	abstract protected function _change_templates( $evt_id, $is_global );
+	abstract protected function _change_templates();
 
 
 
 
 	/**
 	 *	Setup the _template_data property.
-	 * 
+	 *
 	 * This method sets the _templates property array before templates are created.
 	 *
 	 * @access protected
-	 * @param int $evt_id will hold the event id if this is for an event
-	 * @param bool $is_global indicate if this is a global template (true) or not (false)
-	 * @return void 
+	 * @return void
 	 */
-	final function _set_templates( $evt_id, $is_global ) {
+	final function _set_templates() {
 
-		//first are we setting up templates after messenger activation? If so then we need to get defaults from the messenger
-		if ( empty($evt_id) && $is_global ) {
-			//setup templates array
-			foreach ( $this->_contexts as $context => $details ) {
-				foreach ( $this->_fields as $field => $field_type ) {
-					if ( $field !== 'extra' )
-						$this->_templates[$context][$field] = ( !empty( $this->_defaults['mt'][$field]) && is_array($this->_defaults['mt'][$field]) && isset($this->_defaults['mt'][$field][$context]) ? $this->_defaults['mt'][$field][$context] : $this->_defaults['m'][$field] );
-				}
+		//first  get defaults from the messenger
+		//setup templates array
+		foreach ( $this->_contexts as $context => $details ) {
+			foreach ( $this->_fields as $field => $field_type ) {
+				if ( $field !== 'extra' )
+					$this->_templates[$context][$field] = ( !empty( $this->_defaults['mt'][$field]) && is_array($this->_defaults['mt'][$field]) && isset($this->_defaults['mt'][$field][$context]) ? $this->_defaults['mt'][$field][$context] : $this->_defaults['m'][$field] );
 			}
-
-		} else if ( !empty($evt_id) ) {
-			//k we're setting up a custom event template so let's just copy what's currently in the active global template for this messenger and message_type
-			//first let's get all templates for this messenger
-			$all_templates = $this->_EEM_data->get_all_message_templates_by_messenger($this->_messenger->name);
-			/*global $wpdb;
-			print_r($wpdb->last_query);
-			var_dump($all_templates);/**/
-			foreach ( $all_templates as $template_object ) {
-				$mt = $template_object->message_type();
-				$e_id = $template_object->event();
-				if ( $this->_message_type->name == $mt && empty($e_id) ) {
-					$context_templates = $template_object->context_templates();
-					foreach ( $this->_contexts as $context => $details ) {
-						foreach ( $this->_fields as $field => $field_type ) {
-							if ( $field !== 'extra' ) {
-								$this->_templates[$context][$field] = ( !empty( $context_templates[$context] ) && is_array( $context_templates[$context] ) && isset($context_templates[$context][$field] ) && $context_templates[$context][$field] instanceof EE_Message_Template ) ? $context_templates[$context][$field]->get('MTP_content') : '';
-							}
-						}
-					}
-				}
-			}
-			
 		}
 	}
 
@@ -288,18 +261,16 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 		return $valid_shortcodes;
 	}
-	
-	
+
+
 
 	/**
 	 * public facing create new templates method
-	 * @param  int $evt_id    event_id (if event specific)
-	 * @param  bool $is_global whether global template (true) or not (false)
 	 * @access public
 	 * @return mixed (array|bool)            success array or false.
 	 */
-	public function create_new_templates( $evt_id, $is_global ) {
-		return $this->_create_new_templates( $evt_id, $is_global );
+	public function create_new_templates() {
+		return $this->_create_new_templates();
 	}
 
 
@@ -308,29 +279,26 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 	/**
 	 * private method that handles creating new default templates
-	 * @param  int $evt_id    event_id ( if event specified )
-	 * @param  bool $is_global whether global template (true) or not (false)
 	 * @return mixed (array|bool)            success array or false.
 	 */
-	private function _create_new_templates( $evt_id, $is_global ) {
+	private function _create_new_templates() {
 
-		$this->_set_templates( $evt_id, $is_global );
+		$this->_set_templates();
 
 		//allow for child classes to override.
-		$this->_change_templates( $evt_id, $is_global );
+		$this->_change_templates();
 
-		$this->_templates = apply_filters( 'FHEE__' . get_class($this) . '___create_new_templates___templates', $this->_templates, $evt_id, $is_global, $this );
-		$this->_templates = apply_filters( 'FHEE__EE_Message_Template_Defaults___create_new_templates___templates', $this->_templates, $evt_id, $is_global, $this );
+		$this->_templates = apply_filters( 'FHEE__' . get_class($this) . '___create_new_templates___templates', $this->_templates, $this );
+		$this->_templates = apply_filters( 'FHEE__EE_Message_Template_Defaults___create_new_templates___templates', $this->_templates, $this );
 
 		//necessary properties are set, let's save the default templates
 
 		$main_template_data =  array(
 			'MTP_messenger' => $this->_messenger->name,
 			'MTP_message_type' => $this->_message_type->name,
-			'EVT_ID' => $evt_id,
 			'MTP_is_override' => 0,
 			'MTP_deleted' => 0,
-			'MTP_is_global' => $is_global,
+			'MTP_is_global' => 1,
 			'MTP_user_id' => get_current_user_id(),
 			'MTP_is_active' => 1,
 			);
@@ -338,7 +306,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 		//let's insert the above and get our GRP_ID, then reset the template data array to just include the GRP_ID
 		$grp_id = $this->_EEM_data->insert( $main_template_data );
-		
+
 		$template_data = $grp_id ? array( 'GRP_ID' => $grp_id ) : FALSE;
 
 		if ( ! $template_data ) return $grp_id;
@@ -361,13 +329,12 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 		$success_array = array(
 			'GRP_ID' => $grp_id,
-			'EVT_ID' => $main_template_data['EVT_ID'],
 			'MTP_context' => key($this->_contexts)
-		);	
+		);
 
 		return $success_array;
 	}
 
 
 } //end EE_Message_Template_Defaults class
- 
+

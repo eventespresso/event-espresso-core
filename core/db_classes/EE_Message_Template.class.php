@@ -28,15 +28,15 @@ class EE_Message_Template extends EE_Base_Class {
 	/**
 	 * Template ID
 	 * primary key
-	 * 
+	 *
 	 * @access protected
 	 * @var int
 	 */
 	protected $_MTP_ID = FALSE;
-	
+
 	/**
 	 * Group ID
-	 * 
+	 *
 	 * @access protected
 	 * @var int
 	 */
@@ -45,7 +45,7 @@ class EE_Message_Template extends EE_Base_Class {
 
 	/**
 	 * Template context
-	 * 
+	 *
 	 * @access protected
 	 * @var string
 	 */
@@ -53,7 +53,7 @@ class EE_Message_Template extends EE_Base_Class {
 
 	/**
 	 * Template field
-	 * 
+	 *
 	 * @access protected
 	 * @var string
 	 */
@@ -61,14 +61,14 @@ class EE_Message_Template extends EE_Base_Class {
 
 	/**
 	 * template content
-	 * 
+	 *
 	 * @access protected
 	 * @var string
 	 */
 	protected $_MTP_content = NULL;
 
 
-	
+
 
 	/**
 	 * Related Message Template Group this template belongs to
@@ -114,30 +114,6 @@ class EE_Message_Template extends EE_Base_Class {
 
 
 
-
-	/**
-	 * get Event ID
-	 * @access public
-	 * @return int 
-	 */
-	public function event() {
-		return $this->get_first_related('Message_Template_Group')->get('EVT_ID');
-	}
-
-
-
-	/**
-	 * this returns the event_name for the event attached to the group
-	 *
-	 * @access public
-	 * @return string
-	 */
-	public function event_name() {
-		return $this->get_first_related('Message_Template_Group')->event_name();
-	}
-
-
-
 	/**
 	 * get User ID
 	 * @access public
@@ -175,7 +151,7 @@ class EE_Message_Template extends EE_Base_Class {
 
 	/**
 	 * get Message Type
-	 * 
+	 *
 	 * @access public
 	 * @return string
 	 */
@@ -247,7 +223,7 @@ class EE_Message_Template extends EE_Base_Class {
 
 	/**
 	 * This will return an array of shortcodes => labels from the messenger and message_type objecst associated with this template.
-	 * 
+	 *
 	 * @access public
 	 * @param string $context what context we're going to return shortcodes for
 	 * @param array $fields what fields we're returning valid shortcodes for.  If empty then we assume all fields are to be merged and returned.

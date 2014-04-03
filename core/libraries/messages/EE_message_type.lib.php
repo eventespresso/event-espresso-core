@@ -565,64 +565,51 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @access protected
 	 */
 	protected function _get_templates() {
-		$current_templates = $this->_active_messenger->active_templates;
-		$has_event_template = false;
-		$event_id = null;
-		$global_templates = $event_templates = $global_override = array();
+		//defaults
+		$EVT_ID = $mtpg = $global_mtpg = NULL;
+		$templates = array();
 
-		//in vanilla EE we're assuming there's only one event.  However, if there are multiple events then we'll just do global.
+		//in vanilla EE we're assuming there's only one event.  However, if there are multiple events then we'll just use the default templates instead of different templates per event (which could create problems).
 		if ( count($this->_data->events) === 1 ) {
 			foreach ( $this->_data->events as $event ) {
-				$event_id = $event['ID'];
+				$EVT_ID = $event['ID'];
 			}
 		}
 
+		//if this is a preview then we just get whatever message group is for the preview and skip this part!
+		if ( $this->_preview && !empty( $_POST['msg_id'] )  ) {
+			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['msg_id'] );
+		} else {
+			//not a preview or test send so lets continue on our way!
+			$template_qa = array(
+				'MTP_is_active' => TRUE,
+				'MTP_messenger' => $this->_active_messenger->name,
+				'MTP_message_type' => $this->name,
+				'MTP_is_global' => TRUE
+				);
 
-		if ( isset($current_templates) ) {
+			//this gets the current global template (message template group) for the active messenger and message type.
+			$global_mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
 
-			foreach ( $current_templates as $group_object ) {
-				if ( $this->name == $group_object->message_type() ) {
-					$templates = $group_object->context_templates();
+			//If the global template is NOT an override, then we'll use whatever is attached to the event (if there is an evt_ID.  If it IS an override then we just use the global_mtpg
 
-					if ( $group_object->get('MTP_is_override') )
-						$global_override[$context] = TRUE;
-
-					foreach ( $templates as $context => $template_fields ) {
-						foreach ( $template_fields as $template_field => $template_obj ) {
-								if ( $group_object->is_global() ) {
-									$global_templates[$template_field][$context] = $template_obj->get('MTP_content');
-								}
-
-								if ( $group_object->event() == $event_id && !empty( $event_id )) {
-									$event_templates[$template_field][$context] = $template_obj->get('MTP_content');
-								}
-						}
-					}
-				}
+			if ( !empty( $EVT_ID ) && ! $global_mtpg->get('MTP_is_override') ) {
+				$evt_qa = array(
+					'Event.EVT_ID' => $EVT_ID
+				);
+				unset( $template_qa['MTP_is_global'] );
+				$qa = array_merge( $template_qa, $evt_qa );
+				$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $qa ) );
 			}
 
-			//k we now have $global and (possibly) $event_templates.  So let's decide who makes it to the finals.
-			//first if there are no event templates, global wins
-			if ( empty( $event_templates) ) {
-				$this->_templates = $global_templates;
+			$mtpg = $mtpg instanceof EE_Message_Template_Group ? $mtpg : $global_mtpg;
+		}
 
-			//next if there are event templates and no global overrides set, event wins.
-			} elseif ( !empty( $event_templates) && empty( $global_override ) ) {
-				$this->_templates = $event_templates;
+		$templates = $mtpg->context_templates();
 
-
-			//hmph looks like we have event templates and global overrides present.  So its down to the wire, lets take a snapshot and see who wins.
-			} else {
-				foreach ( $event_templates as $field => $contexts ) {
-					foreach ( $contexts as $context ) {
-						$this->_templates[$field][$context] = isset( $global_override[$context] ) ? $global_templates[$field][$context] : $event_templates[$field][$context];
-					}
-				}
-			}
-
-			//hang on, not done yet.  If this is a PREVIEW being generated (and there is no evt_id in the request) then we want to make sure global always wins (even if the generated events happen to have a custom template) because peopel need to see what the global template looks like.
-			if ( $this->_preview && empty($_REQUEST['evt_id'] ) ) {
-				$this->_templates = $global_templates;
+		foreach ( $templates as $context => $template_fields ) {
+			foreach( $template_fields as $template_field=> $template_obj ) {
+				$this->_templates[$template_field][$context] = $template_obj->get('MTP_content');
 			}
 		}
 	}

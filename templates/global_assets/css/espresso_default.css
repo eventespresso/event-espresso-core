@@ -297,7 +297,10 @@
 .ee-upcoming-events-widget-li .ee-event-datetimes-ul {
 	/*margin-left:0 !important;*/
 }
-
+ .espresso_events .ee-event-datetimes-ul li {
+ 	list-style-type: none;
+ 	margin: 0 0 1em;
+}
 
 
 
