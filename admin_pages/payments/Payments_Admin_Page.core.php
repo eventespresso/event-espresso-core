@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Payments_Admin_Page
  *
- * This contains the logic for setting up the Event Payments related admin pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This contains the logic for setting up the Event Payments related admin pages.  Any methods without phpdoc comments have inline docs with parent class.
  *
  *
  * @package		Payments_Admin_Page
@@ -77,7 +77,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'update_payment_method'=>array(
 				'func'=>'_update_payment_method',
 				'noheader'=>TRUE,
-				'headers_sent_func'=>'_payment_methods_list',
+				'headers_sent_route'=>'default',
 			),
 			'update_payment_settings' => array(
 				'func'=>'_update_payment_settings',
@@ -150,13 +150,12 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				);
 		$this->_page_config = array(
 			'default' => $payment_method_list_config,
-			'update_payment_method'=>$payment_method_list_config,
 			'payment_settings' => array(
 				'nav' => array(
 					'label' => __('Settings', 'event_espresso'),
 					'order' => 20
 					),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'payment_methods_settings_help_tab' => array(
 						'title' => __('Payment Method Settings', 'event_espresso'),
 						'filename' => 'payment_methods_settings'
@@ -177,7 +176,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
-	
+
 
 
 
@@ -217,9 +216,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		$gateway_instances = EEM_Gateways::instance()->get_gateway_instances();
 		$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta( $current_user->ID, 'payment_settings', TRUE );
-		
 
-	
+
+
 		foreach ( $payment_settings as $gateway => $settings ) {
 			$ht_content = isset( $gateway_instances[$gateway] ) ? $gateway_instances[$gateway]->get_help_tab_content() : FALSE;
 			if ( $ht_content ) {
@@ -227,20 +226,20 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$help_tabs[$ht_ref] = array(
 					'title' => $settings['display_name'] . __(' Help', 'event_espresso'),
 					'content' => $ht_content
-					);					
+					);
 			}
 		}
 
 		return $help_tabs;
 	}
-	
-	
+
+
 
 
 	protected function _payment_methods_list() {
 		//ok now start normal rendering of the page. realizing this MIGHT be a post request
 		//with an invalid form, or it might be a simple get.
-		EE_Registry::instance()->load_helper( 'Tabbed_Content' );		
+		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		EE_Registry::instance()->load_lib('Payment_Method_Manager');
 		//setup tabs, one for each payment method type
 		$tabs = array();
@@ -250,7 +249,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			if( ! $payment_method ){
 				$new_name = str_replace("_"," ",$pmt_name);
 				$payment_method = EE_Payment_Method::new_instance(array('PMD_type'=>$pmt_name,'PMD_active'=>false,'PMD_name'=>$new_name,'PMD_admin_name'=>$new_name, 'PMD_slug'=>sanitize_key($pmt_name)));
-			}			
+			}
 			add_meta_box(
 						'espresso_' . $pmt_name . '_payment_settings', //html id
 					sprintf(__('%s Settings', 'event_espresso'),$payment_method->admin_name()), //title
@@ -291,15 +290,15 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$payment_method_slug = 'paypal_standard';
 			}
 		}
-		
+
 		$this->_template_args['admin_page_header'] = EEH_Tabbed_Content::tab_text_links( $tabs, 'payment_method_links', '|', $payment_method_slug );
 		$this->display_admin_page_with_sidebar();
 
 	}
 	/**
-	 * 
+	 *
 	 * @param NULL $post_obj_which_is_null is an object containing the current post (as a $post object)
-	 * @param array $metabox is an array with metabox id, title, callback, and args elements. 
+	 * @param array $metabox is an array with metabox id, title, callback, and args elements.
 	 * the value at 'args' has key 'payment_method', as set within _payment_methods_list
 	 */
 	public function payment_method_settings_meta_box($post_obj_which_is_null,$metabox){
@@ -326,7 +325,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			EEH_Template::display_template(EE_PAYMENTS_TEMPLATE_PATH.'payment_method_activate.template.php', $template_args);
 		}
 	}
-	
+
 	/**
 	 * Simplifies the form to merely reproduce 4.1's gateway settings functionality
 	 * @param EE_Payment_Method_Form $form_section
@@ -341,9 +340,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'PRC_ID',
 			'PMD_wp_user_id',
 		));
-		
+
 	}
-	
+
 	/**
 	 * Activates a payment method of that type. MOstly assuming there is only 1 of that type (or none so far)
 	 * @global type $current_user
@@ -371,7 +370,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
 		}
 	}
-	
+
 	/**
 	 * Deactivates the payment method with the specified slug, and redirects.
 	 */
@@ -385,7 +384,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'deactivated', array('action' => 'default'));
 		}
 	}
-	
+
 	/**
 	 * Processes the payment method form that was submitted. This is slightly trickier than usual form
 	 * processing because we first need to identify WHICH form was processed and which paymetn method
@@ -417,7 +416,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default'));
 			}
 			$correct_pmt_form_to_use->receive_form_submission($this->_req_data);
-			if($correct_pmt_form_to_use->is_valid()){				
+			if($correct_pmt_form_to_use->is_valid()){
 				$correct_pmt_form_to_use->save();
 				$pm = $correct_pmt_form_to_use->get_model_object();
 				$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$pm->slug()));
@@ -429,15 +428,15 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_settings() {
-		
-		$this->_template_args['values'] = $this->_yes_no_values;		
+
+		$this->_template_args['values'] = $this->_yes_no_values;
 		$this->_template_args['show_pending_payment_options'] = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) ? absint( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) : FALSE;
 
 		$this->_set_add_edit_form_tags( 'update_payment_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();	
-		
+		$this->display_admin_page_with_sidebar();
+
 	}
 
 
@@ -448,15 +447,15 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	*		@access protected
 	*		@return array
 	*/
-	protected function _update_payment_settings() {	
+	protected function _update_payment_settings() {
 		EE_Registry::instance()->CFG->registration->show_pending_payment_options = isset( $this->_req_data['show_pending_payment_options'] ) ? $this->_req_data['show_pending_payment_options'] : FALSE;
-		EE_Registry::instance()->CFG = apply_filters( 'FHEE__Payments_Admin_Page___update_payment_settings__CFG', EE_Registry::instance()->CFG );	
+		EE_Registry::instance()->CFG = apply_filters( 'FHEE__Payments_Admin_Page___update_payment_settings__CFG', EE_Registry::instance()->CFG );
 
-		
+
 		$what = __('Payment Settings','event_espresso');
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, __('updated','event_espresso'), array( 'action' => 'payment_settings' ) );
-				
+
 	}
 
 
