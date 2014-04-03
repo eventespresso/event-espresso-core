@@ -73,18 +73,29 @@ class EE_Payment_Processor{
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$transaction->set_payment_method_ID($payment_method->ID());
-		$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_info, $success_url, $method, $by_admin );
-		if ( empty( $payment )) {
-			$transaction->set_status( EEM_Transaction::incomplete_status_code );
-			if($save_txn) $transaction->save();
-			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
+		if($payment_method->type_obj() && $payment_method->type_obj() instanceof EE_PMT_Base){
+			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_info, $success_url, $method, $by_admin );
+			if ( empty( $payment )) {
+				$transaction->set_status( EEM_Transaction::incomplete_status_code );
+				if($save_txn) $transaction->save();
+//			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
 			
-		} else {
-			$payment = EEM_Payment::instance()->ensure_is_obj( $payment, TRUE );
-			//ok, now process the transaction according to the payment
-			$transaction->update_based_on_payments($save_txn);//also saves transaction
-			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
+			} else {
+				$payment = EEM_Payment::instance()->ensure_is_obj( $payment, TRUE );
+				//ok, now process the transaction according to the payment
+				$transaction->update_based_on_payments($save_txn);//also saves transaction
+	//			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
+			}
+		}else{
+			EE_Error::add_error( 
+					sprintf( 
+						__( 'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+						'<br/>',
+						EE_Registry::instance()->CFG->organization->email 
+					), __FILE__, __FUNCTION__, __LINE__ 
+				);	
 		}
+		
 		return $payment;
 	}
 

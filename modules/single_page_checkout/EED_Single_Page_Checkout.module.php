@@ -1610,44 +1610,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $payment_method instanceof EE_Payment_Method ) {
 			// and verify it has a valid Payment_Method Type object
 			if ( $payment_method->type_obj() instanceof EE_PMT_Base ) {
-				
-				// WHERE DOES THE PAYMENT TAKE PLACE ?
-				switch ( $payment_method->type_obj()->payment_occurs() ) {
-					
-					// HERE
-					case EE_PMT_Base::onsite :
-						// k... attempt to make the actual payment
-						$payment = $this->_attempt_payment( $payment_method );
-						// check payment status
-						if ( $this->_onsite_payment_successfull( $payment )) {
-							$redirect_url = $payment->redirect_url();
-							$this->_thank_you_page_url = ! empty( $redirect_url ) ? $redirect_url : $this->_thank_you_page_url;
-							$this->_redirect_to_thank_you_page = TRUE;
-						}					
-						break;
-						
-					// THERE
-					case EE_PMT_Base::offsite :
-						// update thank you page url cuz it's used as the redirect after payment
-						$this->_thank_you_page_url = add_query_arg( 
+				//setup the thank you page properly
+				$this->_thank_you_page_url = add_query_arg( 
 							array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ), 
 							$this->_thank_you_page_url 
 						);
-						// k... attempt to make the actual payment
-						$payment = $this->_attempt_payment( $payment_method );
-						$redirect_url = $payment->redirect_url();
-						if ( ! empty( $redirect_url )) {
-							$this->_json_response['return_data'] = array( 'off-site-redirect' => $payment->redirect_form() );  
-						}
-						break;
-						
-					// ewwww.... the REAL world  {:p
-					case EE_PMT_Base::offline :						
-						$this->_redirect_to_thank_you_page = TRUE;
-						break;
-		
+				//attempt payment (offline paymetn methods will just NOT make a payment, but instead 
+				//just mark itself as teh PMD_ID on the transaction
+				$payment = $this->_attempt_payment( $payment_method );
+				//if a payment object was made and it specifies a redirect url...
+				//then we'll setup SPCO to do that redirect
+				if($payment && $payment instanceof EE_Payment && $payment->redirect_url()){
+					$this->_json_response['return_data'] = array( 'off-site-redirect' => $payment->redirect_form() ); 
+					$this->_redirect_to_thank_you_page = FALSE;
+				}else{
+					$this->_redirect_to_thank_you_page = TRUE;
 				}
-
 			} else {
 				// not a payment
 				EE_Error::add_error( 
