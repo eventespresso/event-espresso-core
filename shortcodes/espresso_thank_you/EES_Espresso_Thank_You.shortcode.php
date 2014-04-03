@@ -30,10 +30,42 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	protected $_current_txn = NULL;
 	
 	/**
+	 * @var EE_Registration $_primary_registrant
+	 */
+	protected $_primary_registrant = NULL;
+	
+	/**
 	 * The reg_url_link passed from the Request, or from the Session
 	 * @var string $_reg_url_link
 	 */
 	protected $_reg_url_link = NULL;
+	
+	/**
+	 * whether the incoming reg_url_link is for the primary registrant or not
+	 * @var boolean $_is_primary
+	 */
+	protected $_is_primary = NULL;
+	
+	/**
+	 * The URL for revisting the SPCO attendee information step
+	 * @var string $_SPCO_attendee_information_url
+	 */
+	protected $_SPCO_attendee_information_url = NULL;
+	
+	/**
+	 * The URL for revisting the SPCO payment options step
+	 * @var string $_SPCO_payment_options_url
+	 */
+	protected $_SPCO_payment_options_url = NULL;
+	
+	/**
+	 * whether to display the Payment Options link
+	 * @var boolean $_show_try_pay_again_link
+	 */
+	protected $_show_try_pay_again_link = FALSE;
+
+
+
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, modules, etc
@@ -108,81 +140,147 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function process_shortcode( $attributes = array() ) {
 
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
-			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );			return;
+		} 
+			
+		//prepare variables for displaying
+//		$registrations = $this->_current_txn->registrations();
+//		$event_names = array();
+//		foreach( $registrations as $registration ){
+//			$event_names[ $registration->event_name() ] = $registration->event_name();
+//		}
+//		$primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
+		//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
+		$this->_current_txn = EE_Registry::instance()->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
+		$this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
+		//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		// registrations
+//		$registrations = $this->_current_txn->registrations();
+//		$event_names = array();
+//		foreach( $registrations as $registration ){
+//			if ( $registration instanceof EE_Registration && ( ! $this->_revisit || ( $this->_revisit && $this->_reg_url_link == $registration->reg_url_link() ))) {
+//				$event_names[ $registration->event_name() ] = $registration->event_name();					
+//			}
+//		}			
+//		$template_args['event_names'] = $event_names;			
+		
+		$this->_is_primary = $this->_primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
+		
+		// txn status ? 
+		if( $this->_current_txn->is_completed() ){
+			$this->_show_try_pay_again_link = FALSE;
+		} else if ( $this->_current_txn->is_incomplete() && ( $this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment() )){
+			$this->_show_try_pay_again_link = TRUE;
+		} else if ( $this->_primary_registrant->is_approved() || $this->_primary_registrant->is_pending_payment() ) {
+			// its pending
+			$this->_show_try_pay_again_link = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
 		} else {
-			
-			//prepare variables for displaying
-			$registrations = $this->_current_txn->registrations();
-			$event_names = array();
-			foreach( $registrations as $registration ){
-				$event_names[ $registration->event_name() ] = $registration->event_name();
-			}
-			$primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
-			//get the transaction. yes, we had it during 'handle_thank_you_page', but it may have been updated
-			$this->_current_txn = EE_Registry::instance()->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
-			$primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
-			//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-			// registrations
-			$registrations = $this->_current_txn->registrations();
-			$event_names = array();
-			foreach( $registrations as $registration ){
-				if ( $registration instanceof EE_Registration && ( ! $this->_revisit || ( $this->_revisit && $this->_reg_url_link == $registration->reg_url_link() ))) {
-					$event_names[ $registration->event_name() ] = $registration->event_name();					
-				}
-			}			
-			
-			//prepare variables for displaying
-			$template_args = array();
-			$template_args['transaction'] = $this->_current_txn;
-			$template_args['reg_url_link'] = $this->_reg_url_link;
-			$template_args['is_primary'] = $primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
-						//get payments, but order with newest at teh top, so users see taht first
-			$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
-			$template_args['primary_registrant'] = $primary_registrant;
-			
-			// txn status ? 
-			if( $this->_current_txn->is_completed() ){
-				$template_args['show_try_pay_again_link'] = FALSE;
-			} else if ( $this->_current_txn->is_incomplete() && ( $primary_registrant->is_approved() || $primary_registrant->is_pending_payment() )){
-				$template_args['show_try_pay_again_link'] = TRUE;
-			} else if ( $primary_registrant->is_approved() || $primary_registrant->is_pending_payment() ) {
-				// its pending
-				$template_args['show_try_pay_again_link'] = isset( EE_Registry::instance()->CFG->registration->show_pending_payment_options ) && EE_Registry::instance()->CFG->registration->show_pending_payment_options ? TRUE : FALSE;
-			} else {
-				$template_args['show_try_pay_again_link']  = FALSE;
-			}
-			// link to SPCO
-			$revisit_spco_url = add_query_arg( 
-				array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), 
-				get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )
-			);
-
-			$template_args['event_names'] = $event_names;			
-			// link to SPCO payment_options
-			$template_args['SPCO_payment_options_url'] = $primary_registrant ? $primary_registrant->payment_overview_url() : add_query_arg(  array('step'=>'payment_options' ), $revisit_spco_url );
-			// link to SPCO attendee_information
-			$template_args['SPCO_attendee_information_url'] =$primary_registrant ? $primary_registrant->edit_attendee_information_url() : FALSE;
-			$template_args['gateway_content'] = '';			
-			//create a hackey payment object, but dont save it
-			$gateway_name = $this->_current_txn->selected_gateway();
-			$payment = EE_Payment::new_instance( array(
-				'TXN_ID'=>$this->_current_txn->ID(), 
-				'STS_ID'=>EEM_Payment::status_id_pending, 
-				'PAY_timestamp'=>current_time('timestamp'), 
-				'PAY_amount'=>$this->_current_txn->total(), 
-				'PAY_gateway'=>$gateway_name
-			));
-
-			$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name,$payment );
-
-			
-			
-			EE_Registry::instance()->REQ->add_output( EEH_Template::display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));			
+			$this->_show_try_pay_again_link = FALSE;
 		}
+		// link to SPCO
+		$revisit_spco_url = add_query_arg( 
+			array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), 
+			EE_Registry::instance()->CFG->core->reg_page_url
+		);
 
-		return EE_Registry::instance()->REQ->get_output();		
+		// link to SPCO payment_options
+		$this->_SPCO_payment_options_url = $this->_primary_registrant ? $this->_primary_registrant->payment_overview_url() : add_query_arg( array('step'=>'payment_options' ), $revisit_spco_url );
+		// link to SPCO attendee_information
+		$this->_SPCO_attendee_information_url = $this->_primary_registrant ? $this->_primary_registrant->edit_attendee_information_url() : FALSE;
+		// link to receipt
+		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url('html');
+
+//		EEH_Template_Validator::verify_instanceof( $template_args['primary_registrant']->attendee(), '$primary_registrant', 'EE_Attendee');
+//		EEH_Template_Validator::verify_is_array( $template_args['event_names'], '$event_names');
+
+
+		return EEH_Template::locate_template( THANK_YOU_TEMPLATES_PATH . 'espresso-thank-you-page-overview.template.php', TRUE, $template_args, TRUE );		
 		
 	}
+
+
+
+
+	/**
+	 * 	get_registration_details
+	 * 
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function get_registration_details() {
+		//prepare variables for displaying
+		$template_args = array();
+		$template_args['transaction'] = $this->_current_txn;
+		$template_args['reg_url_link'] = $this->_reg_url_link;
+		$template_args['is_primary'] = $this->_is_primary;
+		$template_args['SPCO_attendee_information_url'] = $this->_SPCO_attendee_information_url;
+		// verify template arguments
+		EEH_Template_Validator::verify_instanceof( $template_args['transaction'], '$transaction', 'EE_Transaction' );
+		EEH_Template_Validator::verify_isnt_null( $template_args['SPCO_attendee_information_url'], '$SPCO_attendee_information_url');
+		return EEH_Template::locate_template( THANK_YOU_TEMPLATES_PATH . 'espresso-thank-you-page-registration-details.template.php', TRUE, $template_args, TRUE );		}
+
+
+
+	/**
+	 * 	get_transaction_details
+	 * 
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function get_transaction_details() {
+		//prepare variables for displaying
+		$template_args = array();
+		$template_args['transaction'] = $this->_current_txn;
+		$template_args['reg_url_link'] = $this->_reg_url_link;
+		$template_args['primary_registrant_name'] = $this->_primary_registrant->attendee()->full_name( TRUE );
+		// link to SPCO payment_options
+		$template_args['show_try_pay_again_link'] = $this->_show_try_pay_again_link;
+		$template_args['SPCO_payment_options_url'] = $this->_SPCO_payment_options_url;
+		// verify template arguments
+		EEH_Template_Validator::verify_instanceof( $template_args['transaction'], '$transaction', 'EE_Transaction' );
+		EEH_Template_Validator::verify_isnt_null( $template_args['show_try_pay_again_link'], '$show_try_pay_again_link' );
+		EEH_Template_Validator::verify_isnt_null( $template_args['SPCO_payment_options_url'], '$SPCO_payment_options_url' );
+		return EEH_Template::locate_template( THANK_YOU_TEMPLATES_PATH . 'espresso-thank-you-page-transaction-details.template.php', TRUE, $template_args, TRUE );		
+	}
+
+
+
+	/**
+	 * 	get_payment_details
+	 * 
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function get_payment_details() {
+		//prepare variables for displaying
+		$template_args = array();
+		$template_args['transaction'] = $this->_current_txn;
+		$template_args['reg_url_link'] = $this->_reg_url_link;
+		//get payments, but order with newest at the top, so users see that first
+		$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
+		//create a hackey payment object, but dont save it
+		$gateway_name = $this->_current_txn->selected_gateway();
+		$payment = EE_Payment::new_instance( array(
+			'TXN_ID'=>$this->_current_txn->ID(), 
+			'STS_ID'=>EEM_Payment::status_id_pending, 
+			'PAY_timestamp'=>current_time('timestamp'), 
+			'PAY_amount'=>$this->_current_txn->total(), 
+			'PAY_gateway'=>$gateway_name
+		));
+		$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name, $payment );
+		// link to SPCO payment_options
+		$template_args['show_try_pay_again_link'] = $this->_show_try_pay_again_link;
+		$template_args['SPCO_payment_options_url'] = $this->_SPCO_payment_options_url;
+		// verify template arguments
+		EEH_Template_Validator::verify_instanceof( $template_args['transaction'], '$transaction', 'EE_Transaction' );
+		EEH_Template_Validator::verify_is_array_of( $template_args['payments'], '$payments', 'EE_Payment' );
+		EEH_Template_Validator::verify_isnt_null( $template_args['show_try_pay_again_link'], '$show_try_pay_again_link' );
+		EEH_Template_Validator::verify_isnt_null( $template_args['gateway_content'], '$gateway_content');
+		EEH_Template_Validator::verify_isnt_null( $template_args['SPCO_payment_options_url'], '$SPCO_payment_options_url');
+		return EEH_Template::locate_template( THANK_YOU_TEMPLATES_PATH . 'espresso-thank-you-page-payment-details.template.php', TRUE, $template_args, TRUE );		
+	}
+
+
 
 }
 // End of file EES_Espresso_Thank_You.shortcode.php
