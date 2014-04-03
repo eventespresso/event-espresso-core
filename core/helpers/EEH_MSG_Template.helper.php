@@ -308,4 +308,40 @@ class EEH_MSG_Template {
 		return $a->newInstance();
 	}
 
+
+
+
+
+	/**
+	 * Given a message_type slug, will return whether that message type is active in the system or not.
+	 *
+	 * @since    4.4.0
+	 * @param  string   $message_type message type to check for.
+	 * @return boolean
+	 */
+	public static function is_mt_active( $message_type ) {
+		self::_set_autoloader();
+		$MSG = EE_Registry::instance()->load_lib('messages');
+		$active_mts = $MSG->get_active_message_types();
+		return in_array( $message_type, $active_mts );
+	}
+
+
+
+	/**
+	 * Given a messenger slug, will return whether that messenger is active in the system or not.
+	 *
+	 * @since    4.4.0
+	 *
+	 * @param  string  $messenger slug for messenger to check.
+	 * @return boolean
+	 */
+	public static function is_messenger_active( $messenger ) {
+		self::_set_autoloader();
+		$MSG = EE_Registry::instance()->load_lib('messenger');
+		$active_messengers = $MSG->get_active_messengers();
+		$active_messengers = array_keys( $active_messengers );
+		return in_array( $messenger, $active_messengers );
+	}
+
 }
