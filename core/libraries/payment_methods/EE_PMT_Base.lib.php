@@ -280,4 +280,15 @@ abstract class EE_PMT_Base{
 			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isnt an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
 		}
 	}
+	
+	/**
+	 * For adding any html output ab ove the payment overview.
+	 * Many gateways won't want ot display anything, so this function just returns an empty string.
+	 * Other gateways may want to override this, such as offline gateways.
+	 * @return string
+	 */
+	public function payment_overview_content(EE_Payment $payment){
+		EE_Registry::instance()->load_helper('Template');
+		return EEH_Template::display_template(EE_LIBRARIES.'payment_methods'.DS.'templates'.DS.'payment_details_content.template.php', array('payment_method'=>$this->_pm_instance,'payment'=>$payment) , true);
+	}
 }

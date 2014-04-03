@@ -40,7 +40,7 @@ $event_name = '';
 				$reg_cntr++;
 				if ( $event_name != $registration->event_name() ) { 
 					$event_name = $registration->event_name(); 
-			?>
+?>
 			<h6>
 				<span class="smaller-text grey-text"><?php _e('for','event_espresso');?>: </span> <?php echo htmlentities( $registration->event_name(), ENT_QUOTES, 'UTF-8' );?>			
 			</h6>							

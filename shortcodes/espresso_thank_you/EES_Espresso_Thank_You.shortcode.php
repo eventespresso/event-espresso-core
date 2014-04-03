@@ -172,7 +172,15 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				'PAY_timestamp'=>current_time('timestamp'), 
 				'PAY_amount'=>$this->_current_txn->total()
 			));
-
+			$last_used_payment_method = $this->_current_txn->payment_method();
+			try{
+				if($last_used_payment_method && $last_used_payment_method->type_obj()){
+					$template_args['gateway_content'] = $last_used_payment_method->type_obj()->payment_overview_content($payment);
+				}
+			}catch(EE_Error $e){
+				EE_Error::add_error(sprintf(__("Payment Method is no longer active and we cannot show its custom content", "event_espresso")),__FILE__,__FUNCTION__,__LINE__);
+				$template_args['gateway_content'] = '<div class="error">'.__("Payment Method is no longer active and we cannot show itsi custom content", 'event_espresso').'</div>';
+			}
 // 			$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name,$payment );
 
 			
