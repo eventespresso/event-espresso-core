@@ -24,8 +24,8 @@
 
 .ee-icon,
 .dashicons {
-	position: relative;
-	top: -2px;
+	/*position: relative;
+	top: -2px;*/
 	font-size: inherit;
    	height: auto;
 	margin-right: .5em;
@@ -782,6 +782,7 @@ input.ee-register-button {
 	vertical-align: text-top;
 }
 
+.click-this,
 .submit-this-form,
 .display-the-hidden,
 .hide-the-displayed,
