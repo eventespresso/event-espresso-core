@@ -77,7 +77,9 @@ class EEM_Payment_Log {
 		}catch(EE_Error $e){
 			$transaction = 0;
 		}
-		add_option(self::log_transient_key_prefix.'/p'.$pm.'/t'.$transaction.'/d'.current_time('mysql'),$message,NULL,false);
+		$t = microtime(true);
+		$micro = sprintf("%06d",($t - floor($t)) * 1000000);
+		add_option(self::log_transient_key_prefix.'/p'.$pm.'/t'.$transaction.'/d'.current_time('mysql').':'.$micro,$message,NULL,false);
 	}
 }
 

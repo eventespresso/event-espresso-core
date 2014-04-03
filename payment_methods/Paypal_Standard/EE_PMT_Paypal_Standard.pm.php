@@ -48,6 +48,8 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		//paypal standard actually sends teh IPN info along with the user
 		//when they return to our site
 		//so in case teh IPN is arriving later, let's try to process an IPN!
-		EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$transaction,$this->_pm_instance);
+		if($_SERVER['REQUEST_METHOD'] == 'POST'){
+			EE_Registry::instance()->load_core('Payment_Processor')->process_ipn($_REQUEST,$transaction,$this->_pm_instance);
+		}
 	}
-}
+}//NOTIFY URL: http://eventespresso.com/sandbox/dev1/transactions/?e_reg_url_link=1-07eae3d1b8e76de4b3bd9181a69408b5&ee_payment_method=paypal_standard

@@ -230,7 +230,7 @@ EE_System::instance();
 /**
  * Interface which allows gateways to be used by different systems other than Event Espresso
  */
-interface EEI_Payment{
+interface EEI_Payment extends EEI_Base{
 	
 	/**
 	 * @return string indicating which the payment is approved, pending, cancelled or failed
@@ -273,7 +273,7 @@ interface EEI_Payment{
  * It's probably best if its a singleton to save on resources but still allow it
  * to have some state
  */
-interface EEMI_Payment{
+interface EEMI_Payment {
 	/**
 	 * REturns a string for the approved status
 	 */
@@ -310,7 +310,10 @@ interface EEMI_Payment{
 	function get_payment_by_txn_id_chq_nmbr($txn_id);
 }
 
-interface EEI_Transaction{
+interface EEI_Base{
+	function ID();
+}
+interface EEI_Transaction extends EEI_Base{
 	/**
 	 * 
 	 * @return EEI_Payment
