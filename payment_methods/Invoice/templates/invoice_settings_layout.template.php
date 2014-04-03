@@ -26,7 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 ?><table class='<?php echo $form->html_class();?>' id='<?php echo $form->html_id();?>' style='<?php echo $form->html_style();?>'>
 	<?php
-	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array('PMD_ID', 'PMD_name','PMD_desc','PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url')));
+	$inputs_to_show = array_intersect_key($form->inputs(),array_flip(array('PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url')));
 	foreach($inputs_to_show as $input){
 		echo $layout_strategy->layout_input($input);
 	}
