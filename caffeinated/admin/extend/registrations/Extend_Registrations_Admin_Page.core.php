@@ -131,11 +131,23 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 		$this->_page_config['contact_list']['list_table'] = 'Extend_EE_Attendee_Contact_List_Table';
 		$this->_page_config['default']['list_table'] = 'Extend_EE_Registrations_List_Table';
-
-		//hook in buttons for newsletter message type trigger.
-		add_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', array( $this, 'add_newsletter_action_buttons'), 10 );
 	}
 
+
+
+
+	public function load_script_styles() {
+		parent::load_scripts_styles();
+
+		//if newsletter message type is active then let's add filter and load js for it.
+		EE_Registry::instance()->load_helper('MSG_Template');
+		if ( EEH_MSG_Template::is_mt_active('newsletter' ) ) {
+			//enqueue newsletter js
+			wp_enqueue_script( 'ee-newsletter-trigger', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.js', array( 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE );
+			//hook in buttons for newsletter message type trigger.
+			add_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', array( $this, 'add_newsletter_action_buttons'), 10 );
+		}
+	}
 
 
 
@@ -224,8 +236,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 * @return string html string for extra buttons
 	 */
 	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
+
 		//need to templates for the newsletter message type for the template selector.
-		$values = array();
+		$values[] = array( 'text' => __('Select Template to Use', 'event_espresso'), 'id' => 0 );
 		$mtps = EEM_Message_Template_Group::instance()->get_all( array( array( 'MTP_message_type' => 'newsletter', 'MTP_messenger' => 'email' ) ) );
 		foreach ( $mtps as $mtp ) {
 			$name = $mtp->name();
@@ -246,8 +259,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'form_route' => 'newsletter_selected_send',
 			'form_nonce_name' => 'newsletter_selected_send_nonce',
 			'form_nonce' => wp_create_nonce( 'newsletter_selected_send_nonce' ),
+			'ajax_nonce' => wp_create_nonce( 'get_newsletter_form_content_nonce'),
 			'template_selector' => EEH_Form_Fields::select_input('newsletter-mtp-selected', $values ),
-			'shortcodes_available' => $shortcodes
+			'shortcodes_available' => $shortcodes,
+			'id_type' => $list_table instanceof EE_Attendee_Contact_List_Table ? 'contact' : 'registration'
 			);
 		$routes_to_add_to = array(
 			'contact_list',
