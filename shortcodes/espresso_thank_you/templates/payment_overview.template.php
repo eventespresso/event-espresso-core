@@ -215,6 +215,7 @@ $event_name = '';
 			?>
 	</div>
 	<br/>	
+<?php } ?>
 
 </div><!-- / .event-display-boxes -->
 <?php 

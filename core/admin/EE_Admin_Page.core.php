@@ -234,8 +234,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * $this->_page_routes = array(
 	 * 		'default' => array(
 	 * 			'func' => '_default_method_handling_route',
-	 * 			'args' => array('array','of','args')
-	 * 			'noheader' => true //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
+	 * 			'args' => array('array','of','args'),
+	 * 			'noheader' => true, //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
+	 *			'headers_sent_route'=>'headers_route_reference'//add this if noheader=>true, and you want to load a headers route after.  The string you enter here should match the defined route reference for a headers sent route.
 	 * 		),
 	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method.
 	 * 		)
@@ -751,19 +752,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 			throw new EE_Error( $error_msg );
 		}
 
+
 		//first lets' catch if the UI request has EVER been set.
 		if ( $this->_is_UI_request === NULL ) {
 			//lets set if this is a UI request or not.
-			$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' ) ? TRUE : FALSE;
+			$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] !== TRUE ) ? TRUE : FALSE;
 
 
 			//wait a minute... we might have a noheader in the route array
 			$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
-		}
-
-		//now if UI request is FALSE and noheader is true AND we have a headers_sent_func in the route array then let's set UI_request to true because the no header route has a second func after headers have been sent.
-		if ( $this->_is_UI_request === FALSE && ! empty( $this->_route['headers_sent_func'] ) ) {
-			$this->_is_UI_request == TRUE;
 		}
 
 		$this->_set_current_labels();
@@ -829,7 +826,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _route_admin_request() {
-		$this->_verify_routes();
+		if (  ! $this->_is_UI_request )
+			$this->_verify_routes();
 
 		$nonce_check = isset( $this->_route_config['require_nonce'] ) ? $this->_route_config['require_nonce'] : TRUE;
 
@@ -844,9 +842,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		// grab callback function
 		$func = is_array( $this->_route ) ? $this->_route['func'] : $this->_route;
-
-		//wait a minute... it's possible this is a noheader route with a sent_headers_func. So let's use that instead
-		$func = $this->_is_UI_request && is_array( $this->_route ) && !empty( $this->_route['sent_headers_func'] ) ? $this->_route['sent_headers_func'] : $func;
 
 		// check if callback has args
 		$args = is_array( $this->_route ) && isset( $this->_route['args'] ) ? $this->_route['args'] : array();
@@ -878,6 +873,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( !empty( $error_msg ) )
 				throw new EE_Error( $error_msg );
 		}
+
+		//if we've routed and this route has a no headers route AND a sent_headers_route, then we need to reset the routing properties to the new route.
+		//now if UI request is FALSE and noheader is true AND we have a headers_sent_route in the route array then let's set UI_request to true because the no header route has a second func after headers have been sent.
+		if ( $this->_is_UI_request === FALSE && ! empty( $this->_route['headers_sent_route'] ) ) {
+			$this->_reset_routing_properties( $this->_route['headers_sent_route'] );
+		}
+	}
+
+
+
+
+	/**
+	 * This method just allows the resetting of page properties in the case where a no headers
+	 * route redirects to a headers route in its route config.
+	 *
+	 * @since   4.4.0
+	 *
+	 * @param  string    $new_route   New (non header) route to redirect to.
+	 * @return   void
+	 */
+	protected function _reset_routing_properties( $new_route ) {
+		$this->_is_UI_request = TRUE;
+		//now we set the current route to whatever the headers_sent_route is set at
+		$this->_req_data['action'] = $new_route;
+		//rerun page setup
+		$this->_page_setup();
 	}
 
 
