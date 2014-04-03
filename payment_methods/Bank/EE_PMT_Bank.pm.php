@@ -47,6 +47,32 @@ class EE_PMT_Bank extends EE_PMT_Base{
 			'exclude'=>array('PMD_debug_mode')
 		));
 	}
+	
+	/**
+	 * For adding any html output ab ove the payment overview.
+	 * Many gateways won't want ot display anything, so this function just returns an empty string.
+	 * Other gateways may want to override this, such as offline gateways.
+	 * @return string
+	 */
+	public function payment_overview_content(EE_Payment $payment){
+		EE_Registry::instance()->load_helper('Template');
+		$extra_meta_for_payment_method = $this->_pm_instance->all_extra_meta_array();
+		$template_vars = array_merge(
+						array(
+							'payment_method'=>$this->_pm_instance,
+							'payment'=>$payment,
+							'page_title'=>'',
+							'payment_instructions'=>'',
+							'name_on_bank_account'=>'',
+							'bank_account_number'=>'',
+							'bank_name'=>'',
+							'bank_address'=>''
+							),
+						$extra_meta_for_payment_method);
+		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'bank_payment_details_content.template.php', 
+				$template_vars,
+				true);
+	}
 }
 
 // End of file EEPMT_Bank.pm.php
