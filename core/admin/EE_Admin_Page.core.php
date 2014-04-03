@@ -234,8 +234,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * $this->_page_routes = array(
 	 * 		'default' => array(
 	 * 			'func' => '_default_method_handling_route',
-	 * 			'args' => array('array','of','args')
-	 * 			'noheader' => true //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
+	 * 			'args' => array('array','of','args'),
+	 * 			'noheader' => true, //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
+	 *			'headers_sent_func'=>'_render_page_func'//add this if noheader=>true, and you MIGHT still want to run some code after running 'func' and headers have been sent
 	 * 		),
 	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method.
 	 * 		)
@@ -763,7 +764,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		//now if UI request is FALSE and noheader is true AND we have a headers_sent_func in the route array then let's set UI_request to true because the no header route has a second func after headers have been sent.
 		if ( $this->_is_UI_request === FALSE && ! empty( $this->_route['headers_sent_func'] ) ) {
-			$this->_is_UI_request == TRUE;
+			$this->_is_UI_request = TRUE;
 		}
 
 		$this->_set_current_labels();
@@ -845,8 +846,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// grab callback function
 		$func = is_array( $this->_route ) ? $this->_route['func'] : $this->_route;
 
-		//wait a minute... it's possible this is a noheader route with a sent_headers_func. So let's use that instead
-		$func = $this->_is_UI_request && is_array( $this->_route ) && !empty( $this->_route['sent_headers_func'] ) ? $this->_route['sent_headers_func'] : $func;
+		//wait a minute... it's possible this is a noheader route with a headers_sent_func. So let's use that instead
+		$func = $this->_is_UI_request && is_array( $this->_route ) && !empty( $this->_route['headers_sent_func'] ) ? $this->_route['headers_sent_func'] : $func;
 
 		// check if callback has args
 		$args = is_array( $this->_route ) && isset( $this->_route['args'] ) ? $this->_route['args'] : array();
