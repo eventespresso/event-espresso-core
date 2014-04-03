@@ -224,6 +224,31 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 * @return string html string for extra buttons
 	 */
 	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
+		//need to templates for the newsletter message type for the template selector.
+		$values = array();
+		$mtps = EEM_Message_Template_Group::instance()->get_all( array( array( 'MTP_message_type' => 'newsletter', 'MTP_messenger' => 'email' ) ) );
+		foreach ( $mtps as $mtp ) {
+			$name = $mtp->name();
+			$values[] = array(
+				'text' => empty( $name ) ? __('Global', 'event_espresso') : $name,
+				'id' => $mtp->ID()
+				);
+		}
+
+		//need to get a list of shortcodes that are available for the newsletter message type.
+		EE_Registry::instance()->load_helper('MSG_Template');
+		$shortcodes = EEH_MSG_Template::get_shortcodes( 'newsletter', 'email', array(), 'attendee', TRUE );
+		$shortcodes = implode(', ', array_keys($shortcodes));
+
+		$form_template = REG_CAF_TEMPLATE_PATH . 'newsletter-send-form.template.php';
+		$form_template_args = array(
+			'form_action' => admin_url('admin.php'),
+			'form_route' => 'newsletter_selected_send',
+			'form_nonce_name' => 'newsletter_selected_send_nonce',
+			'form_nonce' => wp_create_nonce( 'newsletter_selected_send_nonce' ),
+			'template_selector' => EEH_Form_Fields::select_input('newsletter-mtp-selected', $values ),
+			'shortcodes_available' => $shortcodes
+			);
 		$routes_to_add_to = array(
 			'contact_list',
 			'event_registrations',
@@ -232,6 +257,8 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to ) ) {
 			$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send_selected_newsletter">0</span>' );
 			echo '<button class="button secondary-button"><span class="dashicons dashicons-email "></span>' . $button_text . '</button>';
+			EEH_Template::display_template( $form_template, $form_template_args );
+
 		}
 	}
 
