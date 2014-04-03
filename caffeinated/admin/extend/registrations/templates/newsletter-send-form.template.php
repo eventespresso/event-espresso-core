@@ -15,16 +15,22 @@
  * $form_route
  * $form_nonce_name
  * $form_nonce
+ * $ajax_nonce
  * $template_selector
  * $shortcodes_available
+ * $id_type
  */
 ?>
 <div id="ee-batch-message-send-form" style="display:none;">
     <div class="ee-batch-message-send-form">
+        <div class="ee-notices">
+        </div>
         <form id="newsletter-send-form" method="POST" action="<?php echo $form_action; ?>">
                 <input type="hidden" name="page" value="espresso_registrations">
                 <input type="hidden" name="action" value="<?php echo $form_route; ?>">
                 <input type="hidden" name="<?php echo $form_nonce_name; ?>" value="<?php echo $form_nonce; ?>">
+                <input type="hidden" id="get_newsletter_form_content_nonce" name="get_newsletter_form_content_nonce" value="<?php echo $ajax_nonce; ?>">
+                <input type="hidden" name="batch-message[id_type]" value="<?php echo $id_type; ?>">
                 <h3><?php printf( __('Sending batch message to %s people...', 'event-espresso'), '[NUMPEOPLE]' ); ?></h3>
                 <label for="batch-message-template-selector"><?php _e('Select Template:', 'event_espresso'); ?></label>
                 <?php echo $template_selector; ?>
