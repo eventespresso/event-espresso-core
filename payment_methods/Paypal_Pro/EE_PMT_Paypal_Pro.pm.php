@@ -50,15 +50,24 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		if( ! $allowed_types){//if allowed types is a string or empty array or null...
 			$allowed_types = array();
 		}
-		$billing_form = new EE_Billing_Info_Form(array(
+		$form_args = array(
 			'subsections'=>array(
 				'credit_card'=>new EE_Credit_Card_Input(),
 				'credit_card_type'=>new EE_Select_Input(array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(),array_flip($allowed_types))),//the options are set dynamically
 				'exp_month'=>new EE_Month_Input(true),
-				'exp_year'=>new EE_Year_Input(false),
+				'exp_year'=>new EE_Year_Input(true),
 				'cvv'=>new EE_Text_Input(),
-			)
-		));	
+			));
+		if($this->_pm_instance->debug_mode()){
+			$form_args['before_form_content_template'] = new EE_Template_Layout($this->file_folder().'templates'.DS.'paypal_pro_debug_info.template.php');
+			$form_args['subsections']['credit_card']->set_default('5424180818927383');
+			$form_args['subsections']['credit_card']->set_html_help_text(__("Payment fields have been autofilled because you are in debug mode.", 'event_espresso'));
+			$form_args['subsections']['credit_card_type']->set_default('MasterCard');
+			$form_args['subsections']['exp_year']->set_default('2020');
+			$form_args['subsections']['cvv']->set_default('115');
+		}
+		$billing_form = new EE_Billing_Info_Form($form_args);	
+		
 		return $billing_form;
 	}
 	/**

@@ -488,4 +488,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	public function required(){
 		return $this->_required;
 	}
+	/**
+	 * Sets the help text, in case
+	 * @param string $text
+	 */
+	public function set_html_help_text($text){
+		$this->_html_help_text = $text;
+	}
 }

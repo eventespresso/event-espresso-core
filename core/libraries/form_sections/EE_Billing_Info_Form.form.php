@@ -27,6 +27,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_Billing_Info_Form extends EE_Form_Section_Proper{
+	/**
+	 * 
+	 * @param array $options_array @see EE_Form_Section_Proper::__construct()
+	 */
 	public function __construct($options_array= array()){
 		$countries = EEM_Country::instance()->get_all(array(array('CNT_active'=>true)));
 		$country_options = array();
@@ -38,7 +42,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 		foreach($states as $state){
 			$states_organized[$state->country()->name()][$state->name()] = $state->name();
 		}
-		$this->_subsections = array(
+		$this->_subsections = array_merge($this->_subsections,array(
 			'first_name'=>new EE_Text_Input(array('required'=>true)),
 			'last_name'=>new EE_Text_Input(array('required'=>true)),
 			'email'=>new EE_Email_Input(),
@@ -53,7 +57,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 			'country'=>new EE_Select_Input($country_options),
 			'zip'=>new EE_Text_Input(),
 			'phone'=>new EE_Text_Input(),
-		);
+		));
 		parent::__construct($options_array);
 	}
 	/**

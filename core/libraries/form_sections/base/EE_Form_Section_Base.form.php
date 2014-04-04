@@ -43,7 +43,12 @@ abstract class EE_Form_Section_Base{
 	 * @var EE_Validation_Error[]
 	 */
 	protected $_validation_errors;
-	
+	/**
+	 * 
+	 * @param array $options_array {
+	 *	@type $name string the name for this form section, if you want to explicitly define it
+	 * }
+	 */
 	function __construct($options_array = array()){
 		if(isset($options_array['name'])){
 			$this->_name = $options_array['name'];

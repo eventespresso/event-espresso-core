@@ -29,19 +29,37 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @var array
 	 */
 	static protected $_js_localization = array();
+	/**
+	 * path to a template file containing HTML to eb echoed out BEFORE the form
+	 * @var string
+	 */
+	protected $_before_form_template = NULL;
+	
+	/**
+	 *path to a template file containign HTML to be echoed out AFTER the form
+	 * @var string
+	 */
+	protected $_after_form_template = NULL;
 	
 	/**
 	 * when constructing a proper form section, calls _construct_finalize on children
 	 * so that they know who their parent is, and what name they've been given.
-	 * @param array $options_array keys:<ul>
-	 * <li>'subsections' shoudl be EE_Form_Section_Base[], which will be merged with whatever was already
-	 * defined in child constructors;</li>
-	 * <li>'include' should be an array where values are all subsections to be included, and in that order. This is handy if you want
-	 * the subsections to be ordered differently than the default, and if you override which fields are shown</li>
-	 * <li>'exclude' should be an array where values are subsections to be excluded. This is handy if you want
-	 * to remove certain default subsections</li>
-	 * (note: if you specify BOTH 'include' AND 'exclude', the inclusions will be applied first, and the exclusions will exclude items from that list of inclusions)
-	 * <li>and parent's keys too</li></ul>
+	 * @param array $options_array {
+	 *	@type $subsections EE_Form_Section_Base[] where keys are the section's name
+	 *	@type $include string[] numerically-indexed where values are section names to be included,
+	 *		and in that order. This is handy if you want
+	 *		the subsections to be ordered differently than the default, and if you override which fields are shown
+	 *	@type $exclude string[] values are subsections to be excluded. This is handy if you want
+	 *		to remove certain default subsections (note: if you specify BOTH 'include' AND 'exclude', 
+	 *		the inclusions will be applied first, and the exclusions will exclude items from that list of inclusions)
+	 *	@type $before_form_template string filepath of a template for displaying BEFORE the form.
+	 *		This is the preferred method in case you don't want to change the form's
+	 *		content whatsoever, and only want to consistently have content in front of it.
+	 *		If you want to cahnge its content, you should change the $layout_strategy
+	 *	@type $after_form_template string like $before_form_template but puts the content afterwards
+	 *	@type $layout_strategy EE_Form_Section_Layout_Base strategy for laying out the form
+	 * } @see EE_Form_Section_Base::__construct()
+	 * 
 	 */
 	public function __construct($options_array = array()){
 		EE_Registry::instance()->load_helper('Formatter');
@@ -79,7 +97,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 			$this->_layout_strategy = new EE_Two_Column_Layout();
 		}
 		$this->_layout_strategy->_construct_finalize($this);
-		
+		if(isset($options_array['before_form_content_template'])){
+			$this->_before_form_template = $options_array['before_form_content_template'];
+		}
+		if(isset($options_array['after_form_content_template'])){
+			$this->_after_form_template = $options_array['after_form_content_template'];
+		}
 		$this->_enqueue_jquery_validate_script();
 	}
 	/**
@@ -243,7 +266,18 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @return string
 	 */
 	public function get_html(){
-		return $this->_layout_strategy->layout_form();
+		EE_Registry::instance()->load_helper('Template');
+		if($this->_before_form_template){
+			$before_form_content = EEH_Template::locate_template($this->_before_form_template, true, array('form'=>$this), true);
+		}else{
+			$before_form_content = '';
+		}
+		if($this->_after_form_template){
+			$after_form_content = EEH_Template::locate_template($this->_after_form_template, true, array('form'=>$this), true);
+		}else{
+			$after_form_content = '';
+		}
+		return $before_form_content.$this->_layout_strategy->layout_form().$after_form_content;
 	}
 	
 	/**

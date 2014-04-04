@@ -428,5 +428,5 @@ interface EEHI_Template{
 	 * @param  string $CNT_ISO 2 letter ISO code for a country
 	 * @return string        the html output for the formatted money value
 	 */
-	public function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = FALSE, $cur_code_span_class = 'currency-code' );
+	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = FALSE, $cur_code_span_class = 'currency-code' );
 }
