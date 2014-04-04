@@ -331,7 +331,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		if ( !class_exists( $classname ) ) {
 
 			$msg[] = __('uhoh, Something went wrong and no data handler is found', 'event_espresso');
-			$msg[] = sprintf( __('The %s class has set the "$_data_handler" property but the string included (%s) does not match any existing "EE_Messages_incoming_data" classes (found in "/includes/core/messages/data_class"', 'event_espresso'), __CLASS__, $this->_data_handler );
+			$msg[] = sprintf( __('The %s class has set the "$_data_handler" property but the string included (%s) does not match any existing "EE_Messages_incoming_data" classes (found in "/includes/core/messages/data_class").  Looking for %s.', 'event_espresso'), __CLASS__, $this->_data_handler, $classname );
 			throw new EE_error( implode('||', $msg) );
 		}
 
