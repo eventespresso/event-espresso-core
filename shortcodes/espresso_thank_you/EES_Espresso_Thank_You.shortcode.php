@@ -273,15 +273,15 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			// no TXN? then get out
 			if ( ! $TXN = $espresso_thank_you_page->get_txn() ) {
 				$notices = EE_Error::get_notices();
-				$response['espresso_thank_you_page_error'] = array (
-					'errors' => isset( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' )
+				$response['espresso_thank_you_page'] = array (
+					'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' )
 				);
 				return $response;
 			}
 			// bad TXN?
 			if ( $TXN->failed() ) {
-				$response['espresso_thank_you_page_waiting'] = array (
-					'notice' => TRUE
+				$response['espresso_thank_you_page'] = array (
+					'failed' => TRUE
 				);
 				return $response;	
 			}
@@ -291,7 +291,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				'payment_details' => $espresso_thank_you_page->get_payment_details(),
 			);
 			
-		}
+		} else {
+			$response['espresso_thank_you_page'] = array ( 'still_waiting' => TRUE );
+		}		
 		return $response;
 	}
 
@@ -330,6 +332,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
 		<div id="espresso-thank-you-page-ajax-payment-dv"></div>
 		<div id="espresso-thank-you-page-ajax-loading-dv"><span class="left lt-blue-text"><span class="dashicons dashicons-upload"></span>' . __( 'loading transaction and payment information...', 'event_espresso' ) . '</span><p class="highlight-bg small-text clear">' . __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation at this moment. Please note that we will send your full payment and registration confirmation results to you via email as soon as everything is finalized.', 'event_espresso' ) . '</p></div>
+		<div id="espresso-thank-you-page-ajax-time-dv"></div>
 	</div>';
 	}
 
