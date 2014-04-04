@@ -178,6 +178,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		wp_register_script( 'thank_you_page', THANK_YOU_ASSETS_URL . 'thank_you_page.js', array( 'espresso_core', 'heartbeat' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'thank_you_page' );
 		EE_Registry::$i18n_js_strings['reg_url_link'] = $this->_reg_url_link;
+		EE_Registry::$i18n_js_strings['server_time'] = time();
+		EE_Registry::$i18n_js_strings['slow_IPN'] = sprintf( 
+			__( '%sThe Payment Notification appears to be taking longer than ususal to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.%s', 'event_espresso' ),
+			'<div id="espresso-thank-you-page-slow-IPN-dv" class="ee-attention jst-left">',
+			'</div>'
+		);
 		wp_localize_script( 'thank_you_page', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
@@ -281,7 +287,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			// bad TXN?
 			if ( $TXN->failed() ) {
 				$response['espresso_thank_you_page'] = array (
-					'failed' => TRUE
+					'still_waiting' => isset( $data['espresso_thank_you_page']['server_time'] ) ? time() - $data['espresso_thank_you_page']['server_time'] : 0
 				);
 				return $response;	
 			}
@@ -291,9 +297,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				'payment_details' => $espresso_thank_you_page->get_payment_details(),
 			);
 			
-		} else {
-			$response['espresso_thank_you_page'] = array ( 'still_waiting' => TRUE );
-		}		
+		}
 		return $response;
 	}
 
@@ -327,13 +331,21 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function get_ajax_content() {
-		echo '
+?>
 	<div id="espresso-thank-you-page-ajax-content-dv">
 		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
 		<div id="espresso-thank-you-page-ajax-payment-dv"></div>
-		<div id="espresso-thank-you-page-ajax-loading-dv"><span class="left lt-blue-text"><span class="dashicons dashicons-upload"></span>' . __( 'loading transaction and payment information...', 'event_espresso' ) . '</span><p class="highlight-bg small-text clear">' . __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation at this moment. Please note that we will send your full payment and registration confirmation results to you via email as soon as everything is finalized.', 'event_espresso' ) . '</p></div>
-		<div id="espresso-thank-you-page-ajax-time-dv"></div>
-	</div>';
+		<div id="espresso-thank-you-page-ajax-loading-dv">
+			<div id="ee-ajax-loading-pg" class="left lt-blue-text">
+				<span class="dashicons dashicons-upload"></span><?php _e( 'loading transaction and payment information...', 'event_espresso' );?>
+			</div>
+			<p class="highlight-bg small-text clear">
+				<?php _e( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' );?><br/>
+				<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' );?><span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
+			</p>
+		</div>		
+	</div>
+<?php
 	}
 
 
