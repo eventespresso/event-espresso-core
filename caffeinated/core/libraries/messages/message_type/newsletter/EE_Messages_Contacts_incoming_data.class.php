@@ -9,29 +9,29 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 
 /**
  * This prepares data for message types that send messages for multiple contacts and handles
- * when the incoming data is an array of EE_Contact objects.
+ * when the incoming data is an array of EE_Attendee objects.
  *
  * @package        Event Espresso
  * @subpackage  messages
  * @since            4.4.0
  * @author          Darren Ethier
  */
-class EE_Message_Contacts_incoming_data extends EE_messages_incoming_data {
+class EE_Messages_Contacts_incoming_data extends EE_messages_incoming_data {
 
 
     /**
      * Constructor.
      *
      * @since    4.4.0
-     * @param  EE_Contact[]     $data expecting an array of EE_Contact objects.
+     * @param  EE_Attendee[]     $data expecting an array of EE_Attendee objects.
      * @access protected
      */
     public function __construct( $data = array() ) {
 
-        //validate that the first element in the array is an EE_Contact object.  Note that the array may be indexed by REG_ID so we will just shift off the first element.
+        //validate that the first element in the array is an EE_Attendee object.  Note that the array may be indexed by REG_ID so we will just shift off the first element.
         $ctc_chk = reset( $data );
-        if ( ! $ctc_chk instanceof EE_Contact )
-            throw new EE_Error(__('The EE_Message_Contacts_incoming_data class expects an array of EE_Contact objects.', 'event_espresso') );
+        if ( ! $ctc_chk instanceof EE_Attendee )
+            throw new EE_Error(__('The EE_Message_Contacts_incoming_data class expects an array of EE_Attendee objects.', 'event_espresso') );
 
         parent::__construct( $data );
     }
