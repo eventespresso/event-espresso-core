@@ -46,6 +46,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$new_page_routes = array(
 			'reports' => '_registration_reports',
 			'registration_checkins' => '_registration_checkin_list_table',
+			'newsletter_selected_send' => array(
+				'func' => '_newsletter_selected_send',
+				'noheader' => TRUE
+				),
 			'delete_checkin_rows' => array(
 					'func' => '_delete_checkin_rows',
 					'noheader' => TRUE
@@ -135,13 +139,19 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 
+	protected function _ajax_hooks() {
+		parent::_ajax_hooks();
+		add_action('wp_ajax_get_newsletter_form_content', array( $this, 'get_newsletter_form_content') );
+	}
 
-	public function load_script_styles() {
+
+
+	public function load_scripts_styles() {
 		parent::load_scripts_styles();
 
 		//if newsletter message type is active then let's add filter and load js for it.
 		EE_Registry::instance()->load_helper('MSG_Template');
-		if ( EEH_MSG_Template::is_mt_active('newsletter' ) ) {
+		if ( EEH_MSG_Template::is_mt_active('newsletter') ) {
 			//enqueue newsletter js
 			wp_enqueue_script( 'ee-newsletter-trigger', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.js', array( 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE );
 			//hook in buttons for newsletter message type trigger.
@@ -228,6 +238,62 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 
 	/**
+	 * callback for ajax action.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return json
+	 */
+	public function get_newsletter_form_content() {
+		//do a nonce check cause we're not coming in from an normal route here.
+		$nonce = isset( $this->_req_data['get_newsletter_form_content_nonce'] ) ? sanitize_text_field( $this->_req_data['get_newsletter_form_content_nonce'] ) : '';
+		$nonce_ref = 'get_newsletter_form_content_nonce';
+
+		$this->_verify_nonce( $nonce, $nonce_ref );
+		//let's get the mtp for the incoming MTP_ ID
+		if ( !isset( $this->_req_data['MTP_ID'] ) ) {
+			EE_Error::add_error( __('There must be something broken with the js or html structure because the required data for getting a message template group is not present (need an MTP_ID).', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$this->_template_args['success'] = FALSE;
+			$this->_template_args['error'] = TRUE;
+			$this->_return_json();
+		}
+		$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_req_data['MTP_ID'] );
+		if ( ! $MTPG instanceof EE_Message_Template_Group ) {
+			EE_Error::add_error( sprintf( __('The MTP_ID given (%d) does not appear to have a corresponding row in the database.', 'event_espresso'), $this->_req_data['MTP_ID'] ), __FILE__, __FUNCTION__, __LINE__  );
+			$this->_template_args['success'] = FALSE;
+			$this->_template_args['error'] = TRUE;
+			$this->_return_json();
+		}
+
+		$MTPs = $MTPG->context_templates();
+		$MTPs = $MTPs['attendee'];
+		$template_fields = array();
+		foreach ( $MTPs as $MTP ) {
+			$field = $MTP->get('MTP_template_field');
+			if ( $field == 'content'  ) {
+				$content = $MTP->get('MTP_content');
+				if ( !empty( $content['newsletter_content'] ) ) {
+					$template_fields['newsletter_content'] = $content['newsletter_content'];
+					}
+				continue;
+			}
+			$template_fields[$MTP->get('MTP_template_field')] = $MTP->get('MTP_content');
+		}
+
+		$this->_template_args['success'] = TRUE;
+		$this->_template_args['error'] = FALSE;
+		$this->_template_args['data'] = array(
+			'batch_message_from' => isset($template_fields['from']) ? $template_fields['from'] : '',
+			'batch_message_subject' => isset($template_fields['subject']) ? $template_fields['subject'] : '',
+			'batch_message_content' => isset( $template_fields['newsletter_content'] ) ? $template_fields['newsletter_content'] : ''
+			);
+		$this->_return_json();
+	}
+
+
+
+
+	/**
 	 * callback for AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons action
 	 *
 	 * @since 4.4.0
@@ -236,7 +302,23 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 * @return string html string for extra buttons
 	 */
 	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
+		$routes_to_add_to = array(
+			'contact_list',
+			'event_registrations',
+			'default'
+			);
+		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to ) ) {
+			$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send-selected-newsletter-count">0</span>' );
+			echo '<button id="selected-batch-send-trigger" class="button secondary-button"><span class="dashicons dashicons-email "></span>' . $button_text . '</button>';
+			add_action('admin_footer', array( $this, 'newsletter_send_form_skeleton') );
+		}
+	}
 
+
+
+
+	public function newsletter_send_form_skeleton() {
+		$list_table = $this->_list_table_object;
 		//need to templates for the newsletter message type for the template selector.
 		$values[] = array( 'text' => __('Select Template to Use', 'event_espresso'), 'id' => 0 );
 		$mtps = EEM_Message_Template_Group::instance()->get_all( array( array( 'MTP_message_type' => 'newsletter', 'MTP_messenger' => 'email' ) ) );
@@ -251,30 +333,90 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		//need to get a list of shortcodes that are available for the newsletter message type.
 		EE_Registry::instance()->load_helper('MSG_Template');
 		$shortcodes = EEH_MSG_Template::get_shortcodes( 'newsletter', 'email', array(), 'attendee', TRUE );
+		if ( isset( $shortcodes['[NEWSLETTER_CONTENT]'] ) )
+			unset( $shortcodes['[NEWSLETTER_CONTENT]'] );
 		$shortcodes = implode(', ', array_keys($shortcodes));
 
 		$form_template = REG_CAF_TEMPLATE_PATH . 'newsletter-send-form.template.php';
 		$form_template_args = array(
-			'form_action' => admin_url('admin.php'),
+			'form_action' => admin_url('admin.php?page=espresso_registrations'),
 			'form_route' => 'newsletter_selected_send',
 			'form_nonce_name' => 'newsletter_selected_send_nonce',
 			'form_nonce' => wp_create_nonce( 'newsletter_selected_send_nonce' ),
+			'redirect_back_to' => $this->_req_action,
 			'ajax_nonce' => wp_create_nonce( 'get_newsletter_form_content_nonce'),
-			'template_selector' => EEH_Form_Fields::select_input('newsletter-mtp-selected', $values ),
+			'template_selector' => EEH_Form_Fields::select_input('newsletter_mtp_selected', $values ),
 			'shortcodes_available' => $shortcodes,
 			'id_type' => $list_table instanceof EE_Attendee_Contact_List_Table ? 'contact' : 'registration'
 			);
-		$routes_to_add_to = array(
-			'contact_list',
-			'event_registrations',
-			'default'
-			);
-		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to ) ) {
-			$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send_selected_newsletter">0</span>' );
-			echo '<button class="button secondary-button"><span class="dashicons dashicons-email "></span>' . $button_text . '</button>';
-			EEH_Template::display_template( $form_template, $form_template_args );
+		EEH_Template::display_template( $form_template, $form_template_args );
+	}
 
+
+
+	/**
+	 * Handles sending selected registrations/contacts a newsletter.
+	 *
+	 * @since  4.4.0
+	 *
+	 * @return void
+	 */
+	protected function _newsletter_selected_send() {
+		$success = TRUE;
+		//first we need to make sure we have a MTP_ID so we know what template we're sending and updating!
+		if ( empty( $this->_req_data['newsletter_mtp_selected'] ) ) {
+			EE_Error::add_error( __('In order to send a message, a MTP_ID is needed. It was not provided so messages were not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			$success = FALSE;
 		}
+
+		if ( $success ) {
+			//update Message template in case there are any changes
+			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_req_data['newsletter_mtp_selected'] );
+			$MTPs = $MTPG instanceof EE_Message_Template_Group ? $MTPG->context_templates() : array();
+			if ( empty( $MTPs ) ) {
+				EE_Error::add_error( __('Unable to retrieve message template fields from the db. Messages not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				$success = FALSE;
+			}
+
+			//let's just update the specific fields
+			foreach ( $MTPs['attendee'] as $MTP ) {
+				$field = $MTP->get('MTP_template_field');
+				$content = $MTP->get('MTP_content');
+				$new_content = $content;
+				switch( $field ) {
+					case 'from' :
+						$new_content = !empty( $this->_req_data['batch_message']['from'] ) ? $this->_req_data['batch_message']['from'] : $content;
+						break;
+					case 'subject' :
+						$new_content = !empty( $this->_req_data['batch_message']['subject'] ) ? $this->_req_data['batch_message']['subject'] : $content;
+						break;
+					case 'content' :
+						$new_content = $content;
+						$new_content['newsletter_content'] = !empty( $this->_req_data['batch_message']['content'] ) ? $this->_req_data['batch_message']['content'] : $content['newsletter_content'];
+						break;
+					default :
+						continue;
+						break;
+				}
+				$MTP->set('MTP_content', $new_content);
+				$MTP->save();
+			}
+
+			//great fields are updated!  now let's make sure we just have contact objects (EE_Attendee).
+			$id_type = !empty( $this->_req_data['batch_message']['id_type'] ) ? $this->_req_data['batch_message']['id_type'] : 'registration';
+
+			//id_type will affect how we assemble the ids.
+			$ids = !empty( $this->_req_data['batch_message']['ids'] ) ? json_decode( stripslashes($this->_req_data['batch_message']['ids']) ) : array();
+
+			$contacts = $id_type == 'registration' ? EEM_Registration::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
+
+			//we do _action because ALL triggers are handled in EE_Messages_Init.
+			do_action('AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', $contacts, $MTPG->ID() );
+		}
+		$query_args = array(
+			'action' => !empty( $this->_req_data['redirect_back_to'] ) ? $this->_req_data['redirect_back_to'] : 'default'
+			);
+		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 	}
 
 
