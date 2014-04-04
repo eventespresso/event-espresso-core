@@ -55,6 +55,12 @@ abstract class EE_Gateway{
 	protected $_pay_log = NULL;
 	
 	/**
+	 * Used for formatting some input to gateways
+	 * @var EEHI_Template
+	 */
+	protected $_template = NULL;
+	
+	/**
 	 * The ID of the payment method using this gateway
 	 * @var int
 	 */
@@ -135,7 +141,23 @@ abstract class EE_Gateway{
 		$this->_pay_log = $payment_log_model;
 	}
 	
+	/**
+	 * 
+	 * @param EEHI_Template $template_helper
+	 */
+	public function set_template_helper($template_helper){
+		$this->_template = $template_helper;
+	}
+	
 	public function log($message,$transaction){
 		$this->_pay_log->log($message,$transaction,$this->_ID);
+	}
+	/**
+	 * Formats the amount so it can generally be sent to gateways
+	 * @param float $amount
+	 * @return string
+	 */
+	public function format_currency($amount){
+		return $this->_template->format_currency($amount, true);
 	}
 }

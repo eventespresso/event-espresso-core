@@ -178,20 +178,20 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 					'shiptophonenum' => substr($billing_info['phone'],0,20)
 			);
 			
-			EE_Registry::instance()->load_helper('Template');
+			
 			$PaymentDetails = array(
 					// Required.  Total amount of order, including shipping, handling, and tax.
-					'amt' => EEH_Template::format_currency($total_to_pay,true),
+					'amt' => $this->format_currency($total_to_pay),
 					// Required.  Three-letter currency code.  Default is USD.
 					'currencycode' => 'USD',
 					// Required if you include itemized cart details. (L_AMTn, etc.)  Subtotal of items not including S&H, or tax.
-					'itemamt' => EEH_Template::format_currency($item_amount,true),//
+					'itemamt' => $this->format_currency($item_amount),//
 					// Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.
 					'shippingamt' => '',
 					// Total handling costs for the order.  If you specify handlingamt, you must also specify itemamt.
 					'handlingamt' => '',
 					// Required if you specify itemized cart tax details. Sum of tax for all items on the order.  Total sales tax.
-					'taxamt' => EEH_Template::format_currency($tax_amount,true),
+					'taxamt' => $this->format_currency($tax_amount),
 					// Description of the order the customer is purchasing.  127 char max.
 					'desc' => $order_description,
 					// Free-form field for your own use.  256 char max.

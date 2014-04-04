@@ -65,7 +65,7 @@ if ( ! function_exists( 'espresso_get_object_css_class' )) {
  *
  * ------------------------------------------------------------------------
  */
-class EEH_Template {
+class EEH_Template implements EEHI_Template{
 	
 	private static $_espresso_themes = array();
 
