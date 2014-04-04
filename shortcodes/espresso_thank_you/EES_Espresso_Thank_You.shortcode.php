@@ -272,10 +272,17 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$espresso_thank_you_page->init();
 			// no TXN? then get out
 			if ( ! $TXN = $espresso_thank_you_page->get_txn() ) {
+				$notices = EE_Error::get_notices();
+				$response['espresso_thank_you_page_error'] = array (
+					'errors' => isset( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' )
+				);
 				return $response;
 			}
 			// bad TXN?
 			if ( $TXN->failed() ) {
+				$response['espresso_thank_you_page_waiting'] = array (
+					'notice' => TRUE
+				);
 				return $response;	
 			}
 			// TXN has been processed, and heartbeat has our data
