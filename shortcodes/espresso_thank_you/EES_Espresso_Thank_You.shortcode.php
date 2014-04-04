@@ -189,10 +189,13 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		EE_Registry::$i18n_js_strings['reg_url_link'] = $this->_reg_url_link;
 		EE_Registry::$i18n_js_strings['server_time'] = time();
 		EE_Registry::$i18n_js_strings['IPN_wait_time'] = EES_Espresso_Thank_You::IPN_wait_time;
-		EE_Registry::$i18n_js_strings['slow_IPN'] = sprintf( 
-			__( '%sThe Payment Notification appears to be taking longer than ususal to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.%s', 'event_espresso' ),
-			'<div id="espresso-thank-you-page-slow-IPN-dv" class="ee-attention jst-left">',
-			'</div>'
+		EE_Registry::$i18n_js_strings['slow_IPN'] = apply_filters( 
+			'EES_Espresso_Thank_You__load_js__slow_IPN',
+			sprintf( 
+				__( '%sThe Payment Notification appears to be taking longer than ususal to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.%s', 'event_espresso' ),
+				'<div id="espresso-thank-you-page-slow-IPN-dv" class="ee-attention jst-left">',
+				'</div>'
+			)
 		);
 		wp_localize_script( 'thank_you_page', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
@@ -359,7 +362,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				<span class="dashicons dashicons-upload"></span><?php _e( 'loading transaction and payment information...', 'event_espresso' );?>
 			</div>
 			<p class="highlight-bg small-text clear">
-				<?php _e( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' );?><br/>
+				<?php echo apply_filters( 'EES_Espresso_Thank_You__get_ajax_content__waiting_for_IPN_msg', __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' ));?><br/>
 				<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' );?><span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
 			</p>
 		</div>		
