@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -27,7 +27,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 
   	// private instance of the Attendee object
 	private static $_instance = NULL;
-	
+
 	/**
 	 * QST_ID and QST_systems that relate to attendee attributes.
 	 * NOTE: this will be deprecated if we remove system questions
@@ -50,8 +50,8 @@ class EEM_Attendee extends EEM_CPT_Base {
 	 *		@Constructor
 	 *		@access protected
 	 *		@return void
-	 */	
-	protected function __construct() {	
+	 */
+	protected function __construct() {
 		$this->singlular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
 		$this->_tables = array(
@@ -94,7 +94,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 		require_once('strategies/EE_CPT_Where_Conditions.strategy.php');
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_attendees', 'ATTM_ID');
 		parent::__construct();
-		
+
 	}
 
 
@@ -104,12 +104,12 @@ class EEM_Attendee extends EEM_CPT_Base {
 	 *
 	 *		@access public
 	 *		@return EEM_Attendee instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Attendee object
@@ -136,11 +136,11 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 	/**
 	*		retreive  a single attendee from db via their ID
-	* 
+	*
 	* 		@access		public
-	* 		@param		$ATT_ID		
+	* 		@param		$ATT_ID
 	*		@return 		mixed		array on success, FALSE on fail
-	*/	
+	*/
 	public function get_attendee_by_ID( $ATT_ID = FALSE ) {
 
 		if ( ! $ATT_ID ) {
@@ -161,11 +161,11 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 	/**
 	*		retreive  a single attendee from db via their ID
-	* 
+	*
 	* 		@access		public
-	* 		@param		$ATT_ID		
+	* 		@param		$ATT_ID
 	*		@return 		mixed		array on success, FALSE on fail
-	*/	
+	*/
 	public function get_attendee( $where_cols_n_values = FALSE ) {
 
 		if ( ! $where_cols_n_values ) {
@@ -188,28 +188,44 @@ class EEM_Attendee extends EEM_CPT_Base {
 	/**
 	*		Search for an existing Attendee record in the DB
 	* 		@access		public
-	*/	
+	*/
 	public function find_existing_attendee( $where_cols_n_values = NULL ) {
 		// search by combo of first and last names plus the email address
 		$attendee_data_keys = array( 'ATT_fname' => $this->_ATT_fname, 'ATT_lname' => $this->_ATT_lname, 'ATT_email' => $this->_ATT_email );
-		// no search params means attendee object already exists. 
-		$where_cols_n_values = is_array( $where_cols_n_values ) && ! empty( $where_cols_n_values ) ? $where_cols_n_values : $attendee_data_keys;  	 
+		// no search params means attendee object already exists.
+		$where_cols_n_values = is_array( $where_cols_n_values ) && ! empty( $where_cols_n_values ) ? $where_cols_n_values : $attendee_data_keys;
 		$valid_data = TRUE;
 		// check for required values
 		$valid_data = isset( $where_cols_n_values['ATT_fname'] ) && ! empty( $where_cols_n_values['ATT_fname'] ) ? $valid_data : FALSE;
 		$valid_data = isset( $where_cols_n_values['ATT_lname'] ) && ! empty( $where_cols_n_values['ATT_lname'] ) ? $valid_data : FALSE;
 		$valid_data = isset( $where_cols_n_values['ATT_email'] ) && ! empty( $where_cols_n_values['ATT_email'] ) ? $valid_data : FALSE;
-		
+
 		if ( $valid_data ) {
 			if ( $attendee = $this->get_attendee( $where_cols_n_values )) {
 				return $attendee;
 			}
-		} 
+		}
 		return FALSE;
 
 	}
 
 
+
+	/**
+             * Takes an incoming array of EE_Registration ids and sends back a list of corresponding non duplicate
+             * EE_Attendee objects.
+             *
+             * @since    4.4.0
+             * @param  array $ids array of EE_Registration ids
+             * @return  EE_Attendee[]
+             */
+            public function get_array_of_contacts_from_reg_ids( $ids ) {
+                $ids = (array) $ids;
+                $_where = array(
+                    'Registration.REG_ID' => array( 'in', $ids )
+                    );
+                return $this->get_all( array( $_where ) );
+            }
 
 
 }
