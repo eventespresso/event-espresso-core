@@ -350,7 +350,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @return void
 	 */
 	protected function _process_data() {
-		if ( empty( $this->_data->events ) )
+		//at a minimum, we NEED EE_Attendee objects.
+		if ( empty( $this->_data->attendees ) )
 			return TRUE;  //EXIT!
 
 		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
