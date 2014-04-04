@@ -4,7 +4,8 @@
 	wp.heartbeat.debug = true;
 	// set initial beat to fast
 	wp.heartbeat.interval( 'fast' );
-	wp.heartbeat.enqueue( 'espresso_thank_you_page', { 'reg_url_link' : eei18n.reg_url_link }, false );	
+	var thnx_data = { 'reg_url_link' : eei18n.reg_url_link };
+	wp.heartbeat.enqueue( 'espresso_thank_you_page', thnx_data, false );	
  	
  	var loader = $('#espresso-ajax-loading');
  	$('#espresso-ajax-loading').remove();
@@ -21,6 +22,8 @@
 				$('#espresso-thank-you-page-ajax-payment-dv').hide().html( data.espresso_thank_you_page.payment_details ).slideDown();
 			}
 			$('#espresso-thank-you-page-ajax-loading-dv').hide();
+		} else {
+			wp.heartbeat.enqueue( 'espresso_thank_you_page', thnx_data, false );
 		}
 	});
 
