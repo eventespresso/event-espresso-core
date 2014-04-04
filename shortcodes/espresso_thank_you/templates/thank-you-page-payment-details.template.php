@@ -11,33 +11,33 @@
 		<table class='ee-table'>
 			<tbody>
 				<tr>
-					<th>
+					<td>
 						<label><?php _e('Payment Type:', 'event_espresso'); ?></label>
-					</th>
+					</td>
 					<td>
 						<?php $payment->e('PAY_gateway'); ?>
 					</td>
 				</tr>
 				<tr>
-					<th>
+					<td>
 						<label><?php _e('Payment Date:', 'event_espresso'); ?></label>
-					</th>
+					</td>
 					<td>
 						<?php $payment->e('PAY_timestamp'); ?>
 					</td>
 				</tr>
 				<tr>
-					<th>
+					<td>
 						<label><?php _e("Payment Amount: ", 'event_espresso') ?></label>
-					</th>
+					</td>
 					<td>
 						<?php  $payment->e( 'PAY_amount' ); ?>
 					</td>
 				</tr>
 				<tr>
-					<th>
+					<td>
 						<label><?php _e("Payment Status: ", 'event_espresso') ?></label>
-					</th>
+					</td>
 					<td>
 						<?php $payment->e_pretty_status( TRUE );
 						if ( $show_try_pay_again_link &&  ! $payment->is_approved()) {?>
