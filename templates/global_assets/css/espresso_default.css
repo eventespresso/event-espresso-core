@@ -317,14 +317,16 @@
 	margin: 0 0 1em;
 	background-color: #00B1CA;
 	background-image: -moz-linear-gradient( center top , #4EBFDE, #00B1CA );
-	border-top: 1px solid rgba(255,255,255,0.4);
-	border-bottom: 1px solid rgba(0,0,0,0.1);
+	border: 1px solid rgba(0,0,0,0.01) !important;
+	border-top: 1px solid rgba(255,255,255,0.5) !important;
+	border-bottom: 1px solid rgba(0,0,0,0.25) !important;
 	font-weight: normal;
 	cursor: pointer;
 	color: #fff !important;
 	text-decoration: none !important;
 	text-align: center;
-	line-height: 1;
+	line-height: 1em;
+/*	line-height: 1;*/
 	-moz-border-radius: 0;
 	-webkit-border-radius: 0;
 	border-radius: 0;
@@ -333,9 +335,10 @@
 	box-shadow: none;
 }
 .ee-button:hover {
-	background-color: #4EBFDE;
 	color: #fff !important;
+	background-color: #00c7e3;  /*4EBFDE*/
 }
+
 .ee-button:active { top:-1px; }
 
 /* REGISTER BUTTON */
@@ -383,6 +386,8 @@ input.ee-register-button {
 	-webkit-border-radius: 3px;
 	border-radius: 3px;
 }
+
+
 
 /* SHADOWY BUTTONS */
 .ee-shadow.ee-button {
@@ -668,6 +673,7 @@ input.ee-register-button {
 	text-align: right;
 }
 
+/* TEXT */
 .tiny-text {
 	font-size: .5em;
 	line-height: 1.1em;
@@ -697,6 +703,10 @@ input.ee-register-button {
 	font-size: 2em;
 	line-height: 2.4em;
 	letter-spacing: -.5px;
+}
+
+.indented-text {
+	text-shadow:0 -1px 0px rgba( 0, 0, 0, 0.4 );
 }
 
 .pink-text {
@@ -750,12 +760,15 @@ input.ee-register-button {
 	box-sizing: border-box; 	
 }
 .highlight-bg {
-	padding:1em;
+	padding:1em 1.5em;
 	background:#FEFBDC;
 }
 
 .extra-padding {
 	padding:1em;
+}
+.extra-padding-sides {
+	padding:0 1em;
 }
 .width-100 {
 	width: 100%;
