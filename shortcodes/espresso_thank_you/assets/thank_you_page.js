@@ -14,7 +14,9 @@
 
 	$(document).on( 'heartbeat-tick.espresso_thank_you_page', function( event, data ) {
 		console.log( data.espresso_thank_you_page );
-		if ( data.hasOwnProperty( 'espresso_thank_you_page' ) ) {
+		if ( data.espresso_thank_you_page.hasOwnProperty( 'espresso_thank_you_page_waiting' ) ) {
+			$('#espresso-thank-you-page-ajax-transaction-dv').hide().html( data.espresso_thank_you_page.transaction_details ).slideDown();
+		} else if ( data.hasOwnProperty( 'espresso_thank_you_page' ) ) {
 			if ( data.espresso_thank_you_page.hasOwnProperty( 'transaction_details' ) ) {
 				$('#espresso-thank-you-page-ajax-transaction-dv').hide().html( data.espresso_thank_you_page.transaction_details ).slideDown();
 			}
