@@ -408,7 +408,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			//id_type will affect how we assemble the ids.
 			$ids = !empty( $this->_req_data['batch_message']['ids'] ) ? json_decode( stripslashes($this->_req_data['batch_message']['ids']) ) : array();
 
-			$contacts = $id_type == 'registration' ? EEM_Registration::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
+			$contacts = $id_type == 'registration' ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
 
 			//we do _action because ALL triggers are handled in EE_Messages_Init.
 			do_action('AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', $contacts, $MTPG->ID() );
