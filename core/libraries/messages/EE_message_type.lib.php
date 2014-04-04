@@ -605,6 +605,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 				$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $qa ) );
 			}
 
+			//if global template is NOT an override, and there is a 'MTP_ID' in the post global, then we'll assume a specific template has ben requested.
+			if ( !empty( $_POST['MTP_ID'] ) && !$global_mtpg->get('MTP_is_override') ) {
+				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['MTP_ID'] );
+			}
+
 			$mtpg = $mtpg instanceof EE_Message_Template_Group ? $mtpg : $global_mtpg;
 		}
 
