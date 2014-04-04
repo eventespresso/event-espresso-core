@@ -1,5 +1,5 @@
 <h3><?php _e('Transaction Details', 'event_espresso'); ?></h3>
-<div class='ee-transaction-status'>
+<div id="espresso-thank-you-page-transaction-details-dv">
 	<table class='ee-table'>
 		<tbody>
 			<tr>
@@ -39,8 +39,9 @@
 			</tr>
 		</tbody>
 	</table>
-</div>
 
 <?php if ( $show_try_pay_again_link && ! $transaction->is_completed() ) { ?>
 	<p class="small-text jst-rght"><span><a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Click here to view Payment Options", 'event_espresso'); ?></a></span></p><br/>
 <?php }?>
+	
+</div>
