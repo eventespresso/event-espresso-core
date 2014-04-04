@@ -15,13 +15,18 @@
  *
  * EES_Espresso_Thank_You
  *
- * @package			Event Espresso
+ * @package		Event Espresso
  * @subpackage	/shortcodes/
- * @author				Brent Christensen 
+ * @author		Brent Christensen 
  *
  * ------------------------------------------------------------------------
  */
 class EES_Espresso_Thank_You  extends EES_Shortcode {
+	
+	/**
+	 * time in seconds to wait for the IPN to arrive before telling the registrant to bugger off ( 1200s = 20 minutes )
+	 */
+	const IPN_wait_time = 1200;
 	
 	/**
 	 * The transaction specified by the reg_url_link passed from the Request, or from the Session
@@ -142,6 +147,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
+			EE_Error::add_error( 
+				__( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' ), 
+				__FILE__, __FUNCTION__, __LINE__ 
+			);
 			return;
 		} 
 		// check for reg_url_link
@@ -179,6 +188,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		wp_enqueue_script( 'thank_you_page' );
 		EE_Registry::$i18n_js_strings['reg_url_link'] = $this->_reg_url_link;
 		EE_Registry::$i18n_js_strings['server_time'] = time();
+		EE_Registry::$i18n_js_strings['IPN_wait_time'] = EES_Espresso_Thank_You::IPN_wait_time;
 		EE_Registry::$i18n_js_strings['slow_IPN'] = sprintf( 
 			__( '%sThe Payment Notification appears to be taking longer than ususal to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.%s', 'event_espresso' ),
 			'<div id="espresso-thank-you-page-slow-IPN-dv" class="ee-attention jst-left">',
@@ -265,12 +275,21 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 	/**
 	 * 	thank_you_page_IPN_monitor
+	 * 	this basically just pulls the TXN based on the reg_url_link sent from the server, 
+	 * 	then checks that the TXN status is not failed, and that no other errors have been generated.
+	 * 	it also calculates the IPN wait time since the Thank You page was first loaded
 	 * 
 	 *  @access 	public
 	 *  @return 	array
 	 */
 	public static function thank_you_page_IPN_monitor( $response, $data, $screen_id ) {
 		if ( isset( $data['espresso_thank_you_page'] ) && isset( $data['espresso_thank_you_page']['reg_url_link'] )) {
+			if ( ! isset( $data['espresso_thank_you_page']['reg_url_link'] )) {
+				$response['espresso_thank_you_page'] = array (
+					'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' )
+				);
+				return $response;
+			}
 			// set defs, instantiate the thank you page class, and get the ball rolling
 			EES_Espresso_Thank_You::set_definitions();
 			$espresso_thank_you_page = EES_Espresso_Thank_You::instance();
