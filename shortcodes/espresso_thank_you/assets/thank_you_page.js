@@ -16,8 +16,9 @@
 		if ( data.hasOwnProperty( 'espresso_thank_you_page' )) {
 			if ( data.espresso_thank_you_page.hasOwnProperty( 'errors' )) {
 				$('#espresso-thank-you-page-ajax-content-dv').hide().html( data.espresso_thank_you_page.errors ).slideDown(); 
+				wp.heartbeat.dequeue( 'espresso_thank_you_page' );
 			} else if ( data.espresso_thank_you_page.hasOwnProperty( 'still_waiting' )) {
-				if ( data.espresso_thank_you_page.still_waiting > 1200 ) {
+				if ( data.espresso_thank_you_page.still_waiting > eei18n.IPN_wait_time ) {
 					$('#espresso-thank-you-page-ajax-content-dv').hide().html( eei18n.slow_IPN ).slideDown();
 					wp.heartbeat.dequeue( 'espresso_thank_you_page' );
 				} else {
