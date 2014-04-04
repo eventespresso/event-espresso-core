@@ -672,6 +672,9 @@ input.ee-register-button {
 .jst-rght {
 	text-align: right;
 }
+.ee-block {
+	display:block;
+}
 
 /* TEXT */
 .tiny-text {
