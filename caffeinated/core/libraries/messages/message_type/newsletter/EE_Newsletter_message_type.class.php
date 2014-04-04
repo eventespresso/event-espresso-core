@@ -39,7 +39,7 @@ class EE_Newsletter_message_type extends EE_message_type {
 
 
     protected function _set_data_handler() {
-        $this->_data_handler = 'contacts';
+        $this->_data_handler = 'Contacts';
         $this->_single_message = $this->_data instanceof EE_Registration ? TRUE : FALSE;
     }
 
