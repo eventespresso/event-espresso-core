@@ -336,6 +336,12 @@ interface EEI_Transaction extends EEI_Base{
 	 * @return EEI_Registration
 	 */
 	function primary_registration();
+	
+	/**
+	 * Returns the balance due on the transaction
+	 * @return float
+	 */
+	function remaining();
 }
 
 interface EEI_Line_Item{

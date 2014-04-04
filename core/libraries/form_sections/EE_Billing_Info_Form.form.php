@@ -31,7 +31,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 		$countries = EEM_Country::instance()->get_all(array(array('CNT_active'=>true)));
 		$country_options = array();
 		foreach($countries as $country){
-			$country_options[$country->name()] = $country->name();
+			$country_options[$country->ID()] = $country->name();
 		}
 		$states = EEM_State::instance()->get_all(array(array('CNT_ISO'=>array('IN',array_keys($countries))),'force_join'=>array('Country')));
 		$states_organized = array();

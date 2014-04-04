@@ -30,12 +30,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	protected $_no_shipping = NULL;
 	protected $_image_url = NULL;
 	protected $_shipping_details = NULL;
-	/**
-	 * @var $_debug_model boolean
-	 */
-	protected $_debug_mode = NULL;
-	protected $_name = NULL;
-	protected $_admin_name = NULL;
 	protected $_gateway_url = NULL;
 	
 	/**

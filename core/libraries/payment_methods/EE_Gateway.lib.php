@@ -61,6 +61,21 @@ abstract class EE_Gateway{
 	protected $_ID;
 	
 	/**
+	 * @var $_debug_mode boolean whether to send reqeusts to teh sandbox site or not
+	 */
+	protected $_debug_mode = NULL;
+	/**
+	 *
+	 * @var $_name name to show for this paymetn method
+	 */
+	protected $_name = NULL;
+	/**
+	 *
+	 * @var string name to show fir this payment method to admin-type users 
+	 */
+	protected $_admin_name = NULL;
+	
+	/**
 	 * @param EEMI_Payment $model
 	 */
 	public function __construct(){

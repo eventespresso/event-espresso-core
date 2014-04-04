@@ -34,8 +34,19 @@ abstract class EE_Onsite_Gateway extends EE_Gateway{
 	 * usually send a request directly to the payment provider and update the payment's status based on that;
 	 * whereas offsite gateways will usually just update the payment with the URL and query parameters to use
 	 * for sending the request via http_remote_request()
-	 * @param EE_Payment $payment
-	 * @param array $billing_info
+	 * @param EEI_Payment $payment
+	 * @param array $billing_info {
+	 *	@type $first_name string
+	 *	@type $last_name string
+	 *	@type $email string
+	 *	@type $address string
+	 *	@type $address2 string
+	 *	@type $city string
+	 *	@type $state string name of the state (NOT int)
+	 *	@type $country string 2-character ISO code see http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+	 *	@type $zip string
+	 *	@type $phone string
+	 * } unless a child class specifies these array keys are NOT present
 	 * @return EE_Payment updated
 	 */
 	public abstract function do_direct_payment($payment,$billing_info = null);

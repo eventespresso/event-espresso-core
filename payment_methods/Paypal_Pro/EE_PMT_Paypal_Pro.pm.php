@@ -35,7 +35,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		return new EE_Payment_Method_Form(array(
 			'name'=>'Paypal_Pro_Form',
 			'extra_meta_inputs'=>array(
-				'paypal_email'=>new EE_Email_Input(),
+//				'paypal_email'=>new EE_Email_Input(), not actually used
 				'paypal_api_username'=>new EE_Text_Input(),
 				'paypal_api_password'=>new EE_Text_Input(),
 				'paypal_api_signature'=>new EE_Text_Input(),

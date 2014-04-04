@@ -24,7 +24,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-Class EE_Paypal_Pro extends EE_Onsite_Gateway {
+Class EE_Paypal_Pro extends EE_Onsite_Gateway_Old {
 
 	private static $_instance = NULL;
 
@@ -343,8 +343,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		$primary_registrant = $transaction->primary_registration();
 		if ($billing_info != 'no payment required') {
 			$this->_save_billing_info_to_attendee($billing_info, $transaction);
-			$OrderItems = array();
-			if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount and nothing has been paid yet
+			$order_items = array();
+			if( $total_to_charge === NULL && ! $transaction->paid()){//client code HAS NOT specified an amount and nothing has been paid yet
 				$grand_total = $total_line_item->total();
 				$description = 'Event Registrations from ' . get_bloginfo('name');
 
@@ -352,7 +352,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				$item_num = 1;
 				/* @var $transaction EE_Transaction */
 				foreach ($total_line_item->get_items() as $line_item) {	
-					$Item = array(
+					$item = array(
 							// Item Name.  127 char max.
 							'l_name' => substr($line_item->name(),0,127),
 							// Item description.  127 char max.
@@ -373,7 +373,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 							'l_ebayitemorderid' => ''
 					);
 						// add to array of all items
-					array_push($OrderItems, $Item);
+					array_push($order_items, $item);
 				}
 				$item_amount = $total_line_item->get_items_total();
 				$tax_amount = $total_line_item->get_total_tax();
@@ -389,7 +389,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				}
 				$item_amount = $grand_total;
 				$tax_amount = 0;
-				array_push($OrderItems,array(
+				array_push($order_items,array(
 					// Item Name.  127 char max.
 							'l_name' => sprintf(__("Partial payment for registration: %s", 'event_espresso'),$primary_registrant->reg_code()),
 							// Item description.  127 char max.
@@ -506,7 +506,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					'PayerName' => $PayerName,
 					'BillingAddress' => $BillingAddress,
 					'PaymentDetails' => $PaymentDetails,
-					'OrderItems' => $OrderItems,
+					'OrderItems' => $order_items,
 			);
 //			var_dump($PayPalRequestData);die;
 			// Pass the master array into the PayPal class function
