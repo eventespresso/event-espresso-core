@@ -796,6 +796,14 @@ class EE_Core_Config extends EE_Config_Base {
 	public $txn_page_id;
 	public $thank_you_page_id;
 	public $cancel_page_id;
+	/**
+	 * The next 4 vars are the URLs of critical EE pages.
+	 * @var int
+	 */
+	public $reg_page_url;
+	public $txn_page_url;
+	public $thank_you_page_url;
+	public $cancel_page_url;
 
 	/**
 	 * 	class constructor
@@ -815,10 +823,16 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
 		$this->module_view_map = array();
+		// critical EE page IDs
 		$this->reg_page_id = FALSE;
 		$this->txn_page_id = FALSE;
 		$this->thank_you_page_id = FALSE;
 		$this->cancel_page_id = FALSE;
+		// critical EE page URLs
+		$this->reg_page_url = FALSE;
+		$this->txn_page_url = FALSE;
+		$this->thank_you_page_url = FALSE;
+		$this->cancel_page_url = FALSE;
 	}
 
 	public function get_critical_pages_array() {
@@ -829,6 +843,57 @@ class EE_Core_Config extends EE_Config_Base {
 			$this->cancel_page_id
 		);
 	}
+	
+	/**
+	 *  gets/returns URL for EE reg_page
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function reg_page_url() {
+		if ( ! $this->reg_page_url ) {
+			$this->reg_page_url = get_permalink( $this->reg_page_id );
+		}
+		return $this->reg_page_url;
+	}
+	/**
+	 *  gets/returns URL for EE txn_page
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function txn_page_url() {
+		if ( ! $this->txn_page_url ) {
+			$this->txn_page_url = get_permalink( $this->txn_page_id );
+		}
+		return $this->txn_page_url;
+	}
+	/**
+	 *  gets/returns URL for EE thank_you_page
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function thank_you_page_url() {
+		if ( ! $this->thank_you_page_url ) {
+			$this->thank_you_page_url = get_permalink( $this->thank_you_page_id );
+		}
+		return $this->thank_you_page_url;
+	}
+	/**
+	 *  gets/returns URL for EE cancel_page
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function cancel_page_url() {
+		if ( ! $this->cancel_page_url ) {
+			$this->cancel_page_url = get_permalink( $this->cancel_page_id );
+		}
+		return $this->cancel_page_url;
+	}
+
+	
 
 }
 
