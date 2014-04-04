@@ -29,6 +29,7 @@ class EE_Messages_Email_Newsletter_Validator extends EE_Messages_Validator {
      * custom validator (restricting what was originally set by the messenger)
      */
     protected function _modify_validator() {
-        return; //nothing special for this message type (yet).
+        if ( $this->_context == 'attendee' )
+            $this->_valid_shortcodes_modifier[$this->_context]['from'] = array('recipient_details', 'email', 'organization');
     }
 }
