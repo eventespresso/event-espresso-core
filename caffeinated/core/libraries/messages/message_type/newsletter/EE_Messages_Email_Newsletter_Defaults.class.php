@@ -25,6 +25,6 @@ class EE_Messages_Email_Newsletter_Defaults extends EE_Message_Template_Defaults
 
 
     protected function _change_templates() {
-        //yeah no mods!
+        $this->_templates['attendee']['from'] = '[CO_EMAIL]';
     }
 }
