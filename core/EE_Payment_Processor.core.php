@@ -70,6 +70,24 @@ class EE_Payment_Processor{
 	 * @throws EE_Error (espeically if the specified payment method's type is no longer defined)
 	 */
 	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_info = NULL, $success_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
+		//overwrite billing info for testing
+		$billing_info = array(
+			'first_name'=>'payman',
+			'last_name'=>'lordy',
+			'email'=>'few@fewf.efw',
+			'address'=>'1124 wonky rd',
+			'address2'=>'#32',
+			'city'=>'powerlo',
+			'state'=>'ark',
+			'country'=>'US',
+			'zip'=>'12345',
+			'phone'=>'2503242342',
+			'credit_card'=>'5424180818927383',
+			'credit_card_type'=>'MasterCard',
+			'exp_month'=>'02',
+			'exp_year'=>'2020',
+			'cvv'=>'115',
+		);
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$transaction->set_payment_method_ID($payment_method->ID());

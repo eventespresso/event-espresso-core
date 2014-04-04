@@ -266,6 +266,24 @@ interface EEI_Payment extends EEI_Base{
 	 * @return EEI_Transaction
 	 */
 	function transaction();
+	/**
+	 * Sets the amount for this payment
+	 * @param float $amount
+	 */
+	function set_amount($amount);
+	
+	/**
+	 * Sets the ID of the gateway transaction
+	 * @param string $txn_id
+	 */
+	function set_txn_id_chq_nmbr($txn_id);
+	
+	/**
+	 * Sets a string for some extra accounting info
+	 * @param string $extra_accounting_info
+	 */
+	function set_extra_accntng($extra_accounting_info);
+	
 }
 
 /**

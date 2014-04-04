@@ -65,8 +65,6 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 	 * } @see parent::do_direct_payment for more info
 	 */
 	public function do_direct_payment($payment,$billing_info = null){
-		d($payment);
-		dd($billing_info);
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
 		$order_description  = sprintf(__("'Event Registrations from %s", "event_espresso"),get_bloginfo('name'));
@@ -221,69 +219,46 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 				unset($PayPalResult['REQUESTDATA']['EXPDATE']);
 				unset($PayPalResult['REQUESTDATA']['CVV2']);
 				unset($PayPalResult['RAWREQUEST']);
-				$this->log("PaypalPro Response Data (cleaned):".print_r($PayPalResult),$transaction);
+				$this->log("PaypalPro Response Data (cleaned):".print_r($PayPalResult,true),$transaction);
 				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
-				$approved = $this->_APICallSuccessful($PayPalResult);
+				if($this->_APICallSuccessful($PayPalResult)){
+					$payment->set_status($this->_pay_model->approved_status());
+				}else{
+					$payment->set_status($this->_pay_model->declined_status());
+				}
+				$payment->set_amount(isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0);
+				$payment->set_gateway_response($message);
+				$payment->set_txn_id_chq_nmbr(isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null);
 				
 				$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
-
-				$payment = EE_Payment::new_instance(array(
-								'TXN_ID' => $transaction->ID(),
-								'STS_ID' => $approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined,
-								'PAY_timestamp' => current_time('mysql',false),
-								'PAY_method' => 'CART',
-								'PAY_amount' => isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0,
-								'PAY_gateway' => $this->_gateway_name,
-								'PAY_gateway_response' => $message,
-								'PAY_txn_id_chq_nmbr' => isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null,
-								'PAY_po_number' => NULL,
-								'PAY_extra_accntng' => $primary_registration_code,
-								'PAY_via_admin' => false,
-								'PAY_details' => (array) $PayPalResult));
-				$payment->save();
-				$this->update_transaction_with_payment($transaction, $payment);
-				$return = array('success'=>true);
+				$payment->set_extra_accntng($primary_registration_code);
+				$payment->set_details($PayPalResult);
+//				$payment = EE_Payment::new_instance(array(
+//								'TXN_ID' => $transaction->ID(),
+//								'STS_ID' => $approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined,
+//								'PAY_timestamp' => current_time('mysql',false),
+//								'PAY_method' => 'CART',
+//								'PAY_amount' => isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0,
+//								'PAY_gateway' => $this->_gateway_name,
+//								'PAY_gateway_response' => $message,
+//								'PAY_txn_id_chq_nmbr' => isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null,
+//								'PAY_po_number' => NULL,
+//								'PAY_extra_accntng' => $primary_registration_code,
+//								'PAY_via_admin' => false,
+//								'PAY_details' => (array) $PayPalResult));
+//				$payment->save();
+//				$this->update_transaction_with_payment($transaction, $payment);
+//				$return = array('success'=>true);
+				return $payment;
 			}catch(Exception $e){
-				$txn_results = array(
-						'gateway' => $this->_payment_settings['display_name'],
-						'approved' => FALSE,
-						'status' => 'Declined',
-						'response_msg' => $e->getMessage(),
-						'amount' => '0.00',
-						'method' => 'CC',
-						'card_type' => $billing_info['_reg-page-billing-card-type-' . $this->_gateway_name ]['value'],
-						'auth_code' => '',
-						'md5_hash' => '',
-						'transaction_id' => '',
-						'invoice_number' => $primary_registrant instanceof EE_Registration ? $primary_registrant->ID() : '',
-						'raw_response' => $e
-				);
-				$payment = EE_Payment::new_instance(array(
-								'TXN_ID' => $transaction->ID(),
-								'STS_ID' => EEM_Payment::status_id_failed,
-								'PAY_timestamp' => current_time('mysql',false),
-								'PAY_method' => 'CART',
-								'PAY_amount' => 0,
-								'PAY_gateway' => $this->_gateway_name,
-								'PAY_gateway_response' => $e->getMessage(),
-								'PAY_txn_id_chq_nmbr' => null,
-								'PAY_po_number' => NULL,
-								'PAY_extra_accntng' => null,
-								'PAY_via_admin' => false,
-								'PAY_details' => $e));
-				$payment->save();
-				$this->update_transaction_with_payment($transaction, $payment);
-				EE_Registry::instance()->SSN->set_session_data( array( 'txn_results' => $txn_results ));
-				
-				$return = array('error'=>$e->getMessage());
+				$payment->set_status($this->_pay_model->failed_status());
+				$payment->set_gateway_response($e->getMessage());
+				return $payment;
 			}
-			
-			
-		return $payment;
 	}
 	private function prep_and_curl_request($DataArray) {
 		// Create empty holders for each portion of the NVP string
-		$DPFieldsNVP = '&METHOD=prep_and_curl_request&BUTTONSOURCE=AngellEYE_PHP_Class_DDP';
+		$DPFieldsNVP = '&METHOD=DoDirectPayment&BUTTONSOURCE=AngellEYE_PHP_Class_DDP';
 		$CCDetailsNVP = '';
 		$PayerInfoNVP = '';
 		$PayerNameNVP = '';
