@@ -45,17 +45,18 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 		$this->_subsections = array_merge($this->_subsections,array(
 			'first_name'=>new EE_Text_Input(array('required'=>true)),
 			'last_name'=>new EE_Text_Input(array('required'=>true)),
-			'email'=>new EE_Email_Input(),
+			'email'=>new EE_Email_Input(array('required'=>true)),
 			'address'=>new EE_Text_Input(array(
-				'html_label_text'=>  __("Address", 'event_espresso')
+				'html_label_text'=>  __("Address", 'event_espresso'),
+				'required'=>true
 			)),
 			'address2'=>new EE_Text_Input(array(
 				'html_label_text'=> __("Address (cont.)", 'event_espresso')
 			)),
-			'city'=>new EE_Text_Input(),
-			'state'=>new EE_Select_Input($states_organized),
-			'country'=>new EE_Select_Input($country_options),
-			'zip'=>new EE_Text_Input(),
+			'city'=>new EE_Text_Input(array('required'=>true)),
+			'state'=>new EE_Select_Input($states_organized,array('required'=>true)),
+			'country'=>new EE_Select_Input($country_options,array('required'=>true)),
+			'zip'=>new EE_Text_Input(array('required'=>true)),
 			'phone'=>new EE_Text_Input(),
 		));
 		parent::__construct($options_array);
