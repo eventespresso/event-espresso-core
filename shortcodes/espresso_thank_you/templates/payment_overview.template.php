@@ -171,10 +171,10 @@ $event_name = '';
 				<tbody>
 					<tr>
 						<td>
-							<label><?php _e('Payment Type:', 'event_espresso'); ?></label>
+							<label><?php _e('Payment Method:', 'event_espresso'); ?></label>
 						</td>
 						<td>
-							<?php $payment->e('PAY_gateway'); ?>
+							<?php  echo ($payment->payment_method() && $payment->payment_method() instanceof EE_Payment_Method) ? $payment->payment_method()->name() : __("Unknown", 'event_espresso'); ?>
 						</td>
 					</tr>
 					<tr>
