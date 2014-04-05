@@ -98,7 +98,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$redirect_args['notify_url'] = $notify_url;
 		$redirect_args['cmd'] = '_cart';
 		$redirect_args['upload'] = 1;
-		$redirect_args['currency_code'] = 'USD';//@todo: this should be whatever the type of the payment is
+		$redirect_args['currency_code'] = $payment->currency_code();
 		if($this->_image_url){
 			$redirect_args['image_url'] = $this->_image_url;
 		}

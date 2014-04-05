@@ -240,6 +240,10 @@ interface EEI_Payment extends EEI_Base{
 	 * @return float returns the amount the payment is for (wehther or not its approved)
 	 */
 	function amount();
+	/**
+	 * @return string of the currency for this payment
+	 */
+	function currency_code();
 	
 	/**
 	 * 

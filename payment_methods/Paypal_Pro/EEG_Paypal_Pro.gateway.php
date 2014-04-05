@@ -183,7 +183,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 					// Required.  Total amount of order, including shipping, handling, and tax.
 					'amt' => $this->format_currency($total_to_pay),
 					// Required.  Three-letter currency code.  Default is USD.
-					'currencycode' => 'USD',
+					'currencycode' => $payment->currency_code(),
 					// Required if you include itemized cart details. (L_AMTn, etc.)  Subtotal of items not including S&H, or tax.
 					'itemamt' => $this->format_currency($item_amount),//
 					// Total shipping costs for the order.  If you specify shippingamt, you must also specify itemamt.

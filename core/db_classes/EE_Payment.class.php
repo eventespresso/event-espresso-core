@@ -781,6 +781,16 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		}
 		return $html;
 	}
+	/**
+	 * Returns the currency of the payment.
+	 * (At the time of writing, this will always be the currency in the configuration;
+	 * however in the future it is anticipated that this will be stored on the payment
+	 * object itself)
+	 * @return string for the currency code
+	 */
+	public function currency_code(){
+		return EE_Config::instance()->currency->code;
+	}
 
 	
 
