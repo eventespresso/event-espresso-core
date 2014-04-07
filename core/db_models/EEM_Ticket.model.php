@@ -37,7 +37,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
-		$this->singlular_item = __('Ticket','event_espresso');
+		$this->singular_item = __('Ticket','event_espresso');
 		$this->plural_item = __('Tickets','event_espresso');		
 
 		$this->_tables = array(

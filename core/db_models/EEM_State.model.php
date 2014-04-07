@@ -52,7 +52,7 @@ class EEM_State extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('State/Province','event_espresso');
+		$this->singular_item = __('State/Province','event_espresso');
 		$this->plural_item = __('States/Provinces','event_espresso');
 
 		$this->_tables = array(
