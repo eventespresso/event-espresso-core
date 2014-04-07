@@ -8,6 +8,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	const shipping_info_none = 'none';
 	const shipping_info_optional = 'optional';
 	const shipping_info_required = 'required';
+	const help_tab_name = 'ee_paypal_standard_help';
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
 		$this->_gateway = new EEG_Paypal_Standard();
@@ -18,21 +19,29 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		return NULL;
 	}
 	public function generate_new_settings_form() {
-		return new EE_Payment_Method_Form(array(
+		$form =  new EE_Payment_Method_Form(array(
 			'name'=>'Paypal_Standard_Form',
 			'extra_meta_inputs'=>array(
-				'paypal_id'=>new EE_Text_Input(),
-				'no_shipping'=>new EE_Yes_No_Input(),
-				'image_url'=>new EE_Admin_File_Uploader_Input(),
+				'paypal_id'=>new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Paypal Email %s", 'event_espresso'), EEH_Template::get_help_tab_link( self::help_tab_name )),
+					'html_help_text'=>  __("Typically payment@yourdomain.com", 'event_espresso'),
+				)),
+				'image_url'=>new EE_Admin_File_Uploader_Input(array(
+					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso')
+				)),
 				'shipping_details'=>new EE_Select_Input(array(
 					EE_PMT_Paypal_Standard::shipping_info_none => __("Do not prompt for an address", 'event_espresso'),
 					EE_PMT_Paypal_Standard::shipping_info_optional => __("Prompt for an address, but do not require it", 'event_espresso'),
 					EE_PMT_Paypal_Standard::shipping_info_required => __("Prompt for an address, and require it", 'event_espresso')
 				)),
 				
-				)
+				),
+			'before_form_content_template'=>$this->file_folder().DS.'templates'.DS.'paypal_standard_settings_before_form.template.php',
 			)
 		);
+		$form->get_input('PMD_debug_mode')->set_html_label_text(sprintf(__("Use Paypal Sandbox %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_name)));
+		$form->get_input('shipping_details')->set_html_label_text(sprintf(__("Shipping Address Options %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)));
+		return $form;
 	}
 	/**
 	 * Adds the help tab
@@ -41,7 +50,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	 */
 	public function help_tabs_config(){
 		return array(
-			'payment_methods_overview_paypalstandard_help_tab'=>array(
+			self::help_tab_name => array(
 				'title'=>  __("Paypal Standard Settings", 'event_espresso'),
 				'filename'=>'payment_methods_overview_paypalstandard'
 			)

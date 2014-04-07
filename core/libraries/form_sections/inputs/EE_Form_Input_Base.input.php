@@ -470,6 +470,15 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	}
 	
 	/**
+	 * Sets the HTML label text after it has already been defined
+	 * @param string $label
+	 * @return void
+	 */
+	function set_html_label_text($label){
+		$this->_html_label_text = $label;
+	}
+	
+	/**
 	 * Sets whether or no tthis field is required, and adjusts the validation strategy
 	 * @param boolean $required
 	 */

@@ -27,7 +27,6 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	protected $_paypal_id = NULL;
-	protected $_no_shipping = NULL;
 	protected $_image_url = NULL;
 	protected $_shipping_details = NULL;
 	protected $_gateway_url = NULL;
@@ -103,7 +102,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if($this->_image_url){
 			$redirect_args['image_url'] = $this->_image_url;
 		}
-		$redirect_args['no_shipping'] = $this->_no_shipping;
+		$redirect_args['no_shipping'] = $this->_shipping_details;
 		
 		$payment->set_redirect_url($this->_gateway_url);
 		$payment->set_redirect_args($redirect_args);

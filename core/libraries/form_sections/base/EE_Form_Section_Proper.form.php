@@ -52,11 +52,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 *	@type $exclude string[] values are subsections to be excluded. This is handy if you want
 	 *		to remove certain default subsections (note: if you specify BOTH 'include' AND 'exclude', 
 	 *		the inclusions will be applied first, and the exclusions will exclude items from that list of inclusions)
-	 *	@type $before_form_template string filepath of a template for displaying BEFORE the form.
+	 *	@type $before_form_content_template string filepath of a template for displaying BEFORE the form.
 	 *		This is the preferred method in case you don't want to change the form's
 	 *		content whatsoever, and only want to consistently have content in front of it.
 	 *		If you want to cahnge its content, you should change the $layout_strategy
-	 *	@type $after_form_template string like $before_form_template but puts the content afterwards
+	 *	@type $after_form_content_template string like $before_form_template but puts the content afterwards
 	 *	@type $layout_strategy EE_Form_Section_Layout_Base strategy for laying out the form
 	 * } @see EE_Form_Section_Base::__construct()
 	 * 
