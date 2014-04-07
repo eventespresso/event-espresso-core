@@ -34,6 +34,14 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 			)
 		);
 	}
+	public function help_tabs_config(){
+		return array(
+			'payment_methods_overview_paypalstandard_help_tab'=>array(
+				'title'=>  __("Paypal Standard Settings", 'event_espresso'),
+				'filename'=>'payment_methods_overview_paypalstandard'
+			)
+		);
+	}
 	/**
 	 * Logic to be accomplished when the payment attempt is complete.
 	 * Most payment methods don't need to do anything at this point; but some, like Mijireh, do.

@@ -293,4 +293,11 @@ abstract class EE_PMT_Base{
 		EE_Registry::instance()->load_helper('Template');
 		return EEH_Template::display_template(EE_LIBRARIES.'payment_methods'.DS.'templates'.DS.'payment_details_content.template.php', array('payment_method'=>$this->_pm_instance,'payment'=>$payment) , true);
 	}
+	
+	/**
+	 * @return array exactly like EE_Admin_Page _page_config's 'help_tabs' attribute. @see EE_Admin_Page::_set_page_config()
+	 */
+	public function help_tabs_config(){
+		return array();
+	}
 }
