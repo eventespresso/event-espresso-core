@@ -233,22 +233,6 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 				$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
 				$payment->set_extra_accntng($primary_registration_code);
 				$payment->set_details($PayPalResult);
-//				$payment = EE_Payment::new_instance(array(
-//								'TXN_ID' => $transaction->ID(),
-//								'STS_ID' => $approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined,
-//								'PAY_timestamp' => current_time('mysql',false),
-//								'PAY_method' => 'CART',
-//								'PAY_amount' => isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0,
-//								'PAY_gateway' => $this->_gateway_name,
-//								'PAY_gateway_response' => $message,
-//								'PAY_txn_id_chq_nmbr' => isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null,
-//								'PAY_po_number' => NULL,
-//								'PAY_extra_accntng' => $primary_registration_code,
-//								'PAY_via_admin' => false,
-//								'PAY_details' => (array) $PayPalResult));
-//				$payment->save();
-//				$this->update_transaction_with_payment($transaction, $payment);
-//				$return = array('success'=>true);
 				return $payment;
 			}catch(Exception $e){
 				$payment->set_status($this->_pay_model->failed_status());

@@ -99,6 +99,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$redirect_args['cmd'] = '_cart';
 		$redirect_args['upload'] = 1;
 		$redirect_args['currency_code'] = $payment->currency_code();
+		$redirect_args['rm'] = 2;//makes the user return with method=POST
 		if($this->_image_url){
 			$redirect_args['image_url'] = $this->_image_url;
 		}

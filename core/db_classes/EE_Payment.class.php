@@ -81,15 +81,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
     /**
-    *	Payment Gateway utilized 
-	*
-	*	@access	protected
-    *	@var string
-    */
-	protected $_PAY_gateway = NULL;
-
-
-    /**
     *	Gateway Response
 	*
 	*	@access	protected
@@ -283,18 +274,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 
-	/**
-	*		Set Payment Gateway 
-	*
-	* 		@access		public
-	*		@param		string		$gateway
-	*/
-	public function set_gateway( $gateway = FALSE ) {
-		$this->set('PAY_gateway',$gateway);
-	}
-
-
-
 
 
 	/**
@@ -443,15 +422,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		return $this->get_pretty('PAY_amount','no_currency_code');
 	}
 
-
-
-	/**
-	*		get Payment Gateway 
-	* 		@access		public
-	*/
-	public function gateway() {
-		return $this->get('PAY_gateway');
-	}
 
 
 
