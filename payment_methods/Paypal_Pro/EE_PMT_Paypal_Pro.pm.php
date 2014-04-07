@@ -83,6 +83,19 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 			'Discover'=>  __("Discover", 'event_espresso')
 			);
 	}
+	/**	
+	 * Adds the help tab
+	 * @see EE_PMT_Base::help_tabs_config()
+	 * @return array 
+	 */
+	public function help_tabs_config(){
+		return array(
+			'payment_methods_overview_paypalpro_help_tab' => array(
+						'title' => __('PayPal Pro Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_paypalpro'
+						),
+		);
+	}
 }
 
 // End of file EEPM_Paypal_Standard.pm.php

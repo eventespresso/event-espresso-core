@@ -81,7 +81,20 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					'payment_methods/Invoice/templates/invoice_settings_layout.template.php',
 					'payment_methods/Invoice/templates/invoice_settings_input_layout.template.php'),
 			));
- }
+	}
+	/**	
+	 * Adds the help tab
+	 * @see EE_PMT_Base::help_tabs_config()
+	 * @return array 
+	 */
+	public function help_tabs_config(){
+		return array(
+			'payment_methods_overview_invoice_help_tab' => array(
+						'title' => __('Invoice Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_invoice'
+						),
+		);
+	}
  /**
 	 * For adding any html output ab ove the payment overview.
 	 * Many gateways won't want ot display anything, so this function just returns an empty string.

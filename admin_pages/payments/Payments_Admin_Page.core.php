@@ -95,12 +95,12 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					'order' => 10
 					),
 				'metaboxes' => array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-                'help_tabs' => $this->_add_payment_method_help_tabs($this),
-//			array(
-//					'payment_methods_overview_help_tab' => array(
-//						'title' => __('Payment Methods Overview', 'event_espresso'),
-//						'filename' => 'payment_methods_overview'
-//						),
+                'help_tabs' => array_merge(
+			array(
+					'payment_methods_overview_help_tab' => array(
+						'title' => __('Payment Methods Overview', 'event_espresso'),
+						'filename' => 'payment_methods_overview'
+						)),
 //					'payment_methods_overview_authorizenet_aim_help_tab' => array(
 //						'title' => __('Authorize.net AIM Settings', 'event_espresso'),
 //						'filename' => 'payment_methods_overview_authorizenet_aim'
@@ -145,7 +145,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'title' => __('Stripe Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_stripe'
 						)*/
-//					),
+				$this->_add_payment_method_help_tabs()),
 				'help_tour' => array( 'Payment_Methods_Selection_Help_Tour' ),
 				'require_nonce' => FALSE
 				);
@@ -169,7 +169,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				)
 			);
 	}
-	protected function _add_payment_method_help_tabs($admin_page_obj){
+	protected function _add_payment_method_help_tabs(){
 		EE_Registry::instance()->load_lib('Payment_Method_Manager');
 		$pmts = EE_Payment_Method_Manager::instance()->payment_method_types();
 		$all_pmt_help_tabs_config = array();
@@ -177,11 +177,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			foreach($pmt->help_tabs_config() as $help_tab_name => $config){
 				$all_pmt_help_tabs_config[$help_tab_name] = array(
 					'title'=>$config['title'],
-					'content'=>EEH_Template::display_template($pmt->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php', array('admin_page_obj'=>$admin_page_obj), true)
+					'content'=>EEH_Template::display_template($pmt->file_folder().'help_tabs'.DS.$config['filename'].'.help_tab.php', array('admin_page_obj'=>$this), true)
 				);
 			}
 		}
-		d($all_pmt_help_tabs_config);
 		return $all_pmt_help_tabs_config;
 //		return array(
 //			'monkeys_tabs'=>array(

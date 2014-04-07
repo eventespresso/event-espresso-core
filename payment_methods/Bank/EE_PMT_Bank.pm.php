@@ -47,6 +47,19 @@ class EE_PMT_Bank extends EE_PMT_Base{
 			'exclude'=>array('PMD_debug_mode')
 		));
 	}
+	/**
+	 * Adds the help tab
+	 * @see EE_PMT_Base::help_tabs_config()
+	 * @return array 
+	 */
+	public function help_tabs_config(){
+		return array(
+			'payment_methods_overview_bank_draft_help_tab' => array(
+						'title' => __('Bank Draft Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_bank_draft'
+						),
+		);
+	}
 	
 	/**
 	 * For adding any html output ab ove the payment overview.

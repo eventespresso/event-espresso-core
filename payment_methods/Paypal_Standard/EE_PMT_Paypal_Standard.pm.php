@@ -34,6 +34,11 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 			)
 		);
 	}
+	/**
+	 * Adds the help tab
+	 * @see EE_PMT_Base::help_tabs_config()
+	 * @return array 
+	 */
 	public function help_tabs_config(){
 		return array(
 			'payment_methods_overview_paypalstandard_help_tab'=>array(
