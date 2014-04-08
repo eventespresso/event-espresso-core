@@ -31,20 +31,20 @@
 	}
 	?>	
 	<h2 class="about-headline-callout"><?php _e('Introducing an improved event management system!', 'event_espresso'); ?></h2>
-	<p><img class="about-overview-img" src="<?php echo EE_ABOUT_ASSETS_URL; ?>eventeditor-screen.jpg" /></p>
+	<p><img class="about-overview-img" src="http://ee-screenshots.s3.amazonaws.com/ee4/eventeditor-screen.jpg" /></p>
 	<div class="feature-section col three-col about-updates">
 		<div class="col-1">
-			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>publish_meta_box.jpg">
+			<img src="http://ee-screenshots.s3.amazonaws.com/ee4/publish_meta_box.jpg">
 			<h3><?php  _e('Optimized aesthetic', 'event_espresso'); ?></h3>
 			<p><?php  _e('The Event Espresso 4 dashboard has a fresh, uncluttered design that embraces clarity and simplicity.', 'event_espresso'); ?></p>
 		</div>
 		<div class="col-2">
-			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>registrations-overview.jpg">
+			<img src="http://ee-screenshots.s3.amazonaws.com/ee4/registrations-overview.jpg">
 			<h3><?php  _e('Integrated management', 'event_espresso'); ?></h3>
 			<p><?php  _e('We’ve made it easier to know who your customers are and how they’ve done business with you over time.', 'event_espresso'); ?></p>
 		</div>
 		<div class="col-3 last-feature">
-			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>refined-bookkeeping.jpg">
+			<img src="http://ee-screenshots.s3.amazonaws.com/ee4/refined-bookkeeping.jpg">
 			<h3><?php _e('Easy bookkeeping', 'event_espresso'); ?></h3>
 			<p><?php _e('Registrations, payment, and transactions have been substantially improved in Event Espresso 4.', 'event_espresso'); ?></p>
 		</div>
@@ -62,7 +62,7 @@
 			<p><?php  _e('Customers can easily register for classes, events, or conferences, in just a few simple steps. No matter how you use it, Event Espresso 4 will adapt to a multitude of different ticketing and pricing scenarios.', 'event_espresso'); ?></p>
 		</div>
 		<div class="last-feature about-colors-img">
-			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>registrtation-page-large.jpg">
+			<img src="http://ee-screenshots.s3.amazonaws.com/ee4/registrtation-page-large.jpg">
 		</div>
 	</div>
 </div>
@@ -78,7 +78,7 @@
 			<p><?php _e('Easily categorize a price modifier and indicate how that price gets applied to the running total when a transaction occurs.', 'event_espresso'); ?></p>
 		</div>
 		<div class="last-feature about-themes-img">
-			<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>event-management.jpg">
+			<img src="http://ee-screenshots.s3.amazonaws.com/ee4/event-management.jpg">
 		</div>
 	</div>
 </div>
@@ -94,7 +94,7 @@
 			<p><?php _e('With a striking design that does not compromise the simplicity of WordPress and Event Espresso 4, Espresso Arabica 2014 will be the best event theme on the market.', 'event_espresso'); ?></p>
 		</div>
 	</div>
-	<img src="<?php echo EE_ABOUT_ASSETS_URL; ?>single-event-page.jpg">
+	<img src="http://ee-screenshots.s3.amazonaws.com/ee4/single-event-page.jpg">
 
 	
 </div>
@@ -102,6 +102,6 @@
 
 <h3><?php _e('Pick a theme, any theme', 'event_espresso'); ?></h3>
 			<p><?php  _e('We’ve made it super easy to integrate Event Espresso with almost any properly coded WordPress theme, including many of the thousands of themes available on WordPress.org.', 'event_espresso'); ?></p>
-<p><img class="about-overview-img" src="<?php echo EE_ABOUT_ASSETS_URL; ?>multiple-themes.jpg" /></p>
+<p><img class="about-overview-img" src="http://ee-screenshots.s3.amazonaws.com/ee4/multiple-themes.jpg" /></p>
 <hr>
 
