@@ -427,11 +427,14 @@
 		// merge incoming shortcode attributes with calendar config
 		$ee_calendar_js_options = array_merge( $calendar_config, $ee_calendar_js_options );
 		//if the user has changed the filters, those should override whatever the admin specified in the shortcode
+		$js_option_event_category_id = isset( $ee_calendar_js_options['event_category_id'] ) ? $ee_calendar_js_options['event_category_id'] : NULL;
+		$js_option_event_venue_id = isset( $ee_calendar_js_options['event_venue_id'] ) ? $ee_calendar_js_options['event_venue_id'] : NULL;
+		// setup an array with overridden values in it
 		$overrides = array(
-			'event_category_id' => isset($_REQUEST['event_category_id']) ? sanitize_key( $_REQUEST['event_category_id'] ) : isset($ee_calendar_js_options['event_category_id']) ? $ee_calendar_js_options['event_category_id'] : NULL,
-			'event_venue_id'=> isset($_REQUEST['event_venue_id']) ? sanitize_key( $_REQUEST['event_venue_id'] ) : isset($ee_calendar_js_options['event_venue_id']) ? $ee_calendar_js_options['event_venue_id'] : NULL,
-			'month'=> isset($_REQUEST['month']) ? sanitize_text_field( $_REQUEST['month'] ) : $ee_calendar_js_options['month'],
-			'year'=> isset($_REQUEST['year']) ? sanitize_text_field( $_REQUEST['year'] ) : $ee_calendar_js_options['year'],
+			'event_category_id' => isset( $_REQUEST['event_category_id'] ) ? sanitize_key( $_REQUEST['event_category_id'] ) : $js_option_event_category_id,
+			'event_venue_id'=> isset( $_REQUEST['event_venue_id'] ) ? sanitize_key( $_REQUEST['event_venue_id'] ) : $js_option_event_venue_id,
+			'month'=> isset( $_REQUEST['month'] ) ? sanitize_text_field( $_REQUEST['month'] ) : $ee_calendar_js_options['month'],
+			'year'=> isset( $_REQUEST['year'] ) ? sanitize_text_field( $_REQUEST['year'] ) : $ee_calendar_js_options['year'],
 		);
 		// merge overrides into options
 		$ee_calendar_js_options = array_merge( $ee_calendar_js_options, $overrides );
