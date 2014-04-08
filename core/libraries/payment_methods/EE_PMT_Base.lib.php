@@ -150,20 +150,28 @@ abstract class EE_PMT_Base{
 	 */
 	function process_payment( $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){		//@todo: add surcharge for the payment method, if any
 		if($this->_gateway){
-			//there is a gateway, so we're going to create a payment object
-			$payment = EE_Payment::new_instance(array(
-								'TXN_ID' => $transaction->ID(),
-								'STS_ID' => EEM_Payment::status_id_failed,
-								'PAY_timestamp' => current_time('mysql',false),
-								'PAY_method' => $method,
-								'PAY_amount' => $amount !== NULL ? $amount : $transaction->total(),
-								'PMD_ID' => $this->_pm_instance->ID(),
-								'PAY_gateway_response' => '',
-								'PAY_txn_id_chq_nmbr' => NULL,
-								'PAY_po_number' => NULL,
-								'PAY_extra_accntng' => NULL,
-								'PAY_via_admin' => $by_admin,
-								'PAY_details' => NULL));
+			//there is a gateway, so we're going to make a paymetn object
+			//but wait! do they already have a paymetn in progress that we thougth was failed?
+			$duplicate_properties = array(
+				'TXN_ID' => $transaction->ID(),
+				'STS_ID' => EEM_Payment::status_id_failed,
+				'PAY_method' => $method,
+				'PAY_amount' => $amount !== NULL ? $amount : $transaction->total(),
+				'PMD_ID' => $this->_pm_instance->ID(),
+				'PAY_gateway_response'=>NULL,
+				'PAY_via_admin' => $by_admin,
+			);
+			$payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
+			//if we didn't already have a paymetn in progress for the same thing,
+			//then we actually want to make a new payment
+			if( ! $payment){
+				$payment = EE_Payment::new_instance(array_merge($duplicate_properties,array(
+					'PAY_timestamp' => current_time('mysql',false),
+					'PAY_txn_id_chq_nmbr' => NULL,
+					'PAY_po_number' => NULL,
+					'PAY_extra_accntng' => NULL,
+					'PAY_details' => NULL)));
+			}
 			if($this->_gateway instanceof EE_Offsite_Gateway){
 				$core_config = EE_Config::instance()->core;
 				$payment = $this->_gateway->set_redirection_info($payment,$billing_info,$return_url,

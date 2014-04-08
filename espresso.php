@@ -246,6 +246,13 @@ interface EEI_Payment extends EEI_Base{
 	function currency_code();
 	
 	/**
+	 * The gateway transaction's ID, usually assigned by the
+	 * payment provider
+	 * @return string
+	 */
+	function txn_id_chq_nmbr();
+	
+	/**
 	 * 
 	 * @param string $status
 	 */
