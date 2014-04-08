@@ -40,7 +40,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @var string
 	 */
 	protected $_after_form_template = NULL;
-	
+
 	/**
 	 * when constructing a proper form section, calls _construct_finalize on children
 	 * so that they know who their parent is, and what name they've been given.
@@ -461,6 +461,38 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 			$input = $this->get_input($input_to_hide);
 			
 			$input->set_display_strategy(new EE_Hidden_Display_Strategy());
+		}
+	}
+	/**
+	 * Adds the listed subsections to the form section. If $subsection_name_to_add_before is provided,
+	 * adds them all directly before that subsection, otherwise onto the end.
+	 * @param EE_Form_Section_Base[] $subsections where keys are their names
+	 * @param string $subsection_name_to_add_before name of the section to add these subsections in front of, or null to add
+	 * at the very end
+	 * @return void
+	 */
+	public function add_subsections($subsections,$subsection_name_to_add_before = NULL){
+		foreach($subsections as $subsection_name => $subsection){
+			if( ! $subsection instanceof EE_Form_Section_Base){
+				EE_Error::add_error(sprintf(__("Trying to add a %s as a subsection (it was named '%s') to the form section '%s'. It was removed.", "event_espresso"),get_class($subsection),$subsection_name,$this->name()));
+				unset($subsections[$subsection_name]);
+			}
+		}
+		if($subsection_name_to_add_before){
+			$subsections_before = array();
+			foreach($this->_subsections as $subsection_name => $subsection){
+				if( $subsection_name == $subsection_name_to_add_before){
+					break;
+				}
+				$subsections_before[$subsection_name] = $subsection;
+			}
+			$subsections_after = array_diff_key($this->_subsections, $subsections_before);
+			$this->_subsections = array_merge($subsections_before,$subsections,$subsections_after);
+		}else{
+			$this->_subsections = array_merge($this->_subsections,$subsections);
+		}
+		foreach($this->_subsections as $name => $subsection){
+			$subsection->_construct_finalize($this, $name);
 		}
 	}
 }
