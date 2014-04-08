@@ -40,17 +40,33 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	protected $_layout_templatet_file;
+	protected $_layout_begin_template_file;
 	protected $_input_template_file;
 	protected $_subsection_template_file;
-	public function __construct($layout_template_file,$input_template_file = NULL,$subsection_template_file = NULL) {		
+	protected $_layout_end_template_file;
+	public function __construct($layout_template_file = NULL,$begin_template_file = NULL, $input_template_file = NULL,$subsection_template_file = NULL,$end_template_file = NULL) {		
 		$this->_layout_templatet_file = $layout_template_file;
+		$this->_layout_begin_template_file = $begin_template_file;
 		$this->_input_template_file = $input_template_file;
 		$this->_subsection_template_file = $subsection_template_file;
+		$this->_layout_end_template_file = $end_template_file;
 		parent::__construct();
 	}
 	public function layout_form() {
-		EE_Registry::instance()->load_helper('Template');
-		return EEH_Template::locate_template($this->_layout_templatet_file, true, array('form'=>$this->_form_section,'layout_strategy'=>$this), true);
+		if($this->_layout_templatet_file){
+			EE_Registry::instance()->load_helper('Template');
+			return EEH_Template::locate_template($this->_layout_templatet_file, true, array('form'=>$this->_form_section,'layout_strategy'=>$this), true);
+		}else{
+			return parent::layout_form();
+		}
+	}
+	public function layout_form_begin() {
+		if($this->_layout_begin_template_file){
+			EE_Registry::instance()->load_helper('Template');
+			return EEH_Template::locate_template($this->_layout_begin_template_file, true, array('form'=>$this->_form_section,'layout_strategy'=>$this), true);
+		}else{
+			return parent::layout_form_begin();
+		}
 	}
 	/**
 	 * If an input_template_file was provided upon construction, uses that to layout the input. Otherwise uses parent.
@@ -79,6 +95,15 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 		}
 		return parent::layout_subsection($formsection);
 	}
+	public function layout_form_end() {
+		if($this->_layout_end_template_file){
+			EE_Registry::instance()->load_helper('Template');
+			return EEH_Template::locate_template($this->_layout_end_template_file, true, array('form'=>$this->_form_section,'layout_strategy'=>$this), true);
+		}else{
+			return parent::layout_form_end();
+		}
+	}
+	
 }
 
 // End of file EE_Template_Layout.strategy.php

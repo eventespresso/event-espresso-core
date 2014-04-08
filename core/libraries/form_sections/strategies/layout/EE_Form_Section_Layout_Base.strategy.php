@@ -35,7 +35,36 @@ abstract class EE_Form_Section_Layout_Base{
 	 * Returns the HTML
 	 * @return string HTML for displaying
 	 */
-	abstract function layout_form();
+	function layout_form(){
+		$html = '';
+		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$this->_form_section->name(),EEH_Formatter::nl(1) . $this->layout_form_begin());
+		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop__for_'.$this->_form_section->name(),$this->layout_form_loop());
+		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__end__for_'.$this->_form_section->name(),EEH_Formatter::nl(-1) . $this->layout_form_end());
+		$html = $this->add_form_section_hooks_and_filters( $html );
+		return $html;
+	}
+	function layout_form_loop(){
+		$html = '';
+		foreach( $this->_form_section->subsections() as $name=>$subsection ){
+			if ( $subsection instanceof EE_Form_Input_Base ){
+				$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_input_'.$name.'__in_'.$this->_form_section->name(),$this->layout_input( $subsection )) ;
+			} elseif ( $subsection instanceof EE_Form_Section_Base ){
+				$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_non_input_'.$name.'__in_'.$this->_form_section->name(),$this->layout_subsection( $subsection ));
+			}
+		}
+		return $html;
+	}
+	/**
+	 * Should be used to start teh form section (Eg a table tag, or a div tag, etc.)
+	 * @return string
+	 */
+	abstract function layout_form_begin();
+	
+	/**
+	 * Should be used to end the form section (eg a /table tag, or a /div tag, etc)
+	 * @return string
+	 */
+	abstract function layout_form_end();
 	/**
 	 * Should be used internally by layout_form() to layout each input (eg, if this layout
 	 * is putting each input in a row of its own, this should probably be called by a

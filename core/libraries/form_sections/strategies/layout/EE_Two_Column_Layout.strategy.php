@@ -1,19 +1,11 @@
 <?php
 
 class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
-	function layout_form() {
-		$form = $this->_form_section;
-		$html = EEH_Formatter::nl(1) . '<table class="' . $this->_form_section->html_class() . '" id="' . $this->_form_section->html_id() . '" style="' . $this->_form_section->html_style() . '">';
-		foreach($this->_form_section->subsections() as $name=>$subsection){
-			if($subsection instanceof EE_Form_Input_Base){
-				$html .= $this->layout_input($subsection);
-			}elseif($subsection instanceof EE_Form_Section_Base){
-				$html .= $this->layout_subsection($subsection);
-			}
-		}
-		$html .= '</table>';
-		$html = $this->add_form_section_hooks_and_filters( $html );
-		return $html;
+	public function layout_form_begin() {
+		return EEH_Formatter::nl(1) . '<table class="' . $this->_form_section->html_class() . '" id="' . $this->_form_section->html_id() . '" style="' . $this->_form_section->html_style() . '">';
+	}
+	public function layout_form_end() {
+		return '</table>';
 	}
 	/**
 	 * Lays out the row for the input, including label and errors
