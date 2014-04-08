@@ -50,7 +50,9 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		if( ! $allowed_types){//if allowed types is a string or empty array or null...
 			$allowed_types = array();
 		}
+		$form_name = 'Paypal_Pro_Billing_Form';
 		$form_args = array(
+			'name'=>$form_name,
 			'subsections'=>array(
 				'credit_card'=>new EE_Credit_Card_Input(),
 				'credit_card_type'=>new EE_Select_Input(array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(),array_flip($allowed_types))),//the options are set dynamically
@@ -59,7 +61,8 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 				'cvv'=>new EE_Text_Input(),
 			));
 		if($this->_pm_instance->debug_mode()){
-			$form_args['before_form_content_template'] = new EE_Template_Layout($this->file_folder().'templates'.DS.'paypal_pro_debug_info.template.php');
+			//customize
+			add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$form_name,array($this,'generate_billing_form_debug_content'));
 			$form_args['subsections']['credit_card']->set_default('5424180818927383');
 			$form_args['subsections']['credit_card']->set_html_help_text(__("Payment fields have been autofilled because you are in debug mode.", 'event_espresso'));
 			$form_args['subsections']['credit_card_type']->set_default('MasterCard');
@@ -69,6 +72,10 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		$billing_form = new EE_Billing_Info_Form($form_args);	
 		
 		return $billing_form;
+	}
+	public function generate_billing_form_debug_content($form_begin_content){
+		EE_Registry::instance()->load_helper('Template');
+		return EEH_Template::display_template($this->file_folder().'templates'.DS.'paypal_pro_debug_info.template.php',array(),true).$form_begin_content;
 	}
 	/**
 	 * Returns an array of all the payment cards possibly supported by paypal pro.

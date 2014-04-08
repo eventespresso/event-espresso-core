@@ -35,7 +35,7 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 					'html_label_text'=>  sprintf(__("Mijireh Access Key %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_name))
 				)),
 			),
-			'after_form_content_template'=>$this->file_folder().DS.'templates'.DS.'mijireh_settings_after_form.template.php',
+//			'after_form_content_template'=>$this->file_folder().DS.'templates'.DS.'mijireh_settings_after_form.template.php',
 			'exclude'=>array('PMD_debug_mode'),
 		));
 		return $form;

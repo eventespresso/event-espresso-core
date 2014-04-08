@@ -46,10 +46,12 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 				$default_address = 'unknown';
 				$organization_name = 'unknown';
 			}
-		return new EE_Payment_Method_Form(array(
+		$pdf_stylesheet_input_name = 'pdf_stylesheet';
+		$show_on_page_name = 'show_on_page';
+		$form =  new EE_Payment_Method_Form(array(
 				'name'=>'Invoice_Form',
 				'extra_meta_inputs'=>array(
-					'pdf_stylesheet'=>new EE_Select_Input(array('simple.css'), array(
+					$pdf_stylesheet_input_name=>new EE_Select_Input(array('simple.css'), array(
 						'html_help_text'=>  __("Load a custom/pre-made style sheet 
 	to change the look of your invoices.", 'event_espresso'),
 					)),
@@ -60,7 +62,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'default'=>  EE_Config::instance()->organization->logo_url,
 						'html_help_text'=>  __("(Logo for the top left of the invoice)", 'event_espresso'),
 					)),
-					'show_on_page'=>new EE_Yes_No_Input(array(
+					$show_on_page_name=>new EE_Yes_No_Input(array(
 						'html_help_text'=>  __("Show as an option on your payment page?", 'event_espresso'),
 					)),
 					'page_title'=>new EE_Text_Input(array(
@@ -76,11 +78,14 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'default'=> $default_address,
 					)),
 				),
-				'exclude'=>array('PMD_debug_mode'),
-				'layout_strategy'=>new EE_Template_Layout(
-					'payment_methods/Invoice/templates/invoice_settings_layout.template.php',
-					'payment_methods/Invoice/templates/invoice_settings_input_layout.template.php'),
+				'include'=>array(
+					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url',
+					'pdf_stylesheet','pdf_instructions','pdf_logo_image',
+					'show_on_page', 'page_title','page_instructions','page_payable_to','page_address_payable'),
 			));
+		$form->add_subsections(array('header1'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_display.template.php')),$pdf_stylesheet_input_name);
+		$form->add_subsections(array('header2'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php')),$show_on_page_name);
+		return $form;
 	}
 	/**	
 	 * Adds the help tab

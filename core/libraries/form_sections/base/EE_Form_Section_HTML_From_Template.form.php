@@ -2,6 +2,7 @@
 
 if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
+
 /**
  * Event Espresso
  *
@@ -16,19 +17,22 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  *
- * invoice_settings_input_layout
+ * EE_Form_Section_HTML_From_Template
  *
  * @package			Event Espresso
  * @subpackage		
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
- * @var EE_Form_Input_Base $input
  */
-?><tr><th><?php echo $input->get_html_for_label();?></th><td><?php
-	echo $input->get_html_for_input()?><br/><?php
-	echo $input->get_html_for_help();
-	echo $input->get_html_for_errors();
-	?></td></tr><?php
+class EE_Form_Section_HTML_From_Template extends EE_Form_Section_HTML{
+	public function __construct($template_file,$args = array(), $options_array = array()) {
+		EE_Registry::instance()->load_helper('Template');
+		$html = EEH_Template::locate_template($template_file,true, $args, true);
+		
+//		echo " filepath:$template_file html $html";
+		parent::__construct($html, $options_array);
+	}
+}
 
-// End of file invoice_settings_input_layout.template
+// End of file EE_Form_Section_HTML_From_Template.form.php

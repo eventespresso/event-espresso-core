@@ -300,4 +300,19 @@ abstract class EE_PMT_Base{
 	public function help_tabs_config(){
 		return array();
 	}
+	/**
+	 * For adding a filter once only, just like wp's add_filter
+	 * @param string $hook_name
+	 * @param mixed $callback
+	 * @param int $priority
+	 * @param int $accepted_args
+	 * @return boolean whether the function is attached to the filter afterwards or not
+	 */
+	protected function add_filter_once($hook_name,$callback,$priority = NULL,$accepted_args = NULL){
+		if( ! has_filter($hook_name,$callback)){
+			return add_filter($hook_name, $callback, $priority, $accepted_args);
+		}else{
+			return true;
+		}
+	}
 }

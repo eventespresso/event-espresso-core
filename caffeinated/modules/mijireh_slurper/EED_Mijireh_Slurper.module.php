@@ -52,7 +52,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 		define('EED_MIJIREH_SLURPER_PATH',EE_CAFF_PATH.'modules'.DS.'mijireh_slurper'.DS);
 		add_action('load-post.php',array('EED_Mijireh_Slurper','set_edit_post_page_hooks'));
 		add_action('load-admin.php',array('EED_Mijireh_Slurper','check_for_edit_slurp_page'));
-		add_action('AHEE__EE_Mijireh__settings_end',array('EED_Mijireh_Slurper','add_slurp_link_to_gateway'));
+		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__end__for_Mijireh_Form',array('EED_Mijireh_Slurper','add_slurp_link_to_gateway'));
 	}
 	/**
 	 * Merely used to avoid even bothering to add these hooks on pages besides admin's post.php
@@ -70,8 +70,8 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	 * Adds the slurping content to the gateway's settings page, because I thought this was best suited to remain in the module's code (because
 	 * the gateway works fine independent of this module)
 	 */
-	public static function add_slurp_link_to_gateway(){
-		EEH_Template::display_template( EED_MIJIREH_SLURPER_PATH.'templates/additional_content_on_gateway.template.php', array() );
+	public static function add_slurp_link_to_gateway($existing_content){
+		return EEH_Template::display_template( EED_MIJIREH_SLURPER_PATH.'templates/additional_content_on_gateway.template.php', array(),true ) . $existing_content;
 	}
 	public static function slurping_in_progress_notice(){
 		EEH_Template::display_template( EED_MIJIREH_SLURPER_PATH.'templates/slurping_in_progress_notice.template.php', array() );

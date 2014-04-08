@@ -29,17 +29,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @var array
 	 */
 	static protected $_js_localization = array();
-	/**
-	 * path to a template file containing HTML to eb echoed out BEFORE the form
-	 * @var string
-	 */
-	protected $_before_form_template = NULL;
-	
-	/**
-	 *path to a template file containign HTML to be echoed out AFTER the form
-	 * @var string
-	 */
-	protected $_after_form_template = NULL;
 
 	/**
 	 * when constructing a proper form section, calls _construct_finalize on children
@@ -52,11 +41,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 *	@type $exclude string[] values are subsections to be excluded. This is handy if you want
 	 *		to remove certain default subsections (note: if you specify BOTH 'include' AND 'exclude', 
 	 *		the inclusions will be applied first, and the exclusions will exclude items from that list of inclusions)
-	 *	@type $before_form_content_template string filepath of a template for displaying BEFORE the form.
-	 *		This is the preferred method in case you don't want to change the form's
-	 *		content whatsoever, and only want to consistently have content in front of it.
-	 *		If you want to cahnge its content, you should change the $layout_strategy
-	 *	@type $after_form_content_template string like $before_form_template but puts the content afterwards
 	 *	@type $layout_strategy EE_Form_Section_Layout_Base strategy for laying out the form
 	 * } @see EE_Form_Section_Validatable::__construct()
 	 * 
@@ -97,12 +81,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$this->_layout_strategy = new EE_Two_Column_Layout();
 		}
 		$this->_layout_strategy->_construct_finalize($this);
-		if(isset($options_array['before_form_content_template'])){
-			$this->_before_form_template = $options_array['before_form_content_template'];
-		}
-		if(isset($options_array['after_form_content_template'])){
-			$this->_after_form_template = $options_array['after_form_content_template'];
-		}
 		$this->_enqueue_jquery_validate_script();
 	}
 	/**
@@ -279,18 +257,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return string
 	 */
 	public function get_html(){
-		EE_Registry::instance()->load_helper('Template');
-		if($this->_before_form_template){
-			$before_form_content = EEH_Template::locate_template($this->_before_form_template, true, array('form'=>$this), true);
-		}else{
-			$before_form_content = '';
-		}
-		if($this->_after_form_template){
-			$after_form_content = EEH_Template::locate_template($this->_after_form_template, true, array('form'=>$this), true);
-		}else{
-			$after_form_content = '';
-		}
-		return $before_form_content.$this->_layout_strategy->layout_form().$after_form_content;
+		return $this->_layout_strategy->layout_form();
 	}
 	
 	/**
@@ -487,14 +454,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public function add_subsections($subsections,$subsection_name_to_add_before = NULL){
 		foreach($subsections as $subsection_name => $subsection){
-			if( ! $subsection instanceof EE_Form_Section_Validatable){
+			if( ! $subsection instanceof EE_Form_Section_Base){
 				EE_Error::add_error(sprintf(__("Trying to add a %s as a subsection (it was named '%s') to the form section '%s'. It was removed.", "event_espresso"),get_class($subsection),$subsection_name,$this->name()));
 				unset($subsections[$subsection_name]);
 			}
 		}
 		if($subsection_name_to_add_before){
-			$subsections_before = array();
-			foreach($this->_subsections as $subsection_name => $subsection){
+				foreach($this->_subsections as $subsection_name => $subsection){
 				if( $subsection_name == $subsection_name_to_add_before){
 					break;
 				}
