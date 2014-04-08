@@ -6,8 +6,8 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 		foreach( $this->_form_section->subsections() as $name=>$subsection ){
 			if ( $subsection instanceof EE_Form_Input_Base ){
 				$html .= $this->layout_input( $subsection );
-			} elseif ( $subsection instanceof EE_Form_Section_Proper ){
-				$html .= $this->layout_proper_subsection( $subsection );
+			} elseif ( $subsection instanceof EE_Form_Section_Base ){
+				$html .= $this->layout_subsection( $subsection );
 			}
 		}
 		$html .= EEH_Formatter::nl(-1) . '</div>';
@@ -27,7 +27,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 * @param EE_Form_Section_Proper $formsection
 	 */
 
-	public function layout_proper_subsection( $formsection ){
+	public function layout_subsection( $formsection ){
 		return EEH_Formatter::nl(1) . '<div>' . $formsection->get_html_and_js() . EEH_Formatter::nl(-1) . '</div>' . EEH_Formatter::nl(-1);
 	}
 }

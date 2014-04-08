@@ -55,7 +55,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @param EE_Form_Input_Base $input
 	 * @return string html
 	 */
-	abstract function layout_proper_subsection($subsection);
+	abstract function layout_subsection($subsection);
 	
 	/**
 	 * Gets the HTML for the label tag and its contents for the input

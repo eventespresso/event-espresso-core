@@ -14,7 +14,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	/**
 	 * 
 	 * @param array $options_array keys:<ul>
-	 * <li>'extra_meta_inputs' should be EE_Form_Section_Base[] which
+	 * <li>'extra_meta_inputs' should be EE_Form_Section_Validatable[] which
 	 * will be _subsections and will be saved as extra meta on the payment method object;</li>
 	 * <li>and parent's keys</li>
 	 * </ul>

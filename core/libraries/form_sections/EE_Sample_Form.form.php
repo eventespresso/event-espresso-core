@@ -2,6 +2,7 @@
 class EE_Sample_Form extends EE_Form_Section_Proper{
 	function __construct(){
 		$this->_subsections = array(
+			'h1'=>new EE_Form_Section_HTML('hello wordl'),
 			'name'=>new EE_Text_Input(array('required'=>true,'default'=>'your name here')),
 			'email'=>new EE_Email_Input(array('required'=>false)),
 			'shirt_size'=>new EE_Select_Input(array(''=>'Please select...', 's'=>  __("Small", "event_espresso"),'m'=>  __("Medium", "event_espresso"),'l'=>  __("Large", "event_espresso")),'string',array('required'=>true,'default'=>'')),

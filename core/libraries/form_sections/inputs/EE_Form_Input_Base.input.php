@@ -4,7 +4,7 @@
  * For representing a single form input. Extends EE_Form_SEciton_Base because
  * it is a part of a form and shares a suprisingly large amount of functionality
  */
-abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
+abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	
 	/**
 	 * the input's name attribute
@@ -281,7 +281,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Base{
 	 * to the parent form's layotu strategy
 	 * @return string
 	 */
-	public function get_html(){
+	public function get_html_and_js(){
 		return $this->_parent_section->get_html_for_input($this);
 	}
 	/**

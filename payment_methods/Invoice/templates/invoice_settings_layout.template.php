@@ -56,7 +56,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 //		if($subsection instanceof EE_Form_Input_Base){
 //			echo $layout_strategy->layout_input($subsection);
 //		}elseif($subsection instanceof EE_Form_Section_Proper){
-//			echo $layout_strategy->layout_proper_subsection($subsection);
+//			echo $layout_strategy->layout_subsection($subsection);
 //		}
 //	}
 ?></table><?php

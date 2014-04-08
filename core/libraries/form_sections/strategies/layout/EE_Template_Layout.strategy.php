@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * 
  * For very customized layouts, where you provide this class with the location of
  * a template file to use for laying out the form section. Inherits from EE_Div_per_Section
- * in case you call layout_input() or layout_proper_subsection(), or get_html_for_label(), 
+ * in case you call layout_input() or layout_subsection(), or get_html_for_label(), 
  * get_html_for_input(), or get_html_for_errors() on one if the form section's inputs.
  * When would you want to use this instead of just laying out the form's subsections manually
  * in a template file? When you want a very customized layout, but that layout is essential
@@ -67,17 +67,17 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	}
 	/**
 	 * If a subsection_template_file was provided upon construction, uses that to layout the subsection. Otherwise uses parent.
-	 * @see EE_DIv_Per_Section_Layout::layout_proper_subsection() for documentation
+	 * @see EE_DIv_Per_Section_Layout::layout_subsection() for documentation
 	 * @param EE_Form_Input_Base $input
 	 * @return string
 	 */
-	public function layout_proper_subsection($formsection) {
+	public function layout_subsection($formsection) {
 		
 		if($this->_subsection_template_file){
 			EE_Registry::instance()->load_helper('Template');
 			return EEH_Template::locate_template($this->_subsection_template_file, true, array('form'=>$formsection), true);
 		}
-		return parent::layout_proper_subsection($formsection);
+		return parent::layout_subsection($formsection);
 	}
 }
 

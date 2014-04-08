@@ -7,10 +7,10 @@
  * before the hook wp_enqueue_scripts is called (so that the form section can enqueue its needed scripts).
  * However, you may output the form (usually by caling get_html_and_js) anywhere you like.
  */
-class EE_Form_Section_Proper extends EE_Form_Section_Base{
+class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	/**
 	 * Subsections
-	 * @var EE_Form_Section_Base[]
+	 * @var EE_Form_Section_Validatable[]
 	 */
 	protected $_subsections = array();
 	
@@ -45,7 +45,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * when constructing a proper form section, calls _construct_finalize on children
 	 * so that they know who their parent is, and what name they've been given.
 	 * @param array $options_array {
-	 *	@type $subsections EE_Form_Section_Base[] where keys are the section's name
+	 *	@type $subsections EE_Form_Section_Validatable[] where keys are the section's name
 	 *	@type $include string[] numerically-indexed where values are section names to be included,
 	 *		and in that order. This is handy if you want
 	 *		the subsections to be ordered differently than the default, and if you override which fields are shown
@@ -58,7 +58,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 *		If you want to cahnge its content, you should change the $layout_strategy
 	 *	@type $after_form_content_template string like $before_form_template but puts the content afterwards
 	 *	@type $layout_strategy EE_Form_Section_Layout_Base strategy for laying out the form
-	 * } @see EE_Form_Section_Base::__construct()
+	 * } @see EE_Form_Section_Validatable::__construct()
 	 * 
 	 */
 	public function __construct($options_array = array()){
@@ -157,12 +157,25 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		}
 	}
 	/**
-	 * Gets the subsection specified by its name (could be an input or proper subsection)
+	 * Gets the subsection specified by its name
 	 * @param string $name
 	 * @return EE_Form_Section_Base
 	 */
 	public function get_subsection($name){
 		return isset($this->_subsections[$name]) ? $this->_subsections[$name] : NULL;
+	}
+	/**
+	 * Gets all the validatable subsections of this form section
+	 * @return EE_Form_Section_Validatable[]
+	 */
+	public function get_validatable_subsections(){
+		$validatable_subsections = array();
+		foreach($this->_subsections as $name=>$obj){
+			if($obj instanceof EE_Form_Section_Validatable){
+				$validatable_subsections[$name] = $obj;
+			}
+		}
+		return $validatable_subsections;
 	}
 	/**
 	 * Gets an input by the given name. If not found, or if its not an EE_FOrm_Input_Base child,
@@ -214,7 +227,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 			return false;
 		}
 		//ok so no errors general to this entire form section. so let's check the subsections
-		foreach($this->_subsections as $subsection){
+		foreach($this->get_validatable_subsections() as $subsection){
 			if( ! $subsection->is_valid()){
 				return false;
 			}
@@ -359,7 +372,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 */
 	function get_jquery_validation_rules(){
 		$jquery_validation_rules = array();
-		foreach($this->_subsections as $subsection){
+		foreach($this->get_validatable_subsections() as $subsection){
 			$jquery_validation_rules = array_merge($jquery_validation_rules,  $subsection->get_jquery_validation_rules());
 		}
 		return $jquery_validation_rules;
@@ -370,7 +383,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @param array $req_data like $_POST
 	 */
 	protected function _normalize($req_data) {
-		foreach($this->_subsections as $subsection){
+		foreach($this->get_validatable_subsections() as $subsection){
 			$subsection->_normalize($req_data);
 		}
 	}
@@ -382,7 +395,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	 * @param type $req_data
 	 */
 	protected function _validate() {
-		foreach($this->_subsections as $subsection_name => $subsection){
+		foreach($this->get_validatable_subsections() as $subsection_name => $subsection){
 			if(method_exists($this,'_validate_'.$subsection_name)){
 				call_user_func_array(array($this,'_validate_'.$subsection_name), array($subsection));
 			}
@@ -417,7 +430,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 		return $form_sections;
 	}
 	/**
-	 * Gets all the subsections. Consider using inputs() or subforms()
+	 * Gets all the subsections (inputs, proper subsections, or html-only sections).
+	 * Consider using inputs() or subforms()
 	 * if you only want form inputs or proper form sections.
 	 * @return EE_Form_Section[]
 	 */
@@ -466,14 +480,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Base{
 	/**
 	 * Adds the listed subsections to the form section. If $subsection_name_to_add_before is provided,
 	 * adds them all directly before that subsection, otherwise onto the end.
-	 * @param EE_Form_Section_Base[] $subsections where keys are their names
+	 * @param EE_Form_Section_Validatable[] $subsections where keys are their names
 	 * @param string $subsection_name_to_add_before name of the section to add these subsections in front of, or null to add
 	 * at the very end
 	 * @return void
 	 */
 	public function add_subsections($subsections,$subsection_name_to_add_before = NULL){
 		foreach($subsections as $subsection_name => $subsection){
-			if( ! $subsection instanceof EE_Form_Section_Base){
+			if( ! $subsection instanceof EE_Form_Section_Validatable){
 				EE_Error::add_error(sprintf(__("Trying to add a %s as a subsection (it was named '%s') to the form section '%s'. It was removed.", "event_espresso"),get_class($subsection),$subsection_name,$this->name()));
 				unset($subsections[$subsection_name]);
 			}
