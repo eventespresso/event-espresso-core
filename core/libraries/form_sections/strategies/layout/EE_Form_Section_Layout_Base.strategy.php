@@ -14,7 +14,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @var EE_Form_Section_Proper
 	 */
 	protected $_form_section;
-	
+		
 	function __construct(){
 		EE_Registry::instance()->load_helper('Formatter');
 	}
@@ -94,7 +94,7 @@ abstract class EE_Form_Section_Layout_Base{
 	}	
 
 	/**
-	 * Displays the help span for the specified input
+	 * Does an action and hook onto the end of teh form
 	 * @param string $html
 	 * @return string
 	 */
