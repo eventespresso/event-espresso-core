@@ -69,10 +69,8 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 	 * @param EE_Transaction $transaction
 	 */
 	public function finalize_payment_for($transaction) {
-		if($_SERVER['REQUEST_METHOD'] == 'POST'){
-			$most_recent_payment = EEM_Payment::instance()->get_one(array(array('TXN_ID'=>$transaction,'PAY_gateway'=>$this->_gateway_name),'order_by'=>array('PAY_ID'=>'DESC')));
+			$most_recent_payment = EEM_Payment::instance()->get_one(array(array('TXN_ID'=>$transaction->ID(),'PMD_ID'=>$this->_pm_instance->ID()),'order_by'=>array('PAY_ID'=>'DESC')));
 			EE_Registry::instance()->load_core('Payment_Processor')->process_ipn(array('payment'=>$most_recent_payment),$transaction,$this->_pm_instance);
-		}
 	}
 }
 

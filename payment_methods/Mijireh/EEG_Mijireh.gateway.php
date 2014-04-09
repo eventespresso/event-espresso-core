@@ -92,7 +92,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			$response_body = json_decode($response['body']);
 			$payment->set_redirect_url($response_body->checkout_url);
 			$payment->set_txn_id_chq_nmbr($response_body->order_number);
-			$payment->set_details((array)$response_body);
+			$payment->set_details($response['body']);
 		}else{
 			throw new EE_Error(__("No response from Mijireh Gateway", 'event_espresso'));
 		}
