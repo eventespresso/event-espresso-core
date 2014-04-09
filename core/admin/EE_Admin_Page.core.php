@@ -888,7 +888,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * This method just allows the resetting of page properties in the case where a no headers
 	 * route redirects to a headers route in its route config.
 	 *
-	 * @since   4.4.0
+	 * @since   4.3.0
 	 *
 	 * @param  string    $new_route   New (non header) route to redirect to.
 	 * @return   void

@@ -3,7 +3,7 @@
  * This file contains the EE_Newsletter_message_type class.
  * @package      Event Espresso
  * @subpackage helpers
- * @since           4.4.0
+ * @since           4.3.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -15,7 +15,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  messages
- * @since            4.4.0
+ * @since            4.3.0
  * @author          Darren Ethier
  */
 class EE_Newsletter_message_type extends EE_message_type {
@@ -108,7 +108,7 @@ class EE_Newsletter_message_type extends EE_message_type {
      *
      * For the newsletter message type we only have two valid shortcode libraries in use, recipient details and organization.  That's it!
      *
-     * @since   4.4.0
+     * @since   4.3.0
      *
      * @return  void
      */

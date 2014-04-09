@@ -3,7 +3,7 @@
  * This file contains the EE_Newsletter_Shortcodes class.
  * @package      Event Espresso
  * @subpackage helpers
- * @since           4.4.0
+ * @since           4.3.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -14,7 +14,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  * @package        Event Espresso
  * @subpackage  helpers
  *
- * @since            4.4.0
+ * @since            4.3.0
  * @see               EE_Shortcodes for documentation on extended methods.
  * @author          Darren Ethier
  */
@@ -48,7 +48,7 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
      * register_messages_shortcode_library registers this callback with the
      * 'FHEE__EE_messenger__get_validator_config' filter.
      *
-     * @since    4.4.0
+     * @since    4.3.0
      * @param  array                $validator_config  current validator configuration array
      * @param  EE_messenger  $messenger
      * @return  array                                             new validator config.
@@ -75,7 +75,7 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
      * register_messages_shortcode_library registers this callback with the
      * FHEE__EE_messenger__get_template_fields filter.
      *
-     * @since    4.4.0
+     * @since    4.3.0
      *
      * @param  array                $template_fields current template fields setup array.
      * @param  EE_messenger  $messenger

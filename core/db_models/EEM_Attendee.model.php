@@ -50,8 +50,8 @@ class EEM_Attendee extends EEM_CPT_Base {
 	 *		@Constructor
 	 *		@access protected
 	 *		@return void
-	 */	
-	protected function __construct() {	
+	 */
+	protected function __construct() {
 		$this->singular_item = __('Attendee','event_espresso');
 		$this->plural_item = __('Attendees','event_espresso');
 		$this->_tables = array(
@@ -215,7 +215,7 @@ class EEM_Attendee extends EEM_CPT_Base {
              * Takes an incoming array of EE_Registration ids and sends back a list of corresponding non duplicate
              * EE_Attendee objects.
              *
-             * @since    4.4.0
+             * @since    4.3.0
              * @param  array $ids array of EE_Registration ids
              * @return  EE_Attendee[]
              */

@@ -149,7 +149,7 @@ jQuery(document).ready(function($) {
          /**
           * does the ajax to update the form inputs from the given selected_mtp id
           *
-          * @since 4.4.0
+          * @since 4.3.0
           *
           * @param  {int}       selected_mtp id for the message template selected.
           * @return {void}

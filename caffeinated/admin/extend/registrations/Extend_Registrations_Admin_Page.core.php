@@ -240,7 +240,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	/**
 	 * callback for ajax action.
 	 *
-	 * @since 4.4.0
+	 * @since 4.3.0
 	 *
 	 * @return json
 	 */
@@ -296,7 +296,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	/**
 	 * callback for AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons action
 	 *
-	 * @since 4.4.0
+	 * @since 4.3.0
 	 *
 	 * @param EE_Admin_List_Table $list_table
 	 * @return string html string for extra buttons
@@ -357,7 +357,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	/**
 	 * Handles sending selected registrations/contacts a newsletter.
 	 *
-	 * @since  4.4.0
+	 * @since  4.3.0
 	 *
 	 * @return void
 	 */

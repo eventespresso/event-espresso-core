@@ -353,7 +353,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * This will return an array of shortcodes => labels from the messenger and message_type objecst associated with this template.
 	 *
-	 * @since 4.4.0
+	 * @since 4.3.0
 	 * @uses  EEH_MSG_Template::get_shortcodes()
 	 *
 	 * @param string $context what context we're going to return shortcodes for

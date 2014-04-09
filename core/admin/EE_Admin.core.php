@@ -659,8 +659,8 @@ final class EE_Admin {
 	 *
 	 * This method is deprecated in favor of the new location in EEH_Plugin_API.
 	 *
-	 * @since 4.4.0
-	 * @deprecated 4.4.0	Use EEH_Plugin_API() instead
+	 * @since 4.3.0
+	 * @deprecated 4.3.0	Use EEH_Plugin_API() instead
 	 * @see EEH_Plugin_API()
 	 *
 	 * @return void

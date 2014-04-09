@@ -3,7 +3,7 @@
  * This file contains the EEH_Plugin_API helper class.
  * @package      Event Espresso
  * @subpackage helpers
- * @since           4.4.0
+ * @since           4.3.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -20,7 +20,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  helpers
- * @since            4.4.0
+ * @since            4.3.0
  * @author          Darren Ethier
  */
 class EEH_Plugin_API {
@@ -52,7 +52,7 @@ class EEH_Plugin_API {
      * The purpose of this method is to provide an easy way for addons to register their admin pages (
      * using the EE Admin Page loader system).
      *
-     * @since 4.4.0
+     * @since 4.3.0
      *
      * @param  string $page_basename    This string represents the basename of the Admin Page
      *                                                        init.  The init file must use this basename in its name and
@@ -122,7 +122,7 @@ class EEH_Plugin_API {
      * - And of course the main EE_{Message_Type_Name}_message_type class that defines the new
      *      message type and its properties.
      *
-     * @since   4.4.0
+     * @since   4.3.0
      *
      * @param  array  $setup_args  {
      *        An array of arguments provided for registering the message type.
@@ -148,7 +148,7 @@ class EEH_Plugin_API {
     public static function register_new_message_type( $setup_args = array()  ) {
         //make sure this was called in the right place!
         if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
-            EE_Error::doing_it_wrong('EEH_Plugin_API::register_new_message_type', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.4.0' );
+            EE_Error::doing_it_wrong('EEH_Plugin_API::register_new_message_type', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.3.0' );
         }
 
         //required fields MUST be present, so let's make sure they are.
@@ -178,7 +178,7 @@ class EEH_Plugin_API {
     /**
      * callback for FHEE__EE_messages__get_installed__messagetype_files filter.
      *
-     * @since   4.4.0
+     * @since   4.3.0
      *
      * @param  array  $messagetype_files The current array of message type file names
      * @param  array  $type                      This is a string that indicates what type is requested.  It
@@ -205,7 +205,7 @@ class EEH_Plugin_API {
     /**
      * callback for FHEE__EE_Messages_Init__autoload_messages__dir_ref filter.
      *
-     * @since    4.4.0
+     * @since    4.3.0
      *
      * @param array $paths array of paths to be checked by EE_messages autoloader.
      * @return array
@@ -239,7 +239,7 @@ class EEH_Plugin_API {
     /**
      * callback for FHEE__EE_messenger__get_default_message_types__default_types filter.
      *
-     * @since   4.4.0
+     * @since   4.3.0
      *
      *
      * @param  array                $default_types array of message types activated with messenger (
@@ -277,7 +277,7 @@ class EEH_Plugin_API {
      * Note this is not used for adding shortcodes to existing libraries.  It's for registering anything
      * related to registering a new EE_{shortcode_library_name}_Shortcodes.lib.php class.
      *
-     * @since    4.4.0
+     * @since    4.3.0
      *
      * @param  array  $setup_args {
      *       An array of arguments provided for registering the new messages shortcode library.
@@ -309,7 +309,7 @@ class EEH_Plugin_API {
     public static function register_messages_shortcode_library( $name, $setup_args = array() ) {
         //make sure this was called in the right place!
         if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
-            EE_Error::doing_it_wrong('EEH_Plugin_API::register_message_shortcode_library', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.4.0' );
+            EE_Error::doing_it_wrong('EEH_Plugin_API::register_message_shortcode_library', __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), '4.3.0' );
         }
 
         //required fields MUST be present, so let's make sure they are.
@@ -347,7 +347,7 @@ class EEH_Plugin_API {
      * This is the callback for the FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes
      * filter which is used to add additional list type shortcodes.
      *
-     * @since 4.4.0
+     * @since 4.3.0
      *
      * @param  array $original_shortcodes
      * @return  array                                   Modifications to original shortcodes.
