@@ -102,9 +102,9 @@
 	</li>
 
 </ul>
-<h4 class="wp-people-group"><?php _e('Props', 'event_espresso'); ?></h4>
+<h4 class="wp-people-group"><?php _e('Contribtor Recognition', 'event_espresso'); ?></h4>
 <p class="description">
-	<?php printf( __('For every major release we want to recognize the people who contributed to the release via a pull request.  Want to see your name here in lights? %sApply for access to our github repo.%s When you submit a pull request that gets included in a major release we\'ll add your name here linked to your github profile.', 'event_espresso'), '<a href="http://eventespresso.com/developers/request-repo-access/">', '</a>' ); ?>
+	<?php printf( __('For every major release we want to recognize the people who contributed to the release via a Github pull request. Want to see your name listed here? %sApply for access to our github repo.%s When you submit a pull request that gets included in a major release, we\'ll add your name here linked to your github profile.', 'event_espresso'), '<a href="http://eventespresso.com/developers/request-repo-access/">', '</a>' ); ?>
 </p>
 <p class="wp-credits-list">
 	<a href="https://github.com/tareq1988">Tareq Hasan</a>
