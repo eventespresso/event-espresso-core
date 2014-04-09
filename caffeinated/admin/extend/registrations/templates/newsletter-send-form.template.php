@@ -2,7 +2,7 @@
 /**
  * This file is the template for newsletter send form
  *
- * @since 4.4.0
+ * @since 4.3.0
  *
  * @package Event Espresso
  * @subpackage Admin, Messages

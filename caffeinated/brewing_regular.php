@@ -247,7 +247,7 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter( 'FHEE__EE_Datetime_Shortcodes__parser_after', array( $this, 'additional_datetime_parser'), 10, 5 );
 
 		/**
-		 * @since 4.4.0
+		 * @since 4.3.0
 		 */
 		//eat our own dogfood!
 		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_newsletter_message_type' ) );
@@ -537,7 +537,7 @@ class EE_Brewing_Regular extends EE_Base {
 	/**
 	 * Takes care of registering the newsletter message type that is only available in caffeinated EE.
 	 *
-	 * @since   4.4.0
+	 * @since   4.3.0
 	 *
 	 * @return  void
 	 */
@@ -560,7 +560,7 @@ class EE_Brewing_Regular extends EE_Base {
 	/**
 	 * Takes care of registering the newsletter shortcode library and set up related items.
 	 *
-	 * @since   4.4.0
+	 * @since   4.3.0
 	 *
 	 * @return void
 	 */

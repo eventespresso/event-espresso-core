@@ -3,7 +3,7 @@
  * This file contains the EE_Messages_Email_Newsletter_Validator class.
  * @package      Event Espresso
  * @subpackage helpers
- * @since           4.4.0
+ * @since           4.3.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -14,7 +14,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  messages
- * @since            4.4.0
+ * @since            4.3.0
  * @author          Darren Ethier
  */
 class EE_Messages_Email_Newsletter_Validator extends EE_Messages_Validator {

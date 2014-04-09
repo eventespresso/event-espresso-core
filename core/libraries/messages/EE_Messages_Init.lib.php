@@ -325,7 +325,7 @@ class EE_Messages_Init extends EE_Base {
 	/**
 	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send trigger
 	 *
-	 * @since   4.4.0
+	 * @since   4.3.0
 	 *
 	 * @param  EE_Attendee[]  $contacts   an array of EE_Attendee objects
 	 * @param  int      	      $mtp_id     a specific message template group id.

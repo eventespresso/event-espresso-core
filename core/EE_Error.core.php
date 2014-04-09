@@ -105,19 +105,21 @@ class EE_Error extends Exception {
 			$type = EE_Error::error_type( $code );
 			$site = site_url();
 			switch ( $site ) {
-				case 'http://localhost/4.1-DEV' :
-					$to = 'brent@eventespresso.com';
-					break;
-				case 'http://ee.dev' :
-					$to = 'darren@eventespresso.com';
-					break;
-				case 'http://localhost/Wordpress2' :
-					$to = 'michael@eventespresso.com';
+				case 'http://sandbox.eventespresso.com/ee4/' :
+				case 'http://sandbox.eventespresso.com/ee4decaf/' :
+				case 'http://sandbox.eventespresso.com/ee4hf/' :
+				case 'http://sandbox.eventespresso.com/ee4a/' :
+				case 'http://sandbox.eventespresso.com/ee4ad/' :
+				case 'http://sandbox.eventespresso.com/ee4b/' :
+				case 'http://sandbox.eventespresso.com/ee4bd/' :
+				case 'http://sandbox.eventespresso.com/ee4d/' :
+				case 'http://sandbox.eventespresso.com/ee4dd/' :
+					$to = 'developers@eventespresso.com';
 					break;
 				default :
-					$to = 'developers@eventespresso.com';
-			}			
-			$subject = 'Error type ' . $type . ' occured in ' . $ver . ' on ' . $site;
+					$to = get_option( 'admin_email' );
+			}
+			$subject = 'Error type ' . $type . ' occured in ' . $ver . ' on ' . site_url();
 			$msg = EE_Error::_format_error( $type, $message, $file, $line );
 			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
 			wp_mail( $to, $subject, $msg );
