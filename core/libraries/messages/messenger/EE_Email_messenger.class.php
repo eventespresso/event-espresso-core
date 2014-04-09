@@ -115,7 +115,8 @@ class EE_Email_messenger extends EE_messenger  {
 				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list')
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list'),
+				'required' => array('[EVENT_LIST]')
 				),
 			'ticket_list' => array(
 				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'recipient_details'),

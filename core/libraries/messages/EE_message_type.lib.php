@@ -331,7 +331,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		if ( !class_exists( $classname ) ) {
 
 			$msg[] = __('uhoh, Something went wrong and no data handler is found', 'event_espresso');
-			$msg[] = sprintf( __('The %s class has set the "$_data_handler" property but the string included (%s) does not match any existing "EE_Messages_incoming_data" classes (found in "/includes/core/messages/data_class"', 'event_espresso'), __CLASS__, $this->_data_handler );
+			$msg[] = sprintf( __('The %s class has set the "$_data_handler" property but the string included (%s) does not match any existing "EE_Messages_incoming_data" classes (found in "/includes/core/messages/data_class").  Looking for %s.', 'event_espresso'), __CLASS__, $this->_data_handler, $classname );
 			throw new EE_error( implode('||', $msg) );
 		}
 
@@ -350,7 +350,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @return void
 	 */
 	protected function _process_data() {
-		if ( empty( $this->_data->events ) )
+		//at a minimum, we NEED EE_Attendee objects.
+		if ( empty( $this->_data->attendees ) )
 			return TRUE;  //EXIT!
 
 		//process addressees for each context.  Child classes will have to have methods for each context defined to handle the processing of the data object within them
@@ -420,14 +421,16 @@ abstract class EE_message_type extends EE_Messages_Base {
 			}
 		}
 
-		//make sure admin context does not include the recipient_details shortcodes
-		if( ($key = array_search('recipient_details', $this->_valid_shortcodes['admin'] ) ) !== false) {
-			    unset($this->_valid_shortcodes['admin'][$key]);
-			}
-		//make sure admin context does not include the recipient_details shortcodes
-		if( ($key = array_search('recipient_list', $this->_valid_shortcodes['admin'] ) ) !== false) {
-			    unset($this->_valid_shortcodes['admin'][$key]);
-			}
+		//make sure admin context does not include the recipient_details shortcodes IF we have admin context hooked in message types might not have that context.
+		if ( !empty( $this->_valid_shortcodes['admin'] ) ) {
+			if( ($key = array_search('recipient_details', $this->_valid_shortcodes['admin'] ) ) !== false) {
+				    unset($this->_valid_shortcodes['admin'][$key]);
+				}
+			//make sure admin context does not include the recipient_details shortcodes
+			if( ($key = array_search('recipient_list', $this->_valid_shortcodes['admin'] ) ) !== false) {
+				    unset($this->_valid_shortcodes['admin'][$key]);
+				}
+		}
 	}
 
 
@@ -600,6 +603,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 				unset( $template_qa['MTP_is_global'] );
 				$qa = array_merge( $template_qa, $evt_qa );
 				$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $qa ) );
+			}
+
+			//if global template is NOT an override, and there is a 'MTP_ID' in the post global, then we'll assume a specific template has ben requested.
+			if ( !empty( $_POST['MTP_ID'] ) && !$global_mtpg->get('MTP_is_override') ) {
+				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['MTP_ID'] );
 			}
 
 			$mtpg = $mtpg instanceof EE_Message_Template_Group ? $mtpg : $global_mtpg;

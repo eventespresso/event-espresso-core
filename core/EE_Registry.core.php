@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * 
+ *
  * Event Espresso
  *
  * Event Registration and Ticketing Management Plugin for WordPress
@@ -29,7 +29,7 @@ final class EE_Registry {
 	/**
 	* 	EE_Registry Object
 	* 	@var EE_Registry $_instance
-	* 	@access 	private 	
+	* 	@access 	private
 	*/
 	private static $_instance = NULL;
 
@@ -125,23 +125,23 @@ final class EE_Registry {
 	* 	$i18n_js_strings - internationalization for JS strings
 	*  	usage:   EE_Registry::i18n_js_strings['string_key'] = __( 'string to translate.', 'event_espresso' );
 	*  	in js file:  var translatedString = eei18n.string_key;
-	* 	
+	*
 	* 	@access 	public
-	*	@var 	array	
+	*	@var 	array
 	*/
 	public static $i18n_js_strings = array();
 
 	/**
 	* 	$main_file - path to espresso.php
-	* 	
+	*
 	* 	@access 	public
-	*	@var 	array	
+	*	@var 	array
 	*/
 	public $main_file;
-	
+
 	/**
 	 *
-	 * @var type 
+	 * @var type
 	 */
 	public $addons;
 
@@ -153,14 +153,14 @@ final class EE_Registry {
 	 *@singleton method used to instantiate class object
 	 *@access public
 	 *@return EE_Registry instance
-	 */	
+	 */
 	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Registry )) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
-	}	
+	}
 
 
 
@@ -169,7 +169,7 @@ final class EE_Registry {
 	 *@Constructor
 	 *@access private
 	 *@return void
-	 */	
+	 */
 	private function __construct() {
 		$this->load_core( 'Base' );
 		// class library
@@ -198,11 +198,11 @@ final class EE_Registry {
 
 	/**
 	 *	loads core classes - must be singletons
-	 * 
+	 *
 	 * 	@access 	public
 	 *	@param string $class_name - simple class name ie: session
 	 *	@return instantiated class object
-	 */	
+	 */
 	public function load_core ( $class_name, $arguments = array() ) {
 		$paths = array(
 			EE_CORE,
@@ -218,11 +218,11 @@ final class EE_Registry {
 
 	/**
 	 *	loads data_migration_scripts
-	 * 
+	 *
 	 * 	@access 	public
 	 *	@param string $class_name - class name for the DMS ie: EE_DMS_Core_4_2_0
 	 *	@return EE_Data_Migration_Script_Base
-	 */	
+	 */
 	public function load_dms ( $class_name, $arguments = array() ) {
 		// retreive instantiated class
 		return $this->_load( EE_CORE . 'data_migration_scripts' . DS, 'EE_DMS_' , $class_name, 'dms', $arguments, FALSE, FALSE, FALSE );
@@ -234,7 +234,7 @@ final class EE_Registry {
 
 	/**
 	 *	loads object creating classes - must be singletons
-	 * 
+	 *
 	 *	@param string $class_name - simple class name ie: attendee
 	 *	@param array  $arguments - an array of arguments to pass to the class
 	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
@@ -253,12 +253,12 @@ final class EE_Registry {
 
 	/**
 	 *	generic class loader
-	 * 
+	 *
 	 *	@param string $path_to_file - directory path to file location, not including filename
 	 *	@param string $class_name - full class name  ie:  My_Class
 	 *	@param string $type - file type - core? class? helper? model?
 	 *	@return instantiated class object
-	 */	
+	 */
 	public function load_file ( $path_to_file, $class_name, $type = 'class', $arguments = array(), $load_only = TRUE ) {
 		// set path to class file
 		$path_to_file = rtrim( $path_to_file, '/\\' ) . DS;
@@ -273,13 +273,16 @@ final class EE_Registry {
 
 	/**
 	 * 	loads helper classes - must be singletons
-	 * 
+	 *
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
-	 */	
+	 */
 	public function load_helper ( $class_name, $arguments = array(), $load_only = TRUE ) {
+
+		$helper_paths = apply_filters( 'FHEE__EE_Registry__load_helper__helper_paths', array(EE_HELPERS ) );
+
 		// retreive instantiated class
-		return $this->_load( EE_HELPERS, 'EEH_', $class_name, 'helper', $arguments, FALSE, TRUE, $load_only );
+		return $this->_load( $helper_paths, 'EEH_', $class_name, 'helper', $arguments, FALSE, TRUE, $load_only );
 	}
 
 
@@ -287,11 +290,11 @@ final class EE_Registry {
 
 	/**
 	 *	loads core classes - must be singletons
-	 * 
+	 *
 	 * 	@access 	public
 	 *	@param string $class_name - simple class name ie: session
 	 *	@return instantiated class object
-	 */	
+	 */
 	public function load_lib ( $class_name, $arguments = array(), $load_only = FALSE ) {
 		$paths = array(
 			EE_LIBRARIES,
@@ -308,10 +311,10 @@ final class EE_Registry {
 
 	/**
 	 * 	loads model classes - must be singletons
-	 * 
+	 *
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return EEM_Base
-	 */	
+	 */
 	public function load_model ( $class_name, $arguments = array(), $load_only = FALSE ) {
 		// retreive instantiated class
 		return $this->_load( EE_MODELS, 'EEM_' , $class_name, 'model', $arguments, FALSE, TRUE, $load_only );
@@ -321,10 +324,10 @@ final class EE_Registry {
 
 	/**
 	 * 	loads model classes - must be singletons
-	 * 
+	 *
 	 *	@param string $class_name - simple class name ie: price
 	 *	@return instantiated class object
-	 */	
+	 */
 	public function load_model_class ( $class_name, $arguments = array(), $load_only = TRUE ) {
 		$paths = array(
 			EE_MODELS . 'fields' . DS,
@@ -355,15 +358,15 @@ final class EE_Registry {
 
 	/**
 	 *	loads and tracks classes
-	 * 
+	 *
 	 *	@param string $file_path - file path including file name
 	 *	@param string $class_prefix - EE  or EEM or... ???
 	 *	@param string $class_name - $class name
 	 *	@param string $type - file type - core? class? helper? model?
-	 *	@param boolean $arguments - an array of arguments to pass to the class upon instantiation 
+	 *	@param boolean $arguments - an array of arguments to pass to the class upon instantiation
 	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
 	 *	@return instantiated class object
-	 */	
+	 */
 	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
 
 		if ( ! empty( $class_prefix ) && $class_prefix != 'file' ) {
@@ -389,12 +392,12 @@ final class EE_Registry {
 		} else if ( isset ( $this->LIB->$class_name )) {
 			return $this->LIB->$class_name;
 		}
-		
+
 		// assume all paths lead nowhere
 		$path = FALSE;
 		// make sure $file_paths is an array
 		$file_paths = is_array( $file_paths ) ? $file_paths : array( $file_paths );
-		// cycle thru paths 
+		// cycle thru paths
 		foreach ( $file_paths as $key => $file_path ) {
 			// convert all separators to proper DS, if no filepth, then use EE_CLASSES
 			$file_path = $file_path ? str_replace( array( '/', '\\' ), DS, $file_path ) : EE_CLASSES;
@@ -431,9 +434,9 @@ final class EE_Registry {
 				throw new EE_Error(
 					sprintf(
 						__('The %s file %s does not appear to contain the %s Class.','event_espresso'),
-						$type, 
-						$class_name, 
-						$class_name 
+						$type,
+						$class_name,
+						$class_name
 					)
 				);
 			}
@@ -442,7 +445,7 @@ final class EE_Registry {
 			$e->get_error();
 		}
 
-		
+
 		// don't give up! you gotta...
 		try {
 			// create reflection
@@ -463,27 +466,27 @@ final class EE_Registry {
 				$class_obj =  call_user_func_array( array( $class_name, 'instance' ), $arguments );
 			} else if ( $reflector->isInstantiable() ) {
 				$instantiation_mode = 4;
-				$class_obj =  $reflector->newInstance( $arguments );			
+				$class_obj =  $reflector->newInstance( $arguments );
 			} else {
 				// heh ? something's not right !
 				$instantiation_mode = 5;
 			}
-			
+
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
 
-//	echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">$instantiation_mode : ' . $instantiation_mode . '<br/>' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';			
+//	echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">$instantiation_mode : ' . $instantiation_mode . '<br/>' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //	echo '<h4>$from_db : ' . $from_db . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //	echo '<h4>$cache : ' . $cache . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //	echo '<h4>$load_only : ' . $load_only . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //	printr( $arguments, '$arguments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //	printr( $class_obj, '$class_obj  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
-		
-		if ( isset( $class_obj )) {			
+
+		if ( isset( $class_obj )) {
 			// return newly instantiated class
-			if ( isset( $class_abbreviations[ $class_name ] )) {		
+			if ( isset( $class_abbreviations[ $class_name ] )) {
 				$this->$class_abbreviations[ $class_name ] = $class_obj;
 			} else if ( EEH_Class_Tools::has_property( $this, $class_name )) {
 				$this->{$class_name} = $class_obj;
@@ -492,7 +495,7 @@ final class EE_Registry {
 			}
 			return $class_obj;
 		}
-			
+
 	}
 
 
@@ -520,10 +523,10 @@ final class EE_Registry {
 
 	public function addons(){
 		foreach($this->modules as $module){
-			
+
 		}
 	}
- 
+
 }
 // End of file EE_Registry.core.php
 // Location: ./core/EE_Registry.core.php
