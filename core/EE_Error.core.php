@@ -103,7 +103,22 @@ class EE_Error extends Exception {
 		$ver = espresso_version();
 		if ( strpos( $ver, 'dev' ) || strpos( $ver, 'alpha' ) || strpos( $ver, 'beta' ) || strpos( $ver, 'hotfix' )) {
 			$type = EE_Error::error_type( $code );
-			$to = get_option( 'admin_email' );	
+			$site = site_url();
+			switch ( $site ) {
+				case 'http://sandbox.eventespresso.com/ee4/' :
+				case 'http://sandbox.eventespresso.com/ee4decaf/' :
+				case 'http://sandbox.eventespresso.com/ee4hf/' :
+				case 'http://sandbox.eventespresso.com/ee4a/' :
+				case 'http://sandbox.eventespresso.com/ee4ad/' :
+				case 'http://sandbox.eventespresso.com/ee4b/' :
+				case 'http://sandbox.eventespresso.com/ee4bd/' :
+				case 'http://sandbox.eventespresso.com/ee4d/' :
+				case 'http://sandbox.eventespresso.com/ee4dd/' :
+					$to = 'developers@eventespresso.com';
+					break;
+				default :
+					$to = get_option( 'admin_email' );
+			}
 			$subject = 'Error type ' . $type . ' occured in ' . $ver . ' on ' . site_url();
 			$msg = EE_Error::_format_error( $type, $message, $file, $line );
 			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
