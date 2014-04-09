@@ -211,9 +211,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		wp_register_script( 'thank_you_page', THANK_YOU_ASSETS_URL . 'thank_you_page.js', array( 'espresso_core', 'heartbeat' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'thank_you_page' );
 		EE_Registry::$i18n_js_strings['reg_url_link'] = $this->_reg_url_link;
-		EE_Registry::$i18n_js_strings['server_time'] = current_time('timestamp');
+		EE_Registry::$i18n_js_strings['initial_access'] = current_time('timestamp');
 		EE_Registry::$i18n_js_strings['IPN_wait_time'] = EES_Espresso_Thank_You::IPN_wait_time;
 		EE_Registry::$i18n_js_strings['TXN_complete'] = EEM_Transaction::complete_status_code;
+		EE_Registry::$i18n_js_strings['checking_for_new_payments'] = __( 'checking for new payments...', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['loading_payment_info'] = __( 'loading payment information...', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['slow_IPN'] = apply_filters( 
 			'EES_Espresso_Thank_You__load_js__slow_IPN',
@@ -400,7 +401,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	private function _update_server_wait_time( $thank_you_page_data = array() ) {
 		$response['espresso_thank_you_page'] = array (
-			'still_waiting' => isset( $thank_you_page_data['server_time'] ) ? current_time('timestamp') - $thank_you_page_data['server_time'] : 0,
+			'still_waiting' => isset( $thank_you_page_data['initial_access'] ) ? current_time('timestamp') - $thank_you_page_data['initial_access'] : 0,
 			'txn_status' => $this->_current_txn->status_ID()
 		);
 		return $response;	
@@ -441,14 +442,15 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
 		<div id="espresso-thank-you-page-ajax-payment-dv"></div>
 		<div id="espresso-thank-you-page-ajax-loading-dv">
-			<div id="ee-ajax-loading-pg" class="left lt-blue-text">
+			<div id="ee-ajax-loading-dv" class="left lt-blue-text">
 				<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e( 'loading transaction and payment information...', 'event_espresso' );?></span>
 			</div>
-			<p class="highlight-bg small-text clear">
+			<p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
 				<?php echo apply_filters( 'EES_Espresso_Thank_You__get_ajax_content__waiting_for_IPN_msg', __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' ));?><br/>
 				<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' );?><span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
 			</p>
-		</div>		
+		</div>
+		<div class="clear"></div>	
 	</div>
 <?php
 	}
