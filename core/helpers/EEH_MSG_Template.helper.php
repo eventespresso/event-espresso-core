@@ -147,7 +147,7 @@ class EEH_MSG_Template {
 	 * messenger and message_type objects associated with this
 	 * template.
 	 *
-	 * @since 4.4.0
+	 * @since 4.3.0
 	 *
 	 * @param string $message_type
 	 * @param string $messenger
@@ -261,7 +261,7 @@ class EEH_MSG_Template {
 	/**
 	 * Get Messenger object.
 	 *
-	 * @since 4.4.0
+	 * @since 4.3.0
 	 *
 	 * @param string $messenger messenger slug for the messenger object we want to retrieve.
 	 * @return EE_messenger
@@ -287,7 +287,7 @@ class EEH_MSG_Template {
 	/**
 	 * get Message type object
 	 *
-	 * @since 4.4.0
+	 * @since 4.3.0
 	 *
 	 * @param string  $message_type  the slug for the message type object to retrieve
 	 * @return EE_message_type
@@ -315,7 +315,7 @@ class EEH_MSG_Template {
 	/**
 	 * Given a message_type slug, will return whether that message type is active in the system or not.
 	 *
-	 * @since    4.4.0
+	 * @since    4.3.0
 	 * @param  string   $message_type message type to check for.
 	 * @return boolean
 	 */
@@ -331,7 +331,7 @@ class EEH_MSG_Template {
 	/**
 	 * Given a messenger slug, will return whether that messenger is active in the system or not.
 	 *
-	 * @since    4.4.0
+	 * @since    4.3.0
 	 *
 	 * @param  string  $messenger slug for messenger to check.
 	 * @return boolean

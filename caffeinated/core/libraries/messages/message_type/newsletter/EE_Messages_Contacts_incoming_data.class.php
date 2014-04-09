@@ -3,7 +3,7 @@
  * This file contains the EE_Messages_Contacts_incoming_data class.
  * @package      Event Espresso
  * @subpackage helpers
- * @since           4.4.0
+ * @since           4.3.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -13,7 +13,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  messages
- * @since            4.4.0
+ * @since            4.3.0
  * @author          Darren Ethier
  */
 class EE_Messages_Contacts_incoming_data extends EE_messages_incoming_data {
@@ -22,7 +22,7 @@ class EE_Messages_Contacts_incoming_data extends EE_messages_incoming_data {
     /**
      * Constructor.
      *
-     * @since    4.4.0
+     * @since    4.3.0
      * @param  EE_Attendee[]     $data expecting an array of EE_Attendee objects.
      * @access protected
      */
@@ -43,7 +43,7 @@ class EE_Messages_Contacts_incoming_data extends EE_messages_incoming_data {
      *
      * Sets up the expected data object for the messages prep using incoming registration objects.
      *
-     * @since   4.4.0
+     * @since   4.3.0
      *
      * @return void
      * @access protected
