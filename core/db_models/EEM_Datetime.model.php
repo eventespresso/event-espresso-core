@@ -37,7 +37,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
-		$this->singlular_item = __('Datetime','event_espresso');
+		$this->singular_item = __('Datetime','event_espresso');
 		$this->plural_item = __('Datetimes','event_espresso');		
 
 		$this->_tables = array(

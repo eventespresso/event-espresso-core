@@ -193,7 +193,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'order' => 10
 				),
 				'list_table' => 'Events_Admin_List_Table',
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'events_overview_help_tab' => array(
 						'title' => __('Events Overview', 'event_espresso'),
 						'filename' => 'events_overview'
@@ -244,7 +244,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
-					'event_editor_event_datetimes_help_tab' => array(
+					'event_date_info' => array(
 						'title' => __('Event Datetimes', 'event_espresso'),
 						'filename' => 'event_editor_event_datetimes'
 					),
@@ -300,7 +300,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
-					'event_editor_event_datetimes_help_tab' => array(
+					'event_date_info' => array(
 						'title' => __('Event Datetimes', 'event_espresso'),
 						'filename' => 'event_editor_event_datetimes'
 					),
@@ -344,7 +344,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'labels' => array(
 					'publishbox' => __('Update Settings', 'event_espresso')
 				),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'default_settings_help_tab' => array(
 						'title' => __('Default Event Settings', 'event_espresso'),
 						'filename' => 'events_default_settings'
@@ -369,7 +369,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'events_add_category'
 						)
 					),
-                'help_tour' => array('Event_Add_Category_Help_Tour'),
+			'help_tour' => array('Event_Add_Category_Help_Tour'),
 				'metaboxes' => array('_publish_post_box'),
 				'require_nonce' => FALSE
 				),
@@ -386,17 +386,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'events_edit_category'
 						)
 					),
-                'help_tour' => array('Event_Edit_Category_Help_Tour'),
-				'metaboxes' => array('_publish_post_box'),
-				'require_nonce' => FALSE
-				),
+				'help_tour' => array('Event_Edit_Category_Help_Tour'),
+					'metaboxes' => array('_publish_post_box'),
+					'require_nonce' => FALSE
+					),
 			'category_list' => array(
 				'nav' => array(
 					'label' => __('Categories', 'event_espresso'),
 					'order' => 20
 					),
 				'list_table' => 'Event_Categories_Admin_List_Table',
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'events_categories_help_tab' => array(
 						'title' => __('Event Categories', 'event_espresso'),
 						'filename' => 'events_categories'
@@ -413,7 +413,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Event Categories Other', 'event_espresso'),
 						'filename' => 'events_categories_other'
 					)
-                ),
+				),
 				'help_tour' => array(
 					'Event_Categories_Help_Tour'
 					),

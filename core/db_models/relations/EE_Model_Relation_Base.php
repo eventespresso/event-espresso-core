@@ -266,7 +266,13 @@ abstract class EE_Model_Relation_Base{
 		if($this->_blocking_delete_error_message){
 			return $this->_blocking_delete_error_message;
 		}else{
-			return sprintf(__('Cannot delete %1$s when there are related %2$s', "event_espresso"),$this->get_this_model()->item_name(2),$this->get_other_model()->item_name(2));
+//			return sprintf(__('Cannot delete %1$s when there are related %2$s', "event_espresso"),$this->get_this_model()->item_name(2),$this->get_other_model()->item_name(2));
+			return sprintf(
+				__( 'This %1$s is currently linked to one or more %2$s records. If this %1$s is incorrect, then please remove it from all %3$s before attempting to delete it.', "event_espresso"),
+				$this->get_this_model()->item_name(1),
+				$this->get_other_model()->item_name(1),
+				$this->get_other_model()->item_name(2)
+			);
 		}
 		
 	}

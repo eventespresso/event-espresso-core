@@ -21,6 +21,8 @@
  *
  * ------------------------------------------------------------------------
  */
+set_error_handler( array( 'EE_Error', 'error_handler' ));
+register_shutdown_function( array( 'EE_Error', 'fatal_error_handler' ));
 class EE_Error extends Exception {
 
 
@@ -91,6 +93,123 @@ class EE_Error extends Exception {
 	}
 
 
+
+	/**
+	*	error_handler
+	*	@access public
+	*	@return void
+	*/
+	public static function error_handler( $code, $message, $file, $line ) {
+		$ver = espresso_version();
+		if ( strpos( $ver, 'dev' ) || strpos( $ver, 'alpha' ) || strpos( $ver, 'beta' ) || strpos( $ver, 'hotfix' )) {
+			$type = EE_Error::error_type( $code );
+			$site = site_url();
+			switch ( $site ) {
+				case 'http://localhost/4.1-DEV' :
+					$to = 'brent@eventespresso.com';
+					break;
+				case 'http://ee.dev' :
+					$to = 'darren@eventespresso.com';
+					break;
+				case 'http://localhost/Wordpress2' :
+					$to = 'michael@eventespresso.com';
+					break;
+				default :
+					$to = 'developers@eventespresso.com';
+			}			
+			$subject = 'Error type ' . $type . ' occured in ' . $ver . ' on ' . $site;
+			$msg = EE_Error::_format_error( $type, $message, $file, $line );
+			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
+			wp_mail( $to, $subject, $msg );
+		}
+	}
+
+
+
+	/**
+	*	error_type
+	* 	http://www.php.net/manual/en/errorfunc.constants.php#109430
+	*	@access public
+	*	@return void
+	*/
+	public static function error_type( $code ) { 
+		switch( $code ) { 
+			case E_ERROR: // 1 // 
+			return 'E_ERROR'; 
+			case E_WARNING: // 2 // 
+			return 'E_WARNING'; 
+			case E_PARSE: // 4 // 
+			return 'E_PARSE'; 
+			case E_NOTICE: // 8 // 
+			return 'E_NOTICE'; 
+			case E_CORE_ERROR: // 16 // 
+			return 'E_CORE_ERROR'; 
+			case E_CORE_WARNING: // 32 // 
+			return 'E_CORE_WARNING'; 
+			case E_CORE_ERROR: // 64 // 
+			return 'E_COMPILE_ERROR'; 
+			case E_CORE_WARNING: // 128 // 
+			return 'E_COMPILE_WARNING'; 
+			case E_USER_ERROR: // 256 // 
+			return 'E_USER_ERROR'; 
+			case E_USER_WARNING: // 512 // 
+			return 'E_USER_WARNING'; 
+			case E_USER_NOTICE: // 1024 // 
+			return 'E_USER_NOTICE'; 
+			case E_STRICT: // 2048 // 
+			return 'E_STRICT'; 
+			case E_RECOVERABLE_ERROR: // 4096 // 
+			return 'E_RECOVERABLE_ERROR'; 
+			case E_DEPRECATED: // 8192 // 
+			return 'E_DEPRECATED'; 
+			case E_USER_DEPRECATED: // 16384 // 
+			return 'E_USER_DEPRECATED'; 
+		} 
+		return ""; 
+	}
+
+
+
+	/**
+	*	fatal_error_handler
+	*	@access public
+	*	@return void
+	*/
+	public static function fatal_error_handler() {
+		$last_error = error_get_last();
+		if ( $last_error['type'] === E_ERROR ) {
+			EE_Error::error_handler( E_ERROR, $last_error['message'], $last_error['file'], $last_error['line'] );
+		}
+	}
+
+
+
+	/**
+	*	_format_error
+	*	@access private
+	*	@return string
+	*/
+	private static function _format_error( $code, $message, $file, $line ) {
+		$html  = "<table cellpadding='10'><thead bgcolor='#f8f8f8'><th>Item</th><th align='left'>Details</th></thead><tbody>";
+		$html .= "<tr valign='top'><td><b>Code</b></td><td>$code</td></tr>";
+		$html .= "<tr valign='top'><td><b>Error</b></td><td>$message</td></tr>";
+		$html .= "<tr valign='top'><td><b>File</b></td><td>$file</td></tr>";
+		$html .= "<tr valign='top'><td><b>Line</b></td><td>$line</td></tr>";
+		$html .= "</tbody></table>";
+		return $html;
+	}
+
+
+
+
+	/**
+	*	set_content_type
+	*	@access public
+	*	@return string
+	*/
+	public static function set_content_type( $content_type ) {
+		return 'text/html';
+	}
 
 
 

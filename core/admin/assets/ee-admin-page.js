@@ -133,7 +133,9 @@ jQuery(document).ready(function($) {
 
 
 	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
-			
+		
+		console.log( response );
+
 		$('#espresso-ajax-loading').fadeOut('fast');
 		if (( typeof(response.success) !== 'undefined' && response.success !== '' ) || ( typeof(response.errors) !== 'undefined' && response.errors !== '' )) {
 
@@ -162,16 +164,16 @@ jQuery(document).ready(function($) {
 			// set message content
 			$(existing_message).html(msg);
 			//  change location in the DOM if so desired
-			if ( typeof(beforeWhat) !== 'undefined' ) {
+			if ( typeof(beforeWhat) !== 'undefined' && beforeWhat !== '' ) {
 				var moved_message = $(existing_message);
 				$(existing_message).remove();
 				$( beforeWhat ).before( moved_message );
 			}
 			// and display it
 			if ( fadeaway === true ) {
-				$('#message').removeClass('hidden').show().delay(8000).fadeOut();
+				$('#message').removeAttr('style').removeClass('hidden').show().delay(8000).fadeOut();
 			} else {
-				$('#message').removeClass('hidden').show();
+				$('#message').removeAttr('style').removeClass('hidden').show();
 			}
 
 		}
