@@ -103,21 +103,8 @@ class EE_Error extends Exception {
 		$ver = espresso_version();
 		if ( strpos( $ver, 'dev' ) || strpos( $ver, 'alpha' ) || strpos( $ver, 'beta' ) || strpos( $ver, 'hotfix' )) {
 			$type = EE_Error::error_type( $code );
-			$site = site_url();
-			switch ( $site ) {
-				case 'http://localhost/4.1-DEV' :
-					$to = 'brent@eventespresso.com';
-					break;
-				case 'http://ee.dev' :
-					$to = 'darren@eventespresso.com';
-					break;
-				case 'http://localhost/Wordpress2' :
-					$to = 'michael@eventespresso.com';
-					break;
-				default :
-					$to = 'developers@eventespresso.com';
-			}			
-			$subject = 'Error type ' . $type . ' occured in ' . $ver . ' on ' . $site;
+			$to = get_option( 'admin_email' );	
+			$subject = 'Error type ' . $type . ' occured in ' . $ver . ' on ' . site_url();
 			$msg = EE_Error::_format_error( $type, $message, $file, $line );
 			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
 			wp_mail( $to, $subject, $msg );
