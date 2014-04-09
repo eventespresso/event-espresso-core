@@ -48,7 +48,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 			);
 		$this->_metaboxes = array(
 			0 => array(
-				'page_route' => array('edit','create_event'),
+				'page_route' => array('edit','create_new'),
 				'func' => 'messages_metabox',
 				'label' => __('Notifications', 'event_espresso'),
 				'priority' => 'high'
@@ -68,8 +68,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 					)
 				),
 			'enqueues' => array(
-				'events_msg_admin' => array('edit'),
-				'events_msg_admin_css' => array('edit')
+				'events_msg_admin' => array('edit', 'create_new'),
+				'events_msg_admin_css' => array('edit', 'create_new')
 				)
 			); /**/
 	}
@@ -113,44 +113,36 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
 		$this->_req_data['EVT_ID'] = empty($this->_req_data['EVT_ID'] ) && isset($this->_req_data['evt_id'] ) ? $this->_req_data['evt_id'] : $this->_req_data['EVT_ID'];
 
-		//set flag for whether we are adding or editing an event.
-		$add_event = empty($this->_req_data['EVT_ID']) ? TRUE : FALSE;
 
-		if ( !$add_event ) {
+		$EEM_controller = new EE_messages;
+		$active_messengers = $EEM_controller->get_active_messengers();
+		$tabs = array();
 
-			$EEM_controller = new EE_messages;
-			$active_messengers = $EEM_controller->get_active_messengers();
-			$tabs = array();
+		//empty messengers?
+		//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
+		if ( empty( $active_messengers ) ) {
+			$msg_activate_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'activate', 'activate_view' => 'messengers'), EE_MSG_ADMIN_URL );
+			$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
+			$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
+			$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
 
-			//empty messengers?
-			//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
-			if ( empty( $active_messengers ) ) {
-				$msg_activate_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'activate', 'activate_view' => 'messengers'), EE_MSG_ADMIN_URL );
-				$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
-				$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
-				$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
+			echo $error_content;
+			echo $internal_content;
+			return;
+		}
 
-				echo $error_content;
-				echo $internal_content;
-				return;
-			}
-
-
-			//get content for active messengers
-			foreach ( $active_messengers as $name => $messenger ) {
-				$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
-				$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
-			}
+		$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
+		//get content for active messengers
+		foreach ( $active_messengers as $name => $messenger ) {
+			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
+		}
 
 
-			EE_Registry::instance()->load_helper( 'Tabbed_Content' );
-			//we want this to be tabbed content so let's use the EEH_Tabbed_Content::display helper.
-			$tabbed_content = EEH_Tabbed_Content::display($tabs);
-			if ( is_wp_error($tabbed_content) ) {
-				$tabbed_content = $tabbed_content->get_error_message();
-			}
-		} else {
-			$tabbed_content = '<p>' . __( 'You will see notifications options after you add the initial details for your event and save it', 'event_espresso' ) . '</p>';
+		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
+		//we want this to be tabbed content so let's use the EEH_Tabbed_Content::display helper.
+		$tabbed_content = EEH_Tabbed_Content::display($tabs);
+		if ( is_wp_error($tabbed_content) ) {
+			$tabbed_content = $tabbed_content->get_error_message();
 		}
 
 		$notices = '<div id="espresso-ajax-loading" class="ajax-loader-grey">
@@ -186,6 +178,11 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 		$this->_page_object->set_hook_object( $this );
 
 		$this->_page_object->add_message_template( $this->_req_data['messageType'], $this->_req_data['messenger'], $this->_req_data['group_ID'] );
+	}
+
+
+	public function create_new_admin_footer() {
+		$this->edit_admin_footer();
 	}
 
 
