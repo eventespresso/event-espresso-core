@@ -46,7 +46,7 @@ class EEM_Term_Taxonomy extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Term Taxonomy','event_espresso');
+		$this->singular_item = __('Term Taxonomy','event_espresso');
 		$this->plural_item = __('Term Taxonomy','event_espresso');
 		$this->_tables = array(
 			'Term_Taxonomy'=> new EE_Primary_Table('term_taxonomy', 'term_taxonomy_id')
