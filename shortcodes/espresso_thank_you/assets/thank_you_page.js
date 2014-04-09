@@ -9,16 +9,14 @@
 		// JSON array  of data to be sent to the server when polling
 		return : { 
 			'reg_url_link' : eei18n.reg_url_link, 
-			'server_time' : eei18n.server_time, 
+			'initial_access' : eei18n.initial_access, 
 			'txn_status' : this.prev_txn_status,
 			'get_payments_since' : 0
 		},
 		// ajax loading animation
 		spinner : '',
-		// success message array
-		success_msgs : [],
-		// error message array
-		error_msgs : [],
+		// polling_time
+		polling_time : 5,
 
 		
 		/**
@@ -37,7 +35,7 @@
 			this.console_log( 'display_spinner' );
 			this.spinner = $('#espresso-ajax-loading');
 		 	$('#espresso-ajax-loading').remove();
-			$('#ee-ajax-loading-pg').after( this.spinner );
+			$('#ee-ajax-loading-dv').after( this.spinner );
 			$( this.spinner ).css({ 'position' : 'relative', 'top' : '-5px', 'left' : 0, 'margin-left' : '.5em', 'font-size' : '18px', 'float' : 'left' }).show();
 		},
 
@@ -49,7 +47,7 @@
 			// Show debug info ?
 			wp.heartbeat.debug = eei18n.wp_debug == 1 ? true : false;
 			// set initial beat to fast
-			wp.heartbeat.interval( 'fast' );
+			wp.heartbeat.interval( this.polling_time );
 			wp.heartbeat.enqueue( 'espresso_thank_you_page', this.return, false );
 		},
 
@@ -111,7 +109,7 @@
 		process_server_data : function() {
 			this.console_log( 'process_server_data' );
 			// received new payments AND updated transaction ?
-			if ( typeof this.data.transaction_details !== 'undefined' && typeof this.data.new_payments !== 'undefined' ) {
+			if ( typeof this.data.new_payments !== 'undefined' ) {
 				this.update_transaction_details();
 				this.display_new_payments();
 				this.start_stop_heartbeat();
@@ -130,9 +128,6 @@
 			} else if ( typeof this.data.payment_details !== 'undefined' ) {
 				this.display_payment_details();
 				this.hide_loading_message();
-				this.start_stop_heartbeat();
-			} else if ( typeof this.data.new_payments !== 'undefined' ) {
-				this.display_new_payments();
 				this.start_stop_heartbeat();
 			} else {
 				this.start_stop_heartbeat();
@@ -163,7 +158,7 @@
 		*	update_transaction_details
 		*/
 		update_transaction_details : function() {
-			this.console_log( 'display_transaction_details' );
+			this.console_log( 'update_transaction_details' );
 			$('#espresso-thank-you-page-ajax-transaction-dv').html( this.data.transaction_details );
 			// has the TXN status changed ?
 			if ( this.return.txn_status != this.prev_txn_status ) {
@@ -204,6 +199,17 @@
 		},
 
 		/**
+		*	checking_for_new_payments_message
+		*/
+		checking_for_new_payments_message : function() {
+			this.console_log( 'checking_for_new_payments_message' );
+			$('#ee-ajax-loading-pg').hide();
+			$('#ee-ajax-loading-msg-spn').html( eei18n.checking_for_new_payments );
+			$('#espresso-ajax-loading').css({ 'font-size' : '12px', 'top' : 0 });
+			$('#espresso-thank-you-page-ajax-loading-dv').hide(0).addClass('small-text').delay( ( this.polling_time - 1 ) * 1000 ).show(0);
+		},
+
+		/**
 		*	set_wait_time
 		*/
 		set_wait_time : function() { 
@@ -229,6 +235,7 @@
 				this.stop_heartbeat();
 			} else {
 				this.restart_heartbeat();
+				this.checking_for_new_payments_message();
 			}
 		},
 
