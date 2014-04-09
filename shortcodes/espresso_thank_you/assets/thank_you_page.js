@@ -204,8 +204,10 @@
 		checking_for_new_payments_message : function() {
 			this.console_log( 'checking_for_new_payments_message' );
 			$('#ee-ajax-loading-pg').hide();
+			$('#ee-ajax-loading-dv').removeClass('lt-blue-text').addClass('lt-grey-text');
+//			var since = new Date( null, null, null, null, null, this.data.get_payments_since ).toTimeString();   + ' ' + since
 			$('#ee-ajax-loading-msg-spn').html( eei18n.checking_for_new_payments );
-			$('#espresso-ajax-loading').css({ 'font-size' : '12px', 'top' : 0 });
+			$('#espresso-ajax-loading').css({ 'font-size' : '12px', 'top' : 0 }).addClass('lt-grey-text');
 			$('#espresso-thank-you-page-ajax-loading-dv').hide(0).addClass('small-text').delay( ( this.polling_time - 1 ) * 1000 ).show(0);
 		},
 
@@ -233,6 +235,7 @@
 			this.console_log( 'start_stop_heartbeat' );
 			if ( this.return.txn_status === eei18n.TXN_complete ) {
 				this.stop_heartbeat();
+				this.hide_loading_message();
 			} else {
 				this.restart_heartbeat();
 				this.checking_for_new_payments_message();
