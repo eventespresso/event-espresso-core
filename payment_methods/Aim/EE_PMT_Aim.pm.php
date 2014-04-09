@@ -44,7 +44,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 					'required'=>true
 				)),
 				'exp_year'=>new EE_Year_Input(),
-				'ccv'=>new EE_Text_Input(),
+				'cvv'=>new EE_Text_Input(),
 			)
 		));
 		return $form;
