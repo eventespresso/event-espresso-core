@@ -282,11 +282,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$custom_templates = array();
 		$selector_rows = '';
 
-
 		//we don't need message types here so we're just going to ignore. we do, however, expect the event id here. The event id is needed to provide a link to setup a custom template for this event.
 		$event_id = isset( $extra['event'] ) ? $extra['event'] : NULL;
-		if ( empty( $event_id) )
-			throw new EE_Error( sprintf( __('In order to setup the messages templates switcher the event id must be available.  Here is what was sent with the <code>$extra</code> array:<br />', 'event_espresso'), print_r($extra, TRUE) ) );
 
 		$template_wrapper_path = EE_LIBRARIES . 'messages/messenger/admin_templates/event_switcher_wrapper.template.php';
 		$template_row_path = EE_LIBRARIES . 'messages/messenger/admin_templates/event_switcher_row.template.php';
@@ -294,9 +291,15 @@ abstract class EE_messenger extends EE_Messages_Base {
 		//array of template objects for global and custom (non-trashed) (but remember just for this messenger!)
 		$global_templates = EEM_Message_Template_Group::instance()->get_all( array( array('MTP_messenger' => $this->name, 'MTP_is_global' => TRUE, 'MTP_is_active' => TRUE ) ) );
 		$templates_for_event = EEM_Message_Template_Group::instance()->get_all_custom_templates_by_event( $event_id, array( 'MTP_messenger' => $this->name, 'MTP_is_active' => TRUE ) );
+		$templates_for_event = !empty( $templates_for_event ) ? $templates_for_event : array();
 
 		//so we need to setup the rows for the selectors and we use the global mtpgs (cause those will the active message template groups)
 		foreach ( $global_templates as $mtpgID => $mtpg ) {
+			//verify this message type is supposed to show on this page
+			$mtp_obj = $mtpg->message_type_obj();
+			$mtp_obj->admin_registered_pages = (array) $mtp_obj->admin_registered_pages;
+			if ( ! in_array( 'events_edit', $mtp_obj->admin_registered_pages ) )
+				continue;
 			$stargs = array();
 			$default_value = '';
 			$select_values = array();
@@ -321,7 +324,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 			$edit_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'edit_message_template', 'id' => $default_value), admin_url('admin.php') );
 			$create_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'add_new_message_template', 'GRP_ID' => $default_value ) );
 
-			$st_args['mt_name'] = ucwords( $mtpg->message_type_obj()->label['singular'] );
+			$st_args['mt_name'] = ucwords( $mtp_obj->label['singular'] );
 			$st_args['mt_slug'] = $mtpg->message_type();
 			$st_args['messenger_slug'] = $this->name;
 			$st_args['selector'] = EEH_Form_Fields::select_input( 'event_message_templates_relation[' . $mtpgID . ']', $select_values, $default_value, 'data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '"', 'message-template-selector' );
