@@ -314,7 +314,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public static function thank_you_page_IPN_monitor( $response, $data, $screen_id ) {
 		// does this heartbeat contain our data ?
-		if ( isset( $data['espresso_thank_you_page'] ) && isset( $data['espresso_thank_you_page']['reg_url_link'] )) {
+		if ( isset( $data['espresso_thank_you_page'] )) {
 			// check for reg_url_link in the incoming heartbeat data
 			if ( ! isset( $data['espresso_thank_you_page']['reg_url_link'] )) {
 				$response['espresso_thank_you_page'] = array (
@@ -369,8 +369,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			// TXN is happening so let's get the payments now
 			// if we've already gotten payments then the heartbeat daya will contain the timestamp of the last time we checked
 			$since = isset( $data['espresso_thank_you_page']['get_payments_since'] ) ? $data['espresso_thank_you_page']['get_payments_since'] : 0;
-			// reset time since last check for payments 
-			$response['espresso_thank_you_page']['get_payments_since'] = current_time('timestamp');
 			// then check for payments
 			$payments = $espresso_thank_you_page->get_txn_payments( $since );
 			// has a payment been processed ?
@@ -384,6 +382,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				} else {
 					$response['espresso_thank_you_page']['payment_details'] = $espresso_thank_you_page->get_payment_details( $payments );
 				}
+				// reset time to check for payments
+				$response['espresso_thank_you_page']['get_payments_since'] = current_time('timestamp');
+			} else {
+				$response['espresso_thank_you_page']['get_payments_since'] = $since;
 			}
 			
 		}
