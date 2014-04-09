@@ -223,7 +223,9 @@ class EE_Payment_Processor{
 	public function finalize_payment_for($transaction){
 		$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
 		$last_payment_method = $transaction->payment_method();
-		$last_payment_method->type_obj()->finalize_payment_for($transaction);
+		if ( $last_payment_method instanceof EE_Payment_Method ) {
+			$last_payment_method->type_obj()->finalize_payment_for($transaction);
+		}
 	}
 	/**
 	 * 
