@@ -32,6 +32,19 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 		$this->_gateway = new EEG_Mijireh();
 		parent::__construct($pm_instance);
 	}
+	/**	
+	 * Adds the help tab
+	 * @see EE_PMT_Base::help_tabs_config()
+	 * @return array 
+	 */
+	public function help_tabs_config(){
+		return array(
+			self::help_tab_name => array(
+						'title' => __('Mijireh Settings', 'event_espresso'),
+						'filename' => 'payment_methods_overview_mijireh'
+						),
+		);
+	}
 	public function generate_new_settings_form() {
 		$form = new EE_Payment_Method_Form(array(
 			'name'=>'Mijireh_Form',
