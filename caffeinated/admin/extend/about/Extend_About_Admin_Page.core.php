@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Extend_About_Admin_Page
  *
- * This contains the logic for setting up the caffeinated EE About related pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This contains the logic for setting up the caffeinated EE About related pages.  Any methods without phpdoc comments have inline docs with parent class.
  *
  * This is the extended (caf) general settings class
  *
@@ -51,6 +51,15 @@ class Extend_About_Admin_Page extends About_Admin_Page {
 		$settings_message = $steps;
 		$this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso, the most powerful Event Management plugin for WordPress.', 'event_espresso'). $settings_message ;
 		$template = is_readable(EE_ABOUT_CAF_TEMPLATE_PATH . 'whats_new.template.php') ? EE_ABOUT_CAF_TEMPLATE_PATH . 'whats_new.template.php' : EE_ABOUT_TEMPLATE_PATH . 'whats_new.template.php';
+		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
+		$this->display_about_admin_page();
+	}
+
+
+	protected function _overview() {
+		$this->_admin_page_title = __('About to Event Espresso', 'event_espresso');
+		$this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso, the most powerful Event Management plugin for WordPress.', 'event_espresso');
+		$template = is_readable(EE_ABOUT_CAF_TEMPLATE_PATH . 'ee4-overview.template.php') ? EE_ABOUT_CAF_TEMPLATE_PATH . 'ee4-overview.template.php' : EE_ABOUT_TEMPLATE_PATH . 'ee4-overview.template.php';
 		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
 		$this->display_about_admin_page();
 	}
