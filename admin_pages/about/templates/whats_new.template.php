@@ -1,10 +1,13 @@
 <div class="changelog point-releases">
-	<h3><?php echo _n( 'Minor Release', 'Minor Releases', 1 ); ?></h3>
-	<p><?php printf( __( '<strong>Version %1$s</strong> is a major bug fix/enhancement release.', 'event_espresso'), EVENT_ESPRESSO_VERSION ); ?>
-		<?php 
-			$ver = explode( '.', EVENT_ESPRESSO_VERSION ); 		
-			array_pop( $ver ); 		
-			$ver = implode( '.', $ver ); 		
+	<!-- <h3><?php echo _n( 'Minor Release', 'Minor Releases', 1 ); ?></h3> -->
+	<h3><?php echo _n( 'Major Release', 'Major Releases', 1 ); ?></h3>
+	<?php //$type = 'minor'; ?>
+	<?php $type = 'major'; ?>
+	<p><?php printf( __( '<strong>Version %1$s</strong> is a %2$s bug fix/enhancement release.', 'event_espresso'), EVENT_ESPRESSO_VERSION, $type ); ?>
+		<?php
+			$ver = explode( '.', EVENT_ESPRESSO_VERSION );
+			array_pop( $ver );
+			$ver = implode( '.', $ver );
 		?>
 		<?php printf( __( 'For more information, see <a href="%s">the release notes</a>.' ), 'http://eventespresso.com/wiki/ee4-changelog/#' . $ver ); ?>
  	</p>
@@ -18,18 +21,18 @@
 		<div class="ee-attention">
 			<h2 class="ee-maintenance-mode-callout"><?php  _e('Event Espresso is in full maintenance mode.' , 'event_espresso'); ?></h2>
 			<p>
-			<?php 
-				printf( 
-					__('A previous version of Event Espresso has detected. But before anything else can happen, we need to know whether or not to migrate (copy over) your existing event data so that it can be utilized by EE4. For more instructions on what to do, please visit the %sEvent Espresso Maintenance%s page.', 'event_espresso'), 
-					'<a href="admin.php?page=espresso_maintenance_settings">', 
-					'</a>' 
-				); 
+			<?php
+				printf(
+					__('A previous version of Event Espresso has detected. But before anything else can happen, we need to know whether or not to migrate (copy over) your existing event data so that it can be utilized by EE4. For more instructions on what to do, please visit the %sEvent Espresso Maintenance%s page.', 'event_espresso'),
+					'<a href="admin.php?page=espresso_maintenance_settings">',
+					'</a>'
+				);
 			?>
-			</p> 
+			</p>
 		</div>
 		<?php
 	}
-	?>	
+	?>
 	<h2 class="about-headline-callout">Two New Major Features Added</h2>
 <h3>Support for Mijireh Chekout</h3>
 <a href="http://eventespresso.com/wp-content/uploads/2014/03/mijireh-checkout-large.png"><img class="alignright " alt="mijireh-checkout-large" src="http://eventespresso.com/wp-content/uploads/2014/03/mijireh-checkout-large.png" width="131" height="147" /></a><p>Announcing the ability to integrate with <strong>over 90 different gateways and payment providers</strong>, using the Mijireh Checkout system! <a href="http://www.mijireh.com/" target="_blank">Mijireh Checkout</a> is a PCI compliant checkout page that looks exactly like your site, with support for over 90 gateways and payment providers to use on Mijireh's <a href="http://www.mijireh.com/docs/payment-gateways/" target="_blank">secure PCI compliant servers</a>. (see the Payment Settings inside EE 4.2).</p>
