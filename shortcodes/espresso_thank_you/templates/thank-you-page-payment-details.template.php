@@ -53,5 +53,4 @@
 		echo $gateway_content;
 	 }	
 ?>
-	<br/>	
 </div>
