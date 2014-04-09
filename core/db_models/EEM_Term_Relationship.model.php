@@ -46,7 +46,7 @@ class EEM_Term_Relationship extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Term Relationship','event_espresso');
+		$this->singular_item = __('Term Relationship','event_espresso');
 		$this->plural_item = __('Term Relationships','event_espresso');
 		$this->_tables = array(
 			'Term_Relationship'=> new EE_Primary_Table('term_relationships')

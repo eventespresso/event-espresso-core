@@ -46,7 +46,7 @@ class EEM_Status extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Status','event_espresso');
+		$this->singular_item = __('Status','event_espresso');
 		$this->plural_item = __('Stati','event_espresso');
 		$this->_tables = array(
 			'Status'=> new EE_Primary_Table('esp_status', 'STS_ID')
