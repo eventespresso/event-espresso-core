@@ -105,7 +105,7 @@ jQuery(document).ready(function($) {
 		dttPickerHelper.resetpicker().picker($('#txn-admin-payment-date-inp'), {}, $('#txn-admin-payment-amount-inp'), true);
 	});
 
-	
+
 	function display_payments_and_refunds_modal_dialog() {
 		$('#message').hide();
 		dialog_content = $('#txn-admin-apply-payment-dv');
@@ -132,7 +132,7 @@ jQuery(document).ready(function($) {
 				// remove validation notices
 				$('#txn-admin-apply-payment-frm .required').css( 'border', '1px solid #dfdfdf' ).removeClass('requires-value');
 				$('.validation-notice-dv').hide();
-				
+
 				$('.mop').hide();
 			});
 	}
@@ -177,8 +177,8 @@ jQuery(document).ready(function($) {
 	});
 
 
-	
-	
+
+
 	function validate_form_inputs() {
 		goodToGo = true;
 		$('#txn-admin-apply-payment-frm .required').each( function( index ) {
@@ -224,7 +224,7 @@ jQuery(document).ready(function($) {
 
 
 	function apply_payment_or_refund( editOrApply ) {
- 
+
 		var formURL = $('#txn-admin-apply-payment-frm').attr('action');
 		formURL = formURL + '&noheader=true&ee_admin_ajax=true';
 		$('#espresso-ajax').val(1);
@@ -232,13 +232,16 @@ jQuery(document).ready(function($) {
 
 		var formData = $('#txn-admin-apply-payment-frm').serializeFullArray();
 		formData.ee_admin_ajax = true;
+		formData.page = 'espresso_transactions';
+		formData.action = 'espresso_apply_payment';
+		formData.noheader = true;
 		//alert( 'formURL = ' + formURL + '\n\n' + 'formData = ' + formData );
 		formData.txn_admin_payment.amount = accounting.unformat(formData.txn_admin_payment.amount);
 //		response = new Object();
 
 		$.ajax({
 					type: "POST",
-					url:  formURL,
+					url:  ajaxurl,
 					data: formData,
 					dataType: "json",
 					beforeSend: function(jqXHR, obj) {
@@ -284,17 +287,17 @@ jQuery(document).ready(function($) {
 
 	// delete a payment
 	function apply_delete_payment_or_refund() {
-
-		var formURL = $('#txn-admin-delete-payment-frm').attr('action');
-		formURL = formURL + '&noheader=true&ee_admin_ajax=true';
 		$('#delete-txn-admin-noheader-inp').val('true');
 		var formData = $('#txn-admin-delete-payment-frm').serializeFullArray();
 		var PAY_ID = $( '#delete-txn-admin-payment-payment-id-inp' ).val();
 		var delBtn = $( '.txn-admin-payment-action-delete-lnk[rel="' + PAY_ID + '"]');
-		
+		formData.ee_admin_ajax = true;
+		formData.noheader = true;
+		formData.page = 'espresso_transactions';
+		formData.action= 'espresso_delete_payment';
 		$.ajax({
 					type: "POST",
-					url:  formURL,
+					url:  ajaxurl,
 					data: formData,
 					dataType: "json",
 					beforeSend: function(jqXHR, obj) {
@@ -340,10 +343,10 @@ jQuery(document).ready(function($) {
 			$('#txn-admin-payments-total-tr').before( newRow );
 //			$('#txn-admin-payments-tbl tr:last').after( newRow );
 		}
-			
+
 		update_payment( PAY_ID, response );
 		update_payment_totals( response );
-		
+
 		show_admin_page_ajax_msg( response, 'h2.nav-tab-wrapper', true );
 
 	}
@@ -384,7 +387,7 @@ jQuery(document).ready(function($) {
 			response.return_data.pay_status = 'PDC';
 		}
 		$('#payment-amount-' + PAY_ID).parent().removeClass().addClass( 'txn-admin-payment-status-'+response.return_data.pay_status );
-		
+
 	}
 
 
@@ -464,5 +467,5 @@ jQuery(document).ready(function($) {
 	$(document).on( 'click', '#del-txn-admin-modal-dialog-cancel-lnk', function() {
 		overlay.trigger('click');
 	});
-	
+
 });
