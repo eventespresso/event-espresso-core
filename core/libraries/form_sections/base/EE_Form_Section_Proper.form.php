@@ -102,10 +102,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	
 	/**
 	 * was_submitted - checks if form inputs are present in request data
+	 * Basically an alias for form_data_present_in() (which is used by both
+	 * proper form sections and form inputs)
 	 * @return boolean
 	 */
-	public function was_submitted(){
-		return isset( $_REQUEST[ $this->name() ] ) ? TRUE : FALSE;
+	public function was_submitted($form_data = NULL){
+		return $this->form_data_present_in($form_data);
 	}
 	
 	/**
