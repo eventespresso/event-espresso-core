@@ -38,18 +38,16 @@ echo "<hr>SAMPLE FORM<hr>";
 //$f = new EE_Billing_Info_Form();
 //$a = EEM_Attendee::instance()->get_one();
 //$f->populate_from_attendee($a);
-		if($_SERVER['REQUEST_METHOD'] == 'POST'){
-			$f->receive_form_submission($_POST);
-//			dd($f->get_model_object());
-			if($f->is_valid()){
+		if ( $f->was_submitted() ) {
+			$f->receive_form_submission();
+			if( $f->is_valid() ) {
 				echo "valido!";
 				$f->save();
 			}else{
 				echo "invalido";
 			}
-		}else{
-//			$f->populate_defaults(array('name'=>'munchpower','shirt_size'=>'','email'=>'enter it here'));
 		}
+
 		echo $f->form_open();
 		echo $f->get_html_and_js();
 		echo $f->form_submit_button( 'Save Country Details', FALSE, 'small', 'accesskey="p"' );
