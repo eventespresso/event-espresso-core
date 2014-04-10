@@ -56,9 +56,9 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 				'email'		=> new EE_Email_Input(array('required'=>TRUE)),
 				'address'		=> new EE_Text_Input(array( 'html_label_text'=>  __( 'Address', 'event_espresso'), 'required'=>TRUE )),
 				'address2'	=> new EE_Text_Input(array( 'html_label_text'=> __( 'Address 2', 'event_espresso') )),
+				'city'			=> new EE_Text_Input(array('required'=>TRUE)),
 				'state' 		=> new EE_Select_Input( $states_organized, array( 'required' => TRUE )),
 				'country' 		=> new EE_Select_Input( $country_options, array( 'required' => TRUE )),
-				'city'			=> new EE_Text_Input(array('required'=>TRUE)),
 				'zip'			=> new EE_Text_Input(array('required'=>TRUE)),
 				'phone'		=> new EE_Text_Input(),
 			)
