@@ -32,33 +32,38 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 	 * @param array $options_array @see EE_Form_Section_Proper::__construct()
 	 */
 	public function __construct($options_array= array()){
-		$countries = EEM_Country::instance()->get_all(array(array('CNT_active'=>true)));
 		$country_options = array();
-		foreach($countries as $country){
-			$country_options[$country->ID()] = $country->name();
-		}
-		$states = EEM_State::instance()->get_all(array(array('CNT_ISO'=>array('IN',array_keys($countries))),'force_join'=>array('Country')));
 		$states_organized = array();
-		foreach($states as $state){
-			$states_organized[$state->country()->name()][$state->name()] = $state->name();
+		// get possibly cached list of countries
+		$countries = EEM_Country::instance()->get_all_active_countries();
+		if ( ! empty( $countries )) {
+			foreach($countries as $country){
+				$country_options[$country->ID()] = $country->name();
+			}
 		}
-		$this->_subsections = array_merge($this->_subsections,array(
-			'first_name'=>new EE_Text_Input(array('required'=>true)),
-			'last_name'=>new EE_Text_Input(array('required'=>true)),
-			'email'=>new EE_Email_Input(array('required'=>true)),
-			'address'=>new EE_Text_Input(array(
-				'html_label_text'=>  __("Address", 'event_espresso'),
-				'required'=>true
-			)),
-			'address2'=>new EE_Text_Input(array(
-				'html_label_text'=> __("Address (cont.)", 'event_espresso')
-			)),
-			'city'=>new EE_Text_Input(array('required'=>true)),
-			'state'=>new EE_Select_Input($states_organized,array('required'=>true)),
-			'country'=>new EE_Select_Input($country_options,array('required'=>true)),
-			'zip'=>new EE_Text_Input(array('required'=>true)),
-			'phone'=>new EE_Text_Input(),
-		));
+		// get possibly cached list of states
+		$states = EEM_State::instance()->get_all_active_states();
+		if ( ! empty( $states )) {
+			foreach($states as $state){
+				$states_organized[$state->country()->name()][$state->name()] = $state->name();
+			}
+		}
+		$this->_subsections = array_merge(
+			$this->_subsections,
+			array(
+				'first_name'	=> new EE_Text_Input(array('required'=>TRUE)),
+				'last_name'	=> new EE_Text_Input(array('required'=>TRUE)),
+				'email'		=> new EE_Email_Input(array('required'=>TRUE)),
+				'address'		=> new EE_Text_Input(array( 'html_label_text'=>  __( 'Address', 'event_espresso'), 'required'=>TRUE )),
+				'address2'	=> new EE_Text_Input(array( 'html_label_text'=> __( 'Address 2', 'event_espresso') )),
+				'state' 		=> new EE_Select_Input( $states_organized, array( 'required' => TRUE )),
+				'country' 		=> new EE_Select_Input( $country_options, array( 'required' => TRUE )),
+				'city'			=> new EE_Text_Input(array('required'=>TRUE)),
+				'zip'			=> new EE_Text_Input(array('required'=>TRUE)),
+				'phone'		=> new EE_Text_Input(),
+			)
+		);
+		$this->_layout_strategy = new EE_Div_Per_Section_Layout();
 		parent::__construct($options_array);
 	}
 	/**
