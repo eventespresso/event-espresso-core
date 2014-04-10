@@ -424,8 +424,12 @@ class EEH_Activation {
 	 */
 	public static function drop_index( $table_name, $index_name ) {
 		global $wpdb;
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . $table_name . "'" ) == $wpdb->prefix . $table_name ) {
-			return $wpdb->query( 'ALTER TABLE '.$wpdb->prefix . $table_name . ' DROP INDEX ' . $index_name );
+		$table_name_with_prefix = $wpdb->prefix . $table_name ;
+		$index_exists_query = "SHOW INDEX FROM $table_name_with_prefix WHERE Key_name = '$index_name'";		
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name_with_prefix'" ) == $wpdb->prefix . $table_name &&
+				$wpdb->get_var( $index_exists_query ) == $table_name_with_prefix //using get_var with the $index_exists_query returns the table's name
+				) {
+			return $wpdb->query( "ALTER TABLE $table_name_with_prefix DROP INDEX $index_name" );
 		}
 	}
 
