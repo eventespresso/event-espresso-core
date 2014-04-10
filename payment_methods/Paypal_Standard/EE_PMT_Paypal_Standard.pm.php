@@ -14,7 +14,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		$this->_gateway = new EEG_Paypal_Standard();
 		$this->_pretty_name = __("Paypal Standard", 'event_espresso');
 		parent::__construct($pm_instance);
-		
+		$this->_default_button_url = $this->file_url().'lib'.DS.'paypal-logo.png';
 	}
 	public function generate_new_billing_form() {
 		return NULL;

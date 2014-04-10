@@ -30,10 +30,21 @@ abstract class EE_PMT_Base{
 	 */
 	protected $_file_folder = NULL;
 	/**
+	 * String to the absolute URL to this file (useful for getting its web-accessilbe resources
+	 * like images, js, or css)
+	 * @var string
+	 */
+	protected $_file_url = NULL;
+	/**
 	 * Pretty name for the payment method
 	 * @var string
 	 */
 	protected $_pretty_name = NULL;
+	/**
+	 *
+	 * @var string
+	 */
+	protected $_default_button_url = NULL;
 	/**
 	 * 
 	 * @param EE_Payment_Method $pm_instance
@@ -43,6 +54,7 @@ abstract class EE_PMT_Base{
 			$this->set_instance($pm_instance);
 		}
 		$this->_set_file_folder();
+		$this->_set_file_url();
 		if($this->_gateway){
 			$this->_gateway->set_payment_model(EEM_Payment::instance());
 			$this->_gateway->set_payment_log(EEM_Payment_Log::instance());
@@ -51,6 +63,10 @@ abstract class EE_PMT_Base{
 		}
 		if( ! $this->_pretty_name){
 			throw new EE_Error(sprintf(__("You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized", "event_espresso")));
+		}
+		//if the child didn't specify a default button, use the credit card one
+		if( ! $this->_default_button_url){
+			$this->_default_button_url = EE_PLUGIN_DIR_URL . 'payment_methods' . DS . 'pay-by-credit-card.png';
 		}
 	}
 	
@@ -63,11 +79,23 @@ abstract class EE_PMT_Base{
 		$this->_file_folder =  dirname($fn).DS;
 	}
 	/**
+	 * sets the file URL with a trailing slash for this PMT
+	 */
+	protected function _set_file_url(){
+		$plugins_dir_fixed = str_replace('\\',DS,WP_PLUGIN_DIR);
+		$file_folder_fixed = str_replace('\\',DS,$this->file_folder());
+		$file_path = str_replace($plugins_dir_fixed,WP_PLUGIN_URL,$file_folder_fixed);
+		$this->_file_url = $file_path;
+	}
+	/**
 	 * Returns the folder containing the PMT child class, witha trailing slash
 	 * @return string
 	 */
 	public function file_folder(){
 		return $this->_file_folder;
+	}
+	public function file_url(){
+		return $this->_file_url;
 	}
 	/**
 	 * Sets the payment method instance this payment method type is for.
@@ -331,5 +359,12 @@ abstract class EE_PMT_Base{
 	 */
 	public function pretty_name(){
 		return $this->_pretty_name;
+	}
+	/**
+	 * Gets the default absolute URL to the paymetn method type's button
+	 * @return string
+	 */
+	public function default_button_url(){
+		return $this->_default_button_url;
 	}
 }

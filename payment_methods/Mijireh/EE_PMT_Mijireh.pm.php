@@ -32,6 +32,7 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 		$this->_gateway = new EEG_Mijireh();
 		$this->_pretty_name = __("Mijireh", 'event_espresso');
 		parent::__construct($pm_instance);
+		$this->_default_button_url = $this->file_url() . 'lib' . DS . 'mijireh-checkout-logo.png';
 	}
 	/**	
 	 * Adds the help tab

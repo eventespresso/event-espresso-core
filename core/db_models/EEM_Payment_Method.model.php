@@ -158,4 +158,26 @@ class EEM_Payment_Method extends EEM_Base {
 		return parent::ensure_is_ID($base_obj_or_id_or_slug);
 		
 	}
+	
+	function verify_button_urls($query_params = array()){
+		$payment_methods = $this->get_all($query_params);
+		/* @var $payment_method EE_Payment_Method[] */
+		foreach($payment_methods as $payment_method){
+			try{
+				//send an HTTP HEAD request to quickkly verify the file exists
+				$ch = curl_init($payment_method->button_url());
+				curl_setopt($ch, CURLOPT_NOBODY, true);
+				curl_exec($ch);
+				$exists = curl_getinfo($ch, CURLINFO_HTTP_CODE) == 200 ? true : false;
+				curl_close($ch);
+				if( ! $exists){
+					EE_Error::add_attention(sprintf(__("Payment Method '%s' had a broken button url, so it was reset", "event_espresso"),$payment_method->name()));
+					$payment_method->save(array(
+						'PMD_button_url'=>$payment_method->type_obj()->default_button_url()));
+				}
+			}catch(EE_Error $e){
+				$payment_method->set_active(false);
+			}
+		}
+	}
 }

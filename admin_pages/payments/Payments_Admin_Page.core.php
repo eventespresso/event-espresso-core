@@ -259,8 +259,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_methods_list() {
-		//ok now start normal rendering of the page. realizing this MIGHT be a post request
-		//with an invalid form, or it might be a simple get.
+		EEM_Payment_Method::instance()->verify_button_urls(array(array('PMD_active'=>true)));
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		EE_Registry::instance()->load_lib('Payment_Method_Manager');
 		//setup tabs, one for each payment method type
