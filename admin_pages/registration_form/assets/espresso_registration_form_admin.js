@@ -1,13 +1,13 @@
 jQuery(document).ready(function($) {
-	
+
 	$('#post-body').on('change', '#QST_type', function(event){
 		espresso_reg_forms_show_or_hide_question_options();
 	});
-	
+
 	$('#post-body').on('click', '#new-question-option', function(){
 		espresso_reg_forms_add_option();
 	});
-	
+
 	$('#post-body').on('click', '.remove-option', function(){
 		espresso_reg_forms_trash_option(this);
 	});
@@ -15,10 +15,10 @@ jQuery(document).ready(function($) {
 	$('#post-body').on('click', '#QST_admin_only', function() {
 		espresso_maybe_switch_required(this);
 	});
-	
+
 	espresso_reg_forms_show_or_hide_question_options();
-	
-	
+
+
 });
 
 
@@ -60,7 +60,7 @@ function espresso_reg_forms_show_option_desc(show){
 	if(show){
 		jQuery('.option-desc-cell').show();
 		jQuery('.option-desc-header').show();
-		
+
 	}else{
 		jQuery('.option-desc-cell').hide();
 		jQuery('.option-desc-header').hide();
@@ -75,10 +75,12 @@ function espresso_maybe_switch_required(item) {
 		jQuery('#QST_required').prop('disabled', true);
 		jQuery('#required_toggled_on').show();
 		jQuery('#required_toggled_off').hide();
+		return;
 	} else {
 		jQuery('#QST_required').prop('disabled', false);
 		jQuery('#required_toggled_on').hide();
 		jQuery('#required_toggled_off').show();
+		return;
 	}
 }
 
