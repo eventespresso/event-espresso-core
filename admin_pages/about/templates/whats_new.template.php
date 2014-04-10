@@ -1,6 +1,7 @@
 <div class="changelog point-releases">
-	<!-- <h3><?php echo _n( 'Minor Release', 'Minor Releases', 1 ); ?></h3> -->
-	<h3><?php echo _n( 'Major Release', 'Major Releases', 1 ); ?></h3>
+	<!--<h3><?php echo _n( 'Minor Release Information', 'Minor Releases', 1 ); ?></h3>
+	<p>4.2.1 blah...blah...blah</p>-->
+	<h3><?php echo _n( 'Major Release Information', 'Major Releases', 1 ); ?></h3>
 	<?php //$type = 'minor'; ?>
 	<?php $type = 'major'; ?>
 	<p><?php printf( __( '<strong>Version %1$s</strong> is a %2$s bug fix/enhancement release.', 'event_espresso'), EVENT_ESPRESSO_VERSION, $type ); ?>
