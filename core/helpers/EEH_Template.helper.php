@@ -4,34 +4,27 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
 /**
  * Event Espresso
  *
- * Event Registration and Management Plugin for Wordpress
+ * Event Registration and Management Plugin for WordPress
  *
- * @package		Event Espresso
- * @author		Seth Shoultes
- * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
- * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link		http://www.eventespresso.com
+ * @package     Event Espresso
+ * @author      Event Espresso
+ * @copyright	  (c)2009-2012 Event Espresso All Rights Reserved.
+ * @license     http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
+ * @link        http://www.eventespresso.com
  * @version		4.0
- *
- * ------------------------------------------------------------------------
  */
- 
- 
- 
-/**
- * espresso_get_template_part
- * basically a copy of the WordPress get_template_part() function but uses EEH_Template::locate_template() instead, and doesn't add base versions of files
- * so not a very useful function at all except that it adds familiarity PLUS filtering based off of the entire template part name
- * 
- * @param string $slug The slug name for the generic template.
- * @param string $name The name of the specialised template.
- * @return string        the html output for the formatted money value
- */ 
+
+
+
 if ( ! function_exists( 'espresso_get_template_part' )) {
 	/**
 	 * espresso_get_template_part
-	 * @param null $slug
-	 * @param null $name
+	 * basically a copy of the WordPress get_template_part() function but uses EEH_Template::locate_template() instead, and doesn't add base versions of files
+	 * so not a very useful function at all except that it adds familiarity PLUS filtering based off of the entire template part name
+	 *
+	 * @param string $slug The slug name for the generic template.
+	 * @param string $name The name of the specialised template.
+	 * @return string        the html output for the formatted money value
 	 */
 	function espresso_get_template_part( $slug = NULL, $name = NULL ) {
 		EEH_Template::get_template_part( $slug, $name );
@@ -40,33 +33,31 @@ if ( ! function_exists( 'espresso_get_template_part' )) {
 
 
 
-/**
- * espresso_get_object_css_class - attempts to generate a css class based on the type of EE object passed
- *
- *
- * @param EE_Base_Class $object the EE object the css class is being generated for
- * @param  string $prefix added to the beginning of the generated class
- * @param  string $suffix added to the end of the generated class
- * @return string
- */
 if ( ! function_exists( 'espresso_get_object_css_class' )) {
+	/**
+	 * espresso_get_object_css_class - attempts to generate a css class based on the type of EE object passed
+	 *
+	 *
+	 * @param EE_Base_Class $object the EE object the css class is being generated for
+	 * @param  string $prefix added to the beginning of the generated class
+	 * @param  string $suffix added to the end of the generated class
+	 * @return string
+	 */
 	function espresso_get_object_css_class( $object = NULL, $prefix = '', $suffix = '' ) {
 		return EEH_Template::get_object_css_class( $object, $prefix, $suffix );
-	}	
+	}
 }
 
 
 
-/*
- * ------------------------------------------------------------------------
- *
- * EEH_Template	
+/**
+ * class EEH_Template
  *
  * This is a helper utility class that provides different helpers related to template files.
  *
  * @package		Event Espresso
  * @subpackage	/helpers/EEH_Template.helper.php
- * @author		Darren Ethier, Brent Christensen
+ * @author		    Darren Ethier, Brent Christensen
  *
  */
 class EEH_Template {
@@ -97,7 +88,7 @@ class EEH_Template {
 	}
 
 	/**
-	 * 	get_espresso_themes - returns an array of Espresso Child themes loacted in the /tmeplates/ directory
+	 * 	get_espresso_themes - returns an array of Espresso Child themes located in the /templates/ directory
 	 *
 	 * 	@return array
 	 */
@@ -159,7 +150,7 @@ class EEH_Template {
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
 	 * @internal param array|string $mixed $templates  the template file name including extension
-	 * @return void
+	 * @return mixed
 	 */
 	public static function locate_template( $templates = array(), $load = TRUE, $template_args = array(), $return_string = TRUE ) {
 		// first use WP locate_template to check for template in the current theme folder
@@ -230,7 +221,7 @@ class EEH_Template {
 	 * @param bool|string $template_path server path to the file to be loaded, including file name and extension
 	 * @param  array      $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean    $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @return string
+	 * @return mixed boolean | string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
@@ -253,6 +244,7 @@ class EEH_Template {
 		} else {
 			include( $template_path );
 		}
+		return FALSE;
 	}
 
 
@@ -271,6 +263,8 @@ class EEH_Template {
 	public static function get_object_css_class( $object = NULL, $prefix = '', $suffix = '' ) {
 		// in the beginning...
 		$prefix = ! empty( $prefix ) ? rtrim( $prefix, '-' ) . '-' : '';
+		// da muddle
+		$class = '';
 		// the end
 		$suffix = ! empty( $suffix ) ? '-' . ltrim( $suffix, '-' ) : '';
 		// is the passed object an EE object ?
@@ -283,7 +277,7 @@ class EEH_Template {
 				default :
 					$class = strtolower( str_replace( '_', '-', $obj_class ));
 					$class .= method_exists( $obj_class, 'name' ) ? '-' . sanitize_title( $object->name() ) : '';
-				
+
 			}
 		}
 		return $prefix . $class . $suffix;
@@ -291,16 +285,15 @@ class EEH_Template {
 
 
 
-	
-
 	/**
 	 * EEH_Template::format_currency
 	 * This helper takes a raw float value and formats it according to the default config country currency settings, or the country currency settings from the supplied country ISO code
 	 *
-	 * @param  float $amount   raw money value
-	 * @param  boolean $return_raw  whether to return the formatted float value only with no currency sign or code
-	 * @param  boolean $display_code  whether to display the country code (USD). Default = TRUE
-	 * @param  string $CNT_ISO 2 letter ISO code for a country
+	 * @param  float      $amount       raw money value
+	 * @param  boolean    $return_raw   whether to return the formatted float value only with no currency sign or code
+	 * @param  boolean    $display_code whether to display the country code (USD). Default = TRUE
+	 * @param bool|string $CNT_ISO      2 letter ISO code for a country
+	 * @param string      $cur_code_span_class
 	 * @return string        the html output for the formatted money value
 	 */
 	public static function format_currency( $amount = NULL, $return_raw = FALSE, $display_code = TRUE, $CNT_ISO = FALSE, $cur_code_span_class = 'currency-code' ) {
@@ -308,7 +301,7 @@ class EEH_Template {
 		if ( is_null( $amount ) ) {
 			$msg = __( 'In order to format currency, an amount needs to be passed.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return;
+			return '';
 		}
 		//ensure amount is float
 		$amount = (float) $amount;
@@ -362,8 +355,8 @@ class EEH_Template {
 	 * @return string             The localized label for the status id.
 	 */
 	public static function pretty_status( $status_id, $plural = FALSE, $schema = 'upper' ) {
-		$status = EEM_Status::instance()->localized_status(array( $status_id => __('unknown') ), $plural, $schema );
-		return $status[$status_id];
+		$status = EE_Registry::instance()->load_model( 'Status' )->localized_status( array( $status_id => __( 'unknown', 'event_espresso' )), $plural, $schema );
+		return $status[ $status_id ];
 	}
 
 
@@ -507,8 +500,8 @@ class EEH_Template {
 } //end EEH_Template class
 
 //function convert_zero_to_free( $amount, $return_raw ) {
-//	// we don't want to mess with requests for unformated values because those may get used in calculations
-//	if ( ! $return_raw ) {
+//	// we don't want to mess with requests for unformatted values because those may get used in calculations
+//	if ( ! $return_raw && ! is_admin() ) {
 //		$amount = __( 'free', 'event_espresso' );
 //	}
 //	return $amount;
