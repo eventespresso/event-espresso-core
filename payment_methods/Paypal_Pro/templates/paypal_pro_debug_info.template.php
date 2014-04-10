@@ -24,7 +24,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-	?><div class="sandbox-panel">
+/**
+ * @var $form_section EE_Billing_Info_Form
+ */
+if($form_section->payment_method()->debug_mode()){
+?><div class="sandbox-panel">
 					<h2 class="section-title"><?php _e('PayPal Sandbox Mode', 'event_espreso'); ?></h2>
 					<h3 style="color:#ff0000;"><?php _e('Debug Mode Is Turned On. Payments will not be processed', 'event_espresso'); ?></h3>
 
@@ -113,5 +117,5 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 						</table>	
 					</div>			
 				</div><?php
-
+}
 // End of file paypal_pro_billing_form.template.php

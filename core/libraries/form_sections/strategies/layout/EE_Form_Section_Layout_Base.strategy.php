@@ -37,9 +37,9 @@ abstract class EE_Form_Section_Layout_Base{
 	 */
 	function layout_form(){
 		$html = '';
-		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$this->_form_section->name(),EEH_Formatter::nl(1) . $this->layout_form_begin());
-		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop__for_'.$this->_form_section->name(),$this->layout_form_loop());
-		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__end__for_'.$this->_form_section->name(),EEH_Formatter::nl(-1) . $this->layout_form_end());
+		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$this->_form_section->name(),EEH_Formatter::nl(1) . $this->layout_form_begin(),$this->_form_section);
+		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop__for_'.$this->_form_section->name(),$this->layout_form_loop(),$this->_form_section);
+		$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__end__for_'.$this->_form_section->name(),EEH_Formatter::nl(-1) . $this->layout_form_end(),$this->_form_section);
 		$html = $this->add_form_section_hooks_and_filters( $html );
 		return $html;
 	}
@@ -47,9 +47,9 @@ abstract class EE_Form_Section_Layout_Base{
 		$html = '';
 		foreach( $this->_form_section->subsections() as $name=>$subsection ){
 			if ( $subsection instanceof EE_Form_Input_Base ){
-				$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_input_'.$name.'__in_'.$this->_form_section->name(),$this->layout_input( $subsection )) ;
+				$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_input_'.$name.'__in_'.$this->_form_section->name(),$this->layout_input( $subsection ),$this->_form_section,$subsection) ;
 			} elseif ( $subsection instanceof EE_Form_Section_Base ){
-				$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_non_input_'.$name.'__in_'.$this->_form_section->name(),$this->layout_subsection( $subsection ));
+				$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_non_input_'.$name.'__in_'.$this->_form_section->name(),$this->layout_subsection( $subsection ),$this->_form_section,$subsection);
 			}
 		}
 		return $html;

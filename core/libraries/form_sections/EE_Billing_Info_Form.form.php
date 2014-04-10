@@ -28,10 +28,16 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 	/**
+	 * The payment method this billing form is for
+	 * @var EE_Payment_Method
+	 */
+	protected $_pm_instance;
+	/**
 	 * 
 	 * @param array $options_array @see EE_Form_Section_Proper::__construct()
 	 */
-	public function __construct($options_array= array()){
+	public function __construct($payment_method, $options_array= array()){
+		$this->_pm_instance = $payment_method;
 		$countries = EEM_Country::instance()->get_all(array(array('CNT_active'=>true)));
 		$country_options = array();
 		foreach($countries as $country){
@@ -81,6 +87,22 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 			'zip'=>$attendee->zip(),
 			'phone'=>$attendee->phone(),
 		));
+	}
+	/**
+	 * Sets the payment method for this billing form
+	 * @param EE_Payment_Method $payment_methot
+	 * @return void
+	 */
+	public function set_payment_method($payment_method){
+		$this->_pm_instance = $payment_method;
+	}
+	
+	/**
+	 * Returns the instance of the payment method this billing form is for
+	 * @return EE_Payment_Method
+	 */
+	public function payment_method(){
+		return $this->_pm_instance;
 	}
 }
 
