@@ -50,7 +50,7 @@ class EEM_Country extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Country','event_espresso');
+		$this->singular_item = __('Country','event_espresso');
 		$this->plural_item = __('Countries','event_espresso');
 		
 		

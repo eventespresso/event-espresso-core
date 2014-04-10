@@ -45,7 +45,7 @@ class EEH_Parse_Shortcodes {
 	 * @access private
 	 * @var object
 	 */
-	private $_data; 
+	private $_data;
 
 
 
@@ -57,7 +57,7 @@ class EEH_Parse_Shortcodes {
 	 * @access private
 	 * @var array
 	 */
-	private $_shortcode_objs = array(); 
+	private $_shortcode_objs = array();
 
 
 
@@ -82,7 +82,7 @@ class EEH_Parse_Shortcodes {
 	public function parse_message_template( $template, EE_Messages_Addressee $data, $valid_shortcodes) {
 		$this->_init_data( $template, $data, $valid_shortcodes );
 
-		
+
 		$this->_template = is_array($template) ? $template['main'] : $template;
 
 
@@ -164,13 +164,30 @@ class EEH_Parse_Shortcodes {
 	 */
 	private function _parse_message_template() {
 
-		
+
 		//now let's get a list of shortcodes that are found in the given template
 		$possible_shortcodes = preg_match_all( '/(\[.+?\])/', $this->_template, $matches );
 		$shortcodes = (array) $matches[0]; //this should be an array of shortcodes in the template string.
 
 		$matched_code = array();
 		$sc_values = array();
+
+		$list_type_shortcodes = array(
+			'[ATTENDEE_LIST]',
+			'[EVENT_LIST]',
+			'[TICKET_LIST]',
+			'[DATETIME_LIST]',
+			'[QUESTION_LIST]',
+			'[RECIPIENT_QUESTION_LIST]',
+			'[PRIMARY_REGISTRANT_QUESTION_LIST]',
+			'[RECIPIENT_TICKET_LIST]',
+			'[PRIMARY_REGISTRANT_TICKET_LIST]',
+			'[RECIPIENT_DATETIME_LIST]',
+			'[PRIMARY_REGISTRANT_DATETIME_LIST]'
+			);
+
+		$list_type_shortcodes = apply_filters( 'FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes', $list_type_shortcodes );
+
 		//now lets go ahead and loop through our parsers for each shortcode and setup the values
 		foreach ( $shortcodes as $shortcode ) {
 
@@ -181,25 +198,13 @@ class EEH_Parse_Shortcodes {
 				//we need to setup any dynamic shortcodes so that they work with the array_key_exists
 				$sc = preg_match_all( '/(\[[A-Za-z0-9]+_\*)/', $shortcode, $matches );
 				$sc_to_verify = !empty($matches[0] ) ? $matches[0][0] . ']' : $shortcode;
-				
-				if ( !array_key_exists( $sc_to_verify, $sc_obj->get_shortcodes() ) ) { 
+
+				if ( !array_key_exists( $sc_to_verify, $sc_obj->get_shortcodes() ) ) {
 					continue; //the given shortcode isn't in this object
 				}
 
-				$list_type_shortcodes = array(
-					'[ATTENDEE_LIST]',
-					'[EVENT_LIST]',
-					'[TICKET_LIST]',
-					'[DATETIME_LIST]',
-					'[QUESTION_LIST]',
-					'[RECIPIENT_QUESTION_LIST]',
-					'[PRIMARY_REGISTRANT_QUESTION_LIST]',
-					'[RECIPIENT_TICKET_LIST]',
-					'[PRIMARY_REGISTRANT_TICKET_LIST]',
-					'[RECIPIENT_DATETIME_LIST]',
-					'[PRIMARY_REGISTRANT_DATETIME_LIST]'
-					);
-				
+
+
 				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
 				if ( ! in_array( $shortcode, $list_type_shortcodes ) ) {
 					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
@@ -217,7 +222,7 @@ class EEH_Parse_Shortcodes {
 					$sc_values[] = '';
 				}
 			}
-		} 
+		}
 
 		//now we've got parsed values for all the shortcodes in the template so we can go ahead and swap the shortcodes out.
 		$parsed = str_replace(array_values($matched_code), array_values($sc_values), $this->_template);

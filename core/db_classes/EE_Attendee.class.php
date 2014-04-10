@@ -191,7 +191,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 	/**
 	 * related country
-	 * @var EE_COuntry
+	 * @var EE_Country
 	 */
 	protected $_Country;
 
@@ -433,8 +433,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 	 * Returns the first and last name concatenated together with a space.
 	 * @return string
 	 */
-	public function full_name(){
-		return $this->fname()." ".$this->lname();
+	public function full_name( $apply_html_entities = FALSE ){
+		$full_name = $this->fname() . ' ' . $this->lname();
+		return $apply_html_entities ? htmlentities( $full_name, ENT_QUOTES, 'UTF-8' ) : $full_name;
 	}
 
 	

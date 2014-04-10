@@ -42,10 +42,25 @@ class EE_Brewing_Regular extends EE_Base {
 			add_filter( 'FHEE__EE_Config__register_modules__modules_to_register', array( $this, 'caffeinated_modules_to_register' ));
 			// load caff scripts
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_caffeinated_scripts'), 10 );
+
+			add_filter( 'FHEE__EE_Registry__load_helper__helper_paths', array( $this, 'caf_helper_paths' ), 10 );
+
 			// caffeinated constructed
 			do_action( 'AHEE__EE_Brewing_Regular__construct__complete' );
 		}
 	}
+
+
+	/**
+	 * callback for the FHEE__EE_Registry__load_helper__helper_paths filter to add the caffeinated paths
+	 * @param array  $paths original helper paths array
+	 * @return array             new array of paths
+	 */
+	public function caf_helper_paths( $paths ) {
+		$paths[] = EE_CAF_CORE . 'helpers' . DS;
+		return $paths;
+	}
+
 
 
 	/**
@@ -207,26 +222,34 @@ class EE_Brewing_Regular extends EE_Base {
 	 */
 
 	private function _messages_caf() {
-		add_filter('FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( $this, 'messages_autoload_paths'), 10 );
-		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 10, 2 );
-		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 10, 2 );
-		add_filter('FHEE__EE_Email_messenger__get_default_field_content', array( $this, 'email_default_field_content'), 10, 2 );
-		add_filter('FHEE__EE_Message_Template_Defaults___create_new_templates___templates', array( $this, 'message_types_default_field_content'), 10, 4 );
-		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes'), 10, 2 );
+		add_filter('FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( $this, 'messages_autoload_paths'), 5 );
+		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 5, 2 );
+		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 5, 2 );
+		add_filter('FHEE__EE_Email_messenger__get_default_field_content', array( $this, 'email_default_field_content'), 5, 2 );
+		add_filter('FHEE__EE_Message_Template_Defaults___create_new_templates___templates', array( $this, 'message_types_default_field_content'), 5, 4 );
+		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes'), 5, 2 );
 
 		//shortcode parsers
-		add_filter('FHEE__EE_Attendee_Shortcodes__shortcodes', array( $this, 'additional_attendee_shortcodes'), 10, 2 );
-		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 10, 5 );
-		add_filter('FHEE__EE_Recipient_List_Shortcodes__shortcodes', array( $this, 'additional_recipient_details_shortcodes'), 10, 2 );
-		add_filter('FHEE__EE_Recipient_List_Shortcodes__parser_after', array( $this, 'additional_recipient_details_parser'), 10, 5 );
-		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__shortcodes', array( $this, 'additional_primary_registration_details_shortcodes'), 10, 2 );
-		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__parser_after', array( $this, 'additional_primary_registration_details_parser'), 10, 5 );
+		add_filter('FHEE__EE_Attendee_Shortcodes__shortcodes', array( $this, 'additional_attendee_shortcodes'), 5, 2 );
+		add_filter('FHEE__EE_Attendee_Shortcodes__parser_after', array( $this, 'additional_attendee_parser'), 5, 5 );
+		add_filter('FHEE__EE_Recipient_List_Shortcodes__shortcodes', array( $this, 'additional_recipient_details_shortcodes'), 5, 2 );
+		add_filter('FHEE__EE_Recipient_List_Shortcodes__parser_after', array( $this, 'additional_recipient_details_parser'), 5, 5 );
+		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__shortcodes', array( $this, 'additional_primary_registration_details_shortcodes'), 5, 2 );
+		add_filter('FHEE__EE_Primary_Registration_List_Shortcodes__parser_after', array( $this, 'additional_primary_registration_details_parser'), 5, 5 );
 
 		/**
-		 * @since 4.2
+		 * @since 4.2.0
 		 */
 		add_filter( 'FHEE__EE_Datetime_Shortcodes__shortcodes', array( $this, 'additional_datetime_shortcodes'), 10, 2 );
 		add_filter( 'FHEE__EE_Datetime_Shortcodes__parser_after', array( $this, 'additional_datetime_parser'), 10, 5 );
+
+		/**
+		 * @since 4.3.0
+		 */
+		//eat our own dogfood!
+		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_newsletter_message_type' ) );
+		add_action('EE_Brewing_Regular___messages_caf', array( $this, 'register_newsletter_shortcodes' ) );
+		do_action('EE_Brewing_Regular___messages_caf');
 	}
 
 
@@ -309,7 +332,18 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function message_types_valid_shortcodes( $valid_shortcodes, EE_Messages_Base $msg ) {
-		if ( $msg instanceof EE_message_type ) {
+		//make sure question_list and question are ONLY added for the core message types.  Any other message types will have to explicitly set question_list as a valid shortcode.
+		$include_with = array(
+			'registration',
+			'cancelled_registration',
+			'declined_registration',
+			'not_approved_registration',
+			'payment_declined',
+			'payment',
+			'payment_reminder',
+			'pending_approval'
+			);
+		if ( $msg instanceof EE_message_type && in_array( $msg->name, $include_with )) {
 			$contexts = array_keys($msg->get_contexts());
 				foreach ( $contexts as $context ) {
 					$valid_shortcodes[$context][] = 'question_list';
@@ -493,6 +527,51 @@ class EE_Brewing_Regular extends EE_Base {
 				return $parsed;
 				break;
 		}
+	}
+
+
+
+	/**
+	 * Takes care of registering the newsletter message type that is only available in caffeinated EE.
+	 *
+	 * @since   4.3.0
+	 *
+	 * @return  void
+	 */
+	public function register_newsletter_message_type() {
+		//setup array for registering
+		$setup_args = array(
+			'mtname' => 'newsletter',
+			'mtfilename' => 'EE_Newsletter_message_type.class.php',
+			'autoloadpaths' => array(
+				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/' => array('class')
+				),
+			'messengers_to_activate_with' => array( 'email' )
+			);
+		EE_Register_Message_Type::register( $setup_args );
+	}
+
+
+
+
+	/**
+	 * Takes care of registering the newsletter shortcode library and set up related items.
+	 *
+	 * @since   4.3.0
+	 *
+	 * @return void
+	 */
+	public function register_newsletter_shortcodes() {
+		$name = 'newsletter';
+		$setup_args = array(
+			'autoloadpaths' => array(
+				EE_CAF_LIBRARIES . 'shortcodes/' => array( 'lib' )
+				),
+			'msgr_validator_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_validator_config' ),
+			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),
+			'list_type_shortcodes' => array( '[NEWSLETTER_CONTENT]' )
+			);
+		EE_Register_Messages_Shortcode_Library::register( $name, $setup_args );
 	}
 
 

@@ -50,7 +50,7 @@ class EEM_Extra_Meta extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Extra Meta','event_espresso');
+		$this->singular_item = __('Extra Meta','event_espresso');
 		$this->plural_item = __('Extra Metas','event_espresso');
 		$this->_tables = array(
 			'Extra_Meta'=> new EE_Primary_Table('esp_extra_meta', 'EXM_ID')

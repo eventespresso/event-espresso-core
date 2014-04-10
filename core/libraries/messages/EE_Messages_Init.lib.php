@@ -127,6 +127,8 @@ class EE_Messages_Init extends EE_Base {
 		//add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', array( $this, 'payment_reminder'), 10 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
 		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( $this, 'maybe_registration' ), 10, 3 );
+
+		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( $this, 'send_newsletter_message'), 10, 2 );
 	}
 
 
@@ -316,6 +318,25 @@ class EE_Messages_Init extends EE_Base {
 		}
 
 		return $success;
+	}
+
+
+
+	/**
+	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send trigger
+	 *
+	 * @since   4.3.0
+	 *
+	 * @param  EE_Attendee[]  $contacts   an array of EE_Attendee objects
+	 * @param  int      	      $mtp_id     a specific message template group id.
+	 * @return void
+	 */
+	public function send_newsletter_message( $contacts, $mtp_id ) {
+		//make sure mtp is id and set it in the $_POST global for later messages setup.
+		$_POST['MTP_ID'] = (int) $mtp_id;
+
+		$this->_load_controller();
+		$this->_EEMSG->send_message('newsletter', $contacts);
 	}
 
 

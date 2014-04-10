@@ -38,7 +38,7 @@ class EEM_Datetime_Ticket extends EEM_Base {
 	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
-		$this->singlular_item = __('Datetime Ticket','event_espresso');
+		$this->singular_item = __('Datetime Ticket','event_espresso');
 		$this->plural_item = __('Datetime Tickets','event_espresso');		
 
 		$this->_tables = array(

@@ -46,7 +46,7 @@ class EEM_Promotion_Rule extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Promotion-Rule-Relation','event_espresso');
+		$this->singular_item = __('Promotion-Rule-Relation','event_espresso');
 		$this->plural_item = __('Promotion-Rule-Relation','event_espresso');
 		$this->_tables = array(
 			'Promotion_Rule'=> new EE_Primary_Table('esp_promotion_rule', 'PRR_ID')
