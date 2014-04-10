@@ -1721,14 +1721,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _process_payment_options() {
 		if ( $this->_continue_reg ) {
-			// this is required at this point
-			$this->_selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
 			// event requires pre-approval
 			if ( $this->_selected_method_of_payment == 'payments_closed' ) {
 				EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			} else if ( ! $this->_transaction->total() > 0 && ! $this->_reg_url_link ) {
+			} else if ( $this->_transaction->total() == 0 || ! $this->_reg_url_link ) {
 				EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			}
+			} 
 		}
 		$this->go_to_next_step( __FUNCTION__ );
 	}
@@ -1745,15 +1743,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _finalize_payment_options( $params = array(), $success_msg = '' ) {
 
 		if ( $this->_continue_reg ) {
-
 			$this->_transaction->save();
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 			do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
-			//set return URL
+			// set return URL
 			$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), $this->_thank_you_page_url );
-			// attempt payment via payment method
-			$payment = $this->_process_payment();
-			
+			// if payment required
+			if ( $this->_transaction->total() > 0 ) {
+				// attempt payment via payment method
+				$payment = $this->_process_payment();
+			}
 		}
 		$this->_next_step = FALSE;
 		$this->go_to_next_step( __FUNCTION__ ); 
@@ -1774,7 +1773,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// clear any previous errors related to not selecting a payment method
 		EE_Error::overwrite_errors();
 		// how have they choosen to pay?
-		$this->_selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );
+		$this->_selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );  // : 'no_payment_required';
 		// ya gotta make a choice man
 		if ( empty( $this->_selected_method_of_payment )) {
 			$this->_json_response['return_data'] = array( 'plz-select-method-of-payment' => FALSE ); 
@@ -1789,9 +1788,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		
 		//setup the thank you page properly
 		$this->_thank_you_page_url = add_query_arg( 
-					array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ), 
-					$this->_thank_you_page_url 
-				);
+			array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ), 
+			$this->_thank_you_page_url 
+		);
 		//attempt payment (offline paymetn methods will just NOT make a payment, but instead 
 		//just mark itself as teh PMD_ID on the transaction
 		$payment = $this->_attempt_payment( $this->_payment_method );
@@ -1917,18 +1916,24 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
 
 			do_action( 'AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
-
+			$this->_selected_method_of_payment = $this->_get_selected_method_of_payment();
 			// if Default REG Status is set to REQUIRES APPROVAL... then payments are NOT allowed
-			if ( EE_Registry::instance()->REQ->is_set('selected_method_of_payment') && EE_Registry::instance()->REQ->get('selected_method_of_payment') == 'payments_closed' ) {
+			if ( $this->_selected_method_of_payment == 'payments_closed' ) {
 				// set TXN Status to Open
 				$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 				$this->_transaction->save();
 				$this->_transaction->finalize();
 
 			// Default REG Status is set to PENDING PAYMENT OR APPROVED, and payments are allowed
-			} else {
-				// attempt payment
+			} else if ( $this->_transaction->total() > 0 ) {
+				// attempt payment via payment method
 				$payment = $this->_process_payment();
+			} else {
+				// set TXN Status to Open
+				$this->_transaction->set_status( EEM_Transaction::complete_status_code );
+				$this->_transaction->save();
+				$this->_transaction->finalize();
+				$this->_redirect_to_thank_you_page = TRUE;
 			}
 								
 		}
