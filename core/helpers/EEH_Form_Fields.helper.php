@@ -439,13 +439,13 @@ class EEH_Form_Fields {
 	/**
 	 * generate_question_groups_html
 	 *
-	 * @param array|string $question_groups
-	 * @param array        $questions
+	 * @param array         $question_groups
 	 * @param array        $q_meta
+	 * @param bool         $from_admin
 	 * @param string       $group_wrapper
 	 * @return string HTML
 	 */
-	static function generate_question_groups_html2( $question_groups = array(), $questions = array(), $q_meta = array(), $group_wrapper = 'fieldset' ) {
+	static function generate_question_groups_html2( $question_groups = array(), $q_meta = array(), 	$from_admin = FALSE, $group_wrapper = 'fieldset' ) {
 
 		$html = '';
 		$before_question_group_questions = apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', '' );
@@ -465,55 +465,61 @@ class EEH_Form_Fields {
 //			printr( $question_groups, '$question_groups  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			// loop thru question groups
 			foreach ( $question_groups as $QSG ) {
-				// check that questions exist
-				$questions = ! empty( $questions ) ? $questions : $QSG->questions();
-				if ( ! empty( $questions )) {
-					// use fieldsets
-					$html .= "\n\t" . '<' . $group_wrapper . ' class="espresso-question-group-wrap" id="' . $QSG->get( 'QSG_identifier' ) . '">';
-					// group_name
-					if ( $QSG->show_group_name() ) {
-						$html .=  "\n\t\t" . '<h5 class="espresso-question-group-title-h5 section-title">' . $QSG->get_pretty( 'QSG_name' ) . '</h5>';
+				if ( $QSG instanceof EE_Question_Group ) {
+					// check that questions exist
+
+					$where = array( 'QST_deleted' => 0 );
+					if ( ! $from_admin ) {
+						$where['QST_admin_only'] = 0;
 					}
-					// group_desc
-					if ( $QSG->show_group_desc() ) {
-						$html .=  '<div class="espresso-question-group-desc-pg">' . $QSG->get_pretty( 'QSG_desc'  ) . '</div>';
-					}
-
-					$html .= $before_question_group_questions;
-					// loop thru questions
-					foreach ( $questions as $QST ) {
-
-						$qstn_id = $QST->is_system_question() ? $QST->system_ID() : $QST->ID();
-
-						$answer = NULL;
-
-						if (  isset( $_GET['qstn'] ) && isset( $q_meta['input_id'] ) && isset( $q_meta['att_nmbr'] )) {
-							// check for answer in $_GET in case we are reprocessing a form after an error
-							if ( isset( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] )) {
-								$answer = is_array( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] ) ? $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] : sanitize_text_field( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] );
-							}
-						} else if ( isset( $q_meta['attendee'] ) && $q_meta['attendee'] ) {
-							//attendee data from the session
-							$answer = isset( $q_meta['attendee'][ $qstn_id ] ) ? $q_meta['attendee'][ $qstn_id ] : NULL;
+					$questions = $QSG->questions( array( $where, 'order_by' => array( 'Question_Group_Question.QGQ_order' => 'ASC' )));
+					if ( ! empty( $questions )) {
+						// use fieldsets
+						$html .= "\n\t" . '<' . $group_wrapper . ' class="espresso-question-group-wrap" id="' . $QSG->get( 'QSG_identifier' ) . '">';
+						// group_name
+						if ( $QSG->show_group_name() ) {
+							$html .=  "\n\t\t" . '<h5 class="espresso-question-group-title-h5 section-title">' . $QSG->get_pretty( 'QSG_name' ) . '</h5>';
+						}
+						// group_desc
+						if ( $QSG->show_group_desc() ) {
+							$html .=  '<div class="espresso-question-group-desc-pg">' . $QSG->get_pretty( 'QSG_desc'  ) . '</div>';
 						}
 
+						$html .= $before_question_group_questions;
+						// loop thru questions
+						foreach ( $questions as $QST ) {
+							$qstn_id = $QST->is_system_question() ? $QST->system_ID() : $QST->ID();
+
+							$answer = NULL;
+
+							if (  isset( $_GET['qstn'] ) && isset( $q_meta['input_id'] ) && isset( $q_meta['att_nmbr'] )) {
+								// check for answer in $_GET in case we are reprocessing a form after an error
+								if ( isset( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] )) {
+									$answer = is_array( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] ) ? $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] : sanitize_text_field( $_GET['qstn'][ $q_meta['input_id'] ][ $qstn_id ] );
+								}
+							} else if ( isset( $q_meta['attendee'] ) && $q_meta['attendee'] ) {
+								//attendee data from the session
+								$answer = isset( $q_meta['attendee'][ $qstn_id ] ) ? $q_meta['attendee'][ $qstn_id ] : NULL;
+							}
 
 
-						$QFI = new EE_Question_Form_Input(
-							$QST,
-							EE_Answer::new_instance ( array(
-								'ANS_ID'=> 0,
-								'QST_ID'=> 0,
-								'REG_ID'=> 0,
-								'ANS_value'=> $answer
-							 )),
-							$q_meta
-						);
-						//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-						$html .= self::generate_form_input( $QFI );
+
+							$QFI = new EE_Question_Form_Input(
+									$QST,
+									EE_Answer::new_instance ( array(
+											'ANS_ID'=> 0,
+											'QST_ID'=> 0,
+											'REG_ID'=> 0,
+											'ANS_value'=> $answer
+									)),
+									$q_meta
+							);
+							//printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+							$html .= self::generate_form_input( $QFI );
+						}
+						$html .= $after_question_group_questions;
+						$html .= "\n\t" . '</' . $group_wrapper . '>';
 					}
-					$html .= $after_question_group_questions;
-					$html .= "\n\t" . '</' . $group_wrapper . '>';
 				}
 			}
 		}
