@@ -301,7 +301,33 @@ final class EE_System {
 	*/
 	public function load_espresso_addons() {
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
+		$this->_register_plugin_apis();
 	}
+
+
+
+
+	/**
+	 * This method simply requires all the classes implementing EEI_Plugin_API which provide helpers for
+	 * EE plugin authors to more easily register certain components with EE.
+	 *
+	 * @see     /core/libraries/plugin_api/ for all the current available plugin_api library files.
+	 * @since  4.4.0
+	 *
+	 * @return void
+	 */
+	private function _register_plugin_apis() {
+		$plugin_apis_to_register = glob( EE_LIBRARIES . 'plugin_api/*' );
+		//allow PLUGINS to add their own api library classes if they wish.
+		$plugin_apis_to_register = apply_filters( 'FHEE__EE_System___register_plugin_apis__plugin_apis_to_register', $plugin_apis_to_register );
+		//cycle through and setup paths.
+		foreach ( $plugin_apis_to_register as $file ) {
+			if ( is_readable( $file ) )
+				require_once $file;
+		}
+	}
+
+
 
 
 
@@ -660,7 +686,7 @@ final class EE_System {
 //		$e = EEM_Event::instance()->get_one();
 //		EEM_Datetime::instance()->show_next_x_db_queries();
 //		$ds = EEM_Datetime::instance()->get_datetimes_for_event_ordered_by_start_time($e->ID(),false);
-//		
+//
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__start' );
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
