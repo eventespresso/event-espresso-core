@@ -666,7 +666,7 @@ final class EE_Admin {
 	 * @return void
 	 */
 	public static function register_ee_admin_page( $page_basename, $page_path, $config = array() ) {
-		EE_Error::doing_it_wrong( __METHOD__, sprintf( __('Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.', 'event_espresso'), $page_basename), '4.4' );
+		EE_Error::doing_it_wrong( __METHOD__, sprintf( __('Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.', 'event_espresso'), $page_basename), '4.3' );
 		if ( class_exists( 'EE_Register_Admin_Page' ) )
 			EE_Register_Admin_Page::register( $page_basename, $page_path, $config );
 	}

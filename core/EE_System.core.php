@@ -312,7 +312,7 @@ final class EE_System {
 	 * EE plugin authors to more easily register certain components with EE.
 	 *
 	 * @see     /core/libraries/plugin_api/ for all the current available plugin_api library files.
-	 * @since  4.4.0
+	 * @since  4.3.0
 	 *
 	 * @return void
 	 */
