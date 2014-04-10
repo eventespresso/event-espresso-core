@@ -28,9 +28,14 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  * @return string        the html output for the formatted money value
  */ 
 if ( ! function_exists( 'espresso_get_template_part' )) {
+	/**
+	 * espresso_get_template_part
+	 * @param null $slug
+	 * @param null $name
+	 */
 	function espresso_get_template_part( $slug = NULL, $name = NULL ) {
 		EEH_Template::get_template_part( $slug, $name );
-	}	
+	}
 }
 
 
@@ -61,19 +66,18 @@ if ( ! function_exists( 'espresso_get_object_css_class' )) {
  *
  * @package		Event Espresso
  * @subpackage	/helpers/EEH_Template.helper.php
- * @author		Darren Ethier
+ * @author		Darren Ethier, Brent Christensen
  *
- * ------------------------------------------------------------------------
  */
 class EEH_Template {
-	
+
 	private static $_espresso_themes = array();
 
 
 	/**
 	 * 	is_espresso_theme - returns TRUE or FALSE on whether the currently active WP theme is an espresso theme
-	 * 
-	 * 	@return void
+	 *
+	 * 	@return boolean
 	 */
 	public static function is_espresso_theme() {
 		return wp_get_theme()->get( 'TextDomain' ) == 'event_espresso' ? TRUE : FALSE;
@@ -81,19 +85,21 @@ class EEH_Template {
 
 	/**
 	 * 	load_espresso_theme_functions - if current theme is an espresso theme, or uses ee theme template parts, then load it's functions.php file ( if not already loaded )
-	 * 
+	 *
 	 * 	@return void
 	 */
 	public static function load_espresso_theme_functions() {
 		if ( ! defined( 'EE_THEME_FUNCTIONS_LOADED' )) {
-			require_once( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'functions.php' );
+			if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'functions.php' )) {
+				require_once( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'functions.php' );
+			}
 		}
 	}
 
 	/**
 	 * 	get_espresso_themes - returns an array of Espresso Child themes loacted in the /tmeplates/ directory
-	 * 
-	 * 	@return void
+	 *
+	 * 	@return array
 	 */
 	public static function get_espresso_themes() {
 		if ( empty( EEH_Template::$_espresso_themes )) {
@@ -104,7 +110,7 @@ class EEH_Template {
 			EEH_Template::$_espresso_themes = array();
 			foreach ( $espresso_themes as $espresso_theme ) {
 				EEH_Template::$_espresso_themes[ basename( $espresso_theme ) ] = $espresso_theme;
-			}	
+			}
 		}
 		return EEH_Template::$_espresso_themes;
 	}
@@ -115,9 +121,11 @@ class EEH_Template {
 	 * EEH_Template::get_template_part
 	 * basically a copy of the WordPress get_template_part() function but uses EEH_Template::locate_template() instead, and doesn't add base versions of files
 	 * so not a very useful function at all except that it adds familiarity PLUS filtering based off of the entire template part name
-	 * 
+	 *
 	 * @param string $slug The slug name for the generic template.
 	 * @param string $name The name of the specialised template.
+	 * @param array  $template_args
+	 * @param bool   $return_string
 	 * @return string        the html output for the formatted money value
 	 */
 	public static function get_template_part( $slug = NULL, $name = NULL, $template_args = array(), $return_string = FALSE  ) {
@@ -127,37 +135,40 @@ class EEH_Template {
 		if ( $name != '' ) {
 			$templates[] = "{$slug}-{$name}.php";
 		}
-		// allow tempalte parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );		
+		// allow tempalte parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
 		if ( apply_filters( "FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", TRUE )) {
 			EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
-		}		
+		}
 	}
 
 
 
 	/**
-	 * 	locate_template
-	 * 
-	 * 	locate a template file by looking in the following places, in the following order:
-	 *		/wp-content/theme/(the currently activated WP theme)
-	 *		/wp-content/uploads/espresso/templates/(current EE theme)/  
-	 *		/wp-content/uploads/espresso/templates/  
-	 *		/wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ 
-	 *		/wp-content/plugins/(EE4 folder)/(relative path)
-	 *		(absolute server path)
-	 *	as soon as the template is found i none of those locations, it will be returned or loaded 
-	 * 
-	 * 	@param  mixed string | array $templates  the template file name including extension
-	 * 	@param  boolean $load  whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
-	 * 	@param  array $template_args an array of arguments to be extracted for use in the template
-	 * 	@param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
-	 * 	@return void
+	 *    locate_template
+	 *
+	 *    locate a template file by looking in the following places, in the following order:
+	 *        /wp-content/uploads/espresso/templates/(current EE theme)/
+	 *        /wp-content/uploads/espresso/templates/
+	 *        /wp-content/plugins/(EE4 folder)/templates/(current EE theme)/
+	 *        /wp-content/plugins/(EE4 folder)/(relative path)
+	 *        (absolute server path)
+	 *    as soon as the template is found i none of those locations, it will be returned or loaded
+	 *
+	 * @param array    $templates
+	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
+	 * @param  array   $template_args an array of arguments to be extracted for use in the template
+	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
+	 * @internal param array|string $mixed $templates  the template file name including extension
+	 * @return void
 	 */
 	public static function locate_template( $templates = array(), $load = TRUE, $template_args = array(), $return_string = TRUE ) {
 		// first use WP locate_template to check for template in the current theme folder
-		if ( ! $template_path = locate_template( $templates )) {
+		$template_path = locate_template( $templates );
+		// not in the theme
+		if ( empty( $template_path )) {
+			// not even a template to look for ?
 			if ( empty( $templates )) {
-				// get post_type 
+				// get post_type
 				$post_type = EE_Registry::instance()->REQ->get( 'post_type' );
 				// get array of EE Custom Post Types
 				$EE_CPTs = EE_Register_CPTs::get_CPTs();
@@ -168,39 +179,46 @@ class EEH_Template {
 					$templates = $archive_or_single . '-' . $post_type . '.php';
 				}
 			}
+			// currently active EE template theme
 			$current_theme = EE_Config::get_current_theme();
-			// loop thru templates and check each location (or relative to it) for the specified file 
+			// filter array to hold possible template paths
+			$template_locations = apply_filters( 'FHEE__EEH_Template__locate_template__initial_template_locations', array() );
+			// loop thru templates
 			foreach ( (array)$templates as $template ) {
-				// first check the uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
-				if ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template )) {
-					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template;
-					break;
-				// then in the root of the uploads/espresso/templates/ folder 
-				} else if ( is_readable( EVENT_ESPRESSO_TEMPLATE_DIR . $template )) {
-					$template_path = EVENT_ESPRESSO_TEMPLATE_DIR . $template; 
-					break;
-				// in the /templates/(current EE theme)/ folder within the plugin
-				} else if ( is_readable( EE_TEMPLATES . $current_theme . DS . $template )) {
-					$template_path = EE_TEMPLATES . $current_theme . DS . $template;
-					break;
-				// or maybe relative from the plugin root
-				} else if ( is_readable( EE_PLUGIN_DIR_PATH . DS . $template )) {
-					$template_path = EE_PLUGIN_DIR_PATH . DS . $template;
-					break;
-				// otherwise assume it's an absolute server path				
-				} else if ( is_readable( $template )) {
-					$template_path = $template;
-					break;
+				// build up our template locations array by merging back into it with new locations based on the contents of the $templates array
+				$template_locations = array_merge(
+					$template_locations,
+					array(
+						// first check the /wp-content/uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
+						EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template,
+						// then in the root of the /wp-content/uploads/espresso/templates/ folder
+						EVENT_ESPRESSO_TEMPLATE_DIR . $template,
+						// in the  /wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ folder within the plugin
+						EE_TEMPLATES . $current_theme . DS . $template,
+						// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
+						EE_PLUGIN_DIR_PATH . DS . $template,
+						// otherwise assume it's an absolute server path
+						$template
+					)
+				);
+			}
+			// filter array
+			$template_locations = apply_filters( 'FHEE__EEH_Template__locate_template__final_template_locations', $template_locations );
+			// loop thru templates and check each location (or relative to it) for the specified file
+			foreach ( (array)$template_locations as $template_location ) {
+				if ( is_readable( $template_location )) {
+					$template_path = $template_location;
+				    break;
 				}
 			}
 		}
 		// if we got it and you want to see it...
 		if ( $template_path != '' && $load ) {
-			if ( $return_string ) {				
+			if ( $return_string ) {
 				return EEH_Template::display_template( $template_path, $template_args, $return_string );
 			} else {
 				EEH_Template::display_template( $template_path, $template_args, $return_string );
-			}			
+			}
 		}
 		return $template_path;
 	}
@@ -209,10 +227,10 @@ class EEH_Template {
 
 	/**
 	 * load and display a template
-	 * @param  string $template_path  server path to the file to be loaded, including file name and extension
-	 * @param  array $template_args an array of arguments to be extracted for use in the template
-	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @return void
+	 * @param bool|string $template_path server path to the file to be loaded, including file name and extension
+	 * @param  array      $template_args an array of arguments to be extracted for use in the template
+	 * @param  boolean    $return_string whether to send output immediately to screen, or capture and return as a string
+	 * @return string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
@@ -278,7 +296,7 @@ class EEH_Template {
 	/**
 	 * EEH_Template::format_currency
 	 * This helper takes a raw float value and formats it according to the default config country currency settings, or the country currency settings from the supplied country ISO code
-	 * 
+	 *
 	 * @param  float $amount   raw money value
 	 * @param  boolean $return_raw  whether to return the formatted float value only with no currency sign or code
 	 * @param  boolean $display_code  whether to display the country code (USD). Default = TRUE
@@ -303,8 +321,8 @@ class EEH_Template {
 			// verify results
 			if ( ! $mny instanceof EE_Currency_Config ) {
 				// set default config country currency settings
-				$mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config ? EE_Registry::instance()->CFG->currency : new EE_Currency_Config();			
-			}	
+				$mny = EE_Registry::instance()->CFG->currency instanceof EE_Currency_Config ? EE_Registry::instance()->CFG->currency : new EE_Currency_Config();
+			}
 			// format float
 			$amount_formatted = number_format( $amount, $mny->dec_plc, $mny->dec_mrk, $mny->thsnds );
 			// add formatting ?
@@ -316,13 +334,13 @@ class EEH_Template {
 					}else{
 						$amount_formatted = '-' . $mny->sign . str_replace( '-', '', $amount_formatted );
 					}
-					
+
 				}else{
 					$amount_formatted =  $amount_formatted . $mny->sign;
 				}
-				
+
 				// add currency code ?
-				$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;			
+				$amount_formatted = $display_code ? $amount_formatted . ' <span class="' . $cur_code_span_class . '">(' . $mny->code . ')</span>' : $amount_formatted;
 			}
 			// filter results
 			$amount_formatted = apply_filters( 'FHEE__EEH_Template__format_currency__amount_formatted', $amount_formatted, $mny, $return_raw );
@@ -350,7 +368,7 @@ class EEH_Template {
 
 
 
-	
+
 
 	/**
 	 * This helper just returns a button or link for the given parameters
@@ -366,27 +384,25 @@ class EEH_Template {
 
 
 
-
-
 	/**
 	 * This returns a generated link that will load the related help tab on admin pages.
 	 *
 	 *
-	 * @param  string $page The page identifier for the page the help tab is on
-	 * @param  string $action The action (route) for the admin page the help tab is on.
-	 * @param  string $help_tab_id the id for the connected help tab
-	 * @param  string $icon_style (optional) include css class for the style you want to use for the help icon.
-	 * @param  string $help_text (optional) send help text you want to use for the link if default not to be used
+	 * @param  string     $help_tab_id the id for the connected help tab
+	 * @param bool|string $page        The page identifier for the page the help tab is on
+	 * @param bool|string $action      The action (route) for the admin page the help tab is on.
+	 * @param bool|string $icon_style  (optional) include css class for the style you want to use for the help icon.
+	 * @param bool|string $help_text   (optional) send help text you want to use for the link if default not to be used
 	 * @return string              generated link
 	 */
 	public static function get_help_tab_link( $help_tab_id, $page = FALSE, $action = FALSE, $icon_style = FALSE, $help_text = FALSE ) {
 
-		if ( ! $page ) 
+		if ( ! $page )
 			$page = isset( $_REQUEST['page'] ) && ! empty( $_REQUEST['page'] ) ? sanitize_key( $_REQUEST['page'] ) : $page;
-		
+
 		if ( ! $action )
 			$action = isset( $_REQUEST['action'] ) && ! empty( $_REQUEST['action'] ) ? sanitize_key( $_REQUEST['action'] ) : $action;
-		
+
 		$action = empty($action) ? 'default' : $action;
 
 
@@ -446,16 +462,16 @@ class EEH_Template {
 
 
 
-
 	/**
 	 * This is a helper method to generate a status legend for a given status array.
 	 * Note this will only work if the incoming statuses have a key in the EEM_Status->localized_status() methods status_array.
-	 * 
-	 * @param  array $status_array  array of statuses that will make up the legend. In format:
-	 * array(
-	 * 	'status_item' => 'status_name'
-	 * )
+	 *
+	 * @param  array  $status_array  array of statuses that will make up the legend. In format:
+	 *      array(
+	 *          'status_item' => 'status_name'
+	 *       )
 	 * @param  string $active_status This is used to indicate what the active status is IF that is to be highlighted in the legend.
+	 * @throws EE_Error
 	 * @return string               html structure for status.
 	 */
 	public static function status_legend( $status_array, $active_status = '' ) {
