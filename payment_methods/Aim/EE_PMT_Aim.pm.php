@@ -34,7 +34,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		parent::__construct($pm_instance);
 	}
 	public function generate_new_billing_form() {
-		$form = new EE_Billing_Info_Form(array(
+		$form = new EE_Billing_Info_Form($this->_pm_instance,array(
 			'name'=>'AIM_Form',
 			'subsections'=>array(
 				'credit_card'=>new EE_Credit_Card_Input(array(
@@ -44,7 +44,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 					'required'=>true
 				)),
 				'exp_year'=>new EE_Year_Input(),
-				'ccv'=>new EE_Text_Input(),
+				'cvv'=>new EE_Text_Input(),
 			)
 		));
 		return $form;
@@ -61,7 +61,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 				)),
 				'test_transactions'=>new EE_Yes_No_Input(array(
 					'html_label_text'=>  sprintf(__("Send test transactions? %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_link)),
-					'html_help_text'=>  __("Only send test transactions", 'event_espresso')
+					'html_help_text'=>  __("Send test transactions, even to live server", 'event_espresso')
 				)),
 			)
 		));
