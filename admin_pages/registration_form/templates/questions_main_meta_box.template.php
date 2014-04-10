@@ -25,16 +25,16 @@ $has_answers = $question->has_answers();
 				</th>
 				<td>
 					<input type="text" class="regular-text" id="QST_display_text" name="QST_display_text" value="<?php $question->f('QST_display_text')?>"/>
-					
+
 				</td>
 			</tr>
-			
+
 			<tr>
 				<th>
 					<label for="QST_admin_label"><?php echo $fields['QST_admin_label']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('question_label_info');?>
 				</th>
 				<td>
-					<?php 
+					<?php
 						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
 						$id =  ! empty( $QST_system ) ? '_disabled' : '';
 					?>
@@ -50,8 +50,8 @@ $has_answers = $question->has_answers();
 						<?php _e('System question! This field cannot be changed.','event_espresso')?>
 					</span>
 					<?php } ?>
-						
-					</p>					
+
+					</p>
 				</td>
 			</tr>
 
@@ -60,7 +60,7 @@ $has_answers = $question->has_answers();
 					<label for="QST_admin_only"><?php echo $fields['QST_admin_only']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('question_admin_only_info');?>
 				</th>
 				<td>
-					<?php 
+					<?php
 						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
 						$id =  ! empty( $QST_system ) ? '_disabled' : '';
 						$admin_only = $question->get('QST_admin_only');
@@ -74,17 +74,17 @@ $has_answers = $question->has_answers();
 						<?php _e('System question! This field cannot be changed.','event_espresso')?>
 					</span>
 					<?php } ?>
-						
-					</p>					
+
+					</p>
 				</td>
 			</tr>
-			
+
 			<tr>
 				<th>
 					<label for="QST_type"><?php echo $fields['QST_type']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('question_type_info');?>
 				</th>
 				<td>
-					<?php 
+					<?php
 						$disabled = ! empty( $QST_system ) ? ' disabled="disabled"' : '';
 						$id =  ! empty( $QST_system ) ? '_disabled' : '';
 						$disabled = $has_answers ? ' disabled="disabled"' : $disabled;
@@ -100,12 +100,12 @@ $has_answers = $question->has_answers();
 								<?php endif; ?>
 							</span></p>
 					<?php } ?>
-					
-					
+
+
 
 				</td>
 			</tr>
-			
+
 			<tr id="question_options">
 				<th>
 					<label>
@@ -113,7 +113,7 @@ $has_answers = $question->has_answers();
 					</label>
 				</th>
 				<td>
-				
+
 					<table class="question-options-table">
 						<thead>
 							<tr>
@@ -127,7 +127,7 @@ $has_answers = $question->has_answers();
 								</th>
 							</tr>
 						</thead>
-						
+
 						<tbody>
 							<tr class="question-option sample">
 								<td class="option-value-cell">
@@ -140,10 +140,10 @@ $has_answers = $question->has_answers();
 									<span class="dashicons clickable dashicons-post-trash ee-icon-size-18 remove-option remove-item"></span>
 								</td>
 							</tr>
-							
-							<?php 
+
+							<?php
 							$count=0;
-							if ( $question_options = $question->options() ) {									
+							if ( $question_options = $question->options() ) {
 								foreach( $question_options as $option_id => $option ) {
 									$disabled =  $has_answers ? ' disabled="disabled"' : '';
 									$id = $has_answers ? '_disabled' : '';
@@ -169,7 +169,7 @@ $has_answers = $question->has_answers();
 									$count++;
 									?>
 								</tr>
-								<?php 
+								<?php
 								}
 							} else {
 							?>
@@ -185,8 +185,8 @@ $has_answers = $question->has_answers();
 										echo EEH_Form_Fields::hidden_input("question_options_count", $count);
 									?>
 								</td>
-							</tr>							
-							<?php	
+							</tr>
+							<?php
 							}
 							?>
 							<tr style="display:none">
@@ -194,11 +194,11 @@ $has_answers = $question->has_answers();
 							</tr>
 						</tbody>
 					</table>
-					
+
 					<a id="new-question-option" class="button" style="margin:0 0 1em 3px;">
 						<?php _e('Add Another Answer Option','event_espresso')?>
 					</a><br/>
-					
+
 					<p class="description">
 						<?php _e('Answer Options are the choices that you give people to select from for SINGLE, MULTIPLE or DROPDOWN questions. The Value is a simple key that will be saved to the database and the description is optional. Note that values CANNOT contain any HTML, but descriptions can.','event_espresso')?>
 					</p>
@@ -210,21 +210,21 @@ $has_answers = $question->has_answers();
 					<?php endif; ?>
 				</td>
 			</tr>
-			
+
 			<tr>
 				<th>
 					<label for="QST_required"><?php echo $fields['QST_required']->get_nicename();?></label> <?php echo EEH_Template::get_help_tab_link('required_question_info');?>
 				</th>
 				<td>
-					<?php 
+					<?php
 					$system_required = array( 'fname', 'lname', 'email' );
-					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : ''; 
+					$disabled = in_array( $QST_system, $system_required ) ? ' disabled="disabled"' : '';
 					$required_on = $question->get('QST_admin_only');
 					$show_required_msg = $required_on ? '' : ' display:none;';
 					$disabled = $required_on ? ' disabled="disabled"' : '';
-					$id =  ! empty( $disabled ) ? '_disabled' : '';
-					$requiredOptions=array( 
-						array('text'=>'Optional','id'=>0), 
+					$id =  ! empty( $disabled ) && in_array( $QST_system, $system_required) ? '_disabled' : '';
+					$requiredOptions=array(
+						array('text'=>'Optional','id'=>0),
 						array('text'=>'Required','id'=>1)
 					);
 					echo EEH_Form_Fields::select_input('QST_required' . $id, $requiredOptions, $question->required(), 'id="QST_required' . $id . '"' . $disabled );
@@ -235,28 +235,28 @@ $has_answers = $question->has_answers();
 					<p><span id="required_toggled_off" class="description" style="color:#D54E21; display: none;">
 						<?php _e('Required option field is no longer disabled because the question is not Admin-Only','event_espresso')?>
 					</span></p>
-					<?php if ( ! empty( $disabled )) { ?>
+					<?php if ( ! empty( $disabled ) && in_array( $QST_system, $system_required ) ) { ?>
 						<input type="hidden"  id="QST_required" name="QST_required" value="1"/>
 						<p><span class="description" style="color:#D54E21;">
 						<?php _e('System question! This field cannot be changed.','event_espresso')?>
-					</span></p>
-					<?php } ?>					
-					
+						</span></p>
+					<?php } ?>
+
 				</td>
 			</tr>
-			
+
 			<tr>
 				<th>
 					<label for="QST_required_text"><?php _e('Required Text', 'event_espresso'); ?></label> <?php echo EEH_Template::get_help_tab_link('required_text_info');?>
 				</th>
 				<td>
 					<input type="text" class="regular-text" id="QST_required_text" name="QST_required_text" value="<?php  $question->f('QST_required_text')?>"/>
-									
+
 				</td>
 			</tr>
-					
+
 		</tbody>
 	</table>
-	
+
 	<div class="clear"></div>
 </div>
