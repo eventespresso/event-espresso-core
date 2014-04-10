@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/core/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -58,12 +58,12 @@ final class EE_Request_Handler {
 
 
 
-	
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param null $wp
+	 * @return \EE_Request_Handler
 	 */
 	public function __construct( $wp = NULL ) {
 //		d( $wp );
@@ -84,15 +84,16 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	get_request_vars
+	 *    get_request_vars
 	 *
-	 * 	@access public
-	 * 	@return int
+	 * @access public
+	 * @param null $wp
+	 * @return int
 	 */
 	public function get_request_vars( $wp = NULL ) {
 		if ( ! is_admin() ) {
 			// set request post_id
-			$this->set( 'post_id', $this->get_post_id_from_request( $wp )); 
+			$this->set( 'post_id', $this->get_post_id_from_request( $wp ));
 			// set request post name
 			$this->set( 'post_name', $this->get_post_name_from_request( $wp ));
 			// set request post_type
@@ -105,10 +106,11 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	get_post_id_from_request
+	 *    get_post_id_from_request
 	 *
-	 * 	@access public
-	 * 	@return int
+	 * @access public
+	 * @param WP_Query $wp
+	 * @return int
 	 */
 	public function get_post_id_from_request( $wp = NULL ) {
 		if( ! $wp){
@@ -124,18 +126,19 @@ final class EE_Request_Handler {
 		if ( ! $post_id && isset( $wp->request )) {
 			if ( is_numeric( basename( $wp->request ))) {
 				$post_id = basename( $wp->request );
-			} 
-		} 
+			}
+		}
 		return $post_id;
 	}
 
 
 
 	/**
-	 * 	get_post_name_from_request
+	 *    get_post_name_from_request
 	 *
-	 * 	@access public
-	 * 	@return int
+	 * @access public
+	 * @param WP_Query $wp
+	 * @return int
 	 */
 	public function get_post_name_from_request( $wp = NULL ) {
 		if( ! $wp){
@@ -155,8 +158,8 @@ final class EE_Request_Handler {
 				$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_status="publish" AND post_name=%d';
 				if ( $possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $possible_post_name ))) {
 					$post_name = $possible_post_name;
-				}					
-			} 
+				}
+			}
 		}
 		if ( ! $post_name && $this->get( 'post_id' )) {
 			global $wpdb;
@@ -198,7 +201,7 @@ final class EE_Request_Handler {
 		if (  isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] )) {
 			// kk we know this is an epsresso page, but is it a specific post ?
 			if ( ! $this->get( 'post_name' )) {
-				// there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events	
+				// there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
 				$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : NULL;
 				// if the post type matches on of our then set the endpoint
 				if ( $post_name ) {
@@ -210,19 +213,19 @@ final class EE_Request_Handler {
 		if ( $this->get( 'post_name' )) {
 			// load all pages using espresso shortcodes
 			$post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
-			// make sure core pages are included 
+			// make sure core pages are included
 			$espresso_pages = array_merge( $espresso_CPT_endpoints, $post_shortcodes );
 			// was a post name passed ?
 			if (  isset( $espresso_pages[ $this->get( 'post_name' ) ] )) {
 				 return TRUE;
-			}			
+			}
 		}
 		return FALSE;
 	}
 
 
 
-	
+
 	/**
 	 * 	is_espresso_page
 	 *
@@ -235,7 +238,7 @@ final class EE_Request_Handler {
 	}
 
 
-	
+
 	/**
 	 * 	is_espresso_page
 	 *
@@ -247,95 +250,105 @@ final class EE_Request_Handler {
 	}
 
 
-	
+
 	/**
-	 * 	setter
+	 *    setter
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @param $value
+	 * @return    mixed
 	 */
 	public function set( $key, $value ) {
 		$this->_params[ $key ] = $value;
 	}
 
 
-	
+
 	/**
-	 * 	getter
+	 *    getter
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @return    mixed
 	 */
 	public function get( $key ) {
 		return isset( $this->_params[ $key ] ) ? $this->_params[ $key ] : NULL;
 	}
 
 
-	
+
 	/**
-	 * 	check if param exists
+	 *    check if param exists
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @return    boolean
 	 */
 	public function is_set( $key ) {
 		return isset( $this->_params[ $key ] ) ? TRUE : FALSE;
 	}
 
-	
+
+
 	/**
-	 * 	remove param
+	 *    remove param
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @return    void
 	 */
 	public function un_set( $key ) {
 		unset( $this->_params[ $key ] );
 	}
 
 
-	
+
 	/**
-	 * 	set_notice
+	 *    set_notice
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @param $value
+	 * @return    void
 	 */
 	public function set_notice( $key, $value ) {
 		$this->_notice[ $key ] = $value;
 	}
 
 
-	
+
 	/**
-	 * 	get_notice
+	 *    get_notice
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @return    mixed
 	 */
 	public function get_notice( $key ) {
 		return isset( $this->_notice[ $key ] ) ? $this->_notice[ $key ] : NULL;
 	}
 
 
-	
+
 	/**
-	 * 	add_output
+	 *    add_output
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $string
+	 * @return    void
 	 */
 	public function add_output( $string ) {
 		$this->_output .= $string;
 	}
 
 
-	
+
 	/**
 	 * 	get_output
 	 *
 	 *  @access 	public
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function get_output() {
 		return $this->_output;
@@ -343,25 +356,28 @@ final class EE_Request_Handler {
 
 
 
-
+	/**
+	 * @param $item
+	 * @param $key
+	 */
 	function sanitize_text_field_for_array_walk( &$item, &$key ) {
 		$item = strpos( $item, 'email' ) !== FALSE ? sanitize_email( $item ) : sanitize_text_field( $item );
 	}
 
-	
-	
+
+
 
 	/**
 	 *		@ override magic methods
 	 *		@ return void
-	 */	
+	 */
 	public function __set($a,$b) { return FALSE; }
 	public function __get($a) { return FALSE; }
 	public function __isset($a) { return FALSE; }
 	public function __unset($a) { return FALSE; }
 	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }	
-	public function __destruct() { return FALSE; }		
+	public function __wakeup() { return FALSE; }
+	public function __destruct() { return FALSE; }
 
 
 }
