@@ -43,9 +43,9 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
 
 
     /**
-     * Callback set in args for EEH_Plugin_API::register_messages_shortcode_library for 'msgr_validator_callback'.
+     * Callback set in args for EE_Register_Messages_Shortcode_Library::register for 'msgr_validator_callback'.
      *
-     * register_messages_shortcode_library registers this callback with the
+     * EE_Register_Messages_Shortcode_Library::register registers this callback with the
      * 'FHEE__EE_messenger__get_validator_config' filter.
      *
      * @since    4.3.0
@@ -69,10 +69,10 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes {
 
 
     /**
-     * Callback set in args for EEH_Plugin_API::register_messages_shortcode_library for
+     * Callback set in args for EE_Register_Messages_Shortcode_Library::register for
      * 'msgr_template_fields_callback'.
      *
-     * register_messages_shortcode_library registers this callback with the
+     * EE_Register_Messages_Shortcode_Library::register registers this callback with the
      * FHEE__EE_messenger__get_template_fields filter.
      *
      * @since    4.3.0

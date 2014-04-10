@@ -45,9 +45,6 @@ class EE_Brewing_Regular extends EE_Base {
 
 			add_filter( 'FHEE__EE_Registry__load_helper__helper_paths', array( $this, 'caf_helper_paths' ), 10 );
 
-			//Make EE Plugin API helper available
-			EE_Registry::instance()->load_helper('Plugin_API');
-
 			// caffeinated constructed
 			do_action( 'AHEE__EE_Brewing_Regular__construct__complete' );
 		}
@@ -551,7 +548,7 @@ class EE_Brewing_Regular extends EE_Base {
 				),
 			'messengers_to_activate_with' => array( 'email' )
 			);
-		EEH_Plugin_API::register_new_message_type( $setup_args );
+		EE_Register_Message_Type::register( $setup_args );
 	}
 
 
@@ -574,7 +571,7 @@ class EE_Brewing_Regular extends EE_Base {
 			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),
 			'list_type_shortcodes' => array( '[NEWSLETTER_CONTENT]' )
 			);
-		EEH_Plugin_API::register_messages_shortcode_library( $name, $setup_args );
+		EE_Register_Messages_Shortcode_Library::register( $name, $setup_args );
 	}
 
 

@@ -657,18 +657,18 @@ final class EE_Admin {
 	/**
 	 * static method for registering ee admin page.
 	 *
-	 * This method is deprecated in favor of the new location in EEH_Plugin_API.
+	 * This method is deprecated in favor of the new location in EE_Register_Admin_Page::register.
 	 *
 	 * @since 4.3.0
-	 * @deprecated 4.3.0	Use EEH_Plugin_API() instead
-	 * @see EEH_Plugin_API()
+	 * @deprecated 4.3.0	Use EE_Register_Admin_Page::register() instead
+	 * @see EE_Register_Admin_Page::register()
 	 *
 	 * @return void
 	 */
 	public static function register_ee_admin_page( $page_basename, $page_path, $config = array() ) {
-		EE_Error::doing_it_wrong( 'EE_Admin::register_ee_admin_page', __('Usage is deprecated.  Use EEH_Plugin_API for registering new EE admin pages', 'event_espresso'), '4.4' );
-		if ( class_exists( 'EEH_Plugin_API' ) )
-			EEH_Plugin_API::register_ee_admin_page( $page_basename, $page_path, $config );
+		EE_Error::doing_it_wrong( __METHOD__, sprintf( __('Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.', 'event_espresso'), $page_basename), '4.4' );
+		if ( class_exists( 'EE_Register_Admin_Page' ) )
+			EE_Register_Admin_Page::register( $page_basename, $page_path, $config );
 	}
 
 
