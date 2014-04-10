@@ -12,6 +12,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
 		$this->_gateway = new EEG_Paypal_Standard();
+		$this->_pretty_name = __("Paypal Standard", 'event_espresso');
 		parent::__construct($pm_instance);
 		
 	}

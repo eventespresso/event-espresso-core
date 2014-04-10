@@ -26,6 +26,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Check extends EE_PMT_Base{
+	public function __construct($pm_instance = NULL) {
+		$this->_pretty_name = __("Check", 'event_espresso');
+		parent::__construct($pm_instance);
+	}
 	public function generate_new_billing_form() {
 		return ;
 	}

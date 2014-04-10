@@ -30,6 +30,11 @@ abstract class EE_PMT_Base{
 	 */
 	protected $_file_folder = NULL;
 	/**
+	 * Pretty name for the payment method
+	 * @var string
+	 */
+	protected $_pretty_name = NULL;
+	/**
 	 * 
 	 * @param EE_Payment_Method $pm_instance
 	 */
@@ -43,6 +48,9 @@ abstract class EE_PMT_Base{
 			$this->_gateway->set_payment_log(EEM_Payment_Log::instance());
 			EE_Registry::instance()->load_helper('Template');
 			$this->_gateway->set_template_helper(new EEH_Template());
+		}
+		if( ! $this->_pretty_name){
+			throw new EE_Error(sprintf(__("You must set the pretty name for the Payment Method Type in the constructor (_pretty_name), and please make it internationalized", "event_espresso")));
 		}
 	}
 	
@@ -307,5 +315,21 @@ abstract class EE_PMT_Base{
 	 */
 	public function help_tabs_config(){
 		return array();
+	}
+	/**
+	 * The system name for this PMT (eg AIM, Paypal_Pro, Invoice... what gets put into
+	 * the payment method's table's PMT_type column)
+	 * @return string
+	 */
+	public function system_name(){
+		$classname = get_class($this);
+		return str_replace("EE_PMT_",'',$classname);
+	}
+	/**
+	 * A pretty i18n version of the PMT name
+	 * @return string
+	 */
+	public function pretty_name(){
+		return $this->_pretty_name;
 	}
 }

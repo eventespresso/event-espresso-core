@@ -26,6 +26,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Invoice extends EE_PMT_Base{
+	public function __construct($pm_instance = NULL) {
+		$this->_pretty_name = __("Invoice", 'event_espresso');
+		parent::__construct($pm_instance);
+	}
 	public function generate_new_billing_form() {
 		return NULL;
 	}

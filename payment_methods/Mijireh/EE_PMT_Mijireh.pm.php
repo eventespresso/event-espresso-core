@@ -30,6 +30,7 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Mijireh.gateway.php');
 		$this->_gateway = new EEG_Mijireh();
+		$this->_pretty_name = __("Mijireh", 'event_espresso');
 		parent::__construct($pm_instance);
 	}
 	/**	
