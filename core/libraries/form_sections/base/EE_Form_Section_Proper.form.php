@@ -101,6 +101,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	}
 	
 	/**
+	 * was_submitted - checks if form inputs are present in request data
+	 * @return boolean
+	 */
+	public function was_submitted(){
+		return isset( $_REQUEST[ $this->name() ] ) ? TRUE : FALSE;
+	}
+	
+	/**
 	 * After the form section is initially created, call this to sanitize the data in the submission
 	 * which relates to this form section, validate it, and set it as properties on the form.
 	 * @param array $req_data should usually be $_REQUEST (the default). However, you CAN
