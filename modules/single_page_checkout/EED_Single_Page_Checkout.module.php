@@ -357,7 +357,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							}
 						}
 					}
-//				} 				
+//				}
 			} else {
 				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retreived from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			}
@@ -385,10 +385,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			echo '<h1>_initialize_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 			$this->_initialize_transaction();
 		} else {
-			
+
 		}
 		// and verify registrations have been set (first check cached REGs)
-		if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations( array(), TRUE ) == NULL ) { 
+		if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations( array(), TRUE ) == NULL ) {
 //			echo '<h1>registrations  NULL<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 			// then check the db
 			if ( $this->_transaction->registrations() == NULL ) {
@@ -468,7 +468,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! defined('SPCO_TEMPLATES_PATH' )) {
 			self::set_definitions();
 		}
-			
+
 		$this->set_templates();
 
 	}
@@ -674,7 +674,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$additional_event_attendees = array();
 		$events_that_use_coupon_codes = array();
 		$events_that_use_groupon_codes = array();
-		
+
 		$template_args = array(
 			'css_class' => '',
 			'confirmation_data' => '',
@@ -682,7 +682,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'additional_attendee_reg_info' => NULL,
 			'whats_in_the_cart' => '',
 			'prmy_att_input_name' => NULL
-		);	
+		);
 
 		$event_queue['title'] = __('Registrations', 'event_espresso');
 		$attendee_headings = array();
@@ -859,7 +859,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// check if monies are potentially owing
 		$template_args['payment_required'] = $cart_total_before_tax > 0 ? $payment_required : FALSE;
 		// not a free event?
-		if ( $template_args['payment_required'] ) { 
+		if ( $template_args['payment_required'] ) {
 			//check for any previous payments
 			if ( $template_args['payments'] = $this->_transaction->approved_payments() ) {
 				foreach ( $template_args['payments'] as $payment ) {
@@ -869,22 +869,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 				}
 				$template_args['pay_date_frmt'] = get_option('date_format') . ' ' . get_option('time_format');
-			}	
-		} else {			
+			}
+		} else {
 			//unset( self::$_reg_steps['payment_options'] );
 			EE_Registry::instance()->SSN->set_session_data( array( 'billing_info' => 'no payment required' ));
 			$template_args['payments'] = array();
 		}
-		
+
 		$template_args['sub_total'] = $cart_total_before_tax;
 		$template_args['taxes'] = $this->_cart->get_taxes_line_item()->children();
 
 		// what's left to pay?
 		$amount_owing = $grand_total - $total_payments;
 		$template_args['amount_owing'] = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__amount_owing', $amount_owing );
-		
+
 		//$template_args['grand_total'] = $template_args['amount_owing'] !== FALSE ? $amount_owing : $grand_total;
-		
+
 		$template_args['total_items'] = $event_queue['total_items'] = $total_items;
 //	d( $event_queue );
 		$template_args['event_queue'] = $event_queue;
@@ -982,7 +982,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// has gateway been set by no-js user?
 				if ( EE_Registry::instance()->REQ->is_set( 'payment' )) {
 					if ( $payment = sanitize_text_field( EE_Registry::instance()->REQ->get( 'payment' ))) {
-//						d( $payment );	
+//						d( $payment );
 						if ( EE_Registry::instance()->LIB->EEM_Gateways->selected_gateway() != $payment ) {
 							EE_Registry::instance()->LIB->EEM_Gateways->set_selected_gateway( $payment );
 						} else {
@@ -998,7 +998,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			printr( $step_args, '$step_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 //			d( $step_args );
-			$registration_steps .= EEH_Template::locate_template( $this->_templates[ $reg_step_details['template'] ], TRUE, $step_args, TRUE );
+			$registration_steps .= EEH_Template::locate_template( $this->_templates[ $reg_step_details[ 'template' ] ], $step_args, TRUE, TRUE );
 			// pass step info to js
 			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step_details['display_func'];
 			next( self::$_reg_steps );
@@ -1017,7 +1017,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'empty_msg' => apply_filters( 'FHEE__Single_Page_Checkout__registration_checkout__empty_msg', __( 'You need to select at least one event before you can proceed with the registration process.', 'event_espresso' ) )
 		);
 //		d( $wrapper_args );
-		EE_Registry::instance()->REQ->add_output( EEH_Template::locate_template( $this->_templates['registration_page_wrapper'], TRUE, $wrapper_args, TRUE ));
+		EE_Registry::instance()->REQ->add_output( EEH_Template::locate_template( $this->_templates[ 'registration_page_wrapper' ], $wrapper_args, TRUE, TRUE ));
 	}
 
 
@@ -1133,12 +1133,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$registrations = $this->_transaction->registrations( array(), TRUE );
 					if ( ! empty( $registrations )) {
 						EE_Registry::instance()->load_model( 'Attendee' );
-						// grab the saved registrations from the transaction				
+						// grab the saved registrations from the transaction
 						foreach ( $registrations  as $registration ) {
 							// verify EE_Registration object
 							if ( $registration instanceof EE_Registration ) {
-								// EITHER a) first time thru SPCO so process ALL registrations 
-								// OR b) primary registrant is editing info, so process ALL registrations 
+								// EITHER a) first time thru SPCO so process ALL registrations
+								// OR b) primary registrant is editing info, so process ALL registrations
 								// OR b) another registrant is editing info, so ONLY process their registration
 								if ( ! $this->_revisit || $this->_primary_revisit || ( $this->_revisit && $this->_reg_url_link == $registration->reg_url_link() )) {
 									// reg_url_link / line item ID exists ?
@@ -1159,10 +1159,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 											$valid_data[ $line_item_id ] = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item', $valid_data[ $line_item_id ] );
 	//									printr( $valid_data[ $line_item_id ], '$valid_data[ $line_item_id ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 											// now loop through our array of valid post data && process attendee reg forms
-											foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {											
+											foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) {
 												// check for critical inputs
 												if ( empty( $input_value )) {
-													
+
 													switch( $form_input ) {
 														case 'fname' :
 															EE_Error::add_error( __( 'First Name is a required value.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -1177,7 +1177,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 															$success = FALSE;
 														break;
 													}
-													
+
 												} elseif ( $form_input == 'email' ) {
 													// clean the email address
 													$valid_email = sanitize_email( $input_value );
@@ -1187,19 +1187,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 														EE_Error::add_error( __( 'Please enter a valid email address.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 														$success = FALSE;
 													}
-												} 
-											
+												}
+
 												// store a bit of data about the primary attendee
 												if ( $att_nmbr == 1 && $line_item_id == $primary_attendee['line_item_id'] && ! empty( $input_value )) {
 													$primary_attendee[ $form_input ] = $input_value;
 												} else if ( $copy_primary && isset( $primary_attendee[ $form_input ] ) && $input_value == NULL ) {
 													$input_value = $primary_attendee[ $form_input ];
 												}
-												
+
 												// $answer_cache_id is the key used to find the EE_Answer we want
 												$answer_cache_id = $this->_reg_url_link ? $form_input : $form_input . '-' . $line_item_id;
 												$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
-											
+
 												$attendee_property = FALSE;
 												//rename a couple of form_inputs
 												switch( $form_input ) {
@@ -1215,7 +1215,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 														$attendee_property = EEH_Class_Tools::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
 														$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 												}
-							
+
 	//echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	//echo '<h4>attendee_property: ' . $attendee_property . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 	//echo '<h4>$answer_is_obj : ' . $answer_is_obj . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -1224,7 +1224,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												// if this form input has a corresponding attendee property
 												if ( $attendee_property ) {
 													$attendee_data[ $form_input ] = $input_value;
-													if (  $answer_is_obj ) {													
+													if (  $answer_is_obj ) {
 														// and delete the corresponding answer since we won't be storing this data in that object
 														$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
 													}
@@ -1238,17 +1238,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 														if ( $answer  instanceof EE_Answer && $answer->question_ID() == $answer_cache_id ) {
 															$answer->set_value( $input_value );
 															$saved = TRUE;
-														} 
+														}
 													}
-								
+
 												}
 												if ( ! $saved )  {
 													EE_Error::add_error( sprintf( __( 'Unable to save registration form data for the form input: %s', 'event_espresso' ), $form_input ), __FILE__, __FUNCTION__, __LINE__ );
 													$success = FALSE;
 												}
 
-											}  // end of foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value ) 
-											
+											}  // end of foreach ( $valid_data[ $line_item_id ] as $form_input => $input_value )
+
 										} /*else {
 											EE_Error::add_error( sprintf( __( 'It appears that no form data, or invalid data, for attendee #%s was received while attempting to process the registration form.', 'event_espresso' ), $att_nmbr ), __FILE__, __FUNCTION__, __LINE__ );
 											$success = FALSE;
@@ -1292,7 +1292,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												foreach ( $attendee_data as $property_name => $property_value ) {
 													if ( EEH_Class_Tools::has_property( 'EE_Attendee', '_' . $property_name )) {
 														$existing_attendee->set( $property_name, $property_value );
-													}												
+													}
 												}
 												// better save that now
 												$existing_attendee->save();
@@ -1304,7 +1304,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 											} else {
 												// ensure critical details are set for additional attendees
 												if ( $att_nmbr > 1 ) {
-													$critical_attendee_details = array( 
+													$critical_attendee_details = array(
 														'ATT_fname',
 														'ATT_lname',
 														'ATT_email',
@@ -1317,7 +1317,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 														'ATT_phone',
 													);
 													foreach ( $critical_attendee_details as $critical_attendee_detail ) {
-														if ( ! isset( $attendee_data[ $critical_attendee_detail ] ) || empty( $attendee_data[ $critical_attendee_detail ] )) { 
+														if ( ! isset( $attendee_data[ $critical_attendee_detail ] ) || empty( $attendee_data[ $critical_attendee_detail ] )) {
 															$attendee_data[ $critical_attendee_detail ] = $primary_attendee_obj->get( $critical_attendee_detail );
 														}
 													}
@@ -1335,12 +1335,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												$registration->update_cache_after_object_save( 'Attendee', $new_attendee );
 
 											}
-											
+
 											// who's the man ?
 											if ( $att_nmbr == 1 ) {
 												$primary_attendee_obj = $registration->get_first_related( 'Attendee' );
 //												printr( $primary_attendee_obj, '$primary_attendee_obj  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-											}									
+											}
 										}
 
 
@@ -1350,30 +1350,30 @@ class EED_Single_Page_Checkout  extends EED_Module {
 										// remove malformed data
 										unset( $valid_data[ $line_item_id ] );
 									}
-									
+
 									if ( ! $registration->attendee() instanceof EE_Attendee ) {
 										EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $line_item_id ), __FILE__, __FUNCTION__, __LINE__ );
 										$success = FALSE;
 									}
-									
+
 //									printr( $registration->attendee(), '$registration->attendee()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-	
+
 								} // end of if ( ! $this->_revisit || $this->_primary_revisit || ( $this->_revisit && $this->_reg_url_link == $registration->reg_url_link() )) {
-									
+
 							// end of if ( $registration instanceof EE_Registration )
 							} else {
 								EE_Error::add_error( __( 'An invalid Registration object was discovered when attempting to process your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 								$success = FALSE;
-							}							
+							}
 
 //							printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-							
+
 						} // end of foreach ( $this->_transaction->registrations()  as $registration )
 
 						if ( ! $this->_reg_url_link ) {
 							EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
-						}				
-						
+						}
+
 					} else {
 						EE_Error::add_error( __( 'Your form data could not be applied to any valid registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 						$success = FALSE;
@@ -1381,14 +1381,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 				} else {
 					EE_Error::add_error( __( 'A valid transaction could not be initiated for processing your registrations.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-					$success = FALSE;			
+					$success = FALSE;
 				}
 
 			}
 
 		} else {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-			$success = FALSE;		
+			$success = FALSE;
 		}
 
 		// grab any errors
@@ -1427,17 +1427,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function _save_all_registration_information() {
 //		echo '<br/><h5 style="color:#2EA2CC;">'. __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		// verify the transaction		
+		// verify the transaction
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			$this->_transaction->save();
 			$TXN_ID = $this->_transaction->ID();
 			// grab the saved registrations from the transaction
-			foreach ( $this->_transaction->registrations( array(), TRUE ) as $line_item_id => $registration ) {  //  
+			foreach ( $this->_transaction->registrations( array(), TRUE ) as $line_item_id => $registration ) {  //
 //				printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 				// verify object
 				if ( $registration instanceof EE_Registration ) {
-					// EITHER a) first time thru SPCO so process ALL registrations 
-					// OR b) primary registrant is editing info, so process ALL registrations 
+					// EITHER a) first time thru SPCO so process ALL registrations
+					// OR b) primary registrant is editing info, so process ALL registrations
 					// OR b) another registrant is editing info, so ONLY process their registration
 					if ( ! $this->_revisit || $this->_primary_revisit || ( $this->_revisit && $this->_reg_url_link == $registration->reg_url_link() )) {
 						//set TXN ID
@@ -1482,13 +1482,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						if ( ! $this->_transaction->update_cache_after_object_save( 'Registration', $registration, $line_item_id )) {
 							EE_Error::add_error( __( 'The newly saved Registration object could not be cached on the Transaction.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 							return FALSE;
-						}	
-					}	
+						}
+					}
 				} else {
 					EE_Error::add_error( __( 'An invalid Registration object was discovered when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					return FALSE;
 				}
-			}				
+			}
 		} else {
 			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			return FALSE;
@@ -1698,7 +1698,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$response = EE_Registry::instance()->load_model( 'Gateways' )->process_payment_start( $this->_cart->get_grand_total(), $this->_transaction );
 				$this->_thank_you_page_url = $response['forward_url'];
 			}
-						
+
 			if ( isset( $response['msg']['success'] )) {
 				$response_data = array(
 					'success' => $response['msg']['success'],
@@ -1707,7 +1707,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$response_data = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $response_data );
 //				printr( $response_data, '$response_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //				echo '<h4>thank_you_page_url : ' . $this->_thank_you_page_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-				
+
 				if ( EE_Registry::instance()->REQ->front_ajax ) {
 					echo json_encode( $response_data );
 					die();
@@ -1720,8 +1720,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				EE_Error::add_error( $response['msg']['error'], __FILE__, __FUNCTION__, __LINE__ );
 			}
 //			printr( $response, '$response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-		} 
-		
+		}
+
 		$this->go_to_next_step( __FUNCTION__ );
 
 	}

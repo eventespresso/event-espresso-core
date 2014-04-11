@@ -573,7 +573,7 @@ final class EE_Front_Controller {
 		// * /wp-content/uploads/espresso/templates/ee-theme/
 		// * /wp-content/plugins/EE4/templates/espresso_default/
 		$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
-		$template_path = EEH_Template::locate_template( $this->_template_path, FALSE );
+		$template_path = EEH_Template::locate_template( $this->_template_path, array(), FALSE );
 		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
 		$this->_template = basename( $this->_template_path );
 //		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
