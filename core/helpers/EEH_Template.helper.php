@@ -196,7 +196,7 @@ class EEH_Template {
 				// if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
 				array_unshift( $full_template_paths, $template );
 			}
-			// filter final array of template locations
+			// filter final array of full template paths
 			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
