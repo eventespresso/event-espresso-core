@@ -62,14 +62,15 @@ class EE_Payment_Processor{
 	 * @param int $payment_method ID of the payment method to use
 	 * @param EE_Transaction $transaction
 	 * @param float $amount if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
-	 * @param array $billing_info array of simple-key-value-pairs for cc details, billing address, etc
+	 * @param EE_Billing_Info_Form $billing_form (or probably null, if it's an offline or offsite payment method). receive_form_submission() should
+	 * have already been called on the billing form (ie, its inputs should have their normalized values set).
 	 * @param string $success_url string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
 	 * @param string $method like 'CART', indicates who the client who called this was
 	 * @param boolean $save_txn whether or not to save the transaction as part of this function call
 	 * @return EE_Payment
 	 * @throws EE_Error (espeically if the specified payment method's type is no longer defined)
 	 */
-	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_info = NULL, $success_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
+	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_form = NULL, $success_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
 		//overwrite billing info for testing
 //		$billing_info = array(
 //			'first_name'=>'payman',
@@ -92,7 +93,7 @@ class EE_Payment_Processor{
 		EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$transaction->set_payment_method_ID($payment_method->ID());
 		if($payment_method->type_obj() && $payment_method->type_obj() instanceof EE_PMT_Base){
-			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_info, $success_url, $method, $by_admin );
+			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $success_url, $method, $by_admin );
 			if ( empty( $payment )) {
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				if($save_txn) $transaction->save();

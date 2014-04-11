@@ -88,6 +88,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	private $_normalization_strategy;
 	
 	/**
+	 * Strategy for removing sensitive data after we're done with the form input
+	 * @var EE_Sensitive_Data_Removal_Base
+	 */
+	protected $_sensitive_data_removal_strategy;
+	
+	/**
 	 * Stores whether or not this input's response is required.
 	 * Because certain styling elements may also want to know that this
 	 * input is required etc.
@@ -147,6 +153,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			}
 			$this->_normalization_strategy = array_merge($this->_normalization_strategy, $normalization_strategy);
 		}
+		if(isset($options_array['sensitive_data_removal_strategy'])){
+			if(is_array($options_array['sensitive_data_removal_strategy'])){
+				$sensitive_data_removal_strategy = $options_array['sensitive_data_removal_strategy'];
+			}else{
+				$sensitive_data_removal_strategy = array($options_array['sensitive_data_removal_strategy']);
+			}
+			$this->_sensitive_data_removal_strategy = array_merge($this->_sensitive_data_removal_strategy, $sensitive_data_removal_strategy);
+		}
 		if(isset($options_array['validation_strategies'])){
 			if(is_array($options_array['validation_strategies'])){
 				$validation_strategies = $options_array['validation_strategies'];
@@ -169,7 +183,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$this->_normalization_strategy = new EE_Text_Normalization();
 		}
 		$this->_normalization_strategy->_construct_finalize($this);
-		
+		if( ! $this->_sensitive_data_removal_strategy){
+			$this->_sensitive_data_removal_strategy = new EE_No_Sensitive_Data_Removal();
+		}
+		$this->_sensitive_data_removal_strategy->_construct_finalize($this);
 		parent::__construct($options_array);
 	}
 	
@@ -224,6 +241,24 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected function _set_normalization_strategy(EE_Normalization_Strategy_Base $strategy){
 		$this->_normalization_strategy = $strategy;
 	}
+	
+	/**
+	 * Gets sensitive_data_removal_strategy
+	 * @return EE_Sensitive_Data_Removal_Base
+	 */
+	public function get_sensitive_data_removal_strategy() {
+		return $this->_sensitive_data_removal_strategy;
+	}
+
+	/**
+	 * Sets sensitive_data_removal_strategy
+	 * @param EE_Sensitive_Data_Removal_Base $sensitive_data_removal_strategy
+	 * @return boolean
+	 */
+	public function set_sensitive_data_removal_strategy($sensitive_data_removal_strategy) {
+		$this->_sensitive_data_removal_strategy = $sensitive_data_removal_strategy;
+	}
+
 	
 	/**
 	 * Gets the display strategy for this input
@@ -503,5 +538,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	public function set_html_help_text($text){
 		$this->_html_help_text = $text;
+	}
+	/**
+	 * Uses the sensitive data removal strategy to remove the sensitive data from this
+	 * input
+	 * @return void
+	 */
+	public function clean_sensitive_data() {
+		$this->_normalized_value = $this->get_sensitive_data_removal_strategy()->remove_sensitive_data($this->_normalized_value);
 	}
 }

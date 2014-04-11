@@ -150,6 +150,7 @@ class EEH_Autoloader {
 		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/normalization');
 		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/validation');
 		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/layout');
+		$this->_register_autoloaders_for_each_file_in_folder(EE_FORM_SECTIONS.'strategies/sensitive_data_removal');
 	}
 
 

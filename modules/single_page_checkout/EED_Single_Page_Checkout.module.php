@@ -1827,7 +1827,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$payment_method, 
 			$this->_transaction,
 			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ), 
-			$this->_billing_form && $this->_billing_form instanceof EE_Billing_Info_Form ? 	$this->_billing_form->input_values() : NULL, 
+			$this->_billing_form, 
 			$this->_thank_you_page_url
 		);		
 		// verify payment object
