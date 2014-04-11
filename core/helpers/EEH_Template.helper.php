@@ -1,6 +1,5 @@
 <?php
 if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowed'); }
-
 /**
  * Event Espresso
  *
@@ -128,7 +127,7 @@ class EEH_Template {
 		}
 		// allow tempalte parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
 		if ( apply_filters( "FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", TRUE )) {
-			EEH_Template::locate_template( $templates, TRUE, $template_args, $return_string );
+			EEH_Template::locate_template( $templates, $template_args, TRUE, $return_string );
 		}
 	}
 
@@ -138,21 +137,21 @@ class EEH_Template {
 	 *    locate_template
 	 *
 	 *    locate a template file by looking in the following places, in the following order:
-	 *        /wp-content/uploads/espresso/templates/(current EE theme)/
-	 *        /wp-content/uploads/espresso/templates/
-	 *        /wp-content/plugins/(EE4 folder)/templates/(current EE theme)/
-	 *        /wp-content/plugins/(EE4 folder)/(relative path)
-	 *        (absolute server path)
-	 *    as soon as the template is found i none of those locations, it will be returned or loaded
+	 *        <assumed full absolute server path>
+	 *        <server path up to>/wp-content/uploads/espresso/templates/<current EE theme>/
+	 *        <server path up to>/wp-content/uploads/espresso/templates/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/templates/<current EE theme>/
+	 *        <server path up to>/wp-content/plugins/<EE4 folder>/<relative path>
+	 *    as soon as the template is found in one of these locations, it will be returned or loaded
 	 *
 	 * @param array    $templates
-	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
+	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
 	 * @internal param array|string $mixed $templates  the template file name including extension
 	 * @return mixed
 	 */
-	public static function locate_template( $templates = array(), $load = TRUE, $template_args = array(), $return_string = TRUE ) {
+	public static function locate_template( $templates = array(), $template_args = array(), $load = TRUE, $return_string = TRUE ) {
 		// first use WP locate_template to check for template in the current theme folder
 		$template_path = locate_template( $templates );
 		// not in the theme
@@ -172,39 +171,43 @@ class EEH_Template {
 			}
 			// currently active EE template theme
 			$current_theme = EE_Config::get_current_theme();
-			// filter array to hold possible template paths
-			$template_locations = apply_filters( 'FHEE__EEH_Template__locate_template__initial_template_locations', array() );
-			// loop thru templates
+			// array of paths to folders that may contain templates
+			$template_folder_paths = array(
+				// first check the /wp-content/uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
+				EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme,
+				// then in the root of the /wp-content/uploads/espresso/templates/ folder
+				EVENT_ESPRESSO_TEMPLATE_DIR,
+				// in the  /wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ folder within the plugin
+				EE_TEMPLATES . $current_theme,
+				// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
+				EE_PLUGIN_DIR_PATH
+			);
+			// now filter that array
+			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
+			// array to hold all possible template paths
+			$full_template_paths = array();
+			// loop through $templates
 			foreach ( (array)$templates as $template ) {
-				// build up our template locations array by merging back into it with new locations based on the contents of the $templates array
-				$template_locations = array_merge(
-					$template_locations,
-					array(
-						// first check the /wp-content/uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
-						EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme . DS . $template,
-						// then in the root of the /wp-content/uploads/espresso/templates/ folder
-						EVENT_ESPRESSO_TEMPLATE_DIR . $template,
-						// in the  /wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ folder within the plugin
-						EE_TEMPLATES . $current_theme . DS . $template,
-						// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
-						EE_PLUGIN_DIR_PATH . DS . $template,
-						// otherwise assume it's an absolute server path
-						$template
-					)
-				);
+				// while looping through all template folder paths
+				foreach ( (array)$template_folder_paths as $template_folder_path ) {
+					// build up our template locations array by combining our template folder paths with our templates
+					$full_template_paths[] = rtrim( $template_folder_path, DS ) . DS . $template;
+				}
+				// if $template is an absolute path, then we'll tack it onto the start of our array so that it gets searched first
+				array_unshift( $full_template_paths, $template );
 			}
-			// filter array
-			$template_locations = apply_filters( 'FHEE__EEH_Template__locate_template__final_template_locations', $template_locations );
-			// loop thru templates and check each location (or relative to it) for the specified file
-			foreach ( (array)$template_locations as $template_location ) {
-				if ( is_readable( $template_location )) {
-					$template_path = $template_location;
+			// filter final array of template locations
+			$full_template_paths = apply_filters( 'FHEE__EEH_Template__locate_template__full_template_paths', $full_template_paths );
+			// now loop through our final array of template location paths and check each location
+			foreach ( (array)$full_template_paths as $full_template_path ) {
+				if ( is_readable( $full_template_path )) {
+					$template_path = $full_template_path;
 				    break;
 				}
 			}
 		}
 		// if we got it and you want to see it...
-		if ( $template_path != '' && $load ) {
+		if ( is_readable( $template_path ) && $load ) {
 			if ( $return_string ) {
 				return EEH_Template::display_template( $template_path, $template_args, $return_string );
 			} else {
