@@ -48,6 +48,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	// info for each of the reg steps
 	private static $_reg_steps = array();
 	// if a payment method was selected that uses an on-site gateway, then this is the billing form
+	/**
+	 *
+	 * @var EE_Billing_Info_Form
+	 */
 	private $_billing_form = NULL;
 	// string slug for the payment method that was selected during the payment options step
 	private $_selected_method_of_payment = NULL;
@@ -1823,7 +1827,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$payment_method, 
 			$this->_transaction,
 			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ), 
-			$this->_billing_form, 
+			$this->_billing_form && $this->_billing_form instanceof EE_Billing_Info_Form ? 	$this->_billing_form->input_values() : NULL, 
 			$this->_thank_you_page_url
 		);		
 		// verify payment object
