@@ -3,10 +3,10 @@
   Plugin Name: Event Espresso - Calendar
   Plugin URI: http://www.eventespresso.com
   Description: A full calendar addon for Event Espresso. Includes month, week, and day views.
-  Version: 3.0.0.beta
+  Version: 3.0.01.beta
   Author: Event Espresso
   Author URI: http://www.eventespresso.com
-  Copyright 2013 Event Espresso (email : support@eventespresso.com)
+  Copyright 2014 Event Espresso (email : support@eventespresso.com)
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License, version 2, as
