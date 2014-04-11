@@ -109,7 +109,7 @@
 	 */
 	public function __construct() {
 		// calendar_version
-		define( 'EE_CALENDAR_VERSION', '3.0.0.beta' );
+		define( 'EE_CALENDAR_VERSION', '3.0.01.beta' );
 		// define the plugin directory path and URL
 		define( 'EE_CALENDAR_PATH', plugin_dir_path( __FILE__ ));
 		define( 'EE_CALENDAR_URL', plugin_dir_url( __FILE__ ));
