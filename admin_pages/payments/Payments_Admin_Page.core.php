@@ -83,9 +83,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'func'=>'_update_payment_settings',
 				'noheader'=>TRUE,
 				),
+			'payment_log'=> '_payment_log_overview_list_table'
 			);
 	}
-
+	
 
 
 	protected function _set_page_config() {
@@ -166,7 +167,16 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Payment_Methods_Settings_Help_Tour' ),
 				'metaboxes' => array( '_publish_post_box', '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
 				'require_nonce' => FALSE
-				)
+				),
+			'payment_log'=>array(
+				'nav'=> array(
+					'label' => __("Logs", 'event_espresso'),
+					'order'=>30,
+				),
+				'list_table'=>'Payment_Log_Admin_List_Table',
+				'metaboxes' => array('_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
+				'require_nonce'=> FALSE
+			)
 			);
 	}
 	protected function _add_payment_method_help_tabs(){
@@ -481,6 +491,45 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, __('updated','event_espresso'), array( 'action' => 'payment_settings' ) );
 
+	}
+	protected function _payment_log_overview_list_table() {
+//		$this->_search_btn_label = __('Payment Log', 'event_espresso');
+		$this->display_admin_list_table_page_with_sidebar();
+	}
+	protected function _set_list_table_views_payment_log() {
+		$this->_views = array(
+			'all' => array(
+				'slug' => 'all',
+				'label' => __('View All Logs', 'event_espresso'),
+				'count' => 0,
+				)
+		);
+	}
+	/**
+	 * 
+	 * @param type $payment_method_id
+	 * @param type $transaction_id
+	 * @param type $order_asc
+	 * @return type
+	 */
+	public function get_payment_logs($per_page = 50, $current_page = 0, $count = false){
+		if( ! isset($this->_req_data['_payment_method']) || $this->_req_data['_payment_method'] == ''){
+				$payment_method_id = NULL;
+			}else{
+				$payment_method_id = $this->_req_data['_payment_method'];
+			}
+		if($count){
+			return EEM_Payment_Log::instance()->count($payment_method_id);
+		}else{
+			if(isset($this->_req_data['orderby']) && isset($this->_req_data['order']) && $this->_req_data['order'] == 'asc'){
+				$order_asc = true;
+			}else{
+				$order_asc = false;
+			}
+			
+			
+			return EEM_Payment_Log::instance()->get_all_payment_logs($payment_method_id, NULL, $order_asc,$per_page,$current_page*$per_page);
+		}
 	}
 
 
