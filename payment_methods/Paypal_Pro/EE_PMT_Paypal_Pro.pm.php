@@ -55,11 +55,15 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		$form_args = array(
 			'name'=>$form_name,
 			'subsections'=>array(
-				'credit_card'=>new EE_Credit_Card_Input(),
+				'credit_card'=>new EE_Credit_Card_Input(array(
+					'required'=>true
+				)),
 				'credit_card_type'=>new EE_Select_Input(array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(),array_flip($allowed_types))),//the options are set dynamically
 				'exp_month'=>new EE_Month_Input(true),
 				'exp_year'=>new EE_Year_Input(true),
-				'cvv'=>new EE_CVV_Input(),
+				'cvv'=>new EE_CVV_Input(array(
+					'required'=>true
+				)),
 			));
 		//tweak the form (in the template we check for debug mode and whether ot add any content or not)
 		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$form_name, array('EE_PMT_Paypal_Pro','generate_billing_form_debug_content'),10,2);
@@ -77,7 +81,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		return $billing_form;
 	}
 	/**
-	 * 
+	 *  Possibly adds debug content to paypal billing form
 	 * @param type $form_begin_content
 	 * @param EE_Billing_Form $form_section
 	 * @return string

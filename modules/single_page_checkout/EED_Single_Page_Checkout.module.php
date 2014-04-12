@@ -1152,7 +1152,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->_billing_form = $this->_payment_method->type_obj()->billing_form();
 		if ( $this->_billing_form instanceof EE_Billing_Info_Form ) {
 			if ( $this->_billing_form->was_submitted() ) {
+				var_dump($_REQUEST);
 				$this->_billing_form->receive_form_submission();
+				var_dump($this->_billing_form->input_values());die;
 				if ( ! $this->_billing_form->is_valid() ) {
 					EE_Error::add_error( __( 'One or more billing form inputs are invalid and require correction before proceeding.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 					return FALSE;

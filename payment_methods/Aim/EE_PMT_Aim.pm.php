@@ -57,6 +57,12 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		}
 		return $form;
 	}
+	/**
+	 * Possibly adds debug content to billing form
+	 * @param type $original_opening_content
+	 * @param type $form_section
+	 * @return string
+	 */
 	public static function generate_new_billing_form_debug_content($original_opening_content,$form_section){
 		EE_Registry::instance()->load_helper('Template');
 		$pm = $form_section->payment_method();
