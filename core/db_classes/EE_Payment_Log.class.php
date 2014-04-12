@@ -110,7 +110,7 @@ class EE_Payment_Log {
 	 * @return mixed
 	 */
 	function content() {
-		return $this->get('content');
+		return maybe_unserialize($this->get('content'));
 	}
 
 	/**

@@ -132,7 +132,12 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_id(EE_Payment_Log $item) {	
-		return $item->ID();
+		$details_query_args = array(
+			'action'=>'payment_log_details',
+			'ID'=>$item->ID(),
+		);
+		$url = EE_Admin_Page::add_query_args_and_nonce($details_query_args, EE_PAYMENTS_ADMIN_URL);
+		return "<a href='$url'>{$item->ID()}</a>";
 	}
 
 

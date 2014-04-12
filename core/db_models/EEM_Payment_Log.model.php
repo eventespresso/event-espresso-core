@@ -131,6 +131,18 @@ class EEM_Payment_Log {
 		return $query;
 	}
 	/**
+	 * 
+	 * @global type $wpdb
+	 * @param type $ID
+	 * @return EE_Payment_Log
+	 */
+	public function get_one_by_ID($ID){
+		global $wpdb;
+		$rows = $wpdb->get_results($wpdb->prepare("SELECT * FROM {$wpdb->options} WHERE option_id=%d LIMIT 1",$ID),ARRAY_A);
+		$objs = $this->_create_objs($rows);
+		return $objs ? array_shift($objs) : NULL;
+	}
+	/**
 	 * Creates EE_Payment_Log objects from wpdb results
 	 * @param array $rows of arrays, from $wpdb->get_results(*,ARRAY_A)
 	 * @return EE_Payment_Log[]

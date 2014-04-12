@@ -485,6 +485,55 @@ class EEH_Template implements EEHI_Template{
 		$content .= '</div>' . "\n";
 		return $content;
 	}
+	/**
+	 * Gets HTML for laying out a deeply-nested array (and objects) in a format
+	 * that's nice for presenting in the wp admin
+	 * @param mixed $data
+	 */
+	public static function layout_array_as_table($data) {
+	if (is_object($data)) {
+		$data = (array)$data;
+	}
+	ob_start();			
+	if (is_array($data)) {
+		if (EEH_Array::is_associative_array($data)) {
+			?>
+			<table class="widefat">
+				<tbody>
+					<?php
+					foreach ($data as $data_key => $data_values) {
+						?>
+						<tr>
+							<td>
+								<?php echo $data_key;?>
+							</td>
+							<td>
+								<?php self::layout_as_table($data_values);?>
+							</td>
+						</tr>
+						<?php
+					}?>
+				</tbody>
+			</table>
+			<?php
+		}
+		else {
+			?>
+			<ul>
+				<?php
+				foreach ($data as $datum) {
+					echo "<li>";self::layout_array_as_table($datum);echo "</li>";
+				}?>
+			</ul>
+			<?php
+		}
+	}
+	else {
+		//simple value
+		echo $data;
+	}
+	return ob_get_clean();
+}
 
 
 

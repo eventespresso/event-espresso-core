@@ -83,7 +83,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'func'=>'_update_payment_settings',
 				'noheader'=>TRUE,
 				),
-			'payment_log'=> '_payment_log_overview_list_table'
+			'payment_log'=> '_payment_log_overview_list_table',
+			'payment_log_details'=>'_payment_log_details',
 			);
 	}
 	
@@ -530,6 +531,13 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			
 			return EEM_Payment_Log::instance()->get_all_payment_logs($payment_method_id, NULL, $order_asc,$per_page,$current_page*$per_page);
 		}
+	}
+	
+	protected function _payment_log_details() {
+		$payment_log = EEM_Payment_Log::instance()->get_one_by_ID($this->_req_data['ID']);
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_log_details.template.php', array('payment_log'=>$payment_log), TRUE );
+		$this->display_admin_page_with_sidebar();
+
 	}
 
 
