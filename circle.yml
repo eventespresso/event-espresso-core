@@ -17,8 +17,8 @@ machine:
     WP_TESTS_DIR: /home/ubuntu/tmp/wordpress-tests
     plugin_loc: /home/ubuntu/$CIRCLE_PROJECT_REPONAME
     plugin_slug: $CIRCLE_PROJECT_REPONAME
-    plugin_dir: $WP_CORE_DIR/wp-content/plugins/$plugin_slug
-    plugin_tests_dir: $WP_CORE_DIR/wp-content/plugins/$plugin_slug/tests
+    plugin_dir: /home/ubuntu/tmp/wordpress/wp-content/plugins/$plugin_slug
+    plugin_tests_dir: /home/ubuntu/tmp/wordpress/wp-content/plugins/$plugin_slug/tests
 
 
 ## Customize dependencies
