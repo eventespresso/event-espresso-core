@@ -236,39 +236,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 
-
-	/**
-	 * returns the help tab array for all the gateway settings
-	 * @return array an array of help tabs for the gateways.
-	 */
-	protected function _get_gateway_help_tabs() {
-		$help_tabs = array();
-		if ( ! defined( 'ESPRESSO_GATEWAYS' )) {
-			require_once(EE_MODELS . 'EEM_Gateways.model.php');
-		}
-
-		$gateway_instances = EEM_Gateways::instance()->get_gateway_instances();
-		$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta( $current_user->ID, 'payment_settings', TRUE );
-
-
-
-		foreach ( $payment_settings as $gateway => $settings ) {
-			$ht_content = isset( $gateway_instances[$gateway] ) ? $gateway_instances[$gateway]->get_help_tab_content() : FALSE;
-			if ( $ht_content ) {
-				$ht_ref = 'ee_' . $gateway . '_help';
-				$help_tabs[$ht_ref] = array(
-					'title' => $settings['display_name'] . __(' Help', 'event_espresso'),
-					'content' => $ht_content
-					);
-			}
-		}
-
-		return $help_tabs;
-	}
-
-
-
-
 	protected function _payment_methods_list() {
 		EEM_Payment_Method::instance()->verify_button_urls(array(array('PMD_active'=>true)));
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
@@ -276,6 +243,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//setup tabs, one for each payment method type
 		$tabs = array();
 		foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
+			//we don't want to show admin-only PMTs for now
+			if($pmt_obj instanceof EE_PMT_Admin_Only){
+				continue;
+			}
 			//check for any active pms of that type
 			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($pmt_obj->system_name());
 			if( ! $payment_method ){
