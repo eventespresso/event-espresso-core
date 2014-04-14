@@ -237,7 +237,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_methods_list() {
-		EEM_Payment_Method::instance()->verify_button_urls(array(array('PMD_active'=>true)));
+		EEM_Payment_Method::instance()->verify_button_urls(EEM_Payment_Method::instance()->get_all_active());
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		EE_Registry::instance()->load_lib('Payment_Method_Manager');
 		//setup tabs, one for each payment method type
@@ -250,7 +250,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			//check for any active pms of that type
 			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($pmt_obj->system_name());
 			if( ! $payment_method ){
-				$payment_method = EE_Payment_Method::new_instance(array('PMD_type'=>$pmt_obj->system_name(),'PMD_active'=>false,'PMD_name'=>$pmt_obj->pretty_name(),'PMD_admin_name'=>$pmt_obj->pretty_name(), 'PMD_slug'=>sanitize_key($pmt_obj->system_name())));
+				$payment_method = EE_Payment_Method::new_instance(array('PMD_type'=>$pmt_obj->system_name(),'PMD_name'=>$pmt_obj->pretty_name(),'PMD_admin_name'=>$pmt_obj->pretty_name(), 'PMD_slug'=>sanitize_key($pmt_obj->system_name())));
 			}
 			add_meta_box(
 						'espresso_' . $payment_method->slug() . '_payment_settings', //html id
@@ -285,7 +285,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//if that didn't work or wasn't provided, find another way to select the currrent pm
 		if( ! $payment_method_slug){
 			//otherwise, look for an active one
-			$an_active_pm = EEM_Payment_Method::instance()->get_one(array(array('PMD_active'=>true)));
+			$an_active_pm = EEM_Payment_Method::instance()->get_one_active();
 			if($an_active_pm){
 				$payment_method_slug = $an_active_pm->slug();
 			}else{
@@ -336,7 +336,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//we don't want them to be monkeying with the type or activeness
 		$form_section->exclude(array(
 			'PMD_type',
-			'PMD_active',
 			'PMD_order',
 			'PMD_slug',
 			'PRC_ID',
@@ -361,12 +360,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					$pm_type_obj = new $pm_type_class;
 					$payment_method = EEM_Payment_Method::instance()->get_one_by_slug($pm_type_obj->system_name());
 					if( ! $payment_method){
-						$default_scopes = array(EEM_Payment_Method::scope_cart);
-						if($pm_type_obj->payment_occurs() == EE_PMT_Base::offline){
-							$default_scopes[] = EEM_Payment_Method::scope_admin;
-						}
-						$payment_method = EE_Payment_Method::new_instance(array('PMD_scope'=>$default_scopes));
+						$payment_method = EE_Payment_Method::new_instance();
 					}
+					$payment_method->set_active();
 					$payment_method->save(array(
 						'PMD_type'=>$pm_type_obj->system_name(),
 						'PMD_name'=>$pm_type_obj->pretty_name(),
@@ -376,7 +372,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				}
 				
 			}else{
-				$payment_method->set_active(true);
+				$payment_method->set_active();
 				$payment_method->save();
 			}
 			$this->_redirect_after_action(1, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$payment_method->slug()));
@@ -392,7 +388,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		if(isset($this->_req_data['payment_method'])){
 			$payment_method_slug = sanitize_key($this->_req_data['payment_method']);
 			//deactivate it
-			$count_updated = EEM_Payment_Method::instance()->update(array('PMD_active'=>false),array(array('PMD_slug'=>$payment_method_slug)));
+			$count_updated = EEM_Payment_Method::instance()->update(array('PMD_scope'=>array()),array(array('PMD_slug'=>$payment_method_slug)));
 			$this->_redirect_after_action($count_updated, 'Payment Method', 'deactivated', array('action' => 'default','payment_method'=>$payment_method_slug));
 		}else{
 			$this->_redirect_after_action(FALSE, 'Payment Method', 'deactivated', array('action' => 'default'));

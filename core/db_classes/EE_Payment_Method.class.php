@@ -52,8 +52,6 @@ class EE_Payment_Method extends EE_Base_Class{
 	protected $_PMD_wp_user_id = NULL;
 	/** Open by Default? @var PMD_open_by_default*/ 
 	protected $_PMD_open_by_default = NULL;
-	/** Active? @var PMD_active*/ 
-	protected $_PMD_active = NULL;
 	/** Button URL @var PMD_button_url*/ 
 	protected $_PMD_button_url = NULL;
 	/** Preferred Currency @var PMD_preferred_currency*/ 
@@ -119,21 +117,25 @@ class EE_Payment_Method extends EE_Base_Class{
 	}
 
 	/**
-	 * Gets active
+	 * Gets whether this payment method can be used anywhere at all (ie frontend cart, admin, etc)
 	 * @return boolean
 	 */
 	function active() {
-		return $this->get('PMD_active');
+		return array_intersect(array_keys(EEM_Payment_Method::instance()->scopes()),$this->scope());
+	}
+	/**
+	 * Sets this PM as active by making it usable wihtin the CART scope. Offline gateways
+	 * are also usable from the admin-scope as well.
+	 */
+	function set_active(){
+		$default_scopes = array(EEM_Payment_Method::scope_cart);
+		if($this->type_obj() &&
+			$this->type_obj()->payment_occurs() == EE_PMT_Base::offline){
+			$default_scopes[] = EEM_Payment_Method::scope_admin;
+		}
+		$this->set_scope($default_scopes);
 	}
 
-	/**
-	 * Sets active
-	 * @param boolean $active
-	 * @return boolean
-	 */
-	function set_active($active) {
-		return $this->set('PMD_active', $active);
-	}
 	/**
 	 * Gets button_url
 	 * @return string

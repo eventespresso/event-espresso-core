@@ -87,7 +87,6 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_logging'=>new EE_Boolean_Field('PMD_logging', __("Logging On?", 'event_espresso'), false,false),
 				'PMD_wp_user_id'=>new EE_Integer_Field('PMD_wp_user_Id', __("User ID", 'event_espresso'), false, 1),
 				'PMD_open_by_default'=>new EE_Boolean_Field('PMD_open_by_default', __("Open by Default?", 'event_espresso'), false, false),
-				'PMD_active'=>new EE_Boolean_Field('PMD_active', __("Active?", 'event_espresso'), false,true),
 				'PMD_button_url'=>new EE_Plain_Text_Field('PMD_button_url', __("Button URL", 'event_espresso'), true,''),
 				'PMD_preferred_currency'=>new EE_Plain_Text_Field('PMD_preferred_currency', __("Preferred Currency", 'event_espresso'), false, 'USD'),
 				'PMD_scope'=>new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'), false,array('frontend')),//possible values currently are 'frontend','admin','api'
@@ -135,15 +134,33 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @param string $scope one of 
 	 * @return EE_Payment_Method[]
 	 */
-	public function get_all_active($scope = NULL){
+	public function get_all_active($scope = NULL,$query_params = array()){
 		if($scope){
 			if($this->is_valid_scope($scope)){
-				return $this->get_all(array(array('PMD_active'=>true,'PMD_scope'=>array('LIKE',"%$scope%"))));
+				return $this->get_all(array(array('PMD_scope'=>array('LIKE',"%$scope%"))));
 			}else{
 				throw new EE_Error(sprintf(__("'%s' is not a valid scope for a payment method", "event_espresso"),$scope));
 			}	
 		}else{
-			return $this->get_all(array(array('PMD_active'=>true)));
+			$acceptible_scopes = array();
+			foreach($this->scopes() as $scope_name => $desc){
+				$acceptible_scopes['PMD_scope'] = array('LIKE','%'.$scope_name.'%s');
+			}
+			return $this->get_all(array(array('OR*active_scope'=>$acceptible_scopes)) + $query_params);
+		}
+	}
+	/**
+	 * Gets one active paymetn method. see @get_all_active for documentation
+	 * @param string $scope
+	 * @param array $query_params
+	 * @return EE_Payment_Method
+	 */
+	public function get_one_active($scope = NULL, $query_params = array()){
+		$results = $this->get_all_active($scope, $query_params);
+		if($results){
+			return array_shift($results);
+		}else{
+			return NULL;
 		}
 	}
 	
@@ -194,7 +211,7 @@ class EEM_Payment_Method extends EEM_Base {
 	/**
 	 * Verifies the button urls on all the payment methods that meet the criteria
 	 * of $query_params have a valid button url. If not, resets them to their default.
-	 * @param array $query_params @see EEM_Base::get_all
+	 * @param EE_Payment_Method[] payment methods you want to check
 	 */
 	function verify_button_urls($query_params = array()){
 		EE_Registry::instance()->load_helper('URL');
