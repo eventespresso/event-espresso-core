@@ -146,7 +146,7 @@ abstract class EE_Messages_incoming_data {
 
 	/**
 	 * Will hold the final transaction object (EE_Transaction)
-	 * @var EE_Transaction;
+	 * @var EE_Transaction
 	 */
 	public $txn;
 
