@@ -779,7 +779,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'TXN_ID' => $payment['TXN_ID'], 
 					'STS_ID' => $payment['status'],
 					'PAY_timestamp' => $payment['date'], 
-					'PAY_method'=>  EEM_Payment_Method::scope_admin,
+					'PMD_source'=>  EEM_Payment_Method::scope_admin,
 					'PMD_ID' => $payment['PMD_ID'], 
 					'PAY_amount' => $amount,
 					'PAY_gateway_response' => '',
@@ -814,7 +814,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$return_data['STS_ID'] = $payment->STS_ID();
 			$return_data['status'] = self::$_pay_status[ $payment->STS_ID() ];
 			$return_data['date'] = $payment->timestamp( 'Y-m-d', 'h:i a' );
-			$return_data['method'] = strtoupper( $payment->method() ) ;
+			$return_data['method'] = strtoupper( $payment->source() ) ;
 			$this->_get_active_gateways();
 			$return_data['gateway'] =$payment->payment_method() ? $payment->payment_method()->admin_name()  : __("Unknown", 'event_espresso');
 			$return_data['gateway_response'] = $payment->gateway_response();
@@ -1005,7 +1005,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'Registration.REG_group_size' => array( 'LIKE' , $sstr ),
 				'Registration.Ticket.TKT_name' => array( 'LIKE', $sstr ),
 				'Registration.Ticket.TKT_description' => array( 'LIKE', $sstr ),
-				'Payment.PAY_method' => array('LIKE', $sstr),
+				'Payment.PMD_source' => array('LIKE', $sstr),
 				'Payment.Payment_Method.PMD_name' => array('LIKE', $sstr),
 				'TXN_session_data' => array( 'LIKE', $sstr )
 				);

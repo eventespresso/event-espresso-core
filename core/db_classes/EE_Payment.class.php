@@ -68,7 +68,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	*	@access	protected
     *	@var string
     */
-	protected $_PAY_method = NULL;
+	protected $_PMD_source = NULL;
 
 
     /**
@@ -241,10 +241,10 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	*		Set Payment Method
 	*
 	* 		@access		public
-	*		@param		string		$pay_method
+	*		@param		string		$PMD_source
 	*/
-	public function set_method( $pay_method = FALSE ) {
-		$this->set('PAY_method',$pay_method);
+	public function set_source( $PMD_source = FALSE ) {
+		$this->set('PMD_source',$PMD_source);
 	}
 
 
@@ -330,9 +330,9 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	*/
 	public function set_payment_made_via_admin( $via_admin = FALSE ) {
 		if($via_admin){
-			$this->set('PAY_method',  EEM_Payment_Method::scope_admin);
+			$this->set('PMD_source',  EEM_Payment_Method::scope_admin);
 		}else{
-			$this->set('PAY_method', EEM_Payment_Method::scope_cart);
+			$this->set('PMD_source', EEM_Payment_Method::scope_cart);
 		}
 		
 	}
@@ -397,11 +397,11 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 	/**
-	*		get Payment Method
+	*		get Payment Source
 	* 		@access		public
 	*/
-	public function method() {
-		return $this->get('PAY_method');
+	public function source() {
+		return $this->get('PMD_source');
 	}
 
 
@@ -466,7 +466,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	* 		@access		public
 	*/
 	public function payment_made_via_admin() {
-		return ($this->get('PAY_method') == EEM_Payment_Method::scope_admin);
+		return ($this->get('PMD_source') == EEM_Payment_Method::scope_admin);
 	}
 
 

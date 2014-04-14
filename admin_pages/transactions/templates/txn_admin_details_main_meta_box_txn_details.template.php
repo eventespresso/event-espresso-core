@@ -137,7 +137,7 @@
 						<div id="payment-date-<?php echo $PAY_ID;?>" class="payment-date-dv"><?php echo $payment->timestamp('Y-m-d', 'h:i a');?></div>
 					</td>
 					<td class=" jst-cntr">
-						<div id="payment-method-<?php echo $PAY_ID;?>"><?php echo strtoupper( $payment->method() );?></div>
+						<div id="payment-method-<?php echo $PAY_ID;?>"><?php echo $payment->source();?></div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-gateway-<?php echo $PAY_ID;?>">

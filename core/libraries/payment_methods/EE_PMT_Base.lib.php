@@ -191,7 +191,7 @@ abstract class EE_PMT_Base{
 			$duplicate_properties = array(
 				'TXN_ID' => $transaction->ID(),
 				'STS_ID' => EEM_Payment::status_id_failed,
-				'PAY_method' => $method,
+				'PMD_source' => $method,
 				'PAY_amount' => $amount !== NULL ? $amount : $transaction->total(),
 				'PMD_ID' => $this->_pm_instance->ID(),
 				'PAY_gateway_response'=>NULL,

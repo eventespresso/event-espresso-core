@@ -234,7 +234,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					TXN_ID int(10) unsigned DEFAULT NULL,
 					STS_ID varchar(3) COLLATE utf8_bin DEFAULT NULL,
 					PAY_timestamp datetime NOT NULL default '0000-00-00 00:00:00',
-					PAY_method varchar(45) COLLATE utf8_bin DEFAULT NULL,
+					PMD_source varchar(45) COLLATE utf8_bin DEFAULT NULL,
 					PAY_amount decimal(10,3) DEFAULT NULL,
 					PMD_ID int(11) DEFAULT NULL,
 					PAY_gateway_response text COLLATE utf8_bin,
