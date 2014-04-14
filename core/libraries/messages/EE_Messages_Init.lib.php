@@ -170,10 +170,12 @@ class EE_Messages_Init extends EE_Base {
 		//let's set up the message type depending on the status
 		$message_type = 'payment' . '_' . strtolower( $payment->pretty_status() );
 
+		$default_message_type = $payment->amount() < 0 ? 'payment_refund' : 'payment';
+
 		//verify this message type is present and active.  If it isn't then we use the default payment message type.
 		$active_mts = $this->_EEMSG->get_active_message_types();
 
-		$message_type = in_array( $message_type, $active_mts ) ? $message_type : 'payment';
+		$message_type = in_array( $message_type, $active_mts ) ? $message_type : $default_message_type;
 
 
 		$this->_EEMSG->send_message( $message_type, $data);
@@ -310,8 +312,10 @@ class EE_Messages_Init extends EE_Base {
 
 		$data = array( $transaction, $payment );
 
+		$message_type_name = $payment->amount() < 0 ? 'payment_refund' : 'payment';
+
 		$this->_load_controller();
-		$success = $this->_EEMSG->send_message( 'payment', $data );
+		$success = $this->_EEMSG->send_message( $message_type_name, $data );
 
 		if ( ! $success ) {
 			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
