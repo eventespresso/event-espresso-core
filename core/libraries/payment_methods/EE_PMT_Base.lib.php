@@ -195,7 +195,6 @@ abstract class EE_PMT_Base{
 				'PAY_amount' => $amount !== NULL ? $amount : $transaction->total(),
 				'PMD_ID' => $this->_pm_instance->ID(),
 				'PAY_gateway_response'=>NULL,
-				'PAY_via_admin' => $by_admin,
 			);
 			$payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
 			//if we didn't already have a paymetn in progress for the same thing,

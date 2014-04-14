@@ -241,7 +241,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					PAY_txn_id_chq_nmbr varchar(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_po_number varchar(32) COLLATE utf8_bin DEFAULT NULL,
 					PAY_extra_accntng varchar(45) COLLATE utf8_bin DEFAULT NULL,
-					PAY_via_admin tinyint(1) NOT NULL DEFAULT '0',
 					PAY_details text COLLATE utf8_bin,
 					PAY_redirect_url varchar(300),
 					PAY_redirect_args text,

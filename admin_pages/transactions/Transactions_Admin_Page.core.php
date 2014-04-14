@@ -786,7 +786,6 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					'PAY_txn_id_chq_nmbr' => $payment['txn_id_chq_nmbr'],
 					'PAY_po_number' => $payment['po_number'], 
 					'PAY_extra_accntng' => $payment['accounting'], 
-					'PAY_via_admin' => true, 
 					'PAY_details' => $payment,
 					'PAY_ID' => $payment['PAY_ID']
 				)

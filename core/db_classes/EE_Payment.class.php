@@ -117,15 +117,6 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
     /**
-    *	Payment made via admin
-	*
-	*	@access	protected
-    *	@var string
-    */
-	protected $_PAY_via_admin = NULL;
-
-
-    /**
     *	Payment Details
 	*
 	*	@access	protected
@@ -338,7 +329,12 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	*		@param		string		$via_admin
 	*/
 	public function set_payment_made_via_admin( $via_admin = FALSE ) {
-		$this->set('PAY_via_admin',$via_admin);
+		if($via_admin){
+			$this->set('PAY_method',  EEM_Payment_Method::scope_admin);
+		}else{
+			$this->set('PAY_method', EEM_Payment_Method::scope_cart);
+		}
+		
 	}
 
 
@@ -466,11 +462,11 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 	/**
-	*		get Payment made via admin flag
+	*		get Payment made via admin source
 	* 		@access		public
 	*/
 	public function payment_made_via_admin() {
-		return $this->get('PAY_via_admin');
+		return ($this->get('PAY_method') == EEM_Payment_Method::scope_admin);
 	}
 
 
