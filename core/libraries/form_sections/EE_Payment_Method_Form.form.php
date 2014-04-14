@@ -19,7 +19,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	 * <li>and parent's keys</li>
 	 * </ul>
 	 */
-	public function __construct($options_array){
+	public function __construct($options_array = array()){
 		//set the name according to the classname
 		$this->_model = EEM_Payment_Method::instance();
 		if(isset($options_array['extra_meta_inputs'])){

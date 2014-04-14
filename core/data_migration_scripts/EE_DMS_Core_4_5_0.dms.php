@@ -267,6 +267,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				PMD_active tinyint(1) NOT NULL DEFAULT '1',
 				PMD_button_url varchar(1012) DEFAULT NULL,
 				PMD_preferred_currency varchar(10) DEFAULT NULL,
+				PMD_scope VARCHAR(255) NULL DEFAULT 'frontend',
 				PRIMARY KEY  (PMD_ID),
 				UNIQUE KEY PMD_slug_UNIQUE (PMD_slug)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
@@ -599,6 +600,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
 		EE_Config::instance()->update_espresso_config(false, true);
+		$this->_add_default_admin_only_payments();
 		return true;
 	}
 	/**
@@ -611,6 +613,56 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 	
 	public function migration_page_hooks(){
 		
+	}
+	
+	protected function _add_default_admin_only_payments(){
+		global $wpdb, $current_user;
+		$table_name = $wpdb->prefix."esp_payment_method";
+		//make sure we hae payment method records for the following
+		//so admins can record payments for them from the admin page
+		$default_admin_only_payment_methods = array(
+			__("Bank", 'event_espresso')=>  __("Bank Draft", 'event_espresso'),
+			__("Cash", 'event_espresso')=>  __("Cash Deliverd Physically", 'event_espresso'),
+			__("Check", 'event_espresso')=>  __("Paper Check", 'event_espresso'),
+			__("Credit Card", 'event_espresso') =>  __("Offline Credit Card Payment", 'event_espresso'),
+			__("Debit Card", 'event_espresso')=>  __("Offline Debit Payment", 'event_espresso'),
+			__("Invoice", 'event_espresso')=>  __("Invoice received with monies included", 'event_espresso'),
+			__("Money Order", 'event_espresso')=>'',
+			__("Paypal", 'event_espresso')=>  __("Paypal eCheck, Invoice, etc", 'event_espresso'),
+		);
+		
+		foreach($default_admin_only_payment_methods as $nicename => $description){
+			$slug = sanitize_key($nicename);
+//check that such a payment method exists
+			$exists = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM $table_name WHERE slug = %s",$slug));
+			if( ! $exists){
+				$values = array(
+							'PMD_type'=>'Admin_Only',
+							'PMD_name'=>$nicename,
+							'PMD_admin_name'=>$nicename,
+							'PMD_admin_desc'=>$description,
+							'PMD_slug'=>$slug,
+							'PMD_wp_user_id'=>$current_user->ID,
+							'PMD_scope'=>array('admin'),
+						);
+				$success = $wpdb->insert(
+						$table_name,
+						$values,
+						array(
+							'%s',//PMD_type
+							'%s',//PMD_name
+							'%s',//PMD_admin_name
+							'%s',//PMD_admin_desc
+							'%s',//PMD_slug
+							'%d',//PMD_wp_user_id
+							'%s',//PMD_scope
+						)
+						);
+				if( ! $success ){
+					$this->add_error(sprintf(__("Could not insert new admin-only payment method with values %s during migration", "event_espresso"),$this->_json_encode($values)));
+				}
+			}
+		}
 	}
 }
 

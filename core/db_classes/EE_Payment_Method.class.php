@@ -58,6 +58,9 @@ class EE_Payment_Method extends EE_Base_Class{
 	protected $_PMD_button_url = NULL;
 	/** Preferred Currency @var PMD_preferred_currency*/ 
 	protected $_PMD_preferred_currency = NULL;
+	/** @var $_PMD_scope
+	 */
+	protected $_PMD_scope = NULL;
 	
 	/**
 	 * Surcharge for using this payment method
@@ -340,40 +343,23 @@ class EE_Payment_Method extends EE_Base_Class{
 	function set_admin_desc($admin_desc) {
 		return $this->set('PMD_admin_desc', $admin_desc);
 	}
+	/**
+	 * Gets scope
+	 * @return array
+	 */
+	function scope() {
+		return $this->get('PMD_scope');
+	}
 
-//	/**
-//	 * If a model name is provided (eg Registration), gets the model classname for that model.
-//	 * Also works if a model class's classname is provided (eg EE_Registration).
-//	 * @return string like EEM_Attendee
-//	 */
-//	private static function _get_model_classname( $model_name = null){
-//		return 'EEM_Payment_Method';
-//	}
-//	/**
-//	 * Gets the model instance (eg instance of EEM_Attendee) given its classname (eg EE_Attendee)
-//	 * @param string $model_classname
-//	 * @return EEM_Base
-//	 */
-//	protected static function _get_model_instance_with_name($model_classname, $timezone = NULL){
-//		$model_classname = str_replace( 'EEM_', '', $model_classname );
-//		$model = EE_Registry::instance()->load_model( $model_classname );
-//		$model->set_timezone( $timezone );
-//		return $model;
-//	}
-//	
-//	public function get_model() {
-//		return EEM_Payment_Method::instance();
-//	}
-//	/**
-//	 * returns the name of the primary key attribute
-//	 * @return string
-//	 */
-//	protected static function _get_primary_key_name( $classname = NULL ){
-//		if( ! $classname){
-//			throw new EE_Error(sprintf(__("What were you thinking calling _get_primary_key_name(%s)", "event_espresso"),$classname));
-//		}
-//		return self::_get_model( $classname )->get_primary_key_field()->get_name();
-//	}
+	/**
+	 * Sets scope
+	 * @param array $scope
+	 * @return boolean
+	 */
+	function set_scope($scope) {
+		return $this->set('PMD_scope', $scope);
+	}
+
 	
 	/**
 	 * Gets the payment method type for this payment method instance

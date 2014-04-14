@@ -88,6 +88,7 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_active'=>new EE_Boolean_Field('PMD_active', __("Active?", 'event_espresso'), false,true),
 				'PMD_button_url'=>new EE_Plain_Text_Field('PMD_button_url', __("Button URL", 'event_espresso'), true,''),
 				'PMD_preferred_currency'=>new EE_Plain_Text_Field('PMD_preferred_currency', __("Preferred Currency", 'event_espresso'), false, 'USD'),
+				'PMD_scope'=>new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'), false,array('frontend')),//possible values currently are 'frontend','admin','api'
 				
 			)
 		);
