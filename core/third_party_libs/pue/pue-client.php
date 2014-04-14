@@ -1,10 +1,10 @@
 <?php
 /**
-* This file should be bundled with the main plugin.  Any addons to your main plugin can include this file from the main plugin folder.  This contains the library for 
+* This file should be bundled with the main plugin.  Any addons to your main plugin can include this file from the main plugin folder.  This contains the library for
 * handling all the automatic upgrade stuff on the clients end.
-* 
+*
 * You also have to make sure you call this class in any addons/plugins you want to be added to the update checker.  Here's what you do:
-* if ( file_exists(WP_PLUGIN_DIR . '/location_of_file/pue-client.php') ) { //include the file 
+* if ( file_exists(WP_PLUGIN_DIR . '/location_of_file/pue-client.php') ) { //include the file
 *	require( WP_PLUGIN_DIR . '/location_of_file/pue-client.php' );
 *	$host_server_url = 'http://updateserver.com'; //this needs to be the host server where plugin update engine is installed.  note: if you leave this blank then it is assumed wordpress.org is going to be checked and we will just gracefully exit this class.
 *	$plugin_slug = 'plugin-slug'; //this needs to be the slug of the plugin/addon that you want updated (and that pue-client.php is included with).  This slug should match what you've set as the value for plugin-slug when adding the plugin to the plugin list via plugin-update-engine on your server.  Note: IF this is a string then it is assumed the plugin slug will be for a premium version (requiring a license key).  If it is an array, then PUE will look for the "free" and "premium" indexes and then depending on whether there is a valid key or not what version we download for upgrade.
@@ -27,20 +27,20 @@
 //You'll need to put something like this here before initiating the PluginUpdateEngineChecker class to obtain the api-key the client has set for your plugin. Of course this means you will need to include a field in your plugin option page for the client to enter this key.  (modify to match your setup):
 /*
  $settings = get_site_option('plugin_options'); //'plugin_options' should be replaced by whatever holds your plugin options and the api_key
- $api_key = $settings['plugin_api_key']; 
+ $api_key = $settings['plugin_api_key'];
 */
 if ( !class_exists('PluginUpdateEngineChecker') ):
 /**
- * A custom plugin update checker. 
- * 
+ * A custom plugin update checker.
+ *
  * @original author (c) Janis Elsts
  * @heavily modified by Darren Ethier
- * @license GPL2 or greater. 
+ * @license GPL2 or greater.
  * @version 1.1
  * @access public
  */
 class PluginUpdateEngineChecker {
-	
+
 	public $metadataUrl = ''; //The URL of the plugin's metadata file.
 	public $pluginFile = '';  //plugin_basename (used internally by WP updates).
 	public $pluginName = ''; //variable used to hold the pluginName as set by the constructor.
@@ -77,16 +77,16 @@ class PluginUpdateEngineChecker {
 	 */
 	private $_pue_errors = array();
 	private $_error_msg = '';
-		
+
 	/**
 	 * Class constructor.
-	 * 
+	 *
 	 * @param string $metadataUrl The URL of the plugin's metadata file.
 	 * @param string $pluginFile Fully qualified path to the main plugin file.
-	 * @param string $slug The plugin's 'slug'. 
+	 * @param string $slug The plugin's 'slug'.
 	 * @param array $options:  Will contain any options that need to be set in the class initialization for construct.  These are the keys:
 	 * 	@key integer $checkPeriod How often to check for updates (in hours). Defaults to checking every 12 hours. Set to 0 to disable automatic update checks.
-	 * 	@key string $optionName Where to store book-keeping info about update checks. Defaults to 'external_updates-$slug'. 
+	 * 	@key string $optionName Where to store book-keeping info about update checks. Defaults to 'external_updates-$slug'.
 	 *  @key string $apikey used to authorize download updates from developer server
 	 *	@key string $lang_domain If the plugin file pue-client.php is included with is localized you can put the domain reference string here so any strings in this file get included in the localization.
 	 * @return void
@@ -105,7 +105,7 @@ class PluginUpdateEngineChecker {
 
 		$verify_slug = $this->_set_slug_and_slug_props($slug, $options_verified);
 
-		if ( !$verify_slug ) 
+		if ( !$verify_slug )
 			return; //get out because the slug isn't valid.  An admin notice should show.
 
 		$this->current_domain = str_replace('http://','',site_url());
@@ -152,7 +152,7 @@ class PluginUpdateEngineChecker {
 	 * This simply goes through the sent options array and make sure it has all the REQUIRED info.  If it doesn't then we'll set an admin notice with an error message for the user.
 	 *
 	 * @access  private
-	 * @return  void 
+	 * @return  void
 	 */
 	private function _verify_options( $options ) {
 		$domain = isset( $options['lang_domain'] ) ? $options['lang_domain'] : '';
@@ -207,15 +207,15 @@ class PluginUpdateEngineChecker {
 			$this->_display_errors('slug_not_array');
 			return FALSE;
 		}
-		
+
 		$this->_installed_version = $this->getInstalledVersion();
-		
+
 		if ( !$this->_installed_version ) {
 			$this->_display_errors('no_version_present');
 			return FALSE;
 		}
 		return TRUE;
-		
+
 	}
 
 
@@ -286,7 +286,7 @@ class PluginUpdateEngineChecker {
 	 * 	'free' => 'slug_for_free' //what is sent in the update package to check on the PUE server for the free product
 	 * 	'premium' => 'slug_for_premium' //what is send in the update package to check on the PUE server for the premium product
 	 * )
-	 * 
+	 *
 	 * @param mixed (array|string) $slug either an array containing free product slugs or premium product
 	 */
 	private function _set_slug_and_slug_props( $slug, $options ) {
@@ -343,69 +343,69 @@ class PluginUpdateEngineChecker {
 		$this->slug = $set_slug;  //now we've got the slug for the package to get set.
 
 		//now let's setup other properties based on the slug OR the 'plugin_basename' option.
-		
+
 		$this->dismiss_upgrade = 'pu_dismissed_upgrade_'.$this->slug;
 		$this->pue_install_key = 'pue_install_key_'.$this->slug;
 		return TRUE;
 	}
 
 
-	
+
 	/**
 	* gets the api from the options table if present
 	**/
 	function set_api($new_api = '') {
 		//download query flag
 		$this->download_query['pu_get_download'] = 1;
-		//include current version 
+		//include current version
 		$this->download_query['pue_active_version'] = $this->_installed_version;
 		$this->download_query['site_domain'] = $this->current_domain;
 
-		
+
 		//the following is for install key inclusion (will apply later with PUE addons.)
 		$this->install_key_arr = get_site_option($this->pue_install_key);
 		if ( isset($this->install_key_arr['key'] ) ) {
-			
+
 			$this->install_key = $this->install_key_arr['key'];
 
 			$this->download_query['pue_install_key'] = $this->install_key;
 		} else {
 			$this->download_query['pue_install_key'] = '';
 		}
-		
+
 		if ( !empty($new_api) ) {
 			$this->api_secret_key = $new_api;
 			$this->download_query['pu_plugin_api'] = $this->api_secret_key;
 			return;
 		}
-		
+
 		if ( empty($new_api) ) {
 			$this->download_query['pu_plugin_api'] = $this->api_secret_key;
 			return;
 		}
 	}
-	
+
 	/**
-	 * Install the hooks required to run periodic update checks and inject update info 
-	 * into WP data structures. 
+	 * Install the hooks required to run periodic update checks and inject update info
+	 * into WP data structures.
 	 * Also other hooks related to the automatic updates (such as checking agains API and what not (@from Darren)
 	 * @return void
 	 */
 	function installHooks(){
-				
+
 		//Set up the periodic update checks
 		$cronHook = 'check_plugin_updates-' . $this->slug;
 
 		if ( $this->checkPeriod > 0 ){
-			
+
 			//Trigger the check via Cron
 			if ( !wp_next_scheduled($cronHook) && !defined('WP_INSTALLING') ) {
 				wp_schedule_event(time(), 'daily', $cronHook);
 			}
 			add_action($cronHook, array($this, 'checkForUpdates'));
-			
-			//In case Cron is disabled or unreliable, we also manually trigger 
-			//the periodic checks while the user is browsing the Dashboard. 
+
+			//In case Cron is disabled or unreliable, we also manually trigger
+			//the periodic checks while the user is browsing the Dashboard.
 			add_action( 'init', array($this, 'hook_into_wp_update_api'), 0 );
 
 		} else {
@@ -445,10 +445,10 @@ class PluginUpdateEngineChecker {
 	 *
 	 * @uses
 	 * @param  boolean $continue       return true so wp doesn't abort.
-	 * @param  array   $hook_extra     contains the plugin_basename with the 'plugin' 
-	 *                                 index which we can use to indicate if this is 
+	 * @param  array   $hook_extra     contains the plugin_basename with the 'plugin'
+	 *                                 index which we can use to indicate if this is
 	 *                                 where we want our stuff run
-	 * @param  array   $install_result WP sends off all the things that have been done in 
+	 * @param  array   $install_result WP sends off all the things that have been done in
 	 *                                 an array (post install)
 	 * @return boolean				   if wp_error object is returned then wp aborts.
 	 */
@@ -468,10 +468,10 @@ class PluginUpdateEngineChecker {
 	 * This basically is set to fix the directories for our plugins.
 	 *
 	 * Take incoming remote_source file and rename it to match what it should be.
-	 * 
+	 *
 	 * @param  string $source        This is usually the same as $remote_source but *may* be something else if this has already been filtered
 	 * @param  string $remote_source What WP has set as the source (ee plugins coming from beta.eventespresso.com will be beta.tmp)
-	 * @param  WPPluginUpgrader $wppu 
+	 * @param  WPPluginUpgrader $wppu
 	 * @return string renamed file and path
 	 */
 	function fixDirName( $source, $remote_source, $wppu ) {
@@ -518,7 +518,7 @@ class PluginUpdateEngineChecker {
 	}
 
 
-	
+
 
 	function hook_into_wp_update_api() {
 		$this->set_api();
@@ -577,19 +577,19 @@ class PluginUpdateEngineChecker {
 
 	function trigger_update_check() {
 		//we're just using this to trigger a PUE ping whenever an option matching the given $this->option_key is saved..
-		
+
 		$triggered = FALSE;
 		$has_triggered = FALSE;
-		
+
 		if ( !empty($_POST) && !empty( $this->option_key ) ) {
 			foreach ( $_POST as $key => $value ) {
 				$triggered = $this->maybe_trigger_update($value, $key, $this->option_key);
 				$has_triggered = $triggered && !$has_triggered ? TRUE : $has_triggered;
-			}	
+			}
 		}
-		
+
 		return $has_triggered;
-		
+
 	}
 
 	function maybe_trigger_update($value, $key, $site_key_search_string) {
@@ -598,12 +598,13 @@ class PluginUpdateEngineChecker {
 			//if $site_key_search_string exists but the actual key field is empty...let's reset the install key as well.
 			if ( $value == '' || ( is_array($value) && empty($value[$site_key_search_string] ) ) || $value != $this->api_secret_key || ( is_array($value) && $value[$site_key_search_string] != $this->api_secret_key ) )
 				delete_site_option($this->pue_install_key);
-			
+
 			$this->api_secret_key = $value;
 			$this->set_api($this->api_secret_key);
 
-			//reset force_upgrade flag
-			delete_site_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])]);
+			//reset force_upgrade flag (but only if there's a free slug key)
+			if ( !empty( $this->_incoming_slug['free'] ) )
+				delete_site_option( 'pue_force_upgrade_' . $this->_incoming_slug['free'][key($this->_incoming_slug['free'])]);
 
 			//now let's reset some flags if necessary?  in other words IF the user has entered a premium key and the CURRENT version is a free version (NOT a prerelease version) then we need to make sure that we ping for the right version
 			$free_key_match = '/FREE/i';
@@ -626,36 +627,36 @@ class PluginUpdateEngineChecker {
 
 		return false;
 	}
-	
+
 	/**
 	 * Retrieve plugin info from the configured API endpoint.
-	 * 
+	 *
 	 * @uses wp_remote_get()
-	 * 
+	 *
 	 * @param array $queryArgs Additional query arguments to append to the request. Optional.
 	 * @return $pluginInfo
 	 */
 	function requestInfo($queryArgs = array()){
 		//Query args to append to the URL. Plugins can add their own by using a filter callback (see addQueryArgFilter()).
-		$queryArgs['pu_request_plugin'] = $this->slug; 
-		
+		$queryArgs['pu_request_plugin'] = $this->slug;
+
 		if ( !empty($this->api_secret_key) )
-			$queryArgs['pu_plugin_api'] = $this->api_secret_key;  
-			
+			$queryArgs['pu_plugin_api'] = $this->api_secret_key;
+
 		if ( !empty($this->install_key) && $this->_is_premium )
 			$queryArgs['pue_install_key'] = $this->install_key;
 
 		//todo: this can be removed in a later version of PUE when majority of EE users are using more recent versions.
 		$queryArgs['new_pue_chk'] = 1;
-        
+
 		//include version info
 		$queryArgs['pue_active_version'] = $this->_installed_version;
-		
+
 		//include domain info
 		$queryArgs['site_domain'] = $this->current_domain;
 
 		$queryArgs = apply_filters('puc_request_info_query_args-'.$this->slug, $queryArgs);
-		
+
 		//Various options for the wp_remote_get() call. Plugins can filter these, too.
 		$options = array(
 			'timeout' => 10, //seconds
@@ -664,8 +665,8 @@ class PluginUpdateEngineChecker {
 			),
 		);
 		$options = apply_filters('puc_request_info_options-'.$this->slug, array());
-		
-		$url = $this->metadataUrl; 
+
+		$url = $this->metadataUrl;
 
 		if ( !empty($queryArgs) ){
 			$url = add_query_arg($queryArgs, $url);
@@ -681,12 +682,12 @@ class PluginUpdateEngineChecker {
 		//Try to parse the response
 		$pluginInfo = null;
 		if ( !is_wp_error($result) && isset($result['response']['code']) && ($result['response']['code'] == 200) && !empty($result['body']) ){
-			
+
 			$pluginInfo = PU_PluginInfo::fromJson($result['body']);
 		}
 
 		$pluginInfo = apply_filters('puc_request_info_result-'.$this->slug, $pluginInfo, $result);
-		
+
 		return $pluginInfo;
 	}
 
@@ -719,21 +720,21 @@ class PluginUpdateEngineChecker {
 			);
 
 		$resp = wp_remote_post($this->metadataUrl, $args);
-		
+
 	}
 
 
 
-	
+
 	/**
 	 * Retrieve the latest update (if any) from the configured API endpoint.
-	 * 
+	 *
 	 * @uses PluginUpdateEngineChecker::requestInfo()
-	 * 
+	 *
 	 * @return PluginUpdateUtility An instance of PluginUpdateUtility, or NULL when no updates are available.
 	 */
 	function requestUpdate(){
-		//For the sake of simplicity, this function just calls requestInfo() 
+		//For the sake of simplicity, this function just calls requestInfo()
 		//and transforms the result accordingly.
 		$pluginInfo = $this->requestInfo(array('pu_checking_for_updates' => '1'));
 		delete_site_option('pue_json_error_'.$this->pluginFile);
@@ -742,32 +743,32 @@ class PluginUpdateEngineChecker {
 		}
 
 
-		//admin display for if the update check reveals that there is a new version but the API key isn't valid.  
+		//admin display for if the update check reveals that there is a new version but the API key isn't valid.
 		if ( isset($pluginInfo->api_invalid) )  { //we have json_error returned let's display a message
-			$this->json_error = $pluginInfo; 
+			$this->json_error = $pluginInfo;
 			update_site_option('pue_json_error_'.$this->pluginFile, $this->json_error);
 			return $this->json_error;
 		}
 
-		
+
 		if ( isset($pluginInfo->new_install_key) ) {
-			$this->install_key_arr['key'] = $pluginInfo->new_install_key; 
+			$this->install_key_arr['key'] = $pluginInfo->new_install_key;
 			update_site_option($this->pue_install_key, $this->install_key_arr);
 		}
-		
+
 		//need to correct the download url so it contains the custom user data (i.e. api and any other paramaters)
 		//oh let's generate the download_url otherwise it will be old news...
-				
+
 		if ( !empty($this->download_query) )  {
 			$d_install_key = $this->install_key_arr['key'];
 			$this->download_query['pue_install_key'] = $d_install_key;
 			$this->download_query['new_pue_check'] = 1;
 			$pluginInfo->download_url = add_query_arg($this->download_query, $pluginInfo->download_url);
 		}
-		
+
 		return PluginUpdateUtility::fromPluginInfo($pluginInfo);
 	}
-	
+
 	function in_plugin_update_message($plugin_data) {
 		$plugininfo = $this->json_error;
 		//only display messages if there is a new version of the plugin.
@@ -782,27 +783,27 @@ class PluginUpdateEngineChecker {
 			}
 		}
 	}
-	
+
 	function display_changelog() {
 	//todo (at some point in the future!) contents of changelog display page when api-key is invalid or missing.  It will ONLY show the changelog (hook into existing thickbox?)
-	
+
 	}
-	
+
 	function display_json_error($echo = TRUE, $ignore_version_check = FALSE, $alt_content = '') {
 		$pluginInfo = $this->json_error;
 		$update_dismissed = get_site_option($this->dismiss_upgrade);
 		$msg = '';
-		
+
 		$is_dismissed = !empty($update_dismissed) && in_array($pluginInfo->version, $update_dismissed) ? true : false;
-		
+
 		if ($is_dismissed)
 			return;
 
 		//add in pue_verification_error option for when the api_key is blank
-		if ( empty( $this->api_secret_key ) ) 
+		if ( empty( $this->api_secret_key ) )
 			update_site_option( 'pue_verification_error_' . $this->pluginFile, __('No API key is present', $this->lang_domain) );
-		
-		//only display messages if there is a new version of the plugin.  
+
+		//only display messages if there is a new version of the plugin.
 		if ( version_compare($pluginInfo->version, $this->_installed_version, '>') || $ignore_version_check ) {
 			if ( $pluginInfo->api_invalid ) {
 				$msg = str_replace('%plugin_name%', $this->pluginName, $pluginInfo->api_invalid_message);
@@ -891,19 +892,19 @@ class PluginUpdateEngineChecker {
 
 
 
-	
+
 	function dashboard_dismiss_upgrade() {
 		$os_ary = get_site_option($this->dismiss_upgrade);
 		if (!is_array($os_ary))
 			$os_ary = array();
-		
+
 		$os_ary[] = $_POST['version'];
 		update_site_option($this->dismiss_upgrade, $os_ary);
 	}
-	
+
 	/**
 	 * Get the currently installed version of the plugin.
-	 * 
+	 *
 	 * @return string Version number.
 	 */
 	function getInstalledVersion(){
@@ -920,62 +921,62 @@ class PluginUpdateEngineChecker {
 		}
 		return FALSE; //this should never happen
 	}
-	
+
 	/**
-	 * Check for plugin updates. 
+	 * Check for plugin updates.
 	 * The results are stored in the DB option specified in $optionName.
-	 * 
+	 *
 	 * @return void
 	 */
 	function checkForUpdates(){
 		$state = get_site_option($this->optionName);
-		
+
 		if ( empty($state) ){
 			$state = new StdClass;
 			$state->lastCheck = 0;
 			$state->checkedVersion = '';
 			$state->update = null;
 		}
-		
+
 		$state->lastCheck = time();
 		$state->checkedVersion = $this->_installed_version;
-		update_site_option($this->optionName, $state); //Save before checking in case something goes wrong 
-		
+		update_site_option($this->optionName, $state); //Save before checking in case something goes wrong
+
 		$state->update = $this->requestUpdate();
 		update_site_option($this->optionName, $state);
 	}
-	
+
 	/**
 	 * Check for updates only if the configured check interval has already elapsed.
-	 * 
+	 *
 	 * @return void
 	 */
 	function maybeCheckForUpdates(){
 		if ( !is_admin() ) return;
-		
+
 		if ( empty($this->checkPeriod) ){
 			return;
 		}
-		
+
 		$state = get_site_option($this->optionName);
-	
+
 		$shouldCheck =
 			empty($state) ||
-			!isset($state->lastCheck) || 
+			!isset($state->lastCheck) ||
 			( (time() - $state->lastCheck) >= $this->checkPeriod*3600 );
 		//$shouldCheck = true;
-		
+
 		if ( $shouldCheck ){
 			$this->checkForUpdates();
 		}
 	}
-	
+
 	/**
-	 * Intercept plugins_api() calls that request information about our plugin and 
-	 * use the configured API endpoint to satisfy them. 
-	 * 
+	 * Intercept plugins_api() calls that request information about our plugin and
+	 * use the configured API endpoint to satisfy them.
+	 *
 	 * @see plugins_api()
-	 * 
+	 *
 	 * @param mixed $result
 	 * @param string $action
 	 * @param array|object $args
@@ -992,30 +993,30 @@ class PluginUpdateEngineChecker {
 			$result = PU_PluginInfo::fromJson($state->update,true);;
 			$updates = $result->toWpFormat();
 		}
-		
-		if ( $updates )		
+
+		if ( $updates )
 			return $updates;
 		else
 			return $result;
 	}
-	
+
 	/**
 	 * Insert the latest update (if any) into the update list maintained by WP.
 	 * We do two things in here:
 	 * 1. insert OUR update if there is an update available (and replace any existing WP one)
 	 * 2. remove the existing WP one if it exists even if we dont' have an update. This covers the cases where there may be a ping from WP before EE and we've got a premium plugin installed that MATCHES one in the WP db.
-	 * 
+	 *
 	 * @param array $updates Update list created by WordPress.
 	 * @return array Modified update list.
 	 */
 	function injectUpdate( $updates ){
-		
+
 		$state = get_site_option($this->optionName);
 
 		//first remove any existing WP update message that might have snuck in before we have any return from our plugin server.
 		if ( isset( $updates->response[$this->pluginFile] ) )
 			unset( $updates->response[$this->pluginFile] );
-		
+
 		//Is there an update to insert?
 		if ( !empty($state) && isset($state->update) && !empty($state->update) ){
 			//Only insert updates that are actually newer than the currently installed version.
@@ -1025,57 +1026,57 @@ class PluginUpdateEngineChecker {
 		}
 
 		add_action('after_plugin_row_'.$this->pluginFile, array($this, 'in_plugin_update_message'));
-		
+
 		if ( $this->json_error )
 			remove_action('after_plugin_row_'.$this->pluginFile, 'wp_plugin_update_row', 10, 2);
 
 		return $updates;
 	}
 
-	
+
 	/**
-	 * Register a callback for filtering query arguments. 
-	 * 
+	 * Register a callback for filtering query arguments.
+	 *
 	 * The callback function should take one argument - an associative array of query arguments.
 	 * It should return a modified array of query arguments.
-	 * 
+	 *
 	 * @uses add_filter() This method is a convenience wrapper for add_filter().
-	 * 
-	 * @param callback $callback 
+	 *
+	 * @param callback $callback
 	 * @return void
 	 */
 	function addQueryArgFilter($callback){
 		add_filter('puc_request_info_query_args-'.$this->slug, $callback);
 	}
-	
+
 	/**
 	 * Register a callback for filtering arguments passed to wp_remote_get().
-	 * 
+	 *
 	 * The callback function should take one argument - an associative array of arguments -
 	 * and return a modified array or arguments. See the WP documentation on wp_remote_get()
-	 * for details on what arguments are available and how they work. 
-	 * 
+	 * for details on what arguments are available and how they work.
+	 *
 	 * @uses add_filter() This method is a convenience wrapper for add_filter().
-	 * 
+	 *
 	 * @param callback $callback
 	 * @return void
 	 */
 	function addHttpRequestArgFilter($callback){
 		add_filter('puc_request_info_options-'.$this->slug, $callback);
 	}
-	
+
 	/**
 	 * Register a callback for filtering the plugin info retrieved from the external API.
-	 * 
-	 * The callback function should take two arguments. If the plugin info was retrieved 
-	 * successfully, the first argument passed will be an instance of  PU_PluginInfo. Otherwise, 
-	 * it will be NULL. The second argument will be the corresponding return value of 
+	 *
+	 * The callback function should take two arguments. If the plugin info was retrieved
+	 * successfully, the first argument passed will be an instance of  PU_PluginInfo. Otherwise,
+	 * it will be NULL. The second argument will be the corresponding return value of
 	 * wp_remote_get (see WP docs for details).
-	 *  
+	 *
 	 * The callback function should return a new or modified instance of PU_PluginInfo or NULL.
-	 * 
+	 *
 	 * @uses add_filter() This method is a convenience wrapper for add_filter().
-	 * 
+	 *
 	 * @param callback $callback
 	 * @return void
 	 */
@@ -1083,7 +1084,7 @@ class PluginUpdateEngineChecker {
 		add_filter('puc_request_info_result-'.$this->slug, $callback, 10, 2);
 	}
 }
-	
+
 endif;
 
 if ( !class_exists('PU_PluginInfo') ):
@@ -1105,24 +1106,24 @@ class PU_PluginInfo {
 
 	public $author;
 	public $author_homepage;
-	
+
 	public $requires;
 	public $tested;
 	public $upgrade_notice;
-	
+
 	public $rating;
 	public $num_ratings;
 	public $downloaded;
 	public $last_updated;
 	public $render_pass;
-	
+
 	public $id = 0; //The native WP.org API returns numeric plugin IDs, but they're not used for anything.
-		
+
 	/**
-	 * Create a new instance of PU_PluginInfo from JSON-encoded plugin info 
+	 * Create a new instance of PU_PluginInfo from JSON-encoded plugin info
 	 * returned by an external update API.
-	 * 
-	 * @param string $json Valid JSON string representing plugin info. 
+	 *
+	 * @param string $json Valid JSON string representing plugin info.
 	 * @return PU_PluginInfo New instance of PU_PluginInfo, or NULL on error.
 	 */
 	public static function fromJson($json, $object = false){
@@ -1130,34 +1131,34 @@ class PU_PluginInfo {
 		if ( empty($apiResponse) || !is_object($apiResponse) ){
 			return null;
 		}
-		
+
 		//Very, very basic validation.
 		$valid = (isset($apiResponse->name) && !empty($apiResponse->name) && isset($apiResponse->version) && !empty($apiResponse->version)) || (isset($apiResponse->api_invalid) || isset($apiResponse->no_api));
 		if ( !$valid ){
 			return null;
 		}
-		
+
 		$info = new PU_PluginInfo();
-		
+
 		foreach(get_object_vars($apiResponse) as $key => $value){
 			$key = str_replace('plugin_', '', $key); //let's strip out the "plugin_" prefix we've added in plugin-updater-classes.
 			$info->$key = $value;
 		}
-		
-		return $info;		
+
+		return $info;
 	}
-	
+
 	/**
 	 * Transform plugin info into the format used by the native WordPress.org API
-	 * 
+	 *
 	 * @return object
 	 */
 	public function toWpFormat(){
 		$info = new StdClass;
-		
+
 		//The custom update API is built so that many fields have the same name and format
-		//as those returned by the native WordPress.org API. These can be assigned directly. 
-		
+		//as those returned by the native WordPress.org API. These can be assigned directly.
+
 		$sameFormat = array(
 			'name', 'slug', 'version', 'requires', 'tested', 'rating', 'upgrade_notice',
 			'num_ratings', 'downloaded', 'homepage', 'last_updated',
@@ -1167,37 +1168,37 @@ class PU_PluginInfo {
 				$info->$field = $this->$field;
 			}
 		}
-		
+
 		//Other fields need to be renamed and/or transformed.
 		$info->download_link = $this->download_url;
-		
+
 		if ( !empty($this->author_homepage) ){
 			$info->author = sprintf('<a href="%s">%s</a>', $this->author_homepage, $this->author);
 		} else {
 			$info->author = $this->author;
 		}
-		
+
 		if ( is_object($this->sections) ){
 			$info->sections = get_object_vars($this->sections);
 		} elseif ( is_array($this->sections) ) {
-			
+
 			$info->sections = $this->sections;
-			
+
 		} else {
 			$info->sections = array('description' => '');
 		}
-				
+
 		return $info;
 	}
 }
-	
+
 endif;
 
 if ( !class_exists('PluginUpdateUtility') ):
 
 /**
  * A simple container class for holding information about an available update.
- * 
+ *
  * @version 1.1
  * @access public
  */
@@ -1209,10 +1210,10 @@ class PluginUpdateUtility {
 	public $download_url;
 	public $sections = array();
 	public $upgrade_notice;
-	
+
 	/**
 	 * Create a new instance of PluginUpdateUtility from its JSON-encoded representation.
-	 * 
+	 *
 	 * @param string $json
 	 * @return PluginUpdateUtility
 	 */
@@ -1227,11 +1228,11 @@ class PluginUpdateUtility {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Create a new instance of PluginUpdateUtility based on an instance of PU_PluginInfo.
 	 * Basically, this just copies a subset of fields from one object to another.
-	 * 
+	 *
 	 * @param PU_PluginInfo $info
 	 * @return PluginUpdateUtility
 	 */
@@ -1243,15 +1244,15 @@ class PluginUpdateUtility {
 		}
 		return $update;
 	}
-	
+
 	/**
 	 * Transform the update into the format used by WordPress native plugin API.
-	 * 
+	 *
 	 * @return object
 	 */
 	public function toWpFormat(){
 		$update = new StdClass;
-		
+
 		$update->id = $this->id;
 		$update->slug = $this->slug;
 		$update->new_version = $this->version;
@@ -1260,9 +1261,9 @@ class PluginUpdateUtility {
 		if ( !empty($this->upgrade_notice) ){
 			$update->upgrade_notice = $this->upgrade_notice;
 		}
-		
+
 		return $update;
 	}
 }
-	
+
 endif;
