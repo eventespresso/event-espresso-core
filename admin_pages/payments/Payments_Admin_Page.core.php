@@ -359,13 +359,20 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$pm_type_class = EE_Payment_Method_Manager::instance()->payment_method_class_from_type($payment_method_type);
 				if(class_exists($pm_type_class)){
 					$pm_type_obj = new $pm_type_class;
-					$payment_method = EE_Payment_Method::new_instance(array(
+					$payment_method = EEM_Payment_Method::instance()->get_one_by_slug($pm_type_obj->system_name());
+					if( ! $payment_method){
+						$default_scopes = array(EEM_Payment_Method::scope_cart);
+						if($pm_type_obj->payment_occurs() == EE_PMT_Base::offline){
+							$default_scopes[] = EEM_Payment_Method::scope_admin;
+						}
+						$payment_method = EE_Payment_Method::new_instance(array('PMD_scope'=>$default_scopes));
+					}
+					$payment_method->save(array(
 						'PMD_type'=>$pm_type_obj->system_name(),
 						'PMD_name'=>$pm_type_obj->pretty_name(),
 						'PMD_admin_name'=>$pm_type_obj->pretty_name(),
 						'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
 						'PMD_wp_user_id'=>$current_user->ID));
-					$payment_method->save();
 				}
 				
 			}else{
