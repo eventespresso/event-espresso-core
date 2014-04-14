@@ -32,4 +32,34 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	}
 
+
+	/**
+	 * Set up globals necessary to avoid errors when using wp_mail()
+	 */
+	public function setUp_wp_mail( $args ) {
+		if ( isset( $_SERVER['SERVER_NAME'] ) ) {
+			$this->cached_SERVER_NAME = $_SERVER['SERVER_NAME'];
+		}
+
+		$_SERVER['SERVER_NAME'] = 'example.com';
+
+		// passthrough
+		return $args;
+	}
+
+	/**
+	 * Tear down globals set up in setUp_wp_mail()
+	 */
+	public function tearDown_wp_mail( $args ) {
+		if ( ! empty( $this->cached_SERVER_NAME ) ) {
+			$_SERVER['SERVER_NAME'] = $this->cached_SERVER_NAME;
+			unset( $this->cached_SERVER_NAME );
+		} else {
+			unset( $_SERVER['SERVER_NAME'] );
+		}
+
+		// passthrough
+		return $args;
+	}
+
 }
