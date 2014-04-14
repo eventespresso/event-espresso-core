@@ -7,9 +7,6 @@
  * @subpackage 	tests
  */
 
-/**require_once( dirname( __FILE__ ) . '/define-constants.php' );
-$multisite = (int) ( defined( 'WP_TESTS_MULTISITE') && WP_TESTS_MULTISITE );
-system( WP_PHP_BINARY . ' ' . escapeshellarg( dirname( __FILE__ ) . '/install.php' ) . ' ' . escapeshellarg( WP_TESTS_CONFIG_PATH ) . ' ' . escapeshellarg( WP_TESTS_DIR ) . ' ' . $multisite );/**/
 
 /**
  * Do the testsbypass filter for when EE is loaded so that we get db setup.  Need to make sure this
