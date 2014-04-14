@@ -123,8 +123,8 @@ class EE_Messages_Init extends EE_Base {
 	 * @return void
 	 */
 	private function _do_actions() {
-		add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', array( $this, 'payment' ), 10, 2 );
-		//add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', array( $this, 'payment_reminder'), 10 );
+		add_action( 'AHEE__EE_Payment_Processor__process_payment__successful', array( $this, 'payment' ), 10, 2 );
+		//add_action( 'AHEE__EE_Payment_Processor__process_payment__no_payment_made', array( $this, 'payment_reminder'), 10 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
 		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( $this, 'maybe_registration' ), 10, 3 );
 	}

@@ -575,13 +575,13 @@ abstract class EE_Gateway_Old {
 		if(empty($payment)){
 			$transaction->set_status(EEM_Transaction::incomplete_status_code);
 			$transaction->update_extra_meta('gateway', $this->_gateway_name);
-			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
+			do_action( 'AHEE__EE_Payment_Processor__process_payment__no_payment_made', $transaction );
 		}else{
 			$payment = $this->_PAY->ensure_is_obj($payment);
 			//ok, now process the transaction according to the payment
 			$transaction->update_based_on_payments();
 			$transaction->update_extra_meta('gateway', $this->_gateway_name);
-			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
+			do_action( 'AHEE__EE_Payment_Processor__process_payment__successful', $transaction, $payment );
 		}
 		$transaction->save();
 		$transaction->finalize();

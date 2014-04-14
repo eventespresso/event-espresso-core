@@ -97,13 +97,13 @@ class EE_Payment_Processor{
 			if ( empty( $payment )) {
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				if($save_txn) $transaction->save();
-//			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', $transaction );
+			do_action( 'AHEE__EE_Payment_Processor__process_payment__no_payment_made', $transaction );
 			
 			} else {
 				$payment = EEM_Payment::instance()->ensure_is_obj( $payment, TRUE );
 				//ok, now process the transaction according to the payment
 				$transaction->update_based_on_payments($save_txn);//also saves transaction
-	//			do_action( 'AHEE__EE_Gateway__update_transaction_with_payment__done', $transaction, $payment );
+				do_action( 'AHEE__EE_Payment_Processor__process_payment__successful', $transaction, $payment );
 			}
 		}else{
 			EE_Error::add_error( 
