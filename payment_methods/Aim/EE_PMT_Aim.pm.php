@@ -29,8 +29,9 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	const help_tab_link = 'ee_aim_help';
 	
 	public function __construct($pm_instance = NULL) {
-		require_once($this->file_folder().'EEG_AIM.gateway.php');
+		require_once($this->file_folder().'EEG_Aim.gateway.php');
 		$this->_gateway = new EEG_AIM();
+		$this->_pretty_name = __("Authorize.net AIM", 'event_espresso');
 		parent::__construct($pm_instance);
 	}
 	public function generate_new_billing_form() {
@@ -47,7 +48,21 @@ class EE_PMT_Aim extends EE_PMT_Base{
 				'cvv'=>new EE_Text_Input(),
 			)
 		));
+		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_AIM_Form',array('EE_PMT_Aim','generate_new_billing_form_debug_content'),10,2);
+		if($this->_pm_instance->debug_mode() || $this->_pm_instance->get_extra_meta('test_transactions',true,false)){
+			$form->get_input('credit_card')->set_default('4007000000027');
+			$form->get_input('exp_year')->set_default('2020');
+			$form->get_input('cvv')->set_default(('123'));
+			$form->add_subsections(array('fyi_about_autofill'=>new EE_Form_Section_HTML(sprintf(__("%sPayment fields have been autofilled because you are in debug mode%s", "event_espresso"),'<h3>','</h3>'))),'credit_card');
+		}
 		return $form;
+	}
+	public static function generate_new_billing_form_debug_content($original_opening_content,$form_section){
+		EE_Registry::instance()->load_helper('Template');
+		$pm = $form_section->payment_method();
+		$sending_tests = $pm->get_extra_meta('test_transactions',true,false);
+		$show = $pm->debug_mode() || $sending_tests;
+		return EEH_Template::display_template(dirname(__FILE__).DS.'templates'.DS.'authorize_net_aim_debug_info.template.php',array('form_section'=>$form_section,'show'=>$show),true).$original_opening_content;
 	}
 	public function generate_new_settings_form() {
 		EE_Registry::instance()->load_helper('Template');

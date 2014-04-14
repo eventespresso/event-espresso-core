@@ -259,21 +259,19 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _payment_methods_list() {
-		//ok now start normal rendering of the page. realizing this MIGHT be a post request
-		//with an invalid form, or it might be a simple get.
+		EEM_Payment_Method::instance()->verify_button_urls(array(array('PMD_active'=>true)));
 		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
 		EE_Registry::instance()->load_lib('Payment_Method_Manager');
 		//setup tabs, one for each payment method type
 		$tabs = array();
-		foreach(EE_Payment_Method_Manager::instance()->payment_method_type_names() as $pmt_name){
+		foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
 			//check for any active pms of that type
-			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($pmt_name);
+			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($pmt_obj->system_name());
 			if( ! $payment_method ){
-				$new_name = str_replace("_"," ",$pmt_name);
-				$payment_method = EE_Payment_Method::new_instance(array('PMD_type'=>$pmt_name,'PMD_active'=>false,'PMD_name'=>$new_name,'PMD_admin_name'=>$new_name, 'PMD_slug'=>sanitize_key($pmt_name)));
+				$payment_method = EE_Payment_Method::new_instance(array('PMD_type'=>$pmt_obj->system_name(),'PMD_active'=>false,'PMD_name'=>$pmt_obj->pretty_name(),'PMD_admin_name'=>$pmt_obj->pretty_name(), 'PMD_slug'=>sanitize_key($pmt_obj->system_name())));
 			}
 			add_meta_box(
-						'espresso_' . $pmt_name . '_payment_settings', //html id
+						'espresso_' . $payment_method->slug() . '_payment_settings', //html id
 					sprintf(__('%s Settings', 'event_espresso'),$payment_method->admin_name()), //title
 					array($this, 'payment_method_settings_meta_box'), //callback
 					NULL, //post type
@@ -283,10 +281,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						'payment_method'=>$payment_method,
 					));
 			//setup for tabbed content
-			$tabs[$pmt_name] = array(
+			$tabs[$payment_method->slug()] = array(
 				'label' => $payment_method->admin_name(),
 				'class' =>  $payment_method->active() ? 'gateway-active' : '',
-				'href' => 'espresso_' . $pmt_name . '_payment_settings',
+				'href' => 'espresso_' . $payment_method->slug() . '_payment_settings',
 				'title' => __('Modify this Payment Method', 'event_espresso'),
 				'slug' => $payment_method->slug()
 				);
@@ -376,13 +374,18 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$payment_method = EEM_Payment_Method::instance()->get_one_of_type($payment_method_type);
 			if( ! $payment_method){
 				global $current_user;
-				$payment_method = EE_Payment_Method::new_instance(array(
-					'PMD_type'=>$payment_method_type,
-					'PMD_name'=>$payment_method_type,
-					'PMD_admin_name'=>$payment_method_type,
-					'PMD_slug'=>$payment_method_type,
-					'PMD_wp_user_id'=>$current_user->ID));
-				$payment_method->save();
+				$pm_type_class = EE_Payment_Method_Manager::instance()->payment_method_class_from_type($payment_method_type);
+				if(class_exists($pm_type_class)){
+					$pm_type_obj = new $pm_type_class;
+					$payment_method = EE_Payment_Method::new_instance(array(
+						'PMD_type'=>$pm_type_obj->system_name(),
+						'PMD_name'=>$pm_type_obj->pretty_name(),
+						'PMD_admin_name'=>$pm_type_obj->pretty_name(),
+						'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
+						'PMD_wp_user_id'=>$current_user->ID));
+					$payment_method->save();
+				}
+				
 			}else{
 				$payment_method->set_active(true);
 				$payment_method->save();

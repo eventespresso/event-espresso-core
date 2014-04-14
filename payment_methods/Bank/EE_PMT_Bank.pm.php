@@ -26,6 +26,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Bank extends EE_PMT_Base{
+	public function __construct($pm_instance = NULL) {
+		$this->_pretty_name = __("Bank", 'event_espresso');
+		parent::__construct($pm_instance);
+		$this->_default_button_url = $this->file_url().'lib'.DS.'bank-logo.png';
+	}
 	public function generate_new_billing_form() {
 		return NULL;
 	}

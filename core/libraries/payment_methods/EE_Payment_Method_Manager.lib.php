@@ -150,7 +150,6 @@ class EE_Payment_Method_Manager {
 	 */
 	public function payment_method_type_sans_class_prefix($classname){
 		$pmt_name = str_replace("EE_PMT_","",$classname);
-		echo "payment metho dtype snas class prefix fed $class and returns ".$pmt_name;	
 		return $pmt_name;
 	}
 	

@@ -160,7 +160,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 */
 	public function form_data_present_in($req_data = NULL){
 		if($req_data === NULL){
-			$req_data = $_POST;
+			$req_data = $_REQUEST;
 		}
 		return $this->find_form_data_for_this_section($req_data) !== NULL;
 	}

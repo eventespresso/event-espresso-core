@@ -24,7 +24,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-Class EE_Aim extends EE_Onsite_Gateway {
+Class EE_Aim extends EE_Onsite_Gateway_Old {
 
 	const LIVE_URL = 'https://secure.authorize.net/gateway/transact.dll'; //Authnet URL
 	const SANDBOX_URL = 'https://test.authorize.net/gateway/transact.dll';
