@@ -46,7 +46,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[PAYMENT_STATUS]' => __('The payment status for the transaction', 'event_espresso'),
-			'[PAYMENT_GATEWAY]' => __('The payment gateway used for the transaction', 'event_espresso'),
+			'[PAYMENT_METHOD]' => __('The payment method used for the transaction', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
 			'[TOTAL_OWING]' => __('The total owing on a transaction', 'event_espresso'),
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
@@ -94,8 +94,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				return !empty($status) ? $status : __('Unknown', 'event_espresso');
 				break; /**/
 
-			case "[PAYMENT_GATEWAY]" :
-				return $this->_get_payment_gateway();
+			case "[PAYMENT_METHOD]" :
+				return $this->_get_payment_method();
 				break;
 
 			case "[AMOUNT_PAID]" :
@@ -125,10 +125,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 
-	private function _get_payment_gateway() {
+	private function _get_payment_method() {
 		if ( !is_object( $this->_data->txn ) )
 			return '';
-		return $this->_data->txn->selected_gateway();
+		return $this->_data->txn->payment_method() ? $this->_data->txn->payment_method()->name() : __("Unknown", 'event_espresso');
 	}
 
 } //end EE_Transaction Shortcodes library
