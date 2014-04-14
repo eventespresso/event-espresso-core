@@ -31,8 +31,10 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 		$this->_subsections['PMD_button_url'] = new EE_Admin_File_Uploader_Input(array(
 			'html_label_text'=>  __("Button URL", 'event_espresso')
 		));
+		$this->_subsections['PMD_scope'] = new EE_Checkbox_Multi_Input(EEM_Payment_Method::instance()->scopes(),array(
+			'html_label_text'=>$this->_model->field_settings_for('PMD_scope')->get_nicename()
+		));
 		parent::__construct($options_array);
-		
 	}
 	
 	/**
