@@ -41,7 +41,7 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
  *
  * @todo 	This is not done yet.  Just have the shell as an example.
  */
-class EE_UnitTest_Factory_For_Event extends EE_UnitTest_Factory_For_Thing {
+class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 
 	public function __construct( $factory = NULL ) {
 		parent::__construct( $factory );
