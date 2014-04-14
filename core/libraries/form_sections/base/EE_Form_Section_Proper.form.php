@@ -485,5 +485,13 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$subsection->_construct_finalize($this, $name);
 		}
 	}
+	/**
+	 * Just gets all validatable subsections to clean their sensitive data
+	 */
+	public function clean_sensitive_data(){
+		foreach($this->get_validatable_subsections() as $subsection){
+			$subsection->clean_sensitive_data();
+		}
+	}
 }
 	

@@ -719,14 +719,6 @@ final class EE_System {
 	* @return void
 	*/
 	public function initialize() {
-//		$p = EE_Payment_Processor::instance()->process_payment('paypal_pro', EE_Transaction::new_instance());
-//		d($p);
-//		$pms = EEM_Payment_Method::instance()->get_all_active();
-//		foreach($pms as $pm){
-//			echo $pm->button_html('ee');
-//		}
-//		$p = EE_Payment::new_instance(array('PAY_redirect_url'=>'http://google.com','PAY_redirect_args'=>array('key'=>'val','foo'=>'bar')));
-//		echo $p->redirect_form();
 		do_action( 'AHEE__EE_System__initialize' );
 	}
 

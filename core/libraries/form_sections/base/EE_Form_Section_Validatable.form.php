@@ -164,4 +164,11 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 		}
 		return $this->find_form_data_for_this_section($req_data) !== NULL;
 	}
+	/**
+	 * Removes teh sensitive data from this form section (usually done after
+	 * utilizing the data business function, but before saving it somewhere. Eg,
+	 * may remove a password from the form after verifying it was correct)
+	 * @return void
+	 */
+	public abstract function clean_sensitive_data();
 }

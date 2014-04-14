@@ -1139,7 +1139,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->_billing_form = $this->_payment_method->type_obj()->billing_form();
 		if ( $this->_billing_form instanceof EE_Billing_Info_Form ) {
 			if ( $this->_billing_form->was_submitted() ) {
+				var_dump($_REQUEST);
 				$this->_billing_form->receive_form_submission();
+				var_dump($this->_billing_form->input_values());die;
 				if ( ! $this->_billing_form->is_valid() ) {
 					EE_Error::add_error( __( 'One or more billing form inputs are invalid and require correction before proceeding.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 					return FALSE;
@@ -1815,7 +1817,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$payment_method,
 			$this->_transaction,
 			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ), 
-			$this->_billing_form && $this->_billing_form instanceof EE_Billing_Info_Form ? 	$this->_billing_form->input_values() : NULL, 
+			$this->_billing_form, 
 			$this->_thank_you_page_url
 		);
 		// verify payment object

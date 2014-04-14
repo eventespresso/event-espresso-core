@@ -45,7 +45,7 @@ class EE_PMT_Aim extends EE_PMT_Base{
 					'required'=>true
 				)),
 				'exp_year'=>new EE_Year_Input(),
-				'cvv'=>new EE_Text_Input(),
+				'cvv'=>new EE_CVV_Input(),
 			)
 		));
 		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_AIM_Form',array('EE_PMT_Aim','generate_new_billing_form_debug_content'),10,2);
@@ -57,6 +57,12 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		}
 		return $form;
 	}
+	/**
+	 * Possibly adds debug content to billing form
+	 * @param type $original_opening_content
+	 * @param type $form_section
+	 * @return string
+	 */
 	public static function generate_new_billing_form_debug_content($original_opening_content,$form_section){
 		EE_Registry::instance()->load_helper('Template');
 		$pm = $form_section->payment_method();
