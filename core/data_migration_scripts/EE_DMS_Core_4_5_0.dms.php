@@ -634,7 +634,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		foreach($default_admin_only_payment_methods as $nicename => $description){
 			$slug = sanitize_key($nicename);
 //check that such a payment method exists
-			$exists = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM $table_name WHERE slug = %s",$slug));
+			$exists = $wpdb->get_var($wpdb->prepare("SELECT count(*) FROM $table_name WHERE PMD_slug = %s",$slug));
 			if( ! $exists){
 				$values = array(
 							'PMD_type'=>'Admin_Only',
