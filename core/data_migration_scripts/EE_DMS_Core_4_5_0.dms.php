@@ -643,7 +643,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 							'PMD_admin_desc'=>$description,
 							'PMD_slug'=>$slug,
 							'PMD_wp_user_id'=>$current_user->ID,
-							'PMD_scope'=>serialize(array('admin')),
+							'PMD_scope'=>serialize(array('ADMIN')),
 						);
 				$success = $wpdb->insert(
 						$table_name,

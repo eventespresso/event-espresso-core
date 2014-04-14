@@ -28,7 +28,9 @@
  */
 
 class EEM_Payment_Method extends EEM_Base {
-
+	const scope_cart = 'CART';
+	const scope_admin = 'ADMIN';
+	const scope_api = 'API';
 	/**
 	 *
 	 * @var EEM_Payment_Method
@@ -108,11 +110,41 @@ class EEM_Payment_Method extends EEM_Base {
 		return $this->get_one(array(array('PMD_slug'=>$slug)));
 	}
 	/**
+	 * Gets all the acceptable scopes for payment methods.
+	 * Keys are their names as store din the DB, and values are nicenames for displaying them
+	 * @return array
+	 */
+	public function scopes(){
+		return apply_filters('FHEE__EEM_Payment_Method__scopes',array(self::scope_cart => __("Front-end Registration Page", 'event_espresso'),self::scope_admin=>  __("Admin Registration Page", 'event_espresso')));
+	}
+	/**
+	 * Determines if this is an valid scope 
+	 * @param string $scope like one of EEM_Payment_Method::instance()->scopes()
+	 * @return boolean
+	 */
+	public function is_valid_scope($scope){
+		$scopes = $this->scopes();
+		if(isset($scopes[$scope])){
+			return true;
+		}else{
+			return false;
+		}
+	}
+	/**
 	 * Gets all active gateways
+	 * @param string $scope one of 
 	 * @return EE_Payment_Method[]
 	 */
-	public function get_all_active(){
-		return $this->get_all(array(array('PMD_active'=>true)));
+	public function get_all_active($scope = NULL){
+		if($scope){
+			if($this->is_valid_scope($scope)){
+				return $this->get_all(array(array('PMD_active'=>true,'PMD_scope'=>array('LIKE',"%$scope%"))));
+			}else{
+				throw new EE_Error(sprintf(__("'%s' is not a valid scope for a payment method", "event_espresso"),$scope));
+			}	
+		}else{
+			return $this->get_all(array(array('PMD_active'=>true)));
+		}
 	}
 	
 	/**

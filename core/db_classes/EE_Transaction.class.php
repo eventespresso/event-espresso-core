@@ -750,8 +750,8 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 		$gateway_name = $this->get_extra_meta('gateway',true);
 		if ( ! $gateway_name){
 			$last_payment = $this->last_payment();
-			if( $last_payment){
-				$gateway_name = $last_payment->gateway();
+			if( $last_payment && $last_payment->payment_method()){
+				$gateway_name = $last_payment->payment_method()->admin_name();
 			}
 		}
 		if ( !$gateway_name){

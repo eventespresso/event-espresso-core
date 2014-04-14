@@ -141,9 +141,9 @@
 					</td>
 					<td class=" jst-left">
 						<div id="payment-gateway-<?php echo $PAY_ID;?>">
-							<?php echo $payment->gateway();?>
+							<?php echo $payment->payment_method() ?  $payment->payment_method()->admin_name() : __("Unknown", 'event_espresso');?>
 						</div>
-						<div id="payment-gateway-id-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->gateway();?></div>
+						<div id="payment-gateway-id-<?php echo $PAY_ID;?>" class="hidden"><?php echo $payment->payment_method() ? $payment->payment_method()->ID() : 0;?></div>
 					</td>
 					<td class=" jst-left">
 						<div id="payment-response-<?php echo $PAY_ID;?>"><?php echo $payment->gateway_response();?></div>
@@ -314,10 +314,10 @@
 					<div class="txn-admin-apply-payment-method-dv admin-modal-dialog-row">
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-method-inp" class=""><?php _e( 'Method of Payment', 'event_espresso' );?></label>
-						<select name="txn_admin_payment[method]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
+						<select name="txn_admin_payment[PMD_ID]" id="txn-admin-payment-method-slct" class="txn-admin-apply-payment-slct required" type="text" >
 							<option value="0" selected="selected"><?php _e( 'please select an option', 'event_espresso' );?>&nbsp;&nbsp;</option>
-						<?php foreach ( $payment_methods as $method_ID => $method ) : ?>
-							<option id="payment-method-opt-<?php echo $method_ID; ?>" value="<?php echo $method_ID; ?>"><?php echo $method; ?>&nbsp;&nbsp;</option>		
+						<?php foreach ( $payment_methods as $method ) : ?>
+							<option id="payment-method-opt-<?php echo $method->slug(); ?>" value="<?php echo $method->ID(); ?>"><?php echo $method->admin_name(); ?>&nbsp;&nbsp;</option>		
 						<?php endforeach; ?>
 						</select>
 						<br/>

@@ -634,12 +634,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	private function _get_payment_methods() {
-		$this->_template_args['payment_methods'] = array(
-			'PP' => __( 'PayPal', 'event_espresso' ),
-			'CC' => __( 'Credit Card', 'event_espresso' ),
-			'CHQ' => __( 'Cheque', 'event_espresso' ),
-			'CSH' => __( 'Cash', 'event_espresso' )
-		);
+//		$this->_template_args['payment_methods'] = array(
+//			'PP' => __( 'PayPal', 'event_espresso' ),
+//			'CC' => __( 'Credit Card', 'event_espresso' ),
+//			'CHQ' => __( 'Cheque', 'event_espresso' ),
+//			'CSH' => __( 'Cash', 'event_espresso' )
+//		);
+		$this->_template_args['payment_methods'] = EEM_Payment_Method::instance()->get_all_active(EEM_Payment_Method::scope_admin);
 	}
 
 
@@ -772,41 +773,16 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			}
 			// so multiplying amount by type will give a positive value for payments, and negative values for refunds
 			$amount = $payment['amount'] * $type;
-
-			switch( $payment['method'] ) {
-				
-				case 'PP' :
-					$payment['gateway'] = 'PayPal';
-					$payment['gateway_response'] = '';
-					break;
-
-				case 'CC' :
-					$payment['gateway'] = 'Credit_Card';
-					$payment['gateway_response'] = '';
-					break;
-
-				case 'CHQ' :
-					$payment['gateway'] = 'Cheque';
-					$payment['gateway_response'] = '';
-					break;
-
-				case 'CSH' :
-					$payment['gateway'] = 'Cash';
-					$payment['txn_id_chq_nmbr'] = '';
-					$payment['gateway_response'] = '';
-					break;
-
-			}
 			//savea  the new payment
 			$payment = EE_Payment::new_instance( 
 				array(
 					'TXN_ID' => $payment['TXN_ID'], 
 					'STS_ID' => $payment['status'],
 					'PAY_timestamp' => $payment['date'], 
-					'PAY_method' => $payment['method'], 
+					'PAY_method'=>  EEM_Payment_Method::scope_admin,
+					'PMD_ID' => $payment['PMD_ID'], 
 					'PAY_amount' => $amount,
-					'PAY_gateway' => $payment['gateway'],
-					'PAY_gateway_response' => $payment['gateway_response'],
+					'PAY_gateway_response' => '',
 					'PAY_txn_id_chq_nmbr' => $payment['txn_id_chq_nmbr'],
 					'PAY_po_number' => $payment['po_number'], 
 					'PAY_extra_accntng' => $payment['accounting'], 
@@ -841,7 +817,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			$return_data['date'] = $payment->timestamp( 'Y-m-d', 'h:i a' );
 			$return_data['method'] = strtoupper( $payment->method() ) ;
 			$this->_get_active_gateways();
-			$return_data['gateway'] = isset( $this->_template_args['active_gateways'][ $payment->gateway() ] ) ? $this->_template_args['active_gateways'][ $payment->gateway() ] : $payment->gateway();
+			$return_data['gateway'] =$payment->payment_method() ? $payment->payment_method()->admin_name()  : __("Unknown", 'event_espresso');
 			$return_data['gateway_response'] = $payment->gateway_response();
 			$return_data['txn_id_chq_nmbr'] = $payment->txn_id_chq_nmbr();
 			$return_data['po_number'] = $payment->po_number();
