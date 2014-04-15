@@ -50,7 +50,7 @@
                                         array(
                                             'MTP_name' =>$event_name
                                             ),
-                                        array( 'MTP_ID' => $old_row['MTP_ID'] ),
+                                        array( 'MTP_ID' => (int) $old_row['MTP_ID'] ),
                                         array( '%s' ),
                                         array( '%d' )
                                         );
