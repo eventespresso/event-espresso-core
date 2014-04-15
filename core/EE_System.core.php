@@ -621,7 +621,7 @@ final class EE_System {
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
 
-		if ( is_admin() && !defined('DOING_AJAX') ) {
+		if ( is_admin()  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
 		}
