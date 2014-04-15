@@ -178,7 +178,7 @@ abstract class EE_PMT_Base{
 	 * 
 	 * @param EE_Transaction $transaction
 	 * @param type $amount
-	 * @param type $billing_info
+	 * @param EE_Billing_Info_Form $billing_info
 	 * @param type $return_url
 	 * @param type $method
 	 * @param type $by_admin
@@ -209,11 +209,11 @@ abstract class EE_PMT_Base{
 			}
 			if($this->_gateway instanceof EE_Offsite_Gateway){
 				$core_config = EE_Config::instance()->core;
-				$payment = $this->_gateway->set_redirection_info($payment,$billing_info,$return_url,
+				$payment = $this->_gateway->set_redirection_info($payment,$billing_info->input_values(),$return_url,
 						$core_config->txn_page_url(array('e_reg_url_link'=>$transaction->primary_registration()->reg_url_link(),'ee_payment_method'=>$this->_pm_instance->slug())),
 						$core_config->cancel_page_url());
 			}elseif($this->_gateway instanceof EE_Onsite_Gateway){
-				$payment = $this->_gateway->do_direct_payment($payment,$billing_info);
+				$payment = $this->_gateway->do_direct_payment($payment,$billing_info->input_values());
 				$payment->save();
 				$transaction->update_based_on_payments();//also saves transaction
 				$transaction->finalize();

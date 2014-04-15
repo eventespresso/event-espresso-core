@@ -231,4 +231,31 @@ class EEM_Payment_Method extends EEM_Base {
 			}
 		}
 	}
+	
+	/**
+	 * Overrides parent to not only turn wpdb results into EE_Payment_Method objects,
+	 * but also verifies the payment method type of each is a usable object. If not,
+	 * deactivate it, sets a notification, and deactivates it
+	 * @param array $rows
+	 * @return EE_Payment_Method[]
+	 */
+	protected function _create_objects($rows = array()){
+		$payment_methods = parent::_create_objects($rows);
+		$usable_payment_methods = array();
+		foreach($payment_methods as $key => $payment_method){
+			try{
+				$payment_method->type_obj();
+				$usable_payment_methods[$key] = $payment_method;
+			}catch(EE_Error $e){
+				//if it threw an exception, its because the payment type object
+				//isn't defined (probably because somehow the DB got borked,
+				//or an addon which defined it got deactivated
+				//so deactivate it and move on
+				$payment_method->deactivate();
+				$payment_method->save();
+				EE_Error::add_attention(sprintf(__("There is no payment method type '%s', so the payment method '%s' was deactivated", "event_espresso"),$payment_method->type(),$payment_method->name()), __FILE__, __FUNCTION__, __LINE__);
+			}
+		}
+		return $usable_payment_methods;
+	}
 }

@@ -125,7 +125,7 @@ class EE_Payment_Method extends EE_Base_Class{
 	}
 	/**
 	 * Sets this PM as active by making it usable wihtin the CART scope. Offline gateways
-	 * are also usable from the admin-scope as well.
+	 * are also usable from the admin-scope as well. DOES NOT SAVE it
 	 */
 	function set_active(){
 		$default_scopes = array(EEM_Payment_Method::scope_cart);
@@ -134,6 +134,14 @@ class EE_Payment_Method extends EE_Base_Class{
 			$default_scopes[] = EEM_Payment_Method::scope_admin;
 		}
 		$this->set_scope($default_scopes);
+	}
+	
+	/**
+	 * Makes this paymetn method apply to NO scopes at all. DOES NOT SAVE it.
+	 * @return boolean
+	 */
+	function deactivate(){
+		return $this->set_scope(array());
 	}
 
 	/**
