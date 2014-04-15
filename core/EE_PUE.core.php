@@ -206,7 +206,7 @@ class EE_PUE {
 
 
 	function espresso_data_collection_optin_notice() {
-		$ueip_has_notified = get_option('ee_ueip_has_notified');
+		$ueip_has_notified = EE_Registry::instance()->CFG->core->ee_ueip_has_notified;
 		if ( $ueip_has_notified ) return;
 		$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
 		$settings_url = $settings_url . '#UXIP_settings';
