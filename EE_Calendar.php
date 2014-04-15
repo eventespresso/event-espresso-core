@@ -340,7 +340,7 @@
 				if ( $calendar_config->display->enable_category_legend ){
 					echo '
 				<div id="espreso-category-legend">
-					<p class="smaller-text lt-grey-txt">' .  __('click to select a category:', 'event_espresso') . '</p>
+					<p class="smaller-text lt-grey-txt">' .  __('Click to select a category:', 'event_espresso') . '</p>
 					<ul id="ee-category-legend-ul">';
 
 					foreach ($ee_terms as $ee_term) {
