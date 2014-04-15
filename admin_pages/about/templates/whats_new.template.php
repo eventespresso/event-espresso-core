@@ -40,7 +40,7 @@
 	<p>Mijireh Checkout helps increase your conversion rates by using your existing website design. Your checkout process remains seamless to your customers while Mijireh Checkout securely handles collecting and transmitting of the credit card data for you.</p>
 	<h3>Support for the Calendar Add-on in EE 4.2+</h3>
 	<a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-calendar-3-0-01.jpg"><img class="alignright size-medium wp-image-132" alt="ee4-calendar-3-0-01" src="http://ee-screenshots.s3.amazonaws.com/ee4/ee4-calendar-3-0-01.jpg" width="265" height="300" /></a>
-	<p>The calendar add-on for EE 4.2 is now available for purchase on the <a target="_blank" href="http://eventespresso.com">Event Espresso</a> website. The events calendar allows you to display your events in a way that your attendees/registrants are familiar with. It is another way for customers to find your events and even allows you to invite your attendees/registrants to add the events to their own calendars.</p>
+	<p>The calendar add-on for EE 4.2 is now available for purchase on the <a target="_blank" href="http://eventespresso.com/product/ee4-events-calendar/">Event Espresso</a> website. The events calendar allows you to display your events in a way that your attendees/registrants are familiar with. It is another way for customers to find your events and even allows you to invite your attendees/registrants to add the events to their own calendars.</p>
 	<p>The EE4 Calendar add-on includes:</p>
 	<ul>
 		<li>Inline calendar images</li>
