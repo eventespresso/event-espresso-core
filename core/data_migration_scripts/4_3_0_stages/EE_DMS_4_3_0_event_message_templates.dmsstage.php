@@ -42,7 +42,7 @@
  		global $wpdb;
  		if ( $old_row['EVT_ID'] > 0 ) {
                                     //let's get the EVT for this id so we can update the custom name on the old row.
-                                    $event_name = 'Custom Template for ' . $wpdb->get_var( $wpdb->prepare( "SELECT post_title from $wpdb->posts WHERE post_id = %d", absint( $old_row['EVT_ID'] ) ) );
+                                    $event_name = 'Custom Template for ' . $wpdb->get_var( $wpdb->prepare( "SELECT post_title from $wpdb->posts WHERE ID = %d", absint( $old_row['EVT_ID'] ) ) );
 
                                     //update name
                                     $updated = $wpdb->update(
