@@ -307,10 +307,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'event_registrations',
 			'default'
 			);
-		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to ) ) {
-			$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send-selected-newsletter-count">0</span>' );
-			echo '<button id="selected-batch-send-trigger" class="button secondary-button"><span class="dashicons dashicons-email "></span>' . $button_text . '</button>';
-			add_action('admin_footer', array( $this, 'newsletter_send_form_skeleton') );
+		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to )  ) {
+			if ( $this->_req_action == 'event_registrations' && empty( $this->_req_data['event_id'] ) ) {
+				echo '';
+			} else {
+				$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send-selected-newsletter-count">0</span>' );
+				echo '<button id="selected-batch-send-trigger" class="button secondary-button"><span class="dashicons dashicons-email "></span>' . $button_text . '</button>';
+				add_action('admin_footer', array( $this, 'newsletter_send_form_skeleton') );
+			}
 		}
 	}
 
