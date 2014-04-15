@@ -45,12 +45,12 @@
                                     $event_name = 'Custom Template for ' . $wpdb->get_var( $wpdb->prepare( "SELECT post_title from $wpdb->posts WHERE post_id = %d", absint( $old_row['EVT_ID'] ) ) );
 
                                     //update name
-                                    $updates = $wpdb->update(
+                                    $updated = $wpdb->update(
                                         $this->_old_table,
                                         array(
                                             'MTP_name' =>$event_name
                                             ),
-                                        array( 'MTP_ID' => (int) $old_row['MTP_ID'] ),
+                                        array( 'GRP_ID' => (int) $old_row['GRP_ID'] ),
                                         array( '%s' ),
                                         array( '%d' )
                                         );
@@ -65,7 +65,7 @@
  				);
 
                                     if ( FALSE === $updated ) {
-                                        $this->add_error( sprintf( __("Error in updating the row in %s setting 'MTP_name = %d", 'event_espresso'), $this->_old_table, $event_name ) );
+                                        $this->add_error( sprintf( __("Error in updating the row in %s setting 'MTP_name = %s", 'event_espresso'), $this->_old_table, $event_name ) );
                                     }
 
  			if ( FALSE === $inserted ) {
