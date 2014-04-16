@@ -86,7 +86,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @since 4.3.1.
 	 */
 	public function setMaintenanceMode( $level = 0 ) {
-		EE_Registry::instance()->load_core('Maintenance');
+		EE_Registry::instance()->load_core('Maintenance_Mode');
 		switch ( $level ) {
 			case EE_Maintenance_Mode::level_0_not_in_maintenance :
 				$level = EE_Maintenance_Mode::level_0_not_in_maintenance;
