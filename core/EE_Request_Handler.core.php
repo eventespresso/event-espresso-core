@@ -58,16 +58,15 @@ final class EE_Request_Handler {
 
 
 
-
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param null $wp
+	 * @return \EE_Request_Handler
 	 */
 	public function __construct( $wp = NULL ) {
-//		d( $wp );
-		//if somebody forgot to provide us with WP, thats ok because its global
+		//if somebody forgot to provide us with WP, that's ok because its global
 		if( ! $wp){
 			global $wp;
 		}
@@ -76,20 +75,20 @@ final class EE_Request_Handler {
 		// AJAX ???
 		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
 		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? TRUE : FALSE;
-		$this->get_request_vars( $wp );
-//		d( $this->_params );
+		$this->set_request_vars( $wp );
 		do_action( 'AHEE__EE_Request_Handler__construct__complete' );
 	}
 
 
 
 	/**
-	 * 	get_request_vars
+	 *    set_request_vars
 	 *
-	 * 	@access public
-	 * 	@return int
+	 * @access public
+	 * @param null $wp
+	 * @return void
 	 */
-	public function get_request_vars( $wp = NULL ) {
+	public function set_request_vars( $wp = NULL ) {
 		if ( ! is_admin() ) {
 			// set request post_id
 			$this->set( 'post_id', $this->get_post_id_from_request( $wp ));
@@ -105,10 +104,11 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	get_post_id_from_request
+	 *    get_post_id_from_request
 	 *
-	 * 	@access public
-	 * 	@return int
+	 * @access public
+	 * @param null $wp
+	 * @return int
 	 */
 	public function get_post_id_from_request( $wp = NULL ) {
 		if( ! $wp){
@@ -132,10 +132,11 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	get_post_name_from_request
+	 *    get_post_name_from_request
 	 *
-	 * 	@access public
-	 * 	@return int
+	 * @access public
+	 * @param null $wp
+	 * @return string
 	 */
 	public function get_post_name_from_request( $wp = NULL ) {
 		if( ! $wp){
@@ -171,10 +172,11 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	get_post_type_from_request
+	 *    get_post_type_from_request
 	 *
-	 * 	@access public
-	 * 	@return int
+	 * @access public
+	 * @param null $wp
+	 * @return mixed
 	 */
 	public function get_post_type_from_request( $wp = NULL ) {
 		if( ! $wp){
@@ -188,7 +190,7 @@ final class EE_Request_Handler {
 	 * 		test_for_espresso_page
 	 *
 	 * 		@access public
-	 * 		@return mixed
+	 * 		@return bool
 	 */
 	public function test_for_espresso_page() {
 		// load espresso CPT endpoints
@@ -225,12 +227,12 @@ final class EE_Request_Handler {
 
 
 
-
 	/**
-	 * 	is_espresso_page
+	 *    is_espresso_page
 	 *
-	 *  @access 	public
-	 *  @return 	mixed
+	 * @access    public
+	 * @param null $value
+	 * @return    void
 	 */
 	public function set_espresso_page( $value = NULL ) {
 		$value = $value ? $value : $this->test_for_espresso_page();
@@ -252,10 +254,12 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	setter
+	 *    setter
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @param $value
+	 * @return    void
 	 */
 	public function set( $key, $value ) {
 		$this->_params[ $key ] = $value;
@@ -264,10 +268,11 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	getter
+	 *    getter
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @return    mixed
 	 */
 	public function get( $key ) {
 		return isset( $this->_params[ $key ] ) ? $this->_params[ $key ] : NULL;
@@ -276,21 +281,24 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	check if param exists
+	 *    check if param exists
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @return    bool
 	 */
 	public function is_set( $key ) {
 		return isset( $this->_params[ $key ] ) ? TRUE : FALSE;
 	}
 
 
+
 	/**
-	 * 	remove param
+	 *    remove param
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @return    void
 	 */
 	public function un_set( $key ) {
 		unset( $this->_params[ $key ] );
@@ -299,10 +307,12 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	set_notice
+	 *    set_notice
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @param $value
+	 * @return    void
 	 */
 	public function set_notice( $key, $value ) {
 		$this->_notice[ $key ] = $value;
@@ -311,10 +321,11 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	get_notice
+	 *    get_notice
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $key
+	 * @return    mixed
 	 */
 	public function get_notice( $key ) {
 		return isset( $this->_notice[ $key ] ) ? $this->_notice[ $key ] : NULL;
@@ -323,10 +334,11 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	add_output
+	 *    add_output
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $string
+	 * @return    void
 	 */
 	public function add_output( $string ) {
 		$this->_output .= $string;
