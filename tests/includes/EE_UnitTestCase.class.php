@@ -77,4 +77,31 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		return $args;
 	}
 
+
+
+	/**
+	 * Helper method for setting the maintenance mode of EE to given maintenance mode
+	 *
+	 * @param int use to indicate which maintenance mode to set.
+	 * @since 4.3.1.
+	 */
+	public function setMaintenanceMode( $level = 0 ) {
+		EE_Registry::instance()->load_core('Maintenance');
+		switch ( $level ) {
+			case EE_Maintenance_Mode::level_0_not_in_maintenance :
+				$level = EE_Maintenance_Mode::level_0_not_in_maintenance;
+				break;
+			case EE_Maintenance_Mode::level_1_frontend_only_maintenance :
+				$level = EE_Maintenance_Mode::level_1_frontend_only_maintenance;
+				break;
+			case EE_Maintenance_Mode::level_2_complete_maintenance :
+				$level = EE_Maintenance_Mode::level_2_complete_maintenance;
+				break;
+			default :
+				$level = EE_Maintenance_Mode::level_0_not_in_maintenance;
+				break;
+		}
+		update_option( EE_Maintenance::option_name_maintenance_mode, $level );
+	}
+
 }
