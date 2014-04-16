@@ -101,7 +101,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				$level = EE_Maintenance_Mode::level_0_not_in_maintenance;
 				break;
 		}
-		update_option( EE_Maintenance::option_name_maintenance_mode, $level );
+		update_option( EE_Maintenance_Mode::option_name_maintenance_mode, $level );
 	}
 
 }
