@@ -58,11 +58,11 @@ class EES_Espresso_Ticket_Selector  extends EES_Shortcode {
 	 *  @param		array 	$attributes
 	 *  @return 	void
 	 */
-	public function process_shortcode( $attributes ) {
+	public function process_shortcode( $attributes = array() ) {
 		extract( $attributes );
-		$event = get_post( $event_id );
+		$event = EE_Registry::instance()->load_model( 'Event' )->get_one_by_ID( $event_id );
 		ob_start();
-		do_action( 'AHEE_event_details_before_post', $event );
+		do_action( 'AHEE_event_details_before_post', $event_id );
 		espresso_ticket_selector( $event );	
 		do_action( 'AHEE_event_details_after_post' );
 		return ob_get_clean();

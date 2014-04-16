@@ -146,12 +146,11 @@ $event_name = '';
 
 	<div class='reg-payment-details'>
 		<?php 
-		if ( empty($payments)){
+		if ( empty( $payments )){
 			
 			if ( $transaction->total() ){
 				echo apply_filters( 'FHEE__payment_overview_template__no_payments_made',__("No payments have been made yet towards this registration.",'event_espresso') );
-				echo $gateway_content;
-			}else{
+			} else {
 				 echo apply_filters( 'FHEE__payment_overview_template__no_payment_required', __("No payment required",'event_espresso') );
 			}
 			
@@ -197,20 +196,16 @@ $event_name = '';
 							?>
 						</td>
 					</tr>
-					<?php $gateway_payment_content = $payment->gateway_payment_overview_content();
-					if (!empty($gateway_payment_content)){?>
-					<tr>
-						<td colspan=2><?php echo $gateway_payment_content?></td>
-					</tr>
-					<?php }?>
 					</tbody>
 				</table>
-			<?php } ?>
-			
-		<?php }?>
+			<?php }
+			}
+			if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
+				echo $gateway_content;
+			 }	
+			?>
 	</div>
-	<br/>
-		
+	<br/>	
 
 </div><!-- / .event-display-boxes -->
 <?php 

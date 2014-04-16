@@ -131,7 +131,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 						'filename' => 'import_page'
 						)
 					),
-                'help_tour' => array('Event_Import_Help_Tour'),
+				'help_tour' => array('Event_Import_Help_Tour'),
 				'metaboxes' => $default_espresso_boxes,
 				'require_nonce' => FALSE
 		);
@@ -193,9 +193,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		add_filter('FHEE_load_accounting_js', '__return_true');
 
 		//styles
-		wp_enqueue_style('espresso-ui-theme');		
+		wp_enqueue_style('espresso-ui-theme');
 		wp_enqueue_script('event_editor_js');
-		
+
 		$new_strings = array(
 			'image_confirm' => __('Do you really want to delete this image? Please remember to update your event to complete the removal.', 'event_espresso'),
 			'event_starts_on' => __('Event Starts on', 'event_espresso'),
@@ -302,7 +302,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	protected function _import_page(){
-		
+
 		$title = __('Import', 'event_espresso');
 		$intro = __('If you have a previously exported Event Espresso 4 information in a Comma Separated Value (CSV) file format, you can upload the file here: ', 'event_espresso');
 		$form_url = EVENTS_ADMIN_URL;
@@ -310,8 +310,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$type = 'csv';
 		$this->_template_args['form'] = EE_Import::instance()->upload_form($title, $intro, $form_url, $action, $type);
 		$this->_template_args['sample_file_link'] = EE_Admin_Page::add_query_args_and_nonce(array('action'=>'sample_export_file'),$this->_admin_base_url);
-		$content = EEH_Template::display_template(EVENTS_CAF_TEMPLATE_PATH . 'import_page.template.php',$this->_template_args,true); 
-		
+		$content = EEH_Template::display_template(EVENTS_CAF_TEMPLATE_PATH . 'import_page.template.php',$this->_template_args,true);
+
 
 		$this->_template_args['admin_page_content'] = $content;
 		$this->display_admin_page_with_sidebar();
@@ -319,14 +319,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	/**
 	 * _import_events
 	 * This handles displaying the screen and running imports for importing events.
-	 * 	
+	 *
 	 * @return string html
 	 */
 	protected function _import_events() {
 		require_once(EE_CLASSES . 'EE_Import.class.php');
 		$success = EE_Import::instance()->import();
 		$this->_redirect_after_action($success, 'Import File', 'ran', array('action' => 'import_page'),true);
-		
+
 	}
 
 
@@ -334,9 +334,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	/**
 	 * _events_export
 	 * Will export all (or just the given event) to a Excel compatible file.
-	 * 
+	 *
 	 * @access protected
-	 * @return file 
+	 * @return file
 	 */
 	protected function _events_export() {
 		if(isset($this->_req_data['EVT_ID'])){
@@ -388,7 +388,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	}
 
 
-	
+
 	/**
 	 * Creates a sample CSV file for importing
 	 */
@@ -404,7 +404,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * add all metaboxes related to the event_editor
 	 *
 	 * @access protected
-	 * @return void 
+	 * @return void
 	 */
 	protected function _premium_event_editor_meta_boxes() {
 
@@ -440,7 +440,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$template_args['additional_limit'] = $this->_cpt_model_obj->additional_limit();
 		$template_args['default_registration_status'] = EEH_Form_Fields::select_input('default_reg_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status());
 		$template_args['display_description'] = EEH_Form_Fields::select_input('display_desc', $yes_no_values, $this->_cpt_model_obj->display_description());
-		$template_args['display_registration_form'] = EEH_Form_Fields::select_input('display_reg_form', $yes_no_values, $this->_cpt_model_obj->display_reg_form(), '', '', false);
+		$template_args['display_ticket_selector'] = EEH_Form_Fields::select_input('display_ticket_selector', $yes_no_values, $this->_cpt_model_obj->display_ticket_selector(), '', '', false);
 		$template_args['EVT_default_registration_status'] = EEH_Form_Fields::select_input('EVT_default_registration_status', $default_reg_status_values, $this->_cpt_model_obj->default_registration_status() );
 		$template_args['additional_registration_options'] = apply_filters( 'FHEE__Events_Admin_Page__registration_options_meta_box__additional_registration_options', '', $template_args, $yes_no_values, $default_reg_status_values );
 		$templatepath = EVENTS_CAF_TEMPLATE_PATH . 'event_registration_options.template.php';
@@ -536,7 +536,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * wp_list_table_mods for caf
 	 * ============================
 	 */
-	
+
 
 	/**
 	 * hook into list table filters and provide filters for caffeinated list table
@@ -559,8 +559,8 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//category filter
 		$filters[] = $this->category_dropdown();
-		
-		
+
+
 		return array_merge($oldfilters, $filters);
 	}
 
@@ -568,9 +568,9 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 
-	
+
 	/**
-	 * espresso_event_months_dropdown			
+	 * espresso_event_months_dropdown
 	 *
 	 * @access public
 	 * @return string                dropdown listing month/year selections for events.
@@ -626,7 +626,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * get total number of events today
 	 *
 	 * @access public
-	 * @return int 
+	 * @return int
 	 */
 	public function total_events_today() {
 		$start = ' 00:00:00';
@@ -644,7 +644,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 * get total number of events this month
 	 *
 	 * @access public
-	 * @return int 
+	 * @return int
 	 */
 	public function total_events_this_month() {
 		//Dates
@@ -719,7 +719,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			$where['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
 			$where['Term_Taxonomy.term_id'] = $category;
 		}
-		
+
 		//date where conditions
 		if (isset($this->_req_data['month_range']) && $this->_req_data['month_range'] != '') {
 			$where['Datetime.DTT_EVT_start'] = array('BETWEEN', array( strtotime($year_r . '-' . $month_r . '-01 00:00:00'), strtotime($year_r . '-' . $month_r . '-31 23:59:59' ) ) );
@@ -892,12 +892,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'action' => 'ticket_list_table',
 			'status' => $trash ? '' : 'trashed'
 			);
-		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args ); 
+		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args );
 	}
 
 
 
-	
+
 
 	protected function _delete_ticket() {
 		$success = 1;
@@ -911,7 +911,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 			//cycle thru the boxes
 			while ( list( $TKT_ID, $value ) = each( $this->_req_data['checkbox'] ) ) {
-				//delete 
+				//delete
 				if ( ! $this->_delete_the_ticket( $TKT_ID ) ) {
 					$success = 0;
 				}
@@ -933,7 +933,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//failsafe.  If the default ticket count === 1 then we need to redirect to event overview.
 		if ( EEM_Ticket::instance()->count_deleted_and_undeleted( array( array( 'TKT_is_default' => 1 ) ), 'TKT_ID', TRUE ) )
 			$query_args = array();
-		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args ); 
+		$this->_redirect_after_action( $success, 'Tickets', $action_desc, $query_args );
 	}
 
 
@@ -953,7 +953,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 require_once ABSPATH . 'wp-admin/includes/template.php';
 class Walker_Radio_Checklist extends Walker_Category_Checklist {
-	
+
 	function start_el( &$output, $category, $depth = 0, $args = array(), $id = 0 ) {
 		extract($args);
 		if ( empty($taxonomy) )

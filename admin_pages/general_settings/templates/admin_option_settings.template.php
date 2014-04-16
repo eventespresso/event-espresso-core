@@ -108,7 +108,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 				<td>
 					<input name="remote_logging_url" id="remote_logging_url" size="20" class="regular-text" type="text" value="<?php echo $remote_logging_url;?>" />
 					<p class="description">
-						<?php _e('Example: http://www.postbin.org/MY_UNIQUE_ID', 'event_espresso'); ?>
+						<?php _e('Example: http://requestb.in/MY_UNIQUE_ID', 'event_espresso'); ?>
 
 					</p>
 				</td>
@@ -127,7 +127,7 @@ if( defined('CAFFEINATED') && CAFFEINATED ) : ?>
 			<tr>
 				<th>
 					<label>
-						<?php _e('Link to Event Espresso from your Registration Page footer?', 'event_espresso'); ?>
+						<?php _e('Link to Event Espresso in your Registration Page?', 'event_espresso'); ?>
 					</label>
 				</th>
 				<td>

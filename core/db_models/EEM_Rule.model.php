@@ -46,7 +46,7 @@ class EEM_Rule extends EEM_Soft_Delete_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Rule','event_espresso');
+		$this->singular_item = __('Rule','event_espresso');
 		$this->plural_item = __('Rules','event_espresso');
 		$this->_tables = array(
 			'Rule'=> new EE_Primary_Table('esp_rule', 'PRR_ID')

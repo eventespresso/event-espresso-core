@@ -115,7 +115,9 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		$this->_model_relations = array(
 			'Question_Group'=>new EE_HABTM_Relation('Question_Group_Question'),
 			'Question_Option'=>new EE_Has_Many_Relation(),
-			'Answer'=>new EE_Has_Many_Relation()
+			'Answer'=>new EE_Has_Many_Relation(),
+			//for QST_order column
+			'Question_Group_Question'=>new EE_Has_Many_Relation()
 		);
 		
 		parent::__construct();

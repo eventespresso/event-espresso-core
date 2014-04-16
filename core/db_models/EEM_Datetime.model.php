@@ -37,7 +37,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
-		$this->singlular_item = __('Datetime','event_espresso');
+		$this->singular_item = __('Datetime','event_espresso');
 		$this->plural_item = __('Datetimes','event_espresso');		
 
 		$this->_tables = array(
@@ -47,6 +47,8 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			'Datetime'=>array(
 				'DTT_ID'=> new EE_Primary_Key_Int_Field('DTT_ID', __('Datetime ID','event_espresso')),
 				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
+				'DTT_name' => new EE_Plain_Text_Field('DTT_name', __('Datetime Name', 'event_espresso'), false, ''),
+				'DTT_description' => new EE_Full_HTML_Field('DTT_description', __('Description for Datetime', 'event_espresso'), false, ''),
 				'DTT_EVT_start'=>new EE_Datetime_Field('DTT_EVT_start', __('Start time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_EVT_end'=>new EE_Datetime_Field('DTT_EVT_end', __('End time/date of Event','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'DTT_reg_limit'=>new EE_Infinite_Integer_Field('DTT_reg_limit', __('Registration Limit for this time','event_espresso'), true, INF),

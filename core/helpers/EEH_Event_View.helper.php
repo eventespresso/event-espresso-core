@@ -50,10 +50,24 @@
 				$class = 'ee-grey';
 			} 
 			?>
-			<a class="ee-button ee-register-button <?php echo $class . ' ' . espresso_event_list_grid_size_btn(); ?>" href="<?php espresso_event_link_url(); ?>">
+			<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url(); ?>">
 				<?php echo $btn_text; ?>								
 			</a>
 			<?php
+		}		
+	}
+
+
+
+	/**
+	 * espresso_display_ticket_selector
+	 * whether or not to display the Ticket Selector for an event
+	* 
+	 * @return boolean
+	 */
+	if ( ! function_exists( 'espresso_display_ticket_selector' )) {
+		function espresso_display_ticket_selector( $EVT_ID = FALSE ) {
+			return EEH_Event_View::display_ticket_selector( $EVT_ID );
 		}		
 	}
 
@@ -165,23 +179,40 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_list_of_event_dates' )) {
-		function espresso_list_of_event_dates( $EVT_ID = FALSE, $dt_frmt = 'l F jS, Y', $tm_frmt = '@ g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE ) {
+		function espresso_list_of_event_dates( $EVT_ID = FALSE, $dt_frmt = 'l F jS, Y', $tm_frmt = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE ) {
 			$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID ,$show_expired );
 			//d( $datetimes );
 			if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 				global $post;
 				$html = $format ? '<ul id="ee-event-datetimes-ul-' . $post->ID . '" class="ee-event-datetimes-ul">' : '';
 				foreach ( $datetimes as $datetime ) {
-					$html .= $format ? '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">' : '';
-					$html .= $format ? date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( $datetime->start_date_and_time() )) : $datetime;	
-					$html .= $format ? '</li>' : '';
+					if ( $datetime instanceof EE_Datetime ) {
+						if ( $format ) {
+							$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';
+							$datetime_name = $datetime->name();
+							$html .= ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b>' : '';
+							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
+							$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $dt_frmt ) . ' &nbsp; &nbsp; ';
+							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
+							$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $tm_frmt );
+							$datetime_description = $datetime->description();
+							$html .= ! empty( $datetime_description ) ? '<br/> - ' . $datetime_description . '<br/>' : '';
+							$html .= '<br/>';
+							$html .= '</li>';
+
+						} else {
+							$html .= $datetime;
+						}
+					}
 				}
 				$html .= $format ? '</ul>' : '';
-				if ( $echo ) {
-					echo $html;
-				} else {
-					return $html;
-				}
+			} else {
+				$html = $format ?  '<p><span class="dashicons dashicons-marker pink-text"></span>' . __( 'There are no upcoming dates for this event.', 'event_espresso' ) . '</p><br/>' : '';
+			}
+			if ( $echo ) {
+				echo $html;
+			} else {
+				return $html;
 			}
 		}		
 	}
@@ -248,6 +279,37 @@
 		}		
 	}
 
+
+
+	/**
+	 * 	espresso_event_has_content_or_excerpt
+	 *
+	 *  @access 	public
+	 *  @return 	boolean
+	 */
+	if ( ! function_exists( 'espresso_event_has_content_or_excerpt' )) {
+		function espresso_event_has_content_or_excerpt( $EVT_ID = FALSE ) {
+			return EEH_Event_View::event_has_content_or_excerpt( $EVT_ID );
+		}
+	}
+
+
+
+
+	/**
+	 * espresso_event_content_or_excerpt	 
+	 *
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_event_content_or_excerpt' )) {
+		function espresso_event_content_or_excerpt( $num_words = 55, $more = NULL, $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Event_View::event_content_or_excerpt( $num_words, $more );
+			} else {
+				return EEH_Event_View::event_content_or_excerpt( $num_words, $more );
+			}
+		}		
+	}
 
 
 
@@ -434,7 +496,7 @@ class EEH_Event_View extends EEH_Base {
 		 if ( isset( $post->post_type ) && $post->post_type == 'espresso_events' || $EVT_ID ) {
 //			d( $post );
 			// grab the event we're looking for
-			if ( isset( $post->EE_Event ) && (( $EVT_ID && $post->EE_Event->ID() === $EVT_ID ) || ! $EVT_ID )) {
+			if ( isset( $post->EE_Event ) && ( $EVT_ID == 0 || ( $EVT_ID == $post->ID ))) {
 				EEH_Event_View::$_event = $post->EE_Event;
 //				d( EEH_Event_View::$_event );
 			}
@@ -448,6 +510,19 @@ class EEH_Event_View extends EEH_Base {
 		return EEH_Event_View::$_event;
 	}
 
+
+
+
+	/**
+	 * 	display_ticket_selector
+	 *
+	 *  @access 	public
+	 *  @return 	boolean
+	 */
+	public static function display_ticket_selector( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		return $event instanceof EE_Event ? $event->display_ticket_selector() : FALSE;
+	}
 
 
 
@@ -473,6 +548,67 @@ class EEH_Event_View extends EEH_Base {
 	public static function event_active_status( $EVT_ID = FALSE ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		return $event instanceof EE_Event ? $event->pretty_active_status() : 'inactive';
+	}
+
+
+
+	/**
+	 * 	event_has_content_or_excerpt
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function event_has_content_or_excerpt( $EVT_ID = FALSE ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		$has_content_or_excerpt = FALSE;
+		if ( $event instanceof EE_Event ) {
+			$has_content_or_excerpt = $event->description() != '' || $event->short_description( NULL, NULL, TRUE ) != '' ? TRUE : FALSE;
+		}
+		if ( is_archive() && ! ( espresso_display_full_description_in_event_list() || espresso_display_excerpt_in_event_list() )) {
+			$has_content_or_excerpt = FALSE;
+		}
+		return $has_content_or_excerpt;		
+	}
+
+
+
+	/**
+	 * 	event_active_status
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function event_content_or_excerpt( $num_words = NULL, $more = NULL ) {
+
+		global $post;
+		$content = '';
+		
+		ob_start();
+		if (( is_single() ) || ( is_archive() && espresso_display_full_description_in_event_list() )) {
+//echo '<h2 style="color:#E76700;">the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+			the_content();
+		} else if (( is_archive() && has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() ) || apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) {
+//echo '<h2 style="color:#E76700;">the_excerpt<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+			the_excerpt();
+		} else if (( is_archive() && ! has_excerpt( $post->ID ) && espresso_display_excerpt_in_event_list() )) {
+//echo '<h2 style="color:#E76700;">get_the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+			if ( ! empty( $num_words )) {
+				if ( empty( $more )) {
+					$more = ' <a href="' . get_permalink() . '" class="more-link">' . __( '(more&hellip;)' ) . '</a>';
+					$more = apply_filters( 'the_content_more_link', $more );
+				}
+				$content = str_replace( 'NOMORELINK', '', get_the_content( 'NOMORELINK' ));
+				$content =  wp_trim_words( $content, $num_words, ' ' ) . $more;
+			} else {
+				$content =  get_the_content();				
+			}
+			echo apply_filters( 'the_content', $content );
+
+		} else {
+//echo '<h2 style="color:#E76700;">nothing<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+			echo apply_filters( 'the_content', $content );			
+		}
+		return ob_get_clean();
 	}
 
 

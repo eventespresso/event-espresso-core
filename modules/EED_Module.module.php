@@ -21,9 +21,6 @@
  *
  * ------------------------------------------------------------------------
  */
-//add_action( 'plugins_loaded', array( 'EED_Module', 'register_module' ));
-//add_filter( 'AHEE__EE_Front_Controller__register_module', array( 'EED_Module', 'register_module' ));
-
 abstract class EED_Module extends EE_Base { 
 
 	/**

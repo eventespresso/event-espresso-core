@@ -3,26 +3,14 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for Wordpress
- *
- * @package		Event Espresso
- * @author		Seth Shoultes
- * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
- * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link		http://www.eventespresso.com
- * @version		4.0
- *
- * ------------------------------------------------------------------------
  *
  * EE_About_Admin_Page
  *
  * This contains the logic for the About Event Espresso Pages
  *
  *
- * @package		EE_About_Admin_Page
- * @subpackage	admin_pages/about/EE_About_Admin_Page.core.php
+ * @package		EventEspresso
+ * @subpackage	EE_Admin_Page\About_Admin_Page
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
@@ -55,6 +43,7 @@ class About_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => '_whats_new',
+			'overview' => '_overview',
 			'credits' => '_credits',
 			);
 	}
@@ -69,10 +58,16 @@ class About_Admin_Page extends EE_Admin_Page {
 					'order' => 10),
 				'require_nonce' => FALSE
 				),
+			'overview' => array(
+				'nav' => array(
+					'label' => __('About', 'event_espresso'),
+					'order' => 20),
+				'require_nonce' => FALSE
+				),
 			'credits' => array(
 				'nav' => array(
 					'label' => __('Credits', 'event_espresso'),
-					'order' => 20),
+					'order' => 30),
 				'require_nonce' => FALSE
 				),
 			);
@@ -96,6 +91,16 @@ class About_Admin_Page extends EE_Admin_Page {
 		$settings_message = $steps;
 		$this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso' ) . $settings_message;
 		$template = EE_ABOUT_TEMPLATE_PATH . 'whats_new.template.php';
+		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
+		$this->display_about_admin_page();
+	}
+
+
+
+	protected function _overview() {
+		$this->_template_args['admin_page_title'] = __('About Event Espresso', 'event_espresso');
+		$this->_template_args['admin_page_subtitle'] = __('Thank you for choosing Event Espresso Decaf, the most powerful, and free, Event Management plugin for WordPress.', 'event_espresso');
+		$template = EE_ABOUT_TEMPLATE_PATH . 'ee4-overview.template.php';
 		$this->_template_args['about_admin_page_content'] = EEH_Template::display_template( $template, $this->_template_args, TRUE );
 		$this->display_about_admin_page();
 	}

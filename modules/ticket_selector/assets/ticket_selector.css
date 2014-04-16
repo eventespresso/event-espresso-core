@@ -141,6 +141,7 @@
 .tckt-slctr-tkt-details-dv .smaller-text {
 	display: block;
 	margin: 1em 0 0;
+	font-size: 11px;
 }
 .tckt-slctr-tkt-details-tbl-wrap-dv {
 	width: 99%;

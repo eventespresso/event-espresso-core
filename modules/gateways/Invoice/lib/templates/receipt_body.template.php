@@ -106,8 +106,12 @@ $tax_total_line_item;
 							<div class="ticket-time-details">
 								<h4 class="sub-section-title no-bottom-margin"><img class="icon" src="<?php echo EE_IMAGES_URL.'clock-16x16.png';?>"><?php echo _n("Date/Time:","Dates/Times:",count($ticket->datetimes()), "event_espresso");?></h4>
 								<ul class="event-dates">
-									<?php foreach($ticket->datetimes_ordered() as $datetime){?>
-									<li><?php echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time('l F jS, Y',' g:i a'),$datetime->end_date_and_time('l F jS, Y',' g:i a'),$datetime->get_timezone()); ?></li>
+									<?php foreach($ticket->datetimes_ordered() as $datetime){
+										/* @var $datetime EE_Datetime */ ?>
+									<li><?php 
+										echo $datetime->name() ? '<b>'.$datetime->name().' </b>' : '' ;
+										echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); 
+										echo $datetime->description() ? '<p class="ticket-note">'.$datetime->description().'</p>' : '' ?></li>
 									<?php }?>
 								</ul>
 							</div>
@@ -128,7 +132,7 @@ $tax_total_line_item;
 								<?php foreach($registrations_per_line_item[$line_item_id] as $registration){
 									/* @var $registration EE_Registration */
 									$attendee = $registration->attendee();
-									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group.QSG_order'=>'desc','Question.QST_order'=>'desc')));?>
+									$answers = $registration->answers(array('order_by'=>array('Question.Question_Group_Question.QGQ_order'=>'desc')));?>
 								<li class="ticket-registration">
 									<table class="registration-details">
 										<tr class="odd">

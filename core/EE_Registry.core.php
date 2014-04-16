@@ -174,7 +174,7 @@ final class EE_Registry {
 		$this->load_core( 'Base' );
 		// class library
 		$this->LIB = new StdClass();
-		add_action( 'init', array( $this, 'init' ), 1 );
+		add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'init' ));
 	}
 
 
@@ -216,6 +216,21 @@ final class EE_Registry {
 
 
 
+	/**
+	 *	loads data_migration_scripts
+	 * 
+	 * 	@access 	public
+	 *	@param string $class_name - class name for the DMS ie: EE_DMS_Core_4_2_0
+	 *	@return EE_Data_Migration_Script_Base
+	 */	
+	public function load_dms ( $class_name, $arguments = array() ) {
+		// retreive instantiated class
+		return $this->_load( EE_CORE . 'data_migration_scripts' . DS, 'EE_DMS_' , $class_name, 'dms', $arguments, FALSE, FALSE, FALSE );
+	}
+
+
+
+
 
 	/**
 	 *	loads object creating classes - must be singletons
@@ -236,7 +251,6 @@ final class EE_Registry {
 
 
 
-
 	/**
 	 *	generic class loader
 	 * 
@@ -250,7 +264,7 @@ final class EE_Registry {
 		$path_to_file = rtrim( $path_to_file, '/\\' ) . DS;
 		$type = trim( $type, '. ' );
 		// retreive instantiated class
-		return $this->_load( $path_to_file, '', $class_name, $type, $arguments, FALSE, TRUE, $load_only );
+		return $this->_load( $path_to_file, 'file', $class_name, $type, $arguments, FALSE, TRUE, $load_only );
 	}
 
 
@@ -351,10 +365,13 @@ final class EE_Registry {
 	 *	@return instantiated class object
 	 */	
 	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
-		// make sure $class_prefix is uppercase
-		$class_prefix = strtoupper( trim( $class_prefix ));
-		// add class prefix ONCE!!!
-		$class_name = $class_prefix . str_replace( $class_prefix, '', trim( $class_name ));
+
+		if ( ! empty( $class_prefix ) && $class_prefix != 'file' ) {
+			// make sure $class_prefix is uppercase
+			$class_prefix = strtoupper( trim( $class_prefix ));
+			// add class prefix ONCE!!!
+			$class_name = $class_prefix . str_replace( $class_prefix, '', trim( $class_name ));
+		}
 
 		$class_abbreviations = array(
 			'EE_Cart' => 'CART',
@@ -378,34 +395,31 @@ final class EE_Registry {
 		// make sure $file_paths is an array
 		$file_paths = is_array( $file_paths ) ? $file_paths : array( $file_paths );
 		// cycle thru paths 
-		foreach ( $file_paths as $file_path ) {
+		foreach ( $file_paths as $key => $file_path ) {
 			// convert all separators to proper DS, if no filepth, then use EE_CLASSES
 			$file_path = $file_path ? str_replace( array( '/', '\\' ), DS, $file_path ) : EE_CLASSES;
 			// prep file type
 			$type = ! empty( $type ) ? trim( $type, '.' ) . '.' : '';
 			// build full file path
-			$file_path = rtrim( $file_path, DS ) . DS . $class_name . '.' . $type . 'php';
+			$file_paths[ $key ] = $class_prefix == 'file' ? rtrim( $file_path, DS ) . '.' . $type . 'php' : rtrim( $file_path, DS ) . DS . $class_name . '.' . $type . 'php';
 			//does the file exist and can be read ?
-			if ( is_readable( $file_path )) {
-				$path = $file_path;
+			if ( is_readable( $file_paths[ $key ] )) {
+				$path = $file_paths[ $key ];
 				break;
 			}
 		}
-		
-//		echo '<h4>$class_name : ' . $class_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$file_path : ' . $file_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
 		// don't give up! you gotta...
 		try {
-			//does the file exist and can be read ?
+			//does the file exist and can it be read ?
 			if ( ! $path ) {
-				// so sorry, can't find the file'
+				// so sorry, can't find the file
 				throw new EE_Error (
 					sprintf (
-						__('The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath is correct: %s','event_espresso'),
+						__('The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath(s) is correct: %s','event_espresso'),
 						trim( $type, '.' ),
 						$class_name,
-						$file_paths[0]
+						implode( ', ', $file_paths )
 					)
 				);
 			}

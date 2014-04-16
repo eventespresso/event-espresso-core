@@ -500,7 +500,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 			'high',
 			array( 'TXN_ID' => $this->_transaction->ID() )
 		);
-		add_meta_box( 'edit-txn-registrant-mbox', __( 'Primary Registrant', 'event_espresso' ), array( $this, '_txn_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
+		add_meta_box( 'edit-txn-registrant-mbox', __( 'Primary Contact', 'event_espresso' ), array( $this, '_txn_registrant_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
 		add_meta_box( 'edit-txn-billing-info-mbox', __( 'Billing Information', 'event_espresso' ), array( $this, '_txn_billing_info_side_meta_box' ), $this->wp_page_slug, 'side', 'high' );
 
 	}

@@ -89,7 +89,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 			EEM_Price_Type::base_type_discount => __('Discount','event_espresso'), 
 			EEM_Price_Type::base_type_surcharge => __('Surcharge','event_espresso'), 
 			EEM_Price_Type::base_type_tax => __('Tax','event_espresso') );
-		$this->singlular_item = __('Price Type','event_espresso');
+		$this->singular_item = __('Price Type','event_espresso');
 		$this->plural_item = __('Price Types','event_espresso');		
 
 		$this->_tables = array(

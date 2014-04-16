@@ -31,8 +31,8 @@ define( 'EELOGGING_KEY', 'YOUR REMOTE KEY' );</pre>
 <h3><?php _e('Promote Event Espresso', 'event_espresso'); ?></h3>
 <ul>
 <li>
-<?php _e('<strong>Link to Event Espresso from your Registration Page footer?</strong>', 'event_espresso'); ?><br />
-<?php _e('Help spread the word about Event Espresso by allowing us to show a small link in the footer of your registration page.', 'event_espresso'); ?>
+<?php _e('<strong>Link to Event Espresso in your Registration Page?</strong>', 'event_espresso'); ?><br />
+<?php _e('Help spread the word about Event Espresso by allowing us to show a small link back to the to Event Espresso website in your registration page.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('<strong>Event Espresso Affiliate ID</strong>', 'event_espresso'); ?><br />

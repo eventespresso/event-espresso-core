@@ -95,8 +95,8 @@ class Invoice {
 		$template_args['amount_owed'] = $this->transaction->total() - $this->transaction->paid();
 		$template_args['payments'] = $this->transaction->approved_payments();
 		$template_args['net_total'] = '';
-		$template_args['edit_reg_info_url'] = add_query_arg( array( 'step' => 'attendee_information', 'revisit' => TRUE ), $this->registration->edit_attendee_information_url() );
-		$template_args['retry_payment_url'] = add_query_arg( array( 'step' => 'payment_options', 'revisit' => TRUE ), $this->registration->payment_overview_url() );
+		$template_args['edit_reg_info_url'] = $this->registration->edit_attendee_information_url();
+		$template_args['retry_payment_url'] = $this->registration->payment_overview_url();
 		$template_args['show_line_item_description'] = $this->check_if_any_line_items_have_a_description($this->transaction->total_line_item());
 		if ($template_args['amount_pd'] != $template_args['total_cost']) {
 			//$template_args['net_total'] = $this->espressoInvoiceTotals( __('SubTotal', 'event_espresso'), $this->transaction->total());//$this->session_data['cart']['REG']['sub_total']);
@@ -159,14 +159,15 @@ class Invoice {
 
 		//Get the HTML as an object
 		EE_Registry::instance()->load_helper('Template');
-		$template_header = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_header.template.php', $template_args, TRUE );
+		$templates_relative_path = '/modules/gateways/Invoice/lib/templates/';
+		$template_header = EEH_Template::locate_template( $templates_relative_path . 'invoice_header.template.php',TRUE, $template_args, TRUE );
 		if(isset($_GET['receipt'])){
-			$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/receipt_body.template.php', $template_args, TRUE );
+			$template_body = EEH_Template::locate_template( $templates_relative_path . 'receipt_body.template.php',TRUE, $template_args, TRUE );
 		}else{
-			$template_body = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_body.template.php', $template_args, TRUE );
+			$template_body = EEH_Template::locate_template( $templates_relative_path . 'invoice_body.template.php',TRUE, $template_args, TRUE );
 		}
 		
-		$template_footer = EEH_Template::display_template( dirname(__FILE__) . '/templates/invoice_footer.template.php', $template_args, TRUE );
+		$template_footer = EEH_Template::locate_template( $templates_relative_path . 'invoice_footer.template.php',TRUE, $template_args, TRUE );
 		
 		$copies =  ! empty( $_REQUEST['copies'] ) ? $_REQUEST['copies'] : 1;
 

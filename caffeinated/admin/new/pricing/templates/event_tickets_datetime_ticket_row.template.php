@@ -1,5 +1,6 @@
-<tr valign="top" class="ticket-row<?php echo $ticket_archive_class; ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
-	<td><span class="ee-status-strip-td ee-status-strip<?php echo $tkt_status_class; ?>"></span></td>
+<tr valign="top" class="ee-ticket-sortable ticket-row<?php echo $ticket_archive_class; ?>" id="display-ticketrow-<?php echo $tkt_row; ?>">
+	<!--<td class="ee-tkt-order-field"><span class="dashicons dashicons-sort<?php echo $tkt_status_class; ?>"><input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>" ></span></td>-->
+	<td class="ee-tkt-order-field"><span class="ee-status-strip-td ee-status-strip<?php echo $tkt_status_class; ?>"></span><input type="hidden" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_order]" class="edit-ticket-TKT_order" value ="<?php echo $TKT_order; ?>"></td>
 	<td><input type="text" name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_name]" class="edit-ticket-TKT_name ee-large-text-inp" placeholder="Ticket Title" value="<?php echo $TKT_name; ?>"></td>
 	<td>
 		<?php if ( $disabled ) : ?>
@@ -48,6 +49,9 @@
 			
 			<!--<div class="total-price-container"><?php printf( __('Total Final Price: %s', 'event_espresso'), '<span class="ticket-price-amount">' . $TKT_price . '</span>'); ?> </div>-->
 			<textarea name="<?php echo $edit_tickets_name; ?>[<?php echo $tkt_row; ?>][TKT_description]" class="edit-ticket-TKT_description ee-full-textarea-inp" placeholder="Ticket Description"><?php echo $TKT_description; ?></textarea>
+
+			<?php do_action( 'AHEE__event_tickets_datetime_ticket_row_template_after_desc', $tkt_row, $TKT_ID ); ?>
+			
 			<div class="basic-ticket-container">
 				<h5 class="tickets-heading"><?php _e('Ticket Details', 'event_espresso'); ?></h5>
 				<table class="basic-ticket-info">
@@ -194,6 +198,7 @@
  * $TKT_price_rows
  * $TKT_base_price
  * $TKT_base_price_ID
+ * $TKT_order
  * $disabled
  * $ticket_archive_class
  * $trash_icon

@@ -1,7 +1,9 @@
-<?php //echo '<h1>' . __FILE__ . '</h1>'; ?>
-<?php global $post; ?>
-<?php  if ( espresso_display_venue_address_in_event_details() ) : ?>
-<?php do_action( 'AHEE_event_details_before_venue_details', $post );?> 
+<?php
+//echo '<br/><h6 style="color:#2EA2CC;">'. __FILE__ . ' &nbsp; <span style="font-weight:normal;color:#E76700"> Line #: ' . __LINE__ . '</span></h6>';
+
+if (( is_single() && espresso_display_venue_in_event_details() ) || is_archive() && espresso_display_venue_in_event_list() ) :
+	global $post;
+	do_action( 'AHEE_event_details_before_venue_details', $post );?> 
 
 <h3 class="event-venues-h3 ee-event-h3">
 	<span class="ee-icon ee-icon-venue"></span><?php _e( 'Event Location', 'event_espresso' ); ?>
@@ -29,5 +31,7 @@
 
 </div>
 <!-- .espresso-venue-dv -->
-<?php do_action( 'AHEE_event_details_after_venue_details', $post ); ?>
-<?php endif;  ?>
+<?php 
+do_action( 'AHEE_event_details_after_venue_details', $post ); 
+endif;  
+?>

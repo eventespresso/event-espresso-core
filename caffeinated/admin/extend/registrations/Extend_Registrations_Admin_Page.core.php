@@ -37,7 +37,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	}
 
 
-	
+
 
 
 
@@ -54,9 +54,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'func' => '_delete_checkin_row',
 					'noheader' => TRUE
 				),
-			'toggle_checkin_status'	=> array( 
+			'toggle_checkin_status'	=> array(
 					'func' => '_toggle_checkin_status',
-					'noheader' => TRUE 
+					'noheader' => TRUE
 				),
 			'event_registrations'=> '_event_registrations_list_table',
 			);
@@ -104,9 +104,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'registrations_event_checkin_other_help_tab' => array(
 						'title' => __('Event Check-In Other', 'event_espresso'),
 						'filename' => 'registrations_event_checkin_other'
-					)	
+					)
 				),
-				'help_tour' => array( 'Event_Checkin_Help_Tour' ),	
+				'help_tour' => array( 'Event_Checkin_Help_Tour' ),
 				'qtips' => array('Registration_List_Table_Tips' ),
 				'list_table' => 'EE_Event_Registrations_List_Table',
 				'metaboxes' => array(),
@@ -125,6 +125,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			);
 
+		// var_dump($this->_req_data);
+		// exit();
+
 		$this->_page_config = array_merge( $this->_page_config, $new_page_config );
 		$this->_page_config['contact_list']['list_table'] = 'Extend_EE_Attendee_Contact_List_Table';
 		$this->_page_config['default']['list_table'] = 'Extend_EE_Registrations_List_Table';
@@ -142,7 +145,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		if ( $is_IE ) {
 			wp_enqueue_script( 'excanvas' );
 		}
-		
+
 		wp_register_script('espresso_reg_admin_regs_per_day', REG_CAF_ASSETS_URL  . 'espresso_reg_admin_regs_per_day_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_register_script('espresso_reg_admin_regs_per_event', REG_CAF_ASSETS_URL . 'espresso_reg_admin_regs_per_event_report.js', array('jqplot-all'), EVENT_ESPRESSO_VERSION, TRUE );
 	}
@@ -177,10 +180,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'count' => 0,
 				'bulk_action' => !isset( $this->_req_data['event_id'] ) ? array() : array(
 					'toggle_checkin_status' => __('Toggle Check-In', 'event_espresso'),
-					'trash_registrations' => __('Trash Registrations', 'event_espresso')
+					//'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
 				),
-			'trash' => array(
+			/*'trash' => array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
@@ -188,7 +191,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'restore_registrations' => __('Restore Registrations', 'event_espresso'),
 					'delete_registrations' => __('Delete Registrations Permanently', 'event_espresso')
 					)
-				)
+				)/**/
 			);
 	}
 
@@ -218,18 +221,18 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	protected function _registration_reports() {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-	
+
 		$page_args = array();
-		
+
 		$page_args['admin_reports'][] = $this->_registrations_per_day_report( '-1 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 		$page_args['admin_reports'][] = $this->_get_registrations_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
-		
+
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_reports.template.php';
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $page_args, TRUE );
-		
+
 //		printr( $page_args, '$page_args' );
-		
+
 		// the final template wrapper
 		$this->display_admin_page_with_no_sidebar();
 
@@ -246,46 +249,50 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	*		@return void
 	*/
 	private function _registrations_per_day_report( $period = '-1 month' ) {
-	
+
 		$report_ID = 'reg-admin-registrations-per-day-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_day';
-		
+
 		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
-	 
-		if( $results = $REG->get_registrations_per_day_report( $period ) ) {		
-			//printr( $results, '$registrations_per_day' );
-			$regs = array();
-			$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
-			$xmax = 0;
-			$ymax = 0;
-			foreach ( $results as $result ) {
-				$regs[] = array( $result->regDate, (int)$result->total );
-				$xmin = strtotime( $result->regDate ) < strtotime( $xmin ) ? $result->regDate : $xmin;
-				$xmax = strtotime( $result->regDate ) > strtotime( $xmax ) ? $result->regDate : $xmax;
-				$ymax = $result->total > $ymax ? $result->total : $ymax;
-			}
-			
-			$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
-			$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
-			// calculate # days between our min and max dates				
-			$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
-			
-			$report_params = array(
-					'title' 	=> __( 'Total Registrations per Day', 'event_espresso' ),
-					'id' 		=> $report_ID,
-					'regs' 	=> $regs,												
-					'xmin' 	=> $xmin,
-					'xmax' 	=> $xmax,
-					'ymax' 	=> ceil($ymax * 1.25),
-					'span' 	=> $span,
-					'width'	=> ceil(900 / $span)												
-				);
-			wp_localize_script( $report_JS, 'regPerDay', $report_params );
+
+	    $results = $REG->get_registrations_per_day_report( $period );
+
+		//printr( $results, '$registrations_per_day' );
+		$regs = array();
+		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
+		$xmax = 0;
+		$ymax = 0;
+		$results = (array) $results;
+		foreach ( $results as $result ) {
+			$regs[] = array( $result->regDate, (int)$result->total );
+			$xmin = strtotime( $result->regDate ) < strtotime( $xmin ) ? $result->regDate : $xmin;
+			$xmax = strtotime( $result->regDate ) > strtotime( $xmax ) ? $result->regDate : $xmax;
+			$ymax = $result->total > $ymax ? $result->total : $ymax;
 		}
-												
+
+		$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));
+		$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
+		// calculate # days between our min and max dates
+		$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
+
+		$report_title = __( 'Total Registrations per Day', 'event_espresso' );
+
+		$report_params = array(
+				'title' 	=> $report_title,
+				'id' 		=> $report_ID,
+				'regs' 	=> $regs,
+				'xmin' 	=> $xmin,
+				'xmax' 	=> $xmax,
+				'ymax' 	=> ceil($ymax * 1.25),
+				'span' 	=> $span,
+				'width'	=> ceil(900 / $span),
+				'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )
+			);
+		wp_localize_script( $report_JS, 'regPerDay', $report_params );
+
 		return $report_ID;
 	}
 
@@ -300,36 +307,39 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	*		@return void
 	*/
 	private function _get_registrations_per_event_report( $period = '-1 month' ) {
-	
+
 		$report_ID = 'reg-admin-registrations-per-event-report-dv';
 		$report_JS = 'espresso_reg_admin_regs_per_event';
-		
+
 		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
 	    $REG = EEM_Registration::instance();
-	 
-		if( $results = $REG->get_registrations_per_event_report( $period ) ) {		
-			//printr( $results, '$registrations_per_event' );
-			$regs = array();
-			$ymax = 0;
-			foreach ( $results as $result ) {
-				$regs[] = array( $result->event_name, (int)$result->total );
-				$ymax = $result->total > $ymax ? $result->total : $ymax;
-			}	
 
-			$span = $period == 'week' ? 9 : 33;
-
-			$report_params = array(
-				'title' 	=> __( 'Total Registrations per Event', 'event_espresso' ),
-				'id' 		=> $report_ID,
-				'regs' 	=> $regs,												
-				'ymax' 	=> ceil($ymax * 1.25),
-				'span' 	=> $span,
-				'width'	=> ceil(900 / $span)								
-			);
-			wp_localize_script( $report_JS, 'regPerEvent', $report_params );		
+	    $results = $REG->get_registrations_per_event_report( $period );
+		//printr( $results, '$registrations_per_event' );
+		$regs = array();
+		$ymax = 0;
+		$results = (array) $results;
+		foreach ( $results as $result ) {
+			$regs[] = array( $result->event_name, (int)$result->total );
+			$ymax = $result->total > $ymax ? $result->total : $ymax;
 		}
+
+		$span = $period == 'week' ? 9 : 33;
+
+		$report_title = __( 'Total Registrations per Event', 'event_espresso' );
+
+		$report_params = array(
+			'title' 	=> $report_title,
+			'id' 		=> $report_ID,
+			'regs' 	=> $regs,
+			'ymax' 	=> ceil($ymax * 1.25),
+			'span' 	=> $span,
+			'width'	=> ceil(900 / $span),
+			'noRegsMsg' => sprintf( __('<h2>%s</h2><p>There are currently no registration records in the last month for this report.</p>', 'event_espresso'), $report_title )
+		);
+		wp_localize_script( $report_JS, 'regPerEvent', $report_params );
 
 		return $report_ID;
 	}
@@ -360,10 +370,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			);
 		$this->_template_args['after_list_table'] = $this->_display_legend( $legend_items );
 
-		
+
 		$dtt_id = isset(  $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$go_back_url = !empty( $reg_id )  ? EE_Admin_Page::add_query_args_and_nonce(array('action' => 'event_registrations', 'event_id' => EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Event')->ID(), 'DTT_ID' => $dtt_id ), $this->_admin_base_url ) : '';
-		
+
 		$this->_template_args['before_list_table'] = !empty( $reg_id ) && !empty( $dtt_id ) ? '<h2>' . sprintf(__("%s's check in records for %s at the event, %s", 'event_espresso'), '<span id="checkin-attendee-name">' . EEM_Registration::instance()->get_one_by_ID($reg_id)->get_first_related('Attendee')->full_name() . '</span>', '<span id="checkin-dtt"><a href="' . $go_back_url . '">' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->start_date_and_time() . ' - ' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->end_date_and_time() . '</a></span>', '<span id="checkin-event-name">' . EEM_Datetime::instance()->get_one_by_ID($dtt_id)->get_first_related('Event')->get('EVT_name') . '</span>' ) . '</h2>' : '';
 		$this->_template_args['list_table_hidden_fields'] = !empty( $reg_id ) ? '<input type="hidden" name="_REGID" value="' . $reg_id . '">' : '';
 		$this->_template_args['list_table_hidden_fields'] .= !empty( $dtt_id ) ? '<input type="hidden" name="DTT_ID" value="' . $dtt_id . '">' : '';
@@ -423,17 +433,17 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		// bulk action check in toggle
 		if ( ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
-			// cycle thru checkboxes 
+			// cycle thru checkboxes
 			while ( list( $REG_ID, $value ) = each($this->_req_data['checkbox'])) {
 				$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 				$new_status = $this->_toggle_checkin($REG_ID, $DTT_ID);
 			}
-			
+
 		} elseif ( isset( $this->_req_data['_regid'] ) ) {
 			//coming from ajax request
 			$DTT_ID = isset( $this->_req_data['dttid'] ) ? $this->_req_data['dttid'] : NULL;
 			$query_args['DTT_ID'] = $DTT_ID;
-			$new_status = $this->_toggle_checkin($this->_req_data['_regid'], $DTT_ID);		
+			$new_status = $this->_toggle_checkin($this->_req_data['_regid'], $DTT_ID);
 		} else {
 			EE_Error::add_error(__('Missing some required data to toggle the Check-in', 'event_espresso') );
 		}
@@ -442,7 +452,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			return $new_status;
 
 		$this->_redirect_after_action( FALSE,'', '', $query_args, TRUE );
-		
+
 	}
 
 
@@ -599,18 +609,18 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	*		@access public
 	*		@return array
 	*/
-	public function get_event_attendees( $per_page = 10, $count = FALSE, $trash = FALSE, $orderby = '' ) {  
+	public function get_event_attendees( $per_page = 10, $count = FALSE, $trash = FALSE, $orderby = '' ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		require_once(EE_MODELS . 'EEM_Attendee.model.php');
 		//$ATT_MDL = EEM_Attendee::instance();
-		
+
 		$EVT_ID = isset($this->_req_data['event_id']) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$CAT_ID = isset($this->_req_data['category_id']) ? absint( $this->_req_data['category_id'] ) : FALSE;
 		$DTT_ID = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
-		
+
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : $orderby;
-		
+
 		switch ($this->_req_data['orderby']) {
 			case '_REG_date':
 				$orderby = 'REG_date';
@@ -619,7 +629,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				$orderby = 'Attendee.ATT_lname';
 //				$orderby = 'reg.REG_final_price';
 		}
-		
+
 		$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'ASC';
 
 		$current_page = isset( $this->_req_data['paged'] ) && !empty( $this->_req_data['paged'] ) ? $this->_req_data['paged'] : 1;
@@ -645,7 +655,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$status_ids_array = apply_filters( 'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array', array( EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved ) );
 
 		$query_params[0]['STS_ID']= array('IN', $status_ids_array );
-		
+
 		if($trash){
 			$query_params[0]['Attendee.status']=  EEM_CPT_Base::post_status_trashed;
 		}
@@ -668,7 +678,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				'REG_count' => array( 'LIKE' , $sstr ),
 				'REG_group_size' => array( 'LIKE' , $sstr ),
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
-				'Ticket.TKT_description' => array( 'LIKE', $sstr )		
+				'Ticket.TKT_description' => array( 'LIKE', $sstr )
 				);
 		}
 
@@ -679,8 +689,8 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			$registrations = EEM_Registration::instance()->count(array($query_params[0]));
 		}else{
 			$registrations = EEM_Registration::instance()->get_all($query_params);
-		
-		
+
+
 	//		$registrations = EEM_Registration::instance();
 	//		$all_attendees = EEM_Attendee::instance()->get_event_attendees( $EVT_ID, $CAT_ID, $reg_status, $trash, $orderby, $sort, $limit, $output );
 			if ( isset( $registrations[0] ) && $registrations[0] instanceof EE_Registration ) {
@@ -693,13 +703,13 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					$event_date = 'TODO: we need to get date from earliest price date or should this be the actual event date?';//$first_registration->date_obj()->reg_start_date_and_time('l F j, Y,', ' g:i:s a');// isset( $registrations[0]->DTT_EVT_start ) ? date( 'l F j, Y,    g:i:s a', $registrations[0]->DTT_EVT_start ) : '';
 					// edit event link
 					if ( $event_name != '' ) {
-						$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );	
-						$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';	
+						$edit_event_url = self::add_query_args_and_nonce( array( 'action'=>'edit_event', 'EVT_ID'=>$EVT_ID ), EVENTS_ADMIN_URL );
+						$edit_event_lnk = '<a href="'.$edit_event_url.'" title="' . __( 'Edit ', 'event_espresso' ) . $event_name . '">' . __( 'Edit Event', 'event_espresso' ) . '</a>';
 						$event_name .= ' <span class="admin-page-header-edit-lnk not-bold">' . $edit_event_lnk . '</span>' ;
 					}
 
-					$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );	
-					$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';	
+					$back_2_reg_url = self::add_query_args_and_nonce( array( 'action'=>'default' ), REG_ADMIN_URL );
+					$back_2_reg_lnk = '<a href="'.$back_2_reg_url.'" title="' . __( 'click to return to viewing all registrations ', 'event_espresso' ) . '">&laquo; ' . __( 'Back to All Registrations', 'event_espresso' ) . '</a>';
 
 					$this->_template_args['before_admin_page_content'] = '
 				<div id="admin-page-header">

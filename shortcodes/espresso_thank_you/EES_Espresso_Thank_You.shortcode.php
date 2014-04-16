@@ -98,11 +98,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @param		array 	$attributes
 	 *  @return 	void
 	 */
-	public function process_shortcode( $attributes ) {
+	public function process_shortcode( $attributes = array() ) {
 
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
 			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		} else {
+			
 			//prepare variables for displaying
 			$registrations = $this->_current_txn->registrations();
 			$event_names = array();
@@ -143,7 +144,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args['SPCO_attendee_information_url'] = $primary_registrant ? $primary_registrant->edit_attendee_information_url() : add_query_arg( array( 'step'=>'attendee_information' ), $revisit_spco_url );
 			$template_args['gateway_content'] = '';			
 			//create a hackey payment object, but dont save it
-			$gateway_name = $this->_current_txn->get_extra_meta('gateway', true,  __("Unknown", "event_espresso"));
+			$gateway_name = $this->_current_txn->selected_gateway();
 			$payment = EE_Payment::new_instance( array(
 				'TXN_ID'=>$this->_current_txn->ID(), 
 				'STS_ID'=>EEM_Payment::status_id_pending, 

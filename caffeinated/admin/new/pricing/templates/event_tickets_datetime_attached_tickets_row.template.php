@@ -1,4 +1,7 @@
 <section id="edit-event-datetime-tickets-<?php echo $dtt_row; ?>" class="datetime-tickets-edit"<?php echo $show_tickets_row; ?>>
+	<div class="datetime-description-container">
+		<textarea name="<?php echo $event_datetimes_name; ?>[<?php echo $dtt_row; ?>][DTT_description]" class="event-datetime-DTT_description ee-full-textarea-inp" placeholder="Datetime Description (optional)"><?php echo $DTT_description; ?></textarea>
+	</div>
 	<h5 class="datetime-tickets-heading"><?php _e('Assigned Tickets', 'event_espresso'); ?></h5>
 
 	<ul class="datetime-tickets-list">
@@ -49,7 +52,7 @@
 				<?php _e('Create Ticket', 'event_espresso'); ?>
 			</button>
 			<button data-context="short-ticket" data-datetime-row="<?php echo $dtt_row; ?>" class="button-secondary ee-cancel-button add-edit">
-				<?php _e('Cancel', 'event_espresso'); ?>
+				<?php _e('Close', 'event_espresso'); ?>
 			</button>
 		</div>
 		<div style="clear:both"></div>
@@ -62,6 +65,7 @@
  * template args used
  *
  * $dtt_row
+ * $DTT_description
  * $show_tickets_row
  * $datetime_tickets_list
  * $add_new_datetime_ticket_help_link

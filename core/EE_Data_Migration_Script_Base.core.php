@@ -4,8 +4,7 @@
  * 
  */
 abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Base{
-	
-	
+
 	
 	
 	/**
@@ -42,27 +41,26 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * Eg, if we were going to change user passwords from plaintext to encoded versions
 	 * during this migration, this would probably add a new column called somethign like
 	 * "encoded_password".
-	 * @param $drop_pre_existing_tables whenever we are adding a new table, whether to make sure it didn't
-	 * exist previously. If set to true, whenever we go to create a new table, we first double-check no
-	 * table by that name exists, and if it does we drop it first. This is useful when we add a new table during a migration,
-	 * but someone restores their DB to a backup which DOESN'T delete this newly-added table. Because when they re-run the migration, 
-	 * we want to nuke the pre-existing table and start from scratch (we do NOT want to merely 'update' the table, because
-	 * we DON'T want any of the pre-existing data to persist- it might be corrupted).
-	 * So in summary, set to TRUE on a brand-new activation of EE, or during a migration script; leave FALSE otherwise
 	 * @return boolean of success
 	 */
-	abstract public function schema_changes_before_migration($drop_pre_existing_tables = false);
+	abstract public function schema_changes_before_migration();
 	/**
 	 * Performs the database schema changes that need to occur AFTER the data has been migrated.
 	 * Usually this will mean we'll be removing old columns. Eg, if we were changing passwords
 	 * from plaintext to encoded versions, and we had added a column called "encoded_password",
 	 * this function would probably remove the old column "password" (which still holds the plaintext password)
 	 * and possibly rename "encoded_password" to "password"
-	 * @param boolean $drop_pre_existing_tables like 
 	 * @return boolean of success
 	 */
-	abstract public function schema_changes_after_migration($drop_pre_existing_tables = false);
+	abstract public function schema_changes_after_migration();
 	
+	/**
+	 * Place to add hooks and filters for tweaking the migrations page, in order
+	 * to customize it
+	 */
+	public function migration_page_hooks(){
+		//by default none are added because we normally like the default look of the migration page
+	}
 	/**
 	 * Multi-dimensional array that defines teh mapping from OLD table Primary Keys
 	 * to NEW table Primary Keys.
@@ -175,7 +173,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		global $wpdb;
 		$old_table_name_sans_wp = str_replace($wpdb->prefix,"",$old_table_name);
 		$new_table_name_sans_wp = str_replace($wpdb->prefix,"",$new_table_name);
-		return substr(EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this)).'_'.$old_table_name_sans_wp.'_'.$new_table_name_sans_wp,0,64);
+		list($plugin_slug,$version) = EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
+		return substr(EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.$plugin_slug.'_'.$version.'_'.$old_table_name_sans_wp.'_'.$new_table_name_sans_wp,0,64);
 	}
 	
 	
@@ -254,6 +253,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		if( $num_records_actually_migrated < $num_records_to_migrate_limit && $stage!=null && ! $stage->has_more_to_do()){
 			//apparently we're done, because we couldn't migrate the number we intended to
 			$this->set_status(EE_Data_Migration_Manager::status_completed);
+			$this->_update_feedback_message(array_reverse($records_migrated_per_stage));
 			//do schema changes for after the migration now
 			//first double-cehckw ehaven't already done this
 			$this->_maybe_do_schema_changes(false);
@@ -291,9 +291,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			try{
 				ob_start();
 				if($before){
-					$this->schema_changes_before_migration(true);
+					$this->schema_changes_before_migration();
 				}else{
-					$this->schema_changes_after_migration(true);
+					$this->schema_changes_after_migration();
 				}
 				$output = ob_get_contents();
 				ob_end_clean();
@@ -312,6 +312,51 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			}
 		}
 	}
+	/**
+	 * Wrapper for EEH_Activation::create_table. However, takes into account the request type when
+	 * deciding what to pass for its 4th arg, $drop_pre_existing_tables. Using this function, instead
+	 * of _table_should_exist_previously, indicates that this table should be new to the EE version being migrated to or
+	 * activated currently. If this is a brand new activation or a migration, and we're indicating this table should not
+	 * previously exist, then we want to set $drop_pre_existing_tables to TRUE (ie, we shouldn't discover that this table exists in the 
+	 * DB in EEH_Activation::create_table- if it DOES exist, something's wrong and the old table should be nuked.
+	 * 
+	 * Just for a bit of context, the migration script's db_schema_changes_* methods
+	 * are called basically in 3 cases: on brand new activation of EE4 (ie no previous version of EE existed and the plugin is being activated and we want to add
+	 * all the brand new tables), upon reactivation of EE4 (it was deactivated and then reactivated, in which case we want to just verify the DB structure is ok)
+	 * that table should be dropped), and during a migration when we're moving the
+	 * DB to the state of the migration script
+	 * @param type $table_name
+	 * @param type $table_definition_sql
+	 * @param type $engine_string
+	 */
+	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string){
+		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_type_normal))){
+			$drop_pre_existing_tables = true;
+		}else{
+			$drop_pre_existing_tables = false;
+		}
+		EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
+	}
+	
+	/**
+	 * Please see description of _table_is_new_in_this_version. This function will only set
+	 * EEH_Activation::create_table's $drop_pre_existing_tables to TRUE if it's a brand
+	 * new activation. Otherwise, we'll always set $drop_pre_existing_tables to FALSE
+	 * because the table should have existed. Note, if the table is being MODIFIED in this
+	 * version being activated or migrated to, then this is the right option (because
+	 * you wouldn't want to nuke ALL the table's old info just because you're adding a column, right?)
+	 * @param string $table_name
+	 * @param string $table_definition_sql
+	 * @param string $engine_string
+	 */
+	protected function _table_should_exist_previously($table_name,$table_definition_sql,$engine_string){
+		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation))){
+			$drop_pre_existing_tables = true;
+		}else{
+			$drop_pre_existing_tables = false;
+		}
+		EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
+	}
 	
 	/**
 	 * returns an arrya of strings describing errors by all the script's stages
@@ -319,6 +364,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 */
 	public function get_errors(){
 		$all_errors = $this->_errors;
+		if( ! is_array($all_errors)){
+			$all_errors = array();
+		}
 		foreach($this->stages() as $stage){
 			$all_errors = array_merge($stage->get_errors(),$all_errors);
 		}
@@ -414,6 +462,16 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			}
 		}
 		return null;
+	}
+	/**
+	 * Returns the vresion that this script migrates to, based on the script's name.
+	 * Cannot be overwritten because lots of code needs to know which version a script
+	 * migrates to knowing only its name.
+	 * @return array where the first key is the plugin's slug, the 2nd is the version of that plugin
+	 * that will be updated to. Eg array('Core','4.1.0')
+	 */
+	public final function migrates_to_version(){
+		return EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
 	}
 }
 
@@ -754,7 +812,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 	}
 	function _count_records_to_migrate() {
 		global $wpdb;
-		$count = $wpdb->get_var("SELECT COUNT(id) FROM ".$this->_old_table);
+		$count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table);
 		return $count;
 	}
 	
@@ -775,10 +833,10 @@ class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
 	public function can_migrate_from_version($version_string) {
 		return false;
 	}
-	public function schema_changes_after_migration($drop_pre_existing_tables = false) {
+	public function schema_changes_after_migration() {
 		return;
 	}
-	public function schema_changes_before_migration($drop_pre_existing_tables = false) {
+	public function schema_changes_before_migration() {
 		return;
 	}
 	public function __construct() {
@@ -787,5 +845,8 @@ class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
 		$this->_pretty_name = __("Fatal Uncatchable Error Occurred", "event_espresso");
 //		dd($this);
 		parent::__construct();
+	}
+	public function migration_page_hooks() {
+		
 	}
 }

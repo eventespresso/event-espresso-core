@@ -75,7 +75,7 @@ class EE_Email_messenger extends EE_messenger  {
 		//remember by leaving the other fields not set, those fields will inherit the valid shortcodes from the message type.
 		$this->_valid_shortcodes = array(
 			'to' => array('email','event_author', 'primary_registration_details', 'recipient_details'),
-			'from' => array('email', 'primary_registration_details', 'recipient_details', 'event_author')
+			'from' => array('email', 'event_author', 'primary_registration_details', 'recipient_details')
 			);
 	}
 
@@ -154,7 +154,7 @@ class EE_Email_messenger extends EE_messenger  {
 				break;
 		}
 
-		return $url ? EE_PLUGIN_DIR_URL . 'core/libraries/' . $base : EE_LIBRARIES . $base;
+		return $url ? apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $type )  : apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $type );
 	}
 
 

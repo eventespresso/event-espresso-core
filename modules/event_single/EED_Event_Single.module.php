@@ -45,7 +45,7 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		add_filter('FHEE__Config__update_config__CFG', array( 'EED_Event_Single', 'filter_config' ), 10 );
-		add_filter( 'FHEE__EED_Event_Single__template_settings_form__event_list_config', array( 'EED_Event_Single', 'set_default_settings' ));
+//		add_filter( 'FHEE__EED_Event_Single__template_settings_form__event_list_config', array( 'EED_Event_Single', 'set_default_settings' ));
 		add_action( 'AHEE__template_settings__template__before_settings_form', array( 'EED_Event_Single', 'template_settings_form' ), 10 );
 		add_filter( 'FHEE__General_Settings_Admin_Page__update_template_settings__data', array( 'EED_Event_Single', 'update_template_settings' ), 10, 2 );
 		add_action( 'wp_loaded', array( 'EED_Event_Single', 'set_definitions' ), 2 );
@@ -91,7 +91,8 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_default_settings( $CFG ) {
-		$CFG->display_status_banner_single = !empty( $CFG->display_status_banner_single) ? $CFG->display_status_banner_single : FALSE;
+		$CFG->display_status_banner_single = ! empty( $CFG->display_status_banner_single) ? $CFG->display_status_banner_single : FALSE;
+		$CFG->display_venue = ! empty( $CFG->display_venue) ? $CFG->display_venue : TRUE;
 		return $CFG;
 	}
 
@@ -105,7 +106,9 @@ class EED_Event_Single  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function update_template_settings( $CFG, $REQ ) {
+		$CFG->EED_Event_Single = new EE_Event_Single_Config();
 		$CFG->EED_Event_Single->display_status_banner_single = !empty( $REQ['display_status_banner_single'] ) && $REQ['display_status_banner_single'] ? TRUE : FALSE;
+		$CFG->EED_Event_Single->display_venue = !empty( $REQ['display_venue'] ) && $REQ['display_venue'] ? TRUE : FALSE;
 		return $CFG;
 	}
 
@@ -319,17 +322,17 @@ class EED_Event_Single  extends EED_Module {
 
 
 	/**
-	 * 	display_address
+	 * 	display_venue
 	 *
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public static function display_address() {
+	public static function display_venue() {
 		$EE = EE_Registry::instance();
 		$EE->load_helper( 'Venue_View' );
-		$display_address= isset( $EE->CFG->template_settings->display_address_in_regform ) ? $EE->CFG->template_settings->display_address_in_regform : TRUE;
+		$display_venue= isset( $EE->CFG->template_settings->EED_Event_Single->display_venue ) ? $EE->CFG->template_settings->EED_Event_Single->display_venue : TRUE;
 		$venue_name = EEH_Venue_View::venue_name();
-		return $display_address && ! empty( $venue_name ) ? TRUE : FALSE;
+		return $display_venue && ! empty( $venue_name ) ? TRUE : FALSE;
 	}	
 	
 
@@ -337,8 +340,8 @@ class EED_Event_Single  extends EED_Module {
 }
 
 
-function espresso_display_venue_address_in_event_details() {
-	return EED_Event_Single::display_address();
+function espresso_display_venue_in_event_details() {
+	return EED_Event_Single::display_venue();
 }
 
 

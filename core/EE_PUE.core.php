@@ -25,7 +25,7 @@ class EE_PUE {
 
 	/**
 	 * 	EE_Registry Object
-	 *	@var 	object	
+	 *	@var 	object
 	 * 	@access 	protected
 	 */
 	protected $EE = NULL;
@@ -38,29 +38,29 @@ class EE_PUE {
 	protected $_default_terms = array();
 
 
-	
-	
+
+
 
 	/**
 	 *	class constructor
-	 * 
+	 *
 	 *	@access public
 	 *	@return void
-	 */	
+	 */
 	public function __construct() {
 //		throw new EE_Error('error');
-		
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		//wp have no MONTH_IN_SECONDS constant.  So we approximate our own assuming all months are 4 weeks long.
 		if ( !defined('MONTH_IN_SECONDS' ) )
 			define( 'MONTH_IN_SECONDS', WEEK_IN_SECONDS * 4 );
-		
+
 		if(EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance){
 			$this->_uxip_hooks();
 		}
 
-		
+
 		$ueip_optin = EE_Registry::instance()->CFG->core->ee_ueip_optin;
 		$ueip_has_notified = EE_Registry::instance()->CFG->core->ee_ueip_has_notified;
 
@@ -149,7 +149,7 @@ class EE_PUE {
 
 
 		// PUE Auto Upgrades stuff
-		if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { //include the file 
+		if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { //include the file
 			require_once(EE_THIRD_PARTY . 'pue/pue-client.php' );
 
 			$api_key = isset( EE_Registry::instance()->NET_CFG->core->site_license_key ) ? EE_Registry::instance()->NET_CFG->core->site_license_key : '';
@@ -178,7 +178,7 @@ class EE_PUE {
 				'checkPeriod' => '24', //(optional) - use this parameter to indicate how often you want the client's install to ping your server for update checks.  The integer indicates hours.  If you don't include this parameter it will default to 12 hours.
 				'option_key' => 'site_license_key', //this is what is used to reference the api_key in your plugin options.  PUE uses this to trigger updating your information message whenever this option_key is modified.
 				'options_page_slug' => 'espresso_general_settings',
-				'plugin_basename' => plugin_basename(EE_PLUGINPATH),
+				'plugin_basename' => EE_PLUGIN_BASENAME,
 				'use_wp_update' => FALSE, //if TRUE then you want FREE versions of the plugin to be updated from WP
 				'extra_stats' => $extra_stats
 			);
@@ -206,7 +206,7 @@ class EE_PUE {
 
 
 	function espresso_data_collection_optin_notice() {
-		$ueip_has_notified = get_option('ee_ueip_has_notified');
+		$ueip_has_notified = EE_Registry::instance()->CFG->core->ee_ueip_has_notified;
 		if ( $ueip_has_notified ) return;
 		$settings_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default'), admin_url( 'admin.php?page=espresso_general_settings') );
 		$settings_url = $settings_url . '#UXIP_settings';
@@ -257,7 +257,8 @@ class EE_PUE {
 		$ueip_optin = isset( $_POST['selection'] ) ? $_POST['selection'] : 'no';
 
 		//update_option('ee_ueip_optin', $ueip_optin);
-		update_option('ee_ueip_has_notified', 1);
+		EE_Registry::instance()->CFG->core->ee_ueip_has_notified = 1;
+		EE_Registry::instance()->CFG->update_espresso_config( FALSE, FALSE );
 		exit();
 	}
 
@@ -269,8 +270,8 @@ class EE_PUE {
 	 * @return boolean           True if update available, false if not.
 	 */
 	public static function is_update_available($basename = '') {
-		if ( empty($basename) )
-			$basename = plugin_basename(EE_PLUGINPATH);
+
+		$basename = ! empty( $basename ) ? $basename : EE_PLUGIN_BASENAME;
 
 		$update = false;
 
@@ -373,7 +374,7 @@ class EE_PUE {
 
 
 			set_transient( 'ee4_event_info_check', 1, WEEK_IN_SECONDS * 2 );
-		} 
+		}
 	}
 
 }

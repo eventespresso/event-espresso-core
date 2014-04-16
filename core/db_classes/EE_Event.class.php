@@ -135,7 +135,7 @@ class EE_Event extends EE_CPT_Base{
 	 * @brent: yeah what is this field for? from mike
 	 * @var boolean
 	 */
-	protected $_EVT_display_reg_form;
+	protected $_EVT_display_ticket_selector;
 	/**
 	 * indicates time when event should be visible
 	 * @var int 
@@ -289,8 +289,8 @@ class EE_Event extends EE_CPT_Base{
 	function display_description(){
 		return $this->get('EVT_display_desc');
 	}
-	function display_reg_form(){
-		return $this->get('EVT_display_reg_form');
+	function display_ticket_selector(){
+		return $this->get('EVT_display_ticket_selector');
 	}
 	function external_url(){
 		return $this->get('EVT_external_URL');
@@ -316,9 +316,9 @@ class EE_Event extends EE_CPT_Base{
 		return $this->get('EVT_default_registration_status');
 	}
 	
-	function short_description( $num_words = 55, $more = NULL ){
+	function short_description( $num_words = 55, $more = NULL, $not_full_desc = FALSE ){
 		$short_desc = $this->get('EVT_short_desc');
-		if ( ! empty( $short_desc )) {
+		if ( ! empty( $short_desc ) || $not_full_desc ) {
 			return $short_desc;
 		} else {
 			$full_desc = $this->get('EVT_desc');
@@ -353,8 +353,8 @@ class EE_Event extends EE_CPT_Base{
 	function set_display_description($display_desc) {
 		return $this->set('EVT_display_desc', $display_desc);
 	}
-	function set_display_reg_form($display_reg_form) {
-		return $this->set('EVT_display_reg_form', $display_reg_form);
+	function set_display_ticket_selector($display_ticket_selector) {
+		return $this->set('EVT_display_ticket_selector', $display_ticket_selector);
 	}
 	function set_external_url($external_url) {
 		return $this->set('EVT_external_URL', $external_url);
@@ -757,14 +757,25 @@ class EE_Event extends EE_CPT_Base{
 		}
 	}
 	/**
-	 * Gets teh first term taxonomy we can find
+	 * Gets teh first term for 'espresso_event_categories' we can find
 	 * @param array $query_params like EEM_Base::get_all
-	 * @return EE_Term_Taxonomy
+	 * @return EE_Term
 	 */
 	public function first_event_category($query_params = array()){
 		$query_params[0]['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
 		$query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $this->ID();
 		return EEM_Term::instance()->get_one($query_params);
+	}
+	
+	/**
+	 * Gets all terms for 'espresso_event_categories' we can find
+	 * @param type $query_params
+	 * @return EE_Term
+	 */
+	public function get_all_event_categories($query_params = array()){
+		$query_params[0]['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
+		$query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $this->ID();
+		return EEM_Term::instance()->get_all($query_params);
 	}
 
 
