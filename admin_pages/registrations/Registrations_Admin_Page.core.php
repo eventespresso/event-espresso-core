@@ -753,7 +753,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
-		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
+		$CAT_ID = isset( $this->_req_data['EVT_CAT'] ) ? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
 		$reg_status = isset( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
 		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
 		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
@@ -799,7 +799,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$_where['EVT_ID']=$EVT_ID;
 		}
 		if($CAT_ID){
-			throw new EE_Error("not sure how to handle filtering event categories here");
+			$_where['Event.Term_Taxonomy.term_id'] = $CAT_ID;
 		}
 		if($reg_status){
 			$_where['STS_ID'] = $reg_status;

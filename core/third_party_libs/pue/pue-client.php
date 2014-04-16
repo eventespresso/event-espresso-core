@@ -796,22 +796,23 @@ class PluginUpdateEngineChecker {
 
 		$is_dismissed = !empty($update_dismissed) && in_array($pluginInfo->version, $update_dismissed) ? true : false;
 
-		if ($is_dismissed)
-			return;
-
 		//add in pue_verification_error option for when the api_key is blank
 		if ( empty( $this->api_secret_key ) )
 			update_site_option( 'pue_verification_error_' . $this->pluginFile, __('No API key is present', $this->lang_domain) );
 
+		if ( $pluginInfo->api_invalid ) {
+			$msg = str_replace('%plugin_name%', $this->pluginName, $pluginInfo->api_invalid_message);
+			$msg = str_replace('%version%', $pluginInfo->version, $msg);
+		}
+
+		//let's add an option for plugin developers to display some sort of verification message on their options page.
+		update_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
+
+		if ($is_dismissed)
+			return;
+
 		//only display messages if there is a new version of the plugin.
 		if ( version_compare($pluginInfo->version, $this->_installed_version, '>') || $ignore_version_check ) {
-			if ( $pluginInfo->api_invalid ) {
-				$msg = str_replace('%plugin_name%', $this->pluginName, $pluginInfo->api_invalid_message);
-				$msg = str_replace('%version%', $pluginInfo->version, $msg);
-			}
-
-			//let's add an option for plugin developers to display some sort of verification message on their options page.
-			update_site_option( 'pue_verification_error_' . $this->pluginFile, $msg );
 
 			//Dismiss code idea below is obtained from the Gravity Forms Plugin by rocketgenius.com
 			ob_start();
