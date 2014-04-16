@@ -29,7 +29,8 @@ class espresso_Tests extends EE_UnitTestCase {
 	 */
 	function test_espresso_load_required() {
 		$this->assertTrue( class_exists( 'EE_System') );
-		$this->assertTrue( class_exists( 'EEH_Debug_Tools') );
+		//this should be false because WP_DEBUG is not set.
+		$this->assertFalse( class_exists( 'EEH_Debug_Tools') );
 		$this->assertTrue( class_exists( 'EE_Error' ) );
 	}
 }
