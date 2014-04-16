@@ -634,14 +634,17 @@ final class EE_System {
 		add_action( 'init', array( $this, 'set_hooks_for_core' ), 1 );
 		add_action( 'init', array( $this, 'perform_activations_upgrades_and_migrations' ), 3 );
 		add_action( 'init', array( $this, 'load_CPTs_and_session' ), 5 );
-		//add_action( 'init', array( $this, 'load_controllers' ), 7 );
+		add_action( 'init', array( $this, 'load_controllers' ), 7 );
 		add_action( 'init', array( $this, 'core_loaded_and_ready' ), 9 );
 		add_action( 'init', array( $this, 'initialize' ), 10 );
 		add_action( 'init', array( $this, 'initialize_last' ), 100 );
 		add_action('wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ), 25 );
 		add_action( 'admin_bar_menu', array( $this, 'espresso_toolbar_items' ), 100 );
-		//intialize controllers which should setup their own hooks for > plugins_loaded.
-		$this->load_controllers();
+
+		if ( is_admin()  ) {
+			// pew pew pew
+			EE_Registry::instance()->load_core( 'PUE' );
+		}
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
 	}
 

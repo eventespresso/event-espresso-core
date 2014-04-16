@@ -114,7 +114,7 @@ jQuery(document).ready(function($) {
           * @return {void}
           */
          updateForm: function( selected_mtp ) {
-            var selected_mtp = parseInt(selected_mtp,10);
+            selected_mtp = parseInt(selected_mtp,10);
             //if the selected_mtp is 0 then let's just reset the form inputs and hide the form
             if ( typeof( selected_mtp) === 'undefined' || selected_mtp == 0 ) {
                 this.resetFormInputs();
@@ -236,6 +236,10 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         e.stopPropagation();
         EENewsletterTrigger.closeForm();
+    });
+
+    $(document).on('click', '.batch-message-submit', function(e) {
+      $('#espresso-ajax-loading').eeCenter().eeAddOverlay().show();
     });
 
 });

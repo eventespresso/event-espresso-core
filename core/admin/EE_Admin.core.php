@@ -73,8 +73,6 @@ final class EE_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
-		// pew pew pew
-		EE_Registry::instance()->load_core( 'PUE' );
 
 		do_action( 'AHEE__EE_Admin__loaded' );
 	}
