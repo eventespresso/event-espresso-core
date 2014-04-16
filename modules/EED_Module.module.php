@@ -45,7 +45,7 @@ abstract class EED_Module extends EE_Base {
 	protected $ouput = '';
 
 	/**
-	 * 	the current active espresso tempalte theme
+	 * 	the current active espresso template theme
 	 *	@var 	string
 	 * 	@access 	protected
 	 */
