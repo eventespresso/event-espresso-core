@@ -28,19 +28,16 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		$admin_instance = EE_Admin::instance();
 
-		//tests filters have been added that are expected here.
-		$this->assertTrue( has_filter('plugin_action_links', array($admin_instance, 'filter_plugin_actions') ) );
-		$this->assertTrue( has_action('AHEE__EE_System__core_loaded_and_ready', array($admin_instance, 'get_request') ) );
-		$this->assertTrue( has_action('AHEE__EE_System__initialize_last', array($admin_instance, 'init') ) );
-		$this->assertTrue( has_action('AHEE__EE_Admin_Page__route_admin_request', array($admin_instance, 'route_admin_request') ) );
-		$this->assertTrue( has_action('wp_loaded', array($admin_instance, 'wp_loaded') ) );
-		$this->assertTrue( has_action('admin_init', array($admin_instance, 'admin_init') ) );
-		$this->assertTrue( has_action('admin_enqueue_scripts', array($admin_instance, 'enqueue_admin_scripts') ) );
-		$this->assertTrue( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ) );
-		$this->assertTrue( has_filter('admin_footer_text', array($admin_instance, 'espresso_admin_footer') ) );
-
-
-
+		//tests filters have been added that are expected here.  Remember the has_{filter/action} returns the priority set by the caller.
+		$this->assertEquals( has_filter('plugin_action_links', array($admin_instance, 'filter_plugin_actions') ), 10 );
+		$this->assertEquals( has_action('AHEE__EE_System__core_loaded_and_ready', array($admin_instance, 'get_request') ), 10 );
+		$this->assertEquals( has_action('AHEE__EE_System__initialize_last', array($admin_instance, 'init') ), 10 );
+		$this->assertEquals( has_action('AHEE__EE_Admin_Page__route_admin_request', array($admin_instance, 'route_admin_request') ), 100 );
+		$this->assertEquals( has_action('wp_loaded', array($admin_instance, 'wp_loaded'), 100 ), 100 );
+		$this->assertEquals( has_action('admin_init', array($admin_instance, 'admin_init') ), 100 );
+		$this->assertEquals( has_action('admin_enqueue_scripts', array($admin_instance, 'enqueue_admin_scripts') ), 20 );
+		$this->assertEquals( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ), 10 );
+		$this->assertEquals( has_filter('admin_footer_text', array($admin_instance, 'espresso_admin_footer') ), 10 );
 	}
 
 	/**
