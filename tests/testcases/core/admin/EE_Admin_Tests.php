@@ -23,7 +23,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 */
 	function test_loading_admin() {
-		EE_Registry::load_core('Admin');
+		EE_Registry::instance()->load_core('Admin');
 		$this->assertTrue( class_exists('EE_Admin') );
 	}
 
@@ -80,5 +80,22 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		//set maintenance mode back to normal.
 		$this->setMaintenanceMode();
+	}
+
+
+
+
+	/**
+	 * ensure that Request Handler and CPT_Strategy classes are loaded by the get_request method
+	 * as expected.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @depends test_loading_admin
+	 */
+	function get_request() {
+		EE_Admin::instance()->get_request();
+		$this->assertTrue( class_exists('Request_Handler') );
+		$this->assertTrue( class_exists('CPT_Strategy') );
 	}
 }
