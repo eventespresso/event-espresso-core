@@ -51,7 +51,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	protected $_question_model;
 
 	/**
-	 * _question_group_model EEM_QUestion_group instance (for queries)
+	 * _question_group_model EEM_Question_group instance (for queries)
 	 * @var EEM_Question_Group
 	 */
 	protected $_question_group_model;
