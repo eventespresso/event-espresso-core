@@ -323,6 +323,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 	public function newsletter_send_form_skeleton() {
 		$list_table = $this->_list_table_object;
+		$codes = array();
 		//need to templates for the newsletter message type for the template selector.
 		$values[] = array( 'text' => __('Select Template to Use', 'event_espresso'), 'id' => 0 );
 		$mtps = EEM_Message_Template_Group::instance()->get_all( array( array( 'MTP_message_type' => 'newsletter', 'MTP_messenger' => 'email' ) ) );
@@ -336,10 +337,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		//need to get a list of shortcodes that are available for the newsletter message type.
 		EE_Registry::instance()->load_helper('MSG_Template');
-		$shortcodes = EEH_MSG_Template::get_shortcodes( 'newsletter', 'email', array(), 'attendee', TRUE );
-		if ( isset( $shortcodes['[NEWSLETTER_CONTENT]'] ) )
-			unset( $shortcodes['[NEWSLETTER_CONTENT]'] );
-		$shortcodes = implode(', ', array_keys($shortcodes));
+		$shortcodes = EEH_MSG_Template::get_shortcodes( 'newsletter', 'email', array(), 'attendee', FALSE );
+		foreach ( $shortcodes as $field => $shortcode_array ) {
+			$codes[$field] = implode(', ', array_keys($shortcode_array ) );
+		}
+
+		$shortcodes = $codes;
 
 		$form_template = REG_CAF_TEMPLATE_PATH . 'newsletter-send-form.template.php';
 		$form_template_args = array(
@@ -350,7 +353,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'redirect_back_to' => $this->_req_action,
 			'ajax_nonce' => wp_create_nonce( 'get_newsletter_form_content_nonce'),
 			'template_selector' => EEH_Form_Fields::select_input('newsletter_mtp_selected', $values ),
-			'shortcodes_available' => $shortcodes,
+			'shortcodes' => $shortcodes,
 			'id_type' => $list_table instanceof EE_Attendee_Contact_List_Table ? 'contact' : 'registration'
 			);
 		EEH_Template::display_template( $form_template, $form_template_args );
