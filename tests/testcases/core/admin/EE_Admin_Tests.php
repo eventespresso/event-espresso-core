@@ -25,6 +25,22 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	function test_loading_admin() {
 		EE_Registry::instance()->load_core('Admin');
 		$this->assertTrue( class_exists('EE_Admin') );
+
+		$admin_instance = EE_Admin::instance();
+
+		//tests filters have been added that are expected here.
+		$this->assertTrue( has_filter('plugin_action_links', array($admin_instance, 'filter_plugin_actions') ) );
+		$this->assertTrue( has_action('AHEE__EE_System__core_loaded_and_ready', array($admin_instance, 'get_request') ) );
+		$this->assertTrue( has_action('AHEE__EE_System__initialize_last', array($admin_instance, 'init') ) );
+		$this->assertTrue( has_action('AHEE__EE_Admin_Page__route_admin_request', array($admin_instance, 'route_admin_request') ) );
+		$this->assertTrue( has_action('wp_loaded', array($admin_instance, 'wp_loaded') ) );
+		$this->assertTrue( has_action('admin_init', array($admin_instance, 'admin_init') ) );
+		$this->assertTrue( has_action('admin_enqueue_scripts', array($admin_instance, 'enqueue_admin_scripts') ) );
+		$this->assertTrue( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ) );
+		$this->assertTrue( has_filter('admin_footer_text', array($admin_instance, 'espresso_admin_footer') ) );
+
+
+
 	}
 
 	/**
@@ -93,9 +109,24 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 *
 	 * @depends test_loading_admin
 	 */
-	function get_request() {
+	function test_get_request() {
 		EE_Admin::instance()->get_request();
 		$this->assertTrue( class_exists('Request_Handler') );
 		$this->assertTrue( class_exists('CPT_Strategy') );
+	}
+
+
+
+
+
+	/**
+	 * This tests the init callback in EE_Admin.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @depends test_loading_admin
+	 */
+	function test_init() {
+		return;
 	}
 }
