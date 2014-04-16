@@ -81,8 +81,8 @@ class EE_Calendar_Admin {
 			require(EVENT_ESPRESSO_PLUGINFULLPATH . 'class/pue/pue-client.php' );
 			$host_server_url = 'http://eventespresso.com';
 			$plugin_slug = array(
-				'premium' => array('reg' => 'espresso-calendar-core'),
-				'prerelease' => array('beta' => 'espresso-calendar-core-pr')
+				'premium' => array('reg' => 'ee4-events-calendar'),
+				'prerelease' => array('beta' => 'ee4-events-calendar-pr')
 			);
 			$options = array(
 				'apikey' => EE_Registry::instance()->NET_CFG->core->site_license_key,
