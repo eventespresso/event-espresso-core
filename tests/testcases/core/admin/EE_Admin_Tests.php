@@ -108,8 +108,8 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	 */
 	function test_get_request() {
 		EE_Admin::instance()->get_request();
-		$this->assertTrue( class_exists('Request_Handler') );
-		$this->assertTrue( class_exists('CPT_Strategy') );
+		$this->assertTrue( class_exists('EE_Request_Handler') );
+		$this->assertTrue( class_exists('EE_CPT_Strategy') );
 	}
 
 
