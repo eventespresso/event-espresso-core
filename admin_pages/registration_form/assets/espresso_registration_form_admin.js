@@ -16,40 +16,10 @@ jQuery(document).ready(function($) {
 		espresso_maybe_switch_required(this);
 	});
 
-	$('#post-body').on('keydown', '.question-options-table input', function(e) {
-		var keyPressed = e.which;
-		if ( keyPressed == 13 ) { //enter key
-			e.preventDefault();
-			e.stopPropagation();
-			espresso_reg_forms_add_option();
-		}
-	});
-
 	espresso_reg_forms_show_or_hide_question_options();
-
-
-	/** sortable options **/
-	$('.question-options-table').sortable({
-		cursor: 'move',
-		items: '.ee-options-sortable',
-		update: function(event,ui) {
-			espresso_update_option_order();
-		}
-	});
-
 
 });
 
-
-
-function espresso_update_option_order() {
-	var curid,
-	allOptions = jQuery( '.question-options-table tr.ee-options-sortable' );
-	allOptions.each( function(i) {
-		jQuery('.QSO_order', this).val(i);
-	});
-	return;
-}
 
 
 
@@ -96,8 +66,6 @@ function espresso_reg_forms_show_option_desc(show){
 	if(show){
 		jQuery('.option-desc-cell').show();
 		jQuery('.option-desc-header').show();
-		jQuery('.option-value-header').css('width', '45%');
-		jQuery('.option-value-cell').css('width','45%');
 
 	}else{
 		jQuery('.option-desc-cell').hide();
@@ -115,10 +83,12 @@ function espresso_maybe_switch_required(item) {
 		jQuery('#QST_required').prop('disabled', true);
 		jQuery('#required_toggled_on').show();
 		jQuery('#required_toggled_off').hide();
+		return;
 	} else {
 		jQuery('#QST_required').prop('disabled', false);
 		jQuery('#required_toggled_on').hide();
 		jQuery('#required_toggled_off').show();
+		return;
 	}
 }
 

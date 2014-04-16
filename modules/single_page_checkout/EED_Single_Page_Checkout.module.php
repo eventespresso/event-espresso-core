@@ -734,41 +734,44 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				));
 
 				foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
-					$Questions = $Question_Group->get_many_related( 'Question', array( array( 'QST_admin_only' => 0, 'QST_deleted' => 0 ), 'order_by'=>array( 'Question_Group_Question.QGQ_order' =>'ASC' )));
+					$where = array( 'QST_deleted' => 0 );
+					if ( ! $from_admin ) {
+						$where['QST_admin_only'] = 0;
+					}
+					$Questions = $Question_Group->get_many_related( 'Question', array( $where, 'order_by'=>array( 'Question_Group_Question.QGQ_order' =>'ASC' )));
 					foreach ( $Questions as $Question ) {
-						// if this question was for an attendee detail, then check for that answer
-						$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
-						if( $this->_reg_url_link || ! $answer_value ){
-							$answer = EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$Question->ID(), 'REG_ID'=>$registration->ID() )));
-						}
-						// if NOT returning to edit an existing registration OR if this question is for an attendee property OR we still don't have an EE_Answer object
-						if( ! $this->_reg_url_link || $answer_value || ! $answer instanceof EE_Answer ) {
-							// create an EE_Answer object for storing everything in
-							$answer = EE_Answer::new_instance ( array(
-								'QST_ID'=> $Question->ID(),
-								'REG_ID'=> $registration->ID()
-							 ));
-						}
-
-						if( $answer instanceof EE_Answer ){
-							if ( ! empty( $answer_value )) {
-								$answer->set( 'ANS_value', $answer_value );
+						if( $Question instanceof EE_Question ){
+							// if this question was for an attendee detail, then check for that answer
+							$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $Question->ID() );
+							$answer =  $this->_reg_url_link || ! $answer_value  ? EEM_Answer::instance()->get_one( array( array( 'QST_ID'=>$Question->ID(), 'REG_ID'=>$registration->ID() ))) : NULL;
+							// if NOT returning to edit an existing registration OR if this question is for an attendee property OR we still don't have an EE_Answer object
+							if( ! $this->_reg_url_link || $answer_value || ! $answer instanceof EE_Answer ) {
+								// create an EE_Answer object for storing everything in
+								$answer = EE_Answer::new_instance ( array(
+									'QST_ID'=> $Question->ID(),
+									'REG_ID'=> $registration->ID()
+								 ));
 							}
-							$question_meta['attendee'][ $Question->is_system_question() ? $Question->system_ID() : $Question->ID() ] = $answer->value();
-							$answer->cache( 'Question', $Question );
-							$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
-//								echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-							$registration->cache( 'Answer', $answer, $answer_cache_id );
+
+							if( $answer instanceof EE_Answer ){
+								if ( ! empty( $answer_value )) {
+									$answer->set( 'ANS_value', $answer_value );
+								}
+								$question_meta['attendee'][ $Question->is_system_question() ? $Question->system_ID() : $Question->ID() ] = $answer->value();
+								$answer->cache( 'Question', $Question );
+								$answer_cache_id =$Question->system_ID() != NULL ? $Question->system_ID() . '-' . $line_item_ID : $Question->ID() . '-' . $line_item_ID;
+	//								echo '<h4>$answer_cache_id : ' . $answer_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+								$registration->cache( 'Answer', $answer, $answer_cache_id );
+							}
+							$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
 						}
-						$Question_Groups[ $QSG_ID ]->cache( 'Question', $Question );
 					}
 				}
 //					printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 				add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
 				add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
-				$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, 'div' );
-//				printr( $attendee_questions, '$attendee_questions  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, $from_admin, 'div' );
 
 				// show this attendee form?
 				if ( empty( $attendee_questions )) {

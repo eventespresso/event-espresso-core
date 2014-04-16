@@ -1367,7 +1367,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function shortcode_meta_box() {
 		$shortcodes = $this->_get_shortcodes(array(), FALSE); //just make sure shortcodes property is set
-
+		$messenger = $this->_message_template_group->messenger_obj();
 		//now let's set the content depending on the status of the shortcodes array
 		if ( empty( $shortcodes ) ) {
 			$content = '<p>' . __('There are no valid shortcodes available', 'event_espresso') . '</p>';
@@ -1378,8 +1378,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			<div style="float:right; margin-top:10px"><?php echo $this->_get_help_tab_link('message_template_shortcodes'); ?></div><p class="small-text"><?php _e('This is a list of shortcodes that have been organized by content areas where they can be used: ', 'event_espresso' ); ?></p>
 
 			<?php foreach ( $shortcodes as $field => $allshortcodes ) : ?>
+				<?php
+				//get the field label
+				$field_label = $messenger->get_field_label($field);
+				?>
 				<div class="shortcode-field-table">
-					<h3 class="shortcode-field-title"><?php echo $field; ?>:</h3>
+					<h3 class="shortcode-field-title"><?php echo $field_label; ?>:</h3>
 					<div class="ee-shortcode-table-scroll">
 						<table class="widefat ee-shortcode-table">
 							<tbody>

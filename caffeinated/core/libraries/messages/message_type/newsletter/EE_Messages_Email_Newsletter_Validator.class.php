@@ -31,5 +31,11 @@ class EE_Messages_Email_Newsletter_Validator extends EE_Messages_Validator {
     protected function _modify_validator() {
         if ( $this->_context == 'attendee' )
             $this->_valid_shortcodes_modifier[$this->_context]['from'] = array('recipient_details', 'email', 'organization');
+
+        //excluded shortcodes
+        $fields = array('to','from','subject','content','newsletter_content');
+        foreach ( $fields as $field ) {
+            $this->_specific_shortcode_excludes[$field] = array('[RECIPIENT_REGISTRATION_CODE]', '[RECIPIENT_EDIT_REGISTRATION_LINK]');
+        }
     }
 }
