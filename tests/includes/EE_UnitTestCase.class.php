@@ -128,4 +128,32 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		EE_Registry::instance()->CFG = NULL;
 		EE_Registry::instance()->NET_CFG = NULL;
 	}
+
+
+
+	/**
+	 * Method that accepts an array of filter refs to clear all filters from.
+	 *
+	 * @since 4.3.0
+	 * @param  array  $filters array of filter refs to clear. (be careful about core wp filters).
+	 */
+	public function clearAllFilters( $filters = array() ) {
+		foreach( $filters as $filter ) {
+			remove_all_filters($filter);
+		}
+	}
+
+
+
+	/**
+	 * Method that accepts an array of action refs to clear all actions from.
+	 *
+	 * @since 4.3.0
+	 * @param  array  $actions array of action refs to clear. (be careful about core wp actions).
+	 */
+	public function clearAllActions( $actions = array() ) {
+		foreach( $actions as $action ) {
+			remove_all_actions($action);
+		}
+	}
 }
