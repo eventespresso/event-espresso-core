@@ -98,7 +98,23 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  CNT_active tinyint(1) DEFAULT '0',
 					  PRIMARY KEY  (CNT_ISO)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
-
+		
+		$table_name = 'esp_currency';
+		$sql = "CUR_code varchar(6) COLLATE utf8_bin NOT NULL,
+				CUR_single varchar(45) COLLATE utf8_bin DEFAULT 'dollar',
+				CUR_plural varchar(45) COLLATE utf8_bin DEFAULT 'dollars',
+				CUR_sign varchar(45) COLLATE utf8_bin DEFAULT '$',
+				CUR_thsnds varchar(1) COLLATE utf8_bin NOT NULL DEFAULT ',',
+				PRIMARY KEY  (CUR_code)";
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
+		
+		
+		$table_name = 'esp_currency_payment_method';
+		$sql = "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
+				CUR_code  varchar(6) COLLATE utf8_bin NOT NULL,
+				PMD_ID int(11) NOT NULL,
+				PRIMARY KEY  (CPM_ID)";
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 		$table_name = 'esp_datetime';
