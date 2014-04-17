@@ -159,4 +159,30 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		//default should have Admin Page Loader loaded up.
 		$this->assertEquals( class_exists( 'Admin_Page_Loader' ) );
 	}
+
+
+
+
+	/**
+	 * Test callback for removing pages from nav menu
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_remove_pages_from_nav_menu() {
+		//test non page post type object
+		$posttypeStub = new stdClass();
+		$posttypeStub->name = 'non_page';
+		$expected = 'non_page';
+		$result = EE_Admin::instance()->remove_pages_from_nav_menu( $posttypeStub );
+		$this->assertEquals( $expected, $result->name );
+
+		//test when posttype DOES equal page
+		$posttypeStub->name = 'page';
+		$this->setCoreConfig();
+		$expected = EE_Registry::instance()->CFG->core->get_critical_pages_array();
+		$result = EE_Admin::instance()->remove_pages_from_nav_menu( $posttypeStub );
+		$test_response = !empty( $result->_default_query['post__not_in'] ) ? $result->_default_query['post__not_in'] : NULL;
+		$this->assertEquals( $expected, $test_response );
+	}
 }
