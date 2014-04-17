@@ -455,7 +455,7 @@ final class EE_Config {
 		// filter list of installed modules
 		return apply_filters( 'FHEE__EE_Config___register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
-	
+
 
 
 
@@ -844,7 +844,7 @@ class EE_Core_Config extends EE_Config_Base {
 			$this->cancel_page_id
 		);
 	}
-	
+
 	/**
 	 *  gets/returns URL for EE reg_page
 	 *
@@ -905,56 +905,6 @@ class EE_Core_Config extends EE_Config_Base {
 		return $this->cancel_page_url;
 	}
 
-	
-
-	/**
-	 *  gets/returns URL for EE reg_page
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public function reg_page_url() {
-		if ( ! $this->reg_page_url ) {
-			$this->reg_page_url = get_permalink( $this->reg_page_id );
-		}
-		return $this->reg_page_url;
-	}
-	/**
-	 *  gets/returns URL for EE txn_page
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public function txn_page_url() {
-		if ( ! $this->txn_page_url ) {
-			$this->txn_page_url = get_permalink( $this->txn_page_id );
-		}
-		return $this->txn_page_url;
-	}
-	/**
-	 *  gets/returns URL for EE thank_you_page
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public function thank_you_page_url() {
-		if ( ! $this->thank_you_page_url ) {
-			$this->thank_you_page_url = get_permalink( $this->thank_you_page_id );
-		}
-		return $this->thank_you_page_url;
-	}
-	/**
-	 *  gets/returns URL for EE cancel_page
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public function cancel_page_url() {
-		if ( ! $this->cancel_page_url ) {
-			$this->cancel_page_url = get_permalink( $this->cancel_page_id );
-		}
-		return $this->cancel_page_url;
-	}
 
 
 
