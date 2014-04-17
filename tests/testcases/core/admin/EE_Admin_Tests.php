@@ -38,6 +38,10 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('admin_enqueue_scripts', array($admin_instance, 'enqueue_admin_scripts') ), 20 );
 		$this->assertEquals( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ), 10 );
 		$this->assertEquals( has_filter('admin_footer_text', array($admin_instance, 'espresso_admin_footer') ), 10 );
+
+		//messages init is loaded in EE_System, however we want to make sure its availbel to admin
+		//make sure that Messages Init loaded
+		$this->assertTrue( class_exists( 'EE_Messages_Init' ) );
 	}
 
 	/**
@@ -158,9 +162,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('admin_head', array( $admin, 'register_custom_nav_menu_boxes' ) ), 10 );
 		$this->assertEquals( has_filter('nav_menu_meta_box_object', array( $admin, 'remove_pages_from_nav_menu' ) ), 10 );
 
-		//make sure that Messages Init loaded
-		$this->assertTrue( class_exists( 'EE_Messages_Init' ) );
-
 		//default should have Admin Page Loader loaded up.
 		$this->assertTrue( class_exists( 'EE_Admin_Page_Loader' ) );
 	}
@@ -190,4 +191,12 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$test_response = !empty( $result->_default_query['post__not_in'] ) ? $result->_default_query['post__not_in'] : NULL;
 		$this->assertEquals( $expected, $test_response );
 	}
+
+
+
+	//@todo public methods to write tests for
+	//function test_enable_hidden_ee_nav_menu_metaboxes() {}
+	//function ee_cpt_archive_pages()
+
+
 }
