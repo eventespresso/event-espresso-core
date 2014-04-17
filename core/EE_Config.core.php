@@ -178,7 +178,7 @@ final class EE_Config {
 	private function _load_config() {
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
-			$config_class = is_object( $settings ) ? get_class( $this->$config ) : FALSE;
+			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : FALSE;
 			if ( ! empty( $settings ) && ( ! $config_class || ( $settings instanceof $config_class ))) {
 				$this->$config = $settings;
 			}
