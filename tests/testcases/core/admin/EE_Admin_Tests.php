@@ -142,9 +142,10 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		//test when maintenance mode is set to something other than 2
 		$this->setMaintenanceMode();
-		$admin->init();
 		//reset filters for test
 		$this->clearAllFilters( array('FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs') );
+
+		$admin->init();
 
 		$this->assertFalse( has_filter('FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $admin, 'hide_admin_pages_except_maintenance_mode' ) ) );
 		$this->assertEquals( has_action('wp_ajax_dismiss_ee_nag_notice', array( $admin, 'dismiss_ee_nag_notice_callback' ) ), 10 );
