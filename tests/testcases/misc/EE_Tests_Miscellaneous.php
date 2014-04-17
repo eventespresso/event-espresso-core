@@ -17,10 +17,6 @@
  */
 class EE_Tests_Miscellaneous extends EE_UnitTestCase {
 
-	function test_version_check() {
-		$this->assertTrue( espresso_version() >= '4.3.0.reg' );
-	}
-
 	/**
 	 * note this should be moved to the system tests folder.
 	 */

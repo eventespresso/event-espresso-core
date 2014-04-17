@@ -229,7 +229,8 @@ jQuery(document).ready(function($) {
     });
 
     $(document).on('click', '.shortcodes-info', function(e) {
-        $('.shortcodes-info-container').slideToggle();
+      var id = $(this).attr('id').replace('toggle', 'container');
+        $('#' + id).slideToggle();
     });
 
     $(document).on('click', '.batch-message-cancel', function(e) {

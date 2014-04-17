@@ -77,4 +77,83 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		return $args;
 	}
 
+
+
+	/**
+	 * Helper method for setting the maintenance mode of EE to given maintenance mode
+	 *
+	 * @param int use to indicate which maintenance mode to set.
+	 * @since 4.3.0
+	 */
+	public function setMaintenanceMode( $level = 0 ) {
+		EE_Registry::instance()->load_core('Maintenance_Mode');
+		switch ( $level ) {
+			case EE_Maintenance_Mode::level_0_not_in_maintenance :
+				$level = EE_Maintenance_Mode::level_0_not_in_maintenance;
+				break;
+			case EE_Maintenance_Mode::level_1_frontend_only_maintenance :
+				$level = EE_Maintenance_Mode::level_1_frontend_only_maintenance;
+				break;
+			case EE_Maintenance_Mode::level_2_complete_maintenance :
+				$level = EE_Maintenance_Mode::level_2_complete_maintenance;
+				break;
+			default :
+				$level = EE_Maintenance_Mode::level_0_not_in_maintenance;
+				break;
+		}
+		update_option( EE_Maintenance_Mode::option_name_maintenance_mode, $level );
+	}
+
+
+
+	/**
+	 * Helper method for just setting the core config and net config on EE_Registry, so
+	 * configuration tests can be run.
+	 *
+	 * @since 4.3.0
+	 */
+	public function setCoreConfig() {
+		EE_Registry::instance()->load_core('Config');
+		EE_Registry::instance()->load_core('Network_Config');
+	}
+
+
+
+	/**
+	 * Helper method for resetting EE_Registry->CFG and EE_Registry->NET_CFG
+	 *
+	 * @since 4.3.0
+	 */
+	public function resetCoreConfig() {
+		EE_Registry::instance()->CFG = NULL;
+		EE_Registry::instance()->NET_CFG = NULL;
+	}
+
+
+
+	/**
+	 * Method that accepts an array of filter refs to clear all filters from.
+	 *
+	 * @since 4.3.0
+	 * @param  array  $filters array of filter refs to clear. (be careful about core wp filters).
+	 */
+	public function clearAllFilters( $filters = array() ) {
+		foreach( $filters as $filter ) {
+			remove_all_filters($filter);
+		}
+	}
+
+
+
+	/**
+	 * Method that accepts an array of action refs to clear all actions from.
+	 *
+	 * @since 4.3.0
+	 * @param  array  $actions array of action refs to clear. (be careful about core wp actions).
+	 */
+	public function clearAllActions( $actions = array() ) {
+		foreach( $actions as $action ) {
+			remove_all_actions($action);
+		}
+	}
 }

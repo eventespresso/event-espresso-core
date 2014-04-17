@@ -59,7 +59,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
-		
+
 		if ( isset( $_GET['event_id'] )) {
 			$this->_columns = array(
 				'_Reg_Status' => '',
@@ -67,7 +67,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	           	'_REG_ID' => __( 'ID', 'event_espresso' ),
 	           	'_REG_count' => '#',
 	           	'ATT_fname' => __( 'Name', 'event_espresso' ),
-				'ATT_email' =>  __('Email', 'event_espresso'),		
+				'ATT_email' =>  __('Email', 'event_espresso'),
 				'_REG_date' => __( 'Reg Date', 'event_espresso' ),
 				'_REG_code' => __( 'Reg Code', 'event_espresso' ),
 				//'Reg_status' => __( 'Status', 'event_espresso' ),
@@ -76,7 +76,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	  			'TXN_total' => __( 'Total Txn', 'event_espresso' ),
  				'TXN_paid' => __('Paid', 'event_espresso'),
 	           	'actions' => __( 'Actions', 'event_espresso' )
-	        );			
+	        );
 			$this->_bottom_buttons = array(
 				'report'=> array(
 					'route' => 'registrations_report',
@@ -87,7 +87,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			$this->_columns = array(
 				'_Reg_Status' => '',
             	'cb' => '<input type="checkbox" />', //Render a checkbox instead of text
-	           	'_REG_ID' => __( 'ID', 'event_espresso' ),  	
+	           	'_REG_ID' => __( 'ID', 'event_espresso' ),
 				'_REG_count' => '#',
 	           	'ATT_fname' => __( 'Name', 'event_espresso' ),
 				'_REG_date' => __( 'TXN Date', 'event_espresso' ),
@@ -97,9 +97,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				//'Reg_status' => __( 'Status', 'event_espresso' ),
 	  			'_REG_final_price' => __( 'Price', 'event_espresso' ),
             	'actions' => __( 'Actions', 'event_espresso' )
-	        );			
+	        );
 		}
-		
+
 
         $this->_sortable_columns = array(
           	'_REG_date' => array( '_REG_date' => TRUE ),   //true means its already sorted
@@ -130,7 +130,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$filters[] = EEH_Form_Fields::generate_registration_months_dropdown( $cur_date, $reg_status, $cur_category );
 		$filters[] = EEH_Form_Fields::generate_event_category_dropdown( $cur_category );
-		
+
 		$status = array();
 		$status[] = array( 'id' => 0, 'text' => __('Select Status', 'event_espresso') );
 		foreach ( $this->_status as $key => $value ) {
@@ -165,7 +165,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	protected function _total_registrations_this_month(){
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		$_where = $EVT_ID ? array( 'EVT_ID' => $EVT_ID ) : array();
-		$this_year_r = date('Y', current_time('timestamp'));	
+		$this_year_r = date('Y', current_time('timestamp'));
 		$time_start = ' 00:00:00';
 		$time_end = ' 23:59:59';
 		$this_month_r = date('m', current_time('timestamp'));
@@ -173,7 +173,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$_where['REG_date']= array('BETWEEN',
 			array(
 				strtotime( $this_year_r . '-' . $this_month_r . '-01' . ' ' . $time_start ),
-				strtotime( $this_year_r . '-' . $this_month_r . $days_this_month . ' ' . $time_end ) 
+				strtotime( $this_year_r . '-' . $this_month_r . $days_this_month . ' ' . $time_end )
 		));
 		return EEM_Registration::instance()->count(array( $_where ) );
 	}
@@ -217,9 +217,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_cb
 	*/
     function column_cb(EE_Registration $item){
-  		/** checkbox/lock **/
-    	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
-        return $payment_count > 0 ? '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
+	/** checkbox/lock **/
+	$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
+	return $payment_count > 0 ? sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() ) . '<span class="ee-lock-icon"></span>' : sprintf( '<input type="checkbox" name="_REG_ID[]" value="%1$s" />', $item->ID() );
     }
 
 
@@ -232,15 +232,15 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		REG_date
 	*/
 	function column__REG_date(EE_Registration $item){
-		
+
 		//Build row actions
 		$actions = array();
 
         //Build row actions
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->get_first_related('Transaction')->ID() ), TXN_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->get_first_related('Transaction')->ID() ), TXN_ADMIN_URL );
+		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';
 
-		return $REG_date;		
+		return $REG_date;
 
 	}
 
@@ -251,17 +251,17 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	* 		column_event_name
 	*/
 	function column_event_name(EE_Registration $item){
-		
+
 		// page=espresso_events&action=edit_event&EVT_ID=2&edit_event_nonce=cf3a7e5b62
 		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit', 'post'=>$item->event_ID() ), EVENTS_ADMIN_URL );
 		$event_name = $item->event_name();
 		$event_name = $event_name ? $event_name : __("No Associated Event", 'event_espresso');
 		$edit_event = '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event_name ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>';
-		
+
 		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( array( 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
 		$actions['event_filter'] = '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Filter this list to only show registrations for %s', 'event_espresso' ), $event_name ) .'">' .  __( 'View Registrations', 'event_espresso' ) . '</a>';
-		
-		return sprintf('%1$s %2$s', $edit_event, $this->row_actions($actions) );		
+
+		return sprintf('%1$s %2$s', $edit_event, $this->row_actions($actions) );
 	}
 
 
@@ -368,16 +368,16 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	*/
 	function column_PRC_amount(EE_Registration $item){
 		$content = isset( $_GET['event_id'] ) ? '<span class="TKT_name">' . $item->ticket()->name() . '</span><br />' : '';
-		
+
 		if ( $item->price_paid() > 0 ) {
-			$content .= '<span class="reg-pad-rght">' . $item->pretty_price_paid() . '</span>';			
+			$content .= '<span class="reg-pad-rght">' . $item->pretty_price_paid() . '</span>';
 		} else {
 			// free event
 			$content .= '<span class="reg-overview-free-event-spn reg-pad-rght">' . __( 'free', 'event_espresso' ) . '</span>';
 		}
 
 		return $content;
-		
+
 	}
 
 
@@ -391,9 +391,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function column__REG_final_price(EE_Registration $item){
 		$content = isset( $_GET['event_id'] ) ? '' : '<span class="TKT_name">' . $item->ticket()->name() . '</span><br />';
 
-		$content .= '<span class="reg-pad-rght">' .  $item->pretty_price_paid() . '</span>';	
-		return $content;		
-		
+		$content .= '<span class="reg-pad-rght">' .  $item->pretty_price_paid() . '</span>';
+		return $content;
+
 	}
 
 
@@ -406,7 +406,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_TXN_total(EE_Registration $item){
 		if($item->transaction()){
 			$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
-			return '<span class="reg-pad-rght"><a class="status-'. $item->transaction()->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">'  . $item->transaction()->pretty_total() . '</a></span>';			
+			return '<span class="reg-pad-rght"><a class="status-'. $item->transaction()->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">'  . $item->transaction()->pretty_total() . '</a></span>';
 		}else{
 			__("None", "event_espresso");
 		}
@@ -420,20 +420,20 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_TXN_paid
 	*/
 	function column_TXN_paid(EE_Registration $item){
-		
+
 		if ( $item->count() == 1 ) {
 			$transaction = $item->transaction() ? $item->transaction() : EE_Transaction::new_instance();
-			
+
 			if ( $transaction->paid() >= $transaction->total() ) {
 				return '<span class="reg-pad-rght"><img class="" src="' . EE_GLOBAL_ASSETS_URL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
 				return '<span class="reg-pad-rght"><a class="status-'. $transaction->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $item->transaction()->pretty_paid() . '</a><span>';
-			}			
+			}
 		}
-		
+
 		return '&nbsp;';
-		
+
 	}
 
 
@@ -450,11 +450,11 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	        //Build row actions
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$item->attendee_ID() ), REG_ADMIN_URL );
-		
+
 		// page=attendees&event_admin_reports=resend_email&registration_id=43653465634&event_id=2&form_action=resend_email
 		//$resend_reg_lnk_url_params = array( 'action'=>'resend_registration', '_REG_ID'=>$item->REG_ID );
 		$resend_reg_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
-		
+
 
 	        //Build row actions
 	        $view_lnk = '
@@ -488,12 +488,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		</li>';
 
 			$actions = '
-	<ul class="reg-overview-actions-ul">' . 
+	<ul class="reg-overview-actions-ul">' .
 	$view_lnk . $edit_lnk . $resend_reg_lnk . $view_txn_lnk . '
 	</ul>';
-			
+
 			return $actions;
-				
+
 	}
 
 }
