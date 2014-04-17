@@ -196,7 +196,32 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 	//@todo public methods to write tests for
 	//function test_enable_hidden_ee_nav_menu_metaboxes() {}
-	//function ee_cpt_archive_pages()
+	//function test_ee_cpt_archive_pages()
+	//function test_enqueue_admin_scripts()
+	//function test_get_persistent_admin_notices()
+	//function test_dismiss_ee_nag_notice_callback()
+	//function test_dashboard_glance_items()
+	//function test_parse_post_content_on_save()
+
+
+	/**
+	 * Test its_eSpresso method that converts incorrect spelling of Espresso in shortcodes with the correct spelling.
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_its_eSpresso() {
+		//test works as expected with string to correct.
+		$expected = '[ESPRESSO_CONTENT]';
+		$test = '[EXPRESSO_CONTENT]';
+		$result = EE_Admin::instance()->its_eSpresso( $test );
+		$this->assertEquals( $result, $expected );
+
+		//test works as expected with string that should NOT be corrected.
+		$expected = 'some_string';
+		$result = EE_Admin::instance()->its_eSpresso('some_string');
+		$this->assertEquals( $result, $expected );
+	}
 
 
 }
