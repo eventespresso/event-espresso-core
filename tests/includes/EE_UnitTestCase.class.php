@@ -83,7 +83,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * Helper method for setting the maintenance mode of EE to given maintenance mode
 	 *
 	 * @param int use to indicate which maintenance mode to set.
-	 * @since 4.3.1.
+	 * @since 4.3.0
 	 */
 	public function setMaintenanceMode( $level = 0 ) {
 		EE_Registry::instance()->load_core('Maintenance_Mode');
@@ -104,4 +104,28 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		update_option( EE_Maintenance_Mode::option_name_maintenance_mode, $level );
 	}
 
+
+
+	/**
+	 * Helper method for just setting the core config and net config on EE_Registry, so
+	 * configuration tests can be run.
+	 *
+	 * @since 4.3.0
+	 */
+	public function setCoreConfig() {
+		EE_Registry::instance()->load_core('Config');
+		EE_Registry::instance()->load_core('Network_Config');
+	}
+
+
+
+	/**
+	 * Helper method for resetting EE_Registry->CFG and EE_Registry->NET_CFG
+	 *
+	 * @since 4.3.0
+	 */
+	public function resetCoreConfig() {
+		EE_Registry::instance()->CFG = NULL;
+		EE_Registry::instance()->NET_CFG = NULL;
+	}
 }
