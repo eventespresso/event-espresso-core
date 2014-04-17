@@ -133,7 +133,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertFalse( has_action('save_post', array( $admin, 'parse_post_content_on_save' ) ) );
 		$this->assertFalse( has_filter('content_save_pre', array( $admin, 'its_eSpresso' ) ) );
 		$this->assertFalse( has_action('admin_notices', array( $admin, 'get_persistent_admin_notices' ) ) );
-		$this->assertFalse( class_exists('EE_Messages_Init' ) );
 		$this->assertFalse( has_action('dashboard_glance_items', array( $admin, 'dashboard_glance_items' ) ) );
 		//should happen with both conditions
 		$this->assertEquals( has_action('admin_head', array( $admin, 'enable_hidden_ee_nav_menu_metaboxes' ) ), 10 );
@@ -148,7 +147,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('save_post', array( $admin, 'parse_post_content_on_save' ) ), 100 );
 		$this->assertEquals( has_filter('content_save_pre', array( $admin, 'its_eSpresso' ) ), 10 );
 		$this->assertEquals( has_action('admin_notices', array( $admin, 'get_persistent_admin_notices' ) ), 9 );
-		$this->assertEquals( class_exists('EE_Messages_Init' ) );
 		$this->assertFalse( has_action('dashboard_glance_items', array( $admin, 'dashboard_glance_items' ) ), 10 );
 		//should happen with both conditions
 		$this->assertEquals( has_action('admin_head', array( $admin, 'enable_hidden_ee_nav_menu_metaboxes' ) ), 10 );
