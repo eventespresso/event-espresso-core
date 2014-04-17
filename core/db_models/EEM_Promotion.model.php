@@ -46,7 +46,7 @@ class EEM_Promotion extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Promotion','event_espresso');
+		$this->singular_item = __('Promotion','event_espresso');
 		$this->plural_item = __('Promotions','event_espresso');
 		$this->_tables = array(
 			'Promotion'=> new EE_Primary_Table('esp_promotion', 'PRO_ID')

@@ -36,10 +36,10 @@ jQuery(document).ready(function($) {
 						$('#country-details-dv').html( response.return_data );
 						ajax_loading = false;
 					} else if ( response.errors ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
+						show_admin_page_ajax_msg( response, '' );
 					} else {
 						response.errors = eei18n.invalid_server_response;
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+						show_admin_page_ajax_msg( response, '', true );
 					}
 				},
 				error: function(response) {
@@ -47,7 +47,7 @@ jQuery(document).ready(function($) {
 					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
-					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+					show_admin_page_ajax_msg( response, '', true );
 				}
 			});
 		},
@@ -83,10 +83,10 @@ jQuery(document).ready(function($) {
 						$('#country-states-dv').html( response.return_data );
 						ajax_loading = false;
 					} else if ( response.errors ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
+						show_admin_page_ajax_msg( response );
 					} else {
 						response.errors = eei18n.invalid_server_response;
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+						show_admin_page_ajax_msg( response, '', true );
 					}
 				},
 				error: function(response) {
@@ -94,7 +94,7 @@ jQuery(document).ready(function($) {
 					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
-					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+					show_admin_page_ajax_msg( response, '', true );
 				}
 			});
 					
@@ -129,10 +129,10 @@ jQuery(document).ready(function($) {
 					if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
 						EE_CNT_STA.get_country_states( response.return_data );
 					} else if ( response.errors ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
+						show_admin_page_ajax_msg( response, '' );
 					} else {
 						response.errors = eei18n.invalid_server_response;
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+						show_admin_page_ajax_msg( response, '', true );
 					}
 				},
 				error: function(response) {
@@ -140,7 +140,7 @@ jQuery(document).ready(function($) {
 					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
-					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+					show_admin_page_ajax_msg( response, '', true );
 				}
 			});
 		},
@@ -158,7 +158,7 @@ jQuery(document).ready(function($) {
 			
 			if ( CNT_ISO === '' || STA_ID === '' || STA_abbrev === '' ) {
 				response.errors = eei18n.error_occurred;
-				show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+				show_admin_page_ajax_msg( response, '', true );
 				return false;
 			}
 			// post data to be sent
@@ -186,10 +186,10 @@ jQuery(document).ready(function($) {
 						$( row_to_delete ).fadeOut().delay(500).remove();
 						$('#espresso-ajax-loading').fadeOut('fast');
 					} else if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2' );
+						show_admin_page_ajax_msg( response, '' );
 					} else {
 						response.errors = eei18n.invalid_server_response;
-						show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+						show_admin_page_ajax_msg( response, '', true );
 					}
 				},
 				error: function(response) {
@@ -197,7 +197,7 @@ jQuery(document).ready(function($) {
 					if ( typeof(response.errors) === 'undefined' ) {
 						response.errors = eei18n.error_occurred;
 					}
-					show_admin_page_ajax_msg( response, '.admin-modal-dialog-h2', true );
+					show_admin_page_ajax_msg( response, '', true );
 				}
 			});
 		}

@@ -165,25 +165,29 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( ! $WP_Query instanceof WP_Query ) {
 			return;
 		}
-		// grab queried object 
-		if ( isset( $WP_Query->post ) && $WP_Query->get_queried_object() instanceof stdClass ) {
-			// check if it has a taxonomy property set for it and if THAT taxonomy is one of ours
-			if ( isset( $WP_Query->get_queried_object()->taxonomy ) && isset( $this->_CPT_taxonomies[ $WP_Query->get_queried_object()->taxonomy ] )) {
-				// this category belongs to us
-				$CPT_taxonomy = $WP_Query->get_queried_object()->taxonomy;
-				// but which one??? hmmm... guess we gotta go looping
-				foreach ( $this->_CPTs as $post_type => $CPT ) {
-					// verify our CPT has args, is public and has taxonomies set
-					if ( isset( $CPT['args'] ) && $CPT['args']['public'] && ! empty( $CPT['args']['taxonomies'] )) {
-						// does the captured taxonomy belong to this CPT ?
-						if ( in_array( $CPT_taxonomy, $CPT['args']['taxonomies'] )) {
-							// if so, then add this CPT post_type to the current query's array of post_types'
-							$WP_Query->query_vars['post_type'][] = $post_type;
-						}						
+
+		// is a taxonomy set ?
+		if ( $WP_Query->is_tax ) {
+			// loop thru our taxonomies
+			foreach ( $this->_CPT_taxonomies as $CPT_taxonomy => $CPT_taxonomy_details ) {
+				// check if one of our taxonomies is set as a query var
+				if ( isset( $WP_Query->query[ $CPT_taxonomy ] )) {
+					// but which CPT does that correspond to??? hmmm... guess we gotta go looping
+					foreach ( $this->_CPTs as $post_type => $CPT ) {
+						// verify our CPT has args, is public and has taxonomies set
+						if ( isset( $CPT['args'] ) && $CPT['args']['public'] && ! empty( $CPT['args']['taxonomies'] )) {
+							// does the captured taxonomy belong to this CPT ?
+							if ( in_array( $CPT_taxonomy, $CPT['args']['taxonomies'] )) {
+								// if so, then add this CPT post_type to the current query's array of post_types'
+								$WP_Query->query_vars['post_type'] = isset( $WP_Query->query_vars['post_type'] ) ? (array)$WP_Query->query_vars['post_type'] : array();
+								$WP_Query->query_vars['post_type'][] = $post_type;
+							}						
+						}
 					}
 				}
 			}
 		}
+
 
 //		d( $this->_CPTs );
 //		d( $CPT_taxonomy );

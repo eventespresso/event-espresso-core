@@ -16,14 +16,14 @@ class Invoice {
 	private $invoice_settings;
 	private $EE;
 	public function __construct($url_link = 0) {
-		
+
 		if ( $this->registration = EE_Registry::instance()->load_model( 'Registration' )->get_registration_for_reg_url_link( $url_link)) {
 			$this->transaction = $this->registration->transaction();
-			
+
 			$payment_settings = EE_Config::instance()->gateway->payment_settings;//get_user_meta(EE_Registry::instance()->CFG->wp_user, 'payment_settings', TRUE);
 			$this->invoice_settings = $payment_settings['Invoice'];
 		} else {
-			EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );	
+			EE_Error::add_error( __( 'Your request appears to be missing some required data, and no information for your transaction could be retrieved.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 	}
@@ -33,12 +33,12 @@ class Invoice {
 		$EE = EE_Registry::instance();
 
 		//allow the request to override the default theme defined in the invoice settings
-		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : null;		
+		$theme = ( isset( $_REQUEST['theme'] ) && $_REQUEST['theme'] > 0 && $_REQUEST['theme'] < 8 ) ? absint( $_REQUEST['theme'] ) : null;
 		$themes = array(
 										1 => "simple.css",
 										2 => "bauhaus.css",
 										3 => "ejs.css",
-										4 => "horizon.css", 
+										4 => "horizon.css",
 										5 => "lola.css",
 										6 => "tranquility.css",
 										7 => "union.css"
@@ -59,7 +59,7 @@ class Invoice {
 			$template_args['base_url'] = EE_GATEWAYS . '/Invoice/lib/templates/';
 		}
 		$primary_attendee = $this->transaction->primary_registration()->attendee();
-		
+
 		$template_args['organization'] = stripslashes( $EE->CFG->organization->name );
 		$template_args['street'] = empty( $EE->CFG->organization->address_2 ) ? $EE->CFG->organization->address_1 : $EE->CFG->organization->address_1 . '<br>' . $EE->CFG->organization->address_2;
 		$template_args['city'] = $EE->CFG->organization->city;
@@ -67,7 +67,7 @@ class Invoice {
 		$template_args['country'] = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $EE->CFG->organization->CNT_ISO );
 		$template_args['zip'] = $EE->CFG->organization->zip;
 		$template_args['email'] = $EE->CFG->organization->email;
-		
+
 		$template_args['registration_code'] = $this->registration->reg_code();
 		$template_args['registration_date'] = $this->registration->date();
 		$template_args['name'] = $primary_attendee->full_name();
@@ -82,13 +82,13 @@ class Invoice {
 		}
 		$template_args['attendee_state'] = $attendee_state_name;
 		$template_args['attendee_zip'] = $primary_attendee->zip();
-		
+
 		$template_args['ship_name'] = $template_args['name'];
 		$template_args['ship_address'] = $template_args['attendee_address'];
 		$template_args['ship_city'] = $template_args['attendee_city'];
 		$template_args['ship_state'] = $template_args['attendee_state'];
 		$template_args['ship_zip'] = $template_args['attendee_zip'];
-		
+
 		$template_args['total_cost'] = number_format($this->transaction->total(), 2, '.', '');
 		$template_args['transaction'] = $this->transaction;
 		$template_args['amount_pd'] = $this->transaction->paid();
@@ -106,7 +106,7 @@ class Invoice {
 					$template_args['net_total'] .= $this->espressoInvoiceTotals( $tax->name(), $tax->total());
 				}
 			}
-						
+
 			$difference = $template_args['amount_pd'] - $template_args['total_cost'];
 			if ($difference < 0) {
 				$text = __('Discount', 'event_espresso');
@@ -115,7 +115,7 @@ class Invoice {
 			}
 			$template_args['discount'] = $this->espressoInvoiceTotals( $text, $difference );
 		}
-		
+
 		$template_args['currency_symbol'] = $EE->CFG->currency->sign;
 		$template_args['pdf_instructions'] = wpautop(stripslashes_deep(html_entity_decode($this->invoice_settings['pdf_instructions'], ENT_QUOTES)));
 		$template_args['shameless_plug'] = apply_filters( 'FHEE_Invoice__send_invoice__shameless_plug',true );
@@ -137,7 +137,7 @@ class Invoice {
 			}
 			$tax_total_line_item = EEM_Line_Item::instance()->get_one(array(array('TXN_ID'=>$this->transaction->ID(),'LIN_type'=>  EEM_Line_Item::type_tax_sub_total)));
 			$attendee_columns_to_show = array('ATT_address','ATT_address2','ATT_city','STA_ID','CNT_ISO','ATT_zip','ATT_phone');
-			
+
 			$template_args['events_for_txn'] = $events_for_txn;
 			$template_args['ticket_line_items_per_event'] = $ticket_line_items_per_event;
 			$template_args['registrations_per_line_item'] = $registrations_per_line_item;
@@ -151,24 +151,24 @@ class Invoice {
 			//it's just an invoice we're accessing
 			$template_args['download_link'] = $this->registration->invoice_url('download');
 		}
-		
-		
-		
+
+
+
 		//require helpers
 		$EE->load_helper( 'Formatter' );
 
 		//Get the HTML as an object
 		EE_Registry::instance()->load_helper('Template');
 		$templates_relative_path = '/modules/gateways/Invoice/lib/templates/';
-		$template_header = EEH_Template::locate_template( $templates_relative_path . 'invoice_header.template.php',TRUE, $template_args, TRUE );
+		$template_header = EEH_Template::locate_template( $templates_relative_path . 'invoice_header.template.php', $template_args, TRUE, TRUE );
 		if(isset($_GET['receipt'])){
-			$template_body = EEH_Template::locate_template( $templates_relative_path . 'receipt_body.template.php',TRUE, $template_args, TRUE );
+			$template_body = EEH_Template::locate_template( $templates_relative_path . 'receipt_body.template.php', $template_args, TRUE, TRUE );
 		}else{
-			$template_body = EEH_Template::locate_template( $templates_relative_path . 'invoice_body.template.php',TRUE, $template_args, TRUE );
+			$template_body = EEH_Template::locate_template( $templates_relative_path . 'invoice_body.template.php', $template_args, TRUE, TRUE );
 		}
-		
-		$template_footer = EEH_Template::locate_template( $templates_relative_path . 'invoice_footer.template.php',TRUE, $template_args, TRUE );
-		
+
+		$template_footer = EEH_Template::locate_template( $templates_relative_path . 'invoice_footer.template.php', $template_args, TRUE, TRUE );
+
 		$copies =  ! empty( $_REQUEST['copies'] ) ? $_REQUEST['copies'] : 1;
 
 		$content = $this->espresso_replace_invoice_shortcodes($template_header);
@@ -194,7 +194,7 @@ class Invoice {
 			require_once(EE_THIRD_PARTY . 'dompdf/dompdf_config.inc.php');
 			$dompdf = new DOMPDF();
 			$dompdf->load_html($content);
-			$dompdf->render();		
+			$dompdf->render();
 			$dompdf->stream($invoice_name . ".pdf", array( 'Attachment' => $download ));
 		}
 		exit(0);
@@ -218,7 +218,7 @@ class Invoice {
 			return false;
 		}
 	}
-	
+
 //Perform the shortcode replacement
 	function espresso_replace_invoice_shortcodes( $content ) {
 
@@ -289,7 +289,7 @@ class Invoice {
 		return $data;
 	}
 
-	
+
 
 	public function espressoInvoiceTotals($text, $total_cost) {
 

@@ -357,9 +357,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				}
 			}	
 			//get pretty status
-			$status = $registration->status_obj();
-			$status_model = EE_Registry::instance()->load_model('Status');
-			$reg_csv_array[$status_model->field_settings_for('STS_code')->get_nicename()] = $status->code();
+			$reg_csv_array[__("Registration Status", 'event_espresso')] = $registration->pretty_status();
+			//get pretty trnasaction status
+			$reg_csv_array[__("Transaction Status", 'event_espresso')] = $registration->transaction()->pretty_status();
 			//get whether or not the user has checked in 
 			$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
 			//get ticket of registration and its price

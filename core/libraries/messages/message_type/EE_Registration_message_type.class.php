@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Registration_message_type
  *
- * Handles frontend registration message types. 
+ * Handles frontend registration message types.
  *
  * @package		Event Espresso
  * @subpackage	includes/core/messages/message_type/EE_Registration_message_type.class.php
@@ -103,7 +103,7 @@ class EE_Registration_message_type extends EE_message_type {
 
 	protected function _default_template_field_content() {
 		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-content.template.php', TRUE );
-		
+
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
 			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
@@ -124,7 +124,7 @@ class EE_Registration_message_type extends EE_message_type {
 	/**
 	 * _set_contexts
 	 * This sets up the contexts associated with the message_type
-	 * 
+	 *
 	 * @access  protected
 	 * @return  void
 	 */
@@ -149,9 +149,6 @@ class EE_Registration_message_type extends EE_message_type {
 				'description' => __('This template is what each registrant for the event will receive when their registration is approved.', 'event_espresso')
 				)
 			);
-
-		$this->_contexts = apply_filters( 'FHEE_set_contexts_'. $this->name, $this->_contexts );
-		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
 
 
@@ -182,7 +179,7 @@ class EE_Registration_message_type extends EE_message_type {
 
 
 	protected function _primary_attendee_addressees() {
-		if ( $this->_single_message ) 
+		if ( $this->_single_message )
 			return array();
 
 		return parent::_primary_attendee_addressees();

@@ -70,7 +70,7 @@ class EEM_Transaction extends EEM_Base {
 	 *		@return void
 	 */	
 	protected function __construct( $timezone ) {	
-		$this->singlular_item = __('Transaction','event_espresso');
+		$this->singular_item = __('Transaction','event_espresso');
 		$this->plural_item = __('Transactions','event_espresso');		
 
 		$this->_tables = array(

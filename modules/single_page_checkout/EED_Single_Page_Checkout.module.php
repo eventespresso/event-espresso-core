@@ -742,7 +742,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				));
 
 				foreach ( $Question_Groups as $QSG_ID => $Question_Group ) {
-					$Questions = $Question_Group->get_many_related( 'Question', array( array( 'QST_admin_only' => $from_admin, 'QST_deleted' => 0 ), 'order_by'=>array( 'Question_Group_Question.QGQ_order' =>'ASC' )));
+					$where = array( 'QST_deleted' => 0 );
+					if ( ! $from_admin ) {
+						$where['QST_admin_only'] = 0;
+					}
+					$Questions = $Question_Group->get_many_related( 'Question', array( $where, 'order_by'=>array( 'Question_Group_Question.QGQ_order' =>'ASC' )));
 					foreach ( $Questions as $Question ) {
 						if( $Question instanceof EE_Question ){
 							// if this question was for an attendee detail, then check for that answer
@@ -775,8 +779,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 				add_filter( 'FHEE__EEH_Form_Fields__label_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_label_wrap' ), 10, 2 );
 				add_filter( 'FHEE__EEH_Form_Fields__input_html', array( 'EED_Single_Page_Checkout', 'reg_form_form_field_input__wrap' ), 10, 2 );
-				$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $Questions, $question_meta, 'div' );
-//				printr( $attendee_questions, '$attendee_questions  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				$attendee_questions = EEH_Form_Fields::generate_question_groups_html2( $Question_Groups, $question_meta, $from_admin, 'div' );
 
 				// show this attendee form?
 				if ( empty( $attendee_questions )) {
@@ -890,8 +893,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// what's left to pay?
 		$amount_owing = $grand_total - $total_payments;
 		$template_args['amount_owing'] = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__amount_owing', $amount_owing );
-
-		EE_Registry::instance()->SSN->set_session_data( array( 'payment_amount' => $amount_owing ));
 
 		//$template_args['grand_total'] = $template_args['amount_owing'] !== FALSE ? $amount_owing : $grand_total;
 
@@ -1023,7 +1024,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			printr( $step_args, '$step_args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 //			d( $step_args );
-			$registration_steps .= EEH_Template::locate_template( $this->_templates[ $reg_step_details['template'] ], TRUE, $step_args, TRUE );
+			$registration_steps .= EEH_Template::locate_template( $this->_templates[ $reg_step_details[ 'template' ] ], $step_args, TRUE, TRUE );
 			// pass step info to js
 			EE_Registry::$i18n_js_strings[ 'reg_steps' ][] = $reg_step_details['display_func'];
 			next( self::$_reg_steps );
@@ -1042,7 +1043,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			'empty_msg' => apply_filters( 'FHEE__Single_Page_Checkout__registration_checkout__empty_msg', __( 'You need to select at least one event before you can proceed with the registration process.', 'event_espresso' ))
 		);
 //		d( $wrapper_args );
-		EE_Registry::instance()->REQ->add_output( EEH_Template::locate_template( $this->_templates['registration_page_wrapper'], TRUE, $wrapper_args, TRUE ));
+		EE_Registry::instance()->REQ->add_output( EEH_Template::locate_template( $this->_templates[ 'registration_page_wrapper' ], $wrapper_args, TRUE, TRUE ));
 	}
 
 

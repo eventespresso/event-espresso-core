@@ -218,7 +218,7 @@ jQuery(document).ready(function($) {
 		},
 
 
-		
+
 		toggle_msg_elements: function( messenger, status, mts ) {
 			$('.ajax-loader-grey').toggle().hide();
 
@@ -231,7 +231,7 @@ jQuery(document).ready(function($) {
 				$active_on_msg = $('.active-on-message', '.' + messenger + '-content'),
 				$msgr_link = $('.item_display'),
 				show_hide_msgr_form = $('#has_form_class').text();
-			
+
 			if ( status == 'on' ) {
 				$( $on_off_button ).attr('value','messenger-off').attr('class', 'on-off-active on-off-action');
 				if ( show_hide_msgr_form !== 'hidden' )
@@ -291,9 +291,9 @@ jQuery(document).ready(function($) {
 						wht = typeof(resp.data.what) === 'undefined' ? setup.what : resp.data.what,
 						whr = typeof(resp.data.where) === 'undefined' ? setup.where : resp.data.where,
 						display_content = resp.error ? resp.error : resp.content;
-                        
-                        display_content = resp.error ? resp.error : resp.content;
-                        
+
+						display_content = resp.error ? resp.error : resp.content;
+
 						if ( whr == '#ajax-notices-container' && resp.notices !== '' ) {
 							wht = 'append';
 						}
@@ -310,10 +310,11 @@ jQuery(document).ready(function($) {
 		display_notices: function(content) {
 			$('.ajax-loader-grey').hide();
 			$('#ajax-notices-container').html(content);
+			$('.espresso-notices').show();
 		},
 
 
-		
+
 
 		display_content: function(content, where, what) {
 			if ( typeof(where) === 'undefined' || typeof(what) === 'undefined' ) {
@@ -333,7 +334,7 @@ jQuery(document).ready(function($) {
 		slide: function($item) {
 			var msgr = messenger.replace('#',''),
 				mt = $( $item ).attr('id').replace('-messagetype-'+msgr+'-handle','');
-			
+
 			$( '.mt-settings-content', '.'+msgr+'-content #'+mt+'-messagetype-'+msgr ).slideToggle();
 		},
 
@@ -349,12 +350,12 @@ jQuery(document).ready(function($) {
 			this.do_ajax(queryparts);
 		}
 	};
-	
+
 
 	//on page load do init and toggle
 	var messenger = $('.item_display a').attr('href');
 	MSG_helper.init().toggle(messenger);
-	
+
 	//defined the global active and inactive message type containers
 	var $active_mts = $( '#active-message-types' ),
 	$inactive_mts = $( '#inactive-message-types' );

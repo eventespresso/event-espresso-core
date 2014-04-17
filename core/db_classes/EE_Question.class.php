@@ -392,7 +392,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * gets an array of EE_Question_Group which relate to thsi question
+	 * gets an array of EE_Question_Group which relate to this question
 	 * @return EE_Question_Group[]
 	 */
 	public function question_groups(){

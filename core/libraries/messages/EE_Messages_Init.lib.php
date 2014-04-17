@@ -127,6 +127,8 @@ class EE_Messages_Init extends EE_Base {
 		//add_action( 'AHEE__EE_Payment_Processor__process_payment__no_payment_made', array( $this, 'payment_reminder'), 10 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
 		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( $this, 'maybe_registration' ), 10, 3 );
+
+		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( $this, 'send_newsletter_message'), 10, 2 );
 	}
 
 
@@ -168,10 +170,12 @@ class EE_Messages_Init extends EE_Base {
 		//let's set up the message type depending on the status
 		$message_type = 'payment' . '_' . strtolower( $payment->pretty_status() );
 
+		$default_message_type = $payment->amount() < 0 ? 'payment_refund' : 'payment';
+
 		//verify this message type is present and active.  If it isn't then we use the default payment message type.
 		$active_mts = $this->_EEMSG->get_active_message_types();
 
-		$message_type = in_array( $message_type, $active_mts ) ? $message_type : 'payment';
+		$message_type = in_array( $message_type, $active_mts ) ? $message_type : $default_message_type;
 
 
 		$this->_EEMSG->send_message( $message_type, $data);
@@ -308,14 +312,35 @@ class EE_Messages_Init extends EE_Base {
 
 		$data = array( $transaction, $payment );
 
+		$message_type_name = $payment->amount() < 0 ? 'payment_refund' : 'payment';
+
 		$this->_load_controller();
-		$success = $this->_EEMSG->send_message( 'payment', $data );
+		$success = $this->_EEMSG->send_message( $message_type_name, $data );
 
 		if ( ! $success ) {
 			EE_Error::add_error( __('Something went wrong and the payment confirmation was NOT resent', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		return $success;
+	}
+
+
+
+	/**
+	 * Callback for AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send trigger
+	 *
+	 * @since   4.3.0
+	 *
+	 * @param  EE_Attendee[]  $contacts   an array of EE_Attendee objects
+	 * @param  int      	      $mtp_id     a specific message template group id.
+	 * @return void
+	 */
+	public function send_newsletter_message( $contacts, $mtp_id ) {
+		//make sure mtp is id and set it in the $_POST global for later messages setup.
+		$_POST['MTP_ID'] = (int) $mtp_id;
+
+		$this->_load_controller();
+		$this->_EEMSG->send_message('newsletter', $contacts);
 	}
 
 

@@ -46,7 +46,7 @@ class EEM_Term extends EEM_Base {
 	}
 
 	protected function __construct(){
-		$this->singlular_item = __('Term','event_espresso');
+		$this->singular_item = __('Term','event_espresso');
 		$this->plural_item = __('Terms','event_espresso');
 		$this->_tables = array(
 			'Term'=> new EE_Primary_Table('terms', 'term_id')

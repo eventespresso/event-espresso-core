@@ -44,16 +44,22 @@ jQuery(document).ready(function($) {
 		}
 		eeTimeout = setTimeout(doneResizing, 100);
 	});
-	
+
 	//prepare dialog
-	var eeDialog = $('.ee-admin-dialog-container').draggable();
+	var eeDialog = $('.ee-admin-dialog-container').draggable( { disabled: true } );
 
 	var dialogHelper = {
 
-		displayModal: function(overlaystick) {
+		displayModal: function(overlaystick, draggable) {
 			overlaystick = typeof(overlaystick) === 'undefined' ? false : overlaystick;
+			draggable = typeof(draggable) === 'undefined' ? false : draggable
 			position_overlay();
 			position_dialog();
+
+			//if draggable has been turned on
+			if ( draggable ) {
+				$('.ee-admin-dialog-container').draggable( "option", "disabled", false );
+			}
 			if ( ! overlaystick ) {
 				overlay.on('click', function() {
 					dialogHelper.closeModal();

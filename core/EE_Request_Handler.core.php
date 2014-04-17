@@ -4,27 +4,27 @@
  *
  * Event Registration and Management Plugin for WordPress
  *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.0
+ * @ package		Event Espresso
+ * @ author			Event Espresso
+ * @ copyright	(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license		http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link				http://www.eventespresso.com
+ * @ version		 4.0
  *
  * ------------------------------------------------------------------------
  *
- * EE_Request_Handler
+ * class EE_Request_Handler
  *
- * @package			Event Espresso
- * @subpackage	/core/
- * @author				Brent Christensen
+ * @package         Event Espresso
+ * @subpackage  /core/
+ * @author          Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 final class EE_Request_Handler {
 
 	/**
-	 * 	@var 	array	$_params 	$_REQUEST paramaters
+	 * 	@var 	array	$_params 	$_REQUEST parameters
 	 *  @access 	private
 	 */
 	private $_params = array();
@@ -62,12 +62,11 @@ final class EE_Request_Handler {
 	 *    class constructor
 	 *
 	 * @access    public
-	 * @param null $wp
+	 * @param WP_Query $wp
 	 * @return \EE_Request_Handler
 	 */
 	public function __construct( $wp = NULL ) {
-//		d( $wp );
-		//if somebody forgot to provide us with WP, thats ok because its global
+		//if somebody forgot to provide us with WP, that's ok because its global
 		if( ! $wp){
 			global $wp;
 		}
@@ -87,8 +86,8 @@ final class EE_Request_Handler {
 	 *    get_request_vars
 	 *
 	 * @access public
-	 * @param null $wp
-	 * @return int
+	 * @param WP_Query $wp
+	 * @return void
 	 */
 	public function get_request_vars( $wp = NULL ) {
 		if ( ! is_admin() ) {
@@ -138,7 +137,7 @@ final class EE_Request_Handler {
 	 *
 	 * @access public
 	 * @param WP_Query $wp
-	 * @return int
+	 * @return string
 	 */
 	public function get_post_name_from_request( $wp = NULL ) {
 		if( ! $wp){
@@ -156,7 +155,8 @@ final class EE_Request_Handler {
 			if ( ! is_numeric( $possible_post_name )) {
 				global $wpdb;
 				$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_status="publish" AND post_name=%d';
-				if ( $possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $possible_post_name ))) {
+				$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $possible_post_name ));
+				if ( $possible_post_name ) {
 					$post_name = $possible_post_name;
 				}
 			}
@@ -164,7 +164,8 @@ final class EE_Request_Handler {
 		if ( ! $post_name && $this->get( 'post_id' )) {
 			global $wpdb;
 			$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_status="publish" AND ID=%d';
-			if( $possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $this->get( 'post_id' )))) {
+			$possible_post_name = $wpdb->get_var( $wpdb->prepare( $SQL, $this->get( 'post_id' )));
+			if( $possible_post_name ) {
 				$post_name = $possible_post_name;
 			}
 		}
@@ -174,10 +175,11 @@ final class EE_Request_Handler {
 
 
 	/**
-	 * 	get_post_type_from_request
+	 *    get_post_type_from_request
 	 *
-	 * 	@access public
-	 * 	@return int
+	 * @access public
+	 * @param WP_Query $wp
+	 * @return mixed
 	 */
 	public function get_post_type_from_request( $wp = NULL ) {
 		if( ! $wp){
@@ -199,7 +201,7 @@ final class EE_Request_Handler {
 		$post_type_CPT_endpoints = array_flip( $espresso_CPT_endpoints );
 		// was a post name passed ?
 		if (  isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] )) {
-			// kk we know this is an epsresso page, but is it a specific post ?
+			// kk we know this is an espresso page, but is it a specific post ?
 			if ( ! $this->get( 'post_name' )) {
 				// there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
 				$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : NULL;
@@ -225,12 +227,12 @@ final class EE_Request_Handler {
 
 
 
-
 	/**
-	 * 	is_espresso_page
+	 *    is_espresso_page
 	 *
-	 *  @access 	public
-	 *  @return 	mixed
+	 * @access    public
+	 * @param null $value
+	 * @return    mixed
 	 */
 	public function set_espresso_page( $value = NULL ) {
 		$value = $value ? $value : $this->test_for_espresso_page();
@@ -257,7 +259,7 @@ final class EE_Request_Handler {
 	 * @access    public
 	 * @param $key
 	 * @param $value
-	 * @return    mixed
+	 * @return    void
 	 */
 	public function set( $key, $value ) {
 		$this->_params[ $key ] = $value;
@@ -366,17 +368,56 @@ final class EE_Request_Handler {
 
 
 
-
 	/**
-	 *		@ override magic methods
-	 *		@ return void
+	 * @param $a
+	 * @param $b
+	 * @return bool
 	 */
 	public function __set($a,$b) { return FALSE; }
+
+
+
+	/**
+	 * @param $a
+	 * @return bool
+	 */
 	public function __get($a) { return FALSE; }
+
+
+
+	/**
+	 * @param $a
+	 * @return bool
+	 */
 	public function __isset($a) { return FALSE; }
+
+
+
+	/**
+	 * @param $a
+	 * @return bool
+	 */
 	public function __unset($a) { return FALSE; }
+
+
+
+	/**
+	 * @return bool
+	 */
 	public function __clone() { return FALSE; }
+
+
+
+	/**
+	 * @return bool
+	 */
 	public function __wakeup() { return FALSE; }
+
+
+
+	/**
+	 *
+	 */
 	public function __destruct() { return FALSE; }
 
 
