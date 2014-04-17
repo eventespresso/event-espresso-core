@@ -196,14 +196,16 @@ class EE_CPT_Strategy extends EE_BASE {
 					// if post types is an array but the tag archive term is NOT part of that array
 					if ( is_array( $WP_Query->query_vars['post_type'] ) && ! in_array( $term->post_type, $WP_Query->query_vars['post_type'] )) {
 						// add to existing array
-						$WP_Query->query_vars['post_type'][] = $term->post_type;
+						$post_types = array_merge ( $WP_Query->query_vars['post_type'], array( $term->post_type ));
+						$WP_Query->set( 'post_type', $post_types );
+
 					} else {
 						// make post type an array including our CPT
-						$WP_Query->query_vars['post_type'] = array( $WP_Query->query_vars['post_type'], $term->post_type );
+						$WP_Query->set( 'post_type', array( $WP_Query->query_vars['post_type'], $term->post_type ));
 					}
 				} else {
 					// just set post_type to our CPT
-					$WP_Query->query_vars['post_type'] = $term->post_type;
+					$WP_Query->set( 'post_type', $term->post_type );
 				}
 			}
 		}
@@ -295,7 +297,7 @@ class EE_CPT_Strategy extends EE_BASE {
 						// creates classname like:  CPT_Event_Strategy
 						$CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
 						// load and instantiate
-						 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));
+						$CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));
 
 						// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
 						// here's the list of available filters in the WP_Query object
