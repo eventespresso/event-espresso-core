@@ -87,16 +87,29 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		$class_name = strpos( $class_name, 'EE_' ) === 0 ? $class_name : 'EE_' . $class_name;
 		//setup $_addon_settings array from incoming values.
 		self::$_addon_settings[ self::$_addon_name ] = array(
+			// generated from the addon name, changes something like "calendar" to "EE_Calendar"
 			'class_name' 			=> $class_name,
+			// the PHP version for the addon
 			'version' 					=> isset( $setup_args['version'] ) ? (string)$setup_args['version'] : '',
+			// the minimum version of EE Core that the addon will work with
 			'min_core_version' => isset( $setup_args['min_core_version'] ) ? (string)$setup_args['min_core_version'] : '',
-			'base_path' 				=> isset( $setup_args['base_path'] ) ? (string)$setup_args['base_path'] : '',
+			// full server path to plugin root folder
+			'plugin_dir_path' 	=> isset( $setup_args['plugin_dir_path'] ) ? (string)$setup_args['plugin_dir_path'] : '',
+			// path to folder containing files for integrating with the EE core admin and/or setting up EE admin pages
 			'admin_path' 			=> isset( $setup_args['admin_path'] ) ? (string)$setup_args['admin_path'] : '',
+			// a method to be called when the EE Admin is first invoked, can be used for hooking into any admin page
+			'admin_callback' 	=> isset( $setup_args['admin_callback'] ) ? (string)$setup_args['admin_callback'] : '',
+			// the class name for this addon's configuration settings object
 			'config_class' 			=> isset( $setup_args['config_class'] ) ? (string)$setup_args['config_class'] : '',
+			// an array of "class names" => "full server paths" for any classes that might be invoked by the addon
 			'autoloader_paths' => isset( $setup_args['autoloader_paths'] ) ? (array)$setup_args['autoloader_paths'] : array(),
+			// array of full server paths to any data migration scripts used by the addon
 			'dms_paths' 			=> isset( $setup_args['dms_paths'] ) ? (array)$setup_args['dms_paths'] : array(),
+			// array of full server paths to any modules used by the addon
 			'module_paths' 		=> isset( $setup_args['modules'] ) ? (array)$setup_args['modules'] : array(),
+			// array of full server paths to any shortcodes used by the addon
 			'shortcode_paths' 	=> isset( $setup_args['shortcodes'] ) ? (array)$setup_args['shortcodes'] : array(),
+			// array of full server paths to any widgets used by the addon
 			'widget_paths' 		=> isset( $setup_args['widgets'] ) ? (array)$setup_args['widgets'] : array(),
 		);
 		// we need cars
@@ -149,9 +162,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	public static function instantiate_addon() {
 		// load and instantiate main addon class
-		$addon = EE_Registry::instance()->load_addon( self::$_addon_settings[ self::$_addon_name ]['base_path'], self::$_addon_settings[ self::$_addon_name ]['class_name'] );
+		$addon = EE_Registry::instance()->load_addon( self::$_addon_settings[ self::$_addon_name ]['plugin_dir_path'], self::$_addon_settings[ self::$_addon_name ]['class_name'] );
 		$addon->set_version( self::$_addon_settings[ self::$_addon_name ]['version'] );
 		$addon->set_min_core_version( self::$_addon_settings[ self::$_addon_name ]['min_core_version'] );
+		// load_admin_controller
+		if ( ! empty( self::$_addon_settings[ self::$_addon_name ]['min_core_version'] )) {
+			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_addon_settings[ self::$_addon_name ]['admin_callback'] ));
+		}
 	}
 
 
