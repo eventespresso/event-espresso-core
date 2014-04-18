@@ -46,7 +46,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	protected $_QSG_identifier=NULL;
 
 	/**
-	 * Question group descripton
+	 * Question group description
 	 * @access protected
 	 * @var string
 	 */
@@ -184,7 +184,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Returns wehther to show the group's descripton
+	 * Returns wehther to show the group's description
 	 * on the frontend
 	 * @access public
 	 * @return boolean

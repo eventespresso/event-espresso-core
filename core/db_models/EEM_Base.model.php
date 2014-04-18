@@ -2133,7 +2133,7 @@ abstract class EEM_Base extends EE_Base{
 		if($field){
 			return $field->get_qualified_column();
 		}else{
-			throw new EE_Error(sprintf(__("There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",'event_espresos'),$field_name,get_class($this)));
+			throw new EE_Error(sprintf(__("There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",'event_espresso'),$field_name,get_class($this)));
 		}
 	}
 
