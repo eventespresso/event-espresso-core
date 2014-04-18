@@ -55,7 +55,7 @@ class EEM_Message_Template extends EEM_Base {
 	 * 		@return void
 	 */
 	protected function __construct() {
-		$this->singlular_item = __('Message Template','event_espresso');
+		$this->singular_item = __('Message Template','event_espresso');
 		$this->plural_item = __('Message Templates','event_espresso');		
 		
 		$this->_tables = array(

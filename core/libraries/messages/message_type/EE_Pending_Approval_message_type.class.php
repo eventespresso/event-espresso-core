@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Pending_Approval_message_type
  *
- * Handles frontend registration message types. 
+ * Handles frontend registration message types.
  *
  * @package		Event Espresso
  * @subpackage	core/libraries/messages/message_type/EE_Pending_Approval_message_type.class.php
@@ -99,7 +99,7 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 	protected function _default_template_field_content() {
 		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/pending_approval-message-type-content.template.php', TRUE );
-		
+
 		foreach ( $this->_contexts as $context => $details ) {
 			$tcontent[$context]['main'] = $content;
 			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-attendee-list.template.php', TRUE );
@@ -120,7 +120,7 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 	/**
 	 * _set_contexts
 	 * This sets up the contexts associated with the message_type
-	 * 
+	 *
 	 * @access  protected
 	 * @return  void
 	 */
@@ -142,8 +142,6 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 				)
 			);
 
-		$this->_contexts = apply_filters( 'FHEE_set_contexts_'. $this->name, $this->_contexts );
-		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
 
 

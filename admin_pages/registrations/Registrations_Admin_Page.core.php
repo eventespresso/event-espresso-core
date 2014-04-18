@@ -753,7 +753,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
-		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
+		$CAT_ID = isset( $this->_req_data['EVT_CAT'] ) ? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
 		$reg_status = isset( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
 		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
 		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
@@ -799,7 +799,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$_where['EVT_ID']=$EVT_ID;
 		}
 		if($CAT_ID){
-			throw new EE_Error("not sure how to handle filtering event categories here");
+			$_where['Event.Term_Taxonomy.term_id'] = $CAT_ID;
 		}
 		if($reg_status){
 			$_where['STS_ID'] = $reg_status;
@@ -1784,6 +1784,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$REGM = EEM_Registration::instance();
 
 		$success = 1;
+		$error = 0;
 
 		$tickets = array();
 		$dtts = array();
@@ -1803,6 +1804,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
 
 				$REG = $REGM->get_one_by_ID($REG_ID);
+				$payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
+				if ( $payment_count > 0 ) {
+					$name = $REG->attendee()->full_name();
+					$error = 1;
+					$success = 0;
+					EE_Error::add_error( sprintf( __('The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.', 'event_espresso'), $name ), __FILE__, __FUNCTION__, __LINE__ );
+					continue; //can't trash this registration because it has payments.
+				}
 				$ticket = $REG->get_first_related('Ticket');
 				$tickets[$ticket->ID()] = $ticket;
 				$dtt = $ticket->get_many_related('Datetime');
@@ -1811,6 +1820,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$updated = $trash ? $REG->delete() : $REG->restore();
 				if ( !$updated ) {
 					$success = 0;
+				} else {
+					$success = 2;
 				}/**/
 			}
 
@@ -1834,7 +1845,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Registration', 'event_espresso' );
 		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
-		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ) );
+		$overwrite_msgs = $error ? TRUE : FALSE;
+		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ), $overwrite_msgs );
 	}
 
 

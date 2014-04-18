@@ -84,7 +84,7 @@ class EEM_Line_Item extends EEM_Base {
 	 * 		@return void
 	 */
 	protected function __construct( $timezone ) {
-		$this->singlular_item = __('Line Item','event_espresso');
+		$this->singular_item = __('Line Item','event_espresso');
 		$this->plural_item = __('Line Items','event_espresso');		
 
 		$this->_tables = array(

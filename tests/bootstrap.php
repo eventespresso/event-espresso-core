@@ -1,14 +1,25 @@
 <?php
+/**
+ * Bootstrap for EE Unit Tests
+ *
+ * @since 		4.3.0
+ * @package 		Event Espresso
+ * @subpackage 	Tests
+ */
 
-$_tests_dir = getenv('WP_TESTS_DIR');
-if ( !$_tests_dir ) $_tests_dir = dirname( __FILE__ ) . '/../../../../../tests/phpunit';
-
-require_once $_tests_dir . '/includes/functions.php';
-
-function _manually_load_plugin() {
-	require dirname( __FILE__ ) . '/../espresso.php';
+require( dirname( __FILE__ ) . '/includes/define-constants.php' );
+if ( ! file_exists( WP_TESTS_DIR . '/includes/functions.php' ) ) {
+	die( "The WordPress PHPUnit test suite could not be found.\n" );
 }
-tests_add_filter( 'muplugins_loaded', '_manually_load_plugin' );
 
-require $_tests_dir . '/includes/bootstrap.php';
+require_once WP_TESTS_DIR . '/includes/functions.php';
 
+function _install_and_load_event_espresso() {
+	require EE_TESTS_DIR . 'includes/loader.php';
+}
+tests_add_filter( 'muplugins_loaded', '_install_and_load_event_espresso' );
+
+require WP_TESTS_DIR . '/includes/bootstrap.php';
+
+//Load the EE_specific testing tools
+require EE_TESTS_DIR . 'includes/EE_UnitTestCase.class.php';

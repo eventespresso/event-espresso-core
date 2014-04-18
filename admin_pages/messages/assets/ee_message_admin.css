@@ -81,3 +81,94 @@
 	-moz-border-radius: 6px;
 	border-radius: 6px;
 }
+
+.ee-msg-switcher-container {
+	margin-top: 8px;
+}
+
+/** overview table styles **/
+
+#Custom_Messages_Template_List_Table-table-frm .column-name {
+	width: 14%;
+}
+
+#Messages_Template_List_Table-table-frm .column-messenger, #Custom_Messages_Template_List_Table-table-frm .column-messenger {
+	width: 14%;
+}
+
+#Messages_Template_List_Table-table-frm .column-message_type, #Custom_Messages_Template_List_Table-table-frm .column-message_type {
+	width: 12%;
+}
+
+#Messages_Template_List_Table-table-frm .column-messages_sent, #Custom_Messages_Template_List_Table-table-frm .column-messages_sent {
+	width: 10%;
+}
+
+#Messages_Template_List_Table-table-frm .column-description {
+	width: 52%;
+}
+
+#Custom_Messages_Template_List_Table-table-frm .column-description {
+	width: 40%;
+}
+
+#Messages_Template_List_Table-table-frm .column-actions, #Custom_Messages_Template_List_Table-table-frm .column-actions {
+	width: 10%;
+}
+
+#Custom_Messages_Template_List_Table-table-frm .column-events {
+	width: 10%;
+	text-align: center;
+}
+
+#mtp_valid_shortcodes .shortcode-field-table {
+	margin-top: 12px;
+}
+
+#mtp_valid_shortcodes .ee-shortcode-table-scroll {
+	max-height: 400px;
+	overflow: auto;
+}
+
+#ee-msg-context-switcher-frm {
+    display: inline-block;
+}
+.messages-preview-button {
+    display: inline-block;
+}
+
+#espresso_espresso_messages_editor_overview #minor-publishing {
+    border: none;
+}
+
+#minor-publishing ul li {
+    text-align: right;
+}
+
+.resetbutton {
+	margin-right: 5px;
+}
+
+.mtp-inactive {
+	color: #AC9D93;
+}
+
+/** editor styles **/
+#ee-msg-non-global-fields-MTP_description {
+	height: 150px;px;
+}
+
+.non-global-mtp-fields {
+	background-color: #dfdfdf;
+	padding: 10px;
+	-webkit-border-radius: 6px;
+	-moz-border-radius: 6px;
+	border-radius: 6px;
+}
+
+#ee-msg-edit-frm h4 {
+	font-size: 1.5em;
+	margin-top: 40px;
+	margin-bottom: 10px;
+
+}

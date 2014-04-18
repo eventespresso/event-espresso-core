@@ -657,7 +657,7 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		*	submit a step of registraion form
+		*	submit a step of registration form
 		*/
 		process_next_step : function( next_step_btn ) {
 			var step = $(next_step_btn).attr('rel');
@@ -707,7 +707,7 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		*	submit a step of registraion form
+		*	submit a step of registration form
 		*/
 		submit_reg_form : function( step, next_step, form_to_check ) {
 
@@ -1013,7 +1013,7 @@ jQuery(document).ready(function($) {
 
 
 	/**
-	*	submit registraion form
+	*	submit registration form
 	*/
 	$('#single-page-checkout').on( 'click', '.spco-next-step-btn', function(e) {
 		e.preventDefault();

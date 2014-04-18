@@ -135,7 +135,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 						'filename' => 'import_page'
 						)
 					),
-                'help_tour' => array('Event_Import_Help_Tour'),
+				'help_tour' => array('Event_Import_Help_Tour'),
 				'metaboxes' => $default_espresso_boxes,
 				'require_nonce' => FALSE
 		);

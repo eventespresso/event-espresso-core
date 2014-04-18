@@ -191,8 +191,6 @@
 							$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';
 							$datetime_name = $datetime->name();
 							$html .= ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b>' : '';
-							$html .= $add_breaks ? '<br />' : '';
-							$datetime_description = $datetime->description();
 							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
 							$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $dt_frmt ) . ' &nbsp; &nbsp; ';
 							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';

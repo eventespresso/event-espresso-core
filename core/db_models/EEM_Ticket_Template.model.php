@@ -39,7 +39,7 @@ class EEM_Ticket_Template extends EEM_Base {
 	 *		@return void
 	 */
 	protected function __construct( $timezone ) {
-		$this->singlular_item = __('Ticket Template','event_espresso');
+		$this->singular_item = __('Ticket Template','event_espresso');
 		$this->plural_item = __('Ticket Templates','event_espresso');		
 
 		$this->_tables = array(
@@ -50,7 +50,7 @@ class EEM_Ticket_Template extends EEM_Base {
 				'TTM_ID'=>new EE_Primary_Key_Int_Field('TTM_ID', __('Ticket Template ID','event_espresso')),
 				'TTM_name'=>new EE_Plain_Text_Field('TTM_name', __('The name of the ticket template','event_espresso'), false, '' ),
 				'TTM_description'=>new EE_Plain_Text_Field('TTM_description', __('The description for the ticket template','event_espresso'), true, '' ),
-				'TTM_file'=>new EE_Plain_Text_Field('TTM_file', __('The file name for the actual tempalte file saved on disk','event_espresso'), true, '' ),
+				'TTM_file'=>new EE_Plain_Text_Field('TTM_file', __('The file name for the actual template file saved on disk','event_espresso'), true, '' ),
 			));
 		$this->_model_relations = array(
 			'Ticket'=>new EE_Has_Many_Relation()

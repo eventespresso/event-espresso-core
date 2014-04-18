@@ -139,4 +139,209 @@ class EEH_MSG_Template {
 		return $installed_message_objects;
 	}
 
+
+
+
+	/**
+	 * This will return an array of shortcodes => labels from the
+	 * messenger and message_type objects associated with this
+	 * template.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param string $message_type
+	 * @param string $messenger
+	 * @param array $fields what fields we're returning valid
+	 *                      	  shortcodes for.  If empty then we assume
+	 *                      	  all fields are to be returned. Optional.
+	 * @param string $context what context we're going to return
+	 *                        	      shortcodes for. Optional.
+	 * @param bool  $merged If TRUE then we don't return shortcodes
+	 *                      	     indexed by field but instead an array of
+	 *                      	     the unique shortcodes for all the given (
+	 *                      	     or all) fields. Optional.
+	 * @return mixed (array|bool) an array of shortcodes in the format
+	 *                            	           array( '[shortcode] => 'label') OR
+	 *                            	           FALSE if no shortcodes found.
+	 */
+	public static function get_shortcodes( $message_type, $messenger, $fields = array(), $context = 'admin', $merged = FALSE ) {
+		$valid_shortcodes = array();
+		$messenger_name = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $messenger ) ) );
+		$mt_name = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $message_type ) ) );
+
+		//convert slug to object
+		$messenger = self::messenger_obj( $messenger );
+
+		//validate class for getting our list of shortcodes
+		$classname = 'EE_Messages_' . $messenger_name . '_' . $mt_name . '_Validator';
+		if ( !class_exists( $classname ) ) {
+			$msg[] = __( 'The Validator class was unable to load', 'event_espresso');
+			$msg[] = sprintf( __('The class name compiled was %s. Please check and make sure the spelling and case is correct for the class name and that there is an autoloader in place for this class', 'event_espresso'), $classname );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		$a = new ReflectionClass( $classname );
+		$_VLD = $a->newInstance( array(), $context );
+		$valid_shortcodes = $_VLD->get_validators();
+
+		//let's make sure we're only getting the shortcode part of the validators
+		$shortcodes = $fields = array();
+		foreach( $valid_shortcodes as $field => $validators ) {
+			$shortcodes[$field] = $validators['shortcodes'];
+			$fields[] = $field;
+		}
+		$valid_shortcodes = $shortcodes;
+
+		//if not all fields let's make sure we ONLY include the shortcodes for the specified fields.
+		if ( !empty( $fields ) ) {
+			$specified_shortcodes = array();
+			foreach ( $fields as $field ) {
+				if ( isset( $valid_shortcodes[$field] ) )
+					$specified_shortcodes[$field] = $valid_shortcodes[$field];
+			}
+			$valid_shortcodes = $specified_shortcodes;
+		}
+
+
+		//if not merged then let's replace the fields with the localized fields
+		if ( !$merged ) {
+			//let's get all the fields for the set messenger so that we can get the localized label and use that in the returned array.
+			$field_settings = $messenger->get_template_fields();
+			$localized = array();
+			foreach ( $valid_shortcodes as $field => $shortcodes ) {
+				//get localized field label
+				if ( isset( $field_settings[$field] ) ) {
+					//possible that this is used as a main field.
+					if ( empty( $field_settings[$field] ) ) {
+						if ( isset( $field_settings[$field]['extra'][$field] ) ) {
+							$_field = $field_settings[$field]['extra'][$field]['main']['label'];
+						} else {
+							$_field = $field;
+						}
+					} else {
+						$_field = $field_settings[$field]['label'];
+					}
+				} else if ( isset( $field_settings['extra'] ) ) {
+					//loop through extra "main fields" and see if any of their children have our field
+					foreach ( $field_settings['extra'] as $main_field => $fields ) {
+						if ( isset( $fields[$field] ) )
+							$_field = $fields[$field]['label'];
+						else
+							$_field = $field;
+					}
+				} else {
+					$_field = $field;
+				}
+				$localized[$_field] = $shortcodes;
+			}
+			$valid_shortcodes = $localized;
+		}
+
+
+		//if $merged then let's merge all the shortcodes into one list NOT indexed by field.
+		if ( $merged ) {
+			$merged_codes = array();
+			foreach ( $valid_shortcodes as $field => $shortcode ) {
+				foreach ( $shortcode as $code => $label ) {
+					if ( isset( $merged_codes[$code] ) )
+						continue;
+					else
+						$merged_codes[$code] = $label;
+				}
+			}
+			$valid_shortcodes = $merged_codes;
+		}
+
+		return $valid_shortcodes;
+	}
+
+
+
+
+	/**
+	 * Get Messenger object.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param string $messenger messenger slug for the messenger object we want to retrieve.
+	 * @return EE_messenger
+	 */
+	public static function messenger_obj( $messenger ) {
+		$ref = ucwords( str_replace( '_', ' ', $messenger ) );
+		$ref = str_replace( ' ', '_', $ref );
+		$classname = 'EE_' . $ref . '_messenger';
+
+		if ( !class_exists($classname) ) {
+			$msg[] = __('Messenger class loading fail.', 'event_espresso');
+			$msg[] = sprintf( __('The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate messenger file name (minus the extension) in the "/core/messages/messenger/" directory', 'event_espresso'), $classname );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		//made it here so let's instantiate the object and return it.
+		$a = new ReflectionClass($classname);
+		return $a->newInstance();
+	}
+
+
+
+	/**
+	 * get Message type object
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param string  $message_type  the slug for the message type object to retrieve
+	 * @return EE_message_type
+	 */
+	public static function message_type_obj( $message_type ) {
+		$ref = ucwords( str_replace( '_', ' ', $message_type ) );
+		$ref = str_replace( ' ', '_', $ref );
+		$classname = 'EE_' . $ref . '_message_type';
+
+		if ( !class_exists($classname) ) {
+			$msg[] = __('Message Type class loading fail.', 'event_espresso');
+			$msg[] = sprintf( __('The class name checked was "%s". Please check the spelling and case of this reference and make sure it matches the appropriate message type file name (minus the extension) in the "/core/messages/message_type/" directory', 'event_espresso'), $classname );
+			throw new EE_Error( implode( '||', $msg ) );
+		}
+
+		//made it here so let's instantiate the object and return it.
+		$a = new ReflectionClass($classname);
+		return $a->newInstance();
+	}
+
+
+
+
+
+	/**
+	 * Given a message_type slug, will return whether that message type is active in the system or not.
+	 *
+	 * @since    4.3.0
+	 * @param  string   $message_type message type to check for.
+	 * @return boolean
+	 */
+	public static function is_mt_active( $message_type ) {
+		self::_set_autoloader();
+		$MSG = EE_Registry::instance()->load_lib('messages');
+		$active_mts = $MSG->get_active_message_types();
+		return in_array( $message_type, $active_mts );
+	}
+
+
+
+	/**
+	 * Given a messenger slug, will return whether that messenger is active in the system or not.
+	 *
+	 * @since    4.3.0
+	 *
+	 * @param  string  $messenger slug for messenger to check.
+	 * @return boolean
+	 */
+	public static function is_messenger_active( $messenger ) {
+		self::_set_autoloader();
+		$MSG = EE_Registry::instance()->load_lib('messenger');
+		$active_messengers = $MSG->get_active_messengers();
+		$active_messengers = array_keys( $active_messengers );
+		return in_array( $messenger, $active_messengers );
+	}
+
 }

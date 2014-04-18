@@ -51,7 +51,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	protected $_question_model;
 
 	/**
-	 * _question_group_model EEM_QUestion_group instance (for queries)
+	 * _question_group_model EEM_Question_group instance (for queries)
 	 * @var EEM_Question_Group
 	 */
 	protected $_question_group_model;
@@ -223,7 +223,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_add_question() {
 		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'espresso_registration_form_single' );
 	}
 	public function load_scripts_styles_edit_question() {
@@ -297,6 +297,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	protected function _set_column_values_for(EEM_Base $model){
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$set_column_values=array();
+
+		//some initial checks for proper values.
+		//if QST_admin_only, then no matter what QST_required is we disable.
+		if ( !empty( $this->_req_data['QST_admin_only'] ) ) {
+			$this->_req_data['QST_required'] = 0;
+		}
 		foreach($model->field_settings() as $fieldName=>$settings){
 			// basically if QSG_identifier is empty or not set
 			if ( $fieldName == 'QSG_identifier' && ( isset( $this->_req_data['QSG_identifier'] ) && empty( $this->_req_data['QSG_identifier'] ) )) {
@@ -467,7 +473,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
-	 * for both when searchign for trahsed and untrahse dones)
+	 * for both when searchign for trashed and untrahse dones)
 	 * @param EEM_Base $model either EEM_Question or EEM_Question_Group
 	 * @return array lik EEM_Base::get_all's $query_params parameter
 	 */

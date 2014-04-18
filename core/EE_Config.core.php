@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	core/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -42,16 +42,16 @@ final class EE_Config {
 	 * @var EE_Admin_Config
 	 */
 	public $admin;
-	
+
 	/**
 	 *
 	 * @var EE_Core_Config
 	 */
 	public $core;
-	
+
 	/**
-	 * 
-	 * @var EE_Currency_Config 
+	 *
+	 * @var EE_Currency_Config
 	 */
 	public $currency;
 
@@ -66,7 +66,7 @@ final class EE_Config {
 	 * @var EE_Organization_Config
 	 */
 	public $organization;
-	
+
 	/**
 	 *
 	 * @var EE_Registration_Config
@@ -75,7 +75,7 @@ final class EE_Config {
 
 	/**
 	 *
-	 * @var EE_Template_Config 
+	 * @var EE_Template_Config
 	 */
 	public $template_settings;
 
@@ -117,19 +117,18 @@ final class EE_Config {
 
 
 
-
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	private
-	 *  @return 	void
+	 * @access    private
+	 * @return \EE_Config
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin',$this );
 		//set defaults
 		$this->core = new EE_Core_Config();
 		$this->organization = new EE_Organization_Config();
-		$this->currency = new EE_Currency_Config();		
+		$this->currency = new EE_Currency_Config();
 		$this->registration = new EE_Registration_Config();
 		$this->admin = new EE_Admin_Config();
 		$this->template_settings = new EE_Template_Config();
@@ -204,10 +203,12 @@ final class EE_Config {
 
 
 	/**
-	 * 	update_espresso_config'
+	 *    update_espresso_config
 	 *
-	 *  @access 	public
-	 *  @return 	boolean success 
+	 * @access   public
+	 * @param   bool $add_success
+	 * @param   bool $add_error
+	 * @return   bool
 	 */
 	public function update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
 		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
@@ -245,9 +246,10 @@ final class EE_Config {
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it
 			if ( $post_name != 'posts' ) {
-				foreach( $shortcodes as $shortcode => $post_id ){
+				foreach( $shortcodes as $post_id ) {
 					// make sure post still exists
-					if ( $post = get_post( $post_id )) {
+					$post = get_post( $post_id );
+					if ( $post ) {
 						// check that the post name matches what we have saved
 						if ( $post->post_name == $post_name ) {
 							// if so, then break before hitting the unset below
@@ -267,7 +269,7 @@ final class EE_Config {
 
 	/**
 	 * 	register_shortcodes_and_modules.
-	 * 	
+	 *
 	 * 	At this point, it's too early to tell if we're maintenance mode or not.
 	 * 	In fact, this is where we give modules a chance to let core know they exist
 	 * 	so they can help trigger maintenance mode if it's needed
@@ -307,10 +309,9 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	public function widgets_init() {
-		//only init widgets on admin pages when not in complete maintenance, and 
+		//only init widgets on admin pages when not in complete maintenance, and
 		//on frontend when not in any maintenance mode
-		if( (is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || 
-				! EE_Maintenance_Mode::instance()->level()){
+		if (( is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || ! EE_Maintenance_Mode::instance()->level() ) {
 			// grab list of installed widgets
 			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
 			// filter list of modules to register
@@ -349,7 +350,7 @@ final class EE_Config {
 		if ( ! is_readable( $widget_path . DS . $widget_class . $widget_ext )) {
 			$msg = sprintf( __( 'The requested %s widget file could not be found or is not readable due to file permissions.', 'event_espresso' ), $widget_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			return;
 		}
 		// load the widget class file
 		require_once( $widget_path . DS . $widget_class . $widget_ext );
@@ -357,24 +358,20 @@ final class EE_Config {
 		if ( ! class_exists( $widget_class )) {
 			$msg = sprintf( __( 'The requested %s widget class does not exist.', 'event_espresso' ), $widget_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}		
-		if ( register_widget( $widget_class )) {
-			// add to array of registered widgets
-			EE_Registry::instance()->widgets[ $widget_class ] = $widget_path . DS . $widget_class . $widget_ext;			
-			return TRUE;
-		} else {
-			return FALSE;
+			return;
 		}
-	}	
-	
+		register_widget( $widget_class );
+		// add to array of registered widgets
+		EE_Registry::instance()->widgets[ $widget_class ] = $widget_path . DS . $widget_class . $widget_ext;
+	}
+
 
 
 	/**
 	 * 		_register_shortcodes
 	 *
 	 * 		@access private
-	 * 		@return void
+	 * 		@return array
 	 */
 	private function _register_shortcodes() {
 		// load base class
@@ -399,7 +396,7 @@ final class EE_Config {
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$shortcode_path - full path up to and including shortcode folder
-	 *  @return 	void
+	 *  @return 	bool
 	 */
 	public static function register_shortcode( $shortcode_path = NULL ) {
 		do_action( 'AHEE__EE_Config__register_shortcode__begin',$shortcode_path );
@@ -429,7 +426,7 @@ final class EE_Config {
 		// add to array of registered shortcodes
 		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
-	}	
+	}
 
 
 
@@ -438,7 +435,7 @@ final class EE_Config {
 	 * 		_register_modules
 	 *
 	 * 		@access private
-	 * 		@return void
+	 * 		@return array
 	 */
 	private function _register_modules() {
 		// load base class
@@ -458,7 +455,7 @@ final class EE_Config {
 		// filter list of installed modules
 		return apply_filters( 'FHEE__EE_Config___register_modules__installed_modules', EE_Registry::instance()->modules );
 	}
-	
+
 
 
 
@@ -467,7 +464,7 @@ final class EE_Config {
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$module_path - full path up to and including module folder
-	 *  @return 	void
+	 *  @return 	bool
 	 */
 	public static function register_module( $module_path = NULL ) {
 		do_action( 'AHEE__EE_Config__register_module__begin', $module_path );
@@ -501,7 +498,7 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__register_module__complete', $module, EE_Registry::instance()->modules[ $module ] );
 		return TRUE;
 	}
-	
+
 
 	/**
 	 * 	_initialize_shortcodes
@@ -519,18 +516,18 @@ final class EE_Config {
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
 			// which set hooks ?
 			if ( is_admin() ) {
-				// fire immediately			
+				// fire immediately
 				call_user_func( array( $shortcode_class, 'set_hooks_admin' ));
 			} else {
 				// delay until other systems are online
 				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $shortcode_class,'set_hooks' ));
-				// convert classname to UPPERCASE and create WP shortcode. 
-				// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes() 
+				// convert classname to UPPERCASE and create WP shortcode.
+				// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
 				add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
 			}
 		}
 	}
-	
+
 
 
 	/**
@@ -549,7 +546,7 @@ final class EE_Config {
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
 			// which set hooks ?
 			if ( is_admin() ) {
-				// fire immediately			
+				// fire immediately
 				call_user_func( array( $module_class, 'set_hooks_admin' ));
 			} else {
 				// delay until other systems are online
@@ -568,7 +565,7 @@ final class EE_Config {
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	string 		$module - module name (classname without EED_ prefix)
 	 *  @param 	string 		$method_name - the actual module method to be routed to
-	 *  @return 	void
+	 *  @return 	bool
 	 */
 	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
 		do_action( 'AHEE__EE_Config__register_route__begin',$route,$module,$method_name );
@@ -589,6 +586,7 @@ final class EE_Config {
 			return FALSE;
 		}
 		EE_Config::$_module_route_map[ $route ] = array( 'EED_' . $module, $method_name );
+		return TRUE;
 	}
 
 
@@ -598,7 +596,7 @@ final class EE_Config {
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public static function get_route( $route = NULL ) {
 		do_action( 'AHEE__EE_Config__get_route__begin',$route );
@@ -612,13 +610,14 @@ final class EE_Config {
 
 
 	/**
-	 * 	register_forward - allows modules to forward request to another module for further processing
+	 *    register_forward - allows modules to forward request to another module for further processing
 	 *
-	 *  @access 	public
-	 *  @param 	string 		$route - "pretty" public alias for module method
-	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
-	 *  @param 	mixed		string|array 	$forward - function name or array( class, method )
-	 *  @return 	void
+	 * @access    public
+	 * @param    string  $route  - "pretty" public alias for module method
+	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
+	 * @param null       $forward
+	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @return    bool
 	 */
 	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
 		do_action( 'AHEE__EE_Config__register_forward',$route,$status,$forward );
@@ -649,18 +648,18 @@ final class EE_Config {
 			return FALSE;
 		}
 		EE_Config::$_module_forward_map[ $route ][ absint( $status ) ] = $forward;
-//		printr( EE_Config::$_module_forward_map, 'EE_Config::$_module_forward_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		return TRUE;
 	}
 
 
 
 	/**
-	 * 	get_forward - get forwarding route 
+	 * 	get_forward - get forwarding route
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public static function get_forward( $route = NULL, $status = 0 ) {
 		do_action( 'AHEE__EE_Config__get_forward__begin',$route,$status );
@@ -673,13 +672,14 @@ final class EE_Config {
 
 
 	/**
-	 * 	register_forward - allows modules to specify different view templates for different method routes and status results
+	 *    register_forward - allows modules to specify different view templates for different method routes and status results
 	 *
-	 *  @access 	public
-	 *  @param 	string 		$route - "pretty" public alias for module method
-	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
-	 *  @param 	mixed		string|array 	$forward - function name or array( class, method )
-	 *  @return 	void
+	 * @access    public
+	 * @param    string  $route  - "pretty" public alias for module method
+	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
+	 * @param    string   $view
+	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @return    bool
 	 */
 	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
 		do_action( 'AHEE__EE_Config__register_view__begin',$route,$status,$view );
@@ -694,6 +694,7 @@ final class EE_Config {
 			return FALSE;
 		}
 		EE_Config::$_module_view_map[ $route ][ absint( $status ) ] = $view;
+		return TRUE;
 	}
 
 
@@ -706,7 +707,7 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public static function get_view( $route = NULL, $status = 0 ) {
 		do_action( 'AHEE__EE_Config__get_view__begin',$route,$status );
@@ -756,14 +757,14 @@ class EE_Config_Base{
 	/**
 	 *		@ override magic methods
 	 *		@ return void
-	 */	
+	 */
 //	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->$a); }
 //	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->$a = $b ); }
 	public function __isset($a) { return FALSE; }
 	public function __unset($a) { return FALSE; }
 	public function __clone() { return FALSE; }
-	public function __wakeup() { return FALSE; }	
-	public function __destruct() { return FALSE; }		
+	public function __wakeup() { return FALSE; }
+	public function __destruct() { return FALSE; }
 }
 
 
@@ -773,7 +774,7 @@ class EE_Config_Base{
  * Class for defining what's in the EE_Config relating to registration settings
  */
 class EE_Core_Config extends EE_Config_Base {
-	
+
 	public $current_blog_id;
 	public $ee_ueip_optin;
 	public $ee_ueip_has_notified;
@@ -843,7 +844,7 @@ class EE_Core_Config extends EE_Config_Base {
 			$this->cancel_page_id
 		);
 	}
-	
+
 	/**
 	 *  gets/returns URL for EE reg_page
 	 *
@@ -904,7 +905,8 @@ class EE_Core_Config extends EE_Config_Base {
 		return $this->cancel_page_url;
 	}
 
-	
+
+
 
 }
 
@@ -914,53 +916,53 @@ class EE_Core_Config extends EE_Config_Base {
  * Config class for storing info on the Organization
  */
 class EE_Organization_Config extends EE_Config_Base {
-	
-	/** 
+
+	/**
 	* @var string  $name
 	* eg EE4.1
-	*/ 
+	*/
 	public $name;
-	
-	/** 
+
+	/**
 	* @var string $address_1
 	* eg 123 Onna Road
-	*/ 
+	*/
 	public $address_1;
-	
-	/** 
+
+	/**
 	* @var string $address_2
 	* eg PO Box 123
-	*/ 
+	*/
 	public $address_2;
-	
-	/** 
+
+	/**
 	* @var string $city
 	* eg Inna City
-	*/ 
+	*/
 	public $city;
-	
-	/** 
+
+	/**
 	* @var int $STA_ID
 	* eg 4
-	*/ 
+	*/
 	public $STA_ID;
-	
-	/** 
-	* @var string  $CNT_ISO 
+
+	/**
+	* @var string  $CNT_ISO
 	* eg US
-	*/ 
+	*/
 	public $CNT_ISO;
-	
-	/** 
-	* @var string $zip 
+
+	/**
+	* @var string $zip
 	* eg 12345  or V1A 2B3
-	*/ 
+	*/
 	public $zip;
-	
-	/** 
-	* @var string  $email 
+
+	/**
+	* @var string  $email
 	* eg support@eventespresso.com
-	*/ 
+	*/
 	public $email;
 
 
@@ -971,17 +973,17 @@ class EE_Organization_Config extends EE_Config_Base {
 	 */
 	public $phone;
 
-	
+
 	/**
-	 * @var string $vat 
+	 * @var string $vat
 	 * VAT/Tax Number
 	 */
 	public $vat;
-	
-	/** 
-	* @var string  $logo_url 
+
+	/**
+	* @var string  $logo_url
 	* eg http://www.somedomain.com/wp-content/uploads/kittehs.jpg
-	*/ 
+	*/
 	public $logo_url;
 
 
@@ -989,7 +991,7 @@ class EE_Organization_Config extends EE_Config_Base {
 	 * The below are all various properties for holding links to organization social network profiles
 	 * @var string
 	 */
-	
+
 	/**
 	 * facebook (facebook.com/profile.name)
 	 * @var string
@@ -1061,7 +1063,7 @@ class EE_Organization_Config extends EE_Config_Base {
 		$this->google = '';
 		$this->instagram = '';
 	}
-	
+
 }
 
 
@@ -1077,7 +1079,7 @@ class EE_Currency_Config extends EE_Config_Base {
 	* eg 'US'
 	*/
 	public $code;
-	
+
 	/**
 	* @var string $name
 	* eg 'Dollar'
@@ -1097,7 +1099,7 @@ class EE_Currency_Config extends EE_Config_Base {
 	* eg '$'
 	*/
 	public $sign;
-	
+
 	/**
 	* Whether the currency sign shoudl come before the number or not
 	* @var boolean $sign_b4
@@ -1109,14 +1111,14 @@ class EE_Currency_Config extends EE_Config_Base {
 	* @var int $dec_plc
 	*/
 	public $dec_plc;
-	
+
 	/**
 	* Symbol to use for decimal mark
 	* @var string $dec_mrk
 	* eg '.'
 	*/
 	public $dec_mrk;
-	
+
 	/**
 	* Symbol to use for thousands
 	* @var string $thsnds
@@ -1150,8 +1152,8 @@ class EE_Currency_Config extends EE_Config_Base {
 					$this->dec_mrk = $country->currency_decimal_mark();	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
 					$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
 				}
-			}			
-		} 
+			}
+		}
 		// fallback to hardcoded defaults, in case the above failed
 		if ( empty( $this->code )) {
 			// set default currency settings
@@ -1174,64 +1176,64 @@ class EE_Currency_Config extends EE_Config_Base {
  * Class for defining what's in the EE_Config relating to registration settings
  */
 class EE_Registration_Config extends EE_Config_Base {
-	 
+
 	/**
 	 * Default registration status
 	 * @var string $default_STS_ID
 	 * eg 'RPP'
 	 */
 	public $default_STS_ID;
-	  
+
 	/**
 	 * 	whether or not to show alternate payment options during the reg process if payment status is pending
 	 * @var boolean $show_pending_payment_options
 	 */
       public $show_pending_payment_options;
-	
+
 	/**
 	 * Whether to skip the registration confirmation page
 	 * @var boolean $skip_reg_confirmation
 	 */
       public $skip_reg_confirmation;
-	
+
 	/**
 	 * Whether registration confirmation should be the last page of SPCO
 	 * @var boolean $reg_confirmation_last
 	 */
       public $reg_confirmation_last;
-	  
+
 	  /**
 	   * Whether or not to use ReCaptcha
 	   * @var boolean $use_captcha
 	   */
       public $use_captcha;
-	  
+
 	  /**
 	   * ReCaptcha Theme
 	   * @var string $recaptcha_theme
 	   * eg 'clean', 'red'
 	   */
       public $recaptcha_theme;
-	  
+
 	  /**
 	   * ReCaptcha language
 	   * @var string $recaptcha_language
 	   * eg 'en'
 	   */
       public $recaptcha_language;
-	 
+
 	  /**
 	   * ReCaptcha width
 	   * @var int $recaptcha_width
 	   */
       public $recaptcha_width;
-	 
+
 	  /**
 	   * ReCaptcha public key
 	   * @var string $recaptcha_publickey
 	   */
       public $recaptcha_publickey;
-	  
+
 	  /**
 	   * ReCaptcha private key
 	   * @var string $recaptcha_privatekey
@@ -1247,7 +1249,7 @@ class EE_Registration_Config extends EE_Config_Base {
 	 */
 	public function __construct() {
 		// set default registration settings
-		$this->default_STS_ID = EEM_Registration::status_id_pending_payment; 
+		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
 		$this->show_pending_payment_options = FALSE;
 		$this->skip_reg_confirmation = FALSE;
 		$this->reg_confirmation_last = FALSE;
@@ -1356,6 +1358,11 @@ class EE_Template_Config extends EE_Config_Base {
 	public $enable_default_style;
 
 	/**
+	* @var string $custom_style_sheet
+	*/
+	public $custom_style_sheet;
+
+	/**
 	* @var boolean $display_address_in_regform
 	*/
 	public $display_address_in_regform;
@@ -1385,6 +1392,7 @@ class EE_Template_Config extends EE_Config_Base {
 	public function __construct() {
 		// set default template settings
 		$this->enable_default_style = TRUE;
+		$this->custom_style_sheet = NULL;
 		$this->display_address_in_regform = TRUE;
 		$this->display_description_on_multi_reg_page = FALSE;
 		$this->use_custom_templates = FALSE;
@@ -1511,8 +1519,8 @@ class EE_Map_Config extends EE_Config_Base {
  */
 class EE_Gateway_Config extends EE_Config_Base{
 	/**
-	 * Array with keys that are payment gateways slugs, and values are arrays 
-	 * with any config info the gateway wants to store 
+	 * Array with keys that are payment gateways slugs, and values are arrays
+	 * with any config info the gateway wants to store
 	 * @var array
 	 */
 	public $payment_settings;
@@ -1522,7 +1530,7 @@ class EE_Gateway_Config extends EE_Config_Base{
 	 * @var array
 	 */
 	public $active_gateways;
-	
+
 	public function __construct(){
 		$this->payment_settings = array();
 		$this->active_gateways = array('Invoice'=>false);
@@ -1543,7 +1551,7 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 	public $display_datetimes;
 	public $display_venue;
 	public $display_expired_events;
-	
+
 	public function __construct(){
 		$this->display_status_banner = 0;
 		$this->display_description = 1;

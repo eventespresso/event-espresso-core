@@ -219,7 +219,14 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return array
 	 */
 	public function get_default_message_types() {
-		return $this->_default_message_types;
+		$class = get_class( $this );
+
+		//messenger specific filter
+		$default_types = apply_filters( 'FHEE__' . $class . '__get_default_message_types__default_types', $this->_default_message_types, $this );
+
+		//all messengers filter
+		$default_types = apply_filters( 'FHEE__EE_messenger__get_default_message_types__default_types', $default_types, $this );
+		return $default_types;
 	}
 
 
@@ -282,11 +289,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$custom_templates = array();
 		$selector_rows = '';
 
-
 		//we don't need message types here so we're just going to ignore. we do, however, expect the event id here. The event id is needed to provide a link to setup a custom template for this event.
 		$event_id = isset( $extra['event'] ) ? $extra['event'] : NULL;
-		if ( empty( $event_id) )
-			throw new EE_Error( sprintf( __('In order to setup the messages templates switcher the event id must be available.  Here is what was sent with the <code>$extra</code> array:<br />', 'event_espresso'), print_r($extra, TRUE) ) );
 
 		$template_wrapper_path = EE_LIBRARIES . 'messages/messenger/admin_templates/event_switcher_wrapper.template.php';
 		$template_row_path = EE_LIBRARIES . 'messages/messenger/admin_templates/event_switcher_row.template.php';
@@ -294,9 +298,15 @@ abstract class EE_messenger extends EE_Messages_Base {
 		//array of template objects for global and custom (non-trashed) (but remember just for this messenger!)
 		$global_templates = EEM_Message_Template_Group::instance()->get_all( array( array('MTP_messenger' => $this->name, 'MTP_is_global' => TRUE, 'MTP_is_active' => TRUE ) ) );
 		$templates_for_event = EEM_Message_Template_Group::instance()->get_all_custom_templates_by_event( $event_id, array( 'MTP_messenger' => $this->name, 'MTP_is_active' => TRUE ) );
+		$templates_for_event = !empty( $templates_for_event ) ? $templates_for_event : array();
 
 		//so we need to setup the rows for the selectors and we use the global mtpgs (cause those will the active message template groups)
 		foreach ( $global_templates as $mtpgID => $mtpg ) {
+			//verify this message type is supposed to show on this page
+			$mtp_obj = $mtpg->message_type_obj();
+			$mtp_obj->admin_registered_pages = (array) $mtp_obj->admin_registered_pages;
+			if ( ! in_array( 'events_edit', $mtp_obj->admin_registered_pages ) )
+				continue;
 			$stargs = array();
 			$default_value = '';
 			$select_values = array();
@@ -321,7 +331,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 			$edit_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'edit_message_template', 'id' => $default_value), admin_url('admin.php') );
 			$create_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_messages', 'action' => 'add_new_message_template', 'GRP_ID' => $default_value ) );
 
-			$st_args['mt_name'] = ucwords( $mtpg->message_type_obj()->label['singular'] );
+			$st_args['mt_name'] = ucwords( $mtp_obj->label['singular'] );
 			$st_args['mt_slug'] = $mtpg->message_type();
 			$st_args['messenger_slug'] = $this->name;
 			$st_args['selector'] = EEH_Form_Fields::select_input( 'event_message_templates_relation[' . $mtpgID . ']', $select_values, $default_value, 'data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '"', 'message-template-selector' );
@@ -349,7 +359,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 */
 	public function get_template_fields() {
 		$template_fields = apply_filters( 'FHEE__' . get_class($this) . '__get_template_fields', $this->_template_fields, $this );
-		$template_fields = apply_filters(' FHEE__EE_messenger__get_template_fields', $template_fields, $this );
+		$template_fields = apply_filters( 'FHEE__EE_messenger__get_template_fields', $template_fields, $this );
 		return $template_fields;
 	}
 
@@ -497,6 +507,39 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$existing = get_option('ee_active_messengers', true);
 		$existing[$this->name]['test_settings'] = $settings;
 		return update_option('ee_active_messengers', $existing);
+	}
+
+
+
+	/**
+	 * This just returns the field label for a given field setup in the _template_fields property.
+	 *
+	 * @since 	4.3.0
+	 *
+	 * @param string $field The field to retrieve the label for
+	 * @return string        	  The label
+	 */
+	public function get_field_label( $field ) {
+		//first let's see if the field requests is in the top level array.
+		if ( isset( $this->_template_fields[$field] ) && !empty( $this->_template_fields[$field]['label'] ) )
+			return $this->_template[$field]['label'];
+
+		//nope so let's look in the extra array to see if it's there HOWEVER if the field exists as a top level index in the extra array then we know the label is in the 'main' index.
+		if ( isset( $this->_template_fields['extra'] ) && !empty( $this->_template_fields['extra'][$field] ) && !empty( $this->_template_fields['extra'][$field]['main']['label'] )  )
+			return $this->_template_fields['extra'][$field]['main']['label'];
+
+		//now it's possible this field may just be existing in any of the extra array items.
+		if ( !empty( $this->_template_fields['extra'] ) && is_array( $this->_template_fields['extra'] ) ) {
+			foreach ( $this->_template_fields['extra'] as $main_field => $subfields ) {
+				if ( !is_array( $subfields ) )
+					continue;
+				if ( isset( $subfields[$field] ) && !empty( $subfields[$field]['label'] ) )
+					return $subfields[$field]['label'];
+			}
+		}
+
+		//if we made it here then there's no label set so let's just return the $field.
+		return $field;
 	}
 
 

@@ -32,13 +32,6 @@ final class EE_Front_Controller {
 	private static $_instance = NULL;
 
 	/**
-	 * 	system registry
-	 *	@var 	EE_Registry		$EE
-	 * 	@access 	private
-	 */
-	private $EE;
-
-	/**
 	 * 	$_template_path
 	 *	@var 	string		$_template_path
 	 * 	@access 	public
@@ -75,13 +68,14 @@ final class EE_Front_Controller {
 	}
 
 
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 * 	should fire after shortcode, module, addon, or other plugin's default priority init phases have run
+	 *    should fire after shortcode, module, addon, or other plugin's default priority init phases have run
 	 *
-	 *  @access 	private
-	 *  @return 	void
+	 * @access    private
+	 * @return \EE_Front_Controller
 	 */
 	private function __construct() {
 		// determine how to integrate WP_Query with the EE models
@@ -89,7 +83,7 @@ final class EE_Front_Controller {
 		// load other resources and begin to actually run shortcodes and modules
 		add_action( 'wp_loaded', array( $this, 'wp_loaded' ), 5 );
 		// analyse the incoming WP request
-		add_action( 'parse_request', array( $this, 'get_request' ), 1 );
+		add_action( 'parse_request', array( $this, 'get_request' ), 1, 1 );
 		// process any content shortcodes
 		add_action( 'parse_request', array( $this, '_initialize_shortcodes' ), 5 );
 		// process request with module factory
@@ -108,9 +102,9 @@ final class EE_Front_Controller {
 		//exclude EE critical pages from wp_list_pages
 		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
 		//exclude our private cpt comments
-		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 2 );
+		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 1 );
 		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
-		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 2 );
+		add_filter( 'admin_url', array( $this, 'maybe_force_admin_ajax_ssl' ), 200, 1 );
 		// action hook EE
 		do_action( 'AHEE__EE_Front_Controller__construct__done',$this );
 	}
@@ -140,12 +134,13 @@ final class EE_Front_Controller {
 
 
 	/**
-	 * This simply makes sure that any "private" EE cpts do not have their comments show up in any wp comment widgets/queries done on frontend
-	 * @param  array           $clauses  array of comment clauses setup by WP_Comment_Query
-	 * @param  WP_Comment_Query $wpc
-	 * @return array                     array of comment clauses with modifications.
+	 * filter_wp_comments
+	 * This simply makes sure that any "private" EE CPTs do not have their comments show up in any wp comment widgets/queries done on frontend
+	 *
+	 * @param  array $clauses array of comment clauses setup by WP_Comment_Query
+	 * @return array array of comment clauses with modifications.
 	 */
-	public function filter_wp_comments( $clauses, WP_Comment_Query $wpc ) {
+	public function filter_wp_comments( $clauses ) {
 		global $wpdb;
 		if ( strpos( $clauses['join'], $wpdb->posts ) !== FALSE ) {
 			$cpts = EE_Register_CPTs::get_private_CPTs();
@@ -178,15 +173,11 @@ final class EE_Front_Controller {
 	/**
 	 * this just makes sure that if the site is using ssl that we force that for any admin ajax calls from frontend
 	 * @param  string $url    incoming url
-	 * @param  string $schema current schema
 	 * @return string         final assembled url
 	 */
-	public function maybe_force_admin_ajax_ssl( $url, $schema ) {
-		if ( !is_ssl() )
-			return $url;
-
-		if ( preg_match('/admin-ajax.php/', $url ) ) {
-			$url = str_replace('http://', 'https://', $url);
+	public function maybe_force_admin_ajax_ssl( $url ) {
+		if ( is_ssl() && preg_match( '/admin-ajax.php/', $url )) {
+			$url = str_replace( 'http://', 'https://', $url );
 		}
 		return $url;
 	}
@@ -216,15 +207,12 @@ final class EE_Front_Controller {
 
 
 	/*********************************************** 		PARSE_REQUEST HOOK		 ***********************************************/
-
-
-
-
 	/**
-	 *	_get_request
+	 *    _get_request
 	 *
-	 *	@access public
-	 *	@return void
+	 * @access public
+	 * @param WP $WP
+	 * @return void
 	 */
 	public function get_request( WP $WP ) {
 		do_action( 'AHEE__EE_Front_Controller__get_request__start' );
@@ -234,12 +222,12 @@ final class EE_Front_Controller {
 
 
 
-
 	/**
-	 * 	_initialize_shortcodes - calls init method on shortcodes that have been determined to be in the_content for the currently requested page
+	 *    _initialize_shortcodes - calls init method on shortcodes that have been determined to be in the_content for the currently requested page
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param WP $WP
+	 * @return    void
 	 */
 	public function _initialize_shortcodes( WP $WP ) {
 		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__begin', $WP, $this );
@@ -251,18 +239,21 @@ final class EE_Front_Controller {
 			$current_post = 'posts';
 		} else if ( empty( $current_post ) && get_option( 'show_on_front' ) == 'page' ) {
 			// some other page is set as the homepage
-			if ( $page_on_front = get_option( 'page_on_front' )) {
+			$page_on_front = get_option( 'page_on_front' );
+			if ( $page_on_front ) {
 				// k now we need to find the slug for this page
 				global $wpdb;
 				$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
-				if( $post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ))) {
+				$post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ));
+				if( $post_slug ) {
 					// set the current post slug to what it actually is
 					$current_post = $post_slug;
 				}
 			}
 		} else if ( get_option( 'show_on_front' ) == 'page' ) {
 			// we're not on the homepage, but some "other" page is set as the posts page...
-			if ( $page_for_posts = get_option( 'page_for_posts' )) {
+			$page_for_posts = get_option( 'page_for_posts' );
+			if ( $page_for_posts ) {
 				// better get the ID for the current post
 				global $wpdb;
 				$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND post_name=%s';
@@ -321,28 +312,30 @@ final class EE_Front_Controller {
 
 
 
-
 	/**
-	 * 	pre_get_posts - basically a module factory for instantiating modules and selecting the final view template
+	 *    pre_get_posts - basically a module factory for instantiating modules and selecting the final view template
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param   WP_Query    $WP_Query
+	 * @return    void
 	 */
 	public function pre_get_posts( $WP_Query ) {
 		// only load Module_Request_Router if this is the main query
 		if ( $WP_Query->is_main_query() ) {
 			// load module request router
 			$Module_Request_Router = EE_Registry::instance()->load_core( 'Module_Request_Router' );
-			// cycle thru module routes
-			while ( $route = $Module_Request_Router->get_route( $WP_Query ) ) {
-				// determine module and method for route
-				$module = $Module_Request_Router->resolve_route( $route );
-				// get registered view for route
-				$this->_template_path = $Module_Request_Router->get_view( $route );
-				// map the routes to the module objects
-				EE_Registry::instance()->modules[ $route ] = $module;
+			// verify object
+			if ( $Module_Request_Router instanceof EE_Module_Request_Router ) {
+				// cycle thru module routes
+				while ( $route = $Module_Request_Router->get_route( $WP_Query )) {
+					// determine module and method for route
+					$module = $Module_Request_Router->resolve_route( $route );
+					// get registered view for route
+					$this->_template_path = $Module_Request_Router->get_view( $route );
+					// map the routes to the module objects
+					EE_Registry::instance()->modules[ $route ] = $module;
+				}
 			}
-
 		}
 	}
 
@@ -389,8 +382,8 @@ final class EE_Front_Controller {
 			if ( isset( EE_Registry::instance()->CFG->template_settings->enable_default_style ) && EE_Registry::instance()->CFG->template_settings->enable_default_style ) {
 
 				//Load custom style sheet if available
-				if ( isset( EE_Registry::instance()->CFG->style_settings['css_name'] )) {
-					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . EE_Registry::instance()->CFG->style_settings['css_name'], EVENT_ESPRESSO_VERSION );
+				if ( isset( EE_Registry::instance()->CFG->template_settings->custom_style_sheet )) {
+					wp_register_style('espresso_custom_css', EVENT_ESPRESSO_UPLOAD_URL . 'css/' . EE_Registry::instance()->CFG->template_settings->custom_style_sheet, EVENT_ESPRESSO_VERSION );
 					wp_enqueue_style('espresso_custom_css');
 				}
 
@@ -503,14 +496,12 @@ final class EE_Front_Controller {
 
 
 	/*********************************************** 		THE_CONTENT FILTER HOOK		 ***********************************************/
-
-
-
 	/**
-	 * 	the_content
+	 *    the_content
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param   $the_content
+	 * @return    string
 	 */
 	public function the_content( $the_content ) {
 		// nothing gets loaded at this point unless other systems turn this hookpoint on by using:  add_filter( 'FHEE_run_EE_the_content', '__return_true' );
@@ -540,7 +531,7 @@ final class EE_Front_Controller {
 	public function display_errors() {
 		static $shown_already = FALSE;
 		do_action( 'AHEE__EE_Front_Controller__display_errors__begin' );
-		if ( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && ! is_feed() && in_the_loop() ) {
+		if ( apply_filters( 'FHEE__EE_Front_Controller__display_errors', TRUE ) && ! $shown_already && is_main_query() && ! is_feed() && in_the_loop() ) {
 			echo EE_Error::get_notices();
 			$shown_already = TRUE;
 			EE_Registry::instance()->load_helper( 'Template' );
@@ -554,15 +545,12 @@ final class EE_Front_Controller {
 
 
 	/*********************************************** 		UTILITIES		 ***********************************************/
-
-
-
-
 	/**
-	 * 	template_include
+	 *    template_include
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param   string $template_include_path
+	 * @return    string
 	 */
 	public function template_include( $template_include_path = NULL ) {
 //		echo '<h4><br/>$template_include_path : ' . $template_include_path . ' </h4>';
@@ -573,7 +561,7 @@ final class EE_Front_Controller {
 		// * /wp-content/uploads/espresso/templates/ee-theme/
 		// * /wp-content/plugins/EE4/templates/espresso_default/
 		$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
-		$template_path = EEH_Template::locate_template( $this->_template_path, FALSE );
+		$template_path = EEH_Template::locate_template( $this->_template_path, array(), FALSE );
 		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
 		$this->_template = basename( $this->_template_path );
 //		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
@@ -582,12 +570,12 @@ final class EE_Front_Controller {
 
 
 
-
 	/**
-	 * 	get_selected_template
+	 *    get_selected_template
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param bool $with_path
+	 * @return    string
 	 */
 	public function get_selected_template( $with_path = FALSE ) {
 		return $with_path ? $this->_template_path : $this->_template;
