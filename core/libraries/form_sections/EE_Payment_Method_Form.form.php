@@ -34,7 +34,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 		$this->_subsections['PMD_scope'] = new EE_Checkbox_Multi_Input(EEM_Payment_Method::instance()->scopes(),array(
 			'html_label_text'=>$this->_model->field_settings_for('PMD_scope')->get_nicename()
 		));
-		$this->_subsections['Currency'] = new EE_Select_Multi_Model_Input(EEM_Currency::instance()->get_all_active(),array('callback_on_class'=>'pretty_name'));
+		$options_array['subsection_args']['Currency']['model_objects'] = EEM_Currency::instance()->get_all_active();
 		parent::__construct($options_array);
 	}
 	
@@ -58,7 +58,6 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	public function populate_model_obj($model_obj) {
 		$model_obj = $this->_model->ensure_is_obj($model_obj);
 		
-		$this->populate_defaults(array('Currency'=>$model_obj->get_many_related('Currency')));
 		parent::populate_model_obj($model_obj);
 		$extra_metas = $model_obj->all_extra_meta_array();
 		foreach($this->_extra_meta_inputs as $input_name => $extra_meta_input){

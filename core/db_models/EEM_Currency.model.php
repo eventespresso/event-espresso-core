@@ -68,11 +68,11 @@ class EEM_Currency extends EEM_Base{
 		parent::__construct();
 	}
 	/**
-	 * Gets all thea ctive currencies
+	 * Gets all thea ctive currencies, and orders them by their singular name, and then their code
 	 * @return EE_Currency[]
 	 */
 	public function get_all_active(){
-		return $this->get_all(array(array('CUR_active'=>true),'order_by'=>array('CUR_single'=>'ASC','CUR_code'=>'ASC')));
+		return $this->get_all(array(array('CUR_active'=>true),'order_by'=>array('CUR_code'=>'ASC','CUR_single'=>'ASC')));
 	}
 	
 }

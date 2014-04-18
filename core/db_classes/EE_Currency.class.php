@@ -158,8 +158,8 @@ class EE_Currency extends EE_Base_Class{
 	 * Gets a prettier name
 	 * @return string
 	 */
-	function pretty_name(){
-		return sprintf(__("%s (%s)", "event_espresso"),$this->singular_name(),$this->code());
+	function name(){
+		return sprintf(__("%s (%s)", "event_espresso"),$this->code(),$this->plural_name());
 	}
 
 }

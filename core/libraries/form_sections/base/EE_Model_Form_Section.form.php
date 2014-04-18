@@ -19,10 +19,11 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	protected $_model_object = NULL;
 	/**
 	 * 
-	 * @param array $options_array keys: <ul>
-	 * <li>'model' which should be an EEM_Base child;</li>
-	 * <li>'model_object' which is a EE_Base_Class (providing this is equivalent to constructing and then calling set_model_object)</li>
-	 * <li>and parent's keys too</li></ul>
+	 * @param array $options_array keys: {
+	 *	@type EEM_Base $model
+	 *	@type EE_Base_Class $model_object
+	 *	@type array $subsection_args array keys should be subsection names (that either do or will exist), and values are the arrays as you would pass them to that subsection
+	 * }
 	 * @throws EE_Error
 	 */
 	public function __construct($options_array = array()){
@@ -33,14 +34,61 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 			throw new EE_Error(sprintf(__("Model Form Sections must first specify the _model property to be a subcalss of EEM_Base", "event_espresso")));
 		}
 		
+		if(isset($options_array['subsection_args'])){
+			$subsection_args = $options_array['subsection_args'];
+		}else{
+			$subsection_args = array();
+		}
+		
 		$model_fields = $this->_model->field_settings();
 		//calculate what fields to include
-		$this->_subsections = array_merge($this->_convert_model_fields_to_inputs($model_fields),$this->_subsections);
+		$this->_subsections = array_merge(
+				$this->_convert_model_fields_to_inputs($model_fields),
+				$this->_convert_model_relations_to_inputs($this->_model->relation_settings(),$subsection_args),
+				$this->_subsections);
 		parent::__construct($options_array);
 		if(isset($options_array['model_object']) && $options_array['model_object'] instanceof EE_Base_Class){
 			$this->populate_model_obj($options_array['model_object']);
 		}
 		parent::__construct($options_array);
+	}
+	
+	/**
+	 * For now, just makes inputs for only HABTM relations
+	 * @param EE_Model_Relation_Base[] $relations
+	 * @param array $subsection_args keys should be existing or soon-to-be-existing input names, and their values are {
+	 *	@type array {
+	 *		@type EE_Base_Class[] $model_objects if the subsection is an EE_Select_Multi_Model_Input
+	 *	}
+	 * }
+	 */
+	protected function _convert_model_relations_to_inputs($relations,$subsection_args = array()){
+		$inputs = array();
+		foreach($relations as $relation_name => $relation_obj){
+			$input_constructor_args = array(
+				array_merge(array(
+					'required'=> $relation_obj instanceof EE_Belongs_To_Relation,
+					'html_label_text'=>$relation_obj instanceof EE_Belongs_To_Relation ? $relation_obj->get_other_model()->item_name(1) : $relation_obj->get_other_model()->item_name(2),
+				),
+						$subsection_args));
+			$input = NULL;
+			switch(get_class($relation_obj)){
+				case 'EE_HABTM_Relation':
+					if(isset($subsection_args[$relation_name]) &&
+							isset($subsection_args[$relation_name]['model_objects'])){
+						$model_objects = $subsection_args[$relation_name]['model_objects'];
+					}else{
+						$model_objects = $relation_obj->get_other_model()->get_all();
+					}
+					$input = new EE_Select_Multi_Model_Input($model_objects,$input_constructor_args);
+					break;
+				default:
+			}
+			if($input){
+				$inputs[$relation_name] = $input;
+			}
+		}
+		return $inputs;
 	}
 	/**
 	 * Changes model fields into form section inputs
@@ -159,7 +207,25 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	public function populate_model_obj($model_obj){
 		$model_obj = $this->_model->ensure_is_obj($model_obj);
 		$this->_model_object = $model_obj;
-		$this->populate_defaults($model_obj->model_field_array());
+		$defaults = $model_obj->model_field_array();
+		foreach($this->_model->relation_settings() as $relation_name => $relation_obj){
+			$form_inputs = $this->inputs();
+			if(isset($form_inputs[$relation_name])){
+				if($relation_obj instanceof EE_Belongs_To_Relation){
+					//then we only expect there to be one
+					$related_item = $this->_model_object->get_first_related($relation_name);
+					$defaults[$relation_name] = $related_item->ID();
+				}else{
+					$related_items = $this->_model_object->get_many_related($relation_name);
+					$ids = array();
+					foreach($related_items as $related_item){
+						$ids[] = $related_item->ID();
+					}
+					$defaults[$relation_name] = $ids;
+				}
+			}
+		}
+		$this->populate_defaults($defaults);
 	}
 	/**
 	 * Gets all the input values that correspond to model fields. Keys are the input/field names,
@@ -202,7 +268,39 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		if( ! $this->_model_object){
 			throw new EE_Error(sprintf(__("Cannot save the model form's model object (model is '%s') because there is no model object set. You must either set it, or call receive_form_submission where it is set automatically", "event_espresso"),get_class($this->_model)));
 		}
-		return $this->_model_object->save();
+		$success =  $this->_model_object->save();
+		foreach($this->_model->relation_settings() as $relation_name => $relation_obj){
+			if(isset($this->_subsections[$relation_name])){
+				$success = $this->_save_related_info($relation_name);
+			}
+		}
+		return $success;
+	}
+	
+	/**
+	 * 
+	 * @param type $relation_name
+	 */
+	protected function _save_related_info($relation_name){
+		$relation_obj = $this->_model->related_settings_for($relation_name);
+		if($relation_obj instanceof EE_Belongs_To_Relation){
+			//there is just a foreign key on this model pointing to that one
+			$this->_model_object->_add_relation_to($this->get_input_value($relation_name), $relation_name);
+		}elseif($relation_obj instanceof EE_Has_Many_Relation){
+			//then we want to consider all of its currenlty-related things.
+			//if they're in this list, keep them
+			//if they're not in this list, remove them
+			//and lastly add all the new items
+			throw new EE_Error(sprintf(__("Automatic saving of related info across a hasmany relation is not yet supported", "event_espresso")));
+		}elseif($relation_obj instanceof EE_HABTM_Relation){
+			//delete everything NOT in this list
+			$where_query_params = array(
+				$relation_obj->get_other_model()->primary_key_name() => array('NOT_IN',$this->get_input_value($relation_name)));
+			$relation_obj->remove_relations($this->_model_object, $where_query_params);
+			foreach($this->get_input_value($relation_name) as $id){
+				$relation_obj->add_relation_to($this->_model_object, $id);
+			}
+		}
 	}
 	/**
 	 * Gets the model of this model form

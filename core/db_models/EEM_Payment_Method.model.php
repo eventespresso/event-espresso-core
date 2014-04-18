@@ -95,7 +95,7 @@ class EEM_Payment_Method extends EEM_Base {
 		);
 		$this->_model_relations = array(
 			'Price'=>new EE_Belongs_To_Relation(),
-			'Event'=>new EE_HABTM_Relation('Event_Payment_Method'),
+//			'Event'=>new EE_HABTM_Relation('Event_Payment_Method'),
 			'Payment'=>new EE_Has_Many_Relation(),
 			'Currency'=>new EE_HABTM_Relation('Currency_Payment_Method'),
 		);
