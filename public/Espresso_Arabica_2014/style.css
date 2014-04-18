@@ -1,0 +1,857 @@
+/*
+ Theme Name:   	Event Espresso Arabica 2014
+ Description:  		A child theme of Twenty Fourteen designed to maximize the capabilities of Event Espresso
+ Template:     		twentyfourteen
+ Author:       		Seth Shoultes
+ Author URI:  		http://www.eventespresso.com
+ Copyright		(c) 2008-2014 Event Espresso  All Rights Reserved.
+ License			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ Version:      		0.0.1
+ Tags:         		light, right-sidebar, responsive-layout, accessibility-ready
+ Text Domain:  	event_espresso
+*/
+ 
+@import url("../twentyfourteen/style.css");
+
+
+/************************************** EVENT ARCHIVES  ************************************* */
+
+
+/******************* EVENT LIST FILTERS ****************** */
+
+
+#espresso-events-list-filters-wrapper-dv {
+	position: relative;
+	margin: 0 0 1em;
+	z-index: 1;
+}
+#espresso-events-list-filters-h3 {
+	color: #A39D9C;
+	margin: 0 0 .25em;
+}
+#espresso-events-list-filters-dv {
+	position: relative;
+	padding: 1em 1.25em;
+	margin: 0;
+	background: #EEE;
+}
+#espresso-events-list-filters-frm {
+	padding: 0;
+	margin: 0;
+}
+#espresso-events-list-filters-frm a {
+	margin-bottom: 0;
+}
+#espresso-events-list-filters-dv select,
+#espresso-events-list-filters-dv input[type="text"] {
+	width: auto;
+	height: auto;
+	padding: 3px;
+	margin: 0;
+	border: 1px solid #A39D9C;
+	vertical-align: middle;
+}
+#espresso-events-list-filters-dv label {
+	display: inline-block;
+	vertical-align: middle;
+}
+#espresso-events-list-filters-dv span  {
+	height: 21px;
+	margin: 0 1em 0 0;
+	vertical-align: middle;
+}
+
+#espresso-events-list-filters-view-dv {
+	display: inline-block;
+	float: right;
+	margin: .1em 0 0;
+}
+#espresso-events-list-filters-view-dv .events-list-filter-view-lnk {
+	display: inline-block;
+	margin: 0;
+	font-size: 16px;
+}
+#espresso-events-list-filters-view-dv .events-list-filter-view-lnk img {
+	vertical-align: middle;
+	box-shadow: none !important;
+}
+
+.ee-checkbox {
+	vertical-align: middle;
+}
+.ee-checkbox-lbl:hover {
+	cursor: pointer;
+}
+
+
+
+/******************* GLOBAL STYLES ****************** */
+
+.espresso_events a,
+.espresso_venues a { color:#2B2B2B; text-decoration: none; }
+.espresso_events a:hover,
+.espresso_venues a:hover { color:#41A61A; }
+
+
+
+article.espresso_venues,
+article.espresso_events {
+	width: auto;
+	padding: 0 2em 2em;
+	margin: 0 auto !important;
+}
+.espresso-events-list-dv {
+	position: relative;
+	padding: 0;
+	margin: 0 auto;
+}
+.espresso-events-list-dv .espresso-event-list-event {
+	padding: 1em 0 2em;
+	height: auto;
+}
+article.espresso_events .event-list-h1 {
+	position: relative;
+	z-index: 10;
+	margin-top: 0;
+}
+.events-list-event-wrap-dv .ee-status {
+	font-size: .8em;
+}
+
+.espresso-event-wrapper-dv  .event-content p {
+	line-height: 1.5em;
+}
+
+.event-meta p {
+	margin: 1em 0;
+}
+.event-meta .tags-links {
+	display: block;
+	margin:0 0 .5em;
+	font-size:12px;
+	line-height: 1em;
+}
+.event-meta .tags-links a {
+	color: #777;
+}
+
+
+.espresso-venue-dv {
+	/*position: relative;
+	width: auto;
+	padding: 1em;
+	margin: 1em 0;
+	border: 1px solid #eee;
+	background: #f8f8f8;*/
+}
+.ee-gmap-wrapper {
+}
+
+.no-espresso-events-found {
+	padding: 2em;
+}
+.no-espresso-events-found .event-title {
+	margin: 0 0 1em; 
+}
+.no-espresso-events-found #s {
+	min-width: 200px;
+	width: 25%;
+}
+
+
+
+/******************* PAGINATION ****************** */
+
+
+.ee-pagination-dv {
+	padding: 2em;
+	text-align: right;
+}
+.ee-pagination-dv .page-numbers,
+.ee-pagination-dv .page-numbers:visited {
+	display: inline-block;
+	padding: 0 .5em;
+	margin: 0 0 0 .1em;
+	border: 1px solid #EEE;
+	background: #EEE;
+	font-size: .8em;
+	line-height: 2em;
+	color: #736F58;
+	text-decoration: none;
+	font-weight: normal;
+}
+.ee-pagination-dv .page-numbers:hover {
+	border-color: #24890D;
+	background: #24890D;
+	color: #FFF;
+}
+.ee-pagination-dv .current,
+.ee-pagination-dv .page-numbers.current:hover {
+	border-color: #24890D;
+	background: #24890D;
+	color: #FFF;
+	font-weight: bold;
+	cursor: default;
+}
+
+
+
+/******************* PIN-MASH (GRID-VIEW) TEMPLATE ****************** */
+
+
+.grid-event-list-dv .espresso-events-list-dv {
+}
+.grid-event-list-dv .espresso-event-list-event {
+	display: inline-block;
+	float: left;
+	position: relative;
+	padding: 0 !important;
+	margin: 10px 10px 20px;
+	border: none !important;
+	-webkit-transition: top 1s ease, left 1s ease;
+	-moz-transition: top 1s ease, left 1s ease;
+	-o-transition: top 1s ease, left 1s ease;
+	-ms-transition: top 1s ease, left 1s ease;
+}
+.grid-event-list-dv  .events-list-event-wrap-dv {
+	position: relative;
+	width: auto;
+	height: auto;
+	padding: 0 0 10px;
+	background: #fff;
+	box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+	-moz-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+	-webkit-box-shadow: 0 1px 3px rgba(34,25,25,0.4);
+}
+
+.grid-event-list-dv .ee-status {
+ 	display: inline-block;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+}
+
+.grid-event-list-dv  .event-datetimes h4 {
+	display: block;
+	margin: .25em 0;
+	font-size: 16px;
+	line-height: 1.5em; 
+	white-space:nowrap;
+}
+.grid-event-list-dv  .event-datetimes h4 + h4 {
+	padding-left: 5px;
+	background: none;
+}
+
+.grid-event-list-dv  .ee-event-img-dv {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	margin: 0 0 -2.5em;
+}
+.grid-event-list-dv  .ee-event-img {
+	width: 100%;
+	height: auto;
+	border-radius: 0 !important;
+	box-shadow: none !important;
+}
+.grid-event-list-dv  .espresso-event-wrapper-dv {
+	position: relative;
+	margin: 0 1em;
+	background: #fff;
+	background: rgba(255, 255, 255, 0.9);
+}
+.grid-event-list-dv  .espresso-event-wrapper-dv.no-img.expired,
+.grid-event-list-dv  .espresso-event-wrapper-dv.no-img.sold-out {
+	padding-top:2em;
+}
+.grid-event-list-dv  .espresso-event-wrapper-dv.has-img {
+}
+
+.grid-event-list-dv  .espresso-event-wrapper-dv .event-header {
+	padding: 1em 1em 1em;
+	text-shadow: 1px 1px 0px #fff;
+}
+.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title {
+	margin: 0;
+	line-height: 1.1em; 
+}
+.grid-event-list-dv  .espresso-event-wrapper-dv  .event-title a {
+	text-decoration: none;
+	line-height: 1em;
+}
+.grid-event-list-dv  .espresso-event-wrapper-dv  .event-header p {
+	margin: 0 0 .5em;
+	font-size: 1em;
+	color: #999;
+	text-transform: lowercase;
+}
+.grid-event-list-dv  .espresso-event-wrapper-dv  .event-content p {
+	margin: 0 1em 1em;
+	font-size: 1.1em;
+	color: #666;
+	line-height: 1.5em;
+}
+.grid-event-list-dv  .espresso-event-wrapper-dv.has-img  .event-content p {
+	margin: 0 .5em .5em;
+}
+.grid-event-list-dv  .espresso-event-wrapper-dv  .event-meta {
+	text-align: right;
+	margin: 0 0 1em;
+}
+
+.grid-event-list-dv .espresso-event-wrapper-dv a.ee-register-button-lnk {
+	margin: 1em 0 0;
+}
+
+.grid-event-list-dv .tiny-event-list-grid.espresso-event-list-event {
+	width: 134px;
+}
+.grid-event-list-dv .tiny-event-list-grid .event-datetimes h4 {
+	background: none;
+	font-size: 10px;
+	font-weight: normal;
+	line-height: 16px;
+	padding-left: 0;
+}
+.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv {
+	margin: 0 .5em;
+}
+.grid-event-list-dv .tiny-event-list-grid .ee-event-img-dv {
+	margin: 0 0 -1.9em;
+}
+.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-header {
+	padding: .5em;
+}
+.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv.has_img .event-header {
+	padding: 0em;
+}
+.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-header p {
+	font-size: .65em;
+}
+.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-title {
+}
+.grid-event-list-dv .tiny-event-list-grid .espresso-event-wrapper-dv .event-content p {
+	font-size: .8em;
+	line-height: 1.2em;
+}
+.grid-event-list-dv .tiny-event-list-grid a.ee-register-button-lnk {
+	padding: 3px 6px 2px;
+	font-size: 10px;
+}
+
+.grid-event-list-dv .small-event-list-grid.espresso-event-list-event {
+	width: 160px;
+}
+.grid-event-list-dv .small-event-list-grid .event-datetimes h4 {
+	background: none;
+	font-size: 12px;
+	font-weight: normal;
+	line-height: 16px;
+	padding-left: 0;
+}
+.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv {
+	margin: 0 .7em;
+}
+.grid-event-list-dv .small-event-list-grid .ee-event-img-dv {
+	margin: 0 0 -2.1em;
+}
+.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-header {
+	padding: .7em;
+}
+.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv.has_img .event-header {
+	padding: 0em;
+}
+.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-header p {
+	font-size: .8em;
+}
+.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-title {
+}
+.grid-event-list-dv .small-event-list-grid .espresso-event-wrapper-dv .event-content p {
+	font-size: .9em;
+	line-height: 1.3em;
+}
+.grid-event-list-dv .small-event-list-grid a.ee-register-button-lnk {
+	padding: 4px 8px 3px;
+	font-size: 11px;
+}
+
+.grid-event-list-dv .medium-event-list-grid.espresso-event-list-event {
+	width: 196px;
+}
+.grid-event-list-dv .medium-event-list-grid .event-datetimes h4 {
+	font-size: 14px;
+	line-height: 1.2em;
+}
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv {
+	margin: 0 .85em;
+}
+.grid-event-list-dv .medium-event-list-grid .ee-event-img-dv {
+	margin: 0 0 -2.5em;
+}
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-header {
+	padding: .85em;
+}
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv.has_img .event-header {
+	padding: 0em;
+}
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-header p {
+	font-size: .9em;
+}
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-title {
+}
+.grid-event-list-dv .medium-event-list-grid .espresso-event-wrapper-dv .event-content p {
+	font-size: 1em;
+	line-height: 1.4em;
+}
+.grid-event-list-dv .medium-event-list-grid a.ee-register-button-lnk {
+	font-size: 12px;
+}
+
+.grid-event-list-dv  .large-event-list-grid {
+}
+.grid-event-list-dv .large-event-list-grid.espresso-event-list-event {
+	width: 250px;
+}
+
+.grid-event-list-dv  .huge-event-list-grid {
+}
+.grid-event-list-dv .huge-event-list-grid.espresso-event-list-event {
+	width: 340px;
+}
+
+.grid-event-list-dv .ee-gmap-wrapper {
+}
+
+
+
+/******************* TEXT LIST TEMPLATE ****************** */
+
+
+.text-event-list-dv .espresso-event-list-event {
+	width: 100%;
+	clear: both;
+}
+
+.text-event-list-dv .espresso-event-wrapper-dv .event-header {
+	display: block;
+	margin: 3em 0 2em;
+	background: #eee;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+	border-radius: 0;
+	box-shadow: none;
+}
+.text-event-list-dv  .espresso-event-wrapper-dv  .event-title {
+	display: inline-block;
+	margin: 0;
+	font-size: 1em;
+	line-height: 1;
+}
+.text-event-list-dv  .espresso-event-wrapper-dv  .event-title a,
+.text-event-list-dv  .espresso-event-wrapper-dv  .event-title a:visited {
+	display: inline-block;
+	padding: 0.5em 1.5em 0.6em;
+	text-decoration: none;
+	color: #444 !important;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.9);
+	font-size: 1.5em;
+	line-height: 1;
+	font-weight: bold;	
+}
+
+.text-event-list-dv .ee-status {
+ 	display: inline-block;
+	margin: 0.55em;
+	float: right;
+}
+
+
+.text-event-list-dv .event-datetimes h4 {
+	clear:none;
+	display: inline-block;
+	margin-top: 0;
+}
+
+.text-event-list-dv .ee-event-img-dv {
+	position: relative;
+	z-index: 10;
+	float: left;
+	margin: 0 3em 2em 0;
+}
+.text-event-list-dv .espresso-venue-dv {
+	clear:none;
+	display: inline-block;
+}
+
+.text-event-list-dv .event-details-dv {
+	/*float: left;*/
+	/*display: inline; */
+}
+
+.text-event-list-dv .event-meta {
+	float: right;
+	max-width: 25%;
+	min-width: 150px;
+	margin: 0;
+	font-size: .9em;
+	color: #A39D9C;
+}
+
+.text-event-list-dv .ee-gmap-wrapper {
+}
+
+
+
+/******************* DATES LIST TEMPLATE ****************** */
+
+
+.dates-event-list-dv .espresso-event-list-event {
+	position: relative;
+	padding: 1em 0 2em;
+	margin: 1em;
+	border: none;
+	border-bottom: 1px solid #EEEEE6;
+}
+
+.dates-event-list-dv .event-datetimes {
+	position: absolute;
+	top: 1em;
+	left: 0;
+}
+.dates-event-list-dv .event-date-calendar-page-dv {
+	width: 58px;
+	height: 58px;
+	background: #fff;
+	border: 1px solid #007BAE;
+	border-radius: 3px;
+	text-align: center;
+}
+.dates-event-list-dv .event-date-calendar-page-month-dv {
+	padding: 5px 5px 6px;
+	background: #007BAE;
+	border-bottom: 1px solid #007BAE;
+	color: #fff;
+	font-weight: bold;
+	font-size: 12px;
+	line-height: 12px;
+}
+.dates-event-list-dv .event-date-calendar-page-day-dv {
+	padding: 8px 5px 9px;
+	color: #007BAE;
+	font-weight: bold;
+	font-size: 18px;
+	line-height: 18px;  
+}
+
+.dates-event-list-dv .ee-event-img-dv {
+	position: absolute;
+	top: 1em;
+	left: 90px;
+}
+
+.dates-event-list-dv .espresso-event-wrapper-dv {
+	margin-left: 180px;
+}
+.dates-event-list-dv .ee-status {
+	margin: 0 1em 0 0;
+ }
+.dates-event-list-dv  .espresso-event-wrapper-dv  .event-title {
+	margin-top: 0;
+}
+
+.dates-event-list-dv .event-meta {
+	float: right;
+	max-width: 17%;
+	min-width: 150px;
+	margin: 0;
+	text-align: center;
+	color: #A39D9C;
+}
+
+
+.dates-event-list-dv .espresso-venue-address-wrap-dv {
+	float: left;
+	width: 50%;
+}
+.dates-event-list-dv .espresso-venue-name-spn {
+}
+.dates-event-list-dv .ee-gmap-wrapper {
+	float: right;
+	width: 50%;
+}
+
+
+
+/************************************** EVENT SINGLE  ************************************* */
+
+
+
+.espresso-event-header-dv {
+	position: relative;
+	margin: 0 0 20px;
+}
+
+.espresso-event-details.has-excerpt .espresso-event-header-dv {
+	/*min-height: 80px;*/
+}
+
+
+.event-header {
+	width: 97.1%;
+}
+
+.has-excerpt {
+	
+}
+
+.has-post-thumbnail .event-header {
+	position: absolute;
+	bottom: 0;
+	left: 0;
+	padding: 1.5%;
+	text-shadow: 1px 1px 0 #FFFFFF;
+	background: none repeat scroll 0 0 rgba(255, 255, 255, 0.9);
+}
+.has-post-thumbnail .event-header h1 {
+	margin: 0;
+}
+.has-post-thumbnail .event-header p,
+.has-excerpt .event-header p {
+	margin:10px 0 0;
+}
+
+.ee-event-h3 {
+	text-shadow: 1px 1px 0 #FFFFFF;
+	padding: 10px;
+	background: rgba(232, 232, 232, 0.9);	
+}
+
+
+#espresso-event-details-wrap-dv {
+	width:100%;
+	margin: 1em auto; 
+}
+#espresso-event-details-dv {
+	position: relative;
+	padding: 0;
+	margin: 0 auto;
+}
+#event-details-h1 {
+	z-index:10; 
+	font-size: 2em;
+	line-height:1.1em; 
+	word-break: keep-all;
+	white-space: wrap;
+	-webkit-hyphens:none;
+	-moz-hyphens:none;
+	hyphens:none;
+}
+
+.ee-event-img-dv {
+	width:100%;
+	overflow: hidden;
+	margin:0 0 1em;
+}
+.ee-event-img {
+	width:100%;
+	height: 100%;
+}
+.espresso-event-wrapper-dv {
+	position: relative;
+}
+.espresso-event-wrapper-dv .event-content {
+	padding: 0 0 .25em;
+}
+.espresso-event-wrapper-dv .event-content p { 
+}
+.espresso-event-wrapper-dv .event-meta {
+	text-align: right;
+	margin: 0 0 1em;
+}
+.espresso-event-details .event-datetimes {
+	padding: 0 0 1em;
+}
+.espresso-event-details .event-datetimes-h3 {
+}
+.espresso-event-details .ee-event-datetimes-ul {
+	list-style: none;
+}
+.espresso-event-details .ee-event-datetimes-li {
+}
+
+.espresso-event-details .edit-event-lnk {
+	margin:0 1em;
+}
+.espresso-venue-dv {
+	/*padding: 1em 2em;
+	margin:1em 0;
+	border:1px solid #eee;
+	background: #f8f8f8;*/
+}
+
+
+
+/************************************** VENUE  ARCHIVES  ************************************* */
+
+.espresso_events .edit-link,
+.espresso_venues .edit-link {
+	display: inline-block;
+}
+.espresso_events .entry-meta,
+.espresso_venues .entry-meta {
+	display: inline-block;
+	max-width: 100%;
+}
+.espresso_events .entry-meta a,
+.espresso_venues .entry-meta a {
+	text-decoration: none;
+}
+
+.venue-list-venue-wrap-dv {
+	position: relative;
+	font-size: 13px;
+}
+.espresso-venue-wrapper-dv {
+	position: relative;
+	z-index: 1;
+}
+.espresso-venue-wrapper-dv a,
+.espresso-venue-wrapper-dv a:visited {
+	/*color: #444;*/
+}
+h3.venue-title,
+h3.venue-title a {
+	margin: 1em 0;
+	line-height: 1.1em;
+	text-decoration: none;
+}
+.ee-venue-img-dv {
+/*	float: left;
+	width: 235px;
+	height: 156px;
+	overflow: hidden;
+	-moz-box-sizing: content-box !important;
+	box-sizing: content-box !important;*/
+}
+.ee-venue-img-dv img {
+	width: 100%;
+	border-radius: 0;
+	box-shadow: none;
+}
+.venue-header {
+/*	float: left;
+	width: 205px;
+	height: 126px;
+	padding: 10px 20px 20px 10px;
+	line-height: 1.2em;
+	-moz-box-sizing: content-box !important;
+	box-sizing: content-box !important;*/
+}
+.venue-header p {
+	line-height: 1.2em;
+}
+.venue-content {
+/*	float: left;
+	width: 205px;
+	height: 126px;
+	padding: 15px;
+	background: rgba( 0, 0, 0, .05 );
+	color: #444;
+	text-shadow: 1px 1px 0px #fff;
+	line-height: 1.2em;
+	-moz-box-sizing: content-box !important;
+	box-sizing: content-box !important;*/
+}
+.venue-content a {
+
+}
+.venue-list-gmap {
+/*	float: left;
+	width: 235px;
+	height: 156px;
+	padding: 0;
+	-moz-box-sizing: content-box !important;
+	box-sizing: content-box !important;*/
+}
+.venue-meta {
+	position: relative;
+	z-index: 1;
+	padding: 20px 0;
+}
+.espresso-venue-wrapper-dv div.clear {
+	height: 0;
+	padding: 0;
+	margin: 0;
+}
+.edit-venue-lnk {
+}
+
+
+
+
+/************************************** VENUE  SINGLE  ************************************* */
+
+
+
+#espresso-venue-details-wrap-dv {
+    clear: both;
+    margin: 1em auto;
+}
+#espresso-venue-details-dv {
+    margin: 0 auto;
+    padding: 0 1em;
+    position: relative;
+}
+
+#espresso-venue-header-dv {
+	position: relative;
+}
+
+.has-post-thumbnail .venue-header {
+	padding: 20px;
+	position: absolute;
+	bottom: 0;
+	left: 0;
+}
+
+#venue-details-h1 {
+    -moz-hyphens: none;
+    font-size: 2em;
+    line-height: 1.1em;
+    word-break: keep-all;
+    z-index: 10;
+}
+
+.venue-header.has-img h1 {
+	margin:0;
+}
+
+.venue-header.has-img {
+	text-shadow: 1px 1px 0 #FFFFFF;
+	background: none repeat scroll 0 0 rgba(232, 232, 232, 0.9);
+}
+.venue-header.has-excerpt {
+}
+
+.venue-header.has-img p,
+.venue-header.has-excerpt p {
+	margin:10px 0 0;
+}
+
+
+.ee-venue-h3 {
+	background: rgba(232, 232, 232, 0.9);
+	text-shadow: 1px 1px 0 #FFFFFF;
+	padding: 10px;
+}
+
+.ee-venue-img-dv {
+    margin: 0 0 1em;
+    overflow: hidden;
+    width: 100%;
+}
+
+.ee-venue-img {
+	height: auto;
+	width: 100%;
+}
