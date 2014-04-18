@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/core/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -33,8 +33,8 @@ class EE_CPT_Strategy extends EE_BASE {
 
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
-	 *@var 	array	
-	 * @access 	protected
+	 *	@var 	array
+	 * 	@access 	protected
 	 */
 	protected $CPT = NULL;
 
@@ -45,20 +45,26 @@ class EE_CPT_Strategy extends EE_BASE {
 	protected $_CPTs = array();
 
 	/**
-	 * @var 	array 	$_CPT_endpoints
-	 * @access 	protected
-	 */
-	protected $_CPT_endpoints = array();
-
-	/**
-	 * @var 	array 	$_CPT_taxonomies
-	 * @access 	protected
+	 * 	@var 	array 	$_CPT_taxonomies
+	 *  @access 	protected
 	 */
 	protected $_CPT_taxonomies = array();
 
 	/**
+	 * 	@var 	array 	$_CPT_terms
+	 *  @access 	protected
+	 */
+	protected $_CPT_terms = array();
+
+	/**
+	 * 	@var 	array 	$_CPT_endpoints
+	 *  @access 	protected
+	 */
+	protected $_CPT_endpoints = array();
+
+	/**
 	 * $CPT_model
-	 *	@var 	object	
+	 *	@var 	object
 	 * 	@access 	protected
 	 */
 	protected $CPT_model = NULL;
@@ -69,7 +75,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 *@ singleton method used to instantiate class object
 	 *@ access public
 	 *@ return EE_Registry instance
-	 */	
+	 */
 	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_CPT_Strategy )) {
@@ -79,12 +85,12 @@ class EE_CPT_Strategy extends EE_BASE {
 	}
 
 
-	
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_CPT_Strategy
 	 */
 	private function __construct() {
 		// get CPT data
@@ -119,20 +125,101 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	/**
-	 * 	_get_espresso_CPT_endpoints 
+	 * 	_get_espresso_CPT_endpoints
 	 *
 	 * 	@access public
 	 * 	@return array
 	 */
 	public function get_CPT_endpoints() {
 		return $this->_CPT_endpoints;
-	}	
+	}
 
 	/**
-	 * Checks if we're on a EE-CPT archive-or-single page, and if we've never set the EE request var. 
+	 * 	_set_CPT_taxonomies
+	 *
+	 * 	@access private
+	 * 	@return void
+	 */
+	private function _set_CPT_taxonomies() {
+		// check if taxonomies have already been set
+		if ( empty( $this->_CPT_taxonomies )) {
+			// and that this CPT has taxonomies registered for it
+			if ( isset( $this->CPT['args'] ) && isset( $this->CPT['args']['taxonomies'] )) {
+				// if so then grab them, but we want the taxonomy name as the key
+				$taxonomies = array_flip( $this->CPT['args']['taxonomies'] );
+				// then grab the list of ALL taxonomies
+				$all_taxonomies = EE_Register_CPTs::get_taxonomies();
+				foreach ( $taxonomies as $taxonomy => $details ) {
+					// add details to our taxonomies if they exist
+					$taxonomies[ $taxonomy ] = isset( $all_taxonomies[ $taxonomy ] ) ? $all_taxonomies[ $taxonomy ] : NULL;
+				}
+				$this->_CPT_taxonomies = $taxonomies;
+			}
+		}
+	}
+
+
+
+	/**
+	 *    _set_CPT_terms
+	 *
+	 * @access private
+	 * @return void
+	 */
+	private function _set_CPT_terms() {
+		if ( empty( $this->_CPT_terms )) {
+			$terms = EEM_Term::instance()->get_all_CPT_post_tags();
+			foreach ( $terms as $term ) {
+				$this->_CPT_terms[ $term->slug() ] = $term;
+			}
+		}
+	}
+
+
+
+	/**
+	 *    _set_post_type_for_terms
+	 *
+	 * @access private
+	 * @param $WP_Query
+	 * @return void
+	 */
+	private function _set_post_type_for_terms( $WP_Query ) {
+		// is a tag set ?
+		if ( isset( $WP_Query->query['tag'] )) {
+			// set post_tags
+			$this->_set_CPT_terms();
+			// is this tag archive term in the list of terms used by our CPTs ?
+			$term = isset ( $this->_CPT_terms[ $WP_Query->query['tag'] ] ) ? $this->_CPT_terms[ $WP_Query->query['tag'] ] : NULL;
+			// verify the term
+			if ( $term instanceof EE_Term ) {
+				// if a post type is already set
+				if ( isset( $WP_Query->query_vars['post_type'] )) {
+					// if post types is an array but the tag archive term is NOT part of that array
+					if ( is_array( $WP_Query->query_vars['post_type'] ) && ! in_array( $term->post_type, $WP_Query->query_vars['post_type'] )) {
+						// add to existing array
+						$post_types = array_merge ( $WP_Query->query_vars['post_type'], array( $term->post_type ));
+						$WP_Query->set( 'post_type', $post_types );
+
+					} else {
+						// make post type an array including our CPT
+						$WP_Query->set( 'post_type', array( $WP_Query->query_vars['post_type'], $term->post_type ));
+					}
+				} else {
+					// just set post_type to our CPT
+					$WP_Query->set( 'post_type', $term->post_type );
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * Checks if we're on a EE-CPT archive-or-single page, and if we've never set the EE request var.
 	 * If so, sets the 'ee' request variable
 	 * so other parts of EE can know what CPT is getting queried.
-	 * To Mike's knowlege, this must be called from during or after the pre_get_posts hook
+	 * To Mike's knowledge, this must be called from during or after the pre_get_posts hook
 	 * in order for is_archive() and is_single() methods to work properly.
 	 * @return void
 	 */
@@ -143,7 +230,6 @@ class EE_CPT_Strategy extends EE_BASE {
 			if ( is_archive() && EE_Config::get_route( $this->CPT['plural_slug'] )) {
 				// ie: set "ee" to "events"
 				EE_Registry::instance()->REQ->set( 'ee', $this->CPT['plural_slug'] );
-//				d( EE_Registry::instance()->REQ );
 			// or does it match a single page CPT like /event/
 			} else if ( is_single() && EE_Config::get_route( $this->CPT['singular_slug'] )) {
 				// ie: set "ee" to "event"
@@ -152,19 +238,27 @@ class EE_CPT_Strategy extends EE_BASE {
 		}
 	}
 
+
+
 	/**
-	 * 	If this query (not just "main" queries (ie, for WP's infamous "loop")) is for an EE CPT, then we want to supercharge the get_posts query
-	 * to add our EE stuff (like joining to our tables, selecting extra columns, and adding 
+	 *	pre_get_posts
+	 *
+	 * If this query (not just "main" queries (ie, for WP's infamous "loop")) is for an EE CPT, then we want to supercharge the get_posts query
+	 * to add our EE stuff (like joining to our tables, selecting extra columns, and adding
 	 * EE objects to teh post to facilitate further querying of related data etc)
 	 *
-	 * 	@access public
-	 * 	@return array
+	 * @access public
+	 * @param WP_Query $WP_Query
+	 * @return void
 	 */
 	public function pre_get_posts( $WP_Query ) {
 		// check that postz-type is set
 		if ( ! $WP_Query instanceof WP_Query ) {
 			return;
 		}
+
+		// check for terms
+		$this->_set_post_type_for_terms( $WP_Query );
 
 		// is a taxonomy set ?
 		if ( $WP_Query->is_tax ) {
@@ -210,7 +304,8 @@ class EE_CPT_Strategy extends EE_BASE {
 					$this->CPT = $this->_CPTs[ $post_type ];
 					// set post type
 					$this->CPT['post_type'] = $post_type;
-//					echo '<h4>post_type : ' . $this->CPT['post_type'] . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+					// set taxonomies
+					$this->_set_CPT_taxonomies();
 					// the post or category or term that is triggering EE
 					$this->CPT['espresso_page'] = EE_Registry::instance()->REQ->is_espresso_page();
 					// requested post name
@@ -250,20 +345,20 @@ class EE_CPT_Strategy extends EE_BASE {
 					add_filter( 'posts_join',	array( $this, 'posts_join' ));
 					add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
 					add_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
-					add_filter( 'get_edit_post_link', array( $this, 'get_edit_post_link' ), 10, 3 );
-				}				
+					add_filter( 'get_edit_post_link', array( $this, 'get_edit_post_link' ), 10, 2 );
+				}
 			}
 		}
 	}
 
 
 
-
 	/**
-	 * 	posts_fields
+	 *    posts_fields
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param $SQL
+	 * @return    string
 	 */
 	public function posts_fields( $SQL ) {
 		// does this CPT have a meta table ?
@@ -278,10 +373,11 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 	/**
-	 * 	posts_join
+	 *    posts_join
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param $SQL
+	 * @return    string
 	 */
 	public function posts_join( $SQL ) {
 		// does this CPT have a meta table ?
@@ -296,12 +392,13 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 
-
 	/**
-	 * 	the_posts
+	 *    the_posts
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param          $posts
+	 * @param WP_Query $wp_query
+	 * @return    void
 	 */
 	public function the_posts( $posts, WP_Query $wp_query ) {
 //		d( $wp_query );
@@ -320,8 +417,12 @@ class EE_CPT_Strategy extends EE_BASE {
 
 
 
-
-	function get_edit_post_link( $url, $ID, $context ) {
+	/**
+	 * @param $url
+	 * @param $ID
+	 * @return string
+	 */
+	function get_edit_post_link( $url, $ID ) {
 		//need to make sure we only edit links if our cpt
 		global $post;
 		if ( ! isset( $this->_CPTs[ $post->post_type ] )) {
@@ -333,6 +434,7 @@ class EE_CPT_Strategy extends EE_BASE {
 		// http://example.com/wp-admin/admin.php?page=espresso_events&action=edit&post=205&edit_nonce=0d403530d6
 		return wp_nonce_url( add_query_arg( array( 'page' => $this->CPT['post_type'], 'post' =>$ID, 'action' =>'edit' ), $url ), 'edit', 'edit_nonce' );
 	}
+
 
 
 
@@ -352,7 +454,7 @@ class EE_CPT_Strategy extends EE_BASE {
  *
  * @package			Event Espresso
  * @subpackage	/core/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -361,14 +463,14 @@ class EE_CPT_Default_Strategy {
 
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
-	 *	@var 	object	
+	 *	@var 	object
 	 * 	@access 	protected
 	 */
 	protected $CPT = NULL;
 
 
 
-	
+
 	/**
 	 * 	class constructor
 	 *
@@ -376,7 +478,7 @@ class EE_CPT_Default_Strategy {
 	 *  @return 	void
 	 */
 	private function __construct( $CPT ) {
-		
+
 		$this->CPT = $CPT;
 		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );

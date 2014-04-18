@@ -75,21 +75,20 @@ final class EE_Request_Handler {
 		// AJAX ???
 		$this->ajax = defined( 'DOING_AJAX' ) ? TRUE : FALSE;
 		$this->front_ajax = $this->is_set( 'ee_front_ajax' ) && $this->get( 'ee_front_ajax' ) == 1 ? TRUE : FALSE;
-		$this->get_request_vars( $wp );
-//		d( $this->_params );
+		$this->set_request_vars( $wp );
 		do_action( 'AHEE__EE_Request_Handler__construct__complete' );
 	}
 
 
 
 	/**
-	 *    get_request_vars
+	 *    set_request_vars
 	 *
 	 * @access public
 	 * @param WP_Query $wp
 	 * @return void
 	 */
-	public function get_request_vars( $wp = NULL ) {
+	public function set_request_vars( $wp = NULL ) {
 		if ( ! is_admin() ) {
 			// set request post_id
 			$this->set( 'post_id', $this->get_post_id_from_request( $wp ));
@@ -193,24 +192,27 @@ final class EE_Request_Handler {
 	 * 		test_for_espresso_page
 	 *
 	 * 		@access public
-	 * 		@return mixed
+	 * 		@return bool
 	 */
 	public function test_for_espresso_page() {
 		// load espresso CPT endpoints
 		$espresso_CPT_endpoints = EE_Registry::instance()->load_core('CPT_Strategy')->get_CPT_endpoints();
 		$post_type_CPT_endpoints = array_flip( $espresso_CPT_endpoints );
-		// was a post name passed ?
-		if (  isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] )) {
-			// kk we know this is an espresso page, but is it a specific post ?
-			if ( ! $this->get( 'post_name' )) {
-				// there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
-				$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : NULL;
-				// if the post type matches on of our then set the endpoint
-				if ( $post_name ) {
-					$this->set( 'post_name', $post_name );
+		$post_types = (array)$this->get( 'post_type' );
+		foreach ( $post_types as $post_type ) {
+			// was a post name passed ?
+			if ( isset( $post_type_CPT_endpoints[ $post_type ] ) ) {
+				// kk we know this is an epsresso page, but is it a specific post ?
+				if ( !$this->get( 'post_name' ) ) {
+					// there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
+					$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : NULL;
+					// if the post type matches on of our then set the endpoint
+					if ( $post_name ) {
+						$this->set( 'post_name', $post_name );
+					}
 				}
+				return TRUE;
 			}
-			 return TRUE;
 		}
 		if ( $this->get( 'post_name' )) {
 			// load all pages using espresso shortcodes

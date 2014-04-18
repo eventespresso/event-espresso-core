@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/core/CPTs/EE_CPT_Event_Strategy.core.php
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -26,19 +26,19 @@ class EE_CPT_Event_Strategy {
 
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
-	 *	@var 	object	
+	 *	@var 	object
 	 * 	@access 	protected
 	 */
 	protected $CPT = NULL;
-	
 
 
-	
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $CPT
+	 * @return \EE_CPT_Event_Strategy
 	 */
 	public function __construct( $CPT ) {
 		$this->CPT = $CPT;
@@ -55,11 +55,11 @@ class EE_CPT_Event_Strategy {
 		// 'posts_join'
 		$this->_add_filters();
 	}
-	
+
 
 
 	/**
-	 * When an instance of this class is created, we add our filters 
+	 * When an instance of this class is created, we add our filters
 	 * (which will get removed in case the next call to get_posts ISN'T
 	 * for event CPTs)
 	 */
@@ -89,13 +89,15 @@ class EE_CPT_Event_Strategy {
 
 
 	/**
-	 * 	posts_fields
+	 *    posts_fields
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param          $SQL
+	 * @param WP_Query $wp_query
+	 * @return    string
 	 */
 	public function posts_fields( $SQL, WP_Query $wp_query ) {
-		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+		if ( isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {
 			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
 			$SQL .= ', ' . EEM_Datetime::instance()->table() . '.* ' ;
 		}
@@ -105,13 +107,15 @@ class EE_CPT_Event_Strategy {
 
 
 	/**
-	 * 	posts_join
+	 *    posts_join
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param          $SQL
+	 * @param WP_Query $WP_Query
+	 * @return    string
 	 */
 	public function posts_join( $SQL, WP_Query $wp_query ) {
-		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+		if ( isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {
 			global $wpdb;
 			// adds something like " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) " to WP Query JOIN statement
 			$SQL .= ' JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Datetime::instance()->table() . '.EVT_ID = ' . $wpdb->posts . '.ID ) ';
@@ -122,10 +126,12 @@ class EE_CPT_Event_Strategy {
 
 
 	/**
-	 * 	posts_where
+	 *    posts_where
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param          $SQL
+	 * @param WP_Query $wp_query
+	 * @return    string
 	 */
 	public function posts_where( $SQL, WP_Query $wp_query ) {
 		global $wpdb;
@@ -134,34 +140,37 @@ class EE_CPT_Event_Strategy {
 
 
 
-
-
 	/**
-	 * 	posts_groupby
+	 *    posts_groupby
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param          $SQL
+	 * @param WP_Query $wp_query
+	 * @return    void
 	 */
 	public function posts_groupby( $SQL, WP_Query $wp_query ) {
-		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+		if ( isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {
 			// TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
-			// we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once 
+			// we're joining to the datetimes table, where there can be MANY datetimes for a single event, but we want to only show each event only once
 			// (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
 			global $wpdb;
 			$SQL = $wpdb->posts . '.ID';
 		}
-		return $SQL;	
+		return $SQL;
 	}
 
 
+
 	/**
-	 * 	the_posts
+	 *    the_posts
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param          $posts
+	 * @param WP_Query $wp_query
+	 * @return    array
 	 */
 	public function the_posts( $posts, WP_Query $wp_query ) {
-		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+		if ( isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events' ) {
 			// automagically load the EEH_Event_View helper so that it's functions are available
 			EE_Registry::instance()->load_helper('Event_View');
 		}
@@ -170,12 +179,15 @@ class EE_CPT_Event_Strategy {
 
 
 
-
 	/**
-	 * 	get_EE_post_type_metadata
+	 *    get_EE_post_type_metadata
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param null $meta_value
+	 * @param      $post_id
+	 * @param      $meta_key
+	 * @param      $single
+	 * @return    string
 	 */
 	public function get_EE_post_type_metadata( $meta_value = NULL, $post_id, $meta_key, $single ) {
 		return $meta_value;

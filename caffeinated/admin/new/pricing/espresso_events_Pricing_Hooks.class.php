@@ -608,7 +608,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		//default main template args
 		$main_template_args = array(
-			'event_datetime_help_link' => EEH_Template::get_help_tab_link('event_date_info', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add a filter to the template for the help text in the Events_Admin_Page core file so we can add further help
+			'event_datetime_help_link' => EEH_Template::get_help_tab_link('event_editor_event_datetimes_help_tab', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add a filter to the template for the help text in the Events_Admin_Page core file so we can add further help
 			'existing_datetime_ids' => '',
 			'total_dtt_rows' => 1,
 			'add_new_dtt_help_link' => EEH_Template::get_help_tab_link('add_new_dtt_info', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add this help info id to the Events_Admin_Page core file so we can access it here.

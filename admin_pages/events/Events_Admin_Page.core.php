@@ -244,7 +244,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
-					'event_date_info' => array(
+					'event_editor_event_datetimes_help_tab' => array(
 						'title' => __('Event Datetimes', 'event_espresso'),
 						'filename' => 'event_editor_event_datetimes'
 					),
@@ -300,7 +300,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
-					'event_date_info' => array(
+					'event_editor_event_datetimes_help_tab' => array(
 						'title' => __('Event Datetimes', 'event_espresso'),
 						'filename' => 'event_editor_event_datetimes'
 					),
@@ -1261,7 +1261,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket[1] ); //note we're just sending the first default row (decaf can't manage default tickets so this should be sufficent);
 		}
 
-		$template_args['event_datetime_help_link'] = $this->_get_help_tab_link('event_date_info');
+		$template_args['event_datetime_help_link'] = $this->_get_help_tab_link('event_editor_event_datetimes_help_tab');
 		$template_args['ticket_options_help_link'] = $this->_get_help_tab_link('ticket_options_info');
 		$template_args['existing_datetime_ids'] = implode(',', $existing_datetime_ids);
 		$template_args['existing_ticket_ids'] = implode(',', $existing_ticket_ids);
