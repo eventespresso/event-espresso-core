@@ -49,7 +49,10 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 	 */
 	protected function _check_if_option_selected($value){
 		$selected_options = $this->_input->raw_value();
-		$equality = in_array("$value",$selected_options);
+		if( ! $selected_options ){
+			return false;
+		}
+		$equality = in_array("$value",$selected_options );
 		return $equality;
 	}
 }
