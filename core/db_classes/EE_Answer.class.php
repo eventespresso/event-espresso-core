@@ -21,7 +21,6 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Answer extends EE_Base_Class{
 	
 	/**
