@@ -94,7 +94,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// the minimum version of EE Core that the addon will work with
 			'min_core_version' => isset( $setup_args['min_core_version'] ) ? (string)$setup_args['min_core_version'] : '',
 			// full server path to plugin root folder
-			'plugin_dir_path' 	=> isset( $setup_args['plugin_dir_path'] ) ? (string)$setup_args['plugin_dir_path'] : '',
+			'base_path' 	=> isset( $setup_args['base_path'] ) ? (string)$setup_args['base_path'] : '',
 			// path to folder containing files for integrating with the EE core admin and/or setting up EE admin pages
 			'admin_path' 			=> isset( $setup_args['admin_path'] ) ? (string)$setup_args['admin_path'] : '',
 			// a method to be called when the EE Admin is first invoked, can be used for hooking into any admin page
@@ -162,7 +162,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	public static function instantiate_addon() {
 		// load and instantiate main addon class
-		$addon = EE_Registry::instance()->load_addon( self::$_addon_settings[ self::$_addon_name ]['plugin_dir_path'], self::$_addon_settings[ self::$_addon_name ]['class_name'] );
+		$addon = EE_Registry::instance()->load_addon( self::$_addon_settings[ self::$_addon_name ]['base_path'], self::$_addon_settings[ self::$_addon_name ]['class_name'] );
 		$addon->set_version( self::$_addon_settings[ self::$_addon_name ]['version'] );
 		$addon->set_min_core_version( self::$_addon_settings[ self::$_addon_name ]['min_core_version'] );
 		// load_admin_controller
