@@ -120,7 +120,7 @@ final class EE_System {
 		// load EE_Config, EE_Textdomain, etc
 		add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
 		// load EE_Config, EE_Textdomain, etc
-		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_addons' ), 7 );
+		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
 		// ALL EE Addons should use the following hook point to attach their initial setup too
@@ -294,33 +294,11 @@ final class EE_System {
 	* @return void
 	*/
 	public function load_espresso_addons() {
+		// set autoloaders for all of the classes implementing EEI_Plugin_API
+		// which provide helpers for EE plugin authors to more easily register certain components with EE.
+		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'plugin_api' );
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
-		$this->_register_plugin_apis();
 	}
-
-
-
-
-	/**
-	 * This method simply requires all the classes implementing EEI_Plugin_API which provide helpers for
-	 * EE plugin authors to more easily register certain components with EE.
-	 *
-	 * @see     /core/libraries/plugin_api/ for all the current available plugin_api library files.
-	 * @since  4.3.0
-	 *
-	 * @return void
-	 */
-	private function _register_plugin_apis() {
-		$plugin_apis_to_register = glob( EE_LIBRARIES . 'plugin_api/*' );
-		//allow PLUGINS to add their own api library classes if they wish.
-		$plugin_apis_to_register = apply_filters( 'FHEE__EE_System___register_plugin_apis__plugin_apis_to_register', $plugin_apis_to_register );
-		//cycle through and setup paths.
-		foreach ( $plugin_apis_to_register as $file ) {
-			if ( is_readable( $file ) )
-				require_once $file;
-		}
-	}
-
 
 
 
@@ -607,15 +585,15 @@ final class EE_System {
 
 
 	/**
-	* register_shortcodes_modules_and_addons
+	* register_shortcodes_modules_and_widgets
 	*
 	* generate lists of shortcodes and modules, then verify paths and classes
 	*
 	* @access public
 	* @return void
 	*/
-	public function register_shortcodes_modules_and_addons() {
-		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons' );
+	public function register_shortcodes_modules_and_widgets() {
+		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
 	}
 
 
@@ -711,8 +689,10 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__load_controllers__start' );
 		// let's get it started
 		if ( ! is_admin() && !  EE_Maintenance_Mode::instance()->level() ) {
+			do_action( 'AHEE__EE_System__load_controllers__load_front_controllers' );
 			EE_Registry::instance()->load_core( 'Front_Controller' );
 		} else if ( ! EE_FRONT_AJAX ) {
+			do_action( 'AHEE__EE_System__load_controllers__load_admin_controllers' );
 			EE_Registry::instance()->load_core( 'Admin' );
 		}
 		do_action( 'AHEE__EE_System__load_controllers__complete' );
