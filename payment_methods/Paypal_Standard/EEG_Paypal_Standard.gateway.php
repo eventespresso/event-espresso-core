@@ -30,7 +30,31 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	protected $_image_url = NULL;
 	protected $_shipping_details = NULL;
 	protected $_gateway_url = NULL;
-	
+	protected $_currencies_supported = array(
+					'USD',
+					'GBP',
+					'CAD',
+					'AUD',
+					'BRL',
+					'CHF',
+					'CZK',
+					'DKK',
+					'EUR',
+					'HKD',
+					'HUF',
+					'ILS',
+					'JPY',
+					'MXN',
+					'MYR',
+					'NOK',
+					'NZD',
+					'PHP',
+					'PLN',
+					'SEK',
+					'SGD',
+					'THB',
+					'TRY',
+					'TWD');
 	/**
 	 * Also sets the gateway url class variable based o nwhether debug mode is enabled o rnot
 	 * @param type $settings_array

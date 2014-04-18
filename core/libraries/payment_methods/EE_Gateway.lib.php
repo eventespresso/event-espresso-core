@@ -25,6 +25,11 @@
  */
 abstract class EE_Gateway{
 	/**
+	 * a constant used as a possibel value for $_currencies_supported to indicate
+	 * that ALL currencies are supported by this gateway
+	 */
+	const all_currencies_supported = 'all_currencies_supported';
+	/**
 	 * Where keys currency codes, values i18n strings for the currency
 	 * @var array
 	 */

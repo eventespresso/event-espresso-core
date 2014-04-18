@@ -28,6 +28,14 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EEG_Aim extends EE_Onsite_Gateway{
 	protected $_login_id;
 	protected $_transaction_key;
+	protected $_currencies_supported = array(
+		'AUD',
+		'USD',
+		'CAD',
+		'EUR',
+		'GBP',
+		'NZD',
+	);
 	/**
 	 * Whether to send test transactions (even to live site)
 	 * @var boolean 

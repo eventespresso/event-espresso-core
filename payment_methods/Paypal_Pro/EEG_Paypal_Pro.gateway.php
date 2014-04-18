@@ -52,6 +52,31 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 	 */
 	protected $_credit_card_types = NULL;
 				
+	protected $_currencies_supported = array(
+					'USD',
+					'GBP',
+					'CAD',
+					'AUD',
+					'BRL',
+					'CHF',
+					'CZK',
+					'DKK',
+					'EUR',
+					'HKD',
+					'HUF',
+					'ILS',
+					'JPY',
+					'MXN',
+					'MYR',
+					'NOK',
+					'NZD',
+					'PHP',
+					'PLN',
+					'SEK',
+					'SGD',
+					'THB',
+					'TRY',
+					'TWD',);
 	
 	/**
 	 * 

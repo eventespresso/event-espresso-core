@@ -27,6 +27,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EEG_Mijireh extends EE_Offsite_Gateway{
 	protected $_access_key;
+	
+	protected $_currencies_supported = EE_Gateway::all_currencies_supported;
 	/**
 	 * @param EE_Payment $payment to process
 	 * @param string $return_url URL to send the user to after a successful payment on the payment provider's website
