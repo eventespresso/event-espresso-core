@@ -154,7 +154,13 @@ class EE_Currency extends EE_Base_Class{
 	function set_singular_name($single) {
 		return $this->set('CUR_single', $single);
 	}
-
+	/**
+	 * Gets a prettier name
+	 * @return string
+	 */
+	function pretty_name(){
+		return sprintf(__("%s (%s)", "event_espresso"),$this->singular_name(),$this->code());
+	}
 
 }
 

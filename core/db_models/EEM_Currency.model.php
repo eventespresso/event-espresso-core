@@ -67,6 +67,14 @@ class EEM_Currency extends EEM_Base{
 		
 		parent::__construct();
 	}
+	/**
+	 * Gets all thea ctive currencies
+	 * @return EE_Currency[]
+	 */
+	public function get_all_active(){
+		return $this->get_all(array(array('CUR_active'=>true),'order_by'=>array('CUR_single'=>'ASC','CUR_code'=>'ASC')));
+	}
+	
 }
 
 // End of file EEM_Currency.model.php

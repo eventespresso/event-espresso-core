@@ -76,6 +76,11 @@ class EE_Payment_Method extends EE_Base_Class{
 	 */
 	protected $_Payment = array();
 	/**
+	 * Currenices which can be use dby htis paymetn method
+	 * @var EE_Currency[]
+	 */
+	protected $_Currency = array();
+	/**
 	 * Payment Method type object, which has all the info about this type of payment method,
 	 * including functions for processing payments, to get settings forms, etc.
 	 * @var EEPM_Base
