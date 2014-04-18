@@ -62,7 +62,7 @@ abstract class EES_Shortcode extends EE_Base {
 	*	instance - returns intance of child class object
 	*
 	*	@access public
-	*	@return 	void
+	*	@return 	EES_Shortcode
 	*/
 	final public static function instance() {
 		$shortcode_class = EES_Shortcode::_get_called_class();
