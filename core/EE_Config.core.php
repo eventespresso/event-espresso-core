@@ -215,9 +215,23 @@ final class EE_Config {
 	 * @return 		mixed EE_Config_Base | NULL
 	 */
 	public function set_config( $section = '', $name = '', $config_class = '' ) {
+
+		// check that settings section exists
+		if ( ! isset( $this->$section )) {
+			throw new EE_Error( sprintf( __( 'The %s configuration settings do not exist.', 'event_espresso' ), $section ));
+		}
+		// in case old settings were saved as an array
+		if ( is_array( $this->$section )) {
+			// convert them to an object
+			$config_array = $this->$section;
+			$this->$section = new stdClass();
+			foreach ( $config_array as $key => $value ){
+				$this->$section->$key = $value;
+			}
+		}
 		// check that section exists and is the proper format
-		if ( ! isset( $this->$section ) || ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof StdClass )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration does not exist.', 'event_espresso' ), $section ));
+		if ( ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof stdClass )) {
+			throw new EE_Error( sprintf( __( 'The %s configuration settings have not been formatted correctly.', 'event_espresso' ), $section ));
 		}
 		// verify config class is accessible
 		if ( ! class_exists( $config_class )) {
