@@ -30,13 +30,31 @@ abstract class EE_Addon {
 	 * @var $_version
 	 * @type string
 	 */
-	private $_version;
+	protected $_version;
 
 	/**
 	 * @var $_min_core_version
 	 * @type string
 	 */
-	private $_min_core_version;
+	protected $_min_core_version;
+
+	/**
+	 * @var $_config_section
+	 * @type string
+	 */
+	protected static $_config_section;
+
+	/**
+	 * @var $_config_class
+	 * @type string
+	 */
+	protected static $_config_class;
+
+	/**
+	 * @var $_config_class
+	 * @type string
+	 */
+	protected static $_config;
 
 
 
@@ -44,7 +62,7 @@ abstract class EE_Addon {
 	 * new_install - check for migration scripts
 	 * @return mixed
 	 */
-	abstract function new_install();
+	abstract public function new_install();
 
 
 
@@ -52,8 +70,16 @@ abstract class EE_Addon {
 	 * upgrade - check for migration scripts
 	 * @return mixed
 	 */
-	abstract function upgrade();
+	abstract public function upgrade();
 
+
+
+
+	/**
+	 *get_db_update_option_name
+	 * @return string
+	 */
+	abstract public function get_db_update_option_name();
 
 
 	/**
@@ -95,14 +121,6 @@ abstract class EE_Addon {
 
 
 	/**
-	 *get_db_update_option_name
-	 */
-	public function get_db_update_option_name() {
-	}
-
-
-
-	/**
 	 *    set_config
 	 *
 	 * @access    public
@@ -125,8 +143,9 @@ abstract class EE_Addon {
 		if ( ! empty( $config_class )) {
 			self::$_config_class = $config_class;
 		}
-		if ( ! isset( EE_Config::instance()->$section->$name ) || ! EE_Config::instance()->$section->$name instanceof self::$_config_class ){
-			EE_Config::instance()->$section->$name = new self::$_config_class;
+		$config_class = self::$_config_class;
+		if ( ! isset( EE_Config::instance()->$section->$name ) || ! EE_Config::instance()->$section->$name instanceof $config_class ){
+			EE_Config::instance()->$section->$name = new $config_class;
 			EE_Config::instance()->update_espresso_config();
 		}
 
