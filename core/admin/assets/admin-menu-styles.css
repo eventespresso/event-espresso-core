@@ -1,5 +1,5 @@
 /**
-* Event Espresso admin menu styles 
+* Event Espresso admin menu styles
 */
 
 .ee_menu_group {
@@ -7,7 +7,7 @@
 	background-color: #ddd;
 	margin: -2px -5px 0px -12px;
 	padding: 2px 0 3px 10px;
-	font-size:.95em;	
+	font-size:.95em;
 	font-weight: bold;
 	letter-spacing: 1px;
 	color: #333;
@@ -108,11 +108,11 @@ div.TB-ee-frame a {
 
 @font-face {
 	font-family: 'ee_dashicons';
-	src:url('../../../templates/global_assets/fonts/ee_dashicons.eot');
-	src:url('../../../templates/global_assets/fonts/ee_dashicons.eot?#iefix') format('embedded-opentype'),
-		url('../../../templates/global_assets/fonts/ee_dashicons.ttf') format('truetype'),
-		url('../../../templates/global_assets/fonts/ee_dashicons.woff') format('woff'),
-		url('../../../templates/global_assets/fonts/ee_dashicons.svg#ee_dashicons') format('svg');
+	src:url('../../templates/global_assets/fonts/ee_dashicons.eot');
+	src:url('../../templates/global_assets/fonts/ee_dashicons.eot?#iefix') format('embedded-opentype'),
+		url('../../templates/global_assets/fonts/ee_dashicons.ttf') format('truetype'),
+		url('../../templates/global_assets/fonts/ee_dashicons.woff') format('woff'),
+		url('../../templates/global_assets/fonts/ee_dashicons.svg#ee_dashicons') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -124,7 +124,7 @@ div.TB-ee-frame a {
    	height: auto;
 	margin-right: .5em;
     vertical-align: middle;
-	width: auto;	
+	width: auto;
 }
 
 .ee-icon:before, .ee-dashicons, .checkin-icons:before, #wpadminbar .ee-icon:before, #toplevel_page_espresso_events div.wp-menu-image:before,#toplevel_page_espresso_maintenance_settings div.wp-menu-image:before {
