@@ -67,7 +67,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		?>
 		<tr>
 			<th><label for="access_key">
-					<?php _e('Mijireh Access Key', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link( 'ee_Mijireh_help' ); ?>
+					<?php _e('Mijireh Access Key', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link( 'payment_methods_overview_mijireh_help_tab' ); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="access_key" size="35" id="access_key" value="<?php echo $this->_payment_settings['access_key']; ?>">
 				<br />
