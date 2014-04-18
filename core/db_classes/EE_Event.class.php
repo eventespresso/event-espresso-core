@@ -17,23 +17,23 @@
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 require_once( EE_CLASSES . 'EE_CPT_Base.class.php');
-class EE_Event extends EE_CPT_Base{ 	
+class EE_Event extends EE_CPT_Base{
 
 
 	/**
 	 * All registrations for this event
-	 * @var EE_Registration[] 
+	 * @var EE_Registration[]
 	 */
 	protected $_Registration;
-	
+
 	/**
 	 * All datetimes this event is offered
-	 * @var EE_Datetime[] 
+	 * @var EE_Datetime[]
 	 */
 	protected $_Datetime;
 
@@ -45,25 +45,25 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_Primary_Datetime;
 
-	
+
 	/**
 	 * Al question groups which apply to this event
-	 * @var EE_Question_Group[] 
+	 * @var EE_Question_Group[]
 	 */
 	protected $_Question_Group;
-	
+
 	/**
 	 * related venues
 	 * @var EE_Venue[]
 	 */
 	protected $_Venue;
-	
+
 	/**
 	 * Term (in context of a taxonomy) which apply to this event
 	 * @var EE_Term_Taxonomy[]
 	 */
 	protected $_Term_Taxonomy;
-	
+
 	/**
 	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
 	 */
@@ -77,10 +77,10 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_Message_Template_Group;
 
-	
+
 	/**
 	 * ID of event (post id)
-	 * @var int 
+	 * @var int
 	 */
 	protected $_EVT_ID;
 	/**
@@ -116,13 +116,13 @@ class EE_Event extends EE_CPT_Base{
 	protected $_EVT_modified;
 	/**
 	 * id of creator
-	 * @var int 
+	 * @var int
 	 */
 	protected $_EVT_wp_user;
-	
+
 	/**
 	 * indicates order of event on a menu
-	 * @var int 
+	 * @var int
 	 */
 	protected $_EVT_order;
 	/**
@@ -138,10 +138,10 @@ class EE_Event extends EE_CPT_Base{
 	protected $_EVT_display_ticket_selector;
 	/**
 	 * indicates time when event should be visible
-	 * @var int 
+	 * @var int
 	 */
 	protected $_EVT_visible_on;
-	
+
 	/**
 	 * how many extra people user can register
 	 * @var int
@@ -173,7 +173,7 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_EVT_external_URL;
 
-	
+
 	/**
 	 *Indicates whether or not this event accepts donations
 	 * @var boolean
@@ -193,7 +193,7 @@ class EE_Event extends EE_CPT_Base{
 
 
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @return EE_Event
 	 */
@@ -209,7 +209,7 @@ class EE_Event extends EE_CPT_Base{
 
 
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @return EE_Event
 	 */
@@ -233,7 +233,7 @@ class EE_Event extends EE_CPT_Base{
 	public function datetimes_ordered($show_expired = TRUE, $show_deleted = FALSE){
 		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order($this->_EVT_ID,$show_expired,$show_deleted);
 	}
-	
+
 	/**
 	 * Returns one related datetime. Mostly only used by some legacy code.
 	 * @return EE_Datetime
@@ -247,8 +247,8 @@ class EE_Event extends EE_CPT_Base{
 	 * @return EE_Datetime
 	 */
 	public function primary_datetime($try_to_exclude_expired = true, $try_to_exclude_deleted = true) {
-		if ( !empty ( $this->_Primary_Datetime )) { 
-			return $this->_Primary_Datetime; 
+		if ( !empty ( $this->_Primary_Datetime )) {
+			return $this->_Primary_Datetime;
 		}
 		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_primary_datetime_for_event( $this->_EVT_ID ,$try_to_exclude_expired , $try_to_exclude_deleted );
 //		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
@@ -263,12 +263,12 @@ class EE_Event extends EE_CPT_Base{
 	public function tickets($query_params = array()){
 		return $this->get_many_related('Ticket', $query_params);
 	}
-	
-	
+
+
 	function additional_limit(){
 		return $this->get('EVT_additional_limit');
 	}
-	
+
 	function allow_overflow(){
 		return $this->get('EVT_allow_overflow');
 	}
@@ -294,7 +294,7 @@ class EE_Event extends EE_CPT_Base{
 	function external_url(){
 		return $this->get('EVT_external_URL');
 	}
-	
+
 	function member_only(){
 		return $this->get('EVT_member_only');
 	}
@@ -310,11 +310,11 @@ class EE_Event extends EE_CPT_Base{
 	function order(){
 		return $this->get('EVT_order');
 	}
-	
+
 	function default_registration_status() {
 		return $this->get('EVT_default_registration_status');
 	}
-	
+
 	function short_description( $num_words = 55, $more = NULL, $not_full_desc = FALSE ){
 		$short_desc = $this->get('EVT_short_desc');
 		if ( ! empty( $short_desc ) || $not_full_desc ) {
@@ -323,7 +323,7 @@ class EE_Event extends EE_CPT_Base{
 			$full_desc = $this->get('EVT_desc');
 			return wp_trim_words ( $full_desc, $num_words, $more );
 		}
-		
+
 	}
 	function slug(){
 		return $this->get('EVT_slug');
@@ -394,7 +394,7 @@ class EE_Event extends EE_CPT_Base{
 	function set_donations($donations){
 		return $this->set('EVT_donations',$donations);
 	}
-	
+
 	/**
 	 * Adds a venue to this event
 	 * @param EE_Venue/int $venue_id_or_obj
@@ -403,7 +403,7 @@ class EE_Event extends EE_CPT_Base{
 	function add_venue($venue_id_or_obj){
 		return $this->_add_relation_to($venue_id_or_obj, 'Venue');
 	}
-	
+
 	/**
 	 * Removes a venue from the event
 	 * @param EE_Venue/int $venue_id_or_obj
@@ -412,7 +412,7 @@ class EE_Event extends EE_CPT_Base{
 	function remove_venue($venue_id_or_obj){
 		return $this->_remove_relation_to($venue_id_or_obj, 'Venue');
 	}
-	
+
 	/**
 	 * Gets all teh venues related ot the event. May provide additional $query_params if desired
 	 * @param array $query_params like EEM_Base::get_all's $query_params
@@ -430,7 +430,7 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	private function _has_ID_and_is_published() {
 		// first check if event id is present and not NULL, then check if this event is published (or any of the equivalent "published" statuses)
-		return ( $this->ID() && $this->ID() !== NULL && ($this->_status == 'publish' || $this->_status == EEM_Event::sold_out || $this->_status == EEM_Event::postponed || $this->_status == EEM_Event::cancelled ) ) ? TRUE : FALSE;		
+		return ( $this->ID() && $this->ID() !== NULL && ($this->_status == 'publish' || $this->_status == EEM_Event::sold_out || $this->_status == EEM_Event::postponed || $this->_status == EEM_Event::cancelled ) ) ? TRUE : FALSE;
 	}
 
 
@@ -446,7 +446,7 @@ class EE_Event extends EE_CPT_Base{
 		}
 		// set initial value
 		$upcoming = FALSE;
-		//next let's get all datetimes and loop through them 
+		//next let's get all datetimes and loop through them
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
 		foreach ( $dtts as $dtt ) {
 			//if this dtt is expired then we continue cause one of the other datetimes might be upcoming.
@@ -468,7 +468,7 @@ class EE_Event extends EE_CPT_Base{
 		}
 		// set initial value
 		$active = FALSE;
-		//next let's get all datetimes and loop through them 
+		//next let's get all datetimes and loop through them
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
 		foreach ( $dtts as $dtt ) {
 			//if this dtt is expired then we continue cause one of the other datetimes might be active.
@@ -490,7 +490,7 @@ class EE_Event extends EE_CPT_Base{
 		}
 		// set initial value
 		$expired = FALSE;
-		//first let's get all datetimes and loop through them 
+		//first let's get all datetimes and loop through them
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
 		foreach ( $dtts as $dtt ) {
 			//if this dtt is upcoming or active then we return false.
@@ -517,14 +517,14 @@ class EE_Event extends EE_CPT_Base{
 	 * 	perform_sold_out_status_check
 	 * 	checks all of this events's datetime  reg_limit - sold values to determine if ANY datetimes have spaces available...
 	 * 	if NOT, then the event status will get toggled to 'sold_out'
-	 * 
+	 *
 	 * 	@access public
 	 * 	@return bool    return the ACTUAL sold out state.
 	 */
 	public function perform_sold_out_status_check() {
 		// set initial value
 		$spaces_remaining = 0;
-		//next let's get all datetimes and loop through them 
+		//next let's get all datetimes and loop through them
 		$datetimes = $this->get_many_related( 'Datetime', array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' )));
 		foreach ( $datetimes as $datetime ) {
 			$dtt_spaces_remaining = $datetime->spaces_remaining(TRUE);
@@ -546,7 +546,7 @@ class EE_Event extends EE_CPT_Base{
 			$sold_out = FALSE;
 		}
 
-		//note: I considered changing the EEM_Event status away from sold_out if this status check reveals that it's no longer sold out (yet the status is still set as sold out) but the problem is... what do we change the status BACK to?  We can't always assume that the previous event status was 'published' because this status check is always done in the admin and its entirely possible the event admin manually changes to sold_out status from some other status.  We also don't want a draft event to become a "publish event" because the sold out check reveals its NOT sold out. 
+		//note: I considered changing the EEM_Event status away from sold_out if this status check reveals that it's no longer sold out (yet the status is still set as sold out) but the problem is... what do we change the status BACK to?  We can't always assume that the previous event status was 'published' because this status check is always done in the admin and its entirely possible the event admin manually changes to sold_out status from some other status.  We also don't want a draft event to become a "publish event" because the sold out check reveals its NOT sold out.
 		// So I'll forgo the automatic switch away from sold out status for now and instead just return the $sold out status... so this check can be used to validate the TRUE sold out status regardless of what the Event status is set to.
 
 		return $sold_out;
@@ -593,7 +593,7 @@ class EE_Event extends EE_CPT_Base{
 	 * Get the logical active status in a heirarchal order for all the datetimes.
 	 *
 	 * Basically, we order the dtts by EVT_start_date.  Then first test on whether the event is published.  If its NOT published then we test for whether its expired or not.  IF it IS published then we test first on whether an event has any active dates.  If no active dates then we check for any upcoming dates.  If no upcoming dates then the event is considered expired.
-	 * 
+	 *
 	 * @return int (based on EE_Datetime active contstants.
 	 */
 	public function get_active_status() {
@@ -602,7 +602,7 @@ class EE_Event extends EE_CPT_Base{
 		//first check if event id is present on this object
 		if ( ! $this->ID() ) {
 			return FALSE;
-		}			
+		}
 
 		//first get all dtts ordered by date
 		$dtts = $this->get_many_related('Datetime', array( 'order_by' => array('DTT_EVT_start' => 'ASC' ) ) );
@@ -614,7 +614,7 @@ class EE_Event extends EE_CPT_Base{
 
 		//now we can conditionally determine status
 		if ( $this->_status == 'publish' ) {
-			
+
 			if ( in_array( EE_Datetime::active, $status_array )) {
 				return EE_Datetime::active;
 			} else if ( in_array( EE_Datetime::upcoming, $status_array )) {
@@ -622,10 +622,10 @@ class EE_Event extends EE_CPT_Base{
 			} else if ( in_array( EE_Datetime::expired, $status_array ) ) {
 				return EE_Datetime::expired;
 			}  else if ( in_array( EE_Datetime::sold_out, $status_array )) {
-				return EE_Datetime::sold_out;	
+				return EE_Datetime::sold_out;
 			} else {
 				return EE_Datetime::expired; //catchall
-			}		
+			}
 		} else {
 			switch ($this->_status) {
 				case EEM_Event::sold_out :
@@ -641,7 +641,7 @@ class EE_Event extends EE_CPT_Base{
 
 				default :
 					return EE_Datetime::inactive;
-			}			
+			}
 		}
 	}
 
@@ -659,7 +659,7 @@ class EE_Event extends EE_CPT_Base{
 		$status = '';
 		$active_status = $this->get_active_status();
 		$status = '<span class="ee-status event-active-status-' . $active_status . '">' . EEH_Template::pretty_status($active_status, FALSE, 'sentence') . '</span>';
-		
+
 		if ( $echo ) {
 			echo $status;
 		} else {
@@ -709,7 +709,7 @@ class EE_Event extends EE_CPT_Base{
 
 
 
-	
+
 	/**
 	 * This returns the ticket with the latest end time that is available for this event (across all datetimes attached to the event)
 	 * @return EE_Ticket
@@ -765,11 +765,11 @@ class EE_Event extends EE_CPT_Base{
 		$query_params[0]['Term_Taxonomy.Event.EVT_ID'] = $this->ID();
 		return EEM_Term::instance()->get_one($query_params);
 	}
-	
+
 	/**
 	 * Gets all terms for 'espresso_event_categories' we can find
 	 * @param type $query_params
-	 * @return EE_Term
+	 * @return EE_Term[]
 	 */
 	public function get_all_event_categories($query_params = array()){
 		$query_params[0]['Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
