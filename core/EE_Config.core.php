@@ -594,11 +594,11 @@ final class EE_Config {
 
 
 	/**
-	 * 	get_route - get module method route
+	 *    get_route - get module method route
 	 *
-	 *  @access 	public
-	 *  @param 	string 		$route - "pretty" public alias for module method
-	 *  @return 	void
+	 * @access 	public
+	 * @param 	string $route - "pretty" public alias for module method
+	 * @return  mixed string | NULL
 	 */
 	public static function get_route( $route = NULL ) {
 		do_action( 'AHEE__EE_Config__get_route__begin',$route );
@@ -612,13 +612,14 @@ final class EE_Config {
 
 
 	/**
-	 * 	register_forward - allows modules to forward request to another module for further processing
+	 *    register_forward - allows modules to forward request to another module for further processing
 	 *
-	 *  @access 	public
-	 *  @param 	string 		$route - "pretty" public alias for module method
-	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
-	 *  @param 	mixed		string|array 	$forward - function name or array( class, method )
-	 *  @return 	void
+	 * @access    public
+	 * @param    string  $route  - "pretty" public alias for module method
+	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
+	 * @param null       $forward
+	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @return    mixed string | bool
 	 */
 	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
 		do_action( 'AHEE__EE_Config__register_forward',$route,$status,$forward );
@@ -660,7 +661,7 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
-	 *  @return 	void
+	 *  @return 	mixed string | NULL
 	 */
 	public static function get_forward( $route = NULL, $status = 0 ) {
 		do_action( 'AHEE__EE_Config__get_forward__begin',$route,$status );
@@ -673,13 +674,14 @@ final class EE_Config {
 
 
 	/**
-	 * 	register_forward - allows modules to specify different view templates for different method routes and status results
+	 *    register_forward - allows modules to specify different view templates for different method routes and status results
 	 *
-	 *  @access 	public
-	 *  @param 	string 		$route - "pretty" public alias for module method
-	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
-	 *  @param 	mixed		string|array 	$forward - function name or array( class, method )
-	 *  @return 	void
+	 * @access    	public
+	 * @param    	string  $route  - "pretty" public alias for module method
+	 * @param    	integer $status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
+	 * @param 		string       $view
+	 * @internal  	param array|string $mixed $forward - function name or array( class, method )
+	 * @return    	mixed string | bool
 	 */
 	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
 		do_action( 'AHEE__EE_Config__register_view__begin',$route,$status,$view );
@@ -706,7 +708,7 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
-	 *  @return 	void
+	 *  @return 	mixed string | NULL
 	 */
 	public static function get_view( $route = NULL, $status = 0 ) {
 		do_action( 'AHEE__EE_Config__get_view__begin',$route,$status );
