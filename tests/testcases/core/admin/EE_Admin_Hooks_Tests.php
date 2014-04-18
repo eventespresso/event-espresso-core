@@ -16,7 +16,7 @@
  */
 class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 
-	public $extended_ee_admin;
+	private $_eeAdminMock;
 
 
 	/**
@@ -25,7 +25,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	public function setUp() {
 		parent::setUp();
 		EE_Registry::instance()->load_core('Admin_Page');
-		$this->extended_ee_admin = $this->getMockForAbstractClass( 'EE_Admin_Page' );
+		$this->_eeAdminMock = $this->getMockForAbstractClass( 'EE_Admin_Page' );
 	}
 }
 
