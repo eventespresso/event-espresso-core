@@ -38,6 +38,10 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('admin_enqueue_scripts', array($admin_instance, 'enqueue_admin_scripts') ), 20 );
 		$this->assertEquals( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ), 10 );
 		$this->assertEquals( has_filter('admin_footer_text', array($admin_instance, 'espresso_admin_footer') ), 10 );
+
+		//messages init is loaded in EE_System, however we want to make sure its availbel to admin
+		//make sure that Messages Init loaded
+		$this->assertTrue( class_exists( 'EE_Messages_Init' ) );
 	}
 
 	/**
@@ -158,9 +162,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('admin_head', array( $admin, 'register_custom_nav_menu_boxes' ) ), 10 );
 		$this->assertEquals( has_filter('nav_menu_meta_box_object', array( $admin, 'remove_pages_from_nav_menu' ) ), 10 );
 
-		//make sure that Messages Init loaded
-		$this->assertTrue( class_exists( 'EE_Messages_Init' ) );
-
 		//default should have Admin Page Loader loaded up.
 		$this->assertTrue( class_exists( 'EE_Admin_Page_Loader' ) );
 	}
@@ -190,4 +191,54 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$test_response = !empty( $result->_default_query['post__not_in'] ) ? $result->_default_query['post__not_in'] : NULL;
 		$this->assertEquals( $expected, $test_response );
 	}
+
+
+
+	//@todo public methods to write tests for
+	//function test_enable_hidden_ee_nav_menu_metaboxes() {}
+	//function test_ee_cpt_archive_pages()
+	//function test_enqueue_admin_scripts()
+	//function test_get_persistent_admin_notices()
+	//function test_dismiss_ee_nag_notice_callback()
+	//function test_dashboard_glance_items()
+	//function test_parse_post_content_on_save()
+
+
+	/**
+	 * Test its_eSpresso method that converts incorrect spelling of Espresso in shortcodes with the correct spelling.
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_its_eSpresso() {
+		//test works as expected with string to correct.
+		$expected = '[ESPRESSO_CONTENT]';
+		$test = '[EXPRESSO_CONTENT]';
+		$result = EE_Admin::instance()->its_eSpresso( $test );
+		$this->assertEquals( $result, $expected );
+
+		//test works as expected with string that should NOT be corrected.
+		$expected = 'some_string';
+		$result = EE_Admin::instance()->its_eSpresso('some_string');
+		$this->assertEquals( $result, $expected );
+	}
+
+
+
+
+	/**
+	 * Test the powered by Event Espresso footer.
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_espresso_admin_footer() {
+		$actual = EE_Admin::instance()->espresso_admin_footer();
+		//assert contains powered by text.
+		$this->assertContains('Event Registration and Ticketing Powered by', $actual);
+
+		//assert contains eventespresso.com link
+		$this->assertContains('http://eventespresso.com/', $actual);
+	}
+
 }

@@ -177,8 +177,6 @@ final class EE_Admin {
 			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
-			// bring out the pigeons!!!
-			EE_Registry::instance()->load_lib( 'Messages_Init' );
 			//at a glance dashboard widget
 			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
 		}
@@ -410,16 +408,9 @@ final class EE_Admin {
 	/**
 	 * This is the action hook for the AHEE__EE_Admin_Page__route_admin_request hook that fires off right before an EE_Admin_Page route is called.
 	 *
-	 * @param  string 		 $route 	  The route being called
-	 * @param  EE_Admin_Page $admin_page  The EE_Admin_Page object
 	 * @return void
 	 */
-	public function route_admin_request() {
-		// messages loading is turned OFF by default, but prior to the AHEE__EE_Admin_Page__route_admin_request hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
-		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
-			EE_Registry::instance()->load_lib( 'Messages_Init' );
-		}
-	}
+	public function route_admin_request() {}
 
 
 
