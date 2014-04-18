@@ -1464,7 +1464,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * Converst a 3.1 payment status to its equivalent 4.1 regisration status
-	 * @param string $payment_status possible value for 3.1's evens_attendee.payment_statsu
+	 * @param string $payment_status possible value for 3.1's evens_attendee.payment_status
 	 * @param boolean $this_thing_required_pre_approval whether the thing we're considering (the general setting's default payment status,
 	 * the event's default payment status, or the attendee's payment status) required pre-approval.
 	 * @return string STS_ID for use in 4.1

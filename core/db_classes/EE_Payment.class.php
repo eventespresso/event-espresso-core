@@ -542,7 +542,7 @@ class EE_Payment extends EE_Base_Class{
 		}
 	}
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of teh payment
 	 * @return boolean whether the payment is approved or not
 	 */
 	public function is_approved(){
@@ -553,7 +553,7 @@ class EE_Payment extends EE_Base_Class{
 	
 	
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of teh payment
 	 * @return boolean whether the payment is pending or not
 	 */
 	public function is_pending(){
@@ -564,7 +564,7 @@ class EE_Payment extends EE_Base_Class{
 	
 	
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of teh payment
 	 * @return boolean
 	 */
 	public function is_cancelled(){
@@ -574,7 +574,7 @@ class EE_Payment extends EE_Base_Class{
 	
 	
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of teh payment
 	 * @return boolean
 	 */
 	public function is_declined(){
@@ -585,7 +585,7 @@ class EE_Payment extends EE_Base_Class{
 	
 	
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of teh payment
 	 * @return boolean
 	 */
 	public function is_failed(){

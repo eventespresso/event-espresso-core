@@ -78,7 +78,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	
 	
 	/**
-	 * @var post_status_trashed the wp post statsu for trashed cpts
+	 * @var post_status_trashed the wp post status for trashed cpts
 	 */
 	const post_status_trashed = 'trash';
 
