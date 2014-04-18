@@ -27,7 +27,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Text_Normalization extends EE_Normalization_Strategy_Base{
 	public function normalize($value_to_normalize) {
-		return $value_to_normalize;
+		if(is_array($value_to_normalize)){
+			return array_shift($value_to_normalize);
+		}else{
+			return $value_to_normalize;
+		}
 	}
 }
 

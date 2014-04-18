@@ -395,6 +395,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$raw_input = $this->find_form_data_for_this_section($req_data);
 			//super simple sanitization for now
 			if(is_array($raw_input)){
+				$this->_raw_value = array();
 				foreach($raw_input as $key => $value){
 					$this->_raw_value[$key] = $this->_sanitize($value);
 				}

@@ -5,7 +5,7 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			'h1'=>new EE_Form_Section_HTML('hello wordl'),
 			'name'=>new EE_Text_Input(array('required'=>true,'default'=>'your name here')),
 			'email'=>new EE_Email_Input(array('required'=>false)),
-			'shirt_size'=>new EE_Select_Input(array(''=>'Please select...', 's'=>  __("Small", "event_espresso"),'m'=>  __("Medium", "event_espresso"),'l'=>  __("Large", "event_espresso")),'string',array('required'=>true,'default'=>'')),
+			'shirt_size'=>new EE_Select_Input(array(''=>'Please select...', 's'=>  __("Small", "event_espresso"),'m'=>  __("Medium", "event_espresso"),'l'=>  __("Large", "event_espresso")),array('required'=>true,'default'=>'s')),
 			'month_normal'=>new EE_Month_Input(),
 			'month_leading_zero'=>new EE_Month_Input(true),
 			'year_2'=>new EE_Year_Input(false, 1, 1),
@@ -14,9 +14,12 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			'credit_card'=>new EE_Credit_Card_Input(),
 			'image_1'=>new EE_Admin_File_Uploader_Input(),
 			'image_2'=>new EE_Admin_File_Uploader_Input(),
-			'skillz'=>new EE_Checkbox_Multi_Input(array('php'=>'PHP','mysql'=>'MYSQL'), 'string',array('default'=>array('php'))),
+			'skillz'=>new EE_Checkbox_Multi_Input(array('php'=>'PHP','mysql'=>'MYSQL'),array('default'=>array('php'))),
 			'float'=>new EE_Float_Input(),
 			'essay'=>new EE_Text_Area_Input(),
+			'amenities'=>new EE_Select_Multiple_Input(array('hottub'=>'Hot Tub','balcony'=>"Balcony",'skylight'=>'SkyLight','no_axe'=>'No Axe Murderers'),array(
+				'default'=>array('hottub','no_axe'),
+			)),
 			);
 		$this->_layout_strategy = new EE_Div_Per_Section_Layout();
 		parent::__construct();

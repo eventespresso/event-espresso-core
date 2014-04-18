@@ -39,7 +39,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		$html = '';
 		foreach($options as $value => $display_text){
 			$cntr = 0;
-			if($this->_input->raw_value() == "$value"){
+			if($this->_check_if_option_selected($value)){
 				$selected_attr = 'selected="selected"';
 			}else{
 				$selected_attr ='';
@@ -50,5 +50,14 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 			$cntr++;
 		}
 		return $html;
+	}
+	/**
+	 * Checks if that value is the one selected
+	 * @param string|int $value
+	 * @return boolean
+	 */
+	protected function _check_if_option_selected($value){
+		$equality = ($this->_input->raw_value() == "$value");
+		return $equality;
 	}
 }

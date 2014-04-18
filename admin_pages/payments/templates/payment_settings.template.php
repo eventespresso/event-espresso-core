@@ -42,7 +42,8 @@ echo "<hr>SAMPLE FORM<hr>";
 			$f->receive_form_submission();
 			if( $f->is_valid() ) {
 				echo "valido!";
-				$f->save();
+				d($f->input_values());
+//				$f->save();
 			}else{
 				echo "invalido";
 			}

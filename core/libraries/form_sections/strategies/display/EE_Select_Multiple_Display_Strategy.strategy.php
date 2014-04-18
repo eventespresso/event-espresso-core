@@ -31,7 +31,7 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 		if( ! $input instanceof EE_Form_Input_With_Options_Base){
 			throw new EE_Error(sprintf(__("Cannot use Select Multiple Display Strategy with an input that doesn't ahve options", "event_espresso")));
 		}
-		$html= EEH_Formatter::nl(1) . "<select multiple id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}'/>";
+		$html= EEH_Formatter::nl(1) . "<select multiple id='{$input->html_id()}' name='{$input->html_name()}[]' class='{$input->html_class()}' style='{$input->html_style()}'/>";
 		EE_Registry::instance()->load_helper('Array');
 		if(EEH_Array::is_multi_dimensional_array($input->options())){
 			throw new EE_Error(sprintf(__("Select multiple display strategy does not allow for nested arrays of options.", "event_espresso")));
@@ -41,6 +41,16 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy{
 		
 		$html.= EEH_Formatter::nl(-1) . "</select>";
 		return $html;
+	}
+	/**
+	 * Checks if that $value is one of the selected ones
+	 * @param string|int $value
+	 * @return boolean
+	 */
+	protected function _check_if_option_selected($value){
+		$selected_options = $this->_input->raw_value();
+		$equality = in_array("$value",$selected_options);
+		return $equality;
 	}
 }
 

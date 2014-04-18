@@ -28,6 +28,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	protected $_options = array();
+	/**
+	 * whether ot allow mutliple selections (ie, the value of this input should be an arrray)
+	 * or not (ie, the value should be a simple int, string, etc)
+	 * @var boolean
+	 */
+	protected $_multiple_selections = false;
 	public function __construct($select_options = array(), $options_array = array()) {
 		$this->set_select_options($select_options);
 		parent::__construct($options_array);
@@ -50,7 +56,12 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			}elseif(is_string($first_key)){
 				$normalization = new EE_Text_Normalization();
 			}
-			$this->_set_normalization_strategy($normalization);
+			if($this->_multiple_selections){
+				$this->_set_normalization_strategy(new EE_Many_Valued_Normalization($normalization));
+			}else{
+				$this->_set_normalization_strategy($normalization);
+			}
+			
 		}
 	}
 	public function options(){
