@@ -80,8 +80,8 @@ define( 'EE_PLUGIN_DIR_URL', plugin_dir_url( EVENT_ESPRESSO_MAIN_FILE ));
 define( 'EE_ADMIN_PAGES', EE_PLUGIN_DIR_PATH . 'admin_pages' . DS );
 define( 'EE_CORE', EE_PLUGIN_DIR_PATH . 'core' . DS );
 define( 'EE_MODULES', EE_PLUGIN_DIR_PATH . 'modules' . DS );
+define( 'EE_PUBLIC', EE_PLUGIN_DIR_PATH . 'public' . DS );
 define( 'EE_SHORTCODES', EE_PLUGIN_DIR_PATH . 'shortcodes' . DS );
-define( 'EE_TEMPLATES', EE_PLUGIN_DIR_PATH . 'templates' . DS );
 define( 'EE_WIDGETS', EE_PLUGIN_DIR_PATH . 'widgets' . DS );
 define( 'EE_CAFF_PATH', EE_PLUGIN_DIR_PATH . 'caffeinated' . DS );
 // core system paths
@@ -91,6 +91,7 @@ define( 'EE_CLASSES', EE_CORE . 'db_classes' . DS );
 define( 'EE_MODELS', EE_CORE . 'db_models' . DS );
 define( 'EE_HELPERS', EE_CORE . 'helpers' . DS );
 define( 'EE_LIBRARIES', EE_CORE . 'libraries' . DS );
+define( 'EE_TEMPLATES', EE_CORE . 'templates' . DS );
 define( 'EE_THIRD_PARTY', EE_CORE . 'third_party_libs' . DS );
 define( 'EE_GLOBAL_ASSETS', EE_TEMPLATES . 'global_assets' . DS );
 // gateways
