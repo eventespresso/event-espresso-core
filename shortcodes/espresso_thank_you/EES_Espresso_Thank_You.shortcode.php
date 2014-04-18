@@ -166,8 +166,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			return;
 		}
 		// soon to be derprecated
-		EE_Registry::instance()->load_model( 'Gateways' )->thank_you_page_logic( $this->_current_txn );
-		EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
+		EE_Registry::instance()->load_core( 'Payment_Processor' )->finalize_payment_for($this->_current_txn);				
+		//EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
+		//@todo: still need to reset some session data once we arrive here?
 		// load assets
 		add_filter( 'FHEE_load_css', '__return_true' );
 		add_filter( 'FHEE_load_js', '__return_true' );
@@ -175,7 +176,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
 
 	}
-
+	
 
 	/**
 	 * 	load_js
@@ -410,15 +411,14 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		//get payments, but order with newest at the top, so users see that first
 		$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
 		//create a hackey payment object, but dont save it
-		$gateway_name = $this->_current_txn->selected_gateway();
 		$payment = EE_Payment::new_instance( array(
 			'TXN_ID'=>$this->_current_txn->ID(),
 			'STS_ID'=>EEM_Payment::status_id_pending,
 			'PAY_timestamp'=>current_time('timestamp'),
 			'PAY_amount'=>$this->_current_txn->total(),
-			'PAY_gateway'=>$gateway_name
+			'PMD_ID'=>$this->_current_txn->payment_method_ID()
 		));
-		$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name, $payment );
+		$template_args['gateway_content'] = $this->_current_txn->payment_method()->type_obj()->payment_overview_content($payment);//EEM_Gateways::instance()->get_payment_overview_content( $gateway_name, $payment );
 		// link to SPCO payment_options
 		$template_args['show_try_pay_again_link'] = $this->_show_try_pay_again_link;
 		$template_args['SPCO_payment_options_url'] = $this->_SPCO_payment_options_url;
@@ -436,3 +436,4 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 }
 // End of file EES_Espresso_Thank_You.shortcode.php
 // Location: /shortcodes/EES_Espresso_Thank_You.shortcode.php
+

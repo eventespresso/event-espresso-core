@@ -586,12 +586,6 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 
 
-	public function selected_gateway() {
-		return $this->get_extra_meta('gateway', true);
-	}
-
-
-
 	public function gateway_response_on_transaction() {
 		$payment = $this->get_first_related('Payment');
 		$details = !empty( $payment ) ? $this->get_first_related('Payment')->details() : array();
