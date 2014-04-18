@@ -473,7 +473,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
-	 * for both when searchign for trahsed and untrahse dones)
+	 * for both when searching for trashed and untrashed dones)
 	 * @param EEM_Base $model either EEM_Question or EEM_Question_Group
 	 * @return array lik EEM_Base::get_all's $query_params parameter
 	 */

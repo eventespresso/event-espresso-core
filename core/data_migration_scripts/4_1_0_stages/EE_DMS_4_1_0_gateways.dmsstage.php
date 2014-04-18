@@ -29,7 +29,7 @@ function _migration_step($num_items=50){
 			//determine the old option's name
 			$old_gateway_settings = $this->_get_old_gateway_option($new_gateway_slug);
 			if( ! $old_gateway_settings){
-				//no setings existed for this gateway anyways... weird...
+				//no settings existed for this gateway anyways... weird...
 				$items_actually_migrated++;
 				continue;
 			}
