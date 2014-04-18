@@ -159,7 +159,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			// if not redirecting to another site for registration
 			if ( ! $external_url ) {
 				// then display the ticket selector
-				$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );		
+				$ticket_selector .= EEH_Template::locate_template( $templates['ticket_selector'], $template_args );
 			} else {
 				// if not we still need to trigger the display of the submit button
 				add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
@@ -184,11 +184,11 @@ class EED_Ticket_Selector extends  EED_Module {
 	*	@access public
 	* 	@access 		public
 	* 	@return		string
-	*/	
+	*/
 	public static function ticket_selector_form_open( $ID, $external_url = FALSE ) {
 		// if redirecting, we don't need any anything else
 		if ( $external_url ) {
-			return '<form id="" method="GET" action="' . $external_url . '">';		
+			return '<form id="" method="GET" action="' . $external_url . '">';
 		}
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		$checkout_url = espresso_event_link_url( $ID, FALSE );
@@ -196,7 +196,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );	
+		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
 		return '<form id="" method="POST" action="' . $checkout_url . '">' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
 	}
 
