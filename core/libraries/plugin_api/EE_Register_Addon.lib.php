@@ -94,7 +94,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// the minimum version of EE Core that the addon will work with
 			'min_core_version' => isset( $setup_args['min_core_version'] ) ? (string)$setup_args['min_core_version'] : '',
 			// full server path to plugin root folder
-			'base_path' 	=> isset( $setup_args['base_path'] ) ? (string)$setup_args['base_path'] : '',
+			'base_path' 				=> isset( $setup_args['base_path'] ) ? (string)$setup_args['base_path'] : '',
 			// path to folder containing files for integrating with the EE core admin and/or setting up EE admin pages
 			'admin_path' 			=> isset( $setup_args['admin_path'] ) ? (string)$setup_args['admin_path'] : '',
 			// a method to be called when the EE Admin is first invoked, can be used for hooking into any admin page
@@ -103,13 +103,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'config_class' 			=> isset( $setup_args['config_class'] ) ? (string)$setup_args['config_class'] : '',
 			// an array of "class names" => "full server paths" for any classes that might be invoked by the addon
 			'autoloader_paths' => isset( $setup_args['autoloader_paths'] ) ? (array)$setup_args['autoloader_paths'] : array(),
-			// array of full server paths to any data migration scripts used by the addon
+			// array of full server paths to any EE_DMS data migration scripts used by the addon
 			'dms_paths' 			=> isset( $setup_args['dms_paths'] ) ? (array)$setup_args['dms_paths'] : array(),
-			// array of full server paths to any modules used by the addon
+			// array of full server paths to any EED_Modules used by the addon
 			'module_paths' 		=> isset( $setup_args['modules'] ) ? (array)$setup_args['modules'] : array(),
-			// array of full server paths to any shortcodes used by the addon
+			// array of full server paths to any EES_Shortcodes used by the addon
 			'shortcode_paths' 	=> isset( $setup_args['shortcodes'] ) ? (array)$setup_args['shortcodes'] : array(),
-			// array of full server paths to any widgets used by the addon
+			// array of full server paths to any WP_Widgets used by the addon
 			'widget_paths' 		=> isset( $setup_args['widgets'] ) ? (array)$setup_args['widgets'] : array(),
 		);
 		// we need cars
