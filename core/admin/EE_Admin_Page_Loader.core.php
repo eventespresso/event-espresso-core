@@ -348,46 +348,44 @@ class EE_Admin_Page_Loader {
 		//loop through prepped pages and hook into WP's menu functions
 		$i=0;
 		foreach ( $this->_prepped_installed_pages as $installed_page ) {
-			if ( $installed_page instanceof EE_Admin_Page_Init ) {
-				if ( $i === 0 ) {
-					//if initial menu item is a header let's temporarily store and continue.
-					if ( is_array($installed_page) ) {
-						$temp_ref = $installed_page;
-						continue;
-					}
+			if ( $i === 0 ) {
+				//if initial menu item is a header let's temporarily store and continue.
+				if ( is_array($installed_page) ) {
+					$temp_ref = $installed_page;
+					continue;
 				}
-
-				//if we've got $add_main_menu || $temp_ref then we need to add_menu_page on current item
-				if ( isset($temp_ref) || $add_main_menu ) {
-					$title = __('Event Espresso', 'event_espresso');
-						add_menu_page( $title, $title, apply_filters( 'FHEE_management_capability', 'administrator', $espresso_manager['espresso_manager_events'] ), $parent_slug, array($installed_page, 'initialize_admin_page'), 'none' );
-
-					//make sure we add initial header if present
-					if ( isset($temp_ref) ) {
-						add_submenu_page( $parent_slug, $temp_ref['title'], '<span class="ee_menu_group"  onclick="return false;">' . $temp_ref['title'] . '</span>', $temp_ref['capability'], $temp_ref['slug'], array($this, '_default_header_link') );
-					}
-				}
-
-				//let's setup the submenu items
-				$label = is_array($installed_page) ? $installed_page['title'] : $installed_page->label;
-				$menu_label = is_array($installed_page) ? '<span class="ee_menu_group"  onclick="return false;">' . $installed_page['title'] . '</span>' : $installed_page->menu_label;
-				$capability = is_array($installed_page) ? $installed_page['capability'] : $installed_page->capability;
-				$menu_slug = is_array($installed_page) ? $installed_page['slug'] : $installed_page->menu_slug;
-				$menu_func = is_array($installed_page) ? array($this, '_default_header_link') : array($installed_page, 'initialize_admin_page');
-
-
-				$wp_page_slug = add_submenu_page( $parent_slug, $label, $menu_label, $capability, $menu_slug, $menu_func );
-
-				if ( is_object($installed_page) ) {
-					try {
-						$installed_page->set_page_dependencies($wp_page_slug);
-					} catch ( EE_Error $e) {
-						$e->get_error();
-					}
-				}
-				$add_main_menu = false;
-				$i++;
 			}
+
+			//if we've got $add_main_menu || $temp_ref then we need to add_menu_page on current item
+			if ( isset($temp_ref) || $add_main_menu ) {
+				$title = __('Event Espresso', 'event_espresso');
+					add_menu_page( $title, $title, apply_filters( 'FHEE_management_capability', 'administrator', $espresso_manager['espresso_manager_events'] ), $parent_slug, array($installed_page, 'initialize_admin_page'), 'none' );
+
+				//make sure we add initial header if present
+				if ( isset($temp_ref) ) {
+					add_submenu_page( $parent_slug, $temp_ref['title'], '<span class="ee_menu_group"  onclick="return false;">' . $temp_ref['title'] . '</span>', $temp_ref['capability'], $temp_ref['slug'], array($this, '_default_header_link') );
+				}
+			}
+
+			//let's setup the submenu items
+			$label = is_array($installed_page) ? $installed_page['title'] : $installed_page->label;
+			$menu_label = is_array($installed_page) ? '<span class="ee_menu_group"  onclick="return false;">' . $installed_page['title'] . '</span>' : $installed_page->menu_label;
+			$capability = is_array($installed_page) ? $installed_page['capability'] : $installed_page->capability;
+			$menu_slug = is_array($installed_page) ? $installed_page['slug'] : $installed_page->menu_slug;
+			$menu_func = is_array($installed_page) ? array($this, '_default_header_link') : array($installed_page, 'initialize_admin_page');
+
+
+			$wp_page_slug = add_submenu_page( $parent_slug, $label, $menu_label, $capability, $menu_slug, $menu_func );
+
+			if ( is_object($installed_page) ) {
+				try {
+					$installed_page->set_page_dependencies($wp_page_slug);
+				} catch ( EE_Error $e) {
+					$e->get_error();
+				}
+			}
+			$add_main_menu = false;
+			$i++;
 		}
 	}
 
@@ -410,7 +408,7 @@ class EE_Admin_Page_Loader {
 				//get map for page
 				$page_map = $page->get_menu_map();
 				//if not in menu let's unset (via continue)
-				if ( !$page_map['show_on_menu'] ) {
+				if ( ! $page_map['show_on_menu'] ) {
 					continue;
 				}
 				//assign to group
