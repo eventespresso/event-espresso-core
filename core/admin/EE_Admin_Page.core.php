@@ -911,7 +911,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@access public
 	 *	@param array $args
 	 *	@param string $url
-	 * 	@return void
+	 * 	@return string
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
 		EE_Registry::instance()->load_helper('URL');
