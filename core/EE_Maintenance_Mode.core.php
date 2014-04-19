@@ -173,7 +173,7 @@ class EE_Maintenance_Mode {
 	/**
 	 * 	template_include
 	 * 
-	 * 	replacement EE CPT template that displays message notifying site visitors that EE has been temporarily placed into maintenace mode
+	 * 	replacement EE CPT template that displays message notifying site visitors that EE has been temporarily placed into maintenance mode
 	 *
 	 *  @access 	public
 	 *  @return 	string
@@ -191,7 +191,7 @@ class EE_Maintenance_Mode {
 	/**
 	 * 	the_content
 	 * 
-	 * 	displays message notifying site visitors that EE has been temporarily placed into maintenace mode when post_type != EE CPT
+	 * 	displays message notifying site visitors that EE has been temporarily placed into maintenance mode when post_type != EE CPT
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -216,7 +216,7 @@ class EE_Maintenance_Mode {
 	/**
 	 * 	display_maintenance_mode_notice
 	 * 
-	 * 	displays message on frontend of site notifying admin that EE has been temporarily placed into maintenace mode
+	 * 	displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
 	 *
 	 *  @access 	public
 	 *  @return 	string

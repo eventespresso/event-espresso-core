@@ -58,7 +58,7 @@ abstract class EEM_Base extends EE_Base{
 	protected $_indexes = array();
 
 	/**
-	 * Defautls strategy for getting where conditions on this model. This strategy is used to get default
+	 * Default strategy for getting where conditions on this model. This strategy is used to get default
 	 * where conditions which are added to get_all, update, and delete queries. They can be overriden
 	 * by setting the same columns as used in these queries in the query yourself.
 	 * @var EE_Default_Where_Conditions
@@ -1792,7 +1792,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
 	 * @param string $original_query_param used to extract the relation chain between the queried model and $model_name.
 	 * Eg, if we are querying Event, and are adding a join to 'Payment' with the original queyr param key 'Registration.Transaction.Payment.PAY_amount',
-	 * we want to extract 'Registration.Transaction', in case Payment wants to add defautl query params so that it will know
+	 * we want to extract 'Registration.Transaction', in case Payment wants to add default query params so that it will know
 	 * what models to prepend onto its default query params
 	 * @return void
 	 */

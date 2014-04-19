@@ -322,7 +322,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 
 
-			//only add a property to the array if it's not null (otherwise the model should just use the defautl value)
+			//only add a property to the array if it's not null (otherwise the model should just use the default value)
 			else if(isset($this->_req_data[$fieldName])){
 				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
 			}

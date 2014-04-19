@@ -339,7 +339,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 	  'recaptcha_language',
 	  'espresso_dashboard_widget',
 	  'time_reg_limit',
-//	  'use_attendee_pre_approval', removed in 4.1- instead this is factored into the defautl reg status
+//	  'use_attendee_pre_approval', removed in 4.1- instead this is factored into the default reg status
 	  'use_personnel_manager',//no equiv
 	  'use_event_timezones',
 	  'full_logging',

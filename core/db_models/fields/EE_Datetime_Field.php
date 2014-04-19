@@ -400,7 +400,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		if ( !$datetime )
 			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
 
-		//return to defautl for PHP
+		//return to default for PHP
 		date_default_timezone_set('UTC');
 
 		//now that we have the string we can send this over to our string value conversion
