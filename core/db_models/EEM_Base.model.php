@@ -2110,7 +2110,7 @@ abstract class EEM_Base extends EE_Base{
 			$field_name = $last_query_param_part;
 			$model_obj = $this;
 		}else{// $number_of_parts >= 2
-			//the last part is the column name, and there are only 2parts. tehrefore...
+			//the last part is the column name, and there are only 2parts. therefore...
 			$field_name = $last_query_param_part;
 			$model_obj = $this->get_related_model_obj( $query_param_parts[ $number_of_parts - 2 ]);
 		}

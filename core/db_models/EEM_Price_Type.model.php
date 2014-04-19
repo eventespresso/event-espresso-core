@@ -50,7 +50,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	}
 	
 	/**
-	 * Gets the naem of teh base 
+	 * Gets the name of teh base 
 	 * @param type $base_type_int
 	 * @return type
 	 */

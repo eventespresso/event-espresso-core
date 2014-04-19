@@ -1,6 +1,6 @@
 <?php
 /**
- * model for handling has-and-belongs-to-many relatinobetween events and question gruops.
+ * model for handling has-and-belongs-to-many relatinobetween events and question groups.
  * If you want to query based on a non-primary of foreign key on this model, you can't use the EE_HABTM_Relation on Event nor or Question Group.
  * You'll need to use each's EE_Has_Many_Relation relation to this model. Eg, when querying for question groups which apply to primary attendees,
  * you'd do a query like EEM_Question_Group::instance()->get_all(array(array('Event_Question_Group.EQG_primary'=>1)));
@@ -38,7 +38,7 @@ class EEM_Event_Question_Group extends EEM_Base{
 			'Event_Question_Group'=>array(
 				'EQG_ID'=>new EE_Primary_Key_Int_Field('EQG_ID', __('Event to Question Group Link ID','event_espresso')),
 				'EVT_ID'=>new EE_Foreign_Key_Int_Field('EVT_ID', __('Event ID','event_espresso'), false, 0, 'Event'),
-				'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('QUestion Gruop Id','event_espresso'), false, 0, 'Question_Group'),
+				'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('Question Group Id','event_espresso'), false, 0, 'Question_Group'),
 				'EQG_primary'=>new EE_Boolean_Field('EQG_primary', __('Flag indicating question is only for primary attendees','event_espresso'), false, false)
 			)
 		);
