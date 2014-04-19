@@ -70,8 +70,8 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	protected $_QSG_show_group_name=NULL;
 
 	/**
-	 * Boolean to dinicate whether the group description
-	 * should be shown when displayign this question group
+	 * Boolean to indicate whether the group description
+	 * should be shown when displaying this question group
 	 * on the frontend
 	 * @access protected
 	 * @var boolean

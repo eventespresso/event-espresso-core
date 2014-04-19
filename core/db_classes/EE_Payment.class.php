@@ -490,7 +490,7 @@ class EE_Payment extends EE_Base_Class{
 	
 	
 	/**
-	 * returns a pretty version of the status, good for displayign to users
+	 * returns a pretty version of the status, good for displaying to users
 	 * @return string
 	 */
 	public function pretty_status( $show_icons = FALSE ){
