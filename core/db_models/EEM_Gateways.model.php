@@ -479,7 +479,7 @@ Class EEM_Gateways {
 	}
 	
 	/**
-	 * Gets teh currently-selected gateway
+	 * Gets the currently-selected gateway
 	 * @return EE_Gateway
 	 */
 	public function selected_gateway_obj(){
@@ -674,7 +674,7 @@ Class EEM_Gateways {
 						
 		//espresso_clear_session(); this seemed silly. we just expelled
 		//all this effort clearing specific gateway items in the session, and now
-		//we're clearing teh whole thing? no, that must have been an error.
+		//we're clearing the whole thing? no, that must have been an error.
 		//so says Mike, March 27th 2013
 		// how about clearing it BEFORE resetting the data ??? (see above)
 		// wonders br3nt Aug 29th, 2013
@@ -819,7 +819,7 @@ Class EEM_Gateways {
 			} catch( EE_Error $e ) {
 				$response = array( 'msg'=>array( 'error'=>$e->getMessage() ));
 			}
-			//make sure we remove the credit card and other sensitive data, as we dont want to store that in teh db
+			//make sure we remove the credit card and other sensitive data, as we dont want to store that in the db
 			$this->_clean_billing_info_in_session($transaction);
 		}
 		// add return URL
@@ -952,7 +952,7 @@ Class EEM_Gateways {
 		return '';
 	}
 	/**
-	 * Checks if teh provided transaction is completed. If so, clears teh session and handles
+	 * Checks if the provided transaction is completed. If so, clears the session and handles
 	 * the logic of finalizing the transaction
 	 * @param EE_Transaction $transaction
 	 */
@@ -965,7 +965,7 @@ Class EEM_Gateways {
 	}
 	
 	/**
-	 * Uses teh currently-active and selected gateway to handle an Instant Payment Notification.
+	 * Uses the currently-active and selected gateway to handle an Instant Payment Notification.
 	 * Obviously, if this occurs the active gateway must be an Offsite gateway
 	 * @param EE_Transaction or ID $transaction Transaction to beudpated by the IPN
 	 * @return boolean success

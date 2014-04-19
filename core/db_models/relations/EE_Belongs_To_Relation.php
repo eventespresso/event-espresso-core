@@ -2,7 +2,7 @@
 
 /**
  * The current model has the foreign key pointing to the other model. Eg, Registration belongs to Transaction 
- * (because Registration's TXN_ID field is on Registration, and points to teh Transaction's PK) 
+ * (because Registration's TXN_ID field is on Registration, and points to the Transaction's PK) 
  */
 require_once( EE_MODELS . 'relations/EE_Model_Relation_Base.php');
 
@@ -66,7 +66,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base {
 	}
 
 	/**
-	 * Overrides parent so that we don't NEED to save teh $model_object before getting the related objcets.
+	 * Overrides parent so that we don't NEED to save the $model_object before getting the related objcets.
 	 * @param EE_Base_Class $model_obj_or_id
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @param boolean $values_already_prepared_by_model_object

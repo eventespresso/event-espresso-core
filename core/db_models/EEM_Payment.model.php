@@ -43,7 +43,7 @@ class EEM_Payment extends EEM_Base {
 	
 	/**
 	 * Status id in esp_status table that represents a canceleld payment (eg, the
-	 * user went to PayPal, but on the paypal site decided to cancel teh payment)
+	 * user went to PayPal, but on the paypal site decided to cancel the payment)
 	 */
 	const status_id_cancelled = 'PCN';
 	

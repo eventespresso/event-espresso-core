@@ -145,7 +145,7 @@ class EE_Transaction extends EE_Base_Class{
 
 	
 	/**
-	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
+	 * @var EE_Promotion_Object relation to the join table between promotions and whatevers
 	 */
 	protected $_Promotion_Object = NULL;
 	
@@ -414,7 +414,7 @@ class EE_Transaction extends EE_Base_Class{
 	}
 	
 	/**
-	 * Gets teh primary registration only
+	 * Gets the primary registration only
 	 * @return EE_Registration
 	 */
 	public function primary_registration(){
@@ -753,7 +753,7 @@ class EE_Transaction extends EE_Base_Class{
 		}
 		$attendee = $primary_reg->attendee();
 		if ( ! $attendee){
-			EE_Error::add_error(__("Cannot get billing info for gateway %s on transaction because teh primary registration has no attendee exists", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			EE_Error::add_error(__("Cannot get billing info for gateway %s on transaction because the primary registration has no attendee exists", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
 			return false;
 		}
 		return $attendee->billing_info_for_gateway($gateway_name);

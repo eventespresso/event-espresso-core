@@ -115,7 +115,7 @@ abstract class EE_Model_Relation_Base{
 	}
 	
 	/**
-	 * Alters teh $query_params to disable default where conditions, unless otherwise specified
+	 * Alters the $query_params to disable default where conditions, unless otherwise specified
 	 * @param string $query_params
 	 * @return string
 	 */

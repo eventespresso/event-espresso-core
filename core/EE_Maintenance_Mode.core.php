@@ -130,7 +130,7 @@ class EE_Maintenance_Mode {
 	}
 	
 	/**
-	 * Determines if we need to put EE in maintenance mode because teh database needs updating
+	 * Determines if we need to put EE in maintenance mode because the database needs updating
 	 * @return boolean true if DB is old and maintenance mode was triggered; false otherwise
 	 */
 	public function set_maintenance_mode_if_db_old(){

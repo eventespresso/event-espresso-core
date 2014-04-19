@@ -128,7 +128,7 @@ abstract class EE_Base_Class{
 
 		//if db model is instantiatiating
 		if( $bydb ){
-			//client code has indicated these field values are from teh database
+			//client code has indicated these field values are from the database
 			foreach($fieldValues as $field_name => $field_value_from_db){
 				$this->set_from_db($field_name,$field_value_from_db);
 			}
@@ -142,7 +142,7 @@ abstract class EE_Base_Class{
 
 		try {
 
-			//verify we have all the attributes required in teh model
+			//verify we have all the attributes required in the model
 			foreach($model->field_settings() as $fieldName=>$field_obj){
 				if( ! $field_obj->is_db_only_field() && ! EEH_Class_Tools::has_property( $this, $this->_get_private_attribute_name( $fieldName ))){
 					throw new EE_Error(
@@ -454,13 +454,13 @@ abstract class EE_Base_Class{
 
 	/**
 	 * Forgets the cached model of the given relation Name. So the next time we request it,
-	 * we will fetch it again from teh database. (Handy if you know it's changed somehow).
+	 * we will fetch it again from the database. (Handy if you know it's changed somehow).
 	 * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
 	 * then only remove that one object from our cached array. Otherwise, clear the entire list.
 	 * @param string $relationName one of the keys in the _model_relations array on the model. Eg 'Registration'
 	 * @param mixed $object_to_remove_or_index_into_array or an index into the array of cached things
 	 * @param bool          $clear_all This flags clearing the entire cache relation property if this is HasMany or HABTM.
-	 * @return EE_Base_Class from which was cleared from teh cache, or true if we requested to remove a relation from all
+	 * @return EE_Base_Class from which was cleared from the cache, or true if we requested to remove a relation from all
 	 */
 	public function clear_cache($relationName, $object_to_remove_or_index_into_array = null, $clear_all = FALSE){
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
@@ -478,7 +478,7 @@ abstract class EE_Base_Class{
 			if($object_to_remove_or_index_into_array instanceof EE_Base_Class && $object_to_remove_or_index_into_array->ID()){
 				$index_in_cache = $object_to_remove_or_index_into_array->ID();
 				if( is_array($this->{$relationNameClassAttribute}) && ! isset($this->{$relationNameClassAttribute}[$index_in_cache])){
-					//find this object in teh array even though it has a different key
+					//find this object in the array even though it has a different key
 					foreach($this->$relationNameClassAttribute as $index=>$obj){
 						if($obj == $object_to_remove_or_index_into_array || $obj->ID() == $object_to_remove_or_index_into_array->ID()){
 							$index_in_cache = $index;
@@ -641,7 +641,7 @@ abstract class EE_Base_Class{
 	/**
 	 * To be used in template to immediately echo out the value, and format it for output.
 	 * Eg, shoudl call stripslashes and whatnought before echoing
-	 * @param string $field_name the name of the field as it appears in teh DB
+	 * @param string $field_name the name of the field as it appears in the DB
 	 * @param string         $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
 	 * @return void
 	 */
@@ -939,7 +939,7 @@ abstract class EE_Base_Class{
 
 
 	/**
-	*		Saves this object to teh database. An array may be supplied to set some values on this
+	*		Saves this object to the database. An array may be supplied to set some values on this
 	 * object just before saving.
 	*
 	* 		@access		public
@@ -974,7 +974,7 @@ abstract class EE_Base_Class{
 				//but don't use the normal SET method, because it will check if
 				//an item with the same ID exists in the mapper & db, then
 				//will find it in the db (because we just added it) and THAT object
-				//will get added to teh mapper before we can add this one!
+				//will get added to the mapper before we can add this one!
 				//but if we just avoid using the SET method, all that headache can be avoided
 				$pk_attribute = $this->_get_private_attribute_name(self::_get_primary_key_name( get_class($this)));
 				$this->$pk_attribute = $results;
@@ -1039,7 +1039,7 @@ abstract class EE_Base_Class{
 
 
 	/**
-	 * converts a field name to the private attribute's name on teh class.
+	 * converts a field name to the private attribute's name on the class.
 	 * Eg, converts "ANS_ID" to "_ANS_ID", which can be used like so $attr="_ANS_ID"; $this->$attr;
 	 * @param string $fieldName
 	 * @return string
@@ -1159,7 +1159,7 @@ abstract class EE_Base_Class{
 	 * @return mixed, if the primary key is of type INT it'll be an int. Otherwise it could be a string
 	 */
 	public function ID(){
-		//get the name of teh primary key for this class' model, then find what php class attribute's name
+		//get the name of the primary key for this class' model, then find what php class attribute's name
 		$pk_field_parameter = $this->_get_private_attribute_name(self::_get_primary_key_name( get_class($this) ));
 		//now that we know the name of the variable, use a variable variable to get its value and return its
 		return $this->$pk_field_parameter;
@@ -1168,7 +1168,7 @@ abstract class EE_Base_Class{
 	/**
 	 * Adds a relationship to the specified EE_Base_Class object, given the relationship's name. Eg, if the curren tmodel is related
 	 * to a group of events, the $relationName should be 'Event', and should be a key in the EE Model's $_model_relations array.
-	 * If this model object doensn't exist in teh DB, just caches the related thing
+	 * If this model object doensn't exist in the DB, just caches the related thing
 	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object
 	 * @param string $relationName eg 'Events','Question',etc.
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
@@ -1204,8 +1204,8 @@ abstract class EE_Base_Class{
 	/**
 	 * Removes a relationship to the psecified EE_Base_Class object, given the relationships' name. Eg, if the currentmodel is related
 	 * to a group of events, the $relationName should be 'Events', and should be a key in the EE Model's $_model_relations array.
-	 * If this model object doesn't exist in the DB, just removes teh related thing from the cache
-	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to teh DB yet
+	 * If this model object doesn't exist in the DB, just removes the related thing from the cache
+	 * @param mixed $otherObjectModelObjectOrID EE_Base_Class or the ID of the other object, OR an array key into the cache if this isn't saved to the DB yet
 	 * @param string $relationName
 	 * @param array  $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the colums (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.
 	 * @return EE_Base_Class the relation was removed from
@@ -1214,14 +1214,14 @@ abstract class EE_Base_Class{
 		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
 			$otherObject = $this->get_model()->remove_relationship_to($this, $otherObjectModelObjectOrID, $relationName, $where_query );
 			$this->clear_cache($relationName, $otherObject);
-		}else{//this doesn't exist in teh DB, just remove it from the cache
+		}else{//this doesn't exist in the DB, just remove it from the cache
 			$otherObject = $this->clear_cache($relationName,$otherObjectModelObjectOrID);
 		}
 		return $otherObject;
 	}
 
 	/**
-	 * Removes ALL the related things for teh $relationName.
+	 * Removes ALL the related things for the $relationName.
 	 * @param string $relationName
 	 * @param array $where_query_params like EEM_Base::get_all's $query_params[0] (where conditions)
 	 * @return EE_Base_Class
@@ -1230,7 +1230,7 @@ abstract class EE_Base_Class{
 		if($this->ID()){//if this exists in the DB, save the relation change to the DB too
 			$otherObjects = $this->get_model()->remove_relations($this, $relationName, $where_query_params );
 			$this->clear_cache($relationName,null,true);
-		}else{//this doesn't exist in teh DB, just remove it from the cache
+		}else{//this doesn't exist in the DB, just remove it from the cache
 			$otherObjects = $this->clear_cache($relationName,null,true);
 		}
 		return $otherObjects;
@@ -1245,7 +1245,7 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class[]
 	 */
 	public function get_many_related($relationName,$query_params = array()){
-		if($this->ID()){//this exists in teh DB, so get the related things from either the cache or the DB
+		if($this->ID()){//this exists in the DB, so get the related things from either the cache or the DB
 			//if there are query parameters, forget about caching the related model objects.
 			if( $query_params ){
 				$related_model_objects = $this->get_model()->get_all_related($this, $relationName, $query_params);
@@ -1303,7 +1303,7 @@ abstract class EE_Base_Class{
 	public function get_first_related($relationName,$query_params = array()){
 		if($this->ID()){//this exists in the DB, get from the cache OR the DB
 
-			//if they've provided some query parameters, don't bother trying to cache teh result
+			//if they've provided some query parameters, don't bother trying to cache the result
 			//also make sure we're not caching the result of get_first_related
 			//on a relation which should have an array of objects (because the cache might have an array of objects)
 			if ($query_params || ! $this->get_model()->related_settings_for($relationName) instanceof EE_Belongs_To_Relation){
@@ -1320,13 +1320,13 @@ abstract class EE_Base_Class{
 				}
 			}
 		}else{
-			//this doesn't existin teh Db, but maybe the relation is of type belongsto, and so the related thing might
+			//this doesn't exist in the Db, but maybe the relation is of type belongsto, and so the related thing might
 			if( $this->get_model()->related_settings_for($relationName) instanceof EE_Belongs_To_Relation){
 				$related_model_object =  $this->get_model()->get_first_related($this, $relationName, $query_params);
 			}else{
 				$related_model_object = null;
 			}
-			//this doesn't exist in the DB and apparently teh thing it belogns to doesnt either, just get what's cached on this object
+			//this doesn't exist in the DB and apparently the thing it belogns to doesnt either, just get what's cached on this object
 			if( ! $related_model_object){
 				$related_model_object = $this->get_one_from_cache($relationName);
 			}
@@ -1357,7 +1357,7 @@ abstract class EE_Base_Class{
 	}
 
 	/**
-	 * Does a hard delete (ie, removes teh DB row) on all related objects of type $relationName and removes
+	 * Does a hard delete (ie, removes the DB row) on all related objects of type $relationName and removes
 	 * the current model object's relation to them. If they can't be deleted (because
 	 * of blocking related model objects) just does a soft delete on it instead, if possible.
 	 * If the related thing isn't a soft-deletable model object, this function is identical
@@ -1437,7 +1437,7 @@ abstract class EE_Base_Class{
 	 * and passed the method's name and arguments.
 	 * Instead of requiring a plugin to extend the EE_Base_Class (which works fine is there's only 1 plugin, but when will that happen?)
 	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
-	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
+	 * and accepts 2 arguments: the object on which the function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
 	 * Example: in functions.php (or in a plugin):
 	 * add_filter('FHEE__EE_Answer__my_callback','my_callback',10,3);
 	 * function my_callback($previousReturnValue,EE_Base_Class $object,$argsArray){
@@ -1466,8 +1466,8 @@ abstract class EE_Base_Class{
 
 
 	/**
-	 * Similar to insert_post_meta, adds a record in teh Extra_Meta model's table with the given key and value.
-	 * A $previous_value can be specified in case there are many meta rows with teh same key
+	 * Similar to insert_post_meta, adds a record in the Extra_Meta model's table with the given key and value.
+	 * A $previous_value can be specified in case there are many meta rows with the same key
 	 * @param string $meta_key
 	 * @param string $meta_value
 	 * @param string $previous_value
@@ -1492,7 +1492,7 @@ abstract class EE_Base_Class{
 
 	/**
 	 * Adds a new extra meta record. If $unique is set to TRUE, we'll first double-check
-	 * no other extra meta for this model object have teh same key. Returns TRUE if the
+	 * no other extra meta for this model object have the same key. Returns TRUE if the
 	 * extra meta row was entered, false if not
 	 * @param string $meta_key
 	 * @param string $meta_value

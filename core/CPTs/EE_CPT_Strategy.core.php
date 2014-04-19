@@ -245,7 +245,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 *
 	 * If this query (not just "main" queries (ie, for WP's infamous "loop")) is for an EE CPT, then we want to supercharge the get_posts query
 	 * to add our EE stuff (like joining to our tables, selecting extra columns, and adding
-	 * EE objects to teh post to facilitate further querying of related data etc)
+	 * EE objects to the post to facilitate further querying of related data etc)
 	 *
 	 * @access public
 	 * @param WP_Query $WP_Query

@@ -41,7 +41,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	public $base_types = null; 
 
 	/**
-	 * return an array of Base types. Keys are INTs which are used in teh database,
+	 * return an array of Base types. Keys are INTs which are used in the database,
 	 * values are text-representations of the base type.
 	 * @return array
 	 */
@@ -50,7 +50,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 	}
 	
 	/**
-	 * Gets the name of teh base 
+	 * Gets the name of the base 
 	 * @param type $base_type_int
 	 * @return type
 	 */

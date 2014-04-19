@@ -3,7 +3,7 @@
 /**
  * Converts 3.1 checkins to 4.1 checkins. It's true that in 3.1 there WAS a table named
  * event_attendee_checkin, which recorded the time of registrations' checkins. HOWEVER, it was inconsistently used
- * (if at all), and its data is basically junk. The checked_in_quantity and checked_in values on teh attendee table
+ * (if at all), and its data is basically junk. The checked_in_quantity and checked_in values on the attendee table
  * are the important records to convert. 
  * So, in converting we use those numbers to decide how many cehckins to add in 4.1, and jsut assume that
  * they checked in at the time of the event (which is quite reasonable). We COULD try to hunt for the actual time

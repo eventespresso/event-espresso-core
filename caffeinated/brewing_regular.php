@@ -68,7 +68,7 @@ class EE_Brewing_Regular extends EE_Base {
 	 * some global prices that will show off EE4's capabilities. However, if they're upgrading
 	 * from 3.1, or simply 4.1 decaf, we assume they don't want us to suddenly introduce these extra prices.
 	 * This action should only be called when EE 4.1.0P is initially activated.
-	 * Right now the only CAF content are these global prices. If there's more in teh future, then
+	 * Right now the only CAF content are these global prices. If there's more in the future, then
 	 * we should probably create a caf file to contain it all instead just a function like this.
 	 * Right now, we ASSUME the only price types in the system are default ones
 	 * @global type $wpdb

@@ -274,7 +274,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		}
 		
 		
-		//even if there was no payment, we can go ahead with adding teh reg
+		//even if there was no payment, we can go ahead with adding the reg
 		$new_regs = $this->_insert_new_registrations($old_row,$new_att_id,$txn_id);
 		if($new_regs){
 			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_reg_table,$new_regs);
@@ -657,7 +657,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'Declined'=>'PDC'
 			);
 			$by_admin = $old_attendee['payment'] == 'Admin';
-			$STS_ID = isset($pay_status_mapping[$old_attendee['payment_status']]) ? $pay_status_mapping[$old_attendee['payment_status']] : 'PFL';//IE, if we don't recognize teh status, assume paymetn failed
+			$STS_ID = isset($pay_status_mapping[$old_attendee['payment_status']]) ? $pay_status_mapping[$old_attendee['payment_status']] : 'PFL';//IE, if we don't recognize the status, assume paymetn failed
 			$cols_n_values = array(
 				'TXN_ID'=>$new_txn_id,
 				'STS_ID'=>$STS_ID,

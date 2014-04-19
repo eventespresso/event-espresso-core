@@ -138,7 +138,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * gets teh question group's name
+	 * gets the question group's name
 	 * @access public
 	 * @return string
 	 */
@@ -175,7 +175,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Returns whether to show the group's name on teh frontend
+	 * Returns whether to show the group's name on the frontend
 	 * @access public
 	 * @return boolean
 	 */
@@ -195,8 +195,8 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Returns wehther this is a 'system group' (meaning
-	 * a question group integral to teh system, whose questions
-	 * relate to teh attendee table)
+	 * a question group integral to the system, whose questions
+	 * relate to the attendee table)
 	 * @access public
 	 * @return boolean
 	 */

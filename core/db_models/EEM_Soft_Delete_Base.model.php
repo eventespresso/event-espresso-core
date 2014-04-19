@@ -94,7 +94,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	}
 	
 	/**
-	 * Gets one item from teh DB, regardless of whether it's been soft-deleted or not
+	 * Gets one item from the DB, regardless of whether it's been soft-deleted or not
 	 * @param array $query_params like EEM_base::get_all's $query_params
 	 * @return EE_Soft_Delete_Base_Class
 	 */
@@ -159,7 +159,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	}
 	
 	/**
-	 * Alters teh query params so each item's deleted status is ignored.
+	 * Alters the query params so each item's deleted status is ignored.
 	 * @param array $query_params
 	 * @return array
 	 */
@@ -214,7 +214,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		parent::sum($query_params, $field_to_sum);
 	}
 	/**
-	 * Gets all deleted and undeleted mode objects from teh db taht meet the criteria, regardless of 
+	 * Gets all deleted and undeleted mode objects from the db taht meet the criteria, regardless of 
 	 * whether they've been soft-deleted or not
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Soft_Delete_Base_Class[]
@@ -236,7 +236,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	
 	
 	/**
-	 * Permanently deletes teh selected rows. When selecting rows for deletion, ignores
+	 * Permanently deletes the selected rows. When selecting rows for deletion, ignores
 	 * whether they've been soft-deleted or not. (ie, you don't have to soft-delete objects
 	 * before you can permanently delete them).
 	 * Because this will cause a real deletion, related models may block this deletion (ie, add an error

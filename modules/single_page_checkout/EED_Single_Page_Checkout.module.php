@@ -689,7 +689,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$additional_attendee_forms = FALSE;
 
 		$registrations  =  $this->_transaction->registrations( array(), TRUE );
-		// grab the saved registrations from teh transaction
+		// grab the saved registrations from the transaction
 		if ( $this->_transaction instanceof EE_Transaction && $registrations !== NULL ) {
 
 			//d( $this->_transaction );

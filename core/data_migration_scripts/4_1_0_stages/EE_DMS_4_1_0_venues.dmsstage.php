@@ -4,8 +4,8 @@
  * Converts old venues to Venue Custom Post Types.
  * Must be run after state and country default values have been added
  * Does NOT add relation to Events, but does ensure the state and countries 
- * indicated on teh venue exist
- * //		for reference, this is teh 3.1 table we're expecting
+ * indicated on the venue exist
+ * //		for reference, this is the 3.1 table we're expecting
 //CREATE TABLE `wp_events_venue` (
 //  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
 //  `name` varchar(250) DEFAULT NULL,

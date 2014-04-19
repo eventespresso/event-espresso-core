@@ -6,14 +6,14 @@
  * An important note about values dealt with in models and model objects:
  * values used by models exist in basically 3 different domains, which the EE_Model_Fields help convert between:
  * 1. Client-code values (eg, controller code may refer to a date as "March 21, 2013")
- * 2. Model object values (eg, after the model object has called set() on teh value and saves it onto the model object, it may become a unix timestamp, eg 12312412412)
+ * 2. Model object values (eg, after the model object has called set() on the value and saves it onto the model object, it may become a unix timestamp, eg 12312412412)
  * 3. Database values (eg, we may later decide to store dates as mysql dates, in which case they'd be stored as '2013-03-21 00:00:00')
  * Sometimes these values are the same, but often they are not. When your client code is using a model's functions, you need to be aware
  * which domain your data exists in. If it is client-code values (ie, it hasn't had a EE_Model_Field call prepare_for_set on it) then use the
- * model functions as normal. However, if you are calling the model functions with values from teh model object domain (ie, the code your writing is
+ * model functions as normal. However, if you are calling the model functions with values from the model object domain (ie, the code your writing is
  * probably within a model object, and all the values you're dealing with have had an EE_MOdel_Field call prepare_for_set on them), then you'll want
  * to set $values_already_prepared_by_model_object to FALSE within the argument-list of the functions you call (in order to avoid re-processing those values).
- * If your values are already in teh database values domain, you'll either way to convert them into the model object domain by creating model objects
+ * If your values are already in the database values domain, you'll either way to convert them into the model object domain by creating model objects
  * from those raw db values (ie,using EEM_Base::_create_objects), or just use $wpdb directly.
  */
 
@@ -401,7 +401,7 @@ abstract class EEM_Base extends EE_Base{
 	 * 
 	 *	@type string $default_where_conditions can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
 	 *		if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
-	 *		set it to 'other_models_only'. If you only want this model's default where conditions added to teh query, use 'this_model_only'.
+	 *		set it to 'other_models_only'. If you only want this model's default where conditions added to the query, use 'this_model_only'.
 	 *		If you want to use all default where conditions (default), set to 'all'.
 	 * } 
 	 *	@param	array $query_params		
@@ -567,7 +567,7 @@ abstract class EEM_Base extends EE_Base{
 	 * So, this update script will insert a row into wp_esp_event, using any available parameters from $fields_n_values (eg, if "EVT_limit" => 40 is in $fields_n_values,
 	 * the new entry in wp_esp_event will set EVT_limit = 40, and use default for other columns which are not specified)
 	 * @param array $fields_n_values keys are model fields (exactly like keys in EEMerimental::_fields, NOT db columns!), values are strings, ints, floats, and maybe arrays if they are to be serialized.
-	 * Basically, the values are what you'd expect to be values on the model, NOT necessarily what's in teh DB. For example, if we wanted to update only the TXN_details on any Transactions where its ID=34,
+	 * Basically, the values are what you'd expect to be values on the model, NOT necessarily what's in the DB. For example, if we wanted to update only the TXN_details on any Transactions where its ID=34,
 	 * we'd use this metho as follows: 
 	 * EEM_Transaction::instance()->update(
 	 *		array('TXN_details'=>array('detail1'=>'monkey','detail2'=>'banana'),
@@ -899,7 +899,7 @@ abstract class EEM_Base extends EE_Base{
 	 * 'hasMany' relationship: sets $otherModelObject's foreign_key to be $modelObject's primary_key. If $modelObject has no ID, it is first saved.
 	 * 
 	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one.
-	 * If one of the model Objects has not yet been saved to teh database, it is saved before adding the entry in the join table
+	 * If one of the model Objects has not yet been saved to the database, it is saved before adding the entry in the join table
 	 * 
 	 * @param EE_Base_Class/int $thisModelObject
 	 * @param EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
@@ -1007,7 +1007,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function count_related($id_or_obj,$model_name,$query_params = array(),$field_to_count = null, $distinct = FALSE){
 		$related_model = $this->get_related_model_obj($model_name);
-		//we're just going to use teh query params on the related model's normal get_all query,
+		//we're just going to use the query params on the related model's normal get_all query,
 		//except add a condition to say to match the curren't mod
 		if( ! isset($query_params['default_where_conditions'])){
 			$query_params['default_where_conditions']='none';
@@ -1031,7 +1031,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
 		$related_model = $this->get_related_model_obj($model_name);
-		//we're just going to use teh query params on the related model's normal get_all query,
+		//we're just going to use the query params on the related model's normal get_all query,
 		//except add a condition to say to match the curren't mod
 		if( ! isset($query_params['default_where_conditions'])){
 			$query_params['default_where_conditions']='none';
@@ -1196,7 +1196,7 @@ abstract class EEM_Base extends EE_Base{
 				//they didnt include this field. so just use default
 				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($field_obj->get_default_value(), $field_obj, true);
 			}else{
-				//they have specified teh value for thi sfield, so use itvalues_already_prepared_by_model_object
+				//they have specified the value for thi sfield, so use itvalues_already_prepared_by_model_object
 				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($fields_n_values[$field_name], $field_obj); ;
 			
 			}
@@ -1204,7 +1204,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		if($table instanceof EE_Secondary_Table && $new_id){
-			//its not the main table, so we should have already saved teh main table's PK which we just inserted
+			//its not the main table, so we should have already saved the main table's PK which we just inserted
 			//so add the fk to the main table as a column
 			$insertion_col_n_values[$table->get_fk_on_table()] = $new_id;
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
@@ -1429,7 +1429,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Extract all the query parts from $query_params (an array like whats passed to EEMerimental_Base::get_all)
 	 * and put into a EEM_Related_Model_Info_Carrier for easy extraction into a query. We create this object
-	 * instead of directly constructing teh SQL because often we need to extract info from the $query_params
+	 * instead of directly constructing the SQL because often we need to extract info from the $query_params
 	 * but use them in a different order. Eg, we need to know what models we are querying
 	 * before we know what joins to perform. However, we need to know what data types correspond to which fields on other
 	 * models before we can finalize the where clause SQL.
@@ -1800,7 +1800,7 @@ abstract class EEM_Base extends EE_Base{
 		$relation_obj = $this->related_settings_for($model_name);
 		
 		$model_relation_chain = $this->_extract_model_relation_chain($model_name, $original_query_param);
-		//check if teh relation is HABTM, because then we're essentially doing two joins
+		//check if the relation is HABTM, because then we're essentially doing two joins
 		//If so, join first to the JOIN table, and add its data types, and then continue as normal
 		if($relation_obj instanceof EE_HABTM_Relation){
 			$join_model_obj = $relation_obj->get_join_model();
@@ -2194,7 +2194,7 @@ abstract class EEM_Base extends EE_Base{
 				if($alias == $table_obj->get_table_alias()){
 					//so we're joining to this table, meaning the table is already in 
 					//the FROM statement, BUT the primary table isn't. So we want
-					//to add teh inverse join sql
+					//to add the inverse join sql
 					$SQL .= $table_obj->get_inverse_join_sql();
 				}else{
 					//just add a regular JOIN to this table from the primary table
@@ -2496,7 +2496,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach( $cols_n_values as $col => $val ) {
 			foreach( $this->field_settings() as $field_name => $field_obj ){
 				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"				
-				//does the field on the model relate to this column retrieved from teh db? 
+				//does the field on the model relate to this column retrieved from the db? 
 				//or is it a db-only field? (not relating to the model)
 				if (( $field_obj->get_qualified_column() == $col || $field_obj->get_table_column() == $col ) && ! $field_obj->is_db_only_field() ) {
 					//OK, this field apparently relates to this model.
@@ -2578,7 +2578,7 @@ abstract class EEM_Base extends EE_Base{
 	}
 	
 	/**
-	 * Get the name of the items this model repesents, for teh quanitity specified. Eg, 
+	 * Get the name of the items this model repesents, for the quanitity specified. Eg, 
 	 * if $quantity==1, on EEM_Event, it would 'Event' (internationalized), otherwise 
 	 * it would be 'Events'.
 	 * @param int $quantity
@@ -2598,7 +2598,7 @@ abstract class EEM_Base extends EE_Base{
 	 * and passed the method's name and arguments.
 	 * Instead of requiring a plugin to extend the EE_TempBase (which works fine is there's only 1 plugin, but when will that happen?)
 	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
-	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
+	 * and accepts 2 arguments: the object on which the function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
 	 * Example: in functions.php (or in a plugin):
 	 * add_filter('FHEE__EE_Answer__my_callback','my_callback',10,3);
 	 * function my_callback($previousReturnValue,EE_TempBase $object,$argsArray){
@@ -2627,7 +2627,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
 	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
-	 * @param EE_Base_Class/int $base_class_obj_or_id either teh EE_Base_Class taht corresponds to this Model, or its ID
+	 * @param EE_Base_Class/int $base_class_obj_or_id either the EE_Base_Class taht corresponds to this Model, or its ID
 	 * @param boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
 	 * @return EE_Base_Class
 	 */
@@ -2747,7 +2747,7 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			throw new EE_Error(sprintf(__("get_all_copies should be providd with either a model object or an array of field-value-pairs, but was given %s", "event_espresso"),$model_object_or_attributes_array));
 		}
-		//even copies obviously won't have the same ID, so remove teh primary key
+		//even copies obviously won't have the same ID, so remove the primary key
 		//from the WHERE conditions for finding copies (if there is a primary key, of coursE)
 		if($this->has_primary_key_field() && isset($attributes_array[$this->primary_key_name()])){
 			unset($attributes_array[$this->primary_key_name()]);

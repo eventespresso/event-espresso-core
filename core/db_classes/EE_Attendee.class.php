@@ -635,7 +635,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 	/**
 	 * Gets the billing info array where keys match espresso_reg_page_billing_inputs(),
 	 * and keys are their cleaned values
-	 * @param string $gateway_name the _gateway_name property on teh gateway class
+	 * @param string $gateway_name the _gateway_name property on the gateway class
 	 * @return array exactly like EE_Onsite_Gateway->espresso_reg_page_billing_inputs(),
 	 * where keys are names of fields, and values are an array of settings (the most important keys being
 	 * 'label' and 'value)

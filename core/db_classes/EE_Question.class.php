@@ -265,7 +265,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	*		Sets whether teh question has been deleted
+	*		Sets whether the question has been deleted
 	*		(we use this boolean isntead of actually
 	*		deleting it because when users delete this question
 	*		they really want to remove the question from future
