@@ -283,7 +283,7 @@ Class EEM_Gateways {
 		}
 		//$this->_payment_settings[$gateway] = $new_gateway_settings;
 		
-		//echo "updateing usermeta with paymetn settings";var_dump($this->_payment_settings);
+		//echo "updateing usermeta with payment settings";var_dump($this->_payment_settings);
 		$old_payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta(EE_Registry::instance()->CFG->wp_user, 'payment_settings',true);
 		$old_payment_settings[$gateway] = $new_gateway_settings;
 		$this->_payment_settings = $old_payment_settings;

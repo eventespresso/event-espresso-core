@@ -452,7 +452,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 	/**
 	 * Gest the attendee's full address as an array so client code can decide hwo to display it
-	 * @return array numerically indexed, with each part of the address taht is known.
+	 * @return array numerically indexed, with each part of the address that is known.
 	 * Eg, if the user only responded to state and country,
 	 * it would be array(0=>'Alabama',1=>'USA')
 	 */

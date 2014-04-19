@@ -565,7 +565,7 @@ class EE_Transaction extends EE_Base_Class{
 	
 	/**
 	 * Updates the transaction's status and total_paid based on all the payments
-	 * taht apply to it
+	 * that apply to it
 	 * @return boolean success of the application
 	 */
 	public function update_based_on_payments(){

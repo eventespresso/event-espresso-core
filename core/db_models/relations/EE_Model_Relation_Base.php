@@ -9,7 +9,7 @@
  */
 abstract class EE_Model_Relation_Base{
 	/**
-	 * The model name of which this relation is a component (ie, the model taht called new EE_Model_Relation_Base)
+	 * The model name of which this relation is a component (ie, the model that called new EE_Model_Relation_Base)
 	 * @var string eg Event, Question_Group, Registration
 	 */
 	private $_this_model_name;

@@ -2578,7 +2578,7 @@ abstract class EEM_Base extends EE_Base{
 	}
 	
 	/**
-	 * Get the name of the items this model repesents, for the quanitity specified. Eg, 
+	 * Get the name of the items this model repesents, for the quantity specified. Eg, 
 	 * if $quantity==1, on EEM_Event, it would 'Event' (internationalized), otherwise 
 	 * it would be 'Events'.
 	 * @param int $quantity
@@ -2627,7 +2627,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
 	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
-	 * @param EE_Base_Class/int $base_class_obj_or_id either the EE_Base_Class taht corresponds to this Model, or its ID
+	 * @param EE_Base_Class/int $base_class_obj_or_id either the EE_Base_Class that corresponds to this Model, or its ID
 	 * @param boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
 	 * @return EE_Base_Class
 	 */

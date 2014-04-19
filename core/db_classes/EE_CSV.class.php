@@ -266,7 +266,7 @@
 	 *	with a temporary ID gets inserted, we record its mapping from temporary
 	 *	ID to real ID, and use the real ID in place of the temporary ID 
 	 *	when that temporary ID was used as a foreign key.
-	 *	If the CSV data says (in the metadata again) taht it's from a DIFFERENT database,
+	 *	If the CSV data says (in the metadata again) that it's from a DIFFERENT database,
 	 *	we treat all the IDs in the CSV as temporary ID- eg, if the CSV specifies an event with
 	 *	ID 1, and the database already has an event with ID 1, we assume that's just a coincidence,
 	 *	and insert a new event, and map it's temporary ID of 1 over to its new real ID.
@@ -699,7 +699,7 @@
 				$this->write_data_array_to_csv($filehandle, $model_instance_arrays);
 			}else{
 //				echo "no data to write... so jsut write the headers";
-				//so there's actually NO model objects for taht model.
+				//so there's actually NO model objects for that model.
 				//probably still want to show the columns
 				$model = EE_Registry::instance()->load_model($model_name);
 				$column_names = array();

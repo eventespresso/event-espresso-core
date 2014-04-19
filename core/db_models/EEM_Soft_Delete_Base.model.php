@@ -214,7 +214,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		parent::sum($query_params, $field_to_sum);
 	}
 	/**
-	 * Gets all deleted and undeleted mode objects from the db taht meet the criteria, regardless of 
+	 * Gets all deleted and undeleted mode objects from the db that meet the criteria, regardless of 
 	 * whether they've been soft-deleted or not
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Soft_Delete_Base_Class[]
@@ -289,7 +289,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		return $this->delete_or_restore_by_ID(false,$ID);
 	}
 	/**
-	 * For deleting or restoring a particular item. Note taht this model is a SOFT-DELETABLE model! However,
+	 * For deleting or restoring a particular item. Note that this model is a SOFT-DELETABLE model! However,
 	 * this function will ignore whether the items have been soft-deleted or not.
 	 * @param boolean $delete true for deletem, false for restore
 	 * @param mixed $ID int if primary key is an int, string otherwise
@@ -323,7 +323,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	}
 	
 	/**
-	 * 'Undeletes' the chosen items. Note taht this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
+	 * 'Undeletes' the chosen items. Note that this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
 	 * items are ignored in queries. However, this particular function ignores whether the items have been soft-deleted or not.
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return type
@@ -363,7 +363,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 	}
 	
 	/**
-	 * Note taht this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
+	 * Note that this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
 	 * items are ignored in queries. So for this update, soft-deleted items will be ignroed.
 	 * If you want to update soft-deleted items also, use update_deleted_and_undeleted instead.
 	 * @param array $fields_n_values like EEM_base::update's $fields_n_values

@@ -268,7 +268,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * changes the maintenane level, provided there are still no migration scripts that shoudl run
+	 * changes the maintenance level, provided there are still no migration scripts that shoudl run
 	 */
 	public function _change_maintenance_level(){
 		$new_level = intval($this->_req_data['maintenance_mode_level']);

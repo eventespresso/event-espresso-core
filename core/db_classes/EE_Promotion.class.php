@@ -288,7 +288,7 @@ class EE_Promotion extends EE_Base_Class{
 		return $this->set('PRO_decline_msg', $decline_msg);
 	}
 	/**
-	 * Sets whether or not this promotino should be usable by DEFAULT on all new items in its scope
+	 * Sets whether or not this promotion should be usable by DEFAULT on all new items in its scope
 	 * @param boolean $default
 	 * @returns boolean
 	 */

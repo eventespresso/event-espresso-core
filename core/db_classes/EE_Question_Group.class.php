@@ -166,7 +166,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Gets the question group's order number in a sequence
-	 * of other quesiton groups
+	 * of other question groups
 	 * @access public
 	 * @return int
 	 */

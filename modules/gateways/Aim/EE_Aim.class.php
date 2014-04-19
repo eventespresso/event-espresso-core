@@ -225,7 +225,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$this->setField('state', $billing_info['_reg-page-billing-state-' . $this->_gateway_name]['value']);
 			$this->setField('zip', $billing_info['_reg-page-billing-zip-' . $this->_gateway_name]['value']);
 			$this->setField('cust_id', $primary_registrant->ID());
-			//invoice_num would be nice to have itbe unique per SPCO page-load, taht way if users
+			//invoice_num would be nice to have itbe unique per SPCO page-load, that way if users
 			//press back, they don't submit a duplicate. However, we may be keepin g the user on the same spco page
 			//in which case, we need to generate the invoice num per request right here...
 			$this->setField('invoice_num', wp_generate_password(12,false));//$billing_info['_reg-page-billing-invoice-'.$this->_gateway_name]['value']);
