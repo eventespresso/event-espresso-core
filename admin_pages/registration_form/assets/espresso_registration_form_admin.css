@@ -32,6 +32,38 @@
 .ee-question-sortable { cursor: move;}
 .ee-question-sortable label { cursor: inherit;}
 
+.ee-question-sortable {
+    cursor: move;
+    background: white;
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-top: none;
+    margin: 0;
+    position: relative;
+    padding-left: 35px;
+}
+.ee-question-sortable h1,
+.ee-question-sortable h2,
+.ee-question-sortable h3,
+.ee-question-sortable h4,
+.ee-question-sortable h5 {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.ee-question-sortable input {
+    position: absolute;
+    top: 13px;
+    left: 10px;
+}
+.ee-question-sortable:first-child {
+    border-radius: 7px 7px 0 0;
+    border-top: 1px solid #ddd;
+}
+.ee-question-sortable:last-child {
+    border-radius: 0 0 7px 7px;
+}
+
 table.question-options-table td, table.question-options-table th{
 	padding:1em 10px 0 3px; line-height: 1em;
 }
