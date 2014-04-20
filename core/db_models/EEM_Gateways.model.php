@@ -905,7 +905,7 @@ Class EEM_Gateways {
 		$cc = str_replace(array('-',' '),'',$cc);
 		// Get the CC Length
 		$cc_length = strlen($cc);
-		// Initialize the new credit card to contian the last four digits
+		// Initialize the new credit card to contain the last four digits
 		$newCreditCard = substr($cc,-4);
 		// Walk backwards through the credit card number and add a dash after every fourth digit
 		for($i=$cc_length-5;$i>=0;$i--){
@@ -922,7 +922,7 @@ Class EEM_Gateways {
 
 
 	/**
-	 * Handles the thank_you_page, given the curren transaction
+	 * Handles the thank_you_page, given the current transaction
 	 * @param type $transaction
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
@@ -957,7 +957,7 @@ Class EEM_Gateways {
 	 * @param EE_Transaction $transaction
 	 */
 	public function check_for_completed_transaction(EE_Transaction $transaction){
-		//throw new Exception("unfinished. This functino should check for a completed transaction .If completed, clear some session etc
+		//throw new Exception("unfinished. This function should check for a completed transaction. If completed, clear some session etc
 		require_once( EE_MODELS . 'EEM_Transaction.model.php');
 		if($transaction->status_ID() == EEM_Transaction::complete_status_code){
 			$this->reset_session_data();
@@ -967,7 +967,7 @@ Class EEM_Gateways {
 	/**
 	 * Uses the currently-active and selected gateway to handle an Instant Payment Notification.
 	 * Obviously, if this occurs the active gateway must be an Offsite gateway
-	 * @param EE_Transaction or ID $transaction Transaction to beudpated by the IPN
+	 * @param EE_Transaction or ID $transaction Transaction to be udpated by the IPN
 	 * @return boolean success
 	 */
 	public function handle_ipn_for_transaction($transaction){

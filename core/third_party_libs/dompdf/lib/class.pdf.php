@@ -4009,7 +4009,7 @@ EOT;
    */
   function stopObject($id) {
 	// if an object has been appearing on pages up to now, then stop it, this page will
-	// be the last one that could contian it.
+	// be the last one that could contain it.
 	if  (isset($this->addLooseObjects[$id])) {
 	  $this->addLooseObjects[$id] =  '';
 	}

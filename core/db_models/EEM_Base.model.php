@@ -1008,7 +1008,7 @@ abstract class EEM_Base extends EE_Base{
 	function count_related($id_or_obj,$model_name,$query_params = array(),$field_to_count = null, $distinct = FALSE){
 		$related_model = $this->get_related_model_obj($model_name);
 		//we're just going to use the query params on the related model's normal get_all query,
-		//except add a condition to say to match the curren't mod
+		//except add a condition to say to match the current mod
 		if( ! isset($query_params['default_where_conditions'])){
 			$query_params['default_where_conditions']='none';
 		}
@@ -1032,7 +1032,7 @@ abstract class EEM_Base extends EE_Base{
 	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
 		$related_model = $this->get_related_model_obj($model_name);
 		//we're just going to use the query params on the related model's normal get_all query,
-		//except add a condition to say to match the curren't mod
+		//except add a condition to say to match the current mod
 		if( ! isset($query_params['default_where_conditions'])){
 			$query_params['default_where_conditions']='none';
 		}
