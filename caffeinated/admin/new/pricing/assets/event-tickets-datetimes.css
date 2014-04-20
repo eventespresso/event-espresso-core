@@ -20,7 +20,7 @@
     padding-bottom: 11px;
 }/**/
 
-#espresso_events-create_new-event_date_info, #espresso_events-edit-event_date_info {
+#espresso_events-create_new-event_date_info, #espresso_events-edit-event_date_info, #espresso_events-edit-event_editor_event_datetimes_help_tab, #espresso_events-create_new-event_editor_event_datetimes_help_tab {
     top: 18px;
     left: 5px;
 }

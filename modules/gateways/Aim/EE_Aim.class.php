@@ -202,7 +202,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 					$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax_line_item->total(), 'N');
 				}
 			}else{//partial payment
-				if( ! $total_to_charge){//they didn't set teh total to charge, so it must have a balance
+				if( ! $total_to_charge){//they didn't set the total to charge, so it must have a balance
 					$total_to_charge = $transaction->remaining();
 				}
 				$order_description = sprintf(__("Partial payment of %s for %s", "event_espresso"),$total_to_charge,$primary_registrant->reg_code());
@@ -225,9 +225,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$this->setField('state', $billing_info['_reg-page-billing-state-' . $this->_gateway_name]['value']);
 			$this->setField('zip', $billing_info['_reg-page-billing-zip-' . $this->_gateway_name]['value']);
 			$this->setField('cust_id', $primary_registrant->ID());
-			//invoice_num would be nice to have itbe unique per SPCO page-load, taht way if users
-			//press back, they don't submit a duplicate. However, we may be keepin gthe user on teh same spco page
-			//in which case, we need to generate teh invoice num per request right here...
+			//invoice_num would be nice to have itbe unique per SPCO page-load, that way if users
+			//press back, they don't submit a duplicate. However, we may be keepin g the user on the same spco page
+			//in which case, we need to generate the invoice num per request right here...
 			$this->setField('invoice_num', wp_generate_password(12,false));//$billing_info['_reg-page-billing-invoice-'.$this->_gateway_name]['value']);
 
 

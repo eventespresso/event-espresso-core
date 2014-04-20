@@ -74,7 +74,7 @@ class EE_Term_Taxonomy extends EE_Base_Class{
 	protected $_Term;
 	
 	/**
-	 * Event related to this term_taxonomy via teh term_relation model
+	 * Event related to this term_taxonomy via the term_relation model
 	 * @var EE_Event
 	 */
 	protected $_Event;

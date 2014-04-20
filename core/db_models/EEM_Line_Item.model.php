@@ -14,12 +14,12 @@
  * ------------------------------------------------------------------------
  *
  * Line Item Model. MOstly used for storing a snapshot of all the items in a transaction
- * as they were recorded at the time of being added to teh cart. 
+ * as they were recorded at the time of being added to the cart. 
  * There are different 'types' of line items: item, sub-item, tax, sub-total, and total.
  * Note that line items can be nested. For example, a total line item should have one-or-more
  * children sub-totals. Likewise, sub-totals should have one-or-more nested items or taxes
  * (or maybe promotions or products?). Also, items can have nested sub-items (eg. an item could be a 
- * ticket, which has many sub-item prices which together make up teh price of that ticket).
+ * ticket, which has many sub-item prices which together make up the price of that ticket).
  * Note that line items should point to real model objects using OBJ_ID and OBJ_type (note:
  * there is a current limitation that they can only point to models with INT primary keys),
  * but this is NOT required. And in fact, the items they are related to CAN be deleted, but

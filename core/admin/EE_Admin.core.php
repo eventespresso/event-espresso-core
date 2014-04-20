@@ -61,7 +61,8 @@ final class EE_Admin {
 	protected function __construct() {
 		// define global EE_Admin constants
 		$this->_define_all_constants();
-
+		// set autoloaders for our admin page classes based on included path information
+		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_ADMIN );
 		// admin hooks
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
 		// load EE_Request_Handler early
@@ -149,7 +150,11 @@ final class EE_Admin {
 	 *	@return array
 	 */
 	public function hide_admin_pages_except_maintenance_mode( $admin_page_folder_names = array() ){
-		return array('maintenance', 'about','support');
+		return array(
+			'maintenance' => EE_ADMIN_PAGES . 'maintenance' . DS,
+			'about' => EE_ADMIN_PAGES . 'about' . DS,
+			'support' => EE_ADMIN_PAGES . 'support' . DS
+		);
 	}
 
 
@@ -186,7 +191,7 @@ final class EE_Admin {
 			}
 		}
 
-		//make sure our cpts and custom taxonomy metaboxes get shown for first time users
+		//make sure our CPTs and custom taxonomy metaboxes get shown for first time users
 		add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes' ), 10 );
 		add_action('admin_head', array( $this, 'register_custom_nav_menu_boxes' ), 10 );
 
@@ -258,7 +263,7 @@ final class EE_Admin {
 	 *
 	 * Currently EE is using this to make sure there are menu options for our CPT archive page routes.
 	 *
-	 * @todo modify this so its more dynamic and automatic for all ee cpts and setups and can also be hooked into by addons etc.
+	 * @todo modify this so its more dynamic and automatic for all ee CPTs and setups and can also be hooked into by addons etc.
 	 *
 	 * @access public
 	 * @return void

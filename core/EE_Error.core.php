@@ -5,7 +5,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author				Seth Shoultes
+ * @ author				Event Espresso
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @ link					{@link http://www.eventespresso.com}
@@ -16,13 +16,13 @@
  * Error Handling Class
  *
  * @package			Event Espresso
- * @subpackage	includes/classes/EE_Exceptions.class.php
+ * @subpackage		includes/classes/EE_Exceptions.class.php
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 // if you're a dev and want to receive all errors via email add this to your wp-config.php: define( 'EE_ERROR_EMAILS', TRUE );
-if ( defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS === TRUE ) {
+if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE && defined( 'EE_ERROR_EMAILS' ) && EE_ERROR_EMAILS === TRUE ) {
 	set_error_handler( array( 'EE_Error', 'error_handler' ));
 	register_shutdown_function( array( 'EE_Error', 'fatal_error_handler' ));
 }
@@ -98,11 +98,18 @@ class EE_Error extends Exception {
 
 
 	/**
-	*	error_handler
-	*	@access public
-	*	@return void
-	*/
+	 *    error_handler
+	 * @access public
+	 * @param $code
+	 * @param $message
+	 * @param $file
+	 * @param $line
+	 * @return void
+	 */
 	public static function error_handler( $code, $message, $file, $line ) {
+		if ( ! function_exists( 'wp_mail' )) {
+			return;
+		}
 		$ver = espresso_version();
 		if ( strpos( $ver, 'dev' ) || strpos( $ver, 'alpha' ) || strpos( $ver, 'beta' ) || strpos( $ver, 'hotfix' )) {
 			$type = EE_Error::error_type( $code );
@@ -132,11 +139,12 @@ class EE_Error extends Exception {
 
 
 	/**
-	*	error_type
-	* 	http://www.php.net/manual/en/errorfunc.constants.php#109430
-	*	@access public
-	*	@return void
-	*/
+	 *    error_type
+	 *    http://www.php.net/manual/en/errorfunc.constants.php#109430
+	 * @access public
+	 * @param $code
+	 * @return void
+	 */
 	public static function error_type( $code ) {
 		switch( $code ) {
 			case E_ERROR: // 1 //
@@ -190,10 +198,14 @@ class EE_Error extends Exception {
 
 
 	/**
-	*	_format_error
-	*	@access private
-	*	@return string
-	*/
+	 *    _format_error
+	 * @access private
+	 * @param $code
+	 * @param $message
+	 * @param $file
+	 * @param $line
+	 * @return string
+	 */
 	private static function _format_error( $code, $message, $file, $line ) {
 		$html  = "<table cellpadding='10'><thead bgcolor='#f8f8f8'><th>Item</th><th align='left'>Details</th></thead><tbody>";
 		$html .= "<tr valign='top'><td><b>Code</b></td><td>$code</td></tr>";
@@ -206,12 +218,12 @@ class EE_Error extends Exception {
 
 
 
-
 	/**
-	*	set_content_type
-	*	@access public
-	*	@return string
-	*/
+	 *    set_content_type
+	 * @access public
+	 * @param $content_type
+	 * @return string
+	 */
 	public static function set_content_type( $content_type ) {
 		return 'text/html';
 	}
@@ -409,7 +421,7 @@ class EE_Error extends Exception {
 
 			$ex['code'] = $ex['code'] ? $ex['code'] : $error_code;
 
-			// add generic non-identifying messages for non-privledged uesrs
+			// add generic non-identifying messages for non-privileged uesrs
 			if ( ! WP_DEBUG ) {
 
 				$ouput .= '<span class="ee-error-user-msg-spn">' . trim( $ex['msg'] )  . '</span> &nbsp; <sup>' . $ex['code'] . '</sup><br />';

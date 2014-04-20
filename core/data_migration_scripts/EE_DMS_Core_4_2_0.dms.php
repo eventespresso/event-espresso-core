@@ -2,7 +2,7 @@
 /**
  * meant to convert DBs between 4.1.x to 4.2.0
  * mostly just 
- * -adds QGQ_order to teh question-group_question table;
+ * -adds QGQ_order to the question-group_question table;
  * -adds DTT_name and DTT_description to the datetime table;
  */
 //make sure we have all the stages loaded too
@@ -34,7 +34,7 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base{
 	}
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if($version_string <= '4.2.003' && $version_string >= '4.1.0' ){
+		if($version_string <= '4.2.0' && $version_string >= '4.1.0' ){
 //			echo "$version_string can be mgirated fro";
 			return true;
 		}elseif( ! $version_string ){

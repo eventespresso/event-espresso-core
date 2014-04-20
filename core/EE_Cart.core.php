@@ -398,7 +398,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 *	Applies taxes to teh grand total line itemand recalculates it, and returns the grant total
+	 *	Applies taxes to the grand total line itemand recalculates it, and returns the grant total
 	 *	@access private
 	 *	@return float 
 	 */	

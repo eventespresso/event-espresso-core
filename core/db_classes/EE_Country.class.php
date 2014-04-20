@@ -60,7 +60,7 @@ class EE_Country extends EE_Base_Class{
 	protected $_Attendee;
 	
 	/**
-	 *All teh venues in this country
+	 *All the venues in this country
 	 * @var EE_Venue[]
 	 */
 	protected $_Venue;
@@ -89,7 +89,7 @@ class EE_Country extends EE_Base_Class{
 	}
 
 	/**
-	 * Gets teh country name
+	 * Gets the country name
 	 * @return string
 	 */
 	public function name() {
@@ -97,7 +97,7 @@ class EE_Country extends EE_Base_Class{
 	}
 	
 	/**
-	 * gets teh country's currency code
+	 * gets the country's currency code
 	 * @return string
 	 */
 	public function currency_code(){

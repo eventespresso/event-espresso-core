@@ -550,7 +550,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	/**
 	 * Interally used to delete or restore items, using the request data. Meant to be
-	 * flexible between question or question gruops
+	 * flexible between question or question groups
 	 * @param EEM_Base $model
 	 * @param boolean $trash wehter to trash or restore
 	 */

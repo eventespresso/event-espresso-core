@@ -40,11 +40,11 @@ class EEH_Autoloader {
 	private static $_instance = NULL;
 
 	/**
-	* 	$_autoloaders 
+	* 	$_autoloaders
 	* 	@var array $_autoloaders
-	* 	@access 	private 	
+	* 	@access 	private
 	*/
-	private static $_autoloaders;	
+	private static $_autoloaders;
 
 	/**
 	 *	@singleton method used to instantiate class object
@@ -68,7 +68,7 @@ class EEH_Autoloader {
 	 */
 	private function __construct() {
 		self::$_autoloaders = array();
-		$this->_register_custom_autoloaders();			
+		$this->_register_custom_autoloaders();
 		spl_autoload_register( array( $this, 'espresso_autoloader' ));
 	}
 
@@ -86,7 +86,7 @@ class EEH_Autoloader {
 	public static function espresso_autoloader( $className ) {
 		if ( isset( self::$_autoloaders[ $className ] ) && is_readable( self::$_autoloaders[ $className ] )) {
 			require_once( self::$_autoloaders[ $className ] );
-		} 
+		}
 	}
 
 
@@ -105,23 +105,36 @@ class EEH_Autoloader {
 			// don't give up! you gotta...
 			try {
 				// get some class
-				if ( empty( $class )) {					
-					throw new EE_Error ( __( 'An error occurred. No Class name was specified while registering an autoloader.','event_espresso' ));					
+				if ( empty( $class )) {
+					throw new EE_Error ( __( 'An error occurred. No Class name was specified while registering an autoloader.','event_espresso' ));
 				}
-				// one day you will find the path young grasshopper 
-				if ( empty( $path )) {					
-					throw new EE_Error ( sprintf( __( 'An error occurred. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));					
+				// one day you will find the path young grasshopper
+				if ( empty( $path )) {
+					throw new EE_Error ( sprintf( __( 'An error occurred. No path was specified while registering an autoloader for the %s class.','event_espresso' ), $class ));
 				}
 				// is file readable ?
 				if ( ! is_readable( $path )) {
-					throw new EE_Error ( sprintf( __( 'An error occurred. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));					
-				}				 
+					throw new EE_Error ( sprintf( __( 'An error occurred. The file for the %s class could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s','event_espresso' ), $class, $path ));
+				}
 			} catch ( EE_Error $e ) {
 				$e->get_error();
 			}
 			// add autoloader
-			self::$_autoloaders[ $class ] = str_replace( array( '\/', '/' ), DS, $path );			
+			self::$_autoloaders[ $class ] = str_replace( array( '\/', '/' ), DS, $path );
 		}
+	}
+
+
+
+
+	/**
+	 * 	get_autoloaders
+	 *
+	 * 	@access public
+	 * 	@return array
+	 */
+	public static function get_autoloaders() {
+		return self::$_autoloaders;
 	}
 
 
@@ -134,13 +147,13 @@ class EEH_Autoloader {
 	 * 	@return void
 	 */
 	private function _register_custom_autoloaders() {
-		$this->_register_autoloaders_for_each_file_in_folder( EE_CORE );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'fields' );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'helpers' );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'relations' );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'strategies' );
-		$this->_register_autoloaders_for_each_file_in_folder( EE_CLASSES );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CORE );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'fields' );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'helpers' );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'relations' );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_MODELS . DS  . 'strategies' );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( EE_CLASSES );
 	}
 
 
@@ -155,14 +168,18 @@ class EEH_Autoloader {
 	 * @param string $folder name, with or without trailing /, doesn't matter
 	 * @return void
 	 */
-	private function _register_autoloaders_for_each_file_in_folder($folder){
+	public static function register_autoloaders_for_each_file_in_folder( $folder ){
 		// make sure last char is a /
 		$folder .= $folder[strlen($folder)-1] != DS ? DS : '';
 		$class_to_filepath_map = array();
+		$exclude = array( 'index' );
 		//get all the files in that folder that end in php
 		$filepaths = glob( $folder.'*.php');
-		foreach($filepaths as $filepath){
-			$class_to_filepath_map [ EEH_File::get_classname_from_filepath_with_standard_filename( $filepath ) ] = str_replace( array( '\/', '/' ), DS, $filepath );
+		foreach( $filepaths as $filepath ) {
+			$class_name = EEH_File::get_classname_from_filepath_with_standard_filename( $filepath );
+			if ( ! in_array( $class_name, $exclude )) {
+				$class_to_filepath_map [ $class_name ] = str_replace( array( '\/', '/' ), DS, $filepath );
+			}
 		}
 		self::register_autoloader($class_to_filepath_map);
 	}
@@ -178,49 +195,49 @@ class EEH_Autoloader {
 	 * @param  string $className name of class
 	 * @param  array $dir_ref    config array in the following format:
 	 * array(
-	 * 'path' => array('class', 'core') //class suffixes	
+	 * 'path' => array('class', 'core') //class suffixes
 	 * );
 	 * @return void
 	 */
-	public static function try_autoload( $dir_ref, $className ) {
-		//assemble a list of filenames
-		foreach ( $dir_ref as $dir => $types ) {
-			if ( is_array($types) ) {
-				foreach ( $types as $type) {
-					$filenames[] = $dir . $className . '.' . $type . '.php';
-				}
-			} else {
-				$filenames[] = $dir . $className . '.' . $types . '.php';
-			}
-		}
-		//now loop through assembled filenames and require as available
-		foreach ( $filenames as $filename ) {
-			if ( is_readable( $filename )) {
-				require_once( $filename );
-			}				
-		}
-	}
+//	public static function try_autoload( $dir_ref, $className ) {
+//		//assemble a list of filenames
+//		foreach ( $dir_ref as $dir => $types ) {
+//			if ( is_array($types) ) {
+//				foreach ( $types as $type) {
+//					$filenames[] = $dir . $className . '.' . $type . '.php';
+//				}
+//			} else {
+//				$filenames[] = $dir . $className . '.' . $types . '.php';
+//			}
+//		}
+//		//now loop through assembled filenames and require as available
+//		foreach ( $filenames as $filename ) {
+//			if ( is_readable( $filename )) {
+//				require_once( $filename );
+//			}
+//		}
+//	}
 
 
 
 
 	/**
 	 * This takes care of loading a single file in the admin pages that has the suffix ".core.php"
-	 * @param  string $folder    folder name
+	 * @param  string $folder_path    path to folder
 	 * @param  string $className name of class
 	 * @return void
 	 */
-	public static function load_admin_core( $folder, $className ) {
-
-		$classfile = $className . '.core.php';
-		$paths_to_try = apply_filters( 'FHEE__EEH_Autoloader__load_admin_core', array( EE_ADMIN_PAGES . $folder . DS, $className ) );
-
-		foreach ( $paths_to_try as $path ) {
-			if ( is_readable( $path . $classfile )) {
-				require_once( $path . $classfile );
-			}
-		}		
-	}
+//	public static function load_admin_core( $folder_path, $className ) {
+//
+//		$classfile = $className . '.core.php';
+//		$paths_to_try = apply_filters( 'FHEE__EEH_Autoloader__load_admin_core', array( $folder_path . DS, $className ));
+//
+//		foreach ( $paths_to_try as $path ) {
+//			if ( is_readable( $path . $classfile )) {
+//				require_once( $path . $classfile );
+//			}
+//		}
+//	}
 
 
 

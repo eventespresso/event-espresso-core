@@ -288,7 +288,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		//convert 3.1 event status to 4.1 CPT status
 		//for refrence, 3.1 event stati available for setting are:  
 //		$status = array(array('id' => 'A', 'text' => __('Public', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
-//		and the json api uses teh following to convert from 3.1 to 4.0
+//		and the json api uses the following to convert from 3.1 to 4.0
 //		'S'=>'secondary/waitlist',
 //		'A'=>'active',
 //		'X'=>'denied',
@@ -358,7 +358,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	}
 	
 	/**
-	 * Counts all the registrations for the event in teh 3.1 DB. (takes into account attendee rows which represent various registrations)
+	 * Counts all the registrations for the event in the 3.1 DB. (takes into account attendee rows which represent various registrations)
 	 * @global type $wpdb
 	 * @param type $event_id
 	 * @return int

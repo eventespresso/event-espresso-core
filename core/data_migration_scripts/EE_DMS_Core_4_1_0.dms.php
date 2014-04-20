@@ -29,7 +29,7 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  * --static function instance() which returns the instance of EE_Config
  * --that the instance of EE_Config have an property named 'gateway' which is a class with properties '-'payment_settings' and 'active_gateways'
  *	 which are both arrays
- * --a function named update_espresso_config() which saves the EE_Config object to teh database
+ * --a function named update_espresso_config() which saves the EE_Config object to the database
  * --...and all its subclasses... really, you're best off copying the whole thin gwhen 4.1 is released into this file and wrapping its declaration in if( ! class_exists()){...}
  */
 class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
@@ -1211,7 +1211,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	}
 
 	/**
-	 * Gets teh ISO3 fora country given its 3.1 country ID.
+	 * Gets the ISO3 fora country given its 3.1 country ID.
 	 * @param int $country_id
 	 * @return string the country's ISO3 code
 	 */
@@ -1464,7 +1464,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * Converst a 3.1 payment status to its equivalent 4.1 regisration status
-	 * @param string $payment_status possible value for 3.1's evens_attendee.payment_statsu
+	 * @param string $payment_status possible value for 3.1's evens_attendee.payment_status
 	 * @param boolean $this_thing_required_pre_approval whether the thing we're considering (the general setting's default payment status,
 	 * the event's default payment status, or the attendee's payment status) required pre-approval.
 	 * @return string STS_ID for use in 4.1
@@ -1499,7 +1499,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 	/**
 	 * Makes sure the 3.1's image url is converted to an image attachment post to the 4.1 CPT event
-	 * and sets it as teh featured image on the CPT event
+	 * and sets it as the featured image on the CPT event
 	 * @param type $old_event
 	 * @param type $new_cpt_id
 	 * @param  EE_Data_Migration_Script_Stage $migration_stage the stage which called this, where errors should be added
@@ -1546,7 +1546,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	}
 
 	/**
-	 * Creates an image attachment post for the GUID. If teh GUID points to a remote image,
+	 * Creates an image attachment post for the GUID. If the GUID points to a remote image,
 	 * we download it to our uploads directory so that it can be properly processed (eg, creates different sizes of thumbnails)
 	 * @param type $guid
 	 * @param EE_Data_Migration_Script_Stage $migration_stage
@@ -1610,7 +1610,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 	}
 
 	/**
-	 * Finds the attachment post containing info about an image attachment given teh GUID (link to the image itself),
+	 * Finds the attachment post containing info about an image attachment given the GUID (link to the image itself),
 	 * and returns its ID.
 	 * @global type $wpdb
 	 * @param string $guid
