@@ -520,7 +520,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	private function _init_hooks() {
-		if ( empty( $_init_func) )
+		if ( empty( $this->_init_func) )
 			return; //get out there's nothing to take care of.
 
 		//We need to determine what page_route we are on!
