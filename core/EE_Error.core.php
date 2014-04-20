@@ -421,7 +421,7 @@ class EE_Error extends Exception {
 
 			$ex['code'] = $ex['code'] ? $ex['code'] : $error_code;
 
-			// add generic non-identifying messages for non-privledged uesrs
+			// add generic non-identifying messages for non-privileged uesrs
 			if ( ! WP_DEBUG ) {
 
 				$ouput .= '<span class="ee-error-user-msg-spn">' . trim( $ex['msg'] )  . '</span> &nbsp; <sup>' . $ex['code'] . '</sup><br />';

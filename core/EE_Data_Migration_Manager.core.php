@@ -618,7 +618,7 @@ class EE_Data_Migration_Manager{
 		
 		$last_ran_migration_script_properties = isset($last_migration_script_option['option_value']) ? maybe_unserialize($last_migration_script_option['option_value']) : null;
 		//now, tread lightly because we're here because a FATAL non-catchable error
-		//was thrown last time when we were tryign to run a data migration script
+		//was thrown last time when we were trying to run a data migration script
 		//so the fatal error could have happened while getting the mgiration script
 		//or doing running it...
 		$versions_migrated_to = isset($last_migration_script_option['option_name']) ? str_replace(EE_Data_Migration_Manager::data_migration_script_option_prefix,"",$last_migration_script_option['option_name']) : null;
@@ -688,7 +688,7 @@ class EE_Data_Migration_Manager{
 	
 	/**
 	 * Takes an array of data migration script properties and re-creates the class from
-	 * them. The argumetn $propertis_array is assumed to have been made by EE_Data_MIgration_Script_Base::properties_as_array()
+	 * them. The argument $propertis_array is assumed to have been made by EE_Data_MIgration_Script_Base::properties_as_array()
 	 * @param array $properties_array
 	 * @return EE_Data_Migration_Script_Base
 	 * @throws EE_Error
