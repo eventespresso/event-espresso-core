@@ -156,4 +156,16 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			remove_all_actions($action);
 		}
 	}
+
+
+
+	/**
+	 * This defines EE_Admin_Constants to point to the admin mocks * folder instead of the default admin folder.  Note, you will need
+	 * to be careful of using this.
+	 *
+	 * @since 4.3.0
+	 */
+	public function defineAdminConstants() {
+		define( 'EE_ADMIN_PAGES', EE_TESTS_DIR . 'mocks/admin' );
+	}
 }
