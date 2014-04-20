@@ -407,10 +407,18 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	private function _load_custom_methods() {
+		/**
+		 * method cannot be named 'default' (@see http://us3.php
+		 * .net/manual/en/reserved.keywords.php) so need to
+		 * handle routes that are "default"
+		 *
+		 * @since 4.3.0
+		 */
+		$method_callback = $this->_current_route == 'default' ? 'default_callback' : $this->_current_route;
 
 		//these run before the Admin_Page route executes.
-		if ( method_exists( $this, $this->_current_route ) ) {
-			call_user_func( array( $this, $this->_current_route) );
+		if ( method_exists( $this, $method_callback ) ) {
+			call_user_func( array( $this, $method_callback) );
 		}
 
 
