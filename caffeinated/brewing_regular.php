@@ -16,7 +16,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * EE_Brewing_Regular class.  Just a wrapper to help namespace activity for the functionliaty of this file.
+ * EE_Brewing_Regular class.  Just a wrapper to help namespace activity for the functionality of this file.
  *
  * @package		Event Espresso
  * @subpackage	/caffeinated/brewing_regular.php

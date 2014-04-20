@@ -882,7 +882,7 @@ abstract class EE_Base_Class{
 	 * @param string $callback must match a valid method in this class (defaults to get_datetime)
 	 * @param mixed (array|string) $args This is the arguments that will be passed to the callback.
 	 * @param string $prepend You can include something to prepend on the timestamp
-	 * @param string $append You can include somethign to append on the timestamp
+	 * @param string $append You can include something to append on the timestamp
 	 * @return string timestamp
 	 */
 	public function display_in_my_timezone( $field_name, $callback = 'get_datetime', $args = NULL, $prepend = '', $append = '' ) {

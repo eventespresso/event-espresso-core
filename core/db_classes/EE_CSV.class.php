@@ -698,7 +698,7 @@
 			if( ! empty($model_instance_arrays) ){
 				$this->write_data_array_to_csv($filehandle, $model_instance_arrays);
 			}else{
-//				echo "no data to write... so jsut write the headers";
+//				echo "no data to write... so just write the headers";
 				//so there's actually NO model objects for that model.
 				//probably still want to show the columns
 				$model = EE_Registry::instance()->load_model($model_name);

@@ -39,7 +39,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	/**
 	 * Performs database schema changes that need to occur BEFORE the data is migrated.
 	 * Eg, if we were going to change user passwords from plaintext to encoded versions
-	 * during this migration, this would probably add a new column called somethign like
+	 * during this migration, this would probably add a new column called something like
 	 * "encoded_password".
 	 * @return boolean of success
 	 */

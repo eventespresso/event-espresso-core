@@ -112,8 +112,8 @@ class EE_Maintenance_Mode {
 	/**
 	 * Determines whether or not we're in maintenance mode and what level. 
 	 * EE_Maintenance_Mode::level_0_not_in_maintenance => not in maintenance mode (in normal mode)
-	 * EE_Maintenance_Mode::level_1_frontend_only_maintenance=> frontend-only mainteannce mode
-	 * EE_Maintenance_Mode::level_2_complete_maintenance => frontend and backend mainteancne mode
+	 * EE_Maintenance_Mode::level_1_frontend_only_maintenance=> frontend-only maintenance mode
+	 * EE_Maintenance_Mode::level_2_complete_maintenance => frontend and backend maintenance mode
 	 * @return int
 	 */
 	public function level(){
