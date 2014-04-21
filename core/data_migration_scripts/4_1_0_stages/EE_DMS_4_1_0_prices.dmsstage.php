@@ -275,7 +275,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 		return $new_id;
 	}
 	/**
-	 * Inserts a 4.1 ticket based off teh 3.1 price, and the price IDs we've already made from teh 3.1 price
+	 * Inserts a 4.1 ticket based off the 3.1 price, and the price IDs we've already made from the 3.1 price
 	 * @param $old_price_row array where keys are columns
 	 * @param $new_base_price_id int
 	 * @param $new_member_discount_id int

@@ -210,7 +210,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	
 	
 	/**
-	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
+	 * @var EE_Promotion_Object relation to the join table between promotions and whatevers
 	 */
 	protected $_Promotion_Object;
 
@@ -460,7 +460,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		get event start date.  Provide either the date format, or NULL to re-use the
-	 * last-used format, or '' to use teh default date format
+	 * last-used format, or '' to use the default date format
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
@@ -483,7 +483,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		get end date. Provide either the date format, or NULL to re-use the
-	 * last-used format, or '' to use teh default date format
+	 * last-used format, or '' to use the default date format
 	* 
 	* 		@access		public	
 	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
@@ -749,7 +749,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	}
 	
 	/**
-	 * Gets the count of all teh tickets available at this datetime (not ticket types)
+	 * Gets the count of all the tickets available at this datetime (not ticket types)
 	 * before any were sold
 	 * @param array $query_params like EEM_Base::get_all's
 	 * @return int

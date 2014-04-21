@@ -84,9 +84,11 @@ class EE_Register_Admin_Page implements EEI_Plugin_API {
 
 
     public static function set_page_basename( $installed_refs ) {
-        foreach ( self::$_ee_admin_page_registry as $basename => $args ) {
-            $installed_refs[] = $basename;
-        }
+		if ( ! empty( self::$_ee_admin_page_registry )) {
+			foreach ( self::$_ee_admin_page_registry as $basename => $args ) {
+				$installed_refs[ $basename ] = $args['page_path'];
+			}
+		}
         return $installed_refs;
     }
 

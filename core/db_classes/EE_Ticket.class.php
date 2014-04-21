@@ -173,7 +173,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * The row this ticket coresponds with in the editor ui.
+	 * The row this ticket corresponds with in the editor ui.
 	 * @var INT
 	 */
 	protected $_TKT_row;
@@ -516,7 +516,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Gets all the prices that combine to form teh final price of this ticket
+	 * Gets all the prices that combine to form the final price of this ticket
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Price[]
 	 */
@@ -568,7 +568,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Gets all the datetimes this ticket can be used for attending.
-	 * Unless otherwise sepcified, orders datetimes by start date.
+	 * Unless otherwise specified, orders datetimes by start date.
 	 * @param array $query_params see EEM_Base::get_all()
 	 * @return EE_Datetime[]
 	 */
@@ -580,7 +580,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Gets all the datetimes from teh db ordered by DTT_order
+	 * Gets all the datetimes from the db ordered by DTT_order
 	 * @param boolean $show_expired
 	 * @param boolean $show_deleted
 	 * @return EE_Datetime[]

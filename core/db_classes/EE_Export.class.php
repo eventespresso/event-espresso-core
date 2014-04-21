@@ -352,7 +352,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				}
 				$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
 				if($field_name == 'REG_final_price'){
-					//add a column named Currency after teh final price
+					//add a column named Currency after the final price
 					$reg_csv_array[__("Currency", "event_espresso")] = EE_Config::instance()->currency->code;
 				}
 			}	

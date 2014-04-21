@@ -279,7 +279,6 @@ final class EE_Front_Controller {
 					foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 						// verify shortcode is in list of registered shortcodes
 						if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
-							unset( EE_Registry::instance()->shortcodes[ $shortcode_class ] );
 							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
 								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );

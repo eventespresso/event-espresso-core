@@ -112,8 +112,8 @@ class EE_Maintenance_Mode {
 	/**
 	 * Determines whether or not we're in maintenance mode and what level. 
 	 * EE_Maintenance_Mode::level_0_not_in_maintenance => not in maintenance mode (in normal mode)
-	 * EE_Maintenance_Mode::level_1_frontend_only_maintenance=> frontend-only mainteannce mode
-	 * EE_Maintenance_Mode::level_2_complete_maintenance => frontend and backend mainteancne mode
+	 * EE_Maintenance_Mode::level_1_frontend_only_maintenance=> frontend-only maintenance mode
+	 * EE_Maintenance_Mode::level_2_complete_maintenance => frontend and backend maintenance mode
 	 * @return int
 	 */
 	public function level(){
@@ -130,7 +130,7 @@ class EE_Maintenance_Mode {
 	}
 	
 	/**
-	 * Determines if we need to put EE in maintenance mode because teh database needs updating
+	 * Determines if we need to put EE in maintenance mode because the database needs updating
 	 * @return boolean true if DB is old and maintenance mode was triggered; false otherwise
 	 */
 	public function set_maintenance_mode_if_db_old(){
@@ -173,7 +173,7 @@ class EE_Maintenance_Mode {
 	/**
 	 * 	template_include
 	 * 
-	 * 	replacement EE CPT template that displays message notifying site visitors that EE has been temporarily placed into maintenace mode
+	 * 	replacement EE CPT template that displays message notifying site visitors that EE has been temporarily placed into maintenance mode
 	 *
 	 *  @access 	public
 	 *  @return 	string
@@ -191,7 +191,7 @@ class EE_Maintenance_Mode {
 	/**
 	 * 	the_content
 	 * 
-	 * 	displays message notifying site visitors that EE has been temporarily placed into maintenace mode when post_type != EE CPT
+	 * 	displays message notifying site visitors that EE has been temporarily placed into maintenance mode when post_type != EE CPT
 	 *
 	 *  @access 	public
 	 *  @return 	void
@@ -216,7 +216,7 @@ class EE_Maintenance_Mode {
 	/**
 	 * 	display_maintenance_mode_notice
 	 * 
-	 * 	displays message on frontend of site notifying admin that EE has been temporarily placed into maintenace mode
+	 * 	displays message on frontend of site notifying admin that EE has been temporarily placed into maintenance mode
 	 *
 	 *  @access 	public
 	 *  @return 	string

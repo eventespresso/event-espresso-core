@@ -1450,7 +1450,7 @@ class EEH_Form_Fields {
 		$text = ! empty( $text ) ? $text : __('Submit', 'event_espresso' );
 		$btn .= '<input id="' . $ID . '-btn" class="' . $class . '" type="submit" value="' . $text . '" ' . $extra_attributes . '/>';
 		if ( ! $input_only ) {
-			$btn_frm .= '<form id="' . $ID . '-frm" method="POST" action="' . $url . '">';
+			$btn_frm = '<form id="' . $ID . '-frm" method="POST" action="' . $url . '">';
 			$btn_frm .= ! empty( $nonce_action ) ? wp_nonce_field( $nonce_action, $nonce_action . '_nonce', TRUE, FALSE ) : '';
 			$btn_frm .= $btn;
 			$btn_frm .= '</form>';
