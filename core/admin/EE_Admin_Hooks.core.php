@@ -557,7 +557,6 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	public function add_metaboxes() {
-
 		if ( empty( $this->_metaboxes ) )
 			return; //get out we don't have any metaboxes to set for this connection
 
@@ -571,7 +570,6 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		if ( $this->_adminpage_obj instanceof EE_Admin_Page_CPT ) {
 			$this->_adminpage_obj->verify_cpt_object();
 		}
-
 
 		foreach ( $boxes as $box ) {
 			if ( !isset($box['page_route']) )
@@ -616,6 +614,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 */
 	private function _add_metabox( $args ) {
 		$current_screen = get_current_screen();
+		$screen_id = is_object( $current_screen ) ? $current_screen->id : NULL;
 		$func = isset( $args['func'] ) ? $args['func'] : 'some_invalid_callback';
 
 		//set defaults
@@ -626,7 +625,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			'label' => $this->caller,
 			'context' => 'advanced',
 			'callback_args' => array(),
-			'page' => isset( $args['page'] ) ? $args['page'] : $current_screen->id
+			'page' => isset( $args['page'] ) ? $args['page'] : $screen_id
 			);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -648,13 +647,14 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 	private function _remove_metabox( $args ) {
 		$current_screen = get_current_screen();
+		$screen_id = is_object( $current_screen ) ? $current_screen->id : NULL;
 		$func = isset( $args['func'] ) ? $args['func'] : 'some_invalid_callback';
 
 		//set defaults
 		$defaults = array(
 			'id' => isset( $args['id'] ) ? $args['id'] : $this->_current_route . '_' . $this->caller . '_' . $func . '_metabox',
 			'context' => 'default',
-			'screen' => isset( $args['screen'] ) ? $args['screen'] : $current_screen->id
+			'screen' => isset( $args['screen'] ) ? $args['screen'] : $screen_id
 		);
 
 		$args = wp_parse_args( $args, $defaults );

@@ -103,7 +103,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @depends test_valid_constructor
 	 */
 	public function test__set_page_object() {
-		$this->assertTrue( $this->_eeAdminHookMock->verify_page_object() instanceof mock_valid_admin_page_Admin_Mock_Valid_Hooks );
+		$this->assertTrue( $this->_eeAdminHookMock->verify_page_object() instanceof Admin_Mock_Valid_Admin_Page );
 
 		//test exception if _name is empty
 		$cached_name = $this->_eeAdminHookMock->get_property( '_name' );
@@ -156,6 +156,8 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 		$this->_eeAdminHookMock->set_property( '_metaboxes', $new_metabox );
 		$this->setExpectedException( 'EE_Error' );
 		$this->_eeAdminHookMock->add_metaboxes();
+		//restore
+		$this->_eeAdminHookMock->set_property( '_metaboxes', $cached_metabox );
 	}
 
 
@@ -165,9 +167,9 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @depends test_valid_constructor
 	 */
 	public function test__load_custom_methods() {
-		$this->assertTrue( $this->_eeAdminHookMock->default_callback() );
+		$this->assertTrue( $this->_eeAdminHookMock->route_callback );
 		$this->assertEquals( has_action('AHEE__Admin_Mock_Valid_Admin_Page___redirect_after_action__before_redirect_modification_default', array( $this->_eeAdminHookMock, '_redirect_action_early_default' ) ), 10 );
-		$this->assertEquals( has_action('AHEE_redirect_default', array( $this->_eeAdminHookMock, 'redirect_action_default' ) ), 10 );
+		$this->assertEquals( has_action('AHEE_redirect_Admin_Mock_Valid_Admin_Pagedefault', array( $this->_eeAdminHookMock, '_redirect_action_default' ) ), 10 );
 		$this->assertEquals( has_filter( 'FHEE_redirect_Admin_Mock_Valid_Admin_Pagedefault', array( $this->_eeAdminHookMock, '_redirect_filter_default' ) ), 10 );
 	}
 
@@ -182,7 +184,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_filter( 'FHEE_list_table_views_mock_valid_admin_page_default', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views_mock_valid_admin_page_default' ) ), 10 );
 		$this->assertEquals( has_filter( 'FHEE_list_table_views_mock_valid_admin_page', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views_mock_valid_admin_page' ) ), 10 );
 		$this->assertEquals( has_filter( 'FHEE_list_table_views', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views' ) ), 10 );
-		$this->assertEquals( has_action( 'AHEE__EE_Admin_Page __display_admin_page__modify_metaboxes', array( $this->_eeAdminHookMock, 'default_AHEE__EE_Admin_Page__display_admin_page__modify_metaboxes') ), 10 );
+		$this->assertEquals( has_action( 'AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes', array( $this->_eeAdminHookMock, 'default_AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes') ), 10 );
 	}
 
 
@@ -192,7 +194,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @depends test_valid_constructor
 	 */
 	public function test__ajax_hooks() {
-		$this->assertEquals( has_action( 'wp_ajax_ajax_test', array( $ths->_eeAdminHookMock, 'ajax_test_callback' ) ), 10 );
+		$this->assertEquals( has_action( 'wp_ajax_ajax_test', array( $this->_eeAdminHookMock, 'ajax_test_callback' ) ), 10 );
 	}
 
 
@@ -203,6 +205,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 */
 	public function test_invalid_constructor() {
+		$this->go_to( admin_url() );
 		//go to mock_valid_admin_page route for test
 		$this->_eeAdminHookMock = new dummy_not_exist_Hooks( $this->_eeAdminMock );
 

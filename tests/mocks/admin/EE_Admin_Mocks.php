@@ -26,8 +26,8 @@ class dummy_not_exist_Hooks extends EE_Admin_Hooks {
 		$this->_name = NULL;
 	}
 
-	public function verify_adminpage_obj() {
-		return $this->_adminpage_obj;
+	public function verify_page_object() {
+		return $this->_page_object;
 	}
 }
 
@@ -69,7 +69,7 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 				'context' => 'normal'
 				)
 			);
-		$this->_scripts_styles['registers'] = array(
+		$this->_scripts_styles = array(
 			'registers' => array(
 				'test-css' => array(
 					'url' => 'test.css',
@@ -157,7 +157,7 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 		$this->FHEE_list_table_views_global_callback = TRUE;
 	}
 
-	public function default_AHEE__EE_Admin_Page__display_admin_page__modify_metaboxes() {
+	public function default_AHEE__EE_Admin_Page___display_admin_page__modify_metaboxes() {
 		$this->modify_metaboxes_callback = TRUE;
 	}
 
