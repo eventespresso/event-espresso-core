@@ -168,4 +168,16 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	public function defineAdminConstants() {
 		define( 'EE_ADMIN_PAGES', EE_TESTS_DIR . 'mocks/admin' );
 	}
+
+
+
+	/**
+	 * This loads the various admin mock files required for tests.
+	 *
+	 * @since  4.3.0
+	 */
+	public function loadAdminMocks() {
+		require_once EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
+		require_once EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
+	}
 }

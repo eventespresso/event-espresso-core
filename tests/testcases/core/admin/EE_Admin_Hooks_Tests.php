@@ -26,8 +26,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		require EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
-		require EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
+		$this->loadAdminMocks();
 		$this->_eeAdminMock = new Admin_Mock_Valid_Admin_Page(false);
 		$this->_testRoute = admin_url('admin.php?page=mock_valid_admin_page');
 	}
