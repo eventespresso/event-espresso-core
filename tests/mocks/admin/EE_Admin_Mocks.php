@@ -14,7 +14,7 @@
  */
 EE_Registry::instance()->load_core('Admin_Page');
 EE_Registry::instance()->load_core('Admin_Hooks');
-EE_Registry::instance()->load_core('Admin_Init');
+EE_Registry::instance()->load_core('Admin_Page_Init');
 
 /**
  * Mocks an invalid hooks class
