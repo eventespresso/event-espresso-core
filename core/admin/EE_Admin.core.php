@@ -601,9 +601,7 @@ final class EE_Admin {
 					// map shortcode to post names and post IDs
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// and to "Posts page"
-					if ( $page_for_posts ) {
-						EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
-					}
+					EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
 					$update_post_shortcodes = TRUE;
 				}
 			}
@@ -630,11 +628,9 @@ final class EE_Admin {
 		if ( $option == 'page_for_posts' ) {
 			global $wpdb;
 			$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
-			$old_page_for_posts = $wpdb->get_var( $wpdb->prepare( $SQL, $old_value ));
-			$new_page_for_posts = $wpdb->get_var( $wpdb->prepare( $SQL, $value ));
-			if ( $new_page_for_posts ) {
-				EE_Registry::instance()->CFG->core->post_shortcodes[ $new_page_for_posts ] = EE_Registry::instance()->CFG->core->post_shortcodes[ $old_page_for_posts ];
-			}
+			$old_page_for_posts = $old_value ? $wpdb->get_var( $wpdb->prepare( $SQL, $old_value )) : 'posts';
+			$new_page_for_posts = $value ? $wpdb->get_var( $wpdb->prepare( $SQL, $value )) : 'posts';
+			EE_Registry::instance()->CFG->core->post_shortcodes[ $new_page_for_posts ] = EE_Registry::instance()->CFG->core->post_shortcodes[ $old_page_for_posts ];
 			EE_Registry::instance()->CFG->update_post_shortcodes( $new_page_for_posts );
 		}
 	}
@@ -642,10 +638,11 @@ final class EE_Admin {
 
 
 	/**
-	 * 	its_eSpresso - converts the less commonly used spelling of "Expresso" to "Espresso"
+	 *    its_eSpresso - converts the less commonly used spelling of "Expresso" to "Espresso"
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $content
+	 * @return    string
 	 */
 	public function its_eSpresso( $content ) {
 		return str_replace( '[EXPRESSO_', '[ESPRESSO_', $content );
@@ -657,7 +654,7 @@ final class EE_Admin {
 	 * 	espresso_admin_footer
 	 *
 	 *  @access 	public
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function espresso_admin_footer() {
 		return sprintf(
