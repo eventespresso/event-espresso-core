@@ -241,29 +241,17 @@ final class EE_Front_Controller {
 			// some other page is set as the homepage
 			$page_on_front = get_option( 'page_on_front' );
 			if ( $page_on_front ) {
-				// k now we need to find the slug for this page
+				// k now we need to find the post_name for this page
 				global $wpdb;
 				$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND ID=%d';
-				$post_slug = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ));
-				if( $post_slug ) {
-					// set the current post slug to what it actually is
-					$current_post = $post_slug;
-				}
-			}
-		} else if ( get_option( 'show_on_front' ) == 'page' ) {
-			// we're not on the homepage, but some "other" page is set as the posts page...
-			$page_for_posts = get_option( 'page_for_posts' );
-			if ( $page_for_posts ) {
-				// better get the ID for the current post
-				global $wpdb;
-				$SQL = 'SELECT ID from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND post_name=%s';
-				$current_post_id = $wpdb->get_var( $wpdb->prepare( $SQL, $current_post ));
-				// is the current post the "page_for_posts" ???
-				if ( $current_post_id === $page_for_posts ) {
-					$current_post = 'posts';
-				}
+				$page_on_front = $wpdb->get_var( $wpdb->prepare( $SQL, $page_on_front ));
+				// set the current post slug to what it actually is
+				$current_post = $page_on_front ? $page_on_front : $current_post;
 			}
 		}
+		// where are posts being displayed ?
+		$page_for_posts = EE_Config::get_page_for_posts();
+		// in case $current_post is hierarchical like: /parent-page/current-page
 		$current_post = basename( $current_post );
 		// are we on a category page?
 		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
@@ -271,12 +259,12 @@ final class EE_Front_Controller {
 		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
 			// cycle thru all posts with shortcodes set
 			foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
-				// are we on this page ?
-				if ( $current_post == $post_name || $term_exists ) {
-					// filter shortcodes so
-					$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
-					// now cycle thru shortcodes
-					foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
+				// filter shortcodes so
+				$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
+				// now cycle thru shortcodes
+				foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
+					// are we on this page ?
+					if ( $current_post == $post_name || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
 						if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
 							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
@@ -302,11 +290,18 @@ final class EE_Front_Controller {
 							// fire the shortcode class's run method, so that it can activate resources
 							EE_Registry::instance()->shortcodes[ $shortcode_class ]->run( $WP );
 						}
+					// if this is NOT the "Posts page" and we have a valid entry for the "Posts page" in our tracked post_shortcodes array
+					} else if ( $post_name != $page_for_posts && isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
+						// and the shortcode is not being tracked for this page
+						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )) {
+							// then remove the "fallback shortcode
+							remove_shortcode( $shortcode_class );
+						}
 					}
 				}
 			}
 		}
-		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__end',$this );
+		do_action( 'AHEE__EE_Front_Controller__initialize_shortcodes__end', $this );
 	}
 
 
