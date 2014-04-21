@@ -69,13 +69,6 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 				'context' => 'normal'
 				)
 			);
-		$this->_remove_metaboxes = array(
-			0 => array(
-				'page_route' => array('default'),
-				'id' => 'espresso_event_editor_tickets',
-				'context' => 'normal'
-				)
-			);
 		$this->_scripts_styles['registers'] = array(
 			'registers' => array(
 				'test-css' => array(
@@ -205,7 +198,7 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 	 *
 	 * @since 4.3.0
 	 *
-	 * @param  string $method the protected/private method
+	 * @param  string $method the protected method
 	 *                        	       to call
 	 * @return mixed
 	 */

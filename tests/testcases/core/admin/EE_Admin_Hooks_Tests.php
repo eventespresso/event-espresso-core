@@ -29,6 +29,11 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 		$this->loadAdminMocks();
 		$this->_eeAdminMock = new Admin_Mock_Valid_Admin_Page(false);
 		$this->_testRoute = admin_url('admin.php?page=mock_valid_admin_page');
+
+		//go to mock_valid_admin_page route for test
+		$this->go_to($this->_testRoute);
+		$this->defineAdminConstants();
+		$this->_eeAdminHookMock = new mock_valid_admin_page_Admin_Mock_Valid_Hooks( $this->_eeAdminMock );
 	}
 
 
@@ -42,14 +47,9 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @since 4.3.0
 	 */
 	public function test_valid_constructor() {
-		//go to mock_valid_admin_page route for test
-		$this->go_to($this->_testRoute);
-		$this->defineAdminConstants();
-		$this->_eeAdminHookMock = new mock_valid_admin_page_Admin_Mock_Valid_Hooks( $this->_eeAdminMock );
-
 		//test things setup after construct
 		$this->assertTrue( $this->_eeAdminHookMock->verify_adminpage_obj() instanceof Admin_Mock_Valid_Admin_Page );
-		$this->assertTrue( $this->_eeAdminHookMock->verify_extend() );
+		$this->assertFalse( $this->_eeAdminHookMock->verify_extend() );
 	}
 
 	/**
@@ -92,7 +92,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @depends test_valid_constructor
 	 */
 	public function test__set_defaults() {
-		$this->assertEquals( 'default', $this->_eeAdminHookMock->verify_current_route );
+		$this->assertEquals( 'default', $this->_eeAdminHookMock->verify_current_route() );
 		$this->assertEquals( $this->_eeAdminHookMock->caller, 'mock_valid_admin_page_Admin_Mock_Valid_Hooks' );
 		$this->assertFalse( $this->_eeAdminHookMock->verify_extend() );
 	}
@@ -103,7 +103,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @depends test_valid_constructor
 	 */
 	public function test__set_page_object() {
-		$this->assertTrue( $this->_eeAdminHookMock->verify_page_object instanceof mock_valid_admin_page_Admin_Mock_Valid_Hooks );
+		$this->assertTrue( $this->_eeAdminHookMock->verify_page_object() instanceof mock_valid_admin_page_Admin_Mock_Valid_Hooks );
 
 		//test exception if _name is empty
 		$cached_name = $this->_eeAdminHookMock->get_property( '_name' );
@@ -126,7 +126,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @depends test_valid_constructor
 	 */
 	public function test__init_hooks() {
-		$this->assertTrue( has_filter( 'admin_init', array( $this->_eeAdminHookMock, 'init_callback_test' ) ) );
+		$this->assertEquals( has_filter( 'admin_init', array( $this->_eeAdminHookMock, 'init_callback_test' ) ), 10 );
 
 		//test exception if method doesn't exist
 		$cached_init_func = $this->_eeAdminHookMock->get_property( '_init_func' );
@@ -166,9 +166,9 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 */
 	public function test__load_custom_methods() {
 		$this->assertTrue( $this->_eeAdminHookMock->default_callback() );
-		$this->assertTrue( has_action('AHEE__Admin_Mock_Valid_Admin_Page___redirect_after_action__before_redirect_modification_default', array( $this->_eeAdminHookMock, '_redirect_action_early_default' ) ) );
-		$this->assertTrue( has_action('AHEE_redirect_default', array( $this->_eeAdminHookMock, 'redirect_action_default' ) ) );
-		$this->assertTrue( has_filter( 'FHEE_redirect_Admin_Mock_Valid_Admin_Pagedefault', array( $this->_eeAdminHookMock, '_redirect_filter_default' ) ) );
+		$this->assertEquals( has_action('AHEE__Admin_Mock_Valid_Admin_Page___redirect_after_action__before_redirect_modification_default', array( $this->_eeAdminHookMock, '_redirect_action_early_default' ) ), 10 );
+		$this->assertEquals( has_action('AHEE_redirect_default', array( $this->_eeAdminHookMock, 'redirect_action_default' ) ), 10 );
+		$this->assertEquals( has_filter( 'FHEE_redirect_Admin_Mock_Valid_Admin_Pagedefault', array( $this->_eeAdminHookMock, '_redirect_filter_default' ) ), 10 );
 	}
 
 
@@ -178,11 +178,11 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @depends test_valid_constructor
 	 */
 	public function test__load_routed_hooks() {
-		$this->assertTrue( has_action('admin_footer', array( $this->_eeAdminHookMock, 'default_admin_footer' ) ) );
-		$this->assertTrue( has_filter( 'FHEE_list_table_views_mock_valid_admin_page_default', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views_mock_valid_admin_page_default' ) ) );
-		$this->assertTrue( has_filter( 'FHEE_list_table_views_mock_valid_admin_page', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views_mock_valid_admin_page' ) ) );
-		$this->assertTrue( has_filter( 'FHEE_list_table_views', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views' ) ) );
-		$this->assertTrue( has_action( 'AHEE__EE_Admin_Page __display_admin_page__modify_metaboxes', array( $this->_eeAdminHookMock, 'default_AHEE__EE_Admin_Page__display_admin_page__modify_metaboxes') ) );
+		$this->assertEquals( has_action('admin_footer', array( $this->_eeAdminHookMock, 'default_admin_footer' ) ), 10 );
+		$this->assertEquals( has_filter( 'FHEE_list_table_views_mock_valid_admin_page_default', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views_mock_valid_admin_page_default' ) ), 10 );
+		$this->assertEquals( has_filter( 'FHEE_list_table_views_mock_valid_admin_page', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views_mock_valid_admin_page' ) ), 10 );
+		$this->assertEquals( has_filter( 'FHEE_list_table_views', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views' ) ), 10 );
+		$this->assertEquals( has_action( 'AHEE__EE_Admin_Page __display_admin_page__modify_metaboxes', array( $this->_eeAdminHookMock, 'default_AHEE__EE_Admin_Page__display_admin_page__modify_metaboxes') ), 10 );
 	}
 
 
@@ -192,7 +192,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 * @depends test_valid_constructor
 	 */
 	public function test__ajax_hooks() {
-		$this->assertTrue( has_action( 'wp_ajax_ajax_test', array( $ths->_eeAdminHookMock, 'ajax_test_callback' ) ) );
+		$this->assertEquals( has_action( 'wp_ajax_ajax_test', array( $ths->_eeAdminHookMock, 'ajax_test_callback' ) ), 10 );
 	}
 
 
@@ -207,7 +207,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 		$this->_eeAdminHookMock = new dummy_not_exist_Hooks( $this->_eeAdminMock );
 
 		//should have exited early so there should be no page object set.
-		$this->assertEmpty( $this->_eeAdminHookMock->verify_adminpage_obj() );
+		$this->assertEmpty( $this->_eeAdminHookMock->verify_page_object() );
 	}
 
 

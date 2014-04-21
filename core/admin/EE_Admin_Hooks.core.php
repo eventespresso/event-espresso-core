@@ -528,7 +528,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * Loop throught the $_init_func array and add_actions for the array.
 	 * @return void
 	 */
-	private function _init_hooks() {
+	protected function _init_hooks() {
 		if ( empty( $this->_init_func) )
 			return; //get out there's nothing to take care of.
 
@@ -569,8 +569,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	private function _handle_metabox_array( $boxes, $add = TRUE ) {
-		if ( $this->adminpage_obj instanceof EE_Admin_Page_CPT ) {
-			$this->adminpage_obj->verify_cpt_object();
+		if ( $this->_adminpage_obj instanceof EE_Admin_Page_CPT ) {
+			$this->_adminpage_obj->verify_cpt_object();
 		}
 
 
