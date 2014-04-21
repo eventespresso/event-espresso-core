@@ -334,18 +334,23 @@ final class EE_Config {
 
 
 	/**
-	 * 	update_post_shortcodes
+	 *    update_post_shortcodes
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $page_for_posts
+	 * @return    void
 	 */
-	public function update_post_shortcodes() {
-		do_action( 'AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes );
+	public function update_post_shortcodes( $page_for_posts = '' ) {
+		// make sure page_for_posts is set
+		$page_for_posts = !empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
+		// allow others to mess stuff up :D
+		do_action( 'AHEE__EE_Config__update_post_shortcodes', $this->core->post_shortcodes, $page_for_posts );
+		// verify that post_shortcodes is set
 		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
 		// cycle thru post_shortcodes
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it
-			if ( $post_name != 'posts' ) {
+			if ( $post_name !== $page_for_posts ) {
 				foreach( $shortcodes as $post_id ) {
 					// make sure post still exists
 					$post = get_post( $post_id );
@@ -363,6 +368,26 @@ final class EE_Config {
 		}
 		//only show errors
 		$this->update_espresso_config();
+	}
+
+
+
+	/**
+	 * 	get_page_for_posts
+	 *
+	 * 	if the wp-option "show_on_front" is set to "page", then this is the post_name for the post set in the wp-option "page_for_posts"
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function get_page_for_posts() {
+		$page_for_posts = get_option( 'page_for_posts' );
+		if ( ! $page_for_posts ) {
+			return 'posts';
+		}
+		global $wpdb;
+		$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
+		return $wpdb->get_var( $wpdb->prepare( $SQL, $page_for_posts ));
 	}
 
 
