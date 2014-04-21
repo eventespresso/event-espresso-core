@@ -44,7 +44,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 */
 	public function test_valid_constructor() {
 		//go to mock_valid_admin_page route for test
-		$this->goto($this->_testRoute);
+		$this->go_to($this->_testRoute);
 		$this->defineAdminConstants();
 		$this->_eeAdminHookMock = new mock_valid_admin_page_Admin_Mock_Valid_Hooks( $this->_eeAdminMock );
 
