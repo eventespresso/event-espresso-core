@@ -49,7 +49,7 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 
 		//test things setup after construct
 		$this->assertTrue( $this->_eeAdminHookMock->verify_adminpage_obj() instanceof Admin_Mock_Valid_Admin_Page );
-		$this->assertTrue( $this->_eeAdminHookMock->extended_properties() );
+		$this->assertTrue( $this->_eeAdminHookMock->verify_extend() );
 	}
 
 	/**
