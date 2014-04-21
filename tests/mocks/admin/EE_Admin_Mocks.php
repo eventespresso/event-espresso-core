@@ -105,6 +105,11 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 		$this->extended_properties = TRUE;
 	}
 
+
+	public function verify_adminpage_obj() {
+		return $this->_adminpage_obj;
+	}
+
 	public function verify_page_object() {
 		return $this->_page_object;
 	}
