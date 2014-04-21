@@ -80,7 +80,7 @@ abstract class EES_Shortcode extends EE_Base {
 	*/
 	final private static function _get_called_class() {
 		if ( self::$_called_class === NULL || self::$_called_class === 'EES_Shortcode' ) {
-			self::$_called_class = EEH_Class_Tools::get_called_class();
+			self::$_called_class = get_called_class();
 		}
 		return self::$_called_class;
 	}
@@ -103,10 +103,9 @@ abstract class EES_Shortcode extends EE_Base {
 
 
 	/**
-	 *    class constructor - can ONLY be instantiated by EE_Front_Controller
+	 *    class constructor - should ONLY be instantiated by EE_Front_Controller
 	 *
 	 * @access   public
-	 * @internal param \EE_Registry $EE
 	 * @return \EES_Shortcode
 	 */
 	final public function __construct() {
