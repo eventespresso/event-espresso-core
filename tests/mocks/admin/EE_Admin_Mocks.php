@@ -25,6 +25,10 @@ class dummy_not_exist_Hooks extends EE_Admin_Hooks {
 	protected function _set_hooks_properties() {
 		$this->_name = NULL;
 	}
+
+	public function verify_adminpage_obj() {
+		return $this->_adminpage_obj;
+	}
 }
 
 
