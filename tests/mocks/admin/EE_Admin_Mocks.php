@@ -53,7 +53,7 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 	public $ajax_test = FALSE;
 
 	protected function _set_hooks_properties() {
-		$this->_name = 'valid';
+		$this->_name = 'admin_mock_valid';
 		$this->_init_func = array(
 			'default' => 'init_callback_test'
 			);
