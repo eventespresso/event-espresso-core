@@ -261,7 +261,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
 			// unserialize
 			$session_data = maybe_unserialize( $session_data );
-			// just a check to make sure the sesion array is indeed an array
+			// just a check to make sure the session array is indeed an array
 			if ( ! is_array( $session_data ) ) {
 				// no?!?! then something's wrong
 				return FALSE;

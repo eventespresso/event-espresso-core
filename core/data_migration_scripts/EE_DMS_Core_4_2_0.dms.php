@@ -2,7 +2,7 @@
 /**
  * meant to convert DBs between 4.1.x to 4.2.0
  * mostly just 
- * -adds QGQ_order to teh question-group_question table;
+ * -adds QGQ_order to the question-group_question table;
  * -adds DTT_name and DTT_description to the datetime table;
  */
 //make sure we have all the stages loaded too
@@ -395,8 +395,8 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base{
 		
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QST_display_text VARCHAR(100) NOT NULL,
-					QST_admin_label VARCHAR(100) NOT NULL,
+					QST_display_text TEXT NOT NULL,
+					QST_admin_label VARCHAR(255) NOT NULL,
 					QST_system varchar(25) DEFAULT NULL,
 					QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
 					QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
@@ -412,7 +412,7 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base{
 		
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QSG_name VARCHAR(100) NOT NULL,
+					QSG_name VARCHAR(255) NOT NULL,
 					QSG_identifier VARCHAR(100) NOT NULL,
 					QSG_desc TEXT NULL,
 					QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
@@ -438,7 +438,7 @@ class EE_DMS_Core_4_2_0 extends EE_Data_Migration_Script_Base{
 		
 		$table_name='esp_question_option';
 		$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					QSO_value VARCHAR(100) NOT NULL ,
+					QSO_value VARCHAR(255) NOT NULL ,
 					QSO_desc TEXT NOT NULL ,
 					QST_ID INT UNSIGNED NOT NULL ,
 					QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,

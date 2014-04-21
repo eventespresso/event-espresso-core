@@ -152,7 +152,7 @@ abstract class EE_Offsite_Gateway extends EE_Gateway {
 	 * @throws EE_Error
 	 */
 	public function handle_ipn_for_transaction(EE_Transaction $transaction){
-		throw new EE_Error(sprintf(__('handle_ipn_for_transaction not implemented for gateway %s. || This function should take care of creating a payment given teh ipn data, and updating the transaction accordingly.','event_espresso'),get_class($this)));
+		throw new EE_Error(sprintf(__('handle_ipn_for_transaction not implemented for gateway %s. || This function should take care of creating a payment given the ipn data, and updating the transaction accordingly.','event_espresso'),get_class($this)));
 	
 	}
 	

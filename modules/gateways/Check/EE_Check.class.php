@@ -137,7 +137,7 @@ Class EE_Check extends EE_Offline_Gateway {
 		<?php
 	}
 	/**
-	 * Handles teh thank you page logic given this specific transaction 
+	 * Handles the thank you page logic given this specific transaction 
 	 * @param EE_Payment $payment
 	 */
 	public function get_payment_overview_content(EE_Payment $payment) {

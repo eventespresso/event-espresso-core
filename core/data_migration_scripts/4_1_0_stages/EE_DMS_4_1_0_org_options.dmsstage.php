@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Converts 3.1 $org_options to the 4.1 EE_Config class (which maybe should be included at teh bottom of this file, in case
+ * Converts 3.1 $org_options to the 4.1 EE_Config class (which maybe should be included at the bottom of this file, in case
  * EE_Config ever gets dropped)
  * 
  * 3.1 org options looked like:
@@ -9,7 +9,7 @@
   'organization' => string 'EE3.1 to EE4.1' (length=14)
   'organization_street1' => string '123 West Somewhere' (length=18)
   'organization_street2' => string '' (length=0)
-  'organization_city' => string 'Some City' (length=9)
+  'organization_city' => string 'Some City' (length=9ƒ)
   'organization_state' => string 'AZ' (length=2)
   'organization_zip' => string '84128' (length=5)
   'contact_email' => string 'michael@eventespresso.com' (length=25)
@@ -185,7 +185,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			  $c->organization->logo_url = $value;break;
 		  case 'event_page_id':
 			  
-			    //also, find that post, and changes teh shortcode in it from ESPRESSO_PAYMENTS
+			    //also, find that post, and changes the shortcode in it from ESPRESSO_PAYMENTS
 			  //to ESPRESSO_THANK_YOU
 			  $reg_page_post = get_post($value);
 			  $reg_page_post->post_content = str_replace("[ESPRESSO_EVENTS]","[ESPRESSO_CHECKOUT]",$reg_page_post->post_content);
@@ -193,7 +193,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			  $c->core->reg_page_id = $value;
 			  break;
 		  case 'return_url': 
-			  //also, find that post, and changes teh shortcode in it from ESPRESSO_PAYMENTS
+			  //also, find that post, and changes the shortcode in it from ESPRESSO_PAYMENTS
 			  //to ESPRESSO_THANK_YOU
 			  $thank_you_page_post = get_post($value);
 			  $thank_you_page_post->post_content = str_replace("[ESPRESSO_PAYMENTS]","[ESPRESSO_THANK_YOU]",$thank_you_page_post->post_content);
@@ -339,7 +339,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 	  'recaptcha_language',
 	  'espresso_dashboard_widget',
 	  'time_reg_limit',
-//	  'use_attendee_pre_approval', removed in 4.1- instead this is factored into the defautl reg status
+//	  'use_attendee_pre_approval', removed in 4.1- instead this is factored into the default reg status
 	  'use_personnel_manager',//no equiv
 	  'use_event_timezones',
 	  'full_logging',

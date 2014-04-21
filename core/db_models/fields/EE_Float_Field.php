@@ -29,7 +29,7 @@ class EE_Float_Field extends EE_Model_Field_Base{
 		return floatval( $value_inputted_for_field_on_model_object );
 	}
 	/**
-	 * Returns the number formatted according to local custom (set by teh country of the blog).
+	 * Returns the number formatted according to local custom (set by the country of the blog).
 	 * @param float $value_on_field_to_be_outputted
 	 * @return string
 	 */

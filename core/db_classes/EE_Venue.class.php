@@ -22,7 +22,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	protected $_Event_Venue;
 	
 	/**
-	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
+	 * @var EE_Promotion_Object relation to the join table between promotions and whatevers
 	 */
 	protected $_Promotion_Object;
 
@@ -370,7 +370,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	}
 	
 	/**
-	 * Sets the state, given eitehr a state id or state object
+	 * Sets the state, given either a state id or state object
 	 * @param EE_State/int $state_id_or_obj
 	 * @return EE_State
 	 */
@@ -379,7 +379,7 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	}
 	
 	/**
-	 * Sets the coutnry on teh venue
+	 * Sets the coutnry on the venue
 	 * @param EE_Country/string $country_id_or_obj
 	 * @return EE_Country
 	 */

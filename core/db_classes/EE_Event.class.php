@@ -65,7 +65,7 @@ class EE_Event extends EE_CPT_Base{
 	protected $_Term_Taxonomy;
 
 	/**
-	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
+	 * @var EE_Promotion_Object relation to the join table between promotions and whatevers
 	 */
 	protected $_Promotion_Object;
 
@@ -414,7 +414,7 @@ class EE_Event extends EE_CPT_Base{
 	}
 
 	/**
-	 * Gets all teh venues related ot the event. May provide additional $query_params if desired
+	 * Gets all the venues related ot the event. May provide additional $query_params if desired
 	 * @param array $query_params like EEM_Base::get_all's $query_params
 	 * @return EE_Venue[]
 	 */
@@ -756,7 +756,7 @@ class EE_Event extends EE_CPT_Base{
 		}
 	}
 	/**
-	 * Gets teh first term for 'espresso_event_categories' we can find
+	 * Gets the first term for 'espresso_event_categories' we can find
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Term
 	 */

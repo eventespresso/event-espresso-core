@@ -61,7 +61,7 @@
 		<li>Added support for the Calendar add-on</li>
 		<li>Added drag and drop ordering of tickets in the event editor</li>
 		<li>Order Questions by Question Group (replaces ordering questions by question order)</li>
-		<li>Added option to turn ff the Ticket Selector in the Event Details page for events without tickets/registrations</li>
+		<li>Added option to turn off the Ticket Selector in the Event Details page for events without tickets/registrations</li>
 		<li>Ability to add/Edit Event Datetime Names</li>
 		<li>Ability to add/Edit Event Datetime Descriptions</li>
 		<li>Added Event Datetime Name messages shortcode</li>

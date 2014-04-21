@@ -3,8 +3,8 @@
 /*
  * For shared functionality between models internally implemented
  * as Custom Post Types. Subclass of EEM_Soft_Delete_Base, meaning that when you 'delete' one of these model obejcts
- * we actuallyd efault ot just trashing it. (It works differently than EEM_Soft_Delete under teh hood,because there's a post status field
- * insetad of a soft-delete flag, but the functionality is teh same)
+ * we actuallyd efault ot just trashing it. (It works differently than EEM_Soft_Delete under the hood,because there's a post status field
+ * insetad of a soft-delete flag, but the functionality is the same)
  * Note: if you add a new subclass of EEM_CPT_Base, you should add it as a relation
  * on EEM_Term_Taxonomy and EEM_Term_Relationship
  */
@@ -47,7 +47,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	}
 	
 	/**
-	 * Alters teh query params so each item's deleted status is ignored.
+	 * Alters the query params so each item's deleted status is ignored.
 	 * @param array $query_params
 	 * @return array
 	 */
@@ -108,7 +108,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 	protected function __construct($timezone = null){
 		//adds a relationship to Term_Taxonomy for all these models. For this to work
 		//Term_Relationship must have a relation to each model subclassing EE_CPT_Base explicitly
-		//eg, in EEM_Term_Relationship, inside teh _model_relations array, there must be an entry
+		//eg, in EEM_Term_Relationship, inside the _model_relations array, there must be an entry
 		//with key equalling the subclassing model's model name (eg 'Event' or 'Venue'), and the value
 		//must also be new EE_HABTM_Relation('Term_Relationship');
 		$this->_model_relations['Term_Taxonomy'] =new EE_HABTM_Relation('Term_Relationship');
@@ -293,7 +293,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 
 	/**
 	 * Creates a child of EE_CPT_Base given a WP_Post or array of wpdb results which 
-	 * are a row from teh posts table. If we're missing any fields required for the model,
+	 * are a row from the posts table. If we're missing any fields required for the model,
 	 * we just fetch the entire entry from the DB (ie, if you want to use this to save DB queries,
 	 * make sure you are attaching all the model's fields onto the post)
 	 * @param WP_Post|array $post
@@ -312,7 +312,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 				}
 			}
 		}
-		//if we don't have all the fields we need, then just fetch the proper model from teh DB
+		//if we don't have all the fields we need, then just fetch the proper model from the DB
 		if( ! $has_all_necessary_fields_for_table){
 			
 			return $this->get_one_by_ID($post['ID']);
@@ -336,7 +336,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base{
 				}
 			}
 		}
-		//if we don't have all the fields we need, then just fetch the proper model from teh DB
+		//if we don't have all the fields we need, then just fetch the proper model from the DB
 		if( $tables_needing_to_be_queried){
 			if(count($tables_needing_to_be_queried) == 1 && reset($tables_needing_to_be_queried) instanceof EE_Secondary_Table){
 				//so we're only missing data from a secondary table. Well thats not too hard to query for

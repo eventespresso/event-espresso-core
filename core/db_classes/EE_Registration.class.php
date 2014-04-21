@@ -564,7 +564,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * Fetches teh event this registration is for
+	 * Fetches the event this registration is for
 	 * @return EE_Event
 	 */
 	public function event_obj(){

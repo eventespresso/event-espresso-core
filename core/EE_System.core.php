@@ -33,7 +33,7 @@ final class EE_System {
 
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
-	 * So examples of this would be a normal GET request on teh frontend or backend, or a POST, etc.
+	 * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc.
 	 */
 	const req_type_normal = 0;
 	/**
@@ -376,7 +376,7 @@ final class EE_System {
 	 * NOT necessarily the state of the database
 	 *
 	 * @param null $espresso_db_update
-	 * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from teh options table
+	 * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from the options table
 	 * @return array the correct value of 'espresso_db_upgrade', after saving it, if it needed correction
 	 */
 	private function fix_espresso_db_upgrade_option($espresso_db_update = null){
@@ -451,7 +451,7 @@ final class EE_System {
 	 * Adds the current code version to the saved wp option which stores a list of all ee versions ever installed.
 	 *
 	 * @param null $espresso_db_update
-	 * @internal param array $espresso_db_update_value teh value of the WordPress option. If not supplied, fetches it from teh options table
+	 * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from the options table
 	 * @return boolean success as to whether or not this option was changed
 	 */
 	public function update_list_of_installed_versions($espresso_db_update = null){
@@ -469,8 +469,8 @@ final class EE_System {
 	 *
 	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
 	 *                            If not provided, this function retrieves it from the database... so the parameter only exists for optimization
-	 * @internal param array $espresso_db_update_value teh value of the wordpress option.
-	 *                            If not supplied, fetches it from teh options table.
+	 * @internal param array $espresso_db_update_value the value of the wordpress option.
+	 *                            If not supplied, fetches it from the options table.
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,
 	 *                            but still know if this is a new install or not

@@ -407,10 +407,18 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	private function _load_custom_methods() {
+		/**
+		 * method cannot be named 'default' (@see http://us3.php
+		 * .net/manual/en/reserved.keywords.php) so need to
+		 * handle routes that are "default"
+		 *
+		 * @since 4.3.0
+		 */
+		$method_callback = $this->_current_route == 'default' ? 'default_callback' : $this->_current_route;
 
 		//these run before the Admin_Page route executes.
-		if ( method_exists( $this, $this->_current_route ) ) {
-			call_user_func( array( $this, $this->_current_route) );
+		if ( method_exists( $this, $method_callback ) ) {
+			call_user_func( array( $this, $method_callback) );
 		}
 
 
@@ -519,8 +527,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * Loop throught the $_init_func array and add_actions for the array.
 	 * @return void
 	 */
-	private function _init_hooks() {
-		if ( empty( $_init_func) )
+	protected function _init_hooks() {
+		if ( empty( $this->_init_func) )
 			return; //get out there's nothing to take care of.
 
 		//We need to determine what page_route we are on!
@@ -549,7 +557,6 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 * @return void
 	 */
 	public function add_metaboxes() {
-
 		if ( empty( $this->_metaboxes ) )
 			return; //get out we don't have any metaboxes to set for this connection
 
@@ -560,10 +567,6 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 	private function _handle_metabox_array( $boxes, $add = TRUE ) {
-		if ( $this->adminpage_obj instanceof EE_Admin_Page_CPT ) {
-			$this->adminpage_obj->verify_cpt_object();
-		}
-
 
 		foreach ( $boxes as $box ) {
 			if ( !isset($box['page_route']) )
@@ -608,6 +611,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 	 */
 	private function _add_metabox( $args ) {
 		$current_screen = get_current_screen();
+		$screen_id = is_object( $current_screen ) ? $current_screen->id : NULL;
 		$func = isset( $args['func'] ) ? $args['func'] : 'some_invalid_callback';
 
 		//set defaults
@@ -618,7 +622,7 @@ abstract class EE_Admin_Hooks extends EE_Base {
 			'label' => $this->caller,
 			'context' => 'advanced',
 			'callback_args' => array(),
-			'page' => isset( $args['page'] ) ? $args['page'] : $current_screen->id
+			'page' => isset( $args['page'] ) ? $args['page'] : $screen_id
 			);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -640,13 +644,14 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 	private function _remove_metabox( $args ) {
 		$current_screen = get_current_screen();
+		$screen_id = is_object( $current_screen ) ? $current_screen->id : NULL;
 		$func = isset( $args['func'] ) ? $args['func'] : 'some_invalid_callback';
 
 		//set defaults
 		$defaults = array(
 			'id' => isset( $args['id'] ) ? $args['id'] : $this->_current_route . '_' . $this->caller . '_' . $func . '_metabox',
 			'context' => 'default',
-			'screen' => isset( $args['screen'] ) ? $args['screen'] : $current_screen->id
+			'screen' => isset( $args['screen'] ) ? $args['screen'] : $screen_id
 		);
 
 		$args = wp_parse_args( $args, $defaults );

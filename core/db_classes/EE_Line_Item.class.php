@@ -405,7 +405,7 @@ class EE_Line_Item extends EE_Base_Class{
 
 	/**
 	 * Gets the object that this model-joins-to. Eg, if this line item join model object
-	 * is for a ticket, this will return teh ticket object
+	 * is for a ticket, this will return the ticket object
 	 * @return EE_Base_Class (one of the model objects that the field OBJ_ID can point to... see the 'OBJ_ID' field on EEM_Promotion_Object)
 	 */
 	function get_object(){
@@ -482,7 +482,7 @@ class EE_Line_Item extends EE_Base_Class{
 		}
 	}
 	/**
-	 * Gets teh child line item as specified by its code. Because this returns an object (by reference)
+	 * Gets the child line item as specified by its code. Because this returns an object (by reference)
 	 * you can modify this child line item and the parent (this object) can know about them
 	 * because it also has a reference to that line item
 	 * @param string $code
@@ -499,7 +499,7 @@ class EE_Line_Item extends EE_Base_Class{
 		}
 	}
 	/**
-	 * Returns how many items are deleted (or, if this item hasn' tbeen saved ot teh DB yet, just how many it HAD cached on it)
+	 * Returns how many items are deleted (or, if this item hasn' tbeen saved ot the DB yet, just how many it HAD cached on it)
 	 * @return int
 	 */
 	function delete_children_line_items(){
@@ -518,7 +518,7 @@ class EE_Line_Item extends EE_Base_Class{
 	 * If this line item has been saved to the DB, deletes its child with LIN_code == $code. If this line 
 	 * HASN'T been saved to the DB, removes the child line item with index $code
 	 * @param string $code
-	 * @return int count of items deleted (or simply removed from the line item's cache, if not hasn' tbeen saved to teh DB yet)
+	 * @return int count of items deleted (or simply removed from the line item's cache, if not hasn' tbeen saved to the DB yet)
 	 */
 	function delete_child_line_item($code){
 		if($this->ID()){
@@ -707,7 +707,7 @@ class EE_Line_Item extends EE_Base_Class{
 	
 	/**
 	 * Gets all descendants of the specified type
-	 * @param string $type one of teh constants on EEM_Line_Item
+	 * @param string $type one of the constants on EEM_Line_Item
 	 * @return EE_Line_Item
 	 */
 	protected function _get_descendants_of_type($type){
