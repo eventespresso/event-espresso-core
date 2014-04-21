@@ -17,6 +17,8 @@
 class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 
 	private $_eeAdminMock;
+	private $_eeAdminHookMock;
+	private $_testRoute;
 
 
 	/**
@@ -24,21 +26,192 @@ class EE_Admin_Hooks_Tests extends EE_UnitTestCase {
 	 */
 	public function setUp() {
 		parent::setUp();
-		EE_Registry::instance()->load_core('Admin_Page');
-		$this->_eeAdminMock = $this->getMockForAbstractClass( 'EE_Admin_Page' );
+		require EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
+		require EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
+		$this->_eeAdminMock = new Admin_Mock_Valid_Admin_Page(false);
+		$this->_testRoute = admin_url('admin.php?page=mock_valid_admin_page');
 	}
-}
 
-/**
- * Notes:
- * 1. Set up a Hooks class that will fail because it doesn't have a corresponding admin page class
- * 2. Setup a dumy admin page class object that will get instantiated with the ...
- * 3. Setup Hooks class that will instantiate the dummy admin page class object (set page object).
- * 4. There will need to be two versions of tests for the above.
- * 5. In the dummy classes, add a public method for setting different protected/private properties to
- * the wrong values so we can test errors/exceptions etc.
- * 6. For the incoming EE_Admin_Page object via the constructor, we'll use a mock (see what I started).
- * This is so we don't have to build a whole other admin page.
- */
+
+	/**
+	 * This tests a valid admin hook construct.
+	 *
+	 * Not only will this catch anything wrong with constructing a
+	 * Admin_Hook but we're also testing that public properties
+	 * and methods perform as expected.
+	 *
+	 * @since 4.3.0
+	 */
+	public function test_valid_constructor() {
+		//go to mock_valid_admin_page route for test
+		$this->goto($this->_testRoute);
+		$this->defineAdminConstants();
+		$this->_eeAdminHookMock = new mock_valid_admin_page_Admin_Mock_Valid_Hooks( $this->_eeAdminMock );
+
+		//test things setup after construct
+		$this->assertTrue( $this->_eeAdminHookMock->verify_adminpage_obj() instanceof Admin_Mock_Valid_Admin_Page );
+		$this->assertTrue( $this->_eeAdminHookMock->extended_properties() );
+	}
+
+	/**
+	 * @since 4.3.0
+	 * @depends test_valid_constructor
+	 */
+	public function test_enqueue_scripts_styles() {
+		$this->_eeAdminHookMock->enqueue_scripts_styles();
+		$this->assertTrue( wp_style_is( 'test-css', 'registered' ) );
+		$this->assertTrue( wp_style_is( 'test-css' ) );
+		$this->assertFalse( wp_style_is( 'event-editor-css', 'registered' ) );
+		$this->assertTrue( wp_script_is( 'test-js', 'registered' ) );
+		$this->assertTrue( wp_script_is( 'test-js' ) );
+
+		//test exception if no registers index in _scripts_styles property.
+		$scripts_styles_cache = $this->_eeAdminHookMock->get_property( '_scripts_styles' );
+
+		//let's set a scripts styles array with no registers.
+		$new_scripts_styles['something'] = 'fail';
+		$this->_eeAdminHookMock->set_property( '_scripts_styles', $new_scripts_styles );
+		$this->setExpectedException('EE_Error');
+		$this->_eeAdminHookMock->enqueue_scripts_styles();
+
+
+		//test for exception with missing params
+		$this->_eeAdminHookMock->set_property( '_scripts_styles', $scripts_styles_cache );
+		$new_scripts_styles = $scripts_styles_cache;
+		unset( $new_scripts_styles['registers']['test-css']['url'] );
+		$this->_eeAdminHookMock->set_property( '_scripts_styles', $new_scripts_styles );
+		$this->setExpectedException('EE_Error');
+		$this->_eeAdminHookMock->enqueue_scripts_styles();
+
+		//restore correct scripts styles
+		$this->_eeAdminHookMock->set_property( '_scripts_styles', $scripts_styles_cache );
+	}
+
+
+	/**
+	 * @since 4.3.0
+	 * @depends test_valid_constructor
+	 */
+	public function test__set_defaults() {
+		$this->assertEquals( 'default', $this->_eeAdminHookMock->verify_current_route );
+		$this->assertEquals( $this->_eeAdminHookMock->caller, 'mock_valid_admin_page_Admin_Mock_Valid_Hooks' );
+		$this->assertFalse( $this->_eeAdminHookMock->verify_extend() );
+	}
+
+
+	/**
+	 * @since 4.3.0
+	 * @depends test_valid_constructor
+	 */
+	public function test__set_page_object() {
+		$this->assertTrue( $this->_eeAdminHookMock->verify_page_object instanceof mock_valid_admin_page_Admin_Mock_Valid_Hooks );
+
+		//test exception if _name is empty
+		$cached_name = $this->_eeAdminHookMock->get_property( '_name' );
+		$this->_eeAdminHookMock->set_property( '_name', NULL );
+		$this->setExpectedException( 'EE_Error' );
+		$this->_eeAdminHookMock->call_method( '_set_page_object' );
+
+		//test exception if  class does not exist
+		$this->_eeAdminHookMock->set_property( '_name', 'fail' );
+		$this->setExpectedException( 'EE_Error' );
+		$this->_eeAdminHookMock->call_method( '_set_page_object' );
+
+		//restore _name
+		$this->_eeAdminHookMock->set_property( '_name', $cached_name );
+	}
+
+
+	/**
+	 * @since 4.3.0
+	 * @depends test_valid_constructor
+	 */
+	public function test__init_hooks() {
+		$this->assertTrue( has_filter( 'admin_init', array( $this->_eeAdminHookMock, 'init_callback_test' ) ) );
+
+		//test exception if method doesn't exist
+		$cached_init_func = $this->_eeAdminHookMock->get_property( '_init_func' );
+		$this->_eeAdminHookMock->set_property( '_init_func', array( 'fail' => 'fail' ) );
+		$this->setExpectedException( 'EE_Error' );
+		$this->_eeAdminHookMock->call_method( '_init_hooks' );
+
+		//restore
+		$this->_eeAdminHookMock->set_property( '_init_func', $cached_init_func );
+	}
+
+
+
+
+	/**
+	 * This tests the addition of metaboxes which actually gets
+	 * kicked off by the public add_metaboxes method.
+	 *
+	 * @since 4.3.0
+	 * @depends test_valid_constructor
+	 */
+	public function test__add_metabox() {
+		//test exception if the callback for the metabox doesn't exist
+		$cached_metabox = $this->_eeAdminHookMock->get_property( '_metaboxes' );
+		$new_metabox = $cached_metabox;
+		$new_metabox[0]['func'] = 'invalid';
+		$this->_eeAdminHookMock->set_property( '_metaboxes', $new_metabox );
+		$this->setExpectedException( 'EE_Error' );
+		$this->_eeAdminHookMock->add_metaboxes();
+	}
+
+
+
+	/**
+	 * @since 4.3.0
+	 * @depends test_valid_constructor
+	 */
+	public function test__load_custom_methods() {
+		$this->assertTrue( $this->_eeAdminHookMock->default_callback() );
+		$this->assertTrue( has_action('AHEE__Admin_Mock_Valid_Admin_Page___redirect_after_action__before_redirect_modification_default', array( $this->_eeAdminHookMock, '_redirect_action_early_default' ) ) );
+		$this->assertTrue( has_action('AHEE_redirect_default', array( $this->_eeAdminHookMock, 'redirect_action_default' ) ) );
+		$this->assertTrue( has_filter( 'FHEE_redirect_Admin_Mock_Valid_Admin_Pagedefault', array( $this->_eeAdminHookMock, '_redirect_filter_default' ) ) );
+	}
+
+
+
+	/**
+	 * @since 4.3.0
+	 * @depends test_valid_constructor
+	 */
+	public function test__load_routed_hooks() {
+		$this->assertTrue( has_action('admin_footer', array( $this->_eeAdminHookMock, 'default_admin_footer' ) ) );
+		$this->assertTrue( has_filter( 'FHEE_list_table_views_mock_valid_admin_page_default', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views_mock_valid_admin_page_default' ) ) );
+		$this->assertTrue( has_filter( 'FHEE_list_table_views_mock_valid_admin_page', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views_mock_valid_admin_page' ) ) );
+		$this->assertTrue( has_filter( 'FHEE_list_table_views', array( $this->_eeAdminHookMock, 'default_FHEE_list_table_views' ) ) );
+		$this->assertTrue( has_action( 'AHEE__EE_Admin_Page __display_admin_page__modify_metaboxes', array( $this->_eeAdminHookMock, 'default_AHEE__EE_Admin_Page__display_admin_page__modify_metaboxes') ) );
+	}
+
+
+
+	/**
+	 * @since 4.3.0
+	 * @depends test_valid_constructor
+	 */
+	public function test__ajax_hooks() {
+		$this->assertTrue( has_action( 'wp_ajax_ajax_test', array( $ths->_eeAdminHookMock, 'ajax_test_callback' ) ) );
+	}
+
+
+
+	/**
+	 * This tests the loading of an EE_Admin_Page_Hooks class that is setup incorrectly.  (it'll just return really early).
+	 *
+	 * @since 4.3.0
+	 */
+	public function test_invalid_constructor() {
+		//go to mock_valid_admin_page route for test
+		$this->_eeAdminHookMock = new dummy_not_exist_Hooks( $this->_eeAdminMock );
+
+		//should have exited early so there should be no page object set.
+		$this->assertEmpty( $this->_eeAdminHookMock->verify_adminpage_obj() );
+	}
+
+
+}
 
 //class EE_Admin_Hook
