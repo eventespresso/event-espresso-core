@@ -334,7 +334,12 @@ final class EE_System {
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
-				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
+				if ( $testsbypass ) {
+					$this->do_tests_db_setup();
+				}
+				else {
+					add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
+				}
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
@@ -443,6 +448,13 @@ final class EE_System {
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
 			add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee' ), 9 );
 		}
+	}
+
+
+
+	private function do_tests_db_setup() {
+		EEH_Activation::initialize_db_and_folders();
+		EEH_Activation::initialize_db_content();
 	}
 
 

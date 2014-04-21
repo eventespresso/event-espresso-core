@@ -20,7 +20,7 @@ function maybe_bypass_for_tests($bypass) {
 	global $wpdb;
 	//let's check if EE Table exists.  If it does then we do a bypass of is_admin() and user_logged_in check AND we set the $request_type to new_activation.
 	$table_name = $wpdb->prefix . "esp_country";
-	if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
+	if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name && $wpdb->get_var( "SHOW COLUMNS FROM '$table_name' LIKE 'CNT_ISO' " ) != 'CNT_ISO' ) {
 		return TRUE;
 	}
 	return FALSE; //table exists load things normally.
