@@ -177,7 +177,9 @@ class EEH_Template {
 				EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme,
 				// then in the root of the /wp-content/uploads/espresso/templates/ folder
 				EVENT_ESPRESSO_TEMPLATE_DIR,
-				// in the  /wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ folder within the plugin
+				// in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
+				EE_PUBLIC . $current_theme,
+				// in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
 				EE_TEMPLATES . $current_theme,
 				// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
 				EE_PLUGIN_DIR_PATH
