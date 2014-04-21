@@ -168,4 +168,44 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 		$this->ajax_test = TRUE;
 	}
 
+
+	/**
+	 * Method for setting protected properties for testing
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param string $property The name of the property to set
+	 * @param mixed $value     The value to give the property
+	 */
+	public function set_property( $property = '', $value = NULL ) {
+		$this->{$property} = $value;
+	}
+
+
+
+	/**
+	 * Method for getting protected properties for testing
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param  string $property The name of the property to get.]
+	 * @return mixed
+	 */
+	public function get_property( $property = '' ) {
+		return $this->{$property};
+	}
+
+
+	/**
+	 * wrapper for calling protected/private methods.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param  string $method the protected/private method
+	 *                        	       to call
+	 * @return mixed
+	 */
+	public function call_method( $method ) {
+		return $this->{$method}();
+	}
 }
