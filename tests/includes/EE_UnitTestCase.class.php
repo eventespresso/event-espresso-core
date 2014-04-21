@@ -166,7 +166,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @since 4.3.0
 	 */
 	public function defineAdminConstants() {
-		define( 'EE_ADMIN_PAGES', EE_TESTS_DIR . 'mocks/admin' );
+		if ( !defined( 'EE_ADMIN_PAGES' ) );
+			define( 'EE_ADMIN_PAGES', EE_TESTS_DIR . 'mocks/admin' );
 	}
 
 
