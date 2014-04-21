@@ -1331,13 +1331,14 @@ class EE_Currency_Config extends EE_Config_Base {
 	 * @return \EE_Currency_Config
 	 */
 	public function __construct( $CNT_ISO = NULL ) {
+
 		// get country code from organization settings or use default
 		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
 		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode)
-		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() ) {
-			// retreive the country settings from the db, just in case they have been customized
+		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() && ! get_option( 'ee_espresso_activation' )) {
+			// retrieve the country settings from the db, just in case they have been customized
 			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
 			if ( $country instanceof EE_Country ) {
 				$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR
