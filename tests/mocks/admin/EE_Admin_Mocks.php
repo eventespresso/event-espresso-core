@@ -56,6 +56,49 @@ class mock_valid_admin_page_Admin_Mock_Valid_Hooks extends EE_Admin_Hooks {
 		$this->_ajax_func = array(
 			'ajax_test' => 'ajax_test_callback'
 			);
+		$this->_metaboxes = array(
+			0 => array(
+				'page_route' => array('default'),
+				'func' => 'test_metabox',
+				'label' => __('Test Metabox', 'event_espresso'),
+				'priority' => 'high',
+				'context' => 'normal'
+				)
+			);
+		$this->_remove_metaboxes = array(
+			0 => array(
+				'page_route' => array('default'),
+				'id' => 'espresso_event_editor_tickets',
+				'context' => 'normal'
+				)
+			);
+		$this->_scripts_styles['registers'] = array(
+			'registers' => array(
+				'test-css' => array(
+					'url' => 'test.css',
+					'type' => 'css'
+					),
+				'test-js' => array(
+					'url' => 'test.js',
+					'depends' => array('jquery')
+					)
+				),
+			'deregisters' => array(
+				'event-editor-css' => array('type' => 'css' )
+				),
+			'enqueues' => array(
+				'test-css' => array( 'default' ),
+				'test-js' => array( 'default' )
+				),
+			'localize' => array(
+				'test-js' => array(
+					'TEST_ITEM' => 'this is a test' )
+				)
+			);
+	}
+
+	public function test_metabox() {
+		return true;
 	}
 
 	protected function _extend_properties() {
