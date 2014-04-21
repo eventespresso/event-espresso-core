@@ -195,11 +195,10 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 
 
-	/**
-	 * Holds EE_Registry object
-	 * @var EE_Registry
-	 */
-	protected $EE = NULL;
+
+	//for paths
+	protected $_ee_admin_pages_path;
+	protected $_ee_core_caf_admin_extend_path;
 
 
 
@@ -213,6 +212,8 @@ abstract class EE_Admin_Hooks extends EE_Base {
 
 		$this->_adminpage_obj = $adminpage;
 		$this->_req_data = array_merge($_GET, $_POST);
+		$this->_ee_admin_pages_path = EE_ADMIN_PAGES;
+		$this->_ee_core_caf_admin_extend_path = EE_CORE_CAF_ADMIN_EXTEND;
 		$this->_set_defaults();
 		$this->_set_hooks_properties();
 
@@ -375,13 +376,13 @@ abstract class EE_Admin_Hooks extends EE_Base {
 		$ref = str_replace(' ', '_', ucwords($ref) ) . '_Admin_Page'; //take the message -> The_Message
 
 		//first default file (if exists)
-		$decaf_file = EE_ADMIN_PAGES . $this->_name . DS . $ref . '.core.php';
+		$decaf_file = $this->_ee_admin_pages_path . $this->_name . DS . $ref . '.core.php';
 		if ( is_readable( $decaf_file ) )
 		require_once( $decaf_file );
 
 		//now we have to do require for extended file (if needed)
 		if ( $this->_extend ) {
-			require_once( EE_CORE_CAF_ADMIN_EXTEND . $this->_name . DS . 'Extend_' . $ref . '.core.php' );
+			require_once( $this->_ee_core_caf_admin_extend_path . $this->_name . DS . 'Extend_' . $ref . '.core.php' );
 		}
 
 
