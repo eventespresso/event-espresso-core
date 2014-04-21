@@ -342,7 +342,7 @@ final class EE_Config {
 	 */
 	public function update_post_shortcodes( $page_for_posts = '' ) {
 		// make sure page_for_posts is set
-		$page_for_posts = !empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
+		$page_for_posts = ! empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
 		// allow others to mess stuff up :D
 		do_action( 'AHEE__EE_Config__update_post_shortcodes', $this->core->post_shortcodes, $page_for_posts );
 		// verify that post_shortcodes is set
@@ -350,7 +350,7 @@ final class EE_Config {
 		// cycle thru post_shortcodes
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
 			// skip the posts page, because we want all shortcodes registered for it
-			if ( $post_name !== $page_for_posts ) {
+			if ( $post_name !== $page_for_posts && ! empty( $shortcodes )) {
 				foreach( $shortcodes as $post_id ) {
 					// make sure post still exists
 					$post = get_post( $post_id );
@@ -364,6 +364,9 @@ final class EE_Config {
 					// we don't like missing posts around here >:(
 					unset( $this->core->post_shortcodes[ $post_name ] );
 				}
+			} elseif ( empty( $shortcodes )) {
+				// you got no shortcodes to keep track of !
+				unset( $this->core->post_shortcodes[ $post_name ] );
 			}
 		}
 		//only show errors
@@ -375,7 +378,8 @@ final class EE_Config {
 	/**
 	 * 	get_page_for_posts
 	 *
-	 * 	if the wp-option "show_on_front" is set to "page", then this is the post_name for the post set in the wp-option "page_for_posts"
+	 * 	if the wp-option "show_on_front" is set to "page", then this is the post_name for the post set in the wp-option "page_for_posts", or "posts" if no page is selected
+	 *
 	 *
 	 *  @access 	public
 	 *  @return 	string
