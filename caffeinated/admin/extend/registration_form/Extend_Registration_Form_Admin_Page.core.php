@@ -627,7 +627,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
-		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if ($count){
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
 			$query_params['limit'] = NULL;
@@ -642,7 +642,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
-		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if($count){
 			$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
 			$query_params['limit'] = NULL;
