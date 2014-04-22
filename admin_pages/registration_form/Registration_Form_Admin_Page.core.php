@@ -508,8 +508,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	public function get_questions( $per_page=10,$current_page = 1, $count = FALSE ) {
 		$QST = EEM_Question::instance();
-		$query_params = $this->get_query_params($QST, $per_page, $current_page);
+		$query_params = $this->get_query_params($QST, $per_page, $current_page, $count);
 		if ($count){
+			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
+			unset( $query_params['limit'] );
 			$results = $QST->count($query_params);
 		}else{
 			$results = $QST->get_all($query_params);
@@ -523,7 +525,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
 		$query_params=$this->get_query_params(EEM_Question::instance(),$per_page,$current_page,$count);
 		$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
-		$questions=$count ? EEM_Question::instance()->get_all_deleted($where) : EEM_Question::instance()->get_all_deleted($query_params);
+		$questions=$count ? EEM_Question::instance()->count_deleted($where) : EEM_Question::instance()->get_all_deleted($query_params);
 		return $questions;
 	}
 
