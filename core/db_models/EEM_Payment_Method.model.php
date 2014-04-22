@@ -138,7 +138,7 @@ class EEM_Payment_Method extends EEM_Base {
 	public function get_all_active($scope = NULL,$query_params = array()){
 		if($scope){
 			if($this->is_valid_scope($scope)){
-				return $this->get_all(array(array('PMD_scope'=>array('LIKE',"%$scope%"))));
+				return $this->get_all(array_replace_recursive(array(array('PMD_scope'=>array('LIKE',"%$scope%"))),$query_params));
 			}else{
 				throw new EE_Error(sprintf(__("'%s' is not a valid scope for a payment method", "event_espresso"),$scope));
 			}	
@@ -147,7 +147,8 @@ class EEM_Payment_Method extends EEM_Base {
 			foreach($this->scopes() as $scope_name => $desc){
 				$acceptible_scopes['PMD_scope'] = array('LIKE','%'.$scope_name.'%s');
 			}
-			return $this->get_all(array(array('OR*active_scope'=>$acceptible_scopes)) + $query_params);
+			$query_params = array_replace_recursive(array(array('OR*active_scope'=>$acceptible_scopes)), $query_params);
+			return $this->get_all($query_params);
 		}
 	}
 	/**
@@ -258,5 +259,20 @@ class EEM_Payment_Method extends EEM_Base {
 			}
 		}
 		return $usable_payment_methods;
+	}
+	/**
+	 * Gets all the paymetn methods which can be used for transaction 
+	 * (according to the relations between paymetn methods and events, and
+	 * the currencies used for the transaction and their relation to payment methods)
+	 * @param EE_Transaction $transaction
+	 * @param string $scope @see EEM_Payment_Method::get_all_for_events
+	 * @return EE_Payment_Method
+	 */
+	public function get_all_for_transaction($transaction,$scope){
+		//@todo take relations between events and payment methods into account, once 
+		//that relation exists
+		//@todo take the relation between transaction and currencies into account
+		$currencies_for_events = array(EE_Config::instance()->currency->code);
+		return $this->get_all_active($scope, array(array('Currency.CUR_code'=>array('IN',$currencies_for_events))));
 	}
 }

@@ -997,7 +997,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 				}
 				$step_args['selected_method_of_payment'] = $this->_selected_method_of_payment;
-				$available_payment_methods = EE_Registry::instance()->LIB->EEM_Payment_Method->get_all_active(EEM_Payment_Method::scope_cart);
+				$available_payment_methods = EE_Registry::instance()->LIB->EEM_Payment_Method->get_all_for_transaction($this->_transaction, EEM_Payment_Method::scope_cart);
 				$available_pm = array();
 				foreach( $available_payment_methods as $pm ) {
 //					d( $pm );
