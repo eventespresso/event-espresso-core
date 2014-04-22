@@ -1054,6 +1054,19 @@ class EE_Core_Config extends EE_Config_Base {
 		);
 	}
 
+
+	/**
+	 * @return array
+	 */
+	public function get_critical_pages_shortcodes_array() {
+		return array(
+			$this->reg_page_id => 'ESPRESSO_CHECKOUT',
+			$this->txn_page_id => 'ESPRESSO_TXN_PAGE',
+			$this->thank_you_page_id => 'ESPRESSO_THANK_YOU',
+			$this->cancel_page_id => 'ESPRESSO_CANCELLED'
+		);
+	}
+
 	/**
 	 *  gets/returns URL for EE reg_page
 	 *
