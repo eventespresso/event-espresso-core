@@ -585,9 +585,12 @@ final class EE_Admin {
 		$post_types = array_merge( $post_types, $CPTs );
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
+			// whether to proceed with update
+			$update_post_shortcodes = FALSE;
 			// post on frontpage ?
 			$page_for_posts = EE_Config::get_page_for_posts();
-			$update_post_shortcodes = FALSE;
+			// critical page shortcodes that we do NOT want added to the Posts page (blog)
+			$critical_shortcodes = EE_Registry::instance()->CFG->core->get_critical_pages_shortcodes_array();
 			// array of shortcodes indexed by post name
 			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
 			// empty both arrays
@@ -600,8 +603,11 @@ final class EE_Admin {
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
 					// map shortcode to post names and post IDs
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
-					// and to "Posts page"
-					EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
+					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
+					if ( ! in_array( $EES_Shortcode, $critical_shortcodes )) {
+						// and to "Posts page"
+						EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
+					}
 					$update_post_shortcodes = TRUE;
 				}
 			}
