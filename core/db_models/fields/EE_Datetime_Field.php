@@ -542,23 +542,27 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 
 	/**
-	 * This is used to set the $_date property using the PHP DateTime object for internal calcluations and timezone settings
-	 * @param string $datestring Incoming date/time string in an acceptable format
+	 * This is used to set the $_date property using the PHP DateTime object for internal calculations and timezone settings
+	 * @param string $date_string Incoming date/time string in an acceptable format
 	 * @param string $timezone   Valid Timezone for dates
 	 * @return void
 	 */
-	private function _set_date_obj( $datestring, $timezone ) {
-		try{
-			$this->_date = new DateTime( $datestring, new DateTimeZone( $timezone ) );
-		}catch(Exception $e){
+	private function _set_date_obj( $date_string, $timezone ) {
+		try {
+			$this->_date = new DateTime( $date_string, new DateTimeZone( $timezone ));
+		} catch( Exception $e ) {
 			//probably a badly formatted date string
-			//maybe it's the Microsoft excel format '16/08/2013 8:58' ?
-			try{
-				$format = 'd/m/Y H:i';
-				$this->_date = DateTime::createFromFormat($format, $datestring, new DateTimeZone( $timezone ));
-			}catch(Exception $e){
-				//ok give up, but dont throw an error
-				$this->_date = new DateTime(null, new DateTimeZone( $timezone ));
+			try {
+				if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
+					// maybe it's the Microsoft excel format '16/08/2013 8:58' ?
+					$this->_date = DateTime::createFromFormat( 'd/m/Y H:i', $date_string, new DateTimeZone( $timezone ));
+				} else {
+					//change 'd/m/Y H:i'  to 'd-m-Y H:i'  because of how strtotime() interprets date formats. see: http://www.php.net/manual/en/datetime.formats.date.php
+					$this->_date = new DateTime( date( 'd-m-Y H:i', strtotime( $date_string )), new DateTimeZone( $timezone ));
+				}
+			} catch( Exception $e ) {
+				//ok give up, but don't throw an error
+				$this->_date = new DateTime( NULL, new DateTimeZone( $timezone ));
 			}
 		}
 	}
