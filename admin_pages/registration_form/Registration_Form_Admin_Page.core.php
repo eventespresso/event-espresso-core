@@ -511,7 +511,6 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$query_params = $this->get_query_params($QST, $per_page, $current_page);
 		if ($count){
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
-			unset( $query_params['limit'] );
 			$results = $QST->count($where);
 		}else{
 			$results = $QST->get_all($query_params);
