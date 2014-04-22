@@ -597,7 +597,7 @@ final class EE_Admin {
 			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
 			// loop thru shortcodes
 			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
-				// strip class prefix and convert to UPPERCASE
+				// convert to UPPERCASE to get actual shortcode
 				$EES_Shortcode = strtoupper( $EES_Shortcode );
 				// is the shortcode in the post_content ?
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
@@ -605,7 +605,12 @@ final class EE_Admin {
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
 					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
 					if ( ! in_array( $EES_Shortcode, $critical_shortcodes )) {
-						// and to "Posts page"
+						// check that posts page is already being tracked
+						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
+							// if not, then ensure that it is properly added
+							EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
+						}
+						// add shortcode to "Posts page" tracking
 						EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
 					}
 					$update_post_shortcodes = TRUE;
