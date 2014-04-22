@@ -86,8 +86,8 @@ class EE_PMT_Aim extends EE_PMT_Base{
 				)),
 			)
 		));
-		$form->get_input('PMD_debug_mode')->set_html_label_text(sprintf(__("Use Sandbox Server? %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_link)));
-		$form->get_input('PMD_debug_mode')->set_html_help_text(__("Account is on Authorize.net's sandbox server", 'event_espresso'));
+//		$form->get_input('PMD_debug_mode')->set_html_label_text(sprintf(__("Use Sandbox Server? %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_link)));
+//		$form->get_input('PMD_debug_mode')->set_html_help_text(__("Account is on Authorize.net's sandbox server", 'event_espresso'));
 		return $form;
 	}
 	/**

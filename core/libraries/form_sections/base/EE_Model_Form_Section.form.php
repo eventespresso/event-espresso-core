@@ -285,7 +285,8 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	}
 	
 	/**
-	 * 
+	 * Atutomatcially finds the related model info from the form, if present, and
+	 * save the relations indicated
 	 * @param type $relation_name
 	 */
 	protected function _save_related_info($relation_name){

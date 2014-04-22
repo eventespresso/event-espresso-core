@@ -36,7 +36,6 @@ class EE_PMT_Bank extends EE_PMT_Base{
 	}
 	public function generate_new_settings_form() {
 		return new EE_Payment_Method_Form(array(
-			'name'=>'Bank_Form',
 			'extra_meta_inputs'=>array(
 				'page_title'=>new EE_Text_Input(array(
 					'default'=>  __("Electronic Funds Transfers", 'event_espresso')

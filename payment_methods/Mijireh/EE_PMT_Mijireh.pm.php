@@ -49,7 +49,6 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 	}
 	public function generate_new_settings_form() {
 		$form = new EE_Payment_Method_Form(array(
-			'name'=>'Mijireh_Form',
 			'extra_meta_inputs'=>array(
 				'access_key'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Mijireh Access Key %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_name))

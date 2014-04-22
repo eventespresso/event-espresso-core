@@ -16,7 +16,7 @@ abstract class EE_PMT_Base{
 	/** @var EE_Gateway */
 	protected $_gateway = NULL;
 	/**
-	 * @var EE_Form_Section_Proper
+	 * @var EE_Payment_Method_Form
 	 */
 	protected $_settings_form = NULL;
 	/** 

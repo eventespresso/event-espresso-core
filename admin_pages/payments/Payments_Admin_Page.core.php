@@ -360,15 +360,19 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					$pm_type_obj = new $pm_type_class;
 					$payment_method = EEM_Payment_Method::instance()->get_one_by_slug($pm_type_obj->system_name());
 					if( ! $payment_method){
-						$payment_method = EE_Payment_Method::new_instance();
+						$payment_method = EE_Payment_Method::new_instance(array(
+							'PMD_type'=>$pm_type_obj->system_name(),
+							'PMD_name'=>$pm_type_obj->pretty_name(),
+							'PMD_admin_name'=>$pm_type_obj->pretty_name(),
+							'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
+							'PMD_wp_user_id'=>$current_user->ID
+						));
 					}
 					$payment_method->set_active();
-					$payment_method->save(array(
-						'PMD_type'=>$pm_type_obj->system_name(),
-						'PMD_name'=>$pm_type_obj->pretty_name(),
-						'PMD_admin_name'=>$pm_type_obj->pretty_name(),
-						'PMD_slug'=>$pm_type_obj->system_name(),//automatically converted to slug
-						'PMD_wp_user_id'=>$current_user->ID));
+					$payment_method->save();
+					foreach($payment_method->get_all_usable_currencies() as $currency_obj){
+						$payment_method->_add_relation_to($currency_obj, 'Currency');
+					}
 				}
 				
 			}else{

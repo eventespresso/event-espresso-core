@@ -434,4 +434,12 @@ class EE_Payment_Method extends EE_Base_Class{
 		</div>
 ';
 	}
+	/**
+	 * Gets all the currenices which are an option for this payment method
+	 * (as defined by the gateway and the currently active currencies)
+	 * @return EE_Currency[]
+	 */
+	public function get_all_usable_currencies(){
+		return EEM_Currency::instance()->get_all_currencies_usable_by($this->type_obj());
+	}
 }

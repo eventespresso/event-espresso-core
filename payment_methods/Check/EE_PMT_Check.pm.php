@@ -56,7 +56,6 @@ class EE_PMT_Check extends EE_PMT_Base{
 				$organization_name = 'unknown';
 			}
 			return new EE_Payment_Method_Form(array(
-			'name'=>'Check_Form',
 			'extra_meta_inputs'=>array(
 				'check_title'=> new EE_Text_Input(array(
 					'default'=>  __("Check/Money Order Payments", 'event_espresso'),

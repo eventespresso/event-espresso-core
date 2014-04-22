@@ -80,6 +80,25 @@ class EEM_Currency extends EEM_Base{
 		}
 		return $this->get_all($query_params);
 	}
+	/**
+	 * Gets all the currencies which can be used by that payment method type
+	 * @param EE_PMT_Base $payment_method_type
+	 * @return EE_Currency[]
+	 */
+	public function get_all_currencies_usable_by($payment_method_type){
+		if($payment_method_type instanceof EE_PMT_Base &&
+				$payment_method_type->get_gateway()){
+			$currencies_supported = $payment_method_type->get_gateway()->currencies_supported();
+		}else{
+			$currencies_supported = EE_Gateway::all_currencies_supported;
+		}
+		if($currencies_supported == EE_Gateway::all_currencies_supported){
+			$currencies = $this->get_all_active();
+		}else{
+			$currencies = $this->get_all_active(array(array('CUR_code'=>array('IN',$currencies_supported))));
+		}
+		return $currencies;
+	}
 	
 }
 

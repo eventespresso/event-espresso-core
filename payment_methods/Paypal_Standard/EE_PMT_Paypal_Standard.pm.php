@@ -21,7 +21,6 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	}
 	public function generate_new_settings_form() {
 		$form =  new EE_Payment_Method_Form(array(
-			'name'=>'Paypal_Standard_Form',
 			'extra_meta_inputs'=>array(
 				'paypal_id'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Paypal Email %s", 'event_espresso'), EEH_Template::get_help_tab_link( self::help_tab_name )),
