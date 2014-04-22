@@ -28,33 +28,49 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_Select_Multi_Model_Input extends EE_Select_Multiple_Input{
+	protected $_naming_method;
 	/**
 	 * 
 	 * @param EE_Base_Class[] $model_objects_to_select_from
 	 * @param array $options_array {
-	 *	@type $default EE_Base_Class[] or array
-	 *	@type $field_for_name string the name of the field you would like to use for the displayed-name,
-	 *		otherwise we'll just use the model obejct's name() method
-	 *	@type $callback_on_class function name on the class which will be used for getting the displayed-name
+	 *	@type EE_Base_Class[] or arrray $default
+	 *	@type string $naming_method function name on the class which will be used for getting the displayed-name. Eg,
+	 *		if the class were an EE_Event, this could be slug(), description(), name() (default)
 	 * }
 	 */
 	public function __construct($model_objects_to_select_from, $options_array = array()) {
-		//check if they have specified which field to use for the item's name
-		
+		if(isset($options_array['naming_method'])){
+			$this->set_option_naming_method($options_array['naming_method']);
+		}
+		parent::__construct($model_objects_to_select_from, $options_array);
+	}
+	
+	/**
+	 * Sets the method name which will be called when outputting the options list
+	 * @param string $method
+	 */
+	public function set_option_naming_method($method){
+		$this->_naming_method = $method;
+	}
+	
+	
+	/**
+	 * You CAN pass an array of model objects instead of simple values for teh options
+	 * @param EE_Base_Class[] $select_options
+	 */
+	public function set_select_options($model_objects) {
 		//convert the model objects to select from into normal select options
 		$select_options = array();
-		foreach($model_objects_to_select_from as $model_obj){
-			if(isset($options_array['field_for_name'])){
-				$display_value =  $model_obj->get_pretty($options_array['field_for_name']);
-			}elseif(isset($options_array['callback_on_class'])){
-				$callback_on_class = $options_array['callback_on_class'];
+		foreach($model_objects as $model_obj){
+			if($this->_naming_method){
+				$callback_on_class = $this->_naming_method;
 				$display_value = call_user_func(array($model_obj,$callback_on_class));
 			}else{
 				$display_value = $model_obj->name();
 			}
 			$select_options[$model_obj->ID()] = $display_value;
 		}
-		parent::__construct($select_options, $options_array);
+		parent::set_select_options($select_options);
 	}
 	/**
 	 * if they passed in an array of model objects for the default, convert it

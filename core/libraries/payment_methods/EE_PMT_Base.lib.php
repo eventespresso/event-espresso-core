@@ -366,4 +366,11 @@ abstract class EE_PMT_Base{
 	public function default_button_url(){
 		return $this->_default_button_url;
 	}
+	/**
+	 * Gets the gateway used by this paymetn method (if any)
+	 * @return EE_Gateway
+	 */
+	public function get_gateway(){
+		return $this->_gateway;
+	}
 }

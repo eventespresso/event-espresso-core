@@ -40,17 +40,24 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 			$subsection_args = array();
 		}
 		
-		$model_fields = $this->_model->field_settings();
-		//calculate what fields to include
+		//gather fields and relations to convert to inputs
+		//but if they're just going to exclude a field anyways, don't bother converting it to an input
+		$exclude = $this->_subsections;
+		if(isset($options_array['exclude'])){
+			$exclude = array_merge($exclude,array_flip($options_array['exclude']));
+		}
+		$model_fields = array_diff_key($this->_model->field_settings(), $exclude);
+		$model_relations = array_diff_key($this->_model->relation_settings(), $exclude);
+		//convert fields and relations to inputs
 		$this->_subsections = array_merge(
 				$this->_convert_model_fields_to_inputs($model_fields),
-				$this->_convert_model_relations_to_inputs($this->_model->relation_settings(),$subsection_args),
+				$this->_convert_model_relations_to_inputs($model_relations,$subsection_args),
 				$this->_subsections);
 		parent::__construct($options_array);
 		if(isset($options_array['model_object']) && $options_array['model_object'] instanceof EE_Base_Class){
 			$this->populate_model_obj($options_array['model_object']);
 		}
-		parent::__construct($options_array);
+		
 	}
 	
 	/**

@@ -84,7 +84,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 					)),
 				),
 				'include'=>array(
-					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url','PMD_scope',
+					'PMD_ID', 'PMD_name','PMD_desc','PMD_admin_name','PMD_admin_desc', 'PMD_type','PMD_slug', 'PMD_open_by_default','PMD_button_url','PMD_scope','Currency',
 					'pdf_stylesheet','pdf_instructions','pdf_logo_image',
 					'show_on_page', 'page_title','page_instructions','page_payable_to','page_address_payable'),
 			));

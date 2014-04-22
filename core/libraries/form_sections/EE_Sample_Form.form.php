@@ -20,7 +20,7 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			'amenities'=>new EE_Select_Multiple_Input(array('hottub'=>'Hot Tub','balcony'=>"Balcony",'skylight'=>'SkyLight','no_axe'=>'No Axe Murderers'),array(
 				'default'=>array('hottub','no_axe'),
 			)),
-			'payment_methods'=>new EE_Select_Multi_Model_Input('Payment_Method', EEM_Payment_Method::instance()->get_all()),
+			'payment_methods'=>new EE_Select_Multi_Model_Input(EEM_Payment_Method::instance()->get_all()),
 			);
 		$this->_layout_strategy = new EE_Div_Per_Section_Layout();
 		parent::__construct();

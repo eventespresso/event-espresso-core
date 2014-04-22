@@ -33,7 +33,7 @@ class EEM_Currency extends EEM_Base{
 	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
-	 *		@return EEM_Attendee instance
+	 *		@return EEM_Currency instance
 	 */	
 	public static function instance(){
 	
@@ -69,10 +69,16 @@ class EEM_Currency extends EEM_Base{
 	}
 	/**
 	 * Gets all thea ctive currencies, and orders them by their singular name, and then their code
+	 * (may be overridden)
+	 * @param array $query_params see EEM_Base::get_all
 	 * @return EE_Currency[]
 	 */
-	public function get_all_active(){
-		return $this->get_all(array(array('CUR_active'=>true),'order_by'=>array('CUR_code'=>'ASC','CUR_single'=>'ASC')));
+	public function get_all_active($query_params = array()){
+		$query_params[0]['CUR_active'] = true;
+		if( ! isset($query_params['order_by'])){
+			$query_params['order_by'] = array('CUR_code'=>'ASC','CUR_single'=>'ASC');
+		}
+		return $this->get_all($query_params);
 	}
 	
 }

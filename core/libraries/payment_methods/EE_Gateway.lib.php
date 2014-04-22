@@ -165,4 +165,13 @@ abstract class EE_Gateway{
 	public function format_currency($amount){
 		return $this->_template->format_currency($amount, true);
 	}
+	
+	/**
+	 * Returns either an array of all the currency codes supported, 
+	 * or a string indicating they're all supported (EE_gateway::all_currencies_suported)
+	 * @return mixed array or string
+	 */
+	public function currencies_supported(){
+		return $this->_currencies_supported;
+	}
 }
