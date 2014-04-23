@@ -23,17 +23,6 @@
  */
 abstract class EES_Shortcode extends EE_Base {
 
-
-	/**
-	 * 	name of the instantiated child class accessing this parent class
-	 *
-	 *  @access 	private
-	 *  @var 	$_called_class
-	 */
-	private static $_called_class = NULL;
-
-
-
 	/**
 	 *    run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
 	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
@@ -52,38 +41,29 @@ abstract class EES_Shortcode extends EE_Base {
 	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
-	 *  @return 	void
+	 *  @return 	mixed
 	 */
 	public abstract function process_shortcode( $attributes = array() );
 
 
 
 	/**
-	*	instance - returns intance of child class object
-	*
-	*	@access public
-	*	@return 	EES_Shortcode
-	*/
-	final public static function instance() {
-		$shortcode_class = EES_Shortcode::_get_called_class();
+	 *    instance - returns instance of child class object
+	 *
+	 * @access 	public
+	 * @param 	null $shortcode_class
+	 * @return 	\EES_Shortcode
+	 */
+	final public static function instance( $shortcode_class = NULL ) {
+		$shortcode_class = ! empty( $shortcode_class ) ? $shortcode_class : get_called_class();
+		if ( $shortcode_class == 'EES_Shortcode' ) {
+			return NULL;
+		}
 		$shortcode = str_replace( 'EES_', '', strtoupper( $shortcode_class ));
 		$shortcode_obj = isset( EE_Registry::instance()->shortcodes[ $shortcode ] ) ? EE_Registry::instance()->shortcodes[ $shortcode ] : NULL;
 		return $shortcode_obj instanceof $shortcode_class || $shortcode_class == 'self' ? $shortcode_obj : new $shortcode_class();
 	}
 
-
-	/**
-
-	*
-	*	@access public
-	*	@return 	void
-	*/
-	final private static function _get_called_class() {
-		if ( self::$_called_class === NULL || self::$_called_class === 'EES_Shortcode' ) {
-			self::$_called_class = get_called_class();
-		}
-		return self::$_called_class;
-	}
 
 
 
@@ -91,12 +71,13 @@ abstract class EES_Shortcode extends EE_Base {
 	 *    fallback_shortcode_processor - create instance and call process_shortcode
 	 *    NOTE: shortcode may not function perfectly dues to missing assets, but it's better than not having things work at all
 	 *
-	 * @access public
-	 * @param $attributes
-	 * @return    void
+	 * @access 	public
+	 * @param 	$attributes
+	 * @return 	mixed
 	 */
 	final public static function fallback_shortcode_processor( $attributes ) {
-		$shortcode_obj = self::instance();
+		$shortcode_class = get_called_class();
+		$shortcode_obj = self::instance( $shortcode_class );
 		return $shortcode_obj instanceof EES_Shortcode ? $shortcode_obj->process_shortcode( $attributes ) : NULL;
 	}
 
