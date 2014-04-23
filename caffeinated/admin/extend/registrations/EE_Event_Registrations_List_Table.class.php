@@ -279,7 +279,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( $item->count() == 1 ) {
 
 			if ( $item->transaction()->paid() >= $item->transaction()->total() ) {
-				return '<span class="reg-pad-rght"><img class="" src="' . EE_GLOBAL_ASSETS_URL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
+				return '<span class="reg-pad-rght"><div class="dashicons dashicons-yes green-icon"></div></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
 				return '
