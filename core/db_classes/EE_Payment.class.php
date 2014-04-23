@@ -481,7 +481,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	
 	
 	/**
-	 * returns a pretty version of the status, good for displayign to users
+	 * returns a pretty version of the status, good for displaying to users
 	 * @return string
 	 */
 	public function pretty_status( $show_icons = FALSE ){
@@ -519,7 +519,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	
 	
 	/**
-	 * Generally determines if teh status of this payment equals
+	 * Generally determines if the status of this payment equals
 	 * the $STS_ID string
 	 * @param string $STS_ID an ID from the esp_status table/
 	 * one of the status_id_* on the EEM_Payment model
@@ -533,7 +533,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		}
 	}
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of the payment
 	 * @return boolean whether the payment is approved or not
 	 */
 	public function is_approved(){
@@ -544,7 +544,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	
 	
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of the payment
 	 * @return boolean whether the payment is pending or not
 	 */
 	public function is_pending(){
@@ -555,7 +555,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	
 	
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of the payment
 	 * @return boolean
 	 */
 	public function is_cancelled(){
@@ -565,7 +565,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	
 	
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of the payment
 	 * @return boolean
 	 */
 	public function is_declined(){
@@ -576,7 +576,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 	
 	
 	/**
-	 * For determining the statsu of teh payment
+	 * For determining the status of the payment
 	 * @return boolean
 	 */
 	public function is_failed(){

@@ -152,7 +152,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 
 	
 	/**
-	 * @var EE_Promotion_Object relation to teh join table between promotions and whatevers
+	 * @var EE_Promotion_Object relation to the join table between promotions and whatevers
 	 */
 	protected $_Promotion_Object = NULL;
 	
@@ -425,7 +425,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	}
 	
 	/**
-	 * Gets teh primary registration only
+	 * Gets the primary registration only
 	 * @return EE_Registration
 	 */
 	public function primary_registration(){
@@ -455,7 +455,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	
 	
 	/**
-	 * returns a pretty version of the status, good for displayign to users
+	 * returns a pretty version of the status, good for displaying to users
 	 * @return string
 	 */
 	public function pretty_status( $show_icons = FALSE ){
@@ -576,9 +576,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 	
 	/**
 	 * Updates the transaction's status and total_paid based on all the payments
-	 * taht apply to it
+	 * that apply to it
 	 * @param boolean $save_txn whether or not to save the transaction during this function call
-	 * @return boolean success of the application (or NULL if $save_txn = false)
+	 * @return boolean success of the application
 	 */
 	public function update_based_on_payments($save_txn = true){
 		return $this->get_model()->update_based_on_payments($this,$save_txn);
@@ -759,7 +759,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction{
 		}
 		$attendee = $primary_reg->attendee();
 		if ( ! $attendee){
-			EE_Error::add_error(__("Cannot get billing info for gateway %s on transaction because teh primary registration has no attendee exists", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			EE_Error::add_error(__("Cannot get billing info for gateway %s on transaction because the primary registration has no attendee exists", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
 			return false;
 		}
 		return $attendee->billing_info_for_gateway($gateway_name);

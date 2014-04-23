@@ -75,7 +75,7 @@ class EE_Data_Migration_Manager{
 	private $_data_migrations_ran =null;
 	/**
 	 * The last ran script. It's nice to store this somewhere accessible, as its easiest
-	 * to know which was teh last run by which is the newest wp option; but in most of the code
+	 * to know which was the last run by which is the newest wp option; but in most of the code
 	 * we just use the local $_data_migration_ran array, which organized the scripts differently
 	 * @var EE_Data_Migration_Script_Base
 	 */
@@ -87,14 +87,14 @@ class EE_Data_Migration_Manager{
 	 */
 	private $_last_ran_incomplete_script = null;
 	/**
-	 * array where keys are classnames, and values are filepaths of all teh known migration scripts
+	 * array where keys are classnames, and values are filepaths of all the known migration scripts
 	 * @var array
 	 */
 	private $_data_migration_class_to_filepath_map;
 	/**
 	 * the following 4 properties are fully set on construction.
-	 * Note: teh first two apply to whether to conitnue runnign ALL migration scripts (ie, even though we're finished
-	 * one, we may want to start the next one); whereas teh last two indicate whether to continue running a single
+	 * Note: the first two apply to whether to conitnue runnign ALL migration scripts (ie, even though we're finished
+	 * one, we may want to start the next one); whereas the last two indicate whether to continue running a single
 	 * data migration script
 	 * @var array
 	 */
@@ -140,7 +140,7 @@ class EE_Data_Migration_Manager{
 			self::status_fatal_error
 			//note: status_no_more_migration_scripts doesn't apply
 		);
-		//make sure we've included teh base migration script, because we may need the EE_Data_Migration_Script_Error class
+		//make sure we've included the base migration script, because we may need the EE_Data_Migration_Script_Error class
 		//to be defined, because right now it doesn't get autoloaded on its own
 		EE_Registry::instance()->load_core('Data_Migration_Script_Base');
 	}
@@ -293,7 +293,7 @@ class EE_Data_Migration_Manager{
 	}
 	/**
 	 * Ensures that the option indicating the current DB version is set. This should only be 
-	 * a concern when activating EE for teh first time, THEORETICALLY. 
+	 * a concern when activating EE for the first time, THEORETICALLY. 
 	 * If we detect that we're activating EE4 overtop of EE3.1, then we set the current db state to 3.1.x, otherwise
 	 * to 4.1.x. 
 	 * @return string of current db state
@@ -302,7 +302,7 @@ class EE_Data_Migration_Manager{
 		$espresso_db_core_updates = get_option( 'espresso_db_update', array() );
 		$db_state = get_option(EE_Data_Migration_Manager::current_database_state);
 		if( ! $db_state ){
-			//mark teh DB as being in teh state as teh last version in there.
+			//mark the DB as being in the state as the last version in there.
 			//this is done to trigger maintenance mode and do data migration scripts
 			//if the admin installed this version of EE over 3.1.x or 4.0.x
 			//otherwise, the normal maintenance mode code is fine
@@ -513,7 +513,7 @@ class EE_Data_Migration_Manager{
 		}
 		$succesful_save = $this->_save_migrations_ran();
 		if($succesful_save !== TRUE){
-			//ok so teh current wp option didn't save. that's tricky, because we'd like to update it
+			//ok so the current wp option didn't save. that's tricky, because we'd like to update it
 			//and mark it as having a fatal error, but remember- WE CAN'T SAVE THIS WP OPTION!
 			//however, if we throw an exception, and return that, then the next request
 			//won't have as much info in it, and it may be able to save
@@ -572,7 +572,7 @@ class EE_Data_Migration_Manager{
 	
 	/**
 	 * Gets all the data mgiration scripts available in the core folder and folders
-	 * in addons. Has teh side effect of adding them for autoloading
+	 * in addons. Has the side effect of adding them for autoloading
 	 * @return array keys are expected classnames, values are their filepaths
 	 */
 	public function get_all_data_migration_scripts_available(){
@@ -618,7 +618,7 @@ class EE_Data_Migration_Manager{
 		
 		$last_ran_migration_script_properties = isset($last_migration_script_option['option_value']) ? maybe_unserialize($last_migration_script_option['option_value']) : null;
 		//now, tread lightly because we're here because a FATAL non-catchable error
-		//was thrown last time when we were tryign to run a data migration script
+		//was thrown last time when we were trying to run a data migration script
 		//so the fatal error could have happened while getting the mgiration script
 		//or doing running it...
 		$versions_migrated_to = isset($last_migration_script_option['option_name']) ? str_replace(EE_Data_Migration_Manager::data_migration_script_option_prefix,"",$last_migration_script_option['option_name']) : null;
@@ -632,7 +632,7 @@ class EE_Data_Migration_Manager{
 		}else{
 			//so we don't even know which script was last running
 			//use the data migration error stub, which is designed specifically for this type of thing
-			//require the migration script base class file, which also has teh error class
+			//require the migration script base class file, which also has the error class
 
 			$general_migration_error = new EE_Data_Migration_Script_Error();
 			$general_migration_error->add_error($error_message);
@@ -644,7 +644,7 @@ class EE_Data_Migration_Manager{
 		
 	}
 	/**
-	 * saves what data migrations have ran to teh database
+	 * saves what data migrations have ran to the database
 	 * @return mixed TRUE if successfully saved migrations ran, string if an error occurred
 	 */
 	protected function _save_migrations_ran(){
@@ -688,7 +688,7 @@ class EE_Data_Migration_Manager{
 	
 	/**
 	 * Takes an array of data migration script properties and re-creates the class from
-	 * them. The argumetn $propertis_array is assumed to have been made by EE_Data_MIgration_Script_Base::properties_as_array()
+	 * them. The argument $propertis_array is assumed to have been made by EE_Data_MIgration_Script_Base::properties_as_array()
 	 * @param array $properties_array
 	 * @return EE_Data_Migration_Script_Base
 	 * @throws EE_Error
@@ -711,7 +711,7 @@ class EE_Data_Migration_Manager{
 	
 	/**
 	 * Gets the classname for the most up-to-date DMS (ie, the one that will finally
-	 * leave teh DB in a state usable by the current plugin code).
+	 * leave the DB in a state usable by the current plugin code).
 	 * @return string
 	 */
 	public function get_most_up_to_date_dms(){

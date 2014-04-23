@@ -60,7 +60,7 @@ final class EE_Registry {
 
 
 	/**
-	* 	array for storing library classes in
+	* 	StdClass object for storing library classes in
 	* 	@public LIB
 	*/
 	public $LIB = NULL;
@@ -81,11 +81,11 @@ final class EE_Registry {
 
 
 	/**
-	 * 	$addons - array of all addons which have registered themselves to work with EE core
+	 * 	$addons - StdClass object for holding addons which have registered themselves to work with EE core
 	 * 	@access 	public
 	 *	@var 	EE_Addon[]
 	 */
-	public $addons = array();
+	public $addons = NULL;
 
 	/**
 	 * 	$models
@@ -176,6 +176,7 @@ final class EE_Registry {
 		$this->load_core( 'Base' );
 		// class library
 		$this->LIB = new StdClass();
+		$this->addons = new StdClass();
 		add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'init' ));
 	}
 
@@ -211,7 +212,7 @@ final class EE_Registry {
 			EE_ADMIN,
 			EE_CPTS
 		);
-		// retreive instantiated class
+		// retrieve instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'core', $arguments );
 	}
 
@@ -226,7 +227,7 @@ final class EE_Registry {
 	 * @return EE_Data_Migration_Script_Base
 	 */
 	public function load_dms ( $class_name, $arguments = array() ) {
-		// retreive instantiated class
+		// retrieve instantiated class
 		return $this->_load( EE_CORE . 'data_migration_scripts' . DS, 'EE_DMS_' , $class_name, 'dms', $arguments, FALSE, FALSE, FALSE );
 	}
 
@@ -245,29 +246,10 @@ final class EE_Registry {
 	 *	@return object
 	 */
 	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
-		// retreive instantiated class
+		// retrieve instantiated class
 		return $this->_load( EE_CLASSES, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache, $load_only );
 	}
 
-
-
-	/**
-	 *    generic class loader
-	 *
-	 * @param string $path_to_file - directory path to file location, not including filename
-	 * @param string $class_name   - full class name  ie:  My_Class
-	 * @param string $type         - file type - core? class? helper? model?
-	 * @param array  $arguments
-	 * @param bool   $load_only
-	 * @return object
-	 */
-	public function load_file ( $path_to_file, $class_name, $type = 'class', $arguments = array(), $load_only = TRUE ) {
-		// set path to class file
-		$path_to_file = rtrim( $path_to_file, '/\\' ) . DS;
-		$type = trim( $type, '. ' );
-		// retreive instantiated class
-		return $this->_load( $path_to_file, 'file', $class_name, $type, $arguments, FALSE, TRUE, $load_only );
-	}
 
 
 
@@ -283,7 +265,7 @@ final class EE_Registry {
 
 		$helper_paths = apply_filters( 'FHEE__EE_Registry__load_helper__helper_paths', array(EE_HELPERS ) );
 
-		// retreive instantiated class
+		// retrieve instantiated class
 		return $this->_load( $helper_paths, 'EEH_', $class_name, 'helper', $arguments, FALSE, TRUE, $load_only );
 	}
 
@@ -306,7 +288,7 @@ final class EE_Registry {
 			EE_LIBRARIES . 'qtips' . DS,
 			EE_LIBRARIES . 'payment_methods' . DS,
 		);
-		// retreive instantiated class
+		// retrieve instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'lib', $arguments, FALSE, TRUE, $load_only );
 	}
 
@@ -321,7 +303,7 @@ final class EE_Registry {
 	 * @return EEM_Base
 	 */
 	public function load_model ( $class_name, $arguments = array(), $load_only = FALSE ) {
-		// retreive instantiated class
+		// retrieve instantiated class
 		return $this->_load( EE_MODELS, 'EEM_' , $class_name, 'model', $arguments, FALSE, TRUE, $load_only );
 	}
 
@@ -362,6 +344,39 @@ final class EE_Registry {
 
 
 	/**
+	 *    generic class loader
+	 *
+	 * @param string $path_to_file - directory path to file location, not including filename
+	 * @param string $file_name   - file name  ie:  my_file.php, including extension
+	 * @param string $type         - file type - core? class? helper? model?
+	 * @param array  $arguments
+	 * @param bool   $load_only
+	 * @return object
+	 */
+	public function load_file ( $path_to_file, $file_name, $type = '', $arguments = array(), $load_only = TRUE ) {
+		// retrieve instantiated class
+		return $this->_load( $path_to_file, '', $file_name, $type, $arguments, FALSE, TRUE, $load_only );
+	}
+
+
+
+	/**
+	 *    load_addon
+	 *
+	 * @param string $path_to_file - directory path to file location, not including filename
+	 * @param string $class_name   - full class name  ie:  My_Class
+	 * @param string $type         - file type - core? class? helper? model?
+	 * @param array  $arguments
+	 * @param bool   $load_only
+	 * @return EE_Addon
+	 */
+	public function load_addon ( $path_to_file, $class_name, $type = 'class', $arguments = array(), $load_only = FALSE ) {
+		// retrieve instantiated class
+		return $this->_load( $path_to_file, 'addon', $class_name, $type, $arguments, FALSE, TRUE, $load_only );
+	}
+
+
+	/**
 	 *    loads and tracks classes
 	 *
 	 * @param array       $file_paths
@@ -376,12 +391,14 @@ final class EE_Registry {
 	 * @return bool | object
 	 */
 	private function _load ( $file_paths = array(), $class_prefix = 'EE_', $class_name = FALSE, $type = 'class', $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
-
-		if ( ! empty( $class_prefix ) && $class_prefix != 'file' ) {
+		// strip php file extension
+		$class_name = str_replace( '.php', '', trim( $class_name ));
+		// does the class have a prefix ?
+		if ( ! empty( $class_prefix ) && $class_prefix != 'addon' ) {
 			// make sure $class_prefix is uppercase
 			$class_prefix = strtoupper( trim( $class_prefix ));
 			// add class prefix ONCE!!!
-			$class_name = $class_prefix . str_replace( $class_prefix, '', trim( $class_name ));
+			$class_name = $class_prefix . str_replace( $class_prefix, '', $class_name );
 		}
 
 		$class_abbreviations = array(
@@ -399,6 +416,8 @@ final class EE_Registry {
 			return $this->{$class_name};
 		} else if ( isset ( $this->LIB->$class_name )) {
 			return $this->LIB->$class_name;
+		} else if ( $class_prefix == 'addon' && isset ( $this->addons->$class_name )) {
+			return $this->addons->$class_name;
 		}
 
 		// assume all paths lead nowhere
@@ -412,7 +431,7 @@ final class EE_Registry {
 			// prep file type
 			$type = ! empty( $type ) ? trim( $type, '.' ) . '.' : '';
 			// build full file path
-			$file_paths[ $key ] = $class_prefix == 'file' ? rtrim( $file_path, DS ) . '.' . $type . 'php' : rtrim( $file_path, DS ) . DS . $class_name . '.' . $type . 'php';
+			$file_paths[ $key ] = rtrim( $file_path, DS ) . DS . $class_name . '.' . $type . 'php';
 			//does the file exist and can be read ?
 			if ( is_readable( $file_paths[ $key ] )) {
 				$path = $file_paths[ $key ];
@@ -426,7 +445,7 @@ final class EE_Registry {
 				// so sorry, can't find the file
 				throw new EE_Error (
 					sprintf (
-						__('The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath(s) is correct: %s','event_espresso'),
+						__('The %s file %s could not be located or is not readable due to file permissions. Please ensure that the following filepath(s) are correct: %s','event_espresso'),
 						trim( $type, '.' ),
 						$class_name,
 						implode( ', ', $file_paths )
@@ -459,7 +478,7 @@ final class EE_Registry {
 			$reflector = new ReflectionClass( $class_name );
 			// instantiate the class and add to the LIB array for tracking
 			// EE_Base_Classes are instantiated via new_instance by default (models call them via new_instance_from_db)
-			if ( $reflector->getConstructor() === NULL || $load_only ) {
+			if ( $reflector->getConstructor() === NULL || $reflector->isAbstract() || $load_only ) {
 //				$instantiation_mode = 0;
 				// no constructor = static methods only... nothing to instantiate, loading file was enough
 			} else if ( $from_db && method_exists( $class_name, 'new_instance_from_db' ) ) {
@@ -474,9 +493,16 @@ final class EE_Registry {
 			} else if ( $reflector->isInstantiable() ) {
 //				$instantiation_mode = 4;
 				$class_obj =  $reflector->newInstance( $arguments );
-			} else {
+			} else if ( ! $load_only ) {
 				// heh ? something's not right !
 //				$instantiation_mode = 5;
+				throw new EE_Error(
+					sprintf(
+						__('The %s file %s could not be instantiated.','event_espresso'),
+						$type,
+						$class_name
+					)
+				);
 			}
 
 		} catch ( EE_Error $e ) {
@@ -497,6 +523,8 @@ final class EE_Registry {
 				$this->$class_abbreviations[ $class_name ] = $class_obj;
 			} else if ( EEH_Class_Tools::has_property( $this, $class_name )) {
 				$this->{$class_name} = $class_obj;
+			} else if ( $class_prefix == 'addon' && $cache  ) {
+				$this->addons->$class_name = $class_obj;
 			} else if ( !$from_db && $cache  ) {
 				$this->LIB->$class_name = $class_obj;
 			}

@@ -241,7 +241,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * 		get list of paymnet statuses
+	 * 		get list of payment statuses
 	*		@access private
 	*		@return void
 	*/

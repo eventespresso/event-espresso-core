@@ -39,7 +39,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	/**
 	 * Performs database schema changes that need to occur BEFORE the data is migrated.
 	 * Eg, if we were going to change user passwords from plaintext to encoded versions
-	 * during this migration, this would probably add a new column called somethign like
+	 * during this migration, this would probably add a new column called something like
 	 * "encoded_password".
 	 * @return boolean of success
 	 */
@@ -62,7 +62,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		//by default none are added because we normally like the default look of the migration page
 	}
 	/**
-	 * Multi-dimensional array that defines teh mapping from OLD table Primary Keys
+	 * Multi-dimensional array that defines the mapping from OLD table Primary Keys
 	 * to NEW table Primary Keys.
 	 * Top-level array keys are OLD table names (minus the "wp_" part),
 	 * 2nd-level array skeys are NEW table names (again, minus the "wp_" part),
@@ -73,7 +73,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	protected $_mappings = array();
 	
 	/**
-	 * All chidlren of this must call parent::__construct() at the end of their constructor or suffer teh consequences!
+	 * All chidlren of this must call parent::__construct() at the end of their constructor or suffer the consequences!
 	 */
 	public function __construct() {
 		$this->_migration_stages = apply_filters('FHEE__'.get_class($this).'__construct__migration_stages',$this->_migration_stages);
@@ -118,7 +118,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	}
 	/**
 	 * Gets the old primary key, if provided with the OLD table,
-	 * and the new table and the primary key of an item in teh new table
+	 * and the new table and the primary key of an item in the new table
 	 * @param string $old_table with no wpdb prefix (wp_). Eg: events_detail
 	 * @param int|string $old_pk old primary key. Eg events_detail.id's value
 	 * @param string $new_table with no wpdb prefix (wp_). Eg: posts
@@ -266,7 +266,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	}
 	
 	/**
-	 * Updates teh feedback message according to what was done during this migration stage.
+	 * Updates the feedback message according to what was done during this migration stage.
 	 * @param array $records_migrated_per_stage KEYS are pretty names for each stage; values are the count of records migrated from that stage
 	 * @return void
 	 */
@@ -483,10 +483,10 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
  * to a table that needs to be migrated: eg migrating 3.1 events to 4.1 event CPTs. However, each migration stage does 
  * NOT NEED to correspond to migrating a single table: it could also correspond to a group of wp options, files, etc.
  * Only 3 functions need to be implemented for each migration stage: the constructor (it needs to set the _pretty_name property),
- *  _count_records_to_migrate() (which, when migrating a database table, would usually just return the count of records in teh table, but
+ *  _count_records_to_migrate() (which, when migrating a database table, would usually just return the count of records in the table, but
  * doesn't need to return the exactly correct number, as its mostly only used in the UI), and _migration_step() (which converts X records from their
- * old format to teh new format. Whatever definition your migration stage uses for "record" in _count_records_to_migrate() should be the same definition in
- * _migration_step() (ie, it its a count of rows in teh old attendees table in _count_records_to_migrate(), it should also be OLD attendee rows migrated
+ * old format to the new format. Whatever definition your migration stage uses for "record" in _count_records_to_migrate() should be the same definition in
+ * _migration_step() (ie, it its a count of rows in the old attendees table in _count_records_to_migrate(), it should also be OLD attendee rows migrated
  * on each call to _migration_step(). 
  */
 abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Base{
@@ -527,9 +527,9 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	}
 	/**
 	 * IMPORTANT: if an error is encountered, or everything is finished, this stage should update its status property accordingly.
-	 * Note: it should not alter teh count of items migrated. That is done in the public function that calls this.
+	 * Note: it should not alter the count of items migrated. That is done in the public function that calls this.
 	 * IMPORTANT: The count of items migrated should ONLY be less than $num_items_to_migrate when it's the last migration step, otherwise it
-	 * should always return $num_items_to_migrate. (Eg, if we're migrating attendees rows from teh database, and $num_items_to_migrate is set to 50, 
+	 * should always return $num_items_to_migrate. (Eg, if we're migrating attendees rows from the database, and $num_items_to_migrate is set to 50, 
 	 * then we SHOULD actually migrate 50 rows,but at very least we MUST report/return 50 items migrated)
 	 * @return int number of items ACTUALLY migrated
 	 */
@@ -698,7 +698,7 @@ abstract class EE_Data_Migration_Class_Base{
 		return $this->get_status() == EE_Data_Migration_Manager::status_fatal_error;
 	}
 	/**
-	 * Sets teh status to as having a fatal error
+	 * Sets the status to as having a fatal error
 	 */
 	public function set_borked(){
 		$this->_status = EE_Data_Migration_Manager::status_fatal_error;
@@ -793,7 +793,7 @@ abstract class EE_Data_Migration_Class_Base{
 /**
  * Migration stages which simply cycle through all the rows of an old table and somehow migrate them to the new DB
  * should probably extend Stage_Table in order to avoid code repetition. To extend this, implement the _migrate_old_row() method,
- * and create a constructor which defines $this->_old_table to be the name of teh old table.
+ * and create a constructor which defines $this->_old_table to be the name of the old table.
  */
 abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Script_Stage{
 	protected $_old_table;

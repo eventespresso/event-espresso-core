@@ -308,9 +308,9 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	 * Gets teh current transaction given teh reg_url_link, or assumes the reg_url_link is in the
+	 * Gets the current transaction given the reg_url_link, or assumes the reg_url_link is in the
 	 * $_REQUEST global variable. Either way, tries to find the current transaction (through
-	 * teh registration poitned to by reg_url_link), if not reutrns null
+	 * the registration poitned to by reg_url_link), if not reutrns null
 	 * @param string $reg_url_link
 	 * @return EE_Transaction
 	 */
@@ -329,7 +329,7 @@ class EEM_Transaction extends EEM_Base {
 	
 	
 	/**
-	 * Updates teh provided EE_Transaction with all the applicable payments 
+	 * Updates the provided EE_Transaction with all the applicable payments 
 	 * (or fetche the EE_Transaction from its ID)
 	 * @param EE_Transaction/int $transaction_obj_or_id EE_Transaction or its ID
 	 * @param boolean $save_txn whether or not to save the transaction during this funciton call

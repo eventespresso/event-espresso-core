@@ -188,7 +188,7 @@ class EE_Answer extends EE_Base_Class{
 		return $this->get_first_related('Question');
 	}
 	/**
-	 * Gets teh realted EE_Registration to this EE_Answer
+	 * Gets the realted EE_Registration to this EE_Answer
 	 * @return EE_Registration
 	 */
 	public function registration(){

@@ -42,15 +42,15 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 	
 	
 	/**
-	 * Status id in esp_status table that represents a canceleld payment (eg, the
-	 * user went to PayPal, but on the paypal site decided to cancel teh payment)
+	 * Status id in esp_status table that represents a cancelled payment (eg, the
+	 * user went to PayPal, but on the paypal site decided to cancel the payment)
 	 */
 	const status_id_cancelled = 'PCN';
 	
 	
 	
 	/**
-	 * Status id in esp_status table that represents a payment taht was declined by
+	 * Status id in esp_status table that represents a payment that was declined by
 	 * the gateway. (eg, the user's card had no funds, or it was a fraudulent card)
 	 */
 	const status_id_declined = 'PDC';
@@ -227,7 +227,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
 	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
 	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
-	 * @return int number of paymetn deleted
+	 * @return int number of payment deleted
 	 */
 	public function delete($query_params, $allow_blocking = true) {
 		$payments_to_be_deleted = $this->get_all($query_params);
@@ -244,7 +244,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 	}
 	
 	/**
-	 * Deleted the payment indicated by the paymetn object or id, and returns
+	 * Deleted the payment indicated by the payment object or id, and returns
 	 * the EE_transaction which gets affected and updated in the process
 	 * @param EE_Payment or id $payment_obj_or_id
 	 * @return EE_Transaction

@@ -239,7 +239,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
     	if ( !empty( $attendee ) )
 			return '<a href="mailto:' . $attendee->get('ATT_email') . '">' . $attendee->get('ATT_email') . '</a>'; 
 		else
-			return __('Could be somethign wrong with the primary registrationa ssociated with this transaction in the db', 'event_espresso');
+			return __('Could be something wrong with the primary registration a ssociated with this transaction in the db', 'event_espresso');
 	}
 
 

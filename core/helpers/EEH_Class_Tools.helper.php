@@ -22,10 +22,10 @@
  * ------------------------------------------------------------------------
  */
 class EEH_Class_Tools {
-	
+
 	static $i = 0;
 	static $file_line = null;
-	
+
 	/**
 	 * 	get_called_class - for PHP versions < 5.3
 	 *
@@ -35,7 +35,9 @@ class EEH_Class_Tools {
 	 */
 	public static function get_called_class() {
 		$backtrace = debug_backtrace();
-		if ( isset( $backtrace[2] ) && is_array( $backtrace[2] ) && isset( $backtrace[2]['file'] ) && isset( $backtrace[2]['line'] )) {
+		if ( isset( $backtrace[2] ) && is_array( $backtrace[2] ) && isset( $backtrace[2]['class'] )) {
+			return $backtrace[2]['class'];
+		} else if ( isset( $backtrace[2] ) && is_array( $backtrace[2] ) && isset( $backtrace[2]['file'] ) && isset( $backtrace[2]['line'] )) {
 			if ( self::$file_line == $backtrace[2]['file'] . $backtrace[2]['line'] ) {
 				self::$i++;
 			} else {
@@ -54,14 +56,14 @@ class EEH_Class_Tools {
 						$classname = $prefix . str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $classname  ))));
 						return $classname;
 					}
-				}				
+				}
 			} else {
 				$lines = file( $backtrace[2]['file'] );
 				preg_match_all( '/([a-zA-Z0-9\_]+)::' . $backtrace[2]['function'] . '/', $lines[$backtrace[2]['line']-1], $matches );
 				if ( isset( $matches[1] ) && isset( $matches[1][ self::$i ] )) {
 					return $matches[1][ self::$i ];
 				}
-			}			
+			}
 		}
 		return FALSE;
 	}
@@ -88,7 +90,7 @@ class EEH_Class_Tools {
 		}
 	}
 
-	
+
 }
 // if PHP version < 5.3
 if ( ! function_exists( 'get_called_class' )) {

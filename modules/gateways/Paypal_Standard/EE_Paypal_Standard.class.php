@@ -172,7 +172,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 		<tr>
 			<th><label for="currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
-					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+					<?php echo EEH_Template::get_help_tab_link( 'payment_methods_overview_paypalstandard_help_tab' ); ?>
 				</label></th>
 			<td><select name="currency_format" data-placeholder="Choose a currency...">
 				<?php $currency = $this->_payment_settings['currency_format'];?>
@@ -255,7 +255,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 			<th>
 				<label for="pp_image_url">
 					<?php _e('Image URL', 'event_espresso'); ?>
-					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+					<?php echo EEH_Template::get_help_tab_link( 'payment_methods_overview_paypalstandard_help_tab' ); ?>
 				</label>
 			</th>
 			<td>
@@ -273,7 +273,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
-					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+					<?php echo EEH_Template::get_help_tab_link( 'payment_methods_overview_paypalstandard_help_tab' ); ?>
 				</label></th>
 			<td><?php echo EEH_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
@@ -282,7 +282,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 			<th>
 				<label for="no_shipping">
 					<?php _e('Shipping Address Options', 'event_espresso'); ?>
-					<?php echo EEH_Template::get_help_tab_link( 'ee_' . $this->_gateway_name . '_help' ); ?>
+					<?php echo EEH_Template::get_help_tab_link( 'payment_methods_overview_paypalstandard_help_tab' ); ?>
 				</label>
 			</th>
 			<td>
@@ -434,7 +434,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 		$this->_debug_log( "<hr><br>".get_class($this).": payment_status and txn_id sent properly. payment_status:".$_POST['payment_status'].", txn_id:".$_POST['txn_id']);
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if(!$this->validateIpn()){
-			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
+			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
 			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 			EE_Error::add_error(__("PayPal IPN Validation failed!", "event_espresso"));
 			return false;

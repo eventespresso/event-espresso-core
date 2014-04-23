@@ -265,7 +265,7 @@ abstract class EE_Onsite_Gateway_Old extends EE_Gateway_Old {
 	
 	/**
 	 * Saves the cleaned billing info to the trasnaction's primary registration's attendee.
-	 * @param array $billing_info where keys are keys in teh espresso_reg_page_billing_inputs()'s array, values are their
+	 * @param array $billing_info where keys are keys in the espresso_reg_page_billing_inputs()'s array, values are their
 	 * cleaned values.
 	 * @param EE_Transaction $transaction
 	 * @return boolean

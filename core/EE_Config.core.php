@@ -5,7 +5,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author			Seth Shoultes
+ * @ author				Event Espresso
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
@@ -16,7 +16,7 @@
  * EE_Config
  *
  * @package			Event Espresso
- * @subpackage	core/
+ * @subpackage		core/
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
@@ -26,7 +26,7 @@ final class EE_Config {
 
 	/**
 	 * 	instance of the EE_Config object
-	 *	@var 	$_instance
+	 *	@var 	EE_Config $_instance
 	 * 	@access 	private
 	 */
 	private static $_instance = NULL;
@@ -134,7 +134,8 @@ final class EE_Config {
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
-		$this->addons = array();
+		$this->addons = new StdClass();
+//		$this->addons = array();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
 		// set _module_forward_map
@@ -144,7 +145,7 @@ final class EE_Config {
 		// load existing EE site settings
 		$this->_load_config();
 		//  register shortcodes and modules
-		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons', array( $this, 'register_shortcodes_and_modules' ), 999 );
+		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets', array( $this, 'register_shortcodes_and_modules' ), 999 );
 		//  initialize shortcodes and modules
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'initialize_shortcodes_and_modules' ));
 		// register widgets
@@ -177,7 +178,7 @@ final class EE_Config {
 	private function _load_config() {
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
-			$config_class = is_object( $settings ) ? get_class( $this->$config ) : FALSE;
+			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : FALSE;
 			if ( ! empty( $settings ) && ( ! $config_class || ( $settings instanceof $config_class ))) {
 				$this->$config = $settings;
 			}
@@ -200,6 +201,105 @@ final class EE_Config {
 		return $CFG;
 	}
 
+
+
+	/**
+	 *    _set_config
+	 *
+	 * @access    	protected
+	 * @param 		string $name
+	 * @param 		string $config_class
+	 * @param 		string $section
+	 * @throws 	EE_Error
+	 * @internal 	param string $_config_class
+	 * @return 		mixed EE_Config_Base | NULL
+	 */
+	public function set_config( $section = '', $name = '', $config_class = '' ) {
+
+		// check that settings section exists
+		if ( ! isset( $this->$section )) {
+			throw new EE_Error( sprintf( __( 'The %s configuration settings do not exist.', 'event_espresso' ), $section ));
+		}
+		// in case old settings were saved as an array
+		if ( is_array( $this->$section )) {
+			// convert them to an object
+			$config_array = $this->$section;
+			$this->$section = new stdClass();
+			foreach ( $config_array as $key => $value ){
+				$this->$section->$key = $value;
+			}
+		}
+		// check that section exists and is the proper format
+		if ( ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof stdClass )) {
+			throw new EE_Error( sprintf( __( 'The %s configuration settings have not been formatted correctly.', 'event_espresso' ), $section ));
+		}
+		// verify config class is accessible
+		if ( ! class_exists( $config_class )) {
+			throw new EE_Error( sprintf( __( 'The %s class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ), $config_class ));
+		}
+		if ( ! isset( $this->$section->$name ) || ! $this->$section->$name instanceof $config_class ){
+			$this->$section->$name = new $config_class;
+			$this->update_espresso_config();
+			return $this->$section->$name;
+		}
+		return NULL;
+	}
+
+
+
+	/**
+	 *    _update_config
+	 *
+	 * @access 		protected
+	 * @param 		string $section
+	 * @param 		string $name
+	 * @param 		EE_Config_Base 	$config_obj
+	 * @throws 	EE_Error
+	 * @return 		mixed EE_Config_Base | NULL
+	 */
+	public function _update_config( $section = '', $name = '', $config_obj = NULL ) {
+		// check that section exists and is the proper format
+		if ( ! isset( $this->$section ) || ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof StdClass )) {
+			throw new EE_Error( sprintf( __( 'The %s configuration does not exist.', 'event_espresso' ), $section ));
+		}
+		// verify config object
+		if ( ! $config_obj instanceof EE_Config_Base ) {
+			throw new EE_Error( sprintf( __( 'The %s class is not an instance of EE_Config_Base.', 'event_espresso' ), get_class( $config_obj )));
+		}
+		$this->$section->$name = $config_obj;
+		$this->update_espresso_config();
+		return $this->$section->$name;
+	}
+
+
+
+	/**
+	 *    get_config
+	 *
+	 * @access 	public
+	 * @param 	string    $section
+	 * @param 	string $name
+	 * @param 	string    $config_class
+	 * @return 	mixed EE_Config_Base | NULL
+	 */
+	public function get_config( $section = '', $name = '', $config_class = '' ) {
+		// check that config section is valid
+		if ( empty( $section ) || ! isset( $this->$section )) {
+			EE_Error::add_error( sprintf( __( 'No section has been set for the %s configuration.', 'event_espresso' ), $section ), __FILE__, __FUNCTION__, __LINE__ );
+			return NULL;
+		}
+		// check that config has even been set
+		if ( empty( $name ) || ! isset( $this->$section->$name )) {
+			EE_Error::add_error( sprintf( __( 'No configuration has been set for %s->%s.', 'event_espresso' ), $section, $name ), __FILE__, __FUNCTION__, __LINE__ );
+			return NULL;
+		}
+		// check that config is the requested type
+		if ( ! empty( $config_class ) && ! $this->$section->$name instanceof $config_class ) {
+			EE_Error::add_error( sprintf( __( 'The configuration for %s->%s is not of the %s class.', 'event_espresso' ), $section, $name, $config_class ), __FILE__, __FUNCTION__, __LINE__ );
+			return NULL;
+		}
+		return $this->$section->$name;
+	}
 
 
 	/**
@@ -340,21 +440,41 @@ final class EE_Config {
 		$widget_ext = '.widget.php';
 		// make all separators match
 		$widget_path = rtrim( str_replace( '/\\', DS, $widget_path ), DS );
-		// grab and sanitize widget directory name
-		$widget_dir = sanitize_key( basename( $widget_path ));
+		// does the file path INCLUDE the actual file name as part of the path ?
+		if ( strpos( $widget_path, $widget_ext ) !== FALSE ) {
+			// grab and shortcode file name from directory name and break apart at dots
+			$file_name = explode( '.', basename( $widget_path ));
+			// take first segment from file name pieces and remove class prefix if it exists
+			$widget = strpos( $file_name[0], 'EEW_' ) === 0 ? substr( $file_name[0], 4 ) : $file_name[0];
+			// sanitize shortcode directory name
+			$widget = sanitize_key( $widget );
+			// now we need to rebuild the shortcode path
+			$widget_path = explode( DS, $widget_path );
+			// remove last segment
+			array_pop( $widget_path );
+			// glue it back together
+			$widget_path = implode( DS, $widget_path );
+		} else {
+			// grab and sanitize widget directory name
+			$widget = sanitize_key( basename( $widget_path ));
+		}
 		// create classname from widget directory name
-		$widget = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $widget_dir )));
+		$widget = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $widget )));
 		// add class prefix
 		$widget_class = 'EEW_' . $widget;
 		// does the widget exist ?
 		if ( ! is_readable( $widget_path . DS . $widget_class . $widget_ext )) {
-			$msg = sprintf( __( 'The requested %s widget file could not be found or is not readable due to file permissions.', 'event_espresso' ), $widget_class );
+			$msg = sprintf(
+				__( 'The requested %s widget file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso' ),
+				$widget_class,
+				$widget_path . DS . $widget_class . $widget_ext
+			);
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return;
 		}
 		// load the widget class file
 		require_once( $widget_path . DS . $widget_class . $widget_ext );
-		// verfiy that class exists
+		// verify that class exists
 		if ( ! class_exists( $widget_class )) {
 			$msg = sprintf( __( 'The requested %s widget class does not exist.', 'event_espresso' ), $widget_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -374,8 +494,6 @@ final class EE_Config {
 	 * 		@return array
 	 */
 	private function _register_shortcodes() {
-		// load base class
-		require_once( EE_SHORTCODES . 'EES_Shortcode.shortcode.php' );
 		// grab list of installed shortcodes
 		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
@@ -403,15 +521,36 @@ final class EE_Config {
 		$shortcode_ext = '.shortcode.php';
 		// make all separators match
 		$shortcode_path = rtrim( str_replace( '/\\', DS, $shortcode_path ), DS );
-		// grab and sanitize shortcode directory name
-		$shortcode_dir = sanitize_key( basename( $shortcode_path ));
-		// create classname from shortcode directory name
-		$shortcode = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode_dir )));
+		// does the file path INCLUDE the actual file name as part of the path ?
+		if ( strpos( $shortcode_path, $shortcode_ext ) !== FALSE ) {
+			// grab and shortcode file name from directory name and break apart at dots
+			$shortcode_file = explode( '.', basename( $shortcode_path ));
+			// take first segment from file name pieces and remove class prefix if it exists
+			$shortcode = strpos( $shortcode_file[0], 'EES_' ) === 0 ? substr( $shortcode_file[0], 4 ) : $shortcode_file[0];
+			// sanitize shortcode directory name
+			$shortcode = sanitize_key( $shortcode );
+			// now we need to rebuild the shortcode path
+			$shortcode_path = explode( DS, $shortcode_path );
+			// remove last segment
+			array_pop( $shortcode_path );
+			// glue it back together
+			$shortcode_path = implode( DS, $shortcode_path );
+		} else {
+			// we need to generate the filename based off of the folder name
+			// grab and sanitize shortcode directory name
+			$shortcode = sanitize_key( basename( $shortcode_path ));
+		}
+		// create classname from shortcode directory or file name
+		$shortcode = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode )));
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
 		if ( ! is_readable( $shortcode_path . DS . $shortcode_class . $shortcode_ext )) {
-			$msg = sprintf( __( 'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s', 'event_espresso' ), $shortcode_class,$shortcode_path . DS . $shortcode_class . $shortcode_ext );
+			$msg = sprintf(
+				__( 'The requested %s shortcode file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso' ),
+				$shortcode_class,
+				$shortcode_path . DS . $shortcode_class . $shortcode_ext
+			);
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -438,8 +577,6 @@ final class EE_Config {
 	 * 		@return array
 	 */
 	private function _register_modules() {
-		// load base class
-		require_once( EE_MODULES . 'EED_Module.module.php' );
 		// grab list of installed modules
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
@@ -471,15 +608,36 @@ final class EE_Config {
 		$module_ext = '.module.php';
 		// make all separators match
 		$module_path = rtrim( str_replace( '/\\', DS, $module_path ), DS );
-		// grab and sanitize module name
-		$module_dir = basename( $module_path );
+		// does the file path INCLUDE the actual file name as part of the path ?
+		if ( strpos( $module_path, $module_ext ) !== FALSE ) {
+			// grab and shortcode file name from directory name and break apart at dots
+			$module_file = explode( '.', basename( $module_path ));
+			// take first segment from file name pieces and remove class prefix if it exists
+			$module = strpos( $module_file[0], 'EED_' ) === 0 ? substr( $module_file[0], 4 ) : $module_file[0];
+			// sanitize shortcode directory name
+			$module = sanitize_key( $module );
+			// now we need to rebuild the shortcode path
+			$module_path = explode( DS, $module_path );
+			// remove last segment
+			array_pop( $module_path );
+			// glue it back together
+			$module_path = implode( DS, $module_path );
+		} else {
+			// we need to generate the filename based off of the folder name
+			// grab and sanitize module name
+			$module = basename( $module_path );
+		}
 		// create classname from module directory name
-		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
+		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module )));
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
 		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
-			$msg = sprintf( __( 'The requested %s module file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
+			$msg = sprintf(
+				__( 'The requested %s module file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso' ),
+				$module,
+				$module_path . DS . $module_class . $module_ext
+			);
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
@@ -510,7 +668,7 @@ final class EE_Config {
 	private function _initialize_shortcodes() {
 		// cycle thru shortcode folders
 		foreach ( EE_Registry::instance()->shortcodes as $shortcode => $shortcode_path ) {
-			//echo '<h4>' . $shortcode . ' : ' . $shortcode_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			echo '<h5 style="color:#2EA2CC;">' . $shortcode . ' : <span style="color:#E76700">' . $shortcode_path . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 			// add class prefix
 			$shortcode_class = 'EES_' . $shortcode;
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
@@ -538,9 +696,9 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	private function _initialize_modules() {
-		//printr( EE_Registry::instance()->modules, 'EE_Registry::instance()->modules  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// cycle thru shortcode folders
 		foreach ( EE_Registry::instance()->modules as $module => $module_path ) {
+//			echo '<h5 style="color:#2EA2CC;">' . $module . ' : <span style="color:#E76700">' . $module_path . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 			// add class prefix
 			$module_class = 'EED_' . $module;
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
@@ -592,7 +750,7 @@ final class EE_Config {
 
 
 	/**
-	 * 	get_route - get module method route
+	 *    get_route - get module method route
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
@@ -760,10 +918,25 @@ class EE_Config_Base{
 	 */
 //	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->$a); }
 //	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->$a = $b ); }
+	/**
+	 * 		__isset
+	 */
 	public function __isset($a) { return FALSE; }
+	/**
+	 * 		__unset
+	 */
 	public function __unset($a) { return FALSE; }
+	/**
+	 * 		__clone
+	 */
 	public function __clone() { return FALSE; }
+	/**
+	 * 		__wakeup
+	 */
 	public function __wakeup() { return FALSE; }
+	/**
+	 * 		__destruct
+	 */
 	public function __destruct() { return FALSE; }
 }
 
@@ -806,11 +979,13 @@ class EE_Core_Config extends EE_Config_Base {
 	public $thank_you_page_url;
 	public $cancel_page_url;
 
+
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Core_Config
 	 */
 	public function __construct() {
 		$current_network_main_site = is_multisite() ? get_current_site() : NULL;
@@ -836,6 +1011,11 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->cancel_page_url = FALSE;
 	}
 
+
+
+	/**
+	 * @return array
+	 */
 	public function get_critical_pages_array() {
 		return array(
 			$this->reg_page_id,
@@ -1037,11 +1217,13 @@ class EE_Organization_Config extends EE_Config_Base {
 	 */
 	public $instagram;
 
+
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Organization_Config
 	 */
 	public function __construct() {
 		// set default organization settings
@@ -1127,11 +1309,13 @@ class EE_Currency_Config extends EE_Config_Base {
 	public $thsnds;
 
 
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param null $CNT_ISO
+	 * @return \EE_Currency_Config
 	 */
 	public function __construct( $CNT_ISO = NULL ) {
 		// get country code from organization settings or use default
@@ -1141,17 +1325,16 @@ class EE_Currency_Config extends EE_Config_Base {
 		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode)
 		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() ) {
 			// retreive the country settings from the db, just in case they have been customized
-			if ( $country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO )) {
-				if ( $country instanceof EE_Country ) {
-					$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR
-					$this->name = $country->currency_name_single();	// Dollar
-					$this->plural = $country->currency_name_plural(); 	// Dollars
-					$this->sign =  $country->currency_sign(); 			// currency sign: $
-					$this->sign_b4 = $country->currency_sign_before(); 		// currency sign before or after: $TRUE  or  FALSE$
-					$this->dec_plc = $country->currency_decimal_places();	// decimal places: 2 = 0.00  3 = 0.000
-					$this->dec_mrk = $country->currency_decimal_mark();	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-					$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
-				}
+			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
+			if ( $country instanceof EE_Country ) {
+				$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR
+				$this->name = $country->currency_name_single();	// Dollar
+				$this->plural = $country->currency_name_plural(); 	// Dollars
+				$this->sign =  $country->currency_sign(); 			// currency sign: $
+				$this->sign_b4 = $country->currency_sign_before(); 		// currency sign before or after: $TRUE  or  FALSE$
+				$this->dec_plc = $country->currency_decimal_places();	// decimal places: 2 = 0.00  3 = 0.000
+				$this->dec_mrk = $country->currency_decimal_mark();	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+				$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
 			}
 		}
 		// fallback to hardcoded defaults, in case the above failed
@@ -1241,11 +1424,12 @@ class EE_Registration_Config extends EE_Config_Base {
       public $recaptcha_privatekey;
 
 
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Registration_Config
 	 */
 	public function __construct() {
 		// set default registration settings
@@ -1323,11 +1507,12 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $help_tour_activation;
 
 
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Admin_Config
 	 */
 	public function __construct() {
 		// set default general admin settings
@@ -1383,11 +1568,12 @@ class EE_Template_Config extends EE_Config_Base {
 	public $current_espresso_theme;
 
 
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Template_Config
 	 */
 	public function __construct() {
 		// set default template settings
@@ -1486,10 +1672,10 @@ class EE_Map_Config extends EE_Config_Base {
 
 
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Map_Config
 	 */
 	public function __construct() {
 		// set default map settings
@@ -1531,6 +1717,11 @@ class EE_Gateway_Config extends EE_Config_Base{
 	 */
 	public $active_gateways;
 
+
+
+	/**
+	 *	class constructor
+	 */
 	public function __construct(){
 		$this->payment_settings = array();
 		$this->active_gateways = array('Invoice'=>false);
@@ -1552,6 +1743,11 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 	public $display_venue;
 	public $display_expired_events;
 
+
+
+	/**
+	 *	class constructor
+	 */
 	public function __construct(){
 		$this->display_status_banner = 0;
 		$this->display_description = 1;
@@ -1571,6 +1767,9 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public $display_status_banner_single;
 	public $display_venue;
 
+	/**
+	 *	class constructor
+	 */
 	public function __construct() {
 		$this->display_status_banner_single = 0;
 		$this->display_venue = 1;
