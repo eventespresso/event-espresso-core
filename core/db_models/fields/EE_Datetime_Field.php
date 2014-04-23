@@ -560,7 +560,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @param string $timezone   Valid Timezone for dates
 	 * @return void
 	 */
-	private function _set_date_obj( $date_string, $timezone, $format = 'U' ) {
+	private function _set_date_obj( $date_string, $timezone ) {
 		// because DateTime chokes on some formats, check first that strtotime can parse it
 		if ( strtotime( $date_string ) == 0 ) {
 			throw new EE_Error( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to it\'s formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
