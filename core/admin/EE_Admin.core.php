@@ -665,7 +665,7 @@ final class EE_Admin {
 					'date_format',
 					'date_format',
 					sprintf(
-						__('The following date time  "%s" ( %s ) can not be properly parsed by PHP due to it\'s format and may cause incompatibility issues with Event Espresso. You will need to choose a more standard date time format in order for everything to operate correctly. %sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ),
+						__('The following date time  "%s" ( %s ) can not be properly parsed by PHP due to its format and may cause incompatibility issues with Event Espresso. You will need to choose a more standard date time format in order for everything to operate correctly. %sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ),
 						date( $date_time_format ),
 						$date_time_format,
 						'<br /><span style="color:#D54E21;">',
