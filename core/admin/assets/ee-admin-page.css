@@ -364,62 +364,6 @@ label.error { display : block; color : #FE2A00 !important; }
 	margin-left : 2em; margin-right : 2em;
 }
 
-.options_btn {
-	display     : block;
-	float       : left;
-	width       : 18px;
-	height      : 18px;
-	margin      : 2px 3px 0 0;
-	background  : url(../../templates/global_assets/images/cog.png) no-repeat;
-	text-indent : -9000px;
-	outline     : none;
-}
-.options_btn:hover {
-	margin : 4px 3px 0 0;
-	height : 20px;
-}
-.excel_exp_btn {
-	display     : block;
-	float       : left;
-	width       : 18px;
-	height      : 18px;
-	margin      : 2px 3px 0 0;
-	background  : url(../../templates/global_assets/images/excel_icon.png) no-repeat;
-	text-indent : -9000px;
-	outline     : none;
-}
-.excel_exp_btn:hover {
-	margin : 4px 3px 0 0;
-	height : 20px;
-}
-.csv_exp_btn {
-	display     : block;
-	float       : left;
-	width       : 18px;
-	height      : 18px;
-	margin      : 2px 3px 0 0;
-	background  : url(../../templates/global_assets/images/csv_icon_sm.gif) no-repeat;
-	text-indent : -9000px;
-	outline     : none;
-}
-.csv_exp_btn:hover {
-	margin : 4px 3px 0 0;
-	height : 20px;
-}
-.newsletter_btn {
-	display     : block;
-	float       : left;
-	width       : 18px;
-	height      : 18px;
-	margin      : 2px 3px 0 0;
-	background  : url(../../templates/global_assets/images/email_go.png) no-repeat;
-	text-indent : -9000px;
-	outline     : none;
-}
-.newsletter_btn:hover {
-	margin : 4px 3px 0 0;
-	height : 20px;
-}
 
 .help-tab-content img {
 	border : 2px solid #E7E7E7;
