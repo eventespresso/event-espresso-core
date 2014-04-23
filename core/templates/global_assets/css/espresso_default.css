@@ -30,7 +30,7 @@
    	height: auto;
 	margin-right: .5em;
     	vertical-align: middle;
-	width: auto;	
+	width: auto;
 }
 
 .ee-icon {
@@ -172,71 +172,56 @@
 }
 
 .ee-clock-icon-big {
-	min-height: 32px; 
+	min-height: 32px;
 	padding:0 0 0 48px;
 	background: url('../images/clock-32x32.png') top left no-repeat;
 }
 .ee-clock-icon-med {
-	min-height: 24px; 
+	min-height: 24px;
 	padding:0 0 0 36px;
 	background: url('../images/clock-24x24.png') top left no-repeat;
 }
 .ee-clock-icon-small {
-	min-height: 16px; 
+	min-height: 16px;
 	padding:0 0 0 24px;
 	background: url('../images/clock-16x16.png') top left no-repeat;
 }
 
 .ee-location-pin-icon-big {
-	min-height: 32px; 
+	min-height: 32px;
 	padding:0 0 0 48px;
 	background: url('../images/location-pin-32x32.png') top left no-repeat;
 }
 .ee-location-pin-icon-med {
-	min-height: 24px; 
+	min-height: 24px;
 	padding:0 0 0 36px;
 	background: url('../images/location-pin-24x24.png') top left no-repeat;
 }
 .ee-location-pin-icon-small {
-	min-height: 16px; 
+	min-height: 16px;
 	padding:0 0 0 24px;
 	background: url('../images/location-pin-16x16.png') top left no-repeat;
 }
 
-.ee-calendar_year-icon-big {
-	min-height: 32px; 
-	padding:0 0 0 48px;
-	background: url('../images/calendar_year-32x32.png') top left no-repeat;
-}
-.ee-calendar_year-icon-med {
-	min-height: 24px; 
-	padding:0 0 0 36px;
-	background: url('../images/calendar_year-24x24.png') top left no-repeat;
-}
-.ee-calendar_year-icon-small {
-	min-height: 16px; 
-	padding:0 0 0 24px;
-	background: url('../images/calendar_year-16x16.png') top left no-repeat;
-}
 
 .ee-users-icon-big {
-	min-height: 32px; 
+	min-height: 32px;
 	padding:0 0 0 48px;
 	background: url('../images/users-32x32.png') top left no-repeat;
 }
 .ee-users-icon-med {
-	min-height: 24px; 
+	min-height: 24px;
 	padding:0 0 0 36px;
 	background: url('../images/users-24x24.png') top left no-repeat;
 }
 .ee-users-icon-small {
-	min-height: 16px; 
+	min-height: 16px;
 	padding:0 0 0 24px;
 	background: url('../images/users-16x16.png') top left no-repeat;
 }
 
 .ee-external-link-icon {
-	min-height: 16px; 
+	min-height: 16px;
 	padding:0 24px 0 0;
 	background: url('../images/external-link.png') top right no-repeat;
 }
@@ -275,7 +260,7 @@
 	bottom: 4%;
 	left: 0;
 	width: 90%;
-	padding: 2.5% 5%; 
+	padding: 2.5% 5%;
 	background: rgba(255, 255, 255, 0.85);
 	border: 1px solid rgba(255, 255, 255, 0.85);
 	line-height: 1.2em;
@@ -453,7 +438,7 @@ input.ee-register-button {
 }
 .ee-status.event-active-status-DTS { background-color: #FCB93C; }
 .ee-status.event-active-status-DTA { background-color: #70CC50; }
-.ee-status.event-active-status-DTU { background-color: #00B1CA; } 
+.ee-status.event-active-status-DTU { background-color: #00B1CA; }
 .ee-status.event-active-status-DTP { background-color: #8A549A; }
 .ee-status.event-active-status-DTC { background-color: #E44064; }
 .ee-status.event-active-status-DTE { background-color: #A39D9C; }
@@ -495,7 +480,7 @@ input.ee-register-button {
 	display: inline-block;
     	font-style: normal;
     	font-weight: normal;
-    	line-height: 1;	
+    	line-height: 1;
 	vertical-align: middle;
 }
 
@@ -546,7 +531,7 @@ input.ee-register-button {
 	100% {
 		transform: rotate(359deg);
 	}
-} 
+}
 /******************* ERRORS AND NOTICES ****************** */
 
 
@@ -713,25 +698,25 @@ input.ee-register-button {
 }
 
 .pink-text {
-	 color: #E44064; 
+	 color: #E44064;
 }
 .green-text {
-	 color: #70CC50; 
+	 color: #70CC50;
 }
 .red-text {
-	 color: #B4113F; 
+	 color: #B4113F;
 }
 .orange-text {
-	 color: #E76700; 
+	 color: #E76700;
 }
 .lt-blue-text {
 	 color: #00B1CA;
 }
 .blue-text {
-	 color: #005B9E; 
+	 color: #005B9E;
 }
 .yellow-text {
-	 color: #F8D755; 
+	 color: #F8D755;
 }
 .lt-grey-text {
 	color: #A39D9C;
@@ -760,7 +745,7 @@ input.ee-register-button {
 	text-align: center;
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-	box-sizing: border-box; 	
+	box-sizing: border-box;
 }
 .highlight-bg {
 	padding:1em 1.5em;
@@ -844,12 +829,12 @@ input.ee-register-button {
 	font-size: 12px;
 	font-weight: bold;
 	line-height: 1;
-	color: #fff; 
+	color: #fff;
 	text-align: center;
 	text-shadow:0 -1px 0px rgba( 0, 0, 0, 0.4 );
 	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
 	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
-	box-sizing: border-box;   	
+	box-sizing: border-box;
 }
 
 #ee-m-mode-admin-notice-dv p {
@@ -860,11 +845,11 @@ input.ee-register-button {
 	text-shadow:0 1px 1px rgba( 0, 0, 0, 0.4 );
 }
 #ee-m-mode-admin-notice-dv a:hover {
-	color: #F8D755; 
+	color: #F8D755;
 	text-shadow:0 .5px 0px rgba( 0, 0, 0, 0.2 );
 }
 #ee-m-mode-admin-notice-dv a:active {
-	color: #F8D755; 
+	color: #F8D755;
 	text-shadow:0 -1px 0px rgba( 0, 0, 0, 0.4 );
 }
 
@@ -873,7 +858,7 @@ input.ee-register-button {
 	font-size: 10px;
 	letter-spacing: 1px;
 	line-height: 1;
-	text-align: center;	
+	text-align: center;
 }
 #espresso-registration-footer-dv a {
 	text-decoration: none;
@@ -939,7 +924,7 @@ article .espresso_venues {
 	text-transform: none !important;
 	vertical-align: middle;
 	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;	
+	-moz-osx-font-smoothing: grayscale;
 }
 
 /*******************************************************/
