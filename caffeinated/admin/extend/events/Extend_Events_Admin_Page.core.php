@@ -220,8 +220,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 			'event_datetime_actions' => __('Actions', 'event_espresso'),
 			'event_clone_dt_msg' => __('Clone this Event Date and Time', 'event_espresso'),
 			'remove_event_dt_msg' => __('Remove this Event Time', 'event_espresso'),
-			'clone_trooper_img_src' => EE_PLUGIN_DIR_URL . 'images/clone-trooper-16x16.png',
-			'clone_trooper_img_alt' => __('clone', 'event_espresso'),
 			'trash_img_src' => EE_PLUGIN_DIR_URL .'images/trash-16x16.png',
 			'trash_img_alt' => __('trash', 'event_espresso')
 		);
