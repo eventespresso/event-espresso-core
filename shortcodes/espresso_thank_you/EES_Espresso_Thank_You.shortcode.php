@@ -170,8 +170,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
 		// load assets
 		add_filter( 'FHEE_load_css', '__return_true' );
-		add_filter( 'FHEE_load_js', '__return_true' );
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
+		if ( ! $this->_current_txn->is_free() ) {
+			add_filter( 'FHEE_load_js', '__return_true' );
+			add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
+		}
 		add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
 
 	}
@@ -270,11 +272,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			return;
 		}
 		// link to receipt
-		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url('html');
-
+		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
- 		if ( $this->_is_primary ) {
+ 		if ( $this->_is_primary && ! $this->_current_txn->is_free() ) {
 			add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_ajax_content' ));
 		}
 
