@@ -128,6 +128,20 @@
 	content: "\e619";
 }
 
+.pink-icon:before { color: #E44064; }
+.green-icon:before { color: #70CC50; }
+.drk-green-icon:before { color: #009900; }
+.red-icon:before { color: #B4113F; }
+.orange-icon:before { color: #E76700; }
+.lt-blue-icon:before { color: #00B1CA; }
+.blue-icon:before { color: #005B9E; }
+.yellow-icon:before { color: #F8D755; }
+.lt-grey-icon:before { color: #A39D9C; }
+.grey-icon:before { color: #888; }
+.drk-grey-icon:before { color: #59595B; }
+.black-icon:before { color: #2F3334; }
+
+
 .tags-links a {
 	white-space: nowrap;
 }
@@ -171,38 +185,6 @@
 	margin-right: -0.25em;
 }
 
-.ee-clock-icon-big {
-	min-height: 32px;
-	padding:0 0 0 48px;
-	background: url('../images/clock-32x32.png') top left no-repeat;
-}
-.ee-clock-icon-med {
-	min-height: 24px;
-	padding:0 0 0 36px;
-	background: url('../images/clock-24x24.png') top left no-repeat;
-}
-.ee-clock-icon-small {
-	min-height: 16px;
-	padding:0 0 0 24px;
-	background: url('../images/clock-16x16.png') top left no-repeat;
-}
-
-.ee-location-pin-icon-big {
-	min-height: 32px;
-	padding:0 0 0 48px;
-	background: url('../images/location-pin-32x32.png') top left no-repeat;
-}
-.ee-location-pin-icon-med {
-	min-height: 24px;
-	padding:0 0 0 36px;
-	background: url('../images/location-pin-24x24.png') top left no-repeat;
-}
-.ee-location-pin-icon-small {
-	min-height: 16px;
-	padding:0 0 0 24px;
-	background: url('../images/location-pin-16x16.png') top left no-repeat;
-}
-
 
 .ee-users-icon-big {
 	min-height: 32px;
@@ -220,11 +202,6 @@
 	background: url('../images/users-16x16.png') top left no-repeat;
 }
 
-.ee-external-link-icon {
-	min-height: 16px;
-	padding:0 24px 0 0;
-	background: url('../images/external-link.png') top right no-repeat;
-}
 
 .ee-icon-only-lnk {
 	margin: 0 1em;
