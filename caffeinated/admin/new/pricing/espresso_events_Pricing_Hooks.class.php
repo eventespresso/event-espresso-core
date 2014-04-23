@@ -168,7 +168,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$DTT = $evt_obj->_add_relation_to( $DTM, 'Datetime' );
 
 			//before going any further make sure our dates are setup correctly so that the end date is always equal or greater than the start date.
-			if( $DTT->get('DTT_EVT_start') > $DTT->get('DTT_EVT_end') ) {
+			if( $DTT->get_raw('DTT_EVT_start') > $DTT->get_raw('DTT_EVT_end') ) {
 				$DTT->set('DTT_EVT_end', $DTT->get('DTT_EVT_start') );
 				EE_Registry::instance()->load_helper('DTT_Helper');
 				EE_Registry::instance()->load_helper('DTT_Helper');
