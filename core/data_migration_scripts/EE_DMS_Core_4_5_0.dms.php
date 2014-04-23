@@ -206,6 +206,17 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				PRIMARY KEY  (LIN_ID)";
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB' );
 
+		$table_name = 'esp_log';
+		$sql = "LOG_ID int(11) NOT NULL AUTO_INCREMENT,
+				LOG_time datetime DEFAULT NULL,
+				OBJ_ID varchar(45) DEFAULT NULL,
+				OBJ_type varchar(45) DEFAULT NULL,
+				LOG_type varchar(45) DEFAULT NULL,
+				LOG_message text,
+				LOG_wp_user_id int(11) DEFAULT NULL,
+				PRIMARY KEY  (LOG_ID)";
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
+		
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					GRP_ID int(10) unsigned NOT NULL,

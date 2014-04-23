@@ -155,9 +155,8 @@ abstract class EE_Base_Class{
 					);
 				}
 			}
-			// verify we have all the model relations, except on extra metas because they
-			//are meant to be related to everything
-			if(get_class($this) !== 'EE_Extra_Meta'){
+			// verify we have all the model relations, except on models that are related to everything
+			if( ! $model->get_a_field_of_type('EE_Any_Foreign_Model_Name_Field')){
 				foreach($model->relation_settings() as $relationName=>$relationSettings){
 					if( ! EEH_Class_Tools::has_property( $this, $this->_get_private_attribute_name( $relationName ))) {
 						throw new EE_Error(
