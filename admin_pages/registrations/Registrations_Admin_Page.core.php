@@ -1383,7 +1383,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				<td class="reg-admin-edit-attendee-question-td">
 					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . __( 'click to edit question', 'event_espresso' ) . '">
 						<span class="reg-admin-edit-question-group-spn lt-grey-txt">' . __( 'edit the above question group', 'event_espresso' ) . '</span>
-						<img width="16" height="16" alt="' . __( 'Edit Question', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/pencil-16x16.png">
+						<div class="dashicons dashicons-edit"></div>
 					</a>
 				</td>
 			</tr>
