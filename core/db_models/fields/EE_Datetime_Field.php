@@ -390,7 +390,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string 		unix timestampe for utc
 	 */
 	private function _convert_to_utc_unixtimestamp( $datetime ) {
-
 		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime );
 		return $timestamp;
 	}
@@ -561,10 +560,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return void
 	 */
 	private function _set_date_obj( $date_string, $timezone ) {
-		// because DateTime chokes on some formats, check first that strtotime can parse it
-		if ( strtotime( $date_string ) == 0 ) {
-			throw new EE_Error( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to it\'s formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
-		}
 		try {
 			$this->_date = new DateTime( $date_string, new DateTimeZone( $timezone ));
 		} catch( Exception $e ) {
@@ -578,8 +573,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 					$this->_date = new DateTime( date( 'd-m-Y H:i', strtotime( $date_string )), new DateTimeZone( $timezone ));
 				}
 			} catch( Exception $e ) {
-				//ok give up, but don't throw an error
-				$this->_date = new DateTime( NULL, new DateTimeZone( $timezone ));
+				// because DateTime chokes on some formats, check if strtotime fails, and throw error regarding bad format
+				if ( strtotime( $date_string ) == 0 ) {
+					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to it\'s formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
+				} else {
+					//ok give up, but don't throw an error
+					$this->_date = new DateTime( NULL, new DateTimeZone( $timezone ));
+				}
 			}
 		}
 	}
