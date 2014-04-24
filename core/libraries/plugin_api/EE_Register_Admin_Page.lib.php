@@ -47,8 +47,15 @@ class EE_Register_Admin_Page implements EEI_Plugin_API {
      */
     public static function register( $page_basename, $page_path = '', $config = array() ) {
 
-        if ( ! did_action( 'AHEE__EE_Admin__loaded' ) || did_action( 'AHEE__EE_System__initialize_last' )) {
-            EE_Error::doing_it_wrong(__METHOD__, sprintf( __('An attempt was made to register "%s" as an EE Admin page.  This may or may not be working correctly because it should be only called on the "AHEE__EE_Admin__loaded" hook.','event_espresso'), $page_basename), '4.3' );
+        if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_Admin__loaded' )) {
+            EE_Error::doing_it_wrong(
+				__METHOD__,
+				sprintf(
+					__('An attempt was made to register "%s" as an EE Admin page has failed because it was not registered at the correct time.  Please use the "AHEE__EE_Admin__loaded" hook to register Admin pages.','event_espresso'),
+					$page_basename
+				),
+				'4.3'
+			);
         }
 
         //add incoming stuff to our registry property
@@ -82,8 +89,13 @@ class EE_Register_Admin_Page implements EEI_Plugin_API {
 
 
 
-
-    public static function set_page_basename( $installed_refs ) {
+	/**
+	 * set_page_basename
+	 *
+	 * @param $installed_refs
+	 * @return mixed
+	 */
+	public static function set_page_basename( $installed_refs ) {
 		if ( ! empty( self::$_ee_admin_page_registry )) {
 			foreach ( self::$_ee_admin_page_registry as $basename => $args ) {
 				$installed_refs[ $basename ] = $args['page_path'];
@@ -94,9 +106,15 @@ class EE_Register_Admin_Page implements EEI_Plugin_API {
 
 
 
-    public static function set_page_path( $paths ) {
+	/**
+	 * set_page_path
+	 *
+	 * @param $paths
+	 * @return mixed
+	 */
+	public static function set_page_path( $paths ) {
         foreach ( self::$_ee_admin_page_registry as $basename => $args ) {
-            $paths[] = $args['page_path'];
+            $paths[ $basename ] = $args['page_path'];
         }
         return $paths;
     }
