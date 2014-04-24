@@ -166,7 +166,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		$addon->set_version( self::$_addon_settings[ self::$_addon_name ]['version'] );
 		$addon->set_min_core_version( self::$_addon_settings[ self::$_addon_name ]['min_core_version'] );
 		// load_admin_controller
-		if ( ! empty( self::$_addon_settings[ self::$_addon_name ]['min_core_version'] )) {
+		if ( ! empty( self::$_addon_settings[ self::$_addon_name ]['admin_callback'] )) {
 			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_addon_settings[ self::$_addon_name ]['admin_callback'] ));
 		}
 	}
