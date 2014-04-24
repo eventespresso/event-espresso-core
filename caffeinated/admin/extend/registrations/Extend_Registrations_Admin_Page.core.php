@@ -767,7 +767,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$legend_items = array(
 			'star-icon' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
+				'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
 				'desc' => __('This Registrant is the Primary Registrant', 'event_espresso')
 				),
 			'checkin' => array(
