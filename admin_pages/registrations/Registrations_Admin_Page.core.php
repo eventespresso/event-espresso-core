@@ -645,7 +645,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registration_legend_items() {
 		$items = array(
 			'star-icon' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
+				'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
 				'desc' => __('This is the Primary Registrant', 'event_espresso')
 				),
 			'view_details' => array(
