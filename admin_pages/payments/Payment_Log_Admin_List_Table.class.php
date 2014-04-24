@@ -64,15 +64,13 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_columns = array(
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
-			'time' => __('Time', 'event_espresso'),
+			'LOG_time' => __('Time', 'event_espresso'),
 			'PMD_ID' => __('Payment Method', 'event_espresso'),
 			'TXN_ID' => __('Transaction ID', 'event_espresso'),
 			);
 
 		$this->_sortable_columns = array(
-			'id'=> array('LOG_ID'=>FALSE),
-			'time' => array( 'LOG_time' => TRUE ),
-			'PMD_ID'=>array('PMD_ID'=>FALSE),
+			'LOG_time' => array( 'LOG_time' => TRUE ),
 			);
 
 		$this->_hidden_columns = array(
@@ -95,6 +93,19 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		}
 		$filters[] = EEH_Form_Fields::select_input('_payment_method', $payment_method_names, isset($this->_req_data['_payment_method']) ? $this->_req_data['_payment_method'] : 'all');
 
+		
+		$start_date = isset( $this->_req_data['payment-filter-start-date'] ) ? wp_strip_all_tags( $this->_req_data['payment-filter-start-date'] ) : date( 'm/d/Y', strtotime( '-6 months' ));
+		$end_date = isset( $this->_req_data['payment-filter-end-date'] ) ? wp_strip_all_tags( $this->_req_data['payment-filter-end-date'] ) : date( 'm/d/Y' );
+		ob_start();
+		?>
+		<label for="txn-filter-start-date">Display Transactions from </label>
+		<input id="payment-filter-start-date" class="datepicker" type="text" value="<?php echo $start_date; ?>" name="payment-filter-start-date" size="15"/>	
+		<label for="txn-filter-end-date"> until </label>
+		<input id="payment-filter-end-date" class="datepicker" type="text" value="<?php echo $end_date; ?>" name="payment-filter-end-date" size="15"/>	
+		<?php
+		$filters[] = ob_get_contents();
+		ob_end_clean();
+		
 		return $filters;
 	}
 
@@ -103,7 +114,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_views['all']['count'] = $this->_admin_page->get_payment_logs( $this->_per_page,$this->_current_page, TRUE );
 	}
 	
-	public function column_time(EE_Log $item){
+	public function column_LOG_time(EE_Log $item){
 		return $item->get_datetime('LOG_time');
 	}
 	public function column_PMD_ID(EE_Log $item){

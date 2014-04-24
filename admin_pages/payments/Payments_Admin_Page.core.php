@@ -28,7 +28,12 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 class Payments_Admin_Page extends EE_Admin_Page {
-
+	/**
+	 * Variables used for when we're re-sorting the logs results, in case
+	 * we needed to do two queries and we need to resort
+	 * @var string
+	 */
+	private $_sort_logs_again_direction;
 
 	public function __construct( $routing = TRUE ) {
 		parent::__construct( $routing );
@@ -219,6 +224,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		wp_enqueue_media();
 		wp_enqueue_script('media-upload');
 		wp_enqueue_script('ee-payments',EE_GLOBAL_ASSETS_URL.'scripts/ee-media-uploader.js');
+		wp_enqueue_script('ee-text-links');
+		wp_register_script('espresso_payments', EE_PAYMENTS_ASSETS_URL . 'espresso_payments_admin.js',array('ee-datepicker'),FALSE,TRUE);
+		wp_enqueue_script('espresso_payments');
+		wp_enqueue_style('espresso-ui-theme');
 	}
 
 
@@ -230,9 +239,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		wp_register_style( 'espresso_payments', EE_PAYMENTS_ASSETS_URL . 'ee-payments.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_payments');
 		wp_enqueue_style('ee-text-links');
-		//scripts
-		wp_enqueue_script('ee-text-links');
+		//scripts	
 	}
+	
 
 
 
@@ -492,23 +501,99 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 * @return type
 	 */
 	public function get_payment_logs($per_page = 50, $current_page = 0, $count = false){
-		$query_params = array(array('LOG_type'=>  EEM_Log::type_gateway));
-		if( isset($this->_req_data['_payment_method']) && $this->_req_data['_payment_method'] !== ''){
-				$query_params[0] = array('OR'=>array(
-				'Payment_Method'=>$this->_req_data['_payment_method'],
-				'Payment.Payment_Method'=>$this->_req_data['_payment_method']));
+		//we may need to do multiple queries (joining differently), so we actually wan tan array of query params
+		$query_params_for_multiple_queries = array('using_payment' => array(array('LOG_type'=>  EEM_Log::type_gateway)),
+													'using_pm'=>array(array('LOG_type'=>EEM_Log::type_gateway)));
+		//check if they've selected a specific payment method
+		if( isset($this->_req_data['_payment_method']) && $this->_req_data['_payment_method'] !== 'all'){
+			$query_params_for_multiple_queries['using_payment'][0] = array('Payment.Payment_Method.PMD_ID'=>$this->_req_data['_payment_method']);
+			$query_params_for_multiple_queries['using_pm'][0] = array('Payment_Method.PMD_ID'=>$this->_req_data['_payment_method']);
+		}
+		//take into account search
+		if(isset($this->_req_data['s']) && $this->_req_data['s']){
+			$similarity_string = array('LIKE','%'.str_replace("","%",$this->_req_data['s']) .'%');
+			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_fname'] = $similarity_string;
+			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_lname'] = $similarity_string;
+			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_email'] = $similarity_string;
+			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Payment_Method.PMD_name'] = $similarity_string;
+			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Payment_Method.PMD_admin_name'] = $similarity_string;
+			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Payment_Method.PMD_type'] = $similarity_string;
+			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['LOG_message'] = $similarity_string;
+
+			$query_params_for_multiple_queries['using_pm'][0]['OR*s']['Payment_Method.PMD_name'] = $similarity_string;
+			$query_params_for_multiple_queries['using_pm'][0]['OR*s']['Payment_Method.PMD_admin_name'] = $similarity_string;
+			$query_params_for_multiple_queries['using_pm'][0]['OR*s']['Payment_Method.PMD_type'] = $similarity_string;
+			$query_params_for_multiple_queries['using_pm'][0]['OR*s']['LOG_message'] = $similarity_string;
+
+		}
+		if(isset( $this->_req_data['payment-filter-start-date'] ) && isset( $this->_req_data['payment-filter-end-date'] )){
+			//add date
+			$start_date =wp_strip_all_tags( $this->_req_data['payment-filter-start-date'] );
+			$end_date = wp_strip_all_tags( $this->_req_data['payment-filter-end-date'] );
+			//make sure our timestampes start and end right at the boundaries for each day
+			$start_date = date( 'Y-m-d', strtotime( $start_date ) ) . ' 00:00:00';
+			$end_date = date( 'Y-m-d', strtotime( $end_date ) ) . ' 23:59:59';
+
+			//convert to timestamps
+			$start_date = strtotime( $start_date );
+			$end_date = strtotime( $end_date );
+
+			//makes sure start date is the lowest value and vice versa
+			$start_date = min( $start_date, $end_date );
+			$end_date = max( $start_date, $end_date );
+
+			foreach($query_params_for_multiple_queries as $key=>$query_params){
+				$query_params_for_multiple_queries[$key][0]['LOG_time'] = array('BETWEEN',array($start_date,$end_date));
 			}
-		if($count){
-			return EEM_Log::instance()->count($query_params);
+		}
+		if(isset($this->_req_data['order'])){
+			$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'DESC';
+			$this->_sort_logs_again_direction = $sort;
+			foreach($query_params_for_multiple_queries as $key=>$query_params){
+				$query_params_for_multiple_queries[$key]['order_by'] = array('LOG_time' => $sort);
+			}
 		}else{
-//			if(isset($this->_req_data['orderby']) && isset($this->_req_data['order']) && $this->_req_data['order'] == 'asc'){
-//				$query_params
-//			}else{
-//				$order_asc = false;
-//			}
-			
-			
-			return EEM_Log::instance()->get_all($query_params);
+			foreach($query_params_for_multiple_queries as $key=>$query_params){
+				$query_params_for_multiple_queries[$key]['order_by'] = array('LOG_time' => 'DESC');
+			}
+			$this->_sort_logs_again_direction = 'DESC';
+		}
+		$offset = ($current_page-1)*$per_page;
+
+		$results = array();
+		foreach($query_params_for_multiple_queries as $query_params){
+			if( ! $count){
+				$query_params['limit'] = array( $offset, $per_page );
+			}
+
+			$results += EEM_Log::instance()->get_all($query_params);
+		}
+		//now we've lost the ordering if there was one, so re-sort
+		usort($results, array($this,'_sort_logs_again'));
+		if($count){
+			return count($results);
+		}else{
+			return $results;
+		}
+	}
+	/**
+	 * Used by usort to RE-sort log query results, because we lose the ordering
+	 * because we're possibly combining the results from two queries
+	 * @param type $logA
+	 * @param type $logB
+	 * @return int
+	 */
+	protected function _sort_logs_again($logA,$logB){
+		$timeA = $logA->get_raw('LOG_time');
+		$timeB = $logB->get_raw('LOG_time');
+		if($timeA == $timeB){
+			return 0;
+		}
+		$comparison = $timeA < $timeB ? -1 : 1;
+		if(strtoupper($this->_sort_logs_again_direction) == 'DESC'){
+			return $comparison * -1; 
+		}else{
+			return $comparison;
 		}
 	}
 	
