@@ -152,7 +152,8 @@ class EE_Payment_Processor{
 	 */
 	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $save_txn = true ){
 		//do_action('AHEE__log',__FILE__,__FUNCTION__,  sprintf("Logged IPN for payment method %s, registration_url_link '%s'", ))
-		EEM_Payment_Log::instance()->log("processing ipn. raw request data sent:".print_r($_req_data,true), $transaction,$payment_method);
+//		EEM_Payment_Log::instance()->log("processing ipn. raw request data sent:".print_r($_req_data,true), $transaction,$payment_method);
+		$log = EEM_Log::instance()->log(EEM_Log::type_gateway, array('IPN data received'=>$_req_data), $payment_method ? $payment_method : $transaction);
 		try{
 			/**
 			 * @var EE_Payment $payment
@@ -163,6 +164,7 @@ class EE_Payment_Processor{
 				$payment_method = EEM_Payment_Method::instance()->ensure_is_obj($payment_method);
 				if ( $payment_method->type_obj() instanceof EE_PMT_Base ) {
 						$payment = $payment_method->type_obj()->handle_ipn( $_req_data, $transaction );
+						$log->set_object($payment);
 				} else {
 					// not a payment
 					EE_Error::add_error( 
@@ -182,6 +184,7 @@ class EE_Payment_Processor{
 				foreach( $active_pms as $payment_method ){
 					try{
 						$payment = $payment_method->type_obj()->handle_unclaimed_ipn( $_req_data );
+						EEM_Log::instance()->log(EEM_Log::type_gateway, array('IPN data'=>$_req_data), $payment);
 						break;
 					} catch( EE_Error $e ) {
 						//that's fine- it apparently couldn't handle the IPN
@@ -194,6 +197,13 @@ class EE_Payment_Processor{
 				$payment->save();
 				if($save_txn){
 					$payment->transaction()->update_based_on_payments();
+				}
+			}else{
+				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
+				if($payment_method){
+					EEM_Log::instance()->log(EEM_Log::type_gateway, array('IPN data'=>$_req_data), $payment_method);
+				}elseif($transaction){
+					EEM_Log::instance()->log(EEM_Log::type_gateway, array('IPN data'=>$_req_data), $transaction);
 				}
 			}
 			return $payment;
