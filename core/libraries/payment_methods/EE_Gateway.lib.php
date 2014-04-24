@@ -154,8 +154,15 @@ abstract class EE_Gateway{
 		$this->_template = $template_helper;
 	}
 	
-	public function log($message,$transaction){
-		$this->_pay_log->log($message,$transaction,$this->_ID);
+	public function log($message,$payment){
+		if($payment){
+			$type='Payment';
+			$id = $payment->ID();
+		}else{
+			$type = 'Payment_Method';
+			$id = $this->_ID;
+		}
+		$this->_pay_log->gateway_log($message,$id,$type);
 	}
 	/**
 	 * Formats the amount so it can generally be sent to gateways

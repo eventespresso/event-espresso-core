@@ -492,28 +492,44 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 * @return type
 	 */
 	public function get_payment_logs($per_page = 50, $current_page = 0, $count = false){
-		if( ! isset($this->_req_data['_payment_method']) || $this->_req_data['_payment_method'] == ''){
-				$payment_method_id = NULL;
-			}else{
-				$payment_method_id = $this->_req_data['_payment_method'];
+		$query_params = array(array('LOG_type'=>  EEM_Log::type_gateway));
+		if( isset($this->_req_data['_payment_method']) && $this->_req_data['_payment_method'] !== ''){
+				$query_params[0] = array('OR'=>array(
+				'Payment_Method'=>$this->_req_data['_payment_method'],
+				'Payment.Payment_Method'=>$this->_req_data['_payment_method']));
 			}
 		if($count){
-			return EEM_Payment_Log::instance()->count($payment_method_id);
+			return EEM_Log::instance()->count($query_params);
 		}else{
-			if(isset($this->_req_data['orderby']) && isset($this->_req_data['order']) && $this->_req_data['order'] == 'asc'){
-				$order_asc = true;
-			}else{
-				$order_asc = false;
-			}
+//			if(isset($this->_req_data['orderby']) && isset($this->_req_data['order']) && $this->_req_data['order'] == 'asc'){
+//				$query_params
+//			}else{
+//				$order_asc = false;
+//			}
 			
 			
-			return EEM_Payment_Log::instance()->get_all_payment_logs($payment_method_id, NULL, $order_asc,$per_page,$current_page*$per_page);
+			return EEM_Log::instance()->get_all($query_params);
 		}
 	}
 	
 	protected function _payment_log_details() {
-		$payment_log = EEM_Payment_Log::instance()->get_one_by_ID($this->_req_data['ID']);
-		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_log_details.template.php', array('payment_log'=>$payment_log), TRUE );
+		$payment_log = EEM_Log::instance()->get_one_by_ID($this->_req_data['ID']);
+		$payment_method = NULL;
+		$transaction = NULL;
+		if($payment_log->object()){
+			if($payment_log->object() instanceof EE_Payment){
+				$payment_method = $payment_log->object()->payment_method();
+				$transaction = $payment_log->object()->transaction();
+			}elseif($payment_log->object() instanceof EE_Payment_Method){
+				$payment_method = $payment_log->object();
+			}
+		}
+		
+		
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_log_details.template.php', array(
+			'payment_log'=>$payment_log,
+			'payment_method'=>$payment_method,
+			'transaction'=>$transaction), TRUE );
 		$this->display_admin_page_with_sidebar();
 
 	}

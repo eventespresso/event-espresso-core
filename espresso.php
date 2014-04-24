@@ -425,7 +425,7 @@ interface EEMI_Payment_Log{
 	 * @param EEI_Payment_Method $payment_method
 	 * @return void
 	 */
-	function log($message,$transaction,$payment_method);
+	function gateway_log($message,$transaction,$payment_method);
 }
 
 interface EEHI_Template{

@@ -24,7 +24,9 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * ------------------------------------------------------------------------
  */
-/*@var EE_Payment_Log $payment_Log */
+/*@var EE_Log $payment_Log */
+/*@var EE_Payment_Method $payment_Method*/
+/*@var EE_Transaction $transaction*/
 ?>
 <div class="padding">
 	<table class="form-table">
@@ -37,7 +39,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 					</label>
 				</th>
 				<td>
-					<?php $payment_log->ID()?>
+					<?php echo $payment_log->ID()?>
 					
 				</td>
 			</tr>
@@ -48,7 +50,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 					</label>
 				</th>
 				<td>
-					<?php echo $payment_log->payment_method() ? $payment_log->payment_method()->admin_name() : __("No Longer Exists", 'event_espresso')?>
+					<?php echo $payment_method ? $payment_method->admin_name() : __("No Longer Exists", 'event_espresso')?>
 					
 				</td>
 			</tr>
@@ -59,7 +61,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 					</label>
 				</th>
 				<td>
-					<?php echo $payment_log->transaction()->ID()?>
+					<?php echo $transaction ? $transaction->ID() : __("Could not be determined", 'event_espresso');?>
 					
 				</td>
 			</tr>
@@ -70,7 +72,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 					</label>
 				</th>
 				<td>
-					<?php echo EEH_Template::layout_array_as_table($payment_log->content())?>
+					<?php echo $payment_log->e('LOG_message');//EEH_Template::layout_array_as_table($payment_log->content())?>
 				</td>
 			</tr>
 		</tbody>

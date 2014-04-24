@@ -64,13 +64,15 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_columns = array(
 			'cb' => '<input type="checkbox" />',
 			'id' => __('ID', 'event_espresso'),
-			'date' => __('Date', 'event_espresso'),
+			'time' => __('Time', 'event_espresso'),
 			'PMD_ID' => __('Payment Method', 'event_espresso'),
 			'TXN_ID' => __('Transaction ID', 'event_espresso'),
 			);
 
 		$this->_sortable_columns = array(
-			'date' => array( 'date' => FALSE ),
+			'id'=> array('LOG_ID'=>FALSE),
+			'time' => array( 'LOG_time' => TRUE ),
+			'PMD_ID'=>array('PMD_ID'=>FALSE),
 			);
 
 		$this->_hidden_columns = array(
@@ -101,24 +103,30 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		$this->_views['all']['count'] = $this->_admin_page->get_payment_logs( $this->_per_page,$this->_current_page, TRUE );
 	}
 	
-	public function column_date(EE_Payment_Log $item){
-		return $item->date();
+	public function column_time(EE_Log $item){
+		return $item->get_datetime('LOG_time');
 	}
-	public function column_PMD_ID(EE_Payment_Log $item){
-		if($item->payment_method()){
-			return $item->payment_method()->admin_name();
+	public function column_PMD_ID(EE_Log $item){
+		if($item->object() instanceof EE_Payment_Method){
+			return $item->object()->admin_name();
+		}elseif($item->object() instanceof EE_Payment && $item->object()->payment_method()){
+			return $item->object()->payment_method()->admin_name();
 		}else{
 			return __("No longer exists", 'event_espresso');
 		}
 		
 		
 	}
-	public function column_TXN_ID(EE_Payment_Log $item){
-		return $item->TXN_ID();
+	public function column_TXN_ID(EE_Log $item){
+		if($item->object() instanceof EE_Payment){
+			return $item->object()->TXN_ID();
+		}else{
+			return __("Unable to find transaction", 'event_espresso');
+		}
 	}
 
 
-	public function column_cb(EE_Payment_Log $item) {
+	public function column_cb(EE_Log $item) {
 		
 		return sprintf( '<input type="checkbox" class="option_id" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
 	}
@@ -131,7 +139,7 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 
 
 
-	public function column_id(EE_Payment_Log $item) {	
+	public function column_id(EE_Log $item) {	
 		$details_query_args = array(
 			'action'=>'payment_log_details',
 			'ID'=>$item->ID(),

@@ -35,6 +35,8 @@ class EE_Log extends EE_Base_Class{
 	/** WP User ID who was logged in while this occurred @var LOG_wp_user_id*/ protected $_LOG_wp_user_id = NULL;
 	protected $_Answer;
 	protected $_Attendee;
+	protected $_Payment;
+	protected $_Payment_Method;
 	
 	/**
 	 * 
@@ -162,7 +164,7 @@ class EE_Log extends EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	function object(){
-		$model_name_of_related_obj = $this->type();
+		$model_name_of_related_obj = $this->OBJ_type();
 		$is_model_name = EE_Registry::instance()->is_model_name($model_name_of_related_obj);
 		if( ! $is_model_name ){
 			return null;

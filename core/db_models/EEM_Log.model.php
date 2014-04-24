@@ -127,8 +127,28 @@ class EEM_Log extends EEM_Base{
 				'OBJ_ID'=>$obj_id,
 				'OBJ_type'=>$obj_type,
 				));
-			$log->save();
-			return $log;
+		$log->save();
+		return $log;
+	}
+	/**
+	 * Adds a gateway log for teh specieid object, given its ID and type
+	 * @param mixed $message
+	 * @param mixed int|string $related_obj_id
+	 * @param string $related_obj_type
+	 * @return EE_Log
+	 */
+	public function gateway_log($message,$related_obj_id,$related_obj_type){
+		if( ! EE_Registry::instance()->is_model_name($related_obj_type)){
+			throw new EE_Error(sprintf(__("'%s' is not a model name. A model name must be provided when making a gateway log. Eg, 'Payment', 'Payment_Method', etc", "event_espresso"),$related_obj_type));
+		}
+		$log = EE_Log::new_instance(array(
+				'LOG_type'=>EEM_Log::type_gateway,
+				'LOG_message'=>$message,
+				'OBJ_ID'=>$related_obj_id,
+				'OBJ_type'=>$related_obj_type,
+				));
+		$log->save();
+		return $log;
 	}
 }
 

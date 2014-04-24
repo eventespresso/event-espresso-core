@@ -57,7 +57,7 @@ abstract class EE_PMT_Base{
 		$this->_set_file_url();
 		if($this->_gateway){
 			$this->_gateway->set_payment_model(EEM_Payment::instance());
-			$this->_gateway->set_payment_log(EEM_Payment_Log::instance());
+			$this->_gateway->set_payment_log(EEM_Log::instance());
 			EE_Registry::instance()->load_helper('Template');
 			$this->_gateway->set_template_helper(new EEH_Template());
 		}
