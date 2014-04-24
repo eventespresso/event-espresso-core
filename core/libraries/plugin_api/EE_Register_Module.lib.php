@@ -38,17 +38,17 @@ class EE_Register_Module implements EEI_Plugin_API {
 	 *    Method for registering new EED_Modules
 	 *
 	 * @since    4.3.0
-	 * @param  array $setup_args  						an array of arguments provided for registering modules
-	 * @internal param string module_id 				a unique identifier for this set of modules
-	 * @internal param string module_paths 		an array of full server paths to folders containing any EED_Modules, or to the EED_Module files themselves
+	 * @param string $module_id		a unique identifier for this set of modules Required.
+	 * @param  array $setup_args 		an array of arguments provided for registering modules Required.
 	 * @throws EE_Error
+	 * @internal param string module_paths 	an array of full server paths to folders containing any EED_Modules, or to the EED_Module files themselves
 	 * @return void
 	 */
-	public static function register( $setup_args = array()  ) {
+	public static function register( $module_id = NULL, $setup_args = array()  ) {
 
 		//required fields MUST be present, so let's make sure they are.
-		if ( ! is_array( $setup_args ) || empty( $setup_args['module_id'] ) || empty( $setup_args['module_paths'] )) {
-			throw new EE_Error( __( 'In order to register Modules with EE_Register_Module::register(), you must include an array containing the following keys: "module_id" (a unique identifier for this set of modules), and "module_paths" (an array of full server paths to folders that contain modules, or to the module files themselves)', 'event_espresso' ));
+		if ( empty( $module_id ) || ! is_array( $setup_args ) || empty( $setup_args['module_paths'] )) {
+			throw new EE_Error( __( 'In order to register Modules with EE_Register_Module::register(), you must include a "module_id" (a unique identifier for this set of modules), and an array containing the following keys: "module_paths" (an array of full server paths to folders that contain modules, or to the module files themselves)', 'event_espresso' ));
 		}
 
 
@@ -61,9 +61,9 @@ class EE_Register_Module implements EEI_Plugin_API {
 			);
 		}
 		//setup $_settings array from incoming values.
-		self::$_settings[ $setup_args['module_id'] ] = array(
+		self::$_settings[ $module_id ] = array(
 			// array of full server paths to any EED_Modules used by the module
-			'module_paths'  => isset( $setup_args['modules'] ) ? (array)$setup_args['modules'] : array(),
+			'module_paths'  => isset( $setup_args['module_paths'] ) ? (array)$setup_args['module_paths'] : array(),
 		);
 		// add to list of modules to be registered
 		add_filter( 'FHEE__EE_Config__register_modules__modules_to_register', array( 'EE_Register_Module', 'add_modules' ));

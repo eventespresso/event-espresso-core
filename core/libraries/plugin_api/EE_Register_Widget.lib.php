@@ -38,17 +38,17 @@ class EE_Register_Widget implements EEI_Plugin_API {
 	 *    Method for registering new EED_Widgets
 	 *
 	 * @since    4.3.0
-	 * @param  array $setup_args  						an array of arguments provided for registering widgets
-	 * @internal param string widget_id 				a unique identifier for this set of widgets
+	 * @param string $widget_id			a unique identifier for this set of widgets
+	 * @param  array $setup_args  		an array of arguments provided for registering widgets
 	 * @internal param string widget_paths 		an array of full server paths to folders containing any EED_Widgets, or to the EED_Widget files themselves
 	 * @throws EE_Error
 	 * @return void
 	 */
-	public static function register( $setup_args = array()  ) {
+	public static function register( $widget_id = NULL, $setup_args = array()  ) {
 
 		//required fields MUST be present, so let's make sure they are.
-		if ( ! is_array( $setup_args ) || empty( $setup_args['widget_id'] ) || empty( $setup_args['widget_paths'] )) {
-			throw new EE_Error( __( 'In order to register Widgets with EE_Register_Widget::register(), you must include an array containing the following keys: "widget_id" (a unique identifier for this set of widgets), and "widget_paths" (an array of full server paths to folders that contain widgets, or to the widget files themselves)', 'event_espresso' ));
+		if ( empty( $widget_id ) || ! is_array( $setup_args ) || empty( $setup_args['widget_paths'] )) {
+			throw new EE_Error( __( 'In order to register Widgets with EE_Register_Widget::register(), you must include a "widget_id" (a unique identifier for this set of widgets), and an array containing the following keys: "widget_paths" (an array of full server paths to folders that contain widgets, or to the widget files themselves)', 'event_espresso' ));
 		}
 
 
@@ -61,7 +61,7 @@ class EE_Register_Widget implements EEI_Plugin_API {
 			);
 		}
 		//setup $_settings array from incoming values.
-		self::$_settings[ $setup_args['widget_id'] ] = array(
+		self::$_settings[ $widget_id ] = array(
 			// array of full server paths to any EED_Widgets used by the widget
 			'widget_paths'  => isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
 		);

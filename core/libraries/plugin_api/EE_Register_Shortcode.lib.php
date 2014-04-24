@@ -38,17 +38,17 @@ class EE_Register_Shortcode implements EEI_Plugin_API {
 	 *    Method for registering new EE_Shortcodes
 	 *
 	 * @since    4.3.0
-	 * @param  array $setup_args  						an array of arguments provided for registering shortcodes
-	 * @internal param string shortcode_id 				a unique identifier for this set of shortcodes
+	 * @param string $shortcode_id		a unique identifier for this set of modules Required.
+	 * @param  array $setup_args  						an array of arguments provided for registering shortcodes Required.
 	 * @internal param string shortcode_paths 		an array of full server paths to folders containing any EES_Shortcodes, or to the EES_Shortcode files themselves
 	 * @throws EE_Error
 	 * @return void
 	 */
-	public static function register( $setup_args = array()  ) {
+	public static function register( $shortcode_id = NULL, $setup_args = array()  ) {
 
 		//required fields MUST be present, so let's make sure they are.
-		if ( ! is_array( $setup_args ) || empty( $setup_args['shortcode_id'] ) || empty( $setup_args['shortcode_paths'] )) {
-			throw new EE_Error( __( 'In order to register Modules with EE_Register_Shortcode::register(), you must include an array containing the following keys: "shortcode_id" (a unique identifier for this set of shortcodes), and "shortcode_paths" (an array of full server paths to folders that contain shortcodes, or to the shortcode files themselves)', 'event_espresso' ));
+		if ( empty( $shortcode_id ) || ! is_array( $setup_args ) || empty( $setup_args['shortcode_paths'] )) {
+			throw new EE_Error( __( 'In order to register Modules with EE_Register_Shortcode::register(), you must include a "shortcode_id" (a unique identifier for this set of shortcodes), and an array containing the following keys: "shortcode_paths" (an array of full server paths to folders that contain shortcodes, or to the shortcode files themselves)', 'event_espresso' ));
 		}
 
 
@@ -61,7 +61,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API {
 			);
 		}
 		//setup $_settings array from incoming values.
-		self::$_settings[ $setup_args['shortcode_id'] ] = array(
+		self::$_settings[ $shortcode_id ] = array(
 			// array of full server paths to any EES_Shortcodes used by the shortcode
 			'shortcode_paths'  => isset( $setup_args['shortcode_paths'] ) ? (array)$setup_args['shortcode_paths'] : array(),
 		);
