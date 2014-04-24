@@ -442,8 +442,14 @@ label.error { display : block; color : #FE2A00 !important; }
 	float  : left;
 }
 
-.ee-list-table-legend-container .dashicons, .ee-list-table-legend-container .ee-icon {
+.ee-list-table-legend-container .dashicons,
+.ee-list-table-legend-container .ee-icon {
 	font-size : 18px;
+	vertical-align: middle;
+}
+.ee-list-table-legend-container .ee-icon-size-8 {
+	vertical-align: top;
+	margin-bottom: .5em;
 }
 
 .ee-legend-description {
