@@ -521,7 +521,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					break;
 				}
 				$first_datetime = $ticket->get_first_related( 'Datetime' );
-				d( $first_datetime );
 				if ( ! $first_datetime instanceof EE_Datetime ){
 					EE_Error::add_error(sprintf(__("The ticket (%s) is not associated with any valid datetimes.", "event_espresso"),$ticket->name()), __FILE__, __FUNCTION__, __LINE___);
 					continue;
