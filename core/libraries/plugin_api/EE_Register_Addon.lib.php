@@ -89,7 +89,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		self::$_addon_settings[ self::$_addon_name ] = array(
 			// generated from the addon name, changes something like "calendar" to "EE_Calendar"
 			'class_name' 			=> $class_name,
-			// the PHP version for the addon
+			// the "software" version for the addon
 			'version' 					=> isset( $setup_args['version'] ) ? (string)$setup_args['version'] : '',
 			// the minimum version of EE Core that the addon will work with
 			'min_core_version' => isset( $setup_args['min_core_version'] ) ? (string)$setup_args['min_core_version'] : '',
