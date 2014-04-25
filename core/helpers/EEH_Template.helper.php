@@ -506,6 +506,7 @@ class EEH_Template {
 	if (is_object($data)) {
 		$data = (array)$data;
 	}
+	EE_Registry::instance()->load_helper('Array');
 	ob_start();			
 	if (is_array($data)) {
 		if (EEH_Array::is_associative_array($data)) {
@@ -520,7 +521,7 @@ class EEH_Template {
 								<?php echo $data_key;?>
 							</td>
 							<td>
-								<?php self::layout_as_table($data_values);?>
+								<?php echo self::layout_array_as_table($data_values);?>
 							</td>
 						</tr>
 						<?php
@@ -534,7 +535,7 @@ class EEH_Template {
 			<ul>
 				<?php
 				foreach ($data as $datum) {
-					echo "<li>";self::layout_array_as_table($datum);echo "</li>";
+					echo "<li>"; echo self::layout_array_as_table($datum);echo "</li>";
 				}?>
 			</ul>
 			<?php

@@ -90,6 +90,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				),
 			'payment_log'=> '_payment_log_overview_list_table',
 			'payment_log_details'=>'_payment_log_details',
+			'download_logs'=>array(
+				'func'=>'_download_logs',
+				'noheader'=>TRUE
+			)
 			);
 	}
 	
@@ -562,7 +566,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 
 		$results = array();
 		foreach($query_params_for_multiple_queries as $query_params){
-			if( ! $count){
+			if( ! $count && ! isset($this->_req_data['download_results'])){
 				$query_params['limit'] = array( $offset, $per_page );
 			}
 
@@ -570,6 +574,22 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 		//now we've lost the ordering if there was one, so re-sort
 		usort($results, array($this,'_sort_logs_again'));
+		//now they've requested to instead just download the file instead of viewing it.
+		if(isset($this->_req_data['download_results'])){
+			header('Content-Disposition: attachment');
+			header("Content-Disposition: attachment; filename=ee_payment_logs_for_".sanitize_key(site_url()));
+			echo "<h1>Payment Logs for ".site_url()."</h1>";
+			d($query_params_for_multiple_queries);
+			$stuff_to_display = array();
+			foreach($results as $key => $log){
+				$stuff_to_display[$key] = $log->model_field_array();
+				if($log->object()){
+					$stuff_to_display[$log->OBJ_type()] = $log->object()->model_field_array();
+				}
+			}
+			echo d($stuff_to_display);
+			die;
+		}
 		if($count){
 			return count($results);
 		}else{
@@ -617,6 +637,11 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'transaction'=>$transaction), TRUE );
 		$this->display_admin_page_with_sidebar();
 
+	}
+	protected function _download_logs(){
+		header('Content-Disposition: attachment');
+		echo "monkeys";
+		die;
 	}
 
 

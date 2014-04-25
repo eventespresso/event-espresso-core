@@ -105,10 +105,9 @@ class Payment_Log_Admin_List_Table extends EE_Admin_List_Table {
 		<?php
 		$filters[] = ob_get_contents();
 		ob_end_clean();
-		
+		$filters[] = "<label for='download_results'>".__("Download Results", 'event_espresso')."</label><input type='checkbox' id='download_results' name='download_results' value='true'>";
 		return $filters;
 	}
-
 
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_admin_page->get_payment_logs( $this->_per_page,$this->_current_page, TRUE );
