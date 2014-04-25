@@ -487,13 +487,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return void
 	 */
 	private function _initialize_transaction() {
-		// create new TXN
-		$this->_transaction = EE_Transaction::new_instance( array(
-			'TXN_timestamp' => current_time('mysql'),
-			'TXN_total' => $this->_cart->get_cart_grand_total(),
-			'TXN_paid' => 0,
-			'STS_ID' => EEM_Transaction::failed_status_code,
-		));
+		try {
+			// create new TXN
+			$this->_transaction = EE_Transaction::new_instance( array(
+				'TXN_timestamp' => current_time('mysql'),
+				'TXN_total' => $this->_cart->get_cart_grand_total(),
+				'TXN_paid' => 0,
+				'STS_ID' => EEM_Transaction::failed_status_code,
+			));
+		} catch( Exception $e ) {
+			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+		}
 	}
 
 
@@ -534,19 +538,23 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //					// TODO: verify that $event->default_registration_status() is editable in admin event editor, then uncomment and use the following for STS_ID
 					$event_default_registration_status = $event->default_registration_status();
 					$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
-					// now create a new registration for the ticket
-			 		$registration = EE_Registration::new_instance( array(
-						'EVT_ID' => $event->ID(),
-						'TXN_ID' => $this->_transaction->ID(),
-						'TKT_ID' => $ticket->ID(),
-						'STS_ID' => $STS_ID,
-						'REG_date' => $this->_transaction->datetime(),
-						'REG_final_price' => $ticket->price(),
-						'REG_session' => EE_Registry::instance()->SSN->id(),
-						'REG_count' => $att_nmbr,
-						'REG_group_size' => $total_items,
-						'REG_url_link'	=> $reg_url_link
-					));
+					try {
+						// now create a new registration for the ticket
+						$registration = EE_Registration::new_instance( array(
+							'EVT_ID' => $event->ID(),
+							'TXN_ID' => $this->_transaction->ID(),
+							'TKT_ID' => $ticket->ID(),
+							'STS_ID' => $STS_ID,
+							'REG_date' => $this->_transaction->datetime(),
+							'REG_final_price' => $ticket->price(),
+							'REG_session' => EE_Registry::instance()->SSN->id(),
+							'REG_count' => $att_nmbr,
+							'REG_group_size' => $total_items,
+							'REG_url_link'	=> $reg_url_link
+						));
+					} catch( Exception $e ) {
+						EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+					}
 					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
 					$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
 					$this->_transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
