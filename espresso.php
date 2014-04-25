@@ -98,7 +98,7 @@ define( 'EE_GLOBAL_ASSETS', EE_TEMPLATES . 'global_assets' . DS );
 define( 'EE_GATEWAYS', EE_MODULES . 'gateways' . DS );
 define( 'EE_GATEWAYS_URL', EE_PLUGIN_DIR_URL . 'modules' . DS . 'gateways' . DS );
 // asset URL paths
-define( 'EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'templates' . DS );
+define( 'EE_TEMPLATES_URL', EE_PLUGIN_DIR_URL . 'core' . DS . 'templates' . DS );
 define( 'EE_GLOBAL_ASSETS_URL', EE_TEMPLATES_URL . 'global_assets' . DS );
 define( 'EE_IMAGES_URL',  EE_GLOBAL_ASSETS_URL . 'images' . DS );
 define( 'EE_THIRD_PARTY_URL', EE_PLUGIN_DIR_URL . 'core' . DS . 'third_party_libs' . DS );
