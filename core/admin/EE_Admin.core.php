@@ -73,6 +73,7 @@ final class EE_Admin {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
+		add_filter( 'pre_update_option', array( $this, 'check_for_invalid_datetime_formats' ), 100, 2 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
 
 		do_action( 'AHEE__EE_Admin__loaded' );
@@ -625,7 +626,64 @@ final class EE_Admin {
 
 
 	/**
-	 *    reset_page_for_posts_on_change
+	 *    check_for_invalid_datetime_formats
+	 *
+	 *    if an admin changes their date or time format settings on the WP General Settings admin page, verify that their selected format can be parsed by PHP
+	 *
+	 * @access    public
+	 * @param    $value
+	 * @param    $option
+	 * @throws EE_Error
+	 * @return    void
+	 */
+	public function check_for_invalid_datetime_formats( $value, $option ) {
+		// check for date_format or time_format
+		switch ( $option ) {
+			case 'date_format' :
+				$date_time_format = $value . ' ' . get_option('time_format');
+				break;
+			case 'time_format' :
+				$date_time_format = get_option('date_format') . ' ' . $value;
+				break;
+			default :
+				$date_time_format = FALSE;
+		}
+		// do we have a date_time format to check ?
+		if ( $date_time_format ) {
+			// because DateTime chokes on some formats, check first that strtotime can parse it
+			$date_string = strtotime( date( $date_time_format ));
+			// invalid date time formats will evaluate to either "0" or ""
+			if ( empty( $date_string )) {
+				// trigger WP settings error
+				add_settings_error(
+					'date_format',
+					'date_format',
+					sprintf(
+						__('The following date time  "%s" ( %s ) can not be properly parsed by PHP due to its format and may cause incompatibility issues with Event Espresso. You will need to choose a more standard date time format in order for everything to operate correctly. %sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ),
+						date( $date_time_format ),
+						$date_time_format,
+						'<br /><span style="color:#D54E21;">',
+						'</span>'
+					)
+				);
+				// set format to something valid
+				switch ( $option ) {
+					case 'date_format' :
+						$value = 'F j, Y';
+						break;
+					case 'time_format' :
+						$value = 'g:i a';
+						break;
+				}
+			}
+		}
+		return $value;
+	}
+
+
+
+	/**
+	 *    reset_page_for_posts_on_change	
 	 *
 	 * 	if an admin is on the WP Reading Settings page and changes the option for "Posts page", then we need to attribute any shortcodes for the previous blog page to the new blog page
 	 *

@@ -385,7 +385,7 @@ class EE_Transaction extends EE_Base_Class{
 	* 		@access		public
 	*/
 	public function datetime( $format = FALSE, $dt_frmt = FALSE ) {
-		return $this->get('TXN_timestamp');
+		return $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
 	}
 
 
