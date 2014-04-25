@@ -748,6 +748,7 @@ final class EE_System {
 //		EEM_Venue::instance()->get_all(array('force_join'=>array('Event')));
 		//should produce no error
 //		die;
+//		EEM_Price::instance()->get_all(array('order_by'=>array('PRC_ID'=>'asc','Price_Type.PRT_ID'=>'asc')));die;
 		do_action( 'AHEE__EE_System__initialize' );
 	}
 
