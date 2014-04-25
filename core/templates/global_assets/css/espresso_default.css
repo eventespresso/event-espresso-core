@@ -183,23 +183,6 @@
 }
 
 
-.ee-users-icon-big {
-	min-height: 32px;
-	padding:0 0 0 48px;
-	background: url('../images/users-32x32.png') top left no-repeat;
-}
-.ee-users-icon-med {
-	min-height: 24px;
-	padding:0 0 0 36px;
-	background: url('../images/users-24x24.png') top left no-repeat;
-}
-.ee-users-icon-small {
-	min-height: 16px;
-	padding:0 0 0 24px;
-	background: url('../images/users-16x16.png') top left no-repeat;
-}
-
-
 .ee-icon-only-lnk {
 	margin: 0 1em;
 	border: none !important;
