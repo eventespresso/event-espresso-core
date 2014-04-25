@@ -64,7 +64,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API {
 			'dms_paths' =>isset( $setup_args['dms_paths'] ) ? (array)$setup_args['dms_paths'] : array()
 		);
 		// setup DMS
-		add_filter( 'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders', array( 'EE_Register_Addon', 'add_data_migration_script_folders' ));
+		add_filter( 'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders', array( 'EE_Register_Data_Migration_Scripts', 'add_data_migration_script_folders' ));
 	}
 
 
