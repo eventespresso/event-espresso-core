@@ -30,19 +30,19 @@ class EE_Secondary_Table extends EE_Table_Base{
 		return $this->_table_to_join_with;
 	}
 	/**
+	 * creates join statement FROM primary table
 	 * gets SQL like "LEFT JOIN table_name AS table_alias ON other_table_alias.pk = table_alias.fk
 	 *
 	 * @param string $table allows us to set special conditions on the $table_name portion of the join query (i.e. doing a subquery)
 	 * @return string of SQL
 	 */
-	function get_join_sql( $table = NULL ){
+	function get_join_sql( $primary_table_alias_with_model_chain_prefix  ){
 		
-		$table_name = empty($table) ? $this->get_table_name() : $table;
-		$table_alias = $this->get_table_alias();
-		$other_table_alias = $this->get_table_to_join_with()->get_table_alias();
+		$table_name = $this->get_table_name();
+		$secondary_table_alias = EE_Model_Parser::get_prefix_from_table_alias_with_model_relation_chain_prefix($primary_table_alias_with_model_chain_prefix) . $this->get_table_alias();
 		$other_table_pk = $this->get_table_to_join_with()->get_pk_column();
 		$fk = $this->get_fk_on_table();
-		$join_sql = " LEFT JOIN $table_name AS $table_alias ON $other_table_alias.$other_table_pk = $table_alias.$fk ";
+		$join_sql = " LEFT JOIN $table_name AS $secondary_table_alias ON $primary_table_alias_with_model_chain_prefix.$other_table_pk = $secondary_table_alias.$fk ";
 		if($this->get_extra_join_conditions()){
 			$join_sql.="AND ".$this->get_extra_join_conditions();
 		}
@@ -52,19 +52,18 @@ class EE_Secondary_Table extends EE_Table_Base{
 	
 	/**
 	 * Produces join SQL like get_join_sql, except instead of joining the primary table to the
-	 * secondary table, joins the secondary table to the primary one. (Eg, isntead of 
+	 * secondary table, does the inverse: joins the secondary table to the primary one. (Eg, isntead of 
 	 * " LEFT JOIN secondary_table_table AS Secondary ON ..." like get_join_sql, this function returns
 	 * " LEFT JOIN primary_table AS Primary ON ...". 
 	 * This is useful if the secondary table is already included in the SQL, but the primary table is not yet.
 	 * @return string
 	 */
-	function get_inverse_join_sql($table = NULL){
-		$primary_table_name = empty($table) ? $this->get_table_to_join_with()->get_table_name() : $table;
-		$primary_table_alias = $this->get_table_to_join_with()->get_table_alias();
-		$table_alias = $this->get_table_alias();
+	function get_inverse_join_sql($secondary_table_alias_with_model_chain_prefix){
+		$primary_table_name =$this->get_table_to_join_with()->get_table_name();
+		$primary_table_alias = EE_Model_Parser::get_prefix_from_table_alias_with_model_relation_chain_prefix($secondary_table_alias_with_model_chain_prefix) . $this->get_table_to_join_with()->get_table_alias();
 		$primary_table_pk = $this->get_table_to_join_with()->get_pk_column();//$this->get_pk_column();
 		$fk = $this->get_fk_on_table();
-		$join_sql = " LEFT JOIN $primary_table_name AS $primary_table_alias ON $primary_table_alias.$primary_table_pk = $table_alias.$fk ";
+		$join_sql = " LEFT JOIN $primary_table_name AS $primary_table_alias ON $primary_table_alias.$primary_table_pk = $secondary_table_alias_with_model_chain_prefix.$fk ";
 		if($this->get_extra_join_conditions()){
 			$join_sql.="AND ".$this->get_extra_join_conditions();
 		}

@@ -18,13 +18,13 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base{
 	function __construct($block_deletes = true, $blocking_delete_error_message = null){
 		parent::__construct($block_deletes, $blocking_delete_error_message);
 	}
-	function get_join_statement(){
+	function get_join_statement($model_relation_chain){
 		//create the sql string like
 		// LEFT JOIN other_table AS table_alias ON this_table_alias.pk = other_table_alias.fk extra_join_conditions
 		$this_table_pk_field = $this->get_this_model()->get_primary_key_field();
 		$other_table_fk_field = $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
-		$pk_table_alias = $this_table_pk_field->get_table_alias();
-		$fk_table_alias = $other_table_fk_field->get_table_alias();
+		$pk_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_this_model()->get_this_model_name()) . $this_table_pk_field->get_table_alias();
+		$fk_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_other_model()->get_this_model_name()) . $other_table_fk_field->get_table_alias();
 		$fk_table = $this->get_other_model()->get_table_for_alias($fk_table_alias);
 		
 		return $this->_left_join($fk_table, $fk_table_alias, $other_table_fk_field->get_table_column(), $pk_table_alias, $this_table_pk_field->get_table_column()).$this->get_other_model()->_construct_internal_join_to_table_with_alias($fk_table_alias);

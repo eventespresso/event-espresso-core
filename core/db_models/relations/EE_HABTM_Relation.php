@@ -29,20 +29,20 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	}
 	/**
 	 * Gets the SQL string for joining the main model's table containing the pk to the join table. Eg "LEFT JOIN real_join_table AS join_table_alias ON this_table_alias.pk = join_table_alias.fk_to_this_table"
+	 * @param string $model_relation_chain like 'Event.Event_Venue.Venue'
 	 * @return string of SQL
 	 */
-	function get_join_to_intermediate_model_statement(){
+	function get_join_to_intermediate_model_statement($model_relation_chain){
 		//create sql like
 		//LEFT JOIN join_table AS join_table_alias ON this_table_alias.this_table_pk = join_table_alias.join_table_fk_to_this
 		//LEFT JOIN other_table AS other_table_alias ON join_table_alias.join_table_fk_to_other = other_table_alias.other_table_pk
 		
 		$this_table_pk_field = $this->get_this_model()->get_primary_key_field();//get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		$join_table_fk_field_to_this_table = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
-		$this_table_alias = $this_table_pk_field->get_table_alias();
+		$this_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_this_model()->get_this_model_name()) . $this_table_pk_field->get_table_alias();
 		
-		$join_table_alias = $join_table_fk_field_to_this_table->get_table_alias();
+		$join_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_join_model()->get_this_model_name()) . $join_table_fk_field_to_this_table->get_table_alias();
 		$join_table = $this->get_join_model()->get_table_for_alias($join_table_alias);	
-		
 		//phew! ok, we have all the info we need, now we can create the SQL join string
 		$SQL = $this->_left_join($join_table, $join_table_alias, $join_table_fk_field_to_this_table->get_table_column(), $this_table_alias, $this_table_pk_field->get_table_column()) . $this->get_join_model()->_construct_internal_join_to_table_with_alias($join_table_alias);
 				
@@ -53,15 +53,16 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	 * If you want to join between modelA -> joinModelAB -> modelB (eg, Event -> Event_Question_Group -> Question_Group),
 	 * you shoudl prepend the result of this function with results from get_join_to_intermediate_model_statement(),
 	 * so that you join first to the intermediate join table, and then to the other model's pk's table
+	 * @param string $model_relation_chain like 'Event.Event_Venue.Venue'
 	 * @return string of SQL
 	 */
-	function get_join_statement(){
+	function get_join_statement($model_relation_chain){
 		$join_table_fk_field_to_this_table = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
-		$join_table_alias = $join_table_fk_field_to_this_table->get_table_alias();
+		$join_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_join_model()->get_this_model_name()) . $join_table_fk_field_to_this_table->get_table_alias();
 		
 		$other_table_pk_field = $this->get_other_model()->get_primary_key_field();
 		$join_table_fk_field_to_other_table = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
-		$other_table_alias = $other_table_pk_field->get_table_alias();
+		$other_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_other_model()->get_this_model_name()) . $other_table_pk_field->get_table_alias();
 		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);
 		
 		$SQL = $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column()) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);

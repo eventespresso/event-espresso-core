@@ -1612,7 +1612,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		
 		if(in_array($use_default_where_conditions,array('all','other_models_only'))){
-			foreach($query_info_carrier->get_model_names_included() as $model_name =>$model_relation_path){
+			foreach($query_info_carrier->get_model_names_included() as $model_relation_path => $model_name){
 				$related_model = $this->get_related_model_obj($model_name);
 				$related_model_universal_where_params = $related_model->_get_default_where_conditions($model_relation_path);
 				
@@ -1683,7 +1683,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _construct_default_select_sql(EE_Model_Query_Info_Carrier $model_query_info){
 		$selects = $this->_get_columns_to_select_for_this_model();
-		foreach($model_query_info->get_model_names_included() as $name_of_other_model_included=>$model_relation_chain){
+		foreach($model_query_info->get_model_names_included() as $model_relation_chain => $name_of_other_model_included){
 			$other_model_included = $this->get_related_model_obj($name_of_other_model_included);
 			$selects = array_merge($selects, $other_model_included->_get_columns_to_select_for_this_model());
 		}
@@ -1720,9 +1720,8 @@ abstract class EEM_Base extends EE_Base{
 	 * onto its related Transaction object to do the same. Returns an EE_Join_And_Data_Types object which contains the SQL
 	 * for joining, and the data types
 	 * @param string $query_param like Registration.Transaction.TXN_ID
-	 * @param boolean $look_for_field_names. if true (default), we're working with strings like 'Event.Venue.VNU_ID' or 'Registration.REG_ID'
-	 * @param boolean $allow_logic_query_params whether or not to allow logic_query_params like 'NOT','OR', or 'AND'
-	 * or 'PAY_ID'. Otherwise, we don't expect there to be a column name. We only want model names, eg 'Event.Venue' or 'Registration's
+	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info object storing all the accumulated query info up to this point
+	 * @param $query_param_type string mostly just used in case of errors. Array key in $query_params, @see EEM_Base::get_all
 	 * @param string $original_query_param what it originally was (eg Registration.Transaction.TXN_ID). If null, we assume it matches $query_param
 	 * @return void only modifies the EEM_Related_Model_Info_Carrier passed into it
 	 */	
@@ -1794,8 +1793,8 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
 	 * @param string $original_query_param used to extract the relation chain between the queried model and $model_name.
 	 * Eg, if we are querying Event, and are adding a join to 'Payment' with the original queyr param key 'Registration.Transaction.Payment.PAY_amount',
-	 * we want to extract 'Registration.Transaction', in case Payment wants to add default query params so that it will know
-	 * what models to prepend onto its default query params
+	 * we want to extract 'Registration.Transaction.Payment', in case Payment wants to add default query params so that it will know
+	 * what models to prepend onto its default query params or in case it wants to rename tables (in case there are multiple joins to the same table)
 	 * @return void
 	 */
 	private function _add_join_to_model($model_name, EE_Model_Query_Info_Carrier $passed_in_query_info,$original_query_param){
@@ -1806,33 +1805,55 @@ abstract class EEM_Base extends EE_Base{
 		//If so, join first to the JOIN table, and add its data types, and then continue as normal
 		if($relation_obj instanceof EE_HABTM_Relation){
 			$join_model_obj = $relation_obj->get_join_model();
+			//replace the model specified with the join model for this relation chain, whi
+			$relation_chain_to_join_model = $this->_replace_model_name_with_join_model_name_in_model_relation_chain($model_name, $join_model_obj->get_this_model_name(), $model_relation_chain);
 			$new_query_info = new EE_Model_Query_Info_Carrier(
-					array($join_model_obj->get_this_model_name()=>''), 
-					$relation_obj->get_join_to_intermediate_model_statement());
+					array($relation_chain_to_join_model => $join_model_obj->get_this_model_name()), 
+					$relation_obj->get_join_to_intermediate_model_statement($relation_chain_to_join_model));
 			$passed_in_query_info->merge( $new_query_info  );
 		}
 		//now just join to the other table pointed to by the relation object, and add its data types
 		$new_query_info = new EE_Model_Query_Info_Carrier(
-				array($model_name=>$model_relation_chain), 
-				$relation_obj->get_join_statement());
+				array($model_relation_chain=>$model_name), 
+				$relation_obj->get_join_statement($model_relation_chain));
 		$passed_in_query_info->merge( $new_query_info  );
 	}
 	
 	/**
 	 * Gets the model relation chain to $model_name from the $original_query_param.
-	 * Eg, if $model_name were 'Payment', and $originL-query_param were 'Registration.Transaction.Payment.PAY_ID',
-	 * this would return 'Registration.Transaction.Payment'
+	 * Eg, if $model_name were 'Payment', and $original_query_param were 'Registration.Transaction.Payment.PAY_ID',
+	 * this would return 'Registration.Transaction.Payment'. Also if the query param were 'Registration.Transaction.Payment'
+	 * and $model_name were 'Payment', it should return 'Registration.Transaction.Payment'
 	 * @param string $model_name
 	 * @param string $original_query_param
 	 * @return string
 	 */
 	private function _extract_model_relation_chain($model_name,$original_query_param){
+		//prefix and postfix both with a period, as this facilitates searching
+		$model_name = EE_Model_Parser::pad_with_periods($model_name);
+		$original_query_param = EE_Model_Parser::pad_with_periods($original_query_param);
 		$pos_of_model_string = strpos($original_query_param, $model_name);
 		//eg, if we're looking for the model relationp chain from Event to Payment, the original query param is probably something like
 		//"Registration.Transaction.Payment.PAY_ID", $pos_of_modle_string points to the 'P' or Payment. We want the string
 		//"Registration.Transaction.Payment"
 		$model_relation_chain = substr($original_query_param, 0,$pos_of_model_string+strlen($model_name));
-		return $model_relation_chain;
+		return EE_Model_Parser::trim_periods($model_relation_chain);
+	}
+	
+	
+	/**
+	 * Replaces the specified model in teh model relation chain with teh join model
+	 * @param type $model_name
+	 * @param type $join_model_name
+	 * @param type $model_relation_chain
+	 * @return string
+	 */
+	private function _replace_model_name_with_join_model_name_in_model_relation_chain($model_name,$join_model_name,$model_relation_chain){
+		$model_name = EE_Model_Parser::pad_with_periods($model_name);
+		$join_model_name = EE_Model_Parser::pad_with_periods($join_model_name);
+		$model_relation_chain = EE_Model_Parser::pad_with_periods($model_relation_chain);
+		$replaced_with_periods = str_replace($model_name,$join_model_name,$model_relation_chain);
+		return EE_Model_Parser::trim_periods($replaced_with_periods);
 	}
 	
 	
@@ -2189,18 +2210,19 @@ abstract class EEM_Base extends EE_Base{
 	 * @param string $alias table alias to join to (this table should already be in the FROM SQL clause)
 	 * @return string
 	 */
-	function _construct_internal_join_to_table_with_alias($alias){
+	function _construct_internal_join_to_table_with_alias($alias_prefixed){
 		$SQL = '';
+		$alias_sans_prefix = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($alias_prefixed);
 		foreach($this->_tables as $table_obj){
 			if($table_obj instanceof EE_Secondary_Table){//table is secondary table
-				if($alias == $table_obj->get_table_alias()){
+				if($alias_sans_prefix == $table_obj->get_table_alias()){
 					//so we're joining to this table, meaning the table is already in 
 					//the FROM statement, BUT the primary table isn't. So we want
 					//to add the inverse join sql
-					$SQL .= $table_obj->get_inverse_join_sql();
+					$SQL .= $table_obj->get_inverse_join_sql($alias_prefixed);
 				}else{
 					//just add a regular JOIN to this table from the primary table
-					$SQL .= $table_obj->get_join_sql();
+					$SQL .= $table_obj->get_join_sql($alias_prefixed);
 				}
 			}//if it's a primary table, dont add any SQL. it should alredy be in the FROM statement
 		}
@@ -2386,11 +2408,13 @@ abstract class EEM_Base extends EE_Base{
 	}
 	/**
 	 * Gets the actual table for the table alias
-	 * @param string $table_alias eg Event, Event_Meta, Registration, Transaction
+	 * @param string $table_alias eg Event, Event_Meta, Registration, Transaction, but maybe
+	 * a table alias with a model chain prefix, like 'Venue__Event_Venue___Event_Meta'. Either one works
 	 * @return EE_Table_Base
 	 */
 	function get_table_for_alias($table_alias){
-		return $this->_tables[$table_alias]->get_table_name();
+		$table_alias_sans_model_relation_chain_prefix = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($table_alias);
+		return $this->_tables[$table_alias_sans_model_relation_chain_prefix]->get_table_name();
 	}
 	/**
 	 * Returns a flat array of all field son this model, instead of organizing them 

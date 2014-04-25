@@ -11,7 +11,7 @@ require_once( EE_MODELS . 'relations/EE_Belongs_To_Relation.php');
 class EE_Belongs_To_Any_Relation extends EE_Belongs_To_Relation {
 
 
-	function get_join_statement() {
+	function get_join_statement($model_relation_chain) {
 		//create the sql string like
 		$this_table_fk_field = $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		//ALSO, need to get the field with the model name
@@ -19,8 +19,8 @@ class EE_Belongs_To_Any_Relation extends EE_Belongs_To_Relation {
 		
 		
 		$other_table_pk_field = $this->get_other_model()->get_primary_key_field();
-		$this_table_alias = $this_table_fk_field->get_table_alias();
-		$other_table_alias = $other_table_pk_field->get_table_alias();
+		$this_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain,$this->get_this_model()->get_this_model_name()) . $this_table_fk_field->get_table_alias();
+		$other_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_other_model()->get_this_model_name()) . $other_table_pk_field->get_table_alias();
 		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);
 		return $this->_left_join($other_table, 
 				$other_table_alias, 

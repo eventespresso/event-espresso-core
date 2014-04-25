@@ -215,9 +215,10 @@ abstract class EE_Model_Relation_Base{
 	
 	/**
 	 * Gets the SQL string for performing the join between this model and the other model.
+	 * @param string $model_relation_chain like 'Event.Event_Venue.Venue'
 	 * @return string of SQL, eg "LEFT JOIN table_name AS table_alias ON this_model_primary_table.pk = other_model_primary_table.fk" etc
 	 */
-	abstract function get_join_statement();
+	abstract function get_join_statement($model_relation_chain);
 	
 	
 	/**
@@ -274,6 +275,5 @@ abstract class EE_Model_Relation_Base{
 				$this->get_other_model()->item_name(2)
 			);
 		}
-		
 	}
 }

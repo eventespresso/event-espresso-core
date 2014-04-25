@@ -17,8 +17,8 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    /**
     *
     * @var array stating all the models that have been included thus far,so we don't get duplicates.
-    * Keys are model names (eg "Payment"), and values are the model relation chains to them from the queried model
-    * (eg, "Registration.Transaction.Payment")
+    * Keys are the model relation chains to them from the queried model
+    * (eg, "Registration.Transaction.Payment"), and valuesare model names (eg "Payment")
     */
    private $_models_included;
    
@@ -84,7 +84,7 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
     * @param EE_Model_Query_Info_Carrier $other_model_query_info_carrier
     */
    public function merge( $other_model_query_info_carrier ){
-	   if( $other_model_query_info_carrier && ! $this->_have_already_included_one_of_these_models($other_model_query_info_carrier->get_model_names_included())){
+	   if( $other_model_query_info_carrier ){
 		   $model_included_on_other_join_sql_and_data_types_carrier =  $other_model_query_info_carrier->get_model_names_included();
 		   $this->_models_included = array_merge( $this->_models_included, $model_included_on_other_join_sql_and_data_types_carrier );
 			$this->_join_sql .= $other_model_query_info_carrier->_join_sql;
