@@ -1685,7 +1685,7 @@ abstract class EEM_Base extends EE_Base{
 		$selects = $this->_get_columns_to_select_for_this_model();
 		foreach($model_query_info->get_model_names_included() as $model_relation_chain => $name_of_other_model_included){
 			$other_model_included = $this->get_related_model_obj($name_of_other_model_included);
-			$selects = array_merge($selects, $other_model_included->_get_columns_to_select_for_this_model());
+			$selects = array_merge($selects, $other_model_included->_get_columns_to_select_for_this_model($model_relation_chain));
 		}
 		return implode(", ",$selects);
 	}
@@ -1693,13 +1693,15 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets an array of columns to select for this model, which are necessary for it to create its objects.
 	 * So that's going to be the columsn for all the fields on the model
+	 * @param string $model_relation_chain like 'Question.Question_Group.Event'
 	 * @return array numerically indexed, values are columns to select and rename, eg "Event.ID AS 'Event.ID'"
 	 */
-	public function _get_columns_to_select_for_this_model(){
+	public function _get_columns_to_select_for_this_model($model_relation_chain = ''){
 		$fields = $this->field_settings();
 		$selects = array();
+		$table_alias_with_model_relation_chain_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_this_model_name());
 		foreach($fields as $field_name => $field_obj){
-			$selects[] = $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
+			$selects[] = $table_alias_with_model_relation_chain_prefix . $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
 		}
 		//make sure we are also getting the PKs of each table
 		$tables = $this->get_tables();

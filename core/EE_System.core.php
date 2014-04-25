@@ -725,12 +725,13 @@ final class EE_System {
 	*/
 	public function initialize() {
 		EEM_Log::instance()->show_next_x_db_queries();
-		$logs = EEM_Log::instance()->get_all(array(array(
-			'OR'=>array(
-				'Payment.Payment_Method.PMD_ID'=>2,
-				'Payment_Method.PMD_ID'=>2)
-		),'limit'=>10));
+//		$logs = EEM_Log::instance()->get_all(array(array(
+//			'OR'=>array(
+//				'Payment.Payment_Method.PMD_ID'=>2,
+//				'Payment_Method.PMD_ID'=>2)
+//		),'limit'=>10));
 //		d($logs);
+		EEM_Log::instance()->get_all(array('force_join'=>array('Payment.Payment_Method','Payment_Method')));
 		
 		
 //		EEM_Answer::instance()->show_next_x_db_queries();
