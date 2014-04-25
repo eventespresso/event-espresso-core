@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  */
-	
+
 
 
 /**
@@ -28,7 +28,7 @@
  * 2. the same is true for any help_tabs or screen_options you want to add to custom post type views.
  *
  * 3. it is EXPECTED that $this->page_slug will be IDENTICAL to what slug/id was used when doing register_post_type().  So for instance, if you registered a "books" post type then $this->page_slug = 'espresso_books'  would NOT be valid.  So the correct id for the new post type would be "espresso_books".  Remember, you can still use something totally different for front-end rewrite slugs in your configuration array for the register post type.
- * 
+ *
  * @package		Event Espresso
  * @subpackage 	includes/core/admin/EE_Admin_Page.core.php
  * @abstract
@@ -37,7 +37,7 @@
  * ------------------------------------------------------------------------
  */
 abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
-	
+
 
 	/**
 	 * This gets set in _setup_cpt
@@ -76,7 +76,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * array(
 	 * 'post_type_slug' => 'edit_route'
 	 * )
-	 * 
+	 *
 	 * @var array
 	 */
 	protected $_cpt_edit_routes = array();
@@ -89,7 +89,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * the _cpt_model_names property should be in the following format:
 	 * array(
 	 * 'route_defined_by_action_param' => 'Model_Name')
-	 * 
+	 *
 	 * @var boolean
 	 */
 	protected $_cpt_model_names = array();
@@ -100,7 +100,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 	/**
 	 * This will hold an array of autosave containers that will be used to obtain input values and hook into the WP autosave so we can save our inputs on the save_post hook!  Children classes should add to this array by using the _register_autosave_containers() method so that we don't override any other containers already registered.  Registration of containers should be done before load_page_dependencies() is run.
-	 * 
+	 *
 	 * @var array()
 	 */
 	protected $_autosave_containers = array();
@@ -111,14 +111,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	/**
 	 * This is hooked into the WordPress do_action('save_post') hook and runs after the custom post type has been saved.  Child classes are required to declare this method.  Typically you would use this to save any additional data.
 	 *
-	 * Keep in mind also that "save_post" runs on EVERY post update to the database.  
+	 * Keep in mind also that "save_post" runs on EVERY post update to the database.
 	 * ALSO very important.  When a post transitions from scheduled to published, the save_post action is fired but you will NOT have any _POST data containing any extra info you may have from other meta saves.  So MAKE sure that you handle this accordingly.
 	 *
 	 * @access protected
 	 * @abstract
 	 * @param  string $post_id The ID of the cpt that was saved (so you can link relationally)
-	 * @param  object $post    The post object of the cpt that was saved. 
-	 * @return void          
+	 * @param  object $post    The post object of the cpt that was saved.
+	 * @return void
 	 */
 	abstract protected function _insert_update_cpt_item( $post_id, $post );
 
@@ -174,12 +174,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//let's see if the current route has a value for cpt_object_slug if it does we use that instead of the page
 		$this->_cpt_object = isset($this->_req_data['action']) && isset( $this->_cpt_routes[$this->_req_data['action']] ) ? get_post_type_object($this->_cpt_routes[$this->_req_data['action']]) : get_post_type_object( $page );
-
 		//TODO the below will need to be reworked to account for the cpt routes that are NOT based off of page but action param.
 		//get current page from autosave
 		$current_page = isset( $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] ) ? $this->_req_data['ee_autosave_data']['ee-cpt-hidden-inputs']['current_page'] : NULL;
 		$this->_current_page = isset( $this->_req_data['current_page'] ) ? $this->_req_data['current_page'] : $current_page;
-		
+
 		//autosave... make sure its only for the correct page
 		if ( !empty($this->_current_page ) && $this->_current_page == $this->page_slug ) {
 			//setup autosave ajax hook
@@ -192,7 +191,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 	/**
-	 * This method is used to register additional autosave containers to the _autosave_containers property. 
+	 * This method is used to register additional autosave containers to the _autosave_containers property.
 	 *
 	 * @todo We should automate this at some point by creating a wrapper for add_post_metabox and in our wrapper we automatically register the id for the post metabox as a container.
 	 * @param  array $ids an array of ids for containers that hold form inputs we want autosave to pickup.  Typically you would send along the id of a metabox container.
@@ -287,8 +286,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 
 		//now let's do some automatic filters into the wp_system and we'll check to make sure the CHILD class automatically has the required methods in place.
-		
-		//the following filters are for setting all the redirects on DEFAULT WP custom post type actions	
+
+		//the following filters are for setting all the redirects on DEFAULT WP custom post type actions
 		//let's add a hidden input to the post-edit form so we know when we have to trigger our custom redirects!  Otherwise the redirects will happen on ALL post saves which wouldn't be good of course!
 		add_action('edit_form_after_title', array( $this, 'cpt_post_form_hidden_input') );
 
@@ -318,7 +317,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		//add preview button
 		add_filter('get_sample_permalink_html', array($this, 'preview_button_html'), 5, 4 );
-		
+
 
 		//insert our own post_stati dropdown
 		add_action('post_submitbox_misc_actions', array($this, 'custom_post_stati_dropdown' ), 10 );
@@ -423,13 +422,13 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 *	Keep in mind the following things:
 	 *	- "where" index is for the input with the id as that string.
 	 *	- "what" index is what will be used for the value of that input.
-	 *	
-	 * 
-	 * @return JSON object 
+	 *
+	 *
+	 * @return JSON object
 	 */
 	public function do_extra_autosave_stuff() {
 
-		//next let's check for the autosave nonce (we'll use _verify_nonce )		
+		//next let's check for the autosave nonce (we'll use _verify_nonce )
 		$nonce = isset( $this->_req_data['autosavenonce'] ) ? $this->_req_data['autosavenonce'] : NULL;
 		$this->_verify_nonce( $nonce, 'autosave' );
 
@@ -448,7 +447,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		do_action( 'AHEE__EE_Admin_Page_CPT__do_extra_autosave_stuff__after_' . get_class( $this ), $this );
 
 		//now let's return json
-		$this->_return_json();		
+		$this->_return_json();
 	}
 
 
@@ -462,6 +461,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @return void
 	 */
 	protected function _extend_page_config_for_cpt() {
+
 		//before doing anything we need to make sure this runs ONLY when the loaded page matches the set page_slug
 		if ( ( isset( $this->_req_data['page'] ) && $this->_req_data['page'] != $this->page_slug ) )
 			return;
@@ -496,10 +496,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		}
 
 		//load the next section only if this is a matching cpt route as set in the cpt routes array.
-		if ( !isset( $this->_cpt_routes[$this->_req_action] ) ) 
+		if ( !isset( $this->_cpt_routes[$this->_req_action] ) )
 			return;
 
-				
+
 		$this->_cpt_route = isset( $this->_cpt_routes[$this->_req_action] ) ? TRUE : FALSE;
 		//add_action('FHEE__EE_Admin_Page___load_page_dependencies__after_load', array( $this, 'modify_current_screen') );
 
@@ -514,7 +514,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			$id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
 			$this->_set_model_object( $id );
 		}
-		
+
 	}
 
 
@@ -530,13 +530,14 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	protected function _set_model_object( $id = NULL ) {
 
-		if ( empty( $this->_cpt_model_names ) || !isset( $this->_cpt_routes[$this->_req_action] ) || ( is_object( $this->_cpt_model_obj ) && $this->_cpt_model_obj->ID() == $id ) ) 
-			return; //get out we either don't have a model name OR the object has already been set and it has the same id as what has been sent. 
-
-		require_once( EE_MODELS . $this->_cpt_model_names[$this->_req_action] . '.model.php' );
-		$model = call_user_func( array( $this->_cpt_model_names[$this->_req_action] , 'instance' ) );
-		$this->_cpt_model_obj = !empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
-
+		if ( empty( $this->_cpt_model_names ) || ! isset( $this->_cpt_routes[ $this->_req_action ] ) || ( is_object( $this->_cpt_model_obj ) && $this->_cpt_model_obj->ID() == $id )) {
+			//get out cuz we either don't have a model name OR the object has already been set and it has the same id as what has been sent.
+			return;
+		}
+		// load CPT object model
+		$model = EE_Registry::instance()->load_model( $this->_cpt_model_names[$this->_req_action] );
+		$this->_cpt_model_obj = ! empty( $id ) ? $model->get_one_by_ID( $id ) : $model->create_default_object();
+		//d( $this->_cpt_model_obj );
 		do_action( 'AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object' );
 	}
 
@@ -576,7 +577,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 
 		/**var_dump($this->_req_data);
 		exit();/**/
-		
+
 		if ( !empty( $revision ) ) {
 			$action = isset( $this->_req_data['action'] ) ? $this->_req_data['action'] : NULL;
 
@@ -623,10 +624,10 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function verify_cpt_object() {
 		$label = !empty( $this->_cpt_object ) ? $this->_cpt_object->labels->singular_name : $this->page_label;
+		// verify event object
 		if ( ! $this->_cpt_model_obj instanceof EE_CPT_Base ) {
 			throw new EE_Error( sprintf( __('Something has gone wrong with the page load because we are unable to set up the object for the %1$s.  This usually happens when the given id for the page route is NOT for the correct custom post type for this page', 'event_espresso' ), $label ) );
 		}
-
 		//if auto-draft then throw an error
 		if ( $this->_cpt_model_obj->get('status') == 'auto-draft' ) {
 			EE_Error::overwrite_errors();
@@ -643,7 +644,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * Anything triggered by the 'admin_print_footer_scripts' WP hook should be put in here. This particular method will apply on ALL EE_Admin pages.
 	 *
 	 * @access public
-	 * @return void 
+	 * @return void
 	 */
 	public function admin_footer_scripts_global() {
 		$this->_add_admin_page_ajax_loading_img();
@@ -677,7 +678,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 				wp_localize_script('ee_admin_js', 'eeCPTstatuses', $ee_cpt_statuses );
 			}
 		}
-	}	
+	}
 
 
 
@@ -686,7 +687,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * This is a wrapper for the insert/update routes for cpt items so we can add things that are common to ALL insert/updates
 	 * @param  int    $post_id ID of post being updated
 	 * @param  object $post    Post object from WP
-	 * @return void          
+	 * @return void
 	 */
 	public function insert_update( $post_id, $post ) {
 
@@ -702,7 +703,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 					$this->_req_data[$key] = $value;
 				}
 			}
-			
+
 		}/**/ //TODO reactivate after autosave is implemented in 4.2
 
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE )
@@ -718,7 +719,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	/**
 	 * This hooks into the wp_trash_post() function and removes the `_wp_trash_meta_status` and `_wp_trash_meta_time` post meta IF the trashed post is one of our CPT's - note this method should only be called with our cpt routes so we don't have to check for our CPT.
 	 * @param  int    $post_id ID of the post
-	 * @return void          
+	 * @return void
 	 */
 	public function dont_permanently_delete_ee_cpts( $post_id ) {
 		delete_post_meta( $post_id, '_wp_trash_meta_status' );
@@ -738,11 +739,11 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * This is a wrapper for the restore_cpt_revision route for cpt items so we can make sure that when a revision is triggered that we restore related items.  In order to work cpt classes MUST have a restore_cpt_revision method in them.  We also have our OWN action in here so addons can hook into the restore process easily.
 	 * @param  int    $post_id     ID of cpt item
 	 * @param  int    $revision_id ID of revision being restored
-	 * @return void 	            
+	 * @return void
 	 */
 	public function restore_revision( $post_id, $revision_id ) {
 		$this->_restore_cpt_item( $post_id, $revision_id );
-		
+
 		//global action
 		do_action( 'AHEE_EE_Admin_Page_CPT__restore_revision', $post_id, $revision_id);
 
@@ -756,7 +757,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * @see restore_revision() for details
 	 * @param  int $post_id     ID of cpt item
 	 * @param  int $revision_id ID of revision for item
-	 * @return void              
+	 * @return void
 	 */
 	abstract protected function _restore_cpt_item( $post_id, $revision_id );
 
@@ -767,7 +768,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 * Execution of this method is added to the end of the load_page_dependencies method in the parent, so that we can fix a bug where default core metaboxes weren't being called in the sidebar.  To fix we have to reset the current_screen using the page_slug (which is identical - or should be - to our registered_post_type id.)
 	 *
 	 * Also, since the core WP file loads the admin_header.php for WP (and there are a bunch of other things edit-form-advanced.php loads that need to happen really early) we need to load it NOW, hence our _route_admin_request in here. (Otherwise screen options won't be set).
-	 * 
+	 *
 	 * @return void
 	 */
 	public function modify_current_screen() {
@@ -777,7 +778,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		//routeing things REALLY early b/c this is a cpt admin page
 		set_current_screen( $this->_cpt_routes[$this->_req_action]);
 		$this->_current_screen = get_current_screen();
-		$this->_current_screen->base = 'event-espresso'; 
+		$this->_current_screen->base = 'event-espresso';
 		$this->_add_help_tabs(); //we make sure we add any help tabs back in!
 		/*try {
 			$this->_route_admin_request();
@@ -955,7 +956,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 */
 	public function cpt_post_location_redirect( $location, $post_id ) {
 		//we DO have a match so let's setup the url
-		
+
 		//we have to get the post to determine our route
 		$post = get_post($post_id);
 		$edit_route = $this->_cpt_edit_routes[$post->post_type];
@@ -1102,7 +1103,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	 *
 	 * @access protected
 	 * @return string   template for edit cpt form
-	 */			
+	 */
 	protected function _edit_cpt_item() {
 		global $post, $title;
 		$post_id = isset( $this->_req_data['post'] ) ? $this->_req_data['post'] : NULL;
@@ -1154,7 +1155,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 	/**
 	 * some getters
 	 */
-	
+
 
 	/**
 	 * This returns the protected _cpt_model_obj property

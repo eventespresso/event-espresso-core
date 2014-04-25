@@ -9,7 +9,7 @@
   License: 			GPLv2
   TextDomain: 	event_espresso
 
-  Copyright (c) 2008-2014 Event Espresso  All Rights Reserved.
+  Copyright 			(c) 2008-2014 Event Espresso  All Rights Reserved.
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
