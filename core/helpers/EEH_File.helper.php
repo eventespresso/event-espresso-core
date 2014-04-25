@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/core/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -38,8 +38,7 @@ class EEH_File extends EEH_Base {
 		$filename = basename( $filepath );
 		//now remove the first period and everything after
 		$pos_of_first_period = strpos( $filename,'.' );
-		$classname = substr($filename, 0, $pos_of_first_period);
-		return $classname;
+		return substr($filename, 0, $pos_of_first_period);
 	}
 
 

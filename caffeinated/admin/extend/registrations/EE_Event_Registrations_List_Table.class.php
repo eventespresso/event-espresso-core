@@ -9,7 +9,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
 	protected $_dtts_for_event = array();
 	/**
-	 * The event if one is specified in teh request
+	 * The event if one is specified in the request
 	 * @var EE_Event
 	 */
 	protected $_evt = NULL;

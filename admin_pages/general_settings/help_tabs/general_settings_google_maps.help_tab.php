@@ -33,7 +33,7 @@
 </li>
 <li>
 <?php _e('<strong>Set Map Alignment</strong>', 'event_espresso'); ?><br />
-<?php _e('Alignment alows you to move the map left, center, or right within the parent event structure. The default alignment is left.', 'event_espresso'); ?>
+<?php _e('Alignment allows you to move the map left, center, or right within the parent event structure. The default alignment is left.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

@@ -341,37 +341,52 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		if ( ! $orig_event instanceof EE_Event )
 			throw new EE_Error( sprintf( __('An EE_Event object could not be retrieved for the given ID (%s)', 'event_espresso '), $this->_req_data['EVT_ID'] ) );
 
+		//k now let's clone the $orig_event before getting relations
+		$new_event = clone $orig_event;
+
 		//original datetimes
 		$orig_datetimes = $orig_event->get_many_related('Datetime');
 
-		//cache relations we want to include in the clone.
-		$orig_event->get_many_related('Question_Group');
-		$orig_event->get_many_related('Promotion_Object');
-		$orig_event->get_many_related('Venue');
+		//other original relations
+		$orig_qgs = $orig_event->get_many_related('Question_Group');
+		$orig_pos = $orig_event->get_many_related('Promotion_Object');
+		$orig_ven = $orig_event->get_many_related('Venue');
 
-		//k now let's clone the $orig_event
-		$new_event = clone $orig_event;
 
 		//reset the ID and modify other details to make it clear this is a dupe
 		$new_event->set( 'EVT_ID', 0 );
 		$new_name = $new_event->name() . ' ' . __('**DUPLICATE**', 'event_espresso');
 		$new_event->set( 'EVT_name',  $new_name );
 		$new_event->set( 'EVT_slug',  sanitize_title_with_dashes( $new_name ) );
-
-		//let's remove relations on this event for datetimes to prevent any sharing of datetimes between events because related datetimes might be cached.
-		$new_event->_remove_relations('Datetime');
+		$new_event->set( 'status', 'draft' );
 
 		//save the new event
+		$new_event->save();
+
+
+		//loop through simple relations and attach to new event
+		//question groups
+		foreach( $orig_qgs as $qg ) {
+			$new_event->_add_relation_to( $qg, 'Question_Group' );
+		}
+
+		//Promotion Object
+		foreach ( $orig_pos as $pos ) {
+			$new_event->_add_relation_to( $pos, 'Promotion_Object' );
+		}
+
+		//venues
+		foreach( $orig_ven as $ven ) {
+			$new_event->_add_relation_to( $ven, 'Venue' );
+		}
 		$new_event->save();
 
 
 		//k now that we have the new event saved we can loop through the datetimes and start adding relations.
 		$cloned_tickets = array();
 		foreach ( $orig_datetimes as $orig_dtt ) {
-			$orig_tkts = $orig_dtt->tickets();
 			$new_dtt = clone $orig_dtt;
-			//remove relations we don't want included in clone .
-			$new_dtt->_remove_relations('Ticket');
+			$orig_tkts = $orig_dtt->tickets();
 
 			//save new dtt then add to event
 			$new_dtt->set('DTT_ID', 0);
@@ -386,19 +401,15 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				if ( ! $orig_tkt instanceof EE_Ticket )
 					continue;
 
-				//get relations on the $orig_tkt that we need to setup.
-				$orig_prices = $orig_tkt->prices();
-
 				//does this original ticket already exist in the clone_tickets cache?  If so we'll just use the new ticket from it.
 				if ( isset( $cloned_tickets[$orig_tkt->ID()] ) ) {
 					$new_tkt = $cloned_tickets[$orig_tkt->ID()];
 				} else {
 					$new_tkt = clone $orig_tkt;
+					//get relations on the $orig_tkt that we need to setup.
+					$orig_prices = $orig_tkt->prices();
 					$new_tkt->set('TKT_ID', 0);
 					$new_tkt->set('TKT_sold', 0);
-
-					//reset relations on the new ticket
-					$new_tkt->_remove_relations('Price');
 
 					$new_tkt->save(); //make sure new ticket has ID.
 
@@ -412,7 +423,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 					}
 				}
 
-				//k now we can add the new ticket as a relaion to the new datetime and make sure its added to our cached $cloned_tickets array for use with later datetimes that have the same ticket.
+				//k now we can add the new ticket as a relation to the new datetime and make sure its added to our cached $cloned_tickets array for use with later datetimes that have the same ticket.
 				$new_dtt->_add_relation_to($new_tkt, 'Ticket');
 				$new_dtt->save();
 				$cloned_tickets[$orig_tkt->ID()] = $new_tkt;

@@ -408,7 +408,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		);
 
 		//setup reg_objects
-		//note we're seting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
+		//note we're setting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
 		$this->reg_objs = array();
 		$regid = 9999990;
 		foreach ( $this->_attendees as $key => $attendee ) {

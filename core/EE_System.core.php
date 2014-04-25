@@ -33,7 +33,7 @@ final class EE_System {
 
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
-	 * So examples of this would be a normal GET request on teh frontend or backend, or a POST, etc.
+	 * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc.
 	 */
 	const req_type_normal = 0;
 	/**
@@ -120,7 +120,7 @@ final class EE_System {
 		// load EE_Config, EE_Textdomain, etc
 		add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
 		// load EE_Config, EE_Textdomain, etc
-		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_addons' ), 7 );
+		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
 		// ALL EE Addons should use the following hook point to attach their initial setup too
@@ -294,33 +294,11 @@ final class EE_System {
 	* @return void
 	*/
 	public function load_espresso_addons() {
+		// set autoloaders for all of the classes implementing EEI_Plugin_API
+		// which provide helpers for EE plugin authors to more easily register certain components with EE.
+		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'plugin_api' );
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
-		$this->_register_plugin_apis();
 	}
-
-
-
-
-	/**
-	 * This method simply requires all the classes implementing EEI_Plugin_API which provide helpers for
-	 * EE plugin authors to more easily register certain components with EE.
-	 *
-	 * @see     /core/libraries/plugin_api/ for all the current available plugin_api library files.
-	 * @since  4.3.0
-	 *
-	 * @return void
-	 */
-	private function _register_plugin_apis() {
-		$plugin_apis_to_register = glob( EE_LIBRARIES . 'plugin_api/*' );
-		//allow PLUGINS to add their own api library classes if they wish.
-		$plugin_apis_to_register = apply_filters( 'FHEE__EE_System___register_plugin_apis__plugin_apis_to_register', $plugin_apis_to_register );
-		//cycle through and setup paths.
-		foreach ( $plugin_apis_to_register as $file ) {
-			if ( is_readable( $file ) )
-				require_once $file;
-		}
-	}
-
 
 
 
@@ -398,7 +376,7 @@ final class EE_System {
 	 * NOT necessarily the state of the database
 	 *
 	 * @param null $espresso_db_update
-	 * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from teh options table
+	 * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from the options table
 	 * @return array the correct value of 'espresso_db_upgrade', after saving it, if it needed correction
 	 */
 	private function fix_espresso_db_upgrade_option($espresso_db_update = null){
@@ -473,7 +451,7 @@ final class EE_System {
 	 * Adds the current code version to the saved wp option which stores a list of all ee versions ever installed.
 	 *
 	 * @param null $espresso_db_update
-	 * @internal param array $espresso_db_update_value teh value of the WordPress option. If not supplied, fetches it from teh options table
+	 * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from the options table
 	 * @return boolean success as to whether or not this option was changed
 	 */
 	public function update_list_of_installed_versions($espresso_db_update = null){
@@ -491,8 +469,8 @@ final class EE_System {
 	 *
 	 * @param $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
 	 *                            If not provided, this function retrieves it from the database... so the parameter only exists for optimization
-	 * @internal param array $espresso_db_update_value teh value of the wordpress option.
-	 *                            If not supplied, fetches it from teh options table.
+	 * @internal param array $espresso_db_update_value the value of the wordpress option.
+	 *                            If not supplied, fetches it from the options table.
 	 *                            Also, caches its result so later parts of the code can also know whether there's been an
 	 *                            update or not. This way we can add the current version to espresso_db_update,
 	 *                            but still know if this is a new install or not
@@ -607,15 +585,15 @@ final class EE_System {
 
 
 	/**
-	* register_shortcodes_modules_and_addons
+	* register_shortcodes_modules_and_widgets
 	*
 	* generate lists of shortcodes and modules, then verify paths and classes
 	*
 	* @access public
 	* @return void
 	*/
-	public function register_shortcodes_modules_and_addons() {
-		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons' );
+	public function register_shortcodes_modules_and_widgets() {
+		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
 	}
 
 
@@ -711,8 +689,10 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__load_controllers__start' );
 		// let's get it started
 		if ( ! is_admin() && !  EE_Maintenance_Mode::instance()->level() ) {
+			do_action( 'AHEE__EE_System__load_controllers__load_front_controllers' );
 			EE_Registry::instance()->load_core( 'Front_Controller' );
 		} else if ( ! EE_FRONT_AJAX ) {
+			do_action( 'AHEE__EE_System__load_controllers__load_admin_controllers' );
 			EE_Registry::instance()->load_core( 'Admin' );
 		}
 		do_action( 'AHEE__EE_System__load_controllers__complete' );

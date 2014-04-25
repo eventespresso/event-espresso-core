@@ -6,7 +6,7 @@
  */
 class EE_Default_Where_Conditions{
 	/**
-	 * Model fo rwhich this strategy find defautl where conditions
+	 * Model fo rwhich this strategy find default where conditions
 	 * @var EEM_Base
 	 */
 	protected $_model;

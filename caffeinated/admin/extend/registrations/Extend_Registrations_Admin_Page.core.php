@@ -606,7 +606,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	public function toggle_checkin_status() {
 		//first make sure we have the necessary data
 		if ( !isset( $this->_req_data['_regid'] ) ) {
-			EE_Error::add_error( __('There must be somethign broken with the html structure because the required data for toggling the Check-in status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('There must be something broken with the html structure because the required data for toggling the Check-in status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_template_args['success'] = FALSE;
 			$this->_template_args['error'] = TRUE;
 			$this->_return_json();

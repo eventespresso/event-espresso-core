@@ -182,7 +182,7 @@ class CPDF_Adapter implements Canvas {
   private $_page_text;
 
   /**
-   * Array of pages for accesing after rendering is initially complete
+   * Array of pages for accessing after rendering is initially complete
    *
    * @var array
    */
@@ -199,7 +199,7 @@ class CPDF_Adapter implements Canvas {
    * Class constructor
    *
    * @param mixed  $paper  The size of paper to use in this PDF ({@link CPDF_Adapter::$PAPER_SIZES})
-   * @param string $orientation The orienation of the document (either 'landscape' or 'portrait')
+   * @param string $orientation The orientation of the document (either 'landscape' or 'portrait')
    */
   function __construct($paper = "letter", $orientation = "portrait") {
 

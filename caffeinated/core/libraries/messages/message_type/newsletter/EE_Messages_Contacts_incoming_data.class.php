@@ -16,7 +16,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  * @since            4.3.0
  * @author          Darren Ethier
  */
-class EE_Messages_Contacts_incoming_data extends EE_messages_incoming_data {
+class EE_Messages_Contacts_incoming_data extends EE_Messages_incoming_data {
 
 
     /**

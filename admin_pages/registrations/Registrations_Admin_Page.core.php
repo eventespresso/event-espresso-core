@@ -2465,7 +2465,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * Metabox for attendee details
 	 * @param  WP_Post $post wp post object
-	 * @return string        attendee address detials (and form)
+	 * @return string        attendee address details (and form)
 	 */
 	public function attendee_address_details($post) {
 		//get attendee object (should already have it)

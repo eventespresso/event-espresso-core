@@ -1,4 +1,4 @@
-<h3 class="ee-registration-details-h3"><?php _e('Registration  Details:', 'event_espreso'); ?></h3>
+<h3 class="ee-registration-details-h3"><?php _e('Registration  Details:', 'event_espresso'); ?></h3>
 
 <div class="ee-registration-details-dv">
 <?php

@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * extends EE_Admin_List_Table class
  *
- * @package		Evetn Espresso
+ * @package		Event Espresso
  * @subpackage	/includes/core/admin/messages
  * @author		Darren Ethier
  *

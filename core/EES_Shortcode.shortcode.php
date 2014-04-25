@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/shortcodes/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -35,11 +35,12 @@ abstract class EES_Shortcode extends EE_Base {
 
 
 	/**
-	 * 	run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
-	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
+	 *    run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
+	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param WP $WP
+	 * @return    void
 	 */
 	public abstract function run( WP $WP );
 
@@ -56,12 +57,12 @@ abstract class EES_Shortcode extends EE_Base {
 	public abstract function process_shortcode( $attributes = array() );
 
 
-	
+
 	/**
 	*	instance - returns intance of child class object
 	*
 	*	@access public
-	*	@return 	void
+	*	@return 	EES_Shortcode
 	*/
 	final public static function instance() {
 		$shortcode_class = EES_Shortcode::_get_called_class();
@@ -70,7 +71,7 @@ abstract class EES_Shortcode extends EE_Base {
 		return $shortcode_obj instanceof $shortcode_class || $shortcode_class == 'self' ? $shortcode_obj : new $shortcode_class();
 	}
 
-	
+
 	/**
 
 	*
@@ -84,36 +85,38 @@ abstract class EES_Shortcode extends EE_Base {
 		return self::$_called_class;
 	}
 
-	
+
+
 	/**
-	*	fallback_shortcode_processor - create instance and call process_shortcode
-	* 	NOTE: shortcode may not function perfectly dues to missing assets, but it's better than not having things work at all
-	*
-	*	@access public
-	*	@return 	void
-	*/
+	 *    fallback_shortcode_processor - create instance and call process_shortcode
+	 *    NOTE: shortcode may not function perfectly dues to missing assets, but it's better than not having things work at all
+	 *
+	 * @access public
+	 * @param $attributes
+	 * @return    void
+	 */
 	final public static function fallback_shortcode_processor( $attributes ) {
 		$shortcode_obj = self::instance();
 		return $shortcode_obj instanceof EES_Shortcode ? $shortcode_obj->process_shortcode( $attributes ) : NULL;
 	}
 
 
-	
+
 	/**
-	*	class constructor - can ONLY be instantiated by EE_Front_Controller
-	*
-	*	@access public
-	 *	@param 	EE_Registry	$EE
-	*	@return 	void
-	*/
+	 *    class constructor - can ONLY be instantiated by EE_Front_Controller
+	 *
+	 * @access   public
+	 * @internal param \EE_Registry $EE
+	 * @return \EES_Shortcode
+	 */
 	final public function __construct() {
 		// get classname, remove EES_prefix, and convert to UPPERCASE
 		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this )));
-		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));		
+		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));
 	}
 
 
-	
+
 }
 // End of file EES_Shortcode.shortcode.php
 // Location: /shortcodes/EES_Shortcode.shortcode.php

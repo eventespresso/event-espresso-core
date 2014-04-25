@@ -25,7 +25,7 @@ require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
 class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 	/**
-	 * ID of this question gruop
+	 * ID of this question group
 	 * @access protected
 	 * @var int
 	 */
@@ -46,7 +46,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	protected $_QSG_identifier=NULL;
 
 	/**
-	 * Question group descripton
+	 * Question group description
 	 * @access protected
 	 * @var string
 	 */
@@ -54,7 +54,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Integer to indicate where this question group
-	 * should be placed relative to other question gruops in a sequence
+	 * should be placed relative to other question groups in a sequence
 	 * @access protected
 	 * @var int
 	 */
@@ -70,8 +70,8 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	protected $_QSG_show_group_name=NULL;
 
 	/**
-	 * Boolean to dinicate whether the group description
-	 * should be shown when displayign this question gruop
+	 * Boolean to indicate whether the group description
+	 * should be shown when displaying this question group
 	 * on the frontend
 	 * @access protected
 	 * @var boolean
@@ -79,7 +79,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	protected $_QSG_show_group_desc=NULL;
 
 	/**
-	 * Boolean to indicate whether this question gruop
+	 * Boolean to indicate whether this question group
 	 * is a mandatory one, ie integral to the system
 	 * @access protected
 	 * @var boolean
@@ -111,7 +111,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Join model object between events and question groups. Mostly just useful for finding
-	 * which question gruops apply to primary attendees
+	 * which question groups apply to primary attendees
 	 * @access protected
 	 * @var EE_Event_Question_Group
 	 */
@@ -138,7 +138,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * gets teh question gruop's name
+	 * gets the question group's name
 	 * @access public
 	 * @return string
 	 */
@@ -166,7 +166,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Gets the question group's order number in a sequence
-	 * of other quesiton groups
+	 * of other question groups
 	 * @access public
 	 * @return int
 	 */
@@ -175,7 +175,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Returns whether to show the gruop's name on teh frontend
+	 * Returns whether to show the group's name on the frontend
 	 * @access public
 	 * @return boolean
 	 */
@@ -184,7 +184,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Returns wehther to show the group's descripton
+	 * Returns wehther to show the group's description
 	 * on the frontend
 	 * @access public
 	 * @return boolean
@@ -194,9 +194,9 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Returns wehther this is a 'sytem group' (meaning
-	 * a question gruop integral to teh system, whose questions
-	 * relate to teh attendee table)
+	 * Returns wehther this is a 'system group' (meaning
+	 * a question group integral to the system, whose questions
+	 * relate to the attendee table)
 	 * @access public
 	 * @return boolean
 	 */
@@ -205,7 +205,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Returns whether this question gruop has
+	 * Returns whether this question group has
 	 * been deleted
 	 * @access public
 	 * @return boolean

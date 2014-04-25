@@ -314,7 +314,7 @@ class Stylesheet {
 			 mb_substr_count($selector, ">") +
 			 mb_substr_count($selector, "+"), 255);
 
-	//If a normal element name is at the begining of the string,
+	//If a normal element name is at the beginning of the string,
 	//a leading whitespace might have been removed on whitespace collapsing and removal
 	//therefore there might be one whitespace less as selected element names
 	//this can lead to a too small specificity

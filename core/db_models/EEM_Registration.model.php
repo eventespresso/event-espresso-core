@@ -289,7 +289,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 	*		get the number of registrations per day  for the Registration Admin page Reports Tab.
 	 *		(doesn't utilize models because it's a fairly specialized query)
 	* 		@access		public
-	 *		@param $period string which can be passed to php's strtotime functino (eg "-1 month")
+	 *		@param $period string which can be passed to php's strtotime function (eg "-1 month")
 	 *		@return stdClass[] with properties regDate and total
 	*/
 	public function get_registrations_per_day_report( $period = '-1 month' ) {

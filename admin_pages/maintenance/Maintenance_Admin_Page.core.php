@@ -246,7 +246,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * returns JSON and executes anotehr step of teh currently-executing data migration (called via ajax)
+	 * returns JSON and executes another step of the currently-executing data migration (called via ajax)
 	 */
 	public function migration_step(){
 		$this->_template_args['data'] = EE_Data_Migration_Manager::instance()->response_to_migration_ajax_request();
@@ -268,7 +268,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * changes teh maintenane level, provided there are still no migration scripts that shoudl run
+	 * changes the maintenance level, provided there are still no migration scripts that shoudl run
 	 */
 	public function _change_maintenance_level(){
 		$new_level = intval($this->_req_data['maintenance_mode_level']);
