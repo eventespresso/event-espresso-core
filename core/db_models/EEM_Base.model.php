@@ -1966,8 +1966,8 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _deduce_column_name_from_query_param($query_param){
 		$field = $this->_deduce_field_from_query_param($query_param);
-		$table_alias_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_from_query_param($query_param, $field->get_qualified_column());
 		if( $field ){
+			$table_alias_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_from_query_param($query_param, $field->get_qualified_column());
 			return $table_alias_prefix . $field->get_qualified_column();
 		}elseif(array_key_exists($query_param,$this->_custom_selections)){
 			//maybe it's custom selection item?
