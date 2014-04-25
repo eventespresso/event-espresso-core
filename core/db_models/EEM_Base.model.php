@@ -1938,6 +1938,7 @@ abstract class EEM_Base extends EE_Base{
 				}
 			}else{
 				$field_obj = $this->_deduce_field_from_query_param($query_param);
+				
 				//if it's not a normal field, mayeb it's a custom selection?
 				if( ! $field_obj){
 					if(isset( $this->_custom_selections[$query_param][1])){
@@ -1965,8 +1966,9 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _deduce_column_name_from_query_param($query_param){
 		$field = $this->_deduce_field_from_query_param($query_param);
+		$table_alias_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_from_query_param($query_param, $field->get_qualified_column());
 		if( $field ){
-			return $field->get_qualified_column();
+			return $table_alias_prefix . $field->get_qualified_column();
 		}elseif(array_key_exists($query_param,$this->_custom_selections)){
 			//maybe it's custom selection item?
 			//if so, just use it as the "column name"
@@ -2145,6 +2147,7 @@ abstract class EEM_Base extends EE_Base{
 			return null;
 		}
 	}
+	
 	
 	
 	/**
@@ -2521,12 +2524,14 @@ abstract class EEM_Base extends EE_Base{
 		$primary_key = NULL;
 		//make sure the array only has keys that are fields/columns on this model
 		$this_model_fields_n_values = array();
-		foreach( $cols_n_values as $col => $val ) {
+		foreach( $cols_n_values as $column_with_model_relation_chain_prefix => $val ) {
 			foreach( $this->field_settings() as $field_name => $field_obj ){
+				//if there is a model relation chain prefix, remove it
+				$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
 				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"				
 				//does the field on the model relate to this column retrieved from the db? 
 				//or is it a db-only field? (not relating to the model)
-				if (( $field_obj->get_qualified_column() == $col || $field_obj->get_table_column() == $col ) && ! $field_obj->is_db_only_field() ) {
+				if (( $field_obj->get_qualified_column() == $column_with_model_relation_chain_prefix || $field_obj->get_table_column() == $column_with_model_relation_chain_prefix ) && ! $field_obj->is_db_only_field() ) {
 					//OK, this field apparently relates to this model.
 					//now we can add it to the array
 					$this_model_fields_n_values[$field_name] = $val;
@@ -2539,8 +2544,15 @@ abstract class EEM_Base extends EE_Base{
 
 		//check we actually foudn results that we can use to build our model object
 		//if not, return null
-		if( empty( $this_model_fields_n_values )) {
-			return NULL;
+		if( $this->has_primary_key_field()){
+			if(empty( $this_model_fields_n_values[$this->primary_key_name()] )){
+				return NULL;
+			}
+		}else if($this->unique_indexes()){
+			$first_column = reset($this_model_fields_n_values);
+			if(empty($first_column)){
+				return NULL;
+			}
 		}
 		
 		// if there is no primary key or the object doesn't already exist in the entity map, then create a new instance

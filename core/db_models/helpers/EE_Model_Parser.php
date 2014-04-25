@@ -26,6 +26,8 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_Model_Parser {
+	const table_alias_model_relation_chain_seperator = '__';
+	const table_alias_model_relation_chain_prefix_end = '___';
 	/**
 	 * Adds a period onto the front and end of the string. This often helps in searching.
 	 * For example, if we want to find the model name "Event", it can be tricky when the following are possible
@@ -50,7 +52,8 @@ class EE_Model_Parser {
 	
 	/**
 	 * Gets the calculatd table's alias 
-	 * @param string $model_relation_chain
+	 * @param string $model_relation_chain or query param
+	 * @return string which can be added onto table aliases to make them unique
 	 */
 	public static function extract_table_alias_model_relation_chain_prefix($model_relation_chain,$this_model_name){
 		//eg $model_relation_chain = 'Venue.Event_Venue.Event.Registration", and $this_model_name = 'Event'
@@ -65,7 +68,7 @@ class EE_Model_Parser {
 		$model_relation_chain = self::trim_periods($model_relation_chain);
 		//eg 'Venue.Event_Venue'
 		//replace periods with double-underscores
-		$model_relation_chain = str_replace(".","__",$model_relation_chain);
+		$model_relation_chain = str_replace(".",self::table_alias_model_relation_chain_seperator,$model_relation_chain);
 		//eg 'Venue__Event_Venue'
 		if($model_relation_chain !=''){
 			$model_relation_chain = $model_relation_chain.self::table_alias_model_relation_chain_prefix_end;
@@ -90,7 +93,11 @@ class EE_Model_Parser {
 		}
 		return $table_alias;
 	}
-	
+	/**
+	 * Gets the table alias model relation chain prefix from the table alias already containing it
+	 * @param string $table_alias_with_model_relation_chain_prefix
+	 * @return string
+	 */
 	public static function get_prefix_from_table_alias_with_model_relation_chain_prefix($table_alias_with_model_relation_chain_prefix){
 		//does this actually have a table alias model relation chain prefix?
 		$pos = strpos($table_alias_with_model_relation_chain_prefix,self::table_alias_model_relation_chain_prefix_end);
@@ -103,8 +110,24 @@ class EE_Model_Parser {
 		}
 		return $prefix;
 	}
-	
-	const table_alias_model_relation_chain_prefix_end = '___';
+	/**
+	 * Gets the table alias model relation chain prefix from teh query param
+	 * @param type $query_param
+	 * @param type $table_alias_sans_prefix
+	 * @return string
+	 */
+	public static function extract_table_alias_model_relation_chain_from_query_param($query_param,$table_alias_sans_prefix){
+		$pos = strpos($query_param,$table_alias_sans_prefix);
+		if($pos == 0){
+			return '';
+		}
+		$prefix = substr($query_param,0,$pos-1);
+		//turn last . indicates the end of the prefix
+		if($prefix){
+			return str_replace(".",self::table_alias_model_relation_chain_seperator,$prefix).self::table_alias_model_relation_chain_prefix_end;
+		}
+		
+	}
 }
 
 // End of file EE_Model_Parser.php

@@ -724,14 +724,15 @@ final class EE_System {
 	* @return void
 	*/
 	public function initialize() {
-		EEM_Log::instance()->show_next_x_db_queries();
+//		EEM_Log::instance()->show_next_x_db_queries();
 //		$logs = EEM_Log::instance()->get_all(array(array(
 //			'OR'=>array(
 //				'Payment.Payment_Method.PMD_ID'=>2,
-//				'Payment_Method.PMD_ID'=>2)
+//				'Payment_Method.PMD_ID'=>2),
+//			'LOG_ID'=>15
 //		),'limit'=>10));
 //		d($logs);
-		EEM_Log::instance()->get_all(array('force_join'=>array('Payment.Payment_Method','Payment_Method')));
+//		EEM_Log::instance()->get_all(array('force_join'=>array('Payment.Payment_Method','Payment_Method')));
 		
 		
 //		EEM_Answer::instance()->show_next_x_db_queries();
@@ -746,7 +747,7 @@ final class EE_System {
 		
 //		EEM_Venue::instance()->get_all(array('force_join'=>array('Event')));
 		//should produce no error
-		die;
+//		die;
 		do_action( 'AHEE__EE_System__initialize' );
 	}
 
