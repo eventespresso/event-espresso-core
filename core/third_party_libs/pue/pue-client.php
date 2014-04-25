@@ -664,7 +664,7 @@ class PluginUpdateEngineChecker {
 				'Accept' => 'application/json'
 			),
 		);
-		$options = apply_filters('puc_request_info_options-'.$this->slug, array());
+		$options = apply_filters('puc_request_info_options-'.$this->slug, $options);
 
 		$url = $this->metadataUrl;
 
