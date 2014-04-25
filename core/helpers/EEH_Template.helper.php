@@ -125,7 +125,7 @@ class EEH_Template {
 		if ( $name != '' ) {
 			$templates[] = "{$slug}-{$name}.php";
 		}
-		// allow tempalte parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
+		// allow template parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
 		if ( apply_filters( "FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", TRUE )) {
 			EEH_Template::locate_template( $templates, $template_args, TRUE, $return_string );
 		}
@@ -177,7 +177,9 @@ class EEH_Template {
 				EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme,
 				// then in the root of the /wp-content/uploads/espresso/templates/ folder
 				EVENT_ESPRESSO_TEMPLATE_DIR,
-				// in the  /wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ folder within the plugin
+				// in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
+				EE_PUBLIC . $current_theme,
+				// in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
 				EE_TEMPLATES . $current_theme,
 				// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
 				EE_PLUGIN_DIR_PATH

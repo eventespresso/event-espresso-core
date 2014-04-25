@@ -1714,7 +1714,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * processes a test send request to do an actual messenger delivery test for the given message tempalte being tested
+	 * processes a test send request to do an actual messenger delivery test for the given message template being tested
 	 * @param  string $context      what context being tested
 	 * @param  string $messenger  	messenger being tested
 	 * @param  string $message_type message type being tested
@@ -1872,7 +1872,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$MTPG = EEM_Message_Template_Group::instance();
 		//first let's GET this group
 		$MTG = $MTPG->get_one_by_ID( $GRP_ID );
-		//then delete permanently all the related Message Tempaltes
+		//then delete permanently all the related Message Templates
 		$deleted = $MTG->delete_related_permanently( 'Message_Template' );
 
 		if ( $deleted === 0 )
