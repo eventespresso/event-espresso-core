@@ -135,43 +135,53 @@ class EED_Ticket_Selector extends  EED_Module {
 		}
 
 		$template_args = array();
+		$template_args['EVT_ID'] = self::$_event->ID();
+		$template_args['event'] = self::$_event;
 		// is the event expired ?
-		if ( ! $template_args['event_is_expired'] = self::$_event->is_expired() ) {
-
-			$template_args['EVT_ID'] = self::$_event->ID();
-			$template_args['event'] = self::$_event;
-
-			// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
-			$template_args['max_atndz'] = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
-
-			// get all tickets for this event ordered by the datetime
-			$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
-				array( 'Datetime.EVT_ID' => self::$_event->ID() ),
-				'order_by' => array( 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
-			));
-
-			$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
-			$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
-			// redirecting to another site for registration ??
-			$external_url = self::$_event->external_url() !== NULL || self::$_event->external_url() !== '' ? self::$_event->external_url() : FALSE;
-			// set up the form
-			$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID(), $external_url );
-			// if not redirecting to another site for registration
-			if ( ! $external_url ) {
-				// then display the ticket selector
-				$ticket_selector .= EEH_Template::locate_template( $templates['ticket_selector'], $template_args );
-			} else {
-				// if not we still need to trigger the display of the submit button
-				add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
-			}
-			$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() );
-			$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
-
-			return $ticket_selector;
-		} else {
+		$template_args['event_is_expired'] = self::$_event->is_expired();
+		if ( $template_args['event_is_expired'] ) {
 			return '<p><span class="important-notice">' . __( 'We\'re sorry, but all tickets sales have ended because the event is expired.', 'event_espresso' ) . '</span></p>';
 		}
 
+		// filter the maximum qty that can appear in the Ticket Selector qty dropdowns
+		$template_args['max_atndz'] = apply_filters('FHEE__EE_Ticket_Selector__display_ticket_selector__max_tickets', self::$_event->additional_limit() );
+		if ( $template_args['max_atndz'] < 1 ) {
+			$sales_closed_msg = __( 'We\'re sorry, but ticket sales have been closed at this time. Please check back again later.', 'event_espresso' );
+			if ( current_user_can( 'edit_post', self::$_event->ID() )) {
+				$sales_closed_msg .=  sprintf(
+					__( '%sThe "Maximum number of tickets allowed per order for this event" option in the Event Editor has been set to "0". %s(click to edit this event)%s', 'event_espresso' ),
+					'<br />',
+					$link = '<span class="edit-link"><a class="post-edit-link" href="' . get_edit_post_link( self::$_event->ID() ) . '">',
+					'</a></span>'
+			);
+			}
+			return '<p><span class="important-notice">' . $sales_closed_msg . '</span></p>';
+		}
+
+		// get all tickets for this event ordered by the datetime
+		$template_args['tickets'] = EEM_Ticket::instance()->get_all( array(
+			array( 'Datetime.EVT_ID' => self::$_event->ID() ),
+			'order_by' => array( 'TKT_order' => 'ASC', 'TKT_start_date' => 'ASC', 'TKT_end_date' => 'ASC' , 'Datetime.DTT_EVT_start' => 'DESC' )
+		));
+
+		$templates['ticket_selector'] =  TICKET_SELECTOR_TEMPLATES_PATH . 'ticket_selector_chart.template.php';
+		$templates['ticket_selector'] =  apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector__template_path', $templates['ticket_selector'], self::$_event );
+		// redirecting to another site for registration ??
+		$external_url = self::$_event->external_url() !== NULL || self::$_event->external_url() !== '' ? self::$_event->external_url() : FALSE;
+		// set up the form
+		$ticket_selector = EED_Ticket_Selector::ticket_selector_form_open( self::$_event->ID(), $external_url );
+		// if not redirecting to another site for registration
+		if ( ! $external_url ) {
+			// then display the ticket selector
+			$ticket_selector .= EEH_Template::locate_template( $templates['ticket_selector'], $template_args );
+		} else {
+			// if not we still need to trigger the display of the submit button
+			add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
+		}
+		$ticket_selector .= EED_Ticket_Selector::display_ticket_selector_submit( self::$_event->ID() );
+		$ticket_selector .= EED_Ticket_Selector::ticket_selector_form_close();
+
+		return $ticket_selector;
 	}
 
 
