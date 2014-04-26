@@ -86,14 +86,6 @@ class EE_Model_Query_Info_Carrier extends EE_Base{
    public function merge( $other_model_query_info_carrier ){
 	   if( $other_model_query_info_carrier && ! $this->_have_already_included_one_of_these_models($other_model_query_info_carrier->get_model_names_included())){
 			$model_included_on_other_join_sql_and_data_types_carrier =  $other_model_query_info_carrier->get_model_names_included();
-			foreach($this->_models_included as $chain => $model){
-				foreach($model_included_on_other_join_sql_and_data_types_carrier as $chain2 => $model2){
-					if($model == $model2){
-						echo "chain1 $chain (for model $model) matches chain2 $chain2 (for model $model2)";
-//						throw new EE_Error();
-					}
-				}
-			}
 			$this->_models_included = array_merge( $this->_models_included, $model_included_on_other_join_sql_and_data_types_carrier );
 			$this->_join_sql .= $other_model_query_info_carrier->_join_sql;
 	   }

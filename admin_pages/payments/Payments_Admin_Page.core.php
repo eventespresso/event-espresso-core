@@ -506,28 +506,27 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 */
 	public function get_payment_logs($per_page = 50, $current_page = 0, $count = false){
 		//we may need to do multiple queries (joining differently), so we actually wan tan array of query params
-		$query_params_for_multiple_queries = array('using_payment' => array(array('LOG_type'=>  EEM_Log::type_gateway)),
-													'using_pm'=>array(array('LOG_type'=>EEM_Log::type_gateway)));
+		$query_params =  array(array('LOG_type'=>  EEM_Log::type_gateway));
 		//check if they've selected a specific payment method
 		if( isset($this->_req_data['_payment_method']) && $this->_req_data['_payment_method'] !== 'all'){
-			$query_params_for_multiple_queries['using_payment'][0] = array('Payment.Payment_Method.PMD_ID'=>$this->_req_data['_payment_method']);
-			$query_params_for_multiple_queries['using_pm'][0] = array('Payment_Method.PMD_ID'=>$this->_req_data['_payment_method']);
+			$query_params[0]['OR*pm_or_pay_pm'] = array('Payment.Payment_Method.PMD_ID'=>$this->_req_data['_payment_method'],
+				'Payment_Method.PMD_ID'=>$this->_req_data['_payment_method']);
 		}
 		//take into account search
 		if(isset($this->_req_data['s']) && $this->_req_data['s']){
 			$similarity_string = array('LIKE','%'.str_replace("","%",$this->_req_data['s']) .'%');
-			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_fname'] = $similarity_string;
-			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_lname'] = $similarity_string;
-			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_email'] = $similarity_string;
-			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Payment_Method.PMD_name'] = $similarity_string;
-			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Payment_Method.PMD_admin_name'] = $similarity_string;
-			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['Payment.Payment_Method.PMD_type'] = $similarity_string;
-			$query_params_for_multiple_queries['using_payment'][0]['OR*s']['LOG_message'] = $similarity_string;
+			$query_params[0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_fname'] = $similarity_string;
+			$query_params[0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_lname'] = $similarity_string;
+			$query_params[0]['OR*s']['Payment.Transaction.Registration.Attendee.ATT_email'] = $similarity_string;
+			$query_params[0]['OR*s']['Payment.Payment_Method.PMD_name'] = $similarity_string;
+			$query_params[0]['OR*s']['Payment.Payment_Method.PMD_admin_name'] = $similarity_string;
+			$query_params[0]['OR*s']['Payment.Payment_Method.PMD_type'] = $similarity_string;
+			$query_params[0]['OR*s']['LOG_message'] = $similarity_string;
 
-			$query_params_for_multiple_queries['using_pm'][0]['OR*s']['Payment_Method.PMD_name'] = $similarity_string;
-			$query_params_for_multiple_queries['using_pm'][0]['OR*s']['Payment_Method.PMD_admin_name'] = $similarity_string;
-			$query_params_for_multiple_queries['using_pm'][0]['OR*s']['Payment_Method.PMD_type'] = $similarity_string;
-			$query_params_for_multiple_queries['using_pm'][0]['OR*s']['LOG_message'] = $similarity_string;
+			$query_params[0]['OR*s']['Payment_Method.PMD_name'] = $similarity_string;
+			$query_params[0]['OR*s']['Payment_Method.PMD_admin_name'] = $similarity_string;
+			$query_params[0]['OR*s']['Payment_Method.PMD_type'] = $similarity_string;
+			$query_params[0]['OR*s']['LOG_message'] = $similarity_string;
 
 		}
 		if(isset( $this->_req_data['payment-filter-start-date'] ) && isset( $this->_req_data['payment-filter-end-date'] )){
@@ -546,40 +545,33 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$start_date = min( $start_date, $end_date );
 			$end_date = max( $start_date, $end_date );
 
-			foreach($query_params_for_multiple_queries as $key=>$query_params){
-				$query_params_for_multiple_queries[$key][0]['LOG_time'] = array('BETWEEN',array($start_date,$end_date));
-			}
+			$query_params[0]['LOG_time'] = array('BETWEEN',array($start_date,$end_date));
+			
+		}
+		if($count){
+			return EEM_Log::instance()->count($query_params);
 		}
 		if(isset($this->_req_data['order'])){
 			$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'DESC';
-			$this->_sort_logs_again_direction = $sort;
-			foreach($query_params_for_multiple_queries as $key=>$query_params){
-				$query_params_for_multiple_queries[$key]['order_by'] = array('LOG_time' => $sort);
-			}
+			$query_params['order_by'] = array('LOG_time' => $sort);		
 		}else{
-			foreach($query_params_for_multiple_queries as $key=>$query_params){
-				$query_params_for_multiple_queries[$key]['order_by'] = array('LOG_time' => 'DESC');
-			}
-			$this->_sort_logs_again_direction = 'DESC';
+				$query_params['order_by'] = array('LOG_time' => 'DESC');
 		}
 		$offset = ($current_page-1)*$per_page;
 
-		$results = array();
-		foreach($query_params_for_multiple_queries as $query_params){
-			if( ! $count && ! isset($this->_req_data['download_results'])){
-				$query_params['limit'] = array( $offset, $per_page );
-			}
-
-			$results += EEM_Log::instance()->get_all($query_params);
+		if( ! isset($this->_req_data['download_results'])){
+			$query_params['limit'] = array( $offset, $per_page );
 		}
-		//now we've lost the ordering if there was one, so re-sort
-		usort($results, array($this,'_sort_logs_again'));
+
+		$results = EEM_Log::instance()->get_all($query_params);
+		
 		//now they've requested to instead just download the file instead of viewing it.
 		if(isset($this->_req_data['download_results'])){
 			header('Content-Disposition: attachment');
 			header("Content-Disposition: attachment; filename=ee_payment_logs_for_".sanitize_key(site_url()));
 			echo "<h1>Payment Logs for ".site_url()."</h1>";
-			d($query_params_for_multiple_queries);
+			echo "<h3>Query:</h3>";
+			var_dump($query_params);
 			$stuff_to_display = array();
 			foreach($results as $key => $log){
 				$stuff_to_display[$key] = $log->model_field_array();
