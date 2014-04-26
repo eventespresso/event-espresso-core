@@ -576,10 +576,10 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			foreach($results as $key => $log){
 				$stuff_to_display[$key] = $log->model_field_array();
 				if($log->object()){
-					$stuff_to_display[$log->OBJ_type()] = $log->object()->model_field_array();
+					$stuff_to_display[$key][$log->OBJ_type()] = $log->object()->model_field_array();
 				}
 			}
-			echo d($stuff_to_display);
+			var_dump($stuff_to_display);
 			die;
 		}
 		if($count){
