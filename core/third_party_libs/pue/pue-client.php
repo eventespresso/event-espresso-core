@@ -578,7 +578,6 @@ class PluginUpdateEngineChecker {
 	function trigger_update_check() {
 		//we're just using this to trigger a PUE ping whenever an option matching the given $this->option_key is saved..
 
-		$triggered = FALSE;
 		$has_triggered = FALSE;
 
 		if ( !empty($_POST) && !empty( $this->option_key ) ) {
