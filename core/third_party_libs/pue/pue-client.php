@@ -714,7 +714,6 @@ class PluginUpdateEngineChecker {
 			'blocking' => TRUE,
 			'user-agent' => 'PUE-stats-carrier',
 			'body' => $body,
-			'blocking' => TRUE,
 			'sslverify' => FALSE
 			);
 
