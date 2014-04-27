@@ -719,7 +719,7 @@ class PluginUpdateEngineChecker {
 			'sslverify' => FALSE
 			);
 
-		$resp = wp_remote_post($this->metadataUrl, $args);
+		wp_remote_post($this->metadataUrl, $args);
 
 	}
 
