@@ -13,17 +13,28 @@
  *
  * ------------------------------------------------------------------------
  */
+
+/**
+ * espresso_ticket_selector
+ * @param null $event
+ */
 function espresso_ticket_selector( $event = NULL ) {
 	if (  ! apply_filters( 'FHEE_disable_espresso_ticket_selector', FALSE ) ) {
 		echo EED_Ticket_Selector::display_ticket_selector( $event );
 	}
 }
+
+/**
+ * espresso_view_details_btn
+ * @param null $event
+ */
 function espresso_view_details_btn( $event = NULL ) {
 	if (  ! apply_filters( 'FHEE_disable_espresso_view_details_btn', FALSE ) ) {
 		echo EED_Ticket_Selector::display_ticket_selector( $event, TRUE );
 	}
 }
- /**
+
+/**
  * ------------------------------------------------------------------------
  *
  * Ticket Selector  class
@@ -37,11 +48,11 @@ function espresso_view_details_btn( $event = NULL ) {
 class EED_Ticket_Selector extends  EED_Module {
 
 	/**
-	* event that ticket selector is being generated for
-	*
-	* @access protected
-	* @var array
-	*/
+	 * event that ticket selector is being generated for
+	 *
+	 * @access protected
+	 * @var \EE_Event
+	 */
 	protected static $_event = NULL;
 
 
@@ -93,29 +104,28 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	* 	gets the ball rolling
-	*
-	*	@access 	public
-	* 	@param	object 			$WP
-	* 	@return 	void
-	*/
+	 * 	gets the ball rolling
+	 *
+	 *	@access 	public
+	 * 	@param	object 			$WP
+	 * 	@return 	void
+	 */
 	public function run( $WP ) {}
 
 
 
-
-
 	/**
-	* 	creates buttons for selecting number of attendees for an event
-	*
-	*	@access public
-	* 	@param	object 		$event
-	* 	@return 	string
-	*/
+	 *    creates buttons for selecting number of attendees for an event
+	 *
+	 * @access 	public
+	 * @param 	object $event
+	 * @param 	bool 	$view_details
+	 * @return 	string
+	 */
 	public static function display_ticket_selector( $event = NULL, $view_details = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-//		d( $event );
+		//		d( $event );
 		if ( $event instanceof EE_Event ) {
 			self::$_event = $event;
 		} else if ( $event instanceof WP_Post && isset( $event->EE_Event ) && $event->EE_Event instanceof EE_Event ) {
@@ -149,11 +159,12 @@ class EED_Ticket_Selector extends  EED_Module {
 			$sales_closed_msg = __( 'We\'re sorry, but ticket sales have been closed at this time. Please check back again later.', 'event_espresso' );
 			if ( current_user_can( 'edit_post', self::$_event->ID() )) {
 				$sales_closed_msg .=  sprintf(
-					__( '%sThe "Maximum number of tickets allowed per order for this event" option in the Event Editor has been set to "0". %s(click to edit this event)%s', 'event_espresso' ),
-					'<br />',
+					__( '%sNote to Event Admin:%sThe "Maximum number of tickets allowed per order for this event" in the Event Registration Options has been set to "0". This effectively turns off ticket sales. %s(click to edit this event)%s', 'event_espresso' ),
+					'<div class="ee-attention" style="text-align: left;"><b>',
+					'</b><br />',
 					$link = '<span class="edit-link"><a class="post-edit-link" href="' . get_edit_post_link( self::$_event->ID() ) . '">',
-					'</a></span>'
-			);
+					'</a></span></div>'
+				);
 			}
 			return '<p><span class="important-notice">' . $sales_closed_msg . '</span></p>';
 		}
@@ -186,18 +197,17 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
-
-
 	/**
-	* 	ticket_selector_form_open
-	*
-	*	@access public
-	* 	@access 		public
-	* 	@return		string
-	*/
-	public static function ticket_selector_form_open( $ID, $external_url = FALSE ) {
+	 *    ticket_selector_form_open
+	 *
+	 * @access 		public
+	 * @param 		int 	$ID
+	 * @param 		string $external_url
+	 * @return 		string
+	 */
+	public static function ticket_selector_form_open( $ID, $external_url = '' ) {
 		// if redirecting, we don't need any anything else
-		if ( $external_url ) {
+		if ( ! empty( $external_url )) {
 			return '<form id="" method="GET" action="' . $external_url . '">';
 		}
 		EE_Registry::instance()->load_helper( 'Event_View' );
@@ -215,29 +225,30 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	* 	display_ticket_selector_submit
-	*
-	*	@access public
-	* 	@access 		public
-	* 	@return		string
-	*/
+	 * 	display_ticket_selector_submit
+	 *
+	 *	@access public
+	 * 	@access 		public
+	 * 	@return		string
+	 */
 	public static function display_ticket_selector_submit() {
 		if ( apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', FALSE ) && ! is_admin() ) {
 			$btn_text = apply_filters( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit__btn_text', __('Register Now', 'event_espresso' ));
 			return '<input id="ticket-selector-submit-'. self::$_event->ID() .'-btn" class="ticket-selector-submit-btn" type="submit" value="' . $btn_text . '" /><div class="clear"><br/></div>';
 		}
+		return '';
 	}
 
 
 
 
 	/**
-	* 	ticket_selector_form_close
-	*
-	*	@access public
-	* 	@access 		public
-	* 	@return		string
-	*/
+	 * 	ticket_selector_form_close
+	 *
+	 *	@access public
+	 * 	@access 		public
+	 * 	@return		string
+	 */
 	public static function ticket_selector_form_close() {
 		return '</form>';
 	}
@@ -247,12 +258,12 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	* 	display_ticket_selector_submit
-	*
-	*	@access public
-	* 	@access 		public
-	* 	@return		string
-	*/
+	 * 	display_ticket_selector_submit
+	 *
+	 *	@access public
+	 * 	@access 		public
+	 * 	@return		string
+	 */
 	public static function display_view_details_btn() {
 		if ( ! self::$_event->get_permalink() ) {
 			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
@@ -271,21 +282,21 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	* 	process_ticket_selections
-	*
-	*	@access public
-	* 	@access 		public
-	* 	@return		array  or FALSE
-	*/
+	 * 	process_ticket_selections
+	 *
+	 *	@access public
+	 * 	@access 		public
+	 * 	@return		array  or FALSE
+	 */
 	public function process_ticket_selections() {
 		do_action( 'EED_Ticket_Selector__process_ticket_selections__before' );
 		// check nonce
 		if ( ! EE_Registry::instance()->REQ->is_set( 'process_ticket_selections_nonce' ) || ! wp_verify_nonce( EE_Registry::instance()->REQ->get( 'process_ticket_selections_nonce' ), 'process_ticket_selections' )) {
 			$error_msg = __( 'We\'re sorry but your request failed to pass a security check.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
-			return;
+			return FALSE;
 		}
-//		d( EE_Registry::instance()->REQ );
+		//		d( EE_Registry::instance()->REQ );
 
 		$return = FALSE;
 		//we should really only have 1 registration in the works now (ie, no MER)
@@ -333,7 +344,7 @@ class EED_Ticket_Selector extends  EED_Module {
 					if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {
 						// YES we have a ticket quantity
 						$tckts_slctd = TRUE;
-//						d( $valid['ticket_obj'][$x] );
+						//						d( $valid['ticket_obj'][$x] );
 						if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
 							// then add ticket to cart
 							if ( self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] )) {
@@ -347,7 +358,7 @@ class EED_Ticket_Selector extends  EED_Module {
 					}
 				}
 
-//				d( EE_Registry::instance()->CART );
+				//				d( EE_Registry::instance()->CART );
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
@@ -371,10 +382,10 @@ class EED_Ticket_Selector extends  EED_Module {
 					EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
-//die();
-			if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-return-url-'.$valid['id'] )) {
+			//die();
+			if ( $valid['return_url'] ) {
 				EE_Error::get_notices( FALSE, TRUE );
-				wp_safe_redirect( EE_Registry::instance()->REQ->get( 'tkt-slctr-return-url-'.$valid['id'] ) );
+				wp_safe_redirect( $valid['return_url'] );
 				exit();
 			} elseif ( isset( $event_to_add['id'] )) {
 				EE_Error::get_notices( FALSE, TRUE );
@@ -391,11 +402,12 @@ class EED_Ticket_Selector extends  EED_Module {
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-//		if ( isset( $_SERVER['HTTP_REFERER'] )) {
-//			$return_url = add_query_arg(  EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
-//			wp_safe_redirect( $return_url );
-//			exit();
-//		}
+		//		if ( isset( $_SERVER['HTTP_REFERER'] )) {
+		//			$return_url = add_query_arg(  EE_Error::get_notices( FALSE, TRUE ), $_SERVER['HTTP_REFERER'] );
+		//			wp_safe_redirect( $return_url );
+		//			exit();
+		//		}
+		return FALSE;
 
 	}
 
@@ -405,7 +417,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	 *
 	 * @access public
 	 * @static
-	 * @return void
+	 * @return bool
 	 */
 	public static function process_tickets_selection_from_admin() {
 		//nonce has already been verified in the admin
@@ -416,7 +428,6 @@ class EED_Ticket_Selector extends  EED_Module {
 		if ( empty( EE_Registry::instance()->REQ ) ) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
-		$return = FALSE;
 
 		// do we have an event id?
 		if ( EE_Registry::instance()->REQ->is_set( 'tkt-slctr-event-id' )) {
@@ -425,7 +436,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$valid = self::_validate_post_data('add_event_to_cart');
 			// d( $valid );
 
-			//check total tickets oredered vs max number of attendees that can register
+			//check total tickets ordered vs max number of attendees that can register
 			if ( $valid['total_tickets'] > $valid['max_atndz'] ) {
 
 				// ordering too many tickets !!!
@@ -452,7 +463,7 @@ class EED_Ticket_Selector extends  EED_Module {
 					if ( isset( $valid['qty'][$x] ) && $valid['qty'][$x] > 0 ) {
 						// YES we have a ticket quantity
 						$tckts_slctd = TRUE;
-//						d( $valid['ticket_obj'][$x] );
+						//						d( $valid['ticket_obj'][$x] );
 						if ( $valid['ticket_obj'][$x] instanceof EE_Ticket ) {
 							// then add ticket to cart
 							if ( self::_add_ticket_to_cart( $valid['ticket_obj'][$x], $valid['qty'][$x] )) {
@@ -469,7 +480,7 @@ class EED_Ticket_Selector extends  EED_Module {
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
-						EE_Registry::instance()->save_cart();
+						EE_Registry::instance()->CART->save_cart();
 						EE_Registry::instance()->SSN->update();
 						return true;
 					} else {
@@ -494,29 +505,25 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
-
-
-
 	/**
-	* 	validate_post_data
-	*
-	* 	@access 		private
-	*  	@param 		string 		$stage - where we are in the registration process
-	* 	@return		array  or FALSE
-	*/
+	 *    validate_post_data
+	 *
+	 * @access        private
+	 * @return        array  or FALSE
+	 */
 	private static function _validate_post_data() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		// start with an empty array()
 		$valid_data = array();
-//		d( $_POST );
-
+		//		d( $_POST );
 		//if event id is valid
-		if ( $id = absint( EE_Registry::instance()->REQ->get( 'tkt-slctr-event-id' ))) {
-
+		$id = absint( EE_Registry::instance()->REQ->get( 'tkt-slctr-event-id' ));
+		if ( $id ) {
+			// grab valid id
 			$valid_data['id'] = $id;
-			// grab and sanatize return-url
-			$return_url = esc_url_raw( EE_Registry::instance()->REQ->get( 'tkt-slctr-return-url-' . $id ));
+			// grab and sanitize return-url
+			$valid_data['return_url'] = esc_url_raw( EE_Registry::instance()->REQ->get( 'tkt-slctr-return-url-' . $id ));
 			// array of other form names
 			$inputs_to_clean = array(
 				'event' => 'tkt-slctr-event-',
@@ -529,8 +536,8 @@ class EED_Ticket_Selector extends  EED_Module {
 			// let's track the total number of tickets ordered.'
 			$valid_data['total_tickets'] = 0;
 			// cycle through $inputs_to_clean array
-			foreach ($inputs_to_clean as $what => $input_to_clean) {
-
+			foreach ( $inputs_to_clean as $what => $input_to_clean ) {
+				// check for POST data
 				if ( EE_Registry::instance()->REQ->is_set( $input_to_clean . $id )) {
 					// grab value
 					$input_value = EE_Registry::instance()->REQ->get( $input_to_clean . $id );
@@ -544,19 +551,19 @@ class EED_Ticket_Selector extends  EED_Module {
 
 						// arrays of integers
 						case 'qty':
-//							d( $input_value );
+							//							d( $input_value );
 							$row_qty = $input_value;
 							// if qty is coming from a radio button input, then we need to assemble an array of rows
 							if( ! is_array( $row_qty )) {
 								// get number of rows
 								$rows = EE_Registry::instance()->REQ->is_set( 'tkt-slctr-rows-' . $id ) ? absint( EE_Registry::instance()->REQ->get( 'tkt-slctr-rows-' . $id )) : 1;
-//								d( $rows );
+								//								d( $rows );
 								// explode ints by the dash
 								$row_qty = explode( '-', $row_qty );
 								$row = isset( $row_qty[0] ) ? ( absint( $row_qty[0] )) : 1;
 								$qty = isset( $row_qty[1] ) ? absint( $row_qty[1] ) : 0;
 								$row_qty = array( $row => $qty );
-//								 d( $row_qty );
+								//								 d( $row_qty );
 								for( $x = 1; $x <= $rows; $x++ ) {
 									if ( ! isset( $row_qty[$x] )) {
 										$row_qty[$x] = 0;
@@ -564,7 +571,7 @@ class EED_Ticket_Selector extends  EED_Module {
 								}
 							}
 							ksort( $row_qty );
-//							 d( $row_qty );
+							//							 d( $row_qty );
 							// cycle thru values
 							foreach ( $row_qty as $qty ) {
 								$qty = absint( $qty );
@@ -595,13 +602,14 @@ class EED_Ticket_Selector extends  EED_Module {
 							// ensure that $input_value is an array
 							$input_value = is_array( $input_value ) ? $input_value : array( $input_value );
 							// cycle thru values
-							foreach ( $input_value as $key=>$value ) {
+							foreach ( $input_value as $row=>$value ) {
 								// decode and unserialize the ticket object
 								$ticket_obj = unserialize( base64_decode( $value ));
 								// vat is dis? i ask for TICKET !!!
 								if ( ! $ticket_obj instanceof EE_Ticket ) {
 									// get ticket via the ticket id we put in the form
-									$ticket_obj = EE_Registry::instance()->load_model( 'Ticket' )->get_one_by_ID( $valid['ticket_id'][$x] );
+									$ticket_ids = EE_Registry::instance()->REQ->get( 'tkt-slctr-ticket-id-' . $id );
+									$ticket_obj = EE_Registry::instance()->load_model( 'Ticket' )->get_one_by_ID( absint( $ticket_ids[ $row ] ));
 								}
 								$valid_data[$what][] = $ticket_obj;
 							}
@@ -620,21 +628,20 @@ class EED_Ticket_Selector extends  EED_Module {
 			return FALSE;
 		}
 
-//		d( $valid_data );
+		//		d( $valid_data );
+		//		die();
 		return $valid_data;
 	}
 
 
 
-
-
 	/**
-	* 	adds a ticket to the cart
-	* 	@access private
-	* 	@param string - which_cart
-	* 	@param array - items
-	* 	@return TRUE on success, FALSE on fail
-	*/
+	 *    adds a ticket to the cart
+	 * @access   private
+	 * @param EE_Ticket $ticket
+	 * @param int       $qty
+	 * @return TRUE on success, FALSE on fail
+	 */
 	private static function _add_ticket_to_cart( EE_Ticket $ticket = NULL, $qty = 1 ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -651,7 +658,7 @@ class EED_Ticket_Selector extends  EED_Module {
 				$error_msg = sprintf(
 					_n(
 						'We\'re sorry, but there is only %s available space left for this event. Please go back and select a different number of tickets.',
-						 'We\'re sorry, but there are only %s available spaces left for this event. Please go back and select a different number of tickets.',
+						'We\'re sorry, but there are only %s available spaces left for this event. Please go back and select a different number of tickets.',
 						$available_spaces,
 						'event_espresso'
 					),
@@ -671,20 +678,20 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 	/**
-	* 	load js
-	*
-	*	@access 		public
-	* 	@access 		public
-	* 	@return 		void
-	*/
+	 * 	load js
+	 *
+	 *	@access 		public
+	 * 	@access 		public
+	 * 	@return 		void
+	 */
 	public static function load_tckt_slctr_assets() {
 		// add some style
 		if ( apply_filters( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', FALSE ) ) {
 			wp_register_style('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css');
 			wp_enqueue_style('ticket_selector');
 			// make it dance
-//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
-//			wp_enqueue_script('ticket_selector');
+			//			wp_register_script('ticket_selector', TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js', array('jquery'), '', TRUE);
+			//			wp_enqueue_script('ticket_selector');
 			// loco grande
 			wp_localize_script( 'ticket_selector', 'eei18n', EE_Registry::$i18n_js_strings );
 		}
