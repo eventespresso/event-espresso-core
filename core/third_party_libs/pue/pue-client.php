@@ -525,7 +525,7 @@ class PluginUpdateEngineChecker {
 		$this->maybeCheckForUpdates();
 
 
-		//possible update checks on an option page save that is setting the license key.
+		//possible update checks on an option page save that is setting the license key. Note we're not actually using the response yet for this triggered update check but we might at some later date.
 		$triggered = $this->trigger_update_check();
 
 
