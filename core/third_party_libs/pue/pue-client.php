@@ -984,7 +984,8 @@ class PluginUpdateEngineChecker {
 	 * @return mixed
 	 */
 	function injectInfo($result, $action = null, $args = null){
-    	$relevant = ($action == 'plugin_information') && isset($args->slug) && ($args->slug == $this->slug);
+		$updates = FALSE;
+		$relevant = ($action == 'plugin_information') && isset($args->slug) && ($args->slug == $this->slug);
 		if ( !$relevant ){
 			return $result;
 		}
