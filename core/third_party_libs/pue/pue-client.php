@@ -155,7 +155,7 @@ class PluginUpdateEngineChecker {
 	 * @return  void
 	 */
 	private function _verify_options( $options ) {
-		$domain = isset( $options['lang_domain'] ) ? $options['lang_domain'] : '';
+		$this->lang_domain = isset( $options['lang_domain'] ) ? $options['lang_domain'] : '';
 		$required = array(
 			'options_page_slug',
 			'plugin_basename'
