@@ -13,27 +13,6 @@
  *
  * ------------------------------------------------------------------------
  */
-
-/**
- * espresso_ticket_selector
- * @param null $event
- */
-function espresso_ticket_selector( $event = NULL ) {
-	if (  ! apply_filters( 'FHEE_disable_espresso_ticket_selector', FALSE ) ) {
-		echo EED_Ticket_Selector::display_ticket_selector( $event );
-	}
-}
-
-/**
- * espresso_view_details_btn
- * @param null $event
- */
-function espresso_view_details_btn( $event = NULL ) {
-	if (  ! apply_filters( 'FHEE_disable_espresso_view_details_btn', FALSE ) ) {
-		echo EED_Ticket_Selector::display_ticket_selector( $event, TRUE );
-	}
-}
-
 /**
  * ------------------------------------------------------------------------
  *
