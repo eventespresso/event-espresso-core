@@ -176,7 +176,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
             return $default_types;
 
         foreach ( self::$_ee_message_type_registry as $mtname => $mt_reg ) {
-            if ( empty( $mt_reg['messengers_to_activate_with'] ) || empty( $mt_reg['mtfilenames'] ) )
+            if ( empty( $mt_reg['messengers_to_activate_with'] ) || empty( $mt_reg['mtfilename'] ) )
                 continue;
 
             //loop through each of the messengers and if it matches the loaded class then we add this message type to the
