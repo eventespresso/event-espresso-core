@@ -133,7 +133,7 @@ $id =  ! empty( $QST_system ) ? '_disabled' : '';
                     <li class="ee-question-sortable">
                         <label for="question-<?php echo $question_ID?>">
                             <input type="checkbox" name="questions[<?php echo $question_ID;?>]" id="question-<?php echo $question_ID; ?>" value="<?php echo $question_ID;?>"<?php echo $disabled; ?><?php echo $checked; ?>/>
-                            <div class="question-text"><?php echo $question->display_text(); ?></div>
+                            <div class="question-text"><?php echo trim( $question->display_text() ) . ( 95 <= strlen( trim( $question->display_text() ) ) ? "&hellip;" : '' ) ?></div>
                             <input class="question-group-QGQ_order" type="hidden" name="question_orders[<?php echo $question_ID; ?>]" value="<?php echo $question_order; ?>">
                         </label>
                     </li>
