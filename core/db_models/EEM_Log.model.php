@@ -150,6 +150,15 @@ class EEM_Log extends EEM_Base{
 		$log->save();
 		return $log;
 	}
+	
+	/**
+	 * Just gets the bare-bones wpdb results as an array in cases where efficiency is essential
+	 * @param array $query_params @see EEM_Base::get_all
+	 * @return array of arrays
+	 */
+	public function get_all_efficiently($query_params){
+		return $this->_get_all_wpdb_results($query_params);
+	}
 }
 
 // End of file EEM_Log.model.php

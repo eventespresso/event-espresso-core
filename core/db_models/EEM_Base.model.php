@@ -1701,7 +1701,7 @@ abstract class EEM_Base extends EE_Base{
 		$selects = array();
 		$table_alias_with_model_relation_chain_prefix = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_this_model_name());
 		foreach($fields as $field_name => $field_obj){
-			$selects[] = $table_alias_with_model_relation_chain_prefix . $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
+			$selects[] = $table_alias_with_model_relation_chain_prefix . $field_obj->get_table_alias().".".$field_obj->get_table_column()." AS '".$table_alias_with_model_relation_chain_prefix.$field_obj->get_table_alias().".".$field_obj->get_table_column()."'";
 		}
 		//make sure we are also getting the PKs of each table
 		$tables = $this->get_tables();

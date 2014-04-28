@@ -563,30 +563,23 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$query_params['limit'] = array( $offset, $per_page );
 		}
 
-		$results = EEM_Log::instance()->get_all($query_params);
+		
 		
 		//now they've requested to instead just download the file instead of viewing it.
 		if(isset($this->_req_data['download_results'])){
+			$wpdb_results = EEM_Log::instance()->get_all_efficiently($query_params);
 			header('Content-Disposition: attachment');
 			header("Content-Disposition: attachment; filename=ee_payment_logs_for_".sanitize_key(site_url()));
 			echo "<h1>Payment Logs for ".site_url()."</h1>";
 			echo "<h3>Query:</h3>";
 			var_dump($query_params);
-			$stuff_to_display = array();
-			foreach($results as $key => $log){
-				$stuff_to_display[$key] = $log->model_field_array();
-				if($log->object()){
-					$stuff_to_display[$key][$log->OBJ_type()] = $log->object()->model_field_array();
-				}
-			}
-			var_dump($stuff_to_display);
+			echo "<h3>Results:</h3>";
+			var_dump($wpdb_results);
 			die;
 		}
-		if($count){
-			return count($results);
-		}else{
-			return $results;
-		}
+		$results = EEM_Log::instance()->get_all($query_params);
+		return $results;
+		
 	}
 	/**
 	 * Used by usort to RE-sort log query results, because we lose the ordering
