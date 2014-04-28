@@ -154,6 +154,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		if ( EEH_MSG_Template::is_mt_active('newsletter') ) {
 			//enqueue newsletter js
 			wp_enqueue_script( 'ee-newsletter-trigger', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.js', array( 'ee-dialog'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_enqueue_style( 'ee-newsletter-trigger-css', REG_CAF_ASSETS_URL . 'ee-newsletter-trigger.css', array(), EVENT_ESPRESSO_VERSION );
 			//hook in buttons for newsletter message type trigger.
 			add_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', array( $this, 'add_newsletter_action_buttons'), 10 );
 		}
