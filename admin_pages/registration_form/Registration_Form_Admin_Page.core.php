@@ -223,12 +223,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_add_question() {
 		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'espresso_registration_form_single' );
 	}
 	public function load_scripts_styles_edit_question() {
 		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'espresso_registration_form_single' );
 	}
 
