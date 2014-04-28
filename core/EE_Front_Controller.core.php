@@ -263,8 +263,8 @@ final class EE_Front_Controller {
 				$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
 				// now cycle thru shortcodes
 				foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
-					// are we on this page ?
-					if ( $current_post == $post_name || $term_exists ) {
+					// are we on this page, or on the blog page, or an EE CPT category page ?
+					if ( $current_post == $post_name || $current_post == $page_for_posts || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
 						if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
 							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
@@ -289,13 +289,6 @@ final class EE_Front_Controller {
 							EE_Registry::instance()->shortcodes[ $shortcode_class ] = $sc_reflector->newInstance();
 							// fire the shortcode class's run method, so that it can activate resources
 							EE_Registry::instance()->shortcodes[ $shortcode_class ]->run( $WP );
-						}
-					// if this is NOT the "Posts page" and we have a valid entry for the "Posts page" in our tracked post_shortcodes array
-					} else if ( $post_name != $page_for_posts && isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
-						// and the shortcode is not being tracked for this page
-						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )) {
-							// then remove the "fallback shortcode
-							remove_shortcode( $shortcode_class );
 						}
 					}
 				}
@@ -441,17 +434,17 @@ final class EE_Front_Controller {
 						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
 						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '- %s%v' : '- %v%s',
 						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s--' : '--%s'
-						 ),
+					),
 					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk,
 					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
 					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
-					),
+				),
 				'number' => array(
 					'precision' => 0,
 					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
 					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
-					)
-				);
+				)
+			);
 			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
 		}
 
@@ -547,8 +540,8 @@ final class EE_Front_Controller {
 	 * @return    string
 	 */
 	public function template_include( $template_include_path = NULL ) {
-//		echo '<h4><br/>$template_include_path : ' . $template_include_path . ' </h4>';
-//		echo '<h4>$this->_template_path : ' . $this->_template_path . '</h4>';
+		//		echo '<h4><br/>$template_include_path : ' . $template_include_path . ' </h4>';
+		//		echo '<h4>$this->_template_path : ' . $this->_template_path . '</h4>';
 		// use our locate_template() method which checks for the template in the following places:
 		// * /wp-content/theme/ (currently active theme)
 		// * /wp-content/uploads/espresso/templates/
@@ -558,7 +551,7 @@ final class EE_Front_Controller {
 		$template_path = EEH_Template::locate_template( $this->_template_path, array(), FALSE );
 		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
 		$this->_template = basename( $this->_template_path );
-//		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return $this->_template_path;
 	}
 
