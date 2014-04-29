@@ -94,7 +94,7 @@ class EEH_Template {
 	 */
 	public static function get_espresso_themes() {
 		if ( empty( EEH_Template::$_espresso_themes )) {
-			$espresso_themes =  glob( EE_TEMPLATES . '*', GLOB_ONLYDIR );
+			$espresso_themes =  glob( EE_PUBLIC . '*', GLOB_ONLYDIR );
 			if (( $key = array_search( 'global_assets', $espresso_themes )) !== FALSE ) {
 			    unset( $espresso_themes[ $key ] );
 			}
