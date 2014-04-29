@@ -75,8 +75,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		// make sure Event List Module is instantiated
-		EED_Events_Archive::instance();
 		// merge in any attributes passed via fallback shortcode processor
 		$attributes = array_merge( $attributes, $this->_attributes );
 		//set default attributes
@@ -103,9 +101,9 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		//d( $wp_query );
 		$template = 'loop-espresso_events.php';
 		// check what template is loaded and load filters accordingly
-		EED_Events_Archive::template_include( $template, $attributes['fallback_shortcode_processor'] );
+		EED_Events_Archive::instance()->template_include( $template );
 		// load our template
-		$event_list = EEH_Template::locate_template( $template, array(), TRUE, TRUE );
+		$event_list = EEH_Template::locate_template( $template );
 		// now reset the query and postdata
 		wp_reset_query();
 		wp_reset_postdata();
