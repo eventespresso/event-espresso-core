@@ -388,3 +388,8 @@
 	background-color : #F5F5F5;
 	border-radius    : 4px;
 }
+
+.contact-details-buttons a.button-small {
+	float: right;
+	margin-left: 8px;
+}
