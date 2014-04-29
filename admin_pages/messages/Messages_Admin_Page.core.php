@@ -369,7 +369,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected function _add_screen_options_default() {
 		$page_title = $this->_admin_page_title;
-		$this->_admin_page_title = __('Message Templates', 'event_espresso');
+		$this->_admin_page_title = __('Global Message Templates', 'event_espresso');
+		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
+	}
+
+
+
+	protected function _add_screen_options_custom_mtps() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Custom Message Templates', 'event_espresso');
 		$this->_per_page_screen_option();
 		$this->_admin_page_title = $page_title;
 	}
