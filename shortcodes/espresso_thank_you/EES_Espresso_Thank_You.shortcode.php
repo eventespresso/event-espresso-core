@@ -80,8 +80,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public static function set_hooks() {
 		add_action( 'wp_loaded', array( 'EES_Espresso_Thank_You', 'set_definitions' ), 2 );
-		add_filter( 'heartbeat_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 3 );
-		add_filter( 'heartbeat_nopriv_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 3 );
+		add_filter( 'heartbeat_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 2 );
+		add_filter( 'heartbeat_nopriv_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 2 );
 	}
 
 	/**
@@ -92,8 +92,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public static function set_hooks_admin() {
 		// AJAX for IPN monitoring
-		add_filter( 'heartbeat_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 3 );
-		add_filter( 'heartbeat_nopriv_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 3 );
+		add_filter( 'heartbeat_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 2 );
+		add_filter( 'heartbeat_nopriv_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 2 );
 	}
 
 
@@ -269,7 +269,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
-			return;
+			return '';
 		}
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
@@ -294,10 +294,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * @access    public
 	 * @param $response
 	 * @param $data
-	 * @param $screen_id
 	 * @return    array
 	 */
-	public static function thank_you_page_IPN_monitor( $response, $data, $screen_id ) {
+	public static function thank_you_page_IPN_monitor( $response, $data ) {
 		if ( isset( $data['espresso_thank_you_page'] ) && isset( $data['espresso_thank_you_page']['reg_url_link'] )) {
 			if ( ! isset( $data['espresso_thank_you_page']['reg_url_link'] )) {
 				$response['espresso_thank_you_page'] = array (
