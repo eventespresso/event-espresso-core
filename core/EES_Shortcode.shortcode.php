@@ -5,7 +5,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author			Event Espresso
+ * @ author				Event Espresso
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
@@ -82,11 +82,16 @@ abstract class EES_Shortcode extends EE_Base {
 	 * @return 	mixed
 	 */
 	final public static function fallback_shortcode_processor( $attributes ) {
-		$attributes['fallback_shortcode_processor'] = TRUE;
+		// what shortcode was actually parsed ?
 		$shortcode_class = get_called_class();
+		// notify rest of system that fallback processor was triggered
+		add_filter( 'FHEE__fallback_shortcode_processor__' . $shortcode_class, '__return_true' );
+		// get instance of actual shortcode
 		$shortcode_obj = self::instance( $shortcode_class );
+		// verify class
 		if ( $shortcode_obj instanceof EES_Shortcode ) {
-			$shortcode_obj->_attributes = $attributes;
+			// set attributes and run the shortcode
+			$shortcode_obj->_attributes = (array)$attributes;
 			return $shortcode_obj->process_shortcode( $shortcode_obj->_attributes );
 		} else {
 			return NULL;
