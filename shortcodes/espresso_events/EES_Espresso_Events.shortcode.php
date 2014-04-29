@@ -75,6 +75,11 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes = array() ) {
+		// make sure Event List Module is instantiated
+		EED_Events_Archive::instance();
+		// merge in any attributes passed via fallback shortcode processor
+		$attributes = array_merge( $attributes, $this->_attributes );
+		//set default attributes
 		$default_espresso_events_shortcode_atts = array(
 			'title' => NULL,
 			'limit' => 10,
@@ -83,12 +88,13 @@ class EES_Espresso_Events  extends EES_Shortcode {
 			'month' => NULL,
 			'category_slug' => NULL,
 			'order_by' => 'start_date',
-			'sort' => 'ASC'
+			'sort' => 'ASC',
+			'fallback_shortcode_processor' => FALSE
 		);
 		// allow the defaults to be filtered
 		$default_espresso_events_shortcode_atts = apply_filters( 'EES_Espresso_Events__process_shortcode__default_espresso_events_shortcode_atts', $default_espresso_events_shortcode_atts );
 		// grab attributes and merge with defaults, then extract
-		$attributes = shortcode_atts( $default_espresso_events_shortcode_atts, $attributes );
+		$attributes = array_merge( $default_espresso_events_shortcode_atts, $attributes );
 		// make sure we use the_excerpt()
 		add_filter( 'FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true' );
 		// run the query
@@ -97,7 +103,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		//d( $wp_query );
 		$template = 'loop-espresso_events.php';
 		// check what template is loaded and load filters accordingly
-		EED_Events_Archive::template_include( $template );
+		EED_Events_Archive::template_include( $template, $attributes['fallback_shortcode_processor'] );
 		// load our template
 		$event_list = EEH_Template::locate_template( $template, array(), TRUE, TRUE );
 		// now reset the query and postdata
