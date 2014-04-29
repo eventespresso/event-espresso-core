@@ -608,7 +608,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$att_nmbr++;
 					$reg_url_link = $att_nmbr . '-' . $item->code();
 
-//					// TODO: verify that $event->default_registration_status() is editable in admin event editor, then uncomment and use the following for STS_ID
 					$event_default_registration_status = $event->default_registration_status();
 					$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
 					try {
@@ -1122,6 +1121,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 
 //			printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+			printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 			// attendee counter
 			$att_nmbr = 0;
@@ -1130,6 +1130,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$registrations = $this->_transaction->registrations( array(), TRUE );
 					if ( ! empty( $registrations )) {
 						EE_Registry::instance()->load_model( 'Attendee' );
+						$primary_attendee_obj = NULL;
 						// grab the saved registrations from the transaction
 						foreach ( $registrations  as $registration ) {
 							// verify EE_Registration object
@@ -1197,7 +1198,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												$answer_cache_id = $this->_reg_url_link ? $form_input : $form_input . '-' . $line_item_id;
 												$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
 
-												$attendee_property = FALSE;
 												//rename a couple of form_inputs
 												switch( $form_input ) {
 													case 'state' :
