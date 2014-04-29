@@ -78,6 +78,8 @@ final class EE_Front_Controller {
 	 * @return \EE_Front_Controller
 	 */
 	private function __construct() {
+		// make sure template tags are loaded immediately so that themes don't break
+		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'load_espresso_template_tags' ), 10 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'AHEE__EE_System__initialize', array( $this, 'employ_CPT_Strategy' ));
 		// load other resources and begin to actually run shortcodes and modules
@@ -116,6 +118,19 @@ final class EE_Front_Controller {
 
 
 	/*********************************************** 		INIT ACTION HOOK		 ***********************************************/
+
+
+
+	/**
+	 * 	load_espresso_template_tags - if current theme is an espresso theme, or uses ee theme template parts, then load it's functions.php file ( if not already loaded )
+	 *
+	 * 	@return void
+	 */
+	public function load_espresso_template_tags() {
+		if ( is_readable( EE_PUBLIC . 'template_tags.php' )) {
+			require_once( EE_PUBLIC . 'template_tags.php' );
+		}
+	}
 
 
 
@@ -540,13 +555,6 @@ final class EE_Front_Controller {
 	 * @return    string
 	 */
 	public function template_include( $template_include_path = NULL ) {
-		//		echo '<h4><br/>$template_include_path : ' . $template_include_path . ' </h4>';
-		//		echo '<h4>$this->_template_path : ' . $this->_template_path . '</h4>';
-		// use our locate_template() method which checks for the template in the following places:
-		// * /wp-content/theme/ (currently active theme)
-		// * /wp-content/uploads/espresso/templates/
-		// * /wp-content/uploads/espresso/templates/ee-theme/
-		// * /wp-content/plugins/EE4/templates/espresso_default/
 		$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
 		$template_path = EEH_Template::locate_template( $this->_template_path, array(), FALSE );
 		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
@@ -567,7 +575,6 @@ final class EE_Front_Controller {
 	public function get_selected_template( $with_path = FALSE ) {
 		return $with_path ? $this->_template_path : $this->_template;
 	}
-
 
 
 
