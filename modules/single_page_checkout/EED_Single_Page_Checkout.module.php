@@ -63,20 +63,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
-	 *		@singleton method used to instantiate class object
-	 *		@access public
-	 *		@return class instance
-	 */
-	public static function instance ( ) {
-		// check if class object is instantiated
-		if ( ! self::$_instance instanceof EED_Single_Page_Checkout ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
-
-
 
 
 	/**
