@@ -129,7 +129,12 @@ abstract class EED_Module extends EE_Base {
 	public function set_config( $section = 'modules', $name = '', $config_class = '' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		return EE_Config::instance()->set_config( $section, $name, $config_class );
+		try {
+			$this->_config = EE_Config::instance()->set_config( $section, $name, $config_class );
+			return $this->_config;
+		} catch ( EE_Error $e ) {
+			$e->get_error();
+		}
 	}
 
 
