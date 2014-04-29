@@ -124,7 +124,7 @@ abstract class EED_Module extends EE_Base {
 	 * @param 	string 	$section
 	 * @param 	string 	$name
 	 * @param 	string 	$config_class
-	 * @return 	mixed 	EE_Config_Base | NULL
+	 * @return 	mixed 	EE_Config_Base
 	 */
 	public function set_config( $section = 'modules', $name = '', $config_class = '' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
@@ -135,6 +135,7 @@ abstract class EED_Module extends EE_Base {
 		} catch ( EE_Error $e ) {
 			$e->get_error();
 		}
+		return NULL;
 	}
 
 
