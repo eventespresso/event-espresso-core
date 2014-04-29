@@ -68,7 +68,7 @@ if ( ! function_exists( 'espresso_load_event_list_assets' )) {
 	 */
 	function espresso_load_event_list_assets() {
 		$event_list = EED_Events_Archive::instance();
-		add_action( 'wp_loaded', array( $event_list, 'load_event_list_assets' ), 10 );
+		add_action( 'AHEE__EE_System__initialize_last', array( $event_list, 'load_event_list_assets' ), 10 );
 		add_filter( 'FHEE_enable_default_espresso_css', '__return_true' );
 	}
 }
