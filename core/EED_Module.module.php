@@ -99,10 +99,20 @@ abstract class EED_Module extends EE_Base {
 
 
 	/**
-	 * @return EED_Module
+	 *    instance - returns instance of child class object
+	 *
+	 * @access 	public
+	 * @param 	string $module_class
+	 * @return 	\EED_Module
 	 */
-	public static function instance() {
-		return self::$_instance;
+	final public static function instance( $module_class = NULL ) {
+		$module_class = ! empty( $module_class ) ? $module_class : get_called_class();
+		if ( $module_class == 'EED_Module' || empty( $module_class )) {
+			return NULL;
+		}
+		$module = str_replace( 'EED_', '', strtoupper( $module_class ));
+		$module_obj = isset( EE_Registry::instance()->modules[ $module ] ) ? EE_Registry::instance()->modules[ $module ] : NULL;
+		return $module_obj instanceof $module_class || $module_class == 'self' ? $module_obj : new $module_class();
 	}
 
 
