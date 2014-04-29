@@ -24,6 +24,12 @@
 abstract class EES_Shortcode extends EE_Base {
 
 	/**
+	 * @protected 	public
+	 * @var 	array $_attributes
+	 */
+	protected $_attributes = array();
+
+	/**
 	 *    run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
 	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
@@ -51,12 +57,12 @@ abstract class EES_Shortcode extends EE_Base {
 	 *    instance - returns instance of child class object
 	 *
 	 * @access 	public
-	 * @param 	null $shortcode_class
+	 * @param 	string $shortcode_class
 	 * @return 	\EES_Shortcode
 	 */
 	final public static function instance( $shortcode_class = NULL ) {
 		$shortcode_class = ! empty( $shortcode_class ) ? $shortcode_class : get_called_class();
-		if ( $shortcode_class == 'EES_Shortcode' ) {
+		if ( $shortcode_class == 'EES_Shortcode' || empty( $shortcode_class )) {
 			return NULL;
 		}
 		$shortcode = str_replace( 'EES_', '', strtoupper( $shortcode_class ));
@@ -76,9 +82,15 @@ abstract class EES_Shortcode extends EE_Base {
 	 * @return 	mixed
 	 */
 	final public static function fallback_shortcode_processor( $attributes ) {
+		$attributes['fallback_shortcode_processor'] = TRUE;
 		$shortcode_class = get_called_class();
 		$shortcode_obj = self::instance( $shortcode_class );
-		return $shortcode_obj instanceof EES_Shortcode ? $shortcode_obj->process_shortcode( $attributes ) : NULL;
+		if ( $shortcode_obj instanceof EES_Shortcode ) {
+			$shortcode_obj->_attributes = $attributes;
+			return $shortcode_obj->process_shortcode( $shortcode_obj->_attributes );
+		} else {
+			return NULL;
+		}
 	}
 
 
