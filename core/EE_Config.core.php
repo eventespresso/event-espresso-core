@@ -218,7 +218,7 @@ final class EE_Config {
 
 		// check that settings section exists
 		if ( ! isset( $this->$section )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration settings do not exist.', 'event_espresso' ), $section ));
+			throw new EE_Error( sprintf( __( 'The "%s" configuration settings does not exist.', 'event_espresso' ), $section ));
 		}
 		// in case old settings were saved as an array
 		if ( is_array( $this->$section )) {
@@ -231,11 +231,11 @@ final class EE_Config {
 		}
 		// check that section exists and is the proper format
 		if ( ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof stdClass )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration settings have not been formatted correctly.', 'event_espresso' ), $section ));
+			throw new EE_Error( sprintf( __( 'The "%s" configuration settings have not been formatted correctly.', 'event_espresso' ), $section ));
 		}
 		// verify config class is accessible
 		if ( ! class_exists( $config_class )) {
-			throw new EE_Error( sprintf( __( 'The %s class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ), $config_class ));
+			throw new EE_Error( sprintf( __( 'The "%s" class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ), $config_class ));
 		}
 		if ( ! isset( $this->$section->$name ) || ! $this->$section->$name instanceof $config_class ){
 			$this->$section->$name = new $config_class;
@@ -260,11 +260,11 @@ final class EE_Config {
 	public function _update_config( $section = '', $name = '', $config_obj = NULL ) {
 		// check that section exists and is the proper format
 		if ( ! isset( $this->$section ) || ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof StdClass )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration does not exist.', 'event_espresso' ), $section ));
+			throw new EE_Error( sprintf( __( 'The "%s" configuration does not exist.', 'event_espresso' ), $section ));
 		}
 		// verify config object
 		if ( ! $config_obj instanceof EE_Config_Base ) {
-			throw new EE_Error( sprintf( __( 'The %s class is not an instance of EE_Config_Base.', 'event_espresso' ), get_class( $config_obj )));
+			throw new EE_Error( sprintf( __( 'The "%s" class is not an instance of EE_Config_Base.', 'event_espresso' ), get_class( $config_obj )));
 		}
 		$this->$section->$name = $config_obj;
 		$this->update_espresso_config();
