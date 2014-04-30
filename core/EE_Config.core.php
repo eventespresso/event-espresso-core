@@ -1063,7 +1063,7 @@ class EE_Currency_Config extends EE_Config_Base {
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
 		// so if we have a country code and EE core is ready to go...
-		if ( ! empty( $CNT_ISO ) && did_action( 'AHEE__EE_System__core_loaded_and_ready' )) {
+		if ( ! empty( $CNT_ISO ) && EE_Maintenance_Mode::instance()->models_can_query() && ! get_option( 'ee_espresso_activation' )) {
 			// retreive the country settings from the db, just in case they have been customized
 			if ( $country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO )) {
 				if ( $country instanceof EE_Country ) {

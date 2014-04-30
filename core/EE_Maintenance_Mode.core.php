@@ -107,10 +107,19 @@ class EE_Maintenance_Mode {
 		return get_option( self::option_name_maintenance_mode, EE_Maintenance_Mode::level_0_not_in_maintenance );
 	}
 
-
+	/**
+	 * Returns whether or not the models reportedly are able to run queries or not (ie, if the system
+	 * thinks their tables are present and up-to-date).
+	 * @return boolean
+	 */
+	public function models_can_query(){
+		return $this->_real_level() != EE_Maintenance_Mode::level_2_complete_maintenance;
+	}
 
 	/**
-	 * Determines whether or not we're in maintenance mode and what level. 
+	 * Determines whether or not we're in maintenance mode and what level. However, while the site
+	 * is in level 1 maintenance, and an admin visits the frontend, this fucntion makes it appear
+	 * to them as if teh site isn't in mainteance mode.
 	 * EE_Maintenance_Mode::level_0_not_in_maintenance => not in maintenance mode (in normal mode)
 	 * EE_Maintenance_Mode::level_1_frontend_only_maintenance=> frontend-only mainteannce mode
 	 * EE_Maintenance_Mode::level_2_complete_maintenance => frontend and backend mainteancne mode
