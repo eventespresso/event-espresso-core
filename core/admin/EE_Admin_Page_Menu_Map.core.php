@@ -188,7 +188,7 @@ class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map {
 	 * Constructor.
 	 *
 	 * @since 4.4.0
-	 *
+ *
 	 * @param  array     $menu_args  {
 	 *               An array of arguments used to setup the menu group properties on construct.
 	 *               @type string $label 		Menu Group Title.  Required.
@@ -223,5 +223,10 @@ class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map {
 
 	public function default_header_link() {
 		return false;
+	}
+
+
+	public function group_link() {
+		return '<span class="ee_menu_group"  onclick="return false;">' . $this->label . '</span>';
 	}
 }
