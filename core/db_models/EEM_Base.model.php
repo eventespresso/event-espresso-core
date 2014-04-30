@@ -205,7 +205,7 @@ abstract class EEM_Base extends EE_Base{
 		//if we're in maintenance mode level 2, DON'T run any queries
 		//because level 2 indicates the database needs updating and 
 		//is probably out of sync with the code
-		if(EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance){
+		if(EE_Maintenance_Mode::instance()->models_can_query()){
 			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
 		}
 		
