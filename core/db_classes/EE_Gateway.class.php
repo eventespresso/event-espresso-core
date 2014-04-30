@@ -193,7 +193,7 @@ abstract class EE_Gateway {
 			}
 		}else{
 			//ok so we didn't need to update gateway settings
-			//...but when we fetched teh default gateway settings, they set them!
+			//...but when we fetched the default gateway settings, they set them!
 			//so unset them to what they're saved to
 			$this->_payment_settings = $saved_settings;
 			$this->_debug_mode = array_key_exists('use_sandbox',$this->_payment_settings)?intval($this->_payment_settings['use_sandbox']):false;
@@ -202,7 +202,7 @@ abstract class EE_Gateway {
 
 	/**
 	 * performs activating, deactivating, and updating gateways if proper $_POST parameters are sent
-	 * This should probably be done in Payment_Admin_page on a seperate route, not a function called by teh gateway's constructor
+	 * This should probably be done in Payment_Admin_page on a seperate route, not a function called by the gateway's constructor
 	 */
 	private function _gateways_admin() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -560,7 +560,7 @@ abstract class EE_Gateway {
 	
 	
 	/**
-	 * Updates the transaction according to teh payment info
+	 * Updates the transaction according to the payment info
 	 * @param EE_Transaction or int $transaction the transaction to update, or its ID. Cannot be null.
 	 * @param EE_Payment or int $payment the payment just made or its ID. If empty that's actually OK. It just means no payment has been made.
 	 * @return boolean success
@@ -571,7 +571,7 @@ abstract class EE_Gateway {
 		}
 		$transaction = $this->_TXN->ensure_is_obj($transaction);
 		/* @var $transaction EE_transaction */
-		//now, if teh payment's empty, we're going to update the transaction accordingly
+		//now, if the payment's empty, we're going to update the transaction accordingly
 		if(empty($payment)){
 			$transaction->set_status(EEM_Transaction::incomplete_status_code);
 			$transaction->update_extra_meta('gateway', $this->_gateway_name);

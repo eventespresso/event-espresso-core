@@ -1,5 +1,5 @@
 <?php
-//required variables for tempalte:
+//required variables for template:
 assert($question_group instanceof EE_Question_Group);
 assert(isset($all_questions) && (empty($all_questions) || is_array($all_questions)));//list of unused questions
 foreach($all_questions as $question_option){

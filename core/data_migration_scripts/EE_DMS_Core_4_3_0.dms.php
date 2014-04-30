@@ -33,7 +33,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 	}
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if($version_string <= '4.3.008' && $version_string >= '4.2.0' ){
+		if($version_string <= '4.3.0' && $version_string >= '4.2.0' ){
 //			echo "$version_string can be mgirated fro";
 			return true;
 		}elseif( ! $version_string ){
@@ -220,7 +220,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 		$sql = "EMT_ID BIGINT(20) unsigned NOT NULL AUTO_INCREMENT,
 					EVT_ID BIGINT(20) unsigned NOT NULL DEFAULT 0,
 					GRP_ID INT(10) unsigned NOT NULL DEFAULT 0,
-					PRIMARY KEY (EMT_ID),
+					PRIMARY KEY  (EMT_ID),
 					KEY EVT_ID (EVT_ID),
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_is_new_in_this_version( $table_name, $sql, 'ENGINE=InnoDB');
@@ -403,8 +403,8 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QST_display_text VARCHAR(100) NOT NULL,
-					QST_admin_label VARCHAR(100) NOT NULL,
+					QST_display_text TEXT NOT NULL,
+					QST_admin_label VARCHAR(255) NOT NULL,
 					QST_system varchar(25) DEFAULT NULL,
 					QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
 					QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
@@ -420,7 +420,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QSG_name VARCHAR(100) NOT NULL,
+					QSG_name VARCHAR(255) NOT NULL,
 					QSG_identifier VARCHAR(100) NOT NULL,
 					QSG_desc TEXT NULL,
 					QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
@@ -446,7 +446,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_question_option';
 		$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					QSO_value VARCHAR(100) NOT NULL ,
+					QSO_value VARCHAR(255) NOT NULL ,
 					QSO_desc TEXT NOT NULL ,
 					QST_ID INT UNSIGNED NOT NULL ,
 					QSO_order INT UNSIGNED NOT NULL DEFAULT 0,

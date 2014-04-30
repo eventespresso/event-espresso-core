@@ -54,7 +54,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _init_page_props() {
-		require_once( EE_MODELS . 'EEM_Event.model.php' );
+
 		$this->page_slug = EVENTS_PG_SLUG;
 		$this->page_label = EVENTS_LABEL;
 		$this->_admin_base_url = EVENTS_ADMIN_URL;
@@ -67,7 +67,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'espresso_events' => 'edit'
 			);
 
-		$this->_event_model = EEM_Event::instance();
+		$this->_event_model = EE_Registry::instance()->load_model( 'Event' );
 
 		add_action('AHEE__EE_Admin_Page_CPT__set_model_object__after_set_object', array( $this, 'verify_event_edit' ) );
 	}
@@ -244,7 +244,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
-					'event_date_info' => array(
+					'event_editor_event_datetimes_help_tab' => array(
 						'title' => __('Event Datetimes', 'event_espresso'),
 						'filename' => 'event_editor_event_datetimes'
 					),
@@ -300,7 +300,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 						'title' => __('Event Venue Details', 'event_espresso'),
 						'filename' => 'event_editor_venue_details'
 					),
-					'event_date_info' => array(
+					'event_editor_event_datetimes_help_tab' => array(
 						'title' => __('Event Datetimes', 'event_espresso'),
 						'filename' => 'event_editor_event_datetimes'
 					),
@@ -531,29 +531,34 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 * @return void
 	 */
 	public function verify_event_edit($event = NULL) {
-		if ( empty( $event ) )
+		// no event?
+		if ( empty( $event )) {
+			// set event
 			$event = $this->_cpt_model_obj;
-
-		if ( empty ( $event ) )
+		}
+		// STILL no event?
+		if ( empty ( $event )) {
 			return;
-
-
-		//first check if event is active.
-		if ( $event->is_expired() || $event->is_inactive() || $event->status() == EEM_Event::cancelled || $event->status() == EEM_Event::postponed )
+		}
+		// first check if event is active.
+		if ( $event->is_expired() || $event->is_inactive() || $event->status() == EEM_Event::cancelled || $event->status() == EEM_Event::postponed ) {
 			return;
+		}
 		$orig_status = $event->status();
 		//made it here so it IS active... next check that any of the tickets are sold.
 		if ( $event->is_sold_out() || $event->is_sold_out(TRUE ) ) {
 			if ( $event->status() !== $orig_status && $orig_status !== EEM_Event::sold_out  ) {
-				EE_Error::add_attention( sprintf( __('Please note that the Event Status has automaticallly been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You <em>can</em> change the status back to something else before updating if you wish.', 'event_espresso'), EEH_Template::pretty_status( EEM_Event::sold_out, FALSE, 'sentence' ) ) );
+				EE_Error::add_attention( sprintf(
+					__( 'Please note that the Event Status has automaticallly been changed to %s because there are no more spaces available for this event.  However, this change is not permanent until you update the event.  You <em>can</em> change the status back to something else before updating if you wish.', 'event_espresso' ),
+					EEH_Template::pretty_status( EEM_Event::sold_out, FALSE, 'sentence' )
+				));
 			}
 			return;
 		}
-
 		//now we need to determine if the event has any tickets on sale.  If not then we dont' show the error
-		if ( ! $event->tickets_on_sale() )
+		if ( ! $event->tickets_on_sale() ) {
 			return;
-
+		}
 		//made it here so show warning
 		EE_Error::add_attention( $this->_edit_event_warning() );
 	}
@@ -1184,14 +1189,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	protected function _register_event_editor_meta_boxes() {
 		$this->verify_cpt_object();
-
 		add_meta_box('espresso_event_editor_tickets', __('Event Datetime & Ticket', 'event_espresso'), array($this, 'ticket_metabox'), $this->page_slug, 'normal', 'high');
-
 		add_meta_box('espresso_event_editor_event_options', __('Event Registration Options', 'event_espresso'), array($this, 'registration_options_meta_box'), $this->page_slug, 'side', 'default');
-
 		add_meta_box('espresso_event_editor_venue', __('Venue Details', 'event_espresso'), array( $this, 'venue_metabox' ), $this->page_slug, 'normal', 'core');
-
-
 		//note if you're looking for other metaboxes in here, where a metabox has a related management page in the admin you will find it setup in the related management page's "_Hooks" file.  i.e. messages metabox is found in "espresso_events_Messages_Hooks.class.php".
 	}
 
@@ -1199,6 +1199,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function ticket_metabox() {
+
 		$existing_datetime_ids = $existing_ticket_ids = array();
 
 		//defaults for template args
@@ -1224,13 +1225,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		 * 2. Fore each datetime get related tickets
 		 * 3. For each ticket get related prices
 		 */
-
-		$DTM_MDL = EE_Registry::instance()->load_model('Datetime' );
-		$times = $DTM_MDL->get_all_event_dates( $event_id );
-
-		require_once(EE_MODELS . 'EEM_Datetime.model.php');
-		$DTM_MDL = EEM_Datetime::instance();
-		require_once EE_HELPERS . 'EEH_DTT_Helper.helper.php';
+		$times = EE_Registry::instance()->load_model('Datetime' )->get_all_event_dates( $event_id );
+		EE_Registry::instance()->load_helper('DTT_Helper' );
 
 		$firstdtt = array_slice($times, 0, 1);
 		//do we get related tickets?
@@ -1261,7 +1257,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			$template_args['ticket_rows'] .= $this->_get_ticket_row( $ticket[1] ); //note we're just sending the first default row (decaf can't manage default tickets so this should be sufficent);
 		}
 
-		$template_args['event_datetime_help_link'] = $this->_get_help_tab_link('event_date_info');
+		$template_args['event_datetime_help_link'] = $this->_get_help_tab_link('event_editor_event_datetimes_help_tab');
 		$template_args['ticket_options_help_link'] = $this->_get_help_tab_link('ticket_options_info');
 		$template_args['existing_datetime_ids'] = implode(',', $existing_datetime_ids);
 		$template_args['existing_ticket_ids'] = implode(',', $existing_ticket_ids);
@@ -1361,16 +1357,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function venue_metabox() {
 
-		$values = array(
-			array('id' => true, 'text' => __('Yes', 'event_espresso')),
-			array('id' => false, 'text' => __('No', 'event_espresso'))
-		);
-
-		$VNM = EE_Registry::instance()->load_model('Venue');
 		//first let's see if we have a venue already
-		$evnt_id = $this->_cpt_model_obj->ID();
-		$venue = !empty( $evnt_id ) ? $this->_cpt_model_obj->venues() : NULL;
-		$venue = empty( $venue ) ? $VNM->create_default_object() : array_shift( $venue );
+		$event_id = $this->_cpt_model_obj->ID();
+		$venue = !empty( $event_id ) ? $this->_cpt_model_obj->venues() : NULL;
+		$venue = empty( $venue ) ? EE_Registry::instance()->load_model('Venue')->create_default_object() : array_shift( $venue );
 		$template_args['_venue'] = $venue;
 
 		$template_args['states_dropdown'] = EEH_Form_Fields::generate_form_input(

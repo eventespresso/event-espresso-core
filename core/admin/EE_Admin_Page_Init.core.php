@@ -11,23 +11,23 @@
  * @ link					{@link http://www.eventespresso.com}
  * @ since		 		4.0
  *
- * ------------------------------------------------------------------------   
+ * ------------------------------------------------------------------------
  */
 
 /**
  * EE_Admin_Page_Init
- * 
+ *
  * This is utilizes by all Admin_Page_Init child classes in order to define their require methods
  *
  * @package			Event Espresso
  * @abstract
  * @subpackage		includes/core/admin/EE_Admin_Page_Init.core.php
- * @author			Brent Christensen, Darren Ethier 
+ * @author			Brent Christensen, Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 abstract class EE_Admin_Page_Init extends EE_BASE {
-	
+
 	//identity properties (set in _set_defaults and _set_init_properties)
 	public $label;
 	public $menu_label;
@@ -110,7 +110,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * 		'parent_slug' => 'the_slug_for_the_parent_menu_item'
 	 * )
 	 * @abstract
-	 * @access public 
+	 * @access public
 	 * @return array see above description for format.
 	 */
 	abstract public function get_menu_map();
@@ -136,17 +136,17 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		/** SCRIPTS **/
 		//register
-		
+
 
 
 		//enqueue
-		
+
 	}
 
 
 
 
-	
+
 
 
 	/**
@@ -177,9 +177,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * This method is what executes the loading of the specific page class for the given dir_name as called by the EE_Admin_Init class.
 	 *
 	 * @access  public
-	 * @uses   _initialize_admin_page()	
+	 * @uses   _initialize_admin_page()
 	 * @param  string $dir_name directory name for specific admin_page being loaded.
-	 * @return void         
+	 * @return void
 	 */
 	public function initialize_admin_page() {
 		//let's check user access first
@@ -200,11 +200,11 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		if ( !is_object($this->_loaded_page_object) ) {
 			$msg[] = __('We can\'t load the page because we\'re missing a valid page object that tells us what to load', 'event_espresso');
-			$msg[] = $msg[0] . "\r\n" . sprintf( 
+			$msg[] = $msg[0] . "\r\n" . sprintf(
 				__('The custom slug you have set for this page is %s. This means we\'re looking for the class %s_Admin_Page (found in %s_Admin_Page.core.php) within your %s directory', 'event_espresso'),
-				 $this->_file_name, 
-				 $this->_file_name, 
-				 $this->_folder_path . $this->_file_name, 
+				 $this->_file_name,
+				 $this->_file_name,
+				 $this->_folder_path . $this->_file_name,
 				 $this->menu_label
 			);
 			throw new EE_Error( implode( '||', $msg) );
@@ -256,7 +256,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 
 	/**
-	 * This automatically checks if we have a hook class in the loaded child directory.  If we DO then we will register it with the appropriate pages.  That way all we have to do is make sure the file is named correctly and "dropped" in.  
+	 * This automatically checks if we have a hook class in the loaded child directory.  If we DO then we will register it with the appropriate pages.  That way all we have to do is make sure the file is named correctly and "dropped" in.
 	 * Example: if we wanted to set this up for Messages hooking into Events then we would do:  events_Messages_Hooks.class.php
 	 *
 	 * @param bool $extend This indicates whether we're checking the extend directory for any register_hooks files/classes
@@ -277,7 +277,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$this->_hook_paths = array_merge( $this->_register_hook_files( $hook_files_glob_path ), $this->_hook_paths );  //making sure any extended hook paths are later in the array than the core hook paths!
 
 		return $this->_hook_paths;
-		
+
 	}
 
 
@@ -292,17 +292,17 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 				$rel_admin = str_replace( $replace, '', $hook_file);
 				$rel_admin = strtolower($rel_admin);
 				$hook_paths[] = $file;
-				
+
 				//make sure we haven't already got a hook setup for this page path
 				if ( in_array( $rel_admin, $this->_files_hooked ) )
 					continue;
-				
+
 				$this->hook_file = $hook_file;
 				$rel_admin_hook = 'FHEE_do_other_page_hooks_' . $rel_admin;
 				$filter = add_filter( $rel_admin_hook, array($this, 'load_admin_hook') );
 				$this->_files_hooked[] = $rel_admin;
 			}
-		} 
+		}
 
 		return $hook_paths;
 
@@ -321,32 +321,32 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * _initialize_admin_page
 	 * @see  initialize_admin_page() for info
 	 */
-	protected function _initialize_admin_page() {		
-		
+	protected function _initialize_admin_page() {
+
 		//JUST CHECK WE'RE ON RIGHT PAGE.
 		if ( (!isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->menu_slug) && $this->_routing )
 			return; //not on the right page so let's get out.
 		$this->_load_page = TRUE;
 
 		//let's set page specific autoloaders.  Note that this just sets autoloaders for THIS set of admin pages.
-		spl_autoload_register(array( $this, 'set_autoloaders') );
+//		spl_autoload_register(array( $this, 'set_autoloaders') );
 
 		//we don't need to do a page_request check here because it's only called via WP menu system.
 		$admin_page = $this->_file_name . '_Admin_Page';
 		$hook_suffix = $this->menu_slug . '_' . $admin_page;
 		$admin_page = apply_filters("FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__{$hook_suffix}", $admin_page);
-		
+
 		// define requested admin page class name then load the file and instantiate
 		$path_to_file = str_replace( array( '\\', '/' ), DS, $this->_folder_path . $admin_page . '.core.php' );
 		$path_to_file=apply_filters("FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__{$hook_suffix}",$path_to_file );//so if the file would be in EE_ADMIN/attendees/Attendee_Admin_Page.core.php, the filter would be FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__attendees_Attendee_Admin_Page
 
-		if ( is_readable( $path_to_file )) {					
+		if ( is_readable( $path_to_file )) {
 			// This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
 			do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization' );
 			do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_' . $this->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
-			$this->_loaded_page_object = $a->newInstance( $this->_routing );				
+			$this->_loaded_page_object = $a->newInstance( $this->_routing );
 		}
 		do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__after_initialization' );
 		do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__after_initialization_' . $this->menu_slug );
@@ -362,13 +362,13 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 
 
-	public function set_autoloaders( $className ) {
-		$dir_ref = array(
-			$this->_folder_path => array('core','class')
-			);
-		EE_Registry::instance()->load_helper( 'Autoloader' );
-		EEH_Autoloader::try_autoload($dir_ref, $className );
-	}
+//	public function set_autoloaders( $className ) {
+//		$dir_ref = array(
+//			$this->_folder_path => array('core','class')
+//			);
+//		EE_Registry::instance()->load_helper( 'Autoloader' );
+//		EEH_Autoloader::try_autoload($dir_ref, $className );
+//	}
 
 
 
@@ -387,7 +387,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		}
 
 		return true;
-	}	
+	}
 
 }
 // end of file:  includes/core/admin/EE_Admin_Page_Init.core.php

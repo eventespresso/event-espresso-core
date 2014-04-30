@@ -352,14 +352,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 				}
 				$reg_csv_array[$this->_get_column_name_for_field($field)] = $value;
 				if($field_name == 'REG_final_price'){
-					//add a column named Currency after teh final price
+					//add a column named Currency after the final price
 					$reg_csv_array[__("Currency", "event_espresso")] = EE_Config::instance()->currency->code;
 				}
 			}	
 			//get pretty status
-			$status = $registration->status_obj();
-			$status_model = EE_Registry::instance()->load_model('Status');
-			$reg_csv_array[$status_model->field_settings_for('STS_code')->get_nicename()] = $status->code();
+			$reg_csv_array[__("Registration Status", 'event_espresso')] = $registration->pretty_status();
+			//get pretty trnasaction status
+			$reg_csv_array[__("Transaction Status", 'event_espresso')] = $registration->transaction()->pretty_status();
 			//get whether or not the user has checked in 
 			$reg_csv_array[__("Check-Ins", "event_espresso")] = $registration->count_checkins();
 			//get ticket of registration and its price

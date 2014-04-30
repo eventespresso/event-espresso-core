@@ -16,7 +16,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * EE_Brewing_Regular class.  Just a wrapper to help namespace activity for the functionliaty of this file.
+ * EE_Brewing_Regular class.  Just a wrapper to help namespace activity for the functionality of this file.
  *
  * @package		Event Espresso
  * @subpackage	/caffeinated/brewing_regular.php
@@ -45,9 +45,6 @@ class EE_Brewing_Regular extends EE_Base {
 
 			add_filter( 'FHEE__EE_Registry__load_helper__helper_paths', array( $this, 'caf_helper_paths' ), 10 );
 
-			//Make EE Plugin API helper available
-			EE_Registry::instance()->load_helper('Plugin_API');
-
 			// caffeinated constructed
 			do_action( 'AHEE__EE_Brewing_Regular__construct__complete' );
 		}
@@ -71,7 +68,7 @@ class EE_Brewing_Regular extends EE_Base {
 	 * some global prices that will show off EE4's capabilities. However, if they're upgrading
 	 * from 3.1, or simply 4.1 decaf, we assume they don't want us to suddenly introduce these extra prices.
 	 * This action should only be called when EE 4.1.0P is initially activated.
-	 * Right now the only CAF content are these global prices. If there's more in teh future, then
+	 * Right now the only CAF content are these global prices. If there's more in the future, then
 	 * we should probably create a caf file to contain it all instead just a function like this.
 	 * Right now, we ASSUME the only price types in the system are default ones
 	 * @global type $wpdb
@@ -551,7 +548,7 @@ class EE_Brewing_Regular extends EE_Base {
 				),
 			'messengers_to_activate_with' => array( 'email' )
 			);
-		EEH_Plugin_API::register_new_message_type( $setup_args );
+		EE_Register_Message_Type::register( $setup_args );
 	}
 
 
@@ -574,7 +571,7 @@ class EE_Brewing_Regular extends EE_Base {
 			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),
 			'list_type_shortcodes' => array( '[NEWSLETTER_CONTENT]' )
 			);
-		EEH_Plugin_API::register_messages_shortcode_library( $name, $setup_args );
+		EE_Register_Messages_Shortcode_Library::register( $name, $setup_args );
 	}
 
 

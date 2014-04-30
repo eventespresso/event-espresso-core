@@ -67,7 +67,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		?>
 		<tr>
 			<th><label for="access_key">
-					<?php _e('Mijireh Access Key', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link( 'ee_Mijireh_help' ); ?>
+					<?php _e('Mijireh Access Key', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link( 'payment_methods_overview_mijireh_help_tab' ); ?>
 				</label></th>
 			<td><input class="regular-text" type="text" name="access_key" size="35" id="access_key" value="<?php echo $this->_payment_settings['access_key']; ?>">
 				<br />
@@ -96,7 +96,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		return number_format($float, 2);
 	}
 	/**
-	 * Sends a direct request to mijireh, informing them of the order, and they return the URL to send teh user to.
+	 * Sends a direct request to mijireh, informing them of the order, and they return the URL to send the user to.
 	 * Also, in order to later be able to find the status of the gateway's transaction, we immediately create an ee payment
 	 * on this function and give it the mijireh's transaction ID.
 	 * @param EE_Line_Item $total_line_item
@@ -128,7 +128,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				);
 			}
 		}else{//its a partial payment
-			if( ! $total_to_charge){//they didn't set teh total to charge, so it must have a balance
+			if( ! $total_to_charge){//they didn't set the total to charge, so it must have a balance
 				$total_to_charge = $transaction->remaining();
 			}
 			$tax_total = 0;

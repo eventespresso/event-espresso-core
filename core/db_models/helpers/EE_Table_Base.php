@@ -28,7 +28,7 @@ abstract class EE_Table_Base{
 	}
 	function get_table_alias(){
 		if( ! $this->_table_alias){
-			throw new EE_Error("You must call _construct_finalize_with_alias before using thie EE_Table_Base. Did you forget to call parent::__construct at the end of your EEMerimental_Base child's __construct?");
+			throw new EE_Error("You must call _construct_finalize_with_alias before using the EE_Table_Base. Did you forget to call parent::__construct at the end of your EEMerimental_Base child's __construct?");
 		}
 		return $this->_table_alias;
 	}

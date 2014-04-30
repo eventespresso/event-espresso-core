@@ -200,7 +200,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table {
 	protected $_yes_no = array();
 
 	/**
-	 * Array describing buttons that should appear at teh bottom of the page
+	 * Array describing buttons that should appear at the bottom of the page
 	 * Keys are strings that represent the button's function (specifically a key in _labels['buttons']), and the values are another array with the following keys
 	 * array(
 	 * 	'route' => 'page_route',

@@ -256,7 +256,7 @@ class EE_Promotion extends EE_Base_Class{
 		return $this->set('PRO_global', $global);
 	}
 	/**
-	 * Sets teh number of times this promotion hsa been used globally
+	 * Sets the number of times this promotion hsa been used globally
 	 * @param string $global_uses
 	 * @returns boolean
 	 */
@@ -272,7 +272,7 @@ class EE_Promotion extends EE_Base_Class{
 		return $this->set('PRO_exclusive', $exclusive);
 	}
 	/**
-	 * sets teh acceptance message
+	 * sets the acceptance message
 	 * @param string $accept_msg
 	 * @returns boolean
 	 */
@@ -288,7 +288,7 @@ class EE_Promotion extends EE_Base_Class{
 		return $this->set('PRO_decline_msg', $decline_msg);
 	}
 	/**
-	 * Sets whether or not this promotino should be usable by DEFAULT on all new items in its scope
+	 * Sets whether or not this promotion should be usable by DEFAULT on all new items in its scope
 	 * @param boolean $default
 	 * @returns boolean
 	 */
@@ -296,7 +296,7 @@ class EE_Promotion extends EE_Base_Class{
 		return $this->set('PRO_default', $default);
 	}
 	/**
-	 * sets teh order of application on this promotion
+	 * sets the order of application on this promotion
 	 * @param int $order
 	 * @returns boolean
 	 */

@@ -244,6 +244,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => '_edit_cpt_item'
 				),
 
+				'duplicate_attendee' => array(
+					'func' => '_duplicate_attendee',
+					'noheader' => TRUE
+					),
+
 				'insert_attendee'	=> array(
 					'func' => '_insert_or_update_attendee',
 					'args' => array(
@@ -645,7 +650,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registration_legend_items() {
 		$items = array(
 			'star-icon' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
+				'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
 				'desc' => __('This is the Primary Registrant', 'event_espresso')
 				),
 			'view_details' => array(
@@ -753,7 +758,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
 
 		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
-		$CAT_ID = isset( $this->_req_data['category_id'] ) ? absint( $this->_req_data['category_id'] ) : FALSE;
+		$CAT_ID = isset( $this->_req_data['EVT_CAT'] ) ? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
 		$reg_status = isset( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
 		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
 		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
@@ -799,7 +804,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$_where['EVT_ID']=$EVT_ID;
 		}
 		if($CAT_ID){
-			throw new EE_Error("not sure how to handle filtering event categories here");
+			$_where['Event.Term_Taxonomy.term_id'] = $CAT_ID;
 		}
 		if($reg_status){
 			$_where['STS_ID'] = $reg_status;
@@ -1383,7 +1388,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				<td class="reg-admin-edit-attendee-question-td">
 					<a class="reg-admin-edit-attendee-question-lnk" href="#" title="' . __( 'click to edit question', 'event_espresso' ) . '">
 						<span class="reg-admin-edit-question-group-spn lt-grey-txt">' . __( 'edit the above question group', 'event_espresso' ) . '</span>
-						<img width="16" height="16" alt="' . __( 'Edit Question', 'event_espresso' ) . '" src="'. EE_GLOBAL_ASSETS_URL .'/images/pencil-16x16.png">
+						<div class="dashicons dashicons-edit"></div>
 					</a>
 				</td>
 			</tr>
@@ -1678,6 +1683,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		/*@var $attendee EE_Attendee */
 		$attendee = $this->_registration->attendee() ? $this->_registration->attendee() : EEM_Attendee::instance()->create_default_object();
 
+		//now let's determine if this is not the primary registration.  If it isn't then we set the primary_registration object for reference BUT ONLY if the Attendee object loaded is not the same as the primary registration object (that way we know if we need to show cereate button or not)
+		if ( ! $this->_registration->is_primary_registrant() ) {
+			$primary_registration = $this->_registration->get_primary_registration();
+			$primary_attendee = $primary_registration->attendee();
+
+			if ( $attendee->ID() !== $primary_attendee->ID() ) {
+				//in here?  This means the displayed registration is not the primary registrant but ALREADY HAS its own custom attendee object so let's not worry about the primary reg.
+				$primary_registration = NULL;
+			}
+		} else {
+			$primary_registration = NULL;
+		}
+
 		$this->_template_args['ATT_ID'] = $attendee->ID();
 		$this->_template_args['fname'] = $attendee->fname();//$this->_registration->ATT_fname;
 		$this->_template_args['lname'] = $attendee->lname();//$this->_registration->ATT_lname;
@@ -1689,6 +1707,15 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_template_args['country'] =  $attendee->country_obj() ? $attendee->country_obj()->name() : '';
 		$this->_template_args['zip'] =  $attendee->zip() ? '<br />' . $attendee->zip() : '';
 		$this->_template_args['phone'] = $attendee->phone();
+
+		//edit link
+		$this->_template_args['att_edit_link'] = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$attendee->ID() ), REG_ADMIN_URL );
+		$this->_template_args['att_edit_label'] = $primary_registration instanceof EE_Registration ? __('View/Edit Contact', 'event_espresso') : __('View/Edit Contact' );
+
+		//create link
+		$this->_template_args['create_link'] = $primary_registration instanceof EE_Registration ? EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'duplicate_attendee',  '_REG_ID' => $this->_registration->ID() ), REG_ADMIN_URL ): '';
+		$this->_template_args['create_label'] = __('Create Contact', 'event_espresso');
+
 
 		$template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';
 		echo EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
@@ -1784,6 +1811,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$REGM = EEM_Registration::instance();
 
 		$success = 1;
+		$error = 0;
 
 		$tickets = array();
 		$dtts = array();
@@ -1803,6 +1831,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
 
 				$REG = $REGM->get_one_by_ID($REG_ID);
+				$payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
+				if ( $payment_count > 0 ) {
+					$name = $REG->attendee()->full_name();
+					$error = 1;
+					$success = 0;
+					EE_Error::add_error( sprintf( __('The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.', 'event_espresso'), $name ), __FILE__, __FUNCTION__, __LINE__ );
+					continue; //can't trash this registration because it has payments.
+				}
 				$ticket = $REG->get_first_related('Ticket');
 				$tickets[$ticket->ID()] = $ticket;
 				$dtt = $ticket->get_many_related('Datetime');
@@ -1811,6 +1847,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$updated = $trash ? $REG->delete() : $REG->restore();
 				if ( !$updated ) {
 					$success = 0;
+				} else {
+					$success = 2;
 				}/**/
 			}
 
@@ -1834,7 +1872,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Registration', 'event_espresso' );
 		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
-		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ) );
+		$overwrite_msgs = $error ? TRUE : FALSE;
+		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ), $overwrite_msgs );
 	}
 
 
@@ -2374,6 +2413,43 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 	/***************************************		ATTENDEE DETAILS 		***************************************/
 
+
+	/**
+	 * This duplicates the attendee object for the given incoming registration id and attendee_id.
+	 * @return void
+	 */
+	protected function _duplicate_attendee() {
+		$action = !empty( $this->_req_data['return'] ) ? $this->_req_data['return'] : 'default';
+		//verify we have necessary info
+		if ( empty($this->_req_data['_REG_ID'] )  ) {
+			EE_Error::add_error( __('Unable to create the contact for the registration because the required paramaters are not present (_REG_ID )', 'event_espresso'),  __FILE__, __LINE__, __FUNCTION__ );
+			$query_args = array( 'action' => $action );
+			$this->_redirect_after_action('', '', '', $query_args, TRUE);
+		}
+
+		//okay necessary deets present... let's dupe the incoming attendee and attach to incoming registration.
+		$registration = EEM_Registration::instance()->get_one_by_ID( $this->_req_data['_REG_ID'] );
+		$attendee = $registration->attendee();
+
+		//remove relation of existing attendee on registration
+		$registration->_remove_relation_to($attendee, 'Attendee' );
+		//new attendee
+		$new_attendee = clone $attendee;
+		$new_attendee->set( 'ATT_ID', 0 );
+		$new_attendee->save();
+
+		//add new attendee to reg
+		$registration->_add_relation_to( $new_attendee, 'Attendee');
+
+		EE_Error::add_success( __('New Contact record created.  Now make any edits you wish to make for this contact.', 'event_espresso') );
+
+		//redirect to edit page for attendee
+		$query_args = array( 'post' => $new_attendee->ID(), 'action' => 'edit_attendee' );
+
+		$this->_redirect_after_action( '', '', '', $query_args, TRUE );
+	}
+
+
 	//related to cpt routes
 	protected function _insert_update_cpt_item($post_id, $post) {
 		$success = true;
@@ -2453,7 +2529,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * Metabox for attendee details
 	 * @param  WP_Post $post wp post object
-	 * @return string        attendee address detials (and form)
+	 * @return string        attendee address details (and form)
 	 */
 	public function attendee_address_details($post) {
 		//get attendee object (should already have it)

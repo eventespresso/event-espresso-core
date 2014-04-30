@@ -307,10 +307,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'event_registrations',
 			'default'
 			);
-		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to ) ) {
-			$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send-selected-newsletter-count">0</span>' );
-			echo '<button id="selected-batch-send-trigger" class="button secondary-button"><span class="dashicons dashicons-email "></span>' . $button_text . '</button>';
-			add_action('admin_footer', array( $this, 'newsletter_send_form_skeleton') );
+		if ( $this->_current_page == 'espresso_registrations' && in_array( $this->_req_action, $routes_to_add_to )  ) {
+			if ( $this->_req_action == 'event_registrations' && empty( $this->_req_data['event_id'] ) ) {
+				echo '';
+			} else {
+				$button_text = sprintf( __('Send Batch Message (%s selected)', 'event_espresso'), '<span class="send-selected-newsletter-count">0</span>' );
+				echo '<button id="selected-batch-send-trigger" class="button secondary-button"><span class="dashicons dashicons-email "></span>' . $button_text . '</button>';
+				add_action('admin_footer', array( $this, 'newsletter_send_form_skeleton') );
+			}
 		}
 	}
 
@@ -319,6 +323,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 	public function newsletter_send_form_skeleton() {
 		$list_table = $this->_list_table_object;
+		$codes = array();
 		//need to templates for the newsletter message type for the template selector.
 		$values[] = array( 'text' => __('Select Template to Use', 'event_espresso'), 'id' => 0 );
 		$mtps = EEM_Message_Template_Group::instance()->get_all( array( array( 'MTP_message_type' => 'newsletter', 'MTP_messenger' => 'email' ) ) );
@@ -332,10 +337,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		//need to get a list of shortcodes that are available for the newsletter message type.
 		EE_Registry::instance()->load_helper('MSG_Template');
-		$shortcodes = EEH_MSG_Template::get_shortcodes( 'newsletter', 'email', array(), 'attendee', TRUE );
-		if ( isset( $shortcodes['[NEWSLETTER_CONTENT]'] ) )
-			unset( $shortcodes['[NEWSLETTER_CONTENT]'] );
-		$shortcodes = implode(', ', array_keys($shortcodes));
+		$shortcodes = EEH_MSG_Template::get_shortcodes( 'newsletter', 'email', array(), 'attendee', FALSE );
+		foreach ( $shortcodes as $field => $shortcode_array ) {
+			$codes[$field] = implode(', ', array_keys($shortcode_array ) );
+		}
+
+		$shortcodes = $codes;
 
 		$form_template = REG_CAF_TEMPLATE_PATH . 'newsletter-send-form.template.php';
 		$form_template_args = array(
@@ -346,7 +353,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'redirect_back_to' => $this->_req_action,
 			'ajax_nonce' => wp_create_nonce( 'get_newsletter_form_content_nonce'),
 			'template_selector' => EEH_Form_Fields::select_input('newsletter_mtp_selected', $values ),
-			'shortcodes_available' => $shortcodes,
+			'shortcodes' => $shortcodes,
 			'id_type' => $list_table instanceof EE_Attendee_Contact_List_Table ? 'contact' : 'registration'
 			);
 		EEH_Template::display_template( $form_template, $form_template_args );
@@ -599,7 +606,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	public function toggle_checkin_status() {
 		//first make sure we have the necessary data
 		if ( !isset( $this->_req_data['_regid'] ) ) {
-			EE_Error::add_error( __('There must be somethign broken with the html structure because the required data for toggling the Check-in status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('There must be something broken with the html structure because the required data for toggling the Check-in status is not being sent via ajax', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_template_args['success'] = FALSE;
 			$this->_template_args['error'] = TRUE;
 			$this->_return_json();
@@ -760,7 +767,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$legend_items = array(
 			'star-icon' => array(
-				'icon' => EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png',
+				'class' => 'dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8',
 				'desc' => __('This Registrant is the Primary Registrant', 'event_espresso')
 				),
 			'checkin' => array(

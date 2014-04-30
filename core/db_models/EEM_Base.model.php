@@ -6,14 +6,14 @@
  * An important note about values dealt with in models and model objects:
  * values used by models exist in basically 3 different domains, which the EE_Model_Fields help convert between:
  * 1. Client-code values (eg, controller code may refer to a date as "March 21, 2013")
- * 2. Model object values (eg, after the model object has called set() on teh value and saves it onto the model object, it may become a unix timestamp, eg 12312412412)
+ * 2. Model object values (eg, after the model object has called set() on the value and saves it onto the model object, it may become a unix timestamp, eg 12312412412)
  * 3. Database values (eg, we may later decide to store dates as mysql dates, in which case they'd be stored as '2013-03-21 00:00:00')
  * Sometimes these values are the same, but often they are not. When your client code is using a model's functions, you need to be aware
  * which domain your data exists in. If it is client-code values (ie, it hasn't had a EE_Model_Field call prepare_for_set on it) then use the
- * model functions as normal. However, if you are calling the model functions with values from teh model object domain (ie, the code your writing is
+ * model functions as normal. However, if you are calling the model functions with values from the model object domain (ie, the code your writing is
  * probably within a model object, and all the values you're dealing with have had an EE_MOdel_Field call prepare_for_set on them), then you'll want
  * to set $values_already_prepared_by_model_object to FALSE within the argument-list of the functions you call (in order to avoid re-processing those values).
- * If your values are already in teh database values domain, you'll either way to convert them into the model object domain by creating model objects
+ * If your values are already in the database values domain, you'll either way to convert them into the model object domain by creating model objects
  * from those raw db values (ie,using EEM_Base::_create_objects), or just use $wpdb directly.
  */
 
@@ -58,7 +58,7 @@ abstract class EEM_Base extends EE_Base{
 	protected $_indexes = array();
 
 	/**
-	 * Defautls strategy for getting where conditions on this model. This strategy is used to get default
+	 * Default strategy for getting where conditions on this model. This strategy is used to get default
 	 * where conditions which are added to get_all, update, and delete queries. They can be overriden
 	 * by setting the same columns as used in these queries in the query yourself.
 	 * @var EE_Default_Where_Conditions
@@ -301,117 +301,112 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
-	 * @param array $query_params array with the following array key indexes:
+	 * @param array $query_params {
 	 * 
-	 *		key			|					value
-	 * -------------------------------------------------------------------------
-	 *		0 (where)	|	an array of key-value pairs in its most basic form. 
-	 *					|	eg: array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob')
-	 *					|	becomes 
-	 *					|	SQL >> "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
+	 *	@type array $0 (where)
+	 *		eg: array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob')
+			becomes 
+	 *		SQL >> "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
 	 *			
-	 *					|	To add WHERE conditions based on related models (and even models-related-to-related-models) prepend the model's name
-	 *					|	onto the field name. Eg, EEM_Event::instance()->get_all(array(array('Venue.VNU_ID'=>12)));
-	 *					|	becomes
-	 *					|	SQL >> "SELECT * FROM wp_posts AS Event_CPT 
-	 *					|						LEFT JOIN wp_esp_event_meta AS Event_Meta ON Event_CPT.ID = Event_Meta.EVT_ID 
-	 *					|						LEFT JOIN wp_esp_event_venue AS Event_Venue ON Event_Venue.EVT_ID=Event_CPT.ID 
-	 *					|						LEFT JOIN wp_posts AS Venue_CPT ON Venue_CPT.ID=Event_Venue.VNU_ID 
-	 *					|						LEFT JOIN wp_esp_venue_meta AS Venue_Meta ON Venue_CPT.ID = Venue_Meta.VNU_ID 
-	 *					|						WHERE Venue_CPT.ID = 12
-	 *					|	Notice that automatically took care of joining Events to Venues (even when each of those models actually consisted of two tables).
-	 *					|	Also, you may chain the model relations together. Eg insetad of just having "Venue.VNU_ID", you could have
-	 *					|	"Registration.Attendee.ATT_ID" as a field on a query for events (because events are related to Registrations, which are related to Attendees).
-	 *					|	You can take it even further with "Registration.Transaction.Payment.PAY_amount" etc. 
+	 *		To add WHERE conditions based on related models (and even models-related-to-related-models) prepend the model's name
+	 *		onto the field name. Eg, EEM_Event::instance()->get_all(array(array('Venue.VNU_ID'=>12)));
+	 *		becomes
+	 *		SQL >> "SELECT * FROM wp_posts AS Event_CPT 
+	 *						LEFT JOIN wp_esp_event_meta AS Event_Meta ON Event_CPT.ID = Event_Meta.EVT_ID 
+	 *						LEFT JOIN wp_esp_event_venue AS Event_Venue ON Event_Venue.EVT_ID=Event_CPT.ID 
+	 *						LEFT JOIN wp_posts AS Venue_CPT ON Venue_CPT.ID=Event_Venue.VNU_ID 
+	 *						LEFT JOIN wp_esp_venue_meta AS Venue_Meta ON Venue_CPT.ID = Venue_Meta.VNU_ID 
+	 *						WHERE Venue_CPT.ID = 12
+	 *		Notice that automatically took care of joining Events to Venues (even when each of those models actually consisted of two tables).
+	 * 	 	Also, you may chain the model relations together. Eg insetad of just having "Venue.VNU_ID", you could have
+	 *		"Registration.Attendee.ATT_ID" as a field on a query for events (because events are related to Registrations, which are related to Attendees).
+	 *		You can take it even further with "Registration.Transaction.Payment.PAY_amount" etc. 
+	 *		To change the operator (from the default of '='), change the value to an numerically-indexed array, where the
+	 *		first item in the list is the operator. 
+	 *		eg: array( 'QST_display_text' => array('LIKE','%bob%'), 'QST_ID' => array('<',34), 'QST_wp_user' => array('in',array(1,2,7,23))) 
+	 *		becomes
+	 *		SQL >> "...WHERE QST_display_text LIKE '%bob%' AND QST_ID < 34 AND QST_wp_user IN (1,2,7,23)...".
+	 * 		Valid operators so far: =, !=, <, <=, >, >=, LIKE, NOT LIKE, IN (followed by numeric-indexed array), NOT IN (dido), BETWEEN, IS NULL, IS NOT NULL, others?
 	 * 
-	 *					|	To change the operator (from the default of '='), change the value to an numerically-indexed array, where the
-	 *					|	first item in the list is the operator. 
-	 *					|	eg: array( 'QST_display_text' => array('LIKE','%bob%'), 'QST_ID' => array('<',34), 'QST_wp_user' => array('in',array(1,2,7,23))) 
-	 *					|	becomes
-	 *					|	SQL >> "...WHERE QST_display_text LIKE '%bob%' AND QST_ID < 34 AND QST_wp_user IN (1,2,7,23)...".
+	 *		Values can be a string, int, or float. They can also be arrays IFF the operator is IN. 
+	 *		Also, values can actually be field names. To indicate the value is a field, simply provide a third array item (true) to the operator-value array like so:
+	 *		eg: array( 'DTT_reg_limit' => array('>', 'DTT_sold', TRUE) )
+	 *		becomes
+	 *		SQL >> "...WHERE DTT_reg_limit > DTT_sold"
+	 *		Note: you can also use related model field names like you would any other field name. 
+	 *		eg: array('Datetime.DTT_reg_limit'=>array('=','Datetime.DTT_sold',TRUE)
+	 *		could be used if you were querying EEM_Tickets (because Datetime is directly related to tickets)
+	 *		
+	 *		Also, by default all the where conditions are AND'd together. 
+	 *		To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together 
+	 *		eg: array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' => 345678912))
+	 *		becomes 
+	 *		SQL >> "...WHERE TXN_ID = 23 OR TXN_timestamp = 345678912...". 
+	 * 		Also, to negate an entire set of conditions, use 'NOT' as an array key. 
+	 *		eg: array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)
+	 *		becomes 
+	 *		SQL >> "...where ! (TXN_total =50 AND TXN_paid =23) 
+	 *		Note: the 'glue' used to join each condition will continue to be what you last specified. IE, "AND"s by default,
+	 *		but if you had previously specified to use ORs to join, ORs will continue to be used. So, if you specify to use an "OR"
+	 *		to join conditions, it will continue to "stick" until you specify an AND.
+	 *		eg array('OR'=>array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)),AND=>array('TXN_ID'=>1,'STS_ID'=>'TIN')
+	 *		becomes
+	 *		SQL >> "...where ! (TXN_total =50 OR TXN_paid =23) AND TXN_ID=1 AND STS_ID='TIN'"
 	 * 
-	 *					|	Valid operators so far: =, !=, <, <=, >, >=, LIKE, NOT LIKE, IN (followed by numeric-indexed array), NOT IN (dido), BETWEEN, IS NULL, IS NOT NULL, others?
-	 * 
-	 *					|	Values can be a string, int, or float. They can also be arrays IFF the operator is IN. 
-	 *					|	Also, values can actually be field names. To indicate the value is a field, simply provide a third array item (true) to the operator-value array like so:
-	 *					|	eg: array( 'DTT_reg_limit' => array('>', 'DTT_sold', TRUE) )
-	 *					|	becomes
-	 *					|	SQL >> "...WHERE DTT_reg_limit > DTT_sold"
-	 *					|	Note: you can also use related model field names like you would any other field name. 
-	 *					|	eg: array('Datetime.DTT_reg_limit'=>array('=','Datetime.DTT_sold',TRUE)
-	 *					|	could be used if you were querying EEM_Tickets (because Datetime is directly related to tickets)
-	 *					|	
-	 *					|	Also, by default all the where conditions are AND'd together. 
-	 *					|	To override this, add an array key 'OR' (or 'AND') and the array to be OR'd together 
-	 *					|	eg: array('OR'=>array('TXN_ID' => 23 , 'TXN_timestamp__>' => 345678912))
-	 *					|	becomes 
-	 *					|	SQL >> "...WHERE TXN_ID = 23 OR TXN_timestamp = 345678912...". 
-	 * 
-	 *					|	Also, to negate an entire set of conditions, use 'NOT' as an array key. 
-	 *					|	eg: array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)
-	 *					|	becomes 
-	 *					|	SQL >> "...where ! (TXN_total =50 AND TXN_paid =23) 
-	 *					|	Note: the 'glue' used to join each condition will continue to be what you last specified. IE, "AND"s by default,
-	 *					|	but if you had previously specified to use ORs to join, ORs will continue to be used. So, if you specify to use an "OR"
-	 *					|	to join conditions, it will continue to "stick" until you specify an AND.
-	 *					|	eg array('OR'=>array('NOT'=>array('TXN_total' => 50, 'TXN_paid'=>23)),AND=>array('TXN_ID'=>1,'STS_ID'=>'TIN')
-	 *					|	becomes
-	 *					|	SQL >> "...where ! (TXN_total =50 OR TXN_paid =23) AND TXN_ID=1 AND STS_ID='TIN'"
-	 * 
-	 *					|	They can be nested indefinetely. 
-	 *					|	eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN'))))
-	 *					|	becomes 
-	 *					|	SQL >> "...WHERE TXN_total = 23 OR ! (TXN_timestmap = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
+	 *		They can be nested indefinetely. 
+	 *		eg: array('OR'=>array('TXN_total' => 23, 'NOT'=> array( 'TXN_timestamp'=> 345678912, 'AND'=>array('TXN_paid' => 53, 'STS_ID' => 'TIN'))))
+	 *		becomes 
+	 *		SQL >> "...WHERE TXN_total = 23 OR ! (TXN_timestmap = 345678912 OR (TXN_paid = 53 AND STS_ID = 'TIN'))..."
 	 * 
 	 *					
-	 *					|	GOTCHA: 
-	 *					|	because this is an array, array keys must be unique, making it impossible to place two or more where conditions applying to the same field. 
-	 *					|	eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)),
-	 *					|	as PHP enforces that the array keys must be unique, thus removing the first two array entries with key 'PAY_timestamp'.
-	 *					|	becomes 
-	 *					|	SQL >> "PAY_timestamp !=  4234232", ignoring the first two PAY_timestmap conditions).
+	 *		GOTCHA: 
+	 *		because this is an array, array keys must be unique, making it impossible to place two or more where conditions applying to the same field. 
+	 *		eg: array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp'=>array('<',$end_date),'PAY_timestamp'=>array('!=',$special_date)),
+	 *		as PHP enforces that the array keys must be unique, thus removing the first two array entries with key 'PAY_timestamp'.
+	 *		becomes 
+	 *		SQL >> "PAY_timestamp !=  4234232", ignoring the first two PAY_timestmap conditions).
 	 * 
-	 *					|	To overcome this, you can add a '*' character to the end of the field's name, followed by anything.
-	 *					|	These will be removed when generating the SQL string, but allow for the array keys to be unique.
-	 *					|	eg: you could rewrite the previous query as:
-	 *					|	array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*1st'=>array('<',$end_date),'PAY_timestamp*2nd'=>array('!=',$special_date))
-	 *					|	which correctlybecomes 
-	 *					|	SQL >> "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
-	 *					|	This can be applied to condition operators too, 
-	 *					|	eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
+	 *		To overcome this, you can add a '*' character to the end of the field's name, followed by anything.
+	 *		These will be removed when generating the SQL string, but allow for the array keys to be unique.
+	 *		eg: you could rewrite the previous query as:
+	 *		array('PAY_timestamp'=>array('>',$start_date),'PAY_timestamp*1st'=>array('<',$end_date),'PAY_timestamp*2nd'=>array('!=',$special_date))
+	 *		which correctlybecomes 
+	 *		SQL >> "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
+	 *		This can be applied to condition operators too, 
+	 *		eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
+	 *	@type mixed $limit int|array	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become 
+	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
 	 * 
-	 *		limit		|	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become 
-	 *					|	SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
+	 *	@type array $on_join_limit allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins. 
+	 *		Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).	
+	 *	@type mixed $order_by name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
+	 *		which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
+	 *		Like the 'where' conditions, these fields can be on related models. 
+	 *		Eg 'order_by'=>array('Registration.Tranaction.TXN_amount'=>'ASC') is perfectly valid from any model related to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
+	 *	@type string $order	If 'order_by' is used and its value is a string (NOT an array), then 'order' specifies whether to order the field specified in 'order_by' in ascending or
+	 *		descending order. Acceptable values are 'ASC' or 'DESC'. If, 'order_by' isn't used, but 'order' is, then it is assumed you want to order by the primary key.
+	 *		Eg, EEM_Event::instance()->get_all(array('order_by'=>'Datetime.DTT_EVT_start','order'=>'ASC'); //(will join with the Datetime model's table(s) and order by its field DTT_EVT_start)
+	 *		or EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM wp_esp_registration ORDER BY REG_ID ASC"
 	 * 
-	 *	 on_join_limit	|	allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins. 
-	 *					|	Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).	
+	 *	@type mixed $group_by name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
 	 * 
-	 *		order_by	|	name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
-	 *					|	which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
-	 *					|	Like the 'where' conditions, these fields can be on related models. 
-	 *					|	Eg 'order_by'=>array('Registration.Tranaction.TXN_amount'=>'ASC') is perfectly valid from any model related to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
+	 *	@type array having	exactl like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 * 
-	 *		order		|	If 'order_by' is used and its value is a string (NOT an array), then 'order' specifies whether to order the field specified in 'order_by' in ascending or
-	 *					|	descending order. Acceptable values are 'ASC' or 'DESC'. If, 'order_by' isn't used, but 'order' is, then it is assumed you want to order by the primary key.
-	 *					|	Eg, EEM_Event::instance()->get_all(array('order_by'=>'Datetime.DTT_EVT_start','order'=>'ASC'); //(will join with the Datetime model's table(s) and order by its field DTT_EVT_start)
-	 *					|	or EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM wp_esp_registration ORDER BY REG_ID ASC"
+	 *	@type array force_join forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
+	 *		array('Attendee','Payment','Datetime'). You may join with transient models using period, eg "Registration.Transaction.Payment".
+	 *		You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model 
+	 *		(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
+	 *		to avoid future queries
 	 * 
-	 *		group_by	|	name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
-	 * 
-	 *		having		|	exactl like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
-	 * 
-	 *		force_join	|	forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
-	 *					|	array('Attendee','Payment','Datetime'). You may join with transient models using period, eg "Registration.Transaction.Payment".
-	 *					|	You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model 
-	 *					|	(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
-	 *					|	to avoid future queries
-	 * 
-	 *default_where_conditions| can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
-	 *					|	if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
-	 *					|	set it to 'other_models_only'. If you only want this model's default where conditions added to teh query, use 'this_model_only'.
-	 *					 |	If you want to use all default where conditions (default), set to 'all'.
-	 * 
-	 * Some full examples: 
+	 *	@type string $default_where_conditions can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
+	 *		if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
+	 *		set it to 'other_models_only'. If you only want this model's default where conditions added to the query, use 'this_model_only'.
+	 *		If you want to use all default where conditions (default), set to 'all'.
+	 * } 
+	 *	@param	array $query_params		
+	 *	@param	boolean $values_already_prepared_by_model_object	
+	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again.
+	 * @example   Some full examples: 
 	 * 
 	 * 		get 10 transactions which have Scottish attendees:
 	 * 
@@ -435,10 +430,6 @@ abstract class EEM_Base extends EE_Base{
 	 * 			),
 	 *			'order_by'=>array('ANS_value'=>'ASC')
 	 *		));
-	 * 
-	 *	@param	array $query_params		
-	 *	@param	boolean $values_already_prepared_by_model_object	
-	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again.
 	 */
 	function get_all($query_params = array()){
 		return $this->_create_objects($this->_get_all_wpdb_results($query_params, ARRAY_A, NULL));
@@ -575,7 +566,7 @@ abstract class EEM_Base extends EE_Base{
 	 * So, this update script will insert a row into wp_esp_event, using any available parameters from $fields_n_values (eg, if "EVT_limit" => 40 is in $fields_n_values,
 	 * the new entry in wp_esp_event will set EVT_limit = 40, and use default for other columns which are not specified)
 	 * @param array $fields_n_values keys are model fields (exactly like keys in EEMerimental::_fields, NOT db columns!), values are strings, ints, floats, and maybe arrays if they are to be serialized.
-	 * Basically, the values are what you'd expect to be values on the model, NOT necessarily what's in teh DB. For example, if we wanted to update only the TXN_details on any Transactions where its ID=34,
+	 * Basically, the values are what you'd expect to be values on the model, NOT necessarily what's in the DB. For example, if we wanted to update only the TXN_details on any Transactions where its ID=34,
 	 * we'd use this metho as follows: 
 	 * EEM_Transaction::instance()->update(
 	 *		array('TXN_details'=>array('detail1'=>'monkey','detail2'=>'banana'),
@@ -907,7 +898,7 @@ abstract class EEM_Base extends EE_Base{
 	 * 'hasMany' relationship: sets $otherModelObject's foreign_key to be $modelObject's primary_key. If $modelObject has no ID, it is first saved.
 	 * 
 	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one.
-	 * If one of the model Objects has not yet been saved to teh database, it is saved before adding the entry in the join table
+	 * If one of the model Objects has not yet been saved to the database, it is saved before adding the entry in the join table
 	 * 
 	 * @param EE_Base_Class/int $thisModelObject
 	 * @param EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
@@ -1015,8 +1006,8 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function count_related($id_or_obj,$model_name,$query_params = array(),$field_to_count = null, $distinct = FALSE){
 		$related_model = $this->get_related_model_obj($model_name);
-		//we're just going to use teh query params on the related model's normal get_all query,
-		//except add a condition to say to match the curren't mod
+		//we're just going to use the query params on the related model's normal get_all query,
+		//except add a condition to say to match the current mod
 		if( ! isset($query_params['default_where_conditions'])){
 			$query_params['default_where_conditions']='none';
 		}
@@ -1039,8 +1030,8 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
 		$related_model = $this->get_related_model_obj($model_name);
-		//we're just going to use teh query params on the related model's normal get_all query,
-		//except add a condition to say to match the curren't mod
+		//we're just going to use the query params on the related model's normal get_all query,
+		//except add a condition to say to match the current mod
 		if( ! isset($query_params['default_where_conditions'])){
 			$query_params['default_where_conditions']='none';
 		}
@@ -1204,7 +1195,7 @@ abstract class EEM_Base extends EE_Base{
 				//they didnt include this field. so just use default
 				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($field_obj->get_default_value(), $field_obj, true);
 			}else{
-				//they have specified teh value for thi sfield, so use itvalues_already_prepared_by_model_object
+				//they have specified the value for thi sfield, so use itvalues_already_prepared_by_model_object
 				$insertion_col_n_values[$field_obj->get_table_column()] = $this->_prepare_value_for_use_in_db($fields_n_values[$field_name], $field_obj); ;
 			
 			}
@@ -1212,7 +1203,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 
 		if($table instanceof EE_Secondary_Table && $new_id){
-			//its not the main table, so we should have already saved teh main table's PK which we just inserted
+			//its not the main table, so we should have already saved the main table's PK which we just inserted
 			//so add the fk to the main table as a column
 			$insertion_col_n_values[$table->get_fk_on_table()] = $new_id;
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
@@ -1437,7 +1428,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Extract all the query parts from $query_params (an array like whats passed to EEMerimental_Base::get_all)
 	 * and put into a EEM_Related_Model_Info_Carrier for easy extraction into a query. We create this object
-	 * instead of directly constructing teh SQL because often we need to extract info from the $query_params
+	 * instead of directly constructing the SQL because often we need to extract info from the $query_params
 	 * but use them in a different order. Eg, we need to know what models we are querying
 	 * before we know what joins to perform. However, we need to know what data types correspond to which fields on other
 	 * models before we can finalize the where clause SQL.
@@ -1800,7 +1791,7 @@ abstract class EEM_Base extends EE_Base{
 	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
 	 * @param string $original_query_param used to extract the relation chain between the queried model and $model_name.
 	 * Eg, if we are querying Event, and are adding a join to 'Payment' with the original queyr param key 'Registration.Transaction.Payment.PAY_amount',
-	 * we want to extract 'Registration.Transaction', in case Payment wants to add defautl query params so that it will know
+	 * we want to extract 'Registration.Transaction', in case Payment wants to add default query params so that it will know
 	 * what models to prepend onto its default query params
 	 * @return void
 	 */
@@ -1808,7 +1799,7 @@ abstract class EEM_Base extends EE_Base{
 		$relation_obj = $this->related_settings_for($model_name);
 		
 		$model_relation_chain = $this->_extract_model_relation_chain($model_name, $original_query_param);
-		//check if teh relation is HABTM, because then we're essentially doing two joins
+		//check if the relation is HABTM, because then we're essentially doing two joins
 		//If so, join first to the JOIN table, and add its data types, and then continue as normal
 		if($relation_obj instanceof EE_HABTM_Relation){
 			$join_model_obj = $relation_obj->get_join_model();
@@ -2118,7 +2109,7 @@ abstract class EEM_Base extends EE_Base{
 			$field_name = $last_query_param_part;
 			$model_obj = $this;
 		}else{// $number_of_parts >= 2
-			//the last part is the column name, and there are only 2parts. tehrefore...
+			//the last part is the column name, and there are only 2parts. therefore...
 			$field_name = $last_query_param_part;
 			$model_obj = $this->get_related_model_obj( $query_param_parts[ $number_of_parts - 2 ]);
 		}
@@ -2141,7 +2132,7 @@ abstract class EEM_Base extends EE_Base{
 		if($field){
 			return $field->get_qualified_column();
 		}else{
-			throw new EE_Error(sprintf(__("There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",'event_espresos'),$field_name,get_class($this)));
+			throw new EE_Error(sprintf(__("There is no field titled %s on model %s. Either the query trying to use it is bad, or you need to add it to the list of fields on the model.",'event_espresso'),$field_name,get_class($this)));
 		}
 	}
 
@@ -2202,7 +2193,7 @@ abstract class EEM_Base extends EE_Base{
 				if($alias == $table_obj->get_table_alias()){
 					//so we're joining to this table, meaning the table is already in 
 					//the FROM statement, BUT the primary table isn't. So we want
-					//to add teh inverse join sql
+					//to add the inverse join sql
 					$SQL .= $table_obj->get_inverse_join_sql();
 				}else{
 					//just add a regular JOIN to this table from the primary table
@@ -2504,7 +2495,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach( $cols_n_values as $col => $val ) {
 			foreach( $this->field_settings() as $field_name => $field_obj ){
 				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"				
-				//does the field on the model relate to this column retrieved from teh db? 
+				//does the field on the model relate to this column retrieved from the db? 
 				//or is it a db-only field? (not relating to the model)
 				if (( $field_obj->get_qualified_column() == $col || $field_obj->get_table_column() == $col ) && ! $field_obj->is_db_only_field() ) {
 					//OK, this field apparently relates to this model.
@@ -2586,7 +2577,7 @@ abstract class EEM_Base extends EE_Base{
 	}
 	
 	/**
-	 * Get the name of the items this model repesents, for teh quanitity specified. Eg, 
+	 * Get the name of the items this model repesents, for the quantity specified. Eg, 
 	 * if $quantity==1, on EEM_Event, it would 'Event' (internationalized), otherwise 
 	 * it would be 'Events'.
 	 * @param int $quantity
@@ -2606,7 +2597,7 @@ abstract class EEM_Base extends EE_Base{
 	 * and passed the method's name and arguments.
 	 * Instead of requiring a plugin to extend the EE_TempBase (which works fine is there's only 1 plugin, but when will that happen?)
 	 * they can add a hook onto 'filters_hook_espresso__{className}__{methodName}' (eg, filters_hook_espresso__EE_Answer__my_great_function)
-	 * and accepts 2 arguments: the object on which teh function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
+	 * and accepts 2 arguments: the object on which the function was called, and an array of the original arguments passed to the function. Whatever their callbackfunction returns will be returned by this function.
 	 * Example: in functions.php (or in a plugin):
 	 * add_filter('FHEE__EE_Answer__my_callback','my_callback',10,3);
 	 * function my_callback($previousReturnValue,EE_TempBase $object,$argsArray){
@@ -2635,7 +2626,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
 	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
-	 * @param EE_Base_Class/int $base_class_obj_or_id either teh EE_Base_Class taht corresponds to this Model, or its ID
+	 * @param EE_Base_Class/int $base_class_obj_or_id either the EE_Base_Class that corresponds to this Model, or its ID
 	 * @param boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
 	 * @return EE_Base_Class
 	 */
@@ -2755,7 +2746,7 @@ abstract class EEM_Base extends EE_Base{
 		}else{
 			throw new EE_Error(sprintf(__("get_all_copies should be providd with either a model object or an array of field-value-pairs, but was given %s", "event_espresso"),$model_object_or_attributes_array));
 		}
-		//even copies obviously won't have the same ID, so remove teh primary key
+		//even copies obviously won't have the same ID, so remove the primary key
 		//from the WHERE conditions for finding copies (if there is a primary key, of coursE)
 		if($this->has_primary_key_field() && isset($attributes_array[$this->primary_key_name()])){
 			unset($attributes_array[$this->primary_key_name()]);

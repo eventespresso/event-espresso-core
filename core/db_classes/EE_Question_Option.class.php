@@ -57,7 +57,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	protected $_QST_ID=FALSE;
 
 	/**
-	 * Whether teh question has been deleted or not
+	 * Whether the question has been deleted or not
 	 * @access protected
 	 * @var boolean
 	 */

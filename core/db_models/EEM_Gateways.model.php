@@ -283,7 +283,7 @@ Class EEM_Gateways {
 		}
 		//$this->_payment_settings[$gateway] = $new_gateway_settings;
 		
-		//echo "updateing usermeta with paymetn settings";var_dump($this->_payment_settings);
+		//echo "updateing usermeta with payment settings";var_dump($this->_payment_settings);
 		$old_payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta(EE_Registry::instance()->CFG->wp_user, 'payment_settings',true);
 		$old_payment_settings[$gateway] = $new_gateway_settings;
 		$this->_payment_settings = $old_payment_settings;
@@ -479,7 +479,7 @@ Class EEM_Gateways {
 	}
 	
 	/**
-	 * Gets teh currently-selected gateway
+	 * Gets the currently-selected gateway
 	 * @return EE_Gateway
 	 */
 	public function selected_gateway_obj(){
@@ -674,7 +674,7 @@ Class EEM_Gateways {
 						
 		//espresso_clear_session(); this seemed silly. we just expelled
 		//all this effort clearing specific gateway items in the session, and now
-		//we're clearing teh whole thing? no, that must have been an error.
+		//we're clearing the whole thing? no, that must have been an error.
 		//so says Mike, March 27th 2013
 		// how about clearing it BEFORE resetting the data ??? (see above)
 		// wonders br3nt Aug 29th, 2013
@@ -819,7 +819,7 @@ Class EEM_Gateways {
 			} catch( EE_Error $e ) {
 				$response = array( 'msg'=>array( 'error'=>$e->getMessage() ));
 			}
-			//make sure we remove the credit card and other sensitive data, as we dont want to store that in teh db
+			//make sure we remove the credit card and other sensitive data, as we dont want to store that in the db
 			$this->_clean_billing_info_in_session($transaction);
 		}
 		// add return URL
@@ -905,7 +905,7 @@ Class EEM_Gateways {
 		$cc = str_replace(array('-',' '),'',$cc);
 		// Get the CC Length
 		$cc_length = strlen($cc);
-		// Initialize the new credit card to contian the last four digits
+		// Initialize the new credit card to contain the last four digits
 		$newCreditCard = substr($cc,-4);
 		// Walk backwards through the credit card number and add a dash after every fourth digit
 		for($i=$cc_length-5;$i>=0;$i--){
@@ -922,7 +922,7 @@ Class EEM_Gateways {
 
 
 	/**
-	 * Handles the thank_you_page, given the curren transaction
+	 * Handles the thank_you_page, given the current transaction
 	 * @param type $transaction
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction) {
@@ -952,12 +952,12 @@ Class EEM_Gateways {
 		return '';
 	}
 	/**
-	 * Checks if teh provided transaction is completed. If so, clears teh session and handles
+	 * Checks if the provided transaction is completed. If so, clears the session and handles
 	 * the logic of finalizing the transaction
 	 * @param EE_Transaction $transaction
 	 */
 	public function check_for_completed_transaction(EE_Transaction $transaction){
-		//throw new Exception("unfinished. This functino should check for a completed transaction .If completed, clear some session etc
+		//throw new Exception("unfinished. This function should check for a completed transaction. If completed, clear some session etc
 		require_once( EE_MODELS . 'EEM_Transaction.model.php');
 		if($transaction->status_ID() == EEM_Transaction::complete_status_code){
 			$this->reset_session_data();
@@ -965,9 +965,9 @@ Class EEM_Gateways {
 	}
 	
 	/**
-	 * Uses teh currently-active and selected gateway to handle an Instant Payment Notification.
+	 * Uses the currently-active and selected gateway to handle an Instant Payment Notification.
 	 * Obviously, if this occurs the active gateway must be an Offsite gateway
-	 * @param EE_Transaction or ID $transaction Transaction to beudpated by the IPN
+	 * @param EE_Transaction or ID $transaction Transaction to be udpated by the IPN
 	 * @return boolean success
 	 */
 	public function handle_ipn_for_transaction($transaction){

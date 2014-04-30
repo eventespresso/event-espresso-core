@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * extends EE_Admin_List_Table class
  *
- * @package		Evetn Espresso
+ * @package		Event Espresso
  * @subpackage	/includes/core/admin/messages
  * @author		Darren Ethier
  *
@@ -129,7 +129,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	}
 
 	/**
-	 * we're just removing the search box for message tempaltes, not needed.
+	 * we're just removing the search box for message templates, not needed.
 	 * @return string (empty);
 	 */
 	function search_box( $text, $input_id ) {

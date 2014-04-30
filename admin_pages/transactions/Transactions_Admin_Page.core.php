@@ -241,7 +241,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 
 	/**
-	 * 		get list of paymnet statuses
+	 * 		get list of payment statuses
 	*		@access private
 	*		@return void
 	*/
@@ -637,8 +637,12 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['payment_methods'] = array(
 			'PP' => __( 'PayPal', 'event_espresso' ),
 			'CC' => __( 'Credit Card', 'event_espresso' ),
+			'DB'=>  __("Debit Card", 'event_espresso'),
 			'CHQ' => __( 'Cheque', 'event_espresso' ),
-			'CSH' => __( 'Cash', 'event_espresso' )
+			'CSH' => __( 'Cash', 'event_espresso' ),
+			'BK'=>  __("Bank", 'event_espresso'),
+			'IV'=>  __("Invoice", 'event_espresso'),
+			'MO'=>  __("Money Order", 'event_espresso'),
 		);
 	}
 
@@ -777,26 +781,35 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 				case 'PP' :
 					$payment['gateway'] = 'PayPal';
-					$payment['gateway_response'] = '';
+					
 					break;
 
 				case 'CC' :
 					$payment['gateway'] = 'Credit_Card';
-					$payment['gateway_response'] = '';
 					break;
 
 				case 'CHQ' :
 					$payment['gateway'] = 'Cheque';
-					$payment['gateway_response'] = '';
 					break;
 
 				case 'CSH' :
 					$payment['gateway'] = 'Cash';
 					$payment['txn_id_chq_nmbr'] = '';
+					break;
+				case 'DB' : 
+					$payment['gateway'] = 'Debit';
 					$payment['gateway_response'] = '';
 					break;
-
+				case 'BK' :
+					$payment['gateway'] = 'Bank';
+					break;
+				case 'IV' : 
+					$payment['gateway'] = 'Invoice';
+					break;
+				case 'MO' :
+					$payment['gateway'] = 'Money_Order';
 			}
+			$payment['gateway_response'] = '';
 			//savea  the new payment
 			$payment = EE_Payment::new_instance(
 				array(

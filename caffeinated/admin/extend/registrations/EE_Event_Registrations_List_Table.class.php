@@ -9,7 +9,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
 	protected $_dtts_for_event = array();
 	/**
-	 * The event if one is specified in teh request
+	 * The event if one is specified in the request
 	 * @var EE_Event
 	 */
 	protected $_evt = NULL;
@@ -76,11 +76,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		);
 
 		$this->_hidden_columns = array();
-		
-		
+
+
 		$this->_evt = EEM_Event::instance()->get_one_by_ID($evt_id);
 		$this->_dtts_for_event = !empty($evt_id) ? $this->_evt->datetimes_ordered() : array();
-		
+
 
 	}
 
@@ -103,7 +103,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				$evts[] = array( 'id' => $evt->ID(), 'text' => $evt->get('EVT_name') );
 			}
 			$filters[] = EEH_Form_Fields::select_input( 'event_id', $evts );
-			
+
 		} else {
 			//DTT datetimes filter
 			$cur_dtt = isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : $this->_evt->primary_datetime()->ID();
@@ -117,7 +117,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 		return $filters;
 	}
-	
+
 
 
 
@@ -167,7 +167,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	function column_cb(EE_Registration $item) {
-		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', $item->ID() );
+		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', $item->ID() );
 	}
 
 
@@ -197,12 +197,12 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>';
-		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary registrant"/>' : '';
+		$name_link .= $item->count() == 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>	' : '';
 
 		$actions = array();
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$DTT_ID = empty( $DTT_ID ) && !empty( $this->_req_data['event_id'] ) ? EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID() : $DTT_ID;
-		
+
 		if ( !empty($DTT_ID) ) {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
 			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('View all the check-ins/checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
@@ -242,16 +242,16 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 	function column_Event(EE_Registration $item) {
 		$event = $this->_evt instanceof EE_Event ? $this->_evt : $item->event();
-		$chkin_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$event->ID() ), REG_ADMIN_URL );	
-		$event_label = '<a href="'.$chkin_lnk_url.'" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>';	
-		return $event_label;	
+		$chkin_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$event->ID() ), REG_ADMIN_URL );
+		$event_label = '<a href="'.$chkin_lnk_url.'" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>';
+		return $event_label;
 	}
 
 
 
 
 
-	function column_PRC_name(EE_Registration $item){		
+	function column_PRC_name(EE_Registration $item){
 		return $item->ticket() ? $item->ticket()->name() : __("Unknown", "event_espresso");
 	}
 
@@ -264,7 +264,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_REG_final_price
 	*/
 	function column__REG_final_price(EE_Registration $item){
-		return '<span class="reg-pad-rght">' .  ' ' . $item->pretty_price_paid() . '</span>';	
+		return '<span class="reg-pad-rght">' .  ' ' . $item->pretty_price_paid() . '</span>';
 	}
 
 
@@ -275,11 +275,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 * 		column_TXN_paid
 	*/
 	function column_TXN_paid(EE_Registration $item){
-	
+
 		if ( $item->count() == 1 ) {
-			
+
 			if ( $item->transaction()->paid() >= $item->transaction()->total() ) {
-				return '<span class="reg-pad-rght"><img class="" src="' . EE_GLOBAL_ASSETS_URL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
+				return '<span class="reg-pad-rght"><div class="dashicons dashicons-yes green-icon"></div></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
 				return '
@@ -288,11 +288,11 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 						' . $item->transaction()->pretty_paid(). '
 					</a>
 				<span>';
-			}			
+			}
 		} else {
 			return '<span class="reg-pad-rght"></span>';
 		}
-		
+
 	}
 
 
@@ -303,14 +303,14 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	*/
 	function column_TXN_total(EE_Registration $item){
 		$txn = $item->transaction();
-		$view_txn_url = add_query_arg( array('action' => 'view_transaction', 'TXN_ID' => $txn->ID() ), TXN_ADMIN_URL );	
+		$view_txn_url = add_query_arg( array('action' => 'view_transaction', 'TXN_ID' => $txn->ID() ), TXN_ADMIN_URL );
 		if ( $item->get('REG_count') == 1 ) {
 			$line_total_obj = $txn->total_line_item();
 			$txn_total = $line_total_obj instanceof EE_Line_Item ? $line_total_obj->get_pretty('LIN_total') : __('View Transaction', 'event_espresso');
 			return '<a href="' . $view_txn_url . '" title="' . __('View Transaction', 'event_espresso') . '"><span class="reg-pad-rght">'. $txn_total  .'</span></a>';
 		} else {
 			return '<span class="reg-pad-rght"></span>';
-		}		
+		}
 	}
 
 }

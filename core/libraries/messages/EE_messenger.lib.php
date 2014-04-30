@@ -511,6 +511,39 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+	/**
+	 * This just returns the field label for a given field setup in the _template_fields property.
+	 *
+	 * @since 	4.3.0
+	 *
+	 * @param string $field The field to retrieve the label for
+	 * @return string        	  The label
+	 */
+	public function get_field_label( $field ) {
+		//first let's see if the field requests is in the top level array.
+		if ( isset( $this->_template_fields[$field] ) && !empty( $this->_template_fields[$field]['label'] ) )
+			return $this->_template[$field]['label'];
+
+		//nope so let's look in the extra array to see if it's there HOWEVER if the field exists as a top level index in the extra array then we know the label is in the 'main' index.
+		if ( isset( $this->_template_fields['extra'] ) && !empty( $this->_template_fields['extra'][$field] ) && !empty( $this->_template_fields['extra'][$field]['main']['label'] )  )
+			return $this->_template_fields['extra'][$field]['main']['label'];
+
+		//now it's possible this field may just be existing in any of the extra array items.
+		if ( !empty( $this->_template_fields['extra'] ) && is_array( $this->_template_fields['extra'] ) ) {
+			foreach ( $this->_template_fields['extra'] as $main_field => $subfields ) {
+				if ( !is_array( $subfields ) )
+					continue;
+				if ( isset( $subfields[$field] ) && !empty( $subfields[$field]['label'] ) )
+					return $subfields[$field]['label'];
+			}
+		}
+
+		//if we made it here then there's no label set so let's just return the $field.
+		return $field;
+	}
+
+
+
 
 }
 // end EE_messenger class

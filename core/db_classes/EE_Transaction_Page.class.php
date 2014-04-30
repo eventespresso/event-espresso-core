@@ -52,10 +52,10 @@ class EE_Transaction_Page{
 	
 	/**
 	 * handles the IPN. Gets the gateways model to call the currently-used gateway,
-	 * and handle teh IPN in its desired manner. 
+	 * and handle the IPN in its desired manner. 
 	 * Expects that the IPN sent a POST or GET requests with parameters 'e_reg_url_link'
 	 * (which is a registration's REG_url_link value) and 'ee_gateway' (which is the 
-	 * gateway_name of the gateway sending teh IPN. Eg, 'Paypal_Standard'). 
+	 * gateway_name of the gateway sending the IPN. Eg, 'Paypal_Standard'). 
 	 * Maybe we'll want to die afterwards? For now I'll just let the gateway handle that
 	 */
 	function handle_ipn(){

@@ -28,19 +28,19 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
-	
+
 
 	public function __construct( $routing = TRUE ) {
 		define( 'REGISTRATION_FORM_CAF_ADMIN', EE_CORE_CAF_ADMIN_EXTEND . 'registration_form' . DS );
-		define( 'REGISTRATION_FORM_CAF_ASSETS_PATH', REGISTRATION_FORM_CAF_ADMIN . 'assets' . DS );		
-		define( 'REGISTRATION_FORM_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/assets/' );	
-		define( 'REGISTRATION_FORM_CAF_TEMPLATE_PATH', REGISTRATION_FORM_CAF_ADMIN . 'templates' . DS );	
+		define( 'REGISTRATION_FORM_CAF_ASSETS_PATH', REGISTRATION_FORM_CAF_ADMIN . 'assets' . DS );
+		define( 'REGISTRATION_FORM_CAF_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/assets/' );
+		define( 'REGISTRATION_FORM_CAF_TEMPLATE_PATH', REGISTRATION_FORM_CAF_ADMIN . 'templates' . DS );
 		define( 'REGISTRATION_FORM_CAF_TEMPLATE_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/templates/' );
 		parent::__construct( $routing );
 	}
 
-	
-	
+
+
 
 
 
@@ -143,7 +143,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				),
 
 			'view_reg_form_settings'	=> '_reg_form_settings',
-			
+
 			'update_reg_form_settings'	=> array(
 					'func' => '_update_reg_form_settings',
 					'noheader' => TRUE
@@ -271,7 +271,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	}
 
-	
+
 
 
 
@@ -283,7 +283,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	public function load_scripts_styles_question_groups() {
-		wp_enqueue_script( 'espresso_ajax_table_sorting' );	
+		wp_enqueue_script( 'espresso_ajax_table_sorting' );
 	}
 
 
@@ -381,7 +381,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 
-	
+
 
 	protected function _delete_question(){
 		$success=$this->_question_model->delete_permanently_by_ID(intval($this->_req_data['QST_ID']));
@@ -402,9 +402,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
  * @return int number of items deleted permanenetly
  */
 	private function _delete_items(EEM_Soft_Delete_Base $model){
-		
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {			
+		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
 			$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 			// cycle thru bulk action checkboxes
@@ -414,10 +414,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					$success = 0;
 				}
 			}
-	
+
 		}elseif( !empty($this->_req_data['QSG_ID'])){
 			$success = $model->delete_permanently_by_ID($this->_req_data['QSG_ID']);
-				
+
 		}elseif( !empty($this->_req_data['QST_ID'])){
 			$success = $model->delete_permanently_by_ID($this->_req_data['QST_ID']);
 		}else{
@@ -439,7 +439,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$ID=isset( $this->_req_data['QSG_ID'] ) && ! empty( $this->_req_data['QSG_ID'] ) ? absint( $this->_req_data['QSG_ID'] ) : FALSE;
 		$this->_admin_page_title = ucwords( str_replace( '_', ' ', $this->_req_action ));
-		// add ID to title if editing 
+		// add ID to title if editing
 		$this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
 		if($ID){
 			$questionGroup=$this->_question_group_model->get_one_by_ID($ID);
@@ -454,13 +454,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_template_args['all_questions']=$questionGroup->questions_in_and_not_in_group();
 		$this->_template_args['QSG_ID']=$ID ? $ID : TRUE;
 		$this->_template_args['question_group']=$questionGroup;
-		
+
 		$redirect_URL = add_query_arg( array( 'action' => 'question_groups'), $this->_admin_base_url );
 		$this->_set_publish_post_box_vars( 'id', $ID, FALSE, $redirect_URL  );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php', $this->_template_args, TRUE );
 
 		// the details template wrapper
-		$this->display_admin_page_with_sidebar();	
+		$this->display_admin_page_with_sidebar();
 	}
 
 
@@ -491,21 +491,20 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			unset($set_column_values[$pk]);
 			$success= $this->_question_group_model->update($set_column_values,array($wheres));
 		}
-		//save the related questions
+		//update the existing related questions
 		$question_group=$this->_question_group_model->get_one_by_ID($ID);
 		$questions=$question_group->questions();
 		foreach($questions as $question_ID => $question){
-			
-			if(array_key_exists('questions',$this->_req_data) && array_key_exists($question_ID,$this->_req_data['questions'])){
-				$question_group->add_question($question_ID);
-			}elseif ( !empty( $this->_req_data['question_orders'][$question_ID] ) ){
+			//first we always check for order.
+			if ( !empty( $this->_req_data['question_orders'][$question_ID] ) ){
 				//update question order
 				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
-			}elseif ( $question->is_system_question() && $question_group->get('QSG_system') === 1 && isset( $this->_req_data['question_orders'][$question_ID] ) ) {
-				//always make sure we order system questions for the personal group
-				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
+			}
 
-			}else{
+			//then we always check if adding or removing.
+			if(array_key_exists('questions',$this->_req_data) && array_key_exists($question_ID,$this->_req_data['questions'])){
+				$question_group->add_question($question_ID);
+			}else {
 				//not found, remove it (but only if not a system question for the personal group)
 				if ( $question->is_system_question() && $question_group->get('QSG_system') === 1  )
 					continue;
@@ -519,14 +518,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				if ( isset( $this->_req_data['question_orders'][$question_ID]))
 				$question_group->update_question_order( $question_ID, $this->_req_data['question_orders'][$question_ID] );
 			}
-		}
+		}/**/
 		$query_args=array('action'=>'edit_question_group','QSG_ID'=>$ID);
 		if ( $success !== FALSE ) {
 			$msg = $new_question_group ? sprintf( __('The %s has been created', 'event_espresso'), $this->_question_group_model->item_name() ) : sprintf( __('The %s has been updated', 'event_espresso' ), $this->_question_group_model->item_name() );
 			EE_Error::add_success( $msg );
 		}
 		$this->_redirect_after_action(FALSE, '', '', $query_args, TRUE);
-		
+
 	}
 
 
@@ -534,7 +533,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	protected function _trash_or_restore_question_groups($trash = TRUE) {
 		return $this->_trash_or_restore_items( $this->_question_group_model, $trash );
 	}
-	
+
 	protected function _trash_question(){
 		$success=$this->_question_model->delete_by_ID(intval($this->_req_data['QST_ID']));
 		$query_args=array('action'=>'default','status'=>'all');
@@ -550,48 +549,48 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 
 	/**
-	 * Interally used to delete or restore items, using the request data. Meant to be 
-	 * flexible between question or question gruops
+	 * Interally used to delete or restore items, using the request data. Meant to be
+	 * flexible between question or question groups
 	 * @param EEM_Base $model
 	 * @param boolean $trash wehter to trash or restore
 	 */
 	private function _trash_or_restore_items( EEM_Base $model, $trash = TRUE ) {
-		
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		
+
 		$success = 1;
 		//Checkboxes
 		//echo "trash $trash";
 		//var_dump($this->_req_data['checkbox']);die;
 		if ( isset( $this->_req_data['checkbox'] )) {
-			if ( isset( $this->_req_data['checkbox'] ) && ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {			
+			if ( isset( $this->_req_data['checkbox'] ) && ! empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] )) {
 				// if array has more than one element than success message should be plural
 				$success = count( $this->_req_data['checkbox'] ) > 1 ? 2 : 1;
 				// cycle thru bulk action checkboxes
 				while (list( $ID, $value ) = each($this->_req_data['checkbox'])) {
 					if ( ! $model->delete_or_restore_by_ID($trash,absint($ID))) {
 						$success = 0;
-					}				
+					}
 				}
-		
+
 			} else {
 				// grab single id and delete
 				$ID = absint($this->_req_data['checkbox']);
 				if ( ! $model->delete_or_restore_by_ID($trash,$ID)) {
 					$success = 0;
-				}			
+				}
 			}
-		
+
 		} else {
 			// delete via trash link
 			// grab single id and delete
 			$ID = absint($this->_req_data[ $model->primary_key_name() ]);
 			if ( ! $model->delete_or_restore_by_ID($trash,$ID)) {
 				$success = 0;
-			}	
-				
+			}
+
 		}
-		
+
 
 		$action = $model instanceof EEM_Question ? 'default' : 'question_groups';//strtolower( $model->item_name(2) );
 		//echo "action :$action";
@@ -611,10 +610,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function get_trashed_questions( $per_page,$current_page = 1, $count = FALSE ) {
 		$query_params = $this->get_query_params(EEM_Question::instance(), $per_page, $current_page);
-		
+
 		if( $count ){
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$query_params['limit'] = NULL;
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
 			$results=$this->_question_model->count_deleted($where);
 		}else{
@@ -628,10 +626,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
-		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if ($count){
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
-			$query_params['limit'] = NULL;
 			$results = $questionGroupModel->count($where);
 		}else{
 			$results = $questionGroupModel->get_all($query_params);
@@ -643,7 +640,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
-		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if($count){
 			$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
 			$query_params['limit'] = NULL;
@@ -658,11 +655,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	/**
 	 * method for performing updates to question order
 	 * @return array results array
-	 */	
+	 */
 	public function update_question_group_order() {
 
 		$success = __( 'Question group order was updated successfully.', 'event_espresso' );
-		
+
 		// grab our row IDs
 		$row_ids = isset( $this->_req_data['row_ids'] ) && ! empty( $this->_req_data['row_ids'] ) ? explode( ',', rtrim( $this->_req_data['row_ids'], ',' )) : FALSE;
 
@@ -672,7 +669,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		if ( is_array( $row_ids )) {
 			//figure out where we start the row_id count at for the current page.
 			$qsgcount = empty( $curpage ) ? 0 : ($curpage - 1 ) * $perpage;
-		
+
 			global $wpdb;
 			for ( $i = 0; $i < count($row_ids); $i++ ) {
 				//Update the questions when re-ordering
@@ -684,12 +681,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		} else {
 			$success = FALSE;
 		}
-		
+
 		$errors = ! $success ? __( 'An error occurred. The question group order was not updated.', 'event_espresso' ) : FALSE;
-		
+
 		echo json_encode( array( 'return_data' => FALSE, 'success' => $success, 'errors' => $errors ));
 		die();
-		
+
 	}
 
 
@@ -705,14 +702,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 	protected function _reg_form_settings() {
 
 		$this->_template_args['values'] = $this->_yes_no_values;
-		
+
 		$this->_template_args['use_captcha'] = isset( EE_Registry::instance()->CFG->registration->use_captcha ) ? EE_Registry::instance()->CFG->registration->use_captcha : FALSE;
-		$this->_template_args['show_captcha_settings'] = $this->_template_args['use_captcha'] ? 'style="display:table-row;"': ''; 
-		
+		$this->_template_args['show_captcha_settings'] = $this->_template_args['use_captcha'] ? 'style="display:table-row;"': '';
+
 		$this->_template_args['recaptcha_publickey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) : '';
 		$this->_template_args['recaptcha_privatekey'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) ? stripslashes( EE_Registry::instance()->CFG->registration->recaptcha_privatekey ) : '';
 		$this->_template_args['recaptcha_width'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_width ) ? absint( EE_Registry::instance()->CFG->registration->recaptcha_width ) : 500;
-		
+
 		$this->_template_args['recaptcha_theme_options'] = array(
 				array('id'  => 'red','text'=> __('Red', 'event_espresso')),
 				array('id'  => 'white','text'=> __('White', 'event_espresso')),
@@ -722,7 +719,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$this->_template_args['recaptcha_theme'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_theme ) ? EE_Registry::instance()->CFG->registration->recaptcha_theme : 'clean';
 
 		$this->_template_args['recaptcha_example'] = !empty( EE_Registry::instance()->CFG->registration->recaptcha_publickey ) ? $this->_display_recaptcha() : '';
-	
+
 		$this->_template_args['recaptcha_language_options'] = array(
 				array('id'  => 'en','text'=> __('English', 'event_espresso')),
 				array('id'  => 'es','text'=> __('Spanish', 'event_espresso')),
@@ -732,13 +729,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				array('id'  => 'pt','text'=> __('Portuguese', 'event_espresso')),
 				array('id'  => 'ru','text'=> __('Russian', 'event_espresso')),
 				array('id'  => 'tr','text'=> __('Turkish', 'event_espresso'))
-			);		
+			);
 		$this->_template_args['recaptcha_language'] = isset( EE_Registry::instance()->CFG->registration->recaptcha_language ) ? EE_Registry::instance()->CFG->registration->recaptcha_language : 'en';
 
 		$this->_set_add_edit_form_tags( 'update_reg_form_settings' );
 		$this->_set_publish_post_box_vars( NULL, FALSE, FALSE, NULL, FALSE );
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'reg_form_settings.template.php', $this->_template_args, TRUE );
-		$this->display_admin_page_with_sidebar();	
+		$this->display_admin_page_with_sidebar();
 	}
 
 
@@ -781,13 +778,13 @@ var RecaptchaOptions = { theme : "' . EE_Registry::instance()->CFG->registration
 		EE_Registry::instance()->CFG->registration->recaptcha_width = isset( $this->_req_data['recaptcha_width'] ) ? absint( $this->_req_data['recaptcha_width'] ) : 500;
 		EE_Registry::instance()->CFG->registration->recaptcha_theme = isset( $this->_req_data['recaptcha_theme'] ) ? sanitize_text_field( $this->_req_data['recaptcha_theme'] ) : 'clean';
 		EE_Registry::instance()->CFG->registration->recaptcha_language = isset( $this->_req_data['recaptcha_language'] ) ? sanitize_text_field( $this->_req_data['recaptcha_language'] ) : 'en';
-		
-		EE_Registry::instance()->CFG->registration = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration', EE_Registry::instance()->CFG->registration );	
-		
+
+		EE_Registry::instance()->CFG->registration = apply_filters( 'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration', EE_Registry::instance()->CFG->registration );
+
 		$what = 'Registration Options';
 		$success = $this->_update_espresso_configuration( $what, EE_Registry::instance()->CFG, __FILE__, __FUNCTION__, __LINE__ );
 		$this->_redirect_after_action( $success, $what, 'updated', array( 'action' => 'view_reg_form_settings' ) );
-		
+
 	}
 
 }

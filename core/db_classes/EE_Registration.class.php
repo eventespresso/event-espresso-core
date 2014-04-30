@@ -17,170 +17,170 @@
  *
  * @package			Event Espresso
  * @subpackage		includes/classes/EE_Registration.class.php
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
 class EE_Registration extends EE_Soft_Delete_Base_Class {
-	
+
     /**
     *	Registration ID
-	* 
+	*
 	* 	primary key
-	*	
+	*
 	* 	@access	protected
-    *	@var int	
+    *	@var int
     */
 	protected $_REG_ID = FALSE;
 
-	
-	
-	
+
+
+
     /**
     *	Event ID
-	* 
+	*
 	*	foreign key from event table
-	*  
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
 	protected $_EVT_ID = NULL;
-	
-	
-	
+
+
+
     /**
     *	Attendee ID
-	* 
+	*
 	* 	foreign key from attendee table
 	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
-	protected $_ATT_ID = NULL;	
-	
-	
+	protected $_ATT_ID = NULL;
+
+
     /**
     *	Transaction ID
 	*
 	*	foreign key from transaction table
-	* 
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
 	protected $_TXN_ID = NULL;
-	
-	
+
+
     /**
     *	Ticket ID
-	* 
+	*
     *	foreign key from Ticket table
-	* 
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
-	protected $_TKT_ID = NULL;	
-	
-	
-	
-	
+	protected $_TKT_ID = NULL;
+
+
+
+
     /**
     *	Status ID
-	* 
+	*
     *	registration status code - Pending, Complete, Incomplete
-	* 
+	*
 	*	@access	protected
-    *	@var string	
+    *	@var string
     */
-	protected $_STS_ID = NULL;	
-	
-	
+	protected $_STS_ID = NULL;
+
+
     /**
     *	Registration Date
-	* 
+	*
     *	Unix timestamp
-	* 
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
-	protected $_REG_date = NULL;	
-	
-	
+	protected $_REG_date = NULL;
+
+
     /**
     *	Final Price
-	* 
+	*
     *	Final Price for ticket after all modifications
-	* 
+	*
 	*	@access	protected
-    *	@var float	
+    *	@var float
     */
-	protected $_REG_final_price = NULL;	
-	
-	
-	
+	protected $_REG_final_price = NULL;
+
+
+
     /**
     *	PHP Session ID
-	*  
+	*
 	*	@access	protected
-    *	@var string	
+    *	@var string
     */
-	protected $_REG_session = NULL;	
-	
-	
-	
+	protected $_REG_session = NULL;
+
+
+
     /**
     *	Registration Code
-	* 
+	*
     *	a unique string for public identification ( = existing registration_id )
-	* 
+	*
 	*	@access	protected
-    *	@var string	
+    *	@var string
     */
-	protected $_REG_code = NULL;	
-	
-	
-	
+	protected $_REG_code = NULL;
+
+
+
     /**
     *	Registration URL Link
-	* 
+	*
     *	a unique string for use in email links, etc
-	* 
+	*
 	*	@access	protected
-    *	@var string	
+    *	@var string
     */
-	protected $_REG_url_link = NULL;	
-	
-	
-	
+	protected $_REG_url_link = NULL;
+
+
+
     /**
     *	Attendee Number
-	* 
+	*
     *	Simple attendee counter where the Primary Registrant is always #1
-	* 
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
-	protected $_REG_count = 1;		
-	
-	
+	protected $_REG_count = 1;
+
+
     /**
     *	Group Size
-	* 
+	*
     *	total number of registrations that were performed in the same session
-	* 
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
-	protected $_REG_group_size = 1;	
-	
-	
+	protected $_REG_group_size = 1;
+
+
     /**
     *	Attendee Is Going
-	* 
+	*
     *	whether or not the attendee has confirmed they will be going to the event
-	* 
+	*
 	*	@access	protected
-    *	@var boolean	
+    *	@var boolean
     */
 	protected $_REG_att_is_going = 0;
 
@@ -194,60 +194,60 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @var integer
 	 */
 	protected $_REG_deleted = 0;
-	
-	
 
-	
+
+
+
 	/**
 	 * Event for which this registration is for
-	 * 
+	 *
 	 * @access protected
 	 * @var EE_Event $_Event
 	 */
 	protected $_Event = NULL;
-	
-	
+
+
 	/**
 	 * Attendee data for this registration
-	 * 
+	 *
 	 * @access protected
 	 * @var EE_Attendee $_Attendee
 	 */
 	protected $_Attendee = NULL;
-	
-	
+
+
 	/**
 	 * Transaction of this Registration
 	 * @access protected
 	 * @var EE_Tranaction $_Transaction
 	 */
 	protected $_Transaction = NULL;
-	
-	
+
+
 	/**
 	 * Ticket object of the Event Datetime(s) this registration is for
 	 * @access protected
 	 * @var EE_Ticket $_Ticket
 	 */
 	protected $_Ticket = NULL;
-		
+
 	/**
 	 * Status of the registration
 	 * @access protected
 	 * @var EE_Status $_Status
 	 */
 	protected $_Status = NULL;
-	
+
 	/**
 	 * Answers made to questions for this registration
-	 * @access protected 
+	 * @access protected
 	 * @var EE_Answer $_Answer
 	 */
 	protected $_Answer = NULL;
-	
+
 	/**
 	 * Check-in
-	 * @access protected 
+	 * @access protected
 	 * @var EE_Checkin $_Checkin
 	 */
 	protected $_Checkin = NULL;
@@ -292,11 +292,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*		Set Event ID
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$EVT_ID 		Event ID
-	*/	
-	public function set_event( $EVT_ID = FALSE ) {		
+	*/
+	public function set_event( $EVT_ID = FALSE ) {
 		$this->set('EVT_ID',$EVT_ID);
 	}
 
@@ -304,11 +304,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*		Set Attendee ID
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$ATT_ID 		Attendee ID
-	*/	
-	public function set_attendee_id( $ATT_ID = FALSE ) {		
+	*/
+	public function set_attendee_id( $ATT_ID = FALSE ) {
 		$this->set('ATT_ID',$ATT_ID);
 	}
 
@@ -316,47 +316,47 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*		Set Transaction ID
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		int		$TXN_ID 		Transaction ID
-	*/	
-	public function set_transaction_id( $TXN_ID = FALSE ) {		
+	*/
+	public function set_transaction_id( $TXN_ID = FALSE ) {
 		$this->set('TXN_ID',$TXN_ID);
 	}
 
 
 
 	/**
-	*		Set Session 
-	* 
-	* 		@access		public		
+	*		Set Session
+	*
+	* 		@access		public
 	*		@param		string		$REG_session 		PHP Session ID
-	*/	
-	public function set_session( $REG_session = FALSE ) {		
+	*/
+	public function set_session( $REG_session = FALSE ) {
 		$this->set('REG_session',$REG_session);
 	}
 
 
 
 	/**
-	*		Set Registration Code 
-	* 
-	* 		@access		public		
+	*		Set Registration Code
+	*
+	* 		@access		public
 	*		@param		string		$REG_code 		Registration Code
-	*/	
-	public function set_reg_code( $REG_code = FALSE ) {		
+	*/
+	public function set_reg_code( $REG_code = FALSE ) {
 		$this->set('REG_code',$REG_code);
 	}
 
 
 
 	/**
-	*		Set Registration URL Link 
-	* 
-	* 		@access		public		
-	*		@param		string		$REG_url_link 		Registration URL Link 
-	*/	
-	public function set_reg_url_link( $REG_url_link = FALSE ) {		
+	*		Set Registration URL Link
+	*
+	* 		@access		public
+	*		@param		string		$REG_url_link 		Registration URL Link
+	*/
+	public function set_reg_url_link( $REG_url_link = FALSE ) {
 		$this->set('REG_url_link',$REG_url_link);
 	}
 
@@ -364,11 +364,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*		Set Attendee Counter
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		boolean		$REG_count 		Primary Attendee
-	*/	
-	public function set_count( $REG_count = FALSE ) {		
+	*/
+	public function set_count( $REG_count = FALSE ) {
 		$this->set('REG_count',$REG_count);
 	}
 
@@ -376,11 +376,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*		Set Group Size
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		boolean		$REG_group_size 		Group Registration
-	*/	
-	public function set_group_size( $REG_group_size = FALSE ) {		
+	*/
+	public function set_group_size( $REG_group_size = FALSE ) {
 		$this->set('REG_group_size',$REG_group_size);
 	}
 
@@ -392,26 +392,26 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	* 	updates the registration status and ALSO...
 	* 	calls reserve_registration_space() if the reg status changes TO approved from any other reg status
 	* 	calls release_registration_space() if the reg status changes FROM approved to any other reg status
-	* 
-	* 	@access		public		
+	*
+	* 	@access		public
 	*	@param		string	$STS_ID	Status ID
-	*/	
+	*/
 	public function set_status( $new_STS_ID = FALSE ) {
-		// get current REG_Status 
+		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
-		// if status has changed TO approved 
+		// if status has changed TO approved
 		if ( $old_STS_ID != $new_STS_ID && $new_STS_ID == EEM_Registration::status_id_approved ) {
 			// reserve a space by incrementing ticket and datetime sold values
 			$this->_reserve_registration_space();
 			do_action( 'AHEE__EE_Registration__set_status__to_approved', $this );
-		// OR if status has changed FROM  approved 
+		// OR if status has changed FROM  approved
 		} else if ( $old_STS_ID != $new_STS_ID && $old_STS_ID == EEM_Registration::status_id_approved ) {
 			// release a space by decrementing ticket and datetime sold values
 			$this->_release_registration_space();
 			do_action( 'AHEE__EE_Registration__set_status__from_approved', $this );
 		}
 		// update status
-		parent::set( 'STS_ID', $new_STS_ID );		
+		parent::set( 'STS_ID', $new_STS_ID );
 		do_action( 'AHEE__EE_Registration__set_status__after_update', $this );
 	}
 
@@ -419,10 +419,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*	is_not_approved -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_not_approved
-	* 
-	* 	@access		public		
+	*
+	* 	@access		public
 	*	@return 		boolean
-	*/	
+	*/
 	public function is_not_approved( $REG_date = FALSE ) {
 		return $this->status_ID() == EEM_Registration::status_id_not_approved ? TRUE : FALSE;
 	}
@@ -430,10 +430,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*	is_pending_payment -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_pending_payment
-	* 
-	* 	@access		public		
+	*
+	* 	@access		public
 	*	@return 		boolean
-	*/	
+	*/
 	public function is_pending_payment( $REG_date = FALSE ) {
 		return $this->status_ID() == EEM_Registration::status_id_pending_payment ? TRUE : FALSE;
 	}
@@ -441,10 +441,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*	is_approved -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_approved
-	* 
-	* 	@access		public		
+	*
+	* 	@access		public
 	*	@return 		boolean
-	*/	
+	*/
 	public function is_approved( $REG_date = FALSE ) {
 		return $this->status_ID() == EEM_Registration::status_id_approved ? TRUE : FALSE;
 	}
@@ -452,10 +452,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*	is_cancelled -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_cancelled
-	* 
-	* 	@access		public		
+	*
+	* 	@access		public
 	*	@return 		boolean
-	*/	
+	*/
 	public function is_cancelled( $REG_date = FALSE ) {
 		return $this->status_ID() == EEM_Registration::status_id_cancelled ? TRUE : FALSE;
 	}
@@ -463,10 +463,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*	is_declined -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_declined
-	* 
-	* 	@access		public		
+	*
+	* 	@access		public
 	*	@return 		boolean
-	*/	
+	*/
 	public function is_declined( $REG_date = FALSE ) {
 		return $this->status_ID() == EEM_Registration::status_id_declined ? TRUE : FALSE;
 	}
@@ -475,11 +475,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*		Set Registration Date
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		mixed ( int or string )		$REG_date 		Registration Date - Unix timestamp or string representation of Date
-	*/	
-	public function set_reg_date( $REG_date = FALSE ) {		
+	*/
+	public function set_reg_date( $REG_date = FALSE ) {
 		$this->set('REG_date',$REG_date);
 	}
 
@@ -487,14 +487,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*		Set final Price Paid for ticket after all modifications
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		float		$REG_final_price 		Price Paid
-	*/	
-	public function set_price_paid( $REG_final_price = FALSE ) {		
+	*/
+	public function set_price_paid( $REG_final_price = FALSE ) {
 		$this->set('REG_final_price',$REG_final_price);
 	}
-	
+
 	/**
 	 * @return string of price, with correct decimal places and currency symbol
 	 */
@@ -508,26 +508,26 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	*		Attendee Is Going
-	* 
-	* 		@access		public		
+	*
+	* 		@access		public
 	*		@param		boolean		$REG_att_is_going 		Attendee Is Going
-	*/	
-	public function set_att_is_going( $REG_att_is_going = NULL ) {		
+	*/
+	public function set_att_is_going( $REG_att_is_going = NULL ) {
 		$this->set('REG_att_is_going',$REG_att_is_going);
 	}
 
 
 
-	
+
 	/**
 	 * Returns the related EE_Transaction to this registration
-	 * @return EE_Transaction	 
+	 * @return EE_Transaction
 	 */
 	public function transaction(){
 		return $this->get_first_related('Transaction');
 	}
-	
-	
+
+
 	/**
 	 * Gets the reltaed attendee
 	 * @return EE_Attendee
@@ -542,7 +542,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Event ID
 	* 		@access		public
-	*/	
+	*/
 	public function event_ID() {
 		return $this->get('EVT_ID');
 	}
@@ -552,7 +552,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Event ID
 	* 		@access		public
-	*/	
+	*/
 	public function event_name() {
 		$event = $this->event_obj();
 		if($event){
@@ -564,7 +564,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * Fetches teh event this registration is for
+	 * Fetches the event this registration is for
 	 * @return EE_Event
 	 */
 	public function event_obj(){
@@ -575,7 +575,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Attendee ID
 	* 		@access		public
-	*/	
+	*/
 	public function attendee_ID() {
 		return $this->get('ATT_ID');
 	}
@@ -585,7 +585,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Transaction ID
 	* 		@access		public
-	*/	
+	*/
 	public function transaction_ID() {
 		return $this->get('TXN_ID');
 	}
@@ -595,7 +595,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get PHP Session ID
 	* 		@access		public
-	*/	
+	*/
 	public function session_ID() {
 		return $this->get('REG_session');
 	}
@@ -605,7 +605,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Registration Code
 	* 		@access		public
-	*/	
+	*/
 	public function reg_code() {
 		return $this->get('REG_code');
 	}
@@ -615,11 +615,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Registration URL Link
 	* 		@access		public
-	*/	
+	*/
 	public function reg_url_link() {
 		return $this->get('REG_url_link');
 	}
-	
+
 	/**
 	 * Gets the string which represents the URL for the invoice PDF for this registration (according to EED_Invoice)
 	 * Dependant on code in ee/includes/functions/init espresso_export_invoice
@@ -639,7 +639,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		return add_query_arg($query_args,get_permalink(EE_Registry::instance()->CFG->core->thank_you_page_id));
 	}
 	/**
-	 * Gets the string which represents the URL for the 'receipt' PDF, which is currently 
+	 * Gets the string which represents the URL for the 'receipt' PDF, which is currently
 	 * just a variant of the invoice
 	 * @param string $type  'download','launch', or 'html' (default is 'launch')
 	 * @return string
@@ -647,12 +647,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function receipt_url($type = 'launch'){
 		return add_query_arg(array('receipt'=>'true'),$this->invoice_url($type));
 	}
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/**
 	 * Echoes out invoice_url()
 	 * @param string $type  'download','launch', or 'html' (default is 'launch')
@@ -661,62 +661,62 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function e_invoice_url($type = 'launch'){
 		echo $this->invoice_url($type);
 	}
-	
-	
-	
-	
-	
 
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
+
+
+
 	/**
 	 * Echoes out payment_overview_url
 	 */
 	public function e_payment_overview_url(){
 		echo $this->payment_overview_url();
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
 	 * Gets the URL of the thank you page with this registraiton REG_url_link added as
 	 * a query parameter
 	 * @return string
 	 */
 	public function payment_overview_url(){
-		return add_query_arg( 
-			array( 
-				'ee'=>'_register', 
-				'e_reg_url_link'=>$this->reg_url_link(), 
-				'step'=>'payment_options', 
-				'revisit'=>TRUE 
-			), 
+		return add_query_arg(
+			array(
+				'ee'=>'_register',
+				'e_reg_url_link'=>$this->reg_url_link(),
+				'step'=>'payment_options',
+				'revisit'=>TRUE
+			),
 			get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )
 		);
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
 	 * Gets the URL of the thank you page with this registraiton REG_url_link added as
 	 * a query parameter
 	 * @return string
 	 */
 	public function edit_attendee_information_url(){
-		return add_query_arg( 
-			array( 
-				'ee'=>'_register', 
-				'e_reg_url_link'=>$this->reg_url_link(), 
-				'step'=>'attendee_information', 
-				'revisit'=>TRUE 
-			), 
+		return add_query_arg(
+			array(
+				'ee'=>'_register',
+				'e_reg_url_link'=>$this->reg_url_link(),
+				'step'=>'attendee_information',
+				'revisit'=>TRUE
+			),
 			get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )
 		);
 	}
@@ -734,28 +734,43 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				'page' => 'espresso_registrations',
 				'action' => 'view_registration',
 				'_REG_ID' => $this->ID()
-			), 
-			admin_url('admin.php') 
+			),
+			admin_url('admin.php')
 		);
 	}
 
 
 
-	
+
 	/**
 	*	is_primary_registrant?
 	* 		@access		public
-	*/	
+	*/
 	public function is_primary_registrant() {
 		return $this->get('REG_count') == 1 ? TRUE : FALSE;
 	}
 
 
-	
+
+	/**
+	 * This returns the primary registration object for this registration group (which may be this object).
+	 * @return EE_Registration
+	 */
+	public function get_primary_registration()  {
+		if ( $this->is_primary_registrant() )
+			return $this;
+
+		//k reg_count !== 1 so let's get the EE_Registration object matching this txn_id and reg_count == 1
+		$primary_registrant = EEM_Registration::instance()->get_one( array( array('TXN_ID' => $this->transaction_ID(), 'REG_count' => 1 ) ) );
+		return $primary_registrant;
+	}
+
+
+
 	/**
 	*		get  Attendee Number
 	* 		@access		public
-	*/	
+	*/
 	public function count() {
 		return $this->get('REG_count');
 	}
@@ -765,7 +780,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Group Size
 	* 		@access		public
-	*/	
+	*/
 	public function group_size() {
 		return $this->get('REG_group_size');
 	}
@@ -775,7 +790,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Status ID
 	* 		@access		public
-	*/	
+	*/
 	public function status_ID() {
 		return $this->get('STS_ID');
 	}
@@ -785,11 +800,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Registration Date
 	* 		@access		public
-	*/	
+	*/
 	public function date() {
 		return $this->get('REG_date');
 	}
-	
+
 	/**
 	 * gets a pretty date
 	 * @param string $date_format
@@ -799,8 +814,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function pretty_date($date_format = null, $time_format = null){
 		return $this->get_datetime('REG_date', $date_format, $time_format);
 	}
-	
-	
+
+
 
 	/**
 	 * Gets the event this registration is for
@@ -808,8 +823,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	public function event(){
 		return $this->get_first_related('Event');
-	}	
-	
+	}
+
 
 	/**
 	 * Gets the ticket this registration is for
@@ -825,20 +840,20 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 		return $this->get_first_related('Ticket', $query_params);
 	}
-	
+
 
 
 	/**
 	*		get Price Paid
 	* 		@access		public
-	*/	
+	*/
 	public function price_paid() {
 		return $this->get('REG_final_price');
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Returns a nice version of the status for displaying to customers
 	 * @return string
@@ -866,8 +881,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		return $icon . $status[$this->status_ID()];
 	}
 
-	
-	
+
+
 	/**
 	 * Prints out the return value of $this->pretty_status()
 	 * @return void
@@ -883,14 +898,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	*		get Attendee Is Going
 	* 		@access		public
-	*/	
+	*/
 	public function att_is_going() {
 		return $this->get('REG_att_is_going');
 	}
 
 
 
-	
+
 	/**
 	 * Gets related answers
 	 * @param array $query_params like EEM_Base::get_all
@@ -899,7 +914,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function answers($query_params = null){
 		return $this->get_many_related('Answer',$query_params);
 	}
-	
+
 	/**
 	 * Returns the registration date in the 'standard' string format
 	 * (function may be improved in the future to allow for different formats and timezones)
@@ -908,7 +923,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function reg_date(){
 		return $this->get_datetime('REG_date');
 	}
-	
+
 	/**
 	 * Gets the datetime-ticket for this registration (ie, it can be used to isolate
 	 * the ticket this registration purchased, or the datetime they have registered
@@ -918,7 +933,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function datetime_ticket(){
 		return $this->get_first_related('Datetime_Ticket');
 	}
-	
+
 	/**
 	 * Sets the registration's datetime_ticket.
 	 * @param EE_Datetime_Ticket $datetime_ticket
@@ -927,8 +942,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function set_datetime_ticket($datetime_ticket){
 		return$this->_add_relation_to($datetime_ticket, 'Datetime_Ticket');
 	}
-	
-	
+
+
 	/**
 	 * Get the status object of this object
 	 * @return EE_Status
@@ -940,12 +955,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Gets the primary datetime related to this registration via the related Event to this registration
-	 * @return EE_Datetime 
+	 * @return EE_Datetime
 	 */
 	public function get_related_primary_datetime() {
 		return $this->event()->primary_datetime();
 	}
-	
+
 	/**
 	 * Returns the number of times this registration has checked into any of the datetimes
 	 * its available for
@@ -1026,8 +1041,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		$status_to = $status_paths[$cur_status];
 
 		//add relation - note Check-ins are always creating new rows because we are keeping track of Check-ins over time.  Eventually we'll probably want to show a list table for the individual Check-ins so that can be managed.
-		
-		
+
+
 		$new_status = $status_to == 2 ? 0 : $status_to;
 		$chk_data = array(
 			'REG_ID' => $this->ID(),
@@ -1036,7 +1051,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			);
 		$checkin = EE_Checkin::new_instance( $chk_data );
 		$updated = $checkin->save();
-		
+
 
 		if ( $updated == 0 )
 			$status_to = FALSE;
@@ -1085,14 +1100,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 
-	
+
 	/**
 	 * genrerates reg code
 	 * @return boolean
 	 */
 	private function _generate_new_reg_code() {
 		// generate a reg code ?
-		if ( empty( $this->_REG_code )) {		
+		if ( empty( $this->_REG_code )) {
 			// figure out where to start parsing the reg code
 			$chars = strpos( $this->_REG_url_link, '-' ) + 4;
 			$new_reg_code = array(
@@ -1102,7 +1117,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 				$this->transaction()->is_completed() ? 1 : 0
 			);
 			$new_reg_code = implode( '-', $new_reg_code );
-			$new_reg_code = apply_filters( 'FHEE__EE_Registration___generate_new_reg_code__new_reg_code', $new_reg_code, $this );	
+			$new_reg_code = apply_filters( 'FHEE__EE_Registration___generate_new_reg_code__new_reg_code', $new_reg_code, $this );
 			$this->set_reg_code( $new_reg_code );
 			return TRUE;
 		}
@@ -1110,7 +1125,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	}
 
 
-	
+
 	/**
 	 * increments this registration's related ticket sold and corresponding datetime sold values
 	 * @return void
@@ -1127,11 +1142,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			}
 		}
 		// possibly set event status to sold out
-		$this->event()->perform_sold_out_status_check();			
+		$this->event()->perform_sold_out_status_check();
 	}
 
 
-	
+
 	/**
 	 * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
 	 * @return void
@@ -1151,9 +1166,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 
-	
+
 	/**
-	 * genrerates reg code if that has yet to been done, 
+	 * genrerates reg code if that has yet to been done,
 	 * sets reg status based on transaction status and event pre-approval setting
 	 *
 	 * @param  bool $from_admin 	 used to indicate the request is initiated by admin
@@ -1176,14 +1191,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			$update_reg = TRUE;
 		}
 
-		// generate REG codes for NEW registrations			
+		// generate REG codes for NEW registrations
 		$new_reg = $this->_generate_new_reg_code() == TRUE ? TRUE : $new_reg;
 		// save the registration?
-		if ( $update_reg || $new_reg ) { 
+		if ( $update_reg || $new_reg ) {
 			do_action( 'AHEE__EE_Registration__finalize__update_and_new_reg', $this, $from_admin );
 			$this->save();
 		}
-		return array('new_reg' => $new_reg, 'to_approved' => $update_reg);			
+		return array('new_reg' => $new_reg, 'to_approved' => $update_reg);
 	}
 
 

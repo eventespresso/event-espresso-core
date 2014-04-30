@@ -61,7 +61,8 @@ final class EE_Admin {
 	protected function __construct() {
 		// define global EE_Admin constants
 		$this->_define_all_constants();
-
+		// set autoloaders for our admin page classes based on included path information
+		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_ADMIN );
 		// admin hooks
 		add_filter( 'plugin_action_links', array( $this, 'filter_plugin_actions' ), 10, 2 );
 		// load EE_Request_Handler early
@@ -72,9 +73,8 @@ final class EE_Admin {
 		add_action( 'admin_init', array( $this, 'admin_init' ), 100 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 20 );
 		add_action( 'admin_notices', array( $this, 'display_admin_notices' ), 10 );
+		add_filter( 'pre_update_option', array( $this, 'check_for_invalid_datetime_formats' ), 100, 2 );
 		add_filter('admin_footer_text', array( $this, 'espresso_admin_footer' ));
-		// pew pew pew
-		EE_Registry::instance()->load_core( 'PUE' );
 
 		do_action( 'AHEE__EE_Admin__loaded' );
 	}
@@ -151,7 +151,11 @@ final class EE_Admin {
 	 *	@return array
 	 */
 	public function hide_admin_pages_except_maintenance_mode( $admin_page_folder_names = array() ){
-		return array('maintenance', 'about','support');
+		return array(
+			'maintenance' => EE_ADMIN_PAGES . 'maintenance' . DS,
+			'about' => EE_ADMIN_PAGES . 'about' . DS,
+			'support' => EE_ADMIN_PAGES . 'support' . DS
+		);
 	}
 
 
@@ -172,10 +176,9 @@ final class EE_Admin {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
 			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
+			add_action( 'update_option', array( $this, 'reset_page_for_posts_on_change' ), 100, 3 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
-			// bring out the pidgeons!!!
-			EE_Registry::instance()->load_lib( 'Messages_Init' );
 			//at a glance dashboard widget
 			add_filter( 'dashboard_glance_items', array( $this, 'dashboard_glance_items'), 10 );
 		}
@@ -190,7 +193,7 @@ final class EE_Admin {
 			}
 		}
 
-		//make sure our cpts and custom taxonomy metaboxes get shown for first time users
+		//make sure our CPTs and custom taxonomy metaboxes get shown for first time users
 		add_action('admin_head', array($this, 'enable_hidden_ee_nav_menu_metaboxes' ), 10 );
 		add_action('admin_head', array( $this, 'register_custom_nav_menu_boxes' ), 10 );
 
@@ -262,7 +265,7 @@ final class EE_Admin {
 	 *
 	 * Currently EE is using this to make sure there are menu options for our CPT archive page routes.
 	 *
-	 * @todo modify this so its more dynamic and automatic for all ee cpts and setups and can also be hooked into by addons etc.
+	 * @todo modify this so its more dynamic and automatic for all ee CPTs and setups and can also be hooked into by addons etc.
 	 *
 	 * @access public
 	 * @return void
@@ -303,7 +306,7 @@ final class EE_Admin {
 						<?php _e( 'Event Archive Pages', 'event_espresso' ); ?>
 					</a>
 				</li>
-				<!-- temporarily removing but leaving skeleton in place in case we ever decide to add more tabs.
+			<?php /* // temporarily removing but leaving skeleton in place in case we ever decide to add more tabs.
 				<li <?php echo ( 'all' == $current_tab ? ' class="tabs"' : '' ); ?>>
 					<a class="nav-tab-link" data-type="<?php echo esc_attr( $post_type_name ); ?>-all" href="<?php if ( $nav_menu_selected_id ) echo esc_url(add_query_arg($post_type_name . '-tab', 'all', remove_query_arg($removed_args))); ?>#<?php echo $post_type_name; ?>-all">
 						<?php _e( 'View All' ); ?>
@@ -315,6 +318,7 @@ final class EE_Admin {
 					</a>
 				</li> -->
 			</ul><!-- .posttype-tabs -->
+ 			<?php */ ?>
 
 			<div id="tabs-panel-posttype-extra-nav-menu-pages-event-archives" class="tabs-panel <?php
 			echo ( 'event-archives' == $current_tab ? 'tabs-panel-active' : 'tabs-panel-inactive' );
@@ -357,7 +361,7 @@ final class EE_Admin {
 	/**
 	 * Returns an array of event archive nav items.
 	 *
-	 * @todo  for now this method is just in place so when it gets abstracted further we can substitue in whatever method we use for getting the extra nav menu items
+	 * @todo  for now this method is just in place so when it gets abstracted further we can substitute in whatever method we use for getting the extra nav menu items
 	 * @return array
 	 */
 	private function _get_extra_nav_menu_pages_items() {
@@ -407,16 +411,9 @@ final class EE_Admin {
 	/**
 	 * This is the action hook for the AHEE__EE_Admin_Page__route_admin_request hook that fires off right before an EE_Admin_Page route is called.
 	 *
-	 * @param  string 		 $route 	  The route being called
-	 * @param  EE_Admin_Page $admin_page  The EE_Admin_Page object
 	 * @return void
 	 */
-	public function route_admin_request() {
-		// messages loading is turned OFF by default, but prior to the AHEE__EE_Admin_Page__route_admin_request hook, can be turned back on again via: add_filter( 'FHEE_load_EE_messages', '__return_true' );
-		if ( apply_filters( 'FHEE_load_EE_messages', FALSE )) {
-			EE_Registry::instance()->load_lib( 'Messages_Init' );
-		}
-	}
+	public function route_admin_request() {}
 
 
 
@@ -461,18 +458,9 @@ final class EE_Admin {
 
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
 		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
-			$joyride_js = EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js';
-			$joyride_modenizr_js = EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js';
-			$joyride_css = EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css';
-
-			//joyride style
-			wp_register_style('joyride-css', $joyride_css, array(), '2.1');
-
-			wp_register_script('joyride-modenizr', $joyride_modenizr_js, array(), '2.1', TRUE );
-
-			//joyride
-			wp_register_script('jquery-joyride', $joyride_js, array('jquery-cookie', 'joyride-modenizr'), '2.1', TRUE );
-
+			wp_register_style('joyride-css', EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css', array(), '2.1');
+			wp_register_script('joyride-modernizr', EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js', array(), '2.1', TRUE );
+			wp_register_script('jquery-joyride', EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js', array('jquery-cookie', 'joyride-modernizr'), '2.1', TRUE );
 			wp_enqueue_style('joyride-css');
 			wp_enqueue_script('jquery-joyride');
 		}
@@ -578,16 +566,17 @@ final class EE_Admin {
 
 
 
-
-
-
-
-
 	/**
-	 * 	parse_post_content_on_insert
+	 *    parse_post_content_on_save
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *    any time a post is saved, we need to check for any EE shortcodes that may be embedded in the content,
+	 *    and then track what posts those shortcodes are on, so that we can initialize shortcodes well before the_content() runs.
+	 *    this allows us to do things like enqueue scripts for shortcodes ONLY on the pages the shortcodes are actually used on
+	 *
+	 * @access    public
+	 * @param $post_ID
+	 * @param $post
+	 * @return    void
 	 */
 	public function parse_post_content_on_save( $post_ID, $post ) {
 		// default post types
@@ -597,29 +586,39 @@ final class EE_Admin {
 		$post_types = array_merge( $post_types, $CPTs );
 		// for default or CPT posts...
 		if ( isset( $post_types[ $post->post_type ] )) {
-			// post on frontpage ?
-			$show_on_front = get_option('show_on_front');
+			// whether to proceed with update
 			$update_post_shortcodes = FALSE;
+			// post on frontpage ?
+			$page_for_posts = EE_Config::get_page_for_posts();
+			// critical page shortcodes that we do NOT want added to the Posts page (blog)
+			$critical_shortcodes = EE_Registry::instance()->CFG->core->get_critical_pages_shortcodes_array();
 			// array of shortcodes indexed by post name
 			EE_Registry::instance()->CFG->core->post_shortcodes = isset( EE_Registry::instance()->CFG->core->post_shortcodes ) ? EE_Registry::instance()->CFG->core->post_shortcodes : array();
 			// empty both arrays
 			EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ] = array();
 			// loop thru shortcodes
 			foreach ( EE_Registry::instance()->shortcodes as $EES_Shortcode => $shortcode_dir ) {
-				// strip class prefix and convert to UPPERCASE
+				// convert to UPPERCASE to get actual shortcode
 				$EES_Shortcode = strtoupper( $EES_Shortcode );
 				// is the shortcode in the post_content ?
 				if ( strpos( $post->post_content, $EES_Shortcode ) !== FALSE ) {
 					// map shortcode to post names and post IDs
 					EE_Registry::instance()->CFG->core->post_shortcodes[ $post->post_name ][ $EES_Shortcode ] = $post_ID;
-					// and to frontpage in case it's displaying latest posts (don't need to track IDs for this)
-					EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $EES_Shortcode ] = $post_ID;
+					// if the shortcode is NOT one of the critical page shortcodes like ESPRESSO_TXN_PAGE
+					if ( ! in_array( $EES_Shortcode, $critical_shortcodes )) {
+						// check that posts page is already being tracked
+						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
+							// if not, then ensure that it is properly added
+							EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] = array();
+						}
+						// add shortcode to "Posts page" tracking
+						EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $EES_Shortcode ] = $post_ID;
+					}
 					$update_post_shortcodes = TRUE;
 				}
 			}
-
 			if ( $update_post_shortcodes ) {
-				EE_Registry::instance()->CFG->update_post_shortcodes();
+				EE_Registry::instance()->CFG->update_post_shortcodes( $page_for_posts );
 			}
 		}
 	}
@@ -627,10 +626,92 @@ final class EE_Admin {
 
 
 	/**
-	 * 	its_eSpresso - converts the less commonly used spelling of "Expresso" to "Espresso"
+	 *    check_for_invalid_datetime_formats
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 *    if an admin changes their date or time format settings on the WP General Settings admin page, verify that their selected format can be parsed by PHP
+	 *
+	 * @access    public
+	 * @param    $value
+	 * @param    $option
+	 * @throws EE_Error
+	 * @return    void
+	 */
+	public function check_for_invalid_datetime_formats( $value, $option ) {
+		// check for date_format or time_format
+		switch ( $option ) {
+			case 'date_format' :
+				$date_time_format = $value . ' ' . get_option('time_format');
+				break;
+			case 'time_format' :
+				$date_time_format = get_option('date_format') . ' ' . $value;
+				break;
+			default :
+				$date_time_format = FALSE;
+		}
+		// do we have a date_time format to check ?
+		if ( $date_time_format ) {
+			// because DateTime chokes on some formats, check first that strtotime can parse it
+			$date_string = strtotime( date( $date_time_format ));
+			// invalid date time formats will evaluate to either "0" or ""
+			if ( empty( $date_string )) {
+				// trigger WP settings error
+				add_settings_error(
+					'date_format',
+					'date_format',
+					sprintf(
+						__('The following date time  "%s" ( %s ) can not be properly parsed by PHP due to its format and may cause incompatibility issues with Event Espresso. You will need to choose a more standard date time format in order for everything to operate correctly. %sPlease note that your date and time formats have been reset to "F j, Y" and "g:i a" respectively.%s', 'event_espresso' ),
+						date( $date_time_format ),
+						$date_time_format,
+						'<br /><span style="color:#D54E21;">',
+						'</span>'
+					)
+				);
+				// set format to something valid
+				switch ( $option ) {
+					case 'date_format' :
+						$value = 'F j, Y';
+						break;
+					case 'time_format' :
+						$value = 'g:i a';
+						break;
+				}
+			}
+		}
+		return $value;
+	}
+
+
+
+	/**
+	 *    reset_page_for_posts_on_change	
+	 *
+	 * 	if an admin is on the WP Reading Settings page and changes the option for "Posts page", then we need to attribute any shortcodes for the previous blog page to the new blog page
+	 *
+	 * @access 	public
+	 * @param 	$option
+	 * @param 	$old_value
+	 * @param 	$value
+	 * @return 	void
+	 */
+	public function reset_page_for_posts_on_change( $option, $old_value, $value ) {
+		if ( $option == 'page_for_posts' ) {
+			global $wpdb;
+			$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
+			$old_page_for_posts = $old_value ? $wpdb->get_var( $wpdb->prepare( $SQL, $old_value )) : 'posts';
+			$new_page_for_posts = $value ? $wpdb->get_var( $wpdb->prepare( $SQL, $value )) : 'posts';
+			EE_Registry::instance()->CFG->core->post_shortcodes[ $new_page_for_posts ] = EE_Registry::instance()->CFG->core->post_shortcodes[ $old_page_for_posts ];
+			EE_Registry::instance()->CFG->update_post_shortcodes( $new_page_for_posts );
+		}
+	}
+
+
+
+	/**
+	 *    its_eSpresso - converts the less commonly used spelling of "Expresso" to "Espresso"
+	 *
+	 * @access    public
+	 * @param $content
+	 * @return    string
 	 */
 	public function its_eSpresso( $content ) {
 		return str_replace( '[EXPRESSO_', '[ESPRESSO_', $content );
@@ -642,7 +723,7 @@ final class EE_Admin {
 	 * 	espresso_admin_footer
 	 *
 	 *  @access 	public
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function espresso_admin_footer() {
 		return sprintf(
@@ -657,18 +738,18 @@ final class EE_Admin {
 	/**
 	 * static method for registering ee admin page.
 	 *
-	 * This method is deprecated in favor of the new location in EEH_Plugin_API.
+	 * This method is deprecated in favor of the new location in EE_Register_Admin_Page::register.
 	 *
 	 * @since 4.3.0
-	 * @deprecated 4.3.0	Use EEH_Plugin_API() instead
-	 * @see EEH_Plugin_API()
+	 * @deprecated 4.3.0	Use EE_Register_Admin_Page::register() instead
+	 * @see EE_Register_Admin_Page::register()
 	 *
 	 * @return void
 	 */
 	public static function register_ee_admin_page( $page_basename, $page_path, $config = array() ) {
-		EE_Error::doing_it_wrong( 'EE_Admin::register_ee_admin_page', __('Usage is deprecated.  Use EEH_Plugin_API for registering new EE admin pages', 'event_espresso'), '4.4' );
-		if ( class_exists( 'EEH_Plugin_API' ) )
-			EEH_Plugin_API::register_ee_admin_page( $page_basename, $page_path, $config );
+		EE_Error::doing_it_wrong( __METHOD__, sprintf( __('Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.', 'event_espresso'), $page_basename), '4.3' );
+		if ( class_exists( 'EE_Register_Admin_Page' ) )
+			EE_Register_Admin_Page::register( $page_basename, $page_path, $config );
 	}
 
 

@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso 
+ * Event Espresso
  *
  * Event Registration and Management Plugin for WordPress
  *
@@ -23,103 +23,103 @@
  */
 require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
 class EE_Question_Group extends EE_Soft_Delete_Base_Class{
-	
+
 	/**
-	 * ID of this question gruop
+	 * ID of this question group
 	 * @access protected
 	 * @var int
 	 */
 	protected $_QSG_ID=FALSE;
-	
+
 	/**
 	 * Name of this question group. eg, 'addrss info'
 	 * @access protected
 	 * @var stirng
 	 */
 	protected $_QSG_name=NULL;
-	
+
 	/**
 	 * The unique identifier used for this question group within the system
 	 * @access protected
 	 * @var string
 	 */
 	protected $_QSG_identifier=NULL;
-	
+
 	/**
-	 * Question group descripton
+	 * Question group description
 	 * @access protected
 	 * @var string
 	 */
 	protected $_QSG_desc=NULL;
-	
+
 	/**
 	 * Integer to indicate where this question group
-	 * should be placed relative to other question gruops in a sequence
-	 * @access protected 
+	 * should be placed relative to other question groups in a sequence
+	 * @access protected
 	 * @var int
 	 */
 	protected $_QSG_order=NULL;
-	
+
 	/**
 	 * Boolean to indicate whether the group name
 	 * should be shown when displaying this question group
 	 * on the frontend
 	 * @access protected
-	 * @var boolean 
+	 * @var boolean
 	 */
 	protected $_QSG_show_group_name=NULL;
-	
+
 	/**
-	 * Boolean to dinicate whether the group description
-	 * should be shown when displayign this question gruop
+	 * Boolean to indicate whether the group description
+	 * should be shown when displaying this question group
 	 * on the frontend
 	 * @access protected
-	 * @var boolean 
+	 * @var boolean
 	 */
 	protected $_QSG_show_group_desc=NULL;
-	
+
 	/**
-	 * Boolean to indicate whether this question gruop
+	 * Boolean to indicate whether this question group
 	 * is a mandatory one, ie integral to the system
 	 * @access protected
-	 * @var boolean 
+	 * @var boolean
 	 */
 	protected $_QSG_system=NULL;
-	
+
 	/**
 	 * Boolean which indicates whether thsi question group
 	 * has been deleted or not
 	 * @access protected
-	 * @var boolean 
+	 * @var boolean
 	 */
 	protected $_QSG_deleted=NULL;
-	
-	
+
+
 	/**
 	 * Related questions, lazy-loaded.
 	 * @access protected
-	 * @var EE_Question 
+	 * @var EE_Question
 	 */
 	protected $_Question;
-	
+
 	/**
 	 * Related Events
 	 * @access protected
 	 * @var EE_Event
 	 */
 	protected $_Event;
-	
+
 	/**
 	 * Join model object between events and question groups. Mostly just useful for finding
-	 * which question gruops apply to primary attendees
+	 * which question groups apply to primary attendees
 	 * @access protected
 	 * @var EE_Event_Question_Group
 	 */
 	protected $_Event_Question_Group;
-	
 
-	
-	
+
+
+
 
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
@@ -133,19 +133,19 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	public static function new_instance_from_db ( $props_n_values = array() ) {
 		return new self( $props_n_values, TRUE );
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
-	 * gets teh question gruop's name
+	 * gets the question group's name
 	 * @access public
 	 * @return string
 	 */
 	public function name(){
 		return $this->get('QSG_name');
 	}
-	
+
 	/**
 	 * Gets the question group's internal name
 	 * @access public
@@ -154,7 +154,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	public function identifier(){
 		return $this->get('QSG_identifier');
 	}
-	
+
 	/**
 	 * Gets the question group's description
 	 * @access public
@@ -163,28 +163,28 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	public function desc(){
 		return $this->get('QSG_desc');
 	}
-	
+
 	/**
 	 * Gets the question group's order number in a sequence
-	 * of other quesiton groups
+	 * of other question groups
 	 * @access public
 	 * @return int
 	 */
 	public function order(){
 		return $this->get('QSG_order');
 	}
-	
+
 	/**
-	 * Returns whether to show the gruop's name on teh frontend
+	 * Returns whether to show the group's name on the frontend
 	 * @access public
 	 * @return boolean
 	 */
 	public function show_group_name(){
 		return $this->get('QSG_show_group_name');
 	}
-	
+
 	/**
-	 * Returns wehther to show the group's descripton
+	 * Returns wehther to show the group's description
 	 * on the frontend
 	 * @access public
 	 * @return boolean
@@ -192,20 +192,20 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	public function show_group_desc(){
 		return $this->get('QSG_show_group_desc');
 	}
-	
+
 	/**
-	 * Returns wehther this is a 'sytem group' (meaning
-	 * a question gruop integral to teh system, whose questions
-	 * relate to teh attendee table)
+	 * Returns wehther this is a 'system group' (meaning
+	 * a question group integral to the system, whose questions
+	 * relate to the attendee table)
 	 * @access public
 	 * @return boolean
 	 */
 	public function system_group(){
 		return $this->get('QSG_system');
 	}
-	
+
 	/**
-	 * Returns whether this question gruop has
+	 * Returns whether this question group has
 	 * been deleted
 	 * @access public
 	 * @return boolean
@@ -213,13 +213,14 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	public function deleted(){
 		return $this->get('QST_deleted');
 	}
-	
+
 	/**
 	 * Gets all the questions whicha re part of this question group (ordered Question_Group_Question.QGQ_order)
 	 * @return EE_Question[]
 	 */
-	public function questions(){
-		return !empty($this->_QSG_ID) ? $this->get_many_related('Question', array('order_by' => array('Question_Group_Question.QGQ_order' => 'ASC' ) ) ) : array();
+	public function questions( $query_params = array() ){
+		$query_params = ! empty( $query_params ) ? $query_params : array( 'order_by' => array( 'Question_Group_Question.QGQ_order' => 'ASC' ));
+		return ! empty( $this->_QSG_ID ) ? $this->get_many_related( 'Question', $query_params ) : array();
 	}
 
 
@@ -227,7 +228,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	/**
 	 * Gets all the questions which are NOT part of this question group.
 	 * @param  mixed $question_IDS_in_group   if empty array then all questions returned.  if FALSE then we first get questions in this group and exclude them from questions get all. IF empty array then we just return all questions.
-	 * @return EE_Question[]                         
+	 * @return EE_Question[]
 	 */
 	public function questions_not_in_group( $question_IDS_in_group = FALSE ) {
 		if ( $question_IDS_in_group === FALSE ) {
@@ -245,7 +246,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Gets an array of questions with questions IN the group at the start of the array and questions NOT in the group at the end of the array.  Questions in the group are ordered by Question_Group_Question.QGQ_order and questions NOT in the group are ordered by Question.QGQ_order
-	 * @return EE_Question[] 
+	 * @return EE_Question[]
 	 */
 	public function questions_in_and_not_in_group() {
 		$questions_in_group = $this->questions();
@@ -257,16 +258,16 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 
 
 
-	
+
 	/**
-	 * Gets all events which 
+	 * Gets all events which
 	 * @return EE_Event[]
 	 */
 	public function events(){
 		throw new EE_Error(__("Question Group->events() not yet implemetned","event_esresso"));
 		return $this->get_many_related('Event');
 	}
-	
+
 	/**
 	 * Adds the question to this question group
 	 * @param EE_Question || int $question object or ID

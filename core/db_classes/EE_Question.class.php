@@ -265,7 +265,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	*		Sets whether teh question has been deleted
+	*		Sets whether the question has been deleted
 	*		(we use this boolean isntead of actually
 	*		deleting it because when users delete this question
 	*		they really want to remove the question from future
@@ -392,7 +392,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * gets an array of EE_Question_Group which relate to thsi question
+	 * gets an array of EE_Question_Group which relate to this question
 	 * @return EE_Question_Group[]
 	 */
 	public function question_groups(){
@@ -402,7 +402,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	/**
 	 * Returns all the options for this question. By default, it returns only the not-yet-deleted ones.
 	 * @param boolean $notDeletedOptionsOnly 1
-	 * whehter to return ALL options, or only the ones which have not yet been deleleted
+	 * whether to return ALL options, or only the ones which have not yet been deleleted
 	 * @param string|array $selected_value_to_always_include, when retrieving options to an ANSWERED question,
 	 * we want to usually only show non-deleted options AND the value that was selected for the answer,
 	 * whether it was trashed or not.

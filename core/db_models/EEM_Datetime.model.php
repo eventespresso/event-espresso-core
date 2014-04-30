@@ -308,7 +308,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 	
 	/**
 	 * Gets the most important datetime for a particular event (ie, the primary event usually. But if for some WACK
-	 * reason it doesn't exist, we consider teh earliest event the most important)
+	 * reason it doesn't exist, we consider the earliest event the most important)
 	 * @param int $EVT_ID
 	 * @return EE_Datetime
 	 */

@@ -138,7 +138,7 @@ CREATE TABLE `wp_events_detail` (
 				'REG_session'=>new EE_Plain_Text_Field('REG_session', __('Session ID of registration','event_espresso'), false, ''),
 				'REG_code'=>new EE_Plain_Text_Field('REG_code', __('Unique Code for this registration','event_espresso'), false, ''),
 				'REG_url_link'=>new EE_Plain_Text_Field('REG_url_link', __('String to be used in URL for identifying registration','event_espresso'), false, ''),
-				'REG_count'=>new EE_Integer_Field('REG_count', __('Count of this registration in the group registraion ','event_espresso'), true, 1),
+				'REG_count'=>new EE_Integer_Field('REG_count', __('Count of this registration in the group registration ','event_espresso'), true, 1),
 				'REG_group_size'=>new EE_Integer_Field('REG_group_size', __('Number of registrations on this group','event_espresso'), false, 1),
 				'REG_att_is_going'=>new EE_Boolean_Field('REG_att_is_going', __('Flag indicating the registrant plans on attending','event_espresso'), false, false),
 				'REG_deleted' => new EE_Trashed_Flag_Field('REG_deleted', __('Flag indicating if registration has been archived or not.', 'event_espresso'), false, false )	
@@ -178,7 +178,7 @@ CREATE TABLE `wp_events_detail` (
 				'PAY_txn_id_chq_nmbr'=>new EE_Plain_Text_Field('PAY_txn_id_chq_nmbr', __('Transaction ID or Cheque Number','event_espresso'), true, ''),
 				'PAY_po_number'=>new EE_Plain_Text_Field('PAY_po_number', __('Purchase or Sales Number','event_espresso'), true, ''),
 				'PAY_extra_accntng'=>new EE_Simple_HTML_Field('PAY_extra_accntng', __('Extra Account Info','event_espresso'), true, ''),
-				'PAY_via_admin'=>new EE_Boolean_Field('PAY_via_admin', __('Whehter payment made via admin','event_espresso'), false, false),
+				'PAY_via_admin'=>new EE_Boolean_Field('PAY_via_admin', __('Whether payment made via admin','event_espresso'), false, false),
 				'PAY_details'=>new EE_Serialized_Text_Field('PAY_details', __('Full Gateway response about payment','event_espresso'), true, '')
 			)
 		);
@@ -274,7 +274,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 		}
 		
 		
-		//even if there was no payment, we can go ahead with adding teh reg
+		//even if there was no payment, we can go ahead with adding the reg
 		$new_regs = $this->_insert_new_registrations($old_row,$new_att_id,$txn_id);
 		if($new_regs){
 			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_reg_table,$new_regs);
@@ -657,7 +657,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table{
 				'Declined'=>'PDC'
 			);
 			$by_admin = $old_attendee['payment'] == 'Admin';
-			$STS_ID = isset($pay_status_mapping[$old_attendee['payment_status']]) ? $pay_status_mapping[$old_attendee['payment_status']] : 'PFL';//IE, if we don't recognize teh status, assume paymetn failed
+			$STS_ID = isset($pay_status_mapping[$old_attendee['payment_status']]) ? $pay_status_mapping[$old_attendee['payment_status']] : 'PFL';//IE, if we don't recognize the status, assume payment failed
 			$cols_n_values = array(
 				'TXN_ID'=>$new_txn_id,
 				'STS_ID'=>$STS_ID,
