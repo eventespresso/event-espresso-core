@@ -74,12 +74,13 @@ class EE_Admin_Page_Loader {
 
 
 	/**
-	 * _prepped_installed_pages
-	 * This is the prepared array of installed pages for adding to the admin_menu.
-	 * @access private
-	 * @var array
+	 * _prepped_menu_maps
+	 * This is the prepared array of EE_Admin_Page_Menu_Maps for adding to the admin_menu.
+	 *
+	 * @since  4.4.0
+	 * @var EE_Admin_Page_Menu_Map[]
 	 */
-	private $_prepped_installed_pages = array();
+	private $_prepped_menu_maps = array();
 
 
 
@@ -109,7 +110,8 @@ class EE_Admin_Page_Loader {
 	 * @return \EE_Admin_Page_Loader
 	 */
 	public function __construct() {
-
+		//load menu_map classes
+		EE_Registry::instance()->load_file(EE_ADMIN, 'EE_Admin_Page_Loader.core.php');
 		//define the default "groups" for the admin_pages
 		$this->_set_menu_groups();
 		//let's set default autoloaders.  Note that this just sets autoloaders for root admin files.
@@ -151,46 +153,70 @@ class EE_Admin_Page_Loader {
 	 * @return void
 	 */
 	private function _set_menu_groups() {
+
+		//set array of EE_Admin_Page_Menu_Group objects
 		$groups = array(
-			'main' => array(
+			0 => new EE_Admin_Page_Menu_Group( array(
 				'title' => __('Main', 'event_espresso'),
 				'show_heading' => FALSE,
 				'slug' => 'main',
 				'capability' => 'administrator'
-				),
-			'management' => array(
+				)),
+			1 => new EE_Admin_Page_Menu_Group( array(
 				'title' => __('Management', 'event_espresso'),
 				'show_heading' => TRUE,
 				'slug' => 'management',
 				'capability' => 'administrator'
-				),
-			'settings' => array(
+				)),
+			2 => new EE_Admin_Page_Menu_Group( array(
 				'title' => __('Settings', 'event_espresso'),
 				'show_heading' => TRUE,
 				'slug' => 'settings',
 				'capability' => 'administrator'
-				),
-			'templates' => array(
+				)),
+			3 => new EE_Admin_Page_Menu_Group( array(
 				'title' => __('Templates', 'event_espresso'),
 				'show_heading' => TRUE,
 				'slug' => 'templates',
 				'capability' => 'administrator'
-				),
-			'extras' => array(
+				)),
+			4 => new EE_Admin_Page_Menu_Group( array(
 				'title' => __('Extras', 'event_espresso'),
 				'show_heading' => TRUE,
 				'slug' => 'extras',
 				'capability' => 'administrator'
-				),
-			'tools'=>array(
+				)),
+			5=>new EE_Admin_Page_Menu_Group( array(
 				'title' => __("Tools", "event_espresso"),
 				'show_heading' => TRUE,
 				'slug' => 'tools',
 				'capability' => 'administrator'
-				)
+				))
 			);
 
 		$this->_admin_menu_groups = apply_filters( 'FHEE__EE_Admin_Page_Loader___set_menu_groups__admin_menu_groups', $groups );
+	}
+
+
+
+
+	/**
+	 * This takes all the groups in the _admin_menu_groups array and returns the array indexed by group
+	 * slug.  The other utility with this function is it validates that all the groups are instances of
+	 * EE_Admin_Page_Menu_Group (cause some invalid things might have slipped in via addons).
+	 *
+	 * @since  4.4.0
+	 *
+	 * @return EE_Admin_Page_Menu_Group[]
+	 */
+	private function _rearrange_menu_groups() {
+		$groups = array();
+		foreach ( (array) $this->_admin_menu_groups as $group ) {
+			if ( ! $group instanceof EE_Admin_Page_Menu_Group )
+				throw new EE_Error( sprintf( __('Unable to continue sorting the menu groups array because there is an invalid value for the menu groups.  All values in this array are required to be a EE_Admin_Page_Menu_Group object.  Instead there was: %s', 'event_espresso'), $group ) );
+			$groups[$group->menu_slug] = $group;
+		}
+		return $groups;
 	}
 
 
@@ -347,11 +373,11 @@ class EE_Admin_Page_Loader {
 
 		//loop through prepped pages and hook into WP's menu functions
 		$i=0;
-		foreach ( $this->_prepped_installed_pages as $installed_page ) {
+		foreach ( $this->_prepped_menu_maps as $menu_map ) {
 			if ( $i === 0 ) {
-				//if initial menu item is a header let's temporarily store and continue.
-				if ( is_array($installed_page) ) {
-					$temp_ref = $installed_page;
+				//if initial menu item is a menu_group let's temporarily store and continue.
+				if (  $menu_map instanceof EE_Admin_Page_Menu_Group ) {
+					$temp_ref = $menu_map;
 					continue;
 				}
 			}
@@ -359,27 +385,27 @@ class EE_Admin_Page_Loader {
 			//if we've got $add_main_menu || $temp_ref then we need to add_menu_page on current item
 			if ( isset($temp_ref) || $add_main_menu ) {
 				$title = __('Event Espresso', 'event_espresso');
-					add_menu_page( $title, $title, apply_filters( 'FHEE_management_capability', 'administrator', $espresso_manager['espresso_manager_events'] ), $parent_slug, array($installed_page, 'initialize_admin_page'), 'none' );
+					add_menu_page( $title, $title, apply_filters( 'FHEE_management_capability', 'administrator', $espresso_manager['espresso_manager_events'] ), $parent_slug, $menu_map->menu_callback, 'none' );
 
 				//make sure we add initial header if present
 				if ( isset($temp_ref) ) {
-					add_submenu_page( $parent_slug, $temp_ref['title'], '<span class="ee_menu_group"  onclick="return false;">' . $temp_ref['title'] . '</span>', $temp_ref['capability'], $temp_ref['slug'], array($this, '_default_header_link') );
+					add_submenu_page( $parent_slug, $temp_ref->label, $temp_ref->group_link(), $temp_ref->capability, $temp_ref->menu_slug, $temp_ref->callback );
 				}
 			}
 
 			//let's setup the submenu items
-			$label = is_array($installed_page) ? $installed_page['title'] : $installed_page->label;
-			$menu_label = is_array($installed_page) ? '<span class="ee_menu_group"  onclick="return false;">' . $installed_page['title'] . '</span>' : $installed_page->menu_label;
-			$capability = is_array($installed_page) ? $installed_page['capability'] : $installed_page->capability;
-			$menu_slug = is_array($installed_page) ? $installed_page['slug'] : $installed_page->menu_slug;
-			$menu_func = is_array($installed_page) ? array($this, '_default_header_link') : array($installed_page, 'initialize_admin_page');
+			$label = $menu_map->label;
+			$menu_label = $menu_map instanceof EE_Admin_Page_Menu_Group ? $menu_map->group_link(): $menu_map->menu_label;
+			$capability = $menu_map->capability;
+			$menu_slug = $menu_map->menu_slug;
+			$menu_func = $menu_map->menu_callback;
 
 
 			$wp_page_slug = add_submenu_page( $parent_slug, $label, $menu_label, $capability, $menu_slug, $menu_func );
 
-			if ( is_object($installed_page) ) {
+			if ( ! $menu_map instanceof EE_Admin_Page_Menu_Group ) {
 				try {
-					$installed_page->set_page_dependencies($wp_page_slug);
+					$menu_map->admin_init_page->set_page_dependencies($wp_page_slug);
 				} catch ( EE_Error $e) {
 					$e->get_error();
 				}
@@ -393,7 +419,7 @@ class EE_Admin_Page_Loader {
 
 	/**
 	 * _prep_pages
-	 * sets the _prepped_installed_pages property
+	 * sets the _prepped_menu_maps property
 	 *
 	 * @access private
 	 * @throws EE_Error
@@ -402,17 +428,23 @@ class EE_Admin_Page_Loader {
 	private function _prep_pages() {
 		$pages_array = array();
 
-		//loop through each page object and assign those marked "show_menu" into their respective groups.
-		foreach ( $this->_installed_pages as $page ) {
-			if ( $page instanceof EE_Admin_Page_Init ) {
-				//get map for page
+		//rearrange _admin_menu_groups to be indexed by group slug.
+		$menu_groups = $this->_rearrange_menu_groups();
+
+		foreach( $this->_installed_pages as $page ) {
+			if ( $page instanceof EE_Admin_page_Init ) {
 				$page_map = $page->get_menu_map();
-				//if not in menu let's unset (via continue)
-				if ( ! $page_map['show_on_menu'] ) {
-					continue;
+				//if page map is NOT a EE_Admin_Page_Menu_Map object then throw error.
+				if ( ! $page_map instanceof EE_Admin_Page_Menu_Map ) {
+					throw new EE_Error( sprintf( __('The menu map for %s must be an EE_Admin_Page_Menu_Map object.  Instead it is %s.  Please doublecheck that the menu map has been configured correctly.', 'event_espresso'), $page->label, $page_map ) );
 				}
-				//assign to group
-				$pages_array[$page_map['group']][] = $page;
+
+				//if not in menu let's unset (via continue)
+				if ( ! $page_map->show_on_menu )
+					continue;
+
+				//assign to group (remember $page_map has the admin page stored in it).
+				$pages_array[$page_map->menu_group][] = $page_map;
 			}
 		}
 
@@ -420,28 +452,30 @@ class EE_Admin_Page_Loader {
 			throw new EE_Error(__('Something went wrong when prepping the admin pages', 'event_espresso') );
 		}
 
-		//let's sort the groups, make sure it's a valid group, add header (if to show), then
-		foreach ( $pages_array as $group => $pages ) {
-			//valid group?
-			if ( ! array_key_exists( $group, $this->_admin_menu_groups )) {
+		//let's sort the groups, make sure it's a valid group, add header (if to show).
+		foreach ( $pages_array as $group => $menu_maps ) {
+			//valid_group?
+			if ( ! array_key_exists( $group, $menu_groups ) )
 				continue;
-			}
-			// first sort
-			usort( $pages, array($this, '_sort_pages' ) );
+
+			//sort pages.
+			usort( $menu_maps, array( $this, '_sort_menu_maps' ) );
+
 			//prepend header but only if header is to show.
-			if ( $this->_admin_menu_groups[ $group ]['show_heading'] ) {
-				array_unshift( $pages, $this->_admin_menu_groups[ $group ] );
+			if ( $menu_groups[$group]->show_heading ) {
+				array_unshift( $menu_maps, $menu_groups[$group] );
 			}
+
 			//reset $pages_array with prepped data
-			$pages_array[ $group ] = $pages;
+			$pages_array[$group] = $menu_maps;
 		}
-		//now let's setup the _prepped_installed_pages property
-		foreach ( $this->_admin_menu_groups as $group => $details ) {
+
+
+		//now let's setup the _prepped_menu_maps property
+		foreach ( $menu_groups as $group => $group_obj ) {
 			if ( isset( $pages_array[ $group ] ) )
-				$this->_prepped_installed_pages = array_merge( $this->_prepped_installed_pages , $pages_array[ $group ] );
+				$this->_prepped_menu_maps = array_merge( $this->_prepped_menu_maps , $pages_array[ $group ] );
 		}
-
-
 	}
 
 
@@ -577,24 +611,20 @@ class EE_Admin_Page_Loader {
 
 
 
-
-
 	/**
-	 * _sort_pages
-	 * Utility method for sorting the _installed_pages (callback for usort php function)
-	 * @param  object $a page object
-	 * @param  object $b page object being compared to
+	 * Utility method for sorting the _menu_maps (callback for usort php function)
+	 *
+	 * @since  4.4.0
+	 *
+	 * @param  EE_Admin_Page_Menu_Map $a menu_map object
+	 * @param  EE_Admin_Page_Menu_Map $b being compared to
 	 * @return int    sort order
 	 */
-	private function _sort_pages($a, $b) {
-		$apo = $a->get_menu_map();
-		$bpo = $b->get_menu_map();
-		if ( $apo['menu_order'] == $bpo['menu_order'] ) {
+	private function _sort_menu_maps( EE_Admin_Page_Menu $a, EE_Admin_Page_Menu $b ) {
+		if ( $a->menu_order == $b->menu_order )
 			return 0;
-		}
-		return ( $apo['menu_order'] < $bpo['menu_order'] ) ? -1 : 1;
+		return ($a->menu_order < $b->menu_order) ? -1 : 1;
 	}
-
 
 
 
