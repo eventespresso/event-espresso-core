@@ -39,3 +39,5 @@ $event_name = '';
 //insert affiliate code here (see includes/functions/affiliate-handling.php)
 do_action( 'AHEE__payment_overview__template__reg_completed' );
 ?>
+<br/>
+<br/>

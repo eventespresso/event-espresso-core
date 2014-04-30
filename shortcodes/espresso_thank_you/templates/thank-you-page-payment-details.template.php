@@ -3,79 +3,54 @@
 </h2>
 
 <div id="espresso-thank-you-page-payment-details-dv">
-	<?php 
-	if ( ! empty( $payments )){
+<?php if ( ! empty( $payments )){	 ?>
+	<table class="ee-table">
+		<thead>
+			<tr>
+				<th width="35%" class="jst-left">
+					<?php _e('Payment Date','event_espresso')?>
+				</th>
+				<th width="20%" class="jst-left">
+					<?php _e('Type','event_espresso');?>
+				</th>
+				<th width="20%" class="jst-rght">
+					<?php _e('Amount','event_espresso');?>
+				</th>
+				<th width="25%" class="jst-rght">
+					<?php _e('Status','event_espresso');?>
+				</th>
+			</tr>
+		</thead>
+		<tbody>
+	<?php foreach ( $payments as $payment ) { echo $payment; } ?>
+		</tbody>
+	</table>
+<?php
+	} else {
 		
-		foreach ( $payments as $payment ) { 
-	?>
-		<table class='ee-table'>
-			<tbody>
-				<tr>
-					<td>
-						<label><?php _e('Payment Type:', 'event_espresso'); ?></label>
-					</td>
-					<td>
-						<?php $payment->e('PAY_gateway'); ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label><?php _e('Payment Date:', 'event_espresso'); ?></label>
-					</td>
-					<td>
-						<?php $payment->e('PAY_timestamp'); ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label><?php _e("Payment Amount: ", 'event_espresso') ?></label>
-					</td>
-					<td>
-						<?php  $payment->e( 'PAY_amount' ); ?>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						<label><?php _e("Payment Status: ", 'event_espresso') ?></label>
-					</td>
-					<td>
-						<?php $payment->e_pretty_status( TRUE );
-						if ( $show_try_pay_again_link &&  ! $payment->is_approved()) {?>
-						<a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Retry Payment", 'event_espresso'); ?></a>
-							<?php }
-						?>
-					</td>
-				</tr>
-				</tbody>
-			</table>
-		<?php }
-		
+		if ( $transaction->total() ){ 
+			echo apply_filters( 
+				'FHEE__payment_overview_template__no_payments_made',
+				sprintf ( 
+					__('%sNo payments towards this transaction have been received.%s', 'event_espresso' ),
+					'<p class="important-notice">',
+					'</p>'
+				)
+			); 
 		} else {
+			echo apply_filters( 
+				'FHEE__payment_overview_template__no_payment_required',
+				sprintf ( 
+					__('%sNo payment is required for this transaction.%s', 'event_espresso' ),
+					'<p>',
+					'</p>'
+				)
+			); 
+		 }
 			
-			if ( $transaction->total() ){ 
-				echo apply_filters( 
-					'FHEE__payment_overview_template__no_payments_made',
-					sprintf ( 
-						__('%sNo payments towards this transaction have been received.%s', 'event_espresso' ),
-						'<p class="important-notice">',
-						'</p>'
-					)
-				); 
-			} else {
-				echo apply_filters( 
-					'FHEE__payment_overview_template__no_payment_required',
-					sprintf ( 
-						__('%sNo payment is required for this transaction.%s', 'event_espresso' ),
-						'<p>',
-						'</p>'
-					)
-				); 
-			 }
-				
-		}
-		if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
-			echo $gateway_content;
-		 }	
-		?>
-	<br/>	
+	}
+	if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
+		echo $gateway_content;
+	 }	
+?>
 </div>
