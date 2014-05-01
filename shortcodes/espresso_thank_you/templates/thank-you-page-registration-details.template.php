@@ -50,7 +50,7 @@ foreach ( $transaction->registrations() as $registration ) {
 					<?php $registration->e_pretty_status( TRUE )?>
 				</td>
 			</tr>
-            <?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_each_registration', $registration ); ?>
+            <?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_registration_table_row', $registration ); ?>
         <?php } ?>
         <?php if (( $event_name != $registration->event_name() && $event_name != '' ) || $reg_cntr >= count( $transaction->registrations() )) {  ?>
 		</tbody>
