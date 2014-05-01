@@ -61,20 +61,101 @@ class EE_DMS_4_3_0_critical_page_shortcode_tracking extends EE_Data_Migration_Sc
 	 */
 	protected function _migration_step( $num_items = 1 ){
 		// if this isn't set then something is really wrong
-		if ( ! EE_Registry::instance()->CFG->core instanceof EE_Core_Config ) {
-			throw new EE_Error( __( 'It appears the Event Espresso Core Configuration object is not setup correctly.', 'event_espresso' ));
+		if ( ! EE_Config::instance()->core instanceof EE_Core_Config ) {
+			throw new EE_Error( __( 'It appears the Event Espresso Core Configuration is not setup correctly.', 'event_espresso' ));
 		}
 		// name of the WP Posts Page
-		$posts_page = EE_Config::get_page_for_posts();
+		$posts_page = $this->_get_page_for_posts();
 		// make sure critical pages get removed
-		EE_Registry::instance()->CFG->update_post_shortcodes( $posts_page );
-		// and just in case they ever had posts on frontpage at some time, then we should check for "posts" as well
-		EE_Registry::instance()->CFG->update_post_shortcodes( 'posts' );
-		// check for errors
-		$notices = EE_Error::get_notices();
+        $this->_update_post_shortcodes( $posts_page );
+        // save updated config, but only show errors
+        EE_Config::instance()->update_espresso_config();
+        // check for errors
+		$notices = EE_Error::get_notices( FALSE );
 		// no errors returns 1
-		return empty( $notices['errors'] ) ? 1 : 0;
+		if( ! isset( $notices['errors'] )) {
+            $this->set_completed();
+            return 1;
+        } else {
+            return 0;
+        }
 	}
+
+
+
+    /**
+     * 	_get_page_for_posts
+     *
+     * 	if the wp-option "show_on_front" is set to "page", then this is the post_name for the post set in the wp-option "page_for_posts", or "posts" if no page is selected
+     *
+     *
+     *  @access 	private
+     *  @return 	string
+     */
+    private function _get_page_for_posts() {
+        $page_for_posts = get_option( 'page_for_posts' );
+        if ( ! $page_for_posts ) {
+            return 'posts';
+        }
+        global $wpdb;
+        $SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
+        return $wpdb->get_var( $wpdb->prepare( $SQL, $page_for_posts ));
+    }
+
+
+
+    /**
+     *    _update_post_shortcodes
+     *
+     * @access    private
+     * @param $page_for_posts
+     * @return    void
+     */
+    private function _update_post_shortcodes( $page_for_posts = '' ) {
+        // critical page shortcodes that we do NOT want added to the Posts page (blog)
+        $critical_shortcodes = EE_Config::instance()->core->get_critical_pages_shortcodes_array();
+        // verify that post_shortcodes is set
+        EE_Config::instance()->core->post_shortcodes = isset( EE_Config::instance()->core->post_shortcodes ) && is_array( EE_Config::instance()->core->post_shortcodes ) ? EE_Config::instance()->core->post_shortcodes : array();
+        //  just in case the site has ever had posts on frontpage at some time, then we should check for a "Posts Page" named "posts"
+        $post_pages_to_check = $page_for_posts == 'posts' ? array( $page_for_posts ) : array( 'posts', $page_for_posts );
+        // cycle thru post_shortcodes
+        foreach( $post_pages_to_check as $post_page ){
+            // cycle thru post_shortcodes
+            foreach( EE_Config::instance()->core->post_shortcodes as $post_name => $shortcodes ){
+                // are there any shortcodes to track ?
+                if ( ! empty( $shortcodes )) {
+                    // loop thru list of tracked shortcodes
+                    foreach( $shortcodes as $shortcode => $post_id ) {
+                        // if shortcode is for a critical page, BUT this is NOT the corresponding critical page for that shortcode
+                        if ( isset( $critical_shortcodes[ $post_id ] ) && $post_name == $post_page ) {
+                            // then remove this shortcode, because we don't want critical page shortcodes like ESPRESSO_TXN_PAGE running on the "Posts Page" (blog)
+                            unset( EE_Config::instance()->core->post_shortcodes[ $post_name ][ $shortcode ] );
+                        }
+                        // skip the posts page, because we want all shortcodes registered for it
+                        if ( $post_name == $post_page ) {
+                            continue;
+                        }
+                        // make sure post still exists
+                        $post = get_post( $post_id );
+                        if ( $post ) {
+                            // check that the post name matches what we have saved
+                            if ( $post->post_name == $post_name ) {
+                                // if so, then break before hitting the unset below
+                                continue;
+                            }
+                        }
+                        // we don't like missing posts around here >:(
+                        unset( EE_Config::instance()->core->post_shortcodes[ $post_name ] );
+                    }
+                } else {
+                    // you got no shortcodes to keep track of !
+                    unset( EE_Config::instance()->core->post_shortcodes[ $post_name ] );
+                }
+            }
+        }
+   }
+
+
 
 
 }
