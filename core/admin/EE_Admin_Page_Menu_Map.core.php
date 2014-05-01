@@ -126,6 +126,8 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 
 
+
+
 	/**
 	 * Constructor.
 	 *
@@ -202,6 +204,30 @@ abstract class EE_Admin_Page_Menu_Map  {
  * @subpackage  admin
  */
 class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
+
+
+	/**
+	 * The page to a icon used for this menu.
+	 *
+	 * @since  4.4.0
+	 * @see http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
+	 *      	for what can be set for this property.
+	 * @var string
+	 */
+	public $icon_url;
+
+
+
+	/**
+	 * What position in the main menu order for the WP admin menu this menu item
+	 * should show.
+	 *
+	 * @since  4.4.0
+	 * @see http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
+	 *      	for what can be set for this property.
+	 * @var integer
+	 */
+	public $position;
 
 
 	public function __construct( $menu_args ) {
