@@ -217,7 +217,7 @@ class EE_Admin_Page_Loader {
 	 */
 	private function _rearrange_menu_groups() {
 		$groups = array();
-		//first let's order the menu groups by their internal menu order (note uses typehinting to ensure the incoming array is EE_Admin_Page_Menu_Map objects )
+		//first let's order the menu groups by their internal menu order (note usort typehinting to ensure the incoming array is EE_Admin_Page_Menu_Map objects )
 		usort( $this->_admin_menu_groups, array( $this, '_sort_menu_maps' ) );
 		foreach ( $this->_admin_menu_groups as $group ) {
 			if ( ! $group instanceof EE_Admin_Page_Menu_Group )
