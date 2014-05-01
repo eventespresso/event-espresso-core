@@ -7,23 +7,34 @@
  * @subpackage 	admin
  */
 
+
 /**
- * Defines the EE_Admin_Page sub menu object used in EE_Admin_Page_Loader for setting up EE Admin
- * menus.
+ * Abstract class for defining EE Admin Page Menu Map objects
  *
  * @since 		4.4.0
  * @package 		Event Espresso
  * @subpackage 	admin
  */
-class EE_Admin_Page_Menu_Map  {
+abstract class EE_Admin_Page_Menu_Map  {
+
 
 	/**
-	 * The title for the menu item. (What shows up in the actual menu).
+	 * The title for the menu page. (the page the menu links to)
+	 *
+	 * @since  4.4.0
+	 * @var string
+	 */
+	public $title;
+
+
+
+	/**
+	 * The label for the menu item. (What shows up in the actual menu).
 	 *
 	 * @since 4.4.0
 	 * @var string
 	 */
-	public $label;
+	public $menu_label;
 
 
 
@@ -120,41 +131,26 @@ class EE_Admin_Page_Menu_Map  {
 	 *
 	 * @since 4.4.0
 	 *
-	 * @param  array     $menu_args  {
-	 *               An array of arguments used to setup the menu properties on construct.
-	 *               @type string $label 		Menu Title.  Required.
-	 *               @type string $parent_slug 		Slug for the parent of this menu.  Required.
-	 *               @type string $capability		The capability required for this menu to be
-	 *                     					displayed to the user. Optional. Default
-	 *                     					'administrator'.
-	 *               @type string $menu_slug		The slug name to refer to this menu by (should
-	 *                     					be unique for this menu). Required.
-	 *               @type string $menu_callback	The function to be called to output the content
-	 *                     					for the admin page.  Required.
-	 *               @type EE_Admin_Page_Init  $admin_init_page    The init page this menu item is
-	 *                     					associated with.  This is used for setting
-	 *                     					dependencies in the loader. Required.
-	 *               @type string $menu_group	What group this menu belongs to. Required.
-	 *               @type string $menu_order 	What order this menu item should appear in the 						  menu. (within the group it belongs to). Required.
-	 *               @type bool  $show_on_menu	Whether menu shows in WP admin menu or not.
-	 *                     					Optional. Default TRUE.
-	 * }
+	 * @param  array $menu_args  An array of arguments used to setup the menu
+	 *                           		properties on construct.
+	 * @param  array $required   	An array of keys that should be in the $menu_args, this
+	 *                            		is used to validate that the items that should be defined
+	 *                            		are present.
 	 * @return void
 	 */
-	public function __construct( $menu_args = array() ) {
+	public function __construct( $menu_args, $required ) {
 		//verify that required keys are present in the incoming array.
-		$expected = array( 'label', 'parent_slug', 'menu_slug', 'menu_callback', 'menu_group', 'menu_order', 'admin_init_page');
-		$missing = array_diff( $expected, array_keys( (array) $menu_args ) );
+		$missing = array_diff( (array) $required, array_keys( (array) $menu_args ) );
 
 		if ( !empty( $missing ) ) {
-			throw new EE_Error( sprintf( __('EE_Admin_Page_Sub_Menu is missing some expected keys in the argument array.  The following keys are missing: %s', 'event_espresso'), implode(', ', $missing ) ) );
+			throw new EE_Error( sprintf( __('%s is missing some expected keys in the argument array.  The following keys are missing: %s', 'event_espresso'), get_class( $this ), implode(', ', $missing ) ) );
 		}
 
 		//made it here okay, so let's set the properties!
 		foreach ( $menu_args as $prop => $value ) {
 			if ( $prop == 'show_on_menu'  ) {
 				$value = (bool) $value;
-			} else if ( $prop == 'admin_init_page' &&  ! $this instanceof EE_Admin_Page_Menu_Group && ! $value instanceof EE_Admin_Page_Init ) {
+			} else if ( $prop == 'admin_init_page' && in_array( 'admin_init_page', $required['admin_init_page'] ) && ! $value instanceof EE_Admin_Page_Init ) {
 				throw new EE_Error( sprintf( __('The value for the "admin_init_page" argument must be an instance of an EE_Admin_Page_Init object.  Instead %s was given as the value.', 'event_espresso'), $value ) );
 			} else {
 				$value = (string) $value;
@@ -165,9 +161,85 @@ class EE_Admin_Page_Menu_Map  {
 		}
 	}
 
+
+	/**
+	 * This method should define how the menu page gets added for this particular item
+	 * and go ahead and define it.  Note that child classes MUST also return the result of
+	 * the function used to register the WordPress admin page (the wp_page_slug string)
+	 *
+	 * @since  4.4.0
+	 * @return string wp_page_slug.
+	 */
+	abstract protected function _add_menu_page();
+
+
+	/**
+	 * Called by client code to use this menu map for registering a WordPress admin page
+	 *
+	 * @since  4.4.0
+	 */
+	public function add_menu_page() {
+		$wp_page_slug = $this->_add_menu_page();
+		if ( !empty( $wp_page_slug ) && $this->admin_init_page instanceof EE_Admin_Page_Init ) {
+			try {
+				$this->admin_init_page->set_page_dependencies( $wp_page_slug );
+			} catch( EE_Error $e ) {
+				$e->get_error();
+			}
+		}
+	}
+
 } //end EE_Admin_Page_Menu_Map
 
 
+
+
+/**
+ * This defines the menu map structure for a main menu item.
+ *
+ * @since  4.4.0
+ * @package  Event Espresso
+ * @subpackage  admin
+ */
+class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
+
+
+	public function __construct( $menu_args ) {
+		$required = array( 'menu_label', 'parent_slug', 'menu_slug', 'menu_callback', 'menu_group', 'menu_order', 'admin_init_page');
+
+		parent::__construct( $menu_args, $required );
+	}
+
+
+	/**
+	 * Uses the proper WP utility for registering a menu page for the main WP pages.
+	 */
+	protected function _add_menu_page() {
+		return add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback );
+	}
+} //end EE_Admin_Page_Main_Menu
+
+
+
+/**
+ * Defines the menu map structure for sub menu pages.
+ *
+ * @since 4.4.0
+ * @package Event Espresso
+ * @subpackage admin
+ */
+class EE_Admin_Page_Sub_Menu extends EE_Admin_Page_Main_Menu {
+
+	public function __construct( $menu_args ) {
+		parent::__construct( $menu_args );
+	}
+
+
+	protected function _add_menu_page() {
+		return add_submenu_page( $this->parent_slug, $this->title, $this->menu_label, $this->capability, $this->menu_slug, $this->menu_callback );
+	}
+
+} //end class EE_Admin_Page_Menu_Map
 
 
 /**
@@ -184,49 +256,19 @@ class EE_Admin_Page_Menu_Map  {
 class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map {
 
 
-	/**
-	 * Constructor.
-	 *
-	 * @since 4.4.0
- *
-	 * @param  array     $menu_args  {
-	 *               An array of arguments used to setup the menu group properties on construct.
-	 *               @type string $label 		Menu Group Title.  Required.
-	 *               @type string $parent_slug		Not used for menu groups.
-	 *               @type string $capability		The capability required for this menu to be
-	 *                     					displayed to the user. Optional. Default
-	 *                     					'administrator'.
-	 *               @type string $menu_slug		The slug name to refer to this menu by (should
-	 *                     					be unique for this menu). Required.
-	 *               @type string $menu_callback	Menu Group adds its own callback.
-	 *               @type EE_Admin_Page_Init  $admin_init_page    Not used for menu groups.
-	 *               @type string $menu_group	Will be set the same as the menu slug
-	 *                     					automatically by menu groups.
-	 *               @type string $menu_order 	Not used by Menu Groups
-	 *               @type bool  $show_on_menu	Whether menu shows in WP admin menu or not.
-	 *                     					Optional. Default TRUE.
-	 * }
-	 * @return void
-	 */
+
 	public function __construct( $menu_args = array() ) {
-		//let's set defaults so that EE_Admin_Page_Menu_Map doesn't scream at us.
-		$menu_args['parent_slug'] = '';
-		$menu_args['menu_callback'] = array( $this, 'default_header_link' );
-		$menu_args['admin_init_page'] = '';
-		$menu_args['menu_group'] = !empty( $menu_args['menu_slug'] ) ? $menu_args['menu_slug'] : '';
-		$menu_args['menu_order'] = 0;
-
-		parent::__construct( $menu_args );
+		$required = array( 'menu_label', 'menu_slug', 'menu_order' );
+		parent::__construct( $menu_args, $required );
 	}
 
 
-
-	public function default_header_link() {
-		return false;
+	protected function _add_menu_page() {
+		return add_submenu_page( $this->parent_slug, $this->menu_label, $this->_group_link(), $this->capability, $this->menu_slug, $this->_default_header_link(), '__return_false' );
 	}
 
 
-	public function group_link() {
+	private function _group_link() {
 		return '<span class="ee_menu_group"  onclick="return false;">' . $this->label . '</span>';
 	}
-}
+} //end EE_Admin_Page_Menu_Group
