@@ -150,17 +150,31 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 		//made it here okay, so let's set the properties!
 		foreach ( $menu_args as $prop => $value ) {
-			if ( $prop == 'show_on_menu'  ) {
-				$value = (bool) $value;
-			} else if ( $prop == 'admin_init_page' && in_array( 'admin_init_page', $required['admin_init_page'] ) && ! $value instanceof EE_Admin_Page_Init ) {
-				throw new EE_Error( sprintf( __('The value for the "admin_init_page" argument must be an instance of an EE_Admin_Page_Init object.  Instead %s was given as the value.', 'event_espresso'), $value ) );
-			} else {
-				$value = (string) $value;
-			}
 
+			switch ( $prop ) {
+				case 'show_on_menu' :
+					$value = (bool) $value;
+					break;
+				case 'admin_init_page' :
+					if ( in_array( 'admin_init_page', $required['admin_init_page'] ) && ! $value instanceof EE_Admin_Page_Init ) {
+						throw new EE_Error( sprintf( __('The value for the "admin_init_page" argument must be an instance of an EE_Admin_Page_Init object.  Instead %s was given as the value.', 'event_espresso'), $value ) );
+					}
+					break;
+				case 'menu_callback' :
+					break;
+				default :
+					$value = (string) $value;
+					break;
+
+			}
 			$this->{$prop} = $value;
 
 		}
+
+		//if empty menu_callback let's set default (but only if we have admin page init object)
+		if ( empty( $this->menu_callback ) && $this->admin_init_page instanceof EE_Admin_Page_Init )
+			$this->menu_callback = array( $this->admin_init_page, 'initialize_admin_page' );
+
 	}
 
 
@@ -231,7 +245,7 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 
 
 	public function __construct( $menu_args ) {
-		$required = array( 'menu_label', 'parent_slug', 'menu_slug', 'menu_callback', 'menu_group', 'menu_order', 'admin_init_page');
+		$required = array( 'menu_label', 'parent_slug', 'menu_slug', 'menu_group', 'menu_order', 'admin_init_page');
 
 		parent::__construct( $menu_args, $required );
 	}
