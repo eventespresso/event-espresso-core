@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
 		update: function(event, ui) {
 			var allQuestions = $('.ee-question-sortable');
 			allQuestions.each( function(i) {
-				$('.question-group-QGQ_order', this).val(i);
+				$('.question-group-QGQ_order', this).val(i+1);
 			});
 		}
 	});
