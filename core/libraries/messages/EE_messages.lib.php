@@ -291,7 +291,6 @@ class EE_messages {
 	 */
 	public function create_new_templates( $messenger, $message_type, $GRP_ID = 0, $is_global = false ) {
 		$valid_mt = false;
-		$evt_id = absint($GRP_ID);
 
 		$valid_mt = $this->_validate_setup($messenger, $message_type, $is_global);
 
