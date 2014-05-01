@@ -330,7 +330,7 @@ class EE_messages {
 
 		//if we've made it this far we have the class so let's instantiate
 		$a = new ReflectionClass( $classname );
-		$DFLT = $a->newInstance( $this );
+		$DFLT = $a->newInstance( $this, $GRP_ID );
 
 		//generate templates
 		$success = $DFLT->create_new_templates();
