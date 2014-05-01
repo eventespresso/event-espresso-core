@@ -167,6 +167,8 @@ abstract class EE_Admin_Page_Menu_Map  {
 					break;
 
 			}
+			if ( ! EEH_Class_Tools::has_property( $this, $prop ) )
+				throw new EE_Error( sprintf( __('The $menu_args coming into %s has a index key (%s) representing a property that is not defined by the class.  Perhaps there is a typo?', 'event_espresso'), get_class( $this ), $prop ) );
 			$this->{$prop} = $value;
 
 		}
