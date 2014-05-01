@@ -30,10 +30,21 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	//identity properties (set in _set_defaults and _set_init_properties)
 	public $label;
-	public $menu_label;
+
+	/**
+	 * Menu map has a capability.  However, this allows admin pages to have separate capability requirements for menus and accessing pages.  If capability is NOT set, then it defaults to the menu_map capability.
+	 * @var string
+	 */
 	public $capability;
-	public $menu_slug;
-	public $show_on_menu;
+
+
+	/**
+	 * This holds the menu map object for this admin page.
+	 * @var EE_Admin_Page_Menu_Map
+	 */
+	protected $_menu_map;
+
+
 
 	//set in _set_defaults
 	protected $_folder_name;
@@ -101,21 +112,23 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 
 	/**
-	 * get_menu_map is a static function that child classes use to indicate the details of their placement on the menu (or even if they show up on the menu).
-	 * The map is in an associative array with the following properties.
-	 * array(
-	 * 		'group' => 'what "group" this page should be listed with (see EE_Admin_Page_load for list of available groups',
-	 * 		'menu_order' => 'what order the this page will appear in the list for that group - just a regular int value please'
-	 * 		'show_on_menu' => 'bool indicating whether this page will appear in the EE admin navigation menu.'
-	 * 		'parent_slug' => 'the_slug_for_the_parent_menu_item'
-	 * )
+	 * _set_menu_map is a function that child classes use to set the menu_map property (which should be an instance of EE_Admin_Page_Menu_Map.  Their menu can either be EE_Admin_Page_Main_Menu or EE_Admin_Page_Sub_Menu.
+
 	 * @abstract
-	 * @access public
-	 * @return array see above description for format.
 	 */
-	abstract public function get_menu_map();
+	abstract protected function _set_menu_map();
 
 
+
+	/**
+	 * returns the menu map for this admin page
+	 *
+	 * @since 4.4.0
+	 * @return EE_Admin_Page_Menu_Map
+	 */
+	public function  get_menu_map() {
+		return $this->_menu_map;
+	}
 
 
 
@@ -157,16 +170,19 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 */
 	private function _set_defaults() {
 		$this->_file_name = $this->_folder_name = $this->_wp_page_slug = $this->capability = NULL;
-		$this->show_on_menu = $this->_routing = TRUE;
+		$this->_routing = TRUE;
 		$this->_load_page = FALSE;
 		$this->_files_hooked = $this->_hook_paths = array();
+
+		//menu_map
+		$this->_menu_map = $this->get_menu_map();
 	}
 
 
 
 	protected function _set_capability() {
-		$capability = empty($this->capability) ? 'administrator' : $this->capability;
-		$this->capability = apply_filters( 'FHEE_' . $this->menu_slug . '_capability', $capability );
+		$capability = empty($this->capability) ?  $this->_menu_map->capability : $this->capability;
+		$this->capability = apply_filters( 'FHEE_' . $this->menu_map->menu_slug . '_capability', $capability );
 	}
 
 
@@ -205,7 +221,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 				 $this->_file_name,
 				 $this->_file_name,
 				 $this->_folder_path . $this->_file_name,
-				 $this->menu_label
+				 $this->_menu_map->menu_slug
 			);
 			throw new EE_Error( implode( '||', $msg) );
 		}
@@ -324,7 +340,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	protected function _initialize_admin_page() {
 
 		//JUST CHECK WE'RE ON RIGHT PAGE.
-		if ( (!isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->menu_slug) && $this->_routing )
+		if ( (!isset( $_REQUEST['page'] ) || $_REQUEST['page'] != $this->_menu_map->menu_slug) && $this->_routing )
 			return; //not on the right page so let's get out.
 		$this->_load_page = TRUE;
 
@@ -333,7 +349,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		//we don't need to do a page_request check here because it's only called via WP menu system.
 		$admin_page = $this->_file_name . '_Admin_Page';
-		$hook_suffix = $this->menu_slug . '_' . $admin_page;
+		$hook_suffix = $this->_menu_map->menu_slug . '_' . $admin_page;
 		$admin_page = apply_filters("FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__{$hook_suffix}", $admin_page);
 
 		// define requested admin page class name then load the file and instantiate
@@ -343,13 +359,13 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		if ( is_readable( $path_to_file )) {
 			// This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
 			do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization' );
-			do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_' . $this->menu_slug );
+			do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_' . $this->_menu_map->menu_slug );
 			require_once( $path_to_file );
 			$a = new ReflectionClass( $admin_page );
 			$this->_loaded_page_object = $a->newInstance( $this->_routing );
 		}
 		do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__after_initialization' );
-		do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__after_initialization_' . $this->menu_slug );
+		do_action( 'AHEE__EE_Admin_Page___initialize_admin_page__after_initialization_' . $this->_menu_map->menu_slug );
 	}
 
 
