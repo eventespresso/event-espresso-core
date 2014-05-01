@@ -49,7 +49,7 @@
 				</tr>
 				</tbody>
 			</table>
-            <?php  do_action( 'AHEE__thank_you_page_payment_details_template__after_each_payment' ); ?>
+            <?php  do_action( 'AHEE__thank_you_page_payment_details_template__after_each_payment', $payment ); ?>
 
         <?php }
 
@@ -64,7 +64,7 @@
 						'</p>'
 					)
 				);
-                do_action( 'AHEE__thank_you_page_payment_details_template__no_payments_made' );
+                do_action( 'AHEE__thank_you_page_payment_details_template__no_payments_made', $transaction );
 
             } else {
 				echo apply_filters(
@@ -81,7 +81,7 @@
 		}
 		if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
 			echo $gateway_content;
-            do_action( 'AHEE__thank_you_page_payment_details_template__after_gateway_content' );
+            do_action( 'AHEE__thank_you_page_payment_details_template__after_gateway_content', $gateway_content );
 		 }
 		?>
 
