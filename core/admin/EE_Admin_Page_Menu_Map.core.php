@@ -157,7 +157,7 @@ abstract class EE_Admin_Page_Menu_Map  {
 					break;
 				case 'admin_init_page' :
 					if ( in_array( 'admin_init_page', $required['admin_init_page'] ) && ! $value instanceof EE_Admin_Page_Init ) {
-						throw new EE_Error( sprintf( __('The value for the "admin_init_page" argument must be an instance of an EE_Admin_Page_Init object.  Instead %s was given as the value.', 'event_espresso'), $value ) );
+						throw new EE_Error( sprintf( __('The value for the "admin_init_page" argument must be an instance of an EE_Admin_Page_Init object.  Instead %s was given as the value.', 'event_espresso'), print_r($value, TRUE) ) );
 					}
 					break;
 				case 'menu_callback' :
