@@ -1210,13 +1210,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//let's first determine if the incoming template is a global template, if it isn't then we need to get the global template matching messenger and message type.
 			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 
-			$global = $MTPG->is_global();
+			$success = $this->_delete_mtp_permanently( $GRP_ID, FALSE );
 
-			$success = $this->_delete_mtp_permanently( $GRP_ID );
-
-			//if successfully deleted, lets generate the new ones
+			//if successfully deleted, lets generate the new ones.  Note. We set GLOBAL to true, because resets on ANY template will use the related global template defaults for regeneration.  This means that if a custom template is reset, it does NOT reset to whatever the related GLOBAL is in the db but rather what the related
 			if ( $success ) {
-				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, $global );
+				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, TRUE );
 			}
 		}
 
