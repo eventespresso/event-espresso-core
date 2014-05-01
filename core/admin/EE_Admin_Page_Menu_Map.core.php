@@ -215,7 +215,7 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 	 * Uses the proper WP utility for registering a menu page for the main WP pages.
 	 */
 	protected function _add_menu_page() {
-		return add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback );
+		return $this->show_on_menu ? $this->add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback ) : '';
 	}
 } //end EE_Admin_Page_Main_Menu
 
@@ -236,7 +236,7 @@ class EE_Admin_Page_Sub_Menu extends EE_Admin_Page_Main_Menu {
 
 
 	protected function _add_menu_page() {
-		return add_submenu_page( $this->parent_slug, $this->title, $this->menu_label, $this->capability, $this->menu_slug, $this->menu_callback );
+		return $this->show_on_menu ? add_submenu_page( $this->parent_slug, $this->title, $this->menu_label, $this->capability, $this->menu_slug, $this->menu_callback ) : '';
 	}
 
 } //end class EE_Admin_Page_Menu_Map
@@ -264,7 +264,7 @@ class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map {
 
 
 	protected function _add_menu_page() {
-		return add_submenu_page( $this->parent_slug, $this->menu_label, $this->_group_link(), $this->capability, $this->menu_slug, $this->_default_header_link(), '__return_false' );
+		return $this->show_on_menu ? add_submenu_page( $this->parent_slug, $this->menu_label, $this->_group_link(), $this->capability, $this->menu_slug, $this->_default_header_link(), '__return_false' ): '';
 	}
 
 
