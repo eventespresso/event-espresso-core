@@ -191,11 +191,15 @@ class EEM_System_Status{
 	 */
 	function get_https_enabled(){
 		$home = str_replace("http://", "https://", home_url());
-		@$handle = fopen($home, "r");
-		if(empty($handle)){ 
-			return FALSE;
+		$response = wp_remote_get($home);
+		if($response instanceof WP_Error){ 
+			$error_string = '';
+			foreach($response->errors as $short_name => $description_array){
+				$error_string .= "<b>$short_name</b>: ".implode(", ",$description_array);
+			}
+			return $error_string;
 		}
-		return TRUE;
+		return "ok!";
 	}
 	
 	
