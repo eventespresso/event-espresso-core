@@ -1874,9 +1874,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * helper for permanently deleting a mtP group and all related message_templates
 	 * @param  int    $GRP_ID The group being deleted
+	 * @param  bool $include_group whether to delete the Message Template Group as well.
 	 * @return success        boolean to indicate the success of the deletes or not.
 	 */
-	private function _delete_mtp_permanently( $GRP_ID ) {
+	private function _delete_mtp_permanently( $GRP_ID, $include_group = TRUE ) {
 		$success = 1;
 		$MTPG = EEM_Message_Template_Group::instance();
 		//first let's GET this group
@@ -1889,7 +1890,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//now delete permanently this particular group
 
-		if ( ! $MTG->delete_permanently() ) {
+		if ( $include_group && ! $MTG->delete_permanently() ) {
 			$success = 0;
 		}
 		return $success;
