@@ -81,6 +81,8 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//set properties that are always available with objects.
 		$this->_set_init_properties();
 
+		$this->_set_menu_map();
+
 		//set default capability
 		$this->_set_capability();
 
