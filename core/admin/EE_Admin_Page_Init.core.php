@@ -184,7 +184,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	protected function _set_capability() {
 		$capability = empty($this->capability) ?  $this->_menu_map->capability : $this->capability;
-		$this->capability = apply_filters( 'FHEE_' . $this->menu_map->menu_slug . '_capability', $capability );
+		$this->capability = apply_filters( 'FHEE_' . $this->_menu_map->menu_slug . '_capability', $capability );
 	}
 
 
