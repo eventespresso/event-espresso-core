@@ -375,7 +375,6 @@ class EE_Admin_Page_Loader {
 	public function set_menus() {
 		//prep the menu pages (sort, group.)
 		$this->_prep_pages();
-
 		foreach( $this->_prepped_menu_maps as $menu_map ) {
 			$menu_map->add_menu_page();
 		}
@@ -431,13 +430,10 @@ class EE_Admin_Page_Loader {
 		}
 
 
-		//set the _prepped_menu_maps property
-		$this->_prepped_menu_maps = $pages_array;
-
 		//now let's setup the _prepped_menu_maps property
-		/*foreach ( $menu_groups as $group => $group_obj ) {
-			if ( isset( $pages_array[ $group ] ) )
-				$this->_prepped_menu_maps = array_merge( $this->_prepped_menu_maps , $pages_array[ $group ] );
+		foreach ( $pages_array as $group => $group_objs ) {
+			foreach ( $group_objs as $menu_map )
+				$this->_prepped_menu_maps[] = $menu_map;
 		}/**/
 	}
 
