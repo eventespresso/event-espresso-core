@@ -33,36 +33,36 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * @var EE_Transaction $_current_txn
 	 */
 	private $_current_txn = NULL;
-	
+
 	/**
 	 * @var EE_Registration $_primary_registrant
 	 */
 	private $_primary_registrant = NULL;
-	
+
 	/**
 	 * The reg_url_link passed from the Request, or from the Session
 	 * @var string $_reg_url_link
 	 */
 	private $_reg_url_link = NULL;
-	
+
 	/**
 	 * whether the incoming reg_url_link is for the primary registrant or not
 	 * @var boolean $_is_primary
 	 */
 	private $_is_primary = NULL;
-	
+
 	/**
 	 * The URL for revisiting the SPCO attendee information step
 	 * @var string $_SPCO_attendee_information_url
 	 */
 	private $_SPCO_attendee_information_url = NULL;
-	
+
 	/**
 	 * The URL for revisting the SPCO payment options step
 	 * @var string $_SPCO_payment_options_url
 	 */
 	private $_SPCO_payment_options_url = NULL;
-	
+
 	/**
 	 * whether to display the Payment Options link
 	 * @var boolean $_show_try_pay_again_link
@@ -218,7 +218,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		EE_Registry::$i18n_js_strings['TXN_complete'] = EEM_Transaction::complete_status_code;
 		EE_Registry::$i18n_js_strings['checking_for_new_payments'] = __( 'checking for new payments...', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['loading_payment_info'] = __( 'loading payment information...', 'event_espresso' );
-		EE_Registry::$i18n_js_strings['slow_IPN'] = apply_filters( 
+		EE_Registry::$i18n_js_strings['slow_IPN'] = apply_filters(
 			'EES_Espresso_Thank_You__load_js__slow_IPN',
 			sprintf(
 				__( '%sThe Payment Notification appears to be taking longer than usual to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.%s', 'event_espresso' ),
@@ -307,7 +307,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		}
 
 		return EEH_Template::locate_template( THANK_YOU_TEMPLATES_PATH . 'thank-you-page-overview.template.php', TRUE, $template_args, TRUE );
-	
+
 	}
 
 
@@ -323,7 +323,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * @param $data
 	 * @return    array
 	 */
-	public static function thank_you_page_IPN_monitor( $response, $data, $screen_id ) {
+	public static function thank_you_page_IPN_monitor( $response, $data ) {
 		// does this heartbeat contain our data ?
 		if ( isset( $data['espresso_thank_you_page'] )) {
 			// check for reg_url_link in the incoming heartbeat data
@@ -354,14 +354,14 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			// grab transient  of TXN's status
 			$txn_status = isset( $data['espresso_thank_you_page']['txn_status'] ) ? $data['espresso_thank_you_page']['txn_status'] : NULL;
 			// has the TXN status changed since we last checked (or empty because this is the first time running through this code)?
-			if ( $txn_status !== $TXN->status_ID() ) {	
+			if ( $txn_status !== $TXN->status_ID() ) {
 				// switch between two possible basic outcomes
 				switch( $TXN->status_ID()) {
 					// TXN has been updated in some way
 					case EEM_Transaction::overpaid_status_code:
 					case EEM_Transaction::complete_status_code:
 					case EEM_Transaction::incomplete_status_code:
-						// send updated TXN results back to client,  
+						// send updated TXN results back to client,
 						$response['espresso_thank_you_page'] = array(
 							'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
 							'txn_status' => $TXN->status_ID()
@@ -373,7 +373,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 						// keep on waiting...
 						return $espresso_thank_you_page->_update_server_wait_time( $data['espresso_thank_you_page'] );
 				}
-				
+
 			// or is the TXN still failed (never been updated) ???
 			} else if ( $TXN->failed() ) {
 				// keep on waiting...
@@ -391,7 +391,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 						'new_payments' => $espresso_thank_you_page->get_new_payments( $payments ),
 						'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
 						'txn_status' => $TXN->status_ID()
-					);					
+					);
 				} else {
 					$response['espresso_thank_you_page']['payment_details'] = $espresso_thank_you_page->get_payment_details( $payments );
 				}
@@ -400,7 +400,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			} else {
 				$response['espresso_thank_you_page']['get_payments_since'] = $since;
 			}
-			
+
 		}
 		return $response;
 	}
@@ -409,7 +409,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 	/**
 	 * 	_update_server_wait_time
-	 * 
+	 *
 	 *  @access 	public
 	 *  @param 	array $thank_you_page_data thank you page portion of the incoming JSON array from the WP heartbeat data
 	 *  @return 	array
@@ -419,7 +419,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			'still_waiting' => isset( $thank_you_page_data['initial_access'] ) ? current_time('timestamp') - $thank_you_page_data['initial_access'] : 0,
 			'txn_status' => $this->_current_txn->status_ID()
 		);
-		return $response;	
+		return $response;
 	}
 
 
@@ -465,7 +465,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' );?><span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
 			</p>
 		</div>
-		<div class="clear"></div>	
+		<div class="clear"></div>
 	</div>
 <?php
 	}
@@ -498,7 +498,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 	/**
 	 * 	get_payment_row_html
-	 * 
+	 *
 	 *  @access 	public
 	 *  @param 	EE_Payment	$payment
 	 *  @return 	string
@@ -569,7 +569,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 	/**
 	 * 	get_payment_details
-	 * 
+	 *
 	 *  @access 	public
 	 *  @return 	string
 	 */
@@ -579,7 +579,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		foreach ( $payments as $payment ) {
 			$payments_html .= $this->get_payment_row_html( $payment );
 		}
-		return $payments_html;		
+		return $payments_html;
 	}
 
 
