@@ -323,7 +323,7 @@
     height: auto;
 }
 .ticket-table tbody tr.edit-ticket-row td input[type="text"] {
-    height:1;
+    height:1px;
 }
 
 /*ticket status strip */
