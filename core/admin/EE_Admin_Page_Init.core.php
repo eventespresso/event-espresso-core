@@ -100,7 +100,7 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	/**
 	 * _set_init_properties
 	 * Child classes use to set the following properties:
-	 * $label, $menu_label, $capability, $menu_slug, $show_on_menu
+	 * $label
 	 *
 	 * @abstract
 	 * @access protected
