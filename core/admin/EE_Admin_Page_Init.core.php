@@ -81,16 +81,16 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		//set properties that are always available with objects.
 		$this->_set_init_properties();
 
-		$this->_set_menu_map();
-
-		//set default capability
-		$this->_set_capability();
-
 		//global styles/scripts across all wp admin pages
 		add_action('admin_enqueue_scripts', array($this, 'load_wp_global_scripts_styles'), 5 );
 
 		//load initial stuff.
 		$this->_set_file_and_folder_name();
+
+		$this->_set_menu_map();
+
+		//set default capability
+		$this->_set_capability();
 
 	}
 
