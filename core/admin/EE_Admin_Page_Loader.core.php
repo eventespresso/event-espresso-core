@@ -277,7 +277,7 @@ class EE_Admin_Page_Loader {
 			$this->_installed_pages[$page] = $this->_load_admin_page( $page, $path );
 			// verify returned object
 			if ( $this->_installed_pages[$page] instanceof EE_Admin_Page_Init ) {
-				$this->_menu_slugs[$this->_installed_pages[$page]->menu_slug] = $page;
+				$this->_menu_slugs[$this->_installed_pages[$page]->get_menu_map()->menu_slug] = $page;
 				//flag for register hooks on extended pages b/c extended pages use the default INIT.
 				$extend = FALSE;
 				//now that we've got the admin_init objects... lets see if there are any caffeinated pages extending the originals.  If there are then let's hook into the init admin filter and load our extend instead.
@@ -311,6 +311,7 @@ class EE_Admin_Page_Loader {
 		//make sure we have menu slugs global setup. Used in EE_Admin_Page->page_setup() to ensure we don't do a full class load for an admin page that isn't requested.
 		global $ee_menu_slugs;
 		$ee_menu_slugs = $this->_menu_slugs;
+
 		//we need to loop again to run any early code
 		foreach ( $installed_refs as $page => $path ) {
 			if ( $this->_installed_pages[$page] instanceof EE_Admin_Page_Init ) {
