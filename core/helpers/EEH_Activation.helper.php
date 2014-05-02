@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/helpers/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -38,7 +38,7 @@ class EEH_Activation {
 		//which is fired BEFORE activation of plugin anyways
 		EEH_Activation::verify_default_pages_exist();
 	}
-	
+
 	/**
 	 * Sets the database schema and creates folders. This should
 	 * be called on plugin activation and reactivation
@@ -47,7 +47,7 @@ class EEH_Activation {
 		EEH_Activation::create_upload_directories();
 		EEH_Activation::create_database_tables();
 	}
-	
+
 	/**
 	 * assuming we have an up-to-date database schema, this will populate it
 	 * with default and initial data. This should be called
@@ -71,7 +71,7 @@ class EEH_Activation {
 		//EEM_Gateway::load_all_gateways()
 		EEM_Gateways::instance(true)->load_all_gateways();
 		//also, check for CAF default db content
-		do_action( 'AHEE__EEH_Activation__initialize_db_content' );		
+		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
 		//which users really won't care about on initial activation
 		EE_Error::overwrite_success();
@@ -104,7 +104,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function deactivate_event_espresso() {
-		// check permissions 
+		// check permissions
 		if ( current_user_can( 'activate_plugins' )) {
 			deactivate_plugins( EE_PLUGIN_BASENAME, TRUE );
 		}
@@ -124,27 +124,27 @@ class EEH_Activation {
 	public static function verify_default_pages_exist() {
 
 		$critical_page_problem = FALSE;
-		
+
 		$critical_pages = array(
-			array( 
+			array(
 				'id' =>'reg_page_id',
 				'name' => __( 'Registration Checkout', 'event_espresso' ),
 				'post' => NULL,
 				'code' => 'ESPRESSO_CHECKOUT'
 			),
-			array( 
+			array(
 				'id' => 'txn_page_id',
 				'name' => __( 'Transactions', 'event_espresso' ),
 				'post' => NULL,
 				'code' => 'ESPRESSO_TXN_PAGE'
 			),
-			array( 
+			array(
 				'id' => 'thank_you_page_id',
 				'name' => __( 'Thank You', 'event_espresso' ),
 				'post' => NULL,
 				'code' => 'ESPRESSO_THANK_YOU'
 			),
-			array( 
+			array(
 				'id' => 'cancel_page_id',
 				'name' => __( 'Registration Cancelled', 'event_espresso' ),
 				'post' => NULL,
@@ -169,14 +169,14 @@ class EEH_Activation {
 					if ( $critical_page['post'] == NULL ) {
 						$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
 						EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-						break;				
+						break;
 					}
 				}
 			}
 			// track post_shortcodes
 			if ( $critical_page['post'] ) {
 				EEH_Activation::_track_critical_page_post_shortcodes( $critical_page );
-			}	
+			}
 			// check that Post ID matches critical page ID in config
 			if ( isset( $critical_page['post']->ID ) && $critical_page['post']->ID != EE_Registry::instance()->CFG->core->$critical_page['id'] ) {
 				//update Config with post ID
@@ -184,13 +184,13 @@ class EEH_Activation {
 				if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE ) ) {
 					$msg = __( 'The Event Espresso critical page configuration settings could not be updated.', 'event_espresso' );
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-				}					
+				}
 			}
-			
+
 			$critical_page_problem =  ! isset( $critical_page['post']->post_status ) || $critical_page['post']->post_status != 'publish' || strpos( $critical_page['post']->post_content, $critical_page['code'] ) === FALSE ? TRUE : $critical_page_problem;
 
 		}
-						
+
 		if ( $critical_page_problem ) {
 			$msg = sprintf(
 				__('A potential issue has been detected with one or more of your Event Espresso pages. Go to %s to view your Event Espresso pages.', 'event_espresso' ),
@@ -202,14 +202,14 @@ class EEH_Activation {
 		if ( EE_Error::has_notices() ) {
 			EE_Error::get_notices( FALSE, TRUE, TRUE );
 		}
-		
+
 	}
 
 	/**
 	 * REturns the first post which uses the specified shortcode
 	 * @param string $ee_shortcode usually one of the critical pages shortcodes, eg
 	 * ESPRESSO_THANK_YOU. So we will search fora post with the content "[ESPRESSO_THANK_YOU"
-	 * (we don't search for the closing shortcode bracket because they might have added 
+	 * (we don't search for the closing shortcode bracket because they might have added
 	 * parameter to the shortcode
 	 * @return WP_Post or NULl
 	 */
@@ -222,7 +222,7 @@ class EEH_Activation {
 		}else{
 			return NULL;
 		}
-		
+
 //		return $post_id;
 	}
 
@@ -238,7 +238,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function create_critical_page( $critical_page ) {
-		
+
 		$post_args = array(
 			'post_title' => $critical_page['name'],
 			'post_status' => 'publish',
@@ -246,26 +246,26 @@ class EEH_Activation {
 			'comment_status' => 'closed',
 			'post_content' => '[' . $critical_page['code'] . ']'
 		);
-		
+
 		$post_id = wp_insert_post( $post_args );
 		if ( ! $post_id ) {
 			$msg = sprintf(
 				__( 'The Event Espresso  critical page entitled "%s" could not be created.', 'event_espresso' ),
 				$critical_page['name']
 			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return $critical_page;
 		}
 		// get newly created post's details
-		if ( ! $critical_page['post'] = get_post( $post_id )) {			
+		if ( ! $critical_page['post'] = get_post( $post_id )) {
 			$msg = sprintf(
 				__( 'The Event Espresso critical page entitled "%s" could not be retreived.', 'event_espresso' ),
 				$critical_page['name']
 			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );			
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		
-		return $critical_page;				
+
+		return $critical_page;
 
 	}
 
@@ -274,13 +274,14 @@ class EEH_Activation {
 
 
 	/**
-	 * 	This function adds a critical page's shortcode to the post_shortcodes array
+	 *    This function adds a critical page's shortcode to the post_shortcodes array
 	 *
-	 * 	@access private
-	 * 	@static
-	 * 	@return void
+	 * @access private
+	 * @static
+	 * @param array $critical_page
+	 * @return void
 	 */
-	private static function _track_critical_page_post_shortcodes( $critical_page ) {
+	private static function _track_critical_page_post_shortcodes( $critical_page = array() ) {
 		// check the goods
 		if ( ! $critical_page['post'] instanceof WP_Post ) {
 			$msg = sprintf(
@@ -292,9 +293,6 @@ class EEH_Activation {
 		}
 		// map shortcode to post
 		EE_Registry::instance()->CFG->core->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
-		// and to frontpage in case it's displaying latest posts
-		$show_on_front = get_option('show_on_front');
-		EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $critical_page['code'] ] = $critical_page['post']->ID;
 		// update post_shortcode CFG
 		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE )) {
 			$msg = sprintf(
@@ -302,7 +300,7 @@ class EEH_Activation {
 				$critical_page['name']
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-		}		
+		}
 	}
 
 
@@ -320,7 +318,7 @@ class EEH_Activation {
 	 * @param boolean $drop_table_if_pre_existed set to TRUE when you want to make SURE the table is completely empty
 	 * and new once this function is done (ie, you really do want to CREATE a table, and
 	 * expect it to be empty once you're done)
-	 * leave as FALSE when you just want to verify the table exists and matches this definition (and if it 
+	 * leave as FALSE when you just want to verify the table exists and matches this definition (and if it
 	 * HAS data in it you want to leave it be)
 	 * 	@return void
 	 */
@@ -330,7 +328,7 @@ class EEH_Activation {
 		if ( ! function_exists( 'dbDelta' )) {
 			require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 		}
-		global $wpdb;		
+		global $wpdb;
 		$wp_table_name = $wpdb->prefix . $table_name;
 		//		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_t) )
 		if($drop_table_if_pre_existed){
@@ -375,18 +373,18 @@ class EEH_Activation {
 
 	/**
 	 * get_fields_on_table
-	 * Gets all the fields on the database table. 
+	 * Gets all the fields on the database table.
 	 *
 	 * 	@access public
 	 * 	@static
 	 * 	@param string $table_name, wihtout prefixed $wpdb->prefix
 	 * 	@return array of database column names
 	 */
-	public static function get_fields_on_table( $table_name = NULL ) {	
+	public static function get_fields_on_table( $table_name = NULL ) {
 		global $wpdb;
 		$table_name=$wpdb->prefix.$table_name;
 		if ( ! empty( $table_name )) {
-			if (($tablefields = mysql_list_fields(DB_NAME, $table_name, $wpdb -> dbh)) !== FALSE) { 
+			if (($tablefields = mysql_list_fields(DB_NAME, $table_name, $wpdb -> dbh)) !== FALSE) {
 				$columns = mysql_num_fields($tablefields);
 				$field_array = array();
 				for ($i = 0; $i < $columns; $i++) {
@@ -425,7 +423,7 @@ class EEH_Activation {
 	public static function drop_index( $table_name, $index_name ) {
 		global $wpdb;
 		$table_name_with_prefix = $wpdb->prefix . $table_name ;
-		$index_exists_query = "SHOW INDEX FROM $table_name_with_prefix WHERE Key_name = '$index_name'";		
+		$index_exists_query = "SHOW INDEX FROM $table_name_with_prefix WHERE Key_name = '$index_name'";
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name_with_prefix'" ) == $wpdb->prefix . $table_name &&
 				$wpdb->get_var( $index_exists_query ) == $table_name_with_prefix //using get_var with the $index_exists_query returns the table's name
 				) {
@@ -476,14 +474,14 @@ class EEH_Activation {
 		$QSG_systems = array( 1, 2 );
 		// loop thru what we should have and compare to what we have
 		foreach ( $QSG_systems as $QSG_system ) {
-			
+
 			// if we don't have what we should have (but use $QST_system as as string because thats what we got fromteh db)
 			if ( ! in_array( "$QSG_system", $question_groups )) {
 				// add it
 				switch ( $QSG_system ) {
-					
+
 					case 1:
-							$QSG_values = array( 
+							$QSG_values = array(
 									'QSG_name' => __( 'Personal Information', 'event_espresso' ),
 									'QSG_identifier' => 'personal-information-' . time(),
 									'QSG_desc' => '',
@@ -494,9 +492,9 @@ class EEH_Activation {
 									'QSG_deleted' => 0
 								);
 						break;
-						
+
 					case 2:
-							$QSG_values = array( 
+							$QSG_values = array(
 									'QSG_name' => __( 'Address Information','event_espresso' ),
 									'QSG_identifier' => 'address-information-' . time(),
 									'QSG_desc' => '',
@@ -507,37 +505,37 @@ class EEH_Activation {
 									'QSG_deleted' => 0
 								);
 						break;
-						
+
 				}
 				// insert system question
 				$wpdb->insert(
-					$wpdb->prefix . 'esp_question_group', 
-					$QSG_values, 
+					$wpdb->prefix . 'esp_question_group',
+					$QSG_values,
 					array('%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d' )
 				);
-				$QSG_IDs[ $QSG_system ] = $wpdb->insert_id;		
+				$QSG_IDs[ $QSG_system ] = $wpdb->insert_id;
 			}
 		}
 
 
-		
+
 		// QUESTIONS
 		global $wpdb;
 		$SQL = 'SELECT QST_system FROM ' . $wpdb->prefix . "esp_question WHERE QST_system != ''";
 		// what we have
 		$questions = $wpdb->get_col( $SQL );
 		// what we should have
-		$QST_systems = array( 
-			'fname', 
-			'lname', 
-			'email', 
-			'address', 
-			'address2', 
-			'city', 
-			'state', 
-			'country', 
-			'zip', 
-			'phone' 
+		$QST_systems = array(
+			'fname',
+			'lname',
+			'email',
+			'address',
+			'address2',
+			'city',
+			'state',
+			'country',
+			'zip',
+			'phone'
 		);
 		$order_for_group_1 = 1;
 		$order_for_group_2 = 1;
@@ -547,9 +545,9 @@ class EEH_Activation {
 			if ( ! in_array( $QST_system, $questions )) {
 				// add it
 				switch ( $QST_system ) {
-					
+
 					case 'fname':
-							$QST_values = array( 
+							$QST_values = array(
 									'QST_display_text' => __( 'First Name', 'event_espresso' ),
 									'QST_admin_label' => __( 'First Name - System Question', 'event_espresso' ),
 									'QST_system' => 'fname',
@@ -562,9 +560,9 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
+
 					case 'lname':
-							$QST_values = array( 
+							$QST_values = array(
 									'QST_display_text' => __( 'Last Name', 'event_espresso' ),
 									'QST_admin_label' => __( 'Last Name - System Question', 'event_espresso' ),
 									'QST_system' => 'lname',
@@ -577,9 +575,9 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
+
 					case 'email':
-							$QST_values = array( 
+							$QST_values = array(
 									'QST_display_text' => __( 'Email Address', 'event_espresso' ),
 									'QST_admin_label' => __( 'Email Address - System Question', 'event_espresso' ),
 									'QST_system' => 'email',
@@ -592,9 +590,9 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
+
 					case 'address':
-							$QST_values = array( 
+							$QST_values = array(
 									'QST_display_text' => __( 'Address', 'event_espresso' ),
 									'QST_admin_label' => __( 'Address - System Question', 'event_espresso' ),
 									'QST_system' => 'address',
@@ -607,9 +605,9 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
+
 					case 'address2':
-							$QST_values = array( 
+							$QST_values = array(
 									'QST_display_text' => __( 'Address2', 'event_espresso' ),
 									'QST_admin_label' => __( 'Address2 - System Question', 'event_espresso' ),
 									'QST_system' => 'address2',
@@ -622,9 +620,9 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
+
 					case 'city':
-							$QST_values = array( 
+							$QST_values = array(
 									'QST_display_text' => __( 'City', 'event_espresso' ),
 									'QST_admin_label' => __( 'City - System Question', 'event_espresso' ),
 									'QST_system' => 'city',
@@ -637,9 +635,9 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
+
 					case 'state':
-							$QST_values = array( 
+							$QST_values = array(
 									'QST_display_text' => __( 'State/Province', 'event_espresso' ),
 									'QST_admin_label' => __( 'State/Province - System Question', 'event_espresso' ),
 									'QST_system' => 'state',
@@ -652,9 +650,9 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
-					case 'country' : 
-							$QST_values = array( 
+
+					case 'country' :
+							$QST_values = array(
 									'QST_display_text' => __( 'Country', 'event_espresso' ),
 									'QST_admin_label' => __( 'Country - System Question', 'event_espresso' ),
 									'QST_system' => 'country',
@@ -667,9 +665,9 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
+
 					case 'zip':
-							$QST_values = array( 
+							$QST_values = array(
 									'QST_display_text' => __( 'Zip/Postal Code', 'event_espresso' ),
 									'QST_admin_label' => __( 'Zip/Postal Code - System Question', 'event_espresso' ),
 									'QST_system' => 'zip',
@@ -682,9 +680,9 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
+
 					case 'phone':
-							$QST_values = array( 
+							$QST_values = array(
 									'QST_display_text' => __( 'Phone Number', 'event_espresso' ),
 									'QST_admin_label' => __( 'Phone Number - System Question', 'event_espresso' ),
 									'QST_system' => 'phone',
@@ -697,26 +695,26 @@ class EEH_Activation {
 									'QST_deleted' => 0
 								);
 						break;
-						
+
 				}
 				// insert system question
 				$wpdb->insert(
-					$wpdb->prefix . 'esp_question', 
-					$QST_values, 
+					$wpdb->prefix . 'esp_question',
+					$QST_values,
 					array( '%s', '%s', '%s', '%s', '%d', '%s', '%d', '%d', '%d', '%d' )
 				);
-				$QST_ID = $wpdb->insert_id;	
-				
-				// QUESTION GROUP QUESTIONS 
-				
-				$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;		
+				$QST_ID = $wpdb->insert_id;
+
+				// QUESTION GROUP QUESTIONS
+
+				$QSG_ID = in_array( $QST_system, array('fname','lname','email')) ? 1 : 2;
 				// add system questions to groups
 				$wpdb->insert(
-					$wpdb->prefix . 'esp_question_group_question', 
-					array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID, 'QGQ_order'=>($QSG_ID==1)? $order_for_group_1++ : $order_for_group_2++ ), 
+					$wpdb->prefix . 'esp_question_group_question',
+					array( 'QSG_ID' => $QSG_ID , 'QST_ID' => $QST_ID, 'QGQ_order'=>($QSG_ID==1)? $order_for_group_1++ : $order_for_group_2++ ),
 					array( '%d', '%d','%d' )
-				);			
-				
+				);
+
 			}
 		}
 
@@ -730,7 +728,7 @@ class EEH_Activation {
 
 
 
-	
+
 
 
 
@@ -751,7 +749,7 @@ class EEH_Activation {
 			$SQL = "DELETE FROM " . EEM_Status::instance()->table() . " WHERE STS_ID IN ( 'ACT', 'NAC', 'NOP', 'OPN', 'CLS', 'PND', 'ONG', 'SEC', 'DRF', 'DEL', 'DEN', 'EXP', 'RPP', 'RCN', 'RDC', 'RAP', 'RNA', 'TIN', 'TFL', 'TCM', 'TOP', 'PAP', 'PCN', 'PFL', 'PDC', 'EDR', 'ESN', 'PPN' );";
 			$wpdb->query($SQL);
 
-			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . " 
+			$SQL = "INSERT INTO " . EEM_Status::instance()->table() . "
 					(STS_ID, STS_code, STS_type, STS_can_edit, STS_desc, STS_open) VALUES
 					('ACT', 'ACTIVE', 'event', 0, NULL, 1),
 					('NAC', 'NOT_ACTIVE', 'event', 0, NULL, 0),
@@ -781,19 +779,19 @@ class EEH_Activation {
 					('PDC', 'DECLINED', 'payment', 0, NULL, 0),
 					('EDR', 'DRAFT', 'email', 0, NULL, 0),
 					('ESN', 'SENT', 'email', 0, NULL, 1);";
-			$wpdb->query($SQL);	
-			
+			$wpdb->query($SQL);
+
 		}
-		
+
 	}
 
 
 
-	
 
 
 
-	
+
+
 
 
 
@@ -838,7 +836,7 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function generate_default_message_templates() {
-		
+
 		$templates = FALSE;
 		$settings = $installed_messengers = array();
 
@@ -937,7 +935,7 @@ class EEH_Activation {
 		$espresso_no_ticket_prices = get_option( 'ee_no_ticket_prices', FALSE );
 		if ( ! $espresso_no_ticket_prices ) {
 			add_option( 'ee_no_ticket_prices', array(), '', FALSE );
-		}	
+		}
 	}
 
 
@@ -964,7 +962,7 @@ class EEH_Activation {
 		$ee_post_types = array();
 		foreach(EE_Registry::instance()->non_abstract_db_models as $model_name){
 			if ( method_exists( $model_name, 'instance' )) {
-				$model_obj = call_user_func( array( $model_name, 'instance' )); 
+				$model_obj = call_user_func( array( $model_name, 'instance' ));
 				if ( $model_obj instanceof EEM_CPT_Base ) {
 					$ee_post_types[] = $wpdb->prepare("%s",$model_obj->post_type());
 				}
@@ -992,7 +990,7 @@ class EEH_Activation {
 		// load registry
 		foreach( EE_Registry::instance()->non_abstract_db_models as $model_name ){
 			if ( method_exists( $model_name, 'instance' )) {
-				$model_obj = call_user_func( array( $model_name, 'instance' )); 
+				$model_obj = call_user_func( array( $model_name, 'instance' ));
 				if ( $model_obj instanceof EEM_Base ) {
 					foreach ( $model_obj->get_tables() as $table ) {
 						if ( strpos( $table->get_table_name(), 'esp_' )) {
@@ -1012,7 +1010,7 @@ class EEH_Activation {
 			}
 		}
 
-		
+
 		$wp_options_to_delete = array(
 			'ee_no_ticket_prices' => TRUE,
 			'ee_active_messengers' => TRUE,
@@ -1042,12 +1040,12 @@ class EEH_Activation {
 			'ee_rss_' => FALSE,
 			'ee_rte_n_tx_' => FALSE
 		);
-		
+
 		$undeleted_options = array();
 		foreach ( $wp_options_to_delete as $option_name => $no_wildcard ) {
-			
+
 			$option_name = $no_wildcard ? "= '$option_name'" : "LIKE '%$option_name%'";
-			
+
 			if ( $option_id = $wpdb->query( "SELECT option_id FROM $wpdb->options WHERE option_name $option_name" )) {
 				switch ( $wpdb->query( "DELETE FROM $wpdb->options WHERE option_name $option_name" )) {
 					case FALSE :
@@ -1058,10 +1056,10 @@ class EEH_Activation {
 					break;
 					default:
 	//					echo '<h4>the option : ' . $option_name . ' was deleted successully <br /></h4>';
-				}	
+				}
 			}
 		}
-		
+
 		if ( $remove_all && $espresso_db_update = get_option( 'espresso_db_update' )) {
 			$db_update_sans_ee4 = array();
 			foreach($espresso_db_update as $version => $times_activated){
@@ -1071,10 +1069,10 @@ class EEH_Activation {
 			}
 			update_option( 'espresso_db_update', $db_update_sans_ee4 );
 		}
-		
+
 		$errors = '';
 		if ( ! empty( $undeleted_tables )) {
-			$errors .= sprintf( 
+			$errors .= sprintf(
 				__( 'The following tables could not be deleted: %s%s', 'event_espresso' ),
 				'<br/>',
 				implode( ',<br/>', $undeleted_tables )
@@ -1082,16 +1080,16 @@ class EEH_Activation {
 		}
 		if ( ! empty( $undeleted_options )) {
 			$errors .= ! empty( $undeleted_tables ) ? '<br/>' : '';
-			$errors .= sprintf( 
+			$errors .= sprintf(
 				__( 'The following wp-options could not be deleted: %s%s', 'event_espresso' ),
 				'<br/>',
 				implode( ',<br/>', $undeleted_options )
 			);
-			
+
 		}
 		if ( $errors != '' ) {
 			echo $errors;
-		} 
+		}
 	}
 
 

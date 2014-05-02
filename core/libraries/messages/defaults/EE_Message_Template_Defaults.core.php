@@ -37,6 +37,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	 */
 	protected $_m_name;
 	protected $_mt_name;
+	protected $_GRP_ID;
 
 
 
@@ -130,17 +131,21 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	/**
 	 * constructor
 	 * @param EE_Messages $messages the EE_Messages object.
+	 * @param int $GRP_ID Optional.  If included then we're just regenerating the template
+	 *                    		 fields for the given group not the message template group itself
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function __construct( EE_Messages $messages ) {
+	public function __construct( EE_Messages $messages, $GRP_ID = 0 ) {
 		$this->_EE_MSG = $messages;
 
 		//set the model object
 		$this->_EEM_data = EEM_Message_Template_Group::instance();
 
 		$this->_set_props();
+
+		$this->_GRP_ID = $GRP_ID;
 
 		//make sure required props have been set
 		if ( empty( $this->_m_name) || empty( $this->_mt_name ) ) {
@@ -293,23 +298,27 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 		//necessary properties are set, let's save the default templates
 
-		$main_template_data =  array(
-			'MTP_messenger' => $this->_messenger->name,
-			'MTP_message_type' => $this->_message_type->name,
-			'MTP_is_override' => 0,
-			'MTP_deleted' => 0,
-			'MTP_is_global' => 1,
-			'MTP_user_id' => get_current_user_id(),
-			'MTP_is_active' => 1,
-			);
+		if ( empty( $this->_GRP_ID ) ) {
+
+			$main_template_data =  array(
+				'MTP_messenger' => $this->_messenger->name,
+				'MTP_message_type' => $this->_message_type->name,
+				'MTP_is_override' => 0,
+				'MTP_deleted' => 0,
+				'MTP_is_global' => 1,
+				'MTP_user_id' => get_current_user_id(),
+				'MTP_is_active' => 1,
+				);
 
 
-		//let's insert the above and get our GRP_ID, then reset the template data array to just include the GRP_ID
-		$grp_id = $this->_EEM_data->insert( $main_template_data );
+			//let's insert the above and get our GRP_ID, then reset the template data array to just include the GRP_ID
+			$grp_id = $this->_EEM_data->insert( $main_template_data );
 
-		$template_data = $grp_id ? array( 'GRP_ID' => $grp_id ) : FALSE;
+			if ( empty( $grp_id ) ) return $grp_id;
+			$this->_GRP_ID = $grp_id;
+		}
 
-		if ( ! $template_data ) return $grp_id;
+		$template_data = array( 'GRP_ID' => $this->_GRP_ID );
 
 		foreach ( $this->_contexts as $context => $details ) {
 			foreach ( $this->_fields as $field => $field_type ) {
@@ -328,7 +337,7 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		}
 
 		$success_array = array(
-			'GRP_ID' => $grp_id,
+			'GRP_ID' => $this->_GRP_ID,
 			'MTP_context' => key($this->_contexts)
 		);
 
