@@ -17,72 +17,144 @@
 
 
 
-/*************************** EE Conditionals on WP_Query ***************************/
-
+/*************************** EE Conditionals ***************************/
 
 
 /**
- * is_espresso_event_single - whether this is a singular Espresso Event post
+ * is_espresso_event
+ * whether this is an Espresso Event post
+ *
+ * @param int | \EE_Event $event
+ * @return bool
+ */
+function is_espresso_event( $event = NULL ) {
+	// was a param passed ?
+	if ( ! empty( $event )) {
+		// load event view helper
+		EE_Registry::instance()->load_helper( 'Event_View' );
+		// extract EE_Event object from passed param regardless of what it is (within reason of course)
+		$event = EEH_Event_View::get_event( $event );
+		// do we have a valid event ?
+		if ( $event instanceof EE_Event ) {
+			// test post_type
+			return $event->post_type() == 'espresso_events' ? TRUE : FALSE;
+		}
+	}
+	return FALSE;
+}
+
+/**
+ * is_espresso_event_single
+ * whether this is a singular Espresso Event post
+ *
  * @return bool
  */
 function is_espresso_event_single() {
-	can_use_espresso_conditionals( __FUNCTION__ );
-	global $wp_query;
-	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_single : FALSE;
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
+		global $wp_query;
+		// return conditionals set by CPTs
+		return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_single : FALSE;
+	}
+	return FALSE;
 }
 
 /**
- * is_espresso_event_archive - whether this is an archive of Espresso Event posts
+ * is_espresso_event_archive
+ * whether this is an archive of Espresso Event posts
+ *
  * @return bool
  */
 function is_espresso_event_archive() {
-	can_use_espresso_conditionals( __FUNCTION__ );
-	global $wp_query;
-	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_archive : FALSE;
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
+		global $wp_query;
+		return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_archive : FALSE;
+	}
+	return FALSE;
 }
 
 /**
- * is_espresso_event_taxonomy - whether this is an Espresso Event category
+ * is_espresso_event_taxonomy
+ * whether this is an Espresso Event category
+ *
  * @return bool
  */
 function is_espresso_event_taxonomy() {
-	can_use_espresso_conditionals( __FUNCTION__ );
-	global $wp_query;
-	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_taxonomy : FALSE;
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
+		global $wp_query;
+		return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_taxonomy : FALSE;
+	}
+	return FALSE;
 }
 
 /**
- * is_espresso_venue_single - whether this is a singular Espresso Venue post
+ * is_espresso_venue
+ * whether this is an Espresso Venue post
+ *
+ * @param int | \EE_Venue $venue
+ * @return bool
+ */
+function is_espresso_venue( $venue = NULL ) {
+	// was a param passed ?
+	if ( ! empty( $venue )) {
+		// load event view helper
+		EE_Registry::instance()->load_helper( 'Venue_View' );
+		// extract EE_Venue object from passed param regardless of what it is (within reason of course)
+		$venue = EEH_Venue_View::get_event( $venue );
+		// do we have a valid event ?
+		if ( $venue instanceof EE_Venue ) {
+			// test post_type
+			return $venue->post_type() == 'espresso_venues' ? TRUE : FALSE;
+		}
+	}
+	return FALSE;
+}
+
+/**
+ * is_espresso_venue_single
+ * whether this is a singular Espresso Venue post
+ *
  * @return bool
  */
 function is_espresso_venue_single() {
-	can_use_espresso_conditionals( __FUNCTION__ );
-	global $wp_query;
-	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_single : FALSE;
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
+		global $wp_query;
+		return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_single : FALSE;
+	}
+	return FALSE;
 }
 
 /**
- * is_espresso_venue_archive - whether this is an archive of Espresso Venue posts
+ * is_espresso_venue_archive
+ * whether this is an archive of Espresso Venue posts
+ *
  * @return bool
  */
 function is_espresso_venue_archive() {
-	can_use_espresso_conditionals( __FUNCTION__ );
-	global $wp_query;
-	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_archive : FALSE;
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
+		global $wp_query;
+		return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_archive : FALSE;
+	}
+	return FALSE;
 }
 
 /**
- * is_espresso_venue_taxonomy - whether this is an Espresso Venue category
+ * is_espresso_venue_taxonomy
+ * whether this is an Espresso Venue category
+ *
  * @return bool
  */
 function is_espresso_venue_taxonomy() {
-	can_use_espresso_conditionals( __FUNCTION__ );
-	global $wp_query;
-	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_taxonomy : FALSE;
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
+		global $wp_query;
+		return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_taxonomy : FALSE;
+	}
+	return FALSE;
 }
 
 /**
- * is_espresso_venue_taxonomy - whether this is an Espresso Venue category
+ * can_use_espresso_conditionals
+ * tests whether the Espresso Conditional tags like is_espresso_event_single() can be called
+ *
  * @param $conditional_tag
  * @return bool
  */
@@ -91,7 +163,7 @@ function can_use_espresso_conditionals( $conditional_tag ) {
 		EE_Error::doing_it_wrong(
 			__FUNCTION__,
 			sprintf(
-				__( 'The Event Espresso "%s" WP_Query conditional can not be used until after the "init" hook has run, and works best when used within a theme\'s template files.','event_espresso'),
+				__( 'The "%s" conditional tag can not be used until after the "init" hook has run, but works best when used within a theme\'s template files.','event_espresso'),
 				$conditional_tag
 			),
 			'4.4.0'
