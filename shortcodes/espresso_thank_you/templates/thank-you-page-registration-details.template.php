@@ -38,7 +38,8 @@ foreach ( $transaction->registrations() as $registration ) {
 					if ( $registration->attendee() instanceof EE_Attendee ) {
 						echo $registration->attendee()->full_name( TRUE );
 					}
-					echo '<span class="small-text jst-rght"><a class="ee-icon-only-lnk" href=' .  $registration->edit_attendee_information_url() . ' title="' . __('Click here to edit Attendee Information', 'event_espresso') . '"><span class="ee-icon ee-icon-user-edit"></span></a></span>';
+					echo '<span class="small-text jst-rght"><a class="ee-icon-only-lnk" href="' .  $registration->edit_attendee_information_url() . '" title="' . __('Click here to edit Attendee Information', 'event_espresso') . '"><span class="ee-icon ee-icon-user-edit"></span></a></span>';
+					echo '<span class="small-text jst-rght"><a class="ee-resend-reg-confirmation-email ee-icon-only-lnk" href="' .  $resend_reg_confirmation_url . '" title="' . __('Click here to resend the Registration Confirmation email', 'event_espresso') . '" rel="' . $registration->reg_url_link() . '"><span class="ee-icon ee-icon-email-send"></span></a></span>';
 
 
 				?>
