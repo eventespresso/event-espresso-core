@@ -111,7 +111,7 @@ class EE_Admin_Page_Loader {
 	 */
 	public function __construct() {
 		//load menu_map classes
-		EE_Registry::instance()->load_file(EE_ADMIN, 'EE_Admin_Page_Loader.core.php');
+		EE_Registry::instance()->load_file(EE_ADMIN, 'EE_Admin_Page_Menu_Map', 'core');
 		//define the default "groups" for the admin_pages
 		$this->_set_menu_groups();
 		//let's set default autoloaders.  Note that this just sets autoloaders for root admin files.
