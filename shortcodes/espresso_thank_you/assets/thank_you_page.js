@@ -75,6 +75,7 @@
 				// check heartbeat for thank you page data
 				if (typeof data.espresso_thank_you_page === 'undefined') {
 					this.console_log('espresso_thank_you_page undefined');
+					this.stop_heartbeat();
 					return;
 				}
 				// store it
