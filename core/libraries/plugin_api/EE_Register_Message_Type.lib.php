@@ -64,7 +64,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * }
      * @return void
      */
-    public static function register( $setup_args = array()  ) {
+    public static function register( $setup_args ) {
 
         //required fields MUST be present, so let's make sure they are.
         if ( ! is_array( $setup_args ) || empty( $setup_args['mtname'] ) || empty( $setup_args['mtfilename'] ) || empty( $setup_args['autoloadpaths'] ) )
