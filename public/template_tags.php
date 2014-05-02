@@ -17,6 +17,61 @@
 
 
 
+/*************************** EE Conditionals on WP_Query ***************************/
+
+
+
+/**
+ * is_espresso_event_single - whether this is a singular Espresso Event post
+ */
+function is_espresso_event_single() {
+	global $wp_query;
+	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_single : FALSE;
+}
+
+/**
+ * is_espresso_event_archive - whether this is an archive of Espresso Event posts
+ */
+function is_espresso_event_archive() {
+	global $wp_query;
+	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_archive : FALSE;
+}
+
+/**
+ * is_espresso_event_taxonomy - whether this is an Espresso Event category
+ */
+function is_espresso_event_taxonomy() {
+	global $wp_query;
+	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_taxonomy : FALSE;
+}
+
+/**
+ * is_espresso_venue_single - whether this is a singular Espresso Venue post
+ */
+function is_espresso_venue_single() {
+	global $wp_query;
+	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_single : FALSE;
+}
+
+/**
+ * is_espresso_venue_archive - whether this is an archive of Espresso Venue posts
+ */
+function is_espresso_venue_archive() {
+	global $wp_query;
+	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_archive : FALSE;
+}
+
+/**
+ * is_espresso_venue_taxonomy - whether this is an Espresso Venue category
+ */
+function is_espresso_venue_taxonomy() {
+	global $wp_query;
+	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_taxonomy : FALSE;
+}
+
+
+
+
 /*************************** EED_Ticket_Selector ***************************/
 
 
