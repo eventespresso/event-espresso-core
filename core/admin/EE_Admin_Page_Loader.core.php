@@ -157,44 +157,44 @@ class EE_Admin_Page_Loader {
 		//set array of EE_Admin_Page_Menu_Group objects
 		$groups = array(
 			new EE_Admin_Page_Menu_Group( array(
-				'title' => __('Main', 'event_espresso'),
-				'show_heading' => FALSE,
-				'slug' => 'main',
+				'menu_label' => __('Main', 'event_espresso'),
+				'show_on_menu' => FALSE,
+				'menu_slug' => 'main',
 				'capability' => 'administrator',
 				'menu_order' => 0
 				)),
 			new EE_Admin_Page_Menu_Group( array(
-				'title' => __('Management', 'event_espresso'),
-				'show_heading' => TRUE,
-				'slug' => 'management',
+				'menu_label' => __('Management', 'event_espresso'),
+				'show_on_menu' => TRUE,
+				'menu_slug' => 'management',
 				'capability' => 'administrator',
 				'menu_order' => 10
 				)),
 			new EE_Admin_Page_Menu_Group( array(
-				'title' => __('Settings', 'event_espresso'),
-				'show_heading' => TRUE,
-				'slug' => 'settings',
+				'menu_label' => __('Settings', 'event_espresso'),
+				'show_on_menu' => TRUE,
+				'menu_slug' => 'settings',
 				'capability' => 'administrator',
 				'menu_order' => 20
 				)),
 			new EE_Admin_Page_Menu_Group( array(
-				'title' => __('Templates', 'event_espresso'),
-				'show_heading' => TRUE,
-				'slug' => 'templates',
+				'menu_label' => __('Templates', 'event_espresso'),
+				'show_on_menu' => TRUE,
+				'menu_slug' => 'templates',
 				'capability' => 'administrator',
 				'menu_order' => 30
 				)),
 			new EE_Admin_Page_Menu_Group( array(
-				'title' => __('Extras', 'event_espresso'),
-				'show_heading' => TRUE,
-				'slug' => 'extras',
+				'menu_label' => __('Extras', 'event_espresso'),
+				'show_on_menu' => TRUE,
+				'menu_slug' => 'extras',
 				'capability' => 'administrator',
 				'menu_order' => 40
 				)),
 			new EE_Admin_Page_Menu_Group( array(
-				'title' => __("Tools", "event_espresso"),
-				'show_heading' => TRUE,
-				'slug' => 'tools',
+				'menu_label' => __("Tools", "event_espresso"),
+				'show_on_menu' => TRUE,
+				'menu_slug' => 'tools',
 				'capability' => 'administrator',
 				'menu_order' => 50
 				))
