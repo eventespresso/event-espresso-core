@@ -526,7 +526,10 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function the_title( $title = '', $id = '' ) {
 	global $post;
-	return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID  ) . $title :  $title;
+	if ( $post instanceof WP_Post ) {
+		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID  ) . $title :  $title;
+	}
+	return $title;
 }
 
 
