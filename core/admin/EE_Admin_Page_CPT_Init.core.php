@@ -11,27 +11,22 @@
  * @ link					{@link http://www.eventespresso.com}
  * @ since		 		4.0
  *
- * ------------------------------------------------------------------------   
+ * ------------------------------------------------------------------------
  */
 
 /**
  * EE_Admin_Page_CPT_Init
- * 
- * This is utilized by all child EE_Admin_Init classes who use core WordPress Custom Post Type views for adding/editing new items.  
+ *
+ * This is utilized by all child EE_Admin_Init classes who use core WordPress Custom Post Type views for adding/editing new items.
  *
  * @package			Event Espresso
  * @abstract
  * @subpackage		includes/core/admin/EE_Admin_Page_CPT_Init.core.php
- * @author			Darren Ethier 
+ * @author			Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
 abstract class EE_Admin_Page_CPT_Init extends EE_Admin_Page_Init {
-	
-	public function __construct() {
-		parent::__construct();
-	}
-
 
 
 	public function do_initial_loads() {

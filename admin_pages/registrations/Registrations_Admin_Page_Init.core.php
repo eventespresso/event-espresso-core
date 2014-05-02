@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	includes/core/admin/registrations/Registrations_Admin_Page_Init.core.php
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -33,18 +33,18 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_CPT_Init  {
 	 * 		@access public
 	 * 		@return void
 	 */
-	public function __construct() { 
+	public function __construct() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		
-		define( 'REG_PG_SLUG', 'espresso_registrations' );	
-		define( 'REG_PG_NAME', ucwords( str_replace( '_', '', REG_PG_SLUG )));	
-		define( 'REG_ADMIN', EE_ADMIN_PAGES . 'registrations' . DS );	
-		define( 'REG_ADMIN_URL', admin_url( 'admin.php?page=' . REG_PG_SLUG ));	
-		define( 'REG_ASSETS_PATH', REG_ADMIN . 'assets' . DS );		
-		define( 'REG_ASSETS_URL', EE_ADMIN_PAGES_URL . 'registrations/assets/' );	
-		define( 'REG_TEMPLATE_PATH', REG_ADMIN . 'templates' . DS );	
+
+		define( 'REG_PG_SLUG', 'espresso_registrations' );
+		define( 'REG_PG_NAME', ucwords( str_replace( '_', '', REG_PG_SLUG )));
+		define( 'REG_ADMIN', EE_ADMIN_PAGES . 'registrations' . DS );
+		define( 'REG_ADMIN_URL', admin_url( 'admin.php?page=' . REG_PG_SLUG ));
+		define( 'REG_ASSETS_PATH', REG_ADMIN . 'assets' . DS );
+		define( 'REG_ASSETS_URL', EE_ADMIN_PAGES_URL . 'registrations/assets/' );
+		define( 'REG_TEMPLATE_PATH', REG_ADMIN . 'templates' . DS );
 		define( 'REG_TEMPLATE_URL', EE_ADMIN_PAGES_URL . 'registrations/templates/' );
-		
+
 		parent::__construct();
 	}
 
@@ -53,30 +53,25 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_CPT_Init  {
 
 	protected function _set_init_properties() {
 		$this->label = __('Registrations Overview', 'event_espresso');
-		$this->menu_label = __('Registrations', 'event_espresso');
-		$this->menu_slug = REG_PG_SLUG;
-		$this->capability = 'administrator';
 	}
 
 
 
-
-
-
-	public function get_menu_map() {
-		$map = array(
-			'group' => 'main',
+	protected function _set_menu_map() {
+		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
+			'menu_group' => 'main',
 			'menu_order' => 40,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'espresso_events'
-			);
-		return $map;
+			'parent_slug' => 'espresso_events',
+			'menu_slug' => REG_PG_SLUG,
+			'menu_label' => __('Registrations', 'event_espresso'),
+			'capability' => 'administrator',
+			'admin_init_page' => $this
+			));
 	}
-	
-
 
 }
 
 
-	
+
 // end of file:	includes/core/admin/registrations/Registrations_Admin_Page_Init.core.php

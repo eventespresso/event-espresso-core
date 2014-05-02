@@ -45,7 +45,7 @@ class Events_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 
 	protected function _set_menu_map() {
 		$this->_menu_map = new EE_Admin_Page_Main_Menu( array(
-			'menu_roup' => 'main',
+			'menu_group' => 'main',
 			'menu_order' => 10,
 			'show_on_menu' => TRUE,
 			'parent_slug' => 'espresso_events',
