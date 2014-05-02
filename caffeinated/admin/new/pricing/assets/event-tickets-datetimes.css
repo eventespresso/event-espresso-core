@@ -322,9 +322,6 @@
 .ticket-table tbody tr.edit-ticket-row td {
     height: auto;
 }
-.ticket-table tbody tr.edit-ticket-row td input[type="text"] {
-    height:1px;
-}
 
 /*ticket status strip */
 .ticket-table tbody .ticket-row td:first-child {
@@ -649,6 +646,12 @@
 #event-and-ticket-form-content .dashicons, #event-and-ticket-form-content .ee-icon {
     margin-right: 0;
 }
+
+#event-and-ticket-form-content .event-tickets-datetimes-title .ee-icon, #event-and-ticket-form-content .event-tickets-datetimes-title .dashicons {
+    margin-right: 8px
+}
+
+
 
 .ticket-is-required-container {
     margin-top: 10px;
