@@ -268,6 +268,7 @@ class EE_Admin_Page_Loader {
 		$installed_refs = $this->_set_caffeinated($installed_refs);
 		//allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class) OR hook into EEH_Autoloader::load_admin_page() to add their path.;
 		$installed_refs = apply_filters( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', $installed_refs );
+
 		//loop through admin pages and setup the $_installed_pages array.
 		$hooks_ref = array();
 		foreach ( $installed_refs as $page => $path ) {
@@ -283,9 +284,9 @@ class EE_Admin_Page_Loader {
 				//now that we've got the admin_init objects... lets see if there are any caffeinated pages extending the originals.  If there are then let's hook into the init admin filter and load our extend instead.
 				if ( isset( $this->_caffeinated_extends[$page] ) ) {
 					$this->_current_caf_extend_slug = $page;
-					$path_hook = 'FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
+					$path_hook = 'FHEE__EE_Admin_Page_Init___initialize_admin_page__path_to_file__' . $this->_installed_pages[$page]->get_menu_map()->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
 					$path_runtime = 'return "' . $this->_caffeinated_extends[$this->_current_caf_extend_slug]["path"] . '";';
-					$page_hook = 'FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__' . $this->_installed_pages[$page]->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
+					$page_hook = 'FHEE__EE_Admin_Page_Init___initialize_admin_page__admin_page__' . $this->_installed_pages[$page]->get_menu_map()->menu_slug . '_' . $this->_installed_pages[$page]->get_admin_page_name();
 					$page_runtime = 'return "' . $this->_caffeinated_extends[$this->_current_caf_extend_slug]["admin_page"] . '";';
 
 					$hook_function_path = create_function( '$path_to_file', $path_runtime);
