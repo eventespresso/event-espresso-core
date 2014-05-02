@@ -317,9 +317,9 @@
 			},
 
 			/**
-			 *	show ajax success msg
-			 * @param string  success_msg : the message to be displayed
-			 * @param mixed string | int  fadeOut : how long the message is displayed (default: 4000ms)
+			 *    show ajax success msg
+			 * @param success_msg
+			 * @param fadeOut
 			 */
 			show_ajax_success_msg : function( success_msg, fadeOut ) {
 				// make sure fade out time is not too short
@@ -327,7 +327,7 @@
 				// does an actual message exist ?
 				if ( typeof success_msg !== 'undefined' && success_msg !== '' )  {
 					$('#espresso-ajax-notices').eeCenter();
-					$('#espresso-ajax-notices-success > .espresso-notices-msg').html( success_msg );
+					$('#espresso-ajax-notices-success').find('> .espresso-notices-msg').html( success_msg );
 					$('#espresso-ajax-loading').fadeOut('fast');
 					$('#espresso-ajax-notices-success').removeClass('hidden').show().delay(fadeOut).fadeOut();
 				} else {
@@ -336,9 +336,9 @@
 			},
 
 			/**
-			 *	show ajax error msg
-			 * @param string  error_msg : the message to be displayed
-			 * @param mixed string | int  fadeOut : how long the message is displayed (default: 10000ms)
+			 *    show ajax error msg
+			 * @param error_msg
+			 * @param fadeOut
 			 */
 			show_ajax_error_msg : function( error_msg, fadeOut ) {
 				// make sure fade out time is not too short
@@ -346,7 +346,7 @@
 				// does an actual message exist ?
 				if ( typeof error_msg !== 'undefined' && error_msg !== '' ) {
 					$('#espresso-ajax-notices').eeCenter();
-					$('#espresso-ajax-notices-error > .espresso-notices-msg').html( error_msg );
+					$('#espresso-ajax-notices-error').find('> .espresso-notices-msg').html( error_msg );
 					$('#espresso-ajax-loading').fadeOut('fast');
 					$('#espresso-ajax-notices-error').removeClass('hidden').show().delay(fadeOut).fadeOut();
 				} else {
@@ -374,7 +374,7 @@
 				}
 				if (eei18n.wp_debug && typeof obj !== 'undefined') {
 					for (var key in obj) {
-						if (typeof key !== 'undefined' && typeof obj !== 'undefined') {
+						if ( typeof key !== 'undefined' && typeof obj[ key ] !== 'undefined') {
 							console.log(JSON.stringify('    ' + key + ': ' + obj[ key ], null, 4));
 						}
 					}
