@@ -370,7 +370,6 @@ class EE_Admin_Page_Loader {
 
 
 
-
 	/**
 	 * set_menus
 	 * This method sets up the menus for EE Admin Pages
@@ -437,10 +436,11 @@ class EE_Admin_Page_Loader {
 
 
 		//now let's setup the _prepped_menu_maps property
-		foreach ( $pages_array as $group => $group_objs ) {
-			foreach ( $group_objs as $menu_map )
-				$this->_prepped_menu_maps[] = $menu_map;
+		foreach ( $menu_groups as $group => $group_objs ) {
+			if ( isset( $pages_array[$group] ) )
+				$this->_prepped_menu_maps = array_merge( $this->_prepped_menu_maps, $pages_array[$group] );
 		}/**/
+
 	}
 
 
