@@ -300,7 +300,7 @@ class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map {
 
 
 	public function __construct( $menu_args = array() ) {
-		$required = array( 'menu_label', 'menu_slug', 'menu_order' );
+		$required = array( 'menu_label', 'menu_slug', 'menu_order', 'parent_slug' );
 		parent::__construct( $menu_args, $required );
 	}
 

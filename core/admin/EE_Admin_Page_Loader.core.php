@@ -161,42 +161,48 @@ class EE_Admin_Page_Loader {
 				'show_on_menu' => FALSE,
 				'menu_slug' => 'main',
 				'capability' => 'administrator',
-				'menu_order' => 0
+				'menu_order' => 0,
+				'parent_slug' => 'espresso_events'
 				)),
 			new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Management', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'management',
 				'capability' => 'administrator',
-				'menu_order' => 10
+				'menu_order' => 10,
+				'parent_slug' => 'espresso_events'
 				)),
 			new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Settings', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'settings',
 				'capability' => 'administrator',
-				'menu_order' => 20
+				'menu_order' => 20,
+				'parent_slug' => 'espresso_events'
 				)),
 			new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Templates', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'templates',
 				'capability' => 'administrator',
-				'menu_order' => 30
+				'menu_order' => 30,
+				'parent_slug' => 'espresso_events'
 				)),
 			new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Extras', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'extras',
 				'capability' => 'administrator',
-				'menu_order' => 40
+				'menu_order' => 40,
+				'parent_slug' => 'espresso_events'
 				)),
 			new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __("Tools", "event_espresso"),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'tools',
 				'capability' => 'administrator',
-				'menu_order' => 50
+				'menu_order' => 50,
+				'parent_slug' => 'espresso_events'
 				))
 			);
 
