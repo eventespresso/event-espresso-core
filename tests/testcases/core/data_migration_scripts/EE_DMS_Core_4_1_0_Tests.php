@@ -158,4 +158,10 @@ class EE_DMS_Core_4_1_0_Tests extends EE_UnitTestCase {
 		$table_name = $wpdb->prefix . $name;
 		return $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
 	}
+	function test_can_migrate(){
+		$dms = new EE_DMS_Core_4_1_0();
+		$this->assertTrue($dms->can_migrate_from_version(array('Core'=>'3.1.36')));
+		$this->assertFalse($dms->can_migrate_from_version(array('Core'=>'4.1.0')));
+		$this->assertFalse($dms->can_migrate_from_version(array('Core'=>'4.3.0.beta.001')));
+	}
 }

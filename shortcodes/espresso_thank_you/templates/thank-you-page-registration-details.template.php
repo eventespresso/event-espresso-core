@@ -1,4 +1,5 @@
 <h3 class="ee-registration-details-h3"><?php _e('Registration  Details:', 'event_espresso'); ?></h3>
+<?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_heading' ); ?>
 
 <div class="ee-registration-details-dv">
 <?php
@@ -50,8 +51,9 @@ foreach ( $transaction->registrations() as $registration ) {
 					<?php $registration->e_pretty_status( TRUE )?>
 				</td>
 			</tr>
-	<?php } ?>
-	<?php if (( $event_name != $registration->event_name() && $event_name != '' ) || $reg_cntr >= count( $transaction->registrations() )) {  ?>
+            <?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_registration_table_row', $registration ); ?>
+        <?php } ?>
+        <?php if (( $event_name != $registration->event_name() && $event_name != '' ) || $reg_cntr >= count( $transaction->registrations() )) {  ?>
 		</tbody>
 	</table>
 	<?php
@@ -64,6 +66,8 @@ foreach ( $transaction->registrations() as $registration ) {
 		<span><a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit All Attendee Information", 'event_espresso'); ?></a></span>
 	</p>
 <?php } ?>
+
+    <?php  do_action( 'AHEE__thank_you_page_registration_details_template__after_registration_details' ); ?>
 
 </div>
 <!-- end of .registration-details -->

@@ -330,7 +330,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * @param string $screen_id
 	 * @return    array
 	 */
-	public static function thank_you_page_IPN_monitor( $response = array(), $data = array(), $screen_id = '' ) {
+	public static function thank_you_page_IPN_monitor( $response = array(), $data = array() ) {
 		// does this heartbeat contain our data ?
 		if ( isset( $data['espresso_thank_you_page'] )) {
 			// check for reg_url_link in the incoming heartbeat data

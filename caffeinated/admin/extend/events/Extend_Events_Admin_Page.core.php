@@ -346,7 +346,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$orig_datetimes = $orig_event->get_many_related('Datetime');
 
 		//other original relations
-		$orig_qgs = $orig_event->get_many_related('Question_Group');
 		$orig_pos = $orig_event->get_many_related('Promotion_Object');
 		$orig_ven = $orig_event->get_many_related('Venue');
 
@@ -361,13 +360,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		//save the new event
 		$new_event->save();
 
-
-		//loop through simple relations and attach to new event
-		//question groups
-		foreach( $orig_qgs as $qg ) {
-			$new_event->_add_relation_to( $qg, 'Question_Group' );
-		}
-
 		//Promotion Object
 		foreach ( $orig_pos as $pos ) {
 			$new_event->_add_relation_to( $pos, 'Promotion_Object' );
@@ -377,6 +369,31 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		foreach( $orig_ven as $ven ) {
 			$new_event->_add_relation_to( $ven, 'Venue' );
 		}
+		$new_event->save();
+
+
+		//now we need to get the question group relations and handle that
+		//first primary question groups
+		$orig_primary_qgs = $orig_event->get_many_related('Question_Group', array( array('Event_Question_Group.EQG_primary' => 1 ) ) );
+		if ( !empty( $orig_primary_qgs ) ) {
+			foreach ( $orig_primary_qgs as $id => $obj ) {
+				if ( $obj instanceof EE_Question_Group ) {
+					$new_event->_add_relation_to( $obj, 'Question_Group', array( 'EQG_primary' => 1 ) );
+				}
+			}
+		}
+
+		//next additional attendee question groups
+		$orig_additional_qgs = $orig_event->get_many_related('Question_Group', array( array('Event_Question_Group.EQG_primary' => 0 ) ) );
+		if ( !empty( $orig_additional_qgs ) ) {
+			foreach ( $orig_additional_qgs as $id => $obj ) {
+				if ( $obj instanceof EE_Question_Group ) {
+					$new_event->_add_relation_to( $obj, 'Question_Group', array( 'EQG_primary' => 0 ) );
+				}
+			}
+		}
+
+		//now save
 		$new_event->save();
 
 
