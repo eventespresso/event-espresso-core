@@ -304,7 +304,7 @@ class EE_Admin_Page_Loader {
 		}
 		//make sure we have menu slugs global setup. Used in EE_Admin_Page->page_setup() to ensure we don't do a full class load for an admin page that isn't requested.
 		global $ee_menu_slugs;
-		$ee_menu_slugs = $this->get_menu_map()->menu_slug;
+		$ee_menu_slugs = $this->_menu_slugs;
 		//we need to loop again to run any early code
 		foreach ( $installed_refs as $page => $path ) {
 			if ( $this->_installed_pages[$page] instanceof EE_Admin_Page_Init ) {
