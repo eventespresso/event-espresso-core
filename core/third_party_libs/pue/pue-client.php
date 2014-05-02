@@ -155,7 +155,7 @@ class PluginUpdateEngineChecker {
 	 * @return  void
 	 */
 	private function _verify_options( $options ) {
-		$domain = isset( $options['lang_domain'] ) ? $options['lang_domain'] : '';
+		$this->lang_domain = isset( $options['lang_domain'] ) ? $options['lang_domain'] : '';
 		$required = array(
 			'options_page_slug',
 			'plugin_basename'
@@ -249,7 +249,7 @@ class PluginUpdateEngineChecker {
 				case 'slug_not_array' :
 					//Old method for plugin name is just to use the slug and manipulate
 					$pluginname = ucwords(str_replace('-', ' ', $this->_incoming_slug) );
-					$msg .= sprintf( __('The following plugin needs to be updated in order to work with this version of our plugin update script: <strong>%s</strong</p><p>You will have to update this manually.  Contact support for further intstructions', $this->lang_domain), $pluginname);
+					$msg .= sprintf( __('The following plugin needs to be updated in order to work with this version of our plugin update script: <strong>%s</strong></p><p>You will have to update this manually.  Contact support for further intstructions', $this->lang_domain), $pluginname);
 					break;
 			}
 		} else {
@@ -525,7 +525,7 @@ class PluginUpdateEngineChecker {
 		$this->maybeCheckForUpdates();
 
 
-		//possible update checks on an option page save that is setting the license key.
+		//possible update checks on an option page save that is setting the license key. Note we're not actually using the response yet for this triggered update check but we might at some later date.
 		$triggered = $this->trigger_update_check();
 
 
@@ -578,7 +578,6 @@ class PluginUpdateEngineChecker {
 	function trigger_update_check() {
 		//we're just using this to trigger a PUE ping whenever an option matching the given $this->option_key is saved..
 
-		$triggered = FALSE;
 		$has_triggered = FALSE;
 
 		if ( !empty($_POST) && !empty( $this->option_key ) ) {
@@ -664,7 +663,7 @@ class PluginUpdateEngineChecker {
 				'Accept' => 'application/json'
 			),
 		);
-		$options = apply_filters('puc_request_info_options-'.$this->slug, array());
+		$options = apply_filters('puc_request_info_options-'.$this->slug, $options);
 
 		$url = $this->metadataUrl;
 
@@ -715,11 +714,10 @@ class PluginUpdateEngineChecker {
 			'blocking' => TRUE,
 			'user-agent' => 'PUE-stats-carrier',
 			'body' => $body,
-			'blocking' => TRUE,
 			'sslverify' => FALSE
 			);
 
-		$resp = wp_remote_post($this->metadataUrl, $args);
+		wp_remote_post($this->metadataUrl, $args);
 
 	}
 
@@ -984,7 +982,8 @@ class PluginUpdateEngineChecker {
 	 * @return mixed
 	 */
 	function injectInfo($result, $action = null, $args = null){
-    	$relevant = ($action == 'plugin_information') && isset($args->slug) && ($args->slug == $this->slug);
+		$updates = FALSE;
+		$relevant = ($action == 'plugin_information') && isset($args->slug) && ($args->slug == $this->slug);
 		if ( !$relevant ){
 			return $result;
 		}

@@ -69,8 +69,13 @@ class EEH_MSG_Template {
 		$MSG = new EE_messages();
 
 		foreach ( $message_types as $message_type ) {
+			//if global then let's attempt to get the GRP_ID for this combo IF GRP_ID is empty.
+			if ( $global && empty( $GRP_ID ) ) {
+				$GRP_ID = EEM_Message_Template_Group::instance()->get_one( array( array( 'MTP_messenger' => $messenger, 'MTP_message_type' => $message_type, 'MTP_is_global' => TRUE ) ) );
+				$GRP_ID = $GRP_ID instanceof EE_Message_Template_Group ? $GRP_ID->ID() : 0;
+			}
 			//if this is global template generation. First let's determine if we already HAVE global templates for this messenger and message_type combination.  If we do then NO generation!!
-			if ( $global && self::already_generated($messenger, $message_type  ) ) {
+			if ( $global && self::already_generated($messenger, $message_type, $GRP_ID  ) ) {
 				$templates = TRUE;
 				continue; //get out we've already got generated templates for this.
 			}
@@ -98,11 +103,10 @@ class EEH_MSG_Template {
 	 */
 	public static function already_generated( $messenger, $message_type, $GRP_ID = 0 ) {
 		self::_set_autoloader();
-		$MTP = EEM_Message_Template_Group::instance();
+		$MTP = EEM_Message_Template::instance();
 
-
-		//what method we use depends on whether we have an evt_id or not
-		$count = !empty( $GRP_ID ) ? $MTP->get_one_by_ID( $GRP_ID ) : $MTP->get_global_message_template_by_m_and_mt( $messenger, $message_type, 'GRP_ID', 'ASC', NULL, TRUE, 'all' );
+		//what method we use depends on whether we have an GRP_ID or not
+		$count = empty( $GRP_ID ) ? EEM_Message_Template::instance()->count( array( array( 'Message_Template_Group.MTP_messenger' => $messenger, 'Message_Template_Group.MTP_message_type' => $message_type, 'Message_Template_Group.MTP_is_global' => TRUE ) ) ) :  $MTP->count( array( array( 'GRP_ID' => $GRP_ID ) ) );
 
 		self::update_to_active( $messenger, $message_type );
 

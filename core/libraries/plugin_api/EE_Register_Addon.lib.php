@@ -51,12 +51,17 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	public static function register( $addon_name = '', $setup_args = array()  ) {
 
-		//required fields MUST be present, so let's make sure they are.
+		// check that addon has not already been registered with that name
+		if ( isset( self::$_settings[ $addon_name ] )) {
+			throw new EE_Error( sprintf( __( 'An EE_Addon with the name "%s" has already been registered and each EE_Addon requires a unique name.', 'event_espresso' ), $addon_name ));
+		}
+
+		// required fields MUST be present, so let's make sure they are.
 		if ( empty( $addon_name ) || ! is_array( $setup_args ) || empty( $setup_args['autoloader_paths'] ) || empty( $setup_args['dms_paths'] )) {
 			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array containing the following keys: "autoloader_paths" (an array of class names and the full server paths to those files), and "dms_paths" (an array of full server paths to folders that contain data migration scripts)', 'event_espresso' ));
 		}
 
-		//make sure this was called in the right place!
+		// make sure this was called in the right place!
 		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_System___detect_if_activation_or_upgrade__begin' )) {
 			EE_Error::doing_it_wrong(
 				__METHOD__,

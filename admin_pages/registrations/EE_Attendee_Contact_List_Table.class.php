@@ -96,7 +96,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 
 
 	function column_cb($item) {
-		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', /* $1%s */ $item->ID() );
+		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', /* $1%s */ $item->ID() );
 	}
 
 
@@ -145,7 +145,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table {
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->fname() . '</a>';
 
 		//Return the name contents
-		return sprintf('%1$s %2$s', $name_link, $this->row_actions($actions) );		
+		return sprintf('%1$s %2$s', $name_link, $this->row_actions($actions) );
 	}
 
 
