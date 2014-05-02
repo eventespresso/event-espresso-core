@@ -17,42 +17,45 @@
  *
  * @package			Event Espresso
  * @subpackage	/core/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EE_CPT_Venue_Strategy {
 
-
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
-	 *	@var 	array	
+	 *	@var 	array
 	 * 	@access 	protected
 	 */
 	protected $CPT = NULL;
 
 
 
-	
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param 	array 	$arguments
+	 * @return \EE_CPT_Venue_Strategy
 	 */
-	public function __construct( $CPT) {
-		$this->CPT = $CPT;
+	public function __construct( $arguments = array() ) {
+		$this->CPT = isset( $arguments['CPT'] ) ? $arguments['CPT'] : NULL;
+		$WP_Query = isset( $arguments['WP_Query'] ) ? $arguments['WP_Query'] : NULL;
+		$WP_Query->is_espresso_venue_single = is_single() ? TRUE : FALSE;
+		$WP_Query->is_espresso_venue_archive = is_archive() ? TRUE : FALSE;
 		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 	}
 
 
 
-
 	/**
-	 * 	the_posts
+	 *    the_posts
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param          $posts
+	 * @param WP_Query $wp_query
+	 * @return    void
 	 */
 	public function the_posts( $posts, WP_Query $wp_query) {
 		// automagically load the EEH_Venue_View helper so that it's functions are available
