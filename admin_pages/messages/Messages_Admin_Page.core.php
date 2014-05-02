@@ -369,7 +369,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected function _add_screen_options_default() {
 		$page_title = $this->_admin_page_title;
-		$this->_admin_page_title = __('Message Templates', 'event_espresso');
+		$this->_admin_page_title = __('Global Message Templates', 'event_espresso');
+		$this->_per_page_screen_option();
+		$this->_admin_page_title = $page_title;
+	}
+
+
+
+	protected function _add_screen_options_custom_mtps() {
+		$page_title = $this->_admin_page_title;
+		$this->_admin_page_title = __('Custom Message Templates', 'event_espresso');
 		$this->_per_page_screen_option();
 		$this->_admin_page_title = $page_title;
 	}
@@ -1201,13 +1210,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//let's first determine if the incoming template is a global template, if it isn't then we need to get the global template matching messenger and message type.
 			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 
-			$global = $MTPG->is_global();
+			$success = $this->_delete_mtp_permanently( $GRP_ID, FALSE );
 
-			$success = $this->_delete_mtp_permanently( $GRP_ID );
-
-			//if successfully deleted, lets generate the new ones
+			//if successfully deleted, lets generate the new ones.  Note. We set GLOBAL to true, because resets on ANY template will use the related global template defaults for regeneration.  This means that if a custom template is reset, it does NOT reset to whatever the related GLOBAL is in the db but rather what the related
 			if ( $success ) {
-				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, $global );
+				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, TRUE );
 			}
 		}
 
@@ -1865,9 +1872,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * helper for permanently deleting a mtP group and all related message_templates
 	 * @param  int    $GRP_ID The group being deleted
+	 * @param  bool $include_group whether to delete the Message Template Group as well.
 	 * @return success        boolean to indicate the success of the deletes or not.
 	 */
-	private function _delete_mtp_permanently( $GRP_ID ) {
+	private function _delete_mtp_permanently( $GRP_ID, $include_group = TRUE ) {
 		$success = 1;
 		$MTPG = EEM_Message_Template_Group::instance();
 		//first let's GET this group
@@ -1880,7 +1888,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//now delete permanently this particular group
 
-		if ( ! $MTG->delete_permanently() ) {
+		if ( $include_group && ! $MTG->delete_permanently() ) {
 			$success = 0;
 		}
 		return $success;

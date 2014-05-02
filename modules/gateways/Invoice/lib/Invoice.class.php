@@ -188,10 +188,13 @@ class Invoice {
 		if(array_key_exists('html',$_GET)){
 			echo $content;
 		}else{
-			define('DOMPDF_ENABLE_REMOTE', TRUE);
-			define('DOMPDF_ENABLE_JAVASCRIPT', FALSE);
-			define('DOMPDF_ENABLE_CSS_FLOAT', TRUE);
-			require_once(EE_THIRD_PARTY . 'dompdf/dompdf_config.inc.php');
+			//only load dompdf if nobody else has yet...
+			if( ! defined('DOMPDF_DIR')){
+				define('DOMPDF_ENABLE_REMOTE', TRUE);
+				define('DOMPDF_ENABLE_JAVASCRIPT', FALSE);
+				define('DOMPDF_ENABLE_CSS_FLOAT', TRUE);
+				require_once(EE_THIRD_PARTY . 'dompdf/dompdf_config.inc.php');
+			}
 			$dompdf = new DOMPDF();
 			$dompdf->load_html($content);
 			$dompdf->render();
