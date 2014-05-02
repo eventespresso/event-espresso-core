@@ -23,51 +23,90 @@
 
 /**
  * is_espresso_event_single - whether this is a singular Espresso Event post
+ * @return bool
  */
 function is_espresso_event_single() {
+	can_use_espresso_conditionals( __FUNCTION__ );
 	global $wp_query;
 	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_single : FALSE;
 }
 
 /**
  * is_espresso_event_archive - whether this is an archive of Espresso Event posts
+ * @return bool
  */
 function is_espresso_event_archive() {
+	can_use_espresso_conditionals( __FUNCTION__ );
 	global $wp_query;
 	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_archive : FALSE;
 }
 
 /**
  * is_espresso_event_taxonomy - whether this is an Espresso Event category
+ * @return bool
  */
 function is_espresso_event_taxonomy() {
+	can_use_espresso_conditionals( __FUNCTION__ );
 	global $wp_query;
 	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_taxonomy : FALSE;
 }
 
 /**
  * is_espresso_venue_single - whether this is a singular Espresso Venue post
+ * @return bool
  */
 function is_espresso_venue_single() {
+	can_use_espresso_conditionals( __FUNCTION__ );
 	global $wp_query;
 	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_single : FALSE;
 }
 
 /**
  * is_espresso_venue_archive - whether this is an archive of Espresso Venue posts
+ * @return bool
  */
 function is_espresso_venue_archive() {
+	can_use_espresso_conditionals( __FUNCTION__ );
 	global $wp_query;
 	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_archive : FALSE;
 }
 
 /**
  * is_espresso_venue_taxonomy - whether this is an Espresso Venue category
+ * @return bool
  */
 function is_espresso_venue_taxonomy() {
+	can_use_espresso_conditionals( __FUNCTION__ );
 	global $wp_query;
 	return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_taxonomy : FALSE;
 }
+
+/**
+ * is_espresso_venue_taxonomy - whether this is an Espresso Venue category
+ * @param $conditional_tag
+ * @return bool
+ */
+function can_use_espresso_conditionals( $conditional_tag ) {
+	if ( ! did_action( 'AHEE__EE_System__initialize' )) {
+		EE_Error::doing_it_wrong(
+			__FUNCTION__,
+			sprintf(
+				__( 'The Event Espresso "%s" WP_Query conditional can not be used until after the "init" hook has run, and works best when used within a theme\'s template files.','event_espresso'),
+				$conditional_tag
+			),
+			'4.4.0'
+		);
+		return FALSE;
+	}
+	return TRUE;
+}
+
+
+
+
+/*************************** Event Queries ***************************/
+
+
 
 
 
