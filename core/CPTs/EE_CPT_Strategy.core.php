@@ -135,9 +135,10 @@ class EE_CPT_Strategy extends EE_BASE {
 	private function _set_EE_tags_on_WP_Query( WP_Query $WP_Query) {
 		$WP_Query->is_espresso_event_single = FALSE;
 		$WP_Query->is_espresso_event_archive = FALSE;
+		$WP_Query->is_espresso_event_taxonomy = FALSE;
 		$WP_Query->is_espresso_venue_single = FALSE;
 		$WP_Query->is_espresso_venue_archive = FALSE;
-		$WP_Query->is_espresso_taxonomy = FALSE;
+		$WP_Query->is_espresso_venue_taxonomy = FALSE;
 	}
 
 	/**
@@ -292,7 +293,15 @@ class EE_CPT_Strategy extends EE_BASE {
 								// if so, then add this CPT post_type to the current query's array of post_types'
 								$WP_Query->query_vars['post_type'] = isset( $WP_Query->query_vars['post_type'] ) ? (array)$WP_Query->query_vars['post_type'] : array();
 								$WP_Query->query_vars['post_type'][] = $post_type;
-								$WP_Query->is_espresso_taxonomy = TRUE;
+								switch( $post_type ) {
+									case 'espresso_events' :
+										$WP_Query->is_espresso_event_taxonomy = TRUE;
+										break;
+									case 'espresso_venues' :
+										$WP_Query->is_espresso_venue_taxonomy = TRUE;
+										break;
+								}
+
 							}
 						}
 					}
