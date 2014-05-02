@@ -124,6 +124,22 @@ class EE_CPT_Strategy extends EE_BASE {
 	}
 
 
+
+	/**
+	 *    _set_EE_tags_on_WP_Query
+	 *
+	 * @access private
+	 * @param WP_Query $WP_Query
+	 * @return void
+	 */
+	private function _set_EE_tags_on_WP_Query( WP_Query $WP_Query) {
+		$WP_Query->is_espresso_event_single = FALSE;
+		$WP_Query->is_espresso_event_archive = FALSE;
+		$WP_Query->is_espresso_venue_single = FALSE;
+		$WP_Query->is_espresso_venue_archive = FALSE;
+		$WP_Query->is_espresso_taxonomy = FALSE;
+	}
+
 	/**
 	 * 	_get_espresso_CPT_endpoints
 	 *
@@ -256,7 +272,8 @@ class EE_CPT_Strategy extends EE_BASE {
 		if ( ! $WP_Query instanceof WP_Query ) {
 			return;
 		}
-
+		// add our conditionals
+		$this->_set_EE_tags_on_WP_Query( $WP_Query );
 		// check for terms
 		$this->_set_post_type_for_terms( $WP_Query );
 
@@ -275,7 +292,8 @@ class EE_CPT_Strategy extends EE_BASE {
 								// if so, then add this CPT post_type to the current query's array of post_types'
 								$WP_Query->query_vars['post_type'] = isset( $WP_Query->query_vars['post_type'] ) ? (array)$WP_Query->query_vars['post_type'] : array();
 								$WP_Query->query_vars['post_type'][] = $post_type;
-							}						
+								$WP_Query->is_espresso_taxonomy = TRUE;
+							}
 						}
 					}
 				}
@@ -318,18 +336,18 @@ class EE_CPT_Strategy extends EE_BASE {
 						// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
 						EE_Registry::instance()->REQ->set( 'ee', $this->CPT['singular_slug'] );
 					}
-					$this->_possibly_set_ee_request_var( $post_type );		
+					$this->_possibly_set_ee_request_var( $post_type );
 					// convert post_type to model name
 					$model_name = str_replace( 'EE_', '', $this->CPT['class_name'] );
 					// get CPT table data via CPT Model
 					$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
 					$this->CPT['tables'] = $this->CPT_model->get_tables();
 					// is there a Meta Table for this CPT?
-					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $model_name . '_Meta' ] ) ? $this->CPT['tables'][ $model_name . '_Meta' ] : FALSE;		
+					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $model_name . '_Meta' ] ) ? $this->CPT['tables'][ $model_name . '_Meta' ] : FALSE;
 					// creates classname like:  CPT_Event_Strategy
 					$CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
 					// load and instantiate
-					 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));	
+					 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'WP_Query' => $WP_Query, 'CPT' => $this->CPT ));
 
 					// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
 					// here's the list of available filters in the WP_Query object
@@ -395,10 +413,10 @@ class EE_CPT_Strategy extends EE_BASE {
 	/**
 	 *    the_posts
 	 *
-	 * @access    public
-	 * @param          $posts
-	 * @param WP_Query $wp_query
-	 * @return    void
+	 * @access 	public
+	 * @param 	\WP_Post[] 	$posts
+	 * @param 	WP_Query 	$wp_query
+	 * @return 	\WP_Post[]
 	 */
 	public function the_posts( $posts, WP_Query $wp_query ) {
 //		d( $wp_query );
@@ -460,7 +478,6 @@ class EE_CPT_Strategy extends EE_BASE {
  */
 class EE_CPT_Default_Strategy {
 
-
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
 	 *	@var 	object
@@ -470,16 +487,16 @@ class EE_CPT_Default_Strategy {
 
 
 
-
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	private
-	 *  @return 	void
+	 * @access 	private
+	 * @param 	array 	$arguments
+	 * @return 	\EE_CPT_Default_Strategy
 	 */
-	private function __construct( $CPT ) {
-
-		$this->CPT = $CPT;
+	public function __construct( $arguments = array() ) {
+		$this->CPT = isset( $arguments['CPT'] ) ? $arguments['CPT'] : NULL;
+		$WP_Query = isset( $arguments['WP_Query'] ) ? $arguments['WP_Query'] : NULL;
 		//printr( $this->CPT, '$this->CPT  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		add_filter( 'pre_get_posts', array( $this, 'pre_get_posts' ), 999 );
 //		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
@@ -487,19 +504,17 @@ class EE_CPT_Default_Strategy {
 
 
 
-
-
-
 	/**
-	 * 	pre_get_posts
+	 *    pre_get_posts
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access 	public
+	 * @param 	\WP_Query $WP_Query
+	 * @return 	\WP_Query
 	 */
-	public function pre_get_posts(  $WP_Query  ) {
+	public function pre_get_posts(  WP_Query $WP_Query  ) {
 		//printr( $WP_Query, '$WP_Query  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		if ( ! $WP_Query->is_main_query() && ! $WP_Query->is_archive() ) {
-			return;
+			return $WP_Query;
 		}
 //		$WP_Query->set( 'post_type', array( $this->CPT['post_type'] ));
 //		$WP_Query->set( 'fields', 'ids' );
@@ -508,31 +523,32 @@ class EE_CPT_Default_Strategy {
 
 
 
-
-
 	/**
-	 * 	wp
+	 *    wp
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access 	public
+	 * @param 	\WP_Post[] 	$posts
+	 * @param 	\WP_Query $WP_Query
+	 * @return 	\WP_Post[]
 	 */
-	public function the_posts(  $posts, $WP_Query ) {
+	public function the_posts(  $posts, WP_Query $WP_Query ) {
 		return $posts;
 	}
 
 
 
-
 	/**
-	 * 	get_EE_post_type_metadata
+	 *    get_EE_post_type_metadata
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access 	public
+	 * @param mixed 	$meta_value
+	 * @param 	int 		$post_id
+	 * @param 	string 	$meta_key
+	 * @param 	string 	$single
+	 * @return 	mixed
 	 */
 	public function get_EE_post_type_metadata( $meta_value = NULL, $post_id, $meta_key, $single ) {
-
 		return $meta_value;
-
 	}
 
 
