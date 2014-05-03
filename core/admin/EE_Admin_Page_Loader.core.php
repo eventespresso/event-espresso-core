@@ -156,7 +156,7 @@ class EE_Admin_Page_Loader {
 
 		//set array of EE_Admin_Page_Menu_Group objects
 		$groups = array(
-			new EE_Admin_Page_Menu_Group( array(
+			'main' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Main', 'event_espresso'),
 				'show_on_menu' => FALSE,
 				'menu_slug' => 'main',
@@ -164,7 +164,7 @@ class EE_Admin_Page_Loader {
 				'menu_order' => 0,
 				'parent_slug' => 'espresso_events'
 				)),
-			new EE_Admin_Page_Menu_Group( array(
+			'management' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Management', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'management',
@@ -172,7 +172,7 @@ class EE_Admin_Page_Loader {
 				'menu_order' => 10,
 				'parent_slug' => 'espresso_events'
 				)),
-			new EE_Admin_Page_Menu_Group( array(
+			'settings' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Settings', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'settings',
@@ -180,7 +180,7 @@ class EE_Admin_Page_Loader {
 				'menu_order' => 20,
 				'parent_slug' => 'espresso_events'
 				)),
-			new EE_Admin_Page_Menu_Group( array(
+			'templates' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Templates', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'templates',
@@ -188,7 +188,7 @@ class EE_Admin_Page_Loader {
 				'menu_order' => 30,
 				'parent_slug' => 'espresso_events'
 				)),
-			new EE_Admin_Page_Menu_Group( array(
+			'extras' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __('Extras', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'extras',
@@ -196,7 +196,7 @@ class EE_Admin_Page_Loader {
 				'menu_order' => 40,
 				'parent_slug' => 'espresso_events'
 				)),
-			new EE_Admin_Page_Menu_Group( array(
+			'tools' => new EE_Admin_Page_Menu_Group( array(
 				'menu_label' => __("Tools", "event_espresso"),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'tools',
