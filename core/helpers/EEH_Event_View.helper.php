@@ -388,6 +388,14 @@ class EEH_Event_View extends EEH_Base {
 
 
 
+
+	public static function event_archive_url() {
+		return get_post_type_archive_link('espresso_events');
+	}
+
+
+
+
 	/**
 	 * 	event_desc
 	 *
