@@ -699,7 +699,7 @@ class EE_Transaction extends EE_Base_Class{
 	 * @return void
 	 */
 	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ){
-		$reg_msg = array();
+
 		$new_reg = FALSE;
 		$reg_to_approved = FALSE;
 		$registrations = $this->get_many_related('Registration');
