@@ -98,6 +98,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'admin_callback' 	=> isset( $setup_args['admin_callback'] ) ? (string)$setup_args['admin_callback'] : '',
 			// the class name for this addon's configuration settings object
 			'config_class' 			=> isset( $setup_args['config_class'] ) ? (string)$setup_args['config_class'] : '',
+			//the name given to the config for this addons' configuration settings object (optional)
+			'config_name' => isset( $setup_args['config_name'] ) ? (string) $setup_args['config_name']: '',
 			// an array of "class names" => "full server paths" for any classes that might be invoked by the addon
 			'autoloader_paths' => isset( $setup_args['autoloader_paths'] ) ? (array)$setup_args['autoloader_paths'] : array(),
 			// array of full server paths to any EE_DMS data migration scripts used by the addon
@@ -119,6 +121,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		EE_Register_Module::register( $addon_name, array( 'module_paths' => self::$_settings[ $addon_name ]['module_paths'] ));
 		// add to list of shortcodes to be registered
 		EE_Register_Shortcode::register( $addon_name, array( 'shortcode_paths' => self::$_settings[ $addon_name ]['shortcode_paths'] ));
+		//if config_class present let's register config.
+		if ( !empty( self::$_settings[$addon_name]['config_class'] ) )
+			EE_Register_Config::register( self::$_settings[$addon_name]['config_class'], self::$_settings[$addon_name]['config_name'] );
 		// add to list of widgets to be registered
 		EE_Register_Widget::register( $addon_name, array( 'widget_paths' => self::$_settings[ $addon_name ]['widget_paths'] ));
 		// load and instantiate main addon class
