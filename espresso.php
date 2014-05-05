@@ -3,7 +3,7 @@
   Plugin Name: 	Event Espresso
   Plugin URI:  		http://wordpress.org/plugins/event-espresso-free/
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.4.0.dev.002
+  Version: 			4.4.0.dev.003
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
@@ -46,7 +46,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.4.0.dev.002';
+		return '4.4.0.dev.003';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -235,7 +235,7 @@ EE_System::instance();
  * Interface which allows gateways to be used by different systems other than Event Espresso
  */
 interface EEI_Payment extends EEI_Base{
-	
+
 	/**
 	 * @return string indicating which the payment is approved, pending, cancelled or failed
 	 */
@@ -248,36 +248,36 @@ interface EEI_Payment extends EEI_Base{
 	 * @return string of the currency for this payment
 	 */
 	function currency_code();
-	
+
 	/**
 	 * The gateway transaction's ID, usually assigned by the
 	 * payment provider
 	 * @return string
 	 */
 	function txn_id_chq_nmbr();
-	
+
 	/**
-	 * 
+	 *
 	 * @param string $status
 	 */
 	function set_status($status);
-	
+
 	/**
-	 * Sets the response from the gateway, which is displayable to the user. 
+	 * Sets the response from the gateway, which is displayable to the user.
 	 * Eg, 'payment was approved', 'payment failed because invalid date', etc.
 	 * @param string $response
 	 */
 	function set_gateway_response($response);
-	
+
 	/**
 	 * Sets the response details, usually the entire contents of an IPN request,
 	 * or data about the direct paymetn data sent
 	 * @param array $response_details
 	 */
 	function set_details($response_details);
-	
+
 	/**
-	 * 
+	 *
 	 * @return EEI_Transaction
 	 */
 	function transaction();
@@ -286,19 +286,19 @@ interface EEI_Payment extends EEI_Base{
 	 * @param float $amount
 	 */
 	function set_amount($amount);
-	
+
 	/**
 	 * Sets the ID of the gateway transaction
 	 * @param string $txn_id
 	 */
 	function set_txn_id_chq_nmbr($txn_id);
-	
+
 	/**
 	 * Sets a string for some extra accounting info
 	 * @param string $extra_accounting_info
 	 */
 	function set_extra_accntng($extra_accounting_info);
-	
+
 }
 
 /**
@@ -327,14 +327,14 @@ interface EEMI_Payment {
 	 * REturns a string for the declined status
 	 */
 	function declined_status();
-	
-	
+
+
 	/**
 	 * Function that returns an instance of this class.
 	 * @return EEMI_Payment
 	 */
 	public static function instance();
-	
+
 	/**
 	 * Gets a payment by the transaction ID or cheque number
 	 * @param int $txn_id
@@ -348,7 +348,7 @@ interface EEI_Base{
 }
 interface EEI_Transaction extends EEI_Base{
 	/**
-	 * 
+	 *
 	 * @return EEI_Payment
 	 */
 	function last_payment();
@@ -357,19 +357,19 @@ interface EEI_Transaction extends EEI_Base{
 	 * @return float
 	 */
 	function total();
-	
+
 	/**
 	 * Get the line item that represents the total for the transaction
 	 * @return EEI_Line_Item
 	 */
 	function total_line_item();
-	
+
 	/**
 	 * Gets the primary registration for this transaction
 	 * @return EEI_Registration
 	 */
 	function primary_registration();
-	
+
 	/**
 	 * Returns the balance due on the transaction
 	 * @return float
@@ -387,14 +387,14 @@ interface EEI_Line_Item{
 	 * @return float
 	 */
 	function unit_price();
-	
+
 	/**
 	 * Returns the number of items in this line item
 	 * @return int
 	 */
 	function quantity();
 	/**
-	 * Returns the total amount due for this line item 
+	 * Returns the total amount due for this line item
 	 * (usually quantity x unit_price)
 	 * @return float
 	 */
@@ -419,7 +419,7 @@ interface EEI_Registration{
 	function reg_code();
 }
 interface EEI_Payment_Method{
-	
+
 }
 interface EEMI_Payment_Log{
 	/**
@@ -436,7 +436,7 @@ interface EEHI_Template{
 	/**
 	 * EEH_Template::format_currency
 	 * This helper takes a raw float value and formats it according to the default config country currency settings, or the country currency settings from the supplied country ISO code
-	 * 
+	 *
 	 * @param  float $amount   raw money value
 	 * @param  boolean $return_raw  whether to return the formatted float value only with no currency sign or code
 	 * @param  boolean $display_code  whether to display the country code (USD). Default = TRUE
