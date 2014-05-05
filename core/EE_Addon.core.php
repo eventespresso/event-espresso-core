@@ -118,67 +118,6 @@ abstract class EE_Addon {
 	}
 
 
-
-
-	/**
-	 *    set_config
-	 *
-	 * @access    public
-	 * @param string $name
-	 * @param string $config_class
-	 * @param string $section
-	 * @throws EE_Error
-	 * @internal  param string $_config_class
-	 * @return    void
-	 */
-	public static function set_config( $name = '', $config_class = '',  $section = 'addons' ) {
-		$name = ! empty( $name ) ? $name : EEH_Class_Tools::get_called_class();
-		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		if ( ! isset( EE_Config::instance()->$section ) || ! ( EE_Config::instance()->$section instanceof EE_Config_Base || EE_Config::instance()->$section instanceof StdClass )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration does not exist.', 'event_espresso' ), $section ));
-		}
-		if ( ! empty( $section )) {
-			self::$_config_section = $section;
-		}
-		if ( ! empty( $config_class )) {
-			self::$_config_class = $config_class;
-		}
-		$config_class = self::$_config_class;
-		if ( ! isset( EE_Config::instance()->$section->$name ) || ! EE_Config::instance()->$section->$name instanceof $config_class ){
-			EE_Config::instance()->$section->$name = new $config_class;
-			EE_Config::instance()->update_espresso_config();
-		}
-
-	}
-
-
-
-	/**
-	 *    get_config
-	 *
-	 * @access 	public
-	 * @param 	string $name
-	 * @return 	EE_Config_Base
-	 */
-	public static function get_config( $name = '' ) {
-		// check that config has even been set
-		if ( empty( self::$_config_class )) {
-			EE_Error::add_error( sprintf( __( 'No configuration has been set for %s.', 'event_espresso' ), $name ), __FILE__, __FUNCTION__, __LINE__ );
-			return NULL;
-		}
-		$config_class = self::$_config_class;
-		// check for cached config
-		if ( ! self::$_config ) {
-			self::$_config = isset( EE_Config::instance()->addons->$name ) || EE_Config::instance()->addons->$name instanceof $config_class ? EE_Config::instance()->addons->$name : new $config_class;
-		}
-		return self::$_config;
-	}
-
-
-
-
-
-
 }
 // End of file EE_Addon.core.php
 // Location: /core/EE_Addon.core.php
