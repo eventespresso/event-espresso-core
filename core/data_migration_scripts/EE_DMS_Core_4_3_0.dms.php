@@ -80,7 +80,6 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
 
 
-
 		$table_name = 'esp_country';
 		$sql = "CNT_ISO varchar(2) COLLATE utf8_bin NOT NULL,
 					  CNT_ISO3 varchar(3) COLLATE utf8_bin NOT NULL,

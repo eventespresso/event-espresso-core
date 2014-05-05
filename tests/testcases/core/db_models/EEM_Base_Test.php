@@ -33,6 +33,32 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			}
 		}
 	}
+	
+	/**
+	 * Verifies taht for each model, the tables it claims to require have been installed
+	 */
+	public function test_model_tables_exist(){
+		foreach(EE_Registry::instance()->non_abstract_db_models as $model){
+			$model_instance = EE_Registry::instance()->load_model($model);
+			foreach($model_instance->get_tables() as $table_alias => $table_obj){
+				$this->assertTableExists($table_obj->get_table_name(),$model);
+			}
+		}
+	}
+	/**
+	 * We really should implement this function in the proper PHPunit style
+	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+	 * @global type $wpdb
+	 * @param type $table_name
+	 * @param type $model_name
+	 */
+	private function assertTableExists($table_name,$model_name){
+		global $wpdb;
+		$exists =  $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
+		if( !$exists ){
+			$this->assertTrue($exists,  sprintf(__("Table like %s does not exist as it was defined on the model %s", 'event_espresso'),$table_name,$model_name));
+		}
+	}
 //	public function test_models_can_insert(){
 //		foreach(EE_Registry::instance()->non_abstract_db_models as $model){
 //			$model_instance = EE_Registry::instance()->load_model($model);
