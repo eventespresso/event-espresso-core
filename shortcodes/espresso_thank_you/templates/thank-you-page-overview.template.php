@@ -1,3 +1,5 @@
+<?php  do_action( 'AHEE__thank_you_page_overview_template__top' ); ?>
+
 <div id="espresso-thank-you-page-overview-dv" class="width-100" >
 
 	<div class="ee-attention">
@@ -11,11 +13,11 @@
 					'<h2 class="">',
 					'</h2>'
 				)
-			)
+			);
 			?>
 			</p>
 			<div class="jst-rght">
-				<a class="ee-button ee-roundish indented-text big-text" href="<?php echo $TXN_receipt_url;?>"><span class="ee-icon ee-icon-PDF-file-type"></span><?php _e( 'View Full Order Confirmation Receipt', 'event_espresso' );?></a>
+				<a class="ee-button ee-roundish indented-text big-text" href="<?php echo $TXN_receipt_url;?>"><span class="ee-icon ee-icon-PDF-file-type"></span><?php echo apply_filters( 'FHEE__thank_you_page_overview_template__order_conf_button_text', __( 'View Full Order Confirmation Receipt', 'event_espresso' )); ?></a>
 			</div>
 		</div>
 	</div>
@@ -26,3 +28,5 @@
 
 </div>
 <!-- end of espresso-thank-you-page-overview-dv -->
+
+<?php  do_action( 'AHEE__thank_you_page_overview_template__bottom' ); ?>

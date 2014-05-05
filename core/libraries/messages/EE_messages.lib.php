@@ -291,7 +291,6 @@ class EE_messages {
 	 */
 	public function create_new_templates( $messenger, $message_type, $GRP_ID = 0, $is_global = false ) {
 		$valid_mt = false;
-		$evt_id = absint($GRP_ID);
 
 		$valid_mt = $this->_validate_setup($messenger, $message_type, $is_global);
 
@@ -331,7 +330,7 @@ class EE_messages {
 
 		//if we've made it this far we have the class so let's instantiate
 		$a = new ReflectionClass( $classname );
-		$DFLT = $a->newInstance( $this );
+		$DFLT = $a->newInstance( $this, $GRP_ID );
 
 		//generate templates
 		$success = $DFLT->create_new_templates();

@@ -218,7 +218,7 @@ final class EE_Config {
 
 		// check that settings section exists
 		if ( ! isset( $this->$section )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration settings do not exist.', 'event_espresso' ), $section ));
+			throw new EE_Error( sprintf( __( 'The "%s" configuration settings does not exist.', 'event_espresso' ), $section ));
 		}
 		// in case old settings were saved as an array
 		if ( is_array( $this->$section )) {
@@ -231,11 +231,11 @@ final class EE_Config {
 		}
 		// check that section exists and is the proper format
 		if ( ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof stdClass )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration settings have not been formatted correctly.', 'event_espresso' ), $section ));
+			throw new EE_Error( sprintf( __( 'The "%s" configuration settings have not been formatted correctly.', 'event_espresso' ), $section ));
 		}
 		// verify config class is accessible
 		if ( ! class_exists( $config_class )) {
-			throw new EE_Error( sprintf( __( 'The %s class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ), $config_class ));
+			throw new EE_Error( sprintf( __( 'The "%s" class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ), $config_class ));
 		}
 		if ( ! isset( $this->$section->$name ) || ! $this->$section->$name instanceof $config_class ){
 			$this->$section->$name = new $config_class;
@@ -260,11 +260,11 @@ final class EE_Config {
 	public function _update_config( $section = '', $name = '', $config_obj = NULL ) {
 		// check that section exists and is the proper format
 		if ( ! isset( $this->$section ) || ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof StdClass )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration does not exist.', 'event_espresso' ), $section ));
+			throw new EE_Error( sprintf( __( 'The "%s" configuration does not exist.', 'event_espresso' ), $section ));
 		}
 		// verify config object
 		if ( ! $config_obj instanceof EE_Config_Base ) {
-			throw new EE_Error( sprintf( __( 'The %s class is not an instance of EE_Config_Base.', 'event_espresso' ), get_class( $config_obj )));
+			throw new EE_Error( sprintf( __( 'The "%s" class is not an instance of EE_Config_Base.', 'event_espresso' ), get_class( $config_obj )));
 		}
 		$this->$section->$name = $config_obj;
 		$this->update_espresso_config();
@@ -334,35 +334,76 @@ final class EE_Config {
 
 
 	/**
-	 * 	update_post_shortcodes
+	 *    update_post_shortcodes
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $page_for_posts
+	 * @return    void
 	 */
-	public function update_post_shortcodes() {
-		do_action( 'AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes );
+	public function update_post_shortcodes( $page_for_posts = '' ) {
+		// make sure page_for_posts is set
+		$page_for_posts = ! empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
+		// critical page shortcodes that we do NOT want added to the Posts page (blog)
+		$critical_shortcodes = $this->core->get_critical_pages_shortcodes_array();
+		// allow others to mess stuff up :D
+		do_action( 'AHEE__EE_Config__update_post_shortcodes', $this->core->post_shortcodes, $page_for_posts );
+		// verify that post_shortcodes is set
 		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
 		// cycle thru post_shortcodes
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
-			// skip the posts page, because we want all shortcodes registered for it
-			if ( $post_name != 'posts' ) {
-				foreach( $shortcodes as $post_id ) {
+			// are there any shortcodes to track ?
+			if ( ! empty( $shortcodes )) {
+				// loop thru list of tracked shortcodes
+				foreach( $shortcodes as $shortcode => $post_id ) {
+					// if shortcode is for a critical page, BUT this is NOT the corresponding critical page for that shortcode
+					if ( isset( $critical_shortcodes[ $post_id ] ) && $post_name == $page_for_posts ) {
+						// then remove this shortcode, because we don't want critical page shortcodes like ESPRESSO_TXN_PAGE running on the "Posts Page" (blog)
+						unset( $this->core->post_shortcodes[ $post_name ][ $shortcode ] );
+					}
+					// skip the posts page, because we want all shortcodes registered for it
+					if ( $post_name == $page_for_posts ) {
+						continue;
+					}
 					// make sure post still exists
 					$post = get_post( $post_id );
 					if ( $post ) {
 						// check that the post name matches what we have saved
 						if ( $post->post_name == $post_name ) {
 							// if so, then break before hitting the unset below
-							break;
+							continue;
 						}
 					}
 					// we don't like missing posts around here >:(
 					unset( $this->core->post_shortcodes[ $post_name ] );
 				}
+			} else {
+				// you got no shortcodes to keep track of !
+				unset( $this->core->post_shortcodes[ $post_name ] );
 			}
 		}
 		//only show errors
 		$this->update_espresso_config();
+	}
+
+
+
+	/**
+	 * 	get_page_for_posts
+	 *
+	 * 	if the wp-option "show_on_front" is set to "page", then this is the post_name for the post set in the wp-option "page_for_posts", or "posts" if no page is selected
+	 *
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function get_page_for_posts() {
+		$page_for_posts = get_option( 'page_for_posts' );
+		if ( ! $page_for_posts ) {
+			return 'posts';
+		}
+		global $wpdb;
+		$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
+		return $wpdb->get_var( $wpdb->prepare( $SQL, $page_for_posts ));
 	}
 
 
@@ -1025,6 +1066,19 @@ class EE_Core_Config extends EE_Config_Base {
 		);
 	}
 
+
+	/**
+	 * @return array
+	 */
+	public function get_critical_pages_shortcodes_array() {
+		return array(
+			$this->reg_page_id => 'ESPRESSO_CHECKOUT',
+			$this->txn_page_id => 'ESPRESSO_TXN_PAGE',
+			$this->thank_you_page_id => 'ESPRESSO_THANK_YOU',
+			$this->cancel_page_id => 'ESPRESSO_CANCELLED'
+		);
+	}
+
 	/**
 	 *  gets/returns URL for EE reg_page
 	 *
@@ -1318,13 +1372,14 @@ class EE_Currency_Config extends EE_Config_Base {
 	 * @return \EE_Currency_Config
 	 */
 	public function __construct( $CNT_ISO = NULL ) {
+
 		// get country code from organization settings or use default
 		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
 		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode)
-		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() ) {
-			// retreive the country settings from the db, just in case they have been customized
+		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() && ! get_option( 'ee_espresso_activation' )) {
+			// retrieve the country settings from the db, just in case they have been customized
 			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
 			if ( $country instanceof EE_Country ) {
 				$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR

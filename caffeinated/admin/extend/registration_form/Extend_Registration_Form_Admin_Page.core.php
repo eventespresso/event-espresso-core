@@ -402,7 +402,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
  * @return int number of items deleted permanenetly
  */
 	private function _delete_items(EEM_Soft_Delete_Base $model){
-
+		$success = 0;
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if (!empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
 			// if array has more than one element than success message should be plural
@@ -421,7 +421,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		}elseif( !empty($this->_req_data['QST_ID'])){
 			$success = $model->delete_permanently_by_ID($this->_req_data['QST_ID']);
 		}else{
-			throw new EE_Error(sprintf(__("Route malconfigured. We need to either have a request var called 'checkbox','QST_ID', or 'QSG_ID'. None was given", "event_espresso")));
+			EE_Error::add_error( sprintf(__("No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.", "event_espresso")));
 		}
 		return $success;
 	}
@@ -613,7 +613,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 		if( $count ){
 			//note: this a subclass of EEM_Soft_Delete_Base, so thsi is actually only getting nontrashed items
-			$query_params['limit'] = NULL;
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
 			$results=$this->_question_model->count_deleted($where);
 		}else{
@@ -627,10 +626,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function get_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
-		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if ($count){
 			$where = isset( $query_params[0] ) ? array( $query_params[0] ) : array();
-			$query_params['limit'] = NULL;
 			$results = $questionGroupModel->count($where);
 		}else{
 			$results = $questionGroupModel->get_all($query_params);
@@ -642,7 +640,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	public function get_trashed_question_groups( $per_page,$current_page = 1, $count = FALSE ) {
 		$questionGroupModel=EEM_Question_Group::instance();
-		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page,$count);
+		$query_params=$this->get_query_params($questionGroupModel,$per_page,$current_page);
 		if($count){
 			$where = isset( $query_params[0] ) ? array($query_params[0]) : array();
 			$query_params['limit'] = NULL;

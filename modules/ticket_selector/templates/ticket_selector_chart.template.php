@@ -20,7 +20,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	$min = 0;
 	$remaining = $ticket->remaining();
 	if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
-		if ( $max_atndz > 1 ) {
+//		if ( $max_atndz > 1 ) {
 			// offer the number of $tickets_remaining or $max_atndz, whichever is smaller
 			$max = min( $remaining, $max_atndz );
 			// but... we also want to restrict the number of tickets by the ticket max setting,
@@ -30,8 +30,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			$min = $ticket->min() > 0 ? $ticket->min() : 0;
 			// and if the ticket is required, then make sure that min qty is at least 1
 			$min = $ticket->required() ? max( $min, 1 ) : $min;
-
-		}
+//		}
 	}
 
 	$ticket_price = $ticket->get_ticket_total_with_taxes();
@@ -78,7 +77,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<td class="tckt-slctr-tbl-td-name">
 					<b><?php echo $ticket->get_pretty('TKT_name');?></b>
 					<a id="display-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="display-tckt-slctr-tkt-details display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php _e( 'click to show additional ticket details', 'event_espresso' ); ?>">
-						<?php echo sprintf( __( 'show%1$sdetails%1$s+', 'event_espresso' ), '&nbsp;' ); ?>						
+						<?php echo sprintf( __( 'show%1$sdetails%1$s+', 'event_espresso' ), '&nbsp;' ); ?>
 					</a>
 					<a id="hide-tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" class="hide-tckt-slctr-tkt-details hide-the-displayed lt-grey-text smaller-text hide-if-no-js" rel="tckt-slctr-tkt-details-<?php echo $EVT_ID . '-' . $TKT_ID; ?>" title="<?php _e( 'click to hide additional ticket details', 'event_espresso' ); ?>" style="display:none;">
 						<?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?>

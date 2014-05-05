@@ -72,4 +72,44 @@ class EEM_Event_Message_Template extends EEM_Base {
 		return self::$_instance;
 	}
 
+
+
+
+	/**
+	 * helper method to simply return an array of event ids for events attached to the given
+	 * message template group.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param  int    $GRP_ID The MTP group we want attached events for.
+	 * @return  array               An array of event ids.
+	 */
+	public function get_attached_event_ids( $GRP_ID ) {
+		$event_ids = $this->_get_all_wpdb_results( array( array( 'GRP_ID' => $GRP_ID ) ), ARRAY_N, 'EVT_ID' );
+		$event_ids = call_user_func_array( 'array_merge', $event_ids );
+		return $event_ids;
+	}
+
+
+
+	/**
+	 * helper method for clearing event/group relations for the given event ids and grp ids.
+	 * @param  array $GRP_IDs  An array of GRP_IDs. Optional. If empty then there must be EVTIDs.
+	 * @param  array $EVT_IDs  An array of EVT_IDs.  Optional. If empty then there must be
+	 *                         	       GRPIDs.
+	 * @return int 		       How many rows were deleted.
+	 */
+	public function delete_event_group_relations( $GRP_IDs = array(), $EVT_IDs = array() ) {
+		if ( empty( $GRP_IDs ) && empty( $EVT_IDs ) )
+			throw new EE_Error( sprintf( __('%s requires either an array of GRP_IDs or EVT_IDs or both, but both cannot be empty.', 'event_espresso' ), __METHOD__ ) );
+
+		if ( !empty( $GRP_IDs ) )
+			$where['GRP_ID'] = array( 'IN', (array) $GRP_IDs );
+
+		if ( !empty( $EVT_IDs ) )
+			$where['EVT_ID'] = array( 'IN', (array) $EVT_IDs );
+
+		return $this->delete( array( $where ), FALSE );
+	}
+
 } //end class EEM_Event_Message_Template

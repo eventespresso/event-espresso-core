@@ -1,40 +1,49 @@
-#icon-options-event { background: url("../../../templates/global_assets/images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
-#entries-per-page-dv { display:inline; }
+#entries-per-page-dv { display : inline; }
 
-.wrap .nav-tab-wrapper { margin-bottom:1em; }
-.wrap .subsubsub { margin:0; }
+.wrap .nav-tab-wrapper { margin-bottom : 1em; }
 
-#reg-filters-dv { clear:both; padding:1.5em 0; }
-.datepicker { width:125px; }
+.wrap .subsubsub { margin : 0; }
+
+#reg-filters-dv { clear : both; padding : 1.5em 0; }
+
+.datepicker { width : 125px; }
 
 /* TABLE COLUMNS */
 
-.column-_REG_ID { width:3%; }
-.column-_REG_date { width:12.5%; }
+.column-_REG_ID { width : 3%; }
+
+.column-_REG_date { width : 12.5%; }
 
 .status-TCM,
 .status-RAP,
-.reg-overview-full-payment-spn { color:#090; font-weight:bold; }
+.reg-overview-full-payment-spn { color : #090; font-weight : bold; }
 
 .status-TPN,
 .status-RPP,
-.reg-overview-part-payment-spn { color:#F93; font-weight:bold; }
+.reg-overview-part-payment-spn { color : #F93; font-weight : bold; }
 
 .status-TFL, .status-TIN, .status-TOP,
 .status-RCN, .status-RFL, .status-RNA,
-.reg-overview-no-payment-spn { color:#F00; font-weight:bold; }
+.reg-overview-no-payment-spn { color : #F00; font-weight : bold; }
 
-.status-RAP, .status-RPP, .status-RCN, .status-RFL, .status-RNA { font-size:.9em;}
+.status-RAP, .status-RPP, .status-RCN, .status-RFL, .status-RNA { font-size : .9em; }
 
-.wp-list-table .column-event_name { width:10%; }
+.wp-list-table .column-event_name { width : 10%; }
+
 .wp-list-table .column-_REG_date,
-.wp-list-table .column-DTT_EVT_start { width:12.5%; }
-.wp-list-table .column-ATT_fname { width:15%; }*/
-.wp-list-table .column-_REG_count { width:10%; text-align:center;  }
-.wp-list-table .column-ATT_email { width:10.5%; }
-.wp-list-table .column-_REG_code { width:10.5%; }
-.wp-list-table .column-_REG_att_checked_in { width:5%; text-align:center; }
-.wp-list-table .column-DTT_reg_limit { width:4.25%; text-align:center; }
+.wp-list-table .column-DTT_EVT_start { width : 12.5%; }
+
+.wp-list-table .column-ATT_fname { width : 15%; }
+
+.wp-list-table .column-_REG_count { width : 10%; text-align : center; }
+
+.wp-list-table .column-ATT_email { width : 10.5%; }
+
+.wp-list-table .column-_REG_code { width : 10.5%; }
+
+.wp-list-table .column-_REG_att_checked_in { width : 5%; text-align : center; }
+
+.wp-list-table .column-DTT_reg_limit { width : 4.25%; text-align : center; }
 
 .wp-list-table #PRC_amount,
 .wp-list-table #REG_final_price,
@@ -44,332 +53,343 @@
 .wp-list-table .column-PRC_amount,
 .wp-list-table .column-_REG_final_price,
 .wp-list-table .column-TXN_total,
-.wp-list-table .column-TXN_paid { width:10%; text-align:left; }
+.wp-list-table .column-TXN_paid { width : 10%; text-align : left; }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #cb {
-	width: 3%;
+	width : 3%;
 }
 
-
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in {
-	width: 3%;
-	margin: 0;
+	width  : 3%;
+	margin : 0;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_att_checked_in .dashicons {
-	margin-left: 10px;
+	margin-left : 10px;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_count {
-	width: 4%;
+	width : 4%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_name {
-	width: 11%;
+	width : 11%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #ATT_email {
-	width: 14%;
+	width : 14%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #Event {
-	width: 14%;
+	width : 14%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_code {
-	width: 8%;
+	width : 8%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #_REG_final_price {
-	width: 6%;
+	width : 6%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_paid {
-	width: 6%;
+	width : 6%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #TXN_total {
-	width: 6%;
+	width : 6%;
 }
 
 #EE_Event_Registrations_List_Table-table-frm .wp-list-table #PRC_name {
-	width: 8%;
+	width : 8%;
 }
 
-
-.reg-pad-rght { display:block; padding-right:1em; }
+.reg-pad-rght { display : block; padding-right : 1em; }
 
 .wp-list-table .column-actions,
-.wp-list-table .column-CHK_in { width:11%;  }
+.wp-list-table .column-CHK_in { width : 11%; }
 
 .wp-list-table.attendees .column-actions {
-	width: 7%;
+	width : 7%;
 }
 
-.reg-overview-free-event-spn { display: block; text-align:center; }
+.reg-overview-free-event-spn { display : block; text-align : center; }
 
-.reg-overview-actions-ul { list-style:none; margin:0; }
-.reg-overview-actions-ul li { display: inline; margin:0; }
-.reg-overview-actions-ul li + li { margin-left:0; }
+.reg-overview-actions-ul { list-style : none; margin : 0; }
 
-#reg-admin-reg-details-reg-nmbr-hdr { padding:0; margin:-.5em 0 1em; }
+.reg-overview-actions-ul li { display : inline; margin : 0; }
+
+.reg-overview-actions-ul li + li { margin-left : 0; }
+
+#reg-admin-reg-details-reg-nmbr-hdr { padding : 0; margin : -.5em 0 1em; }
+
 #reg-admin-reg-details-reg-date-hdr,
-#reg-admin-reg-details-reg-status-hdr { padding:0; margin:0 0 1em; }
+#reg-admin-reg-details-reg-status-hdr { padding : 0; margin : 0 0 1em; }
 
-#reg-admin-approve-decline-reg-status-spn { position: relative; top:-4px; display:block; }
-#reg-admin-approve-decline-reg-status-spn a { margin-left:1em; margin-right:1em; vertical-align: baseline; }
+#reg-admin-approve-decline-reg-status-spn { position : relative; top : -4px; display : block; }
 
-.admin-side-mbox-dv { margin:1em 0 2em; }
-.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0px 1px 0px #fff; }
-.admin-side-mbox-label-spn { width:30%; padding-right:.5em; text-align:right; }
-.admin-side-mbox-text-dv { padding-left:.5em; margin:0 0 1em 30%; }
+#reg-admin-approve-decline-reg-status-spn a { margin-left : 1em; margin-right : 1em; vertical-align : baseline; }
 
-.admin-primary-mbox-h4 { margin:2em 0 .25em;  }
+.admin-side-mbox-dv { margin : 1em 0 2em; }
+
+.admin-side-mbox-dv p { margin : .5em 0; line-height : 1.2em; color : #333; text-shadow : 0 1px 0 #FFF; }
+
+.admin-side-mbox-label-spn { width : 30%; padding-right : .5em; text-align : right; }
+
+.admin-side-mbox-text-dv { padding-left : .5em; margin : 0 0 1em 30%; }
+
+.admin-primary-mbox-h4 { margin : 2em 0 .25em; }
 
 .admin-primary-mbox-tbl-wrap {
-	padding:3px; margin:0em 0 2em;
-	background:#fff; border:1px solid #dfdfdf;
-	border-radius:3px; -moz-border-radius:3px;  -webkit-border-radius:3px;
+	padding       : 3px; margin : 0 0 2em;
+	background    : #FFF; border : 1px solid #DFDFDF;
+	border-radius : 3px;
 }
+
 .admin-primary-mbox-tbl {
-    width:100%; border-spacing: 0; border-collapse:collapse;
+	width : 100%; border-spacing : 0; border-collapse : collapse;
 }
+
 .admin-primary-mbox-tbl th, .admin-primary-mbox-tbl td {
-	padding:6px 12px; margin: 0;
-	border:1px solid #dfdfdf; background:#fcfcfc;
-	font-family: sans-serif; font-size: 1em; vertical-align:middle;
+	padding     : 6px 12px; margin : 0;
+	border      : 1px solid #DFDFDF; background : #FCFCFC;
+	font-family : sans-serif; font-size : 1em; vertical-align : middle;
 }
-.admin-primary-mbox-tbl tr + tr { border-top:none; }
+
+.admin-primary-mbox-tbl tr + tr { border-top : none; }
+
 .admin-primary-mbox-tbl th + th,
-.admin-primary-mbox-tbl td + td { border-left:none; }
-.admin-primary-mbox-tbl th { font-size:.9em; font-weight:bold; }
-.admin-primary-mbox-tbl caption { display:none; }
+.admin-primary-mbox-tbl td + td { border-left : none; }
 
-.form-table.skinny-rows th, .form-table.skinny-rows td { padding:3px 10px; }
+.admin-primary-mbox-tbl th { font-size : .9em; font-weight : bold; }
 
-.admin-primary-mbox-total-tr { font-size:1.1em; }
+.admin-primary-mbox-tbl caption { display : none; }
 
+.form-table.skinny-rows th, .form-table.skinny-rows td { padding : 3px 10px; }
+
+.admin-primary-mbox-total-tr { font-size : 1.1em; }
 
 .jqplot-title {
-	 font-size:24px; text-align:left !important; margin: 1em 0 0 1em;
+	font-size : 24px; text-align : left !important; margin : 1em 0 0 1em;
 }
+
 .jqplot-point-label {
-	padding:0 .5em;
-	background:#fff; border:1px solid #ddd;
-	border-radius:3px; -moz-border-radius:3px;  -webkit-border-radius:3px;
-	font-size:12px; color:#333;
-	-webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
-	-moz-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
-	box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
+	padding       : 0 .5em;
+	background    : #FFF; border : 1px solid #DDD;
+	border-radius : 3px;
+	font-size     : 12px; color : #333;
+	box-shadow    : 1px 1px 1px rgba(0, 0, 0, .2), 3px 3px 2px rgba(0, 0, 0, .1);
 }
 
-.reg-admin-edit-question-group-spn { position: relative; top:-4px; padding: 4px; vertical-align: middle; }
-.reg-admin-edit-attendee-question-lnk { padding: 4px; text-decoration: none; outline:none; }
-.reg-admin-edit-attendee-question-lnk:focus { outline:none; }
+.reg-admin-edit-question-group-spn { position : relative; top : -4px; padding : 4px; vertical-align : middle; }
+
+.reg-admin-edit-attendee-question-lnk { padding : 4px; text-decoration : none; outline : none; }
+
+.reg-admin-edit-attendee-question-lnk:focus { outline : none; }
+
 .reg-admin-edit-attendee-question-lnk img { }
-
-
 
 /*.display-the-hidden { float:right; padding-left:16px; cursor:pointer; }
 .hide-the-displayed { float:right; padding-left:16px; cursor:pointer; }*/
 
-.tkt-slctr-tbl { min-width:530px; margin-bottom:1em; border:none; border-bottom: 1px solid #EDEDED; border-collapse: collapse; border-spacing: 0;}
-.tkt-slctr-tbl th { padding:.5em 1em .5em 0; border:none; font-size:1em; line-height:1em; text-align:left; }
-.tkt-slctr-tbl td { padding:.5em 1em .5em 0; border:none; border-top: 1px solid #EDEDED; font-size:1em; line-height:1em; }
-.tkt-slctr-tbl .tckt-slctr-tbl-td-qty { padding-right:0; }
+.tkt-slctr-tbl { min-width : 530px; margin-bottom : 1em; border : none; border-bottom : 1px solid #EDEDED; border-collapse : collapse; border-spacing : 0; }
 
+.tkt-slctr-tbl th { padding : .5em 1em .5em 0; border : none; font-size : 1em; line-height : 1em; text-align : left; }
+
+.tkt-slctr-tbl td { padding : .5em 1em .5em 0; border : none; border-top : 1px solid #EDEDED; font-size : 1em; line-height : 1em; }
+
+.tkt-slctr-tbl .tckt-slctr-tbl-td-qty { padding-right : 0; }
 
 /** Check-in status manipulation **/
 
 /**never checked in**/
 .wp-list-table ._REG_att_checked_in {
-    padding-left: 20px;
+	padding-left : 20px;
 }
 
 .checkedin-status-0:before {
-	font-family: 'dashicons' !important; /** using important b/c wp has dashicons setup with important and I had to override **/
-	content: "\f158";
+	font    : 'dashicons' !important; /** using important b/c wp has dashicons setup with important and I had to override **/
+	content : "\f158";
 }
 
 /**checked in**/
 .checkedin-status-1:before {
-	content: "\e614";
+	content : "\e614";
 }
 
 /**check in but now checked out**/
 .checkedin-status-2:before {
-	content: "\e613";
+	content : "\e613";
 }
-
-
 
 /**
  * attendee edit page stuff
  *
  */
 
-
 #titlediv .title-prompt-text {
-	color: #bbb;
-	position: absolute;
-	font-size: 1.7em;
-	padding: 11px 10px;
+	color     : #BBB;
+	position  : absolute;
+	font-size : 1.7em;
+	padding   : 11px 10px;
 }
 
 #title-wrap .title-prompt-text {
-	font-size: 1.3em;
-	padding: 5px 8px;
+	font-size : 1.3em;
+	padding   : 5px 8px;
 }
 
 #titlediv .smaller-text-field, #titlediv .main-text-field {
-	padding: 3px 8px;
-	font-size: 1.7em;
-	line-height: 100%;
-	height: 1.7em;
-	width: 49.3%;
-	outline: none;
-	margin: 1px 0;
-	margin-right: 6px;
-	float:left;
+	padding     : 3px 8px;
+	font-size   : 1.7em;
+	line-height : 100%;
+	height      : 1.7em;
+	width       : 49.3%;
+	outline     : none;
+	margin      : 1px 6px 1px 0;
+	float       : left;
 }
 
 #titlediv .main-text-field {
-	width: 100%;
-	float: none;
+	width : 100%;
+	float : none;
 }
 
-
-
 .espresso-question-group-wrap table th {
-	width: inherit;
-	min-width: 200px;
+	width     : inherit;
+	min-width : 200px;
 }
 
 #attendee_details_address label.espresso-form-input-lbl {
-	display: block;
+	display : block;
 }
 
 #attendee_details_address input.all-options {
-	width: 100%;
+	width : 100%;
 }
 
 #attendee_details_address #ATT_zip {
-	width: 10%;
-	min-width: 150px;
+	width     : 10%;
+	min-width : 150px;
 }
-
 
 /**
  * status strips
  */
- /*pending payment*/
+/*pending payment*/
 .reg-status-RPP, .button-secondary.reg-status-RPP, .button-primary.reg-status-RPP {
-	border-left-color: #00B1CA;
+	border-left-color : #00B1CA;
 }
+
 /*cancelled*/
 .reg-status-RCN, .button-secondary.reg-status-RCN, .button-primary.reg-status-RCN {
-	border-left-color: #AC9D9C;
+	border-left-color : #AC9D9C;
 }
 
 /*declined*/
- .reg-status-RDC, .button-secondary.reg-status-RDC, .button-primary.reg-status-RDC {
-	border-left-color: #E44064;
+.reg-status-RDC, .button-secondary.reg-status-RDC, .button-primary.reg-status-RDC {
+	border-left-color : #E44064;
 }
 
 /*approved*/
 .reg-status-RAP, .button-secondary.reg-status-RAP, .button-primary.reg-status-RAP {
-	border-left-color: #70CC50;
+	border-left-color : #70CC50;
 }
 
 /*not-approved*/
 .reg-status-RNA, .button-secondary.reg-status-RNA, .button-primary.reg-status-RNA {
-	border-left-color: #E76700;
+	border-left-color : #E76700;
 }
 
 .widefat td.column-_Reg_Status, .widefat th.column-_Reg_Status {
-	width: 2%;
-	padding: 0;
-	margin: 0;
+	width   : 2%;
+	padding : 0;
+	margin  : 0;
 }
 
 /** reg status legend **/
 .ee-status-legend-RPP {
-	background-color: #00B1CA;
+	background-color : #00B1CA;
 }
+
 .ee-status-legend-RCN {
-	background-color: #AC9D9C;
+	background-color : #AC9D9C;
 }
 
 .ee-status-legend-RDC {
-	background-color: #E44064;
+	background-color : #E44064;
 }
 
 .ee-status-legend-RAP {
-	background-color: #70CC50;
+	background-color : #70CC50;
 }
+
 .ee-status-legend-RNA {
-	background-color: #E76700;
+	background-color : #E76700;
 }
 
-.status-RPP { color: #00B1CA;}
-.status-RCN { color: #AC9D9C;}
-.status-RDC { color: #E44064; font-weight: bold;}
-.status-RAP { color: #70CC50;}
-.status-RNA { color: #E76700;}
+.status-RPP { color : #00B1CA; }
 
+.status-RCN { color : #AC9D9C; }
+
+.status-RDC { color : #E44064; font-weight : bold; }
+
+.status-RAP { color : #70CC50; }
+
+.status-RNA { color : #E76700; }
 
 #admin-primary-mbox-reg-details-dv .secondary-button {
-	margin-left: 10px;
+	margin-left : 10px;
 }
 
 #reg_status_change_form {
-	margin-top: 1em;
+	margin-top : 1em;
 }
 
 #reg_status_change_form .button-secondary {
-	margin-right: 0;
+	margin-right : 0;
 }
 
 #reg_status_change_form .ee-attention {
-	position: absolute;
-	width: 50%;
-	top: -100px;
-	right: 0;
-	padding: 15px 10px 0 10px;
+	position : absolute;
+	width    : 50%;
+	top      : -100px;
+	right    : 0;
+	padding  : 15px 10px 0 10px;
 }
 
 .espresso-admin .wp-list-table .ee-icon-size-22:before {
-	font-size: 22px;
+	font-size : 22px;
 }
 
 /**newsletter send css**/
 .ee-batch-message-send-form h3 {
-	font-size: 2em;
+	font-size : 2em;
 }
 
 .ee-batch-message-send-form .batch-message-edit-fields {
-	background-color: #e3e3e3;
-	padding: 10px;
-	margin-top: 20px;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
+	background-color : #E3E3E3;
+	padding          : 10px;
+	margin-top       : 20px;
+	border-radius    : 4px;
 }
 
 .ee-batch-message-send-form .batch-message-input, .ee-batch-message-send-form .batch-message-textarea {
-	width: 100%;
+	width : 100%;
 }
 
 .ee-batch-message-send-form .batch-message-textarea {
-	height: 200px;
+	height : 200px;
 }
 
 .ee-batch-message-send-form .shortcodes-info-container {
-	padding: 5px 20px 5px 20px;;
-	margin-bottom: 10px;
-	background-color: #f5f5f5;
-	-webkit-border-radius: 4px;
-	-moz-border-radius: 4px;
-	border-radius: 4px;
+	padding          : 5px 20px 5px 20px;;
+	margin-bottom    : 10px;
+	background-color : #F5F5F5;
+	border-radius    : 4px;
+}
 
+.contact-details-buttons a.button-small {
+	float: right;
+	margin-left: 8px;
 }

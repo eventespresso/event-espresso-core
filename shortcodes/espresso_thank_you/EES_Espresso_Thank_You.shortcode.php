@@ -32,42 +32,42 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * The transaction specified by the reg_url_link passed from the Request, or from the Session
 	 * @var EE_Transaction $_current_txn
 	 */
-	protected $_current_txn = NULL;
+	private $_current_txn = NULL;
 
 	/**
 	 * @var EE_Registration $_primary_registrant
 	 */
-	protected $_primary_registrant = NULL;
+	private $_primary_registrant = NULL;
 
 	/**
 	 * The reg_url_link passed from the Request, or from the Session
 	 * @var string $_reg_url_link
 	 */
-	protected $_reg_url_link = NULL;
+	private $_reg_url_link = NULL;
 
 	/**
 	 * whether the incoming reg_url_link is for the primary registrant or not
 	 * @var boolean $_is_primary
 	 */
-	protected $_is_primary = NULL;
+	private $_is_primary = NULL;
 
 	/**
 	 * The URL for revisiting the SPCO attendee information step
 	 * @var string $_SPCO_attendee_information_url
 	 */
-	protected $_SPCO_attendee_information_url = NULL;
+	private $_SPCO_attendee_information_url = NULL;
 
 	/**
-	 * The URL for revisiting the SPCO payment options step
+	 * The URL for revisting the SPCO payment options step
 	 * @var string $_SPCO_payment_options_url
 	 */
-	protected $_SPCO_payment_options_url = NULL;
+	private $_SPCO_payment_options_url = NULL;
 
 	/**
 	 * whether to display the Payment Options link
 	 * @var boolean $_show_try_pay_again_link
 	 */
-	protected $_show_try_pay_again_link = FALSE;
+	private $_show_try_pay_again_link = FALSE;
 
 
 
@@ -80,8 +80,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public static function set_hooks() {
 		add_action( 'wp_loaded', array( 'EES_Espresso_Thank_You', 'set_definitions' ), 2 );
-		add_filter( 'heartbeat_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 3 );
-		add_filter( 'heartbeat_nopriv_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 3 );
 	}
 
 	/**
@@ -94,6 +92,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// AJAX for IPN monitoring
 		add_filter( 'heartbeat_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 3 );
 		add_filter( 'heartbeat_nopriv_received', array( 'EES_Espresso_Thank_You', 'thank_you_page_IPN_monitor' ), 10, 3 );
+		add_action( 'wp_ajax_espresso_resend_reg_confirmation_email', array( 'EES_Espresso_Thank_You', 'resend_reg_confirmation_email' ), 10, 2 );
+		add_action( 'wp_ajax_nopriv_espresso_resend_reg_confirmation_email', array( 'EES_Espresso_Thank_You', 'resend_reg_confirmation_email' ), 10, 2 );
 	}
 
 
@@ -122,6 +122,32 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	}
 
 
+
+	/**
+	 *    get_txn_payments
+	 *
+	 * @access    public
+	 * @param int $since
+	 * @return    mixed array of EE_Payment || FALSE
+	 */
+	public function get_txn_payments( $since = 0 ) {
+		if ( ! $this->get_txn() ) {
+			return FALSE;
+		}
+		$args = array( 'order_by' => array( 'PAY_timestamp' => 'ASC' ));
+		if ( $since > 0 ) {
+			$args[0] = array( 'PAY_timestamp' => array( '>', $since ));
+		}
+		// get array of payments with most recent first
+		$payments = $this->_current_txn->payments( $args );
+//		global $wpdb;
+//		echo $wpdb->last_query;
+//		printr( $payments, '$payments  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		return $payments;
+	}
+
+
+
 	/**
 	 * 	set_reg_url_link
 	 *
@@ -143,7 +169,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @param  	WP $WP
 	 *  @return 	void
 	 */
-	public function run( WP $WP= NULL ) {
+	public function run( WP $WP ) {
 
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
@@ -165,16 +191,21 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			);
 			return;
 		}
+		if ( EE_Registry::instance()->REQ->is_set( 'resend' )) {
+			return EES_Espresso_Thank_You::resend_reg_confirmation_email();
+		}
 		// soon to be derprecated
 		EE_Registry::instance()->load_core( 'Payment_Processor' )->finalize_payment_for($this->_current_txn);				
 		//EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
 		//@todo: still need to reset some session data once we arrive here?
 		// load assets
 		add_filter( 'FHEE_load_css', '__return_true' );
-		add_filter( 'FHEE_load_js', '__return_true' );
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
+		if ( ! $this->_current_txn->is_free() ) {
+			add_filter( 'FHEE_load_js', '__return_true' );
+			add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
+		}
 		add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
-
+		return;
 	}
 	
 
@@ -188,8 +219,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		wp_register_script( 'thank_you_page', THANK_YOU_ASSETS_URL . 'thank_you_page.js', array( 'espresso_core', 'heartbeat' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'thank_you_page' );
 		EE_Registry::$i18n_js_strings['reg_url_link'] = $this->_reg_url_link;
-		EE_Registry::$i18n_js_strings['server_time'] = time();
+		EE_Registry::$i18n_js_strings['initial_access'] = current_time('timestamp');
 		EE_Registry::$i18n_js_strings['IPN_wait_time'] = EES_Espresso_Thank_You::IPN_wait_time;
+		EE_Registry::$i18n_js_strings['TXN_complete'] = EEM_Transaction::complete_status_code;
+		EE_Registry::$i18n_js_strings['checking_for_new_payments'] = __( 'checking for new payments...', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['loading_payment_info'] = __( 'loading payment information...', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['server_error'] = __('An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['slow_IPN'] = apply_filters(
 			'EES_Espresso_Thank_You__load_js__slow_IPN',
 			sprintf(
@@ -237,8 +272,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		}
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
-			array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )),
-			EE_Registry::instance()->CFG->core->reg_page_url
+			array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>$this->_reg_url_link ),
+			EE_Registry::instance()->CFG->core->reg_page_url()
 		);
 		// link to SPCO payment_options
 		$this->_SPCO_payment_options_url = $this->_primary_registrant instanceof EE_Registration ? $this->_primary_registrant->payment_overview_url() : add_query_arg( array('step'=>'payment_options' ), $revisit_spco_url );
@@ -268,14 +303,13 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
 				__FILE__, __FUNCTION__, __LINE__
 			);
-			return;
+			return '';
 		}
 		// link to receipt
-		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url('html');
-
+		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
- 		if ( $this->_is_primary ) {
+ 		if ( $this->_is_primary && ! $this->_current_txn->is_free() ) {
 			add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_ajax_content' ));
 		}
 
@@ -292,19 +326,23 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *    it also calculates the IPN wait time since the Thank You page was first loaded
 	 *
 	 * @access    public
-	 * @param $response
-	 * @param $data
-	 * @param $screen_id
+	 * @param array  $response
+	 * @param array  $data
+	 * @param string $screen_id
 	 * @return    array
 	 */
-	public static function thank_you_page_IPN_monitor( $response, $data, $screen_id ) {
-		if ( isset( $data['espresso_thank_you_page'] ) && isset( $data['espresso_thank_you_page']['reg_url_link'] )) {
+	public static function thank_you_page_IPN_monitor( $response = array(), $data = array() ) {
+		// does this heartbeat contain our data ?
+		if ( isset( $data['espresso_thank_you_page'] )) {
+			// check for reg_url_link in the incoming heartbeat data
 			if ( ! isset( $data['espresso_thank_you_page']['reg_url_link'] )) {
 				$response['espresso_thank_you_page'] = array (
 					'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' )
 				);
 				return $response;
 			}
+			// kk heartbeat has our data
+			$response['espresso_thank_you_page'] = array();
 			// set defs, instantiate the thank you page class, and get the ball rolling
 			EES_Espresso_Thank_You::set_definitions();
 			$espresso_thank_you_page = EES_Espresso_Thank_You::instance();
@@ -320,20 +358,74 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				);
 				return $response;
 			}
-			// bad TXN?
-			if ( $TXN->failed() ) {
-				$response['espresso_thank_you_page'] = array (
-					'still_waiting' => isset( $data['espresso_thank_you_page']['server_time'] ) ? time() - $data['espresso_thank_you_page']['server_time'] : 0
-				);
-				return $response;
+			// grab transient of TXN's status
+			$txn_status = isset( $data['espresso_thank_you_page']['txn_status'] ) ? $data['espresso_thank_you_page']['txn_status'] : NULL;
+			// has the TXN status changed since we last checked (or empty because this is the first time running through this code)?
+			if ( $txn_status !== $TXN->status_ID() ) {
+				// switch between two possible basic outcomes
+				switch( $TXN->status_ID()) {
+					// TXN has been updated in some way
+					case EEM_Transaction::overpaid_status_code:
+					case EEM_Transaction::complete_status_code:
+					case EEM_Transaction::incomplete_status_code:
+						// send updated TXN results back to client,
+						$response['espresso_thank_you_page'] = array(
+							'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
+							'txn_status' => $TXN->status_ID()
+						);
+						break;
+					// or we have a bad TXN, or really slow IPN, so calculate the wait time and send that back...
+					case EEM_Transaction::failed_status_code:
+					default:
+						// keep on waiting...
+						return $espresso_thank_you_page->_update_server_wait_time( $data['espresso_thank_you_page'] );
+				}
+
+			// or is the TXN still failed (never been updated) ???
+			} else if ( $TXN->failed() ) {
+				// keep on waiting...
+				return $espresso_thank_you_page->_update_server_wait_time( $data['espresso_thank_you_page'] );
 			}
-			// TXN has been processed, and heartbeat has our data
-			$response['espresso_thank_you_page'] = array (
-				'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
-				'payment_details' => $espresso_thank_you_page->get_payment_details(),
-			);
+			// TXN is happening so let's get the payments now
+			// if we've already gotten payments then the heartbeat daya will contain the timestamp of the last time we checked
+			$since = isset( $data['espresso_thank_you_page']['get_payments_since'] ) ? $data['espresso_thank_you_page']['get_payments_since'] : 0;
+			// then check for payments
+			$payments = $espresso_thank_you_page->get_txn_payments( $since );
+			// has a payment been processed ?
+			if ( ! empty( $payments )) {
+				if ( $since ) {
+					$response['espresso_thank_you_page'] = array(
+						'new_payments' => $espresso_thank_you_page->get_new_payments( $payments ),
+						'transaction_details' => $espresso_thank_you_page->get_transaction_details(),
+						'txn_status' => $TXN->status_ID()
+					);
+				} else {
+					$response['espresso_thank_you_page']['payment_details'] = $espresso_thank_you_page->get_payment_details( $payments );
+				}
+				// reset time to check for payments
+				$response['espresso_thank_you_page']['get_payments_since'] = current_time('timestamp');
+			} else {
+				$response['espresso_thank_you_page']['get_payments_since'] = $since;
+			}
 
 		}
+		return $response;
+	}
+
+
+
+	/**
+	 * 	_update_server_wait_time
+	 *
+	 *  @access 	public
+	 *  @param 	array $thank_you_page_data thank you page portion of the incoming JSON array from the WP heartbeat data
+	 *  @return 	array
+	 */
+	private function _update_server_wait_time( $thank_you_page_data = array() ) {
+		$response['espresso_thank_you_page'] = array (
+			'still_waiting' => isset( $thank_you_page_data['initial_access'] ) ? current_time('timestamp') - $thank_you_page_data['initial_access'] : 0,
+			'txn_status' => $this->_current_txn->status_ID()
+		);
 		return $response;
 	}
 
@@ -352,10 +444,57 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$template_args['reg_url_link'] = $this->_reg_url_link;
 		$template_args['is_primary'] = $this->_is_primary;
 		$template_args['SPCO_attendee_information_url'] = $this->_SPCO_attendee_information_url;
+
+		$template_args['resend_reg_confirmation_url'] = add_query_arg(
+			array( 'e_reg_url_link'=>$this->_reg_url_link, 'resend' => 'reg_confirmation' ),
+			EE_Registry::instance()->CFG->core->thank_you_page_url()
+		);
 		// verify template arguments
 		EEH_Template_Validator::verify_instanceof( $template_args['transaction'], '$transaction', 'EE_Transaction' );
 		EEH_Template_Validator::verify_isnt_null( $template_args['SPCO_attendee_information_url'], '$SPCO_attendee_information_url');
 		echo EEH_Template::locate_template( THANK_YOU_TEMPLATES_PATH . 'thank-you-page-registration-details.template.php', $template_args, TRUE, TRUE );
+	}
+
+
+
+	/**
+	 * 	resend_reg_confirmation_email
+	 */
+	public static function resend_reg_confirmation_email() {
+		// was a REG_ID passed ?
+		if ( EE_Registry::instance()->load_core( 'Request_Handler' )->is_set( 'reg_url_link' )) {
+			// get registration from reg_url_link
+			$registration = EE_Registry::instance()->load_model( 'Registration' )->get_one( array( array( 'REG_url_link' => EE_Registry::instance()->REQ->get( 'reg_url_link' ))));
+			if ( $registration instanceof EE_Registration ) {
+				// resend email
+				EE_Registry::instance()->load_lib( 'Messages_Init' )->process_resend( TRUE, array( '_REG_ID' => $registration->ID() ));
+			} else {
+				EE_Error::add_error(
+					__( 'The Registration Confirmation email could not be sent because a valid Registration could not be retrieved from the database.', 'event_espresso' ),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+			}
+		} else {
+			EE_Error::add_error(
+				__( 'The Registration Confirmation email could not be sent because a registration URL link is missing or invalid.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+		}
+		// request sent via AJAX ?
+		if ( EE_FRONT_AJAX ) {
+			echo json_encode( EE_Error::get_notices( FALSE ));
+			die();
+		// or was JS disabled ?
+		} else {
+			// save errors so that they get picked up on the next request
+			EE_Error::get_notices( TRUE, TRUE );
+			wp_safe_redirect(
+				add_query_arg(
+					array( 'e_reg_url_link'=> EE_Registry::instance()->REQ->get( 'e_reg_url_link' )),
+					EE_Registry::instance()->CFG->core->thank_you_page_url()
+				)
+			);
+		}
 	}
 
 
@@ -372,14 +511,15 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
 		<div id="espresso-thank-you-page-ajax-payment-dv"></div>
 		<div id="espresso-thank-you-page-ajax-loading-dv">
-			<div id="ee-ajax-loading-pg" class="left lt-blue-text">
-				<span class="dashicons dashicons-upload"></span><?php _e( 'loading transaction and payment information...', 'event_espresso' );?>
+			<div id="ee-ajax-loading-dv" class="left lt-blue-text">
+				<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e( 'loading transaction and payment information...', 'event_espresso' );?></span>
 			</div>
-			<p class="highlight-bg small-text clear">
+			<p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
 				<?php echo apply_filters( 'EES_Espresso_Thank_You__get_ajax_content__waiting_for_IPN_msg', __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' ));?><br/>
 				<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' );?><span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
 			</p>
 		</div>
+		<div class="clear"></div>
 	</div>
 <?php
 	}
@@ -411,18 +551,54 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 
 	/**
-	 * 	get_payment_details
+	 * 	get_payment_row_html
 	 *
 	 *  @access 	public
+	 *  @param 	EE_Payment	$payment
 	 *  @return 	string
 	 */
-	public function get_payment_details() {
+	public function get_payment_row_html( $payment = NULL ) {
+		$html = '';
+		if ( $payment instanceof EE_Payment ) {
+			$html .= '
+				<tr>
+					<td>
+						' . $payment->timestamp() . '
+					</td>
+					<td>
+						' . $payment->gateway() . '
+					</td>
+					<td class="jst-rght">
+						' . EEH_Template::format_currency( $payment->amount() ) . '
+					</td>
+					<td class="jst-rght">
+						' . $payment->pretty_status( TRUE ) . '
+					</td>
+				</tr>';
+		}
+		return $html;
+	}
+
+
+
+	/**
+	 *    get_payment_details
+	 *
+	 * @access    public
+	 * @param array $payments
+	 * @return    string
+	 */
+	public function get_payment_details( $payments = array() ) {
+		if ( empty( $payments )) {
+			return '';
+		}
 		//prepare variables for displaying
 		$template_args = array();
 		$template_args['transaction'] = $this->_current_txn;
 		$template_args['reg_url_link'] = $this->_reg_url_link;
-		//get payments, but order with newest at the top, so users see that first
-		$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
+		foreach ( $payments as $payment ) {
+			$template_args['payments'][] = $this->get_payment_row_html( $payment );
+		}
 		//create a hackey payment object, but dont save it
 		$payment = EE_Payment::new_instance( array(
 			'TXN_ID'=>$this->_current_txn->ID(),
@@ -437,11 +613,29 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		$template_args['SPCO_payment_options_url'] = $this->_SPCO_payment_options_url;
 		// verify template arguments
 		EEH_Template_Validator::verify_instanceof( $template_args['transaction'], '$transaction', 'EE_Transaction' );
-		EEH_Template_Validator::verify_is_array_of( $template_args['payments'], '$payments', 'EE_Payment' );
+		EEH_Template_Validator::verify_isnt_null( $template_args['payments'], '$payments' );
 		EEH_Template_Validator::verify_isnt_null( $template_args['show_try_pay_again_link'], '$show_try_pay_again_link' );
 		EEH_Template_Validator::verify_isnt_null( $template_args['gateway_content'], '$gateway_content');
 		EEH_Template_Validator::verify_isnt_null( $template_args['SPCO_payment_options_url'], '$SPCO_payment_options_url');
 		return EEH_Template::locate_template( THANK_YOU_TEMPLATES_PATH . 'thank-you-page-payment-details.template.php', $template_args, TRUE, TRUE );
+	}
+
+
+
+	/**
+	 *    get_payment_details
+	 *
+	 * @access    public
+	 * @param array $payments
+	 * @return    string
+	 */
+	public function get_new_payments( $payments = array() ) {
+		$payments_html = '';
+		//prepare variables for displaying
+		foreach ( $payments as $payment ) {
+			$payments_html .= $this->get_payment_row_html( $payment );
+		}
+		return $payments_html;
 	}
 
 

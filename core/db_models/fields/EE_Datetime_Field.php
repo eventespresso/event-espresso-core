@@ -242,6 +242,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 */
 	public function prepare_for_set_with_new_time($time_to_set_string, $current_datetime_value ){
 		$this->_set_date_obj( date( $this->_date_format . ' ' . $this->_time_format, $current_datetime_value), 'UTC' );
+		if ( ! $this->_date instanceof DateTime ) {
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+		}
 		return $this->_prepare_for_set_new( $time_to_set_string, TRUE );
 	}
 
@@ -257,6 +260,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 */
 	public function prepare_for_set_with_new_date($date_to_set_string, $current_datetime_value ){
 		$this->_set_date_obj( date( $this->_date_format  . ' ' . $this->_time_format, $current_datetime_value ), 'UTC' );
+		if ( ! $this->_date instanceof DateTime ) {
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+		}
 		return $this->_prepare_for_set_new( $date_to_set_string );
 	}
 
@@ -328,9 +334,12 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$dtvalue = (int) $dtvalue;
 		$datetime = date( 'Y-m-d H:i:s', $dtvalue );
 		$this->_set_date_obj( $datetime, 'UTC' );
+		if ( ! $this->_date instanceof DateTime ) {
+			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+		}
 		$this->_date->setTimezone( new DateTimeZone( $this->_timezone ) );
-
 		return $this->_date->format( $format );
+
 	}
 
 
@@ -349,6 +358,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return int                         UTC UnixTimestamp
 	 */
 	private function _prepare_for_set_new( $datetimeadjustment, $is_time = FALSE ) {
+
 		//first let's parse the incoming string
 		$parsed = date_parse( $datetimeadjustment );
 
@@ -380,7 +390,6 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string 		unix timestampe for utc
 	 */
 	private function _convert_to_utc_unixtimestamp( $datetime ) {
-
 		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime );
 		return $timestamp;
 	}
@@ -397,8 +406,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		$datetime = strtotime($datetime);
 
 		//if we don't have a datetime at this point then something has gone wrong
-		if ( !$datetime )
+		if ( ! $datetime ) {
 			throw new EE_Error( __('Something went wrong with setting the date/time.  Likely, either there is an invalid timezone string or invalid timestamp being used.', 'event_espresso' ) );
+		}
 
 		//return to default for PHP
 		date_default_timezone_set('UTC');
@@ -416,8 +426,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		//create a new datetime object using the given string and timezone
 		$this->_set_date_obj( $datetime, $this->_timezone );
 
-		if ( !$this->_date )
+		if ( ! $this->_date instanceof DateTime ) {
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
+		}
 
 		$this->_date->setTimezone( EE_Datetime_Field::get_UTC_DateTimeZone() );
 		return $this->_date->format('U');
@@ -449,6 +460,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 				'<a href="http://www.php.net/manual/en/timezones.php">',
 				'</a>'
 			));
+			return FALSE;
 		}
 		return TRUE;
 	}
@@ -542,23 +554,32 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 
 	/**
-	 * This is used to set the $_date property using the PHP DateTime object for internal calcluations and timezone settings
-	 * @param string $datestring Incoming date/time string in an acceptable format
+	 * This is used to set the $_date property using the PHP DateTime object for internal calculations and timezone settings
+	 * @param string $date_string Incoming date/time string in an acceptable format
 	 * @param string $timezone   Valid Timezone for dates
 	 * @return void
 	 */
-	private function _set_date_obj( $datestring, $timezone ) {
-		try{
-			$this->_date = new DateTime( $datestring, new DateTimeZone( $timezone ) );
-		}catch(Exception $e){
+	private function _set_date_obj( $date_string, $timezone ) {
+		try {
+			$this->_date = new DateTime( $date_string, new DateTimeZone( $timezone ));
+		} catch( Exception $e ) {
 			//probably a badly formatted date string
-			//maybe it's the Microsoft excel format '16/08/2013 8:58' ?
-			try{
-				$format = 'd/m/Y H:i';
-				$this->_date = DateTime::createFromFormat($format, $datestring, new DateTimeZone( $timezone ));
-			}catch(Exception $e){
-				//ok give up, but dont throw an error
-				$this->_date = new DateTime(null, new DateTimeZone( $timezone ));
+			try {
+				if ( version_compare( PHP_VERSION, '5.3.0' ) >= 0 ) {
+					// maybe it's the Microsoft excel format '16/08/2013 8:58' ?
+					$this->_date = DateTime::createFromFormat( 'd/m/Y H:i', $date_string, new DateTimeZone( $timezone ));
+				} else {
+					//change 'd/m/Y H:i'  to 'd-m-Y H:i'  because of how strtotime() interprets date formats. see: http://www.php.net/manual/en/datetime.formats.date.php
+					$this->_date = new DateTime( date( 'd-m-Y H:i', strtotime( $date_string )), new DateTimeZone( $timezone ));
+				}
+			} catch( Exception $e ) {
+				// because DateTime chokes on some formats, check if strtotime fails, and throw error regarding bad format
+				if ( strtotime( $date_string ) == 0 ) {
+					throw new Exception( sprintf( __('The following date time \'%s\' can not be parsed by PHP due to it\'s formatting.%sYou may need to choose a more standard date time format. Please check your WordPress Settings.', 'event_espresso' ), $date_string, '<br />' ));
+				} else {
+					//ok give up, but don't throw an error
+					$this->_date = new DateTime( NULL, new DateTimeZone( $timezone ));
+				}
 			}
 		}
 	}

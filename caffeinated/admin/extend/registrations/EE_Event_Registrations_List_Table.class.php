@@ -197,7 +197,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$name_link = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>';
-		$name_link .= $item->count() == 1 ? '<img class="primary-attendee-star-img" src="' . EE_GLOBAL_ASSETS_URL . 'images/star-8x8.png" width="8" height="8" alt="this is the primary registrant"/>' : '';
+		$name_link .= $item->count() == 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>	' : '';
 
 		$actions = array();
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
@@ -279,7 +279,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( $item->count() == 1 ) {
 
 			if ( $item->transaction()->paid() >= $item->transaction()->total() ) {
-				return '<span class="reg-pad-rght"><img class="" src="' . EE_GLOBAL_ASSETS_URL . 'images/check-mark-16x16.png" width="16" height="16" alt="Paid in Full"/></span>';
+				return '<span class="reg-pad-rght"><div class="dashicons dashicons-yes green-icon"></div></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
 				return '
