@@ -134,7 +134,7 @@ final class EE_Config {
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
-		$this->addons = new StdClass();
+		$this->addons = apply_filters('FHEE__EE_Config__construct__addons', new stdClass() );
 //		$this->addons = array();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
