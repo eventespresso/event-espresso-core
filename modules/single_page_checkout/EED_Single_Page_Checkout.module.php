@@ -43,19 +43,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_primary_revisit = FALSE;
 	// is registration allowed to progress or halted for some reason such as failing to pass recaptcha?
 	private $_continue_reg = TRUE;
-	// array of tempate paths
+	// array of template paths
 	private $_templates = array();
 	// info for each of the reg steps
 	private static $_reg_steps = array();
-	// if a payment method was selected that uses an on-site gateway, then this is the billing form
 	/**
-	 *
-	 * @var EE_Billing_Info_Form
+	 * 	if a payment method was selected that uses an on-site gateway, then this is the billing form
+	 * @type EE_Billing_Info_Form
 	 */
 	private $_billing_form = NULL;
 	// string slug for the payment method that was selected during the payment options step
 	private $_selected_method_of_payment = NULL;
-	// the related attendee object for the primary registrant
+	/**
+	 * 	the related attendee object for the primary registrant
+	 * @type EE_Attendee
+	 */
 	private $_primary_attendee_obj = NULL;
 
 
@@ -512,7 +514,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 				$first_datetime = $ticket->get_first_related( 'Datetime' );
 				if ( ! $first_datetime instanceof EE_Datetime ){
-					EE_Error::add_error(sprintf(__("The ticket (%s) is not associated with any valid datetimes.", "event_espresso"),$ticket->name()), __FILE__, __FUNCTION__, __LINE___);
+					EE_Error::add_error(sprintf(__("The ticket (%s) is not associated with any valid datetimes.", "event_espresso"),$ticket->name()), __FILE__, __FUNCTION__, __LINE__ );
 					continue;
 				}
 				$event = $first_datetime->get_first_related( 'Event' );
@@ -627,10 +629,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	nocache_headers_nginx
+	 *    nocache_headers_nginx
 	 *
-	 *  @access 	public
-	 *  @return 	array
+	 * @access    public
+	 * @param $headers
+	 * @return    array
 	 */
 	public static function nocache_headers_nginx ( $headers ) {
 		$headers['X-Accel-Expires'] = 0;
@@ -655,7 +658,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *
 	 * @access 	public
 	 * @param 	bool $from_admin
-	 * @return 	string
+	 * @return 	mixed void | string
 	 */
 	public function registration_checkout( $from_admin = FALSE ) {
 
@@ -982,7 +985,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// has method_of_payment been set by no-js user?
 				if ( $this->_selected_method_of_payment = $this->_get_selected_method_of_payment() ) {
 					// get EE_Payment_Method object
-					if ( $this->_payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->_selected_method_of_payment ) ) {
+					$this->_payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->_selected_method_of_payment );
+					if ( $this->_payment_method ) {
 						$this->_get_billing_form();
 					}
 				}
@@ -1035,6 +1039,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		d( $wrapper_args );
 		EE_Registry::instance()->REQ->add_output( EEH_Template::locate_template( $this->_templates[ 'registration_page_wrapper' ], $wrapper_args, TRUE, TRUE ));
 
+		return '';
+
 	}
 
 
@@ -1074,13 +1080,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-
 	/**
 	 * _get_payment_method_for_selected_method_of_payment
 	 * retreives a valid payment method
 	 *
 	 * @access public
-	 * @return string html
+	 * @param null $selected_method_of_payment
+	 * @return \EE_Payment_Method
 	 */
 	private function _get_payment_method_for_selected_method_of_payment( $selected_method_of_payment = NULL ) {
 		// if not passed, then get selected method of payment
@@ -1121,10 +1127,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * _get_billing_form
 	 *
 	 * @access private
-	 * @return string html
+	 * @return bool
 	 */
 	private function _get_billing_form() {
-		// get billing formfor the selected payment method
+		// get billing form for the selected payment method
 		$this->_billing_form = $this->_payment_method->type_obj()->billing_form();
 		if ( $this->_billing_form instanceof EE_Billing_Info_Form ) {
 			if ( $this->_billing_form->was_submitted() ) {
@@ -1135,6 +1141,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			}
 		}
+		return TRUE;
 	}
 
 
@@ -1153,7 +1160,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->init_for_admin();
 
 		//do native registration_checkout
-		return $this->registration_checkout( TRUE );
+		$this->registration_checkout( TRUE );
 	}
 
 
@@ -1250,7 +1257,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$registrations = $this->_transaction->registrations( array(), TRUE );
 					if ( ! empty( $registrations )) {
 						EE_Registry::instance()->load_model( 'Attendee' );
-						$primary_attendee_obj = NULL;
+						$this->_primary_attendee_obj = NULL;
 						// grab the saved registrations from the transaction
 						foreach ( $registrations  as $registration ) {
 							// verify EE_Registration object
@@ -1260,7 +1267,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								// OR b) another registrant is editing info, so ONLY process their registration
 								if ( ! $this->_revisit || $this->_primary_revisit || ( $this->_revisit && $this->_reg_url_link == $registration->reg_url_link() )) {
 									// reg_url_link / line item ID exists ?
-									if ( $line_item_id = $registration->reg_url_link() ) {
+									$line_item_id = $registration->reg_url_link();
+									if ( $line_item_id ) {
 //										echo '<h5 style="color:#2EA2CC;">$line_item_id : <span style="color:#E76700">' . $line_item_id . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 										// Houston, we have a registration!
 										$att_nmbr++;
@@ -1373,7 +1381,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	//									printr( $attendee_data, '$attendee_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 										// this registration does not require additional attendee information ?
-										if ( $copy_primary && $att_nmbr > 1 ) {
+										if ( $copy_primary && $att_nmbr > 1 && $this->_primary_attendee_obj instanceof EE_Attendee ) {
 	//										echo '<h1>$copy_primary && $att_nmbr > 1  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 											// add relation to new attendee
 											$registration->_add_relation_to( $this->_primary_attendee_obj,
@@ -1730,7 +1738,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// if payment required
 			if ( $this->_transaction->total() > 0 ) {
 				// attempt payment via payment method
-				$payment = $this->_process_payment();
+				$this->_process_payment();
 			}
 		}
 		$this->_next_step = FALSE;
@@ -1746,7 +1754,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	_process_payment
 	 *
 	 * 	@access private
-	 * 	@return 	void
+	 * 	@return 	bool
 	 */
 	private function _process_payment() {
 		// clear any previous errors related to not selecting a payment method
@@ -1781,7 +1789,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} else {
 			$this->_redirect_to_thank_you_page = TRUE;
 		}
-
+		return TRUE;
 	}
 
 
@@ -1801,8 +1809,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$payment = EE_Registry::instance()->load_core( 'Payment_Processor' )->process_payment(
 			$payment_method,
 			$this->_transaction,
-			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ), 
-			$this->_billing_form, 
+			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ),
+			$this->_billing_form,
 			$this->_thank_you_page_url
 		);
 		// verify payment object
@@ -1906,7 +1914,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// Default REG Status is set to PENDING PAYMENT OR APPROVED, and payments are allowed
 			} else if ( $this->_transaction->total() > 0 ) {
 				// attempt payment via payment method
-				$payment = $this->_process_payment();
+				$this->_process_payment();
 			} else {
 				// set TXN Status to Open
 				$this->_transaction->set_status( EEM_Transaction::complete_status_code );
