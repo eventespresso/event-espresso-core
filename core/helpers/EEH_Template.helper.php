@@ -227,14 +227,14 @@ class EEH_Template {
 	 * @param bool|string $template_path server path to the file to be loaded, including file name and extension
 	 * @param  array      $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean    $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @return mixed boolean | string
+	 * @return mixed string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $template_path || ! is_readable( $template_path )) {
-			return FALSE;
+			return '';
 		}
 		// if $template_args are not in an array, then make it so
 		if ( ! is_array( $template_args ) && ! is_object( $template_args )) {
@@ -250,7 +250,7 @@ class EEH_Template {
 		} else {
 			include( $template_path );
 		}
-		return FALSE;
+		return '';
 	}
 
 
@@ -510,7 +510,7 @@ class EEH_Template {
 		$data = (array)$data;
 	}
 	EE_Registry::instance()->load_helper('Array');
-	ob_start();			
+	ob_start();
 	if (is_array($data)) {
 		if (EEH_Array::is_associative_array($data)) {
 			?>
