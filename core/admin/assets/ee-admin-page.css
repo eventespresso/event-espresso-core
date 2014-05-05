@@ -545,10 +545,6 @@ label.error { display : block; color : #FE2A00 !important; }
 	content : "\f139";
 }
 
-.ee-numeric {
-	text-align : right;
-}
-
 /* Admin theme specific colors */
 .ee-alternate-color {
 	color : #E6E6E6;
@@ -652,3 +648,31 @@ label.error { display : block; color : #FE2A00 !important; }
 	cursor : pointer;
 }
 
+/***************************/
+/** EE-INPUT-SELECTORS**/
+/**************************/
+.ee-text-inp, .ee-small-text-inp {
+    width: 100%;
+}
+
+.ee-small-text-inp {
+    max-width: 100%;
+    min-width:  50px;
+}
+
+.ee-large-text-inp {
+    width: 100%;
+}
+
+.ee-full-textarea-inp {
+    width: 100%;
+    height: 100px;
+}
+
+.ee-inp-right {
+    text-align: right;
+}
+
+.ee-numeric {
+	text-align : right;
+}
