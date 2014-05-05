@@ -195,7 +195,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			return EES_Espresso_Thank_You::resend_reg_confirmation_email();
 		}
 		// soon to be derprecated
-		EE_Registry::instance()->load_core( 'Payment_Processor' )->finalize_payment_for($this->_current_txn);				
+		EE_Registry::instance()->load_core( 'Payment_Processor' )->finalize_payment_for($this->_current_txn);
 		//EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
 		//@todo: still need to reset some session data once we arrive here?
 		// load assets
@@ -207,7 +207,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
 		return;
 	}
-	
+
 
 	/**
 	 * 	load_js
@@ -566,7 +566,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 						' . $payment->timestamp() . '
 					</td>
 					<td>
-						' . $payment->gateway() . '
+						' . $payment->payment_method()->name() . '
 					</td>
 					<td class="jst-rght">
 						' . EEH_Template::format_currency( $payment->amount() ) . '
