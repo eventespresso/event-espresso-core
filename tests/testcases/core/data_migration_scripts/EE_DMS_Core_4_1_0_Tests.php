@@ -18,7 +18,12 @@
  * @subpackage 	tests
  */
 class EE_DMS_Core_4_1_0_Tests extends EE_UnitTestCase {
-
+	public function setUp() {
+		if( ! class_exists('EE_DMS_Core_4_1_0')){
+			EE_Data_Migration_Manager::instance()->get_all_data_migration_scripts_available();
+		}
+		parent::setUp();
+	}
 	function test_esp_answer_exists() {
 		$this->assertTrue( $this->table_exists_check( 'esp_answer' ) );
 	}
@@ -158,6 +163,9 @@ class EE_DMS_Core_4_1_0_Tests extends EE_UnitTestCase {
 		$table_name = $wpdb->prefix . $name;
 		return $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
 	}
+	/**
+	 * @group data_migration_scripts
+	 */
 	function test_can_migrate(){
 		$dms = new EE_DMS_Core_4_1_0();
 		$this->assertTrue($dms->can_migrate_from_version(array('Core'=>'3.1.36')));
