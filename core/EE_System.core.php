@@ -95,7 +95,7 @@ final class EE_System {
 		// check required WP version
 		if ( ! $this->_minimum_wp_version_required() ) {
 			unset( $_GET['activate'] );
-			add_action( 'admin_notices', 'espresso_minimum_wp_version_error', 1 );
+			add_action( 'admin_notices', array( $this, 'minimum_wp_version_error' ), 1 );
 			exit();
 		}
 		// check recommended WP version
@@ -182,12 +182,11 @@ final class EE_System {
 
 
 	/**
-	 * 	_minimum_wp_version_error
+	 * 	minimum_wp_version_error
 	 *
-	 * 	@access private
 	 * 	@return void
 	 */
-	private function _minimum_wp_version_error() {
+	public function minimum_wp_version_error() {
 		global $wp_version;
 		?>
 		<div class="error">

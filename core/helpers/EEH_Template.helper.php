@@ -80,11 +80,12 @@ class EEH_Template {
 	 */
 	public static function load_espresso_theme_functions() {
 		if ( ! defined( 'EE_THEME_FUNCTIONS_LOADED' )) {
-			if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'functions.php' )) {
-				require_once( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'functions.php' );
+			if ( is_readable( EE_PUBLIC . EE_Config::get_current_theme() . DS . 'functions.php' )) {
+				require_once( EE_PUBLIC . EE_Config::get_current_theme() . DS . 'functions.php' );
 			}
 		}
 	}
+
 
 	/**
 	 * 	get_espresso_themes - returns an array of Espresso Child themes located in the /templates/ directory
@@ -93,7 +94,7 @@ class EEH_Template {
 	 */
 	public static function get_espresso_themes() {
 		if ( empty( EEH_Template::$_espresso_themes )) {
-			$espresso_themes =  glob( EE_TEMPLATES . '*', GLOB_ONLYDIR );
+			$espresso_themes =  glob( EE_PUBLIC . '*', GLOB_ONLYDIR );
 			if (( $key = array_search( 'global_assets', $espresso_themes )) !== FALSE ) {
 			    unset( $espresso_themes[ $key ] );
 			}
@@ -177,7 +178,9 @@ class EEH_Template {
 				EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme,
 				// then in the root of the /wp-content/uploads/espresso/templates/ folder
 				EVENT_ESPRESSO_TEMPLATE_DIR,
-				// in the  /wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ folder within the plugin
+				// in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
+				EE_PUBLIC . $current_theme,
+				// in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
 				EE_TEMPLATES . $current_theme,
 				// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
 				EE_PLUGIN_DIR_PATH
@@ -207,7 +210,7 @@ class EEH_Template {
 			}
 		}
 		// if we got it and you want to see it...
-		if ( is_readable( $template_path ) && $load ) {
+		if ( $template_path && $load ) {
 			if ( $return_string ) {
 				return EEH_Template::display_template( $template_path, $template_args, $return_string );
 			} else {
@@ -224,14 +227,14 @@ class EEH_Template {
 	 * @param bool|string $template_path server path to the file to be loaded, including file name and extension
 	 * @param  array      $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean    $return_string whether to send output immediately to screen, or capture and return as a string
-	 * @return mixed boolean | string
+	 * @return mixed string
 	 */
 	public static function display_template( $template_path = FALSE, $template_args = array(), $return_string = FALSE ) {
 		//require the template validator for verifying variables are set according to how the template requires
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
 		// you gimme nuttin - YOU GET NUTTIN !!
 		if ( ! $template_path || ! is_readable( $template_path )) {
-			return FALSE;
+			return '';
 		}
 		// if $template_args are not in an array, then make it so
 		if ( ! is_array( $template_args ) && ! is_object( $template_args )) {
@@ -247,7 +250,7 @@ class EEH_Template {
 		} else {
 			include( $template_path );
 		}
-		return FALSE;
+		return '';
 	}
 
 
@@ -507,7 +510,7 @@ class EEH_Template {
 		$data = (array)$data;
 	}
 	EE_Registry::instance()->load_helper('Array');
-	ob_start();			
+	ob_start();
 	if (is_array($data)) {
 		if (EEH_Array::is_associative_array($data)) {
 			?>

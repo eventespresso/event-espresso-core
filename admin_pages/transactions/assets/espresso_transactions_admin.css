@@ -1,7 +1,6 @@
-.espresso-admin .form-table th { max-width:!important 30%; min-width:!important 20%; }
-.espresso-admin .form-table td { max-width:!important 79%; min-width:!important 69%; }
-.espresso-admin .regular-text { width:!important 98%; }
-#icon-options-event { background: url("../../../templates/global_assets/images/events_icon_32.png") no-repeat scroll 0 0 transparent; }
+.espresso-admin .form-table th { max-width: 30%!important; min-width: 20%!important; }
+.espresso-admin .form-table td { max-width: 79%!important; min-width: 69%!important; }
+.espresso-admin .regular-text { width: 98%!important; }
 #entries-per-page-dv { display:inline; }
 
 .wrap .nav-tab-wrapper { margin-bottom:1em; }
@@ -128,7 +127,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .payment-date-dv { width: 100px; }
 
 .admin-side-mbox-dv { margin:1em 0 2em; }
-.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0px 1px 0px #fff; }
+.admin-side-mbox-dv p { margin:.5em 0; line-height:1.2em; color:#333; text-shadow:0 1px 0px #fff; }
 .admin-side-mbox-label-spn { width:30%; padding-right:.5em; text-align:right; }
 .admin-side-mbox-text-dv { padding-left:.5em; margin:0 0 1em 30%; }
 
@@ -138,9 +137,9 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 .admin-modal-dialog-wrap,
 .admin-primary-mbox-tbl-wrap,
 .admin-primary-mbox-tbl-wrap-inner {
-    padding:3px; margin:0em 0 2em;
+    padding:3px; margin:0 0 2em;
     background:#fff; border:1px solid #dfdfdf;
-    border-radius:3px; -moz-border-radius:3px;  -webkit-border-radius:3px;
+    border-radius:3px;
 }
 .admin-primary-mbox-tbl {
     width:100%; border-spacing: 0; border-collapse:collapse;
@@ -192,7 +191,7 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
     display:block; width:auto; padding:3px 6px;; margin:0;
     background: none repeat scroll 0 0 #FFFFFF; border: 1px solid #DFDFDF; border-radius: 3px 3px 3px 3px;
     color: #666; cursor: pointer; vertical-align:middle;
-    
+
 }*/
 
 
@@ -254,10 +253,8 @@ td.column-TXN_ID { padding: 4px 7px  29px; }
 }
 .jqplot-point-label {
     padding:0 .5em;
-    background:#fff; border:1px solid #ddd; 
-    border-radius:3px; -moz-border-radius:3px;  -webkit-border-radius:3px;
+    background:#fff; border:1px solid #ddd;
+    border-radius:3px;
     font-size:12px; color:#333;
-    -webkit-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
-    -moz-box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
-    box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1); 
+    box-shadow: 1px 1px 1px rgba(0,0,0,.2), 3px 3px 2px rgba(0,0,0,.1);
 }

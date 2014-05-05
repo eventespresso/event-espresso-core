@@ -43,19 +43,21 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_primary_revisit = FALSE;
 	// is registration allowed to progress or halted for some reason such as failing to pass recaptcha?
 	private $_continue_reg = TRUE;
-	// array of tempate paths
+	// array of template paths
 	private $_templates = array();
 	// info for each of the reg steps
 	private static $_reg_steps = array();
-	// if a payment method was selected that uses an on-site gateway, then this is the billing form
 	/**
-	 *
-	 * @var EE_Billing_Info_Form
+	 * 	if a payment method was selected that uses an on-site gateway, then this is the billing form
+	 * @type EE_Billing_Info_Form
 	 */
 	private $_billing_form = NULL;
 	// string slug for the payment method that was selected during the payment options step
 	private $_selected_method_of_payment = NULL;
-	// the related attendee object for the primary registrant
+	/**
+	 * 	the related attendee object for the primary registrant
+	 * @type EE_Attendee
+	 */
 	private $_primary_attendee_obj = NULL;
 
 
@@ -84,18 +86,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-	/**
-	 *		@singleton method used to instantiate class object
-	 *		@access public
-	 *		@return EED_Single_Page_Checkout
-	 */
-	public static function instance ( ) {
-		// check if class object is instantiated
-		if ( ! self::$_instance instanceof EED_Single_Page_Checkout ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
 
 
 
@@ -218,26 +208,32 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	ajax_process_registration_steps
 	 */
 	public static function process_attendee_information() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		EED_Single_Page_Checkout::instance()->_current_step = 'attendee_information';
-		EED_Single_Page_Checkout::instance()->init();
-		EED_Single_Page_Checkout::instance()->_process_attendee_information();
+		$SPCO = EED_Single_Page_Checkout::instance();
+		if ( $SPCO instanceof EED_Single_Page_Checkout ) {
+			$SPCO->_current_step = 'attendee_information';
+			$SPCO->init();
+			$SPCO->_process_attendee_information();
+		}
 	}
 
 
 	public static function process_payment_options() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		EED_Single_Page_Checkout::instance()->_current_step = 'payment_options';
-		EED_Single_Page_Checkout::instance()->init();
-		EED_Single_Page_Checkout::instance()->_process_payment_options();
+		$SPCO = EED_Single_Page_Checkout::instance();
+		if ( $SPCO instanceof EED_Single_Page_Checkout ) {
+			$SPCO->_current_step = 'payment_options';
+			$SPCO->init();
+			$SPCO->_process_payment_options();
+		}
 	}
 
 
 	public static function process_registration_confirmation() {
-//		echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
-		EED_Single_Page_Checkout::instance()->_current_step = 'registration_confirmation';
-		EED_Single_Page_Checkout::instance()->init();
-		EED_Single_Page_Checkout::instance()->_process_registration_confirmation();
+//		$SPCO = EED_Single_Page_Checkout::instance();
+//		if ( $SPCO instanceof EED_Single_Page_Checkout ) {
+//			$SPCO->_current_step = 'registration_confirmation';
+//			$SPCO->init();
+//			$SPCO->_process_registration_confirmation();
+//		}
 	}
 
 
@@ -285,7 +281,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
-//		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// make sure reg steps array is setup
 		if ( empty( self::$_reg_steps )) {
 			EED_Single_Page_Checkout::setup_reg_steps_array();
@@ -296,14 +291,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// grab what step we're on
 		$this->_current_step = ! empty( $this->_current_step )  ? $this->_current_step : 'attendee_information';
 		$this->_current_step = EE_Registry::instance()->REQ->is_set( 'step' ) ? EE_Registry::instance()->REQ->get( 'step' ) : $this->_current_step;
-//		echo '<br/><h5 style="color:#2EA2CC;">$this->_current_step : <span style="color:#E76700">' . $this->_current_step . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// returning from the thank you page ?
 		$this->_reg_url_link = EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' ) ? EE_Registry::instance()->REQ->get( 'e_reg_url_link' ) : FALSE;
 		// if reg_url_link is present in the request, then we are only being sent back to SPCO to retry the payment
 		if ( $this->_reg_url_link ) {
 			// are we returning to the page to edit attendee info or retry a payment?
 			$this->_revisit = EE_Registry::instance()->REQ->is_set( 'revisit' ) && EE_Registry::instance()->REQ->get( 'revisit' ) == 1 ? TRUE : FALSE;
-//			echo '<h5 style="color:#2EA2CC;">$this->_revisit : <span style="color:#E76700">' . $this->_revisit . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 			if ( $this->_revisit ) {
 				// remove all other pages from the reg steps array except the one required by the revisit
 				self::$_reg_steps = array_intersect_key( self::$_reg_steps, array( $this->_current_step => TRUE ));
@@ -324,16 +317,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //						d( $registration );
 						// verify registration
 						if ( $registration instanceof EE_Registration ) {
-//							echo '<h5 style="color:#2EA2CC;">$registration->reg_url_link() : <span style="color:#E76700">' . $registration->reg_url_link() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 							// we display all attendee info for the primary registrant
 							if ( $this->_reg_url_link == $registration->reg_url_link() && $registration->is_primary_registrant() ) {
-//								echo '<h5 style="color:#2EA2CC;">$registration->is_primary_registrant() : <span style="color:#E76700">' . $registration->is_primary_registrant() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 								$this->_primary_revisit = TRUE;
 								break;
 							} else if ( $this->_reg_url_link != $registration->reg_url_link() ) {
 								// but hide info if it doesn't belong to you
 								$this->_transaction->clear_cache( 'Registration', $registration->ID() );
-//								echo '<h5 style="color:#2EA2CC;">clear me : <span style="color:#E76700">' . $registration->ID() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 							}
 						}
 					}
@@ -343,6 +333,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 		} else {
 			$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
+//			printr( $this->_transaction, '$this->_transaction <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			$this->_cart = EE_Registry::instance()->load_core( 'Cart' );
 //			printr( $this->_transaction->registrations(), '$this->_transaction->registrations()  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		}
@@ -355,21 +346,18 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			if ( ! $this->_revisit && $ID = $this->_transaction->ID() ) {
 				// but if this transaction has already been saved to the db earlier in the same session (ie: it's not a revisit)... then let's pull that
-//				echo '<h5 style="color:#2EA2CC;">$ID : <span style="color:#E76700">' . $ID . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
 					EE_Error::add_error( __( 'Your Registration and Transaction information could not be retreived from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-					return FALSE;
+					return;
 				}
 			}
 		} elseif ( ! $this->_revisit ) {
-//			echo '<h1>_initialize_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 			$this->_initialize_transaction();
 		} else {
 
 		}
 		// and verify registrations have been set (first check cached REGs)
 		if ( $this->_transaction instanceof EE_Transaction && $this->_transaction->registrations( array(), TRUE ) == NULL ) {
-//			echo '<h1>registrations  NULL<br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 			// then check the db
 			if ( $this->_transaction->registrations() == NULL ) {
 				$this->_initialize_registrations();
@@ -388,7 +376,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// load css and js
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'load_css' ), 10 );
 		add_action( 'wp_enqueue_scripts', array( 'EED_Single_Page_Checkout', 'load_js' ), 10 );
-//		die();
 
 	}
 
@@ -398,6 +385,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * sorts registrations by REG_count
 	 *
 	 * @access public
+	 * @param EE_Registration $reg_A
+	 * @param EE_Registration $reg_B
 	 * @return array()
 	 */
 	public static function sort_registrations_by_REG_count( EE_Registration $reg_A, EE_Registration $reg_B ) {
@@ -456,7 +445,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// verify transaction
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			// but if this transaction has already been saved to the db... then let's pull that
-			if ( $ID = $this->_transaction->ID() ) {
+			$ID = $this->_transaction->ID();
+			if ( $ID ) {
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
 					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					return;
@@ -489,13 +479,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return void
 	 */
 	private function _initialize_transaction() {
-		// create new TXN
-		$this->_transaction = EE_Transaction::new_instance( array(
-			'TXN_timestamp' => current_time('mysql'),
-			'TXN_total' => $this->_cart->get_cart_grand_total(),
-			'TXN_paid' => 0,
-			'STS_ID' => EEM_Transaction::failed_status_code,
-		));
+		try {
+			// create new TXN
+			$this->_transaction = EE_Transaction::new_instance( array(
+				'TXN_timestamp' => current_time('mysql'),
+				'TXN_total' => $this->_cart->get_cart_grand_total(),
+				'TXN_paid' => 0,
+				'STS_ID' => EEM_Transaction::failed_status_code,
+			));
+		} catch( Exception $e ) {
+			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+		}
 	}
 
 
@@ -520,7 +514,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 				$first_datetime = $ticket->get_first_related( 'Datetime' );
 				if ( ! $first_datetime instanceof EE_Datetime ){
-					EE_Error::add_error(sprintf(__("The ticket (%s) is not associated with any valid datetimes.", "event_espresso"),$ticket->name()), __FILE__, __FUNCTION__, __LINE___);
+					EE_Error::add_error(sprintf(__("The ticket (%s) is not associated with any valid datetimes.", "event_espresso"),$ticket->name()), __FILE__, __FUNCTION__, __LINE__ );
 					continue;
 				}
 				$event = $first_datetime->get_first_related( 'Event' );
@@ -635,10 +629,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	nocache_headers_nginx
+	 *    nocache_headers_nginx
 	 *
-	 *  @access 	public
-	 *  @return 	array
+	 * @access    public
+	 * @param $headers
+	 * @return    array
 	 */
 	public static function nocache_headers_nginx ( $headers ) {
 		$headers['X-Accel-Expires'] = 0;
@@ -659,10 +654,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 		load and display the Registration Single Page Checkout
+	 *        load and display the Registration Single Page Checkout
 	 *
-	 * 		@access 		public
-	 * 		@return 		void
+	 * @access 	public
+	 * @param 	bool $from_admin
+	 * @return 	mixed void | string
 	 */
 	public function registration_checkout( $from_admin = FALSE ) {
 
@@ -680,8 +676,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$sold_out_events = array();
 		$events_requiring_pre_approval = array();
 		$additional_event_attendees = array();
-		$events_that_use_coupon_codes = array();
-		$events_that_use_groupon_codes = array();
+//		$events_that_use_coupon_codes = array();
+//		$events_that_use_groupon_codes = array();
 
 		$template_args = array(
 			'css_class' => '',
@@ -693,7 +689,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		);
 
 		$event_queue['title'] = __('Registrations', 'event_espresso');
-		$attendee_headings = array();
 		$additional_attendee_forms = FALSE;
 
 		$registrations  =  $this->_transaction->registrations( array(), TRUE );
@@ -702,7 +697,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			//d( $this->_transaction );
 			$event_queue['has_items'] = TRUE;
-			$attendee_questions = array();
 			$prev_event = NULL;
 
 			foreach ( $registrations as $registration ) {
@@ -927,7 +921,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$confirmation_btn_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__finalize_registration', $confirmation_btn_text );
 		}
 		// grand total less than paid but greater than zero ?
-		if ( $grand_total < $this->_transaction->paid() && $grand_total > 0 ) {
+		if ( $grand_total < $this->_transaction->paid() && $grand_total > 0 && $this->_next_step == 'payment_options' ) {
 			// owing money
 			$proceed_to_payment_btn_text = sprintf(
 				// & Proceed to Payment
@@ -935,8 +929,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				'&nbsp;',  // %1$s
 				'&amp;'	// %2$s
 			);
-			$proceed_to_payment_btn_text = apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__and_proceed_to_payment', $proceed_to_payment_btn_text );
-			$confirmation_btn_text .= $confirmation_btn_text;
+			$confirmation_btn_text .=  apply_filters( 'FHEE__EED_Single_Page_Checkout__registration_checkout__button_text__and_proceed_to_payment', $proceed_to_payment_btn_text );
 		}
 		add_action( 'AHEE__SPCO_after_reg_step_form', array( $this, 'add_extra_finalize_registration_inputs' ), 10, 2 );
 
@@ -992,7 +985,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// has method_of_payment been set by no-js user?
 				if ( $this->_selected_method_of_payment = $this->_get_selected_method_of_payment() ) {
 					// get EE_Payment_Method object
-					if ( $this->_payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->_selected_method_of_payment ) ) {
+					$this->_payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->_selected_method_of_payment );
+					if ( $this->_payment_method ) {
 						$this->_get_billing_form();
 					}
 				}
@@ -1044,9 +1038,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		);
 //		d( $wrapper_args );
 		EE_Registry::instance()->REQ->add_output( EEH_Template::locate_template( $this->_templates[ 'registration_page_wrapper' ], $wrapper_args, TRUE, TRUE ));
+
+		return '';
+
 	}
-
-
 
 
 
@@ -1085,13 +1080,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-
 	/**
 	 * _get_payment_method_for_selected_method_of_payment
 	 * retreives a valid payment method
 	 *
 	 * @access public
-	 * @return string html
+	 * @param null $selected_method_of_payment
+	 * @return \EE_Payment_Method
 	 */
 	private function _get_payment_method_for_selected_method_of_payment( $selected_method_of_payment = NULL ) {
 		// if not passed, then get selected method of payment
@@ -1132,10 +1127,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * _get_billing_form
 	 *
 	 * @access private
-	 * @return string html
+	 * @return bool
 	 */
 	private function _get_billing_form() {
-		// get billing formfor the selected payment method
+		// get billing form for the selected payment method
 		$this->_billing_form = $this->_payment_method->type_obj()->billing_form();
 		if ( $this->_billing_form instanceof EE_Billing_Info_Form ) {
 			if ( $this->_billing_form->was_submitted() ) {
@@ -1146,6 +1141,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				}
 			}
 		}
+		return TRUE;
 	}
 
 
@@ -1155,7 +1151,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * this generates the output for the registration form for manual registrations via the admin
 	 *
 	 * @access public
-	 * @return string html
+	 * @return string
 	 */
 	public function registration_checkout_for_admin() {
 
@@ -1164,20 +1160,19 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->init_for_admin();
 
 		//do native registration_checkout
-		return $this->registration_checkout( TRUE );
+		$this->registration_checkout( TRUE );
 	}
 
 
 
-
-
-
 	/**
-	 * 	add_extra_finalize_registration_inputs
+	 *    add_extra_finalize_registration_inputs
 	 *
-	 * 	@access 	public
-	 * 	@param 	string 	$label
-	 * 	@return 		string
+	 * @access    public
+	 * @param $current_step
+	 * @param $next_step
+	 * @internal  param string $label
+	 * @return        string
 	 */
 	public function add_extra_finalize_registration_inputs( $current_step, $next_step ) {
 		if ( $next_step == 'finalize_registration' ) {
@@ -1194,7 +1189,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *
 	 * 	@access 	public
 	 * 	@param 	string 	$label
-	 * 	@return 		string
+	 * 	@return 	string
 	 */
 	public static function reg_form_form_field_label_wrap( $label ) {
 		return '<div class="reg-page-form-field-wrap-pg">' . $label;
@@ -1209,7 +1204,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@access 	public
 	 * 	@param 	string 	$input
 	 * 	@param 	string 	$label
-	 * 	@return 		string
+	 * 	@return 	string
 	 */
 	public static function reg_form_form_field_input__wrap( $input, $label ) {
 		return $input . '</div>';
@@ -1220,10 +1215,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	/**
 	 * 	_process_attendee_information
 	 *
-	 * 	@access private
-	 * 	@return 	void (redirect)
+	 * 	@access 	private
+	 * @return mixed
 	 */
 	private function _process_attendee_information() {
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$success = TRUE;
 		// empty container
@@ -1252,6 +1248,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 
 //			printr( $valid_data, '$valid_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $this->_transaction, '$this->_transaction  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 			// attendee counter
 			$att_nmbr = 0;
@@ -1260,6 +1257,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$registrations = $this->_transaction->registrations( array(), TRUE );
 					if ( ! empty( $registrations )) {
 						EE_Registry::instance()->load_model( 'Attendee' );
+						$this->_primary_attendee_obj = NULL;
 						// grab the saved registrations from the transaction
 						foreach ( $registrations  as $registration ) {
 							// verify EE_Registration object
@@ -1269,7 +1267,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 								// OR b) another registrant is editing info, so ONLY process their registration
 								if ( ! $this->_revisit || $this->_primary_revisit || ( $this->_revisit && $this->_reg_url_link == $registration->reg_url_link() )) {
 									// reg_url_link / line item ID exists ?
-									if ( $line_item_id = $registration->reg_url_link() ) {
+									$line_item_id = $registration->reg_url_link();
+									if ( $line_item_id ) {
 //										echo '<h5 style="color:#2EA2CC;">$line_item_id : <span style="color:#E76700">' . $line_item_id . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 										// Houston, we have a registration!
 										$att_nmbr++;
@@ -1327,7 +1326,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												$answer_cache_id = $this->_reg_url_link ? $form_input : $form_input . '-' . $line_item_id;
 												$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
 
-												$attendee_property = FALSE;
 												//rename a couple of form_inputs
 												switch( $form_input ) {
 													case 'state' :
@@ -1383,7 +1381,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	//									printr( $attendee_data, '$attendee_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 										// this registration does not require additional attendee information ?
-										if ( $copy_primary && $att_nmbr > 1 ) {
+										if ( $copy_primary && $att_nmbr > 1 && $this->_primary_attendee_obj instanceof EE_Attendee ) {
 	//										echo '<h1>$copy_primary && $att_nmbr > 1  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h1>';
 											// add relation to new attendee
 											$registration->_add_relation_to( $this->_primary_attendee_obj,
@@ -1520,19 +1518,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 
 		// grab any errors
-//		$notices = EE_Error::get_notices( FALSE, FALSE, TRUE );
-//		if ( ! isset( $notices['errors'] )) {
 		if ( $success ) {
 			EE_Error::add_success( __('Attendee information submitted successfully.', 'event_espresso' ));
-		} //else {
-//			$this->_next_step = $this->_current_step;
-//		}
-
-
+		}
 
 		//this might be called while in admin and if it is then we don't want to do our normal steps.
 		if ( is_admin() && ! EE_Registry::instance()->REQ->front_ajax ) {
-//			return ! isset( $notices['errors'] ) ? TRUE : FALSE;
 			return $success;
 		}
 
@@ -1541,7 +1532,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
 
 		$this->go_to_next_step( __FUNCTION__ );
-
+		return TRUE;
 	}
 
 
@@ -1551,14 +1542,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	simply loops through the current transaction and saves all data for each registration
 	 *
 	 * 	@access private
-	 * 	@return 	void
+	 * 	@return 	bool
 	 */
 	private function _save_all_registration_information() {
 //		echo '<br/><h5 style="color:#2EA2CC;">'. __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// verify the transaction
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			$this->_transaction->save();
-			$TXN_ID = $this->_transaction->ID();
 			// grab the saved registrations from the transaction
 			foreach ( $this->_transaction->registrations( array(), TRUE ) as $line_item_id => $registration ) {  //
 //				printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -1573,7 +1563,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							$registration->set_transaction_id( $this->_transaction->ID() );
 						}
 						// verify and save the attendee
-						if ( $attendee = $registration->attendee() ) {
+						$attendee = $registration->attendee();
+						if ( $attendee ) {
 							if ( $attendee instanceof EE_Attendee ) {
 	//							printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$attendee->save();
@@ -1645,14 +1636,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	_finalize_attendee_information
-	 * 	this is the final step after a user  revisits the site to edit their attendee information
-	 * 	this gets called AFTER the _process_attendee_information() method above
+	 *    _finalize_attendee_information
+	 *    this is the final step after a user  revisits the site to edit their attendee information
+	 *    this gets called AFTER the _process_attendee_information() method above
 	 *
-	 * 	@access private
-	 * 	@return 	void (redirect)
+	 * @access   private
+	 * @return    void (redirect)
 	 */
-	private function _finalize_attendee_information( $params = array(), $success_msg = '' ) {
+	private function _finalize_attendee_information() {
+
 		if ( $this->_transaction instanceof EE_Transaction && $this->_continue_reg ) {
 			// save everything
 			if ( $this->_save_all_registration_information() ) {
@@ -1712,6 +1704,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return 	void
 	 */
 	private function _process_payment_options() {
+
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+
 		if ( $this->_continue_reg ) {
 			// event requires pre-approval
 			if ( $this->_selected_method_of_payment == 'payments_closed' ) {
@@ -1726,13 +1721,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	_finalize_payment_options
-	 * 	this is the final step after a user  revisits the site to retry a payment
+	 *    _finalize_payment_options
+	 *    this is the final step after a user  revisits the site to retry a payment
 	 *
-	 * 	@access private
-	 * 	@return 	void (redirect)
+	 * @access   private
+	 * @return    void (redirect)
 	 */
-	private function _finalize_payment_options( $params = array(), $success_msg = '' ) {
+	private function _finalize_payment_options() {
 
 		if ( $this->_continue_reg ) {
 			$this->_transaction->save();
@@ -1743,7 +1738,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// if payment required
 			if ( $this->_transaction->total() > 0 ) {
 				// attempt payment via payment method
-				$payment = $this->_process_payment();
+				$this->_process_payment();
 			}
 		}
 		$this->_next_step = FALSE;
@@ -1759,7 +1754,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	_process_payment
 	 *
 	 * 	@access private
-	 * 	@return 	void
+	 * 	@return 	bool
 	 */
 	private function _process_payment() {
 		// clear any previous errors related to not selecting a payment method
@@ -1794,7 +1789,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} else {
 			$this->_redirect_to_thank_you_page = TRUE;
 		}
-
+		return TRUE;
 	}
 
 
@@ -1814,8 +1809,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$payment = EE_Registry::instance()->load_core( 'Payment_Processor' )->process_payment(
 			$payment_method,
 			$this->_transaction,
-			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ), 
-			$this->_billing_form, 
+			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ),
+			$this->_billing_form,
 			$this->_thank_you_page_url
 		);
 		// verify payment object
@@ -1919,7 +1914,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// Default REG Status is set to PENDING PAYMENT OR APPROVED, and payments are allowed
 			} else if ( $this->_transaction->total() > 0 ) {
 				// attempt payment via payment method
-				$payment = $this->_process_payment();
+				$this->_process_payment();
 			} else {
 				// set TXN Status to Open
 				$this->_transaction->set_status( EEM_Transaction::complete_status_code );
@@ -1938,10 +1933,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 		_process_return_to_reg_step_query_args
+	 *        _process_return_to_reg_step_query_args
 	 *
-	 * 		@access 	private
-	 * 		@return 		void
+	 * @access 	private
+	 * @param 	$args
+	 * @return 	array
 	 */
 	private function _process_return_to_reg_step_query_args( $args ) {
 		$remove = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn' );
@@ -1955,12 +1951,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-
 	/**
 	 *   handle ajax message responses and redirects
 	 *
-	 *   @access public
-	 *   @return void
+	 * @access public
+	 * @param string $prev_step
+	 * @param bool   $callback
+	 * @param bool   $callback_param
+	 * @return void
 	 */
 	public function go_to_next_step( $prev_step = '', $callback = FALSE, $callback_param = FALSE ) {
 
@@ -2037,7 +2035,8 @@ if ( $this->_current_step != 'attendee_information' ) {
 		// store notices in a transient
 		EE_Error::get_notices( FALSE, TRUE, TRUE );
 		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from
-		if ( $next_step = $no_errors ? $this->_next_step : str_replace( 'process_', '', $this->_current_step )) {
+		$next_step = $no_errors ? $this->_next_step : str_replace( 'process_', '', $this->_current_step );
+		if ( $next_step ) {
 			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => '_register', 'step' => $next_step ));
 			$redirect = add_query_arg( $args, $this->_reg_page_base_url );
 		} else {

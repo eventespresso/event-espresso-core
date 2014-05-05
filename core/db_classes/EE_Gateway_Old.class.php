@@ -27,9 +27,9 @@ abstract class EE_Gateway_Old {
 
 	private $_session_gateway_data = NULL;
 	protected $_payment_settings = array();
-	// gateway name 
+	// gateway name
 	protected $_gateway_name = NULL;
-	// path to gateway class file 
+	// path to gateway class file
 	protected $_path = NULL;
 	// image name for gateway button
 	protected $_button_base = NULL;
@@ -51,29 +51,29 @@ abstract class EE_Gateway_Old {
 	/**
 	 * whether this gateway should be in debug mode or not. If it is, we'll probably
 	 * send the website admin IPN messages and show debug info, etc.
-	 * Can be activated with sandbox mode or not, whatever you want. 
+	 * Can be activated with sandbox mode or not, whatever you want.
 	 */
 	protected $_debug_mode = FALSE;
-	
+
 	/**
 	 * Transaction model for querying
 	 * @var EEM_Transaction
 	 */
 	protected $_TXN = null;
-	
+
 	/**
 	 * Payment model for querying
-	 * @var EEM_Payment 
+	 * @var EEM_Payment
 	 */
 	protected $_PAY = null;
-	
+
 	/**
 	 *
 	 * @var EE_Registry
 	 */
 	protected $EE = null;
-	
-	
+
+
 	/**
 	 * Registration model for querying
 	 * @var EEM_Registration
@@ -84,12 +84,12 @@ abstract class EE_Gateway_Old {
 	abstract protected function _update_settings();
 	abstract protected function _display_settings();
 	abstract public function espresso_display_payment_gateways( $selected_gateway = '');
-	
+
 	protected function __construct(EEM_Gateways &$model) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		//echo '<h4>$this->_gateway_name : ' . $this->_gateway_name . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 
-		
+
 		if (!defined('GATEWAYS_ADMIN_URL')) {
 			define('GATEWAYS_ADMIN_URL', admin_url('admin.php?page=espresso_payment_settings'));
 		}
@@ -120,7 +120,7 @@ abstract class EE_Gateway_Old {
 		EE_Registry::instance()->load_helper( 'Formatter' );
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 	}
-	
+
 	/**
 	 * @param EE_Line_item $line_item
 	 * @param EE_Transaction $transaction
@@ -131,7 +131,7 @@ abstract class EE_Gateway_Old {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return array('success'=>TRUE);
 	}
-	
+
 	/**
 	 * Adds the msg to the debug output log, for sending emails on ipns, or whatever
 	 * @param string $msg
@@ -140,8 +140,8 @@ abstract class EE_Gateway_Old {
 	protected function _debug_log($msg){
 		$this->_debug_log.="<br>".$msg;
 	}
-	
-	
+
+
 	/**
 	 * returns a string of the gateway's debug output.
 	 * @return string
@@ -181,9 +181,9 @@ abstract class EE_Gateway_Old {
 		}
 		//if we're missing some settings,set them and save the settings right away
 		if ( ! $saved_settings_has_all_needed_settings) {
-			
+
 			$this->_payment_settings = array_merge($default_settings, $saved_settings);
-			
+
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 				$msg = sprintf( __( '%s payment settings initialized.', 'event_espresso' ), $this->_payment_settings['display_name'] );
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -221,7 +221,7 @@ abstract class EE_Gateway_Old {
 		}
 
 		if (isset($_POST['update_' . $this->_gateway_name]) && check_admin_referer('espresso_form_check', 'add_' . $this->_gateway_name . '_settings')) {
-			//printr( $_POST, 'POST' );		
+			//printr( $_POST, 'POST' );
 			$this->_update_settings();
 			if ($this->_EEM_Gateways->update_payment_settings($this->_gateway_name, $this->_payment_settings)) {
 				$msg = sprintf( __( '%s payment settings updated.', 'event_espresso' ), $this->_payment_settings['display_name'] );
@@ -232,12 +232,12 @@ abstract class EE_Gateway_Old {
 			}
 		}
 	}
-	
-	
+
+
 
 	private function _gateways_frontend() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		add_action( 'AHEE_display_payment_gateways', array( $this, 'espresso_display_payment_gateways'), 10, 1 );
+		add_action( 'AHEE__display_payment_gateways', array( $this, 'espresso_display_payment_gateways'), 10, 1 );
 		// grab session data for this gateway
 		if ( $gateway_data = EE_Registry::instance()->SSN->get_session_data( 'gateway_data' )) {
 			if ( isset( $gateway_data[ $this->_gateway_name ] )) {
@@ -265,7 +265,7 @@ abstract class EE_Gateway_Old {
 	 * @param EE_Registration or int, current registration we want to link back to in the return url.
 	 * @param boolean $urlencode whether or not to url-encode the url (if true, you probably intend to pass
 	 * this string as a URL parameter itself, or maybe a post parameter)
-	 *  @return string URL on the current site of the thank_you page, with parameters added on to know which registration was just 
+	 *  @return string URL on the current site of the thank_you page, with parameters added on to know which registration was just
 	 * processed in order to correctly display the payment status. And it gets URL-encoded by default
 	 */
 	protected function _get_return_url( $registration, $urlencode = false ){
@@ -288,7 +288,7 @@ abstract class EE_Gateway_Old {
 		}
 		return $url;
 	}
-	
+
 	public function gateway() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, ' $this->_gateway_name = ' . $this->_gateway_name );
 		return $this->_gateway_name;
@@ -301,7 +301,7 @@ abstract class EE_Gateway_Old {
 		add_meta_box(
 					'espresso_' . $this->_gateway_name . '_payment_settings', $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso'), array(&$this, 'settings_meta_box'), $current_screen->id, 'normal'
 		);
-		
+
 	}
 
 	/**
@@ -328,8 +328,8 @@ abstract class EE_Gateway_Old {
 
 		<a name="<?php echo $this->_gateway_name; ?>" id="<?php echo $this->_gateway_name; ?>"></a>
 		<div class="padding">
-		<?php if ( ! $this->_EEM_Gateways->is_active($this->_gateway_name)) { 
-						$activate = add_query_arg(array('activate_' . $this->_gateway_name => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway_name; 
+		<?php if ( ! $this->_EEM_Gateways->is_active($this->_gateway_name)) {
+						$activate = add_query_arg(array('activate_' . $this->_gateway_name => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway_name;
 		?>
 				<table class="form-table">
 					<tbody>
@@ -337,7 +337,7 @@ abstract class EE_Gateway_Old {
 							<th>
 								<label><?php _e('Click to Activate', 'event_espresso'); ?></label>
 							</th>
-							<td>				
+							<td>
 								<a id="activate_<?php echo $this->_gateway_name; ?>" class="espresso-button-green button-primary" onclick="location.href='<?php echo $activate; ?>'">
 									<?php echo __('Activate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?>
 								</a>
@@ -345,9 +345,9 @@ abstract class EE_Gateway_Old {
 						</tr>
 					</tbody>
 				</table>
-		<?php } else { 
+		<?php } else {
 						$this->_display_settings_wrapper();
-					} 
+					}
 		?>
 		</div> <!-- Class=padding -->
 		<?php
@@ -365,7 +365,7 @@ abstract class EE_Gateway_Old {
 							<th>
 								<label><strong style="color:#F00"><?php _e('IMPORTANT', 'event_espresso'); ?></strong></label>
 							</th>
-							<td>				
+							<td>
 								<strong><?php _e('You are responsible for your own website security and Payment Card Industry Data Security Standards (PCI DSS) compliance.', 'event_espresso');?></strong><br />
 								<?php _e('Learn more about ', 'event_espresso');?>
 								<a href="https://www.pcisecuritystandards.org/merchants/index.php">
@@ -374,9 +374,9 @@ abstract class EE_Gateway_Old {
 							</td>
 						</tr>
 						<?php endif; ?>
-					
+
 						<?php $this->_display_settings(); ?>
-						
+
 						<tr>
 							<th>
 								<label for="<?php echo $this->_gateway_name; ?>_button_url">
@@ -384,7 +384,7 @@ abstract class EE_Gateway_Old {
 								</label>
 							</th>
 							<td>
-								<?php 
+								<?php
 								$this->_payment_settings['button_url'] = empty( $this->_payment_settings['button_url'] ) ? $this->_btn_img : $this->_payment_settings['button_url']; ?>
 
 								<span class='ee_media_uploader_area'>
@@ -394,22 +394,22 @@ abstract class EE_Gateway_Old {
 								</span><br/>
 							</td>
 						</tr>
-						
+
 						<tr>
 							<th>
 								<input type="hidden" name="update_<?php echo $this->_gateway_name; ?>" value="1">
-									<input 
+									<input
 											id="save_<?php echo $this->_gateway_name; ?>_settings"
-											class="button-primary" 
-											type="submit" 
-											name="Submit" 
-											value="<?php echo __('Update', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso');?>" 
+											class="button-primary"
+											type="submit"
+											name="Submit"
+											value="<?php echo __('Update', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Settings', 'event_espresso');?>"
 											style="margin:1em 4em 2em 0"
 										/>
 							</th>
 							<td>
 								<p>
-									
+
 									<?php $deactivate = add_query_arg(array('deactivate_' . $this->_gateway_name => 'true'), GATEWAYS_ADMIN_URL) . '#' . $this->_gateway_name; ?>
 									<a id="deactivate_<?php echo $this->_gateway_name; ?>" class="espresso-button button-secondary" type="submit" onclick="location.href='<?php echo $deactivate; ?>'">
 										<?php echo __('Deactivate', 'event_espresso') . ' ' . $this->_payment_settings['display_name'] . ' ' . __('Payments?'); ?>
@@ -440,7 +440,7 @@ abstract class EE_Gateway_Old {
 		// are we returning to the page to edit attendee info or retry a payment?
 		if ( EE_Registry::instance()->REQ instanceof EE_Request_Handler && EE_Registry::instance()->REQ->is_set( 'revisit' ) ) {
 			$params['revisit'] = EE_Registry::instance()->REQ->get( 'revisit' ) == 1 ? TRUE : FALSE;
-		}		
+		}
 		$this->_form_url = add_query_arg( $params, $base_url );
 		$this->_set_session_data();
 		return TRUE;
@@ -474,7 +474,7 @@ abstract class EE_Gateway_Old {
 	}
 
 	private function _set_session_data() {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );		
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// get existing gateway data
 		$gateway_data = EE_Registry::instance()->SSN->get_session_data( 'gateway_data' );
 		// add this gateway
@@ -483,7 +483,7 @@ abstract class EE_Gateway_Old {
 			'selected' => $this->_selected,
 			'css_class' => $this->_css_class,
 			'css_link_class' => $this->_css_link_class
-		);		
+		);
 		EE_Registry::instance()->SSN->set_session_data( array( 'gateway_data' => $gateway_data ));
 	}
 
@@ -499,7 +499,7 @@ abstract class EE_Gateway_Old {
 
 	protected function _reset_button_url() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		
+
 		$in_uploads = $this->_EEM_Gateways->is_in_uploads($this->_gateway_name);
 		if (is_array($in_uploads) && $in_uploads[$this->_gateway_name]) {
 			$button_url = EVENT_ESPRESSO_GATEWAY_URL . "/" . $this->_gateway_name . '/lib/' . $this->_button_base;
@@ -534,7 +534,7 @@ abstract class EE_Gateway_Old {
 		</div>
 ';
 	}
-	
+
 	/**
 	 * States whether this gateway is in debug mode or not. if it is, then we'll be
 	 * displaying debug info, and email the admin debug info.
@@ -543,7 +543,7 @@ abstract class EE_Gateway_Old {
 	public function debug_mode_active(){
 		return $this->_debug_mode;
 	}
-	
+
 
 
 
@@ -554,11 +554,11 @@ abstract class EE_Gateway_Old {
 	 */
 	public function thank_you_page_logic(EE_Transaction $transaction){
 		// save the transaction to the db in case anything changed
-		$transaction->save();		
+		$transaction->save();
 		return true;
 	}
-	
-	
+
+
 	/**
 	 * Updates the transaction according to the payment info
 	 * @param EE_Transaction or int $transaction the transaction to update, or its ID. Cannot be null.
@@ -587,7 +587,7 @@ abstract class EE_Gateway_Old {
 		$transaction->finalize();
 		return true;
 	}
-	
+
 	/**
 	 * For adding any html output ab ove the payment overview.
 	 * Many gateways won't want ot display anything, so this function just returns an empty string.
@@ -602,7 +602,7 @@ abstract class EE_Gateway_Old {
 			echo "";//just echo out a single space, so the output buffer that's listening doesnt complain its empty
 		}
 	}
-	
+
 	/**
 	 * Gets the cancel URL
 	 * @return string
@@ -610,5 +610,5 @@ abstract class EE_Gateway_Old {
 	protected function _get_cancel_url(){
 		return get_permalink(EE_Registry::instance()->CFG->core->cancel_page_id);
 	}
-} 
+}
 
