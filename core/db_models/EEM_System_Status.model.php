@@ -44,6 +44,7 @@ class EEM_System_Status{
 			'wp_settings'=>$this->get_wp_settings(),
 			'https_enabled'=>$this->get_https_enabled(),
 			'php_version'=>$this->php_version(),
+			'php.ini_settings'=>$this->get_php_ini_all(),
 			'php_info'=>$this->get_php_info(),
 			
 		);
@@ -201,6 +202,11 @@ class EEM_System_Status{
 		}
 		return "ok!";
 	}
-	
-	
+	/**
+	 * Gets all the php.ini settings
+	 * @return array
+	 */
+	function get_php_ini_all(){
+		return ini_get_all();
+	}	
 }
