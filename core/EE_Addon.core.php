@@ -39,6 +39,12 @@ abstract class EE_Addon {
 	protected $_min_core_version;
 
 	/**
+	 * @var $_activation_indicator_option_name
+	 * @type string
+	 */
+	protected $_activation_indicator_option_name;
+
+	/**
 	 * @var $_config_section
 	 * @type string
 	 */
@@ -56,30 +62,6 @@ abstract class EE_Addon {
 	 */
 	protected static $_config;
 
-
-
-	/**
-	 * new_install - check for migration scripts
-	 * @return mixed
-	 */
-	abstract public function new_install();
-
-
-
-	/**
-	 * upgrade - check for migration scripts
-	 * @return mixed
-	 */
-	abstract public function upgrade();
-
-
-
-
-	/**
-	 *get_db_update_option_name
-	 * @return string
-	 */
-	abstract public function get_db_update_option_name();
 
 
 	/**
@@ -117,6 +99,68 @@ abstract class EE_Addon {
 		return $this->_min_core_version;
 	}
 
+
+	/**
+	 * set_activation_indicator_option
+	 */
+	public function set_activation_indicator_option( $activation_indicator_option_name = '' ) {
+		$this->_activation_indicator_option_name = $activation_indicator_option_name;
+	}
+
+	/**
+	 * get_activation_indicator_option
+	 * @return string
+	 */
+	public function get_activation_indicator_option() {
+		return $this->_activation_indicator_option_name;
+	}
+
+
+
+
+	/**
+	 * set_db_update_option_name
+	 * Until we do something better, we'll just check for migration scripts upon
+	 * plugin activation only. In the future, we'll want to do it on plugin updates too
+	 * @return bool
+	 */
+	public function set_db_update_option_name(){
+		//let's just handle this on the next request, ok? right now we're just not really ready
+		return update_option( $this->_activation_indicator_option_name, TRUE );
+	}
+
+
+
+
+	/**
+	 * new_install - check for migration scripts
+	 * @return mixed void|bool
+	 */
+	public function new_install() {
+		//if core is also active, then get core to check for migration scripts
+		//and set maintenance mode is necessary
+		if ( get_option( $this->_activation_indicator_option_name )) {
+			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+			return delete_option( $this->_activation_indicator_option_name );
+		}
+		return;
+	}
+
+
+
+	/**
+	 * upgrade - check for migration scripts
+	 * @return mixed void|bool
+	 */
+	public function upgrade() {
+		// if core is also active, then get core to check for migration scripts
+		// and set maintenance mode is necessary
+		if ( get_option( $this->_activation_indicator_option_name )) {
+			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+			return delete_option( $this->_activation_indicator_option_name );
+		}
+		return;
+	}
 
 
 
