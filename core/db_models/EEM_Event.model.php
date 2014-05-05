@@ -138,7 +138,6 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
 			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
-			'Promotion_Object'=>new EE_Has_Many_Any_Relation(),
 			'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template')
 		);
 

@@ -21,10 +21,6 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 	 */
 	protected $_Event_Venue;
 	
-	/**
-	 * @var EE_Promotion_Object relation to the join table between promotions and whatevers
-	 */
-	protected $_Promotion_Object;
 
 	/**
 	 * related country
