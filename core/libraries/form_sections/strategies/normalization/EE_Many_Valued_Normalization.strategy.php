@@ -45,8 +45,10 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base{
 		$items_to_normalize = array();
 		if(is_array($value_to_normalize)){
 			$items_to_normalize = $value_to_normalize;
-		}else{
+		}elseif($value_to_normalize !== NULL){
 			$items_to_normalize = array($value_to_normalize);
+		}else{
+			$items_to_normalize = array();
 		}
 		$normalized_array_value = array();
 		foreach($items_to_normalize as $key => $individual_item){

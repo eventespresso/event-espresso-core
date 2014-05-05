@@ -302,10 +302,15 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 			throw new EE_Error(sprintf(__("Automatic saving of related info across a hasmany relation is not yet supported", "event_espresso")));
 		}elseif($relation_obj instanceof EE_HABTM_Relation){
 			//delete everything NOT in this list
-			$where_query_params = array(
-				$relation_obj->get_other_model()->primary_key_name() => array('NOT_IN',$this->get_input_value($relation_name)));
+			$normalized_input_value = $this->get_input_value($relation_name);
+			if($normalized_input_value && is_array($normalized_input_value)){
+				$where_query_params = array(
+					$relation_obj->get_other_model()->primary_key_name() => array('NOT_IN',$normalized_input_value));
+			}else{
+				$where_query_params = array();
+			}
 			$relation_obj->remove_relations($this->_model_object, $where_query_params);
-			foreach($this->get_input_value($relation_name) as $id){
+			foreach($normalized_input_value as $id){
 				$relation_obj->add_relation_to($this->_model_object, $id);
 			}
 		}

@@ -61,7 +61,8 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 		//setup the currency options
 		$this->_subsections['Currency'] = new EE_Select_Multi_Model_Input(EEM_Currency::instance()->get_all_currencies_usable_by($this->_payment_method_type),
 				array(
-			'html_label_text'=>  __("Currencies Supported", 'event_espresso')
+			'html_label_text'=>  __("Currencies Supported", 'event_espresso'),
+			'required'=>TRUE
 		));
 		//set the name of this form based on the payment method type
 		if( ! $this->_name){
