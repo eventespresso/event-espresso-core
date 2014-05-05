@@ -38,14 +38,15 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 *    Method for registering new EE_Addons
 	 *
 	 * @since    4.3.0
-	 * @param string $addon_name 		the EE_Addon's name. Required.
+	 * @param array $setup_args
 	 * @throws EE_Error
-	 * @internal param string admin_path            full server path to the folder where the addon\'s admin files reside
-	 * @internal param string autoloader_paths    an array of class names and the full server paths to those files. Required.
-	 * @internal param string dms_paths                an array of full server paths to folders that contain data migration scripts. Required.
-	 * @internal param string module_paths        an array of full server paths to any EED_Modules used by the addon
-	 * @internal param string shortcode_paths    an array of full server paths to folders that contain EES_Shortcodes
-	 * @internal param string widgets                    an array of full server paths to folders that contain WP_Widgets
+	 * @internal param string $addon_name 		the EE_Addon's name. Required.
+	 * @internal param string admin_path 			full server path to the folder where the addon\'s admin files reside
+	 * @internal param string autoloader_paths 	an array of class names and the full server paths to those files. Required.
+	 * @internal param string dms_paths 				an array of full server paths to folders that contain data migration scripts. Required.
+	 * @internal param string module_paths 		an array of full server paths to any EED_Modules used by the addon
+	 * @internal param string shortcode_paths 	an array of full server paths to folders that contain EES_Shortcodes
+	 * @internal param string widgets 					an array of full server paths to folders that contain WP_Widgets
 	 * @return void
 	 */
 	public static function register( $setup_args = array()  ) {
