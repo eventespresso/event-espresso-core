@@ -350,7 +350,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$orig_datetimes = $orig_event->get_many_related('Datetime');
 
 		//other original relations
-		$orig_pos = $orig_event->get_many_related('Promotion_Object');
 		$orig_ven = $orig_event->get_many_related('Venue');
 
 
@@ -363,11 +362,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//save the new event
 		$new_event->save();
-
-		//Promotion Object
-		foreach ( $orig_pos as $pos ) {
-			$new_event->_add_relation_to( $pos, 'Promotion_Object' );
-		}
 
 		//venues
 		foreach( $orig_ven as $ven ) {
