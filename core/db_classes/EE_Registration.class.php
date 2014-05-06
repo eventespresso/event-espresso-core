@@ -590,6 +590,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		return $this->get('TXN_ID');
 	}
 
+	/**
+	 * @return int
+	 */
+	public function ticket_ID(){
+		return $this->get('TKT_ID');
+	}
 
 
 	/**
@@ -1092,13 +1098,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	private function _generate_new_reg_code() {
 		// generate a reg code ?
-		if ( empty( $this->_REG_code )) {		
+		if ( ! $this->reg_code() ) {		
 			// figure out where to start parsing the reg code
-			$chars = strpos( $this->_REG_url_link, '-' ) + 4;
+			$chars = strpos( $this->reg_url_link(), '-' ) + 4;
 			$new_reg_code = array(
-				$this->_TXN_ID,
-				$this->_TKT_ID,
-				substr( $this->_REG_url_link, 0, $chars ) . substr( $this->_REG_url_link, -3 ),
+				$this->transaction_ID(),
+				$this->ticket_ID(),
+				substr( $this->reg_url_link(), 0, $chars ) . substr( $this->reg_url_link(), -3 ),
 				$this->transaction()->is_completed() ? 1 : 0
 			);
 			$new_reg_code = implode( '-', $new_reg_code );

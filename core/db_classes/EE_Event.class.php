@@ -227,7 +227,7 @@ class EE_Event extends EE_CPT_Base{
 	 * @return EE_Datetime[]
 	 */
 	public function datetimes_ordered($show_expired = TRUE, $show_deleted = FALSE){
-		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order($this->_EVT_ID,$show_expired,$show_deleted);
+		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order($this->ID(),$show_expired,$show_deleted);
 	}
 
 	/**
@@ -426,7 +426,7 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	private function _has_ID_and_is_published() {
 		// first check if event id is present and not NULL, then check if this event is published (or any of the equivalent "published" statuses)
-		return ( $this->ID() && $this->ID() !== NULL && ($this->_status == 'publish' || $this->_status == EEM_Event::sold_out || $this->_status == EEM_Event::postponed || $this->_status == EEM_Event::cancelled ) ) ? TRUE : FALSE;
+		return ( $this->ID() && $this->ID() !== NULL && ($this->status() == 'publish' || $this->status() == EEM_Event::sold_out || $this->status() == EEM_Event::postponed || $this->status() == EEM_Event::cancelled ) ) ? TRUE : FALSE;
 	}
 
 
@@ -609,7 +609,7 @@ class EE_Event extends EE_CPT_Base{
 		}
 
 		//now we can conditionally determine status
-		if ( $this->_status == 'publish' ) {
+		if ( $this->status() == 'publish' ) {
 
 			if ( in_array( EE_Datetime::active, $status_array )) {
 				return EE_Datetime::active;
@@ -623,7 +623,7 @@ class EE_Event extends EE_CPT_Base{
 				return EE_Datetime::expired; //catchall
 			}
 		} else {
-			switch ($this->_status) {
+			switch ($this->status()) {
 				case EEM_Event::sold_out :
 					return EE_Datetime::sold_out;
 					break;
@@ -667,7 +667,7 @@ class EE_Event extends EE_CPT_Base{
 	public function get_number_of_tickets_sold() {
 		$tkt_sold = 0;
 
-		if ( empty( $this->_EVT_ID ) )
+		if ( ! $this->ID()  )
 			return 0;
 
 		$datetimes = $this->get_many_related('Datetime');

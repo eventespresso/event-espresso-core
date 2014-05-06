@@ -625,11 +625,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 	 * @return array 
 	 */
 	public function events() {
-		if ( empty( $this->_Event ) ){
-			$events = EEM_Event::instance()->get_all(array(array('Registration.Attendee.ATT_ID'=>$this->get('ATT_ID'))));
-			$this->_Event = $events;
-		}
-		return $this->_Event;
+		return $this->get_many_related('Event');
 	}
 	
 	/**

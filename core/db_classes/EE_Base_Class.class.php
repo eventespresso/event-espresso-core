@@ -89,6 +89,18 @@ abstract class EE_Base_Class{
 	protected $_cached_properties = array();
 
 	/**
+	 * An array containing keys of the related model, and values are either an array of related mode objects or a single related model object. see the model's _model_relations. The keys should match those specified. And if the relation is of type EE_Belongs_To (or one of its children), then there should only be ONE related model object, all others have an array)
+	 * @var EE_Base_Class[][]
+	 */
+	protected $_model_relations = array();
+	
+	/**
+	 * Array where keys are field names (see the model's _fields property) and values are their values. To see what
+	 * their types should be, look at what that field object returns on its prepare_for_get and prepare_for_set methods)
+	 * @var type 
+	 */
+	protected $_fields = array();
+	/**
 	 * Everything is related to extra meta... except extra meta, but it doesn't hurt
 	 * to have this in that case
 	 * $var EE_Extra_Meta[]
@@ -140,47 +152,6 @@ abstract class EE_Base_Class{
 			}
 		}
 
-		try {
-
-			//verify we have all the attributes required in the model
-			foreach($model->field_settings() as $fieldName=>$field_obj){
-				if( ! $field_obj->is_db_only_field() && ! EEH_Class_Tools::has_property( $this, $this->_get_private_attribute_name( $fieldName ))){
-					throw new EE_Error(
-						sprintf(
-							__('You have added an attribute titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add $%s to %s','event_espresso'),
-							$fieldName,
-							get_class($model),
-							get_class($this),
-							$this->_get_private_attribute_name($fieldName),
-							get_class($this))
-					);
-				}
-			}
-			// verify we have all the model relations, except on extra metas because they
-			//are meant to be related to everything
-			if(get_class($this) !== 'EE_Extra_Meta'){
-				foreach($model->relation_settings() as $relationName=>$relationSettings){
-					if( ! EEH_Class_Tools::has_property( $this, $this->_get_private_attribute_name( $relationName ))) {
-						throw new EE_Error(
-							sprintf(
-								__('You have added a relation titled \'%s\' to your model %s, but have not set a corresponding attribute on %s. Please add protected $%s to %s','event_espresso'),
-								$relationName,
-								get_class($model),
-								get_class($this),
-								$this->_get_private_attribute_name($relationName),
-								get_class($this)
-							)
-						);
-					}
-				}
-			}
-
-		} catch ( EE_Error $e ) {
-			$e->get_error();
-			echo EE_Error::get_notices();
-		}
-
-
 
 		$this->_timezone = $timezone;
 		//remember what values were passed to this constructor
@@ -188,7 +159,15 @@ abstract class EE_Base_Class{
 		//remember in entity mapper
 		if($model->has_primary_key_field() && $this->ID()){
 			$model->add_to_entity_map($this);
-	}
+		}
+		//setup all the relations
+		foreach($this->get_model()->relation_settings() as $relation_name=>$relation_obj){
+			if($relation_obj instanceof EE_Belongs_To_Relation){
+				$this->_model_relations[$relation_name] = NULL;
+			}else{
+				$this->_model_relations[$relation_name] = array();
+			}
+		}
 	}
 
 
@@ -202,15 +181,14 @@ abstract class EE_Base_Class{
 	 * @param type $use_default
 	 */
 	public function set($field_name,$field_value,$use_default= false){
-		$privateAttributeName=$this->_get_private_attribute_name($field_name);
 		$field_obj = $this->get_model()->field_settings_for($field_name);
 		if ( method_exists( $field_obj, 'set_timezone' ) )
 			$field_obj->set_timezone( $this->_timezone );
 		 $holder_of_value = $field_obj->prepare_for_set($field_value);
 		 if( ($field_value === NULL || $holder_of_value === NULL || $holder_of_value ==='') && $use_default){
-			 $this->$privateAttributeName = $field_obj->get_default_value();
+			 $this->_fields[$field_name] = $field_obj->get_default_value();
 		 }else{
-			$this->$privateAttributeName = $holder_of_value;
+			$this->_fields[$field_name] = $holder_of_value;
 		 }
 
 		 //if we're not in the constructor...
@@ -236,7 +214,7 @@ abstract class EE_Base_Class{
 			 $this->get_model()->add_to_entity_map($this);
 		 }
 		 //let's unset any cache for this field_name from the $_cached_properties property.
-		 $this->_clear_cached_property( $privateAttributeName );
+		 $this->_clear_cached_property( $field_name );
 	}
 
 
@@ -318,8 +296,6 @@ abstract class EE_Base_Class{
 		if ( ! $object_to_cache instanceof EE_Base_Class ) {
 			return;
 		}
-		// get the class name (minus the prefix) for the related object
-		$relationNameClassAttribute = $this->_get_private_attribute_name( $relationName );
 		// also get "how" the object is related, or throw an error
 		if( ! $relationship_to_model = $this->get_model()->related_settings_for( $relationName )) {
 			throw new EE_Error( sprintf( __( 'There is no relationship to %s on a %s. Cannot cache it', 'event_espresso' ), $relationName, get_class( $this )));
@@ -328,31 +304,31 @@ abstract class EE_Base_Class{
 		if( $relationship_to_model instanceof EE_Belongs_To_Relation ){
 			// if it's a "belongs to" relationship, then there's only one related model object  eg, if this is a registration, there's only 1 attendee for it
 			// so for these model objects just set it to be cached
-			$this->{$relationNameClassAttribute} = $object_to_cache;
+			$this->_model_relations[$relationName] = $object_to_cache;
 			$return = TRUE;
 		} else {
 			// otherwise, this is the "many" side of a one to many relationship, so we'll add the object to the array of related objects for that type.
 			// eg: if this is an event, there are many registrations for that event, so we cache the registrations in an array
-			if( ! is_array( $this->{$relationNameClassAttribute} )) {
+			if( ! is_array( $this->_model_relations[$relationName] )) {
 				// if for some reason, the cached item is a model object, then stick that in the array, otherwise start with an empty array
-				$this->{$relationNameClassAttribute} = $this->{$relationNameClassAttribute} instanceof EE_Base_Class ? array( $this->{$relationNameClassAttribute} ) : array();
+				$this->_model_relations[$relationName] = $this->_model_relations[$relationName] instanceof EE_Base_Class ? array( $this->_model_relations[$relationName] ) : array();
 			}
 			// first check for a cache_id which is normally empty
 			if ( ! empty( $cache_id )) {
 				// if the cache_id exists, then it means we are purposely trying to cache this with a known key that can then be used to retrieve the object later on
-				$this->{$relationNameClassAttribute}[ $cache_id ] = $object_to_cache;
+				$this->_model_relations[$relationName][ $cache_id ] = $object_to_cache;
 				$return = $cache_id;
 			} elseif ( $object_to_cache->ID() ) {
 				// OR the cached object originally came from the db, so let's just use it's PK for an ID
-				$this->{$relationNameClassAttribute}[ $object_to_cache->ID() ] = $object_to_cache;
+				$this->_model_relations[$relationName][ $object_to_cache->ID() ] = $object_to_cache;
 				$return = $object_to_cache->ID();
 			} else {
 				// OR it's a new object with no ID, so just throw it in the array with an autoincremented ID
-				$this->{$relationNameClassAttribute}[] = $object_to_cache;
+				$this->_model_relations[$relationName][] = $object_to_cache;
 				  // move the internal pointer to the end of the array
-				end( $this->{$relationNameClassAttribute} );
+				end( $this->_model_relations[$relationName] );
 				// and grab the key so that we can return it
-				$return = key( $this->{$relationNameClassAttribute} );
+				$return = key( $this->_model_relations[$relationName] );
 			}
 
 		}
@@ -366,17 +342,16 @@ abstract class EE_Base_Class{
 	 * For adding an item to the cached_properties property.
 	 *
 	 * @access protected
-	 * @param string $propertyname the property item the corresponding value is for.
+	 * @param string $fieldname the property item the corresponding value is for.
 	 * @param mixed  $value        The value we are caching.
 	 * @return void
 	 */
-	protected function _set_cached_property( $propertyname, $value, $cache_type = NULL ) {
+	protected function _set_cached_property( $fieldname, $value, $cache_type = NULL ) {
 		//first make sure this property exists
-		if ( !EEH_Class_Tools::has_property( $this, $propertyname ) )
-			throw new EE_Error( sprintf( __('Trying to cache a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
+		$this->get_model()->field_settings_for($fieldname);
 
 		$cache_type = empty( $cache_type ) ? 'standard' : $cache_type;
-		$this->_cached_properties[$propertyname][$cache_type] = $value;
+		$this->_cached_properties[$fieldname][$cache_type] = $value;
 	}
 
 
@@ -386,30 +361,28 @@ abstract class EE_Base_Class{
 	/**
 	 * This returns the value cached property if it exists OR the actual property value if the cache doesn't exist.
 	 * This also SETS the cache if we return the actual property!
-	 * @param  string $propertyname the name of the property we're trying to retrieve
+	 * @param  string $fieldname the name of the property we're trying to retrieve
 	 * @param string         $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
 	 *		It can also accept certain pre-defined "schema" strings to define how to output the property. see the field's prepare_for_pretty_echoing for what strings can be used
 	 * @return mixed                whatever the value for the property is we're retrieving
 	 */
-	protected function _get_cached_property( $propertyname, $pretty = FALSE, $extra_cache_ref = NULL ) {
-
-		//first make sure this property exists
-		if ( !EEH_Class_Tools::has_property( $this, $propertyname )) {
-			throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
-		}
+	protected function _get_cached_property( $fieldname, $pretty = FALSE, $extra_cache_ref = NULL ) {
+		//verify the field exists
+		$this->get_model()->field_settings_for($fieldname);
 
 		$cache_type = $pretty ? 'pretty' : 'standard';
 		$cache_type .= !empty( $extra_cache_ref ) ? '_' . $extra_cache_ref : '';
 
-		if ( isset( $this->_cached_properties[$propertyname][$cache_type] ) ) {
-			return $this->_cached_properties[$propertyname][$cache_type];
+		if ( isset( $this->_cached_properties[$fieldname][$cache_type] ) ) {
+			return $this->_cached_properties[$fieldname][$cache_type];
 		}
 
-		//otherwise let's return the property
-		$field_name = ltrim( $propertyname, '_' );
-		$field_obj = $this->get_model()->field_settings_for($field_name);
-		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->$propertyname, $extra_cache_ref) : $field_obj->prepare_for_get($this->$propertyname );
-		$this->_set_cached_property( $propertyname, $value, $cache_type );
+		$field_obj = $this->get_model()->field_settings_for($fieldname);
+		if( ! isset($this->_fields[$fieldname])){
+			$this->_fields[$fieldname] = NULL;
+		}
+		$value = $pretty ? $field_obj->prepare_for_pretty_echoing($this->_fields[$fieldname], $extra_cache_ref) : $field_obj->prepare_for_get($this->_fields[$fieldname] );
+		$this->_set_cached_property( $fieldname, $value, $cache_type );
 		return $value;
 	}
 
@@ -467,19 +440,18 @@ abstract class EE_Base_Class{
 		if( ! $relationship_to_model){
 			throw new EE_Error(sprintf(__("There is no relationship to %s on a %s. Cannot clear that cache",'event_espresso'),$relationName,get_class($this)));
 		}
-		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
 		if($clear_all){
 			$obj_removed = true;
-			$this->$relationNameClassAttribute  = null;
+			$this->_model_relations[$relationName]  = null;
 		}elseif($relationship_to_model instanceof EE_Belongs_To_Relation){
-			$obj_removed = $this->$relationNameClassAttribute;
-			$this->$relationNameClassAttribute  = null;
+			$obj_removed = $this->_model_relations[$relationName];
+			$this->_model_relations[$relationName]  = null;
 		}else{
 			if($object_to_remove_or_index_into_array instanceof EE_Base_Class && $object_to_remove_or_index_into_array->ID()){
 				$index_in_cache = $object_to_remove_or_index_into_array->ID();
-				if( is_array($this->{$relationNameClassAttribute}) && ! isset($this->{$relationNameClassAttribute}[$index_in_cache])){
+				if( is_array($this->_model_relations[$relationName]) && ! isset($this->_model_relations[$relationName][$index_in_cache])){
 					//find this object in the array even though it has a different key
-					foreach($this->$relationNameClassAttribute as $index=>$obj){
+					foreach($this->_model_relations[$relationName] as $index=>$obj){
 						if($obj == $object_to_remove_or_index_into_array || $obj->ID() == $object_to_remove_or_index_into_array->ID()){
 							$index_in_cache = $index;
 							break;
@@ -496,8 +468,8 @@ abstract class EE_Base_Class{
 			}else{
 				$index_in_cache = $object_to_remove_or_index_into_array;
 			}
-			$obj_removed = $this->{$relationNameClassAttribute}[$index_in_cache];
-			unset($this->{$relationNameClassAttribute}[$index_in_cache]);
+			$obj_removed = $this->_model_relations[$relationName][$index_in_cache];
+			unset($this->_model_relations[$relationName][$index_in_cache]);
 		}
 		return $obj_removed;
 	}
@@ -513,15 +485,11 @@ abstract class EE_Base_Class{
 	 * @param string $current_cache_id - the ID that was used when originally caching the object
 	 * @return boolean TRUE on success, FALSE on fail
 	 */
-	public function update_cache_after_object_save( $relationName, EE_Base_Class $newly_saved_object, $current_cache_id = '' ){
-//		echo '<h4>$relationName : ' . $relationName . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$current_cache_id : ' . $current_cache_id . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-		// get the correct relation name for the related item
-		$relationNameClassAttribute = $this->_get_private_attribute_name( $relationName );
+	public function update_cache_after_object_save( $relationName, EE_Base_Class $newly_saved_object, $current_cache_id = '') {
 //		echo '<h4>$relationNameClassAttribute : ' . $relationNameClassAttribute . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $this->{$relationNameClassAttribute}, '$this->{$relationNameClassAttribute}  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		printr( $this->_model_relations[$relationName], '$this->_model_relations[$relationName]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// verify that incoming object is of the correct type
-		$obj_class = 'EE' . $relationNameClassAttribute;
+		$obj_class = 'EE_' . $relationName;
 		if ( $newly_saved_object instanceof $obj_class ) {
 			// now get the type of relation
 			$relationship_to_model = $this->get_model()->related_settings_for( $relationName );
@@ -529,14 +497,14 @@ abstract class EE_Base_Class{
 			// if this is a 1:1 realtionship
 			if( $relationship_to_model instanceof EE_Belongs_To_Relation ) {
 				// then just replace the cached object with the newly saved object
-				$this->{$relationNameClassAttribute} = $newly_saved_object;
+				$this->_model_relations[$relationName] = $newly_saved_object;
 				return TRUE;
 			// or if it's some kind of sordid feral polyamorous relationship...
-			} elseif ( is_array( $this->{$relationNameClassAttribute} ) && isset( $this->{$relationNameClassAttribute}[ $current_cache_id ] )) {
+			} elseif ( is_array( $this->_model_relations[$relationName] ) && isset( $this->_model_relations[$relationName][ $current_cache_id ] )) {
 				// then remove the current cached item
-				unset( $this->{$relationNameClassAttribute}[ $current_cache_id ] );
+				unset( $this->_model_relations[$relationName][ $current_cache_id ] );
 				// and cache the newly saved object using it's new ID
-				$this->{$relationNameClassAttribute}[ $newly_saved_object->ID() ] = $newly_saved_object;
+				$this->_model_relations[$relationName][ $newly_saved_object->ID() ] = $newly_saved_object;
 				return TRUE;
 			}
 		}
@@ -554,8 +522,7 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class
 	 */
 	public function get_one_from_cache($relationName){
-		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
-		$cached_array_or_object =  $this->$relationNameClassAttribute;
+		$cached_array_or_object =  $this->_model_relations[$relationName];
 		if(is_array($cached_array_or_object)){
 			return array_shift($cached_array_or_object);
 		}else{
@@ -572,8 +539,7 @@ abstract class EE_Base_Class{
 	 * @return EE_Base_Class[]
 	 */
 	public function get_all_from_cache($relationName){
-		$relationNameClassAttribute = $this->_get_private_attribute_name($relationName);
-		$cached_array_or_object =  $this->$relationNameClassAttribute;
+		$cached_array_or_object =  $this->_model_relations[$relationName];
 		if(is_array($cached_array_or_object)){
 			return $cached_array_or_object;
 		}elseif($cached_array_or_object){//if the result isnt an array, but exists, make it an array
@@ -592,7 +558,6 @@ abstract class EE_Base_Class{
 	 * @param type $use_default
 	 */
 	public function set_from_db($field_name,$field_value_from_db){
-		$privateAttributeName=$this->_get_private_attribute_name($field_name);
 		$field_obj = $this->get_model()->field_settings_for($field_name);
 		//you would think the DB hass no NULLs for non-nullabel fields right? wrong!
 		//eg, a CPT model object could have an entry in the posts table, but no
@@ -603,8 +568,7 @@ abstract class EE_Base_Class{
 		}else{
 			$field_value = $field_value_from_db;
 		}
-		$this->$privateAttributeName = $field_obj->prepare_for_set_from_db($field_value);
-		//echo '<h4>' . $privateAttributeName . ' : ' . $this->$privateAttributeName . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		$this->_fields[$field_name] = $field_obj->prepare_for_set_from_db($field_value);
 	}
 
 
@@ -619,8 +583,7 @@ abstract class EE_Base_Class{
 	 * @throws EE_Error if fieldSettings is misconfigured
 	 */
 	public function get($field_name, $extra_cache_ref = NULL ){
-		$privateAttributeName=$this->_get_private_attribute_name($field_name);
-		return $this->_get_cached_property( $privateAttributeName, FALSE, $extra_cache_ref );
+		return $this->_get_cached_property( $field_name, FALSE, $extra_cache_ref );
 	}
 
 
@@ -631,9 +594,9 @@ abstract class EE_Base_Class{
 	 * @throws EE_Error if fieldSettings is misconfigured or the field doesn't exist.
 	 */
 	public function get_raw($field_name) {
-		$privateAttributeName = $this->_get_private_attribute_name($field_name);
-		$this->_property_exists( $privateAttributeName );
-		return $this->$privateAttributeName;
+		$this->get_model()->field_settings_for($field_name);
+		return $this->_fields[$field_name];
+		
 	}
 
 
@@ -665,8 +628,7 @@ abstract class EE_Base_Class{
 	 * @return mixed
 	 */
 	public function get_pretty($field_name, $extra_cache_ref = NULL){
-		$privateAttributeName = $this->_get_private_attribute_name($field_name);
-		return  $this->_get_cached_property( $privateAttributeName, TRUE, $extra_cache_ref );
+		return  $this->_get_cached_property( $field_name, TRUE, $extra_cache_ref );
 	}
 
 
@@ -691,10 +653,9 @@ abstract class EE_Base_Class{
 
 		//validate field for datetime and returns field settings if valid.
 		$field = $this->_get_dtt_field_settings( $field_name );
-		$var_name = $this->_get_private_attribute_name( $field_name );
 
 		if ( $dt_frmt !== NULL ) {
-			$this->_clear_cached_property( $var_name, $date_or_time );
+			$this->_clear_cached_property( $field_name, $date_or_time );
 		}
 		if ( $echo )
 			$field->set_pretty_date_format( $in_dt_frmt );
@@ -702,7 +663,7 @@ abstract class EE_Base_Class{
 			$field->set_date_format( $in_dt_frmt );
 
 		if ( $tm_frmt !== NULL ) {
-			$this->_clear_cached_property( $var_name, $date_or_time );
+			$this->_clear_cached_property( $field_name, $date_or_time );
 		}
 		if ( $echo )
 			$field->set_pretty_time_format( $in_tm_frmt );
@@ -729,9 +690,9 @@ abstract class EE_Base_Class{
 
 
 		if ( $echo ) {
-			$this->e( ltrim( $var_name, '_' ), $date_or_time );
+			$this->e( $field_name, $date_or_time );
 		 } else
-			return $this->get( ltrim( $var_name, '_' ), $date_or_time );
+			return $this->get( $field_name, $date_or_time );
 	}
 
 
@@ -849,22 +810,21 @@ abstract class EE_Base_Class{
 	 */
 	private function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {
 		$field = $this->_get_dtt_field_settings( $fieldname );
-		$attribute_field_name = $this->_get_private_attribute_name($fieldname);
 		$field->set_timezone( $this->_timezone );
 
 		switch ( $what ) {
 			case 'T' :
-				$this->$attribute_field_name = $field->prepare_for_set_with_new_time( $datetime_value, $this->$attribute_field_name );
+				$this->_fields[$fieldname] = $field->prepare_for_set_with_new_time( $datetime_value, $this->_fields[$fieldname] );
 				break;
 			case 'D' :
-				$this->$attribute_field_name = $field->prepare_for_set_with_new_date( $datetime_value, $this->$attribute_field_name );
+				$this->_fields[$fieldname] = $field->prepare_for_set_with_new_date( $datetime_value, $this->_fields[$fieldname] );
 				break;
 			case 'B' :
-				$this->$attribute_field_name = $field->prepare_for_set( $datetime_value );
+				$this->_fields[$fieldname] = $field->prepare_for_set( $datetime_value );
 				break;
 		}
 
-		$this->_clear_cached_property($attribute_field_name);
+		$this->_clear_cached_property($this->_fields[$fieldname]);
 	}
 
 
@@ -953,12 +913,7 @@ abstract class EE_Base_Class{
 			$this->set($column,$value);
 		}
 		//now get current attribute values
-		$save_cols_n_values = array();
-		foreach($this->get_model()->field_settings(false) as $fieldName=>$field_obj){
-			$attributeName=$this->_get_private_attribute_name($fieldName);
-			$save_cols_n_values[$fieldName] = $this->$attributeName;
-
-		}
+		$save_cols_n_values = $this->_fields;
 		//if the object already has an ID, update it. Otherwise, insert it
 		//also: change the assumption about values passed to the model NOT being prepare dby the model obejct. They have been
 		$old_assumption_concerning_value_preparation = $this->get_model()->get_assumption_concerning_values_already_prepared_by_model_object();
@@ -976,9 +931,9 @@ abstract class EE_Base_Class{
 				//will find it in the db (because we just added it) and THAT object
 				//will get added to the mapper before we can add this one!
 				//but if we just avoid using the SET method, all that headache can be avoided
-				$pk_attribute = $this->_get_private_attribute_name(self::_get_primary_key_name( get_class($this)));
-				$this->$pk_attribute = $results;
-				$this->_clear_cached_property($pk_attribute);
+				$pk_field_name =self::_get_primary_key_name( get_class($this)); 
+				$this->_fields[$pk_field_name] = $results;
+				$this->_clear_cached_property($pk_field_name);
 			}
 			$this->get_model()->add_to_entity_map($this);
 		}
@@ -1007,22 +962,21 @@ abstract class EE_Base_Class{
 		//now save all the NEW cached model objects  (ie they don't exist in the DB)
 		foreach($this->get_model()->relation_settings() as $relationName => $relationObj){
 
-			$property_name = $this->_get_private_attribute_name($relationName);
 
-			if($this->$property_name){
+			if($this->_model_relations[$relationName]){
 				//is this a relation where we should expect just ONE related object (ie, EE_Belongs_To_relation)
 				//or MANY related objects (ie, EE_HABTM_Relation or EE_Has_Many_Relation)?
 				if($relationObj instanceof EE_Belongs_To_Relation){
 					//add a relation to that relation type (which saves the appropriate thing in the process)
 					//but ONLY if it DOESNT exist in the DB
 					/* @var $related_model_obj EE_Base_Class */
-					$related_model_obj = $this->$property_name;
+					$related_model_obj = $this->_model_relations[$relationName];
 //					if( ! $related_model_obj->ID()){
 						$this->_add_relation_to($related_model_obj, $relationName);
 						$related_model_obj->save_new_cached_related_model_objs();
 //					}
 				}else{
-					foreach($this->$property_name as $related_model_obj){
+					foreach($this->_model_relations[$relationName] as $related_model_obj){
 						//add a relation to that relation type (which saves the appropriate thing in the process)
 						//but ONLY if it DOESNT exist in the DB
 //						if( ! $related_model_obj->ID()){
@@ -1035,17 +989,6 @@ abstract class EE_Base_Class{
 		}
 
 		return $id;
-	}
-
-
-	/**
-	 * converts a field name to the private attribute's name on the class.
-	 * Eg, converts "ANS_ID" to "_ANS_ID", which can be used like so $attr="_ANS_ID"; $this->$attr;
-	 * @param string $fieldName
-	 * @return string
-	 */
-	protected function _get_private_attribute_name($fieldName){
-		return "_".$fieldName;
 	}
 
 
@@ -1159,10 +1102,8 @@ abstract class EE_Base_Class{
 	 * @return mixed, if the primary key is of type INT it'll be an int. Otherwise it could be a string
 	 */
 	public function ID(){
-		//get the name of the primary key for this class' model, then find what php class attribute's name
-		$pk_field_parameter = $this->_get_private_attribute_name(self::_get_primary_key_name( get_class($this) ));
 		//now that we know the name of the variable, use a variable variable to get its value and return its
-		return $this->$pk_field_parameter;
+		return $this->_fields[self::_get_primary_key_name( get_class($this) )];
 	}
 
 	/**
@@ -1389,8 +1330,7 @@ abstract class EE_Base_Class{
 	 * @return bool            				  TRUE if existing,FALSE if not.
 	 */
 	public function is_set( $field_name ) {
-		$privateAttributeName = $this->_get_private_attribute_name( $field_name );
-		return EEH_Class_Tools::has_property( $this, $privateAttributeName ) ? TRUE : FALSE;
+		return isset($this->_fields[$field_name]);
 	}
 
 
@@ -1404,7 +1344,7 @@ abstract class EE_Base_Class{
 
 		foreach ( (array) $properties as $propertyname ) {
 			//first make sure this property exists
-			if ( !EEH_Class_Tools::has_property( $this, $propertyname ) )
+			if ( ! $this->_fields[$propertyname] )
 				throw new EE_Error( sprintf( __('Trying to retrieve a non-existent property (%s).  Doublecheck the spelling please', 'event_espresso'), $propertyname ) );
 		}
 
