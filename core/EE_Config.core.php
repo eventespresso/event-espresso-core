@@ -178,14 +178,29 @@ final class EE_Config {
 	private function _load_config() {
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
-			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : FALSE;
-			if ( ! empty( $settings ) && ( ! $config_class || ( $settings instanceof $config_class ))) {
-				$this->$config = $settings;
+			//addon configurations are as the property so let's handle that first.
+			if ( $config == 'addons' ) {
+				foreach( $settings as $addon_config => $addon_settings ) {
+					$this->addons->$addon_config = $this->_load_config_verification ( $addon_config, $addon_settings, TRUE ) ? $addon_settings : $this->addons->$addon_config;
+				}
+				continue;
 			}
+			$this->$config = $this->_load_config_verification( $config, $settings ) ? $settings : $this->$config;
 		}
 	}
 
 
+
+	private function _load_config_verification( $config, $settings, $addons = FALSE ) {
+		$prop_to_check = $addons ? $this->addons->$config : $this->$config;
+		$config_class = is_object( $settings ) && is_object( $prop_to_check ) ? get_class(
+		$prop_to_check ) : FALSE;
+		if ( !empty( $settings ) && ( ! $config_class || ( $settings instanceof $config_class ) ) ) {
+			return TRUE;
+		} ELSE {
+			return FALSE;
+		}
+	}
 
 
 	/**
