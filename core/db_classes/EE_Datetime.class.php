@@ -209,10 +209,6 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	protected $_Checkin;
 	
 	
-	/**
-	 * @var EE_Promotion_Object relation to the join table between promotions and whatevers
-	 */
-	protected $_Promotion_Object;
 
 
 
