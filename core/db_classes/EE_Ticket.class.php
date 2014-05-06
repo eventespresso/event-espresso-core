@@ -265,10 +265,6 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	protected $_Ticket_Template;
 
 
-	/**
-	 * @var EE_Promotion_Object a relation to the join-table between promotions and whatevers
-	 */
-	protected $_Promotion_Object;
 
 
 	/**
