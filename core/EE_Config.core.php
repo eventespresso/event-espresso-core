@@ -197,7 +197,7 @@ final class EE_Config {
 		$prop_to_check ) : FALSE;
 		if ( !empty( $settings ) && ( ! $config_class || ( $settings instanceof $config_class ) ) ) {
 			return TRUE;
-		} ELSE {
+		} else {
 			return FALSE;
 		}
 	}
