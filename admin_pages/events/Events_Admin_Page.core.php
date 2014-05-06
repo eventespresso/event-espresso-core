@@ -1722,13 +1722,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 
-		//any promotion objects
-		$promotion_objects = $this->_cpt_model_obj->get_many_related('Promotion_Object');
-		if ( !empty( $promotion_objects ) ) {
-			foreach ( $promotion_objects as $promotion_object ) {
-				$this->_cpt_model_obj->_remove_relation_to($promotion_object, 'Promotion_Object');
-			}
-		}
 
 
 		//Message Template Groups
