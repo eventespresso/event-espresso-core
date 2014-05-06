@@ -123,8 +123,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		// add to list of shortcodes to be registered
 		EE_Register_Shortcode::register( $setup_args['addon_name'], array( 'shortcode_paths' => self::$_settings[ $setup_args['addon_name'] ]['shortcode_paths'] ));
 		//if config_class present let's register config.
-		if ( !empty( self::$_settings[$addon_name]['config_class'] ) )
-			EE_Register_Config::register( self::$_settings[$addon_name]['config_class'], self::$_settings[$addon_name]['config_name'] );
+		if ( !empty( self::$_settings[$setup_args['addon_name']]['config_class'] ) )
+			EE_Register_Config::register( self::$_settings[$setup_args['addon_name']]['config_class'], self::$_settings[$setup_args['addon_name']]['config_name'] );
 		// add to list of widgets to be registered
 		EE_Register_Widget::register( $setup_args['addon_name'], array( 'widget_paths' => self::$_settings[ $setup_args['addon_name'] ]['widget_paths'] ));
 		// load and instantiate main addon class
