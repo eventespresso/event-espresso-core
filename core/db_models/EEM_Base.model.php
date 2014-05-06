@@ -553,7 +553,7 @@ abstract class EEM_Base extends EE_Base{
 	
 	/**
 	 * Gets all the tables comprising this model. Array keys are the table aliases, and values are EE_Table objects
-	 * @return EE_Table[]
+	 * @return EE_Table_Base[]
 	 */
 	function get_tables(){
 		return $this->_tables;

@@ -1960,7 +1960,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		//we need to remove all the relationships on the transaction
 		$TXN->delete_related_permanently('Payment');
-		$TXN->_remove_relations('Promotion_Object');
 		$TXN->delete_related_permanently('Extra_Meta');
 
 		//now we can delete this REG permanently (and the transaction of course)
