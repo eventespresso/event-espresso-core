@@ -83,8 +83,8 @@ class EE_Register_Admin_Page implements EEI_Plugin_API {
      * @return  void
      */
     public static function deregister( $page_basename ) {
-    	if ( !empty( self::$_ee_admin_page_registry['$page_basename'] ) )
-    		unset( self::$_ee_admin_page_registry['$page_basename'] );
+    	if ( !empty( self::$_ee_admin_page_registry[$page_basename] ) )
+    		unset( self::$_ee_admin_page_registry[$page_basename] );
     }
 
 

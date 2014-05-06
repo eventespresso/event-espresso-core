@@ -64,10 +64,6 @@ class EE_Event extends EE_CPT_Base{
 	 */
 	protected $_Term_Taxonomy;
 
-	/**
-	 * @var EE_Promotion_Object relation to the join table between promotions and whatevers
-	 */
-	protected $_Promotion_Object;
 
 
 

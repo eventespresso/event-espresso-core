@@ -62,7 +62,6 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			'Ticket'=>new EE_HABTM_Relation('Datetime_Ticket'),
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Checkin'=>new EE_Has_Many_Relation(),
-			'Promotion_Object'=>new EE_Has_Many_Any_Relation()
 		);
 
 		parent::__construct( $timezone );

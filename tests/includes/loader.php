@@ -27,5 +27,8 @@ function maybe_bypass_for_tests($bypass) {
 }
 tests_add_filter('FHEE__EE_System__detect_if_activation_or_upgrade__testsbypass', 'maybe_bypass_for_tests');
 
+//make sure EE_session does not load
+tests_add_filter( 'FHEE_load_EE_Session', '__return_false' );
+
 // Bootstrap EE
 require dirname( __FILE__ ) . '/../../espresso.php';
