@@ -934,6 +934,8 @@ final class EE_Config {
 
 
 
+
+
 	/**
 	 * 	__sleep
 	 *
@@ -941,6 +943,7 @@ final class EE_Config {
 	 *  @return 	array
 	 */
 	public function __sleep() {
+		//we serialize everything except the addons becuse if an addon gets deactivated, waking up could really break things.
 		return apply_filters( 'FHEE__EE_Config__sleep',array(
 			'core',
 			'organization',
@@ -949,9 +952,22 @@ final class EE_Config {
 			'admin',
 			'template_settings',
 			'map_settings',
-			'gateway',
-			'addons'
+			'gateway'
 		) );
+	}
+
+	private function _set_addons() {
+		$this->addons = apply_filters( 'FHEE__EE_Config__construct__addons', new stdClass() );
+	}
+
+
+	/**
+	 * magic __wakeup method.
+	 * EE_Config uses this to make sure the addons property gets set properly when woken up.
+	 * @access protected
+	 */
+	public function __wakeup() {
+		$this->_set_addons();
 	}
 
 
