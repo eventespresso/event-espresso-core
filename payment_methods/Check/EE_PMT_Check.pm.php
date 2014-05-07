@@ -26,6 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Check extends EE_PMT_Base{
+	const help_tab_name = 'ee_check_help';
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Check", 'event_espresso');
 		parent::__construct($pm_instance);
@@ -58,15 +59,19 @@ class EE_PMT_Check extends EE_PMT_Base{
 			return new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'check_title'=> new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Title %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
 					'default'=>  __("Check/Money Order Payments", 'event_espresso'),
 				)),
 				'payment_instructions'=>new EE_Text_Area_Input(array(
+					'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
 					'default'=> __("Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
 				)),
 				'payable_to'=>new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Payable To %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
 					'default'=>$organization_name
 				)),
 				'address_to_send_payment'=>new EE_Text_Area_Input(array(
+					'html_label_text'=>  sprintf(__("Address Payable %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
 					'default'=>$default_address
 				)),
 			),
@@ -81,7 +86,7 @@ class EE_PMT_Check extends EE_PMT_Base{
 	 */
 	public function help_tabs_config(){
 		return array(
-			'payment_methods_overview_check_help_tab' => array(
+			self::help_tab_name => array(
 						'title' => __('Check Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_check'
 						),

@@ -26,6 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Paypal_Pro extends EE_PMT_Base{
+	const help_tab_name = 'ee_paypal_help';
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Paypal_Pro.gateway.php');
 		$this->_gateway = new EEG_Paypal_Pro();
@@ -36,10 +37,18 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		return new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 //				'paypal_email'=>new EE_Email_Input(), not actually used
-				'paypal_api_username'=>new EE_Text_Input(),
-				'paypal_api_password'=>new EE_Text_Input(),
-				'paypal_api_signature'=>new EE_Text_Input(),
-				'no_shipping'=>new EE_Yes_No_Input(),
+				'paypal_api_username'=>new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Paypal API Username %s", "event_espresso"),EEH_Template::get_help_tab_link(self::help_tab_name))
+				)),
+				'paypal_api_password'=>new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Paypal API Password %s", "event_espresso"),EEH_Template::get_help_tab_link(self::help_tab_name))
+				)),
+				'paypal_api_signature'=>new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Paypal API Signature %s", "event_espresso"),EEH_Template::get_help_tab_link(self::help_tab_name))
+				)),
+				'no_shipping'=>new EE_Yes_No_Input(array(
+					'html_label_text'=>  sprintf(__("No Shipping? %s", "event_espresso"),EEH_Template::get_help_tab_link(self::help_tab_name))
+				)),
 				'credit_card_types'=>new EE_Checkbox_Multi_Input($this->card_types_supported()),
 				)
 			)
@@ -109,7 +118,7 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 	 */
 	public function help_tabs_config(){
 		return array(
-			'payment_methods_overview_paypalpro_help_tab' => array(
+			self::help_tab_name => array(
 						'title' => __('PayPal Pro Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_paypalpro'
 						),

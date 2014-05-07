@@ -298,7 +298,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		//if that didn't work or wasn't provided, find another way to select the currrent pm
 		if( ! $payment_method_slug){
 			//otherwise, look for an active one
-			$an_active_pm = EEM_Payment_Method::instance()->get_one_active();
+			$an_active_pm = EEM_Payment_Method::instance()->get_one_active('CART');
 			if($an_active_pm){
 				$payment_method_slug = $an_active_pm->slug();
 			}else{
@@ -382,6 +382,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						));
 					}
 					$payment_method->set_active();
+					//handles the goofy case where someone activates the invoice gateway which is also 
+					$payment_method->set_type($pm_type_obj->system_name());
 					$payment_method->save();
 					foreach($payment_method->get_all_usable_currencies() as $currency_obj){
 						$payment_method->_add_relation_to($currency_obj, 'Currency');
@@ -427,6 +429,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			//echo "early processing ran";return;
 			//ok let's find which gateway form to use based on the form input
 			EE_Registry::instance()->load_lib('Payment_Method_Manager');
+			/**
+			 * @var $correct_pmt_form_to_use EE_Payment_Method_Form
+			 */
 			$correct_pmt_form_to_use = NULL;
 			foreach(EE_Payment_Method_Manager::instance()->payment_method_types() as $pmt_obj){
 				//get the form and simplify it, like what we do when we display it
@@ -447,6 +452,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$correct_pmt_form_to_use->save();
 				$pm = $correct_pmt_form_to_use->get_model_object();
 				$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$pm->slug()));
+			}else{
+				EE_Error::add_error(sprintf(__("Payment method of type %s was not saved because there were validation errors. They have been marked in the form", 'event_espresso'),$pmt_obj->pretty_name()));
 			}
 		}
 		return;

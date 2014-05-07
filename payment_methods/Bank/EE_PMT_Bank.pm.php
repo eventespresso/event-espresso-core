@@ -26,6 +26,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Bank extends EE_PMT_Base{
+	const help_tab_name = 'ee_bank_help';
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Bank", 'event_espresso');
 		parent::__construct($pm_instance);
@@ -38,15 +39,25 @@ class EE_PMT_Bank extends EE_PMT_Base{
 		return new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'page_title'=>new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Title %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
 					'default'=>  __("Electronic Funds Transfers", 'event_espresso')
 				)),
 				'payment_instructions'=>new EE_Text_Area_Input(array(
+					'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
 					'default'=>  __("Please initiate an electronic payment using the bank information below. Payment must be received within 48 hours of event date.", 'event_espresso')
 				)),
-				'name_on_bank_account'=>new EE_Text_Input(),
-				'bank_account_number'=>new EE_Text_Input(),
-				'bank_name'=>new EE_Text_Input(),
-				'bank_address'=>new EE_Text_Area_Input()
+				'name_on_bank_account'=>new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Name on Bank Account %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+				)),
+				'bank_account_number'=>new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Bank Account # %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+				)),
+				'bank_name'=>new EE_Text_Input(array(
+					'html_label_text'=>  sprintf(__("Bank Name %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+				)),
+				'bank_address'=>new EE_Text_Area_Input(array(
+					'html_label_text'=>  sprintf(__("Bank Address %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+				))
 			),
 			'exclude'=>array('PMD_debug_mode')
 		));
@@ -58,7 +69,7 @@ class EE_PMT_Bank extends EE_PMT_Base{
 	 */
 	public function help_tabs_config(){
 		return array(
-			'payment_methods_overview_bank_draft_help_tab' => array(
+			self::help_tab_name => array(
 						'title' => __('Bank Draft Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_bank_draft'
 						),
