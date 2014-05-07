@@ -25,8 +25,7 @@ td { vertical-align:top!important; }
 .not-really-a-table  { border:none!important; }
 
 #invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
-#logo-dv { width:150px!important; }
-#logo-dv img { max-width:150px!important; border: none; }
+#logo-dv img { max-width:200px!important; border: none; }
 
 #comments{padding-top:1cm; line-height:1.2em; }
 

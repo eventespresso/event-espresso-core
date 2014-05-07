@@ -934,6 +934,8 @@ final class EE_Config {
 
 
 
+
+
 	/**
 	 * 	__sleep
 	 *
@@ -941,6 +943,13 @@ final class EE_Config {
 	 *  @return 	array
 	 */
 	public function __sleep() {
+		//first we save each addons config to it's own wp_option table
+		$props = get_object_vars( $this );
+		foreach ( $props['addons'] as $key => $value ) {
+			update_option('ee_config_' . $key, $value);
+		}
+
+		//we serialize everything except the addons becuse if an addon gets deactivated, waking up could really break things.
 		return apply_filters( 'FHEE__EE_Config__sleep',array(
 			'core',
 			'organization',
@@ -949,9 +958,29 @@ final class EE_Config {
 			'admin',
 			'template_settings',
 			'map_settings',
-			'gateway',
-			'addons'
+			'gateway'
 		) );
+	}
+
+	private function _set_addons() {
+		$this->addons = apply_filters( 'FHEE__EE_Config__construct__addons', new stdClass() );
+		//now we load any possibly existing options for the addons in the db! Note this will NOT retrieve options for deactivated addons.
+		$props = get_object_vars( $this );
+		foreach ( $props['addons'] as $key => $value ) {
+			$addon_opts = get_option( 'ee_config_' . $key );
+			if ( !empty( $addon_opts ) )
+				$this->addons->$key = $addon_opts;
+		}
+	}
+
+
+	/**
+	 * magic __wakeup method.
+	 * EE_Config uses this to make sure the addons property gets set properly when woken up.
+	 * @access protected
+	 */
+	public function __wakeup() {
+		$this->_set_addons();
 	}
 
 
