@@ -450,12 +450,20 @@ abstract class EE_Base_Class{
 			if($object_to_remove_or_index_into_array instanceof EE_Base_Class && $object_to_remove_or_index_into_array->ID()){
 				$index_in_cache = $object_to_remove_or_index_into_array->ID();
 				if( is_array($this->_model_relations[$relationName]) && ! isset($this->_model_relations[$relationName][$index_in_cache])){
+					$index_found_at = NULL;
 					//find this object in the array even though it has a different key
 					foreach($this->_model_relations[$relationName] as $index=>$obj){
 						if($obj == $object_to_remove_or_index_into_array || $obj->ID() == $object_to_remove_or_index_into_array->ID()){
-							$index_in_cache = $index;
+							$index_found_at = $index;
 							break;
 						}
+					}
+					if($index_found_at){
+						$index_in_cache = $index_found_at;
+					}else{
+						//it wasn't found. huh. well obviously it doesn't need to be removed from teh cache
+						//if it wasn't in it to begin with. So we're done
+						return $object_to_remove_or_index_into_array;
 					}
 				}
 			}elseif($object_to_remove_or_index_into_array instanceof EE_Base_Class){
