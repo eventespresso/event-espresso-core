@@ -51,7 +51,10 @@ abstract class EEME_Base {
 	 */
 	protected $_ = NULL;
 	
-	public function __construct(){
+	public function __construct(){if( ! $this->_model_name_extended){
+			throw new EE_Error(sprintf(__("When declaring a model extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'", "event_espresso")));
+		}
+		
 		if(did_action('AHEE__EEM_'.$this->_model_name_extended.'__construct__end')){
 			throw new EE_Error(sprintf(__("Hooked in model extension '%s' too late! The model %s has already been used!", "event_espresso"),get_class($this),$this->_model_name_extended));
 		}
