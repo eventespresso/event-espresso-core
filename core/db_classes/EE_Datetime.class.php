@@ -340,7 +340,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function increase_sold( $qty = 1 ) {
-		$sold = $this->_DTT_sold + $qty;
+		$sold = $this->get_raw('DTT_sold') + $qty;
 		return $this->set_sold( $sold );
 	}
 	
@@ -350,31 +350,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function decrease_sold( $qty = 1 ) {
-		$sold = $this->_DTT_sold - $qty;
+		$sold = $this->get_raw('DTT_sold') - $qty;
 		// sold can not go below zero
 		$sold = max( 0, $sold );
 		return $this->set_sold( $sold );
-	}
-
-
-
-
-
-
-
-
-	/**
-	*		get Datetime ID
-	* 
-	* 		@access		public		
-	*		@return 		mixed		int on success, FALSE on fail
-	*/	
-	public function ID() {
-		if (isset($this->_DTT_ID)) {
-			return $this->_DTT_ID;
-		} else {
-			return FALSE;
-		}
 	}
 
 
@@ -656,7 +635,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		@return 		int
 	*/	
 	public function start() {
-		return $this->_DTT_EVT_start;
+		return $this->get_raw('DTT_EVT_start');
 	}
 
 
@@ -669,7 +648,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*		@return 		int
 	*/	
 	public function end() {
-		return $this->_DTT_EVT_end;
+		return $this->get_raw('DTT_EVT_end');
 	}
 
 
@@ -684,7 +663,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	@return 		mixed		int on success, FALSE on fail
 	*/	
 	public function reg_limit() {
-		return $this->_DTT_reg_limit;
+		return $this->get_raw('DTT_reg_limit');
 	}
 
 
@@ -699,7 +678,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	@return 		mixed		int on success, FALSE on fail
 	*/	
 	public function sold() {
-		return $this->_DTT_sold;
+		return $this->get_raw('DTT_sold');
 	}
 
 
@@ -713,7 +692,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	*	@return 		boolean
 	*/	
 	public function sold_out() {
-		return $this->_DTT_reg_limit > 0 && $this->_DTT_sold >= $this->_DTT_reg_limit ? TRUE : FALSE ;
+		return $this->get('DTT_reg_limit') > 0 && $this->get('DTT_sold') >= $this->get('DTT_reg_limit') ? TRUE : FALSE ;
 	}
 
 
@@ -730,7 +709,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	public function spaces_remaining( $consider_tickets = FALSE ) {
 		// tickets remaining availalbe for purchase
 		//no need for special checks for infinite, becuase if DTT_reg_limit == INF, then INF - x = INF
-		$dtt_remaining = $this->_DTT_reg_limit - $this->_DTT_sold ;
+		$dtt_remaining = $this->get('DTT_reg_limit') - $this->get('DTT_sold') ;
 
 		if ( ! $consider_tickets ) 
 			return $dtt_remaining;
@@ -775,9 +754,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return boolean 
 	 */
 	public function is_upcoming() {
-		$start = '_DTT_EVT_start';
-		$this->_property_exists($start);
-		return ( $this->$start > time() );
+		return ( $this->get_raw('DTT_EVT_start') > time() );
 	}
 
 
@@ -787,10 +764,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return boolean       
 	 */
 	public function is_active() {
-		$start = '_DTT_EVT_start';
-		$end = '_DTT_EVT_end';
-		$this->_property_exists( array( $start, $end ) );
-		return ( $this->$start < time() && $this->$end > time() );
+		return ( $this->get_raw('DTT_EVT_start')< time() && $this->get_raw('DTT_EVT_end') > time() );
 	}
 
 
@@ -801,9 +775,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @return boolean       
 	 */
 	public function is_expired() {
-		$end = '_DTT_EVT_end';
-		$this->_property_exists( $end );
-		return ( $this->$end < time() );
+		return ( $this->get_raw('DTT_EVT_end') < time() );
 	}
 
 
@@ -837,10 +809,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		}
 
 		//first condition is to see if the months are different
-		if ( date('m', $this->_DTT_EVT_start) != date('m', $this->_DTT_EVT_end ) ) {
+		if ( date('m', $this->get_raw('DTT_EVT_start')) != date('m', $this->get_raw('DTT_EVT_end') ) ) {
 			$displaydate = $this->start_date('M j\, Y g:i a') . ' - ' . $this->end_date('M j\, Y g:i a');
 		//next condition is if its the same month but different day
-		} else if ( date('m', $this->_DTT_EVT_start) == date('m', $this->_DTT_EVT_end ) && date('d', $this->_DTT_EVT_start) != date('d', $this->_DTT_EVT_end) ) {
+		} else if ( date('m', $this->get_raw('DTT_EVT_start')) == date('m', $this->get_raw('DTT_EVT_end') ) && date('d', $this->get_raw('DTT_EVT_start')) != date('d', $this->get_raw('DTT_EVT_end')) ) {
 			$displaydate = $this->start_date('M j\, g:i a') . ' - ' . $this->end_date('M j\, g:i a Y');
 		} else {
 			$displaydate = $this->start_date('F j\, Y') . ' @ ' . $this->start_date('g:i a') . ' - ' . $this->end_date('g:i a');
