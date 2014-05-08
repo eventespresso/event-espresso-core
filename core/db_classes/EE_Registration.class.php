@@ -256,7 +256,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 
-
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @param type $timezone
+	 * @return EE_Registration
+	 */
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );

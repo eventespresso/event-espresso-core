@@ -104,11 +104,98 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t->_add_relation_to($r, 'Registration');
 		$this->assertEquals($t->ID(),0);
 		$this->assertEquals($r->ID(),0);
+		//get the registration cached on the transaction
 		$r_from_t = $t->get_first_related('Registration');
 		$this->assertEquals($r,$r_from_t);
-		
 	}
 	
+	function test_remove_relation_to(){
+		$t = EE_Transaction::new_instance();
+		$t->save();
+		$r = EE_Registration::new_instance(array('TXN_ID'=>$t->ID()));
+		$r->save();
+		$t_from_r = $r->get_first_related('Transaction');
+		$this->assertEquals($t,$t_from_r);
+		//remove the relation
+		$r->_remove_relation_to($t, 'Transaction');
+		$t_from_r = $r->get_first_related('Transaction');
+		$this->assertNull($t_from_r);
+	}
+	function test_remove_relations(){
+		$t = EE_Transaction::new_instance();
+		$t->save();
+		$r = EE_Registration::new_instance(array('TXN_ID'=>$t->ID()));
+		$r->save();
+		$t_from_r = $r->get_first_related('Transaction');
+		$this->assertEquals($t,$t_from_r);
+		$r->_remove_relations('Transaction');
+		$t_from_r = $r->get_first_related('Transaction');
+		$this->assertNull($t_from_r);
+	}
+	function test_count_related(){
+		$e1 = EE_Event::new_instance(array('EVT_name'=>'1'));
+		$e1->save();
+		$this->assertNotEquals($e1->ID(),0);
+		$e2 = EE_Event::new_instance(array('EVT_name'=>'2'));
+		$e2->save();
+		$this->assertNotEquals($e2->ID(),0);
+		$e3 = EE_Event::new_instance(array('EVT_name'=>'3'));
+		$e3->save();
+		$v = EE_Venue::new_instance(array('VNU_name'=>'v1'));
+		$v->save();
+		$v->_add_relation_to($e1, 'Event');
+		$v->_add_relation_to($e2, 'Event');
+		$this->assertEquals($v->count_related('Event'),2);
+	}
+	
+	function test_sum_related(){
+		$t = EE_Transaction::new_instance();
+		$t->save();
+		$p1 = EE_Payment::new_instance(array('PAY_amount'=>1,'TXN_ID'=>$t->ID()));
+		$p1->save();
+		$p2 = EE_Payment::new_instance(array('PAY_amount'=>2,'TXN_ID'=>$t->ID()));
+		$p2->save();
+		$p1 = EE_Payment::new_instance(array('PAY_amount'=>1000,'TXN_ID'=>0));
+		$p1->save();
+		$this->assertEquals($t->sum_related('Payment',array(),'PAY_amount'),3);
+		$t->_remove_relation_to($p2, 'Payment');
+		$this->assertEquals($t->sum_related('Payment',array(),'PAY_amount'),1);
+	}
+	
+	function test_cache_specifying_id(){
+		$t = EE_Transaction::new_instance();
+		$r = EE_Registration::new_instance();
+		$t->cache('Registration', $r, 'r');
+		$related_rs = $t->get_many_related('Registration');
+		$this->assertArrayHasKey('r',$related_rs);
+		$this->assertArrayNotHasKey('r2', $related_rs);
+		$r_from_t = $t->get_one_from_cache('Registration');
+		$this->assertEquals($r,$r_from_t);
+		$r2 = EE_Registration::new_instance();
+		$t->cache('Registration',$r2,'r2');
+		$rs_from_t = $t->get_all_from_cache('Registration');
+		$this->assertArrayContains($r,$rs_from_t);
+		$this->assertArrayContains($r2,$rs_from_t);
+	}
+	
+	function test_update_cache_after_save(){
+		$t = EE_Transaction::new_instance();
+		$r = EE_Registration::new_instance();
+		$t->cache('Registration', $r, 'monkey_code');
+		$related_rs = $t->get_many_related('Registration');
+		$this->assertArrayHasKey('monkey_code',$related_rs);
+		$r->save();
+		$t->update_cache_after_object_save('Registration', $r, 'monkey_code');
+		$related_rs = $t->get_many_related('Registration');
+		$this->assertArrayHasKey($r->ID(),$related_rs);
+		$this->assertArrayNotHasKey('monkey_code',$related_rs);
+	}
+	
+	function test_is_set(){
+		$t = EE_Transaction::new_instance();
+		$this->assertTrue($t->is_set('TXN_ID'));
+		$this->assertFalse($t->is_set('monkey_brains'));
+	}
 }
 
 // End of file EE_Base_Class_Test.php
