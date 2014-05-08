@@ -117,7 +117,8 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertEquals($t,$t_from_r);
 		//remove the relation
-		$r->_remove_relation_to($t, 'Transaction');
+		$t_removed = $r->_remove_relation_to($t, 'Transaction');
+		$this->assertEquals($t,$t_removed);		
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertNull($t_from_r);
 	}
