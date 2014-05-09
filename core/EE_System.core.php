@@ -593,6 +593,30 @@ final class EE_System {
 	*/
 	public function register_shortcodes_modules_and_widgets() {
 		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
+		if ( has_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons' )) {
+			$this->_incompatible_addon_error();
+		}
+	}
+
+
+	/**
+	* _incompatible_addon_error
+	*
+	* @access public
+	* @return void
+	*/
+	private function _incompatible_addon_error() {
+		// get array of classes hooking into here
+		$class_names = EEH_Class_Tools::get_class_names_for_all_callbacks_on_hook( 'AHEE__EE_System__register_shortcodes_modules_and_addons' );
+		if ( ! empty( $class_names )) {
+			$msg = __( 'The following plugins, addons, or modules appear to be incompatible with this version of Event Espresso and may require updating or deactivation:', 'event_espresso' );
+			$msg .= '<ul>';
+			foreach ( $class_names as $class_name ) {
+				$msg .= '<li><b>Event Espresso - ' . str_replace( array( 'EE_', 'EEM_', 'EED_', 'EES_', 'EEW_' ), '', $class_name ) . '</b></li>';
+			}
+			$msg .= '</ul>';
+		}
+		EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	}
 
 
