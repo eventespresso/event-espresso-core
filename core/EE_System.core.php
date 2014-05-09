@@ -594,7 +594,9 @@ final class EE_System {
 	public function register_shortcodes_modules_and_widgets() {
 		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
 		if ( has_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons' )) {
-			$this->_incompatible_addon_error();
+			if ( is_admin() || ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE )) {
+				$this->_incompatible_addon_error();
+			}
 		}
 	}
 
