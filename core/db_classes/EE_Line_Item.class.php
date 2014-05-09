@@ -538,7 +538,7 @@ class EE_Line_Item extends EE_Base_Class{
 	 */
 	function generate_code(){
 		// each line item in the cart requires a unique identifier
-		return md5( $this->_OBJ_type . $this->_OBJ_ID . time() );
+		return md5( $this->get('OBJ_type') . $this->get('OBJ_ID') . time() );
 	}
 	
 	function is_tax(){
