@@ -593,6 +593,7 @@ final class EE_System {
 	*/
 	public function register_shortcodes_modules_and_widgets() {
 		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
+		// check for addons using old hookpoint
 		if ( has_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons' )) {
 			if ( is_admin() || ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE )) {
 				$this->_incompatible_addon_error();
