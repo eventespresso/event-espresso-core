@@ -220,7 +220,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class{
 	 */
 	public function questions( $query_params = array() ){
 		$query_params = ! empty( $query_params ) ? $query_params : array( 'order_by' => array( 'Question_Group_Question.QGQ_order' => 'ASC' ));
-		return ! empty( $this->_QSG_ID ) ? $this->get_many_related( 'Question', $query_params ) : array();
+		return  $this->ID() ? $this->get_many_related( 'Question', $query_params ) : array();
 	}
 
 

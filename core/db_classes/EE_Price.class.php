@@ -276,7 +276,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 	* @return 		string
 	*/
 	public function desc() {
-		return $this->_PRC_desc;
+		return $this->get('PRC_desc');
 	}
 
 

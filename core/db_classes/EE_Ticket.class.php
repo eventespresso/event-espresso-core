@@ -304,7 +304,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	public function is_on_sale() {
-		return ( $this->_TKT_start_date < time() && $this->_TKT_end_date > time() );
+		return ( $this->get_raw('TKT_start_date') < time() && $this->get_raw('TKT_end_date') > time() );
 	}
 
 
@@ -315,7 +315,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	public function is_pending() {
-		return ( $this->_TKT_start_date > time() );
+		return ( $this->get_raw('TKT_start_date') > time() );
 	}
 
 
@@ -325,7 +325,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	public function is_expired() {
-		return ( $this->_TKT_end_date < time() );
+		return ( $this->get_raw('TKT_end_date') < time() );
 	}
 
 
@@ -350,7 +350,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 			}
 		}
 		// datetime is still open for registration, but is this ticket sold out ?
-		return $this->_TKT_qty < 1 || $this->_TKT_qty > $this->_TKT_sold ? TRUE : FALSE;
+		return $this->get_raw('TKT_qty') < 1 || $this->get_raw('TKT_qty') > $this->get_raw('TKT_sold') ? TRUE : FALSE;
 	}
 
 
@@ -401,8 +401,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		if ( ! empty( $datetimes )) {
 			// although TKT_qty and $datetime->spaces_remaining() could both be INF
 			//we only need to check for INF explicitly if we want to optimize.
-			//because INF - x = INF; and min(x,INF) = x
-			$tickets_remaining = $this->_TKT_qty - $this->_TKT_sold;
+			//because INF - x = INF; and min(x,INF) = x(
+			$tickets_remaining = $this->get('TKT_qty') - $this->get('TKT_sold');
 			foreach ( $datetimes as $datetime ) {
 				$tickets_remaining =  min( $tickets_remaining, $datetime->spaces_remaining() );
 			}
@@ -419,7 +419,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 */
 	public function ticket_status( $display = FALSE ) {
 		if ( ! $this->is_remaining() ) return $display ? EEH_Template::pretty_status(EE_Ticket::sold_out, FALSE, 'sentence') : EE_Ticket::sold_out;
-		if ( $this->_TKT_deleted ) return $display ? EEH_Template::pretty_status(EE_Ticket::archived, FALSE, 'sentence') : EE_Ticket::archived;
+		if ( $this->get('TKT_deleted') ) return $display ? EEH_Template::pretty_status(EE_Ticket::archived, FALSE, 'sentence') : EE_Ticket::archived;
 		if ( $this->is_expired() ) return $display ? EEH_Template::pretty_status(EE_Ticket::expired, FALSE, 'sentence') : EE_Ticket::expired;
 		if ( $this->is_pending() ) return $display ? EEH_Template::pretty_status(EE_Ticket::pending, FALSE, 'sentence') : EE_Ticket::pending;
 		if ( $this->is_on_sale() ) return $display ? EEH_Template::pretty_status(EE_Ticket::onsale, FALSE, 'sentence') : EE_Ticket::onsale;
@@ -442,7 +442,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		}
 
 		//Tickets sold
-		$tickets_sold['ticket'] = $this->_TKT_sold;
+		$tickets_sold['ticket'] = $this->get_raw('TKT_sold');
 
 		return $tickets_sold;
 	}
@@ -778,7 +778,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function increase_sold( $qty = 1 ) {
-		$sold = $this->_TKT_sold + $qty;
+		$sold = $this->get_raw('TKT_sold') + $qty;
 		return $this->set_sold( $sold );
 	}
 
@@ -788,7 +788,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @return boolean
 	 */
 	function decrease_sold( $qty = 1 ) {
-		$sold = $this->_TKT_sold - $qty;
+		$sold = $this->get_raw('TKT_sold') - $qty;
 		// sold can not go below zero
 		$sold = max( 0, $sold );
 		return $this->set_sold( $sold );

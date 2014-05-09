@@ -215,6 +215,7 @@ abstract class EEM_Base extends EE_Base{
 				$table_obj->_construct_finalize_set_table_to_join_with($this->_get_main_table());
 			}
 		}
+		$this->_fields = apply_filters('FHEE__'.get_class($this).'__construct__fields',$this->_fields);
 		foreach($this->_fields as $table_alis => $fields_for_table){
 			if(!array_key_exists($table_alias,$this->_tables)){
 				throw new EE_Error(sprintf(__("Table alias %s does not exist in EEM_Base child's _tables array. Only tables defined are %s",'event_espresso'),$table_alias,implode(",",$this->_fields)));
@@ -232,7 +233,7 @@ abstract class EEM_Base extends EE_Base{
 		if( get_class($this) != 'EEM_Extra_Meta'){
 			$this->_model_relations['Extra_Meta'] = new EE_Has_Many_Any_Relation();
 		}
-		
+		$this->_model_relations = apply_filters('FHEE__'.get_class($this).'__construct__model_relations',$this->_model_relations);
 		foreach($this->_model_relations as $model_name => $relation_obj){
 			$relation_obj->_construct_finalize_set_models($this->get_this_model_name(), $model_name);
 		}
@@ -247,7 +248,7 @@ abstract class EEM_Base extends EE_Base{
 			$this->_default_where_conditions_strategy = new EE_Default_Where_Conditions();
 		}
 		$this->_default_where_conditions_strategy->_finalize_construct($this);
-		
+		do_action('AHEE__'.get_class($this).'__construct__end');
 	}
 
 

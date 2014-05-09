@@ -181,4 +181,24 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		require_once EE_TESTS_DIR . 'mocks/admin/EE_Admin_Mocks.php';
 		require_once EE_TESTS_DIR . 'mocks/admin/admin_mock_valid/Admin_Mock_Valid_Admin_Page.core.php';
 	}
+	/**
+	 * IT would be better to add a constraint and do this properly at some point
+	 * @param mixed $item
+	 */
+	public function assertArrayContains($item,$haystack){
+		$in_there = in_array($item, $haystack);
+		if($in_there){
+			$this->assertTrue(true);
+		}else{
+			$this->assertTrue($in_there,  sprintf(__("Array %s does not contain %s", "event_espresso"),print_r($haystack,true),print_r($item,true)));
+		}
+	}
+	public function assertArrayDoesNotContain($item,$haystack){
+		$not_in_there = ! in_array($item,$haystack);
+		if($not_in_there){
+			$this->assertTrue($not_in_there);
+		}else{
+			$this->assertTrue($not_in_there,  sprintf(__("Array %s DOES contain %s when it shouldn't", "event_espresso"),print_r($haystack,true),print_r($item,true)));
+		}
+	}
 }

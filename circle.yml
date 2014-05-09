@@ -24,6 +24,8 @@ machine:
 ## Customize dependencies
 dependencies:
   pre:
+    #enable xdebug
+    # - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
     #setup WP install
     - wget -nv -O /home/ubuntu/tmp/wordpress.tar.gz https://github.com/WordPress/WordPress/tarball/$WP_VERSION;
     - mkdir -p $WP_CORE_DIR;
@@ -41,3 +43,4 @@ dependencies:
 test:
   override:
     - cd $plugin_tests_dir; phpunit
+    # - cd $plugin_tests_dir; phpunit --coverage-html $CIRCLE_ARTIFACTS
