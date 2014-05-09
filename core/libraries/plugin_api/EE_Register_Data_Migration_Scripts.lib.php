@@ -91,7 +91,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API {
 	 * @param mixed $dms_id  unique identifier for the set of Data Migration Scripts that were previously registered
 	 * @return void
 	 */
-	public static function deregister( $dms_id ) {
+	public static function deregister( $dms_id = NULL ) {
 		if ( isset( self::$_settings[ $dms_id ] )) {
 			unset( self::$_settings[ $dms_id ] );
 		}
