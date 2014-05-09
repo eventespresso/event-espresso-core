@@ -35,17 +35,16 @@ class EE_Register_Config implements EEI_Plugin_API {
 	 * @throws EE_Error
 	 *
 	 * @param  string $config_class_name The name of the Config class being registered.
-	 *                                   		Note this class must extend EE_Config Base and
-	 *                                   		must have already been registered with an
-	 *                                   		autolaoder.
-	 * @param  string $config_name          Optional.  By default the new config will be
-	 *                                      		registered to EE_Config::instance()->
-	 *                                      		addons->{$config_class_name}.  You may want
-	 *                                      		to have more control over the property name
-	 *                                      		which is what this variable is for.
+	 *                                   		Note this class must extend EE_Config Base and must have already been registered with an autoloader.
+	 * @param  array $setup_args {
+	 *
+	 * 		@type  string $config_name	Optional.  By default the new config will be registered to EE_Config::instance()->addons->{$config_class_name}.
+	 * 														You may want to have more control over the property name which is what this variable is for.
+	 *                       		}
 	 * @return void
 	 */
-	public static function register( $config_class_name, $config_name = '' ) {
+	public static function register( $config_class_name = NULL, $setup_args = array() ) {
+		$config_name = isset( $setup_args['config_name'] ) ? $setup_args['config_name'] : $config_class_name;
 		//first find out if this happened too late.
 		if ( did_action( 'AHEE__EE_System__load_core_configuration__begin' ) ) {
 			EE_Error::doing_it_wrong(
@@ -80,7 +79,7 @@ class EE_Register_Config implements EEI_Plugin_API {
 		foreach ( self::$_ee_config_registry as $class_name => $config_name ) {
 			//first some validation of our incoming class_name.  We'll throw an error early if its' not registered correctly
 			if ( ! class_exists( $class_name ) ) {
-				throw EE_Error(
+				throw new EE_Error(
 					sprintf(
 						__( 'The "%s" config class can not be registered with EE_Config because the class does not exist.  Verify that an autoloader has been set for this class', 'event_espresso' ),
 						$class_name
@@ -98,7 +97,7 @@ class EE_Register_Config implements EEI_Plugin_API {
 	/**
 	 * @param mixed $config_class_name
 	 */
-	public static function deregister( $config_class_name ) {
+	public static function deregister( $config_class_name = NULL ) {
 		if ( ! empty( self::$_ee_config_registry[ $config_class_name ] ))
     			unset( self::$_ee_config_registry[ $config_class_name ] );
 	}
