@@ -248,10 +248,10 @@ final class EE_Registry {
 	 *	@return object
 	 */
 	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
-		$paths = array(
+		$paths = apply_filters('FHEE__EE_Registry__load_class__paths',array(
 			EE_CLASSES,
 			EE_CORE
-		);
+		));
 		// retrieve instantiated class
 		return $this->_load( $paths, 'EE_' , $class_name, 'class', $arguments, $from_db, $cache, $load_only );
 	}
@@ -306,10 +306,10 @@ final class EE_Registry {
 	 * @return EEM_Base
 	 */
 	public function load_model ( $class_name, $arguments = array(), $load_only = FALSE ) {
-		$paths = array(
+		$paths = apply_filters('FHEE__EE_Registry__load_model__paths',array(
 			EE_MODELS,
 			EE_CORE
-		);
+		));
 		// retrieve instantiated class
 		return $this->_load( $paths, 'EEM_' , $class_name, 'model', $arguments, FALSE, TRUE, $load_only );
 	}

@@ -24,7 +24,7 @@
  * @since 				$VID:$
  *
  */
-class EEH_File extends EEH_Base {
+class EEH_File{
 
 
 
@@ -67,6 +67,33 @@ class EEH_File extends EEH_Base {
 	 */
 	public static function end_with_directory_separator( $file_path ){
 		return rtrim( $file_path, '/\\' ) . DS;
+	}
+	/**
+	 * shorthand for both EEH_FIle::end_with_directory_seperator AND EEH_File::standardise_directory_seperators
+	 * @return string
+	 */
+	public static function standardise_and_end_with_directory_seperator($file_path){
+		return self::end_with_directory_separator(self::standardise_directory_separators($file_path));
+	}
+	/**
+	 * takes teh folder name (with or without trailing slash) and finds the files it in,
+	 * and what the class's name inside of each should be.
+	 * @param string $folder_paths
+	 * @return array where keys are what the classnames SHOULD be, and values are their filepaths
+	 * @throws EE_Error
+	 */
+	public static function get_contents_of_folders($folder_paths){
+		$class_to_folder_path = array();
+		foreach($folder_paths as $folder_path){
+			$folder_path = self::standardise_and_end_with_directory_seperator($folder_path);
+			$files_in_folder = glob($folder_path.'*');
+			$class_to_folder_path = array();
+			foreach($files_in_folder as $filepath){
+				$classname = self::get_classname_from_filepath_with_standard_filename($filepath);
+				$class_to_folder_path[$classname] = $filepath;
+			}
+		}
+		return $class_to_folder_path;
 	}
 
 
