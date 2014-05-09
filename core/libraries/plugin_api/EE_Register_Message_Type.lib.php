@@ -43,12 +43,12 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      *
      * @since   4.3.0
      *
+	 * 	@param string $mtname                               Whatever is defined for the $name property of
+	 *                                                                          the message type you are registering (eg.
+	 *                                                                          declined_registration). Required.
      * @param  array  $setup_args  {
      *        An array of arguments provided for registering the message type.
      *
-     *        @type string $mtname                               Whatever is defined for the $name property of
-     *                                                                          the message type you are registering (eg.
-     *                                                                          declined_registration). Required.
      *        @type string $mtfilename                          The filename of the message type being
      *                                                                          registered.  This will be the main
      *                                                                          EE_{Messagetype_Name}_message_type class. (
@@ -64,31 +64,38 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * }
      * @return void
      */
-    public static function register( $setup_args ) {
+    public static function register( $mtname = NULL, $setup_args = array() ) {
 
         //required fields MUST be present, so let's make sure they are.
-        if ( ! is_array( $setup_args ) || empty( $setup_args['mtname'] ) || empty( $setup_args['mtfilename'] ) || empty( $setup_args['autoloadpaths'] ) )
-            throw new EE_Error( __( 'In order to register a message type with EE_Register_Message_Type::register, you must include an array that contains the following keys: "mtname", "mtfilename", "autoloadpaths"', 'event_espresso' ) );
+        if ( ! isset( $mtname ) || ! is_array( $setup_args ) || empty( $setup_args['mtfilename'] ) || empty( $setup_args['autoloadpaths'] ) )
+            throw new EE_Error(
+				__( 'In order to register a message type with EE_Register_Message_Type::register, you must include an array that contains the following keys: "mtname", "mtfilename", "autoloadpaths"', 'event_espresso' )
+			);
 
         //make sure this was called in the right place!
         if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
-            EE_Error::doing_it_wrong(__METHOD__, sprintf( __('A message type named "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'), $setup_args['mtname'] ), '4.3.0' );
+            EE_Error::doing_it_wrong(
+				__METHOD__,
+				sprintf(
+					__('A message type named "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'),
+					$mtname
+				),
+				'4.3.0'
+			);
         }
 
-        $mtname = (string) $setup_args['mtname'];
-        //setup $__ee_message_type_registry array from incoming values.
-        self::$_ee_message_type_registry[$mtname] = array(
-            'mtfilename' => (string) $setup_args['mtfilename'],
-            'autoloadpaths' => (array) $setup_args['autoloadpaths'],
-            'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array()
-            );
+	//setup $__ee_message_type_registry array from incoming values.
+	self::$_ee_message_type_registry[ $mtname ] = array(
+		'mtfilename' => (string) $setup_args['mtfilename'],
+		'autoloadpaths' => (array) $setup_args['autoloadpaths'],
+		'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array()
+	);
 
         //add filters
+		add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EE_Register_Message_Type', 'register_msgs_autoload_paths'), 10 );
+		add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EE_Register_Message_Type', 'register_messagetype_files'), 10, 1 );
+		add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EE_Register_Message_Type', 'register_messengers_to_activate_mt_with'), 10, 2 );
 
-	add_filter( 'FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( 'EE_Register_Message_Type', 'register_msgs_autoload_paths'), 10 );
-
-            add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EE_Register_Message_Type', 'register_messagetype_files'), 10, 2 );
-            add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EE_Register_Message_Type', 'register_messengers_to_activate_mt_with'), 10, 2 );
     }
 
 
@@ -101,7 +108,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * @param string  $mtname the name for the message type that was previously registered
      * @return void
      */
-    public static function deregister( $mtname ) {
+    public static function deregister( $mtname = NULL ) {
     	if ( !empty( self::$_ee_message_type_registry[$mtname] ) )
     		unset( self::$_ee_message_type_registry[$mtname] );
     }
@@ -114,11 +121,9 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * @since   4.3.0
      *
      * @param  array  $messagetype_files The current array of message type file names
-     * @param  array  $type                      This is a string that indicates what type is requested.  It
-     *                                                        could be either 'messengers', 'message_types', or 'all'.
      * @return  array                                 Array of message type file names
      */
-    public static function register_messagetype_files( $messagetype_files, $type ) {
+    public static function register_messagetype_files( $messagetype_files ) {
         if ( empty( self::$_ee_message_type_registry ) )
             return $messagetype_files;
 
