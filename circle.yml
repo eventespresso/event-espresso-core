@@ -24,7 +24,7 @@ machine:
 ## Customize dependencies
 dependencies:
   pre:
-    #enable xdebug
+    #enable xdebug.  LINE 1/2 to uncomment if you want to run a code coverage report.
     # - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
     #setup WP install
     - wget -nv -O /home/ubuntu/tmp/wordpress.tar.gz https://github.com/WordPress/WordPress/tarball/$WP_VERSION;
@@ -42,5 +42,7 @@ dependencies:
 ##tests override
 test:
   override:
+    # comment out the below line to run a code coverage report.
     - cd $plugin_tests_dir; phpunit
+    ## LINE 2/2 to uncomment if you want to run a code coverage report.
     # - cd $plugin_tests_dir; phpunit --coverage-html $CIRCLE_ARTIFACTS
