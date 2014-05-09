@@ -122,7 +122,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_path'] )) {
 			// register admin page
-			EE_Register_Admin_Page::register( $addon_name, self::$_settings[ $addon_name ]['admin_path'] );
+			EE_Register_Admin_Page::register( $addon_name, array( 'page_path' => self::$_settings[ $addon_name ]['admin_path'] ));
 	}
 		if ( ! empty( self::$_settings[ $addon_name ]['module_paths'] )) {
 			// add to list of modules to be registered
