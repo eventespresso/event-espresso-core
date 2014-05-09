@@ -74,7 +74,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API {
 	/**
 	 * Filters the list of shortcodes to add ours.
 	 * and they're just full filepaths to FOLDERS containing a shortcode class file. Eg.
-	 * array('espresso_monkey'=>'/public_html/wondersite/wp-content/plugins/ee4/shortcodes/espresso_monkey',...)
+	 * array('espresso_monkey'=>'/public_html/wonder-site/wp-content/plugins/ee4/shortcodes/espresso_monkey',...)
 	 * @param array $shortcodes_to_register  array of paths to all shortcodes that require registering
 	 * @return array
 	 */
@@ -96,7 +96,7 @@ class EE_Register_Shortcode implements EEI_Plugin_API {
 	 * @param string  $shortcode_id the name for the shortcode that was previously registered
 	 * @return void
 	 */
-	public static function deregister( $shortcode_id ) {
+	public static function deregister( $shortcode_id = NULL ) {
 		if ( isset( self::$_settings[ $shortcode_id ] )) {
 			unset( self::$_settings[ $shortcode_id ] );
 		}
