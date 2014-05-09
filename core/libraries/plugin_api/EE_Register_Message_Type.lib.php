@@ -43,7 +43,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      *
      * @since   4.3.0
      *
-	 * 	@param string $mtname                               Whatever is defined for the $name property of
+	 * 	@param string $mt_name                               Whatever is defined for the $name property of
 	 *                                                                          the message type you are registering (eg.
 	 *                                                                          declined_registration). Required.
      * @param  array  $setup_args  {
@@ -64,12 +64,12 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      * }
      * @return void
      */
-    public static function register( $mtname = NULL, $setup_args = array() ) {
+    public static function register( $mt_name = NULL, $setup_args = array() ) {
 
         //required fields MUST be present, so let's make sure they are.
-        if ( ! isset( $mtname ) || ! is_array( $setup_args ) || empty( $setup_args['mtfilename'] ) || empty( $setup_args['autoloadpaths'] ) )
+        if ( ! isset( $mt_name ) || ! is_array( $setup_args ) || empty( $setup_args['mtfilename'] ) || empty( $setup_args['autoloadpaths'] ) )
             throw new EE_Error(
-				__( 'In order to register a message type with EE_Register_Message_Type::register, you must include an array that contains the following keys: "mtname", "mtfilename", "autoloadpaths"', 'event_espresso' )
+				__( 'In order to register a message type with EE_Register_Message_Type::register, you must include a unique name for the message type, plus an array containing the following keys: "mtfilename", "autoloadpaths"', 'event_espresso' )
 			);
 
         //make sure this was called in the right place!
@@ -78,14 +78,14 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 				__METHOD__,
 				sprintf(
 					__('A message type named "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'),
-					$mtname
+					$mt_name
 				),
 				'4.3.0'
 			);
         }
 
 	//setup $__ee_message_type_registry array from incoming values.
-	self::$_ee_message_type_registry[ $mtname ] = array(
+	self::$_ee_message_type_registry[ $mt_name ] = array(
 		'mtfilename' => (string) $setup_args['mtfilename'],
 		'autoloadpaths' => (array) $setup_args['autoloadpaths'],
 		'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array()
@@ -105,12 +105,12 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      *
      * @since    4.3.0
      *
-     * @param string  $mtname the name for the message type that was previously registered
+     * @param string  $mt_name the name for the message type that was previously registered
      * @return void
      */
-    public static function deregister( $mtname = NULL ) {
-    	if ( !empty( self::$_ee_message_type_registry[$mtname] ) )
-    		unset( self::$_ee_message_type_registry[$mtname] );
+    public static function deregister( $mt_name = NULL ) {
+    	if ( !empty( self::$_ee_message_type_registry[$mt_name] ) )
+    		unset( self::$_ee_message_type_registry[$mt_name] );
     }
 
 
@@ -180,14 +180,14 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
         if ( empty( self::$_ee_message_type_registry ) )
             return $default_types;
 
-        foreach ( self::$_ee_message_type_registry as $mtname => $mt_reg ) {
+        foreach ( self::$_ee_message_type_registry as $mt_name => $mt_reg ) {
             if ( empty( $mt_reg['messengers_to_activate_with'] ) || empty( $mt_reg['mtfilename'] ) )
                 continue;
 
             //loop through each of the messengers and if it matches the loaded class then we add this message type to the
             foreach ( $mt_reg['messengers_to_activate_with'] as $msgr ) {
                 if ( $messenger->name == $msgr ) {
-                    $default_types[] = $mtname;
+                    $default_types[] = $mt_name;
                 }
             }
         }
