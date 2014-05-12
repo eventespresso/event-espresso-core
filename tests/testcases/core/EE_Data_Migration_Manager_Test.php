@@ -27,8 +27,7 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	}
 	public function test_ensure_current_database_state_is_set(){
 		//options table should be empty to start
-		$this->assertWPOptionDoesNotExists('espresso_db_update');
-		$this->assertWPOptionDoesNotExists(EE_Data_Migration_Manager::current_database_state);
+		$this->assertWPOptionDoesNotExist(EE_Data_Migration_Manager::current_database_state);
 		$this->_pretend_current_code_state_is_at(espresso_version());
 		$db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
 		$this->assertArrayHasKey('Core',$db_state);

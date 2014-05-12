@@ -210,15 +210,15 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if($option){
 			$this->assertTrue(true);
 		}else{
-			$this->assertTrue($option,  sprintf(__("The WP Option '%s' does not exist but should", "event_espresso"),$option_name));
+			$this->assertNotNull($option,  sprintf(__("The WP Option '%s' does not exist but should", "event_espresso"),$option_name));
 		}
 	}
-	public function assertWPOptionDoesNotExists($option_name){
+	public function assertWPOptionDoesNotExist($option_name){
 		$option = get_option($option_name,NULL);
-		if( ! $option){
-			$this->assertTrue(true);
+		if( $option){
+			$this->assertNull($option,sprintf(__("The WP Option '%s' exists but shouldN'T", "event_espresso"),$option_name));
 		}else{
-			$this->assertTrue($option,  sprintf(__("The WP Option '%s' exists but shouldN'T", "event_espresso"),$option_name));
+			$this->assertTrue(true);
 		}
 	}
 }

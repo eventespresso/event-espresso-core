@@ -30,6 +30,12 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 */
 	protected $_feedback_message;
 	/**
+	 * Indicaates the script's priority. Like wp's add_action and add_filter, lower numbers
+	 * correspond to earlier exeecution
+	 * @var int
+	 */
+	protected $_priority = 10;
+	/**
 	 * Returns whether or not this data migration script can operate on the given version of the database.
 	 * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
 	 * it's passed a string like '3.1.38B', it should return true
@@ -472,6 +478,17 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 */
 	public final function migrates_to_version(){
 		return EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
+	}
+	
+	/**
+	 * Returns the script's priority relative to DMSs from other addons. However, when
+	 * two DMSs from the same addon/core apply, this is ignored (and instead the version that
+	 * the script migrates to is used to determine which to run first). The default is 5, but all core DMSs
+	 * normally have priority 10.
+	 * @return int
+	 */
+	public function priority(){
+		return $this->_priority;
 	}
 }
 
