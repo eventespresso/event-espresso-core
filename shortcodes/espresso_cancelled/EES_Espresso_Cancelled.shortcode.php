@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/shortcodes/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -41,27 +41,29 @@ class EES_Espresso_Cancelled  extends EES_Shortcode {
 	public static function set_hooks_admin() {
 	}
 
+
+
 	/**
-	 * 	run - initial shortcode module setup called during "wp_loaded" hook
-	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
+	 *    run - initial shortcode module setup called during "wp_loaded" hook
+	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param WP $WP
+	 * @return    void
 	 */
 	public function run( WP $WP ) {
-		EE_Registry::instance()->load_core( 'Session' ); 
-		EE_Registry::instance()->SSN->clear_session(); 
 	}
 
 	/**
-	 * 	process_shortcode - ESPRESSO_CHECKOUT 
-	 * 
+	 * 	process_shortcode - ESPRESSO_CHECKOUT
+	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		return EE_Registry::instance()->REQ->get_output();		
+		EE_Registry::instance()->load_core( 'Session' )->clear_session( __CLASS__, __FUNCTION__ );
+		return EE_Registry::instance()->REQ->get_output();
 	}
 
 }
