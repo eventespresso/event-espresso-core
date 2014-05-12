@@ -93,11 +93,11 @@ abstract class EE_Base_Class{
 	 * @var EE_Base_Class[][]
 	 */
 	protected $_model_relations = array();
-	
+
 	/**
 	 * Array where keys are field names (see the model's _fields property) and values are their values. To see what
 	 * their types should be, look at what that field object returns on its prepare_for_get and prepare_for_set methods)
-	 * @var type 
+	 * @var type
 	 */
 	protected $_fields = array();
 	/**
@@ -604,7 +604,7 @@ abstract class EE_Base_Class{
 	public function get_raw($field_name) {
 		$this->get_model()->field_settings_for($field_name);
 		return $this->_fields[$field_name];
-		
+
 	}
 
 
@@ -867,7 +867,7 @@ abstract class EE_Base_Class{
 		$args = array_merge( $fn, (array) $args );
 
 		if ( !method_exists( $this, $callback ) )
-			throw EE_Error(sprintf( __('The method named "%s" given as the callback param in "display_in_my_timezone" does not exist.  Please check your spelling', 'event_espresso'), $callback ) );
+			throw new EE_Error(sprintf( __('The method named "%s" given as the callback param in "display_in_my_timezone" does not exist.  Please check your spelling', 'event_espresso'), $callback ) );
 		$args = (array) $args;
 		$return =  $prepend . call_user_func_array( array( $this, $callback ), $args ) . $append;
 
@@ -939,7 +939,7 @@ abstract class EE_Base_Class{
 				//will find it in the db (because we just added it) and THAT object
 				//will get added to the mapper before we can add this one!
 				//but if we just avoid using the SET method, all that headache can be avoided
-				$pk_field_name =self::_get_primary_key_name( get_class($this)); 
+				$pk_field_name =self::_get_primary_key_name( get_class($this));
 				$this->_fields[$pk_field_name] = $results;
 				$this->_clear_cached_property($pk_field_name);
 			}
@@ -1434,7 +1434,7 @@ abstract class EE_Base_Class{
 		if( ! $existing_rows_like_that){
 			return $this->add_extra_meta($meta_key, $meta_value);
 		}else{
-			return EEM_Extra_Meta::instance()->update(array('EXM_value'=>$meta_value), $query_params);;
+			return EEM_Extra_Meta::instance()->update(array('EXM_value'=>$meta_value), $query_params);
 		}
 	}
 
