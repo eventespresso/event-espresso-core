@@ -11,7 +11,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * numerically-indexed array where each value is EE_Data_Migration_Script_Stage object
 	 * @var EE_Data_Migration_Script_Stage[] $migration_functions 
 	 */
-	protected $_migration_stages;
+	protected $_migration_stages = array();
 	
 	/**
 	 * Indicates we've already ran the schema changes that needed to happen BEFORE the data migration

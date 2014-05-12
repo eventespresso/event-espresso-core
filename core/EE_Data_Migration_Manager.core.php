@@ -121,6 +121,13 @@ class EE_Data_Migration_Manager{
 		}
 		return self::$_instance;
 	}	
+	/**
+	 * resets the singleton to its brand-new state (but does NOT delete old references to the old singleton. Meaning,
+	 * all new usages of the singleton shoul dbe made with CLassname::instance())
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+	}
 	
 	
 	private function __construct(){
@@ -279,13 +286,13 @@ class EE_Data_Migration_Manager{
 	
 	/**
 	 * Gets the juicy details out of a dms filename like 'EE_DMS_Core_4_1_0'
-	 * @param string $filename
+	 * @param string $classname
 	 * @return array with keys 'slug','major_version','minor_version', and 'micro_version' (the last 3 are ints)
 	 * @throws EE_Error
 	 */
-	public function parse_dms_classname($filename){
+	public function parse_dms_classname($classname){
 		$matches = array();
-		preg_match('~EE_DMS_(.*)_([0-9]*)_([0-9]*)_([0-9]*)~',$filename,$matches);
+		preg_match('~EE_DMS_(.*)_([0-9]*)_([0-9]*)_([0-9]*)~',$classname,$matches);
 		if( ! $matches || ! (isset($matches[1]) && isset($matches[2]) && isset($matches[3]))){
 				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w is either 'Core' or the slug of an addon and x, y and z are numbers, ", "event_espresso"),$migration_script_name));
 		}
