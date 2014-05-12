@@ -159,7 +159,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			// if not redirecting to another site for registration
 			if ( ! $external_url ) {
 				// then display the ticket selector
-				$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );		
+				$ticket_selector .= EEH_Template::display_template( $templates['ticket_selector'], $template_args, TRUE );
 			} else {
 				// if not we still need to trigger the display of the submit button
 				add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
@@ -184,11 +184,11 @@ class EED_Ticket_Selector extends  EED_Module {
 	*	@access public
 	* 	@access 		public
 	* 	@return		string
-	*/	
+	*/
 	public static function ticket_selector_form_open( $ID, $external_url = FALSE ) {
 		// if redirecting, we don't need any anything else
 		if ( $external_url ) {
-			return '<form id="" method="GET" action="' . $external_url . '">';		
+			return '<form id="" method="GET" action="' . $external_url . '">';
 		}
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		$checkout_url = espresso_event_link_url( $ID, FALSE );
@@ -196,7 +196,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
-		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );	
+		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );
 		return '<form id="" method="POST" action="' . $checkout_url . '">' . wp_nonce_field( 'process_ticket_selections', 'process_ticket_selections_nonce', TRUE, FALSE );
 	}
 
@@ -278,13 +278,12 @@ class EED_Ticket_Selector extends  EED_Module {
 //		d( EE_Registry::instance()->REQ );
 
 		$return = FALSE;
-		//we should really only have 1 registration in the works now (ie, no MER)
-		//so clear any previosu items in the cart. When MER happens this will probably need to be tweaked,
-		//possibly wrappe din a conditional checking for some constant defined in MER etc.
+		//we should really only have 1 registration in the works now (ie, no MER) so clear any previous items in the cart.
+		// When MER happens this will probably need to be tweaked, possibly wrapped in a conditional checking for some constant defined in MER etc.
 		EE_Registry::instance()->load_core( 'Session' );
 		// unless otherwise requested, clear the session
 		if ( apply_filters( 'FHEE__EE_Ticket_Selector__process_ticket_selections__clear_session', TRUE ) ) {
-			EE_Registry::instance()->SSN->clear_session();
+			EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		}
 		//d( EE_Registry::instance()->SSN );
 
