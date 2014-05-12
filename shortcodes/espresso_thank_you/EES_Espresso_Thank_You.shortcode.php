@@ -17,12 +17,12 @@
  *
  * @package			Event Espresso
  * @subpackage	/shortcodes/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EES_Espresso_Thank_You  extends EES_Shortcode {
-	
+
 	/**
 	 * The transaction specified by the reg_url_link passed from the Request, or from the Session
 	 * @var EE_Transaction $_current_txn
@@ -68,13 +68,13 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
 	 *  @access 	public
-	 *  @param  	WP $WP 
+	 *  @param  	WP $WP
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-		
+
 		// only do thank you page stuff if we have a REG_url_link in the url
-		if ( EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {			
+		if ( EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
 			$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link();
 			if ( ! $this->_current_txn instanceof EE_Transaction ) {
 				EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
@@ -83,17 +83,30 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
 				add_filter( 'FHEE_load_css', '__return_true' );
 				add_filter( 'FHEE_load_js', '__return_true' );
-				add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
+				add_action( 'shutdown', array( $this, 'shutdown' ));
 			}
-		} 
+		}
 	}
 
 
 
 
 	/**
-	 * 	process_shortcode - EES_Espresso_Thank_You 
-	 * 
+	 * shutdown
+	 *
+	 *  @access 	public
+	 *  @return 	void
+	 */
+	public function shutdown() {
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+	}
+
+
+
+
+	/**
+	 * 	process_shortcode - EES_Espresso_Thank_You
+	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
 	 *  @return 	void
@@ -103,7 +116,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
 			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		} else {
-			
+
 			//prepare variables for displaying
 			$registrations = $this->_current_txn->registrations();
 			$event_names = array();
@@ -121,8 +134,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
 			$template_args['primary_registrant'] = $primary_registrant;
 			$template_args['event_names'] = $event_names;
-			
-			// txn status ? 
+
+			// txn status ?
 			if( $this->_current_txn->is_completed() ){
 				$template_args['show_try_pay_again_link'] = FALSE;
 			} else if ( $this->_current_txn->is_incomplete() && ( $primary_registrant->is_approved() || $primary_registrant->is_pending_payment() )){
@@ -134,34 +147,34 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				$template_args['show_try_pay_again_link']  = FALSE;
 			}
 			// link to SPCO
-			$revisit_spco_url = add_query_arg( 
-				array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )), 
+			$revisit_spco_url = add_query_arg(
+				array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )),
 				get_permalink( EE_Registry::instance()->CFG->core->reg_page_id )
 			);
 			// link to SPCO payment_options
 			$template_args['SPCO_payment_options_url'] = $primary_registrant ? $primary_registrant->payment_overview_url() : add_query_arg(  array('step'=>'payment_options' ), $revisit_spco_url );
 			// link to SPCO attendee_information
 			$template_args['SPCO_attendee_information_url'] = $primary_registrant ? $primary_registrant->edit_attendee_information_url() : add_query_arg( array( 'step'=>'attendee_information' ), $revisit_spco_url );
-			$template_args['gateway_content'] = '';			
+			$template_args['gateway_content'] = '';
 			//create a hackey payment object, but dont save it
 			$gateway_name = $this->_current_txn->selected_gateway();
 			$payment = EE_Payment::new_instance( array(
-				'TXN_ID'=>$this->_current_txn->ID(), 
-				'STS_ID'=>EEM_Payment::status_id_pending, 
-				'PAY_timestamp'=>current_time('timestamp'), 
-				'PAY_amount'=>$this->_current_txn->total(), 
+				'TXN_ID'=>$this->_current_txn->ID(),
+				'STS_ID'=>EEM_Payment::status_id_pending,
+				'PAY_timestamp'=>current_time('timestamp'),
+				'PAY_amount'=>$this->_current_txn->total(),
 				'PAY_gateway'=>$gateway_name
 			));
 
 			$template_args['gateway_content'] = EEM_Gateways::instance()->get_payment_overview_content( $gateway_name,$payment );
 
-			
-			
-			EE_Registry::instance()->REQ->add_output( EEH_Template::display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));			
+
+
+			EE_Registry::instance()->REQ->add_output( EEH_Template::display_template( THANK_YOU_TEMPLATES_PATH . 'payment_overview.template.php', $template_args, TRUE ));
 		}
 
-		return EE_Registry::instance()->REQ->get_output();		
-		
+		return EE_Registry::instance()->REQ->get_output();
+
 	}
 
 }
