@@ -10,7 +10,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
  * @ author				Seth Shoultes
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link				http://www.eventespresso.com
+ * @ link					http://www.eventespresso.com
  * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
@@ -19,7 +19,7 @@ do_action( 'AHEE_log', __FILE__, ' FILE LOADED', '' );
  *
  * @package				Event Espresso
  * @subpackage			includes/classes/EE_Base_Class.class.php
- * @author				Michael Nelson
+ * @author					Michael Nelson
  *
  * ------------------------------------------------------------------------
  */
@@ -1028,7 +1028,7 @@ abstract class EE_Base_Class{
 
 	/**
 	 * for getting a model while instantiated.
-	 * @return EEM_Base
+	 * @return mixed EEM_Base|EEM_CPT_Base
 	 */
 	public function get_model() {
 		$modelName = self::_get_model_classname( get_class($this) );
@@ -1040,7 +1040,7 @@ abstract class EE_Base_Class{
 	/**
 	 * @param $props_n_values
 	 * @param $classname
-	 * @return bool|EE_Base_Class
+	 * @return mixed bool|EE_Base_Class|EEM_CPT_Base
 	 */
 	protected static function _get_object_from_entity_mapper($props_n_values, $classname){
 		//TODO: will not work for TErm_RElationships because they ahve no PK!
