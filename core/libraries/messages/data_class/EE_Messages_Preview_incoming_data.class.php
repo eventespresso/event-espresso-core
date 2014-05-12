@@ -43,7 +43,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	 * @param array $data
 	 */
 	public function __construct( $data = array() ) {
-		
+
 		$data = empty($data) ? array() : $data['event_ids'];
 		$this->_setup_attendees_events();
 		parent::__construct($data);
@@ -72,7 +72,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 
 		//now let's loop and set up the _events property.  At the same time we'll set up attendee properties.
-		
+
 
 		//we'll actually use the generated line_item identifiers for our loop
 		$dtts = array();
@@ -332,7 +332,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	 * Return an array of event objects from the database
 	 *
 	 * If event ids are not included then we'll just retrieve the first published event from the database.
-	 * 
+	 *
 	 * @param  array  $event_ids if set, this will be an array of event ids to obtain events for.
 	 * @return array    An array of event objects from the db.
 	 */
@@ -347,7 +347,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$where = !empty($event_ids) ? array('EVT_ID' => array( 'IN', $event_ids ), 'Datetime.Ticket.TKT_ID' => array('>', 1) ) : array('Datetime.Ticket.TKT_ID' => array('>', 1) );
 
 		$events = EE_Registry::instance()->load_model('Event')->get_all(array($where, 'limit' => $limit ) );
-		
+
 		return $events;
 	}
 
@@ -359,8 +359,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 	protected function _setup_data() {
 
 		//need to figure out the running total for test purposes so... we're going to create a temp cart and add the tickets to it!
-		
-		EE_Registry::instance()->SSN->clear_session();
+
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 
 		$cart = EE_Cart::instance();
 
