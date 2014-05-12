@@ -36,7 +36,7 @@ Class EEM_Gateways {
 
 	/**
 	 * 	EE_Registry Object
-	 *	@var 	EE_Registry	
+	 *	@var 	EE_Registry
 	 * 	@access 	protected
 	 */
 	protected $EE = NULL;
@@ -67,16 +67,16 @@ Class EEM_Gateways {
 	private function __construct($activation = false) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		
-		
+
+
 		//so client code can check for instatiation b4 including
 		EE_Registry::instance()->load_class( 'Gateway' );
 		EE_Registry::instance()->load_class( 'Offline_Gateway' );
 		EE_Registry::instance()->load_class( 'Offsite_Gateway' );
-		EE_Registry::instance()->load_class( 'Onsite_Gateway' );	
-		EE_Registry::instance()->load_core( 'Session' );	
+		EE_Registry::instance()->load_class( 'Onsite_Gateway' );
+		EE_Registry::instance()->load_core( 'Session' );
 		define('ESPRESSO_GATEWAYS', TRUE);
-		$this->set_ajax($activation);		
+		$this->set_ajax($activation);
 		$this->_load_session_gateway_data();
 		$this->_load_payment_settings();
 		$this->_scan_and_load_all_gateways();
@@ -108,7 +108,7 @@ Class EEM_Gateways {
 			$this->_ajax = $this->_session_gateway_data['ajax'];
 		}
 	}
-	
+
 
 
 
@@ -147,8 +147,8 @@ Class EEM_Gateways {
 			$this->_load_all_gateway_files();
 		} else {
 			// if something went wrong, fail gracefully
-			if ( ! is_array(EE_Registry::instance()->CFG->gateway->active_gateways)) {	
-				$msg = __( 'There are no active payment gateways. Please configure at least one gateway in the Event Espresso Payment settings page.', 'event_espresso'); 
+			if ( ! is_array(EE_Registry::instance()->CFG->gateway->active_gateways)) {
+				$msg = __( 'There are no active payment gateways. Please configure at least one gateway in the Event Espresso Payment settings page.', 'event_espresso');
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				return;
 			}
@@ -188,7 +188,7 @@ Class EEM_Gateways {
 	 */
 	private function _load_all_gateway_files() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		
+
 		$gateways = array();
 		$upload_gateways = array();
 		// grab standard gateways
@@ -209,7 +209,7 @@ Class EEM_Gateways {
 			$sub = basename( $upload_gateway );
 			$upload_gateways[$sub] = TRUE;
 		}
-		
+
 		$this->_all_gateways = array_merge($upload_gateways, $gateways);
 		//printr( $this->_all_gateways, '_all_gateways  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
@@ -221,9 +221,9 @@ Class EEM_Gateways {
 					require_once(EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . $filename);
 				} else {
 					$msg = sprintf(
-							__( 'The file : %s could not be located in : %s', 'event_espresso'), 
+							__( 'The file : %s could not be located in : %s', 'event_espresso'),
 							'<b>' . $filename . '</b>',
-							'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>' 
+							'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>'
 					);
 					EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 				}
@@ -232,7 +232,7 @@ Class EEM_Gateways {
 				require_once(EE_MODULES . 'gateways' . DS . $gateway . DS . $filename);
 			} else {
 				$msg = sprintf(
-						__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'), 
+						__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'),
 						'<b>' . $filename . '</b>',
 						'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>',
 						'<b>' . EE_MODULES . 'gateways' . DS . $gateway . DS . '</b>'
@@ -282,7 +282,7 @@ Class EEM_Gateways {
 			return FALSE;
 		}
 		//$this->_payment_settings[$gateway] = $new_gateway_settings;
-		
+
 		//echo "updateing usermeta with paymetn settings";var_dump($this->_payment_settings);
 		$old_payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;//get_user_meta(EE_Registry::instance()->CFG->wp_user, 'payment_settings',true);
 		$old_payment_settings[$gateway] = $new_gateway_settings;
@@ -414,8 +414,8 @@ Class EEM_Gateways {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if (!$gateway || !array_key_exists($gateway, EE_Registry::instance()->CFG->gateway->active_gateways)) {
 			return FALSE;
-		} 
-		
+		}
+
 		$this->_selected_gateway = $gateway;
 		$this->_hide_other_gateways = TRUE;
 		$this->_set_session_data();
@@ -438,7 +438,7 @@ Class EEM_Gateways {
 	public function get_gateway_instances() {
 		return $this->_gateway_instances;
 	}
-	
+
 	/**
 	 * Gets the gateway specified by gateway_name (where gateway_name == the gateway's _gateway_name property)
 	 * @param string $gateway_name
@@ -448,12 +448,12 @@ Class EEM_Gateways {
 		$gateway = isset($this->_gateway_instances[$gateway_name]) ? $this->_gateway_instances[$gateway_name] : null;
 		return $gateway;
 	}
-	
+
 
 	/**
 	 * 		unset gateway as selected
 	 * 		@access public
-	 * 		@return 	boolean	TRUE 
+	 * 		@return 	boolean	TRUE
 	 */
 	public function unset_selected_gateway() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -477,7 +477,7 @@ Class EEM_Gateways {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return $this->_selected_gateway;
 	}
-	
+
 	/**
 	 * Gets teh currently-selected gateway
 	 * @return EE_Gateway
@@ -498,7 +498,7 @@ Class EEM_Gateways {
 	 * 		@return 	boolean	TRUE on success FALSE on fail
 	 */
 	public function set_form_url() {
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );		
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		if ( $base_url = get_permalink( EE_Registry::instance()->CFG->core->reg_page_id ) ) {
 			foreach (EE_Registry::instance()->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 				if (!empty($this->_gateway_instances[$gateway])) {
@@ -587,7 +587,7 @@ Class EEM_Gateways {
 	 */
 	private function _set_session_data() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		
+
 		$session_data = array(
 						'selected_gateway' => $this->_selected_gateway,
 						'hide_other_gateways' => $this->_hide_other_gateways,
@@ -595,7 +595,7 @@ Class EEM_Gateways {
 						'ajax' => $this->_ajax
 				);
 		// returns TRUE or FALSE
-		return EE_Registry::instance()->SSN->set_session_data( array( 'gateway_data' => $session_data ));		
+		return EE_Registry::instance()->SSN->set_session_data( array( 'gateway_data' => $session_data ));
 
 	}
 
@@ -612,14 +612,14 @@ Class EEM_Gateways {
 			$this->_ajax = false;
 		}else{
 			if ( ! isset( EE_Registry::instance()->REQ )) {
-				EE_Registry::instance()->load_core( 'Request_Handler' );		
+				EE_Registry::instance()->load_core( 'Request_Handler' );
 			}
 			if ( ! is_bool( EE_Registry::instance()->REQ->ajax )) {
 				$this->_notices['errors'][] = __( 'An error occurred. Set Ajax requires a boolean paramater.', 'event_espresso' );
 				$this->_ajax = FALSE;
 			} else {
 				$this->_ajax = EE_Registry::instance()->REQ->ajax;
-			}	
+			}
 		}
 	}
 
@@ -645,7 +645,7 @@ Class EEM_Gateways {
 	public function reset_session_data() {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-	
+
 		foreach (EE_Registry::instance()->CFG->gateway->active_gateways as $gateway => $in_uploads) {
 			if (!empty($this->_gateway_instances[$gateway])) {
 				$this->_gateway_instances[$gateway]->reset_session_data();
@@ -653,14 +653,14 @@ Class EEM_Gateways {
 				return FALSE;
 			}
 		}
-		
+
 		$this->_selected_gateway = NULL;
 		$this->_hide_other_gateways = FALSE;
 		$this->_off_site_form = NULL;
 		$this->_ajax = TRUE;
 		$this->_payment_settings = array();
-		
-		EE_Registry::instance()->SSN->clear_session();
+
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		EE_Registry::instance()->SSN->set_session_data(
 			array(
 				'selected_gateway' => $this->_selected_gateway,
@@ -668,23 +668,23 @@ Class EEM_Gateways {
 				'off_site_form' => $this->_off_site_form,
 				'ajax' => $this->_ajax,
 				'payment_settings' => $this->_payment_settings
-			), 
+			),
 			'gateway_data'
 		);
-						
+
 		//espresso_clear_session(); this seemed silly. we just expelled
 		//all this effort clearing specific gateway items in the session, and now
 		//we're clearing teh whole thing? no, that must have been an error.
 		//so says Mike, March 27th 2013
 		// how about clearing it BEFORE resetting the data ??? (see above)
 		// wonders br3nt Aug 29th, 2013
-		
+
 		return TRUE;
 	}
-	
+
 	/**
 	 * Requires the given gateway for later use. Does not instantiate the gateway, however.
-	 * By default, searches for the gateway named $gateway in 
+	 * By default, searches for the gateway named $gateway in
 	 * wp-uploads/espresso/gateways/$gateway/EE_$gateway.class.php
 	 * next in
 	 * wp-content/plugins/{event-espresso}/gateawys/$gateway/EE_$gateway}.class.php.
@@ -692,7 +692,7 @@ Class EEM_Gateways {
 	 * or FHEE__EEM_Gateways__get_gateway_filepath__filename to override the file's name,
 	 * or FHEE__EEM_Gateways__get_gateway_filepath__classname to override the class's name, given the gateway's name.
 	 * Each of these filters is passed the gateway's name.
-	 * 
+	 *
 	 * @param string $gateway_name usually the folder's name where the gateway is stored. Eg, Paypal_Standard, 2checkout, Check, etc.
 	 * @return void just requires the gateway. Doesn't return it
 	 */
@@ -706,12 +706,12 @@ Class EEM_Gateways {
 			require_once(EE_GATEWAYS . DS . $gateway_name . DS . $filename);
 		} else {
 			$msg = sprintf(
-					__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'), 
+					__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'),
 					'<b>' . $filename . '</b>',
 					'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway_name . DS . '</b>',
 					'<b>' . EE_GATEWAYS . DS . $gateway_name . DS . '</b>'
 			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );	
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 	}*/
 
@@ -734,12 +734,12 @@ Class EEM_Gateways {
 			require_once(EE_GATEWAYS . DS . $gateway . DS . $filename);
 		} else {
 			$msg = sprintf(
-					__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'), 
+					__( 'The file : %s could not be located in either : %s or %s', 'event_espresso'),
 					'<b>' . $filename . '</b>',
 					'<b>' . EVENT_ESPRESSO_GATEWAY_DIR . $gateway . DS . '</b>',
 					'<b>' . EE_GATEWAYS . DS . $gateway . DS . '</b>'
 			);
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );	
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		if (class_exists($classname)) {
@@ -760,7 +760,7 @@ Class EEM_Gateways {
 	 * 		@access public
 	 * 		@return 	mixed	array on success or FALSE on fail
 	 */
-	public function process_gateway_selection() {	
+	public function process_gateway_selection() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// check for off site payment
 		if ( isset( $_POST['selected_gateway'] ) && ! empty( $_POST['selected_gateway'] )) {
@@ -770,7 +770,7 @@ Class EEM_Gateways {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();		
+		$this->_gateway_instances[ $this->_selected_gateway ]->process_gateway_selection();
 	}
 
 
@@ -808,7 +808,7 @@ Class EEM_Gateways {
 		}
 		EE_Registry::instance()->load_helper( 'Template' );
 		// free event?
-		if ( $line_item->total() == EEH_Template::format_currency( 0, TRUE )) {			
+		if ( $line_item->total() == EEH_Template::format_currency( 0, TRUE )) {
 			$transaction->set_status( EEM_Transaction::complete_status_code );
 			$transaction->save();
 			$transaction->finalize();
@@ -823,10 +823,10 @@ Class EEM_Gateways {
 			$this->_clean_billing_info_in_session($transaction);
 		}
 		// add return URL
-		$response['forward_url'] = $this->_get_return_page_url( $transaction );		
+		$response['forward_url'] = $this->_get_return_page_url( $transaction );
 		return $response;
-	}	
-	
+	}
+
 	/**
 	 * Cleans the session so that it doesn't store the credit card or CVV to the DB
 	 * @param EE_Transaction $transaction to also update
@@ -837,7 +837,7 @@ Class EEM_Gateways {
 		if ( isset( $session_data['billing_info'] ) ) {
 			foreach($session_data['billing_info'] as $name=>$billing_input_array){
 				if($billing_input_array['sanitize'] == 'ccard'){
-					
+
 					$session_data['billing_info'][$name]['value'] = $this->MaskCreditCard($billing_input_array['value']);
 				}elseif($billing_input_array['sanitize'] == 'ccv'){
 					$session_data['billing_info'][$name]['value'] = '';
@@ -861,12 +861,12 @@ Class EEM_Gateways {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		//get thank you page url
 		$return_page_url = rtrim( get_permalink( EE_Registry::instance()->CFG->core->thank_you_page_id ), '/' );
-		
+
 		$registration = $transaction->get_first_related( 'Registration' );
 		//$reg = $transaction->primary_registration();
 //		printr( $reg, '$reg  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		die();
-		if ( $registration instanceof EE_Registration ) {		
+		if ( $registration instanceof EE_Registration ) {
 			$return_page_url = add_query_arg( array( 'e_reg_url_link'=>$registration->reg_url_link() ), $return_page_url );
 		}else{
 			throw new EE_Error(sprintf(__('Could not find a valid primary registration for this transaction', "event_espresso")));
@@ -892,9 +892,9 @@ Class EEM_Gateways {
 		// Return the masked Credit Card #
 		return $cc;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Add dashes to a credit card number.
 	 * @param int|string $cc The credit card number to format with dashes.
@@ -933,11 +933,11 @@ Class EEM_Gateways {
 		}
 		$this->check_for_completed_transaction($transaction);
 	}
-	
+
 	/**
 	 * Gets the HTML from the currently-selected gateway to display the payment's overview, specific to this gateway.
 	 * Content to be shown may include errors, notes about the payment, and further payment instructions (often the case for offline gateways).
-	 * 
+	 *
 	 * @param string gateway name (usually the folder's name where the main gateway file is located inside the gateways folder), eg Paypal_Standard
 	 * @param EE_Transaction $transaction
 	 * @return string of HTML to be displayed above the payment overview, usually on the thank you page
@@ -964,7 +964,7 @@ Class EEM_Gateways {
 			$this->reset_session_data();
 		}
 	}
-	
+
 	/**
 	 * Uses teh currently-active and selected gateway to handle an Instant Payment Notification.
 	 * Obviously, if this occurs the active gateway must be an Offsite gateway
@@ -977,16 +977,16 @@ Class EEM_Gateways {
 		//echo "eemgateway, handle ipn for transaction";
 		//echo "current gawtay:";var_dump($current_gateway);
 		if(!empty($current_gateway)	&& $current_gateway instanceof EE_Offsite_Gateway){
-			
-			
+
+
 			$current_gateway->handle_ipn_for_transaction($transaction);
 			//echo "current gateway in debug mode:";var_dump($current_gateway->debug_mode_active());
-			if($current_gateway->debug_mode_active()){		
+			if($current_gateway->debug_mode_active()){
 				$debug_output=$current_gateway->get_debug_log();
 				$success=wp_mail(EE_Registry::instance()->CFG->organization->email,"Event Espresso IPN Debug info for ".$this->_selected_gateway,"POST data received:".print_r($_POST,true)." output is".$debug_output);
 				//echo "successful sent email?".$success;
 			}
-			
+
 		}
 	}
 
@@ -997,237 +997,237 @@ Class EEM_Gateways {
 	 * 		@return 	array
 	 */
 	public function get_country_ISO2_codes() {
-	
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		return array(
 					'US' => 'United States',
 					'AU' => 'Australia',
-					'CA' => 'Canada', 
+					'CA' => 'Canada',
 					'GB' => 'United Kingdom',
-					'FR' => 'France', 
-					'IT' => 'Italy', 
-					'ES' => 'Spain', 
-					'DE' => 'Germany', 
-					'CH' => 'Switzerland', 
-					'NL' => 'The Netherlands', 
-					'SE' => 'Sweden', 
-					'AF' => 'Afghanistan', 
-					'AL' => 'Albania', 
-					'CY' => 'Akrotiri and Dhekelia', 
-					'AD' => 'Andorra', 
-					'AO' => 'Angola', 
-					'AI' => 'Anguilla', 
-					'AQ' => 'Antarctica', 
-					'AG' => 'Antigua and Barbuda', 
-					'SA' => 'Saudi Arabia', 
-					'DZ' => 'Argelia', 
-					'AR' => 'Argentina', 
-					'AM' => 'Armenia', 
-					'AW' => 'Aruba', 
-					'AT' => 'Austria', 
-					'AZ' => 'Azerbaijan', 
-					'BS' => 'Bahamas', 
-					'BH' => 'Bahrein', 
-					'BD' => 'Bangladesh', 
-					'BB' => 'Barbados', 
-					'BE' => 'Belgium ', 
-					'BZ' => 'Belize', 
-					'BJ' => 'Benin', 
-					'BM' => 'Bermudas', 
-					'BY' => 'Belarus', 
-					'BO' => 'Bolivia', 
-					'BA' => 'Bosnia and Herzegovina', 
-					'BW' => 'Botswana', 
-					'BV' => 'Bouvet Island', 
-					'BR' => 'Brazil', 
-					'BN' => 'Brunei', 
-					'BG' => 'Bulgaria', 
-					'BF' => 'Burkina Faso', 
-					'BI' => 'Burundi', 
-					'BT' => 'Bhutan', 
-					'CV' => 'Cape Verde', 
-					'KH' => 'Cambodia', 
-					'CM' => 'Cameroon', 
-					'KY' => 'Cayman Islands', 
-					'CF' => 'Central African Republic', 
-					'TD' => 'Chad', 
-					'CL' => 'Chile', 
-					'CN' => 'China', 
-					'CX' => 'Christmas Island', 
-					'CY' => 'Cyprus', 
-					'CC' => 'Cocos Island', 
-					'CK' => 'Cook Islands', 
-					'CO' => 'Colombia', 
-					'KM' => 'Comoros', 
-					'CG' => 'Congo', 
-					'KP' => 'Corea del Norte', 
-					'CR' => 'Costa Rica', 
-					'HR' => 'Croatia', 
-					'CU' => 'Cuba', 
-					'CZ' => 'Czech Republic', 
-					'DK' => 'Danmark', 
-					'DJ' => 'Djibouti', 
-					'DM' => 'Dominica', 
-					'DO' => 'Dominican Republic', 
-					'EC' => 'Ecuador', 
-					'EG' => 'Egypt', 
-					'SV' => 'El Salvador', 
-					'ER' => 'Eritrea', 
-					'SK' => 'Eslovakia', 
-					'SI' => 'Eslovenia', 
-					'EE' => 'Estonia', 
-					'ET' => 'Ethiopia', 
-					'FO' => 'Faroe islands', 
-					'FK' => 'Falkland Islands', 
-					'FJ' => 'Fiji', 
-					'FI' => 'Finland', 
-					'GA' => 'Gabon', 
-					'GM' => 'Gambia', 
-					'GE' => 'Georgia', 
-					'GH' => 'Ghana', 
-					'GI' => 'Gibraltar', 
-					'GR' => 'Greece', 
-					'GD' => 'Grenada', 
-					'GL' => 'Greenland', 
-					'GP' => 'Guadeloupe', 
-					'GU' => 'Guam', 
-					'GT' => 'Guatemala', 
-					'GN' => 'Guinea', 
+					'FR' => 'France',
+					'IT' => 'Italy',
+					'ES' => 'Spain',
+					'DE' => 'Germany',
+					'CH' => 'Switzerland',
+					'NL' => 'The Netherlands',
+					'SE' => 'Sweden',
+					'AF' => 'Afghanistan',
+					'AL' => 'Albania',
+					'CY' => 'Akrotiri and Dhekelia',
+					'AD' => 'Andorra',
+					'AO' => 'Angola',
+					'AI' => 'Anguilla',
+					'AQ' => 'Antarctica',
+					'AG' => 'Antigua and Barbuda',
+					'SA' => 'Saudi Arabia',
+					'DZ' => 'Argelia',
+					'AR' => 'Argentina',
+					'AM' => 'Armenia',
+					'AW' => 'Aruba',
+					'AT' => 'Austria',
+					'AZ' => 'Azerbaijan',
+					'BS' => 'Bahamas',
+					'BH' => 'Bahrein',
+					'BD' => 'Bangladesh',
+					'BB' => 'Barbados',
+					'BE' => 'Belgium ',
+					'BZ' => 'Belize',
+					'BJ' => 'Benin',
+					'BM' => 'Bermudas',
+					'BY' => 'Belarus',
+					'BO' => 'Bolivia',
+					'BA' => 'Bosnia and Herzegovina',
+					'BW' => 'Botswana',
+					'BV' => 'Bouvet Island',
+					'BR' => 'Brazil',
+					'BN' => 'Brunei',
+					'BG' => 'Bulgaria',
+					'BF' => 'Burkina Faso',
+					'BI' => 'Burundi',
+					'BT' => 'Bhutan',
+					'CV' => 'Cape Verde',
+					'KH' => 'Cambodia',
+					'CM' => 'Cameroon',
+					'KY' => 'Cayman Islands',
+					'CF' => 'Central African Republic',
+					'TD' => 'Chad',
+					'CL' => 'Chile',
+					'CN' => 'China',
+					'CX' => 'Christmas Island',
+					'CY' => 'Cyprus',
+					'CC' => 'Cocos Island',
+					'CK' => 'Cook Islands',
+					'CO' => 'Colombia',
+					'KM' => 'Comoros',
+					'CG' => 'Congo',
+					'KP' => 'Corea del Norte',
+					'CR' => 'Costa Rica',
+					'HR' => 'Croatia',
+					'CU' => 'Cuba',
+					'CZ' => 'Czech Republic',
+					'DK' => 'Danmark',
+					'DJ' => 'Djibouti',
+					'DM' => 'Dominica',
+					'DO' => 'Dominican Republic',
+					'EC' => 'Ecuador',
+					'EG' => 'Egypt',
+					'SV' => 'El Salvador',
+					'ER' => 'Eritrea',
+					'SK' => 'Eslovakia',
+					'SI' => 'Eslovenia',
+					'EE' => 'Estonia',
+					'ET' => 'Ethiopia',
+					'FO' => 'Faroe islands',
+					'FK' => 'Falkland Islands',
+					'FJ' => 'Fiji',
+					'FI' => 'Finland',
+					'GA' => 'Gabon',
+					'GM' => 'Gambia',
+					'GE' => 'Georgia',
+					'GH' => 'Ghana',
+					'GI' => 'Gibraltar',
+					'GR' => 'Greece',
+					'GD' => 'Grenada',
+					'GL' => 'Greenland',
+					'GP' => 'Guadeloupe',
+					'GU' => 'Guam',
+					'GT' => 'Guatemala',
+					'GN' => 'Guinea',
 					'GQ' => 'Equatorial Guinea',
-					'GW' => 'Guinea-Bissau', 
-					'GY' => 'Guyana', 
-					'HT' => 'Haiti', 
-					'HN' => 'Honduras', 
-					'HK' => 'Hong Kong', 
-					'HU' => 'Hungary', 
-					'IN' => 'India', 
-					'IO' => 'British Indian Ocean Territory', 
-					'ID' => 'Indonesia', 
-					'IQ' => 'Iraq', 
-					'IR' => 'Iran', 
-					'IE' => 'Ireland', 
-					'IS' => 'Iceland', 
-					'IL' => 'Israel', 
-					'CI' => 'Ivory Coast ', 
-					'JM' => 'Jamaica', 
-					'JP' => 'Japan', 
-					'JO' => 'Jordan', 
-					'KZ' => 'Kazakhstan', 
-					'KE' => 'Kenya', 
-					'KG' => 'Kirguistan', 
-					'KI' => 'Kiribati', 
-					'KR' => 'South Korea', 
-					'XK' => 'Kosovo', 
-					'KW' => 'Kuwait', 
-					'LA' => 'Laos', 
-					'LV' => 'Latvia', 
-					'LS' => 'Lesotho', 
-					'LB' => 'Lebanon', 
-					'LR' => 'Liberia', 
-					'LY' => 'Libya', 
-					'LI' => 'Liechtenstein', 
-					'LT' => 'Lithuania', 
-					'LU' => 'Luxemburg', 
-					'MO' => 'Macao', 
-					'MK' => 'Macedonia', 
-					'MG' => 'Madagascar', 
-					'MY' => 'Malaysia', 
-					'MW' => 'Malawi', 
-					'MV' => 'Maldivas', 
-					'ML' => 'Mali', 
-					'MT' => 'Malta', 
-					'MP' => 'Northern Marianas', 
-					'MA' => 'Marruecos', 
-					'MH' => 'Marshall islands', 
-					'MQ' => 'Martinica', 
-					'MU' => 'Mauricio', 
-					'MR' => 'Mauritania', 
-					'YT' => 'Mayote', 
-					'MX' => 'Mexico', 
-					'FM' => 'Micronesia', 
-					'MD' => 'Moldova', 
-					'MC' => 'Monaco', 
-					'MN' => 'Mongolia', 
-					'MS' => 'Montserrat', 
-					'ME' => 'Montenegro', 
-					'MZ' => 'Mozambique', 
-					'MM' => 'Myanmar', 
-					'NA' => 'Namibia', 
-					'NR' => 'Nauru', 
-					'NP' => 'Nepal', 
-					'AN' => 'Netherlands Antilles', 
-					'NI' => 'Nicaragua', 
-					'NE' => 'Niger', 
-					'NG' => 'Nigeria', 
-					'NU' => 'Niue', 
-					'NO' => 'Norway', 
-					'NC' => 'New Caledonia', 
-					'NZ' => 'New Zealand', 
-					'OM' => 'Oman', 
-					'PK' => 'Pakistan', 
-					'PW' => 'Palau', 
-					'PA' => 'Panama', 
-					'PG' => 'Papua New Guinea', 
-					'PY' => 'Paraguay', 
-					'PE' => 'Peru', 
-					'PH' => 'Philippines', 
-					'PL' => 'Poland', 
-					'PT' => 'Portugal', 
-					'PR' => 'Puerto Rico', 
-					'QA' => 'Qatar', 
-					'RW' => 'Rowanda', 
-					'RO' => 'Romania', 
-					'RU' => 'Russia', 
-					'PM' => 'Saint Pierre and Miquelon', 
-					'WS' => 'Samoa', 
-					'AS' => 'American Samoa', 
-					'SM' => 'San Marino', 
-					'VC' => 'San Vincente y las Granadinas', 
-					'SH' => 'Santa Helena', 
-					'LC' => 'Santa Lucia', 
-					'SN'  => 'Senegal', 
-					'SC' => 'Seychelles', 
-					'SL' => 'Sierra Leona', 
-					'SG' => 'Singapore', 
-					'SY' => 'Syria', 
-					'SO' => 'Somalia', 
-					'LK' => 'Sri Lanka', 
-					'ZA' => 'South Africa', 
-					'SD' => 'Sudan', 
-					'SR' => 'Suriname', 
-					'SZ' => 'Swaziland', 
-					'TH' => 'Thailand', 
-					'TW' => 'Taiwan', 
-					'TZ' => 'Tanzania', 
-					'TJ' => 'Tajikistan', 
-					'TP' => 'Timor Oriental', 
-					'TG' => 'Togo', 
-					'TK' => 'Tokelau', 
-					'TO' => 'Tonga', 
-					'TT' => 'Trinidad and Tobago', 
-					'TN' => 'Tunisia', 
-					'TM' => 'Turkmenistan', 
-					'TR' => 'Turkey', 
-					'TV' => 'Tuvalu', 
-					'UA' => 'Ukraine', 
-					'UG' => 'Uganda', 
-					'AE' => 'United Arab Emirates', 
-					'UY' => 'Uruguay', 
-					'UZ' => 'Uzbekistan', 
-					'VU' => 'Vanuatu', 
-					'VA' => 'Vatican City', 
-					'VE' => 'Venezuela', 
-					'VN' => 'Vietnam', 
+					'GW' => 'Guinea-Bissau',
+					'GY' => 'Guyana',
+					'HT' => 'Haiti',
+					'HN' => 'Honduras',
+					'HK' => 'Hong Kong',
+					'HU' => 'Hungary',
+					'IN' => 'India',
+					'IO' => 'British Indian Ocean Territory',
+					'ID' => 'Indonesia',
+					'IQ' => 'Iraq',
+					'IR' => 'Iran',
+					'IE' => 'Ireland',
+					'IS' => 'Iceland',
+					'IL' => 'Israel',
+					'CI' => 'Ivory Coast ',
+					'JM' => 'Jamaica',
+					'JP' => 'Japan',
+					'JO' => 'Jordan',
+					'KZ' => 'Kazakhstan',
+					'KE' => 'Kenya',
+					'KG' => 'Kirguistan',
+					'KI' => 'Kiribati',
+					'KR' => 'South Korea',
+					'XK' => 'Kosovo',
+					'KW' => 'Kuwait',
+					'LA' => 'Laos',
+					'LV' => 'Latvia',
+					'LS' => 'Lesotho',
+					'LB' => 'Lebanon',
+					'LR' => 'Liberia',
+					'LY' => 'Libya',
+					'LI' => 'Liechtenstein',
+					'LT' => 'Lithuania',
+					'LU' => 'Luxemburg',
+					'MO' => 'Macao',
+					'MK' => 'Macedonia',
+					'MG' => 'Madagascar',
+					'MY' => 'Malaysia',
+					'MW' => 'Malawi',
+					'MV' => 'Maldivas',
+					'ML' => 'Mali',
+					'MT' => 'Malta',
+					'MP' => 'Northern Marianas',
+					'MA' => 'Marruecos',
+					'MH' => 'Marshall islands',
+					'MQ' => 'Martinica',
+					'MU' => 'Mauricio',
+					'MR' => 'Mauritania',
+					'YT' => 'Mayote',
+					'MX' => 'Mexico',
+					'FM' => 'Micronesia',
+					'MD' => 'Moldova',
+					'MC' => 'Monaco',
+					'MN' => 'Mongolia',
+					'MS' => 'Montserrat',
+					'ME' => 'Montenegro',
+					'MZ' => 'Mozambique',
+					'MM' => 'Myanmar',
+					'NA' => 'Namibia',
+					'NR' => 'Nauru',
+					'NP' => 'Nepal',
+					'AN' => 'Netherlands Antilles',
+					'NI' => 'Nicaragua',
+					'NE' => 'Niger',
+					'NG' => 'Nigeria',
+					'NU' => 'Niue',
+					'NO' => 'Norway',
+					'NC' => 'New Caledonia',
+					'NZ' => 'New Zealand',
+					'OM' => 'Oman',
+					'PK' => 'Pakistan',
+					'PW' => 'Palau',
+					'PA' => 'Panama',
+					'PG' => 'Papua New Guinea',
+					'PY' => 'Paraguay',
+					'PE' => 'Peru',
+					'PH' => 'Philippines',
+					'PL' => 'Poland',
+					'PT' => 'Portugal',
+					'PR' => 'Puerto Rico',
+					'QA' => 'Qatar',
+					'RW' => 'Rowanda',
+					'RO' => 'Romania',
+					'RU' => 'Russia',
+					'PM' => 'Saint Pierre and Miquelon',
+					'WS' => 'Samoa',
+					'AS' => 'American Samoa',
+					'SM' => 'San Marino',
+					'VC' => 'San Vincente y las Granadinas',
+					'SH' => 'Santa Helena',
+					'LC' => 'Santa Lucia',
+					'SN'  => 'Senegal',
+					'SC' => 'Seychelles',
+					'SL' => 'Sierra Leona',
+					'SG' => 'Singapore',
+					'SY' => 'Syria',
+					'SO' => 'Somalia',
+					'LK' => 'Sri Lanka',
+					'ZA' => 'South Africa',
+					'SD' => 'Sudan',
+					'SR' => 'Suriname',
+					'SZ' => 'Swaziland',
+					'TH' => 'Thailand',
+					'TW' => 'Taiwan',
+					'TZ' => 'Tanzania',
+					'TJ' => 'Tajikistan',
+					'TP' => 'Timor Oriental',
+					'TG' => 'Togo',
+					'TK' => 'Tokelau',
+					'TO' => 'Tonga',
+					'TT' => 'Trinidad and Tobago',
+					'TN' => 'Tunisia',
+					'TM' => 'Turkmenistan',
+					'TR' => 'Turkey',
+					'TV' => 'Tuvalu',
+					'UA' => 'Ukraine',
+					'UG' => 'Uganda',
+					'AE' => 'United Arab Emirates',
+					'UY' => 'Uruguay',
+					'UZ' => 'Uzbekistan',
+					'VU' => 'Vanuatu',
+					'VA' => 'Vatican City',
+					'VE' => 'Venezuela',
+					'VN' => 'Vietnam',
 					'VI' => 'Virgin Islands',
-					'YE' => 'Yemen', 
-					'YU' => 'Yugoslavia', 
-					'ZM' => 'Zambia', 
-					'ZW' => 'Zimbabwe'					
+					'YE' => 'Yemen',
+					'YU' => 'Yugoslavia',
+					'ZM' => 'Zambia',
+					'ZW' => 'Zimbabwe'
 				);
-	
+
 	}
 
-		
 
-	
+
+
 }
