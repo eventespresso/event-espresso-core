@@ -537,6 +537,9 @@ class EEH_Template {
 
 		$total_pages = ceil( $total_items ) / $per_page;
 
+		if ( $total_pages <= 1)
+			return '';
+
 		$output = '<span class="displaying-num">' . sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
 
 		if ( $current == 1 )
@@ -547,14 +550,14 @@ class EEH_Template {
 		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
 			'first-page' . $disable_first,
 			esc_attr__( 'Go to the first page' ),
-			esc_url( remove_query_arg( 'paged', $current_url ) ),
+			esc_url( remove_query_arg( 'paged', $url ) ),
 			'&laquo;'
 		);
 
 		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
 			'prev-page' . $disable_first,
 			esc_attr__( 'Go to the previous page' ),
-			esc_url( add_query_arg( 'paged', max( 1, $current-1 ), $current_url ) ),
+			esc_url( add_query_arg( 'paged', max( 1, $current-1 ), $url ) ),
 			'&lsaquo;'
 		);
 
@@ -573,14 +576,14 @@ class EEH_Template {
 		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
 			'next-page' . $disable_last,
 			esc_attr__( 'Go to the next page' ),
-			esc_url( add_query_arg( 'paged', min( $total_pages, $current+1 ), $current_url ) ),
+			esc_url( add_query_arg( 'paged', min( $total_pages, $current+1 ), $url ) ),
 			'&rsaquo;'
 		);
 
 		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
 			'last-page' . $disable_last,
 			esc_attr__( 'Go to the last page' ),
-			esc_url( add_query_arg( 'paged', $total_pages, $current_url ) ),
+			esc_url( add_query_arg( 'paged', $total_pages, $url ) ),
 			'&raquo;'
 		);
 
