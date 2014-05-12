@@ -1444,7 +1444,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 		}
 		$this->_transaction->finalize( TRUE );
-		EE_Registry::instance()->SSN->clear_session();
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		return $this->_transaction->ID();
 	}
 
