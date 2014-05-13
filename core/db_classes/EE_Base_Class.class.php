@@ -926,7 +926,11 @@ abstract class EE_Base_Class{
 	 */
 	public function delete_permanently(){
 		$model=$this->get_model();
-		$result=$model->delete_permanently_by_ID($this->ID());
+		if($model instanceof EEM_Soft_Delete_Base){
+			$result=$model->delete_permanently_by_ID($this->ID());
+		}else{
+			$result = $this->delete();
+		}
 		return $result ? true : false;
 	}
 

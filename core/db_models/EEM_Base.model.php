@@ -1104,7 +1104,7 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		if( !isset($field_with_model_name) || !$field_with_model_name ){
-			throw new EE_Error(sprintf(__("There is no EE_Any_Foreign_Model_Name field on model %d", "event_espresso"),get_class($this->get_this_model())));
+			throw new EE_Error(sprintf(__("There is no EE_Any_Foreign_Model_Name field on model %d", "event_espresso"),get_class($this)));
 		}
 		return $field_with_model_name;
 	}
