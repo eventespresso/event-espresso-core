@@ -683,7 +683,7 @@ final class EE_Admin {
 
 
 	/**
-	 *    reset_page_for_posts_on_change	
+	 *    reset_page_for_posts_on_change
 	 *
 	 * 	if an admin is on the WP Reading Settings page and changes the option for "Posts page", then we need to attribute any shortcodes for the previous blog page to the new blog page
 	 *
@@ -740,16 +740,20 @@ final class EE_Admin {
 	 *
 	 * This method is deprecated in favor of the new location in EE_Register_Admin_Page::register.
 	 *
-	 * @since 4.3.0
-	 * @deprecated 4.3.0	Use EE_Register_Admin_Page::register() instead
-	 * @see EE_Register_Admin_Page::register()
+	 * @since      4.3.0
+	 * @deprecated 4.3.0    Use EE_Register_Admin_Page::register() instead
+	 * @see        EE_Register_Admin_Page::register()
 	 *
+	 * @param       $page_basename
+	 * @param       $page_path
+	 * @param array $config
 	 * @return void
 	 */
 	public static function register_ee_admin_page( $page_basename, $page_path, $config = array() ) {
 		EE_Error::doing_it_wrong( __METHOD__, sprintf( __('Usage is deprecated.  Use EE_Register_Admin_Page::register() for registering the %s admin page.', 'event_espresso'), $page_basename), '4.3' );
 		if ( class_exists( 'EE_Register_Admin_Page' ) )
-			EE_Register_Admin_Page::register( $page_basename, $page_path, $config );
+			$config['page_path'] = $page_path;
+			EE_Register_Admin_Page::register( $page_basename, $config );
 	}
 
 

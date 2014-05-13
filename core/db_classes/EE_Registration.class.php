@@ -257,7 +257,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @param type $timezone
 	 * @return EE_Registration
@@ -867,6 +867,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Returns a nice version of the status for displaying to customers
+	 * @param bool $show_icons
 	 * @return string
 	 */
 	public function pretty_status( $show_icons = FALSE ){
@@ -896,6 +897,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Prints out the return value of $this->pretty_status()
+	 * @param bool $show_icons
 	 * @return void
 	 */
 	public function e_pretty_status( $show_icons = FALSE ){
@@ -1038,13 +1040,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 			$DTT_ID = $datetime->ID();
 		}
 
-		$updated = 0;
-
 		$status_paths = array(
 			0 => 1,
 			1 => 2,
 			2 => 1
-			);
+		);
 
 		//start by getting the current status so we know what status we'll be changing to.
 		$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array('CHK_timestamp' => 'DESC') ) );
@@ -1093,7 +1093,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		if ( $error ) {
 			return sprintf( __("%s's check-in status was not changed.", "event_espresso"), $attendee->full_name() );
 		}
-
+		$msg = '';
 		//what is the status message going to be?
 		switch ( $cur_status ) {
 			case 0 :
@@ -1118,7 +1118,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	private function _generate_new_reg_code() {
 		// generate a reg code ?
-		if ( ! $this->reg_code() ) {		
+		if ( ! $this->reg_code() ) {
 			// figure out where to start parsing the reg code
 			$chars = strpos( $this->reg_url_link(), '-' ) + 4;
 			$new_reg_code = array(
@@ -1148,8 +1148,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		$datetimes = $ticket->datetimes();
 		if ( is_array( $datetimes )) {
 			foreach ( $datetimes as $datetime ) {
-				$datetime->increase_sold();
-				$datetime->save();
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->increase_sold();
+					$datetime->save();
+				}
 			}
 		}
 		// possibly set event status to sold out
@@ -1169,8 +1171,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		$datetimes = $ticket->datetimes();
 		if ( is_array( $datetimes )) {
 			foreach ( $datetimes as $datetime ) {
-				$datetime->decrease_sold();
-				$datetime->save();
+				if ( $datetime instanceof EE_Datetime ) {
+					$datetime->decrease_sold();
+					$datetime->save();
+				}
 			}
 		}
 	}

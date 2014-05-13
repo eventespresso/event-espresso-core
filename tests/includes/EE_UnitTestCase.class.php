@@ -201,4 +201,24 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			$this->assertTrue($not_in_there,  sprintf(__("Array %s DOES contain %s when it shouldn't", "event_espresso"),print_r($haystack,true),print_r($item,true)));
 		}
 	}
+	/**
+	 * 
+	 * @param string $option_name
+	 */
+	public function assertWPOptionExists($option_name){
+		$option = get_option($option_name,NULL);
+		if($option){
+			$this->assertTrue(true);
+		}else{
+			$this->assertNotNull($option,  sprintf(__("The WP Option '%s' does not exist but should", "event_espresso"),$option_name));
+		}
+	}
+	public function assertWPOptionDoesNotExist($option_name){
+		$option = get_option($option_name,NULL);
+		if( $option){
+			$this->assertNull($option,sprintf(__("The WP Option '%s' exists but shouldN'T", "event_espresso"),$option_name));
+		}else{
+			$this->assertTrue(true);
+		}
+	}
 }

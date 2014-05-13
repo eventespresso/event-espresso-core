@@ -205,7 +205,7 @@ final class EE_Registry {
 	 * @access    public
 	 * @param string $class_name - simple class name ie: session
 	 * @param array  $arguments
-	 * @return object
+	 * @return mixed
 	 */
 	public function load_core ( $class_name, $arguments = array() ) {
 		$core_paths = array(
@@ -245,7 +245,7 @@ final class EE_Registry {
 	 *	@param bool   $from_db    - some classes are instantiated from the db and thus call a different method to instantiate
 	 *	@param bool   $cache      if you dont' want the class to be stored in the internal cache (non-persistent) then set this to FALSE (ie. when instantiating model objects from client in a loop)
 	 *	@param bool   $load_only      whether or not to just load the file and NOT instantiate, or load AND instantiate (default)
-	 *	@return object
+	 *	@return EE_Base_Class
 	 */
 	public function load_class ( $class_name, $arguments = array(), $from_db = FALSE, $cache = TRUE, $load_only = FALSE ) {
 		$paths = apply_filters('FHEE__EE_Registry__load_class__paths',array(
@@ -265,7 +265,7 @@ final class EE_Registry {
 	 * @param string $class_name - simple class name ie: price
 	 * @param array  $arguments
 	 * @param bool   $load_only
-	 * @return object
+	 * @return EEH_Base
 	 */
 	public function load_helper ( $class_name, $arguments = array(), $load_only = TRUE ) {
 		$helper_paths = apply_filters( 'FHEE__EE_Registry__load_helper__helper_paths', array(EE_HELPERS ) );
@@ -282,7 +282,7 @@ final class EE_Registry {
 	 * @param string $class_name - simple class name ie: session
 	 * @param array  $arguments
 	 * @param bool   $load_only
-	 * @return object
+	 * @return mixed
 	 */
 	public function load_lib ( $class_name, $arguments = array(), $load_only = FALSE ) {
 		$paths = array(
@@ -322,7 +322,7 @@ final class EE_Registry {
 	 * @param string $class_name - simple class name ie: price
 	 * @param array  $arguments
 	 * @param bool   $load_only
-	 * @return object
+	 * @return mixed
 	 */
 	public function load_model_class ( $class_name, $arguments = array(), $load_only = TRUE ) {
 		$paths = array(
@@ -358,7 +358,7 @@ final class EE_Registry {
 	 * @param string $type         - file type - core? class? helper? model?
 	 * @param array  $arguments
 	 * @param bool   $load_only
-	 * @return object
+	 * @return mixed
 	 */
 	public function load_file ( $path_to_file, $file_name, $type = '', $arguments = array(), $load_only = TRUE ) {
 		// retrieve instantiated class
