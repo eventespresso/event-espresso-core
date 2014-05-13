@@ -103,7 +103,7 @@ abstract class EED_Module extends EE_Base {
 	 * @param $module_name
 	 * @return EED_Module
 	 */
-	public static function instance( $module_name ) {
+	public static function instance( $module_name = '' ) {
 		$module_name = ! empty( $module_name ) ? $module_name : get_called_class();
 		if ( ! EE_Registry::instance()->modules->$module_name instanceof EED_Module ) {
 			EE_Registry::instance()->modules->$module_name = new $module_name();
@@ -151,7 +151,7 @@ abstract class EED_Module extends EE_Base {
 	 * @param 	string 	$config_class
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
-	public function get_config( $section = 'modules', $name = '', $config_class = '' ) {
+	public static function get_config( $section = 'modules', $name = '', $config_class = '' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
 		// check for cached config
