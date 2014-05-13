@@ -348,41 +348,66 @@ class EE_Data_Migration_Manager{
 		//$scripts_ran = array('4.1.0.core'=>array('monkey'=>null));
 		$script_class_and_filespaths_available = $this->get_all_data_migration_scripts_available();
 		
-		$script_classes_that_should_run = array();
 		
 		$current_database_state = $this->ensure_current_database_state_is_set();
 		//determine which have already been run
-		foreach($script_class_and_filespaths_available as $classname => $filepath){
-			list($script_converts_plugin_slug,$script_converts_to_version) = $this->script_migrates_to_version($classname);
-			//check if this version script is DONE or not; or if it's never been ran
-			if(		! $scripts_ran || 
-					! isset($scripts_ran[$script_converts_plugin_slug]) ||
-					! isset($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version])){
-				//we haven't ran this conversion script before
-				//now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
-				$script = new $classname;
-				/* @var $script EE_Data_Migration_Script_base */
-				$can_migrate = $script->can_migrate_from_version($current_database_state);
-				if($can_migrate){
-					$script_classes_that_should_run[$classname] = $script;
-				}
-			} elseif($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version] instanceof EE_Data_Migration_Script_Base){
-				//this script has been ran, or at least started
-				$script = $scripts_ran[$script_converts_plugin_slug][$script_converts_to_version];
-				if( $script->get_status() != self::status_completed){
-					//this script is already underway... keep going with it
-					$script_classes_that_should_run[$classname] = $script;
+		$script_classes_that_should_run_per_iteration = array();
+		$iteration = 0;
+		$next_database_state_to_consider = $current_database_state;
+		$theoretical_database_state = NULL;
+		do{
+			//the next state after the currently-considered one will start off looking the same as the current, but we may make additions...
+			$theoretical_database_state = $next_database_state_to_consider;
+			//the next db state to consider is "what would the DB be like had we run all the scripts we found that applied last time?)
+			foreach($script_class_and_filespaths_available as $classname => $filepath){
+				
+				list($script_converts_plugin_slug,$script_converts_to_version) = $this->script_migrates_to_version($classname);
+				//check if this version script is DONE or not; or if it's never been ran
+				if(		! $scripts_ran || 
+						! isset($scripts_ran[$script_converts_plugin_slug]) ||
+						! isset($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version])){
+					//we haven't ran this conversion script before
+					//now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
+					$script = new $classname;
+					/* @var $script EE_Data_Migration_Script_Base */
+					$can_migrate = $script->can_migrate_from_version($theoretical_database_state);
+					if($can_migrate){
+						$script_classes_that_should_run_per_iteration[$iteration][$script->priority()][] = $script;
+						$migrates_to_version = $script->migrates_to_version();
+						$next_database_state_to_consider[$migrates_to_version[0]] = $migrates_to_version[1];
+						unset($script_class_and_filespaths_available[$classname]);
+					}
+				} elseif($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version] instanceof EE_Data_Migration_Script_Base){
+					//this script has been ran, or at least started
+					$script = $scripts_ran[$script_converts_plugin_slug][$script_converts_to_version];
+					if( $script->get_status() != self::status_completed){
+						//this script is already underway... keep going with it
+						$script_classes_that_should_run_per_iteration[$iteration][$script->priority()][] = $script;
+						$migrates_to_version = $script->migrates_to_version();
+						$next_database_state_to_consider[$migrates_to_version[0]] = $migrates_to_version[1];
+						unset($script_class_and_filespaths_available[$classname]);
+					}else{
+						//it must have a status that indicates it has finished, so we don't want to try and run it again
+					}
 				}else{
-					//it must have a status that indicates it has finished, so we don't want to try and run it again
+					//it exists but it's not  a proper data migration script
+					//maybe the script got renamed? or was simply removed from EE?
+					//either way, its certainly not runnable!
 				}
-			}else{
-				//it exists but it's not  a proper data migration script
-				//maybe the script got renamed? or was simply removed from EE?
-				//either way, its certainly not runnable!
+			}
+			$iteration++;
+		}while( $next_database_state_to_consider != $theoretical_database_state && $iteration<6);
+		//ok we have all the scripts that should run, now let's make them into flat array
+		$scripts_that_should_run = array();
+		foreach($script_classes_that_should_run_per_iteration as $iteration => $scripts_at_priority){
+			foreach($scripts_at_priority as $priority => $scripts){
+				foreach($scripts as $script){
+					$scripts_that_should_run[get_class($script)] = $script;
+				}
 			}
 		}
-		ksort($script_classes_that_should_run);
-		return $script_classes_that_should_run;
+		
+		return $scripts_that_should_run;
 	}
 	
 	/**

@@ -34,7 +34,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * correspond to earlier exeecution
 	 * @var int
 	 */
-	protected $_priority = 10;
+	protected $_priority = 5;
 	/**
 	 * Returns whether or not this data migration script can operate on the given version of the database.
 	 * Eg, if this migration script can migrate from 3.1.26 or higher (but not anything after 4.0.0), and
@@ -479,12 +479,22 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public final function migrates_to_version(){
 		return EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
 	}
+	/**
+	 * Gets the addon's slug that this migration script is for
+	 * @return string
+	 */
+	public final function slug(){
+		$details = EE_Data_Migration_Manager::instance()->parse_dms_classname(get_class($this));
+		return $details['slug'];
+	}
 	
 	/**
 	 * Returns the script's priority relative to DMSs from other addons. However, when
 	 * two DMSs from the same addon/core apply, this is ignored (and instead the version that
 	 * the script migrates to is used to determine which to run first). The default is 5, but all core DMSs
-	 * normally have priority 10.
+	 * normally have priority 10. (So if you want a DMS "A" to run before DMS "B", both of which are from addons,
+	 * and both of which CAN run at the same time (ie, "B" doesn't depend on "A" to set
+	 * the database up so it can run), then you can set "A" to priority 3 or something.
 	 * @return int
 	 */
 	public function priority(){

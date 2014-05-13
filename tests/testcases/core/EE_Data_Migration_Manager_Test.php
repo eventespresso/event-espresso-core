@@ -36,8 +36,11 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function test_check_for_applicable_data_migration_scripts(){
 		$this->_pretend_current_db_state_is_at('3.1.37.7');
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
-		$this->assertArrayHasKey('EE_DMS_Core_4_1_0',$dmss);
-		$this->assertArrayHasKey('EE_DMS_Mock_1_0_0',$dmss);
+		//make sure the array contains the first two migrations, and they're in teh right order
+		$first = array_shift($dmss);
+		$this->assertInstanceOf('EE_DMS_Core_4_1_0',$first);
+		$second = array_shift($dmss);
+		$this->assertInstanceOf('EE_DMS_Mock_1_0_0',$first);
 		//pretend we already ran one DMS
 		$dms_done = new EE_DMS_Core_4_1_0();
 		$dms_done->set_completed();
