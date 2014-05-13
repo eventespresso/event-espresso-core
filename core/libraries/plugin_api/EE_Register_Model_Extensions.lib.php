@@ -77,4 +77,15 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 			throw new EE_Error(sprintf(__("The key '%s' is not a known key for registering a model", "event_espresso"),$unknown_key));
 		}
 	}
+
+
+	/**
+	 * deregister
+	 * @param string $model_id
+	 */
+	public static function deregister( $model_id = NULL ){
+		if(isset(self::$_registry[$model_id])){
+			unset(self::$_registry[$model_id]);
+		}
+	}
 }
