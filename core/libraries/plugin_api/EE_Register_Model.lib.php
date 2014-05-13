@@ -46,6 +46,12 @@ class EE_Register_Model {
 	 * }
 	 */
 	public static function register( $model_id = NULL, $config = array() ){
+
+		//required fields MUST be present, so let's make sure they are.
+		if ( empty( $model_id ) || ! is_array( $config ) || empty( $config['model_paths'] )) {
+			throw new EE_Error( __( 'In order to register Models with EE_Register_Model::register(), you must include a "model_id" (a unique identifier for this set of models), and an array containing the following keys: "model_paths" (an array of full server paths to folders that contain models)', 'event_espresso' ));
+		}
+
 		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_Admin__loaded' )) {
             EE_Error::doing_it_wrong(
 				__METHOD__,
