@@ -624,8 +624,9 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
+		$shortcode = strtoupper( str_replace( 'EES_', '', $shortcode_class ));
 		// add to array of registered shortcodes
-		EE_Registry::instance()->shortcodes->$shortcode_class = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
+		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
 	}
 
