@@ -39,8 +39,8 @@ abstract class EE_Model_Relation_Base{
 	/**
 	 * Object representing the relationship between two models. This knows how to join the models,
 	 * get related models across the relation, and add-and-remove the relationships.
-	 * @type boolean $block_deletes if there are related models across this relation, block (prevent and add an error) the deletion of this model
-	 * @type string $blocking_delete_error_message a customized error message on blocking deletes instead of the default
+	 * @param boolean $block_deletes if there are related models across this relation, block (prevent and add an error) the deletion of this model
+	 * @param string $blocking_delete_error_message a customized error message on blocking deletes instead of the default
 	 */
 	function __construct($block_deletes, $blocking_delete_error_message){
 		$this->_blocking_delete = $block_deletes;
@@ -50,8 +50,8 @@ abstract class EE_Model_Relation_Base{
 
 
 	/**
-	 * @type $this_model_name
-	 * @type $other_model_name
+	 * @param $this_model_name
+	 * @param $other_model_name
 	 * @throws EE_Error
 	 */
 	function _construct_finalize_set_models($this_model_name, $other_model_name){
@@ -88,7 +88,7 @@ abstract class EE_Model_Relation_Base{
 
 	/**
 	 * Internally used by get_this_model() and get_other_model()
-	 * @type string $model_name like Event, Question_Group, etc. omit the EEM_
+	 * @param string $model_name like Event, Question_Group, etc. omit the EEM_
 	 * @return EEM_Base
 	 */
 	protected function _get_model($model_name){
@@ -101,7 +101,7 @@ abstract class EE_Model_Relation_Base{
 
 	/**
 	 * entirely possible that relations may be called from a model and we need to make sure those relations have their timezone set correctly.
-	 * @type string $timezone timezone to set.
+	 * @param string $timezone timezone to set.
 	 */
 	public function set_timezone( $timezone ) {
 		if($timezone !== NULL)
@@ -111,12 +111,12 @@ abstract class EE_Model_Relation_Base{
 
 
 	/**
-	 * @type        $other_table
-	 * @type        $other_table_alias
-	 * @type        $other_table_column
-	 * @type        $this_table_alias
-	 * @type        $this_table_join_column
-	 * @type string $extra_join_sql
+	 * @param        $other_table
+	 * @param        $other_table_alias
+	 * @param        $other_table_column
+	 * @param        $this_table_alias
+	 * @param        $this_table_join_column
+	 * @param string $extra_join_sql
 	 * @return string
 	 */
 	protected function _left_join($other_table,$other_table_alias,$other_table_column,$this_table_alias,$this_table_join_column, $extra_join_sql = ''){
@@ -131,9 +131,9 @@ abstract class EE_Model_Relation_Base{
 	 * For both of those child classes, $model_object must be saved so that it has an ID before querying,
 	 * otherwise an error will be thrown. Note: by default we disable default_where_conditions
 	 * EE_Belongs_To_Relation doesn't need to be saved before querying.
-	 * @type EE_Base_Class|int $model_object_or_id or the primary key of this model
-	 * @type array $query_params like EEM_Base::get_all's $query_params
-	 * @type boolean $values_already_prepared_by_model_object
+	 * @param EE_Base_Class|int $model_object_or_id or the primary key of this model
+	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @param boolean $values_already_prepared_by_model_object
 	 * @return EE_Base_Class[]
 	 */
 	public function get_all_related($model_object_or_id, $query_params = array(), $values_already_prepared_by_model_object = false){
@@ -148,7 +148,7 @@ abstract class EE_Model_Relation_Base{
 
 	/**
 	 * Alters the $query_params to disable default where conditions, unless otherwise specified
-	 * @type string $query_params
+	 * @param string $query_params
 	 * @return string
 	 */
 	protected function _disable_default_where_conditions_on_query_param($query_params){
@@ -165,8 +165,8 @@ abstract class EE_Model_Relation_Base{
 	 * parameters are specified, then all related model objects will be deleted.
 	 * Note: If the related model is extends EEM_Soft_Delete_Base, then the related
 	 * model objects will only be soft-deleted.
-	 * @type EE_Base_Class|int|string $model_object_or_id
-	 * @type array $query_params
+	 * @param EE_Base_Class|int|string $model_object_or_id
+	 * @param array $query_params
 	 * @return int of how many related models got deleted
 	 */
 	public function delete_all_related($model_object_or_id,$query_params = array()){
@@ -193,8 +193,8 @@ abstract class EE_Model_Relation_Base{
 	 * parameters are specified, then all related model objects will be deleted.
 	 * Note: If the related model is extends EEM_Soft_Delete_Base, then the related
 	 * model objects will only be soft-deleted.
-	 * @type EE_Base_Class|int|string $model_object_or_id
-	 * @type array $query_params
+	 * @param EE_Base_Class|int|string $model_object_or_id
+	 * @param array $query_params
 	 * @return int of how many related models got deleted
 	 */
 	public function delete_related_permanently($model_object_or_id,$query_params = array()){
@@ -231,7 +231,7 @@ abstract class EE_Model_Relation_Base{
 
 	/**
 	 * this just returns a model_object_id for incoming item that could be an object or id.
-	 * @type  EE_Base_Class|int $model_object_or_id model object or the primary key of this model
+	 * @param  EE_Base_Class|int $model_object_or_id model object or the primary key of this model
 	 * @throws EE_Error
 	 * @return int
 	 */
@@ -261,8 +261,8 @@ abstract class EE_Model_Relation_Base{
 	 * Adds a reltionships between the two model objects provided. Each type of relationship handles this differently (EE_Belongs_To is a
 	 * slight exception, it should more accurately be called set_relation_to(...), as this relationship only allows this model to be related
 	 * to a signel other model of this type)
-	 * @type $this_obj_or_id
-	 * @type $other_obj_or_id
+	 * @param $this_obj_or_id
+	 * @param $other_obj_or_id
 	 * @return EE_Base_Class the EE_Base_Class which was added as a relation. (Convenient if you only pass an ID for $other_obj_or_id)
 	 */
 	abstract function add_relation_to($this_obj_or_id, $other_obj_or_id);
@@ -271,8 +271,8 @@ abstract class EE_Model_Relation_Base{
 
 	/**
 	 * Similar to 'add_relation_to(...)', performs the opposite action of removing the relationship between the two model objects
-	 * @type $this_obj_or_id
-	 * @type $other_obj_or_id
+	 * @param $this_obj_or_id
+	 * @param $other_obj_or_id
 	 * @return bool
 	 */
 	abstract function remove_relation_to($this_obj_or_id, $other_obj_or_id);
@@ -281,8 +281,8 @@ abstract class EE_Model_Relation_Base{
 
 	/**
 	 * Removes ALL relation instances for this relation obj
-	 * @type EE_Base_Class|int $this_obj_or_id
-	 * @type array             $where_query_param
+	 * @param EE_Base_Class|int $this_obj_or_id
+	 * @param array             $where_query_param
 	 * @internal param array $where_query_params like EEM_Base::get_all's $query_params[0] (where conditions)
 	 * @return EE_Base_Class[]
 	 */
