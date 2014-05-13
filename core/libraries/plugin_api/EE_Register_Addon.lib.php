@@ -77,7 +77,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		// no class name for addon?
 		if ( empty( $setup_args['class_name'] )) {
 			// generate one by first separating name with spaces
-			$class_name = str_replace( array( '-', '_' ), ' ', trim( $setup_args['addon_name'] ));
+			$class_name = str_replace( array( '-', '_' ), ' ', trim( $addon_name ));
 			//capitalize, then replace spaces with underscores
 			$class_name = str_replace( ' ', '_', ucwords( $class_name ));
 		} else {
@@ -85,7 +85,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		$class_name = strpos( $class_name, 'EE_' ) === 0 ? $class_name : 'EE_' . $class_name;
 		//setup $_settings array from incoming values.
-		self::$_settings[ $setup_args['addon_name'] ] = array(
+		self::$_settings[ $addon_name ] = array(
 			// generated from the addon name, changes something like "calendar" to "EE_Calendar"
 			'class_name' 			=> $class_name,
 			// the "software" version for the addon
