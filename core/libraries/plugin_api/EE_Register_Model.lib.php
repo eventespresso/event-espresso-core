@@ -12,7 +12,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @author				Mike Nelson
  *
  */
-class EE_Register_Model {
+class EE_Register_Model implements EEI_Plugin_API {
 	/**
 	 *
 	 * @var array keys are the model_id used to register with, values are the array provided to register them, exactly like EE_Register_Model::register()'s 2nd arg
@@ -40,8 +40,6 @@ class EE_Register_Model {
 	 *                         the EE registry so they can be used like ordinary models. The class contained in each file should extend EEM_Base.
 	 * @internal param array $ class_paths array of folders containing DB classes, where each file follows the model class naming convention,
 	 *                         which is EE_{model_name}.class.php. The class contained in each file should extend EE_Base_Class
-	 * @internal param array $ model_extension_paths array of folders containing DB model extensions, where each file follows the models naming convention, which is: EEME_{your_plugin_slug}_model_name_extended}.model_ext.php. Where your_plugin_slug} is really anything you want (but something having to do with your addon, like 'Calendar' or '3D_View') and model_name_extended} is the model extended. The class contained in teh file should extend EEME_Base_{model_name_extended}.model_ext.php. Where {your_plugin_slug} is really anything you want (but something having to do with your addon, like 'Calendar' or '3D_View') and {model_name_extended} is the model extended. The class contained in teh file should extend EEME_Base
-	 * @internal param array $ class_extension_paths array of folders containing DB class extensions, where each file follows the model class extension naming convention, which is: EEE_{your_plugin_slug}_model_name_extended}.class_ext.php. Where your_plugin_slug} is something like 'Calendar','MailChimp',etc, and model_name_extended} is the name of the model extended, eg 'Attendee','Event',etc. THe class contained in the file should extend EEE_Base_Class._{model_name_extended}.class_ext.php. Where {your_plugin_slug} is something like 'Calendar','MailChimp',etc, and {model_name_extended} is the name of the model extended, eg 'Attendee','Event',etc. THe class contained in the file should extend EEE_Base_Class.
 	 *
 	 * }
 	 */
@@ -78,30 +76,6 @@ class EE_Register_Model {
 			add_filter('FHEE__EE_System__parse_implemented_model_names', array('EE_Register_Model','add_addon_models'));
 			add_filter('FHEE__EE_Registry__load_model__paths',array('EE_Register_Model','add_model_folders'));
 			unset($config['model_paths']);
-		}
-		if(isset($config['class_paths'])){
-			$class_to_filepath_map = EEH_File::get_contents_of_folders($config['class_paths']);
-			EEH_Autoloader::register_autoloader($class_to_filepath_map);
-			add_filter('FHEE__EE_Registry__load_class__paths',array('EE_Register_Model','add_class_folders'));
-			unset($config['class_paths']);
-		}
-		if(isset($config['model_extension_paths'])){
-			require_once(EE_LIBRARIES.'plugin_api/db/EEME_Base.lib.php');
-			$class_to_filepath_map = EEH_File::get_contents_of_folders($config['model_extension_paths']);
-			EEH_Autoloader::register_autoloader($class_to_filepath_map);
-			foreach(array_keys($class_to_filepath_map) as $classname){
-				new $classname;
-			}
-			unset($config['model_extension_paths']);
-		}
-		if(isset($config['class_extension_paths'])){
-			require_once(EE_LIBRARIES.'plugin_api/db/EEE_Base_Class.lib.php');
-			$class_to_filepath_map = EEH_File::get_contents_of_folders($config['class_extension_paths']);
-			EEH_Autoloader::register_autoloader($class_to_filepath_map);
-			foreach(array_keys($class_to_filepath_map) as $classname){
-				new $classname;
-			}
-			unset($config['class_extension_paths']);
 		}
 		foreach($config as $unknown_key => $unknown_config){
 			throw new EE_Error(sprintf(__("The key '%s' is not a known key for registering a model", "event_espresso"),$unknown_key));
