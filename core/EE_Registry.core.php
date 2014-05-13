@@ -96,7 +96,7 @@ final class EE_Registry {
 	/**
 	 * 	$modules
 	 * 	@access 	public
-	 *	@var 	EED_Module[]
+	 *	@var 	EED_Module[] $modules
 	 */
 	public $modules = NULL;
 
@@ -105,14 +105,14 @@ final class EE_Registry {
 	 * 	@access 	public
 	 *	@var 	EES_Shortcode[]  $shortcodes
 	 */
-	public $shortcodes = array();
+	public $shortcodes = NULL;
 
 	/**
 	 * 	$widgets
 	 * 	@access 	public
 	 *	@var 	WP_Widget[]  $widgets
 	 */
-	public $widgets = array();
+	public $widgets = NULL;
 
 
 
@@ -178,6 +178,8 @@ final class EE_Registry {
 		$this->LIB = new StdClass();
 		$this->addons = new StdClass();
 		$this->modules = new StdClass();
+		$this->shortcodes = new StdClass();
+		$this->widgets = new StdClass();
 		add_action( 'AHEE__EE_System__set_hooks_for_core', array( $this, 'init' ));
 	}
 
