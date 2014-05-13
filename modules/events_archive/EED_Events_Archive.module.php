@@ -116,7 +116,7 @@ class EED_Events_Archive  extends EED_Module {
 	 * @return void
 	 */
 	protected static function _set_config(){
-		return EED_Events_Archive::instance()->set_config( 'template_settings', 'EE_Events_Archive', 'EE_Events_Archive_Config' );
+		return EED_Events_Archive::set_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
 	}
 
 
@@ -127,7 +127,7 @@ class EED_Events_Archive  extends EED_Module {
 	 * @return void
 	 */
 	protected static function _get_config(){
-		$config = EED_Events_Archive::instance()->get_config( 'template_settings', 'EE_Events_Archive', 'EE_Events_Archive_Config' );
+		$config = EED_Events_Archive::get_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
 		return $config instanceof EE_Events_Archive_Config ? $config : EED_Events_Archive::_set_config();
 	}
 
