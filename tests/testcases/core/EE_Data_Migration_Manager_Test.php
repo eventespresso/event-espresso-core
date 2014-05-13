@@ -25,7 +25,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  */
 /**
- * @group data_migration_scripts
+ * @group core/data_migration_scripts
  */
 class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function test_get_all_data_migration_scripts_available(){
@@ -38,9 +38,8 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$this->assertArrayHasKey('EE_DMS_Core_4_3_0', $dms_classpaths);
 	}
 	public function test_ensure_current_database_state_is_set(){
-		//options table should be empty to start
-		$this->assertWPOptionDoesNotExist(EE_Data_Migration_Manager::current_database_state);
 		$this->_pretend_current_code_state_is_at(espresso_version());
+		$this->_pretend_current_db_state_is_at();
 		$db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
 		$this->assertArrayHasKey('Core',$db_state);
 		$this->assertEquals(espresso_version(), $db_state['Core']);
