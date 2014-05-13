@@ -77,6 +77,12 @@ class EE_Register_Model implements EEI_Plugin_API {
 			add_filter('FHEE__EE_Registry__load_model__paths',array('EE_Register_Model','add_model_folders'));
 			unset($config['model_paths']);
 		}
+		if(isset($config['class_paths'])){
+			$class_to_filepath_map = EEH_File::get_contents_of_folders($config['class_paths']);
+			EEH_Autoloader::register_autoloader($class_to_filepath_map);
+			add_filter('FHEE__EE_Registry__load_class__paths',array('EE_Register_Model','add_class_folders'));
+			unset($config['class_paths']);
+		}
 		foreach($config as $unknown_key => $unknown_config){
 			throw new EE_Error(sprintf(__("The key '%s' is not a known key for registering a model", "event_espresso"),$unknown_key));
 		}
