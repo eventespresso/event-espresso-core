@@ -60,7 +60,7 @@ abstract class EES_Shortcode extends EE_Base {
 			return NULL;
 		}
 		$shortcode = str_replace( 'EES_', '', strtoupper( $shortcode_class ));
-		$shortcode_obj = isset( EE_Registry::instance()->shortcodes[ $shortcode ] ) ? EE_Registry::instance()->shortcodes[ $shortcode ] : NULL;
+		$shortcode_obj = isset( EE_Registry::instance()->shortcodes->$shortcode ) ? EE_Registry::instance()->shortcodes->$shortcode : NULL;
 		return $shortcode_obj instanceof $shortcode_class || $shortcode_class == 'self' ? $shortcode_obj : new $shortcode_class();
 	}
 
