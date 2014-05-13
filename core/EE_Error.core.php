@@ -906,10 +906,11 @@ class EE_Error extends Exception {
 
 
 	/**
-	 * 	get_persistent_admin_notices
+	 *    get_persistent_admin_notices
 	 *
-	 *  	@access 	public
-	 *  	@return 	void
+	 * @access    public
+	 * @param string $return_url
+	 * @return    array
 	 */
 	public static function get_persistent_admin_notices( $return_url = '' ) {
 		$notices = '';
