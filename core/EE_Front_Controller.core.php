@@ -47,14 +47,6 @@ final class EE_Front_Controller {
 
 
 	/**
-	 * static copy of registry that modules can use until they get instantiated
-	 *	@var 	EE_Registry	$registry
-	 * 	@access 	public
-	 */
-	public static $registry;
-
-
-	/**
 	 *	@singleton method used to instantiate class object
 	 *	@access public
 	 *	@return EE_Front_Controller
@@ -327,10 +319,13 @@ final class EE_Front_Controller {
 					$module = $Module_Request_Router->resolve_route( $route );
 					// get registered view for route
 					$this->_template_path = $Module_Request_Router->get_view( $route );
-					// map the routes to the module objects
-					EE_Registry::instance()->modules[ $route ] = $module;
+					// grab module name
+					$module_name = $module->module_name();
+					// map the module to the module objects
+					EE_Registry::instance()->modules->$module_name = $module;
 				}
 			}
+			//d( EE_Registry::instance()->modules );
 		}
 	}
 
@@ -339,9 +334,6 @@ final class EE_Front_Controller {
 
 
 	/*********************************************** 		WP HOOK		 ***********************************************/
-
-
-
 
 
 
