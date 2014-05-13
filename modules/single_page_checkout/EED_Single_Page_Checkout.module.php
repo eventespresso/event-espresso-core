@@ -39,7 +39,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_primary_revisit = FALSE;
 	// is registration allowed to progress or halted for some reason such as failing to pass recaptcha?
 	private $_continue_reg = TRUE;
-	// array of tempate paths
+	// array of template paths
 	private $_templates = array();
 	// info for each of the reg steps
 	private static $_reg_steps = array();
@@ -61,20 +61,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private $_transaction = NULL;
 
-
-
-	/**
-	 *		@singleton method used to instantiate class object
-	 *		@access public
-	 *		@return class instance
-	 */
-	public static function instance ( ) {
-		// check if class object is instantiated
-		if ( ! self::$_instance instanceof EED_Single_Page_Checkout ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
 
 
 
