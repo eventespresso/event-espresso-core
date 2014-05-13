@@ -279,9 +279,9 @@ final class EE_Front_Controller {
 								break;
 							}
 							// and pass the request object to the run method
-							EE_Registry::instance()->shortcodes[ $shortcode_class ] = $sc_reflector->newInstance();
+							EE_Registry::instance()->shortcodes->$shortcode_class = $sc_reflector->newInstance();
 							// fire the shortcode class's run method, so that it can activate resources
-							EE_Registry::instance()->shortcodes[ $shortcode_class ]->run( $WP );
+							EE_Registry::instance()->shortcodes->$shortcode_class->run( $WP );
 						}
 					// if this is NOT the "Posts page" and we have a valid entry for the "Posts page" in our tracked post_shortcodes array
 					} else if ( $post_name != $page_for_posts && isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
