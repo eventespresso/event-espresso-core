@@ -1306,8 +1306,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function second_table() {
 		// grab second table from tables array
-		// YES THERE IS A BLANK PARAMETER FOLLOWED BY A COMMA AND THE LINE LOOKS BACKWARDS - NO FIXIE CUZ YOU BREAKIE !!!
-		list(  , $second_table ) = $this->_tables;
+		$second_table = end( $this->_tables );
 		return $second_table instanceof EE_Secondary_Table ? $second_table->get_table_name() : NULL;
 	}
 
