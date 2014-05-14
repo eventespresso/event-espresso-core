@@ -167,7 +167,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @param  	WP $WP
 	 *  @return 	void
 	 */
-	public function run( WP $WP= NULL ) {
+	public function run( WP $WP ) {
 
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
