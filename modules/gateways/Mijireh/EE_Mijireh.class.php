@@ -142,7 +142,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		'body'=>  json_encode($order)
 		);
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
-		if(! empty($response['body'])){
+		if(! $response instanceof WP_Error ){
 			$response_body = json_decode($response['body']);
 			if($response['response']['code'] == 201 || $response['response']['code'] == 200){
 			
@@ -174,9 +174,13 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				}
 				$payment->save($properties);
 			}else{
-				$mijireh_error = '';
-				foreach($response_body as $error_field => $errors){
-					$mijireh_error.=$error_field.":".implode(",",$errors);
+				if($response_body){
+					$mijireh_error = '';
+					foreach($response_body as $error_field => $errors){
+						$mijireh_error.=$error_field.":".implode(",",$errors);
+					}
+				}else{
+					$mijireh_error = $response['body'];
 				}
 				$error_message = sprintf(__("Error response from Mijireh: %s", 'event_espresso'),$mijireh_error);
 				
@@ -184,7 +188,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				throw new EE_Error($error_message);
 			}
 		}else{
-			$error_message = __("No response from Mijireh Gateway", 'event_espresso');
+			$error_message = sprintf(__("Errors communicating with Mijireh: %s", 'event_espresso'),implode(",",$response->get_error_messages()));
 			EE_Error::add_error($error_message);
 			throw new EE_Error($error_message);
 		}
