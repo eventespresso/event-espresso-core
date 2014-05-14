@@ -654,6 +654,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		do_action( 'FHEE__EE_Admin_Page___load_page_dependencies__after_load', $this->page_slug );
+		//targeted hook
+		do_action( 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__' . $this->page_slug . '__' . $this->_req_action );
 
 	}
 
