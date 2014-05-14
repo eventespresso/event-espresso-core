@@ -144,35 +144,49 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
 		if(! empty($response['body'])){
 			$response_body = json_decode($response['body']);
-			$this->_gatewayUrl = $response_body->checkout_url;
-			$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
-			//chek if we already have an identical payment
-			$duplicate_properties = array(
-				'TXN_ID' => $transaction->ID(), 
-				'STS_ID' => EEM_Payment::status_id_failed, 
-				'PAY_method' => 'CART', 
-				'PAY_amount' => $transaction->total(), 
-				'PAY_gateway' => $this->_gateway_name, 
-				'PAY_gateway_response' => null, 
-				'PAY_po_number' => NULL, 
-				'PAY_extra_accntng'=>$primary_registrant->reg_code(),
-				'PAY_via_admin' => false, 
-			);
-			$unique_properties = array(
-				'PAY_txn_id_chq_nmbr' => $response_body->order_number, 
-				'PAY_timestamp' => $transaction->datetime(), 				
-				'PAY_details' => (array)$response_body
-			);
-			$properties = array_merge($unique_properties,$duplicate_properties);
-			$duplicate_payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
-			if($duplicate_payment){
-				$payment = $duplicate_payment; 
+			if($response['response']['code'] == 200){
+			
+				$this->_gatewayUrl = $response_body->checkout_url;
+				$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
+				//chek if we already have an identical payment
+				$duplicate_properties = array(
+					'TXN_ID' => $transaction->ID(), 
+					'STS_ID' => EEM_Payment::status_id_failed, 
+					'PAY_method' => 'CART', 
+					'PAY_amount' => $transaction->total(), 
+					'PAY_gateway' => $this->_gateway_name, 
+					'PAY_gateway_response' => null, 
+					'PAY_po_number' => NULL, 
+					'PAY_extra_accntng'=>$primary_registrant->reg_code(),
+					'PAY_via_admin' => false, 
+				);
+				$unique_properties = array(
+					'PAY_txn_id_chq_nmbr' => $response_body->order_number, 
+					'PAY_timestamp' => $transaction->datetime(), 				
+					'PAY_details' => (array)$response_body
+				);
+				$properties = array_merge($unique_properties,$duplicate_properties);
+				$duplicate_payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
+				if($duplicate_payment){
+					$payment = $duplicate_payment; 
+				}else{
+					$payment = EE_Payment::new_instance();
+				}
+				$payment->save($properties);
 			}else{
-				$payment = EE_Payment::new_instance();
+				$mijireh_error = '';
+				foreach($response_body as $error_field => $errors){
+					$mijireh_error.=$error_field.":".implode(",",$errors);
+				}
+				$error_message = sprintf(__("Error response from Mijireh: %s", 'event_espresso'),$mijireh_error);
+				
+				EE_Error::add_error($error_message);
+				throw new EE_Error($error_message);
 			}
-			$payment->save($properties);
 		}else{
-			throw new EE_Error(__("No response from Mijireh Gateway", 'event_espresso'));
+			$error_message = __("No response from Mijireh Gateway", 'event_espresso');
+			EE_Error::add_error($error_message);
+			throw new EE_Error($error_message);
 		}
 		$this->redirect_after_reg_step_3();
 	}
