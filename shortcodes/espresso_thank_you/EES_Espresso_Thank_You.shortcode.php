@@ -440,6 +440,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function get_ajax_content() {
+		$offline_payment_methods = array( 'Bank', 'Check', 'Invoice' );
 ?>
 	<div id="espresso-thank-you-page-ajax-content-dv">
 		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
@@ -448,10 +449,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			<div id="ee-ajax-loading-dv" class="left lt-blue-text">
 				<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e( 'loading transaction and payment information...', 'event_espresso' );?></span>
 			</div>
+			<?php if ( ! in_array( $this->_current_txn->selected_gateway(), $offline_payment_methods )) : ?>
 			<p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
 				<?php echo apply_filters( 'EES_Espresso_Thank_You__get_ajax_content__waiting_for_IPN_msg', __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' ));?><br/>
 				<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' );?><span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
 			</p>
+			<?php endif; ?>
 		</div>
 		<div class="clear"></div>
 	</div>
