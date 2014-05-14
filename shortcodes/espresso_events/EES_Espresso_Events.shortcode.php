@@ -71,8 +71,8 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 * 	[ESPRESSO_EVENTS sort="ASC"]
 	 *
 	 *  @access 	public
-	 *  @param	array 	$attributes
-	 *  @return 	void
+	 *  @param 	array 	$attributes
+	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
 		$default_espresso_events_shortcode_atts = array(
