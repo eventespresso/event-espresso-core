@@ -126,7 +126,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		foreach($total_line_item->get_items() as $line_item){
 			$order['items'][] = array(
 				'name'=>$line_item->name(),
-				'price'=>$this->_format_float($line_item->total()),
+				'price'=>$this->_format_float($line_item->unit_price()),
 				'sku'=>$line_item->code(),
 				'quantity'=>$line_item->quantity()
 			);
@@ -144,7 +144,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
 		if(! empty($response['body'])){
 			$response_body = json_decode($response['body']);
-			if($response['response']['code'] == 200){
+			if($response['response']['code'] == 201 || $response['response']['code'] == 200){
 			
 				$this->_gatewayUrl = $response_body->checkout_url;
 				$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
