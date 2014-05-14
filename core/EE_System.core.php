@@ -318,7 +318,6 @@ final class EE_System {
 	* @return void
 	*/
 	public function detect_if_activation_or_upgrade() {
-
 		do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
 
 		//this filter is present to make it easier to bypass the admin/user check here so we can setup the db when running tests.
@@ -330,12 +329,14 @@ final class EE_System {
 		// load M-Mode class
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// check if db has been updated, or if its a brand-new installation
+		
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
-		$request_type = $testsbypass ? EE_system::req_type_new_activation : $this->detect_req_type($espresso_db_update);
+		$request_type =  $this->detect_req_type($espresso_db_update);
 //		echo "request type:".$request_type;
 		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}
+		
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
@@ -454,18 +455,37 @@ final class EE_System {
 
 	/**
 	 * Adds the current code version to the saved wp option which stores a list of all ee versions ever installed.
-	 *
-	 * @param null $espresso_db_update
+	 * @param array $version_history
 	 * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from the options table
+	 * @param string version to be added to the version history
+	 * @param string $plugin_slug like 'Core', or that of an addon, like 'Mailchimp' or 'Calendar'
 	 * @return boolean success as to whether or not this option was changed
 	 */
-	public function update_list_of_installed_versions($espresso_db_update = null){
-		$espresso_db_update = $this->fix_espresso_db_upgrade_option($espresso_db_update);
-		$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
+	public function update_list_of_installed_versions($version_history = NULL,$current_version_to_add = NULL,$plugin_slug = 'Core'){
+		if($plugin_slug == 'Core'){
+			$version_history = $this->fix_espresso_db_upgrade_option($version_history);
+		}
+		if( $current_version_to_add == NULL){
+			$current_version_to_add = espresso_version();
+		}
+		$version_history[ $current_version_to_add ][] = date( 'Y-m-d H:i:s' );
 		// resave
-		return update_option( 'espresso_db_update', $espresso_db_update );
+		
+		return update_option( $this->_get_db_update_option_name_for($plugin_slug), $version_history );
 	}
-
+	const ee_addon_version_history_option_prefix = 'ee_version_history_';
+	/**
+	 * Gets the plugin's option name which stores when its 
+	 * @param string $plugin_slug
+	 * @return string
+	 */
+	protected function _get_db_update_option_name_for($plugin_slug){
+		if($plugin_slug == 'Core'){
+			return 'espresso_db_update';
+		}else{
+			return self::ee_addon_version_history_option_prefix.$plugin_slug;
+		}
+	}
 
 
 	/**

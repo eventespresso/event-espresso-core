@@ -68,6 +68,16 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$this->assertArrayHasKey('Core', $dms_ran);
 		$this->assertArrayhasKey('4.1.0',$dms_ran['Core']);
 	}
+	public function test_get_most_up_to_date_dms(){
+		$dms_classname = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
+		//yes, this test will need to be updated everytime we add a new core DMS
+		$this->assertEquals('EE_DMS_Core_4_3_0',$dms_classname);
+		EE_Data_Migration_Manager::reset();
+		$this->_add_mock_dms();
+		$non_core_dms = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms('Mock');
+		$this->assertEquals('EE_DMS_Mock_1_0_0',$non_core_dms);
+		$this->_remove_mock_dms();
+	}
 	private function _pretend_ran_dms(EE_Data_Migration_Script_Base $dms_class){
 		$details = EE_Data_Migration_Manager::instance()->parse_dms_classname(get_class($dms_class));
 		$plugin_slug_for_use_in_option_name = $details['slug'].".";
@@ -93,6 +103,9 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	private function _add_mock_dms(){
 		add_filter('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array($this,'add_mock_dms'));
 		EE_Data_Migration_Manager::reset();
+	}
+	private function _remove_mock_dms(){
+		remove_filter('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array($this,'add_mock_dms'));
 	}
 	public function add_mock_dms($dms_folders){
 		$dms_folders[] = EE_TESTS_DIR . 'mocks/core/data_migration_scripts';

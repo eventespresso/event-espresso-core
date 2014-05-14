@@ -70,6 +70,68 @@ class EE_System_Test extends EE_UnitTestCase{
 		$this->assertEquals('5.3.1.alpha.2',$new_version);
 	}
 	
+	function test_detect_activation_or_upgrade(){
+		$original_espresso_db_update= get_option('espresso_db_update');
+		//first: check things turn out as expected for NORMAL REQUEST
+		EE_System::reset();
+		delete_option( 'ee_espresso_activation' );
+		$pretend_activation_history = array(
+			espresso_version() => array(current_time('mysql'))
+		);
+		$this->_pretend_espresso_db_update_is($pretend_activation_history);
+		$current_activation_history = get_option('espresso_db_update');
+		$this->assertEquals(1,count($current_activation_history[espresso_version()]));
+		EE_System::instance()->detect_if_activation_or_upgrade();
+		$current_activation_history = get_option('espresso_db_update');
+		//this should have just added to the number of times this same verison was activated
+		$this->assertEquals(EE_System::req_type_normal,EE_System::instance()->detect_req_type());
+		$this->assertEquals($pretend_activation_history,$current_activation_history);
+		
+		//next, check a NEW ACTIVATION
+		EE_System::reset();
+		
+		$this->_pretend_espresso_db_update_is(NULL);
+		remove_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',array(EE_System::instance(),'initialize_db_if_no_migrations_required'));
+		$this->assertWPOptionDoesNotExist('espresso_db_update');
+		EE_System::instance()->detect_if_activation_or_upgrade();
+		$current_activation_history = get_option('espresso_db_update');
+		//check we've added this to the version history
+		//and that the hook for adding tables n stuff was added
+		$this->assertEquals(array(espresso_version()=>array(current_time('mysql'))),$current_activation_history);
+		has_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',array(EE_System::instance(),'initialize_db_if_no_migrations_required'));
+		
+		//next, check REACTIVATION
+		EE_System::reset();
+		update_option('ee_espresso_activation',true);
+		$this->_pretend_espresso_db_update_is(array(
+				espresso_version() => array(current_time('mysql'))
+				));
+		EE_System::instance()->detect_if_activation_or_upgrade();
+		$current_activation_history = get_option('espresso_db_update');
+		$this->assertEquals(EE_System::req_type_reactivation,EE_System::instance()->detect_req_type());
+		$this->assertEquals(array(espresso_version() =>array(current_time('mysql'),current_time('mysql'))),$current_activation_history);
+		
+		//next, check UPGRADES
+		EE_System::reset();
+		$pretend_previous_version = $this->_add_to_version(espresso_version(),'0.-1.0.0.0');
+		$this->_pretend_espresso_db_update_is(array(
+				 $pretend_previous_version => array(current_time('mysql'))
+				));
+		EE_System::instance()->detect_if_activation_or_upgrade();
+		$current_activation_history = get_option('espresso_db_update');
+		$this->assertEquals(EE_System::req_type_upgrade,EE_System::instance()->detect_req_type());
+		$this->assertEquals(
+				array(
+					$pretend_previous_version=>array(current_time('mysql')),
+					espresso_version()=>array(current_time('mysql'))),
+				$current_activation_history);
+		
+		//now just make sure is everything the way we left it
+		$this->_pretend_espresso_db_update_is($original_espresso_db_update);
+		EE_System::reset();
+		EE_System::instance()->detect_req_type();
+	}
+	
 	/**
 	 * Sets the wordpress option 'espresso_db_update'
 	 * @param array $espresso_db_upgrade top-level-keys shoudl be version numbers,

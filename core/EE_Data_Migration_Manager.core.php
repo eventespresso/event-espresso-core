@@ -719,23 +719,24 @@ class EE_Data_Migration_Manager{
 	/**
 	 * Gets the classname for the most up-to-date DMS (ie, the one that will finally
 	 * leave the DB in a state usable by the current plugin code).
+	 * @param string $plugin_slug the slug for the ee plugin we are searching for. Default is 'Core'
 	 * @return string
 	 */
-	public function get_most_up_to_date_dms(){
+	public function get_most_up_to_date_dms($plugin_slug = 'Core'){
 		$class_to_filepath_map = $this->get_all_data_migration_scripts_available();
 		$most_up_to_date_dms_classname = NULL;
 		foreach($class_to_filepath_map as $classname => $filepath){
 			if($most_up_to_date_dms_classname === NULL){
-				list($plugin_slug,$version_string) = $this->script_migrates_to_version($classname);
+				list($this_plugin_slug,$version_string) = $this->script_migrates_to_version($classname);
 //				$details = $this->parse_dms_classname($classname);
-				if($plugin_slug == 'Core'){//if it's for core, it wins
+				if($this_plugin_slug == $plugin_slug){//if it's for core, it wins
 					$most_up_to_date_dms_classname = $classname;
 				}//if it wasn't for core, we must keep searching for one that is!
 				continue;
 			}else{
 				list($champion_slug,$champion_version) = $this->script_migrates_to_version($most_up_to_date_dms_classname);
 				list($contender_slug,$contender_version) = $this->script_migrates_to_version($classname);
-				if($contender_slug == 'Core' && version_compare($champion_version, $contender_version, '<')){
+				if($contender_slug == $plugin_slug && version_compare($champion_version, $contender_version, '<')){
 					//so the contenders version is higher and its for Core
 					$most_up_to_date_dms_classname = $classname;
 				}
