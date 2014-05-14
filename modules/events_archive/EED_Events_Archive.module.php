@@ -178,9 +178,9 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	private function _filter_query_parts() {
 		// build event list query
-		add_filter( 'posts_join', array( $this, 'posts_join' ), 1, 2 );
-		add_filter( 'posts_where', array( $this, 'posts_where' ), 1, 2 );
-		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1, 2 );
+		add_filter( 'posts_join', array( $this, 'posts_join' ), 11, 2 );
+		add_filter( 'posts_where', array( $this, 'posts_where' ), 11, 2 );
+		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 11, 2 );
 	}
 
 
