@@ -294,7 +294,7 @@ class EED_Events_Archive  extends EED_Module {
 				case 'venue_title' :
 				case 'city' :
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Venue::instance()->table() . '.VNU_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' EE_Venue_TBL ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = EE_Venue_TBL.ID )';
 					break;
 
 				case 'state' :
@@ -445,7 +445,7 @@ class EED_Events_Archive  extends EED_Module {
 					break;
 
 				case 'venue_title' :
-					$SQL .= $glue . 'venue_title ' . $sort;
+					$SQL .= $glue . 'EE_Venue_TBL.post_title ' . $sort;
 					break;
 
 				case 'city' :
@@ -972,6 +972,7 @@ class EE_Event_List_Query extends WP_Query {
 		// run the query
 		parent::__construct( $args );
 	}
+
 
 
 
