@@ -624,7 +624,7 @@ final class EE_Config {
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		$shortcode = strtoupper( str_replace( 'EES_', '', $shortcode_class ));
+		$shortcode = strtoupper( $shortcode );
 		// add to array of registered shortcodes
 		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
@@ -730,7 +730,9 @@ final class EE_Config {
 	 */
 	private function _initialize_shortcodes() {
 		// cycle thru shortcode folders
-		foreach ( EE_Registry::instance()->shortcodes as $shortcode_class => $shortcode_path ) {
+		foreach ( EE_Registry::instance()->shortcodes as $shortcode => $shortcode_path ) {
+			// add class prefix
+			$shortcode_class = 'EES_' . $shortcode;
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
 			// which set hooks ?
 			if ( is_admin() ) {
@@ -741,7 +743,7 @@ final class EE_Config {
 				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $shortcode_class,'set_hooks' ));
 				// convert classname to UPPERCASE and create WP shortcode.
 				// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
-				add_shortcode( strtoupper( str_replace( 'EES_', '', $shortcode_class )), array( $shortcode_class, 'fallback_shortcode_processor' ));
+				add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
 			}
 		}
 	}
