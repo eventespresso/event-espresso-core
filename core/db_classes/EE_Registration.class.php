@@ -285,11 +285,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 * @param mixed $field_value
 	 * @param bool $use_default
 	 */
-	public function set( $field_name, $field_value, $use_default= FALSE ) {
+	public function set( $field_name, $field_value, $use_default = FALSE ) {
 		if ( $field_name == 'STS_ID' ) {
-			$this->set_status( $field_value );
+			$this->set_status( $field_value, $use_default );
 		} else {
-			parent::set( $field_name, $field_value, $use_default= FALSE );
+			parent::set( $field_name, $field_value, $use_default );
 		}
 	}
 
@@ -399,21 +399,25 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 *    calls release_registration_space() if the reg status changes FROM approved to any other reg status
 	 *
 	 * @access        public
-	 * @param bool $new_STS_ID
-	 * @internal      param string $STS_ID Status ID
+	 * @param string $new_STS_ID
+	 * @param bool $new_registration
 	 */
-	public function set_status( $new_STS_ID = FALSE ) {
+	public function set_status( $new_STS_ID = '', $new_registration = FALSE ) {
 		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
 		// if status has changed TO approved
 		if ( $old_STS_ID != $new_STS_ID && $new_STS_ID == EEM_Registration::status_id_approved ) {
-			// reserve a space by incrementing ticket and datetime sold values
-			$this->_reserve_registration_space();
+			if ( ! $new_registration ) {
+				// reserve a space by incrementing ticket and datetime sold values
+				$this->_reserve_registration_space();
+			}
 			do_action( 'AHEE__EE_Registration__set_status__to_approved', $this );
 		// OR if status has changed FROM  approved
 		} else if ( $old_STS_ID != $new_STS_ID && $old_STS_ID == EEM_Registration::status_id_approved ) {
-			// release a space by decrementing ticket and datetime sold values
-			$this->_release_registration_space();
+			if ( ! $new_registration ) {
+				// release a space by decrementing ticket and datetime sold values
+				$this->_release_registration_space();
+			}
 			do_action( 'AHEE__EE_Registration__set_status__from_approved', $this );
 		}
 		// update status
