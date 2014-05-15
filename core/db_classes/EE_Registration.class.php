@@ -287,7 +287,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	public function set( $field_name, $field_value, $use_default = FALSE ) {
 		if ( $field_name == 'STS_ID' ) {
-			$this->set_status( $field_value, $use_default );
+			$this->set_status( $field_value );
 		} else {
 			parent::set( $field_name, $field_value, $use_default );
 		}
@@ -400,24 +400,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 *
 	 * @access        public
 	 * @param string $new_STS_ID
-	 * @param bool $new_registration
 	 */
-	public function set_status( $new_STS_ID = '', $new_registration = FALSE ) {
+	public function set_status( $new_STS_ID = '' ) {
 		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
 		// if status has changed TO approved
 		if ( $old_STS_ID != $new_STS_ID && $new_STS_ID == EEM_Registration::status_id_approved ) {
-			if ( ! $new_registration ) {
-				// reserve a space by incrementing ticket and datetime sold values
-				$this->_reserve_registration_space();
-			}
+			// reserve a space by incrementing ticket and datetime sold values
+			$this->_reserve_registration_space();
 			do_action( 'AHEE__EE_Registration__set_status__to_approved', $this );
 		// OR if status has changed FROM  approved
 		} else if ( $old_STS_ID != $new_STS_ID && $old_STS_ID == EEM_Registration::status_id_approved ) {
-			if ( ! $new_registration ) {
-				// release a space by decrementing ticket and datetime sold values
-				$this->_release_registration_space();
-			}
+			// release a space by decrementing ticket and datetime sold values
+			$this->_release_registration_space();
 			do_action( 'AHEE__EE_Registration__set_status__from_approved', $this );
 		}
 		// update status
@@ -1102,7 +1097,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * genrerates reg code
+	 * generates reg code
 	 * @return boolean
 	 */
 	private function _generate_new_reg_code() {
@@ -1182,8 +1177,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
 		$update_reg = FALSE;
 		$new_reg = FALSE;
-		// update reg status if no monies are owing and the REG status is pending payment AND we're not doing this from admin.
-		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment && $flip_reg_status ) {
+		// update reg status if no monies are owing AND ( the REG status is pending payment and we're not doing this from admin ) OR ( the event default reg status is Approved )
+		if ((( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment && $flip_reg_status ) || $this->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
 			// automatically toggle status to approved
 			$this->set_status( EEM_Registration::status_id_approved );
 			$update_reg = TRUE;
