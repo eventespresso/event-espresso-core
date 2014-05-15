@@ -287,7 +287,7 @@ final class EE_Front_Controller {
 					} else if ( $post_name != $page_for_posts && isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
 						// and the shortcode is not being tracked for this page
 						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )) {
-							// then remove the "fallback shortcode
+							// then remove the "fallback" shortcode processor
 							remove_shortcode( $shortcode_class );
 						}
 					}
