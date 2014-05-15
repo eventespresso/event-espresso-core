@@ -122,7 +122,7 @@ final class EE_System {
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
 		// detect whether install or upgrade
-		add_action( 'plugins_loaded', array( $this, 'detect_if_activation_or_upgrade' ), 3 );
+		add_action( 'plugins_loaded', array( $this, 'detect_activations_or_upgrades' ), 3 );
 		// load EE_Config, EE_Textdomain, etc
 		add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
 		// load EE_Config, EE_Textdomain, etc
@@ -306,8 +306,55 @@ final class EE_System {
 	}
 
 
-
-
+	/**
+	 * Checks for activation or upgrade of core first; then also checks if any registered
+	 * addons have been activated or upgraded
+	 */
+	public function detect_activations_or_upgrades(){
+		//first off: let's make sure to handle core
+		$this->detect_if_activation_or_upgrade();
+		foreach(EE_Registry::instance()->addons as $addon){
+			//detect teh request type for that addon
+			$activation_history_for_addon = $this->_get_db_update_option_name_for($addon->name());
+			$request_type = $this->_detect_req_type($activation_history_for_addon, $addon->get_db_update_option_name(), $addon->version());
+			$addon->set_req_type($request_type);
+			
+			switch($request_type){
+				case EE_System::req_type_new_activation:
+					do_action( "AHEE__EE_System__detect_activations_or_upgrades__{$addon->name()}__new_activation" );
+					$addon->new_install();
+					//if we weren't in maintenance mode and were able to setup our DB,
+					//then this has been an installed verison. If we DIDN'T get to setup the addon's DB,
+					//then we won't consider it installed. This means that during the next request, it will also be 
+					//considered a new install, and agian try to setup its DB. It should keep trying until it succeeds
+					if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
+						$this->update_list_of_installed_versions($activation_history_for_addon, $addon->version(), $addon->name() );
+					}
+					break;
+				case EE_System::req_type_reactivation:
+					do_action( "AHEE__EE_System__detect_activations_or_upgrades__{$addon->name()}__reactivation" );
+					$addon->reactivation();
+					$this->update_list_of_installed_versions($activation_history_for_addon, $addon->version(), $addon->name() );
+					break;
+				case EE_System::req_type_upgrade:
+					do_action( "AHEE__EE_System__detect_activations_or_upgrades__{$addon->name()}__upgrade" );
+					$addon->upgrade();
+					$this->update_list_of_installed_versions($activation_history_for_addon, $addon->version(), $addon->name() );
+					break;
+				case EE_System::req_type_downgrade:
+					do_action( "AHEE__EE_System__detect_activations_or_upgrades__{$addon->name()}__downgrade" );
+					$addon->downgrade();
+					$this->update_list_of_installed_versions($activation_history_for_addon, $addon->version(), $addon->name() );
+					break;
+				case EE_System::req_type_normal:
+				default:
+	//				$this->_maybe_redirect_to_ee_about();
+					break;
+			}
+			
+			do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__complete' );
+		}
+	}
 	/**
 	* detect_if_activation_or_upgrade
 	*
@@ -501,32 +548,46 @@ final class EE_System {
 	 *                            but still know if this is a new install or not
 	 * @return int one of the consts on EE_System::req_type_
 	 */
+	const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 	public function detect_req_type( $espresso_db_update = NULL ){
 
 		if ( $this->_req_type === NULL ){
 			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
-			if( $espresso_db_update ){
-				//it exists, so this isn't a completely new install
-				//check if this version already in that list of previously installed versions
-				if ( ! isset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] )) {
-					//its a new version!
-					$this->_req_type = EE_System::req_type_upgrade;
-				} else {
-					// its not an update. maybe a reactivation?
-					if( get_option( 'ee_espresso_activation', FALSE )){
-						$this->_req_type = EE_System::req_type_reactivation;
-						delete_option( 'ee_espresso_activation' );
-					} else {
-						//its not a new install, not an upgrade, and not even a reactivation. its nothing special
-						$this->_req_type = EE_System::req_type_normal;
-					}
-				}
-			} else {
-				//it doesn't exist. It's a completely new install
-				$this->_req_type = EE_System::req_type_new_activation;
-			}
+			$this->_req_type = $this->_detect_req_type($espresso_db_update,'ee_espresso_activation',espresso_version());
 		}
 		return $this->_req_type;
+	}
+	/**
+	 * Determines the request type for any ee addon, given three piece of info: the current array of activation histories (for core that' 'espresso_db_update' wp option); the name of the wordpress option which is temporarily set upon activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin
+	 * was just activated to (for core that will alwasy be espreso_version())
+	 * @param array $activation_history_for_addon the option's value which stores the activation history for this ee plugin.
+	 * for core that's 'espresso_db_update'
+	 * @param string $activation_indicator_option_name the name of the wordpress option that is temporarily set to indicate that this plugin was just activated
+	 * @param string $version_to_upgrade_to the version that was just upgraded to (for core that will be espresso_version())
+	 * @return int one of the consts on EE_System::req_type_*
+	 */
+	protected function _detect_req_type($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
+		if( $activation_history_for_addon ){
+			//it exists, so this isn't a completely new install
+			//check if this version already in that list of previously installed versions
+			if ( ! isset( $activation_history_for_addon[ $version_to_upgrade_to ] )) {
+				//its a new version!
+				$req_type = EE_System::req_type_upgrade;
+			} else {
+				// its not an update. maybe a reactivation?
+				if( get_option( $activation_indicator_option_name, FALSE )){
+					$req_type = EE_System::req_type_reactivation;
+					delete_option( $activation_indicator_option_name );
+				} else {
+					//its not a new install, not an upgrade, and not even a reactivation. its nothing special
+					$req_type = EE_System::req_type_normal;
+				}
+			}
+		} else {
+			//it doesn't exist. It's a completely new install
+			$req_type = EE_System::req_type_new_activation;
+		}
+		return $req_type;
 	}
 
 

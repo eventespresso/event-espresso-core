@@ -141,8 +141,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			EE_Register_Widget::register( $addon_name, array( 'widget_paths' => self::$_settings[ $addon_name ]['widget_paths'] ));
 		}
 		// load and instantiate main addon class
-		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EE_Register_Addon', 'instantiate_addon' ));
-
+//		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EE_Register_Addon', 'instantiate_addon' ));
+		self::instantiate_addon();
 	}
 
 
@@ -154,9 +154,10 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @return void
 	 */
 	public static function instantiate_addon() {
-		foreach( self::$_settings as $settings ) {
+		foreach( self::$_settings as $addon_name => $settings ) {
 			// load and instantiate main addon class
 			$addon = EE_Registry::instance()->load_addon( $settings['base_path'], $settings['class_name'] );
+			$addon->set_name($addon_name);
 			$addon->set_version( $settings['version'] );
 			$addon->set_min_core_version( $settings['min_core_version'] );
 			// load_admin_controller

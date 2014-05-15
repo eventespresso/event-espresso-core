@@ -68,8 +68,7 @@ class EE_System_Test extends EE_UnitTestCase{
 		$version_to_add = '1.0.-1.1.1';
 		$new_version = $this->_add_to_version($version, $version_to_add);
 		$this->assertEquals('5.3.1.alpha.2',$new_version);
-	}
-	
+	}	
 	function test_detect_activation_or_upgrade(){
 		$original_espresso_db_update= get_option('espresso_db_update');
 		//first: check things turn out as expected for NORMAL REQUEST
