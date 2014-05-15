@@ -223,5 +223,27 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}
 	}
 	
+	/**
+	 * Modifies the $wp_actions global to make it look like certian actions were and weren't
+	 * performed, so that EE_Register_Addon is deceived into thinking it's the right
+	 * time to register an addon etc
+	 * @global array $wp_actions
+	 */
+	protected function _pretend_addon_hook_time(){
+		global $wp_actions;
+		unset($wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin']);
+		$wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
+	}
+	/**
+	 * Restores the $wp_actions global to how ti should have been before we
+	 * started pretending we hooked in at the right time etc
+	 * @global array $wp_actions
+	 */
+	protected function _stop_pretending_addon_hook_time(){
+		global $wp_actions;
+		$wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'] = 1;
+		unset($wp_actions['AHEE__EE_System__load_espresso_addons']);
+	}
+	
 	
 }

@@ -13,7 +13,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  */
 /**
- * @group core/libraries/plugin-api
+ * @group core/libraries/plugin_api
  * @group agg
  */
 class EE_Register_Addon_Test extends EE_UnitTestCase{
@@ -38,7 +38,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		//registering this first time should throw an E_USER_NOTICE
 		try{
 			EE_Register_Addon::register('New_Addon', $min_registration_args);
-			$this->assertTrue(false,'We should have had a warning saying that we are setting up the ee addon at the wrong time');
+			$this->fail('We should have had a warning saying that we are setting up the ee addon at the wrong time');
 		}catch(PHPUnit_Framework_Error_Notice $e){
 			$this->assertTrue(True);
 		}
@@ -50,7 +50,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		}
 		
 		//try again, this time make it look like we're calling it at the right time
-		$this->_pretend_hooking_in_addon_at_right_time();
+		$this->_pretend_addon_hook_time();
 		EE_Register_Addon::register('New_Addon', $min_registration_args);
 		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 		
@@ -62,29 +62,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		}catch(PHPUnit_Framework_Error_Notice $e){
 			$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
 		}
-		$this->_stop_pretending_hooking_in_at_right_time();
-	}
-	
-	/**
-	 * Modifies the $wp_actions global to make it look like certian actions were and weren't
-	 * performed, so that EE_Register_Addon is deceived into thinking it's the right
-	 * time to register an addon
-	 * @global array $wp_actions
-	 */
-	private function _pretend_hooking_in_addon_at_right_time(){
-		global $wp_actions;
-		unset($wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin']);
-		$wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
-	}
-	/**
-	 * Restores the $wp_actions global to how ti should have been before we
-	 * started pretending we hooked in at the right time
-	 * @global array $wp_actions
-	 */
-	private function _stop_pretending_hooking_in_at_right_time(){
-		global $wp_actions;
-		$wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'] = 1;
-		unset($wp_actions['AHEE__EE_System__load_espresso_addons']);
+		$this->_stop_pretending_addon_hook_time();
 	}
 }
 

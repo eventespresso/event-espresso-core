@@ -123,10 +123,12 @@ class EE_Data_Migration_Manager{
 	}	
 	/**
 	 * resets the singleton to its brand-new state (but does NOT delete old references to the old singleton. Meaning,
-	 * all new usages of the singleton shoul dbe made with CLassname::instance())
+	 * all new usages of the singleton shoul dbe made with CLassname::instance()) and returns it
+	 * @return EE_Data_Migration_Manager
 	 */
 	public static function reset(){
 		self::$_instance = NULL;
+		return self::instance();
 	}
 	
 	
