@@ -742,8 +742,12 @@ final class EE_Config {
 				// delay until other systems are online
 				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $shortcode_class,'set_hooks' ));
 				// convert classname to UPPERCASE and create WP shortcode.
-				// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
-				add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
+				$shortcode_tag = strtoupper( $shortcode );
+				// but first check if the shortcode has already been added before assigning 'fallback_shortcode_processor'
+				if ( ! shortcode_exists( $shortcode_tag )) {
+					// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
+					add_shortcode( $shortcode_tag, array( $shortcode_class, 'fallback_shortcode_processor' ));
+				}
 			}
 		}
 	}
