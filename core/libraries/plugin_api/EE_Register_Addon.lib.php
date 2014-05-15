@@ -142,28 +142,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		// load and instantiate main addon class
 //		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EE_Register_Addon', 'instantiate_addon' ));
-		self::instantiate_addon();
-	}
-
-
-
-
-	/**
-	 * instantiate_addon
-	 *
-	 * @return void
-	 */
-	public static function instantiate_addon() {
-		foreach( self::$_settings as $addon_name => $settings ) {
-			// load and instantiate main addon class
-			$addon = EE_Registry::instance()->load_addon( $settings['base_path'], $settings['class_name'] );
-			$addon->set_name($addon_name);
-			$addon->set_version( $settings['version'] );
-			$addon->set_min_core_version( $settings['min_core_version'] );
-			// load_admin_controller
-			if ( ! empty( $settings['admin_callback'] )) {
-				add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, $settings['admin_callback'] ));
-			}
+		$addon = EE_Registry::instance()->load_addon( self::$_settings[ $addon_name ]['base_path'], self::$_settings[ $addon_name ]['class_name'] );
+		$addon->set_name($addon_name);
+		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
+		$addon->set_min_core_version( self::$_settings[ $addon_name ]['min_core_version'] );
+		// load_admin_controller
+		if ( ! empty( self::$_settings[ $addon_name ]['admin_callback'] )) {
+			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
 		}
 	}
 
@@ -180,6 +165,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	public static function deregister( $addon_name = NULL ) {
 		if ( isset( self::$_settings[ $addon_name ] )) {
+			$class_name = self::$_settings[ $addon_name ]['class_name'];
+			unset(EE_Registry::instance()->addons->$class_name);
 			unset( self::$_settings[ $addon_name ] );
 		}
 	}

@@ -19,6 +19,7 @@ require_once EE_TESTS_DIR . 'includes/factory.php';
  * @subpackage 	tests
  */
 class EE_UnitTestCase extends WP_UnitTestCase {
+	const error_code_undefined_property = 8;
 	protected $_cached_SERVER_NAME = NULL;
 
 	public function setUp() {
@@ -221,4 +222,6 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			$this->assertTrue(true);
 		}
 	}
+	
+	
 }
