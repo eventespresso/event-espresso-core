@@ -92,6 +92,7 @@ abstract class EES_Shortcode extends EE_Base {
 	final public function __construct() {
 		// get classname, remove EES_prefix, and convert to UPPERCASE
 		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this )));
+		// assign shortcode to the preferred callback, which overwrites the "fallback shortcode processor" assigned earlier
 		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));
 	}
 
