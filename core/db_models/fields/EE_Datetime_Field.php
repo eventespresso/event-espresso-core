@@ -48,6 +48,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 
 
 
+
 	public function __construct( $table_column, $nicename, $nullable, $default_value, $timezone = NULL, $date_format = NULL, $time_format = NULL, $pretty_date_format = NULL, $pretty_time_format = NULL ){
 
 		parent::__construct($table_column, $nicename, $nullable, $default_value);
@@ -242,7 +243,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 */
 	public function prepare_for_set_with_new_time($time_to_set_string, $current_datetime_value ){
 		$this->_set_date_obj( date( $this->_date_format . ' ' . $this->_time_format, $current_datetime_value), 'UTC' );
-		if ( ! $this->_date instanceof DateTime ) {
+		if ( ! $this->_date instanceof DateTime  && ! $this->_nullable ) {
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 		}
 		return $this->_prepare_for_set_new( $time_to_set_string, TRUE );
@@ -260,7 +261,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 */
 	public function prepare_for_set_with_new_date($date_to_set_string, $current_datetime_value ){
 		$this->_set_date_obj( date( $this->_date_format  . ' ' . $this->_time_format, $current_datetime_value ), 'UTC' );
-		if ( ! $this->_date instanceof DateTime ) {
+		if ( ! $this->_date instanceof DateTime && ! $this->_nullable ) {
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 		}
 		return $this->_prepare_for_set_new( $date_to_set_string );
@@ -277,6 +278,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string                formatted date time for given timezone
 	 */
 	public function prepare_for_get( $datetimevalue ) {
+
 		$format_string = $this->_get_date_time_output();
 		//send this to our formatter to return localized time for the timezone
 		return $this->_convert_to_timezone_from_utc_unix_timestamp( $datetimevalue, $format_string );
@@ -302,7 +304,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string                mysql timestamp in UTC
 	 */
 	public function prepare_for_use_in_db( $datetimevalue ) {
-		return date( "Y-m-d H:i:s", $datetimevalue );
+		return $this->_nullable && empty( $datetimevalue) ? NULL : date( "Y-m-d H:i:s", $datetimevalue );
 	}
 
 
@@ -315,7 +317,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return int                 UnixTime in UTC
 	 */
 	public function prepare_for_set_from_db( $datetime_value ) {
-		return strtotime( $datetime_value );
+		return $this->_nullable && empty( $datetime_value ) ? NULL : strtotime( $datetime_value );
 	}
 
 
@@ -331,6 +333,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string           final converted date-time-zone.
 	 */
 	private function _convert_to_timezone_from_utc_unix_timestamp( $dtvalue, $format ) {
+		if ( $this->_nullable && empty( $dtvalue ) )
+			return NULL;
 		$dtvalue = (int) $dtvalue;
 		$datetime = date( 'Y-m-d H:i:s', $dtvalue );
 		$this->_set_date_obj( $datetime, 'UTC' );
@@ -358,6 +362,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return int                         UTC UnixTimestamp
 	 */
 	private function _prepare_for_set_new( $datetimeadjustment, $is_time = FALSE ) {
+		if ( $this->_nullable && empty( $datetimeadjustment ) )
+			return NULL;
 
 		//first let's parse the incoming string
 		$parsed = date_parse( $datetimeadjustment );
@@ -390,6 +396,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return string 		unix timestampe for utc
 	 */
 	private function _convert_to_utc_unixtimestamp( $datetime ) {
+		if ( $this->_nullable && empty( $datetime ) )
+			return NULL;
 		$timestamp = is_numeric( $datetime ) ? $this->_convert_from_numeric_value_to_utc_unixtimestamp( $datetime ) : $this->_convert_from_string_value_to_utc_unixtimestamp( $datetime );
 		return $timestamp;
 	}
@@ -426,7 +434,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 		//create a new datetime object using the given string and timezone
 		$this->_set_date_obj( $datetime, $this->_timezone );
 
-		if ( ! $this->_date instanceof DateTime ) {
+		if ( ! $this->_date instanceof DateTime && ! $this->_nullable ) {
 			throw new EE_Error( __('Something went wrong with setting the date/time. Likely, either there is an invalid datetime string or an invalid timezone string being used.', 'event_espresso' ) );
 		}
 
@@ -560,6 +568,10 @@ class EE_Datetime_Field extends EE_Model_Field_Base {
 	 * @return void
 	 */
 	private function _set_date_obj( $date_string, $timezone ) {
+		if ( $this->_nullable && empty( $date_string ) ) {
+			$this->_date = NULL;
+			return;
+		}
 		try {
 			$this->_date = new DateTime( $date_string, new DateTimeZone( $timezone ));
 		} catch( Exception $e ) {
