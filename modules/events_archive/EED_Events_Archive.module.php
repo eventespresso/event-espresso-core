@@ -347,6 +347,12 @@ class EED_Events_Archive  extends EED_Module {
 		foreach( (array)$orderby_params as $orderby ) {
 			switch ( $orderby ) {
 
+				case 'category_slug' :
+					if ( EED_Events_Archive::_event_category_slug() === '' ) {
+						$SQL .= EED_Events_Archive::posts_join_sql_for_terms( TRUE );
+					}
+					break;
+
 				case 'ticket_start' :
 				case 'ticket_end' :
 					$SQL .= ' LEFT JOIN ' . EEM_Datetime_Ticket::instance()->table() . ' ON (' . EEM_Datetime::instance()->table() . '.DTT_ID = ' . EEM_Datetime_Ticket::instance()->table() . '.DTT_ID )';
