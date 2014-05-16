@@ -535,7 +535,7 @@ class EEH_Template {
 		$per_page = (int) $per_page;
 		$current = (int) $current;
 
-		$total_pages = ceil( $total_items ) / $per_page;
+		$total_pages = round( ceil( $total_items ) / $per_page );
 
 		if ( $total_pages <= 1)
 			return '';
