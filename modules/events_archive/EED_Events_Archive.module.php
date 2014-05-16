@@ -270,11 +270,11 @@ class EED_Events_Archive  extends EED_Module {
 			switch ( $orderby ) {
 
 				case 'ticket_start' :
-					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.ticket_start' ;
+					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_start_date' ;
 					break;
 
 				case 'ticket_end' :
-					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.ticket_end' ;
+					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_end_date' ;
 					break;
 
 				case 'venue_title' :
