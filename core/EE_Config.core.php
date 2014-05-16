@@ -191,6 +191,12 @@ final class EE_Config {
 
 
 
+	/**
+	 * @param      $config
+	 * @param      $settings
+	 * @param bool $addons
+	 * @return bool
+	 */
 	private function _load_config_verification( $config, $settings, $addons = FALSE ) {
 		$prop_to_check = $addons ? $this->addons->$config : $this->$config;
 		$config_class = is_object( $settings ) && is_object( $prop_to_check ) ? get_class(
@@ -538,7 +544,7 @@ final class EE_Config {
 		}
 		register_widget( $widget_class );
 		// add to array of registered widgets
-		EE_Registry::instance()->widgets[ $widget_class ] = $widget_path . DS . $widget_class . $widget_ext;
+		EE_Registry::instance()->widgets->$widget_class = $widget_path . DS . $widget_class . $widget_ext;
 	}
 
 
@@ -612,14 +618,15 @@ final class EE_Config {
 		}
 		// load the shortcode class file
 		require_once( $shortcode_path . DS . $shortcode_class . $shortcode_ext );
-		// verfiy that class exists
+		// verify that class exists
 		if ( ! class_exists( $shortcode_class )) {
 			$msg = sprintf( __( 'The requested %s shortcode class does not exist.', 'event_espresso' ), $shortcode_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
+		$shortcode = strtoupper( $shortcode );
 		// add to array of registered shortcodes
-		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
+		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
 		return TRUE;
 	}
 
@@ -700,15 +707,15 @@ final class EE_Config {
 		// load the module class file
 		require_once( $module_path . DS . $module_class . $module_ext );
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->stop_timer("Requiring module $module_class"); }
-		// verfiy that class exists
+		// verify that class exists
 		if ( ! class_exists( $module_class )) {
 			$msg = sprintf( __( 'The requested %s module class does not exist.', 'event_espresso' ), $module_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// add to array of registered modules
-		EE_Registry::instance()->modules[ $module ] = $module_path . DS . $module_class . $module_ext;
-		do_action( 'AHEE__EE_Config__register_module__complete', $module, EE_Registry::instance()->modules[ $module ] );
+		EE_Registry::instance()->modules->$module_class = $module_path . DS . $module_class . $module_ext;
+		do_action( 'AHEE__EE_Config__register_module__complete', $module_class, EE_Registry::instance()->modules->$module_class );
 		return TRUE;
 	}
 
@@ -724,7 +731,6 @@ final class EE_Config {
 	private function _initialize_shortcodes() {
 		// cycle thru shortcode folders
 		foreach ( EE_Registry::instance()->shortcodes as $shortcode => $shortcode_path ) {
-//			echo '<h5 style="color:#2EA2CC;">' . $shortcode . ' : <span style="color:#E76700">' . $shortcode_path . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 			// add class prefix
 			$shortcode_class = 'EES_' . $shortcode;
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
@@ -736,8 +742,12 @@ final class EE_Config {
 				// delay until other systems are online
 				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $shortcode_class,'set_hooks' ));
 				// convert classname to UPPERCASE and create WP shortcode.
-				// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
-				add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
+				$shortcode_tag = strtoupper( $shortcode );
+				// but first check if the shortcode has already been added before assigning 'fallback_shortcode_processor'
+				if ( ! shortcode_exists( $shortcode_tag )) {
+					// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
+					add_shortcode( $shortcode_tag, array( $shortcode_class, 'fallback_shortcode_processor' ));
+				}
 			}
 		}
 	}
@@ -753,10 +763,7 @@ final class EE_Config {
 	 */
 	private function _initialize_modules() {
 		// cycle thru shortcode folders
-		foreach ( EE_Registry::instance()->modules as $module => $module_path ) {
-//			echo '<h5 style="color:#2EA2CC;">' . $module . ' : <span style="color:#E76700">' . $module_path . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-			// add class prefix
-			$module_class = 'EED_' . $module;
+		foreach ( EE_Registry::instance()->modules as $module_class => $module_path ) {
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
 			// which set hooks ?
 			if ( is_admin() ) {
@@ -782,9 +789,10 @@ final class EE_Config {
 	 *  @return 	bool
 	 */
 	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
-		do_action( 'AHEE__EE_Config__register_route__begin',$route,$module,$method_name );
+		do_action( 'AHEE__EE_Config__register_route__begin', $route, $module, $method_name );
 		$module = str_replace( 'EED_', '', $module );
-		if ( ! isset( EE_Registry::instance()->modules[ $module ] )) {
+		$module_class = 'EED_' . $module;
+		if ( ! isset( EE_Registry::instance()->modules->$module_class )) {
 			$msg = sprintf( __( 'The module %s has not been registered.', 'event_espresso' ), $module );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -949,7 +957,7 @@ final class EE_Config {
 			update_option('ee_config_' . $key, $value);
 		}
 
-		//we serialize everything except the addons becuse if an addon gets deactivated, waking up could really break things.
+		//we serialize everything except the addons because if an addon gets deactivated, waking up could really break things.
 		return apply_filters( 'FHEE__EE_Config__sleep',array(
 			'core',
 			'organization',
@@ -1040,7 +1048,7 @@ class EE_Core_Config extends EE_Config_Base {
 	 * Not to be confused with the 4 critical page variables (See
 	 * get_critical_pages_array()), this is just an array of wp posts that have EE
 	 * shortcodes in them. Keys are slugs, values are arrays with only 1 element: where the key is the shortcode
-	 * in the page, and the value is the page's ID. The key 'posts' is basially a duplicate of this same array.
+	 * in the page, and the value is the page's ID. The key 'posts' is basically a duplicate of this same array.
 	 * @var array
 	 */
 	public $post_shortcodes;
@@ -1369,7 +1377,7 @@ class EE_Currency_Config extends EE_Config_Base {
 	public $sign;
 
 	/**
-	* Whether the currency sign shoudl come before the number or not
+	* Whether the currency sign should come before the number or not
 	* @var boolean $sign_b4
 	*/
 	public $sign_b4;
@@ -1550,9 +1558,9 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $use_dashboard_widget;
 
 	/**
-	* @var int $events_in_dasboard
+	* @var int $events_in_dashboard
 	*/
-	public $events_in_dasboard;
+	public $events_in_dashboard;
 
 	/**
 	* @var boolean $use_event_timezones
@@ -1603,7 +1611,7 @@ class EE_Admin_Config extends EE_Config_Base {
 		// set default general admin settings
 		$this->use_personnel_manager = TRUE;
 		$this->use_dashboard_widget = TRUE;
-		$this->events_in_dasboard = 30;
+		$this->events_in_dashboard = 30;
 		$this->use_event_timezones = FALSE;
 		$this->use_full_logging = FALSE;
 		$this->use_remote_logging = FALSE;

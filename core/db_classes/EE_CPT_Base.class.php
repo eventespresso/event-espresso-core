@@ -57,9 +57,9 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Adds to the specified event category. If it category doesn't exist, creates it.
-	 * @type string $category_name
-	 * @type string $category_description optional
-	 * @type int $parent_term_taxonomy_id optional
+	 * @param string $category_name
+	 * @param string $category_description optional
+	 * @param int $parent_term_taxonomy_id optional
 	 * @return EE_Term_Taxonomy
 	 */
 	function add_event_category($category_name,$category_description=null,$parent_term_taxonomy_id = null){
@@ -68,7 +68,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Removes the event category by specified name from being related ot this event
-	 * @type string $category_name
+	 * @param string $category_name
 	 * @return bool
 	 */
 	function remove_event_category($category_name){
@@ -78,7 +78,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	/**
 	 * Removes the relation to the specified term taxonomy, and maintains the
 	 * data integrity of the term taxonomy provided
-	 * @type EE_Term_Taxonomy $term_taxonomy
+	 * @param EE_Term_Taxonomy $term_taxonomy
 	 * @return EE_Base_Class the relation was removed from
 	 */
 	function remove_relation_to_term_taxonomy($term_taxonomy){
@@ -129,7 +129,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * @type string $status
+	 * @param string $status
 	 */
 	public function set_status ( $status ) {
 		$this->set( 'status', $status );
@@ -141,8 +141,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	 *
 	 * @link http://codex.wordpress.org/Function_Reference/get_the_post_thumbnail
 	 * @access protected
-	 * @type string|array $size (optional) Image size. Defaults to 'post-thumbnail' but can also be a 2-item array representing width and height in pixels (i.e. array(32,32) ).
-	 * @type string|array $attr Optional. Query string or array of attributes.
+	 * @param string|array $size (optional) Image size. Defaults to 'post-thumbnail' but can also be a 2-item array representing width and height in pixels (i.e. array(32,32) ).
+	 * @param string|array $attr Optional. Query string or array of attributes.
 	 * @return string HTML image element
 	 */
 	protected function _get_feature_image( $size, $attr ) {
@@ -157,8 +157,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * See _get_feature_image. Returns the HTML to displya a featured image
-	 * @type string $size
-	 * @type string|array $attr
+	 * @param string $size
+	 * @param string|array $attr
 	 * @return string of html
 	 */
 	public function feature_image( $size = 'thumbnail', $attr = '' ) {
@@ -171,7 +171,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * This uses the wp "wp_get_attachment_image_src()" function to return the feature image for the current class using the given size params.
-	 * @type  string|array $size can either be a string: 'thumbnail', 'medium', 'large', 'full' OR 2-item array representing width and height in pixels eg. array(32,32).
+	 * @param  string|array $size can either be a string: 'thumbnail', 'medium', 'large', 'full' OR 2-item array representing width and height in pixels eg. array(32,32).
 	 * @return string|boolean       	  the url of the image or false if not found
 	 */
 	public function feature_image_url( $size = 'thumbnail' ) {
@@ -183,9 +183,9 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * This is a method for restoring this_obj using details from the given $revision_id
-	 * @type  int          $revision_id ID of the revision we're getting data from
+	 * @param  int          $revision_id ID of the revision we're getting data from
 	 * @param array|string $related_obj_names
-	 * @type array         $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.  This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names sent);
+	 * @param array         $where_query You can optionally include an array of key=>value pairs that allow you to further constrict the relation to being added.  However, keep in mind that the columns (keys) given must match a column on the JOIN table and currently only the HABTM models accept these additional conditions.  Also remember that if an exact match isn't found for these extra cols/val pairs, then a NEW row is created in the join table.  This array is INDEXED by RELATED OBJ NAME (so it corresponds with the obj_names sent);
 	 * @internal param array|string $related_obj_names if included this will be used to restore for related obj if not included then we just do restore on the meta.  We will accept an array of related_obj_names for restoration here.
 	 * @return void
 	 */
@@ -241,8 +241,8 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Wrapper for get_post_meta, http://codex.wordpress.org/Function_Reference/get_post_meta
-	 * @type string $meta_key
-	 * @type boolean $single
+	 * @param string $meta_key
+	 * @param boolean $single
 	 * @return mixed <ul><li>If only $id is set it will return all meta values in an associative array.</li>
 	 * <li>If $single is set to false, or left blank, the function returns an array containing all values of the specified key.</li>
 	 * <li>If $single is set to true, the function returns the first value of the specified key (not in an array</li></ul>
@@ -255,9 +255,9 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Wrapper for update_post_meta, http://codex.wordpress.org/Function_Reference/update_post_meta
-	 * @type string $meta_key
-	 * @type mixed  $meta_value
-	 * @type mixed  $prev_value
+	 * @param string $meta_key
+	 * @param mixed  $meta_value
+	 * @param mixed  $prev_value
 	 * @throws EE_Error
 	 * @return mixed Returns meta_id if the meta doesn't exist, otherwise returns true on success and false on failure. NOTE: If the meta_value passed to this function is the same as the value that is already in the database, this function returns false.
 	 */
@@ -272,9 +272,9 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Wrapper for add_post_meta, http://codex.wordpress.org/Function_Reference/add_post_meta
-	 * @type mixed       $meta_key
-	 * @type mixed       $meta_value
-	 * @type bool $unique . If postmeta for this $meta_key already exists, whether to add an additional item or not
+	 * @param mixed       $meta_key
+	 * @param mixed       $meta_value
+	 * @param bool $unique . If postmeta for this $meta_key already exists, whether to add an additional item or not
 	 * @throws EE_Error
 	 * @return boolean Boolean true, except if the $unique argument was set to true and a custom field with the given key already exists, in which case false is returned.
 	 */
@@ -295,7 +295,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Gets all the term-taxonomies for this CPT
-	 * @type array $query_params
+	 * @param array $query_params
 	 * @return EE_Term_Taxonomy
 	 */
 	public function term_taxonomies($query_params = array()){
