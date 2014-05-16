@@ -76,10 +76,12 @@ final class EE_System {
 		return self::$_instance;
 	}
 	/**
-	 * resets the instance of NULL, so the next call to instance() will provide a NEW instance
+	 * resets the instance and returns it
+	 * @return EE_System
 	 */
 	public static function reset(){
 		self::$_instance = NULL;
+		return self::instance();
 	}
 
 
@@ -315,7 +317,7 @@ final class EE_System {
 		$this->detect_if_activation_or_upgrade();
 		foreach(EE_Registry::instance()->addons as $addon){
 			//detect teh request type for that addon
-			$activation_history_for_addon = $this->_get_db_update_option_name_for($addon->name());
+			$activation_history_for_addon = $addon->get_activation_history();
 			$request_type = $this->_detect_req_type($activation_history_for_addon, $addon->get_db_update_option_name(), $addon->version());
 			$addon->set_req_type($request_type);
 			
@@ -515,22 +517,22 @@ final class EE_System {
 		if( $current_version_to_add == NULL){
 			$current_version_to_add = espresso_version();
 		}
-		$version_history[ $current_version_to_add ][] = date( 'Y-m-d H:i:s' );
+		$version_history[ $current_version_to_add ][] = date( 'Y-m-d H:i:s',time() );
 		// resave
 		
-		return update_option( $this->_get_db_update_option_name_for($plugin_slug), $version_history );
+		return update_option( $this->_get_activation_history_option_name_for($plugin_slug), $version_history );
 	}
-	const ee_addon_version_history_option_prefix = 'ee_version_history_';
+	
 	/**
 	 * Gets the plugin's option name which stores when its 
 	 * @param string $plugin_slug
 	 * @return string
 	 */
-	protected function _get_db_update_option_name_for($plugin_slug){
+	protected function _get_activation_history_option_name_for($plugin_slug){
 		if($plugin_slug == 'Core'){
 			return 'espresso_db_update';
 		}else{
-			return self::ee_addon_version_history_option_prefix.$plugin_slug;
+			return EE_Addon::ee_addon_version_history_option_prefix.$plugin_slug;
 		}
 	}
 

@@ -20,13 +20,14 @@ class EE_DMS_New_Addon_0_0_2 extends EE_Data_Migration_Script_Base{
 	 */
 	public function can_migrate_from_version($version_string) {
 		if(isset($version_string['New_Addon'])){
-		if(version_compare($version_string['New_Addon'],'0.0.2')){
-			//db state is at 0.0.2 or higher. this doesnt apply
-			return false;
-		}else{
-			//db state is old. this applies
-			return true;
-		}
+			if(version_compare('0.0.2', $version_string['New_Addon'])){
+				//db state is old. this applies
+				return true;
+			}else{
+				//db state is at 0.0.2 or higher. this doesnt apply
+				return false;
+				
+			}
 		}else{
 			//apparently this addon was never installed prevously
 			//so we don't want ot migrate (we'll probably just add the tables

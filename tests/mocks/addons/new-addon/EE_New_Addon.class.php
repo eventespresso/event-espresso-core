@@ -13,10 +13,6 @@
  */
 Class  EE_New_Addon extends EE_Addon {
 
-	const activation_indicator_option_name = 'ee_espresso_new_addon_activation';
-
-
-
 	/**
 	 * class constructor
 	 */
@@ -55,59 +51,6 @@ Class  EE_New_Addon extends EE_Addon {
 			)
 		);
 	}
-
-
-
-	/**
-	* get_db_update_option_name
-	* @return string
-	*/
-	public function get_db_update_option_name(){
-		return EE_New_Addon::activation_indicator_option_name;
-	}
-
-
-
-	/**
-	* Until we do something better, we'll just check for migration scripts upon
-	* plugin activation only. In the future, we'll want to do it on plugin updates too
-	*/
-	public function set_activation_indicator_option(){
-		//let's just handle this on the next request, ok? right now we're just not really ready
-		update_option( EE_New_Addon::activation_indicator_option_name, TRUE );
-	}
-
-
-
-	/**
-	 * new_install - check for migration scripts
-	 * @return mixed
-	 */
-	public function new_install() {
-		//if core is also active, then get core to check for migration scripts
-		//and set maintenance mode is necessary
-		if ( get_option( EE_New_Addon::activation_indicator_option_name )) {
-			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-			delete_option( EE_New_Addon::activation_indicator_option_name );
-		}
-	}
-
-
-
-	/**
-	 * upgrade - check for migration scripts
-	 * @return mixed
-	 */
-	public function upgrade() {
-		//if core is also active, then get core to check for migration scripts
-		//and set maintenance mode is necessary
-		if ( get_option( EE_New_Addon::activation_indicator_option_name )) {
-			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
-			delete_option( EE_New_Addon::activation_indicator_option_name );
-		}
-	}
-
-
 
 	/**
 	 * 	additional_admin_hooks

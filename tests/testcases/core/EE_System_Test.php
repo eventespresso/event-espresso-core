@@ -16,6 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core
  */
 class EE_System_Test extends EE_UnitTestCase{
+	protected $_mock_addon_name = 'New_Addon';
 	public function test_detect_request_type(){
 		//we will be playing with this option which might need to persist after the test
 		$original_espresso_db_update= get_option('espresso_db_update');
@@ -130,7 +131,121 @@ class EE_System_Test extends EE_UnitTestCase{
 		EE_System::reset();
 		EE_System::instance()->detect_req_type();
 	}
+	/**
+	 * 
+	 * @return EE_Addon
+	 */
+	private function _register_mock_addon(){
+		$this->_pretend_addon_hook_time();
+		$mock_addon_path = EE_TESTS_DIR.'mocks/addons/new-addon/';
+		EE_Register_Addon::register($this->_mock_addon_name, array(
+			'version'=>'0.0.1',
+			'min_core_version'=>'4.0.0',
+			'base_path'=>$mock_addon_path,
+			'dms_paths'=>$mock_addon_path . 'core/data_migration_scripts'
+			));
+		//double-check that worked fine
+		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
+		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
+		$this->assertArrayHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+		
+		//ensure this is the only addon
+		$this->assertEquals(1,count(EE_Registry::instance()->addons));
+		$this->assertNull(EE_Registry::instance()->addons->EE_New_Addon->detect_req_type());
+		return EE_Registry::instance()->addons->EE_New_Addon;
+	}
 	
+	private function _deregister_mock_addon(){
+		EE_Register_Addon::deregister($this->_mock_addon_name);
+		try{
+			EE_Registry::instance()->addons->EE_New_Addon;
+			$this->fail('EE_New_Addon is still registered. Deregister failed');
+		}catch(PHPUnit_Framework_Error_Notice $e){
+			$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
+		}
+		//verify DMSs deregistered
+		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
+		$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+		$this->_stop_pretending_addon_hook_time();
+	}
+	/**
+	 * tests that we're correctly detecting activation or upgrades in registered
+	 * addons. 
+	 * @group agg
+	 */
+	function test_detect_activations_or_upgrades_new_install(){
+		global $wp_actions;
+		$addon = $this->_register_mock_addon();
+		$addon_classname = get_class($addon);
+		
+		//its activation history wp option shouldn't exist
+		$this->assertWPOptionDoesNotExist($addon->get_activation_history_option_name());
+		//and it also shouldn't be in the current db state
+		$current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
+		//just for assurance, make sure New Addon is the only existing addon
+		$this->assertArrayNotHasKey('New_Addon', $current_db_state);
+		$this->assertNull($addon->detect_req_type());
+		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$addon_classname}__new_install"]) ? $wp_actions["AHEE__{$addon_classname}__new_install"] : 0;
+		//now check for activations/upgrades in addons
+		EE_System::reset()->detect_activations_or_upgrades();
+		$this->assertEquals(EE_System::req_type_new_activation,$addon->detect_req_type());
+		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$addon_classname}__new_install"]);
+		$this->_deregister_mock_addon();
+	}
+	
+	public function test_detect_activations_or_upgrades_upgrade(){
+		global $wp_actions;
+		$addon = $this->_register_mock_addon();
+		$addon_classname = get_class($addon);
+		//first make sure the mock DMS can migrate from v 0.0.1
+		$dms = new EE_DMS_New_Addon_0_0_2();
+		$this->assertTrue($dms->can_migrate_from_version(array('New_Addon'=>'0.0.1')));
+		
+		//it should have an entry in its activation history and db state
+		$activation_history_option_name = $addon->get_activation_history_option_name();
+		update_option($activation_history_option_name,array($addon->version()));
+		$db_state = get_option(EE_Data_Migration_Manager::current_database_state);
+		$db_state['New_Addon'] = '0.0.1';
+		update_option(EE_Data_Migration_Manager::current_database_state,$db_state);
+		
+		
+		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$addon_classname}__upgrade"]) ? $wp_actions["AHEE__{$addon_classname}__upgrade"] : 0;
+		//the site shouldn't be in MM before
+		$this->assertEquals(EE_Maintenance_Mode::level_0_not_in_maintenance,  EE_Maintenance_Mode::instance()->level());
+		//now check for activations/upgrades in addons
+		EE_System::reset()->detect_activations_or_upgrades();
+		$this->assertEquals(EE_System::req_type_upgrade,$addon->detect_req_type());
+		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$addon_classname}__upgrade"]);
+		//the fact that there's an applicable DMS means the site should be placed in maintenance mode
+		$this->assertEquals(EE_Maintenance_Mode::level_2_complete_maintenance,  EE_Maintenance_Mode::instance()->level());
+		//ok all done
+		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+		$this->_deregister_mock_addon();
+	}
+	
+	public function test_detect_activations_or_upgrades_reactivation(){
+		global $wp_actions;
+		$addon = $this->_register_mock_addon();
+		$addon_classname = get_class($addon);
+		
+		//it should have an entry in its activation history and db state
+		$activation_history_option_name = $addon->get_activation_history_option_name();
+		update_option($activation_history_option_name,array($addon->version()));
+		$db_state = get_option(EE_Data_Migration_Manager::current_database_state);
+		$db_state['New_Addon'] = '0.0.1';
+		update_option(EE_Data_Migration_Manager::current_database_state,$db_state);
+		
+		
+		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$addon_classname}__upgrade"]) ? $wp_actions["AHEE__{$addon_classname}__upgrade"] : 0;
+		//now check for activations/upgrades in addons
+		EE_System::reset()->detect_activations_or_upgrades();
+		$this->assertEquals(EE_System::req_type_upgrade,$addon->detect_req_type());
+		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$addon_classname}__upgrade"]);
+		$this->assertEquals(EE_Maintenance_Mode::level_2_complete_maintenance,  EE_Maintenance_Mode::instance()->level());
+		//ok all done
+		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
+		$this->_deregister_mock_addon();
+	}
 	/**
 	 * Sets the wordpress option 'espresso_db_update'
 	 * @param array $espresso_db_upgrade top-level-keys shoudl be version numbers,

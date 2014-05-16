@@ -25,6 +25,12 @@
  * ------------------------------------------------------------------------
  */
 abstract class EE_Addon {
+	
+	/**
+	 * prefix to be added onto an addon's plugin slug to make a wp option name
+	 * which will be used to store the plugin's activation history
+	 */
+	const ee_addon_version_history_option_prefix = 'ee_version_history_';
 
 	public function __construct() {
 		//we need to set a wordpress option to indicate that this addon has been activated
@@ -88,6 +94,8 @@ abstract class EE_Addon {
 	 * @return mixed
 	 */
 	public function new_install(){
+		$classname = get_class($this);
+		do_action("AHEE__{$classname}__new_install");
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 		add_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',array($this,'initialize_db_if_no_migrations_required'));
 	}
@@ -97,6 +105,8 @@ abstract class EE_Addon {
 	 * @return void
 	 */
 	public function reactivation(){
+		$classname = get_class($this);
+		do_action("AHEE__{$classname}__reactivation");
 		add_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',array($this,'initialize_db_if_no_migrations_required'));
 	}
 
@@ -144,13 +154,18 @@ abstract class EE_Addon {
 	 * @return mixed
 	 */
 	public function upgrade(){
+		$classname = get_class($this);
+		do_action("AHEE__{$classname}__upgrade");
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 	}
 	
 	/**
 	 * If Core detects this addon has been downgraded, you may want to invoke some special logic here.
 	 */
-	public function downgrade(){}
+	public function downgrade(){
+		$classname = get_class($this);
+		do_action("AHEE__{$classname}__downgrade");
+	}
 
 
 
@@ -232,6 +247,23 @@ abstract class EE_Addon {
 	 */
 	function detect_req_type(){
 		return $this->_req_type;
+	}
+	
+	/**
+	 * Gets the name of the wp option that stores the activation history
+	 * of this addon
+	 * @return string
+	 */
+	function get_activation_history_option_name(){
+		return self::ee_addon_version_history_option_prefix . $this->name();
+	}
+	
+	/**
+	 * Gets the wp option which stores the activation history for this addon
+	 * @return array
+	 */
+	function get_activation_history(){
+		return get_option($this->get_activation_history_option_name(), NULL);
 	}
 
 }
