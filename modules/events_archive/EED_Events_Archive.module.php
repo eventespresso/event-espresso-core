@@ -366,7 +366,8 @@ class EED_Events_Archive  extends EED_Module {
 
 				case 'state' :
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->second_table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Event_Venue::instance()->second_table() . '.VNU_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->second_table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Venue::instance()->second_table() . '.VNU_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_State::instance()->table() . ' ON (' . EEM_Venue::instance()->second_table() . '.STA_ID = ' . EEM_State::instance()->table() . '.STA_ID )';
 					break;
 
 				break;
