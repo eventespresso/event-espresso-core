@@ -37,7 +37,7 @@ dependencies:
     # set up database
     - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
   post:
-    - wget https://phar.phpunit.de/phpunit.phar;chmod +x phpunit.phar;sudo mv phpunit.phar /home/ubuntu/.phpenv/shims/phpunit
+    - wget https://phar.phpunit.de/phpunit.phar;chmod +x phpunit.phar;mv phpunit.phar /home/ubuntu/.phpenv/shims/phpunit
 
 ##tests override
 test:
