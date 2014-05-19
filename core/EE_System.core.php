@@ -75,6 +75,12 @@ final class EE_System {
 		}
 		return self::$_instance;
 	}
+	/**
+	 * resets the instance of NULL, so the next call to instance() will provide a NEW instance
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+	}
 
 
 

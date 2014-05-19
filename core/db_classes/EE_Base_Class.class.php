@@ -430,7 +430,7 @@ abstract class EE_Base_Class{
 	 * Forgets the cached model of the given relation Name. So the next time we request it,
 	 * we will fetch it again from the database. (Handy if you know it's changed somehow).
 	 * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
-	 * then only remove that one object from our cached array. Otherwise, clear the entire list.
+	 * then only remove that one object from our cached array. Otherwise, clear the entire list
 	 * @param string $relationName                         one of the keys in the _model_relations array on the model. Eg 'Registration'
 	 * @param mixed  $object_to_remove_or_index_into_array or an index into the array of cached things
 	 * @param bool   $clear_all                            This flags clearing the entire cache relation property if this is HasMany or HABTM.
@@ -1367,7 +1367,7 @@ abstract class EE_Base_Class{
 			$count =  $this->get_model()->delete_related($this, $relationName, $query_params);
 		}else{
 			$count = count($this->get_all_from_cache($relationName));
-			$this->clear_cache($relationName);
+			$this->clear_cache($relationName,NULL,TRUE);
 		}
 		return $count;
 	}
@@ -1388,7 +1388,7 @@ abstract class EE_Base_Class{
 		}else{
 			$count = count($this->get_all_from_cache($relationName));
 		}
-		$this->clear_cache($relationName);
+		$this->clear_cache($relationName,NULL,TRUE);
 		return $count;
 	}
 
