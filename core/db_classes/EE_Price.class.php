@@ -1,6 +1,6 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 /**
- * Event Espresso 
+ * Event Espresso
  *
  * Event Registration and Management Plugin for WordPress
  *
@@ -22,7 +22,7 @@
  * ------------------------------------------------------------------------
  */
 class EE_Price extends EE_Soft_Delete_Base_Class{
-	
+
 	/**
 	*		Price ID
 	*
@@ -127,9 +127,9 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 	 * @var EE_Ticket[]
 	 */
 	protected $_Ticket;
-	
-	
-	
+
+
+
 	/**
 	 *
 	 * @var EE_Price_Type
@@ -139,7 +139,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @param type $timezone
 	 * @return EE_Price
@@ -219,7 +219,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		set deleted
-	* 
+	*
 	* 		@access		public
 	*		@param		bool		PRC_deleted
 	*/
@@ -238,16 +238,16 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 	public function type() {
 		return $this->get('PRT_ID');
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return EE_Price_Type
 	 */
 	public function type_obj(){
 		return $this->get_first_related('Price_Type');
 	}
 
-	
+
 
 
 	/**
@@ -317,12 +317,12 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 		return $this->get('PRC_parent');
 	}
 
-	
+
 	//some helper methods for getting info on the price_type for this price
-	
+
 	/**
 	 * return whether the price is a base price or not
-	 * @return boolean 
+	 * @return boolean
 	 */
 	public function is_base_price() {
 		$price_type = $this->type_obj();
@@ -330,7 +330,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 	}
 
 
-	
+
 	/**
 	 * Simply indicates whether this price increases or decreases the total
 	 * @return boolean true = discount, otherwise adds to the total
@@ -344,7 +344,7 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * whether the price is a percentage or not
-	 * @return boolean 
+	 * @return boolean
 	 */
 	public function is_percent() {
 		$price_type = $this->type_obj();
@@ -352,8 +352,15 @@ class EE_Price extends EE_Soft_Delete_Base_Class{
 	}
 
 
+	/**
+	 * return pretty price dependant on whether its a dollar or percent.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @return string
+	 */
 	public function pretty_price() {
-		return $this->get_pretty('PRC_amount');
+		return ! $this->is_percent() ? $this->get_pretty('PRC_amount') : $this->get('PRC_amount') . '%';
 	}
 
 
