@@ -629,6 +629,25 @@ final class EE_System {
 		}
 		EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	}
+	
+	/**
+	 * Using the information gathered in EE_SYstem::_incompatible_addon_error,
+	 * deactivates any addons considered incompatible with the current version of EE
+	 */
+	public function deactivate_incompatible_addons(){
+		$incompatible_addons = get_option( 'ee_incompatible_addons', array() );
+		if ( ! empty( $incompatible_addons )) {
+			$active_plugins = get_option( 'active_plugins', array() );
+			foreach ( $active_plugins as $active_plugin ) {
+				foreach ( $incompatible_addons as $incompatible_addon ) {
+					if ( strpos( $active_plugin,  $incompatible_addon ) !== FALSE ) {
+						deactivate_plugins( $active_plugin );
+						EE_Error::add_attention(sprintf(__("The addon %s was automatically deactivated because its incompatible with the current version of EE Core and would cause errors", 'event_espresso'), __FILE__, __FUNCTION__, __LINE__),$active_plugin);
+					}
+				}
+			}
+		}
+	}
 
 
 
