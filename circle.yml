@@ -42,5 +42,5 @@ dependencies:
 ##tests override
 test:
   override:
-    - cd $plugin_tests_dir; phpunit -d display_errors=1
+    - cd $plugin_tests_dir; phpunit
     # - cd $plugin_tests_dir; phpunit --coverage-html $CIRCLE_ARTIFACTS
