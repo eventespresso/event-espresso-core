@@ -903,7 +903,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				);
 		}
 
-		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
+		$where = apply_filters( 'FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data );
+		$query_params = apply_filters( 'FHEE__Events_Admin_Page__get_events__query_params', array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ), $this->_req_data );
+
+
 
 		//let's first check if we have special requests coming in.
 		if ( isset( $this->_req_data['active_status'] ) ) {
