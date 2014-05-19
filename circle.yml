@@ -13,12 +13,12 @@ machine:
     CIRCLE_ENV: test
     WP_VERSION: 3.8.1
     WP_MULTISITE: 0
-    WP_CORE_DIR: /home/ubuntu/tmp/wordpress/
-    WP_TESTS_DIR: /home/ubuntu/tmp/wordpress-tests
+    WP_CORE_DIR: /home/ubuntu/wordpress/
+    WP_TESTS_DIR: /home/ubuntu/wordpress-tests
     plugin_loc: /home/ubuntu/$CIRCLE_PROJECT_REPONAME
     plugin_slug: $CIRCLE_PROJECT_REPONAME
-    plugin_dir: /home/ubuntu/tmp/wordpress/wp-content/plugins/$plugin_slug
-    plugin_tests_dir: /home/ubuntu/tmp/wordpress/wp-content/plugins/$plugin_slug/tests
+    plugin_dir: /home/ubuntu/wordpress/wp-content/plugins/$plugin_slug
+    plugin_tests_dir: /home/ubuntu/wordpress/wp-content/plugins/$plugin_slug/tests
 
 
 ## Customize dependencies
@@ -27,9 +27,9 @@ dependencies:
     #enable xdebug
     # - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
     #setup WP install
-    - wget -nv -O /home/ubuntu/tmp/wordpress.tar.gz https://github.com/WordPress/WordPress/tarball/$WP_VERSION;
+    - wget -nv -O /home/ubuntu/wordpress.tar.gz https://github.com/WordPress/WordPress/tarball/$WP_VERSION;
     - mkdir -p $WP_CORE_DIR;
-    - tar --strip-components=1 -zxmf /home/ubuntu/tmp/wordpress.tar.gz -C $WP_CORE_DIR;
+    - tar --strip-components=1 -zxmf /home/ubuntu/wordpress.tar.gz -C $WP_CORE_DIR;
     - mv $plugin_loc $plugin_dir;
     # set up testing suite
     - svn co --ignore-externals http://unit-tests.svn.wordpress.org/trunk/ $WP_TESTS_DIR;
@@ -37,7 +37,7 @@ dependencies:
     # set up database
     - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
   post:
-    - wget https://phar.phpunit.de/phpunit.phar;chmod +x phpunit.phar;mv phpunit.phar /home/ubuntu/.phpenv/versions/5.4.21/pear
+    #- wget https://phar.phpunit.de/phpunit.phar;chmod +x phpunit.phar;mv phpunit.phar /home/ubuntu/.phpenv/versions/5.4.21/pear
 
 ##tests override
 test:
