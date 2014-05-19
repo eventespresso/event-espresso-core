@@ -188,8 +188,10 @@ final class EE_Config {
 		foreach ( $espresso_config as $config => $settings ) {
 			//addon configurations are as the property so let's handle that first.
 			if ( $config == 'addons' ) {
-				foreach( $settings as $addon_config => $addon_settings ) {
-					$this->addons->$addon_config = $this->_load_config_verification ( $addon_config, $addon_settings, TRUE ) ? $addon_settings : $this->addons->$addon_config;
+				if ( is_array( $settings ) || is_object( $settings ) ) {
+					foreach( $settings as $addon_config => $addon_settings ) {
+						$this->addons->$addon_config = $this->_load_config_verification ( $addon_config, $addon_settings, TRUE ) ? $addon_settings : $this->addons->$addon_config;
+					}
 				}
 				continue;
 			}
