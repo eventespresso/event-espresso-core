@@ -115,20 +115,20 @@ class EED_Events_Archive  extends EED_Module {
 	 *
 	 * @return void
 	 */
-	protected static function _set_config(){
-		return EED_Events_Archive::set_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
+	public function set_config(){
+		return $this->_set_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
 	}
 
 
 
 	/**
-	 *    _get_config
+	 *    get_config
 	 *
 	 * @return void
 	 */
-	protected static function _get_config(){
-		$config = EED_Events_Archive::get_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
-		return $config instanceof EE_Events_Archive_Config ? $config : EED_Events_Archive::_set_config();
+	public function get_config(){
+		$config =  $this->_get_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
+		return $config instanceof EE_Events_Archive_Config ? $config :  $this->set_config();
 	}
 
 
@@ -873,8 +873,15 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	string
 	 */
 	public static function event_list_title() {
-	return apply_filters( 'FHEE__archive_espresso_events_template__upcoming_events_h1', __( 'Upcoming Events', 'event_espresso' ));
+		return apply_filters( 'FHEE__archive_espresso_events_template__upcoming_events_h1', __( 'Upcoming Events', 'event_espresso' ));
+	}
+
+
+
 }
+
+
+
 
 /**
  * @return int
