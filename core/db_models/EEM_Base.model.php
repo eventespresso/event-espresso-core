@@ -264,7 +264,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * This sets the _timezone property after model object has been instantiated.
-	 * @type string $timezone valid PHP DateTimeZone timezone string
+	 * @param string $timezone valid PHP DateTimeZone timezone string
 	 */
 	public function set_timezone( $timezone ) {
 		if($timezone !== NULL){
@@ -289,7 +289,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * retrieve the status details from esp_status table as an array IF this model has the status table as a relation.
 	 *
-	 * @type  boolean $translated return localized strings or JUST the array.
+	 * @param  boolean $translated return localized strings or JUST the array.
 	 * @return array
 	 */
 	 public function status_array( $translated = FALSE ) {
@@ -310,8 +310,8 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets all the EE_Base_Class objects which match the $query_params, by querying the DB.
 	 * @param array $query_params {
-	 * 
-	 *	@type array $0 (where)
+	 *
+	 *	@param array $0 (where) array {
 	 *		eg: array('QST_display_text'=>'Are you bob?','QST_admin_text'=>'Determine if user is bob')
 			becomes
 	 *		SQL >> "...WHERE QST_display_text = 'Are you bob?' AND QST_admin_text = 'Determine if user is bob'...")
@@ -382,37 +382,37 @@ abstract class EEM_Base extends EE_Base{
 	 *		SQL >> "PAY_timestamp > 123412341 AND PAY_timestamp < 2354235235234 AND PAY_timestamp != 1241234123"
 	 *		This can be applied to condition operators too,
 	 *		eg: array('OR'=>array('REG_ID'=>3,'Transaction.TXN_ID'=>23),'OR*whatever'=>array('Attendee.ATT_fname'=>'bob','Attendee.ATT_lname'=>'wilson')));
-	 *	@type mixed $limit int|array	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become
+	 *	@param mixed $limit int|array	adds a limit to the query just like the SQL limit clause, so limits of "23", "25,50", and array(23,42) are all valid would become
 	 *		SQL "...LIMIT 23", "...LIMIT 25,50", and "...LIMIT 23,42" respectively
 	 *
-	 *	@type array $on_join_limit allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins.
+	 *	@param array $on_join_limit allows the setting of a special select join with a internal limit so you can do paging on one-to-many multi-table-joins.
 	 *		Send an array in the following format array('on_join_limit' => array( 'table_alias', array(1,2) ) ).
-	 *	@type mixed $order_by name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
+	 *	@param mixed $order_by name of a column to order by, or an array where keys are field names and values are either 'ASC' or 'DESC'. 'limit'=>array('STS_ID'=>'ASC','REG_date'=>'DESC'),
 	 *		which would becomes SQL "...ORDER BY TXN_timestamp..." and "...ORDER BY STS_ID ASC, REG_date DESC..." respectively.
 	 *		Like the 'where' conditions, these fields can be on related models.
 	 *		Eg 'order_by'=>array('Registration.Transaction.TXN_amount'=>'ASC') is perfectly valid from any model related to 'Registration' (like Event, Attendee, Price, Datetime, etc.)
-	 *	@type string $order	If 'order_by' is used and its value is a string (NOT an array), then 'order' specifies whether to order the field specified in 'order_by' in ascending or
+	 *	@param string $order	If 'order_by' is used and its value is a string (NOT an array), then 'order' specifies whether to order the field specified in 'order_by' in ascending or
 	 *		descending order. Acceptable values are 'ASC' or 'DESC'. If, 'order_by' isn't used, but 'order' is, then it is assumed you want to order by the primary key.
 	 *		Eg, EEM_Event::instance()->get_all(array('order_by'=>'Datetime.DTT_EVT_start','order'=>'ASC'); //(will join with the Datetime model's table(s) and order by its field DTT_EVT_start)
 	 *		or EEM_Registration::instance()->get_all(array('order'=>'ASC'));//will make SQL "SELECT * FROM wp_esp_registration ORDER BY REG_ID ASC"
 	 *
-	 *	@type mixed $group_by name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
+	 *	@param mixed $group_by name of field to order by, or an array of fields. Eg either 'group_by'=>'VNU_ID', or 'group_by'=>array('EVT_name','Registration.Transaction.TXN_total')
 	 *
-	 *	@type array having	exactly like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
+	 *	@param array having	exactly like WHERE parameters array, except these conditions apply to the grouped results (whereas WHERE conditions apply to the pre-grouped results)
 	 *
-	 *	@type array force_join forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
+	 *	@param array force_join forces a join with the models named. Should be an numerically-indexed array where values are models to be joined in the query.Eg
 	 *		array('Attendee','Payment','Datetime'). You may join with transient models using period, eg "Registration.Transaction.Payment".
 	 *		You will probably only want to do this in hopes of increasing efficiency, as related models which belongs to the current model
 	 *		(ie, the current model has a foreign key to them, like how Registration belongs to Attendee) can be cached in order
 	 *		to avoid future queries
 	 *
-	 *	@type string $default_where_conditions can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
+	 *	@param string $default_where_conditions can be set to 'none', 'this_model_only', 'other_models_only', or 'all'. set this to 'none' to disable all default where conditions. Eg, usually soft-deleted objects are filtered-out
 	 *		if you want to include them, set this query param to 'none'. If you want to ONLY disable THIS model's default where conditions
 	 *		set it to 'other_models_only'. If you only want this model's default where conditions added to the query, use 'this_model_only'.
 	 *		If you want to use all default where conditions (default), set to 'all'.
 	 * }
-	 *	@type	array $query_params
-	 *	@type	boolean $values_already_prepared_by_model_object
+	 *	@param	array $query_params
+	 *	@param	boolean $values_already_prepared_by_model_object
 	 * @return EE_Base_Class[]  *note that there is NO option to pass the output type. If you want results different from EE_Base_Class[], use _get_all_wpdb_results()and make it public again.
 	 * @example   Some full examples:
 	 *
@@ -449,9 +449,9 @@ abstract class EEM_Base extends EE_Base{
 	 * Used internally to get WPDB results, because other functions, besides get_all, may want to do some queries, but may want to
 	 * preserve the WPDB results (eg, update, which first queries to make sure we have all the tables on the model)
 	 * @global $wpdb
-	 * @type array $query_params like EEM_Base::get_all's $query_params
-	 * @type string $output ARRAY_A, OBJECT_K, etc. Just like
-	 * @type boolean $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
+	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @param string $output ARRAY_A, OBJECT_K, etc. Just like
+	 * @param boolean $columns_to_select, What columns to select. By default, we select all columns specified by the fields on the model,
 	 * and the models we joined to in the query. However, you can override this and set the select to "*", or a specific column name, like "ATT_ID", etc.
 	 * If you would like to use these custom selections in WHERE, GROUP_BY, or HAVING clauses, you must instead provide an array.
 	 * Array keys are the aliases used to refer to this selection, and values are to be numerically-indexed arrays, where 0 is the selection
@@ -483,7 +483,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * For creating a custom select statement
-	 * @type mixed $columns_to_select either a string to be inserted directly as the select statement,
+	 * @param mixed $columns_to_select either a string to be inserted directly as the select statement,
 	 * or an array where keys are aliases, and values are arrays where 0=>the selection SQL, and 1=>is the datatype
 	 * @throws EE_Error
 	 * @return string
@@ -519,7 +519,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets a single item for this model from the DB, given only its ID (or null if none is found).
-	 * @type mixed $id int or string, depending on the type of the model's primary key
+	 * @param mixed $id int or string, depending on the type of the model's primary key
 	 * @return EE_Base_Class
 	 */
 	function get_one_by_ID($id){
@@ -529,7 +529,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
 	 * null is rturned.
-	 * @type array $query_params like EEM_Base's $query_params variable.
+	 * @param array $query_params like EEM_Base's $query_params variable.
 	 * @return EE_Base_Class
 	 */
 	function get_one($query_params = array()){
@@ -576,13 +576,13 @@ abstract class EEM_Base extends EE_Base{
 	 * (which means where wp_posts has ID = 1, because wp_posts.ID is the primary key's column), which exists, but there is no entry in wp_esp_event for this entry in wp_posts.
 	 * So, this update script will insert a row into wp_esp_event, using any available parameters from $fields_n_values (eg, if "EVT_limit" => 40 is in $fields_n_values,
 	 * the new entry in wp_esp_event will set EVT_limit = 40, and use default for other columns which are not specified)
-	 * @type array $fields_n_values keys are model fields (exactly like keys in EEMerimental::_fields, NOT db columns!), values are strings, ints, floats, and maybe arrays if they are to be serialized.
+	 * @param array $fields_n_values keys are model fields (exactly like keys in EEMerimental::_fields, NOT db columns!), values are strings, ints, floats, and maybe arrays if they are to be serialized.
 	 * Basically, the values are what you'd expect to be values on the model, NOT necessarily what's in the DB. For example, if we wanted to update only the TXN_details on any Transactions where its ID=34,
 	 * we'd use this metho as follows:
 	 * EEM_Transaction::instance()->update(
 	 *		array('TXN_details'=>array('detail1'=>'monkey','detail2'=>'banana'),
 	 *		array(array('TXN_ID'=>34)));
-	 * @type array $query_params very much like EEM_Base::get_all's $query_params
+	 * @param array $query_params very much like EEM_Base::get_all's $query_params
 	 * in client code into what's expected to be stored on each field. Eg, consider updating Question's QST_admin_label field is of type Simple_HTML. If you use this function to update
 	 * that field to $new_value = (note replace 8's with appropriate opening and closing tags in the following example)"8script8alert('I hack all');8/script88b8boom baby8/b8", then if you set $values_already_prepared_by_model_object to TRUE,
 	 * it is assumed that you've already called EE_Simple_HTML_Field->prepare_for_set($new_value), which removes the malicious javascript. However, if $values_already_prepared_by_model_object
@@ -621,6 +621,7 @@ abstract class EEM_Base extends EE_Base{
 			$this->_ignore_where_strategy = FALSE;
 		}
 
+
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
 		$rows_affected = $wpdb->query($SQL);
@@ -634,7 +635,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Makes the SQL for after "UPDATE tablex inner join tabley..." and before "...WHERE". Eg "Question.name='party time?', Question.desc='what do you think?',..."
 	 * Values are filtered through wpdb->prepare to avoid against SQL injection, but currently no further filtering is done
 	 * @global $wpdb
-	 * @type array $fields_n_values array keys are field names on this model, and values are what those fields should be updated to in the DB
+	 * @param array $fields_n_values array keys are field names on this model, and values are what those fields should be updated to in the DB
 	 * @return string of SQL
 	 */
 	function _construct_update_sql($fields_n_values){
@@ -652,8 +653,8 @@ abstract class EEM_Base extends EE_Base{
 	 * Deletes the model objects that meet the query params. Note: this method is overridden
 	 * in EEM_Soft_Delete_Base so that soft-deleted model objects are instead only flagged
 	 * as archived, not actually deleted
-	 * @type array $query_params very much like EEM_Base::get_all's $query_params
-	 * @type boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
+	 * @param array $query_params very much like EEM_Base::get_all's $query_params
+	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
 	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
 	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
 	 * @return int how many rows got deleted
@@ -691,8 +692,8 @@ abstract class EEM_Base extends EE_Base{
 	 * Checks all the relations that throw error messages when there are blcoking related objects
 	 * for related model objects. If there are any related model objects on those relations,
 	 * adds an EE_Error, and return true
-	 * @type EE_Base_Class|int $this_model_obj_or_id
-	 * @type EE_Base_Class $ignore_this_model_obj a model object like 'EE_Event', or 'EE_Term_Taxonomy', which should be ignored when
+	 * @param EE_Base_Class|int $this_model_obj_or_id
+	 * @param EE_Base_Class $ignore_this_model_obj a model object like 'EE_Event', or 'EE_Term_Taxonomy', which should be ignored when
 	 * determining whether there are related model objects which block this model object's deletion. Useful
 	 * if you know A is related to B and are considering deleting A, but want to see if A has any other objects
 	 * blocking its deletion before removing the relation between A and B
@@ -732,8 +733,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * This sets up our delete where sql and accounts for if we have secondary tables that will have rows deleted as well.
-	 * @type  array  $objects_for_deletion This should be the values returned by $this->_get_all_wpdb_results()
-	 * @type boolean $allow_blocking       if TRUE, matched objects will only be deleted if there is no related model info
+	 * @param  array  $objects_for_deletion This should be the values returned by $this->_get_all_wpdb_results()
+	 * @param boolean $allow_blocking       if TRUE, matched objects will only be deleted if there is no related model info
 	 * that blocks it (ie, there' sno other data that depends on this data); if false, deletes regardless of other objects
 	 * which may depend on it. Its generally advisable to always leave this as TRUE, otherwise you could easily corrupt your DB
 	 * @throws EE_Error
@@ -804,7 +805,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Deletes a single row from the DB given the model object's primary key value. (eg, EE_Attendee->ID()'s value).
 	 * Wrapper for EEM_Base::delete()
-	 * @type mixed $id
+	 * @param mixed $id
 	 * @return boolean whether the row got deleted or not
 	 */
 	public function delete_by_ID($id){
@@ -816,9 +817,9 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Count all the rows that match criteria expressed in $query_params (an array just like arg to EEM_Base::get_all).
 	 * If $field_to_count isn't provided, the model's primary key is used. Otherwise, we count by field_to_count's column
-	 * @type array $query_params like EEM_Base::get_all's
-	 * @type string $field_to_count field on model to count by (not column name)
-	 * @type bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @param string $field_to_count field on model to count by (not column name)
+	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 * @return int
 	 */
 	function count($query_params =array(),$field_to_count = NULL, $distinct = FALSE){
@@ -843,8 +844,8 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Sums up the value of the $field_to_sum (defaults to the primary key, which isn't terribly useful)
 	 *
-	 * @type array $query_params like EEM_Base::get_all
-	 * @type string $field_to_sum name of field (array key in $_fields array)
+	 * @param array $query_params like EEM_Base::get_all
+	 * @param string $field_to_sum name of field (array key in $_fields array)
 	 * @return int
 	 */
 	function sum($query_params, $field_to_sum = NULL){
@@ -873,7 +874,7 @@ abstract class EEM_Base extends EE_Base{
 	 * In order to avoid repeating this code for the get_all, sum, and count functions, put the code parts
 	 * that are identical in here. Returns a string of SQL of everything in a SELECT query except the beginning
 	 * SELECT clause, eg " FROM wp_posts AS Event INNER JOIN ... WHERE ... ORDER BY ... LIMIT ... GROUP BY ... HAVING ..."
-	 * @type EE_Model_Query_Info_Carrier $model_query_info
+	 * @param EE_Model_Query_Info_Carrier $model_query_info
 	 * @return string
 	 */
 	private function _construct_2nd_half_of_select_query(EE_Model_Query_Info_Carrier $model_query_info){
@@ -887,7 +888,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Set to easily debug the next X queries ran from thsi model.
-	 * @type int $count
+	 * @param int $count
 	 */
 	function show_next_x_db_queries($count = 1){
 		$this->_show_next_x_db_queries = $count;
@@ -896,7 +897,7 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * @type $sql_query
+	 * @param $sql_query
 	 */
 	function show_db_query_if_previously_requested($sql_query){
 		if($this->_show_next_x_db_queries > 0){
@@ -916,11 +917,11 @@ abstract class EEM_Base extends EE_Base{
 	 * 'hasAndBelongsToMany' relationships: checks that there isn't already an entry in the join table, and adds one.
 	 * If one of the model Objects has not yet been saved to the database, it is saved before adding the entry in the join table
 	 *
-	 * @type EE_Base_Class/int $thisModelObject
-	 * @type EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
-	 * @type string $relationName, key in EEM_Base::_relations
+	 * @param EE_Base_Class/int $thisModelObject
+	 * @param EE_Base_Class/int $id_or_obj EE_base_Class or ID of other Model Object
+	 * @param string $relationName, key in EEM_Base::_relations
 	 * an attendee to a group, you also want to specify which role they will have in that group. So you would use this parameter to specificy array('role-column-name'=>'role-id')
-	 * @type array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
+	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 * @return EE_Base_Class which was added as a relation. Object referred to by $other_model_id_or_obj
 	 */
 	public function add_relationship_to($id_or_obj,$other_model_id_or_obj, $relationName, $where_query = array()){
@@ -938,11 +939,11 @@ abstract class EEM_Base extends EE_Base{
 	 *
 	 * 'hasAndBelongsToMany' relationships:removes any existing entry in the join table between the two models.
 	 *
-	 * @type EE_Base_Class/int $id_or_obj
-	 * @type EE_Base_Class/int $other_model_id_or_obj EE_Base_Class or ID of other Model Object
-	 * @type string $relationName key in EEM_Base::_relations
+	 * @param EE_Base_Class/int $id_or_obj
+	 * @param EE_Base_Class/int $other_model_id_or_obj EE_Base_Class or ID of other Model Object
+	 * @param string $relationName key in EEM_Base::_relations
 	 * @return boolean of success
-	 * @type array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
+	 * @param array   $where_query This allows you to enter further query params for the relation to for relation to methods that allow you to further specify extra columns to join by (such as HABTM).  Keep in mind that the only acceptable query_params is strict "col" => "value" pairs because these will be inserted in any new rows created as well.
 	 */
 	public function remove_relationship_to($id_or_obj,  $other_model_id_or_obj, $relationName, $where_query= array() ){
 		$relation_obj = $this->related_settings_for($relationName);
@@ -953,10 +954,10 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 *
-	 * @type mixed  $id_or_obj
-	 * @type string $relationName
-	 * @type array  $where_query_params
-	 * @type EE_Base_Class[] objects to which relations were removed
+	 * @param mixed  $id_or_obj
+	 * @param string $relationName
+	 * @param array  $where_query_params
+	 * @param EE_Base_Class[] objects to which relations were removed
 	 * @return \EE_Base_Class[]
 	 */
 	public function remove_relations($id_or_obj,$relationName,$where_query_params = array()){
@@ -970,9 +971,9 @@ abstract class EEM_Base extends EE_Base{
 	 * Note: by default, we remove the "default query params"
 	 * because we want to get even deleted items etc.
 	 * @global $wpdb
-	 * @type mixed $id_or_obj EE_Base_Class child or its ID
-	 * @type string $model_name like 'Event', 'Registration', etc. always singular
-	 * @type array $query_params like EEM_Base::get_all
+	 * @param mixed $id_or_obj EE_Base_Class child or its ID
+	 * @param string $model_name like 'Event', 'Registration', etc. always singular
+	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Base_Class[]
 	 */
 	function get_all_related($id_or_obj, $model_name, $query_params = null){
@@ -986,9 +987,9 @@ abstract class EEM_Base extends EE_Base{
 	 * which are related to $id_or_obj which meet the criteria set in $query_params.
 	 * However, if the model objects can't be deleted because of blocking related model objects, then
 	 * they aren't deleted. (Unless the thing that would have been deleted can be soft-deleted, that still happens).
-	 * @type EE_Base_Class|int|string $id_or_obj
-	 * @type string $model_name
-	 * @type array $query_params
+	 * @param EE_Base_Class|int|string $id_or_obj
+	 * @param string $model_name
+	 * @param array $query_params
 	 * @return int how many deleted
 	 */
 	public function delete_related($id_or_obj,$model_name, $query_params = array()){
@@ -1002,9 +1003,9 @@ abstract class EEM_Base extends EE_Base{
 	 * which are related to $id_or_obj which meet the criteria set in $query_params. If
 	 * the model objects can't be hard deleted because of blocking related model objects,
 	 * just does a soft-delete on them instead.
-	 * @type EE_Base_Class|int|string $id_or_obj
-	 * @type string $model_name
-	 * @type array $query_params
+	 * @param EE_Base_Class|int|string $id_or_obj
+	 * @param string $model_name
+	 * @param array $query_params
 	 * @return int how many deleted
 	 */
 	public function delete_related_permanently($id_or_obj,$model_name, $query_params = array()){
@@ -1016,11 +1017,11 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Instead of getting the related model objects, simply counts them. Ignores default_where_conditions by default,
 	 * unless otherwise specified in the $query_params
-	 * @type int/EE_Base_Class $id_or_obj
-	 * @type string $model_name like 'Event', or 'Registration'
-	 * @type array $query_params like EEM_Base::get_all's
-	 * @type string $field_to_count name of field to count by. By default, uses primary key
-	 * @type bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
+	 * @param int/EE_Base_Class $id_or_obj
+	 * @param string $model_name like 'Event', or 'Registration'
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @param string $field_to_count name of field to count by. By default, uses primary key
+	 * @param bool 	 $distinct if we want to only count the distinct values for the column then you can trigger that by the setting $distinct to TRUE;
 	 * @return int
 	 */
 	function count_related($id_or_obj,$model_name,$query_params = array(),$field_to_count = null, $distinct = FALSE){
@@ -1041,10 +1042,10 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Instead of getting the related model objects, simply sums up the values of the specified field.
 	 * Note: ignores default_where_conditions by default, unless otherwise specified i nthe $query_params
-	 * @type int/EE_Base_Class $id_or_obj
-	 * @type string $model_name like 'Event', or 'Registration'
-	 * @type array $query_params like EEM_Base::get_all's
-	 * @type string $field_to_sum name of field to count by. By default, uses primary key
+	 * @param int/EE_Base_Class $id_or_obj
+	 * @param string $model_name like 'Event', or 'Registration'
+	 * @param array $query_params like EEM_Base::get_all's
+	 * @param string $field_to_sum name of field to count by. By default, uses primary key
 	 * @return int
 	 */
 	function sum_related($id_or_obj,$model_name,$query_params,$field_to_sum = null){
@@ -1064,9 +1065,9 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Uses $this->_relatedModels info to find the first related model object of relation $relationName to the given $modelObject
-	 * @type EE_Base_Class|mixed $id_or_obj
-	 * @type string               $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
-	 * @type                     $query_params
+	 * @param EE_Base_Class|mixed $id_or_obj
+	 * @param string               $other_model_name , key in $this->_relatedModels, eg 'Registration', or 'Events'
+	 * @param                     $query_params
 	 * @internal param \EE_Base_Class $ 'child $modelObject one of EE_Answer, EE_Attendee, etc.
 	 * @internal param mixed $id_or_obj EE_Base_Class child or its ID
 	 * @return EE_Base_Class
@@ -1102,7 +1103,7 @@ abstract class EEM_Base extends EE_Base{
 			}
 		}
 		if( !isset($field_with_model_name) || !$field_with_model_name ){
-			throw new EE_Error(sprintf(__("There is no EE_Any_Foreign_Model_Name field on model %d", "event_espresso"),get_class($this)));
+			throw new EE_Error(sprintf(__("There is no EE_Any_Foreign_Model_Name field on model %d", "event_espresso"),get_class($this->get_this_model())));
 		}
 		return $field_with_model_name;
 	}
@@ -1112,7 +1113,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Inserts a new entry into the database, for each table
 	 * @global $wpdb
-	 * @type array $field_n_values keys are field names, values are their values (in the client code's domain if $values_already_prepared_by_model_object is false,
+	 * @param array $field_n_values keys are field names, values are their values (in the client code's domain if $values_already_prepared_by_model_object is false,
 	 * in the model object's domain if $values_already_prepared_by_model_object is true. See comment about this at the top of EEM_Base)
 	 * @return int new primary key on main table that got inserted
 	 * @throws EE_Error
@@ -1134,8 +1135,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Checks that the result would satisfy the unique indexes on this model
-	 * @type array   $field_n_values
-	 * @type string $action
+	 * @param array   $field_n_values
+	 * @param string $action
 	 * @return boolean
 	 */
 	protected function _satisfies_unique_indexes($field_n_values,$action = 'insert'){
@@ -1156,7 +1157,7 @@ abstract class EEM_Base extends EE_Base{
 	 * saved to the DB would break some uniqueness requirement, like a primary key
 	 * or an index primary key set) with the item specified. $id_obj_or_fields_array
 	 * can be either an EE_Base_Class or an array of fields n values
-	 * @type EE_Base_Class|array|int|string $obj_or_fields_array
+	 * @param EE_Base_Class|array|int|string $obj_or_fields_array
 	 * @throws EE_Error
 	 * @return EE_Base_Class
 	 */
@@ -1181,7 +1182,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Like count, but is optimized and returns a boolean instead of an int
-	 * @type array $query_params
+	 * @param array $query_params
 	 * @return boolean
 	 */
 	function exists($query_params){
@@ -1191,7 +1192,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Wrapper for exists, except ignores default query parameters so we're only considering ID
-	 * @type int|string $id
+	 * @param int|string $id
 	 * @return boolean
 	 */
 	function exists_by_ID($id){
@@ -1207,9 +1208,9 @@ abstract class EEM_Base extends EE_Base{
 	 * on the main table)
 	 * This is protected rather than private because private is not accessible to any child methods and there MAY be cases where we want to call it directly rather than via insert().
 	 * @access   protected
-	 * @type EE_Table_Base $table
-	 * @type array         $fields_n_values each key should be in _fields's keys, and value should be an int, string or float
-	 * @type bool|int     $new_id
+	 * @param EE_Table_Base $table
+	 * @param array         $fields_n_values each key should be in _fields's keys, and value should be an int, string or float
+	 * @param bool|int     $new_id
 	 * @throws EE_Error
 	 * @internal param int $new_id for now we assume only int keys
 	 * @return int ID of new row inserted
@@ -1275,7 +1276,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Used to build a primary key string (when the model has no primary key),
 	 * which can be used a unique string to identify this model object.
-	 * @type array $cols_n_values keys are field names, values are their values
+	 * @param array $cols_n_values keys are field names, values are their values
 	 * @return string
 	 */
 	public function get_index_primary_key_string($cols_n_values){
@@ -1286,9 +1287,9 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Consolidates code for preparing  a value supplied to the model for use int eh db. Calls the field's prepare_for_use_in_db method on the value,
 	 * and depending on $value_already_prepare_by_model_obj, may also call the field's prepare_for_set() method.
-	 * @type mixed $value value in the client code domain if $value_already_prepared_by_model_object is false, otherwise a value
+	 * @param mixed $value value in the client code domain if $value_already_prepared_by_model_object is false, otherwise a value
 	 * in the model object's domain (see lengthy comment at top of file)
-	 * @type EE_Model_Field_Base $field field which will be doing the preparing of the value. If null, we assume $value is a custom selection
+	 * @param EE_Model_Field_Base $field field which will be doing the preparing of the value. If null, we assume $value is a custom selection
 	 * @return mixed a value ready for use in the database for insertions, updating, or in a where clause
 	 */
 	private function _prepare_value_for_use_in_db($value, $field){
@@ -1353,7 +1354,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Finds all the fields that correspond to the given table
-	 * @type string $table_alias, array key in EEM_Base::_tables
+	 * @param string $table_alias, array key in EEM_Base::_tables
 	 * @return EE_Model_Field_Base[]
 	 */
 	function _get_fields_for_table($table_alias){
@@ -1365,7 +1366,7 @@ abstract class EEM_Base extends EE_Base{
 	 * to complete this query. Eg, given where parameters like array('EVT_ID'=>3) from within Event model, we won't need any
 	 * related models. But if the array were array('Registrations.REG_ID'=>3), we'd need the related Registration model.
 	 * If it were array('Registrations.Transactions.Payments.PAY_ID'=>3), then we'd need the related Registration, Tranaction, and Payment models.
-	 * @type array $where_params like EEM_Base::get_all's $query_parameters['where']
+	 * @param array $where_params like EEM_Base::get_all's $query_parameters['where']
 	 * @return EE_Model_Query_Info_Carrier
 	 */
 	function _extract_related_models_from_query($query_params){
@@ -1399,9 +1400,9 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * For extracting related models from WHERE (0), HAVING (having), ORDER BY (order_by) or forced joins (forece_join)
-	 * @type array                       $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having']
-	 * @type EE_Model_Query_Info_Carrier $model_query_info_carrier
-	 * @type string                      $query_param_type one of $this->_allowed_query_params
+	 * @param array                       $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having']
+	 * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
+	 * @param string                      $query_param_type one of $this->_allowed_query_params
 	 * @throws EE_Error
 	 * @return \EE_Model_Query_Info_Carrier
 	 */
@@ -1446,9 +1447,9 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * For extracting related models from forced_joins, where the array values contain the info about what
 	 * models to join with. Eg an array like array('Attendee','Price.Price_Type');
-	 * @type array                       $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having']
-	 * @type EE_Model_Query_Info_Carrier $model_query_info_carrier
-	 * @type string                      $query_param_type one of $this->_allowed_query_params
+	 * @param array                       $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having']
+	 * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
+	 * @param string                      $query_param_type one of $this->_allowed_query_params
 	 * @throws EE_Error
 	 * @return \EE_Model_Query_Info_Carrier
 	 */
@@ -1474,7 +1475,7 @@ abstract class EEM_Base extends EE_Base{
 	 * but use them in a different order. Eg, we need to know what models we are querying
 	 * before we know what joins to perform. However, we need to know what data types correspond to which fields on other
 	 * models before we can finalize the where clause SQL.
-	 * @type array $query_params
+	 * @param array $query_params
 	 * @throws EE_Error
 	 * @return EE_Model_Query_Info_Carrier
 	 */
@@ -1596,8 +1597,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Checks if $value isn't empty. If it IS empty (ie, its '', NULL, 0, etc) returns FALSE; otherwise TRUE. Also adds doing_it_wrong messages if WP_DEBUG is on.
-	 * @type string $name query parameter name
-	 * @type mixed $value
+	 * @param string $name query parameter name
+	 * @param mixed $value
 	 * @return boolean. True if value is fine (non-empty), false if it's NOT ok (NULL, '', or 0, etc
 	 */
 	private function _isnt_empty($name,$value){
@@ -1617,7 +1618,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Verifies that $should_be_order_string is in $this->_allowed_order_values,
 	 * otherwise throws an exception
-	 * @type string $should_be_order_string
+	 * @param string $should_be_order_string
 	 * @return string either ASC, asc, DESC or desc
 	 * @throws EE_Error
 	 */
@@ -1635,11 +1636,11 @@ abstract class EEM_Base extends EE_Base{
 	 * Looks at all the models which are included in this query, and asks each
 	 * for their universal_where_params, and returns them in the same format as $query_params[0] (where),
 	 * so they can be merged
-	 * @type EE_Model_Query_Info_Carrier $query_info_carrier
-	 * @type string                      $use_default_where_conditions can be 'none','other_models_only', or 'all'.  'none' means NO default where conditions will be used AT ALL during this query.
+	 * @param EE_Model_Query_Info_Carrier $query_info_carrier
+	 * @param string                      $use_default_where_conditions can be 'none','other_models_only', or 'all'.  'none' means NO default where conditions will be used AT ALL during this query.
 	 * 'other_models_only' means default where conditions from other models will be used, but not for this primary model. 'all', the default, means
 	 * default where conditions will apply as normal
-	 * @type array                       $where_query_params           like EEM_Base::get_all's $query_parmas[0]
+	 * @param array                       $where_query_params           like EEM_Base::get_all's $query_parmas[0]
 	 * @throws EE_Error
 	 * @return array like $query_params[0], see EEM_Base::get_all for documentation
 	 */
@@ -1676,10 +1677,10 @@ abstract class EEM_Base extends EE_Base{
 	 * then we also add a special where condition which allows for that model's primary key
 	 * to be null (which is important for JOINs. Eg, if you want to see all Events ordered by Venue's name,
 	 * then Event's with NO Venue won't appear unless you allow VNU_ID to be NULL)
-	 * @type array $default_where_conditions
-	 * @type array $provided_where_conditions
-	 * @type EEM_Base $model
-	 * @type string $model_relation_path like 'Transaction.Payment.'
+	 * @param array $default_where_conditions
+	 * @param array $provided_where_conditions
+	 * @param EEM_Base $model
+	 * @param string $model_relation_path like 'Transaction.Payment.'
 	 * @return array like EEM_Base::get_all's $query_params[0]
 	 */
 	private function _override_defaults_or_make_null_friendly($default_where_conditions,$provided_where_conditions,$model,$model_relation_path){
@@ -1709,7 +1710,7 @@ abstract class EEM_Base extends EE_Base{
 	 * default where conditions on all get_all, update, and delete queries done by this model.
 	 * Use the same syntax as client code. Eg on the Event model, use array('Event.EVT_post_type'=>'esp_event'),
 	 * NOT array('Event_CPT.post_type'=>'esp_event').
-	 * @type string $model_relation_path eg, path from Event to Payment is "Registration.Transaction.Payment."
+	 * @param string $model_relation_path eg, path from Event to Payment is "Registration.Transaction.Payment."
 	 * @return array like EEM_Base::get_all's $query_params[0] (where conditions)
 	 */
 	private function _get_default_where_conditions($model_relation_path = null){
@@ -1721,7 +1722,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Creates the string of SQL for the select part of a select query, everything behind SELECT and before FROM.
 	 * Eg, "Event.post_id, Event.post_name,Event_Detail.EVT_ID..."
-	 * @type EE_Model_Query_Info_Carrier $model_query_info
+	 * @param EE_Model_Query_Info_Carrier $model_query_info
 	 * @return string
 	 */
 	private function _construct_default_select_sql(EE_Model_Query_Info_Carrier $model_query_info){
@@ -1764,10 +1765,10 @@ abstract class EEM_Base extends EE_Base{
 	 * gets the join statement for it; gets the data types for it; and passes the remaining 'Transaction.TXN_ID'
 	 * onto its related Transaction object to do the same. Returns an EE_Join_And_Data_Types object which contains the SQL
 	 * for joining, and the data types
-	 * @type string 	$query_param
-	 * @type EE_Model_Query_Info_Carrier $passed_in_query_info
-	 * @type 		$query_param_type
-	 * @type null|string 	$original_query_param
+	 * @param string 	$query_param
+	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
+	 * @param 		$query_param_type
+	 * @param null|string 	$original_query_param
 	 * @throws EE_Error
 	 * @internal param string $query_param like Registration.Transaction.TXN_ID
 	 * @internal param bool $look_for_field_names . if true (default), we're working with strings like 'Event.Venue.VNU_ID' or 'Registration.REG_ID'
@@ -1841,9 +1842,9 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Privately used by _extract_related_model_info_from_query_param to add a join to $model_name
 	 * and store it on $passed_in_query_info
-	 * @type string $model_name
-	 * @type EE_Model_Query_Info_Carrier $passed_in_query_info
-	 * @type string $original_query_param used to extract the relation chain between the queried model and $model_name.
+	 * @param string $model_name
+	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
+	 * @param string $original_query_param used to extract the relation chain between the queried model and $model_name.
 	 * Eg, if we are querying Event, and are adding a join to 'Payment' with the original queyr param key 'Registration.Transaction.Payment.PAY_amount',
 	 * we want to extract 'Registration.Transaction', in case Payment wants to add default query params so that it will know
 	 * what models to prepend onto its default query params
@@ -1873,8 +1874,8 @@ abstract class EEM_Base extends EE_Base{
 	 * Gets the model relation chain to $model_name from the $original_query_param.
 	 * Eg, if $model_name were 'Payment', and $originL-query_param were 'Registration.Transaction.Payment.PAY_ID',
 	 * this would return 'Registration.Transaction.Payment'
-	 * @type string $model_name
-	 * @type string $original_query_param
+	 * @param string $model_name
+	 * @param string $original_query_param
 	 * @return string
 	 */
 	private function _extract_model_relation_chain($model_name,$original_query_param){
@@ -1890,7 +1891,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Constructs SQL for where clause, like "WHERE Event.ID = 23 AND Transaction.amount > 100" etc.
 	 * @global $wpdb
-	 * @type array $where_params like EEM_Base::get_all
+	 * @param array $where_params like EEM_Base::get_all
 	 * @return string of SQL
 	 */
 	private function _construct_where_clause($where_params){
@@ -1905,7 +1906,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Just like the _construct_where_clause, except prepends 'HAVING' instead of 'WHERE',
 	 * and should be passed HAVING parameters, not WHERE parameters
-	 * @type array $having_params
+	 * @param array $having_params
 	 * @return string
 	 */
 	private function _construct_having_clause($having_params){
@@ -1921,8 +1922,8 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Gets the EE_Model_Field on the model indicated by $model_name and the $field_name.
 	 * Eg, if called with _get_field_on_model('ATT_ID','Attendee'), it will return the EE_Primary_Key_Field on EEM_Attendee.
-	 * @type string $field_name
-	 * @type string $model_name
+	 * @param string $field_name
+	 * @param string $model_name
 	 * @return EE_Model_Field_Base
 	 * @throws EE_Error
 	 */
@@ -1943,8 +1944,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Used for creating nested WHERE conditions. Eg "WHERE ! (Event.ID = 3 OR ( Event_Meta.meta_key = 'bob' AND Event_Meta.meta_value = 'foo'))"
-	 * @type array  $where_params see EEM_Base::get_all for documentation
-	 * @type string $glue         joins each subclause together. Should really only be " AND " or " OR "...
+	 * @param array  $where_params see EEM_Base::get_all for documentation
+	 * @param string $glue         joins each subclause together. Should really only be " AND " or " OR "...
 	 * @throws EE_Error
 	 * @return string of SQL
 	 */
@@ -1993,7 +1994,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Takes the input parameter and extract the table name (alias) and column name
-	 * @type $query_param
+	 * @param $query_param
 	 * @throws EE_Error
 	 * @internal param string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @return string table alias and column name for SQL, eg "Transaction.TXN_ID"
@@ -2016,7 +2017,7 @@ abstract class EEM_Base extends EE_Base{
 	 * param keys (eg, 'OR*', 'EVT_ID') in order for the array keys to still be unique, so that they don't get overwritten
 	 * Takes a string like 'Event.EVT_ID*', 'TXN_total**', 'OR*1st', and 'DTT_reg_start*foobar' to
 	 * 'Event.EVT_ID', 'TXN_total', 'OR', and 'DTT_reg_start', respectively.
-	 * @type string $condition_query_param_key
+	 * @param string $condition_query_param_key
 	 * @return string
 	 */
 	private function _remove_stars_and_anything_after_from_condition_query_param_key($condition_query_param_key){
@@ -2033,8 +2034,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * creates the SQL for the operator and the value in a WHERE clause, eg "< 23" or "LIKE '%monkey%'"
-	 * @type mixed array | string 	$op_and_value
-	 * @type EE_Model_Field_Base|string $field_obj . If string, should be one of EEM_Base::_valid_wpdb_data_types
+	 * @param mixed array | string 	$op_and_value
+	 * @param EE_Model_Field_Base|string $field_obj . If string, should be one of EEM_Base::_valid_wpdb_data_types
 	 * @throws EE_Error
 	 * @return string
 	 */
@@ -2089,8 +2090,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Creates the operands to be used in a BETWEEN query, eg "'2014-12-31 20:23:33' AND '2015-01-23 12:32:54'"
-	 * @type array $values
-	 * @type EE_Model_Field_Base|string $field_obj if string, it should be the datatype to be used when querying, eg '%s'
+	 * @param array $values
+	 * @param EE_Model_Field_Base|string $field_obj if string, it should be the datatype to be used when querying, eg '%s'
 	 * @return string
 	 */
 	function _construct_between_value( $values, $field_obj ) {
@@ -2110,8 +2111,8 @@ abstract class EEM_Base extends EE_Base{
 	 * string surrounded by ( and ). Eg, _construct_in_value(array(1,2,3),'%d') would
 	 * return '(1,2,3)'; _construct_in_value("1,2,hack",'%d') would return '(1,2,1)' (assuming
 	 * I'm right that a string, when interpreted as a digit, becomes a 1. It might become a 0)
-	 * @type mixed $values array or comma-separated string
-	 * @type EE_Model_Field_Base|string $field_obj if string, it should be a wpdb data type like '%s', or '%d'
+	 * @param mixed $values array or comma-separated string
+	 * @param EE_Model_Field_Base|string $field_obj if string, it should be a wpdb data type like '%s', or '%d'
 	 * @return string of SQL to follow an 'IN' or 'NOT IN' operator
 	 */
 	function _construct_in_value($values,  $field_obj){
@@ -2140,8 +2141,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 *
-	 * @type mixed 	$value
-	 * @type EE_Model_Field_Base|string $field_obj if string it should be a wpdb data type like '%d'
+	 * @param mixed 	$value
+	 * @param EE_Model_Field_Base|string $field_obj if string it should be a wpdb data type like '%d'
 	 * @throws EE_Error
 	 * @return false|null|string
 	 */
@@ -2161,7 +2162,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Takes the input parameter and finds the model field that it indicates.
-	 * @type string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
+	 * @param string $query_param_name like Registration.Transaction.TXN_ID, Event.Datetime.start_time, or REG_ID
 	 * @throws EE_Error
 	 * @return EE_Model_Field_Base
 	 */
@@ -2195,7 +2196,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Givena field's name (ie, a key in $this->field_settings()), uses the EE_Model_Field object to get the table's alias and column
 	 * which corresponds to it
-	 * @type string $field_name
+	 * @param string $field_name
 	 * @throws EE_Error
 	 * @return string
 	 */
@@ -2215,8 +2216,8 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * constructs the select use on special limit joins
 	 * NOTE: for now this has only been tested and will work when the  table alias is for the PRIMARY table. Although its setup so the select query will be setup on and just doing the special select join off of the primary table (as that is typically where the limits would be set).
-	 * @type  string $table_alias The table the select is being built for
-	 * @type  mixed|string $limit The limit for this select
+	 * @param  string $table_alias The table the select is being built for
+	 * @param  mixed|string $limit The limit for this select
 	 * @return string 				The final select join element for the query.
 	 */
 	function _construct_limit_join_select( $table_alias, $limit ) {
@@ -2245,6 +2246,7 @@ abstract class EEM_Base extends EE_Base{
 		return $SQL;
 	}
 
+
 	
 	/**
 	 * Constructs the SQL for joining all the tables on this model.
@@ -2256,7 +2258,7 @@ abstract class EEM_Base extends EE_Base{
 	 * With $alias being a secondary table's alias, this will construct SQL like:
 	 * " INNER JOIN wp_esp_primary_table AS Primary_Table ON Primary_Table.pk = Secondary_Table.fk".
 	 *
-	 * @type string $alias table alias to join to (this table should already be in the FROM SQL clause)
+	 * @param string $alias table alias to join to (this table should already be in the FROM SQL clause)
 	 * @return string
 	 */
 	function _construct_internal_join_to_table_with_alias($alias){
@@ -2296,7 +2298,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets the model object given the relation's name / model's name (eg, 'Event', 'Registration',etc. Always singular)
-	 * @type string $model_name
+	 * @param string $model_name
 	 * @throws EE_Error
 	 * @return EEM_Base
 	 */
@@ -2339,7 +2341,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Returns the specified EE_Model_Relation, or throws an exception
-	 * @type string $relation_name name of relation, key in $this->_relatedModels
+	 * @param string $relation_name name of relation, key in $this->_relatedModels
 	 * @throws EE_Error
 	 * @return EE_Model_Relation_Base
 	 */
@@ -2362,7 +2364,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * A convenience method for getting a specific field's settings, instead of getting all field settings for all fields
-	 * @type string $fieldName
+	 * @param string $fieldName
 	 * @throws EE_Error
 	 * @return EE_Model_Field_Base
 	 */
@@ -2379,7 +2381,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * gets the field object of type 'primary_key' from the fieldsSettings attribute.
 	 * Eg, on EE_Answer that would be ANS_ID field object
-	 * @type $field_obj
+	 * @param $field_obj
 	 * @return EE_Model_Field_Base
 	 */
 	public function is_primary_key_field( $field_obj ){
@@ -2435,7 +2437,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Finds the first field of type $field_class_name.
-	 * @type string $field_class_name class name of field that you want to find. Eg, EE_Datetime_Field, EE_Foreign_Key_Field, etc
+	 * @param string $field_class_name class name of field that you want to find. Eg, EE_Datetime_Field, EE_Foreign_Key_Field, etc
 	 * @return EE_Model_Field_Base or null if none is found
 	 */
 	public function get_a_field_of_type($field_class_name){
@@ -2449,7 +2451,7 @@ abstract class EEM_Base extends EE_Base{
 	}
 	/**
 	 * Gets a foreign key field pointing to model.
-	 * @type string $model_name eg Event, Registration, not EEM_Event
+	 * @param string $model_name eg Event, Registration, not EEM_Event
 	 * @return EE_Foreign_Key_Field_Base
 	 * @throws EE_Error
 	 */
@@ -2470,7 +2472,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets the actual table for the table alias
-	 * @type string $table_alias eg Event, Event_Meta, Registration, Transaction
+	 * @param string $table_alias eg Event, Event_Meta, Registration, Transaction
 	 * @return EE_Table_Base
 	 */
 	function get_table_for_alias($table_alias){
@@ -2482,7 +2484,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Returns a flat array of all field son this model, instead of organizing them
 	 * by table_alias as they are in the constructor.
-	 * @type bool $include_db_only_fields
+	 * @param bool $include_db_only_fields
 	 * @internal param \flag $include_db_only_fields indicating whether or not to include the db-only fields
 	 * @return EE_Model_Field_Base[] where the keys are the field's name
 	 */
@@ -2502,7 +2504,7 @@ abstract class EEM_Base extends EE_Base{
 	*		cycle though array of attendees and create objects out of each item
 	*
 	* 		@access		private
-	* 		@type		array		$rows of results of $wpdb->get_results($query,ARRAY_A)
+	* 		@param		array		$rows of results of $wpdb->get_results($query,ARRAY_A)
 	*		@return 	EE_Base_Class[]		array keys are primary keys (if there is a primary key on the model. if not, numerically indexed)
 	*/
 	protected function _create_objects( $rows = array() ) {
@@ -2572,7 +2574,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 *
-	 * @type mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
+	 * @param mixed $cols_n_values either an array of where each key is the name of a field, and the value is its value
 	 * or an stdClass where each property is the name of a column,
 	 * @return EE_Base_Class
 	 */
@@ -2624,7 +2626,7 @@ abstract class EEM_Base extends EE_Base{
 	}
 	/**
 	 * Gets the model object from the  entity map if it exists
-	 * @type int|string $id the ID of the model object
+	 * @param int|string $id the ID of the model object
 	 * @return EE_Base_Class
 	 */
 	public function get_from_entity_map( $id ){
@@ -2635,7 +2637,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Adds the object to the model's mappings
-	 * @type 	EE_Base_Class  $object
+	 * @param 	EE_Base_Class  $object
 	 * @throws EE_Error
 	 * @return EE_Base_Class
 	 */
@@ -2677,7 +2679,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Get the name of the items this model represents, for the quantity specified. Eg,
 	 * if $quantity==1, on EEM_Event, it would 'Event' (internationalized), otherwise
 	 * it would be 'Events'.
-	 * @type int $quantity
+	 * @param int $quantity
 	 * @return string
 	 */
 	public function item_name($quantity = 1){
@@ -2707,8 +2709,8 @@ abstract class EEM_Base extends EE_Base{
 	 * $answer=EEM_Answer::instance();
 	 * echo $answer->my_callback('monkeys',100);
 	 * //will output "you called my_callback! and passed args:monkeys,100"
-	 * @type string $methodName name of method which was called on a child of EE_TempBase, but which
-	 * @type array  $args       array of original arguments passed to the function
+	 * @param string $methodName name of method which was called on a child of EE_TempBase, but which
+	 * @param array  $args       array of original arguments passed to the function
 	 * @throws EE_Error
 	 * @return mixed whatever the plugin which calls add_filter decides
 	 */
@@ -2728,8 +2730,8 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Ensures $base_class_obj_or_id is of the EE_Base_Class child that corresponds ot this model.
 	 * If not, assumes its an ID, and uses $this->get_one_by_ID() to get the EE_Base_Class.
-	 * @type        $base_class_obj_or_id
-	 * @type boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
+	 * @param        $base_class_obj_or_id
+	 * @param boolean $ensure_is_in_db if set, we will also verify this model object exists in the database. If it does not, we add it
 	 * @throws EE_Error
 	 * @internal param \EE_Base_Class $ /int $base_class_obj_or_id either the EE_Base_Class that corresponds to this Model, or its ID
 	 * @return EE_Base_Class
@@ -2757,7 +2759,7 @@ abstract class EEM_Base extends EE_Base{
 	 * Similar to ensure_is_obj(), this method makes sure $base_class_obj_or_id
 	 * is a value of the this model's primary key. If it's an EE_Base_Class child,
 	 * returns it ID.
-	 * @type EE_Base_Class|int|string $base_class_obj_or_id
+	 * @param EE_Base_Class|int|string $base_class_obj_or_id
 	 * @return int|string depending on the type of this model object's ID
 	 * @throws EE_Error
 	 */
@@ -2790,7 +2792,7 @@ abstract class EEM_Base extends EE_Base{
 	 * $EVT->assume_values_already_prepared_by_model_object(true);
 	 * $EVT->update(array('foo'=>'bar'),array(array('foo'=>'monkey')));
 	 * $EVT->assume_values_already_prepared_by_model_object($old_setting);
-	 * @type boolean $values_already_prepared
+	 * @param boolean $values_already_prepared
 	 * @return void
 	 */
 	public function assume_values_already_prepared_by_model_object($values_already_prepared = false){
@@ -2845,8 +2847,8 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Finds all model objects in the DB that appear to be a copy of $model_object_or_attributes_array.
 	 * We consider something to be a copy if all the attributes match (except the ID, of course).
-	 * @type array|EE_Base_Class $model_object_or_attributes_array
-	 * @type array                $query_params like EEM_Base::get_all's query_params.
+	 * @param array|EE_Base_Class $model_object_or_attributes_array
+	 * @param array                $query_params like EEM_Base::get_all's query_params.
 	 * @throws EE_Error
 	 * @return \EE_Base_Class[]
 	 * @internal param array|\EE_Base_Class $model_object_or_attributes_array If its an array, it's field-value pairs
@@ -2877,8 +2879,8 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Gets the first copy we find. See get_all_copies for more details
-	 * @type mixed EE_Base_Class | array        $model_object_or_attributes_array
-	 * @type array $query_params
+	 * @param mixed EE_Base_Class | array        $model_object_or_attributes_array
+	 * @param array $query_params
 	 * @return EE_Base_Class
 	 */
 	function get_one_copy($model_object_or_attributes_array,$query_params = array()){
@@ -2896,8 +2898,8 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Updates the item with the specified id. Ignores default query parameters because
 	 * we have specified the ID, and its assumed we KNOW what we're doing
-	 * @type array $fields_n_values keys are field names, values are their new values
-	 * @type int|string $id the value of the primary key to update
+	 * @param array $fields_n_values keys are field names, values are their new values
+	 * @param int|string $id the value of the primary key to update
 	 * @return int number of rows updated
 	 */
 	public function update_by_ID($fields_n_values,$id){
@@ -2910,7 +2912,7 @@ abstract class EEM_Base extends EE_Base{
 
 	/**
 	 * Changes an operator which was supplied to the models into one usable in SQL
-	 * @type string $operator_supplied
+	 * @param string $operator_supplied
 	 * @return string an operator which can be used in SQL
 	 * @throws EE_Error
 	 */

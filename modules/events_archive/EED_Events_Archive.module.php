@@ -111,6 +111,28 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
+	 *    set_config
+	 *
+	 * @return void
+	 */
+	protected static function _set_config(){
+		return EED_Events_Archive::set_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
+	}
+
+
+
+	/**
+	 *    _get_config
+	 *
+	 * @return void
+	 */
+	protected static function _get_config(){
+		$config = EED_Events_Archive::get_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
+		return $config instanceof EE_Events_Archive_Config ? $config : EED_Events_Archive::_set_config();
+	}
+
+
+	/**
 	 *    run - initial module setup
 	 *
 	 * @access    public
@@ -160,9 +182,9 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	private function _filter_query_parts() {
 		// build event list query
-		add_filter( 'posts_join', array( $this, 'posts_join' ), 1, 2 );
-		add_filter( 'posts_where', array( $this, 'posts_where' ), 1, 2 );
-		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 1, 2 );
+		add_filter( 'posts_join', array( $this, 'posts_join' ), 11, 2 );
+		add_filter( 'posts_where', array( $this, 'posts_where' ), 11, 2 );
+		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 11, 2 );
 	}
 
 
@@ -852,9 +874,6 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public static function event_list_title() {
 	return apply_filters( 'FHEE__archive_espresso_events_template__upcoming_events_h1', __( 'Upcoming Events', 'event_espresso' ));
-}
-
-
 }
 
 /**

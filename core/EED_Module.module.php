@@ -93,7 +93,22 @@ abstract class EED_Module extends EE_Base {
 	 */
 	final public function __construct() {
 		$this->theme = EE_Config::get_current_theme();
-		self::$_instance = $this;
+		$module_name = $this->module_name();
+		EE_Registry::instance()->modules->$module_name = $this;
+	}
+
+
+
+	/**
+	 * @param $module_name
+	 * @return EED_Module
+	 */
+	public static function instance( $module_name = '' ) {
+		$module_name = ! empty( $module_name ) ? $module_name : get_called_class();
+		if ( ! isset(  EE_Registry::instance()->modules->$module_name ) || ! EE_Registry::instance()->modules->$module_name instanceof EED_Module ) {
+			EE_Registry::instance()->modules->$module_name = $module_name !== 'EED_Module' ? new $module_name() : NULL;
+		}
+		return EE_Registry::instance()->modules->$module_name;
 	}
 
 
@@ -126,7 +141,7 @@ abstract class EED_Module extends EE_Base {
 	 * @param 	string 	$config_class
 	 * @return 	mixed 	EE_Config_Base
 	 */
-	public function set_config( $section = 'modules', $name = '', $config_class = '' ) {
+	public static function set_config( $section = 'modules', $name = '', $config_class = '' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
 		try {
@@ -149,14 +164,14 @@ abstract class EED_Module extends EE_Base {
 	 * @param 	string 	$config_class
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
-	public function get_config( $section = 'modules', $name = '', $config_class = '' ) {
+	public static function get_config( $section = 'modules', $name = '', $config_class = '' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
 		// check for cached config
-		if ( ! $this->_config ) {
-			$this->_config = EE_Config::instance()->get_config( $section, $name, $config_class );
+		if ( ! self::instance( $name )->_config ) {
+			self::instance( $name )->_config = EE_Config::instance()->get_config( $section, $name, $config_class );
 		}
-		return $this->_config;
+		return self::instance( $name )->_config;
 	}
 
 

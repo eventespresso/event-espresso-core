@@ -308,7 +308,8 @@ class EE_Event extends EE_CPT_Base{
 	}
 
 	function default_registration_status() {
-		return $this->get('EVT_default_registration_status');
+		$event_default_registration_status = $this->get('EVT_default_registration_status');
+		return ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
 	}
 
 	function short_description( $num_words = 55, $more = NULL, $not_full_desc = FALSE ){

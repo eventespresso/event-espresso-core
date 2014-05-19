@@ -102,10 +102,12 @@ final class EE_Admin {
 
 
 	/**
-	 * 	filter_plugin_actions - adds links to the Plugins page listing
+	 *    filter_plugin_actions - adds links to the Plugins page listing
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access 	public
+	 * @param 	array 	$links
+	 * @param 	string 	$plugin
+	 * @return 	array
 	 */
 	public function filter_plugin_actions( $links, $plugin ) {
 		// set $main_file in stone
@@ -145,10 +147,11 @@ final class EE_Admin {
 
 
 	/**
-	 *	hide_admin_pages_except_maintenance_mode
+	 *    hide_admin_pages_except_maintenance_mode
 	 *
-	 *	@access public
-	 *	@return array
+	 * @access public
+	 * @param array $admin_page_folder_names
+	 * @return array
 	 */
 	public function hide_admin_pages_except_maintenance_mode( $admin_page_folder_names = array() ){
 		return array(
@@ -171,7 +174,7 @@ final class EE_Admin {
 		//if we're in maintenance mode level 2, we want to disable the entire admin, except the maintenance mode page(s)
 		//however, we want to make use of the admin infrastructure still
 		if ( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){
-			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100);
+			add_filter( 'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs', array( $this, 'hide_admin_pages_except_maintenance_mode' ), 100 );
 		} else {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
@@ -283,7 +286,6 @@ final class EE_Admin {
 		$db_fields = false;
 		$walker = new Walker_Nav_Menu_Checklist( $db_fields );
 		$current_tab = 'event-archives';
-		$page_links = array();
 
 		/*if ( ! empty( $_REQUEST['quick-search-posttype-' . $post_type_name] ) ) {
 			$current_tab = 'search';
@@ -379,6 +381,7 @@ final class EE_Admin {
 	 * Setup nav menu walker item for usage in the event archive nav menu metabox.  It receives a menu_item array with the properites and converts it to the menu item object.
 	 *
 	 * @see wp_setup_nav_menu_item() in wp-includes/nav-menu.php
+	 * @param $menuitem
 	 * @return stdClass
 	 */
 	private function _setup_extra_nav_menu_pages_items( $menuitem ) {
@@ -546,6 +549,10 @@ final class EE_Admin {
 
 
 
+	/**
+	 * @param $elements
+	 * @return array
+	 */
 	public function dashboard_glance_items( $elements ) {
 		$events = EEM_Event::instance()->count();
 		$items['events']['url'] = EE_Admin_Page::add_query_args_and_nonce( array('page' => 'espresso_events'), EVENTS_ADMIN_URL );
@@ -634,7 +641,7 @@ final class EE_Admin {
 	 * @param    $value
 	 * @param    $option
 	 * @throws EE_Error
-	 * @return    void
+	 * @return    string
 	 */
 	public function check_for_invalid_datetime_formats( $value, $option ) {
 		// check for date_format or time_format
