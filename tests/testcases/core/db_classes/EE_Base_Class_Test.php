@@ -205,6 +205,18 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		//test that clear cache for an item that ISN'T cached doesn't produce an error.
 		$response = $t->clear_cache('Registration');
 		$this->assertNull( $response );
+		//test that after we've cached something, we can remove it specifically
+		$r = EE_Registration::new_instance(array('REG_code'=>'monkey1'));
+		$r2 = EE_Registration::new_instance(array('REG_code'=>'monkey2'));
+		$t->cache('Registration', $r);
+		$t->cache('Registration',$r2);
+		$rs_cached = $t->get_all_from_cache('Registration');
+		$this->assertArrayContains($r, $rs_cached);
+		$this->assertArrayContains($r2,$rs_cached);
+		$r_removed = $t->clear_cache('Registration',$r);
+		$this->assertEquals($r,$r_removed);
+		$this->assertArrayContains($r2,$t->get_all_from_cache('Registration'));
+		$this->assertArrayDoesNotContain($r, $t->get_all_from_cache('Registration'));
 	}
 }
 
