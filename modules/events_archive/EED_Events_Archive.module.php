@@ -270,15 +270,15 @@ class EED_Events_Archive  extends EED_Module {
 			switch ( $orderby ) {
 
 				case 'ticket_start' :
-					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.ticket_start' ;
+					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_start_date' ;
 					break;
 
 				case 'ticket_end' :
-					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.ticket_end' ;
+					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_end_date' ;
 					break;
 
 				case 'venue_title' :
-					$SQL .= ', EE_Venue_TBL.post_title' ;
+					$SQL .= ', EE_Venue_TBL.post_title AS venue_title' ;
 					break;
 
 				case 'city' :
@@ -347,6 +347,12 @@ class EED_Events_Archive  extends EED_Module {
 		foreach( (array)$orderby_params as $orderby ) {
 			switch ( $orderby ) {
 
+				case 'category_slug' :
+					if ( EED_Events_Archive::_event_category_slug() === '' ) {
+						$SQL .= EED_Events_Archive::posts_join_sql_for_terms( TRUE );
+					}
+					break;
+
 				case 'ticket_start' :
 				case 'ticket_end' :
 					$SQL .= ' LEFT JOIN ' . EEM_Datetime_Ticket::instance()->table() . ' ON (' . EEM_Datetime::instance()->table() . '.DTT_ID = ' . EEM_Datetime_Ticket::instance()->table() . '.DTT_ID )';
@@ -355,18 +361,19 @@ class EED_Events_Archive  extends EED_Module {
 
 				case 'venue_title' :
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' EE_Venue_TBL ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = EE_Venue_TBL.ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' AS EE_Venue_TBL ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = EE_Venue_TBL.ID )';
 					break;
 
 				case 'city' :
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' EE_Venue_TBL ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = EE_Venue_TBL.ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' AS EE_Venue_TBL ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = EE_Venue_TBL.ID )';
 					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->second_table() . ' ON ( EE_Venue_TBL.ID = ' . EEM_Venue::instance()->second_table() . '.VNU_ID )';
 					break;
 
 				case 'state' :
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->second_table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Event_Venue::instance()->second_table() . '.VNU_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->second_table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Venue::instance()->second_table() . '.VNU_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_State::instance()->table() . ' ON (' . EEM_Venue::instance()->second_table() . '.STA_ID = ' . EEM_State::instance()->table() . '.STA_ID )';
 					break;
 
 				break;
@@ -512,7 +519,7 @@ class EED_Events_Archive  extends EED_Module {
 					break;
 
 				case 'venue_title' :
-					$SQL .= $glue . 'EE_Venue_TBL.post_title ' . $sort;
+					$SQL .= $glue . 'venue_title ' . $sort;
 					break;
 
 				case 'city' :
