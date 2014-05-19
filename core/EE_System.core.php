@@ -624,6 +624,8 @@ final class EE_System {
 				$msg .= '<li><b>Event Espresso - ' . str_replace( array( 'EE_', 'EEM_', 'EED_', 'EES_', 'EEW_' ), '', $class_name ) . '</b></li>';
 			}
 			$msg .= '</ul>';
+			// save list of incompatible addons to wp-options for later use
+			add_option( 'ee_incompatible_addons', $class_names, '', 'no' );
 		}
 		EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 	}
