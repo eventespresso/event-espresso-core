@@ -873,8 +873,7 @@ class EED_Events_Archive  extends EED_Module {
 	 *  @return 	string
 	 */
 	public static function event_list_title() {
-		return apply_filters( 'FHEE__archive_espresso_events_template__upcoming_events_h1', __( 'Upcoming Events', 'event_espresso' ));
-	}
+	return apply_filters( 'FHEE__archive_espresso_events_template__upcoming_events_h1', __( 'Upcoming Events', 'event_espresso' ));
 }
 
 /**
