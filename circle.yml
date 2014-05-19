@@ -37,7 +37,7 @@ dependencies:
     # set up database
     - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
   post:
-    - pear install --force 'pear.phpunit.de/PHPUnit-3.7.32'
+    #- pear install --force 'pear.phpunit.de/PHPUnit-3.7.32'
 
 ##tests override
 test:
