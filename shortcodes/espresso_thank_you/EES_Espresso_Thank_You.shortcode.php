@@ -5,7 +5,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author			Seth Shoultes
+ * @ author				Event Espresso
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
@@ -15,9 +15,9 @@
  *
  * EES_Espresso_Thank_You
  *
- * @package		Event Espresso
- * @subpackage	/shortcodes/
- * @author		Brent Christensen
+ * @package		 	Event Espresso
+ * @subpackage 	/shortcodes/
+ * @author 				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -52,13 +52,13 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	private $_is_primary = NULL;
 
 	/**
-	 * The URL for revisting the SPCO attendee information step
+	 * The URL for revisiting the SPCO attendee information step
 	 * @var string $_SPCO_attendee_information_url
 	 */
 	private $_SPCO_attendee_information_url = NULL;
 
 	/**
-	 * The URL for revisting the SPCO payment options step
+	 * The URL for revisiting the SPCO payment options step
 	 * @var string $_SPCO_payment_options_url
 	 */
 	private $_SPCO_payment_options_url = NULL;
@@ -227,7 +227,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		EE_Registry::$i18n_js_strings['slow_IPN'] = apply_filters(
 			'EES_Espresso_Thank_You__load_js__slow_IPN',
 			sprintf(
-				__( '%sThe Payment Notification appears to be taking longer than ususal to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.%s', 'event_espresso' ),
+				__( '%sThe Payment Notification appears to be taking longer than usual to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.%s', 'event_espresso' ),
 				'<div id="espresso-thank-you-page-slow-IPN-dv" class="ee-attention jst-left">',
 				'</div>'
 			)
@@ -247,6 +247,14 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function init() {
 		//get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
 		$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link( $this->_reg_url_link );
+		if ( ! $this->_current_txn instanceof EE_Transaction ) {
+			EE_Error::add_error(
+				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return;
+		}
+
 		$this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 		$this->_is_primary = $this->_primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
 
@@ -267,9 +275,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			EE_Registry::instance()->CFG->core->reg_page_url()
 		);
 		// link to SPCO payment_options
-		$this->_SPCO_payment_options_url = $this->_primary_registrant ? $this->_primary_registrant->payment_overview_url() : add_query_arg( array('step'=>'payment_options' ), $revisit_spco_url );
+		$this->_SPCO_payment_options_url = $this->_primary_registrant instanceof EE_Registration ? $this->_primary_registrant->payment_overview_url() : add_query_arg( array('step'=>'payment_options' ), $revisit_spco_url );
 		// link to SPCO attendee_information
-		$this->_SPCO_attendee_information_url = $this->_primary_registrant ? $this->_primary_registrant->edit_attendee_information_url() : FALSE;
+		$this->_SPCO_attendee_information_url = $this->_primary_registrant instanceof EE_Registration ? $this->_primary_registrant->edit_attendee_information_url() : FALSE;
 
 		EE_Registry::instance()->load_helper( 'Template' );
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
@@ -339,15 +347,16 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$espresso_thank_you_page = EES_Espresso_Thank_You::instance();
 			$espresso_thank_you_page->set_reg_url_link( $data['espresso_thank_you_page']['reg_url_link'] );
 			$espresso_thank_you_page->init();
+			//get TXN
+			$TXN = $espresso_thank_you_page->get_txn();
 			// no TXN? then get out
-			if ( ! $TXN = $espresso_thank_you_page->get_txn() ) {
+			if ( ! $TXN instanceof EE_Transaction ) {
 				$notices = EE_Error::get_notices();
 				$response['espresso_thank_you_page'] = array (
 					'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' )
 				);
 				return $response;
 			}
-			$TXN_ID = $TXN->ID();
 			// grab transient of TXN's status
 			$txn_status = isset( $data['espresso_thank_you_page']['txn_status'] ) ? $data['espresso_thank_you_page']['txn_status'] : NULL;
 			// has the TXN status changed since we last checked (or empty because this is the first time running through this code)?
