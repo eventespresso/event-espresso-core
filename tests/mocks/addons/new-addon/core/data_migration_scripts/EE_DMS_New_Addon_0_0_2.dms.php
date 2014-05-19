@@ -44,9 +44,10 @@ class EE_DMS_New_Addon_0_0_2 extends EE_Data_Migration_Script_Base{
 	public function schema_changes_before_migration() {
 		$this->_table_is_new_in_this_version('new_addon', '
 			NEW_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-			NEW_name  VARCHAR(10) NOT NULL,
+			NEW_name VARCHAR(10) NOT NULL,
 			EVT_ID int(10) unsigned NOT NULL,
-			PRIMARY KEY  (NEW_ID)');
+			PRIMARY KEY  (NEW_ID)'
+				);
 	}
 }
 

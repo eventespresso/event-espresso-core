@@ -134,6 +134,9 @@ abstract class EE_Addon {
 		$current_data_migration_script = EE_Registry::instance()->load_dms( EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms($this->name()) );
 		$current_data_migration_script->schema_changes_before_migration();
 		$current_data_migration_script->schema_changes_after_migration();
+		if($current_data_migration_script->get_errors()){
+			echo "errors occured while initializing db:";var_dump($current_data_migration_script->get_errors());
+		}
 		EE_Data_Migration_Manager::instance()->update_current_database_state_to(array($this->name(),$this->version()));
 	}
 	/**
