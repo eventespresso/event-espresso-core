@@ -37,6 +37,14 @@ final class EE_Config {
 	 */
 	public $addons;
 
+
+	/**
+	 * Addons that get registered using EE_Register_Config also have the "slug" registered with this property.  This is so the __wakeup magic method doesn't potentially call a addon config object constructor twice when serialized EE_Config is unserialized yet still retrieves any saved configuration settings specific to the addon.
+	 *
+	 * @var array
+	 */
+	private $_registered_addon_slugs;
+
 	/**
 	 *
 	 * @var EE_Admin_Config
@@ -135,7 +143,7 @@ final class EE_Config {
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
 		$this->addons = apply_filters('FHEE__EE_Config__construct__addons', new stdClass() );
-//		$this->addons = array();
+		$this->_registered_addon_slugs = apply_filters( 'FHEE__EE_Config___registered_addon_slugs', array() );
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
 		// set _module_forward_map
@@ -239,7 +247,7 @@ final class EE_Config {
 
 		// check that settings section exists
 		if ( ! isset( $this->$section )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration settings do not exist.', 'event_espresso' ), $section ));
+			throw new EE_Error( sprintf( __( 'The "%s" configuration settings does not exist.', 'event_espresso' ), $section ));
 		}
 		// in case old settings were saved as an array
 		if ( is_array( $this->$section )) {
@@ -252,11 +260,11 @@ final class EE_Config {
 		}
 		// check that section exists and is the proper format
 		if ( ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof stdClass )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration settings have not been formatted correctly.', 'event_espresso' ), $section ));
+			throw new EE_Error( sprintf( __( 'The "%s" configuration settings have not been formatted correctly.', 'event_espresso' ), $section ));
 		}
 		// verify config class is accessible
 		if ( ! class_exists( $config_class )) {
-			throw new EE_Error( sprintf( __( 'The %s class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ), $config_class ));
+			throw new EE_Error( sprintf( __( 'The "%s" class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ), $config_class ));
 		}
 		if ( ! isset( $this->$section->$name ) || ! $this->$section->$name instanceof $config_class ){
 			$this->$section->$name = new $config_class;
@@ -281,11 +289,11 @@ final class EE_Config {
 	public function _update_config( $section = '', $name = '', $config_obj = NULL ) {
 		// check that section exists and is the proper format
 		if ( ! isset( $this->$section ) || ! ( $this->$section instanceof EE_Config_Base || $this->$section instanceof StdClass )) {
-			throw new EE_Error( sprintf( __( 'The %s configuration does not exist.', 'event_espresso' ), $section ));
+			throw new EE_Error( sprintf( __( 'The "%s" configuration does not exist.', 'event_espresso' ), $section ));
 		}
 		// verify config object
 		if ( ! $config_obj instanceof EE_Config_Base ) {
-			throw new EE_Error( sprintf( __( 'The %s class is not an instance of EE_Config_Base.', 'event_espresso' ), get_class( $config_obj )));
+			throw new EE_Error( sprintf( __( 'The "%s" class is not an instance of EE_Config_Base.', 'event_espresso' ), get_class( $config_obj )));
 		}
 		$this->$section->$name = $config_obj;
 		$this->update_espresso_config();
@@ -957,7 +965,7 @@ final class EE_Config {
 			update_option('ee_config_' . $key, $value);
 		}
 
-		//we serialize everything except the addons because if an addon gets deactivated, waking up could really break things.
+		//we serialize everything except the addons becuse if an addon gets deactivated, waking up could really break things.
 		return apply_filters( 'FHEE__EE_Config__sleep',array(
 			'core',
 			'organization',
@@ -971,10 +979,11 @@ final class EE_Config {
 	}
 
 	private function _set_addons() {
-		$this->addons = apply_filters( 'FHEE__EE_Config__construct__addons', new stdClass() );
+		$this->_registered_addon_slugs = apply_filters( 'FHEE__EE_Config___registered_addon_slugs', array() );
+
 		//now we load any possibly existing options for the addons in the db! Note this will NOT retrieve options for deactivated addons.
 		$props = get_object_vars( $this );
-		foreach ( $props['addons'] as $key => $value ) {
+		foreach ( $props['_registered_addon_slugs'] as $key => $value ) {
 			$addon_opts = get_option( 'ee_config_' . $key );
 			if ( !empty( $addon_opts ) )
 				$this->addons->$key = $addon_opts;
@@ -1048,7 +1057,7 @@ class EE_Core_Config extends EE_Config_Base {
 	 * Not to be confused with the 4 critical page variables (See
 	 * get_critical_pages_array()), this is just an array of wp posts that have EE
 	 * shortcodes in them. Keys are slugs, values are arrays with only 1 element: where the key is the shortcode
-	 * in the page, and the value is the page's ID. The key 'posts' is basically a duplicate of this same array.
+	 * in the page, and the value is the page's ID. The key 'posts' is basially a duplicate of this same array.
 	 * @var array
 	 */
 	public $post_shortcodes;
@@ -1377,7 +1386,7 @@ class EE_Currency_Config extends EE_Config_Base {
 	public $sign;
 
 	/**
-	* Whether the currency sign should come before the number or not
+	* Whether the currency sign shoudl come before the number or not
 	* @var boolean $sign_b4
 	*/
 	public $sign_b4;
@@ -1558,9 +1567,9 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $use_dashboard_widget;
 
 	/**
-	* @var int $events_in_dashboard
+	* @var int $events_in_dasboard
 	*/
-	public $events_in_dashboard;
+	public $events_in_dasboard;
 
 	/**
 	* @var boolean $use_event_timezones
@@ -1611,7 +1620,7 @@ class EE_Admin_Config extends EE_Config_Base {
 		// set default general admin settings
 		$this->use_personnel_manager = TRUE;
 		$this->use_dashboard_widget = TRUE;
-		$this->events_in_dashboard = 30;
+		$this->events_in_dasboard = 30;
 		$this->use_event_timezones = FALSE;
 		$this->use_full_logging = FALSE;
 		$this->use_remote_logging = FALSE;
