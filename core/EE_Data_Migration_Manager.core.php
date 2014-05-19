@@ -410,6 +410,8 @@ class EE_Data_Migration_Manager{
 	 * item is a string describing what was done
 	 */
 	public function migration_step(){
+		//first off: we are NOT running DMSs for incompatible addons
+		EE_System::instance()->deactivate_incompatible_addons();
 		try{
 			$currently_executing_script = $this->get_last_ran_script();
 			if( ! $currently_executing_script){
@@ -528,6 +530,8 @@ class EE_Data_Migration_Manager{
 		}
 		return $response_array;
 	}
+	
+	
 	
 	/**
 	 * Echo out JSON response to migration script AJAX requests. Takes precautions
