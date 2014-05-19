@@ -114,7 +114,7 @@ abstract class EED_Module extends EE_Base {
 
 
 	/**
-	 *    set_config
+	 *    _set_config
 	 *
 	 * @access 	public
 	 * @param 	string 	$section
@@ -122,7 +122,7 @@ abstract class EED_Module extends EE_Base {
 	 * @param 	string 	$config_class
 	 * @return 	mixed 	EE_Config_Base
 	 */
-	public function set_config( $section = 'modules', $name = '', $config_class = '' ) {
+	protected function _set_config( $section = 'modules', $name = '', $config_class = '' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
 		try {
@@ -137,7 +137,7 @@ abstract class EED_Module extends EE_Base {
 
 
 	/**
-	 *    get_config
+	 *    _get_config
 	 *
 	 * @access 	public
 	 * @param 	string 	$section
@@ -145,7 +145,7 @@ abstract class EED_Module extends EE_Base {
 	 * @param 	string 	$config_class
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
-	public static function get_config( $section = 'modules', $name = '', $config_class = '' ) {
+	protected function _get_config( $section = 'modules', $name = '', $config_class = '' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
 		// check for cached config
