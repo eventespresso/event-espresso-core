@@ -11,4 +11,8 @@
 			<directory suffix=".php">./testcases/</directory>
 		</testsuite>
 	</testsuites>
+	<php>
+		<ini name="display_errors" value="1" />
+		<const name="WP_DEBUG" value="TRUE" />
+	</php>
 </phpunit>
