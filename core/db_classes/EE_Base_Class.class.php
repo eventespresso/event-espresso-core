@@ -1367,7 +1367,7 @@ abstract class EE_Base_Class{
 			$count =  $this->get_model()->delete_related($this, $relationName, $query_params);
 		}else{
 			$count = count($this->get_all_from_cache($relationName));
-			$this->clear_cache($relationName);
+			$this->clear_cache($relationName,NULL,TRUE);
 		}
 		return $count;
 	}
