@@ -12,16 +12,15 @@
  * @ since		 		4.0
  *
  * ------------------------------------------------------------------------
- *
+ */
+require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
+/**
  * EE_Registration class
  *
  * @package			Event Espresso
  * @subpackage		includes/classes/EE_Registration.class.php
  * @author				Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
 class EE_Registration extends EE_Soft_Delete_Base_Class {
 
     /**
@@ -219,7 +218,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	/**
 	 * Transaction of this Registration
 	 * @access protected
-	 * @var EE_Tranaction $_Transaction
+	 * @var EE_Transaction $_Transaction
 	 */
 	protected $_Transaction = NULL;
 
@@ -254,12 +253,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 
-
-
 	/**
 	 *
-	 * @param type $props_n_values
-	 * @param type $timezone
+	 * @param array 	$props_n_values
+	 * @param string 	$timezone
 	 * @return EE_Registration
 	 */
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
@@ -270,7 +267,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 
-
+	/**
+	 * @param array $props_n_values
+	 * @param null  $timezone
+	 * @return EE_Registration
+	 */
 	public static function new_instance_from_db ( $props_n_values = array(), $timezone = NULL ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
@@ -280,15 +281,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 	/**
 	 * Overrides parent set() method so that all calls to set( 'STS_ID', $STS_ID ) can be routed to internal set_status()
-	 * @param type $field_name
-	 * @param type $field_value
-	 * @param type $use_default
+	 * @param string $field_name
+	 * @param mixed $field_value
+	 * @param bool $use_default
 	 */
-	public function set( $field_name, $field_value, $use_default= FALSE ) {
+	public function set( $field_name, $field_value, $use_default = FALSE ) {
 		if ( $field_name == 'STS_ID' ) {
 			$this->set_status( $field_value );
 		} else {
-			parent::set( $field_name, $field_value, $use_default= FALSE );
+			parent::set( $field_name, $field_value, $use_default );
 		}
 	}
 
@@ -301,7 +302,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	* 		@access		public
 	*		@param		int		$EVT_ID 		Event ID
 	*/
-	public function set_event( $EVT_ID = FALSE ) {
+	public function set_event( $EVT_ID = 0 ) {
 		$this->set('EVT_ID',$EVT_ID);
 	}
 
@@ -313,7 +314,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	* 		@access		public
 	*		@param		int		$ATT_ID 		Attendee ID
 	*/
-	public function set_attendee_id( $ATT_ID = FALSE ) {
+	public function set_attendee_id( $ATT_ID = 0 ) {
 		$this->set('ATT_ID',$ATT_ID);
 	}
 
@@ -325,43 +326,43 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	* 		@access		public
 	*		@param		int		$TXN_ID 		Transaction ID
 	*/
-	public function set_transaction_id( $TXN_ID = FALSE ) {
+	public function set_transaction_id( $TXN_ID = 0 ) {
 		$this->set('TXN_ID',$TXN_ID);
 	}
 
 
 
 	/**
-	*		Set Session
-	*
-	* 		@access		public
-	*		@param		string		$REG_session 		PHP Session ID
-	*/
-	public function set_session( $REG_session = FALSE ) {
+	 *        Set Session
+	 *
+	 * @access 	public
+	 * @param 	string $REG_session PHP Session ID
+	 */
+	public function set_session( $REG_session = '' ) {
 		$this->set('REG_session',$REG_session);
 	}
 
 
 
 	/**
-	*		Set Registration Code
-	*
-	* 		@access		public
-	*		@param		string		$REG_code 		Registration Code
-	*/
-	public function set_reg_code( $REG_code = FALSE ) {
+	 *        Set Registration Code
+	 *
+	 * @access 	public
+	 * @param 	string $REG_code Registration Code
+	 */
+	public function set_reg_code( $REG_code = '' ) {
 		$this->set('REG_code',$REG_code);
 	}
 
 
 
 	/**
-	*		Set Registration URL Link
-	*
-	* 		@access		public
-	*		@param		string		$REG_url_link 		Registration URL Link
-	*/
-	public function set_reg_url_link( $REG_url_link = FALSE ) {
+	 *        Set Registration URL Link
+	 *
+	 * @access 	public
+	 * @param 	string 	$REG_url_link Registration URL Link
+	 */
+	public function set_reg_url_link( $REG_url_link = '' ) {
 		$this->set('REG_url_link',$REG_url_link);
 	}
 
@@ -371,9 +372,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	*		Set Attendee Counter
 	*
 	* 		@access		public
-	*		@param		boolean		$REG_count 		Primary Attendee
+	*		@param		int		$REG_count 		Primary Attendee
 	*/
-	public function set_count( $REG_count = FALSE ) {
+	public function set_count( $REG_count = 1 ) {
 		$this->set('REG_count',$REG_count);
 	}
 
@@ -391,17 +392,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 
-
 	/**
-	*	Set Status ID
-	* 	updates the registration status and ALSO...
-	* 	calls reserve_registration_space() if the reg status changes TO approved from any other reg status
-	* 	calls release_registration_space() if the reg status changes FROM approved to any other reg status
-	*
-	* 	@access		public
-	*	@param		string	$STS_ID	Status ID
-	*/
-	public function set_status( $new_STS_ID = FALSE ) {
+	 *    Set Status ID
+	 *    updates the registration status and ALSO...
+	 *    calls reserve_registration_space() if the reg status changes TO approved from any other reg status
+	 *    calls release_registration_space() if the reg status changes FROM approved to any other reg status
+	 *
+	 * @access        public
+	 * @param string $new_STS_ID
+	 */
+	public function set_status( $new_STS_ID = '' ) {
 		// get current REG_Status
 		$old_STS_ID = $this->status_ID();
 		// if status has changed TO approved
@@ -423,56 +423,56 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	*	is_not_approved -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_not_approved
+	*	is_not_approved -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_not_approved
 	*
 	* 	@access		public
 	*	@return 		boolean
 	*/
-	public function is_not_approved( $REG_date = FALSE ) {
+	public function is_not_approved() {
 		return $this->status_ID() == EEM_Registration::status_id_not_approved ? TRUE : FALSE;
 	}
 
 
 	/**
-	*	is_pending_payment -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_pending_payment
+	*	is_pending_payment -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_pending_payment
 	*
 	* 	@access		public
 	*	@return 		boolean
 	*/
-	public function is_pending_payment( $REG_date = FALSE ) {
+	public function is_pending_payment() {
 		return $this->status_ID() == EEM_Registration::status_id_pending_payment ? TRUE : FALSE;
 	}
 
 
 	/**
-	*	is_approved -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_approved
+	*	is_approved -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_approved
 	*
 	* 	@access		public
 	*	@return 		boolean
 	*/
-	public function is_approved( $REG_date = FALSE ) {
+	public function is_approved() {
 		return $this->status_ID() == EEM_Registration::status_id_approved ? TRUE : FALSE;
 	}
 
 
 	/**
-	*	is_cancelled -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_cancelled
+	*	is_cancelled -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_cancelled
 	*
 	* 	@access		public
 	*	@return 		boolean
 	*/
-	public function is_cancelled( $REG_date = FALSE ) {
+	public function is_cancelled() {
 		return $this->status_ID() == EEM_Registration::status_id_cancelled ? TRUE : FALSE;
 	}
 
 
 	/**
-	*	is_declined -  convenience method that returns TRUE if REG ststus ID == EEM_Registration::status_id_declined
+	*	is_declined -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_declined
 	*
 	* 	@access		public
 	*	@return 		boolean
 	*/
-	public function is_declined( $REG_date = FALSE ) {
+	public function is_declined() {
 		return $this->status_ID() == EEM_Registration::status_id_declined ? TRUE : FALSE;
 	}
 
@@ -491,12 +491,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	*		Set final Price Paid for ticket after all modifications
-	*
-	* 		@access		public
-	*		@param		float		$REG_final_price 		Price Paid
-	*/
-	public function set_price_paid( $REG_final_price = FALSE ) {
+	 * 	Set final Price Paid for ticket after all modifications
+	 *
+	 * @access 	public
+	 * @param  	float $REG_final_price
+	 */
+	public function set_price_paid( $REG_final_price = 0.00 ) {
 		$this->set('REG_final_price',$REG_final_price);
 	}
 
@@ -517,7 +517,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	* 		@access		public
 	*		@param		boolean		$REG_att_is_going 		Attendee Is Going
 	*/
-	public function set_att_is_going( $REG_att_is_going = NULL ) {
+	public function set_att_is_going( $REG_att_is_going = FALSE ) {
 		$this->set('REG_att_is_going',$REG_att_is_going);
 	}
 
@@ -1113,7 +1113,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * genrerates reg code
+	 * generates reg code
 	 * @return boolean
 	 */
 	private function _generate_new_reg_code() {
@@ -1183,18 +1183,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * genrerates reg code if that has yet to been done,
+	 * generates reg code if that has yet to been done,
 	 * sets reg status based on transaction status and event pre-approval setting
 	 *
 	 * @param  bool $from_admin 	 used to indicate the request is initiated by admin
 	 * @param  bool $flip_reg_status used to indicate we DO want to automatically flip the registration status if txn is complete.
-	 * @return array 	an array with two boolean values, first indicates if new reg, second indicates if regstatus was updated.
+	 * @return array 	an array with two boolean values, first indicates if new reg, second indicates if reg status was updated.
 	 */
 	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
 		$update_reg = FALSE;
 		$new_reg = FALSE;
-		// update reg status if no monies are owing and the REG status is pending payment AND we're not doing this from admin.
-		if (( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment && $flip_reg_status ) {
+		// update reg status if no monies are owing AND ( the REG status is pending payment and we're not doing this from admin ) OR ( the event default reg status is Approved )
+		if ((( $this->transaction()->is_completed() || $this->transaction()->is_overpaid() ) && $this->status_ID() == EEM_Registration::status_id_pending_payment && $flip_reg_status ) || $this->event()->default_registration_status() == EEM_Registration::status_id_approved ) {
 			// automatically toggle status to approved
 			$this->set_status( EEM_Registration::status_id_approved );
 			$update_reg = TRUE;

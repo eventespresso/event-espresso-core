@@ -93,32 +93,28 @@ abstract class EED_Module extends EE_Base {
 	 */
 	final public function __construct() {
 		$this->theme = EE_Config::get_current_theme();
-		self::$_instance = $this;
+		$module_name = ! empty( $module_name ) ? $module_name : get_called_class();
+		EE_Registry::instance()->modules->$module_name = $this;
 	}
 
 
 
 	/**
-	 *    instance - returns instance of child class object
-	 *
-	 * @access 	public
-	 * @param 	string $module_class
-	 * @return 	\EED_Module
+	 * @param $module_name
+	 * @return EED_Module
 	 */
-	final public static function instance( $module_class = NULL ) {
-		$module_class = ! empty( $module_class ) ? $module_class : get_called_class();
-		if ( $module_class == 'EED_Module' || empty( $module_class )) {
-			return NULL;
+	public static function instance( $module_name = '' ) {
+		$module_name = ! empty( $module_name ) ? $module_name : get_called_class();
+		if ( ! isset(  EE_Registry::instance()->modules->$module_name ) || ! EE_Registry::instance()->modules->$module_name instanceof EED_Module ) {
+			EE_Registry::instance()->modules->$module_name = $module_name !== 'EED_Module' ? new $module_name() : NULL;
 		}
-		$module = str_replace( 'EED_', '', strtoupper( $module_class ));
-		$module_obj = isset( EE_Registry::instance()->modules[ $module ] ) ? EE_Registry::instance()->modules[ $module ] : NULL;
-		return $module_obj instanceof $module_class || $module_class == 'self' ? $module_obj : new $module_class();
+		return EE_Registry::instance()->modules->$module_name;
 	}
 
 
 
 	/**
-	 *    set_config
+	 *    _set_config
 	 *
 	 * @access 	public
 	 * @param 	string 	$section
@@ -126,7 +122,7 @@ abstract class EED_Module extends EE_Base {
 	 * @param 	string 	$config_class
 	 * @return 	mixed 	EE_Config_Base
 	 */
-	public function set_config( $section = 'modules', $name = '', $config_class = '' ) {
+	protected function _set_config( $section = 'modules', $name = '', $config_class = '' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
 		try {
@@ -141,7 +137,7 @@ abstract class EED_Module extends EE_Base {
 
 
 	/**
-	 *    get_config
+	 *    _get_config
 	 *
 	 * @access 	public
 	 * @param 	string 	$section
@@ -149,14 +145,14 @@ abstract class EED_Module extends EE_Base {
 	 * @param 	string 	$config_class
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
-	public function get_config( $section = 'modules', $name = '', $config_class = '' ) {
+	protected function _get_config( $section = 'modules', $name = '', $config_class = '' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
 		// check for cached config
-		if ( ! $this->_config ) {
-			$this->_config = EE_Config::instance()->get_config( $section, $name, $config_class );
+		if ( ! self::instance( $name )->_config ) {
+			self::instance( $name )->_config = EE_Config::instance()->get_config( $section, $name, $config_class );
 		}
-		return $this->_config;
+		return self::instance( $name )->_config;
 	}
 
 

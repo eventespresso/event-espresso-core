@@ -176,9 +176,9 @@ abstract class EE_Base_Class{
 	/**
 	 * Overrides parent because parent expects old models.
 	 * This also doesn't do any validation, and won't work for serialized arrays
-	 * @type	string 	$field_name
-	 * @type	mixed 	$field_value
-	 * @type bool 	$use_default
+	 * @param	string 	$field_name
+	 * @param	mixed 	$field_value
+	 * @param bool 	$use_default
 	 */
 	public function set($field_name,$field_value,$use_default= false){
 		$field_obj = $this->get_model()->field_settings_for($field_name);
@@ -564,9 +564,9 @@ abstract class EE_Base_Class{
 	/**
 	 * Overrides parent because parent expects old models.
 	 * This also doesn't do any validation, and won't work for serialized arrays
-	 * @type string  $field_name
-	 * @type mixed $field_value_from_db
-	 * @type bool $use_default
+	 * @param string  $field_name
+	 * @param mixed $field_value_from_db
+	 * @param bool $use_default
 	 */
 	public function set_from_db($field_name,$field_value_from_db){
 		$field_obj = $this->get_model()->field_settings_for($field_name);
@@ -586,8 +586,8 @@ abstract class EE_Base_Class{
 
 	/**
 	 * verifies that the specified field is of the correct type
-	 * @type string        $field_name
-	 * @type string $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
+	 * @param string        $field_name
+	 * @param string $extra_cache_ref This allows the user to specify an extra cache ref for the given property (in cases where the same property may be used for different outputs - i.e. datetime, money etc.)
 	 * @internal param mixed $value the value to check if it's of the correct type
 	 * @internal param \EE_Model_Field $fieldSettings settings for a specific field.
 	 * @return boolean
@@ -648,11 +648,11 @@ abstract class EE_Base_Class{
 	 * Note: this protected function is called by the wrapper get_date or get_time or get_datetime functions (and the equivalent e_date, e_time, e_datetime).
 	 *
 	 * @access   protected
-	 * @type  string  $field_name   Field on the instantiated EE_Base_Class child object
-	 * @type null     $dt_frmt
-	 * @type null     $tm_frmt
-	 * @type string   $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
-	 * @type  boolean $echo         Whether the dtt is echoing using pretty echoing or just returned using vanilla get
+	 * @param  string  $field_name   Field on the instantiated EE_Base_Class child object
+	 * @param null     $dt_frmt
+	 * @param null     $tm_frmt
+	 * @param string   $date_or_time if NULL then both are returned, otherwise "D" = only date and "T" = only time.
+	 * @param  boolean $echo         Whether the dtt is echoing using pretty echoing or just returned using vanilla get
 	 * @internal param mixed $date_format valid datetime format used for date (if '' then we just use the default on the field, if NULL we use the last-used format)
 	 * @internal param mixed $time_format Same as above except this is for time format
 	 * @return mixed               string on success, FALSE on fail, or EE_Error Exception is thrown if field is not a valid dtt field
@@ -871,11 +871,11 @@ abstract class EE_Base_Class{
 	 * NOTE, this currently only works well with methods that return values.  If you use it with methods that echo values the $_timestamp property may not get reset to its original value and that could lead to some unexpected results!
 	 *
 	 * @access public
-	 * @type string               $field_name This is the name of the field on the object that contains the date/time value being returned.
-	 * @type string               $callback   must match a valid method in this class (defaults to get_datetime)
-	 * @type mixed (array|string) $args       This is the arguments that will be passed to the callback.
-	 * @type string               $prepend    You can include something to prepend on the timestamp
-	 * @type string               $append     You can include something to append on the timestamp
+	 * @param string               $field_name This is the name of the field on the object that contains the date/time value being returned.
+	 * @param string               $callback   must match a valid method in this class (defaults to get_datetime)
+	 * @param mixed (array|string) $args       This is the arguments that will be passed to the callback.
+	 * @param string               $prepend    You can include something to prepend on the timestamp
+	 * @param string               $append     You can include something to append on the timestamp
 	 * @throws EE_Error
 	 * @return string timestamp
 	 */
@@ -1061,9 +1061,9 @@ abstract class EE_Base_Class{
 	/**
 	 * This is called by child static "new_instance" method and we'll check to see if there is an existing db entry for the primary key (if present in incoming values).
 	 * If there is a key in the incoming array that matches the primary key for the model AND it is not null, then we check the db. If there's a an object we return it.  If not we return false.
-	 * @type  array  $props_n_values incoming array of properties and their values
-	 * @type  string $classname      the classname of the child class
-	 * @type null    $timezone
+	 * @param  array  $props_n_values incoming array of properties and their values
+	 * @param  string $classname      the classname of the child class
+	 * @param null    $timezone
 	 * @return mixed (EE_Base_Class|bool)
 	 */
 	protected static function _check_for_object( $props_n_values, $classname, $timezone = NULL ) {
@@ -1554,9 +1554,9 @@ abstract class EE_Base_Class{
 	 * Gets the extra meta with the given meta key. If you specify "single" we just return 1, otherwise
 	 * an array of everything found. Requires that this model actually have a relation of type EE_Has_Many_Any_Relation.
 	 * You can specify $default is case you haven't found the extra meta
-	 * @type string $meta_key
-	 * @type boolean $single
-	 * @type mixed $default if we don't find anything, what should we return?
+	 * @param string $meta_key
+	 * @param boolean $single
+	 * @param mixed $default if we don't find anything, what should we return?
 	 * @return mixed single value if $single; array if ! $single
 	 */
 	public function get_extra_meta($meta_key,$single = FALSE,$default = NULL){

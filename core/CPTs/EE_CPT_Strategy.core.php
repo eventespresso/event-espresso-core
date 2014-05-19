@@ -201,7 +201,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @param $WP_Query
 	 * @return void
 	 */
-	private function _set_post_type_for_terms( $WP_Query ) {
+	private function _set_post_type_for_terms( WP_Query $WP_Query ) {
 		// is a tag set ?
 		if ( isset( $WP_Query->query['tag'] )) {
 			// set post_tags
@@ -487,12 +487,14 @@ class EE_CPT_Strategy extends EE_BASE {
  */
 class EE_CPT_Default_Strategy {
 
+
 	/**
 	 * $CPT - the current page, if it utilizes CPTs
 	 *	@var 	object
 	 * 	@access 	protected
 	 */
 	protected $CPT = NULL;
+
 
 
 
