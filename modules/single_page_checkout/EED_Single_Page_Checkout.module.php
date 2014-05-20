@@ -37,7 +37,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_revisit = FALSE;
 	// is registration allowed to progress or halted for some reason such as failing to pass recaptcha?
 	private $_continue_reg = TRUE;
-	// array of tempate paths
+	// array of template paths
 	private $_templates = array();
 	// info for each of the reg steps
 	private static $_reg_steps = array();
@@ -1088,7 +1088,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 											$answer_cache_id = $this->_reg_url_link ? $form_input : $form_input . '-' . $line_item_id;
 											$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
 
-											$attendee_property = FALSE;
 											//rename a couple of form_inputs
 											switch( $form_input ) {
 												case 'state' :
@@ -1128,7 +1127,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 														$saved = TRUE;
 													}
 												}
-
+												/// hmmm...  must be a new question that was just added
+												if ( ! $saved ) {
+													// since $form_input is actually the question ID for questions that don't relate to an attendee property
+													$new_question = EEM_Question::instance()->get_one_by_ID( $form_input );
+													if ( $new_question instanceof EE_Question  ) {
+														// create an EE_Answer object for the new question
+														$new_answer = EE_Answer::new_instance ( array(
+															'QST_ID'	=> $new_question->ID(),
+															'REG_ID'	=> $registration->ID(),
+															'ANS_value' => $input_value
+														));
+														$answer_cache_id = $new_question->system_ID() != NULL ? $new_question->system_ID() . '-' . $line_item_id : $new_question->ID() . '-' . $line_item_id;
+														$registration->cache( 'Answer', $new_answer, $answer_cache_id );
+														$saved = TRUE;
+													}
+												}
 											}
 											if ( ! $saved )  {
 												EE_Error::add_error( sprintf( __( 'Unable to save registration form data for the form input: %s', 'event_espresso' ), $form_input ), __FILE__, __FUNCTION__, __LINE__ );
