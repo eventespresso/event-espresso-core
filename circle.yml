@@ -37,7 +37,7 @@ dependencies:
    - mv $plugin_loc $plugin_dir;
     # set up database
     - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
-  post:
+  # post:
     #- cd $plugin_tests_dir; wget https://phar.phpunit.de/phpunit.phar;
 
 ##tests override
