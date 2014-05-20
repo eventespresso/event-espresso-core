@@ -31,6 +31,8 @@ dependencies:
     - mv $plugin_loc $plugin_dir;
     # set up database
     - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
+    # setup phpunit
+    - wget https://phar.phpunit.de/phpunit.phar && chmod+x phpunit.phar && mv phunit.phar /home/ubuntu/.phpenv/shims/phpunit
 
 ##tests override
 test:
