@@ -27,12 +27,12 @@ dependencies:
     #enable xdebug
     # - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
     #setup WP install
-    - git clone git://develop.git.wordpress.org/ $WP_TESTS_DIR;
-    - cd $WP_TESTS_DIR && cp wp-tests-config-sample.php wp-tests-config.php && sed -i "s/yourdbnamehere/wordpress_test/" wp-tests-config.php && sed -i "s/yourusernamehere/root/" wp-tests-config.php && sed -i "s/yourpasswordhere//" wp-tests-config.php;
+    - git clone git://develop.git.wordpress.org/ $WP_TESTS_DIR
+    - cd $WP_TESTS_DIR && cp wp-tests-config-sample.php wp-tests-config.php && sed -i "s/yourdbnamehere/wordpress_test/" wp-tests-config.php && sed -i "s/yourusernamehere/root/" wp-tests-config.php && sed -i "s/yourpasswordhere//" wp-tests-config.php
    # mv plugin into tests/src
-   - mv $plugin_loc $plugin_dir;
+   - mv $plugin_loc $plugin_dir
     # set up database
-    - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
+    - mysql -e 'CREATE DATABASE wordpress_test;' -uroot
 
 ##tests override
 test:
