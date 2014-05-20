@@ -1021,7 +1021,7 @@ class EE_Event_List_Query extends WP_Query {
 
 		// first off, let's remove any filters from previous queries
 		remove_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ));
-		remove_all_filters( 'FHEE__content_espresso_events__event_class', array( $this, 'event_list_css' ));
+		remove_filter( 'FHEE__content_espresso_events__event_class', array( $this, 'event_list_css' ));
 
 		// Event List Title ?
 		add_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ), 10, 1 );
