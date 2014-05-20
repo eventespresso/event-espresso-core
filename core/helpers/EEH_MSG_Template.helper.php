@@ -217,8 +217,8 @@ class EEH_MSG_Template {
 				if ( isset( $field_settings[$field] ) ) {
 					//possible that this is used as a main field.
 					if ( empty( $field_settings[$field] ) ) {
-						if ( isset( $field_settings[$field]['extra'][$field] ) ) {
-							$_field = $field_settings[$field]['extra'][$field]['main']['label'];
+						if ( isset( $field_settings['extra'][$field] ) ) {
+							$_field = $field_settings['extra'][$field]['main']['label'];
 						} else {
 							$_field = $field;
 						}
