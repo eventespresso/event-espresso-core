@@ -13,7 +13,7 @@ machine:
     CIRCLE_ENV: test
     WP_MULTISITE: 0
     WP_CORE_DIR: /home/ubuntu/wordpress-develop
-    WP_TESTS_DIR: /home/ubuntu/wordpress-develop/tests/
+    WP_TESTS_DIR: /home/ubuntu/wordpress-develop/tests/phpunit
     plugin_loc: /home/ubuntu/$CIRCLE_PROJECT_REPONAME
     plugin_slug: $CIRCLE_PROJECT_REPONAME
     plugin_dir: /home/ubuntu/wordpress-develop/src/wp-content/plugins/$plugin_slug
