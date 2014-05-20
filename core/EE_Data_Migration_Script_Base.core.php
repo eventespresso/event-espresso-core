@@ -335,7 +335,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param type $table_definition_sql
 	 * @param type $engine_string
 	 */
-	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string){
+	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string='ENGINE=MyISAM '){
 		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_type_normal))){
 			$drop_pre_existing_tables = true;
 		}else{
@@ -355,7 +355,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param string $table_definition_sql
 	 * @param string $engine_string
 	 */
-	protected function _table_should_exist_previously($table_name,$table_definition_sql,$engine_string){
+	protected function _table_should_exist_previously($table_name,$table_definition_sql,$engine_string = 'ENGINE=MyISAM'){
 		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation))){
 			$drop_pre_existing_tables = true;
 		}else{

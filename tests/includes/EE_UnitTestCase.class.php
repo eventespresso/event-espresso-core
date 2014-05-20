@@ -224,6 +224,24 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 	
 	/**
+	 * We really should implement this function in the proper PHPunit style
+	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+	 * @global type $wpdb
+	 * @param string $table_name with or without $wpdb->prefix
+	 * @param string $model_name the model's name (only used for error reporting)
+	 */
+	function assertTableExists($table_name,$model_name = 'Unknown'){
+		global $wpdb;
+		if(strpos($table_name, $wpdb->prefix) !== 0){
+			$table_name = $wpdb->prefix.$table_name;
+		}
+		$exists =  $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
+		if( !$exists ){
+			$this->assertTrue($exists,  sprintf(__("Table like %s does not exist as it was defined on the model %s", 'event_espresso'),$table_name,$model_name));
+		}
+	}
+	
+	/**
 	 * Modifies the $wp_actions global to make it look like certian actions were and weren't
 	 * performed, so that EE_Register_Addon is deceived into thinking it's the right
 	 * time to register an addon etc

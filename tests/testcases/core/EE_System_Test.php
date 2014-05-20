@@ -16,6 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @group core
  */
 class EE_System_Test extends EE_UnitTestCase{
+	protected $_mock_addon_name = 'New_Addon';
 	public function test_detect_request_type(){
 		//we will be playing with this option which might need to persist after the test
 		$original_espresso_db_update= get_option('espresso_db_update');
@@ -130,6 +131,7 @@ class EE_System_Test extends EE_UnitTestCase{
 		EE_System::reset();
 		EE_System::instance()->detect_req_type();
 	}
+	
 	
 	/**
 	 * Sets the wordpress option 'espresso_db_update'

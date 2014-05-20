@@ -21,7 +21,6 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	private $_reg_args;
 	private $_addon_name;
 	static function setUpBeforeClass() {
-		require_once(EE_TESTS_DIR.'mocks/addons/new-addon/EE_New_Addon.class.php');
 		parent::setUpBeforeClass();
 	}
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
