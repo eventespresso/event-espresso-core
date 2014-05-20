@@ -139,6 +139,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertFalse( has_filter('content_save_pre', array( $admin, 'its_eSpresso' ) ) );
 		$this->assertFalse( has_action('admin_notices', array( $admin, 'get_persistent_admin_notices' ) ) );
 		$this->assertFalse( has_action('dashboard_glance_items', array( $admin, 'dashboard_glance_items' ) ) );
+		$this->assertFalse( has_filter( 'get_edit_post_link', array( $admin, 'modify_edit_post_link') ) );
 		//should happen with both conditions
 		$this->assertEquals( has_action('admin_head', array( $admin, 'enable_hidden_ee_nav_menu_metaboxes' ) ), 10 );
 		$this->assertEquals( has_action('admin_head', array( $admin, 'register_custom_nav_menu_boxes' ) ), 10 );
@@ -161,6 +162,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('admin_head', array( $admin, 'enable_hidden_ee_nav_menu_metaboxes' ) ), 10 );
 		$this->assertEquals( has_action('admin_head', array( $admin, 'register_custom_nav_menu_boxes' ) ), 10 );
 		$this->assertEquals( has_filter('nav_menu_meta_box_object', array( $admin, 'remove_pages_from_nav_menu' ) ), 10 );
+		$this->assertEquals( has_filter( 'get_edit_post_link', array( $admin, 'modify_edit_post_link') ), 10 );
 
 		//default should have Admin Page Loader loaded up.
 		$this->assertTrue( class_exists( 'EE_Admin_Page_Loader' ) );
@@ -239,6 +241,35 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		//assert contains eventespresso.com link
 		$this->assertContains('http://eventespresso.com/', $actual);
+	}
+
+
+
+	/**
+	 * Test the filter callback for get_edit_post_link
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_modify_edit_post_link() {
+		//add contact post
+		$attendee = EE_Attendee::new_instance( array( 'ATT_full_name' => 'Test Dude' ) );
+		$attendee->save();
+		$id = $attendee->ID();
+
+		//dummy link for testing
+		$orig_link = 'http://testdummylink.com';
+		EE_Registry::instance()->load_helper('URL');
+		$expected_link = EEH_URL::add_query_args_and_nonce( array( 'action' => 'edit_attendee', 'post' => $id ), admin_url('admin.php?page=espresso_registrations' ) );
+
+		//first test that if the id given doesn't match our post type that the original link is returned.
+		$notmodified = EE_Admin::instance()->modify_edit_post_link( $orig_link, 5555, '' );
+		$this->assertEquals( $orig_link, $notmodified );
+
+		//next test that if the id given matches our post type that the expected link is generated
+		$ismodified = EE_Admin::instance()->modify_edit_post_link( $orig_link, $id, '' );
+
+		$this->assertEquals( $expected_link, $ismodified );
 	}
 
 }
