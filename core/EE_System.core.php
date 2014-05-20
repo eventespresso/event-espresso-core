@@ -601,10 +601,9 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
 		// check for addons using old hookpoint
 		if ( has_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons' )) {
-			if ( is_admin() || ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE )) {
-				$this->_incompatible_addon_error();
-			}
+			$this->_incompatible_addon_error();
 		}
+		$this->_deactivate_incompatible_addons();
 	}
 
 
@@ -627,14 +626,16 @@ final class EE_System {
 			// save list of incompatible addons to wp-options for later use
 			add_option( 'ee_incompatible_addons', $class_names, '', 'no' );
 		}
-		EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		if ( is_admin() ) {
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
 	}
-	
+
 	/**
-	 * Using the information gathered in EE_SYstem::_incompatible_addon_error,
+	 * Using the information gathered in EE_System::_incompatible_addon_error,
 	 * deactivates any addons considered incompatible with the current version of EE
 	 */
-	public function deactivate_incompatible_addons(){
+	private function _deactivate_incompatible_addons(){
 		$incompatible_addons = get_option( 'ee_incompatible_addons', array() );
 		if ( ! empty( $incompatible_addons )) {
 			$active_plugins = get_option( 'active_plugins', array() );
