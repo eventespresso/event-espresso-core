@@ -27,18 +27,12 @@ dependencies:
     #enable xdebug
     # - sed -i 's/^;//' ~/.phpenv/versions/$(phpenv global)/etc/conf.d/xdebug.ini
     #setup WP install
-    # - wget -nv -O /home/ubuntu/wordpress.tar.gz https://github.com/WordPress/WordPress/tarball/$WP_VERSION;
-    # - mkdir -p $WP_CORE_DIR;
-    # - tar --strip-components=1 -zxmf /home/ubuntu/wordpress.tar.gz -C $WP_CORE_DIR;
-    # set up testing suite
     - git clone git://develop.git.wordpress.org/ $WP_TESTS_DIR;
-    - cd $WP_TESTS_DIR && cp wp-tests-config-sample.php wp-tests-config.php && sed -i "s:dirname( __FILE__ ) . '/wordpress/':'$WP_CORE_DIR':" wp-tests-config.php && sed -i "s/yourdbnamehere/wordpress_test/" wp-tests-config.php && sed -i "s/yourusernamehere/root/" wp-tests-config.php && sed -i "s/yourpasswordhere//" wp-tests-config.php;
+    - cd $WP_TESTS_DIR && cp wp-tests-config-sample.php wp-tests-config.php && sed -i "s/yourdbnamehere/wordpress_test/" wp-tests-config.php && sed -i "s/yourusernamehere/root/" wp-tests-config.php && sed -i "s/yourpasswordhere//" wp-tests-config.php;
    # mv plugin into tests/src
    - mv $plugin_loc $plugin_dir;
     # set up database
     - mysql -e 'CREATE DATABASE wordpress_test;' -uroot;
-  # post:
-    #- cd $plugin_tests_dir; wget https://phar.phpunit.de/phpunit.phar;
 
 ##tests override
 test:
