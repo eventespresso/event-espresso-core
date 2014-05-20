@@ -44,7 +44,7 @@ class EE_Register_Config implements EEI_Plugin_API {
 	 */
 	public static function register( $config_class = NULL, $setup_args = array() ) {
 
-		$setup_args['config_name'] = isset( $setup_args['config_name'] ) ? $setup_args['config_name'] : $config_class;
+		$setup_args['config_name'] = isset( $setup_args['config_name'] ) && ! empty( $setup_args['config_name'] ) ? $setup_args['config_name'] : $config_class;
 
 		//required fields MUST be present, so let's make sure they are.
 		if ( empty( $config_class ) || ! is_array( $setup_args ) || empty( $setup_args['config_name'] )) {
@@ -116,7 +116,7 @@ class EE_Register_Config implements EEI_Plugin_API {
 	 * @return array
 	 */
 	public static function set_config_slugs( $addon_slugs ) {
-		foreach( self::$_ee_config_registry as $class_name => $config_name ) {
+		foreach( self::$_ee_config_registry as $config_name ) {
 			$addon_slugs[] = $config_name;
 		}
 		return $addon_slugs;
