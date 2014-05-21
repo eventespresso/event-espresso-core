@@ -112,7 +112,7 @@ class EE_Data_Migration_Manager{
 	/**
 	 *@singleton method used to instantiate class object
 	 *@access public
-	 *@return EE_Data_Migratino_Manager instance
+	 *@return EE_Data_Migration_Manager instance
 	 */	
 	public static function instance() {
 		// check if class object is instantiated
@@ -159,7 +159,7 @@ class EE_Data_Migration_Manager{
 	 * 'ee_data_migration_script_Core.4.1.0' in 4.2 or 'ee_data_migration_script_4.1.0' befor ethat).
 	 * The option name shouldn't ever be like 'ee_data_migration_script_Core.4.1.0.reg' because it's derived, indirectly, from the data migration's classname,
 	 * which should always be like EE_DMS_%s_%d_%d_%d.dms.php (eg EE_DMS_Core_4_1_0.dms.php)
-	 * @param type $option_name (see 
+	 * @param string $option_name (see EE_Data_Migration_Manage::_save_migrations_ran() where the option name is set)
 	 * @return array where the first item is the plugin slug (eg 'Core','Calendar',etc) and the 2nd is the version of that plugin (eg '4.1.0')
 	 */
 	private function _get_plugin_slug_and_version_string_from_dms_option_name($option_name){
@@ -296,7 +296,7 @@ class EE_Data_Migration_Manager{
 		$matches = array();
 		preg_match('~EE_DMS_(.*)_([0-9]*)_([0-9]*)_([0-9]*)~',$classname,$matches);
 		if( ! $matches || ! (isset($matches[1]) && isset($matches[2]) && isset($matches[3]))){
-				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w is either 'Core' or the slug of an addon and x, y and z are numbers, ", "event_espresso"),$migration_script_name));
+				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w is either 'Core' or the slug of an addon and x, y and z are numbers, ", "event_espresso"),$classname));
 		}
 		return array('slug'=>$matches[1],'major_version'=>intval($matches[2]),'minor_version'=>intval($matches[3]),'micro_version'=>intval($matches[4]));
 	}
@@ -553,7 +553,7 @@ class EE_Data_Migration_Manager{
 				'status'=> EE_Data_Migration_Manager::status_fatal_error,
 				'message'=> sprintf(__("Unknown fatal error occurred: %s", "event_espresso"),$e->getMessage()),
 				'script'=>'Unknown');
-			$this->add_error_to_migrations_ran($e->getMessage."; Stack trace:".$e->getTraceAsString());
+			$this->add_error_to_migrations_ran($e->getMessage()."; Stack trace:".$e->getTraceAsString());
 		}
 		$warnings_etc = '';
 		$warnings_etc = @ob_get_contents();
@@ -666,22 +666,23 @@ class EE_Data_Migration_Manager{
 			foreach($migrations_ran_for_plugin as $version_string => $array_or_migration_obj){
 	//			echo "saving migration script to $version_string<br>";
 				$plugin_slug_for_use_in_option_name = $plugin_slug.".";
-				$old_option_value = get_option(self::data_migration_script_mapping_option_prefix.$plugin_slug_for_use_in_option_name.$version_string);
+				$option_name = self::data_migration_script_option_prefix.$plugin_slug_for_use_in_option_name.$version_string;
+				$old_option_value = get_option($option_name);
 				if($array_or_migration_obj instanceof EE_Data_Migration_Script_Base){
 					$script_array_for_saving = $array_or_migration_obj->properties_as_array();
 					if( $old_option_value != $script_array_for_saving){
-						$successful_updates = update_option(self::data_migration_script_option_prefix.$plugin_slug_for_use_in_option_name.$version_string,$script_array_for_saving);
+						$successful_updates = update_option($option_name,$script_array_for_saving);
 					}
 				}else{//we don't know what this array-thing is. So just save it as-is
 	//				$array_of_migrations[$version_string] = $array_or_migration_obj;
 					if($old_option_value != $array_or_migration_obj){
-						$successful_updates = update_option(self::data_migration_script_option_prefix.$plugin_slug_for_use_in_option_name.$version_string,$array_or_migration_obj);
+						$successful_updates = update_option($option_name,$array_or_migration_obj);
 					}
 				}
-	//			if( ! $successful_updates ){
-	//					global $wpdb;
-	//				return $wpdb->last_error;
-	//			}
+				if( ! $successful_updates ){
+					global $wpdb;
+					return $wpdb->last_error;
+				}
 			}
 		}	
 		return true;

@@ -53,6 +53,11 @@ final class EE_System {
 	 * TODO  will detect that EE has been DOWNGRADED. We probably don't want to run in this case...
 	 */
 	const req_type_downgrade = 4;
+	
+	/**
+	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
+	 */
+	const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 
 	/**
 	 * Stores which type of request this is, options being one of the constants on EE_System starting with req_type_*.
@@ -550,7 +555,6 @@ final class EE_System {
 	 *                            but still know if this is a new install or not
 	 * @return int one of the consts on EE_System::req_type_
 	 */
-	const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 	public function detect_req_type( $espresso_db_update = NULL ){
 
 		if ( $this->_req_type === NULL ){
