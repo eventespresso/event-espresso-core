@@ -2045,13 +2045,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
 
 
-		if ( $delete ) {
+		if ( $delete && !empty( $id ) ) {
 			$delete = is_bool($delete) ? 'delete' : $delete; //make sure we have a default if just true is sent.
 			$delete_link_args = array( $name => $id );
 			$delete = $this->get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
 		}
 
-		$this->_template_args['publish_delete_link'] = $delete;
+		$this->_template_args['publish_delete_link'] = !empty( $id ) ? $delete : '';
 		// create hidden id field for what is being saved
 		$hidden_field_arr[$name] = array(
 			'type' => 'hidden',
