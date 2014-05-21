@@ -17,15 +17,15 @@
 
 	/**
 	 * espresso_event_reg_button
-	 * returns the "Register Now" button if event is active, 
+	 * returns the "Register Now" button if event is active,
 	 * an inactive button like status banner if the event is not active
  	 * or a "Read More" button if so desired
-	 * 
+	 *
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_reg_button' )) {
 		function espresso_event_reg_button( $btn_text_if_active = NULL, $btn_text_if_inactive = FALSE, $EVT_ID = FALSE ) {
-			$event_status = EEH_Event_View::event_active_status( $EVT_ID );	
+			$event_status = EEH_Event_View::event_active_status( $EVT_ID );
 			switch ( $event_status ) {
 				case EE_Datetime::sold_out :
 					$btn_text = __('Sold Out', 'event_espresso');
@@ -40,7 +40,7 @@
 					$class = 'ee-grey';
 					break;
 				case EE_Datetime::upcoming :
-				case EE_Datetime::active : 
+				case EE_Datetime::active :
 				default :
 					$btn_text =! empty( $btn_text_if_active ) ? $btn_text_if_active : __( 'Register Now', 'event_espresso' );
 					$class = 'ee-green';
@@ -48,13 +48,13 @@
 			if ( $event_status < 1 && ! empty( $btn_text_if_inactive )) {
 				$btn_text = $btn_text_if_inactive;
 				$class = 'ee-grey';
-			} 
+			}
 			?>
 			<a class="ee-button ee-register-button <?php echo $class; ?>" href="<?php espresso_event_link_url(); ?>">
-				<?php echo $btn_text; ?>								
+				<?php echo $btn_text; ?>
 			</a>
 			<?php
-		}		
+		}
 	}
 
 
@@ -62,13 +62,13 @@
 	/**
 	 * espresso_display_ticket_selector
 	 * whether or not to display the Ticket Selector for an event
-	* 
+	*
 	 * @return boolean
 	 */
 	if ( ! function_exists( 'espresso_display_ticket_selector' )) {
 		function espresso_display_ticket_selector( $EVT_ID = FALSE ) {
 			return EEH_Event_View::display_ticket_selector( $EVT_ID );
-		}		
+		}
 	}
 
 
@@ -76,20 +76,20 @@
 	/**
 	 * espresso_event_status
 	 * returns a banner showing the event status if it is sold out, expired, or inactive
-	* 
+	*
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_status_banner' )) {
 		function espresso_event_status_banner( $EVT_ID = FALSE ) {
 			return EEH_Event_View::event_status( $EVT_ID );
-		}		
+		}
 	}
 
 
 	/**
 	 * espresso_event_status
 	 * returns the event status if it is sold out, expired, or inactive
-	* 
+	*
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_status' )) {
@@ -98,15 +98,15 @@
 				echo EEH_Event_View::event_active_status( $EVT_ID );
 			} else {
 				return EEH_Event_View::event_active_status( $EVT_ID );
-			}			
-		}		
+			}
+		}
 	}
 
 
 	/**
 	 * espresso_event_categories
 	 * returns the terms associated with an event
-	* 
+	*
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_categories' )) {
@@ -116,14 +116,14 @@
 			} else {
 				return EEH_Event_View::event_categories( $EVT_ID, $hide_uncategorized );
 			}
-		}		
+		}
 	}
 
 
 	/**
 	 * espresso_event_tickets_available
 	* returns the ticket types available for purchase for an event
-	* 
+	*
 	 * @return object
 	 */
 	if ( ! function_exists( 'espresso_event_tickets_available' )) {
@@ -133,7 +133,7 @@
 				$html = $format ? '<ul id="ee-event-tickets-ul-' . $EVT_ID . '" class="ee-event-tickets-ul">' : '';
 				foreach ( $tickets as $ticket ) {
 					$html .= $format ? '<li id="ee-event-tickets-li-' . $ticket->ID() . '" class="ee-event-tickets-li">' : '';
-					$html .= $format ? $ticket->name() . ' ' . EEH_Template::format_currency( $ticket->get_ticket_total_with_taxes() ) : $ticket;	
+					$html .= $format ? $ticket->name() . ' ' . EEH_Template::format_currency( $ticket->get_ticket_total_with_taxes() ) : $ticket;
 					$html .= $format ? '</li>' : ', ';
 				}
 				$html .= $format ? '</ul>' : '';
@@ -143,39 +143,39 @@
 					return $html;
 				}
 			}
-		}		
+		}
 	}
 
 	/**
 	 * espresso_event_date
 	* returns the primary date object for an event
-	* 
+	*
 	 * @return object
 	 */
 	if ( ! function_exists( 'espresso_event_date_obj' )) {
 		function espresso_event_date_obj( $EVT_ID = FALSE ) {
 			return EEH_Event_View::get_primary_date_obj( $EVT_ID );
-		}		
+		}
 	}
 
 
 	/**
-	 * espresso_event_date 
+	 * espresso_event_date
 	* returns the primary date for an event
-	* 
+	*
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_date' )) {
 		function espresso_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
 			echo date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID )));
-		}		
+		}
 	}
 
 
 	/**
 	 * espresso_list_of_event_dates
 	* returns a unordered list of dates for an event
-	* 
+	*
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_list_of_event_dates' )) {
@@ -216,7 +216,7 @@
 			} else {
 				return $html;
 			}
-		}		
+		}
 	}
 
 
@@ -229,7 +229,7 @@
 	if ( ! function_exists( 'espresso_event_end_date' )) {
 		function espresso_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
 			echo date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID )));
-		}		
+		}
 	}
 
 	/**
@@ -247,7 +247,7 @@
 			} else {
 				echo date_i18n( $single_dt_frmt . ' ' . $single_tm_frmt, strtotime( EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt, $EVT_ID )));
 			}
-		}		
+		}
 	}
 
 
@@ -260,14 +260,14 @@
 	if ( ! function_exists( 'espresso_event_date_as_calendar_page' )) {
 		function espresso_event_date_as_calendar_page( $EVT_ID = FALSE ) {
 			EEH_Event_View::event_date_as_calendar_page( $EVT_ID );
-		}		
+		}
 	}
 
 
 
 
 	/**
-	 * espresso_event_link_url	 
+	 * espresso_event_link_url
 	 *
 	 * @return string
 	 */
@@ -278,7 +278,7 @@
 			} else {
 				return EEH_Event_View::event_link_url( $EVT_ID );
 			}
-		}		
+		}
 	}
 
 
@@ -299,7 +299,7 @@
 
 
 	/**
-	 * espresso_event_content_or_excerpt	 
+	 * espresso_event_content_or_excerpt
 	 *
 	 * @return string
 	 */
@@ -310,13 +310,13 @@
 			} else {
 				return EEH_Event_View::event_content_or_excerpt( $num_words, $more );
 			}
-		}		
+		}
 	}
 
 
 
 	/**
-	 * espresso_event_phone	 
+	 * espresso_event_phone
 	 *
 	 * @return string
 	 */
@@ -327,13 +327,13 @@
 			} else {
 				return EEH_Event_View::event_phone( $EVT_ID );
 			}
-		}		
+		}
 	}
 
 
 
 	/**
-	 * espresso_edit_event_link	 
+	 * espresso_edit_event_link
 	 * returns a link to edit an event
 	 *
 	 * @return string
@@ -345,7 +345,7 @@
 			} else {
 				return EEH_Event_View::edit_event_link( $EVT_ID );
 			}
-		}		
+		}
 	}
 
 
@@ -356,7 +356,7 @@
 	if ( ! function_exists( 'espresso_organization_name' )) {
 		function espresso_organization_name() {
 			echo EE_Registry::instance()->CFG->organization->name;
-		}		
+		}
 	}
 
 	/**
@@ -375,7 +375,7 @@
 				EE_Registry::instance()->CFG->organization->zip
 			);
 			return EEH_Address::format( $address, $type );
-		}		
+		}
 	}
 
 	/**
@@ -385,7 +385,7 @@
 	if ( ! function_exists( 'espresso_organization_email' )) {
 		function espresso_organization_email() {
 			echo EE_Registry::instance()->CFG->organization->email;
-		}		
+		}
 	}
 
 	/**
@@ -395,7 +395,7 @@
 	if ( ! function_exists( 'espresso_organization_logo_url' )) {
 		function espresso_organization_logo_url() {
 			echo EE_Registry::instance()->CFG->organization->logo_url;
-		}		
+		}
 	}
 
 	/**
@@ -405,7 +405,7 @@
 	if ( ! function_exists( 'espresso_organization_facebook' )) {
 		function espresso_organization_facebook() {
 			echo EE_Registry::instance()->CFG->organization->facebook;
-		}		
+		}
 	}
 
 	/**
@@ -415,7 +415,7 @@
 	if ( ! function_exists( 'espresso_organization_twitter' )) {
 		function espresso_organization_twitter() {
 			echo EE_Registry::instance()->CFG->organization->twitter;
-		}		
+		}
 	}
 
 	/**
@@ -425,7 +425,7 @@
 	if ( ! function_exists( 'espresso_organization_linkedin' )) {
 		function espresso_organization_linkedin() {
 			echo EE_Registry::instance()->CFG->organization->linkedin;
-		}		
+		}
 	}
 
 	/**
@@ -435,7 +435,7 @@
 	if ( ! function_exists( 'espresso_organization_pinterest' )) {
 		function espresso_organization_pinterest() {
 			echo EE_Registry::instance()->CFG->organization->pinterest;
-		}		
+		}
 	}
 
 	/**
@@ -445,7 +445,7 @@
 	if ( ! function_exists( 'espresso_organization_google' )) {
 		function espresso_organization_google() {
 			echo EE_Registry::instance()->CFG->organization->google;
-		}		
+		}
 	}
 
 	/**
@@ -455,7 +455,7 @@
 	if ( ! function_exists( 'espresso_organization_instagram' )) {
 		function espresso_organization_instagram() {
 			echo EE_Registry::instance()->CFG->organization->instagram;
-		}		
+		}
 	}
 
 
@@ -469,7 +469,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/core/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -536,7 +536,7 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function event_status( $EVT_ID = FALSE ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
-		return $event instanceof EE_Event ? $event->pretty_active_status( FALSE, FALSE ) : '';
+		return $event instanceof EE_Event ? $event->pretty_active_status( FALSE ) : '';
 	}
 
 
@@ -569,7 +569,7 @@ class EEH_Event_View extends EEH_Base {
 		if ( is_archive() && ! ( espresso_display_full_description_in_event_list() || espresso_display_excerpt_in_event_list() )) {
 			$has_content_or_excerpt = FALSE;
 		}
-		return $has_content_or_excerpt;		
+		return $has_content_or_excerpt;
 	}
 
 
@@ -584,7 +584,7 @@ class EEH_Event_View extends EEH_Base {
 
 		global $post;
 		$content = '';
-		
+
 		ob_start();
 		if (( is_single() ) || ( is_archive() && espresso_display_full_description_in_event_list() )) {
 //echo '<h2 style="color:#E76700;">the_content<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
@@ -602,13 +602,13 @@ class EEH_Event_View extends EEH_Base {
 				$content = str_replace( 'NOMORELINK', '', get_the_content( 'NOMORELINK' ));
 				$content =  wp_trim_words( $content, $num_words, ' ' ) . $more;
 			} else {
-				$content =  get_the_content();				
+				$content =  get_the_content();
 			}
 			echo apply_filters( 'the_content', $content );
 
 		} else {
 //echo '<h2 style="color:#E76700;">nothing<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
-			echo apply_filters( 'the_content', $content );			
+			echo apply_filters( 'the_content', $content );
 		}
 		return ob_get_clean();
 	}
@@ -627,7 +627,7 @@ class EEH_Event_View extends EEH_Base {
 		if( $event instanceof EE_Event ) {
 			foreach( EEH_Event_View::get_all_date_obj( $EVT_ID, FALSE ) as $datetime ) {
 				$tickets_available_for_purchase = array_merge( $tickets_available_for_purchase, $datetime->ticket_types_available_for_purchase() );
-			}			
+			}
 		}
 		return $tickets_available_for_purchase;
 	}
@@ -651,11 +651,11 @@ class EEH_Event_View extends EEH_Base {
 					$url = get_term_link( $term, 'espresso_venue_categories' );
 					if ( ! is_wp_error( $url ) && (( $hide_uncategorized && strtolower( $term->name ) != __( 'uncategorized', 'event_espresso' )) || ! $hide_uncategorized )) {
 						$category_links[] = '<a href="' . esc_url( $url ) . '" rel="tag">' . $term->name . '</a>';
-					}					
+					}
 				}
 			}
-		}		
-		return implode( ', ', $category_links );		
+		}
+		return implode( ', ', $category_links );
 	}
 
 
@@ -670,7 +670,7 @@ class EEH_Event_View extends EEH_Base {
 	public static function the_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
 		if ( $datetime = EEH_Event_View::get_primary_date_obj( $EVT_ID )) {
 			return $datetime->start_date_and_time( $dt_frmt, $tm_frmt );
-		}		
+		}
 	}
 
 
@@ -684,7 +684,7 @@ class EEH_Event_View extends EEH_Base {
 	public static function the_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
 		if ( $datetime = EEH_Event_View::get_last_date_obj( $EVT_ID )) {
 			return $datetime->end_date_and_time( $dt_frmt, $tm_frmt );
-		}		
+		}
 	}
 
 
@@ -702,7 +702,7 @@ class EEH_Event_View extends EEH_Base {
 			<div class="event-date-calendar-page-month-dv"><?php echo date_i18n( 'M', strtotime( $datetime->start_date()));?></div>
 			<div class="event-date-calendar-page-day-dv"><?php echo $datetime->start_date( 'd' );?></div>
 		</div>
-	<?php	
+	<?php
 		}
 	}
 
@@ -722,7 +722,7 @@ class EEH_Event_View extends EEH_Base {
 			return reset( $datetimes );
 		} else {
 			 return FALSE;
-		} 
+		}
 	}
 
 
@@ -776,7 +776,7 @@ class EEH_Event_View extends EEH_Base {
 	 * 	event_link_url
 	 *
 	 *  @access 	public
-	 *  @param	string $text 
+	 *  @param	string $text
 	 *  @return 	string
 	 */
 	public static function event_link_url( $EVT_ID = FALSE ) {
@@ -794,7 +794,7 @@ class EEH_Event_View extends EEH_Base {
 	 * 	event_phone
 	 *
 	 *  @access 	public
-	 *  @param	string $text 
+	 *  @param	string $text
 	 *  @return 	string
 	 */
 	public static function event_phone( $EVT_ID = FALSE ) {
@@ -829,8 +829,8 @@ class EEH_Event_View extends EEH_Base {
 				$post_type_obj = get_post_type_object( 'espresso_events' );
 				// build final link html
 				$link = '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr( $post_type_obj->labels->edit_item ) . '">' . $link . '</a>';
-				// put it all together 
-				return $before . apply_filters( 'edit_post_link', $link, $event->ID() ) . $after;			
+				// put it all together
+				return $before . apply_filters( 'edit_post_link', $link, $event->ID() ) . $after;
 			}
 		}
 	}
@@ -846,14 +846,14 @@ class EEH_Event_View extends EEH_Base {
 	 */
 //	public static function event_desc( ) {
 //			global $post;
-//			
+//
 //	}
 
 
 
 	/**
 	 * 	extract_event_IDs_from_WP_Query
-	 * 	given a WP_Query object, this method will get the EVT_IDs for all event CPT posts 
+	 * 	given a WP_Query object, this method will get the EVT_IDs for all event CPT posts
 	 *
 	 *  @access 	public
 	 *  @param 	array	$EVT_IDs an array of Event IDs
@@ -871,7 +871,7 @@ class EEH_Event_View extends EEH_Base {
 //			}
 //		}
 //		return $EVT_IDs;
-//	}	
+//	}
 
 
 
@@ -884,7 +884,7 @@ class EEH_Event_View extends EEH_Base {
 	 *  @return 	string
 	 */
 //	public static function get_datetimes_for_events( $EVT_IDs = array() ) {
-//		
+//
 //		if ( ! is_array( $EVT_IDs )) {
 //			$EVT_IDs = array( absint( $EVT_IDs ));
 //		}
@@ -895,14 +895,14 @@ class EEH_Event_View extends EEH_Base {
 //		$datetimes = is_array( $datetimes ) ? $datetimes : array();
 ////		printr( $datetimes, '$datetimes  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		return $datetimes;
-//	}	
+//	}
 
 
 
 
 	/**
 	 * 	add_event_datetimes_and_tickets_to_WP_Query
-	 *	efficiently adds event datetimes and event tickets to WP_Query event CPT posts 
+	 *	efficiently adds event datetimes and event tickets to WP_Query event CPT posts
 	 *
 	 *  @access 	public
 	 *  @param 	WP_Query	$wp_query
@@ -926,7 +926,7 @@ class EEH_Event_View extends EEH_Base {
 //			}
 //		}
 //		return $wp_query;
-//	}	
+//	}
 
 
 	/**
@@ -946,10 +946,10 @@ class EEH_Event_View extends EEH_Base {
 //				$datetimes = EEH_Event_View::get_datetimes_for_events( $EVT_IDs );
 //				// now put it all together
 //				$wp_query = EEH_Event_View::add_event_datetimes_and_tickets_to_WP_Query( $wp_query, $datetimes );
-//			}					
+//			}
 //		}
 //		return $wp_query;
-//	}	
+//	}
 
 
 
