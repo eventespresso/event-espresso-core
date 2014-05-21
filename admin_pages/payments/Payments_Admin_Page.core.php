@@ -346,13 +346,13 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	 * @param EE_Payment_Method_Form $form_section
 	 */
 	protected function _simplify_form($form_section){
-		//we don't want them to be monkeying with the type or activeness
 		$form_section->exclude(array(
-			'PMD_type',
-			'PMD_order',
-			'PMD_slug',
-			'PRC_ID',
-			'PMD_wp_user_id',
+			'PMD_type',//dont want them chaning the type
+			'PMD_order',//or the order, for now
+			'PMD_slug',//or the slug (probably never)
+			'PRC_ID',//or the price surcharge (will probably change soon)
+			'PMD_wp_user_id',//or the user's ID
+			'Currency'//or the currency, until the rest of EE supports simultaneous currencies
 		));
 
 	}
