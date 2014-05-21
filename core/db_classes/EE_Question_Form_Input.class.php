@@ -221,9 +221,9 @@ class EE_Question_Form_Input {
 	 */
 	public function get( $property = NULL ){
 		if ( ! empty( $property )) {
-			if ( $this->_question_form_input_property_exists( 'EE_Question', '_' . $property )) {
+			if ( EEM_Question::instance()->has_field($property)) {
 				return $this->_QST->get( $property );
-			} else if ( $this->_question_form_input_property_exists( 'EE_Answer', '_' . $property )) {
+			} else if (EEM_Answer::instance()->has_field($property)) {
 				return $this->_ANS->get( $property );
 			} else if  ( $this->_question_form_input_property_exists( __CLASS__, $property )) {
 				return $this->{$property};
@@ -242,12 +242,13 @@ class EE_Question_Form_Input {
 	 * @return void
 	 */
 	public function set( $property = NULL, $value = NULL ){
-		if ( ! empty( $property )) {					
-			if ( $this->_question_form_input_property_exists( 'EE_Question', '_' . $property )) {
+		if ( ! empty( $property )) {
+			if ( EEM_Question::instance()->has_field($property)) {
 				return $this->_QST->set( $property, $value );
-			} else if ( $this->_question_form_input_property_exists( 'EE_Answer', '_' . $property )) {
+			} else if (EEM_Answer::instance()->has_field($property) ) {
 				return $this->_ANS->set( $property, $value );
 			} else if ( $this->_question_form_input_property_exists(  __CLASS__, $property )) {
+				echo "<hr>$property is a prop of QFI";
 				$this->{$property} = $value;
 				return TRUE;
 			}

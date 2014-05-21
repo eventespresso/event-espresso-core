@@ -330,7 +330,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return boolean success
 	 */
 	public function add_temp_option( EE_Question_Option $option ){
-		return $this->_model_relations['Question_Option'][] = $option;
+		$this->_model_relations['Question_Option'][] = $option;
+		return true;
 	}
 	/**
 	 * Marks the option as deleted.
