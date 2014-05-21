@@ -54,8 +54,6 @@ class EE_Payment_Method extends EE_Base_Class{
 	protected $_PMD_open_by_default = NULL;
 	/** Button URL @var PMD_button_url*/ 
 	protected $_PMD_button_url = NULL;
-	/** Preferred Currency @var PMD_preferred_currency*/ 
-	protected $_PMD_preferred_currency = NULL;
 	/** @var $_PMD_scope
 	 */
 	protected $_PMD_scope = NULL;
@@ -260,22 +258,6 @@ class EE_Payment_Method extends EE_Base_Class{
 	 */
 	function set_order($order) {
 		return $this->set('PMD_order', $order);
-	}
-	/**
-	 * Gets preferred_currency
-	 * @return string
-	 */
-	function preferred_currency() {
-		return $this->get('PMD_preferred_currency');
-	}
-
-	/**
-	 * Sets preferred_currency
-	 * @param string $preferred_currency
-	 * @return boolean
-	 */
-	function set_preferred_currency($preferred_currency) {
-		return $this->set('PMD_preferred_currency', $preferred_currency);
 	}
 	/**
 	 * Gets slug

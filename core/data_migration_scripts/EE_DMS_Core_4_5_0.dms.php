@@ -292,7 +292,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				PMD_wp_user_id int(11) NOT NULL DEFAULT '0',
 				PMD_open_by_default tinyint(1) NOT NULL DEFAULT '0',
 				PMD_button_url varchar(1012) DEFAULT NULL,
-				PMD_preferred_currency varchar(10) DEFAULT NULL,
 				PMD_scope VARCHAR(255) NULL DEFAULT 'frontend',
 				PRIMARY KEY  (PMD_ID),
 				UNIQUE KEY PMD_slug_UNIQUE (PMD_slug)";

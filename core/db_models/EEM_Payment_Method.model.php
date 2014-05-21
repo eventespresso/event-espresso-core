@@ -88,7 +88,6 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_wp_user_id'=>new EE_Integer_Field('PMD_wp_user_Id', __("User ID", 'event_espresso'), false, 1),
 				'PMD_open_by_default'=>new EE_Boolean_Field('PMD_open_by_default', __("Open by Default?", 'event_espresso'), false, false),
 				'PMD_button_url'=>new EE_Plain_Text_Field('PMD_button_url', __("Button URL", 'event_espresso'), true,''),
-				'PMD_preferred_currency'=>new EE_Plain_Text_Field('PMD_preferred_currency', __("Preferred Currency", 'event_espresso'), false, 'USD'),
 				'PMD_scope'=>new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'), false,array('frontend')),//possible values currently are 'frontend','admin','api'
 				
 			)
