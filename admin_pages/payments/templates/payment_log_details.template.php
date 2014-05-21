@@ -72,7 +72,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 					</label>
 				</th>
 				<td>
-					<?php echo $payment_log->e('LOG_message');//EEH_Template::layout_array_as_table($payment_log->content())?>
+					<?php echo $payment_log->e('LOG_message','as_table');//EEH_Template::layout_array_as_table($payment_log->content())?>
 				</td>
 			</tr>
 		</tbody>

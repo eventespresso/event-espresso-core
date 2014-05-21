@@ -235,16 +235,11 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 					'PaymentDetails' => $PaymentDetails,
 					'OrderItems' => $order_items,
 			);
-			$this->log("PaypalPro Request Data:".print_r($PayPalRequestData,true), $transaction);
+			$this->_log_clean_request($PayPalRequestData, $transaction);
 			try{
 				$PayPalResult = $this->prep_and_curl_request($PayPalRequestData);
 				//remove PCI-sensitive data so it doesn't get stored
-				unset($PayPalResult['REQUESTDATA']['CREDITCARDTYPE']);
-				unset($PayPalResult['REQUESTDATA']['ACCT']);
-				unset($PayPalResult['REQUESTDATA']['EXPDATE']);
-				unset($PayPalResult['REQUESTDATA']['CVV2']);
-				unset($PayPalResult['RAWREQUEST']);
-				$this->log("PaypalPro Response Data (cleaned):".print_r($PayPalResult,true),$transaction);
+				$PayPalResult = $this->_log_clean_response($PayPalResult,$transaction);
 				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
 				if($this->_APICallSuccessful($PayPalResult)){
 					$payment->set_status($this->_pay_model->approved_status());
@@ -264,6 +259,33 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 				$payment->set_gateway_response($e->getMessage());
 				return $payment;
 			}
+	}
+	/**
+	 * CLeans out sensitive CC data and then logs it, and returns the cleaned request
+	 * @param array $request
+	 * @param EEI_Transaction $transaction
+	 * @return array
+	 */
+	private function _log_clean_request($request,$transaction){
+		$cleaned_request_data = $request;
+		unset($cleaned_request_data['CCDetails']['acct']);
+		unset($cleaned_request_data['CCDetails']['cvv2']);
+		$this->log(array('Paypal Request'=>$cleaned_request_data), $transaction);
+	}
+	/**
+	 * Cleans the response, logs it, and returns it
+	 * @param array $response
+	 * @param EEI_Transaction $transaction
+	 * @return array cleaned
+	 */
+	private function _log_clean_response($response,$transaction){
+		unset($response['REQUESTDATA']['CREDITCARDTYPE']);
+		unset($response['REQUESTDATA']['ACCT']);
+		unset($response['REQUESTDATA']['EXPDATE']);
+		unset($response['REQUESTDATA']['CVV2']);
+		unset($response['RAWREQUEST']);
+		$this->log(array('Paypal Response'=>$response),$transaction);
+		return $response;
 	}
 	private function prep_and_curl_request($DataArray) {
 		// Create empty holders for each portion of the NVP string
