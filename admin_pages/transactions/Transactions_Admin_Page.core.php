@@ -820,7 +820,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			//update the transaction with this payment
-			if( $payment->apply_payment_to_transaction( TRUE ) ){
+			if( $payment->apply_payment_to_transaction() ){
 				$msg =__('The payment has been processed succesfully.', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}else{
