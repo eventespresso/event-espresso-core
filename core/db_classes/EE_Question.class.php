@@ -21,121 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
 class EE_Question extends EE_Soft_Delete_Base_Class{
-
-
-	/**
-	 * question's id
-	 * @access protected
-	 * @var int
-	 */
-	protected $_QST_ID=FALSE;
-
-
-	/**
-	 * how the question is displayed.eg, "What is your name?"
-	 * @access protected
-	 * @var string
-	 */
-	protected $_QST_display_text=NULL;
-
-
-	/**
-	 * An administrative label to help differentiate between two questions that have the same display text
-	 * @access protected
-	 * @var string
-	 */
-	protected $_QST_admin_label=NULL;
-
-
-	/**
-	 * If it's a system name, the column of the attendee column to which this question corresponds
-	 * @access protected
-	 * @var string
-	 */
-	protected $_QST_system=NULL;
-
-
-	/**
-	 * Whether the question's textfield, radio button list, etc.
-	 * valid values are: TEXT, TEXTAREA, SINGLE, DROPDOWN, MULTIPLE, DATE
-	 * @access protected
-	 * @var string
-	 */
-	protected $_QST_type=NULL;
-
-
-	/**
-	 * Indictes whether the question must be answered if presented in a form
-	 * @access protected
-	 * @var boolean
-	 */
-	protected $_QST_required=NULL;
-
-
-	/**
-	 *Text to show when the field isn't entered in a form when it's required
-	 * @access protected
-	 * @var string
-	 */
-	protected $_QST_required_text=NULL;
-
-
-	/**
-	 * Number to indicate where this question ought to appear in the order of questions
-	 * @access protected
-	 * @var int
-	 */
-	protected $_QST_order=NULL;
-
-
-	/**
-	 * Indicates whether this question is for administrators only
-	 * @access protected
-	 * @var boolena
-	 */
-	protected $_QST_admin_only=NULL;
-
-	/**
-	 *
-	 * ID of the WP USEr who created this question
-	 * @access protected
-	 * @var int
-	 */
-	protected $_QST_wp_user=NULL;
-
-	/**
-	 * Boolean to indicate whether this question
-	 * has been deleted or not
-	 * @access private
-	 * @var boolean
-	 */
-	protected $_QST_deleted=NULL;
-
-	/**
-	 * realted answers, lazy-loaded
-	 * @var EE_Answer[]
-	 */
-	protected $_Answer;
-
-	/**
-	 * related question groups, lazy-loaded
-	 * @var EE_Question_Group[]
-	 */
-	protected $_Question_Group;
-
-	/**
-	 * related question options, lazy-loaded
-	 * @var EE_Question_Option[]
-	 */
-	protected $_Question_Option;
-
-
-	protected $_Question_Group_Question; //for QST_order relation
-
-
-
 
 
 	public static function new_instance( $props_n_values = array() ) {
@@ -144,15 +30,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 		return $has_object ? $has_object : new self( $props_n_values );
 	}
 
-
-
-
 	public static function new_instance_from_db ( $props_n_values = array() ) {
 		return new self( $props_n_values, TRUE );
 	}
-
-
-
 
 	/**
 	*		Set	Question display text
@@ -433,7 +313,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return boolean success
 	 */
 	public function temp_options(){
-		return $this->_Question_Option;
+		return $this->_model_relations['Question_Option'];
 	}
 	/**
 	 * Adds an option for this question. Note: if the option were previously associted with a different
@@ -450,7 +330,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class{
 	 * @return boolean success
 	 */
 	public function add_temp_option( EE_Question_Option $option ){
-		return $this->_Question_Option[] = $option;
+		return $this->_model_relations['Question_Option'][] = $option;
 	}
 	/**
 	 * Marks the option as deleted.

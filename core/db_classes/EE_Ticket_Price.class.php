@@ -24,51 +24,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  */
 class EE_Ticket_Price extends EE_Base_Class{
 
-
-
-	/**
-	 * Primary Key for Ticket Price
-	 * @var int
-	 */
-	protected $_TKP_ID;
-
-
-
-	/**
-	 * Foreign Key to related Ticket
-	 * @var int
-	 */
-	protected $_TKT_ID;
-
-
-
-
-	/**
-	 * Foreign Key to related Price
-	 * @var int
-	 */
-	protected $_PRC_ID;
-
-
-	//related objects
-	
-	/**
-	 * Related Ticket object
-	 * @var EE_Ticket
-	 */
-	protected $_Ticket;
-
-
-
-
-	/**
-	 * Related Price object
-	 * @var EE_Price
-	 */
-	protected $_Price;
-
-
-
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );

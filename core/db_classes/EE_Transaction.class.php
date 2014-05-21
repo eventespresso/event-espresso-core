@@ -21,95 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once( EE_CLASSES . 'EE_Base_Class.class.php');
 class EE_Transaction extends EE_Base_Class{
-
-    /**
-    *	Transaction ID
-	*
-	* 	primary key
-	*
-	* 	@access	protected
-    *	@var int
-    */
-	protected $_TXN_ID = FALSE;
-
-
-
-
-    /**
-    *	Timestamp
-	*
-	*	date / time
-	*
-	*	@access	protected
-    *	@var timestamp
-    */
-	protected $_TXN_timestamp = NULL;
-
-
-
-    /**
-    *	Total Cost for Transaction
-	*
-	* 	note: always use Decimal(10,2) as SQL type for money
-	*
-	*	@access	protected
-    *	@var float
-    */
-	protected $_TXN_total = 0;
-
-
-
-    /**
-    *	Total Amount Paid to Date
-	*
-	* 	note: always use Decimal(10,2) as SQL type for money
-	*
-	*	@access	protected
-    *	@var float
-    */
-	protected $_TXN_paid = 0;
-
-
-    /**
-    *	Transaction Status
-	*
-	*	foreign key from status type table - 3 character string
-	*
-	*	@access	protected
-    *	@var string
-    */
-	protected $_STS_ID = NULL;
-
-
-
-
-	/**
-	*	session data
-	*
-	*	EE_Session session_data array from when this txn was generated
-	*
-	*	@access	protected
-	*	@var array
-	*/
-	protected $_TXN_session_data = NULL;
-
-
-
-    /**
-    *	Hash Salt
-	*
-    *	required for some payment gateways
-	*
-	*	@access	protected
-    *	@var string
-    */
-	protected $_TXN_hash_salt = NULL;
-
-
-
-
 
     /**
     *	datetime format
@@ -120,40 +32,6 @@ class EE_Transaction extends EE_Base_Class{
     *	@var string
     */
 	private $dt_frmt = 'F j, Y g:i a';
-
-
-	/**
-	 * Registrations on this transaction
-	 * @var EE_Registration[]
-	 */
-	protected $_Registration = NULL;
-
-
-
-	/**
-	 * Payments for this transaction
-	 * @var EE_Payment[]
-	 */
-	protected $_Payment = NULL;
-
-
-	/**
-	 *
-	 * @var EE_Status
-	 */
-	protected $_Status = NULL;
-
-
-
-	/**
-	 * All the line items associated with this transaction. Note: the line item of type 'total'
-	 * is the most important one, and should eb the parent of all other line items
-	 * (meaning it is the result of all the other line items)
-	 * @var EE_Line_Item[]
-	 */
-	protected $_Line_Item = NULL;
-
-
 
 	/**
 	 *

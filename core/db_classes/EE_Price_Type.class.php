@@ -23,67 +23,6 @@
  */
 class EE_Price_Type extends EE_Soft_Delete_Base_Class{
 
-	/**
-	*	Price Type ID
-	* 	primary key
-	*
-	* 	@access	protected
-	*		@var int
-	*/
-	protected $_PRT_ID = FALSE;
-
-	/**
-	*	Price Type name
-	*
-	*	@access	protected
-	*	@var string
-	*/
-	protected $_PRT_name = NULL;
-
-	/**
-	*	Price Base Type ID
-	* 	1 = Base Price , 2 = Discount , 3 = Surcharge , 4 = Tax
-	*
-	*	@access	protected
-	*	@var int
-	*/
-	protected $_PBT_ID = NULL;
-
-
-
-  /**
-  *	Price type a percentage?
-	*
-	*	@access	protected
-  *	@var bool
-  */
-	protected $_PRT_is_percent = NULL;
-
-
-	/**
-	*	Price type order
-	*
-	*	@access	protected
-	*	@var int
-	*/
-	protected $_PRT_order = NULL;
-
-	/**
-	*	is Price type deleted
-	*
-	*	@access	protected
-	*	@var int
-	*/
-	protected $_PRT_deleted = NULL;
-
-	/**
-	 *
-	 * @var EE_Price[]
-	 */
-	protected $_Price;
-
-
-
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );

@@ -24,56 +24,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  */
 class EE_Datetime_Ticket extends EE_Base_Class{
 
-	/**
-	 * Primary Key
-	 * @var int
-	 */
-	protected $_DTK_ID;
-
-
-
-
-	/**
-	 * Foreign Key to Datetime
-	 * @var int
-	 */
-	protected $_DTT_ID;
-
-
-
-
-	/**
-	 * Foreign Key to Ticket
-	 * @var int
-	 */
-	protected $_TKT_ID;
-
-
-
-
-	//cached related objects
-	
-
-	/**
-	 * Ticket object
-	 * @var EE_Ticket
-	 */
-	protected $_Ticket;
-	
-
-
-
-	/**
-	 * Datetime object
-	 * @var EE_Datetime
-	 */
-	protected $_Datetime;
-
-
-
-
-
-
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );

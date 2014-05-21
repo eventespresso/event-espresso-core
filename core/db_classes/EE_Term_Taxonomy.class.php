@@ -21,78 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Term_Taxonomy extends EE_Base_Class{
-	
-	/**
-	 * primary key for this relationship table
-	 * 
-	 * @access protected
-	 * @var int
-	 */
-	protected $_term_taxonomy_id;
-	/**
-	 * foreign key to term-only table
-	 * @var int
-	 */
-	protected $_term_id;
-	
-	/**
-	 * name of taxonomy
-	 * @var string
-	 */
-	protected $_taxonomy;
-	/**
-	 * description of term in context of the taxonomy
-	 * @var string
-	 */
-	protected $_description;
-	/**
-	 * parent term in context of taxonomy
-	 * @var int
-	 */
-	protected $_parent;
-
-
-	/**
-	 * count of objects this term is attached to
-	 * @var int
-	 */
-	protected $_term_count;
-
-
-	/**
-	 * Join model between terms-in-context and posts
-	 * @access protected
-	 * @var EE_Term_Relationship[]
-	 */
-	protected $_Term_Relationship;
-	/**
-	 * RElated term
-	 * @var EE_Term
-	 */
-	protected $_Term;
-	
-	/**
-	 * Event related to this term_taxonomy via the term_relation model
-	 * @var EE_Event
-	 */
-	protected $_Event;
-
-	/**
-	 * Venue related to this term_taxonomy via the term_relation model.
-	 * 
-	 * @var EE_Venue
-	 */
-	protected $_Venue;
-
-	/**
-	 * Attendee related to this term_taxonomy via the term_relation model.
-	 * 
-	 * @var EE_Attendee
-	 */
-	protected $_Attendee;
-
 
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;

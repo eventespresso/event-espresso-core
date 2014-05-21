@@ -23,31 +23,6 @@
  */
 require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Extra_Meta extends EE_Base_Class{
-	/** Extra Meta ID", "event_espresso @var EXM_ID*/ 
-	protected $_EXM_ID = NULL;
-	/** Primary Key of Attached Thing", "event_espresso @var OBJ_ID*/ 
-	protected $_OBJ_ID = NULL;
-	/** Model of Attached Thing", "event_espresso @var EXM_type*/ 
-	protected $_EXM_type = NULL;
-	/** Meta Key", "event_espresso @var EXM_key*/ 
-	protected $_EXM_key = NULL;
-	/** Meta Value", "event_espresso @var EXM_value*/ 
-	protected $_EXM_value = NULL;
-				
-	
-	/**
-	 * 
-	 * @var EE_Payment 
-	 */
-	protected $_Payment;
-	/**
-	 *
-	 * @var EE_Transaction
-	 */
-	protected $_Transaction;
-	
-	protected $_Term_Taxonomy;
-
 
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;

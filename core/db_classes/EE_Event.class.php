@@ -25,18 +25,6 @@ require_once( EE_CLASSES . 'EE_CPT_Base.class.php');
 class EE_Event extends EE_CPT_Base{
 
 
-	/**
-	 * All registrations for this event
-	 * @var EE_Registration[]
-	 */
-	protected $_Registration;
-
-	/**
-	 * All datetimes this event is offered
-	 * @var EE_Datetime[]
-	 */
-	protected $_Datetime;
-
 
 
 	/**
@@ -44,149 +32,6 @@ class EE_Event extends EE_CPT_Base{
 	 * @var EE_Datetime
 	 */
 	protected $_Primary_Datetime;
-
-
-	/**
-	 * Al question groups which apply to this event
-	 * @var EE_Question_Group[]
-	 */
-	protected $_Question_Group;
-
-	/**
-	 * related venues
-	 * @var EE_Venue[]
-	 */
-	protected $_Venue;
-
-	/**
-	 * Term (in context of a taxonomy) which apply to this event
-	 * @var EE_Term_Taxonomy[]
-	 */
-	protected $_Term_Taxonomy;
-
-
-
-
-	/**
-	 * If this event has any related Message Template Groups attached to it, they will be added to this property.
-	 * @var EE_Message_Template_Group[]
-	 */
-	protected $_Message_Template_Group;
-
-
-	/**
-	 * ID of event (post id)
-	 * @var int
-	 */
-	protected $_EVT_ID;
-	/**
-	 * name of the event
-	 * @var string
-	 */
-	protected $_EVT_name;
-	/**
-	 * description of the event
-	 * @var string
-	 */
-	protected $_EVT_desc;
-	/**
-	 * url-friendly string of event name
-	 * @var string
-	 */
-	protected $_EVT_slug;
-	/**
-	 * STring describing Event
-	 * @var string
-	 */
-	protected $_EVT_created;
-	/**
-	 * Short description of the event
-	 * @var string
-	 */
-	protected $_EVT_short_desc;
-
-	/**
-	 * time last modified
-	 * @var string
-	 */
-	protected $_EVT_modified;
-	/**
-	 * id of creator
-	 * @var int
-	 */
-	protected $_EVT_wp_user;
-
-	/**
-	 * indicates order of event on a menu
-	 * @var int
-	 */
-	protected $_EVT_order;
-	/**
-	 * whether or not to display the event's description
-	 * @var boolean
-	 */
-	protected $_EVT_display_desc;
-	/**
-	 * whether ot not to display something
-	 * @brent: yeah what is this field for? from mike
-	 * @var boolean
-	 */
-	protected $_EVT_display_ticket_selector;
-	/**
-	 * indicates time when event should be visible
-	 * @var int
-	 */
-	protected $_EVT_visible_on;
-
-	/**
-	 * how many extra people user can register
-	 * @var int
-	 */
-	protected $_EVT_additional_limit;
-	/**
-	 * whether event is for members only
-	 * @var boolean
-	 */
-	protected $_EVT_member_only;
-	/**
-	 * Phone number for event.  Event managers can have a specific phone number attached to an event that users can call in to get more details.
-	 * @var string
-	 */
-	protected $_EVT_phone;
-	/**
-	 * flag indicating whether ot not to allow overflow registrants
-	 * @var boolean
-	 */
-	protected $_EVT_allow_overflow;
-	/**
-	 * timezone event will occur in
-	 * @var string
-	 */
-	protected $_EVT_timezone_string;
-	/**
-	 * URL of event if hosted elsewhere
-	 * @var string
-	 */
-	protected $_EVT_external_URL;
-
-
-	/**
-	 *Indicates whether or not this event accepts donations
-	 * @var boolean
-	 */
-	protected $_EVT_donations;
-
-
-
-
-	/**
-	 * used to indicate what the default payment status for the event will be
-	 * @var string
-	 */
-	protected $_EVT_default_registration_status;
-
-
-
 
 	/**
 	 *
@@ -247,7 +92,6 @@ class EE_Event extends EE_CPT_Base{
 			return $this->_Primary_Datetime;
 		}
 		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_primary_datetime_for_event( $this->ID() ,$try_to_exclude_expired , $try_to_exclude_deleted );
-//		$this->_Primary_Datetime = EEM_Datetime::instance( $this->_timezone )->get_most_important_datetime_for_event( $this->_EVT_ID );
 		return $this->_Primary_Datetime;
 	}
 

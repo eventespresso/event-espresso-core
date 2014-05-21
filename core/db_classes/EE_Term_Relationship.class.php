@@ -21,57 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Term_Relationship extends EE_Base_Class{
-	
-	/**
-	 * object/post id
-	 * 
-	 * @access protected
-	 * @var int
-	 */
-	protected $_object_id=FALSE;
-	
-	/**
-	 * term Id (in context of a taxonomy)
-	 * @access protected
-	 * @var int 
-	 */
-	protected $_term_taxonomy_id=NULL;
-	
-	/**
-	 * The order of the term? doesnt seem to get used much...
-	 * @access protected
-	 * @var int
-	 */
-	protected $_term_order=NULL;
-
-	/**
-	 * 
-	 * @var EE_Attendee
-	 */
-	protected $_Attendee;
-	/**
-	 * Related event, lazy-loaded
-	 * @access protected
-	 * @var EE_Event 
-	 */
-	protected $_Event;
-	
-	/**
-	 * Related venue
-	 * @var EE_Venue
-	 */
-	protected $_Venue;
-	/**
-	 * Related term in context of a taxonomy, lazy-loaded
-	 * @access protected
-	 * @var EE_Term_Taxonomy 
-	 */
-	protected $_Term_Taxonomy;
-
-
-
 
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;

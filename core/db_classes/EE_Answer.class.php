@@ -21,54 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Answer extends EE_Base_Class{
-	
-	/**
-	 * Answer ID
-	 * 
-	 * @access protected
-	 * @var int
-	 */
-	protected $_ANS_ID=FALSE;
-	
-	/**
-	 * ID of the related Registration
-	 * @access protected
-	 * @var int 
-	 */
-	protected $_REG_ID=NULL;
-	
-	/**
-	 * ID of the related question
-	 * @access protected
-	 * @var int
-	 */
-	protected $_QST_ID=NULL;
-	
-	/**
-	 * Text of answer. This is obvious for text and textarea typed questions.
-	 * For check
-	 * @access protected
-	 * @var string 
-	 */
-	protected $_ANS_value=NULL;
-
-	/**
-	 * Related question, lazy-loaded
-	 * @access protected
-	 * @var EE_Question[] 
-	 */
-	protected $_Question;
-	
-	/**
-	 * Related registration, lazy-loaded
-	 * @access protected
-	 * @var EE_Registration[] 
-	 */
-	protected $_Registration;
-
-
 
 	/**
 	 * 

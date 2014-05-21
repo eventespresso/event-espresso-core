@@ -24,59 +24,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  */
 class EE_Ticket_Template extends EE_Base_Class{
 
-	/**
-	 * Ticket Template Primary Key
-	 * @var INT
-	 */
-	protected $_TTM_ID;
-
-
-
-
-	/**
-	 * Name of the Ticket Template
-	 * @var string
-	 */
-	protected $_TTM_name;
-
-
-
-
-
-	/**
-	 * Description of the Ticket Template
-	 * @var string
-	 */
-	protected $_TTM_description;
-
-
-
-
-
-
-	/**
-	 * Name of the file for the ticket template
-	 * @var string
-	 */
-	protected $_TTM_file;
-
-
-	//relations
-
-
-
-
-	/**
-	 * Cached ticket objects attached to this ticket template
-	 * @var EE_Ticket[]
-	 */
-	protected $_Ticket;
-
-
-
-
-
-
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );

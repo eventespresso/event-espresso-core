@@ -21,62 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Status extends EE_Base_Class{
-	
-	/**
-	 * status primary key
-	 * 
-	 * @access protected
-	 * @var int
-	 */
-	protected $_STS_ID=FALSE;
-	
-	/**
-	 * staus code (one-word description)
-	 * @var string
-	 */
-	protected $_STS_code=NULL;
-	
-	/**
-	 * type
-	 * @access protected
-	 * @var string
-	 */
-	protected $_STS_type=NULL;
-	/**
-	 * whetehr this status is editable
-	 * @var boolean
-	 */
-	protected $_STS_can_edit=NULL;
-	/**
-	 * Longer description of the status
-	 * @var string
-	 */
-	protected $_STS_desc=NULL;
-	/**
-	 * Whether or not to consider this status open. The definition of 'open' varies depending
-	 * on the STS_type, but it's generally synonymous with 'ok','active','available',etc.
-	 * @var boolean
-	 */
-	protected $_STS_open=NULL;
-	
-	/**
-	 *
-	 * @var EE_Registration[]
-	 */
-	protected $_Registration;
-	/**
-	 * 
-	 * @var EE_Payment[] 
-	 */
-	protected $_Payment;
-	/**
-	 *
-	 * @var EE_Transaction[]
-	 */
-	protected $_Transaction;
-
 
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;

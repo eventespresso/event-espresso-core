@@ -21,41 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Term extends EE_Base_Class{
-	
-	/**
-	 * term primary key
-	 * 
-	 * @access protected
-	 * @var int
-	 */
-	protected $_term_id=FALSE;
-	
-	/**
-	 * term name
-	 * @var string
-	 */
-	protected $_name=NULL;
-	
-	/**
-	 * slug for term
-	 * @access protected
-	 * @var string
-	 */
-	protected $_slug=NULL;
-	/**
-	 * term group id
-	 * @var int
-	 */
-	protected $_term_group=NULL;
-
-	/**
-	 * Terms in context of taxonomies
-	 * @access protected
-	 * @var EE_Term_Taxonomy[] 
-	 */
-	protected $_Term_Taxonomy;
 
 	/**
 	 * Sets some dynamic defaults

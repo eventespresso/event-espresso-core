@@ -25,60 +25,6 @@
  */
 class EE_Message_Template extends EE_Base_Class {
 
-	/**
-	 * Template ID
-	 * primary key
-	 *
-	 * @access protected
-	 * @var int
-	 */
-	protected $_MTP_ID = FALSE;
-
-	/**
-	 * Group ID
-	 *
-	 * @access protected
-	 * @var int
-	 */
-	protected $_GRP_ID = FALSE;
-
-
-	/**
-	 * Template context
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $_MTP_context = NULL;
-
-	/**
-	 * Template field
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $_MTP_template_field = NULL;
-
-	/**
-	 * template content
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $_MTP_content = NULL;
-
-
-
-
-	/**
-	 * Related Message Template Group this template belongs to
-	 * @var EE_Message_Template_Group
-	 */
-	protected $_Message_Template_Group = NULL;
-
-
-
-
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );

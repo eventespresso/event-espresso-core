@@ -21,60 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Soft_Delete_Base_Class.class.php' );
 class EE_Question_Option extends EE_Soft_Delete_Base_Class{
-
-	/**
-	 * Answer ID
-	 *
-	 * @access protected
-	 * @var int
-	 */
-	protected $_QSO_ID=FALSE;
-
-	/**
-	 * Question Option description
-	 *
-	 * @access protected
-	 * @var string
-	 */
-	protected $_QSO_desc=FALSE;
-
-	/**
-	 * Question Option Value
-	 *
-	 * @access protected
-	 * @var int
-	 */
-	protected $_QSO_value=FALSE;
-
-	/**
-	 * Question ID
-	 *
-	 * @access protected
-	 * @var int
-	 */
-	protected $_QST_ID=FALSE;
-
-	/**
-	 * Whether the question has been deleted or not
-	 * @access protected
-	 * @var boolean
-	 */
-	protected $_QSO_deleted=FALSE;
-
-
-
-
-	/**
-	 * The order for this Question Option when displayed
-	 *
-	 * @access protected
-	 * @var integer
-	 */
-	protected $_QSO_order = 0;
-
-
 
 	/**
 	 * Question Option Opt Group Name
@@ -83,17 +30,6 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class{
 	 * @var string
 	 */
 	protected $_QSO_opt_group=NULL;
-
-	/**
-	 * The question whcih relates to this question option
-	 *@access protected
-	 * @var EE_Question
-	 */
-	protected $_Question;
-
-
-
-
 
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;

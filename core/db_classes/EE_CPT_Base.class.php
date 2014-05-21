@@ -22,39 +22,6 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class{
 	protected $_feature_image = array();
 
 
-
-	/**
-	 * This is a field common to ALL CPT model objects that indicates what post_type the model object is.  This is needed because there are times where the post type may equal "revision" because it is a revision of the main object.
-	 * @var string
-	 */
-	protected $_post_type = '';
-
-
-
-	/**
-	 * This is a field common to ALL CPT model objects that simply hold what the parent id is for this model object.  If empty then this model object is the top level ancestor of all children.
-	 * @var INT
-	 */
-	protected $_parent = 0;
-
-
-
-	/**
-	 * Common status property for all CPT Base Class children that is equivalent to the wp "post_status" column
-	 * @var string
-	 */
-	protected $_status;
-
-
-
-
-	/**
-	 * Terms (in context of a particular taxonomy) which apply to this cpt
-	 * @var EE_Term_Taxonomy[]
-	 */
-	protected $_Term_Taxonomy;
-
-
 	/**
 	 * Adds to the specified event category. If it category doesn't exist, creates it.
 	 * @param string $category_name

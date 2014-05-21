@@ -24,48 +24,6 @@
 require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_Country extends EE_Base_Class{
 
-	protected $_CNT_ISO;
-	protected $_CNT_ISO3;
-	protected $_RGN_ID;
-	protected $_CNT_name;
-	protected $_CNT_cur_code;
-	protected $_CNT_cur_single;
-	protected $_CNT_cur_plural;
-	protected $_CNT_cur_sign;
-	protected $_CNT_cur_sign_b4;
-	protected $_CNT_cur_dec_plc;
-	protected $_CNT_cur_dec_mrk;
-	protected $_CNT_cur_thsnds;
-	protected $_CNT_tel_code;
-	protected $_CNT_is_EU;
-	protected $_CNT_active;
-	
-	/**
-	 * Related Region, lazy-loaded
-	 * @access protected
-	 * @var EE_Region
-	 */
-	protected $_Region;
-	
-	/**
-	 * Related states
-	 * @var EE_State[]
-	 */
-	protected $_State;
-	
-	/**
-	 * All the attendees in this country
-	 * @var EE_Attendee[]
-	 */
-	protected $_Attendee;
-	
-	/**
-	 *All the venues in this country
-	 * @var EE_Venue[]
-	 */
-	protected $_Venue;
-
-
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname );

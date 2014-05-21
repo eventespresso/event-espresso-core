@@ -523,7 +523,6 @@ class EEH_Form_Fields {
 				}
 			}
 		}
-
 		return $html;
 
 	}
@@ -564,7 +563,7 @@ class EEH_Form_Fields {
 		$QST_options = $QFI->options(true,$answer);
 		$options = $QST_options ? self::prep_answer_options( $QST_options ) : array();
 		$system_ID = $QFI->get('QST_system');
-
+		echo "got to switch for qfi:";d($QFI);
 		switch ( $QFI->get('QST_type') ){
 
 			case 'TEXTAREA' :

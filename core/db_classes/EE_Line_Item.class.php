@@ -24,98 +24,18 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  * ------------------------------------------------------------------------
  */
 class EE_Line_Item extends EE_Base_Class{
-	
-	
-	/** ID", "event_espresso @var LIN_ID*/ 
-	protected $_LIN_ID = NULL;
 	/**
-	 * Index in cart
-	 * @var string 
-	 */
-	protected $_LIN_code = NULL;
-	/** Transaction ID", "event_espresso @var TXN_ID*/ 
-	protected $_TXN_ID = NULL;
-	/** Line Item Name", "event_espresso @var LIN_name*/ 
-	protected $_LIN_name = NULL;
-	/** Line Item Description", "event_espresso @var LIN_desc*/ 
-	protected $_LIN_desc = NULL;
-	/**
-	 * Line Item Unit Price (0 if its a percent)
-	 */
-	protected $_LIN_unit_price = NULL;
-	/**
-	 *
-	 * @var $_LIN_percent if its a percent line item, then this is a number betweeen 100-1
-	 */
-	protected $_LIN_percent = NULL;
-	/**
-	 * Indicating whether or not this item should be taxed
-	 * @var boolean
-	 */
-	protected $_LIN_is_taxable = NULL;
-	/** Quantity", "event_espresso @var LIN_quantity*/ 
-	protected $_LIN_quantity = NULL;
-	/**
-	 *
-	 * @var $_LIN_total total percent ? (previous-total * unit_price) : (unit_price * quantity); (where previous-total is the total of all previous line items in this group)
-	 */
-	protected $_LIN_total = NULL;
-	/**
-	 *
-	 * @var $_LIN_order order of application in producing the parent (this only makes a different when the items are a mix of percent VS flat-rate items)
-	 */
-	protected $_LIN_order = NULL;
-	/**
-	 * The parent line item's ID. (By "parent", we mean that THIS line item contributes towards
-	 * the total on the "parent's" total)
-	 * @var int
-	 */
-	protected $_LIN_parent = NULL;
-	/**
-	 *
-	 * @var $_LIN_type one of line-item, sub-item, sub-total, tax, total. mostly handy for display
-	 */
-	protected $_LIN_type = NULL;
-	/** ID of Item purchased.", "event_espresso @var OBJ_ID*/ 
-	protected $_OBJ_ID = NULL;
-	/** Type of Line Item purchased.", "event_espresso @var LIN_item_type*/ 
-	protected $_OBJ_type = NULL;
-		
-
-
-
-	/**
-	 * Registration the Check-in references
-	 * @var EE_Registration
-	 */
-	protected $_Transaction;
-	
-	/**
-	 * The ticket this line item MAY refer to
-	 * @var EE_Ticket
-	 */
-	protected $_Ticket;
-
-	/**
-	 *The Price (usually a tax) this item MAY refer to
-	 * @var EE_Price
-	 */
-	protected $_Price;
-	
-	/**
-	 * All children line items
-	 * @var EE_Line_Item[]
+	 * for children line items (currently not a normal relation)
+	 * @var Line_Item EE_Line_Item[]
 	 */
 	protected $_Line_Item;
-
-
-
-/**
- * 
- * @param type $props_n_values
- * @param type $timezone
- * @return EE_Line_Item
- */
+	
+	/**
+	 * 
+	 * @param type $props_n_values
+	 * @param type $timezone
+	 * @return EE_Line_Item
+	 */
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );

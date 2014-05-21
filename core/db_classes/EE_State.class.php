@@ -21,34 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-require_once ( EE_CLASSES . 'EE_Base_Class.class.php' );
 class EE_State extends EE_Base_Class{
-
-	protected $_STA_ID;
-	protected $_CNT_ISO;
-	protected $_STA_abbrev;
-	protected $_STA_name;
-	protected $_STA_active;
-	
-	/**
-	 * All the attendees in this state
-	 * @var EE_Attendee[]
-	 */
-	protected $_Attendee;
-	/**
-	 * Related Country, lazy-loaded
-	 * @access protected
-	 * @var EE_Country 
-	 */
-	protected $_Country;
-	
-	/**
-	 * Venues in this state
-	 * @var EE_Venue[]
-	 */
-	protected $_Venue;
-
-
 
 	public static function new_instance( $props_n_values = array() ) {
 		$classname = __CLASS__;

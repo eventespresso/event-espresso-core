@@ -3,55 +3,6 @@
 class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 
 	/**
-	 * Related events
-	 * @var EE_Event[]
-	 */
-	protected $_Event;
-
-	/**
-	 * related state
-	 * @var EE_State
-	 */
-	protected $_State;
-
-
-	/**
-	 * join table object(s)
-	 * @var Event_Venue[]
-	 */
-	protected $_Event_Venue;
-	
-
-	/**
-	 * related country
-	 * @var EE_COuntry
-	 */
-	protected $_Country;
-	protected $_VNU_ID;
-	protected $_VNU_name;
-	protected $_VNU_desc;
-	protected $_VNU_identifier;
-	protected $_VNU_created;
-	protected $_VNU_short_desc;
-	protected $_VNU_modified;
-	protected $_VNU_wp_user;
-	protected $_VNU_order;
-	protected $_VNU_address;
-	protected $_VNU_address2;
-	protected $_VNU_city;
-	protected $_STA_ID;
-	protected $_CNT_ISO;
-	protected $_VNU_zip;
-	protected $_VNU_phone;
-	protected $_VNU_capacity;
-	protected $_VNU_url;
-	protected $_VNU_virtual_phone;
-	protected $_VNU_virtual_url;
-	protected $_VNU_enable_for_gmap;
-	protected $_VNU_google_map_link;
-	
-
-	/**
 	 * 
 	 * @param type $props_n_values
 	 * @return EE_Venue

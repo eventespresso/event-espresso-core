@@ -4,7 +4,6 @@
  * Class for handling soft-delete logic (ie, use a column in the DB to indicate deletion of the model, insetad
  * of actually deleting it) EE_{classes}. 
  */
-require_once( EE_CLASSES . 'EE_Base_Class.class.php');
 abstract class EE_Soft_Delete_Base_Class extends EE_Base_Class{
 	/**
 	 * Performs a soft delete (archive) fo this object
