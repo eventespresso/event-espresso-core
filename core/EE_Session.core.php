@@ -13,7 +13,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
  * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
- * 
+ *
  * EE_Session class
  *
  * @package				Event Espresso
@@ -53,7 +53,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	private $_ip_address = NULL;
 
 	// array for defining default session vars
-	private $_default_session_vars = array ( 
+	private $_default_session_vars = array (
 		'id' => NULL,
 		'user_id' => NULL,
 		'ip_address' => NULL,
@@ -123,10 +123,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		$this->_set_defaults();
 
-		// check for existing session and retreive it from db
-		if ( ! $this->_espresso_session() ) {
-			// or just start a new one
-			$this->_create_espresso_session();
+		// check for existing session and retreive it from db.  Filtered in case session needs to be turned off (typically with tests)
+		if ( apply_filters( 'FHEE__EE_Session__construct__can_create_session', TRUE ) ) {
+			if ( ! $this->_espresso_session()  ) {
+				// or just start a new one
+				$this->_create_espresso_session();
+			}
 		}
 
 		// check request for 'clear_session' param
@@ -151,7 +153,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 				$this->_session_data[ $key ] = array();
 			} else {
 				$this->_session_data[ $key ] = '';
-			}			
+			}
 		}
 	}
 
@@ -217,7 +219,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 					// then let's remove the session data from the transaction before we save the transaction in the session_data
 					$value->set_txn_session_data( NULL );
 				}
-				$this->_session_data[ $key ] = $value;				
+				$this->_session_data[ $key ] = $value;
 			}
 		}
 
@@ -246,12 +248,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			//starts a new session if one doesn't already exist, or reinitiates an existing one
 			session_start();
 			// set initial site access time
-			$this->_session_data['init_access'] = $this->_time;		
-			// set referer	
+			$this->_session_data['init_access'] = $this->_time;
+			// set referer
 			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
 		}
 		// grab the session ID
-		$this->_sid = session_id();		
+		$this->_sid = session_id();
 		// set the "user agent"
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
 		// now let's retreive what's in the db
@@ -313,8 +315,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
 		if ( empty( $this->_session_data )) {
 			$this->_set_defaults();
-		}			
-		
+		}
+
 		foreach ( $this->_session_data as $key => $value ) {
 
 			switch( $key ) {
@@ -348,7 +350,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 						// set pages visited where the first will be the http referrer
 						$this->_session_data[ 'pages_visited' ][ $this->_time ] = $this->_get_page_visit();
 						// we'll only save the last 10 page visits.
-						$session_data[ 'pages_visited' ] = array_slice( $this->_session_data['pages_visited'], -10 );					
+						$session_data[ 'pages_visited' ] = array_slice( $this->_session_data['pages_visited'], -10 );
 					}
 				break;
 
@@ -374,7 +376,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			} else {
 				return FALSE;
 			}
-		} 
+		}
 		// meh, why not?
 		return TRUE;
 
@@ -433,7 +435,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		if ( isset( $_SERVER['REMOTE_ADDR'] )) {
 			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['REMOTE_ADDR'] )) {
 				$visitor_ip = esc_attr( $_SERVER['REMOTE_ADDR'] );
-			}			
+			}
 		} else if ( isset( $_SERVER['HTTP_CLIENT_IP'] )) {
 			if ( preg_match( '/^(([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5]).){3}([1-9]?[0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/', $_SERVER['HTTP_CLIENT_IP'] )) {
 				$visitor_ip = esc_attr( $_SERVER['HTTP_CLIENT_IP'] );
@@ -457,7 +459,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			} elseif ( $ip_bits[$i] < 1 ) {
 				// less than 1?
 				$ip_bits[$i] = 0;
-			} 
+			}
 
 		}
 
@@ -482,10 +484,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 //		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$page_visit = home_url('/') . 'wp-admin/admin-ajax.php';
-		
+
 		// check for request url
 		if ( isset( $_SERVER['REQUEST_URI'] )) {
-		
+
 			$request_uri = esc_url( $_SERVER['REQUEST_URI'] );
 
 			$ru_bits = explode( '?', $request_uri );
@@ -518,13 +520,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			$page_visit = rtrim( $http_host . $request_uri . $page_id . $e_reg, '?' );
 
 		}
-		
+
 		if ( $page_visit != home_url('/') . 'wp-admin/admin-ajax.php' ) {
 			return $page_visit;
 		} else {
 			return FALSE;
 		}
-		
+
 	}
 
 
@@ -584,7 +586,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		if ( ! is_array( $data_to_reset ) ) {
 			$data_to_reset = array ( $data_to_reset );
 		}
-		
+
 		$return_value = TRUE;
 
 		// since $data_to_reset is an array, cycle through the values
@@ -638,7 +640,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-
+	/**
+	 * Used to reset the entire object (for tests).
+	 *
+	 * @since 4.3.0
+	 *
+	 */
+	public function reset_instance() {
+		$this->clear_session();
+		self::$_instance = NULL;
+	}
 
 }
 

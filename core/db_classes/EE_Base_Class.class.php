@@ -430,14 +430,15 @@ abstract class EE_Base_Class{
 	 * Forgets the cached model of the given relation Name. So the next time we request it,
 	 * we will fetch it again from the database. (Handy if you know it's changed somehow).
 	 * If a specific object is supplied, and the relationship to it is either a HasMany or HABTM,
-	 * then only remove that one object from our cached array. Otherwise, clear the entire list.
+	 * then only remove that one object from our cached array. Otherwise, clear the entire list
 	 * @param string $relationName                         one of the keys in the _model_relations array on the model. Eg 'Registration'
-	 * @param mixed  $object_to_remove_or_index_into_array or an index into the array of cached things
+	 * @param mixed  $object_to_remove_or_index_into_array or an index into the array of cached things, or NULL
+	 * if you intend to use $clear_all = TRUE, or the relation only has 1 object anyways (ie, it's a BelongsToRelation)
 	 * @param bool   $clear_all                            This flags clearing the entire cache relation property if this is HasMany or HABTM.
 	 * @throws EE_Error
 	 * @return EE_Base_Class from which was cleared from the cache, or true if we requested to remove a relation from all
 	 */
-	public function clear_cache($relationName, $object_to_remove_or_index_into_array = null, $clear_all = FALSE){
+	public function clear_cache($relationName, $object_to_remove_or_index_into_array = NULL, $clear_all = FALSE){
 		$relationship_to_model = $this->get_model()->related_settings_for($relationName);
 		$index_in_cache = '';
 		if( ! $relationship_to_model){
@@ -479,8 +480,16 @@ abstract class EE_Base_Class{
 			}else{
 				$index_in_cache = $object_to_remove_or_index_into_array;
 			}
-			$obj_removed = $this->_model_relations[$relationName][$index_in_cache];
-			unset($this->_model_relations[$relationName][$index_in_cache]);
+			//supposedly we've found it. But it could just be that the client code
+			//provided a bad index/object
+			if(isset( $this->_model_relations[$relationName]) &&
+					isset( $this->_model_relations[$relationName][$index_in_cache])){
+				$obj_removed = $this->_model_relations[$relationName][$index_in_cache];
+				unset($this->_model_relations[$relationName][$index_in_cache]);
+			}else{
+				//that thing was never cached anyways.
+				$obj_removed = NULL;
+			}
 		}
 		return $obj_removed;
 	}
@@ -1367,7 +1376,7 @@ abstract class EE_Base_Class{
 			$count =  $this->get_model()->delete_related($this, $relationName, $query_params);
 		}else{
 			$count = count($this->get_all_from_cache($relationName));
-			$this->clear_cache($relationName);
+			$this->clear_cache($relationName,NULL,TRUE);
 		}
 		return $count;
 	}
@@ -1388,7 +1397,7 @@ abstract class EE_Base_Class{
 		}else{
 			$count = count($this->get_all_from_cache($relationName));
 		}
-		$this->clear_cache($relationName);
+		$this->clear_cache($relationName,NULL,TRUE);
 		return $count;
 	}
 
