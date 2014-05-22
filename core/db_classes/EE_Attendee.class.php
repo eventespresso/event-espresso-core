@@ -395,9 +395,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 
 	/**
-	 * Gets a maximum of 100 related registrations
+	 * Gets registrations of this attendee
 	 * @param array $query_params
-	 * @return int|EE_Registration[] UNLESS $output='count', in which case INT
+	 * @return EE_Registration[]
 	 */
 	public function get_registrations( $query_params = array() ) {
 		return $this->get_many_related( 'Registration', $query_params );

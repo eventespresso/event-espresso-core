@@ -184,13 +184,11 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * Gets all events which
-	 * @throws EE_Error
+	 * Gets all events which are related to this question group
 	 * @return EE_Event[]
 	 */
 	public function events() {
-		throw new EE_Error( __( "Question Group->events() not yet implemented", "event_espresso" ) );
-		//return $this->get_many_related( 'Event' );
+		return $this->get_many_related( 'Event' );
 	}
 
 
