@@ -75,6 +75,12 @@ final class EE_System {
 		}
 		return self::$_instance;
 	}
+	/**
+	 * resets the instance of NULL, so the next call to instance() will provide a NEW instance
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+	}
 
 
 
@@ -593,7 +599,38 @@ final class EE_System {
 	*/
 	public function register_shortcodes_modules_and_widgets() {
 		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
+		// check for addons using old hookpoint
+		if ( has_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons' )) {
+			$this->_incompatible_addon_error();
+		}
 	}
+
+
+	/**
+	* _incompatible_addon_error
+	*
+	* @access public
+	* @return void
+	*/
+	private function _incompatible_addon_error() {
+		// get array of classes hooking into here
+		$class_names = EEH_Class_Tools::get_class_names_for_all_callbacks_on_hook( 'AHEE__EE_System__register_shortcodes_modules_and_addons' );
+		if ( ! empty( $class_names )) {
+			$msg = __( 'The following plugins, addons, or modules appear to be incompatible with this version of Event Espresso and were automatically deactivated to avoid fatal errors:', 'event_espresso' );
+			$msg .= '<ul>';
+			foreach ( $class_names as $class_name ) {
+				$msg .= '<li><b>Event Espresso - ' . str_replace( array( 'EE_', 'EEM_', 'EED_', 'EES_', 'EEW_' ), '', $class_name ) . '</b></li>';
+			}
+			$msg .= '</ul>';
+			$msg .= __( 'Compatibility issues can be avoided and/or resolved by keeping addons and plugins updated to the latest version.', 'event_espresso' );
+			// save list of incompatible addons to wp-options for later use
+			add_option( 'ee_incompatible_addons', $class_names, '', 'no' );
+		}
+		if ( is_admin() ) {
+			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+		}
+	}
+
 
 
 
@@ -635,7 +672,29 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function set_hooks_for_core() {
+		$this->_deactivate_incompatible_addons();
 		do_action( 'AHEE__EE_System__set_hooks_for_core' );
+	}
+
+
+
+	/**
+	 * Using the information gathered in EE_System::_incompatible_addon_error,
+	 * deactivates any addons considered incompatible with the current version of EE
+	 */
+	private function _deactivate_incompatible_addons(){
+		$incompatible_addons = get_option( 'ee_incompatible_addons', array() );
+		if ( ! empty( $incompatible_addons )) {
+			$active_plugins = get_option( 'active_plugins', array() );
+			foreach ( $active_plugins as $active_plugin ) {
+				foreach ( $incompatible_addons as $incompatible_addon ) {
+					if ( strpos( $active_plugin,  $incompatible_addon ) !== FALSE ) {
+						deactivate_plugins( $active_plugin );
+						unset( $_GET['activate'] );
+					}
+				}
+			}
+		}
 	}
 
 

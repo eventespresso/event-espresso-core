@@ -56,6 +56,12 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour {
 					'tipAdjustmentY' => -25,
 					'tipAdjustmentX' => 20
 					)
+				),
+			40 => array(
+				'content' => $this->_end_tour_stop(),
+				'options' => array(
+					'tipLocation' => 'top'
+					)
 				)
 			);
 	}
@@ -73,6 +79,10 @@ class Payment_Methods_Selection_Help_Tour extends EE_Help_Tour {
 
 	protected function _gateway_settings_metabox_stop() {
 		return '<p>' . __('A payment gateway must first be enabled. You will then be able to configure the payment gateway. Be sure to save settings after configuring your payment gateway.', 'event_espresso') . '</p>';
+	}
+
+	protected function _end_tour_stop() {
+		return '<p>' . __('After configuring your payment gateway, go to the Event Editor to create your first event with Event Espresso.', 'event_espresso') . '</p>';
 	}
 
 }

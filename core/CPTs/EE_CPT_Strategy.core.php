@@ -184,7 +184,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @param $WP_Query
 	 * @return void
 	 */
-	private function _set_post_type_for_terms( $WP_Query ) {
+	private function _set_post_type_for_terms( WP_Query $WP_Query ) {
 		// is a tag set ?
 		if ( isset( $WP_Query->query['tag'] )) {
 			// set post_tags
@@ -275,7 +275,7 @@ class EE_CPT_Strategy extends EE_BASE {
 								// if so, then add this CPT post_type to the current query's array of post_types'
 								$WP_Query->query_vars['post_type'] = isset( $WP_Query->query_vars['post_type'] ) ? (array)$WP_Query->query_vars['post_type'] : array();
 								$WP_Query->query_vars['post_type'][] = $post_type;
-							}						
+							}
 						}
 					}
 				}
@@ -318,18 +318,18 @@ class EE_CPT_Strategy extends EE_BASE {
 						// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
 						EE_Registry::instance()->REQ->set( 'ee', $this->CPT['singular_slug'] );
 					}
-					$this->_possibly_set_ee_request_var( $post_type );		
+					$this->_possibly_set_ee_request_var( $post_type );
 					// convert post_type to model name
 					$model_name = str_replace( 'EE_', '', $this->CPT['class_name'] );
 					// get CPT table data via CPT Model
 					$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
 					$this->CPT['tables'] = $this->CPT_model->get_tables();
 					// is there a Meta Table for this CPT?
-					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $model_name . '_Meta' ] ) ? $this->CPT['tables'][ $model_name . '_Meta' ] : FALSE;		
+					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $model_name . '_Meta' ] ) ? $this->CPT['tables'][ $model_name . '_Meta' ] : FALSE;
 					// creates classname like:  CPT_Event_Strategy
 					$CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
 					// load and instantiate
-					 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));	
+					 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));
 
 					// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
 					// here's the list of available filters in the WP_Query object

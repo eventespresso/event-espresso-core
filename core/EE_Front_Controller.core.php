@@ -47,14 +47,6 @@ final class EE_Front_Controller {
 
 
 	/**
-	 * static copy of registry that modules can use until they get instantiated
-	 *	@var 	EE_Registry	$registry
-	 * 	@access 	public
-	 */
-	public static $registry;
-
-
-	/**
 	 *	@singleton method used to instantiate class object
 	 *	@access public
 	 *	@return EE_Front_Controller
@@ -267,7 +259,7 @@ final class EE_Front_Controller {
 					// are we on this page ?
 					if ( $current_post == $post_name || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
-						if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
+						if ( ! isset( EE_Registry::instance()->shortcodes->$shortcode_class )) {
 							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
 								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
@@ -287,15 +279,15 @@ final class EE_Front_Controller {
 								break;
 							}
 							// and pass the request object to the run method
-							EE_Registry::instance()->shortcodes[ $shortcode_class ] = $sc_reflector->newInstance();
+							EE_Registry::instance()->shortcodes->$shortcode_class = $sc_reflector->newInstance();
 							// fire the shortcode class's run method, so that it can activate resources
-							EE_Registry::instance()->shortcodes[ $shortcode_class ]->run( $WP );
+							EE_Registry::instance()->shortcodes->$shortcode_class->run( $WP );
 						}
 					// if this is NOT the "Posts page" and we have a valid entry for the "Posts page" in our tracked post_shortcodes array
 					} else if ( $post_name != $page_for_posts && isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
 						// and the shortcode is not being tracked for this page
 						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )) {
-							// then remove the "fallback shortcode
+							// then remove the "fallback" shortcode processor
 							remove_shortcode( $shortcode_class );
 						}
 					}
@@ -327,10 +319,13 @@ final class EE_Front_Controller {
 					$module = $Module_Request_Router->resolve_route( $route );
 					// get registered view for route
 					$this->_template_path = $Module_Request_Router->get_view( $route );
-					// map the routes to the module objects
-					EE_Registry::instance()->modules[ $route ] = $module;
+					// grab module name
+					$module_name = $module->module_name();
+					// map the module to the module objects
+					EE_Registry::instance()->modules->$module_name = $module;
 				}
 			}
+			//d( EE_Registry::instance()->modules );
 		}
 	}
 
@@ -339,9 +334,6 @@ final class EE_Front_Controller {
 
 
 	/*********************************************** 		WP HOOK		 ***********************************************/
-
-
-
 
 
 

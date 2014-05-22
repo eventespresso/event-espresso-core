@@ -191,7 +191,7 @@ class EED_Ticket_Selector extends  EED_Module {
 			return '<form id="" method="GET" action="' . $external_url . '">';		
 		}
 		EE_Registry::instance()->load_helper( 'Event_View' );
-		$checkout_url = espresso_event_link_url( $ID, FALSE );
+		$checkout_url = EEH_Event_View::event_link_url( $ID );
 		if ( ! $checkout_url ) {
 			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );

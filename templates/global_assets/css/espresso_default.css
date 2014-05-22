@@ -303,6 +303,9 @@
 }
 
 
+ul.ee-upcoming-events-widget-ul li{
+	list-style-type:none !important;
+}
 
 
 /******************* BUTTONS ****************** */

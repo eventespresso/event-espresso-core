@@ -315,7 +315,7 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_default_field_content() {
 		$this->_default_field_content = array(
 			'to' => '[RECIPIENT_EMAIL]',
-			'from' => '[EVENT_AUTHOR_FORMATTED_EMAIL]',
+			'from' => '[CO_FORMATTED_EMAIL]',
 			'subject' => '',
 			'content' => array(
 				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),

@@ -18,12 +18,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  *
  * @package				Event Espresso
  * @subpackage		includes/classes/EE_Datetime.class.php
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EE_Datetime extends EE_Soft_Delete_Base_Class{
-	
+
 	/**
 	 * constant used by get_active_status, indicates datetime has no more available spaces
 	 */
@@ -52,26 +52,26 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * constant used in various places indicating that an event is INACTIVE (not yet ready to be published)
 	 */
 	const inactive = 'DTI';
-	
+
     /**
     *	Datetime ID
-	* 
+	*
 	* 	primary key
-	*	
+	*
 	* 	@access	protected
-    *	@var int	
+    *	@var int
     */
 	protected $_DTT_ID;
-	
-	
-	
+
+
+
     /**
     *	Event ID
-	* 
+	*
 	* 	foreign key
-	* 
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
 	protected $_EVT_ID;
 
@@ -96,44 +96,44 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @var string
 	 */
 	protected $_DTT_description;
-	
-	
-	
-	
-	
+
+
+
+
+
     /**
     *	Event Start Timestamp
-	* 
+	*
 	*	date / time
-	*  
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
 	protected $_DTT_EVT_start;
-	
-	
-	
+
+
+
     /**
     *	Event End Timestamp
-	* 
+	*
 	*	date / time
-	*  
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
 	protected $_DTT_EVT_end;
-	
-	
-		
-	
-	
+
+
+
+
+
     /**
     *	reg limit
-	* 
+	*
     *	registration limit for this date/time slot
-	* 
+	*
 	*	@access	protected
-    *	@var int	
+    *	@var int
     */
 	protected $_DTT_reg_limit = INF;
 
@@ -144,9 +144,9 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * Number of sales occuring for this Datetime
 	 * @var int
 	 */
-	protected $_DTT_sold = 0;	
-		
-	
+	protected $_DTT_sold = 0;
+
+
 
 
 
@@ -155,7 +155,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @var boolean
 	 */
 	protected $_DTT_is_primary = null;
-	
+
 
 
 	/**
@@ -191,8 +191,8 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @var EE_Event[]
 	 */
 	protected $_Event;
-	
-	
+
+
 	/**
 	 *
 	 * @var EE_Ticket[]
@@ -207,15 +207,15 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 * @var EE_Checkin[]
 	 */
 	protected $_Checkin;
-	
-	
 
 
 
-	
-	
-
-
+	/**
+	 *
+	 * @param array 	$props_n_values
+	 * @param string 	$timezone
+	 * @return EE_Datetime
+	 */
 	public static function new_instance( $props_n_values = array(), $timezone = NULL ) {
 		$classname = __CLASS__;
 		$has_object = parent::_check_for_object( $props_n_values, $classname, $timezone );
@@ -223,34 +223,44 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	}
 
 
+
+	/**
+	 * @param array $props_n_values
+	 * @param null  $timezone
+	 * @return EE_Datetime
+	 */
 	public static function new_instance_from_db ( $props_n_values = array(), $timezone = NULL ) {
 		return new self( $props_n_values, TRUE, $timezone );
 	}
 
 
 
-
+	/**
+	 * @param $name
+	 */
 	public function set_name( $name ) {
-		return $this->set( 'DTT_name', $name );
+		$this->set( 'DTT_name', $name );
 	}
 
 
 
-
+	/**
+	 * @param $description
+	 */
 	public function set_description( $description ) {
-		return $this->set( 'DTT_description', $description );
+		$this->set( 'DTT_description', $description );
 	}
 
 
 
 	/**
 	*		Set event start date
-	* 
-	*		set the start date for an event 
-	* 
-	* 		@access		public		
+	*
+	*		set the start date for an event
+	*
+	* 		@access		public
 	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
-	*/	
+	*/
 	public function set_start_date( $date ) {
 		$this->_set_date_for($date, 'DTT_EVT_start');
 	}
@@ -261,12 +271,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		Set event start time
-	* 
-	*		set the start time for an event 
-	* 
-	* 		@access		public		
+	*
+	*		set the start time for an event
+	*
+	* 		@access		public
 	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
-	*/	
+	*/
 	public function set_start_time( $time ) {
 		$this->_set_time_for($time,'DTT_EVT_start');
 	}
@@ -276,12 +286,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		Set event end date
-	* 
-	*		set the end date for an event 
-	* 
-	* 		@access		public		
+	*
+	*		set the end date for an event
+	*
+	* 		@access		public
 	*		@param		string		$date 		a string representation of the event's date ex:  Dec. 25, 2025 or 12-25-2025
-	*/	
+	*/
 	public function set_end_date( $date ) {
 		$this->_set_date_for($date,'DTT_EVT_end');
 	}
@@ -292,12 +302,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		Set event end time
-	* 
-	*		set the end time for an event 
-	* 
-	* 		@access		public		
+	*
+	*		set the end time for an event
+	*
+	* 		@access		public
 	*		@param		string		$time 		a string representation of the event time ex:  9am  or  7:30 PM
-	*/	
+	*/
 	public function set_end_time( $time ) {
 		$this->_set_time_for($time,'DTT_EVT_end');
 	}
@@ -306,24 +316,24 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		Set registration limit
-	* 
+	*
 	*		set the maximum number of attendees that can be registered for this datetime slot
-	* 
-	* 		@access		public		
-	*		@param		int		$reg_limit 	
-	*/	
+	*
+	* 		@access		public
+	*		@param		int		$reg_limit
+	*/
 	public function set_reg_limit( $reg_limit ) {
 		$this->set('DTT_reg_limit', $reg_limit);
 	}
 
 	/**
 	*	set_sold
-	* 
-	* 	@access		public		
-	*	@param		int		$sold 	
-	*/	
+	*
+	* 	@access		public
+	*	@param		int		$sold
+	*/
 	public function set_sold( $sold ) {
-		return $this->set( 'DTT_sold', $sold );
+		$this->set( 'DTT_sold', $sold );
 	}
 
 
@@ -332,44 +342,21 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	/**
 	 * increments sold by amount passed by $qty
 	 * @param int $qty
-	 * @return boolean
 	 */
 	function increase_sold( $qty = 1 ) {
-		$sold = $this->_DTT_sold + $qty;
-		return $this->set_sold( $sold );
+		$sold = $this->get_raw('DTT_sold') + $qty;
+		$this->set_sold( $sold );
 	}
-	
+
 	/**
 	 * decrements (subtracts) sold amount passed by $qty
 	 * @param int $qty
-	 * @return boolean
 	 */
 	function decrease_sold( $qty = 1 ) {
-		$sold = $this->_DTT_sold - $qty;
+		$sold = $this->get_raw('DTT_sold') - $qty;
 		// sold can not go below zero
 		$sold = max( 0, $sold );
-		return $this->set_sold( $sold );
-	}
-
-
-
-
-
-
-
-
-	/**
-	*		get Datetime ID
-	* 
-	* 		@access		public		
-	*		@return 		mixed		int on success, FALSE on fail
-	*/	
-	public function ID() {
-		if (isset($this->_DTT_ID)) {
-			return $this->_DTT_ID;
-		} else {
-			return FALSE;
-		}
+		$this->set_sold( $sold );
 	}
 
 
@@ -380,7 +367,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	 */
 	public function name() {
 		return $this->get('DTT_name');
-	} 
+	}
 
 
 
@@ -388,7 +375,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * returns the datetime description
-	 * @return string 
+	 * @return string
 	 */
 	public function description() {
 		return $this->get('DTT_description');
@@ -430,21 +417,19 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
-
-
-
-
 	/**
-	*		show date and/or time
-	* 
-	* 		@access		private	
-	* 		@param		string		$date_or_time - whether to display a date or time or both
-	* 		@param		string		$start_or_end - whether to display start or end datetimes
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	* 		@param 		string 		$echo 		whether we echo or return (note echoing uses "pretty" formats, otherwise we use the standard formats)
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
+	 *        show date and/or time
+	 *
+	 * @access        private
+	 * @param        string $date_or_time - whether to display a date or time or both
+	 * @param        string $start_or_end - whether to display start or end datetimes
+	 * @param null          $dt_frmt
+	 * @param null          $tm_frmt
+	 * @param bool|string   $echo         whether we echo or return (note echoing uses "pretty" formats, otherwise we use the standard formats)
+	 * @internal      param string $dt_format - string representation of date format defaults to 'F j, Y'
+	 * @internal      param string $tm_format - string representation of time format defaults to 'g:i a'
+	 * @return        mixed        string on success, FALSE on fail
+	 */
 	private function _show_datetime( $date_or_time = NULL, $start_or_end = 'start', $dt_frmt = NULL, $tm_frmt = NULL, $echo = FALSE ) {
 		$field_name = "DTT_EVT_{$start_or_end}";
 		$dtt = $this->_get_datetime( $field_name, $dt_frmt, $tm_frmt, $date_or_time, $echo );
@@ -453,16 +438,16 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
-
 	/**
-	*		get event start date.  Provide either the date format, or NULL to re-use the
+	 *        get event start date.  Provide either the date format, or NULL to re-use the
 	 * last-used format, or '' to use the default date format
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function start_date( $dt_frmt = NULL ) {		
+	 *
+	 * @access        public
+	 * @param null $dt_frmt
+	 * @internal      param string $dt_format - string representation of date format defaults to 'F j, Y'
+	 * @return        mixed        string on success, FALSE on fail
+	 */
+	public function start_date( $dt_frmt = NULL ) {
 		return $this->_show_datetime( 'D', 'start', $dt_frmt );
 	}
 
@@ -476,43 +461,51 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 
 
-
 	/**
-	*		get end date. Provide either the date format, or NULL to re-use the
+	 *        get end date. Provide either the date format, or NULL to re-use the
 	 * last-used format, or '' to use the default date format
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
-	public function end_date( $dt_frmt = NULL ) {		
+	 *
+	 * @access        public
+	 * @param null $dt_frmt
+	 * @internal      param string $dt_format - string representation of date format defaults to 'F j, Y'
+	 * @return        mixed        string on success, FALSE on fail
+	 */
+	public function end_date( $dt_frmt = NULL ) {
 		return $this->_show_datetime( 'D', 'end', $dt_frmt );
 	}
 	/**
 	 * Echoes the end date. See end_date()
 	 * @param string $dt_frmt
 	 */
-	public function e_end_date( $dt_frmt = NULL ) {		
+	public function e_end_date( $dt_frmt = NULL ) {
 		$this->_show_datetime( 'D', 'end', $dt_frmt, NULL, TRUE );
 	}
 
 
 
 	/**
-	*		get date_range - meaning the start AND end date
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to WP settings
-	* 		@param		string		$conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
+	 *        get date_range - meaning the start AND end date
+	 *
+	 * @access        public
+	 * @param null          $dt_frmt
+	 * @param        string $conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
+	 * @internal      param string $dt_format - string representation of date format defaults to WP settings
+	 * @return        mixed        string on success, FALSE on fail
+	 */
 	public function date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {
 		$dt_frmt = ! empty( $dt_frmt ) ? $dt_frmt : $this->_dt_frmt;
 		$start = str_replace( ' ', '&nbsp;', date_i18n( $dt_frmt, strtotime( $this->_show_datetime( 'D', 'start', NULL, NULL ))));
 		$end = str_replace( ' ', '&nbsp;', date_i18n( $dt_frmt, strtotime( $this->_show_datetime( 'D', 'end', NULL, NULL ))));
 		return $start != $end ? $start . $conjunction . $end : $start;
 	}
-	public function e_date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {		
+
+
+
+	/**
+	 * @param null   $dt_frmt
+	 * @param string $conjunction
+	 */
+	public function e_date_range( $dt_frmt = NULL, $conjunction = ' - ' ) {
 		echo $this->date_range( $dt_frmt, $conjunction );
 	}
 
@@ -520,15 +513,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		get start time
-	* 
-	* 		@access		public	
+	*
+	* 		@access		public
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
-	*/	
+	*/
 	public function start_time( $tm_format = NULL ) {
 		return $this->_show_datetime( 'T', 'start', NULL, $tm_format );
 	}
 
+
+
+	/**
+	 * @param null $tm_format
+	 */
 	public function e_start_time( $tm_format = NULL ) {
 		$this->_show_datetime( 'T', 'start', NULL, $tm_format, TRUE );
 	}
@@ -537,15 +535,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		get end time
-	* 
-	* 		@access		public	
+	*
+	* 		@access		public
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	*		@return 		mixed		string on success, FALSE on fail
-	*/	
+	*/
 	public function end_time( $tm_format = NULL ) {
 		return $this->_show_datetime( 'T', 'end', NULL, $tm_format );
 	}
 
+
+
+	/**
+	 * @param null $tm_format
+	 */
 	public function e_end_time( $tm_format = NULL ) {
 		$this->_show_datetime( 'T', 'end', NULL, $tm_format, TRUE );
 	}
@@ -554,50 +557,64 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		get time_range
-	* 
-	* 		@access		public	
+	*
+	* 		@access		public
 	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
 	* 		@param		string		$conjunction - conjunction junction what's your function ? this string joins the start date with the end date ie: Jan 01 "to" Dec 31
 	*		@return 		mixed		string on success, FALSE on fail
-	*/	
+	*/
 	public function time_range( $tm_format = NULL, $conjunction = ' - ' ) {
 		$tm_format = ! empty( $tm_format ) ? $tm_format : $this->_tm_frmt;
 		$start = str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'start', NULL, NULL ))));
 		$end = str_replace( ' ', '&nbsp;', date_i18n( $tm_format, strtotime( $this->_show_datetime( 'T', 'end', NULL, NULL ))));
 		return $start != $end ? $start . $conjunction . $end : $start;
 	}
-	public function e_time_range( $tm_format = NULL, $conjunction = ' - ' ) {		
+
+
+
+	/**
+	 * @param null   $tm_format
+	 * @param string $conjunction
+	 */
+	public function e_time_range( $tm_format = NULL, $conjunction = ' - ' ) {
 		echo $this->time_range( $tm_format, $conjunction );
 	}
 
 
 
-
-
-
-
 	/**
-	*		get start date and start time
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
+	 *        get start date and start time
+	 *
+	 * @access        public
+	 * @param null          $dt_frmt
+	 * @param        string $tm_format - string representation of time format defaults to 'g:i a'
+	 * @internal      param string $dt_format - string representation of date format defaults to 'F j, Y'
+	 * @return        mixed        string on success, FALSE on fail
+	 */
 	public function start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
 		return $this->_show_datetime( '', 'start', $dt_frmt, $tm_format );
 	}
 
+
+
+	/**
+	 * @param null $dt_frmt
+	 * @param null $tm_format
+	 */
 	public function e_start_date_and_time( $dt_frmt = NULL, $tm_format = NULL ) {
 		$this->_show_datetime( '', 'start', $dt_frmt, $tm_format, TRUE);
 	}
 
+
+
 	/**
-	 * Shows the length of the event (start to end time). 
+	 * Shows the length of the event (start to end time).
 	 * Can be shown in 'seconds','minutes','hours', or 'days'.
-	 * By default, rounds up. (So if you use 'days', and then event 
+	 * By default, rounds up. (So if you use 'days', and then event
 	 * only occurs for 1 hour, it will return 1 day).
 	 * @param string $units 'seconds','minutes','hours','days'
+	 * @param bool   $round_up
+	 * @return float|int|mixed
 	 */
 	public function length($units = 'seconds',$round_up = false){
 		$start = $this->get_raw('DTT_EVT_start');
@@ -620,23 +637,30 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 			$length_in_units = max($length_in_units, 1);
 		}
 		return $length_in_units;
-		
+
 	}
 
 
 
 	/**
-	*		get end date and time
-	* 
-	* 		@access		public	
-	* 		@param		string		$dt_format - string representation of date format defaults to 'F j, Y'
-	* 		@param		string		$tm_format - string representation of time format defaults to 'g:i a'
-	*		@return 		mixed		string on success, FALSE on fail
-	*/	
+	 *        get end date and time
+	 *
+	 * @access        public
+	 * @param bool        $dt_frmt
+	 * @param bool|string $tm_format - string representation of time format defaults to 'g:i a'
+	 * @internal      param string $dt_format - string representation of date format defaults to 'F j, Y'
+	 * @return        mixed        string on success, FALSE on fail
+	 */
 	public function end_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
 		return $this->_show_datetime( '', 'end', $dt_frmt, $tm_format );
 	}
 
+
+
+	/**
+	 * @param bool $dt_frmt
+	 * @param bool $tm_format
+	 */
 	public function e_end_date_and_time( $dt_frmt = FALSE, $tm_format = FALSE ) {
 		$this->_show_datetime( '', 'end', $dt_frmt, $tm_format, TRUE );
 	}
@@ -646,12 +670,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		get start timestamp
-	* 
-	* 		@access		public	
+	*
+	* 		@access		public
 	*		@return 		int
-	*/	
+	*/
 	public function start() {
-		return $this->_DTT_EVT_start;
+		return $this->get_raw('DTT_EVT_start');
 	}
 
 
@@ -659,12 +683,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*		get end timestamp
-	* 
-	* 		@access		public	
+	*
+	* 		@access		public
 	*		@return 		int
-	*/	
+	*/
 	public function end() {
-		return $this->_DTT_EVT_end;
+		return $this->get_raw('DTT_EVT_end');
 	}
 
 
@@ -674,12 +698,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*	get the registration limit for this datetime slot
-	* 
-	* 	@access		public		
+	*
+	* 	@access		public
 	*	@return 		mixed		int on success, FALSE on fail
-	*/	
+	*/
 	public function reg_limit() {
-		return $this->_DTT_reg_limit;
+		return $this->get_raw('DTT_reg_limit');
 	}
 
 
@@ -689,12 +713,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*	get the number of tickets sold for this datetime slot
-	* 
-	* 	@access		public		
+	*
+	* 	@access		public
 	*	@return 		mixed		int on success, FALSE on fail
-	*/	
+	*/
 	public function sold() {
-		return $this->_DTT_sold;
+		return $this->get_raw('DTT_sold');
 	}
 
 
@@ -703,12 +727,12 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	*	have the tickets sold for this datetime, met or exceed the registration limit ?
-	* 
-	* 	@access		public		
+	*
+	* 	@access		public
 	*	@return 		boolean
-	*/	
+	*/
 	public function sold_out() {
-		return $this->_DTT_reg_limit > 0 && $this->_DTT_sold >= $this->_DTT_reg_limit ? TRUE : FALSE ;
+		return $this->get('DTT_reg_limit') > 0 && $this->get('DTT_sold') >= $this->get('DTT_reg_limit') ? TRUE : FALSE ;
 	}
 
 
@@ -717,17 +741,17 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	/**
 	*	return the total number of spaces remaining at this venue.
 	 *  This only takes the venue's capacity into account, NOT the tickets available for sale
-	* 
+	*
 	* 	@access		public
-	* 	@param      bool    $consider_tickets Whether to consider tickets remaining when determining if there are any spaces left (because if all tickets attached to this datetime have no spaces left, then this datetime IS effectively sold out)  However, there are cases where we just want to know the spaces remaining for this particular datetime hence the flag.	
+	* 	@param      bool    $consider_tickets Whether to consider tickets remaining when determining if there are any spaces left (because if all tickets attached to this datetime have no spaces left, then this datetime IS effectively sold out)  However, there are cases where we just want to know the spaces remaining for this particular datetime hence the flag.
 	*	@return 		int
-	*/	
+	*/
 	public function spaces_remaining( $consider_tickets = FALSE ) {
 		// tickets remaining availalbe for purchase
 		//no need for special checks for infinite, becuase if DTT_reg_limit == INF, then INF - x = INF
-		$dtt_remaining = $this->_DTT_reg_limit - $this->_DTT_sold ;
+		$dtt_remaining = $this->get('DTT_reg_limit') - $this->get('DTT_sold') ;
 
-		if ( ! $consider_tickets ) 
+		if ( ! $consider_tickets )
 			return $dtt_remaining;
 
 		$tickets_remaining = $this->tickets_remaining();
@@ -736,14 +760,14 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Counts the total tickets available (from all the different types of tickets which are available for
-	 * this datetime). 
-	 * @param array $query_params  like EEM_Base::get_all's 
-	 * @return count
+	 * this datetime).
+	 * @param array $query_params  like EEM_Base::get_all's
+	 * @return int
 	 */
 	public function tickets_remaining($query_params = array()){
 		return EEM_Ticket::instance()->sum_tickets_currently_available_at_datetime($this->ID(),$query_params);
 	}
-	
+
 	/**
 	 * Gets the count of all the tickets available at this datetime (not ticket types)
 	 * before any were sold
@@ -767,25 +791,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	/**
 	 * This simply compares the internal dtt for the given string with NOW and determines if the date is upcoming or not.
 	 * @access public
-	 * @return boolean 
+	 * @return boolean
 	 */
 	public function is_upcoming() {
-		$start = '_DTT_EVT_start';
-		$this->_property_exists($start);
-		return ( $this->$start > time() );
+		return ( $this->get_raw('DTT_EVT_start') > time() );
 	}
 
 
 
 	/**
 	 * This simply compares the internal datetime for the given string with NOW and returns if the date is active (i.e. start and end time)
-	 * @return boolean       
+	 * @return boolean
 	 */
 	public function is_active() {
-		$start = '_DTT_EVT_start';
-		$end = '_DTT_EVT_end';
-		$this->_property_exists( array( $start, $end ) );
-		return ( $this->$start < time() && $this->$end > time() );
+		return ( $this->get_raw('DTT_EVT_start')< time() && $this->get_raw('DTT_EVT_end') > time() );
 	}
 
 
@@ -793,12 +812,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * This simply compares the internal dtt for the given string with NOW and determines if the date is expired or not.
-	 * @return boolean       
+	 * @return boolean
 	 */
 	public function is_expired() {
-		$end = '_DTT_EVT_end';
-		$this->_property_exists( $end );
-		return ( $this->$end < time() );
+		return ( $this->get_raw('DTT_EVT_end') < time() );
 	}
 
 
@@ -832,10 +849,10 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		}
 
 		//first condition is to see if the months are different
-		if ( date('m', $this->_DTT_EVT_start) != date('m', $this->_DTT_EVT_end ) ) {
+		if ( date('m', $this->get_raw('DTT_EVT_start')) != date('m', $this->get_raw('DTT_EVT_end') ) ) {
 			$displaydate = $this->start_date('M j\, Y g:i a') . ' - ' . $this->end_date('M j\, Y g:i a');
 		//next condition is if its the same month but different day
-		} else if ( date('m', $this->_DTT_EVT_start) == date('m', $this->_DTT_EVT_end ) && date('d', $this->_DTT_EVT_start) != date('d', $this->_DTT_EVT_end) ) {
+		} else if ( date('m', $this->get_raw('DTT_EVT_start')) == date('m', $this->get_raw('DTT_EVT_end') ) && date('d', $this->get_raw('DTT_EVT_start')) != date('d', $this->get_raw('DTT_EVT_end')) ) {
 			$displaydate = $this->start_date('M j\, g:i a') . ' - ' . $this->end_date('M j\, g:i a Y');
 		} else {
 			$displaydate = $this->start_date('F j\, Y') . ' @ ' . $this->start_date('g:i a') . ' - ' . $this->end_date('g:i a');
@@ -844,7 +861,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	}
 
 
-	
+
 	/**
 	 * Gets all the tickets for this datetime
 	 * @param array $query_params see EEM_Base::get_all()
@@ -853,7 +870,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	public function tickets($query_params = array()){
 		return $this->get_many_related('Ticket', $query_params);
 	}
-	
+
 	/**
 	 * Gets all the ticket types currently available for purchase
 	 * @param array $query_params like EEM_Base::get_all's
@@ -864,18 +881,20 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 		if ( ! ( $this->is_upcoming() || $this->is_active() ) || $this->sold_out() ) {
 			return array();
 		}
-		$query_params = array( array(
-			'TKT_start_date' => array('<=',current_time('mysql')),
-			'TKT_end_date' => array('>=',current_time('mysql')),
-			'TKT_deleted' => FALSE
-		));
+		if ( empty( $query_params )) {
+			$query_params = array( array(
+				'TKT_start_date' => array('<=',current_time('mysql')),
+				'TKT_end_date' => array('>=',current_time('mysql')),
+				'TKT_deleted' => FALSE
+			));
+		}
 //		$query_params[0]['TKT_start_date'] = array('<=',current_time('mysql'));
 //		$query_params[0]['TKT_end_date'] = array('>=',current_time('mysql'));
 		return $this->tickets( $query_params );
 	}
 
 	/**
-	 * 
+	 *
 	 * @return EE_Event
 	 */
 	public function event(){
@@ -883,7 +902,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * Updates the DTT_sold attribute (and saves) based on the number of registrations for this datetime (via the tickets). 
+	 * Updates the DTT_sold attribute (and saves) based on the number of registrations for this datetime (via the tickets).
 	 * into account
 	 * @return int
 	 */
@@ -902,5 +921,4 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class{
 }
 
 /* End of file EE_Datetime.class.php */
-/* Location: includes/classes/EE_Datetime.class.php */	
-	
+/* Location: includes/classes/EE_Datetime.class.php */

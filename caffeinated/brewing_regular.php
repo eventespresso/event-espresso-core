@@ -541,14 +541,13 @@ class EE_Brewing_Regular extends EE_Base {
 	public function register_newsletter_message_type() {
 		//setup array for registering
 		$setup_args = array(
-			'mtname' => 'newsletter',
 			'mtfilename' => 'EE_Newsletter_message_type.class.php',
 			'autoloadpaths' => array(
 				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/' => array('class')
 				),
 			'messengers_to_activate_with' => array( 'email' )
 			);
-		EE_Register_Message_Type::register( $setup_args );
+		EE_Register_Message_Type::register( 'newsletter', $setup_args );
 	}
 
 
@@ -562,7 +561,6 @@ class EE_Brewing_Regular extends EE_Base {
 	 * @return void
 	 */
 	public function register_newsletter_shortcodes() {
-		$name = 'newsletter';
 		$setup_args = array(
 			'autoloadpaths' => array(
 				EE_CAF_LIBRARIES . 'shortcodes/' => array( 'lib' )
@@ -571,7 +569,7 @@ class EE_Brewing_Regular extends EE_Base {
 			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),
 			'list_type_shortcodes' => array( '[NEWSLETTER_CONTENT]' )
 			);
-		EE_Register_Messages_Shortcode_Library::register( $name, $setup_args );
+		EE_Register_Messages_Shortcode_Library::register( 'newsletter', $setup_args );
 	}
 
 

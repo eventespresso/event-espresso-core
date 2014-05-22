@@ -138,7 +138,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
 			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
-			'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template')
+			'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
+			'Attendee'=>new EE_HABTM_Relation('Registration'),
 		);
 
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_events', 'EVTM_ID');

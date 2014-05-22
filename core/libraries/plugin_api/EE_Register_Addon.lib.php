@@ -38,15 +38,16 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 *    Method for registering new EE_Addons
 	 *
 	 * @since    4.3.0
-	 * @param string $addon_name 		the EE_Addon's name. Required.
-	 * @param  array $setup_args 			An array of arguments provided for registering the message type.
 	 * @throws EE_Error
+	 * @param string $addon_name 		the EE_Addon's name. Required.
+	 * @param  array $setup_args { 			An array of arguments provided for registering the message type.
 	 * @internal param string admin_path            full server path to the folder where the addon\'s admin files reside
 	 * @internal param string autoloader_paths    an array of class names and the full server paths to those files. Required.
 	 * @internal param string dms_paths                an array of full server paths to folders that contain data migration scripts. Required.
 	 * @internal param string module_paths        an array of full server paths to any EED_Modules used by the addon
 	 * @internal param string shortcode_paths    an array of full server paths to folders that contain EES_Shortcodes
 	 * @internal param string widgets                    an array of full server paths to folders that contain WP_Widgets
+	 * 	}
 	 * @return void
 	 */
 	public static function register( $addon_name = '', $setup_args = array()  ) {
@@ -57,8 +58,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 
 		// required fields MUST be present, so let's make sure they are.
-		if ( empty( $addon_name ) || ! is_array( $setup_args ) || empty( $setup_args['autoloader_paths'] ) || empty( $setup_args['dms_paths'] )) {
-			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array containing the following keys: "autoloader_paths" (an array of class names and the full server paths to those files), and "dms_paths" (an array of full server paths to folders that contain data migration scripts)', 'event_espresso' ));
+		if ( empty( $addon_name ) || ! is_array( $setup_args )) {
+			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.', 'event_espresso' ));
 		}
 
 		// make sure this was called in the right place!
@@ -111,21 +112,34 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// array of full server paths to any WP_Widgets used by the addon
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
 		);
-		// we need cars
-		EEH_Autoloader::instance()->register_autoloader( self::$_settings[ $addon_name ]['autoloader_paths'] );
-		// setup DMS
-		EE_Register_Data_Migration_Scripts::register( $addon_name, array( 'dms_paths' => self::$_settings[ $addon_name ]['dms_paths'] ));
-		// register admin page
-		EE_Register_Admin_Page::register( $addon_name, self::$_settings[ $addon_name ]['admin_path'] );
-		// add to list of modules to be registered
-		EE_Register_Module::register( $addon_name, array( 'module_paths' => self::$_settings[ $addon_name ]['module_paths'] ));
-		// add to list of shortcodes to be registered
-		EE_Register_Shortcode::register( $addon_name, array( 'shortcode_paths' => self::$_settings[ $addon_name ]['shortcode_paths'] ));
-		//if config_class present let's register config.
-		if ( !empty( self::$_settings[$addon_name]['config_class'] ) )
-			EE_Register_Config::register( self::$_settings[$addon_name]['config_class'], self::$_settings[$addon_name]['config_name'] );
-		// add to list of widgets to be registered
-		EE_Register_Widget::register( $addon_name, array( 'widget_paths' => self::$_settings[ $addon_name ]['widget_paths'] ));
+		if ( ! empty( self::$_settings[ $addon_name ]['autoloader_paths'] )) {
+			// we need cars
+			EEH_Autoloader::instance()->register_autoloader( self::$_settings[ $addon_name ]['autoloader_paths'] );
+		}
+		if ( ! empty( self::$_settings[ $addon_name ]['dms_paths'] )) {
+			// setup DMS
+			EE_Register_Data_Migration_Scripts::register( $addon_name, array( 'dms_paths' => self::$_settings[ $addon_name ]['dms_paths'] ));
+		}
+		if ( ! empty( self::$_settings[ $addon_name ]['admin_path'] )) {
+			// register admin page
+			EE_Register_Admin_Page::register( $addon_name, array( 'page_path' => self::$_settings[ $addon_name ]['admin_path'] ));
+	}
+		if ( ! empty( self::$_settings[ $addon_name ]['module_paths'] )) {
+			// add to list of modules to be registered
+			EE_Register_Module::register( $addon_name, array( 'module_paths' => self::$_settings[ $addon_name ]['module_paths'] ));
+		}
+		if ( ! empty( self::$_settings[ $addon_name ]['shortcode_paths'] )) {
+			// add to list of shortcodes to be registered
+			EE_Register_Shortcode::register( $addon_name, array( 'shortcode_paths' => self::$_settings[ $addon_name ]['shortcode_paths'] ));
+		}
+		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
+			// if config_class present let's register config.
+			EE_Register_Config::register( self::$_settings[ $addon_name ]['config_class'], array( 'config_name' => self::$_settings[ $addon_name ]['config_name'] ));
+		}
+		if ( ! empty( self::$_settings[ $addon_name ]['widget_paths'] )) {
+			// add to list of widgets to be registered
+			EE_Register_Widget::register( $addon_name, array( 'widget_paths' => self::$_settings[ $addon_name ]['widget_paths'] ));
+		}
 		// load and instantiate main addon class
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EE_Register_Addon', 'instantiate_addon' ));
 
@@ -163,7 +177,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @param string  $addon_name the name for the addon that was previously registered
 	 * @return void
 	 */
-	public static function deregister( $addon_name ) {
+	public static function deregister( $addon_name = NULL ) {
 		if ( isset( self::$_settings[ $addon_name ] )) {
 			unset( self::$_settings[ $addon_name ] );
 		}
