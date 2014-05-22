@@ -29,7 +29,7 @@
  */
 abstract class EE_Addon {
 
-	
+
 	/**
 	 * prefix to be added onto an addon's plugin slug to make a wp option name
 	 * which will be used to store the plugin's activation history
@@ -205,9 +205,18 @@ abstract class EE_Addon {
 	 *
 	 * Returns the name of the activation indicator option
 	 * (an option which is set temporarily to indicate that this addon was just activated)
+	 * @deprecated since version 4.3.0.alpha.016
 	 * @return string
 	 */
 	public function get_db_update_option_name() {
+		EE_Error::doing_it_wrong(__FUNCTION__, __('EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name', 'event_espresso'), '4.3.0.alpha.016');
+		return $this->get_activation_indicator_option_name();
+	}
+	/**
+	 * Gets the name of the wp option which is used to temporarily indicate that this addon was activated
+	 * @return string
+	 */
+	public function get_activation_indicator_option_name(){
 		return 'ee_activation_' . $this->name();
 	}
 
@@ -290,7 +299,7 @@ abstract class EE_Addon {
 	function detect_req_type() {
 		return $this->_req_type;
 	}
-	
+
 	/**
 	 * Gets the name of the wp option that stores the activation history
 	 * of this addon
@@ -299,7 +308,7 @@ abstract class EE_Addon {
 	function get_activation_history_option_name(){
 		return self::ee_addon_version_history_option_prefix . $this->name();
 	}
-	
+
 	/**
 	 * Gets the wp option which stores the activation history for this addon
 	 * @return array

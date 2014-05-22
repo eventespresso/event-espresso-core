@@ -323,7 +323,7 @@ final class EE_System {
 		foreach(EE_Registry::instance()->addons as $addon){
 			//detect teh request type for that addon
 			$activation_history_for_addon = $addon->get_activation_history();
-			$request_type = $this->_detect_req_type($activation_history_for_addon, $addon->get_db_update_option_name(), $addon->version());
+			$request_type = $this->_detect_req_type($activation_history_for_addon, $addon->get_activation_indicator_option_name(), $addon->version());
 			$addon->set_req_type($request_type);
 
 			switch($request_type){

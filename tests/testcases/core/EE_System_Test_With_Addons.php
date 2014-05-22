@@ -42,14 +42,14 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->assertNull($this->_addon->detect_req_type());
 		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__new_install"]) ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"] : 0;
 		//set the activator option
-		update_option($this->_addon->get_db_update_option_name(),TRUE);
-		$this->assertWPOptionExists($this->_addon->get_db_update_option_name());
+		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
+		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
 		//now check for activations/upgrades in addons
 
 		EE_System::reset()->detect_activations_or_upgrades();
 		$this->assertEquals(EE_System::req_type_new_activation,$this->_addon->detect_req_type());
 		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$this->_addon_classname}__new_install"]);
-		$this->assertWPOptionDoesNotExist($this->_addon->get_db_update_option_name());
+		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
 		//now we also want to check that the addon will have created the necessary table
 		//that it needed upon new activation (and so we call the function that does it, which
 		//is normally called a little later in the request)
@@ -71,7 +71,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$db_state[$this->_addon_name] = '0.0.1';
 		update_option(EE_Data_Migration_Manager::current_database_state,$db_state);
 		//pretend the activation indicator option was set (by WP calling its activation hook)
-		update_option($this->_addon->get_db_update_option_name(),TRUE);
+		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
 		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$addon_classname}__upgrade"]) ? $wp_actions["AHEE__{$addon_classname}__upgrade"] : 0;
 		//the site shouldn't be in MM before
 		$this->assertEquals(EE_Maintenance_Mode::level_0_not_in_maintenance,  EE_Maintenance_Mode::instance()->level());
@@ -83,7 +83,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//the fact that there's an applicable DMS means the site should be placed in maintenance mode
 		$this->assertEquals(EE_Maintenance_Mode::level_2_complete_maintenance,  EE_Maintenance_Mode::instance()->level());
 		//check that the activation indicator option was removed
-		$this->assertWPOptionDoesNotExist($this->_addon->get_db_update_option_name());
+		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
 		//ok all done
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
 	}
@@ -131,8 +131,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		update_option(EE_Data_Migration_Manager::current_database_state,$db_state);
 
 		//set the activator option
-		update_option($this->_addon->get_db_update_option_name(),TRUE);
-		$this->assertWPOptionExists($this->_addon->get_db_update_option_name());
+		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
+		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
 
 		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$addon_classname}__upgrade"]) ? $wp_actions["AHEE__{$addon_classname}__upgrade"] : 0;
 		//now check for activations/upgrades in addons
@@ -140,7 +140,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->assertEquals(EE_System::req_type_upgrade,$this->_addon->detect_req_type());
 		$this->assertEquals($times_its_new_install_hook_fired_before + 1, $wp_actions["AHEE__{$addon_classname}__upgrade"]);
 		$this->assertEquals(EE_Maintenance_Mode::level_2_complete_maintenance,  EE_Maintenance_Mode::instance()->level());
-		$this->assertWPOptionDoesNotExist($this->_addon->get_db_update_option_name());
+		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_indicator_option_name());
 		//ok all done
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_0_not_in_maintenance);
 	}
