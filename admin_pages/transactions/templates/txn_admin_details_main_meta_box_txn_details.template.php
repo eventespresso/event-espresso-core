@@ -293,12 +293,12 @@
 					<input  type="hidden" name="txn_admin_payment[type]" id="txn-admin-payment-type-inp" value="1"/>
 					<input  type="hidden" name="txn_admin_payment[details]" id="txn-admin-payment-details-inp" value=""/>
 					<input  type="hidden" name="txn_admin_delete_payment_form_url" id="txn-admin-delete-payment-form-url-inp" value="<?php echo $delete_payment_form_url; ?>"/>
-					<input  type="hidden" name="txn_admin_todays_date" id="txn-admin-todays-date-inp" value="<?php echo date('Y-m-d h:i a', current_time('timestamp') ); ?>"/>
+					<input  type="hidden" name="txn_admin_todays_date" id="txn-admin-todays-date-inp" value="<?php echo date( 'Y-m-d h:i a', current_time( 'timestamp' )); ?>"/>
 
 					<div class="txn-admin-apply-payment-date-dv admin-modal-dialog-row">
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-date-inp" class=""><?php _e( 'Payment Date', 'event_espresso' );?></label>
-						<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp required" type="text" value="<?php echo date('Y-m-d h:i a', current_time('timestamp') );?>"/>
+						<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp required" type="text" value="<?php echo date( 'Y-m-d h:i a', current_time( 'timestamp' )); ?>"/>
 						<br/>
 						<p class="description"><?php _e( 'The date the payment was actually made on', 'event_espresso' );?></p>
 					</div>

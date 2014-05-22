@@ -65,7 +65,7 @@ final class EE_Module_Request_Router {
 	 *    it checks the previous routes array, and checks if the last called route has any forwarding routes registered for it
 	 *
 	 * @access    public
-	 * @param   WP_Query $WP
+	 * @param WP_Query $WP_Query
 	 * @return    string | NULL
 	 */
 	public function get_route( WP_Query $WP_Query ) {
@@ -229,15 +229,55 @@ final class EE_Module_Request_Router {
 
 
 	/**
-	 *		@ override magic methods
-	 *		@ return void
+	 * @param $a
+	 * @param $b
+	 * @return bool
 	 */
 	public function __set($a,$b) { return FALSE; }
+
+
+
+	/**
+	 * @param $a
+	 * @return bool
+	 */
 	public function __get($a) { return FALSE; }
+
+
+
+	/**
+	 * @param $a
+	 * @return bool
+	 */
 	public function __isset($a) { return FALSE; }
+
+
+
+	/**
+	 * @param $a
+	 * @return bool
+	 */
 	public function __unset($a) { return FALSE; }
+
+
+
+	/**
+	 * @return bool
+	 */
 	public function __clone() { return FALSE; }
+
+
+
+	/**
+	 * @return bool
+	 */
 	public function __wakeup() { return FALSE; }
+
+
+
+	/**
+	 *
+	 */
 	public function __destruct() { return FALSE; }
 
 }

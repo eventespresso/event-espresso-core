@@ -39,7 +39,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_primary_revisit = FALSE;
 	// is registration allowed to progress or halted for some reason such as failing to pass recaptcha?
 	private $_continue_reg = TRUE;
-	// array of tempate paths
+	// array of template paths
 	private $_templates = array();
 	// info for each of the reg steps
 	private static $_reg_steps = array();
@@ -61,20 +61,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private $_transaction = NULL;
 
-
-
-	/**
-	 *		@singleton method used to instantiate class object
-	 *		@access public
-	 *		@return class instance
-	 */
-	public static function instance ( ) {
-		// check if class object is instantiated
-		if ( ! self::$_instance instanceof EED_Single_Page_Checkout ) {
-			self::$_instance = new self();
-		}
-		return self::$_instance;
-	}
 
 
 
@@ -621,17 +607,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				for ( $x = 1; $x <= $item->quantity(); $x++ ) {
 					$att_nmbr++;
 					$reg_url_link = $att_nmbr . '-' . $item->code();
-
-//					// TODO: verify that $event->default_registration_status() is editable in admin event editor, then uncomment and use the following for STS_ID
-					$event_default_registration_status = $event->default_registration_status();
-					$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
+					// grab the default reg status for the event
+					$registration_status = $event->default_registration_status();
+					// if it's set to "Approved", then temporarily downgrade it to "Pending Payment", so that reg limits and/or ticket sales are not skewed in case the reg process is aborted
+					$registration_status = $registration_status == EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment : $registration_status;
 					try {
 						// now create a new registration for the ticket
 						$registration = EE_Registration::new_instance( array(
 							'EVT_ID' => $event->ID(),
 							'TXN_ID' => $this->_transaction->ID(),
 							'TKT_ID' => $ticket->ID(),
-							'STS_ID' => $STS_ID,
+							'STS_ID' => $registration_status,
 							'REG_date' => $this->_transaction->datetime(),
 							'REG_final_price' => $ticket->price(),
 							'REG_session' => EE_Registry::instance()->SSN->id(),
@@ -1223,7 +1209,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 														$attendee_property = TRUE;
 													break;
 													default :
-														$attendee_property = EEH_Class_Tools::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
+														$attendee_property = EEM_Attendee::instance()->has_field('ATT_' . $form_input) ? TRUE : FALSE;
 														$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 												}
 
@@ -1301,7 +1287,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												unset( $attendee_data['ATT_email'] );
 												// now loop thru what' sleft and add to attendee CPT
 												foreach ( $attendee_data as $property_name => $property_value ) {
-													if ( EEH_Class_Tools::has_property( 'EE_Attendee', '_' . $property_name )) {
+													if ( EEM_Attendee::instance()->has_field($property_name)) {
 														$existing_attendee->set( $property_name, $property_value );
 													}
 												}

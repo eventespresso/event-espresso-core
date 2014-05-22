@@ -14,21 +14,21 @@
  * ------------------------------------------------------------------------
  *
  * Line Item Model. MOstly used for storing a snapshot of all the items in a transaction
- * as they were recorded at the time of being added to the cart. 
+ * as they were recorded at the time of being added to the cart.
  * There are different 'types' of line items: item, sub-item, tax, sub-total, and total.
  * Note that line items can be nested. For example, a total line item should have one-or-more
  * children sub-totals. Likewise, sub-totals should have one-or-more nested items or taxes
- * (or maybe promotions or products?). Also, items can have nested sub-items (eg. an item could be a 
+ * (or maybe promotions or products?). Also, items can have nested sub-items (eg. an item could be a
  * ticket, which has many sub-item prices which together make up the price of that ticket).
  * Note that line items should point to real model objects using OBJ_ID and OBJ_type (note:
  * there is a current limitation that they can only point to models with INT primary keys),
  * but this is NOT required. And in fact, the items they are related to CAN be deleted, but
  * the line item should still exist (in this case it merely shows that there was ONCE a model
  * object the line item was based off of).
- * 
+ *
  * In usage, Line Items are first stored on the EE_Cart, but not saved until a user's registration is
- * finalized (like how the EE_Transaction is stored in the session until it is confirmed). 
- * Many of their methods (like 
+ * finalized (like how the EE_Transaction is stored in the session until it is confirmed).
+ * Many of their methods (like
  *
  *
  * @package			Event Espresso
@@ -39,7 +39,7 @@
  */
 
 class EEM_Line_Item extends EEM_Base {
-	
+
 	const type_tax_sub_total = 'tax-sub-total';
 	const type_tax = 'tax';
 	const type_line_item = 'line-item';
@@ -52,40 +52,38 @@ class EEM_Line_Item extends EEM_Base {
 
 
 	/**
-	 * 		This funtion is a singleton method used to instantiate the EEM_Line_Item object
+	 * 		instantiate the EEM_Line_Item singleton
 	 *
 	 * 		@access public
 	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 * 		@return EEM_Checkin instance
+	 * 		@return \EEM_Line_Item
 	 */
 	public static function instance( $timezone = NULL ) {
-
-		// check if instance of EEM_Checkin already exists
-		if (self::$_instance === NULL) {
+		// check if instance of EEM_Line_Item already exists
+		if ( ! self::$_instance instanceof EEM_Line_Item) {
 			// instantiate Price_model
 			self::$_instance = new self( $timezone );
 		}
-
 		//set timezone if we have in incoming string
-		if ( !empty( $timezone ) )
+		if ( ! empty( $timezone ) )
 			self::$_instance->set_timezone( $timezone );
-		
-		// EEM_Checkin object
+
+		// EEM_Line_Item object
 		return self::$_instance;
 	}
 
 
 
 	/**
-	 * 		private constructor to prevent direct creation
-	 * 		@Constructor
-	 * 		@access protected
-	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 * 		@return void
+	 *        private constructor to prevent direct creation
+	 * @Constructor
+	 * @access protected
+	 * @param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
+	 * @return \EEM_Line_Item
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Line Item','event_espresso');
-		$this->plural_item = __('Line Items','event_espresso');		
+		$this->plural_item = __('Line Items','event_espresso');
 
 		$this->_tables = array(
 			'Line_Item'=>new EE_Primary_Table('esp_line_item','LIN_ID')
@@ -105,7 +103,7 @@ class EEM_Line_Item extends EEM_Base {
 				'LIN_total'=>new EE_Money_Field('LIN_total', __("Total (unit price x quantity)", "event_espresso"), false, 0),
 				'LIN_quantity'=>new EE_Integer_Field('LIN_quantity', __("Quantity", "event_espresso"), true, null),
 				'LIN_parent'=>new EE_Integer_Field('LIN_parent', __("Parent ID (this item goes towards that Line Item's total)", "event_espresso"), true, null),
-				'LIN_type'=>new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item', 
+				'LIN_type'=>new EE_Enum_Text_Field('LIN_type', __("Type", "event_espresso"), false, 'line-item',
 						array(
 							self::type_line_item=>  __("Line Item", "event_espresso"),
 							self::type_sub_line_item=>  __("Sub-Item", "event_espresso"),

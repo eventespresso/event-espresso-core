@@ -10,7 +10,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * Cannot be used until models and model objects are allowed to be located elsewhere besides
  * just in the core directories core/db_models and core/db_classes, respectively
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Base_Class_Test extends EE_UnitTestCase{
 	static function setUpBeforeClass() {
 //		EE_Registry::instance()->load_helper('Activation');
-//		EEH_Activation::create_table('esp_mock', 
+//		EEH_Activation::create_table('esp_mock',
 //				"MCK_ID int(11) NOT NULL,
 //				PRIMARY KEY  (MCK_ID)");
 //		require_once(EE_TESTS_DIR.'mocks/core/db_models/EEM_Mock.model.php');
@@ -95,12 +95,12 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 			$this->assertInstanceOf('EE_Registration', $r_from_t);
 		}
 	}
-	
+
 	function test_cache_related(){
 		$t = EE_Transaction::new_instance();
 		//note that we did NOT save it
 		$r = EE_Registration::new_instance();
-		
+
 		$t->_add_relation_to($r, 'Registration');
 		$this->assertEquals($t->ID(),0);
 		$this->assertEquals($r->ID(),0);
@@ -108,7 +108,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r_from_t = $t->get_first_related('Registration');
 		$this->assertEquals($r,$r_from_t);
 	}
-	
+
 	function test_remove_relation_to(){
 		$t = EE_Transaction::new_instance();
 		$t->save();
@@ -118,7 +118,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertEquals($t,$t_from_r);
 		//remove the relation
 		$t_removed = $r->_remove_relation_to($t, 'Transaction');
-		$this->assertEquals($t,$t_removed);		
+		$this->assertEquals($t,$t_removed);
 		$t_from_r = $r->get_first_related('Transaction');
 		$this->assertNull($t_from_r);
 	}
@@ -148,7 +148,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$v->_add_relation_to($e2, 'Event');
 		$this->assertEquals($v->count_related('Event'),2);
 	}
-	
+
 	function test_sum_related(){
 		$t = EE_Transaction::new_instance();
 		$t->save();
@@ -162,7 +162,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t->_remove_relation_to($p2, 'Payment');
 		$this->assertEquals($t->sum_related('Payment',array(),'PAY_amount'),1);
 	}
-	
+
 	function test_cache_specifying_id(){
 		$t = EE_Transaction::new_instance();
 		$r = EE_Registration::new_instance();
@@ -178,7 +178,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertArrayContains($r,$rs_from_t);
 		$this->assertArrayContains($r2,$rs_from_t);
 	}
-	
+
 	function test_update_cache_after_save(){
 		$t = EE_Transaction::new_instance();
 		$r = EE_Registration::new_instance();
@@ -191,11 +191,104 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertArrayHasKey($r->ID(),$related_rs);
 		$this->assertArrayNotHasKey('monkey_code',$related_rs);
 	}
-	
+
 	function test_is_set(){
 		$t = EE_Transaction::new_instance();
 		$this->assertTrue($t->is_set('TXN_ID'));
 		$this->assertFalse($t->is_set('monkey_brains'));
+	}
+
+	/**
+	 * tests that clearing all from a cache works as expected
+	 */
+	function test_clear_cache__all(){
+		$t = EE_Transaction::new_instance();
+
+		//test that clear cache for an item that ISN'T cached doesn't produce an error.
+		$response = $t->clear_cache('Registration');
+		$this->assertNull( $response );
+		
+		$r = EE_Registration::new_instance(array('REG_code'=>'monkey1'));
+		$r2 = EE_Registration::new_instance(array('REG_code'=>'monkey2'));
+		$t->cache('Registration', $r);
+		$t->cache('Registration',$r2);
+		$rs_cached = $t->get_all_from_cache('Registration');
+		$this->assertArrayContains($r, $rs_cached);
+		$this->assertArrayContains($r2,$rs_cached);
+		//ok but if we call clear cache again without specifying what we want, 
+		//we should actually do nothing
+		$r_null = $t->clear_cache('Registration');
+		$this->assertNull($r_null);
+		$this->assertArrayContains($r, $rs_cached);
+		$this->assertArrayContains($r2,$rs_cached);
+		//ok now clear everything
+		$success = $t->clear_cache('Registration',NULL,TRUE);
+		$this->assertTrue($success);
+		$cached_regs = $t->get_all_from_cache('Registration');
+		$this->assertEmpty($cached_regs);
+		
+	}
+	
+	/**
+	 * test that after we've cached something, we can remove it specifically
+	 * by only knowing the object
+	 */
+	function test_clear_cache__specific_object(){
+		$t = EE_Transaction::new_instance();
+		$r = EE_Registration::new_instance(array('REG_code'=>'monkey1'));
+		$r2 = EE_Registration::new_instance(array('REG_code'=>'monkey2'));
+		$t->cache('Registration', $r);
+		$t->cache('Registration',$r2);
+		$rs_cached = $t->get_all_from_cache('Registration');
+		$this->assertArrayContains($r, $rs_cached);
+		$this->assertArrayContains($r2,$rs_cached);
+		$r_removed = $t->clear_cache('Registration',$r);
+		$this->assertEquals($r,$r_removed);
+		$this->assertArrayContains($r2,$t->get_all_from_cache('Registration'));
+		$this->assertArrayDoesNotContain($r, $t->get_all_from_cache('Registration'));
+		//now check if we clear the cache for an item that isn't in the cahce, it returns null
+		$r3 = EE_Registration::new_instance(array('REG_code'=>'mystery monkey'));
+		$r_null = $t->clear_cache('Registration', $r3);
+		$this->assertNull($r_null);
+		
+	}
+	
+	/**
+	 * test that after we've cached something using a specific index,
+	 * we can remove it using a specific index
+	 * 
+	 */
+	function test_clear_cache__specific_index(){
+		$t = EE_Transaction::new_instance();
+		$r = EE_Registration::new_instance(array('REG_code'=>'monkey1'));
+		$r2 = EE_Registration::new_instance(array('REG_code'=>'monkey2'));
+		$t->cache('Registration', $r,'monkey1');
+		$t->cache('Registration',$r2,'monkey2');
+		$rs_cached = $t->get_all_from_cache('Registration');
+		$this->assertArrayContains($r, $rs_cached);
+		$this->assertArrayContains($r2,$rs_cached);
+		$r_cached = $t->clear_cache('Registration','monkey1');
+		$this->assertEquals($r,$r_cached);
+		$this->assertArrayDoesNotContain($r, $t->get_all_from_cache('Registration'));
+		//also check that if the index isn't set, we just return null
+		$r_null = $t->clear_cache('Registration','mystery monkey');
+		$this->assertNull($r_null);
+	}
+	
+	/**
+	 * tests that clearing the cache on a belongsTo relation works
+	 */
+	function test_clear_cache__belongs_to(){
+		$t = EE_Transaction::new_instance(array('TXN_total'=>'99'));
+		$r = EE_Registration::new_instance(array('REG_code'=>'monkey1'));
+		$success = $r->cache('Transaction',$t);
+		$this->assertTrue($success);
+		$t_cached = $r->get_one_from_cache('Transaction');
+		$this->assertEquals($t,$t_cached);
+		$t_removed = $r->clear_cache('Transaction');
+		$this->assertEquals($t,$t_removed);
+		$t_null = $r->get_one_from_cache('Transaction');
+		$this->assertNull($t_null);
 	}
 }
 

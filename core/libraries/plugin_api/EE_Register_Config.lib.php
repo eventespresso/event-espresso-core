@@ -44,7 +44,7 @@ class EE_Register_Config implements EEI_Plugin_API {
 	 */
 	public static function register( $config_class = NULL, $setup_args = array() ) {
 
-		$setup_args['config_name'] = isset( $setup_args['config_name'] ) ? $setup_args['config_name'] : $config_class;
+		$setup_args['config_name'] = isset( $setup_args['config_name'] ) && ! empty( $setup_args['config_name'] ) ? $setup_args['config_name'] : $config_class;
 
 		//required fields MUST be present, so let's make sure they are.
 		if ( empty( $config_class ) || ! is_array( $setup_args ) || empty( $setup_args['config_name'] )) {
@@ -68,6 +68,7 @@ class EE_Register_Config implements EEI_Plugin_API {
 		self::$_ee_config_registry[ $config_class ] = $setup_args['config_name'];
 
 		add_filter( 'FHEE__EE_Config__construct__addons', array( 'EE_Register_Config', 'set_config' ), 10 );
+		add_filter( 'FHEE__EE_Config___registered_addon_slugs', array( 'EE_Register_Config', 'set_config_slugs' ), 10 );
 	}
 
 
@@ -97,6 +98,28 @@ class EE_Register_Config implements EEI_Plugin_API {
 			$addons_config->{$config_name} = new $class_name;
 		}
 		return $addons_config;
+	}
+
+
+
+
+	/**
+	 * Callback for the FHEE__EE_Config___registered_addon_slugs filter.
+	 * Registers addon slugs with the EE_Config::instance()->)registered_addons_slug
+	 * property.
+	 *
+	 * @since    4.3.0
+	 * @throws EE_Error
+	 *
+	 * @param array  $addon_slugs current array of $addon_slugs.
+	 *
+	 * @return array
+	 */
+	public static function set_config_slugs( $addon_slugs ) {
+		foreach( self::$_ee_config_registry as $config_name ) {
+			$addon_slugs[] = $config_name;
+		}
+		return $addon_slugs;
 	}
 
 

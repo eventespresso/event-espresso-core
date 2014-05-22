@@ -52,6 +52,15 @@ class EEM_Base_Test extends EE_UnitTestCase{
 //			$this->assertNotEmpty($id);
 //		}
 //	}
+	
+	/**
+	 * checks that EEM_Base::has_field works properly
+	 */
+	function test_has_field(){
+		$this->assertTrue(EEM_Question::instance()->has_field('QST_ID'));
+		$this->assertTrue(EEM_QUestion::instance()->has_field('QST_admin_only'));
+		$this->assertFalse(EEM_Question::instance()->has_field('monkey brains'));
+	}
 }
 
 // End of file EEM_Base_Test.php
