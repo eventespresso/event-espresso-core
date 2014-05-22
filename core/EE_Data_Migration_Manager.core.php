@@ -555,7 +555,6 @@ class EE_Data_Migration_Manager{
 				'script'=>'Unknown');
 			$this->add_error_to_migrations_ran($e->getMessage."; Stack trace:".$e->getTraceAsString());
 		}
-		$warnings_etc = '';
 		$warnings_etc = @ob_get_contents();
 		ob_end_clean();
 		$response['message'] .=$warnings_etc;
