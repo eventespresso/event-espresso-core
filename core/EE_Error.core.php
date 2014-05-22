@@ -115,21 +115,21 @@ class EE_Error extends Exception {
 			$type = EE_Error::error_type( $code );
 			$site = site_url();
 			switch ( $site ) {
-				case 'http://sandbox.eventespresso.com/ee4/' :
-				case 'http://sandbox.eventespresso.com/ee4decaf/' :
-				case 'http://sandbox.eventespresso.com/ee4hf/' :
-				case 'http://sandbox.eventespresso.com/ee4a/' :
-				case 'http://sandbox.eventespresso.com/ee4ad/' :
-				case 'http://sandbox.eventespresso.com/ee4b/' :
-				case 'http://sandbox.eventespresso.com/ee4bd/' :
-				case 'http://sandbox.eventespresso.com/ee4d/' :
-				case 'http://sandbox.eventespresso.com/ee4dd/' :
+				case 'http://ee4.eventespresso.com/' :
+				case 'http://ee4decaf.eventespresso.com/' :
+				case 'http://ee4hf.eventespresso.com/' :
+				case 'http://ee4a.eventespresso.com/' :
+				case 'http://ee4ad.eventespresso.com/' :
+				case 'http://ee4b.eventespresso.com/' :
+				case 'http://ee4bd.eventespresso.com/' :
+				case 'http://ee4d.eventespresso.com/' :
+				case 'http://ee4dd.eventespresso.com/' :
 					$to = 'developers@eventespresso.com';
 					break;
 				default :
 					$to = get_option( 'admin_email' );
 			}
-			$subject = 'Error type ' . $type . ' occured in ' . $ver . ' on ' . site_url();
+			$subject = 'Error type ' . $type . ' occurred in ' . $ver . ' on ' . site_url();
 			$msg = EE_Error::_format_error( $type, $message, $file, $line );
 			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
 			wp_mail( $to, $subject, $msg );
@@ -284,8 +284,9 @@ class EE_Error extends Exception {
 
 		$ouput = '
 <style type="text/css">
-	#error-page {
+	#ee-error-message {
 		max-width:90% !important;
+		margin: 0 5%;
 	}
 	.ee-error-dev-msg-pg,
 	.error .ee-error-dev-msg-pg {
