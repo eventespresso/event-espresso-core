@@ -53,7 +53,7 @@ final class EE_System {
 	 * TODO  will detect that EE has been DOWNGRADED. We probably don't want to run in this case...
 	 */
 	const req_type_downgrade = 4;
-	
+
 	/**
 	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
 	 */
@@ -325,14 +325,14 @@ final class EE_System {
 			$activation_history_for_addon = $addon->get_activation_history();
 			$request_type = $this->_detect_req_type($activation_history_for_addon, $addon->get_db_update_option_name(), $addon->version());
 			$addon->set_req_type($request_type);
-			
+
 			switch($request_type){
 				case EE_System::req_type_new_activation:
 					do_action( "AHEE__EE_System__detect_activations_or_upgrades__{$addon->name()}__new_activation" );
 					$addon->new_install();
 					//if we weren't in maintenance mode and were able to setup our DB,
 					//then this has been an installed verison. If we DIDN'T get to setup the addon's DB,
-					//then we won't consider it installed. This means that during the next request, it will also be 
+					//then we won't consider it installed. This means that during the next request, it will also be
 					//considered a new install, and agian try to setup its DB. It should keep trying until it succeeds
 					if( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ){
 						$this->update_list_of_installed_versions($activation_history_for_addon, $addon->version(), $addon->name() );
@@ -358,7 +358,7 @@ final class EE_System {
 	//				$this->_maybe_redirect_to_ee_about();
 					break;
 			}
-			
+
 			do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__complete' );
 		}
 	}
@@ -383,14 +383,14 @@ final class EE_System {
 		// load M-Mode class
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// check if db has been updated, or if its a brand-new installation
-		
+
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
 		$request_type =  $this->detect_req_type($espresso_db_update);
 //		echo "request type:".$request_type;
 		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}
-		
+
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
@@ -524,12 +524,12 @@ final class EE_System {
 		}
 		$version_history[ $current_version_to_add ][] = date( 'Y-m-d H:i:s',time() );
 		// resave
-		
+
 		return update_option( $this->_get_activation_history_option_name_for($plugin_slug), $version_history );
 	}
-	
+
 	/**
-	 * Gets the plugin's option name which stores when its 
+	 * Gets the plugin's option name which stores when its
 	 * @param string $plugin_slug
 	 * @return string
 	 */
@@ -579,6 +579,7 @@ final class EE_System {
 			if ( ! isset( $activation_history_for_addon[ $version_to_upgrade_to ] )) {
 				//its a new version!
 				$req_type = EE_System::req_type_upgrade;
+				delete_option( $activation_indicator_option_name );
 			} else {
 				// its not an update. maybe a reactivation?
 				if( get_option( $activation_indicator_option_name, FALSE )){
@@ -592,6 +593,7 @@ final class EE_System {
 		} else {
 			//it doesn't exist. It's a completely new install
 			$req_type = EE_System::req_type_new_activation;
+			delete_option( $activation_indicator_option_name );
 		}
 		return $req_type;
 	}
