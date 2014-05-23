@@ -1,6 +1,7 @@
 <h2 class="section-heading display-box-heading">
 	<?php _e('Payment Overview', 'event_espresso'); ?>
 </h2>
+<?php  do_action( 'AHEE__thank_you_page_payment_details_template__after_heading' ); ?>
 
 <div id="espresso-thank-you-page-payment-details-dv">
 <?php if ( ! empty( $payments )){	 ?>
@@ -22,35 +23,50 @@
 			</tr>
 		</thead>
 		<tbody>
-	<?php foreach ( $payments as $payment ) { echo $payment; } ?>
+		<?php
+			foreach ( $payments as $payment ) {
+				echo $payment;
+			}
+		?>
 		</tbody>
 	</table>
 <?php
 	} else {
-		
-		if ( $transaction->total() ){ 
-			echo apply_filters( 
+
+		if ( $transaction->total() ){
+
+			echo apply_filters(
 				'FHEE__payment_overview_template__no_payments_made',
-				sprintf ( 
+				sprintf (
 					__('%sNo payments towards this transaction have been received.%s', 'event_espresso' ),
 					'<p class="important-notice">',
 					'</p>'
 				)
-			); 
+			);
+			do_action( 'AHEE__thank_you_page_payment_details_template__no_payments_made', $transaction );
+
 		} else {
-			echo apply_filters( 
+			echo apply_filters(
 				'FHEE__payment_overview_template__no_payment_required',
-				sprintf ( 
+				sprintf (
 					__('%sNo payment is required for this transaction.%s', 'event_espresso' ),
 					'<p>',
 					'</p>'
 				)
-			); 
+			);
+			do_action( 'AHEE__thank_you_page_payment_details_template__no_payment_required' );
+
 		 }
-			
+
 	}
 	if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
 		echo $gateway_content;
-	 }	
+		do_action( 'AHEE__thank_you_page_payment_details_template__after_gateway_content', $gateway_content );
+	 }
+
 ?>
+
+	<br/>
+	<?php  do_action( 'AHEE__thank_you_page_payment_details_template__after_payment_details' ); ?>
+
 </div>
