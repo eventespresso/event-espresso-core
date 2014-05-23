@@ -1209,7 +1209,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 														$attendee_property = TRUE;
 													break;
 													default :
-														$attendee_property = EEH_Class_Tools::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
+														$attendee_property = EEM_Attendee::instance()->has_field('ATT_' . $form_input) ? TRUE : FALSE;
 														$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 												}
 
@@ -1287,7 +1287,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												unset( $attendee_data['ATT_email'] );
 												// now loop thru what' sleft and add to attendee CPT
 												foreach ( $attendee_data as $property_name => $property_value ) {
-													if ( EEH_Class_Tools::has_property( 'EE_Attendee', '_' . $property_name )) {
+													if ( EEM_Attendee::instance()->has_field($property_name)) {
 														$existing_attendee->set( $property_name, $property_value );
 													}
 												}
