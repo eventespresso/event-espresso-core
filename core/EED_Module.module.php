@@ -93,7 +93,7 @@ abstract class EED_Module extends EE_Base {
 	 */
 	final public function __construct() {
 		$this->theme = EE_Config::get_current_theme();
-		$module_name = ! empty( $module_name ) ? $module_name : get_called_class();
+		$module_name = $this->module_name();
 		EE_Registry::instance()->modules->$module_name = $this;
 	}
 
@@ -109,6 +109,18 @@ abstract class EED_Module extends EE_Base {
 			EE_Registry::instance()->modules->$module_name = $module_name !== 'EED_Module' ? new $module_name() : NULL;
 		}
 		return EE_Registry::instance()->modules->$module_name;
+	}
+
+
+
+	/**
+	 *    module_name
+	 *
+	 * @access    public
+	 * @return    string
+	 */
+	public function module_name() {
+		return get_class( $this );
 	}
 
 
