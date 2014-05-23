@@ -120,6 +120,10 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// setup DMS
 			EE_Register_Data_Migration_Scripts::register( $addon_name, array( 'dms_paths' => self::$_settings[ $addon_name ]['dms_paths'] ));
 		}
+		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
+			// if config_class is present let's register config.
+			EE_Register_Config::register( self::$_settings[ $addon_name ]['config_class'], array( 'config_name' => self::$_settings[ $addon_name ]['config_name'] ));
+		}
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_path'] )) {
 			// register admin page
 			EE_Register_Admin_Page::register( $addon_name, array( 'page_path' => self::$_settings[ $addon_name ]['admin_path'] ));
@@ -131,10 +135,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		if ( ! empty( self::$_settings[ $addon_name ]['shortcode_paths'] )) {
 			// add to list of shortcodes to be registered
 			EE_Register_Shortcode::register( $addon_name, array( 'shortcode_paths' => self::$_settings[ $addon_name ]['shortcode_paths'] ));
-		}
-		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
-			// if config_class present let's register config.
-			EE_Register_Config::register( self::$_settings[ $addon_name ]['config_class'], array( 'config_name' => self::$_settings[ $addon_name ]['config_name'] ));
 		}
 		if ( ! empty( self::$_settings[ $addon_name ]['widget_paths'] )) {
 			// add to list of widgets to be registered
@@ -159,6 +159,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			$addon = EE_Registry::instance()->load_addon( $settings['base_path'], $settings['class_name'] );
 			$addon->set_version( $settings['version'] );
 			$addon->set_min_core_version( $settings['min_core_version'] );
+			$addon->set_config( EE_Registry::instance()->CFG->get_config( 'addons', $settings['config_name'], $settings['config_class'] ));
 			// load_admin_controller
 			if ( ! empty( $settings['admin_callback'] )) {
 				add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, $settings['admin_callback'] ));
