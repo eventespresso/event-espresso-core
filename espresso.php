@@ -425,11 +425,11 @@ interface EEMI_Payment_Log{
 	/**
 	 * Logs a message
 	 * @param string $message
-	 * @param EEI_Transaction $transaction
-	 * @param EEI_Payment_Method $payment_method
+	 * @param int|string $id
+	 * @param string $model_name
 	 * @return void
 	 */
-	function gateway_log($message,$transaction,$payment_method);
+	function gateway_log($message,$id,$model_name);
 }
 
 interface EEHI_Template{

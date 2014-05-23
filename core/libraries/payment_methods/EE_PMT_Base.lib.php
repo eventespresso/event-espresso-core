@@ -1,4 +1,4 @@
-<?php 
+<?php
 EE_Registry::instance()->load_lib('Gateway');
 EE_Registry::instance()->load_lib('Onsite_Gateway');
 EE_Registry::instance()->load_lib('Offsite_Gateway');
@@ -19,7 +19,7 @@ abstract class EE_PMT_Base{
 	 * @var EE_Payment_Method_Form
 	 */
 	protected $_settings_form = NULL;
-	/** 
+	/**
 	 * @var EE_Form_Section_Proper
 	 */
 	protected $_billing_form = NULL;
@@ -46,7 +46,7 @@ abstract class EE_PMT_Base{
 	 */
 	protected $_default_button_url = NULL;
 	/**
-	 * 
+	 *
 	 * @param EE_Payment_Method $pm_instance
 	 */
 	function __construct($pm_instance = NULL) {
@@ -69,7 +69,7 @@ abstract class EE_PMT_Base{
 			$this->_default_button_url = EE_PLUGIN_DIR_URL . 'payment_methods' . DS . 'pay-by-credit-card.png';
 		}
 	}
-	
+
 	/**
 	 * sets the file_folder property
 	 */
@@ -113,7 +113,7 @@ abstract class EE_PMT_Base{
 			$this->_gateway->set_settings($payment_method_instance->settings_array());
 		}
 	}
-	
+
 	/**
 	 * Gets teh form for displaying to admins where they setup the payment method
 	 * @return EE_Payment_Method_Form
@@ -175,7 +175,7 @@ abstract class EE_PMT_Base{
 		return $this->_requires_https;
 	}
 	/**
-	 * 
+	 *
 	 * @param EE_Transaction $transaction
 	 * @param type $amount
 	 * @param EE_Billing_Info_Form $billing_info
@@ -207,8 +207,12 @@ abstract class EE_PMT_Base{
 					'PAY_extra_accntng' => NULL,
 					'PAY_details' => NULL)));
 			}
+			//make sure the payment has been saved to show we started it, and so it has an ID
+			//should the gateway try to log it
+			$payment->save();
 			if($this->_gateway instanceof EE_Offsite_Gateway){
 				$core_config = EE_Config::instance()->core;
+
 				$payment = $this->_gateway->set_redirection_info($payment,$billing_info->input_values(),$return_url,
 						$core_config->txn_page_url(array('e_reg_url_link'=>$transaction->primary_registration()->reg_url_link(),'ee_payment_method'=>$this->_pm_instance->slug())),
 						$core_config->cancel_page_url());
@@ -237,14 +241,14 @@ abstract class EE_PMT_Base{
 		$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
 		if( ! $this->_gateway instanceof EE_Offsite_Gateway){
 			throw new EE_Error(sprintf(__("Could not handle IPN because '%s' is not an offsite gateway", "event_espresso"), print_r( $this->_gateway, TRUE )));
-			
+
 		}
 		$payment = $this->_gateway->handle_payment_update($req_data,$transaction);
 		return $payment;
 	}
-	
+
 	/**
-	 * Gets the payment this IPN is for. Children may often want to 
+	 * Gets the payment this IPN is for. Children may often want to
 	 * override this to inspect the request
 	 * @param array $req_data
 	 * @param EE_Transaction $transaction
@@ -257,7 +261,7 @@ abstract class EE_PMT_Base{
 	 * In case generic code cannot provide the paymetn processor with a specific payment method
 	 * and transaction, it will try calling this method on each activate payment method.
 	 * If the payment method is able to identify the request as being for it, it should fetch
-	 * the payment its for and return it. If not, it should throw an EE_Error to indicate it cannot 
+	 * the payment its for and return it. If not, it should throw an EE_Error to indicate it cannot
 	 * handle the IPN
 	 * @param array $req_data
 	 * @return EE_Payment only if this payment method can find the info its needs from $req_data
@@ -273,13 +277,13 @@ abstract class EE_PMT_Base{
 	 * (Mijireh is an offsite gateway which doesn't send an IPN. So when the user returns to EE from
 	 * mijireh, this method needs to be called so the Mijireh PM can ping Mijireh to know the status
 	 * of the payment). Fed a transaction because it's always assumed to be the last payment that
-	 * 
+	 *
 	 * @param EE_Transaction $transaction
 	 * @return void
 	 */
 	public function finalize_payment_for($transaction){
 	}
-	
+
 	/**
 	 * Whether or not this payment method's gateway supports sending refund requests
 	 * @return boolean
@@ -292,7 +296,7 @@ abstract class EE_PMT_Base{
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param type $payment
 	 * @param type $refund_info
 	 * @return EE_Payment
@@ -304,7 +308,7 @@ abstract class EE_PMT_Base{
 			throw new EE_Error(sprintf(__("Payment Method Type '%s' does not support sending refund requests", "event_espresso"),get_class($this)));
 		}
 	}
-	
+
 	const onsite = 'on-site';
 	const offsite = 'off-site';
 	const offline = 'off-line';
@@ -325,7 +329,7 @@ abstract class EE_PMT_Base{
 			throw new EE_Error(sprintf(__("Payment method type '%s's gateway isnt an instance of EE_Onsite_Gateway, EE_Offsite_Gateway, or null. It must be one of those", "event_espresso"),get_class($this)));
 		}
 	}
-	
+
 	/**
 	 * For adding any html output ab ove the payment overview.
 	 * Many gateways won't want ot display anything, so this function just returns an empty string.
@@ -336,7 +340,7 @@ abstract class EE_PMT_Base{
 		EE_Registry::instance()->load_helper('Template');
 		return EEH_Template::display_template(EE_LIBRARIES.'payment_methods'.DS.'templates'.DS.'payment_details_content.template.php', array('payment_method'=>$this->_pm_instance,'payment'=>$payment) , true);
 	}
-	
+
 	/**
 	 * @return array exactly like EE_Admin_Page _page_config's 'help_tabs' attribute. @see EE_Admin_Page::_set_page_config()
 	 */

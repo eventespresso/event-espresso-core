@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEG_Aim
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -38,7 +38,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	);
 	/**
 	 * Whether to send test transactions (even to live site)
-	 * @var boolean 
+	 * @var boolean
 	 */
 	protected $_test_transactions;
 	const LIVE_URL = 'https://secure.authorize.net/gateway/transact.dll'; //Authnet URL
@@ -81,11 +81,11 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	 *	@type $exp_month string
 	 *	@type $exp_year string
 	 *	@see parent::do_direct_payment
-	 * } 
+	 * }
 	 * @return EE_Payment updated
 	 */
 	public function do_direct_payment($payment, $billing_info = null) {
-		
+
 			// Enable test mode if needed
 			//4007000000027  <-- test successful visa
 			//4222222222222  <-- test failure card number
@@ -108,8 +108,8 @@ class EEG_Aim extends EE_Onsite_Gateway{
 				$order_description = sprintf(__("Partial payment of %s for %s", "event_espresso"),$payment->amount(),$primary_registrant->reg_code());
 			}
 
-			
-			
+
+
 
 			//start transaction
 			$this->setField('amount', $this->format_currency($payment->amount()));
@@ -137,7 +137,8 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			}
 
 			//Capture response
-			$response = $this->authorizeAndCapture();
+			$this->type = "AUTH_CAPTURE";
+			$response = $this->_sendRequest($payment);
 			if (!empty($response)){
 				if ($this->_debug_mode) {
 					$txn_id = $response->invoice_number;
@@ -149,7 +150,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 				$payment->set_amount($response->amount);
 				$payment->set_gateway_response(sprintf("%s (code: %s)",$response->response_reason_text,$response->response_reason_code));
 				$payment->set_extra_accntng($primary_registrant->reg_code());
-				$payment->set_details(print_r($response,true));	
+				$payment->set_details(print_r($response,true));
 			} else {
 				$payment->set_status($this->_pay_model->failed_status());
 				$payment->set_gateway_response(__("There was no response from Authorize.net", 'event_espresso'));
@@ -159,7 +160,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 	}
 	/**
 	 * Add a line item.
-	 * 
+	 *
 	 * @param string $item_id
 	 * @param string $item_name
 	 * @param string $item_description
@@ -178,7 +179,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			);
 		$this->_additional_line_items[] = implode('<|>', $args);
 	}
-	
+
 	/**
 	 * Set an individual name/value pair. This will append x_ to the name
 	 * before posting.
@@ -194,45 +195,26 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			To set a custom field use setCustomField('field','value') instead.");
 		}
 	}
-	
-	/**
-	 * Do an AUTH_CAPTURE transaction.
-	 *
-	 * Required "x_" fields: card_num, exp_date, amount
-	 *
-	 * @param string $amount   The dollar amount to charge
-	 * @param string $card_num The credit card number
-	 * @param string $exp_date CC expiration date
-	 *
-	 * @return EE_AuthorizeNetAIM_Response
-	 */
-	public function authorizeAndCapture($amount = false, $card_num = false, $exp_date = false) {
-		($amount ? $this->amount = $amount : null);
-		($card_num ? $this->card_num = $card_num : null);
-		($exp_date ? $this->exp_date = $exp_date : null);
-		$this->type = "AUTH_CAPTURE";
-		return $this->_sendRequest();
-	}
 	/**
 	 * Posts the request to AuthorizeNet & returns response.
 	 *
 	 * @return AuthorizeNetARB_Response The response.
 	 */
-	private function _sendRequest() {
+	private function _sendRequest($payment) {
 		$this->_x_post_fields['login'] = $this->_login_id;
 		$this->_x_post_fields['tran_key'] = $this->_transaction_key;
-		$this->_post_string = "";
+		$x_keys = array();
 		foreach ($this->_x_post_fields as $key => $value) {
-			$this->_post_string .= "x_$key=" . urlencode($value) . "&";
+			$x_keys[] = "x_$key=" . urlencode($value);
 		}
 		// Add line items
 		foreach ($this->_additional_line_items as $key => $value) {
-			$this->_post_string .= "x_line_item=" . urlencode($value) . "&";
+			$x_keys[] =  "x_line_item=" . urlencode($value);
 		}
-		$this->_post_string = rtrim($this->_post_string, "& ");
+		$this->_log_clean_request($x_keys, $payment);
 		$post_url = ($this->_debug_mode ? self::SANDBOX_URL : self::LIVE_URL);
 		$curl_request = curl_init($post_url);
-		curl_setopt($curl_request, CURLOPT_POSTFIELDS, $this->_post_string);
+		curl_setopt($curl_request, CURLOPT_POSTFIELDS, implode("&",$x_keys));
 		curl_setopt($curl_request, CURLOPT_HEADER, 0);
 		curl_setopt($curl_request, CURLOPT_TIMEOUT, 45);
 		curl_setopt($curl_request, CURLOPT_RETURNTRANSFER, 1);
@@ -250,8 +232,30 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		$response = curl_exec($curl_request);
 
 		curl_close($curl_request);
+		$response_obj =  new EE_AuthorizeNetAIM_Response($response);
 
-		return new EE_AuthorizeNetAIM_Response($response);
+		return $this->_log_and_clean_response($response_obj, $payment);
+	}
+	/**
+	 * Logs the clean data only
+	 * @param array $request_array
+	 * @param EEI_Payment $payment
+	 */
+	private function _log_clean_request($request_array,$payment){
+		unset($request_array['x_card_num']);
+		unset($request_array['card_code']);
+		$this->log(array('AIM Request sent:'=>$request_array),$payment);
+	}
+
+	/**
+	 * Logs the response and cleans it
+	 * @param EE_AuthorizeNetAIM_Response $response_obj
+	 * @param EE_Payment $payment
+	 */
+	private function _log_and_clean_response($response_obj,$payment){
+		$response_obj->account_number = '';
+		$this->log(array('AIM Response received:'=>$response_obj),$payment);
+		return $response_obj;
 	}
 
 }

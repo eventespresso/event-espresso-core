@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEG_Paypal_Pro
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -51,7 +51,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 	 * @var $_credit_card_types array with the keys for credit card types accepted on this account
 	 */
 	protected $_credit_card_types = NULL;
-				
+
 	protected $_currencies_supported = array(
 					'USD',
 					'GBP',
@@ -77,9 +77,9 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 					'THB',
 					'TRY',
 					'TWD',);
-	
+
 	/**
-	 * 
+	 *
 	 * @param EEI_Payment $payment
 	 * @param array $billing_info{
 	 *	@type $credit_card string
@@ -98,7 +98,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			$item_num = 1;
 			$total_line_item = $transaction->total_line_item();
 			$order_items = array();
-			foreach ($total_line_item->get_items() as $line_item) {	
+			foreach ($total_line_item->get_items() as $line_item) {
 				$item = array(
 						// Item Name.  127 char max.
 						'l_name' => substr($line_item->name(),0,127),
@@ -143,8 +143,8 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		}
 		// Populate data arrays with order data.
 		$DPFields = array(
-			// How you want to obtain payment ?  
-			// Authorization indidicates the payment is a basic auth subject to settlement with Auth & Capture.  
+			// How you want to obtain payment ?
+			// Authorization indidicates the payment is a basic auth subject to settlement with Auth & Capture.
 			// Sale indicates that this is a final sale for which you are requesting payment.  Default is Sale.
 			'paymentaction' => 'Sale',
 			// Required.  IP address of the payer's browser.
@@ -153,7 +153,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			'returnfmfdetails' => '1'
 		);
 		$CCDetails = array(
-			// Required. Type of credit card.  Visa, MasterCard, Discover, Amex, Maestro, Solo.  
+			// Required. Type of credit card.  Visa, MasterCard, Discover, Amex, Maestro, Solo.
 			// If Maestro or Solo, the currency code must be GBP.  In addition, either start date or issue number must be specified.
 			'creditcardtype' => $billing_info['credit_card_type'],
 			// Required.  Credit card number.  No spaces or punctuation.
@@ -196,14 +196,14 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 					// Required. Name of State or Province.
 					'state' => substr($billing_info['state'],0,40),
 					// Required.  Country code.
-					'countrycode' => $billing_info['country'], 
+					'countrycode' => $billing_info['country'],
 					// Required.  Postal code of payer.
 					'zip' => $billing_info['zip'],
 					// Phone Number of payer.  20 char max.
 					'shiptophonenum' => substr($billing_info['phone'],0,20)
 			);
-			
-			
+
+
 			$PaymentDetails = array(
 					// Required.  Total amount of order, including shipping, handling, and tax.
 					'amt' => $this->format_currency($total_to_pay),
@@ -235,11 +235,11 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 					'PaymentDetails' => $PaymentDetails,
 					'OrderItems' => $order_items,
 			);
-			$this->_log_clean_request($PayPalRequestData, $transaction);
+			$this->_log_clean_request($PayPalRequestData, $payment);
 			try{
 				$PayPalResult = $this->prep_and_curl_request($PayPalRequestData);
 				//remove PCI-sensitive data so it doesn't get stored
-				$PayPalResult = $this->_log_clean_response($PayPalResult,$transaction);
+				$PayPalResult = $this->_log_clean_response($PayPalResult,$payment);
 				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
 				if($this->_APICallSuccessful($PayPalResult)){
 					$payment->set_status($this->_pay_model->approved_status());
@@ -249,7 +249,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 				$payment->set_amount(isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0);
 				$payment->set_gateway_response($message);
 				$payment->set_txn_id_chq_nmbr(isset( $PayPalResult['TRANSACTIONID'] )? $PayPalResult['TRANSACTIONID'] : null);
-				
+
 				$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
 				$payment->set_extra_accntng($primary_registration_code);
 				$payment->set_details($PayPalResult);
@@ -263,28 +263,28 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 	/**
 	 * CLeans out sensitive CC data and then logs it, and returns the cleaned request
 	 * @param array $request
-	 * @param EEI_Transaction $transaction
+	 * @param EEI_Payment $payment
 	 * @return array
 	 */
-	private function _log_clean_request($request,$transaction){
+	private function _log_clean_request($request,$payment){
 		$cleaned_request_data = $request;
 		unset($cleaned_request_data['CCDetails']['acct']);
 		unset($cleaned_request_data['CCDetails']['cvv2']);
-		$this->log(array('Paypal Request'=>$cleaned_request_data), $transaction);
+		$this->log(array('Paypal Request'=>$cleaned_request_data), $payment);
 	}
 	/**
 	 * Cleans the response, logs it, and returns it
 	 * @param array $response
-	 * @param EEI_Transaction $transaction
+	 * @param EEI_Payment $payment
 	 * @return array cleaned
 	 */
-	private function _log_clean_response($response,$transaction){
+	private function _log_clean_response($response,$payment){
 		unset($response['REQUESTDATA']['CREDITCARDTYPE']);
 		unset($response['REQUESTDATA']['ACCT']);
 		unset($response['REQUESTDATA']['EXPDATE']);
 		unset($response['REQUESTDATA']['CVV2']);
 		unset($response['RAWREQUEST']);
-		$this->log(array('Paypal Response'=>$response),$transaction);
+		$this->log(array('Paypal Response'=>$response),$payment);
 		return $response;
 	}
 	private function prep_and_curl_request($DataArray) {
@@ -377,7 +377,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $Request);
 
-		//execute the curl POST		
+		//execute the curl POST
 		$Response = curl_exec($curl);
 
 		curl_close($curl);
