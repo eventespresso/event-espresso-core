@@ -1033,8 +1033,8 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 
 			if ( ! $tickets_exist ) {
 				$SQL = "INSERT INTO $ticket_table
-					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
-					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
+					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL', $SQL );
 				$wpdb->query($SQL);
 			}
