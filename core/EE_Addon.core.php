@@ -39,22 +39,10 @@ abstract class EE_Addon {
 	protected $_min_core_version;
 
 	/**
-	 * @var $_config_section
-	 * @type string
+	 * @var $_config
+	 * @type EE_Config_Base
 	 */
-	protected static $_config_section;
-
-	/**
-	 * @var $_config_class
-	 * @type string
-	 */
-	protected static $_config_class;
-
-	/**
-	 * @var $_config_class
-	 * @type string
-	 */
-	protected static $_config;
+	protected $_config;
 
 
 
@@ -116,6 +104,30 @@ abstract class EE_Addon {
 	public function min_core_version() {
 		return $this->_min_core_version;
 	}
+
+
+
+	/**
+	 * @param EE_Config_Base $config
+	 */
+	public function set_config( $config ) {
+		$this->_config = $config;
+	}
+
+
+
+	/**
+	 * @return EE_Config_Base
+	 */
+	public function config() {
+		return $this->_config;
+	}
+
+
+
+
+
+
 
 
 }
