@@ -145,10 +145,28 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		$addon->set_name($addon_name);
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
 		$addon->set_min_core_version( self::$_settings[ $addon_name ]['min_core_version'] );
-		$addon->set_config( EE_Registry::instance()->CFG->get_config( 'addons', self::$_settings[ $addon_name ]['config_name'], self::$_settings[ $addon_name ]['config_class'] ));
+		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
+			self::$_settings[ $addon_name ]['addon'] = $addon;
+			add_action( 'AHEE__EE_System__load_core_configuration__complete', array( 'EE_Register_Addon', 'set_config' ));
+		}
 		// load_admin_controller
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_callback'] )) {
 			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
+		}
+	}
+
+
+
+	/**
+	 * set_config
+	 *
+	 * @return void
+	 */
+	public static function set_config() {
+		foreach( self::$_settings as $settings ) {
+			if ( isset( $settings['addon'] )) {
+				$settings['addon']->set_config( EE_Registry::instance()->CFG->get_config( 'addons', $settings['config_name'], $settings['config_class'] ));
+			}
 		}
 	}
 
