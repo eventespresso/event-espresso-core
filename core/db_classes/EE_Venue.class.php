@@ -1,385 +1,498 @@
-<?php
+<?php if ( ! defined( 'EVENT_ESPRESSO_VERSION' ) ) {
+	exit( 'No direct script access allowed' );
+}
+/**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package        Event Espresso
+ * @ author        Event Espresso
+ * @ copyright    (c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license        {@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
+ * @ link                {@link http://www.eventespresso.com}
+ * @ since            4.0
+ *
+ */
 
+
+
+
+
+/**
+ * EE_Venue class
+ *
+ * @package 			Event Espresso
+ * @subpackage 	includes/classes/EE_Venue.class.php
+ * @author 				Mike Nelson
+ */
 class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 
 	/**
-	 * Related events
-	 * @var EE_Event[]
-	 */
-	protected $_Event;
-
-	/**
-	 * related state
-	 * @var EE_State
-	 */
-	protected $_State;
-
-
-	/**
-	 * join table object(s)
-	 * @var Event_Venue[]
-	 */
-	protected $_Event_Venue;
-	
-
-	/**
-	 * related country
-	 * @var EE_COuntry
-	 */
-	protected $_Country;
-	protected $_VNU_ID;
-	protected $_VNU_name;
-	protected $_VNU_desc;
-	protected $_VNU_identifier;
-	protected $_VNU_created;
-	protected $_VNU_short_desc;
-	protected $_VNU_modified;
-	protected $_VNU_wp_user;
-	protected $_VNU_order;
-	protected $_VNU_address;
-	protected $_VNU_address2;
-	protected $_VNU_city;
-	protected $_STA_ID;
-	protected $_CNT_ISO;
-	protected $_VNU_zip;
-	protected $_VNU_phone;
-	protected $_VNU_capacity;
-	protected $_VNU_url;
-	protected $_VNU_virtual_phone;
-	protected $_VNU_virtual_url;
-	protected $_VNU_enable_for_gmap;
-	protected $_VNU_google_map_link;
-	
-
-	/**
-	 * 
-	 * @param type $props_n_values
+	 *
+	 * @param array $props_n_values
 	 * @return EE_Venue
 	 */
-	public static function new_instance($props_n_values = array()) {
-		$classname = __CLASS__;
-		$has_object = parent::_check_for_object($props_n_values, $classname);
-		return $has_object ? $has_object : new self($props_n_values);
+	public static function new_instance( $props_n_values = array() ) {
+		$has_object = parent::_check_for_object( $props_n_values, __CLASS__ );
+		return $has_object ? $has_object : new self( $props_n_values );
 	}
 
+
+
 	/**
-	 * 
-	 * @param type $props_n_values
+	 *
+	 * @param array $props_n_values
 	 * @return EE_Venue
 	 */
-	public static function new_instance_from_db($props_n_values = array()) {
-		return new self($props_n_values, TRUE);
-	}
-
-	/**
-	 * Gets address
-	 */
-	function address() {
-		return $this->get('VNU_address');
-	}
-
-	/**
-	 * Sets address
-	 */
-	function set_address($address) {
-		return $this->set('VNU_address', $address);
-	}
-
-	/**
-	 * Gets state
-	 */
-	function state_ID() {
-		return $this->get('STA_ID');
-	}
-
-	/**
-	 * Sets state
-	 */
-	function set_state_ID($state) {
-		return $this->set('STA_ID', $state);
+	public static function new_instance_from_db( $props_n_values = array() ) {
+		return new self( $props_n_values, TRUE );
 	}
 
 
-	function country_ID() {
-		return $this->get('CNT_ISO');
-	}
 
-	/**
-	 * Gets address2
-	 */
-	function address2() {
-		return $this->get('VNU_address2');
-	}
-
-	/**
-	 * Sets address2
-	 */
-	function set_address2($address2) {
-		return $this->set('VNU_address2', $address2);
-	}
-
-	/**
-	 * Gets capacity
-	 */
-	function capacity() {
-		return $this->get_pretty('VNU_capacity', 'symbol');
-	}
-
-	/**
-	 * Sets capacity
-	 */
-	function set_capacity($capacity) {
-		return $this->set('VNU_capacity', $capacity);
-	}
-
-	/**
-	 * Gets city
-	 */
-	function city() {
-		return $this->get('VNU_city');
-	}
-
-	/**
-	 * Sets city
-	 */
-	function set_city($city) {
-		return $this->set('VNU_city', $city);
-	}
-
-	/**
-	 * Gets created
-	 */
-	function created() {
-		return $this->get('VNU_created');
-	}
-
-	/**
-	 * Sets created
-	 */
-	function set_created($created) {
-		return $this->set('VNU_created', $created);
-	}
-
-	/**
-	 * Gets desc
-	 */
-	function description() {
-		return $this->get('VNU_desc');
-	}
-
-	/**
-	 * Sets desc
-	 */
-	function set_description($desc) {
-		return $this->set('VNU_desc', $desc);
-	}
-
-	/**
-	 * Gets short description (AKA: the exceprt)
-	 */
-	function excerpt() {
-		return $this->get('VNU_short_desc');
-	}
-	/**
-	 * Gets identifier
-	 */
-	function identifier() {
-		return $this->get('VNU_identifier');
-	}
-
-	/**
-	 * Sets identifier
-	 */
-	function set_identifier($identifier) {
-		return $this->set('VNU_identifier', $identifier);
-	}
-
-	/**
-	 * Gets modified
-	 */
-	function modified() {
-		return $this->get('VNU_modified');
-	}
-
-	/**
-	 * Sets modified
-	 */
-	function set_modified($modified) {
-		return $this->set('VNU_modified', $modified);
-	}
-	
 	/**
 	 * Gets name
+	 * @return string
 	 */
 	function name() {
-		return $this->get('VNU_name');
-	}
-
-	/**
-	 * Sets name
-	 */
-	function set_name($name) {
-		return $this->set('VNU_name', $name);
-	}
-
-	/**
-	 * Gets order
-	 */
-	function order() {
-		return $this->get('VNU_order');
-	}
-
-	/**
-	 * Sets order
-	 */
-	function set_order($order) {
-		return $this->set('VNU_order', $order);
+		return $this->get( 'VNU_name' );
 	}
 
 
 	/**
 	 * Gets phone
+	 * @return string
 	 */
 	function phone() {
-		return $this->get('VNU_phone');
+		return $this->get( 'VNU_phone' );
 	}
+
+
 
 	/**
-	 * Sets phone
+	 * venue_url
+	 * @return string
 	 */
-	function set_phone($phone) {
-		return $this->set('VNU_phone', $phone);
-	}
-
-	
-	/**
-	 * Gets wp_user
-	 */
-	function wp_user() {
-		return $this->get('VNU_wp_user');
-	}
-
-	/**
-	 * Sets wp_user
-	 */
-	function set_wp_user($wp_user) {
-		return $this->set('VNU_wp_user', $wp_user);
-	}
-
-	
-	/**
-	 * Gets zip
-	 */
-	function zip() {
-		return $this->get('VNU_zip');
-	}
-
-	/**
-	 * Sets zip
-	 */
-	function set_zip($zip) {
-		return $this->set('VNU_zip', $zip);
-	}
-
-
 	function venue_url() {
-		return $this->get('VNU_url');
+		return $this->get( 'VNU_url' );
 	}
 
 
-
-	function set_venue_url( $url ) {
-		return $this->set('VNU_url');
-	}
-
-
-	function virtual_phone() {
-		return $this->get('VNU_virtual_phone');
-	}
-
-
-	function set_virtual_phone( $phone ) {
-		return $this->set('VNU_virtual_phone');
-	}
-
-
-
-	function virtual_url() {
-		return $this->get('VNU_virtual_url');
-	}
-
-
-
-	function set_virtual_url( $url ) {
-		return $this->set('VNU_virtual_url');
-	}
-
-
-
-
-	function enable_for_gmap() {
-		return $this->get('VNU_enable_for_gmap');
-	}
-
-
-
-	function set_enable_for_gmap( $enable ) {
-		return $this->set('VNU_enable_for_gmap');
-	}
-
-
-	function google_map_link() {
-		return $this->get('VNU_google_map_link');
-	}
-
-
-
-	function set_google_map_link() {
-		return $this->set('VNU_google_map_link');
+	/**
+	 * Gets desc
+	 * @return string
+	 */
+	function description() {
+		return $this->get( 'VNU_desc' );
 	}
 
 
 
 	/**
-	 * Gets all events happening at this venue. QUery parameters can be added to 
-	 * fetcha subset of those events.
-	 * @param array $query_params like EEM_Base::get_all's $query_params
-	 * @return EE_Event[]
+	 * Gets short description (AKA: the excerpt)
+	 * @return string
 	 */
-	function events($query_params = array()){
-		return $this->get_many_related('Event', $query_params);
+	function excerpt() {
+		return $this->get( 'VNU_short_desc' );
 	}
-	
+
+
+
+	/**
+	 * Gets identifier
+	 * @return string
+	 */
+	function identifier() {
+		return $this->get( 'VNU_identifier' );
+	}
+
+
+
+	/**
+	 * Gets address
+	 * @return string
+	 */
+	function address() {
+		return $this->get( 'VNU_address' );
+	}
+
+
+
+	/**
+	 * Gets address2
+	 * @return string
+	 */
+	function address2() {
+		return $this->get( 'VNU_address2' );
+	}
+
+
+
+
+	/**
+	 * Gets city
+	 * @return string
+	 */
+	function city() {
+		return $this->get( 'VNU_city' );
+	}
+
+	/**
+	 * Gets state
+	 * @return int
+	 */
+	function state_ID() {
+		return $this->get( 'STA_ID' );
+	}
+
 	/**
 	 * Gets the state for this venue
 	 * @return EE_State
 	 */
-	function state_obj(){
-		return $this->get_first_related('State');
+	function state_obj() {
+		return $this->get_first_related( 'State' );
 	}
+
+
+
+	/**
+	 * country_ID
+	 * @return string
+	 */
+	function country_ID() {
+		return $this->get( 'CNT_ISO' );
+	}
+
 	/**
 	 * Gets the country of this venue
 	 * @return EE_Country
 	 */
-	function country_obj(){
-		return $this->get_first_related('Country');
+	function country_obj() {
+		return $this->get_first_related( 'Country' );
 	}
-	
+
+
+	/**
+	 * Gets zip
+	 * @return string
+	 */
+	function zip() {
+		return $this->get( 'VNU_zip' );
+	}
+
+
+
+	/**
+	 * Gets capacity
+	 * @return int
+	 */
+	function capacity() {
+		return $this->get_pretty( 'VNU_capacity', 'symbol' );
+	}
+
+
+
+	/**
+	 * Gets created
+	 * @return string
+	 */
+	function created() {
+		return $this->get( 'VNU_created' );
+	}
+
+
+
+	/**
+	 * Gets modified
+	 * @return string
+	 */
+	function modified() {
+		return $this->get( 'VNU_modified' );
+	}
+
+
+
+	/**
+	 * Gets order
+	 * @return int
+	 */
+	function order() {
+		return $this->get( 'VNU_order' );
+	}
+
+
+
+	/**
+	 * Gets wp_user
+	 * @return int
+	 */
+	function wp_user() {
+		return $this->get( 'VNU_wp_user' );
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	function virtual_phone() {
+		return $this->get( 'VNU_virtual_phone' );
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	function virtual_url() {
+		return $this->get( 'VNU_virtual_url' );
+	}
+
+
+
+	/**
+	 * @return bool
+	 */
+	function enable_for_gmap() {
+		return $this->get( 'VNU_enable_for_gmap' );
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	function google_map_link() {
+		return $this->get( 'VNU_google_map_link' );
+	}
+
+
+
+
+
+	/**
+	 * Gets all events happening at this venue. Query parameters can be added to
+	 * fetch a subset of those events.
+	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @return EE_Event[]
+	 */
+	function events( $query_params = array() ) {
+		return $this->get_many_related( 'Event', $query_params );
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/**
+	 * Sets address
+	 */
+	function set_address( $address = '' ) {
+		$this->set( 'VNU_address', $address );
+	}
+
+
+
+	/**
+	 * @param string $address2
+	 */
+	function set_address2( $address2 = '' ) {
+		$this->set( 'VNU_address2', $address2 );
+	}
+
+
+
+	/**
+	 * @param string $city
+	 */
+	function set_city( $city = '' ) {
+		$this->set( 'VNU_city', $city );
+	}
+
+
+
+	/**
+	 * @param int $state
+	 */
+	function set_state_ID( $state = 0 ) {
+		$this->set( 'STA_ID', $state );
+	}
+
+
+
+
 	/**
 	 * Sets the state, given either a state id or state object
-	 * @param EE_State/int $state_id_or_obj
+	 * @param EE_State /int $state_id_or_obj
 	 * @return EE_State
 	 */
-	function set_state_obj($state_id_or_obj){
-		return $this->_add_relation_to($state_id_or_obj, 'State');
+	function set_state_obj( $state_id_or_obj ) {
+		return $this->_add_relation_to( $state_id_or_obj, 'State' );
 	}
-	
+
+
+
 	/**
-	 * Sets the coutnry on the venue
-	 * @param EE_Country/string $country_id_or_obj
+	 * @param int $country_ID
+	 */
+	function set_country_ID( $country_ID = 0 ) {
+		$this->set( 'CNT_ISO', $country_ID );
+	}
+
+
+	/**
+	 * Sets the country on the venue
+	 * @param EE_Country /string $country_id_or_obj
 	 * @return EE_Country
 	 */
-	function set_country_obj($country_id_or_obj){
+	function set_country_obj( $country_id_or_obj ) {
 		return $this->_add_relation_to($country_id_or_obj, 'Country');
 	}
+
+
+
+	/**
+	 * @param string $zip
+	 */
+	function set_zip( $zip = '' ) {
+		$this->set( 'VNU_zip', $zip );
+	}
+
+
+
+	/**
+	 * @param int $capacity
+	 */
+	function set_capacity( $capacity = 0 ) {
+		$this->set( 'VNU_capacity', $capacity );
+	}
+
+
+
+	/**
+	 * @param string $created
+	 */
+	function set_created( $created = '' ) {
+		$this->set( 'VNU_created', $created );
+	}
+
+
+
+	/**
+	 * @param string $desc
+	 */
+	function set_description( $desc = '' ) {
+		$this->set( 'VNU_desc', $desc );
+	}
+
+
+
+	/**
+	 * @param string $identifier
+	 */
+	function set_identifier( $identifier = '' ) {
+		$this->set( 'VNU_identifier', $identifier );
+	}
+
+
+
+	/**
+	 * @param string $modified
+	 */
+	function set_modified( $modified = '' ) {
+		$this->set( 'VNU_modified', $modified );
+	}
+
+
+
+	/**
+	 * @param string $name
+	 */
+	function set_name( $name = '' ) {
+		$this->set( 'VNU_name', $name );
+	}
+
+
+
+	/**
+	 * @param int $order
+	 */
+	function set_order( $order = 0 ) {
+		$this->set( 'VNU_order', $order );
+	}
+
+
+
+	/**
+	 * @param string $phone
+	 */
+	function set_phone( $phone = '' ) {
+		$this->set( 'VNU_phone', $phone );
+	}
+
+
+
+	/**
+	 * @param int $wp_user
+	 */
+	function set_wp_user( $wp_user = 1 ) {
+		$this->set( 'VNU_wp_user', $wp_user );
+	}
+
+
+
+	/**
+	 * @param string $url
+	 */
+	function set_venue_url( $url = '' ) {
+		$this->set( 'VNU_url', $url );
+	}
+
+
+
+	/**
+	 * @param string $phone
+	 */
+	function set_virtual_phone( $phone = '' ) {
+		$this->set( 'VNU_virtual_phone', $phone );
+	}
+
+
+
+	/**
+	 * @param string $url
+	 */
+	function set_virtual_url( $url = '' ) {
+		$this->set( 'VNU_virtual_url', $url );
+	}
+
+
+
+	/**
+	 * @param string $enable
+	 */
+	function set_enable_for_gmap( $enable = '' ) {
+		$this->set( 'VNU_enable_for_gmap', $enable );
+	}
+
+
+
+	/**
+	 * @param string $google_map_link
+	 */
+	function set_google_map_link( $google_map_link = '' ) {
+		$this->set( 'VNU_google_map_link', $google_map_link );
+	}
+
+
+
 }

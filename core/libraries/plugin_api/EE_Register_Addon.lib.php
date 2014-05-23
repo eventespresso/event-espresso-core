@@ -141,28 +141,14 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			EE_Register_Widget::register( $addon_name, array( 'widget_paths' => self::$_settings[ $addon_name ]['widget_paths'] ));
 		}
 		// load and instantiate main addon class
-		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EE_Register_Addon', 'instantiate_addon' ));
-
-	}
-
-
-
-
-	/**
-	 * instantiate_addon
-	 *
-	 * @return void
-	 */
-	public static function instantiate_addon() {
-		foreach( self::$_settings as $settings ) {
-			// load and instantiate main addon class
-			$addon = EE_Registry::instance()->load_addon( $settings['base_path'], $settings['class_name'] );
-			$addon->set_version( $settings['version'] );
-			$addon->set_min_core_version( $settings['min_core_version'] );
-			// load_admin_controller
-			if ( ! empty( $settings['admin_callback'] )) {
-				add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, $settings['admin_callback'] ));
-			}
+//		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EE_Register_Addon', 'instantiate_addon' ));
+		$addon = EE_Registry::instance()->load_addon( self::$_settings[ $addon_name ]['base_path'], self::$_settings[ $addon_name ]['class_name'] );
+		$addon->set_name($addon_name);
+		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
+		$addon->set_min_core_version( self::$_settings[ $addon_name ]['min_core_version'] );
+		// load_admin_controller
+		if ( ! empty( self::$_settings[ $addon_name ]['admin_callback'] )) {
+			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
 		}
 	}
 
@@ -179,7 +165,35 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	public static function deregister( $addon_name = NULL ) {
 		if ( isset( self::$_settings[ $addon_name ] )) {
+			$class_name = self::$_settings[ $addon_name ]['class_name'];
+			if ( ! empty( self::$_settings[ $addon_name ]['dms_paths'] )) {
+				// setup DMS
+				EE_Register_Data_Migration_Scripts::deregister( $addon_name );
+			}
+			if ( ! empty( self::$_settings[ $addon_name ]['admin_path'] )) {
+				// register admin page
+				EE_Register_Admin_Page::deregister( $addon_name );
+			}
+			if ( ! empty( self::$_settings[ $addon_name ]['module_paths'] )) {
+				// add to list of modules to be registered
+				EE_Register_Module::deregister( $addon_name );
+			}
+			if ( ! empty( self::$_settings[ $addon_name ]['shortcode_paths'] )) {
+				// add to list of shortcodes to be registered
+				EE_Register_Shortcode::deregister( $addon_name );
+			}
+			if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
+				// if config_class present let's register config.
+				EE_Register_Config::deregister( self::$_settings[ $addon_name ]['config_class']);
+			}
+			if ( ! empty( self::$_settings[ $addon_name ]['widget_paths'] )) {
+				// add to list of widgets to be registered
+				EE_Register_Widget::deregister( $addon_name );
+			}
+			unset(EE_Registry::instance()->addons->$class_name);
 			unset( self::$_settings[ $addon_name ] );
+		}else{
+			throw new EE_Error(sprintf(__("Could not deregister '%s' because it was either never registered, or already deregistered", "event_espresso"),$addon_name));
 		}
 	}
 
