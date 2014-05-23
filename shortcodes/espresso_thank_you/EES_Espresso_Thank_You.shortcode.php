@@ -241,6 +241,14 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function init() {
 		//get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
 		$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link( $this->_reg_url_link );
+		// verify TXN
+		if ( ! $this->_current_txn instanceof EE_Transaction ) {
+			EE_Error::add_error(
+				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
+				__FILE__, __FUNCTION__, __LINE__
+			);
+			return;
+		}
 		$this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 		$this->_is_primary = $this->_primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
 
@@ -512,6 +520,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 						' . $payment->pretty_status( TRUE ) . '
 					</td>
 				</tr>';
+				do_action( 'AHEE__thank_you_page_payment_details_template__after_each_payment', $payment );
 		}
 		return $html;
 	}
