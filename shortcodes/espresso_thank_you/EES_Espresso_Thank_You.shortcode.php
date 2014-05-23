@@ -520,6 +520,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 						' . $payment->pretty_status( TRUE ) . '
 					</td>
 				</tr>';
+				do_action( 'AHEE__thank_you_page_payment_details_template__after_each_payment', $payment );
 		}
 		return $html;
 	}
