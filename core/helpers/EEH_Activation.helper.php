@@ -1137,15 +1137,15 @@ class EEH_Activation {
 			);
 
 		//make sure needed functions are available.
-		if ( ! function_exists('get_plugins') )
-			require_once ABSPATH.'wp-admin/includes/plugin.php'; //require file if needed.
-
-		//if plugin is empty then get list of all plugins in the WP plugin directory else we just use incoming plugin.
+		if ( ! function_exists('get_plugins')) {
+			//require file if needed.
+			require_once ABSPATH.'wp-admin/includes/plugin.php';
+		}
+		// if plugin is empty then get list of all plugins in the WP plugin directory else we just use incoming plugin.
 		if ( empty( $plugin ) ) {
 			$all_plugins = get_plugins();
 		} else {
-			$plugin_file = WP_PLUGIN_DIR . '/' . $plugin;
-			$all_plugins[$plugin] = get_plugin_data( $plugin_file, false, false );
+			$all_plugins[$plugin] = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin, false, false );
 		}
 
 		//loop through the plugins and check if they are active.
