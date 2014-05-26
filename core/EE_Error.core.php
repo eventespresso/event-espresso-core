@@ -831,8 +831,9 @@ class EE_Error extends Exception {
 		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
 			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
 			//maybe initialize persistent_admin_notices
-			if ( empty( $persistent_admin_notices ) )
+			if ( empty( $persistent_admin_notices )) {
 				add_option( 'ee_pers_admin_notices', array(), '', 'no' );
+			}
 			if ( ! array_key_exists( $pan_name, $persistent_admin_notices ) || $force_update ) {
 				$persistent_admin_notices[ $pan_name ] = $pan_message;
 				update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
