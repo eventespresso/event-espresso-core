@@ -97,7 +97,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		//d( $wp_query );
 		$template = 'loop-espresso_events.php';
 		// check what template is loaded and load filters accordingly
-		EED_Events_Archive::template_include( $template );
+		EED_Events_Archive::instance()->template_include( $template );
 		// load our template
 		$event_list = EEH_Template::locate_template( $template, array(), TRUE, TRUE );
 		// now reset the query and postdata

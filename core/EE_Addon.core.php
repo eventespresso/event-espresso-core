@@ -49,22 +49,10 @@ abstract class EE_Addon {
 	protected $_min_core_version;
 
 	/**
-	 * @var $_config_section
-	 * @type string
+	 * @var $_config
+	 * @type EE_Config_Base
 	 */
-	protected static $_config_section;
-
-	/**
-	 * @var $_config_class
-	 * @type string
-	 */
-	protected static $_config_class;
-
-	/**
-	 * @var $_config_class
-	 * @type string
-	 */
-	protected static $_config;
+	protected $_config;
 
 	/**
 	 * A non-internationalized name to identify this addon. Eg 'Calendar','Mailchimp',etc/
@@ -200,7 +188,6 @@ abstract class EE_Addon {
 
 
 
-
 	/**
 	 *
 	 * Returns the name of the activation indicator option
@@ -212,6 +199,9 @@ abstract class EE_Addon {
 		EE_Error::doing_it_wrong(__FUNCTION__, __('EE_Addon::get_db_update_option was renamed to EE_Addon::get_activation_indicator_option_name', 'event_espresso'), '4.3.0.alpha.016');
 		return $this->get_activation_indicator_option_name();
 	}
+
+
+
 	/**
 	 * Gets the name of the wp option which is used to temporarily indicate that this addon was activated
 	 * @return string
@@ -261,6 +251,24 @@ abstract class EE_Addon {
 
 
 	/**
+	 * @param EE_Config_Base $config
+	 */
+	public function set_config( $config ) {
+		$this->_config = $config;
+	}
+
+
+
+	/**
+	 * @return EE_Config_Base
+	 */
+	public function config() {
+		return $this->_config;
+	}
+
+
+
+	/**
 	 * Gets addon_name
 	 * @return string
 	 */
@@ -290,7 +298,7 @@ abstract class EE_Addon {
 	}
 
 
-
+	
 	/**
 	 * Returns the request type of this addon (ie, EE_System::req_type_normal, EE_System::req_type_new_activation, EE_System::req_type_reactivation, EE_System::req_type_upgrade, or EE_System::req_type_downgrade). This is set by EE_System when it is checking for new install or upgrades
 	 * of addons
@@ -300,6 +308,8 @@ abstract class EE_Addon {
 		return $this->_req_type;
 	}
 
+
+	
 	/**
 	 * Gets the name of the wp option that stores the activation history
 	 * of this addon
@@ -309,6 +319,8 @@ abstract class EE_Addon {
 		return self::ee_addon_version_history_option_prefix . $this->name();
 	}
 
+
+	
 	/**
 	 * Gets the wp option which stores the activation history for this addon
 	 * @return array

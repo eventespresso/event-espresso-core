@@ -128,13 +128,14 @@ abstract class EED_Module extends EE_Base {
 	/**
 	 *    set_config
 	 *
-	 * @access 	public
+	 * @access 	protected
 	 * @param 	string 	$section
 	 * @param 	string 	$name
 	 * @param 	string 	$config_class
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
-	public static function set_config( $section = 'modules', $name = '', $config_class = '' ) {
+	protected static function _set_config( $section = 'modules', $name = '', $config_class = '' ) {
+//		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
 		return EE_Config::instance()->set_config( $section, $name, $config_class );
@@ -145,20 +146,17 @@ abstract class EED_Module extends EE_Base {
 	/**
 	 *    get_config
 	 *
-	 * @access 	public
+	 * @access 	protected
 	 * @param 	string 	$section
 	 * @param 	string 	$name
 	 * @param 	string 	$config_class
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
-	public static function get_config( $section = 'modules', $name = '', $config_class = '' ) {
+	protected static function _get_config( $section = 'modules', $name = '', $config_class = '' ) {
+//		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		// check for cached config
-		if ( ! self::instance( $name )->_config ) {
-			self::instance( $name )->_config = EE_Config::instance()->get_config( $section, $name, $config_class );
-		}
-		return self::instance( $name )->_config;
+		return EE_Config::instance()->get_config( $section, $name, $config_class );
 	}
 
 

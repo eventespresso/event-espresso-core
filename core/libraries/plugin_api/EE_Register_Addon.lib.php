@@ -120,6 +120,10 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// setup DMS
 			EE_Register_Data_Migration_Scripts::register( $addon_name, array( 'dms_paths' => self::$_settings[ $addon_name ]['dms_paths'] ));
 		}
+		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
+			// if config_class is present let's register config.
+			EE_Register_Config::register( self::$_settings[ $addon_name ]['config_class'], array( 'config_name' => self::$_settings[ $addon_name ]['config_name'] ));
+		}
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_path'] )) {
 			// register admin page
 			EE_Register_Admin_Page::register( $addon_name, array( 'page_path' => self::$_settings[ $addon_name ]['admin_path'] ));
@@ -132,23 +136,37 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// add to list of shortcodes to be registered
 			EE_Register_Shortcode::register( $addon_name, array( 'shortcode_paths' => self::$_settings[ $addon_name ]['shortcode_paths'] ));
 		}
-		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
-			// if config_class present let's register config.
-			EE_Register_Config::register( self::$_settings[ $addon_name ]['config_class'], array( 'config_name' => self::$_settings[ $addon_name ]['config_name'] ));
-		}
 		if ( ! empty( self::$_settings[ $addon_name ]['widget_paths'] )) {
 			// add to list of widgets to be registered
 			EE_Register_Widget::register( $addon_name, array( 'widget_paths' => self::$_settings[ $addon_name ]['widget_paths'] ));
 		}
 		// load and instantiate main addon class
-//		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( 'EE_Register_Addon', 'instantiate_addon' ));
 		$addon = EE_Registry::instance()->load_addon( self::$_settings[ $addon_name ]['base_path'], self::$_settings[ $addon_name ]['class_name'] );
 		$addon->set_name($addon_name);
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
 		$addon->set_min_core_version( self::$_settings[ $addon_name ]['min_core_version'] );
+		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
+			self::$_settings[ $addon_name ]['addon'] = $addon;
+			add_action( 'AHEE__EE_System__load_core_configuration__complete', array( 'EE_Register_Addon', 'set_config' ));
+		}
 		// load_admin_controller
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_callback'] )) {
 			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
+		}
+	}
+
+
+
+	/**
+	 * set_config
+	 *
+	 * @return void
+	 */
+	public static function set_config() {
+		foreach( self::$_settings as $settings ) {
+			if ( isset( $settings['addon'] )) {
+				$settings['addon']->set_config( EE_Registry::instance()->CFG->get_config( 'addons', $settings['config_name'], $settings['config_class'] ));
+			}
 		}
 	}
 
