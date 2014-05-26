@@ -260,11 +260,11 @@ final class EE_Front_Controller {
 					if ( $current_post == $post_name || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
 						if ( ! isset( EE_Registry::instance()->shortcodes->$shortcode_class )) {
-							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
-								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
-								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
-							}
+//							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
+//								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
+//								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+//								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
+//							}
 							break;
 						}
 						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
