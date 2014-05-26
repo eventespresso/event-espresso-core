@@ -107,15 +107,15 @@
     width: 25em !important;
 }
 
-#post-body-content > div {
+#update_question_group_event_form #post-body-content > div, #insert_question_group_event_form #post-body-content > div {
     max-width: 48.5%;
-    width: auto !important;
+    width: auto;
     float: left;
     clear: none;
 }
 
-#post-body-content > div:last-child {
-    float: right !important;
+#update_question_group_event_form #post-body-content > div:last-child, #insert_question_group_event_form #post-body-content > div:last-child {
+    float: right;
 }
 
 table.question-options-table td, table.question-options-table th{
