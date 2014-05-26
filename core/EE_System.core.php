@@ -376,17 +376,18 @@ final class EE_System {
 
 
 
-
-
 	/**
 	 * check to see if any ee3addons are active and if they are deactivate and throw up message.
 	 *
+	 * @param string $plugin
+	 * @param bool   $network_wide
 	 * @return void
 	 */
 	public function check_ee3addons( $plugin = '', $network_wide = false ) {
 		//check for and deactivate and EE3 addons and deactivate (user-proofing)
-		if ( ! class_exists( 'EEH_Activation' ) )
+		if ( ! class_exists( 'EEH_Activation' )) {
 			EE_Registry::instance()->load_helper('Activation');
+		}
 		EEH_Activation::screen_for_ee3_addons( $plugin );
 	}
 
@@ -676,7 +677,6 @@ final class EE_System {
 		if ( is_admin()  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
-
 			//check ee3addons status
 			add_action( 'activated_plugin', array( $this, 'check_ee3addons' ), 10, 2 );
 		}
