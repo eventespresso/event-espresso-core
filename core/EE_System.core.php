@@ -342,12 +342,14 @@ final class EE_System {
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->check_ee3addons();
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done reactivation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->check_ee3addons();
 				break;
 			case EE_System::req_type_upgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__upgrade' );
@@ -359,11 +361,13 @@ final class EE_System {
 					add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee'));
 				}
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->check_ee3addons();
 //				echo "done upgrade";die;
 				break;
 			case EE_System::req_type_downgrade:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__downgrade' );
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->check_ee3addons();
 				break;
 			case EE_System::req_type_normal:
 			default:
@@ -372,6 +376,23 @@ final class EE_System {
 		}
 		do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__complete' );
 	}
+
+
+
+
+
+	/**
+	 * check to see if any ee3addons are active and if they are deactivate and throw up message.
+	 *
+	 * @return void
+	 */
+	public function check_ee3addons( $plugin = '', $network_wide = false ) {
+		//check for and deactivate and EE3 addons and deactivate (user-proofing)
+		if ( ! class_exists( 'EEH_Activation' ) )
+			EE_Registry::instance()->load_helper('Activation');
+		EEH_Activation::screen_for_ee3_addons( $plugin );
+	}
+
 
 
 
@@ -658,6 +679,9 @@ final class EE_System {
 		if ( is_admin()  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
+
+			//check ee3addons status
+			add_action( 'activated_plugin', array( $this, 'check_ee3addons' ), 10, 2 );
 		}
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
 	}
