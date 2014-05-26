@@ -203,6 +203,14 @@ class EE_Admin_Page_Loader {
 				'capability' => 'administrator',
 				'menu_order' => 50,
 				'parent_slug' => 'espresso_events'
+				)),
+			'addons' => new EE_Admin_Page_Menu_Group( array(
+				'menu_label' => __('Addons', 'event_espresso'),
+				'show_on_menu' => TRUE,
+				'menu_slug' => 'addons',
+				'capability' => 'administrator',
+				'menu_order' => 60,
+				'parent_slug' => 'espresso_events'
 				))
 			);
 
