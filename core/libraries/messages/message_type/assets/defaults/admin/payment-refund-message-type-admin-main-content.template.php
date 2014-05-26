@@ -38,7 +38,7 @@ The following message was sent to the Primary Registrant of this transaction:
 <ul>
 	<li><strong>Payment Status:</strong> [PAYMENT_STATUS]</li>
 	<li><strong>Transaction ID:</strong> <a href="[TRANSACTION_ADMIN_URL]">[TXN_ID]</a></li>
-	<li><strong>Payment Gateway:</strong> [PAYMENT_GATEWAY]</li>
+	<li><strong>Payment Gateway:</strong> [PAYMENT_METHOD]</li>
 	<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
 	<li><strong>Refund Amount:</strong> [AMOUNT_PAID]</li>
 	<li><strong>Amount Due:</strong> [TOTAL_OWING]</li>
