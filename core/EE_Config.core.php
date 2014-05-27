@@ -87,6 +87,16 @@ final class EE_Config {
 	 */
 	public $template_settings;
 
+
+
+	/**
+	 * Holds EE environment values.
+	 *
+	 * @var EE_Environment_Config
+	 */
+	public $environment;
+
+
 	/**
 	 * 	_module_route_map
 	 *	@var 	array	$_module_route_map
@@ -1877,6 +1887,36 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public function __construct() {
 		$this->display_status_banner_single = 0;
 		$this->display_venue = 1;
+	}
+}
+
+
+
+
+/**
+ * Stores any EE Environment values that are referenced through the code.
+ *
+ * @since 4.4.0
+ * @package Event Espresso
+ * @subpackage  config
+ */
+class EE_Environment_Config extends EE_Config_Base {
+
+	/**
+	 * Hold any php environment variables that we want to track.
+	 *
+	 * @var stdClass;
+	 */
+	public $php;
+
+	public function __construct() {
+		$this->php = new stdClass();
+		$this->_set_php_values();
+	}
+
+	protected function _set_php_values() {
+		$this->php->max_input_vars = ini_get( 'max_input_vars' );
+		$this->php->version = phpversion();
 	}
 }
 
