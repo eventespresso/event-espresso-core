@@ -774,6 +774,15 @@ class EE_Event extends EE_CPT_Base{
 		return EEM_Term::instance()->get_all($query_params);
 	}
 
+	/**
+	 * Gets all the question groups, ordering them by QSG_order ascending
+	 * @param array $query_params @see EEM_Base::get_all
+	 * @return EE_Question_Group[]
+	 */
+	public function question_groups($query_params = array()){
+		$query_params = ! empty( $query_params ) ? $query_params : array( 'order_by' => array( 'QSG_order' => 'ASC' ));
+		return $this->get_many_related('Question_Group', $query_params);
+	}
 
 
 

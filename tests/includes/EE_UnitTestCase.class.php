@@ -202,7 +202,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param string $option_name
 	 */
 	public function assertWPOptionExists($option_name){
@@ -220,5 +220,69 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}else{
 			$this->assertTrue(true);
 		}
+	}
+	/**
+	 *Creates a model object and its required dependencies
+	 * @global int $auto_made_thing_seed
+	 * @param string $model_name
+	 * @param array $args array of arguments to supply when constructing the model obejct
+	 * @param boolean $save
+	 * @return EE_Base_Class
+	 */
+	function new_model_obj_with_dependencies( $model_name, $args = array(), $save = true ) {
+		global $auto_made_thing_seed;
+		if($auto_made_thing_seed === NULL){
+			$auto_made_thing_seed = 1;
+		}
+		$model = EE_Registry::instance()->load_model($model_name);
+
+		//set the related model foreign keys
+		foreach($model->relation_settings() as $related_model_name => $relation){
+			if($relation instanceof EE_Belongs_To_Any_Relation){
+				continue;
+			}elseif($relation instanceof EE_Belongs_To_Relation) {
+				$obj = $this->new_model_obj_with_dependencies($related_model_name);
+				$fk = $model->get_foreign_key_to($related_model_name);
+				if( ! isset( $args[ $fk->get_name() ] )){
+					$args[$fk->get_name()] = $obj->ID();
+				}
+
+			}
+		}
+
+		//set any other fields which haven't yet been set
+		foreach($model->field_settings() as $field_name => $field){
+			$value = NULL;
+			if($field_name == 'EVT_timezone_string'){
+				$value = NULL;
+			}elseif($field instanceof EE_Enum_Integer_Field ||
+					$field instanceof EE_Enum_Text_Field ||
+					$field instanceof EE_Boolean_Field){
+				$value = $field->get_default_value();
+			}elseif( $field instanceof EE_Integer_Field ||
+					$field instanceof EE_Float_Field ||
+					$field instanceof EE_Foreign_Key_Field_Base ||
+					$field instanceof EE_Primary_Key_String_Field){
+				$value = $auto_made_thing_seed;
+			}elseif( $field instanceof EE_Text_Field_Base ){
+				$value = $auto_made_thing_seed."_".$field->get_name();
+			}
+			if( ! isset( $args[ $field_name ] ) && $value !== NULL){
+				$args[$field->get_name()] = $value;
+			}
+		}
+		//and finally make the model obj
+		$classname = 'EE_'.$model_name;
+		$model_obj = $classname::new_instance($args);
+		if($save){
+			$success = $model_obj->save();
+			if( ! $success ){
+				global $wpdb;
+				throw new EE_Error(sprintf("Coudl not save %s using %s. Error was %s",$model_name,json_encode($args),$wpdb->last_error));
+			}
+		}
+		$auto_made_thing_seed++;
+		return $model_obj;
+
 	}
 }

@@ -8,7 +8,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Registration_Test
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
@@ -31,6 +31,18 @@ class EE_Registration_Test extends EE_UnitTestCase{
 		$this->assertNotNull($r->reg_code());
 		$this->assertEquals(EEM_Registration::status_id_approved,$r->status_ID());
 	}
+
+	function test_answer_value_to_question() {
+		$r = $this->new_model_obj_with_dependencies( 'Registration' );
+		$q1 = $this->new_model_obj_with_dependencies( 'Question' );
+		//also grab the default firstname question
+		$q2 = EEM_Question::instance()->get_one_by_ID(EEM_Attendee::fname_question_id);
+		$this->assertNotNull($q2);
+		$a1 = $this->new_model_obj_with_dependencies( 'Answer', array('REG_ID'=>$r->ID(), 'QST_ID'=>$q1->ID()));
+		$this->assertEquals( $a1->value(), $r->answer_value_to_question( $q1, false ) );
+		$this->assertEquals($r->attendee()->fname(),$r->answer_value_to_question($q2,false));
+	}
+
 }
 
 // End of file EE_Registration_Test.php
