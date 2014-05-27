@@ -27,7 +27,7 @@
  * @subpackage 	core
  * @author 				Michael Nelson, Brent Christensen
  */
-abstract class EE_Addon {
+abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
@@ -47,12 +47,6 @@ abstract class EE_Addon {
 	 * @type string
 	 */
 	protected $_min_core_version;
-
-	/**
-	 * @var $_config
-	 * @type EE_Config_Base
-	 */
-	protected $_config;
 
 	/**
 	 * A non-internationalized name to identify this addon. Eg 'Calendar','Mailchimp',etc/
@@ -314,91 +308,13 @@ abstract class EE_Addon {
 
 
 	/**
-	 * grabs the addon's config object that is cached as a property right on the addon instance
-	 * @return EE_Config_Base
+	 * @param string $config_section
 	 */
-	public function config() {
-		return $this->_config;
+	public function set_config_section( $config_section = '' ) {
+		$this->_config_section = ! empty( $config_section ) ? $config_section : 'addons';
 	}
 
 
-	/**
-	 * caches an EE_Config_Base config object as a property right on the addon instance
-	 * @param EE_Config_Base $config
-	 */
-	public function set_config( EE_Config_Base $config ) {
-		$this->_config = $config;
-	}
-
-
-
-	/**
-	 *    _set_config_class
-	 * ensures that a config class is set, either from a passed config class or one generated from the config name
-	 *
-	 * @access 	private
-	 * @param 	string $config_class
-	 * @param 	string $name
-	 * @return 	string
-	 */
-	private function _set_config_class( $config_class = '', $name = '' ) {
-		$name = str_replace( ' ', '_', ucwords( explode( '_', $name )));
-		return ! empty( $config_class ) ? $config_class : $name . '_Config';
-	}
-
-
-
-	/**
-	 *    set_config
-	 * 	this method integrates directly with EE_Config to set up the config object for this addon
-	 *
-	 * @access 	protected
-	 * @param 	string 	$config_class
-	 * @param 	string 	$name
-	 * @param 	string 	$section
-	 * @param 	EE_Config_Base 	$config_obj
-	 * @return 	mixed 	EE_Config_Base | NULL
-	 */
-	protected function _set_config( $config_class = '', $name = '', EE_Config_Base $config_obj = NULL, $section = 'addons' ) {
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = $this->_set_config_class( $config_class, $name );
-		return EE_Config::instance()->set_config( $section, $name, $config_class, $config_obj );
-	}
-
-
-
-	/**
-	 *    _update_config
-	 * 	this method integrates directly with EE_Config to update an existing config object for this addon
-	 *
-	 * @access 	protected
-	 * @param 	EE_Config_Base 	$config_obj
-	 * @param 	string 	$name
-	 * @param 	string 	$section
-	 * @return 	mixed 	EE_Config_Base | NULL
-	 */
-	protected function _update_config( EE_Config_Base $config_obj, $name = '', $section = 'addons' ) {
-		$name = ! empty( $name ) ? $name : get_called_class();
-		return EE_Config::instance()->update_config( $section, $name, $config_obj );
-	}
-
-
-
-	/**
-	 *    get_config
-	 * 	this method integrates directly with EE_Config to either retrieve an existing config object, or set up a new one for this addon
-	 *
-	 * @access 	protected
-	 * @param 	string 	$config_class
-	 * @param 	string 	$name
-	 * @param 	string 	$section
-	 * @return 	mixed 	EE_Config_Base | NULL
-	 */
-	protected function _get_config( $config_class = '', $name = '', $section = 'addons' ) {
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = $this->_set_config_class( $config_class, $name );
-		return EE_Config::instance()->get_config( $section, $name, $config_class );
-	}
 
 
 
