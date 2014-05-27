@@ -48,6 +48,13 @@ Class  EE_New_Addon extends EE_Addon {
 				'module_paths' 		=> array( EE_NEW_ADDON_PATH . 'EED_New_Addon.module.php' ),
 				'shortcode_paths' 	=> array( EE_NEW_ADDON_PATH . 'EES_New_Addon.shortcode.php' ),
 				'widget_paths' 		=> array( EE_NEW_ADDON_PATH . 'EEW_New_Addon.widget.php' ),
+				//The below is for if plugin update engine is being used for autoupdates. not needed if PUE is not being used.
+				'pue_options'			=> array(
+					'pue_plugin_slug' => 'espresso_new_addon',
+					'plugin_basename' => EE_NEW_ADDON_PLUGIN_FILE,
+					'checkPeriod' => '24',
+					'use_wp_update' => FALSE
+					)
 			)
 		);
 	}
