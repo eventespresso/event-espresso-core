@@ -114,16 +114,17 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// array of full server paths to any WP_Widgets used by the addon
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
 		);
+
+		// we need cars
 		if ( ! empty( self::$_settings[ $addon_name ]['autoloader_paths'] )) {
-			// we need cars
 			EEH_Autoloader::instance()->register_autoloader( self::$_settings[ $addon_name ]['autoloader_paths'] );
 		}
+		// setup DMS
 		if ( ! empty( self::$_settings[ $addon_name ]['dms_paths'] )) {
-			// setup DMS
 			EE_Register_Data_Migration_Scripts::register( $addon_name, array( 'dms_paths' => self::$_settings[ $addon_name ]['dms_paths'] ));
 		}
+		// if config_class is present let's register config.
 		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
-			// if config_class is present let's register config.
 			EE_Register_Config::register(
 				self::$_settings[ $addon_name ]['config_class'],
 				array(
@@ -132,33 +133,81 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				)
 			);
 		}
+		// register admin page
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_path'] )) {
-			// register admin page
 			EE_Register_Admin_Page::register( $addon_name, array( 'page_path' => self::$_settings[ $addon_name ]['admin_path'] ));
 	}
+		// add to list of modules to be registered
 		if ( ! empty( self::$_settings[ $addon_name ]['module_paths'] )) {
-			// add to list of modules to be registered
 			EE_Register_Module::register( $addon_name, array( 'module_paths' => self::$_settings[ $addon_name ]['module_paths'] ));
 		}
+		// add to list of shortcodes to be registered
 		if ( ! empty( self::$_settings[ $addon_name ]['shortcode_paths'] )) {
-			// add to list of shortcodes to be registered
 			EE_Register_Shortcode::register( $addon_name, array( 'shortcode_paths' => self::$_settings[ $addon_name ]['shortcode_paths'] ));
 		}
+		// add to list of widgets to be registered
 		if ( ! empty( self::$_settings[ $addon_name ]['widget_paths'] )) {
-			// add to list of widgets to be registered
 			EE_Register_Widget::register( $addon_name, array( 'widget_paths' => self::$_settings[ $addon_name ]['widget_paths'] ));
+		}
+		// if plugin update engine is being used for auto-updates (not needed if PUE is not being used)
+		if ( ! empty( $setup_args['pue_options'] )) {
+			self::$_settings[ $addon_name ]['pue_options'] = array(
+				'pue_plugin_slug' 	=> isset( $setup_args['pue_options']['pue_plugin_slug'] ) ? (string)$setup_args['pue_options']['pue_plugin_slug'] : 'espresso_' . strtolower( $class_name ),
+				'plugin_basename' => isset( $setup_args['pue_options']['plugin_basename'] ) ? (string)$setup_args['pue_options']['plugin_basename'] : self::$_settings[ $addon_name ]['base_path'] ,
+				'checkPeriod' 			=> isset( $setup_args['pue_options']['checkPeriod'] ) ? (string)$setup_args['pue_options']['checkPeriod'] : '24',
+				'use_wp_update'		=> isset( $setup_args['pue_options']['use_wp_update'] ) ? (string)$setup_args['pue_options']['use_wp_update'] : FALSE
+			);
+			add_action( 'action_hook_espresso_new_addon_update_api', array( 'EE_Register_Addon', 'load_pue_update' ));
 		}
 		// load and instantiate main addon class
 		$addon = EE_Registry::instance()->load_addon( self::$_settings[ $addon_name ]['base_path'], self::$_settings[ $addon_name ]['class_name'] );
-		$addon->set_name($addon_name);
+		$addon->set_name( $addon_name );
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
 		$addon->set_min_core_version( self::$_settings[ $addon_name ]['min_core_version'] );
 		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
 		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
 		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
-		// load_admin_controller
+		// call any additional admin_callback functions during load_admin_controller hook
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_callback'] )) {
 			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
+		}
+	}
+
+
+
+	/**
+	 * 	load_pue_update - Update notifications
+	 *
+	 *  @return 	void
+	 */
+	public static function load_pue_update() {
+		// load PUE client
+		EE_Registry::instance()->load_file( EE_THIRD_PARTY . 'pue' . DS, 'pue-client.php' );
+		// cycle thru settings
+		foreach ( self::$_settings as $settings ) {
+			if ( isset( $settings['pue_options'] )) {
+				// initiate the class and start the plugin update engine!
+				new PluginUpdateEngineChecker(
+				// host file URL
+					'http://eventespresso.com',
+					// plugin slug(s)
+					array(
+						'premium' => array( 'reg' => $settings['pue_options']['pue_plugin_slug'] ),
+						'prerelease' => array( 'beta' => $settings['pue_options']['pue_plugin_slug'] . '-pr' )
+					),
+					// options
+					array(
+						'apikey' => EE_Registry::instance()->NET_CFG->core->site_license_key,
+						'lang_domain' => 'event_espresso',
+						'checkPeriod' => $settings['pue_options']['checkPeriod'],
+						'option_key' => 'site_license_key',
+						'options_page_slug' => 'event_espresso',
+						'plugin_basename' => $settings['pue_options']['plugin_basename'],
+						// if use_wp_update is TRUE it means you want FREE versions of the plugin to be updated from WP
+						'use_wp_update' => $settings['pue_options']['use_wp_update'],
+					)
+				);
+			}
 		}
 	}
 
