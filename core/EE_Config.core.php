@@ -319,6 +319,21 @@ final class EE_Config {
 
 
 	/**
+	 *    _set_config_class
+	 * ensures that a config class is set, either from a passed config class or one generated from the config name
+	 *
+	 * @access 	private
+	 * @param 	string $config_class
+	 * @param 	string $name
+	 * @return 	string
+	 */
+	private function _set_config_class( $config_class = '', $name = '' ) {
+		$name = str_replace( ' ', '_', ucwords( explode( '_', $name )));
+		return ! empty( $config_class ) ? $config_class : $name . '_Config';
+	}
+
+
+	/**
 	 *    set_config
 	 *
 	 * @access        protected
@@ -329,6 +344,8 @@ final class EE_Config {
 	 * @return        \EE_Config_Base|bool
 	 */
 	public function set_config( $section = '', $name = '', $config_class = '', EE_Config_Base $config_obj = NULL ) {
+		// ensure config class is set to something
+		$config_class = $this->_set_config_class( $config_class, $name );
 		// run tests 1-4, 6, and 7 to verify all config params are set and valid
 		if ( ! $this->_verify_config_params( $section, $name, $config_class, NULL, array( 1, 2, 3, 4, 6, 7 ))) {
 			return FALSE;
@@ -397,6 +414,8 @@ final class EE_Config {
 	 * @return 	mixed EE_Config_Base | NULL
 	 */
 	public function get_config( $section = '', $name = '', $config_class = '' ) {
+		// ensure config class is set to something
+		$config_class = $this->_set_config_class( $config_class, $name );
 		// run tests 1-4, 6 and 7 to verify that all params have been set
 		if ( ! $this->_verify_config_params( $section, $name, $config_class, NULL, array( 1, 2, 3, 4, 6, 7 ))) {
 			return NULL;
