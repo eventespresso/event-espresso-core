@@ -328,8 +328,7 @@ final class EE_Config {
 	 * @return 	string
 	 */
 	private function _set_config_class( $config_class = '', $name = '' ) {
-		$name = str_replace( ' ', '_', ucwords( explode( '_', $name )));
-		return ! empty( $config_class ) ? $config_class : $name . '_Config';
+		return ! empty( $config_class ) ? $config_class : str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $name ))) . '_Config';
 	}
 
 
