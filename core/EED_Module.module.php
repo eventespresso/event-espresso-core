@@ -16,12 +16,12 @@
  * EED_Module
  *
  * @package			Event Espresso
- * @subpackage	/modules/
+ * @subpackage 	/core/
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
-abstract class EED_Module extends EE_Base {
+abstract class EED_Module extends EE_Configurable {
 
 	/**
 	 * 	instance of the EED_Module object
@@ -29,13 +29,6 @@ abstract class EED_Module extends EE_Base {
 	 *	@var 	EED_Module $_instance
 	 */
 	protected static $_instance = NULL;
-
-	/**
-	 * 	instance of the EE_Config_Base object
-	 * 	@access 	protected
-	 *	@var 	EE_Config_Base $_config
-	 */
-	protected $_config = NULL;
 
 	/**
 	 * 	rendered output to be returned to WP
@@ -125,42 +118,6 @@ abstract class EED_Module extends EE_Base {
 
 
 
-	/**
-	 *    set_config
-	 *
-	 * @access 	protected
-	 * @param 	string 	$section
-	 * @param 	string 	$name
-	 * @param 	string 	$config_class
-	 * @return 	mixed 	EE_Config_Base | NULL
-	 */
-	protected static function _set_config( $section = 'modules', $name = '', $config_class = '' ) {
-//		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		return EE_Config::instance()->set_config( $section, $name, $config_class );
-	}
-
-
-
-	/**
-	 *    get_config
-	 *
-	 * @access 	protected
-	 * @param 	string 	$section
-	 * @param 	string 	$name
-	 * @param 	string 	$config_class
-	 * @return 	mixed 	EE_Config_Base | NULL
-	 */
-	protected static function _get_config( $section = 'modules', $name = '', $config_class = '' ) {
-//		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		return EE_Config::instance()->get_config( $section, $name, $config_class );
-	}
-
-
-
 }
 // End of file EED_Module.module.php
-// Location: /modules/EED_Module.module.php
+// Location: /core/EED_Module.module.php
