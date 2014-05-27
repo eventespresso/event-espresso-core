@@ -97,6 +97,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'admin_path' 			=> isset( $setup_args['admin_path'] ) ? (string)$setup_args['admin_path'] : '',
 			// a method to be called when the EE Admin is first invoked, can be used for hooking into any admin page
 			'admin_callback' 	=> isset( $setup_args['admin_callback'] ) ? (string)$setup_args['admin_callback'] : '',
+			// the section name for this addon's configuration settings section (defaults to "addons")
+			'config_section' 		=> isset( $setup_args['config_section'] ) ? (string)$setup_args['config_section'] : '',
 			// the class name for this addon's configuration settings object
 			'config_class' 			=> isset( $setup_args['config_class'] ) ? (string)$setup_args['config_class'] : '',
 			//the name given to the config for this addons' configuration settings object (optional)
@@ -122,7 +124,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
 			// if config_class is present let's register config.
-			EE_Register_Config::register( self::$_settings[ $addon_name ]['config_class'], array( 'config_name' => self::$_settings[ $addon_name ]['config_name'] ));
+			EE_Register_Config::register(
+				self::$_settings[ $addon_name ]['config_class'],
+				array(
+					'config_section' => self::$_settings[ $addon_name ]['config_section'],
+					'config_name' => self::$_settings[ $addon_name ]['config_name']
+				)
+			);
 		}
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_path'] )) {
 			// register admin page
@@ -145,10 +153,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		$addon->set_name($addon_name);
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
 		$addon->set_min_core_version( self::$_settings[ $addon_name ]['min_core_version'] );
-		if ( ! empty( self::$_settings[ $addon_name ]['config_class'] )) {
-			self::$_settings[ $addon_name ]['addon'] = $addon;
-			add_action( 'AHEE__EE_System__load_core_configuration__complete', array( 'EE_Register_Addon', 'set_config' ));
-		}
+		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
+		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
+		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
 		// load_admin_controller
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_callback'] )) {
 			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
@@ -158,27 +165,12 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 
 	/**
-	 * set_config
-	 *
-	 * @return void
-	 */
-	public static function set_config() {
-		foreach( self::$_settings as $settings ) {
-			if ( isset( $settings['addon'] )) {
-				$settings['addon']->set_config( EE_Registry::instance()->CFG->get_config( 'addons', $settings['config_name'], $settings['config_class'] ));
-			}
-		}
-	}
-
-
-
-
-	/**
 	 * This deregisters an addon that was previously registered with a specific addon_name.
 	 *
 	 * @since    4.3.0
 	 *
-	 * @param string  $addon_name the name for the addon that was previously registered
+	 * @param string $addon_name the name for the addon that was previously registered
+	 * @throws EE_Error
 	 * @return void
 	 */
 	public static function deregister( $addon_name = NULL ) {
