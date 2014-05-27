@@ -965,25 +965,52 @@ abstract class EE_Base_Class{
 		//also: change the assumption about values passed to the model NOT being prepare dby the model obejct. They have been
 		$old_assumption_concerning_value_preparation = $this->get_model()->get_assumption_concerning_values_already_prepared_by_model_object();
 		$this->get_model()->assume_values_already_prepared_by_model_object(true);
-
-		if ( !empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
-			$results = $this->get_model()->update ( $save_cols_n_values, array(array(self::_get_primary_key_name(get_class($this))=>$this->ID()),'default_where_conditions'=>'other_models_only') );
-		} else {
-			unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
-			$results = $this->get_model()->insert( $save_cols_n_values, true);
-			if($results){
-				//if successful, set the primary key
-				//but don't use the normal SET method, because it will check if
-				//an item with the same ID exists in the mapper & db, then
-				//will find it in the db (because we just added it) and THAT object
-				//will get added to the mapper before we can add this one!
-				//but if we just avoid using the SET method, all that headache can be avoided
-				$pk_field_name =self::_get_primary_key_name( get_class($this));
-				$this->_fields[$pk_field_name] = $results;
-				$this->_clear_cached_property($pk_field_name);
+		//does this model have an autoincrement PK?
+		if($this->get_model()->has_primary_key_field()){
+			if($this->get_model()->get_primary_key_field()->is_auto_increment()){
+				//ok check if it's set, if so: update; if not, insert
+				if ( ! empty( $save_cols_n_values[self::_get_primary_key_name( get_class($this) )] ) ){
+					$results = $this->get_model()->update_by_ID ( $save_cols_n_values, $this->ID() );
+				} else {
+					unset($save_cols_n_values[self::_get_primary_key_name( get_class( $this) )]);
+					$results = $this->get_model()->insert( $save_cols_n_values, true);
+					if($results){
+						//if successful, set the primary key
+						//but don't use the normal SET method, because it will check if
+						//an item with the same ID exists in the mapper & db, then
+						//will find it in the db (because we just added it) and THAT object
+						//will get added to the mapper before we can add this one!
+						//but if we just avoid using the SET method, all that headache can be avoided
+						$pk_field_name =self::_get_primary_key_name( get_class($this));
+						$this->_fields[$pk_field_name] = $results;
+						$this->_clear_cached_property($pk_field_name);
+					}
+					$this->get_model()->add_to_entity_map($this);
+				}
+			}else{//PK is NOT auto-increment
+				//so check if one like it already exists in the db
+				if( $this->get_model()->exists_by_ID( $this->ID() ) ){
+					$results = $this->get_model()->update_by_ID($save_cols_n_values, $this->ID());
+				}else{
+					$results = $this->get_model()->insert($save_cols_n_values);
+				}
 			}
-			$this->get_model()->add_to_entity_map($this);
+		}else{//there is NO primary key
+			$already_in_db = false;
+			foreach($this->get_model()->unique_indexes() as $index_name => $index){
+				$uniqueness_where_params = array_intersect_key($save_cols_n_values, $index->fields());
+				if($this->get_model()->exists(array($uniqueness_where_params))){
+					$already_in_db = true;
+				}
+			}
+			if( $already_in_db ){
+				$combined_pk_fields_n_values = array_insersect_key($save_cols_n_values,$this->get_model()->get_combined_primary_key_fields());
+				$results = $this->get_model()->update($save_cols_n_values,$combined_pk_fields_n_values);
+			}else{
+				$results = $this->get_model()->insert($save_cols_n_values);
+			}
 		}
+
 		//restore the old assumption about values being prepared by the model obejct
 		$this->get_model()->assume_values_already_prepared_by_model_object($old_assumption_concerning_value_preparation);
 
