@@ -98,7 +98,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			// a method to be called when the EE Admin is first invoked, can be used for hooking into any admin page
 			'admin_callback' 	=> isset( $setup_args['admin_callback'] ) ? (string)$setup_args['admin_callback'] : '',
 			// the section name for this addon's configuration settings section (defaults to "addons")
-			'config_section' 		=> isset( $setup_args['config_section'] ) ? (string)$setup_args['config_section'] : '',
+			'config_section' 		=> isset( $setup_args['config_section'] ) ? (string)$setup_args['config_section'] : 'addons',
 			// the class name for this addon's configuration settings object
 			'config_class' 			=> isset( $setup_args['config_class'] ) ? (string)$setup_args['config_class'] : '',
 			//the name given to the config for this addons' configuration settings object (optional)
