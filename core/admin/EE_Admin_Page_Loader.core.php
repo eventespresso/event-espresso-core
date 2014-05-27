@@ -177,7 +177,7 @@ class EE_Admin_Page_Loader {
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'settings',
 				'capability' => 'administrator',
-				'menu_order' => 20,
+				'menu_order' => 30,
 				'parent_slug' => 'espresso_events'
 				)),
 			'templates' => new EE_Admin_Page_Menu_Group( array(
@@ -185,7 +185,7 @@ class EE_Admin_Page_Loader {
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'templates',
 				'capability' => 'administrator',
-				'menu_order' => 30,
+				'menu_order' => 40,
 				'parent_slug' => 'espresso_events'
 				)),
 			'extras' => new EE_Admin_Page_Menu_Group( array(
@@ -193,7 +193,7 @@ class EE_Admin_Page_Loader {
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'extras',
 				'capability' => 'administrator',
-				'menu_order' => 40,
+				'menu_order' => 50,
 				'parent_slug' => 'espresso_events'
 				)),
 			'tools' => new EE_Admin_Page_Menu_Group( array(
@@ -201,7 +201,15 @@ class EE_Admin_Page_Loader {
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'tools',
 				'capability' => 'administrator',
-				'menu_order' => 50,
+				'menu_order' => 60,
+				'parent_slug' => 'espresso_events'
+				)),
+			'addons' => new EE_Admin_Page_Menu_Group( array(
+				'menu_label' => __('Addons', 'event_espresso'),
+				'show_on_menu' => TRUE,
+				'menu_slug' => 'addons',
+				'capability' => 'administrator',
+				'menu_order' => 20,
 				'parent_slug' => 'espresso_events'
 				))
 			);

@@ -824,12 +824,17 @@ class EE_Error extends Exception {
 	*	@access 	public
 	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
 	* 	@param		string	$pan_message	the message to be stored persistently until dismissed
+	* 	@param bool $force_update allows one to enforce the reappearance of a persistent message.
 	* 	@return 		void
 	*/
-	public static function add_persistent_admin_notice( $pan_name = '', $pan_message ) {
+	public static function add_persistent_admin_notice( $pan_name = '', $pan_message, $force_update = FALSE ) {
 		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
 			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
-			if ( ! array_key_exists( $pan_name, $persistent_admin_notices )) {
+			//maybe initialize persistent_admin_notices
+			if ( empty( $persistent_admin_notices )) {
+				add_option( 'ee_pers_admin_notices', array(), '', 'no' );
+			}
+			if ( ! array_key_exists( $pan_name, $persistent_admin_notices ) || $force_update ) {
 				$persistent_admin_notices[ $pan_name ] = $pan_message;
 				update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
 			}
