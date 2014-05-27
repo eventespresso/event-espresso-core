@@ -929,6 +929,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	}
 
 	/**
+	 * Gets the registiration's answer value to the specified question
+	 * (either the question's ID or a question object)
+	 * @param EE_Question|int $question
+	 * @return array|string if pretty_value= true, the result will always be a string
+	 * (because the answer might be an array of answer values, so passing pretty_value=true
+	 * will convert it into some kind of string)
+	 */
+	public function answer_value_to_question( $question, $pretty_value=true ) {
+		$question_id = EEM_Question::instance()->ensure_is_ID($question);
+		return EEM_Answer::instance()->get_answer_value_to_question($this,$question_id,$pretty_value);
+	}
+
+	/**
 	 * Returns the registration date in the 'standard' string format
 	 * (function may be improved in the future to allow for different formats and timezones)
 	 * @return string
@@ -954,6 +967,22 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 	 */
 	public function set_datetime_ticket($datetime_ticket){
 		return$this->_add_relation_to($datetime_ticket, 'Datetime_Ticket');
+	}
+	/**
+	 * Gets deleted
+	 * @return boolean
+	 */
+	public function deleted() {
+		return $this->get( 'REG_deleted' );
+	}
+
+	/**
+	 * Sets deleted
+	 * @param boolean $deleted
+	 * @return boolean
+	 */
+	public function set_deleted($deleted) {
+		return $this->set( 'REG_deleted', $deleted );
 	}
 
 
