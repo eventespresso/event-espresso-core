@@ -1,4 +1,4 @@
-<?php 
+<?php
 /* @var $events_for_txn EE_Event[] */
 $events_for_txn;
 /* @var $ticket_line_items_per_event EE_Line_Item[] */
@@ -12,7 +12,7 @@ $tax_total_line_item;
 ?>
 
 	<div id="invoice">
-		
+
 		<table id="invoice-header" class="not-really-a-table">
 			<tr>
 				<td id="logo-dv">
@@ -99,7 +99,7 @@ $tax_total_line_item;
 								<?php }?>
 							</tbody>
 						</table>
-						
+
 					</div>
 					<div class="reg-details-for-ticket">
 						<div class="ticket-time-and-place-details">
@@ -108,9 +108,9 @@ $tax_total_line_item;
 								<ul class="event-dates">
 									<?php foreach($ticket->datetimes_ordered() as $datetime){
 										/* @var $datetime EE_Datetime */ ?>
-									<li><?php 
+									<li><?php
 										echo $datetime->name() ? '<b>'.$datetime->name().' </b>' : '' ;
-										echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone()); 
+										echo sprintf(__("%s - %s (%s)", "event_espresso"),$datetime->start_date_and_time(),$datetime->end_date_and_time(),$datetime->get_timezone());
 										echo $datetime->description() ? '<p class="ticket-note">'.$datetime->description().'</p>' : '' ?></li>
 									<?php }?>
 								</ul>
@@ -139,37 +139,25 @@ $tax_total_line_item;
 											<th><?php echo 	_e("Registration Code:", "event_espresso");?></th>
 											<td><?php echo $registration->reg_code();?> - <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></td>
 										</tr>
-										<tr>
-											<th><?php _e("Attendee:", "event_espresso");?></th>
-											<td><?php echo $attendee->full_name();?> (<?php echo $attendee->email();?>)</td>
-										</tr>
-										
-										<?php foreach($attendee_columns_to_show as $field_name){
-												if( ! $attendee->get($field_name)){
+										<?php
+										foreach($event->question_groups() as $question_group){
+											?><tr><th><?php $question_group->e('QSG_name');?></th><td></td></tr><?php
+											$has_personal_info = false;
+											foreach($question_group->questions() as $question){
+												if( in_array($question->ID(),$questions_to_skip)){
+													$has_personal_info = true;
 													continue;
 												}
-											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);
-											if($field_info->get_name() == 'STA_ID'){
-												$state_obj = $attendee->state_obj();
-												$value = $state_obj ? $state_obj->name() : '';
-											}elseif($field_info->get_name() == 'CNT_ISO'){
-												$country_obj  = $attendee->country_obj();
-												$value = $country_obj ? $country_obj->name() : '';
-											}else{
-												$value = $attendee->get($field_name);
-											 }?>
-											<tr>
-												<th><?php echo $field_info->get_nicename()?>: </th>
-												<td><?php echo $value;?></td>
-											</tr>
-										 <?php }
-										 foreach($answers as $ans_id => $answer){
-											$question = $answer->question();?>
-											<tr>
-												<th><?php echo $question ? $question->display_text() : '{Question Deleted}'?>: </th>
-												<td><?php echo $answer->e_value()?></td>
-											</tr>
-										<?php }?>
+												?><tr>
+														<th><?php echo $question->display_text()?></th>
+														<td><?php echo $registration->answer_value_to_question($question);?></td>
+												</tr><?php
+											}
+											if($has_personal_info){
+												?><tr><th><?php	_e('Attendee', 'event_espresso');?></th><td><?php echo sprintf(__('%s (%s)', "event_espresso"),$attendee->full_name(),$attendee->email())?></td></tr><?php
+											}
+										}
+										?>
 									</table>
 								</li>
 								<?php } ?>
@@ -179,7 +167,7 @@ $tax_total_line_item;
 				</li>
 			<?php }?>
 			</ul>
-			
+
 		<?php }?>
 		</div>
 		<div class="taxes">
@@ -196,7 +184,7 @@ $tax_total_line_item;
 						</tr>
 					</thead>
 					<tbody>
-						<?php 
+						<?php
 						foreach($tax_total_line_item->children() as $child_tax){?>
 						<tr>
 							<td><?php echo $child_tax->name()?></td>
@@ -234,7 +222,7 @@ $tax_total_line_item;
 					</tr>
 				</thead>
 				<tbody>
-					<?php 
+					<?php
 					$c = false;
 					if(!empty($payments)){
 
@@ -279,7 +267,7 @@ $tax_total_line_item;
 					<?php foreach($venues_for_events as $venue){?>
 						<tr class="venue-details">
 							<td class="venue-details-part venue-address-dv">
-								<h3><a href='<?php echo $venue->get_permalink()?>'><?php 
+								<h3><a href='<?php echo $venue->get_permalink()?>'><?php
 									echo $venue->name()
 								?></a></h3>
 								<p><?php echo $venue->description()?></p>
@@ -294,8 +282,8 @@ $tax_total_line_item;
 			</table>
 
 			<?php if($shameless_plug){?>
-			<div class='aln-cntr'><?php 
-				printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>"); 
+			<div class='aln-cntr'><?php
+				printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>");
 			?></div>
 			<?php } ?>
 		</div>
