@@ -359,7 +359,7 @@ abstract class EE_Addon {
 	 * @param 	EE_Config_Base 	$config_obj
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
-	protected function _set_config( $config_class = '', $name = '', EE_Config_Base $config_obj = NULL, $section = 'modules' ) {
+	protected function _set_config( $config_class = '', $name = '', EE_Config_Base $config_obj = NULL, $section = 'addons' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = $this->_set_config_class( $config_class, $name );
 		return EE_Config::instance()->set_config( $section, $name, $config_class, $config_obj );
@@ -377,7 +377,7 @@ abstract class EE_Addon {
 	 * @param 	string 	$section
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
-	protected function _update_config( EE_Config_Base $config_obj, $name = '', $section = 'modules' ) {
+	protected function _update_config( EE_Config_Base $config_obj, $name = '', $section = 'addons' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		return EE_Config::instance()->update_config( $section, $name, $config_obj );
 	}
@@ -394,7 +394,7 @@ abstract class EE_Addon {
 	 * @param 	string 	$section
 	 * @return 	mixed 	EE_Config_Base | NULL
 	 */
-	protected function _get_config( $config_class = '', $name = '', $section = 'modules' ) {
+	protected function _get_config( $config_class = '', $name = '', $section = 'addons' ) {
 		$name = ! empty( $name ) ? $name : get_called_class();
 		$config_class = $this->_set_config_class( $config_class, $name );
 		return EE_Config::instance()->get_config( $section, $name, $config_class );
