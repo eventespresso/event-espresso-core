@@ -143,7 +143,7 @@ class EE_Error extends Exception {
 	 *    http://www.php.net/manual/en/errorfunc.constants.php#109430
 	 * @access public
 	 * @param $code
-	 * @return void
+	 * @return string
 	 */
 	public static function error_type( $code ) {
 		switch( $code ) {
@@ -282,7 +282,7 @@ class EE_Error extends Exception {
 
 		$trace_details = '';
 
-		$ouput = '
+		$output = '
 <style type="text/css">
 	#ee-error-message {
 		max-width:90% !important;
@@ -331,7 +331,7 @@ class EE_Error extends Exception {
 	.small-text {
 		font-size: .85em;
 		line-height: 1.4em;
-		letter-spacing: .25px;
+		letter-spacing: 1px;
 	}
 	.lt-grey-text {
 		color: #a8a8a8;
@@ -340,7 +340,7 @@ class EE_Error extends Exception {
 <div id="ee-error-message" class="error">';
 
 		if ( ! WP_DEBUG ) {
-			$ouput .= '
+			$output .= '
 	<p>';
 		}
 
@@ -425,12 +425,12 @@ class EE_Error extends Exception {
 			// add generic non-identifying messages for non-privileged uesrs
 			if ( ! WP_DEBUG ) {
 
-				$ouput .= '<span class="ee-error-user-msg-spn">' . trim( $ex['msg'] )  . '</span> &nbsp; <sup>' . $ex['code'] . '</sup><br />';
+				$output .= '<span class="ee-error-user-msg-spn">' . trim( $ex['msg'] )  . '</span> &nbsp; <sup>' . $ex['code'] . '</sup><br />';
 
 			} else {
 
 				// or helpful developer messages if debugging is on
-				$ouput .= '
+				$output .= '
 		<div class="ee-error-dev-msg-dv">
 			<p class="ee-error-dev-msg-pg">
 				<strong class="ee-error-dev-msg-str">An ' . $ex['name'] . ' exception was thrown!</strong>  &nbsp; <span>code: ' . $ex['code'] . '</span><br />
@@ -444,18 +444,18 @@ class EE_Error extends Exception {
 				' . $trace_details;
 
 				if ( ! empty( $class )) {
-					$ouput .= '
+					$output .= '
 				<div style="padding:3px; margin:0 0 1em; border:1px solid #666; background:#fff; border-radius:3px;">
 					<div style="padding:1em 2em; border:1px solid #666; background:#f9f9f9;">
 						<h3>Class Details</h3>';
 						$a = new ReflectionClass( $class );
-						$ouput .= '
+						$output .= '
 						<pre>' . $a . '</pre>
 					</div>
 				</div>';
 				}
 
-				$ouput .= '
+				$output .= '
 			</div>
 		</div>
 		<br />';
@@ -467,24 +467,24 @@ class EE_Error extends Exception {
 		}
 
 		// remove last linebreak
-		$ouput = substr( $ouput, 0, ( count( $ouput ) - 7 ));
+		$output = substr( $output, 0, ( count( $output ) - 7 ));
 
 		if ( ! WP_DEBUG ) {
-			$ouput .= '
+			$output .= '
 	</p>';
 		}
 
-		$ouput .= '
+		$output .= '
 </div>';
 
-		$ouput .= self::_print_scripts( TRUE );
+		$output .= self::_print_scripts( TRUE );
 
 		if ( defined( 'DOING_AJAX' )) {
-			echo json_encode( array( 'error' => $ouput ));
+			echo json_encode( array( 'error' => $output ));
 			exit();
 		}
 
-		echo $ouput;
+		echo $output;
 		die();
 
 	}
