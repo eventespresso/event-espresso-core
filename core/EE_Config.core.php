@@ -329,7 +329,6 @@ final class EE_Config {
 	 * @return        \EE_Config_Base|bool
 	 */
 	public function set_config( $section = '', $name = '', $config_class = '', EE_Config_Base $config_obj = NULL ) {
-//		echo '<h5 style="color:#2EA2CC;">' . __FUNCTION__ . ' : <span style="color:#E76700">' . $section . ' -> ' . $name . ' = ' . $config_class . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// run tests 1-4, 6, and 7 to verify all config params are set and valid
 		if ( ! $this->_verify_config_params( $section, $name, $config_class, NULL, array( 1, 2, 3, 4, 6, 7 ))) {
 			return FALSE;
@@ -355,16 +354,15 @@ final class EE_Config {
 
 
 	/**
-	 *    _update_config
+	 *    update_config
 	 *
-	 * @access 	protected
+	 * @access 	public
 	 * @param 	string 		$section
 	 * @param 	string 		$name
 	 * @param 	\EE_Config_Base|string $config_obj
 	 * @return  bool
 	 */
-	protected function _update_config( $section = '', $name = '', $config_obj = '' ) {
-//		echo '<h5 style="color:#2EA2CC;">' . __FUNCTION__ . ' : <span style="color:#E76700">' . $section . ' -> ' . $name . ' = ' . print_r( $config_obj, TRUE ) . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+	public function update_config( $section = '', $name = '', $config_obj = '' ) {
 		// get class name of the incoming object
 		$config_class = get_class( $config_obj );
 		// run tests 1-5 and 9 to verify config
@@ -399,7 +397,6 @@ final class EE_Config {
 	 * @return 	mixed EE_Config_Base | NULL
 	 */
 	public function get_config( $section = '', $name = '', $config_class = '' ) {
-//		echo '<h5 style="color:#2EA2CC;">' . __FUNCTION__ . ' : <span style="color:#E76700">' . $section . ' -> ' . $name . ' = ' . $config_class . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// run tests 1-4, 6 and 7 to verify that all params have been set
 		if ( ! $this->_verify_config_params( $section, $name, $config_class, NULL, array( 1, 2, 3, 4, 6, 7 ))) {
 			return NULL;
