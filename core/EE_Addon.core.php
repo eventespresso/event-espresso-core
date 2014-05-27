@@ -79,16 +79,6 @@ abstract class EE_Addon {
 
 
 
-	/**
-	 * When the addon is activated, this should be called to set a wordpress option that
-	 * indicates it was activated. This is especially useful for detecting reactivations.
-	 */
-	public function set_activation_indicator_option() {
-		//let's just handle this on the next request, ok? right now we're just not really ready
-		update_option( $this->get_db_update_option_name(), TRUE );
-	}
-
-
 
 	/**
 	 * Called when EE core detects this addon has been activated for the first time.
@@ -203,6 +193,16 @@ abstract class EE_Addon {
 
 
 	/**
+	 * When the addon is activated, this should be called to set a wordpress option that
+	 * indicates it was activated. This is especially useful for detecting reactivations.
+	 */
+	public function set_activation_indicator_option() {
+		// let's just handle this on the next request, ok? right now we're just not really ready
+		update_option( $this->get_activation_indicator_option_name(), TRUE );
+	}
+
+
+	/**
 	 * Gets the name of the wp option which is used to temporarily indicate that this addon was activated
 	 * @return string
 	 */
@@ -251,24 +251,6 @@ abstract class EE_Addon {
 
 
 	/**
-	 * @param EE_Config_Base $config
-	 */
-	public function set_config( $config ) {
-		$this->_config = $config;
-	}
-
-
-
-	/**
-	 * @return EE_Config_Base
-	 */
-	public function config() {
-		return $this->_config;
-	}
-
-
-
-	/**
 	 * Gets addon_name
 	 * @return string
 	 */
@@ -298,7 +280,7 @@ abstract class EE_Addon {
 	}
 
 
-	
+
 	/**
 	 * Returns the request type of this addon (ie, EE_System::req_type_normal, EE_System::req_type_new_activation, EE_System::req_type_reactivation, EE_System::req_type_upgrade, or EE_System::req_type_downgrade). This is set by EE_System when it is checking for new install or upgrades
 	 * of addons
@@ -309,7 +291,7 @@ abstract class EE_Addon {
 	}
 
 
-	
+
 	/**
 	 * Gets the name of the wp option that stores the activation history
 	 * of this addon
@@ -320,13 +302,102 @@ abstract class EE_Addon {
 	}
 
 
-	
+
 	/**
 	 * Gets the wp option which stores the activation history for this addon
 	 * @return array
 	 */
 	function get_activation_history(){
 		return get_option($this->get_activation_history_option_name(), NULL);
+	}
+
+
+
+	/**
+	 * grabs the addon's config object that is cached as a property right on the addon instance
+	 * @return EE_Config_Base
+	 */
+	public function config() {
+		return $this->_config;
+	}
+
+
+	/**
+	 * caches an EE_Config_Base config object as a property right on the addon instance
+	 * @param EE_Config_Base $config
+	 */
+	public function set_config( EE_Config_Base $config ) {
+		$this->_config = $config;
+	}
+
+
+
+	/**
+	 *    _set_config_class
+	 * ensures that a config class is set, either from a passed config class or one generated from the config name
+	 *
+	 * @access 	private
+	 * @param 	string $config_class
+	 * @param 	string $name
+	 * @return 	string
+	 */
+	private function _set_config_class( $config_class = '', $name = '' ) {
+		$name = str_replace( ' ', '_', ucwords( explode( '_', $name )));
+		return ! empty( $config_class ) ? $config_class : $name . '_Config';
+	}
+
+
+
+	/**
+	 *    set_config
+	 * 	this method integrates directly with EE_Config to set up the config object for this addon
+	 *
+	 * @access 	protected
+	 * @param 	string 	$config_class
+	 * @param 	string 	$name
+	 * @param 	string 	$section
+	 * @param 	EE_Config_Base 	$config_obj
+	 * @return 	mixed 	EE_Config_Base | NULL
+	 */
+	protected function _set_config( $config_class = '', $name = '', EE_Config_Base $config_obj = NULL, $section = 'modules' ) {
+		$name = ! empty( $name ) ? $name : get_called_class();
+		$config_class = $this->_set_config_class( $config_class, $name );
+		return EE_Config::instance()->set_config( $section, $name, $config_class, $config_obj );
+	}
+
+
+
+	/**
+	 *    _update_config
+	 * 	this method integrates directly with EE_Config to update an existing config object for this addon
+	 *
+	 * @access 	protected
+	 * @param 	EE_Config_Base 	$config_obj
+	 * @param 	string 	$name
+	 * @param 	string 	$section
+	 * @return 	mixed 	EE_Config_Base | NULL
+	 */
+	protected function _update_config( EE_Config_Base $config_obj, $name = '', $section = 'modules' ) {
+		$name = ! empty( $name ) ? $name : get_called_class();
+		return EE_Config::instance()->update_config( $section, $name, $config_obj );
+	}
+
+
+
+	/**
+	 *    get_config
+	 * 	this method integrates directly with EE_Config to either retrieve an existing config object, or set up a new one for this addon
+	 *
+	 * @access 	protected
+	 * @param 	string 	$config_class
+	 * @param 	string 	$name
+	 * @param 	string 	$section
+	 * @return 	mixed 	EE_Config_Base | NULL
+	 */
+	protected function _get_config( $config_class = '', $name = '', $section = 'modules' ) {
+		$name = ! empty( $name ) ? $name : get_called_class();
+		$config_class = $this->_set_config_class( $config_class, $name );
+		return EE_Config::instance()->get_config( $section, $name, $config_class );
 	}
 
 
