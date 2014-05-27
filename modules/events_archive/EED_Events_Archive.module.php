@@ -116,21 +116,11 @@ class EED_Events_Archive  extends EED_Module {
 	 * @return \EE_Events_Archive_Config
 	 */
 	protected function set_config(){
-		return EED_Events_Archive::_set_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
+		$this->set_config_section( 'template_settings' );
+		$this->set_config_class( 'EE_Events_Archive_Config' );
+		$this->set_config_name( 'EED_Events_Archive' );
 	}
 
-
-
-	/**
-	 *    get_config
-	 *
-	 * @return \EE_Events_Archive_Config
-	 */
-	public function get_config(){
-		$config = EED_Events_Archive::_get_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
-//		d( $config );
-		return $config instanceof EE_Events_Archive_Config ? $config : $this->set_config();
-	}
 
 
 	/**
@@ -142,7 +132,7 @@ class EED_Events_Archive  extends EED_Module {
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
 		// ensure valid EE_Events_Archive_Config() object exists
-//		EED_Events_Archive::_set_config();
+		$this->set_config();
 		// load other required components
 		$this->_load_assests();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
@@ -162,7 +152,7 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function event_list() {
 		// ensure valid EE_Events_Archive_Config() object exists
-//		EED_Events_Archive::_set_config();
+		$this->set_config();
 		// load other required components
 		$this->_load_assests();
 	}
@@ -481,7 +471,7 @@ class EED_Events_Archive  extends EED_Module {
 		// don't add content filter for dedicated EE child themes or private posts
 		if ( ! EEH_Template::is_espresso_theme() && ! post_password_required() ) {
 			// add status banner ?
-			if ( $this->get_config()->display_status_banner ) {
+			if ( $this->config()->display_status_banner ) {
 				add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 			}
 			// if NOT a custom template
