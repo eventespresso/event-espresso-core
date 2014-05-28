@@ -245,7 +245,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 					KEY TXN_ID (TXN_ID),
 					KEY PAY_timestamp (PAY_timestamp)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-		
+
 		$table_name = "esp_ticket";
 		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_ID int(10) unsigned NOT NULL,
@@ -499,7 +499,8 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 		//setting up default prices, price types, and tickets is also essential for the price migrations
 		$script_with_defaults->insert_default_price_types();
 		$script_with_defaults->insert_default_prices();
-		$script_with_defaults->insert_default_tickets();
+		//but the schema on the tickets table has changed since 4.1, so use our default ticket method instead of 4.1's
+		$this->insert_default_tickets();
 
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
 		EE_Config::instance()->update_espresso_config(false, true);
@@ -515,6 +516,52 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 	public function migration_page_hooks(){
 
 	}
+
+	/**
+	 * insert default ticket
+	 * Almost identical to EE_DMS_Core_4_1_0::insert_default_tickets, except is aware of the TKT_required field
+	 *
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public function insert_default_tickets() {
+
+		global $wpdb;
+		$ticket_table = $wpdb->prefix."esp_ticket";
+		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_table'") == $ticket_table ) {
+
+			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
+			$tickets_exist = $wpdb->get_var($SQL);
+
+			if ( ! $tickets_exist ) {
+				$SQL = "INSERT INTO $ticket_table
+					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
+					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL', $SQL );
+				$wpdb->query($SQL);
+			}
+		}
+		$ticket_price_table = $wpdb->prefix."esp_ticket_price";
+
+		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_price_table'") == $ticket_price_table ) {
+
+			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
+			$ticket_prc_exist = $wpdb->get_var($SQL);
+
+			if ( ! $ticket_prc_exist ) {
+
+				$SQL = "INSERT INTO $ticket_price_table
+				( TKP_ID, TKT_ID, PRC_ID ) VALUES
+				( 1, 1, 1 )
+				";
+
+				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL__ticket_price', $SQL );
+				$wpdb->query($SQL);
+			}
+		}
+	}
+
 }
 
 

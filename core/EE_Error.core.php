@@ -115,21 +115,21 @@ class EE_Error extends Exception {
 			$type = EE_Error::error_type( $code );
 			$site = site_url();
 			switch ( $site ) {
-				case 'http://sandbox.eventespresso.com/ee4/' :
-				case 'http://sandbox.eventespresso.com/ee4decaf/' :
-				case 'http://sandbox.eventespresso.com/ee4hf/' :
-				case 'http://sandbox.eventespresso.com/ee4a/' :
-				case 'http://sandbox.eventespresso.com/ee4ad/' :
-				case 'http://sandbox.eventespresso.com/ee4b/' :
-				case 'http://sandbox.eventespresso.com/ee4bd/' :
-				case 'http://sandbox.eventespresso.com/ee4d/' :
-				case 'http://sandbox.eventespresso.com/ee4dd/' :
+				case 'http://ee4.eventespresso.com/' :
+				case 'http://ee4decaf.eventespresso.com/' :
+				case 'http://ee4hf.eventespresso.com/' :
+				case 'http://ee4a.eventespresso.com/' :
+				case 'http://ee4ad.eventespresso.com/' :
+				case 'http://ee4b.eventespresso.com/' :
+				case 'http://ee4bd.eventespresso.com/' :
+				case 'http://ee4d.eventespresso.com/' :
+				case 'http://ee4dd.eventespresso.com/' :
 					$to = 'developers@eventespresso.com';
 					break;
 				default :
 					$to = get_option( 'admin_email' );
 			}
-			$subject = 'Error type ' . $type . ' occured in ' . $ver . ' on ' . site_url();
+			$subject = 'Error type ' . $type . ' occurred in ' . $ver . ' on ' . site_url();
 			$msg = EE_Error::_format_error( $type, $message, $file, $line );
 			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
 			wp_mail( $to, $subject, $msg );
@@ -143,7 +143,7 @@ class EE_Error extends Exception {
 	 *    http://www.php.net/manual/en/errorfunc.constants.php#109430
 	 * @access public
 	 * @param $code
-	 * @return void
+	 * @return string
 	 */
 	public static function error_type( $code ) {
 		switch( $code ) {
@@ -282,10 +282,11 @@ class EE_Error extends Exception {
 
 		$trace_details = '';
 
-		$ouput = '
+		$output = '
 <style type="text/css">
-	#error-page {
+	#ee-error-message {
 		max-width:90% !important;
+		margin: 0 5%;
 	}
 	.ee-error-dev-msg-pg,
 	.error .ee-error-dev-msg-pg {
@@ -330,7 +331,7 @@ class EE_Error extends Exception {
 	.small-text {
 		font-size: .85em;
 		line-height: 1.4em;
-		letter-spacing: .25px;
+		letter-spacing: 1px;
 	}
 	.lt-grey-text {
 		color: #a8a8a8;
@@ -339,7 +340,7 @@ class EE_Error extends Exception {
 <div id="ee-error-message" class="error">';
 
 		if ( ! WP_DEBUG ) {
-			$ouput .= '
+			$output .= '
 	<p>';
 		}
 
@@ -424,12 +425,12 @@ class EE_Error extends Exception {
 			// add generic non-identifying messages for non-privileged uesrs
 			if ( ! WP_DEBUG ) {
 
-				$ouput .= '<span class="ee-error-user-msg-spn">' . trim( $ex['msg'] )  . '</span> &nbsp; <sup>' . $ex['code'] . '</sup><br />';
+				$output .= '<span class="ee-error-user-msg-spn">' . trim( $ex['msg'] )  . '</span> &nbsp; <sup>' . $ex['code'] . '</sup><br />';
 
 			} else {
 
 				// or helpful developer messages if debugging is on
-				$ouput .= '
+				$output .= '
 		<div class="ee-error-dev-msg-dv">
 			<p class="ee-error-dev-msg-pg">
 				<strong class="ee-error-dev-msg-str">An ' . $ex['name'] . ' exception was thrown!</strong>  &nbsp; <span>code: ' . $ex['code'] . '</span><br />
@@ -443,18 +444,18 @@ class EE_Error extends Exception {
 				' . $trace_details;
 
 				if ( ! empty( $class )) {
-					$ouput .= '
+					$output .= '
 				<div style="padding:3px; margin:0 0 1em; border:1px solid #666; background:#fff; border-radius:3px;">
 					<div style="padding:1em 2em; border:1px solid #666; background:#f9f9f9;">
 						<h3>Class Details</h3>';
 						$a = new ReflectionClass( $class );
-						$ouput .= '
+						$output .= '
 						<pre>' . $a . '</pre>
 					</div>
 				</div>';
 				}
 
-				$ouput .= '
+				$output .= '
 			</div>
 		</div>
 		<br />';
@@ -466,24 +467,24 @@ class EE_Error extends Exception {
 		}
 
 		// remove last linebreak
-		$ouput = substr( $ouput, 0, ( count( $ouput ) - 7 ));
+		$output = substr( $output, 0, ( count( $output ) - 7 ));
 
 		if ( ! WP_DEBUG ) {
-			$ouput .= '
+			$output .= '
 	</p>';
 		}
 
-		$ouput .= '
+		$output .= '
 </div>';
 
-		$ouput .= self::_print_scripts( TRUE );
+		$output .= self::_print_scripts( TRUE );
 
 		if ( defined( 'DOING_AJAX' )) {
-			echo json_encode( array( 'error' => $ouput ));
+			echo json_encode( array( 'error' => $output ));
 			exit();
 		}
 
-		echo $ouput;
+		echo $output;
 		die();
 
 	}

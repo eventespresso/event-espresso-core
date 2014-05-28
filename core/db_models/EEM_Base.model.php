@@ -2375,7 +2375,34 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $fieldSettings[$fieldName];
 	}
+	
+	/**
+	 * Checks if this field exists on this model
+	 * @param string $fieldName a key in the model's _field_settings array
+	 * @return boolean
+	 */
+	public function has_field($fieldName){
+		$fieldSettings = $this->field_settings(true);
+		if( isset($fieldSettings[$fieldName])){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
+	/**
+	 * Returns whether or not this model hsa a relation to teh specified model
+	 * @param string $relation_name possibly one of the keys in the relation_settings array
+	 * @return boolean
+	 */
+	public function has_relation($relation_name){
+		$relations = $this->relation_settings();
+		if(isset($relations[$relation_name])){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 
 	/**

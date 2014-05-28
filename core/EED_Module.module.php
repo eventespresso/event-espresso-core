@@ -16,12 +16,12 @@
  * EED_Module
  *
  * @package			Event Espresso
- * @subpackage	/modules/
+ * @subpackage 	/core/
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
-abstract class EED_Module extends EE_Base {
+abstract class EED_Module extends EE_Configurable {
 
 	/**
 	 * 	instance of the EED_Module object
@@ -29,13 +29,6 @@ abstract class EED_Module extends EE_Base {
 	 *	@var 	EED_Module $_instance
 	 */
 	protected static $_instance = NULL;
-
-	/**
-	 * 	instance of the EE_Config_Base object
-	 * 	@access 	protected
-	 *	@var 	EE_Config_Base $_config
-	 */
-	protected $_config = NULL;
 
 	/**
 	 * 	rendered output to be returned to WP
@@ -125,50 +118,5 @@ abstract class EED_Module extends EE_Base {
 
 
 
-	/**
-	 *    _set_config
-	 *
-	 * @access 	public
-	 * @param 	string 	$section
-	 * @param 	string 	$name
-	 * @param 	string 	$config_class
-	 * @return 	mixed 	EE_Config_Base
-	 */
-	protected function _set_config( $section = 'modules', $name = '', $config_class = '' ) {
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		try {
-			$this->_config = EE_Config::instance()->set_config( $section, $name, $config_class );
-			return $this->_config;
-		} catch ( EE_Error $e ) {
-			$e->get_error();
-		}
-		return NULL;
-	}
-
-
-
-	/**
-	 *    _get_config
-	 *
-	 * @access 	public
-	 * @param 	string 	$section
-	 * @param 	string 	$name
-	 * @param 	string 	$config_class
-	 * @return 	mixed 	EE_Config_Base | NULL
-	 */
-	protected function _get_config( $section = 'modules', $name = '', $config_class = '' ) {
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		// check for cached config
-		if ( ! self::instance( $name )->_config ) {
-			self::instance( $name )->_config = EE_Config::instance()->get_config( $section, $name, $config_class );
-		}
-		return self::instance( $name )->_config;
-	}
-
-
-
 }
 // End of file EED_Module.module.php
-// Location: /modules/EED_Module.module.php

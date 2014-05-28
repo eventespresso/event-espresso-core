@@ -23,13 +23,18 @@
 			</tr>
 		</thead>
 		<tbody>
-	<?php foreach ( $payments as $payment ) { echo $payment; } ?>
+		<?php
+			foreach ( $payments as $payment ) {
+				echo $payment;
+			}
+		?>
 		</tbody>
 	</table>
 <?php
 	} else {
 
 		if ( $transaction->total() ){
+
 			echo apply_filters(
 				'FHEE__payment_overview_template__no_payments_made',
 				sprintf (
@@ -38,45 +43,30 @@
 					'</p>'
 				)
 			);
-           do_action( 'AHEE__thank_you_page_payment_details_template__after_each_payment', $payment );
+			do_action( 'AHEE__thank_you_page_payment_details_template__no_payments_made', $transaction );
 
 		} else {
 
-			if ( $transaction->total() ){
 			echo apply_filters(
-					'FHEE__payment_overview_template__no_payments_made',
-					sprintf (
-						__('%sNo payments towards this transaction have been received.%s', 'event_espresso' ),
-						'<p class="important-notice">',
-						'</p>'
-					)
-				);
-                do_action( 'AHEE__thank_you_page_payment_details_template__no_payments_made', $transaction );
-
-            } else {
-				echo apply_filters(
 				'FHEE__payment_overview_template__no_payment_required',
 				sprintf (
 					__('%sNo payment is required for this transaction.%s', 'event_espresso' ),
 					'<p>',
 					'</p>'
-					)
-				);
-                do_action( 'AHEE__thank_you_page_payment_details_template__no_payment_required' );
-			 }
+				)
+			);
+			do_action( 'AHEE__thank_you_page_payment_details_template__no_payment_required' );
 
-		}
-
-		if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
-			echo $gateway_content;
-            do_action( 'AHEE__thank_you_page_payment_details_template__after_gateway_content', $gateway_content );
 		 }
-		?>
 
-    <br/>
-<?php
-		do_action( 'AHEE__thank_you_page_payment_details_template__after_payment_details' );
+	}
+	if ( ! empty( $gateway_content ) && ! $transaction->is_completed() ){
 		echo $gateway_content;
+		do_action( 'AHEE__thank_you_page_payment_details_template__after_gateway_content', $gateway_content );
 	 }
+
 ?>
-</div>
+
+	<br/>
+	<?php  do_action( 'AHEE__thank_you_page_payment_details_template__after_payment_details' ); ?>
+

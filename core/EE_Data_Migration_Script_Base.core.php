@@ -1,18 +1,18 @@
 <?php
 
 /**
- * 
+ *
  */
 abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Base{
 
-	
-	
+
+
 	/**
 	 * numerically-indexed array where each value is EE_Data_Migration_Script_Stage object
-	 * @var EE_Data_Migration_Script_Stage[] $migration_functions 
+	 * @var EE_Data_Migration_Script_Stage[] $migration_functions
 	 */
 	protected $_migration_stages = array();
-	
+
 	/**
 	 * Indicates we've already ran the schema changes that needed to happen BEFORE the data migration
 	 * @var boolean
@@ -23,7 +23,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @var boolean
 	 */
 	protected $_schema_changes_after_migration_ran = null;
-	
+
 	/**
 	 * String which describes what's currently happening in this migration
 	 * @var string
@@ -59,7 +59,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @return boolean of success
 	 */
 	abstract public function schema_changes_after_migration();
-	
+
 	/**
 	 * Place to add hooks and filters for tweaking the migrations page, in order
 	 * to customize it
@@ -77,7 +77,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @var array
 	 */
 	protected $_mappings = array();
-	
+
 	/**
 	 * All chidlren of this must call parent::__construct() at the end of their constructor or suffer the consequences!
 	 */
@@ -88,7 +88,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		parent::__construct();
 	}
-	
+
 	/**
 	 * Sets the mapping from old table primary keys to new table primary keys.
 	 * This mapping is automatically persisted as a property on the migration
@@ -105,7 +105,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		$this->_mappings[$old_table][$new_table][$old_pk] = $new_pk;
 	}
-	
+
 	/**
 	 * Gets the new primary key, if provided with the OLD table and the primary key
 	 * of an item in the old table, and the new table
@@ -144,7 +144,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Gets the mapping array option specified by the table names
 	 * @param type $old_table_name
@@ -155,7 +155,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$option =  get_option($this->_get_mapping_option_name($old_table_name, $new_table_name),array());
 		return $option;
 	}
-	
+
 	/**
 	 * Updates the mapping option specified by the table names with the array provided
 	 * @param string $old_table_name
@@ -168,7 +168,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$success =  update_option($this->_get_mapping_option_name($old_table_name, $new_table_name),$mapping_array);
 		return $success;
 	}
-	
+
 	/**
 	 * Gest the option name for this script to map from $old_table_name to $new_table_name
 	 * @param type $old_table_name
@@ -182,17 +182,17 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		list($plugin_slug,$version) = EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
 		return substr(EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.$plugin_slug.'_'.$version.'_'.$old_table_name_sans_wp.'_'.$new_table_name_sans_wp,0,64);
 	}
-	
-	
+
+
 	/**
 	 * Counts all the records that will be migrated during this data migration.
-	 * For example, if we were changing old user passwords from plaintext to encoded versions, 
+	 * For example, if we were changing old user passwords from plaintext to encoded versions,
 	 * this would be a count of all users who have passwords. If we were going to also split
 	 * attendee records into transactions, registrations, and attendee records, this would include
 	 * the count of all attendees currently in existence in the DB (ie, users + attendees).
 	 * If you can't determine how many records there are to migrate, just provide a guess: this
 	 * number will only be used in calculating the percent complete. If you estimate there to be
-	 * 100 records to migrate, and it turns out there's 120, we'll just show the migration as being at 
+	 * 100 records to migrate, and it turns out there's 120, we'll just show the migration as being at
 	 * 99% until the function "migration_step" returns EE_Data_Migration_Script_Base::status_complete.
 	 * @return int
 	 */
@@ -203,7 +203,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return $count;
 	}
-	
+
 	/**
 	 * Returns the number of records updated so far. Usually this is easiest to do
 	 * by just setting a transient and updating it after each migration_step
@@ -217,9 +217,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		$this->_records_migrated = $count;
 		return $count;
 	}
-	
+
 	public function migration_step($num_records_to_migrate_limit){
-		
+
 		//if wehaven't yet done the 1st schema changes, do them now. buffer any output
 		$this->_maybe_do_schema_changes(true);
 
@@ -256,9 +256,13 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		//check if we're all done this data migration...
 		//which is indicated by being done early AND the last stage claims to be done
-		if( $num_records_actually_migrated < $num_records_to_migrate_limit && $stage!=null && ! $stage->has_more_to_do()){
+		if($stage == NULL){
+			//this migration script apparently has NO stages... which is super weird, but whatever
+			$this->set_completed();
+			$this->_maybe_do_schema_changes(false);
+		}else if( $num_records_actually_migrated < $num_records_to_migrate_limit && ! $stage->has_more_to_do()){
 			//apparently we're done, because we couldn't migrate the number we intended to
-			$this->set_status(EE_Data_Migration_Manager::status_completed);
+			$this->set_completed();
 			$this->_update_feedback_message(array_reverse($records_migrated_per_stage));
 			//do schema changes for after the migration now
 			//first double-cehckw ehaven't already done this
@@ -269,7 +273,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return $num_records_actually_migrated;
 	}
-	
+
 	/**
 	 * Updates the feedback message according to what was done during this migration stage.
 	 * @param array $records_migrated_per_stage KEYS are pretty names for each stage; values are the count of records migrated from that stage
@@ -323,9 +327,9 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * deciding what to pass for its 4th arg, $drop_pre_existing_tables. Using this function, instead
 	 * of _table_should_exist_previously, indicates that this table should be new to the EE version being migrated to or
 	 * activated currently. If this is a brand new activation or a migration, and we're indicating this table should not
-	 * previously exist, then we want to set $drop_pre_existing_tables to TRUE (ie, we shouldn't discover that this table exists in the 
+	 * previously exist, then we want to set $drop_pre_existing_tables to TRUE (ie, we shouldn't discover that this table exists in the
 	 * DB in EEH_Activation::create_table- if it DOES exist, something's wrong and the old table should be nuked.
-	 * 
+	 *
 	 * Just for a bit of context, the migration script's db_schema_changes_* methods
 	 * are called basically in 3 cases: on brand new activation of EE4 (ie no previous version of EE existed and the plugin is being activated and we want to add
 	 * all the brand new tables), upon reactivation of EE4 (it was deactivated and then reactivated, in which case we want to just verify the DB structure is ok)
@@ -335,15 +339,16 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param type $table_definition_sql
 	 * @param type $engine_string
 	 */
-	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string){
-		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation,  EE_System::req_type_normal))){
+	protected function _table_is_new_in_this_version($table_name,$table_definition_sql,$engine_string='ENGINE=MyISAM '){
+		if(in_array($this->_get_req_type_for_plugin_corresponding_to_this_dms(),array(EE_System::req_type_new_activation,  EE_System::req_type_normal))){
 			$drop_pre_existing_tables = true;
 		}else{
 			$drop_pre_existing_tables = false;
 		}
+		EE_Registry::instance()->load_helper('Activation');
 		EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
 	}
-	
+
 	/**
 	 * Please see description of _table_is_new_in_this_version. This function will only set
 	 * EEH_Activation::create_table's $drop_pre_existing_tables to TRUE if it's a brand
@@ -355,15 +360,35 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * @param string $table_definition_sql
 	 * @param string $engine_string
 	 */
-	protected function _table_should_exist_previously($table_name,$table_definition_sql,$engine_string){
-		if(in_array(EE_System::instance()->detect_req_type(),array(EE_System::req_type_new_activation))){
+	protected function _table_should_exist_previously($table_name,$table_definition_sql,$engine_string = 'ENGINE=MyISAM'){
+
+		if(in_array($this->_get_req_type_for_plugin_corresponding_to_this_dms(),array(EE_System::req_type_new_activation))){
 			$drop_pre_existing_tables = true;
 		}else{
 			$drop_pre_existing_tables = false;
 		}
+		EE_Registry::instance()->load_helper('Activation');
 		EEH_Activation::create_table($table_name,$table_definition_sql, $engine_string, $drop_pre_existing_tables);
 	}
-	
+
+	/**
+	 * Gets the request type for the plugin (core or addon) that corresponds to this DMS
+	 * @return int one of EE_System::_req_type_* consts
+	 * @throws EE_Error
+	 */
+	private function _get_req_type_for_plugin_corresponding_to_this_dms(){
+		if($this->slug() == 'Core'){
+			return EE_System::instance()->detect_req_type();
+		}else{//it must be for an addon
+			$addon_name = 'EE_'.$this->slug();
+			if(isset(EE_Registry::instance()->addons->$addon_name)){
+				return EE_Registry::instance()->addons->$addon_name->detect_req_type();
+			}else{
+				throw new EE_Error(sprintf(__("The DMS slug '%s' should correspond to the addon's classname, which should be '%s', but so such addon class was registered. This is whats been registered:%s", "event_espresso"),$this->slug(),$addon_name,implode(",",get_object_vars(EE_Registry::instance()->addons))));
+			}
+		}
+	}
+
 	/**
 	 * returns an arrya of strings describing errors by all the script's stages
 	 * @return array
@@ -385,7 +410,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public function can_continue(){
 		return in_array($this->get_status(),  EE_Data_Migration_Manager::instance()->stati_that_indicate_to_continue_single_migration_script);
 	}
-	
+
 	/**
 	 * Gets all the data migration stages associated with this script. Note:
 	 * addons can filter this list to add their own stages, and because the list is
@@ -398,7 +423,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		ksort($stages);
 		return $stages;
 	}
-	
+
 	/**
 	 * Gets a string which should describe what's going on currently with this migration, which
 	 * can be displayed to the user
@@ -407,12 +432,12 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public function get_feedback_message(){
 		return $this->_feedback_message;
 	}
-	
+
 	/**
 	 * A lot like "__sleep()" magic method in purpose, this is meant for persisting this class'
 	 * properties to the DB. However, we don't want to use __sleep() because its quite
 	 * possible that this class is defined when it goes to sleep, but NOT available when it
-	 * awakes (eg, this class is part of an addon that is deactivated at some point). 
+	 * awakes (eg, this class is part of an addon that is deactivated at some point).
 	 */
 	public function properties_as_array(){
 		$properties = parent::properties_as_array();
@@ -421,7 +446,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			$properties['_migration_stages'][$migration_stage_priority] = $migration_stage_class->properties_as_array();
 		}
 		unset($properties['_mappings']);
-		
+
 		foreach($this->_mappings as $old_table_name => $mapping_to_new_table){
 			foreach($mapping_to_new_table as $new_table_name => $mapping){
 				$success = $this->_set_mapping_option($old_table_name, $new_table_name, $mapping);
@@ -429,7 +454,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		}
 		return $properties;
 	}
-	
+
 	/**
 	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
 	 * to ahve been made from the properties_as_array() function.
@@ -479,7 +504,19 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public final function migrates_to_version(){
 		return EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
 	}
-	
+
+	/**
+	 * Gets this addon's slug as it would appear in the current_db_state wp option,
+	 * and if this migration script is for an addon, it SHOULD match the addon's slug
+	 * (and also the addon's classname, minus the 'EE_' prefix.). Eg, 'Calendar' for the EE_Calendar addon.
+	 * Or 'Core' for core (non-addon).
+	 * @return string
+	 */
+	public function slug(){
+		$migrates_to_version_info = $this->migrates_to_version();
+		//the slug is the first part of the array
+		return $migrates_to_version_info[0];
+	}
 	/**
 	 * Returns the script's priority relative to DMSs from other addons. However, when
 	 * two DMSs from the same addon/core apply, this is ignored (and instead the version that
@@ -496,14 +533,14 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 /**
  * Each migration script is meant to be composed of different stages. Often, each stage corresponds
- * to a table that needs to be migrated: eg migrating 3.1 events to 4.1 event CPTs. However, each migration stage does 
+ * to a table that needs to be migrated: eg migrating 3.1 events to 4.1 event CPTs. However, each migration stage does
  * NOT NEED to correspond to migrating a single table: it could also correspond to a group of wp options, files, etc.
  * Only 3 functions need to be implemented for each migration stage: the constructor (it needs to set the _pretty_name property),
  *  _count_records_to_migrate() (which, when migrating a database table, would usually just return the count of records in the table, but
  * doesn't need to return the exactly correct number, as its mostly only used in the UI), and _migration_step() (which converts X records from their
  * old format to the new format. Whatever definition your migration stage uses for "record" in _count_records_to_migrate() should be the same definition in
  * _migration_step() (ie, it its a count of rows in the old attendees table in _count_records_to_migrate(), it should also be OLD attendee rows migrated
- * on each call to _migration_step(). 
+ * on each call to _migration_step().
  */
 abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Base{
 	/**
@@ -511,17 +548,17 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * @var EE_Data_Migration_Script_Base
 	 */
 	protected $_migration_script;
-	
+
 	/**
 	 * This should eb called to essentially 'finalize' construction of the stage.
-	 * This isnt done on the main constructor in order to avoid repetitive code. Instead, this is 
+	 * This isnt done on the main constructor in order to avoid repetitive code. Instead, this is
 	 * called by EE_Data_Migration_Script_Base's __construct() method so children don't have to
 	 * @param EE_Data_Migration_Script_Base $migration_script
 	 */
 	public function _construct_finalize($migration_script){
 		$this->_migration_script = $migration_script;
 	}
-		
+
 	/**
 	 * Migrates X old records to the new format. If a fatal error is encountered it is NOT caught here,
 	 * but is propagated upwards for catching. So basically, the _migration_step() function implemented by children
@@ -545,12 +582,12 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	 * IMPORTANT: if an error is encountered, or everything is finished, this stage should update its status property accordingly.
 	 * Note: it should not alter the count of items migrated. That is done in the public function that calls this.
 	 * IMPORTANT: The count of items migrated should ONLY be less than $num_items_to_migrate when it's the last migration step, otherwise it
-	 * should always return $num_items_to_migrate. (Eg, if we're migrating attendees rows from the database, and $num_items_to_migrate is set to 50, 
+	 * should always return $num_items_to_migrate. (Eg, if we're migrating attendees rows from the database, and $num_items_to_migrate is set to 50,
 	 * then we SHOULD actually migrate 50 rows,but at very least we MUST report/return 50 items migrated)
 	 * @return int number of items ACTUALLY migrated
 	 */
 	abstract protected function _migration_step($num_items_to_migrate=50);
-	
+
 	/**
 	 * Counts the records that have been migrated so far
 	 * @return int
@@ -558,7 +595,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	public function count_records_migrated() {
 		return $this->_records_migrated;
 	}
-	
+
 	/**
 	 * returns an arrya of strings describing errors
 	 * @return array
@@ -566,8 +603,8 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 	public function get_errors(){
 		return $this->_errors;
 	}
-	
-	
+
+
 	/**
 	 * Sets all of the properties of this script stage to match what's in the array, whcih is assumed
 	 * to ahve been made from the properties_as_array() function.
@@ -579,7 +616,7 @@ abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Ba
 			$this->$property_name = $property_value;
 		}
 	}
-	
+
 	/**
 	 * Gets the script this is a stage of
 	 * @return EE_Data_Migration_Script_Base
@@ -602,10 +639,10 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @var $records_migrated int
 	 */
 	protected $_records_migrated = 0;
-	
-	
+
+
 	/**
-	 * Whether this mgiration script is done or not. This COULD be deduced by 
+	 * Whether this mgiration script is done or not. This COULD be deduced by
 	 * _records_to_migrate and _records_migrated, but that might nto be accurate
 	 * @var string one of EE_Data_migration_Manager::status_* constants
 	 */
@@ -639,7 +676,7 @@ abstract class EE_Data_Migration_Class_Base{
 		return $this->_pretty_name;
 	}
 	/**
-	 * 
+	 *
 	 * @return int
 	 */
 	public function count_records_to_migrate(){
@@ -659,7 +696,7 @@ abstract class EE_Data_Migration_Class_Base{
 	 */
 	abstract protected function _count_records_to_migrate();
 	/**
-	 * Returns a string indicating the migraiton script's status. 
+	 * Returns a string indicating the migraiton script's status.
 	 * @return string one of EE_Data_Migration_Manager::statu_* constants
 	 * @throws EE_Error
 	 */
@@ -670,18 +707,18 @@ abstract class EE_Data_Migration_Class_Base{
 		return $this->_status;
 	}
 	/**
-	 * 
+	 *
 	 * @param string $status
 	 * @return void
 	 */
 	protected function set_status($status){
 		$this->_status = $status;
-	}	
+	}
 	/**
 	 * @return array of strings
 	 */
 	abstract public function get_errors();
-	
+
 	/**
 	 * Return sthe last error that occurred. If none occurred, returns null
 	 * @return string
@@ -705,7 +742,7 @@ abstract class EE_Data_Migration_Class_Base{
 			$this->_errors[] = $error;
 		}
 	}
-	
+
 	/**
 	 * Indicates there was a fatal error and the migration cannot possibly continue
 	 * @return boolean
@@ -739,12 +776,12 @@ abstract class EE_Data_Migration_Class_Base{
 	public function set_completed(){
 		$this->_status = EE_Data_Migration_Manager::status_completed;
 	}
-	
+
 	/**
 	 * A lot like "__sleep()" magic method in purpose, this is meant for persisting this class'
 	 * properties to the DB. However, we don't want to use __sleep() because its quite
 	 * possible that this class is defined when it goes to sleep, but NOT available when it
-	 * awakes (eg, this class is part of an addon that is deactivated at some point). 
+	 * awakes (eg, this class is part of an addon that is deactivated at some point).
 	 */
 	public function properties_as_array(){
 		$properties =  get_object_vars($this);
@@ -758,7 +795,7 @@ abstract class EE_Data_Migration_Class_Base{
 	 * @param array $array_of_properties like what's produced from properties_as_array() method
 	 */
 	abstract public function instantiate_from_array_of_properties($array_of_properties);
-	
+
 	/**
 	 * Convenience method for showing a database insertion error
 	 * @param string $old_table
@@ -787,9 +824,9 @@ abstract class EE_Data_Migration_Class_Base{
 				'<br/>',
 				$wpdb->last_error);
 	}
-	
+
 	/* Same as json_encode, just avoids putting
-	 * serialized arrays into the http build query, as that would 
+	 * serialized arrays into the http build query, as that would
 	* @param type $array_of_data
 	* @return string
 	*/
@@ -832,7 +869,7 @@ abstract class EE_Data_Migration_Script_Stage_Table extends EE_Data_Migration_Sc
 		$count = $wpdb->get_var("SELECT COUNT(*) FROM ".$this->_old_table);
 		return $count;
 	}
-	
+
 	/**
 	 * takes care of migrating this particular row from the OLD table to whatever its
 	 * representation is in the new database. If there are errors, use $this->add_error to log them. If there is a fatal error
@@ -857,13 +894,13 @@ class EE_Data_Migration_Script_Error extends EE_Data_Migration_Script_Base{
 		return;
 	}
 	public function __construct() {
-		
+
 		$this->_migration_stages = array();
 		$this->_pretty_name = __("Fatal Uncatchable Error Occurred", "event_espresso");
 //		dd($this);
 		parent::__construct();
 	}
 	public function migration_page_hooks() {
-		
+
 	}
 }

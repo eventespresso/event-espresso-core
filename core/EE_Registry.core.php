@@ -232,7 +232,7 @@ final class EE_Registry {
 	 */
 	public function load_dms ( $class_name, $arguments = array() ) {
 		// retrieve instantiated class
-		return $this->_load( EE_CORE . 'data_migration_scripts' . DS, 'EE_DMS_' , $class_name, 'dms', $arguments, FALSE, FALSE, FALSE );
+		return $this->_load( EE_Data_Migration_Manager::instance()->get_data_migration_script_folders(), 'EE_DMS_' , $class_name, 'dms', $arguments, FALSE, FALSE, FALSE );
 	}
 
 
