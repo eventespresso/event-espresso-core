@@ -12,20 +12,20 @@
  * @ version		 	4.0
  *
  * ------------------------------------------------------------------------
- *
+ */
+/**
  * Attendee Model
  *
  * @package			Event Espresso
  * @subpackage		includes/models/
  * @author				Michael Nelson
- *
- * ------------------------------------------------------------------------
  */
-require_once ( EE_MODELS . 'EEM_Base.model.php' );
-
 class EEM_Answer extends EEM_Base {
 
-  	// private instance of the Attendee object
+	/**
+	 * private instance of the EEM_Answer object
+	 * @type EEM_Answer
+	 */
 	private static $_instance = NULL;
 
 	/**
@@ -44,23 +44,30 @@ class EEM_Answer extends EEM_Base {
 		EEM_Attendee::zip_question_id => 'ATT_zip'
 	);
 
+
+
+
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *		This function is a singleton method used to instantiate the EEM_Answer object
 	 *
 	 *		@access public
-	 *		@return EEM_Attendee instance
+	 *		@return \EEM_Answer
 	 */
 	public static function instance(){
 
-		// check if instance of EEM_Attendee already exists
-		if ( self::$_instance === NULL ) {
+		// check if instance of EEM_Answer already exists
+		if ( ! self::$_instance instanceof EEM_Answer ) {
 			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
-		// EEM_Attendee object
 		return self::$_instance;
 	}
 
+
+
+	/**
+	 * 	constructor
+	 */
 	protected function __construct(){
 		$this->singular_item = __('Answer','event_espresso');
 		$this->plural_item = __('Answers','event_espresso');
@@ -71,7 +78,7 @@ class EEM_Answer extends EEM_Base {
 			'Answer'=>array(
 				'ANS_ID'=> new EE_Primary_Key_Int_Field('ANS_ID', __('Answer ID','event_espresso')),
 				'REG_ID'=>new EE_Foreign_Key_Int_Field('REG_ID', __('Registration ID','event_espresso'), false, 0, 'Registration'),
-				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Quesetion ID','event_espresso'), false, 0, 'Question'),
+				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question ID','event_espresso'), false, 0, 'Question'),
 				'ANS_value'=>new EE_Maybe_Serialized_Text_Field('ANS_value', __('Answer Value','event_espresso'), false, '')
 			));
 		$this->_model_relations = array(

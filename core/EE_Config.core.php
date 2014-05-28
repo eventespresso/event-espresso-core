@@ -2019,6 +2019,11 @@ class EE_Environment_Config extends EE_Config_Base {
 	 */
 	public $php;
 
+
+
+	/**
+	 * 	constructor
+	 */
 	public function __construct() {
 		$this->php = new stdClass();
 		$this->_set_php_values();
