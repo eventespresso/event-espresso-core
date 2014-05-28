@@ -266,7 +266,7 @@ final class EE_Request_Handler {
 	 */
 	public function set( $key, $value, $override_ee = FALSE ) {
 		// don't allow "ee" to be overwritten unless explicitly instructed to do so
-		if ( $key != 'ee' || ( $key == 'ee' && isset( $this->_params['ee'] ) && $override_ee )) {
+		if ( $key != 'ee' || ( $key == 'ee' && empty( $this->_params['ee'] )) || ( $key == 'ee' && ! empty( $this->_params['ee'] ) && $override_ee )) {
 			$this->_params[ $key ] = $value;
 		}
 	}
