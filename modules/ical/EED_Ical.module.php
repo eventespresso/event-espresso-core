@@ -12,16 +12,19 @@
  * @ version		 	EE4
  *
  * ------------------------------------------------------------------------
+ */
+/**
+ * EED_Ical Class
  *
- * Event List
+ * 	adds a link that will import an event's details into any calendar that supports the iCal format
  *
- * @package		Event Espresso
- * @subpackage	/modules/ical/
- * @author		Brent Christensen 
- *
- * ------------------------------------------------------------------------
+ * @package 			Event Espresso
+ * @subpackage 	/modules/ical/
+ * @author 				Brent Christensen
  */
 class EED_Ical  extends EED_Module {
+
+	const iCal_datetime_format = 'Ymd\THis\Z';
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -50,20 +53,23 @@ class EED_Ical  extends EED_Module {
 
 
 	/**
-	 * 	run - initial module setup
+	 *    run - initial module setup
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param    WP $WP
+	 * @return    void
 	 */
 	public function run( $WP ) {}
 
 
 
 	/**
-	 * 	generate_add_to_iCal_button
+	 *    generate_add_to_iCal_button
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $html
+	 * @param $datetime
+	 * @return    string
 	 */
 	public static function generate_add_to_iCal_button( $html, $datetime ) {
 		// first verify a proper datetime object has been received
@@ -74,26 +80,25 @@ class EED_Ical  extends EED_Module {
 			$URL = add_query_arg( array( 'ee' => 'download_ics_file', 'ics_id' => $datetime->ID() ), site_url() );
 			// what type ?
 			switch ( $iCal_type ) {
-				// submit buttons appear as buttons and are very caompatible with a theme's style
+				// submit buttons appear as buttons and are very compatible with a theme's style
 				case 'submit' :
-					$ical = '<form id="download-iCal-frm-' . $datetime->ID() . '" class="download-iCal-frm" action="' . $URL . '" method="post" >';
-					$ical .= '<input type="submit" class="ee-ical-sbmt" value="' . esc_attr( '&#xf145;' ) . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '"/>';
-					$ical .= '</form>';
+					$html .= '<form id="download-iCal-frm-' . $datetime->ID() . '" class="download-iCal-frm" action="' . $URL . '" method="post" >';
+					$html .= '<input type="submit" class="ee-ical-sbmt" value="' . esc_attr( '&#xf145;' ) . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '"/>';
+					$html .= '</form>';
 					break;
 				// buttons are just links that have been styled to appear as buttons, but may not be blend with a theme as well as submit buttons
 				case 'button' :
-					$ical = '<a class="ee-ical-btn small ee-button ee-roundish" href="' . $URL . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '">';
-					$ical .= ' <span class="dashicons dashicons-calendar"></span>';
-					$ical .= '</a>';
+					$html .= '<a class="ee-ical-btn small ee-button ee-roundish" href="' . $URL . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '">';
+					$html .= ' <span class="dashicons dashicons-calendar"></span>';
+					$html .= '</a>';
 					break;
 				// links are just links that use the calendar dashicon
 				case 'icon' :
-					$ical = '<a class="ee-ical-lnk" href="' . $URL . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '">';
-					$ical .= ' <span class="dashicons dashicons-calendar"></span>';
-					$ical .= '</a>';
+					$html .= '<a class="ee-ical-lnk" href="' . $URL . '" title="' . __( 'Add to iCal Calendar', 'event_espresso' ) . '">';
+					$html .= ' <span class="dashicons dashicons-calendar"></span>';
+					$html .= '</a>';
 					break;
 			}
-			$html .= $ical;
 		}
 		return $html;
 	}
@@ -133,15 +138,17 @@ class EED_Ical  extends EED_Module {
 				$organizer = EED_Ical::_escape_ICal_data( EE_Registry::instance()->CFG->organization->name );
 				$UID = EED_Ical::_escape_ICal_data( md5( $event->name() . $event->ID() . $datetime->ID() ));
 				$org_email = EED_Ical::_escape_ICal_data( $datetime->ID() );
-				$timestamp = date( 'Ymd\THis\Z' );
+				$timestamp = date( EED_Ical::iCal_datetime_format );
 				$location = EED_Ical::_escape_ICal_data( $location );
 				$summary = EED_Ical::_escape_ICal_data( wp_trim_words( $event->description() ));
 				$description = EED_Ical::_escape_ICal_data( wp_strip_all_tags( $event->description() ));
-				$status = EED_Ical::_escape_ICal_data( $datetime->get_active_status() );
+				$status = $datetime->get_active_status();
+				$status = $status == EE_Datetime::cancelled ? 'Cancelled' : 'Confirmed';
+				$status = EED_Ical::_escape_ICal_data( $status );
 				$categories = EED_Ical::_escape_ICal_data( $category );
 				$url = EED_Ical::_escape_ICal_data( get_permalink( $event->ID() ));
-				$dtt_start = EED_Ical::_escape_ICal_data( $datetime->start_date_and_time( 'Ymd\THis\Z' ));
-				$dtt_end = EED_Ical::_escape_ICal_data( $datetime->end_date_and_time( 'Ymd\THis\Z' ));
+				$dtt_start = EED_Ical::_escape_ICal_data( date( EED_Ical::iCal_datetime_format, $datetime->start() ));
+				$dtt_end = EED_Ical::_escape_ICal_data( date( EED_Ical::iCal_datetime_format, $datetime->end() ));
 				// set headers
 				header( 'Content-type: text/calendar; charset=utf-8' );
 				header( 'Content-Disposition: attachment; filename="' . $filename . '"' );
@@ -188,7 +195,7 @@ class EED_Ical  extends EED_Module {
 	 */
 	private static function _escape_ICal_data( $string = '' ) {
 		return preg_replace( '/([\,;])/', '\\\$1', $string );
-	}	
+	}
 
 
 
