@@ -67,7 +67,7 @@ class EEM_Payment_Method extends EEM_Base {
 	 */
 	protected function __construct() {
 		$this->singlular_item = __('Payment Method','event_espresso');
-		$this->plural_item = __('Payment Methods','event_espresso');		
+		$this->plural_item = __('Payment Methods','event_espresso');
 
 		$this->_tables = array(
 			'Payment_Method'=>new EE_Primary_Table('esp_payment_method','PMD_ID')
@@ -88,8 +88,8 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_wp_user_id'=>new EE_Integer_Field('PMD_wp_user_Id', __("User ID", 'event_espresso'), false, 1),
 				'PMD_open_by_default'=>new EE_Boolean_Field('PMD_open_by_default', __("Open by Default?", 'event_espresso'), false, false),
 				'PMD_button_url'=>new EE_Plain_Text_Field('PMD_button_url', __("Button URL", 'event_espresso'), true,''),
-				'PMD_scope'=>new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'), false,array('frontend')),//possible values currently are 'frontend','admin','api'
-				
+				'PMD_scope'=>new EE_Serialized_Text_Field('PMD_scope', __("Usable From?", 'event_espresso'), false,array()),//possible values currently are 'CART','ADMIN','API'
+
 			)
 		);
 		$this->_model_relations = array(
@@ -117,7 +117,7 @@ class EEM_Payment_Method extends EEM_Base {
 		return apply_filters('FHEE__EEM_Payment_Method__scopes',array(self::scope_cart => __("Front-end Registration Page", 'event_espresso'),self::scope_admin=>  __("Admin Registration Page", 'event_espresso')));
 	}
 	/**
-	 * Determines if this is an valid scope 
+	 * Determines if this is an valid scope
 	 * @param string $scope like one of EEM_Payment_Method::instance()->scopes()
 	 * @return boolean
 	 */
@@ -131,7 +131,7 @@ class EEM_Payment_Method extends EEM_Base {
 	}
 	/**
 	 * Gets all active gateways
-	 * @param string $scope one of 
+	 * @param string $scope one of
 	 * @return EE_Payment_Method[]
 	 */
 	public function get_all_active($scope = NULL,$query_params = array()){
@@ -140,7 +140,7 @@ class EEM_Payment_Method extends EEM_Base {
 				return $this->get_all(array_replace_recursive(array(array('PMD_scope'=>array('LIKE',"%$scope%"))),$query_params));
 			}else{
 				throw new EE_Error(sprintf(__("'%s' is not a valid scope for a payment method", "event_espresso"),$scope));
-			}	
+			}
 		}else{
 			$acceptible_scopes = array();
 			foreach($this->scopes() as $scope_name => $desc){
@@ -164,7 +164,6 @@ class EEM_Payment_Method extends EEM_Base {
 			return NULL;
 		}
 	}
-	
 	/**
 	 * Gets one payment method of that type, regardless of whether its active or not
 	 * @param string $type
@@ -177,7 +176,7 @@ class EEM_Payment_Method extends EEM_Base {
 	 * Overrides parent ot also check by the slug
 	 * @see EEM_Base::ensure_is_obj()
 	 * @param string|int|EE_Payment_Method $base_class_obj_or_id
-	 * @param boolean $ensure_is_in_db 
+	 * @param boolean $ensure_is_in_db
 	 * @return EE_Payment_Method
 	 * @throws EE_Error
 	 */
@@ -194,7 +193,7 @@ class EEM_Payment_Method extends EEM_Base {
 			}
 		}
 	}
-	
+
 	/**
 	 * Gets the ID of this object, or if its a string finds the object's id
 	 * assocaited with that slug
@@ -204,10 +203,9 @@ class EEM_Payment_Method extends EEM_Base {
 	function ensure_is_ID($base_obj_or_id_or_slug){
 		if(is_string($base_obj_or_id_or_slug)){
 			//assume it's a slug
-			$base_obj_or_id_or_slug =  $this->get_one_by_slug($base_obj_or_id_or_slug);	
+			$base_obj_or_id_or_slug =  $this->get_one_by_slug($base_obj_or_id_or_slug);
 		}
 		return parent::ensure_is_ID($base_obj_or_id_or_slug);
-		
 	}
 	/**
 	 * Verifies the button urls on all the payment methods that meet the criteria
@@ -221,7 +219,7 @@ class EEM_Payment_Method extends EEM_Base {
 		foreach($payment_methods as $payment_method){
 			try{
 				//send an HTTP HEAD request to quickkly verify the file exists
-				
+
 				if( ! EEH_URL::remote_file_exists($payment_method->button_url())){
 					EE_Error::add_attention(sprintf(__("Payment Method '%s' had a broken button url, so it was reset", "event_espresso"),$payment_method->name()));
 					$payment_method->save(array(
@@ -232,7 +230,7 @@ class EEM_Payment_Method extends EEM_Base {
 			}
 		}
 	}
-	
+
 	/**
 	 * Overrides parent to not only turn wpdb results into EE_Payment_Method objects,
 	 * but also verifies the payment method type of each is a usable object. If not,
@@ -260,7 +258,7 @@ class EEM_Payment_Method extends EEM_Base {
 		return $usable_payment_methods;
 	}
 	/**
-	 * Gets all the paymetn methods which can be used for transaction 
+	 * Gets all the paymetn methods which can be used for transaction
 	 * (according to the relations between paymetn methods and events, and
 	 * the currencies used for the transaction and their relation to payment methods)
 	 * @param EE_Transaction $transaction
@@ -268,7 +266,7 @@ class EEM_Payment_Method extends EEM_Base {
 	 * @return EE_Payment_Method
 	 */
 	public function get_all_for_transaction($transaction,$scope){
-		//@todo take relations between events and payment methods into account, once 
+		//@todo take relations between events and payment methods into account, once
 		//that relation exists
 		//@todo take the relation between transaction and currencies into account
 		$currencies_for_events = array(EE_Config::instance()->currency->code);

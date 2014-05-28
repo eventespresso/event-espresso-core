@@ -56,7 +56,7 @@ final class EE_Config {
 	public $currency;
 
 	/**
-	 *
+	 * @deprecated since 4.5.0 in favour of instead using EEM_Payment_Method model and its corresponding esp_payment_method table
 	 * @var EE_Gateway_Config
 	 */
 	public $gateway;
@@ -1756,19 +1756,23 @@ class EE_Map_Config extends EE_Config_Base {
 }
 
 /**
- * stores payment gateway info
+ * stores payment gateway info.
+ * @deprecated since version 4.5
+ * In favour of instead using the EEM_Payment_Method model and associated table
  */
 class EE_Gateway_Config extends EE_Config_Base{
 	/**
 	 * Array with keys that are payment gateways slugs, and values are arrays
 	 * with any config info the gateway wants to store
 	 * @var array
+	 * @deprecated since version 4.5
 	 */
 	public $payment_settings;
 	/**
 	 * Where keys are gateway slugs, and values are booleans indicating whether or not
 	 * the gateway is stored in the uploads directory
 	 * @var array
+	 * @deprecated sicne version 4.5
 	 */
 	public $active_gateways;
 

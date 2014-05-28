@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEPMT_Paypal_Pro
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -37,17 +37,14 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		return new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 //				'paypal_email'=>new EE_Email_Input(), not actually used
-				'paypal_api_username'=>new EE_Text_Input(array(
+				'username'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Paypal API Username %s", "event_espresso"),EEH_Template::get_help_tab_link(self::help_tab_name))
 				)),
-				'paypal_api_password'=>new EE_Text_Input(array(
+				'password'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Paypal API Password %s", "event_espresso"),EEH_Template::get_help_tab_link(self::help_tab_name))
 				)),
-				'paypal_api_signature'=>new EE_Text_Input(array(
+				'signature'=>new EE_Text_Input(array(
 					'html_label_text'=>  sprintf(__("Paypal API Signature %s", "event_espresso"),EEH_Template::get_help_tab_link(self::help_tab_name))
-				)),
-				'no_shipping'=>new EE_Yes_No_Input(array(
-					'html_label_text'=>  sprintf(__("No Shipping? %s", "event_espresso"),EEH_Template::get_help_tab_link(self::help_tab_name))
 				)),
 				'credit_card_types'=>new EE_Checkbox_Multi_Input($this->card_types_supported()),
 				)
@@ -75,8 +72,8 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 			));
 		//tweak the form (in the template we check for debug mode and whether ot add any content or not)
 		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$form_name, array('EE_PMT_Paypal_Pro','generate_billing_form_debug_content'),10,2);
-		
-		$billing_form = new EE_Billing_Info_Form($this->_pm_instance,$form_args);	
+
+		$billing_form = new EE_Billing_Info_Form($this->_pm_instance,$form_args);
 		if($this->_pm_instance->debug_mode()){
 			$billing_form->get_input('credit_card')->set_default('5424180818927383');
 //			$form_args['subsections']['credit_card']->set_html_help_text(__("Payment fields have been autofilled because you are in debug mode.", 'event_espresso'));
@@ -85,7 +82,6 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 			$billing_form->get_input('exp_year')->set_default('2020');
 			$billing_form->get_input('cvv')->set_default('115');
 		}
-		
 		return $billing_form;
 	}
 	/**
@@ -111,10 +107,10 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 			'Discover'=>  __("Discover", 'event_espresso')
 			);
 	}
-	/**	
+	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
-	 * @return array 
+	 * @return array
 	 */
 	public function help_tabs_config(){
 		return array(

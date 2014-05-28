@@ -1,13 +1,13 @@
 <?php
 /**
  * meant to convert DBs between 4.4 and 4.5
- * mostly just 
+ * mostly just
  * -adds QGQ_order to teh question-group_question table;
  * -adds DTT_name and DTT_description to the datetime table;
  */
 //make sure we have all the stages loaded too
 //unfortunately, this needs to be done upon INCLUSION of this file,
-//instead of construction, because it only gets constructed on first page load 
+//instead of construction, because it only gets constructed on first page load
 //(all other times it gets resurrected from a wordpress option)
 $stages = glob(EE_CORE.'data_migration_scripts/4_5_0_stages/*');
 $class_to_filepath = array();
@@ -22,11 +22,12 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
 
 class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
-	
-	
+
+
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.5.0.P", "event_espresso");
 		$this->_migration_stages = array(
+			new EE_DMS_4_5_0_gateways()
 		);
 		parent::__construct();
 	}
@@ -38,7 +39,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		}elseif( ! $version_string ){
 //			echo "no version string provided: $version_string";
 			//no version string provided... this must be pre 4.1
-			//because since 4.1 we're 
+			//because since 4.1 we're
 			return false;//changed mind. dont want people thinking they should migrate yet because they cant
 		}else{
 //			echo "$version_string doesnt apply";
@@ -58,7 +59,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					ANS_value TEXT NOT NULL ,
 					PRIMARY KEY  (ANS_ID)";
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
-		
+
 		$table_name = 'esp_attendee_meta';
 		$sql = "ATTM_ID int(10) unsigned NOT	NULL AUTO_INCREMENT,
 						ATT_ID int(10) unsigned NOT NULL,
@@ -98,7 +99,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  CNT_active tinyint(1) DEFAULT '0',
 					  PRIMARY KEY  (CNT_ISO)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
-		
+
 		$table_name = 'esp_currency';
 		$sql = "CUR_code varchar(6) COLLATE utf8_bin NOT NULL,
 				CUR_single varchar(45) COLLATE utf8_bin DEFAULT 'dollar',
@@ -108,8 +109,8 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				CUR_active tinyint(1) DEFAULT '0',
 				PRIMARY KEY  (CUR_code)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB' );
-		
-		
+
+
 		$table_name = 'esp_currency_payment_method';
 		$sql = "CPM_ID int(11) NOT NULL AUTO_INCREMENT,
 				CUR_code  varchar(6) COLLATE utf8_bin NOT NULL,
@@ -134,9 +135,9 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 						PRIMARY KEY  (DTT_ID),
 						KEY EVT_ID (EVT_ID),
 						KEY DTT_is_primary (DTT_is_primary)";
-		
-		
-		
+
+
+
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 		$table_name = 'esp_event_meta';
 		$sql = "
@@ -157,7 +158,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
 
 
-		
+
 		$table_name='esp_event_question_group';
 		$sql="EQG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					EVT_ID INT UNSIGNED NOT NULL ,
@@ -177,7 +178,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
 
 
-		
+
 		$table_name='esp_extra_meta';
 		$sql="EXM_ID int(11) NOT NULL AUTO_INCREMENT,
 				OBJ_ID int(11) DEFAULT NULL,
@@ -216,7 +217,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				LOG_wp_user_id int(11) DEFAULT NULL,
 				PRIMARY KEY  (LOG_ID)";
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB');
-		
+
 		$table_name = 'esp_message_template';
 		$sql = "MTP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					GRP_ID int(10) unsigned NOT NULL,
@@ -316,7 +317,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (PRO_ID) ,
 					KEY PRC_ID (PRC_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-		
+
 		$table_name = 'esp_promotion_object';
 		$sql = "POB_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 			PRO_ID INT UNSIGNED NOT NULL,
@@ -327,7 +328,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			KEY OBJ_ID (OBJ_ID),
 			KEY PRO_ID (PRO_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-		
+
 		$table_name = 'esp_promotion_applied';
 		$sql = "PRA_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 			PRO_ID INT UNSIGNED NOT NULL,
@@ -337,7 +338,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			KEY OBJ_ID (OBJ_ID),
 			KEY PRO_ID (PRO_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-		
+
 		$table_name = 'esp_promotion_rule';
 		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					PRO_ID INT UNSIGNED NOT NULL ,
@@ -348,9 +349,9 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					KEY PRO_ID (PRO_ID),
 					KEY RUL_ID (RUL_ID) ";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-		
-		
-		
+
+
+
 		$table_name = 'esp_rule';
 		$sql = "RUL_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					RUL_name VARCHAR(45) NOT NULL ,
@@ -364,10 +365,10 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					RUL_archived TINYINT(1) NOT NULL DEFAULT 0 ,
 					PRIMARY KEY  (RUL_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-		
 
 
-		$table_name = "esp_ticket";  
+
+		$table_name = "esp_ticket";
 		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_ID int(10) unsigned NOT NULL,
 					  TKT_name varchar(100) NOT NULL DEFAULT '',
@@ -393,7 +394,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_ticket_price";  
+		$table_name = "esp_ticket_price";
 		$sql = "TKP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TKT_ID int(10) unsigned NOT NULL,
 					  PRC_ID int(10) unsigned NOT NULL,
@@ -403,7 +404,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_datetime_ticket";  
+		$table_name = "esp_datetime_ticket";
 		$sql = "DTK_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  DTT_ID int(10) unsigned NOT NULL,
 					  TKT_ID int(10) unsigned NOT NULL,
@@ -414,7 +415,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_ticket_template";  
+		$table_name = "esp_ticket_template";
 		$sql = "TTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_name varchar(45) NOT NULL,
 					  TTM_description text,
@@ -424,7 +425,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 
 
-		$table_name = "esp_price";  
+		$table_name = "esp_price";
 		$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  PRT_ID tinyint(3) unsigned NOT NULL,
 					  PRC_amount decimal(10,3) NOT NULL DEFAULT '0.00',
@@ -452,7 +453,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
 
-		
+
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 					QST_display_text VARCHAR(100) NOT NULL,
@@ -467,9 +468,9 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID)';
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
-		
+
 		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
-		
+
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
 					QSG_name VARCHAR(100) NOT NULL,
@@ -483,9 +484,9 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					PRIMARY KEY  (QSG_ID),
 					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
-		
-		
-		
+
+
+
 		$table_name='esp_question_group_question';
 		$sql="QGQ_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					QSG_ID INT UNSIGNED NOT NULL ,
@@ -495,7 +496,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
 
 
-		
+
 		$table_name='esp_question_option';
 		$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
 					QSO_value VARCHAR(100) NOT NULL ,
@@ -587,8 +588,8 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
 
-		
-		
+
+
 
 
 		$table_name = 'esp_venue_meta';
@@ -610,10 +611,10 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			PRIMARY KEY  (VNUM_ID),
 			KEY STA_ID (STA_ID),
 			KEY CNT_ISO (CNT_ISO)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');	
-		
-		
-		$script_with_defaults = EE_Registry::instance()->load_dms( 'Core_4_1_0' );		
+		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
+
+
+		$script_with_defaults = EE_Registry::instance()->load_dms( 'Core_4_1_0' );
 		//setting up the default stats and countries is also essential for the data migrations to run
 		//(because many need to convert old string states to foreign keys into the states table)
 		$script_with_defaults->insert_default_states();
@@ -622,7 +623,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$script_with_defaults->insert_default_price_types();
 		$script_with_defaults->insert_default_prices();
 		$script_with_defaults->insert_default_tickets();
-		
+
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
 		EE_Config::instance()->update_espresso_config(false, true);
 		$this->add_default_admin_only_payments();
@@ -636,17 +637,17 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 	public function schema_changes_after_migration() {
 		return true;
 	}
-	
+
 	public function migration_page_hooks(){
-		
+
 	}
-	
+
 	public function add_default_admin_only_payments(){
 		global $wpdb, $current_user;
 		$table_name = $wpdb->prefix."esp_payment_method";
 		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $table_name . "'") == $table_name ) {
 
-			$SQL = "SELECT COUNT('CUR_code') FROM " . $table_name;
+			$SQL = "SELECT COUNT( * ) FROM " . $table_name;
 			$existing_payment_methods = $wpdb->get_var($SQL);
 			if ( ! $existing_payment_methods ) {
 				//make sure we hae payment method records for the following
@@ -696,9 +697,9 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				}
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * insert_default_countries
 	 *

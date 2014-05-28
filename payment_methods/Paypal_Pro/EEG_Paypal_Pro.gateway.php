@@ -30,22 +30,17 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 	 *
 	 * @var $_paypal_api_username string
 	 */
-	protected $_paypal_api_username = NULL;
+	protected $_username = NULL;
 	/**
 	 *
-	 * @var $_paypal_api_password string
+	 * @var $_password string
 	 */
-	protected $_paypal_api_password = NULL;
+	protected $_password = NULL;
 	/**
 	 *
-	 * @var $_paypal_api_signature string
+	 * @var $_signature string
 	 */
-	protected $_paypal_api_signature = NULL;
-	/**
-	 *
-	 * @var $_no_shipping boolean
-	 */
-	protected $_no_shipping = NULL;
+	protected $_signature = NULL;
 	/**
 	 *
 	 * @var $_credit_card_types array with the keys for credit card types accepted on this account
@@ -350,7 +345,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			$Secure3DNVP .= '&' . strtoupper($Secure3DVar) . '=' . urlencode($Secure3DVal);
 
 		// Now that we have each chunk we need to go ahead and append them all together for our entire NVP string
-		$NVPRequest = 'USER=' . $this->_paypal_api_username . '&PWD=' . $this->_paypal_api_password . '&VERSION=64.0' . '&SIGNATURE=' . $this->_paypal_api_signature . $DPFieldsNVP . $CCDetailsNVP . $PayerInfoNVP . $PayerNameNVP . $BillingAddressNVP . $PaymentDetailsNVP . $OrderItemsNVP . $ShippingAddressNVP . $Secure3DNVP;
+		$NVPRequest = 'USER=' . $this->_username . '&PWD=' . $this->_password . '&VERSION=64.0' . '&SIGNATURE=' . $this->_signature . $DPFieldsNVP . $CCDetailsNVP . $PayerInfoNVP . $PayerNameNVP . $BillingAddressNVP . $PaymentDetailsNVP . $OrderItemsNVP . $ShippingAddressNVP . $Secure3DNVP;
 		$NVPResponse = $this->_CURLRequest($NVPRequest);
 		$NVPRequestArray = $this->_NVPToArray($NVPRequest);
 		$NVPResponseArray = $this->_NVPToArray($NVPResponse);
