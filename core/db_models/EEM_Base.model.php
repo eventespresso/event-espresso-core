@@ -2076,6 +2076,10 @@ abstract class EEM_Base extends EE_Base{
 				throw new EE_Error(sprintf(__("You attempted to give a value  (%s) while using a NULL-style operator (%s). That isnt valid", "event_espresso"),$value,$operator));
 			}
 			return $operator;
+		}elseif( $operator == 'LIKE' && ! is_array($value)){
+			//if the operator is 'LIKE', we want to allow percent signs (%) and not
+			//remove other junk. So just treat it as a string.
+			return $operator.SP.$this->_wpdb_prepare_using_field($value, '%s');
 		}elseif( ! in_array($operator, $this->_in_style_operators) && ! is_array($value)){
 			return $operator.SP.$this->_wpdb_prepare_using_field($value,$field_obj);
 		}elseif(in_array($operator, $this->_in_style_operators) && ! is_array($value)){
@@ -2375,7 +2379,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $fieldSettings[$fieldName];
 	}
-	
+
 	/**
 	 * Checks if this field exists on this model
 	 * @param string $fieldName a key in the model's _field_settings array
