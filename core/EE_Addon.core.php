@@ -92,6 +92,24 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 
+	/**
+	 * @param mixed $min_core_version
+	 */
+	public function set_min_core_version( $min_core_version = NULL ) {
+		$this->_min_core_version = $min_core_version;
+	}
+
+
+
+	/**
+	 * get__min_core_version
+	 * @return string
+	 */
+	public function min_core_version() {
+		return $this->_min_core_version;
+	}
+
+
 
 	/**
 	 * Sets addon_name
