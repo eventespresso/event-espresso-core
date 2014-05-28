@@ -706,16 +706,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
 
-		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
-		$CAT_ID = isset( $this->_req_data['EVT_CAT'] ) ? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
-		$reg_status = isset( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
-		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
-		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
-		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
+		$EVT_ID = ! empty( $this->_req_data['event_id'] ) && $this->_req_data['event_id'] > 0 ? absint( $this->_req_data['event_id'] ) : FALSE;
+		$CAT_ID = ! empty( $this->_req_data['EVT_CAT'] ) && (int) $this->_req_data['EVT_CAT'] > 0? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
+		$reg_status = ! empty( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
+		$month_range = ! empty( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
+		$today_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
+		$this_month_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
 		$start_date = FALSE;
 		$end_date = FALSE;
 		$_where = array();
-		$trash = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'trash' ? TRUE : FALSE;
+		$trash = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'trash' ? TRUE : FALSE;
 
 		//set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -828,6 +828,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if($count){
 			return $trash ? EEM_Registration::instance()->count_deleted(array($_where) ): EEM_Registration::instance()->count(array($_where, 'default_where_conditions' => 'this_model_only') );
 		}else{
+			EEM_Registration::instance()->show_next_x_db_queries();
 			//make sure we remove default where conditions cause all registrations matching query are returned
 			$query_params = array( $_where, 'order_by' => array( $orderby => $sort ), 'default_where_conditions' => 'this_model_only' );
 			if ( $per_page !== -1 ) {
