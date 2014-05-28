@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Transaction_Shortcodes
- * 
+ *
  * this is a child class for the EE_Shortcodes library.  The EE_Transaction_Shortcodes lists all shortcodes related to transaction specific info.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Transaction_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -47,6 +47,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[PAYMENT_STATUS]' => __('The payment status for the transaction', 'event_espresso'),
 			'[PAYMENT_METHOD]' => __('The payment method used for the transaction', 'event_espresso'),
+			'[PAYMENT_GATEWAY]' => __('This is a deprecated shortcode retained for backward compatibility.  For now it parses the same as [PAYMENT_METHOD] but please use [PAYMENT_METHOD] in your templates instead.', 'event_espresso')
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
 			'[TOTAL_OWING]' => __('The total owing on a transaction', 'event_espresso'),
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
@@ -56,7 +57,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-		
+
 		EE_Registry::instance()->load_helper( 'Template' );
 
 		if ( !$this->_data->txn instanceof EE_Transaction )
@@ -95,6 +96,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break; /**/
 
 			case "[PAYMENT_METHOD]" :
+			case "[PAYMENT_GATEWAY]" :
 				return $this->_get_payment_method();
 				break;
 

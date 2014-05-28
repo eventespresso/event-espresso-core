@@ -41,7 +41,7 @@
 	<li><strong>Payment Status:</strong> [PAYMENT_STATUS]</li>
 	<li><strong>Transaction ID:</strong> [TXN_ID]</li>
 	<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
-	<li><strong>Payment Method:</strong> [PAYMENT_GATEWAY]</li>
+	<li><strong>Payment Method:</strong> [PAYMENT_METHOD]</li>
 	<li><strong>Payment Amount:</strong> [AMOUNT_PAID]</li>
 	<li><strong>Amount Due:</strong> [TOTAL_OWING]</li>
 </ul>
