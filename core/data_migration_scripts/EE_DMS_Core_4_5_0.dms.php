@@ -27,7 +27,8 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.5.0.P", "event_espresso");
 		$this->_migration_stages = array(
-			new EE_DMS_4_5_0_gateways()
+			new EE_DMS_4_5_0_gateways(),
+			new EE_DMS_4_5_0_payment_method_currencies(),
 		);
 		parent::__construct();
 	}
@@ -296,7 +297,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				PMD_scope VARCHAR(255) NULL DEFAULT 'frontend',
 				PRIMARY KEY  (PMD_ID),
 				UNIQUE KEY PMD_slug_UNIQUE (PMD_slug)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
 		$table_name = 'esp_promotion';

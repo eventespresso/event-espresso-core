@@ -18,11 +18,13 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
 class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 	protected $_new_table_name;
 	protected $_extra_meta_table_name;
+	protected $_currency_table_name;
+	protected $_currency_payment_method_table_name;
 	/**
 	 * each key is the name of a 4.1-style gateway we know how to migrate to 4.5
 	 * @var array
 	 */
-	protected $_gateways_we_know_how_to_migrate = array(
+	protected $_gateway_we_know_to_migrate = array(
 		'Aim',
 		'Bank',
 		'Check',
@@ -36,6 +38,8 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 		global $wpdb;
 		$this->_new_table_name = $wpdb->prefix."esp_payment_method";
 		$this->_extra_meta_table_name = $wpdb->prefix."esp_extra_meta";
+		$this->_currency_table_name = $wpdb->prefix."esp_currency";
+		$this->_currency_payment_method_table_name = $wpdb->prefix."esp_currency_payment_method";
 		$this->_pretty_name = __('Gateways', 'event_espresso');
 		parent::__construct();
 	}
@@ -50,7 +54,7 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 		$gateways_to_deal_with = array_slice(EE_Config::instance()->gateway->payment_settings,$this->count_records_migrated(),$num_items_to_migrate);
 		foreach($gateways_to_deal_with as $old_gateway_slug => $old_gateway_settings){
 
-			if( in_array( $old_gateway_slug, $this->_gateways_we_know_how_to_migrate ) ) {
+			if( in_array( $old_gateway_slug, $this->_gateway_we_know_to_migrate ) ) {
 				if( ! $old_gateway_settings){
 					//no settings existed for this gateway anyways... weird...
 					$items_actually_migrated++;
@@ -62,14 +66,10 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 						$old_gateway_settings,
 						isset( EE_Config::instance()->gateway->active_gateways[ $old_gateway_slug ] ) );
 				if( $success ) {
-					unset(EE_Config::instance()->gateway->payment_settings[ $old_gateway_slug ] );
+					EE_Config::instance()->gateway->payment_settings[ $old_gateway_slug ] = 'Deprecated';
 				}
 			}
 			$items_actually_migrated++;
-		}
-		//if we can keep going, and it hasn' tbeen done yet, convert active gateways
-		if($items_actually_migrated < $num_items_to_migrate){
-			$this->_converted_active_gateways = true;
 		}
 
 		EE_Config::instance()->update_espresso_config(false,false);
@@ -213,29 +213,42 @@ class EE_DMS_4_5_0_gateways extends EE_Data_Migration_Script_Stage{
 		}
 
 		if( $id ){
-			foreach( $extra_meta_key_values as $key => $value ){
-				$exm_args = array(
-					'OBJ_ID'=>$id,
-					'EXM_type'=>'Payment_Method',
-					'EXM_key'=>$key,
-					'EXM_value'=> maybe_serialize($value )
-				);
-				$success = $wpdb->insert(
-						$this->_extra_meta_table_name,
-						$exm_args,
-						array(
-							'%d',//OBJ_ID
-							'%s',//EXM_type
-							'%s',//EXM_key
-							'%s',//EXM_value
-						));
-				if( ! $success ){
-					$this->add_error(sprintf(__('Could not insert extra meta key with values %s. %s', "event_espresso"),json_encode($exm_args),$wpdb->last_error));
-				}
-			}
+			$this->_convert_extra_meta_values( $id, $extra_meta_key_values );
+			$this->get_migration_script()->set_mapping( 'EE_Gateway_Config', $old_gateway_slug, $this->_new_table_name, $id );
 			return true;
 		}
 	}
+	/**
+	 * Converts old gateway settings whicih don't map onto the Payment_Method model
+	 * to extra meta fields
+	 * @param int $id
+	 * @param array $extra_meta_key_values
+	 */
+	private function _convert_extra_meta_values($id,$extra_meta_key_values){
+		global $wpdb;
+		foreach( $extra_meta_key_values as $key => $value ){
+			$exm_args = array(
+				'OBJ_ID'=>$id,
+				'EXM_type'=>'Payment_Method',
+				'EXM_key'=>$key,
+				'EXM_value'=> maybe_serialize($value )
+			);
+			$success = $wpdb->insert(
+					$this->_extra_meta_table_name,
+					$exm_args,
+					array(
+						'%d',//OBJ_ID
+						'%s',//EXM_type
+						'%s',//EXM_key
+						'%s',//EXM_value
+					));
+			if( ! $success ){
+				$this->add_error(sprintf(__('Could not insert extra meta key with values %s. %s', "event_espresso"),json_encode($exm_args),$wpdb->last_error));
+			}
+		}
+	}
+
+
 }
 
 // End of file EE_DMS_4_5_0_gateways.dmsstage.php
