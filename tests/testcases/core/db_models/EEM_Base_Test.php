@@ -9,7 +9,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * Tests EEM_Base core functionality. And currently also does the job of making sure all existing models are setup correctly
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -33,7 +33,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 			}
 		}
 	}
-	
+
 	/**
 	 * Verifies taht for each model, the tables it claims to require have been installed
 	 */
@@ -52,7 +52,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 //			$this->assertNotEmpty($id);
 //		}
 //	}
-	
+
 	/**
 	 * checks that EEM_Base::has_field works properly
 	 */
@@ -60,6 +60,24 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertTrue(EEM_Question::instance()->has_field('QST_ID'));
 		$this->assertTrue(EEM_QUestion::instance()->has_field('QST_admin_only'));
 		$this->assertFalse(EEM_Question::instance()->has_field('monkey brains'));
+	}
+
+	/**
+	 * checks that adding a LIKE in teh WHERE clauses works ok
+	 */
+	function test_where_like(){
+		$attendees_before = EEM_Attendee::instance()->get_all();
+		$this->assertEmpty($attendees_before);
+
+		$a = EE_Attendee::new_instance(array('ATT_email'=>'monkey123@hotmail.com'));
+		$a->save();
+
+		$attendees_after_insert = EEM_Attendee::instance()->get_all();
+		$this->assertEquals(1,count($attendees_after_insert));
+
+		$attendee_found = EEM_Attendee::instance()->get_one(array(array('ATT_email'=>array('LIKE','%key12%'))));
+		$this->assertInstanceOf('EE_Attendee', $attendee_found);
+		$this->assertEquals($a->ID(),$attendee_found->ID());
 	}
 }
 

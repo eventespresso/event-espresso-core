@@ -2379,7 +2379,7 @@ abstract class EEM_Base extends EE_Base{
 		}
 		return $fieldSettings[$fieldName];
 	}
-	
+
 	/**
 	 * Checks if this field exists on this model
 	 * @param string $fieldName a key in the model's _field_settings array
