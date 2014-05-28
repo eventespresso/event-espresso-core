@@ -95,6 +95,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	private function __construct() {
 
+		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
+		if ( ! apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
+			return NULL;
+		}
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		define( 'ESPRESSO_SESSION', TRUE );
@@ -124,11 +129,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		$this->_set_defaults();
 
 		// check for existing session and retreive it from db.  Filtered in case session needs to be turned off (typically with tests)
-		if ( apply_filters( 'FHEE__EE_Session__construct__can_create_session', TRUE ) ) {
-			if ( ! $this->_espresso_session()  ) {
-				// or just start a new one
-				$this->_create_espresso_session();
-			}
+		if ( ! $this->_espresso_session()  ) {
+			// or just start a new one
+			$this->_create_espresso_session();
 		}
 
 		// check request for 'clear_session' param

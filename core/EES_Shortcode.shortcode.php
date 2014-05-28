@@ -100,6 +100,20 @@ abstract class EES_Shortcode extends EE_Base {
 
 
 
+
+	/**
+	 *    invalid_shortcode_processor -  used in cases where we know the shortcode is invalid, most likely due to a deactivated addon, and simply returns an empty string
+	 *
+	 * @access 	public
+	 * @param 	$attributes
+	 * @return 	string
+	 */
+	final public static function invalid_shortcode_processor( $attributes ) {
+		return '';
+	}
+
+
+
 	/**
 	 *    class constructor - should ONLY be instantiated by EE_Front_Controller
 	 *

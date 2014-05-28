@@ -113,27 +113,18 @@ class EED_Events_Archive  extends EED_Module {
 	/**
 	 *    set_config
 	 *
-	 * @return void
+	 * @return \EE_Events_Archive_Config
 	 */
-	public function set_config(){
-		return $this->_set_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
+	protected function set_config(){
+		$this->set_config_section( 'template_settings' );
+		$this->set_config_class( 'EE_Events_Archive_Config' );
+		$this->set_config_name( 'EED_Events_Archive' );
 	}
 
 
 
 	/**
-	 *    get_config
-	 *
-	 * @return void
-	 */
-	public function get_config(){
-		$config =  $this->_get_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
-		return $config instanceof EE_Events_Archive_Config ? $config :  $this->set_config();
-	}
-
-
-	/**
-	 *    run - initial module setup
+	 * 	run - initial module setup
 	 *
 	 * @access    public
 	 * @param WP $WP
@@ -142,13 +133,13 @@ class EED_Events_Archive  extends EED_Module {
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
 		// ensure valid EE_Events_Archive_Config() object exists
-		$this->set_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
+		$this->set_config();
 		// load other required components
 		$this->load_event_list_assets();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		$this->_filter_query_parts();
 		// check what template is loaded
-		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 2 );
+		add_filter( 'template_include',  array( $this, 'template_include' ), 999, 1 );
 		add_filter( 'FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true' );
 	}
 
@@ -162,7 +153,7 @@ class EED_Events_Archive  extends EED_Module {
 	 */
 	public function event_list() {
 		// ensure valid EE_Events_Archive_Config() object exists
-		$this->set_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
+		$this->set_config();
 		// load other required components
 		$this->load_event_list_assets();
 	}
@@ -493,14 +484,11 @@ class EED_Events_Archive  extends EED_Module {
 	 * @param    string $template
 	 * @return    string
 	 */
-	public function template_include( $template = '' ) {
-
-		// ensure valid EE_Events_Archive_Config() object exists
-		$this->set_config( 'template_settings', 'EED_Events_Archive', 'EE_Events_Archive_Config' );
+	public function template_include( $template ) {
 		// don't add content filter for dedicated EE child themes or private posts
 		if ( ! EEH_Template::is_espresso_theme() && ! post_password_required() ) {
 			// add status banner ?
-			if ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_status_banner ) {
+			if ( $this->config()->display_status_banner ) {
 				add_filter( 'the_title', array( 'EED_Events_Archive', 'the_title' ), 100, 2 );
 			}
 			// if NOT a custom template

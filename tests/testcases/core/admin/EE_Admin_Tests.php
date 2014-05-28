@@ -39,7 +39,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ), 10 );
 		$this->assertEquals( has_filter('admin_footer_text', array($admin_instance, 'espresso_admin_footer') ), 10 );
 
-		//messages init is loaded in EE_System, however we want to make sure its availbel to admin
+		//messages init is loaded in EE_System, however we want to make sure its available to admin
 		//make sure that Messages Init loaded
 		$this->assertTrue( class_exists( 'EE_Messages_Init' ) );
 	}
@@ -195,9 +195,38 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	}
 
 
+	/**
+	 * test enable_hidden_ee_nav_menu_metaboxes()
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_enable_hidden_ee_nav_menu_metaboxes() {
+
+		//first we'll add dummy metabox to simulate our metaboxes.
+		add_meta_box( 'add-espresso_events', __('Event Espresso Pages', 'event_espresso'), '__return_true', 'nav-menus', 'side', 'core' );
+
+		//need to set the current user
+		$current_user = get_current_user_id();
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+
+		//set the current page to the be the nav-menus.php page
+		global $pagenow;
+		$pagenow = 'nav-menus.php';
+
+		//run test
+		//should be a registered metabox with the add-espresso_events id.
+		global $wp_meta_boxes;
+		$this->assertArrayHasKey( 'add-espresso_events', $wp_meta_boxes['nav-menus']['side']['core'], 'There should be a registered metabox with the key add-espresso_events and there isn\'t' );
+
+		//now let's verify that the method being tested works as expected
+		EE_Admin::instance()->enable_hidden_ee_nav_menu_metaboxes();
+		$hidden_metaboxes = get_user_option( get_current_user_id(), 'metaboxhidden_nav-menus' );
+		$this->assertEmpty( $hidden_metaboxes );
+	}
 
 	//@todo public methods to write tests for
-	//function test_enable_hidden_ee_nav_menu_metaboxes() {}
+
 	//function test_ee_cpt_archive_pages()
 	//function test_enqueue_admin_scripts()
 	//function test_get_persistent_admin_notices()

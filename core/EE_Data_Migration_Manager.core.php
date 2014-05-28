@@ -112,8 +112,8 @@ class EE_Data_Migration_Manager{
 	/**
 	 *@singleton method used to instantiate class object
 	 *@access public
-	 *@return EE_Data_Migratino_Manager instance
-	 */
+	 *@return EE_Data_Migration_Manager instance
+	 */	
 	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Data_Migration_Manager )) {
@@ -123,10 +123,12 @@ class EE_Data_Migration_Manager{
 	}
 	/**
 	 * resets the singleton to its brand-new state (but does NOT delete old references to the old singleton. Meaning,
-	 * all new usages of the singleton shoul dbe made with CLassname::instance())
+	 * all new usages of the singleton shoul dbe made with CLassname::instance()) and returns it
+	 * @return EE_Data_Migration_Manager
 	 */
 	public static function reset(){
 		self::$_instance = NULL;
+		return self::instance();
 	}
 
 
@@ -157,7 +159,7 @@ class EE_Data_Migration_Manager{
 	 * 'ee_data_migration_script_Core.4.1.0' in 4.2 or 'ee_data_migration_script_4.1.0' befor ethat).
 	 * The option name shouldn't ever be like 'ee_data_migration_script_Core.4.1.0.reg' because it's derived, indirectly, from the data migration's classname,
 	 * which should always be like EE_DMS_%s_%d_%d_%d.dms.php (eg EE_DMS_Core_4_1_0.dms.php)
-	 * @param type $option_name (see
+	 * @param string $option_name (see EE_Data_Migration_Manage::_save_migrations_ran() where the option name is set)
 	 * @return array where the first item is the plugin slug (eg 'Core','Calendar',etc) and the 2nd is the version of that plugin (eg '4.1.0')
 	 */
 	private function _get_plugin_slug_and_version_string_from_dms_option_name($option_name){
@@ -294,7 +296,7 @@ class EE_Data_Migration_Manager{
 		$matches = array();
 		preg_match('~EE_DMS_(.*)_([0-9]*)_([0-9]*)_([0-9]*)~',$classname,$matches);
 		if( ! $matches || ! (isset($matches[1]) && isset($matches[2]) && isset($matches[3]))){
-				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w is either 'Core' or the slug of an addon and x, y and z are numbers, ", "event_espresso"),$migration_script_name));
+				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w is either 'Core' or the slug of an addon and x, y and z are numbers, ", "event_espresso"),$classname));
 		}
 		return array('slug'=>$matches[1],'major_version'=>intval($matches[2]),'minor_version'=>intval($matches[3]),'micro_version'=>intval($matches[4]));
 	}
@@ -553,9 +555,8 @@ class EE_Data_Migration_Manager{
 				'status'=> EE_Data_Migration_Manager::status_fatal_error,
 				'message'=> sprintf(__("Unknown fatal error occurred: %s", "event_espresso"),$e->getMessage()),
 				'script'=>'Unknown');
-			$this->add_error_to_migrations_ran($e->getMessage."; Stack trace:".$e->getTraceAsString());
+			$this->add_error_to_migrations_ran($e->getMessage()."; Stack trace:".$e->getTraceAsString());
 		}
-		$warnings_etc = '';
 		$warnings_etc = @ob_get_contents();
 		ob_end_clean();
 		$response['message'] .=$warnings_etc;
@@ -666,22 +667,23 @@ class EE_Data_Migration_Manager{
 			foreach($migrations_ran_for_plugin as $version_string => $array_or_migration_obj){
 	//			echo "saving migration script to $version_string<br>";
 				$plugin_slug_for_use_in_option_name = $plugin_slug.".";
-				$old_option_value = get_option(self::data_migration_script_mapping_option_prefix.$plugin_slug_for_use_in_option_name.$version_string);
+				$option_name = self::data_migration_script_option_prefix.$plugin_slug_for_use_in_option_name.$version_string;
+				$old_option_value = get_option($option_name);
 				if($array_or_migration_obj instanceof EE_Data_Migration_Script_Base){
 					$script_array_for_saving = $array_or_migration_obj->properties_as_array();
 					if( $old_option_value != $script_array_for_saving){
-						$successful_updates = update_option(self::data_migration_script_option_prefix.$plugin_slug_for_use_in_option_name.$version_string,$script_array_for_saving);
+						$successful_updates = update_option($option_name,$script_array_for_saving);
 					}
 				}else{//we don't know what this array-thing is. So just save it as-is
 	//				$array_of_migrations[$version_string] = $array_or_migration_obj;
 					if($old_option_value != $array_or_migration_obj){
-						$successful_updates = update_option(self::data_migration_script_option_prefix.$plugin_slug_for_use_in_option_name.$version_string,$array_or_migration_obj);
+						$successful_updates = update_option($option_name,$array_or_migration_obj);
 					}
 				}
-	//			if( ! $successful_updates ){
-	//					global $wpdb;
-	//				return $wpdb->last_error;
-	//			}
+				if( ! $successful_updates ){
+					global $wpdb;
+					return $wpdb->last_error;
+				}
 			}
 		}
 		return true;
@@ -721,23 +723,24 @@ class EE_Data_Migration_Manager{
 	/**
 	 * Gets the classname for the most up-to-date DMS (ie, the one that will finally
 	 * leave the DB in a state usable by the current plugin code).
+	 * @param string $plugin_slug the slug for the ee plugin we are searching for. Default is 'Core'
 	 * @return string
 	 */
-	public function get_most_up_to_date_dms(){
+	public function get_most_up_to_date_dms($plugin_slug = 'Core'){
 		$class_to_filepath_map = $this->get_all_data_migration_scripts_available();
 		$most_up_to_date_dms_classname = NULL;
 		foreach($class_to_filepath_map as $classname => $filepath){
 			if($most_up_to_date_dms_classname === NULL){
-				list($plugin_slug,$version_string) = $this->script_migrates_to_version($classname);
+				list($this_plugin_slug,$version_string) = $this->script_migrates_to_version($classname);
 //				$details = $this->parse_dms_classname($classname);
-				if($plugin_slug == 'Core'){//if it's for core, it wins
+				if($this_plugin_slug == $plugin_slug){//if it's for core, it wins
 					$most_up_to_date_dms_classname = $classname;
 				}//if it wasn't for core, we must keep searching for one that is!
 				continue;
 			}else{
 				list($champion_slug,$champion_version) = $this->script_migrates_to_version($most_up_to_date_dms_classname);
 				list($contender_slug,$contender_version) = $this->script_migrates_to_version($classname);
-				if($contender_slug == 'Core' && version_compare($champion_version, $contender_version, '<')){
+				if($contender_slug == $plugin_slug && version_compare($champion_version, $contender_version, '<')){
 					//so the contenders version is higher and its for Core
 					$most_up_to_date_dms_classname = $classname;
 				}
