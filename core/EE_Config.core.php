@@ -152,6 +152,7 @@ final class EE_Config {
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
+		$this->environment = new EE_Environment_Config();
 		$this->addons = apply_filters('FHEE__EE_Config__construct__addons', new stdClass() );
 		$this->_registered_addon_slugs = apply_filters( 'FHEE__EE_Config___registered_addon_slugs', array() );
 		// set _module_route_map
@@ -1914,9 +1915,42 @@ class EE_Environment_Config extends EE_Config_Base {
 		$this->_set_php_values();
 	}
 
+
+	/**
+	 * This sets the php environment variables.
+	 *
+	 * @since 4.4.0
+	 * @return void
+	 */
 	protected function _set_php_values() {
 		$this->php->max_input_vars = ini_get( 'max_input_vars' );
 		$this->php->version = phpversion();
+	}
+
+
+
+	/**
+	 * helper method for determining whether input_count is
+	 * reaching the potential maximum the server can handle
+	 * according to max_input_vars
+	 *
+	 * @param int $input_count the count of input vars.
+	 *
+	 * @return array {
+	 *         An array that represents whether available space and if no available space the error message.
+	 *         @type bool $has_space		whether more inputs can be added.
+	 *         @type string $msg 		Any message to be displayed.
+	 * }
+	 */
+	public function max_input_vars_limit_check( $input_count = 0 ) {
+		if ( $input_count >= $this->php->max_input_vars ) {
+			$response['has_space'] = FALSE;
+			$response['msg'] = __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
+		} else {
+			$response['has_space'] = TRUE;
+			$response['msg'] = '';
+		}
+		return $response;
 	}
 }
 
