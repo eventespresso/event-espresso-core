@@ -224,7 +224,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return void
 	 */
 	public function _possibly_set_ee_request_var(){
-
+		// check if ee action var has been set
 		if ( ! EE_Registry::instance()->REQ->is_set( 'ee' )) {
 			// check that route exists for CPT archive slug
 			if ( is_archive() && EE_Config::get_route( $this->CPT['plural_slug'] )) {
