@@ -259,12 +259,16 @@ final class EE_Request_Handler {
 	 *    setter
 	 *
 	 * @access    public
-	 * @param $key
-	 * @param $value
+	 * @param      $key
+	 * @param      $value
+	 * @param bool $override_ee
 	 * @return    void
 	 */
-	public function set( $key, $value ) {
-		$this->_params[ $key ] = $value;
+	public function set( $key, $value, $override_ee = FALSE ) {
+		// don't allow "ee" to be overwritten unless explicitly instructed to do so
+		if ( $key != 'ee' || ( $key == 'ee' && isset( $this->_params['ee'] ) && $override_ee )) {
+			$this->_params[ $key ] = $value;
+		}
 	}
 
 
