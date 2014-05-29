@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Data_Migration_Manager_Test
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
@@ -56,12 +56,12 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		$this->assertArrayNotHasKey('EE_DMS_Core_4_1_0',$dmss);
 		$this->assertArrayHasKey('EE_DMS_Mock_1_0_0',$dmss);
-		
+
 		//now pretend we're elsewhere in the migration where 4.2 should be ran
 		$this->_pretend_current_db_state_is_at('4.1.1');
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		$this->assertArrayHasKey('EE_DMS_Core_4_2_0',$dmss);
-		
+
 	}
 	public function test_parse_dms_classname(){
 		$details = EE_Data_Migration_Manager::instance()->parse_dms_classname("EE_DMS_Funky_4_8_12");
@@ -122,6 +122,11 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function add_mock_dms($dms_folders){
 		$dms_folders[] = EE_TESTS_DIR . 'mocks/core/data_migration_scripts';
 		return $dms_folders;
+	}
+	public function test_script_migrates_to_version(){
+		$migrates_to = EE_Data_Migration_Manager::instance()->script_migrates_to_version('EE_DMS_Core_6_4_3');
+		$this->assertEquals( 'Core', $migrates_to[ 'slug' ] );
+		$this->assertEquals( '6.4.3', $migrates_to[ 'version' ] );
 	}
 }
 

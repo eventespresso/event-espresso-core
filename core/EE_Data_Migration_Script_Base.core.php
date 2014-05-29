@@ -179,8 +179,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		global $wpdb;
 		$old_table_name_sans_wp = str_replace($wpdb->prefix,"",$old_table_name);
 		$new_table_name_sans_wp = str_replace($wpdb->prefix,"",$new_table_name);
-		list($plugin_slug,$version) = EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
-		return substr(EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix.$plugin_slug.'_'.$version.'_'.$old_table_name_sans_wp.'_'.$new_table_name_sans_wp,0,64);
+		$migrates_to = EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
+		return substr( EE_Data_Migration_Manager::data_migration_script_mapping_option_prefix . $migrates_to [ 'slug' ] . '_' . $migrates_to[ 'version' ] . '_' . $old_table_name_sans_wp . '_' . $new_table_name_sans_wp, 0, 64 );
 	}
 
 
@@ -502,7 +502,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	 * that will be updated to. Eg array('Core','4.1.0')
 	 */
 	public final function migrates_to_version(){
-		return EE_Data_Migration_Manager::instance()->script_migrates_to_version(get_class($this));
+		return EE_Data_Migration_Manager::instance()->script_migrates_to_version( get_class( $this ) );
 	}
 
 	/**
@@ -515,7 +515,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 	public function slug(){
 		$migrates_to_version_info = $this->migrates_to_version();
 		//the slug is the first part of the array
-		return $migrates_to_version_info[0];
+		return $migrates_to_version_info[ 'slug' ];
 	}
 	/**
 	 * Returns the script's priority relative to DMSs from other addons. However, when

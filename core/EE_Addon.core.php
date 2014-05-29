@@ -209,7 +209,7 @@ abstract class EE_Addon extends EE_Configurable {
 			echo "errors occurred while initializing db:";
 			var_dump( $current_data_migration_script->get_errors() );
 		}
-		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( $this->name(), $this->version() ) );
+		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( 'slug' => $this->name(), 'version' => $this->version() ) );
 	}
 
 
