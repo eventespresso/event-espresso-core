@@ -345,7 +345,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 //				}
 			} else {
-				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retreived from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			}
 		} else {
 			$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
@@ -363,7 +363,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// but if this transaction has already been saved to the db earlier in the same session (ie: it's not a revisit)... then let's pull that
 //				echo '<h5 style="color:#2EA2CC;">$ID : <span style="color:#E76700">' . $ID . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
-					EE_Error::add_error( __( 'Your Registration and Transaction information could not be retreived from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					return FALSE;
 				}
 			}
@@ -437,7 +437,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// but if this transaction has already been saved to the db... then let's pull that
 			if ( $ID = $this->_transaction->ID() ) {
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
-					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					return FALSE;
 				}
 			}
