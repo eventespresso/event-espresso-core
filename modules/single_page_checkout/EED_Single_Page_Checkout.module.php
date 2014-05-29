@@ -367,7 +367,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// but if this transaction has already been saved to the db... then let's pull that
 			if ( $ID = $this->_transaction->ID() ) {
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
-					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					return FALSE;
 				}
 			}
@@ -490,7 +490,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		try {
 			// create new TXN
 			$this->_transaction = EE_Transaction::new_instance( array(
-				'TXN_timestamp' => current_time('mysql'),
+				'TXN_timestamp' => current_time('timestamp'),
 				'TXN_total' => $this->_cart->get_cart_grand_total(),
 				'TXN_paid' => 0,
 				'STS_ID' => EEM_Transaction::failed_status_code,
@@ -508,13 +508,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return 	void
 	 */
 	private function _initialize_registrations() {
-		//d($this->_cart->all_ticket_quantity_count());
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			$att_nmbr = 0;
 			$total_items = $this->_cart->all_ticket_quantity_count();
 			// now let's add the cart items to the $transaction
 			foreach ( $this->_cart->get_tickets() as $item ) {
-				// grab the related ticket object for this lient_item
+				// grab the related ticket object for this line_item
 				$ticket = $item->ticket();
 				if ( ! $ticket instanceof EE_Ticket ){
 					EE_Error::add_error(sprintf(__("Line item %s did not contain a valid ticket", "event_espresso"),$item->ID()), __FILE__, __FUNCTION__, __LINE__);
@@ -545,7 +544,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							'TXN_ID' => $this->_transaction->ID(),
 							'TKT_ID' => $ticket->ID(),
 							'STS_ID' => $STS_ID,
-							'REG_date' => $this->_transaction->datetime(),
+							'REG_date' => $this->_transaction->get( 'TXN_timestamp' ),
 							'REG_final_price' => $ticket->price(),
 							'REG_session' => EE_Registry::instance()->SSN->id(),
 							'REG_count' => $att_nmbr,
