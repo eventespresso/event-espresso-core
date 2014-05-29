@@ -409,7 +409,8 @@ class EE_Data_Migration_Manager{
 		//ok we have all the scripts that should run, now let's make them into flat array
 		$scripts_that_should_run = array();
 		foreach($script_classes_that_should_run_per_iteration as $iteration => $scripts_at_priority){
-			foreach($scripts_at_priority as $priority => $scripts){
+			ksort($scripts_at_priority);
+			foreach($scripts_at_priority as $scripts){
 				foreach($scripts as $script){
 					$scripts_that_should_run[get_class($script)] = $script;
 				}
