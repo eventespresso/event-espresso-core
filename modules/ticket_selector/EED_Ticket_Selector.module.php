@@ -193,7 +193,7 @@ class EED_Ticket_Selector extends  EED_Module {
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		$checkout_url = EEH_Event_View::event_link_url( $ID );
 		if ( ! $checkout_url ) {
-			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
+			$msg = __('The URL for the Event Details page could not be retrieved.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$checkout_url = add_query_arg( array( 'ee' => 'process_ticket_selections' ), $checkout_url );	
@@ -245,7 +245,7 @@ class EED_Ticket_Selector extends  EED_Module {
 	*/
 	public static function display_view_details_btn() {
 		if ( ! self::$_event->get_permalink() ) {
-			$msg = __('The URL for the Event Details page could not be retreived.', 'event_espresso' );
+			$msg = __('The URL for the Event Details page could not be retrieved.', 'event_espresso' );
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 		}
 		$view_details_btn = '<form id="" method="POST" action="' . self::$_event->get_permalink() . '">';
@@ -331,7 +331,7 @@ class EED_Ticket_Selector extends  EED_Module {
 							}
 						} else {
 							// nothing added to cart
-							$error_msg = __( 'A valid ticket could not be retreived for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
+							$error_msg = __( 'A valid ticket could not be retrieved for the event.<br/>Please click the back button on your browser and try again.', 'event_espresso' );
 							EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}
@@ -450,7 +450,7 @@ class EED_Ticket_Selector extends  EED_Module {
 							}
 						} else {
 							// nothing added to cart
-							$error_msg = __( 'A valid ticket could not be retreived for this event.<br/>Please refresh this page and try again.', 'event_espresso' );
+							$error_msg = __( 'A valid ticket could not be retrieved for this event.<br/>Please refresh this page and try again.', 'event_espresso' );
 							EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 						}
 					}

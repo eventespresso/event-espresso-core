@@ -25,7 +25,7 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 
 		//setup any properties containing various test factory objects. EE_Test_Factories should extend the WP_UnitTest_Factory_for_Thing abstract class ( @see wp tests/includes/factory.php).  It's possible that EE might be able to extend the EE Factories (i.e. post) as well.
 		//eg.
-		//$this->event = new EE_UnitTest_Factory_For_Event( $this );
+		$this->event = new EE_UnitTest_Factory_For_Event( $this );
 	}
 }
 
@@ -45,22 +45,35 @@ class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 
 	public function __construct( $factory = NULL ) {
 		parent::__construct( $factory );
-		$this->default_generation_definitions = array(); //default args for creating events.  We might put in here the default event column values that we want for tests.
+		//default args for creating events.
+		$this->default_generation_definitions = array(
+			'EVT_name' => new WP_UnitTest_Generator_Sequence( 'Event %s' ),
+			'EVT_desc' => new WP_UnitTest_Generator_Sequence( 'Event content %s' ),
+			'EVT_short_desc' => new WP_UnitTest_Generator_Sequence( 'Event excerpt %s' ),
+		);
 	}
 
 
 	public function create_object( $args ) {
-		//all the stuff in here for creating an event.
+		$event = EE_Event::new_instance( $args );
+		return $event->save();
 	}
 
 
 
 	public function update_object( $EVT_ID, $cols_n_data ) {
 		//all the stuff for updating an event.
+		$event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
+		if ( ! $event instanceof EE_Event )
+			return null;
+		foreach ( $cols_n_data as $key => $val ) {
+			$event->set( $key, $val );
+		}
+		return $event->save();
 	}
 
 
 	public function get_object_by_id( $EVT_ID ) {
-		//all the stuff for getting an event by Event ID.
+		return EEM_Event::instance()->get_one_by_ID( $EVT_ID );
 	}
 }
