@@ -1095,6 +1095,90 @@ class EEH_Activation {
 
 
 
+	/**
+	 * Check to see if any ee3addons matching the given slug are present and if so , deactivate with
+	 * persistent notice.
+	 *
+	 * @since 4.4.0
+	 *
+	 * @param string $plugin plugin path to plugin being activated.
+	 * @return void
+	 */
+	public static function screen_for_ee3_addons( $plugin = '' ) {
+		$addons_to_disable = array();
+		$ee3addons = array(
+			'espresso-infusionsoft',
+			'espresso-permissions-pro',
+			'espresso-frontend-event-manager-pr',
+			'espresso-volume-discounts-pr',
+			'espresso-json-api',
+			'grid-template',
+			'espresso-calendar',
+			'espresso-price-modifier-pr',
+			'custom-templates',
+			'recurring-events-drop-down',
+			'espresso-social',
+			'espresso-seating',
+			'espresso-template-calendar-table',
+			'espresso-s2member-pr',
+			'espresso-template-category-accordian',
+			'espresso-groupon',
+			'espresso-attendee-mover-pr',
+			'espresso-custom-files',
+			'espresso-services',
+			'espresso-mailchimp',
+			'espresso-multiple',
+			'espresso-recurring',
+			'espresso-ticketing',
+			'espresso-members',
+			'espresso-permissions-basic',
+			'vector-maps',
+			'date-range'
+			);
+
+		//make sure needed functions are available.
+		if ( ! function_exists('get_plugins')) {
+			//require file if needed.
+			require_once ABSPATH.'wp-admin/includes/plugin.php';
+		}
+		// if plugin is empty then get list of all plugins in the WP plugin directory else we just use incoming plugin.
+		if ( empty( $plugin ) ) {
+			$all_plugins = get_plugins();
+		} else {
+			$all_plugins[$plugin] = get_plugin_data( WP_PLUGIN_DIR . '/' . $plugin, false, false );
+		}
+
+		//loop through the plugins and check if they are active.
+		foreach ( $all_plugins as $path => $plugin_details ) {
+			$plugin_basename = plugin_basename( trim( $path ) );
+			//first check if plugin is active.  If it isn't then it doesn't matter. If $plugin isn't empty then this is being called on an activation hook so the inactive check is pointless.
+			if ( empty( $plugin ) && is_plugin_inactive( $plugin_basename ) )
+				continue;
+
+			//now check if any of the values in the ee3addons array is found in the plugin_basename.
+			foreach( $ee3addons as $addon ) {
+				if ( strpos( $plugin_basename, $addon ) !== false ) {
+					$addons_to_disable[$plugin_basename] = $plugin_details['Name'];
+					break;
+				}
+			}
+		}
+
+		//if there are addons_to_disable, let's disable them and setup our persistent message
+		$msg = '';
+		if ( !empty( $addons_to_disable ) ) {
+			$msg = _n('The following Event Espresso addon has been disabled because it is not compatible with Event Espresso 4+:', 'The following Event Espresso addons have been disabled because they are not compatible with Event Espresso 4+:', count( $addons_to_disable ), 'event_espresso');
+			$msg .= '<ul>';
+			foreach ( $addons_to_disable as $basename => $name ) {
+				deactivate_plugins( $basename, true );
+				$msg .= '<li>' . $name . '</li>';
+			}
+			$msg .= '</ul>';
+		}
+		if ( !empty($msg) )
+			EE_Error::add_persistent_admin_notice( 'ee3plugins_disabled', $msg, true );
+	}
+
 }
 // End of file EEH_Activation.helper.php
 // Location: /helpers/EEH_Activation.core.php

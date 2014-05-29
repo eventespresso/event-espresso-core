@@ -80,11 +80,12 @@ class EEH_Template {
 	 */
 	public static function load_espresso_theme_functions() {
 		if ( ! defined( 'EE_THEME_FUNCTIONS_LOADED' )) {
-			if ( is_readable( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'functions.php' )) {
-				require_once( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'functions.php' );
+			if ( is_readable( EE_PUBLIC . EE_Config::get_current_theme() . DS . 'functions.php' )) {
+				require_once( EE_PUBLIC . EE_Config::get_current_theme() . DS . 'functions.php' );
 			}
 		}
 	}
+
 
 	/**
 	 * 	get_espresso_themes - returns an array of Espresso Child themes located in the /templates/ directory
@@ -93,7 +94,7 @@ class EEH_Template {
 	 */
 	public static function get_espresso_themes() {
 		if ( empty( EEH_Template::$_espresso_themes )) {
-			$espresso_themes =  glob( EE_TEMPLATES . '*', GLOB_ONLYDIR );
+			$espresso_themes =  glob( EE_PUBLIC . '*', GLOB_ONLYDIR );
 			if (( $key = array_search( 'global_assets', $espresso_themes )) !== FALSE ) {
 			    unset( $espresso_themes[ $key ] );
 			}
@@ -125,7 +126,7 @@ class EEH_Template {
 		if ( $name != '' ) {
 			$templates[] = "{$slug}-{$name}.php";
 		}
-		// allow tempalte parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
+		// allow template parts to be turned off via something like: add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
 		if ( apply_filters( "FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", TRUE )) {
 			EEH_Template::locate_template( $templates, $template_args, TRUE, $return_string );
 		}
@@ -177,7 +178,9 @@ class EEH_Template {
 				EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme,
 				// then in the root of the /wp-content/uploads/espresso/templates/ folder
 				EVENT_ESPRESSO_TEMPLATE_DIR,
-				// in the  /wp-content/plugins/(EE4 folder)/templates/(current EE theme)/ folder within the plugin
+				// in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
+				EE_PUBLIC . $current_theme,
+				// in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
 				EE_TEMPLATES . $current_theme,
 				// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
 				EE_PLUGIN_DIR_PATH
@@ -207,7 +210,7 @@ class EEH_Template {
 			}
 		}
 		// if we got it and you want to see it...
-		if ( is_readable( $template_path ) && $load ) {
+		if ( $template_path && $load ) {
 			if ( $return_string ) {
 				return EEH_Template::display_template( $template_path, $template_args, $return_string );
 			} else {
@@ -496,6 +499,103 @@ class EEH_Template {
 		$content .= '</dl>' . "\n";
 		$content .= '</div>' . "\n";
 		return $content;
+	}
+
+
+
+	/**
+	 * wrapper for self::get_paging_html() that simply echos the generated paging html
+	 *
+	 * @since 4.4.0
+	 * @see   self:get_paging_html() for argument docs.
+	 */
+	public static function paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE ) {
+		echo self::get_paging_html( $total_items, $current, $per_page, $url, $show_num_field );
+	}
+
+
+
+	/**
+	 * A method for generating paging similar to WP_List_Table
+	 *
+	 * @since 4.4.0
+	 * @see      wp-admin/includes/class-wp-list-table.php WP_List_Table::pagination()
+	 *
+	 * @param  integer $total_items      	How many total items there are to page.
+	 * @param  integer $current 	 	What the current page is.
+	 * @param  integer $per_page 		How many items per page.
+	 * @param  string   $url                  	What the base url for page links is.
+	 * @param  boolean $show_num_field  Whether to show the input for changing page number.
+	 * @return  string
+	 */
+	public static function get_paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE ) {
+		$page_links = array();
+		$disable_first = $disable_last = '';
+		$total_items = (int) $total_items;
+		$per_page = (int) $per_page;
+		$current = (int) $current;
+
+		$total_pages = round( ceil( $total_items ) / $per_page );
+
+		if ( $total_pages <= 1)
+			return '';
+
+		$output = '<span class="displaying-num">' . sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
+
+		if ( $current == 1 )
+			$disable_first = ' disabled';
+		if ( $current == $total_pages )
+			$disable_last = ' disabled';
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'first-page' . $disable_first,
+			esc_attr__( 'Go to the first page' ),
+			esc_url( remove_query_arg( 'paged', $url ) ),
+			'&laquo;'
+		);
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'prev-page' . $disable_first,
+			esc_attr__( 'Go to the previous page' ),
+			esc_url( add_query_arg( 'paged', max( 1, $current-1 ), $url ) ),
+			'&lsaquo;'
+		);
+
+		if ( ! $show_num_field )
+			$html_current_page = $current;
+		else
+			$html_current_page = sprintf( "<input class='current-page' title='%s' type='text' name='paged' value='%s' size='%d' />",
+				esc_attr__( 'Current page' ),
+				$current,
+				strlen( $total_pages )
+			);
+
+		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
+		$page_links[] = '<span class="paging-input">' . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . '</span>';
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'next-page' . $disable_last,
+			esc_attr__( 'Go to the next page' ),
+			esc_url( add_query_arg( 'paged', min( $total_pages, $current+1 ), $url ) ),
+			'&rsaquo;'
+		);
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'last-page' . $disable_last,
+			esc_attr__( 'Go to the last page' ),
+			esc_url( add_query_arg( 'paged', $total_pages, $url ) ),
+			'&raquo;'
+		);
+
+		$pagination_links_class = 'pagination-links';
+		$output .= "\n<span class='$pagination_links_class'>" . join( "\n", $page_links ) . '</span>';
+
+		if ( $total_pages )
+			$page_class = $total_pages < 2 ? ' one-page' : '';
+		else
+			$page_class = ' no-pages';
+
+		return "<div class='tablenav-pages{$page_class}'>$output</div>";
 	}
 
 

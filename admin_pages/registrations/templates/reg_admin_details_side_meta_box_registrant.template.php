@@ -21,9 +21,14 @@
 </div>
 
 
-<p style="text-align:right;">
-	<?php $att_link = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_attendee', 'post'=>$ATT_ID ), REG_ADMIN_URL ); ?>
-	<a href="<?php echo $att_link; ?>" title="<?php _e( 'View details for this contact', 'event_espresso' );?>">
-		<?php _e('View / Edit this Contact', 'event_espresso'); ?>
+<p class="contact-details-buttons">
+	<a class="button button-small" href="<?php echo $att_edit_link; ?>" title="<?php echo $att_edit_label; ?>">
+		<?php echo $att_edit_label; ?>
 	</a>
+	<?php if ( !empty( $create_link ) ) : ?>
+		<a class="button button-small" href="<?php echo $create_link; ?>" title="<?php _e('This registration shares the contact details for the primary registration in this group.  If you\'d like this registration to have its own details, you can do so by clicking this button', 'event_espresso'); ?>">
+		<?php echo $create_label; ?>
+	</a>
+	<?php endif; ?>
+	<div style="clear:both"></div>
 </p>

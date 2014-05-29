@@ -97,6 +97,9 @@ class EEM_Attendee extends EEM_CPT_Base {
 		parent::__construct();
 
 	}
+	public function get_all_wpdb_results($query_params){
+		return $this->_get_all_wpdb_results($query_params);
+	}
 
 
 
@@ -117,6 +120,14 @@ class EEM_Attendee extends EEM_CPT_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Attendee
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
 
 	/**
 	 * Gets all the attendees for a transaction (by using the esp_registration as a join table)

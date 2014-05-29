@@ -78,6 +78,8 @@ final class EE_Front_Controller {
 	 * @return \EE_Front_Controller
 	 */
 	private function __construct() {
+		// make sure template tags are loaded immediately so that themes don't break
+		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'load_espresso_template_tags' ), 10 );
 		// determine how to integrate WP_Query with the EE models
 		add_action( 'AHEE__EE_System__initialize', array( $this, 'employ_CPT_Strategy' ));
 		// load other resources and begin to actually run shortcodes and modules
@@ -116,6 +118,19 @@ final class EE_Front_Controller {
 
 
 	/*********************************************** 		INIT ACTION HOOK		 ***********************************************/
+
+
+
+	/**
+	 * 	load_espresso_template_tags - if current theme is an espresso theme, or uses ee theme template parts, then load it's functions.php file ( if not already loaded )
+	 *
+	 * 	@return void
+	 */
+	public function load_espresso_template_tags() {
+		if ( is_readable( EE_PUBLIC . 'template_tags.php' )) {
+			require_once( EE_PUBLIC . 'template_tags.php' );
+		}
+	}
 
 
 
@@ -264,15 +279,16 @@ final class EE_Front_Controller {
 				$post_shortcodes = apply_filters( 'FHEE__Front_Controller__initialize_shortcodes__post_shortcodes', $post_shortcodes );
 				// now cycle thru shortcodes
 				foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
-					// are we on this page ?
+					// are we on this page, or on the blog page, or an EE CPT category page ?
 					if ( $current_post == $post_name || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
-						if ( ! isset( EE_Registry::instance()->shortcodes[ $shortcode_class ] )) {
-							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE ) {
+						if ( ! isset( EE_Registry::instance()->shortcodes->$shortcode_class )) {
+							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE &&  $current_post != $page_for_posts ) {
 								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
 							}
+							add_shortcode( $shortcode_class, array( 'EES_Shortcode', 'invalid_shortcode_processor' ));
 							break;
 						}
 						// is this : a shortcodes set exclusively for this post, or for the home page, or a category, or a taxonomy ?
@@ -287,15 +303,15 @@ final class EE_Front_Controller {
 								break;
 							}
 							// and pass the request object to the run method
-							EE_Registry::instance()->shortcodes[ $shortcode_class ] = $sc_reflector->newInstance();
+							EE_Registry::instance()->shortcodes->$shortcode_class = $sc_reflector->newInstance();
 							// fire the shortcode class's run method, so that it can activate resources
-							EE_Registry::instance()->shortcodes[ $shortcode_class ]->run( $WP );
+							EE_Registry::instance()->shortcodes->$shortcode_class->run( $WP );
 						}
 					// if this is NOT the "Posts page" and we have a valid entry for the "Posts page" in our tracked post_shortcodes array
 					} else if ( $post_name != $page_for_posts && isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ] )) {
 						// and the shortcode is not being tracked for this page
 						if ( ! isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $page_for_posts ][ $shortcode_class ] )) {
-							// then remove the "fallback shortcode
+							// then remove the "fallback" shortcode processor
 							remove_shortcode( $shortcode_class );
 						}
 					}
@@ -327,10 +343,13 @@ final class EE_Front_Controller {
 					$module = $Module_Request_Router->resolve_route( $route );
 					// get registered view for route
 					$this->_template_path = $Module_Request_Router->get_view( $route );
-					// map the routes to the module objects
-					EE_Registry::instance()->modules[ $route ] = $module;
+					// grab module name
+					$module_name = $module->module_name();
+					// map the module to the module objects
+					EE_Registry::instance()->modules->$module_name = $module;
 				}
 			}
+			//d( EE_Registry::instance()->modules );
 		}
 	}
 
@@ -339,9 +358,6 @@ final class EE_Front_Controller {
 
 
 	/*********************************************** 		WP HOOK		 ***********************************************/
-
-
-
 
 
 
@@ -442,17 +458,17 @@ final class EE_Front_Controller {
 						'pos' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s%v' : '%v%s',
 						'neg' => EE_Registry::instance()->CFG->currency->sign_b4 ? '- %s%v' : '- %v%s',
 						'zero' => EE_Registry::instance()->CFG->currency->sign_b4 ? '%s--' : '--%s'
-						 ),
+					),
 					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk,
 					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
 					'precision' => EE_Registry::instance()->CFG->currency->dec_plc
-					),
+				),
 				'number' => array(
 					'precision' => 0,
 					'thousand' => EE_Registry::instance()->CFG->currency->thsnds,
 					'decimal' => EE_Registry::instance()->CFG->currency->dec_mrk
-					)
-				);
+				)
+			);
 			wp_localize_script('ee-accounting', 'EE_ACCOUNTING_CFG', $currency_config);
 		}
 
@@ -548,18 +564,11 @@ final class EE_Front_Controller {
 	 * @return    string
 	 */
 	public function template_include( $template_include_path = NULL ) {
-//		echo '<h4><br/>$template_include_path : ' . $template_include_path . ' </h4>';
-//		echo '<h4>$this->_template_path : ' . $this->_template_path . '</h4>';
-		// use our locate_template() method which checks for the template in the following places:
-		// * /wp-content/theme/ (currently active theme)
-		// * /wp-content/uploads/espresso/templates/
-		// * /wp-content/uploads/espresso/templates/ee-theme/
-		// * /wp-content/plugins/EE4/templates/espresso_default/
 		$this->_template_path = ! empty( $this->_template_path ) ? basename( $this->_template_path ) : basename( $template_include_path );
 		$template_path = EEH_Template::locate_template( $this->_template_path, array(), FALSE );
 		$this->_template_path = ! empty( $template_path ) ? $template_path : $template_include_path;
 		$this->_template = basename( $this->_template_path );
-//		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+		//		echo '<h4>$this->_template_path : ' . $this->_template_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		return $this->_template_path;
 	}
 
@@ -575,7 +584,6 @@ final class EE_Front_Controller {
 	public function get_selected_template( $with_path = FALSE ) {
 		return $with_path ? $this->_template_path : $this->_template;
 	}
-
 
 
 

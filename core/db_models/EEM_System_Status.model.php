@@ -44,6 +44,7 @@ class EEM_System_Status{
 			'wp_settings'=>$this->get_wp_settings(),
 			'https_enabled'=>$this->get_https_enabled(),
 			'php_version'=>$this->php_version(),
+			'php.ini_settings'=>$this->get_php_ini_all(),
 			'php_info'=>$this->get_php_info(),
 			
 		);
@@ -191,12 +192,21 @@ class EEM_System_Status{
 	 */
 	function get_https_enabled(){
 		$home = str_replace("http://", "https://", home_url());
-		@$handle = fopen($home, "r");
-		if(empty($handle)){ 
-			return FALSE;
+		$response = wp_remote_get($home);
+		if($response instanceof WP_Error){ 
+			$error_string = '';
+			foreach($response->errors as $short_name => $description_array){
+				$error_string .= "<b>$short_name</b>: ".implode(", ",$description_array);
+			}
+			return $error_string;
 		}
-		return TRUE;
+		return "ok!";
 	}
-	
-	
+	/**
+	 * Gets all the php.ini settings
+	 * @return array
+	 */
+	function get_php_ini_all(){
+		return ini_get_all();
+	}	
 }

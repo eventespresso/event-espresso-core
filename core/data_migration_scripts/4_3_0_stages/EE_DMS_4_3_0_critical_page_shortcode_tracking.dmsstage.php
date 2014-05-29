@@ -72,13 +72,15 @@ class EE_DMS_4_3_0_critical_page_shortcode_tracking extends EE_Data_Migration_Sc
         EE_Config::instance()->update_espresso_config();
         // check for errors
 		$notices = EE_Error::get_notices( FALSE );
-		// no errors returns 1
-		if( ! isset( $notices['errors'] )) {
-            $this->set_completed();
+		// any errors to report?
+		if( isset( $notices['errors'] )) {
+          foreach($notices as $key => $value){
+			  $this->add_error($value);
+		  }  
+        } 
+		//regardless of whether it worked or not, we ought to continue the migration
+		$this->set_completed();
             return 1;
-        } else {
-            return 0;
-        }
 	}
 
 

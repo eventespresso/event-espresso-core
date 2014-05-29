@@ -654,6 +654,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 
 		do_action( 'FHEE__EE_Admin_Page___load_page_dependencies__after_load', $this->page_slug );
+		//targeted hook
+		do_action( 'FHEE__EE_Admin_Page___load_page_dependencies__after_load__' . $this->page_slug . '__' . $this->_req_action );
 
 	}
 
@@ -2043,13 +2045,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['publish_box_extra_content'] = isset( $this->_template_args['publish_box_extra_content'] ) ? $this->_template_args['publish_box_extra_content'] : '';
 
 
-		if ( $delete ) {
+		if ( $delete && !empty( $id ) ) {
 			$delete = is_bool($delete) ? 'delete' : $delete; //make sure we have a default if just true is sent.
 			$delete_link_args = array( $name => $id );
 			$delete = $this->get_action_link_or_button( $delete, $delete, $delete_link_args, 'submitdelete deletion');
 		}
 
-		$this->_template_args['publish_delete_link'] = $delete;
+		$this->_template_args['publish_delete_link'] = !empty( $id ) ? $delete : '';
 		// create hidden id field for what is being saved
 		$hidden_field_arr[$name] = array(
 			'type' => 'hidden',
@@ -2331,7 +2333,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_template_args['list_table_hidden_fields'] = $hidden_form_fields;
 
 		//display message about search results?
-		$this->_template_args['before_list_table'] .= !empty( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '';
+		$this->_template_args['before_list_table'] .= apply_filters( 'FHEE__EE_Admin_Page___display_admin_list_table_page__before_list_table__template_arg', !empty( $this->_req_data['s'] ) ? '<p class="ee-search-results">' . sprintf( __('Displaying search results for the search string: <strong><em>%s</em></strong>', 'event_espresso'), trim($this->_req_data['s'], '%') ) . '</p>' : '', $this->page_slug, $this->_req_data, $this->_req_action );
 
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $this->_template_args, TRUE );
 

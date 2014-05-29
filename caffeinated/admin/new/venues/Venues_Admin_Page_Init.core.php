@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Venues_Admin_Page_Init
  *
- * This is the init for the EE Venue Admin Pages.  See EE_Admin_Page_CPT_Init (and EE_Admin_Page_Init) for method inline docs. 
+ * This is the init for the EE Venue Admin Pages.  See EE_Admin_Page_CPT_Init (and EE_Admin_Page_Init) for method inline docs.
  *
  *
  * @package		Venues_Admin_Page_Init
@@ -32,7 +32,7 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 
 	public function __construct() {
 		//define some event categories related constants
-		define( 'EE_VENUES_PG_SLUG', 'espresso_venues' );	
+		define( 'EE_VENUES_PG_SLUG', 'espresso_venues' );
 		define( 'EE_VENUES_ADMIN_URL', admin_url('admin.php?page=' . EE_VENUES_PG_SLUG ));
 		define( 'EE_VENUES_ASSETS_URL', EE_CORE_CAF_ADMIN_URL . 'new/venues/assets/');
 		define( 'EE_VENUES_TEMPLATE_PATH', EE_CORE_CAF_ADMIN . 'new/venues/templates/' );
@@ -47,14 +47,18 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 		$this->menu_slug = EE_VENUES_PG_SLUG;
 	}
 
-	public function get_menu_map() {
-		$map = array(
-				'group' => 'management',
-				'menu_order' => 40,
-				'show_on_menu' => TRUE,
-				'parent_slug' => 'espresso_events'
-			);
-		return $map;
+
+	protected function _set_menu_map() {
+		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
+			'menu_group' => 'management',
+			'menu_order' => 40,
+			'show_on_menu' => TRUE,
+			'parent_slug' => 'espresso_events',
+			'menu_slug' => EE_VENUES_PG_SLUG,
+			'menu_label' => __('Venues', 'event_espresso'),
+			'capability' => 'administrator',
+			'admin_init_page' => $this
+			));
 	}
 
 } //end Venues_Admin_Page_Init

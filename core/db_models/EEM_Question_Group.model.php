@@ -24,7 +24,8 @@
 require_once ( EE_MODELS . 'EEM_Soft_Delete_Base.model.php' );
 require_once( EE_CLASSES . 'EE_Question_Group.class.php');
 class EEM_Question_Group extends EEM_Soft_Delete_Base {
-
+	const system_personal = 1;
+	const system_address = 2;
   	// private instance of the Attendee object
 	private static $_instance = NULL;
 
@@ -33,12 +34,12 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 	 *
 	 *		@access public
 	 *		@return EEM_Question_Group instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Attendee object

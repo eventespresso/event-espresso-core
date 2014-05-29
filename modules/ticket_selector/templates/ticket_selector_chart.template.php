@@ -94,6 +94,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 //echo '<br/><b>$remaining : ' . $remaining . '</b>';
 //echo '<br/><b> $ticket->ticket_status() : ' .  $tkt_status . '</b>';
 //echo '<br/><b> $ticket->uses() : ' .  $ticket->uses() . '</b>';
+//echo '<br/><b> $ticket->required() : ' .  $ticket->uses() . '</b>';
 				?>
 				</td>
 				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
@@ -138,9 +139,6 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 
 			?>
 				<select name="tkt-slctr-qty-<?php echo $EVT_ID; ?>[]" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct">
-				<?php if ( $min != 0 ) { ?>
-					<option value="0">&nbsp;0&nbsp;</option>
-				<?php } ?>
 				<?php
 					// this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
 					if ( ! $ticket->required() && $min !== 0 ) {

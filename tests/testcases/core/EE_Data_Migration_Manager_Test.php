@@ -4,16 +4,28 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
 /**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.3
+ *
+ * ------------------------------------------------------------------------
  *
  * EE_Data_Migration_Manager_Test
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
 /**
- * @group data_migration_scripts
+ * @group core/data_migration_scripts
  */
 class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function test_get_all_data_migration_scripts_available(){
@@ -26,9 +38,8 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$this->assertArrayHasKey('EE_DMS_Core_4_3_0', $dms_classpaths);
 	}
 	public function test_ensure_current_database_state_is_set(){
-		//options table should be empty to start
-		$this->assertWPOptionDoesNotExist(EE_Data_Migration_Manager::current_database_state);
 		$this->_pretend_current_code_state_is_at(espresso_version());
+		$this->_pretend_current_db_state_is_at();
 		$db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
 		$this->assertArrayHasKey('Core',$db_state);
 		$this->assertEquals(espresso_version(), $db_state['Core']);
@@ -40,7 +51,7 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$first = array_shift($dmss);
 		$this->assertInstanceOf('EE_DMS_Core_4_1_0',$first);
 		$second = array_shift($dmss);
-		$this->assertInstanceOf('EE_DMS_Mock_1_0_0',$first);
+		$this->assertInstanceOf('EE_DMS_Mock_1_0_0',$second);
 		//pretend we already ran one DMS
 		$dms_done = new EE_DMS_Core_4_1_0();
 		$dms_done->set_completed();
@@ -48,12 +59,12 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		$this->assertArrayNotHasKey('EE_DMS_Core_4_1_0',$dmss);
 		$this->assertArrayHasKey('EE_DMS_Mock_1_0_0',$dmss);
-		
+
 		//now pretend we're elsewhere in the migration where 4.2 should be ran
 		$this->_pretend_current_db_state_is_at('4.1.1');
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		$this->assertArrayHasKey('EE_DMS_Core_4_2_0',$dmss);
-		
+
 	}
 	public function test_parse_dms_classname(){
 		$details = EE_Data_Migration_Manager::instance()->parse_dms_classname("EE_DMS_Funky_4_8_12");
@@ -71,6 +82,16 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$dms_ran = EE_Data_Migration_Manager::instance()->get_data_migrations_ran();
 		$this->assertArrayHasKey('Core', $dms_ran);
 		$this->assertArrayhasKey('4.1.0',$dms_ran['Core']);
+	}
+	public function test_get_most_up_to_date_dms(){
+		$dms_classname = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
+		//yes, this test will need to be updated everytime we add a new core DMS
+		$this->assertEquals('EE_DMS_Core_4_3_0',$dms_classname);
+		EE_Data_Migration_Manager::reset();
+		$this->_add_mock_dms();
+		$non_core_dms = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms('Mock');
+		$this->assertEquals('EE_DMS_Mock_1_0_0',$non_core_dms);
+		$this->_remove_mock_dms();
 	}
 	private function _pretend_ran_dms(EE_Data_Migration_Script_Base $dms_class){
 		$details = EE_Data_Migration_Manager::instance()->parse_dms_classname(get_class($dms_class));
@@ -98,9 +119,17 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		add_filter('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array($this,'add_mock_dms'));
 		EE_Data_Migration_Manager::reset();
 	}
+	private function _remove_mock_dms(){
+		remove_filter('FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array($this,'add_mock_dms'));
+	}
 	public function add_mock_dms($dms_folders){
 		$dms_folders[] = EE_TESTS_DIR . 'mocks/core/data_migration_scripts';
 		return $dms_folders;
+	}
+	public function test_script_migrates_to_version(){
+		$migrates_to = EE_Data_Migration_Manager::instance()->script_migrates_to_version('EE_DMS_Core_6_4_3');
+		$this->assertEquals( 'Core', $migrates_to[ 'slug' ] );
+		$this->assertEquals( '6.4.3', $migrates_to[ 'version' ] );
 	}
 }
 

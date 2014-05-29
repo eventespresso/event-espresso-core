@@ -86,7 +86,7 @@
 	<?php if ( $grand_raw_total > 0 || $TXN_status != 'TCM' ) : ?>
 
 	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
-		<img id="cash-single" src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/cash-single-16x16.png" alt="" /><?php _e( 'Payment Details', 'event_espresso' );?>
+		<span class="ee-icon ee-icon-cash"></span><?php _e( 'Payment Details', 'event_espresso' );?>
 	</h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
@@ -120,12 +120,12 @@
 						<ul class="txn-overview-actions-ul">
 							<li>
 								<a class="txn-admin-payment-action-edit-lnk" title="<?php _e( 'Edit Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
-									<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/edit.png" alt="" width="13" height="13" />
+									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
 								<a class="txn-admin-payment-action-delete-lnk" title="<?php _e( 'Delete Payment', 'event_espresso' );?>" rel="<?php echo $PAY_ID;?>">
-									<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/trash-16x16.png" alt="" width="13" height="13" />
+									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>
 						</ul>
@@ -202,12 +202,12 @@
 						<ul class="txn-overview-actions-ul">
 							<li>
 								<a class="txn-admin-payment-action-edit-lnk" title="<?php _e( 'Edit Payment', 'event_espresso' );?>" rel="PAY_ID">
-									<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/edit.png" alt="" width="13" height="13" />
+									<div class="dashicons dashicons-edit" style="margin: 0;"></div>
 								</a>
 							</li>
 							<li>
 								<a class="txn-admin-payment-action-delete-lnk" title="<?php _e( 'Delete Payment', 'event_espresso' );?>" rel="PAY_ID">
-									<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/trash-16x16.png" alt="" width="13" height="13" />
+									<div class="dashicons dashicons-trash" style="margin: 0;"></div>
 								</a>
 							</li>
 						</ul>
@@ -267,17 +267,23 @@
 	<div id="txn-admin-apply-payment-dv" class="txn-admin-payment-option auto-hide" style="display: none;">
 
 		<h2 id="admin-modal-dialog-apply-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
-			<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/cash-single-add-24x24.png" alt="" />
+			<div class="ee-icon ee-icon-cash-add float-left"></div>
 			<?php echo __( 'Apply a Payment to Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
 		</h2>
 
 		<h2 id="admin-modal-dialog-edit-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
-			<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/cash-single-edit-24x24.png" alt="" />
-			<?php echo __( 'Edit Payment #', 'event_espresso' ) . '<span></span>' . __( ' for Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
+			<div class="ee-icon ee-icon-cash-edit float-left"></div>
+			<?php
+			echo sprintf(
+				__( 'Edit Payment #%s for Transaction #%s', 'event_espresso' ),
+				'<span></span>',
+				$txn_nmbr['value']
+			);
+			?>
 		</h2>
 
 		<h2 id="admin-modal-dialog-apply-refund-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
-			<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/cash-single-remove-24x24.png" alt="" />
+			<div class="ee-icon ee-icon-cash-remove float-left"></div>
 			<?php echo __( 'Apply a Refund to Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
 		</h2>
 
@@ -293,12 +299,12 @@
 					<input  type="hidden" name="txn_admin_payment[type]" id="txn-admin-payment-type-inp" value="1"/>
 					<input  type="hidden" name="txn_admin_payment[details]" id="txn-admin-payment-details-inp" value=""/>
 					<input  type="hidden" name="txn_admin_delete_payment_form_url" id="txn-admin-delete-payment-form-url-inp" value="<?php echo $delete_payment_form_url; ?>"/>
-					<input  type="hidden" name="txn_admin_todays_date" id="txn-admin-todays-date-inp" value="<?php echo date('Y-m-d h:i a', current_time('timestamp') ); ?>"/>
+					<input  type="hidden" name="txn_admin_todays_date" id="txn-admin-todays-date-inp" value="<?php echo date( 'Y-m-d h:i a', current_time( 'timestamp' )); ?>"/>
 
 					<div class="txn-admin-apply-payment-date-dv admin-modal-dialog-row">
 						<div class="validation-notice-dv"><?php _e( 'The following is  a required field', 'event_espresso' );?></div>
 						<label for="txn-admin-payment-date-inp" class=""><?php _e( 'Payment Date', 'event_espresso' );?></label>
-						<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp required" type="text" value="<?php echo date('Y-m-d h:i a', current_time('timestamp') );?>"/>
+						<input name="txn_admin_payment[date]" id="txn-admin-payment-date-inp" class="txn-admin-apply-payment-inp required" type="text" value="<?php echo date( 'Y-m-d h:i a', current_time( 'timestamp' )); ?>"/>
 						<br/>
 						<p class="description"><?php _e( 'The date the payment was actually made on', 'event_espresso' );?></p>
 					</div>
@@ -440,7 +446,7 @@
 	<div id="txn-admin-delete-payment-dv" class="txn-admin-payment-option auto-hide" style="display: none;">
 
 		<h2 id="admin-modal-dialog-delete-payment-h2" class="admin-modal-dialog-h2 hdr-has-icon" style="display:none;">
-			<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/cash-single-add-24x24.png" alt="" />
+			<span class="ee-icon ee-icon-cash-add"></span>
 			<?php echo __( 'Delete Payment/Refund for Transaction #', 'event_espresso' ) . $txn_nmbr['value'];?>
 		</h2>
 
@@ -477,6 +483,7 @@
 			</div>
 
 			<ul id="del-admin-modal-dialog-options-ul">
+				<li>
 					<a id="txn-admin-modal-dialog-delete-lnk" class="button-primary no-icon" style="display:none;" >
 						<?php _e( 'Delete', 'event_espresso' );?>
 					</a>

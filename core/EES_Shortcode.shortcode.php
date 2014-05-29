@@ -5,7 +5,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author			Event Espresso
+ * @ author				Event Espresso
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
@@ -22,6 +22,12 @@
  * ------------------------------------------------------------------------
  */
 abstract class EES_Shortcode extends EE_Base {
+
+	/**
+	 * @protected 	public
+	 * @var 	array $_attributes
+	 */
+	protected $_attributes = array();
 
 	/**
 	 *    run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
@@ -51,16 +57,16 @@ abstract class EES_Shortcode extends EE_Base {
 	 *    instance - returns instance of child class object
 	 *
 	 * @access 	public
-	 * @param 	null $shortcode_class
+	 * @param 	string $shortcode_class
 	 * @return 	\EES_Shortcode
 	 */
 	final public static function instance( $shortcode_class = NULL ) {
 		$shortcode_class = ! empty( $shortcode_class ) ? $shortcode_class : get_called_class();
-		if ( $shortcode_class == 'EES_Shortcode' ) {
+		if ( $shortcode_class == 'EES_Shortcode' || empty( $shortcode_class )) {
 			return NULL;
 		}
 		$shortcode = str_replace( 'EES_', '', strtoupper( $shortcode_class ));
-		$shortcode_obj = isset( EE_Registry::instance()->shortcodes[ $shortcode ] ) ? EE_Registry::instance()->shortcodes[ $shortcode ] : NULL;
+		$shortcode_obj = isset( EE_Registry::instance()->shortcodes->$shortcode ) ? EE_Registry::instance()->shortcodes->$shortcode : NULL;
 		return $shortcode_obj instanceof $shortcode_class || $shortcode_class == 'self' ? $shortcode_obj : new $shortcode_class();
 	}
 
@@ -76,9 +82,34 @@ abstract class EES_Shortcode extends EE_Base {
 	 * @return 	mixed
 	 */
 	final public static function fallback_shortcode_processor( $attributes ) {
+		// what shortcode was actually parsed ?
 		$shortcode_class = get_called_class();
+		// notify rest of system that fallback processor was triggered
+		add_filter( 'FHEE__fallback_shortcode_processor__' . $shortcode_class, '__return_true' );
+		// get instance of actual shortcode
 		$shortcode_obj = self::instance( $shortcode_class );
-		return $shortcode_obj instanceof EES_Shortcode ? $shortcode_obj->process_shortcode( $attributes ) : NULL;
+		// verify class
+		if ( $shortcode_obj instanceof EES_Shortcode ) {
+			// set attributes and run the shortcode
+			$shortcode_obj->_attributes = (array)$attributes;
+			return $shortcode_obj->process_shortcode( $shortcode_obj->_attributes );
+		} else {
+			return NULL;
+		}
+	}
+
+
+
+
+	/**
+	 *    invalid_shortcode_processor -  used in cases where we know the shortcode is invalid, most likely due to a deactivated addon, and simply returns an empty string
+	 *
+	 * @access 	public
+	 * @param 	$attributes
+	 * @return 	string
+	 */
+	final public static function invalid_shortcode_processor( $attributes ) {
+		return '';
 	}
 
 
@@ -92,6 +123,7 @@ abstract class EES_Shortcode extends EE_Base {
 	final public function __construct() {
 		// get classname, remove EES_prefix, and convert to UPPERCASE
 		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this )));
+		// assign shortcode to the preferred callback, which overwrites the "fallback shortcode processor" assigned earlier
 		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));
 	}
 

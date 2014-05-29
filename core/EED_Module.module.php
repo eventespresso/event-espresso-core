@@ -16,12 +16,12 @@
  * EED_Module
  *
  * @package			Event Espresso
- * @subpackage	/modules/
+ * @subpackage 	/core/
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
-abstract class EED_Module extends EE_Base {
+abstract class EED_Module extends EE_Configurable {
 
 	/**
 	 * 	instance of the EED_Module object
@@ -29,13 +29,6 @@ abstract class EED_Module extends EE_Base {
 	 *	@var 	EED_Module $_instance
 	 */
 	protected static $_instance = NULL;
-
-	/**
-	 * 	instance of the EE_Config_Base object
-	 * 	@access 	protected
-	 *	@var 	EE_Config_Base $_config
-	 */
-	protected $_config = NULL;
 
 	/**
 	 * 	rendered output to be returned to WP
@@ -93,58 +86,37 @@ abstract class EED_Module extends EE_Base {
 	 */
 	final public function __construct() {
 		$this->theme = EE_Config::get_current_theme();
-		self::$_instance = $this;
+		$module_name = $this->module_name();
+		EE_Registry::instance()->modules->$module_name = $this;
 	}
 
 
 
 	/**
+	 * @param $module_name
 	 * @return EED_Module
 	 */
-	public static function instance() {
-		return self::$_instance;
-	}
-
-
-
-	/**
-	 *    set_config
-	 *
-	 * @access 	public
-	 * @param 	string 	$section
-	 * @param 	string 	$name
-	 * @param 	string 	$config_class
-	 * @return 	mixed 	EE_Config_Base | NULL
-	 */
-	public function set_config( $section = 'modules', $name = '', $config_class = '' ) {
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		return EE_Config::instance()->set_config( $section, $name, $config_class );
-	}
-
-
-
-	/**
-	 *    get_config
-	 *
-	 * @access 	public
-	 * @param 	string 	$section
-	 * @param 	string 	$name
-	 * @param 	string 	$config_class
-	 * @return 	mixed 	EE_Config_Base | NULL
-	 */
-	public function get_config( $section = 'modules', $name = '', $config_class = '' ) {
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		// check for cached config
-		if ( ! $this->_config ) {
-			$this->_config = EE_Config::instance()->get_config( $section, $name, $config_class );
+	public static function instance( $module_name = '' ) {
+		$module_name = ! empty( $module_name ) ? $module_name : get_called_class();
+		if ( ! isset(  EE_Registry::instance()->modules->$module_name ) || ! EE_Registry::instance()->modules->$module_name instanceof EED_Module ) {
+			EE_Registry::instance()->modules->$module_name = $module_name !== 'EED_Module' ? new $module_name() : NULL;
 		}
-		return $this->_config;
+		return EE_Registry::instance()->modules->$module_name;
+	}
+
+
+
+	/**
+	 *    module_name
+	 *
+	 * @access    public
+	 * @return    string
+	 */
+	public function module_name() {
+		return get_class( $this );
 	}
 
 
 
 }
 // End of file EED_Module.module.php
-// Location: /modules/EED_Module.module.php

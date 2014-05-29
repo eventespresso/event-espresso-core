@@ -1,8 +1,8 @@
 <div class="padding">
-	
+
 	<?php do_action( 'AHEE__admin_option_settings__template__before', $template_args ); ?>
 
-	<?php /* @todo put back once we have a dashboard widget to use 
+	<?php /* @todo put back once we have a dashboard widget to use
 	<h4 class="ee-admin-settings-hdr">
 		<?php _e('WordPress Dashboard', 'event_espresso'); ?>
 	</h4>
@@ -29,16 +29,16 @@
 					<?php _e('How many days into the future?', 'event_espresso'); ?>
 				</th>
 				<td>
-					<input name="events_in_dasboard" size="5" style="width:50px;" type="text" value="<?php echo $events_in_dasboard; ?>" />
+					<input name="events_in_dashboard" size="5" style="width:50px;" type="text" value="<?php echo $events_in_dasboard; ?>" />
 				</td>
 			</tr>
 
 		</tbody>
 	</table>
-	 
-<?php * 
+
+<?php *
 	 */
-/* @todo: implement in 4.2 or whenever timezones-per-event get implemented. 
+/* @todo: implement in 4.2 or whenever timezones-per-event get implemented.
  * When implementing this, it would probably be more proper to add a filter here
  * and use it from general_settings in the caffeinated folder
 
