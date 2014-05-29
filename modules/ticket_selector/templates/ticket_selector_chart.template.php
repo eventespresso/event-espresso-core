@@ -126,7 +126,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 				<?php
 				// if only one attendee is allowed to register at a time
 				} else if ( $max_atndz  == 1 ) {
-					// display submit button since we have tickets availalbe
+					// display submit button since we have tickets available
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 			?>
 				<input type="radio" name="tkt-slctr-qty-<?php echo $EVT_ID; ?>" id="ticket-selector-tbl-qty-slct-<?php echo $EVT_ID . '-' . $row; ?>" class="ticket-selector-tbl-qty-slct" value="<?php echo $row . '-'; ?>1" <?php echo $row == 1 ? ' checked="checked"' : ''; ?> />
@@ -134,7 +134,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					$hidden_input_qty = FALSE;
 
 				} elseif ( $max > 0 ) {
-					// display submit button since we have tickets availalbe
+					// display submit button since we have tickets available
 					add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
 
 			?>
@@ -249,8 +249,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 						<section class="tckt-slctr-tkt-sale-dates-sctn">
 							<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
 							<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
-							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->start_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->start_date() )) ; ?><br/>
-							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->end_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->end_date() )) ; ?><br/>
+							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( $date_format, strtotime( $ticket->start_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( $time_format, strtotime( $ticket->start_date() )) ; ?><br/>
+							<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( $date_format, strtotime( $ticket->end_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( $time_format, strtotime( $ticket->end_date() )) ; ?><br/>
 						</section>
 						<br/>
 
@@ -305,16 +305,19 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 										</tr>
 									</thead>
 									<tbody>
-									<?php foreach ( $datetimes as $datetime ) : ?>
+									<?php
+										foreach ( $datetimes as $datetime ) :
+											if ( $datetime instanceof EE_Datetime ) :
+									?>
 
 									<tr>
 										<td class="small-text">
 											<?php $datetime_name = $datetime->name(); ?>
 											<?php echo ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b><br/>' : ''; ?>
-											<?php echo $datetime->date_range( 'l F jS, Y', __( ' to  ', 'event_espresso' )); ?>
+											<?php echo $datetime->date_range( $date_format, __( ' to  ', 'event_espresso' )); ?>
 										</td>
 										<td class="cntr small-text">
-											<?php echo $datetime->time_range( NULL, __( ' to  ', 'event_espresso' )); ?>
+											<?php echo $datetime->time_range( $time_format, __( ' to  ', 'event_espresso' )); ?>
 										</td>
 										<td class="cntr small-text">
 											<?php echo $ticket->sold(); ?>
@@ -330,6 +333,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 											<?php echo $tkts_left === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $tkts_left; ?>
 										</td>
 									</tr>
+											<?php endif; ?>
 									<?php endforeach; ?>
 									</tbody>
 								</table>
