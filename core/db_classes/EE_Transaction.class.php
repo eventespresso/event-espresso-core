@@ -373,18 +373,16 @@ class EE_Transaction extends EE_Base_Class{
 
 
 
-
-
-
-
-
 	/**
-	*		get Transaction datetime
-	* 		@param 		boolean		$format - whether to format date  - defaults to FALSE (return timestamp)
-	* 		@param 		string			$dt_frmt - defaults to 'F j, Y g:i a'
-	* 		@access		public
-	*/
-	public function datetime( $format = FALSE, $dt_frmt = FALSE ) {
+	 * 	datetime
+	 * 	Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted string including the UTC (timezone) offset.
+	 * 	Formatting options, including the UTC offset, are set via the WP General Settings page
+	 *
+	 * @access 	public
+	 * @param 	boolean $format - whether to format date  - defaults to FALSE (return timestamp)
+	 * @return mixed
+	 */
+	public function datetime( $format = FALSE ) {
 		return $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
 	}
 
@@ -393,7 +391,7 @@ class EE_Transaction extends EE_Base_Class{
 
 	/**
 	 * 	Gets registrations on this transaction
-	 *  	@param		array 	$query_params	aray of query paramaters
+	 *  	@param		array 	$query_params	array of query parameters
 	 *  	@param		boolean 	$get_cached 		TRUE to retrieve cached registrations or FALSE to pull from the db
 	 * 	@return EE_Registration[]
 	 */
