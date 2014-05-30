@@ -141,7 +141,6 @@ class EE_Maintenance_Mode {
 			//we also want to handle the opposite: if the site is mm2, but there aren't any migrations to run
 			//then we shouldn't be in mm2. (Maybe an addon got deactivated?)
 			update_option( self::option_name_maintenance_mode, self::level_0_not_in_maintenance );
-			EE_Error::add_success( __( 'Site taken out of maintenance mode because no data migration scripts are required', 'event_espresso' ) );
 			return false;
 		}
 	}

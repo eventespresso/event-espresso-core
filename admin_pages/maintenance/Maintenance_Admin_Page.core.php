@@ -131,7 +131,17 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		//it all depends if we're in maintenance model level 1 (frontend-only) or
 		//level 2 (everything except maintenance page)
 		try{
-			EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+			//get the current maintenance level and check if
+			//we are removed
+			$mm = EE_Maintenance_Mode::instance()->level();
+			$placed_in_mm = EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+			if( $mm == EE_Maintenance_Mode::level_2_complete_maintenance && ! $placed_in_mm){
+				//we just took the site out of maintenance mode, so notify the user.
+				//unfortunately this message appears to be echoed on the NEXT page load...
+				//oh well, we should really be checking for this on addon deactivation anyways
+				EE_Error::add_attention( __( 'Site taken out of maintenance mode because no data migration scripts are required', 'event_espresso' ) );
+				$this->_process_notices( array( 'page' => 'espresso_maintenance_settings'), false );
+			}
 			//in case an exception is thrown while trying to handle migrations
 			switch(EE_Maintenance_Mode::instance()->level()){
 				case EE_Maintenance_Mode::level_0_not_in_maintenance:
