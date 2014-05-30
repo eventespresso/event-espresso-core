@@ -87,7 +87,7 @@ abstract class EED_Module extends EE_Configurable {
 	final public function __construct() {
 		$this->theme = EE_Config::get_current_theme();
 		$module_name = $this->module_name();
-		EE_Registry::instance()->modules->$module_name = $this;
+		EE_Registry::instance()->modules->{$module_name} = $this;
 	}
 
 
@@ -98,8 +98,8 @@ abstract class EED_Module extends EE_Configurable {
 	 */
 	public static function instance( $module_name = '' ) {
 		$module_name = ! empty( $module_name ) ? $module_name : get_called_class();
-		if ( ! isset(  EE_Registry::instance()->modules->$module_name ) || ! EE_Registry::instance()->modules->$module_name instanceof EED_Module ) {
-			EE_Registry::instance()->modules->$module_name = $module_name !== 'EED_Module' ? EE_Module_Request_Router::module_factory( $module_name ) : NULL;
+		if ( ! isset(  EE_Registry::instance()->modules->{$module_name} ) || ! EE_Registry::instance()->modules->{$module_name} instanceof EED_Module ) {
+			EE_Registry::instance()->modules->{$module_name} = $module_name !== 'EED_Module' ? EE_Module_Request_Router::module_factory( $module_name ) : NULL;
 		}
 		return EE_Registry::instance()->modules->$module_name;
 	}
