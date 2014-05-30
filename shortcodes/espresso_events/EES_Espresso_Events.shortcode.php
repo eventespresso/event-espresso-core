@@ -44,10 +44,11 @@ class EES_Espresso_Events  extends EES_Shortcode {
 
 
 	/**
-	 * 	run - initial module setup
+	 *    run - initial module setup
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param WP $WP
+	 * @return    void
 	 */
 	public function run( WP $WP ) {
 		// this will trigger the EED_Events_Archive module's event_list() method during the pre_get_posts hook point,
@@ -75,6 +76,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
+		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		$default_espresso_events_shortcode_atts = array(
 			'title' => NULL,
 			'limit' => 10,
@@ -110,7 +112,199 @@ class EES_Espresso_Events  extends EES_Shortcode {
 
 
 
+}
+
+
+
+
+
+/**
+ *
+ * Class EE_Event_List_Query
+ *
+ * Description
+ *
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Brent Christensen
+ * @since 				4.1
+ *
+ */
+class EE_Event_List_Query extends WP_Query {
+
+	private $_title = NULL;
+	private $_limit = 10;
+	private $_css_class = NULL;
+	private $_show_expired = FALSE;
+	private $_month = NULL;
+	private $_category_slug = NULL;
+	private $_order_by = NULL;
+	private $_sort = NULL;
+
+
+
+	/**
+	 * EE_Event_List_Query Constructor	 *
+	 * sets up a WordPress query
+	 *
+	 * @param array $args
+	 * @return \EE_Event_List_Query
+	 */
+	function __construct( $args = array() ) {
+		//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		EEH_Event_Query::filter_query_parts();
+		EEH_Event_Query::get_post_data();
+		// incoming args could be a mix of WP query args + EE shortcode args
+		foreach ( $args as $key =>$value ) {
+			$property = '_' . $key;
+			// if the arg is a property of this class, then it's an EE shortcode arg
+			if ( EEH_Class_Tools::has_property( $this, $property )) {
+				// set the property value
+				$this->$property = $value;
+				// then remove it from the array of args that will later be passed to WP_Query()
+				unset( $args[ $key ] );
+			}
+		}
+		// parse orderby attribute
+		if ( $this->_order_by !== NULL ) {
+			$this->_order_by = explode( ',', $this->_order_by );
+			$this->_order_by = array_map('trim', $this->_order_by);
+		}
+		$this->_sort = in_array( $this->_sort, array( 'ASC', 'asc', 'DESC', 'desc' )) ? strtoupper( $this->_sort ) : 'ASC';
+
+		// first off, let's remove any filters from previous queries
+		remove_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ));
+		remove_all_filters( 'FHEE__content_espresso_events__event_class' );
+
+		// Event List Title ?
+		add_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ), 10, 1 );
+		// add the css class
+		add_filter( 'FHEE__content_espresso_events__event_class', array( $this, 'event_list_css' ), 10, 1 );
+		// the current "page" we are viewing
+		$paged = max( 1, get_query_var( 'paged' ));
+		// Force these args
+		$args = array_merge( $args, array(
+			'post_type' => 'espresso_events',
+			'posts_per_page' => $this->_limit,
+			'update_post_term_cache' => FALSE,
+			'update_post_meta_cache' => FALSE,
+			'paged' => $paged,
+			'offset' => ( $paged - 1 ) * $this->_limit
+		));
+		// filter the query parts
+		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
+		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
+		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 10, 1 );
+
+		// run the query
+		parent::__construct( $args );
+	}
+
+
+
+	/**
+	 *    posts_join
+	 *
+	 * @access    public
+	 * @param    string $SQL
+	 * @return    string
+	 */
+	public function posts_join( $SQL = '' ) {
+		// first off, let's remove any filters from previous queries
+		remove_filter( 'posts_join', array( $this, 'posts_join' ));
+		// generate the SQL
+		if ( $this->_category_slug !== NULL ) {
+			$SQL .= EEH_Event_Query::posts_join_sql_for_terms( TRUE );
+		}
+		if ( $this->_order_by !== NULL ) {
+			$SQL .= EEH_Event_Query::posts_join_for_orderby( $this->_order_by );
+		}
+		return $SQL;
+	}
+
+
+
+	/**
+	 *    posts_where
+	 *
+	 * @access    public
+	 * @param    string $SQL
+	 * @return    string
+	 */
+	public function posts_where( $SQL = '' ) {
+		// first off, let's remove any filters from previous queries
+		remove_filter( 'posts_where', array( $this, 'posts_where' ));
+		// Show Expired ?
+		$this->_show_expired = $this->_show_expired ? TRUE : FALSE;
+		$SQL .= EEH_Event_Query::posts_where_sql_for_show_expired( $this->_show_expired );
+		// Category
+		$SQL .=  EEH_Event_Query::posts_where_sql_for_event_category_slug( $this->_category_slug );
+		// Start Date
+		$SQL .= EEH_Event_Query::posts_where_sql_for_event_list_month( $this->_month );
+		return $SQL;
+	}
+
+
+
+	/**
+	 *    posts_orderby
+	 *
+	 * @access    public
+	 * @param    string $SQL
+	 * @return    string
+	 */
+	public function posts_orderby( $SQL = '' ) {
+		// first off, let's remove any filters from previous queries
+		remove_filter( 'posts_orderby', array( $this, 'posts_orderby' ) );
+		// generate the SQL
+		$SQL =  EEH_Event_Query::posts_orderby_sql( $this->_order_by, $this->_sort );
+		return $SQL;
+	}
+
+
+
+
+	/**
+	 *    event_list_title
+	 *
+	 * @access    public
+	 * @param string $event_list_title
+	 * @return    string
+	 */
+	public function event_list_title( $event_list_title = '' ) {
+		if ( ! empty( $this->_title )) {
+			return $this->_title;
+		}
+		return $event_list_title;
+	}
+
+
+
+	/**
+	 *    event_list_css
+	 *
+	 * @access    public
+	 * @param string $event_list_css
+	 * @return    array
+	 */
+	public function event_list_css( $event_list_css = '' ) {
+		$event_list_css .=  ! empty( $event_list_css ) ? ' ' : '';
+		$event_list_css .=  ! empty( $this->_css_class ) ? $this->_css_class : '';
+		$event_list_css .=  ! empty( $event_list_css ) ? ' ' : '';
+		$event_list_css .=  ! empty( $this->_category_slug ) ? $this->_category_slug : '';
+		return $event_list_css;
+	}
+
+
+
+
+
 
 }
+
+
+
 // End of file EES_Espresso_Events.shortcode.php
 // Location: /shortcodes/EES_Espresso_Events.shortcode.php
