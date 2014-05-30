@@ -1151,7 +1151,8 @@ class EEH_Activation {
 		//loop through the plugins and check if they are active.
 		foreach ( $all_plugins as $path => $plugin_details ) {
 			$plugin_basename = plugin_basename( trim( $path ) );
-			$plugin_basename = array_pop( explode( DS, $plugin_basename ));
+			$plugin_basename = explode( DS, $plugin_basename );
+			$plugin_basename = array_pop( $plugin_basename );
 			//first check if plugin is active.  If it isn't then it doesn't matter. If $plugin isn't empty then this is being called on an activation hook so the inactive check is pointless.
 			if ( empty( $plugin ) && is_plugin_inactive( $plugin_basename ) )
 				continue;
