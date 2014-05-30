@@ -816,12 +816,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
 				'Ticket.TKT_description' => array( 'LIKE', $sstr )
 				);
-
-			$_where['OR*'] = array(
-				'Event.status' => 'draft',
-				'Event.status*' => 'trash',
-				'Event.status**' => 'publish',
-				);
 		}
 
 
