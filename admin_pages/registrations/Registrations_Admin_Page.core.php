@@ -827,7 +827,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			if ( $per_page !== -1 ) {
 				$query_params['limit'] = $limit;
 			}
-			EEM_Registration::instance()->show_next_x_db_queries();
 			$registrations =  $trash ? EEM_Registration::instance()->get_all_deleted($query_params) : EEM_Registration::instance()->get_all($query_params);
 
 
