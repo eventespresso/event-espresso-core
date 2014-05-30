@@ -816,12 +816,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
 				'Ticket.TKT_description' => array( 'LIKE', $sstr )
 				);
-
-			$_where['OR*'] = array(
-				'Event.status' => 'draft',
-				'Event.status*' => 'trash',
-				'Event.status**' => 'publish',
-				);
 		}
 
 
@@ -833,6 +827,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			if ( $per_page !== -1 ) {
 				$query_params['limit'] = $limit;
 			}
+			EEM_Registration::instance()->show_next_x_db_queries();
 			$registrations =  $trash ? EEM_Registration::instance()->get_all_deleted($query_params) : EEM_Registration::instance()->get_all($query_params);
 
 
