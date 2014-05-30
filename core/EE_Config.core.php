@@ -32,8 +32,9 @@ final class EE_Config {
 	private static $_instance = NULL;
 
 	/**
-	 *
-	 * @var EE_Config_Base[]
+	 * An StdClass whose property names are addon slugs,
+	 * and values are their config classes
+	 * @var StdClass
 	 */
 	public $addons;
 
