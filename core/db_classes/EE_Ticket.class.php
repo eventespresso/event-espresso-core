@@ -35,7 +35,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * Primary key for Ticket. 
+	 * Primary key for Ticket.
 	 * @var INT
 	 */
 	protected $_TKT_ID;
@@ -254,8 +254,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	 * @var EE_Ticket_Template
 	 */
 	protected $_Ticket_Template;
-	
-	
+
+
 	/**
 	 * @var EE_Promotion_Object a relation to the join-table between promotions and whatevers
 	 */
@@ -263,7 +263,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @param type $timezone
 	 * @return EE_Ticket
@@ -275,7 +275,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @param type $timezone
 	 * @return EE_Ticket
@@ -296,7 +296,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Return if a ticket is on sale or not
-	 * @return boolean      
+	 * @return boolean
 	 */
 	public function is_on_sale() {
 		return ( $this->_TKT_start_date < time() && $this->_TKT_end_date > time() );
@@ -335,7 +335,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		// are we checking availablity for a particular datetime ?
 		if ( $DTT_ID ) {
 			// get that datetime object
-			$datetime = $this->get_first_related( 
+			$datetime = $this->get_first_related(
 				'Datetime',
 				array( array( 'DTT_ID' => $DTT_ID ))
 			);
@@ -365,31 +365,31 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 			return false;
 
 		return true;
-	}	
+	}
 
 
 
 	/**
 	 * return the total number of tickets available for purchase
-	 * @param  int    $DTT_ID the primary key for a particular datetime. set to null for 
+	 * @param  int    $DTT_ID the primary key for a particular datetime. set to null for
 	 * all related datetimes
 	 * @return int
 	 */
 	public function remaining( $DTT_ID = 0 ) {
-		// are we checking availablity for a particular datetime ?
+		// are we checking availability for a particular datetime ?
 		if ( $DTT_ID ) {
 			// get that datetime object
-			$datetimes = $this->get_many_related( 
+			$datetimes = $this->get_many_related(
 				'Datetime',
 				array( array( 'DTT_ID' => $DTT_ID ))
 			); //needs to be in array for loop below.
 		} else {
 			// we need to check availability of ALL datetimes
 			// get that datetime object
-			$datetimes = $this->get_many_related( 
+			$datetimes = $this->get_many_related(
 				'Datetime',
 				array( 'order_by' => array( 'DTT_EVT_start' => 'ASC' ))
-			);			
+			);
 		}
 //		d( $datetimes );
 		// if datetime reg limit is not unlimited
@@ -399,7 +399,10 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 			//because INF - x = INF; and min(x,INF) = x
 			$tickets_remaining = $this->_TKT_qty - $this->_TKT_sold;
 			foreach ( $datetimes as $datetime ) {
-				$tickets_remaining =  min( $tickets_remaining, $datetime->spaces_remaining() );
+				if ( $datetime instanceof EE_Datetime ) {
+					$tickets_remaining =  min( $tickets_remaining, $datetime->spaces_remaining() );
+					$tickets_remaining =  min( $tickets_remaining, $datetime->reg_limit() );
+				}
 			}
 			return $tickets_remaining;
 		}
@@ -418,7 +421,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		if ( $this->is_expired() ) return $display ? EEH_Template::pretty_status(EE_Ticket::expired, FALSE, 'sentence') : EE_Ticket::expired;
 		if ( $this->is_pending() ) return $display ? EEH_Template::pretty_status(EE_Ticket::pending, FALSE, 'sentence') : EE_Ticket::pending;
 		if ( $this->is_on_sale() ) return $display ? EEH_Template::pretty_status(EE_Ticket::onsale, FALSE, 'sentence') : EE_Ticket::onsale;
-		
+
 	}
 
 
@@ -475,12 +478,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 
 
-	
+
 	/**
 	 * This returns the total tickets sold depending on the given parameters.
 	 * @param  string $what   Can be one of two options: 'ticket', 'datetime'.
 	 *                        'ticket' = total ticket sales for all datetimes this ticket is related to
-	 *                        'datetime' = total ticket sales for a specified datetime (required $dtt_id) 
+	 *                        'datetime' = total ticket sales for a specified datetime (required $dtt_id)
 	 *                        'datetime' = total ticket sales in the datetime_ticket table. If $dtt_id is not given then we return an array of sales indexed by datetime.  If $dtt_id IS given then we return the tickets sold for that given datetime.
 	 * @param  int    $dtt_id [optional] include the dtt_id with $what = 'datetime'.
 	 * @return mixed (array|int)    	  how many tickets have sold
@@ -492,7 +495,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 			case 'ticket' :
 				return $tickets_sold['ticket'];
 				break;
-				
+
 			case 'datetime' :
 				if ( empty( $tickets_sold['datetime'] ) )
 					return $total;
@@ -505,7 +508,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 				break;
 		}
 	}
-	
+
 	/**
 	 * Gets all the prices that combine to form teh final price of this ticket
 	 * @param array $query_params like EEM_Base::get_all
@@ -546,8 +549,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		return $this->prices($query_params);
 	}
 
-	
-	
+
+
 	/**
 	 * Gets all the ticket applicabilities (ie, relations between datetimes and tickets)
 	 * @param array $query_params see EEM_Base::get_all()
@@ -556,7 +559,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	public function datetime_tickets($query_params = array()){
 		return $this->get_many_related('Datetime_Ticket', $query_params);
 	}
-	
+
 	/**
 	 * Gets all the datetimes this ticket can be used for attending.
 	 * Unless otherwise sepcified, orders datetimes by start date.
@@ -569,7 +572,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		}
 		return $this->get_many_related('Datetime', $query_params);
 	}
-	
+
 	/**
 	 * Gets all the datetimes from teh db ordered by start time
 	 * @param boolean $show_expired
@@ -591,7 +594,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * Simply returns an array of EE_Price objects that are taxes.
-	 * @return EE_Taxes[] 
+	 * @return EE_Taxes[]
 	 */
 	public function get_ticket_taxes_for_admin() {
 		return EE_Taxes::get_taxes_for_admin($this);
@@ -629,7 +632,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		return $this->get_ticket_subtotal() + $this->get_ticket_taxes_total_for_admin();
 	}
 
-	
+
 	/**
 	 * Gets ID
 	 * @return string
@@ -637,7 +640,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	function ID() {
 		return $this->get('TKT_ID');
 	}
-	
+
 	/**
 	 * Gets name
 	 * @return string
@@ -766,7 +769,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	function set_sold( $sold ) {
 		return $this->set('TKT_sold', $sold);
 	}
-	
+
 	/**
 	 * increments sold by amount passed by $qty
 	 * @param int $qty
@@ -776,7 +779,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		$sold = $this->_TKT_sold + $qty;
 		return $this->set_sold( $sold );
 	}
-	
+
 	/**
 	 * decrements (subtracts) sold by amount passed by $qty
 	 * @param int $qty
@@ -788,7 +791,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 		$sold = max( 0, $sold );
 		return $this->set_sold( $sold );
 	}
-	
+
 	/**
 	 * Gets qty
 	 * @return int
@@ -944,7 +947,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 	public function count_registrations($query_params = array()){
 		return $this->count_related('Registration', $query_params);
 	}
-	
+
 	/**
 	 * Updates the TKT_sold attribute (and saves) based on the number of APPROVED registrations for thsi ticket.
 	 * into account
