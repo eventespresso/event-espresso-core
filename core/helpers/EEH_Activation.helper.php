@@ -1151,13 +1151,14 @@ class EEH_Activation {
 		//loop through the plugins and check if they are active.
 		foreach ( $all_plugins as $path => $plugin_details ) {
 			$plugin_basename = plugin_basename( trim( $path ) );
+			$plugin_basename = array_pop( explode( DS, $plugin_basename ));
 			//first check if plugin is active.  If it isn't then it doesn't matter. If $plugin isn't empty then this is being called on an activation hook so the inactive check is pointless.
 			if ( empty( $plugin ) && is_plugin_inactive( $plugin_basename ) )
 				continue;
 
 			//now check if any of the values in the ee3addons array is found in the plugin_basename.
 			foreach( $ee3addons as $addon ) {
-				if ( strpos( $plugin_basename, $addon ) !== false ) {
+				if ( $plugin_basename === $addon . '.php' ) {
 					$addons_to_disable[$plugin_basename] = $plugin_details['Name'];
 					break;
 				}
@@ -1175,6 +1176,7 @@ class EEH_Activation {
 			}
 			$msg .= '</ul>';
 		}
+
 		if ( !empty($msg) )
 			EE_Error::add_persistent_admin_notice( 'ee3plugins_disabled', $msg, true );
 	}
