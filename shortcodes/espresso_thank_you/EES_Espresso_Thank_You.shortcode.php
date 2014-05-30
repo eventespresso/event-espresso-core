@@ -117,6 +117,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			EE_Error::add_error( __( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
 		} else {
 
+
 			//prepare variables for displaying
 			$registrations = $this->_current_txn->registrations();
 			$event_names = array();
@@ -132,6 +133,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$template_args['transaction'] = $this->_current_txn;
 			//get payments, but order with newest at teh top, so users see taht first
 			$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
+			// if no payments have been made yet, but we've made it to the Thank You page, then let's toggle any "Failed" transactions to "Incomplete"
+			if ( empty( $template_args['payments'] ) &&  $this->_current_txn->status_ID() == EEM_Transaction::failed_status_code ) {
+				$this->_current_txn->set_status( EEM_Transaction::incomplete_status_code );
+			}
 			$template_args['primary_registrant'] = $primary_registrant;
 			$template_args['event_names'] = $event_names;
 
