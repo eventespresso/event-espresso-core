@@ -32,7 +32,7 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 		</footer>	
 	</div>
 	
-<?php else if ( is_archive() ) : ?>
+<?php elseif ( is_archive() ) : ?>
 
 	<div id="espresso-venue-header-dv-<?php echo $post->ID;?>" class="espresso-venue-header-dv">
 		<?php espresso_get_template_part( 'content', 'espresso_venues-thumbnail' ); ?>
