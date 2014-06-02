@@ -392,7 +392,7 @@ final class EE_Config {
 			return $this->set_config( $section, $name, $config_class, $config_obj );
 		} else {
 			// update wp-option for this config class.
-			if ( update_option( $this->_generate_config_option_name( $section, $name ), $config_class )) {
+			if ( update_option( $this->_generate_config_option_name( $section, $name ), $config_obj )) {
 				$this->{$section}->{$name} = $config_obj;
 				return $this->update_espresso_config();
 			} else {
