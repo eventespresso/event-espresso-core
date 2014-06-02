@@ -1,6 +1,6 @@
 <h3><?php _e('Events Overview Filters', 'event_espresso'); ?></h3>
 <p>
-<?php _e('Filters are a way to show events that fall into certain criteria.', 'event_espresso'); ?><br />
+<?php _e('Filters are a way to show events based on certain criteria.', 'event_espresso'); ?><br />
 </p>
 <p>
 <ul>
@@ -14,7 +14,7 @@
 </li>
 <li>
 <?php _e('<strong>Filter by Categories</strong>', 'event_espresso'); ?><br />
-<?php _e('Show events that fall under a specific category.', 'event_espresso'); ?>
+<?php _e('Show events from a specific category.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>
