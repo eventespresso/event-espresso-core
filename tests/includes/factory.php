@@ -26,8 +26,8 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 		//setup any properties containing various test factory objects. EE_Test_Factories should extend the WP_UnitTest_Factory_for_Thing abstract class ( @see wp tests/includes/factory.php).  It's possible that EE might be able to extend the EE Factories (i.e. post) as well.
 		//eg.
 		$this->event = new EE_UnitTest_Factory_For_Event( $this );
-		$this->dtt = new EE_UnitTest_Factory_For_Datetime( $this );
-		$this->dtt_chained = new EE_UnitTest_Factory_For_Datetime( $this, true );
+		$this->datetime = new EE_UnitTest_Factory_For_Datetime( $this );
+		$this->datetime_chained = new EE_UnitTest_Factory_For_Datetime( $this, true );
 	}
 }
 
@@ -147,8 +147,8 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 		$this->default_generation_definitions = array(
 			'DTT_name' => new WP_UnitTest_Generator_Sequence( 'Datetime %s' ),
 			'DTT_description' => new WP_UnitTest_Generator_Sequence( 'Datetime Description %s' ),
-			'DTT_EVT_start' => strtotime( '+1 month', current_time() ),
-			'DTT_EVT_end' => strtotime( '+2 months', current_time() )
+			'DTT_EVT_start' => strtotime( '+1 month', current_time('timestamp') ),
+			'DTT_EVT_end' => strtotime( '+2 months', current_time('timestamp') )
 		);
 	}
 
