@@ -28,6 +28,8 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 		$this->event = new EE_UnitTest_Factory_For_Event( $this );
 		$this->datetime = new EE_UnitTest_Factory_For_Datetime( $this );
 		$this->datetime_chained = new EE_UnitTest_Factory_For_Datetime( $this, true );
+		$this->ticket = new EE_UnitTest_Factory_For_Ticket( $this );
+		$this->ticket_chained = new EE_UnitTest_Factory_For_Ticket( $this, true );
 	}
 }
 
@@ -182,7 +184,7 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 		if ( $this->_chained ) {
 			if ( empty( $this->_event ) ) {
 				$EVT_ID = isset( $args['EVT_ID'] ) ? $args['EVT_ID'] : 0;
-				$this->_set_new_event();
+				$this->_set_new_event( $EVT_ID );
 			}
 			//add relation to event
 			$dtt->_add_relation_to( $this->_event, 'EE_Event' );
@@ -240,5 +242,143 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 	 */
 	public function get_object_by_id( $DTT_ID ) {
 		return EEM_Datetime::instance()->get_one_by_ID( $DTT_ID );
+	}
+}
+
+
+/**
+ * EE Factory Class for tickets
+ *
+ * @since 		4.3.0
+ * @package 		Event Espresso
+ * @subpackage 	tests
+ *
+ */
+class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
+
+	/**
+	 * Tickets always have to be attached to an datetime, so this holds a datetime default.
+	 *
+	 * @since  4.3.0
+	 * @var EE_Datetime
+	 */
+	protected $_datetime;
+
+
+	/**
+	 * Used to indicate whether the generated objects are chained in the EE Model Heirarchy or not.  note currently multiple tickets can be attached to a single datetime, however at this time one cannot automatically generate multiple tickets to multiple datetimes via the chained process.
+	 *
+	 * @var bool
+	 */
+	protected $_chained;
+
+
+
+	/**
+	 * constructor
+	 *
+	 * @param EE_UnitTest_Factory $factory
+	 * @param bool   $chained        This indicates that we are chaining this ticket to a datetime (instead of creating an isolated Ticket).
+	 */
+	public function __construct( $factory = NULL, $chained = FALSE ) {
+		parent::__construct( $factory );
+		$this->_chained = $chained;
+		//default args for creating tickets
+		$this->default_generation_definitions = array(
+			'TKT_name' => new WP_UnitTest_Generator_Sequence( 'Ticket %s' ),
+			'TKT_description' => new WP_UnitTest_Generator_Sequence( 'Ticket Description %s' ),
+			'TKT_start_date' => strtotime( '+1 month', current_time('timestamp') ),
+			'TKT_end_date' => strtotime( '+2 months', current_time('timestamp') )
+		);
+	}
+
+
+	/**
+	 * This allows setting the $_datetime property to a new datetime object if the incoming args for the
+	 * new ticket have a dtt_id (or set to default if no dtt_id)
+	 *
+	 * @since 4.3.0
+	 * @param int $DTT_ID EE_Datetime ID
+	 */
+	private function _set_new_datetime( $DTT_ID = 0 ) {
+		$this->_datetime = empty( $DTT_ID ) ? EEM_Datetime::instance()->get_one_by_ID( $DTT_ID ) : $this->factory->datetime->create();
+
+		//failsafe just in case (so we can be sure to have an datetime).
+		if ( empty( $this->_datetime ) ) {
+			$this->_datetime = $this->factory->datetime->create();
+		}
+	}
+
+
+
+	/**
+	 * This handles connecting a ticket to the datetime object that's been generated.
+	 *
+	 * @param EE_Ticket $tkt
+	 *
+	 * @return EE_Ticket
+	 */
+	private function _maybe_chained( EE_Ticket $tkt ) {
+		if ( $this->_chained ) {
+			if ( empty( $this->_datetime ) ) {
+				$DTT_ID = isset( $args['DTT_ID'] ) ? $args['DTT_ID'] : 0;
+				$this->_set_new_datetime( $DTT_ID );
+			}
+			//add relation to datetime
+			$tkt->_add_relation_to( $this->_datetime, 'EE_Datetime' );
+			$tkt->save();
+			return $tkt;
+		}
+	}
+
+
+	/**
+	 * used by factory to create ticket object
+	 *
+	 * @param array  $args Incoming field values to set on the new object
+	 *
+	 * @return EE_Ticket|false
+	 */
+	public function create_object( $args ) {
+		$tkt = EE_ticket::new_instance( $args );
+		$tktID = $tkt->save();
+		$tkt = $this->_maybe_chained( $tkt );
+		return $tktID ? $tkt : false;
+	}
+
+
+
+	/**
+	 * Update ticket object for given ticket
+	 *
+	 * @param int      $TKT_ID         Ticket ID for the ticket to update
+	 * @param array   $cols_n_data columns and values to change/update
+	 *
+	 * @return EE_Ticket|false.
+	 */
+	public function update_object( $TKT_ID, $cols_n_data ) {
+		//all the stuff for updating an ticket.
+		$tkt = EEM_Ticket::instance()->get_one_by_ID( $TKT_ID );
+		if ( ! $tkt instanceof EE_Ticket )
+			return null;
+		foreach ( $cols_n_data as $key => $val ) {
+			$tkt->set( $key, $val );
+		}
+		$success = $tkt->save();
+		return $success ? $tkt : false;
+	}
+
+
+
+
+	/**
+	 * return the ticket object for a given ticket ID
+	 *
+	 * @param int  $TKT_ID the ticket id for the ticket to attemp to retrieve
+	 *
+	 * @return mixed null|EE_Ticket
+	 */
+	public function get_object_by_id( $TKT_ID ) {
+		return EEM_Ticket::instance()->get_one_by_ID( $TKT_ID );
 	}
 }
