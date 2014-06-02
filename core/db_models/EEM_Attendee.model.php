@@ -136,7 +136,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 	/**
-	*		retreive  a single attendee from db via their ID
+	*		retrieve  a single attendee from db via their ID
 	*
 	* 		@access		public
 	* 		@param		$ATT_ID
@@ -147,7 +147,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 		if ( ! $ATT_ID ) {
 			return FALSE;
 		}
-		// retreive a particular transaction
+		// retrieve a particular transaction
 		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
 		if ( $attendee = $this->get_all( array($where_cols_n_values ) )) {
 			return array_shift( $attendee_array );
@@ -161,7 +161,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 	/**
-	*		retreive  a single attendee from db via their ID
+	*		retrieve  a single attendee from db via their ID
 	*
 	* 		@access		public
 	* 		@param		$ATT_ID

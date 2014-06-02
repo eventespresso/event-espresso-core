@@ -144,7 +144,7 @@ class EEM_Payment extends EEM_Base {
 
 
 	/**
-	*		retreive  all payments from db for a particular transaction, optionally with
+	*		retrieve  all payments from db for a particular transaction, optionally with
 	 *		a particular status
 	*
 	* 		@access		public
@@ -160,7 +160,7 @@ class EEM_Payment extends EEM_Base {
 		if($status_of_payment){
 			$query_params[0]['STS_ID'] = $status_of_payment;
 		}
-		// retreive payments
+		// retrieve payments
 		return $this->get_all ( $query_params );
 	}
 
@@ -263,7 +263,7 @@ class EEM_Payment extends EEM_Base {
 
 
 	/**
-	*		retreive  all payments from db between two dates
+	*		retrieve  all payments from db between two dates
 	*
 	* 		@access		public
 	* 		@param		string		$start_date
