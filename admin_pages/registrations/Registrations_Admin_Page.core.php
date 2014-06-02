@@ -1459,7 +1459,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					$attendee->save();
 				} else {
 					// no existing attendee exists so create a new one
-					$attendee = new EE_Attendee( array(
+					$attendee = EE_Attendee::new_instance( array(
 						'ATT_full_name' => $QST_fname . ' ' . $QST_lname,
 						'ATT_fname' => $Qst_fname,
 						'ATT_lname' => $QST_lname,
