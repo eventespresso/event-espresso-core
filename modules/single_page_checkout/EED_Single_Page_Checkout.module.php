@@ -315,7 +315,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// but if this transaction has already been saved to the db... then let's pull that
 			if ( $ID = $this->_transaction->ID() ) {
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
-					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					return FALSE;
 				}
 			}
@@ -1322,7 +1322,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //					}
 //					return TRUE;
 //				}  else {
-//					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+//					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 //					return FALSE;
 //				}
 //			}  else {
