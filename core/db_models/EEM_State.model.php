@@ -178,7 +178,7 @@ class EEM_State extends EEM_Base {
 			return FALSE;
 		}
 				
-		// retreive a particular transaction
+		// retrieve a particular transaction
 		$where_cols_n_values = array( array( 'STA_ID' => $STA_ID ));
 		if ( $answer = $this->delete ( $where_cols_n_values )) {
 			return TRUE;

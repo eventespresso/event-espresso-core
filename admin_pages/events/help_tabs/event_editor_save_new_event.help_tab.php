@@ -33,7 +33,7 @@
 </li>
 <li>
 <?php _e('<strong>Move to Trash</strong>', 'event_espresso'); ?><br />
-<?php _e('Click the Move to Trash link to move an event to the trash. Note: an event can be completely deleted only after associated payments have been removed and registrations have been removed.', 'event_espresso'); ?>
+<?php _e('Click the Move to Trash link to move an event to the trash. Note: an event can only be deleted after associated payments have been removed and registrations have been removed.', 'event_espresso'); ?>
 </li>
 </ul>
 </p>

@@ -104,7 +104,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		define( 'ESPRESSO_SESSION', TRUE );
 
-		// retreive session options from db
+		// retrieve session options from db
 		if ( $session_settings = get_option( 'ee_session_settings' ) !== FALSE ) {
 			// cycle though existing session options
 			foreach ( $session_settings as $var_name => $session_setting ) {
@@ -128,7 +128,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		$this->_set_defaults();
 
-		// check for existing session and retreive it from db.  Filtered in case session needs to be turned off (typically with tests)
+		// check for existing session and retrieve it from db.  Filtered in case session needs to be turned off (typically with tests)
 		if ( ! $this->_espresso_session()  ) {
 			// or just start a new one
 			$this->_create_espresso_session();
@@ -165,7 +165,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 * @retreive session data
+	 * @retrieve session data
 	 * @access	public
 	 * @return	array
 	 */
@@ -178,7 +178,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 * @retreive session data
+	 * @retrieve session data
 	 * @access	public
 	 * @return	array
 	 */
@@ -259,7 +259,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		$this->_sid = session_id();
 		// set the "user agent"
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
-		// now let's retreive what's in the db
+		// now let's retrieve what's in the db
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
 		if ( $session_data = get_transient( 'ee_ssn_' . $this->_sid )) {
 			// un-encrypt the data
