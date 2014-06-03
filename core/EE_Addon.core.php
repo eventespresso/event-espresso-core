@@ -111,6 +111,8 @@ abstract class EE_Addon extends EE_Configurable {
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
 			$this->initialize_db();
 			$this->initialize_default_data();
+			//@todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
+			EE_Data_Migration_Manager::instance()->update_current_database_state_to(array($this->name(),$this->version()));
 		}
 	}
 

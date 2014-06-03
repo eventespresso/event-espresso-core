@@ -26,23 +26,23 @@
 </p>
 <ul>
 <li style="list-style-type: none;">
-<strong>Archived</strong><br />
-A status of archived occurs when the first ticket is sold. After the first ticket sale, Event Espresso archives the existing ticket to prevent changes which could affect existing registrants. A new ticket is automatically created for new registrants so that an event admin can change pricing (if needed).
+<strong><?php _e('Archived', 'event_espresso'); ?></strong><br />
+<?php _e('A status of archived occurs when the first ticket is sold. After the first ticket sale, Event Espresso archives the existing ticket to prevent changes which could affect existing registrants. A new ticket is automatically created for new registrants so that an event admin can change pricing (if needed).', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong>Expired</strong><br />
-A status of expired occurs once an event has already taken place.
+<strong><?php _e('Expired', 'event_espresso'); ?></strong><br />
+<?php _e('A status of expired occurs once an event has already taken place.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong>Sold Out</strong><br />
-A status of sold out occurs when the maximum quantity of a certain ticket is purchased. For example, if 50 Premium tickets were available and 50 Premium tickets were immediately purchased, then this ticket would have a status of sold out since no more tickets would be available for purchase.
+<strong><?php _e('Sold Out', 'event_espresso'); ?></strong><br />
+<?php _e('A status of sold out occurs when the maximum quantity of a certain ticket is purchased. For example, if 50 Premium tickets were available and 50 Premium tickets were immediately purchased, then this ticket would have a status of sold out since no more tickets would be available for purchase.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong>Upcoming</strong><br />
-A status of upcoming occurs when a ticket is scheduled to go on sale in the future.
+<strong><?php _e('Upcoming', 'event_espresso'); ?></strong><br />
+<?php _e('A status of upcoming occurs when a ticket is scheduled to go on sale in the future.', 'event_espresso'); ?>
 </li>
 <li style="list-style-type: none;">
-<strong>On Sale</strong><br />
-A status of on sale means that a ticket is currently available for purchase.
+<strong><?php _e('On Sale', 'event_espresso'); ?></strong><br />
+<?php _e('A status of on sale means that a ticket is currently available for purchase.', 'event_espresso'); ?>
 </li>
 </ul>
