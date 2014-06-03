@@ -181,10 +181,11 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 	 * This handles connecting a datetime to the event object that's been generated.
 	 *
 	 * @param EE_Datetime $dtt
+	 * @param array $args incoming arguments from caller for specifying overrides.
 	 *
 	 * @return EE_Datetime
 	 */
-	private function _maybe_chained( EE_Datetime $dtt ) {
+	private function _maybe_chained( EE_Datetime $dtt, $args ) {
 		if ( $this->_chained ) {
 			if ( empty( $this->_event ) ) {
 				$EVT_ID = isset( $args['EVT_ID'] ) ? $args['EVT_ID'] : 0;
@@ -208,7 +209,7 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 	public function create_object( $args ) {
 		$dtt = EE_Datetime::new_instance( $args );
 		$dttID = $dtt->save();
-		$dtt = $this->_maybe_chained( $dtt );
+		$dtt = $this->_maybe_chained( $dtt, $args );
 		return $dttID ? $dtt : false;
 	}
 
@@ -269,6 +270,16 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 	protected $_datetime;
 
 
+
+	/**
+	 * Tickets have prices attached to them.  If this is chained then we attache a price to the ticket automatically.
+	 *
+	 * @since 4.3.0
+	 * @var   EE_Price
+	 */
+	protected $_price;
+
+
 	/**
 	 * Used to indicate whether the generated objects are chained in the EE Model Heirarchy or not.  note currently multiple tickets can be attached to a single datetime, however at this time one cannot automatically generate multiple tickets to multiple datetimes via the chained process.
 	 *
@@ -298,7 +309,7 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 
 
 	/**
-	 * This allows setting the $_datetime property to a new datetime object if the incoming args for the
+	 * This allows setting the $_datetime property to a new ticket object if the incoming args for the
 	 * new ticket have a dtt_id (or set to default if no dtt_id)
 	 *
 	 * @since 4.3.0
@@ -315,21 +326,51 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 
 
 
+
 	/**
-	 * This handles connecting a ticket to the datetime object that's been generated.
+	 * This allows setting the $_price property to a new ticket object if the incoming args for the new ticket have a PRC_ID (or set to default if no PRIC_ID) provided.
+	 * Note that we are using the price_chained method to ensure that the price has a corresponding price type object applied.
+	 *
+	 * @since 4.3.0
+	 * @param int $PRC_ID
+	 * @return void
+	 */
+	private function _set_new_price( $PRC_ID = 0 ) {
+		$this->_price = empty( $PRC_ID ) ? EEM_Price::instance()->get_one_by_ID( $PRC_ID ) : $this->factory->price_chained->create();
+
+		//failsafe just in case (so we can be sure to have an price).
+		if ( empty( $this->_price ) ) {
+			$this->_datetime = $this->factory->price_chained->create();
+		}
+
+	}
+
+
+	/**
+	 * This handles connecting a ticket to the datetime and price object that's been generated.
 	 *
 	 * @param EE_Ticket $tkt
+	 * @param array $args incoming arguments from caller for specifying overrides.
 	 *
 	 * @return EE_Ticket
 	 */
-	private function _maybe_chained( EE_Ticket $tkt ) {
+	private function _maybe_chained( EE_Ticket $tkt, $args ) {
 		if ( $this->_chained ) {
 			if ( empty( $this->_datetime ) ) {
 				$DTT_ID = isset( $args['DTT_ID'] ) ? $args['DTT_ID'] : 0;
 				$this->_set_new_datetime( $DTT_ID );
 			}
+
+			if ( empty( $this->_price ) ) {
+				$PRC_ID = isset( $args['PRC_ID'] ) ? $args['PRC_ID'] : 0;
+				$this->_set_new_price( $PRC_ID );
+			}
+
 			//add relation to datetime
 			$tkt->_add_relation_to( $this->_datetime, 'EE_Datetime' );
+
+			//add relation to price
+			$tkt->_add_relation_to( $this->_price, 'EE_Price' );
 			$tkt->save();
 			return $tkt;
 		}
@@ -346,7 +387,7 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 	public function create_object( $args ) {
 		$tkt = EE_ticket::new_instance( $args );
 		$tktID = $tkt->save();
-		$tkt = $this->_maybe_chained( $tkt );
+		$tkt = $this->_maybe_chained( $tkt, $args );
 		return $tktID ? $tkt : false;
 	}
 
@@ -642,10 +683,11 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 	 * This handles connecting a ticket to the price object that's been generated.
 	 *
 	 * @param EE_Price_Type $price
+	 * @param array $args incoming arguments from caller for specifying overrides.
 	 *
 	 * @return EE_Price_Type
 	 */
-	private function _maybe_chained( EE_Price_Type $price_type ) {
+	private function _maybe_chained( EE_Price_Type $price_type, $args ) {
 		if ( $this->_chained ) {
 			if ( empty( $this->_price ) ) {
 				$PRC_ID = isset( $args['PRC_ID'] ) ? $args['PRC_ID'] : 0;
@@ -669,7 +711,7 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 	public function create_object( $args ) {
 		$price_type = EE_Price_Type::new_instance( $args );
 		$price_typeID = $price_type->save();
-		$price_type = $this->_maybe_chained( $price_type );
+		$price_type = $this->_maybe_chained( $price_type, $args );
 		return $price_typeID ? $price_type : false;
 	}
 
