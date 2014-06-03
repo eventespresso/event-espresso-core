@@ -34,6 +34,8 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 		$this->price_chained = new EE_UnitTest_Factory_For_Price( $this, true );
 		$this->price_type = new EE_UnitTest_Factory_For_Price_Type( $this );
 		$this->price_type_chained = new EE_UnitTest_Factory_For_Price_Type( $this, true );
+		$this->registration = new EE_UnitTest_Factory_For_Registration( $this );
+		$this->registration_chained = new EE_UnitTest_Factory_For_Registration( $this, true );
 	}
 }
 
@@ -64,6 +66,8 @@ class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * used by factory to create event object
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param array  $args Incoming field values to set on the new object
 	 *
 	 * @return EE_Event|false
@@ -77,6 +81,8 @@ class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 
 	/**
 	 * Update event object for given event
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int      $EVT_ID         Event ID for the event to update
 	 * @param array   $cols_n_data columns and values to change/update
@@ -99,6 +105,8 @@ class EE_UnitTest_Factory_For_Event extends WP_UnitTest_Factory_For_Thing {
 
 	/**
 	 * return the event object for a given event ID
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int  $EVT_ID the event id for the event to attemp to retrieve
 	 *
@@ -180,6 +188,8 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * This handles connecting a datetime to the event object that's been generated.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param EE_Datetime $dtt
 	 * @param array $args incoming arguments from caller for specifying overrides.
 	 *
@@ -202,6 +212,8 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * used by factory to create datetime object
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param array  $args Incoming field values to set on the new object
 	 *
 	 * @return EE_Datetime|false
@@ -217,6 +229,8 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 
 	/**
 	 * Update datetime object for given datetime
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int      $DTT_ID         Datetime ID for the datetime to update
 	 * @param array   $cols_n_data columns and values to change/update
@@ -240,6 +254,8 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 
 	/**
 	 * return the datetime object for a given datetime ID
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int  $DTT_ID the datetime id for the datetime to attemp to retrieve
 	 *
@@ -349,6 +365,8 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * This handles connecting a ticket to the datetime and price object that's been generated.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param EE_Ticket $tkt
 	 * @param array $args incoming arguments from caller for specifying overrides.
 	 *
@@ -380,6 +398,8 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * used by factory to create ticket object
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param array  $args Incoming field values to set on the new object
 	 *
 	 * @return EE_Ticket|false
@@ -395,6 +415,8 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 
 	/**
 	 * Update ticket object for given ticket
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int      $TKT_ID         Ticket ID for the ticket to update
 	 * @param array   $cols_n_data columns and values to change/update
@@ -418,6 +440,8 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 
 	/**
 	 * return the ticket object for a given ticket ID
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int  $TKT_ID the ticket id for the ticket to attemp to retrieve
 	 *
@@ -508,6 +532,8 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * Create a EE_Price_Type (optionally using provided args )
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param array  $args incoming arguments
 	 *
 	 * @return EE_Price_Type
@@ -543,6 +569,8 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * This handles connecting a ticket to the price type object that's been generated.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param EE_Price $price
 	 * @param array $args incoming args to override defaults.
 	 *
@@ -563,7 +591,9 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 
 
 	/**
-	 * used by factory to create price object
+	 * used by factory to create price object.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param array  $args Incoming field values to set on the new object
 	 *
@@ -579,7 +609,9 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 
 
 	/**
-	 * Update price object for given price
+	 * Update price object for given price.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int      $PRC_ID         Price ID for the price to update
 	 * @param array   $cols_n_data columns and values to change/update
@@ -602,7 +634,9 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 
 
 	/**
-	 * return the price object for a given price ID
+	 * return the price object for a given price ID.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int  $PRC_ID the price id for the price to attempt to retrieve
 	 *
@@ -617,7 +651,7 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 
 
 /**
- * EE Factory Class for Price Types
+ * EE Factory Class for Price Types.
  *
  * When this is called as a chained object - a default price will be created and attached to the given price type.
  *
@@ -682,6 +716,8 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 	/**
 	 * This handles connecting a ticket to the price object that's been generated.
 	 *
+	 * @since 4.3.0
+	 *
 	 * @param EE_Price_Type $price
 	 * @param array $args incoming arguments from caller for specifying overrides.
 	 *
@@ -702,7 +738,9 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 
 
 	/**
-	 * used by factory to create price type object
+	 * used by factory to create price type object.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param array  $args Incoming field values to set on the new object
 	 *
@@ -718,9 +756,11 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 
 
 	/**
-	 * Update price_type object for given price_type
+	 * Update price_type object for given price_type.
 	 *
-	 * @param int      $PRC_ID         Price_Type ID for the price_type to update
+	 * @since 4.3.0
+	 *
+	 * @param int      $PRT_ID         Price_Type ID for the price_type to update
 	 * @param array   $cols_n_data columns and values to change/update
 	 *
 	 * @return EE_Price_Type|false.
@@ -741,7 +781,9 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 
 
 	/**
-	 * return the price type object for a given price type ID
+	 * return the price type object for a given price type ID.
+	 *
+	 * @since 4.3.0
 	 *
 	 * @param int  $PRT_ID the price type id for the price type to attempt to retrieve
 	 *
@@ -751,3 +793,208 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 		return EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID );
 	}
 }
+
+
+
+
+/**
+ * EE Factory Class for registrations
+ *
+ * @since 		4.3.0
+ * @package 		Event Espresso
+ * @subpackage 	tests
+ *
+ */
+class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing {
+
+	/**
+	 * Registrations are related to a transaction - this is used when automatically generating a transaction object to relate to the registration.
+	 *
+	 * @since  4.3.0
+	 * @var EE_Transaction
+	 */
+	protected $_transaction;
+
+
+
+	/**
+	 * Registrations are related to a ticket.
+	 *
+	 * @since 4.3.0
+	 * @var   EE_Ticket
+	 */
+	protected $_ticket;
+
+
+
+	/**
+	 * Registrations are related to an Attendee.
+	 *
+	 * @since 4.3.0
+	 * @var   EE_Attendee
+	 */
+	protected $_attendee;
+
+
+
+	/**
+	 * Registrations are related to an status.
+	 *
+	 * @since 4.3.0
+	 * @var   EE_status
+	 */
+	protected $_status;
+
+
+	/**
+	 * Used to indicate whether the generated objects are chained in the EE Model Heirarchy or not.  Note that the only relations that are automatically generated and setup when the chained method is use are,  Registrations->Tickets (which also means the EVT_ID is set), Registrations->transaction, Registrations->attendee, Registrations->status.  Registrations to custom questions and answers are NOT set.  Also the transaction is just a base transaction, there are NO relations via transaction to line items.
+	 *
+	 * @var bool
+	 */
+	protected $_chained;
+
+
+
+	/**
+	 * constructor
+	 *
+	 * @param EE_UnitTest_Factory $factory
+	 * @param bool   $chained        This indicates that we are chaining this registrations to related objects.
+	 */
+	public function __construct( $factory = NULL, $chained = FALSE ) {
+		parent::__construct( $factory );
+		$this->_chained = $chained;
+		//default args for creating registrations
+		$this->default_generation_definitions = array();
+	}
+
+
+
+	/**
+	 * This generates the dummy relation objects for use in a new registration.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param array $args
+	 */
+	private function _set_new_relations( $args ) {
+		//transaction
+		$this->_transaction = empty( $args['TXN_ID'] ) ? $this->factory->transaction->create() : EEM_Transaction::instance()->get_one_by_ID( $args['TXN_ID'] );
+		$this->_transaction = empty( $this->_transaction ) ? $this->factory->transaction->create() : $this->_transaction;
+
+		//ticket
+		$this->_ticket = empty( $args['TKT_ID'] ) ? $this->factory->ticket_chained->create() : EEM_Ticket::instance()->get_one_by_ID( $args['TKT_ID'] );
+		$this->_ticket = empty( $this->_ticket ) ? $this->factory->ticket_chained->create() : $this->_ticket;
+
+		//attendee
+		$this->_attendee = empty( $args['ATT_ID'] ) ? $this->factory->attendee->create() : EEM_Attendee::instance()->get_one_by_ID( $args['ATT_ID'] );
+		$this->_attendee = empty( $this->_attendee ) ? $this->factory->attendee->create() : $this->_attendee;
+
+		//status
+		$this->_status = empty( $arg['STS_ID'] ) ? $this->factory->status->create( array( 'STS_ID' => EEM_Registration::status_id_pending_payment, 'STS_type' => 'registration', 'STS_code' => 'PENDING_PAYMENT' ) ) : EEM_Status::instance()->get_one_by_ID( $args['STS_ID'] );
+		$this->_status = empty( $this->_status ) ? $this->factory->status->create( array( 'STS_ID' => EEM_Registration::status_id_pending_payment, 'STS_type' => 'registration', 'STS_code' => 'PENDING_PAYMENT' ) ) : $this->_status;
+	}
+
+
+
+	/**
+	 * This handles connecting a registration to related items when the chained flag is true.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param EE_Registration $registration
+	 * @param array $args incoming arguments from caller for specifying overrides.
+	 *
+	 * @return EE_Registration
+	 */
+	private function _maybe_chained( EE_Registration $registration, $args ) {
+		if ( $this->_chained ) {
+			if ( empty( $this->_transaction ) || empty( $this->_ticket ) || empty( $this->_attendee ) || empty( $this->_status ) ) {
+				$this->_set_new_relations( $args );
+			}
+
+			//add relation to transaction
+			$registration->_add_relation_to( $this->_transaction, 'EE_Transaction' );
+
+			//add relation to ticket
+			$registration->_add_relation_to( $this->_ticket, 'EE_Ticket' );
+
+			//add relation to event
+			$event = $this->_ticket->get_first_related( 'Datetime' )->get_first_related( 'Event' );
+			$registration->_add_relation_to( $event, 'EE_Event' );
+
+			//add relation to attendee
+			$registration->_add_relation_to( $this->_attendee, 'EE_Attendee' );
+
+			//add relation to status
+			$registration->_add_relation_to( $this->_status, 'EE_Status' );
+
+			$registration->save();
+			return $registration;
+		}
+	}
+
+
+
+
+	/**
+	 * used by factory to create registration object.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param array  $args Incoming field values to set on the new object
+	 *
+	 * @return EE_Registration|false
+	 */
+	public function create_object( $args ) {
+		$registration = EE_Registration::new_instance( $args );
+		$registrationID = $registration->save();
+		$registration = $this->_maybe_chained( $registration, $args );
+		return $registrationID ? $registration : false;
+	}
+
+
+
+	/**
+	 * Update registration object for given registration.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int      $REG_ID         Price_Type ID for the registration to update
+	 * @param array   $cols_n_data columns and values to change/update
+	 *
+	 * @return EE_Registration|false.
+	 */
+	public function update_object( $REG_ID, $cols_n_data ) {
+		//all the stuff for updating an registration.
+		$registration = EEM_Registration::instance()->get_one_by_ID( $REG_ID );
+		if ( ! $registration instanceof EE_Registration )
+			return null;
+		foreach ( $cols_n_data as $key => $val ) {
+			$registration->set( $key, $val );
+		}
+		$success = $registration->save();
+		return $success ? $registration : false;
+	}
+
+
+
+
+	/**
+	 * return the registration object for a given registration ID.
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int  $REG_ID the registration id for the registration to attempt to retrieve
+	 *
+	 * @return mixed null|EE_Registration
+	 */
+	public function get_object_by_id( $REG_ID ) {
+		return EEM_Registration::instance()->get_one_by_ID( $REG_ID );
+	}
+
+}
+
+
+
+
