@@ -8,31 +8,31 @@
 <p>
 <ul>
 <li>
-<?php _e('<strong>Status</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Status', 'event_espresso'); ?></strong><br />
 <?php _e('The following statuses are available: Pending Review, Draft, Cancelled, Postponed, and Sold Out. A status of pending review will set an event to draft until an event administrator has approved the event. A status of draft will save an event but it will be unpublished. A status of cancelled means that an event will no longer take place. A status of postponed means that an event is not currently scheduled but may be in the future. A status of sold out means that tickets are no longer available for an event.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Visibility</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Visibility', 'event_espresso'); ?></strong><br />
 <?php _e('The following visibility options are available: Public, Password Protected, and Private. An event that is set to public will be accessible by anyone. An event that is set to password protected will only be available to event administrators and individuals who know the password to access the event registration. An event that is set to private will completely be hidden from public view.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Publish</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Publish', 'event_espresso'); ?></strong><br />
 <?php _e('An event can be published immediately or you can schedule it to be published at a later date in the future.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Approved Registrations</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Approved Registrations', 'event_espresso'); ?></strong><br />
 <?php _e('Shows number of registrants who are attending event. Click on the Approved Registrations link to be brought to a page where you can be a list of registrants who are attending the event.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Pending Payment Registrations</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Pending Payment Registrations', 'event_espresso'); ?></strong><br />
 <?php _e('Shows number of registrants who need to pay to attend the event. Click on the Pending Payment Registrations link to be brought to a page where you can be a list of registrants who need to pay for this event.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Not Approved Registrations</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Not Approved Registrations', 'event_espresso'); ?></strong><br />
 <?php _e('Shows number of registrants who cannot attend the event because they were not approved. Click on the Not Approved Registrations link to be brought to a page where you can be a list of registrants who cannot attend the event.', 'event_espresso'); ?>
 </li>
 <li>
-<?php _e('<strong>Move to Trash</strong>', 'event_espresso'); ?><br />
+<strong><?php _e('Move to Trash', 'event_espresso'); ?></strong><br />
 <?php _e('Click the Move to Trash link to move an event to the trash. Note: an event can only be deleted after associated payments have been removed and registrations have been removed.', 'event_espresso'); ?>
 </li>
 </ul>
