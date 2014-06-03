@@ -129,12 +129,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			$this->_current_txn = EE_Registry::instance()->LIB->EEM_Transaction->get_one_by_ID( $this->_current_txn->ID() );
 			//printr( $this->_current_txn, '$this->_current_txn  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 			$template_args = array();
-			//update the trsansaction, in case we just updated it.
+			//update the transaction, in case we just updated it.
 			$template_args['transaction'] = $this->_current_txn;
 			//get payments, but order with newest at teh top, so users see taht first
 			$template_args['payments'] = $this->_current_txn->payments(array('order_by'=>array('PAY_timestamp'=>'DESC')));
-			// if no payments have been made yet, but we've made it to the Thank You page, then let's toggle any "Failed" transactions to "Incomplete"
-			if ( empty( $template_args['payments'] ) &&  $this->_current_txn->status_ID() == EEM_Transaction::failed_status_code ) {
+			// if we've made it to the Thank You page, then let's toggle any "Failed" transactions to "Incomplete"
+			if ( $this->_current_txn->status_ID() == EEM_Transaction::failed_status_code ) {
 				$this->_current_txn->set_status( EEM_Transaction::incomplete_status_code );
 			}
 			$template_args['primary_registrant'] = $primary_registrant;
