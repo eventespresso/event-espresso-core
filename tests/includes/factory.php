@@ -20,6 +20,46 @@
  */
 class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 
+
+	/**
+	 * @var EE_UnitTest_Factory_For_Event
+	 */
+	public $event;
+
+
+	/**
+	 * @var EE_UnitTest_Factory_For_Datetime
+	 */
+	public $datetime;
+	public $datetime_chained;
+
+	/**
+	 * @var EE_UnitTest_Factory_For_Ticket
+	 */
+	public $ticket;
+	public $ticket_chained;
+
+
+	/**
+	 * @var EE_UnitTest_Factory_For_Price
+	 */
+	public $price;
+	public $price_chained;
+
+
+	/**
+	 * @var EE_UnitTest_Factory_For_Price_Type
+	 */
+	public $price_type;
+	public $price_type_chained;
+
+
+	/**
+	 * @var EE_UnitTest_Factory_For_Registration
+	 */
+	public $registration;
+	public $registration_chained;
+
 	public function __construct() {
 		parent::__construct();
 
