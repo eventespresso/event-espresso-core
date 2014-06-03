@@ -905,7 +905,9 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 		parent::__construct( $factory );
 		$this->_chained = $chained;
 		//default args for creating registrations
-		$this->default_generation_definitions = array();
+		$this->default_generation_definitions = array(
+			'REG_url_link' => new WP_UnitTest_Generator_Sequence( '%s-' . md5( uniqid() ) )
+			);
 	}
 
 
@@ -988,8 +990,12 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 	 */
 	public function create_object( $args ) {
 		$registration = EE_Registration::new_instance( $args );
+		//some things have to be set after the registration has been instantiated.
+		$registration->set( 'REG_session', uniqid() );
 		$registrationID = $registration->save();
 		$registration = $this->_maybe_chained( $registration, $args );
+		$registration->finalize();
+		$registration->save();
 		return $registrationID ? $registration : false;
 	}
 
