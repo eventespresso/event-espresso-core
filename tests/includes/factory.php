@@ -30,6 +30,10 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 		$this->datetime_chained = new EE_UnitTest_Factory_For_Datetime( $this, true );
 		$this->ticket = new EE_UnitTest_Factory_For_Ticket( $this );
 		$this->ticket_chained = new EE_UnitTest_Factory_For_Ticket( $this, true );
+		$this->price = new EE_UnitTest_Factory_For_Price( $this );
+		$this->price_chained = new EE_UnitTest_Factory_For_Price( $this, true );
+		$this->price_type = new EE_UnitTest_Factory_For_Price_Type( $this );
+		$this->price_type_chained = new EE_UnitTest_Factory_For_Price_Type( $this, true );
 	}
 }
 
@@ -380,5 +384,328 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 	 */
 	public function get_object_by_id( $TKT_ID ) {
 		return EEM_Ticket::instance()->get_one_by_ID( $TKT_ID );
+	}
+}
+
+
+
+/**
+ * EE Factory Class for Prices
+ *
+ * Note that prices do  have a chained option.  However, this only applies to a price type automatically created and attached to the price.  Details about this price type can be included with the (optional) arguments for create, and create many.
+ *
+ * @since 		4.3.0
+ * @package 		Event Espresso
+ * @subpackage 	tests
+ *
+ */
+class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
+
+
+	/**
+	 * Prices always have to be attached to an price type, so this holds a price type default.
+	 *
+	 * @since  4.3.0
+	 * @var EE_Price_Type
+	 */
+	protected $_price_type;
+
+	/**
+	 * For prices, this simply indicates whether the price will automatically be setup attached to a price type or not.
+	 *
+	 * @var bool
+	 */
+	protected $_chained;
+
+
+	/**
+	 * constructor
+	 *
+	 * @param EE_UnitTest_Factory $factory
+	 */
+	public function __construct( $factory = NULL, $chained = FALSE ) {
+		parent::__construct( $factory );
+		$this->_chained = $chained;
+		//default args for creating prices
+		$this->default_generation_definitions = array(
+			'PRC_name' => new WP_UnitTest_Generator_Sequence( 'Price %s' ),
+			'PRC_desc' => new WP_UnitTest_Generator_Sequence( 'Price Description %s' ),
+			'PRC_amount' => 0,
+			/**
+			 * Options for price type are:
+			 * 'base': This will result in a base price type created for EEM_Price_type::base_type_base_price
+			 * 'discount': This will result in a discount price type created for EEM_Price_type::base_type_discount
+			 * 'surcharge': This will result in a surcharge price type created for EEM_Price_Type::base_type_surcharge
+			 * 'tax': This will result in a tax price type created for EEM_Price_Type::base_type_tax
+			 */
+			'PRT_name' => 'Base Price Type',
+			'PRC_type' => 'base',
+			'PRC_type_is_percent' => false, //true if percent for price type, false if dollar
+			'TKT_end_date' => strtotime( '+2 months', current_time('timestamp') )
+		);
+	}
+
+
+	/**
+	 * This allows setting the $_price_type property to a new price_type object if the incoming args for the
+	 * new price have a prt_id (or set to default if no prt_id).  This optionally will use any args for price type that is included in the incoming arguments.
+	 *
+	 * @since 4.3.0
+	 * @param int $PRT_ID EE_Price_Type ID
+	 */
+	private function _set_new_price_type( $PRT_ID = 0, $args ) {
+		$this->_price_type = empty( $PRT_ID ) ? EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID ) : $this->_create_price_type( $args );
+
+		//failsafe just in case (so we can be sure to have an price_type).
+		if ( empty( $this->_price_type ) ) {
+			$this->_price_type = $this->_create_price_type( $args );
+		}
+	}
+
+
+
+	/**
+	 * Create a EE_Price_Type (optionally using provided args )
+	 *
+	 * @param array  $args incoming arguments
+	 *
+	 * @return EE_Price_Type
+	 */
+	private function _create_price_type( $args ) {
+		//BASE PRICE TYPE
+		$base_price_type = ! emtpy( $args['PRC_type'] ) ? $args['PRC_type'] : $this->default_generation_args['PRC_type'];
+		switch ( $base_price_type ) {
+			case 'base' :
+				$base_type = EEM_Price_Type::base_type_base_price;
+				break;
+			case 'discount' :
+				$base_type = EEM_Price_Type::base_type_discount;
+				break;
+			case 'surcharge' :
+				$base_type = EEM_Price_Type::base_type_surcharge;
+				break;
+			default :
+				$base_type = EEM_Price_Type::base_type_tax;
+				break;
+		}
+		//set the properties for the price type depending on the args
+		$prt_args = array(
+			'PRT_name' => ! empty( $args['PRT_name'] ) ? $args['PRT_name'] : $this->default_generation_args['PRT_name'],
+			'PBT_ID' => $base_type,
+			'PRT_is_percent' => ! empty( $args['PRC_type_is_percent'] ) ? $args['PRC_type_is_percent'] : $this->default_generation_args['PRC_type_is_percent']
+			);
+		return $this->factory->price_type->create( $prt_args );
+	}
+
+
+
+	/**
+	 * This handles connecting a ticket to the price type object that's been generated.
+	 *
+	 * @param EE_Price $price
+	 * @param array $args incoming args to override defaults.
+	 *
+	 * @return EE_Price
+	 */
+	private function _maybe_chained( EE_Price $price, $args ) {
+		if ( $this->_chained ) {
+			if ( empty( $this->_price_type ) ) {
+				$PRT_ID = isset( $args['PRT_ID'] ) ? $args['PRT_ID'] : 0;
+				$this->_set_new_price_type( $PRT_ID, $args );
+			}
+			//add relation to datetime
+			$price->_add_relation_to( $this->_price_type, 'EE_Price_Type' );
+			$price->save();
+			return $price;
+		}
+	}
+
+
+	/**
+	 * used by factory to create price object
+	 *
+	 * @param array  $args Incoming field values to set on the new object
+	 *
+	 * @return EE_Price|false
+	 */
+	public function create_object( $args ) {
+		$price = EE_Price::new_instance( $args );
+		$priceID = $price->save();
+		$price = $this->_maybe_chained( $price, $args );
+		return $priceID ? $price : false;
+	}
+
+
+
+	/**
+	 * Update price object for given price
+	 *
+	 * @param int      $PRC_ID         Price ID for the price to update
+	 * @param array   $cols_n_data columns and values to change/update
+	 *
+	 * @return EE_Price|false.
+	 */
+	public function update_object( $PRC_ID, $cols_n_data ) {
+		//all the stuff for updating an price.
+		$price = EEM_Price::instance()->get_one_by_ID( $PRC_ID );
+		if ( ! $price instanceof EE_Price )
+			return null;
+		foreach ( $cols_n_data as $key => $val ) {
+			$price->set( $key, $val );
+		}
+		$success = $price->save();
+		return $success ? $price : false;
+	}
+
+
+
+
+	/**
+	 * return the price object for a given price ID
+	 *
+	 * @param int  $PRC_ID the price id for the price to attempt to retrieve
+	 *
+	 * @return mixed null|EE_Price
+	 */
+	public function get_object_by_id( $PRC_ID ) {
+		return EEM_Price::instance()->get_one_by_ID( $PRC_ID );
+	}
+}
+
+
+
+
+/**
+ * EE Factory Class for Price Types
+ *
+ * When this is called as a chained object - a default price will be created and attached to the given price type.
+ *
+ * @since 		4.3.0
+ * @package 		Event Espresso
+ * @subpackage 	tests
+ *
+ */
+class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
+
+
+	/**
+	 * If chained, the price will be added to this property.
+	 *
+	 * @since  4.3.0
+	 * @var EE_Price
+	 */
+	protected $_price;
+
+	/**
+	 * For prices, this simply indicates whether a price will automatically be setup attached to the price type or not.
+	 *
+	 * @var bool
+	 */
+	protected $_chained;
+
+
+	/**
+	 * constructor
+	 *
+	 * @param EE_UnitTest_Factory $factory
+	 */
+	public function __construct( $factory = NULL, $chained = FALSE ) {
+		parent::__construct( $factory );
+		$this->_chained = $chained;
+		//default args for creating prices
+		$this->default_generation_definitions = array(
+			'PRT_name' => new WP_UnitTest_Generator_Sequence( '%s Price Type' )
+		);
+	}
+
+
+	/**
+	 * This allows setting the $_price property to a new price object if the incoming args for the
+	 * new price have a prc_id (or set to default if no prc_id).  This optionally will use any args for price type that is included in the incoming arguments.
+	 *
+	 * @since 4.3.0
+	 * @param int $PRT_ID EE_Price_Type ID
+	 */
+	private function _set_new_price( $PRC_ID = 0 ) {
+		$this->_price = empty( $PRC_ID ) ? EEM_Price::instance()->get_one_by_ID( $PRC_ID ) : $this->factory->price->create();
+
+		//failsafe just in case (so we can be sure to have an price).
+		if ( empty( $this->_price ) ) {
+			$this->_price = $this->factory->price->create();
+		}
+	}
+
+
+
+
+	/**
+	 * This handles connecting a ticket to the price object that's been generated.
+	 *
+	 * @param EE_Price_Type $price
+	 *
+	 * @return EE_Price_Type
+	 */
+	private function _maybe_chained( EE_Price_Type $price_type ) {
+		if ( $this->_chained ) {
+			if ( empty( $this->_price ) ) {
+				$PRC_ID = isset( $args['PRC_ID'] ) ? $args['PRC_ID'] : 0;
+				$this->_set_new_price_type( $PRC_ID );
+			}
+			//add relation to datetime
+			$price_type->_add_relation_to( $this->_price, 'EE_Price' );
+			$price_type->save();
+			return $price_type;
+		}
+	}
+
+
+	/**
+	 * used by factory to create price type object
+	 *
+	 * @param array  $args Incoming field values to set on the new object
+	 *
+	 * @return EE_Price_Type|false
+	 */
+	public function create_object( $args ) {
+		$price_type = EE_Price_Type::new_instance( $args );
+		$price_typeID = $price_type->save();
+		$price_type = $this->_maybe_chained( $price_type );
+		return $price_typeID ? $price_type : false;
+	}
+
+
+
+	/**
+	 * Update price_type object for given price_type
+	 *
+	 * @param int      $PRC_ID         Price_Type ID for the price_type to update
+	 * @param array   $cols_n_data columns and values to change/update
+	 *
+	 * @return EE_Price_Type|false.
+	 */
+	public function update_object( $PRT_ID, $cols_n_data ) {
+		//all the stuff for updating an price_type.
+		$price_type = EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID );
+		if ( ! $price_type instanceof EE_Price_Type )
+			return null;
+		foreach ( $cols_n_data as $key => $val ) {
+			$price_type->set( $key, $val );
+		}
+		$success = $price_type->save();
+		return $success ? $price_type : false;
+	}
+
+
+
+
+	/**
+	 * return the price type object for a given price type ID
+	 *
+	 * @param int  $PRT_ID the price type id for the price type to attempt to retrieve
+	 *
+	 * @return mixed null|EE_Price_Type
+	 */
+	public function get_object_by_id( $PRT_ID ) {
+		return EEM_Price_Type::instance()->get_one_by_ID( $PRT_ID );
 	}
 }
