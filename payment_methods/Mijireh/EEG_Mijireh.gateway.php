@@ -20,14 +20,14 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEG_Mijireh
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
 class EEG_Mijireh extends EE_Offsite_Gateway{
 	protected $_access_key;
-	
+
 	protected $_currencies_supported = EE_Gateway::all_currencies_supported;
 	/**
 	 * @param EE_Payment $payment to process
@@ -36,17 +36,17 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 	 * @param string $cancel_url URL to send the user to after a cancelled payment attempt on teh payment provider's website
 	 * @param boolean $send_full_itemized_list whether or not to try itemizing all the items purchased when
 	 * informing the payment provider of the purchase or not. If charging for the entire transaction, this is usually
-	 * set to TRUE; however if we are just charing for a part, it's harder to nail down exactly what the payment is for, 
+	 * set to TRUE; however if we are just charing for a part, it's harder to nail down exactly what the payment is for,
 	 * so its usually set to FALSE in that case
 	 * @return EE_Payment
 	 */
-	public function set_redirection_info($payment, $billing_info = array(), $return_url = NULL, $cancel_url = NULL) {				
+	public function set_redirection_info($payment, $billing_info = array(), $return_url = NULL, $cancel_url = NULL) {
 		/* @var $transaction EE_Transaction */
 		$transaction = $payment->transaction();
-		
-		//get any of the current registrations, 
+
+		//get any of the current registrations,
 		$primary_registrant = $transaction->primary_registration();
-		
+
 		$primary_attendee = $primary_registrant->attendee();
 		$items = array();
 		//if we're are charging for the full amount, show the normal line items
@@ -80,7 +80,33 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			'last_name'=>$primary_attendee->lname(),
 			'tax'=>$this->format_currency($tax_total),
 			'partner_id'=>'ee');
-		
+		//setup address?
+		if(		$primary_attendee->address()  &&
+				$primary_attendee->city()  &&
+				$primary_attendee->state_ID()  &&
+				$primary_attendee->country_ID()  &&
+				$primary_attendee->zip()  ){
+			$send_address_info = TRUE;
+		}else{
+			$send_address_info = FALSE;
+		}
+		if( $send_address_info ){
+			$shipping_address = array(
+				'street' => $primary_attendee->address(),
+				'city' => $primary_attendee->city(),
+				'state_province' => $primary_attendee->state_obj() ? $primary_attendee->state_obj()->abbrev() : '',
+				'zip_code' => $primary_attendee->zip(),
+				'country' => $primary_attendee->country_ID()
+			);
+			if( $primary_attendee->address2() ){
+				$shipping_address[ 'apt_suite' ] = $primary_attendee->address2();
+			}
+			if( $primary_attendee->phone() ){
+				$shipping_address[ 'phone' ] = $primary_attendee->phone();
+			}
+			$order[ 'billing_address' ] = $shipping_address;
+			$order[ 'shipping_address' ] = $shipping_address;
+		}
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
 				$args = array(
 		'headers' => array(
