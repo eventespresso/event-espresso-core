@@ -35,7 +35,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 
 	/**
-	 *    Method for registering new EE_Addons. Should be called before AFTER AHEE__EE_System__load_espresso_addons but BEFORE AHEE__EE_System___detect_if_activation_or_upgrade__begin in ordert to register all its components.
+	 *    Method for registering new EE_Addons.
+	 * Should be called AFTER AHEE__EE_System__load_espresso_addons but BEFORE AHEE__EE_System___detect_if_activation_or_upgrade__begin in order to register all its components.
 	 * However, it may also be called after the 'activate_plugin' action (when an addon is activated),
 	 * because an activating addon won't be loaded by WP until after AHEE__EE_System__load_espresso_addons has fired.
 	 * If its called after 'activate_plugin', it registers the addon still, but its components are not registered
@@ -187,7 +188,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	}
 	/**
 	 * Loads and instantiates the EE_Addon class and adds it onto the registry
-	 * @param type $addon_name
+	 * @param string $addon_name
 	 * @return EE_Addon
 	 */
 	private static function _load_and_init_addon_class($addon_name){
