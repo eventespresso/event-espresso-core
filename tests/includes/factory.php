@@ -274,6 +274,7 @@ class EE_UnitTest_Factory_For_Datetime extends WP_UnitTest_Factory_For_Thing {
 			$dtt->save();
 			return $dtt;
 		}
+		return $dtt;
 	}
 
 
@@ -460,6 +461,7 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 			$tkt->save();
 			return $tkt;
 		}
+		return $tkt;
 	}
 
 
@@ -655,6 +657,7 @@ class EE_UnitTest_Factory_For_Price extends WP_UnitTest_Factory_For_Thing {
 			$price->save();
 			return $price;
 		}
+		return $price;
 	}
 
 
@@ -802,6 +805,7 @@ class EE_UnitTest_Factory_For_Price_Type extends WP_UnitTest_Factory_For_Thing {
 			$price_type->save();
 			return $price_type;
 		}
+		return $price_type;
 	}
 
 
@@ -1002,6 +1006,7 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 			$registration->save();
 			return $registration;
 		}
+		return $registration;
 	}
 
 
@@ -1195,6 +1200,7 @@ class EE_UnitTest_Factory_For_Transaction extends WP_UnitTest_Factory_For_Thing 
 			$transaction->save();
 			return $transaction;
 		}
+		return $transaction;
 	}
 
 
@@ -1363,6 +1369,7 @@ class EE_UnitTest_Factory_For_Attendee extends WP_UnitTest_Factory_For_Thing {
 			$attendee->save();
 			return $attendee;
 		}
+		return $attendee;
 	}
 
 
