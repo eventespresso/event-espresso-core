@@ -68,16 +68,18 @@ class EE_DMS_4_3_0_critical_page_shortcode_tracking extends EE_Data_Migration_Sc
 		$posts_page = $this->_get_page_for_posts();
 		// make sure critical pages get removed
         $this->_update_post_shortcodes( $posts_page );
-        // save updated config, but only show errors
-        EE_Config::instance()->update_espresso_config();
-        // check for errors
+        // save updated config, but don't add errors
+		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE )) {
+			EE_Error::add_error( __( 'The Event Espresso Configuration Settings were not updated when attempting to save the "critical page post shortcodes".', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		// check for errors
 		$notices = EE_Error::get_notices( FALSE );
 		// any errors to report?
 		if( isset( $notices['errors'] )) {
-          foreach($notices as $key => $value){
+          foreach($notices as $value){
 			  $this->add_error($value);
-		  }  
-        } 
+		  }
+        }
 		//regardless of whether it worked or not, we ought to continue the migration
 		$this->set_completed();
             return 1;
