@@ -35,7 +35,12 @@ class EE_Register_Addon implements EEI_Plugin_API {
 
 
 	/**
-	 *    Method for registering new EE_Addons
+	 *    Method for registering new EE_Addons. Should be called before AFTER AHEE__EE_System__load_espresso_addons but BEFORE AHEE__EE_System___detect_if_activation_or_upgrade__begin in ordert to register all its components.
+	 * However, it may also be called after the 'activate_plugin' action (when an addon is activated),
+	 * because an activating addon won't be loaded by WP until after AHEE__EE_System__load_espresso_addons has fired.
+	 * If its called after 'activate_plugin', it registers the addon still, but its components are not registered
+	 * (they shouldn't be needed anyways, because it's just an activation request and they won't have a chance to do anything anyways). Instead, it just sets the newly-activated addon's activation indicator wp option and returns
+	 * (so that we can detect that the addon has activated on the subsequent request)
 	 *
 	 * @since    4.3.0
 	 * @throws EE_Error
@@ -52,26 +57,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 */
 	public static function register( $addon_name = '', $setup_args = array()  ) {
 
-		// check that addon has not already been registered with that name
-		if ( isset( self::$_settings[ $addon_name ] )) {
-			throw new EE_Error( sprintf( __( 'An EE_Addon with the name "%s" has already been registered and each EE_Addon requires a unique name.', 'event_espresso' ), $addon_name ));
-		}
-
 		// required fields MUST be present, so let's make sure they are.
 		if ( empty( $addon_name ) || ! is_array( $setup_args )) {
 			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.', 'event_espresso' ));
 		}
-
-		// make sure this was called in the right place!
-		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_System___detect_if_activation_or_upgrade__begin' )) {
-			EE_Error::doing_it_wrong(
-				__METHOD__,
-				sprintf(
-					__( 'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.','event_espresso'),
-					$addon_name
-				),
-				'4.3.0'
-			);
+		// check that addon has not already been registered with that name
+		if ( isset( self::$_settings[ $addon_name ] ) && ! did_action( 'activate_plugin' ) ) {
+			throw new EE_Error( sprintf( __( 'An EE_Addon with the name "%s" has already been registered and each EE_Addon requires a unique name.', 'event_espresso' ), $addon_name ));
 		}
 		// no class name for addon?
 		if ( empty( $setup_args['class_name'] )) {
@@ -84,7 +76,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		}
 		$class_name = strpos( $class_name, 'EE_' ) === 0 ? $class_name : 'EE_' . $class_name;
 		//setup $_settings array from incoming values.
-		self::$_settings[ $addon_name ] = array(
+		$addon_settings = array(
 			// generated from the addon name, changes something like "calendar" to "EE_Calendar"
 			'class_name' 			=> $class_name,
 			// the "software" version for the addon
@@ -115,6 +107,33 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
 		);
 
+		//this is an activation request
+		if( did_action( 'activate_plugin' ) ){
+			//to find if THIS is the addon that was activated,
+			//just check if we have already registered it or not
+			//(as the newly-activated addon wasn't around the first time addons were registered)
+			if( ! isset( self::$_settings[ $addon_name ] ) ){
+				self::$_settings[ $addon_name ] = $addon_settings;
+				$addon = self::_load_and_init_addon_class($addon_name);
+				$addon->set_activation_indicator_option();
+				//dont bother setting up the rest of the addon.
+				//we know it was just activated and the request will end soon
+			}
+			return;
+		}else{
+			// make sure this was called in the right place!
+			if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_System___detect_if_activation_or_upgrade__begin' )) {
+				EE_Error::doing_it_wrong(
+					__METHOD__,
+					sprintf(
+						__( 'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.','event_espresso'),
+						$addon_name
+					),
+					'4.3.0'
+				);
+			}
+			self::$_settings[ $addon_name ] = $addon_settings;
+		}
 		// we need cars
 		if ( ! empty( self::$_settings[ $addon_name ]['autoloader_paths'] )) {
 			EEH_Autoloader::instance()->register_autoloader( self::$_settings[ $addon_name ]['autoloader_paths'] );
@@ -160,6 +179,18 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			add_action( 'action_hook_espresso_new_addon_update_api', array( 'EE_Register_Addon', 'load_pue_update' ));
 		}
 		// load and instantiate main addon class
+		$addon = self::_load_and_init_addon_class($addon_name);
+		// call any additional admin_callback functions during load_admin_controller hook
+		if ( ! empty( self::$_settings[ $addon_name ]['admin_callback'] )) {
+			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
+		}
+	}
+	/**
+	 * Loads and instantiates the EE_Addon class and adds it onto the registry
+	 * @param type $addon_name
+	 * @return EE_Addon
+	 */
+	private static function _load_and_init_addon_class($addon_name){
 		$addon = EE_Registry::instance()->load_addon( self::$_settings[ $addon_name ]['base_path'], self::$_settings[ $addon_name ]['class_name'] );
 		$addon->set_name( $addon_name );
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
@@ -167,10 +198,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
 		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
 		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
-		// call any additional admin_callback functions during load_admin_controller hook
-		if ( ! empty( self::$_settings[ $addon_name ]['admin_callback'] )) {
-			add_action( 'AHEE__EE_System__load_controllers__load_admin_controllers', array( $addon, self::$_settings[ $addon_name ]['admin_callback'] ));
-		}
+		return $addon;
 	}
 
 
