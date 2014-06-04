@@ -77,6 +77,13 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 
 
 
+	/**
+	 * @var EE_UnitTest_Factory_For_Status
+	 */
+	public $status;
+
+
+
 	public function __construct() {
 		parent::__construct();
 
@@ -96,6 +103,7 @@ class EE_UnitTest_Factory extends WP_UnitTest_Factory {
 		$this->transaction_chained = new EE_UnitTest_Factory_For_Transaction( $this, true );
 		$this->attendee = new EE_UnitTest_Factory_For_Attendee( $this );
 		$this->attendee_chained = new EE_UnitTest_Factory_For_Attendee( $this, true );
+		$this->status = new EE_UnitTest_Factory_For_Status( $this );
 	}
 }
 
@@ -392,11 +400,11 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 	 * @param int $DTT_ID EE_Datetime ID
 	 */
 	private function _set_new_datetime( $DTT_ID = 0 ) {
-		$this->_datetime = empty( $DTT_ID ) ? EEM_Datetime::instance()->get_one_by_ID( $DTT_ID ) : $this->factory->datetime->create();
+		$this->_datetime = empty( $DTT_ID ) ? EEM_Datetime::instance()->get_one_by_ID( $DTT_ID ) : $this->factory->datetime_chained->create();
 
 		//failsafe just in case (so we can be sure to have an datetime).
 		if ( empty( $this->_datetime ) ) {
-			$this->_datetime = $this->factory->datetime->create();
+			$this->_datetime = $this->factory->datetime_chained->create();
 		}
 	}
 
@@ -416,7 +424,7 @@ class EE_UnitTest_Factory_For_Ticket extends WP_UnitTest_Factory_For_Thing {
 
 		//failsafe just in case (so we can be sure to have an price).
 		if ( empty( $this->_price ) ) {
-			$this->_datetime = $this->factory->price_chained->create();
+			$this->_price = $this->factory->price_chained->create();
 		}
 
 	}
@@ -1413,5 +1421,80 @@ class EE_UnitTest_Factory_For_Attendee extends WP_UnitTest_Factory_For_Thing {
 	 */
 	public function get_object_by_id( $ATT_ID ) {
 		return EEM_Attendee::instance()->get_one_by_ID( $ATT_ID );
+	}
+}
+
+
+
+
+
+/**
+ * EE Factory Class for EE_Status
+ *
+ * @since 		4.3.0
+ * @package 		Event Espresso
+ * @subpackage 	tests
+ *
+ */
+class EE_UnitTest_Factory_For_Status extends WP_UnitTest_Factory_For_Thing {
+
+	public function __construct( $factory = NULL ) {
+		parent::__construct( $factory );
+		//default args for creating events.
+		$this->default_generation_definitions = array();
+	}
+
+
+	/**
+	 * used by factory to create status object
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param array  $args Incoming field values to set on the new object
+	 *
+	 * @return EE_Status|false
+	 */
+	public function create_object( $args ) {
+		$status = EE_Status::new_instance( $args );
+		$statusID = $status->save();
+		return $statusID ? $status : false;
+	}
+
+
+	/**
+	 * Update status object for given status
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int      $STS_ID         Status ID for the status to update
+	 * @param array   $cols_n_data columns and values to change/update
+	 *
+	 * @return EE_Status|false
+	 */
+	public function update_object( $STS_ID, $cols_n_data ) {
+		//all the stuff for updating an status.
+		$status = EEM_Status::instance()->get_one_by_ID( $STS_ID );
+		if ( ! $status instanceof EE_Status )
+			return null;
+		foreach ( $cols_n_data as $key => $val ) {
+			$status->set( $key, $val );
+		}
+		$success = $status->save();
+		return $success ? $status : false;
+	}
+
+
+
+	/**
+	 * return the status object for a given status ID
+	 *
+	 * @since 4.3.0
+	 *
+	 * @param int  $STS_ID the status id for the status to attemp to retrieve
+	 *
+	 * @return mixed null|EE_Status
+	 */
+	public function get_object_by_id( $STS_ID ) {
+		return EEM_Status::instance()->get_one_by_ID( $STS_ID );
 	}
 }
