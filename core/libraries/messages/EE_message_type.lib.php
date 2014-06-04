@@ -641,6 +641,21 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$EVT_ID = $mtpg = $global_mtpg = NULL;
 		$templates = array();
 
+		//set the primary messenger
+		//primary messenger should ALWAYS be set via the trigger in a $_REQUEST variable.  If it's NOT present, then we assume that the incoming messenger IS a primary messenger.
+		$primary_messenger =  !empty( $_REQUEST['prmry_msgr'] ) ? $_REQUEST['prmry_msgr'] : $this->_active_messenger->name;
+
+		if ( $this->_active_messenger->name !== $primary_messenger ) {
+			$messengers = EE_Registry::instance()->load_lib('messages')->get_active_messengers();
+			$this->_primary_messenger = isset( $messengers[$primary_messenger] ) ? $messengers[$primary_messenger] : $this->_active_messenger;
+		}
+
+		$template_qa = array(
+			'MTP_is_active' => TRUE,
+			'MTP_messenger' => $this->_primary_messenger->name,
+			'MTP_message_type' => $this->name
+		);
+
 		//in vanilla EE we're assuming there's only one event.  However, if there are multiple events then we'll just use the default templates instead of different templates per event (which could create problems).
 		if ( count($this->_data->events) === 1 ) {
 			foreach ( $this->_data->events as $event ) {
@@ -654,11 +669,10 @@ abstract class EE_message_type extends EE_Messages_Base {
 		} else {
 			//not a preview or test send so lets continue on our way!
 			//is there an evt_id?  If so let's get that. template.
-			if ( !empty( $EVT_ID ) && ! $global_mtpg->get('MTP_is_override') ) {
+			if ( !empty( $EVT_ID )  ) {
 				$evt_qa = array(
 					'Event.EVT_ID' => $EVT_ID
 				);
-				unset( $template_qa['MTP_is_global'] );
 				$qa = array_merge( $template_qa, $evt_qa );
 				$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $qa ) );
 			}
@@ -666,25 +680,12 @@ abstract class EE_message_type extends EE_Messages_Base {
 			//is there a 'MTP_ID' ? if so let's get that.
 
 			//if global template is NOT an override, and there is a 'MTP_ID' in the post global, then we'll assume a specific template has ben requested.
-			if ( !empty( $_POST['MTP_ID'] ) && !$global_mtpg->get('MTP_is_override') ) {
+			if ( !empty( $_POST['MTP_ID'] )  ) {
 				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['MTP_ID'] );
 			}
 
-			//let's just doublecheck for global template for the PRIMARY messenger.  (should be able to determine from the current mtpg in the queue).
-			$primary_messenger = $mtpg instanceof EE_Message_Template_Group ? $mtpg->get('MTP_messenger') : NULL;
-			$primary_messenger = empty( $primary_messenger ) && !empty( $_REQUEST['prmry_msgr'] ) ? $_REQUEST['prmry_msgr'] : $this->_active_messenger->name;
 
-			if ( $this->_active_messenger->name !== $primary_messenger ) {
-				$messengers = EE_Registry::instance()->load_lib('messages')->get_active_messengers();
-				$this->_primary_messenger = isset( $messengers[$primary_messenger] ) ? $messengers[$primary_messenger] : $this->_active_messenger;
-			}
-
-			$template_qa = array(
-				'MTP_is_active' => TRUE,
-				'MTP_messenger' => $this->_primary_messenger->name,
-				'MTP_message_type' => $this->name,
-				'MTP_is_global' => TRUE
-				);
+			$template_qa['MTP_is_global'] = TRUE;
 
 			//this gets the current global template (message template group) for the active messenger and message type.
 			$global_mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
