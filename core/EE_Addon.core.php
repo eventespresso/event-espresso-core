@@ -286,9 +286,11 @@ abstract class EE_Addon extends EE_Configurable {
 		return $this->_req_type;
 	}
 
+
+
 	/**
 	 * Detects the request type for this addon (whether it was just activated, upgrades, a normal request, etc.
-	 * @return
+	 * @return void
 	 */
 	function detect_activation_or_upgrade(){
 		$activation_history_for_addon = $this->get_activation_history();
