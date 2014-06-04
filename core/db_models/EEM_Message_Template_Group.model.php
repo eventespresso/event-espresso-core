@@ -61,7 +61,6 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 				'MTP_name' => new EE_Plain_Text_Field( 'MTP_name', __('The name of the temlpate group', 'event_espresso'), FALSE, '' ),
 				'MTP_description' => new EE_Simple_HTML_Field( 'MTP_description', __('A brief description about this template.', 'event_esrpresso' ), FALSE, '' ),
 				'MTP_user_id'=> new EE_Integer_Field('MTP_user_id', __('User who created this template', 'event_espresso'), FALSE, 1 ),
-				'MTP_messenger'=>new EE_Plain_Text_Field('MTP_messenger', __('Messenger Used for Template', 'event_espresso'), FALSE, 'email' ),
 				'MTP_message_type'=>new EE_Plain_Text_Field('MTP_message_type', __('Message Type', 'event_espresso'),false,'registration'),
 				'MTP_is_global'=>new EE_Boolean_Field('MTP_is_global', __('Flag indicating if Template Group is Global', 'event_espresso'), false, true),
 				'MTP_is_override'=>new EE_Boolean_Field('MTP_is_override', __('Flag indicating if Template Group overrides any other Templates for the messenger/messagetype combination', 'event_espresso'), false, false),
@@ -71,7 +70,8 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 			);
 		$this->_model_relations = array(
 			'Message_Template' => new EE_Has_Many_Relation(),
-			'Event' => new EE_HABTM_Relation('Event_Message_Template')
+			'Event' => new EE_HABTM_Relation('Event_Message_Template'),
+			'Messenger_Group' => new EE_Has_Many_Relation()
 			);
 
 		parent::__construct();
@@ -99,7 +99,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 * @return array all (including trashed or inactive) message template group objects for the given messenger
 	 */
 	public function get_all_message_templates_by_messenger($messenger, $orderby = 'GRP_ID', $order = 'ASC' ) {
-		return $this->get_all_deleted_and_undeleted( array( array('MTP_messenger' => $messenger), 'order_by' => array($orderby => $order) ) );
+		return $this->get_all_deleted_and_undeleted( array( array('Messenger_Group.MSGG_messenger' => $messenger), 'order_by' => array($orderby => $order) ) );
 	}
 
 
@@ -112,7 +112,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	protected function _maybe_mtp_filters( $_where = array() ) {
 		//account for messenger or message type filters
 		if ( isset($_REQUEST['ee_messenger_filter_by'] ) && $_REQUEST['ee_messenger_filter_by'] != 'none_selected' ) {
-			$_where['MTP_messenger'] =  $_REQUEST['ee_messenger_filter_by'] ;
+			$_where['Messenger_Group.MSGG_messenger'] =  $_REQUEST['ee_messenger_filter_by'] ;
 		}
 
 		if ( isset( $_REQUEST['ee_message_type_filter_by']) && $_REQUEST['ee_message_type_filter_by'] != 'none_selected' ) {
@@ -239,7 +239,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	public function get_event_message_templates_by_m_and_mt_and_evt( $messenger, $message_type, $evt_id, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
 
 		$_where = array(
-			'MTP_messenger' => $messenger,
+			'Messenger_Group.MSGG_messenger' => $messenger,
 			'MTP_message_type' => $message_type,
 			'Event.EVT_ID' => $evt_id,
 			'MTP_is_global' => TRUE,
@@ -267,7 +267,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	 */
 	public function get_global_message_template_by_m_and_mt($messenger, $message_type, $orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $active = TRUE ) {
 		$_where = array(
-			'MTP_messenger' => $messenger,
+			'Messenger_Group.MSGG_messenger' => $messenger,
 			'MTP_message_type' => $message_type,
 			'MTP_is_global' => TRUE,
 			);
@@ -294,7 +294,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	public function get_custom_message_template_by_m_and_mt( $messenger, $message_type, $query_params = array() ) {
 		$_where = array(
 			'MTP_is_global' => FALSE,
-			'MTP_messenger' => $messenger,
+			'Messenger_Group.MSGG_messenger' => $messenger,
 			'MTP_message_type' => $message_type
 			);
 
