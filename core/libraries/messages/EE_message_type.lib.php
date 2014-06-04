@@ -76,11 +76,30 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	public $count = 0;
 
+
+
+
+
 	/**
 	 * This will hold the active messenger object that is passed to the type so the message_type knows what template files to process.  IT is possible that the active_messenger sent along actually doesn't HAVE a template (or maybe turned off) for the given message_type.
-	 * @var object
+	 * @var EE_Messenger
 	 */
 	protected $_active_messenger;
+
+
+
+
+
+	/**
+	 * This holds what the primary messenger is for the active instance of this message type.
+	 *
+	 * @var EE_Messenger
+	 */
+	protected $_primary_messenger;
+
+
+
+
 
 	/**
 	 * This will hold the shortcode_replace instance for handling replacement of shortcodes in the various templates
@@ -177,7 +196,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	public function set_messages($data, $active_messenger, $context = FALSE ) {
 
-		$this->_active_messenger = $active_messenger;
+		$this->_active_messenger = $this->_primary_messenger  = $active_messenger;
+
 		$this->_data = $data;
 
 		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send).
@@ -213,10 +233,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
 	}
-
-
-
-
 
 
 
@@ -584,18 +600,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['msg_id'] );
 		} else {
 			//not a preview or test send so lets continue on our way!
-			$template_qa = array(
-				'MTP_is_active' => TRUE,
-				'MTP_messenger' => $this->_active_messenger->name,
-				'MTP_message_type' => $this->name,
-				'MTP_is_global' => TRUE
-				);
-
-			//this gets the current global template (message template group) for the active messenger and message type.
-			$global_mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-
-			//If the global template is NOT an override, then we'll use whatever is attached to the event (if there is an evt_ID.  If it IS an override then we just use the global_mtpg
-
+			//is there an evt_id?  If so let's get that. template.
 			if ( !empty( $EVT_ID ) && ! $global_mtpg->get('MTP_is_override') ) {
 				$evt_qa = array(
 					'Event.EVT_ID' => $EVT_ID
@@ -605,12 +610,33 @@ abstract class EE_message_type extends EE_Messages_Base {
 				$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $qa ) );
 			}
 
+			//is there a 'MTP_ID' ? if so let's get that.
+
 			//if global template is NOT an override, and there is a 'MTP_ID' in the post global, then we'll assume a specific template has ben requested.
 			if ( !empty( $_POST['MTP_ID'] ) && !$global_mtpg->get('MTP_is_override') ) {
 				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['MTP_ID'] );
 			}
 
-			$mtpg = $mtpg instanceof EE_Message_Template_Group ? $mtpg : $global_mtpg;
+			//let's just doublecheck for global template for the PRIMARY messenger.  (should be able to determine from the current mtpg in the queue).
+			$primary_messenger = $mtpg instanceof EE_Message_Template_Group ? $mtpg->get('MTP_messenger') : NULL;
+			$primary_messenger = empty( $primary_messenger ) && !empty( $_REQUEST['prmry_msgr'] ) ? $_REQUEST['prmry_msgr'] : $this->_active_messenger->name;
+
+			if ( $this->_active_messenger->name !== $primary_messenger ) {
+				$messengers = EE_Registry::instance()->load_lib('messages')->get_active_messengers();
+				$this->_primary_messenger = isset( $messengers[$primary_messenger] ) ? $messengers[$primary_messenger] : $this->_active_messenger;
+			}
+
+			$template_qa = array(
+				'MTP_is_active' => TRUE,
+				'MTP_messenger' => $this->_primary_messenger->name,
+				'MTP_message_type' => $this->name,
+				'MTP_is_global' => TRUE
+				);
+
+			//this gets the current global template (message template group) for the active messenger and message type.
+			$global_mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+
+			$mtpg = $mtpg instanceof EE_Message_Template_Group && ! $global_mtpg->get( 'MTP_is_override' ) ? $mtpg : $global_mtpg;
 		}
 
 		$templates = $mtpg->context_templates();
@@ -650,7 +676,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		//get what shortcodes are supposed to be used
 		$mt_shortcodes = $this->get_valid_shortcodes();
-		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
+		$m_shortcodes = $this->_primary_messenger->get_valid_shortcodes();
 
 		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off) EXCEPT if we're previewing
 		if ( empty( $this->_templates['to'][$context] ) && !$this->_preview )

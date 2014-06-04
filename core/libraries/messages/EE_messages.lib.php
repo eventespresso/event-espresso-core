@@ -143,6 +143,41 @@ class EE_messages {
 
 
 	/**
+	 * Used to verify if a message can be sent for the given messenger and message type considering that the messenger may be a secondary messenger for the given message type.
+	 *
+	 * @param EE_messenger $messenger    messenger used in trigger
+	 * @param EE_messagetype $message_type message type used in trigger
+	 *
+	 * @return bool true if message can send/false if "you no go"
+	 */
+	private function _verify_message_can_send( $messenger, $message_type ) {
+		$primary_msgrs = array();
+		//get the $messengers the message type says it can be used with.
+		$used_with = $message_type->with_messengers();
+
+		foreach ( $used_with as $primary_msgr => $secondary_msgrs ) {
+			if ( $messenger->name == $primary_msgr ) {
+				$primary_msgrs[] = $primary_msgr;
+				continue;
+			}
+			if ( in_array( $messenger->name, $secondary_msgrs ) ) {
+				$primary_msgrs[] = $primary_msgr;
+			}
+		}
+
+		//now let's check our primary_msgrs array and verify they are in the _active_message_types array.
+		foreach ( $primary_msgrs as $mssgr ) {
+			if ( isset( $this->_active_message_types[$mssgr][$message_type->name] ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+
+
+	/**
 	 * delegates message sending to messengers
 	 * @param  string  $type    What type of message are we sending (corresponds to message types)
 	 * @param  array  $vars    Data being sent for parsing in the message
@@ -156,9 +191,10 @@ class EE_messages {
 			// then send it
 			foreach ( $this->_active_messengers as $active_messenger ) {
 
-				//we ONLY continue if the given messenger has that message type active with it.
-				if ( !isset( $this->_active_message_types[$active_messenger->name][$type] ) )
+				//we ONLY continue if the given messenger has that message type active with it. OR the given messenger is the secondary messenger for any of the primary messenger that has a message type active with it.
+				if ( ! $this->_verify_message_can_send( $active_messenger, $this->_installed_message_types[$type] ) ) {
 					return false;
+				}
 
 				// create message data
 				$messages = $this->_installed_message_types[$type];
@@ -214,7 +250,7 @@ class EE_messages {
 			// valid messenger?
 			if ( isset( $this->_active_messengers[$messenger] ) ) {
 
-				//we ONLY continue if the given messenger has that message type active with it.
+				//we ONLY continue if the given messenger has that message type active with it (note previews only come from primary messengers so no need to check secondarys)
 				if ( !isset( $this->_active_message_types[$messenger][$type] ) )
 					return false;
 
