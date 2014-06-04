@@ -1027,8 +1027,11 @@ class EE_UnitTest_Factory_For_Registration extends WP_UnitTest_Factory_For_Thing
 		$registration->set( 'REG_session', uniqid() );
 		$registrationID = $registration->save();
 		$registration = $this->_maybe_chained( $registration, $args );
-		$registration->finalize();
-		$registration->save();
+		//only run finalize if $chained because it requires EE_Transaction
+		if ( $this->_chained ) {
+			$registration->finalize();
+			$registration->save();
+		}
 		return $registrationID ? $registration : false;
 	}
 
