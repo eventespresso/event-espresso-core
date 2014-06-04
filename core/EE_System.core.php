@@ -131,9 +131,8 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
-		//when an ee plugin is activated, we want to call
-		//the core hook(s) again because the newly-activated addon didn't
-		//get a chance to run at all
+		// when an ee addon is activated, we want to call the core hook(s) again
+		// because the newly-activated addon didn't get a chance to run at all
 		add_action( 'activate_plugin', array( $this, 'load_espresso_addons' ), 1 );
 		// detect whether install or upgrade
 		add_action( 'plugins_loaded', array( $this, 'detect_activations_or_upgrades' ), 3 );
@@ -148,11 +147,14 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__construct__complete', $this );
 	}
 
+
+
 	/**
-	 * 	_check_wp_version
+	 *    _check_wp_version
 	 *
-	 * 	@access private
-	 * 	@return boolean
+	 * @access private
+	 * @param string $min_version
+	 * @return boolean
 	 */
 	private function _check_wp_version( $min_version = EE_MIN_WP_VER_REQUIRED ) {
 		global $wp_version;
@@ -179,11 +181,14 @@ final class EE_System {
 		return $this->_check_wp_version( EE_MIN_WP_VER_RECOMMENDED );
 	}
 
+
+
 	/**
-	 * 	_check_php_version
+	 *    _check_php_version
 	 *
-	 * 	@access private
-	 * 	@return boolean
+	 * @access private
+	 * @param string $min_version
+	 * @return boolean
 	 */
 	private function _check_php_version( $min_version = EE_MIN_PHP_VER_RECOMMENDED ) {
 		return version_compare( PHP_VERSION, $min_version, '>=' ) ? TRUE : FALSE;
@@ -483,11 +488,9 @@ final class EE_System {
 
 	/**
 	 * Adds the current code version to the saved wp option which stores a list of all ee versions ever installed.
-	 * @param array $version_history
-	 * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from the options table
-	 * @param string version to be added to the version history
-	 * @param string $plugin_slug like 'Core', or that of an addon, like 'Mailchimp' or 'Calendar'
-	 * @return boolean success as to whether or not this option was changed
+	 * @param 	array 	$version_history
+	 * @param 	string 	$current_version_to_add 	version to be added to the version history
+	 * @return 	boolean success as to whether or not this option was changed
 	 */
 	public function update_list_of_installed_versions($version_history = NULL,$current_version_to_add = NULL) {
 		if( ! $version_history ) {
@@ -497,8 +500,7 @@ final class EE_System {
 			$current_version_to_add = espresso_version();
 		}
 		$version_history[ $current_version_to_add ][] = date( 'Y-m-d H:i:s',time() );
-		// resave
-
+		// re-save
 		return update_option( 'espresso_db_update', $version_history );
 	}
 
@@ -594,7 +596,8 @@ final class EE_System {
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
 		// check for activation errors
-		if ( $activation_errors = get_option( 'ee_plugin_activation_errors', FALSE )) {
+		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
+		if ( $activation_errors ) {
 			EE_Error::add_error( $activation_errors );
 			update_option( 'ee_plugin_activation_errors', FALSE );
 		}
@@ -616,6 +619,8 @@ final class EE_System {
 	private function _parse_model_names(){
 		//get all the files in the EE_MODELS folder that end in .model.php
 		$models = glob( EE_MODELS.'*.model.php');
+		$model_names = array();
+		$non_abstract_db_models = array();
 		foreach( $models as $model ){
 			// get model classname
 			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
@@ -680,9 +685,9 @@ final class EE_System {
 			$msg .= __( 'Compatibility issues can be avoided and/or resolved by keeping addons and plugins updated to the latest version.', 'event_espresso' );
 			// save list of incompatible addons to wp-options for later use
 			add_option( 'ee_incompatible_addons', $class_names, '', 'no' );
-		}
-		if ( is_admin() ) {
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			if ( is_admin() ) {
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
 		}
 	}
 
@@ -870,10 +875,11 @@ final class EE_System {
 
 
 	/**
-	 * 	espresso_toolbar_items
+	 *    espresso_toolbar_items
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $admin_bar
+	 * @return    void
 	 */
 	public function espresso_toolbar_items( $admin_bar ) {
 
