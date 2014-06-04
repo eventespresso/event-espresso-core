@@ -2776,7 +2776,7 @@ abstract class EEM_Base extends EE_Base{
 		}elseif(is_string($base_class_obj_or_id) && intval($base_class_obj_or_id)){//assume its a string representation of the object
 			$model_object = $this->get_one_by_ID(intval($base_class_obj_or_id));
 		}else{
-			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full valeu is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
+			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full value is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
 		}
 		if( $model_object->ID() == NULL && $ensure_is_in_db){
 			$model_object->save();
@@ -2803,7 +2803,7 @@ abstract class EEM_Base extends EE_Base{
 		}elseif(is_string($base_class_obj_or_id) && intval($base_class_obj_or_id)){//assume its a string representation of the object
 			$id = $base_class_obj_or_id;
 		}else{
-			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full valeu is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
+			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full value is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
 		}
 		return $id;
 	}
