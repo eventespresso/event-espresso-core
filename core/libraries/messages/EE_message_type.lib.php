@@ -91,17 +91,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
-	 * This holds what the primary messenger is for the active instance of this message type.
-	 *
-	 * @var EE_Messenger
-	 */
-	protected $_primary_messenger;
-
-
-
-
-
-	/**
 	 * This will hold the shortcode_replace instance for handling replacement of shortcodes in the various templates
 	 * @var object
 	 */
@@ -219,7 +208,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	public function set_messages($data, $active_messenger, $context = FALSE ) {
 
-		$this->_active_messenger = $this->_primary_messenger  = $active_messenger;
+		$this->_active_messenger = $active_messenger;
 
 		$this->_data = $data;
 
@@ -641,18 +630,9 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$EVT_ID = $mtpg = $global_mtpg = NULL;
 		$templates = array();
 
-		//set the primary messenger
-		//primary messenger should ALWAYS be set via the trigger in a $_REQUEST variable.  If it's NOT present, then we assume that the incoming messenger IS a primary messenger.
-		$primary_messenger =  !empty( $_REQUEST['prmry_msgr'] ) ? $_REQUEST['prmry_msgr'] : $this->_active_messenger->name;
-
-		if ( $this->_active_messenger->name !== $primary_messenger ) {
-			$messengers = EE_Registry::instance()->load_lib('messages')->get_active_messengers();
-			$this->_primary_messenger = isset( $messengers[$primary_messenger] ) ? $messengers[$primary_messenger] : $this->_active_messenger;
-		}
-
 		$template_qa = array(
 			'MTP_is_active' => TRUE,
-			'MTP_messenger' => $this->_primary_messenger->name,
+			'MTP_messenger' => $this->_active_messenger->name,
 			'MTP_message_type' => $this->name
 		);
 
@@ -730,7 +710,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		//get what shortcodes are supposed to be used
 		$mt_shortcodes = $this->get_valid_shortcodes();
-		$m_shortcodes = $this->_primary_messenger->get_valid_shortcodes();
+		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
 		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off) EXCEPT if we're previewing
 		if ( empty( $this->_templates['to'][$context] ) && !$this->_preview )

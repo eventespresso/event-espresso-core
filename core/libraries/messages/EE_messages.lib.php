@@ -143,31 +143,20 @@ class EE_messages {
 
 
 	/**
-	 * Used to verify if a message can be sent for the given messenger and message type considering that the messenger may be a secondary messenger for the given message type.
+	 * Used to verify if a message can be sent for the given messenger and message type and that it is a primary messenger.
 	 *
 	 * @param EE_messenger $messenger    messenger used in trigger
 	 * @param EE_messagetype $message_type message type used in trigger
 	 *
-	 * @return bool true if message can send/false if "you no go"
+	 * @return bool true can is primary and can be sent OR FALSE meaning cannot send.
 	 */
-	private function _verify_message_can_send( $messenger, $message_type ) {
+	private function _is_primary_messenger_and_active( $messenger, $message_type ) {
 		$primary_msgrs = array();
 		//get the $messengers the message type says it can be used with.
 		$used_with = $message_type->with_messengers();
 
 		foreach ( $used_with as $primary_msgr => $secondary_msgrs ) {
-			if ( $messenger->name == $primary_msgr ) {
-				$primary_msgrs[] = $primary_msgr;
-				continue;
-			}
-			if ( in_array( $messenger->name, $secondary_msgrs ) ) {
-				$primary_msgrs[] = $primary_msgr;
-			}
-		}
-
-		//now let's check our primary_msgrs array and verify they are in the _active_message_types array.
-		foreach ( $primary_msgrs as $mssgr ) {
-			if ( isset( $this->_active_message_types[$mssgr][$message_type->name] ) ) {
+			if ( $messenger->name == $primary_msgr && isset( $this->_active_message_types[$primary_msgr][$message_type->name] ) ) {
 				return true;
 			}
 		}
@@ -181,45 +170,34 @@ class EE_messages {
 	 * delegates message sending to messengers
 	 * @param  string  $type    What type of message are we sending (corresponds to message types)
 	 * @param  array  $vars    Data being sent for parsing in the message
+	 * @param  string $messenger if included then we ONLY use the specified messenger for delivery.  Otherwise we cycle through all active messengers.
 	 * @return void
 	 */
-	public function send_message( $type, $vars ) {
+	public function send_message( $type, $vars, $messenger = '' ) {
 		$success = FALSE;
 		$error = FALSE;
 		// is that a real class ?
 		if ( isset(  $this->_installed_message_types[$type] ) ) {
-			// then send it
-			foreach ( $this->_active_messengers as $active_messenger ) {
-
-				//we ONLY continue if the given messenger has that message type active with it. OR the given messenger is the secondary messenger for any of the primary messenger that has a message type active with it.
-				if ( ! $this->_verify_message_can_send( $active_messenger, $this->_installed_message_types[$type] ) ) {
+			//is the messenger specified? If so then let's see if can send.  This is the check where its possible secondary messengers might be in use.
+			if ( !empty ( $messenger ) ) {
+				$primary_messenger =  !empty( $_REQUEST['prmry_msgr'] ) ? $this->_active_messengers[$_REQUEST['prmry_msgr']]: $this->_active_messengers[$messenger];
+				if ( !$this->_is_primary_messenger_and_active( $primary_messenger, $this->_installed_message_types[$type] ) )
 					return false;
-				}
+				$success = $this->_send_message( $primary_messenger, $this->_installed_message_types[$type], $vars, $messenger );
+			} else {
+				//no messenger sent so let's just loop through active messengers (this method is only acceptable for primary messengers)
+				foreach ( $this->_active_messengers as $active_messenger ) {
 
-				// create message data
-				$messages = $this->_installed_message_types[$type];
-				$exit = $messages->set_messages( $vars, $active_messenger );
+					//we ONLY continue if the given messenger is a primary messenger and is an active messenger for the given message type.  Otherwise we get out.
+					if ( ! $this->_is_primary_messenger_and_active( $active_messenger, $this->_installed_message_types[$type] ) ) {
+						return false;
+					}
 
-				if ( is_wp_error($messages) || $messages === FALSE || $exit === FALSE ) {
-					//we've got an error so let's bubble up the error_object to be caught by caller.
-					//todo: would be better to just catch the errors and then return any aggregated errors later.
-					$error = TRUE;
-					continue;
-				}
-
-				if ( $messages->count === 0 ) continue; //it is possible that the user has the messenger turned off for this type.
-
-				//TODO: check count (at some point we'll use this to decide whether we send to queue or not i.e.
-				//if ( $messages->count > 1000 ) ... do something
-				//else...
-				foreach ( $messages->messages as $message ) {
-					//todo: should we do some reporting on messages gone out at some point?  I think we could have the $active_messenger object return bool for whether message was sent or not and we can compile a report based on that.
-					$success = $active_messenger->send_message( $message );
+					$success = $this->_send_message( $active_messenger, $this->_installed_message_types[$type], $vars, $active_messenger );
 					if ( $success === FALSE  ) {
 						$error = TRUE;
 					}
 				}
-				unset($messages);
 			}
 		} else {
 			return EE_Error::add_error( sprintf( __('Message type: %s does not exist', 'event_espresso'), $type ), __FILE__, __FUNCTION__, __LINE__ );
@@ -273,6 +251,31 @@ class EE_messages {
 			return FALSE;
 		}
 
+	}
+
+
+
+	private function _send_message( $primary_messenger, $message_type, $data, $secondary_messenger ) {
+		$messages = $message_type;
+		$success = FALSE;
+		$exit = $messages->set_messages( $data, $primary_messenger );
+
+		if ( is_wp_error($messages) || $messages === FALSE || $exit === FALSE ) {
+			//can't even get started yo!
+			return FALSE;
+		}
+
+		if ( $messages->count === 0 ) return FALSE; //it is possible that the user has the messenger turned off for this type.
+
+		//TODO: check count (at some point we'll use this to decide whether we send to queue or not i.e.
+		//if ( $messages->count > 1000 ) ... do something
+		//else...
+		foreach ( $messages->messages as $message ) {
+			//todo: should we do some reporting on messages gone out at some point?  I think we could have the $active_messenger object return bool for whether message was sent or not and we can compile a report based on that.
+			$success = $secondary_messenger->send_message( $message );
+		}
+		unset($messages);
+		return $success;
 	}
 
 
