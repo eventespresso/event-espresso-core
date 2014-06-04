@@ -371,11 +371,11 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 
 	/**
 	 * return the total number of tickets available for purchase
-	 * @param  int    $DTT_ID the primary key for a particular datetime. set to null for
-	 * all related datetimes
+	 * @param  int  $DTT_ID the primary key for a particular datetime
+	 * @param array $datetimes, if you have already retrieved the list of datetimes for this ticket, or only wish to test a specific set of datetimes
 	 * @return int
 	 */
-	public function remaining( $DTT_ID = 0 ) {
+	public function remaining( $DTT_ID = 0, $datetimes = array() ) {
 		// are we checking availability for a particular datetime ?
 		if ( $DTT_ID ) {
 			// get that datetime object
@@ -383,7 +383,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 				'Datetime',
 				array( array( 'DTT_ID' => $DTT_ID ))
 			); //needs to be in array for loop below.
-		} else {
+		} else if ( empty( $datetimes )) {
 			// we need to check availability of ALL datetimes
 			// get that datetime object
 			$datetimes = $this->get_many_related(
@@ -400,12 +400,12 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class{
 			$tickets_remaining = $this->_TKT_qty - $this->_TKT_sold;
 			foreach ( $datetimes as $datetime ) {
 				if ( $datetime instanceof EE_Datetime ) {
-					$tickets_remaining =  min( $tickets_remaining, $datetime->spaces_remaining() );
-					$tickets_remaining =  min( $tickets_remaining, $datetime->reg_limit() );
+					$tickets_remaining =  min( $tickets_remaining, $datetime->spaces_remaining());
 				}
 			}
 			return $tickets_remaining;
 		}
+		return 0;
 	}
 
 
