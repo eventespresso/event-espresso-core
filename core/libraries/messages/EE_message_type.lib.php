@@ -165,6 +165,28 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+	/**
+	 * This is used to designate the primary and secondary messengers for a message type.  It is set via set_with_messengers() on construct.
+	 * Should be in this format: {
+	 * 	@type string $primary_messenger  	the name of the primary messenger.  Primary
+	 * 	      					messengers are used for generating templates,
+	 * 	      					doing validation and defining valid shortcodes. {
+	 * 	      	@type string $secondary_messenger 	values are the name(s) for the secondary
+	 * 	      	      					messengers.  Secondary messengers are
+	 * 	      	      					just valid delivery vehicles that will utilize
+	 * 	      	      					the templates (and generated EE_message
+	 * 	      	      					objects from the primary messengers.
+	 * 	      	}
+	 * }
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var array
+	 */
+	protected $_with_messengers = array();
+
+
+
 
 	/**
 	 * This holds the addressees in an array indexed by context for later retrieval when assembling the message objects.
@@ -180,6 +202,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	public function __construct() {
 		$this->_messages_item_type = 'message_type';
 		$this->_set_contexts();
+		$this->_set_with_messengers();
 		parent::__construct();
 	}
 
@@ -262,6 +285,36 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+
+	/**
+	 * used to set the $_with_messengers property.
+	 * @see property definition for description of setup.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @abstract
+	 * @return void
+	 */
+	protected function _set_with_messengers() {
+		$this->_with_messengers = array(
+			'email' => array()
+			);
+	}
+
+
+
+
+	/**
+	 * Return the value of the _with_messengers property
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return array
+	 */
+	public function with_messengers() {
+
+		return apply_filters( 'FHEE__EE_message_type__get_with_messengers__with_messengers__' . get_class( $this ), $this->_with_messengers);
+	}
 
 
 
