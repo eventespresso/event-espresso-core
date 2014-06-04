@@ -113,7 +113,7 @@ class EE_Data_Migration_Manager{
 	 *@singleton method used to instantiate class object
 	 *@access public
 	 *@return EE_Data_Migration_Manager instance
-	 */	
+	 */
 	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Data_Migration_Manager )) {
@@ -257,13 +257,13 @@ class EE_Data_Migration_Manager{
 	}
 
 	/**
-	 * Gets all the options containing migration scripts that have been run
-	 * @param boolean @only_get_one FALSE by default- meaning to get ALL; if set ot TRUE, will only retrieve one
+	 * Gets all the options containing migration scripts that have been run. Ordering is important: it's assumed that the last
+	 * option returned in this array is the most-recently ran DMS option
 	 * @return array
 	 */
 	 public function get_all_migration_script_options(){
 		global $wpdb;
-		return $wpdb->get_results("SELECT * FROM {$wpdb->options} WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC",ARRAY_A);
+		return $wpdb->get_results("SELECT * FROM {$wpdb->options} WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id ASC",ARRAY_A);
 	}
 
 	/**
@@ -389,13 +389,15 @@ class EE_Data_Migration_Manager{
 
 	/**
 	 * Gets the script which is currently being ran, if thereis one. If $include_completed_scripts is set to TRUE
-	 * it will return the last ran script even if its complete
+	 * it will return the last ran script even if its complete.
+	 * This means: if you want to find the currently-executing script, leave it as FALSE.
+	 * If you really just want to find the script which ran most recently, regardless of status, leave it as TRUE.
 	 * @return EE_Data_Migration_Script_Base
 	 * @throws EE_Error
 	 */
 	public function get_last_ran_script($include_completed_scripts = false){
 		//make sure we've setup the class properties _last_ran_script and _last_ran_incomplete_script
-		if($this->_data_migrations_ran){
+		if( ! $this->_data_migrations_ran){
 			$this->get_data_migrations_ran();
 		}
 		if($include_completed_scripts){

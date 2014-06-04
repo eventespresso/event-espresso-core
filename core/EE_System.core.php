@@ -577,6 +577,7 @@ final class EE_System {
 	 * @return int one of the consts on EE_System::req_type_*
 	 */
 	protected function _detect_req_type($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
+//		echo "EE_System::_detect_req_type for ";d($activation_history_for_addon);d($activation_indicator_option_name);d($version_to_upgrade_to);
 		if( $activation_history_for_addon ){
 			//it exists, so this isn't a completely new install
 			//check if this version already in that list of previously installed versions
@@ -599,6 +600,7 @@ final class EE_System {
 			$req_type = EE_System::req_type_new_activation;
 			delete_option( $activation_indicator_option_name );
 		}
+//		echo "req type for ".$activation_indicator_option_name." was $req_type";
 		return $req_type;
 	}
 

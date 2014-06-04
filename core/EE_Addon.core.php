@@ -65,10 +65,6 @@ abstract class EE_Addon extends EE_Configurable {
 	 *    class constructor
 	 */
 	public function __construct() {
-		//we need to set a wordpress option to indicate that this addon has been activated
-		//this is mostly only used by core to detect a reactivation
-		$reflector = new ReflectionClass( get_class( $this ) );
-		register_activation_hook( $reflector->getFileName(), array( $this, 'set_activation_indicator_option' ) );
 	}
 
 
@@ -95,6 +91,7 @@ abstract class EE_Addon extends EE_Configurable {
 	 */
 	public function reactivation() {
 		$classname = get_class($this);
+		echo "by jove! $classname has been reactivated!";die;
 		do_action("AHEE__{$classname}__reactivation");
 		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
 	}

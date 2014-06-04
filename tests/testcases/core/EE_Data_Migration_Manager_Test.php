@@ -8,7 +8,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Data_Migration_Manager_Test
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
@@ -44,12 +44,12 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		$this->assertArrayNotHasKey('EE_DMS_Core_4_1_0',$dmss);
 		$this->assertArrayHasKey('EE_DMS_Mock_1_0_0',$dmss);
-		
+
 		//now pretend we're elsewhere in the migration where 4.2 should be ran
 		$this->_pretend_current_db_state_is_at('4.1.1');
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		$this->assertArrayHasKey('EE_DMS_Core_4_2_0',$dmss);
-		
+
 	}
 	public function test_parse_dms_classname(){
 		$details = EE_Data_Migration_Manager::instance()->parse_dms_classname("EE_DMS_Funky_4_8_12");
@@ -78,6 +78,36 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$this->assertEquals('EE_DMS_Mock_1_0_0',$non_core_dms);
 		$this->_remove_mock_dms();
 	}
+
+	public function test_get_last_ran_script(){
+		$dms41 = new EE_DMS_Core_4_1_0();
+		$dms41->set_completed();
+		$dms42 = new EE_DMS_Core_4_2_0();
+		$this->_pretend_ran_dms($dms41);
+		$this->_pretend_ran_dms($dms42);
+		$last_ran_script = EE_Data_Migration_Manager::reset()->get_last_ran_script();
+		$this->assertEquals($dms42,$last_ran_script);
+
+		//now if it's borked, we still should have found dms42
+		$dms42->set_borked();
+		$this->_pretend_ran_dms($dms42);
+		$last_ran_script = EE_Data_Migration_Manager::reset()->get_last_ran_script();
+		$this->assertEquals($dms42,$last_ran_script);
+
+		//all DMSs are complete, so we shouldn't find a current one
+		$dms42->set_completed();
+		$this->_pretend_ran_dms($dms42);
+		$last_ran_script = EE_Data_Migration_Manager::reset()->get_last_ran_script();
+		$this->assertNull($last_ran_script);
+
+		//now what we're ok with finding a complete dms (we're not searching
+		//for a currently-executing one)
+		$last_ran_script = EE_Data_Migration_Manager::reset()->get_last_ran_script(TRUE);
+		$this->assertEquals($dms42,$last_ran_script);
+	}
+
+
+
 	private function _pretend_ran_dms(EE_Data_Migration_Script_Base $dms_class){
 		$details = EE_Data_Migration_Manager::instance()->parse_dms_classname(get_class($dms_class));
 		$plugin_slug_for_use_in_option_name = $details['slug'].".";
