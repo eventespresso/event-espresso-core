@@ -705,7 +705,7 @@ class EE_Error extends Exception {
 	*
 	*	@access public
 	* 	@param		boolean		$format_output		whether or not to format the messages for display in the WP admin
-	* 	@param		boolean		$save_to_transient	whether or not to save notices to the db for retreival on next request - ONLY do this just before redirecting
+	* 	@param		boolean		$save_to_transient	whether or not to save notices to the db for retrieval on next request - ONLY do this just before redirecting
 	* 	@param		boolean		$remove_empty		whether or not to unset empty messages
 	* 	@return 		array
 	*/
