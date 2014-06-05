@@ -14,6 +14,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 /**
  * @group core/libraries/plugin_api
+ * @group core
  * @group agg
  */
 class EE_Register_Addon_Test extends EE_UnitTestCase{
