@@ -36,7 +36,7 @@ Class  EE_New_Addon extends EE_Addon {
 				'admin_path' 			=> EE_NEW_ADDON_ADMIN,
 				'admin_callback'		=> 'additional_admin_hooks',
 				'config_class' 			=> 'EE_New_Addon_Config',
-				'config_name'			=> 'New_Addon',
+				'config_name' 		=> 'EE_New_Addon',
 				'autoloader_paths' => array(
 					'EE_New_Addon' 						=> EE_NEW_ADDON_PATH . 'EE_New_Addon.class.php',
 					'EE_New_Addon_Config' 			=> EE_NEW_ADDON_PATH . 'EE_New_Addon_Config.php',
@@ -47,7 +47,7 @@ Class  EE_New_Addon extends EE_Addon {
 				'module_paths' 		=> array( EE_NEW_ADDON_PATH . 'EED_New_Addon.module.php' ),
 				'shortcode_paths' 	=> array( EE_NEW_ADDON_PATH . 'EES_New_Addon.shortcode.php' ),
 				'widget_paths' 		=> array( EE_NEW_ADDON_PATH . 'EEW_New_Addon.widget.php' ),
-				//The below is for if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
+				// if plugin update engine is being used for auto-updates. not needed if PUE is not being used.
 				'pue_options'			=> array(
 					'pue_plugin_slug' => 'espresso_new_addon',
 					'plugin_basename' => EE_NEW_ADDON_PLUGIN_FILE,
@@ -57,6 +57,8 @@ Class  EE_New_Addon extends EE_Addon {
 			)
 		);
 	}
+
+
 
 	/**
 	 * 	additional_admin_hooks
@@ -70,7 +72,6 @@ Class  EE_New_Addon extends EE_Addon {
 			add_filter( 'plugin_action_links', array( $this, 'plugin_actions' ), 10, 2 );
 		}
 	}
-
 
 
 
