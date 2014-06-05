@@ -117,7 +117,11 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			$items_actually_migrated++;
 		}
 
-		EE_Config::instance()->update_espresso_config(false,false);
+		$success = EE_Config::instance()->update_espresso_config(FALSE,TRUE);
+		if( ! $success ) {
+			$this->add_error( sprintf( __( 'Could not save EE Config during org options stage. Reason: %s', 'event_espresso' ),  EE_Error::get_notices( FALSE )) );
+			EE_Error::overwrite_errors();
+		}
 		EE_Network_Config::instance()->update_config(FALSE,FALSE);
 		if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
 			$this->set_completed();
