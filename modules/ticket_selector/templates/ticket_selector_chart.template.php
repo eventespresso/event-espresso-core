@@ -21,17 +21,15 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 		$min = 0;
 		$remaining = $ticket->remaining();
 		if ( $ticket->is_on_sale() && $ticket->is_remaining() ) {
-	//		if ( $max_atndz > 1 ) {
-				// offer the number of $tickets_remaining or $max_atndz, whichever is smaller
-				$max = min( $remaining, $max_atndz );
-				// but... we also want to restrict the number of tickets by the ticket max setting,
-				// however, the max still can't be higher than what was just set above
-				$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
-				// and we also want to restrict the minimum number of tickets by the ticket min setting
-				$min = $ticket->min() > 0 ? $ticket->min() : 0;
-				// and if the ticket is required, then make sure that min qty is at least 1
-				$min = $ticket->required() ? max( $min, 1 ) : $min;
-	//		}
+			// offer the number of $tickets_remaining or $max_atndz, whichever is smaller
+			$max = min( $remaining, $max_atndz );
+			// but... we also want to restrict the number of tickets by the ticket max setting,
+			// however, the max still can't be higher than what was just set above
+			$max = $ticket->max() > 0 ? min( $ticket->max(), $max ) : $max;
+			// and we also want to restrict the minimum number of tickets by the ticket min setting
+			$min = $ticket->min() > 0 ? $ticket->min() : 0;
+			// and if the ticket is required, then make sure that min qty is at least 1
+			$min = $ticket->required() ? max( $min, 1 ) : $min;
 		}
 
 		$ticket_price = $ticket->get_ticket_total_with_taxes();
@@ -134,6 +132,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			<?php
 						$hidden_input_qty = FALSE;
 
+					} else if ( $max_atndz  == 0 ) {
+						echo '<span class="sold-out">' . __( 'Closed', 'event_espresso' ) . '</span>';
 					} elseif ( $max > 0 ) {
 						// display submit button since we have tickets availalbe
 						add_filter( 'FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true' );
@@ -236,100 +236,101 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 									</div>
 								</section>
 								<br/>
-							<?php } ?>
+								<?php } ?>
 
-							<section class="tckt-slctr-tkt-sale-dates-sctn">
-								<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
-								<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
-								<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->start_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->start_date() )) ; ?><br/>
-								<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->end_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->end_date() )) ; ?><br/>
-							</section>
-							<br/>
+								<section class="tckt-slctr-tkt-sale-dates-sctn">
+									<h5><?php _e( 'Ticket Sale Dates', 'event_espresso' ); ?></h5>
+									<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The dates when this ticket is available for purchase.', 'event_espresso' ); ?></span><br/>
+									<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Goes On Sale:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->start_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->start_date() )) ; ?><br/>
+									<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Sales End:', 'event_espresso' ); ?></span><span class="dashicons dashicons-calendar"></span><?php echo date_i18n( 'l F jS, Y', strtotime( $ticket->end_date() )) . ' &nbsp; '; ?><span class="dashicons dashicons-clock"></span><?php echo date_i18n( 'g:i a', strtotime( $ticket->end_date() )) ; ?><br/>
+								</section>
+								<br/>
 
-							<?php do_action( 'AHEE__ticket_selector_chart_template__after_ticket_date', $ticket ); ?>
+								<?php do_action( 'AHEE__ticket_selector_chart_template__after_ticket_date', $ticket ); ?>
 
-							<?php if ( $ticket->min() &&$ticket->max() ) { ?>
-							<section class="tckt-slctr-tkt-quantities-sctn">
-								<h5><?php _e( 'Purchasable Quantities', 'event_espresso' ); ?></h5>
-								<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of tickets that can be purchased per transaction (if available).', 'event_espresso' ); ?></span><br/>
-								<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Minimum Qty:', 'event_espresso' ); ?></span><?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?>
-								<?php if ( $ticket->min() > $remaining ) { ?> &nbsp; <span class="important-notice small-text"><?php echo _e( 'The Minimum Quantity purchasable for this ticket exceeds the number of spaces remaining', 'event_espresso' ); ?></span><?php } ?><br/>
-								<?php //$max = min( $max, $max_atndz );?>
-								<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Maximum Qty:', 'event_espresso' ); ?></span><?php echo $ticket->max() === INF ? __( 'no limit', 'event_espresso' ) : max( $ticket->max(), 1 ); ?><br/>
-							</section>
-							<br/>
-							<?php } ?>
+								<?php if ( $ticket->min() &&$ticket->max() ) { ?>
+								<section class="tckt-slctr-tkt-quantities-sctn">
+									<h5><?php _e( 'Purchasable Quantities', 'event_espresso' ); ?></h5>
+									<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of tickets that can be purchased per transaction (if available).', 'event_espresso' ); ?></span><br/>
+									<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Minimum Qty:', 'event_espresso' ); ?></span><?php echo $ticket->min() > 0 ? $ticket->min() : 0; ?>
+									<?php if ( $ticket->min() > $remaining ) { ?> &nbsp; <span class="important-notice small-text"><?php echo _e( 'The Minimum Quantity purchasable for this ticket exceeds the number of spaces remaining', 'event_espresso' ); ?></span><?php } ?><br/>
+									<?php //$max = min( $max, $max_atndz );?>
+									<span class="ticket-details-label-spn drk-grey-text"><?php _e( 'Maximum Qty:', 'event_espresso' ); ?></span><?php echo $ticket->max() === INF ? __( 'no limit', 'event_espresso' ) : max( $ticket->max(), 1 ); ?><br/>
+								</section>
+								<br/>
+								<?php } ?>
 
-							<?php if ( $ticket->uses() !== INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) { ?>
-							<section class="tckt-slctr-tkt-uses-sctn">
-								<h5><?php _e( 'Event Date Ticket Uses', 'event_espresso' ); ?></h5>
-								<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of separate event datetimes (see table below) that this ticket can be used to gain admittance to.<br/> <strong>Admission is always one person per ticket.</strong>', 'event_espresso' ); ?></span><br/>
-								<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# Datetimes:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
-							</section>
-							<?php } ?>
+								<?php if ( $ticket->uses() !== INF && ( ! defined( 'EE_DECAF' ) || EE_DECAF !== TRUE )) { ?>
+								<section class="tckt-slctr-tkt-uses-sctn">
+									<h5><?php _e( 'Event Date Ticket Uses', 'event_espresso' ); ?></h5>
+									<span class="drk-grey-text small-text no-bold"> - <?php _e( 'The number of separate event datetimes (see table below) that this ticket can be used to gain admittance to.<br/> <strong>Admission is always one person per ticket.</strong>', 'event_espresso' ); ?></span><br/>
+									<span class="ticket-details-label-spn drk-grey-text"><?php _e( '# Datetimes:', 'event_espresso' ); ?></span><?php  echo $ticket->e( 'TKT_uses' );?><br/>
+								</section>
+								<?php } ?>
 
-							<?php if ( $datetimes = $ticket->datetimes_ordered($event_is_expired,false)) { ?>
-							<section class="tckt-slctr-tkt-datetimes-sctn">
-								<h5><?php _e( 'Event Access', 'event_espresso' ); ?></h5>
-								<span class="drk-grey-text small-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. "Remaining" shows the number of this ticket type left:', 'event_espresso' ); ?></span>
-								<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
-									<table class="tckt-slctr-tkt-details-tbl">
-										<thead>
+								<?php if ( $datetimes = $ticket->datetimes_ordered($event_is_expired,false)) { ?>
+								<section class="tckt-slctr-tkt-datetimes-sctn">
+									<h5><?php _e( 'Event Access', 'event_espresso' ); ?></h5>
+									<span class="drk-grey-text small-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. "Remaining" shows the number of this ticket type left:', 'event_espresso' ); ?></span>
+									<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
+										<table class="tckt-slctr-tkt-details-tbl">
+											<thead>
+												<tr>
+													<th valign="middle">
+														<span class="dashicons dashicons-calendar"></span><span class="small-text"><?php _e( 'Event Date ', 'event_espresso' ); ?></span>
+													</th>
+													<th width="15%" valign="middle" class="">
+														<span class="dashicons dashicons-clock"></span><span class="small-text"><?php _e( 'Time ', 'event_espresso' ); ?></span>
+													</th>
+													<th width="12.5%" valign="middle" class="cntr">
+														<span class="smaller-text"><?php _e( 'This Ticket<br/>Sold', 'event_espresso' ); ?></span>
+													</th>
+													<th width="12.5%" valign="middle" class="cntr">
+														<span class="smaller-text"><?php _e( 'This Ticket<br/>Left', 'event_espresso' ); ?></span>
+													</th>
+													<th width="12.5%" valign="middle" class="cntr">
+														<span class="smaller-text"><?php _e( 'Total Tickets<br/>Sold', 'event_espresso' ); ?></span>
+													</th>
+													<th width="12.5%" valign="middle" class="cntr">
+														<span class="smaller-text"><?php _e( 'Total Spaces<br/>Left', 'event_espresso' ); ?></span>
+													</th>
+												</tr>
+											</thead>
+											<tbody>
+											<?php foreach ( $datetimes as $datetime ) { ?>
+
 											<tr>
-												<th valign="middle">
-													<span class="dashicons dashicons-calendar"></span><span class="small-text"><?php _e( 'Event Date ', 'event_espresso' ); ?></span>
-												</th>
-												<th width="15%" valign="middle" class="">
-													<span class="dashicons dashicons-clock"></span><span class="small-text"><?php _e( 'Time ', 'event_espresso' ); ?></span>
-												</th>
-												<th width="12.5%" valign="middle" class="cntr">
-													<span class="smaller-text"><?php _e( 'This Ticket<br/>Sold', 'event_espresso' ); ?></span>
-												</th>
-												<th width="12.5%" valign="middle" class="cntr">
-													<span class="smaller-text"><?php _e( 'This Ticket<br/>Left', 'event_espresso' ); ?></span>
-												</th>
-												<th width="12.5%" valign="middle" class="cntr">
-													<span class="smaller-text"><?php _e( 'Total Tickets<br/>Sold', 'event_espresso' ); ?></span>
-												</th>
-												<th width="12.5%" valign="middle" class="cntr">
-													<span class="smaller-text"><?php _e( 'Total Spaces<br/>Left', 'event_espresso' ); ?></span>
-												</th>
+												<td class="small-text">
+													<?php $datetime_name = $datetime->name(); ?>
+													<?php echo ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b><br/>' : ''; ?>
+													<?php echo $datetime->date_range( 'l F jS, Y', __( ' to  ', 'event_espresso' )); ?>
+												</td>
+												<td class="cntr small-text">
+													<?php echo $datetime->time_range( NULL, __( ' to  ', 'event_espresso' )); ?>
+												</td>
+												<td class="cntr small-text">
+													<?php echo $ticket->sold(); ?>
+												</td>
+												<td class="cntr small-text">
+													<?php echo $ticket->qty() === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $ticket->qty() - $ticket->sold(); ?>
+												</td>
+												<td class="cntr small-text">
+													<?php echo $datetime->sold(); ?>
+												</td>
+										<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out smaller-text">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
+												<td class="cntr small-text">
+													<?php echo $tkts_left === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $tkts_left; ?>
+												</td>
 											</tr>
-										</thead>
-										<tbody>
-										<?php foreach ( $datetimes as $datetime ) { ?>
+											<?php } ?>
+											</tbody>
+										</table>
+									</div>
+								</section>
+								<br/>
+								<?php } ?>
 
-										<tr>
-											<td class="small-text">
-												<?php $datetime_name = $datetime->name(); ?>
-												<?php echo ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b><br/>' : ''; ?>
-												<?php echo $datetime->date_range( 'l F jS, Y', __( ' to  ', 'event_espresso' )); ?>
-											</td>
-											<td class="cntr small-text">
-												<?php echo $datetime->time_range( NULL, __( ' to  ', 'event_espresso' )); ?>
-											</td>
-											<td class="cntr small-text">
-												<?php echo $ticket->sold(); ?>
-											</td>
-											<td class="cntr small-text">
-												<?php echo $ticket->qty() === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $ticket->qty() - $ticket->sold(); ?>
-											</td>
-											<td class="cntr small-text">
-												<?php echo $datetime->sold(); ?>
-											</td>
-									<?php $tkts_left = $datetime->sold_out() ? '<span class="sold-out smaller-text">' . __( 'Sold&nbsp;Out', 'event_espresso' ) . '</span>' : $datetime->spaces_remaining(); ?>
-											<td class="cntr small-text">
-												<?php echo $tkts_left === INF ? '<span class="smaller-text">' .  __( 'unlimited ', 'event_espresso' ) . '</span>' : $tkts_left; ?>
-											</td>
-										</tr>
-										<?php } ?>
-										</tbody>
-									</table>
-								</div>
 							</section>
-							<br/>
-							<?php } ?>
-
 
 						</div>
 					</td>
