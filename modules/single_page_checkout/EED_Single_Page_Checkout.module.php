@@ -37,7 +37,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_revisit = FALSE;
 	// is registration allowed to progress or halted for some reason such as failing to pass recaptcha?
 	private $_continue_reg = TRUE;
-	// array of tempate paths
+	// array of template paths
 	private $_templates = array();
 	// info for each of the reg steps
 	private static $_reg_steps = array();
@@ -315,7 +315,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// but if this transaction has already been saved to the db... then let's pull that
 			if ( $ID = $this->_transaction->ID() ) {
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
-					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					return FALSE;
 				}
 			}
@@ -367,7 +367,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			// but if this transaction has already been saved to the db... then let's pull that
 			if ( $ID = $this->_transaction->ID() ) {
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
-					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 					return FALSE;
 				}
 			}
@@ -490,7 +490,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		try {
 			// create new TXN
 			$this->_transaction = EE_Transaction::new_instance( array(
-				'TXN_timestamp' => current_time('mysql'),
+				'TXN_timestamp' => current_time('timestamp'),
 				'TXN_total' => $this->_cart->get_cart_grand_total(),
 				'TXN_paid' => 0,
 				'STS_ID' => EEM_Transaction::failed_status_code,
@@ -508,13 +508,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return 	void
 	 */
 	private function _initialize_registrations() {
-		//d($this->_cart->all_ticket_quantity_count());
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			$att_nmbr = 0;
 			$total_items = $this->_cart->all_ticket_quantity_count();
 			// now let's add the cart items to the $transaction
 			foreach ( $this->_cart->get_tickets() as $item ) {
-				// grab the related ticket object for this lient_item
+				// grab the related ticket object for this line_item
 				$ticket = $item->ticket();
 				if ( ! $ticket instanceof EE_Ticket ){
 					EE_Error::add_error(sprintf(__("Line item %s did not contain a valid ticket", "event_espresso"),$item->ID()), __FILE__, __FUNCTION__, __LINE__);
@@ -545,7 +544,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							'TXN_ID' => $this->_transaction->ID(),
 							'TKT_ID' => $ticket->ID(),
 							'STS_ID' => $STS_ID,
-							'REG_date' => $this->_transaction->datetime(),
+							'REG_date' => $this->_transaction->get( 'TXN_timestamp' ),
 							'REG_final_price' => $ticket->price(),
 							'REG_session' => EE_Registry::instance()->SSN->id(),
 							'REG_count' => $att_nmbr,
@@ -1088,7 +1087,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 											$answer_cache_id = $this->_reg_url_link ? $form_input : $form_input . '-' . $line_item_id;
 											$answer_is_obj = isset( $answers[ $answer_cache_id ] ) && $answers[ $answer_cache_id ] instanceof EE_Answer ? TRUE : FALSE;
 
-											$attendee_property = FALSE;
 											//rename a couple of form_inputs
 											switch( $form_input ) {
 												case 'state' :
@@ -1128,7 +1126,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 														$saved = TRUE;
 													}
 												}
-
+												/// hmmm...  must be a new question that was just added
+												if ( ! $saved ) {
+													// since $form_input is actually the question ID for questions that don't relate to an attendee property
+													$new_question = EEM_Question::instance()->get_one_by_ID( $form_input );
+													if ( $new_question instanceof EE_Question  ) {
+														// create an EE_Answer object for the new question
+														$new_answer = EE_Answer::new_instance ( array(
+															'QST_ID'	=> $new_question->ID(),
+															'REG_ID'	=> $registration->ID(),
+															'ANS_value' => $input_value
+														));
+														$answer_cache_id = $new_question->system_ID() != NULL ? $new_question->system_ID() . '-' . $line_item_id : $new_question->ID() . '-' . $line_item_id;
+														$registration->cache( 'Answer', $new_answer, $answer_cache_id );
+														$saved = TRUE;
+													}
+												}
 											}
 											if ( ! $saved )  {
 												EE_Error::add_error( sprintf( __( 'Unable to save registration form data for the form input: %s', 'event_espresso' ), $form_input ), __FILE__, __FUNCTION__, __LINE__ );
@@ -1309,7 +1322,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //					}
 //					return TRUE;
 //				}  else {
-//					EE_Error::add_error( __( 'The Transaction could not be retreived from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+//					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 //					return FALSE;
 //				}
 //			}  else {
@@ -1444,7 +1457,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 		}
 		$this->_transaction->finalize( TRUE );
-		EE_Registry::instance()->SSN->clear_session();
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		return $this->_transaction->ID();
 	}
 

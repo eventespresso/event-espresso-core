@@ -684,7 +684,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		if ( $this->_registration = $REG->get_one_by_ID( $REG_ID ))
 			return TRUE;
 		else {
-			$error_msg = sprintf( __('An error occurred and the details for Registration ID #%s could not be retreived.', 'event_espresso'), $REG_ID );
+			$error_msg = sprintf( __('An error occurred and the details for Registration ID #%s could not be retrieved.', 'event_espresso'), $REG_ID );
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 			$this->_registration = NULL;
 			return FALSE;
@@ -706,16 +706,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	 */
 	public function get_registrations( $per_page = 10, $count = FALSE, $this_month = FALSE, $today = FALSE ) {
 
-		$EVT_ID = isset( $this->_req_data['event_id'] ) ? absint( $this->_req_data['event_id'] ) : FALSE;
-		$CAT_ID = isset( $this->_req_data['EVT_CAT'] ) ? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
-		$reg_status = isset( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
-		$month_range = isset( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
-		$today_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
-		$this_month_a = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
+		$EVT_ID = ! empty( $this->_req_data['event_id'] ) && $this->_req_data['event_id'] > 0 ? absint( $this->_req_data['event_id'] ) : FALSE;
+		$CAT_ID = ! empty( $this->_req_data['EVT_CAT'] ) && (int) $this->_req_data['EVT_CAT'] > 0? absint( $this->_req_data['EVT_CAT'] ) : FALSE;
+		$reg_status = ! empty( $this->_req_data['_reg_status'] ) ? sanitize_text_field( $this->_req_data['_reg_status'] ) : FALSE;
+		$month_range = ! empty( $this->_req_data['month_range'] ) ? sanitize_text_field( $this->_req_data['month_range'] ) : FALSE;//should be like 2013-april
+		$today_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'today' ? TRUE : FALSE;
+		$this_month_a = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'month' ? TRUE  : FALSE;
 		$start_date = FALSE;
 		$end_date = FALSE;
 		$_where = array();
-		$trash = isset( $this->_req_data['status'] ) && $this->_req_data['status'] == 'trash' ? TRUE : FALSE;
+		$trash = ! empty( $this->_req_data['status'] ) && $this->_req_data['status'] == 'trash' ? TRUE : FALSE;
 
 		//set orderby
 		$this->_req_data['orderby'] = ! empty($this->_req_data['orderby']) ? $this->_req_data['orderby'] : '';
@@ -815,12 +815,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'REG_group_size' => array( 'LIKE' , $sstr ),
 				'Ticket.TKT_name' => array( 'LIKE', $sstr ),
 				'Ticket.TKT_description' => array( 'LIKE', $sstr )
-				);
-
-			$_where['OR*'] = array(
-				'Event.status' => 'draft',
-				'Event.status*' => 'trash',
-				'Event.status**' => 'publish',
 				);
 		}
 
@@ -1465,7 +1459,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					$attendee->save();
 				} else {
 					// no existing attendee exists so create a new one
-					$attendee = new EE_Attendee( array(
+					$attendee = EE_Attendee::new_instance( array(
 						'ATT_full_name' => $QST_fname . ' ' . $QST_lname,
 						'ATT_fname' => $Qst_fname,
 						'ATT_lname' => $QST_lname,
@@ -1484,7 +1478,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					// grab and set the new ID
 					if ( ! $new_id) {
 						$success = FALSE;
-						EE_Error::add_error( __('An error occurred. An ID for the new registration could not be retreived.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+						EE_Error::add_error( __('An error occurred. An ID for the new registration could not be retrieved.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 					}
 				}
 				if ( $attendee->ID() ) {
