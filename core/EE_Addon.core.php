@@ -91,7 +91,6 @@ abstract class EE_Addon extends EE_Configurable {
 	 */
 	public function reactivation() {
 		$classname = get_class($this);
-		echo "by jove! $classname has been reactivated!";die;
 		do_action("AHEE__{$classname}__reactivation");
 		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
 	}
