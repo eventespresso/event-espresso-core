@@ -735,7 +735,7 @@ class EEH_Form_Fields {
 		$label_html = apply_filters( 'FHEE__EEH_Form_Fields__label_html', $label_html, $required_text );
 
 		$input_html = "\n\t\t\t" . '<select name="' . $name . '" id="' . $id . '" class="' . $class . ' ' . $required['class'] . '" title="' . $required['msg'] . '"' . $disabled . ' ' . $extra . '>';
-		// recursively count array elelments, to determine total number of options
+		// recursively count array elements, to determine total number of options
 		$only_option = count( $options, 1 ) == 1 ? TRUE : FALSE;
 		if ( ! $only_option ) {
 			// if there is NO answer set and there are multiple options to choose from, then set the "please select" message as selected
@@ -1068,7 +1068,7 @@ class EEH_Form_Fields {
 	 * 	@return array
 	 */
 	public static function prep_answer_options( $QSOs = array() ){
-		$options = array();
+		$prepped_answer_options = array();
 		if ( is_array( $QSOs ) && ! empty( $QSOs )) {
 			foreach( $QSOs as $key => $QSO ) {
 				if ( ! $QSO instanceof EE_Question_Option ) {
@@ -1078,13 +1078,14 @@ class EEH_Form_Fields {
 					));
 				}
 				if ( $QSO->opt_group() ) {
-					$options[ $QSO->opt_group() ][] = $QSO;
+					$prepped_answer_options[ $QSO->opt_group() ][] = $QSO;
 				} else {
-					$options[] = $QSO;
+					$prepped_answer_options[] = $QSO;
 				}
 			}
 		}
-		return $options;
+//		d( $prepped_answer_options );
+		return $prepped_answer_options;
 	}
 
 
@@ -1153,7 +1154,7 @@ class EEH_Form_Fields {
 
 
 	/**
-	 * 	load_system_dropdowns
+	 * 	_load_system_dropdowns
 	 * @param array 	$QFI
 	 * @return array
 	 */
@@ -1173,33 +1174,35 @@ class EEH_Form_Fields {
 				$QFI = self::generate_country_dropdown( $QFI, TRUE );
 				break;
 		}
-//		printr( $QFI, '$QFI  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		return $QFI;
 	}
 
 
 
 	/**
-	 * 	generate_state_dropdown
-	 * 	@param array 	$QST
-	 * 	@return array
+	 *    generate_state_dropdown
+	 * @param array $QST
+	 * @param bool  $get_all
+	 * @return array
 	 */
 	public static function generate_state_dropdown( $QST, $get_all = FALSE ){
 		$states = $get_all ? EEM_State::instance()->get_all_states() : EEM_State::instance()->get_all_states_of_active_countries();
-		if ( $states ) {
+		if ( $states && count( $states ) != count( $QST->options() )) {
 			$QST->set( 'QST_type', 'DROPDOWN' );
 			// if multiple countries, we'll create option groups within the dropdown
-			foreach ( $states as $STA_ID => $state ) {
-				$QSO = EE_Question_Option::new_instance ( array (
-					'QSO_value' => $state->ID(),
-					'QSO_desc' => $state->name(),
-					'QST_ID' => $QST->get( 'QST_ID' ),
-					'QSO_deleted' => FALSE
-				));
-				// set option group
-				$QSO->set_opt_group( $state->country()->name() );
-				// add option to question
-				$QST->add_temp_option( $QSO );
+			foreach ( $states as $state ) {
+				if ( $state instanceof EE_State ) {
+					$QSO = EE_Question_Option::new_instance ( array (
+						'QSO_value' => $state->ID(),
+						'QSO_desc' => $state->name(),
+						'QST_ID' => $QST->get( 'QST_ID' ),
+						'QSO_deleted' => FALSE
+					));
+					// set option group
+					$QSO->set_opt_group( $state->country()->name() );
+					// add option to question
+					$QST->add_temp_option( $QSO );
+				}
 			}
 		}
 		return $QST;
@@ -1208,23 +1211,27 @@ class EEH_Form_Fields {
 
 
 	/**
-	 * 	generate_country_dropdown
-	 * 	@param array 	$question
-	 * 	@return array
+	 *    generate_country_dropdown
+	 * @param      $QST
+	 * @param bool $get_all
+	 * @internal param array $question
+	 * @return array
 	 */
 	public static function generate_country_dropdown( $QST, $get_all = FALSE ){
 		$countries = $get_all ? EEM_Country::instance()->get_all_countries() : EEM_Country::instance()->get_all_active_countries();
-		if ( $countries ) {
+		if ( $countries && count( $countries ) != count( $QST->options() ) ) {
 			$QST->set( 'QST_type', 'DROPDOWN' );
 			// now add countries
 			foreach ( $countries as $country ) {
-				$QSO = EE_Question_Option::new_instance ( array (
-					'QSO_value' => $country->ID(),
-					'QSO_desc' => $country->name(),
-					'QST_ID' => $QST->get( 'QST_ID' ),
-					'QSO_deleted' => FALSE
-				));
-				$QST->add_temp_option( $QSO );
+				if ( $country instanceof EE_Country ) {
+					$QSO = EE_Question_Option::new_instance ( array (
+						'QSO_value' => $country->ID(),
+						'QSO_desc' => $country->name(),
+						'QST_ID' => $QST->get( 'QST_ID' ),
+						'QSO_deleted' => FALSE
+					));
+					$QST->add_temp_option( $QSO );
+				}
 			}
 		}
 		return $QST;
@@ -1427,20 +1434,19 @@ class EEH_Form_Fields {
 
 
 
-
 	/**
-	 * 	generate a submit button with or without it's own microform
-	 *	this is the only way to create buttons that are compatible across all themes
+	 *    generate a submit button with or without it's own microform
+	 *    this is the only way to create buttons that are compatible across all themes
 	 *
-	 * 	@access 	public
-	 * 	@param 	string 	$url - the form action
-	 * 	@param 	string 	$ID - some kind of unique ID, appended with "-sbmt" for the input and "-frm" for the form
-	 * 	@param 	string 	$class - css classes (separated by spaces if more than one)
-	 * 	@param 	string 	$text - what appears on the button
-	 * 	@param 	string 	$nonce_action - if using nonces
-	 * 	@param 	string 	$input_only - whether to print form header and footer. TRUE returns the input without the form
-	 * 	@param 	string 	$extra_attributes - any extra attributes that need to be attached to the form input
-	 * 	@return 		void
+	 * @access    public
+	 * @param    string   $url              - the form action
+	 * @param    string   $ID               - some kind of unique ID, appended with "-sbmt" for the input and "-frm" for the form
+	 * @param    string   $class            - css classes (separated by spaces if more than one)
+	 * @param    string   $text             - what appears on the button
+	 * @param    string   $nonce_action     - if using nonces
+	 * @param    bool|string $input_only       - whether to print form header and footer. TRUE returns the input without the form
+	 * @param    string   $extra_attributes - any extra attributes that need to be attached to the form input
+	 * @return    void
 	 */
 	public static function submit_button( $url = '', $ID = '', $class = '', $text = '', $nonce_action = '', $input_only = FALSE, $extra_attributes = '' ) {
 		$btn = '';
@@ -1450,7 +1456,7 @@ class EEH_Form_Fields {
 		$text = ! empty( $text ) ? $text : __('Submit', 'event_espresso' );
 		$btn .= '<input id="' . $ID . '-btn" class="' . $class . '" type="submit" value="' . $text . '" ' . $extra_attributes . '/>';
 		if ( ! $input_only ) {
-			$btn_frm .= '<form id="' . $ID . '-frm" method="POST" action="' . $url . '">';
+			$btn_frm = '<form id="' . $ID . '-frm" method="POST" action="' . $url . '">';
 			$btn_frm .= ! empty( $nonce_action ) ? wp_nonce_field( $nonce_action, $nonce_action . '_nonce', TRUE, FALSE ) : '';
 			$btn_frm .= $btn;
 			$btn_frm .= '</form>';

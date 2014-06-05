@@ -57,7 +57,7 @@ class EEM_Venue extends EEM_CPT_Base {
 			'Venue_CPT'=>array(
 				'VNU_ID'=>new EE_Primary_Key_Int_Field('ID', __("Venue ID", "event_espresso")),
 				'VNU_name'=>new EE_Plain_Text_Field('post_title', __("Venue Name", "event_espresso"), false, ''),
-				'VNU_desc'=>new EE_Simple_HTML_Field('post_content', __("Venue Description", "event_espresso"), false,''),
+				'VNU_desc'=>new EE_Post_Content_Field('post_content', __("Venue Description", "event_espresso"), false,''),
 				'VNU_identifier'=>new EE_Slug_Field('post_name', __("Venue Identifier", "event_espresso"), false,''),
 				'VNU_created'=>new EE_Datetime_Field('post_date', __("Date Venue Created", "event_espresso"), true,current_time('timestamp')),
 				'VNU_short_desc'=>new EE_Plain_Text_Field('post_excerpt', __("Short Description of Venue", "event_espresso"), true,''),
