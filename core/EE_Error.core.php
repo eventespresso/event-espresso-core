@@ -890,7 +890,7 @@ class EE_Error extends Exception {
 				'nag_notice' => $pan_name,
 				'return_url' => urlencode( $return_url ),
 				'ajax_url' => WP_AJAX_URL,
-				'unknown_error' => __( 'An unknown error has occured on the server while attempting to dissmiss this notice.', 'event_espresso' )
+				'unknown_error' => __( 'An unknown error has occurred on the server while attempting to dissmiss this notice.', 'event_espresso' )
 			);
 			wp_localize_script( 'espresso_core', 'ee_dismiss', $args );
 			return '
