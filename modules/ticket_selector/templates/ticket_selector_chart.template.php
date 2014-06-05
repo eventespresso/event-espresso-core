@@ -15,6 +15,7 @@
 $row = 1;
 $ticket_count = count( $tickets );
 foreach ( $tickets as $TKT_ID => $ticket ) {
+	if ( $ticket instanceof EE_Ticket ) {
 //	d( $ticket );
 	$max = $ticket->max();
 	$min = 0;
@@ -213,17 +214,16 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 											<?php $running_total += $new_sub_total; ?>
 										<?php else : ?>
 											<td class="small-text"><?php echo $price_mod->desc(); ?></td>
-											<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount() ); ?></td>
-											<?php $running_total += $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount(); ?>
 										<?php endif; ?>
-										</tr>
-									<?php endforeach; ?>
-									<?php if ( $ticket->taxable() ) : ?>
-										<?php //$ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
-										<tr>
-											<td colspan="2" class="jst-rght small-text"><b><?php _e( 'subtotal', 'event_espresso' ); ?></b></td>
-											<td class="jst-rght small-text"><b><?php echo  EEH_Template::format_currency( $running_total ); ?></b></td>
-										</tr>
+											<tr>
+												<td colspan="2" class="jst-rght small-text"><b><?php _e( 'Total Ticket Price', 'event_espresso' ); ?></b></td>
+												<td class="jst-rght small-text"><b><?php echo EEH_Template::format_currency( $running_total ); ?></b></td>
+											</tr>
+										</tbody>
+									</table>
+								</div>
+							</section>
+							<br/>
 
 									<?php
 									foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) : ?>
@@ -344,6 +344,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 			</tr>
 <?php
 		$row++;
+
+		}
 	}
 ?>
 
