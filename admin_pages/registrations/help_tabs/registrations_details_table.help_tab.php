@@ -34,7 +34,7 @@
 </li>
 <li>
 <?php _e('<strong>Line Total</strong>', 'event_espresso'); ?><br />
-<?php _e('Shows the total based on the quanity of tickets multiplied by the price of each ticket.', 'event_espresso'); ?>
+<?php _e('Shows the total based on the quantity of tickets multiplied by the price of each ticket.', 'event_espresso'); ?>
 </li>
 <li>
 <?php _e('<strong>Taxes</strong>', 'event_espresso'); ?><br />

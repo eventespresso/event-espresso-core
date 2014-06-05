@@ -130,7 +130,7 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table{
 			$this->get_migration_script()->set_mapping($this->_old_table, $old_row['id'], $this->_new_price_table, array($new_price_id));
 		}
 		//associate the ticket to all datetimes for event (ie, this ONE ticket grants access to ALL datetimes, not just one of the attendee's choice.
-		//if the latter were the case, then we'd create a seperate ticket for each datetime and ahve their association be one-to-one)
+		//if the latter were the case, then we'd create a separate ticket for each datetime and ahve their association be one-to-one)
 		//create ticket
 //		$ticket_id = $this->_insert_new_ticket($old_row);
 //		if($ticket_id){

@@ -425,6 +425,8 @@ class EE_Data_Migration_Manager{
 					EE_Registry::instance()->load_helper('Activation');
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
+					EEH_Activation::system_initialization();
+					EEH_Activation::create_upload_directories();
 					EEH_Activation::initialize_db_content();
 					//make sure the datetime and ticket total sold are correct
 					$this->_save_migrations_ran();
@@ -490,6 +492,8 @@ class EE_Data_Migration_Manager{
 						////huh, no more scripts to run... apparently we're done!
 						//but dont forget to make sure intial data is there
 						EE_Registry::instance()->load_helper('Activation');
+						EEH_Activation::system_initialization();
+						EEH_Activation::create_upload_directories();
 						EEH_Activation::initialize_db_content();
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
