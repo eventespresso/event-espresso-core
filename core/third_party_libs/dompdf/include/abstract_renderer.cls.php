@@ -126,7 +126,7 @@ abstract class Abstract_Renderer {
 
 	//Try to optimize away reading and composing of same background multiple times
 	//Postponing read with imagecreatefrom   ...()
-	//final composition paramters and name not known yet
+	//final composition parameters and name not known yet
 	//Therefore read dimension directly from file, instead of creating gd object first.
 	//$img_w = imagesx($src); $img_h = imagesy($src);
 

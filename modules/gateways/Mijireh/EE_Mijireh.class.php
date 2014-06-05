@@ -122,7 +122,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			foreach($total_line_item->get_items() as $line_item){
 				$items[] = array(
 					'name'=>$line_item->name(),
-					'price'=>$this->_format_float($line_item->total()),
+					'price'=>$this->_format_float($line_item->unit_price()),
 					'sku'=>$line_item->code(),
 					'quantity'=>$line_item->quantity()
 				);
@@ -149,18 +149,13 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			'last_name'=>$primary_attendee->lname(),
 			'tax'=>$this->_format_float($tax_total),
 			'partner_id'=>'ee');
-
+		
 		//setup address?
 		if(		$primary_attendee->address()  &&
 				$primary_attendee->city()  &&
 				$primary_attendee->state_ID()  &&
 				$primary_attendee->country_ID()  &&
 				$primary_attendee->zip()  ){
-			$send_address_info = TRUE;
-		}else{
-			$send_address_info = FALSE;
-		}
-		if( $send_address_info ){
 			$shipping_address = array(
 				'street' => $primary_attendee->address(),
 				'city' => $primary_attendee->city(),
@@ -200,7 +195,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 					$problems_string = $response['body'];
 				}
 
-				throw new EE_Error(sprintf(__('Errors occured communicating with Mijireh: %s.','event_espresso'),$problems_string));
+				throw new EE_Error(sprintf(__('Errors occurred communicating with Mijireh: %s.','event_espresso'),$problems_string));
 			}
 			$this->_gatewayUrl = $response_body->checkout_url;
 			$this->_EEM_Gateways->set_off_site_form($this->submitPayment());

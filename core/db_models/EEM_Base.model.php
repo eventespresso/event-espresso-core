@@ -2060,7 +2060,7 @@ abstract class EEM_Base extends EE_Base{
 		if(is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2] == true){
 			return $operator.SP.$this->_deduce_column_name_from_query_param($value);
 		}elseif(in_array($operator, $this->_in_style_operators) && is_array($value)){
-			//in this case, the value should be an array, or at least a comma-seperated list
+			//in this case, the value should be an array, or at least a comma-separated list
 			//it will need to handle a little differently
 			$cleaned_value = $this->_construct_in_value($value, $field_obj);
 			//note: $cleaned_value has already been run through $wpdb->prepare()
