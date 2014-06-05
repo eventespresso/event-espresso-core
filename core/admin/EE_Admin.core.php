@@ -100,7 +100,7 @@ final class EE_Admin {
 		define( 'EE_ADMIN_PAGES_URL', EE_PLUGIN_DIR_URL . 'admin_pages/' );
 		define( 'EE_ADMIN_TEMPLATE', EE_ADMIN . 'templates' . DS );
 		define( 'WP_ADMIN_PATH', ABSPATH . 'wp-admin/' );
-		define( 'WP_AJAX_URL', get_bloginfo('url') . '/wp-admin/admin-ajax.php' );
+		define( 'WP_AJAX_URL', admin_url( 'admin-ajax.php' ));
 		define( 'JQPLOT_URL', EE_GLOBAL_ASSETS_URL . 'scripts/jqplot/' );
 	}
 
