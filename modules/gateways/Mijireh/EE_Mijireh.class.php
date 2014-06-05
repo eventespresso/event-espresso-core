@@ -195,7 +195,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 					$problems_string = $response['body'];
 				}
 
-				throw new EE_Error(sprintf(__('Errors occured communicating with Mijireh: %s.','event_espresso'),$problems_string));
+				throw new EE_Error(sprintf(__('Errors occurred communicating with Mijireh: %s.','event_espresso'),$problems_string));
 			}
 			$this->_gatewayUrl = $response_body->checkout_url;
 			$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
