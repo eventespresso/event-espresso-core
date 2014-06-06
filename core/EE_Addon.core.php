@@ -66,10 +66,6 @@ abstract class EE_Addon extends EE_Configurable {
 	 *    class constructor
 	 */
 	public function __construct() {
-		//we need to set a wordpress option to indicate that this addon has been activated
-		//this is mostly only used by core to detect a reactivation
-		$reflector = new ReflectionClass( get_class( $this ) );
-		register_activation_hook( $reflector->getFileName(), array( $this, 'set_activation_indicator_option' ) );
 	}
 
 
@@ -158,6 +154,7 @@ abstract class EE_Addon extends EE_Configurable {
 	 * @return mixed
 	 */
 	public function new_install() {
+
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__new_install");
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
@@ -189,6 +186,8 @@ abstract class EE_Addon extends EE_Configurable {
 		if ( EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance ) {
 			$this->initialize_db();
 			$this->initialize_default_data();
+			//@todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
+			EE_Data_Migration_Manager::instance()->update_current_database_state_to(array($this->name(),$this->version()));
 		}
 	}
 
@@ -206,8 +205,9 @@ abstract class EE_Addon extends EE_Configurable {
 		$current_data_migration_script->schema_changes_before_migration();
 		$current_data_migration_script->schema_changes_after_migration();
 		if ( $current_data_migration_script->get_errors() ) {
-			echo "errors occurred while initializing db:";
-			var_dump( $current_data_migration_script->get_errors() );
+			foreach( $current_data_migration_script->get_errors() as $error ) {
+				EE_Error::add_error( $error );
+			}
 		}
 		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( 'slug' => $this->name(), 'version' => $this->version() ) );
 	}
@@ -297,6 +297,146 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 
+	/**
+	 * @param mixed $version
+	 */
+	public function set_version( $version = NULL ) {
+		$this->_version = $version;
+	}
+
+
+
+	/**
+	 * @param mixed $min_core_version
+	 */
+	public function set_min_core_version( $min_core_version = NULL ) {
+		$this->_min_core_version = $min_core_version;
+	}
+
+
+
+	/**
+	 * get__version
+	 * @return string
+	 */
+	public function version() {
+		return $this->_version;
+	}
+
+
+
+	/**
+	 * get__min_core_version
+	 * @return string
+	 */
+	public function min_core_version() {
+		return $this->_min_core_version;
+	}
+
+
+
+	/**
+	 * Gets addon_name
+	 * @return string
+	 */
+	function name() {
+		return $this->_addon_name;
+	}
+
+
+
+	/**
+	 * Sets addon_name
+	 * @param string $addon_name
+	 * @return boolean
+	 */
+	function set_name( $addon_name ) {
+		return $this->_addon_name = $addon_name;
+	}
+
+
+
+	/**
+	 * Used by EE_System to set the request type of this addon. Should not be used by addon developers
+	 * @param int $req_type
+	 */
+	function set_req_type( $req_type ) {
+		$this->_req_type = $req_type;
+	}
+
+
+
+	/**
+	 * Returns the request type of this addon (ie, EE_System::req_type_normal, EE_System::req_type_new_activation, EE_System::req_type_reactivation, EE_System::req_type_upgrade, or EE_System::req_type_downgrade). This is set by EE_System when it is checking for new install or upgrades
+	 * of addons
+	 */
+	function detect_req_type() {
+		if( ! $this->_req_type ){
+			$this->detect_activation_or_upgrade();
+		}
+		return $this->_req_type;
+	}
+
+
+
+	/**
+	 * Detects the request type for this addon (whether it was just activated, upgrades, a normal request, etc.
+	 * @return void
+	 */
+	function detect_activation_or_upgrade(){
+		$activation_history_for_addon = $this->get_activation_history();
+//		d($activation_history_for_addon);
+		$request_type = EE_System::detect_req_type_given_activation_history($activation_history_for_addon, $this->get_activation_indicator_option_name(), $this->version());
+		$this->set_req_type($request_type);
+		$classname = get_class($this);
+		switch($request_type){
+			case EE_System::req_type_new_activation:
+				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__new_activation" );
+				$this->new_install();
+				$this->update_list_of_installed_versions( $activation_history_for_addon );
+				break;
+			case EE_System::req_type_reactivation:
+				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__reactivation" );
+				$this->reactivation();
+				$this->update_list_of_installed_versions( $activation_history_for_addon );
+				break;
+			case EE_System::req_type_upgrade:
+				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__upgrade" );
+				$this->upgrade();
+				$this->update_list_of_installed_versions($activation_history_for_addon );
+				break;
+			case EE_System::req_type_downgrade:
+				do_action( "AHEE__{$classname}__detect_activations_or_upgrades__downgrade" );
+				$this->downgrade();
+				$this->update_list_of_installed_versions($activation_history_for_addon );
+				break;
+			case EE_System::req_type_normal:
+			default:
+//				$this->_maybe_redirect_to_ee_about();
+				break;
+		}
+
+		do_action( "AHEE__{$classname}__detect_if_activation_or_upgrade__complete" );
+	}
+
+	/**
+	 * Updates the version history for this addon
+	 * @param array $version_history
+	 * @param string $current_version_to_add
+	 * @return boolean success
+	 */
+	public function update_list_of_installed_versions($version_history = NULL,$current_version_to_add = NULL) {
+		if( ! $version_history ) {
+			$version_history = $this->get_activation_history();
+		}
+		if( $current_version_to_add == NULL){
+			$current_version_to_add = $this->version();
+		}
+		$version_history[ $current_version_to_add ][] = date( 'Y-m-d H:i:s',time() );
+		// resave
+//		echo "updating list of installed versions:".$this->get_activation_history_option_name();d($version_history);
+		return update_option( $this->get_activation_history_option_name(), $version_history );
+	}
 
 	/**
 	 * Gets the name of the wp option that stores the activation history

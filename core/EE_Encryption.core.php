@@ -62,7 +62,7 @@ class EE_Encryption {
 		// if encryption key has not been set
 		if ( empty( self::$_encryption_key )) {
 
-			// retreive encryption_key from db
+			// retrieve encryption_key from db
 			self::$_encryption_key = get_option( 'ee_encryption_key' );
 			
 			// WHAT?? No encryption_key in the db ??

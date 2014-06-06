@@ -300,7 +300,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 			return FALSE;
 		}
 		$primaryKeyName=$this->primary_key_name();
-		// retreive a particular transaction
+		// retrieve a particular transaction
 		$query_params = array();
 		$query_params[0] = array( $primaryKeyName => $ID );
 		if ( $this->delete_or_restore ($delete, $query_params )) {

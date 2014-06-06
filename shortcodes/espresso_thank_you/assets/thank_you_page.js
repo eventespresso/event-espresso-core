@@ -22,11 +22,11 @@ jQuery(document).ready(function($) {
 		// data object sent from the server
 		data: [],
 		// JSON array  of data to be sent to the server when polling
-		return: {
-			'reg_url_link': eei18n.reg_url_link,
-			'initial_access': eei18n.initial_access,
-			'txn_status': this.prev_txn_status,
-			'get_payments_since': 0
+		return : {
+			'reg_url_link' : eei18n.reg_url_link,
+			'initial_access' : eei18n.initial_access,
+			'txn_status' : this.prev_txn_status,
+			'get_payments_since' : 0
 		},
 		// ajax loading animation
 		spinner: '',
@@ -35,10 +35,10 @@ jQuery(document).ready(function($) {
 
 
 		/**
-		 *    init
-		 */
-		init: function () {
-			this.console_log('init');
+		*	init
+		*/
+		init : function() {
+			this.console_log( 'init' );
 			this.display_spinner();
 			this.set_up_wp_heartbeat();
 			eei18n.wp_debug = 0;
@@ -63,8 +63,10 @@ jQuery(document).ready(function($) {
 			// Show debug info ?
 			wp.heartbeat.debug = eei18n.wp_debug === 1;
 			// set initial beat to fast
-			wp.heartbeat.interval(this.polling_time);
-			wp.heartbeat.enqueue('espresso_thank_you_page', this.return, false);
+			wp.heartbeat.interval( this.polling_time );
+			wp.heartbeat.enqueue( 'espresso_thank_you_page', this.return, false );
+			wp.heartbeat.connectNow();
+
 		},
 
 		/**
@@ -81,21 +83,21 @@ jQuery(document).ready(function($) {
 			// store it
 			this.data = data.espresso_thank_you_page;
 			// and log to console if debugging
-			this.console_log_obj('this.data', this.data);
+			this.console_log_obj( 'this.data', this.data );
 			// set return txn status to incoming txn status
 			if (typeof this.data.txn_status !== 'undefined') {
 				this.return.txn_status = this.data.txn_status;
 			}
 			// set return get_payments_since to incoming get_payments_since which
-			if (typeof this.data.get_payments_since !== 'undefined') {
+			if ( typeof this.data.get_payments_since !== 'undefined') {
 				this.return.get_payments_since = this.data.get_payments_since;
 			}
 			// handle errors
 			if (typeof this.data.errors !== 'undefined') {
 				this.display_errors(this.data.errors);
 				this.stop_heartbeat();
-				// slow IPN
-			} else if (typeof this.data.still_waiting !== 'undefined') {
+			// slow IPN
+			} else if ( typeof this.data.still_waiting !== 'undefined') {
 				this.process_wait_time();
 				// server sent back data
 			} else {
@@ -229,20 +231,20 @@ jQuery(document).ready(function($) {
 		},
 
 		/**
-		 *    set_wait_time
-		 */
-		set_wait_time: function () {
-			this.console_log('set_wait_time');
-			var waitTime = new Date(null, null, null, null, null, this.data.still_waiting).toTimeString().match(/\d{2}:\d{2}:\d{2}/)[0];
-			$('#espresso-thank-you-page-ajax-time-dv').html(waitTime);
+		*	set_wait_time
+		*/
+		set_wait_time : function() {
+			this.console_log( 'set_wait_time' );
+			var waitTime = new Date( null, null, null, null, null, this.data.still_waiting ).toTimeString().match(/\d{2}:\d{2}:\d{2}/)[0];
+			$('#espresso-thank-you-page-ajax-time-dv').html( waitTime );
 		},
 
 		/**
-		 *    wait_time_exceeded
-		 */
-		wait_time_exceeded: function () {
-			this.console_log('wait_time_exceeded');
-			$('#espresso-thank-you-page-ajax-content-dv').hide().html(eei18n.slow_IPN).slideDown();
+		*	wait_time_exceeded
+		*/
+		wait_time_exceeded : function() {
+			this.console_log( 'wait_time_exceeded' );
+			$('#espresso-thank-you-page-ajax-content-dv').hide().html( eei18n.slow_IPN ).slideDown();
 		},
 
 		/**

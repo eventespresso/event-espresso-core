@@ -233,7 +233,68 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 *    posts_join
+	 *    posts_fields
+	 *
+	 * @access    public
+	 * @param          $SQL
+	 * @param WP_Query $wp_query
+	 * @return    string
+	 */
+	public function posts_fields( $SQL, WP_Query $wp_query ) {
+		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
+			$SQL .= EED_Events_Archive::posts_fields_sql_for_orderby( array( 'start_date' ));
+		}
+		return $SQL;
+	}
+
+
+
+	/**
+	 *    posts_join_sql_for_terms
+	 *
+	 * @access    public
+	 * @param array $orderby_params
+	 * @internal  param bool|string $mixed $join_terms pass TRUE or term string, doesn't really matter since this value doesn't really get used for anything yet
+	 * @return    string
+	 */
+	public static function posts_fields_sql_for_orderby( $orderby_params = array() ) {
+		$SQL= '';
+		foreach( (array)$orderby_params as $orderby ) {
+			switch ( $orderby ) {
+
+				case 'ticket_start' :
+					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_start_date' ;
+					break;
+
+				case 'ticket_end' :
+					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_end_date' ;
+					break;
+
+				case 'venue_title' :
+					$SQL .= ', EE_Venue_TBL.post_title AS venue_title' ;
+					break;
+
+				case 'city' :
+					$SQL .= ', ' . EEM_Venue::instance()->second_table() . '.VNU_city' ;
+					break;
+
+				case 'state' :
+					$SQL .= ', ' . EEM_State::instance()->table() . '.STA_name' ;
+					break;
+
+					break;
+
+			}
+		}
+
+		return  $SQL;
+	}
+
+
+
+	/**
+	 * 	posts_join
 	 *
 	 * @access    public
 	 * @param          $SQL
@@ -284,6 +345,12 @@ class EED_Events_Archive  extends EED_Module {
 		foreach( (array)$orderby_params as $orderby ) {
 			switch ( $orderby ) {
 
+				case 'category_slug' :
+					if ( EED_Events_Archive::_event_category_slug() === '' ) {
+						$SQL .= EED_Events_Archive::posts_join_sql_for_terms( TRUE );
+					}
+					break;
+
 				case 'ticket_start' :
 				case 'ticket_end' :
 					$SQL .= ' LEFT JOIN ' . EEM_Datetime_Ticket::instance()->table() . ' ON (' . EEM_Datetime::instance()->table() . '.DTT_ID = ' . EEM_Datetime_Ticket::instance()->table() . '.DTT_ID )';
@@ -291,14 +358,20 @@ class EED_Events_Archive  extends EED_Module {
 					break;
 
 				case 'venue_title' :
+					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' AS EE_Venue_TBL ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = EE_Venue_TBL.ID )';
+					break;
+
 				case 'city' :
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Venue::instance()->table() . '.VNU_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' AS EE_Venue_TBL ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = EE_Venue_TBL.ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->second_table() . ' ON ( EE_Venue_TBL.ID = ' . EEM_Venue::instance()->second_table() . '.VNU_ID )';
 					break;
 
 				case 'state' :
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
-					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->second_table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Event_Venue::instance()->second_table() . '.VNU_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->second_table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Venue::instance()->second_table() . '.VNU_ID )';
+					$SQL .= ' LEFT JOIN ' . EEM_State::instance()->table() . ' ON (' . EEM_Venue::instance()->second_table() . '.STA_ID = ' . EEM_State::instance()->table() . '.STA_ID )';
 					break;
 
 					break;
@@ -991,7 +1064,7 @@ class EE_Event_List_Query extends WP_Query {
 
 		// first off, let's remove any filters from previous queries
 		remove_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ));
-		remove_all_filters( 'FHEE__content_espresso_events__event_class', array( $this, 'event_list_css' ));
+		remove_filter( 'FHEE__content_espresso_events__event_class', array( $this, 'event_list_css' ));
 
 		// Event List Title ?
 		add_filter( 'FHEE__archive_espresso_events_template__upcoming_events_h1', array( $this, 'event_list_title' ), 10, 1 );
@@ -1009,6 +1082,7 @@ class EE_Event_List_Query extends WP_Query {
 			'offset' => ( $paged - 1 ) * $this->_limit
 		));
 		// filter the query parts
+		add_filter( 'posts_fields', array( $this, 'posts_fields' ), 10, 1 );
 		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 1 );
 		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 1 );
 		add_filter( 'posts_orderby', array( $this, 'posts_orderby' ), 10, 1 );
@@ -1020,7 +1094,25 @@ class EE_Event_List_Query extends WP_Query {
 
 
 	/**
-	 *    posts_join
+	 *    posts_fields
+	 *
+	 * @access 	public
+	 * @param 	$SQL
+	 * @return 	string
+	 */
+	public function posts_fields( $SQL ) {
+		// first off, let's remove any filters from previous queries
+		remove_filter( 'posts_fields', array( $this, 'posts_fields' ));
+		if ( $this->_order_by !== NULL ) {
+			$SQL .= EED_Events_Archive::posts_fields_sql_for_orderby( $this->_order_by );
+		}
+		return $SQL;
+	}
+
+
+
+	/**
+	 * 	posts_join
 	 *
 	 * @access    public
 	 * @param $SQL

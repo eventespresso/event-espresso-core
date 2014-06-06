@@ -1481,7 +1481,7 @@ class EE_DMS_Core_4_1_0 extends EE_Data_Migration_Script_Base{
 			''=>'RPP',
 			'Incomplete'=>'RPP',
 			'Pending'=>'RAP',
-			//stati that only occured on 3.1 attendees:
+			//stati that only occurred on 3.1 attendees:
 			'Payment Declined'=>'RPP',
 			'Not Completed'=>'RPP',
 			'Cancelled'=>'RPP',
