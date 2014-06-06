@@ -233,7 +233,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
-	*		retreive ALL registrations for a particular Attendee from db
+	*		retrieve ALL registrations for a particular Attendee from db
 	* 		@access		public
 	* 		@param		int		$ATT_ID
 	*		@return 	EE_Registration[]
@@ -267,7 +267,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
-	*		retreive registration for a specific transaction attendee from db
+	*		retrieve registration for a specific transaction attendee from db
 	* 
 	* 		@access		public
 	* 		@param		$TXN_ID

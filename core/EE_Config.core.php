@@ -32,8 +32,9 @@ final class EE_Config {
 	private static $_instance = NULL;
 
 	/**
-	 *
-	 * @var EE_Config_Base[]
+	 * An StdClass whose property names are addon slugs,
+	 * and values are their config classes
+	 * @var StdClass
 	 */
 	public $addons;
 
@@ -193,11 +194,11 @@ final class EE_Config {
 	 * 		@return void
 	 */
 	private function _load_core_config() {
-
+		$convert_from_array = array( 'addons' );
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
 			// in case old settings were saved as an array
-			if ( is_array( $settings )) {
+			if ( is_array( $settings ) && in_array( $settings, $convert_from_array )) {
 				// convert them to an object
 				$config_array = $settings;
 				$settings = new stdClass();
@@ -227,6 +228,71 @@ final class EE_Config {
 		return apply_filters( 'FHEE__EE_Config__get_espresso_config__CFG', get_option( 'ee_config', array() ));
 	}
 
+
+	/**
+	 * 	double_check_config_comparison
+	 *
+	 *  @access 	public
+	 */
+	public function double_check_config_comparison( $option = '', $old_value, $value ) {
+		// make sure we're checking the ee config
+		if ( $option == 'ee_config' ) {
+			// run a loose comparison of the old value against the new value for type and properties, but NOT exact instance like WP update_option does
+			if ( $value != $old_value ) {
+				// if they are NOT the same, then remove the hook, which means the subsequent update results will be based solely on the update query results
+				// the reason we do this is because, as stated above, WP update_option performs an exact instance comparison (===) on any update values passed to it
+				// this happens PRIOR to serialization and any subsequent update. If values are found to match their previous old value, then WP bails before performing any update.
+				// Since we are passing the EE_Config object, it is comparing the EXACT instance of the saved version it just pulled from the db, with the one being passed to it (which will not match).
+				// HOWEVER, once the object is serialized and passed off to MySQL to update,
+				// MySQL MAY ALSO NOT perform the update because the string it sees in the db looks the same as the new one it has been passed!!!
+				// This results in the query returning an "affected rows" value of ZERO, which gets returned immediately by WP update_option and looks like an error.
+				remove_action( 'update_option', array( $this, 'check_config_updated' ));
+			}
+		}
+	}
+
+
+
+	/**
+	 *    update_espresso_config
+	 *
+	 * @access   public
+	 * @param   bool $add_success
+	 * @param   bool $add_error
+	 * @return   bool
+	 */
+	public function update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
+		$instance = self::$_instance;
+		self::$_instance = NULL;
+		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
+		// hook into update_option because that happens AFTER the ( $value === $old_value ) conditional but BEFORE the actual update occurs
+		add_action( 'update_option', array( $this, 'double_check_config_comparison' ), 1, 3 );
+		// now update "ee_config"
+		$saved = update_option( 'ee_config', $this );
+		// if not saved... check if the hook we just added still exists; if it does, it means one of two things:
+		// that update_option bailed at the ( $value === $old_value ) conditional, or...
+		// the db update query returned 0 rows affected (probably because the data  value was the same from it's perspective)
+		// so the existence of the hook means that a negative result from update_option is NOT an error, but just means no update occurred, so don't display an error to the user.
+		// BUT... if update_option returns FALSE, AND the hook is missing, then it means that something truly went wrong
+		$saved = ! $saved ? has_action( 'update_option', array( $this, 'double_check_config_comparison' )) : $saved;
+		// remove our action since we don't want it in the system anymore
+		remove_action( 'update_option', array( $this, 'double_check_config_comparison' ), 1 );
+		do_action( 'AHEE__EE_Config__update_espresso_config__end', $this, $saved );
+		self::$_instance = $instance;
+		unset( $instance );
+		// if config remains the same or was updated successfully
+		if ( $saved ) {
+			if ( $add_success ) {
+				EE_Error::add_success( __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			}
+			return TRUE;
+		} else {
+			if ( $add_error ) {
+				EE_Error::add_error( __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			}
+			return FALSE;
+		}
+	}
 
 
 	/**
@@ -402,7 +468,7 @@ final class EE_Config {
 			return $this->set_config( $section, $name, $config_class, $config_obj );
 		} else {
 			// update wp-option for this config class.
-			if ( update_option( $this->_generate_config_option_name( $section, $name ), $config_class )) {
+			if ( update_option( $this->_generate_config_option_name( $section, $name ), $config_obj )) {
 				$this->{$section}->{$name} = $config_obj;
 				return $this->update_espresso_config();
 			} else {
@@ -467,36 +533,6 @@ final class EE_Config {
 		return get_option( $config_option_name );
 	}
 
-
-
-	/**
-	 *    update_espresso_config
-	 *
-	 * @access   public
-	 * @param   bool $add_success
-	 * @param   bool $add_error
-	 * @return   bool
-	 */
-	public function update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
-		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
-		// compare existing settings with what's already saved'
-		$saved_config = $this->get_espresso_config();
-		// update
-		$saved = $saved_config == $this ? TRUE : update_option( 'ee_config', $this );
-		do_action( 'AHEE__EE_Config__update_espresso_config__end', $this, $saved );
-		// if config remains the same or was updated successfully
-		if ( $saved ) {
-			if ( $add_success ) {
-				EE_Error::add_success( __( 'The Event Espresso Configuration Settings have been successfully updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			}
-			return TRUE;
-		} else {
-			if ( $add_error ) {
-				EE_Error::add_error( __( 'The Event Espresso Configuration Settings were not updated.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			}
-			return FALSE;
-		}
-	}
 
 
 
@@ -1087,41 +1123,10 @@ final class EE_Config {
 
 
 
-
-
-
-	/**
-	 * 	__sleep
-	 *
-	 *  @return 	array
-	 */
-	public function __sleep() {
-
-		//we serialize everything except the addons because if an addon gets deactivated, waking up could really break things.
-		return apply_filters( 'FHEE__EE_Config__sleep',array(
-			'core',
-			'organization',
-			'currency',
-			'registration',
-			'admin',
-			'template_settings',
-			'map_settings',
-			'gateway'
-		) );
-	}
-
-
-	/**
-	 * magic __wakeup method.
-	 */
-	public function __wakeup() {
-	}
-
-
-
 	public function shutdown() {
 		update_option( 'ee_config_option_names', $this->_config_option_names );
 	}
+
 
 
 }
@@ -1545,7 +1550,9 @@ class EE_Currency_Config extends EE_Config_Base {
 	public function __construct( $CNT_ISO = NULL ) {
 
 		// get country code from organization settings or use default
-		$CNT_ISO = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : NULL;
+		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : NULL;
+		// but override if requested
+		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
 		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode)
 		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() && ! get_option( 'ee_espresso_activation' )) {
 			// retrieve the country settings from the db, just in case they have been customized

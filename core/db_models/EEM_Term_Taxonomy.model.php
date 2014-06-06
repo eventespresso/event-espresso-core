@@ -33,16 +33,25 @@ class EEM_Term_Taxonomy extends EEM_Base {
 	 *
 	 *		@access public
 	 *		@return EEM_Attendee instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Attendee object
 		return self::$_instance;
+	}
+
+	/**
+	 * Resets the model and returns it
+	 * @return EEM_Term_Taxonomy
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 
 	protected function __construct(){
@@ -70,7 +79,7 @@ class EEM_Term_Taxonomy extends EEM_Base {
 		$this->_indexes = array(
 			'term_id_taxonomy'=>new EE_Unique_Index(array('term_id','taxonomy'))
 		);
-		
+
 		parent::__construct();
 	}
 

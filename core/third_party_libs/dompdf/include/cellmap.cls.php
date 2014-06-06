@@ -462,7 +462,7 @@ class Cellmap {
 
 	$this->_frames[$key]["frame"] = $frame;
 
-	// Handle seperated border model
+	// Handle separated border model
 	if ( !$collapse ) {
 	  list($h, $v) = $this->_table->get_style()->border_spacing;
 

@@ -331,7 +331,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 //				}
 			} else {
-				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retreived from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			}
 		} else {
 			$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
@@ -349,8 +349,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( ! $this->_revisit && $ID = $this->_transaction->ID() ) {
 				// but if this transaction has already been saved to the db earlier in the same session (ie: it's not a revisit)... then let's pull that
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
-					EE_Error::add_error( __( 'Your Registration and Transaction information could not be retreived from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-					return;
+					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					return FALSE;
 				}
 			}
 		} elseif ( ! $this->_revisit ) {
@@ -549,7 +549,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		try {
 			// create new TXN
 			$this->_transaction = EE_Transaction::new_instance( array(
-				'TXN_timestamp' => current_time('mysql'),
+				'TXN_timestamp' => current_time('timestamp'),
 				'TXN_total' => $this->_cart->get_cart_grand_total(),
 				'TXN_paid' => 0,
 				'STS_ID' => EEM_Transaction::failed_status_code,
@@ -567,13 +567,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return 	void
 	 */
 	private function _initialize_registrations() {
-		//d($this->_cart->all_ticket_quantity_count());
 		if ( $this->_transaction instanceof EE_Transaction ) {
 			$att_nmbr = 0;
 			$total_items = $this->_cart->all_ticket_quantity_count();
 			// now let's add the cart items to the $transaction
 			foreach ( $this->_cart->get_tickets() as $item ) {
-				// grab the related ticket object for this lient_item
+				// grab the related ticket object for this line_item
 				$ticket = $item->ticket();
 				if ( ! $ticket instanceof EE_Ticket ){
 					EE_Error::add_error(sprintf(__("Line item %s did not contain a valid ticket", "event_espresso"),$item->ID()), __FILE__, __FUNCTION__, __LINE__ );
@@ -1542,7 +1541,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 		}
 		$this->_transaction->finalize( TRUE );
-		EE_Registry::instance()->SSN->clear_session();
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		return $this->_transaction->ID();
 	}
 

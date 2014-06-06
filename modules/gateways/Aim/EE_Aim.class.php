@@ -265,7 +265,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				$success = $payment->save();
 				$successful_update_of_transaction = $this->update_transaction_with_payment($transaction, $payment);
 				//we successfully got a response from AIM. the payment might not necessarily have gone through
-				//but we did our job, so return sucess
+				//but we did our job, so return success
 				$return = array('success' => true);
 				
 			} else {

@@ -257,13 +257,13 @@ class EE_Data_Migration_Manager{
 	}
 
 	/**
-	 * Gets all the options containing migration scripts that have been run
-	 * @param boolean @only_get_one FALSE by default- meaning to get ALL; if set ot TRUE, will only retrieve one
+	 * Gets all the options containing migration scripts that have been run. Ordering is important: it's assumed that the last
+	 * option returned in this array is the most-recently ran DMS option
 	 * @return array
 	 */
 	 public function get_all_migration_script_options(){
 		global $wpdb;
-		return $wpdb->get_results("SELECT * FROM {$wpdb->options} WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC",ARRAY_A);
+		return $wpdb->get_results("SELECT * FROM {$wpdb->options} WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id ASC",ARRAY_A);
 	}
 
 	/**
@@ -422,13 +422,15 @@ class EE_Data_Migration_Manager{
 
 	/**
 	 * Gets the script which is currently being ran, if thereis one. If $include_completed_scripts is set to TRUE
-	 * it will return the last ran script even if its complete
+	 * it will return the last ran script even if its complete.
+	 * This means: if you want to find the currently-executing script, leave it as FALSE.
+	 * If you really just want to find the script which ran most recently, regardless of status, leave it as TRUE.
 	 * @return EE_Data_Migration_Script_Base
 	 * @throws EE_Error
 	 */
 	public function get_last_ran_script($include_completed_scripts = false){
 		//make sure we've setup the class properties _last_ran_script and _last_ran_incomplete_script
-		if($this->_data_migrations_ran){
+		if( ! $this->_data_migrations_ran){
 			$this->get_data_migrations_ran();
 		}
 		if($include_completed_scripts){
@@ -456,6 +458,8 @@ class EE_Data_Migration_Manager{
 					EE_Registry::instance()->load_helper('Activation');
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
+					EEH_Activation::system_initialization();
+					EEH_Activation::create_upload_directories();
 					EEH_Activation::initialize_db_content();
 					//make sure the datetime and ticket total sold are correct
 					$this->_save_migrations_ran();
@@ -523,6 +527,8 @@ class EE_Data_Migration_Manager{
 						////huh, no more scripts to run... apparently we're done!
 						//but dont forget to make sure intial data is there
 						EE_Registry::instance()->load_helper('Activation');
+						EEH_Activation::system_initialization();
+						EEH_Activation::create_upload_directories();
 						EEH_Activation::initialize_db_content();
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
@@ -633,7 +639,17 @@ class EE_Data_Migration_Manager{
 				foreach($files as $file){
 					$pos_of_last_slash = strrpos($file,DS);
 					$classname = str_replace(".dms.php","", substr($file, $pos_of_last_slash+1));
+					$migrates_to = $this->script_migrates_to_version( $classname );
+					$slug = $migrates_to[ 'slug' ];
+					//check that the slug as contained in the DMS is associated with
+					//the slug of an addon or core
+					if( $slug != 'Core' ){
+						if( ! EE_Registry::instance()->get_addon_by_name( $slug ) ) {
+							EE_Error::doing_it_wrong(__FUNCTION__, sprintf( __( 'The data migration script "%s" migrates the "%s" data, but there is no EE addon with that name. There is only: %s. ', 'event_espresso' ),$classname,$slug,implode(",", array_keys( EE_Registry::instance()->get_addons_by_name() ) ) ), '4.3.0.alpha.019' );
+						}
+					}
 					$this->_data_migration_class_to_filepath_map[$classname] = $file;
+
 				}
 
 			}

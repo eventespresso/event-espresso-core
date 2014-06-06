@@ -8,11 +8,11 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_4_1_0_Mock
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
-class EE_DMS_Mock_1_0_0 extends EE_Data_Migration_Script_Base{
+class EE_DMS_Core_1_0_0 extends EE_Data_Migration_Script_Base{
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
 		if($version_string < '4.0.0' && $version_string > '3.1.26' ){
@@ -30,11 +30,11 @@ class EE_DMS_Mock_1_0_0 extends EE_Data_Migration_Script_Base{
 	}
 
 	public function schema_changes_after_migration() {
-		
+
 	}
 
 	public function schema_changes_before_migration() {
-		
+
 	}
 }
 

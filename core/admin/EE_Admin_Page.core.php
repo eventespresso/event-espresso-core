@@ -2647,10 +2647,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success > 1 ) {
 			// set plural msg
-			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
+			EE_Error::add_success( sprintf( __('The "%s" have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
 			// set singular msg
-			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_success( sprintf( __('The "%s" has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		// check that $query_args isn't something crazy
@@ -3046,15 +3046,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		// and save it (note we're also doing the network save here)
 		$net_saved = is_main_site() ? EE_Network_Config::instance()->update_config( FALSE, FALSE ) : TRUE;
-		if ( EE_Config::instance()->update_espresso_config( FALSE, FALSE ) && $net_saved ) {
-			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
+		$config_saved = EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		if ( $config_saved && $net_saved ) {
+			EE_Error::add_success( sprintf( __('"%s" have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {
-			$user_msg = sprintf( __('An error occurred. The %s were not updated.', 'event_espresso'), $tab );
-			EE_Error::add_error( $user_msg, $file, $func, $line  );
+			EE_Error::add_error( sprintf( __('The "%s" were not updated.', 'event_espresso'), $tab ), $file, $func, $line  );
 			return FALSE;
 		}
-
 	}
 
 
