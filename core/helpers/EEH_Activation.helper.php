@@ -447,7 +447,7 @@ class EEH_Activation {
 		//find the migration script that sets the database to be compatible with the code
 		$dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		if( $dms_name ){
-			$current_data_migration_script = EE_Registry::instance()->load_dms(  );
+			$current_data_migration_script = EE_Registry::instance()->load_dms( $dms_name );
 			$current_data_migration_script->schema_changes_before_migration();
 			$current_data_migration_script->schema_changes_after_migration();
 			EE_Data_Migration_Manager::instance()->update_current_database_state_to();

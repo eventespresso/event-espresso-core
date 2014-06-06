@@ -125,7 +125,7 @@ abstract class EE_Addon extends EE_Configurable {
 		//find the migration script that sets the database to be compatible with the code
 		$current_dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms( $this->name() );
 		if( $current_dms_name ){
-			$current_data_migration_script = EE_Registry::instance()->load_dms(  );
+			$current_data_migration_script = EE_Registry::instance()->load_dms( $current_dms_name );
 			$current_data_migration_script->schema_changes_before_migration();
 			$current_data_migration_script->schema_changes_after_migration();
 			if ( $current_data_migration_script->get_errors() ) {
