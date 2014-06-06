@@ -35,8 +35,10 @@ class EEH_Class_Tools {
 	 */
 	public static function get_called_class() {
 		$backtrace = debug_backtrace();
-		if ( isset( $backtrace[2] ) && is_array( $backtrace[2] ) && isset( $backtrace[2]['class'] )) {
+		if ( isset( $backtrace[2] ) && is_array( $backtrace[2] ) && isset( $backtrace[2]['class'] ) && ! isset( $backtrace[2]['file'] )) {
 			return $backtrace[2]['class'];
+		} else if ( isset( $backtrace[3] ) && is_array( $backtrace[3] ) && isset( $backtrace[3]['class'] ) && ! isset( $backtrace[3]['file'] )) {
+			return $backtrace[3]['class'];
 		} else if ( isset( $backtrace[2] ) && is_array( $backtrace[2] ) && isset( $backtrace[2]['file'] ) && isset( $backtrace[2]['line'] )) {
 			if ( self::$file_line == $backtrace[2]['file'] . $backtrace[2]['line'] ) {
 				self::$i++;
