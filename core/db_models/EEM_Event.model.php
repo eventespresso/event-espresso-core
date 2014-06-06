@@ -102,7 +102,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Event_CPT'=>array(
 				'EVT_ID'=>new EE_Primary_Key_Int_Field( 'ID', __( 'Post ID for Event','event_espresso' )),
 				'EVT_name'=>new EE_Plain_Text_Field( 'post_title', __( 'Event Name','event_espresso' ), FALSE, '' ),
-				'EVT_desc'=>new EE_Simple_HTML_Field( 'post_content', __( 'Event Description', 'event_espresso' ), FALSE, '' ),
+				'EVT_desc'=>new EE_Post_Content_Field( 'post_content', __( 'Event Description', 'event_espresso' ), FALSE, '' ),
 				'EVT_slug'=>new EE_Slug_Field( 'post_name', __( 'Event Slug', 'event_espresso' ), FALSE, '' ),
 				'EVT_created'=>new EE_Datetime_Field( 'post_date', __( 'Date/Time Event Created', 'event_espresso' ), FALSE, current_time( 'timestamp' )),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field( 'post_excerpt', __( 'Event Short Descripiton', 'event_espresso' ), FALSE,'' ),
