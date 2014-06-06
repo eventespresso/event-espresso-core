@@ -150,14 +150,14 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			'tax'=>$this->_format_float($tax_total),
 			'partner_id'=>'ee'
 		);
-		
+
 		//setup address?
 		if(		$primary_attendee->address()  &&
 				$primary_attendee->city()  &&
 				$primary_attendee->state_ID()  &&
 				$primary_attendee->country_ID()  &&
 				$primary_attendee->zip()  ){
-				
+
 				$shipping_address = array(
 					'street' => $primary_attendee->address(),
 					'city' => $primary_attendee->city(),
@@ -175,7 +175,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		}
 		$order[ 'billing_address' ] = $shipping_address;
 		$order[ 'shipping_address' ] = $shipping_address;
-			
+
 		foreach($total_line_item->get_items() as $line_item){
 			$order['items'][] = array(
 				'name'=>$line_item->name(),
@@ -239,10 +239,9 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 					$mijireh_error = $response['body'];
 				}
 				$error_message = sprintf(__("Error response from Mijireh: %s", 'event_espresso'),$mijireh_error);
-				
+
 				EE_Error::add_error($error_message);
 				throw new EE_Error($error_message);
-			}
 		}else{
 			$error_message = sprintf(__("Errors communicating with Mijireh: %s", 'event_espresso'),implode(",",$response->get_error_messages()));
 			EE_Error::add_error($error_message);
