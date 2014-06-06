@@ -639,7 +639,8 @@ class EE_Data_Migration_Manager{
 				foreach($files as $file){
 					$pos_of_last_slash = strrpos($file,DS);
 					$classname = str_replace(".dms.php","", substr($file, $pos_of_last_slash+1));
-					list( $slug, $version ) = $this->script_migrates_to_version( $classname );
+					$migrates_to = $this->script_migrates_to_version( $classname );
+					$slug = $migrates_to[ 'slug' ];
 					//check that the slug as contained in the DMS is associated with
 					//the slug of an addon or core
 					if( $slug != 'Core' ){

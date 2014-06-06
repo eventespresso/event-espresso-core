@@ -64,18 +64,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.', 'event_espresso' ));
 		}
 
-		// make sure this was called in the right place!
-		if ( ! did_action( 'AHEE__EE_System__load_espresso_addons' ) || did_action( 'AHEE__EE_System___detect_if_activation_or_upgrade__begin' )) {
-			EE_Error::doing_it_wrong(
-				__METHOD__,
-				sprintf(
-					__( 'An attempt to register an EE_Addon named "%s" has failed because it was not registered at the correct time.  Please use the "AHEE__EE_System__load_espresso_addons" hook to register addons.','event_espresso'),
-					$setup_args['addon_name']
-				),
-				'4.3.0'
-			);
-		}
-		
+
 		// no class name for addon?
 		if ( empty( $setup_args['class_name'] )) {
 			// generate one by first separating name with spaces

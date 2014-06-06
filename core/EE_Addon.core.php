@@ -166,7 +166,7 @@ abstract class EE_Addon extends EE_Configurable {
 			$this->initialize_db();
 			$this->initialize_default_data();
 			//@todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
-			EE_Data_Migration_Manager::instance()->update_current_database_state_to(array($this->name(),$this->version()));
+			EE_Data_Migration_Manager::instance()->update_current_database_state_to(array('slug' => $this->name(), 'version' => $this->version()));
 		}
 	}
 
