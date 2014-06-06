@@ -14,6 +14,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 /**
  * @group core/data_migration_scripts
+ * @group core
  */
 class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function test_get_all_data_migration_scripts_available(){
@@ -21,10 +22,10 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		EE_Data_Migration_Manager::reset();
 		$dms_classpaths = EE_Data_Migration_Manager::instance()->get_all_data_migration_scripts_available();
 		$this->assertArrayHasKey('EE_DMS_Core_4_1_0', $dms_classpaths);
-		$this->assertArrayHasKey('EE_DMS_Mock_1_0_0',$dms_classpaths);
+		$this->assertArrayHasKey('EE_DMS_Core_1_0_0',$dms_classpaths);
 		$this->assertArrayHasKey('EE_DMS_Core_4_2_0', $dms_classpaths);
 		$this->assertArrayHasKey('EE_DMS_Core_4_3_0', $dms_classpaths);
-	}
+}
 	public function test_ensure_current_database_state_is_set(){
 		$this->_pretend_current_code_state_is_at(espresso_version());
 		$this->_pretend_current_db_state_is_at();
@@ -36,14 +37,14 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$this->_pretend_current_db_state_is_at('3.1.37.7');
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		$this->assertArrayHasKey('EE_DMS_Core_4_1_0',$dmss);
-		$this->assertArrayHasKey('EE_DMS_Mock_1_0_0',$dmss);
+		$this->assertArrayHasKey('EE_DMS_Core_1_0_0',$dmss);
 		//pretend we already ran one DMS
 		$dms_done = new EE_DMS_Core_4_1_0();
 		$dms_done->set_completed();
 		$this->_pretend_ran_dms($dms_done);
 		$dmss = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
 		$this->assertArrayNotHasKey('EE_DMS_Core_4_1_0',$dmss);
-		$this->assertArrayHasKey('EE_DMS_Mock_1_0_0',$dmss);
+		$this->assertArrayHasKey('EE_DMS_Core_1_0_0',$dmss);
 
 		//now pretend we're elsewhere in the migration where 4.2 should be ran
 		$this->_pretend_current_db_state_is_at('4.1.1');
@@ -72,11 +73,6 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$dms_classname = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
 		//yes, this test will need to be updated everytime we add a new core DMS
 		$this->assertEquals('EE_DMS_Core_4_3_0',$dms_classname);
-		EE_Data_Migration_Manager::reset();
-		$this->_add_mock_dms();
-		$non_core_dms = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms('Mock');
-		$this->assertEquals('EE_DMS_Mock_1_0_0',$non_core_dms);
-		$this->_remove_mock_dms();
 	}
 
 	public function test_get_last_ran_script(){

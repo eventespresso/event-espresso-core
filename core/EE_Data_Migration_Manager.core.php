@@ -602,7 +602,16 @@ class EE_Data_Migration_Manager{
 				foreach($files as $file){
 					$pos_of_last_slash = strrpos($file,DS);
 					$classname = str_replace(".dms.php","", substr($file, $pos_of_last_slash+1));
+					list( $slug, $version ) = $this->script_migrates_to_version( $classname );
+					//check that the slug as contained in the DMS is associated with
+					//the slug of an addon or core
+					if( $slug != 'Core' ){
+						if( ! EE_Registry::instance()->get_addon_by_name( $slug ) ) {
+							EE_Error::doing_it_wrong(__FUNCTION__, sprintf( __( 'The data migration script "%s" migrates the "%s" data, but there is no EE addon with that name. There is only: %s. ', 'event_espresso' ),$classname,$slug,implode(",", array_keys( EE_Registry::instance()->get_addons_by_name() ) ) ), '4.3.0.alpha.019' );
+						}
+					}
 					$this->_data_migration_class_to_filepath_map[$classname] = $file;
+
 				}
 
 			}
