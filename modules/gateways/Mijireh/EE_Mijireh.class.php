@@ -128,7 +128,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				);
 			}
 		}else{//its a partial payment
-			if( ! $total_to_charge){//they didn't set the total to charge, so it must have a balance
+			if( ! $total_to_charge ){//they didn't set the total to charge, so it must have a balance
 				$total_to_charge = $transaction->remaining();
 			}
 			$tax_total = 0;
@@ -158,33 +158,23 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				$primary_attendee->country_ID()  &&
 				$primary_attendee->zip()  ){
 
-				$shipping_address = array(
-					'street' => $primary_attendee->address(),
-					'city' => $primary_attendee->city(),
-					'state_province' => $primary_attendee->state_obj() ? $primary_attendee->state_obj()->abbrev() : '',
-					'zip_code' => $primary_attendee->zip(),
-					'country' => $primary_attendee->country_ID()
-				);
-		}
-
-		if( $primary_attendee->address2() ){
-			$shipping_address[ 'apt_suite' ] = $primary_attendee->address2();
-		}
-		if( $primary_attendee->phone() ){
-			$shipping_address[ 'phone' ] = $primary_attendee->phone();
-		}
-		$order[ 'billing_address' ] = $shipping_address;
-		$order[ 'shipping_address' ] = $shipping_address;
-
-		foreach($total_line_item->get_items() as $line_item){
-			$order['items'][] = array(
-				'name'=>$line_item->name(),
-				'price'=>$this->_format_float($line_item->unit_price()),
-				'sku'=>$line_item->code(),
-				'quantity'=>$line_item->quantity()
+			$shipping_address = array(
+				'street' => $primary_attendee->address(),
+				'city' => $primary_attendee->city(),
+				'state_province' => $primary_attendee->state_obj() ? $primary_attendee->state_obj()->abbrev() : '',
+				'zip_code' => $primary_attendee->zip(),
+				'country' => $primary_attendee->country_ID()
 			);
+			if( $primary_attendee->address2() ){
+				$shipping_address[ 'apt_suite' ] = $primary_attendee->address2();
+			}
+			if( $primary_attendee->phone() ){
+				$shipping_address[ 'phone' ] = $primary_attendee->phone();
+			}
+			$order[ 'billing_address' ] = $shipping_address;
+			$order[ 'shipping_address' ] = $shipping_address;
 		}
-		
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
 				$args = array(
 		'headers' => array(
@@ -231,23 +221,18 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			$properties = array_merge($unique_properties,$duplicate_properties);
 			$duplicate_payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
 			if($duplicate_payment){
-					$mijireh_error = '';
-					foreach($response_body as $error_field => $errors){
-						$mijireh_error.=$error_field.":".implode(",",$errors);
-					}
-				}else{
-					$mijireh_error = $response['body'];
-				}
-				$error_message = sprintf(__("Error response from Mijireh: %s", 'event_espresso'),$mijireh_error);
-
-				EE_Error::add_error($error_message);
-				throw new EE_Error($error_message);
+				$payment = $duplicate_payment;
+			}else{
+				$payment = EE_Payment::new_instance();
+			}
+			$payment->save($properties);
 		}else{
 			$error_message = sprintf(__("Errors communicating with Mijireh: %s", 'event_espresso'),implode(",",$response->get_error_messages()));
 			EE_Error::add_error($error_message);
 			throw new EE_Error($error_message);
+
 		}
-		$this->redirect_after_reg_step_3();
+	$this->redirect_after_reg_step_3();
 	}
 
 	/**
