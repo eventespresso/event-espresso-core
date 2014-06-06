@@ -219,7 +219,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												<?php } ?>
 												</tr>
 											<?php } ?>
-											<?php if ( $ticket->taxable() ) : ?>
+											<?php if ( $ticket->taxable() ) { ?>
 												<?php //$ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
 												<tr>
 													<td colspan="2" class="jst-rght small-text"><b><?php _e( 'subtotal', 'event_espresso' ); ?></b></td>
@@ -307,8 +307,8 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 											</thead>
 											<tbody>
 										<?php
-											foreach ( $datetimes as $datetime ) :
-												if ( $datetime instanceof EE_Datetime ) :
+											foreach ( $datetimes as $datetime ) {
+												if ( $datetime instanceof EE_Datetime ) {
 										?>
 
 											<tr>
