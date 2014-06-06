@@ -131,7 +131,7 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	*		retreive  all transactions from db between two dates
+	*		retrieve  all transactions from db between two dates
 	* 
 	* 		@access		public
 	* 		@param		string		$start_date		
@@ -211,7 +211,7 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	*		retreive a single transaction from db via the TXN_ID
+	*		retrieve a single transaction from db via the TXN_ID
 	* 
 	* 		@access		public
 	* 		@param		string		$TXN_ID			

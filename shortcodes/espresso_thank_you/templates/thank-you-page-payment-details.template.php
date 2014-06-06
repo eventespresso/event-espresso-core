@@ -11,13 +11,13 @@
 				<th width="35%" class="jst-left">
 					<?php _e('Payment Date','event_espresso')?>
 				</th>
-				<th width="20%" class="jst-left">
+				<th width="17.5%" class="jst-left">
 					<?php _e('Type','event_espresso');?>
 				</th>
-				<th width="20%" class="jst-rght">
+				<th width="17.5%" class="jst-rght">
 					<?php _e('Amount','event_espresso');?>
 				</th>
-				<th width="25%" class="jst-rght">
+				<th width="30%" class="jst-rght">
 					<?php _e('Status','event_espresso');?>
 				</th>
 			</tr>

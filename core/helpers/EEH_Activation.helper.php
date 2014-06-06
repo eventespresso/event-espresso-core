@@ -259,7 +259,7 @@ class EEH_Activation {
 		// get newly created post's details
 		if ( ! $critical_page['post'] = get_post( $post_id )) {
 			$msg = sprintf(
-				__( 'The Event Espresso critical page entitled "%s" could not be retreived.', 'event_espresso' ),
+				__( 'The Event Espresso critical page entitled "%s" could not be retrieved.', 'event_espresso' ),
 				$critical_page['name']
 			);
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );

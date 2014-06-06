@@ -563,6 +563,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function get_payment_row_html( $payment = NULL ) {
 		$html = '';
 		if ( $payment instanceof EE_Payment ) {
+			$payment_declined_msg = $payment->STS_ID() === EEM_Payment::status_id_declined ? '<br /><span class="small-text">' . $payment->gateway_response() . '</span>' : '';
 			$html .= '
 				<tr>
 					<td>
@@ -574,8 +575,8 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 					<td class="jst-rght">
 						' . EEH_Template::format_currency( $payment->amount() ) . '
 					</td>
-					<td class="jst-rght">
-						' . $payment->pretty_status( TRUE ) . '
+					<td class="jst-rght" style="line-height:1;">
+						' . $payment->pretty_status( TRUE ) . $payment_declined_msg . '
 					</td>
 				</tr>';
 				do_action( 'AHEE__thank_you_page_payment_details_template__after_each_payment', $payment );

@@ -4,7 +4,7 @@
  * Model for retrieving Information about the Event Espresso status.
  */
 class EEM_System_Status{
-	
+
 	// private instance of the EEM_System_Status object
 	private static $_instance = NULL;
 
@@ -27,10 +27,10 @@ class EEM_System_Status{
 		return self::$_instance;
 	}
 	private function __construct(){
-		
+
 	}
 	/**
-	 * 
+	 *
 	 * @return array where each key is a function name on this class, and each value is SOMETHING--
 	 * it might be a value, an array, or an object
 	 */
@@ -46,27 +46,27 @@ class EEM_System_Status{
 			'php_version'=>$this->php_version(),
 			'php.ini_settings'=>$this->get_php_ini_all(),
 			'php_info'=>$this->get_php_info(),
-			
+
 		);
 	}
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	function get_ee_version(){
 		return espresso_version();
 	}
 	/**
-	 * 
+	 *
 	 * @return string
 	 */
 	function php_version(){
 		return phpversion();
 	}
 	/**
-	 * 
+	 *
 	 * @return array, where each key is a plugin name (lower-cased), values are sub-arrays.
-	 * Sub-arrays like described in wp function get_plugin_data. Ie,	 * 
+	 * Sub-arrays like described in wp function get_plugin_data. Ie,	 *
 	 *	'Name' => 'Plugin Name',
 		'PluginURI' => 'Plugin URI',
 		'Version' => 'Version',
@@ -90,13 +90,13 @@ class EEM_System_Status{
 		}
 		return $plugin_info;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return array with keys 'home_url' and 'site_url'
 	 */
 	function get_wp_settings(){
-		
+
 		return array(
 			'name'=>get_bloginfo('name','display'),
 			'is_multisite'=>is_multisite(),
@@ -112,7 +112,7 @@ class EEM_System_Status{
 			'language'=>get_bloginfo('language','display')
 			);
 	}
-	
+
 	/**
 	 * Gets an array of information about the history of ee versions installed
 	 * @return array
@@ -120,8 +120,8 @@ class EEM_System_Status{
 	function get_ee_activation_history(){
 		return get_option('espresso_db_update');
 	}
-	
-	
+
+
 	/**
 	 * Gets an array where keys are ee versions, and their values are arrays indicating all the different times that version was installed
 	 * @return EE_Data_Migration_Script_Base[]
@@ -135,21 +135,21 @@ class EEM_System_Status{
 		return $presentable_migration_scripts;
 //		return get_option(EE_Data_Migration_Manager::data_migrations_option_name);//EE_Data_Migration_Manager::instance()->get_data_migrations_ran();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return array like EE_Config class
 	 */
 	function get_ee_config(){
-		return EE_Config::instance()->get_espresso_config();
+		return EE_Config::instance();
 	}
-	
+
 	/**
 	 * Gets an array of php setup info, pilfered from http://www.php.net/manual/en/function.phpinfo.php#87463
 	 * @return array like the output of phpinfo(), but in an array
 	 */
 	function get_php_info(){
-		ob_start(); 
+		ob_start();
 		phpinfo(-1);
 
 		$pi = preg_replace(
@@ -185,7 +185,7 @@ class EEM_System_Status{
 
 		return $pi;
 	}
-	
+
 	/**
 	 * Checks if site responds ot HTTPS
 	 * @return boolean

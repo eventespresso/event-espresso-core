@@ -76,23 +76,20 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 */
 	public static function instance ( ) {
 		// check if class object is instantiated
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Session )) {
+		if ( ! self::$_instance instanceof EE_Session ) {
 			self::$_instance = new self();
-			//echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		}
 		return self::$_instance;
 	}
 
 
 
-
-
 	/**
-	 *		private constructor to prevent direct creation
-	 *		@Constructor
-	 *		@access private
-	 *		@return void
-	 */
+	* 	private constructor to prevent direct creation
+	* 	@Constructor
+	* 	@access private
+	* 	@return \EE_Session
+	*/
 	private function __construct() {
 
 		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
@@ -104,7 +101,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		define( 'ESPRESSO_SESSION', TRUE );
 
-		// retreive session options from db
+		// retrieve session options from db
 		if ( $session_settings = get_option( 'ee_session_settings' ) !== FALSE ) {
 			// cycle though existing session options
 			foreach ( $session_settings as $var_name => $session_setting ) {
@@ -128,8 +125,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		$this->_set_defaults();
 
-		// check for existing session and retreive it from db.  Filtered in case session needs to be turned off (typically with tests)
-		if ( ! $this->_espresso_session()  ) {
+		// check for existing session and retrieve it from db
+		if ( ! $this->_espresso_session() ) {
 			// or just start a new one
 			$this->_create_espresso_session();
 		}
@@ -165,7 +162,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 * @retreive session data
+	 * @retrieve session data
 	 * @access	public
 	 * @return	array
 	 */
@@ -178,7 +175,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 * @retreive session data
+	 * @retrieve session data
 	 * @access	public
 	 * @return	array
 	 */
@@ -243,12 +240,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		// is the SID being passed explicitly ?
-		if( isset( $_REQUEST['EESID'] )) {
+		if ( isset( $_REQUEST['EESID'] )) {
 			session_id( sanitize_text_field( $_REQUEST['EESID'] ));
 		}
-		// first visit ?
+		// check that session has started
 		if ( session_id() === '' ) {
-			//starts a new session if one doesn't already exist, or reinitiates an existing one
+			//starts a new session if one doesn't already exist, or re-initiates an existing one
 			session_start();
 			// set initial site access time
 			$this->_session_data['init_access'] = $this->_time;
@@ -259,21 +256,26 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		$this->_sid = session_id();
 		// set the "user agent"
 		$this->_user_agent = ( isset($_SERVER['HTTP_USER_AGENT'])) ? esc_attr( $_SERVER['HTTP_USER_AGENT'] ) : FALSE;
-		// now let's retreive what's in the db
+		// now let's retrieve what's in the db
 		// we're using WP's Transient API to store session data using the PHP session ID as the option name
-		if ( $session_data = get_transient( 'ee_ssn_' . $this->_sid )) {
+		$session_data = get_transient( 'ee_ssn_' . $this->_sid );
+		if ( $session_data ) {
 			// un-encrypt the data
 			$session_data = $this->_use_encryption ? $this->encryption->decrypt( $session_data ) : $session_data;
 			// unserialize
 			$session_data = maybe_unserialize( $session_data );
 			// just a check to make sure the session array is indeed an array
 			if ( ! is_array( $session_data ) ) {
-				// no?!?! then something's wrong
+				// no?!?! then something is wrong
 				return FALSE;
 			}
 
 		} else {
-			// no previous session = go back and create one
+			// set initial site access time
+			$this->_session_data['init_access'] = $this->_time;
+			// set referer
+			$this->_session_data[ 'pages_visited' ][ $this->_session_data['init_access'] ] = isset( $_SERVER['HTTP_REFERER'] ) ? esc_attr( $_SERVER['HTTP_REFERER'] ) : '';
+			// no previous session = go back and create one (on top of the data above)
 			return FALSE;
 		}
 
@@ -298,23 +300,20 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 		// make event espresso session data available to plugin
 		$this->_session_data = $session_data;
-
 		return TRUE;
 
 	}
 
 
 
-
-
-	/**
-	 *		@update session data  prior to saving to the db
-	 *		@access public
-	 *		@return TRUE on success, FALSE on fail
-	 */
+	 /**
+	  * @update session data  prior to saving to the db
+	  * @access public
+	  * @param bool $new_session
+	  * @return TRUE on success, FALSE on fail
+	  */
 	public function update( $new_session = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
 		$this->_session_data = isset( $this->_session_data ) && is_array( $this->_session_data ) && isset( $this->_session_data['id']) ? $this->_session_data : NULL;
 		if ( empty( $this->_session_data )) {
 			$this->_set_defaults();
@@ -348,6 +347,11 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 					$session_data['last_access'] = $this->_time;
 				break;
 
+				case 'user_id' :
+					// current user if logged in
+					$session_data['user_id'] = $this->_wp_user_id();
+				break;
+
 				case 'pages_visited' :
 					if ( $page_visit = $this->_get_page_visit() ) {
 						// set pages visited where the first will be the http referrer
@@ -365,9 +369,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			}
 
 		}
-
-		// current user if logged in
-		$session_data['user_id'] = $this->_wp_user_id();
 
 		$this->_session_data = $session_data;
 
@@ -507,14 +508,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 			// check for page_id in SERVER REQUEST
 			if ( isset( $_REQUEST['page_id'] )) {
-				// rebuild $e_reg without any of the extra paramaters
+				// rebuild $e_reg without any of the extra parameters
 				$page_id = '?page_id=' . esc_attr( $_REQUEST['page_id'] ) . '&amp;';
 			} else {
 				$page_id = '?';
 			}
 			// check for $e_reg in SERVER REQUEST
 			if ( isset( $_REQUEST['ee'] )) {
-				// rebuild $e_reg without any of the extra paramaters
+				// rebuild $e_reg without any of the extra parameters
 				$e_reg = 'ee=' . esc_attr( $_REQUEST['ee'] );
 			} else {
 				$e_reg = '';
@@ -542,8 +543,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *			@return void
 	 */
 	public function _wp_user_id() {
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
 		// if I need to explain the following lines of code, then you shouldn't be looking at this!
 		$user = wp_get_current_user();
 		$this->_wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
@@ -553,15 +552,18 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
+	 /**
+	  * Clear EE_Session data
+	  *
+	  * @access public
+	  * @param string $class
+	  * @param string $function
+	  * @return void
+	  */
+	public function clear_session( $class = '', $function = '' ) {
 
-
-	/**
-	 * 		Clear EE_Session data
-	 *
-	 * 		@access public
-	 * 		@return void
-	 */
-	public function clear_session() {
+//		echo '<h2 style="color:#E76700;">session cleared by : ' . $class . '::' .  $function . '()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+		do_action( 'AHEE_log', __FILE__, __FUNCTION__, 'session cleared by : ' . $class . '::' .  $function . '()' );
 		// wipe out everything that isn't a default session datum
 		$this->reset_data( array_keys( $this->_session_data ));
 	}
@@ -576,10 +578,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *			@return TRUE on success, FALSE on fail
 	 */
 	public function reset_data( $data_to_reset = FALSE, $show_all_notices = FALSE ) {
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-//		echo '<h3>'. __CLASS__ .'->'.__FUNCTION__.'  ( line no: ' . __LINE__ . ' )</h3>';
-
 		// nothing ??? go home!
 		if ( ! $data_to_reset ) {
 			EE_Error::add_error( __( 'No session data could be reset, because no session var name was provided.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );

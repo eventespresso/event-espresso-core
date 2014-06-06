@@ -225,12 +225,48 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEmpty( $hidden_metaboxes );
 	}
 
+
+
+	/**
+	 * testing output for the dashboard upcoming widget hook callback
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_dashboard_glance_items() {
+		//add some events and registrations
+		$this->factory->event->create_many(10);
+		$this->factory->registration->create_many(5);
+
+		//expected events dashboard items
+		EE_Registry::instance()->load_helper('URL');
+		$xpct_events_url = EEH_URL::add_query_args_and_nonce( array( 'page' => 'espresso_events'), admin_url('admin.php') );
+		$xpct_events_text = sprintf( _n( '%s Event', '%s Events', 10 ), number_format_i18n( 10 ) );
+		$xpct_events_title = __('Click to view all Events', 'event_espresso');
+		$xpct_event_assembled = sprintf( '<a href="%s" title="%s">%s</a>', $xpct_events_url, $xpct_events_title, $xpct_events_text );
+
+		//expected registration dashboard items
+		$xpct_registration_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), admin_url('admin.php') );
+		$xpct_registration_text = sprintf( _n( '%s Registration', '%s Registrations', 5 ), number_format_i18n(5) );
+		$xpct_registration_title = __('Click to view all registrations', 'event_espresso');
+		$xpct_registration_assembled = sprintf( '<a href="%s" title="%s">%s</a>', $xpct_registration_url, $xpct_registration_title, $xpct_registration_text );
+
+		$generated_items = EE_Admin::instance()->dashboard_glance_items( '' );
+		//first assert the elements are an array.
+		$this->assertInternalType('array', $generated_items);
+
+		//assert the count for the array is two
+		$this->assertcount( 2, $generated_items);
+
+		//assert that the first item matches the xpctd event string.
+		$this->assertEquals( $xpct_event_assembled, $generated_items[0] );
+
+		//assert that the second item matches the xpctd registration string
+		$this->assertEquals( $xpct_registration_assembled, $generated_items[1] );
+	}
+
 	//@todo public methods to write tests for
 
-	//function test_ee_cpt_archive_pages()
-	//function test_enqueue_admin_scripts()
-	//function test_get_persistent_admin_notices()
-	//function test_dismiss_ee_nag_notice_callback()
 	//function test_dashboard_glance_items()
 	//function test_parse_post_content_on_save()
 

@@ -366,7 +366,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 	public function additional_attendee_parser( $parsed, $shortcode, $data, $extra_data, $shortcode_parser ) {
 
-		if ( strpos( $shortcode, '[ANSWER_*' ) === FALSE || !isset( $extra_data['data']->questions) || !isset( $extra_data['data']->attendees) )
+		if ( strpos( $shortcode, '[ANSWER_*' ) === FALSE || !isset( $extra_data['data']->questions) || !isset( $extra_data['data']->registrations) )
 			return $parsed;
 
 		//let's get the question from the code.
@@ -375,8 +375,8 @@ class EE_Brewing_Regular extends EE_Base {
 
 		//now let's figure out which question has this text.
 		foreach ( $extra_data['data']->questions as $ansid => $question ) {
-			if ( $question->get('QST_display_text') == $shortcode && isset($extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]) )
-				return $extra_data['data']->attendees[$data->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop');
+			if ( $question->get('QST_display_text') == $shortcode && isset($extra_data['data']->registrations[$data->ID()]['ans_objs'][$ansid]) )
+				return $extra_data['data']->registrations[$data->ID()]['ans_objs'][$ansid]->get_pretty('ANS_value', 'no_wpautop');
 		}
 
 		//nothing!

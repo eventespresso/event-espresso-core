@@ -616,6 +616,32 @@ final class EE_Registry {
 	 */
 	final static function __callStatic($a,$b) {}
 
+	/**
+	 * Gets the addon by its name/slug (not classname. For that, just
+	 * use the classname as the property name on EE_Config::instance()->addons)
+	 * @param string $name
+	 * @return EE_Addon
+	 */
+	public function get_addon_by_name( $name ){
+		foreach($this->addons as $addon){
+			if( $addon->name() == $name){
+				return $addon;
+			}
+		}
+		return NULL;
+	}
+	/**
+	 * Gets an array of all the reigstered addons, where the keys are their names. (ie, what each returns for their name() function) They're already available on EE_Config::instance()->addons as properties, where each property's name is the addon's classname. So if you just want to get the addon by classname, use EE_Config::instance()->addons->{classname}
+	 *
+	 * @return EE_Addon[] where the KEYS are the addons's name()
+	 */
+	public function get_addons_by_name(){
+		$addons = array();
+		foreach($this->addons as $addon){
+			$addons[ $addon->name() ] = $addon;
+		}
+		return $addons;
+	}
 
 
 }
