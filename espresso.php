@@ -68,6 +68,7 @@ if( ! defined( 'SP' ) ){
 	define('SP',' ');
 }
 
+
 define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 // define the plugin directory and URL
 define( 'EE_PLUGIN_BASENAME', plugin_basename( EVENT_ESPRESSO_MAIN_FILE ));
@@ -145,12 +146,6 @@ function espresso_duplicate_plugin_error() {
  * 	adds a wp-option to indicate that EE has been activated via the WP admin plugins page
  */
 function espresso_plugin_activation() {
-	// check permissions
-	if ( ! current_user_can( 'activate_plugins' )) {
-		return;
-	}
-	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	check_admin_referer( "activate-plugin_{$plugin}" );
 	update_option( 'ee_espresso_activation', TRUE );
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
@@ -161,12 +156,6 @@ register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation'
  * 	espresso_plugin_deactivation
  */
 function espresso_plugin_deactivation() {
-	// check permissions
-	if ( ! current_user_can( 'activate_plugins' )) {
-		return;
-	}
-	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	check_admin_referer( "deactivate-plugin_{$plugin}" );
 	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_deactivation();
 }
