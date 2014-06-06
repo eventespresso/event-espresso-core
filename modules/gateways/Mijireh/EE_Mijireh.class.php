@@ -183,7 +183,8 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				'sku'=>$line_item->code(),
 				'quantity'=>$line_item->quantity()
 			);
-
+		}
+		
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
 				$args = array(
 		'headers' => array(
@@ -229,7 +230,6 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			);
 			$properties = array_merge($unique_properties,$duplicate_properties);
 			$duplicate_payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
-			}else{
 			if($duplicate_payment){
 					$mijireh_error = '';
 					foreach($response_body as $error_field => $errors){
