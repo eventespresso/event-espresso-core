@@ -8,7 +8,7 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
- * This is the library class for the "newsletter" group shortcods.
+ * This is the library class for the "newsletter" group shortcodes.
  *
  *
  * @package        Event Espresso

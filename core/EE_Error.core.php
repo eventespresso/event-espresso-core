@@ -881,7 +881,7 @@ class EE_Error extends Exception {
 	 *  	@access 	public
 	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
 	* 	@param		string	$pan_name	the message to be stored persistently until dismissed
-	* 	@param		string	$return_url	URL to go back to aftger nag notice is dissmissed
+	* 	@param		string	$return_url	URL to go back to aftger nag notice is dismissed
 	 *  	@return 		string
 	 */
 	public static function display_persistent_admin_notices( $pan_name = '', $pan_message = '', $return_url = '' ) {
