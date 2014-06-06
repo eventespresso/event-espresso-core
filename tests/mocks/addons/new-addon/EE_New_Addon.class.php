@@ -11,28 +11,26 @@
  *
  * ------------------------------------------------------------------------
  */
+// define the plugin directory path and URL
+define( 'EE_NEW_ADDON_PATH', plugin_dir_path( __FILE__ ));
+define( 'EE_NEW_ADDON_URL', plugin_dir_url( __FILE__ ));
+define( 'EE_NEW_ADDON_ADMIN', EE_NEW_ADDON_PATH . 'admin' . DS . 'new_addon' . DS );
 Class  EE_New_Addon extends EE_Addon {
 
 	/**
 	 * class constructor
 	 */
 	public function __construct() {
-		// register our activation hook
-		register_activation_hook( __FILE__, array( $this, 'set_activation_indicator_option' ));
 	}
 
 	public static function register_addon() {
-		// define the plugin directory path and URL
-		define( 'EE_NEW_ADDON_PATH', plugin_dir_path( __FILE__ ));
-		define( 'EE_NEW_ADDON_URL', plugin_dir_url( __FILE__ ));
-		define( 'EE_NEW_ADDON_ADMIN', EE_NEW_ADDON_PATH . 'admin' . DS . 'new_addon' . DS );
 		// register addon via Plugin API
 		EE_Register_Addon::register(
 			'New_Addon',
 			array(
 				'version' 					=> EE_NEW_ADDON_VERSION,
 				'min_core_version' => '4.3.0',
-				'base_path' 				=> EE_NEW_ADDON_PATH,
+				'main_file_path' 				=> EE_NEW_ADDON_PLUGIN_FILE,
 				'admin_path' 			=> EE_NEW_ADDON_ADMIN,
 				'admin_callback'		=> 'additional_admin_hooks',
 				'config_class' 			=> 'EE_New_Addon_Config',

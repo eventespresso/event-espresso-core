@@ -26,7 +26,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->_reg_args = array(
 			'version'=>'1.0.0',
 			'min_core_version'=>'4.0.0',
-			'base_path'=>$this->_mock_addon_path,
+			'main_file_path'=>$this->_mock_addon_path . 'espresso-new-addon.php',
 			'dms_paths'=>$this->_mock_addon_path . 'core/data_migration_scripts'
 
 		);
@@ -59,7 +59,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	function test_register_mock_addon_success(){
 		$this->_pretend_addon_hook_time();
 		if( did_action( 'activate_plugin' ) ){
-			$this->assertTrue(false);
+			$this->assertTrue( FALSE );
 		}
 		$this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
 		EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
@@ -117,7 +117,22 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 		$this->_stop_pretending_addon_hook_time();
 		$this->_stop_pretending_after_plugin_activation();
+		remove_all_filters('AHEE__EE_System__load_espresso_addons');
 	}
+
+	/**
+	 * double checks that we the example addon is registering correctly.
+	 * @todo: to make sure our example addon is really working, we shoudl try using it
+	 * on its own
+	 */
+//	public function test_regular_new_addon_activation(){
+//		$this->_pretend_addon_hook_time();
+//		require_once( EE_TESTS_DIR . 'mocks/addons/new-addon/espresso-new-addon.php' );
+//		EE_New_Addon::register_addon();
+//		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
+//
+//		//and theni t hsould be teared-down by tearDown()
+//	}
 
 	protected function _stop_pretending_after_plugin_activation(){
 		global $wp_actions;
