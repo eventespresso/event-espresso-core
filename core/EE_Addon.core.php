@@ -101,6 +101,7 @@ abstract class EE_Addon extends EE_Configurable {
 //		echo "Deactivating $classname";die;
 		do_action("AHEE__{$classname}__deactivation");
 		//check if the site no longer needs to be in maintenance mode
+		EE_Register_Addon::deregister( $this->name() );
 		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 	}
 

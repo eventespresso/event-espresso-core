@@ -204,6 +204,9 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
 		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
 		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
+		//unfortunately this can't be hooked in upon construction, because we don't have
+		//the plugin mainfile's path upon construction.
+		register_deactivation_hook($addon->get_main_plugin_file(), array($addon,'deactivation'));
 		return $addon;
 	}
 
@@ -283,6 +286,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				// add to list of widgets to be registered
 				EE_Register_Widget::deregister( $addon_name );
 			}
+			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename,  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
 			unset(EE_Registry::instance()->addons->$class_name);
 			unset( self::$_settings[ $addon_name ] );
 		}else{

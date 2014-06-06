@@ -103,6 +103,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 	public function tearDown() {
 		if( isset( $this->_addon_name ) && isset( EE_Registry::instance()->addons->EE_New_Addon ) ){
+			$addon_main_file_basename = EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename();
 			EE_Register_Addon::deregister($this->_addon_name);
 			try{
 				EE_Registry::instance()->addons->EE_New_Addon;
@@ -110,7 +111,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 			}catch(PHPUnit_Framework_Error_Notice $e){
 				$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
 			}
+			//verify the deactvation hook was removed
+			$this->assertFalse( has_action( 'deactivate_' . $addon_main_file_basename) );
 		}
+
 		//verify DMSs deregistered
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
 		$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
