@@ -128,27 +128,6 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
-	 * Used by EE_System to set the request type of this addon. Should not be used by addon developers
-	 * @param int $req_type
-	 */
-	function set_req_type( $req_type ) {
-		$this->_req_type = $req_type;
-	}
-
-
-
-	/**
-	 * Returns the request type of this addon (ie, EE_System::req_type_normal, EE_System::req_type_new_activation, EE_System::req_type_reactivation, EE_System::req_type_upgrade, or EE_System::req_type_downgrade). This is set by EE_System when it is checking for new install or upgrades
-	 * of addons
-	 * @return int
-	 */
-	function detect_req_type() {
-		return $this->_req_type;
-	}
-
-
-
-	/**
 	 * Called when EE core detects this addon has been activated for the first time.
 	 * If the site isn't in maintenance mode, should setup the addon's database
 	 * @return mixed
@@ -280,10 +259,11 @@ abstract class EE_Addon extends EE_Configurable {
 	/**
 	 * When the addon is activated, this should be called to set a wordpress option that
 	 * indicates it was activated. This is especially useful for detecting reactivations.
+	 * @return bool
 	 */
 	public function set_activation_indicator_option() {
 		// let's just handle this on the next request, ok? right now we're just not really ready
-		update_option( $this->get_activation_indicator_option_name(), TRUE );
+		return update_option( $this->get_activation_indicator_option_name(), TRUE );
 	}
 
 
@@ -295,64 +275,6 @@ abstract class EE_Addon extends EE_Configurable {
 		return 'ee_activation_' . $this->name();
 	}
 
-
-
-	/**
-	 * @param mixed $version
-	 */
-	public function set_version( $version = NULL ) {
-		$this->_version = $version;
-	}
-
-
-
-	/**
-	 * @param mixed $min_core_version
-	 */
-	public function set_min_core_version( $min_core_version = NULL ) {
-		$this->_min_core_version = $min_core_version;
-	}
-
-
-
-	/**
-	 * get__version
-	 * @return string
-	 */
-	public function version() {
-		return $this->_version;
-	}
-
-
-
-	/**
-	 * get__min_core_version
-	 * @return string
-	 */
-	public function min_core_version() {
-		return $this->_min_core_version;
-	}
-
-
-
-	/**
-	 * Gets addon_name
-	 * @return string
-	 */
-	function name() {
-		return $this->_addon_name;
-	}
-
-
-
-	/**
-	 * Sets addon_name
-	 * @param string $addon_name
-	 * @return boolean
-	 */
-	function set_name( $addon_name ) {
-		return $this->_addon_name = $addon_name;
-	}
 
 
 
