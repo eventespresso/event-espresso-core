@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @subpackage		messages
  * @author			Darren Ethier
  */
-class EE_Email_messenger extends EE_messenger  {
+class EE_Html_messenger extends EE_messenger  {
 
 
 	/**
@@ -32,6 +32,14 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @var string
 	 */
 	protected $_content;
+
+
+	/**
+	 * This is for the page title that gets displayed.  (Why use "subject"?  Because the "title" tag in html is equivalent to the "subject" of the page.
+	 *
+	 * @var string
+	 */
+	protected $_subject;
 
 
 
@@ -72,6 +80,9 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	protected function _set_validator_config() {
 		$this->_validator_config = array(
+			'subject' => array(
+				'shortcodes' => array('organization', 'primary_registration_details', 'event_author', 'primary_registration_details', 'recipient_details')
+				),
 			'content' => array(
 				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list', 'transaction')
 				),
@@ -102,15 +113,19 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @since 4.5.0
 	 *
 	 * @param bool $url  return url or path
-	 * @param mixed (string|bool) $type 'preview'|wpeditor|FALSE (default is the css for html)
+	 * @param mixed (string|bool) $type wpeditor|print|base|FALSE (default is the main css for html)
 	 *
 	 * @return string path to css file.
 	 */
 	public function get_inline_css_template( $url = TRUE, $type = FALSE ) {
 		switch ( $type ) {
 
-			case 'preview' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-preview-css.template.css';
+			case 'base' :
+				$base = 'messages/messenger/assets/html/html-messenger-inline-base-css.template.css';
+				break;
+
+			case 'print' :
+				$base = 'messages/messenger/assets/html/html-messenger-inline-print-css.template.css';
 				break;
 
 			case 'wpeditor' :
@@ -140,6 +155,15 @@ class EE_Email_messenger extends EE_messenger  {
 		$this->_template_fields = array(
 			'content' => '', //left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
 			'extra' => array(
+				'subject' => array(
+					'input' => 'text',
+					'label' => __('Page Title', 'event_espresso'),
+					'type' => 'string',
+					'required' => TRUE,
+					'validation' => TRUE,
+					'css_class' => 'large-text',
+					'format' => '%s'
+					),
 				'content' => array(
 					'main' => array(
 						'input' => 'wp_editor',
@@ -211,6 +235,7 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	protected function _set_default_field_content() {
 		$this->_default_field_content = array(
+			'subject' => '',
 			'content' => array(
 				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),
 				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
@@ -243,35 +268,33 @@ class EE_Email_messenger extends EE_messenger  {
 	 * @return string.
 	 */
 	protected function _send_message() {
-		//@todo
-		//Set headers, get body of message (including any wrappers (_get_main_template()), load css/js, output content.
-		//$this->_body( FALSE )
-	}
-
-
-
-	/**
-	 * see parent for definition
-	 * @return string html body of the message content and the related css.
-	 */
-	protected function _preview() {
-		return $this->_body( TRUE );
-	}
-
-
-
-	/**
-	 * setup body for html content
-	 *
-	 * @param bool $preview will etermine whether this is preview template or not.
-	 * @return string formatted body for email.
-	 */
-	protected function _body( $preview = FALSE ) {
-		//setup template args!
 		$this->_template_args = array(
-			'main_body' => wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) ))
+			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
+			'base_css' => $this->get_inline_css_template(TRUE, 'base'),
+			'print_css' => $this->get_inline_css_template(TRUE, 'print'),
+			'main_css' => $this->get_inline_css_template(TRUE),
+			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
-		$body =  $this->_get_main_template( $preview );
-		return $body;
+		echo $this->_get_main_template();
+		exit(0);
+	}
+
+
+
+	/**
+	 * Overwrite parent _get_main_template for display_html purposes.
+	 *
+	 * @since  4.5.0
+	 *
+	 * @return string
+	 */
+	protected function _get_main_template() {
+		$relative_path =  '/core/libraries/messages/messenger/assets/' . $this->name . '/';
+
+		$wrapper_template_file = $this->name . '-messenger-main-wrapper.template.php';
+
+		//require template helper
+		EE_Registry::instance()->load_helper( 'Template' );
+		return EEH_Template::locate_template( array( $relative_path . $wrapper_template_file, $wrapper_template_file ), $this->_template_args );
 	}
 }
