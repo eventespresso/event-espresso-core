@@ -722,7 +722,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			//merge in valid shortcodes for the field.
 			$shortcodes = isset($m_shortcodes[$field]) ? $m_shortcodes[$field] : $valid_shortcodes;
 			if ( isset( $this->_templates[$field][$context] ) ) {
-				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes);
+				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes, $this->name, $this->_active_messenger->name );
 			}
 		}
 		return $message;
