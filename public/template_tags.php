@@ -187,15 +187,12 @@ if ( ! function_exists( 'espresso_get_events' )) {
 	function espresso_get_events( $params = array() ) {
 		//set default params
 		$default_espresso_events_params = array(
-			'title' => NULL,
 			'limit' => 10,
-			'css_class' => NULL,
 			'show_expired' => FALSE,
 			'month' => NULL,
 			'category_slug' => NULL,
 			'order_by' => 'start_date',
-			'sort' => 'ASC',
-			'fallback_shortcode_processor' => FALSE
+			'sort' => 'ASC'
 		);
 		// allow the defaults to be filtered
 		$default_espresso_events_params = apply_filters( 'espresso_get_events__default_espresso_events_params', $default_espresso_events_params );
