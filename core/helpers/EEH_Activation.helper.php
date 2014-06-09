@@ -293,6 +293,12 @@ class EEH_Activation {
 		}
 		// map shortcode to post
 		EE_Registry::instance()->CFG->core->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
+		// and make sure it's NOT added to the WP "Posts Page"
+		// name of the WP Posts Page
+		$posts_page = EE_Registry::instance()->CFG->get_page_for_posts();
+		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ] )) {
+			unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ][ $critical_page['code'] ] );
+		}
 		// update post_shortcode CFG
 		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE )) {
 			$msg = sprintf(
@@ -445,10 +451,15 @@ class EEH_Activation {
 	 */
 	public static function create_database_tables() {
 		//find the migration script that sets the database to be compatible with the code
-		$current_data_migration_script = EE_Registry::instance()->load_dms( EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms() );
-		$current_data_migration_script->schema_changes_before_migration();
-		$current_data_migration_script->schema_changes_after_migration();
-		EE_Data_Migration_Manager::instance()->update_current_database_state_to();
+		$dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
+		if( $dms_name ){
+			$current_data_migration_script = EE_Registry::instance()->load_dms( $dms_name );
+			$current_data_migration_script->schema_changes_before_migration();
+			$current_data_migration_script->schema_changes_after_migration();
+			EE_Data_Migration_Manager::instance()->update_current_database_state_to();
+		}else{
+			throw new EE_Error( sprintf( __( 'Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly', 'event_espresso' ) ) );
+		}
 	}
 
 

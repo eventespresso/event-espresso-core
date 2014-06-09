@@ -106,7 +106,7 @@ class EEM_Payment extends EEM_Base {
 
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Payment object
+	 *		This function is a singleton method used to instantiate the EEM_Payment object
 	 *
 	 *		@access public
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
@@ -144,7 +144,7 @@ class EEM_Payment extends EEM_Base {
 
 
 	/**
-	*		retreive  all payments from db for a particular transaction, optionally with
+	*		retrieve  all payments from db for a particular transaction, optionally with
 	 *		a particular status
 	*
 	* 		@access		public
@@ -160,7 +160,7 @@ class EEM_Payment extends EEM_Base {
 		if($status_of_payment){
 			$query_params[0]['STS_ID'] = $status_of_payment;
 		}
-		// retreive payments
+		// retrieve payments
 		return $this->get_all ( $query_params );
 	}
 
@@ -263,7 +263,7 @@ class EEM_Payment extends EEM_Base {
 
 
 	/**
-	*		retreive  all payments from db between two dates
+	*		retrieve  all payments from db between two dates
 	*
 	* 		@access		public
 	* 		@param		string		$start_date

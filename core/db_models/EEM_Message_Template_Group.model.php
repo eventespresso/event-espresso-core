@@ -31,7 +31,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	private static $_instance = NULL;
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Message_Template_Group object
+	 *		This function is a singleton method used to instantiate the EEM_Message_Template_Group object
 	 *
 	 *		@access public
 	 *		@return EEM_Question instance

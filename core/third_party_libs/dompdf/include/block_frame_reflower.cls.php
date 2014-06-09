@@ -371,7 +371,7 @@ class Block_Frame_Reflower extends Frame_Reflower {
 	  if ( $height === "auto" && $content_height > $height /* && $style->overflow === "visible" */) 
 		$height = $content_height;
 
-	  // FIXME: this should probably be moved to a seperate function as per
+	  // FIXME: this should probably be moved to a separate function as per
 	  // _calculate_restricted_width
 	  
 	  // Only handle min/max height if the height is independent of the frame's content

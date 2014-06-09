@@ -57,27 +57,19 @@ class EED_New_Addon extends EED_Module {
 
 
 
-
 	/**
-	 *    set_config
+	 *    config
 	 *
 	 * @return EE_New_Addon_Config
 	 */
-	protected static function _set_config(){
-		return EED_New_Addon::instance()->set_config( 'addons', 'EED_New_Addon', 'EE_New_Addon_Config' );
+	public function config(){
+		// config settings are setup up individually for EED_Modules via the EE_Configurable class that all modules inherit from, so
+		// $this->config();  can be used anywhere to retrieve it's config, and:
+		// $this->_update_config( $EE_Config_Base_object ); can be used to supply an updated instance of it's config object
+		// to piggy back off of the config setup for the base EE_New_Addon class, just use the following (note: updates would have to occur from within that class)
+		return EE_Registry::instance()->addons->EE_New_Addon->config();
 	}
 
-
-
-	/**
-	 *    _get_config
-	 *
-	 * @return EE_New_Addon_Config
-	 */
-	protected static function _get_config(){
-		$config = EED_New_Addon::instance()->get_config( 'addons', 'EED_New_Addon', 'EE_New_Addon_Config' );
-		return $config instanceof EE_New_Addon_Config ? $config : EED_New_Addon::_set_config();
-	}
 
 
 
@@ -91,7 +83,6 @@ class EED_New_Addon extends EED_Module {
 	  * @return    void
 	  */
 	 public function run( $WP ) {
-		 EED_New_Addon::_set_config();
 		 add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ));
 	 }
 
@@ -125,35 +116,6 @@ class EED_New_Addon extends EED_Module {
 		}
 	}
 
-
-
-
-	 /**
-	  *    _get_new_addon
-	  *
-	  * @access    	public
-	  * @return    	string
-	  */
-	public static function _get_new_addon(  ) {
-		// get new_addon options
-		$config = EED_New_Addon::_get_config();
-		return '';
-	}
-
-
-
-
-	 /**
-	  *    display_new_addon
-	  *
-	  * @access    	public
-	  * @return    	string
-	  */
-	public function display_new_addon(  ) {
-		// get new_addon options
-		$config = EED_New_Addon::_get_config();
-		return '';
-	}
 
 
 

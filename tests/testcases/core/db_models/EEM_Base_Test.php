@@ -35,7 +35,7 @@ class EEM_Base_Test extends EE_UnitTestCase{
 	}
 
 	/**
-	 * Verifies taht for each model, the tables it claims to require have been installed
+	 * Verifies that for each model, the tables it claims to require have been installed
 	 */
 	public function test_model_tables_exist(){
 		foreach(EE_Registry::instance()->non_abstract_db_models as $model){

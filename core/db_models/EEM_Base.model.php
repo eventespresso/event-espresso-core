@@ -212,7 +212,7 @@ abstract class EEM_Base extends EE_Base{
 		//if we're in maintenance mode level 2, DON'T run any queries
 		//because level 2 indicates the database needs updating and
 		//is probably out of sync with the code
-		if(EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance){
+		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
 			throw new EE_Error(sprintf(__("EE Level 2 Maintenance mode is active. That means EE cant run ANY database queries until the necessary migration scripts have run which will take EE out of maintenance mode level 2", "event_espresso")));
 		}
 
@@ -1332,8 +1332,7 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	public function second_table() {
 		// grab second table from tables array
-		// YES THERE IS A BLANK PARAMETER FOLLOWED BY A COMMA AND THE LINE LOOKS BACKWARDS - NO FIXIE CUZ YOU BREAKIE !!!
-		list(  , $second_table ) = $this->_tables;
+		$second_table = end( $this->_tables );
 		return $second_table instanceof EE_Secondary_Table ? $second_table->get_table_name() : NULL;
 	}
 
@@ -1397,11 +1396,9 @@ abstract class EEM_Base extends EE_Base{
 		return $query_info_carrier;
 	}
 
-
-
 	/**
 	 * For extracting related models from WHERE (0), HAVING (having), ORDER BY (order_by) or forced joins (forece_join)
-	 * @param array                       $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having']
+	 * @param array $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having']
 	 * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
 	 * @param string                      $query_param_type one of $this->_allowed_query_params
 	 * @throws EE_Error
@@ -1444,11 +1441,10 @@ abstract class EEM_Base extends EE_Base{
 	}
 
 
-
 	/**
 	 * For extracting related models from forced_joins, where the array values contain the info about what
 	 * models to join with. Eg an array like array('Attendee','Price.Price_Type');
-	 * @param array                       $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having']
+	 * @param array $sub_query_params like EEM_Base::get_all's $query_params[0] or $query_params['having']
 	 * @param EE_Model_Query_Info_Carrier $model_query_info_carrier
 	 * @param string                      $query_param_type one of $this->_allowed_query_params
 	 * @throws EE_Error
@@ -1768,14 +1764,15 @@ abstract class EEM_Base extends EE_Base{
 	 * for joining, and the data types
 	 * @param string 	$query_param
 	 * @param EE_Model_Query_Info_Carrier $passed_in_query_info
-	 * @param 		$query_param_type
+	 * @param 		$query_param_type like Registration.Transaction.TXN_ID
 	 * @param null|string 	$original_query_param
 	 * @throws EE_Error
 	 * @internal param string $query_param like Registration.Transaction.TXN_ID
 	 * @internal param bool $look_for_field_names . if true (default), we're working with strings like 'Event.Venue.VNU_ID' or 'Registration.REG_ID'
 	 * @internal param bool $allow_logic_query_params whether or not to allow logic_query_params like 'NOT','OR', or 'AND'
 	 * or 'PAY_ID'. Otherwise, we don't expect there to be a column name. We only want model names, eg 'Event.Venue' or 'Registration's
-	 * @internal param string $original_query_param what it originally was (eg Registration.Transaction.TXN_ID). If null, we assume it matches $query_param
+	 * @param string $original_query_param what it originally was (eg Registration.Transaction.TXN_ID). If null, we assume it matches $query_param
+	 * @return void only modifies the EEM_Related_Model_Info_Carrier passed into it
 	 */
 	private function _extract_related_model_info_from_query_param($query_param, EE_Model_Query_Info_Carrier $passed_in_query_info, $query_param_type, $original_query_param = null){
 		if($original_query_param == null){
@@ -2060,7 +2057,7 @@ abstract class EEM_Base extends EE_Base{
 		if(is_array($op_and_value) && isset($op_and_value[2]) && $op_and_value[2] == true){
 			return $operator.SP.$this->_deduce_column_name_from_query_param($value);
 		}elseif(in_array($operator, $this->_in_style_operators) && is_array($value)){
-			//in this case, the value should be an array, or at least a comma-seperated list
+			//in this case, the value should be an array, or at least a comma-separated list
 			//it will need to handle a little differently
 			$cleaned_value = $this->_construct_in_value($value, $field_obj);
 			//note: $cleaned_value has already been run through $wpdb->prepare()
@@ -2515,8 +2512,7 @@ abstract class EEM_Base extends EE_Base{
 	/**
 	 * Returns a flat array of all field son this model, instead of organizing them
 	 * by table_alias as they are in the constructor.
-	 * @param bool $include_db_only_fields
-	 * @internal param \flag $include_db_only_fields indicating whether or not to include the db-only fields
+	 * @param $include_db_only_fields flag indicating whether or not to include the db-only fields
 	 * @return EE_Model_Field_Base[] where the keys are the field's name
 	 */
 	public function field_settings($include_db_only_fields = false){
@@ -2776,7 +2772,7 @@ abstract class EEM_Base extends EE_Base{
 		}elseif(is_string($base_class_obj_or_id) && intval($base_class_obj_or_id)){//assume its a string representation of the object
 			$model_object = $this->get_one_by_ID(intval($base_class_obj_or_id));
 		}else{
-			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full valeu is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
+			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full value is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
 		}
 		if( $model_object->ID() == NULL && $ensure_is_in_db){
 			$model_object->save();
@@ -2803,7 +2799,7 @@ abstract class EEM_Base extends EE_Base{
 		}elseif(is_string($base_class_obj_or_id) && intval($base_class_obj_or_id)){//assume its a string representation of the object
 			$id = $base_class_obj_or_id;
 		}else{
-			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full valeu is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
+			throw new EE_Error(sprintf(__("'%s' is neither an object of type %s, nor an ID! Its full value is '%s'",'event_espresso'),$base_class_obj_or_id,$this->_get_class_name(),print_r($base_class_obj_or_id,true)));
 		}
 		return $id;
 	}

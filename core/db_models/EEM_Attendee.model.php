@@ -62,7 +62,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 			'Attendee_CPT'=>array(
 				'ATT_ID'=>new EE_Primary_Key_Int_Field('ID', __("Attendee ID", "event_espresso")),
 				'ATT_full_name'=>new EE_Plain_Text_Field('post_title', __("Attendee Full Name", "event_espresso"), false, __("Unknown", "event_espresso")),
-				'ATT_bio'=>new EE_Simple_HTML_Field('post_content', __("Attendee Biography", "event_espresso"), false, __("No Biography Provided", "event_espresso")),
+				'ATT_bio'=>new EE_Post_Content_Field('post_content', __("Attendee Biography", "event_espresso"), false, __("No Biography Provided", "event_espresso")),
 				'ATT_slug'=>new EE_Slug_Field('post_name', __("Attendee URL Slug", "event_espresso"), false),
 				'ATT_created'=>new EE_Datetime_Field('post_date', __("Time Attendee Created", "event_espresso"), false, current_time('timestamp')),
 				'ATT_short_bio'=>new EE_Simple_HTML_Field('post_excerpt', __("Attendee Short Biography", "event_espresso"), true, __("No Biography Provided", "event_espresso")),
@@ -101,7 +101,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
 	 *		@return EEM_Attendee instance
@@ -136,7 +136,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 	/**
-	*		retreive  a single attendee from db via their ID
+	*		retrieve  a single attendee from db via their ID
 	*
 	* 		@access		public
 	* 		@param		$ATT_ID
@@ -147,7 +147,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 		if ( ! $ATT_ID ) {
 			return FALSE;
 		}
-		// retreive a particular transaction
+		// retrieve a particular transaction
 		$where_cols_n_values = array( 'ATT_ID' => $ATT_ID );
 		if ( $attendee = $this->get_all( array($where_cols_n_values ) )) {
 			return array_shift( $attendee_array );
@@ -161,7 +161,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 	/**
-	*		retreive  a single attendee from db via their ID
+	*		retrieve  a single attendee from db via their ID
 	*
 	* 		@access		public
 	* 		@param		$ATT_ID

@@ -29,7 +29,7 @@ class EEM_Term_Relationship extends EEM_Base {
 	private static $_instance = NULL;
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
 	 *		@return EEM_Attendee instance
@@ -118,7 +118,7 @@ from {$wpdb->term_relationships} AS tr WHERE tt.term_taxonomy_id = $second_opera
 		return $count;
 	}
 	/**
-	 * Overrides parent so taht after running this, we also double-check
+	 * Overrides parent so that after running this, we also double-check
 	 * the term taxonomy counts are up-to-date
 	 * @param array $query_params @see EEM_Base::get_all
 	 * @param boolean $allow_blocking

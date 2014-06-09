@@ -118,7 +118,7 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 * 		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 * 		@access public
 	 * 		@return EEM_Price_Type instance

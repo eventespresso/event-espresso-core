@@ -272,7 +272,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
-	 * This method can be overridden by child classes to do any special conditionals that might triger an exit from generating messages (that might happen with delays etc).
+	 * This method can be overridden by child classes to do any special conditionals that might trigger an exit from generating messages (that might happen with delays etc).
 	 * @return bool   TRUE will trigger an exit, FALSE will continue the code execution.
 	 */
 	protected function _trigger_exit() {

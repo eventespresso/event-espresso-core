@@ -17,7 +17,7 @@
  *
  * @package			Event Espresso
  * @subpackage	/shortcodes/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -53,24 +53,22 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 		global $wpdb;
 		$SQL = 'SELECT post_content from ' . $wpdb->posts . ' WHERE post_type="page" AND post_status="publish" AND post_name=%s';
 		if( $post_content = $wpdb->get_var( $wpdb->prepare( $SQL, EE_Registry::instance()->REQ->get( 'post_name' )))) {
-			// generate shortcode to search for
-			$EES_Shortcode = '[' . str_replace( 'EES_', '', strtoupper( get_class( $this )));
 			// now check for this shortcode
-			if ( strpos( $post_content, $EES_Shortcode ) !== FALSE ) {	
+			if ( strpos( $post_content, '[ESPRESSO_CHECKOUT' ) !== FALSE ) {
 				EE_Registry::instance()->REQ->set( 'ee', '_register' );
-			}					
+			}
 		}
 	}
 
 	/**
-	 * 	process_shortcode - ESPRESSO_CHECKOUT 
-	 * 
+	 * 	process_shortcode - ESPRESSO_CHECKOUT
+	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
 	 *  @return 	void
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		return EE_Registry::instance()->REQ->get_output();		
+		return EE_Registry::instance()->REQ->get_output();
 	}
 
 }

@@ -76,14 +76,14 @@ jQuery(document).ready(function($) {
 				} else if ( typeof response.error !== 'undefined' && response.error !== '' ) {
 					display_espresso_ajax_notices( response.error );
 				} else {
-					display_espresso_ajax_notices( 'An unknown error has occured on the server while saving the new state to the database.' );
+					display_espresso_ajax_notices( 'An unknown error has occurred on the server while saving the new state to the database.' );
 				}
 						
 			},
 			
 			error: function( response ) {
 				$('#espresso-ajax-loading').fadeOut('fast');
-				display_espresso_ajax_notices( 'An unknown error has occured on the server while saving the new state to the database.' );
+				display_espresso_ajax_notices( 'An unknown error has occurred on the server while saving the new state to the database.' );
 			}
 					
 		});

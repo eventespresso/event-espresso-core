@@ -265,7 +265,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			$this->set_completed();
 			$this->_update_feedback_message(array_reverse($records_migrated_per_stage));
 			//do schema changes for after the migration now
-			//first double-cehckw ehaven't already done this
+			//first double-check we haven't already done this
 			$this->_maybe_do_schema_changes(false);
 		}else{
 			//update feedback message, keeping in mind that we show them with the most recent at the top
@@ -380,11 +380,11 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 		if($this->slug() == 'Core'){
 			return EE_System::instance()->detect_req_type();
 		}else{//it must be for an addon
-			$addon_name = 'EE_'.$this->slug();
-			if(isset(EE_Registry::instance()->addons->$addon_name)){
-				return EE_Registry::instance()->addons->$addon_name->detect_req_type();
+			$addon_name = $this->slug();
+			if( EE_Registry::instance()->get_addon_by_name($addon_name)){
+				return EE_Registry::instance()->get_addon_by_name($addon_name)->detect_req_type();
 			}else{
-				throw new EE_Error(sprintf(__("The DMS slug '%s' should correspond to the addon's classname, which should be '%s', but so such addon class was registered. This is whats been registered:%s", "event_espresso"),$this->slug(),$addon_name,implode(",",get_object_vars(EE_Registry::instance()->addons))));
+				throw new EE_Error(sprintf(__("The DMS slug '%s' should correspond to the addon's name, which should also be '%s', but no such addon was registered. These are the registered addons' names: %s", "event_espresso"),$this->slug(),$addon_name,implode(",",array_keys( EE_Registry::instance()->get_addons_by_name() ) ) ) ) ;
 			}
 		}
 	}

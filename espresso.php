@@ -3,7 +3,7 @@
   Plugin Name: 	Event Espresso
   Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.3.0.alpha.017
+  Version: 			4.3.0.alpha.019
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
@@ -43,7 +43,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.3.0.alpha.017';
+		return '4.3.0.alpha.019';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -67,6 +67,7 @@ if ( ! defined( 'PS' )) {
 if( ! defined( 'SP' ) ){
 	define('SP',' ');
 }
+
 
 define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 // define the plugin directory and URL
@@ -145,12 +146,6 @@ function espresso_duplicate_plugin_error() {
  * 	adds a wp-option to indicate that EE has been activated via the WP admin plugins page
  */
 function espresso_plugin_activation() {
-	// check permissions
-	if ( ! current_user_can( 'activate_plugins' )) {
-		return;
-	}
-	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	check_admin_referer( "activate-plugin_{$plugin}" );
 	update_option( 'ee_espresso_activation', TRUE );
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
@@ -161,12 +156,6 @@ register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation'
  * 	espresso_plugin_deactivation
  */
 function espresso_plugin_deactivation() {
-	// check permissions
-	if ( ! current_user_can( 'activate_plugins' )) {
-		return;
-	}
-	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	check_admin_referer( "deactivate-plugin_{$plugin}" );
 	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_deactivation();
 }

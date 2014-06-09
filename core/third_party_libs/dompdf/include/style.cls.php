@@ -1278,7 +1278,7 @@ class Style {
    At individual property like border-top-width need to check whether overriding value is also !important.
    Also store the !important condition for later overrides.
    Since not known who is initiating the override, need to get passed !importan as parameter.
-   !important Paramter taken as in the original style in the css file.
+   !important Parameter taken as in the original style in the css file.
    When poperty border !important given, do not mark subsets like border_style as important. Only
    individual properties.
 
