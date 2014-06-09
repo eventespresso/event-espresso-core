@@ -254,7 +254,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	/**
-	 * This just allows us to add additional paths to the autoloader (EE_Messages_Init::autoload_messages()) for the messages system.
+	 * This just allows us to add additional paths to the autoloader (EED_Messages::autoload_messages()) for the messages system.
 	 * @param  array  $dir_ref original array of paths
 	 * @return array           appended paths
 	 */

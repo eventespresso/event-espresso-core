@@ -295,7 +295,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	 */
 	private function _get_shortcode_objects( $sc_refs ) {
 		$sc_objs = array();
-		EE_Messages_Init::set_autoloaders();
+		EED_Messages::set_autoloaders();
 		foreach ( $sc_refs as $shortcode_ref ) {
 			$ref = ucwords( str_replace( '_', ' ', $shortcode_ref ) );
 			$ref = str_replace( ' ', '_', $ref );
