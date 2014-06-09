@@ -69,6 +69,15 @@ abstract class EE_message_type extends EE_Messages_Base {
 	protected $_templates;
 
 
+
+	/**
+	 * If a specific template is being parsed, this will hold the message template group GRP_ID for that template.
+	 *
+	 * @var int.
+	 */
+	protected $_GRP_ID;
+
+
 	/** OTHER INFO PROPERTIES **/
 	/**
 	 * This will hold the count of the message objects in the messages array. This could be used for determining if batching/queueing is needed.
@@ -677,6 +686,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 			$mtpg = $mtpg instanceof EE_Message_Template_Group && ! $global_mtpg->get( 'MTP_is_override' ) ? $mtpg : $global_mtpg;
 		}
+		$this->_GRP_ID = $mtpg->ID();
 
 		$templates = $mtpg->context_templates();
 
@@ -727,7 +737,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			//merge in valid shortcodes for the field.
 			$shortcodes = isset($m_shortcodes[$field]) ? $m_shortcodes[$field] : $valid_shortcodes;
 			if ( isset( $this->_templates[$field][$context] ) ) {
-				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes, $this->name, $this->_active_messenger->name );
+				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes, $this->name, $this->_active_messenger->name, $context, $this->_GRP_ID );
 			}
 		}
 		return $message;
