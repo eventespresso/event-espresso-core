@@ -202,19 +202,21 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 *
 	 * @access public
 	 * @param  array|object $data       Data to be parsed for messenger/message_type
-	 * @param  string $active_messenger The active messenger being used
-	 * @param  mixed (bool|string) $context if present then this is a preview being generated, so we'll make sure we ONLY do the preview for the given context and set up the message
+	 * @param  EE_messenger $active_messenger The active messenger being used
+	 * @param  string $context if present then a message is only being generated for a specific context
+	 * @param  bool   $preview indicate whether a preview is being generated or not.
 	 * @return void
 	 */
-	public function set_messages($data, $active_messenger, $context = FALSE ) {
+	public function set_messages($data, EE_messenger $active_messenger, $context = '', $preview = FALSE ) {
 
 		$this->_active_messenger = $active_messenger;
 
 		$this->_data = $data;
+		$this->_preview = $preview;
 
 		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send).
 		$exit = $this->_trigger_exit();
-		if ( $exit && !$context ) return FALSE;
+		if ( $exit && ! $this->_preview ) return FALSE;
 
 		//todo: need to move require into registration hook but for now we'll require here.
 		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
@@ -225,15 +227,15 @@ abstract class EE_message_type extends EE_Messages_Base {
 		//if there is a context available then we're going to reset the datahandler to the Preview_incoming_data handler
 		$this->_set_data_handler();
 
-		$this->_data_handler = !$context ? $this->_data_handler : 'Preview';
-		$this->_set_contexts;
+		$this->_data_handler = ! $this->_preview ? $this->_data_handler : 'Preview';
 
 		//if there is an incoming context then this is a preview so let's ONLY show the given context!
-		if ( $context ) {
-			$this->_preview = TRUE;
-			$cntxt = $this->_contexts[$context];
-			$this->_contexts = array();
-			$this->_contexts[$context] = $cntxt;
+		if ( !empty( $context ) ) {
+			$cntxt = ! empty( $this->_contexts[$context] ) ? $this->_contexts[$context] : '';
+			if ( ! empty( $cntxt )  ) {
+				$this->_contexts = array();
+				$this->_contexts[$context] = $cntxt;
+			}
 		}
 
 		$exit = $this->_init_data();
