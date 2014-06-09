@@ -48,7 +48,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	private static $_instance = NULL;
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Event object
+	 *		This function is a singleton method used to instantiate the EEM_Event object
 	 *
 	 *		@access public
 	 *		@return EEM_Event instance

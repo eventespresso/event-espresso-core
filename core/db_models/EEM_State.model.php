@@ -36,7 +36,7 @@ class EEM_State extends EEM_Base {
 
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_State object
+	 *		This function is a singleton method used to instantiate the EEM_State object
 	 *
 	 *		@access public
 	 *		@return EEM_State instance

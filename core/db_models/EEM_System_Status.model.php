@@ -11,7 +11,7 @@ class EEM_System_Status{
 
 
 	/**
-	 * 		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 * 		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 * 		@access public
 	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
