@@ -128,7 +128,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				);
 			}
 		}else{//its a partial payment
-			if( ! $total_to_charge){//they didn't set the total to charge, so it must have a balance
+			if( ! $total_to_charge ){//they didn't set the total to charge, so it must have a balance
 				$total_to_charge = $transaction->remaining();
 			}
 			$tax_total = 0;
@@ -148,14 +148,16 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			'first_name'=>$primary_attendee->fname(),
 			'last_name'=>$primary_attendee->lname(),
 			'tax'=>$this->_format_float($tax_total),
-			'partner_id'=>'ee');
-		
+			'partner_id'=>'ee'
+		);
+
 		//setup address?
 		if(		$primary_attendee->address()  &&
 				$primary_attendee->city()  &&
 				$primary_attendee->state_ID()  &&
 				$primary_attendee->country_ID()  &&
 				$primary_attendee->zip()  ){
+
 			$shipping_address = array(
 				'street' => $primary_attendee->address(),
 				'city' => $primary_attendee->city(),
@@ -182,7 +184,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		'body'=>  json_encode($order)
 		);
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
-		if(! empty($response['body'])){
+		if(! $response instanceof WP_Error ){
 			$response_body = json_decode($response['body']);
 			if($response_body == NULL || ! isset($response_body->checkout_url)){
 				if( is_array( $response_body ) || is_object( $response_body)){
@@ -225,9 +227,12 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			}
 			$payment->save($properties);
 		}else{
-			throw new EE_Error(__("No response from Mijireh Gateway", 'event_espresso'));
+			$error_message = sprintf(__("Errors communicating with Mijireh: %s", 'event_espresso'),implode(",",$response->get_error_messages()));
+			EE_Error::add_error($error_message);
+			throw new EE_Error($error_message);
+
 		}
-		$this->redirect_after_reg_step_3();
+	$this->redirect_after_reg_step_3();
 	}
 
 	/**

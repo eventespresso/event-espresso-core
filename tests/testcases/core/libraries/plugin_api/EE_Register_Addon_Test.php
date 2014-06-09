@@ -51,7 +51,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		}catch(PHPUnit_Framework_Error_Notice $e){
 			$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
 		}
-		//check dmss werne't setup either
+		//check dmss weren't setup either
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
 		$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
 
@@ -99,7 +99,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
 		EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
 		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
-		//cehck DMSs were setup properly too
+		//check DMSs were setup properly too
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
 		$this->assertArrayHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
 

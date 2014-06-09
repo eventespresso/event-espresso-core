@@ -587,7 +587,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class {
 	 */
 	public function spaces_remaining( $consider_tickets = FALSE ) {
 		// tickets remaining availalbe for purchase
-		//no need for special checks for infinite, becuase if DTT_reg_limit == INF, then INF - x = INF
+		//no need for special checks for infinite, because if DTT_reg_limit == INF, then INF - x = INF
 		$dtt_remaining = $this->get( 'DTT_reg_limit' ) - $this->get( 'DTT_sold' );
 		if ( !$consider_tickets ) {
 			return $dtt_remaining;

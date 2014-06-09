@@ -15,9 +15,10 @@
  *
  * EES_Espresso_Thank_You
  *
- * @package		Event Espresso
- * @subpackage	/shortcodes/
- * @author		Brent Christensen
+ * @package			Event Espresso
+ * @subpackage 	/shortcodes/
+ * @author				Brent Christensen
+
  *
  * ------------------------------------------------------------------------
  */

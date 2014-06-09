@@ -133,14 +133,18 @@ abstract class EE_Addon extends EE_Configurable {
 	 */
 	public function initialize_db() {
 		//find the migration script that sets the database to be compatible with the code
-		$current_data_migration_script = EE_Registry::instance()->load_dms( EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms( $this->name() ) );
-		$current_data_migration_script->schema_changes_before_migration();
-		$current_data_migration_script->schema_changes_after_migration();
-		if ( $current_data_migration_script->get_errors() ) {
-			foreach( $current_data_migration_script->get_errors() as $error ) {
-				EE_Error::add_error( $error );
+		$current_dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms( $this->name() );
+		if( $current_dms_name ){
+			$current_data_migration_script = EE_Registry::instance()->load_dms( $current_dms_name );
+			$current_data_migration_script->schema_changes_before_migration();
+			$current_data_migration_script->schema_changes_after_migration();
+			if ( $current_data_migration_script->get_errors() ) {
+				foreach( $current_data_migration_script->get_errors() as $error ) {
+					EE_Error::add_error( $error );
+				}
 			}
 		}
+		//if not DMS was found that shoudl be ok. This addon just doesn't require any database changes
 		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( $this->name(), $this->version() ) );
 	}
 

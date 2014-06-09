@@ -12,7 +12,7 @@ class EEM_Event_Question_Group extends EEM_Base{
 	private static $_instance = NULL;
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
 	 *		@return EEM_Question_Group instance
