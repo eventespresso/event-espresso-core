@@ -502,7 +502,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 	
 	
 	/**
-	 *	@recursive funtion for exporting table data and merging the results with the next results
+	 *	@recursive function for exporting table data and merging the results with the next results
 	 *	@access private
 	 *	@param array keys are model names (eg 'Event', 'Attendee', etc.) and values are arrays of query params like on EEM_Base::get_all
 	 *	@return array on success, FALSE on fail

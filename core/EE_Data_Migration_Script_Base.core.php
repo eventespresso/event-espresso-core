@@ -265,7 +265,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 			$this->set_completed();
 			$this->_update_feedback_message(array_reverse($records_migrated_per_stage));
 			//do schema changes for after the migration now
-			//first double-cehckw ehaven't already done this
+			//first double-check we haven't already done this
 			$this->_maybe_do_schema_changes(false);
 		}else{
 			//update feedback message, keeping in mind that we show them with the most recent at the top

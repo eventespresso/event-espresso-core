@@ -31,7 +31,7 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base {
 	private static $_instance = NULL;
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
 	 *		@return EEM_Question_Option instance

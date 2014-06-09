@@ -33,7 +33,7 @@ class EEM_Country extends EEM_Base {
 
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Country object
+	 *		This function is a singleton method used to instantiate the EEM_Country object
 	 *
 	 *		@access public
 	 *		@return EEM_Country instance
