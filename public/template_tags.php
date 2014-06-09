@@ -178,8 +178,41 @@ function can_use_espresso_conditionals( $conditional_tag ) {
 
 /*************************** Event Queries ***************************/
 
-
-
+if ( ! function_exists( 'espresso_get_events' )) {
+	/**
+	 * 	espresso_get_events
+	 * @param array $params
+	 * @return array
+	 */
+	function espresso_get_events( $params = array() ) {
+		//set default params
+		$default_espresso_events_params = array(
+			'title' => NULL,
+			'limit' => 10,
+			'css_class' => NULL,
+			'show_expired' => FALSE,
+			'month' => NULL,
+			'category_slug' => NULL,
+			'order_by' => 'start_date',
+			'sort' => 'ASC',
+			'fallback_shortcode_processor' => FALSE
+		);
+		// allow the defaults to be filtered
+		$default_espresso_events_params = apply_filters( 'espresso_get_events__default_espresso_events_params', $default_espresso_events_params );
+		// grab params and merge with defaults, then extract
+		$params = array_merge( $default_espresso_events_params, $params );
+		// run the query
+		$events_query = new EE_Event_List_Query( $params );
+		// assign results to a variable so we can return it
+		$events = $events_query->have_posts() ? $events_query->posts : array();
+		// but first reset the query and postdata
+		wp_reset_query();
+		wp_reset_postdata();
+		EED_Events_Archive::remove_all_events_archive_filters();
+		unset( $events_query );
+		return $events;
+	}
+}
 
 
 
