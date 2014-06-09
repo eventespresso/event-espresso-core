@@ -173,17 +173,18 @@ class EE_messages {
 	 * @param  string $messenger if included then we ONLY use the specified messenger for delivery.  Otherwise we cycle through all active messengers.
 	 * @return void
 	 */
-	public function send_message( $type, $vars, $messenger = '' ) {
+	public function send_message( $type, $vars, $messenger = '', $primary_messenger='', $context='' ) {
 		$success = FALSE;
 		$error = FALSE;
 		// is that a real class ?
 		if ( isset(  $this->_installed_message_types[$type] ) ) {
 			//is the messenger specified? If so then let's see if can send.  This is the check where its possible secondary messengers might be in use.
 			if ( !empty ( $messenger ) ) {
-				$primary_messenger =  !empty( $_REQUEST['prmry_msgr'] ) ? $this->_active_messengers[$_REQUEST['prmry_msgr']]: $this->_active_messengers[$messenger];
+				$primary_messenger =  !empty( $primary_messenger ) ? $this->_active_messengers[$primary_messenger]: $this->_active_messengers[$messenger];
 				if ( !$this->_is_primary_messenger_and_active( $primary_messenger, $this->_installed_message_types[$type] ) )
 					return false;
-				$success = $this->_send_message( $primary_messenger, $this->_installed_message_types[$type], $vars, $messenger );
+				$context = !empty( $context ) ? $context : FALSE;
+				$success = $this->_send_message( $primary_messenger, $this->_installed_message_types[$type], $vars, $messenger, $context );
 			} else {
 				//no messenger sent so let's just loop through active messengers (this method is only acceptable for primary messengers)
 				foreach ( $this->_active_messengers as $active_messenger ) {
@@ -255,10 +256,10 @@ class EE_messages {
 
 
 
-	private function _send_message( $primary_messenger, $message_type, $data, $secondary_messenger ) {
+	private function _send_message( $primary_messenger, $message_type, $data, $secondary_messenger, $context = FALSE ) {
 		$messages = $message_type;
 		$success = FALSE;
-		$exit = $messages->set_messages( $data, $primary_messenger );
+		$exit = $messages->set_messages( $data, $primary_messenger, $context );
 
 		if ( is_wp_error($messages) || $messages === FALSE || $exit === FALSE ) {
 			//can't even get started yo!
