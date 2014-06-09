@@ -98,7 +98,6 @@ class EED_Events_Archive  extends EED_Module {
 		$this->_load_assests();
 		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
 		EE_Registry::instance()->load_helper( 'Event_Query' );
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		EEH_Event_Query::filter_query_parts();
 		EEH_Event_Query::get_post_data();
 		// check what template is loaded
