@@ -76,7 +76,6 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		$default_espresso_events_shortcode_atts = array(
 			'title' => NULL,
 			'limit' => 10,
@@ -96,12 +95,10 @@ class EES_Espresso_Events  extends EES_Shortcode {
 		// run the query
 		global $wp_query;
 		$wp_query = new EE_Event_List_Query( $attributes );
-		//d( $wp_query );
-		$template = 'loop-espresso_events.php';
 		// check what template is loaded and load filters accordingly
-		EED_Events_Archive::instance()->template_include( $template );
+		EED_Events_Archive::instance()->template_include( 'loop-espresso_events.php' );
 		// load our template
-		$event_list = EEH_Template::locate_template( $template, array(), TRUE, TRUE );
+		$event_list = EEH_Template::locate_template( 'loop-espresso_events.php', array(), TRUE, TRUE );
 		// now reset the query and postdata
 		wp_reset_query();
 		wp_reset_postdata();
@@ -153,7 +150,6 @@ class EE_Event_List_Query extends WP_Query {
 	function __construct( $args = array() ) {
 		//		printr( $args, '$args  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		EE_Registry::instance()->load_helper( 'Event_Query' );
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		EEH_Event_Query::filter_query_parts();
 		EEH_Event_Query::get_post_data();
 		// incoming args could be a mix of WP query args + EE shortcode args
