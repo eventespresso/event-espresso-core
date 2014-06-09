@@ -141,6 +141,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	public function test_detect_activations_or_upgrades__reactivation(){
 		global $wp_actions;
 
+		$this->assertEquals(EE_Maintenance_Mode::level_0_not_in_maintenance,  EE_Maintenance_Mode::instance()->level());
+
 		//it should have an entry in its activation history and db state
 		$activation_history_option_name = $this->_addon->get_activation_history_option_name();
 		update_option($activation_history_option_name,array($this->_addon->version()));
