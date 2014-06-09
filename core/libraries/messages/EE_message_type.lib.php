@@ -644,8 +644,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 		}
 
 		//if this is a preview then we just get whatever message group is for the preview and skip this part!
-		if ( $this->_preview && !empty( $_POST['msg_id'] )  ) {
-			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['msg_id'] );
+		if ( $this->_preview && !empty( $_REQUEST['GRP_ID'] )  ) {
+			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['GRP_ID'] );
 		} else {
 			//not a preview or test send so lets continue on our way!
 			//is there an evt_id?  If so let's get that. template.
@@ -657,11 +657,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 				$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $qa ) );
 			}
 
-			//is there a 'MTP_ID' ? if so let's get that.
+			//is there a 'GRP_ID' ? if so let's get that.
 
-			//if global template is NOT an override, and there is a 'MTP_ID' in the post global, then we'll assume a specific template has ben requested.
-			if ( !empty( $_POST['MTP_ID'] )  ) {
-				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['MTP_ID'] );
+			//if global template is NOT an override, and there is a 'GRP_ID' in the _REQUEST global, then we'll assume a specific template has ben requested.
+			if ( !empty( $_REQUEST['GRP_ID'] )  ) {
+				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_request['GRP_ID'] );
 			}
 
 

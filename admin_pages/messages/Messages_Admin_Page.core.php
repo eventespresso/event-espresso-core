@@ -1124,7 +1124,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_set_publish_post_box_vars( 'id', $GRP_ID );
 
 		//add preview button
-		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
+		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'GRP_ID' => $GRP_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
 		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
 
 
@@ -1252,11 +1252,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function _preview_message( $send = FALSE ) {
 		//first make sure we've got the necessary parameters
-		if ( !isset( $this->_req_data['message_type'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['msg_id'] ) ) {
+		if ( !isset( $this->_req_data['message_type'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['GRP_ID'] ) ) {
 			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		$_POST['msg_id'] = $this->_req_data['msg_id']; //make sure post global has the msg_id param for later use.
+		$_POST['GRP_ID'] = $this->_req_data['GRP_ID']; //make sure post global has the GRP_ID param for later use.
 
 		$MSG = new EE_messages();
 
@@ -1269,7 +1269,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//let's add a button to go back to the edit view
 		$query_args = array(
-			'id' => $this->_req_data['msg_id'],
+			'id' => $this->_req_data['GRP_ID'],
 			'context' => $this->_req_data['context'],
 			'action' => 'edit_message_template'
 			);
@@ -1732,7 +1732,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_req_data['messenger'] = $messenger;
 		$this->_req_data['message_type'] = $message_type;
 		$this->_req_data['context'] = $context;
-		$this->_req_data['msg_id'] = isset($this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : '';
+		$this->_req_data['GRP_ID'] = isset($this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : '';
 
 		//let's save any existing fields that might be required by the messenger
 		if ( isset( $this->_req_data['test_settings_fld'] ) ) {

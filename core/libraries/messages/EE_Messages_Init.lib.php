@@ -332,12 +332,12 @@ class EE_Messages_Init extends EE_Base {
 	 * @since   4.3.0
 	 *
 	 * @param  EE_Attendee[]  $contacts   an array of EE_Attendee objects
-	 * @param  int      	      $mtp_id     a specific message template group id.
+	 * @param  int      	      $grp_id     a specific message template group id.
 	 * @return void
 	 */
-	public function send_newsletter_message( $contacts, $mtp_id ) {
+	public function send_newsletter_message( $contacts, $grp_id ) {
 		//make sure mtp is id and set it in the $_POST global for later messages setup.
-		$_POST['MTP_ID'] = (int) $mtp_id;
+		$_POST['GRP_ID'] = (int) $grp_id;
 
 		$this->_load_controller();
 		$this->_EEMSG->send_message('newsletter', $contacts);
