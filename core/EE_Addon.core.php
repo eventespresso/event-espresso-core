@@ -412,7 +412,7 @@ abstract class EE_Addon extends EE_Configurable {
 	 * @return string
 	 */
 	public function get_main_plugin_file_basename() {
-		return basename( $this->get_main_plugin_file() );
+		return plugin_basename( $this->get_main_plugin_file() );
 	}
 
 	/**

@@ -286,7 +286,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				// add to list of widgets to be registered
 				EE_Register_Widget::deregister( $addon_name );
 			}
-			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename,  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
+			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
 			unset(EE_Registry::instance()->addons->$class_name);
 			unset( self::$_settings[ $addon_name ] );
 		}else{

@@ -54,6 +54,9 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		//check dmss werne't setup either
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
 		$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+
+		//check that we didn't register the addon's deactivaiton hook either
+		$this->assertFalse( has_action( 'deactivate_' .  plugin_basename( $this->_reg_args[ 'main_file_path' ] ) )  );
 	}
 
 	function test_register_mock_addon_success(){
@@ -67,6 +70,9 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		//cehck DMSs were setup properly too
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
 		$this->assertArrayHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+
+		//and check the deactivation hook was setup properly
+		$this->assertTrue( has_action( 'deactivate_' .  EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename() ) );
 	}
 
 	/**
@@ -103,7 +109,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 	public function tearDown() {
 		if( isset( $this->_addon_name ) && isset( EE_Registry::instance()->addons->EE_New_Addon ) ){
-			$addon_main_file_basename = EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename();
+			$main_file_path_before_deregistration = EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename();
 			EE_Register_Addon::deregister($this->_addon_name);
 			try{
 				EE_Registry::instance()->addons->EE_New_Addon;
@@ -112,7 +118,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 				$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
 			}
 			//verify the deactvation hook was removed
-			$this->assertFalse( has_action( 'deactivate_' . $addon_main_file_basename) );
+			$this->assertFalse( has_action( 'deactivate_' . $main_file_path_before_deregistration ) );
 		}
 
 		//verify DMSs deregistered
