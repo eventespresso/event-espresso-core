@@ -201,7 +201,7 @@ class EEH_Template {
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
-					$template_path = $full_template_path;
+					$template_path = str_replace( array( '\\', '/' ), DIRECTORY_SEPARATOR, $full_template_path );
 				    break;
 				}
 			}
@@ -209,9 +209,9 @@ class EEH_Template {
 		// if we got it and you want to see it...
 		if ( is_readable( $template_path ) && $load ) {
 			if ( $return_string ) {
-				return EEH_Template::display_template( $template_path, $template_args, $return_string );
+				return EEH_Template::display_template( $template_path, $template_args, TRUE );
 			} else {
-				EEH_Template::display_template( $template_path, $template_args, $return_string );
+				EEH_Template::display_template( $template_path, $template_args, FALSE );
 			}
 		}
 		return $template_path;
@@ -240,7 +240,7 @@ class EEH_Template {
 		extract( (array) $template_args);
 
 		if ( $return_string ) {
-			// becuz we want to return a string, we are going to capture the output
+			// because we want to return a string, we are going to capture the output
 			ob_start();
 			include( $template_path );
 			return ob_get_clean();
