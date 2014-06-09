@@ -222,7 +222,7 @@ class EE_Brewing_Regular extends EE_Base {
 	 */
 
 	private function _messages_caf() {
-		add_filter('FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( $this, 'messages_autoload_paths'), 5 );
+		add_filter('FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( $this, 'messages_autoload_paths'), 5 );
 		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 5, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 5, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_default_field_content', array( $this, 'email_default_field_content'), 5, 2 );
@@ -259,7 +259,7 @@ class EE_Brewing_Regular extends EE_Base {
 	 * @return array           appended paths
 	 */
 	public function messages_autoload_paths( $dir_ref ) {
-		$dir_ref[EE_CAF_LIBRARIES . 'shortcodes/'] = 'lib';
+		$dir_ref = EE_CAF_LIBRARIES . 'shortcodes';
 		return $dir_ref;
 	}
 
@@ -543,7 +543,7 @@ class EE_Brewing_Regular extends EE_Base {
 		$setup_args = array(
 			'mtfilename' => 'EE_Newsletter_message_type.class.php',
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/' => array('class')
+				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
 				),
 			'messengers_to_activate_with' => array( 'email' )
 			);
@@ -563,7 +563,7 @@ class EE_Brewing_Regular extends EE_Base {
 	public function register_newsletter_shortcodes() {
 		$setup_args = array(
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'shortcodes/' => array( 'lib' )
+				EE_CAF_LIBRARIES . 'shortcodes/'
 				),
 			'msgr_validator_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_validator_config' ),
 			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),
