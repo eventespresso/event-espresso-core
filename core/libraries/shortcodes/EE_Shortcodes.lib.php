@@ -18,13 +18,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Shortcodes
- * 
+ *
  * This is the parent class for the shortcodes libraries.  All common methods, properties are defined in here.
  *
- * The way this library works is a child class would be for defining a logical "grouping" of shortcodes (i.e. 'payment', 'address', 'attendee', 'event' etc.).  The child class extends this parent and then that grouping of shortcodes can be retrieved wherever they are needed. 
+ * The way this library works is a child class would be for defining a logical "grouping" of shortcodes (i.e. 'payment', 'address', 'attendee', 'event' etc.).  The child class extends this parent and then that grouping of shortcodes can be retrieved wherever they are needed.
  *
  * This library takes care of defining shortcodes and their descriptions and also the parsers for those shortcodes.
- * 
+ *
  * @abstract
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Shortcodes.lib.php
@@ -112,7 +112,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	/**
 	 * loads an instance of the EE_Shortcode_Parser helper when requested
 	 */
-	protected function _set_shortcode_helper() {	
+	protected function _set_shortcode_helper() {
 		//shortcode helper
 		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		//get shortcode_replace instance- set when _get_messages is called in child...
@@ -172,7 +172,7 @@ abstract class EE_Shortcodes extends EE_Base {
 
 		//note the below filter applies to ALL shortcode parsers... be careful!
 		$this->_shortcodes = apply_filters( 'FHEE__EE_Shortcodes__shortcodes', $this->_shortcodes, $this );
-		
+
 		return $this->_shortcodes;
 	}
 
@@ -185,7 +185,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	 *
 	 * @abstract
 	 * @access protected
-	 * @return void 
+	 * @return void
 	 */
 	abstract protected function _init_props();
 
@@ -211,7 +211,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	 * @return mixed (void|exception) If validation fails we'll throw an exception.
 	 */
 	protected function _validate_list_requirements() {
-		
+
 		//first test to make sure we've got an array!
 		if ( !is_array($this->_data) ) {
 			throw new EE_Error( sprintf( __('Expecting an array for the data sent to %s', 'event_espresso'), get_class($this) ) );
@@ -226,11 +226,11 @@ abstract class EE_Shortcodes extends EE_Base {
 		if ( !isset( $this->_data['data'] ) )
 			throw new EE_Error( __('The incoming data does not have the required data index in its array', 'event_espresso') );
 
-		//all is well let's just reformat the _extra_data() array if present
+		//all is well let's make sure _extra_data always has the values needed.
 		//let's make sure that extra_data includes all templates (for later parsing if necessary)
-		if ( !empty( $this->_extra_data ) && is_object($this->_extra_data ) ) {
-			$this->_extra_data['data'] = $this->_extra_data;
-			$this->_extra_data['templates'] = $this->_data['template'];
+		if ( empty( $this->_extra_data ) || ( empty( $this->_extra_data['data'] ) && empty( $this->_extra_data['template'] ) ) ) {
+			$this->_extra_data['data'] = $this->_data['data'];
+			$this->_extra_data['template'] = $this->_data['template'];
 		}
 
 	}

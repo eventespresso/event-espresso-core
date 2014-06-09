@@ -18,13 +18,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Event_List_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Event_List_Shortcodes lists all shortcodes related to Event Lists. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Event_List_Shortcodes lists all shortcodes related to Event Lists.
  *
  * This is a special shortcode parser in that it will actually LOAD other parsers and receive a template to parse via the Shortcode Parser.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Event_List_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -91,8 +91,8 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 		$events = '';
 
 		//now we need to loop through the events array in EE_Messages_Addressee and send data to the EE_Parser helper.
-		foreach ( $data->events as $event ) {	
-			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event['event'], $valid_shortcodes, $this->_data);
+		foreach ( $data->events as $event ) {
+			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event['event'], $valid_shortcodes, $this->_extra_data);
 		}
 		return $events;
 
@@ -134,5 +134,5 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	}
 
 
-	
+
 } // end EE_Event_List_Shortcodes class

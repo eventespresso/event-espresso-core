@@ -18,13 +18,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Attendee_List_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Attendee_List_Shortcodes lists all shortcodes related to Attendee Lists. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Attendee_List_Shortcodes lists all shortcodes related to Attendee Lists.
  *
  * This is a special shortcode parser in that it will actually LOAD other parser and receive a template to parse via the Shortcode Parser.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Attendee_List_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -94,7 +94,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 
 		//now we need to loop through the attendee list and send data to the EE_Parser helper.
 		foreach ( $data->reg_objs as $registration ) {
-			$attnds .= $this->_shortcode_helper->parse_attendee_list_template($template, $registrations, $valid_shortcodes, $this->_data);
+			$attnds .= $this->_shortcode_helper->parse_attendee_list_template($template, $registrations, $valid_shortcodes, $this->_extra_data);
 		}
 
 		return $attnds;
@@ -130,7 +130,7 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 
 	/**
 	 * return parsed list of attendees for a ticket
-	 * @return string 
+	 * @return string
 	 */
 	private function _get_registration_list_for_ticket() {
 		$valid_shortcodes = array( 'attendee', 'event_list', 'question_list' );
@@ -158,9 +158,9 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes {
 
 
 	private function _get_registrations_from_event( EE_Event $event ) {
-		return isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['reg_objs'] : array(); 
+		return isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['reg_objs'] : array();
 	}
 
 
-	
+
 } // end EE_Attendee_List_Shortcodes class

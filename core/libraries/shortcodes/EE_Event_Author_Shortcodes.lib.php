@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Event_Author_Shortcodes
- * 
+ *
  * this is a child class for the EE_Shortcodes library.  The EE_Event_Author_Shortcodes lists all shortcodes related to event author specific information.  It's important to note that if used in 'TO', 'FROM', 'SUBJECT', or 'main_content' fields, it parses to the event_admin recipient. If used in the [EVENT_LIST] field, then it parses as the author for each event in the list.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Event_Author_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -53,7 +53,7 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 		//make sure we end up with a copy of the EE_Messages_Addressee object
 		$recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
 		$recipient = ! $recipient instanceof EE_Messages_Addressee && is_array($this->_data) && isset( $this->_data['data'] ) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data'] : $recipient;
-		$recipient = ! $recipient instanceof EE_Messages_Addressee && !empty( $this->_extra_dataa['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : $recipient;
+		$recipient = ! $recipient instanceof EE_Messages_Addressee && !empty( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : $recipient;
 
 		if ( ! $recipient instanceof EE_Messages_Addressee )
 			return '';
@@ -76,11 +76,11 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 				return $recipient->admin_email;
 				break;
 
-			default : 
+			default :
 				return '';
 				break;
 		}
 	}
 
-	
+
 } // end EE_Registration_Shortcodes class
