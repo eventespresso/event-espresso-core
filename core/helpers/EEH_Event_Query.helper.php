@@ -55,6 +55,13 @@ class EEH_Event_Query {
 	 */
 	protected static $_event_query_show_expired = NULL;
 
+	/**
+	 *    list of params used to build the query's various clauses
+	 * @var    $_query_params
+	 * @access    protected
+	 */
+	protected static $_query_params = array();
+
 
 
 	/**
@@ -131,11 +138,11 @@ class EEH_Event_Query {
 	 * @return    string
 	 */
 	public static function posts_join( $SQL = '', WP_Query $wp_query ) {
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		if ( isset( $wp_query->query ) && isset( $wp_query->query[ 'post_type' ] ) && $wp_query->query[ 'post_type' ] == 'espresso_events' ) {
 			// Category
 			$SQL .= EEH_Event_Query::posts_join_sql_for_terms( EEH_Event_Query::_event_category_slug() );
 		}
+//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -156,6 +163,7 @@ class EEH_Event_Query {
 			$SQL .= " LEFT JOIN $wpdb->term_taxonomy ON ($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id)";
 			$SQL .= " LEFT JOIN $wpdb->terms ON ($wpdb->terms.term_id = $wpdb->term_taxonomy.term_id) ";
 		}
+//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -191,6 +199,7 @@ class EEH_Event_Query {
 					break;
 			}
 		}
+//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -205,7 +214,6 @@ class EEH_Event_Query {
 	 * @return    string
 	 */
 	public static function posts_where( $SQL = '', WP_Query $wp_query ) {
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars[ 'post_type' ] ) && $wp_query->query_vars[ 'post_type' ] == 'espresso_events' ) {
 			// Show Expired ?
 			$SQL .= EEH_Event_Query::posts_where_sql_for_show_expired( EEH_Event_Query::_show_expired() );
@@ -214,6 +222,7 @@ class EEH_Event_Query {
 			// Start Date
 			$SQL .= EEH_Event_Query::posts_where_sql_for_event_list_month( EEH_Event_Query::_display_month() );
 		}
+//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -261,6 +270,7 @@ class EEH_Event_Query {
 			// event end date is GREATER than the start of the month ( so nothing that ended before this month )
 			$SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end >= "' . date( 'Y-m-d 0:0:00', strtotime( $month ) ) . '" ';
 		}
+//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -275,10 +285,10 @@ class EEH_Event_Query {
 	 * @return    string
 	 */
 	public static function posts_orderby( $SQL = '', WP_Query $wp_query ) {
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		if ( isset( $wp_query->query ) && isset( $wp_query->query[ 'post_type' ] ) && $wp_query->query[ 'post_type' ] == 'espresso_events' ) {
 			$SQL = EEH_Event_Query::posts_orderby_sql( array( 'start_date' ) );
 		}
+//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
@@ -312,9 +322,22 @@ class EEH_Event_Query {
 		global $wpdb;
 		$SQL = '';
 		$counter = 0;
-		$orderby_params = is_array( $orderby_params ) ? $orderby_params : array( $orderby_params );
-		foreach ( $orderby_params as $orderby ) {
+		//make sure 'orderby' is set in query params
+		if ( isset( self::$_query_params['orderby'] )) {
+			self::$_query_params['orderby'] = array();
+		}
+		// loop thru $orderby_params (type cast as array)
+		foreach ( (array)$orderby_params as $orderby ) {
+			// check if we have already added this param
+			if ( isset( self::$_query_params['orderby'][ $orderby ] )) {
+				// if so then remove from the $orderby_params so that the count() method below is accurate
+				unset( $orderby_params[ $orderby ] );
+				// then bump ahead to the next param
+				continue;
+			}
+			// this will ad a comma depending on whether this is the first or last param
 			$glue = $counter == 0 || $counter == count( $orderby_params ) ? ' ' : ', ';
+			// ok what's we dealing with?
 			switch ( $orderby ) {
 				case 'id' :
 				case 'ID' :
@@ -349,6 +372,8 @@ class EEH_Event_Query {
 					$SQL .= $glue . EEM_Datetime::instance()->table() . '.DTT_EVT_start ' . $sort;
 					break;
 			}
+			// add to array of orderby params that have been added
+			self::$_query_params['orderby'][ $orderby ] = TRUE;
 			$counter ++;
 		}
 		return $SQL;
