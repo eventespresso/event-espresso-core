@@ -59,6 +59,38 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->assertFalse( has_action( 'deactivate_' .  plugin_basename( $this->_reg_args[ 'main_file_path' ] ) )  );
 	}
 
+	function test_register_mock_addon_fail__bad_parameters(){
+		//we're registering the addon with the wrong parameters
+		$this->_pretend_addon_hook_time();
+		if( did_action( 'activate_plugin' ) ){
+			$this->assertTrue( FALSE );
+		}
+		try{
+			EE_Register_Addon::register($this->_addon_name, array(
+				'version'=>'1.0.0',
+				'min_core_version'=>'4.0.0',
+				'dms_paths'=>$this->_mock_addon_path . 'core/data_migration_scripts'
+			));
+			$this->fail('We should have received a warning that the \'plugin_main_file\' is a required argument when registerign an addon');
+		}catch(EE_Error $e){
+			$this->assertTrue(True);
+		}
+
+		//check that we didn't actually register the addon
+		try{
+			EE_Registry::instance()->addons->EE_New_Addon;
+			$this->fail('The addon New_Addon should not have been registered because its called at the wrong time');
+		}catch(PHPUnit_Framework_Error_Notice $e){
+			$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
+		}
+		//check dmss werne't setup either
+		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
+		$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+
+		//check that we didn't register the addon's deactivaiton hook either
+		$this->assertFalse( has_action( 'deactivate_' .  plugin_basename( $this->_reg_args[ 'main_file_path' ] ) )  );
+	}
+
 	function test_register_mock_addon_success(){
 		$this->_pretend_addon_hook_time();
 		if( did_action( 'activate_plugin' ) ){

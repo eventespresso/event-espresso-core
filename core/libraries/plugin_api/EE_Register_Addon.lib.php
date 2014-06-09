@@ -64,7 +64,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.', 'event_espresso' ));
 		}
 		if ( ! isset($setup_args[ 'main_file_path' ]) || empty( $setup_args[ 'main_file_path' ] ) ){
-			throw new EE_Error( sprintf( __( 'When registering an addon, you provide the "main_file_path", which is the full path to the main file loaded directly by Wordpress. You only provided %s', 'event_espresso' ), implode(",", array_keys( $setup_args ) ) ) );
+			throw new EE_Error( sprintf( __( 'When registering an addon, you didn\'t provide the "main_file_path", which is the full path to the main file loaded directly by Wordpress. You only provided %s', 'event_espresso' ), implode(",", array_keys( $setup_args ) ) ) );
 		}
 		// check that addon has not already been registered with that name
 		if ( isset( self::$_settings[ $addon_name ] ) && ! did_action( 'activate_plugin' ) ) {
