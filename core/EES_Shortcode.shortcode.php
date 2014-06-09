@@ -5,7 +5,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author			Event Espresso
+ * @ author				Event Espresso
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
@@ -22,6 +22,12 @@
  * ------------------------------------------------------------------------
  */
 abstract class EES_Shortcode extends EE_Base {
+
+	/**
+	 * @protected 	public
+	 * @var 	array $_attributes
+	 */
+	protected $_attributes = array();
 
 	/**
 	 *    run - initial shortcode module setup called during "wp_loaded" hook - this shortcode is going to execute during this request !
@@ -51,12 +57,12 @@ abstract class EES_Shortcode extends EE_Base {
 	 *    instance - returns instance of child class object
 	 *
 	 * @access 	public
-	 * @param 	null $shortcode_class
+	 * @param 	string $shortcode_class
 	 * @return 	\EES_Shortcode
 	 */
 	final public static function instance( $shortcode_class = NULL ) {
 		$shortcode_class = ! empty( $shortcode_class ) ? $shortcode_class : get_called_class();
-		if ( $shortcode_class == 'EES_Shortcode' ) {
+		if ( $shortcode_class == 'EES_Shortcode' || empty( $shortcode_class )) {
 			return NULL;
 		}
 		$shortcode = str_replace( 'EES_', '', strtoupper( $shortcode_class ));
@@ -76,9 +82,20 @@ abstract class EES_Shortcode extends EE_Base {
 	 * @return 	mixed
 	 */
 	final public static function fallback_shortcode_processor( $attributes ) {
+		// what shortcode was actually parsed ?
 		$shortcode_class = get_called_class();
+		// notify rest of system that fallback processor was triggered
+		add_filter( 'FHEE__fallback_shortcode_processor__' . $shortcode_class, '__return_true' );
+		// get instance of actual shortcode
 		$shortcode_obj = self::instance( $shortcode_class );
-		return $shortcode_obj instanceof EES_Shortcode ? $shortcode_obj->process_shortcode( $attributes ) : NULL;
+		// verify class
+		if ( $shortcode_obj instanceof EES_Shortcode ) {
+			// set attributes and run the shortcode
+			$shortcode_obj->_attributes = (array)$attributes;
+			return $shortcode_obj->process_shortcode( $shortcode_obj->_attributes );
+		} else {
+			return NULL;
+		}
 	}
 
 

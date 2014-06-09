@@ -8,7 +8,7 @@
  */
 
 require( dirname( __FILE__ ) . '/includes/define-constants.php' );
-if ( ! file_exists( WP_TESTS_DIR . '/includes/functions.php' ) ) {
+if ( ! is_readable( WP_TESTS_DIR . '/includes/functions.php' ) ) {
 	die( "The WordPress PHPUnit test suite could not be found.\n" );
 }
 

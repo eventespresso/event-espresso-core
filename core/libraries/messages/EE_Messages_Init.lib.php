@@ -247,7 +247,7 @@ class EE_Messages_Init extends EE_Base {
 	 *
 	 * @access public
 	 * @param  bool $success incoming success value (we return true or false on success/fail)
-	 * @param arrray $req_data This is the $_POST & $_GET data sent from EE_Admin Pages
+	 * @param array $req_data This is the $_POST & $_GET data sent from EE_Admin Pages
 	 * @return bool          success/fail
 	 */
 	public function process_resend( $success, $req_data ) {

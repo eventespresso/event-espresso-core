@@ -49,13 +49,14 @@ abstract class EE_Addon extends EE_Configurable {
 	protected $_min_core_version;
 
 	/**
-	 * A non-internationalized name to identify this addon. Eg 'Calendar','Mailchimp',etc/
+	 * A non-internationalized name to identify this addon. Eg 'Calendar','MailChimp',etc/
 	 * @type string _addon_name
 	 */
 	protected $_addon_name;
 
 	/**
-	 * @type int one of the EE_System::req_type_* consts
+	 * one of the EE_System::req_type_* constants
+	 * @type int $_req_type
 	 */
 	protected $_req_type = NULL;
 
@@ -67,6 +68,62 @@ abstract class EE_Addon extends EE_Configurable {
 	public function __construct() {
 	}
 
+
+
+	/**
+	 * @param mixed $version
+	 */
+	public function set_version( $version = NULL ) {
+		$this->_version = $version;
+	}
+
+
+	/**
+	 * get__version
+	 * @return string
+	 */
+	public function version() {
+		return $this->_version;
+	}
+
+
+
+	/**
+	 * @param mixed $min_core_version
+	 */
+	public function set_min_core_version( $min_core_version = NULL ) {
+		$this->_min_core_version = $min_core_version;
+	}
+
+
+
+	/**
+	 * get__min_core_version
+	 * @return string
+	 */
+	public function min_core_version() {
+		return $this->_min_core_version;
+	}
+
+
+
+	/**
+	 * Sets addon_name
+	 * @param string $addon_name
+	 * @return boolean
+	 */
+	function set_name( $addon_name ) {
+		return $this->_addon_name = $addon_name;
+	}
+
+
+	/**
+	 * Gets addon_name
+	 * @return string
+	 */
+	function name() {
+		return $this->_addon_name;
+	}
 
 
 
@@ -109,7 +166,7 @@ abstract class EE_Addon extends EE_Configurable {
 			$this->initialize_db();
 			$this->initialize_default_data();
 			//@todo: this will probably need to be adjusted in 4.4 as the array changed formats I believe
-			EE_Data_Migration_Manager::instance()->update_current_database_state_to(array($this->name(),$this->version()));
+			EE_Data_Migration_Manager::instance()->update_current_database_state_to(array('slug' => $this->name(), 'version' => $this->version()));
 		}
 	}
 
@@ -135,7 +192,7 @@ abstract class EE_Addon extends EE_Configurable {
 			}
 		}
 		//if not DMS was found that shoudl be ok. This addon just doesn't require any database changes
-		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( $this->name(), $this->version() ) );
+		EE_Data_Migration_Manager::instance()->update_current_database_state_to( array( 'slug' => $this->name(), 'version' => $this->version() ) );
 	}
 
 
@@ -177,6 +234,19 @@ abstract class EE_Addon extends EE_Configurable {
 
 
 	/**
+	 * set_db_update_option_name
+	 * Until we do something better, we'll just check for migration scripts upon
+	 * plugin activation only. In the future, we'll want to do it on plugin updates too
+	 * @return bool
+	 */
+	public function set_db_update_option_name(){
+		EE_Error::doing_it_wrong(__FUNCTION__, __('EE_Addon::set_db_update_option_name was renamed to EE_Addon::set_activation_indicator_option', 'event_espresso'), '4.3.0.alpha.016');
+		//let's just handle this on the next request, ok? right now we're just not really ready
+		return $this->set_activation_indicator_option();
+	}
+
+
+	/**
 	 *
 	 * Returns the name of the activation indicator option
 	 * (an option which is set temporarily to indicate that this addon was just activated)
@@ -193,10 +263,11 @@ abstract class EE_Addon extends EE_Configurable {
 	/**
 	 * When the addon is activated, this should be called to set a wordpress option that
 	 * indicates it was activated. This is especially useful for detecting reactivations.
+	 * @return bool
 	 */
 	public function set_activation_indicator_option() {
 		// let's just handle this on the next request, ok? right now we're just not really ready
-		update_option( $this->get_activation_indicator_option_name(), TRUE );
+		return update_option( $this->get_activation_indicator_option_name(), TRUE );
 	}
 
 
@@ -208,64 +279,6 @@ abstract class EE_Addon extends EE_Configurable {
 		return 'ee_activation_' . $this->name();
 	}
 
-
-
-	/**
-	 * @param mixed $version
-	 */
-	public function set_version( $version = NULL ) {
-		$this->_version = $version;
-	}
-
-
-
-	/**
-	 * @param mixed $min_core_version
-	 */
-	public function set_min_core_version( $min_core_version = NULL ) {
-		$this->_min_core_version = $min_core_version;
-	}
-
-
-
-	/**
-	 * get__version
-	 * @return string
-	 */
-	public function version() {
-		return $this->_version;
-	}
-
-
-
-	/**
-	 * get__min_core_version
-	 * @return string
-	 */
-	public function min_core_version() {
-		return $this->_min_core_version;
-	}
-
-
-
-	/**
-	 * Gets addon_name
-	 * @return string
-	 */
-	function name() {
-		return $this->_addon_name;
-	}
-
-
-
-	/**
-	 * Sets addon_name
-	 * @param string $addon_name
-	 * @return boolean
-	 */
-	function set_name( $addon_name ) {
-		return $this->_addon_name = $addon_name;
-	}
 
 
 

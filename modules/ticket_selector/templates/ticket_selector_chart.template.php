@@ -214,11 +214,19 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 													<?php $running_total += $new_sub_total; ?>
 												<?php } else { ?>
 													<td class="small-text"><?php echo $price_mod->desc(); ?></td>
+													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount() ); ?></td>
+													<?php $running_total += $price_mod->is_discount() ? $price_mod->amount() * -1 : $price_mod->amount(); ?>
 												<?php } ?>
 												</tr>
 											<?php } ?>
-											<?php
-											foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) { ?>
+											<?php if ( $ticket->taxable() ) { ?>
+												<?php //$ticket_subtotal =$ticket->get_ticket_subtotal(); ?>
+												<tr>
+													<td colspan="2" class="jst-rght small-text"><b><?php _e( 'subtotal', 'event_espresso' ); ?></b></td>
+													<td class="jst-rght small-text"><b><?php echo  EEH_Template::format_currency( $running_total ); ?></b></td>
+												</tr>
+
+												<?php foreach ( $ticket->get_ticket_taxes_for_admin() as $tax ) { ?>
 												<tr>
 													<td class="jst-rght small-text"><?php echo $tax->name(); ?></td>
 													<td class="jst-rght small-text"><?php echo $tax->amount(); ?>%</td>
@@ -226,6 +234,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 													<td class="jst-rght small-text"><?php echo EEH_Template::format_currency( $tax_amount ); ?></td>
 													<?php $running_total += $tax_amount; ?>
 												</tr>
+												<?php } ?>
 											<?php } ?>
 												<tr>
 													<td colspan="2" class="jst-rght small-text"><b><?php _e( 'Total Ticket Price', 'event_espresso' ); ?></b></td>
@@ -297,16 +306,19 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												</tr>
 											</thead>
 											<tbody>
-											<?php foreach ( $datetimes as $datetime ) { ?>
+										<?php
+											foreach ( $datetimes as $datetime ) {
+												if ( $datetime instanceof EE_Datetime ) {
+										?>
 
 											<tr>
 												<td class="small-text">
 													<?php $datetime_name = $datetime->name(); ?>
 													<?php echo ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b><br/>' : ''; ?>
-													<?php echo $datetime->date_range( 'l F jS, Y', __( ' to  ', 'event_espresso' )); ?>
+													<?php echo $datetime->date_range( $date_format, __( ' to  ', 'event_espresso' )); ?>
 												</td>
 												<td class="cntr small-text">
-													<?php echo $datetime->time_range( NULL, __( ' to  ', 'event_espresso' )); ?>
+													<?php echo $datetime->time_range( $time_format, __( ' to  ', 'event_espresso' )); ?>
 												</td>
 												<td class="cntr small-text">
 													<?php echo $ticket->sold(); ?>
@@ -323,6 +335,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 												</td>
 											</tr>
 											<?php } ?>
+										<?php } ?>
 											</tbody>
 										</table>
 									</div>

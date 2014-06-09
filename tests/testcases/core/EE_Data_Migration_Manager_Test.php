@@ -4,6 +4,18 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 	exit('No direct script access allowed');
 
 /**
+ * Event Espresso
+ *
+ * Event Registration and Management Plugin for WordPress
+ *
+ * @ package			Event Espresso
+ * @ author			Seth Shoultes
+ * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @ link					http://www.eventespresso.com
+ * @ version		 	4.3
+ *
+ * ------------------------------------------------------------------------
  *
  * EE_Data_Migration_Manager_Test
  *
@@ -137,6 +149,11 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 	public function add_mock_dms($dms_folders){
 		$dms_folders[] = EE_TESTS_DIR . 'mocks/core/data_migration_scripts';
 		return $dms_folders;
+	}
+	public function test_script_migrates_to_version(){
+		$migrates_to = EE_Data_Migration_Manager::instance()->script_migrates_to_version('EE_DMS_Core_6_4_3');
+		$this->assertEquals( 'Core', $migrates_to[ 'slug' ] );
+		$this->assertEquals( '6.4.3', $migrates_to[ 'version' ] );
 	}
 }
 

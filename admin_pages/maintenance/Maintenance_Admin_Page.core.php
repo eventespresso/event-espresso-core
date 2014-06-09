@@ -212,7 +212,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			}
 
 			if(isset($current_script)){
-				list($plugin_slug,$new_version) = $current_script->migrates_to_version();
+				$migrates_to = $current_script->migrates_to_version();
+				$plugin_slug = $migrates_to[ 'slug' ];
+				$new_version = $migrates_to[ 'version' ];
 				$this->_template_args = array_merge($this->_template_args,array(
 					'current_db_state'=>  sprintf(__("EE%s (%s)", "event_espresso"), isset($current_db_state[$plugin_slug]) ? $current_db_state[$plugin_slug] : 3,$plugin_slug),
 					'next_db_state'=>isset($current_script) ? sprintf(__("EE%s (%s)", 'event_espresso'),$new_version,$plugin_slug) : NULL));

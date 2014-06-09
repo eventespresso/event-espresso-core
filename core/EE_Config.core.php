@@ -80,6 +80,16 @@ final class EE_Config {
 	 */
 	public $template_settings;
 
+
+
+	/**
+	 * Holds EE environment values.
+	 *
+	 * @var EE_Environment_Config
+	 */
+	public $environment;
+
+
 	/**
 	 *	@var 	array	$_config_option_names
 	 * 	@access 	private
@@ -139,6 +149,7 @@ final class EE_Config {
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
+		$this->environment = new EE_Environment_Config();
 		$this->addons = new stdClass();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
@@ -1993,6 +2004,74 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public function __construct() {
 		$this->display_status_banner_single = 0;
 		$this->display_venue = 1;
+	}
+}
+
+
+
+
+/**
+ * Stores any EE Environment values that are referenced through the code.
+ *
+ * @since 4.4.0
+ * @package Event Espresso
+ * @subpackage  config
+ */
+class EE_Environment_Config extends EE_Config_Base {
+
+	/**
+	 * Hold any php environment variables that we want to track.
+	 *
+	 * @var stdClass;
+	 */
+	public $php;
+
+
+
+	/**
+	 * 	constructor
+	 */
+	public function __construct() {
+		$this->php = new stdClass();
+		$this->_set_php_values();
+	}
+
+
+	/**
+	 * This sets the php environment variables.
+	 *
+	 * @since 4.4.0
+	 * @return void
+	 */
+	protected function _set_php_values() {
+		$this->php->max_input_vars = ini_get( 'max_input_vars' );
+		$this->php->version = phpversion();
+	}
+
+
+
+	/**
+	 * helper method for determining whether input_count is
+	 * reaching the potential maximum the server can handle
+	 * according to max_input_vars
+	 *
+	 * @param int $input_count the count of input vars.
+	 *
+	 * @return array {
+	 *         An array that represents whether available space and if no available space the error message.
+	 *         @type bool $has_space		whether more inputs can be added.
+	 *         @type string $msg 		Any message to be displayed.
+	 * }
+	 */
+	public function max_input_vars_limit_check( $input_count = 0 ) {
+		if ( ( $input_count >= $this->php->max_input_vars ) && version_compare( $this->php->version, '5.3' ) ) {
+			$response['has_space'] = FALSE;
+			$response['msg'] = __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
+		} else {
+			$response['has_space'] = TRUE;
+			$response['msg'] = '';
+		}
+		return $response;
 	}
 }
 

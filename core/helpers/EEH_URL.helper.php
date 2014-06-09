@@ -30,8 +30,8 @@ class EEH_URL{
 	 * adds nonce to array of arguments then calls WP add_query_arg function
 	 *
 	 * @access public
-	 * @param array 	$args
-	 * @param string 	$url
+	 * @param array       $args
+	 * @param bool|string $url
 	 * @return string
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = '' ) {

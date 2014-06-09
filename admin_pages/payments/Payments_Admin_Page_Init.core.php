@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Payments_Admin_Page_Init
  *
- * This is the init for the EE Payments Admin Pages.  See EE_Admin_Page_Init for method inline docs. 
+ * This is the init for the EE Payments Admin Pages.  See EE_Admin_Page_Init for method inline docs.
  *
  *
  * @package		Payments_Admin_Page_Init
@@ -34,8 +34,8 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 		//define some page related constants
 		define( 'EE_PAYMENTS_PG_SLUG', 'espresso_payment_settings' );
 		define( 'EE_PAYMENTS_ADMIN_URL', admin_url( 'admin.php?page=' . EE_PAYMENTS_PG_SLUG ));
-		define( 'EE_PAYMENTS_ADMIN', EE_ADMIN_PAGES . 'payments' . DS );	
-		define( 'EE_PAYMENTS_TEMPLATE_PATH', EE_PAYMENTS_ADMIN . 'templates' . DS );	
+		define( 'EE_PAYMENTS_ADMIN', EE_ADMIN_PAGES . 'payments' . DS );
+		define( 'EE_PAYMENTS_TEMPLATE_PATH', EE_PAYMENTS_ADMIN . 'templates' . DS );
 		define( 'EE_PAYMENTS_ASSETS_URL', EE_ADMIN_PAGES_URL . 'payments/assets/' );
 
 		//check that there are active gateways on all admin page loads. but dont do it just yet
@@ -45,20 +45,22 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 
 	protected function _set_init_properties() {
 		$this->label = __('Payment Methods', 'event_espresso');
-		$this->menu_label = __('Payment Methods', 'event_espresso');
-		$this->menu_slug = EE_PAYMENTS_PG_SLUG;
 	}
 
-	public function get_menu_map() {
-		$map = array(
-			'group' => 'settings',
+	protected function _set_menu_map() {
+		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
+			'menu_group' => 'settings',
 			'menu_order' => 30,
 			'show_on_menu' => TRUE,
-			'parent_slug' => 'espresso_events'
-			);
-		return $map;
+			'parent_slug' => 'espresso_events',
+			'menu_slug' => EE_PAYMENTS_PG_SLUG,
+			'menu_label' => __('Payment Methods', 'event_espresso'),
+			'capability' => 'administrator',
+			'admin_init_page' => $this
+			));
 	}
-	
+
+
 	/**
 	 * Checks that there is at least one active gateway. If not, add a notice
 	 */
@@ -69,7 +71,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 			echo '<div class="error">
 				 <p>'.  sprintf(__("There are no Active Payment Methods setup for Event Espresso. Please %s activate at least one.%s", "event_espresso"),"<a href='$url'>","</a>").'</p>
 			 </div>';
-		}	
+		}
 	}
 
 } //end class Payments_Admin_Page_Init
