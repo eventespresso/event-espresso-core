@@ -72,6 +72,20 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 
 
+	protected function _get_data_for_context( $context, $id ) {
+		if ( $context  == 'admin' ) {
+			$payment = EEM_Payment::instance()->get_one_by_ID( $id );
+			$transaction = $payment instanceof EE_Payment ? $payment->transaction() : NULL;
+			if ( $payment instanceof EE_Payment && $transaction instanceof EE_Transaction ) {
+				return array( $transaction, $payment );
+			}
+		} else {
+			return EEM_Registration::instance()->get_one_by_ID( $id );
+		}
+	}
+
+
+
 	protected function _set_default_field_content() {
 
 		$this->_default_field_content = array(

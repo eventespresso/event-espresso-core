@@ -62,6 +62,19 @@ class EE_Payment_Reminder_message_type extends EE_message_type {
 
 
 
+
+	protected function _get_data_for_context( $context, $id ) {
+
+		$payment = EEM_Payment::instance()->get_one_by_ID( $id );
+		$transaction = $payment instanceof EE_Payment ? $payment->transaction() : NULL;
+		if ( $payment instanceof EE_Payment && $transaction instanceof EE_Transaction ) {
+			return array( $transaction, $payment );
+		}
+		return NULL;
+	}
+
+
+
 	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
 		//this is just a test
 		return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';

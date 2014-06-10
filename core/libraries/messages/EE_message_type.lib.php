@@ -277,6 +277,20 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
+	 * This method should return a EE_Base_Class object (or array of EE_Base_Class objects) for the given context and ID (which should be the primary key id for the base class).  Client code doesn't have to know what a message type's data handler is.
+	 * This is (curently) called by the EED_Messages module.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return mixed ( EE_Base_Class||EE_Base_Class[] )
+	 */
+	abstract protected function _get_data_for_context( $context, $id );
+
+
+
+
+
+	/**
 	 * _set_contexts
 	 * This sets up the contexts associated with the message_type
 	 *
@@ -286,6 +300,38 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	abstract protected function _set_contexts();
 
+
+
+
+	/**
+	 * Wrapper for _get_data_for_context() that handles some validation before calling the main class and also allows for filtering.
+	 *
+	 * @since 4.5.0
+	 * @throws EE_Error
+	 *
+	 * @param string $context 	This should be a string matching a valid context for the message type.
+	 * @param int      $id 		Integer corresponding to the value for the primary key of a EE_Base_Class_Object
+	 *
+	 *
+	 * @return mixed (EE_Base_Class||EE_Base_Class[])
+	 */
+	public function get_data_for_context( $context, $id ) {
+		//valid context?
+		if ( !isset( $this->_contexts[$context] ) ) {
+			throw new EE_Error( sprintf( __('The context %s is not a valid context for %s.', 'event_espresso'), $context, get_class( $this ) ) );
+		}
+
+		//get data and apply global and class specific filters on it.
+		$data = apply_filters( 'FHEE__EE_message_type__get_data_for_context__data', $this->_get_data_for_context( $context, $id ) );
+		$data = apply_filters( 'FHEE__' . get_class( $this ) . '__get_data_for_context__data', $data, $this );
+
+		//if empty then something went wrong!
+		if ( empty( $data ) ) {
+			throw new EE_Error( sprintf(  __('There is no data retrieved, it\'s possible that the id given (%d) does not match any value in the database for the corresponding EE_Base_Class used by the data handler for the %s message type.', 'event_espresso'), $id, $this->name ) );
+		}
+
+		return $data;
+	}
 
 
 
