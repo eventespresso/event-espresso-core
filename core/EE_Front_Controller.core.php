@@ -272,7 +272,7 @@ final class EE_Front_Controller {
 		$term_exists = is_array( term_exists( $current_post, 'category' )) || array_key_exists( 'category_name', $WP->query_vars );
 		// make sure shortcodes are set
 		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes )) {
-//			d( EE_Registry::instance()->CFG->core->post_shortcodes );
+			// d( EE_Registry::instance()->CFG->core->post_shortcodes );
 			// cycle thru all posts with shortcodes set
 			foreach ( EE_Registry::instance()->CFG->core->post_shortcodes as $post_name => $post_shortcodes ) {
 				// filter shortcodes so
@@ -280,10 +280,10 @@ final class EE_Front_Controller {
 				// now cycle thru shortcodes
 				foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 					// are we on this page, or on the blog page, or an EE CPT category page ?
-					if ( $current_post == $post_name || $term_exists ) {
+					if ( current_user_can( 'edit_post', $post_id ) && $current_post == $post_name || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
 						if ( ! isset( EE_Registry::instance()->shortcodes->$shortcode_class )) {
-							if ( defined( 'WP_DEBUG' ) && WP_DEBUG === TRUE &&  $current_post != $page_for_posts ) {
+							if ( $current_post != $page_for_posts ) {
 								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
