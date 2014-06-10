@@ -737,8 +737,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	*/
 	function _txn_billing_info_side_meta_box() {
 
-		$this->_template_args['billing_info'] = $this->_transaction->billing_info();
-
+		$this->_template_args['billing_form'] = $this->_transaction->billing_info();
 		$this->_template_args['billing_form_url'] = add_query_arg( array( 'action' => 'edit_transaction', 'process' => 'billing'  ), TXN_ADMIN_URL );
 
 		$template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_billing_info.template.php';
@@ -778,14 +777,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				array(
 					'TXN_ID' => $payment['TXN_ID'],
 					'STS_ID' => $payment['status'],
-					'PAY_timestamp' => $payment['date'], 
+					'PAY_timestamp' => $payment['date'],
 					'PMD_source'=>  EEM_Payment_Method::scope_admin,
-					'PMD_ID' => $payment['PMD_ID'], 
+					'PMD_ID' => $payment['PMD_ID'],
 					'PAY_amount' => $amount,
 					'PAY_gateway_response' => '',
 					'PAY_txn_id_chq_nmbr' => $payment['txn_id_chq_nmbr'],
-					'PAY_po_number' => $payment['po_number'], 
-					'PAY_extra_accntng' => $payment['accounting'], 
+					'PAY_po_number' => $payment['po_number'],
+					'PAY_extra_accntng' => $payment['accounting'],
 					'PAY_details' => $payment,
 					'PAY_ID' => $payment['PAY_ID']
 				)
