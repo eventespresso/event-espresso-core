@@ -141,6 +141,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	public function test_detect_activations_or_upgrades__reactivation(){
 		global $wp_actions;
 
+		$this->assertEquals(EE_Maintenance_Mode::level_0_not_in_maintenance,  EE_Maintenance_Mode::instance()->level());
+
 		//it should have an entry in its activation history and db state
 		$activation_history_option_name = $this->_addon->get_activation_history_option_name();
 		update_option($activation_history_option_name,array($this->_addon->version()));
@@ -215,7 +217,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		EE_Register_Addon::register($this->_addon_name, array(
 			'version'=>'0.0.1',
 			'min_core_version'=>'4.0.0',
-			'base_path'=>$mock_addon_path,
+			'main_file_path'=>$mock_addon_path . 'espresso-new-addon.php',
 			'dms_paths'=>$mock_addon_path . 'core/data_migration_scripts'
 			));
 		//double-check that worked fine
@@ -236,19 +238,22 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 
 
 	public function tearDown(){
-		update_option( $this->_addon->get_activation_history_option_name(), $this->_addon_activation_history );
-		update_option(EE_Data_Migration_Manager::current_database_state, $this->_current_db_state );
-		EE_Register_Addon::deregister($this->_addon_name);
-		try{
-			EE_Registry::instance()->addons->EE_New_Addon;
-			$this->fail('EE_New_Addon is still registered. Deregister failed');
-		}catch(PHPUnit_Framework_Error_Notice $e){
-			$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
+		//if somehow $this->_addon isn't set, we don't need to worry about deregistering it right?
+		if( $this->_addon instanceof EE_Addon ){
+			update_option( $this->_addon->get_activation_history_option_name(), $this->_addon_activation_history );
+			update_option(EE_Data_Migration_Manager::current_database_state, $this->_current_db_state );
+			EE_Register_Addon::deregister($this->_addon_name);
+			try{
+				EE_Registry::instance()->addons->EE_New_Addon;
+				$this->fail('EE_New_Addon is still registered. Deregister failed');
+			}catch(PHPUnit_Framework_Error_Notice $e){
+				$this->assertEquals(EE_UnitTestCase::error_code_undefined_property,$e->getCode());
+			}
+			//verify DMSs deregistered
+			$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
+			$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
+			$this->_stop_pretending_addon_hook_time();
 		}
-		//verify DMSs deregistered
-		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
-		$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
-		$this->_stop_pretending_addon_hook_time();
 	}
 
 }

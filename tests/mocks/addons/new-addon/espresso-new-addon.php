@@ -36,11 +36,11 @@
  *
  * ------------------------------------------------------------------------
  */
+define( 'EE_NEW_ADDON_VERSION', '0.0.1.dev.002' );
+define( 'EE_NEW_ADDON_PLUGIN_FILE',  __FILE__ );
 function load_espresso_new_addon() {
 if ( class_exists( 'EE_Addon' )) {
 	// new_addon version
-	define( 'EE_NEW_ADDON_VERSION', '0.0.1.dev.002' );
-	define( 'EE_NEW_ADDON_PLUGIN_FILE', plugin_basename( __FILE__ ));
 	require_once ( plugin_dir_path( __FILE__ ) . 'EE_New_Addon.class.php' );
 	EE_New_Addon::register_addon();
 }

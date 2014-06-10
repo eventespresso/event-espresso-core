@@ -49,6 +49,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @internal param string $addon_name 		the EE_Addon's name. Required.
 	 * @param  array $setup_args { 			An array of arguments provided for registering the message type.
 	 * @internal param string admin_path 			full server path to the folder where the addon\'s admin files reside
+	 * @internal param string main_file_path the full server path to the main file loaded directly by WP
 	 * @internal param string autoloader_paths 	an array of class names and the full server paths to those files. Required.
 	 * @internal param string dms_paths 				an array of full server paths to folders that contain data migration scripts. Required.
 	 * @internal param string module_paths 		an array of full server paths to any EED_Modules used by the addon
@@ -62,6 +63,13 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		// required fields MUST be present, so let's make sure they are.
 		if ( empty( $addon_name ) || ! is_array( $setup_args )) {
 			throw new EE_Error( __( 'In order to register an EE_Addon with EE_Register_Addon::register(), you must include the "addon_name" (the name of the addon), and an array of arguments.', 'event_espresso' ));
+		}
+		if ( ! isset($setup_args[ 'main_file_path' ]) || empty( $setup_args[ 'main_file_path' ] ) ){
+			throw new EE_Error( sprintf( __( 'When registering an addon, you didn\'t provide the "main_file_path", which is the full path to the main file loaded directly by Wordpress. You only provided %s', 'event_espresso' ), implode(",", array_keys( $setup_args ) ) ) );
+		}
+		// check that addon has not already been registered with that name
+		if ( isset( self::$_settings[ $addon_name ] ) && ! did_action( 'activate_plugin' ) ) {
+			throw new EE_Error( sprintf( __( 'An EE_Addon with the name "%s" has already been registered and each EE_Addon requires a unique name.', 'event_espresso' ), $addon_name ));
 		}
 
 
@@ -83,8 +91,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'version' 					=> isset( $setup_args['version'] ) ? (string)$setup_args['version'] : '',
 			// the minimum version of EE Core that the addon will work with
 			'min_core_version' => isset( $setup_args['min_core_version'] ) ? (string)$setup_args['min_core_version'] : '',
-			// full server path to plugin root folder
-			'base_path' 				=> isset( $setup_args['base_path'] ) ? (string)$setup_args['base_path'] : '',
+			// full server path to main file (file loaded directly by WP)
+			'main_file_path' 				=> isset( $setup_args['main_file_path'] ) ? (string)$setup_args['main_file_path'] : '',
 			// path to folder containing files for integrating with the EE core admin and/or setting up EE admin pages
 			'admin_path' 			=> isset( $setup_args['admin_path'] ) ? (string)$setup_args['admin_path'] : '',
 			// a method to be called when the EE Admin is first invoked, can be used for hooking into any admin page
@@ -174,7 +182,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		if ( ! empty( $setup_args['pue_options'] )) {
 			self::$_settings[ $addon_name ]['pue_options'] = array(
 				'pue_plugin_slug' 	=> isset( $setup_args['pue_options']['pue_plugin_slug'] ) ? (string)$setup_args['pue_options']['pue_plugin_slug'] : 'espresso_' . strtolower( $class_name ),
-				'plugin_basename' => isset( $setup_args['pue_options']['plugin_basename'] ) ? (string)$setup_args['pue_options']['plugin_basename'] : self::$_settings[ $addon_name ]['base_path'] ,
+				'plugin_basename' => isset( $setup_args['pue_options']['plugin_basename'] ) ? (string)$setup_args['pue_options']['plugin_basename'] : plugin_basename( self::$_settings[ $addon_name ]['main_file_path'] ),
 				'checkPeriod' 			=> isset( $setup_args['pue_options']['checkPeriod'] ) ? (string)$setup_args['pue_options']['checkPeriod'] : '24',
 				'use_wp_update'		=> isset( $setup_args['pue_options']['use_wp_update'] ) ? (string)$setup_args['pue_options']['use_wp_update'] : FALSE
 			);
@@ -193,13 +201,17 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * @return EE_Addon
 	 */
 	private static function _load_and_init_addon_class($addon_name){
-		$addon = EE_Registry::instance()->load_addon( self::$_settings[ $addon_name ]['base_path'], self::$_settings[ $addon_name ]['class_name'] );
+		$addon = EE_Registry::instance()->load_addon( dirname( self::$_settings[ $addon_name ]['main_file_path'] ), self::$_settings[ $addon_name ]['class_name'] );
 		$addon->set_name( $addon_name );
+		$addon->set_main_plugin_file( self::$_settings[ $addon_name ]['main_file_path'] );
 		$addon->set_version( self::$_settings[ $addon_name ]['version'] );
 		$addon->set_min_core_version( self::$_settings[ $addon_name ]['min_core_version'] );
 		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
 		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
 		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
+		//unfortunately this can't be hooked in upon construction, because we don't have
+		//the plugin mainfile's path upon construction.
+		register_deactivation_hook($addon->get_main_plugin_file(), array($addon,'deactivation'));
 		return $addon;
 	}
 
@@ -279,6 +291,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 				// add to list of widgets to be registered
 				EE_Register_Widget::deregister( $addon_name );
 			}
+			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
 			unset(EE_Registry::instance()->addons->$class_name);
 			unset( self::$_settings[ $addon_name ] );
 		}else{
