@@ -293,6 +293,12 @@ class EEH_Activation {
 		}
 		// map shortcode to post
 		EE_Registry::instance()->CFG->core->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
+		// and make sure it's NOT added to the WP "Posts Page"
+		// name of the WP Posts Page
+		$posts_page = EE_Registry::instance()->CFG->get_page_for_posts();
+		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ] )) {
+			unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ][ $critical_page['code'] ] );
+		}
 		// update post_shortcode CFG
 		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE )) {
 			$msg = sprintf(

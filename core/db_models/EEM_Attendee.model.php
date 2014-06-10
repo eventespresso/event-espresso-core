@@ -104,7 +104,7 @@ class EEM_Attendee extends EEM_CPT_Base {
 
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 *		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 *		@access public
 	 *		@return EEM_Attendee instance

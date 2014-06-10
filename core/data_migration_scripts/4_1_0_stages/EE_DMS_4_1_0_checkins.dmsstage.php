@@ -121,7 +121,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table{
 		global $wpdb;
 		
 		
-		//ok we can actually do what we set out to do: add a cehckin/checkout record
+		//ok we can actually do what we set out to do: add a checkin/checkout record
 		$cols_n_values = array(
 			'REG_ID'=>$new_reg_id,
 			'DTT_ID'=>$new_datetime['DTT_ID'],
