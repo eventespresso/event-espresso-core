@@ -150,7 +150,17 @@ abstract class EE_Addon extends EE_Configurable {
 	public function reactivation() {
 		$classname = get_class($this);
 		do_action("AHEE__{$classname}__reactivation");
+		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 		add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ) );
+	}
+
+	public function deactivation(){
+		$classname = get_class($this);
+//		echo "Deactivating $classname";die;
+		do_action("AHEE__{$classname}__deactivation");
+		//check if the site no longer needs to be in maintenance mode
+		EE_Register_Addon::deregister( $this->name() );
+		EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
 	}
 
 
@@ -391,10 +401,44 @@ abstract class EE_Addon extends EE_Configurable {
 	public function set_config_section( $config_section = '' ) {
 		$this->_config_section = ! empty( $config_section ) ? $config_section : 'addons';
 	}
+	/**
+	 *	filepath to the main file, which can be used for register_activation_hook, register_deactivation_hook, etc.
+	 * @type string
+	 */
+	protected $_main_plugin_file;
 
+	/**
+	 *
+	 * Sets the filepath to the main plugin file
+	 * @param string $filepath
+	 */
+	public function set_main_plugin_file( $filepath ) {
+		$this->_main_plugin_file = $filepath;
+	}
+	/**
+	 * gets the filepath to teh main file
+	 * @return string
+	 */
+	public function get_main_plugin_file(){
+		return $this->_main_plugin_file;
+	}
 
+	/**
+	 * Gets the filename (no path) of the main file (the main file loaded
+	 * by WP)
+	 * @return string
+	 */
+	public function get_main_plugin_file_basename() {
+		return plugin_basename( $this->get_main_plugin_file() );
+	}
 
-
+	/**
+	 * Gets the folder name which contains the main plugin file
+	 * @return string
+	 */
+	public function get_main_plugin_file_dirname(){
+		return dirname( $this->get_main_plugin_file() );
+	}
 
 }
 // End of file EE_Addon.core.php
