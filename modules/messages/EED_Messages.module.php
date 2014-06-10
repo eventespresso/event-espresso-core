@@ -50,6 +50,9 @@ class EED_Messages  extends EED_Module {
 		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( 'EED_Messages', 'maybe_registration' ), 10, 3 );
 
 		//filters
+
+		//register routes
+		self::_register_routes();
 	}
 
 	/**
@@ -72,15 +75,86 @@ class EED_Messages  extends EED_Module {
 
 
 
+
 	/**
-	 * 	run - initial module setup
+	 * All the message triggers done by route go in here.
 	 *
-	 *  @access 	public
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	private static function _register_routes() {
+		EE_Config::register_route( __('msg_url_trigger', 'event_espresso'), 'Messages', 'run' );
+		do_action( 'AHEE__EED_Messages___register_routes' );
+	}
+
+
+
+
+	/**
+	 *  This runs when the msg_url_trigger route has initiated.
+	 *
+	 *  @since 4.5.0
+	 *  @throws EE_Error
+	 *
 	 *  @return 	void
 	 */
 	public function run( $WP ) {
-		//currently nothing happens
-		return;
+		$sending_messenger = EE_Registry::instance()->REQ->is_set('snd_msgr') ? EE_Registry::instance()->REQ->get('snd_msgr') : '';
+		$generating_messenger = EE_Registry::instance()->REQ->is_set('gen_msgr') ? EE_Registry::instance()->REQ->get('gen_msgr') : '';
+		$message_type = EE_Registry::instance()->REQ->is_set('message_type') ? EE_Registry::instance()->REQ->get('message_type') : '';
+		$context = EE_Registry::instance()->REQ->is_set('context') ? EE_Registry::instance()->REQ->get('context') : '';
+		$token = EE_Registry::instance()->REQ->is_set('token') ? EE_Registry::instance()->REQ->get('token') : '';
+		$data_id = EE_Registry::instance()->REQ->is_set('id') ? (int) EE_Registry::instance()->REQ->get('id') : 0;
+
+		//verify the needed params are present.
+		if ( empty( $sending_messenger ) || empty( $generating_messenger ) || empty( $message_type ) || empty( $context ) || empty( $token ) ) {
+			throw new EE_Error( __('The request for the "msg_url_trigger" route has a malformed url.', 'event_espresso') );
+		}
+
+		//retrieve the data via the handler
+		//How we do this is the token will always be the unique REG_url_link saved with a registration.  We use that to make sure we retrieve the correct data for the given registration.  Depending on the context and the message type data handler, the data_id will correspond to the specific data handler item we need to retrieve for specific messages (i.e. a specific payment or specific refund).  Otherwise the data sent for the messages "send_message" method will be assumed beginning from the registration.
+
+		$data = $this->_get_messages_data_from_url( $message_type, $token, $data_id );
+	}
+
+
+
+
+
+
+	/**
+	 * Given the token (reg_url_link) and (optionally) the $data_id, this returns the appropriate data object(s) for the given message_type.
+	 *
+	 * @since 4.5.0
+	 * @throws EE_Error
+	 *
+	 * @param string $message_type Used to figure out what data handler is used (which in turn enables us to know what data type is required)
+	 * @param string $token   the REG_url_link - this is the base for retrieving the related data.
+	 * @param int      $data_id Some data handlers require a specific object.  The id is used to provide that specific object.
+	 *
+	 * @return mixed  (EE_Base_Class||EE_Base_Class[])
+	 */
+	private function _get_messages_data_from_url( $message_type, $token, $data_id = 0 ) {
+
+		//ensure controller is loaded
+		self::_load_controller();
+
+		//get the registration.
+		$registration = EEM_Registration::instance()->get_one( array( 'REG_url_link' => $token ) );
+
+		//if no registration then bail early.
+		if ( ! $registration instanceof EE_Registration ) {
+			throw new EE_Error( __('Unable to complete the request because the token is invalid.', 'event_espresso' ) );
+		}
+
+		//get data handler from message type.
+
+
+		//get data according to data handler requirements
+
+
+
 	}
 
 
