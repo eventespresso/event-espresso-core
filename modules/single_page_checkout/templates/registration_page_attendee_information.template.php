@@ -10,7 +10,7 @@
 <div id="spco-attendee_information-dv" class="spco-step-dv <?php echo $step_dv_class; ?>">
 
 	<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
-        <?php echo apply_filters( 'FHEE__registration_page_attendee_information__attendee_information_pg', sprintf( __(' In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%1$s) are required.', 'event_espresso'), '<br />', '<span class="asterisk">*</span>' )); ?>
+        <?php echo apply_filters( 'FHEE__registration_page_attendee_information__attendee_information_pg', sprintf( __('In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%2$s) are required.', 'event_espresso'), '<br />', '<span class="asterisk">*</span>' )); ?>
 	</p>
 <?php if ( ! $from_admin ) : ?>
 	<form id="spco-registration-attendee_information-frm" action="<?php echo $reg_step_form_url;?>" method="post">

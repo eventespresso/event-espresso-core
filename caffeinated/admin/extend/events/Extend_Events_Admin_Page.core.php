@@ -346,7 +346,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$orig_datetimes = $orig_event->get_many_related('Datetime');
 
 		//other original relations
-		$orig_pos = $orig_event->get_many_related('Promotion_Object');
 		$orig_ven = $orig_event->get_many_related('Venue');
 
 
@@ -359,11 +358,6 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 		//save the new event
 		$new_event->save();
-
-		//Promotion Object
-		foreach ( $orig_pos as $pos ) {
-			$new_event->_add_relation_to( $pos, 'Promotion_Object' );
-		}
 
 		//venues
 		foreach( $orig_ven as $ven ) {
@@ -909,7 +903,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				);
 		}
 
-		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
+		$where = apply_filters( 'FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data );
+		$query_params = apply_filters( 'FHEE__Events_Admin_Page__get_events__query_params', array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ), $this->_req_data );
+
+
 
 		//let's first check if we have special requests coming in.
 		if ( isset( $this->_req_data['active_status'] ) ) {

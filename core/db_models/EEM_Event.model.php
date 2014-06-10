@@ -48,7 +48,7 @@ class EEM_Event  extends EEM_CPT_Base{
 	private static $_instance = NULL;
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the EEM_Event object
+	 *		This function is a singleton method used to instantiate the EEM_Event object
 	 *
 	 *		@access public
 	 *		@return EEM_Event instance
@@ -102,7 +102,7 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Event_CPT'=>array(
 				'EVT_ID'=>new EE_Primary_Key_Int_Field( 'ID', __( 'Post ID for Event','event_espresso' )),
 				'EVT_name'=>new EE_Plain_Text_Field( 'post_title', __( 'Event Name','event_espresso' ), FALSE, '' ),
-				'EVT_desc'=>new EE_Simple_HTML_Field( 'post_content', __( 'Event Description', 'event_espresso' ), FALSE, '' ),
+				'EVT_desc'=>new EE_Post_Content_Field( 'post_content', __( 'Event Description', 'event_espresso' ), FALSE, '' ),
 				'EVT_slug'=>new EE_Slug_Field( 'post_name', __( 'Event Slug', 'event_espresso' ), FALSE, '' ),
 				'EVT_created'=>new EE_Datetime_Field( 'post_date', __( 'Date/Time Event Created', 'event_espresso' ), FALSE, current_time( 'timestamp' )),
 				'EVT_short_desc'=>new EE_Simple_HTML_Field( 'post_excerpt', __( 'Event Short Description', 'event_espresso' ), FALSE,'' ),
@@ -138,8 +138,8 @@ class EEM_Event  extends EEM_CPT_Base{
 			'Question_Group'=>new EE_HABTM_Relation('Event_Question_Group'),
 			'Venue'=>new EE_HABTM_Relation('Event_Venue'),
 			'Term_Taxonomy'=>new EE_HABTM_Relation('Term_Relationship'),
-			'Promotion_Object'=>new EE_Has_Many_Any_Relation(),
-			'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template')
+			'Message_Template_Group' => new EE_HABTM_Relation('Event_Message_Template'),
+			'Attendee'=>new EE_HABTM_Relation('Registration'),
 		);
 
 		$this->_default_where_conditions_strategy = new EE_CPT_Where_Conditions('espresso_events', 'EVTM_ID');

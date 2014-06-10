@@ -338,7 +338,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	    $this->_session = !empty( $this->_transaction ) ? $this->_transaction->get('TXN_session_data') : NULL;
 
 	 	if ( empty( $this->_transaction ) ) {
-	    	$error_msg = __('An error occurred and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retreived.', 'event_espresso');
+	    	$error_msg = __('An error occurred and the details for Transaction ID #', 'event_espresso') . $TXN_ID .  __(' could not be retrieved.', 'event_espresso');
 			EE_Error::add_error( $error_msg, __FILE__, __FUNCTION__, __LINE__ );
 	    }
 	}
@@ -794,7 +794,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}
 			//update the transaction with this payment
-			if( $payment->apply_payment_to_transaction( TRUE ) ){
+			if( $payment->apply_payment_to_transaction() ){
 				$msg =__('The payment has been processed succesfully.', 'event_espresso');
 				EE_Error::add_success( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			}else{

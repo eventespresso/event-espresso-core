@@ -62,7 +62,6 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 			'Ticket'=>new EE_HABTM_Relation('Datetime_Ticket'),
 			'Event'=>new EE_Belongs_To_Relation(),
 			'Checkin'=>new EE_Has_Many_Relation(),
-			'Promotion_Object'=>new EE_Has_Many_Any_Relation()
 		);
 
 		parent::__construct( $timezone );
@@ -73,7 +72,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the Espresso_model object
+	 *		This function is a singleton method used to instantiate the Espresso_model object
 	 *
 	 *		@access public
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)

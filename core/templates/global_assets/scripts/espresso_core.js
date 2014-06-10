@@ -122,7 +122,21 @@
 			return this.each( function() {
 				$(this).css("visibility", "visible");
 			});
-		}
+		},
+
+
+
+		/**
+		 * This helper method simply removes any matching items from a js array.
+		 * @param  {array} arr js array to remove items from
+		 * @param  {string}   ind value of what element is being removed
+		 * @return {array}    new array with removed items
+		 */
+		removeFromArray: function( arr, ind ) {
+			return arr.filter( function(i) {
+				return i != ind;
+			});
+		},
 
 
 	});

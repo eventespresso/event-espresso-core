@@ -25,6 +25,7 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.3.0.P", "event_espresso");
+		$this->_priority = 10;
 		$this->_migration_stages = array(
 			new EE_DMS_4_3_0_question_option_order(),
 			new EE_DMS_4_3_0_event_message_templates(),
@@ -78,7 +79,6 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 								KEY ATT_lname (ATT_lname),
 								KEY ATT_email (ATT_email)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
 
 
 		$table_name = 'esp_country';
@@ -246,75 +246,6 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 					KEY TXN_ID (TXN_ID),
 					KEY PAY_timestamp (PAY_timestamp)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-		$table_name = 'esp_promotion';
-		$sql = "PRO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					PRC_ID INT UNSIGNED NOT NULL ,
-					PRO_scope VARCHAR(16) NOT NULL DEFAULT 'event' ,
-					PRO_start DATETIME NULL DEFAULT NULL ,
-					PRO_end DATETIME NULL DEFAULT NULL ,
-					PRO_code VARCHAR(45) NULL DEFAULT NULL ,
-					PRO_uses SMALLINT UNSIGNED NULL DEFAULT NULL ,
-					PRO_global TINYINT(1) NOT NULL DEFAULT 0 ,
-					PRO_global_uses SMALLINT UNSIGNED NOT NULL DEFAULT 0 ,
-					PRO_exclusive TINYINT(1) NOT NULL DEFAULT 0 ,
-					PRO_accept_msg TINYTEXT NULL DEFAULT NULL ,
-					PRO_decline_msg TINYTEXT NULL DEFAULT NULL ,
-					PRO_default TINYINT(1) NOT NULL DEFAULT 0 ,
-					PRO_order TINYINT UNSIGNED NOT NULL DEFAULT 40 ,
-					PRIMARY KEY  (PRO_ID) ,
-					KEY PRC_ID (PRC_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-		$table_name = 'esp_promotion_object';
-		$sql = "POB_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-			PRO_ID INT UNSIGNED NOT NULL,
-			OBJ_ID INT UNSIGNED NOT NULL,
-			POB_type VARCHAR(45) NULL,
-			POB_used INT NULL,
-			PRIMARY KEY  (POB_ID),
-			KEY OBJ_ID (OBJ_ID),
-			KEY PRO_ID (PRO_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-		$table_name = 'esp_promotion_applied';
-		$sql = "PRA_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-			PRO_ID INT UNSIGNED NOT NULL,
-			OBJ_ID INT UNSIGNED NOT NULL,
-			POB_type VARCHAR(45) NULL,
-			PRIMARY KEY  (PRA_ID),
-			KEY OBJ_ID (OBJ_ID),
-			KEY PRO_ID (PRO_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-		$table_name = 'esp_promotion_rule';
-		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					PRO_ID INT UNSIGNED NOT NULL ,
-					RUL_ID INT UNSIGNED NOT NULL ,
-					PRR_order TINYINT UNSIGNED NOT NULL DEFAULT 1,
-					PRR_add_rule_comparison ENUM('AND','OR') NULL DEFAULT 'AND',
-					PRIMARY KEY  (PRR_ID) ,
-					KEY PRO_ID (PRO_ID),
-					KEY RUL_ID (RUL_ID) ";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-
-
-		$table_name = 'esp_rule';
-		$sql = "RUL_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					RUL_name VARCHAR(45) NOT NULL ,
-					RUL_desc TEXT NULL ,
-					RUL_trigger VARCHAR(45) NOT NULL ,
-					RUL_trigger_type VARCHAR(45) NULL DEFAULT NULL ,
-					RUL_comparison ENUM('=','!=','<','>') NOT NULL DEFAULT '=' ,
-					RUL_value VARCHAR(45) NOT NULL ,
-					RUL_value_type VARCHAR(45) NULL DEFAULT NULL ,
-					RUL_is_active TINYINT(1) NOT NULL DEFAULT 1 ,
-					RUL_archived TINYINT(1) NOT NULL DEFAULT 0 ,
-					PRIMARY KEY  (RUL_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-
 
 		$table_name = "esp_ticket";
 		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -569,7 +500,8 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 		//setting up default prices, price types, and tickets is also essential for the price migrations
 		$script_with_defaults->insert_default_price_types();
 		$script_with_defaults->insert_default_prices();
-		$script_with_defaults->insert_default_tickets();
+		//but the schema on the tickets table has changed since 4.1, so use our default ticket method instead of 4.1's
+		$this->insert_default_tickets();
 
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
 		EE_Config::instance()->update_espresso_config(false, true);
@@ -585,6 +517,52 @@ class EE_DMS_Core_4_3_0 extends EE_Data_Migration_Script_Base{
 	public function migration_page_hooks(){
 
 	}
+
+	/**
+	 * insert default ticket
+	 * Almost identical to EE_DMS_Core_4_1_0::insert_default_tickets, except is aware of the TKT_required field
+	 *
+	 * @access public
+	 * @static
+	 * @return void
+	 */
+	public function insert_default_tickets() {
+
+		global $wpdb;
+		$ticket_table = $wpdb->prefix."esp_ticket";
+		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_table'") == $ticket_table ) {
+
+			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
+			$tickets_exist = $wpdb->get_var($SQL);
+
+			if ( ! $tickets_exist ) {
+				$SQL = "INSERT INTO $ticket_table
+					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_deleted ) VALUES
+					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, 0);";
+				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL', $SQL );
+				$wpdb->query($SQL);
+			}
+		}
+		$ticket_price_table = $wpdb->prefix."esp_ticket_price";
+
+		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_price_table'") == $ticket_price_table ) {
+
+			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
+			$ticket_prc_exist = $wpdb->get_var($SQL);
+
+			if ( ! $ticket_prc_exist ) {
+
+				$SQL = "INSERT INTO $ticket_price_table
+				( TKP_ID, TKT_ID, PRC_ID ) VALUES
+				( 1, 1, 1 )
+				";
+
+				$SQL = apply_filters( 'FHEE__EE_DMS_4_1_0__insert_default_tickets__SQL__ticket_price', $SQL );
+				$wpdb->query($SQL);
+			}
+		}
+	}
+
 }
 
 

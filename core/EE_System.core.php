@@ -34,6 +34,9 @@ final class EE_System {
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
 	 * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc.
+	 * Also, if an addon is activated while the site is in maintenance mode, that is ALSO considered a
+	 * 'normal' request (because it shouldn't setup its default data because its tables might not exist).
+	 * Instead, the first request once EE is out of maintenance mode will be considered the addon's activation request
 	 */
 	const req_type_normal = 0;
 	/**
@@ -55,6 +58,11 @@ final class EE_System {
 	const req_type_downgrade = 4;
 
 	/**
+	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
+	 */
+	const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
+
+	/**
 	 * Stores which type of request this is, options being one of the constants on EE_System starting with req_type_*.
 	 * It can be a brand-new activation, a reactivation, an upgrade, a downgrade, or a normal request.
 	 * @var int
@@ -74,6 +82,14 @@ final class EE_System {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
+	}
+	/**
+	 * resets the instance and returns it
+	 * @return EE_System
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 
 
@@ -115,8 +131,11 @@ final class EE_System {
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
+		// when an ee addon is activated, we want to call the core hook(s) again
+		// because the newly-activated addon didn't get a chance to run at all
+		add_action( 'activate_plugin', array( $this, 'load_espresso_addons' ), 1 );
 		// detect whether install or upgrade
-		add_action( 'plugins_loaded', array( $this, 'detect_if_activation_or_upgrade' ), 3 );
+		add_action( 'plugins_loaded', array( $this, 'detect_activations_or_upgrades' ), 3 );
 		// load EE_Config, EE_Textdomain, etc
 		add_action( 'plugins_loaded', array( $this, 'load_core_configuration' ), 5 );
 		// load EE_Config, EE_Textdomain, etc
@@ -128,11 +147,14 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__construct__complete', $this );
 	}
 
+
+
 	/**
-	 * 	_check_wp_version
+	 *    _check_wp_version
 	 *
-	 * 	@access private
-	 * 	@return boolean
+	 * @access private
+	 * @param string $min_version
+	 * @return boolean
 	 */
 	private function _check_wp_version( $min_version = EE_MIN_WP_VER_REQUIRED ) {
 		global $wp_version;
@@ -159,11 +181,14 @@ final class EE_System {
 		return $this->_check_wp_version( EE_MIN_WP_VER_RECOMMENDED );
 	}
 
+
+
 	/**
-	 * 	_check_php_version
+	 *    _check_php_version
 	 *
-	 * 	@access private
-	 * 	@return boolean
+	 * @access private
+	 * @param string $min_version
+	 * @return boolean
 	 */
 	private function _check_php_version( $min_version = EE_MIN_PHP_VER_RECOMMENDED ) {
 		return version_compare( PHP_VERSION, $min_version, '>=' ) ? TRUE : FALSE;
@@ -300,8 +325,18 @@ final class EE_System {
 	}
 
 
-
-
+	/**
+	 * Checks for activation or upgrade of core first; then also checks if any registered
+	 * addons have been activated or upgraded
+	 */
+	public function detect_activations_or_upgrades(){
+		//first off: let's make sure to handle core
+		$this->detect_if_activation_or_upgrade();
+		foreach(EE_Registry::instance()->addons as $addon){
+			//detect teh request type for that addon
+			$addon->detect_activation_or_upgrade();
+		}
+	}
 	/**
 	* detect_if_activation_or_upgrade
 	*
@@ -312,7 +347,6 @@ final class EE_System {
 	* @return void
 	*/
 	public function detect_if_activation_or_upgrade() {
-
 		do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
 
 		//this filter is present to make it easier to bypass the admin/user check here so we can setup the db when running tests.
@@ -324,18 +358,21 @@ final class EE_System {
 		// load M-Mode class
 		EE_Registry::instance()->load_core( 'Maintenance_Mode' );
 		// check if db has been updated, or if its a brand-new installation
+
 		$espresso_db_update = $this->fix_espresso_db_upgrade_option();
-		$request_type = $testsbypass ? EE_system::req_type_new_activation : $this->detect_req_type($espresso_db_update);
+		$request_type =  $this->detect_req_type($espresso_db_update);
 //		echo "request type:".$request_type;
 		if( $request_type != EE_System::req_type_normal){
 			EE_Registry::instance()->load_helper('Activation');
 		}
+
 		switch($request_type){
 			case EE_System::req_type_new_activation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation' );
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
+				$this->check_ee3addons();
 				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
@@ -366,6 +403,24 @@ final class EE_System {
 		}
 		do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__complete' );
 	}
+
+
+
+	/**
+	 * check to see if any ee3addons are active and if they are deactivate and throw up message.
+	 *
+	 * @param string $plugin
+	 * @param bool   $network_wide
+	 * @return void
+	 */
+	public function check_ee3addons( $plugin = '', $network_wide = false ) {
+		//check for and deactivate and EE3 addons and deactivate (user-proofing)
+		if ( ! class_exists( 'EEH_Activation' )) {
+			EE_Registry::instance()->load_helper('Activation');
+		}
+		EEH_Activation::screen_for_ee3_addons( $plugin );
+	}
+
 
 
 
@@ -438,6 +493,10 @@ final class EE_System {
 			EEH_Activation::system_initialization();
 			EEH_Activation::initialize_db_and_folders();
 			EEH_Activation::initialize_db_content();
+			//foreach registered addon, make sure its db is up-to-date too
+			foreach(EE_Registry::instance()->addons as $addon){
+				$addon->initialize_db_if_no_migrations_required();
+			}
 		}
 		if ( $request_type == EE_System::req_type_new_activation || $request_type == EE_System::req_type_reactivation || $request_type == EE_System::req_type_upgrade ) {
 			add_action( 'AHEE__EE_System__load_CPTs_and_session__start', array( $this, 'redirect_to_about_ee' ), 9 );
@@ -448,18 +507,21 @@ final class EE_System {
 
 	/**
 	 * Adds the current code version to the saved wp option which stores a list of all ee versions ever installed.
-	 *
-	 * @param null $espresso_db_update
-	 * @internal param array $espresso_db_update_value the value of the WordPress option. If not supplied, fetches it from the options table
-	 * @return boolean success as to whether or not this option was changed
+	 * @param 	array 	$version_history
+	 * @param 	string 	$current_version_to_add 	version to be added to the version history
+	 * @return 	boolean success as to whether or not this option was changed
 	 */
-	public function update_list_of_installed_versions($espresso_db_update = null){
-		$espresso_db_update = $this->fix_espresso_db_upgrade_option($espresso_db_update);
-		$espresso_db_update[ EVENT_ESPRESSO_VERSION ][] = date( 'Y-m-d H:i:s' );
-		// resave
-		return update_option( 'espresso_db_update', $espresso_db_update );
+	public function update_list_of_installed_versions($version_history = NULL,$current_version_to_add = NULL) {
+		if( ! $version_history ) {
+			$version_history = $this->fix_espresso_db_upgrade_option($version_history);
+		}
+		if( $current_version_to_add == NULL){
+			$current_version_to_add = espresso_version();
+		}
+		$version_history[ $current_version_to_add ][] = date( 'Y-m-d H:i:s',time() );
+		// re-save
+		return update_option( 'espresso_db_update', $version_history );
 	}
-
 
 
 	/**
@@ -479,28 +541,48 @@ final class EE_System {
 
 		if ( $this->_req_type === NULL ){
 			$espresso_db_update = ! empty( $espresso_db_update ) ? $espresso_db_update : $this->fix_espresso_db_upgrade_option();
-			if( $espresso_db_update ){
+			$this->_req_type = $this->detect_req_type_given_activation_history($espresso_db_update,'ee_espresso_activation',espresso_version());
+		}
+		return $this->_req_type;
+	}
+	/**
+	 * Determines the request type for any ee addon, given three piece of info: the current array of activation histories (for core that' 'espresso_db_update' wp option); the name of the wordpress option which is temporarily set upon activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin
+	 * was just activated to (for core that will alwasy be espreso_version())
+	 * @param array $activation_history_for_addon the option's value which stores the activation history for this ee plugin.
+	 * for core that's 'espresso_db_update'
+	 * @param string $activation_indicator_option_name the name of the wordpress option that is temporarily set to indicate that this plugin was just activated
+	 * @param string $version_to_upgrade_to the version that was just upgraded to (for core that will be espresso_version())
+	 * @return int one of the consts on EE_System::req_type_*
+	 */
+	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
+		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
+			$req_type = EE_System::req_type_normal;
+		}else{
+			if( $activation_history_for_addon ){
 				//it exists, so this isn't a completely new install
 				//check if this version already in that list of previously installed versions
-				if ( ! isset( $espresso_db_update[ EVENT_ESPRESSO_VERSION ] )) {
+				if ( ! isset( $activation_history_for_addon[ $version_to_upgrade_to ] )) {
 					//its a new version!
-					$this->_req_type = EE_System::req_type_upgrade;
+					$req_type = EE_System::req_type_upgrade;
+					delete_option( $activation_indicator_option_name );
 				} else {
 					// its not an update. maybe a reactivation?
-					if( get_option( 'ee_espresso_activation', FALSE )){
-						$this->_req_type = EE_System::req_type_reactivation;
-						delete_option( 'ee_espresso_activation' );
+					if( get_option( $activation_indicator_option_name, FALSE )){
+						$req_type = EE_System::req_type_reactivation;
+						delete_option( $activation_indicator_option_name );
 					} else {
 						//its not a new install, not an upgrade, and not even a reactivation. its nothing special
-						$this->_req_type = EE_System::req_type_normal;
+						$req_type = EE_System::req_type_normal;
 					}
 				}
 			} else {
 				//it doesn't exist. It's a completely new install
-				$this->_req_type = EE_System::req_type_new_activation;
+				$req_type = EE_System::req_type_new_activation;
+				delete_option( $activation_indicator_option_name );
 			}
 		}
-		return $this->_req_type;
+//		echo "req type for ".$activation_indicator_option_name." was $req_type";
+		return $req_type;
 	}
 
 
@@ -533,7 +615,8 @@ final class EE_System {
 		//load textdomain
 		EE_Load_Textdomain::load_textdomain();
 		// check for activation errors
-		if ( $activation_errors = get_option( 'ee_plugin_activation_errors', FALSE )) {
+		$activation_errors = get_option( 'ee_plugin_activation_errors', FALSE );
+		if ( $activation_errors ) {
 			EE_Error::add_error( $activation_errors );
 			update_option( 'ee_plugin_activation_errors', FALSE );
 		}
@@ -555,6 +638,8 @@ final class EE_System {
 	private function _parse_model_names(){
 		//get all the files in the EE_MODELS folder that end in .model.php
 		$models = glob( EE_MODELS.'*.model.php');
+		$model_names = array();
+		$non_abstract_db_models = array();
 		foreach( $models as $model ){
 			// get model classname
 			$classname = EEH_File::get_classname_from_filepath_with_standard_filename( $model );
@@ -593,7 +678,38 @@ final class EE_System {
 	*/
 	public function register_shortcodes_modules_and_widgets() {
 		do_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets' );
+		// check for addons using old hookpoint
+		if ( has_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons' )) {
+			$this->_incompatible_addon_error();
+		}
 	}
+
+
+	/**
+	* _incompatible_addon_error
+	*
+	* @access public
+	* @return void
+	*/
+	private function _incompatible_addon_error() {
+		// get array of classes hooking into here
+		$class_names = EEH_Class_Tools::get_class_names_for_all_callbacks_on_hook( 'AHEE__EE_System__register_shortcodes_modules_and_addons' );
+		if ( ! empty( $class_names )) {
+			$msg = __( 'The following plugins, addons, or modules appear to be incompatible with this version of Event Espresso and were automatically deactivated to avoid fatal errors:', 'event_espresso' );
+			$msg .= '<ul>';
+			foreach ( $class_names as $class_name ) {
+				$msg .= '<li><b>Event Espresso - ' . str_replace( array( 'EE_', 'EEM_', 'EED_', 'EES_', 'EEW_' ), '', $class_name ) . '</b></li>';
+			}
+			$msg .= '</ul>';
+			$msg .= __( 'Compatibility issues can be avoided and/or resolved by keeping addons and plugins updated to the latest version.', 'event_espresso' );
+			// save list of incompatible addons to wp-options for later use
+			add_option( 'ee_incompatible_addons', $class_names, '', 'no' );
+			if ( is_admin() ) {
+				EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
+			}
+		}
+	}
+
 
 
 
@@ -621,6 +737,8 @@ final class EE_System {
 		if ( is_admin()  ) {
 			// pew pew pew
 			EE_Registry::instance()->load_core( 'PUE' );
+			//check ee3addons status
+			add_action( 'activated_plugin', array( $this, 'check_ee3addons' ), 10, 2 );
 		}
 		do_action( 'AHEE__EE_System__brew_espresso__complete', $this );
 	}
@@ -635,7 +753,29 @@ final class EE_System {
 	 *  	@return 	void
 	 */
 	public function set_hooks_for_core() {
+		$this->_deactivate_incompatible_addons();
 		do_action( 'AHEE__EE_System__set_hooks_for_core' );
+	}
+
+
+
+	/**
+	 * Using the information gathered in EE_System::_incompatible_addon_error,
+	 * deactivates any addons considered incompatible with the current version of EE
+	 */
+	private function _deactivate_incompatible_addons(){
+		$incompatible_addons = get_option( 'ee_incompatible_addons', array() );
+		if ( ! empty( $incompatible_addons )) {
+			$active_plugins = get_option( 'active_plugins', array() );
+			foreach ( $active_plugins as $active_plugin ) {
+				foreach ( $incompatible_addons as $incompatible_addon ) {
+					if ( strpos( $active_plugin,  $incompatible_addon ) !== FALSE ) {
+						deactivate_plugins( $active_plugin );
+						unset( $_GET['activate'] );
+					}
+				}
+			}
+		}
 	}
 
 
@@ -666,10 +806,7 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__start' );
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
-		// session loading is turned ON by default, but prior to the init hook, can be turned back OFF via: add_filter( 'FHEE_load_EE_Session', '__return_false' );
-		if ( apply_filters( 'FHEE_load_EE_Session', TRUE ) ) {
-			EE_Registry::instance()->load_core( 'Session' );
-		}
+		EE_Registry::instance()->load_core( 'Session' );
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__complete' );
 	}
 
@@ -784,10 +921,11 @@ final class EE_System {
 
 
 	/**
-	 * 	espresso_toolbar_items
+	 *    espresso_toolbar_items
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param $admin_bar
+	 * @return    void
 	 */
 	public function espresso_toolbar_items( $admin_bar ) {
 

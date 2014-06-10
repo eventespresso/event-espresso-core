@@ -86,7 +86,7 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function event_status( $EVT_ID = FALSE ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
-		return $event instanceof EE_Event ? $event->pretty_active_status( FALSE, FALSE ) : '';
+		return $event instanceof EE_Event ? $event->pretty_active_status( FALSE ) : '';
 	}
 
 

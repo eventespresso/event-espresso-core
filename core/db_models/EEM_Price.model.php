@@ -33,7 +33,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 * 		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 * 		@access public
 	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
@@ -77,7 +77,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRT_ID'=>new EE_Foreign_Key_Int_Field('PRT_ID', 'Price type Id', false,  NULL, 'Price_Type'),
 				'PRC_amount'=>new EE_Money_Field('PRC_amount', 'Price Amount', false, 0),
 				'PRC_name'=>new EE_Plain_Text_Field('PRC_name', 'Name of Price', false, ''),
-				'PRC_desc'=>new EE_Simple_HTML_Field('PRC_desc', 'Price Description', false, ''),
+				'PRC_desc'=>new EE_Post_Content_Field('PRC_desc', 'Price Description', false, ''),
 				'PRC_is_default'=>new EE_Boolean_Field('PRC_is_default', 'Flag indicating whether price is a default price', false, true),
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
@@ -112,20 +112,20 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive  ALL prices from db
+	 * 		retrieve  ALL prices from db
 	 *
 	 * 		@access		public
 	 * 		@return		EE_PRice[]
 	 */
 	public function get_all_prices() {
-		// retreive all prices
+		// retrieve all prices
 		return $this->get_all(array('order_by'=>array('PRC_amount'=>'ASC')));
 	}
 
 
 
 	/**
-	 * 		retreive all active prices for a particular event
+	 * 		retrieve all active prices for a particular event
 	 *
 	 * 		@access		public
 	 * 		@return 		array				on success
@@ -143,7 +143,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive all active global prices for a particular event
+	 * 		retrieve all active global prices for a particular event
 	 *
 	 * 		@access		public
 	 * 		@param 			boolean $count  return count
@@ -173,7 +173,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive all prices that are taxes
+	 * 		retrieve all prices that are taxes
 	 *
 	 * 		@access		public
 	 * 		@return 		array				on success
@@ -200,7 +200,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive all prices for an ticket plus default global prices, but not taxes
+	 * 		retrieve all prices for an ticket plus default global prices, but not taxes
 	 *
 	 * 		@access		public
 	 * 		@param int     $TKT          the id of the event.  If not included then we assume that this is a new ticket.

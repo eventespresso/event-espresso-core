@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Maintenance_Admin_Page
  *
- * This contains the logic for setting up the Event Maintenance related admin pages.  Any methods without phpdoc comments have inline docs with parent class. 
+ * This contains the logic for setting up the Event Maintenance related admin pages.  Any methods without phpdoc comments have inline docs with parent class.
  *
  *
  * @package		Maintenance_Admin_Page
@@ -115,7 +115,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'system_status'=>array(
 				'nav'=>array(
 					'label'=>  __("System Information", "event_espresso"),
-					'order'=>30	
+					'order'=>30
 				),
 				'require_nonce' => FALSE,
 				//'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
@@ -127,17 +127,21 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	 * default maintenance page. If we're in maintenance mode level 2, then we need to show
 	 * the migration scripts and all that UI.
 	 */
-	public function _maintenance(){		
-//		$migration_scripts = EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts();
-//		$migration_script = end($migration_scripts);
-//		d($migration_script);
-//		$p = $migration_script->properties_as_array();
-//		d($p);
-//		$dm = EE_Data_Migration_Manager::instance()->_instantiate_script_from_properties_array($p);
-//		dd($dm);
+	public function _maintenance(){
 		//it all depends if we're in maintenance model level 1 (frontend-only) or
 		//level 2 (everything except maintenance page)
 		try{
+			//get the current maintenance level and check if
+			//we are removed
+			$mm = EE_Maintenance_Mode::instance()->level();
+			$placed_in_mm = EE_Maintenance_Mode::instance()->set_maintenance_mode_if_db_old();
+			if( $mm == EE_Maintenance_Mode::level_2_complete_maintenance && ! $placed_in_mm){
+				//we just took the site out of maintenance mode, so notify the user.
+				//unfortunately this message appears to be echoed on the NEXT page load...
+				//oh well, we should really be checking for this on addon deactivation anyways
+				EE_Error::add_attention( __( 'Site taken out of maintenance mode because no data migration scripts are required', 'event_espresso' ) );
+				$this->_process_notices( array( 'page' => 'espresso_maintenance_settings'), false );
+			}
 			//in case an exception is thrown while trying to handle migrations
 			switch(EE_Maintenance_Mode::instance()->level()){
 				case EE_Maintenance_Mode::level_0_not_in_maintenance:
@@ -174,7 +178,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			$most_recent_migration = EE_Data_Migration_Manager::instance()->get_last_ran_script(true);
 			$exception_thrown = false;
 		}catch(EE_Error $e){
-			
+
 			EE_Data_Migration_Manager::instance()->add_error_to_migrations_ran($e->getMessage());
 			//now, just so we can display the page correctly, make a error migraiton script stage object
 			//and also put the error on it. It only persists for the duration of this request
@@ -183,8 +187,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			$exception_thrown = true;
 		}
 		$current_db_state = EE_Data_Migration_Manager::instance()->ensure_current_database_state_is_set();
-		if($exception_thrown || 
-				(	$most_recent_migration && 
+		if($exception_thrown ||
+				(	$most_recent_migration &&
 					$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
 					$most_recent_migration->is_borked()
 				)){
@@ -193,7 +197,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		}elseif($addons_should_be_upgraded_first){
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_upgrade_addons_before_migrating.template.php';
 		}else{
-			if($most_recent_migration && 
+			if($most_recent_migration &&
 					$most_recent_migration instanceof EE_Data_Migration_Class_Base &&
 					$most_recent_migration->can_continue()){
 				$show_backup_db_text = false;
@@ -206,14 +210,16 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				$show_most_recent_migration = false;
 				$show_continue_current_migration_script = false;
 			}
-		
+
 			if(isset($current_script)){
-				list($plugin_slug,$new_version) = $current_script->migrates_to_version();
+				$migrates_to = $current_script->migrates_to_version();
+				$plugin_slug = $migrates_to[ 'slug' ];
+				$new_version = $migrates_to[ 'version' ];
 				$this->_template_args = array_merge($this->_template_args,array(
 					'current_db_state'=>  sprintf(__("EE%s (%s)", "event_espresso"), isset($current_db_state[$plugin_slug]) ? $current_db_state[$plugin_slug] : 3,$plugin_slug),
 					'next_db_state'=>isset($current_script) ? sprintf(__("EE%s (%s)", 'event_espresso'),$new_version,$plugin_slug) : NULL));
 			}
-			
+
 			$this->_template_path = EE_MAINTENANCE_TEMPLATE_PATH . 'ee_migration_page.template.php';
 			$this->_template_args = array_merge($this->_template_args,array(
 			'show_most_recent_migration' => $show_most_recent_migration,//flag for showing the most recent migration's status and/or errors
@@ -223,7 +229,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 			'script_names'=>$script_names,//array of names of scripts that have run
 			'show_continue_current_migration_script'=>$show_continue_current_migration_script,//flag to change wording to indicating that we're only CONTINUING a migration script (somehow it got interrupted0
 			'reset_db_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'start_with_fresh_ee4_db'), EE_MAINTENANCE_ADMIN_URL),
-			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL), 
+			'update_migration_script_page_link' => EE_Admin_Page::add_query_args_and_nonce(array('action'=>'change_maintenance_level'),EE_MAINTENANCE_ADMIN_URL),
 			'ultimate_db_state'=>  sprintf(__("EE%s", 'event_espresso'),espresso_version()),
 		));
 		//make sure we have the form fields helper available. It usually is, but sometimes it isn't
@@ -314,8 +320,8 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		$from = $this->_req_data['from'];
 		$from_name = $this->_req_data['from_name'];
 		$body = $this->_req_data['body'];
-		$success = wp_mail(EE_SUPPORT_EMAIL, 
-				'Migration Crash Report', 
+		$success = wp_mail(EE_SUPPORT_EMAIL,
+				'Migration Crash Report',
 				$body."/r/n<br>".  print_r(EEM_System_Status::instance()->get_system_stati(),true),
 				array(
 					"from:$from_name<$from>",
@@ -335,7 +341,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	}
 
 
-	
+
 	/**
 	 * Resets the entire EE4 database.
 	 * Currently basically only sets up ee4 database for a fresh install- doesn't
@@ -352,10 +358,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		}
 		EE_System::instance()->initialize_db_if_no_migrations_required();
 		EE_System::instance()->redirect_to_about_ee();
-	}	
+	}
 
 
-	
+
 	/**
 	 * Deletes ALL EE tables, Records, and Options from the database.
 	 */
@@ -366,7 +372,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EEH_Activation::delete_all_espresso_tables_and_data();
 		EEH_Activation::deactivate_event_espresso();
 		wp_safe_redirect( admin_url( 'plugins.php' ));
-	}	
+	}
 
 	/**
 	 * sets up EE4 to rerun the migrations from ee3 to ee4
@@ -378,7 +384,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 		EEH_Activation::delete_all_espresso_tables_and_data(false);
 		//set the db state to something that will require migrations
 		update_option(EE_Data_Migration_Manager::current_database_state, '3.1.36.0');
-		
+
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_2_complete_maintenance);
 		$this->_redirect_after_action(true, __("Database", 'event_espresso'), __("reset", 'event_espresso'));
 	}
@@ -390,7 +396,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 	public function admin_init() {}
 	public function admin_notices() {}
 	public function admin_footer_scripts() {}
-	
+
 
 
 
@@ -400,7 +406,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 //		wp_enqueue_media();
 //		wp_enqueue_script('media-upload');
 		wp_enqueue_script('ee-maintenance',EE_MAINTENANCE_ASSETS_URL.'/ee-maintenance.js',array('jquery'),EVENT_ESPRESSO_VERSION,true);
-		
+
 		wp_register_style( 'espresso_maintenance', EE_MAINTENANCE_ASSETS_URL . 'ee-maintenance.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_maintenance');
 	}

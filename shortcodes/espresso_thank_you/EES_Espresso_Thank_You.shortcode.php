@@ -15,9 +15,9 @@
  *
  * EES_Espresso_Thank_You
  *
- * @package			Event Espresso
- * @subpackage		/shortcodes/
- * @author				Brent Christensen
+ * @package		 	Event Espresso
+ * @subpackage 	/shortcodes/
+ * @author 				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -58,7 +58,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	private $_SPCO_attendee_information_url = NULL;
 
 	/**
-	 * The URL for revisting the SPCO payment options step
+	 * The URL for revisiting the SPCO payment options step
 	 * @var string $_SPCO_payment_options_url
 	 */
 	private $_SPCO_payment_options_url = NULL;
@@ -248,6 +248,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function init() {
 		//get the transaction. yes, we may have just loaded it, but it may have been updated, or this may be via an ajax request
 		$this->_current_txn = EE_Registry::instance()->load_model( 'Transaction' )->get_transaction_from_reg_url_link( $this->_reg_url_link );
+		// verify TXN
 		if ( ! $this->_current_txn instanceof EE_Transaction ) {
 			EE_Error::add_error(
 				__( 'No transaction information could be retrieved or the transaction data is not of the correct type.', 'event_espresso' ),
@@ -292,7 +293,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *
 	 *  @access 	public
 	 *  @param	array 	$attributes
-	 *  @return 	mixed string
+	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
 
@@ -320,16 +321,16 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 
 	/**
-	 *    thank_you_page_IPN_monitor
-	 *    this basically just pulls the TXN based on the reg_url_link sent from the server,
-	 *    then checks that the TXN status is not failed, and that no other errors have been generated.
-	 *    it also calculates the IPN wait time since the Thank You page was first loaded
+	 * 	thank_you_page_IPN_monitor
+	 * 	this basically just pulls the TXN based on the reg_url_link sent from the server,
+	 * 	then checks that the TXN status is not failed, and that no other errors have been generated.
+	 * 	it also calculates the IPN wait time since the Thank You page was first loaded
 	 *
-	 * @access    public
+	 *  @access 	public
 	 * @param array  $response
 	 * @param array  $data
 	 * @param string $screen_id
-	 * @return    array
+	 *  @return 	array
 	 */
 	public static function thank_you_page_IPN_monitor( $response = array(), $data = array() ) {
 		// does this heartbeat contain our data ?
@@ -506,6 +507,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function get_ajax_content() {
+		$offline_payment_methods = array( 'Bank', 'Check', 'Invoice' );
 ?>
 	<div id="espresso-thank-you-page-ajax-content-dv">
 		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
@@ -514,10 +516,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			<div id="ee-ajax-loading-dv" class="left lt-blue-text">
 				<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e( 'loading transaction and payment information...', 'event_espresso' );?></span>
 			</div>
+			<?php if ( ! in_array( $this->_current_txn->selected_gateway(), $offline_payment_methods )) : ?>
 			<p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
 				<?php echo apply_filters( 'EES_Espresso_Thank_You__get_ajax_content__waiting_for_IPN_msg', __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' ));?><br/>
 				<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' );?><span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
 			</p>
+			<?php endif; ?>
 		</div>
 		<div class="clear"></div>
 	</div>
@@ -560,6 +564,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function get_payment_row_html( $payment = NULL ) {
 		$html = '';
 		if ( $payment instanceof EE_Payment ) {
+			$payment_declined_msg = $payment->STS_ID() === EEM_Payment::status_id_declined ? '<br /><span class="small-text">' . $payment->gateway_response() . '</span>' : '';
 			$html .= '
 				<tr>
 					<td>
@@ -571,10 +576,11 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 					<td class="jst-rght">
 						' . EEH_Template::format_currency( $payment->amount() ) . '
 					</td>
-					<td class="jst-rght">
-						' . $payment->pretty_status( TRUE ) . '
+					<td class="jst-rght" style="line-height:1;">
+						' . $payment->pretty_status( TRUE ) . $payment_declined_msg . '
 					</td>
 				</tr>';
+				do_action( 'AHEE__thank_you_page_payment_details_template__after_each_payment', $payment );
 		}
 		return $html;
 	}
@@ -643,4 +649,3 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 }
 // End of file EES_Espresso_Thank_You.shortcode.php
 // Location: /shortcodes/EES_Espresso_Thank_You.shortcode.php
-

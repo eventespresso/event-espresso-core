@@ -65,7 +65,7 @@ final class EE_Module_Request_Router {
 	 *    it checks the previous routes array, and checks if the last called route has any forwarding routes registered for it
 	 *
 	 * @access    public
-	 * @param   WP_Query $WP
+	 * @param WP_Query $WP_Query
 	 * @return    string | NULL
 	 */
 	public function get_route( WP_Query $WP_Query ) {
@@ -165,7 +165,7 @@ final class EE_Module_Request_Router {
 			return FALSE;
 		}
 		// instantiate module and call route method
-		$module = $this->_module_route_factory( $module_name, $method );
+		$module = $this->_module_router( $module_name, $method );
 		if ( $module instanceof EED_Module ) {
 			return $module;
 		}
@@ -175,16 +175,15 @@ final class EE_Module_Request_Router {
 
 
 	/**
-	 *    _module_route_factory
+	 *    module_factory
 	 *
 	 *    this method instantiates modules and calls the method that was defined when the route was registered
 	 *
 	 * @access    public
 	 * @param   string  $module_name
-	 * @param   string  $method
 	 * @return    EED_Module | boolean
 	 */
-	private function _module_route_factory( $module_name, $method ) {
+	public static function module_factory( $module_name ) {
 		// let's pause to reflect on this...
 		$mod_reflector = new ReflectionClass( $module_name );
 		// ensure that class is actually a module
@@ -193,9 +192,25 @@ final class EE_Module_Request_Router {
 			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
-		// and pass the EE_Registry object to the run method
-		$module = $mod_reflector->newInstance( EE_Registry::instance() );
-		// now call whatever action the route was for
+		// instantiate and return module class
+		return $mod_reflector->newInstance();
+	}
+
+
+	/**
+	 *    _module_router
+	 *
+	 *    this method instantiates modules and calls the method that was defined when the route was registered
+	 *
+	 * @access    private
+	 * @param   string  $module_name
+	 * @param   string  $method
+	 * @return    EED_Module | boolean
+	 */
+	private function _module_router( $module_name, $method ) {
+		// instantiate module class
+		$module = EE_Module_Request_Router::module_factory( $module_name );
+		// and call whatever action the route was for
 		call_user_func( array( $module, $method ), $this->WP_Query );
 		return $module;
 	}
@@ -229,15 +244,55 @@ final class EE_Module_Request_Router {
 
 
 	/**
-	 *		@ override magic methods
-	 *		@ return void
+	 * @param $a
+	 * @param $b
+	 * @return bool
 	 */
 	public function __set($a,$b) { return FALSE; }
+
+
+
+	/**
+	 * @param $a
+	 * @return bool
+	 */
 	public function __get($a) { return FALSE; }
+
+
+
+	/**
+	 * @param $a
+	 * @return bool
+	 */
 	public function __isset($a) { return FALSE; }
+
+
+
+	/**
+	 * @param $a
+	 * @return bool
+	 */
 	public function __unset($a) { return FALSE; }
+
+
+
+	/**
+	 * @return bool
+	 */
 	public function __clone() { return FALSE; }
+
+
+
+	/**
+	 * @return bool
+	 */
 	public function __wakeup() { return FALSE; }
+
+
+
+	/**
+	 *
+	 */
 	public function __destruct() { return FALSE; }
 
 }

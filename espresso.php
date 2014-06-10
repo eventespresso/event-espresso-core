@@ -3,7 +3,7 @@
   Plugin Name: 	Event Espresso
   Plugin URI:  		http://wordpress.org/plugins/event-espresso-free/
   Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.4.0.dev.003
+  Version: 			4.5.0.dev.000
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
@@ -46,7 +46,7 @@ if ( ! function_exists( 'espresso_version' )) {
 	 * @return string
 	 */
 	function espresso_version() {
-		return '4.4.0.dev.003';
+		return '4.5.0.dev.000';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -73,6 +73,7 @@ if( ! defined( 'SP' )){
 if( ! defined( 'EENL' )){
 	define( 'EENL', "\n" );
 }
+
 
 define( 'EE_SUPPORT_EMAIL', 'support@eventespresso.com');
 // define the plugin directory and URL
@@ -125,8 +126,8 @@ define( 'EE_LANGUAGES_SAFE_LOC', '..' . DS . 'uploads' . DS . 'espresso' . DS . 
 define( 'EE_LANGUAGES_SAFE_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'languages' . DS );
 
 //ajax constants
-define( 'EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) ? TRUE : FALSE );
-define( 'EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) ? TRUE : FALSE );
+define( 'EE_FRONT_AJAX', isset($_REQUEST['ee_front_ajax']) || isset( $_REQUEST['data']['ee_front_ajax'] ) ? TRUE : FALSE );
+define( 'EE_ADMIN_AJAX', isset($_REQUEST['ee_admin_ajax']) || isset( $_REQUEST['data']['ee_admin_ajax'] ) ? TRUE : FALSE );
 //just a handy constant occasionally needed for finding values representing infinity in the DB
 //you're better to use this than its straight value (currently -1) in case you ever
 //want to change its default value! or find when -1 means infinity
@@ -154,12 +155,6 @@ function espresso_duplicate_plugin_error() {
  * 	adds a wp-option to indicate that EE has been activated via the WP admin plugins page
  */
 function espresso_plugin_activation() {
-	// check permissions
-	if ( ! current_user_can( 'activate_plugins' )) {
-		return;
-	}
-	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	check_admin_referer( "activate-plugin_{$plugin}" );
 	update_option( 'ee_espresso_activation', TRUE );
 }
 register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation' );
@@ -170,12 +165,6 @@ register_activation_hook( EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation'
  * 	espresso_plugin_deactivation
  */
 function espresso_plugin_deactivation() {
-	// check permissions
-	if ( ! current_user_can( 'activate_plugins' )) {
-		return;
-	}
-	$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-	check_admin_referer( "deactivate-plugin_{$plugin}" );
 	espresso_load_required( 'EEH_Activation', EE_HELPERS . 'EEH_Activation.helper.php' );
 	EEH_Activation::plugin_deactivation();
 }

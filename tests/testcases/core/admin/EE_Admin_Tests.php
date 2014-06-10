@@ -39,7 +39,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ), 10 );
 		$this->assertEquals( has_filter('admin_footer_text', array($admin_instance, 'espresso_admin_footer') ), 10 );
 
-		//messages init is loaded in EE_System, however we want to make sure its availbel to admin
+		//messages init is loaded in EE_System, however we want to make sure its available to admin
 		//make sure that Messages Init loaded
 		$this->assertTrue( class_exists( 'EE_Messages_Init' ) );
 	}
@@ -139,6 +139,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertFalse( has_filter('content_save_pre', array( $admin, 'its_eSpresso' ) ) );
 		$this->assertFalse( has_action('admin_notices', array( $admin, 'get_persistent_admin_notices' ) ) );
 		$this->assertFalse( has_action('dashboard_glance_items', array( $admin, 'dashboard_glance_items' ) ) );
+		$this->assertFalse( has_filter( 'get_edit_post_link', array( $admin, 'modify_edit_post_link') ) );
 		//should happen with both conditions
 		$this->assertEquals( has_action('admin_head', array( $admin, 'enable_hidden_ee_nav_menu_metaboxes' ) ), 10 );
 		$this->assertEquals( has_action('admin_head', array( $admin, 'register_custom_nav_menu_boxes' ) ), 10 );
@@ -161,6 +162,7 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('admin_head', array( $admin, 'enable_hidden_ee_nav_menu_metaboxes' ) ), 10 );
 		$this->assertEquals( has_action('admin_head', array( $admin, 'register_custom_nav_menu_boxes' ) ), 10 );
 		$this->assertEquals( has_filter('nav_menu_meta_box_object', array( $admin, 'remove_pages_from_nav_menu' ) ), 10 );
+		$this->assertEquals( has_filter( 'get_edit_post_link', array( $admin, 'modify_edit_post_link') ), 10 );
 
 		//default should have Admin Page Loader loaded up.
 		$this->assertTrue( class_exists( 'EE_Admin_Page_Loader' ) );
@@ -193,13 +195,78 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 	}
 
 
+	/**
+	 * test enable_hidden_ee_nav_menu_metaboxes()
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_enable_hidden_ee_nav_menu_metaboxes() {
+
+		//first we'll add dummy metabox to simulate our metaboxes.
+		add_meta_box( 'add-espresso_events', __('Event Espresso Pages', 'event_espresso'), '__return_true', 'nav-menus', 'side', 'core' );
+
+		//need to set the current user
+		$current_user = get_current_user_id();
+		wp_set_current_user( $this->factory->user->create( array( 'role' => 'administrator' ) ) );
+
+		//set the current page to the be the nav-menus.php page
+		global $pagenow;
+		$pagenow = 'nav-menus.php';
+
+		//run test
+		//should be a registered metabox with the add-espresso_events id.
+		global $wp_meta_boxes;
+		$this->assertArrayHasKey( 'add-espresso_events', $wp_meta_boxes['nav-menus']['side']['core'], 'There should be a registered metabox with the key add-espresso_events and there isn\'t' );
+
+		//now let's verify that the method being tested works as expected
+		EE_Admin::instance()->enable_hidden_ee_nav_menu_metaboxes();
+		$hidden_metaboxes = get_user_option( get_current_user_id(), 'metaboxhidden_nav-menus' );
+		$this->assertEmpty( $hidden_metaboxes );
+	}
+
+
+
+	/**
+	 * testing output for the dashboard upcoming widget hook callback
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_dashboard_glance_items() {
+		//add some events and registrations
+		$this->factory->event->create_many(10);
+		$this->factory->registration->create_many(5);
+
+		//expected events dashboard items
+		EE_Registry::instance()->load_helper('URL');
+		$xpct_events_url = EEH_URL::add_query_args_and_nonce( array( 'page' => 'espresso_events'), admin_url('admin.php') );
+		$xpct_events_text = sprintf( _n( '%s Event', '%s Events', 10 ), number_format_i18n( 10 ) );
+		$xpct_events_title = __('Click to view all Events', 'event_espresso');
+		$xpct_event_assembled = sprintf( '<a href="%s" title="%s">%s</a>', $xpct_events_url, $xpct_events_title, $xpct_events_text );
+
+		//expected registration dashboard items
+		$xpct_registration_url = EEH_URL::add_query_args_and_nonce( array('page' => 'espresso_registrations' ), admin_url('admin.php') );
+		$xpct_registration_text = sprintf( _n( '%s Registration', '%s Registrations', 5 ), number_format_i18n(5) );
+		$xpct_registration_title = __('Click to view all registrations', 'event_espresso');
+		$xpct_registration_assembled = sprintf( '<a href="%s" title="%s">%s</a>', $xpct_registration_url, $xpct_registration_title, $xpct_registration_text );
+
+		$generated_items = EE_Admin::instance()->dashboard_glance_items( '' );
+		//first assert the elements are an array.
+		$this->assertInternalType('array', $generated_items);
+
+		//assert the count for the array is two
+		$this->assertcount( 2, $generated_items);
+
+		//assert that the first item matches the xpctd event string.
+		$this->assertEquals( $xpct_event_assembled, $generated_items[0] );
+
+		//assert that the second item matches the xpctd registration string
+		$this->assertEquals( $xpct_registration_assembled, $generated_items[1] );
+	}
 
 	//@todo public methods to write tests for
-	//function test_enable_hidden_ee_nav_menu_metaboxes() {}
-	//function test_ee_cpt_archive_pages()
-	//function test_enqueue_admin_scripts()
-	//function test_get_persistent_admin_notices()
-	//function test_dismiss_ee_nag_notice_callback()
+
 	//function test_dashboard_glance_items()
 	//function test_parse_post_content_on_save()
 
@@ -239,6 +306,35 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 
 		//assert contains eventespresso.com link
 		$this->assertContains('http://eventespresso.com/', $actual);
+	}
+
+
+
+	/**
+	 * Test the filter callback for get_edit_post_link
+	 *
+	 * @since 4.3.0
+	 * @depends test_loading_admin
+	 */
+	function test_modify_edit_post_link() {
+		//add contact post
+		$attendee = EE_Attendee::new_instance( array( 'ATT_full_name' => 'Test Dude' ) );
+		$attendee->save();
+		$id = $attendee->ID();
+
+		//dummy link for testing
+		$orig_link = 'http://testdummylink.com';
+		EE_Registry::instance()->load_helper('URL');
+		$expected_link = EEH_URL::add_query_args_and_nonce( array( 'action' => 'edit_attendee', 'post' => $id ), admin_url('admin.php?page=espresso_registrations' ) );
+
+		//first test that if the id given doesn't match our post type that the original link is returned.
+		$notmodified = EE_Admin::instance()->modify_edit_post_link( $orig_link, 5555, '' );
+		$this->assertEquals( $orig_link, $notmodified );
+
+		//next test that if the id given matches our post type that the expected link is generated
+		$ismodified = EE_Admin::instance()->modify_edit_post_link( $orig_link, $id, '' );
+
+		$this->assertEquals( $expected_link, $ismodified );
 	}
 
 }

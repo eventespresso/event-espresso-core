@@ -48,7 +48,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API {
 
 		//required fields MUST be present, so let's make sure they are.
 		if ( empty( $dms_id ) || ! is_array( $setup_args ) || empty( $setup_args['dms_paths'] )) {
-			throw new EE_Error( __( 'In order to register Data Migration Scripts with EE_Register_Data_Migration_Scripts::register(), you must include an array containing the following keys: "dms_id" (a unique identifier for this set of data migration scripts), "dms_paths" (an array of full server paths to folders that contain data migration scripts)', 'event_espresso' ));
+			throw new EE_Error( __( 'In order to register Data Migration Scripts with EE_Register_Data_Migration_Scripts::register(), you must include a "dms_id" (a unique identifier for this set of data migration scripts), and  an array containing the following keys: "dms_paths" (an array of full server paths to folders that contain data migration scripts)', 'event_espresso' ));
 		}
 
 		//make sure this was called in the right place!
@@ -91,7 +91,7 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API {
 	 * @param mixed $dms_id  unique identifier for the set of Data Migration Scripts that were previously registered
 	 * @return void
 	 */
-	public static function deregister( $dms_id ) {
+	public static function deregister( $dms_id = NULL ) {
 		if ( isset( self::$_settings[ $dms_id ] )) {
 			unset( self::$_settings[ $dms_id ] );
 		}

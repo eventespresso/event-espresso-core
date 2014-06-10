@@ -6,23 +6,23 @@
  * that list to those which have ALREADY run, and determines if there are any that
  * SHOULD run. Also, takes care of running them upon the admin's request in conjunction
  * with the AJAX code on the data migration admin page
- * 
+ *
  * When determining what data migration scripts ought to run, compares
  * the wordpress option with name 'espresso_data_migrations' to all the data migration scripts
  * contained in the appointed folders (includes/core/data_migration_scripts in core,
- * but addons can add their own folder). See EE_Data_Migration_Script_Base.php for the data 
+ * but addons can add their own folder). See EE_Data_Migration_Script_Base.php for the data
  * migration script naming rules (not just conventions).
- * 
+ *
  * When performing the migrations, the ajax code on the client-side repeatedly pings
  * a URL which calls EE_Data_Migration_Manager::migration_step(), which in turn calls the currently-executing
  * data migration script and calls its function also named migration_step(), which migrates a few records
  * over to the new database structure, and returns either: EE_Data_Migration_Manager::status_continue to indicate that
  * it's successfully migrated some data, but has more to do on the subsequent ajax request;  EE_Data_Migration_Manager::status_completed
  * to indicate it succesfully migrate some data, and has nothing left to do; or EE_Data_Migration_Manager::status_fatal_error to indicate
- * an error occurred which means the ajax script should probably stop executing. 
+ * an error occurred which means the ajax script should probably stop executing.
  */
 class EE_Data_Migration_Manager{
-	
+
 	/**
 	 *
 	 * @var EE_Registry
@@ -32,18 +32,18 @@ class EE_Data_Migration_Manager{
 	 * name of the wordpress option which stores an array of data about
 	 */
 	const data_migrations_option_name = 'ee_data_migration';
-	
-	
+
+
 	const data_migration_script_option_prefix = 'ee_data_migration_script_';
-	
+
 	const data_migration_script_mapping_option_prefix = 'ee_dms_map_';
-	
+
 	/**
 	 * name of the wordpress option which stores the database' current version. IE, the code may be at version 4.2.0,
 	 * but as migrations are performed the database will progress from 3.1.35 to 4.1.0 etc.
 	 */
 	const current_database_state = 'ee_data_migration_current_db_state';
-	
+
 	/**
 	 * Special status string returned when we're positive there are no more data migration
 	 * scripts that can be run.
@@ -61,14 +61,14 @@ class EE_Data_Migration_Manager{
 	 * string indicating a fatal error occurred and the data migration should be completedly aborted
 	 */
 	const status_fatal_error = 'status_fatal_error';
-	
+
 	/**
 	 * the number of 'items' (usually DB rows) to migrate on each 'step' (ajax request sent
 	 * during migration)
 	 */
 	const step_size = 50;
 	/**
-	 * Array of information concernign data migrations that have ran in the history 
+	 * Array of information concernign data migrations that have ran in the history
 	 * of this EE installation. Keys should be the name of the version the script upgraded to
 	 * @var EE_Data_Migration_Script_Base[]
 	 */
@@ -80,7 +80,7 @@ class EE_Data_Migration_Manager{
 	 * @var EE_Data_Migration_Script_Base
 	 */
 	private $_last_ran_script = null;
-	
+
 	/**
 	 * Similarly to _last_ran_script, but this is the last INCOMPLETE migration script.
 	 * @var EE_Data_Migration_Script_Base
@@ -102,27 +102,36 @@ class EE_Data_Migration_Manager{
 	var $stati_that_indicate_to_stop_migrations = array();
 	var $stati_that_indicate_to_continue_single_migration_script = array();
 	var $stati_that_indicate_to_stop_single_migration_script = array();
-	
+
 	/**
      * 	@var EE_Data_Migration_Manager $_instance
-	 * 	@access 	private 	
+	 * 	@access 	private
      */
 	private static $_instance = NULL;
-	
+
 	/**
 	 *@singleton method used to instantiate class object
 	 *@access public
-	 *@return EE_Data_Migratino_Manager instance
-	 */	
+	 *@return EE_Data_Migration_Manager instance
+	 */
 	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Data_Migration_Manager )) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
-	}	
-	
-	
+	}
+	/**
+	 * resets the singleton to its brand-new state (but does NOT delete old references to the old singleton. Meaning,
+	 * all new usages of the singleton shoul dbe made with CLassname::instance()) and returns it
+	 * @return EE_Data_Migration_Manager
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
+
 	private function __construct(){
 		$this->stati_that_indicate_to_continue_migrations = array(
 			self::status_continue,
@@ -144,20 +153,20 @@ class EE_Data_Migration_Manager{
 		//to be defined, because right now it doesn't get autoloaded on its own
 		EE_Registry::instance()->load_core('Data_Migration_Script_Base');
 	}
-	
+
 	/**
 	 * Deciphers, from an option's name, what plugin and version it relates to (see _save_migrations_ran to see what the option names are like, but generally they're like
 	 * 'ee_data_migration_script_Core.4.1.0' in 4.2 or 'ee_data_migration_script_4.1.0' befor ethat).
 	 * The option name shouldn't ever be like 'ee_data_migration_script_Core.4.1.0.reg' because it's derived, indirectly, from the data migration's classname,
 	 * which should always be like EE_DMS_%s_%d_%d_%d.dms.php (eg EE_DMS_Core_4_1_0.dms.php)
-	 * @param type $option_name (see 
+	 * @param string $option_name (see EE_Data_Migration_Manage::_save_migrations_ran() where the option name is set)
 	 * @return array where the first item is the plugin slug (eg 'Core','Calendar',etc) and the 2nd is the version of that plugin (eg '4.1.0')
 	 */
 	private function _get_plugin_slug_and_version_string_from_dms_option_name($option_name){
 		$plugin_slug_and_version_string = str_replace(EE_Data_Migration_Manager::data_migration_script_option_prefix, "", $option_name);
 		//check if $plugin_slug_and_version_string is like '4.1.0' (4.1-style) or 'Core.4.1.0' (4.2-style)
 		$parts = explode(".",$plugin_slug_and_version_string);
-		
+
 		if(count($parts) == 4){
 			//it's 4.2-style.eg Core.4.1.0
 			$plugin_slug = $parts[0];//eg Core
@@ -169,10 +178,10 @@ class EE_Data_Migration_Manager{
 		}
 		return array($plugin_slug,$version_string);
 	}
-	
+
 	/**
 	 * Gets the DMS class from the wordpress option, oterhwise throws an EE_Error if it's not
-	 * for a known DMS class. 
+	 * for a known DMS class.
 	 * @param string $dms_option_name
 	 * @param string $dms_option_value (serialized)
 	 * @return EE_Data_Migration_Script_Base
@@ -205,12 +214,12 @@ class EE_Data_Migration_Manager{
 			//setup autoloaders for each of the scripts in there
 			$this->get_all_data_migration_scripts_available();
 			$data_migrations_options = $this->get_all_migration_script_options();//get_option(EE_Data_Migration_Manager::data_migrations_option_name,get_option('espresso_data_migrations',array()));
-			
+
 			$data_migrations_ran = array();
 			//convert into data migration script classes where possible
 			foreach($data_migrations_options as $data_migration_option){
 				list($plugin_slug,$version_string) = $this->_get_plugin_slug_and_version_string_from_dms_option_name($data_migration_option['option_name']);
-				
+
 				try{
 					$class = $this->_get_dms_class_from_wp_option($data_migration_option['option_name'],$data_migration_option['option_value']);
 					$data_migrations_ran[$plugin_slug][$version_string] = $class;
@@ -234,7 +243,7 @@ class EE_Data_Migration_Manager{
 		return $this->_data_migrations_ran;
 	}
 	/**
-	 * 
+	 *
 	 * @param string $script_name eg 'DMS_Core_4_1_0'
 	 * @param string $old_table eg 'wp_events_detail'
 	 * @param string $old_pk eg 'wp_esp_posts'
@@ -246,56 +255,61 @@ class EE_Data_Migration_Manager{
 		$mapping = $script->get_mapping_new_pk($old_table, $old_pk, $new_table);
 		return $mapping;
 	}
-	
+
 	/**
-	 * Gets all the options containing migration scripts that have been run
-	 * @param boolean @only_get_one FALSE by default- meaning to get ALL; if set ot TRUE, will only retrieve one
+	 * Gets all the options containing migration scripts that have been run. Ordering is important: it's assumed that the last
+	 * option returned in this array is the most-recently ran DMS option
 	 * @return array
 	 */
 	 public function get_all_migration_script_options(){
 		global $wpdb;
-		return $wpdb->get_results("SELECT * FROM {$wpdb->options} WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC",ARRAY_A);
+		return $wpdb->get_results("SELECT * FROM {$wpdb->options} WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id ASC",ARRAY_A);
 	}
-	
+
 	/**
 	 * Gets the array of folders which contain data migration scripts. Also adds them to be auto-loaded
-	 * @return array where each value is the full folderpath of a folder containing data migration scripts, WITH slashes at the end of the 
+	 * @return array where each value is the full folderpath of a folder containing data migration scripts, WITH slashes at the end of the
 	 * folder name.
 	 */
 	public function get_data_migration_script_folders(){
 		return  apply_filters( 'FHEE__EE_Data_Migration_Manager__get_data_migration_script_folders',array(EE_CORE.'data_migration_scripts') );
 	}
-	
+
 	/**
 	 * Gets the version the migration script upgrades to
 	 * @param string $migration_script_name eg 'EE_DMS_Core_4_1_0'
-	 * @return array, where the first element is the plugin slug (like 'Core','Calendar',etc) and the 2nd element is the script woudl update that plugin's data to
+	 * @return array {
+	 *	@type string $slug like 'Core','Calendar',etc
+	 *	@type string $version like 4.3.0
+	 * }
 	 * @throws EE_Error
 	 */
 	public function script_migrates_to_version($migration_script_name){
 		$dms_info = $this->parse_dms_classname($migration_script_name);
-		return array($dms_info['slug'], $dms_info['major_version'].".".$dms_info['minor_version'].".".$dms_info['micro_version']);
+		return array(
+			'slug'=> $dms_info[ 'slug' ],
+			'version'=> $dms_info[ 'major_version' ] . "." . $dms_info[ 'minor_version' ] . "." . $dms_info[ 'micro_version' ] );
 	}
-	
+
 	/**
 	 * Gets the juicy details out of a dms filename like 'EE_DMS_Core_4_1_0'
-	 * @param string $filename
+	 * @param string $classname
 	 * @return array with keys 'slug','major_version','minor_version', and 'micro_version' (the last 3 are ints)
 	 * @throws EE_Error
 	 */
-	public function parse_dms_classname($filename){
+	public function parse_dms_classname($classname){
 		$matches = array();
-		preg_match('~EE_DMS_(.*)_([0-9]*)_([0-9]*)_([0-9]*)~',$filename,$matches);
+		preg_match('~EE_DMS_(.*)_([0-9]*)_([0-9]*)_([0-9]*)~',$classname,$matches);
 		if( ! $matches || ! (isset($matches[1]) && isset($matches[2]) && isset($matches[3]))){
-				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w is either 'Core' or the slug of an addon and x, y and z are numbers, ", "event_espresso"),$migration_script_name));
+				throw new EE_Error(sprintf(__("%s is not a valid Data Migration Script. The classname should be like EE_DMS_w_x_y_z, where w is either 'Core' or the slug of an addon and x, y and z are numbers, ", "event_espresso"),$classname));
 		}
 		return array('slug'=>$matches[1],'major_version'=>intval($matches[2]),'minor_version'=>intval($matches[3]),'micro_version'=>intval($matches[4]));
 	}
 	/**
-	 * Ensures that the option indicating the current DB version is set. This should only be 
-	 * a concern when activating EE for the first time, THEORETICALLY. 
+	 * Ensures that the option indicating the current DB version is set. This should only be
+	 * a concern when activating EE for the first time, THEORETICALLY.
 	 * If we detect that we're activating EE4 overtop of EE3.1, then we set the current db state to 3.1.x, otherwise
-	 * to 4.1.x. 
+	 * to 4.1.x.
 	 * @return string of current db state
 	 */
 	public function ensure_current_database_state_is_set(){
@@ -340,53 +354,83 @@ class EE_Data_Migration_Manager{
 		$scripts_ran = $this->get_data_migrations_ran();
 		//$scripts_ran = array('4.1.0.core'=>array('monkey'=>null));
 		$script_class_and_filespaths_available = $this->get_all_data_migration_scripts_available();
-		
-		$script_classes_that_should_run = array();
-		
+
+
 		$current_database_state = $this->ensure_current_database_state_is_set();
 		//determine which have already been run
-		foreach($script_class_and_filespaths_available as $classname => $filepath){
-			list($script_converts_plugin_slug,$script_converts_to_version) = $this->script_migrates_to_version($classname);
-			//check if this version script is DONE or not; or if it's never been ran
-			if(		! $scripts_ran || 
-					! isset($scripts_ran[$script_converts_plugin_slug]) ||
-					! isset($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version])){
-				//we haven't ran this conversion script before
-				//now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
-				$script = new $classname;
-				/* @var $script EE_Data_Migration_Script_base */
-				$can_migrate = $script->can_migrate_from_version($current_database_state);
-				if($can_migrate){
-					$script_classes_that_should_run[$classname] = $script;
-				}
-			} elseif($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version] instanceof EE_Data_Migration_Script_Base){
-				//this script has been ran, or at least started
-				$script = $scripts_ran[$script_converts_plugin_slug][$script_converts_to_version];
-				if( $script->get_status() != self::status_completed){
-					//this script is already underway... keep going with it
-					$script_classes_that_should_run[$classname] = $script;
+		$script_classes_that_should_run_per_iteration = array();
+		$iteration = 0;
+		$next_database_state_to_consider = $current_database_state;
+		$theoretical_database_state = NULL;
+		do{
+			//the next state after the currently-considered one will start off looking the same as the current, but we may make additions...
+			$theoretical_database_state = $next_database_state_to_consider;
+			//the next db state to consider is "what would the DB be like had we run all the scripts we found that applied last time?)
+			foreach($script_class_and_filespaths_available as $classname => $filepath){
+
+				$migrates_to_version = $this->script_migrates_to_version($classname);
+				$script_converts_plugin_slug = $migrates_to_version[ 'slug' ];
+				$script_converts_to_version = $migrates_to_version[ 'version' ];
+				//check if this version script is DONE or not; or if it's never been ran
+				if(		! $scripts_ran ||
+						! isset($scripts_ran[$script_converts_plugin_slug]) ||
+						! isset($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version])){
+					//we haven't ran this conversion script before
+					//now check if it applies... note that we've added an autoloader for it on get_all_data_migration_scripts_available
+					$script = new $classname;
+					/* @var $script EE_Data_Migration_Script_Base */
+					$can_migrate = $script->can_migrate_from_version($theoretical_database_state);
+					if($can_migrate){
+						$script_classes_that_should_run_per_iteration[$iteration][$script->priority()][] = $script;
+						$migrates_to_version = $script->migrates_to_version();
+						$next_database_state_to_consider[ $migrates_to_version[ 'slug' ] ] = $migrates_to_version[ 'version' ];
+						unset($script_class_and_filespaths_available[$classname]);
+					}
+				} elseif($scripts_ran[$script_converts_plugin_slug][$script_converts_to_version] instanceof EE_Data_Migration_Script_Base){
+					//this script has been ran, or at least started
+					$script = $scripts_ran[$script_converts_plugin_slug][$script_converts_to_version];
+					if( $script->get_status() != self::status_completed){
+						//this script is already underway... keep going with it
+						$script_classes_that_should_run_per_iteration[$iteration][$script->priority()][] = $script;
+						$migrates_to_version = $script->migrates_to_version();
+						$next_database_state_to_consider[ $migrates_to_version[ 'slug' ] ] = $migrates_to_version[ 'version' ];
+						unset($script_class_and_filespaths_available[$classname]);
+					}else{
+						//it must have a status that indicates it has finished, so we don't want to try and run it again
+					}
 				}else{
-					//it must have a status that indicates it has finished, so we don't want to try and run it again
+					//it exists but it's not  a proper data migration script
+					//maybe the script got renamed? or was simply removed from EE?
+					//either way, its certainly not runnable!
 				}
-			}else{
-				//it exists but it's not  a proper data migration script
-				//maybe the script got renamed? or was simply removed from EE?
-				//either way, its certainly not runnable!
+			}
+			$iteration++;
+		}while( $next_database_state_to_consider != $theoretical_database_state && $iteration<6);
+		//ok we have all the scripts that should run, now let's make them into flat array
+		$scripts_that_should_run = array();
+		foreach($script_classes_that_should_run_per_iteration as $iteration => $scripts_at_priority){
+			ksort($scripts_at_priority);
+			foreach($scripts_at_priority as $scripts){
+				foreach($scripts as $script){
+					$scripts_that_should_run[get_class($script)] = $script;
+				}
 			}
 		}
-		ksort($script_classes_that_should_run);
-		return $script_classes_that_should_run;
+
+		return $scripts_that_should_run;
 	}
-	
+
 	/**
 	 * Gets the script which is currently being ran, if thereis one. If $include_completed_scripts is set to TRUE
-	 * it will return the last ran script even if its complete
+	 * it will return the last ran script even if its complete.
+	 * This means: if you want to find the currently-executing script, leave it as FALSE.
+	 * If you really just want to find the script which ran most recently, regardless of status, leave it as TRUE.
 	 * @return EE_Data_Migration_Script_Base
 	 * @throws EE_Error
 	 */
 	public function get_last_ran_script($include_completed_scripts = false){
 		//make sure we've setup the class properties _last_ran_script and _last_ran_incomplete_script
-		if($this->_data_migrations_ran){
+		if( ! $this->_data_migrations_ran){
 			$this->get_data_migrations_ran();
 		}
 		if($include_completed_scripts){
@@ -395,10 +439,10 @@ class EE_Data_Migration_Manager{
 			return $this->_last_ran_incomplete_script;
 		}
 	}
-	
+
 	/**
 	 * Runs the data migration scripts (well, each request to this method calls one of the
-	 * data migration scripts' migration_step() functions). 
+	 * data migration scripts' migration_step() functions).
 	 * @return array, where the first item is one EE_Data_Migration_Script_Base's stati, and the second
 	 * item is a string describing what was done
 	 */
@@ -414,26 +458,30 @@ class EE_Data_Migration_Manager{
 					EE_Registry::instance()->load_helper('Activation');
 					//we should be good to allow them to exit maintenance mode now
 					EE_Maintenance_Mode::instance()->set_maintenance_level(intval(EE_Maintenance_Mode::level_0_not_in_maintenance));
+					EEH_Activation::system_initialization();
+					EEH_Activation::create_upload_directories();
 					EEH_Activation::initialize_db_content();
 					//make sure the datetime and ticket total sold are correct
 					$this->_save_migrations_ran();
 					return array(
 						'records_to_migrate'=>1,
 						'records_migrated'=>1,
-						'status'=>self::status_no_more_migration_scripts,  
+						'status'=>self::status_no_more_migration_scripts,
 						'script'=>__("Data Migration Completed Successfully", "event_espresso"),
 						'message'=>  __("All done!", "event_espresso"));
 				}
 				$currently_executing_script = array_shift($scripts);
 				//and add to the array/wp option showing the scripts ran
 //				$this->_data_migrations_ran[$this->script_migrates_to_version(get_class($currently_executing_script))] = $currently_executing_script;
-				list($plugin_slug,$version) = $this->script_migrates_to_version(get_class($currently_executing_script));
+				$migrates_to = $this->script_migrates_to_version(get_class($currently_executing_script));
+				$plugin_slug = $migrates_to[ 'slug' ];
+				$version = $migrates_to[ 'version' ];
 				$this->_data_migrations_ran[$plugin_slug][$version] = $currently_executing_script;
 			}
 			$current_script_name = get_class($currently_executing_script);
 		}catch(Exception $e){
 			//an exception occurred while trying to get migration scripts
-			
+
 			$message =  sprintf(__("Error Message: %s<br>Stack Trace:%s", "event_espresso"),$e->getMessage(),$e->getTraceAsString());
 			//record it on the array of data mgiration scripts ran. This will be overwritten next time we try and try to run data migrations
 			//but thats ok-- it's just an FYI to support that we coudln't even run any data migrations
@@ -471,7 +519,7 @@ class EE_Data_Migration_Manager{
 							'message'=>$currently_executing_script->get_feedback_message(),
 							'script'=> sprintf(__("%s Completed",'event_espresso'),$currently_executing_script->pretty_name())
 						);
-					//check if there are any more after this one. 
+					//check if there are any more after this one.
 					$scripts_remaining = $this->check_for_applicable_data_migration_scripts();
 					if( ! $scripts_remaining ){
 						//we should be good to allow them to exit maintenance mode now
@@ -479,6 +527,8 @@ class EE_Data_Migration_Manager{
 						////huh, no more scripts to run... apparently we're done!
 						//but dont forget to make sure intial data is there
 						EE_Registry::instance()->load_helper('Activation');
+						EEH_Activation::system_initialization();
+						EEH_Activation::create_upload_directories();
 						EEH_Activation::initialize_db_content();
 						$response_array['status'] = self::status_no_more_migration_scripts;
 					}
@@ -521,7 +571,9 @@ class EE_Data_Migration_Manager{
 		}
 		return $response_array;
 	}
-	
+
+
+
 	/**
 	 * Echo out JSON response to migration script AJAX requests. Takes precautions
 	 * to buffer output so that we don't throw junk into our json.
@@ -544,32 +596,33 @@ class EE_Data_Migration_Manager{
 				'status'=> EE_Data_Migration_Manager::status_fatal_error,
 				'message'=> sprintf(__("Unknown fatal error occurred: %s", "event_espresso"),$e->getMessage()),
 				'script'=>'Unknown');
-			$this->add_error_to_migrations_ran($e->getMessage."; Stack trace:".$e->getTraceAsString());
+			$this->add_error_to_migrations_ran($e->getMessage()."; Stack trace:".$e->getTraceAsString());
 		}
-		$warnings_etc = '';
 		$warnings_etc = @ob_get_contents();
 		ob_end_clean();
 		$response['message'] .=$warnings_etc;
 		return $response;
 	}
-	
+
 	/**
 	 * Updates the wordpress option that keeps track of which which EE version the database
 	 * is at (ie, the code may be at 4.1.0, but the database is still at 3.1.35)
-	 * @param array $slug_and_version where the first item is the plugin slug, the 2nd is a string of the version
+	 * @param array $slug_and_version {
+	 *	@type string $slug like 'Core' or 'Calendar',
+	 *	@type string $version like '4.1.0'
+	 * }
 	 * @return void
 	 */
 	public function update_current_database_state_to($slug_and_version = null){
 		if( ! $slug_and_version ){
 			//no version was provided, assume it should be at the current code version
-			
-			$slug_and_version = array('Core',espresso_version());
+			$slug_and_version = array('slug' => 'Core', 'version' => espresso_version());
 		}
 		$current_database_state = get_option(self::current_database_state);
-		$current_database_state[$slug_and_version[0]]=$slug_and_version[1];
+		$current_database_state[ $slug_and_version[ 'slug' ] ]=$slug_and_version[ 'version' ];
 		update_option(self::current_database_state,$current_database_state);
 	}
-	
+
 	/**
 	 * Gets all the data mgiration scripts available in the core folder and folders
 	 * in addons. Has the side effect of adding them for autoloading
@@ -586,7 +639,17 @@ class EE_Data_Migration_Manager{
 				foreach($files as $file){
 					$pos_of_last_slash = strrpos($file,DS);
 					$classname = str_replace(".dms.php","", substr($file, $pos_of_last_slash+1));
+					$migrates_to = $this->script_migrates_to_version( $classname );
+					$slug = $migrates_to[ 'slug' ];
+					//check that the slug as contained in the DMS is associated with
+					//the slug of an addon or core
+					if( $slug != 'Core' ){
+						if( ! EE_Registry::instance()->get_addon_by_name( $slug ) ) {
+							EE_Error::doing_it_wrong(__FUNCTION__, sprintf( __( 'The data migration script "%s" migrates the "%s" data, but there is no EE addon with that name. There is only: %s. ', 'event_espresso' ),$classname,$slug,implode(",", array_keys( EE_Registry::instance()->get_addons_by_name() ) ) ), '4.3.0.alpha.019' );
+						}
+					}
 					$this->_data_migration_class_to_filepath_map[$classname] = $file;
+
 				}
 
 			}
@@ -594,9 +657,9 @@ class EE_Data_Migration_Manager{
 		}
 		return $this->_data_migration_class_to_filepath_map;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Once we have an addon that works with EE4.1, we will actually want to fetch the PUE slugs
 	 * from each addon, and check if they need updating,
@@ -615,14 +678,14 @@ class EE_Data_Migration_Manager{
 		//get last-ran migraiton script
 		global $wpdb;
 		$last_migration_script_option = $wpdb->get_row("SELECT * FROM ".$wpdb->options." WHERE option_name like '".EE_Data_Migration_Manager::data_migration_script_option_prefix."%' ORDER BY option_id DESC LIMIT 1",ARRAY_A);
-		
+
 		$last_ran_migration_script_properties = isset($last_migration_script_option['option_value']) ? maybe_unserialize($last_migration_script_option['option_value']) : null;
 		//now, tread lightly because we're here because a FATAL non-catchable error
 		//was thrown last time when we were trying to run a data migration script
 		//so the fatal error could have happened while getting the mgiration script
 		//or doing running it...
 		$versions_migrated_to = isset($last_migration_script_option['option_name']) ? str_replace(EE_Data_Migration_Manager::data_migration_script_option_prefix,"",$last_migration_script_option['option_name']) : null;
-		
+
 		//check if it THINKS its a data migration script and especially if it's one that HASN'T finished yet
 		//because if it has finished, then it obviously couldn't be the cause of this error, right? (because its all done)
 		if(isset($last_ran_migration_script_properties['class']) && isset($last_ran_migration_script_properties['_status']) && $last_ran_migration_script_properties['_status'] != self::status_completed){
@@ -641,7 +704,7 @@ class EE_Data_Migration_Manager{
 			$versions_migrated_to = 'Unknown.Unknown';
 		}
 		update_option(self::data_migration_script_option_prefix.$versions_migrated_to,$last_ran_migration_script_properties);
-		
+
 	}
 	/**
 	 * saves what data migrations have ran to the database
@@ -657,24 +720,25 @@ class EE_Data_Migration_Manager{
 			foreach($migrations_ran_for_plugin as $version_string => $array_or_migration_obj){
 	//			echo "saving migration script to $version_string<br>";
 				$plugin_slug_for_use_in_option_name = $plugin_slug.".";
-				$old_option_value = get_option(self::data_migration_script_mapping_option_prefix.$plugin_slug_for_use_in_option_name.$version_string);
+				$option_name = self::data_migration_script_option_prefix.$plugin_slug_for_use_in_option_name.$version_string;
+				$old_option_value = get_option($option_name);
 				if($array_or_migration_obj instanceof EE_Data_Migration_Script_Base){
 					$script_array_for_saving = $array_or_migration_obj->properties_as_array();
 					if( $old_option_value != $script_array_for_saving){
-						$successful_updates = update_option(self::data_migration_script_option_prefix.$plugin_slug_for_use_in_option_name.$version_string,$script_array_for_saving);
+						$successful_updates = update_option($option_name,$script_array_for_saving);
 					}
 				}else{//we don't know what this array-thing is. So just save it as-is
 	//				$array_of_migrations[$version_string] = $array_or_migration_obj;
 					if($old_option_value != $array_or_migration_obj){
-						$successful_updates = update_option(self::data_migration_script_option_prefix.$plugin_slug_for_use_in_option_name.$version_string,$array_or_migration_obj);
+						$successful_updates = update_option($option_name,$array_or_migration_obj);
 					}
 				}
-	//			if( ! $successful_updates ){
-	//					global $wpdb;
-	//				return $wpdb->last_error;
-	//			}
+				if( ! $successful_updates ){
+					global $wpdb;
+					return $wpdb->last_error;
+				}
 			}
-		}	
+		}
 		return true;
 //		$updated = update_option(self::data_migrations_option_name, $array_of_migrations);
 //		if( $updated !== TRUE){
@@ -685,7 +749,7 @@ class EE_Data_Migration_Manager{
 //		}
 //				wp_mail("michael@eventespresso.com", time()." price debug info", "updated: $updated, last error: $last_error, byte length of option: ".strlen(serialize($array_of_migrations)));
 	}
-	
+
 	/**
 	 * Takes an array of data migration script properties and re-creates the class from
 	 * them. The argument $propertis_array is assumed to have been made by EE_Data_MIgration_Script_Base::properties_as_array()
@@ -708,27 +772,30 @@ class EE_Data_Migration_Manager{
 		$class->instantiate_from_array_of_properties($properties_array);
 		return $class;
 	}
-	
+
 	/**
 	 * Gets the classname for the most up-to-date DMS (ie, the one that will finally
 	 * leave the DB in a state usable by the current plugin code).
+	 * @param string $plugin_slug the slug for the ee plugin we are searching for. Default is 'Core'
 	 * @return string
 	 */
-	public function get_most_up_to_date_dms(){
+	public function get_most_up_to_date_dms($plugin_slug = 'Core'){
 		$class_to_filepath_map = $this->get_all_data_migration_scripts_available();
 		$most_up_to_date_dms_classname = NULL;
 		foreach($class_to_filepath_map as $classname => $filepath){
 			if($most_up_to_date_dms_classname === NULL){
-				list($plugin_slug,$version_string) = $this->script_migrates_to_version($classname);
+				$migrates_to = $this->script_migrates_to_version($classname);
+				$this_plugin_slug = $migrates_to[ 'slug' ];
+				$version_string = $migrates_to[ 'version' ];
 //				$details = $this->parse_dms_classname($classname);
-				if($plugin_slug == 'Core'){//if it's for core, it wins
+				if($this_plugin_slug == $plugin_slug){//if it's for core, it wins
 					$most_up_to_date_dms_classname = $classname;
 				}//if it wasn't for core, we must keep searching for one that is!
 				continue;
 			}else{
-				list($champion_slug,$champion_version) = $this->script_migrates_to_version($most_up_to_date_dms_classname);
-				list($contender_slug,$contender_version) = $this->script_migrates_to_version($classname);
-				if($contender_slug == 'Core' && version_compare($champion_version, $contender_version, '<')){
+				$champion_migrates_to= $this->script_migrates_to_version($most_up_to_date_dms_classname);
+				$contender_migrates_to = $this->script_migrates_to_version($classname);
+				if($contender_migrates_to[ 'slug' ] == $plugin_slug && version_compare($champion_migrates_to[ 'version' ], $contender_migrates_to[ 'version' ], '<')){
 					//so the contenders version is higher and its for Core
 					$most_up_to_date_dms_classname = $classname;
 				}

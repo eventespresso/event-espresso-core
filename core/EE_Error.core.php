@@ -115,21 +115,21 @@ class EE_Error extends Exception {
 			$type = EE_Error::error_type( $code );
 			$site = site_url();
 			switch ( $site ) {
-				case 'http://sandbox.eventespresso.com/ee4/' :
-				case 'http://sandbox.eventespresso.com/ee4decaf/' :
-				case 'http://sandbox.eventespresso.com/ee4hf/' :
-				case 'http://sandbox.eventespresso.com/ee4a/' :
-				case 'http://sandbox.eventespresso.com/ee4ad/' :
-				case 'http://sandbox.eventespresso.com/ee4b/' :
-				case 'http://sandbox.eventespresso.com/ee4bd/' :
-				case 'http://sandbox.eventespresso.com/ee4d/' :
-				case 'http://sandbox.eventespresso.com/ee4dd/' :
+				case 'http://ee4.eventespresso.com/' :
+				case 'http://ee4decaf.eventespresso.com/' :
+				case 'http://ee4hf.eventespresso.com/' :
+				case 'http://ee4a.eventespresso.com/' :
+				case 'http://ee4ad.eventespresso.com/' :
+				case 'http://ee4b.eventespresso.com/' :
+				case 'http://ee4bd.eventespresso.com/' :
+				case 'http://ee4d.eventespresso.com/' :
+				case 'http://ee4dd.eventespresso.com/' :
 					$to = 'developers@eventespresso.com';
 					break;
 				default :
 					$to = get_option( 'admin_email' );
 			}
-			$subject = 'Error type ' . $type . ' occured in ' . $ver . ' on ' . site_url();
+			$subject = 'Error type ' . $type . ' occurred in ' . $ver . ' on ' . site_url();
 			$msg = EE_Error::_format_error( $type, $message, $file, $line );
 			add_filter( 'wp_mail_content_type', array( 'EE_Error', 'set_content_type' ));
 			wp_mail( $to, $subject, $msg );
@@ -143,7 +143,7 @@ class EE_Error extends Exception {
 	 *    http://www.php.net/manual/en/errorfunc.constants.php#109430
 	 * @access public
 	 * @param $code
-	 * @return void
+	 * @return string
 	 */
 	public static function error_type( $code ) {
 		switch( $code ) {
@@ -282,10 +282,11 @@ class EE_Error extends Exception {
 
 		$trace_details = '';
 
-		$ouput = '
+		$output = '
 <style type="text/css">
-	#error-page {
+	#ee-error-message {
 		max-width:90% !important;
+		margin: 0 5%;
 	}
 	.ee-error-dev-msg-pg,
 	.error .ee-error-dev-msg-pg {
@@ -330,7 +331,7 @@ class EE_Error extends Exception {
 	.small-text {
 		font-size: .85em;
 		line-height: 1.4em;
-		letter-spacing: .25px;
+		letter-spacing: 1px;
 	}
 	.lt-grey-text {
 		color: #a8a8a8;
@@ -339,7 +340,7 @@ class EE_Error extends Exception {
 <div id="ee-error-message" class="error">';
 
 		if ( ! WP_DEBUG ) {
-			$ouput .= '
+			$output .= '
 	<p>';
 		}
 
@@ -424,12 +425,12 @@ class EE_Error extends Exception {
 			// add generic non-identifying messages for non-privileged uesrs
 			if ( ! WP_DEBUG ) {
 
-				$ouput .= '<span class="ee-error-user-msg-spn">' . trim( $ex['msg'] )  . '</span> &nbsp; <sup>' . $ex['code'] . '</sup><br />';
+				$output .= '<span class="ee-error-user-msg-spn">' . trim( $ex['msg'] )  . '</span> &nbsp; <sup>' . $ex['code'] . '</sup><br />';
 
 			} else {
 
 				// or helpful developer messages if debugging is on
-				$ouput .= '
+				$output .= '
 		<div class="ee-error-dev-msg-dv">
 			<p class="ee-error-dev-msg-pg">
 				<strong class="ee-error-dev-msg-str">An ' . $ex['name'] . ' exception was thrown!</strong>  &nbsp; <span>code: ' . $ex['code'] . '</span><br />
@@ -443,18 +444,18 @@ class EE_Error extends Exception {
 				' . $trace_details;
 
 				if ( ! empty( $class )) {
-					$ouput .= '
+					$output .= '
 				<div style="padding:3px; margin:0 0 1em; border:1px solid #666; background:#fff; border-radius:3px;">
 					<div style="padding:1em 2em; border:1px solid #666; background:#f9f9f9;">
 						<h3>Class Details</h3>';
 						$a = new ReflectionClass( $class );
-						$ouput .= '
+						$output .= '
 						<pre>' . $a . '</pre>
 					</div>
 				</div>';
 				}
 
-				$ouput .= '
+				$output .= '
 			</div>
 		</div>
 		<br />';
@@ -466,24 +467,24 @@ class EE_Error extends Exception {
 		}
 
 		// remove last linebreak
-		$ouput = substr( $ouput, 0, ( count( $ouput ) - 7 ));
+		$output = substr( $output, 0, ( count( $output ) - 7 ));
 
 		if ( ! WP_DEBUG ) {
-			$ouput .= '
+			$output .= '
 	</p>';
 		}
 
-		$ouput .= '
+		$output .= '
 </div>';
 
-		$ouput .= self::_print_scripts( TRUE );
+		$output .= self::_print_scripts( TRUE );
 
 		if ( defined( 'DOING_AJAX' )) {
-			echo json_encode( array( 'error' => $ouput ));
+			echo json_encode( array( 'error' => $output ));
 			exit();
 		}
 
-		echo $ouput;
+		echo $output;
 		die();
 
 	}
@@ -616,7 +617,7 @@ class EE_Error extends Exception {
 		if ( ! empty( $msg )) {
 			// get error code only on error
 			$error_code = $type == 'errors' ? EE_Error::generate_error_code ( $file, $func, $line ) : '';
-			$error_code =  ! empty( $error_code ) ? '<br/><span class="smaller-text">' . $error_code . '</span>' : '';
+			$error_code =  ! empty( $error_code ) ? '<br/><span class="tiny-text">' . $error_code . '</span>' : '';
 			// add notice
 			self::$_espresso_notices[ $type ][] = $msg . $error_code;
 			add_action( 'wp_footer', array( 'EE_Error', 'enqueue_error_scripts' ), 1 );
@@ -704,7 +705,7 @@ class EE_Error extends Exception {
 	*
 	*	@access public
 	* 	@param		boolean		$format_output		whether or not to format the messages for display in the WP admin
-	* 	@param		boolean		$save_to_transient	whether or not to save notices to the db for retreival on next request - ONLY do this just before redirecting
+	* 	@param		boolean		$save_to_transient	whether or not to save notices to the db for retrieval on next request - ONLY do this just before redirecting
 	* 	@param		boolean		$remove_empty		whether or not to unset empty messages
 	* 	@return 		array
 	*/
@@ -824,12 +825,17 @@ class EE_Error extends Exception {
 	*	@access 	public
 	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
 	* 	@param		string	$pan_message	the message to be stored persistently until dismissed
+	* 	@param bool $force_update allows one to enforce the reappearance of a persistent message.
 	* 	@return 		void
 	*/
-	public static function add_persistent_admin_notice( $pan_name = '', $pan_message ) {
+	public static function add_persistent_admin_notice( $pan_name = '', $pan_message, $force_update = FALSE ) {
 		if ( ! empty( $pan_name ) && ! empty( $pan_message )) {
 			$persistent_admin_notices = get_option( 'ee_pers_admin_notices', array() );
-			if ( ! array_key_exists( $pan_name, $persistent_admin_notices )) {
+			//maybe initialize persistent_admin_notices
+			if ( empty( $persistent_admin_notices )) {
+				add_option( 'ee_pers_admin_notices', array(), '', 'no' );
+			}
+			if ( ! array_key_exists( $pan_name, $persistent_admin_notices ) || $force_update ) {
 				$persistent_admin_notices[ $pan_name ] = $pan_message;
 				update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
 			}
@@ -880,7 +886,7 @@ class EE_Error extends Exception {
 	 *  	@access 	public
 	* 	@param		string	$pan_name	the name, or key of the Persistent Admin Notice to be stored
 	* 	@param		string	$pan_name	the message to be stored persistently until dismissed
-	* 	@param		string	$return_url	URL to go back to aftger nag notice is dissmissed
+	* 	@param		string	$return_url	URL to go back to aftger nag notice is dismissed
 	 *  	@return 		string
 	 */
 	public static function display_persistent_admin_notices( $pan_name = '', $pan_message = '', $return_url = '' ) {
@@ -889,7 +895,7 @@ class EE_Error extends Exception {
 				'nag_notice' => $pan_name,
 				'return_url' => urlencode( $return_url ),
 				'ajax_url' => WP_AJAX_URL,
-				'unknown_error' => __( 'An unknown error has occured on the server while attempting to dissmiss this notice.', 'event_espresso' )
+				'unknown_error' => __( 'An unknown error has occurred on the server while attempting to dismiss this notice.', 'event_espresso' )
 			);
 			wp_localize_script( 'espresso_core', 'ee_dismiss', $args );
 			return '
@@ -906,10 +912,11 @@ class EE_Error extends Exception {
 
 
 	/**
-	 * 	get_persistent_admin_notices
+	 *    get_persistent_admin_notices
 	 *
-	 *  	@access 	public
-	 *  	@return 	void
+	 * @access    public
+	 * @param string $return_url
+	 * @return    array
 	 */
 	public static function get_persistent_admin_notices( $return_url = '' ) {
 		$notices = '';
@@ -993,89 +1000,10 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	*	@ return string
 	*/
 	public static function generate_error_code ( $file = '', $func = '', $line = '' ) {
-
-	//echo '<h4>$file : ' . $file . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-	//echo '<h4>$func : ' . $func . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-	//echo '<h4>$line : ' . $line . '  <br /><span style="font-size:10px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h4>';
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		$error_code = '';
-		if ( ! empty( $file ) && ! empty( $func ) && ! empty( $line )) {
-			$code_bits = array( 'file' => $file, 'func' => $func, 'line' => $line );
-
-			foreach ( $code_bits as $key => $code_bit ) {
-				switch ( $key ) {
-
-					case 'file':
-						$code_bit = str_replace( '\\', '/', $code_bit );
-						// break filepath up by the /
-						$code_bit = explode ( '/', $code_bit );
-						// filename is the last segment
-						$file = isset( $code_bit[ count($code_bit)-1 ] ) ? $code_bit[ count($code_bit)-1 ] : '';
-						// folder is the second to the last segment
-						$folder = isset( $code_bit[ count($code_bit)-2 ] ) ? $code_bit[ count($code_bit)-2 ] : '';
-						//change all dashes to underscores
-						$folder = str_replace ( '-', '_', $folder );
-						//strip vowels
-						$folder = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), '', $folder );
-						// break it up by the _
-						$folder_bits = explode( '_', $folder);
-						$folder = '';
-						foreach ( $folder_bits as $folder_bit ) {
-							// grab the first 2 characters from each word
-							$folder .= substr($folder_bit, 0, 3);
-						}
-						$error_code .= $folder != '' ? $folder . '-' : '';
-
-						// break filename by the dots - to get at the first bit
-						$code_bit = explode('.', $file);
-						// remove EE_ from the filename
-						$code_bit = str_replace ( 'EE_', '', $code_bit[0] );
-						// and EEM_
-						$code_bit = str_replace ( 'EEM_', '', $code_bit );
-						// remove all non-alpha characters
-						$code_bit = preg_replace( '[A-Za-z]', '', $code_bit );
-						//change all dashes to underscores
-						$file = str_replace ( '-', '_', $code_bit );
-						//strip vowels
-						$file = str_replace ( array( 'a', 'A', 'e', 'E', 'i', 'I', 'o', 'O', 'u', 'U' ), '', $file );
-						// break it up by the _
-						$file_bits = explode( '_', $file);
-						$file = '';
-						foreach ( $file_bits as $file_bit ) {
-							// grab the first 2 characters from each word
-							$file .= substr($file_bit, 0, 3);
-						}
-						$error_code .= $file != '' ? $file . '-' : '';
-
-					break;
-
-					case 'func':
-						//change all dashes to underscores
-						$code_bit = str_replace ( '-', '_', $code_bit );
-						// break function name by the underscore if there are any
-						$func_bits = explode('_', $code_bit);
-						// split camelCase
-						// preg_match_all('/((?:^|[A-Z])[a-z]+)/',$str,$matches);
-						$func = '';
-						$x = 0;
-						foreach ( $func_bits as $func_bit ) {
-							$func .= substr($func_bit, 0, 3);
-						}
-						// convert to uppercase
-						$error_code .= $func != '' ? $func . '-' :  '';
-					break;
-
-					case 'line':
-						// i can't figure this one out
-						$error_code .= $code_bit;
-					break;
-
-				}
-			}
-			$error_code = ' ' . rtrim( strtoupper( $error_code ), '-' );
-		}
+		$file = explode( '.', basename( $file ));
+		$error_code = ! empty( $file[0] ) ? $file[0] : '';
+		$error_code .= ! empty( $func ) ? ' - ' . $func : '';
+		$error_code .= ! empty( $line ) ? ' - ' . $line : '';
 		return $error_code;
 	}
 

@@ -204,7 +204,7 @@ class EEH_Template {
 			// now loop through our final array of template location paths and check each location
 			foreach ( (array)$full_template_paths as $full_template_path ) {
 				if ( is_readable( $full_template_path )) {
-					$template_path = $full_template_path;
+					$template_path = str_replace( array( '\\', '/' ), DIRECTORY_SEPARATOR, $full_template_path );
 				    break;
 				}
 			}
@@ -212,9 +212,9 @@ class EEH_Template {
 		// if we got it and you want to see it...
 		if ( $template_path && $load ) {
 			if ( $return_string ) {
-				return EEH_Template::display_template( $template_path, $template_args, $return_string );
+				return EEH_Template::display_template( $template_path, $template_args, TRUE );
 			} else {
-				EEH_Template::display_template( $template_path, $template_args, $return_string );
+				EEH_Template::display_template( $template_path, $template_args, FALSE );
 			}
 		}
 		return $template_path;
@@ -243,7 +243,7 @@ class EEH_Template {
 		extract( (array) $template_args);
 
 		if ( $return_string ) {
-			// becuz we want to return a string, we are going to capture the output
+			// because we want to return a string, we are going to capture the output
 			ob_start();
 			include( $template_path );
 			return ob_get_clean();
@@ -550,6 +550,103 @@ class EEH_Template {
 	}
 	return ob_get_clean();
 }
+
+
+
+	/**
+	 * wrapper for self::get_paging_html() that simply echos the generated paging html
+	 *
+	 * @since 4.4.0
+	 * @see   self:get_paging_html() for argument docs.
+	 */
+	public static function paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE ) {
+		echo self::get_paging_html( $total_items, $current, $per_page, $url, $show_num_field );
+	}
+
+
+
+	/**
+	 * A method for generating paging similar to WP_List_Table
+	 *
+	 * @since 4.4.0
+	 * @see      wp-admin/includes/class-wp-list-table.php WP_List_Table::pagination()
+	 *
+	 * @param  integer $total_items      	How many total items there are to page.
+	 * @param  integer $current 	 	What the current page is.
+	 * @param  integer $per_page 		How many items per page.
+	 * @param  string   $url                  	What the base url for page links is.
+	 * @param  boolean $show_num_field  Whether to show the input for changing page number.
+	 * @return  string
+	 */
+	public static function get_paging_html( $total_items, $current, $per_page, $url, $show_num_field = TRUE ) {
+		$page_links = array();
+		$disable_first = $disable_last = '';
+		$total_items = (int) $total_items;
+		$per_page = (int) $per_page;
+		$current = (int) $current;
+
+		$total_pages = round( ceil( $total_items ) / $per_page );
+
+		if ( $total_pages <= 1)
+			return '';
+
+		$output = '<span class="displaying-num">' . sprintf( _n( '1 item', '%s items', $total_items ), number_format_i18n( $total_items ) ) . '</span>';
+
+		if ( $current == 1 )
+			$disable_first = ' disabled';
+		if ( $current == $total_pages )
+			$disable_last = ' disabled';
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'first-page' . $disable_first,
+			esc_attr__( 'Go to the first page' ),
+			esc_url( remove_query_arg( 'paged', $url ) ),
+			'&laquo;'
+		);
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'prev-page' . $disable_first,
+			esc_attr__( 'Go to the previous page' ),
+			esc_url( add_query_arg( 'paged', max( 1, $current-1 ), $url ) ),
+			'&lsaquo;'
+		);
+
+		if ( ! $show_num_field )
+			$html_current_page = $current;
+		else
+			$html_current_page = sprintf( "<input class='current-page' title='%s' type='text' name='paged' value='%s' size='%d' />",
+				esc_attr__( 'Current page' ),
+				$current,
+				strlen( $total_pages )
+			);
+
+		$html_total_pages = sprintf( "<span class='total-pages'>%s</span>", number_format_i18n( $total_pages ) );
+		$page_links[] = '<span class="paging-input">' . sprintf( _x( '%1$s of %2$s', 'paging' ), $html_current_page, $html_total_pages ) . '</span>';
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'next-page' . $disable_last,
+			esc_attr__( 'Go to the next page' ),
+			esc_url( add_query_arg( 'paged', min( $total_pages, $current+1 ), $url ) ),
+			'&rsaquo;'
+		);
+
+		$page_links[] = sprintf( "<a class='%s' title='%s' href='%s'>%s</a>",
+			'last-page' . $disable_last,
+			esc_attr__( 'Go to the last page' ),
+			esc_url( add_query_arg( 'paged', $total_pages, $url ) ),
+			'&raquo;'
+		);
+
+		$pagination_links_class = 'pagination-links';
+		$output .= "\n<span class='$pagination_links_class'>" . join( "\n", $page_links ) . '</span>';
+
+		if ( $total_pages )
+			$page_class = $total_pages < 2 ? ' one-page' : '';
+		else
+			$page_class = ' no-pages';
+
+		return "<div class='tablenav-pages{$page_class}'>$output</div>";
+	}
 
 
 

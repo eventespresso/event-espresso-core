@@ -26,17 +26,15 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  */
 interface EEI_Plugin_API {
 
-
 	/**
 	 * Used to register a component with EE.
 	 *
-	 * @since 4.3.0
-	 *
-	 * @param  mixed $ref type depends on implementation but typically contains necessary info for
-	 *                    		 registering the component
+	 * @since    4.3.0
+	 * @param string $ID a unique name or ID for the component being registered
+	 * @param array  $setup_args  an array of key value pairs of info for registering the component
 	 * @return void
 	 */
-	public static function register( $ref );
+	public static function register( $ID = NULL, $setup_args = array() );
 
 
 
@@ -44,10 +42,8 @@ interface EEI_Plugin_API {
 	 * Used to deregister a component with EE.
 	 *
 	 * @since 4.3.0
-	 *
-	 * @param  mixed $ref type depends on implementation but typically contains necessary info for
-	 *                    		 registering the component
+	 * @param string $ID a unique name or ID for the component being registered
 	 * @return void
 	 */
-	public static function deregister( $ref );
+	public static function deregister( $ID = NULL );
 }

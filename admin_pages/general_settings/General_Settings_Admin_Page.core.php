@@ -486,7 +486,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 		$this->_template_args['use_personnel_manager'] = isset( EE_Registry::instance()->CFG->admin->use_personnel_manager ) ? absint( EE_Registry::instance()->CFG->admin->use_personnel_manager ) : FALSE;
 		$this->_template_args['use_dashboard_widget'] = isset( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) ? absint( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) : TRUE;
-		$this->_template_args['events_in_dasboard'] = isset( EE_Registry::instance()->CFG->admin->events_in_dasboard ) ? absint( EE_Registry::instance()->CFG->admin->events_in_dasboard ) : 30;
+		$this->_template_args['events_in_dashboard'] = isset( EE_Registry::instance()->CFG->admin->events_in_dashboard ) ? absint( EE_Registry::instance()->CFG->admin->events_in_dashboard ) : 30;
 		$this->_template_args['use_event_timezones'] = isset( EE_Registry::instance()->CFG->admin->use_event_timezones ) ? absint( EE_Registry::instance()->CFG->admin->use_event_timezones ) : FALSE;
 		$this->_template_args['use_full_logging'] = isset( EE_Registry::instance()->CFG->admin->use_full_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_full_logging ) : FALSE;
 		$this->_template_args['use_remote_logging'] = isset( EE_Registry::instance()->CFG->admin->use_remote_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_remote_logging ) : FALSE;
@@ -505,7 +505,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _update_admin_option_settings() {
 		EE_Registry::instance()->CFG->admin->use_personnel_manager = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : EE_Registry::instance()->CFG->admin->use_personnel_manager;
 		EE_Registry::instance()->CFG->admin->use_dashboard_widget = isset( $this->_req_data['use_dashboard_widget'] ) ? absint( $this->_req_data['use_dashboard_widget'] ) : EE_Registry::instance()->CFG->admin->use_dashboard_widget;
-		EE_Registry::instance()->CFG->admin->events_in_dasboard = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : EE_Registry::instance()->CFG->admin->events_in_dasboard;
+		EE_Registry::instance()->CFG->admin->events_in_dashboard = isset( $this->_req_data['events_in_dashboard'] ) ? absint( $this->_req_data['events_in_dashboard'] ) : EE_Registry::instance()->CFG->admin->events_in_dashboard;
 		EE_Registry::instance()->CFG->admin->use_event_timezones = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : EE_Registry::instance()->CFG->admin->use_event_timezones;
 		EE_Registry::instance()->CFG->admin->use_full_logging = isset( $this->_req_data['use_full_logging'] ) ? absint( $this->_req_data['use_full_logging'] ) : EE_Registry::instance()->CFG->admin->use_full_logging;
 		EE_Registry::instance()->CFG->admin->use_remote_logging = isset( $this->_req_data['use_remote_logging'] ) ? absint( $this->_req_data['use_remote_logging'] ) : EE_Registry::instance()->CFG->admin->use_remote_logging;

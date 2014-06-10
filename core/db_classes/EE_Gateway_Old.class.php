@@ -202,7 +202,7 @@ abstract class EE_Gateway_Old {
 
 	/**
 	 * performs activating, deactivating, and updating gateways if proper $_POST parameters are sent
-	 * This should probably be done in Payment_Admin_page on a seperate route, not a function called by the gateway's constructor
+	 * This should probably be done in Payment_Admin_page on a separate route, not a function called by the gateway's constructor
 	 */
 	private function _gateways_admin() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );

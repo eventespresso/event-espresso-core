@@ -329,7 +329,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					}
 //				}
 			} else {
-				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retreived from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+				EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
 			}
 		} else {
 			$this->_transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
@@ -347,8 +347,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( ! $this->_revisit && $ID = $this->_transaction->ID() ) {
 				// but if this transaction has already been saved to the db earlier in the same session (ie: it's not a revisit)... then let's pull that
 				if ( ! $this->_transaction = EEM_Transaction::instance()->get_one_by_ID( $ID )) {
-					EE_Error::add_error( __( 'Your Registration and Transaction information could not be retreived from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-					return;
+					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+					return FALSE;
 				}
 			}
 		} elseif ( ! $this->_revisit ) {
@@ -626,31 +626,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 	}
 
-
-
-	/**
-	 *    nocache_headers_nginx
-	 *
-	 * @access    public
-	 * @param $headers
-	 * @return    array
-	 */
-	public static function nocache_headers_nginx ( $headers ) {
-		$headers['X-Accel-Expires'] = 0;
-		return $headers;
-	}
-
-
-
-	/**
-	 * 	nocache_headers
-	 *
-	 *  @access 	public
-	 *  @return 	void
-	 */
-	public static function nocache_headers() {
-		nocache_headers();
-	}
 
 
 	/**
@@ -1337,7 +1312,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 														$attendee_property = TRUE;
 													break;
 													default :
-														$attendee_property = EEH_Class_Tools::has_property( 'EE_Attendee', '_ATT_' . $form_input ) ? TRUE : FALSE;
+														$attendee_property = EEM_Attendee::instance()->has_field('ATT_' . $form_input) ? TRUE : FALSE;
 														$form_input = $attendee_property ? 'ATT_' . $form_input : $form_input;
 												}
 
@@ -1416,7 +1391,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												unset( $attendee_data['ATT_email'] );
 												// now loop thru what' sleft and add to attendee CPT
 												foreach ( $attendee_data as $property_name => $property_value ) {
-													if ( EEH_Class_Tools::has_property( 'EE_Attendee', '_' . $property_name )) {
+													if ( EEM_Attendee::instance()->has_field($property_name)) {
 														$existing_attendee->set( $property_name, $property_value );
 													}
 												}
@@ -1688,7 +1663,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
 		}
 		$this->_transaction->finalize( TRUE );
-		EE_Registry::instance()->SSN->clear_session();
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		return $this->_transaction->ID();
 	}
 

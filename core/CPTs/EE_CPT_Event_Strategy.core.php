@@ -68,8 +68,8 @@ class EE_CPT_Event_Strategy {
 	 * for event CPTs)
 	 */
 	protected function _add_filters(){
-		add_filter( 'posts_fields', array( $this, 'posts_fields' ), 10, 2 );
-		add_filter( 'posts_join', array( $this, 'posts_join' ), 10, 2 );
+		add_filter( 'posts_fields', array( $this, 'posts_fields' ), 1, 2 );
+		add_filter( 'posts_join', array( $this, 'posts_join' ), 1, 2 );
 //		add_filter( 'posts_where', array( $this, 'posts_where' ), 10, 2 );
 		add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
 		add_filter( 'posts_groupby', array( $this, 'posts_groupby' ), 1, 2 );

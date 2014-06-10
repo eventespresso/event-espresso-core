@@ -385,7 +385,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway_Old {
 					$grand_total = $transaction->remaining();
 					$description = sprintf(__("Total paid to date: %s, and this charge is for the balance.", "event_espresso"),$transaction->get_pretty('TXN_paid'));
 				}else{
-					throw new EE_Error(sprintf(__("An unexpected error has occured. Amount to charge passed to paypal was invalid'%s'", "event_espresso"),$total_line_item));
+					throw new EE_Error(sprintf(__("An unexpected error has occurred. Amount to charge passed to PayPal was invalid'%s'", "event_espresso"),$total_line_item));
 				}
 				$item_amount = $grand_total;
 				$tax_amount = 0;

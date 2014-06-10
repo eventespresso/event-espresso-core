@@ -92,7 +92,6 @@ class EEM_Transaction extends EEM_Base {
 			'Registration'=>new EE_Has_Many_Relation(),
 			'Payment'=>new EE_Has_Many_Relation(),
 			'Status'=>new EE_Belongs_To_Relation(),
-			'Promotion_Object'=>new EE_Has_Many_Any_Relation(),
 			'Line_Item'=>new EE_Has_Many_Relation(false),//you can delete a transaction without needing to delete its line items
 			'Payment_Method'=>new EE_Belongs_To_Relation(),
 		);
@@ -104,7 +103,7 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the Espresso_model object
+	 *		This function is a singleton method used to instantiate the Espresso_model object
 	 *
 	 *		@access public
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
@@ -134,7 +133,7 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	*		retreive  all transactions from db between two dates
+	*		retrieve  all transactions from db between two dates
 	* 
 	* 		@access		public
 	* 		@param		string		$start_date		
@@ -214,7 +213,7 @@ class EEM_Transaction extends EEM_Base {
 
 
 	/**
-	*		retreive a single transaction from db via the TXN_ID
+	*		retrieve a single transaction from db via the TXN_ID
 	* 
 	* 		@access		public
 	* 		@param		string		$TXN_ID			

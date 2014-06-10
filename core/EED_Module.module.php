@@ -16,12 +16,12 @@
  * EED_Module
  *
  * @package			Event Espresso
- * @subpackage	/modules/
+ * @subpackage 	/core/
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
-abstract class EED_Module extends EE_Base {
+abstract class EED_Module extends EE_Configurable {
 
 	/**
 	 * 	instance of the EED_Module object
@@ -29,13 +29,6 @@ abstract class EED_Module extends EE_Base {
 	 *	@var 	EED_Module $_instance
 	 */
 	protected static $_instance = NULL;
-
-	/**
-	 * 	instance of the EE_Config_Base object
-	 * 	@access 	protected
-	 *	@var 	EE_Config_Base $_config
-	 */
-	protected $_config = NULL;
 
 	/**
 	 * 	rendered output to be returned to WP
@@ -93,74 +86,37 @@ abstract class EED_Module extends EE_Base {
 	 */
 	final public function __construct() {
 		$this->theme = EE_Config::get_current_theme();
-		self::$_instance = $this;
+		$module_name = $this->module_name();
+		EE_Registry::instance()->modules->{$module_name} = $this;
 	}
 
 
 
 	/**
-	 *    instance - returns instance of child class object
-	 *
-	 * @access 	public
-	 * @param 	string $module_class
-	 * @return 	\EED_Module
+	 * @param $module_name
+	 * @return EED_Module
 	 */
-	final public static function instance( $module_class = NULL ) {
-		$module_class = ! empty( $module_class ) ? $module_class : get_called_class();
-		if ( $module_class == 'EED_Module' || empty( $module_class )) {
-			return NULL;
+	public static function instance( $module_name = '' ) {
+		$module_name = ! empty( $module_name ) ? $module_name : get_called_class();
+		if ( ! isset(  EE_Registry::instance()->modules->{$module_name} ) || ! EE_Registry::instance()->modules->{$module_name} instanceof EED_Module ) {
+			EE_Registry::instance()->modules->{$module_name} = $module_name !== 'EED_Module' ? EE_Module_Request_Router::module_factory( $module_name ) : NULL;
 		}
-		$module = str_replace( 'EED_', '', strtoupper( $module_class ));
-		$module_obj = isset( EE_Registry::instance()->modules[ $module ] ) ? EE_Registry::instance()->modules[ $module ] : NULL;
-		return $module_obj instanceof $module_class || $module_class == 'self' ? $module_obj : new $module_class();
+		return EE_Registry::instance()->modules->$module_name;
 	}
 
 
 
 	/**
-	 *    set_config
+	 *    module_name
 	 *
-	 * @access 	public
-	 * @param 	string 	$section
-	 * @param 	string 	$name
-	 * @param 	string 	$config_class
-	 * @return 	mixed 	EE_Config_Base
+	 * @access    public
+	 * @return    string
 	 */
-	public function set_config( $section = 'modules', $name = '', $config_class = '' ) {
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		try {
-			$this->_config = EE_Config::instance()->set_config( $section, $name, $config_class );
-			return $this->_config;
-		} catch ( EE_Error $e ) {
-			$e->get_error();
-		}
-		return NULL;
-	}
-
-
-
-	/**
-	 *    get_config
-	 *
-	 * @access 	public
-	 * @param 	string 	$section
-	 * @param 	string 	$name
-	 * @param 	string 	$config_class
-	 * @return 	mixed 	EE_Config_Base | NULL
-	 */
-	public function get_config( $section = 'modules', $name = '', $config_class = '' ) {
-		$name = ! empty( $name ) ? $name : get_called_class();
-		$config_class = ! empty( $config_class ) ? $config_class : $name . '_Config';
-		// check for cached config
-		if ( ! $this->_config ) {
-			$this->_config = EE_Config::instance()->get_config( $section, $name, $config_class );
-		}
-		return $this->_config;
+	public function module_name() {
+		return get_class( $this );
 	}
 
 
 
 }
 // End of file EED_Module.module.php
-// Location: /modules/EED_Module.module.php

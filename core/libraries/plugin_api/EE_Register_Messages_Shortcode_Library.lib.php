@@ -62,16 +62,17 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API {
      * }
      * @return void
      */
-    public static function register( $name, $setup_args = array() ) {
-        //make sure this was called in the right place!
-        if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
-            EE_Error::doing_it_wrong(__METHOD__, sprintf( __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook (Trying to register a library named %s).','event_espresso'), $name ), '4.3.0' );
-        }
+    public static function register( $name = NULL, $setup_args = array() ) {
 
         //required fields MUST be present, so let's make sure they are.
-        if ( ! is_array( $setup_args ) || empty( $setup_args['autoloadpaths'] ) ) {
-            throw new EE_Error( __( 'In order to register a messages shortcode library with EE_Register_Messages_Shortcode_Library::register, you must include an array that contains the following key: "autoload_paths"', 'event_espresso' ) );
+        if ( empty( $name ) || ! is_array( $setup_args ) || empty( $setup_args['autoloadpaths'] ) ) {
+            throw new EE_Error( __( 'In order to register a messages shortcode library with EE_Register_Messages_Shortcode_Library::register, you must include a "name" (a unique identifier for this set of message shortcodes), and an array containing the following keys: : "autoload_paths"', 'event_espresso' ) );
         }
+
+		//make sure this was called in the right place!
+		if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
+			EE_Error::doing_it_wrong(__METHOD__, sprintf( __('Should be only called on the "EE_Brewing_Regular__messages_caf" hook (Trying to register a library named %s).','event_espresso'), $name ), '4.3.0' );
+		}
 
         $name = (string) $name;
         self::$_ee_messages_shortcode_registry[$name] = array(
@@ -106,7 +107,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API {
      * @param  string $name name used to register the shortcode library.
      * @return  void
      */
-    public static function deregister( $name ) {
+    public static function deregister( $name = NULL ) {
     	if ( !empty( self::$_ee_messages_shortcode_registry[$name] ) )
     		unset( self::$_ee_messages_shortcode_registry[$name] );
     }
@@ -149,7 +150,7 @@ class EE_Register_Messages_Shortcode_Library implements EEI_Plugin_API {
         if ( empty( self::$_ee_messages_shortcode_registry ) )
             return $original_shortcodes;
 
-        foreach ( self::$_ee_messages_shortcode_registry as $name => $sc_reg ) {
+        foreach ( self::$_ee_messages_shortcode_registry as $sc_reg ) {
             if ( !empty( $sc_reg['list_type_shortcodes'] ) )
                 $original_shortcodes = array_merge( $original_shortcodes, $sc_reg['list_type_shortcodes'] );
         }

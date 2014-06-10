@@ -143,7 +143,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 *		This funtion is a singleton method used to instantiate the Espresso_model object
+	 *		This function is a singleton method used to instantiate the Espresso_model object
 	 *
 	 *		@access public
 	 *		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
@@ -233,7 +233,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
-	*		retreive ALL registrations for a particular Attendee from db
+	*		retrieve ALL registrations for a particular Attendee from db
 	* 		@access		public
 	* 		@param		int		$ATT_ID
 	*		@return 	EE_Registration[]
@@ -267,7 +267,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 
 
 	/**
-	*		retreive registration for a specific transaction attendee from db
+	*		retrieve registration for a specific transaction attendee from db
 	* 
 	* 		@access		public
 	* 		@param		$TXN_ID

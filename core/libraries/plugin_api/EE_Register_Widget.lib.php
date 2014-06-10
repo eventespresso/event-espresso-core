@@ -96,7 +96,7 @@ class EE_Register_Widget implements EEI_Plugin_API {
 	 * @param string  $widget_id the name for the widget that was previously registered
 	 * @return void
 	 */
-	public static function deregister( $widget_id ) {
+	public static function deregister( $widget_id = NULL ) {
 		if ( isset( self::$_settings[ $widget_id ] )) {
 			unset( self::$_settings[ $widget_id ] );
 		}
