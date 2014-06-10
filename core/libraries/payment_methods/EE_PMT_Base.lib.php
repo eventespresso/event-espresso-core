@@ -228,6 +228,10 @@ abstract class EE_PMT_Base{
 			//so create no payment. The payment processor will know how to handle this
 			$payment = NULL; // <<<<<  added by brent as interm solution so that $payment is defined for return below
 		}
+		//if there is billing info, clean it and save it now
+		if( $billing_info instanceof EE_Billing_Info_Form ){
+			$this->_save_billing_info_to_attendee( $billing_info, $transaction );
+		}
 		return $payment;
 	}
 	/**
@@ -245,6 +249,36 @@ abstract class EE_PMT_Base{
 		}
 		$payment = $this->_gateway->handle_payment_update($req_data,$transaction);
 		return $payment;
+	}
+
+	/**
+	 * Saves the billing info onto the attendee of the primary registrant on this transaction, and
+	 * cleans it first.
+	 * @param EE_Billing_Info_Form $billing_form
+	 * @param EE_Transaction $transaction
+	 * @return boolean success
+	 */
+	protected function _save_billing_info_to_attendee($billing_form, $transaction){
+		if( ! $transaction || ! $transaction instanceof EE_Transaction){
+			EE_Error::add_error(__("Cannot save billing info because no transaction was specified", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		$primary_reg = $transaction->primary_registration();
+		if( ! $primary_reg ){
+			EE_Error::add_error(__("Cannot save billing info because the transaction has no primary registration", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		$attendee_id = $primary_reg->attendee_ID();
+		if( ! $attendee_id ){
+			EE_Error::add_error(__("Cannot save billing info because the transaction's primary registration has no attendee!", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
+			return false;
+		}
+		if( ! $billing_form instanceof EE_Billing_Info_Form ){
+			EE_Error::add_error( __( 'Cannot save billing info because there is none.', 'event_espresso' ) );
+			return false;
+		}
+		$billing_form->clean_sensitive_data();
+		return update_post_meta($attendee_id, 'billing_info_' . $this->system_name(), $billing_form->input_values() );
 	}
 
 	/**
