@@ -288,7 +288,7 @@ class EE_Html_messenger extends EE_messenger  {
 	 *
 	 * @return string
 	 */
-	protected function _get_main_template() {
+	protected function _get_main_template( $preview = FALSE ) {
 		$relative_path =  '/core/libraries/messages/messenger/assets/' . $this->name . '/';
 
 		$wrapper_template_file = $this->name . '-messenger-main-wrapper.template.php';
@@ -297,4 +297,11 @@ class EE_Html_messenger extends EE_messenger  {
 		EE_Registry::instance()->load_helper( 'Template' );
 		return EEH_Template::locate_template( array( $relative_path . $wrapper_template_file, $wrapper_template_file ), $this->_template_args );
 	}
+
+
+
+	protected function _preview() { return $this->_send_message(); }
+
+
+	protected function _set_admin_settings_fields() {}
 }
