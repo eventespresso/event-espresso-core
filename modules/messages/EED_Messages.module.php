@@ -208,11 +208,11 @@ class EED_Messages  extends EED_Module {
 			'messages/validators/email',
 			'shortcodes'
 			);
-
+		$paths = array();
 		foreach ( $dir_ref as $index => $dir ) {
-			$dir_ref[$index] = EE_LIBRARIES . $dir;
+			$paths[$index] = EE_LIBRARIES . $dir;
 		}
-		self::$_MSG_PATHS = apply_filters( 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS', $dir_ref );
+		self::$_MSG_PATHS = apply_filters( 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS', $paths );
 	}
 
 

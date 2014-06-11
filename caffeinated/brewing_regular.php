@@ -259,7 +259,7 @@ class EE_Brewing_Regular extends EE_Base {
 	 * @return array           appended paths
 	 */
 	public function messages_autoload_paths( $dir_ref ) {
-		$dir_ref = EE_CAF_LIBRARIES . 'shortcodes';
+		$dir_ref[] = EE_CAF_LIBRARIES . 'shortcodes';
 		return $dir_ref;
 	}
 
