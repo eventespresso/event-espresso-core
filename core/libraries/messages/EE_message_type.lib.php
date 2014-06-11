@@ -431,7 +431,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	protected function _set_with_messengers() {
 		$this->_with_messengers = array(
-			'email' => array()
+			'email' => array('html')
 			);
 	}
 
