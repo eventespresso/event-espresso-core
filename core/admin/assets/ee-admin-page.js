@@ -6,10 +6,10 @@ jQuery(document).ready(function($) {
 
 
 	function validate_form_inputs( submittedForm ) {
-	
+
 		var goodToGo = true;
 		var cntr = 1;
-		
+
 		$( submittedForm ).find('.required').each( function( index ) {
 			if( $(this).val() === '' || $(this).val() === 0 ) {
 				$(this).addClass('requires-value').siblings( '.validation-notice-dv' ).fadeIn();
@@ -29,7 +29,7 @@ jQuery(document).ready(function($) {
 		return goodToGo;
 	}
 
-	
+
 	$('.submit-for-validation').click(function(event) {
 		event.preventDefault();
 		var submittedForm = $(this).closest('form');
@@ -37,9 +37,9 @@ jQuery(document).ready(function($) {
 			submittedForm.submit();
 		}
 	});
-	
 
-	
+
+
 	$('#admin-recaptcha-settings-slct').change( function() {
 		if ( $(this).val() == 1 ) {
 			$('.admin-recaptcha-settings-tr').find('.maybe-required').removeClass('maybe-required').addClass('required');
@@ -51,15 +51,15 @@ jQuery(document).ready(function($) {
 			$('.admin-recaptcha-settings-hdr').hide();
 		}
 	});
-				
+
 	$('#admin-recaptcha-settings-slct').trigger( 'change' );
 
 
-		
+
 	function escape_square_brackets( value ) {
 		value = value.replace(/[[]/g,'\\\[');
 		value = value.replace(/]/g,'\\\]');
-		return value; 
+		return value;
 	}
 
 
@@ -72,9 +72,9 @@ jQuery(document).ready(function($) {
 			}
 		}
 	}
-		
-			
-	
+
+
+
 	var overlay = $( "#espresso-admin-page-overlay-dv" );
 	window.eeTimeout = false;
 	window.overlay = overlay;
@@ -88,7 +88,7 @@ jQuery(document).ready(function($) {
 	});
 
 	$('.updated.fade').delay(5000).fadeOut();
-	
+
 	/*
 	Floating "Save" and "Save & Close" buttons
 	 */
@@ -120,8 +120,8 @@ jQuery(document).ready(function($) {
 		$('#'+content_id).show();
 	});
 
-	
-	
+
+
 
 	window.do_before_admin_page_ajax = function do_before_admin_page_ajax() {
 		// stop any message alerts that are in progress
@@ -129,11 +129,11 @@ jQuery(document).ready(function($) {
 		// spinny things pacify the masses
 		$('#espresso-ajax-loading').eeCenter().show();
 	};
-	
+
 
 
 	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
-		
+
 		console.log( response );
 
 		$('#espresso-ajax-loading').fadeOut('fast');
@@ -149,18 +149,18 @@ jQuery(document).ready(function($) {
 			}
 			var existing_message = $('#message');
 			var fadeaway = true;
-			
+
 
 			if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
 				msg = '<p>' + response.success + '</p>';
 			}
-		
+
 			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
 				msg = '<p>' + response.errors + '</p>';
 				$(existing_message).removeClass('updated').addClass('error');
 				fadeaway = false;
 			}
-			
+
 			// set message content
 			$(existing_message).html(msg);
 			//  change location in the DOM if so desired
@@ -242,6 +242,12 @@ jQuery(document).ready(function($) {
 
 
 	/**
+	 * temporarily rmove trash link on venue editor.
+	 */
+	$('#delete-action', '.event-espresso_page_espresso_venues').remove();
+
+
+	/**
 	 * EE Help dialog loads
 	 */
 	$('.espresso-admin').on('click', '.ee-dialog', function(e) {
@@ -308,10 +314,10 @@ jQuery(document).ready(function($) {
 	if ( typeof eeLazyLoadingContainers !== 'undefined' ) {
 		espressoAjaxPopulate();
 	}
-	
-	
 
-	
+
+
+
 	$('.dismiss-ee-nag-notice').click(function(event) {
 		var nag_notice = $(this).attr('rel');
 		if ( $('#'+nag_notice).size() ) {
