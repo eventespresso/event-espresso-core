@@ -624,13 +624,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							'REG_group_size' => $total_items,
 							'REG_url_link'	=> $reg_url_link
 						));
+						// now create relations between various objects
+						$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
+						$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
+						$this->_transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
+					// if something failed...
 					} catch( Exception $e ) {
 						EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
 					}
-					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
-					$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
-					$this->_transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
-
 				}
 			}
 			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
