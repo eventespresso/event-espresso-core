@@ -2,23 +2,23 @@
 
 /*
  * For auto-generating form sections based off a model.
- * 
+ *
  */
 class EE_Model_Form_Section extends EE_Form_Section_Proper{
-	
+
 	/**
 	 *
 	 * @var EEM_Base
 	 */
 	protected $_model = NULL;
-	
+
 	/**
 	 *
 	 * @var EE_Base_Class
 	 */
 	protected $_model_object = NULL;
 	/**
-	 * 
+	 *
 	 * @param array $options_array keys: {
 	 *	@type EEM_Base $model
 	 *	@type EE_Base_Class $model_object
@@ -33,13 +33,13 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		if( ! $this->_model || ! $this->_model instanceof EEM_Base ){
 			throw new EE_Error(sprintf(__("Model Form Sections must first specify the _model property to be a subcalss of EEM_Base", "event_espresso")));
 		}
-		
+
 		if(isset($options_array['subsection_args'])){
 			$subsection_args = $options_array['subsection_args'];
 		}else{
 			$subsection_args = array();
 		}
-		
+
 		//gather fields and relations to convert to inputs
 		//but if they're just going to exclude a field anyways, don't bother converting it to an input
 		$exclude = $this->_subsections;
@@ -57,9 +57,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		if(isset($options_array['model_object']) && $options_array['model_object'] instanceof EE_Base_Class){
 			$this->populate_model_obj($options_array['model_object']);
 		}
-		
+
 	}
-	
+
 	/**
 	 * For now, just makes inputs for only HABTM relations
 	 * @param EE_Model_Relation_Base[] $relations
@@ -149,7 +149,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 						$input_constructor_args[1] = $input_constructor_args[0];
 						$input_constructor_args[0] = $model_names;
 						$input_class = 'EE_Select_Input';
-					}					
+					}
 					break;
 				case 'EE_Full_HTML_Field':
 					$input_class = 'EE_Text_Area_Input';
@@ -199,8 +199,8 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				default:
 					throw new EE_Error(sprintf(__("Model field of type '%s' does not convert to any known Form Input. Please add a case to EE_Model_Form_section's _convert_model_fields_to_inputs switch statement", "event_espresso"),get_class($model_field)));
 			}
-			$reflection = new ReflectionClass($input_class); 
-			$input = $reflection->newInstanceArgs($input_constructor_args); 
+			$reflection = new ReflectionClass($input_class);
+			$input = $reflection->newInstanceArgs($input_constructor_args);
 			$inputs[$field_name] = $input;
 		}
 		return $inputs;
@@ -242,8 +242,8 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	public function inputs_values_corresponding_to_model_fields(){
 		return array_intersect_key($this->input_values(),$this->_model->field_settings());
 	}
-	public function receive_form_submission($req_data = NULL) {
-		parent::receive_form_submission($req_data);
+	public function receive_form_submission($req_data = NULL, $validate = TRUE) {
+		parent::receive_form_submission($req_data, $validate);
 		//create or set the model object, if it isn't already
 		if( ! $this->_model_object ){
 			//check to see if the form indicates a PK, in which case we want to only retrieve it and update it
@@ -262,14 +262,14 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 				$this->_model_object->set($field_name,$field_value);
 			}
 		}
-		
+
 	}
 	/**
 	 * After this form has been initialized and is verified to be valid,
 	 * either creates a model object from its data and saves it, or updates
 	 * the model object its data represents
 	 * @return int, 1 on a successful update, the ID of
-	 *					the new entry on insert; 0 on failure	
+	 *					the new entry on insert; 0 on failure
 	 */
 	public function save(){
 		if( ! $this->_model_object){
@@ -283,7 +283,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		}
 		return $success;
 	}
-	
+
 	/**
 	 * Atutomatcially finds the related model info from the form, if present, and
 	 * save the relations indicated
@@ -332,7 +332,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	public function get_model_object(){
 		return $this->_model_object;
 	}
-	
+
 	/**
 	 * gets teh default name of this form section if none is specified
 	 * @return string
@@ -343,5 +343,5 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 			$this->_name =  $default_name;
 		}
 	}
-	
+
 }

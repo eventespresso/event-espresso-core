@@ -450,7 +450,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 			return NULL;
 		}
 		$billing_form = $pm_type->billing_form();
-		$billing_form->populate_defaults( $billing_info );
+		$billing_form->receive_form_submission( $billing_info, FALSE );
 		return $billing_form;
 	}
 

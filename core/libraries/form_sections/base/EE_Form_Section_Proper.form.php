@@ -13,7 +13,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @var EE_Form_Section_Validatable[]
 	 */
 	protected $_subsections = array();
-	
+
 	/**
 	 * Strategy for laying out the form
 	 * @var EE_Form_Section_Layout_Base
@@ -39,11 +39,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 *		and in that order. This is handy if you want
 	 *		the subsections to be ordered differently than the default, and if you override which fields are shown
 	 *	@type $exclude string[] values are subsections to be excluded. This is handy if you want
-	 *		to remove certain default subsections (note: if you specify BOTH 'include' AND 'exclude', 
+	 *		to remove certain default subsections (note: if you specify BOTH 'include' AND 'exclude',
 	 *		the inclusions will be applied first, and the exclusions will exclude items from that list of inclusions)
 	 *	@type $layout_strategy EE_Form_Section_Layout_Base strategy for laying out the form
 	 * } @see EE_Form_Section_Validatable::__construct()
-	 * 
+	 *
 	 */
 	public function __construct($options_array = array()){
 		EE_Registry::instance()->load_helper('Formatter');
@@ -55,7 +55,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		if(isset($options_array['subsections'])){
 			$this->_subsections = array_merge($this->_subsections,$options_array['subsections']);
 		}
-		
+
 		if(isset($options_array['include'])){
 			//we are going to make sure we ONLY have those those subsections to include
 			//AND we are going to make sure they're in that specified order
@@ -99,7 +99,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	public function get_html_for_input($input){
 		return $this->_layout_strategy->layout_input($input);
 	}
-	
+
 	/**
 	 * was_submitted - checks if form inputs are present in request data
 	 * Basically an alias for form_data_present_in() (which is used by both
@@ -109,20 +109,30 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	public function was_submitted($form_data = NULL){
 		return $this->form_data_present_in($form_data);
 	}
-	
+
 	/**
 	 * After the form section is initially created, call this to sanitize the data in the submission
 	 * which relates to this form section, validate it, and set it as properties on the form.
 	 * @param array $req_data should usually be $_REQUEST (the default). However, you CAN
-	 * supply a different array. Consider using set_defaults() instead however.
+	 * supply a different array. Consider using set_defaults() instead however. (If you rendered
+	 * the form in the page using echo $form_x->get_html_and_js() the inputs will have the correct name
+	 * in the request data for this function to find them and populate the form with them.
+	 * If you have a flat form (with only input subsections), you can supply a flat array where keys
+	 * are the form input names and values are their values)
+	 * @param boolean $validate whether or not to perform validation on this data. Default is,
+	 * of course, to validate that data, and set errors on the invalid values. But if the data
+	 * has already been validated (eg you validated the data then stored it in the DB) you may want
+	 * to skip this step.
 	 * @return void
 	 */
-	public function receive_form_submission($req_data = NULL){
+	public function receive_form_submission($req_data = NULL, $validate = TRUE){
 		if( $req_data === NULL){
 			$req_data = $_REQUEST;
 		}
 		$this->_normalize($req_data);
-		$this->_validate();
+		if( $validate ){
+			$this->_validate();
+		}
 		$this->_received_submission = TRUE;
 	}
 	/**
@@ -222,12 +232,12 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		return true;
 	}
-	
+
 	/**
 	 * adds a filter so taht jquery validate gets enqueued in EE_System::wp_enqueue_scripts().
-	 * This must be done BEFORE wp_enqueue_scripts() gets called, which is on 
+	 * This must be done BEFORE wp_enqueue_scripts() gets called, which is on
 	 * the wp_enqueue_scripts hook.
-	 * However, registering the form js and localizing it can happen when we 
+	 * However, registering the form js and localizing it can happen when we
 	 * actually output the form (which is preferred, seeing how teh form's fields
 	 * could change until it's actually outputted)
 	 * @return void
@@ -235,7 +245,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	protected function _enqueue_jquery_validate_script(){
 		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 	}
-	
+
 	/**
 	 * gets teh default name of this form section if none is specified
 	 * @return string
@@ -247,21 +257,21 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$this->_name =  $default_name;
 		}
 	}
-	
-	
-	
-	
-	
+
+
+
+
+
 	/**
-	 * Returns the JS for validating the form (and subsections) inside script tags. 
-	 * Also returns the HTML for the form, except for the form opening and closing tags 
+	 * Returns the JS for validating the form (and subsections) inside script tags.
+	 * Also returns the HTML for the form, except for the form opening and closing tags
 	 * (as the form section doesn't know where you necessarily want to send the information to), and except for a submit button.
 	 */
 	public function get_html_and_js(){
 		$this->_enqueue_and_localize_form_js();
 		return $this->get_html();
 	}
-	
+
 	/**
 	 * returns HTML for displaying this form section. recursively calls display_section() on all subsections
 	 * @return string
@@ -269,7 +279,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	public function get_html(){
 		return $this->_layout_strategy->layout_form();
 	}
-	
+
 	/**
 	 * returns HTML for generating the opening form HTML tag (<form>)
 	 * @param string $action the URL the form is submitted to
@@ -280,7 +290,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	public function form_open( $action = NULL, $method = 'POST', $other_attributes = '' ) {
 		return EEH_Formatter::nl(1) . '<form id="ee-' . $this->html_id() . '-form" action="' . $action . '" method="' . $method . '"' . $other_attributes . '>';
 	}
-	
+
 	/**
 	 * returns HTML for generating an HTML form submit button
 	 * @return string
@@ -289,7 +299,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		$primary = $primary === TRUE ? 'primary' : 'secondary';
 		return EEH_Formatter::nl() . '<input id="ee-' . $this->html_id() . '-submit" class="button button-' . $primary . ' button-' . $btn_size . '" type="submit" value="' . $value . '" name="ee_' . $this->html_id() . '_submit" ' . $other_attributes . '/>';
 	}
-	
+
 	/**
 	 * returns HTML for generating the closing form HTML tag (</form>)
 	 * @return string
@@ -298,14 +308,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		return EEH_Formatter::nl(-1) . '</form>' . EEH_Formatter::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_Formatter::nl();
 	}
 
-	
+
 	/**
 	 * gets the variables used by form_section_validation.js.
 	 * This needs to be called AFTER we've called $this->_enqueue_jquery_validate_script,
 	 * but before the wordpress hook wp_loaded
 	 */
 	public function _enqueue_and_localize_form_js(){
-		wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);	
+		wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);
 		wp_enqueue_script('ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'), '1', true);
 		$validation_rules = $this->get_jquery_validation_rules();
 		$form_section_id = $this->html_id();
@@ -318,7 +328,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		add_action('get_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
 		add_action('admin_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
 	}
-	
+
 	/**
 	 * passes all the form data required by the JS to the JS, and enqueues the few required JS files.
 	 * Should be setup by each form during the _enqueues_and_localize_form_js
@@ -327,7 +337,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//allow inputs and stuff to hook in their JS and stuff here
 		do_action('AHEE__EE_Form_Section_Proper__localize_script_for_all_forms__begin');
 		EE_Form_Section_Proper::$_js_localization['localized_error_messages'] = EE_Form_Section_Proper::_get_localized_error_messages();
-		wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);	
+		wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);
 		wp_enqueue_script('ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'),
 				'1',true);
 		wp_localize_script('ee_form_section_validation','ee_form_section_vars', EE_Form_Section_Proper::$_js_localization);
@@ -342,7 +352,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			'validUrl'=>  __("This is not a valid absolute URL. Eg, http://mysite.com/monkey.jpg", "event_espresso")
 		);
 	}
-	
+
 	/**
 	 * Gets the JS to put inside the jquery validation rules for subsection of this form section. See parent function for more...
 	 * @return array
@@ -354,7 +364,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		return $jquery_validation_rules;
 	}
-	
+
 	/**
 	 * Sanitizes all the data and sets the sanitized value of each field
 	 * @param array $req_data like $_POST
@@ -379,7 +389,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$subsection->_validate();
 		}
 	}
-	
+
 	/**
 	 * Gets all the inputs on this form section
 	 * @return EE_Form_Input_Base[]
@@ -428,7 +438,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		return $input_values;
 	}
 	/**
-	 * Indicates whether or not this form has received a submission yet 
+	 * Indicates whether or not this form has received a submission yet
 	 * (ie, had receive_form_submission called on it yet)
 	 * @return boolean
 	 */
@@ -446,11 +456,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			unset($this->_subsections[$input_to_exclude_name]);
 		}
 	}
-	
+
 	public function hide($inputs_to_hide= array()){
 		foreach($inputs_to_hide as $input_to_hide){
 			$input = $this->get_input($input_to_hide);
-			
+
 			$input->set_display_strategy(new EE_Hidden_Display_Strategy());
 		}
 	}
@@ -494,4 +504,4 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 	}
 }
-	
+

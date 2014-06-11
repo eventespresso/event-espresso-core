@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  *
  * EE_Form_Section_Validatable
- * 
+ *
  * Class for cross-cutting job of handling forms.
  * In the presentation layer Form Sections handle the display of form inputs on the page.
  * In both the presentation and controller layer, Form Sections handle validation (by js and php)
@@ -29,7 +29,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * all fields within a form section. So this means that a Form Input is considered a subsection of form section in its own right.
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -42,7 +42,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 * @var EE_Validation_Error[]
 	 */
 	protected $_validation_errors;
-	
+
 	/**
 	 * Errors on this form section. Note: EE_Form_Section_Proper
 	 * has another function for getting all errors in this form section and subsections
@@ -63,19 +63,19 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 				$validation_error_messages[] =$validation_error->getMessage();
 			}
 		}
-		
+
 		return implode(", ",$validation_error_messages);
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Performs validation on this form section (and subsections). Should be called after _sanitize()
 	 * @param array $req_data
 	 * @return boolean of whether or not the form section is valid
 	 */
 	abstract protected function _validate();
-	
+
 	/**
 	 * Checks if this field has any validation errors
 	 * @return boolean
@@ -87,17 +87,17 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Sanitizes input for this form section
 	 * @param $req_data is the full request data like $_POST
 	 * @return boolean of whether a normalization error occurred
 	 */
 	abstract protected function _normalize($req_data);
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Creates a validation error from the arguments provided, and adds it to the form section's list.
 	 * If such an EE_Validation_Error object is passed in as the first arg, simply sets this as its form section, and adds
@@ -117,7 +117,7 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 		}
 		$this->_validation_errors[] = $validation_error;
 	}
-	
+
 	/**
 	 * When generating the JS for the jquery valiation rules like<br>
 	 * <code>$( "#myform" ).validate({
@@ -133,17 +133,20 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 		password_again: {
 			equalTo: "#password"
 		  }</code>
-	 * except we leave it as a PHP obejct, and leave wp_localize_script to 
+	 * except we leave it as a PHP obejct, and leave wp_localize_script to
 	 * turn it into a JSON object which can be used by the js
 	 * @return array
 	 */
 	abstract function get_jquery_validation_rules();
-	
-	
+
+
 	/**
 	 * using this section's name and its parents, finds the value of the form data that corresponds to it.
-	 * For example, if this form section's name is my_form[subform][form_input_1], then it's value should be in $_REQUEST
-	 * at $_REQUEST['my_form']['subform']['form_input_1']. This function finds its value in the form.
+	 * For example, if this form section's HTML name is my_form[subform][form_input_1], then it's value should be in $_REQUEST
+	 * at $_REQUEST['my_form']['subform']['form_input_1']. (If that doesn't exist, we also check for this subsection's name
+	 * at the TOP LEVEL of the request data. Eg $_REQUEST['form_input_1'].)
+	 * This function finds its value in the form.
+	 * @return mixed whatever the raw value of this form section is in the request data
 	 */
 	public function find_form_data_for_this_section($req_data){
 		if( $this->_parent_section ){
@@ -151,7 +154,15 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 		}else{
 			$array_of_parent = $req_data;
 		}
-		return isset($array_of_parent[$this->name()]) ? $array_of_parent[$this->name()] : null;
+		if( isset( $array_of_parent[ $this->name() ] ) ){
+			return $array_of_parent[ $this->name() ];
+		}elseif( isset( $req_data[ $this->name() ] ) ){
+			//maybe its data is at the top level of the request data?
+			return $req_data[ $this->name() ];
+
+		}else{
+			return NULL;
+		}
 	}
 	/**
 	 * Checks if this form section's data is present in the req data specified

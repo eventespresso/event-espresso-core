@@ -8,7 +8,7 @@
 		/* @var $form_input EE_Form_Input_Base */
 	?>
 		<div class="clearfix">
-			<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php echo $form_input->get_html_for_label();?></span><?php echo $form_input->raw_value();?>
+			<span class="admin-side-mbox-label-spn lt-grey-txt float-left"><?php echo $form_input->get_html_for_label();?></span><?php echo $form_input->normalized_value();?>
 		</div>
 
 		<?php endforeach; ?>
