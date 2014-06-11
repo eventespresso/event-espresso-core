@@ -148,7 +148,7 @@ class EED_Messages  extends EED_Module {
 			throw new EE_Error( __('Unable to complete the request because the token is invalid.', 'event_espresso' ) );
 		}
 
-		//get data handler from message type.
+		//get message type object then get the correct
 
 
 		//get data according to data handler requirements
