@@ -112,10 +112,16 @@ class EED_Messages  extends EED_Module {
 			throw new EE_Error( __('The request for the "msg_url_trigger" route has a malformed url.', 'event_espresso') );
 		}
 
-		//retrieve the data via the handler
-		//How we do this is the token will always be the unique REG_url_link saved with a registration.  We use that to make sure we retrieve the correct data for the given registration.  Depending on the context and the message type data handler, the data_id will correspond to the specific data handler item we need to retrieve for specific messages (i.e. a specific payment or specific refund).  Otherwise the data sent for the messages "send_message" method will be assumed beginning from the registration.
+		//ensure controller is loaded
+		self::_load_controller();
 
-		$data = $this->_get_messages_data_from_url( $message_type, $token, $data_id );
+		//retrieve the data via the handler
+		//How we do this is the token will always be the unique REG_url_link saved with a registration.  We use that to make sure we retrieve the correct data for the given registration.  Depending on the context and the message type data handler, the data_id will correspond to the specific data handler item we need to retrieve for specific messages (i.e. a specific payment or specific refund).
+
+		$data = $this->_get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context );
+
+		//now we can trigger the actual sending of the message via the message type.
+		self::$_EEMSG->send_message( $message_type, $sending_messenger, $generating_messenger, $context );
 	}
 
 
@@ -129,16 +135,15 @@ class EED_Messages  extends EED_Module {
 	 * @since 4.5.0
 	 * @throws EE_Error
 	 *
+	 * @param string $generating_messenger The messenger that is used for generating templates for this message type.
 	 * @param string $message_type Used to figure out what data handler is used (which in turn enables us to know what data type is required)
 	 * @param string $token   the REG_url_link - this is the base for retrieving the related data.
 	 * @param int      $data_id Some data handlers require a specific object.  The id is used to provide that specific object.
+	 * @param string $context what context is being requested.
 	 *
 	 * @return mixed  (EE_Base_Class||EE_Base_Class[])
 	 */
-	private function _get_messages_data_from_url( $message_type, $token, $data_id = 0 ) {
-
-		//ensure controller is loaded
-		self::_load_controller();
+	private function _get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context ) {
 
 		//get the registration.
 		$registration = EEM_Registration::instance()->get_one( array( 'REG_url_link' => $token ) );
@@ -148,13 +153,17 @@ class EED_Messages  extends EED_Module {
 			throw new EE_Error( __('Unable to complete the request because the token is invalid.', 'event_espresso' ) );
 		}
 
-		//get message type object then get the correct
+		//get message type object then get the correct data setup for that message type.
+		$message_type = self::$_EEMSG->get_active_message_type( $generating_messenger, $message_type );
 
+
+		//if no message type then it likely isn't active for this messenger.
+		if ( ! $message_type instanceof EE_message_type ) {
+			throw new EE_Error( sprintf( __('Unable to get data for the %s message type, likely because it is not active for the %s messenger.', 'event_espresso') ) );
+		}
 
 		//get data according to data handler requirements
-
-
-
+		return $message_type->get_data_for_context( $context, $registration, $data_id );
 	}
 
 
