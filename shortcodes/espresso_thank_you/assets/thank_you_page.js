@@ -235,12 +235,12 @@
 		*/
 		start_stop_heartbeat : function() {
 			this.console_log( 'start_stop_heartbeat' );
-			if ( this.return.txn_status === eei18n.TXN_complete ) {
-				this.stop_heartbeat();
-				this.hide_loading_message();
-			} else {
+			if (this.return.txn_status === eei18n.TXN_incomplete) {
 				this.restart_heartbeat();
 				this.checking_for_new_payments_message();
+			} else {
+				this.stop_heartbeat();
+				this.hide_loading_message();
 			}
 		},
 
