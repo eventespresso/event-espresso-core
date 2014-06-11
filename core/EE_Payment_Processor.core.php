@@ -26,15 +26,15 @@
 class EE_Payment_Processor{
 	/**
      * 	@var EE_Payment_Processor $_instance
-	 * 	@access 	private 	
+	 * 	@access 	private
      */
 	private static $_instance = NULL;
-	
+
 	/**
 	 *@singleton method used to instantiate class object
 	 *@access public
 	 *@return EE_Payment_Processor instance
-	 */	
+	 */
 	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Data_Migration_Manager )) {
@@ -50,7 +50,7 @@ class EE_Payment_Processor{
 	 *@Constructor
 	 *@access private
 	 *@return void
-	 */	
+	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Payment_Processor__construct' );
 	}
@@ -58,7 +58,7 @@ class EE_Payment_Processor{
 
 
 	/**
-	 * Using the selected gateway, processes the payment for that transaction. 
+	 * Using the selected gateway, processes the payment for that transaction.
 	 * @param int $payment_method ID of the payment method to use
 	 * @param EE_Transaction $transaction
 	 * @param float $amount if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
@@ -98,7 +98,7 @@ class EE_Payment_Processor{
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				if($save_txn) $transaction->save();
 			do_action( 'AHEE__EE_Payment_Processor__process_payment__no_payment_made', $transaction );
-			
+
 			} else {
 				$payment = EEM_Payment::instance()->ensure_is_obj( $payment, TRUE );
 				//ok, now process the transaction according to the payment
@@ -106,20 +106,20 @@ class EE_Payment_Processor{
 				do_action( 'AHEE__EE_Payment_Processor__process_payment__successful', $transaction, $payment );
 			}
 		}else{
-			EE_Error::add_error( 
-					sprintf( 
+			EE_Error::add_error(
+					sprintf(
 						__( 'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
 						'<br/>',
-						EE_Registry::instance()->CFG->organization->email 
-					), __FILE__, __FUNCTION__, __LINE__ 
-				);	
+						EE_Registry::instance()->CFG->organization->email
+					), __FILE__, __FUNCTION__, __LINE__
+				);
 		}
-		
+
 		return $payment;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param EE_Transaction $transaction
 	 * @param type $payment_method
 	 */
@@ -139,9 +139,9 @@ class EE_Payment_Processor{
 		);
 		return $url;
 	}
-	
+
 	/**
-	 * Process the IPN. Firstly, we'll hope we put the standard args into the IPN URL so 
+	 * Process the IPN. Firstly, we'll hope we put the standard args into the IPN URL so
 	 * we can easily find what registration the IPN is for and what paymetn method.
 	 * However, if not, we'll give all payment methods a chance to claim it and process it.
 	 * @param EE_Transaction $transaction optional (or a transactions id)
@@ -167,14 +167,14 @@ class EE_Payment_Processor{
 						$log->set_object($payment);
 				} else {
 					// not a payment
-					EE_Error::add_error( 
-						sprintf( 
+					EE_Error::add_error(
+						sprintf(
 							__( 'A valid payment method could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.', 'event_espresso' ),
 							'<br/>',
-							EE_Registry::instance()->CFG->organization->email 
-						), 
-						__FILE__, __FUNCTION__, __LINE__ 
-					);			
+							EE_Registry::instance()->CFG->organization->email
+						),
+						__FILE__, __FUNCTION__, __LINE__
+					);
 				}
 			}else{
 				//that's actually pretty ok. The IPN just wasn't able
@@ -190,7 +190,7 @@ class EE_Payment_Processor{
 						//that's fine- it apparently couldn't handle the IPN
 					}
 				}
-				
+
 			}
 // 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
 			if($payment && $payment instanceof EE_Payment){
@@ -207,7 +207,7 @@ class EE_Payment_Processor{
 				}
 			}
 			return $payment;
-			
+
 		} catch( EE_Error $e ) {
 			do_action(
 				'AHEE__log', __FILE__, __FUNCTION__, sprintf(
@@ -221,9 +221,9 @@ class EE_Payment_Processor{
 		}
 	}
 	/**
-	 * Should be called just before displaying the payment attempt results to the user, 
+	 * Should be called just before displaying the payment attempt results to the user,
 	 * when the payment attempt has finished. Some payment methods may have special
-	 * logic to perform here. For example, if process_payment() happens on a special request 
+	 * logic to perform here. For example, if process_payment() happens on a special request
 	 * and then the user is redirected to a page that displays the payment's status, this
 	 * should be called while loading the page that displays the payment's status. If the user is
 	 * sent to an offsite paymetn provider, this should be called upon returning from that offsite payment
@@ -239,7 +239,7 @@ class EE_Payment_Processor{
 		}
 	}
 	/**
-	 * 
+	 *
 	 * @param EE_Payment_Method $payment_method
 	 * @param type $payment_to_refund
 	 * @param type $amount

@@ -40,7 +40,7 @@ abstract class EE_Gateway{
 	 * @var boolean
 	 */
 	protected $_supports_sending_refunds = false;
-	
+
 	/**
 	 * Whether or not this gateway can support RECEIVING a refund request from the payment
 	 * provider (ie, initiated by admin on the payment prover's website who sends an IPN to EE)
@@ -52,25 +52,25 @@ abstract class EE_Gateway{
 	 * @var EEMI_Payment
 	 */
 	protected $_pay_model = NULL;
-	
+
 	/**
 	 * Model used for adding to the payments log
 	 * @var EEMI_Payment_Log
 	 */
 	protected $_pay_log = NULL;
-	
+
 	/**
 	 * Used for formatting some input to gateways
 	 * @var EEHI_Template
 	 */
 	protected $_template = NULL;
-	
+
 	/**
 	 * The ID of the payment method using this gateway
 	 * @var int
 	 */
 	protected $_ID;
-	
+
 	/**
 	 * @var $_debug_mode boolean whether to send reqeusts to teh sandbox site or not
 	 */
@@ -82,14 +82,30 @@ abstract class EE_Gateway{
 	protected $_name = NULL;
 	/**
 	 *
-	 * @var string name to show fir this payment method to admin-type users 
+	 * @var string name to show fir this payment method to admin-type users
 	 */
 	protected $_admin_name = NULL;
-	
+
 	/**
 	 * @param EEMI_Payment $model
 	 */
 	public function __construct(){
+	}
+
+	/**
+	 * We don't want to serialize models as they often have circular structures
+	 * (eg a payment model has a reference to each payment model object; and most
+	 * payments have a transaction, most transactions have a payment method;
+	 * most payment methods have a payment method type; most payment method types
+	 * have a gateway. And if a gateway serializes its models, we start at the
+	 * beginning again)
+	 * @return array
+	 */
+	public function __sleep(){
+		$properties = get_object_vars($this);
+		unset( $properties[ '_pay_model' ] );
+		unset( $properties[ '_pay_log' ] );
+		return array_keys($properties);
 	}
 	/**
 	 * Returns whether or not this gateway shoudl support SENDING refunds
@@ -107,10 +123,10 @@ abstract class EE_Gateway{
 	public function supports_receiving_refunds(){
 		return $this->_supports_receiving_refunds;
 	}
-	
+
 	/**
 	 * Tries to refund the payment specified, taking into account the extra
-	 * refund info. Note that if the gateway's _supports_sending_refunds is false, 
+	 * refund info. Note that if the gateway's _supports_sending_refunds is false,
 	 * this should just throw an exception.
 	 * @param EE_Payment $payment
 	 * @param array $refund_info
@@ -145,15 +161,15 @@ abstract class EE_Gateway{
 	public function set_payment_log($payment_log_model){
 		$this->_pay_log = $payment_log_model;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param EEHI_Template $template_helper
 	 */
 	public function set_template_helper($template_helper){
 		$this->_template = $template_helper;
 	}
-	
+
 	public function log($message,$payment){
 		if($payment){
 			$type='Payment';
@@ -172,9 +188,9 @@ abstract class EE_Gateway{
 	public function format_currency($amount){
 		return $this->_template->format_currency($amount, true);
 	}
-	
+
 	/**
-	 * Returns either an array of all the currency codes supported, 
+	 * Returns either an array of all the currency codes supported,
 	 * or a string indicating they're all supported (EE_gateway::all_currencies_suported)
 	 * @return mixed array or string
 	 */

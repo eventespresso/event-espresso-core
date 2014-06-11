@@ -539,10 +539,18 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	}
 	/**
 	 * Uses the sensitive data removal strategy to remove the sensitive data from this
-	 * input
+	 * input. If there is any kind of sensitive data removal on this input, we clear
+	 * out the raw value completely
 	 * @return void
 	 */
 	public function clean_sensitive_data() {
+		//if we do ANY kind of sensitive data removal on this, then just clear out the raw value
+		//if we need more logic than this we'll make a strategy for it
+		if( $this->_sensitive_data_removal_strategy &&
+				! $this->_sensitive_data_removal_strategy instanceof EE_No_Sensitive_Data_Removal ){
+			$this->_raw_value = NULL;
+		}
+		//and clean the normalized value according tothe appropriate strategy
 		$this->_normalized_value = $this->get_sensitive_data_removal_strategy()->remove_sensitive_data($this->_normalized_value);
 	}
 }
