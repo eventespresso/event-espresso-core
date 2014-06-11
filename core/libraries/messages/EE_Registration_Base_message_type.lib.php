@@ -18,7 +18,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  * @abstract
  * @author          Darren Ethier
  */
-abstract class EE_Registration_message_type extends EE_message_type {
+abstract class EE_Registration_Base_message_type extends EE_message_type {
 
 
 
