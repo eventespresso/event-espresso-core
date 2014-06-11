@@ -217,6 +217,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		EE_Registry::$i18n_js_strings['initial_access'] = current_time('timestamp');
 		EE_Registry::$i18n_js_strings['IPN_wait_time'] = EES_Espresso_Thank_You::IPN_wait_time;
 		EE_Registry::$i18n_js_strings['TXN_complete'] = EEM_Transaction::complete_status_code;
+		EE_Registry::$i18n_js_strings['TXN_incomplete'] = EEM_Transaction::incomplete_status_code;
 		EE_Registry::$i18n_js_strings['checking_for_new_payments'] = __( 'checking for new payments...', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['loading_payment_info'] = __( 'loading payment information...', 'event_espresso' );
 		EE_Registry::$i18n_js_strings['slow_IPN'] = apply_filters(
