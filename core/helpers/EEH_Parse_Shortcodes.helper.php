@@ -77,13 +77,13 @@ class EEH_Parse_Shortcodes {
 	 * @param  string 				 $template         This is the incoming string to be parsed
 	 * @param  EE_Messages_Addressee $data        This is the incoming data object
 	 * @param  array 				 $valid_shortcodes  An array of strings that correspond to EE_Shortcode libraries
-	 * @param string   				 $message_type      The slug for the message type calling the parser.
-	 * @param string   				 $messenger 	       The slug for the messenger calling the parser.
+	 * @param EE_message_type   			 $message_type      The message type that called the parser
+	 * @param EE_messenger   			$messenger 	       The active messenger for this parsing session.
 	 * @param string 				 $context 	       The context for the template being parsed.
 	 * @param INT 					 $GRP_ID 	       The message template grp_id for the specific template being parsed.
 	 * @return string                   The parsed template string
 	 */
-	public function parse_message_template( $template, EE_Messages_Addressee $data, $valid_shortcodes, $message_type, $messenger, $context, $GRP_ID ) {
+	public function parse_message_template( $template, EE_Messages_Addressee $data, $valid_shortcodes, EE_message_type $message_type, EE_messenger $messenger, $context, $GRP_ID ) {
 		$extra_data = array(
 			'messenger' => $messenger,
 			'message_type' => $message_type,
