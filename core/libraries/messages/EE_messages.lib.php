@@ -570,6 +570,25 @@ class EE_messages {
 		return $message_types;
 	}
 
+
+	/**
+	 * This returns the EE_message_type from the active message types array ( if present );
+	 *
+	 * @param string $messenger      The string should correspond to the messenger (message types are
+	 *                               		    assigned to a messenger in the messages settings)
+	 * @param string $message_type The string should correspond to a message type.
+	 *
+	 * @return EE_Message_Type|null
+	 */
+	public function get_active_message_type( $messenger, $message_type ) {
+		if ( !empty( $this->_active_message_types[$messenger][$message_type] ) && !empty( $this->_installed_message_types[$message_type] ) )  {
+			return $this->_installed_message_types[$message_type];
+		}
+		return NULL;
+	}
+
+
+
 	public function get_installed_message_types() {
 		return $this->_installed_message_types;
 	}
