@@ -23,8 +23,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	protected $_cached_SERVER_NAME = NULL;
 
 	public function setUp() {
+		global $auto_made_thing_seed;
 		parent::setUp();
-
+		$auto_made_thing_seed = 1;
 		// Fake WP mail globals, to avoid errors
 		add_filter( 'wp_mail', array( $this, 'setUp_wp_mail' ) );
 		add_filter( 'wp_mail_from', array( $this, 'tearDown_wp_mail' ) );
@@ -279,7 +280,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				$value = NULL;
 			}elseif($field instanceof EE_Enum_Integer_Field ||
 					$field instanceof EE_Enum_Text_Field ||
-					$field instanceof EE_Boolean_Field){
+					$field instanceof EE_Boolean_Field ||
+					$field_name == 'PMD_type'){
 				$value = $field->get_default_value();
 			}elseif( $field instanceof EE_Integer_Field ||
 					$field instanceof EE_Float_Field ||

@@ -5,7 +5,7 @@
  * it is a part of a form and shares a suprisingly large amount of functionality
  */
 abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
-	
+
 	/**
 	 * the input's name attribute
 	 * @var string
@@ -52,14 +52,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @var string
 	 */
 	protected $_html_help_style;
-	
+
 	/**
 	 * The raw data submitted fo rthis, like in teh $_POST superglobal.
 	 * Generally unsafe for usage in client code
 	 * @var mixed string or array
 	 */
 	protected $_raw_value;
-	
+
 	/**
 	 * Value normalized according to the input's normalization strategy.
 	 * The normalization strategy dictates whether this is a string, int, float,
@@ -67,32 +67,32 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @var mixed
 	 */
 	protected $_normalized_value;
-	
+
 	/**
 	 * Strategy used for displaying this field.
 	 * Child classes must use _get_display_strategy to access it.
 	 * @var EE_Display_Strategy_Base
 	 */
 	private $_display_strategy;
-	
+
 	/**
 	 * Gets all the validation strategies used on this field
 	 * @var EE_Validation_Strategy_Base[]
 	 */
 	private $_validation_strategies;
-	
+
 	/**
 	 * The normalization strategy for this field
 	 * @var EE_Validation_Strategy_Base
 	 */
 	private $_normalization_strategy;
-	
+
 	/**
 	 * Strategy for removing sensitive data after we're done with the form input
 	 * @var EE_Sensitive_Data_Removal_Base
 	 */
 	protected $_sensitive_data_removal_strategy;
-	
+
 	/**
 	 * Stores whether or not this input's response is required.
 	 * Because certain styling elements may also want to know that this
@@ -100,7 +100,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @var boolean
 	 */
 	protected $_required;
-	
+
 	public function __construct($options_array = array()){
 		if(isset($options_array['html_name'])){
 			$this->_html_name = $options_array['html_name'];
@@ -129,14 +129,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		if(isset($options_array['html_help_style'])){
 			$this->_html_help_style = $options_array['html_help_style'];
 		}
-		
+
 		if(isset($options_array['default'])){
 			$this->_raw_value = $options_array['default'];
 		}
 		if(isset($options_array['required']) && in_array($options_array['required'], array('true',true))){
 			$this->set_required(true);
 		}
-		
+
 		if(isset($options_array['display_strategy'])){
 			if(is_array($options_array['display_strategy'])){
 				$display_strategy = $options_array['display_strategy'];
@@ -169,10 +169,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			}
 			$this->_validation_strategies = array_merge($this->_validation_strategies, $validation_strategies);
 		}
-		
-		
-		
-		
+
+
+
+
 		$this->_display_strategy->_construct_finalize($this);
 		if($this->_validation_strategies){
 			foreach($this->_validation_strategies as $validation_strategy){
@@ -189,7 +189,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$this->_sensitive_data_removal_strategy->_construct_finalize($this);
 		parent::__construct($options_array);
 	}
-	
+
 	/**
 	 * Sets the html_name to its dfeautl value, if none was specified in teh constructor.
 	 * Calcuation involves using hte name and the parent's html_name
@@ -203,7 +203,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			}
 		}
 	}
-	
+
 	function _construct_finalize($parent_form_section, $name) {
 		parent::_construct_finalize($parent_form_section, $name);
 		$this->_set_default_html_name_if_empty();
@@ -213,7 +213,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			}
 		}
 	}
-	
+
 	 /**
 	  * Returns the strategy for displaying this form input. If none is set, throws an exception.
 	  * @return EE_Display_Strategy_Base
@@ -227,13 +227,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 	}
 	/**
-	 * Sets the display strategy. 
+	 * Sets the display strategy.
 	 * @param EE_Display_Strategy_Base $strategy
 	 */
 	protected function _set_display_strategy(EE_Display_Strategy_Base $strategy){
 		$this->_display_strategy = $strategy;
 	}
-	
+
 	/**
 	 * Sets the sanitization strategy
 	 * @param EE_Normalization_Strategy_Base $strategy
@@ -241,7 +241,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected function _set_normalization_strategy(EE_Normalization_Strategy_Base $strategy){
 		$this->_normalization_strategy = $strategy;
 	}
-	
+
 	/**
 	 * Gets sensitive_data_removal_strategy
 	 * @return EE_Sensitive_Data_Removal_Base
@@ -259,7 +259,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$this->_sensitive_data_removal_strategy = $sensitive_data_removal_strategy;
 	}
 
-	
+
 	/**
 	 * Gets the display strategy for this input
 	 * @return EE_Display_Strategy_Base
@@ -290,7 +290,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		$this->_normalization_strategy = $normalization_strategy;
 		$this->_normalization_strategy->_construct_finalize($this);
 	}
-	
+
 	/**
 	 * Returns all teh validation strategies which apply to this field, numerically indexed
 	 * @return EE_Validation_Strategy_Base[]
@@ -301,7 +301,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}else{
 			return array();
 		}
-		
+
 	}
 	/**
 	 * Adds this strategy to the field so it will be used in both JS validation and server-side validation
@@ -339,7 +339,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	/**
 	 * Gets the HTML for dislpaying the errors section for this form input
 	 * according to the form section's layout strategy
-	 * @return string	 
+	 * @return string
 	 */
 	public function get_html_for_errors(){
 		return $this->_parent_section->get_layout_strategy()->display_errors($this);
@@ -381,8 +381,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	private function _sanitize($value){
 		return $value !== NULL ?stripslashes(html_entity_decode($value)) : NULL;//don't sanitize_text_field
 	}
-	
-	
+
+
 	/**
 	 * Picks out the form value that relates to this form input,
 	 * and stores it as the sanitized value on the form input, and sets the normalized value.
@@ -408,11 +408,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$this->add_validation_error($e);
 		}
 	}
-	
+
 	public function html_name(){
 		return $this->_html_name;
 	}
-	
+
 	function html_label_id(){
 		return $this->_html_label_id;
 	}
@@ -435,10 +435,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		return $this->_html_style;
 	}
 	/**
-	 * returns the raw, UNSAFE, input, almost exactly as the user submitted it. 
+	 * returns the raw, UNSAFE, input, almost exactly as the user submitted it.
 	 * Please note that almost all client code should instead use the normalized_value;
 	 * or possibly raw_value_in_form (which prepares the string for displaying in an HTML attribute on a tag,
-	 * mostly by escaping quotes) 
+	 * mostly by escaping quotes)
 	 * Note, we do not store the exact original value sent in the user's request because
 	 * it may have malicious content, and we MIGHT want to store the form input in a transient or something...
 	 * in which case, we would have stored the malicious content to our database.
@@ -453,14 +453,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return string
 	 */
 	function raw_value_in_form(){
-		if(is_object($this->raw_value())){
-			d($this->raw_value());
-		}
 		return htmlentities($this->raw_value(),ENT_QUOTES, 'UTF-8');
 	}
 	/**
 	 * returns the value after it's been sanitized, and then converted into it's proper type
-	 * in PHP. Eg, a string, an int, an array, 
+	 * in PHP. Eg, a string, an int, an array,
 	 * @return mixed
 	 */
 	function normalized_value(){
@@ -476,7 +473,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		  }
 		}
 	  });</code>
-		if this field had the name 'password_again', it should return 
+		if this field had the name 'password_again', it should return
 	 * <br><code>password_again: {
 			equalTo: "#password"
 		  }</code>
@@ -494,7 +491,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 		return $jquery_validation_js;
 	}
-	
+
 	/**
 	 * Sets the input's default value for use in displaying in the form (note: does NOT
 	 * perform sanitization or normalization on this value, as the programmer should be providing it)
@@ -504,7 +501,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	function set_default($value){
 		$this->_raw_value = $value;
 	}
-	
+
 	/**
 	 * Sets the HTML label text after it has already been defined
 	 * @param string $label
@@ -513,7 +510,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	function set_html_label_text($label){
 		$this->_html_label_text = $label;
 	}
-	
+
 	/**
 	 * Sets whether or no tthis field is required, and adjusts the validation strategy
 	 * @param boolean $required

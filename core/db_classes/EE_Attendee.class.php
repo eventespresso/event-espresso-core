@@ -436,7 +436,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 
 	/**
 	 * Gets the billing info array where keys match espresso_reg_page_billing_inputs(),
-	 * and keys are their cleaned values
+	 * and keys are their cleaned values. @see EE_Attendee::save_and_clean_billing_info_for_payment_method() which was used to save the billing info
 	 * @param EE_Payment_Method $payment_method the _gateway_name property on the gateway class
 	 * @return EE_Form_Section_Proper
 	 */
@@ -445,7 +445,7 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 		if( ! $pm_type instanceof EE_PMT_Base ){
 			return NULL;
 		}
-		$billing_info =  $this->get_post_meta( 'billing_info_' . get_class( $pm_type ), true );
+		$billing_info =  $this->get_post_meta( $this->get_billing_info_postmeta_name( $payment_method ), true );
 		if ( ! $billing_info){
 			return NULL;
 		}
@@ -453,6 +453,36 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Has_Address {
 		$billing_form->populate_defaults( $billing_info );
 		return $billing_form;
 	}
+
+	/**
+	 * Gets the postmeta key that holds this attendee's billing info for the
+	 * specified paymetn method
+	 * @param EE_Payment_Method $payment_method
+	 * @return string
+	 */
+	public function get_billing_info_postmeta_name($payment_method){
+		if( $payment_method->type_obj() instanceof EE_PMT_Base ){
+			return 'billing_info_' . get_class( $payment_method->type_obj() );
+		}else{
+			return NULL;
+		}
+	}
+
+	/**
+	 * Saves the billing info to the attendee. @see EE_Attendee::billing_info_for_payment_method() which is used to retrieve it
+	 * @param EE_Form_Section_Proper $billing_form
+	 * @param EE_Payment_Method $payment_method
+	 * @return boolean
+	 */
+	public function save_and_clean_billing_info_for_payment_method($billing_form, $payment_method){
+		if( ! $billing_form instanceof EE_Form_Section_Proper ){
+			EE_Error::add_error( __( 'Cannot save billing info because there is none.', 'event_espresso' ) );
+			return false;
+		}
+		$billing_form->clean_sensitive_data();
+		return update_post_meta($this->ID(), $this->get_billing_info_postmeta_name( $payment_method ), $billing_form->input_values() );
+	}
+
 }
 
 /* End of file EE_Attendee.class.php */

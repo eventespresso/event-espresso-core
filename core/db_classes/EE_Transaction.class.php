@@ -610,12 +610,6 @@ class EE_Transaction extends EE_Base_Class {
 	 */
 	public function billing_info(){
 		$payment_method = $this->payment_method();
-		if ( ! $payment_method){
-			$last_payment = $this->last_payment();
-			if( $last_payment && $last_payment->payment_method()){
-				$payment_method = $last_payment->payment_method();
-			}
-		}
 		if ( !$payment_method){
 			EE_Error::add_error(__("Could not find billing info for transaction because no gateway has been used for it yet", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
 			return false;
@@ -657,7 +651,17 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return EE_Payment_Method
 	 */
 	function payment_method(){
-		return $this->get_first_related('Payment_Method');
+		$pm = $this->get_first_related('Payment_Method');
+		if( $pm instanceof EE_Payment_Method ){
+			return $pm;
+		}else{
+			$last_payment = $this->last_payment();
+			if( $last_payment instanceof EE_Payment && $last_payment->payment_method() ){
+				return $last_payment->payment_method();
+			}else{
+				return NULL;
+			}
+		}
 	}
 
 	/**

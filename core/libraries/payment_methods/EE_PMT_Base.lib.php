@@ -268,17 +268,13 @@ abstract class EE_PMT_Base{
 			EE_Error::add_error(__("Cannot save billing info because the transaction has no primary registration", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
 			return false;
 		}
-		$attendee_id = $primary_reg->attendee_ID();
-		if( ! $attendee_id ){
+		$attendee = $primary_reg->attendee();
+		if( ! $attendee ){
 			EE_Error::add_error(__("Cannot save billing info because the transaction's primary registration has no attendee!", "event_espresso"), __FILE__, __FUNCTION__, __LINE__);
 			return false;
 		}
-		if( ! $billing_form instanceof EE_Billing_Info_Form ){
-			EE_Error::add_error( __( 'Cannot save billing info because there is none.', 'event_espresso' ) );
-			return false;
-		}
-		$billing_form->clean_sensitive_data();
-		return update_post_meta($attendee_id, 'billing_info_' . $this->system_name(), $billing_form->input_values() );
+		return $attendee->save_and_clean_billing_info_for_payment_method($billing_form, $transaction->payment_method() );
+
 	}
 
 	/**
