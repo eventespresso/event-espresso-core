@@ -81,6 +81,18 @@ class EE_Payment_message_type extends EE_message_type {
 		return NULL;
 	}
 
+	protected function _get_id_for_msg_url( $context, EE_Registration $registration ) {
+		//there should be a transaction and payment object in the incoming data.
+		if ( $this->_data instanceof EE_Messages_incoming_data  ) {
+			$payment = $this->_data->payment;
+
+			if ( $payment instanceof EE_Payment ) {
+				return $payment->ID();
+			}
+		}
+		return 0;
+	}
+
 
 
 	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {

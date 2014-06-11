@@ -65,6 +65,22 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 
 
 
+	protected function _get_id_for_msg_url( $context, EE_Registration $registration ) {
+		if ( $context == 'admin' ) {
+			//there should be a transaction and payment object in the incoming data.
+			if ( $this->_data instanceof EE_Messages_incoming_data  ) {
+				$payment = $this->_data->payment;
+
+				if ( $payment instanceof EE_Payment ) {
+					return $payment->ID();
+				}
+			}
+		}
+		return 0;
+	}
+
+
+
 	protected function _get_data_for_context( $context, EE_Registration $registration, $id ) {
 		if ( $context  == 'admin' ) {
 			//use the registration to get the transaction.

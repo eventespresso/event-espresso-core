@@ -47,13 +47,12 @@ class EE_Newsletter_message_type extends EE_message_type {
 
     protected function _get_data_for_context( $context, EE_Registration $registration, $id ) {
         //newsletter message type data handler is 'Contacts' and it expects an array of EE_Attendee objects.
-        $contact = $registration->get_first_related( 'Attendee', array( array( 'ATT_ID' => $id ) ) );
+        $contact = $registration->attendee();
         if ( $contact instanceof EE_Attendee ) {
             return array( $contact );
         }
        return array();
     }
-
 
 
 
