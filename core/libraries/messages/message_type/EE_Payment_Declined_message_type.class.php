@@ -72,12 +72,9 @@ class EE_Payment_Declined_message_type extends EE_message_type {
 			throw new EE_Error( __('The given registration does not have an associated transaction. Something is wrong.', 'event_espresso' ) );
 		}
 
-		$payment = EEM_Payment::instance()->get_one( array( array( 'PAY_ID' => $id, 'TXN_ID' => $transaction->ID() ) ) );
+		$payment = ! empty( $id ) ? EEM_Payment::instance()->get_one( array( array( 'PAY_ID' => $id, 'TXN_ID' => $transaction->ID() ) ) ) : 0;
 
-		if ( $payment instanceof EE_Payment && $transaction instanceof EE_Transaction ) {
-			return array( $transaction, $payment );
-		}
-		return NULL;
+		return array( $transaction, $payment );
 	}
 
 
