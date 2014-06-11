@@ -65,17 +65,25 @@ class EE_Declined_Registration_message_type extends EE_message_type {
 
 
 
-	protected function _get_data_for_context( $context, $id ) {
+	protected function _get_data_for_context( $context, EE_Registration $registration, $id ) {
 		if ( $context  == 'admin' ) {
-			$payment = EEM_Payment::instance()->get_one_by_ID( $id );
-			$transaction = $payment instanceof EE_Payment ? $payment->transaction() : NULL;
+			//use the registration to get the transaction.
+			$transaction = $registration->transaction();
+
+			//bail early if no transaction
+			if ( ! $transaction instanceof EE_Transaction ) {
+				throw new EE_Error( __('The given registration does not have an associated transaction. Something is wrong.', 'event_espresso' ) );
+			}
+
+			$payment = EEM_Payment::instance()->get_one( array( array( 'PAY_ID' => $id, 'TXN_ID' => $transaction->ID() ) ) );
+
 			if ( $payment instanceof EE_Payment && $transaction instanceof EE_Transaction ) {
 				return array( $transaction, $payment );
 			} else {
 				return NULL;
 			}
 		} else {
-			return EEM_Registration::instance()->get_one_by_ID( $id );
+			return $registration;
 		}
 	}
 

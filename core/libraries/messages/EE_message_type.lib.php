@@ -278,13 +278,15 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 	/**
 	 * This method should return a EE_Base_Class object (or array of EE_Base_Class objects) for the given context and ID (which should be the primary key id for the base class).  Client code doesn't have to know what a message type's data handler is.
-	 * This is (curently) called by the EED_Messages module.
 	 *
 	 * @since 4.5.0
 	 *
+	 * @param string $context 	This should be a string matching a valid context for the message type.
+	 * @param EE_Registration $registration 	Need a registration to ensure that the data is valid (prevents people guessing a url).
+	 * @param int      $id 		Optional. Integer corresponding to the value for the primary key of a EE_Base_Class_Object
 	 * @return mixed ( EE_Base_Class||EE_Base_Class[] )
 	 */
-	abstract protected function _get_data_for_context( $context, $id );
+	abstract protected function _get_data_for_context( $context, EE_Registration $registration, $id );
 
 
 
@@ -306,23 +308,26 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * Wrapper for _get_data_for_context() that handles some validation before calling the main class and also allows for filtering.
 	 *
+	 * This is (curently) called by the EED_Messages module.
+	 *
 	 * @since 4.5.0
 	 * @throws EE_Error
 	 *
 	 * @param string $context 	This should be a string matching a valid context for the message type.
-	 * @param int      $id 		Integer corresponding to the value for the primary key of a EE_Base_Class_Object
+	 * @param EE_Registration $registration 	Need a registration to ensure that the data is valid (prevents people guessing a url).
+	 * @param int      $id 		Optional. Integer corresponding to the value for the primary key of a EE_Base_Class_Object
 	 *
 	 *
 	 * @return mixed (EE_Base_Class||EE_Base_Class[])
 	 */
-	public function get_data_for_context( $context, $id ) {
+	public function get_data_for_context( $context, EE_Registration $registration, $id = 0 ) {
 		//valid context?
 		if ( !isset( $this->_contexts[$context] ) ) {
 			throw new EE_Error( sprintf( __('The context %s is not a valid context for %s.', 'event_espresso'), $context, get_class( $this ) ) );
 		}
 
 		//get data and apply global and class specific filters on it.
-		$data = apply_filters( 'FHEE__EE_message_type__get_data_for_context__data', $this->_get_data_for_context( $context, $id ) );
+		$data = apply_filters( 'FHEE__EE_message_type__get_data_for_context__data', $this->_get_data_for_context( $context, $registration, $id ) );
 		$data = apply_filters( 'FHEE__' . get_class( $this ) . '__get_data_for_context__data', $data, $this );
 
 		//if empty then something went wrong!
