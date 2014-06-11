@@ -35,9 +35,17 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
+		//make sure we end up with a copy of the EE_Messages_Addressee object
+		$recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
+		$recipient = ! $recipient instanceof EE_Messages_Addressee && is_array($this->_data) && isset( $this->_data['data'] ) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data'] : $recipient;
+		$recipient = ! $recipient instanceof EE_Messages_Addressee && !empty( $this->_extra_data['data'] ) && $this->_extra_data['data'] instanceof EE_Messages_Addressee ? $this->_extra_data['data'] : $recipient;
+
+		if ( ! $recipient instanceof EE_Messages_Addressee )
+			return '';
+
 		switch ( $shortcode ) {
 			case '[DISPLAY_HTML_URL]' :
-				return $this->_get_display_url();
+				return $this->_get_display_url($recipient);
 				break;
 		}
 		return '';
@@ -53,8 +61,20 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 	 *
 	 * @return string The generated url for displaying the link.
 	 */
-	private function _get_display_url() {
-		//@todo need the url generator to be completed
+	private function _get_display_url( EE_Messages_Addressee $recipient ) {
+		$reg = $recipient->reg_obj;
+		$reg = ! $reg instanceof EE_Registration ? $recipient->primary_reg_obj : $reg;
+
+		//if no reg object then we really can't do anything at this point.
+		if ( ! $reg instanceof EE_Registration ) {
+			return '';
+		}
+
+		if ( $this->_message_type instanceof EE_message_type ) {
+			return $this->_message_type->get_url_trigger( $this->_context, 'html', $reg );
+		}
+
+		return '';
 	}
 
 
