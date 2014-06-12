@@ -24,60 +24,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
  * ------------------------------------------------------------------------
  */
 class EE_Payment_Method extends EE_Base_Class{
-	
-	/** ID @var PMD_ID*/ 
-	protected $_PMD_ID = NULL;
-	/** @var PMD_type string pointing to which PMT_Base child that holds all the payment-processing funcitonality of 
-	 * the particular payment method. Eg Paypal_Standard, which indicates the type object is EE_PMT_Paypal_Standard */ 
-	protected $_PMD_type = NULL;
-	/** Name @var PMD_name - a name used for external (frontend) display only*/ 
-	protected $_PMD_name = NULL;
-	/** Description @var PMD_desc description for external (frontend) description*/ 
-	protected $_PMD_desc = NULL;
-	/** Name @var PMD_admin_name - a name used for interal (admin) display only*/ 
-	protected $_PMD_admin_name = NULL;
-	/** Description @var PMD_admin_desc description used for internal (admin) display only*/ 
-	protected $_PMD_admin_desc = NULL;
-	/** Slug @var PMD_slug*/ 
-	protected $_PMD_slug = NULL;
-	/** Order @var PMD_order*/ 
-	protected $_PMD_order = NULL;
-	/** Surcharge Price @var PRC_ID*/ 
-	protected $_PRC_ID = NULL;
-	/** Debug Mode On? @var PMD_debug_model*/ 
-	protected $_PMD_debug_mode = NULL;
-	/** Logging On? @var PMD_logging*/ 
-	protected $_PMD_logging = NULL;
-	/** User ID @var PMD_wp_user_id*/ 
-	protected $_PMD_wp_user_id = NULL;
-	/** Open by Default? @var PMD_open_by_default*/ 
-	protected $_PMD_open_by_default = NULL;
-	/** Button URL @var PMD_button_url*/ 
-	protected $_PMD_button_url = NULL;
-	/** @var $_PMD_scope
-	 */
-	protected $_PMD_scope = NULL;
-	
-	/**
-	 * Surcharge for using this payment method
-	 * @var EE_Price
-	 */
-	protected $_Price = NULL;
-	/**
-	 * ALl events that allow the use of this gateway
-	 * @var EE_Event[]
-	 */
-	protected $_Event = array();
-	/**
-	 * Payments made using this gateway
-	 * @var EE_Payment[]
-	 */
-	protected $_Payment = array();
-	/**
-	 * Currenices which can be use dby htis paymetn method
-	 * @var EE_Currency[]
-	 */
-	protected $_Currency = array();
 	/**
 	 * Payment Method type object, which has all the info about this type of payment method,
 	 * including functions for processing payments, to get settings forms, etc.
@@ -87,7 +33,7 @@ class EE_Payment_Method extends EE_Base_Class{
 
 
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @param type $timezone
 	 * @return EE_Payment_Method
@@ -98,7 +44,7 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $has_object ? $has_object : new self( $props_n_values, FALSE );
 	}
 
-	
+
 	public static function new_instance_from_db ( $props_n_values = array()) {
 		return new self( $props_n_values, TRUE );
 	}
@@ -138,7 +84,7 @@ class EE_Payment_Method extends EE_Base_Class{
 		}
 		$this->set_scope($default_scopes);
 	}
-	
+
 	/**
 	 * Makes this paymetn method apply to NO scopes at all. DOES NOT SAVE it.
 	 * @return boolean
@@ -195,22 +141,7 @@ class EE_Payment_Method extends EE_Base_Class{
 	function set_description($description) {
 		return $this->set('PMD_desc', $description);
 	}
-	/**
-	 * Gets logging
-	 * @return boolean
-	 */
-	function logging() {
-		return $this->get('PMD_logging');
-	}
-
-	/**
-	 * Sets logging
-	 * @param boolean $logging
-	 * @return boolean
-	 */
-	function set_logging($logging) {
-		return $this->set('PMD_logging', $logging);
-	}
+	
 	/**
 	 * Gets name
 	 * @return string
@@ -307,7 +238,7 @@ class EE_Payment_Method extends EE_Base_Class{
 	function set_wp_user_id($wp_user_id) {
 		return $this->set('PMD_wp_user_id', $wp_user_id);
 	}
-	
+
 	/**
 	 * Gets admin_name
 	 * @return string
@@ -357,7 +288,7 @@ class EE_Payment_Method extends EE_Base_Class{
 		return $this->set('PMD_scope', $scope);
 	}
 
-	
+
 	/**
 	 * Gets the payment method type for this payment method instance
 	 * @return EE_PMT_Base
@@ -378,11 +309,11 @@ class EE_Payment_Method extends EE_Base_Class{
 			}
 		}
 		return $this->_type_obj;
-	}	
-	
+	}
+
 	/**
-	 * Returns a simple arrya of key-value pairs combining the payment method's fields (without the 'PMD_' prefix) 
-	 * and the extra meta. Mostly used for passing off ot gateways.	 * 
+	 * Returns a simple arrya of key-value pairs combining the payment method's fields (without the 'PMD_' prefix)
+	 * and the extra meta. Mostly used for passing off ot gateways.	 *
 	 * @return array
 	 */
 	public function settings_array(){
@@ -399,7 +330,7 @@ class EE_Payment_Method extends EE_Base_Class{
 		$combined_settings_array = array_merge($extra_metas,$combined_settings_array);
 		return $combined_settings_array;
 	}
-	
+
 	/**
 	 * Gets the HTML for displaying the payment method on a page.
 	 * @param string $url

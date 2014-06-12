@@ -84,7 +84,6 @@ class EEM_Payment_Method extends EEM_Base {
 				'PMD_order'=>new EE_Integer_Field('PMD_order', __("Order", 'event_espresso'), false, 0),
 				'PRC_ID'=>new EE_Foreign_Key_Int_Field('PRC_ID', __("Surcharge Price", 'event_espresso'), true, NULL, 'Price'),
 				'PMD_debug_mode'=>new EE_Boolean_Field('PMD_debug_mode', __("Debug Mode On?", 'event_espresso'), false, false),
-				'PMD_logging'=>new EE_Boolean_Field('PMD_logging', __("Logging On?", 'event_espresso'), false,false),
 				'PMD_wp_user_id'=>new EE_Integer_Field('PMD_wp_user_Id', __("User ID", 'event_espresso'), false, 1),
 				'PMD_open_by_default'=>new EE_Boolean_Field('PMD_open_by_default', __("Open by Default?", 'event_espresso'), false, false),
 				'PMD_button_url'=>new EE_Plain_Text_Field('PMD_button_url', __("Button URL", 'event_espresso'), true,''),
