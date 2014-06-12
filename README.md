@@ -3,13 +3,13 @@ EE4 core
 Note: for non stable versions. We currently use minor versioning numbers such as (4.1.{branch}.125) for rapid development occuring.  On stable branches, minor versions represent minor releases i.e. (4.1.1.reg) that typically don't include new features.  Releases including new features bump the second number (i.e. 4.1.1 -> 4.2.0 ).  The string appended to the end of the version represents what major branch the code is based off.  In the list below we **do not** include minor version numbers.
 
 ***
-**Current Stable Version:** 4.2.2.reg
+**Current Stable Version:** 4.2.x.p
 
-**Current Beta Version:** (no beta currently)
+**Current Beta Version:** 4.3.0.beta.xxx
 
-**Current Alpha Version:** 4.3.0.alpha.xxx
+**Current Alpha Version:** 4.4.0.alpha.xxx
 
-**Current Development Version:** 4.4.0.dev.xxx
+**Current Development Version:** 4.5.0.dev.xxx
 ***
 
 This is the Core for Event Espresso 4. This README.md file is targeted for display with our Github repo.  For detailed information via traditional readme, see the readme.txt file.
