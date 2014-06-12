@@ -71,16 +71,6 @@ class EE_Messages_Addressee extends EE_Base {
 	public $registrations; //holds all registrations for a transaction (with cached relations on that registration);
 
 
-
-	/**
-	 * txn related
-	 */
-	public $billing;
-	/**
-	 *total taxes
-	 * @var float
-	 */
-	public $taxes;
 	public $txn;
 	public $payment;
 	public $txn_objs;

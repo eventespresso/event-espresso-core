@@ -375,8 +375,6 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	private function _set_default_addressee_data() {
 		$this->_default_addressee_data = array(
-			'billing' => $this->_data->billing,
-			'taxes' => $this->_data->taxes,
 			'txn' => $this->_data->txn,
 			'payment' => isset($this->_data->payment) ? $this->_data->payment : NULL,
 			'reg_objs' => $this->_data->reg_objs,
