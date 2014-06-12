@@ -92,12 +92,12 @@ class EE_Payment_Processor{
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj( $payment_method, TRUE );
 		EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$transaction->set_payment_method_ID($payment_method->ID());
-		if($payment_method->type_obj() && $payment_method->type_obj() instanceof EE_PMT_Base){
+		if( $payment_method->type_obj() instanceof EE_PMT_Base){
 			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $success_url, $method, $by_admin );
 			if ( empty( $payment )) {
 				$transaction->set_status( EEM_Transaction::incomplete_status_code );
 				if($save_txn) $transaction->save();
-			do_action( 'AHEE__EE_Payment_Processor__process_payment__no_payment_made', $transaction );
+				do_action( 'AHEE__EE_Payment_Processor__process_payment__no_payment_made', $transaction );
 
 			} else {
 				$payment = EEM_Payment::instance()->ensure_is_obj( $payment, TRUE );
@@ -193,7 +193,7 @@ class EE_Payment_Processor{
 
 			}
 // 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
-			if($payment && $payment instanceof EE_Payment){
+			if( $payment instanceof EE_Payment){
 				$payment->save();
 				if($save_txn){
 					$payment->transaction()->update_based_on_payments();

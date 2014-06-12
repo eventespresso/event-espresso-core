@@ -20,26 +20,15 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Log
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
 class EE_Log extends EE_Base_Class{
-	/** LOG_ID */ protected $_LOG_ID= NULL;
-	/** Log Time @var LOG_time*/ protected $_LOG_time = NULL;
-	/** Object ID (int or string) @var OBJ_ID	*/ protected $_OBJ_ID	 = NULL;
-	/** Object Type @var OBJ_type*/ protected $_OBJ_type = NULL;
-	/** Type of log entry", "event_espresso @var LOG_type*/ protected $_LOG_type = NULL;
-	/** Log Message (body) @var LOG_message*/ protected $_LOG_message = NULL;
-	/** WP User ID who was logged in while this occurred @var LOG_wp_user_id*/ protected $_LOG_wp_user_id = NULL;
-	protected $_Answer;
-	protected $_Attendee;
-	protected $_Payment;
-	protected $_Payment_Method;
-	
+
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @return EE_Log
 	 */
@@ -51,7 +40,7 @@ class EE_Log extends EE_Base_Class{
 	}
 
 	/**
-	 * 
+	 *
 	 * @param type $props_n_values
 	 * @return EE_Log
 	 */
@@ -147,7 +136,7 @@ class EE_Log extends EE_Base_Class{
 	 * @return int
 	 */
 	function wp_user_id() {
-		return $this->get('LOG_wp_user_id');		
+		return $this->get('LOG_wp_user_id');
 	}
 
 	/**
@@ -158,7 +147,7 @@ class EE_Log extends EE_Base_Class{
 	function set_wp_user_id($wp_user_id) {
 		return $this->set('LOG_wp_user_id', $wp_user_id);
 	}
-	
+
 	/**
 	 * Gets the model object attached to this log
 	 * @return EE_Base_Class
@@ -172,7 +161,7 @@ class EE_Log extends EE_Base_Class{
 			return $this->get_first_related($model_name_of_related_obj);
 		}
 	}
-	
+
 	/**
 	 * Shorthand for setting the OBJ_ID and OBJ_type. Slightly handier than using
 	 * _add_relation_to because you don't have to specify what type of model you're
@@ -181,7 +170,7 @@ class EE_Log extends EE_Base_Class{
 	 * @param type $save
 	 * @return boolean if $save=true, NULL is $save=false
 	 */
-	function set_object($object){
+	function set_object($object, $save = TRUE ) {
 		if($object instanceof EE_Base_Class){
 			$this->set_OBJ_type($object->get_model()->get_this_model_name());
 			$this->set_OBJ_ID($object->ID());
