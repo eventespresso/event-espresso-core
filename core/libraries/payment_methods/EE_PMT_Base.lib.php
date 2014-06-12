@@ -210,14 +210,19 @@ abstract class EE_PMT_Base{
 			//make sure the payment has been saved to show we started it, and so it has an ID
 			//should the gateway try to log it
 			$payment->save();
+			if($billing_info instanceof EE_Form_Section_Proper ){
+				$billing_values = $billing_info->input_values();
+			}else{
+				$billing_values = NULL;
+			}
 			if($this->_gateway instanceof EE_Offsite_Gateway){
 				$core_config = EE_Config::instance()->core;
 
-				$payment = $this->_gateway->set_redirection_info($payment,$billing_info->input_values(),$return_url,
+				$payment = $this->_gateway->set_redirection_info($payment,$billing_values,$return_url,
 						$core_config->txn_page_url(array('e_reg_url_link'=>$transaction->primary_registration()->reg_url_link(),'ee_payment_method'=>$this->_pm_instance->slug())),
 						$core_config->cancel_page_url());
 			}elseif($this->_gateway instanceof EE_Onsite_Gateway){
-				$payment = $this->_gateway->do_direct_payment($payment,$billing_info->input_values());
+				$payment = $this->_gateway->do_direct_payment($payment,$billing_values);
 				$payment->save();
 				$transaction->update_based_on_payments();//also saves transaction
 				$transaction->finalize();
