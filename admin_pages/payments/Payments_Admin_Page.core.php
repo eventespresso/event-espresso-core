@@ -96,7 +96,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			)
 			);
 	}
-	
+
 
 
 	protected function _set_page_config() {
@@ -160,7 +160,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				'help_tour' => array( 'Payment_Methods_Selection_Help_Tour' ),
 				'require_nonce' => FALSE
 				);
-		
+
 		$this->_page_config = array(
 			'default' => $payment_method_list_config,
 			'payment_settings' => array(
@@ -243,9 +243,9 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		wp_register_style( 'espresso_payments', EE_PAYMENTS_ASSETS_URL . 'ee-payments.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style('espresso_payments');
 		wp_enqueue_style('ee-text-links');
-		//scripts	
+		//scripts
 	}
-	
+
 
 
 
@@ -382,14 +382,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 						));
 					}
 					$payment_method->set_active();
-					//handles the goofy case where someone activates the invoice gateway which is also 
+					//handles the goofy case where someone activates the invoice gateway which is also
 					$payment_method->set_type($pm_type_obj->system_name());
 					$payment_method->save();
 					foreach($payment_method->get_all_usable_currencies() as $currency_obj){
 						$payment_method->_add_relation_to($currency_obj, 'Currency');
 					}
 				}
-				
+
 			}else{
 				$payment_method->set_active();
 				$payment_method->save();
@@ -451,7 +451,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			if($correct_pmt_form_to_use->is_valid()){
 				$correct_pmt_form_to_use->save();
 				$pm = $correct_pmt_form_to_use->get_model_object();
-				$this->_redirect_after_action(FALSE, 'Payment Method', 'activated', array('action' => 'default','payment_method'=>$pm->slug()));
+				$this->_redirect_after_action(TRUE, 'Payment Method', 'updated', array('action' => 'default','payment_method'=>$pm->slug()));
 			}else{
 				EE_Error::add_error(sprintf(__("Payment method of type %s was not saved because there were validation errors. They have been marked in the form", 'event_espresso'),$pmt_obj->pretty_name()));
 			}
@@ -505,7 +505,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		);
 	}
 	/**
-	 * 
+	 *
 	 * @param type $payment_method_id
 	 * @param type $transaction_id
 	 * @param type $order_asc
@@ -553,14 +553,14 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$end_date = max( $start_date, $end_date );
 
 			$query_params[0]['LOG_time'] = array('BETWEEN',array($start_date,$end_date));
-			
+
 		}
 		if($count){
 			return EEM_Log::instance()->count($query_params);
 		}
 		if(isset($this->_req_data['order'])){
 			$sort = ( isset( $this->_req_data['order'] ) && ! empty( $this->_req_data['order'] )) ? $this->_req_data['order'] : 'DESC';
-			$query_params['order_by'] = array('LOG_time' => $sort);		
+			$query_params['order_by'] = array('LOG_time' => $sort);
 		}else{
 				$query_params['order_by'] = array('LOG_time' => 'DESC');
 		}
@@ -570,8 +570,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			$query_params['limit'] = array( $offset, $per_page );
 		}
 
-		
-		
+
+
 		//now they've requested to instead just download the file instead of viewing it.
 		if(isset($this->_req_data['download_results'])){
 			$wpdb_results = EEM_Log::instance()->get_all_efficiently($query_params);
@@ -586,7 +586,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 		$results = EEM_Log::instance()->get_all($query_params);
 		return $results;
-		
+
 	}
 	/**
 	 * Used by usort to RE-sort log query results, because we lose the ordering
@@ -603,12 +603,12 @@ class Payments_Admin_Page extends EE_Admin_Page {
 		}
 		$comparison = $timeA < $timeB ? -1 : 1;
 		if(strtoupper($this->_sort_logs_again_direction) == 'DESC'){
-			return $comparison * -1; 
+			return $comparison * -1;
 		}else{
 			return $comparison;
 		}
 	}
-	
+
 	protected function _payment_log_details() {
 		$payment_log = EEM_Log::instance()->get_one_by_ID($this->_req_data['ID']);
 		$payment_method = NULL;
@@ -621,8 +621,8 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$payment_method = $payment_log->object();
 			}
 		}
-		
-		
+
+
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_PAYMENTS_TEMPLATE_PATH . 'payment_log_details.template.php', array(
 			'payment_log'=>$payment_log,
 			'payment_method'=>$payment_method,
