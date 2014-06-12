@@ -36,9 +36,9 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 	 */
 	public $payment;
 
-	
+
 	/**
-	 * incoming data is expected to be a EE_Transaction object and (possibly) EE_Payment object in an array.  
+	 * incoming data is expected to be a EE_Transaction object and (possibly) EE_Payment object in an array.
 	 * @param array $data
 	 */
 	public function __construct( $data ) {
@@ -60,7 +60,7 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 	/**
 	 * This sets up an empty EE_Payment object for the purpose of shortcode parsing.  Note that this doesn't actually get saved to the db.
-	 * @return EE_Payment 
+	 * @return EE_Payment
 	 */
 	private function _get_empty_payment_obj( EE_Transaction $txn ) {
 		$PMT = EE_Payment::new_instance( array(
@@ -75,31 +75,21 @@ class EE_Messages_Gateways_incoming_data extends EE_Messages_incoming_data {
 
 
 	protected function _setup_data() {
-		
+
 		$this->reg_info = array();
 
 		$this->txn = $this->_data['txn_obj'];
 		$this->payment = $this->_data['pmt_obj'];
 		$this->incoming_data = $this->_data;
-		$this->taxes = $this->txn->tax_total();
-
-		$this->grand_total_price_object = ''; //not available and not needed?
 
 		$session_data = $this->txn->session_data();
-	
+
 
 		//other data from the session (if possible)
 		$this->user_id = isset( $session_data['user_id'] ) ? $session_data['user_id'] : '';
 		$this->ip_address = isset( $session_data['ip_address'] ) ? $session_data['ip_address'] : '';
 		$this->user_agent = isset( $session_data['user_agent'] ) ? $session_data['user_agent'] : '';
 		$this->init_access = $this->last_access = '';
-
-		$this->billing = $this->payment->details();
-		// check that the gateways didn't blow up
-		if ( ! $this->billing instanceof EE_Error ) {
-			EE_Registry::instance()->load_helper('Template');
-			$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
-		}
 
 		$this->reg_objs = $this->txn->get_many_related('Registration');
 		$this->_assemble_data();

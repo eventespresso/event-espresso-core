@@ -48,9 +48,6 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 
 		$this->reg_info = array();
 		$this->incoming_data = $session;
-		$this->taxes = $this->txn->tax_total();
-
-		$this->grand_total_price_object = '';
 
 		//other data from the session (if possible)
 		$this->user_id = isset( $session['user_id'] ) ? $session['user_id'] : '';
@@ -66,11 +63,6 @@ class EE_Messages_EE_Session_incoming_data extends EE_Messages_incoming_data {
 			'PAY_gateway_response' => $this->txn->gateway_response_on_transaction(),
 			)
 		 ) : $this->payment; //if there is no payments associated with the transaction then we just create a default payment object for potential parsing.
-
-		$this->billing = $this->payment->details();
-
-		EE_Registry::instance()->load_helper('Template');
-		$this->billing['total_due'] = isset( $this->billing['total'] ) ? EEH_Template::format_currency( $this->billing['total'] ) : '';
 
 		//let's get all the registrations associated with this txn
 		$this->reg_objs = $this->txn->registrations();
