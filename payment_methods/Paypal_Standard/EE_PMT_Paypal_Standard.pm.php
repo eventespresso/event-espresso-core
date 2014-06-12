@@ -5,9 +5,9 @@
  * and open the template in the editor.
  */
 class EE_PMT_Paypal_Standard extends EE_PMT_Base{
-	const shipping_info_none = 'none';
-	const shipping_info_optional = 'optional';
-	const shipping_info_required = 'required';
+	const shipping_info_none = 1;
+	const shipping_info_optional = 0;
+	const shipping_info_required = 2;
 	const help_tab_name = 'ee_paypal_standard_help';
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
@@ -34,7 +34,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 					EE_PMT_Paypal_Standard::shipping_info_optional => __("Prompt for an address, but do not require it", 'event_espresso'),
 					EE_PMT_Paypal_Standard::shipping_info_required => __("Prompt for an address, and require it", 'event_espresso')
 				)),
-				
+
 				),
 			'before_form_content_template'=>$this->file_folder().DS.'templates'.DS.'paypal_standard_settings_before_form.template.php',
 			)
@@ -46,7 +46,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
-	 * @return array 
+	 * @return array
 	 */
 	public function help_tabs_config(){
 		return array(
@@ -62,7 +62,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	 * (Mijireh is an offsite gateway which doesn't send an IPN. So when the user returns to EE from
 	 * mijireh, this method needs to be called so the Mijireh PM can ping Mijireh to know the status
 	 * of the payment). Fed a transaction because it's always assumed to be the last payment that
-	 * 
+	 *
 	 * @param EE_Transaction $transaction
 	 * @return void
 	 */
