@@ -2,7 +2,7 @@
 	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th scope="col" width=""><?php _e( 'Available Tickets', 'event_espresso' ); ?></th>
+				<th scope="col" width=""><span class="ee-icon ee-icon-tickets"></span><?php _e( 'Available Tickets', 'event_espresso' ); ?></th>
 				<th scope="col" width="22.5%"><?php _e( 'Price', 'event_espresso' ); ?> <span class="smaller-text no-bold"><?php _e( '(each)', 'event_espresso' ); ?></span></th>
 				<th scope="col" width="17.5%" class="cntr"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
 			</tr>
@@ -83,7 +83,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	//echo '<br/><b> $ticket->uses() : ' .  $ticket->uses() . '</b>';
 					?>
 					</td>
-					<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?></td>
+					<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?>&nbsp;</td>
 					<td class="tckt-slctr-tbl-td-qty cntr">
 				<?php
 					$hidden_input_qty = $max_atndz > 1 ? TRUE : FALSE;
