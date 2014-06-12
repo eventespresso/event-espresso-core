@@ -159,6 +159,8 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				$primary_attendee->zip()  ){
 
 			$shipping_address = array(
+				'first_name'=>$primary_attendee->fname(),
+				'last_name'=>$primary_attendee->lname(),
 				'street' => $primary_attendee->address(),
 				'city' => $primary_attendee->city(),
 				'state_province' => $primary_attendee->state_obj() ? $primary_attendee->state_obj()->abbrev() : '',
