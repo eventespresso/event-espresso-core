@@ -47,7 +47,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[PAYMENT_STATUS]' => __('The payment status for the transaction', 'event_espresso'),
 			'[PAYMENT_METHOD]' => __('The payment method used for the transaction', 'event_espresso'),
-			'[PAYMENT_GATEWAY]' => __('This is a deprecated shortcode retained for backward compatibility.  For now it parses the same as [PAYMENT_METHOD] but please use [PAYMENT_METHOD] in your templates instead.', 'event_espresso')
+			'[PAYMENT_GATEWAY]' => __('This is a deprecated shortcode retained for backward compatibility.  For now it parses the same as [PAYMENT_METHOD] but please use [PAYMENT_METHOD] in your templates instead.', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
 			'[TOTAL_OWING]' => __('The total owing on a transaction', 'event_espresso'),
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
