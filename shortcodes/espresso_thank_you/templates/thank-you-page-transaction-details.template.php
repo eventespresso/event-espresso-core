@@ -44,7 +44,13 @@
 	</table>
 
 <?php if ( $show_try_pay_again_link && ! $transaction->is_completed() ) { ?>
-	<p class="small-text jst-rght"><span><a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Click here to view Payment Options", 'event_espresso'); ?></a></span></p><br/>
+	<p class="small-text jst-rght">
+		<a href='<?php echo $SPCO_payment_options_url?>'><?php _e("Click here to view Payment Options", 'event_espresso'); ?> <span class="ee-icon ee-icon-cash"></span></a><br/><br/>
+		<a class="lt-grey-text" href="<?php echo $transaction->invoice_url('download');?>"><?php _e("Click here to Download an Invoice", "event_espresso");?> <span class="ee-icon ee-icon-PDF-file-type"></span></a>
+	</p>
+	<br/>
+
+
 <?php }?>
 
     <?php  do_action( 'AHEE__thank_you_page_transaction_details_template__after_transaction_details' ); ?>
