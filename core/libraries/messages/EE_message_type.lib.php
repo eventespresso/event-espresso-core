@@ -790,7 +790,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		//if this is a preview then we just get whatever message group is for the preview and skip this part!
 		if ( $this->_preview && EE_Registry::instance()->REQ->is_set('GRP_ID')  ) {
-			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( EE_Registry::instance()->get('GRP_ID') );
+			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( EE_Registry::instance()->REQ->get('GRP_ID') );
 		} else {
 			//not a preview or test send so lets continue on our way!
 			//is there an evt_id?  If so let's get that. template.
@@ -806,7 +806,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 			//if global template is NOT an override, and there is a 'GRP_ID' in the request, then we'll assume a specific template has ben requested.
 			if ( EE_Registry::instance()->REQ->is_set('GRP_ID') ) {
-				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( EE_Registry::instance()->get('GRP_ID') );
+				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( EE_Registry::instance()->REQ->get('GRP_ID') );
 			}
 
 
