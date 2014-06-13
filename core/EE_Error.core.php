@@ -919,10 +919,8 @@ class EE_Error extends Exception {
 		if ( $persistent_admin_notices = get_option( 'ee_pers_admin_notices', FALSE )) {
 			// load scripts
 			wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_register_script('ee-dialog', EE_ADMIN_URL . 'assets/ee-dialog-helper.js', array('jquery', 'jquery-ui-draggable'), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_register_script( 'ee-parse-uri', EE_GLOBAL_ASSETS_URL . 'scripts/parseuri.js', array(), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_register_script('ee_admin_js', EE_ADMIN_URL . 'assets/ee-admin-page.js', array( 'espresso_core', 'ee-parse-uri', 'ee-dialog' ), EVENT_ESPRESSO_VERSION, TRUE );
-			wp_enqueue_script( 'ee_admin_js' );
+			wp_register_script( 'ee_error_js', EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js', array('espresso_core'), EVENT_ESPRESSO_VERSION, TRUE );
+			wp_enqueue_script( 'ee_error_js' );
 			// and display notices
 			foreach( $persistent_admin_notices as $pan_name => $pan_message ) {
 				$notices .= self::display_persistent_admin_notices( $pan_name, $pan_message, $return_url );
@@ -1107,6 +1105,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
  */
 function espresso_error_enqueue_scripts() {
 	// js for error handling
+	wp_register_script( 'espresso_core', EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js', array('jquery'), EVENT_ESPRESSO_VERSION, FALSE );
 	wp_register_script( 'ee_error_js', EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js', array('espresso_core'), EVENT_ESPRESSO_VERSION, FALSE );
 }
 if ( is_admin() ) {
