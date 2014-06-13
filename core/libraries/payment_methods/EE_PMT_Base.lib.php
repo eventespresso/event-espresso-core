@@ -312,11 +312,13 @@ abstract class EE_PMT_Base{
 	 * (Mijireh is an offsite gateway which doesn't send an IPN. So when the user returns to EE from
 	 * mijireh, this method needs to be called so the Mijireh PM can ping Mijireh to know the status
 	 * of the payment). Fed a transaction because it's always assumed to be the last payment that
+	 * we're dealing with. Returns that last payment (if there is one)
 	 *
 	 * @param EE_Transaction $transaction
-	 * @return void
+	 * @return EE_Payment
 	 */
 	public function finalize_payment_for($transaction){
+		return $transaction->last_payment();
 	}
 
 	/**

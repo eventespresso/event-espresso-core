@@ -129,6 +129,16 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 		return self::$_instance;
 	}
 
+	/**
+	 * Exactly like instance(), but always returns a new EEM_Payment
+	 * @param string $timezone
+	 * @return EEM_Payment
+	 */
+	public static function reset( $timezone = NULL){
+		self::$_instance = new self( $timezone );
+		return self::$_instance;
+	}
+
 
 
 
@@ -304,7 +314,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 //echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
 		return $this->get_all(array(array('PAY_timestamp'=>array('>=',$start_date),'PAY_timestamp*'=>array('<=',$end_date))));
 	}
-	
+
 	/**
 	 * methods for EEMI_Payment
 	 */

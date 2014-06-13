@@ -94,17 +94,7 @@ class EE_Payment_Processor{
 		$transaction->set_payment_method_ID($payment_method->ID());
 		if( $payment_method->type_obj() instanceof EE_PMT_Base){
 			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $success_url, $method, $by_admin );
-			if ( empty( $payment )) {
-				$transaction->set_status( EEM_Transaction::incomplete_status_code );
-				if($save_txn) $transaction->save();
-				do_action( 'AHEE__EE_Payment_Processor__process_payment__no_payment_made', $transaction );
-
-			} else {
-				$payment = EEM_Payment::instance()->ensure_is_obj( $payment, TRUE );
-				//ok, now process the transaction according to the payment
-				$transaction->update_based_on_payments($save_txn);//also saves transaction
-				do_action( 'AHEE__EE_Payment_Processor__process_payment__successful', $transaction, $payment );
-			}
+			$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
 		}else{
 			EE_Error::add_error(
 					sprintf(
@@ -195,9 +185,7 @@ class EE_Payment_Processor{
 // 			EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
 			if( $payment instanceof EE_Payment){
 				$payment->save();
-				if($save_txn){
-					$payment->transaction()->update_based_on_payments();
-				}
+				$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
 			}else{
 				//we couldn't find the payment for this IPN... let's try and log at least SOMETHING
 				if($payment_method){
@@ -229,26 +217,78 @@ class EE_Payment_Processor{
 	 * sent to an offsite paymetn provider, this should be called upon returning from that offsite payment
 	 * provider.
 	 * @param EE_Transaction $transaction
-	 * @return void
+	 * @return EE_Payment
 	 */
 	public function finalize_payment_for($transaction){
 		$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
 		$last_payment_method = $transaction->payment_method();
 		if ( $last_payment_method instanceof EE_Payment_Method ) {
-			$last_payment_method->type_obj()->finalize_payment_for($transaction);
+			$payment = $last_payment_method->type_obj()->finalize_payment_for($transaction);
+			$this->update_txn_based_on_payment( $transaction, $payment );
+			return $payment;
+		}else{
+			return NULL;
 		}
 	}
 	/**
 	 *
 	 * @param EE_Payment_Method $payment_method
-	 * @param type $payment_to_refund
-	 * @param type $amount
+	 * @param EE_Payment $payment_to_refund
+	 * @param float $amount
 	 * @return EE_Payment
 	 */
 	public function process_refund($payment_method,$payment_to_refund,$refund_info = array()){
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_ID($payment_method);
 		if($payment_method->type_obj()->supports_sending_refunds()){
 			$payment_method->do_direct_refund($payment_to_refund,$refund_info);
+			$this->update_txn_based_on_payment( $payment_to_refund->transaction(), $payment_to_refund );
+		}
+		return $payment_to_refund;
+	}
+
+	/**
+	 * This should be called each time there may have been an update to a payment
+	 * on a transaction (ie, we asked for a payment to process a payment for a transaction,
+	 * or we told a payment method about an IPN, or we told a payment method to
+	 * "finalize_payment_for" (a transaction), or we told a payment method to
+	 * process a refund. This should handle firing the correct hooks to indicate
+	 * what exactly happened and updating the transaction appropriately). This could be integrated
+	 * directly into EE_Transaction upon save, but we want this logic to be seperate
+	 * from 'normal' plain-jane saving and updating of transactions and payments, and to be
+	 * tied to payment processing
+	 * @param EE_Transaction $txn
+	 * @param EE_Payment $payment
+	 * @param boolean $save_txn whether or not to save the transaction in this function
+	 * (you can save 1 DB query if you know you're going to save it later instead)
+	 */
+	public function update_txn_based_on_payment( $txn,$payment, $save_txn = TRUE ){
+//		$txn = EEM_Transaction::instance()->ensure_is_obj( $txn );
+		if($payment === NULL){
+			//there is no payment. Must be an offline gateway
+			//but have we already triggered pending payment notification?
+			if( $txn->status_ID() !== EEM_Transaction::incomplete_status_code ){
+				//createa hackey payment object, but dont save it
+				$payment = EE_Payment::new_instance(array(
+					'TXN_ID'=>$txn->ID(),
+					'STS_ID'=>EEM_Payment::status_id_pending,
+					'PAY_timestamp'=>current_time('timestamp'),
+					'PAY_amount'=>$txn->total(),
+					'PAY_gateway'=>$this->_gateway_name));
+				$txn->set_status( EEM_Transaction::incomplete_status_code );
+				if( $save_txn ){
+					$txn->save();
+				}
+				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made', $txn, $payment );
+			}else{
+				//we should have already done that action
+			}
+		}else{
+//			$payment = EEM_Payment::instance()->ensure_is_obj( $payment );
+			//ok, now process the transaction according to the payment
+			$txn->update_based_on_payments($save_txn);//also saves transaction
+			if( $payment->just_approved() ){
+				do_action( 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', $txn, $payment );
+			}
 		}
 	}
 }

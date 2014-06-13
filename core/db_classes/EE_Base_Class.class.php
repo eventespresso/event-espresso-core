@@ -33,7 +33,7 @@ abstract class EE_Base_Class{
 	 * which values to override and which to not override.
 	 * @var array
 	 */
-	private $_props_n_values_provided_in_constructor = null;
+	protected $_props_n_values_provided_in_constructor = null;
 
 	/**
 	 * Timezone
@@ -1622,10 +1622,10 @@ abstract class EE_Base_Class{
 	}
 	/**
 	 * Returns a simple array of all the extra meta associated with this model object.
-	 * If $one_of_each_key is true (Default), it will be an array of simple key-value pairs, key sbeing the 
+	 * If $one_of_each_key is true (Default), it will be an array of simple key-value pairs, key sbeing the
 	 * extra meta's key, and teh value being its value. However, if there are duplicate extra meta rows with
-	 * the same key, only one will be used. (eg array('foo'=>'bar','monkey'=>123)) 
-	 * If $one_of_each_key is false, it will return an array with the top-level keys being 
+	 * the same key, only one will be used. (eg array('foo'=>'bar','monkey'=>123))
+	 * If $one_of_each_key is false, it will return an array with the top-level keys being
 	 * the extra meta keys, but their values are also arrays, which have the extra-meta's ID as their sub-key, and
 	 * finally the extra meta's value as each sub-value. (eg arrya('foo'=>array(1=>'bar',2=>'bill'),'monkey'=>array(3=>123)))
 	 * @param boolean $one_of_each_key
