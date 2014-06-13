@@ -70,6 +70,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	private $_show_try_pay_again_link = FALSE;
 
+	/**
+	 * whether the selected payment method is Bank, Check , Invoice, etc
+	 * @var boolean $_is_offline_payment_method
+	 */
+	private $_is_offline_payment_method = FALSE;
+
 
 
 
@@ -270,6 +276,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else {
 			$this->_show_try_pay_again_link = FALSE;
 		}
+		$this->_is_offline_payment_method = in_array( $this->_current_txn->selected_gateway( TRUE ), array( 'Bank', 'Check', 'Invoice' ));
+		if ( $this->_current_txn->last_payment() instanceof EE_Payment && $this->_current_txn->last_payment()->gateway() != NULL ) {
+			$this->_is_offline_payment_method = in_array( $this->_current_txn->last_payment()->gateway(), array( 'Bank', 'Check', 'Invoice' ));
+		}
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
 			array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>EE_Registry::instance()->REQ->get( 'e_reg_url_link' )),
@@ -383,12 +393,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 				return $espresso_thank_you_page->_update_server_wait_time( $data['espresso_thank_you_page'] );
 			}
 			// TXN is happening so let's get the payments now
-			// if we've already gotten payments then the heartbeat daya will contain the timestamp of the last time we checked
+			// if we've already gotten payments then the heartbeat data will contain the timestamp of the last time we checked
 			$since = isset( $data['espresso_thank_you_page']['get_payments_since'] ) ? $data['espresso_thank_you_page']['get_payments_since'] : 0;
 			// then check for payments
 			$payments = $espresso_thank_you_page->get_txn_payments( $since );
 			// has a payment been processed ?
-			if ( ! empty( $payments )) {
+			if ( ! empty( $payments ) || $espresso_thank_you_page->_is_offline_payment_method ) {
 				if ( $since ) {
 					$response['espresso_thank_you_page'] = array(
 						'new_payments' => $espresso_thank_you_page->get_new_payments( $payments ),
@@ -455,7 +465,6 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function get_ajax_content() {
-		$offline_payment_methods = array( 'Bank', 'Check', 'Invoice' );
 ?>
 	<div id="espresso-thank-you-page-ajax-content-dv">
 		<div id="espresso-thank-you-page-ajax-transaction-dv"></div>
@@ -464,7 +473,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			<div id="ee-ajax-loading-dv" class="left lt-blue-text">
 				<span class="dashicons dashicons-upload"></span><span id="ee-ajax-loading-msg-spn"><?php _e( 'loading transaction and payment information...', 'event_espresso' );?></span>
 			</div>
-			<?php if ( ! in_array( $this->_current_txn->selected_gateway(), $offline_payment_methods )) : ?>
+			<?php if ( ! $this->_is_offline_payment_method ) : ?>
 			<p id="ee-ajax-loading-pg" class="highlight-bg small-text clear">
 				<?php echo apply_filters( 'EES_Espresso_Thank_You__get_ajax_content__waiting_for_IPN_msg', __( 'Some payment gateways can take 15 minutes or more to return their payment notification, so please be patient if you require payment confirmation as soon as possible. Please note that as soon as everything is finalized, we will send your full payment and registration confirmation results to you via email.', 'event_espresso' ));?><br/>
 				<span class="jst-rght ee-block small-text lt-grey-text"><?php _e( 'current wait time ', 'event_espresso' );?><span id="espresso-thank-you-page-ajax-time-dv">00:00:00</span></span>
@@ -536,23 +545,22 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 
 	/**
-	 * 	get_payment_details
+	 *    get_payment_details
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param 	array $payments
+	 * @return    string
 	 */
 	public function get_payment_details( $payments = array() ) {
-		if ( empty( $payments )) {
-			return '';
-		}
 		//prepare variables for displaying
 		$template_args = array();
 		$template_args['transaction'] = $this->_current_txn;
 		$template_args['reg_url_link'] = $this->_reg_url_link;
+		$template_args['payments'] = array();
 		foreach ( $payments as $payment ) {
 			$template_args['payments'][] = $this->get_payment_row_html( $payment );
 		}
-		//create a hackey payment object, but dont save it
+		//create a hacky payment object, but dont save it
 		$gateway_name = $this->_current_txn->selected_gateway();
 		$payment = EE_Payment::new_instance( array(
 			'TXN_ID'=>$this->_current_txn->ID(),
