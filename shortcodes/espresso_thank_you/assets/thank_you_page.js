@@ -61,7 +61,7 @@ jQuery(document).ready(function($) {
 		set_up_wp_heartbeat: function () {
 			this.console_log('set_up_wp_heartbeat');
 			// Show debug info ?
-			wp.heartbeat.debug = eei18n.wp_debug === 1;
+			wp.heartbeat.debug = eei18n.wp_debug === '1' ? true : false;
 			// set initial beat to fast
 			wp.heartbeat.interval( this.polling_time );
 			wp.heartbeat.enqueue( 'espresso_thank_you_page', this.return, false );
@@ -180,7 +180,7 @@ jQuery(document).ready(function($) {
 			this.console_log('update_transaction_details');
 			$('#espresso-thank-you-page-ajax-transaction-dv').html(this.data.transaction_details);
 			// has the TXN status changed ?
-			if (this.return.txn_status !== this.prev_txn_status) {
+			if ( this.return.txn_status !== this.prev_txn_status ) {
 				this.prev_txn_status = this.return.txn_status;
 			}
 		},
@@ -218,17 +218,17 @@ jQuery(document).ready(function($) {
 		},
 
 		/**
-		 *    checking_for_new_payments_message
-		 */
-		checking_for_new_payments_message: function () {
-			this.console_log('checking_for_new_payments_message');
-			$('#ee-ajax-loading-pg').hide();
-			$('#ee-ajax-loading-dv').removeClass('lt-blue-text').addClass('lt-grey-text');
-			//			var since = new Date( null, null, null, null, null, this.data.get_payments_since ).toTimeString();   + ' ' + since
-			$('#ee-ajax-loading-msg-spn').html(eei18n.checking_for_new_payments);
-			this.spinner.css({ 'font-size': '12px', 'top': 0 }).addClass('lt-grey-text');
-			$('#espresso-thank-you-page-ajax-loading-dv').hide(0).addClass('small-text').delay(( this.polling_time - 1 ) * 1000).show(0);
-		},
+		*	checking_for_new_payments_message
+		*/
+//		checking_for_new_payments_message : function() {
+//			this.console_log( 'checking_for_new_payments_message' );
+//			$('#ee-ajax-loading-pg').hide();
+//			$('#ee-ajax-loading-dv').removeClass('lt-blue-text').addClass('lt-grey-text');
+////			var since = new Date( null, null, null, null, null, this.data.get_payments_since ).toTimeString();   + ' ' + since
+//			$('#ee-ajax-loading-msg-spn').html( eei18n.checking_for_new_payments );
+//			$('#espresso-ajax-loading').css({ 'font-size' : '12px', 'top' : 0 }).addClass('lt-grey-text');
+//			$('#espresso-thank-you-page-ajax-loading-dv').hide(0).addClass('small-text').delay( ( this.polling_time - 1 ) * 1000 ).show(0);
+//		},
 
 		/**
 		*	set_wait_time
@@ -248,16 +248,16 @@ jQuery(document).ready(function($) {
 		},
 
 		/**
-		 *    start_stop_heartbeat
-		 */
-		start_stop_heartbeat: function () {
-			this.console_log('start_stop_heartbeat');
-			if (this.return.txn_status === eei18n.TXN_complete) {
+		*	start_stop_heartbeat
+		*/
+		start_stop_heartbeat : function() {
+			this.console_log( 'start_stop_heartbeat' );
+			if (this.return.txn_status === eei18n.TXN_incomplete) {
+				this.restart_heartbeat();
+//				this.checking_for_new_payments_message();
+			} else {
 				this.stop_heartbeat();
 				this.hide_loading_message();
-			} else {
-				this.restart_heartbeat();
-				this.checking_for_new_payments_message();
 			}
 		},
 
@@ -379,14 +379,13 @@ jQuery(document).ready(function($) {
 				for (var key in obj) {
 					if ( typeof key !== 'undefined' && typeof obj[ key ] !== 'undefined') {
 						console.log(JSON.stringify('    ' + key + ': ' + obj[ key ], null, 4));
-					}
+				}
 				}
 			}
 		}
 
 	};
 	// end of eeThnx object
-
 	eeThnx.init();
 	// setup listener
 	$(document).on( 'heartbeat-tick.espresso_thank_you_page', function( event, data ) {

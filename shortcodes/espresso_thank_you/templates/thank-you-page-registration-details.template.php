@@ -43,6 +43,7 @@ foreach ( $transaction->registrations() as $registration ) {
 
 
 				?>
+					<span class="small-text jst-rght"><a class="ee-icon-only-lnk" href=<?php echo $registration->edit_attendee_information_url();?> title="<?php _e('Click here to edit Attendee Information', 'event_espresso');?>"><span class="ee-icon ee-icon-user-edit"></a></span>
 				</td>
 				<td width="30%" class="jst-left">
 					<?php $registration->e('REG_code') ?>
@@ -63,7 +64,7 @@ foreach ( $transaction->registrations() as $registration ) {
 ?>
 <?php if ( $is_primary && $SPCO_attendee_information_url ) { ?>
 	<p class="small-text jst-rght">
-		<span><a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit All Attendee Information", 'event_espresso'); ?></a></span>
+		<a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit All Attendee Information", 'event_espresso'); ?> <span class="dashicons dashicons-groups"></span></a>
 	</p>
 <?php } ?>
 
