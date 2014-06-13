@@ -35,7 +35,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private $_current_step = '';
 	// where we are going next in the reg process
 	private $_next_step = '';
-	// erg_url_link for a previously saved registration
+	// reg_url_link for a previously saved registration
 	private $_reg_url_link = '';
 	// whether returning to edit attendee information or to retry a payment
 	private $_revisit = FALSE;
