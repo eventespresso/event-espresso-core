@@ -86,7 +86,7 @@ final class EE_Capabilities extends EE_Base {
 	 * @return array
 	 */
 	private function _init_caps_map() {
-		return apply_filters( 'FHEE__EE_Capabilities___init_caps_map', array(
+		return array(
 			'administrator' => array(
 				//basic access
 				'read_ee',
@@ -157,7 +157,8 @@ final class EE_Capabilities extends EE_Base {
 				'read_question_group',
 				'delete_question_group'
 				)
-			) );
+			);
+	}
 	}
 
 
