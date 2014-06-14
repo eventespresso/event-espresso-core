@@ -78,6 +78,18 @@ final class EE_Capabilities extends EE_Base {
 	 * @return void
 	 */
 	private function __construct() {
+		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'init_caps' ));
+	}
+
+
+
+	/**
+	 * This delays the initialization of the capabilities class until EE_System core is loaded and ready.
+	 *
+	 * @since 4.5.0
+	 * @return void
+	 */
+	public function init_caps() {
 		$this->_caps_map = $this->_init_caps_map();
 		$this->_init_role_caps();
 		$this->_set_meta_caps();
@@ -102,7 +114,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Edit( 'edit_registration', array( EEM_Registration::instance(), '', 'edit_others_registration', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Checkin::instance(), '', 'edit_others_checkin', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_transaction', array( EEM_Transaction::instance(), '', 'edit_others_transaction', '' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_message', array( EEM_Message_Group::instance(), '', 'edit_others_message', '' ) ),
+			new EE_Meta_Capability_Map_Edit( 'edit_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_price_type', array( EEM_Price_Type::instance(), '', 'edit_others_default_price_type', '' ) ),
@@ -115,7 +127,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Read( 'read_registration', array( EEM_Registration::instance(), '', '', 'edit_others_registration' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_checkin', array( EEM_Checkin::instance(), '', '', 'edit_others_checkin' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_transaction', array( EEM_Transaction::instance(), '', '', 'edit_others_transaction' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_message', array( EEM_Message_Group::instance(), '', '', 'edit_others_message' ) ),
+			new EE_Meta_Capability_Map_Read( 'read_message', array( EEM_Message_Template_Group::instance(), '', '', 'edit_others_message' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_ticket', array( EEM_Ticket::instance(), '', '', 'edit_others_default_ticket' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_price', array( EEM_Price::instance(), '', '', 'edit_others_default_price' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_price_type', array( EEM_Price_Type::instance(), '', '', 'edit_others_default_price_type' ) ),
@@ -128,7 +140,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'delete_registration', array( EEM_Registration::instance(), '', 'edit_others_registration', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_checkin', array( EEM_Checkin::instance(), '', 'edit_others_checkin', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_transaction', array( EEM_Transaction::instance(), '', 'edit_others_transaction', '' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_message', array( EEM_Message_Group::instance(), '', 'edit_others_message', '' ) ),
+			new EE_Meta_Capability_Map_Delete( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_price_type', array( EEM_Price_Type::instance(), '', 'edit_others_default_price_type', '' ) ),
@@ -449,6 +461,9 @@ abstract class EE_Meta_Capability_Map {
 class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 
 	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+		//only process if we're checking our mapped_cap
+		if ( $cap !== $this->meta_cap )
+			return $caps;
 		$obj = $this->model->get_one_by_ID( $args[0] );
 
 		//if no obj then let's just do cap
@@ -531,6 +546,9 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit {
 class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 
 	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+		//only process if we're checking our mapped cap;
+		if ( $cap !== $this->meta_cap )
+			return $caps;
 		$obj = $this->model->get_one_by_ID( $args[0] );
 
 		//if no obj then let's just do cap
