@@ -397,13 +397,9 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	 * @return bool|die true if pass (or admin) wp_die if fail
 	 */
 	private function _check_user_access() {
-		//note we want to make sure we never lock out administrators.
-		if ( current_user_can( 'administrator' ) ) {
-			return true;
-		} elseif (!current_user_can( $this->capability ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( $this->_menu_map->capability, $this->_menu_map->menu_slug ) ) {
 			wp_die( __('You don\'t have access to this page.'), '', array( 'back_link' => true ) );
 		}
-
 		return true;
 	}
 
