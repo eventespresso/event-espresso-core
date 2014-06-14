@@ -79,6 +79,7 @@ final class EE_Capabilities extends EE_Base {
 	 */
 	private function __construct() {
 		$this->_caps_map = $this->_init_caps_map();
+		$this->_init_role_caps();
 		$this->_set_meta_caps();
 	}
 
@@ -231,6 +232,30 @@ final class EE_Capabilities extends EE_Base {
 				)
 			);
 	}
+
+
+
+
+	/**
+	 * This adds all the default caps to roles as registered in the _caps_map property.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function _init_role_caps() {
+		//only do this if the read_ee cap isn't on the administrator role
+		$administrator = get_role('administrator');
+		if ( $administrator->has_cap( 'read_ee' ) ) {
+			return;
+		}
+
+		//loop through the _init_caps_map for each role and add the caps to the role.
+		foreach ( $this->_caps_map as $role => $caps ) {
+			foreach ( $caps as $cap ) {
+				$this->add_cap_to_role( $role, $cap );
+			}
+		}
 	}
 
 
