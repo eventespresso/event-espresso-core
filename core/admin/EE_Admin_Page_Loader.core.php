@@ -391,7 +391,9 @@ class EE_Admin_Page_Loader {
 		//prep the menu pages (sort, group.)
 		$this->_prep_pages();
 		foreach( $this->_prepped_menu_maps as $menu_map ) {
-			$menu_map->add_menu_page();
+			if ( EE_Registry::instance()->CAP->current_user_can( $menu_map->capability, $menu_map->menu_slug ) ) {
+				$menu_map->add_menu_page();
+			}
 		}
 	}
 
