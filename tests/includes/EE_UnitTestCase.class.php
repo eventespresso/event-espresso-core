@@ -30,9 +30,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	public function setUp() {
 		global $auto_made_thing_seed, $wp_actions;
-		$this->wp_actions_saved = $wp_actions;
 		parent::setUp();
 
+//		$this->wp_actions_saved = $wp_actions;
 		// Fake WP mail globals, to avoid errors
 		add_filter( 'wp_mail', array( $this, 'setUp_wp_mail' ) );
 		add_filter( 'wp_mail_from', array( $this, 'tearDown_wp_mail' ) );
@@ -43,8 +43,9 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 	public function tearDown(){
-		global $wp_actions;
-		$wp_actions = $this->wp_actions_saved;
+		parent::tearDown();
+//		global $wp_actions;
+//		$wp_actions = $this->wp_actions_saved;
 	}
 
 	/**
