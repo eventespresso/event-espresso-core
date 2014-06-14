@@ -19,10 +19,18 @@ require_once EE_TESTS_DIR . 'includes/factory.php';
  * @subpackage 	tests
  */
 class EE_UnitTestCase extends WP_UnitTestCase {
+	/**
+	 * Should be used to store the global $wp_actions during a test
+	 * so that it can be restored afterwards to keep tests from interfere with each other
+	 * @var array
+	 */
+	protected $wp_actions_saved = NULL;
 	const error_code_undefined_property = 8;
 	protected $_cached_SERVER_NAME = NULL;
 
 	public function setUp() {
+		global $auto_made_thing_seed, $wp_actions;
+		$this->wp_actions_saved = $wp_actions;
 		parent::setUp();
 
 		// Fake WP mail globals, to avoid errors
@@ -34,6 +42,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	}
 
+	public function tearDown(){
+		global $wp_actions;
+		$wp_actions = $this->wp_actions_saved;
+	}
 
 	/**
 	 *  Use this to clean up any global scope singletons etc that we may have being used by EE so
