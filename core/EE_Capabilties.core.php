@@ -30,21 +30,15 @@ final class EE_Capabilities extends EE_Base {
 
 
 	/**
-	 * This is a map of caps that correspond to a EE route.
+	 * This is a map of caps that correspond to a default WP_Role.
+	 * Array is indexed by Role and values are ee capabilities.
 	 *
-	 * format:  array {
-	 * 	@type string $route index is the unique_route_name {
-	 * 	      @type array $caps  values are the capabilities in an array.
-	 * 	}
-	 * }
-	 *
-	 * example: $_caps_map = array( 'espresso_events_route' => array( 'administrator', 'edit_event' ) );
-	 *
-	 * unique_route_name in most cases is formed from {page_slug}_{route}.
+	 * @since 4.5.0
 	 *
 	 * @var array
 	 */
 	private $_caps_map = array();
+
 
 
 
@@ -81,6 +75,9 @@ final class EE_Capabilities extends EE_Base {
 
 
 
+
+
+
 	/**
 	 * This sets up and returns the initial capabilities map for Event Espresso
 	 *
@@ -89,95 +86,106 @@ final class EE_Capabilities extends EE_Base {
 	 * @return array
 	 */
 	private function _init_caps_map() {
-		return array();
+		return apply_filters( 'FHEE__EE_Capabilities___init_caps_map', array(
+			'administrator' => array(
+				//basic access
+				'read_ee',
+				//gateways
+				'manage_gateways',
+				//events
+				'edit_others_event',
+				'edit_published_event',
+				'edit_event',
+				'manage_event_categories',
+				'edit_event_category',
+				'read_event_category',
+				'delete_event_category',
+				'publish_event',
+				'edit_private_event',
+				'read_private_event',
+				'read_event',
+				'delete_private_event',
+				'delete_event',
+				//venues
+				'manage_venue_categories',
+				'edit_venue_category',
+				'read_venue_category',
+				'delete_venue_category',
+				'edit_others_venue',
+				'edit_published_venue',
+				'edit_venue',
+				'publish_venue',
+				'edit_private_venue',
+				'read_private_venue',
+				'read_venue',
+				'delete_private_venue',
+				'delete_venue',
+				//contacts
+				'edit_others_contact',
+				'edit_contact',
+				'delete_contact',
+				'read_contact',
+				//registrations & checkins
+				'edit_registration',
+				'create_registration',
+				'read_registration',
+				'delete_registration',
+				'edit_checkin',
+				//transactions && payments
+				'edit_transaction',
+				'read_transaction',
+				'edit_payment',
+				'delete_payment',
+				//messages
+				'edit_global_message',
+				'edit_message',
+				'read_messages',
+				//tickets
+				'edit_default_ticket',
+				//prices
+				'edit_default_price',
+				'delete_default_price',
+				'edit_default_price_type',
+				'delete_default_price_type',
+				'read_default_price',
+				'read_price_type',
+				//registration form
+				'edit_question',
+				'read_question',
+				'delete_question',
+				'edit_question_group',
+				'read_question_group',
+				'delete_question_group'
+				)
+			) );
 	}
 
 
 
 
 	/**
-	 * This returns capabilities for the given reference.
+	 * This method sets a capability on a role.  Note this should only be done on activation, or if you have something specific to prevent the cap from being added on every page load (adding caps are persistent to the db).
+	 * Note. this is a wrapper for $wp_role->add_cap()
 	 *
-	 * @param string $ref Should match an index in _caps_map.
-	 *
-	 * @return array array of capabilities for the given ref.
-	 */
-	public function get_caps( $ref ) {
-		$caps = isset( $this->_caps_map[$ref] ) ? $this->_caps_map[$ref] : array();
-		return apply_filters( 'FHEE__EE_Capabilities__get_caps__caps', $caps, $ref );
-	}
-
-
-
-	/**
-	 * This sets capabilities for the given reference and cap.
+	 * @see wp-includes/capabilities.php
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param string $ref    a unique reference for the capabilities.
-	 * @param string|array $caps the caps required for the given route_ref
+	 * @param string $role  A WordPress role the capability is being added to
+	 * @param string $cap   The capability being added to the role
+	 * @param bool $grant  Whether to grant access to this cap on this role.
+	 * @return void
 	 */
-	public function set_caps( $ref, $caps ) {
-		$this->_caps_map[$ref] = (array) $caps;
-	}
-
-
-
-	/**
-	 * This is a wrapper for the native wp current_user_can method.  It basically allows us to have grouped capabilities on a specific ref (unique route reference) and handles seeing if any of the capabilities required are a match.
-	 *
-	 * @param string $ref Should match an index in _caps_map
-	 *
-	 * @return bool 	True if user has access, false if not.
-	 */
-	public function current_user_can( $ref ) {
-		$caps = $this->get_caps( $ref );
-		if ( empty( $caps ) ) {
-			//nothing matching this index!
-			return false;
+	public function add_cap_to_role( $role, $cap, $grant = TRUE ) {
+		$role = get_role( $role );
+		if ( $role instanceof WP_Roles ) {
+			$role->add_cap( $cap, $grant );
 		}
-
-		$has_access = false;
-		foreach ( $caps as $cap ) {
-			$has_access = current_user_can ( $cap );
-			if ( $has_access ) {
-				//user has access to jump out.
-				return true;
-			}
-		}
-
-		//no access for yuze
-		return false;
 	}
 
 
 
 
-	/**
-	 * This is a wrapper for the native wp current_user_can_for_blog function.  It basically allows us to have grouped capabilities on a specific ref (unique route refernece) and handles seeing if any of the capabiliteis required are a match.
-	 *
-	 * @param int $blog_id Blog ID
-	 * @param string $ref     Should match an index in $_caps_map
-	 *
-	 * @return bool
-	 */
-	public function current_user_can_for_blog( $blog_id, $ref ) {
-		$caps = $this->get_caps( $ref );
-		if ( empty( $caps ) ) {
-			//nothing matching this index!
-			return false;
-		}
 
-		$has_access = false;
-		foreach ( $caps as $cap ) {
-			$has_access = current_user_can_for_blog( $blog_id, $cap );
-			if ( $has_access ) {
-				//user has access to jump out.
-				return true;
-			}
-		}
 
-		//no access for yuze
-		return false;
-	}
 }
