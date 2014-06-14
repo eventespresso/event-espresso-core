@@ -179,8 +179,31 @@ final class EE_Capabilities extends EE_Base {
 	 */
 	public function add_cap_to_role( $role, $cap, $grant = TRUE ) {
 		$role = get_role( $role );
-		if ( $role instanceof WP_Roles ) {
+		if ( $role instanceof WP_Role ) {
 			$role->add_cap( $cap, $grant );
+		}
+	}
+
+
+
+
+
+	/**
+	 * Functions similarly to add_cap_to_role except removes cap from given role.
+	 * Wrapper for $wp_role->remove_cap()
+	 *
+	 * @see wp-includes/capabilities.php
+	 * @since 4.5.0
+	 *
+	 * @param string $role A WordPress role the capability is being removed from.
+	 * @param string $cap  The capability being femoved
+	 *
+	 * @return void
+	 */
+	public function remove_cap_from_role( $role, $cap ) {
+		$role = get_role( $role );
+		if ( $role instanceof WP_Role ) {
+			$role->remove_cap( $cap );
 		}
 	}
 
