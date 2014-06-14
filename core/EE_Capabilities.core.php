@@ -462,8 +462,10 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 
 	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
-		if ( $cap !== $this->meta_cap )
+		if ( $cap !== $this->meta_cap ) {
 			return $caps;
+		}
+
 		$obj = $this->model->get_one_by_ID( $args[0] );
 
 		//if no obj then let's just do cap
@@ -547,8 +549,10 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 
 	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped cap;
-		if ( $cap !== $this->meta_cap )
+		if ( $cap !== $this->meta_cap ) {
 			return $caps;
+		}
+
 		$obj = $this->model->get_one_by_ID( $args[0] );
 
 		//if no obj then let's just do cap
