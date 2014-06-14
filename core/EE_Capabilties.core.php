@@ -210,6 +210,52 @@ final class EE_Capabilities extends EE_Base {
 
 
 
+	/**
+	 * Wrapper for the native WP current_user_can() method.
+	 * This is provided as a handy method for a couple things:
+	 * 1. Using the context string it allows for targeted filtering by addons for a specific check (without having to write those filters wherever current_user_can is called).
+	 * 2. Explicit passing of $id from a given context ( useful in the cases of map_meta_cap filters )
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $cap     The cap being checked.
+	 * @param string $context The context where the current_user_can is being called from.
+	 * @param int    $id          Optional. Id for item where current_user_can is being called from (used in map_meta_cap() filters.
+	 *
+	 * @return bool  Whether user can or not.
+	 */
+	public function current_user_can( $cap, $context, $id = 0 ) {
+		$user_can = !empty( $id ) ? current_user_can( $cap, $id ) : current_user_can( $cap );
+
+		//apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
+		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can__user_can__' . $context, $user_can, $cap, $id );
+		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can__user_can', $user_can, $context, $cap, $id );
+		return $user_can;
+	}
 
 
+
+	/**
+	 * Wrapper for the native WP current_user_can_for_blog() method.
+	 * This is provided as a handy method for a couple things:
+	 * 1. Using the context string it allows for targeted filtering by addons for a specific check (without having to write those filters wherever current_user_can is called).
+	 * 2. Explicit passing of $id from a given context ( useful in the cases of map_meta_cap filters )
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param int      $blog_id The blog id that is being checked for.
+	 * @param string $cap     The cap being checked.
+	 * @param string $context The context where the current_user_can is being called from.
+	 * @param int    $id          Optional. Id for item where current_user_can is being called from (used in map_meta_cap() filters.
+	 *
+	 * @return bool  Whether user can or not.
+	 */
+	public function current_user_can_for_blog( $blog_id, $cap, $context, $id = 0 ) {
+		$user_can = !empty( $id ) ? current_user_can_for_blog( $blog_id, $cap, $id ) : current_user_can( $blog_id, $cap );
+
+		//apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
+		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can_for_blog__user_can__' . $context, $user_can, $blog_id, $cap, $id );
+		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can_for_blog__user_can', $user_can, $context, $blog_id, $cap, $id );
+		return $user_can;
+	}
 }
