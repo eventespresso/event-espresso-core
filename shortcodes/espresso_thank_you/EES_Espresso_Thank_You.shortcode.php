@@ -259,6 +259,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// if we've made it to the Thank You page, then let's toggle any "Failed" transactions to "Incomplete"
 		if ( $this->_current_txn->status_ID() == EEM_Transaction::failed_status_code ) {
 			$this->_current_txn->set_status( EEM_Transaction::incomplete_status_code );
+			$this->_current_txn->save();
 		}
 		$this->_primary_registrant = $this->_current_txn->primary_registration() instanceof EE_Registration ? $this->_current_txn->primary_registration() : NULL;
 		$this->_is_primary = $this->_primary_registrant->reg_url_link() == $this->_reg_url_link ? TRUE : FALSE;
