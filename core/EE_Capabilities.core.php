@@ -86,12 +86,14 @@ final class EE_Capabilities extends EE_Base {
 	/**
 	 * This delays the initialization of the capabilities class until EE_System core is loaded and ready.
 	 *
+	 * @param bool $reset allows for resetting the default capabilities saved on roles.  Note that this doesn't actually REMOVE any capabilities from existing roles, it just resaves defaults roles and ensures that they are up to date.
+	 *
 	 * @since 4.5.0
 	 * @return void
 	 */
-	public function init_caps() {
+	public function init_caps( $reset = FALSE ) {
 		$this->_caps_map = $this->_init_caps_map();
-		$this->_init_role_caps();
+		$this->_init_role_caps( $reset );
 		$this->_set_meta_caps();
 	}
 
@@ -260,12 +262,15 @@ final class EE_Capabilities extends EE_Base {
 	 *
 	 * @since 4.5.0
 	 *
+	 * @param bool $reset allows for resetting the default capabilities saved on roles.  Note that this doesn't actually REMOVE any capabilities from existing roles, it just resaves defaults roles and ensures that they are up to date.
 	 * @return void
 	 */
-	public function _init_role_caps() {
+	public function _init_role_caps( $reset = FALSE ) {
 		//only do this if the read_ee cap isn't on the administrator role
 		$administrator = get_role('administrator');
-		if ( $administrator->has_cap( 'read_ee' ) ) {
+
+		//note that this has_cap check isn't adding an additioanl mysql query because the core roles and capabiliteis are autoloaded by WordPress from the wp_options table.
+		if ( $administrator->has_cap( 'read_ee' ) && ! $reset ) {
 			return;
 		}
 
