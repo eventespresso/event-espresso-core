@@ -105,78 +105,119 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		//load field generator helper
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
+		//is there a evt_id in the request?
+		$evt_id = ! empty( $this->_req_data['EVT_ID'] ) && ! is_array( $this->_req_data['EVT_ID'] ) ? $this->_req_data['EVT_ID'] : 0;
+		$evt_id = ! empty( $this->_req_data['post'] ) ? $this->_req_data['post'] : $evt_id;
+
+
 		$this->_page_routes = array(
-			'default' => '_events_overview_list_table',
+			'default' => array(
+				'func' => '_events_overview_list_table',
+				'capability' => 'read_event'
+				),
+			'create_new' => array(
+				'func' => '_create_new_cpt_item',
+				'capability' => 'edit_event'
+				),
+			'edit' => array(
+				'func' => '_edit_cpt_item',
+				'capability' => 'edit_event'
+				),
 			'copy_event' => array(
 				'func' => '_copy_events',
+				'capability' => 'edit_event',
+				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'trash_event' => array(
 				'func' => '_trash_or_restore_event',
 				'args' => array('event_status' => 'trash'),
+				'capability' => 'delete_event',
+				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'trash_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('event_status' => 'trash'),
+				'capability' => 'delete_event',
 				'noheader' => true
 			),
 			'restore_event' => array(
 				'func' => '_trash_or_restore_event',
 				'args' => array('event_status' => 'draft'),
+				'capability' => 'delete_event',
+				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'restore_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('event_status' => 'draft'),
+				'capability' => 'delete_event',
 				'noheader' => true
 			),
 			'delete_event' => array(
 				'func' => '_delete_event',
+				'capability' => 'delete_event',
+				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'delete_events' => array(
 				'func' => '_delete_events',
+				'capability' => 'delete_event',
 				'noheader' => true
 			),
-			'view_report' => '_view_report',
-			'default_event_settings' => '_default_event_settings',
+			'view_report' => array(
+				'func' => '_view_report',
+				'capablity' => 'read_event'
+				),
+			'default_event_settings' => array(
+				'func' => '_default_event_settings',
+				'capability' => 'manage_options'
+				),
 			'update_default_event_settings' => array(
 				'func' => '_update_default_event_settings',
+				'capability' => 'manage_options',
 				'noheader' => TRUE,
 				),
 			//event category tab related
 			'add_category' => array(
 				'func' => '_category_details',
+				'capability' => 'edit_event_category',
 				'args' => array('add'),
 				),
 			'edit_category' => array(
 				'func' => '_category_details',
+				'capability' => 'edit_event_category',
 				'args' => array('edit')
 				),
 			'delete_categories' => array(
 				'func' => '_delete_categories',
+				'capability' => 'delete_event_category',
 				'noheader' => TRUE
 				),
 
 			'delete_category' => array(
 				'func' => '_delete_categories',
+				'capability' => 'delete_event_category',
 				'noheader' => TRUE
 				),
 
 			'insert_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => TRUE),
+				'capability' => 'edit_event_category',
 				'noheader' => TRUE
 				),
 
 			'update_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => FALSE),
+				'capability' => 'edit_event_category',
 				'noheader' => TRUE
 				),
 			'category_list' => array(
-				'func' => '_category_list_table'
+				'func' => '_category_list_table',
+				'capability' => 'read_event_category'
 				)
 		);
 	}

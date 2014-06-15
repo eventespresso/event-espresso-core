@@ -43,58 +43,86 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'events';
 		$default_espresso_boxes = $this->_default_espresso_metaboxes;
 
+		//is there a evt_id in the request?
+		$evt_id = ! empty( $this->_req_data['EVT_ID'] ) && ! is_array( $this->_req_data['EVT_ID'] ) ? $this->_req_data['EVT_ID'] : 0;
+		$evt_id = ! empty( $this->_req_data['post'] ) ? $this->_req_data['post'] : $evt_id;
+
+		//tkt_id?
+		$tkt_id = !empty( $this->_req_data['TKT_ID'] ) && ! is_array( $this->_req_data['TKT_ID'] ) ? $this->_req_data['TKT_ID'] : 0;
 
 		$new_page_routes = array(
 			'duplicate_event' => array(
 				'func' => '_duplicate_event',
+				'capability' => 'edit_event',
+				'obj_id' => $evt_id,
 				'noheader' => TRUE
 				),
-			'ticket_list_table' => '_tickets_overview_list_table',
+			'ticket_list_table' => array(
+				'func' => '_tickets_overview_list_table',
+				'capability' => 'read_default_ticket'
+				),
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
+				'capability' => 'edit_default_ticket',
+				'obj_id' => $tkt_id,
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE )
 				),
 			'trash_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
+				'capability' => 'edit_default_ticket',
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE )
 				),
 			'restore_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
+				'capability' => 'edit_default_ticket',
+				'obj_id' => $tkt_id,
 				'noheader' => TRUE
 				),
 			'restore_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
+				'capability' => 'edit_default_ticket',
 				'noheader' => TRUE
 				),
 			'delete_ticket' => array(
 				'func' => '_delete_ticket',
+				'capability' => 'edit_default_ticket',
+				'obj_id' => $tkt_id,
 				'noheader' => TRUE
 				),
 			'delete_tickets' => array(
 				'func' => '_delete_ticket',
+				'capability' => 'edit_default_ticket',
 				'noheader' => TRUE
 				),
-			'import_page'=>'_import_page',
+			'import_page'=> array(
+				'func' => '_import_page',
+				'capability' => 'import'
+				),
 			'import' => array(
 				'func'=>'_import_events',
+				'capability' => 'import',
 				'noheader'=>TRUE,
 				),
 			'import_events' => array(
 				'func'=>'_import_events',
+				'capability' => 'import',
 				'noheader'=>TRUE,
 				),
 			'export_events' => array(
 				'func' => '_events_export',
+				'capability' => 'export',
 				'noheader' => true
 			),
 			'export_categories' => array(
 				'func' => '_categories_export',
+				'capability' => 'export',
 				'noheader' => TRUE
 				),
 			'sample_export_file'=>array(
 				'func'=>'_sample_export_file',
+				'capability' => 'export',
 				'noheader'=>TRUE
 				)
 			);
