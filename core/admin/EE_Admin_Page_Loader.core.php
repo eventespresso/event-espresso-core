@@ -160,7 +160,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Main', 'event_espresso'),
 				'show_on_menu' => FALSE,
 				'menu_slug' => 'main',
-				'capability' => 'administrator',
+				'capability' => 'read_ee',
 				'menu_order' => 0,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -168,7 +168,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Management', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'management',
-				'capability' => 'administrator',
+				'capability' => 'read_ee',
 				'menu_order' => 10,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -176,7 +176,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Settings', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'settings',
-				'capability' => 'administrator',
+				'capability' => 'read_ee',
 				'menu_order' => 30,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -184,7 +184,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Templates', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'templates',
-				'capability' => 'administrator',
+				'capability' => 'read_ee',
 				'menu_order' => 40,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -192,7 +192,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Extras', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'extras',
-				'capability' => 'administrator',
+				'capability' => 'read_ee',
 				'menu_order' => 50,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -200,7 +200,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __("Tools", "event_espresso"),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'tools',
-				'capability' => 'administrator',
+				'capability' => 'read_ee',
 				'menu_order' => 60,
 				'parent_slug' => 'espresso_events'
 				)),
@@ -208,7 +208,7 @@ class EE_Admin_Page_Loader {
 				'menu_label' => __('Addons', 'event_espresso'),
 				'show_on_menu' => TRUE,
 				'menu_slug' => 'addons',
-				'capability' => 'administrator',
+				'capability' => 'read_ee',
 				'menu_order' => 20,
 				'parent_slug' => 'espresso_events'
 				))
