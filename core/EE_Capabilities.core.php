@@ -466,7 +466,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 			return $caps;
 		}
 
-		$obj = isset( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
+		$obj = ! empty( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
 
 		//if no obj then let's just do cap
 		if ( ! $obj instanceof EE_Base_Class ) {
@@ -553,7 +553,7 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 			return $caps;
 		}
 
-		$obj = isset( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
+		$obj = ! empty( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
 
 		//if no obj then let's just do cap
 		if ( ! $obj instanceof EE_Base_Class ) {
