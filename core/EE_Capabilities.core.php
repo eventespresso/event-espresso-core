@@ -174,6 +174,7 @@ final class EE_Capabilities extends EE_Base {
 				'edit_event_category',
 				'read_event_category',
 				'delete_event_category',
+				'assign_event_category',
 				'publish_event',
 				'edit_private_event',
 				'read_private_event',
@@ -185,6 +186,7 @@ final class EE_Capabilities extends EE_Base {
 				'edit_venue_category',
 				'read_venue_category',
 				'delete_venue_category',
+				'assign_venue_category',
 				'edit_others_venue',
 				'edit_published_venue',
 				'edit_venue',
@@ -240,7 +242,12 @@ final class EE_Capabilities extends EE_Base {
 				'edit_question_group',
 				'edit_others_question_groups',
 				'read_question_group',
-				'delete_question_group'
+				'delete_question_group',
+				//event_type taxonomy
+				'assign_event_type',
+				'edit_event_type',
+				'delete_event_type',
+				'read_event_type',
 				)
 			);
 	}
