@@ -349,6 +349,7 @@ class EE_Register_CPTs {
 		'has_archive' => true,
 		'hierarchical' => true,
 		'menu_position' => null,
+		'map_meta_cap' => true,
 		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments' )
 	  );
 
