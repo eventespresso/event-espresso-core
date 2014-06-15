@@ -236,8 +236,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 			'func' => '_default_method_handling_route',
 	 * 			'args' => array('array','of','args'),
 	 * 			'noheader' => true, //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
-	 *			'headers_sent_route'=>'headers_route_reference'//add this if noheader=>true, and you want to load a headers route after.  The string you enter here should match the defined route reference for a headers sent route.
-	 *			'capability' => 'route_capability' //indicate a string for minimum capability required to access this route.
+	 *			'headers_sent_route'=>'headers_route_reference', //add this if noheader=>true, and you want to load a headers route after.  The string you enter here should match the defined route reference for a headers sent route.
+	 *			'capability' => 'route_capability', //indicate a string for minimum capability required to access this route.
+	 *			'obj_id' => 10 // if this route has an object id, then this can include it (used for capability checks).
 	 * 		),
 	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method.
 	 * 		)
@@ -1225,7 +1226,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	private function _check_user_access() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$capability = empty( $this->_route['capability'] ) ? 'manage_options' : $this->_route['capability'];
-		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->_req_action ) ) && ! defined( 'DOING_AJAX')) {
+		$id = ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
+		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->_req_action, $id ) ) && ! defined( 'DOING_AJAX')) {
 			wp_redirect( home_url('/') . 'wp-admin/' );
 		}
 	}
