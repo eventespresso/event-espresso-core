@@ -346,7 +346,7 @@ final class EE_Capabilities extends EE_Base {
 	 * @return bool  Whether user can or not.
 	 */
 	public function current_user_can( $cap, $context, $id = 0 ) {
-		$user_can = !empty( $id ) ? current_user_can( $cap, $id ) : current_user_can( $cap );
+		$user_can = ! empty( $id ) ? current_user_can( $cap, $id ) : current_user_can( $cap );
 
 		//apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
 		$user_can = apply_filters( 'FHEE__EE_Capabilities__current_user_can__user_can__' . $context, $user_can, $cap, $id );
