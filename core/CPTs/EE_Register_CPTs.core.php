@@ -56,8 +56,8 @@ class EE_Register_CPTs {
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
 			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
 		}
-		// setup default terms in any of our taxonomies (but only if we're in admin). 
-		// Why not added via register_actvation_hook?  
+		// setup default terms in any of our taxonomies (but only if we're in admin).
+		// Why not added via register_actvation_hook?
 		// Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
 		if ( is_admin() ) {
 			$this->set_initial_event_categories();
@@ -75,7 +75,7 @@ class EE_Register_CPTs {
 		}
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
-		
+
 	}
 
 
@@ -88,7 +88,7 @@ class EE_Register_CPTs {
 	 *  @access 	public
 	 *  @return 	array
 	 */
-	public static function get_taxonomies(){		
+	public static function get_taxonomies(){
 		// define taxonomies
 		return array(
 			'espresso_event_categories' => array(
@@ -97,6 +97,12 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_in_nav_menus' => true,
+					'capabilities' => array(
+						'manage_terms' => 'read_event_category',
+						'edit_terms' => 'edit_event_category',
+						'delete_terms' => 'delete_event_category',
+						'assign_terms' => 'assign_event_category'
+						),
 					'rewrite' => array( 'slug' => __( 'event-category', 'event_espresso' ))
 				)),
 			'espresso_venue_categories' => array(
@@ -105,6 +111,12 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_in_nav_menus' => false, //by default this doesn't show for decaf
+					'capabilities' => array(
+						'manage_terms' => 'read_venue_category',
+						'edit_terms' => 'edit_venue_category',
+						'delete_terms' => 'delete_venue_category',
+						'assign_terms' => 'assign_venue_category'
+						),
 					'rewrite' => array( 'slug' => __( 'venue-category', 'event_espresso' ))
 				)),
 			'espresso_event_type' => array(
@@ -113,10 +125,16 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=>true,
 					'show_ui'=>false,
+					'capabilities' => array(
+						'manage_terms' => 'read_event_type',
+						'edit_terms' => 'edit_event_type',
+						'delete_terms' => 'delete_event_type',
+						'assign_terms' => 'assign_event_type'
+						),
 					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
 					'hierarchical'=>true
 				))
-			);		
+			);
 	}
 
 
@@ -129,7 +147,7 @@ class EE_Register_CPTs {
 	 *  @access 	public
 	 *  @return 	array
 	 */
-	public static function get_CPTs(){		
+	public static function get_CPTs(){
 		// define CPTs
 		return array(
 			'espresso_events' => array(
@@ -141,6 +159,22 @@ class EE_Register_CPTs {
 				'args' => array(
 					'public'=> TRUE,
 					'show_in_nav_menus' => TRUE,
+					'capability_type' => 'event',
+					'capabilities' => array(
+						'edit_post' => 'edit_event',
+						'read_post' => 'read_event',
+						'delete_post' => 'delete_event',
+						'edit_posts' => 'edit_event',
+						'edit_others_posts' => 'edit_others_event',
+						'publish_posts' => 'publish_event',
+						'read_private_posts' => 'read_private_event',
+						'delete_posts' => 'delete_event',
+						'delete_private_posts' => 'delete_private_event',
+						'delete_published_posts' => 'edit_published_event',
+						'delete_others_posts' => 'edit_others_event',
+						'edit_private_posts' => 'edit_private_event',
+						'edit_published_posts' => 'edit_published_event'
+						),
 					'taxonomies'=> array(
 						'espresso_event_categories',
 						'espresso_event_type',
@@ -155,7 +189,23 @@ class EE_Register_CPTs {
 				'class_name' => 'EE_Venue',
 				'args' => array(
 					'public'=> TRUE,
-					'show_in_nav_menus' => FALSE, //by default this doesn't show for decaf
+					'show_in_nav_menus' => FALSE, //by default this doesn't show for decaf,
+					'capability_type' => 'venue',
+					'capabilities' => array(
+						'edit_post' => 'edit_venue',
+						'read_post' => 'read_venue',
+						'delete_post' => 'delete_venue',
+						'edit_posts' => 'edit_venue',
+						'edit_others_posts' => 'edit_others_venue',
+						'publish_posts' => 'publish_venue',
+						'read_private_posts' => 'read_private_venue',
+						'delete_posts' => 'delete_venue',
+						'delete_private_posts' => 'delete_private_venue',
+						'delete_published_posts' => 'edit_published_venue',
+						'delete_others_posts' => 'edit_others_venue',
+						'edit_private_posts' => 'edit_private_venue',
+						'edit_published_posts' => 'edit_published_venue'
+						),
 					'taxonomies'=> array(
 						'espresso_venue_categories',
 						'post_tag'
@@ -180,6 +230,22 @@ class EE_Register_CPTs {
 					'hierarchical'=> FALSE,
 					'has_archive' => FALSE,
 					'taxonomies' => array( 'post_tag' ),
+					'capability_type' => 'contact',
+					'capabilities' => array(
+						'edit_post' => 'edit_contact',
+						'read_post' => 'read_contact',
+						'delete_post' => 'delete_contact',
+						'edit_posts' => 'edit_contact',
+						'edit_others_posts' => 'edit_others_contact',
+						'publish_posts' => 'edit_contact',
+						'read_private_posts' => 'edit_others_contact',
+						'delete_posts' => 'delete_contact',
+						'delete_private_posts' => 'edit_others_contact',
+						'delete_published_posts' => 'edit_contact',
+						'delete_others_posts' => 'edit_others_contact',
+						'edit_private_posts' => 'edit_others_contact',
+						'edit_published_posts' => 'edit_contact'
+						),
 					'supports' => array( 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),
 				))
 			);
@@ -189,7 +255,7 @@ class EE_Register_CPTs {
 
 
 	/**
-	 * This basically goes through the CPT array and returns only CPT's that have the ['args']['public'] option set as false 
+	 * This basically goes through the CPT array and returns only CPT's that have the ['args']['public'] option set as false
 	 * @return array
 	 */
 	public static function get_private_CPTs() {
@@ -209,14 +275,14 @@ class EE_Register_CPTs {
 	/**
 	 * Registers a custom taxonomy. Should be called before registering custom post types,
 	 * otherwise you should link the taxonomy to the custom post type using 'register_taxonomy_for_object_type'.
-	 * 
+	 *
 	 * @param string $taxonomy_name, eg 'books'
 	 * @param string $singular_name internationalized singular name
 	 * @param type $plural_name internationalized plural name
 	 * @param type $override_args like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
 	 */
 	function register_taxonomy($taxonomy_name, $singular_name, $plural_name, $override_args = array()){
-		
+
 		$args = array(
 		'hierarchical'      => true,
 		'labels'            => array(
@@ -229,19 +295,19 @@ class EE_Register_CPTs {
 		'show_in_nav_menus' => false
 		//'rewrite'           => array( 'slug' => 'genre' ),
 	);
-		
+
 	  if($override_args){
 		  if(isset($override_args['labels'])){
 			  $labels = array_merge($args['labels'],$override_args['labels']);
 			  $args['labels'] = $labels;
 		  }
 		  $args = array_merge($args,$override_args);
-		  
+
 	  }
 		register_taxonomy($taxonomy_name,null, $args);
 	}
-	
-	
+
+
 	/**
 	 * Registers a new custom post type. Sets default settings given only the following params.
 	 *
@@ -274,18 +340,18 @@ class EE_Register_CPTs {
 		'labels' => $labels,
 		'public' => true,
 		'publicly_queryable' => true,
-		'show_ui' => false, 
-		'show_in_menu' => false, 
+		'show_ui' => false,
+		'show_in_menu' => false,
 		'show_in_nav_menus' => false,
 		'query_var' => true,
 		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => sanitize_title($plural_name) ), $post_type ),
 		'capability_type' => 'post',
-		'has_archive' => true, 
+		'has_archive' => true,
 		'hierarchical' => true,
 		'menu_position' => null,
 		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments' )
-	  ); 
-	  
+	  );
+
 	  if($override_args){
 		  if(isset($override_args['labels'])){
 			  $labels = array_merge($args['labels'],$override_args['labels']);
@@ -383,7 +449,7 @@ class EE_Register_CPTs {
 	 * hooked into the wp 'save_post' action hook for setting our default terms found in the $_default_terms property
 	 * @param  int    $post_id ID of CPT being saved
 	 * @param  object $post    Post object
-	 * @return void          
+	 * @return void
 	 */
 	function save_default_term( $post_id, $post ) {
 		if ( empty( $this->_default_terms ) )
@@ -406,9 +472,9 @@ class EE_Register_CPTs {
 		}
 	}
 
-	
-	
-	
+
+
+
 
 }
 
