@@ -116,7 +116,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Edit( 'edit_registration', array( EEM_Registration::instance(), '', 'edit_others_registration', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Checkin::instance(), '', 'edit_others_checkin', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_transaction', array( EEM_Transaction::instance(), '', 'edit_others_transaction', '' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', '' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'edit_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_price_type', array( EEM_Price_Type::instance(), '', 'edit_others_default_price_type', '' ) ),
@@ -129,7 +129,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Read( 'read_registration', array( EEM_Registration::instance(), '', '', 'edit_others_registration' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_checkin', array( EEM_Checkin::instance(), '', '', 'edit_others_checkin' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_transaction', array( EEM_Transaction::instance(), '', '', 'edit_others_transaction' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_message', array( EEM_Message_Template_Group::instance(), '', '', 'edit_others_message' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'read_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_ticket', array( EEM_Ticket::instance(), '', '', 'edit_others_default_ticket' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_price', array( EEM_Price::instance(), '', '', 'edit_others_default_price' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_price_type', array( EEM_Price_Type::instance(), '', '', 'edit_others_default_price_type' ) ),
@@ -142,7 +142,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'delete_registration', array( EEM_Registration::instance(), '', 'edit_others_registration', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_checkin', array( EEM_Checkin::instance(), '', 'edit_others_checkin', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_transaction', array( EEM_Transaction::instance(), '', 'edit_others_transaction', '' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', '' ) ),
+			new EE_Meta_Capability_Map_Messages_Cap( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_price_type', array( EEM_Price_Type::instance(), '', 'edit_others_default_price_type', '' ) ),
@@ -222,6 +222,7 @@ final class EE_Capabilities extends EE_Base {
 				'edit_global_message',
 				'read_message',
 				'edit_message',
+				'edit_others_message',
 				'read_messages',
 				//tickets
 				'read_default_ticket',
@@ -603,6 +604,54 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 				$caps[] = $cap;
 			}
 		}
+		return $caps;
+	}
+}
+
+
+
+
+/**
+ * Meta Capability Map class for the messages component
+ * This is a special map due to messages having global and custom messages.  Only users with the edit_global_message capability should be able to do things with the global messages.
+ *
+ * @since 4.5.0
+ * @package Event Espresso
+ * @subpackage core, capabilities
+ * @author  Darren Ethier
+ */
+class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
+
+	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+		//only process if we're checking our mapped_cap
+		if ( $cap !== $this->meta_cap ) {
+			return $caps;
+		}
+
+		$obj = ! empty( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
+
+		//if no obj then let's just do cap
+		if ( ! $obj instanceof EE_Base_Class ) {
+			$caps[] = $cap;
+			return $caps;
+		}
+
+		$is_global = $obj->is_global();
+
+		if ( $obj->wp_user() && $user_id == $obj->wp_user() ) {
+			if ( $is_global ) {
+				$caps[]  = $this->private_cap;
+			} else {
+				$caps[] = $cap;
+			}
+		} else {
+			if ( $is_global ) {
+				$caps[] = $this->private_cap;
+			} else {
+				$caps[] = $this->others_cap;
+			}
+		}
+
 		return $caps;
 	}
 }
