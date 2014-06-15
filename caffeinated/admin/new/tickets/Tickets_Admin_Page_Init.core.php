@@ -69,7 +69,7 @@ class Tickets_Admin_Page_Init extends EE_Admin_Page_Init  {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => TICKETS_PG_SLUG,
 			'menu_label' => TICKETS_LABEL,
-			'capability' => 'administrator',
+			'capability' => 'read_default_ticket',
 			'admin_init_page' => $this
 			));
 	}
