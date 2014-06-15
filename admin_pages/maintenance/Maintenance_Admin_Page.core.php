@@ -60,34 +60,52 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_maintenance',
+			'default' => array(
+				'func' => '_maintenance',
+				'capability' => 'manage_options'
+				),
 			'change_maintenance_level'=>array(
 				'func'=>'_change_maintenance_level',
+				'capability' => 'manage_options',
 				'noheader'=>true
 			),
-			'system_status'=>'_system_status',
+			'system_status'=>array(
+				'func' => '_system_status',
+				'capability' => 'manage_options'
+				),
 			'send_migration_crash_report'=>array(
 				'func'=>'_send_migration_crash_report',
+				'capability' => 'manage_options',
 				'noheader'=>true
 			),
-			'confirm_migration_crash_report_sent'=>'_confirm_migration_crash_report_sent',
-			'data_reset' => '_data_reset_and_delete',
+			'confirm_migration_crash_report_sent'=> array(
+				'func' => '_confirm_migration_crash_report_sent',
+				'capability' => 'manage_options'
+				),
+			'data_reset' => array(
+				'func' => '_data_reset_and_delete',
+				'capability' => 'manage_options'
+				),
 			'reset_db'=>array(
 				'func'=>'_reset_db',
+				'capability' => 'manage_options',
 				'noheader'=>true,
 				'args'=>array('nuke_old_ee4_data'=>true),
 			),
 			'start_with_fresh_ee4_db'=>array(
 				'func'=>'_reset_db',
+				'capability' => 'manage_options',
 				'noheader'=>true,
 				'args'=>array('nuke_old_ee4_data'=>false),
 			),
 			'delete_db'=>array(
 				'func'=>'_delete_db',
+				'capability' => 'manage_options',
 				'noheader'=>true
 			),
 			'rerun_migration_from_ee3'=>array(
 				'func'=>'_rerun_migration_from_ee3',
+				'capability' => 'manage_options',
 				'noheader'=>true
 			)
 		);
