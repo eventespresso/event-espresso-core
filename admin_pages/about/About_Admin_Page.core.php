@@ -42,9 +42,18 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_whats_new',
-			'overview' => '_overview',
-			'credits' => '_credits',
+			'default' => array(
+				'func' => '_whats_new',
+				'capability' => 'read_ee'
+				),
+			'overview' => array(
+				'func' => '_overview',
+				'capability' => 'read_ee'
+				),
+			'credits' => array(
+				'func' => '_credits',
+				'capability' => 'read_ee'
+				),
 			);
 	}
 
