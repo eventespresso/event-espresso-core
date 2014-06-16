@@ -46,33 +46,49 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	protected function _extend_page_config() {
 		$this->_admin_base_path = REGISTRATION_FORM_CAF_ADMIN;
+		$qst_id = ! empty( $this->_req_data['QST_ID'] ) && ! is_array( $this->_req_data['QST_ID'] ) ? $this->_req_data['QST_ID'] : 0;
+		$qsg_id = ! empty( $this->_req_data['QSG_ID'] ) && ! is_array( $this->_req_data['QSG_ID'] ) ? $this->_req_data['QSG_ID'] : 0;
+
 		$new_page_routes = array(
-			'question_groups' => '_question_groups_overview_list_table',
-			'add_question' => '_edit_question',
+			'question_groups' => array(
+				'func' => '_question_groups_overview_list_table',
+				'capability' => 'read_question_group'
+				),
+			'add_question' => array(
+				'func' => '_edit_question',
+				'capability' => 'edit_question'
+				),
 			'insert_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => TRUE),
+				'capability' => 'edit_question',
 				'noheader' => TRUE
 				),
 
 			'trash_question' => array(
 				'func' => '_trash_question',
+				'capability' => 'delete_question',
+				'obj_id' => $qst_id,
 				'noheader' => TRUE
 				),
 
 			'delete_question' => array(
 				'func' => '_delete_question',
+				'capability' => 'delete_question',
+				'obj_id' => $qst_id,
 				'noheader' => TRUE
 				),
 
 			'trash_questions' => array(
 				'func' => '_trash_or_restore_questions',
+				'capability' => 'delete_question',
 				'args' => array('trash' => TRUE),
 				'noheader' => TRUE
 				),
 
 			'restore_questions' => array(
 				'func' => '_trash_or_restore_questions',
+				'capability' => 'delete_question',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
 				),
@@ -80,72 +96,95 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			'delete_questions'=>array(
 				'func'=>'_delete_questions',
 				'args'=>array(),
+				'capability' => 'delete_question',
 				'noheader'=>TRUE
 			),
 
-			'add_question_group' => '_edit_question_group',
+			'add_question_group' => array(
+				'func' => '_edit_question_group',
+				'capability' => 'edit_question_group'
+				),
 
 			'edit_question_group' => array(
 				'func' => '_edit_question_group',
+				'capability' => 'edit_question_group',
+				'obj_id' => $qsg_id,
 				'args' => array('edit')
 				),
 
 			'delete_question_groups' => array(
 				'func' => '_delete_question_groups',
+				'capability' => 'delete_question_group',
 				'noheader' => TRUE
 				),
 
 			'delete_question_group' => array(
 				'func' => '_delete_question_groups',
+				'capability' => 'delete_question_group',
+				'obj_id' => $qsg_id,
 				'noheader' => TRUE
 				),
 
 			'trash_question_group' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array( 'trash' => TRUE ),
+				'capability' => 'delete_question_group',
+				'obj_id' => $qsg_id,
 				'noheader' => TRUE
 				),
 
 			'restore_question_group' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array( 'trash' => FALSE ),
+				'capability' => 'delete_question_group',
+				'obj_id' => $qsg_id,
 				'noheader' => TRUE
 				),
 
 			'insert_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => TRUE),
+				'capability' => 'edit_question_group',
 				'noheader' => TRUE
 				),
 
 			'update_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => FALSE ),
+				'capability' => 'edit_question_group',
+				'obj_id' => $qsg_id,
 				'noheader' => TRUE,
 				),
 
 			'trash_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => TRUE),
+				'capability' => 'delete_question_group',
 				'noheader' => array('trash' => FALSE)
 				),
 
 			'restore_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => FALSE),
+				'capability' => 'delete_question_group',
 				'noheader' => TRUE
 				),
 
 
 			'espresso_update_question_group_order' => array(
 				'func' => 'update_question_group_order',
+				'capability' => 'edit_question_group',
 				'noheader' => TRUE
 				),
 
-			'view_reg_form_settings'	=> '_reg_form_settings',
+			'view_reg_form_settings' => array(
+				'func' => '_reg_form_settings',
+				'capability' => 'manage_options'
+				),
 
 			'update_reg_form_settings'	=> array(
 					'func' => '_update_reg_form_settings',
+					'capability' => 'manage_options',
 					'noheader' => TRUE
 				),
 			);

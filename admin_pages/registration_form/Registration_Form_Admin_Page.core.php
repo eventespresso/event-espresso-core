@@ -97,20 +97,30 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _set_page_routes() {
+		$qst_id = ! empty( $this->_req_data['QST_ID'] ) ? $this->_req_data['QST_ID'] : 0;
 		$this->_page_routes = array(
-
-			'default' => '_questions_overview_list_table',
+			'default' => array(
+				'func' => '_questions_overview_list_table',
+				'capability' => 'read_question'
+				),
 
 			'edit_question' => array(
 				'func' => '_edit_question',
+				'capability' => 'edit_question',
+				'obj_id' => $qst_id,
 				'args' => array('edit')
 				),
 
-			'question_groups' => '_questions_groups_preview',
+			'question_groups' => array(
+				'func' => '_questions_groups_preview',
+				'capability' => 'read_question'
+				),
 
 			'update_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => FALSE ),
+				'capability' => 'edit_question',
+				'obj_id' => $qst_id,
 				'noheader' => TRUE,
 				),
 			);
