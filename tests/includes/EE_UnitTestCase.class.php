@@ -24,13 +24,20 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * so that it can be restored afterwards to keep tests from interfere with each other
 	 * @var array
 	 */
-	protected $wp_actions_saved = NULL;
+	protected $wp_filters_saved = NULL;
 	const error_code_undefined_property = 8;
 	protected $_cached_SERVER_NAME = NULL;
 
 	public function setUp() {
-		global $auto_made_thing_seed, $wp_actions;
+		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
 		parent::setUp();
+		$auto_made_thing_seed = 1;
+		$this->wp_filters_saved = array(
+			'wp_filter'=>$wp_filter,
+			'wp_actions'=>$wp_actions,
+			'merged_filters'=>$merged_filters,
+			'wp_current_filter'=>$wp_current_filter
+		);
 
 //		$this->wp_actions_saved = $wp_actions;
 		// Fake WP mail globals, to avoid errors
@@ -44,8 +51,11 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	public function tearDown(){
 		parent::tearDown();
-//		global $wp_actions;
-//		$wp_actions = $this->wp_actions_saved;
+		global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
+		$wp_filter = $this->wp_filters_saved[ 'wp_filter' ];
+		$wp_actions = $this->wp_filters_saved[ 'wp_actions' ];
+		$merged_filters = $this->wp_filters_saved[ 'merged_filters' ];
+		$wp_current_filter = $this->wp_filters_saved[ 'wp_current_filter' ];
 	}
 
 	/**
