@@ -43,26 +43,46 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 	protected function _extend_page_config() {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'registrations';
+
+		$reg_id = ! empty( $this->_req_data['_REG_ID'] ) && ! is_array( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : 0;
+		$att_id = ! empty( $this->_req_data[ 'ATT_ID' ] ) ? ! is_array( $this->_req_data['ATT_ID'] ) : 0;
+		$att_id = ! empty( $this->_req_data['post'] ) && ! is_array( $this->_req_data['post'] ) ? $this->_req_data['post'] : $att_id;
+
 		$new_page_routes = array(
-			'reports' => '_registration_reports',
-			'registration_checkins' => '_registration_checkin_list_table',
+			'reports' => array(
+				'func' => '_registration_reports',
+				'capability' => 'read_registration'
+				),
+			'registration_checkins' => array(
+				'func' => '_registration_checkin_list_table',
+				'capability' => 'read_checkin'
+				),
 			'newsletter_selected_send' => array(
 				'func' => '_newsletter_selected_send',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'edit_registration'
 				),
 			'delete_checkin_rows' => array(
 					'func' => '_delete_checkin_rows',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_checkin'
 				),
 			'delete_checkin_row' => array(
 					'func' => '_delete_checkin_row',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_checkin',
+					'obj_id' => $att_id
 				),
 			'toggle_checkin_status'	=> array(
 					'func' => '_toggle_checkin_status',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_checkin',
+					'obj_id' => $att_id
 				),
-			'event_registrations'=> '_event_registrations_list_table',
+			'event_registrations'=> array(
+				'func' => '_event_registrations_list_table',
+				'capability' => 'read_registration',
+				)
 			);
 
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );

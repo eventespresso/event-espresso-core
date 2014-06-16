@@ -128,125 +128,176 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$this->_get_registration_status_array();
 
+		$reg_id = ! empty( $this->_req_data['_REG_ID'] ) && ! is_array( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : 0;
+		$att_id = ! empty( $this->_req_data[ 'ATT_ID' ] ) ? ! is_array( $this->_req_data['ATT_ID'] ) : 0;
+		$att_id = ! empty( $this->_req_data['post'] ) && ! is_array( $this->_req_data['post'] ) ? $this->_req_data['post'] : $att_id;
+
 		$this->_page_routes = array(
 
-				'default'	=> '_registrations_overview_list_table',
+				'default'	=> array(
+					'func' => '_registrations_overview_list_table',
+					'capability' => 'read_registration'
+					),
 
-				'view_registration'	=> '_registration_details',
+				'view_registration'	=> array(
+					'func' => '_registration_details',
+					'capability' => 'edit_registration',
+					'obj_id' => $reg_id
+					),
 
 				'edit_registration'	=> array(
 						'func' => '_registration_details',
 						'args' => array( 'edit' ),
-						'noheader' => TRUE
-
+						'noheader' => TRUE,
+						'capability' => 'edit_registration',
+						'obj_id' => $reg_id
 					),
 
 				'trash_registrations' => array(
 					'func' => '_trash_or_restore_registrations',
 					'args' => array('trash' => TRUE),
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_registration'
 					),
 
 				'restore_registrations' => array(
 					'func' => '_trash_or_restore_registrations',
 					'args' => array( 'trash' => FALSE ),
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_registration'
 					),
 
 				'delete_registrations' => array(
 					'func' => '_delete_registrations',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_registration'
 					),
 
 				'update_attendee_registration_form'	=> array(
 						'func' => '_update_attendee_registration_form',
-						'noheader' => TRUE
+						'noheader' => TRUE,
+						'capability' => 'edit_registration',
+						'obj_id' => $reg_id
 					),
 
-				'new_registration' => 'new_registration',
+				'new_registration' => array(
+					'func' => 'new_registration',
+					'capability' => 'edit_registration'
+					),
 
 				'process_registration_step'	=> array(
 						'func' => '_process_registration_step',
-						'noheader' => TRUE
+						'noheader' => TRUE,
+						'capability' => 'edit_registration'
 					),
 
 				'change_reg_status' => array(
 					'func' => '_change_reg_status',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_registration',
+					'obj_id' => $reg_id
 					),
 
 				'approve_registration'	=> array(
 						'func' => 'approve_registration',
-						'noheader' => TRUE
+						'noheader' => TRUE,
+						'capability' => 'edit_regsitration',
+						'obj_id' => $reg_id
 					),
 
 				'approve_and_notify_registration' => array(
 					'func' => 'approve_registration',
 					'noheader' => TRUE,
-					'args' => array(TRUE)
+					'args' => array(TRUE),
+					'capability' => 'edit_registration',
+					'obj_id' => $reg_id
 					),
 
 				'decline_registration'	=> array(
 						'func' => 'decline_registration',
-						'noheader' => TRUE
+						'noheader' => TRUE,
+						'capability' => 'edit_registration',
+						'obj_id' => $reg_id
 					),
 
 				'decline_and_notify_registration' => array(
 					'func' => 'decline_registration',
 					'noheader' => TRUE,
-					'args' => array(TRUE)
+					'args' => array(TRUE),
+					'capability' => 'edit_registration',
+					'obj_id' => $reg_id
 					),
 
 				'pending_registration'	=> array(
 						'func' => 'pending_registration',
-						'noheader' => TRUE
+						'noheader' => TRUE,
+						'capability' => 'edit_registration',
+						'obj_id' => $reg_id
 					),
 
 				'pending_and_notify_registration' => array(
 					'func' => 'pending_registration',
 					'noheader' => TRUE,
-					'args' => array(TRUE)
+					'args' => array(TRUE),
+					'capability' => 'edit_registration',
+					'obj_id' => $reg_id
 					),
 
 				'no_approve_registration' => array(
 					'func' => 'not_approve_registration',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_registration',
+					'obj_id' => $reg_id
 					),
 
 				'no_approve_and_notify_registration' => array(
 					'func' => 'not_approve_registration',
 					'noheader' => TRUE,
-					'args' => array(TRUE)
+					'args' => array(TRUE),
+					'capability' => 'edit_registration',
+					'obj_id' => $reg_id
 					),
 
 				'cancel_registration'	=> array(
 						'func' => 'cancel_registration',
-						'noheader' => TRUE
+						'noheader' => TRUE,
+						'capability' => 'edit_registration',
+						'obj_id' => $reg_id
 					),
 
 				'cancel_and_notify_registration' => array(
 					'func' => 'cancel_registration',
 					'noheader' => TRUE,
-					'args' => array(TRUE)
+					'args' => array(TRUE),
+					'capability' => 'edit_registration',
+					'obj_id' => $reg_id
 					),
 
-				'contact_list'	=> '_attendee_contact_list_table',
+				'contact_list'	=> array(
+					'func' => '_attendee_contact_list_table',
+					'capability' => 'read_contact'
+					),
 
 
 				'add_new_attendee'	=> array(
 					'func' => '_create_new_cpt_item',
 					'args' => array(
-						'new_attendee' => TRUE
+						'new_attendee' => TRUE,
+					'capability' => 'edit_contact'
 					)
 				),
 
 				'edit_attendee'	=> array(
-					'func' => '_edit_cpt_item'
+					'func' => '_edit_cpt_item',
+					'capability' => 'edit_contact',
+					'obj_id' => $att_id
 				),
 
 				'duplicate_attendee' => array(
 					'func' => '_duplicate_attendee',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_contact',
+					'obj_id' => $att_id
 					),
 
 				'insert_attendee'	=> array(
@@ -254,7 +305,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'args' => array(
 						'new_attendee' => TRUE
 					),
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_contact'
 				),
 
 				'update_attendee'	=> array(
@@ -262,7 +314,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'args' => array(
 						'new_attendee' => FALSE
 					),
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_contact',
+					'obj_id' => $att_id
 				),
 
 				'trash_attendees'	=> array(
@@ -270,7 +324,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'args' => array(
 						'trash' => TRUE
 					),
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_contact',
+					'obj_id' => $att_id
 				),
 
 				'restore_attendees'	=> array(
@@ -278,19 +334,25 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'args' => array(
 						'trash' => FALSE
 					),
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_contact',
+					'obj_id' => $att_id
 				),
 				'resend_registration' => array(
 					'func' => '_resend_registration',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_registration',
+					'obj_id' => $reg_id
 					),
 				'registrations_report'=>array(
 					'func'=>'_registrations_report',
-					'noheader'=> TRUE
+					'noheader'=> TRUE,
+					'capability' => 'read_registration'
 				),
 				'contact_list_export'=>array(
 					'func'=>'_contact_list_export',
-					'noheader'=>TRUE
+					'noheader'=>TRUE,
+					'capability' => 'export'
 				)
 		);
 
