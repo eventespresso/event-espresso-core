@@ -467,7 +467,7 @@ class EE_Transaction extends EE_Base_Class {
 	 * @param EE_Registration $registration
 	 * @return EE_Base_Class the relation was added to
 	 */
-	public function add_registration( $registration ) {
+	public function add_registration( EE_Registration $registration ) {
 		return $this->_add_relation_to( $registration, 'Registration' );
 	}
 
@@ -491,6 +491,17 @@ class EE_Transaction extends EE_Base_Class {
 	 */
 	public function items_purchased() {
 		return $this->line_items( array( array( 'LIN_type' => EEM_Line_Item::type_line_item ) ) );
+	}
+
+
+
+	/**
+	 * Wrapper for _add_relation_to
+	 * @param EE_Line_Item $line_item
+	 * @return EE_Base_Class the relation was added to
+	 */
+	public function add_line_item( EE_Line_Item $line_item ) {
+		return $this->_add_relation_to( $line_item, 'Line_Item' );
 	}
 
 
@@ -605,7 +616,6 @@ class EE_Transaction extends EE_Base_Class {
 
 	/**
 	 *  Gets the array of billing info for the gateway and for this transaction's primary registration's attendee.
-	 * @param string $payment_method the gateway class' _gateway_name property
 	 * @return EE_Form_Section_Proper
 	 */
 	public function billing_info(){
@@ -641,7 +651,7 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return boolean
 	 */
 	function set_payment_method_ID($PMD_ID) {
-		return $this->set('PMD_ID', $PMD_ID);
+		$this->set('PMD_ID', $PMD_ID);
 	}
 
 	/**
@@ -675,35 +685,5 @@ class EE_Transaction extends EE_Base_Class {
 
 
 
-	/**
-	 * process EE_Transaction object prior to serialization
-	 * @return array
-	 */
-	//	public function __sleep() {
-	//		// the transaction stores a record of the session_data array, and the session_data array has a copy of the transaction
-	//		if ( isset( $this->_TXN_session_data['transaction'] ) && $this->_TXN_session_data['transaction'] instanceof EE_Transaction ) {
-	//			// but we don't want that copy of the transaction to have a copy of the session
-	//			$this->_TXN_session_data['transaction']->set_txn_session_data( NULL );
-	//		}
-	//
-	//		$properties_to_serialize = array(
-	//			'_TXN_ID',
-	//			'_TXN_timestamp',
-	//			'_TXN_total',
-	//			'_TXN_paid',
-	//			'_STS_ID',
-	//			'_TXN_session_data',
-	//			'_TXN_hash_salt',
-	//			'dt_frmt',
-	//			'_Registration',
-	//			'_Payment',
-	//			'_Status',
-	//			'_Promotion_Object',
-	//			'_Line_Item',
-	//			'_Extra_Meta'
-	//		);
-	//
-	//		return $properties_to_serialize;
-	//	}
 }/* End of file EE_Transaction.class.php */
 /* Location: includes/classes/EE_Transaction.class.php */
