@@ -93,7 +93,7 @@ final class EE_Capabilities extends EE_Base {
 	 */
 	public function init_caps( $reset = FALSE ) {
 		$this->_caps_map = $this->_init_caps_map();
-		$this->_init_role_caps( $reset );
+		$this->init_role_caps( $reset );
 		$this->_set_meta_caps();
 	}
 
@@ -268,7 +268,7 @@ final class EE_Capabilities extends EE_Base {
 	 * @param bool $reset allows for resetting the default capabilities saved on roles.  Note that this doesn't actually REMOVE any capabilities from existing roles, it just resaves defaults roles and ensures that they are up to date.
 	 * @return void
 	 */
-	public function _init_role_caps( $reset = FALSE ) {
+	public function init_role_caps( $reset = FALSE ) {
 		//only do this if the read_ee cap isn't on the administrator role
 		$administrator = get_role('administrator');
 
