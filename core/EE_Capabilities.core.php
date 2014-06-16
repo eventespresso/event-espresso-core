@@ -120,8 +120,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Edit( 'edit_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_price_type', array( EEM_Price_Type::instance(), '', 'edit_others_default_price_type', '' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_question', array( EEM_Question::instance(), '', 'edit_others_question', '' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_question_group', array( EEM_Question_Group::instance(), '', 'edit_others_question_group', '' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question', array( EEM_Question::instance(), '', 'edit_others_question', 'edit_system_question' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question_group', array( EEM_Question_Group::instance(), '', 'edit_others_question_group', 'edit_system_question_group' ) ),
 			//reads
 			new EE_Meta_Capability_Map_Read( 'read_event', array( EEM_Event::instance(), '', 'read_others_event', 'read_private_event' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_venue', array( EEM_Venue::instance(), '', 'read_others_venue', 'read_private_venue' ) ),
@@ -146,8 +146,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_price_type', array( EEM_Price_Type::instance(), '', 'edit_others_default_price_type', '' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_question', array( EEM_Question::instance(), '', 'edit_others_question', '' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_question_group', array( EEM_Question_Group::instance(), '', 'edit_others_question_group', '' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', 'edit_others_question', 'edit_system_question' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', 'edit_others_question_group', 'edit_system_question_group' ) ),
 		);
 	}
 
@@ -652,6 +652,49 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
 			} else {
 				$caps[] = $this->others_cap;
 			}
+		}
+
+		return $caps;
+	}
+}
+
+
+
+
+/**
+ * Meta Capability Map class for the registration form (questions and question groups) component
+ * This is a special map due to questions and question groups having special "system" data.  Only users with the edit_system_question or edit_system_question_group capability should be able to do things with the system data.
+ *
+ * @since 4.5.0
+ * @package Event Espresso
+ * @subpackage core, capabilities
+ * @author  Darren Ethier
+ */
+class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Map {
+
+	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
+		//only process if we're checking our mapped_cap
+		if ( $cap !== $this->meta_cap ) {
+			return $caps;
+		}
+
+		$obj = ! empty( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
+
+		//if no obj then let's just do cap
+		if ( ! $obj instanceof EE_Base_Class ) {
+			$caps[] = $cap;
+			return $caps;
+		}
+
+		$is_system = $obj instanceof EE_Question_Group ? $obj->system_group() : FALSE;
+		$is_system = $obj instanceof EE_Question ? $obj->is_system_question() : $is_system;
+
+		if ( $is_system ) {
+			$caps[] = $this->private_cap;
+		} elseif ( $obj->wp_user() && $user_id == $obj->wp_user() ) {
+			$caps[] = $cap;
+		} else {
+			$caps[] = $this->others_cap;
 		}
 
 		return $caps;
