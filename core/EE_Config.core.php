@@ -1623,6 +1623,17 @@ class EE_Registration_Config extends EE_Config_Base {
       public $skip_reg_confirmation;
 
 	/**
+	 * an array of SPCO reg steps where:
+	 * 		the keys denotes the reg step order
+	 * 		each element consists of an array with the following elements:
+	 * 			"file_path" => the file path to the EE_SPCO_Reg_Step class
+	 * 			"class_name" => the specific EE_SPCO_Reg_Step child class name
+	 * 			"slug" => the URL param used to trigger the reg step
+	 * @var array $reg_steps
+	 */
+      public $reg_steps;
+
+	/**
 	 * Whether registration confirmation should be the last page of SPCO
 	 * @var boolean $reg_confirmation_last
 	 */
@@ -1679,6 +1690,7 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
 		$this->show_pending_payment_options = FALSE;
 		$this->skip_reg_confirmation = FALSE;
+		$this->reg_steps = array();
 		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;
 		$this->recaptcha_theme = 'clean';
@@ -1687,6 +1699,9 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->recaptcha_publickey = NULL;
 		$this->recaptcha_privatekey = NULL;
 	}
+
+
+
 
 }
 
