@@ -2,9 +2,9 @@
 
 /**
  * Links up 4.1 events to question groups. In 3.1, this join didn't occur on a table, but instead
- * on a column in the events_detail table (question_groups), and inside a serialized array on a column on the same table (event_meta's index add_attendee_question_groups) 
+ * on a column in the events_detail table (question_groups), and inside a serialized array on a column on the same table (event_meta's index add_attendee_question_groups)
 
-	The 4.1 model tables and fields are 
+	The 4.1 model tables and fields are
  * $this->_tables = array(
 			'Event_Question_Group'=>new EE_Primary_Table('esp_event_question_group','EQG_ID')
 		);
@@ -18,7 +18,7 @@
 	);
 
 
- * 
+ *
  */
 class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_Table{
 	private $_new_table;
@@ -31,7 +31,7 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
 //			$txn = $this->_get_txn($txn_id);
 //			$new_line_items = $this->_insert_new_line_items($txn,$old_row);
 //			$this->get_migration_script()->set_mapping($this->_old_table,$old_row['id'],$this->_new_line_table,$new_line_items);
-		
+
 			$this->_insert_new_event_question_groups($old_row);
 	}
 //	function _migration_step($num_items=50){
@@ -60,7 +60,7 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
 		$this->_pretty_name = __("Question Groups in each Event", "event_espresso");
 		parent::__construct();
 	}
-	
+
 	/**
 	 * Attempts to insert a new question group inthe new format given an old one
 	 * @global type $wpdb
@@ -68,32 +68,36 @@ class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_T
 	 * @return void
 	 */
 	private function _insert_new_event_question_groups($old_event){
-		$question_groups_for_primary = maybe_unserialize($old_event['question_groups']);
 		$new_event_question_group_ids = array();
-		foreach($question_groups_for_primary as $old_question_group_id){
-			$new_id = $this->_insert_event_question_group($old_event,$old_question_group_id,true);
-			if($new_id){
-				$new_event_question_group_ids[] = $new_id;
-			}
-		}
-		
-		$event_meta = maybe_unserialize($old_event['event_meta']);
-		if(isset($event_meta['add_attendee_question_groups'])){
-			$question_groups_for_add_attendees = maybe_unserialize($event_meta['add_attendee_question_groups']);
-			foreach($event_meta['add_attendee_question_groups'] as $old_question_group_id){
-				$new_id = $this->_insert_event_question_group($old_event,$old_question_group_id,false);
+		$question_groups_for_primary = maybe_unserialize($old_event['question_groups']);
+		if( is_array($question_groups_for_primary ) ){
+			foreach($question_groups_for_primary as $old_question_group_id){
+				$new_id = $this->_insert_event_question_group($old_event,$old_question_group_id,true);
 				if($new_id){
 					$new_event_question_group_ids[] = $new_id;
 				}
 			}
 		}
+		$event_meta = maybe_unserialize($old_event['event_meta']);
+		if(isset($event_meta['add_attendee_question_groups'])){
+			if( is_array( $event_meta['add_attendee_question_groups'] )){
+				foreach($event_meta['add_attendee_question_groups'] as $old_question_group_id){
+					$new_id = $this->_insert_event_question_group($old_event,$old_question_group_id,false);
+					if($new_id){
+						$new_event_question_group_ids[] = $new_id;
+					}
+				}
+			}
+		}
+
+
 		$this->get_migration_script()->set_mapping($this->_old_table, $old_event['id'], $this->_new_table, $new_event_question_group_ids);
 	}
-	
+
 	private function _insert_event_question_group($old_event,$old_question_group_id,$primary){
 		global $wpdb;
 		$new_question_group_id =$this->get_migration_script()->get_mapping_new_pk($wpdb->prefix."events_qst_group", intval($old_question_group_id), $wpdb->prefix."esp_question_group");
-			
+
 		if( ! $new_question_group_id){
 			$this->add_error(sprintf(__("Could not find 4.1 question ID for 3.1 question id #%s on event $%s", "event_espresso"),$old_question_group_id,$old_event['id']));
 			return 0;
