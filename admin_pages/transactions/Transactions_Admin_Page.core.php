@@ -104,30 +104,43 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$this->_get_transaction_status_array();
 
+		$txn_id = ! empty( $this->_req_data['TXN_ID'] ) && ! is_array( $this->_req_data['TXN_ID'] ) ? $this->_req_data['TXN_ID'] : 0;
+
 		$this->_page_routes = array(
 
-				'default' => '_transactions_overview_list_table',
+				'default' => array(
+					'func' => '_transactions_overview_list_table',
+					'capability' => 'read_transaction'
+					),
 
-				'view_transaction' => '_transaction_details',
+				'view_transaction' => array(
+					'func' => '_transaction_details',
+					'capability' => 'edit_transaction',
+					'obj_id' => $txn_id
+					),
 
 				'send_payment_reminder'	=> array(
 					'func' => '_send_payment_reminder',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_transaction'
 					),
 
 				'espresso_apply_payment' => array(
 				 	'func' => 'apply_payments_or_refunds',
-				 	'noheader' => TRUE
+				 	'noheader' => TRUE,
+				 	'capability' => 'edit_payment'
 				 	),
 
 				'espresso_apply_refund'	=> array(
 					'func' => 'apply_payments_or_refunds',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_payment'
 					),
 
 				'espresso_delete_payment' => array(
 					'func' => 'delete_payment',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_payment'
 					),
 
 		);
@@ -781,7 +794,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 				case 'PP' :
 					$payment['gateway'] = 'PayPal';
-					
+
 					break;
 
 				case 'CC' :
@@ -796,14 +809,14 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 					$payment['gateway'] = 'Cash';
 					$payment['txn_id_chq_nmbr'] = '';
 					break;
-				case 'DB' : 
+				case 'DB' :
 					$payment['gateway'] = 'Debit';
 					$payment['gateway_response'] = '';
 					break;
 				case 'BK' :
 					$payment['gateway'] = 'Bank';
 					break;
-				case 'IV' : 
+				case 'IV' :
 					$payment['gateway'] = 'Invoice';
 					break;
 				case 'MO' :
