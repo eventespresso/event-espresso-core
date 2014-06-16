@@ -175,11 +175,12 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		global $wp_actions;
 
 		//its activation history wp option shouldn't exist
-		$this->assertWPOptionDoesNotExist($this->_addon->get_activation_history_option_name());
+		delete_option($this->_addon->get_activation_history_option_name());
 		//and it also shouldn't be in the current db state
 		$current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
 		//just for assurance, make sure New Addon is the only existing addon
-		$this->assertArrayNotHasKey($this->_addon_name, $current_db_state);
+		unset($current_db_state[ $this->_addon_name ]);
+		update_option( EE_Data_Migration_Manager::current_database_state,$current_db_state );
 		$times_its_new_install_hook_fired_before = isset($wp_actions["AHEE__{$this->_addon_classname}__new_install"]) ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"] : 0;
 		//set the activator option
 		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
@@ -190,7 +191,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//now check for activations/upgrades in addons
 		EE_System::reset()->detect_activations_or_upgrades();
 		$this->assertEquals(EE_System::req_type_normal,$this->_addon->detect_req_type());
-		$this->assertEquals($times_its_new_install_hook_fired_before, $wp_actions["AHEE__{$this->_addon_classname}__new_install"]);
+		$this->assertEquals($times_its_new_install_hook_fired_before, isset( $wp_actions["AHEE__{$this->_addon_classname}__new_install"] ) ? $wp_actions["AHEE__{$this->_addon_classname}__new_install"] : 0);
 		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
 
 		//ok, now let's pretend the site was teaken out of MM
@@ -212,6 +213,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 	 * Registers the mock addon so it can be used for testing
 	 */
 	public function setUp(){
+		parent::setUp();
 		$this->_pretend_addon_hook_time();
 		$mock_addon_path = EE_TESTS_DIR.'mocks/addons/new-addon/';
 		EE_Register_Addon::register($this->_addon_name, array(
@@ -255,6 +257,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 			$this->assertArrayNotHasKey('EE_DMS_New_Addon_0_0_2',$DMSs_available);
 			$this->_stop_pretending_addon_hook_time();
 		}
+		parent::tearDown();
 	}
 
 }

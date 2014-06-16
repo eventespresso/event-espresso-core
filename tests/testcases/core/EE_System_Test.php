@@ -27,9 +27,9 @@ class EE_System_Test extends EE_UnitTestCase{
 	 * remember teh espresso_db_update's option before these tests
 	 */
 	function setUp() {
+		parent::setUp();
 		$this->_original_espresso_db_update = get_option('espresso_db_update');
 		EE_System::reset();
-		parent::setUp();
 	}
 	public function test_detect_request_type(){
 

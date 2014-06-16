@@ -19,13 +19,25 @@ require_once EE_TESTS_DIR . 'includes/factory.php';
  * @subpackage 	tests
  */
 class EE_UnitTestCase extends WP_UnitTestCase {
+	/**
+	 * Should be used to store the global $wp_actions during a test
+	 * so that it can be restored afterwards to keep tests from interfere with each other
+	 * @var array
+	 */
+	protected $wp_filters_saved = NULL;
 	const error_code_undefined_property = 8;
 	protected $_cached_SERVER_NAME = NULL;
 
 	public function setUp() {
-		global $auto_made_thing_seed;
+		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
 		parent::setUp();
 		$auto_made_thing_seed = 1;
+		$this->wp_filters_saved = array(
+			'wp_filter'=>$wp_filter,
+			'wp_actions'=>$wp_actions,
+			'merged_filters'=>$merged_filters,
+			'wp_current_filter'=>$wp_current_filter
+		);
 		// Fake WP mail globals, to avoid errors
 		add_filter( 'wp_mail', array( $this, 'setUp_wp_mail' ) );
 		add_filter( 'wp_mail_from', array( $this, 'tearDown_wp_mail' ) );
@@ -35,6 +47,14 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	}
 
+	public function tearDown(){
+		parent::tearDown();
+		global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
+		$wp_filter = $this->wp_filters_saved[ 'wp_filter' ];
+		$wp_actions = $this->wp_filters_saved[ 'wp_actions' ];
+		$merged_filters = $this->wp_filters_saved[ 'merged_filters' ];
+		$wp_current_filter = $this->wp_filters_saved[ 'wp_current_filter' ];
+	}
 
 	/**
 	 *  Use this to clean up any global scope singletons etc that we may have being used by EE so
