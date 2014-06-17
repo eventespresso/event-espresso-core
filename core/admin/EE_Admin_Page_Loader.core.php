@@ -286,7 +286,7 @@ class EE_Admin_Page_Loader {
 			$this->_installed_pages[$page] = $this->_load_admin_page( $page, $path );
 			// verify returned object
 			if ( $this->_installed_pages[$page] instanceof EE_Admin_Page_Init ) {
-				if ( ! $this->_installed_pages[$page]->get_menu_map() instanceof EE_Menu_Map ) {
+				if ( ! $this->_installed_pages[$page]->get_menu_map() instanceof EE_Admin_Page_Menu_Map ) {
 					continue;
 				}
 				$this->_menu_slugs[$this->_installed_pages[$page]->get_menu_map()->menu_slug] = $page;
