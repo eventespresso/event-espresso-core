@@ -338,6 +338,11 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * We really should implement this function in the proper PHPunit style
 	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+	 * !NOTE! This ONLY checks for non-temporary tables! And WP_UnitTestCase changes all queries that use
+	 * 'CREATE TABLE' to 'CREATE TEMPORARY TABLE'. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
+	 * So you need to remove that filter BEFORE the table is created if you subsequently want to check
+	 * whether the table exists or not; or alternatively somehow improve this to check for temporary tables...
+	 * but that's unfortunately very difficult with MYSQL
 	 * @global WPDB $wpdb
 	 * @param string $table_name with or without $wpdb->prefix
 	 * @param string $model_name the model's name (only used for error reporting)
