@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
 
 
 	$('#admin-recaptcha-settings-slct').change( function() {
-		if ( $(this).val() == 1 ) {
+		if ( $(this).val() === 1 ) {
 			$('.admin-recaptcha-settings-tr').find('.maybe-required').removeClass('maybe-required').addClass('required');
 			$('.admin-recaptcha-settings-tr').show();
 			$('.admin-recaptcha-settings-hdr').show();
@@ -67,8 +67,8 @@ jQuery(document).ready(function($) {
 	//Select All
 	function selectAll(x) {
 		for(var i=0,l=x.form.length; i<l; i++) {
-			if(x.form[i].type == 'checkbox' && x.form[i].name != 'sAll') {
-				x.form[i].checked=x.form[i].checked?false:true
+			if(x.form[i].type === 'checkbox' && x.form[i].name !== 'sAll') {
+				x.form[i].checked=x.form[i].checked?false:true;
 			}
 		}
 	}
@@ -120,37 +120,6 @@ jQuery(document).ready(function($) {
 		$('#'+content_id).show();
 	});
 
-
-
-
-	window.do_before_admin_page_ajax = function do_before_admin_page_ajax() {
-		// stop any message alerts that are in progress
-		$('#message').stop().hide();
-		// spinny things pacify the masses
-		$('#espresso-ajax-loading').eeCenter().show();
-	};
-
-
-
-	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
-
-		console.log( response );
-
-		$('#espresso-ajax-loading').fadeOut('fast');
-		if (( typeof(response.success) !== 'undefined' && response.success !== '' ) || ( typeof(response.errors) !== 'undefined' && response.errors !== '' )) {
-
-			if ( closeModal === undefined ) {
-				closeModal = false;
-			}
-			// if there is no existing message...
-			if ( $('#message').length === 0 ) {
-				//create one and add it to the DOM
-				$('.nav-tab-wrapper').before( '<div id="message" class="updated hidden"></div>' );
-			}
-			var existing_message = $('#message');
-			var fadeaway = true;
-
-
 			if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
 				msg = '<p>' + response.success + '</p>';
 			}
@@ -161,33 +130,15 @@ jQuery(document).ready(function($) {
 				fadeaway = false;
 			}
 
-			// set message content
-			$(existing_message).html(msg);
-			//  change location in the DOM if so desired
-			if ( typeof(beforeWhat) !== 'undefined' && beforeWhat !== '' ) {
-				var moved_message = $(existing_message);
-				$(existing_message).remove();
-				$( beforeWhat ).before( moved_message );
-			}
-			// and display it
-			if ( fadeaway === true ) {
-				$('#message').removeAttr('style').removeClass('hidden').show().delay(8000).fadeOut();
-			} else {
-				$('#message').removeAttr('style').removeClass('hidden').show();
-			}
-
-		}
-
-	};
-
 
 	/**
 	 * add in our own statuses IF they exist
 	 */
 	var our_status = $('#cur_status').text();
 	// handle removing "move to trash" text if post_status is trash
-	if ( our_status == 'Trashed' )
+	if ( our_status === 'Trashed' ) {
 		$('#delete-action').hide();
+	}
 	if ( typeof(eeCPTstatuses) !== 'undefined' ) {
 		var wp_status = $('.ee-status-container', '#misc-publishing-actions').first();
 		var extra_statuses = $('#ee_post_status').html();
@@ -231,8 +182,9 @@ jQuery(document).ready(function($) {
 
 
 
-		if ( extra_statuses !== '' )
+		if ( extra_statuses !== '' ) {
 			$(extra_statuses).appendTo($('#post_status'));
+		}
 	}
 
 	/**
@@ -275,7 +227,7 @@ jQuery(document).ready(function($) {
 
 	$('#wpcontent').on( 'click', '.espresso-help-tab-lnk', function(){
 		var target_help_tab = '#tab-link-' + $(this).attr('id') + ' a';
-		if ( $('#contextual-help-wrap').css('display') == 'none' ) {
+		if ( $('#contextual-help-wrap').css('display') === 'none' ) {
 			$('#contextual-help-link').trigger('click');
 		}
 		$(target_help_tab).trigger('click');
@@ -305,8 +257,9 @@ jQuery(document).ready(function($) {
 
 		if ( el ) {
 			el = el.toString();
-			if ( $.inArray(el, eeLazyLoadingContainers) != -1 )
+			if ( $.inArray(el, eeLazyLoadingContainers) !== -1 ) {
 				show(0, el);
+			}
 		} else {
 			$.each( eeLazyLoadingContainers, show );
 		}
@@ -318,42 +271,7 @@ jQuery(document).ready(function($) {
 
 
 
-	$('.dismiss-ee-nag-notice').click(function(event) {
-		var nag_notice = $(this).attr('rel');
-		if ( $('#'+nag_notice).size() ) {
-			event.preventDefault();
-			$.ajax({
-				type: "POST",
-				url:  ee_dismiss.ajax_url,
-				dataType: "json",
-				data: {
-					action : 'dismiss_ee_nag_notice',
-					ee_nag_notice: nag_notice,
-					return_url: ee_dismiss.return_url,
-					noheader : 'true'
-				},
-				beforeSend: function() {
-					window.do_before_admin_page_ajax();
-				},
-				success: function( response ){
-					if ( typeof(response.errors) !== 'undefined' && response.errors !== '' ) {
-						console.log( response );
-						window.show_admin_page_ajax_msg( response );
-					} else {
-						$('#espresso-ajax-loading').fadeOut('fast');
-						$('#'+nag_notice).fadeOut('fast');
-					}
-				},
-				error: function( response ) {
-					$('#'+nag_notice).fadeOut('fast');
-					msg = {};
-					msg.errors = ee_dismiss.unknown_error;
-					console.log( msg );
-					window.show_admin_page_ajax_msg( msg );
-				}
-			});
-		}
-	});
+
 
 
 });
