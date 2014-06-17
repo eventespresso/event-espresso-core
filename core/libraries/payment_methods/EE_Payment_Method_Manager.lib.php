@@ -12,15 +12,9 @@ class EE_Payment_Method_Manager {
 	 */
 	private static $_instance = NULL;
 	/**
-	 * @var array keys are classnames without 'EEPM_', values are their filepaths
+	 * @var array keys are classnames without 'EE_PMT_', values are their filepaths
 	 */
 	protected $_payment_method_types = array();
-
-	/**
-	 *
-	 * @var array whose valusa re payment method
-	 */
-	protected $_included_payment_method_types = array();
 	/**
 	 *		@singleton method used to instantiate class object
 	 *		@access public
@@ -36,9 +30,20 @@ class EE_Payment_Method_Manager {
 	}
 
 	/**
-	 * 		_register_modules
+	 * If necessary, re-register payment methods
+	 * @param boolean $force_recheck whether to recheck for payment method types,
+	 * or just re-use the PMTs we found last time we checked during this request (if
+	 * we have not yet checked during this request, then we need to check anyways)
+	 */
+	protected function _maybe_register_payment_methods( $force_recheck = FALSE ){
+		if( ! $this->_payment_method_types || $force_recheck ){
+			$this->register_payment_methods();
+		}
+	}
+
+	/**
+	 * 		register_payment_methods
 	 *
-	 * 		@access private
 	 * 		@return void
 	 */
 	function register_payment_methods() {
@@ -94,12 +99,11 @@ class EE_Payment_Method_Manager {
 	/**
 	 * Checks if a paymetn method has been registered, and if so includes it
 	 * @param string $payment_method_name like 'Paypal_Pro', (ie classname without the prefix 'EEPM_')
+	 * @param boolean $force_recheck whether to force re-checking for new payment method types
 	 * @return boolean
 	 */
-	public function payment_method_type_exists($payment_method_name){
-		if( ! $this->_payment_method_types){
-			$this->register_payment_methods();
-		}
+	public function payment_method_type_exists($payment_method_name, $force_recheck = FALSE){
+		$this->_maybe_register_payment_methods($force_recheck);
 		if(isset($this->_payment_method_types[$payment_method_name])){
 			require_once($this->_payment_method_types[$payment_method_name]);
 			return true;
@@ -109,12 +113,13 @@ class EE_Payment_Method_Manager {
 	}
 	/**
 	 * Returns all the classnames of the various payment method types
+	 * @param boolean $with_prefixes TRUE: get payment method type classnames; false just their 'names'
+	 * (what you'd find in wp_esp_payment_method.PMD_type)
+	 * @param boolean $force_recheck whether to force re-checking for new payment method types
 	 * @return array
 	 */
-	public function payment_method_type_names($with_prefixes = FALSE){
-		if( ! $this->_payment_method_types){
-			$this->register_payment_methods();
-		}
+	public function payment_method_type_names($with_prefixes = FALSE, $force_recheck = FALSE ){
+		$this->_maybe_register_payment_methods($force_recheck);
 		if($with_prefixes){
 			$classnames = array_keys($this->_payment_method_types);
 			$payment_methods = array();
@@ -129,12 +134,11 @@ class EE_Payment_Method_Manager {
 	/**
 	 * Gets an object of each payment method type, none of which are bound to a
 	 * payment method instance
+	 * @param boolean $force_recheck whether to force re-checking for new payment method types
 	 * @return EE_PMT_Base[]
 	 */
-	public function payment_method_types(){
-		if( ! $this->_payment_method_types){
-			$this->register_payment_methods();
-		}
+	public function payment_method_types( $force_recheck = FALSE ){
+		$this->_maybe_register_payment_methods($force_recheck);
 		$pmt_objs = array();
 		foreach($this->payment_method_type_names(true) as $classname){
 			$pmt_objs[] = new $classname;

@@ -360,6 +360,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		global $wp_actions;
 		unset($wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin']);
 		$wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
+		unset($wp_actions[ 'AHEE__EE_System__register_shortcodes_modules_and_widgets' ] );
 	}
 	/**
 	 * Restores the $wp_actions global to how ti should have been before we
