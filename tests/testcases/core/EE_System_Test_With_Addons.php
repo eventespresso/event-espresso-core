@@ -64,6 +64,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//set the activator option
 		update_option($this->_addon->get_activation_indicator_option_name(),TRUE);
 		$this->assertWPOptionExists($this->_addon->get_activation_indicator_option_name());
+//		$this->assertTableDoesNotExist( 'new_addon' );
 		//now check for activations/upgrades in addons
 
 		EE_System::reset()->detect_activations_or_upgrades();
@@ -188,6 +189,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//lastly, and imporatntly SET MAINTENANCE MODE LEVEL 2
 		EE_Maintenance_Mode::instance()->set_maintenance_level(EE_Maintenance_Mode::level_2_complete_maintenance);
 
+//		$this->assertTableDoesNotExist( 'new_addon' );
 		//now check for activations/upgrades in addons
 		EE_System::reset()->detect_activations_or_upgrades();
 		$this->assertEquals(EE_System::req_type_normal,$this->_addon->detect_req_type());
@@ -236,6 +238,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->_current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
 		delete_option(EE_Data_Migration_Manager::current_database_state);
 		update_option(EE_Data_Migration_Manager::current_database_state, array('Core' => espresso_version() ) );
+		//we want to create real tables, not just 'temporary' tables, plz. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
+		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
 	}
 
 
