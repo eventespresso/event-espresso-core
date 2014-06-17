@@ -319,7 +319,7 @@ final class EE_Capabilities extends EE_Base {
 	 * @since 4.5.0
 	 *
 	 * @param string $role A WordPress role the capability is being removed from.
-	 * @param string $cap  The capability being femoved
+	 * @param string $cap  The capability being removed
 	 *
 	 * @return void
 	 */
@@ -424,12 +424,12 @@ abstract class EE_Meta_Capability_Map {
 		$this->meta_cap = $meta_cap;
 		//verify there are four args in the $map_values array;
 		if ( count( $map_values ) !== 4 ) {
-			throw new EE_Error( sprintf( __('Incoming $map_values array should have a count of four values in it.  This is what was given: %s<br>', 'event_espresso'), print_r( $map_values, TRUE ) ) );
+			throw new EE_Error( sprintf( __('Incoming $map_values array should have a count of four values in it.  This is what was given: %s', 'event_espresso'), '<br>' . print_r( $map_values, TRUE ) ) );
 		}
 
 		//the first value should be an instance of EEM_Base
 		if ( ! $map_values[0] instanceof EEM_Base ) {
-			throw new EE_Error( sprintf( __('The first value in the $map_values array should be an instance of EEM_Base.  It is not, instead this was given: %s', 'event_espresso'), print_r( $map_values[0], true ) ) );
+			throw new EE_Error( sprintf( __('The first value in the $map_values array should be an instance of EEM_Base.  It is not, instead this was given: %s', 'event_espresso'), '<br>' . print_r( $map_values[0], true ) ) );
 		}
 
 		//set properties
@@ -547,7 +547,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 
 /**
  * Meta Capability Map class for delete type capabilities
- * Merely extends the Edit map.  Intention is for typhinting so it's clear a capability is a "delete" type of capability (in case mapping needs to change in the future)
+ * Merely extends the Edit map.  Intention is for type hinting so it's clear a capability is a "delete" type of capability (in case mapping needs to change in the future)
  *
  * @since 4.5.0
  * @package Event Espresso
