@@ -42,9 +42,9 @@ final class EE_Capabilities extends EE_Base {
 
 
 	/**
-	 * This used to hold an array of EE_Capabilities_Meta_Map objects that define the granular capabilities mapped to for a user depending on context.
+	 * This used to hold an array of EE_Meta_Capability_Map objects that define the granular capabilities mapped to for a user depending on context.
 	 *
-	 * @var EE_Capabilities_Meta_Map[]
+	 * @var EE_Meta_Capability_Map[]
 	 */
 	private $_meta_caps = array();
 
@@ -53,7 +53,7 @@ final class EE_Capabilities extends EE_Base {
 
 
 	/**
-	 * singleton method used to instantiat class object
+	 * singleton method used to instantiate class object
 	 *
 	 * @since 4.5.0
 	 *
@@ -69,13 +69,12 @@ final class EE_Capabilities extends EE_Base {
 
 
 
-
 	/**
 	 * private constructor
 	 *
 	 * @since 4.5.0
 	 *
-	 * @return void
+	 * @return \EE_Capabilities
 	 */
 	private function __construct() {
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'init_caps' ));
@@ -272,7 +271,7 @@ final class EE_Capabilities extends EE_Base {
 		//only do this if the read_ee cap isn't on the administrator role
 		$administrator = get_role('administrator');
 
-		//note that this has_cap check isn't adding an additioanl mysql query because the core roles and capabiliteis are autoloaded by WordPress from the wp_options table.
+		//note that this has_cap check isn't adding an additional mysql query because the core roles and capabilities are autoloaded by WordPress from the wp_options table.
 		if ( $administrator->has_cap( 'read_ee' ) && ! $reset ) {
 			return;
 		}
@@ -404,20 +403,22 @@ abstract class EE_Meta_Capability_Map {
 	public $private_cap = '';
 
 
+
 	/**
 	 * constructor.
-	 * Recieves the setup arguments for the map.
+	 * Receives the setup arguments for the map.
 	 *
-	 * @since 4.5.0
+	 * @since    4.5.0
 	 *
 	 * @param string $meta_cap     What meta capability is this mapping.
-	 * @param array  $map_values   array{
-	 *                             //array of valuse that MUST match a count of 4.  It's okay to send an empty string for capabilities that don't get mapped to.
-	 *                             @type EEM_Base model used for grabbing any context object. Required.
-	 *                             @type string  represents the capability used for published. Optional.
-	 *                             @type string  represents the capability used for "others". Optional.
-	 *                             @type string  represents the capability used for private. Optional.
-	 * }
+	 * @param array  $map_values   array {
+	 * 		//array of values that MUST match a count of 4.  It's okay to send an empty string for capabilities that don't get mapped to.
+	 * 		@internal param \EEM_Base $ model used for grabbing any context object. Required.
+	 * 		@internal param string $ represents the capability used for published. Optional.
+	 * 		@internal param string $ represents the capability used for "others". Optional.
+	 * 		@internal param string $ represents the capability used for private. Optional.
+	 * 	}
+	 * @throws EE_Error
 	 */
 	public function __construct( $meta_cap, $map_values ) {
 		$this->meta_cap = $meta_cap;
@@ -451,7 +452,7 @@ abstract class EE_Meta_Capability_Map {
 	 *
 	 * @param array  $caps    actual users capabilities
 	 * @param string $cap     initial capability name that is being checked (the "map" key)
-	 * @param ing     $user_id The user id
+	 * @param int     $user_id The user id
 	 * @param array  $args    Adds context to the cap. Typically the object ID.
 	 *
 	 * @return array   actual users capabilities
@@ -475,6 +476,19 @@ abstract class EE_Meta_Capability_Map {
  */
 class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 
+	/**
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 *
+	 * @since 4.5.0
+	 * @see  wp-includes/capabilities.php
+	 *
+	 * @param array  $caps    actual users capabilities
+	 * @param string $cap     initial capability name that is being checked (the "map" key)
+	 * @param int     $user_id The user id
+	 * @param array  $args    Adds context to the cap. Typically the object ID.
+	 *
+	 * @return array   actual users capabilities
+	 */
 	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
 		if ( $cap !== $this->meta_cap ) {
@@ -542,6 +556,19 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
  */
 class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit {
 
+	/**
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 *
+	 * @since 4.5.0
+	 * @see  wp-includes/capabilities.php
+	 *
+	 * @param array  $caps    actual users capabilities
+	 * @param string $cap     initial capability name that is being checked (the "map" key)
+	 * @param int     $user_id The user id
+	 * @param array  $args    Adds context to the cap. Typically the object ID.
+	 *
+	 * @return array   actual users capabilities
+	 */
 	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
 		return parent::map_meta_caps( $caps, $cap, $user_id, $args );
 	}
@@ -562,6 +589,19 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit {
  */
 class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 
+	/**
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 *
+	 * @since 4.5.0
+	 * @see  wp-includes/capabilities.php
+	 *
+	 * @param array  $caps    actual users capabilities
+	 * @param string $cap     initial capability name that is being checked (the "map" key)
+	 * @param int     $user_id The user id
+	 * @param array  $args    Adds context to the cap. Typically the object ID.
+	 *
+	 * @return array   actual users capabilities
+	 */
 	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped cap;
 		if ( $cap !== $this->meta_cap ) {
@@ -624,6 +664,19 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
  */
 class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
 
+	/**
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 *
+	 * @since 4.5.0
+	 * @see  wp-includes/capabilities.php
+	 *
+	 * @param array  $caps    actual users capabilities
+	 * @param string $cap     initial capability name that is being checked (the "map" key)
+	 * @param int     $user_id The user id
+	 * @param array  $args    Adds context to the cap. Typically the object ID.
+	 *
+	 * @return array   actual users capabilities
+	 */
 	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
 		if ( $cap !== $this->meta_cap ) {
@@ -672,6 +725,19 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
  */
 class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Map {
 
+	/**
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. edit_event is a meta for edit_others_events ) work as expected.
+	 *
+	 * @since 4.5.0
+	 * @see  wp-includes/capabilities.php
+	 *
+	 * @param array  $caps    actual users capabilities
+	 * @param string $cap     initial capability name that is being checked (the "map" key)
+	 * @param int     $user_id The user id
+	 * @param array  $args    Adds context to the cap. Typically the object ID.
+	 *
+	 * @return array   actual users capabilities
+	 */
 	public function map_meta_caps( $caps, $cap, $user_id, $args ) {
 		//only process if we're checking our mapped_cap
 		if ( $cap !== $this->meta_cap ) {
