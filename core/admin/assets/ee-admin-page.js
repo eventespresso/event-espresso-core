@@ -120,6 +120,15 @@ jQuery(document).ready(function($) {
 		$('#'+content_id).show();
 	});
 
+			if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
+				msg = '<p>' + response.success + '</p>';
+			}
+
+			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
+				msg = '<p>' + response.errors + '</p>';
+				$(existing_message).removeClass('updated').addClass('error');
+				fadeaway = false;
+			}
 
 
 	/**
@@ -182,6 +191,12 @@ jQuery(document).ready(function($) {
 	 * temporarily remove preview button
 	 */
 	$('#preview-action').remove();
+
+
+	/**
+	 * temporarily rmove trash link on venue editor.
+	 */
+	$('#delete-action', '.event-espresso_page_espresso_venues').remove();
 
 
 	/**
