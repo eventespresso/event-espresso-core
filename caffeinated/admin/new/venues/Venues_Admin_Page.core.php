@@ -123,73 +123,100 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		//load field generator helper
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
+		//is there a vnu_id in the request?
+		$vnu_id = ! empty( $this->_req_data['VNU_ID'] ) && ! is_array( $this->_req_data['VNU_ID'] ) ? $this->_req_data['VNU_ID'] : 0;
+		$vnu_id = ! empty( $this->_req_data['post'] ) ? $this->_req_data['post'] : $vnu_id;
+
 		$this->_page_routes = array(
-			'default' => '_overview_list_table',
+			'default' => array(
+				'func' => '_overview_list_table',
+				'capability' => 'read_venue'
+				),
 			'trash_venue' => array(
 				'func' => '_trash_or_restore_venue',
 				'args' => array( 'venue_status' => 'trash' ),
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'delete_venue',
+				'obj_id' => $vnu_id
 				),
 			'trash_venues' => array(
 				'func' => '_trash_or_restore_venues',
 				'args' => array( 'venue_status' => 'trash' ),
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'delete_venue'
 				),
 			'restore_venue' => array(
 				'func' => '_trash_or_restore_venue',
 				'args' => array( 'venue_status' => 'draft' ),
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'delete_venue',
+				'obj_id' => $vnu_id
 				),
 			'restore_venues' => array(
 				'func' => '_trash_or_restore_venues',
 				'args' => array( 'venue_status' => 'draft' ),
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'delete_venue'
 				),
 			'delete_venues' => array(
 				'func' => '_delete_venues',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'delete_venue'
 				),
 			'delete_venue' => array(
 				'func' => '_delete_venue',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'delete_venue',
+				'obj_id' => $vnu_id
 				),
 			//venue category tab related
 			'add_category' => array(
 				'func' => '_category_details',
 				'args' => array('add'),
+				'capability' => 'edit_venue_category'
 				),
 			'edit_category' => array(
 				'func' => '_category_details',
-				'args' => array('edit')
+				'args' => array('edit'),
+				'capability' => 'edit_venue_category'
 				),
 			'delete_categories' => array(
 				'func' => '_delete_categories',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'delete_venue_category'
 				),
 
 			'delete_category' => array(
 				'func' => '_delete_categories',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'delete_venue_category'
 				),
 
 			'insert_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => TRUE),
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'edit_venue_category'
 				),
 
 			'update_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => FALSE),
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'edit_venue_category'
 				),
 			'export_categories' => array(
 				'func' => '_categories_export',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'export'
 				),
-			'import_categories' => '_import_categories',
+			'import_categories' => array(
+				'func' => '_import_categories',
+				'capability' => 'import'
+				),
 			'category_list' => array(
-				'func' => '_category_list_table'
+				'func' => '_category_list_table',
+				'capability' => 'manage_venue_categories'
 				)
 		);
 	}
