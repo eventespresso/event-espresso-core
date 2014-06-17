@@ -89,6 +89,10 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		$this->_set_menu_map();
 
+		if ( empty( $this->_menu_map ) || is_array( $this->_menu_map ) )
+			return;
+
+
 		//set default capability
 		$this->_set_capability();
 
@@ -115,10 +119,14 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	/**
 	 * _set_menu_map is a function that child classes use to set the menu_map property (which should be an instance of EE_Admin_Page_Menu_Map.  Their menu can either be EE_Admin_Page_Main_Menu or EE_Admin_Page_Sub_Menu.
-
-	 * @abstract
+	 *
+	 * @since 4.4.0
+	 *
+	 * @ return void.
 	 */
-	abstract protected function _set_menu_map();
+	protected function _set_menu_map() {
+		return array();
+	}
 
 
 
