@@ -90,7 +90,11 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 		$this->_set_menu_map();
 
 		if ( empty( $this->_menu_map ) || is_array( $this->_menu_map ) )
-			return;
+			 {
+			 	EE_Error::doing_it_wrong( get_class( $this ) . '::$_menu_map', sprintf( __('The EE4 addon with the class %s is setting up the _menu_map property incorrectly for this version of EE core.  Please see Admin_Page_Init class examples in core for the new way of setting this property up.', 'event_espresso' ), get_class( $this ) ), '4.4.0' );
+			 	return;
+			 }
+
 
 
 		//set default capability
