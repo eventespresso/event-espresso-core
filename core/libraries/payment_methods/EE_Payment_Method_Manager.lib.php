@@ -15,10 +15,10 @@ class EE_Payment_Method_Manager {
 	 * @var array keys are classnames without 'EEPM_', values are their filepaths
 	 */
 	protected $_payment_method_types = array();
-	
+
 	/**
 	 *
-	 * @var array whose valusa re payment method 
+	 * @var array whose valusa re payment method
 	 */
 	protected $_included_payment_method_types = array();
 	/**
@@ -34,7 +34,7 @@ class EE_Payment_Method_Manager {
 		EE_Registry::instance()->load_lib('PMT_Base');
 		return self::$_instance;
 	}
-	
+
 	/**
 	 * 		_register_modules
 	 *
@@ -45,7 +45,7 @@ class EE_Payment_Method_Manager {
 		// grab list of installed modules
 		$pm_to_register = glob( EE_PAYMENT_METHODS . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
-		$pm_to_register = apply_filters( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__modules_to_register', $pm_to_register );
+		$pm_to_register = apply_filters( 'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register', $pm_to_register );
 		// loop through folders
 		foreach ( $pm_to_register as $pm_path ) {
 				$this->register_payment_method( $pm_path );
@@ -96,7 +96,7 @@ class EE_Payment_Method_Manager {
 	 * @param string $payment_method_name like 'Paypal_Pro', (ie classname without the prefix 'EEPM_')
 	 * @return boolean
 	 */
-	public function payment_method_exists($payment_method_name){
+	public function payment_method_type_exists($payment_method_name){
 		if( ! $this->_payment_method_types){
 			$this->register_payment_methods();
 		}
@@ -127,7 +127,7 @@ class EE_Payment_Method_Manager {
 		}
 	}
 	/**
-	 * Gets an object of each payment method type, none of which are bound to a 
+	 * Gets an object of each payment method type, none of which are bound to a
 	 * payment method instance
 	 * @return EE_PMT_Base[]
 	 */
@@ -141,7 +141,7 @@ class EE_Payment_Method_Manager {
 		}
 		return $pmt_objs;
 	}
-	
+
 	/**
 	 * Changes the payment method's classname into the payment method type's name
 	 * (as used on the payment method's table's PMD_type field)
@@ -152,7 +152,7 @@ class EE_Payment_Method_Manager {
 		$pmt_name = str_replace("EE_PMT_","",$classname);
 		return $pmt_name;
 	}
-	
+
 	/**
 	 * Does the opposite of payment-method_type_sans_prefix
 	 * @param string $type
