@@ -1159,6 +1159,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( !is_array( $config ) || ( is_array($config) && (isset($config['nav']) && !$config['nav'] ) || !isset($config['nav'] ) ) )
 				continue; //no nav tab for this config
 
+			if ( ! $this->_check_user_access( $slug, TRUE ) )
+				continue; //no nav tab becasue current user does not have access.
+
 			//check for persistent flag
 			if ( isset( $config['nav']['persistent']) && !$config['nav']['persistent'] && $slug !== $this->_req_action )
 				continue; //nav tab is only to appear when route requested.
@@ -1220,16 +1223,29 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * 		verifies user access for this admin page
-	*		@access 		private
-	*		@return 		void
+	 * 		@param string $route_to_check if present then the capability for the route matching this string is checked.
+	 * 		@param bool   $verify_only Default is FALSE which means if user check fails then wp_die().  Otherwise just return false if verify fail.
+	*		@return 		BOOL|wp_die()
 	*/
-	private function _check_user_access() {
+	private function _check_user_access( $route_to_check = '', $verify_only = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		$capability = empty( $this->_route['capability'] ) ? 'manage_options' : $this->_route['capability'];
+		$capability = ! empty( $route_to_check ) && ! empty( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
+
+		if ( empty( $capability ) && empty( $route_to_check )  ) {
+			$capability = empty( $this->_route['capability'] ) ? 'manage_options' : $this->_route['capability'];
+		} else {
+			$capability = empty( $capability ) ? 'manage_options' : $capability;
+		}
+
 		$id = ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
 		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->_req_action, $id ) ) && ! defined( 'DOING_AJAX')) {
-			wp_redirect( home_url('/') . 'wp-admin/' );
+			if ( $verify_only ) {
+				return FALSE;
+			} else {
+				wp_die( __('You do not have access to this route.', 'event_espresso' ) );
+			}
 		}
+		return TRUE;
 	}
 
 
