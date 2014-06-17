@@ -29,15 +29,17 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	protected $_cached_SERVER_NAME = NULL;
 
 	public function setUp() {
+		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
+		//as it immediately adds a few hooks we might not want to backup
 		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
-		parent::setUp();
-		$auto_made_thing_seed = 1;
 		$this->wp_filters_saved = array(
 			'wp_filter'=>$wp_filter,
 			'wp_actions'=>$wp_actions,
 			'merged_filters'=>$merged_filters,
 			'wp_current_filter'=>$wp_current_filter
 		);
+		parent::setUp();
+		$auto_made_thing_seed = 1;
 
 //		$this->wp_actions_saved = $wp_actions;
 		// Fake WP mail globals, to avoid errors
