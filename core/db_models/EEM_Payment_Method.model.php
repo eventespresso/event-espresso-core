@@ -56,6 +56,14 @@ class EEM_Payment_Method extends EEM_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * Resets the instance
+	 * @return EEM_Payment_Method
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
 
 
 	/**

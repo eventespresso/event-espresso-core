@@ -94,6 +94,10 @@ class EE_Payment_Processor{
 		$transaction->set_payment_method_ID($payment_method->ID());
 		if( $payment_method->type_obj() instanceof EE_PMT_Base){
 			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $success_url, $method, $by_admin );
+			//we need to save this payment in order for transaction to be updated correctly
+			//(because it queries teh DB to find the total amount paid, and saving puts
+			//the payment into the DB)
+			$payment->save();
 			$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
 		}else{
 			EE_Error::add_error(

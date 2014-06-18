@@ -266,6 +266,17 @@ interface EEI_Payment extends EEI_Base{
 	function set_details($response_details);
 
 	/**
+	 * Sets the URl to redirect to, to process payment
+	 * @param string $url
+	 */
+	function set_redirect_url($url);
+
+	/**
+	 * Sets the argument which should be passed to the redirect url (ie, usually POST variables)
+	 * @param array $args
+	 */
+	function set_redirect_args($args);
+	/**
 	 *
 	 * @return EEI_Transaction
 	 */
@@ -416,7 +427,7 @@ interface EEMI_Payment_Log{
 	 * @param string $message
 	 * @param int|string $id
 	 * @param string $model_name
-	 * @return void
+	 * @return EEI_Log
 	 */
 	function gateway_log($message,$id,$model_name);
 }
