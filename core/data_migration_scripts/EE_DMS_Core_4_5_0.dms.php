@@ -25,13 +25,18 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.5.0.P", "event_espresso");
 		$this->_priority = 10;
-		$this->_migration_stages = array();
+		$this->_migration_stages = array(
+			new EE_DMS_4_5_0_update_wp_user_for_tickets(),
+			new EE_DMS_4_5_0_update_wp_user_for_prices(),
+			new EE_DMS_4_5_0_update_wp_user_for_price_types(),
+			new EE_DMS_4_5_0_update_wp_user_for_question_groups()
+			);
 		parent::__construct();
 	}
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
 		if($version_string <= '4.5.0' && $version_string >= '4.3.0' ){
-//			echo "$version_string can be migrated fro";
+//			echo "$version_string can be migrated from";
 			return true;
 		}elseif( ! $version_string ){
 //			echo "no version string provided: $version_string";
@@ -444,6 +449,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  TKT_qty mediumint(8) DEFAULT NULL,
 					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
 					  TKT_uses tinyint NOT NULL DEFAULT '-1',
+					  TKT_required tinyint unsigned NOT NULL DEFAULT '0',
 					  TKT_min tinyint unsigned NOT NULL DEFAULT '0',
 					  TKT_max tinyint NOT NULL DEFAULT '-1',
 					  TKT_price decimal(10,3) NOT NULL DEFAULT '0.00',
@@ -487,6 +493,8 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$this->insert_default_prices();
 		$this->insert_default_tickets();
 
+		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
+		EE_Config::instance()->update_espresso_config(false, true);
 		return true;
 	}
 	/**
@@ -554,7 +562,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 				$user_id = get_current_user_id();
 				$SQL = "INSERT INTO $price_table
 							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_wp_user, PRC_order, PRC_deleted, PRC_parent ) VALUES
-							(1, 1, '0.00', 'Free Admission', '', 1, NULL, $wp_user, 0, 0, 0);";
+							(1, 1, '0.00', 'Free Admission', '', 1, NULL, $user_id, 0, 0, 0);";
 				$SQL = apply_filters( 'FHEE__EE_DMS_4_5_0__insert_default_prices__SQL', $SQL );
 				$wpdb->query($SQL);
 			}
