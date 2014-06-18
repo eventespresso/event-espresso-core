@@ -55,6 +55,12 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * 			@type  string module_paths 	an array of full server paths to any EED_Modules used by the addon
 	 * 			@type  string shortcode_paths 	an array of full server paths to folders that contain EES_Shortcodes
 	 * 			@type  string widgets 					an array of full server paths to folders that contain WP_Widgets
+	 * 			@type  array capabilities  {
+	 * 			      	an array indexed by role name (i.e. administrator,author ) and the values are an array of caps to add to the role.
+	 * 			      	'administrator' => array('read_addon', 'edit_addon' etc.).
+	 * 	         		}
+	 * 	         		@type  EE_Meta_Capability_Map[] capability_maps an array of EE_Meta_Capability_Map object for any addons that need to register any special meta mapped capabilities
+	 * 	         		}
 	 * @return void
 	 */
 	public static function register( $addon_name = '', $setup_args = array()  ) {
@@ -114,6 +120,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
 			// array of PUE options used by the addon
 			'pue_options' 			=> isset( $setup_args['pue_options'] ) ? (array)$setup_args['pue_options'] : array(),
+			'capabilities' => isset( $setup_args['capabilities'] ) ? (array) $setup_args['capabilities'] : array(),
+			'capability_maps' => isset( $setup_args['capability_maps'] ) ? (array) $setup_args['capability_maps'] : array()
 		);
 
 		//this is an activation request
@@ -164,7 +172,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		// register admin page
 		if ( ! empty( self::$_settings[ $addon_name ]['admin_path'] )) {
 			EE_Register_Admin_Page::register( $addon_name, array( 'page_path' => self::$_settings[ $addon_name ]['admin_path'] ));
-	}
+
+		}
 		// add to list of modules to be registered
 		if ( ! empty( self::$_settings[ $addon_name ]['module_paths'] )) {
 			EE_Register_Module::register( $addon_name, array( 'module_paths' => self::$_settings[ $addon_name ]['module_paths'] ));
@@ -177,6 +186,12 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		if ( ! empty( self::$_settings[ $addon_name ]['widget_paths'] )) {
 			EE_Register_Widget::register( $addon_name, array( 'widget_paths' => self::$_settings[ $addon_name ]['widget_paths'] ));
 		}
+
+		//register capability related stuff.
+		if ( ! empty( self::$_settings[ $addon_name ]['capabilities'] ) ) {
+			EE_Register_Capabilities::register( $addon_name . '_caps', array( 'capabilities' => self::$_settings[$addon_name]['capabilities'], 'capability_maps' => self::$_settings[$addon_name]['capability_maps'] ) );
+		}
+
 		// if plugin update engine is being used for auto-updates (not needed if PUE is not being used)
 		if ( ! empty( $setup_args['pue_options'] )) {
 			self::$_settings[ $addon_name ]['pue_options'] = array(
