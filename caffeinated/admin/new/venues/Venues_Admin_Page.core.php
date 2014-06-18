@@ -886,7 +886,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 		switch ( $_orderby ) {
 			case 'id':
-				$orderby = 'VNU_id';
+				$orderby = 'VNU_ID';
 				break;
 
 			case 'capacity':

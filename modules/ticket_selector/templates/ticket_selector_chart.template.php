@@ -2,7 +2,7 @@
 	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th scope="col" width=""><?php _e( 'Available Tickets', 'event_espresso' ); ?></th>
+				<th scope="col" width=""><span class="ee-icon ee-icon-tickets"></span><?php _e( 'Available Tickets', 'event_espresso' ); ?></th>
 				<th scope="col" width="22.5%"><?php _e( 'Price', 'event_espresso' ); ?> <span class="smaller-text no-bold"><?php _e( '(each)', 'event_espresso' ); ?></span></th>
 				<th scope="col" width="17.5%" class="cntr"><?php _e( 'Qty*', 'event_espresso' ); ?></th>
 			</tr>
@@ -83,7 +83,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 	//echo '<br/><b> $ticket->uses() : ' .  $ticket->uses() . '</b>';
 					?>
 					</td>
-					<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?></td>
+					<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?>&nbsp;</td>
 					<td class="tckt-slctr-tbl-td-qty cntr">
 				<?php
 					$hidden_input_qty = $max_atndz > 1 ? TRUE : FALSE;
@@ -261,7 +261,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 							<?php if ( $datetimes = $ticket->datetimes_ordered($event_is_expired,false)) : ?>
 							<section class="tckt-slctr-tkt-datetimes-sctn">
 								<h5><?php _e( 'Event Access', 'event_espresso' ); ?></h5>
-								<span class="drk-grey-text small-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. "Remaining" shows the number of this ticket type left:', 'event_espresso' ); ?></span>
+								<span class="drk-grey-text small-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times.', 'event_espresso' ); ?></span>
 								<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
 									<table class="tckt-slctr-tkt-details-tbl">
 										<thead>
