@@ -261,7 +261,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 							<?php if ( $datetimes = $ticket->datetimes_ordered($event_is_expired,false)) : ?>
 							<section class="tckt-slctr-tkt-datetimes-sctn">
 								<h5><?php _e( 'Event Access', 'event_espresso' ); ?></h5>
-								<span class="drk-grey-text small-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times. "Remaining" shows the number of this ticket type left:', 'event_espresso' ); ?></span>
+								<span class="drk-grey-text small-text no-bold"> - <?php _e( 'This ticket allows access to the following event dates and times.', 'event_espresso' ); ?></span>
 								<div class="tckt-slctr-tkt-details-tbl-wrap-dv">
 									<table class="tckt-slctr-tkt-details-tbl">
 										<thead>
