@@ -116,7 +116,6 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Edit( 'edit_contact', array( EEM_Attendee::instance(), '', 'edit_others_contact', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_registration', array( EEM_Registration::instance(), '', 'edit_others_registration', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Registration::instance(), '', 'edit_others_checkin', '' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_transaction', array( EEM_Transaction::instance(), '', 'edit_others_transaction', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'edit_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
@@ -129,7 +128,6 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Read( 'read_contact', array( EEM_Attendee::instance(), '', 'read_others_contact', 'read_private_contact' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_registration', array( EEM_Registration::instance(), '', '', 'edit_others_registration' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_checkin', array( EEM_Registration::instance(), '', '', 'edit_others_checkin' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_transaction', array( EEM_Transaction::instance(), '', '', 'edit_others_transaction' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'read_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_ticket', array( EEM_Ticket::instance(), '', '', 'edit_others_default_ticket' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_price', array( EEM_Price::instance(), '', '', 'edit_others_default_price' ) ),
@@ -142,7 +140,6 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'delete_contact', array( EEM_Attendee::instance(), '', 'edit_others_contact', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_registration', array( EEM_Registration::instance(), '', 'edit_others_registration', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_checkin', array( EEM_Registration::instance(), '', 'edit_others_checkin', '' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_transaction', array( EEM_Transaction::instance(), '', 'edit_others_transaction', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
@@ -217,8 +214,8 @@ final class EE_Capabilities extends EE_Base {
 				'edit_others_checkin',
 				//transactions && payments
 				'edit_transaction',
-				'edit_others_transaction',
 				'read_transaction',
+				'delete_transaction',
 				'edit_payment',
 				'delete_payment',
 				//messages
