@@ -89,6 +89,14 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 		$this->_set_menu_map();
 
+		if ( empty( $this->_menu_map ) || is_array( $this->_menu_map ) )
+			 {
+			 	EE_Error::doing_it_wrong( get_class( $this ) . '::$_menu_map', sprintf( __('The EE4 addon with the class %s is setting up the _menu_map property incorrectly for this version of EE core.  Please see Admin_Page_Init class examples in core for the new way of setting this property up.', 'event_espresso' ), get_class( $this ) ), '4.4.0' );
+			 	return;
+			 }
+
+
+
 		//set default capability
 		$this->_set_capability();
 
@@ -115,10 +123,14 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 
 	/**
 	 * _set_menu_map is a function that child classes use to set the menu_map property (which should be an instance of EE_Admin_Page_Menu_Map.  Their menu can either be EE_Admin_Page_Main_Menu or EE_Admin_Page_Sub_Menu.
-
-	 * @abstract
+	 *
+	 * @since 4.4.0
+	 *
+	 * @ return void.
 	 */
-	abstract protected function _set_menu_map();
+	protected function _set_menu_map() {
+		return array();
+	}
 
 
 
@@ -239,9 +251,13 @@ abstract class EE_Admin_Page_Init extends EE_BASE {
 	/**
 	 * This executes the intial page loads for EE_Admin pages to take care of any ajax or other code needing to run before the load-page... hook.
 	 * Note, the page loads are happening around the wp_init hook.
-	 * @return [type] [description]
+	 * @return void
 	 */
 	public function do_initial_loads() {
+		//no loading or initializing if menu map is setup incorrectly.
+		if ( empty( $this->_menu_map ) || is_array( $this->_menu_map ) ) {
+			return;
+		}
 		$this->_initialize_admin_page();
 	}
 
