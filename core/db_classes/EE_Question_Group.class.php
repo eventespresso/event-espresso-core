@@ -131,6 +131,19 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * get the author of the question group.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		return $this->get('QSG_wp_user');
+	}
+
+
+
+	/**
 	 * Returns whether this question group has
 	 * been deleted
 	 * @access public
