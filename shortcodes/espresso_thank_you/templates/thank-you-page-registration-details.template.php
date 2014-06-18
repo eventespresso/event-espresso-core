@@ -64,7 +64,7 @@ foreach ( $transaction->registrations() as $registration ) {
 ?>
 <?php if ( $is_primary && $SPCO_attendee_information_url ) { ?>
 	<p class="small-text jst-rght">
-		<a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit All Attendee Information", 'event_espresso'); ?> <span class="dashicons dashicons-groups"></span></a>
+		<a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit All Attendee Information", 'event_espresso'); ?></a>
 	</p>
 <?php } ?>
 
