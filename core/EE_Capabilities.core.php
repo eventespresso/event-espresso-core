@@ -686,7 +686,7 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
 		$obj = ! empty( $args[0] ) ? $this->model->get_one_by_ID( $args[0] ) : NULL;
 
 		//if no obj then let's just do cap
-		if ( ! $obj instanceof EE_Base_Class ) {
+		if ( ! $obj instanceof EE_Message_Template_Group ) {
 			$caps[] = $cap;
 			return $caps;
 		}
