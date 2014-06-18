@@ -71,13 +71,13 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'func' => '_delete_checkin_row',
 					'noheader' => TRUE,
 					'capability' => 'delete_checkin',
-					'obj_id' => $att_id
+					'obj_id' => $reg_id
 				),
 			'toggle_checkin_status'	=> array(
 					'func' => '_toggle_checkin_status',
 					'noheader' => TRUE,
 					'capability' => 'edit_checkin',
-					'obj_id' => $att_id
+					'obj_id' => $reg_id
 				),
 			'event_registrations'=> array(
 				'func' => '_event_registrations_list_table',
