@@ -2,7 +2,7 @@
 	<table id="tkt-slctr-tbl-<?php echo $EVT_ID; ?>" class="tkt-slctr-tbl" border="0" cellspacing="0" cellpadding="0">
 		<thead>
 			<tr>
-				<th scope="col" width=""><?php _e( 'Available Tickets', 'event_espresso' ); ?></th>
+				<th scope="col" width=""><span class="ee-icon ee-icon-tickets"></span><?php _e( 'Available Tickets', 'event_espresso' ); ?></th>
 				<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
 				<th scope="col" width="22.5%"><?php _e( 'Price', 'event_espresso' ); ?> </th>
 				<?php } ?>
@@ -97,7 +97,7 @@ foreach ( $tickets as $TKT_ID => $ticket ) {
 					?>
 					</td>
 					<?php if ( apply_filters( 'FHEE__ticket_selector_chart_template__display_ticket_price_details', TRUE )) { ?>
-					<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?> <span class="smaller-text no-bold"><?php
+					<td class="tckt-slctr-tbl-td-price jst-rght"><?php echo EEH_Template::format_currency( $ticket_price ); ?>&nbsp;<span class="smaller-text no-bold"><?php
 						echo $ticket_bundle ? __( ' / bundle', 'event_espresso' ) : __( ' / ticket', 'event_espresso' );?></span> &nbsp;
 					</td>
 					<?php } ?>
