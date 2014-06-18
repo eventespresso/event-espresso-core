@@ -185,6 +185,12 @@ jQuery(document).ready(function($) {
 
 
 	/**
+	 * temporarily rmove trash link on venue editor.
+	 */
+	$('#delete-action', '.event-espresso_page_espresso_venues').remove();
+
+
+	/**
 	 * EE Help dialog loads
 	 */
 	$('.espresso-admin').on('click', '.ee-dialog', function(e) {

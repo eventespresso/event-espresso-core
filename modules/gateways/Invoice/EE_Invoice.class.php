@@ -58,7 +58,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		if($country_obj){
 			$default_address .= '<br />' . $country_obj->name();
 		}
-		
+
 		$default_address .= '<br />' . trim($org_config->zip);
 		$this->_payment_settings['active'] = '';
 		$this->_payment_settings['pdf_title'] = __('Invoice Payments', 'event_espresso');
@@ -84,7 +84,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 		$this->_payment_settings['invoice_logo_url'] = trim(strip_tags($_POST['invoice_logo_url']));
 		$this->_payment_settings['show'] = $_POST['show'];
 		$this->_payment_settings['invoice_css'] = trim(strip_tags($_POST['invoice_css']));
-		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 	protected function _display_settings() {
@@ -100,11 +100,11 @@ Class EE_Invoice extends EE_Offline_Gateway {
 //		$this->_payment_settings['show'] = isset( $this->_payment_settings['show'] ) ? $this->_payment_settings['show'] : '';
 //		$this->_payment_settings['invoice_css'] = isset( $this->_payment_settings['invoice_css'] ) ? $this->_payment_settings['invoice_css'] : '';
 //		$this->_payment_settings['button_url'] = isset( $this->_payment_settings['button_url'] ) ? $this->_payment_settings['button_url'] : '';
-		
+
 		?>
 				<tr>
 					<th><h4 style="margin:.75em 0 1em;"><?php _e('Invoice Display Settings', 'event_espresso'); ?></h4></th>
-					<td>						
+					<td>
 						<span class="description"><?php _e('The following settings affect the content and/or appearance of the downloadable PDF invoice.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
@@ -115,9 +115,9 @@ Class EE_Invoice extends EE_Offline_Gateway {
 					</th>
 					<td>
 						<select id="base-invoice-select" name="invoice_css">
-						<?php 
+						<?php
 						$this->_payment_settings['invoice_css'] = ! empty( $this->_payment_settings['invoice_css'] ) ? $this->_payment_settings['invoice_css'] : 'simple.css';
-						foreach ($themes as $theme) { 
+						foreach ($themes as $theme) {
 							$selected = ( $theme == $this->_payment_settings['invoice_css'] ) ? 'selected="selected"' : ''; ?>
 							<option value="<?php echo $theme ?>" <?php echo $selected; ?>><?php echo $theme; ?></option>
 						<?php } ?>
@@ -125,7 +125,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 						<span class="description"><?php _e('Load a custom/pre-made style sheet <br />to change the look of your invoices.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
-	
+
 				<tr>
 					<th>
 						<label for="pdf_instructions"><?php _e('Instructions', 'event_espresso'); ?></label>
@@ -134,7 +134,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 						<textarea name="pdf_instructions" cols="50" rows="5"><?php echo stripslashes_deep($this->_payment_settings['pdf_instructions']); ?></textarea>
 					</td>
 				</tr>
-	
+
 				<tr>
 					<th>
 						<label for="invoice_logo_url"><?php _e('Logo Image', 'event_espresso'); ?></label>
@@ -146,15 +146,15 @@ Class EE_Invoice extends EE_Offline_Gateway {
 								<input class="ee_media_url" type="text" name="invoice_logo_url" size='34' value="<?php echo $this->_payment_settings['invoice_logo_url']; ?>">
 								<a href="#" class="ee_media_upload"><img src="images/media-button-image.gif" alt="Add an Image"></a>
 							</span><br/>
-							
+
 							<span class="description"><?php _e('(Logo for the top left of the invoice)', 'event_espresso'); ?></span>
 						</p>
 					</td>
 				</tr>
-				
+
 				<tr>
 					<th><h4 style="margin:.75em 0 1em;"><?php _e('Invoice Gateway Settings', 'event_espresso'); ?></h4></th>
-					<td>						
+					<td>
 						<span class="description"><?php _e('The following settings affect the functioning of the Invoice gateway.', 'event_espresso'); ?></span>
 					</td>
 				</tr>
@@ -177,7 +177,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 						<input class="regular-text" type="text" name="pdf_title" id="pdf_title" size="30" value="<?php echo stripslashes_deep($this->_payment_settings['pdf_title']); ?>" />
 					</td>
 				</tr>
-	
+
 				<tr>
 					<th>
 						<label for="page_instructions"><?php _e('Invoice Instructions', 'event_espresso'); ?></label>
@@ -206,10 +206,10 @@ Class EE_Invoice extends EE_Offline_Gateway {
 				</tr>
 		<?php
 	}
-	
-	
-	
-	
+
+
+
+
 	protected function _display_settings_help() {
 		?>
 		<script type="text/javascript" charset="utf-8">
@@ -257,7 +257,7 @@ Class EE_Invoice extends EE_Offline_Gateway {
 	public function get_payment_overview_content(EE_Payment $payment) {
 		$registration = $payment->transaction()->primary_registration();
 		//$registration = $session_data['registration'][$session_data['primary_attendee']['line_item_id']];
-		
+
 		if (!$this->_payment_settings['show'])
 			return;
 		?>
@@ -269,9 +269,11 @@ Class EE_Invoice extends EE_Offline_Gateway {
 			}
 
 			?>
-			<p><a href="<?php echo $registration->invoice_url('download') ?>" class="ee-button-lnk inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
-					<?php _e('Download PDF Invoice', 'event_espresso'); ?>
-				</a></p>
+			<p>
+				<a href="<?php echo $registration->invoice_url('download') ?>" class="ee-button-lnk inline-button ui-priority-primary ui-state-default ui-state-hover ui-state-focus ui-corner-all" target="_blank">
+					<?php _e('Download PDF Invoice', 'event_espresso'); ?> <span class="ee-icon ee-icon-PDF-file-type"></span>
+				</a>
+			</p>
 			<?php
 			if (isset($this->_payment_settings['page_instructions'])) {
 				echo '<div class="event-messages ui-state-highlight"><span class="ui-icon ui-icon-alert"></span><p class="instruct">' . stripslashes_deep($this->_payment_settings['page_instructions']) . '</p></div>';
@@ -285,16 +287,16 @@ Class EE_Invoice extends EE_Offline_Gateway {
 			}
 			?>
 		</div>
-		<?php		
+		<?php
 	}
 
 	public function espresso_display_payment_gateways( $selected_gateway = '' ) {
-	
+
 		$this->_css_class = $selected_gateway == $this->_gateway_name ? '' : ' hidden';
-		echo $this->_generate_payment_gateway_selection_button(); 
+		echo $this->_generate_payment_gateway_selection_button();
 
 		?>
-		
+
 		<div id="reg-page-billing-info-<?php echo $this->_gateway_name; ?>-dv" class="reg-page-billing-info-dv <?php echo $this->_css_class; ?>">
 			<h3><?php _e('You have selected "Invoice" as your method of payment', 'event_espresso'); ?></h3>
 			<p><?php _e('After finalizing your registration, you will be transferred to the payment overview where you can download your invoice.', 'event_espresso'); ?></p>
