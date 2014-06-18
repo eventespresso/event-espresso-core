@@ -146,7 +146,7 @@
 	white-space: nowrap;
 }
 .tags-links a:before {
-	content: "\f323";
+	content: "\f318";
 	display: inline-block;
 	font-family: dashicons;
 	font-style: normal;

@@ -423,10 +423,14 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
+	 * this returns the payment method selected during the SPCO Payment Options step
+	 * @param bool $most_recent whether to return the initial or last payment method selected
 	 * @return mixed
 	 */
-	public function selected_gateway() {
-		return $this->get_extra_meta( 'gateway', TRUE );
+	public function selected_gateway( $most_recent = FALSE ) {
+		$payment_methods = $this->get_extra_meta( 'gateway' );
+		ksort( $payment_methods );
+		return $most_recent ? array_pop( $payment_methods ) : array_shift( $payment_methods );
 	}
 
 

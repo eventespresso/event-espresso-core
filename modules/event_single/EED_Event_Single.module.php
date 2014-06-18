@@ -17,7 +17,7 @@
  *
  * @package		Event Espresso
  * @subpackage	/modules/event_details/
- * @author		Brent Christensen 
+ * @author		Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -32,7 +32,6 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		add_filter( 'FHEE_run_EE_wp', '__return_true' );
-		add_filter( 'FHEE_load_EE_Session', '__return_true' );
 		add_action( 'wp_loaded', array( 'EED_Event_Single', 'set_definitions' ), 2 );
 		EE_Config::register_route( __( 'event', 'event_espresso' ), 'Event_Single', 'run' );
 	}
@@ -205,7 +204,7 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public static function the_title( $title = '', $id = '' ) {
 		global $post;
-		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID ) . $title :  $title; 
+		return in_the_loop() && $post->ID == $id ? espresso_event_status_banner( $post->ID ) . $title :  $title;
 	}
 
 
@@ -224,16 +223,16 @@ class EED_Event_Single  extends EED_Module {
 			// so in order to load a template that uses the_content() from within a callback being used to filter the_content(),
 			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
 			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
-			//now add additional content 
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 110, 1 );
-			add_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 120, 1 );
+			//now add additional content
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 110, 1 );
+			add_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 120, 1 );
 			add_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130, 1 );
 			// now load our template
 			$template = EEH_Template::locate_template( 'content-espresso_events-details.php' );
 			//now add our filter back in, plus some others
 			add_filter( 'the_content', array( 'EED_Event_Single', 'event_details' ), 100 );
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 110 );
-			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 120 );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_datetimes' ), 110 );
+			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_tickets' ), 120 );
 			remove_filter( 'the_content', array( 'EED_Event_Single', 'event_venues' ), 130 );
 		}
 		// we're not returning the $content directly because the template we are loading uses the_content (or the_excerpt)
@@ -241,6 +240,17 @@ class EED_Event_Single  extends EED_Module {
 	}
 
 
+
+	/**
+	 * 	event_datetimes
+	 *
+	 *  	@access 	public
+	 * 	@param		string 	$content
+	 *  	@return 		void
+	 */
+	public static function event_datetimes( $content ) {
+		return EEH_Template::locate_template( 'content-espresso_events-datetimes.php' ) . $content;
+	}
 
 	/**
 	 * 	event_tickets
@@ -251,17 +261,6 @@ class EED_Event_Single  extends EED_Module {
 	 */
 	public static function event_tickets( $content ) {
 		return $content . EEH_Template::locate_template( 'content-espresso_events-tickets.php' );
-	}
-
-	/**
-	 * 	event_datetimes
-	 *
-	 *  	@access 	public
-	 * 	@param		string 	$content
-	 *  	@return 		void
-	 */
-	public static function event_datetimes( $content ) {
-		return $content . EEH_Template::locate_template( 'content-espresso_events-datetimes.php' );
 	}
 
 	/**
@@ -333,8 +332,8 @@ class EED_Event_Single  extends EED_Module {
 		$display_venue= isset( $EE->CFG->template_settings->EED_Event_Single->display_venue ) ? $EE->CFG->template_settings->EED_Event_Single->display_venue : TRUE;
 		$venue_name = EEH_Venue_View::venue_name();
 		return $display_venue && ! empty( $venue_name ) ? TRUE : FALSE;
-	}	
-	
+	}
+
 
 
 }
