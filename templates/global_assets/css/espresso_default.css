@@ -795,6 +795,7 @@ input.ee-register-button {
 .ee-gmap {
 	max-width: 100%;
 }
+.ee-gmap-wrapper .gmnoprint img { max-width:none; }
 
 .ee-form-add-new-state-dv {
 	padding:1.5em 1.5em .5em;
