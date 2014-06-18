@@ -87,6 +87,7 @@ final class EE_Capabilities extends EE_Base {
 	 *
 	 * @param bool $reset allows for resetting the default capabilities saved on roles.  Note that this doesn't actually REMOVE any capabilities from existing roles, it just resaves defaults roles and ensures that they are up to date.
 	 *
+	 *
 	 * @since 4.5.0
 	 * @return void
 	 */
@@ -148,6 +149,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', 'edit_others_question', 'edit_system_question' ) ),
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', 'edit_others_question_group', 'edit_system_question_group' ) ),
 		);
+
+		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
 	}
 
 
@@ -265,19 +268,28 @@ final class EE_Capabilities extends EE_Base {
 	 * @since 4.5.0
 	 *
 	 * @param bool $reset allows for resetting the default capabilities saved on roles.  Note that this doesn't actually REMOVE any capabilities from existing roles, it just resaves defaults roles and ensures that they are up to date.
+	 * @param array $custom_map Optional.  Can be used to send a custom map of roles and capabilities for setting them up.  Note that this should ONLY be called on activation hook or some other one-time task otherwise the caps will be added on every request.
+	 *
 	 * @return void
 	 */
-	public function init_role_caps( $reset = FALSE ) {
-		//only do this if the read_ee cap isn't on the administrator role
-		$administrator = get_role('administrator');
+	public function init_role_caps( $reset = FALSE, $custom_map = array() ) {
 
-		//note that this has_cap check isn't adding an additional mysql query because the core roles and capabilities are autoloaded by WordPress from the wp_options table.
-		if ( $administrator->has_cap( 'read_ee' ) && ! $reset ) {
-			return;
+		if ( empty( $custom_map ) ) {
+			//only do this if the read_ee cap isn't on the administrator role
+			$administrator = get_role('administrator');
+
+			//note that this has_cap check isn't adding an additional mysql query because the core roles and capabilities are autoloaded by WordPress from the wp_options table.
+			if ( $administrator->has_cap( 'read_ee' ) && ! $reset ) {
+				return;
+			}
+
+			$caps_map = $this->_caps_map;
+		} else {
+			$caps_map = $custom_map;
 		}
 
 		//loop through the _init_caps_map for each role and add the caps to the role.
-		foreach ( $this->_caps_map as $role => $caps ) {
+		foreach ( $caps_map as $role => $caps ) {
 			foreach ( $caps as $cap ) {
 				$this->add_cap_to_role( $role, $cap );
 			}
