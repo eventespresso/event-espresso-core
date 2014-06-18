@@ -124,6 +124,8 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		}
 		EE_Network_Config::instance()->update_config(FALSE,FALSE);
 		if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
+			//we may have added new pages and this might be necessary
+			flush_rewrite_rules();
 			$this->set_completed();
 		}
 		return $items_actually_migrated;
