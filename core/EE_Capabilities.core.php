@@ -52,6 +52,7 @@ final class EE_Capabilities extends EE_Base {
 
 
 
+
 	/**
 	 * singleton method used to instantiate class object
 	 *
@@ -274,18 +275,16 @@ final class EE_Capabilities extends EE_Base {
 	 */
 	public function init_role_caps( $reset = FALSE, $custom_map = array() ) {
 
-		if ( empty( $custom_map ) ) {
-			//only do this if the read_ee cap isn't on the administrator role
-			$administrator = get_role('administrator');
+		$caps_map = empty( $custom_map ) ? $this->_caps_map : $custom_map;
 
-			//note that this has_cap check isn't adding an additional mysql query because the core roles and capabilities are autoloaded by WordPress from the wp_options table.
-			if ( $administrator->has_cap( 'read_ee' ) && ! $reset ) {
-				return;
-			}
 
-			$caps_map = $this->_caps_map;
-		} else {
-			$caps_map = $custom_map;
+		//first let's determine if these caps have already been set.
+		$cap_to_check = empty( $custom_map ) ? reset($this->_caps_map) : reset($custom_map);
+		$cap_to_check = reset($cap_to_check); //should be the first capability in the first role array.
+		$caps_are_set = get_option( 'ee_caps_initialized' );
+
+		if ( ! $reset && !empty( $caps_are_set ) && is_array( $caps_are_set ) && in_array( $cap_to_check, $caps_are_set ) ) {
+			return;
 		}
 
 		//loop through the _init_caps_map for each role and add the caps to the role.
@@ -294,6 +293,10 @@ final class EE_Capabilities extends EE_Base {
 				$this->add_cap_to_role( $role, $cap );
 			}
 		}
+
+		//now let's just save the cap that has been set.
+		$caps_are_set[] = $cap_to_check;
+		update_option( 'ee_caps_initialized', $caps_are_set );
 	}
 
 
