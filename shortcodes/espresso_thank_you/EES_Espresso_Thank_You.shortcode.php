@@ -584,7 +584,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 						' . $payment->timestamp() . '
 					</td>
 					<td>
-						' . $payment->gateway() . '
+						' . str_replace( '_', ' ', $payment->gateway() ) . '
 					</td>
 					<td class="jst-rght">
 						' . EEH_Template::format_currency( $payment->amount() ) . '
