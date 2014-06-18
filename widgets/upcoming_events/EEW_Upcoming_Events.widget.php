@@ -282,21 +282,17 @@ class EEW_Upcoming_Events  extends WP_Widget {
 								default :
 									$len_class =  'one-line';
 							}
-//							echo '<div id="ee-upcoming-events-widget-header-dv-' . $event->ID() . '" class="ee-upcoming-events-widget-header-dv '. $len_class . '">';
-
 							echo '<h6 class="ee-upcoming-events-widget-h6"><a href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h6>';
 							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
 								echo '<a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a>';
 							}
-//							echo '</div>';
-							if ( $show_desc && $desc = $event->short_description( 25 )) {
-								echo  '<h6 class="">' . __('Event Details: ', 'event_espresso') . '</h6><p>' . $desc . '</p>';
-							}
 							if ( $show_dates ) {
-								echo  '<h6 class="">' . __('Event Dates: ', 'event_espresso') . '</h6>';
-								echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', 'g:i a', FALSE, NULL, TRUE, TRUE );
+								echo '<br />' . espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', 'g:i a', FALSE, NULL, TRUE, TRUE );
 							}
-							echo '<br/></li>';
+							if ( $show_desc && $desc = $event->short_description( 25 )) {
+								echo  '<br /><p>' . $desc . '</p>';
+							}
+							echo '</li>';
 						}
 					}
 					echo '</ul>';
