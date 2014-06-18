@@ -99,7 +99,7 @@ if ( $show_backup_db_text ) { ?>
 							<td><h3><?php _e('2', 'event_espresso');?></h3></td>
 							<td>
 								<?php echo apply_filters( 'FHEE__ee_migration_page__option_2_main',sprintf(__('I do NOT want to migrate my %1$s data to %2$s at this time and just want to use %3$s without migrating data.', "event_espresso"),$current_db_state,$next_db_state,$ultimate_db_state),$current_db_state,$next_db_state,$ultimate_db_state);?><br />
-								<span class="ee-attention"><?php _e( 'Please Note: In order to avoid errors, any existing Event Espresso data (events, ticket, registrations, etc) in your db will be erased! Regular WP data will NOT be affected.', 'event_espresso' );?></span>
+								<span class="reminder-spn"><?php _e( 'Please Note: In order to avoid errors, any existing Event Espresso data (events, ticket, registrations, etc) in your db will be erased! Regular WP data will NOT be affected.', 'event_espresso' );?></span>
 								<a id="display-no-migration-details" class="display-the-hidden lt-grey-text smaller-text hide-if-no-js" rel="no-migration-details"><?php _e('click for more details', "event_espresso");?>&nbsp;+</a>
 								<a  id="hide-no-migration-details" class="hide-the-displayed lt-grey-text smaller-text hide-if-no-js"  rel="no-migration-details" style="display:none;" ><?php echo sprintf( __( 'hide%1$sdetails%1$s-', 'event_espresso' ), '&nbsp;' ); ?></a>
 							</td>
