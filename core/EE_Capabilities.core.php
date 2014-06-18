@@ -413,10 +413,10 @@ abstract class EE_Meta_Capability_Map {
 	 * @param string $meta_cap     What meta capability is this mapping.
 	 * @param array  $map_values   array {
 	 * 		//array of values that MUST match a count of 4.  It's okay to send an empty string for capabilities that don't get mapped to.
-	 * 		@internal param \EEM_Base $ model used for grabbing any context object. Required.
-	 * 		@internal param string $ represents the capability used for published. Optional.
-	 * 		@internal param string $ represents the capability used for "others". Optional.
-	 * 		@internal param string $ represents the capability used for private. Optional.
+	 * 		@type param \EEM_Base model used for grabbing any context object. Required.
+	 * 		@type param string represents the capability used for published. Optional.
+	 * 		@type param string represents the capability used for "others". Optional.
+	 * 		@type param string represents the capability used for private. Optional.
 	 * 	}
 	 * @throws EE_Error
 	 */
