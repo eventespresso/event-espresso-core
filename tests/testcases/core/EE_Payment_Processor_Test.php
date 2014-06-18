@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Payment_Processor_Test extends EE_UnitTestCase{
 
-	public function test_process_payment_onsite(){
+	public function test_process_payment__onsite__success(){
 		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Onsite' ) );
 		$transaction = $this->_new_typical_transaction();
 		$billing_form = $pm->type_obj()->billing_form();
@@ -36,6 +36,26 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$this->assertInstanceOf( 'EE_Payment', $payment );
 		$this->assertEquals( EEM_Payment::status_id_approved, $payment->status() );
 		$this->assertEquals( $successful_payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful' ] );
+	}
+
+	public function test_process_payment__onsite__declined(){
+		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Mock_Onsite' ) );
+		$transaction = $this->_new_typical_transaction();
+		$billing_form = $pm->type_obj()->billing_form();
+		$billing_form->receive_form_submission( array(
+			'status'=>  EEM_Payment::status_id_declined,
+			'credit_card' => '4111 1111 1111 1111',
+			'exp_month' => '12',
+			'exp_year' => '2032',
+			'cvv' => '123'
+		));
+		global $wp_actions;
+		EE_Registry::instance()->load_helper( 'Array' );
+		$successful_payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 );
+		$payment = EE_Payment_Processor::instance()->process_payment( $pm, $transaction, NULL, $billing_form, 'success', 'CART', TRUE, TRUE );
+		$this->assertInstanceOf( 'EE_Payment', $payment );
+		$this->assertEquals( EEM_Payment::status_id_declined, $payment->status() );
+		$this->assertEquals( $successful_payment_actions, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
 	}
 
 	public function setUp(){
