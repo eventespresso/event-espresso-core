@@ -301,7 +301,7 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function get_all_date_obj( $EVT_ID = FALSE,$include_expired = NULL, $include_deleted = false ) {
+	public static function get_all_date_obj( $EVT_ID = FALSE, $include_expired = NULL, $include_deleted = false, $limit = NULL ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if($include_expired === null){
 			if($event->is_expired()){
@@ -313,7 +313,7 @@ class EEH_Event_View extends EEH_Base {
 			$include_expired = true;
 		}
 		if ( $event instanceof EE_Event ) {
-			return $event->datetimes_ordered($include_expired,$include_deleted);
+			return $event->datetimes_ordered($include_expired, $include_deleted, $limit);
 		} else {
 			 return FALSE;
 		}
