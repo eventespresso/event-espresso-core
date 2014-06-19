@@ -249,6 +249,7 @@
 }
 .ee-upcoming-events-widget-ul li p {
 	padding-left: 10px;
+	padding: 10px 0 10px 10px;
 }
 .ee-upcoming-events-widget-header-dv {
 	position: relative;
