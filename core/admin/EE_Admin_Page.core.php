@@ -2780,6 +2780,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( !isset( $this->_labels['buttons'][$type] ) )
 			throw new EE_Error( sprintf( __('There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.', 'event_espresso'), $type) );
 
+		//finally check user access for this button.
+		$has_access = $this->_check_user_access( $action, TRUE );
+		if ( ! $has_access ) {
+			return '';
+		}
+
 		$_base_url = !$base_url ? $this->_admin_base_url : $base_url;
 
 		$query_args = array(
