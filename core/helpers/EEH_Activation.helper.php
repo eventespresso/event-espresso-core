@@ -1161,17 +1161,18 @@ class EEH_Activation {
 
 		//loop through the plugins and check if they are active.
 		foreach ( $all_plugins as $path => $plugin_details ) {
-			$plugin_basename = plugin_basename( trim( $path ) );
-			$plugin_basename = explode( DS, $plugin_basename );
+			$orig_plugin_basename = plugin_basename( trim( $path ) );
+			$plugin_basename = explode( DS, $orig_plugin_basename );
 			$plugin_basename = array_pop( $plugin_basename );
-			//first check if plugin is active.  If it isn't then it doesn't matter. If $plugin isn't empty then this is being called on an activation hook so the inactive check is pointless.
-			if ( empty( $plugin ) && is_plugin_inactive( $plugin_basename ) )
+
+			//first check if plugin is active.  If it isn't then it doesn't matter.
+			if ( is_plugin_inactive( $orig_plugin_basename ) )
 				continue;
 
 			//now check if any of the values in the ee3addons array is found in the plugin_basename.
 			foreach( $ee3addons as $addon ) {
 				if ( $plugin_basename === $addon . '.php' ) {
-					$addons_to_disable[$plugin_basename] = $plugin_details['Name'];
+					$addons_to_disable[$orig_plugin_basename] = $plugin_details['Name'];
 					break;
 				}
 			}
@@ -1183,7 +1184,7 @@ class EEH_Activation {
 			$msg = _n('The following Event Espresso addon has been disabled because it is not compatible with Event Espresso 4+:', 'The following Event Espresso addons have been disabled because they are not compatible with Event Espresso 4+:', count( $addons_to_disable ), 'event_espresso');
 			$msg .= '<ul>';
 			foreach ( $addons_to_disable as $basename => $name ) {
-				deactivate_plugins( $basename, true );
+				deactivate_plugins( $basename );
 				$msg .= '<li>' . $name . '</li>';
 			}
 			$msg .= '</ul>';
