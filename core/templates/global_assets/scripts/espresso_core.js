@@ -150,6 +150,56 @@ jQuery(document).ready(function($) {
 	$('.hide-if-no-js').removeClass( 'hide-if-no-js' );
 
 
+	window.do_before_admin_page_ajax = function do_before_admin_page_ajax() {
+		// stop any message alerts that are in progress
+		$('#message').stop().hide();
+		// spinny things pacify the masses
+		$('#espresso-ajax-loading').eeCenter().show();
+	};
+
+
+
+	window.show_admin_page_ajax_msg = function show_admin_page_ajax_msg( response, beforeWhat, closeModal ) {
+		console.log( response );
+		$('#espresso-ajax-loading').fadeOut('fast');
+		if (( typeof(response.success) !== 'undefined' && response.success !== '' ) || ( typeof(response.errors) !== 'undefined' && response.errors !== '' )) {
+			if ( closeModal === undefined ) {
+				closeModal = false;
+			}
+			// if there is no existing message...
+			if ( $('#message').length === 0 ) {
+				//create one and add it to the DOM
+				$('.nav-tab-wrapper').before( '<div id="message" class="updated hidden"></div>' );
+			}
+			var existing_message = $('#message');
+			var fadeaway = true;
+			// success ?
+			if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
+				msg = '<p>' + response.success + '</p>';
+			}
+			// no existing errors?
+			if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
+				msg = '<p>' + response.errors + '</p>';
+				$(existing_message).removeClass('updated').addClass('error');
+				fadeaway = false;
+			}
+			// set message content
+			$(existing_message).html(msg);
+			//  change location in the DOM if so desired
+			if ( typeof(beforeWhat) !== 'undefined' && beforeWhat !== '' ) {
+				var moved_message = $(existing_message);
+				$(existing_message).remove();
+				$( beforeWhat ).before( moved_message );
+			}
+			// and display it
+			if ( fadeaway === true ) {
+				$('#message').removeAttr('style').removeClass('hidden').show().delay(8000).fadeOut();
+			} else {
+				$('#message').removeAttr('style').removeClass('hidden').show();
+			}
+		}
+	};
+
 
 	function display_espresso_notices() {
 		$('#espresso-notices').eeCenter();
