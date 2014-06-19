@@ -530,7 +530,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$this->_verify_routes();
 
 			//next let's just check user_access and kill if no access
-			$this->_check_user_access();
+			$this->check_user_access();
 
 			if ( $this->_is_UI_request ) {
 				//admin_init stuff - global, all views for this page class, specific view
@@ -1159,7 +1159,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( !is_array( $config ) || ( is_array($config) && (isset($config['nav']) && !$config['nav'] ) || !isset($config['nav'] ) ) )
 				continue; //no nav tab for this config
 
-			if ( ! $this->_check_user_access( $slug, TRUE ) )
+			if ( ! $this->check_user_access( $slug, TRUE ) )
 				continue; //no nav tab becasue current user does not have access.
 
 			//check for persistent flag
@@ -1227,7 +1227,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 		@param bool   $verify_only Default is FALSE which means if user check fails then wp_die().  Otherwise just return false if verify fail.
 	*		@return 		BOOL|wp_die()
 	*/
-	private function _check_user_access( $route_to_check = '', $verify_only = FALSE ) {
+	public function check_user_access( $route_to_check = '', $verify_only = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		$capability = ! empty( $route_to_check ) && ! empty( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
 
@@ -2781,7 +2781,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			throw new EE_Error( sprintf( __('There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.', 'event_espresso'), $type) );
 
 		//finally check user access for this button.
-		$has_access = $this->_check_user_access( $action, TRUE );
+		$has_access = $this->check_user_access( $action, TRUE );
 		if ( ! $has_access ) {
 			return '';
 		}
@@ -2820,7 +2820,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 			'option' => $this->_current_page . '_' . $this->_current_view . '_per_page'
 			);
 		//ONLY add the screen option if the user has access to it.
-		if ( $this->_check_user_access( $this->_current_view, true ) ) {
+		if ( $this->check_user_access( $this->_current_view, true ) ) {
 			add_screen_option( $option, $args );
 		}
 	}
