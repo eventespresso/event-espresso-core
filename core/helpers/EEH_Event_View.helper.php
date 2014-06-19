@@ -192,16 +192,15 @@
 						if ( $format ) {
 							$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';
 							$datetime_name = $datetime->name();
-							$html .= ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b>' : '';
+							$html .= ! empty( $datetime_name ) ? '<strong>' . $datetime_name . '</strong>' : '';
 							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
-							$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $dt_frmt ) . ' &nbsp; &nbsp; ';
-							$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
-							$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $tm_frmt );
+							$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $dt_frmt ) . '';
+							//$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
+							$html .= '<br /><span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $tm_frmt );
 							$datetime_description = $datetime->description();
-							$html .= ! empty( $datetime_description ) ? '<br/> - ' . $datetime_description . '<br/>' : '';
-							$html .= '<br/>';
+							$html .= ! empty( $datetime_description )  && $add_breaks ? '<br />' : '';
+							$html .= ! empty( $datetime_description ) ? ' - ' . $datetime_description : '';
 							$html .= '</li>';
-
 						} else {
 							$html .= $datetime;
 						}
