@@ -22,29 +22,29 @@ $wrap_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
 		<?php espresso_get_template_part( 'content', 'espresso_venues-thumbnail' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_venues-header' ); ?>
 	</div>
-	
+
 	<div class="espresso-venue-wrapper-dv">
 		<?php espresso_get_template_part( 'content', 'espresso_venues-details' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_venues-location' ); ?>
 		<footer class="venue-meta">
 			<?php do_action( 'AHEE__content_espresso_venues_template__footer_top', $post ); ?>
 			<?php do_action( 'AHEE__content_espresso_venues_template__footer_bottom', $post ); ?>
-		</footer>	
+		</footer>
 	</div>
-	
-<?php else if ( is_archive() ) : ?>
+
+<?php elseif ( is_archive() ) : ?>
 
 	<div id="espresso-venue-header-dv-<?php echo $post->ID;?>" class="espresso-venue-header-dv">
 		<?php espresso_get_template_part( 'content', 'espresso_venues-thumbnail' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_venues-header' ); ?>
 	</div>
-	
+
 	<div class="espresso-venue-wrapper-dv">
 		<?php espresso_get_template_part( 'content', 'espresso_venues-details' ); ?>
 	</div>
 
 <?php endif; ?>
-	
+
 </article>
 <!-- #post -->
 <?php do_action( 'AHEE__content_espresso_venues_template__after_post', $post );

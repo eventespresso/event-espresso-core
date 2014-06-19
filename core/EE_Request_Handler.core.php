@@ -350,7 +350,7 @@ final class EE_Request_Handler {
 	 * 	get_output
 	 *
 	 *  @access 	public
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function get_output() {
 		return $this->_output;
