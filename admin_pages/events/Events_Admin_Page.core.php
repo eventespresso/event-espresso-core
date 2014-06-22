@@ -1492,6 +1492,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				);
 		}
 
+		//final conditions for wp_user
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_event' ) ) {
+			$where['EVT_wp_user'] =  current_user_id();
+		}
+
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_private_event') ) {
+			$where['AND'] = array(
+				'wp_user' => array( '!=', current_user_id() ),
+				'status' => 'private'
+				);
+		}
+
+
 		$where = apply_filters( 'FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data );
 		$query_params = apply_filters( 'FHEE__Events_Admin_Page__get_events__query_params', array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ), $this->_req_data );
 

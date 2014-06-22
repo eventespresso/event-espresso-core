@@ -180,6 +180,7 @@ final class EE_Capabilities extends EE_Base {
 				'publish_event',
 				'edit_private_event',
 				'read_private_event',
+				'read_others_event',
 				'read_event',
 				'delete_private_event',
 				'delete_event',
@@ -196,6 +197,7 @@ final class EE_Capabilities extends EE_Base {
 				'edit_private_venue',
 				'read_private_venue',
 				'read_venue',
+				'read_others_venue',
 				'delete_private_venue',
 				'delete_venue',
 				//contacts
