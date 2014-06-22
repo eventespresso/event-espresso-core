@@ -667,8 +667,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'bulk_action' => array_merge( $def_reg_status_actions,  array(
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					))
-				),
-			'trash' => array(
+				)
+			);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registration', 'delete_registration' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
@@ -676,8 +679,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'restore_registrations' => __('Restore Registrations', 'event_espresso'),
 					'delete_registrations' => __('Delete Registrations Permanently', 'event_espresso')
 					)
-				)
-			);
+				);
+		}
 	}
 
 
