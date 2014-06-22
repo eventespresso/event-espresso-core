@@ -130,63 +130,81 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 
-		$edit_query_args = array(
-				'action' => 'edit',
-				'post' => $item->ID()
-			);
-		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
+		$actions = array();
 
-		$attendees_query_args = array(
-				'action' => 'default',
-				'event_id' => $item->ID()
-			);
-		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
+		if ( EE_Registry::instance()->CAP->current_user_can('edit_event', 'edit', $item->ID() ) ) {
+			$edit_query_args = array(
+					'action' => 'edit',
+					'post' => $item->ID()
+				);
+			$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
+			$actions['edit'] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>';
 
-		$export_query_args = array(
-				'action' => 'export_events',
-				'EVT_ID' => $item->ID()
-			);
-		$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
+		}
 
-		$trash_event_query_args = array(
-				'action' => 'trash_event',
-				'EVT_ID' => $item->ID()
-			);
-		$trash_event_link = EE_Admin_Page::add_query_args_and_nonce( $trash_event_query_args, EVENTS_ADMIN_URL );
+		if ( EE_Registry::instance()->CAP->current_user_can( 'read_registration', 'view_registration', $item->ID() ) ) {
+			$attendees_query_args = array(
+					'action' => 'default',
+					'event_id' => $item->ID()
+				);
+			$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
+			$actions['attendees'] = '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>';
+		}
 
-		$restore_event_query_args = array(
-				'action' => 'restore_event',
-				'EVT_ID' => $item->ID()
-			);
-		$restore_event_link = EE_Admin_Page::add_query_args_and_nonce( $restore_event_query_args, EVENTS_ADMIN_URL );
+		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'export_events', $item->ID() ) ) {
+			$export_query_args = array(
+					'action' => 'export_events',
+					'EVT_ID' => $item->ID()
+				);
+			$export_event_link = EE_Admin_Page::add_query_args_and_nonce( $export_query_args, EVENTS_ADMIN_URL );
+			$actions['export'] = '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>';
+		}
 
-		$delete_event_query_args = array(
-				'action' => 'delete_event',
-				'EVT_ID' => $item->ID()
-			);
-		$delete_event_link = EE_Admin_Page::add_query_args_and_nonce( $delete_event_query_args, EVENTS_ADMIN_URL );
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'trash_event', $item->ID() ) ) {
+			$trash_event_query_args = array(
+					'action' => 'trash_event',
+					'EVT_ID' => $item->ID()
+				);
+			$trash_event_link = EE_Admin_Page::add_query_args_and_nonce( $trash_event_query_args, EVENTS_ADMIN_URL );
+		}
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'restore_event', $item->ID() ) ) {
+			$restore_event_query_args = array(
+					'action' => 'restore_event',
+					'EVT_ID' => $item->ID()
+				);
+			$restore_event_link = EE_Admin_Page::add_query_args_and_nonce( $restore_event_query_args, EVENTS_ADMIN_URL );
+		}
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'delete_event', $item->ID() ) ) {
+			$delete_event_query_args = array(
+					'action' => 'delete_event',
+					'EVT_ID' => $item->ID()
+				);
+			$delete_event_link = EE_Admin_Page::add_query_args_and_nonce( $delete_event_query_args, EVENTS_ADMIN_URL );
+		}
 
 		$view_link = get_permalink($item->ID());
 
-		$actions = array(
-			'view' => '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>',
-			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>',
-			'attendees' => '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>',
-			'export' => '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>'
-			);
+		$actions['view'] = '<a href="' . $view_link . '" title="' . __('View Event', 'event_espresso') . '">' . __('View', 'event_espresso') . '</a>';
 
 		switch ( $item->get( 'status' ) ) {
 			case 'trash' :
-					$actions['restore_from_trash'] = '<a href="' . $restore_event_link . '" title="' . __('Restore from Trash', 'event_espresso') . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
-					if ( $item->count_related('Registration') === 0 )
+					if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'restore_event', $item->ID() ) ) {
+						$actions['restore_from_trash'] = '<a href="' . $restore_event_link . '" title="' . __('Restore from Trash', 'event_espresso') . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
+					}
+					if ( $item->count_related('Registration') === 0 && EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'delete_event', $item->ID() ) ) {
 						$actions['delete permanently'] = '<a href="' . $delete_event_link . '" title="' . __('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+					}
 				break;
 			default :
-					$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
+					if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'trash_event', $item->ID() ) ) {
+						$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
+					}
 		}
 
 		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status;
+		$content = EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'edit_event', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status : '<strong>' . $item->name() . '</strong>';
 		$content .= $this->row_actions($actions);
 		return $content;
 
