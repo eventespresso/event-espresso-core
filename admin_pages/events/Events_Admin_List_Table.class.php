@@ -258,7 +258,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			);
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 		$registered_attendees = EEM_Registration::instance()->get_event_registration_count( $item->ID() );
-		return '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>';
+		return  EE_Registry::instance()->CAP->current_user_can( 'read_registration', 'view_registration', $item->ID() ) ? '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>' : $registered_attendees;
 	}
 
 
@@ -275,26 +275,28 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 		$actionlinks = array();
 
-		$edit_query_args = array(
-				'action' => 'edit',
-				'post' => $item->ID()
-			);
+		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'edit_event', $item->ID() ) ) {
+			$edit_query_args = array(
+					'action' => 'edit',
+					'post' => $item->ID()
+				);
+			$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
+			$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="ee-icon ee-icon-calendar-edit"></div></a>';
+		}
 
-		$attendees_query_args = array(
+		if ( EE_Registry::instance()->CAP->current_user_can( 'read_registration', 'view_registration', $item->ID() ) ) {
+			$attendees_query_args = array(
 				'action' => 'default',
 				'event_id' => $item->ID()
 			);
+			$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
+			$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Registrants', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
+		}
 
-
-
-		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EVENTS_ADMIN_URL );
 		$view_link = get_permalink($item->ID());
-		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 
 		$actionlinks[] = '<a href="' .  $view_link . '" title="' . __('View Event', 'event_espresso') . '" target="_blank">';
 		$actionlinks[] = '<div class="dashicons dashicons-search"></div></a>';
-		$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="ee-icon ee-icon-calendar-edit"></div></a>';
-		$actionlinks[] = '<a href="' . $attendees_link . '" title="' . __('View Registrants', 'event_espresso') . '"><div class="dashicons dashicons-groups"></div></a>';
 
 		$actionlinks = apply_filters( 'FHEE__Events_Admin_List_Table__column_actions__action_links', $actionlinks, $item );
 

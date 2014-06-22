@@ -51,7 +51,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$new_page_routes = array(
 			'reports' => array(
 				'func' => '_registration_reports',
-				'capability' => 'read_registration'
+				'capability' => 'edit_registration'
 				),
 			'registration_checkins' => array(
 				'func' => '_registration_checkin_list_table',

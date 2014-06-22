@@ -320,12 +320,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function extra_list_table_actions( $actionlinks, $event ) {
-		$reports_query_args = array(
-				'action' => 'reports',
-				'EVT_ID' => $event->ID()
-			);
-		$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
-		$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
+		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'reports', $event->ID() ) ) {
+			$reports_query_args = array(
+					'action' => 'reports',
+					'EVT_ID' => $event->ID()
+				);
+			$reports_link = EE_Admin_Page::add_query_args_and_nonce( $reports_query_args, REG_ADMIN_URL );
+			$actionlinks[] = '<a href="' . $reports_link . '" title="' .  __('View Report', 'event_espresso') . '"><div class="dashicons dashicons-chart-bar"></div></a>' . "\n\t";
+		}
 		return $actionlinks;
 	}
 
