@@ -639,7 +639,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'trash_events' => __('Move to Trash', 'event_espresso'),
 					)
 			),
-			'trash' => array(
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'trash_view' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
@@ -647,8 +650,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 					'restore_events' => __('Restore From Trash', 'evnet_espresso'),
 					'delete_events' => __('Delete Permanently', 'event_espresso')
 					)
-				)
-		);
+				);
+		}
 	}
 
 
