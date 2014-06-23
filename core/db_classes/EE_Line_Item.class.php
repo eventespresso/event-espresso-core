@@ -459,7 +459,7 @@ class EE_Line_Item extends EE_Base_Class {
 	function ticket_datetime_start( $date_format = '', $time_format = '' ) {
 		$first_datetime_string = __( "Unknown", "event_espresso" );
 		$ticket = $this->ticket();
-		if ( $ticket ) {
+		if ( $ticket instanceof EE_Ticket ) {
 			$first_datetime = $ticket->first_datetime();
 			if ( $first_datetime ) {
 				$first_datetime_string = $first_datetime->start_date_and_time( $date_format, $time_format );
