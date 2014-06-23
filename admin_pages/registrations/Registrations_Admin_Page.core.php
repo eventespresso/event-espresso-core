@@ -934,6 +934,13 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				);
 		}
 
+		//capability checks
+		if ( ! EE_Registry::instance()->CAP->current_user_can('edit_others_registration', 'get_registrations' ) ) {
+			$_where['AND'] = array(
+				'Event.EVT_wp_user' => get_current_user_id()
+				);
+		}
+
 
 		if($count){
 			return $trash ? EEM_Registration::instance()->count_deleted(array($_where) ): EEM_Registration::instance()->count(array($_where, 'default_where_conditions' => 'this_model_only') );
