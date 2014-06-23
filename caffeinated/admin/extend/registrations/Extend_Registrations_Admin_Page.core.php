@@ -60,7 +60,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'newsletter_selected_send' => array(
 				'func' => '_newsletter_selected_send',
 				'noheader' => TRUE,
-				'capability' => 'edit_registration'
+				'capability' => 'send_message'
 				),
 			'delete_checkin_rows' => array(
 					'func' => '_delete_checkin_rows',
@@ -229,15 +229,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					//'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
 				),
-			/*'trash' => array(
-				'slug' => 'trash',
-				'label' => __('Trash', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'restore_registrations' => __('Restore Registrations', 'event_espresso'),
-					'delete_registrations' => __('Delete Registrations Permanently', 'event_espresso')
-					)
-				)/**/
 			);
 	}
 
@@ -323,6 +314,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 * @return string html string for extra buttons
 	 */
 	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'send_message', 'newsletter_selected_send' ) ) {
+			return '';
+		}
+
 		$routes_to_add_to = array(
 			'contact_list',
 			'event_registrations',
@@ -493,9 +488,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-	    $REG = EEM_Registration::instance();
+		$REG = EEM_Registration::instance();
 
-	    $results = $REG->get_registrations_per_day_report( $period );
+		$results = $REG->get_registrations_per_day_report( $period );
 
 		//printr( $results, '$registrations_per_day' );
 		$regs = array();
@@ -551,9 +546,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-	    $REG = EEM_Registration::instance();
+		$REG = EEM_Registration::instance();
 
-	    $results = $REG->get_registrations_per_event_report( $period );
+		$results = $REG->get_registrations_per_event_report( $period );
 		//printr( $results, '$registrations_per_event' );
 		$regs = array();
 		$ymax = 0;
