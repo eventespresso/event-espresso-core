@@ -458,22 +458,22 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	        //Build row actions
 	        $view_lnk = '
 		<li>
-			<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<div class="dashicons dashicons-search"></div>
+			<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '" class="tiny-text">
+				<div class="dashicons dashicons-clipboard"></div>
 			</a>
 		</li>';
 
 	       $edit_lnk = '
 		<li>
-			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact Details', 'event_espresso' ) . '">
-				<div class="dashicons dashicons-businessman"></div>
+			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact Details', 'event_espresso' ) . '" class="tiny-text">
+				<div class="ee-icon ee-icon-user-edit ee-icon-size-16"></div>
 			</a>
 		</li>';
 
 	         $resend_reg_lnk = '
 		<li>
-			<a href="'.$resend_reg_lnk_url.'" title="' . __( 'Resend Registration Details', 'event_espresso' ) . '">
-				<div class="ee-icon ee-icon-email-send"></div>
+			<a href="'.$resend_reg_lnk_url.'" title="' . __( 'Resend Registration Details', 'event_espresso' ) . '" class="tiny-text">
+				<div class="dashicons dashicons-email-alt"></div>
 			</a>
 		</li>';
 
@@ -481,8 +481,8 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
 		$view_txn_lnk = '
 		<li>
-			<a href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">
-				<div class="ee-icon ee-icon-cash"></div>
+			<a href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '" class="tiny-text">
+				<div class="dashicons dashicons-cart"></div>
 			</a>
 		</li>';
 
