@@ -94,7 +94,17 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
-			$events = EEM_Event::instance()->get_all(array(array(), 'order_by' => array( 'EVT_name' => 'asc' ) ) );
+
+			//note possible capability restrictions
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_private_event') ) {
+				$where['status**'] =  array( '!=', 'private' );
+			}
+
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_event', 'get_events' ) ) {
+				$where['EVT_wp_user'] =  get_current_user_id();
+			}
+
+			$events = EEM_Event::instance()->get_all(array( $where, 'order_by' => array( 'EVT_name' => 'asc' ) ) );
 			$evts[] = array('id' => 0, 'text' => __('To toggle Check-in status, select an event', 'event_espresso') );
 			foreach ( $events as $evt ) {
 				//any registrations for this event?
