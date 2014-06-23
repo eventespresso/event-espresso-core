@@ -341,8 +341,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'resend_registration' => array(
 					'func' => '_resend_registration',
 					'noheader' => TRUE,
-					'capability' => 'edit_registration',
-					'obj_id' => $reg_id
+					'capability' => 'send_message'
 					),
 				'registrations_report'=>array(
 					'func'=>'_registrations_report',
@@ -370,7 +369,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'label' => __('Overview', 'event_espresso'),
 					'order' => 5
 					),
-                'help_tabs' => array(
+			'help_tabs' => array(
 					'registrations_overview_help_tab' => array(
 						'title' => __('Registrations Overview', 'event_espresso'),
 						'filename' => 'registrations_overview'
@@ -695,17 +694,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'bulk_action' => array(
 					'trash_attendees' => __('Move to Trash', 'event_espresso'),
 					)
-				),
-			'trash' => array(
+				)
+			);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_contact', 'trash_attendees' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => 'Trash',
 				'count' => 0,
 				'bulk_action' => array(
 					'restore_attendees' => __('Restore from Trash', 'event_espresso'),
 					)
-				)
-
-			);
+				);
+		}
 	}
 
 
@@ -734,7 +735,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-icon ee-icon-cash',
 				'desc' => __('View Transaction Details', 'event_espresso')
 				),
-        		'approved_status' => array(
+			'approved_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_approved,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_approved, FALSE, 'sentence' )
 				),
@@ -746,11 +747,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_not_approved,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_not_approved, FALSE, 'sentence' )
 				),
-           		'declined_status' => array(
+			'declined_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_declined,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_declined, FALSE, 'sentence' )
 				),
-           		'cancelled_status' => array(
+			'cancelled_status' => array(
 				'class' => 'ee-status-legend ee-status-legend-' . EEM_Registration::status_id_cancelled,
 				'desc' => EEH_Template::pretty_status( EEM_Registration::status_id_cancelled, FALSE, 'sentence' )
 				)
@@ -770,7 +771,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	protected function _registrations_overview_list_table() {
 		$EVT_ID = ( ! empty( $this->_req_data['event_id'] )) ? absint( $this->_req_data['event_id'] ) : FALSE;
 		if ( $EVT_ID ) {
-			$this->_admin_page_title .= $this->get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'add-new-h2' );
+			if ( EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'new_registration', $EVT_ID ) ) {
+				$this->_admin_page_title .= $this->get_action_link_or_button( 'new_registration', 'add-registrant', array( 'event_id' => $EVT_ID ), 'add-new-h2' );
+			}
 			$event = EEM_Event::instance()->get_one_by_ID( $EVT_ID );
 			$this->_template_args['admin_page_header'] = $event instanceof EE_Event ? sprintf( __('%s Viewing registrations for the event: %s%s', 'event_espressso'), '<h2>', '<a href="' . EE_Admin_Page::add_query_args_and_nonce( array('action' => 'edit', 'post' => $event->ID() ), EVENTS_ADMIN_URL ) . '">' . $event->get('EVT_name') . '</a>', '</h2>' ) : '';
 		}
@@ -1163,7 +1166,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			//make sure we don't just get 0 updated
 			$success = $success === FALSE ? FALSE : TRUE;
 
-			if ( $success && $notify ) {
+			if ( $success && $notify && EE_Registry::instance()->CAP->current_user_can( 'send_message', 'resend_registration' ) ) {
 				$this->_req_data['_REG_ID'] = $REG_ID;
 				$this->_process_resend_registration();
 			}
@@ -1195,7 +1198,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$route = isset( $this->_req_data['return'] ) && $this->_req_data['return'] == 'view_registration' ? array( 'action' => 'view_registration', '_REG_ID' => $result['REG_ID'] ) : array( 'action' => 'default' );
 
 		//was the send notification toggle checked?
-		if ( !empty( $this->_req_data['txn_reg_status_change']['send_notifications'] ) ) {
+		if ( !empty( $this->_req_data['txn_reg_status_change']['send_notifications'] ) && EE_Registry::instance()->CAP->current_user_can( 'send_message', 'resend_registration' ) ) {
 			$this->_req_data['_REG_ID'] = $result['REG_ID'];
 			$this->_process_resend_registration();
 		}
