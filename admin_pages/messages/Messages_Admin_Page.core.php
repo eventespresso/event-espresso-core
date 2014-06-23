@@ -649,8 +649,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'trash_message_template' => __('Move to Trash', 'event_espresso')
 				)
-			),
-			'trashed' => array(
+			)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_message', 'trash_message_template' ) ) {
+			$this->_views['trashed'] = array(
 				'slug' => 'trashed',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
@@ -658,8 +661,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'restore_message_template' => __('Restore From Trash', 'event_espresso'),
 					'delete_message_template' => __('Delete Permanently', 'event_espresso')
 				)
-			)
-		);
+			);
+		}
 	}
 
 
@@ -720,11 +723,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		switch( $type ) {
 
 			case 'in_use':
-				$templates = $MTP->get_all_active_message_templates($orderby, $order, $limit, $count, $global );
+				$templates = $MTP->get_all_active_message_templates($orderby, $order, $limit, $count, $global, TRUE );
 				break;
 
 			case 'all':
-				$templates = $global ? $MTP->get_all_global_message_templates($orderby, $order, $limit, $count) : $MTP->get_all_custom_message_templates( $orderby, $order, $limit, $count );
+				$templates = $global ? $MTP->get_all_global_message_templates($orderby, $order, $limit, $count) : $MTP->get_all_custom_message_templates( $orderby, $order, $limit, $count, TRUE );
 				break;
 
 			default:
