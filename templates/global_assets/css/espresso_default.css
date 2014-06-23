@@ -252,6 +252,10 @@
 
 .ee-upcoming-events-widget-li {
 }
+.ee-upcoming-events-widget-ul li ul,
+.ee-upcoming-events-widget-ul li p {
+	padding: 0px 10px 10px;
+}
 .ee-upcoming-events-widget-header-dv {
 	position: relative;
 	width:100%;
@@ -287,15 +291,14 @@
 	background: rgba(255, 255, 255, 0.9);
 	border: 1px solid rgba(255, 255, 255, 0.9);
 }
-.ee-upcoming-events-widget-li h6 {
-	margin: 1em 0 .25em;
-}
+
 .ee-upcoming-events-widget-details-dv,
 .ee-upcoming-events-widget-details-dv p {
 	line-height: 1.4em !important;
 }
 .ee-upcoming-events-widget-li .ee-event-datetimes-ul {
 	/*margin-left:0 !important;*/
+	padding: 10px 0;
 }
  .espresso_events .ee-event-datetimes-ul li {
  	list-style-type: none;
