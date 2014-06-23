@@ -1,25 +1,11 @@
 <?php if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
-
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for Wordpress
- *
- * @package		Event Espresso
- * @author		Seth Shoultes
- * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
- * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link		http://www.eventespresso.com
- * @version		4.0
- *
- * ------------------------------------------------------------------------
- *
  * EEH_URL helper
  * Helper class for URL-related PHP functions
  *
- * @package		Event Espresso
- * @subpackage	/helper/EEH_URL.helper.php
- * @author		Michael Nelson
+ * @package			Event Espresso
+ * @subpackage 	/helper/EEH_URL.helper.php
+ * @author				Brent Christensen, Michael Nelson
  *
  * ------------------------------------------------------------------------
  */
@@ -130,4 +116,5 @@ class EEH_URL{
 
 
 }
-?>
+// End of file EEH_URL.helper.php
+// Location: /core/helpers/EEH_URL.helper.php
