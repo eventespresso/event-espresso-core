@@ -1161,18 +1161,16 @@ class EEH_Activation {
 
 		//loop through the plugins and check if they are active.
 		foreach ( $all_plugins as $path => $plugin_details ) {
-			$orig_plugin_basename = plugin_basename( trim( $path ) );
-			$plugin_basename = explode( DS, $orig_plugin_basename );
-			$plugin_basename = array_pop( $plugin_basename );
+			$plugin_basename = plugin_basename( trim( $path ) );
 
 			//first check if plugin is active.  If it isn't then it doesn't matter.
-			if ( is_plugin_inactive( $orig_plugin_basename ) )
+			if ( is_plugin_inactive( $plugin_basename ) )
 				continue;
 
 			//now check if any of the values in the ee3addons array is found in the plugin_basename.
 			foreach( $ee3addons as $addon ) {
-				if ( $plugin_basename === $addon . '.php' ) {
-					$addons_to_disable[$orig_plugin_basename] = $plugin_details['Name'];
+				if ( strpos( $plugin_basename, $addon ) !== FALSE  ) {
+					$addons_to_disable[$plugin_basename] = $plugin_details['Name'];
 					break;
 				}
 			}
