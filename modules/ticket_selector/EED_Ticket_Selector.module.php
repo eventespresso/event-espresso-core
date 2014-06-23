@@ -205,7 +205,13 @@ class EED_Ticket_Selector extends  EED_Module {
 	public static function ticket_selector_form_open( $ID = 0, $external_url = FALSE ) {
 		// if redirecting, we don't need any anything else
 		if ( $external_url ) {
-			return '<form id="" method="GET" action="' . $external_url . '">';
+			EE_Registry::instance()->load_helper( 'URL' );
+			$html = '<form id="" method="GET" action="' . EEH_URL::refactor_url( $external_url ) . '">';
+			$query_args = EEH_URL::get_query_string( $external_url );
+			foreach ( $query_args as $query_arg => $value ) {
+				$html .= '<input type="hidden" name="' . $query_arg . '" value="' . $value . '">';
+			}
+			return $html;
 		}
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		$checkout_url = EEH_Event_View::event_link_url( $ID );
