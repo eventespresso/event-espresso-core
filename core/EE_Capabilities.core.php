@@ -208,7 +208,6 @@ final class EE_Capabilities extends EE_Base {
 				//registrations & checkins
 				'edit_registration',
 				'edit_others_registration',
-				'create_registration',
 				'read_registration',
 				'delete_registration',
 				'read_checkin',
