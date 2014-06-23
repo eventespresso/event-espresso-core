@@ -125,9 +125,9 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-	    $TXN = EEM_Transaction::instance();
+		$TXN = EEM_Transaction::instance();
 
-	    $results = $TXN->get_revenue_per_day_report( $period );
+		$results = $TXN->get_revenue_per_day_report( $period );
 		//printr( $results, '$registrations_per_day' );
 		$revenue = array();
 		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
@@ -183,9 +183,9 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-	    $TXN = EEM_Transaction::instance();
+		$TXN = EEM_Transaction::instance();
 
-	    $results = $TXN->get_revenue_per_event_report( $period );
+		$results = $TXN->get_revenue_per_event_report( $period );
 
 		//printr( $results, '$registrations_per_event' );
 		$revenue = array();
