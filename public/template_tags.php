@@ -28,17 +28,13 @@
  * @return bool
  */
 function is_espresso_event( $event = NULL ) {
-	// was a param passed ?
-	if ( ! empty( $event )) {
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
 		// load event view helper
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		// extract EE_Event object from passed param regardless of what it is (within reason of course)
 		$event = EEH_Event_View::get_event( $event );
 		// do we have a valid event ?
-		if ( $event instanceof EE_Event ) {
-			// test post_type
-			return $event->post_type() == 'espresso_events' ? TRUE : FALSE;
-		}
+		return $event instanceof EE_Event  ? TRUE : FALSE;
 	}
 	return FALSE;
 }
@@ -94,17 +90,13 @@ function is_espresso_event_taxonomy() {
  * @return bool
  */
 function is_espresso_venue( $venue = NULL ) {
-	// was a param passed ?
-	if ( ! empty( $venue )) {
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
 		// load event view helper
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		// extract EE_Venue object from passed param regardless of what it is (within reason of course)
-		$venue = EEH_Venue_View::get_event( $venue );
+		$venue = EEH_Venue_View::get_venue( $venue, FALSE );
 		// do we have a valid event ?
-		if ( $venue instanceof EE_Venue ) {
-			// test post_type
-			return $venue->post_type() == 'espresso_venues' ? TRUE : FALSE;
-		}
+		return $venue instanceof EE_Venue ? TRUE : FALSE;
 	}
 	return FALSE;
 }
