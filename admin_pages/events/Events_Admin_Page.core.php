@@ -1475,15 +1475,28 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		switch ( $status ) {
 			case NULL :
 			case 'all' :
+				$status = array();
 				break;
 
 			case 'draft' :
+				$status = array( 'draft', 'auto-draft' );
 				$where['status'] = array( 'IN', array('draft', 'auto-draft') );
 				break;
 
 			default :
+				$status = array( $status );
 				$where['status'] = $status;
 		}
+
+		//possible conditions for capability checks
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_private_event') ) {
+			$where['status**'] => array( '!=', $status );
+		}
+
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_event', 'get_events' ) ) {
+			$where['EVT_wp_user'] =  get_current_user_id();
+		}
+
 
 		//search query handling
 		if ( isset( $this->_req_data['s'] ) ) {
@@ -1493,19 +1506,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'EVT_desc' => array('LIKE', $search_string),
 				'EVT_short_desc' => array('LIKE', $search_string)
 				);
-		}
-
-		//possible conditions for capability checks
-
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_private_event') ) {
-			$where['AND'] = array(
-				'wp_user' => array( '!=', get_current_user_id() ),
-				'status' => 'private'
-				);
-		}
-
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_event', 'get_events' ) ) {
-			$where['EVT_wp_user'] =  get_current_user_id();
 		}
 
 
