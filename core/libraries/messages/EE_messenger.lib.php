@@ -338,7 +338,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 			//note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
 			$st_args['create_button'] =  $mtpg->get('MTP_is_override') ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $create_url . '" class="button button-small create-mtpg-button">' . __('Create New Custom', 'event_espresso') . '</a>';
-			$st_args['edit_button'] = '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __('Edit', 'event_espresso') . '</a>';
+			$st_args['create_button'] = EE_Registry::instance()->CAP->current_user_can( 'edit_message', 'create_template_button' ) ? $st_args['create_button'] : '';
+			$st_args['edit_button'] = EE_Registry::instance()->CAP->current_user_can( 'edit_message', 'edit_message_template', $mtpgID ) ?  '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __('Edit', 'event_espresso') . '</a>' : '';
 			$selector_rows .= EEH_Template::display_template( $template_row_path, $st_args, TRUE );
 		}
 
