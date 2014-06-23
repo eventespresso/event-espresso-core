@@ -58,7 +58,7 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes {
 		//now it's possible that $recipient is not an instance of EE_Messages_Addressee in which case we need to see if $this->_data is an instance of $event.
 		$event = $this->_data instanceof EE_Event ? $this->_data : NULL;
 
-		if ( ! $recipient instanceof EE_Messages_Addressee || ! $event instanceof EE_Event )
+		if ( ! $recipient instanceof EE_Messages_Addressee && ! $event instanceof EE_Event )
 			return '';
 
 		switch ( $shortcode ) {
