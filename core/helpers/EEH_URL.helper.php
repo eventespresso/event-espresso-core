@@ -98,10 +98,14 @@ class EEH_URL{
 		if ( ! $as_array ) {
 			return $query;
 		}
+		// if no query string exists then just return an empty array now
+		if ( empty( $query )) {
+			return array();
+		}
 		// empty array to hold results
 		$query_params = array();
 		// now break apart the query string into separate params
-		$query = explode( '&', $url_bits[ 'query' ] );
+		$query = explode( '&', $query );
 		// loop thru our query params
 		foreach ( $query as $query_args ) {
 			// break apart the key value pairs
