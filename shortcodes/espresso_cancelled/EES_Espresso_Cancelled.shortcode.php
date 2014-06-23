@@ -59,10 +59,21 @@ class EES_Espresso_Cancelled  extends EES_Shortcode {
 	 *
 	 *  @access 	public
 	 *  @param		array 	$attributes
-	 *  @return 	void
+	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
-		EE_Registry::instance()->load_core( 'Session' )->clear_session( __CLASS__, __FUNCTION__ );
+		EE_Registry::instance()->load_core( 'Session' );
+		$transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
+		if ( $transaction instanceof EE_Transaction ) {
+			do_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', $transaction );
+			$registrations = $transaction->registrations();
+			foreach( $registrations as $registration ) {
+				if ( $registration instanceof EE_Registration ) {
+					do_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__registration', $registration );
+				}
+			}
+		}
+		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
 		return EE_Registry::instance()->REQ->get_output();
 	}
 

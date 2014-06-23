@@ -551,13 +551,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							'REG_group_size' => $total_items,
 							'REG_url_link'	=> $reg_url_link
 						));
+						// now create relations between various objects
+						$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
+						$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
+						$this->_transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
+					// if something failed...
 					} catch( Exception $e ) {
 						EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
 					}
-					$registration->_add_relation_to( $event, 'Event', array(), $event->ID() );
-					$registration->_add_relation_to( $item->ticket(), 'Ticket', array(), $item->ticket()->ID() );
-					$this->_transaction->_add_relation_to( $registration, 'Registration', array(), $reg_url_link );
-
 				}
 			}
 			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this->_transaction ));
@@ -1625,9 +1626,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	string
 	 */
 	public static function display_registration_footer() {
-		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );
 		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer', EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
-			echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></div>' );
+			if ( ! empty( EE_Registry::instance()->CFG->admin->affiliate_id )) {
+				$url = add_query_arg( array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id ), 'http://eventespresso.com/' );
+				$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', $url );
+				echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></div>' );
+			}
 		}
 	}
 

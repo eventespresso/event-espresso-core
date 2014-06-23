@@ -56,12 +56,12 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 	protected function _update_settings() {
 		$this->_payment_settings['access_key'] = $_POST['access_key'];
 		$this->_payment_settings['display_name'] = $_POST['display_name'];
-		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';		
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 
-	
-	
+
+
 
 	protected function _display_settings() {
 		?>
@@ -106,12 +106,12 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
 		$mijireh_settings = $this->_payment_settings;
 		$access_key = $mijireh_settings['access_key'];
-				
+
 		/* @var $transaction EE_Transaction */
 		if( ! $transaction){
 			$transaction = $total_line_item->transaction();
 		}
-		//get any of the current registrations, 
+		//get any of the current registrations,
 		$primary_registrant = $transaction->primary_registration();
 		$primary_attendee = $primary_registrant->attendee();
 		$order = array(
@@ -131,8 +131,8 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 				'quantity'=>$line_item->quantity()
 			);
 		}
-		
-	
+
+
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
 				$args = array(
 		'headers' => array(
@@ -145,30 +145,30 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		if(! $response instanceof WP_Error ){
 			$response_body = json_decode($response['body']);
 			if($response['response']['code'] == 201 || $response['response']['code'] == 200){
-			
+
 				$this->_gatewayUrl = $response_body->checkout_url;
 				$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
-				//chek if we already have an identical payment
+				//check if we already have an identical payment
 				$duplicate_properties = array(
-					'TXN_ID' => $transaction->ID(), 
-					'STS_ID' => EEM_Payment::status_id_failed, 
-					'PAY_method' => 'CART', 
-					'PAY_amount' => $transaction->total(), 
-					'PAY_gateway' => $this->_gateway_name, 
-					'PAY_gateway_response' => null, 
-					'PAY_po_number' => NULL, 
+					'TXN_ID' => $transaction->ID(),
+					'STS_ID' => EEM_Payment::status_id_failed,
+					'PAY_method' => 'CART',
+					'PAY_amount' => $transaction->total(),
+					'PAY_gateway' => $this->_gateway_name,
+					'PAY_gateway_response' => null,
+					'PAY_po_number' => NULL,
 					'PAY_extra_accntng'=>$primary_registrant->reg_code(),
-					'PAY_via_admin' => false, 
+					'PAY_via_admin' => false,
 				);
 				$unique_properties = array(
-					'PAY_txn_id_chq_nmbr' => $response_body->order_number, 
-					'PAY_timestamp' => $transaction->datetime(), 				
+					'PAY_txn_id_chq_nmbr' => $response_body->order_number,
+					'PAY_timestamp' => current_time( 'mysql', FALSE ),
 					'PAY_details' => (array)$response_body
 				);
 				$properties = array_merge($unique_properties,$duplicate_properties);
 				$duplicate_payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
 				if($duplicate_payment){
-					$payment = $duplicate_payment; 
+					$payment = $duplicate_payment;
 				}else{
 					$payment = EE_Payment::new_instance();
 				}
@@ -183,7 +183,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 					$mijireh_error = $response['body'];
 				}
 				$error_message = sprintf(__("Error response from Mijireh: %s", 'event_espresso'),$mijireh_error);
-				
+
 				EE_Error::add_error($error_message);
 				throw new EE_Error($error_message);
 			}
@@ -194,9 +194,9 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		}
 		$this->redirect_after_reg_step_3();
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Override's parent to only change the FORM's method to a GET instead of a POST
 	 * @return array
 	 */
@@ -218,9 +218,9 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		//mijireh actually doesnt do IPNs. Instead, when we load the thank you page we just retrieve the payment's status in mijireh and updated our payment and transaction etc
 		return true;
 	}
-	
-	
-	
+
+
+
 
 	public function espresso_display_payment_gateways( $selected_gateway = '' ) {
 		$this->_css_class = $selected_gateway == $this->_gateway_name ? '' : ' hidden';
@@ -263,17 +263,17 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 					default:
 						$payment->set_status(EEM_Payment::status_id_declined);
 				}
-				
+
 				$payment->save();
 				$this->update_transaction_with_payment($transaction, $payment);
 			}
 		}else{
 			throw new EE_Error(sprintf(__("Could not find Mijireh payment for transaction %s",'event_espresso'),$transaction->ID()));
 		}
-		
+
 		parent::thank_you_page_logic($transaction);
 	}
-	
+
 	/**
 	 * Gets the array of settings for this gateway
 	 * @return array
@@ -282,4 +282,3 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		return $this->_payment_settings;
 	}
 }
-	
