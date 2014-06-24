@@ -943,6 +943,15 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			//todo add filter by category
 			);
 
+		//cap checks
+		if ( ! EE_Registry::instance()->current_user_can( 'edit_private_venue', 'get_venue' ) ) {
+			$where['status**'] = array( '!=' , 'private' );
+		}
+
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_venue', 'get_venues' ) ) {
+			$where['VNU_wp_user'] =  get_current_user_id();
+		}
+
 
 		if ( isset( $this->_req_data['s'] ) ) {
 			$sstr = '%' . $this->_req_data['s'] . '%';
@@ -965,6 +974,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'Event.EVT_external_URL' => array('LIKE', $sstr ),
 				);
 		}
+
 
 		$venues = $count ? $this->_venue_model->count( array($where), 'VNU_ID' ) : $this->_venue_model->get_all( array( $where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $sort ) );
 
