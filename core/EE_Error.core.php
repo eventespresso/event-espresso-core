@@ -835,6 +835,7 @@ class EE_Error extends Exception {
 			if ( empty( $persistent_admin_notices )) {
 				add_option( 'ee_pers_admin_notices', array(), '', 'no' );
 			}
+			$pan_name = sanitize_key( $pan_name );
 			if ( ! array_key_exists( $pan_name, $persistent_admin_notices ) || $force_update ) {
 				$persistent_admin_notices[ $pan_name ] = $pan_message;
 				update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
@@ -901,8 +902,8 @@ class EE_Error extends Exception {
 			return '
 			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix" style="border-left: 4px solid #E76700;">
 				<p>' . $pan_message . '</p>
-				<a class="dismiss-ee-nag-notice hide-if-no-js dashicons" style="float: right; cursor: pointer;" rel="' . $pan_name . '">
-					<span class="dashicons-dismiss" style="position:relative; top:2px; margin-right:.25em;"></span>'.__( 'Dismiss', 'event_espresso' ) .'
+				<a class="dismiss-ee-nag-notice hide-if-no-js" style="float: right; cursor: pointer; text-decoration:none;" rel="' . $pan_name . '">
+					<span class="dashicons dashicons-dismiss" style="position:relative; top:-1px; margin-right:.25em;"></span>'.__( 'Dismiss', 'event_espresso' ) .'
 				</a>
 				<div style="clear:both;"></div>
 			</div>';
