@@ -1159,12 +1159,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( !is_array( $config ) || ( is_array($config) && (isset($config['nav']) && !$config['nav'] ) || !isset($config['nav'] ) ) )
 				continue; //no nav tab for this config
 
-			if ( ! $this->check_user_access( $slug, TRUE ) )
-				continue; //no nav tab becasue current user does not have access.
-
 			//check for persistent flag
 			if ( isset( $config['nav']['persistent']) && !$config['nav']['persistent'] && $slug !== $this->_req_action )
 				continue; //nav tab is only to appear when route requested.
+
+			if ( ! $this->check_user_access( $slug, TRUE ) )
+				continue; //no nav tab becasue current user does not have access.
 
 			$css_class = isset( $config['css_class'] ) ? $config['css_class'] . ' ' : '';
 			$this->_nav_tabs[$slug] = array(
