@@ -241,12 +241,10 @@ final class EE_Capabilities extends EE_Base {
 				'read_default_price_type',
 				//registration form
 				'edit_question',
-				'edit_others_questions',
 				'edit_system_question',
 				'read_question',
 				'delete_question',
 				'edit_question_group',
-				'edit_others_question_groups',
 				'read_question_group',
 				'edit_system_question_group',
 				'delete_question_group',

@@ -359,8 +359,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'bulk_action' => array(
 					'trash_questions' => __('Trash', 'event_espresso'),
 					)
-				),
-			'trash' => array(
+				)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can('delete_question', 'trash_questions' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
@@ -368,8 +371,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'delete_questions' => __('Delete Permanently', 'event_espresso'),
 					'restore_questions' => __('Restore', 'event_espresso'),
 					)
-				),
-		);
+				);
+		}
 	}
 
 
@@ -386,8 +389,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'bulk_action' => array(
 					'trash_question_groups' => __('Trash', 'event_espresso'),
 					)
-				),
-			'trash' => array(
+				)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question_group', 'trash_question_groups' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
@@ -395,8 +401,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'delete_question_groups' => __('Delete Permanently', 'event_espresso'),
 					'restore_question_groups' => __('Restore', 'event_espresso'),
 					)
-				),
-		);
+				);
+		}
 	}
 
 
