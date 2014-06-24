@@ -742,7 +742,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		$chk_data = array( 'REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID, 'CHK_in' => $new_status );
 		$checkin = EE_Checkin::new_instance( $chk_data );
 		$updated = $checkin->save();
-		if ( $updated == 0 ) {
+		if ( $updated === 0 ) {
 			$status_to = FALSE;
 		}
 		return $status_to;
