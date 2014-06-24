@@ -720,19 +720,19 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'desc' => __('This is the Primary Registrant', 'event_espresso')
 				),
 			'view_details' => array(
-				'class' => 'dashicons dashicons-search',
+				'class' => 'dashicons dashicons-clipboard',
 				'desc' => __('View Registration Details', 'event_espresso')
 				),
 			'edit_attendee' => array(
-				'class' => 'dashicons dashicons-businessman',
+				'class' => 'ee-icon ee-icon-user-edit ee-icon-size-16',
 				'desc' => __('Edit Contact Details', 'event_espresso')
 				),
 			'resend_registration' => array(
-				'class' => 'ee-icon ee-icon-email-send',
+				'class' => 'dashicons dashicons-email-alt',
 				'desc' => __('Resend Registration Details', 'event_espresso')
 				),
 			'view_transaction' => array(
-				'class' => 'ee-icon ee-icon-cash',
+				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
 				),
 			'approved_status' => array(
@@ -1336,8 +1336,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['taxes'] = array();
 		}
 
-		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'edit_transaction', 'view_transaction' ) ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __('View Transaction'), 'button secondary-button right ee-icon ee-icon-cash' ) : '';
-		$this->_template_args['resend_registration_button'] = EE_Registry::instance()->CAP->current_user_can( 'send_message', 'resend_registration' ) ?  EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __('Resend Registration'), 'button secondary-button ee-icon ee-icon-email-send right' ) : '';
+		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'edit_transaction', 'view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
+		$this->_template_args['resend_registration_button'] = EE_Registry::instance()->CAP->current_user_can( 'send_message', 'resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
 
 		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );
 

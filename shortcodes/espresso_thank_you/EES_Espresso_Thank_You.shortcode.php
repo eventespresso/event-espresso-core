@@ -476,10 +476,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 * 	resend_reg_confirmation_email
 	 */
 	public static function resend_reg_confirmation_email() {
+		EE_Registry::instance()->load_core( 'Request_Handler' );
+		$reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link' );
 		// was a REG_ID passed ?
-		if ( EE_Registry::instance()->load_core( 'Request_Handler' )->is_set( 'reg_url_link' )) {
+		if ( $reg_url_link ) {
 			// get registration from reg_url_link
-			$registration = EE_Registry::instance()->load_model( 'Registration' )->get_one( array( array( 'REG_url_link' => EE_Registry::instance()->REQ->get( 'reg_url_link' ))));
+			$registration = EE_Registry::instance()->load_model( 'Registration' )->get_one( array( array( 'REG_url_link' => $reg_url_link )));
 			if ( $registration instanceof EE_Registration ) {
 				// resend email
 				EE_Registry::instance()->load_lib( 'Messages_Init' )->process_resend( TRUE, array( '_REG_ID' => $registration->ID() ));
@@ -505,7 +507,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			EE_Error::get_notices( TRUE, TRUE );
 			wp_safe_redirect(
 				add_query_arg(
-					array( 'e_reg_url_link'=> EE_Registry::instance()->REQ->get( 'e_reg_url_link' )),
+					array( 'e_reg_url_link'=> $reg_url_link ),
 					EE_Registry::instance()->CFG->core->thank_you_page_url()
 				)
 			);

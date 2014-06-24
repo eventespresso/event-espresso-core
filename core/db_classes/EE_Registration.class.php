@@ -798,21 +798,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		}
 		$status_paths = array( 0 => 1, 1 => 2, 2 => 1 );
 		//start by getting the current status so we know what status we'll be changing to.
-		$checkin = $this->get_first_related( 'Checkin', array( array( 'DTT_ID' => $DTT_ID ), 'order_by' => array( 'CHK_timestamp' => 'DESC' ) ) );
-		if ( $checkin instanceof EE_Checkin ) {
-			$cur_status = $this->check_in_status_for_datetime( NULL, $checkin );
-			$status_to = $status_paths[ $cur_status ];
-			//add relation - note Check-ins are always creating new rows because we are keeping track of Check-ins over time.  Eventually we'll probably want to show a list table for the individual Check-ins so that can be managed.
-			$new_status = $status_to == 2 ? 0 : $status_to;
-			$chk_data = array( 'REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID, 'CHK_in' => $new_status );
-			$checkin = EE_Checkin::new_instance( $chk_data );
-			$updated = $checkin->save();
-			if ( $updated == 0 ) {
-				$status_to = FALSE;
-			}
-			return $status_to;
+		$cur_status = $this->check_in_status_for_datetime( $DTT_ID, NULL );
+		$status_to = $status_paths[ $cur_status ];
+		//add relation - note Check-ins are always creating new rows because we are keeping track of Check-ins over time.  Eventually we'll probably want to show a list table for the individual Check-ins so that can be managed.
+		$new_status = $status_to == 2 ? 0 : $status_to;
+		$chk_data = array( 'REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID, 'CHK_in' => $new_status );
+		$checkin = EE_Checkin::new_instance( $chk_data );
+		$updated = $checkin->save();
+		if ( $updated === 0 ) {
+			$status_to = FALSE;
 		}
-		return FALSE;
+		return $status_to;
 	}
 
 

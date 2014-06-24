@@ -289,30 +289,30 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 	//Build row actions
 	$view_lnk = '
 		<li>
-			<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
-				<span class="dashicons dashicons-search"></span>
+			<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '" class="tiny-text">
+				<span class="dashicons dashicons-cart"></span>
 			</a>
 		</li>';
 
 	$dl_invoice_lnk = '
 		<li>
-			<a title="' . __( 'Download Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'">
-				<span class="ee-icon ee-icon-PDF-file-type"></span>
+			<a title="' . __( 'Download Transaction Invoice', 'event_espresso' ) . '" target="_blank" href="'.$dl_invoice_lnk_url.'" class="tiny-text">
+				<span class="ee-icon ee-icon-PDF-file-type ee-icon-size-16"></span>
 			</a>
 		</li>';
 
 	$send_pay_lnk = EE_Registry::instance()->CAP->current_user_can( 'send_message', 'send_payment_reminder' ) ? '
 		<li>
-			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '">
-				<span class="ee-icon ee-icon-payment-reminder"></span>
+			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" class="tiny-text">
+				<span class="dashicons dashicons-email-alt"></span>
 			</a>
 		</li>' : '';
 	$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
 
 	$view_reg_lnk = EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'view_registration', $registration->ID() ) ? '
 		<li>
-			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">
-				<span class="ee-icon ee-icon-user-edit"></span>
+			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '" class="tiny-text">
+				<span class="dashicons dashicons-clipboard"></span>
 			</a>
 		</li>' : '';
 

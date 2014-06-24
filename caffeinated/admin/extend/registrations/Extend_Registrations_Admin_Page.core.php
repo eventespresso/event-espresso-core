@@ -720,7 +720,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$query_args = array(
 			'action' => 'registration_checkins',
 			'DTT_ID' => isset( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : 0,
-			'_REGID' => isset( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : 0
+			'_REGID' => isset( $this->_req_data['_REGID'] ) ? $this->_req_data['_REGID'] : 0
 			);
 		if ( !empty( $this->_req_data['checkbox'] ) && is_array( $this->_req_data['checkbox'] ) ) {
 			while ( list( $CHK_ID, $value ) = each( $this->_req_data['checkbox'] ) ) {

@@ -364,7 +364,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _transaction_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'class' => 'dashicons dashicons-search',
+				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
 				),
 			'download_invoice' => array(
@@ -372,11 +372,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'desc' => __('Download Transaction Invoice as a PDF', 'event_espresso')
 				),
 			'send_payment_reminder' => array(
-				'class' => 'ee-icon ee-icon-payment-reminder',
+				'class' => 'dashicons dashicons-email-alt',
 				'desc' => __('Send Payment Reminder', 'event_espresso')
 				),
 			'view_registration' => array(
-				'class' => 'ee-icon ee-icon-user-edit',
+				'class' => 'dashicons dashicons-clipboard',
 				'desc' => __('View Registration Details', 'event_espresso')
 				),
 			'blank' => array(
@@ -449,7 +449,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
 
 		if ( EE_Registry::instance()->CAP->current_user_can( 'send_message', 'send_payment_reminder' ) ) {
-			$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __('Send Payment Reminder'), 'button secondary-button right ee-icon ee-icon-payment-reminder' ) : '';
+		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __(' Send Payment Reminder'), 'button secondary-button right',  'dashicons dashicons-email-alt' ) : '';
 		}
 
 		$amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
