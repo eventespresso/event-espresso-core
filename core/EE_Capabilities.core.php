@@ -120,8 +120,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Edit( 'edit_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_price_type', array( EEM_Price_Type::instance(), '', 'edit_others_default_price_type', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question', array( EEM_Question::instance(), '', 'edit_others_question', 'edit_system_question' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question_group', array( EEM_Question_Group::instance(), '', 'edit_others_question_group', 'edit_system_question_group' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question', array( EEM_Question::instance(), '', '', 'edit_system_question' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_system_question_group' ) ),
 			//reads
 			new EE_Meta_Capability_Map_Read( 'read_event', array( EEM_Event::instance(), '', 'read_others_event', 'read_private_event' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_venue', array( EEM_Venue::instance(), '', 'read_others_venue', 'read_private_venue' ) ),
@@ -131,9 +131,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Messages_Cap( 'read_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_ticket', array( EEM_Ticket::instance(), '', '', 'edit_others_default_ticket' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_price', array( EEM_Price::instance(), '', '', 'edit_others_default_price' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_default_price_type', array( EEM_Price_Type::instance(), '', '', 'edit_others_default_price_type' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_question', array( EEM_Question::instance(), '', '', 'edit_others_question' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_others_question_group' ) ),
+			new EE_Meta_Capability_Map_Read( 'read_default_price_type', array( EEM_Price_Type::instance(), '', '', 'edit_others_default_price_type' ) )
+
 			//deletes
 			new EE_Meta_Capability_Map_Delete( 'delete_event', array( EEM_Event::instance(), 'edit_published_event', 'edit_others_event', 'delete_private_event' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_venue', array( EEM_Venue::instance(), 'edit_published_venue', 'edit_others_venue', 'delete_private_venue' ) ),
@@ -144,8 +143,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_price', array( EEM_Price::instance(), '', 'edit_others_default_price', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_price_type', array( EEM_Price_Type::instance(), '', 'edit_others_default_price_type', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', 'edit_others_question', 'edit_system_question' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', 'edit_others_question_group', 'edit_system_question_group' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', '', 'edit_system_question' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_system_question_group' ) ),
 		);
 
 		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
@@ -792,10 +791,8 @@ class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Ma
 
 		if ( $is_system ) {
 			$caps[] = $this->private_cap;
-		} elseif ( $obj->wp_user() && $user_id == $obj->wp_user() ) {
-			$caps[] = $cap;
 		} else {
-			$caps[] = $this->others_cap;
+			$caps[] = $cap;
 		}
 
 		return $caps;
