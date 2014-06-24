@@ -236,15 +236,15 @@ class EE_Register_CPTs {
 						'read_post' => 'read_contact',
 						'delete_post' => 'delete_contact',
 						'edit_posts' => 'edit_contacts',
-						'edit_others_posts' => 'edit_contact',
-						'publish_posts' => 'edit_contact',
-						'read_private_posts' => 'edit_contact',
+						'edit_others_posts' => 'edit_contacts',
+						'publish_posts' => 'edit_contacts',
+						'read_private_posts' => 'edit_contacts',
 						'delete_posts' => 'delete_contacts',
-						'delete_private_posts' => 'delete_contact',
-						'delete_published_posts' => 'delete_contact',
-						'delete_others_posts' => 'delete_contact',
-						'edit_private_posts' => 'delete_contact',
-						'edit_published_posts' => 'edit_contact'
+						'delete_private_posts' => 'delete_contacts',
+						'delete_published_posts' => 'delete_contacts',
+						'delete_others_posts' => 'delete_contacts',
+						'edit_private_posts' => 'delete_contacts',
+						'edit_published_posts' => 'edit_contacts'
 						),
 					'supports' => array( 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),
 				))
