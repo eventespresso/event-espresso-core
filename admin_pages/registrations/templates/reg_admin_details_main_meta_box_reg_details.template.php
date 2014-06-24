@@ -1,10 +1,10 @@
 <div id="admin-primary-mbox-reg-details-dv" class="admin-primary-mbox-dv">
-	
+
 	<?php echo $view_transaction_button; ?>
 	<?php echo $resend_registration_button; ?>
 	<br/>
-	
-	<h4 class="admin-primary-mbox-h4"><?php _e( 'Registration Items', 'event_espresso' );?></h4>
+
+	<h4 class="admin-primary-mbox-h4 hdr-has-icon"><span class="dashicons dashicons-clipboard"></span><?php _e( 'Registration Items', 'event_espresso' );?></h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
 		<table class="admin-primary-mbox-tbl">
@@ -20,7 +20,7 @@
 				</tr>
 			</thead>
 			<tbody>
-		<?php foreach ( $line_items as $item ) : 
+		<?php foreach ( $line_items as $item ) :
 ?>
 			<tr>
 				<td class="jst-left"><?php echo $item->get('LIN_code');?></td>
@@ -44,23 +44,21 @@
 					<th class=" jst-rght" colspan="6"><?php _e( 'Grand Total', 'event_espresso' );?></th>
 					<th class=" jst-rght"><?php echo $grand_total; ?></th>
 				</tr>
-			</tbody>	
+			</tbody>
 		</table>
-	</div>	
+	</div>
 
-	<a id="display-additional-registration-session-info" class="display-the-hidden" rel="additional-registration-session-info">
-		<img src="<?php echo EE_IMAGES_URL;?>additional_info-10x10.png" alt="" />
-		<?php _e( 'view additional registration session details', 'event_espresso' );?>
+	<a id="display-additional-registration-session-info" class="display-the-hidden smaller-text" rel="additional-registration-session-info">
+		<span class="dashicons dashicons-plus-alt"></span><?php _e( 'view additional registration session details', 'event_espresso' );?>
 	</a>
 
 	<div id="additional-registration-session-info-dv" class="hidden">
 
-		<a id="hide-additional-registration-session-info" class="hide-the-displayed hidden" rel="additional-registration-session-info">
-			<img src="<?php echo EE_IMAGES_URL;?>close_additional_info-10x10.png" alt="" />
-			<?php _e( 'hide additional registration session details', 'event_espresso' );?>			
+		<a id="hide-additional-registration-session-info" class="hide-the-displayed hidden smaller-text" rel="additional-registration-session-info">
+			<span class="dashicons dashicons-dismiss"></span><?php _e( 'hide additional registration session details', 'event_espresso' );?>
 		</a>
-	<br class="clear"/>	
-		
+	<br class="clear"/>
+
 		<h4 class="admin-primary-mbox-h4"><?php _e( 'Registration Session Details', 'event_espresso' );?></h4>
 
 		<table id="admin-primary-mbox-reg-extra-session-info-tbl" class="form-table skinny-rows">
@@ -76,12 +74,12 @@
 				</tr>
 			<?php endforeach; // $reg_details?>
 			</tbody>
-		</table>	
-		<?php 
+		</table>
+		<?php
 		//printr( $full_session, 'full_session', 'auto' );
 		?>
 	</div>
-	
+
 	<br class="clear"/>
-	
+
 </div>
