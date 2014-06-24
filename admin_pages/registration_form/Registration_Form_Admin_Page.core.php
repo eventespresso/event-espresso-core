@@ -521,7 +521,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 						'OR' => array(
 							'QSG_system' => array( '>', 0 ),
 							'AND' => array(
-								'QSG_system' => array( '<', 0 ),
+								'QSG_system' => array( '<', 1 ),
 								'QSG_wp_user' => get_current_user_id()
 								)
 							)

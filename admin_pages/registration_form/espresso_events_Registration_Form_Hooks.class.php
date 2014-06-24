@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * espresso_events_Registration_Form_Hooks
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
  * Commenting/docs common to all children classes is found in the EE_Admin_Hooks parent.
- * 
+ *
  *
  * @package		espresso_events_Registration_Form_Hooks
  * @subpackage	includes/core/admin/messages/espresso_events_Registration_Form_Hooks.class.php
@@ -77,7 +77,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 		$post_evt = $EVT_MDL->get_one_by_ID( $post_id );
 		//restore revision for primary questions
 		$post_evt->restore_revision($revision_id, array('Question_Group'), array('Question_Group' => array('Event_Question_Group.EQG_primary' => 1 ) ) );
-		return $post_evt; //for any caffeinated functionality extending.		
+		return $post_evt; //for any caffeinated functionality extending.
 	}
 
 
@@ -98,10 +98,22 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
 			</p>
 			<?php
-			$QSGs = EEM_Event::instance()->get_all_question_groups();
+			//make sure we're only displaying the question groups for the current event author (or the current user if new event)
+			$qsg_where['AND'] = array(
+					'OR' => array(
+						'QSG_system' => array( '>', 0 ),
+						'AND' => array(
+							'QSG_system' => array('<', 1),
+							'QSG_wp_user' => !empty( $event_id ) ? $this->_event->wp_user() :get_current_user_id()
+							)
+						)
+					);
+			$qsg_where['QSG_deleted'] = FALSE;
+			$query_params = array( $qsg_where, 'order_by' => array( 'QSG_order' => 'ASC' ) );
+			$QSGs = EEM_Question_Group::instance()->get_all( $query_params );
 			$EQGs = !empty( $event_id ) ? $this->_event->get_many_related('Question_Group', array(array('Event_Question_Group.EQG_primary' => 1 )) ) : array();
 			$EQGids = array_keys($EQGs);
-			
+
 			//printr( $QSGs, '$QSGs  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 			if ( ! empty( $QSGs )) {
@@ -111,10 +123,10 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 					$checked = ( in_array( $QSG->ID(), $EQGids ) || $QSG->get('QSG_system') == 1 ) ? ' checked="checked"' : '';
 					$visibility = $QSG->get('QSG_system') == 1 ? ' style="visibility:hidden"' : '';
 					$edit_link = $this->_adminpage_obj->add_query_args_and_nonce( array( 'action' => 'edit_question_group', 'QSG_ID' => $QSG->ID() ), EE_FORMS_ADMIN_URL );
-					
+
 					$html .= '
 					<p id="event-question-group-' . $QSG->ID() . '">
-						<input value="' . $QSG->ID() . '" type="checkbox"' . $visibility . ' name="question_groups[' . $QSG->ID() . ']"' . $checked . ' /> 
+						<input value="' . $QSG->ID() . '" type="checkbox"' . $visibility . ' name="question_groups[' . $QSG->ID() . ']"' . $checked . ' />
 						<a href="' . $edit_link . '" title="Edit ' . $QSG->get('QSG_name') . ' Group" target="_blank">' . $QSG->get('QSG_name') . '</a>
 					</p>';
 				}

@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * espresso_events_Registration_Form_Hooks_Extend
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
  * Commenting/docs common to all children classes is found in the EE_Admin_Hooks parent.
- * 
+ *
  *
  * @package		espresso_events_Registration_Form_Hooks_Extend
  * @subpackage	includes/core/admin/messages/espresso_events_Registration_Form_Hooks_Extend.class.php
@@ -93,7 +93,19 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 				<?php _e('to your event.', 'event_espresso'); ?>
 			</p>
 			<?php
-			$QSGs = EEM_Event::instance()->get_all_question_groups();
+			//make sure we're only displaying the question groups for the current event author (or the current user if new event)
+			$qsg_where['AND'] = array(
+					'OR' => array(
+						'QSG_system' => array( '>', 0 ),
+						'AND' => array(
+							'QSG_system' => array('<', 1),
+							'QSG_wp_user' => !empty( $event_id ) ? $this->_event->wp_user() :get_current_user_id()
+							)
+						)
+					);
+			$qsg_where['QSG_deleted'] = FALSE;
+			$query_params = array( $qsg_where, 'order_by' => array( 'QSG_order' => 'ASC' ) );
+			$QSGs = EEM_Question_Group::instance()->get_all( $query_params );
 			$EQGs = !empty( $event_id ) ? $this->_event->get_many_related('Question_Group', array(array('Event_Question_Group.EQG_primary' => 0 )) ) : array();
 			$EQGids = array_keys($EQGs);
 
@@ -106,7 +118,7 @@ class espresso_events_Registration_Form_Hooks_Extend extends espresso_events_Reg
 
 					$html .= '
 					<p id="event-question-group-' . $QSG->ID() . '">
-						<input value="' . $QSG->ID() . '" type="checkbox" name="add_attendee_question_groups[' . $QSG->ID() . ']"' . $checked . ' /> 
+						<input value="' . $QSG->ID() . '" type="checkbox" name="add_attendee_question_groups[' . $QSG->ID() . ']"' . $checked . ' />
 						<a href="' . $edit_link . '" title="Edit ' . $QSG->get('QSG_name') . ' Group" target="_blank">' . $QSG->get('QSG_name') . '</a>
 					</p>';
 				}
