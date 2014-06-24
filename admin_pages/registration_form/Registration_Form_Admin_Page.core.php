@@ -275,16 +275,19 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 //				'bulk_action' => array(
 //					'trash_questions' => __('Trash', 'event_espresso'),
 //					)
-				),
-			'trash' => array(
+				)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'trash_questions' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
 //				'bulk_action' => array(
 //					'delete_questions' => __('Delete Permanently', 'event_espresso'),
 //					'restore_questions' => __('Restore', 'event_espresso'),
-				)
-		);
+				);
+		}
 	}
 
 	/**
@@ -506,6 +509,37 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}else{
 				$query_params[0]=array(
 					'QST_display_text'=>array('LIKE',"%$search_string%")
+					);
+			}
+		}
+
+		//capability checks
+		if ( $model instanceof EEM_Question_Group ) {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_question_groups', 'edit_question_group' ) ) {
+				$query_params[0] = array(
+					'AND' => array(
+						'OR' => array(
+							'QSG_system' => array( '>', 0 ),
+							'AND' => array(
+								'QSG_system' => array( '<', 0 ),
+								'QSG_wp_user' => get_current_user_id()
+								)
+							)
+						)
+					);
+			}
+		} else {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_questions', 'edit_question' ) ) {
+				$query_params[0] = array(
+					'AND' => array(
+						'OR' => array(
+							'QST_system' => array( '!=', '' ),
+							'AND' => array(
+								'QST_system' => '',
+								'QST_wp_user' => get_current_user_id()
+								)
+							)
+						)
 					);
 			}
 		}
