@@ -59,7 +59,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				),
 			'ticket_list_table' => array(
 				'func' => '_tickets_overview_list_table',
-				'capability' => 'read_default_ticket'
+				'capability' => 'read_default_tickets'
 				),
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
@@ -70,7 +70,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				),
 			'trash_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'edit_default_ticket',
+				'capability' => 'edit_default_tickets',
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE )
 				),
@@ -82,7 +82,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				),
 			'restore_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'edit_default_ticket',
+				'capability' => 'edit_default_tickets',
 				'noheader' => TRUE
 				),
 			'delete_ticket' => array(
@@ -93,7 +93,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				),
 			'delete_tickets' => array(
 				'func' => '_delete_ticket',
-				'capability' => 'edit_default_ticket',
+				'capability' => 'edit_default_tickets',
 				'noheader' => TRUE
 				),
 			'import_page'=> array(

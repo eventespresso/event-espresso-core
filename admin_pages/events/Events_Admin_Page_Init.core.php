@@ -51,7 +51,7 @@ class Events_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => 'espresso_events',
 			'menu_label' => EVENTS_LABEL,
-			'capability' => 'read_event',
+			'capability' => 'read_events',
 			'admin_init_page' => $this
 			));
 	}

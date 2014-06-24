@@ -138,7 +138,7 @@ class About_Admin_Page extends EE_Admin_Page {
 			unset( $steps['gateways'] );
 		}
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'edit' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_events', 'edit' ) ) {
 			unset( $steps['event'] );
 		}
 

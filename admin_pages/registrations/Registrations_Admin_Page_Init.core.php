@@ -65,7 +65,7 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_CPT_Init  {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => REG_PG_SLUG,
 			'menu_label' => __('Registrations', 'event_espresso'),
-			'capability' => 'read_registration',
+			'capability' => 'read_registrations',
 			'admin_init_page' => $this
 			));
 	}

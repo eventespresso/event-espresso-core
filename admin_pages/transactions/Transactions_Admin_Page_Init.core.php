@@ -68,7 +68,7 @@ class Transactions_Admin_Page_Init extends EE_Admin_Page_Init {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => TXN_PG_SLUG,
 			'menu_label' => __('Transactions', 'event_espresso'),
-			'capability' => 'read_transaction',
+			'capability' => 'read_transactions',
 			'admin_init_page' => $this
 			));
 	}
