@@ -132,8 +132,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Read( 'read_default_ticket', array( EEM_Ticket::instance(), '', '', 'edit_others_default_ticket' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_price', array( EEM_Price::instance(), '', '', 'edit_others_default_price' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_price_type', array( EEM_Price_Type::instance(), '', '', 'edit_others_default_price_type' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_default_question', array( EEM_Question::instance(), '', '', 'edit_others_default_question' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_default_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_others_default_question_group' ) ),
+			new EE_Meta_Capability_Map_Read( 'read_question', array( EEM_Question::instance(), '', '', 'edit_others_question' ) ),
+			new EE_Meta_Capability_Map_Read( 'read_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_others_question_group' ) ),
 			//deletes
 			new EE_Meta_Capability_Map_Delete( 'delete_event', array( EEM_Event::instance(), 'edit_published_event', 'edit_others_event', 'delete_private_event' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_venue', array( EEM_Venue::instance(), 'edit_published_venue', 'edit_others_venue', 'delete_private_venue' ) ),
