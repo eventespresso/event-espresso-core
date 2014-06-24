@@ -47,7 +47,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		$new_page_routes = array(
 			'reports' => array(
 				'func' => '_transaction_reports',
-				'capability' => 'edit_transaction'
+				'capability' => 'edit_transactions'
 				)
 			);
 
@@ -59,7 +59,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 20
 					),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'transactions_reports_help_tab' => array(
 						'title' => __('Transaction Reports', 'event_espresso'),
 						'filename' => 'transactions_reports'

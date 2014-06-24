@@ -110,7 +110,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 				'default' => array(
 					'func' => '_transactions_overview_list_table',
-					'capability' => 'read_transaction'
+					'capability' => 'read_transactions'
 					),
 
 				'view_transaction' => array(
@@ -122,25 +122,25 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'send_payment_reminder'	=> array(
 					'func' => '_send_payment_reminder',
 					'noheader' => TRUE,
-					'capability' => 'edit_transaction'
+					'capability' => 'send_message'
 					),
 
 				'espresso_apply_payment' => array(
 				 	'func' => 'apply_payments_or_refunds',
 				 	'noheader' => TRUE,
-				 	'capability' => 'edit_payment'
+				 	'capability' => 'edit_payments'
 				 	),
 
 				'espresso_apply_refund'	=> array(
 					'func' => 'apply_payments_or_refunds',
 					'noheader' => TRUE,
-					'capability' => 'edit_payment'
+					'capability' => 'edit_payments'
 					),
 
 				'espresso_delete_payment' => array(
 					'func' => 'delete_payment',
 					'noheader' => TRUE,
-					'capability' => 'delete_payment'
+					'capability' => 'delete_payments'
 					),
 
 		);
