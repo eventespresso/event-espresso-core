@@ -469,11 +469,12 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 	 * @param bool   $add_breaks
 	 * @return string
 	 */
-	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = 'l F jS, Y', $time_format = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE ) {
+	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = 'l F jS, Y', $time_format = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE, $limit = NULL ) {
+		
 		$date_format = apply_filters( 'FHEE__espresso_list_of_event_dates__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_list_of_event_dates__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
-		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID ,$show_expired );
+		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID, $show_expired, FALSE, $limit );
 		//d( $datetimes );
 		if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 			global $post;
