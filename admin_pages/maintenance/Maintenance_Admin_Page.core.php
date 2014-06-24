@@ -54,6 +54,11 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 	protected function _define_page_props() {
 		$this->_admin_page_title = EE_MAINTENANCE_LABEL;
+		$this->_labels = array(
+			'buttons' => array(
+				'reset_capabilities' => __( 'Reset Capabilities', 'event_espresso' )
+				)
+			);
 	}
 
 
@@ -107,7 +112,16 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				'func'=>'_rerun_migration_from_ee3',
 				'capability' => 'manage_options',
 				'noheader'=>true
-			)
+			),
+			'tools' => array(
+				'func' => '_tools_page',
+				'capability' => 'manage_options'
+				),
+			'reset_capabilities' => array(
+				'func' => '_reset_capabilities',
+				'capability' => 'manage_options',
+				'noheader' => true
+				)
 		);
 	}
 	protected function _set_page_config() {
@@ -137,7 +151,14 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				),
 				'require_nonce' => FALSE,
 				//'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-			)
+			),
+			'tools' => array(
+				'nav' => array(
+					'label' => __('Other Tools', 'event_espresso'),
+					'order' => 40
+					),
+				'require_nonce' => FALSE
+				),
 		);
 	}
 
@@ -438,6 +459,27 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 //		wp_enqueue_style('ee-text-links');
 //		//scripts
 //		wp_enqueue_script('ee-text-links');
+	}
+
+
+	public function load_scripts_styles_tools() {
+		wp_register_style( 'ee_tools_page', EE_MAINTENANCE_ASSETS_URL . 'ee-tools.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style( 'ee_tools_page' );
+	}
+
+
+
+	protected function _tools_page() {
+		$template_args['reset_capabilities_button'] = $this->get_action_link_or_button( 'reset_capabilities', 'reset_capabilities', array(),  'button button-primary' );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_MAINTENANCE_TEMPLATE_PATH . 'tools_page.template.php', $template_args, TRUE  );
+		$this->display_admin_page_with_sidebar();
+	}
+
+
+	protected function _reset_capabilities() {
+		EE_Registry::instance()->CAP->init_caps( true );
+		EE_Error::add_success( __('Default Event Espresso capabilities have been restored for all current roles.', 'event_espresso' ) );
+		$this->_redirect_after_action( FALSE, '', '', array( 'action' => 'tools' ), TRUE );
 	}
 
 
