@@ -52,7 +52,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 			'singular' => __('Event Venue', 'event_espresso' ),
 			'plural' => __('Event Venues', 'event_espresso' ),
 			'ajax' => TRUE, //for now,
-			'screen' => $this->_admin_page->get_current_screen()->id 
+			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
 		$this->_columns = array(
@@ -129,16 +129,19 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_VENUES_ADMIN_URL );
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_VENUES_ADMIN_URL );
 
-		$actions = array(
-			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Venue', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
-			);
+		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_venue', 'edit', $item->ID() ) ) {
+			$actions = array(
+				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Venue', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
+				);
+		}
 
-		if ( $item->count_related('Event') === 0 )
+		if ( $item->count_related('Event') === 0 && EE_Registry::instance()->CAP->current_user_can( 'delete_venue', 'delete_venue', $item->ID() ) ) {
 			$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Venue', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
+		}
 
 		$statuses = EEM_Venue::instance()->get_status_array();
 
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name()) . '</a></strong>';
+		$content = EE_Registry::instance()->CAP->current_user_can( 'edit_venue', 'edit', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name()) . '</a></strong>' : $item->name();
 		$content .= $item->status() == 'draft' ? ' - <span class="post-state">' . $statuses['draft'] . '</span>' : '';
 		$content .= $this->row_actions($actions);
 		return $content;
