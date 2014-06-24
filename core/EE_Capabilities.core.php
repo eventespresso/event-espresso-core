@@ -260,6 +260,8 @@ final class EE_Capabilities extends EE_Base {
 				'edit_others_message',
 				'edit_others_messages',
 				'read_others_messages',
+				'delete_message',
+				'delete_messages',
 				'send_message',
 				//tickets
 				'read_default_ticket',
