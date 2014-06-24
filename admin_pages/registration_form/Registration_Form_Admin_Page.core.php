@@ -513,8 +513,8 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 		}
 
-		//capability checks
-		if ( $model instanceof EEM_Question_Group ) {
+		//capability checks (just leaving this commented out for reference because it illustrates some complicated query params that could be useful when fully implemented)
+		/*if ( $model instanceof EEM_Question_Group ) {
 			if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_question_groups', 'edit_question_group' ) ) {
 				$query_params[0] = array(
 					'AND' => array(
@@ -542,7 +542,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 						)
 					);
 			}
-		}
+		}/**/
 
 		return $query_params;
 

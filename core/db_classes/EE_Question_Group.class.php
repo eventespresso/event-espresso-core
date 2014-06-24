@@ -192,18 +192,6 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class {
 		}
 		$_where = ! empty( $question_IDS_in_group ) ? array( 'QST_ID' => array( 'not_in', $question_IDS_in_group ) ) : array();
 
-		//allow for capability checks
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_questions', 'edit_question' ) ) {
-				$_where['AND'] = array(
-					'OR' => array(
-						'QST_system' => array( '!=', '' ),
-						'AND' => array(
-							'QST_system' => '',
-							'QST_wp_user' => get_current_user_id()
-							)
-						)
-					);
-			}
 		return EEM_Question::instance()->get_all( array( $_where, 'order_by' => array( 'QST_ID' => 'ASC' ) ) );
 	}
 

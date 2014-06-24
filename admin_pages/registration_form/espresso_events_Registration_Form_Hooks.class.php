@@ -98,16 +98,7 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks {
 				<?php _e('to your event. The personal information group is required for all events.', 'event_espresso'); ?>
 			</p>
 			<?php
-			//make sure we're only displaying the question groups for the current event author (or the current user if new event)
-			$qsg_where['AND'] = array(
-					'OR' => array(
-						'QSG_system' => array( '>', 0 ),
-						'AND' => array(
-							'QSG_system' => array('<', 1),
-							'QSG_wp_user' => !empty( $event_id ) ? $this->_event->wp_user() :get_current_user_id()
-							)
-						)
-					);
+
 			$qsg_where['QSG_deleted'] = FALSE;
 			$query_params = array( $qsg_where, 'order_by' => array( 'QSG_order' => 'ASC' ) );
 			$QSGs = EEM_Question_Group::instance()->get_all( $query_params );
