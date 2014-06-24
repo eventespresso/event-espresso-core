@@ -370,6 +370,29 @@ final class EE_Capabilities extends EE_Base {
 
 
 
+
+
+	/**
+	 * This is a wrapper for the WP user_can() function and follows the same style as the other wrappers in this class.
+	 *
+	 * @param int|WP_User $user    Either the user_id or a WP_User object
+	 * @param string $cap     The capability string being checked
+	 * @param string $context The context where the user_can is being called from (used in filters).
+	 * @param int    $id      Optional. Id for item where user_can is being called from ( used in map_meta_cap() filters)
+	 *
+	 * @return bool Whether user can or not.
+	 */
+	public function user_can( $user, $cap, $context, $id = 0 ) {
+		$user_can = ! empty( $id ) ? user_can( $user, $cap, $id ) : user_can( $user, $cap );
+
+		//apply filters (both a global on just the cap, and context specific.  Global overrides context specific)
+		$user_can = apply_filters( 'FHEE__EE_Capabilities__user_can__user_can__' . $context, $user_can, $user, $cap, $id );
+		$user_can = apply_filters( 'FHEE__EE_Capabilities__user_can__user_can', $user_can, $user, $context, $cap, $id );
+		return $user_can;
+	}
+
+
+
 	/**
 	 * Wrapper for the native WP current_user_can_for_blog() method.
 	 * This is provided as a handy method for a couple things:
