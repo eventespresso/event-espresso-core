@@ -200,7 +200,7 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 	function column_actions( $item ) {
-		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_message', 'add_new_message_template' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_messages', 'add_new_message_template' ) ) {
 			$create_args = array(
 				'GRP_ID' => $item->ID(),
 				'messenger' => $item->messenger(),

@@ -174,20 +174,20 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 				'default'=> array(
 					'func' => '_ee_default_messages_overview_list_table',
-					'capability' => 'edit_global_message'
+					'capability' => 'edit_global_messages'
 					),
 				'custom_mtps' => array(
 					'func' => '_ee_custom_messages_overview_list_table',
-					'capability' => 'read_message'
+					'capability' => 'read_messages'
 					),
 				'add_new_message_template'	=>array(
 					 'func' => '_add_message_template',
-					 'capability' => 'edit_message',
+					 'capability' => 'edit_messages',
 					 'noheader' => TRUE
 					),
 				'edit_message_template' => array(
 					'func' => '_edit_message_template',
-					'capability' => 'edit_message',
+					'capability' => 'edit_messages',
 					'obj_id' => $grp_id
 					),
 				'preview_message' => array(
@@ -197,7 +197,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'insert_message_template' => array(
 					'func' => '_insert_or_update_message_template',
-					'capability' => 'edit_message',
+					'capability' => 'edit_messages',
 					'args' => array( 'new_template' => TRUE ),
 					'noheader' => TRUE
 					 ),
@@ -249,12 +249,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'noheader' => TRUE
 					),
 				'settings' => array(
-					'func' =>' _settings',
+					'func' => '_settings',
 					'capability' => 'manage_options'
 					),
 				'reports' => array(
 					'func' => '_messages_reports',
-					'capability' => 'edit_global_message'
+					'capability' => 'edit_global_messages'
 					),
 		);
 	}

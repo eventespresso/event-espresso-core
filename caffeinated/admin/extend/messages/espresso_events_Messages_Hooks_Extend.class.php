@@ -166,7 +166,7 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	 */
 	public function create_new_custom() {
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_message', 'create_new_custom_ajax' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_messages', 'create_new_custom_ajax' ) ) {
 			wp_die( __('You don\'t have privileges to do this action', 'event_espresso' ) );
 		}
 
