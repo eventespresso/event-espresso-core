@@ -382,8 +382,11 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'bulk_action' => array(
 							'trash_price' => __('Move to Trash', 'event_espresso')
 						)
-				),
-			'trashed' => array(
+				)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price', 'trash_price' ) ) {
+			$this->_views['trashed'] = array(
 					'slug' => 'trashed',
 					'label' => __('Trash', 'event_espresso'),
 					'count' => 0,
@@ -391,8 +394,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'restore_price' => __('Restore from Trash', 'event_espresso'),
 							'delete_price' => __('Delete Permanently', 'event_espresso')
 						)
-				)
-		);
+				);
+		}
 	}
 
 
@@ -409,8 +412,11 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'bulk_action' => array(
 							'trash_price_type' => __('Move to Trash', 'event_espresso')
 						)
-				),
-			'trashed' => array(
+				)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price_type', 'trash_price_type' ) ) {
+			 $this->_views['trashed'] = array(
 					'slug' => 'trashed',
 					'label' => __('Trash', 'event_espresso'),
 					'count' => 0,
@@ -418,8 +424,8 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 							'restore_price_type' => __('Restore from Trash', 'event_espresso'),
 							'delete_price_type' => __('Delete Permanently', 'event_espresso')
 						)
-				)
-		);
+				);
+		}
 	}
 
 
