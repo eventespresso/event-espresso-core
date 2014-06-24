@@ -28,14 +28,16 @@ class EEH_Venue_View extends EEH_Base {
 	private static $_venue = NULL;
 
 
+
 	/**
-	 * 	get_venue
-	* 	attempts to retrieve an EE_Venue object any way it can
+	 *    get_venue
+	 *    attempts to retrieve an EE_Venue object any way it can
 	 *
-	 *  @access 	private
-	 *  @return 	object
+	 * @access    public
+	 * @param int $VNU_ID
+	 * @return    object
 	 */
-	private static function get_venue( $VNU_ID = FALSE ) {
+	public static function get_venue( $VNU_ID = 0, $look_in_event = TRUE ) {
 		$VNU_ID = absint( $VNU_ID );
 		// do we already have the Venue you are looking for?
 		if ( EEH_Venue_View::$_venue instanceof EE_Venue && EEH_Venue_View::$_venue->ID() == $VNU_ID ) {
@@ -65,27 +67,29 @@ class EEH_Venue_View extends EEH_Base {
 				break;
 
 				case 'espresso_events':
-					// grab the events related venues
-					$venues = EEH_Venue_View::get_event_venues();
-					// make sure the result is an array
-					$venues = is_array( $venues ) ? $venues : array();
-					// do we have an ID for a specific venue?
-					if ( $VNU_ID ) {
-						// loop thru the related venues
-						foreach( $venues as $venue ) {
-							// untill we find the venue we're looking for
-							if ( $venue->ID() == $VNU_ID ) {
-								EEH_Venue_View::$_venue = $venue;
-								break;
+					if ( $look_in_event ) {
+						// grab the events related venues
+						$venues = EEH_Venue_View::get_event_venues();
+						// make sure the result is an array
+						$venues = is_array( $venues ) ? $venues : array();
+						// do we have an ID for a specific venue?
+						if ( $VNU_ID ) {
+							// loop thru the related venues
+							foreach( $venues as $venue ) {
+								// until we find the venue we're looking for
+								if ( $venue->ID() == $VNU_ID ) {
+									EEH_Venue_View::$_venue = $venue;
+									break;
+								}
+								// if the venue being asked for is not related to the global event post,
+								// still return the venue being asked for
 							}
-							// if the venue being asked for is not related to the global event post,
-							// still return the venue being asked for
+							// no venue ID ?
+							// then the global post is an events post and this function was called with no argument
+						} else {
+							// just grab the first related event venue
+							EEH_Venue_View::$_venue = reset( $venues );
 						}
-					// no venue ID ?
-					// then the global post is an events post and this function was called with no argument
-					} else {
-						// just grab the first related event venue
-						EEH_Venue_View::$_venue = reset( $venues );
 					}
 				break;
 
