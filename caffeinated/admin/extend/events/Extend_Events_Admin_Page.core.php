@@ -334,7 +334,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 
 
 	public function additional_legend_items($items) {
-		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'view_reports' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_registrations', 'view_reports' ) ) {
 			$items['reports'] = array(
 					'class' => 'dashicons dashicons-chart-bar',
 					'desc' => __('Event Reports', 'event_espresso')

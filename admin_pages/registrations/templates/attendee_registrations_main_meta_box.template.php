@@ -25,9 +25,9 @@
 					<?php
 							$reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$registration->ID() ), REG_ADMIN_URL );
 							echo EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'view_registration', $registration->ID() ) ? '
-							<a href="'.$reg_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' sprintf( __( '
-								View Registration ', 'event_espresso'), $registration->ID() )';
-							</a>' : '';
+							<a href="'.$reg_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . sprintf( __( '
+								View Registration ', 'event_espresso'), $registration->ID() ) .
+							'</a>' : '';
 					?>
 					</td>
 					<td class="jst-left">

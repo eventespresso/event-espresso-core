@@ -148,7 +148,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_views['all']['count'] = $this->_total_registrations();
 		$this->_views['month']['count'] = $this->_total_registrations_this_month();
 		$this->_views['today']['count'] = $this->_total_registrations_today();
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registration', 'delete_registration' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registrations', 'delete_registration' ) ) {
 			$this->_views['trash']['count'] = $this->_total_registrations(TRUE);
 		}
 	}
@@ -470,7 +470,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>' : '';
 
-	       $edit_lnk = EE_Registry::instance()->CAP->current_user_can('edit_contact', 'edit_attendee', $item->attendee_ID() ) ?'
+	       $edit_lnk = EE_Registry::instance()->CAP->current_user_can('edit_contacts', 'edit_attendee' ) ?'
 		<li>
 			<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact Details', 'event_espresso' ) . '" class="tiny-text">
 				<div class="ee-icon ee-icon-user-edit ee-icon-size-16"></div>

@@ -89,18 +89,18 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	protected function _get_table_filters() {
-		$filters = array();
+		$filters = $where = array();
+
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
 
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
-
 			//note possible capability restrictions
-			if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_private_event', 'get_events') ) {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_private_events', 'get_events') ) {
 				$where['status**'] =  array( '!=', 'private' );
 			}
 
-			if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_event', 'get_events' ) ) {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_events', 'get_events' ) ) {
 				$where['EVT_wp_user'] =  get_current_user_id();
 			}
 
@@ -207,14 +207,14 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_ATT_name(EE_Registration $item) {
 		// edit attendee link
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
-		$name_link = EE_Registry::instance()->CAP->current_user_can( 'edit_contact', 'edit_contact' ) ?  '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>' : $item->attendee()->full_name();
+		$name_link = EE_Registry::instance()->CAP->current_user_can( 'edit_contacts', 'edit_contact' ) ?  '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Contact', 'event_espresso' ) . '">' . $item->attendee()->full_name() . '</a>' : $item->attendee()->full_name();
 		$name_link .= $item->count() == 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>	' : '';
 
 		$actions = array();
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$DTT_ID = empty( $DTT_ID ) && !empty( $this->_req_data['event_id'] ) ? EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID() : $DTT_ID;
 
-		if ( !empty($DTT_ID) && EE_Registry::instance()->CAP->current_user_can( 'read_checkin', 'registration_checkins' ) ) {
+		if ( !empty($DTT_ID) && EE_Registry::instance()->CAP->current_user_can( 'read_checkins', 'registration_checkins' ) ) {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
 			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('View all the check-ins/checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
@@ -254,7 +254,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_Event(EE_Registration $item) {
 		$event = $this->_evt instanceof EE_Event ? $this->_evt : $item->event();
 		$chkin_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$event->ID() ), REG_ADMIN_URL );
-		$event_label = EE_Registry::instance()->CAP->current_user_can( 'read_checkin', 'registration_checkins' ) ?  '<a href="'.$chkin_lnk_url.'" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>' : $event->name();
+		$event_label = EE_Registry::instance()->CAP->current_user_can( 'read_checkins', 'registration_checkins' ) ?  '<a href="'.$chkin_lnk_url.'" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>' : $event->name();
 		return $event_label;
 	}
 
