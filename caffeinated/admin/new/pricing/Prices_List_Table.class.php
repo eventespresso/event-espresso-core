@@ -98,7 +98,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_all_data_count;
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price', 'trash_price') ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_prices', 'trash_price') ) {
 			$this->_views['trashed']['count'] = $this->_trashed_count;
 		}
 	}

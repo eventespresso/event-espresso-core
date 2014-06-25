@@ -85,12 +85,12 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 					'func' => '_price_overview_list_table',
-					'capability' => 'read_default_price'
+					'capability' => 'read_default_prices'
 				),
 			'add_new_price'	=> array(
 					'func' => '_edit_price_details',
 					'args' => array( 'new_price' => TRUE ),
-					'capability' => 'edit_default_price'
+					'capability' => 'edit_default_prices'
 				),
 			'edit_price'	=> array(
 					'func' => '_edit_price_details',
@@ -102,7 +102,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'func' => '_insert_or_update_price',
 					'args' => array( 'new_price' => TRUE ),
 					'noheader' => TRUE,
-					'capability' => 'edit_default_price',
+					'capability' => 'edit_default_prices',
 				),
 			'update_price'	=> array(
 					'func' => '_insert_or_update_price',
@@ -134,16 +134,16 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			'espresso_update_price_order' => array(
 				'func' => 'update_price_order',
 				'noheader' => TRUE,
-				'capability' => 'edit_default_price'
+				'capability' => 'edit_default_prices'
 				),
 			// price types
 			'price_types'	=> array(
 					'func' => '_price_types_overview_list_table',
-					'capability' => 'read_default_price_type'
+					'capability' => 'read_default_price_types'
 				),
 			'add_new_price_type'	=> array(
 					'func' => '_edit_price_type_details',
-					'capability' => 'edit_default_price_type'
+					'capability' => 'edit_default_price_types'
 				),
 			'edit_price_type'	=> array(
 					'func' => '_edit_price_type_details',
@@ -154,7 +154,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'func' => '_insert_or_update_price_type',
 					'args' => array( 'new_price_type' => TRUE ),
 					'noheader' => TRUE,
-					'capability' => 'edit_default_price_type'
+					'capability' => 'edit_default_price_types'
 				),
 			'update_price_type' => array(
 					'func' => '_insert_or_update_price_type',
@@ -385,7 +385,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price', 'trash_price' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_prices', 'trash_price' ) ) {
 			$this->_views['trashed'] = array(
 					'slug' => 'trashed',
 					'label' => __('Trash', 'event_espresso'),
@@ -415,7 +415,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price_type', 'trash_price_type' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price_types', 'trash_price_type' ) ) {
 			 $this->_views['trashed'] = array(
 					'slug' => 'trashed',
 					'label' => __('Trash', 'event_espresso'),
