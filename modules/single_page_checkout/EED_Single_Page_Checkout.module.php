@@ -1016,6 +1016,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 
 			$primary_attendee = array();
+			$primary_attendee_obj = NULL;
 			$primary_attendee['line_item_id'] = NULL;
 			if ( isset( $valid_data['primary_attendee'] )) {
 				$primary_attendee['line_item_id'] =  ! empty( $valid_data['primary_attendee'] ) ? $valid_data['primary_attendee'] : FALSE;
@@ -1208,14 +1209,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 													'ATT_fname',
 													'ATT_lname',
 													'ATT_email',
-													'ATT_address',
-													'ATT_address2',
-													'ATT_city',
-													'STA_ID',
-													'CNT_ISO',
-													'ATT_zip',
-													'ATT_phone',
+//													'ATT_address',
+//													'ATT_address2',
+//													'ATT_city',
+//													'STA_ID',
+//													'CNT_ISO',
+//													'ATT_zip',
+//													'ATT_phone',
 												);
+												$critical_attendee_details = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__critical_attendee_details', $critical_attendee_details );
 												foreach ( $critical_attendee_details as $critical_attendee_detail ) {
 													if ( ! isset( $attendee_data[ $critical_attendee_detail ] ) || empty( $attendee_data[ $critical_attendee_detail ] )) {
 														$attendee_data[ $critical_attendee_detail ] = $primary_attendee_obj->get( $critical_attendee_detail );
@@ -1338,7 +1340,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						// verify and save the attendee
 						if ( $attendee = $registration->attendee() ) {
 							if ( $attendee instanceof EE_Attendee ) {
-	//							printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//								printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$attendee->save();
 								$registration->set_attendee_id( $attendee->ID() );
 								if ( ! $registration->update_cache_after_object_save( 'Attendee', $attendee )) {
@@ -1355,10 +1357,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						}
 						// save so that REG has ID
 						$registration->save();
-						// now save the aswers
+						// now save the answers
 						foreach ( $registration->answers() as $cache_key => $answer ) {
 							// verify object
 							if ( $answer instanceof EE_Answer ) {
+//								printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$answer->set_registration( $registration->ID() );
 								$answer->save();
 								if ( ! $registration->update_cache_after_object_save( 'Answer', $answer, $cache_key )) {
