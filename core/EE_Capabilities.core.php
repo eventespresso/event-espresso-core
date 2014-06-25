@@ -166,7 +166,7 @@ final class EE_Capabilities extends EE_Base {
 				//events
 				'edit_others_event',
 				'edit_others_events',
-				'edit_published_events',
+				'edit_published_event',
 				'delete_published_event',
 				'edit_event',
 				'edit_events',
@@ -198,7 +198,7 @@ final class EE_Capabilities extends EE_Base {
 				'edit_others_venue',
 				'edit_others_venues',
 				'delete_published_venues',
-				'edit_published_venues',
+				'edit_published_venue',
 				'edit_venue',
 				'edit_venues',
 				'publish_venue',
