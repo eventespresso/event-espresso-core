@@ -113,8 +113,8 @@ final class EE_Capabilities extends EE_Base {
 	private function _set_meta_caps() {
 		$this->_meta_caps =  array (
 			//edits
-			new EE_Meta_Capability_Map_Edit( 'edit_event', array( EEM_Event::instance(), 'publish_event', 'edit_others_event', 'edit_private_event' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_venue', array( EEM_Venue::instance(), 'publish_venue', 'edit_others_venue', 'edit_private_venue' ) ),
+			new EE_Meta_Capability_Map_Edit( 'edit_event', array( EEM_Event::instance(), 'edit_published_event', 'edit_others_event', 'edit_private_event' ) ),
+			new EE_Meta_Capability_Map_Edit( 'edit_published_venue', array( EEM_Venue::instance(), 'publish_venue', 'edit_others_venue', 'edit_private_venue' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_contact', array( EEM_Attendee::instance(), '', 'edit_others_contact', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_registration', array( EEM_Registration::instance(), '', 'edit_others_registration', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Registration::instance(), '', 'edit_others_checkin', '' ) ),
