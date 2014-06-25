@@ -130,16 +130,16 @@ class About_Admin_Page extends EE_Admin_Page {
 			);
 
 		//now let's setup the steps we'll use based on conditions.
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'update_your_organization_settings' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_general_settings_update_your_organization_settings' ) ) {
 			unset( $steps['organization'] );
 		}
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'manage_gateways', 'default' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'manage_gateways', 'espresso_payment_settings_default' ) ) {
 			unset( $steps['gateways'] );
 		}
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_events', 'create_new' ) ) {
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_events', 'create_new' ) ) {
+
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_events', 'espresso_events_create_new' ) ) {
 			unset( $steps['event'] );
 		}
 

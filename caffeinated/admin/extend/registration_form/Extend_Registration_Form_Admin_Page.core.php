@@ -362,7 +362,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can('delete_questions', 'trash_questions' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can('delete_questions', 'espresso_registration_form_trash_questions' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
@@ -392,7 +392,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question_groups', 'trash_question_groups' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question_groups', 'espresso_registration_form_trash_question_groups' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),

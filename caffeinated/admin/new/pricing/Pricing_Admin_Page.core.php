@@ -385,7 +385,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_prices', 'trash_price' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_prices', 'pricing_trash_price' ) ) {
 			$this->_views['trashed'] = array(
 					'slug' => 'trashed',
 					'label' => __('Trash', 'event_espresso'),
@@ -415,7 +415,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price_types', 'trash_price_type' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price_types', 'pricing_trash_price_type' ) ) {
 			 $this->_views['trashed'] = array(
 					'slug' => 'trashed',
 					'label' => __('Trash', 'event_espresso'),

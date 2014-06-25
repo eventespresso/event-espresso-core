@@ -278,7 +278,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_questions', 'trash_questions' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_questions', 'espresso_registration_form_trash_questions' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
@@ -515,7 +515,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 		//capability checks (just leaving this commented out for reference because it illustrates some complicated query params that could be useful when fully implemented)
 		/*if ( $model instanceof EEM_Question_Group ) {
-			if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_question_groups', 'edit_question_group' ) ) {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_question_groups', 'espresso_registration_form_edit_question_group' ) ) {
 				$query_params[0] = array(
 					'AND' => array(
 						'OR' => array(
@@ -529,7 +529,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					);
 			}
 		} else {
-			if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_questions', 'edit_question' ) ) {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_questions', 'espresso_registration_form_edit_question' ) ) {
 				$query_params[0] = array(
 					'AND' => array(
 						'OR' => array(

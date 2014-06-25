@@ -314,7 +314,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 * @return string html string for extra buttons
 	 */
 	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'send_message', 'newsletter_selected_send' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_registrations_newsletter_selected_send' ) ) {
 			return '';
 		}
 
