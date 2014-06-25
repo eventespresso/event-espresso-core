@@ -139,6 +139,7 @@ class About_Admin_Page extends EE_Admin_Page {
 		}
 
 		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_events', 'create_new' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_events', 'create_new' ) ) {
 			unset( $steps['event'] );
 		}
 
