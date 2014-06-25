@@ -200,6 +200,8 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
+		EEH_Activation::drop_index( 'esp_message_template_group', 'EVT_ID' );
+
 		$table_name = 'esp_message_template_group';
 		$sql = "GRP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					MTP_user_id int(10) NOT NULL DEFAULT '1',
@@ -465,7 +467,7 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (TKT_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
 
-
+		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
 
 		$table_name = 'esp_question_group';
 		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
