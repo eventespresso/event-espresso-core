@@ -115,7 +115,7 @@ final class EE_Capabilities extends EE_Base {
 			//edits
 			new EE_Meta_Capability_Map_Edit( 'edit_event', array( EEM_Event::instance(), 'edit_published_events', 'edit_others_events', 'edit_private_events' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_venue', array( EEM_Venue::instance(), 'edit_published_venues', 'edit_others_venues', 'edit_private_venues' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_contact', array( EEM_Attendee::instance(), '', 'edit_others_contact', '' ) ),
+			new EE_Meta_Capability_Map_Edit( 'edit_contact', array( EEM_Attendee::instance(), '', 'edit_others_contacts', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_registration', array( EEM_Registration::instance(), '', 'edit_others_registration', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Registration::instance(), '', 'edit_others_checkin', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'edit_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
@@ -125,7 +125,7 @@ final class EE_Capabilities extends EE_Base {
 			//reads
 			new EE_Meta_Capability_Map_Read( 'read_event', array( EEM_Event::instance(), '', 'read_others_events', 'read_private_events' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_venue', array( EEM_Venue::instance(), '', 'read_others_venues', 'read_private_venues' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_contact', array( EEM_Attendee::instance(), '', 'read_others_contact', 'read_private_contact' ) ),
+			new EE_Meta_Capability_Map_Read( 'read_contact', array( EEM_Attendee::instance(), '', 'read_others_contacts', 'read_private_contact' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_registration', array( EEM_Registration::instance(), '', '', 'edit_others_registration' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_checkin', array( EEM_Registration::instance(), '', '', 'edit_others_checkin' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'read_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
@@ -134,7 +134,7 @@ final class EE_Capabilities extends EE_Base {
 			//deletes
 			new EE_Meta_Capability_Map_Delete( 'delete_event', array( EEM_Event::instance(), 'delete_published_events', 'delete_others_events', 'delete_private_events' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_venue', array( EEM_Venue::instance(), 'delete_published_venues', 'delete_others_venues', 'delete_private_venues' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_contact', array( EEM_Attendee::instance(), '', 'edit_others_contact', '' ) ),
+			new EE_Meta_Capability_Map_Delete( 'delete_contact', array( EEM_Attendee::instance(), '', 'edit_others_contacts', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_registration', array( EEM_Registration::instance(), '', 'edit_others_registration', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_checkin', array( EEM_Registration::instance(), '', 'delete_others_checkin', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_message', 'edit_global_message' ) ),
@@ -203,19 +203,18 @@ final class EE_Capabilities extends EE_Base {
 			//venue categories
 				'manage_venue_categories',
 				'edit_venue_category',
-				'read_venue_category',
 				'delete_venue_category',
 				'assign_venue_category',
 			//contacts
-				'edit_others_contact',
-				'edit_others_contacts',
-				'edit_contact',
-				'edit_contacts',
-				'delete_contact',
-				'delete_contacts',
 				'read_contact',
 				'read_contacts',
 				'read_others_contacts',
+				'edit_contact',
+				'edit_contacts',
+				'edit_others_contacts',
+				'delete_contact',
+				'delete_contacts',
+
 			//registrations & checkins
 				'edit_registration',
 				'edit_registrations',
