@@ -198,7 +198,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				$this->get_field_name('date_range'),
 				$this->get_field_id('date_range')
 			);
-			?>
+			?><span class="description"><br /><?php _e('This setting will replace the list of dates in the widget.', 'event_espresso'); ?></span>
 		</p>
 		
 		<?php
