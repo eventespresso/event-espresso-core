@@ -172,7 +172,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	public function process_payment_start(EE_Line_Item $total_line_item, $transaction=null, $total_to_charge = null) {
 		$session_data = EE_Registry::instance()->SSN->get_session_data();
 		$billing_info = $session_data['billing_info'];
-		
+
 		if ($billing_info != 'no payment required') {
 			$this->_save_billing_info_to_attendee($billing_info, $transaction);
 			// Enable test mode if needed
@@ -251,7 +251,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				$payment = EE_Payment::new_instance(array(
 							'TXN_ID' => $transaction->ID(),
 							'STS_ID' => $payment_status,
-							'PAY_timestamp' => current_time('mysql',false),
+							'PAY_timestamp' => current_time( 'mysql', FALSE ),
 							'PAY_method' => 'CART',
 							'PAY_amount' => $response->amount,
 							'PAY_gateway' => $this->_gateway_name,
@@ -261,18 +261,18 @@ Class EE_Aim extends EE_Onsite_Gateway {
 							'PAY_extra_accntng' => $primary_registration_code,
 							'PAY_via_admin' => false,
 							'PAY_details' => (array) $response));
-				
+
 				$success = $payment->save();
 				$successful_update_of_transaction = $this->update_transaction_with_payment($transaction, $payment);
 				//we successfully got a response from AIM. the payment might not necessarily have gone through
 				//but we did our job, so return success
 				$return = array('success' => true);
-				
+
 			} else {
 				$payment = EE_Payment::new_instance(array(
 								'TXN_ID' => $transaction->ID(),
 								'STS_ID' => EEM_Payment::status_id_failed,
-								'PAY_timestamp' => current_time('mysql',false),
+								'PAY_timestamp' => current_time( 'mysql', FALSE ),
 								'PAY_method' => 'CART',
 								'PAY_amount' => 0,
 								'PAY_gateway' => $this->_gateway_name,
@@ -311,7 +311,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 
 	/**
 	 * Add a line item.
-	 * 
+	 *
 	 * @param string $item_id
 	 * @param string $item_name
 	 * @param string $item_description
@@ -351,7 +351,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				<h4 style="color:#ff0000;" title="Payments will not be processed"><?php _e('Authorize.net AIM Debug Mode Is Turned On', 'event_espresso'); ?></h4>
 				<p style="color:#ff0000;"><?php _e('Test credit card ', 'event_espresso'); ?># 4007000000027</p><br/>
 		<?php endif; ?>
-		
+
 			<h5><strong><?php _e('Billing Address', 'event_espresso'); ?></strong></h5>
 
 			<?php $billing_inputs = $this->espresso_reg_page_billing_inputs(); ?>
@@ -360,7 +360,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			<h5><strong><?php _e('Credit Card Information', 'event_espresso'); ?></strong></h5>
 
 			<?php echo $this->_generate_billing_info_form_fields($billing_inputs, 'credit_card'); ?>
-	
+
 			<input type='hidden' id='_reg-page-billing-invoice-<?php echo $gw; ?>' name='_reg-page-billing-invoice-<?php echo $gw; ?>' value='<?php echo wp_generate_password(12,false) ?>' />
 
 		</div>
