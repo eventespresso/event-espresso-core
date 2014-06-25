@@ -308,8 +308,6 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
 			unset(EE_Registry::instance()->addons->$class_name);
 			unset( self::$_settings[ $addon_name ] );
-		}else{
-			throw new EE_Error(sprintf(__("Could not deregister '%s' because it was either never registered, or already deregistered", "event_espresso"),$addon_name));
 		}
 	}
 
