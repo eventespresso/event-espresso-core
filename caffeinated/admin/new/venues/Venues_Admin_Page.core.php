@@ -130,7 +130,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_overview_list_table',
-				'capability' => 'read_venue'
+				'capability' => 'read_venues'
 				),
 			'trash_venue' => array(
 				'func' => '_trash_or_restore_venue',
@@ -143,7 +143,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_trash_or_restore_venues',
 				'args' => array( 'venue_status' => 'trash' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venue'
+				'capability' => 'delete_venues'
 				),
 			'restore_venue' => array(
 				'func' => '_trash_or_restore_venue',
@@ -156,12 +156,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_trash_or_restore_venues',
 				'args' => array( 'venue_status' => 'draft' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venue'
+				'capability' => 'delete_venues'
 				),
 			'delete_venues' => array(
 				'func' => '_delete_venues',
 				'noheader' => TRUE,
-				'capability' => 'delete_venue'
+				'capability' => 'delete_venues'
 				),
 			'delete_venue' => array(
 				'func' => '_delete_venue',
@@ -948,7 +948,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			$where['status**'] = array( '!=' , 'private' );
 		}
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_venue', 'get_venues' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_venues', 'get_venues' ) ) {
 			$where['VNU_wp_user'] =  get_current_user_id();
 		}
 
