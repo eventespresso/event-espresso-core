@@ -166,14 +166,14 @@ class EE_Register_CPTs {
 						'delete_post' => 'delete_event',
 						'edit_posts' => 'edit_events',
 						'edit_others_posts' => 'edit_others_events',
-						'publish_posts' => 'publish_event',
+						'publish_posts' => 'publish_events',
 						'read_private_posts' => 'read_private_events',
-						'delete_posts' => 'delete_posts',
-						'delete_private_posts' => 'delete_private_posts',
-						'delete_published_posts' => 'delete_published_event',
+						'delete_posts' => 'delete_events',
+						'delete_private_posts' => 'delete_private_events',
+						'delete_published_posts' => 'delete_published_events',
 						'delete_others_posts' => 'delete_others_events',
 						'edit_private_posts' => 'edit_private_events',
-						'edit_published_posts' => 'edit_published_event'
+						'edit_published_posts' => 'edit_published_events'
 						),
 					'taxonomies'=> array(
 						'espresso_event_categories',
@@ -197,11 +197,11 @@ class EE_Register_CPTs {
 						'delete_post' => 'delete_venue',
 						'edit_posts' => 'edit_venues',
 						'edit_others_posts' => 'edit_others_venues',
-						'publish_posts' => 'publish_venue',
+						'publish_posts' => 'publish_venues',
 						'read_private_posts' => 'read_private_venues',
 						'delete_posts' => 'delete_venues',
 						'delete_private_posts' => 'delete_private_venues',
-						'delete_published_posts' => 'delete_published_venue',
+						'delete_published_posts' => 'delete_published_venues',
 						'delete_others_posts' => 'edit_others_venues',
 						'edit_private_posts' => 'edit_private_venues',
 						'edit_published_posts' => 'edit_published_venues'
