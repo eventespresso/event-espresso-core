@@ -171,6 +171,23 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * Gets the "author" of the registration.  Note that for the purposes of registrations, the author will correspond with the author of the event this registration is for.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		$event = $this->event();
+		if ( $event instanceof EE_Event ) {
+			return $event->wp_user();
+		}
+		return 0;
+	}
+
+
+
+	/**
 	 * decrements (subtracts) this registration's related ticket sold and corresponding datetime sold values
 	 * @return void
 	 */

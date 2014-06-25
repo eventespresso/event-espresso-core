@@ -43,26 +43,46 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 	protected function _extend_page_config() {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'registrations';
+
+		$reg_id = ! empty( $this->_req_data['_REG_ID'] ) && ! is_array( $this->_req_data['_REG_ID'] ) ? $this->_req_data['_REG_ID'] : 0;
+		$att_id = ! empty( $this->_req_data[ 'ATT_ID' ] ) ? ! is_array( $this->_req_data['ATT_ID'] ) : 0;
+		$att_id = ! empty( $this->_req_data['post'] ) && ! is_array( $this->_req_data['post'] ) ? $this->_req_data['post'] : $att_id;
+
 		$new_page_routes = array(
-			'reports' => '_registration_reports',
-			'registration_checkins' => '_registration_checkin_list_table',
+			'reports' => array(
+				'func' => '_registration_reports',
+				'capability' => 'edit_registrations'
+				),
+			'registration_checkins' => array(
+				'func' => '_registration_checkin_list_table',
+				'capability' => 'read_checkins'
+				),
 			'newsletter_selected_send' => array(
 				'func' => '_newsletter_selected_send',
-				'noheader' => TRUE
+				'noheader' => TRUE,
+				'capability' => 'send_message'
 				),
 			'delete_checkin_rows' => array(
 					'func' => '_delete_checkin_rows',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_checkins'
 				),
 			'delete_checkin_row' => array(
 					'func' => '_delete_checkin_row',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_checkin',
+					'obj_id' => $reg_id
 				),
 			'toggle_checkin_status'	=> array(
 					'func' => '_toggle_checkin_status',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_checkin',
+					'obj_id' => $reg_id
 				),
-			'event_registrations'=> '_event_registrations_list_table',
+			'event_registrations'=> array(
+				'func' => '_event_registrations_list_table',
+				'capability' => 'read_registrations',
+				)
 			);
 
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
@@ -209,15 +229,6 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					//'trash_registrations' => __('Trash Registrations', 'event_espresso')
 					)
 				),
-			/*'trash' => array(
-				'slug' => 'trash',
-				'label' => __('Trash', 'event_espresso'),
-				'count' => 0,
-				'bulk_action' => array(
-					'restore_registrations' => __('Restore Registrations', 'event_espresso'),
-					'delete_registrations' => __('Delete Registrations Permanently', 'event_espresso')
-					)
-				)/**/
 			);
 	}
 
@@ -303,6 +314,10 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 * @return string html string for extra buttons
 	 */
 	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'send_message', 'newsletter_selected_send' ) ) {
+			return '';
+		}
+
 		$routes_to_add_to = array(
 			'contact_list',
 			'event_registrations',
@@ -473,9 +488,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-	    $REG = EEM_Registration::instance();
+		$REG = EEM_Registration::instance();
 
-	    $results = $REG->get_registrations_per_day_report( $period );
+		$results = $REG->get_registrations_per_day_report( $period );
 
 		//printr( $results, '$registrations_per_day' );
 		$regs = array();
@@ -531,9 +546,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		wp_enqueue_script( $report_JS );
 
 		require_once ( EE_MODELS . 'EEM_Registration.model.php' );
-	    $REG = EEM_Registration::instance();
+		$REG = EEM_Registration::instance();
 
-	    $results = $REG->get_registrations_per_event_report( $period );
+		$results = $REG->get_registrations_per_event_report( $period );
 		//printr( $results, '$registrations_per_event' );
 		$regs = array();
 		$ymax = 0;

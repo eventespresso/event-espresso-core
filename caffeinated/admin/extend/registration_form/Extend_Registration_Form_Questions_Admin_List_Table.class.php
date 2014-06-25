@@ -37,7 +37,8 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 
 	public function column_display_text(EE_Question $item) {
 		$system_question = $item->is_system_question();
-		
+		$actions = array();
+
 		if ( !defined('REG_ADMIN_URL') )
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 
@@ -66,23 +67,29 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 		$trash_link = EE_Admin_Page::add_query_args_and_nonce( $trash_query_args, EE_FORMS_ADMIN_URL );
 		$restore_link = EE_Admin_Page::add_query_args_and_nonce( $restore_query_args, EE_FORMS_ADMIN_URL );
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_FORMS_ADMIN_URL );
-		
-		$actions = array(
-			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Question', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_question', 'edit_question', $item->ID() ) ) {
+			$actions = array(
+				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Question', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
-
-		if ( ! $system_question && $this->_view != 'trash' )
-			$actions['delete'] = '<a href="' . $trash_link . '" title="' . __('Trash Question', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
-
-		if ( $this->_view == 'trash' ) {
-			$actions['restore'] = '<a href="' . $restore_link . '" title="' . __('Restore Question', 'event_espresso') . '">' . __('Restore', 'event_espresso') . '</a>';
-			if ( $item->count_related('Answer') === 0 )
-				$actions['delete_permanently'] = '<a href="' . $delete_link . '" title="' . __('Delete Question Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 		}
 
-		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>';
+		if ( ! $system_question && $this->_view != 'trash' && EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'trash_question', $item->ID() ) ) {
+			$actions['delete'] = '<a href="' . $trash_link . '" title="' . __('Trash Question', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
+		}
+
+		if ( $this->_view == 'trash' ) {
+			if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'restore_questions', $item->ID() ) ) {
+				$actions['restore'] = '<a href="' . $restore_link . '" title="' . __('Restore Question', 'event_espresso') . '">' . __('Restore', 'event_espresso') . '</a>';
+			}
+			if ( $item->count_related('Answer') === 0 && EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'delete_questions', $item->ID() ) ) {
+				$actions['delete_permanently'] = '<a href="' . $delete_link . '" title="' . __('Delete Question Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
+			}
+		}
+
+		$content = EE_Registry::instance()->CAP->current_user_can( 'edit_question', 'edit_question', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>' : $item->display_text();
 		$content .= $this->row_actions($actions);
-		return $content;	
+		return $content;
 	}
 
 }

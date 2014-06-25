@@ -236,7 +236,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 			'func' => '_default_method_handling_route',
 	 * 			'args' => array('array','of','args'),
 	 * 			'noheader' => true, //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
-	 *			'headers_sent_route'=>'headers_route_reference'//add this if noheader=>true, and you want to load a headers route after.  The string you enter here should match the defined route reference for a headers sent route.
+	 *			'headers_sent_route'=>'headers_route_reference', //add this if noheader=>true, and you want to load a headers route after.  The string you enter here should match the defined route reference for a headers sent route.
+	 *			'capability' => 'route_capability', //indicate a string for minimum capability required to access this route.
+	 *			'obj_id' => 10 // if this route has an object id, then this can include it (used for capability checks).
 	 * 		),
 	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method.
 	 * 		)
@@ -474,9 +476,6 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 		if ( ( !$this->_current_page || ! isset( $ee_menu_slugs[$this->_current_page] ) ) && !defined( 'DOING_AJAX') ) return FALSE;
 
-		//next let's just check user_access and kill if no access
-		$this->_check_user_access();
-
 
 		// becuz WP List tables have two duplicate select inputs for choosing bulk actions, we need to copy the action from the second to the first
 		if ( isset( $this->_req_data['action2'] ) && $this->_req_data['action'] == -1 ) {
@@ -518,6 +517,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		$this->_page_routes = apply_filters( 'FHEE__' . get_class($this) . '__page_setup__page_routes', $this->_page_routes, $this );
 		$this->_page_config = apply_filters( 'FHEE__' . get_class($this) . '__page_setup__page_config', $this->_page_config, $this );
 
+
 		//if AHEE__EE_Admin_Page__route_admin_request_$this->_current_view method is present then we call it hooked into the AHEE__EE_Admin_Page__route_admin_request action
 		if ( method_exists( $this, 'AHEE__EE_Admin_Page__route_admin_request_' . $this->_current_view ) ) {
 			add_action( 'AHEE__EE_Admin_Page__route_admin_request', array( $this, 'AHEE__EE_Admin_Page__route_admin_request_' . $this->_current_view ), 10, 2 );
@@ -529,6 +529,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			$this->_verify_routes();
 
+			//next let's just check user_access and kill if no access
+			$this->check_user_access();
+
 			if ( $this->_is_UI_request ) {
 				//admin_init stuff - global, all views for this page class, specific view
 				add_action( 'admin_init', array( $this, 'admin_init' ), 10 );
@@ -538,8 +541,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			} else {
 				//hijack regular WP loading and route admin request immediately
-				if ( current_user_can( 'manage_options' ) )
-					@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
+				@ini_set( 'memory_limit', apply_filters( 'admin_memory_limit', WP_MAX_MEMORY_LIMIT ) );
 				$this->route_admin_request();
 			}
 		}
@@ -1161,6 +1163,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( isset( $config['nav']['persistent']) && !$config['nav']['persistent'] && $slug !== $this->_req_action )
 				continue; //nav tab is only to appear when route requested.
 
+			if ( ! $this->check_user_access( $slug, TRUE ) )
+				continue; //no nav tab becasue current user does not have access.
+
 			$css_class = isset( $config['css_class'] ) ? $config['css_class'] . ' ' : '';
 			$this->_nav_tabs[$slug] = array(
 				'url' => isset($config['nav']['url']) ? $config['nav']['url'] : self::add_query_args_and_nonce( array( 'action'=>$slug ), $this->_admin_base_url ),
@@ -1218,14 +1223,29 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	/**
 	 * 		verifies user access for this admin page
-	*		@access 		private
-	*		@return 		void
+	 * 		@param string $route_to_check if present then the capability for the route matching this string is checked.
+	 * 		@param bool   $verify_only Default is FALSE which means if user check fails then wp_die().  Otherwise just return false if verify fail.
+	*		@return 		BOOL|wp_die()
 	*/
-	private function _check_user_access() {
+	public function check_user_access( $route_to_check = '', $verify_only = FALSE ) {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if (( ! function_exists( 'is_admin' ) or ! current_user_can( 'manage_options' )) && ! defined( 'DOING_AJAX')) {
-			wp_redirect( home_url('/') . 'wp-admin/' );
+		$capability = ! empty( $route_to_check ) && ! empty( $this->_page_routes[$route_to_check] ) && ! empty( $this->_page_routes[$route_to_check]['capability'] ) ? $this->_page_routes[$route_to_check]['capability'] : NULL;
+
+		if ( empty( $capability ) && empty( $route_to_check )  ) {
+			$capability = empty( $this->_route['capability'] ) ? 'manage_options' : $this->_route['capability'];
+		} else {
+			$capability = empty( $capability ) ? 'manage_options' : $capability;
 		}
+
+		$id = ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
+		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->_req_action, $id ) ) && ! defined( 'DOING_AJAX')) {
+			if ( $verify_only ) {
+				return FALSE;
+			} else {
+				wp_die( __('You do not have access to this route.', 'event_espresso' ) );
+			}
+		}
+		return TRUE;
 	}
 
 
@@ -2760,6 +2780,12 @@ abstract class EE_Admin_Page extends EE_BASE {
 		if ( !isset( $this->_labels['buttons'][$type] ) )
 			throw new EE_Error( sprintf( __('There is no label for the given button type (%s). Labels are set in the <code>_page_config</code> property.', 'event_espresso'), $type) );
 
+		//finally check user access for this button.
+		$has_access = $this->check_user_access( $action, TRUE );
+		if ( ! $has_access ) {
+			return '';
+		}
+
 		$_base_url = !$base_url ? $this->_admin_base_url : $base_url;
 
 		$query_args = array(
@@ -2793,7 +2819,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 			'default' => 10,
 			'option' => $this->_current_page . '_' . $this->_current_view . '_per_page'
 			);
-		add_screen_option( $option, $args );
+		//ONLY add the screen option if the user has access to it.
+		if ( $this->check_user_access( $this->_current_view, true ) ) {
+			add_screen_option( $option, $args );
+		}
 	}
 
 
@@ -3072,7 +3101,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 	protected function _get_dir() {
 		$reflector = new ReflectionClass(get_class($this));
-        return dirname($reflector->getFileName());
+		return dirname($reflector->getFileName());
 	}
 
 

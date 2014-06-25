@@ -32,19 +32,19 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table {
 	 * 		REG_date
 	*/
 	function column_REG_date(EE_Registration $item){
-		
+
 		//Build row actions
 		$actions = array();
 
-        //Build row actions
- 		$check_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
-		$actions['check_in'] = '
-			<a href="'.$check_in_url.'" title="' . __( 'The Check-In List allows you to easily toggle check-in status for this event', 'event_espresso' ) . '">' . __( 'View Check-ins', 'event_espresso' ) . '</a>';
-		
-		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->get_first_related('Transaction')->ID() ), TXN_ADMIN_URL );	
-		$REG_date = '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>';	
+		//Build row actions
+		$check_in_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$item->event_ID() ), REG_ADMIN_URL );
+		$actions['check_in'] = EE_Registry::instance()->CAP->current_user_can( 'read_checkin', 'registration_checkins', $item->ID() ) ? '
+			<a href="'.$check_in_url.'" title="' . __( 'The Check-In List allows you to easily toggle check-in status for this event', 'event_espresso' ) . '">' . __( 'View Check-ins', 'event_espresso' ) . '</a>' : __( 'View Check-ins', 'event_espresso' );
 
-		return sprintf('%1$s %2$s', $REG_date, $this->row_actions($actions) );		
+		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction()->ID() ), TXN_ADMIN_URL );
+		$REG_date = EE_Regisry::instance()->CAP->current_user_can( 'edit_transaction', 'view_transaction' ) ?  '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>' : $item->reg_date();
+
+		return sprintf('%1$s %2$s', $REG_date, $this->row_actions($actions) );
 
 	}
 
@@ -66,7 +66,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table {
 		foreach($datetimes as $datetime){
 			$query_args['DTT_ID'] = $datetime->ID();
 			$checkin_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, REG_ADMIN_URL );
-			$datetime_strings[] = '<a href="' . $checkin_url . '" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $datetime->start_date_and_time() . '</a>';
+			$datetime_strings[] = EE_Registry::instance()->CAP->current_user_can( 'read_checkin', 'registration_checkins', $item->ID() ) ? '<a href="' . $checkin_url . '" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $datetime->start_date_and_time() . '</a>' : $datetime->start_date_and_time();
 		}
 		return implode("<br />",$datetime_strings);
     }

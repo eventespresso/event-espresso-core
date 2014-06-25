@@ -46,33 +46,49 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 	protected function _extend_page_config() {
 		$this->_admin_base_path = REGISTRATION_FORM_CAF_ADMIN;
+		$qst_id = ! empty( $this->_req_data['QST_ID'] ) && ! is_array( $this->_req_data['QST_ID'] ) ? $this->_req_data['QST_ID'] : 0;
+		$qsg_id = ! empty( $this->_req_data['QSG_ID'] ) && ! is_array( $this->_req_data['QSG_ID'] ) ? $this->_req_data['QSG_ID'] : 0;
+
 		$new_page_routes = array(
-			'question_groups' => '_question_groups_overview_list_table',
-			'add_question' => '_edit_question',
+			'question_groups' => array(
+				'func' => '_question_groups_overview_list_table',
+				'capability' => 'read_question_groups'
+				),
+			'add_question' => array(
+				'func' => '_edit_question',
+				'capability' => 'edit_questions'
+				),
 			'insert_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => TRUE),
+				'capability' => 'edit_questions',
 				'noheader' => TRUE
 				),
 
 			'trash_question' => array(
 				'func' => '_trash_question',
+				'capability' => 'delete_question',
+				'obj_id' => $qst_id,
 				'noheader' => TRUE
 				),
 
 			'delete_question' => array(
 				'func' => '_delete_question',
+				'capability' => 'delete_question',
+				'obj_id' => $qst_id,
 				'noheader' => TRUE
 				),
 
 			'trash_questions' => array(
 				'func' => '_trash_or_restore_questions',
+				'capability' => 'delete_questions',
 				'args' => array('trash' => TRUE),
 				'noheader' => TRUE
 				),
 
 			'restore_questions' => array(
 				'func' => '_trash_or_restore_questions',
+				'capability' => 'delete_questions',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
 				),
@@ -80,72 +96,95 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			'delete_questions'=>array(
 				'func'=>'_delete_questions',
 				'args'=>array(),
+				'capability' => 'delete_questions',
 				'noheader'=>TRUE
 			),
 
-			'add_question_group' => '_edit_question_group',
+			'add_question_group' => array(
+				'func' => '_edit_question_group',
+				'capability' => 'edit_question_groups'
+				),
 
 			'edit_question_group' => array(
 				'func' => '_edit_question_group',
+				'capability' => 'edit_question_group',
+				'obj_id' => $qsg_id,
 				'args' => array('edit')
 				),
 
 			'delete_question_groups' => array(
 				'func' => '_delete_question_groups',
+				'capability' => 'delete_question_groups',
 				'noheader' => TRUE
 				),
 
 			'delete_question_group' => array(
 				'func' => '_delete_question_groups',
+				'capability' => 'delete_question_group',
+				'obj_id' => $qsg_id,
 				'noheader' => TRUE
 				),
 
 			'trash_question_group' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array( 'trash' => TRUE ),
+				'capability' => 'delete_question_group',
+				'obj_id' => $qsg_id,
 				'noheader' => TRUE
 				),
 
 			'restore_question_group' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array( 'trash' => FALSE ),
+				'capability' => 'delete_question_group',
+				'obj_id' => $qsg_id,
 				'noheader' => TRUE
 				),
 
 			'insert_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => TRUE),
+				'capability' => 'edit_question_groups',
 				'noheader' => TRUE
 				),
 
 			'update_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => FALSE ),
+				'capability' => 'edit_question_group',
+				'obj_id' => $qsg_id,
 				'noheader' => TRUE,
 				),
 
 			'trash_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => TRUE),
+				'capability' => 'delete_question_groups',
 				'noheader' => array('trash' => FALSE)
 				),
 
 			'restore_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => FALSE),
+				'capability' => 'delete_question_groups',
 				'noheader' => TRUE
 				),
 
 
 			'espresso_update_question_group_order' => array(
 				'func' => 'update_question_group_order',
+				'capability' => 'edit_question_groups',
 				'noheader' => TRUE
 				),
 
-			'view_reg_form_settings'	=> '_reg_form_settings',
+			'view_reg_form_settings' => array(
+				'func' => '_reg_form_settings',
+				'capability' => 'manage_options'
+				),
 
 			'update_reg_form_settings'	=> array(
 					'func' => '_update_reg_form_settings',
+					'capability' => 'manage_options',
 					'noheader' => TRUE
 				),
 			);
@@ -320,8 +359,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'bulk_action' => array(
 					'trash_questions' => __('Trash', 'event_espresso'),
 					)
-				),
-			'trash' => array(
+				)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can('delete_questions', 'trash_questions' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
@@ -329,8 +371,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'delete_questions' => __('Delete Permanently', 'event_espresso'),
 					'restore_questions' => __('Restore', 'event_espresso'),
 					)
-				),
-		);
+				);
+		}
 	}
 
 
@@ -347,8 +389,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'bulk_action' => array(
 					'trash_question_groups' => __('Trash', 'event_espresso'),
 					)
-				),
-			'trash' => array(
+				)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question_groups', 'trash_question_groups' ) ) {
+			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
@@ -356,8 +401,8 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 					'delete_question_groups' => __('Delete Permanently', 'event_espresso'),
 					'restore_question_groups' => __('Restore', 'event_espresso'),
 					)
-				),
-		);
+				);
+		}
 	}
 
 

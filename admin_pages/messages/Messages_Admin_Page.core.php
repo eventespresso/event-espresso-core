@@ -169,26 +169,93 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	*		@return void
 	*/
 	protected function _set_page_routes() {
+		$grp_id = ! empty( $this->_req_data['GRP_ID'] ) && ! is_array( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
 
 		$this->_page_routes = array(
-				'default'=> '_ee_default_messages_overview_list_table',
-				'custom_mtps' => '_ee_custom_messages_overview_list_table',
+				'default'=> array(
+					'func' => '_ee_default_messages_overview_list_table',
+					'capability' => 'edit_global_messages'
+					),
+				'custom_mtps' => array(
+					'func' => '_ee_custom_messages_overview_list_table',
+					'capability' => 'read_messages'
+					),
 				'add_new_message_template'	=>array(
 					 'func' => '_add_message_template',
+					 'capability' => 'edit_messages',
 					 'noheader' => TRUE
 					),
-				'edit_message_template'	=> '_edit_message_template',
-				'preview_message' => '_preview_message',
-				'insert_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => TRUE ), 'noheader' => TRUE ),
-				'update_message_template' => array( 'func' => '_insert_or_update_message_template', 'args' => array( 'new_template' => FALSE ), 'noheader' => TRUE ),
-				'trash_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE, 'all' => TRUE ), 'noheader' => TRUE ),
-				'trash_message_template_context' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => TRUE ), 'noheader' => TRUE ),
-				'restore_message_template' => array( 'func' => '_trash_or_restore_message_template', 'args' => array( 'trash' => FALSE, 'all' => TRUE ), 'noheader' => TRUE ),
-				'restore_message_template_context' => array( 'func' => '_trash_or_restore_message_template' , 'args' => array('trash' => FALSE), 'noheader' => TRUE  ),
-				'delete_message_template' => array( 'func' => '_delete_message_template', 'noheader' => TRUE ),
-				'reset_to_default' => array( 'func' => '_reset_to_default_template', 'noheader' => TRUE ),
-				'settings' => '_settings',
-				'reports' => '_messages_reports'
+				'edit_message_template' => array(
+					'func' => '_edit_message_template',
+					'capability' => 'edit_messages',
+					'obj_id' => $grp_id
+					),
+				'preview_message' => array(
+					'func' => '_preview_message',
+					'capability' => 'read_message',
+					'obj_id' => $grp_id
+					),
+				'insert_message_template' => array(
+					'func' => '_insert_or_update_message_template',
+					'capability' => 'edit_messages',
+					'args' => array( 'new_template' => TRUE ),
+					'noheader' => TRUE
+					 ),
+				'update_message_template' => array(
+					'func' => '_insert_or_update_message_template',
+					'capability' => 'edit_message',
+					'obj_id' => $grp_id,
+					'args' => array( 'new_template' => FALSE ),
+					'noheader' => TRUE
+					),
+				'trash_message_template' => array(
+					'func' => '_trash_or_restore_message_template',
+					'capability' => 'delete_message',
+					'obj_id' => $grp_id,
+					'args' => array( 'trash' => TRUE, 'all' => TRUE ),
+					'noheader' => TRUE
+					),
+				'trash_message_template_context' => array(
+					'func' => '_trash_or_restore_message_template',
+					'capability' => 'delete_message',
+					'obj_id' => $grp_id,
+					'args' => array( 'trash' => TRUE ),
+					'noheader' => TRUE
+					),
+				'restore_message_template' => array(
+					'func' => '_trash_or_restore_message_template',
+					'capability' => 'delete_message',
+					'obj_id' => $grp_id,
+					'args' => array( 'trash' => FALSE, 'all' => TRUE ),
+					'noheader' => TRUE
+					),
+				'restore_message_template_context' => array(
+					'func' => '_trash_or_restore_message_template',
+					'capability' => 'delete_message',
+					'obj_id' => $grp_id,
+					'args' => array('trash' => FALSE),
+					'noheader' => TRUE
+					),
+				'delete_message_template' => array(
+					'func' => '_delete_message_template',
+					'capability' => 'delete_message',
+					'obj_id' => $grp_id,
+					'noheader' => TRUE
+					),
+				'reset_to_default' => array(
+					'func' => '_reset_to_default_template',
+					'capability' => 'edit_message',
+					'obj_id' => $grp_id,
+					'noheader' => TRUE
+					),
+				'settings' => array(
+					'func' => '_settings',
+					'capability' => 'manage_options'
+					),
+				'reports' => array(
+					'func' => '_messages_reports',
+					'capability' => 'edit_global_messages'
+					),
 		);
 	}
 
@@ -582,8 +649,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'bulk_action' => array(
 					'trash_message_template' => __('Move to Trash', 'event_espresso')
 				)
-			),
-			'trashed' => array(
+			)
+		);
+
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_message', 'trash_message_template' ) ) {
+			$this->_views['trashed'] = array(
 				'slug' => 'trashed',
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
@@ -591,8 +661,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					'restore_message_template' => __('Restore From Trash', 'event_espresso'),
 					'delete_message_template' => __('Delete Permanently', 'event_espresso')
 				)
-			)
-		);
+			);
+		}
 	}
 
 
@@ -653,11 +723,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		switch( $type ) {
 
 			case 'in_use':
-				$templates = $MTP->get_all_active_message_templates($orderby, $order, $limit, $count, $global );
+				$templates = $MTP->get_all_active_message_templates($orderby, $order, $limit, $count, $global, TRUE );
 				break;
 
 			case 'all':
-				$templates = $global ? $MTP->get_all_global_message_templates($orderby, $order, $limit, $count) : $MTP->get_all_custom_message_templates( $orderby, $order, $limit, $count );
+				$templates = $global ? $MTP->get_all_global_message_templates($orderby, $order, $limit, $count) : $MTP->get_all_custom_message_templates( $orderby, $order, $limit, $count, TRUE );
 				break;
 
 			default:

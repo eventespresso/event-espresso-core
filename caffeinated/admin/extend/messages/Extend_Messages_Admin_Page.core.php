@@ -29,12 +29,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class Extend_Messages_Admin_Page extends Messages_Admin_Page {
 
-
-
-	public function __construct( $routing = TRUE ) {
-		parent::__construct( $routing );
-	}
-
 	protected function _extend_page_config() {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'messages';
 	}

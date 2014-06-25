@@ -321,6 +321,8 @@ final class EE_System {
 		// set autoloaders for all of the classes implementing EEI_Plugin_API
 		// which provide helpers for EE plugin authors to more easily register certain components with EE.
 		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'plugin_api' );
+		//load and setup EE_Capabilities
+		EE_Registry::instance()->load_core( 'Capabilities' );
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
 	}
 
