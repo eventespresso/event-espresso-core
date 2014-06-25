@@ -78,7 +78,9 @@ final class EE_Capabilities extends EE_Base {
 	 * @return \EE_Capabilities
 	 */
 	private function __construct() {
-		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'init_caps' ));
+		if( ! EE_Maintenance_Mode::instance()->models_can_query()){
+			add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'init_caps' ));
+		}
 	}
 
 
