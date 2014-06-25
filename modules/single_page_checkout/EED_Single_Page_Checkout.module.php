@@ -1208,7 +1208,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												$critical_attendee_details = array(
 													'ATT_fname',
 													'ATT_lname',
-													'ATT_email',
+													'ATT_email'
 //													'ATT_address',
 //													'ATT_address2',
 //													'ATT_city',
