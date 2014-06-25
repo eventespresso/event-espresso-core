@@ -1238,7 +1238,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 
 		$id = ! empty( $this->_route['obj_id'] ) ? $this->_route['obj_id'] : 0;
-		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->_req_action, $id ) ) && ! defined( 'DOING_AJAX')) {
+		if (( ! function_exists( 'is_admin' ) || ! EE_Registry::instance()->CAP->current_user_can( $capability, $this->page_slug . '_' . $this->_req_action, $id ) ) && ! defined( 'DOING_AJAX')) {
 			if ( $verify_only ) {
 				return FALSE;
 			} else {

@@ -652,7 +652,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_message', 'trash_message_template' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_message', 'espresso_messages_trash_message_template' ) ) {
 			$this->_views['trashed'] = array(
 				'slug' => 'trashed',
 				'label' => __('Trash', 'event_espresso'),

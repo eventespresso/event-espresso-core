@@ -18,13 +18,13 @@
 					<td class="jst-left">
 					<?php
 						$event_url = add_query_arg( array( 'action' => 'edit', 'post' => $registration->event_ID() ), admin_url( 'admin.php?page=espresso_events' ));
-						echo EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'edit', $registration->event_ID() ) ?  '<a href="'. $event_url .'"  title="'. __( 'Edit Event', 'event_espresso' ) .'">' . $registration->event_name() . '</a>' : $registration->event_name();
+						echo EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'espresso_events_edit', $registration->event_ID() ) ?  '<a href="'. $event_url .'"  title="'. __( 'Edit Event', 'event_espresso' ) .'">' . $registration->event_name() . '</a>' : $registration->event_name();
 					?>
 					</td>
 					<td class="jst-left">
 					<?php
 							$reg_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$registration->ID() ), REG_ADMIN_URL );
-							echo EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'view_registration', $registration->ID() ) ? '
+							echo EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'espresso_registrations_view_registration', $registration->ID() ) ? '
 							<a href="'.$reg_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . sprintf( __( '
 								View Registration ', 'event_espresso'), $registration->ID() ) .
 							'</a>' : '';
@@ -33,7 +33,7 @@
 					<td class="jst-left">
 					<?php
 						$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$registration->transaction_ID() ), TXN_ADMIN_URL );
-						echo EE_Registry::instance()->CAP->current_user_can( 'edit_transaction', 'view_transaction' ) ? '
+						echo EE_Registry::instance()->CAP->current_user_can( 'edit_transaction', 'espresso_transactions_view_transaction' ) ? '
 						<a href="'.$txn_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
 							View Transaction ' . $registration->transaction_ID() . '
 						</a>' : '';

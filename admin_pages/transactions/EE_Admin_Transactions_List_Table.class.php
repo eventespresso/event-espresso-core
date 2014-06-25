@@ -223,7 +223,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		$attendee = $primary_reg->get_first_related('Attendee');
 		if ( !empty( $attendee ) ) {
 			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$primary_reg->ID() ), REG_ADMIN_URL );
-			return EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'view_registration', $primary_reg->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>' : $attendee->full_name();
+			return EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'espresso_registrations_view_registration', $primary_reg->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>' : $attendee->full_name();
 		}
 		return __('Could be something wrong with the primary registration associated with this transaction in the db', 'event_espresso');
 	}
@@ -258,11 +258,11 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 
 			//filter this view by transactions for this event
 			$txn_by_event_lnk = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'default', 'EVT_ID' => $event->ID() ) );
-			if ( EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'edit', $event->ID() ) ) {
+			if ( EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'espresso_events_edit', $event->ID() ) ) {
 				$actions['filter_by_event'] = '<a href="' . $txn_by_event_lnk . '" title="' . __('Filter transactions by this event', 'event_espresso') . '">' . __('View Transactions for this event', 'event_espresso') . '</a>';
 			}
 
-			return sprintf('%1$s %2$s', EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'edit', $event->ID() ) ? '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event->get('EVT_name') ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>' : wp_trim_words( $event_name, 30, '...' ), $this->row_actions($actions) );
+			return sprintf('%1$s %2$s', EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'espresso_events_edit', $event->ID() ) ? '<a href="' . $edit_event_url . '" title="' . sprintf( __( 'Edit Event: %s', 'event_espresso' ), $event->get('EVT_name') ) .'">' .  wp_trim_words( $event_name, 30, '...' ) . '</a>' : wp_trim_words( $event_name, 30, '...' ), $this->row_actions($actions) );
 		} else {
 			return __('The event associated with this transaction via the primary registration cannot be retrieved.', 'event_espresso');
 		}
@@ -301,7 +301,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>';
 
-	$send_pay_lnk = EE_Registry::instance()->CAP->current_user_can( 'send_message', 'send_payment_reminder' ) ? '
+	$send_pay_lnk = EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_transactions_send_payment_reminder' ) ? '
 		<li>
 			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" class="tiny-text">
 				<span class="dashicons dashicons-email-alt"></span>
@@ -309,7 +309,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		</li>' : '';
 	$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
 
-	$view_reg_lnk = EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'view_registration', $registration->ID() ) ? '
+	$view_reg_lnk = EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'espresso_registrations_view_registration', $registration->ID() ) ? '
 		<li>
 			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '" class="tiny-text">
 				<span class="dashicons dashicons-clipboard"></span>
