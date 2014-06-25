@@ -93,7 +93,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_admin_page->get_question_groups( $this->_per_page,$this->_current_page, TRUE );
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question_group', 'trash_question_group' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question_groups', 'trash_question_group' ) ) {
 			$this->_views['trash']['count'] = $this->_admin_page->get_trashed_question_groups( $this->_per_page,$this->_current_page, TRUE );
 		}
 	}
@@ -107,7 +107,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 		$system_group = $item->get('QSG_system');
 		$has_questions_with_answers = $item->has_questions_with_answers();
 		$lock_icon = $system_group === 0 && $this->_view == 'trash' && $has_questions_with_answers ? 'ee-lock-icon ee-alternate-color' : 'ee-lock-icon ee-system-lock';
-		return $system_group > 0 || ( $system_group === 0 && $this->_view == 'trash' && $has_questions_with_answers ) || ! EE_Registry::instance()->CAP->current_user_can( 'delete_question_group', 'trash_question_groups' ) ? '<span class="' . $lock_icon . '"></span>'  . sprintf( '<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />', $item->ID() )  : sprintf( '<input type="checkbox" id="QSG_ID[%1$d]" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
+		return $system_group > 0 || ( $system_group === 0 && $this->_view == 'trash' && $has_questions_with_answers ) || ! EE_Registry::instance()->CAP->current_user_can( 'delete_question_groups', 'trash_question_groups' ) ? '<span class="' . $lock_icon . '"></span>'  . sprintf( '<input type="hidden" name="hdnchk[%1$d]" value="%1$d" />', $item->ID() )  : sprintf( '<input type="checkbox" id="QSG_ID[%1$d]" name="checkbox[%1$d]" value="%1$d" />', $item->ID() );
 	}
 
 
@@ -183,7 +183,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 			}
 		}
 
-		$content =  EE_Registry::instance()->CAP->current_user_can( 'edit_question_group', 'edit_question_group' ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' : $item->name();
+		$content =  EE_Registry::instance()->CAP->current_user_can( 'edit_question_group', 'edit_question_group', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' : $item->name();
 		$content .= $this->row_actions($actions);
 		return $content;
 	}

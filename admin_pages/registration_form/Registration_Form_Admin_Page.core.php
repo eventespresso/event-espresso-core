@@ -101,7 +101,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_questions_overview_list_table',
-				'capability' => 'read_question'
+				'capability' => 'read_questions'
 				),
 
 			'edit_question' => array(
@@ -113,7 +113,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 			'question_groups' => array(
 				'func' => '_questions_groups_preview',
-				'capability' => 'read_question'
+				'capability' => 'read_questions'
 				),
 
 			'update_question' => array(
@@ -278,7 +278,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'trash_questions' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_questions', 'trash_questions' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
