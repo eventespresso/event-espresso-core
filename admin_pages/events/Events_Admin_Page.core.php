@@ -642,7 +642,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_events', 'trash_view' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_events', 'trash_events' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
