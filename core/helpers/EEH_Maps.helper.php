@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * EEH_Maps	
+ * EEH_Maps
  *
  * This is a helper utility class that provides different helpers related to mapping and displaying location related data.
  *
@@ -35,10 +35,10 @@ class EEH_Maps {
 	 * @return string (link to map!)
 	 */
 	public static function google_map( $ee_gmaps_opts ){
-		
+
 		//d( $ee_gmaps_opts );
-		
-		$ee_map_width = isset( $ee_gmaps_opts['ee_map_width'] ) && ! empty( $ee_gmaps_opts['ee_map_width'] ) ? $ee_gmaps_opts['ee_map_width'] : '300';	
+
+		$ee_map_width = isset( $ee_gmaps_opts['ee_map_width'] ) && ! empty( $ee_gmaps_opts['ee_map_width'] ) ? $ee_gmaps_opts['ee_map_width'] : '300';
 		$ee_map_height = isset( $ee_gmaps_opts['ee_map_height'] ) && ! empty( $ee_gmaps_opts['ee_map_height'] ) ? $ee_gmaps_opts['ee_map_height'] : '185';
 		$ee_map_zoom = isset( $ee_gmaps_opts['ee_map_zoom'] ) && ! empty( $ee_gmaps_opts['ee_map_zoom'] ) ? $ee_gmaps_opts['ee_map_zoom'] : '12';
 		$ee_map_nav_display = isset( $ee_gmaps_opts['ee_map_nav_display'] ) && ! empty( $ee_gmaps_opts['ee_map_nav_display'] ) ? 'true' : 'false';
@@ -65,20 +65,20 @@ class EEH_Maps {
 			$map_align = 'ee-gmap-align-none';
 		}
 
-		
+
 		// Determine whether user has set a hardoded url to use and
 		// if so display a Google static iframe map else run V3 api
 		if( $static_url ) {
-			
+
 			$html = '<div class="ee-gmap-iframewrap ee-gmap-wrapper ' . $map_align . '">';
 			$html .= '<iframe src="' . $static_url . '&output=embed" style="width: ' . $ee_map_width  .'px; height: ' . $ee_map_height . 'px;" frameborder="0" scrolling="no">';
 			$html .= '</iframe>';
 			$html .= '<a href="' . $static_url . '">View Large map</a>';
 			$html .= '</div>';
 			return $html;
-			
+
 		 } else {
-			
+
 			EEH_Maps::$gmap_vars[ $ee_gmaps_opts['map_ID'] ] = array(
 				'map_ID' => $ee_gmaps_opts['map_ID'],
 				'ee_map_zoom' => $ee_map_zoom,
@@ -86,18 +86,18 @@ class EEH_Maps {
 				'ee_map_nav_size' => $ee_map_nav_size,
 				'ee_map_type_control' => $ee_map_type_control,
 				'location' => $ee_gmaps_opts['location']
-			);		
-			
+			);
+
 			$html = '<div class="ee-gmap-wrapper '.$map_align.';">';
 			$html .= '<div class="ee-gmap" id="map_canvas_' . $ee_gmaps_opts['map_ID'] .'" style="width: '.$ee_map_width.'px; height: '.$ee_map_height.'px;"></div>';  //
 			$html .= '</div>';
 
 			wp_enqueue_script( 'gmap_api' );
 			wp_enqueue_script( 'ee_gmap' );
-			add_action( 'wp_footer', array( 'EEH_Maps', 'footer_enqueue_script' ));	
+			add_action( 'wp_footer', array( 'EEH_Maps', 'footer_enqueue_script' ));
 
 			return $html;
-			
+
 		} // end auto map or static url map check
 
 	}
@@ -109,7 +109,7 @@ class EEH_Maps {
 	 * @return void
 	 */
 	public static function footer_enqueue_script() {
-		wp_localize_script( 'ee_gmap', 'ee_gmap_vars', EEH_Maps::$gmap_vars );		
+		wp_localize_script( 'ee_gmap', 'ee_gmap_vars', EEH_Maps::$gmap_vars );
 	}
 
 
@@ -119,11 +119,12 @@ class EEH_Maps {
 	 * @param  array $atts aray of attributes required for the map link generation
 	 * @return string (link to map!)
 	 */
-	public static function espresso_google_map_js() { 
-		wp_register_script( 'gmap_api', 'http://maps.google.com/maps/api/js?sensor=false', array('jquery'), NULL, TRUE );
+	public static function espresso_google_map_js() {
+		$scheme = is_ssl() ? 'https://' : 'http://';
+		wp_register_script( 'gmap_api', $scheme . 'maps.google.com/maps/api/js?sensor=false', array('jquery'), NULL, TRUE );
 		wp_register_script( 'ee_gmap', plugin_dir_url(__FILE__) . 'assets/ee_gmap.js', array('gmap_api'), '1.0', TRUE );
 	}
-	
+
 	/**
 	 * creates a Google Map Link
 	 * @param  array $atts aray of attributes required for the map link generation
@@ -145,9 +146,9 @@ class EEH_Maps {
 		$id = isset($id) ? $id : 'not_set';
 		$map_image_class = isset($map_image_class) ? $map_image_class : 'ee_google_map_view';
 
-		$gaddress = ($address != '' ? $address : '') . ($city != '' ? ',' . $city : '') . ($state != '' ? ',' . $state : '') . ($zip != '' ? ',' . $zip : '') . ($country != '' ? ',' . $country : '');
+		$address_string = ($address != '' ? $address : '') . ($city != '' ? ',' . $city : '') . ($state != '' ? ',' . $state : '') . ($zip != '' ? ',' . $zip : '') . ($country != '' ? ',' . $country : '');
 
-		$google_map = htmlentities2('http://maps.google.com/maps?q=' . urlencode($gaddress));
+		$google_map = htmlentities2('http://maps.google.com/maps?q=' . urlencode( $address_string ));
 
 		switch ($type) {
 			case 'text':
@@ -160,15 +161,14 @@ class EEH_Maps {
 				break;
 
 			case 'map':
-				$google_map_link = '<a class="a_map_image_link" href="' . $google_map . '" target="_blank">' . '<img class="map_image_link" id="venue_map_' . $id . '" ' . $map_image_class . ' src="' . htmlentities2('http://maps.googleapis.com/maps/api/staticmap?center=' . urlencode($gaddress) . '&amp;zoom=14&amp;size=' . $map_w . 'x' . $map_h . '&amp;markers=color:green|label:|' . urlencode($gaddress) . '&amp;sensor=false') . '" /></a>';
-				return $google_map_link;
+				$scheme = is_ssl() ? 'https://' : 'http://';
+				return '<a class="a_map_image_link" href="' . $google_map . '" target="_blank">' . '<img class="map_image_link" id="venue_map_' . $id . '" ' . $map_image_class . ' src="' . htmlentities2( $scheme . 'maps.googleapis.com/maps/api/staticmap?center=' . urlencode( $address_string ) . '&amp;zoom=14&amp;size=' . $map_w . 'x' . $map_h . '&amp;markers=color:green|label:|' . urlencode( $address_string ) . '&amp;sensor=false' ) . '" /></a>';
 		}
 
-		$google_map_link = '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
-		return $google_map_link;
+		return '<a href="' . $google_map . '" target="_blank">' . $text . '</a>';
 	}
-	
-	
-} 
+
+
+}
 // End of file EEH_Maps.helper.php
 // Location: /helpers/EEH_Maps.helper.php
