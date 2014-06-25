@@ -165,7 +165,7 @@ class About_Admin_Page extends EE_Admin_Page {
 		$step_num = 1;
 		$step_content = '<h3>'.__('Getting Started').'</h3>';
 		foreach ( $steps as $ref => $text ) {
-			$step_content .= '<p><strong>' . sprintf( __('Step %d: ', 'event_espresso' ), $step_num ) . '<strong>' . sprintf( '%s' . $text . '%s', $done_steps[$ref] ? '<strike>' : '', $done_steps[$ref] ? '</strike>' : '' ) . '</p>';
+			$step_content .= '<p><strong>' . sprintf( __('Step %d: ', 'event_espresso' ), $step_num ) . '</strong>' . sprintf( '%s' . $text . '%s', $done_steps[$ref] ? '<strike>' : '', $done_steps[$ref] ? '</strike>' : '' ) . '</p>';
 			$step_num++;
 		}
 
