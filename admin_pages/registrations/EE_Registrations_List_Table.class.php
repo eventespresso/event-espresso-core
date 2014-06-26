@@ -148,7 +148,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_views['all']['count'] = $this->_total_registrations();
 		$this->_views['month']['count'] = $this->_total_registrations_this_month();
 		$this->_views['today']['count'] = $this->_total_registrations_today();
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registrations', 'espresso_registrations_delete_registration' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registrations', 'espresso_registrations_trash_registrations' ) ) {
 			$this->_views['trash']['count'] = $this->_total_registrations(TRUE);
 		}
 	}
@@ -298,7 +298,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
    		$attendee = $item->attendee();
 		$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 		$attendee_name = $attendee instanceof EE_Attendee ? $attendee->full_name() : '';
-		$link = EE_Registry::instance()->CAP->current_user_can('edit_registration', 'espresso_registrations_edit_registration', $item->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee_name . '</a>' : $attendee_name;
+		$link = EE_Registry::instance()->CAP->current_user_can('read_registration', 'espresso_registrations_view_registration', $item->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee_name . '</a>' : $attendee_name;
 		$link .= $item->count() == 1 ? '&nbsp;<sup><div class="dashicons dashicons-star-filled lt-blue-icon ee-icon-size-8"></div></sup>' : '';
 
 		$payment_count = $item->get_first_related('Transaction')->count_related('Payment');
@@ -463,7 +463,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 
 	        //Build row actions
-	        $view_lnk = EE_Registry::instance()->CAP->current_user_can('edit_registration', 'espresso_registrations_view_registration', $item->ID() ) ? '
+	        $view_lnk = EE_Registry::instance()->CAP->current_user_can('read_registration', 'espresso_registrations_view_registration', $item->ID() ) ? '
 		<li>
 			<a href="'.$view_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '" class="tiny-text">
 				<div class="dashicons dashicons-clipboard"></div>

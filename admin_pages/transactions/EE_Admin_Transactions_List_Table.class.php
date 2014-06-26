@@ -223,7 +223,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		$attendee = $primary_reg->get_first_related('Attendee');
 		if ( !empty( $attendee ) ) {
 			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_registration', '_REG_ID'=>$primary_reg->ID() ), REG_ADMIN_URL );
-			return EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'espresso_registrations_view_registration', $primary_reg->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>' : $attendee->full_name();
+			return EE_Registry::instance()->CAP->current_user_can( 'read_registration', 'espresso_registrations_view_registration', $primary_reg->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '">' . $attendee->full_name() . '</a>' : $attendee->full_name();
 		}
 		return __('Could be something wrong with the primary registration associated with this transaction in the db', 'event_espresso');
 	}
@@ -309,7 +309,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 		</li>' : '';
 	$send_pay_lnk = $item->get('STS_ID') != EEM_Transaction::complete_status_code && $item->get('STS_ID') != EEM_Transaction::overpaid_status_code ? $send_pay_lnk : '';
 
-	$view_reg_lnk = EE_Registry::instance()->CAP->current_user_can( 'edit_registration', 'espresso_registrations_view_registration', $registration->ID() ) ? '
+	$view_reg_lnk = EE_Registry::instance()->CAP->current_user_can( 'read_registration', 'espresso_registrations_view_registration', $registration->ID() ) ? '
 		<li>
 			<a href="'.$view_reg_lnk_url.'" title="' . __( 'View Registration Details', 'event_espresso' ) . '" class="tiny-text">
 				<span class="dashicons dashicons-clipboard"></span>
