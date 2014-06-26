@@ -286,8 +286,6 @@ final class EE_Capabilities extends EE_Base {
 				'manage_event_types',
 				'edit_event_type',
 				'delete_event_type',
-				'read_event_type',
-				'read_event_types',
 				)
 			);
 	}
