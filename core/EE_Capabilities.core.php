@@ -119,8 +119,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Registration::instance(), '', 'edit_others_checkins', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'edit_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_messages', 'edit_global_messages' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_tickets', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question', array( EEM_Question::instance(), '', '', 'edit_system_question' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_system_question_group' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question', array( EEM_Question::instance(), '', '', 'edit_system_questions' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_system_question_groups' ) ),
 			//reads
 			new EE_Meta_Capability_Map_Read( 'read_event', array( EEM_Event::instance(), '', 'read_others_events', 'read_private_events' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_venue', array( EEM_Venue::instance(), '', 'read_others_venues', 'read_private_venues' ) ),
@@ -136,8 +136,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'delete_checkin', array( EEM_Registration::instance(), '', 'delete_others_checkins', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'delete_others_messages', 'delete_global_messages' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'delete_others_default_tickets', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', '', 'edit_system_question' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_system_question_group' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', '', 'delete_system_questions' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', '', 'delete_system_question_groups' ) ),
 		);
 
 		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
@@ -271,16 +271,14 @@ final class EE_Capabilities extends EE_Base {
 			//registration form
 				'edit_question',
 				'edit_questions',
-				'edit_system_question',
-				'read_question',
+				'edit_system_questions',
 				'read_questions',
 				'delete_question',
 				'delete_questions',
 				'edit_question_group',
 				'edit_question_groups',
-				'read_question_group',
 				'read_question_groups',
-				'edit_system_question_group',
+				'edit_system_question_groups',
 				'delete_question_group',
 				'delete_question_groups',
 			//event_type taxonomy
