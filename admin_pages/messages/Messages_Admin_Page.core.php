@@ -174,7 +174,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 				'default'=> array(
 					'func' => '_ee_default_messages_overview_list_table',
-					'capability' => 'edit_global_messages'
+					'capability' => 'read_global_messages'
 					),
 				'custom_mtps' => array(
 					'func' => '_ee_custom_messages_overview_list_table',
@@ -187,7 +187,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'edit_message_template' => array(
 					'func' => '_edit_message_template',
-					'capability' => 'edit_messages',
+					'capability' => 'edit_message',
 					'obj_id' => $grp_id
 					),
 				'preview_message' => array(
@@ -254,7 +254,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'reports' => array(
 					'func' => '_messages_reports',
-					'capability' => 'edit_global_messages'
+					'capability' => 'read_messages'
 					),
 		);
 	}
@@ -652,7 +652,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_message', 'espresso_messages_trash_message_template' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_messages', 'espresso_messages_trash_message_template' ) ) {
 			$this->_views['trashed'] = array(
 				'slug' => 'trashed',
 				'label' => __('Trash', 'event_espresso'),

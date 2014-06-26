@@ -296,7 +296,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base {
 		$sql_date = date("Y-m-d H:i:s", strtotime($period));
 		$where = array('REG_date'=>array('>=',$sql_date) );
 
-		if ( ! EE_Registry::instance()->current_user_can( 'edit_others_registration', 'reg_per_day_report' ) ) {
+		if ( ! EE_Registry::instance()->current_user_can( 'read_others_registrations', 'reg_per_day_report' ) ) {
 			$where['Event.EVT_wp_user'] = get_current_user_id();
 		}
 

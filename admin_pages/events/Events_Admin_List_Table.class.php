@@ -151,7 +151,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			$actions['attendees'] = '<a href="' . $attendees_link . '" title="' . __('View Registrations', 'event_espresso') . '">' . __('Registrations', 'event_espresso') . '</a>';
 		}
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso-events_export_events', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export_events', $item->ID() ) ) {
 			$export_query_args = array(
 					'action' => 'export_events',
 					'EVT_ID' => $item->ID()

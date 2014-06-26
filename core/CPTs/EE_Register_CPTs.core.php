@@ -243,7 +243,7 @@ class EE_Register_CPTs {
 						'delete_private_posts' => 'delete_contacts',
 						'delete_published_posts' => 'delete_contacts',
 						'delete_others_posts' => 'delete_contacts',
-						'edit_private_posts' => 'delete_contacts',
+						'edit_private_posts' => 'edit_contacts',
 						'edit_published_posts' => 'edit_contacts'
 						),
 					'supports' => array( 'editor', 'thumbnail', 'excerpt', 'custom-fields', 'comments' ),

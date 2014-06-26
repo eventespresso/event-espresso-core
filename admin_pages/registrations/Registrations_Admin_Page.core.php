@@ -141,7 +141,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 				'view_registration'	=> array(
 					'func' => '_registration_details',
-					'capability' => 'edit_registration',
+					'capability' => 'read_registration',
 					'obj_id' => $reg_id
 					),
 
@@ -938,7 +938,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//capability checks
-		if ( ! EE_Registry::instance()->CAP->current_user_can('edit_others_registrations', 'get_registrations' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can('read_others_registrations', 'get_registrations' ) ) {
 			$_where['AND'] = array(
 				'Event.EVT_wp_user' => get_current_user_id()
 				);
@@ -1336,7 +1336,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_template_args['taxes'] = array();
 		}
 
-		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'edit_transactions', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
+		$this->_template_args['view_transaction_button'] = EE_Registry::instance()->CAP->current_user_can( 'read_transaction', 'espresso_transactions_view_transaction' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array('action'=> 'view_transaction', 'TXN_ID' => $transaction->ID() ), TXN_ADMIN_URL ), __(' View Transaction'), 'button secondary-button right', 'dashicons dashicons-cart' ) : '';
 		$this->_template_args['resend_registration_button'] = EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_registrations_resend_registration' ) ?EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'resend_registration', '_REG_ID'=>$this->_registration->ID(), 'redirect_to' => 'view_registration' ), REG_ADMIN_URL ), __(' Resend Registration'), 'button secondary-button right', 'dashicons dashicons-email-alt' ) : '';
 
 		$this->_template_args['grand_total'] = EEH_Template::format_currency( $transaction->total() );

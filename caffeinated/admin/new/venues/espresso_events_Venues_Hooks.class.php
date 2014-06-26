@@ -116,7 +116,7 @@ class espresso_events_Venues_Hooks extends EE_Admin_Hooks {
 		$vnu_where['status'] = 'publish';
 
 		//cap checks
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_venues', 'get_venues_event_editor' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_venues', 'get_venues' ) ) {
 			$vnu_where['VNU_wp_user'] = get_current_user_id();
 		}
 
