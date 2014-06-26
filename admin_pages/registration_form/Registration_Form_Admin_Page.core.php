@@ -113,7 +113,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 			'question_groups' => array(
 				'func' => '_questions_groups_preview',
-				'capability' => 'read_questions'
+				'capability' => 'read_question_groups'
 				),
 
 			'update_question' => array(

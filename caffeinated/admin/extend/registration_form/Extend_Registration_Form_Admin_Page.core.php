@@ -72,6 +72,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				'noheader' => TRUE
 				),
 
+			'restore_question' => array(
+				'func' => '_trash_or_restore_questions',
+				'capability' => 'delete_question',
+				'obj_id' => $qst_id,
+				'args' => array( 'trash' => FALSE ),
+				'noheader' => TRUE
+				),
+
 			'delete_question' => array(
 				'func' => '_delete_question',
 				'capability' => 'delete_question',

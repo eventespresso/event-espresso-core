@@ -53,7 +53,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 			);
 
 		$restore_query_args = array(
-			'action' => 'restore_questions',
+			'action' => 'restore_question',
 			'QST_ID' => $item->ID()
 			);
 
@@ -79,7 +79,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 		}
 
 		if ( $this->_view == 'trash' ) {
-			if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'espresso_registration_form_restore_questions', $item->ID() ) ) {
+			if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'espresso_registration_form_restore_question', $item->ID() ) ) {
 				$actions['restore'] = '<a href="' . $restore_link . '" title="' . __('Restore Question', 'event_espresso') . '">' . __('Restore', 'event_espresso') . '</a>';
 			}
 			if ( $item->count_related('Answer') === 0 && EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'espresso_registration_form_delete_questions', $item->ID() ) ) {
