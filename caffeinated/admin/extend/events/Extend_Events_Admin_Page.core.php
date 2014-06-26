@@ -63,37 +63,37 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				),
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'edit_default_ticket',
+				'capability' => 'delete_default_ticket',
 				'obj_id' => $tkt_id,
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE )
 				),
 			'trash_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'edit_default_tickets',
+				'capability' => 'delete_default_tickets',
 				'noheader' => TRUE,
 				'args' => array( 'trash' => TRUE )
 				),
 			'restore_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'edit_default_ticket',
+				'capability' => 'delete_default_ticket',
 				'obj_id' => $tkt_id,
 				'noheader' => TRUE
 				),
 			'restore_tickets' => array(
 				'func' => '_trash_or_restore_ticket',
-				'capability' => 'edit_default_tickets',
+				'capability' => 'delete_default_tickets',
 				'noheader' => TRUE
 				),
 			'delete_ticket' => array(
 				'func' => '_delete_ticket',
-				'capability' => 'edit_default_ticket',
+				'capability' => 'delete_default_ticket',
 				'obj_id' => $tkt_id,
 				'noheader' => TRUE
 				),
 			'delete_tickets' => array(
 				'func' => '_delete_ticket',
-				'capability' => 'edit_default_tickets',
+				'capability' => 'delete_default_tickets',
 				'noheader' => TRUE
 				),
 			'import_page'=> array(

@@ -118,7 +118,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Edit( 'edit_registration', array( EEM_Registration::instance(), '', 'edit_others_registrations', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Registration::instance(), '', 'edit_others_checkins', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'edit_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_messages', 'edit_global_messages' ) ),
-			new EE_Meta_Capability_Map_Edit( 'edit_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
+			new EE_Meta_Capability_Map_Edit( 'edit_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_tickets', '' ) ),
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question', array( EEM_Question::instance(), '', '', 'edit_system_question' ) ),
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'edit_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_system_question_group' ) ),
 			//reads
@@ -127,7 +127,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Read( 'read_registration', array( EEM_Registration::instance(), '', '', 'edit_others_registrations' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_checkin', array( EEM_Registration::instance(), '', '', 'read_others_checkins' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'read_message', array( EEM_Message_Template_Group::instance(), '', 'read_others_messages', 'read_global_messages' ) ),
-			new EE_Meta_Capability_Map_Read( 'read_default_ticket', array( EEM_Ticket::instance(), '', '', 'edit_others_default_ticket' ) ),
+			new EE_Meta_Capability_Map_Read( 'read_default_ticket', array( EEM_Ticket::instance(), '', '', 'read_others_default_tickets' ) ),
 
 			//deletes
 			new EE_Meta_Capability_Map_Delete( 'delete_event', array( EEM_Event::instance(), 'delete_published_events', 'delete_others_events', 'delete_private_events' ) ),
@@ -135,7 +135,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'delete_registration', array( EEM_Registration::instance(), '', 'edit_others_registrations', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_checkin', array( EEM_Registration::instance(), '', 'delete_others_checkins', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'delete_others_messages', 'delete_global_messages' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'edit_others_default_ticket', '' ) ),
+			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'delete_others_default_tickets', '' ) ),
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', '', 'edit_system_question' ) ),
 			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', '', 'edit_system_question_group' ) ),
 		);
@@ -250,10 +250,13 @@ final class EE_Capabilities extends EE_Base {
 			//tickets
 				'read_default_ticket',
 				'read_default_tickets',
+				'read_others_default_tickets',
 				'edit_default_ticket',
 				'edit_default_tickets',
-				'edit_others_default_ticket',
-				'read_others_default_tickets',
+				'edit_others_default_tickets',
+				'delete_ticket',
+				'delete_tickets',
+				'delete_others_default_tickets',
 			//prices
 				'edit_default_price',
 				'edit_default_prices',
