@@ -115,7 +115,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 				'view_transaction' => array(
 					'func' => '_transaction_details',
-					'capability' => 'edit_transaction',
+					'capability' => 'read_transaction',
 					'obj_id' => $txn_id
 					),
 

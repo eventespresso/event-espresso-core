@@ -33,7 +33,7 @@
 					<td class="jst-left">
 					<?php
 						$txn_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$registration->transaction_ID() ), TXN_ADMIN_URL );
-						echo EE_Registry::instance()->CAP->current_user_can( 'edit_transaction', 'espresso_transactions_view_transaction' ) ? '
+						echo EE_Registry::instance()->CAP->current_user_can( 'read_transaction', 'espresso_transactions_view_transaction' ) ? '
 						<a href="'.$txn_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">
 							View Transaction ' . $registration->transaction_ID() . '
 						</a>' : '';

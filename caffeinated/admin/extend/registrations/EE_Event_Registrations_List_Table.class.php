@@ -293,7 +293,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				return '<span class="reg-pad-rght"><div class="dashicons dashicons-yes green-icon"></div></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
-				return EE_Registry::instance()->CAP->current_user_can( 'edit_transaction', 'espresso_transactions_view_transaction' ) ?  '
+				return EE_Registry::instance()->CAP->current_user_can( 'read_transaction', 'espresso_transactions_view_transaction' ) ?  '
 				<span class="reg-pad-rght">
 					<a class="status-'. $item->transaction()->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">
 						' . $item->transaction()->pretty_paid(). '
@@ -318,7 +318,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( $item->get('REG_count') == 1 ) {
 			$line_total_obj = $txn->total_line_item();
 			$txn_total = $line_total_obj instanceof EE_Line_Item ? $line_total_obj->get_pretty('LIN_total') : __('View Transaction', 'event_espresso');
-			return EE_Registry::instance()->CAP->current_user_can( 'edit_transaction', 'espresso_transactions_view_transaction' ) ?  '<a href="' . $view_txn_url . '" title="' . __('View Transaction', 'event_espresso') . '"><span class="reg-pad-rght">'. $txn_total  .'</span></a>' : '<span class="reg-pad-rght">' . $txn_total . '</span>';
+			return EE_Registry::instance()->CAP->current_user_can( 'read_transaction', 'espresso_transactions_view_transaction' ) ?  '<a href="' . $view_txn_url . '" title="' . __('View Transaction', 'event_espresso') . '"><span class="reg-pad-rght">'. $txn_total  .'</span></a>' : '<span class="reg-pad-rght">' . $txn_total . '</span>';
 		} else {
 			return '<span class="reg-pad-rght"></span>';
 		}
