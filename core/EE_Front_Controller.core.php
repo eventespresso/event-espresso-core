@@ -280,7 +280,7 @@ final class EE_Front_Controller {
 				// now cycle thru shortcodes
 				foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 					// are we on this page, or on the blog page, or an EE CPT category page ?
-					if ( current_user_can( 'edit_post', $post_id ) && $current_post == $post_name || $term_exists ) {
+					if ( $current_post == $post_name || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
 						if ( ! isset( EE_Registry::instance()->shortcodes->$shortcode_class )) {
 							if ( $current_post != $page_for_posts ) {
