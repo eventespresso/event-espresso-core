@@ -60,7 +60,7 @@ Venue: <a href="[VENUE_URL]" target="_blank">[VENUE_TITLE]</a> ([VENUE_CITY], [V
 													<h6>Contact Info:</h6>
 													Phone: <strong>[EVENT_PHONE]</strong>
 
-													Email: <strong><a href="[EVENT_AUTHOR_EMAIL]">[EVENT_AUTHOR_EMAIL]</a></strong>
+													Email: <strong><a href="mailto:[EVENT_AUTHOR_EMAIL]">[EVENT_AUTHOR_EMAIL]</a></strong>
 												</td>
 											</tr>
 										</tbody>

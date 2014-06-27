@@ -204,11 +204,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		EE_Registry::instance()->load_model( 'Gateways' )->thank_you_page_logic( $this->_current_txn );
 		EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
 		// load assets
-		add_filter( 'FHEE_load_css', '__return_true' );
-		if ( ! $this->_current_txn->is_free() ) {
-			add_filter( 'FHEE_load_js', '__return_true' );
-			add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
-		}
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
 		add_action( 'shutdown', array( EE_Session::instance(), 'clear_session' ));
 		return;
 	}
@@ -223,7 +219,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	public function load_js() {
 		wp_register_script( 'thank_you_page', THANK_YOU_ASSETS_URL . 'thank_you_page.js', array( 'espresso_core', 'heartbeat' ), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'thank_you_page' );
-		EE_Registry::$i18n_js_strings['reg_url_link'] = $this->_reg_url_link;
+		EE_Registry::$i18n_js_strings['e_reg_url_link'] = $this->_reg_url_link;
 		EE_Registry::$i18n_js_strings['initial_access'] = current_time('timestamp');
 		EE_Registry::$i18n_js_strings['IPN_wait_time'] = EES_Espresso_Thank_You::IPN_wait_time;
 		EE_Registry::$i18n_js_strings['TXN_complete'] = EEM_Transaction::complete_status_code;
@@ -350,7 +346,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		// does this heartbeat contain our data ?
 		if ( isset( $data['espresso_thank_you_page'] )) {
 			// check for reg_url_link in the incoming heartbeat data
-			if ( ! isset( $data['espresso_thank_you_page']['reg_url_link'] )) {
+			if ( ! isset( $data['espresso_thank_you_page']['e_reg_url_link'] )) {
 				$response['espresso_thank_you_page'] = array (
 					'errors' => ! empty( $notices['errors'] ) ? $notices['errors'] : __( 'No transaction information could be retrieved because the registration URL link is missing or invalid.', 'event_espresso' )
 				);
@@ -361,7 +357,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			// set defs, instantiate the thank you page class, and get the ball rolling
 			EES_Espresso_Thank_You::set_definitions();
 			$espresso_thank_you_page = EES_Espresso_Thank_You::instance();
-			$espresso_thank_you_page->set_reg_url_link( $data['espresso_thank_you_page']['reg_url_link'] );
+			$espresso_thank_you_page->set_reg_url_link( $data['espresso_thank_you_page']['e_reg_url_link'] );
 			$espresso_thank_you_page->init();
 			//get TXN
 			$TXN = $espresso_thank_you_page->get_txn();
