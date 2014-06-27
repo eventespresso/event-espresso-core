@@ -146,10 +146,12 @@ class EE_Maintenance_Mode {
 		if( EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()){
 			update_option(self::option_name_maintenance_mode, self::level_2_complete_maintenance);
 			return true;
-		}else{
+		}elseif( $this->level() == self::level_2_complete_maintenance ){
 			//we also want to handle the opposite: if the site is mm2, but there aren't any migrations to run
 			//then we shouldn't be in mm2. (Maybe an addon got deactivated?)
 			update_option( self::option_name_maintenance_mode, self::level_0_not_in_maintenance );
+			return false;
+		}else{
 			return false;
 		}
 	}
