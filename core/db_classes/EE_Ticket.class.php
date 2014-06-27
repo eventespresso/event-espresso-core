@@ -400,6 +400,20 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 
 
+
+	/**
+	 * get the author of the ticket.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		return $this->get('TKT_wp_user');
+	}
+
+
+
 	/**
 	 * Gets the template for the ticket
 	 * @return EE_Ticket_Template

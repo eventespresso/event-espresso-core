@@ -29,15 +29,19 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	protected $_cached_SERVER_NAME = NULL;
 
 	public function setUp() {
+		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
+		//as it immediately adds a few hooks we might not want to backup
 		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
-		parent::setUp();
-		$auto_made_thing_seed = 1;
 		$this->wp_filters_saved = array(
 			'wp_filter'=>$wp_filter,
 			'wp_actions'=>$wp_actions,
 			'merged_filters'=>$merged_filters,
 			'wp_current_filter'=>$wp_current_filter
 		);
+		parent::setUp();
+		$auto_made_thing_seed = 1;
+
+//		$this->wp_actions_saved = $wp_actions;
 		// Fake WP mail globals, to avoid errors
 		add_filter( 'wp_mail', array( $this, 'setUp_wp_mail' ) );
 		add_filter( 'wp_mail_from', array( $this, 'tearDown_wp_mail' ) );
@@ -335,6 +339,11 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * We really should implement this function in the proper PHPunit style
 	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+	 * !NOTE! This ONLY checks for non-temporary tables! And WP_UnitTestCase changes all queries that use
+	 * 'CREATE TABLE' to 'CREATE TEMPORARY TABLE'. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
+	 * So you need to remove that filter BEFORE the table is created if you subsequently want to check
+	 * whether the table exists or not; or alternatively somehow improve this to check for temporary tables...
+	 * but that's unfortunately very difficult with MYSQL
 	 * @global WPDB $wpdb
 	 * @param string $table_name with or without $wpdb->prefix
 	 * @param string $model_name the model's name (only used for error reporting)
@@ -347,6 +356,24 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$exists =  $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
 		if( !$exists ){
 			$this->assertTrue($exists,  sprintf(__("Table like %s does not exist as it was defined on the model %s", 'event_espresso'),$table_name,$model_name));
+		}
+	}
+
+	/**
+	 * We really should implement this function in the proper PHPunit style
+	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+	 * @global WPDB $wpdb
+	 * @param string $table_name with or without $wpdb->prefix
+	 * @param string $model_name the model's name (only used for error reporting)
+	 */
+	function assertTableDoesNotExist($table_name, $model_name = 'Unknown' ){
+		global $wpdb;
+		if(strpos($table_name, $wpdb->prefix) !== 0){
+			$table_name = $wpdb->prefix.$table_name;
+		}
+		$exists =  $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
+		if( $exists ){
+			$this->assertFalse($exists,  sprintf(__("Table like %s SHOULD NOT exist. It was apparently defined on the model '%s'", 'event_espresso'),$table_name,$model_name));
 		}
 	}
 

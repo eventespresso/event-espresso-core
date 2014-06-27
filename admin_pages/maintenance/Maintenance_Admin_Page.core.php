@@ -54,42 +54,74 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 
 	protected function _define_page_props() {
 		$this->_admin_page_title = EE_MAINTENANCE_LABEL;
+		$this->_labels = array(
+			'buttons' => array(
+				'reset_capabilities' => __( 'Reset Capabilities', 'event_espresso' )
+				)
+			);
 	}
 
 
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_maintenance',
+			'default' => array(
+				'func' => '_maintenance',
+				'capability' => 'manage_options'
+				),
 			'change_maintenance_level'=>array(
 				'func'=>'_change_maintenance_level',
+				'capability' => 'manage_options',
 				'noheader'=>true
 			),
-			'system_status'=>'_system_status',
+			'system_status'=>array(
+				'func' => '_system_status',
+				'capability' => 'manage_options'
+				),
 			'send_migration_crash_report'=>array(
 				'func'=>'_send_migration_crash_report',
+				'capability' => 'manage_options',
 				'noheader'=>true
 			),
-			'confirm_migration_crash_report_sent'=>'_confirm_migration_crash_report_sent',
-			'data_reset' => '_data_reset_and_delete',
+			'confirm_migration_crash_report_sent'=> array(
+				'func' => '_confirm_migration_crash_report_sent',
+				'capability' => 'manage_options'
+				),
+			'data_reset' => array(
+				'func' => '_data_reset_and_delete',
+				'capability' => 'manage_options'
+				),
 			'reset_db'=>array(
 				'func'=>'_reset_db',
+				'capability' => 'manage_options',
 				'noheader'=>true,
 				'args'=>array('nuke_old_ee4_data'=>true),
 			),
 			'start_with_fresh_ee4_db'=>array(
 				'func'=>'_reset_db',
+				'capability' => 'manage_options',
 				'noheader'=>true,
 				'args'=>array('nuke_old_ee4_data'=>false),
 			),
 			'delete_db'=>array(
 				'func'=>'_delete_db',
+				'capability' => 'manage_options',
 				'noheader'=>true
 			),
 			'rerun_migration_from_ee3'=>array(
 				'func'=>'_rerun_migration_from_ee3',
+				'capability' => 'manage_options',
 				'noheader'=>true
-			)
+			),
+			'tools' => array(
+				'func' => '_tools_page',
+				'capability' => 'manage_options'
+				),
+			'reset_capabilities' => array(
+				'func' => '_reset_capabilities',
+				'capability' => 'manage_options',
+				'noheader' => true
+				)
 		);
 	}
 	protected function _set_page_config() {
@@ -119,7 +151,14 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 				),
 				'require_nonce' => FALSE,
 				//'metaboxes'=>array( '_espresso_news_post_box', '_espresso_links_post_box', '_espresso_sponsors_post_box'),
-			)
+			),
+			'tools' => array(
+				'nav' => array(
+					'label' => __('Other Tools', 'event_espresso'),
+					'order' => 40
+					),
+				'require_nonce' => FALSE
+				),
 		);
 	}
 
@@ -420,6 +459,27 @@ class Maintenance_Admin_Page extends EE_Admin_Page {
 //		wp_enqueue_style('ee-text-links');
 //		//scripts
 //		wp_enqueue_script('ee-text-links');
+	}
+
+
+	public function load_scripts_styles_tools() {
+		wp_register_style( 'ee_tools_page', EE_MAINTENANCE_ASSETS_URL . 'ee-tools.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_enqueue_style( 'ee_tools_page' );
+	}
+
+
+
+	protected function _tools_page() {
+		$template_args['reset_capabilities_button'] = $this->get_action_link_or_button( 'reset_capabilities', 'reset_capabilities', array(),  'button button-primary' );
+		$this->_template_args['admin_page_content'] = EEH_Template::display_template( EE_MAINTENANCE_TEMPLATE_PATH . 'tools_page.template.php', $template_args, TRUE  );
+		$this->display_admin_page_with_sidebar();
+	}
+
+
+	protected function _reset_capabilities() {
+		EE_Registry::instance()->CAP->init_caps( true );
+		EE_Error::add_success( __('Default Event Espresso capabilities have been restored for all current roles.', 'event_espresso' ) );
+		$this->_redirect_after_action( FALSE, '', '', array( 'action' => 'tools' ), TRUE );
 	}
 
 

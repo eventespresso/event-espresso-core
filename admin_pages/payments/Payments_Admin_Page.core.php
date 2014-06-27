@@ -68,31 +68,38 @@ class Payments_Admin_Page extends EE_Admin_Page {
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
 			'default' => array(
-				'func'=>'_payment_methods_list'
+				'func'=>'_payment_methods_list',
+				'capability' => 'manage_gateways'
 			),
 			'payment_settings' => '_payment_settings',
 			'activate_payment_method'=>array(
 				'func'=>'_activate_payment_method',
-				'noheader'=>TRUE
+				'noheader'=>TRUE,
+				'capability' => 'manage_gateways'
 				),
 			'deactivate_payment_method'=>array(
 				'func'=>'_deactivate_payment_method',
-				'noheader'=>TRUE
+				'noheader'=>TRUE,
+				'capability' => 'manage_gateways'
 				),
 			'update_payment_method'=>array(
 				'func'=>'_update_payment_method',
 				'noheader'=>TRUE,
 				'headers_sent_route'=>'default',
+				'capability' => 'manage_gateways'
 			),
 			'update_payment_settings' => array(
 				'func'=>'_update_payment_settings',
 				'noheader'=>TRUE,
+				'capability' => 'manage_gateways'
 				),
-			'payment_log'=> '_payment_log_overview_list_table',
-			'payment_log_details'=>'_payment_log_details',
-			'download_logs'=>array(
-				'func'=>'_download_logs',
-				'noheader'=>TRUE
+			'payment_log'=> array(
+				'func'=> '_payment_log_overview_list_table',
+				'capability' => 'manage_gateways'
+			),
+			'payment_log_details'=> array(
+				'func'=>'_payment_log_details',
+				'capability' => 'manage_gateways'
 			)
 			);
 	}
@@ -303,6 +310,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 				$payment_method_slug = $an_active_pm->slug();
 			}else{
 				$payment_method_slug = 'paypal_standard';
+
 			}
 		}
 
@@ -457,6 +465,7 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			}
 		}
 		return;
+
 	}
 
 
@@ -629,11 +638,6 @@ class Payments_Admin_Page extends EE_Admin_Page {
 			'transaction'=>$transaction), TRUE );
 		$this->display_admin_page_with_sidebar();
 
-	}
-	protected function _download_logs(){
-		header('Content-Disposition: attachment');
-		echo "monkeys";
-		die;
 	}
 
 

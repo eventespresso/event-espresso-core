@@ -608,6 +608,12 @@ class EE_Error extends Exception {
 	* 	@return 		void
 	*/
 	private static function _add_notice( $type = 'success', $msg = NULL, $file = NULL, $func = NULL, $line = NULL ) {
+		if ( empty( $msg )) {
+			EE_Error::doing_it_wrong( 'EE_Error::add_' . $type . '()', 'Notifications are not much use without a message! Please add a message.', EVENT_ESPRESSO_VERSION );
+		}
+		if ( $type == 'errors' && ( empty( $file ) || empty( $func ) || empty( $line ))) {
+			EE_Error::doing_it_wrong( 'EE_Error::add_error()', 'You need to provide the file name, function name, and line number that the error occurred on in order to better assist with debugging.', EVENT_ESPRESSO_VERSION );
+		}
 		// get separate user and developer messages if they exist
 		$msg = explode( '||', $msg );
 		$user_msg = $msg[0];
@@ -835,6 +841,7 @@ class EE_Error extends Exception {
 			if ( empty( $persistent_admin_notices )) {
 				add_option( 'ee_pers_admin_notices', array(), '', 'no' );
 			}
+			$pan_name = sanitize_key( $pan_name );
 			if ( ! array_key_exists( $pan_name, $persistent_admin_notices ) || $force_update ) {
 				$persistent_admin_notices[ $pan_name ] = $pan_message;
 				update_option( 'ee_pers_admin_notices', $persistent_admin_notices );
@@ -901,8 +908,8 @@ class EE_Error extends Exception {
 			return '
 			<div id="' . $pan_name . '" class="espresso-notices updated ee-nag-notice clearfix" style="border-left: 4px solid #E76700;">
 				<p>' . $pan_message . '</p>
-				<a class="dismiss-ee-nag-notice hide-if-no-js dashicons" style="float: right; cursor: pointer;" rel="' . $pan_name . '">
-					<span class="dashicons-dismiss" style="position:relative; top:2px; margin-right:.25em;"></span>'.__( 'Dismiss', 'event_espresso' ) .'
+				<a class="dismiss-ee-nag-notice hide-if-no-js" style="float: right; cursor: pointer; text-decoration:none;" rel="' . $pan_name . '">
+					<span class="dashicons dashicons-dismiss" style="position:relative; top:-1px; margin-right:.25em;"></span>'.__( 'Dismiss', 'event_espresso' ) .'
 				</a>
 				<div style="clear:both;"></div>
 			</div>';
@@ -1084,7 +1091,7 @@ var ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
 	 * @uses   constant WP_DEBUG test if wp_debug is on or not
 	 * @param  string $function The function that was called
 	 * @param  string $message  A message explaining what has been done incorrectly
-	 * @param  string $version  The verison of Event Espresso where the error was added
+	 * @param  string $version  The version of Event Espresso where the error was added
 	 * @return trigger_error()
 	 */
 	public static function doing_it_wrong( $function, $message, $version ) {

@@ -8,7 +8,7 @@ jQuery(document).ready(function($) {
 			slow_IPN : '<div id="espresso-thank-you-page-slow-IPN-dv" class="ee-attention jst-left">The Payment Notification appears to be taking longer than usual to arrive. Maybe check back later or just wait for your payment and registration confirmation results to be sent to you via email. We apologize for any inconvenience this may have caused.</div>',
 			server_error : "An unknown error occurred on the server while attempting to process your request. Please refresh the page and try again.",
 			TXN_complete : "TCM",
-			reg_url_link : "",
+			e_reg_url_link : "",
 			initial_access : new Date().getTime(),
 			IPN_wait_time : 1200,
 			wp_debug : 0
@@ -23,7 +23,7 @@ jQuery(document).ready(function($) {
 		data: [],
 		// JSON array  of data to be sent to the server when polling
 		return : {
-			'reg_url_link' : eei18n.reg_url_link,
+			'e_reg_url_link' : eei18n.e_reg_url_link,
 			'initial_access' : eei18n.initial_access,
 			'txn_status' : this.prev_txn_status,
 			'get_payments_since' : 0
@@ -288,7 +288,7 @@ jQuery(document).ready(function($) {
 				url: eei18n.ajax_url,
 				data: {
 					action : "espresso_resend_reg_confirmation_email",
-					reg_url_link : eei18n.reg_url_link,
+					e_reg_url_link : eei18n.e_reg_url_link,
 					id : $(this).attr( 'rel' ),
 					ee_front_ajax : 1
 				},

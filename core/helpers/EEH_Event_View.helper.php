@@ -28,14 +28,16 @@ class EEH_Event_View extends EEH_Base {
 	private static $_event = NULL;
 
 
+
 	/**
-	 * 	get_event
-	* 	attempts to retrieve an EE_Event object any way it can
+	 *    get_event
+	 *    attempts to retrieve an EE_Event object any way it can
 	 *
-	 *  @access 	public
-	 *  @return 	object
+	 * @access    public
+	 * @param int $EVT_ID
+	 * @return    object
 	 */
-	public static function get_event( $EVT_ID = FALSE ) {
+	public static function get_event( $EVT_ID = 0 ) {
 		$EVT_ID = $EVT_ID instanceof WP_Post ? $EVT_ID->ID : absint( $EVT_ID );
 		// do we already have the Event  you are looking for?
 		if ( EEH_Event_View::$_event instanceof EE_Event && $EVT_ID && EEH_Event_View::$_event->ID() === $EVT_ID ) {
@@ -301,7 +303,7 @@ class EEH_Event_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function get_all_date_obj( $EVT_ID = FALSE,$include_expired = NULL, $include_deleted = false ) {
+	public static function get_all_date_obj( $EVT_ID = FALSE, $include_expired = NULL, $include_deleted = false, $limit = NULL ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if($include_expired === null){
 			if($event->is_expired()){
@@ -313,7 +315,7 @@ class EEH_Event_View extends EEH_Base {
 			$include_expired = true;
 		}
 		if ( $event instanceof EE_Event ) {
-			return $event->datetimes_ordered($include_expired,$include_deleted);
+			return $event->datetimes_ordered($include_expired, $include_deleted, $limit);
 		} else {
 			 return FALSE;
 		}

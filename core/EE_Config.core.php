@@ -764,10 +764,10 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__register_shortcode__begin',$shortcode_path );
 		$shortcode_ext = '.shortcode.php';
 		// make all separators match
-		$shortcode_path = rtrim( str_replace( '/\\', DS, $shortcode_path ), DS );
+		$shortcode_path = str_replace( array( '\\', '/' ), DS, $shortcode_path );
 		// does the file path INCLUDE the actual file name as part of the path ?
 		if ( strpos( $shortcode_path, $shortcode_ext ) !== FALSE ) {
-			// grab and shortcode file name from directory name and break apart at dots
+			// grab shortcode file name from directory name and break apart at dots
 			$shortcode_file = explode( '.', basename( $shortcode_path ));
 			// take first segment from file name pieces and remove class prefix if it exists
 			$shortcode = strpos( $shortcode_file[0], 'EES_' ) === 0 ? substr( $shortcode_file[0], 4 ) : $shortcode_file[0];
@@ -778,28 +778,23 @@ final class EE_Config {
 			// remove last segment
 			array_pop( $shortcode_path );
 			// glue it back together
-			$shortcode_path = implode( DS, $shortcode_path );
+			$shortcode_path = implode( DS, $shortcode_path ) . DS;
 		} else {
 			// we need to generate the filename based off of the folder name
 			// grab and sanitize shortcode directory name
 			$shortcode = sanitize_key( basename( $shortcode_path ));
+			$shortcode_path = rtrim( $shortcode_path, DS ) . DS;
 		}
 		// create classname from shortcode directory or file name
 		$shortcode = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode )));
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		if ( ! is_readable( $shortcode_path . DS . $shortcode_class . $shortcode_ext )) {
-			$msg = sprintf(
-				__( 'The requested %s shortcode file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso' ),
-				$shortcode_class,
-				$shortcode_path . DS . $shortcode_class . $shortcode_ext
-			);
-			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' )) {
 			return FALSE;
 		}
 		// load the shortcode class file
-		require_once( $shortcode_path . DS . $shortcode_class . $shortcode_ext );
+		require_once( $shortcode_path . $shortcode_class . $shortcode_ext );
 		// verify that class exists
 		if ( ! class_exists( $shortcode_class )) {
 			$msg = sprintf( __( 'The requested %s shortcode class does not exist.', 'event_espresso' ), $shortcode_class );
@@ -808,7 +803,7 @@ final class EE_Config {
 		}
 		$shortcode = strtoupper( $shortcode );
 		// add to array of registered shortcodes
-		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
+		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . $shortcode_class . $shortcode_ext;
 		return TRUE;
 	}
 
@@ -852,7 +847,7 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__register_module__begin', $module_path );
 		$module_ext = '.module.php';
 		// make all separators match
-		$module_path = rtrim( str_replace( '/\\', DS, $module_path ), DS );
+		$module_path = str_replace( array( '\\', '/' ), DS, $module_path );
 		// does the file path INCLUDE the actual file name as part of the path ?
 		if ( strpos( $module_path, $module_ext ) !== FALSE ) {
 			// grab and shortcode file name from directory name and break apart at dots
@@ -866,29 +861,24 @@ final class EE_Config {
 			// remove last segment
 			array_pop( $module_path );
 			// glue it back together
-			$module_path = implode( DS, $module_path );
+			$module_path = implode( DS, $module_path ) . DS;
 		} else {
 			// we need to generate the filename based off of the folder name
 			// grab and sanitize module name
 			$module = basename( $module_path );
+			$module_path = rtrim( $module_path, DS ) . DS;
 		}
 		// create classname from module directory name
 		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module )));
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
-			$msg = sprintf(
-				__( 'The requested %s module file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso' ),
-				$module,
-				$module_path . DS . $module_class . $module_ext
-			);
-			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' )) {
 			return FALSE;
 		}
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
 		// load the module class file
-		require_once( $module_path . DS . $module_class . $module_ext );
+		require_once( $module_path . $module_class . $module_ext );
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->stop_timer("Requiring module $module_class"); }
 		// verify that class exists
 		if ( ! class_exists( $module_class )) {
@@ -897,7 +887,7 @@ final class EE_Config {
 			return FALSE;
 		}
 		// add to array of registered modules
-		EE_Registry::instance()->modules->$module_class = $module_path . DS . $module_class . $module_ext;
+		EE_Registry::instance()->modules->$module_class = $module_path . $module_class . $module_ext;
 		do_action( 'AHEE__EE_Config__register_module__complete', $module_class, EE_Registry::instance()->modules->$module_class );
 		return TRUE;
 	}

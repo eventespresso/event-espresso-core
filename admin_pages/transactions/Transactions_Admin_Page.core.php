@@ -104,30 +104,43 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 
 		$this->_get_transaction_status_array();
 
+		$txn_id = ! empty( $this->_req_data['TXN_ID'] ) && ! is_array( $this->_req_data['TXN_ID'] ) ? $this->_req_data['TXN_ID'] : 0;
+
 		$this->_page_routes = array(
 
-				'default' => '_transactions_overview_list_table',
+				'default' => array(
+					'func' => '_transactions_overview_list_table',
+					'capability' => 'read_transactions'
+					),
 
-				'view_transaction' => '_transaction_details',
+				'view_transaction' => array(
+					'func' => '_transaction_details',
+					'capability' => 'read_transaction',
+					'obj_id' => $txn_id
+					),
 
 				'send_payment_reminder'	=> array(
 					'func' => '_send_payment_reminder',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'send_message'
 					),
 
 				'espresso_apply_payment' => array(
 				 	'func' => 'apply_payments_or_refunds',
-				 	'noheader' => TRUE
+				 	'noheader' => TRUE,
+				 	'capability' => 'edit_payments'
 				 	),
 
 				'espresso_apply_refund'	=> array(
 					'func' => 'apply_payments_or_refunds',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'edit_payments'
 					),
 
 				'espresso_delete_payment' => array(
 					'func' => 'delete_payment',
-					'noheader' => TRUE
+					'noheader' => TRUE,
+					'capability' => 'delete_payments'
 					),
 
 		);
@@ -351,7 +364,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 	protected function _transaction_legend_items() {
 		$items = array(
 			'view_details' => array(
-				'class' => 'dashicons dashicons-search',
+				'class' => 'dashicons dashicons-cart',
 				'desc' => __('View Transaction Details', 'event_espresso')
 				),
 			'download_invoice' => array(
@@ -359,11 +372,11 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'desc' => __('Download Transaction Invoice as a PDF', 'event_espresso')
 				),
 			'send_payment_reminder' => array(
-				'class' => 'ee-icon ee-icon-payment-reminder',
+				'class' => 'dashicons dashicons-email-alt',
 				'desc' => __('Send Payment Reminder', 'event_espresso')
 				),
 			'view_registration' => array(
-				'class' => 'ee-icon ee-icon-user-edit',
+				'class' => 'dashicons dashicons-clipboard',
 				'desc' => __('View Registration Details', 'event_espresso')
 				),
 			'blank' => array(
@@ -420,7 +433,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args = array();
 		$this->_template_args['transactions_page'] = $this->wp_page_slug;
 
-	    $this->_set_transaction_object();
+		$this->_set_transaction_object();
 
 		$this->_template_args['txn_nmbr']['value'] = $this->_transaction->ID();
 		$this->_template_args['txn_nmbr']['label'] = __( 'Transaction Number', 'event_espresso' );
@@ -435,7 +448,9 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['grand_total'] = $this->_transaction->get('TXN_total');
 		$this->_template_args['total_paid'] = $this->_transaction->get('TXN_paid');
 
-		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __('Send Payment Reminder'), 'button secondary-button right ee-icon ee-icon-payment-reminder' ) : '';
+		if ( EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_transactions_send_payment_reminder' ) ) {
+		$this->_template_args['send_payment_reminder_button'] = $this->_transaction->get('STS_ID') != EEM_Transaction::complete_status_code && $this->_transaction->get('STS_ID') != EEM_Transaction::overpaid_status_code ? EEH_Template::get_button_or_link( EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'send_payment_reminder', 'TXN_ID'=>$this->_transaction->ID(), 'redirect_to' => 'view_transaction' ), TXN_ADMIN_URL ), __(' Send Payment Reminder'), 'button secondary-button right',  'dashicons dashicons-email-alt' ) : '';
+		}
 
 		$amount_due = $this->_transaction->get('TXN_total') - $this->_transaction->get('TXN_paid');
 		$this->_template_args['amount_due'] =  ' <span id="txn-admin-total-amount-due">' . EEH_Template::format_currency( $amount_due, TRUE ) . '</span>';

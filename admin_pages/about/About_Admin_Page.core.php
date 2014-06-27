@@ -42,9 +42,18 @@ class About_Admin_Page extends EE_Admin_Page {
 
 	protected function _set_page_routes() {
 		$this->_page_routes = array(
-			'default' => '_whats_new',
-			'overview' => '_overview',
-			'credits' => '_credits',
+			'default' => array(
+				'func' => '_whats_new',
+				'capability' => 'read_ee'
+				),
+			'overview' => array(
+				'func' => '_overview',
+				'capability' => 'read_ee'
+				),
+			'credits' => array(
+				'func' => '_credits',
+				'capability' => 'read_ee'
+				),
 			);
 	}
 
@@ -108,26 +117,60 @@ class About_Admin_Page extends EE_Admin_Page {
 
 
 	protected function _get_started_steps() {
-		$steps = '<h3>'.__('Getting Started').'</h3>';
-		$step_one = '<p>'.sprintf( __('%sStep 1%s: Visit your %sOrganization Settings%s and add/update your details.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_general_settings">', '</a>') .'</strong></p>';
-		$step_two = '<p>'.sprintf( __('%sStep 2%s: Setup your %sPayment Methods%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_payment_settings">', '</a>') .'</strong></p>';
-		$step_three = '<p>'.sprintf( __('%sStep 3%s: Create your %sFirst Event%s.', 'event_espresso'), '<strong>', '</strong>', '<a href="admin.php?page=espresso_events&action=create_new">', '</a>') .'</strong></p>';
+
+		$step_one_prefix = sprintf( __('%sStep 1:%s:', 'event_espresso'), '<strong>', '</strong>' );
+		$step_two_prefix = sprintf( __('%sStep 2:%s:', 'event_espresso'), '<strong>', '</strong>'  );
+		$step_three_prefix = sprintf( __('%sStep 3:%s:', 'event_espresso'), '<strong>', '</strong>'  );
+
+		//baseline steps in the order they go in.
+		$steps = array(
+			'organization' => '<span>'.sprintf( __('Visit your %sOrganization Settings%s and add/update your details.', 'event_espresso'), '<a href="admin.php?page=espresso_general_settings">', '</a>') .'</span>',
+			'gateways' => '<span>'.sprintf( __('Setup your %sPayment Methods%s.', 'event_espresso'), '<a href="admin.php?page=espresso_payment_settings">', '</a>') .'</span>',
+			'event' => '<span>'.sprintf( __('Create your %sFirst Event%s.', 'event_espresso'), '<a href="admin.php?page=espresso_events&action=create_new">', '</a>') .'</span>'
+			);
+
+		//now let's setup the steps we'll use based on conditions.
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'manage_options', 'espresso_general_settings_update_your_organization_settings' ) ) {
+			unset( $steps['organization'] );
+		}
+
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'manage_gateways', 'espresso_payment_settings_default' ) ) {
+			unset( $steps['gateways'] );
+		}
+
+
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_events', 'espresso_events_create_new' ) ) {
+			unset( $steps['event'] );
+		}
+
+		//if empty $steps get out!
+		if ( empty( $steps ) ) {
+			return FALSE;
+		}
 
 		//done?
-		$done_step_one = EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' ? FALSE : TRUE;
-		$done_step_two = count(EE_Registry::instance()->CFG->gateway->active_gateways) < 1 || ( count(EE_Registry::instance()->CFG->gateway->active_gateways) === 1 && !empty( EE_Registry::instance()->CFG->gateway->payment_settings['Invoice'] ) && preg_match( '/123 Onna Road/', EE_Registry::instance()->CFG->gateway->payment_settings['Invoice']['payment_address'] ) ) ? FALSE : TRUE;
-		$done_step_three = EE_Registry::instance()->load_model('Event')->count() > 0 ? TRUE : FALSE;
+		$done_steps = array(
+			'organization' => EE_Registry::instance()->CFG->organization->address_1 == '123 Onna Road' ? FALSE : TRUE,
+			'gateways' => count(EE_Registry::instance()->CFG->gateway->active_gateways) < 1 || ( count(EE_Registry::instance()->CFG->gateway->active_gateways) === 1 && !empty( EE_Registry::instance()->CFG->gateway->payment_settings['Invoice'] ) && preg_match( '/123 Onna Road/', EE_Registry::instance()->CFG->gateway->payment_settings['Invoice']['payment_address'] ) ) ? FALSE : TRUE,
+			'event' => EE_Registry::instance()->load_model('Event')->count() > 0 ? TRUE : FALSE
+			);
 
 		//if ALL steps are done, let's just return FALSE so we don't display anything
-		if ( $done_step_one && $done_step_two && $done_step_three )
+		if ( $done_steps['organization'] && $done_steps['gateways'] && $done_steps['event'] ) {
 			return FALSE;
+		}
 
-		//now let's put it together
-		$steps .= sprintf( '%s' . $step_one . '%s', $done_step_one ? '<strike>' : '', $done_step_one ? '</strike>': '' );
-		$steps .= sprintf( '%s' . $step_two . '%s', $done_step_two ? '<strike>' : '', $done_step_two ? '</strike>': '' );
-		$steps .= sprintf( '%s' . $step_three . '%s', $done_step_three ? '<strike>' : '', $done_step_three ? '</strike>': '' );
 
-		return $steps;
+
+		//loop through remaining steps and set up the correct step prefixes for whatever steps are left.
+		$step_num = 1;
+		$step_content = '<h3>'.__('Getting Started').'</h3>';
+		foreach ( $steps as $ref => $text ) {
+			$step_content .= '<p><strong>' . sprintf( __('Step %d: ', 'event_espresso' ), $step_num ) . '</strong>' . sprintf( '%s' . $text . '%s', $done_steps[$ref] ? '<strike>' : '', $done_steps[$ref] ? '</strike>' : '' ) . '</p>';
+			$step_num++;
+		}
+
+		return $step_content;
 	}
 
 

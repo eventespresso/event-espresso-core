@@ -18,10 +18,10 @@ foreach ( $transaction->registrations() as $registration ) {
 	<table class='ee-table ee-registrations-list'>
 		<thead>
 			<tr>
-				<th width="35%">
+				<th width="40%">
 					<?php _e("Registrant Name",'event_espresso')?>
 				</th>
-				<th width="30%" class="jst-left">
+				<th width="25%" class="jst-left">
 					<?php _e("REG Code",'event_espresso');?>
 				</th>
 				<th width="35%" class="jst-left">
@@ -33,19 +33,18 @@ foreach ( $transaction->registrations() as $registration ) {
 	<?php } ?>
 	<?php if ( $is_primary || ( ! $is_primary && $reg_url_link == $registration->reg_url_link() )) { ?>
 			<tr>
-				<td width="35%">
+				<td width="40%">
 				<?php
 					if ( $registration->attendee() instanceof EE_Attendee ) {
 						echo $registration->attendee()->full_name( TRUE );
 					}
-					echo '<span class="small-text jst-rght"><a class="ee-icon-only-lnk" href="' .  $registration->edit_attendee_information_url() . '" title="' . __('Click here to edit Attendee Information', 'event_espresso') . '"><span class="ee-icon ee-icon-user-edit"></span></a></span>';
-					echo '<span class="small-text jst-rght"><a class="ee-resend-reg-confirmation-email ee-icon-only-lnk" href="' .  $resend_reg_confirmation_url . '" title="' . __('Click here to resend the Registration Confirmation email', 'event_espresso') . '" rel="' . $registration->reg_url_link() . '"><span class="ee-icon ee-icon-email-send"></span></a></span>';
-
-
 				?>
-					<span class="small-text jst-rght"><a class="ee-icon-only-lnk" href=<?php echo $registration->edit_attendee_information_url();?> title="<?php _e('Click here to edit Attendee Information', 'event_espresso');?>"><span class="ee-icon ee-icon-user-edit"></a></span>
+p					<p class="tiny-text" style="margin: .75em 0 0;">
+						<a class="ee-icon-only-lnk" href="<?php echo $registration->edit_attendee_information_url();?>" title="<?php _e('Click here to edit Attendee Information', 'event_espresso');?>"><span class="ee-icon ee-icon-user-edit"></span><?php _e('edit info', 'event_espresso');?></a>
+						<a class="ee-resend-reg-confirmation-email ee-icon-only-lnk" href="<?php echo $resend_reg_confirmation_url;?>" title="<?php _e('Click here to resend the Registration Confirmation email', 'event_espresso');?>" rel="<?php echo $registration->reg_url_link();?>"><span class="dashicons dashicons-email-alt"></span><?php _e('resend email', 'event_espresso');?></a>
+					</p>
 				</td>
-				<td width="30%" class="jst-left">
+				<td width="25%" class="jst-left">
 					<?php $registration->e('REG_code') ?>
 				</td>
 				<td width="35%" class="jst-left">
@@ -64,7 +63,7 @@ foreach ( $transaction->registrations() as $registration ) {
 ?>
 <?php if ( $is_primary && $SPCO_attendee_information_url ) { ?>
 	<p class="small-text jst-rght">
-		<a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit All Attendee Information", 'event_espresso'); ?> <span class="dashicons dashicons-groups"></span></a>
+		<a href='<?php echo $SPCO_attendee_information_url?>'><?php _e("Click here to edit All Attendee Information", 'event_espresso'); ?></a>
 	</p>
 <?php } ?>
 

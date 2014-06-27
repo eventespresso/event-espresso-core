@@ -376,7 +376,8 @@ class EEH_Template {
 	 * @param  string $label What is the label you want displayed for the button
 	 * @return string        the html output for the button
 	 */
-	public static function get_button_or_link( $url, $label, $class = 'button-primary' ) {
+	public static function get_button_or_link( $url, $label, $class = 'button-primary', $icon = '' ) {
+		$label = ! empty( $icon ) ? '<span class="' . $icon . '"></span>' . $label : $label;
 		$button = '<a id="' . sanitize_title_with_dashes($label) . '" href="' . $url . '" class="' . $class . '">' . $label . '</a>';
 		return $button;
 	}

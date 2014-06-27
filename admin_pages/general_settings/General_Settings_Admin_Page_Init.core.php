@@ -55,7 +55,7 @@ class General_Settings_Admin_Page_Init extends EE_Admin_Page_Init {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => GEN_SET_PG_SLUG,
 			'menu_label' => GEN_SET_LABEL,
-			'capability' => 'administrator',
+			'capability' => 'manage_options',
 			'admin_init_page' => $this
 			));
 	}

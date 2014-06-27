@@ -1216,6 +1216,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 
 			$primary_attendee = array();
+			$primary_attendee_obj = NULL;
 			$primary_attendee['line_item_id'] = NULL;
 			if ( isset( $valid_data['primary_attendee'] )) {
 				$primary_attendee['line_item_id'] =  ! empty( $valid_data['primary_attendee'] ) ? $valid_data['primary_attendee'] : FALSE;
@@ -1402,25 +1403,26 @@ class EED_Single_Page_Checkout  extends EED_Module {
 												$registration->set_attendee_id( $existing_attendee->ID() );
 												$registration->update_cache_after_object_save( 'Attendee', $existing_attendee );
 
-											} else {
-												// ensure critical details are set for additional attendees
-												if ( $att_nmbr > 1 ) {
-													$critical_attendee_details = array(
-														'ATT_fname',
-														'ATT_lname',
-														'ATT_email',
-														'ATT_address',
-														'ATT_address2',
-														'ATT_city',
-														'STA_ID',
-														'CNT_ISO',
-														'ATT_zip',
-														'ATT_phone',
-													);
-													foreach ( $critical_attendee_details as $critical_attendee_detail ) {
-														if ( ! isset( $attendee_data[ $critical_attendee_detail ] ) || empty( $attendee_data[ $critical_attendee_detail ] )) {
-															$attendee_data[ $critical_attendee_detail ] = $this->_primary_attendee_obj->get( $critical_attendee_detail );
-														}
+										} else {
+											// ensure critical details are set for additional attendees
+											if ( $att_nmbr > 1 ) {
+												$critical_attendee_details = array(
+													'ATT_fname',
+													'ATT_lname',
+													'ATT_email'
+//													'ATT_address',
+//													'ATT_address2',
+//													'ATT_city',
+//													'STA_ID',
+//													'CNT_ISO',
+//													'ATT_zip',
+//													'ATT_phone',
+												);
+												$critical_attendee_details = apply_filters( 'FHEE__EE_Single_Page_Checkout__process_attendee_information__critical_attendee_details', $critical_attendee_details );
+												foreach ( $critical_attendee_details as $critical_attendee_detail ) {
+													if ( ! isset( $attendee_data[ $critical_attendee_detail ] ) || empty( $attendee_data[ $critical_attendee_detail ] )) {
+														$attendee_data[ $critical_attendee_detail ] = $primary_attendee_obj->get( $critical_attendee_detail );
+													}
 													}
 
 												}
@@ -1541,7 +1543,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						$attendee = $registration->attendee();
 						if ( $attendee ) {
 							if ( $attendee instanceof EE_Attendee ) {
-	//							printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//								printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$attendee->save();
 								$registration->set_attendee_id( $attendee->ID() );
 								if ( ! $registration->update_cache_after_object_save( 'Attendee', $attendee )) {
@@ -1567,10 +1569,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						}
 						// save so that REG has ID
 						$registration->save();
-						// now save the aswers
+						// now save the answers
 						foreach ( $registration->answers() as $cache_key => $answer ) {
 							// verify object
 							if ( $answer instanceof EE_Answer ) {
+//								printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$answer->set_registration( $registration->ID() );
 								$answer->save();
 								if ( ! $registration->update_cache_after_object_save( 'Answer', $answer, $cache_key )) {
@@ -1907,6 +1910,26 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
+
+	/**
+	 * 	display_registration_footer
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function display_registration_footer() {
+		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer', EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
+			if ( ! empty( EE_Registry::instance()->CFG->admin->affiliate_id )) {
+				$url = add_query_arg( array( 'ap_id' => EE_Registry::instance()->CFG->admin->affiliate_id ), 'http://eventespresso.com/' );
+				$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', $url );
+				echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso" target="_blank">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress" target="_blank">Event Espresso</a></div>' );
+			}
+		}
+	}
+
+
+
+
 	/**
 	 *        _process_return_to_reg_step_query_args
 	 *
@@ -2024,25 +2047,6 @@ if ( $this->_current_step != 'attendee_information' ) {
 		wp_safe_redirect( $redirect );
 		exit();
 	}
-
-
-
-
-
-	/**
-	 * 	display_registration_footer
-	 *
-	 *  @access 	public
-	 *  @return 	string
-	 */
-	public static function display_registration_footer() {
-		$url = apply_filters( 'FHEE__EE_Front_Controller__registration_footer__url', 'http://eventespresso.com/' );
-		if ( apply_filters( 'FHEE__EE_Front__Controller__show_reg_footer', EE_Registry::instance()->CFG->admin->show_reg_footer ) ) {
-			echo apply_filters( 'FHEE__EE_Front_Controller__display_registration_footer','<div id="espresso-registration-footer-dv"><a href="' . $url . '" title="Event Registration Powered by Event Espresso">Event Registration and Ticketing</a> Powered by <a href="' . $url . '" title="Event Espresso - Event Registration and Management System for WordPress">Event Espresso</a></div>' );
-		}
-	}
-
-
 
 }
 // End of file EED_Single_Page_Checkout.module.php

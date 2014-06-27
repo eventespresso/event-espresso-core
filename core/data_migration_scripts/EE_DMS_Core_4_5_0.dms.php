@@ -1,9 +1,10 @@
 <?php
 /**
- * meant to convert DBs between 4.4 and 4.5
+ * meant to convert DBs between 4.3 and 4.5
  * mostly just
  * -adds QGQ_order to teh question-group_question table;
  * -adds DTT_name and DTT_description to the datetime table;
+ * -adds users onto prices, price types, question groups, and tickets
  */
 //make sure we have all the stages loaded too
 //unfortunately, this needs to be done upon INCLUSION of this file,
@@ -26,21 +27,25 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 	public function __construct() {
 		$this->_pretty_name = __("Data Migration to Event Espresso 4.5.0.P", "event_espresso");
+		$this->_priority = 10;
 		$this->_migration_stages = array(
 			new EE_DMS_4_5_0_gateways(),
 			new EE_DMS_4_5_0_payment_method_currencies(),
-		);
+			new EE_DMS_4_5_0_update_wp_user_for_tickets(),
+			new EE_DMS_4_5_0_update_wp_user_for_prices(),
+			new EE_DMS_4_5_0_update_wp_user_for_price_types(),
+			new EE_DMS_4_5_0_update_wp_user_for_question_groups()
+			);
 		parent::__construct();
 	}
 	public function can_migrate_from_version($version_array) {
 		$version_string = $version_array['Core'];
-		if($version_string <= '4.5.003' && $version_string >= '4.2.0' ){
-//			echo "$version_string can be mgirated fro";
+		if($version_string <= '4.5.0' && $version_string >= '4.3.0' ){
+//			echo "$version_string can be migrated from";
 			return true;
 		}elseif( ! $version_string ){
 //			echo "no version string provided: $version_string";
-			//no version string provided... this must be pre 4.1
-			//because since 4.1 we're
+			//no version string provided... this must be pre 4.3
 			return false;//changed mind. dont want people thinking they should migrate yet because they cant
 		}else{
 //			echo "$version_string doesnt apply";
@@ -79,7 +84,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 								KEY ATT_lname (ATT_lname),
 								KEY ATT_email (ATT_email)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
 
 
 		$table_name = 'esp_country';
@@ -229,8 +233,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					KEY GRP_ID (GRP_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
-
-
 		EEH_Activation::drop_index( 'esp_message_template_group', 'EVT_ID' );
 
 		$table_name = 'esp_message_template_group';
@@ -252,11 +254,10 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$sql = "EMT_ID BIGINT(20) unsigned NOT NULL AUTO_INCREMENT,
 					EVT_ID BIGINT(20) unsigned NOT NULL DEFAULT 0,
 					GRP_ID INT(10) unsigned NOT NULL DEFAULT 0,
-					PRIMARY KEY (EMT_ID),
+					PRIMARY KEY  (EMT_ID),
 					KEY EVT_ID (EVT_ID),
 					KEY GRP_ID (GRP_ID)";
-		$this->_table_is_new_in_this_version( $table_name, $sql, 'ENGINE=InnoDB');
-
+		$this->_table_should_exist_previously( $table_name, $sql, 'ENGINE=InnoDB');
 
 
 		$table_name = 'esp_payment';
@@ -299,101 +300,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_is_new_in_this_version($table_name, $sql, 'ENGINE=InnoDB ');
 
 
-		$table_name = 'esp_promotion';
-		$sql = "PRO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					PRC_ID INT UNSIGNED NOT NULL ,
-					PRO_scope VARCHAR(16) NOT NULL DEFAULT 'event' ,
-					PRO_start DATETIME NULL DEFAULT NULL ,
-					PRO_end DATETIME NULL DEFAULT NULL ,
-					PRO_code VARCHAR(45) NULL DEFAULT NULL ,
-					PRO_uses SMALLINT UNSIGNED NULL DEFAULT NULL ,
-					PRO_global TINYINT(1) NOT NULL DEFAULT 0 ,
-					PRO_global_uses SMALLINT UNSIGNED NOT NULL DEFAULT 0 ,
-					PRO_exclusive TINYINT(1) NOT NULL DEFAULT 0 ,
-					PRO_accept_msg TINYTEXT NULL DEFAULT NULL ,
-					PRO_decline_msg TINYTEXT NULL DEFAULT NULL ,
-					PRO_default TINYINT(1) NOT NULL DEFAULT 0 ,
-					PRO_order TINYINT UNSIGNED NOT NULL DEFAULT 40 ,
-					PRIMARY KEY  (PRO_ID) ,
-					KEY PRC_ID (PRC_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-		$table_name = 'esp_promotion_object';
-		$sql = "POB_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-			PRO_ID INT UNSIGNED NOT NULL,
-			OBJ_ID INT UNSIGNED NOT NULL,
-			POB_type VARCHAR(45) NULL,
-			POB_used INT NULL,
-			PRIMARY KEY  (POB_ID),
-			KEY OBJ_ID (OBJ_ID),
-			KEY PRO_ID (PRO_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-		$table_name = 'esp_promotion_applied';
-		$sql = "PRA_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-			PRO_ID INT UNSIGNED NOT NULL,
-			OBJ_ID INT UNSIGNED NOT NULL,
-			POB_type VARCHAR(45) NULL,
-			PRIMARY KEY  (PRA_ID),
-			KEY OBJ_ID (OBJ_ID),
-			KEY PRO_ID (PRO_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-		$table_name = 'esp_promotion_rule';
-		$sql = "PRR_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					PRO_ID INT UNSIGNED NOT NULL ,
-					RUL_ID INT UNSIGNED NOT NULL ,
-					PRR_order TINYINT UNSIGNED NOT NULL DEFAULT 1,
-					PRR_add_rule_comparison ENUM('AND','OR') NULL DEFAULT 'AND',
-					PRIMARY KEY  (PRR_ID) ,
-					KEY PRO_ID (PRO_ID),
-					KEY RUL_ID (RUL_ID) ";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-
-
-		$table_name = 'esp_rule';
-		$sql = "RUL_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					RUL_name VARCHAR(45) NOT NULL ,
-					RUL_desc TEXT NULL ,
-					RUL_trigger VARCHAR(45) NOT NULL ,
-					RUL_trigger_type VARCHAR(45) NULL DEFAULT NULL ,
-					RUL_comparison ENUM('=','!=','<','>') NOT NULL DEFAULT '=' ,
-					RUL_value VARCHAR(45) NOT NULL ,
-					RUL_value_type VARCHAR(45) NULL DEFAULT NULL ,
-					RUL_is_active TINYINT(1) NOT NULL DEFAULT 1 ,
-					RUL_archived TINYINT(1) NOT NULL DEFAULT 0 ,
-					PRIMARY KEY  (RUL_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
-
-
-
-		$table_name = "esp_ticket";
-		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-					  TTM_ID int(10) unsigned NOT NULL,
-					  TKT_name varchar(100) NOT NULL DEFAULT '',
-					  TKT_description TEXT NOT NULL DEFAULT '',
-					  TKT_qty mediumint(8) DEFAULT NULL,
-					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
-					  TKT_uses tinyint NOT NULL DEFAULT '-1',
-					  TKT_required tinyint unsigned NOT NULL DEFAULT '0',
-					  TKT_min tinyint unsigned NOT NULL DEFAULT '0',
-					  TKT_max tinyint NOT NULL DEFAULT '-1',
-					  TKT_price decimal(10,3) NOT NULL DEFAULT '0.00',
-					  TKT_start_date datetime NOT NULL default '0000-00-00 00:00:00',
-					  TKT_end_date datetime NOT NULL default '0000-00-00 00:00:00',
-					  TKT_taxable tinyint(1) unsigned NOT NULL DEFAULT '0',
-					  TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
-					  TKT_row tinyint(3) unsigned NOT NULL DEFAULT '0',
-					  TKT_is_default tinyint(1) unsigned NOT NULL DEFAULT '0',
-					  TKT_parent int(10) unsigned DEFAULT '0',
-					  TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
-					  PRIMARY KEY  (TKT_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
-
-
-
-
 		$table_name = "esp_ticket_price";
 		$sql = "TKP_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TKT_ID int(10) unsigned NOT NULL,
@@ -412,9 +318,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
 
-
-
-
 		$table_name = "esp_ticket_template";
 		$sql = "TTM_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 					  TTM_name varchar(45) NOT NULL,
@@ -423,41 +326,10 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					  PRIMARY KEY  (TTM_ID)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
-
-
-		$table_name = "esp_price";
-		$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
-					  PRT_ID tinyint(3) unsigned NOT NULL,
-					  PRC_amount decimal(10,3) NOT NULL DEFAULT '0.00',
-					  PRC_name varchar(45) NOT NULL,
-					  PRC_desc text,
-					  PRC_is_default tinyint(1) unsigned NOT NULL DEFAULT '1',
-					  PRC_overrides int(10) unsigned DEFAULT NULL,
-					  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
-					  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
-					  PRC_parent int(10) unsigned DEFAULT 0,
-					  PRIMARY KEY  (PRC_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
-
-
-
-		$table_name = "esp_price_type";
-		$sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
-				  PRT_name VARCHAR(45) NOT NULL ,
-				  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
-				  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
-				  PRT_order tinyint UNSIGNED NULL,
-				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
-				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
-				  PRIMARY KEY  (PRT_ID)";
-		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
-
-
-
 		$table_name='esp_question';
 		$sql='QST_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QST_display_text VARCHAR(100) NOT NULL,
-					QST_admin_label VARCHAR(100) NOT NULL,
+					QST_display_text TEXT NOT NULL,
+					QST_admin_label VARCHAR(255) NOT NULL,
 					QST_system varchar(25) DEFAULT NULL,
 					QST_type VARCHAR(25) NOT NULL DEFAULT "TEXT",
 					QST_required TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
@@ -468,24 +340,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 					QST_deleted TINYINT UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QST_ID)';
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
-
-		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
-
-		$table_name = 'esp_question_group';
-		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
-					QSG_name VARCHAR(100) NOT NULL,
-					QSG_identifier VARCHAR(100) NOT NULL,
-					QSG_desc TEXT NULL,
-					QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
-					QSG_show_group_name TINYINT(1) NOT NULL,
-					QSG_show_group_desc TINYINT(1) NOT NULL,
-					QSG_system TINYINT NULL,
-					QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
-					PRIMARY KEY  (QSG_ID),
-					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
-		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
-
-
 
 		$table_name='esp_question_group_question';
 		$sql="QGQ_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
@@ -499,11 +353,11 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 
 		$table_name='esp_question_option';
 		$sql="QSO_ID INT UNSIGNED NOT NULL AUTO_INCREMENT ,
-					QSO_value VARCHAR(100) NOT NULL ,
+					QSO_value VARCHAR(255) NOT NULL ,
 					QSO_desc TEXT NOT NULL ,
 					QST_ID INT UNSIGNED NOT NULL ,
 					QSO_order INT UNSIGNED NOT NULL DEFAULT 0,
-					QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0 ,
+					QSO_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
 					PRIMARY KEY  (QSO_ID)";
 		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
 
@@ -613,16 +467,86 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 			KEY CNT_ISO (CNT_ISO)";
 		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB');
 
+		//modified tables
+		$table_name = "esp_price";
+		$sql = "PRC_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+					  PRT_ID tinyint(3) unsigned NOT NULL,
+					  PRC_amount decimal(10,3) NOT NULL DEFAULT '0.00',
+					  PRC_name varchar(45) NOT NULL,
+					  PRC_desc text,
+					  PRC_is_default tinyint(1) unsigned NOT NULL DEFAULT '1',
+					  PRC_overrides int(10) unsigned DEFAULT NULL,
+					  PRC_deleted tinyint(1) unsigned NOT NULL DEFAULT '0',
+					  PRC_order tinyint(3) unsigned NOT NULL DEFAULT '0',
+					  PRC_wp_user BIGINT UNSIGNED NULL,
+					  PRC_parent int(10) unsigned DEFAULT 0,
+					  PRIMARY KEY  (PRC_ID)";
+		$this->_table_should_exist_previously($table_name,$sql, 'ENGINE=InnoDB');
 
-		$script_with_defaults = EE_Registry::instance()->load_dms( 'Core_4_1_0' );
-		//setting up the default stats and countries is also essential for the data migrations to run
+		$table_name = "esp_price_type";
+		$sql = "PRT_ID tinyint(3) unsigned NOT NULL AUTO_INCREMENT,
+				  PRT_name VARCHAR(45) NOT NULL ,
+				  PBT_ID tinyint(3) unsigned NOT NULL DEFAULT '1',
+				  PRT_is_percent tinyint(1) NOT NULL DEFAULT '0',
+				  PRT_order tinyint UNSIGNED NULL,
+				  PRT_wp_user BIGINT UNSIGNED NULL,
+				  PRT_deleted tinyint(1) NOT NULL DEFAULT '0',
+				  UNIQUE KEY PRT_name_UNIQUE (PRT_name),
+				  PRIMARY KEY  (PRT_ID)";
+		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB ');
+
+
+		$table_name = "esp_ticket";
+		$sql = "TKT_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
+					  TTM_ID int(10) unsigned NOT NULL,
+					  TKT_name varchar(100) NOT NULL DEFAULT '',
+					  TKT_description TEXT NOT NULL DEFAULT '',
+					  TKT_qty mediumint(8) DEFAULT NULL,
+					  TKT_sold mediumint(8) NOT NULL DEFAULT 0,
+					  TKT_uses tinyint NOT NULL DEFAULT '-1',
+					  TKT_required tinyint unsigned NOT NULL DEFAULT '0',
+					  TKT_min tinyint unsigned NOT NULL DEFAULT '0',
+					  TKT_max tinyint NOT NULL DEFAULT '-1',
+					  TKT_price decimal(10,3) NOT NULL DEFAULT '0.00',
+					  TKT_start_date datetime NOT NULL default '0000-00-00 00:00:00',
+					  TKT_end_date datetime NOT NULL default '0000-00-00 00:00:00',
+					  TKT_taxable tinyint(1) unsigned NOT NULL DEFAULT '0',
+					  TKT_order tinyint(3) unsigned NOT NULL DEFAULT '0',
+					  TKT_row tinyint(3) unsigned NOT NULL DEFAULT '0',
+					  TKT_is_default tinyint(1) unsigned NOT NULL DEFAULT '0',
+					  TKT_wp_user BIGINT UNSIGNED NULL,
+					  TKT_parent int(10) unsigned DEFAULT '0',
+					  TKT_deleted tinyint(1) NOT NULL DEFAULT '0',
+					  PRIMARY KEY  (TKT_ID)";
+		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
+
+		EEH_Activation::drop_index( 'esp_question_group', 'QSG_identifier_UNIQUE' );
+
+		$table_name = 'esp_question_group';
+		$sql='QSG_ID INT UNSIGNED NOT NULL AUTO_INCREMENT,
+					QSG_name VARCHAR(255) NOT NULL,
+					QSG_identifier VARCHAR(100) NOT NULL,
+					QSG_desc TEXT NULL,
+					QSG_order TINYINT UNSIGNED NOT NULL DEFAULT 0,
+					QSG_show_group_name TINYINT(1) NOT NULL,
+					QSG_show_group_desc TINYINT(1) NOT NULL,
+					QSG_system TINYINT NULL,
+					QSG_deleted TINYINT(1) UNSIGNED NOT NULL DEFAULT 0,
+					QSG_wp_user BIGINT UNSIGNED NULL,
+					PRIMARY KEY  (QSG_ID),
+					UNIQUE KEY QSG_identifier_UNIQUE (QSG_identifier ASC)';
+		$this->_table_should_exist_previously($table_name, $sql, 'ENGINE=InnoDB' );
+
+		$script_4_1_defaults = EE_Registry::instance()->load_dms('Core_4_1_0');
+
 		//(because many need to convert old string states to foreign keys into the states table)
-		$script_with_defaults->insert_default_states();
-		$script_with_defaults->insert_default_countries();
-		//setting up default prices, price types, and tickets is also essential for the price migrations
-		$script_with_defaults->insert_default_price_types();
-		$script_with_defaults->insert_default_prices();
-		$script_with_defaults->insert_default_tickets();
+		$script_4_1_defaults->insert_default_states();
+		$script_4_1_defaults->insert_default_countries();
+
+		//schema on price, price_types and tickets has changed so use the default method in here instead of 4.1's and later.
+		$this->insert_default_price_types();
+		$this->insert_default_prices();
+		$this->insert_default_tickets();
 
 		//setting up the config wp option pretty well counts as a 'schema change', or at least should happen ehre
 		EE_Config::instance()->update_espresso_config(false, true);
@@ -631,7 +555,6 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		return true;
 	}
 	/**
-	 * We COULD clean up the esp_question.QST_order field here. We'll leave it for now
 	 * @return boolean
 	 */
 	public function schema_changes_after_migration() {
@@ -875,6 +798,113 @@ class EE_DMS_Core_4_5_0 extends EE_Data_Migration_Script_Base{
 		}
 
 	}
+
+	/**
+	 * insert_default_price_types
+	 *
+	 * @since 4.5.0
+	 * @return void
+	 */
+	public function insert_default_price_types() {
+		global $wpdb;
+		$price_type_table = $wpdb->prefix."esp_price_type";
+
+		if ($wpdb->get_var("SHOW TABLES LIKE '$price_type_table'") == $price_type_table) {
+
+			$SQL = 'SELECT COUNT(PRT_ID) FROM ' . $price_type_table;
+			$price_types_exist = $wpdb->get_var( $SQL );
+
+			if ( ! $price_types_exist ) {
+				$user_id = get_current_user_id();
+				$SQL = "INSERT INTO $price_type_table ( PRT_ID, PRT_name, PBT_ID, PRT_is_percent, PRT_order, PRT_wp_user, PRT_deleted ) VALUES
+							(1, '" . __('Base Price', 'event_espresso') . "', 1,  0, 0, $user_id, 0),
+							(2, '" . __('Percent Discount', 'event_espresso') . "', 2,  1, 20, $user_id, 0),
+							(3, '" . __('Dollar Discount', 'event_espresso') . "', 2,  0, 30, $user_id, 0),
+							(4, '" . __('Percent Surcharge', 'event_espresso') . "', 3,  1, 40, $user_id,  0),
+							(5, '" . __('Dollar Surcharge', 'event_espresso') . "', 3,  0, 50, $user_id, 0);";
+				$SQL = apply_filters( 'FHEE__EE_DMS_4_5_0__insert_default_price_types__SQL', $SQL );
+				$wpdb->query( $SQL );
+			}
+		}
+	}
+
+
+	/**
+	 * insert default prices.
+	 *  If we're INSTALLING 4.x CAF, then we add a few extra default prices
+	 * when EEH_Activaion's initialize_db_content is called via  ahook in
+	 * EE_Brewing_regular
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function insert_default_prices() {
+		global $wpdb;
+		$price_table = $wpdb->prefix."esp_price";
+
+		if ($wpdb->get_var("SHOW TABLES LIKE '$price_table'") == $price_table) {
+
+			$SQL = 'SELECT COUNT(PRC_ID) FROM ' .$price_table;
+			$prices_exist = $wpdb->get_var( $SQL );
+
+			if ( ! $prices_exist ) {
+				$user_id = get_current_user_id();
+				$SQL = "INSERT INTO $price_table
+							(PRC_ID, PRT_ID, PRC_amount, PRC_name, PRC_desc,  PRC_is_default, PRC_overrides, PRC_wp_user, PRC_order, PRC_deleted, PRC_parent ) VALUES
+							(1, 1, '0.00', 'Free Admission', '', 1, NULL, $user_id, 0, 0, 0);";
+				$SQL = apply_filters( 'FHEE__EE_DMS_4_5_0__insert_default_prices__SQL', $SQL );
+				$wpdb->query($SQL);
+			}
+		}
+	}
+
+	/**
+	 * insert default ticket
+	 * Almost identical to EE_DMS_Core_4_3_0::insert_default_tickets, except is aware of the TKT_wp_user field
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	public function insert_default_tickets() {
+
+		global $wpdb;
+		$ticket_table = $wpdb->prefix."esp_ticket";
+		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_table'") == $ticket_table ) {
+
+			$SQL = 'SELECT COUNT(TKT_ID) FROM ' . $ticket_table;
+			$tickets_exist = $wpdb->get_var($SQL);
+
+			if ( ! $tickets_exist ) {
+				$user_id = get_current_user_id();
+				$SQL = "INSERT INTO $ticket_table
+					( TKT_ID, TTM_ID, TKT_name, TKT_description, TKT_qty, TKT_sold, TKT_uses, TKT_required, TKT_min, TKT_max, TKT_price, TKT_start_date, TKT_end_date, TKT_taxable, TKT_order, TKT_row, TKT_is_default, TKT_parent, TKT_wp_user, TKT_deleted ) VALUES
+					( 1, 0, '" . __("Free Ticket", "event_espresso") . "', '', 100, 0, -1, 0, 0, -1, 0.00, '0000-00-00 00:00:00', '0000-00-00 00:00:00', 0, 0, 1, 1, 0, $user_id, 0);";
+				$SQL = apply_filters( 'FHEE__EE_DMS_4_5_0__insert_default_tickets__SQL', $SQL );
+				$wpdb->query($SQL);
+			}
+		}
+		$ticket_price_table = $wpdb->prefix."esp_ticket_price";
+
+		if ( $wpdb->get_var("SHOW TABLES LIKE'$ticket_price_table'") == $ticket_price_table ) {
+
+			$SQL = 'SELECT COUNT(TKP_ID) FROM ' . $ticket_price_table;
+			$ticket_prc_exist = $wpdb->get_var($SQL);
+
+			if ( ! $ticket_prc_exist ) {
+
+				$SQL = "INSERT INTO $ticket_price_table
+				( TKP_ID, TKT_ID, PRC_ID ) VALUES
+				( 1, 1, 1 )
+				";
+
+				$SQL = apply_filters( 'FHEE__EE_DMS_4_5_0__insert_default_tickets__SQL__ticket_price', $SQL );
+				$wpdb->query($SQL);
+			}
+		}
+	}
+
 }
 
 
