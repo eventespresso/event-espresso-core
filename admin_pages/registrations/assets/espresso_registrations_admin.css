@@ -341,3 +341,13 @@
 .espresso-admin .wp-list-table .ee-icon-size-22:before {
 	font-size: 22px;
 }
+
+/**
+ * Fixes for admin side spco (because wp-admin adds some of its own styles to elements)
+ */
+.reg-page-form-field-wrap-pg select {
+    display: block;
+    padding: 7px 10px;
+    margin: 0px 0px 1em;
+    height: auto;
+}
