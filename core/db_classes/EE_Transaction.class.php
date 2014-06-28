@@ -433,7 +433,7 @@ class EE_Transaction extends EE_Base_Class {
 			ksort( $payment_methods );
 			return $most_recent ? array_pop( $payment_methods ) : array_shift( $payment_methods );
 		} else {
-			return 'Invoice'; //registration done via admin will always (for now, be an invoice payment method)
+			return NULL;
 		}
 	}
 
