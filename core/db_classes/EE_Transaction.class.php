@@ -429,9 +429,11 @@ class EE_Transaction extends EE_Base_Class {
 	 */
 	public function selected_gateway( $most_recent = FALSE ) {
 		$payment_methods = $this->get_extra_meta( 'gateway' );
-		if ( is_array( $payment_methods )) {
+		if ( is_array( $payment_methods ) ) {
 			ksort( $payment_methods );
 			return $most_recent ? array_pop( $payment_methods ) : array_shift( $payment_methods );
+		} else {
+			return NULL;
 		}
 		return NULL;
 	}
