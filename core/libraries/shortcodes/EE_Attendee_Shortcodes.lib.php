@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Attendee_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Attendee_Shortcodes lists all shortcodes related to attendee specific info. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Attendee_Shortcodes lists all shortcodes related to attendee specific info.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Attendee_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -51,7 +51,14 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			'[LNAME]' => __('Last Name of an attendee', 'event_espresso'),
 			'[EDIT_ATTENDEE_LINK]' => __('Edit Registration Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso'),
 			'[REGISTRATION_CODE]' => __('Unique Registration Code for the registration', 'event_espresso'),
-			'[FRONTEND_EDIT_REG_LINK]' => __('Generates a link for the given registration to edit this registration details on the frontend.', 'event_espresso')
+			'[FRONTEND_EDIT_REG_LINK]' => __('Generates a link for the given registration to edit this registration details on the frontend.', 'event_espresso'),
+			'[PHONE_NUMBER]' => __('The Phone Number for the Registration.', 'event_espresso'),
+			'[ADDRESS]' => __('The Address for the Registration', 'event_espresso'),
+			'[ADDRESS2]' => __('Whatever was in the address 2 field for the registration.', 'event_espresso'),
+			'[CITY]' => __('The city for the registration.', 'event_espresso'),
+			'[ZIP_PC]' => __('The ZIP (or Postal) Code for the Registration.', 'event_espresso'),
+			'[ADDRESS_STATE]' => __('The state/province for the registration.', 'event_espresso' ),
+			'[COUNTRY]' => __('The country for the registration.', 'event_espresso')
 			);
 	}
 
@@ -71,7 +78,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 		$attendee = $this->_xtra->registrations[$registration->ID()]['att_obj'];
 
 		switch ( $shortcode ) {
-			
+
 			case '[FNAME]' :
 				return $attendee->fname();
 				break;
@@ -94,6 +101,36 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 			case '[FRONTEND_EDIT_REG_LINK]' :
 				return $registration->edit_attendee_information_url();
+				break;
+
+			case '[PHONE_NUMBER]' :
+				return $attendee->phone();
+				break;
+
+			case '[ADDRESS]' :
+				return $attendee->address();
+				break;
+
+			case '[ADDRESS2]' :
+				return $attendee->address2();
+				break;
+
+			case '[CITY]' :
+				return $attendee->city();
+				break;
+
+			case '[ZIP_PC]' :
+				return $attendee->zip();
+				break;
+
+			case '[ADDRESS_STATE]' :
+				$state_obj = $attendee->state_obj();
+				return $state_obj instanceof EE_State ? $state_obj->name() : '';
+				break;
+
+			case '[COUNTRY]' :
+				$country_obj = $attendee->country_obj();
+				return $country_obj instanceof EE_Country ? $country_obj->name() : '';
 				break;
 
 		}

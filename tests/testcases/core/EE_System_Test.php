@@ -91,13 +91,14 @@ class EE_System_Test extends EE_UnitTestCase{
 		$current_activation_history_after = get_option('espresso_db_update');
 		//this should have just added to the number of times this same verison was activated
 		$this->assertEquals(EE_System::req_type_normal,EE_System::instance()->detect_req_type());
-		$this->assertEquals($pretend_activation_history,$current_activation_history_after);
+		$this->assertArrayHasKey( espresso_version(), $current_activation_history_after );
+		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history_after[ espresso_version() ][ 0 ] );
 
 	}
 	/**
 	 * new activation
 	 */
-	function test_detect_activation_or_upgrade__new_install(){
+	function test_detect_activation_or_upgrade__new_install() {
 		$this->_pretend_espresso_db_update_is(NULL);
 		//pretend the activation indicator option was set (because it's really unusual
 		//for a plugin to be activated without having WP call its activation hook)
@@ -108,10 +109,47 @@ class EE_System_Test extends EE_UnitTestCase{
 		$current_activation_history = get_option('espresso_db_update');
 		//check we've added this to the version history
 		//and that the hook for adding tables n stuff was added
-		$this->assertEquals(array(espresso_version()=>array(current_time('mysql'))),$current_activation_history);
+		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
+		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 0 ] );
 		has_action('AHEE__EE_System__perform_activations_upgrades_and_migrations',array(EE_System::instance(),'initialize_db_if_no_migrations_required'));
 		//and the activation indicator option shoudl have been removed
 		$this->assertWPOptionDoesNotExist('ee_espresso_activation');
+	}
+
+	/**
+	 * tests EE_SYstem_Test::assertTimeIsAbout
+	 */
+	public function test_assertTimeIsAbout(){
+		//these tests should fail
+		try{
+			$this->assertTimeIsAbout(current_time( 'timestamp' ), current_time( 'timestamp' ) + 6, 5 );
+		}catch( PHPUnit_Framework_ExpectationFailedException $e ){
+			$this->assertTrue( TRUE );
+		}
+		try{
+			$this->assertTimeIsAbout(current_time( 'timestamp' ), current_time( 'timestamp' ) - 6, 5 );
+		}catch( PHPUnit_Framework_ExpectationFailedException $e ){
+			$this->assertTrue( TRUE );
+		}
+		$this->assertTimeIsAbout( current_time( 'timestamp' ), current_time( 'timestamp' ) + 4, 5 );
+		$this->assertTimeIsAbout( current_time( 'timestamp' ), current_time( 'timestamp' ) - 3, 5 );
+	}
+
+	/**
+	 * Asserts that there is at most $precision time difference between $expected_time and
+	 * $actual_time, in either direction
+	 * @param string|int $expected_time mysql or unix timestamp
+	 * @param string|int $actual_time mysql or unix timestamp
+	 * @param int $precision allowed number of seconds of time idfference without failing
+	 */
+	protected function assertTimeIsAbout($expected_time, $actual_time, $precision = 5) {
+		if( ! is_int( $expected_time ) ){
+			$expected_time = strtotime( $expected_time );
+		}
+		if( ! is_int( $actual_time ) ){
+			$actual_time = strtotime( $actual_time );
+		}
+		$this->assertLessThanOrEqual($precision, abs( $actual_time - $expected_time ) );
 	}
 	/**
 	 * tests we can detect an upgrade when the plugin is deactivated, then a new version of the plugin
@@ -129,11 +167,11 @@ class EE_System_Test extends EE_UnitTestCase{
 		EE_System::instance()->detect_if_activation_or_upgrade();
 		$current_activation_history = get_option('espresso_db_update');
 		$this->assertEquals(EE_System::req_type_upgrade,EE_System::instance()->detect_req_type());
-		$this->assertEquals(
-				array(
-					$pretend_previous_version=>array(current_time('mysql')),
-					espresso_version()=>array(current_time('mysql'))),
-				$current_activation_history);
+		$this->assertArrayHasKey( $pretend_previous_version, $current_activation_history );
+		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ $pretend_previous_version ][ 0 ] );
+		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
+		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 0 ] );
+
 		$this->assertWPOptionDoesNotExist('ee_espresso_activation');
 	}
 	/**
@@ -148,11 +186,10 @@ class EE_System_Test extends EE_UnitTestCase{
 		EE_System::instance()->detect_if_activation_or_upgrade();
 		$current_activation_history = get_option('espresso_db_update');
 		$this->assertEquals(EE_System::req_type_upgrade,EE_System::instance()->detect_req_type());
-		$this->assertEquals(
-				array(
-					$pretend_previous_version=>array(current_time('mysql')),
-					espresso_version()=>array(current_time('mysql'))),
-				$current_activation_history);
+		$this->assertArrayHasKey( $pretend_previous_version, $current_activation_history );
+		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ $pretend_previous_version ][ 0 ] );
+		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
+		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 0 ] );
 		$this->assertWPOptionDoesNotExist('ee_espresso_activation');
 	}
 	function test_detect_activation_or_upgrade__reactivation(){
@@ -163,7 +200,10 @@ class EE_System_Test extends EE_UnitTestCase{
 		EE_System::instance()->detect_if_activation_or_upgrade();
 		$current_activation_history = get_option('espresso_db_update');
 		$this->assertEquals(EE_System::req_type_reactivation,EE_System::instance()->detect_req_type());
-		$this->assertEquals(array(espresso_version() =>array(current_time('mysql'),current_time('mysql'))),$current_activation_history);
+//		$this->assertEquals(array(espresso_version() =>array(current_time('mysql'),current_time('mysql'))),$current_activation_history);
+		$this->assertArrayHasKey( espresso_version(), $current_activation_history );
+		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 0 ] );
+		$this->assertTimeIsAbout(current_time( 'timestamp' ), $current_activation_history[ espresso_version() ][ 1 ] );
 		$this->assertWPOptionDoesNotExist('ee_espresso_activation');
 	}
 
