@@ -621,6 +621,7 @@ class EED_Events_Archive  extends EED_Module {
 			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
 			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
+			remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
 			//now add additional content depending on whether event is using the_excerpt() or the_content()
 			EED_Events_Archive::_add_additional_excerpt_filters();
 			EED_Events_Archive::_add_additional_content_filters();
@@ -629,6 +630,7 @@ class EED_Events_Archive  extends EED_Module {
 			// re-add our main filters (or else the next event won't have them)
 			add_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 			add_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
+			add_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1, 1 );
 			// but remove the other filters so that they don't get applied to the next post
 			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_datetimes' ), 110, 1 );
 			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_tickets' ), 120, 1 );
