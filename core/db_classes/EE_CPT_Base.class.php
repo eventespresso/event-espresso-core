@@ -87,7 +87,7 @@ abstract class EE_CPT_Base extends EE_Soft_Delete_Base_Class {
 	 * @return string
 	 */
 	public function post_type() {
-		return $this->get( 'post_type' );
+		return $this->get_model()->post_type();
 	}
 
 
