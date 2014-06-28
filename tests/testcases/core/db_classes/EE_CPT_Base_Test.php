@@ -8,7 +8,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_CPT_Base_Test
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  */
@@ -17,17 +17,21 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  */
 class EE_CPT_Base_Test extends EE_UnitTestCase{
 	function test_post_type(){
-		//@todo: currently this test returns UNEXPECTED results and fails
-		//to fix, we should make POST_TYPE a NON-db-only field, says Mike.
-//		$e = EE_Event::new_instance(array('EVT_name'=>'e1'));
-//		$e->save();
-//		$this->assertEquals('espresso_events',$e->post_type());
+		$e = EE_Event::new_instance(array('EVT_name'=>'e1'));
+		$this->assertEquals('espresso_events',$e->post_type());
+		$e->save();
+		$this->assertEquals('espresso_events',$e->post_type());
+		
+		$a = EE_Attendee::new_instance( array( 'ATT_fname' => 'mr', 'ATT_lname' => 'perfect' ) );
+		$this->assertEquals('espresso_attendees',$a->post_type());
+		$a->save();
+		$this->assertEquals('espresso_attendees',$a->post_type());
 	}
 	function test_parent(){
 		$e = EE_Event::new_instance(array('parent'=>12));
 		$this->assertEquals($e->parent(),12);
 	}
-	
+
 }
 
 // End of file EE_CPT_Base_Test.php
