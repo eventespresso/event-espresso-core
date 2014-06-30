@@ -51,7 +51,7 @@ class EE_Messages_Email_Payment_Declined_Validator extends EE_Messages_Validator
 			'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list', 'recipient_details', 'transaction')
 			);
 		$new_config['content'] = array(
-			'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details', 'recipient_list', 'transaction', 'primary_registration_details', 'primary_registration_list')
+			'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'recipient_details', 'recipient_list', 'transaction', 'primary_registration_details', 'primary_registration_list', 'messenger')
 			);
 		$this->_MSGR->set_validator_config( $new_config );
 
