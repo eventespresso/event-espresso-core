@@ -435,7 +435,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'REG_ID' => $regid
 						);
 					$REG_OBJ =  EE_Registration::new_instance( $reg_array );
-					$this->_attendees[$key]['reg_obj'][$regid] = $REG_OBJ;
+					$this->_attendees[$key]['reg_objs'][$regid] = $REG_OBJ;
 					$this->_events[$evtid]['reg_objs'][] = $REG_OBJ;
 					$this->reg_objs[] = $REG_OBJ;
 					$regcnt++;
@@ -466,7 +466,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			'lname' => $this->_attendees[999999991]['att_obj']->lname(),
 			'email' => $this->_attendees[999999991]['att_obj']->email(),
 			'att_obj' => $this->_attendees[999999991]['att_obj'],
-			'reg_obj' => $this->_attendees[999999991]['reg_obj']
+			'reg_obj' => array_shift($this->_attendees[999999991]['reg_objs'])
 			);
 
 		//reg_info property
