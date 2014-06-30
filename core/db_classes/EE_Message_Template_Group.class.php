@@ -115,6 +115,19 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * Wrapper for the user function() (preserve bacward compat)
+	 *
+	 * @since  4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		return $this->user();
+	}
+
+
+
+	/**
 	 * This simply returns a count of all related events to this message template group
 	 * @return int
 	 */

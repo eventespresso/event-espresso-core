@@ -224,7 +224,7 @@ abstract class EE_Base_Class{
 	 * @param string $timezone A valid timezone string as described by @link http://www.php.net/manual/en/timezones.php
 	 * @return void
 	 */
-	public function set_timezone( $timezone ) {
+	public function set_timezone( $timezone = '' ) {
 		$timezone = empty( $timezone ) ? get_option( 'timezone_string' ) : $timezone;
 
 		//if timezone is STILL empty then let's get the GMT offset and then set the timezone_string using our converter

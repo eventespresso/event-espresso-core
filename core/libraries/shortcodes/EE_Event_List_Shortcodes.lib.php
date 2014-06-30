@@ -115,12 +115,12 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 
 		//here we're setting up the events for the event_list template for THIS registration.
 		$evt_result = '';
-		$events = $this->_get_events_from_registration($registration);
+		$all_events = $this->_get_events_from_registration($registration);
 
 		//we're NOT going to prepare a list of attendees this time around
 		$events = '';
 
-		foreach ( $events as $event ) {
+		foreach ( $all_events as $event ) {
 			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event, $valid_shortcodes, $this->_extra_data);
 		}
 

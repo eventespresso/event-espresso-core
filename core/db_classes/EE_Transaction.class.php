@@ -193,16 +193,22 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * 	datetime
-	 * 	Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted string including the UTC (timezone) offset.
-	 * 	Formatting options, including the UTC offset, are set via the WP General Settings page
+	 *    datetime
+	 *    Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted date string including the UTC (timezone) offset.
+	 *    Formatting options, including the UTC offset, are set via the WP General Settings page.
+	 *    A second boolean param will apply the UTF timezone offset to the unix timestamp
 	 *
-	 * @access 	public
-	 * @param 	boolean $format - whether to format date  - defaults to FALSE (return timestamp)
-	 * @return mixed
+	 * @access    public
+	 * @param    boolean $format - whether to format date  - FALSE (default) returns RAW timestamp in UTC+0, TRUE returns formatted date string including the UTC offset
+	 * @param    bool       $GMT - if BOTH $format && $GMT are set to FALSE, then return a unix timestamp with the UTC offset applied
+	 * @return    mixed
 	 */
-	public function datetime( $format = FALSE ) {
-		return $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
+	public function datetime( $format = FALSE, $GMT = TRUE ) {
+		// grab either the formatted datetime (which INCLUDES the UTC offset ) OR the UTC+0 unix timestamp
+		$datetime = $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
+		// if either the formatted datetime or the UTC+0 unix timestamp is requested, then return that
+		// but if BOTH $format && $GMT are set to FALSE, then return a unix timestamp with the UTC offset applied
+		return $GMT || $format ? $datetime : $this->get_raw( 'TXN_timestamp' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 	}
 
 
@@ -423,10 +429,19 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
+	 * this returns the payment method selected during the SPCO Payment Options step
+	 * @param bool $most_recent whether to return the initial or last payment method selected
 	 * @return mixed
 	 */
-	public function selected_gateway() {
-		return $this->get_extra_meta( 'gateway', TRUE );
+	public function selected_gateway( $most_recent = FALSE ) {
+		$payment_methods = $this->get_extra_meta( 'gateway' );
+		if ( is_array( $payment_methods ) ) {
+			ksort( $payment_methods );
+			return $most_recent ? array_pop( $payment_methods ) : array_shift( $payment_methods );
+		} else {
+			return NULL;
+		}
+		return NULL;
 	}
 
 

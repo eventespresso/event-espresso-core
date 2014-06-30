@@ -263,7 +263,7 @@ abstract class EE_Shortcodes extends EE_Base {
 
 		//next test to make sure we've got the required template in the index!
 		if ( !isset( $this->_data['template'] ) ) {
-			throw new EE_Error( sprintf( __('The incoming data does not have the required template (%s) in its array', 'event_espresso'), $req_template ) );
+			throw new EE_Error( sprintf( __('The incoming data does not have the required template index in its array', 'event_espresso') ) );
 		}
 
 		//next test to make sure we've got got a data index in the incoming data array

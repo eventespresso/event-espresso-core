@@ -103,7 +103,7 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes {
 
 		$tktparsed = '';
 		foreach ( $tkts as $ticket ) {
-			$tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template( $template, $ticket, $valid_shortcodes, $this->_extra_data );
+			$tktparsed .= $this->_shortcode_helper->parse_ticket_list_template( $template, $ticket, $valid_shortcodes, $data );
 		}
 		return $tktparsed;
 	}

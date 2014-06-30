@@ -28,17 +28,13 @@
  * @return bool
  */
 function is_espresso_event( $event = NULL ) {
-	// was a param passed ?
-	if ( ! empty( $event )) {
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
 		// load event view helper
 		EE_Registry::instance()->load_helper( 'Event_View' );
 		// extract EE_Event object from passed param regardless of what it is (within reason of course)
 		$event = EEH_Event_View::get_event( $event );
 		// do we have a valid event ?
-		if ( $event instanceof EE_Event ) {
-			// test post_type
-			return $event->post_type() == 'espresso_events' ? TRUE : FALSE;
-		}
+		return $event instanceof EE_Event  ? TRUE : FALSE;
 	}
 	return FALSE;
 }
@@ -94,17 +90,13 @@ function is_espresso_event_taxonomy() {
  * @return bool
  */
 function is_espresso_venue( $venue = NULL ) {
-	// was a param passed ?
-	if ( ! empty( $venue )) {
+	if ( can_use_espresso_conditionals( __FUNCTION__ )) {
 		// load event view helper
 		EE_Registry::instance()->load_helper( 'Venue_View' );
 		// extract EE_Venue object from passed param regardless of what it is (within reason of course)
-		$venue = EEH_Venue_View::get_event( $venue );
+		$venue = EEH_Venue_View::get_venue( $venue, FALSE );
 		// do we have a valid event ?
-		if ( $venue instanceof EE_Venue ) {
-			// test post_type
-			return $venue->post_type() == 'espresso_venues' ? TRUE : FALSE;
-		}
+		return $venue instanceof EE_Venue ? TRUE : FALSE;
 	}
 	return FALSE;
 }
@@ -477,11 +469,12 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 	 * @param bool   $add_breaks
 	 * @return string
 	 */
-	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = 'l F jS, Y', $time_format = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE ) {
+	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = 'l F jS, Y', $time_format = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE, $limit = NULL ) {
+		
 		$date_format = apply_filters( 'FHEE__espresso_list_of_event_dates__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_list_of_event_dates__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
-		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID ,$show_expired );
+		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID, $show_expired, FALSE, $limit );
 		//d( $datetimes );
 		if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 			global $post;
@@ -491,17 +484,15 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 					if ( $format ) {
 						$html .= '<li id="ee-event-datetimes-li-' . $datetime->ID() . '" class="ee-event-datetimes-li">';
 						$datetime_name = $datetime->name();
-						$html .= ! empty( $datetime_name ) ? '<b>' . $datetime_name . '</b>' : '';
+						$html .= ! empty( $datetime_name ) ? '<strong>' . $datetime_name . '</strong>' : '';
 						$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
-						$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $date_format ) . ' &nbsp; &nbsp; ';
-						$html .= ! empty( $datetime_name )  && $add_breaks ? '<br />' : '';
+						$html .= '<span class="dashicons dashicons-calendar"></span>' . $datetime->date_range( $date_format ) . '<br/>';
 						$html .= '<span class="dashicons dashicons-clock"></span>' . $datetime->time_range( $time_format );
 						$datetime_description = $datetime->description();
-						$html .= ! empty( $datetime_description ) ? '<br/> - ' . $datetime_description . '<br/>' : '';
+						$html .= ! empty( $datetime_description )  && $add_breaks ? '<br />' : '';
+						$html .= ! empty( $datetime_description ) ? ' - ' . $datetime_description : '';
 						$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
-						$html .= '<br/>';
 						$html .= '</li>';
-
 					} else {
 						$html .= $datetime;
 						$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );

@@ -1,7 +1,7 @@
 <div id="admin-primary-mbox-dv" class="admin-primary-mbox-dv">
 
 	<h4 class="admin-primary-mbox-h4 hdr-has-icon">
-		<img src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/invoice-1-16x16.png" alt="" /><?php _e( 'Transaction Items', 'event_espresso' );?>
+		<span class="dashicons dashicons-cart"></span><?php _e( 'Transaction Items', 'event_espresso' );?>
 	</h4>
 
 	<div class="admin-primary-mbox-tbl-wrap">
@@ -50,16 +50,14 @@
 	</div>
 
 
-	<a id="display-additional-transaction-session-info" class="display-the-hidden" rel="additional-transaction-session-info">
-		<img id="additional-info-img" src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/additional_info-10x10.png" alt="" />
-		<?php _e( 'view additional transaction session details', 'event_espresso' );?>
+	<a id="display-additional-transaction-session-info" class="display-the-hidden smaller-text" rel="additional-transaction-session-info">
+		<span class="dashicons dashicons-plus-alt"></span><?php _e( 'view additional transaction session details', 'event_espresso' );?>
 	</a>
 
 	<div id="additional-transaction-session-info-dv" class="hidden">
 
-		<a id="hide-additional-transaction-session-info" class="hide-the-displayed hidden" rel="additional-transaction-session-info">
-			<img id="close-additional-info-img" src="<?php echo EE_GLOBAL_ASSETS_URL;?>images/close_additional_info-10x10.png" alt="" />
-		<?php _e( 'hide additional transaction session details', 'event_espresso' );?>
+		<a id="hide-additional-transaction-session-info" class="hide-the-displayed hidden smaller-text" rel="additional-transaction-session-info">
+			<span class="dashicons dashicons-dismiss"></span><?php _e( 'hide additional transaction session details', 'event_espresso' );?>
 		</a>
 	<br class="clear"/>
 

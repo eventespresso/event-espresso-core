@@ -127,8 +127,8 @@ class EE_Messages_Init extends EE_Base {
 		//add_action( 'AHEE__EE_Gateway__update_transaction_with_payment__no_payment', array( $this, 'payment_reminder'), 10 );
 		add_action( 'AHEE__Transactions_Admin_Page___send_payment_reminder__process_admin_payment_reminder', array( $this, 'payment_reminder'), 10 );/**/
 		add_action( 'AHEE__EE_Transaction__finalize__all_transaction', array( $this, 'maybe_registration' ), 10, 3 );
-
 		add_action( 'AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', array( $this, 'send_newsletter_message'), 10, 2 );
+		add_action( 'AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', array( $this, 'cancelled_registration' ), 10 );
 	}
 
 
@@ -179,6 +179,22 @@ class EE_Messages_Init extends EE_Base {
 
 
 		$this->_EEMSG->send_message( $message_type, $data);
+	}
+
+
+
+
+	public function cancelled_registration( EE_Transaction $transaction ) {
+		$this->_load_controller();
+
+		$data = array( $transaction, NULL );
+
+		$active_mts = $this->_EEMSG->get_active_message_types();
+
+		if ( in_array( 'cancelled_registration', $active_mts ) ) {
+			$this->_EEMSG->send_message( 'cancelled_registration', $data );
+		}
+		return;
 	}
 
 

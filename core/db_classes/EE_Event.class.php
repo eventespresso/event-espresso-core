@@ -72,8 +72,8 @@ class EE_Event extends EE_CPT_Base {
 	 * @param boolean $show_deleted whether or not to include deleted events
 	 * @return EE_Datetime[]
 	 */
-	public function datetimes_ordered( $show_expired = TRUE, $show_deleted = FALSE ) {
-		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order( $this->ID(), $show_expired, $show_deleted );
+	public function datetimes_ordered( $show_expired = TRUE, $show_deleted = FALSE, $limit = NULL ) {
+		return EEM_Datetime::instance( $this->_timezone )->get_datetimes_for_event_ordered_by_DTT_order( $this->ID(), $show_expired, $show_deleted, $limit );
 	}
 
 
