@@ -75,7 +75,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//we're also going to set the active messengers and active message types in here.
 		$this->_active_messengers = get_option('ee_active_messengers');
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
-		$this->_active_message_types = !empty($this->_active_messenger) && !empty($this->_active_messengers[$this->_active_messenger]) ? array_keys($this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types']) : array();
+		$this->_active_message_types = !empty($this->_active_messenger) && !empty($this->_active_messengers[$this->_active_messenger]) && ! empty(  $this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types'] ) ? array_keys($this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types']) : array();
 
 
 		//what about saving the objects in the active_messengers and active_message_types?
