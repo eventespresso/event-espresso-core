@@ -48,7 +48,7 @@ class EEH_Qtip_Loader extends EEH_Base {
 	 */
 	private function __construct() {
 		//let's just make sure this is instantiated in the right place.
-		if ( did_action('wp_head') || did_action('admin_head') ) {
+		if ( did_action( 'wp_print_styles' ) || did_action( 'admin_head' )) {
 			EE_Error::doing_it_wrong( 'EEH_Qtip_Loader', __('This helper must be instantiated before or within a callback for the WordPress wp_enqueue_scripts hook action hook.', 'event_espresso' ), '4.1' );
 		}
 	}
