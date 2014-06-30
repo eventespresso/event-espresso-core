@@ -181,7 +181,7 @@ class EE_messages {
 		// is that a real class ?
 		if ( isset(  $this->_installed_message_types[$type] ) ) {
 			//is the messenger specified? If so then let's see if can send.  This is the check where its possible secondary messengers might be in use.
-			if ( !empty ( $messenger ) ) {
+			if ( !empty ( $sending_messenger ) ) {
 				$generating_messenger =  !empty( $generating_messenger ) ? $this->_active_messengers[$generating_messenger]: NULL;
 				$generating_messenger = empty( $generating_messenger ) && ! empty( $this->_active_messengers[$sending_messenger] ) ? $this->_active_messengers[$sending_messenger] : $generating_messenger;
 				if ( !$this->_is_generating_messenger_and_active( $generating_messenger, $this->_installed_message_types[$type] ) ) {

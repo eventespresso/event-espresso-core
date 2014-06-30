@@ -121,7 +121,7 @@ class EED_Messages  extends EED_Module {
 		$data = $this->_get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context );
 
 		//now we can trigger the actual sending of the message via the message type.
-		self::$_EEMSG->send_message( $message_type, $sending_messenger, $generating_messenger, $context );
+		self::$_EEMSG->send_message( $message_type, $data, $sending_messenger, $generating_messenger, $context );
 	}
 
 
@@ -146,7 +146,7 @@ class EED_Messages  extends EED_Module {
 	private function _get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context ) {
 
 		//get the registration.
-		$registration = EEM_Registration::instance()->get_one( array( 'REG_url_link' => $token ) );
+		$registration = EEM_Registration::instance()->get_one( array( array( 'REG_url_link' => $token ) ) );
 
 		//if no registration then bail early.
 		if ( ! $registration instanceof EE_Registration ) {

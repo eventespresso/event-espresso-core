@@ -290,7 +290,7 @@ class EE_Html_messenger extends EE_messenger  {
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
 		echo $this->_get_main_template();
-		exit(0);
+		exit();
 	}
 
 

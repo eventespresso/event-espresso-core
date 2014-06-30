@@ -369,6 +369,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			'snd_msgr' => $sending_messenger,
 			'gen_msgr' => $this->_active_messenger->name,
 			'message_type' => $this->name,
+			'context' => $context,
 			'token' => $registration->reg_url_link(),
 			'GRP_ID' => $this->_GRP_ID,
 			'id' => $this->_get_id_for_msg_url( $context, $registration )
