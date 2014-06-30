@@ -17,7 +17,7 @@ class EE_DMS_4_5_0_update_wp_user_for_tickets extends EE_Data_Migration_Script_S
 	protected function _migrate_old_row($old_row) {
 		//foreach ticket row we add the id for the current logged in user.
 		global $wpdb;
-		$user_id = get_current_user_id();
+		$user_id = $this->get_migration_script()->get_default_creator_id();
 		$updated = $wpdb->update($this->_old_table,
 				array('TKT_wp_user'=>$user_id),
 				array('TKT_ID'=>$old_row['TKT_ID']),

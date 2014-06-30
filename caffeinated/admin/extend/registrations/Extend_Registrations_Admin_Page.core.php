@@ -263,15 +263,15 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 		$this->_verify_nonce( $nonce, $nonce_ref );
 		//let's get the mtp for the incoming MTP_ ID
-		if ( !isset( $this->_req_data['MTP_ID'] ) ) {
-			EE_Error::add_error( __('There must be something broken with the js or html structure because the required data for getting a message template group is not present (need an MTP_ID).', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+		if ( !isset( $this->_req_data['GRP_ID'] ) ) {
+			EE_Error::add_error( __('There must be something broken with the js or html structure because the required data for getting a message template group is not present (need an GRP_ID).', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$this->_template_args['success'] = FALSE;
 			$this->_template_args['error'] = TRUE;
 			$this->_return_json();
 		}
-		$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_req_data['MTP_ID'] );
+		$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_req_data['GRP_ID'] );
 		if ( ! $MTPG instanceof EE_Message_Template_Group ) {
-			EE_Error::add_error( sprintf( __('The MTP_ID given (%d) does not appear to have a corresponding row in the database.', 'event_espresso'), $this->_req_data['MTP_ID'] ), __FILE__, __FUNCTION__, __LINE__  );
+			EE_Error::add_error( sprintf( __('The GRP_ID given (%d) does not appear to have a corresponding row in the database.', 'event_espresso'), $this->_req_data['GRP_ID'] ), __FILE__, __FUNCTION__, __LINE__  );
 			$this->_template_args['success'] = FALSE;
 			$this->_template_args['error'] = TRUE;
 			$this->_return_json();
@@ -386,9 +386,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 */
 	protected function _newsletter_selected_send() {
 		$success = TRUE;
-		//first we need to make sure we have a MTP_ID so we know what template we're sending and updating!
+		//first we need to make sure we have a GRP_ID so we know what template we're sending and updating!
 		if ( empty( $this->_req_data['newsletter_mtp_selected'] ) ) {
-			EE_Error::add_error( __('In order to send a message, a MTP_ID is needed. It was not provided so messages were not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( __('In order to send a message, a Message Template GRP_ID is needed. It was not provided so messages were not sent.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$success = FALSE;
 		}
 
@@ -433,7 +433,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 
 			$contacts = $id_type == 'registration' ? EEM_Attendee::instance()->get_array_of_contacts_from_reg_ids( $ids ) : EEM_Attendee::instance()->get_all( array( array( 'ATT_ID' => array('in', $ids ) ) ) );
 
-			//we do _action because ALL triggers are handled in EE_Messages_Init.
+			//we do _action because ALL triggers are handled in EED_Messages.
 			do_action('AHEE__Extend_Registrations_Admin_Page___newsletter_selected_send', $contacts, $MTPG->ID() );
 		}
 		$query_args = array(

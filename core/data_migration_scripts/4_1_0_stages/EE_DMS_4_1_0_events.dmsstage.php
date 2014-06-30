@@ -1,4 +1,4 @@
-<?php 
+<?php
 /**
  * migrates old 3.1 events, and start_end entries to 4.1 event CPTs, tickets (although doesn't assign them any prices, only datetimes; also
  * this is run BEFORE migrating prices), and datetimes.
@@ -86,13 +86,13 @@ CREATE TABLE `wp_events_detail` (
 ) ENGINE=InnoDB AUTO_INCREMENT=63 DEFAULT CHARSET=utf8$$
 
 
- * 
+ *
  * 4.1 Event model:
  * $this->_tables = array(
 			'Event_CPT'=>new EE_Primary_Table('posts','ID'),
 			'Event_Meta'=> new EE_Secondary_Table('esp_event_meta', 'EVTM_ID','EVT_ID')
 		);
-		
+
 		$this->_fields = array(
 			'Event_CPT'=>array(
 				'EVT_ID'=>new EE_Primary_Key_Int_Field('ID', __('Post ID for Event','event_espresso')),
@@ -122,12 +122,12 @@ CREATE TABLE `wp_events_detail` (
 				'EVT_timezone_string'=>new EE_Plain_Text_Field('EVT_timezone_string', __("Timezone (name) for Event times", "event_espresso"), false),
 				'EVT_external_URL'=>new EE_Plain_Text_Field('EVT_external_URL', __("URL of Event Page if hosted elsewhere", "event_espresso"), true),
 				'EVT_donations'=>new EE_Boolean_Field('EVT_donations', __("Accept Donations?", "event_espresso"), false, false)
-				
+
 			));
- 
- * 
+
+ *
  * 3.1's start end table
- * 
+ *
 CREATE TABLE `wp_events_start_end` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `event_id` int(11) DEFAULT NULL,
@@ -139,7 +139,7 @@ CREATE TABLE `wp_events_start_end` (
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8$$
 
 
- * 
+ *
  * and 4.1 Datetime model's tables and fields:
  * $this->_tables = array(
 			'Datetime'=> new EE_Primary_Table('esp_datetime', 'DTT_ID')
@@ -164,8 +164,8 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private $_new_table;
 	private $_new_meta_table;
 	private $_new_datetime_table;
-	
-	
+
+
 	function __construct() {
 		global $wpdb;
 		$this->_old_table = $wpdb->prefix."events_detail";
@@ -202,18 +202,18 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$event_meta = maybe_unserialize($event_row['event_meta']);
 				$guid = isset($event_meta['event_thumbnail_url']) ? $event_meta['event_thumbnail_url'] : null;
 				$created_attachment_post = $this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid,$post_id,$this);
-				
+
 				//maybe create a venue from info on the event?
 				$new_venue_id = $this->_maybe_create_venue($event_row);
 				if($new_venue_id){
 					$this->_insert_new_venue_to_event($post_id,$new_venue_id);
 				}
 				$this->_add_post_metas($event_row, $post_id);
-				
+
 			}
 			$items_migrated_this_step++;
 			if($guid){
-				//if we had to check for an image attachment 
+				//if we had to check for an image attachment
 				//then let's call it a day (avoid timing out, because this took a long time)
 				break;
 			}
@@ -223,7 +223,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		}
 		return $items_migrated_this_step;
 	}
-	
+
 	/**
 	 * Stores any extra 3.1 "event_meta" column things as post meta
 	 * @param type $old_event
@@ -236,7 +236,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			return;
 		}
 		unset($event_meta['date_submitted']);//factored into CPT
-		unset($event_meta['additional_attendee_reg_info']);//facotred into event meta table 
+		unset($event_meta['additional_attendee_reg_info']);//facotred into event meta table
 		unset($event_meta['default_payment_status']);//dido
 		unset($event_meta['event_thumbnail_url']);//used to find post featured image
 		foreach($event_meta as $meta_key => $meta_value){
@@ -270,7 +270,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		}
 		return $event_slug;
 	}
-	
+
 	/**
 	 * returns whether or not there is a post that has this same slug (post_title)
 	 * @global type $wpdb
@@ -286,7 +286,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 	private function _insert_cpt($old_event){
 		global $wpdb;
 		//convert 3.1 event status to 4.1 CPT status
-		//for refrence, 3.1 event stati available for setting are:  
+		//for refrence, 3.1 event stati available for setting are:
 //		$status = array(array('id' => 'A', 'text' => __('Public', 'event_espresso')), array('id' => 'S', 'text' => __('Waitlist', 'event_espresso')), array('id' => 'O', 'text' => __('Ongoing', 'event_espresso')), array('id' => 'R', 'text' => __('Draft', 'event_espresso')), array('id' => 'D', 'text' => __('Deleted', 'event_espresso')));
 //		and the json api uses the following to convert from 3.1 to 4.0
 //		'S'=>'secondary/waitlist',
@@ -297,7 +297,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 //		'P'=>'pending',
 //		'R'=>'draft',
 //		'D'=>'deleted');
-//		4.1 Event Post stati are the normal post statis 
+//		4.1 Event Post stati are the normal post statis
 //		(publish,future,draft,pending,private,trash,auto-draft,inherit)
 //		and 3 custom ones: cancelled,postponed,sold_out
 		$status_conversions = array(
@@ -321,7 +321,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'post_title'=>stripslashes($old_event['event_name']),//EVT_name
 			'post_content'=>stripslashes($old_event['event_desc']),//EVT_desc
 			'post_name'=>$this->_find_unique_slug($old_event['event_name']),//$old_event['event_identifier'],//EVT_slug
-			'post_date'=>$old_event['submitted'],//EVT_created NOT 
+			'post_date'=>$old_event['submitted'],//EVT_created NOT
 			'post_date_gmt'=>get_gmt_from_date($old_event['submitted']),
 			'post_excerpt'=>'',//EVT_short_desc
 			'post_modified'=>$old_event['submitted'],//EVT_modified
@@ -346,7 +346,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'%d',//EVT_order
 			'%s',//post_type
 			'%s',//status
-		);	
+		);
 		$success = $wpdb->insert($this->_new_table,
 				$cols_n_values,
 				$datatypes);
@@ -356,7 +356,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		}
 		return $wpdb->insert_id;
 	}
-	
+
 	/**
 	 * Counts all the registrations for the event in the 3.1 DB. (takes into account attendee rows which represent various registrations)
 	 * @global type $wpdb
@@ -368,7 +368,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$count = $wpdb->get_var($wpdb->prepare("SELECT sum(quantity) FROM {$wpdb->prefix}events_attendee WHERE event_id=%d",$event_id));
 		return intval($count);
 	}
-	
+
 	private function _insert_event_meta($old_event,$new_cpt_id){
 		global $wpdb;
 		$event_meta = maybe_unserialize($old_event['event_meta']);
@@ -392,7 +392,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			'EVT_timezone_string'=> $old_event['timezone_string'],
 			'EVT_external_URL'=>$old_event['externalURL'],
 			'EVT_donations'=>false//doesnt exist in 3.1
-			
+
 		);
 		$datatypes = array(
 			'%s',//EVT_ID
@@ -417,7 +417,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		}
 		return $wpdb->insert_id;
 	}
-	
+
 	private function _maybe_create_venue($old_event){
 		if(		$old_event['address'] ||
 				$old_event['address2'] ||
@@ -431,26 +431,62 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 				$old_event['virtual_url'] ||
 				$old_event['virtual_phone']
 				){
-			$id = $this->_insert_venue_into_posts($old_event);
-			if($id){
-				$this->_insert_venue_into_meta_table($id, $old_event);
+			$old_id = $this->_duplicate_venue_exists( $old_event );
+			if( $old_id ){
+				return $old_id;
+			}
+			$new_id = $this->_insert_venue_into_posts($old_event);
+			if( $new_id ){
+				$this->_insert_venue_into_meta_table($new_id, $old_event);
 				$guid = isset($old_event['venue_image']) ? $old_event['venue_image']  : null;
-				$this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid, $id,$this);
+				$this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post($guid, $new_id,$this);
 			}
 			//we don't bother recording the conversion from old events to venues as that
 			//will complicate finding the conversion from old venues to new events
-			return $id;
+			return $new_id;
 		}else{
 			return 0;
 		}
 	}
-	
+
+	/**
+	 * Assuming there is venue data on this event, check if there is a duplicate venue already in the system for it.
+	 * If so, return it. Otherwise return NULL.
+	 * @param array $old_event
+	 * @return int duplicate venue id
+	 */
+	private function _duplicate_venue_exists($old_event){
+		global $wpdb;
+		$conditions = array(
+			'VNU_address' => $old_event [ 'address' ],
+			'VNU_address2' => $old_event[ 'address2' ],
+			'VNU_city' => $old_event[ 'city' ],
+			'VNU_zip' => $old_event[ 'zip' ],
+			'post_title'=> stripslashes($old_event['venue_title']),
+			'VNU_phone'=>$old_event['venue_phone'],//VNU_phone
+			'VNU_url'=>$old_event['venue_url'],//VNU_url
+			'VNU_virtual_phone'=>$old_event['virtual_phone'],//VNU_virtual_phone
+			'VNU_virtual_url'=>$old_event['virtual_url'],//VNU_virtual_url
+		);
+		$sql_conditions = array();
+		foreach($conditions as $column => $value){
+			$sql_conditions [] = "$column = '$value'";
+		}
+		$query = "SELECT VNU_ID
+					FROM
+		{$wpdb->posts} as p INNER JOIN
+		{$wpdb->prefix}esp_venue_meta as v ON p.ID = v.VNU_ID
+			WHERE " . implode( " AND ",$sql_conditions ) . " LIMIT 1";
+		$id = $wpdb->get_var( $query );
+		return $id;
+	}
+
 	/**
 	 * Inserts the CPT
 	 * @param array $old_venue keys are cols, values are col values
 	 * @return int
 	 */
-	private function _insert_venue_into_posts($old_event){		
+	private function _insert_venue_into_posts($old_event){
 		global $wpdb;
 		$insertion_array = array(
 					'post_title'=>stripslashes($old_event['venue_title']),//VNU_name
@@ -559,7 +595,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		}
 		return $wpdb->insert_id;
 	}
-	
+
 	private function _insert_new_venue_to_event($new_event_id,$new_venue_id){
 		global $wpdb;
 		if( ! $new_event_id){
@@ -586,7 +622,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 			return 0;
 		}
 		return $wpdb->insert_id;
-	
+
 	}
 	/**
 	 * Converts all the 3.1 start-end times for the event to 4.1 datetimes
@@ -659,7 +695,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		}
 		return $wpdb->insert_id;
 	}
-	
+
 	/**
 	 * Checks if there's a 4.1 datetime for this event already. This is mostly only handy
 	 * when deciding whether a datetime we're about ot insert should be the 'primary' or not
@@ -672,11 +708,11 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage{
 		$count = $wpdb->get_var($wpdb->prepare("SELECT COUNT(*) FROM $this->_new_datetime_table WHERE EVT_ID=%d",$cpt_event_id));
 		return intval($count);
 	}
-	
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
+
 }

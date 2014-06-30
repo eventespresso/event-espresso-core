@@ -30,8 +30,7 @@ class EEH_MSG_Template {
 
 
 	private static function _set_autoloader() {
-		EE_Registry::instance()->load_lib( 'Messages_Init' );
-		EE_Messages_Init::set_autoloaders();
+		EED_Messages::set_autoloaders();
 	}
 
 
