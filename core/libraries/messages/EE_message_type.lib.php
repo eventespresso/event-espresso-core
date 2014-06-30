@@ -352,10 +352,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 		//valid sending_messenger?
 		$not_valid_msgr = FALSE;
 		foreach ( $this->_with_messengers as $generating => $sendings ) {
-			if ( empty( $sending ) || array_search( $sending_messenger, $sendings ) === FALSE ) {
+			if ( empty( $sendings ) || array_search( $sending_messenger, $sendings ) === FALSE ) {
 				$not_valid_msgr = TRUE;
 			}
 		}
+
 		if ( $not_valid_msgr ) {
 			throw new EE_Error( sprintf( __('The given sending messenger string (%s) does not match a valid sending messenger with the %s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.', 'event_espresso'), $sending_messenger, get_class( $this ) ) );
 		}
@@ -374,6 +375,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			);
 
 		$url = add_query_arg( $query_args, $base_url );
+
 
 		//made it here so now we can just get the url and filter it.  Filtered globally and by message type.
 		$url = apply_filters( 'FHEE__EE_message_type__get_url_trigger__url', $url, $this );
@@ -750,7 +752,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			}
 
 			//note the FIRST reg object in this array is the one we'll use for this attendee as the primary registration for this attendee.
-			$aee['reg_obj'] = array_shift($this->_data->attendees[$att_id]['reg_obj']);
+			$aee['reg_obj'] = array_shift($this->_data->attendees[$att_id]['reg_objs']);
 
 			$aee['attendees'] = $this->_data->attendees;
 
