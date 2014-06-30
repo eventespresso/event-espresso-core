@@ -371,7 +371,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			'message_type' => $this->name,
 			'token' => $registration->reg_url_link(),
 			'GRP_ID' => $this->_GRP_ID,
-			'id' => $this->_get_id_for_msg_url()
+			'id' => $this->_get_id_for_msg_url( $context, $registration )
 			);
 
 		$url = add_query_arg( $query_args, $base_url );
