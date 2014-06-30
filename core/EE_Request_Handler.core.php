@@ -202,8 +202,8 @@ final class EE_Request_Handler {
 		foreach ( $post_types as $post_type ) {
 			// was a post name passed ?
 			if ( isset( $post_type_CPT_endpoints[ $post_type ] ) ) {
-				// kk we know this is an epsresso page, but is it a specific post ?
-				if ( !$this->get( 'post_name' ) ) {
+				// kk we know this is an espresso page, but is it a specific post ?
+				if ( ! $this->get( 'post_name' ) ) {
 					// there's no specific post name set, so maybe it's one of our endpoints like www.domain.com/events
 					$post_name = isset( $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] ) ? $post_type_CPT_endpoints[ $this->get( 'post_type' ) ] : NULL;
 					// if the post type matches on of our then set the endpoint
