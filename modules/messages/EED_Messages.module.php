@@ -22,9 +22,9 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 class EED_Messages  extends EED_Module {
 
 	/**
-	 * This holds the EE_Messages controller
+	 * This holds the EE_messages controller
 	 *
-	 * @var EE_Messages
+	 * @var EE_messages
 	 */
 	private  static $_EEMSG;
 
@@ -224,9 +224,9 @@ class EED_Messages  extends EED_Module {
 	 * @return void
 	 */
 	private static function _load_controller() {
-		if ( ! self::$_EEMSG instanceof EE_Messages ) {
+		if ( ! self::$_EEMSG instanceof EE_messages ) {
 			self::set_autoloaders();
-			self::$_EEMSG = new EE_Messages();
+			self::$_EEMSG = new EE_messages();
 		}
 	}
 
