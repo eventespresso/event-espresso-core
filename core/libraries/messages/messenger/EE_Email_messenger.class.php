@@ -160,6 +160,26 @@ class EE_Email_messenger extends EE_messenger  {
 
 
 
+	/**
+	 * @see parent EE_messenger class for docs
+	 *
+	 * @since 4.5.0
+	 */
+	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
+		if ( $sending_messenger_name = 'html' ) {
+			add_filter( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', array( $this, 'add_email_css' ), 10, 2 );
+		}
+	}
+
+
+
+
+	public function add_email_css( $url, $type ) {
+		return $this->get_inline_css_template( true );
+	}
+
+
+
 
 	/**
 	 * See parent for details
@@ -326,7 +346,6 @@ class EE_Email_messenger extends EE_messenger  {
 				)
 			);
 	}
-
 
 
 

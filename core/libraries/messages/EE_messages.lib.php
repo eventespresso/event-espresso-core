@@ -284,6 +284,11 @@ class EE_messages {
 			return FALSE;
 		}
 
+		//if the generating messenger and the sending messengers are different, are there any hooks that the generating messenger sets for the sending messenger (i.e. css file swap outs etc.)
+		if ( $sending_messenger != $generating_messenger ) {
+			$generating_messenger->do_secondary_messenger_hooks( $sending_messenger->name );
+		}
+
 		if ( $messages->count === 0 ) return FALSE; //it is possible that the user has the messenger turned off for this type.
 
 		//TODO: check count (at some point we'll use this to decide whether we send to queue or not i.e.

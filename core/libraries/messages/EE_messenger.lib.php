@@ -592,5 +592,19 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+	/**
+	 * This is a method called from EE_messages when this messenger is a generating messenger and the sending messenger is a different messenger.  Child messengers can set hooks for the sending messenger to callback on if necessary (i.e. swap out css files or something else).
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $sending_messenger_name the name of the sending messenger so we only set the hooks needed.
+	 *
+	 * @return void
+	 */
+	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
+		return;
+	}
+
+
 }
 // end EE_messenger class
