@@ -923,8 +923,12 @@ class EEH_Activation {
 			update_option( 'ee_active_messengers', $active_messengers );
 
 
-			//let's generate all the templates
-			$templates = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+			//let's generate all the templates but ONLY if there are default message types for the messenger.  It is entirely possible that activating the messenger just exposes new shortcodes (because it acts as a secondary messenger), in which case no default templates are created
+			if ( ! empty( $default_mts ) ) {
+				$templates = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+			} else {
+				$templates = TRUE;
+			}
 
 		}
 

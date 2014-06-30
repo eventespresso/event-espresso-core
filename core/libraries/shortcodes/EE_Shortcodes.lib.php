@@ -85,6 +85,49 @@ abstract class EE_Shortcodes extends EE_Base {
 
 
 	/**
+	 * EE_messenger used to generate the template being parsed.
+	 *
+	 * @since 4.5.0
+	 * @var EE_messenger
+	 */
+	protected $_messenger;
+
+
+
+	/**
+	 * message type used to generate the template being parsed.
+	 *
+	 * @since 4.5.0
+	 * @var EE_message_type
+	 */
+	protected $_message_type;
+
+
+
+
+	/**
+	 * context used for the template being parsed
+	 *
+	 * @since 4.5.0
+	 * @var string
+	 */
+	protected $_context;
+
+
+
+
+	/**
+	 * Specific Message Template Group ID
+	 *
+	 * @since 4.5.0
+	 * @var int
+	 */
+	protected $_GRP_ID;
+
+
+
+
+	/**
 	 * This will hold an instance of the EEH_Parse_Shortcodes helper that will be used when handling list type shortcodes
 	 * @var object
 	 */
@@ -149,6 +192,7 @@ abstract class EE_Shortcodes extends EE_Base {
 			return false; //get out, this parser doesn't handle the incoming shortcode.
 		$this->_data = $data;
 		$this->_extra_data = $extra_data;
+		$this->_set_messages_properties();
 		$parsed = apply_filters( 'FHEE__' . get_class($this) . '__parser_after', $this->_parser($shortcode), $shortcode, $data, $extra_data, $this );
 
 		//note the below filter applies to ALL shortcode parsers... be careful!
@@ -226,13 +270,33 @@ abstract class EE_Shortcodes extends EE_Base {
 		if ( !isset( $this->_data['data'] ) )
 			throw new EE_Error( __('The incoming data does not have the required data index in its array', 'event_espresso') );
 
-		//all is well let's just reformat the _extra_data() array if present
+		//all is well let's make sure _extra_data always has the values needed.
 		//let's make sure that extra_data includes all templates (for later parsing if necessary)
-		if ( !empty( $this->_extra_data ) && is_object($this->_extra_data ) ) {
-			$this->_extra_data['data'] = $this->_extra_data;
-			$this->_extra_data['templates'] = $this->_data['template'];
+		if ( empty( $this->_extra_data ) || ( empty( $this->_extra_data['data'] ) && empty( $this->_extra_data['template'] ) ) ) {
+			$this->_extra_data['data'] = $this->_data['data'];
+			$this->_extra_data['template'] = $this->_data['template'];
 		}
 
+	}
+
+
+
+	/**
+	 * This sets the properties related to the messages system
+	 *
+	 * @since 4.5.0
+	 *
+	 *
+	 * @return void
+	 */
+	protected function _set_messages_properties() {
+		//should be in _extra_data
+		if ( isset( $this->_extra_data['messenger'] ) ) {
+			$this->_messenger = $this->_extra_data['messenger'];
+			$this->_message_type = $this->_extra_data['message_type'];
+			$this->_context = $this->_extra_data['context'];
+			$this->_GRP_ID = $this->_extra_data['GRP_ID'];
+		}
 	}
 
 

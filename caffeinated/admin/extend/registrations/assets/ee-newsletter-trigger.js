@@ -160,7 +160,7 @@ jQuery(document).ready(function($) {
                     'action' : 'get_newsletter_form_content',
                     'page' : 'espresso_registrations',
                     'get_newsletter_form_content_nonce' : $('#get_newsletter_form_content_nonce').val(),
-                    'MTP_ID' : selected_mtp,
+                    'GRP_ID' : selected_mtp,
                     'ee_admin_ajax' : true
                 };
                 //do post
