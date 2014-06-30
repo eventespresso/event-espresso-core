@@ -1834,6 +1834,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _generate_new_templates($messenger, $message_types, $GRP_ID = 0, $global = FALSE) {
 
+		//if no $message_types are given then that's okay... this may be a messenger that just adds shortcodes, so we just don't generate any templates.
+		if ( empty( $message_types ) )
+			return true;
+
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
 		return EEH_MSG_Template::generate_new_templates($messenger, $message_types, $GRP_ID,  $global);
@@ -2038,9 +2042,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'obj' => $messenger
 				);
 
+			$message_types_for_messenger = $messenger->get_valid_message_types();
+
 			//assemble the array for the ACTIVE and INACTIVE message types with the selected messenger //note that all message types will be in the inactive box if the messenger is NOT active.
 			$selected_settings = isset( $this->_active_messengers[$messenger->name]['settings'] ) ? $this->_active_messengers[$messenger->name]['settings'] : array();
 			foreach ( $message_types as $message_type ) {
+				//first we need to verify that this message type is valid with this messenger. Cause if it isn't then it shouldn't show in either the inactive OR active metabox.
+				if ( ! in_array( $message_type->name, $message_types_for_messenger ) ) {
+					continue;
+				}
+
 				$a_or_i = isset( $selected_settings[$messenger->name . '-message_types'][$message_type->name] ) && $selected_settings[$messenger->name . '-message_types'][$message_type->name] ? 'active' : 'inactive';
 
 				$this->_m_mt_settings['message_type_tabs'][$messenger->name][$a_or_i][$message_type->name] = array(
@@ -2150,6 +2161,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$m_boxes[$messenger . '_a_box'] = sprintf( __('%s Settings', 'event_espresso'), $tab_array['label'] );
 			$m_template_args[$messenger . '_a_box'] = array(
 					'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
+					'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) ? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) : '',
 					'content' => $this->_get_messenger_box_content( $tab_array['obj'] ),
 					'hidden' => $active ? '' : ' hidden',
 					'hide_on_message' => $hide_on_message,
@@ -2161,6 +2173,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//message type meta boxes (which is really just the inactive container for each messenger showing inactive message types for that messenger)
 			$mt_boxes[$messenger . '_i_box'] = __('Inactive Message Types', 'event_espresso');
 			$mt_template_args[$messenger . '_i_box'] = array(
+				'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
 				'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) ? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) : '',
 				'hidden' => $active ? '' : ' hidden',
 				'hide_on_message' => $hide_on_message,
@@ -2183,7 +2196,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		foreach ( $mt_boxes as $box => $label ) {
 			$callback_args = array( 'template_path' => $mt_template_path, 'template_args' => $mt_template_args[$box] );
 			$mt = str_replace( '_i_box', '', $box );
-			add_meta_box( 'espresso_' . $msgr . '_inactive_mts', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'side', 'high', $callback_args );
+			add_meta_box( 'espresso_' . $mt . '_inactive_mts', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'side', 'high', $callback_args );
 		}
 
 	}
