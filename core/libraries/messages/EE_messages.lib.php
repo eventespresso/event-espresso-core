@@ -68,7 +68,7 @@ class EE_messages {
 					EE_Error::add_error($active->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
 				}
 				$this->_active_messengers[$name] = $active;
-				$this->_active_message_types[$name] = $_actives[$name]['settings'][$name . '-message_types'];
+				$this->_active_message_types[$name] = ! empty( $_actives[$name]['settings'][$name . '-message_types'] ) ? $_actives[$name]['settings'][$name . '-message_types'] : array();
 			}
 		}
 	}

@@ -250,11 +250,25 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 	/**
-	 * See definition of this class in parent
+	 * @see definition of this method in parent
+	 *
+	 * @since 4.5.0
+	 *
 	 */
 	protected function _set_default_message_types() {
 		//@todo this is where order_confirmation and invoice will go.
 		$this->_default_message_types = array();
+	}
+
+
+
+	/**
+	 * @see definition of this method in parent
+	 *
+	 * @since 4.5.0
+	 */
+	protected function _set_valid_message_types() {
+		$this->_valid_message_types = array();
 	}
 
 

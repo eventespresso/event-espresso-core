@@ -60,6 +60,9 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      *                                                                          type should activate with. Each value in the
      *                                                                          array should match the name property of a
      *                                                                          EE_messenger. Optional.
+     *        @type array $messengers_to_validate_with An array of messengers that this message type is valid for.  Each
+     *                                                                          value in the array should match the name property of an
+     *                                                                          EE_messenger. Optional.
      *
      * }
      * @return void
@@ -88,13 +91,15 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
 	self::$_ee_message_type_registry[ $mt_name ] = array(
 		'mtfilename' => (string) $setup_args['mtfilename'],
 		'autoloadpaths' => (array) $setup_args['autoloadpaths'],
-		'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array()
+		'messengers_to_activate_with' => ! empty( $setup_args['messengers_to_activate_with'] ) ? (array) $setup_args['messengers_to_activate_with'] : array(),
+                        'messengers_to_validate_with' => ! empty( $setup_args['messengers_to_validate_with'] ) ? (array) $setup_args['messengers_to_validate_with'] : array()
 	);
 
         //add filters
 		add_filter( 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( 'EE_Register_Message_Type', 'register_msgs_autoload_paths'), 10 );
 		add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EE_Register_Message_Type', 'register_messagetype_files'), 10, 1 );
 		add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EE_Register_Message_Type', 'register_messengers_to_activate_mt_with'), 10, 2 );
+                        add_filter( 'FHEE__EE_messenger__get_valid_message_types__valid_types', array( 'EE_Register_Message_Type', 'register_messengers_to_validate_mt_with'), 10, 2 );
 
     }
 
@@ -193,5 +198,37 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
         }
 
         return $default_types;
+    }
+
+
+
+     /**
+     * callback for FHEE__EE_messenger__get_valid_message_types__default_types filter.
+     *
+     * @since   4.3.0
+     *
+     *
+     * @param  array                $valid_types     array of message types valid with messenger (
+     *                                                               corresponds to the $name property of message type)
+     * @param  EE_messenger $messenger      The EE_messenger the filter is called from.
+     * @return  array
+     */
+    public static function register_messengers_to_validate_mt_with( $valid_types, EE_messenger $messenger ) {
+        if ( empty( self::$_ee_message_type_registry ) )
+            return $valid_types;
+
+        foreach ( self::$_ee_message_type_registry as $mt_name => $mt_reg ) {
+            if ( empty( $mt_reg['messengers_to_validate_with'] ) || empty( $mt_reg['mtfilename'] ) )
+                continue;
+
+            //loop through each of the messengers and if it matches the loaded class then we add this message type to the
+            foreach ( $mt_reg['messengers_to_validate_with'] as $msgr ) {
+                if ( $messenger->name == $msgr ) {
+                    $valid_types[] = $mt_name;
+                }
+            }
+        }
+
+        return $valid_types;
     }
 }

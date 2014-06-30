@@ -545,7 +545,8 @@ class EE_Brewing_Regular extends EE_Base {
 			'autoloadpaths' => array(
 				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
 				),
-			'messengers_to_activate_with' => array( 'email' )
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'newsletter', $setup_args );
 	}

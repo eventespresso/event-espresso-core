@@ -351,6 +351,29 @@ class EE_Email_messenger extends EE_messenger  {
 
 
 	/**
+	 * @see definition of this class in parent
+	 *
+	 * @since 4.5.0
+	 *
+	 */
+	protected function _set_valid_message_types() {
+		$this->_valid_message_types = array(
+			'payment',
+			'registration',
+			'not_approved_registration',
+			'declined_registration',
+			'cancelled_registration',
+			'pending_approval',
+			'payment_reminder',
+			'payment_declined',
+			'payment_refund'
+			);
+	}
+
+
+
+
+	/**
 	 * setting up admin_settings_fields for messenger.
 	 */
 	protected function _set_admin_settings_fields() {}
