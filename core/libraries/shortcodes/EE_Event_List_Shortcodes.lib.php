@@ -106,7 +106,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_event_list_for_registration() {
-		$valid_shortcodes = array('event', 'ticket_list', 'datetime_list', 'attendee', 'event_author');
+		$valid_shortcodes = array('event', 'ticket_list', 'datetime_list', 'attendee', 'event_author', 'recipient_details', 'recipient_list', 'venue');
 		$template = is_array( $this->_data['template'] ) && isset($this->_data['template']['event_list']) ? $this->_data['template']['event_list'] : $this->_extra_data['template']['event_list'];
 		$registration = $this->_data['data'];
 
@@ -120,7 +120,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 		//we're NOT going to prepare a list of attendees this time around
 		$events = '';
 
-		foreach ( $all_events as $event ) {
+		foreach ( (array) $all_events as $event ) {
 			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event, $valid_shortcodes, $this->_extra_data);
 		}
 
