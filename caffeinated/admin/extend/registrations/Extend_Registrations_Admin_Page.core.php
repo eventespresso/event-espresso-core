@@ -119,7 +119,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 					'persistent' => FALSE
 					),
 				'list_table' => 'EE_Registration_CheckIn_List_Table',
-				'help_tour' => array( 'Checkin_Toggle_View_Help_Tour' ),
+				//'help_tour' => array( 'Checkin_Toggle_View_Help_Tour' ),
 				'metaboxes' => array(),
 				'require_nonce' => FALSE
 				),

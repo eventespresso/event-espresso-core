@@ -17,7 +17,7 @@
  *
  * @package		Event Espresso
  * @subpackage	/widgets/upcoming_events/
- * @author		Brent Christensen 
+ * @author		Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -33,8 +33,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			__( 'Event Espresso Upcoming Events', 'event_espresso' ),
 			 array( 'description' => __( 'A widget to display your upcoming events.', 'event_espresso' )),
 			array(
-				'width' => 300, 
-				'height' => 350, 
+				'width' => 300,
+				'height' => 350,
 				'id_base' => 'ee-upcoming-events-widget'
 			)
 		);
@@ -50,13 +50,13 @@ class EEW_Upcoming_Events  extends WP_Widget {
 	 * @param array $instance Previously saved values from database.
 	 */
 	public function form( $instance ) {
-		
+
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
-		EE_Registry::instance()->load_class( 'Question_Option', array(), FALSE, FALSE, TRUE );		
+		EE_Registry::instance()->load_class( 'Question_Option', array(), FALSE, FALSE, TRUE );
 		// Set up some default widget settings.
 		$defaults = array(
-			'title' => __('Upcoming Events', 'event_espresso'), 
-			'category_name' => '', 
+			'title' => __('Upcoming Events', 'event_espresso'),
+			'category_name' => '',
 			'show_expired' => FALSE,
 			'show_desc' => TRUE,
 			'show_dates' => TRUE,
@@ -66,12 +66,12 @@ class EEW_Upcoming_Events  extends WP_Widget {
 
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		// don't add HTML labels for EE_Form_Fields generated inputs
-		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );		
+		add_filter( 'FHEE__EEH_Form_Fields__label_html', '__return_empty_string' );
 		$yes_no_values = array(
 			EE_Question_Option::new_instance( array( 'QSO_value' => 0, 'QSO_desc' => __('No', 'event_espresso'))),
 			EE_Question_Option::new_instance( array( 'QSO_value' => 1, 'QSO_desc' => __('Yes', 'event_espresso')))
 		);
-		
+
 	?>
 
 		<!-- Widget Title: Text Input -->
@@ -88,19 +88,20 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			</label>
 			<?php
 			$event_categories = array();
-			if ( $categories = EE_Registry::instance()->load_model( 'Term' )->get_all_ee_categories( TRUE )) {				
+			if ( $categories = EE_Registry::instance()->load_model( 'Term' )->get_all_ee_categories( TRUE )) {
 				foreach ( $categories as $category ) {
 					$event_categories[] = EE_Question_Option::new_instance( array( 'QSO_value' => $category->get( 'slug' ), 'QSO_desc' => $category->get( 'name' )));
 				}
-			}			
-			echo EEH_Form_Fields::select( 
-				 __('Event Category:', 'event_espresso'), 
-				$instance['category_name'], 
-				$event_categories, 
+			}
+			array_unshift( $event_categories, EE_Question_Option::new_instance( array( 'QSO_value' => '', 'QSO_desc' => __(' - display all - ', 'event_espresso'))));
+			echo EEH_Form_Fields::select(
+				 __('Event Category:', 'event_espresso'),
+				$instance['category_name'],
+				$event_categories,
 				$this->get_field_name('category_name'),
 				$this->get_field_id('category_name')
 			);
-			?>				
+			?>
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('limit'); ?>">
@@ -113,14 +114,14 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				<?php _e('Show Expired Events:', 'event_espresso'); ?>
 			</label>
 			<?php
-			echo EEH_Form_Fields::select( 
-				 __('Show Expired Events:', 'event_espresso'), 
-				$instance['show_expired'], 
-				$yes_no_values, 
+			echo EEH_Form_Fields::select(
+				 __('Show Expired Events:', 'event_espresso'),
+				$instance['show_expired'],
+				$yes_no_values,
 				$this->get_field_name('show_expired'),
 				$this->get_field_id('show_expired')
 			);
-			?>			
+			?>
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('image_size'); ?>">
@@ -138,44 +139,44 @@ class EEW_Upcoming_Events  extends WP_Widget {
 					}
 				}
 				$image_sizes[] = EE_Question_Option::new_instance( array( 'QSO_value' => 'none', 'QSO_desc' =>  __('don\'t show images', 'event_espresso') ));
-			}			
-			echo EEH_Form_Fields::select( 
-				 __('Image Size:', 'event_espresso'), 
-				$instance['image_size'], 
-				$image_sizes, 
+			}
+			echo EEH_Form_Fields::select(
+				 __('Image Size:', 'event_espresso'),
+				$instance['image_size'],
+				$image_sizes,
 				$this->get_field_name('image_size'),
 				$this->get_field_id('image_size')
 			);
 			?>
-	
+
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('show_desc'); ?>">
 				<?php _e('Show Description:', 'event_espresso'); ?>
 			</label>
 			<?php
-			echo EEH_Form_Fields::select( 
-				 __('Show Description:', 'event_espresso'), 
-				$instance['show_desc'], 
-				$yes_no_values, 
+			echo EEH_Form_Fields::select(
+				 __('Show Description:', 'event_espresso'),
+				$instance['show_desc'],
+				$yes_no_values,
 				$this->get_field_name('show_desc'),
 				$this->get_field_id('show_desc')
 			);
-			?>			
+			?>
 		</p>
 		<p>
 			<label for="<?php echo $this->get_field_id('show_dates'); ?>">
 				<?php _e('Show Dates:', 'event_espresso'); ?>
 			</label>
 			<?php
-			echo EEH_Form_Fields::select( 
-				 __('Show Dates:', 'event_espresso'), 
-				$instance['show_dates'], 
-				$yes_no_values, 
+			echo EEH_Form_Fields::select(
+				 __('Show Dates:', 'event_espresso'),
+				$instance['show_dates'],
+				$yes_no_values,
 				$this->get_field_name('show_dates'),
 				$this->get_field_id('show_dates')
 			);
-			?>			
+			?>
 		</p>
 
 		<?php
@@ -193,7 +194,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 	 *
 	 * @return array Updated safe values to be saved.
 	 */
-	public function update( $new_instance, $old_instance ) {		
+	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 		$instance['title'] = ! empty( $new_instance['title'] ) ? strip_tags( $new_instance['title'] ) : '';
 		$instance['category_name'] = $new_instance['category_name'];
@@ -216,7 +217,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 	 * @param array $instance Saved values from database.
 	 */
 	public function widget( $args, $instance ) {
-		
+
 		global $post;
 		// make sure there is some kinda post object
 		if ( $post instanceof WP_Post ) {
@@ -228,12 +229,12 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				extract($args);
 				// filter the title
 				$title = apply_filters('widget_title', $instance['title']);
-				// Before widget (defined by themes). 
+				// Before widget (defined by themes).
 				echo $before_widget;
-				// Display the widget title if one was input (before and after defined by themes). 
+				// Display the widget title if one was input (before and after defined by themes).
 				if ( ! empty( $title )) {
 					echo $before_title . $title . $after_title;
-				}	
+				}
 				// grab widget settings
 				$category = isset( $instance['category_name'] ) && ! empty( $instance['category_name'] ) ? $instance['category_name'] : FALSE;
 				$show_expired = isset( $instance['show_expired'] ) ? (bool) absint( $instance['show_expired'] ) : FALSE;
@@ -243,7 +244,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				// start to build our where clause
 				$where = array(
 //					'Datetime.DTT_is_primary' => 1,
-					'status' => 'publish' 
+					'status' => 'publish'
 				);
 				// add category
 				if ( $category ) {
@@ -256,11 +257,11 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				}
 				// run the query
 				$events = EE_Registry::instance()->load_model( 'Event' )->get_all( array(
-					$where,		
-					'limit' => $instance['limit'] > 0 ? '0,' . $instance['limit'] : '0,10', 
-					'order_by' => 'Datetime.DTT_EVT_start', 
-					'order' => 'ASC', 
-					'group_by' => 'EVT_ID' 
+					$where,
+					'limit' => $instance['limit'] > 0 ? '0,' . $instance['limit'] : '0,10',
+					'order_by' => 'Datetime.DTT_EVT_start',
+					'order' => 'ASC',
+					'group_by' => 'EVT_ID'
 				));
 
 				if ( ! empty( $events )) {
@@ -268,7 +269,7 @@ class EEW_Upcoming_Events  extends WP_Widget {
 					foreach ( $events as $event ) {
 						if ( $event instanceof EE_Event && $post->ID != $event->ID() ) {
 							//printr( $event, '$event  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-							echo '<li class="ee-upcoming-events-widget-li">';
+							echo '<li id="ee-upcoming-events-widget-li-' . $event->ID() . '" class="ee-upcoming-events-widget-li">';
 							// how big is the event name ?
 							$name_length = strlen( $event->name() );
 							switch( $name_length ) {
@@ -281,29 +282,25 @@ class EEW_Upcoming_Events  extends WP_Widget {
 								default :
 									$len_class =  'one-line';
 							}
-							echo '<div id="ee-upcoming-events-widget-header-dv-' . $event->ID() . '" class="ee-upcoming-events-widget-header-dv '. $len_class . '">';
-							
-							echo '<h5 class="ee-upcoming-events-widget-h5"><a href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a></h5>';
-							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {						
-								echo '<a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a>';		
-							}							
-							echo '</div>';
-							if ( $show_desc && $desc = $event->short_description( 25 )) {
-								echo  '<h6 class="">' . __('Event Details: ', 'event_espresso') . '</h6><p>' . $desc . '</p>';
+							echo '<a class="ee-widget-event-name-a" href="' . get_permalink( $event->ID() ) . '">' . $event->name() . '</a>';
+							if ( has_post_thumbnail( $event->ID() ) && $image_size != 'none' ) {
+								echo '<a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a>';
 							}
 							if ( $show_dates ) {
-								echo  '<h6 class="">' . __('Event Dates: ', 'event_espresso') . '</h6>';
 								echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', 'g:i a', FALSE, NULL, TRUE, TRUE );
 							}
-							echo '<br/><br/><br/></li>';
+							if ( $show_desc && $desc = $event->short_description( 25 )) {
+								echo  '<p>' . $desc . '</p>';
+							}
+							echo '</li>';
 						}
 					}
 					echo '</ul>';
-				}			
-				// After widget (defined by themes). 
-				echo $after_widget;				
+				}
+				// After widget (defined by themes).
+				echo $after_widget;
 			}
-		}		
+		}
 	}
 
 }
