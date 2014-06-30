@@ -1,37 +1,14 @@
-<?php
-if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowed'); }
-
+<?php if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowed'); }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for Wordpress
- *
- * @package		Event Espresso
- * @author		Seth Shoultes
- * @copyright	(c)2009-2012 Event Espresso All Rights Reserved.
- * @license		http://eventespresso.com/support/terms-conditions/  ** see Plugin Licensing **
- * @link		http://www.eventespresso.com
- * @version		4.0
- *
- * ------------------------------------------------------------------------
- *
- * EEH_Qtip_Loader	
+ * EEH_Qtip_Loader
  *
  * This is a helper utility class that provides a PHP api for setting up qtip js library programmatically.
  *
  * @package		Event Espresso
  * @subpackage	/helpers/EEH_Qtip_Loader.helper.php
  * @author		Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
-
-
-
-require_once( EE_HELPERS . 'EEH_Base.helper.php' );
 class EEH_Qtip_Loader extends EEH_Base {
-
-
 
 	/**
 	 * EEH_Qtip_Loader Object
@@ -39,8 +16,6 @@ class EEH_Qtip_Loader extends EEH_Base {
 	 * @access private
 	 */
 	private static $_instance = NULL;
-
-
 
 	/**
 	 * array of qtip config objects
@@ -54,28 +29,28 @@ class EEH_Qtip_Loader extends EEH_Base {
 	 *@singleton method used to instantiate class object
 	 *@access public
 	 *@return EEH_Qtip_Loader instance
-	 */	
+	 */
 	public static function instance() {
 		// check if class object is instantiated
 		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EEH_Qtip_Loader )) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
-	}	
+	}
 
 
 
 	/**
 	 *private constructor to prevent direct creation
-	 *@Constructor
-	 *@access private
-	 *@return void
-	 */	
+	 * @Constructor
+	 * @access private
+	 * @return \EEH_Qtip_Loader
+	 */
 	private function __construct() {
 		//let's just make sure this is instantiated in the right place.
-		if ( did_action('wp_head') || did_action('admin_head') ) {
-			EE_Error::doing_it_wrong( 'EEH_Qtip_Loader', __('This helper must be instantiated before or within a callback for the WordPress wp_enqueue_scripts hook action hook.', '4.1' ) );
-		}	
+		if ( did_action( 'wp_print_styles' ) || did_action( 'admin_head' )) {
+			EE_Error::doing_it_wrong( 'EEH_Qtip_Loader', __('This helper must be instantiated before or within a callback for the WordPress wp_enqueue_scripts hook action hook.', 'event_espresso' ), '4.1' );
+		}
 	}
 
 
@@ -142,7 +117,7 @@ class EEH_Qtip_Loader extends EEH_Base {
 
 		//let's just make sure this is instantiated in the right place.
 		if ( did_action('wp_enqueue_scripts') || did_action('admin_enqueue_scripts') ) {
-			EE_Error::doing_it_wrong( 'EEH_Qtip_Loader->register()', __('EE_Qtip_Config objects must be registered before wp_enqueue_scripts is called.', '4.1' ) );
+			EE_Error::doing_it_wrong( 'EEH_Qtip_Loader->register()', __('EE_Qtip_Config objects must be registered before wp_enqueue_scripts is called.', 'event_espresso' ), '4.1' );
 		}
 
 		$configname = (array) $configname; //typecast to array
@@ -159,14 +134,14 @@ class EEH_Qtip_Loader extends EEH_Base {
 	}
 
 
-	
 
 	/**
 	 * private utility for registering and setting up qtip config objects
 	 *
 	 * @access private
-	 * @param  string $config the shortname of the class (will be used to generate the expected classname)
+	 * @param  string $config the short name of the class (will be used to generate the expected classname)
 	 * @param  array  $paths  array of paths to check (or if empty we check core/libraries/qtips or assume its loaded)
+	 * @throws EE_Error
 	 * @return void
 	 */
 	private function _register( $config, $paths ) {
