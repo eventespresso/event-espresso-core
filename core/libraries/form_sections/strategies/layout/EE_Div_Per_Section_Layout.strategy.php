@@ -4,9 +4,10 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 
 	/**
 	 * opening div tag for a form
+	 * @return string
 	 */
 	public function layout_form_begin() {
-		return $html = EEH_Formatter::nl(1) . '<div class="' . $this->_form_section->html_class() . '" id="' . $this->_form_section->html_id() . '" style="' . $this->_form_section->html_style() . '">';
+		return EEH_Formatter::nl(1) . '<div id="' . $this->_form_section->html_id() . '" class="' . $this->_form_section->html_class() . '" style="' . $this->_form_section->html_style() . '">';
 	}
 
 
@@ -16,21 +17,41 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function layout_input( $input ) {
-		return EEH_Formatter::nl() . '<div>' . EEH_Formatter::nl(1) . $input->get_html_for_label() . EEH_Formatter::nl() . $input->get_html_for_errors() . EEH_Formatter::nl() . $input->get_html_for_input() . EEH_Formatter::nl() . $input->get_html_for_help() . EEH_Formatter::nl(-1) . '</div>' . EEH_Formatter::nl(-1);
+		$html = '';
+		if ( $input instanceof EE_Hidden_Input  ) {
+			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
+		} else if ( $input instanceof EE_Submit_Input  ) {
+			$html .= EEH_Formatter::nl() . '<div id="' . $input->html_label_id() . '-submit-dv">';
+			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
+			$html .= EEH_Formatter::nl(-1) . '</div>';
+		} else {
+			$html .= EEH_Formatter::nl() . '<div id="' . $input->html_label_id() . '-input-dv">';
+			$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
+			$html .= EEH_Formatter::nl() . $input->get_html_for_errors();
+			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
+			$html .= EEH_Formatter::nl() . $input->get_html_for_help();
+			$html .= EEH_Formatter::nl(-1) . '</div>';
+			$html .= EEH_Formatter::nl(-1);
+		}
+		return $html;
 	}
+
 
 
 	/**
 	 * Lays out a row for the subsection
-	 * @param EE_Form_Section_Proper $formsection
+	 * @param EE_Form_Section_Proper $form_section
+	 * @return string
 	 */
-	public function layout_subsection( $formsection ){
-		return EEH_Formatter::nl(1) . '<div>' . $formsection->get_html_and_js() . EEH_Formatter::nl(-1) . '</div>' . EEH_Formatter::nl(-1);
+	public function layout_subsection( $form_section = NULL ){
+//		d( $form_section );
+		return EEH_Formatter::nl(1) . $form_section->get_html_and_js() . EEH_Formatter::nl(-1);
 	}
 
 
 	/**
 	 * closing div tag for a form
+	 * @return string
 	 */
 	public function layout_form_end(){
 		return EEH_Formatter::nl(-1) . '</div>';
