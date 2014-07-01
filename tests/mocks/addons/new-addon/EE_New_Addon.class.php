@@ -51,6 +51,7 @@ Class  EE_New_Addon extends EE_Addon {
 					'plugin_basename' => EE_NEW_ADDON_PLUGIN_FILE,
 					'checkPeriod' => '24',
 					'use_wp_update' => FALSE,
+					),
 				'capabilities' => array(
 					'administrator' => array(
 						'read_addon', 'edit_addon', 'edit_others_addon', 'edit_private_addon'
@@ -59,7 +60,6 @@ Class  EE_New_Addon extends EE_Addon {
 				'capability_maps' => array(
 					new EE_Meta_Capability_Map_Edit( 'edit_addon', array( EEM_Event::instance(), '', 'edit_others_addon', 'edit_private_addon' ) )
 					)
-				)
 			)
 		);
 	}
