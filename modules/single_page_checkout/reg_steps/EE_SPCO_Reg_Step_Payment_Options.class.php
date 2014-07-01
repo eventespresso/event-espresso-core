@@ -22,7 +22,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'payment_options';
-		$this->_name = sprintf( __('Payment%sOptions', 'event_espresso'), '&nbsp;' );
+		$this->_name = __('Payment Options', 'event_espresso');
 		$this->_template = SPCO_TEMPLATES_PATH . 'registration_page_payment_options.template.php';
 		$this->checkout = $checkout;
 	}
@@ -54,7 +54,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	/**
 	 * @return string
 	 */
-	public function display_reg_step() {
+	public function generate_reg_form() {
 
 
 		EE_Registry::instance()->REQ->add_output(
