@@ -61,8 +61,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$registrations = $this->checkout->transaction->registrations( array(), TRUE );
 		// build array of form options
 		$form_args = array(
-			'name' 			=> $this->name(),
-			'html_id' 			=> 'ee-' . $this->name() . '-reg-step-dv',
+			'name' 			=> $this->slug(),
+			'html_id' 			=> $this->slug() . '-reg-step',
 			'subsections' 	=> array(),
 			'exclude' 	=> array(),
 			'layout_strategy'	=> is_admin() ?
@@ -110,10 +110,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function registrations_reg_form( EE_Registration $registration ) {
 		// array of params to pass to parent constructor
 		$form_args = array(
-			'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
+			'layout_strategy' 	=> new EE_Fieldset_Section_Layout(),
 			'subsections' 			=> array(),
 			'name' 					=> $registration->reg_url_link(),
-			'html_id' 					=> 'ee-registration-' . $registration->reg_url_link()
+			'html_id' 					=> 'ee-registration-' . $registration->reg_url_link(),
+			'html_class' 			=> 'ee-reg-form-attendee-dv',
 		);
 
 		// verify that registration has valid event
@@ -129,7 +130,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			if ( $question_groups ) {
 				foreach ( $question_groups as $question_group ) {
 					if ( $question_group instanceof EE_Question_Group ) {
-						$form_args['subsections'][ 'question_group_reg_form-' . $question_group->identifier() ] = $this->question_group_reg_form( $registration, $question_group );
+						$form_args['subsections'][ 'reg_form_qstn_grp_' . $question_group->identifier() ] = $this->question_group_reg_form( $registration, $question_group );
 					}
 				}
 			}
@@ -149,7 +150,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// array of params to pass to parent constructor
 		$form_args = array(
 			'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
-			'subsections' 			=> array(),
+			'subsections' 			=> array(
+				'reg_form_qstn_grp_hdr' => $this->question_group_header( $question_group )
+			),
 			'name' 					=> $question_group->identifier(),
 			'html_id' 					=> 'ee-reg-form-qstn-grp-' . $question_group->identifier(),
 			'html_class' 			=> 'ee-reg-form-qstn-grp-dv',
@@ -169,12 +172,37 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				)
 			)
 		);
+		// filter for additional content before questions
+		$form_args['subsections'][ 'reg_form_questions_before' ] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', '' ));
+		// loop thru questions
 		foreach ( $questions as $question ) {
 			if( $question instanceof EE_Question ){
-				$form_args['subsections'][ 'reg_form_question-' . $question->ID() ] = $this->_reg_form_question( $registration, $question );
+				$form_args['subsections'][ 'reg_form_question-' . $question->ID() ] = $this->reg_form_question( $registration, $question );
 			}
 		}
+		// filter for additional content after questions
+		$form_args['subsections'][ 'reg_form_questions_after' ] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '' ));
 		return new EE_Form_Section_Proper( $form_args );
+	}
+
+
+
+	/**
+	 * @access public
+	 * @param EE_Question_Group $question_group
+	 * @return 	EE_Form_Section_HTML
+	 */
+	public function question_group_header( EE_Question_Group $question_group ){
+		$html = '';
+		// group_name
+		if ( $question_group->show_group_name() ) {
+			$html .=  "\n\t\t" . '<h5 class="ee-reg-form-qstn-grp-title section-title">' . $question_group->name( TRUE ) . '</h5>';
+		}
+		// group_desc
+		if ( $question_group->show_group_desc() ) {
+			$html .=  '<p class="espresso-question-group-desc-pg">' . $question_group->desc( TRUE ) . '</p>';
+		}
+		return new EE_Form_Section_HTML( $html );
 	}
 
 
@@ -185,7 +213,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @param EE_Question     $question
 	 * @return 	EE_Form_Input_Base
 	 */
-	public function _reg_form_question( EE_Registration $registration, EE_Question $question ){
+	public function reg_form_question( EE_Registration $registration, EE_Question $question ){
 
 		// if this question was for an attendee detail, then check for that answer
 		$answer_value = EEM_Answer::instance()->get_attendee_property_answer_value( $registration, $question->ID() );
