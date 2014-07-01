@@ -24,6 +24,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	 * @var EE_Base_Class
 	 */
 	protected $_model_object = NULL;
+
+
+
 	/**
 	 *
 	 * @param array $options_array keys: {
@@ -57,9 +60,10 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		$model_relations = array_diff_key($this->_model->relation_settings(), $exclude);
 		//convert fields and relations to inputs
 		$this->_subsections = array_merge(
-				$this->_convert_model_fields_to_inputs($model_fields),
-				$this->_convert_model_relations_to_inputs($model_relations,$subsection_args),
-				$this->_subsections);
+			$this->_convert_model_fields_to_inputs($model_fields),
+			$this->_convert_model_relations_to_inputs($model_relations,$subsection_args),
+			$this->_subsections
+		);
 		parent::__construct($options_array);
 		if(isset($options_array['model_object']) && $options_array['model_object'] instanceof EE_Base_Class){
 			$this->populate_model_obj($options_array['model_object']);
@@ -81,13 +85,16 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	 */
 	protected function _convert_model_relations_to_inputs($relations,$subsection_args = array()){
 		$inputs = array();
-		foreach($relations as $relation_name => $relation_obj){
+		foreach( $relations as $relation_name => $relation_obj ) {
 			$input_constructor_args = array(
-				array_merge(array(
-					'required'=> $relation_obj instanceof EE_Belongs_To_Relation,
-					'html_label_text'=>$relation_obj instanceof EE_Belongs_To_Relation ? $relation_obj->get_other_model()->item_name(1) : $relation_obj->get_other_model()->item_name(2),
-				),
-						$subsection_args));
+				array_merge(
+					array(
+						'required'=> $relation_obj instanceof EE_Belongs_To_Relation,
+						'html_label_text'=>$relation_obj instanceof EE_Belongs_To_Relation ? $relation_obj->get_other_model()->item_name(1) : $relation_obj->get_other_model()->item_name(2),
+					),
+					$subsection_args
+				)
+			);
 			$input = NULL;
 			switch(get_class($relation_obj)){
 				case 'EE_HABTM_Relation':
@@ -219,6 +226,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		}
 		return $inputs;
 	}
+
+
+
 	/**
 	 * Mostly the same as populate_defaults , except takes a model object as input, not an array,
 	 * and also sets the form's _model_object
@@ -248,6 +258,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		}
 		$this->populate_defaults($defaults);
 	}
+
+
+
 	/**
 	 * Gets all the input values that correspond to model fields. Keys are the input/field names,
 	 * values are their normalized values
@@ -366,6 +379,9 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 	public function get_model(){
 		return $this->_model;
 	}
+
+
+
 	/**
 	 * Gets the model object for this model form, which was either set
 	 * upon construction (using the $options_array arg 'model_object'), by using
@@ -377,6 +393,8 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 		return $this->_model_object;
 	}
 
+
+
 	/**
 	 * gets teh default name of this form section if none is specified
 	 * @return string
@@ -387,5 +405,7 @@ class EE_Model_Form_Section extends EE_Form_Section_Proper{
 			$this->_name =  $default_name;
 		}
 	}
+
+
 
 }
