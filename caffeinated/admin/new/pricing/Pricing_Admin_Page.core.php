@@ -951,9 +951,13 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['price_type'] = $price_type;
 
 
-		$base_types = EEM_Price_Type::instance()->base_types;
+		$base_types = EEM_Price_Type::instance()->get_base_types();
 		$select_values = array();
 		foreach ( $base_types as $ref => $text ) {
+			if ( $ref == EEM_Price_Type::base_type_base_price ) {
+				//do not allow creation of base_type_base_prices because that's a system only base type.
+				continue;
+			}
 			$values[] = array( 'id' => $ref, 'text' => $text );
 		}
 
