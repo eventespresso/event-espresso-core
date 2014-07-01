@@ -22,7 +22,7 @@ class EE_SPCO_Reg_Step_Registration_Confirmation extends EE_SPCO_Reg_Step {
 	 */
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'registration_confirmation';
-		$this->_name = sprintf( __('Registration%sConfirmation', 'event_espresso'), '&nbsp;' );
+		$this->_name = __('Registration Confirmation', 'event_espresso');
 		$this->_template = SPCO_TEMPLATES_PATH . 'registration_page_confirmation.template.php';
 		$this->checkout = $checkout;
 	}
@@ -51,7 +51,7 @@ class EE_SPCO_Reg_Step_Registration_Confirmation extends EE_SPCO_Reg_Step {
 	/**
 	 * @return string
 	 */
-	public function display_reg_step() {
+	public function generate_reg_form() {
 
 
 		EE_Registry::instance()->REQ->add_output(
