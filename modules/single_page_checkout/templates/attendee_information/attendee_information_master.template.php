@@ -49,7 +49,7 @@ if ( count( $registrations ) > 0 ) {
 
 			<?php
 // ATTENDEE QUESTIONS
-			$reg_form = 'reg_form' . str_replace( '-', '', $registration->reg_url_link() );
+			$reg_form = 'reg_form_' . str_replace( '-', '', $registration->reg_url_link() );
 //			d( $reg_form );
 			echo ${$reg_form};
 			?>
