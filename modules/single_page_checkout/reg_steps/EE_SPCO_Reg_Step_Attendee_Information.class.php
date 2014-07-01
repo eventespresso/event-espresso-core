@@ -195,11 +195,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function question_group_header( EE_Question_Group $question_group ){
 		$html = '';
 		// group_name
-		if ( $question_group->show_group_name() ) {
+		if ( $question_group->show_group_name() && $question_group->name() != '' ) {
 			$html .=  "\n\t\t" . '<h5 class="ee-reg-form-qstn-grp-title section-title">' . $question_group->name( TRUE ) . '</h5>';
 		}
 		// group_desc
-		if ( $question_group->show_group_desc() ) {
+		if ( $question_group->show_group_desc() && $question_group->desc() != '' ) {
 			$html .=  '<p class="espresso-question-group-desc-pg">' . $question_group->desc( TRUE ) . '</p>';
 		}
 		return new EE_Form_Section_HTML( $html );
