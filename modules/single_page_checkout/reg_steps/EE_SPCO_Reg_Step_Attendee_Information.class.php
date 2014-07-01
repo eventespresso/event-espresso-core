@@ -68,7 +68,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			'layout_strategy'	=> is_admin() ?
 				new EE_Div_Per_Section_Layout() :
 				new EE_Template_Layout( array(
-					'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'attendee_information/attendee_information_master.template.php', // layout_template
+					'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'attendee_information_master.template.php', // layout_template
 					'begin_template_file' 			=> NULL,
 					'input_template_file' 				=> NULL,
 					'subsection_template_file' 	=> NULL,
@@ -87,16 +87,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		if ( $registrations ) {
 			foreach ( $registrations as $registration ) {
 				if ( $registration instanceof EE_Registration ) {
-//					$reg_link = $registration->reg_url_link();
-//					$reg_link = 'reg_form' . str_replace( '-', '', $registration->reg_url_link() );
 					$form_args['subsections'][ 'reg_form' . str_replace( '-', '', $registration->reg_url_link() ) ] = $this->registrations_reg_form( $registration );
-//					$form_args['exclude'][] = $registration->reg_url_link();
-//					$registration->reg_form = $this->registrations_reg_form( $registration );
 					$form_args['layout_strategy']->add_template_args( array( 'registrations' => array( $registration->reg_url_link() => $registration )));
 				}
 			}
 		}
-//		 d( $form_args );
 		$this->reg_form = new EE_Form_Section_Proper( $form_args );
 
 	}
@@ -139,6 +134,16 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 						$form_args['subsections'][ 'reg_form_qstn_grp_' . $question_group->identifier() ] = $this->question_group_reg_form( $registration, $question_group );
 					}
 				}
+			} else {
+				EE_Registry::instance()->load_helper( 'Template' );
+				$form_args['subsections'][ 'attendee_info_not_required_' . $registration->reg_url_link() ] = new EE_Form_Section_HTML(
+					EEH_Template::locate_template(
+						SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'attendee_info_not_required.template.php',
+						apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information__registrations_reg_form__attendee_info_not_required_template_args', array()),
+						TRUE,
+						TRUE
+					)
+				);
 			}
 		}
 		$attendee_nmbr++;
@@ -183,8 +188,20 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// loop thru questions
 		foreach ( $questions as $question ) {
 			if( $question instanceof EE_Question ){
-				$form_args['subsections'][ 'reg_form_question-' . $question->ID() ] = $this->reg_form_question( $registration, $question );
+				$form_args['subsections'][ 'reg_form_question_' . $question->ID() ] = $this->reg_form_question( $registration, $question );
 			}
+		}
+		if ( $registration->is_primary_registrant() ) {
+			// set array of args
+			$input_constructor_args = array(
+				'layout_strategy' => new EE_Div_Per_Section_Layout(),
+				'name' 				=> 'primary_registrant',
+				'html_name' 		=> 'primary_registrant',
+				'html_id' 				=> 'primary_registrant',
+				'default'				=> TRUE
+			);
+			// generate input
+			$form_args['subsections'][ 'reg_form_primary_registrant' ] = new EE_Hidden_Input( $input_constructor_args );
 		}
 		// filter for additional content after questions
 		$form_args['subsections'][ 'reg_form_questions_after' ] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '' ));
@@ -202,7 +219,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$html = '';
 		// group_name
 		if ( $question_group->show_group_name() && $question_group->name() != '' ) {
-			$html .=  "\n\t\t" . '<h5 class="ee-reg-form-qstn-grp-title section-title">' . $question_group->name() . '</h5>';
+			$html .=  "\n\t\t" . '<h4 class="ee-reg-form-qstn-grp-title section-title">' . $question_group->name() . '</h4>';
 		}
 		// group_desc
 		if ( $question_group->show_group_desc() && $question_group->desc() != '' ) {
