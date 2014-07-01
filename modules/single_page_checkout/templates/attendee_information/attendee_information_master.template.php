@@ -1,11 +1,8 @@
-		<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
-			<?php echo apply_filters( 'FHEE__registration_page_attendee_information__attendee_information_pg', sprintf( __('In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%2$s) are required.', 'event_espresso'), '<br />', '<span class="asterisk">*</span>' )); ?>
-		</p>
+	<p id="spco-attendee_information-pg" class="spco-steps-pg small-text drk-grey-text">
+		<?php echo apply_filters( 'FHEE__registration_page_attendee_information__attendee_information_pg', sprintf( __('In order to process your registration, we ask you to provide the following information.%1$sPlease note that all fields marked with an asterisk (%2$s) are required.', 'event_espresso'), '<br />', '<span class="asterisk">*</span>' )); ?>
+	</p>
 
-		<?php
-global $css_class;
-
-
+<?php
 $att_nmbr = 0;
 $prev_event = '';
 $prev_ticket = '';
@@ -13,26 +10,26 @@ $prev_ticket = '';
 if ( count( $registrations ) > 0 ) {
 	foreach ( $registrations as $registration ) {
 		if ( $registration instanceof EE_Registration ) {
-		$att_nmbr++;
+			$att_nmbr++;
 ?>
 
 		<div id="spco-attendee-panel-dv-<?php echo $registration->reg_url_link();?>" class="spco-attendee-panel-dv">
 
 			<?php if ( $registration->event()->ID() != $prev_event ) { ?>
-			<h3 id="event_title-<?php echo $registration->event()->ID() ?>" class="big-event-title-hdr">
+			<h4 id="event_title-<?php echo $registration->event()->ID() ?>" class="big-event-title-hdr">
 				<?php echo $registration->event()->name(); ?>
-			</h3>
+			</h4>
 			<?php } ?>
 			<?php if ( $registration->ticket()->ID() != $prev_ticket ) { ?>
 				<?php if ( ! $revisit ) { ?>
-			<div class="spco-ticket-info-dv">
-				<h4><?php _e('Ticket Details', 'event_espresso');?></h4>
+			<div class="spco-ticket-info-dv small-text">
+				<h5><?php _e('Ticket Details', 'event_espresso');?></h5>
 				<table>
 					<tr>
 						<th scope="col" width=""><?php _e('Ticket Name and Description', 'event_espresso');?></th>
-						<th scope="col" width="5%" class="jst-cntr"><?php _e('Qty', 'event_espresso');?></th>
-						<th scope="col" width="15%" class="jst-rght"><?php _e('Price', 'event_espresso');?></th>
-						<th scope="col" width="15%" class="jst-rght"><?php _e('Total', 'event_espresso');?></th>
+						<th scope="col" width="7.5%" class="jst-cntr"><?php _e('Qty', 'event_espresso');?></th>
+						<th scope="col" width="17.5%" class="jst-cntr"><?php _e('Price', 'event_espresso');?></th>
+						<th scope="col" width="17.5%" class="jst-cntr"><?php _e('Total', 'event_espresso');?></th>
 					</tr>
 					<tr>
 						<td>
