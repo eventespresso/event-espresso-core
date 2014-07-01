@@ -21,11 +21,11 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 		if ( $input instanceof EE_Hidden_Input  ) {
 			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
 		} else if ( $input instanceof EE_Submit_Input  ) {
-			$html .= EEH_Formatter::nl() . '<div id="' . $input->html_label_id() . '-submit-dv">';
+			$html .= EEH_Formatter::nl() . '<div id="' . $input->html_label_id() . '-submit-dv" class="' . $input->html_class() . '-submit-dv">';
 			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
 			$html .= EEH_Formatter::nl(-1) . '</div>';
 		} else {
-			$html .= EEH_Formatter::nl() . '<div id="' . $input->html_label_id() . '-input-dv">';
+			$html .= EEH_Formatter::nl() . '<div id="' . $input->html_label_id() . '-input-dv" class="' . $input->html_class() . '-input-dv">';
 			$html .= EEH_Formatter::nl(1) . $input->get_html_for_label();
 			$html .= EEH_Formatter::nl() . $input->get_html_for_errors();
 			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
