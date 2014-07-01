@@ -1,8 +1,8 @@
 <?php
 
 /**
- * For representing a single form input. Extends EE_Form_SEciton_Base because
- * it is a part of a form and shares a suprisingly large amount of functionality
+ * For representing a single form input. Extends EE_Form_Section_Base because
+ * it is a part of a form and shares a surprisingly large amount of functionality
  */
 abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
@@ -54,7 +54,21 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected $_html_help_style;
 
 	/**
-	 * The raw data submitted fo rthis, like in teh $_POST superglobal.
+	 * Stores whether or not this input's response is required.
+	 * Because certain styling elements may also want to know that this
+	 * input is required etc.
+	 * @var boolean
+	 */
+	protected $_required;
+
+	/**
+	 * css styles applied to button type inputs
+	 * @var string
+	 */
+	protected $_button_css_attributes;
+
+	/**
+	 * The raw data submitted for this, like in the $_POST super global.
 	 * Generally unsafe for usage in client code
 	 * @var mixed string or array
 	 */
@@ -93,85 +107,52 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	protected $_sensitive_data_removal_strategy;
 
+
+
 	/**
-	 * Stores whether or not this input's response is required.
-	 * Because certain styling elements may also want to know that this
-	 * input is required etc.
-	 * @var boolean
+	 *
+	 * @param array $input_args {
+	 *		@type $name string the name for this form section, if you want to explicitly define it
+	 * 	}
 	 */
-	protected $_required;
-
-	public function __construct($options_array = array()){
-		if(isset($options_array['html_name'])){
-			$this->_html_name = $options_array['html_name'];
-		}
-		if(isset($options_array['html_label_id'])){
-			$this->_html_label_id = $options_array['html_label_id'];
-		}
-		if(isset($options_array['html_label_class'])){
-			$this->_html_label_class = $options_array['html_label_class'];
-		}
-		if(isset($options_array['html_label_style'])){
-			$this->_html_label_style = $options_array['html_label_style'];
-		}
-		if(isset($options_array['html_label_text'])){
-			$this->_html_label_text = $options_array['html_label_text'];
-		}
-		if(isset($options_array['html_label'])){
-			$this->_html_label = $options_array['html_label'];
-		}
-		if(isset($options_array['html_help_text'])){
-			$this->_html_help_text = $options_array['html_help_text'];
-		}
-		if(isset($options_array['html_help_class'])){
-			$this->_html_help_class = $options_array['html_help_class'];
-		}
-		if(isset($options_array['html_help_style'])){
-			$this->_html_help_style = $options_array['html_help_style'];
-		}
-
-		if(isset($options_array['default'])){
-			$this->_raw_value = $options_array['default'];
-		}
-		if(isset($options_array['required']) && in_array($options_array['required'], array('true',true))){
-			$this->set_required(true);
-		}
-
-		if(isset($options_array['display_strategy'])){
-			if(is_array($options_array['display_strategy'])){
-				$display_strategy = $options_array['display_strategy'];
-			}else{
-				$display_strategy = array($options_array['display_strategy']);
+	public function __construct( $input_args = array() ){
+		// the following properties must be cast as arrays
+		$set_as_array = array(
+			'display_strategy',
+			'normalization_strategy',
+			'sensitive_data_removal_strategy',
+			'validation_strategies'
+		);
+		// loop thru incoming options
+		foreach( $input_args as $key => $value ) {
+			// add underscore to $key to match property names
+			$_key = '_' . $key;
+			if ( property_exists( $this, $_key )) {
+				// first check if this property needs to be set as an array
+				if ( isset( $set_as_array[ $key ] )) {
+					// ensure value is an array
+					$value = is_array( $value ) ? $value : array( $value );
+					// and merge with existing values
+					$this->$_key = array_merge( $this->$_key, $value );
+				} else {
+					$this->$_key = $value;
+				}
+			// this property uses a different name than expected
+			} else if ( $key === 'default' ) {
+				$this->_raw_value =  $value;
 			}
-			$this->_display_strategy = array_merge($this->_display_strategy, $display_strategy);
 		}
-		if(isset($options_array['normalization_strategy'])){
-			if(is_array($options_array['normalization_strategy'])){
-				$normalization_strategy = $options_array['normalization_strategy'];
-			}else{
-				$normalization_strategy = array($options_array['normalization_strategy']);
-			}
-			$this->_normalization_strategy = array_merge($this->_normalization_strategy, $normalization_strategy);
+		// ensure that "required" is set correctly
+		switch( $this->_required ) {
+			case 1 :
+			case 'true' :
+			case 'TRUE' :
+			case TRUE :
+				$this->_required = TRUE;
+				break;
+			default :
+				$this->_required = FALSE;
 		}
-		if(isset($options_array['sensitive_data_removal_strategy'])){
-			if(is_array($options_array['sensitive_data_removal_strategy'])){
-				$sensitive_data_removal_strategy = $options_array['sensitive_data_removal_strategy'];
-			}else{
-				$sensitive_data_removal_strategy = array($options_array['sensitive_data_removal_strategy']);
-			}
-			$this->_sensitive_data_removal_strategy = array_merge($this->_sensitive_data_removal_strategy, $sensitive_data_removal_strategy);
-		}
-		if(isset($options_array['validation_strategies'])){
-			if(is_array($options_array['validation_strategies'])){
-				$validation_strategies = $options_array['validation_strategies'];
-			}else{
-				$validation_strategies = array($options_array['validation_strategies']);
-			}
-			$this->_validation_strategies = array_merge($this->_validation_strategies, $validation_strategies);
-		}
-
-
-
 
 		$this->_display_strategy->_construct_finalize($this);
 		if($this->_validation_strategies){
@@ -187,12 +168,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$this->_sensitive_data_removal_strategy = new EE_No_Sensitive_Data_Removal();
 		}
 		$this->_sensitive_data_removal_strategy->_construct_finalize($this);
-		parent::__construct($options_array);
+		parent::__construct( $input_args );
 	}
 
 	/**
-	 * Sets the html_name to its dfeautl value, if none was specified in teh constructor.
-	 * Calcuation involves using hte name and the parent's html_name
+	 * Sets the html_name to its default value, if none was specified in teh constructor.
+	 * Calculation involves using the name and the parent's html_name
 	 */
 	protected function _set_default_html_name_if_empty(){
 		if( ! $this->_html_name){
@@ -204,6 +185,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 	}
 
+
+
+	/**
+	 * @param $parent_form_section
+	 * @param $name
+	 */
 	function _construct_finalize($parent_form_section, $name) {
 		parent::_construct_finalize($parent_form_section, $name);
 		$this->_set_default_html_name_if_empty();
@@ -313,7 +300,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	}
 	/**
 	 * Gets the HTML, JS, and CSS necessary to display this field according
-	 * to the parent form's layotu strategy
+	 * to the parent form's layout strategy
 	 * @return string
 	 */
 	public function get_html_and_js(){
@@ -337,7 +324,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		return $this->_parent_section->get_layout_strategy()->display_label($this);
 	}
 	/**
-	 * Gets the HTML for dislpaying the errors section for this form input
+	 * Gets the HTML for displaying the errors section for this form input
 	 * according to the form section's layout strategy
 	 * @return string
 	 */
@@ -360,10 +347,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected function _validate() {
 		if(is_array($this->_validation_strategies)){
 			foreach($this->_validation_strategies as $validation_strategy){
-				try{
-				$validation_strategy->validate($this->normalized_value());
-				}catch(EE_Validation_Error $e){
-					$this->add_validation_error($e);
+				if ( $validation_strategy instanceof EE_Validation_Strategy_Base ) {
+					try{
+						$validation_strategy->validate($this->normalized_value());
+					}catch(EE_Validation_Error $e){
+						$this->add_validation_error($e);
+					}
 				}
 			}
 		}
@@ -373,10 +362,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			return true;
 		}
 	}
+
+
+
 	/**
 	 * Performs basic sanitization on this value. But what sanitization can be performed anyways?
 	 * This value MIGHT be allowed to have tags, so we can't really remove them.
 	 * @param string $value
+	 * @return null|string
 	 */
 	private function _sanitize($value){
 		return $value !== NULL ?stripslashes(html_entity_decode($value)) : NULL;//don't sanitize_text_field
@@ -409,28 +402,74 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 	}
 
+
+
+	/**
+	 * @return string
+	 */
 	public function html_name(){
 		return $this->_html_name;
 	}
 
+
+
+	/**
+	 * @return string
+	 */
 	function html_label_id(){
 		return $this->_html_label_id;
 	}
+
+
+
+	/**
+	 * @return string
+	 */
 	function html_label_class(){
 		return $this->_html_label_class;
 	}
+
+
+
+	/**
+	 * @return string
+	 */
 	function html_label_style(){
 		return $this->_html_label_style;
 	}
+
+
+
+	/**
+	 * @return string
+	 */
 	function html_label_text(){
 		return $this->_html_label_text;
 	}
+
+
+
+	/**
+	 * @return string
+	 */
 	function html_help_text(){
 		return $this->_html_help_text;
 	}
+
+
+
+	/**
+	 * @return string
+	 */
 	function html_help_class(){
 		return $this->_html_help_class;
 	}
+
+
+
+	/**
+	 * @return string
+	 */
 	function html_help_style(){
 		return $this->_html_style;
 	}
@@ -464,7 +503,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		return $this->_normalized_value;
 	}
 	/**
-	 * When generating the JS for the jquery valiation rules like<br>
+	 * When generating the JS for the jquery validation rules like<br>
 	 * <code>$( "#myform" ).validate({
 		rules: {
 		  password: "required",
@@ -512,7 +551,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	}
 
 	/**
-	 * Sets whether or no tthis field is required, and adjusts the validation strategy
+	 * Sets whether or not this field is required, and adjusts the validation strategy
 	 * @param boolean $required
 	 */
 	function set_required($required = true){
@@ -550,7 +589,55 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 				! $this->_sensitive_data_removal_strategy instanceof EE_No_Sensitive_Data_Removal ){
 			$this->_raw_value = NULL;
 		}
-		//and clean the normalized value according tothe appropriate strategy
+		//and clean the normalized value according to the appropriate strategy
 		$this->_normalized_value = $this->get_sensitive_data_removal_strategy()->remove_sensitive_data($this->_normalized_value);
 	}
+
+
+
+	/**
+	 * @param bool   $primary
+	 * @param string $button_size
+	 * @param string $other_attributes
+	 */
+	public function set_button_css_attributes( $primary = TRUE, $button_size = '', $other_attributes = '' ) {
+		$button_css_attributes = 'button';
+		$button_css_attributes .= $primary === TRUE ? ' button-primary' : ' button-secondary';
+		switch ( $button_size ) {
+			case 'xs' :
+			case 'extra-small' :
+				$button_css_attributes .= ' button-xs';
+				break;
+			case 'sm' :
+			case 'small' :
+				$button_css_attributes .= ' button-sm';
+				break;
+			case 'lg' :
+			case 'large' :
+				$button_css_attributes .= ' button-lg';
+				break;
+			case 'block' :
+				$button_css_attributes .= ' button-block';
+				break;
+			case 'md' :
+			case 'medium' :
+			default :
+				$button_css_attributes .= '';
+		}
+		$this->_button_css_attributes = $button_css_attributes . ' ' . $other_attributes;
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function button_css_attributes() {
+		if ( empty( $this->_button_css_attributes )) {
+			$this->set_button_css_attributes();
+		}
+		return $this->_button_css_attributes;
+	}
+
+
 }
