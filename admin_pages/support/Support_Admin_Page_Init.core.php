@@ -52,7 +52,7 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => EE_SUPPORT_PG_SLUG,
 			'menu_label' => __('Help & Support', 'event_espresso'),
-			'capability' => 'administrator',
+			'capability' => 'read_ee',
 			'admin_init_page' => $this
 			));
 	}

@@ -19,13 +19,29 @@ require_once EE_TESTS_DIR . 'includes/factory.php';
  * @subpackage 	tests
  */
 class EE_UnitTestCase extends WP_UnitTestCase {
+	/**
+	 * Should be used to store the global $wp_actions during a test
+	 * so that it can be restored afterwards to keep tests from interfere with each other
+	 * @var array
+	 */
+	protected $wp_filters_saved = NULL;
 	const error_code_undefined_property = 8;
 	protected $_cached_SERVER_NAME = NULL;
 
 	public function setUp() {
-		global $auto_made_thing_seed;
+		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
+		//as it immediately adds a few hooks we might not want to backup
+		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
+		$this->wp_filters_saved = array(
+			'wp_filter'=>$wp_filter,
+			'wp_actions'=>$wp_actions,
+			'merged_filters'=>$merged_filters,
+			'wp_current_filter'=>$wp_current_filter
+		);
 		parent::setUp();
 		$auto_made_thing_seed = 1;
+
+//		$this->wp_actions_saved = $wp_actions;
 		// Fake WP mail globals, to avoid errors
 		add_filter( 'wp_mail', array( $this, 'setUp_wp_mail' ) );
 		add_filter( 'wp_mail_from', array( $this, 'tearDown_wp_mail' ) );
@@ -35,6 +51,14 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	}
 
+	public function tearDown(){
+		parent::tearDown();
+		global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
+		$wp_filter = $this->wp_filters_saved[ 'wp_filter' ];
+		$wp_actions = $this->wp_filters_saved[ 'wp_actions' ];
+		$merged_filters = $this->wp_filters_saved[ 'merged_filters' ];
+		$wp_current_filter = $this->wp_filters_saved[ 'wp_current_filter' ];
+	}
 
 	/**
 	 *  Use this to clean up any global scope singletons etc that we may have being used by EE so
@@ -315,6 +339,11 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * We really should implement this function in the proper PHPunit style
 	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+	 * !NOTE! This ONLY checks for non-temporary tables! And WP_UnitTestCase changes all queries that use
+	 * 'CREATE TABLE' to 'CREATE TEMPORARY TABLE'. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
+	 * So you need to remove that filter BEFORE the table is created if you subsequently want to check
+	 * whether the table exists or not; or alternatively somehow improve this to check for temporary tables...
+	 * but that's unfortunately very difficult with MYSQL
 	 * @global WPDB $wpdb
 	 * @param string $table_name with or without $wpdb->prefix
 	 * @param string $model_name the model's name (only used for error reporting)
@@ -331,6 +360,24 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	}
 
 	/**
+	 * We really should implement this function in the proper PHPunit style
+	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+	 * @global WPDB $wpdb
+	 * @param string $table_name with or without $wpdb->prefix
+	 * @param string $model_name the model's name (only used for error reporting)
+	 */
+	function assertTableDoesNotExist($table_name, $model_name = 'Unknown' ){
+		global $wpdb;
+		if(strpos($table_name, $wpdb->prefix) !== 0){
+			$table_name = $wpdb->prefix.$table_name;
+		}
+		$exists =  $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
+		if( $exists ){
+			$this->assertFalse($exists,  sprintf(__("Table like %s SHOULD NOT exist. It was apparently defined on the model '%s'", 'event_espresso'),$table_name,$model_name));
+		}
+	}
+
+	/**
 	 * Modifies the $wp_actions global to make it look like certian actions were and weren't
 	 * performed, so that EE_Register_Addon is deceived into thinking it's the right
 	 * time to register an addon etc
@@ -340,6 +387,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		global $wp_actions;
 		unset($wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin']);
 		$wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
+		unset($wp_actions[ 'AHEE__EE_System__register_shortcodes_modules_and_widgets' ] );
 	}
 	/**
 	 * Restores the $wp_actions global to how ti should have been before we

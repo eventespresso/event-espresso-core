@@ -22,7 +22,7 @@
  * @subpackage            includes/classes/EE_Payment.class.php
  * @author                Brent Christensen
  */
-class EE_Payment extends EE_Base_Class {
+class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 	/**
 	 *
@@ -616,6 +616,23 @@ class EE_Payment extends EE_Base_Class {
 	 */
 	private function _strip_all_tags_within_array( &$item, $key ) {
 		$item = wp_strip_all_tags( $item );
+	}
+
+	/**
+	 * Returns TRUE is this payment was set to approved during this request (or
+	 * is approved and was created during this request). False otherwise.
+	 * @return boolean
+	 */
+	public function just_approved(){
+		EE_Registry::instance()->load_helper( 'Array' );
+		$original_status =EEH_Array::is_set( $this->_props_n_values_provided_in_constructor, 'STS_ID', $this->get_model()->field_settings_for( 'STS_ID' )->get_default_value() );
+		$current_status = $this->status();
+		if( $original_status !== EEM_Payment::status_id_approved &&
+				$current_status === EEM_Payment::status_id_approved ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
 	}
 }
 

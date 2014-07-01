@@ -171,7 +171,7 @@ abstract class EE_Gateway{
 	}
 
 	public function log($message,$payment){
-		if($payment){
+		if($payment instanceof EEI_Payment){
 			$type='Payment';
 			$id = $payment->ID();
 		}else{

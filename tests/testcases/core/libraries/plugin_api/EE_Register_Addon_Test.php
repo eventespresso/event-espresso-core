@@ -125,6 +125,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	 * for problems
 	 */
 	public function test_register_addon_called_twice_on_activation(){
+		EE_System::reset();
 		$this->_pretend_addon_hook_time();
 		if( did_action( 'activate_plugin' ) ){
 			$this->assertTrue( FALSE );
@@ -160,6 +161,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->_stop_pretending_addon_hook_time();
 		$this->_stop_pretending_after_plugin_activation();
 		remove_all_filters('AHEE__EE_System__load_espresso_addons');
+		parent::tearDown();
 	}
 
 	/**

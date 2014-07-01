@@ -58,7 +58,7 @@ class EE_Payment_Method extends EE_Base_Class{
 	private static function _payment_method_type($props_n_values){
 		EE_Registry::instance()->load_lib('Payment_Method_Manager');
 		$type_string = isset($props_n_values['PMD_type']) ? $props_n_values['PMD_type'] : NULL;
-		if(EE_Payment_Method_Manager::instance()->payment_method_exists($type_string)){
+		if(EE_Payment_Method_Manager::instance()->payment_method_type_exists($type_string)){
 			return 'EEPM_'.$type_string;
 		}else{
 			return __CLASS__;
@@ -141,7 +141,7 @@ class EE_Payment_Method extends EE_Base_Class{
 	function set_description($description) {
 		return $this->set('PMD_desc', $description);
 	}
-	
+
 	/**
 	 * Gets name
 	 * @return string
@@ -297,7 +297,7 @@ class EE_Payment_Method extends EE_Base_Class{
 	public function type_obj(){
 		if( ! $this->_type_obj ) {
 			EE_Registry::instance()->load_lib( 'Payment_Method_Manager' );
-			if ( EE_Payment_Method_Manager::instance()->payment_method_exists( $this->type() )) {
+			if ( EE_Payment_Method_Manager::instance()->payment_method_type_exists( $this->type() )) {
 				$class_name = EE_Payment_Method_Manager::instance()->payment_method_class_from_type( $this->type() );
 				if ( ! class_exists( $class_name )) {
 					throw new EE_Error(sprintf(__("There is no payment method type of class '%s', did you deactivate an EE addon?", "event_espresso"),$class_name));

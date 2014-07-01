@@ -82,7 +82,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 			'Payment'=>array(
 				'PAY_ID'=>new EE_Primary_Key_Int_Field('PAY_ID', __('Payment ID','event_espresso')),
 				'TXN_ID'=>new EE_Foreign_Key_Int_Field('TXN_ID', __('Transaction ID','event_espresso'), false, 0, 'Transaction'),
-				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('STatus ID','event_espresso'), false, EEM_Payment::status_id_cancelled, 'Status'),
+				'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', __('STatus ID','event_espresso'), false, EEM_Payment::status_id_failed, 'Status'),
 				'PAY_timestamp'=> new EE_Datetime_Field('PAY_timestamp', __('Timestamp of when payment was attemped','event_espresso'), false, current_time('timestamp'), $timezone ),
 				'PMD_source'=>new EE_All_Caps_Text_Field('PMD_source', __('User-friendly description of payment','event_espresso'), false, 'CART'),
 				'PAY_amount'=>new EE_Money_Field('PAY_amount', __('Amount Payment should be for','event_espresso'), false, 0),
@@ -126,6 +126,16 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 		self::$_instance->set_timezone( $timezone );
 
 		// EEM_Payment object
+		return self::$_instance;
+	}
+
+	/**
+	 * Exactly like instance(), but always returns a new EEM_Payment
+	 * @param string $timezone
+	 * @return EEM_Payment
+	 */
+	public static function reset( $timezone = NULL){
+		self::$_instance = new self( $timezone );
 		return self::$_instance;
 	}
 
@@ -304,7 +314,7 @@ class EEM_Payment extends EEM_Base implements EEMI_Payment{
 //echo '<h3>$end_date : ' . $end_date . '  <span style="margin:0 0 0 3em;font-size:12px;font-weight:normal;">( file: '. __FILE__ . ' - line no: ' . __LINE__ . ' )</span></h3>';
 		return $this->get_all(array(array('PAY_timestamp'=>array('>=',$start_date),'PAY_timestamp*'=>array('<=',$end_date))));
 	}
-	
+
 	/**
 	 * methods for EEMI_Payment
 	 */

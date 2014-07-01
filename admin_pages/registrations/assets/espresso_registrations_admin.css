@@ -208,7 +208,7 @@
 }
 
 .checkedin-status-0:before {
-	font    : 'dashicons' !important; /** using important b/c wp has dashicons setup with important and I had to override **/
+	font-family    : 'dashicons' !important; /** using important b/c wp has dashicons setup with important and I had to override **/
 	content : "\f158";
 }
 
@@ -392,4 +392,14 @@
 .contact-details-buttons a.button-small {
 	float: right;
 	margin-left: 8px;
+}
+
+/**
+ * Fixes for admin side spco (because wp-admin adds some of its own styles to elements)
+ */
+.reg-page-form-field-wrap-pg select {
+    display: block;
+    padding: 7px 10px;
+    margin: 0px 0px 1em;
+    height: auto;
 }

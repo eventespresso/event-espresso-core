@@ -41,7 +41,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 		$this->_gateway_name = 'Paypal_Standard';
 		$this->_button_base = 'paypal-logo.png';
 		$this->_path = str_replace('\\', '/', __FILE__);
-		
+
 		$this->addField('rm', '2');		 // Return method = POST
 		$this->addField('cmd', '_xclick');
 		parent::__construct($model);
@@ -70,7 +70,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 		$this->_payment_settings['currency_format'] = $_POST['currency_format'];
 		$this->_payment_settings['no_shipping'] = $_POST['no_shipping'];
 		$this->_payment_settings['use_sandbox'] = $_POST['use_sandbox'];
-		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';	
+		$this->_payment_settings['button_url'] = isset( $_POST['button_url'] ) ? esc_url_raw( $_POST['button_url'] ) : '';
 	}
 
 
@@ -153,7 +153,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 			<th>
 				<label><strong style="color:#F00"><?php _e('Please Note', 'event_espresso'); ?></strong></label>
 			</th>
-			<td>				
+			<td>
 				<?php _e('You will need a PayPal Premier or Business account for the PayPal IPN to work correctly.', 'event_espresso'); ?>
 			</td>
 		</tr>
@@ -168,7 +168,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 					<?php _e('Typically payment@yourdomain.com', 'event_espresso'); ?>
 				</span></td>
 		</tr>
-		
+
 		<tr>
 			<th><label for="currency_format">
 					<?php _e('Country Currency', 'event_espresso'); ?>
@@ -269,7 +269,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 				</span>
 			</td>
 		</tr>
-		
+
 		<tr>
 			<th><label for="use_sandbox">
 					<?php _e('Use the Debugging Feature and the PayPal Sandbox', 'event_espresso'); ?>
@@ -277,7 +277,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 				</label></th>
 			<td><?php echo EEH_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?></td>
 		</tr>
-		
+
 		<tr>
 			<th>
 				<label for="no_shipping">
@@ -300,7 +300,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 	}
 
 	protected function _display_settings_help() {
-		?>		
+		?>
 		<div id="sandbox_info" style="display:none">
 			<h2>
 				<?php _e('PayPal Sandbox', 'event_espresso'); ?>
@@ -352,7 +352,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 		$no_shipping = $paypal_settings['no_shipping'];
 
 		$item_num = 1;
-		
+
 		/* @var $transaction EE_Transaction */
 		if( ! $transaction){
 			$transaction = $total_line_item->transaction();
@@ -410,7 +410,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 		$this->addField('no_shipping ', $no_shipping);
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
 		$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
-		
+
 		$this->redirect_after_reg_step_3($transaction,$paypal_settings['use_sandbox']);
 	}
 
@@ -425,8 +425,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 	 */
 	public function handle_ipn_for_transaction(EE_Transaction $transaction){
 		$this->_debug_log("<hr><br>".get_class($this).":start handle_ipn_for_transaction on transaction:".($transaction instanceof EE_Transaction)?$transaction->ID():'unknown');
-		
-		
+
+
 		//verify there's payment data that's been sent
 		if(empty($_POST['payment_status']) || empty($_POST['txn_id'])){
 			return false;
@@ -445,8 +445,8 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 		if(empty($transaction)){
 			return false;
 		}
-		
-		
+
+
 		//ok, well let's process this payment then!
 		if($_POST['payment_status']=='Completed'){ //the old code considered 'Pending' as completed too..
 			$status = EEM_Payment::status_id_approved;//approved
@@ -460,7 +460,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 		}
 		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
 		//check if we've already processed this payment
-		
+
 		$payment = $this->_PAY->get_payment_by_txn_id_chq_nmbr($_POST['txn_id']);
 		if(!empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
@@ -480,29 +480,29 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 			//no previous payment exists, create one
 			$primary_registrant = $transaction->primary_registration();
 			$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
-			
+
 			$payment = EE_Payment::new_instance(array(
-				'TXN_ID' => $transaction->ID(), 
-				'STS_ID' => $status, 
-				'PAY_timestamp' => $transaction->datetime(), 
-				'PAY_method' => sanitize_text_field($_POST['txn_type']), 
-				'PAY_amount' => floatval($_REQUEST['mc_gross']), 
-				'PAY_gateway' => $this->_gateway_name, 
-				'PAY_gateway_response' => $gateway_response, 
-				'PAY_txn_id_chq_nmbr' => $_POST['txn_id'], 
-				'PAY_po_number' => NULL, 
+				'TXN_ID' => $transaction->ID(),
+				'STS_ID' => $status,
+				'PAY_timestamp' => current_time( 'mysql', FALSE ),
+				'PAY_method' => sanitize_text_field($_POST['txn_type']),
+				'PAY_amount' => floatval($_REQUEST['mc_gross']),
+				'PAY_gateway' => $this->_gateway_name,
+				'PAY_gateway_response' => $gateway_response,
+				'PAY_txn_id_chq_nmbr' => $_POST['txn_id'],
+				'PAY_po_number' => NULL,
 				'PAY_extra_accntng'=>$primary_registration_code,
-				'PAY_via_admin' => false, 
+				'PAY_via_admin' => false,
 				'PAY_details' => $_POST
 			));
-		
+
 		}
 		$payment->save();
-		return $this->update_transaction_with_payment($transaction,$payment);	
+		return $this->update_transaction_with_payment($transaction,$payment);
 	}
-	
-	
-	
+
+
+
 
 	public function espresso_display_payment_gateways( $selected_gateway = '' ) {
 		$this->_css_class = $selected_gateway == $this->_gateway_name ? '' : ' hidden';
@@ -526,12 +526,12 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 	 */
 	public function validateIpn() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		
+
 		$this->ipnData=$_POST;
 		$response_post_data=$_POST + array('cmd'=>'_notify-validate');
 		$result= wp_remote_post($this->_gatewayUrl, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
-		
-		if (!is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) { 
+
+		if (!is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) {
 //			echo "eepaypalstandard success!";
 			$this->ipnResponse = $result['body'];
 			return true;
@@ -545,7 +545,7 @@ Class EE_Paypal_Standard extends EE_Offsite_Gateway_Old {
 			return false;
 		}
 	}
-	
+
 
 
 }

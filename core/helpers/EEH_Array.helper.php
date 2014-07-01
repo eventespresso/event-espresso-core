@@ -15,7 +15,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('NO direct script access allowe
  *
  * ------------------------------------------------------------------------
  *
- * EE_Array	
+ * EE_Array
  *
  * This is a helper utility class that provides different helpers related to array manipulation (that might extend or modify existing PHP core array function).
  *
@@ -36,7 +36,7 @@ class EEH_Array extends EEH_Base {
 	 * This method basically works the same as the PHP core function array_diff except it allows you to compare arrays of EE_Base_Class objects
 	 *
 	 * NOTE: This will ONLY work on an array of EE_Base_Class objects
-	 * 
+	 *
 	 * @uses array_udiff core php function for setting up our own array comparison
 	 * @uses self::_compare_objects as the custom method for array_udiff
 	 * @param  array $array1 an array of objects
@@ -54,7 +54,7 @@ class EEH_Array extends EEH_Base {
 	private static function _compare_objects( EE_Base_Class $obj_a, EE_Base_Class $obj_b ) {
 		return $obj_a->ID() - $obj_b->ID();
 	}
-	
+
 	/**
 	 * Given that $arr is an array, determines if it's associative or numerically-indexed
 	 * @param array $arr
@@ -63,9 +63,9 @@ class EEH_Array extends EEH_Base {
 	public static function is_associative_array($arr){
 		return  array_keys($arr) !== range(0, count($arr) - 1);
 	}
-	
+
 	/**
-	 * Gets an item from the array and leave the array intact. Use in place of end() 
+	 * Gets an item from the array and leave the array intact. Use in place of end()
 	 * when you don't want to change the array
 	 * @param array $arr
 	 * @return mixed whatever's in the array
@@ -94,5 +94,15 @@ class EEH_Array extends EEH_Base {
 		}
 	}
 
+	/**
+	 * Shorthand for isset( $arr[ $index ] ) ? $arr[ $index ] : $default
+	 * @param type $arr
+	 * @param type $index
+	 * @param type $default
+	 * @return mixed
+	 */
+	public static function is_set( $arr, $index, $default ) {
+		return isset( $arr[ $index ] ) ? $arr[ $index ] : $default;
+	}
 
 } //end EEH_Template class

@@ -49,7 +49,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 		//we might have a timezone set, let set_timezone decide what to do with it
 		self::$_instance->set_timezone( $timezone );
-		
+
 		// EEM_Price object
 		return self::$_instance;
 	}
@@ -66,7 +66,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	protected function __construct( $timezone ) {
 		require_once( EE_MODELS . 'EEM_Price_Type.model.php');
 		$this->singular_item = __('Price','event_espresso');
-		$this->plural_item = __('Prices','event_espresso');		
+		$this->plural_item = __('Prices','event_espresso');
 
 		$this->_tables = array(
 			'Price'=>new EE_Primary_Table('esp_price','PRC_ID')
@@ -82,7 +82,8 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'PRC_overrides'=>new EE_Integer_Field('PRC_overrides', 'Price ID for a global Price that will be overridden by this Price  ( for replacing default prices )', true, 0),
 				'PRC_order'=>new EE_Integer_Field('PRC_order', 'Order of Application of Price (lower numbers apply first?)', false, 1),
 				'PRC_deleted'=>new EE_Trashed_Flag_Field('PRC_deleted', 'Flag Indicating if this has been deleted or not', false, false),
-				'PRC_parent' => new EE_Integer_Field('PRC_parent', __('Indicates what PRC_ID is the parent of this PRC_ID'), true, 0 )
+				'PRC_parent' => new EE_Integer_Field('PRC_parent', __('Indicates what PRC_ID is the parent of this PRC_ID'), true, 0 ),
+				'PRC_wp_user' => new EE_Integer_Field('PRC_wp_user', __('User who created this price', 'event_espresso'), FALSE, get_current_user_id() ),
 			)
 		);
 		$this->_model_relations = array(
@@ -90,7 +91,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			'Price_Type'=>new EE_Belongs_To_Relation()
 		);
 		parent::__construct( $timezone );
-		
+
 		require_once ( EE_CLASSES . 'EE_Price.class.php' );
 
 	}
@@ -103,7 +104,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 	 * 		@access		public
 	 * 		@return		mixed		array on success, FALSE on fail
 	 */
-	public function get_new_price() { 
+	public function get_new_price() {
 		return $this->create_default_object();
 	}
 
@@ -186,8 +187,8 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			array( 'Price_Type.PBT_ID'=>  EEM_Price_Type::base_type_tax ),
 			'order_by' => array( 'Price_Type.PRT_order' => 'ASC', 'PRC_order' => 'ASC' )
 		));
-//		$all_taxes = $this->_select_all_prices_where( 
-//				array( 'prt.PBT_ID' => 4, 'prc.PRC_deleted' => FALSE )	
+//		$all_taxes = $this->_select_all_prices_where(
+//				array( 'prt.PBT_ID' => 4, 'prc.PRC_deleted' => FALSE )
 //		);
 		foreach ( $all_taxes as $tax ) {
 			$taxes[ $tax->order() ][ $tax->ID() ] = $tax;
@@ -223,9 +224,9 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 			} else {
 				return array();
 			}
-			
+
 		} else {
-		
+
 			$ticket_prices = $this->get_all(array(
 				array(
 					'TKT_ID'=>$TKT_ID,
@@ -234,8 +235,8 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 				'order_by'=> array('PRC_order' => 'ASC')
 			));
 		}
-		
-		if ( !empty( $ticket_prices ) ) {		
+
+		if ( !empty( $ticket_prices ) ) {
 			foreach ( $ticket_prices as $price ) {
 				$array_of_price_objects[ $price->type() ][] = $price;
 			}

@@ -38,7 +38,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Ticket','event_espresso');
-		$this->plural_item = __('Tickets','event_espresso');		
+		$this->plural_item = __('Tickets','event_espresso');
 
 		$this->_tables = array(
 			'Ticket'=> new EE_Primary_Table('esp_ticket', 'TKT_ID')
@@ -63,6 +63,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed in the editor (used for autosaves when the form doesn\'t have the ticket ID yet)', 'event_espresso'), false, 0),
 				'TKT_row' => new EE_Integer_Field('TKT_row', __('How tickets are displayed in the ui', 'event_espresso'), false, 0 ),
 				'TKT_deleted' => new EE_Trashed_Flag_Field('TKT_deleted', __('Flag indicating if this has been archived or not', 'event_espresso'), false, false),
+				'TKT_wp_user' => new EE_Integer_Field('TKT_wp_user', __('User who created this ticket.', 'event_espresso'), FALSE, get_current_user_id() ),
 				'TKT_parent' => new EE_Integer_Field('TKT_parent', __('Indicates what TKT_ID is the parent of this TKT_ID (used in autosaves/revisions)'), true, 0 )
 			));
 		$this->_model_relations = array(
