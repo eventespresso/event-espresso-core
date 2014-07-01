@@ -137,7 +137,7 @@ class EE_Html_messenger extends EE_messenger  {
 				break;
 		}
 
-		return $url ? apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $type )  : apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $type );
+		return $url ? apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $url, $type )  : apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $url, $type );
 	}
 
 
