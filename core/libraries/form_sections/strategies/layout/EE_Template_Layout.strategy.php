@@ -67,7 +67,11 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	public function layout_form() {
 		if ( $this->_layout_template_file ) {
 			EE_Registry::instance()->load_helper( 'Template' );
-			return EEH_Template::locate_template( $this->_layout_template_file, $this->template_args(), TRUE, TRUE );
+			$args = '';
+//			ob_start();
+//			d( $this->_template_args );
+//			$args = ob_get_clean();
+			return $args . EEH_Template::locate_template( $this->_layout_template_file, $this->template_args(), TRUE, TRUE );
 		} else {
 			return parent::layout_form();
 		}
@@ -113,9 +117,6 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	 * @return string
 	 */
 	public function layout_subsection( $form_section = NULL ) {
-//		d( $form_section );
-//		$form_section = $form_section instanceof EE_Form_Section ? $form_section : $this->form_section()->subsections();
-//		d( $form_section );
 		if($this->_subsection_template_file){
 			EE_Registry::instance()->load_helper('Template');
 			return EEH_Template::locate_template( $this->_subsection_template_file, $this->template_args(), TRUE, TRUE );
@@ -162,12 +163,15 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	 * @return array
 	 */
 	public function template_args() {
-//		$this->_template_args[ $this->_form_section->ID() . '_form' ] = $this->_form_section;
-//		$subsections = $this->form_section()->subsections();
-		foreach ( $this->form_section()->subforms() as $subform_name => $subform ) {
-//			if ( $subsection instanceof EE_Form_Section ) {
-				$this->_template_args[ $subform_name ] = $this->layout_subsection( $subform );
-//			}
+//		d( $this->form_section() );
+		foreach ( $this->form_section()->subsections() as $subsection_name => $subsection ) {
+//			d( $subsection_name );
+			if ( strpos( $subsection_name, '[' ) !== FALSE ) {
+				$sub_name = explode( '[', $subsection_name );
+				$this->_template_args[ $sub_name[0] ][ rtrim( $sub_name[1], ']' ) ] = $this->layout_subsection( $subsection );
+			} else {
+				$this->_template_args[ $subsection_name ] = $this->layout_subsection( $subsection );
+			}
 		}
 //		d( $this->_template_args );
 		return $this->_template_args;
