@@ -61,19 +61,19 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$registrations = $this->checkout->transaction->registrations( array(), TRUE );
 		// build array of form options
 		$form_args = array(
-			'name' 			=> $this->slug(),
-			'html_id' 			=> $this->slug() . '-reg-step',
-			'subsections' 	=> array(),
-			'exclude' 	=> array(),
-			'layout_strategy'	=> is_admin() ?
+			'name' 					=> $this->slug(),
+			'html_id' 					=> $this->slug() . '-reg-step',
+			'subsections' 			=> array(),
+			'exclude' 					=> array(),
+			'layout_strategy'		=> is_admin() ?
 				new EE_Div_Per_Section_Layout() :
 				new EE_Template_Layout( array(
-					'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'attendee_information_master.template.php', // layout_template
-					'begin_template_file' 			=> NULL,
-					'input_template_file' 				=> NULL,
-					'subsection_template_file' 	=> NULL,
-					'end_template_file' 				=> NULL,
-					'template_args' 						=> array(
+					'layout_template_file' 		=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'attendee_information_master.template.php', // layout_template
+					'begin_template_file' 		=> NULL,
+					'input_template_file' 			=> NULL,
+					'subsection_template_file' => NULL,
+					'end_template_file' 			=> NULL,
+					'template_args' 					=> array(
 						'registrations' =>array()
 					)
 				)
@@ -87,8 +87,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		if ( $registrations ) {
 			foreach ( $registrations as $registration ) {
 				if ( $registration instanceof EE_Registration ) {
-					$form_args['subsections'][ 'reg_form' . str_replace( '-', '', $registration->reg_url_link() ) ] = $this->registrations_reg_form( $registration );
-					$form_args['layout_strategy']->add_template_args( array( 'registrations' => array( $registration->reg_url_link() => $registration )));
+					$form_args['subsections'][ 'reg_form_' . str_replace( '-', '', $registration->reg_url_link() ) ] = $this->registrations_reg_form( $registration );
+					if ( $form_args['layout_strategy'] instanceof EE_Template_Layout ) {
+						$form_args['layout_strategy']->add_template_args( array( 'registrations' => array( $registration->reg_url_link() => $registration )));
+					}
 				}
 			}
 		}
@@ -106,18 +108,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		static $attendee_nmbr = 1;
 		// array of params to pass to parent constructor
 		$form_args = array(
+			'name' 				=> $registration->reg_url_link(),
+			'html_id' 				=> 'ee-registration-' . $registration->reg_url_link(),
+			'html_class' 		=> 'ee-reg-form-attendee-dv',
+			'subsections' 		=> array(),
 			'layout_strategy' => new EE_Fieldset_Section_Layout(
-					array(
-						'legend_class' 	=> 'spco-attendee-lgnd smaller-text lt-grey-text',
-						'legend_text' 	=> sprintf( __( 'Attendee %d', 'event_espresso' ), $attendee_nmbr )
-					)
-				),
-			'subsections' 	=> array(),
-			'name' 			=> $registration->reg_url_link(),
-			'html_id' 			=> 'ee-registration-' . $registration->reg_url_link(),
-			'html_class' 	=> 'ee-reg-form-attendee-dv',
+				array(
+					'legend_class' 	=> 'spco-attendee-lgnd smaller-text lt-grey-text',
+					'legend_text' 	=> sprintf( __( 'Attendee %d', 'event_espresso' ), $attendee_nmbr )
+				)
+			)
 		);
-
 		// verify that registration has valid event
 		if ( $registration->event() instanceof EE_Event ) {
 			$query_params = array(
@@ -160,14 +161,14 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function question_group_reg_form( EE_Registration $registration, EE_Question_Group $question_group ){
 		// array of params to pass to parent constructor
 		$form_args = array(
-			'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
-			'subsections' 			=> array(
-				'reg_form_qstn_grp_hdr' => $this->question_group_header( $question_group )
-			),
 			'name' 					=> $question_group->identifier(),
 			'html_id' 					=> 'ee-reg-form-qstn-grp-' . $question_group->identifier(),
 			'html_class' 			=> 'ee-reg-form-qstn-grp-dv',
-			'html_label_id' 		=> 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-lbl'
+			'html_label_id' 		=> 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-lbl',
+			'subsections' 			=> array(
+				'reg_form_qstn_grp_hdr' => $this->question_group_header( $question_group )
+			),
+			'layout_strategy' 	=> new EE_Div_Per_Section_Layout()
 		);
 
 		$questions = $question_group->get_many_related(
@@ -184,7 +185,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			)
 		);
 		// filter for additional content before questions
-		$form_args['subsections'][ 'reg_form_questions_before' ] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', '' ));
+		$form_args['subsections']['reg_form_questions_before'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__before_question_group_questions', '' ));
 		// loop thru questions
 		foreach ( $questions as $question ) {
 			if( $question instanceof EE_Question ){
@@ -192,19 +193,18 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			}
 		}
 		if ( $registration->is_primary_registrant() ) {
-			// set array of args
-			$input_constructor_args = array(
-				'layout_strategy' => new EE_Div_Per_Section_Layout(),
-				'name' 				=> 'primary_registrant',
-				'html_name' 		=> 'primary_registrant',
-				'html_id' 				=> 'primary_registrant',
-				'default'				=> TRUE
-			);
-			// generate input
-			$form_args['subsections'][ 'reg_form_primary_registrant' ] = new EE_Hidden_Input( $input_constructor_args );
+			if ( ! is_admin() ) {
+				// TODO: add admin option for toggling copy attendee info, then use that value here
+				$print_copy_info = TRUE;
+				// generate hidden input
+				$form_args['subsections']['copy_attendee_info'] = $print_copy_info ? $this->copy_attendee_info_form() : $this->auto_copy_attendee_info();
+			}
+			// generate hidden input
+			$form_args['subsections']['reg_form_primary_registrant'] = $this->additional_primary_registrant_inputs();
 		}
 		// filter for additional content after questions
-		$form_args['subsections'][ 'reg_form_questions_after' ] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '' ));
+		$form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '' ));
+//		d( $form_args );
 		return new EE_Form_Section_Proper( $form_args );
 	}
 
@@ -226,6 +226,114 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			$html .=  '<p class="ee-reg-form-qstn-grp-desc-pg small-text lt-grey-text">' . $question_group->desc() . '</p>';
 		}
 		return new EE_Form_Section_HTML( $html );
+	}
+
+
+
+	/**
+	 * @access public
+	 * @return 	EE_Form_Section_Proper
+	 */
+	public function copy_attendee_info_form(){
+
+		// array of params to pass to parent constructor
+		$form_args = array(
+			'name' 					=> 'copy_attendee_info',
+			'html_id' 					=> 'copy-attendee-info',
+			'html_class' 			=> 'copy-attendee-info',
+			'subsections' 			=> $this->copy_attendee_info_inputs(),
+			'layout_strategy' 	=> new EE_Template_Layout( array(
+						'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'copy_attendee_info.template.php', // layout_template
+						'begin_template_file' 			=> NULL,
+						'input_template_file' 				=> NULL,
+						'subsection_template_file' 	=> NULL,
+						'end_template_file' 				=> NULL
+					)
+				)
+		);
+		return new EE_Form_Section_Proper( $form_args );
+	}
+
+
+
+	/**
+	 * auto_copy_attendee_info
+	 *
+	 * @access public
+	 * @return 	EE_Form_Section_Proper
+	 */
+	public function auto_copy_attendee_info() {
+		return new EE_Form_Section_HTML(
+			EEH_Template::locate_template(
+				SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'auto_copy_attendee_info.template.php',
+				apply_filters( 'FHEE__EE_SPCO_Reg_Step_Attendee_Information__auto_copy_attendee_info__template_args', array()),
+				TRUE,
+				TRUE
+			)
+		);
+	}
+
+
+
+	/**
+	 * copy_attendee_info_inputs
+	 *
+	 * @access public
+	 * @return 	EE_Form_Section_Proper
+	 */
+	public function copy_attendee_info_inputs() {
+		$copy_attendee_info_inputs = array();
+		$prev_ticket = NULL;
+		// grab the saved registrations from the transaction
+		$registrations = $this->checkout->transaction->registrations( array(), TRUE );
+		foreach ( $registrations as $registration ) {
+			// for all  attendees other than the primary attendee
+			if ( $registration instanceof EE_Registration && ! $registration->is_primary_registrant() ) {
+				// if this is a new ticket OR if this is the very first additional attendee after the primary attendee
+				if ( $registration->ticket()->ID() !== $prev_ticket ) {
+					$item_name = $registration->ticket()->name();
+					$item_name .= $registration->ticket()->description() != '' ? ' - ' . $registration->ticket()->description() : '';
+					$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->ticket()->ID() . ']' ] = new EE_Form_Section_HTML( '<h6 class="spco-copy-attendee-event-hdr">' . $item_name . '</h6>' );
+					$prev_ticket = $registration->ticket()->ID();
+				} else {
+					$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->ticket()->ID() . ']' ] = new EE_Form_Section_HTML( '
+			<div class="clear-float"></div>
+		<hr class="spco-copy-attendee-hr" />'
+					);
+				}
+				$input_constructor_args = array(
+					'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
+					'name' 					=> 'spco_copy_attendee_chk' . $registration->reg_url_link(),
+					'html_name' 			=> 'spco-copy-attendee-chk-' . $registration->reg_url_link(),
+					'html_id' 					=> 'spco-copy-attendee-chk-' . $registration->reg_url_link(),
+					'html_class' 			=> 'spco-copy-attendee-chk',
+					'html_label_text'		=> sprintf( __('Attendee #%s', 'event_espresso'), $registration->count() )
+				);
+				$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->reg_url_link() . ']' ] = new EE_Checkbox_Multi_Input( $input_constructor_args );
+			}
+		}
+		return $copy_attendee_info_inputs;
+	}
+
+
+
+	/**
+	 * additional_primary_registrant_inputs
+	 *
+	 * @access public
+	 * @return 	EE_Form_Input_Base
+	 */
+	public function additional_primary_registrant_inputs(){
+		// generate hidden input
+		return new EE_Hidden_Input(
+			array(
+				'layout_strategy' => new EE_Div_Per_Section_Layout(),
+				'name' 				=> 'primary_registrant',
+				'html_name' 		=> 'primary_registrant',
+				'html_id' 				=> 'primary_registrant',
+				'default'				=> TRUE
+			)
+		);
 	}
 
 
