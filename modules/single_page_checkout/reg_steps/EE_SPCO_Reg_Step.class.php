@@ -210,10 +210,9 @@ abstract class EE_SPCO_Reg_Step {
 	public function display_reg_form() {
 		$html = '';
 		if ( $this->reg_form instanceof EE_Form_Section_Proper ) {
-			echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-			$this->reg_form->add_subsections( array( 'spco-next-step-btn' => $this->reg_step_submit_button() ));
 			$html .= $this->reg_form->form_open( add_query_arg( array( 'ee' => '_register', 'step' => $this->slug(), 'action' => 'process_reg_step' ), $this->checkout->reg_page_base_url ));
 			$html .= $this->reg_form->get_html_and_js();
+			$html .= $this->reg_step_submit_button();
 			$html .= $this->reg_form->form_close();
 		}
 		return $html;
@@ -241,7 +240,7 @@ abstract class EE_SPCO_Reg_Step {
 		echo $sbmt_btn->get_html_for_input();
 		echo '</div>';
 		echo '<!--end spco-whats-next-buttons-->';
-		return new EE_Form_Section_HTML( ob_get_clean() );
+		return ob_get_clean();
 	}
 
 
