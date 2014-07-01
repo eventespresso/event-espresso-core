@@ -172,7 +172,7 @@
 
 /*** INPUTS ***/
 
-input:not([type=submit]):not([type=file]) {
+input:not([type=checkbox]):not([type=submit]):not([type=file]) {
 	max-width: 100%;
 	min-width: 50%;
 	width:100%;
