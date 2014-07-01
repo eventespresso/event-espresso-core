@@ -26,7 +26,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	/**
 	 * 	$checkout - EE_Checkout object for handling the properties of the current checkout process
 	 * 	@access public
-	 *	@var EE_Checkout $checkout
+	 *	@type EE_Checkout $checkout
 	 */
 	public $checkout = NULL;
 
@@ -143,8 +143,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-
-
 	/**
 	 *    get_reg_steps
 	 *
@@ -176,8 +174,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	}
 
 
+
 	/**
-	 * 	set next step
+	 * 	_set_current_step
+	 *
+	 *  @access 	private
+	 *  @return 	void
+	 */
+	private function _set_current_step() {
+		// grab what step we're on
+		$current_step = EE_Registry::instance()->REQ->get( 'step', '' );
+		$this->checkout->current_step = isset( $this->checkout->reg_steps[ $current_step ] ) ? $this->checkout->reg_steps[ $current_step ] : reset( $this->checkout->reg_steps );
+		$this->checkout->current_step->set_is_current_step( TRUE );
+	}
+
+
+
+	/**
+	 * 	_set_next_step
+	 * advances the reg_steps array pointer and sets the next step, then reverses pointer back to the current step
 	 *
 	 *  @access 	private
 	 *  @return 	void
@@ -201,8 +216,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	}
 
 
+
 	/**
-	 * 	get next step from load_reg_steps
+	 * 	_get_next_reg_step
+	 * 	this simply returns the next step from reg_steps array
 	 *
 	 *  @access 	private
 	 *  @return 	EE_SPCO_Reg_Step
@@ -267,50 +284,78 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 		// load the reg steps array
 		$this->load_reg_steps();
-//		d( $this->checkout->reg_steps );
-		// grab what step we're on
-		$current_step = EE_Registry::instance()->REQ->get( 'step', '' );
-		$this->checkout->current_step = isset( $this->checkout->reg_steps[ $current_step ] ) ? $this->checkout->reg_steps[ $current_step ] : reset( $this->checkout->reg_steps );
-//		d( $this->checkout->current_step );
+		// set the current step
+		$this->_set_current_step();
 		// and the next step
 		$this->_set_next_step();
-//		d( $this->checkout->next_step );
 		// and what we're doing on the current step
 		$this->_action = EE_Registry::instance()->REQ->get( 'action', 'display_reg_step' );
-//		d( $this->_action );
-
 		// returning from the thank you page ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
+		// get transaction from db or session
 		$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_transaction_and_cart_for_current_session();
+		// and the registrations for the transaction
 		$this->_get_registrations( $this->checkout->transaction );
-//		d( $this->checkout->transaction );
-//		d( $this->checkout->cart );
-
 		// and template paths
 		$this->set_templates();
-		// add some style and make it dance
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_css' ), 10 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
-
+		// verify transaction one last time
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
+			// load reg form for the current step
+//			$this->checkout->current_step->reg_form = EE_Registry::instance()->load_file(
+//				SPCO_REG_STEPS_PATH,
+//				$this->checkout->current_step->reg_form_name(),
+//				'form',
+//				$this->checkout->current_step,
+//				FALSE
+//			);
+			try {
+				$this->checkout->current_step->generate_reg_form();
+			} catch( Exception $e ) {
+				throw new EE_Error( $e->getMessage() );
+			}
+			// check for form submission
+			if ( $this->checkout->current_step->reg_form->was_submitted() ) {
+				// capture form data
+				$this->checkout->current_step->reg_form->receive_form_submission();
+				// validate form data
+				if ( $this->checkout->current_step->reg_form->is_valid() ) {
+					// good registrant, you get to proceed
+					EE_Error::add_success( $this->checkout->current_step->reg_form->submission_success_message() );
+					d( $this->checkout->current_step->reg_form->input_values() );
+					// advance to the next step! If you pass GO, collect $200
+					next( $this->checkout->reg_steps );
+					// and advance the next step as well
+					$this->_set_next_step();
+				} else {
+					// bad, bad, bad registrant
+					EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+				}
+			}
 			// initialize each reg step, which gives them the chance to potentially alter the process
 			$this->_initialize_reg_steps();
-			// IT's THE FINAL COUNTDOWN... err.. I mean... reg step
+			// IT'S THE FI-NAL COUNT-DOWN... err.. I mean... final reg step
 			if ( $this->checkout->current_step == 'finalize_registration' ) {
 				do_action( "AHEE__Single_Page_Checkout__before_finalize_registration", $this->checkout->current_step );
 				$this->_process_finalize_registration();
 				do_action( "AHEE__Single_Page_Checkout__after_finalize_registration", $this->checkout->current_step );
 			} else {
+				// meh... do one of those other steps first
 				if ( method_exists( $this->checkout->current_step, $this->_action )) {
 					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
 					call_user_func( array( $this->checkout->current_step, $this->_action ));
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
 				}
 			}
+
 		}
+//		d( $this->checkout );
+		// add some style and make it dance
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_css' ), 10 );
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
+
+		$this->registration_checkout();
 
 	}
-
 
 
 
@@ -318,7 +363,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * _get_transaction_and_cart_for_previous_visit
 	 *
 	 * @access private
-	 * @return EE_Transaction
+	 * 	@return mixed EE_Transaction|NULL
 	 */
 	private function _get_transaction_and_cart_for_previous_visit() {
 		// because the reg_url_link is present in the request, this is a return visit to SPCO, so we'll get the transaction data from the db
@@ -330,6 +375,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			return $transaction;
 		} else {
 			EE_Error::add_error( __( 'Your Registration and Transaction information could not be retrieved from the db.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			return NULL;
 		}
 	}
 
@@ -390,12 +436,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-
 	/**
 	 * 	generates a new EE_Transaction object and adds it to the $_transaction property.
 	 *
 	 * 	@access private
-	 * 	@return EE_Transaction
+	 * 	@return mixed EE_Transaction|NULL
 	 */
 	private function _initialize_transaction() {
 		try {
@@ -409,7 +454,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		} catch( Exception $e ) {
 			EE_Error::add_error( $e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
 		}
+		return NULL;
 	}
+
 
 
 	/**
@@ -438,7 +485,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( $registration instanceof EE_Registration ) {
 				// we display all attendee info for the primary registrant
 				if ( $this->checkout->reg_url_link == $registration->reg_url_link() && $registration->is_primary_registrant() ) {
-					$this->_primary_revisit = TRUE;
+					$this->checkout->primary_revisit = TRUE;
 					break;
 				} else if ( $this->checkout->reg_url_link != $registration->reg_url_link() ) {
 					// but hide info if it doesn't belong to you
@@ -485,7 +532,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					$att_nmbr++;
 					$reg_url_link = $att_nmbr . '-' . $item->code();
 
-					//					// TODO: verify that $event->default_registration_status() is editable in admin event editor, then uncomment and use the following for STS_ID
 					$event_default_registration_status = $event->default_registration_status();
 					$STS_ID = ! empty( $event_default_registration_status ) ? $event_default_registration_status : EE_Registry::instance()->CFG->registration->default_STS_ID;
 					// now create a new registration for the ticket
@@ -512,7 +558,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 			//			echo '<h3>'. __CLASS__ . '->' . __FUNCTION__ . ' <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h3>';
 		}
-
 	}
 
 
@@ -535,7 +580,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
-
 	/**
 	 * 		set templates
 	 *
@@ -543,11 +587,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@return 		void
 	 */
 	public function set_templates() {
-		$this->_templates['registration_page_wrapper'] = SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php';
-		$this->_templates['registration_page_attendee_information'] = SPCO_TEMPLATES_PATH . 'registration_page_attendee_information.template.php';
-		$this->_templates['registration_page_payment_options'] = SPCO_TEMPLATES_PATH . 'registration_page_payment_options.template.php';
-		$this->_templates['registration_page_confirmation'] = SPCO_TEMPLATES_PATH . 'registration_page_confirmation.template.php';
-		$this->_templates['confirmation_page'] = SPCO_TEMPLATES_PATH . 'confirmation_page.template.php';
+//		$this->_templates['registration_page_wrapper'] = SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php';
+//		$this->_templates['registration_page_attendee_information'] = SPCO_TEMPLATES_PATH . 'attendee_information_master.template.php';
+//		$this->_templates['registration_page_payment_options'] = SPCO_TEMPLATES_PATH . 'registration_page_payment_options.template.php';
+//		$this->_templates['registration_page_confirmation'] = SPCO_TEMPLATES_PATH . 'registration_page_confirmation.template.php';
+//		$this->_templates['confirmation_page'] = SPCO_TEMPLATES_PATH . 'confirmation_page.template.php';
 //		 EE_Config::register_view( 'single_page_checkout', 0, $this->_templates['registration_page_wrapper'] );
 	}
 
@@ -605,13 +649,58 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
+	 * 	display the Registration Single Page Checkout
+	 *
+	 * @access 	public
+	 * @return 	string
+	 */
+	public function registration_checkout() {
+		// form details
+		$form_args = array(
+			'name' 	=> 'single-page-checkout',
+			'html_id' 	=> 'ee-single-page-checkout-dv',
+			//template files
+			'layout_strategy' => is_admin() ?
+				new EE_Div_Per_Section_Layout() :
+				new EE_Template_Layout( array(
+					'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php',
+					'begin_template_file' 			=> NULL,
+					'input_template_file' 				=> NULL,
+					'subsection_template_file' 	=> NULL,
+					'end_template_file' 				=> NULL,
+					'template_args' => array(
+							'empty_cart' 		=> count( $this->checkout->transaction->registrations() ) < 1 ? TRUE : FALSE,
+							'revisit' 				=> $this->checkout->revisit,
+							'reg_steps' 			=> $this->checkout->reg_steps,
+							'empty_msg' 		=> apply_filters(
+								'FHEE__Single_Page_Checkout__registration_checkout__empty_msg',
+								sprintf(
+									__( 'You need to %sselect at least one event%s before you can proceed with the registration process.', 'event_espresso' ),
+									'<a href="'. add_query_arg( array( 'post_type' => 'espresso_events' ), site_url() ) . '" title="' . __( 'Return to Events list', 'event_espresso' ) . '">',
+									'</a>'
+								)
+							)
+						)
+				)
+			)
+		);
+//		d( $this->checkout );
+		$this->checkout->registration_form = new EE_Form_Section_Proper( $form_args );
+		// load template and add to output sent that gets filtered into the_content()
+		EE_Registry::instance()->REQ->add_output( $this->checkout->registration_form->get_html_and_js() );
+	}
+
+
+
+	/**
 	 *        load and display the Registration Single Page Checkout
 	 *
 	 * @access 	public
 	 * @param 	bool $from_admin
 	 * @return 	mixed void | string
 	 */
-	public function registration_checkout( $from_admin = FALSE ) {
+	public function _registration_checkout( $from_admin = FALSE ) {
+		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 		//d($this->checkout->cart);
@@ -921,7 +1010,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'step' => $reg_step,
 					'step_nmbr' => $this->_revisit !== FALSE ? $step_or_revisit : $step_or_revisit . $step_nmbr . ' - ',
 					'edit_lnk_class' => $edit_lnk_class,
-					'edit_lnk_url' => $edit_lnk_url,
+					'edit_lnk_url' => add_query_arg( array( 'ee' => '_register', 'step' => $reg_step_details['display_func'] ), $this->_reg_page_base_url ),
 					'step_dv_class' => $step_dv_class,
 					'reg_step_form_url' => $reg_step_form_url,
 					'reg_step_ajax_action' => $reg_step_details['process_func'],
