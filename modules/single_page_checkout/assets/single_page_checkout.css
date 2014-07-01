@@ -140,7 +140,7 @@
 	padding-top:.5em;
 }
 .ee-reg-form-qstn-grp-dv {
-	padding:1em;
+	padding:.5em 1em 1em;
 }
 .ee-reg-form-qstn-grp-dv + .ee-reg-form-qstn-grp-dv {
 	margin:.5em 0 0;
@@ -149,8 +149,25 @@
 	margin:.25em 0 1em;
 }
 .ee-reg-form-attendee-dv .ee-reg-form-qstn-grp-desc-pg {
-	padding: 0 1em;
-	margin:-1em 0 0;
-	font-size: .9em;
-	color: #999;
+	padding: 0 1em 1em;
+	margin:-1em 0 1em;
+}
+.spco-attendee-lgnd {
+	width: auto;
+	padding:0 1em;
+	margin:0;
+	border: none;
+	-moz-border:none;
+	letter-spacing:1px;
+	font-weight: bold;
+}
+.event_questions + .spco-attendee-lgnd {
+	margin-top:2em;
+}
+/*** INPUTS ***/
+
+input:not([type=submit]):not([type=file]) {
+	max-width: 100%;
+	min-width: 50%;
+	width:100%;
 }
