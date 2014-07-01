@@ -108,13 +108,19 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return EE_Form_Section_Proper
 	 */
 	public function registrations_reg_form( EE_Registration $registration ) {
+		static $attendee_nmbr = 1;
 		// array of params to pass to parent constructor
 		$form_args = array(
-			'layout_strategy' 	=> new EE_Fieldset_Section_Layout(),
-			'subsections' 			=> array(),
-			'name' 					=> $registration->reg_url_link(),
-			'html_id' 					=> 'ee-registration-' . $registration->reg_url_link(),
-			'html_class' 			=> 'ee-reg-form-attendee-dv',
+			'layout_strategy' => new EE_Fieldset_Section_Layout(
+					array(
+						'legend_class' 	=> 'spco-attendee-lgnd smaller-text lt-grey-text',
+						'legend_text' 	=> sprintf( __( 'Attendee %d', 'event_espresso' ), $attendee_nmbr )
+					)
+				),
+			'subsections' 	=> array(),
+			'name' 			=> $registration->reg_url_link(),
+			'html_id' 			=> 'ee-registration-' . $registration->reg_url_link(),
+			'html_class' 	=> 'ee-reg-form-attendee-dv',
 		);
 
 		// verify that registration has valid event
@@ -135,7 +141,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		//		d( $form_args );
+		$attendee_nmbr++;
 		return new EE_Form_Section_Proper( $form_args );
 	}
 
@@ -196,11 +202,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$html = '';
 		// group_name
 		if ( $question_group->show_group_name() && $question_group->name() != '' ) {
-			$html .=  "\n\t\t" . '<h5 class="ee-reg-form-qstn-grp-title section-title">' . $question_group->name( TRUE ) . '</h5>';
+			$html .=  "\n\t\t" . '<h5 class="ee-reg-form-qstn-grp-title section-title">' . $question_group->name() . '</h5>';
 		}
 		// group_desc
 		if ( $question_group->show_group_desc() && $question_group->desc() != '' ) {
-			$html .=  '<p class="espresso-question-group-desc-pg">' . $question_group->desc( TRUE ) . '</p>';
+			$html .=  '<p class="ee-reg-form-qstn-grp-desc-pg small-text lt-grey-text">' . $question_group->desc() . '</p>';
 		}
 		return new EE_Form_Section_HTML( $html );
 	}
