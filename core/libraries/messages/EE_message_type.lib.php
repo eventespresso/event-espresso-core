@@ -263,6 +263,9 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
+
+		//this will do any hooks that the message type sets for a specific messenger it may need to modify.
+		$this->_do_messenger_hooks();
 	}
 
 
@@ -325,6 +328,21 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	protected function _get_id_for_msg_url( $context, EE_Registration $registration ) {
 		return 0;
+	}
+
+
+
+
+
+	/**
+	* This sets up any action/filter hooks this message type puts in place for a specific messenger.  It's called from the set_messages() method.  Note that by default this does nothing.  Child classes will need to override if they want to add specific hooks for a messenger.
+	*
+	* @since 1.0.0
+	*
+	* @return void
+	*/
+	protected function _do_messenger_hooks() {
+		return;
 	}
 
 
