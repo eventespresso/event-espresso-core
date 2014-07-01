@@ -21,7 +21,7 @@
  *
  * ------------------------------------------------------------------------
  */
-class EED_Single_Page_Checkout  extends EED_Module {
+class EED_Single_Page_Checkout_BAK  extends EED_Module {
 
 	// base url for the site's registration checkout page - additional url params will be added to this
 	private $_reg_page_base_url = '';
