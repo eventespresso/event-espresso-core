@@ -42,10 +42,10 @@ if ( ! $empty_cart ) {
 			echo do_action( 'AHEE__' . $slug . '__reg_step_start', $reg_step );
 			// todo: deprecate hook AHEE__registration_page_attendee_information__start
 	?>
-<!--		<h3 id="spco---><?php //echo $slug; ?><!---hdr" class="spco-step-title-hdr">-->
-<!--			--><?php //echo $reg_step->name(); ?>
-<!--			<a id="spco-edit---><?php //echo $slug; ?><!---lnk" class="spco-edit-step-lnk --><?php //echo $reg_step->edit_link_class(); ?><!--"  href="--><?php //echo $reg_step->edit_lnk_url(); ?><!--" rel="--><?php //echo $slug; ?><!--">--><?php //apply_filters( 'FHEE__registration_page_' . $slug . '__edit_link_text', __( 'edit', 'event_espresso' )); ?><!--</a>-->
-<!--		</h3>-->
+		<h3 id="spco-<?php echo $slug; ?>-hdr" class="spco-step-title-hdr">
+			<?php echo $reg_step->name(); ?>
+			<a id="spco-edit-<?php echo $slug; ?>-lnk" class="spco-edit-step-lnk <?php echo $reg_step->edit_link_class(); ?>"  href="<?php echo $reg_step->edit_lnk_url(); ?>" rel="<?php echo $slug; ?>"><?php apply_filters( 'FHEE__registration_page_' . $slug . '__edit_link_text', __( 'edit', 'event_espresso' )); ?></a>
+		</h3>
 			<?php do_action( 'AHEE__registration_page_registration_questions__template__after_spco_' . $slug . '_header' )?>
 		<div id="spco-<?php echo $slug; ?>-dv" class="spco-step-dv <?php echo $reg_step->div_class(); ?>">
 			<?php echo $reg_step->display_reg_form(); ?>
