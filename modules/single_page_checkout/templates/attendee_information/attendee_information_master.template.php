@@ -52,7 +52,9 @@ if ( count( $registrations ) > 0 ) {
 
 			<?php
 // ATTENDEE QUESTIONS
-			echo '<h5 style="color:#2EA2CC;">$registration->reg_url_link() : <span style="color:#E76700">' . $registration->reg_url_link() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+			$reg_form = 'reg_form' . str_replace( '-', '', $registration->reg_url_link() );
+//			d( $reg_form );
+			echo ${$reg_form};
 			?>
 
 		</div>
@@ -63,10 +65,11 @@ if ( count( $registrations ) > 0 ) {
 		}
 	 } // end foreach $registrations as $registration
 	//$attendee_information_form->get_html_and_js();
-	d( $attendee_information_form );
-	if ( $attendee_information_form instanceof EE_Form_Section_Proper ) {
-		$attendee_information_form->get_layout_strategy()->layout_subsection( $registration->reg_url_link() );
-	}
+//	d( $hidden_inputs );
+	echo $hidden_inputs;
+//	if ( $attendee_information_form instanceof EE_Form_Section_Proper ) {
+//		$attendee_information_form->get_layout_strategy()->layout_subsection( $registration->reg_url_link() );
+//	}
 } // $event_queue['total_items']
 
 ?>
