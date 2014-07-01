@@ -309,9 +309,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				$value = $field->get_default_value();
 			}elseif( $field instanceof EE_Integer_Field ||
 					$field instanceof EE_Float_Field ||
-					$field instanceof EE_Foreign_Key_Field_Base ||
-					$field instanceof EE_Primary_Key_String_Field){
+					$field instanceof EE_Foreign_Key_Field_Base ){
 				$value = $auto_made_thing_seed;
+			}elseif( $field instanceof EE_Primary_Key_String_Field ){
+				$value = "$auto_made_thing_seed";
 			}elseif( $field instanceof EE_Text_Field_Base ){
 				$value = $auto_made_thing_seed."_".$field->get_name();
 			}

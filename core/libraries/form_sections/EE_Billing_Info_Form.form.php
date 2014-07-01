@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * Default form which can be used by payment method types for their billing info
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -33,7 +33,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 	 */
 	protected $_pm_instance;
 	/**
-	 * 
+	 *
 	 * @param array $options_array @see EE_Form_Section_Proper::__construct()
 	 */
 	public function __construct($payment_method, $options_array= array()){
@@ -101,7 +101,7 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 	public function set_payment_method($payment_method){
 		$this->_pm_instance = $payment_method;
 	}
-	
+
 	/**
 	 * Returns the instance of the payment method this billing form is for
 	 * @return EE_Payment_Method
