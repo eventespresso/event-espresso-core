@@ -15,10 +15,9 @@ if ( ! $empty_cart ) {
 				$step_display_dv_class = $reg_step->is_current_step() ? 'active-step' : 'inactive-step';
 		?>
 		<div id="spco-step-<?php echo $slug; ?>-display-dv" class="spco-step-display-dv <?php echo $step_display_dv_class; ?> steps-<?php echo $total_steps; ?>">
-			<span class="spco-step-big-nmbr"><?php echo $step_nmbr; ?></span>
-			<h2 id="spco-step-<?php echo $slug; ?>-display-hdr" class="spco-steps-display-hdr">
-				&nbsp;<?php echo str_replace( '&nbsp;', '<br/>&nbsp;', $reg_step->name() ); ?>
-			</h2>
+			<h4 id="spco-step-<?php echo $slug; ?>-display-hdr" class="spco-steps-display-hdr">
+				<span class="spco-step-big-nmbr"><?php echo $step_nmbr; ?></span>&nbsp;<span class="spco-step-name"><?php echo str_replace( '&nbsp;', '<br/>&nbsp;', $reg_step->name() ); ?></span>
+			</h4>
 		</div>
 
 		<?php if ( $step_nmbr < $total_steps ) { ?>
@@ -43,10 +42,10 @@ if ( ! $empty_cart ) {
 			echo do_action( 'AHEE__' . $slug . '__reg_step_start', $reg_step );
 			// todo: deprecate hook AHEE__registration_page_attendee_information__start
 	?>
-		<h2 id="spco-<?php echo $slug; ?>-hdr" class="spco-step-title-hdr">
-			<?php echo $reg_step->name(); ?>
-			<a id="spco-edit-<?php echo $slug; ?>-lnk" class="spco-edit-step-lnk <?php echo $reg_step->edit_link_class(); ?>"  href="<?php echo $reg_step->edit_lnk_url(); ?>" rel="<?php echo $slug; ?>"><?php apply_filters( 'FHEE__registration_page_' . $slug . '__edit_link_text', __( 'edit', 'event_espresso' )); ?></a>
-		</h2>
+<!--		<h3 id="spco---><?php //echo $slug; ?><!---hdr" class="spco-step-title-hdr">-->
+<!--			--><?php //echo $reg_step->name(); ?>
+<!--			<a id="spco-edit---><?php //echo $slug; ?><!---lnk" class="spco-edit-step-lnk --><?php //echo $reg_step->edit_link_class(); ?><!--"  href="--><?php //echo $reg_step->edit_lnk_url(); ?><!--" rel="--><?php //echo $slug; ?><!--">--><?php //apply_filters( 'FHEE__registration_page_' . $slug . '__edit_link_text', __( 'edit', 'event_espresso' )); ?><!--</a>-->
+<!--		</h3>-->
 			<?php do_action( 'AHEE__registration_page_registration_questions__template__after_spco_' . $slug . '_header' )?>
 		<div id="spco-<?php echo $slug; ?>-dv" class="spco-step-dv <?php echo $reg_step->div_class(); ?>">
 			<?php echo $reg_step->display_reg_form(); ?>
