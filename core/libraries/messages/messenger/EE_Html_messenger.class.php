@@ -153,6 +153,15 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _set_template_fields() {
 		// any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  Also, notice that the "values" are equal to the field type that messages admin will use to know what kind of field to display. The values ALSO have one index labeled "shortcode".  the values in that array indicate which ACTUAL SHORTCODE (i.e. [SHORTCODE]) is required in order for this extra field to be displayed.  If the required shortcode isn't part of the shortcodes array then the field is not needed and will not be displayed/parsed.
 		$this->_template_fields = array(
+			'subject' => array(
+				'input' => 'text',
+				'label' => __('Page Title', 'event_espresso'),
+				'type' => 'string',
+				'required' => TRUE,
+				'validation' => TRUE,
+				'css_class' => 'large-text',
+				'format' => '%s'
+				),
 			'content' => '', //left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
 			'extra' => array(
 				'subject' => array(
