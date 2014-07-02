@@ -33,6 +33,50 @@ jQuery(document).ready(function($) {
 			$active_mts = $( '#active-message-types' );
 			$inactive_mts = $( '#inactive-message-types' );
 
+			//set draggables and droppables!
+			$( "li", $active_mts ).draggable({
+				cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
+				revert: "invalid", //when not dropped the item will revert back to its initial location
+				containment: "document",
+				helper: "clone",
+				cursor: "move"
+			});
+
+			//toggle slide
+			$( document ).on('click', '#active-message-types .mt-handlediv', function() {
+				MSG_helper.slide(this);
+			});
+
+			$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
+				MSG_helper.slide(this);
+			});
+
+			//make sure inactives are draggable too
+			$( "li", $inactive_mts ).draggable({
+				cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
+				revert: "invalid", //when not dropped the item will revert back to its initial location
+				containment: "document",
+				helper: "clone",
+				cursor: "move"
+			});/**/
+
+			$inactive_mts.droppable({
+				accept: "#active-message-types li",
+				activeClass: "ui-state-highlight",
+				drop: function( event, ui ) {
+					MSG_helper.inactivate( ui.draggable );
+				}
+			});
+
+
+			$active_mts.droppable({
+				accept: "#inactive-message-types li",
+				activeClass: "custom-state-active",
+				drop: function( event, ui ) {
+					MSG_helper.activate( ui.draggable );
+				}
+			});
+
 			return this; //make chainable
 		},
 
@@ -355,55 +399,6 @@ jQuery(document).ready(function($) {
 	//on page load do init and toggle
 	var messenger = $('.item_display a').attr('href');
 	MSG_helper.init().toggle(messenger);
-
-	//defined the global active and inactive message type containers
-	var $active_mts = $( '#active-message-types' ),
-	$inactive_mts = $( '#inactive-message-types' );
-
-
-	//set draggables and droppables!
-	$( "li", $active_mts ).draggable({
-		cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
-		revert: "invalid", //when not dropped the item will revert back to its initial location
-		containment: "document",
-		helper: "clone",
-		cursor: "move"
-	});
-
-	//toggle slide
-	$( document ).on('click', '#active-message-types .mt-handlediv', function() {
-		MSG_helper.slide(this);
-	});
-
-	$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
-		MSG_helper.slide(this);
-	});
-
-	//make sure inactives are draggable too
-	$( "li", $inactive_mts ).draggable({
-		cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
-		revert: "invalid", //when not dropped the item will revert back to its initial location
-		containment: "document",
-		helper: "clone",
-		cursor: "move"
-	});/**/
-
-	$inactive_mts.droppable({
-		accept: "#active-message-types li",
-		activeClass: "ui-state-highlight",
-		drop: function( event, ui ) {
-			MSG_helper.inactivate( ui.draggable );
-		}
-	});
-
-
-	$active_mts.droppable({
-		accept: "#inactive-message-types li",
-		activeClass: "custom-state-active",
-		drop: function( event, ui ) {
-			MSG_helper.activate( ui.draggable );
-		}
-	});
 
 	/**
 	 * bind to messenger text link selector event
