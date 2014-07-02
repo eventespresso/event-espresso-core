@@ -473,6 +473,9 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//note this isn't referenced by any shortcode parsers so we'll ignore for now.
 		$this->reg_info = array();
 
+		//let's set a reg_obj for messengers expecting one.
+		$this->reg_obj = array_pop( $this->_attendees[999999991]['reg_objs'] );
+
 
 		//the below are just dummy items.
 		$this->user_id = 1;
