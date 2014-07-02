@@ -34,7 +34,14 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 					EE_PMT_Paypal_Standard::shipping_info_optional => __("Prompt for an address, but do not require it", 'event_espresso'),
 					EE_PMT_Paypal_Standard::shipping_info_required => __("Prompt for an address, and require it", 'event_espresso')
 				)),
-
+				'tax_override' => new EE_Yes_No_Input(array(
+					'html_label_text' => sprintf( __( 'Override Paypal Taxes %s', 'event_espresso' ), EEH_Template::get_help_tab_link( self::help_tab_name ) ),
+					'html_help_text' => __('Whether to prevent Paypal from adding taxes or not', 'event_espresso')
+				)),
+				'shipping_override' => new EE_Yes_No_Input(array(
+					'html_label_text' => sprintf( __( 'Override Paypal Shipping %s', 'event_espresso' ), EEH_Template::get_help_tab_link( self::help_tab_name ) ),
+					'html_help_text' => __('Whether to prevent Paypal from adding shipping charges or not', 'event_espresso')
+				))
 				),
 			'before_form_content_template'=>$this->file_folder().DS.'templates'.DS.'paypal_standard_settings_before_form.template.php',
 			)
