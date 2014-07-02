@@ -4,15 +4,15 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * This function toggles message boxes active and inactive setting the correct selectors for other js used on this page
-		 * @param  {string} messenger What messenger is being toggled
+		 * @param  {string} incoming_messenger What messenger is being toggled
 		 * @param  {string} type      'active' or 'inactive'? (default: active)
 		 * @return {void}
 		 */
-		toggle: function( messenger, type ) {
+		toggle: function( incoming_messenger, type ) {
 			if ( typeof(type) === 'undefined' ) type = 'active';
 
 			//makes sure we strip out any '#'
-			messenger = messenger.replace('#','');
+			messenger = incoming_messenger.replace('#','');
 
 			//set refs
 			var active_main = '#espresso_' + messenger + '_settings';
@@ -398,7 +398,7 @@ jQuery(document).ready(function($) {
 
 	//on page load do init and toggle
 	var messenger = $('.item_display a').attr('href');
-	MSG_helper.init().toggle(messenger);
+	MSG_helper.init().toggle('email');
 
 	/**
 	 * bind to messenger text link selector event
