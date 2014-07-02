@@ -157,7 +157,6 @@
 	padding:0 1em;
 	margin:0;
 	border: none;
-	-moz-border:none;
 	letter-spacing:1px;
 	font-weight: bold;
 }
@@ -169,6 +168,60 @@
 	margin:0 .25em .5em;
 }
 
+
+/*  COPY ATTENDEE INFO  */
+
+#spco-copy-attendee-dv {
+	position:relative;
+	padding:1.5em;
+	margin:1em 0 0;
+	background:rgba( 128, 128, 128, .05 );
+	border-radius: 2px;
+	line-height:1.1em;
+}
+#spco-copy-attendee-dv .spco-copy-attendee-pg {
+	margin:0;
+	font-size:.8em;
+	letter-spacing:1px;
+}
+#spco-copy-attendee-dv .spco-copy-all-attendee-pg {
+	margin:0 0 .75em;
+}
+#spco-copy-attendee-dv label {
+	display: block;
+	padding: 0.5em 10px 0.5em 0;
+	cursor: pointer;
+	font-size: .9em;
+	line-height: 1em;
+	vertical-align: middle;
+}
+#spco-copy-attendee-dv .spco-copy-attendee-pg span {
+	margin:0 0 1em;
+	font-size:.9em;
+	letter-spacing:1px;
+	color:#777;
+	line-height:.9em;
+}
+#spco-copy-attendee-dv .spco-copy-attendee-event-hdr {
+	clear:both;
+	margin:1.5em 0 .5em;
+	font-size:.8em;
+	font-weight:bold;
+	color:#444;
+}
+#spco-copy-attendee-dv .spco-copy-attendee-chk, #spco-copy-all-attendee-chk {
+	position:relative;
+	top:2px;
+	left:5px;
+	margin:0 5px;
+}
+#more-attendee-copy-options-dv {
+	position:relative;
+	display:none;
+	padding:0;
+	margin:3em 0 0;
+	clear : both;
+}
 
 /*** INPUTS ***/
 
