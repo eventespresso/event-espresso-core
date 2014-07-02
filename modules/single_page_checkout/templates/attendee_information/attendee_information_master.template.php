@@ -48,26 +48,22 @@ if ( count( $registrations ) > 0 ) {
 			<?php } ?>
 
 			<?php
-// ATTENDEE QUESTIONS
+			// ATTENDEE QUESTIONS
 			$reg_form = 'reg_form_' . str_replace( '-', '', $registration->reg_url_link() );
-//			d( $reg_form );
 			echo ${$reg_form};
 			?>
 
 		</div>
 <?php
-			echo $item['additional_attendee_reg_info'];
 			$prev_event = $registration->event()->ID();
 			$prev_ticket = $registration->ticket()->ID();
-		}
-	 } // end foreach $registrations as $registration
-	//$attendee_information_form->get_html_and_js();
-//	d( $hidden_inputs );
+
+		} // if ( $registration instanceof EE_Registration )
+	 } // end foreach ( $registrations as $registration )
+
 	echo $hidden_inputs;
-//	if ( $attendee_information_form instanceof EE_Form_Section_Proper ) {
-//		$attendee_information_form->get_layout_strategy()->layout_subsection( $registration->reg_url_link() );
-//	}
-} // $event_queue['total_items']
+
+} // end if ( count( $registrations ) > 0 )
 
 ?>
 
