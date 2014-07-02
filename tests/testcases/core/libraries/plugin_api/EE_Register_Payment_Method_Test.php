@@ -17,6 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @group core/libraries/plugin_api
  * @group core
  * @group agg
+ * @group payment_methods
  */
 class EE_Register_Payment_Method_Test extends EE_UnitTestCase{
 	protected $_pmt_name = 'Mock_Onsite';
@@ -34,7 +35,7 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase{
 		remove_all_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register');
 
 		//first verify it doesn't already exists
-		$pmt_exists = EE_Payment_Method_Manager::instance()->payment_method_type_exists( $this->_pmt_name );
+		$pmt_exists = EE_Payment_Method_Manager::reset()->payment_method_type_exists( $this->_pmt_name );
 		$this->assertFalse( $pmt_exists );
 
 		//try registering at wrong time
@@ -52,7 +53,7 @@ class EE_Register_Payment_Method_Test extends EE_UnitTestCase{
 		remove_all_filters('FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register');
 
 		//first verify it doesn't already exists
-		$pmt_exists = EE_Payment_Method_Manager::instance()->payment_method_type_exists( $this->_pmt_name );
+		$pmt_exists = EE_Payment_Method_Manager::reset()->payment_method_type_exists( $this->_pmt_name );
 		$this->assertFalse( $pmt_exists );
 
 

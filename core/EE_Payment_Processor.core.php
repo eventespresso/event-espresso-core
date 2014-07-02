@@ -94,10 +94,13 @@ class EE_Payment_Processor{
 		$transaction->set_payment_method_ID($payment_method->ID());
 		if( $payment_method->type_obj() instanceof EE_PMT_Base){
 			$payment = $payment_method->type_obj()->process_payment( $transaction, $amount, $billing_form, $success_url, $method, $by_admin );
-			//we need to save this payment in order for transaction to be updated correctly
+			//offline gateways DON'T return a payment object, so check it
+			if( $payment instanceof EE_Payment) {
+				//we need to save this payment in order for transaction to be updated correctly
 			//(because it queries teh DB to find the total amount paid, and saving puts
 			//the payment into the DB)
-			$payment->save();
+				$payment->save();
+			}
 			$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
 		}else{
 			EE_Error::add_error(
@@ -272,12 +275,12 @@ class EE_Payment_Processor{
 			//but have we already triggered pending payment notification?
 			if( $txn->status_ID() !== EEM_Transaction::incomplete_status_code ){
 				//createa hackey payment object, but dont save it
-				$payment = EE_Payment::new_instance(array(
-					'TXN_ID'=>$txn->ID(),
-					'STS_ID'=>EEM_Payment::status_id_pending,
-					'PAY_timestamp'=>current_time('timestamp'),
-					'PAY_amount'=>$txn->total(),
-					'PAY_gateway'=>$this->_gateway_name));
+				$payment = EE_Payment::new_instance( array(
+					'TXN_ID' => $txn->ID(),
+					'STS_ID' => EEM_Payment::status_id_pending,
+					'PAY_timestamp' => current_time('timestamp'),
+					'PAY_amount' => $txn->total(),
+					'PMD_ID' => $txn->payment_method_ID() ) );
 				$txn->set_status( EEM_Transaction::incomplete_status_code );
 				if( $save_txn ){
 					$txn->save();

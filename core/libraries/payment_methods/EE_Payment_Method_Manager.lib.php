@@ -30,6 +30,15 @@ class EE_Payment_Method_Manager {
 	}
 
 	/**
+	 * Resets the instance and returns a new one
+	 * @return EE_Payment_Method_Manager
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
+	/**
 	 * If necessary, re-register payment methods
 	 * @param boolean $force_recheck whether to recheck for payment method types,
 	 * or just re-use the PMTs we found last time we checked during this request (if

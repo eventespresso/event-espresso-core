@@ -287,6 +287,14 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		foreach($model->relation_settings() as $related_model_name => $relation){
 			if($relation instanceof EE_Belongs_To_Any_Relation){
 				continue;
+			}elseif( $related_model_name == 'Country' ){
+				//we already have lots of countries. lets not make any more
+				//what's more making them is tricky: the primary key needs to be a unique
+				//2-character string but not an integer (else it confuses the country
+				//form input validation)
+				if( ! isset( $args['CNT_ISO' ] )){
+					$args[ 'CNT_ISO' ] = 'US';
+				}
 			}elseif($relation instanceof EE_Belongs_To_Relation) {
 				$obj = $this->new_model_obj_with_dependencies($related_model_name);
 				$fk = $model->get_foreign_key_to($related_model_name);
@@ -309,9 +317,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 				$value = $field->get_default_value();
 			}elseif( $field instanceof EE_Integer_Field ||
 					$field instanceof EE_Float_Field ||
-					$field instanceof EE_Foreign_Key_Field_Base ||
-					$field instanceof EE_Primary_Key_String_Field){
+					$field instanceof EE_Foreign_Key_Field_Base ){
 				$value = $auto_made_thing_seed;
+			}elseif( $field instanceof EE_Primary_Key_String_Field ){
+				$value = "$auto_made_thing_seed";
 			}elseif( $field instanceof EE_Text_Field_Base ){
 				$value = $auto_made_thing_seed."_".$field->get_name();
 			}

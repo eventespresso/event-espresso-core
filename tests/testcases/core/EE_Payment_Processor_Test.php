@@ -15,6 +15,7 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 /**
  * @group payment_methods
+ * @group agg
  */
 class EE_Payment_Processor_Test extends EE_UnitTestCase{
 
@@ -112,6 +113,7 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 				EE_TESTS_DIR . 'mocks' . DS . 'payment_methods' . DS . 'Mock_Offsite'
 			)
 		));
+
 	}
 	public function tearDown(){
 		EE_Register_Payment_Method::deregister( 'onsite' );

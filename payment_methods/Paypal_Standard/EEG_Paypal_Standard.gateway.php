@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEG_Paypal_Standard
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -29,6 +29,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	protected $_paypal_id = NULL;
 	protected $_image_url = NULL;
 	protected $_shipping_details = NULL;
+	protected $_shipping_override = NULL;
+	protected $_tax_override = NULL;
 	protected $_gateway_url = NULL;
 	protected $_currencies_supported = array(
 					'USD',
@@ -67,7 +69,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$this->_gateway_url = 'https://www.paypal.com/cgi-bin/webscr';
 		}
 	}
-	
+
 	/**
 	 * @param EEI_Payment $payment to process
 	 * @param array $billing_info but should be empty for this gateway
@@ -76,7 +78,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @param string $cancel_url URL to send the user to after a cancelled payment attempt on teh payment provider's website
 	 * @param boolean $send_full_itemized_list whether or not to try itemizing all the items purchased when
 	 * informing the payment provider of the purchase or not. If charging for the entire transaction, this is usually
-	 * set to TRUE; however if we are just charing for a part, it's harder to nail down exactly what the payment is for, 
+	 * set to TRUE; however if we are just charing for a part, it's harder to nail down exactly what the payment is for,
 	 * so its usually set to FALSE in that case
 	 * @return EEI_Payment
 	 */
@@ -93,6 +95,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$redirect_args['item_name_' . $item_num] = substr($line_item->name(),0,127);
 				$redirect_args['amount_' . $item_num] = $line_item->unit_price();
 				$redirect_args['quantity_' . $item_num] = $line_item->quantity();
+				if( $this->_shipping_override ){
+					$redirect_args['shipping_' . $item_num ] = '0.00';
+				}
+				if( $this->_tax_override ){
+					$redirect_args[ 'tax_' . $item_num ] = '0.00';
+				}
 				$item_num++;
 			}
 			//and show all the taxes
@@ -107,7 +115,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['item_name_' . $item_num] = substr(sprintf(__("Amoutn owing for registration %s", "event_espresso"),$primary_registrant->reg_code()));
 			$redirect_args['amount_' . $item_num] = $payment->amount();
 			$item_num++;
-			
+
 		}
 		if($this->_debug_mode){
 			$redirect_args['item_name_' . $item_num] = 'DEBUG INFO (this item only added in sandbox mode';
@@ -115,6 +123,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['on0_'.$item_num] = 'NOTIFY URL';
 			$redirect_args['os0_' . $item_num] = $notify_url;
 		}
+
 		$redirect_args['business'] = $this->_paypal_id;
 		$redirect_args['return'] = $return_url;
 		$redirect_args['cancel_return'] = $cancel_url;
@@ -127,7 +136,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['image_url'] = $this->_image_url;
 		}
 		$redirect_args['no_shipping'] = $this->_shipping_details;
-		
+
 		$payment->set_redirect_url($this->_gateway_url);
 		$payment->set_redirect_args($redirect_args);
 		return $payment;
@@ -161,8 +170,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		if(empty($transaction)){
 			return false;
 		}
-		
-		
+
+
 		//ok, well let's process this payment then!
 		if($update_info['payment_status']=='Completed'){ //the old code considered 'Pending' as completed too..
 			$status = $this->_pay_model->approved_status();//approved
@@ -176,7 +185,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 //		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
 		//check if we've already processed this payment
-		
+
 		if( ! empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->status() == $status && $payment->amount() == $update_info['mc_gross']){
@@ -199,12 +208,12 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @param EE_Payment $payment
 	 * @return boolean
 	 */
-	public function validate_ipn($update_info,$payment) {		
+	public function validate_ipn($update_info,$payment) {
 		$update_info_from_post_only = array_diff_key($update_info, $_GET);
 		$response_post_data=$update_info_from_post_only + array('cmd'=>'_notify-validate');
 		$result= wp_remote_post($this->_gateway_url, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
-		
-		if ( ! is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) { 
+
+		if ( ! is_wp_error($result) && array_key_exists('body',$result) && strcmp($result['body'], "VERIFIED") == 0) {
 			return true;
 		}else{
 			$payment->set_gateway_response(sprintf(__("IPN Validation failed! Paypal responded with '%s'", "event_espresso"),$result['body']));

@@ -108,7 +108,7 @@ class EE_Email_messenger extends EE_messenger  {
 				'shortcodes' => array('organization', 'primary_registration_details', 'event_author', 'primary_registration_details', 'recipient_details')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list', 'transaction')
+				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list', 'transaction', 'messenger')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
@@ -156,6 +156,26 @@ class EE_Email_messenger extends EE_messenger  {
 		}
 
 		return $url ? apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $type )  : apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $type );
+	}
+
+
+
+	/**
+	 * @see parent EE_messenger class for docs
+	 *
+	 * @since 4.5.0
+	 */
+	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
+		if ( $sending_messenger_name = 'html' ) {
+			add_filter( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', array( $this, 'add_email_css' ), 10, 2 );
+		}
+	}
+
+
+
+
+	public function add_email_css( $url, $type ) {
+		return $this->get_inline_css_template( true );
 	}
 
 
@@ -329,7 +349,6 @@ class EE_Email_messenger extends EE_messenger  {
 
 
 
-
 	/**
 	 * See definition of this class in parent
 	 */
@@ -340,6 +359,29 @@ class EE_Email_messenger extends EE_messenger  {
 			'not_approved_registration',
 			//'declined_registration',
 			//'cancelled_registration',
+			'pending_approval',
+			'payment_reminder',
+			'payment_declined',
+			'payment_refund'
+			);
+	}
+
+
+
+
+	/**
+	 * @see definition of this class in parent
+	 *
+	 * @since 4.5.0
+	 *
+	 */
+	protected function _set_valid_message_types() {
+		$this->_valid_message_types = array(
+			'payment',
+			'registration',
+			'not_approved_registration',
+			'declined_registration',
+			'cancelled_registration',
 			'pending_approval',
 			'payment_reminder',
 			'payment_declined',

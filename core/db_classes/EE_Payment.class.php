@@ -435,35 +435,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 
 
 
-	/**
-	 * Echoes out the payment overview HTML from the gateway used on this payment
-	 */
-	public function e_gateway_payment_overview_content() {
-		echo $this->gateway_payment_overview_content();
-	}
 
-
-
-	/**
-	 * Gets the payment overview content from the gateway used on this payment.
-	 * @return string
-	 */
-	public function gateway_payment_overview_content() {
-		$gateway_name = $this->gateway();
-		$EEM_Gateways = EEM_Gateways::instance();
-		//call its render payment results, feeding it the current payment
-		return $EEM_Gateways->get_payment_overview_content( $gateway_name, $this );
-	}
-
-
-
-	/**
-	 *        get Payment Gateway
-	 * @access        public
-	 */
-	public function gateway() {
-		return $this->get( 'PAY_gateway' );
-	}
 
 
 

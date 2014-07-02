@@ -624,8 +624,7 @@ final class EE_System {
 		}
 		// get model names
 		$this->_parse_model_names();
-		//load_messages controller
-		EE_Registry::instance()->load_lib( 'Messages_Init' );
+
 		//load caf stuff a chance to play during the activation process too.
 		$this->_maybe_brew_regular();
 		do_action( 'AHEE__EE_System__load_core_configuration__complete', $this );

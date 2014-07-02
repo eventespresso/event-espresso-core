@@ -52,8 +52,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function __construct( $routing = TRUE ) {
 		//make sure messages autoloader is running
-		EE_Registry::instance()->load_lib( 'Messages_Init' );
-		EE_Messages_Init::set_autoloaders();
+		EED_Messages::set_autoloaders();
 		parent::__construct($routing);
 	}
 
@@ -76,7 +75,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//we're also going to set the active messengers and active message types in here.
 		$this->_active_messengers = get_option('ee_active_messengers');
 		$this->_active_messengers = !empty($this->_active_messengers) ?  $this->_active_messengers : array();
-		$this->_active_message_types = !empty($this->_active_messenger) && !empty($this->_active_messengers[$this->_active_messenger]) ? array_keys($this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types']) : array();
+		$this->_active_message_types = !empty($this->_active_messenger) && !empty($this->_active_messengers[$this->_active_messenger]) && ! empty(  $this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types'] ) ? array_keys($this->_active_messengers[$this->_active_messenger]['settings'][$this->_active_messenger . '-message_types']) : array();
 
 
 		//what about saving the objects in the active_messengers and active_message_types?
@@ -1194,7 +1193,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_set_publish_post_box_vars( 'id', $GRP_ID );
 
 		//add preview button
-		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'msg_id' => $GRP_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
+		$preview_url = parent::add_query_args_and_nonce( array( 'message_type' => $message_template_group->message_type(), 'messenger' => $message_template_group->messenger(), 'context' => $context,'GRP_ID' => $GRP_ID, 'action' => 'preview_message' ), $this->_admin_base_url );
 		$preview_button = '<a href="' . $preview_url . '" class="button-secondary messages-preview-button">' . __('Preview', 'event_espresso') . '</a>';
 
 
@@ -1322,11 +1321,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	public function _preview_message( $send = FALSE ) {
 		//first make sure we've got the necessary parameters
-		if ( !isset( $this->_req_data['message_type'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['msg_id'] ) ) {
+		if ( !isset( $this->_req_data['message_type'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['messenger'] ) || !isset( $this->_req_data['GRP_ID'] ) ) {
 			EE_Error::add_error( __('Missing necessary parameters for displaying preview', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
-		$_POST['msg_id'] = $this->_req_data['msg_id']; //make sure post global has the msg_id param for later use.
+		$_POST['GRP_ID'] = $this->_req_data['GRP_ID']; //make sure post global has the GRP_ID param for later use.
 
 		$MSG = new EE_messages();
 
@@ -1339,7 +1338,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//let's add a button to go back to the edit view
 		$query_args = array(
-			'id' => $this->_req_data['msg_id'],
+			'id' => $this->_req_data['GRP_ID'],
 			'context' => $this->_req_data['context'],
 			'action' => 'edit_message_template'
 			);
@@ -1802,7 +1801,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_req_data['messenger'] = $messenger;
 		$this->_req_data['message_type'] = $message_type;
 		$this->_req_data['context'] = $context;
-		$this->_req_data['msg_id'] = isset($this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : '';
+		$this->_req_data['GRP_ID'] = isset($this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : '';
 
 		//let's save any existing fields that might be required by the messenger
 		if ( isset( $this->_req_data['test_settings_fld'] ) ) {
@@ -1834,6 +1833,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 * @return array|error_object array of data required for the redirect to the correct edit page or error object if encountering problems.
 	 */
 	protected function _generate_new_templates($messenger, $message_types, $GRP_ID = 0, $global = FALSE) {
+
+		//if no $message_types are given then that's okay... this may be a messenger that just adds shortcodes, so we just don't generate any templates.
+		if ( empty( $message_types ) )
+			return true;
 
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
 
@@ -2039,9 +2042,16 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'obj' => $messenger
 				);
 
+			$message_types_for_messenger = $messenger->get_valid_message_types();
+
 			//assemble the array for the ACTIVE and INACTIVE message types with the selected messenger //note that all message types will be in the inactive box if the messenger is NOT active.
 			$selected_settings = isset( $this->_active_messengers[$messenger->name]['settings'] ) ? $this->_active_messengers[$messenger->name]['settings'] : array();
 			foreach ( $message_types as $message_type ) {
+				//first we need to verify that this message type is valid with this messenger. Cause if it isn't then it shouldn't show in either the inactive OR active metabox.
+				if ( ! in_array( $message_type->name, $message_types_for_messenger ) ) {
+					continue;
+				}
+
 				$a_or_i = isset( $selected_settings[$messenger->name . '-message_types'][$message_type->name] ) && $selected_settings[$messenger->name . '-message_types'][$message_type->name] ? 'active' : 'inactive';
 
 				$this->_m_mt_settings['message_type_tabs'][$messenger->name][$a_or_i][$message_type->name] = array(
@@ -2151,6 +2161,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$m_boxes[$messenger . '_a_box'] = sprintf( __('%s Settings', 'event_espresso'), $tab_array['label'] );
 			$m_template_args[$messenger . '_a_box'] = array(
 					'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
+					'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) ? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) : '',
 					'content' => $this->_get_messenger_box_content( $tab_array['obj'] ),
 					'hidden' => $active ? '' : ' hidden',
 					'hide_on_message' => $hide_on_message,
@@ -2162,6 +2173,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//message type meta boxes (which is really just the inactive container for each messenger showing inactive message types for that messenger)
 			$mt_boxes[$messenger . '_i_box'] = __('Inactive Message Types', 'event_espresso');
 			$mt_template_args[$messenger . '_i_box'] = array(
+				'active_message_types' => !empty( $active_mt_tabs ) ? $this->_get_mt_tabs( $active_mt_tabs ) : '',
 				'inactive_message_types' => isset( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) ? $this->_get_mt_tabs( $this->_m_mt_settings['message_type_tabs'][$messenger]['inactive'] ) : '',
 				'hidden' => $active ? '' : ' hidden',
 				'hide_on_message' => $hide_on_message,
@@ -2184,7 +2196,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		foreach ( $mt_boxes as $box => $label ) {
 			$callback_args = array( 'template_path' => $mt_template_path, 'template_args' => $mt_template_args[$box] );
 			$mt = str_replace( '_i_box', '', $box );
-			add_meta_box( 'espresso_' . $msgr . '_inactive_mts', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'side', 'high', $callback_args );
+			add_meta_box( 'espresso_' . $mt . '_inactive_mts', $label, create_function('$post, $metabox', 'echo EEH_Template::display_template( $metabox["args"]["template_path"], $metabox["args"]["template_args"], TRUE );'), $this->_current_screen_id, 'side', 'high', $callback_args );
 		}
 
 	}
