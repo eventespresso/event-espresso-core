@@ -42,15 +42,6 @@ jQuery(document).ready(function($) {
 				cursor: "move"
 			});
 
-			//toggle slide
-			$( document ).on('click', '#active-message-types .mt-handlediv', function() {
-				MSG_helper.slide(this);
-			});
-
-			$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
-				MSG_helper.slide(this);
-			});
-
 			//make sure inactives are draggable too
 			$( "li", $inactive_mts ).draggable({
 				cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
@@ -399,6 +390,17 @@ jQuery(document).ready(function($) {
 	//on page load do init and toggle
 	var messenger = $('.item_display a').attr('href');
 	MSG_helper.init().toggle('email');
+
+
+
+	//toggle slide
+	$( document ).on('click', '#active-message-types .mt-handlediv', function() {
+		MSG_helper.slide(this);
+	});
+
+	$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
+		MSG_helper.slide(this);
+	});
 
 	/**
 	 * bind to messenger text link selector event
