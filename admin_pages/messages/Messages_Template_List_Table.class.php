@@ -193,7 +193,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		$ctxt = array();
 		$context_templates = $item->context_templates();
 		foreach ( $context_templates as $context => $template_fields ) {
-			$mtp_to = $context_templates[$context]['to'] instanceof EE_Message_Template ? $context_templates[$context]['to']->get('MTP_content') : NULL;
+			$mtp_to = !empty( $context_templates[$context]['to'] ) && $context_templates[$context]['to'] instanceof EE_Message_Template ? $context_templates[$context]['to']->get('MTP_content') : NULL;
 			$inactive = empty( $mtp_to ) ? ' class="mtp-inactive"' : '';
 			$context_title = ucwords($c_configs[$context]['label']);
 			$edit_link = EE_Admin_Page::add_query_args_and_nonce( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL );
