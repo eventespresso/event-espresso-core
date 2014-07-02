@@ -192,7 +192,12 @@ final class EE_Config {
 				$config_array = $settings;
 				$settings = new stdClass();
 				foreach ( $config_array as $key => $value ){
-					$settings->$key = $value;
+					if ( $key == 'calendar' ) {
+						$this->set_config( 'addons', 'EE_Calendar_Config', $value );
+					} else {
+						$settings->$key = $value;
+					}
+
 				}
 			}
 			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : '';
