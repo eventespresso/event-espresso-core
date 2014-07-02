@@ -84,7 +84,7 @@ class EE_Html_messenger extends EE_messenger  {
 				'shortcodes' => array('organization', 'primary_registration_details', 'event_author', 'primary_registration_details', 'recipient_details')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list', 'transaction')
+				'shortcodes' => array( 'recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
@@ -101,6 +101,10 @@ class EE_Html_messenger extends EE_messenger  {
 			'datetime_list' => array(
 				'shortcodes' => array('datetime'),
 				'required' => array('[DATETIME_LIST]')
+				),
+			'question_list' => array(
+				'shortcodes' => array('question'),
+				'required' => array('[QUESTION_LIST]')
 				)
 			);
 	}
@@ -216,7 +220,18 @@ class EE_Html_messenger extends EE_messenger  {
 						'css_class' => 'large-text',
 						'rows' => '10',
 						'shortcodes_required' => array('[DATETIME_LIST]')
-						)
+						),
+					'question_list' => array(
+						'input' => 'textarea',
+						'label' => '[QUESTION_LIST]',
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[QUESTION_LIST]')
+					)
 				)
 			)
 		);
@@ -241,7 +256,8 @@ class EE_Html_messenger extends EE_messenger  {
 				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
 				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
 				'ticket_list' => __('This contains the formatting for each ticket in a ticket list.', 'event_espresso'),
-				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso')
+				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso'),
+				'question_list' => __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'event_espresso')
 				)
 			);
 	}
