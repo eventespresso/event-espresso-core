@@ -264,7 +264,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return 	EE_Form_Section_Proper
 	 */
 	public function copy_attendee_info_form(){
-
 		// array of params to pass to parent constructor
 		$form_args = array(
 			'name' 					=> 'spco_copy_attendee_chk',
@@ -333,11 +332,12 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->reg_url_link() . ']' ] = new EE_Checkbox_Multi_Input(
 					array( $registration->reg_url_link() => sprintf( __('Attendee #%s', 'event_espresso'), $registration->count() )),
 					array(
-						'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
-						'name' 					=> $registration->reg_url_link(),
-						'html_name' 			=> 'spco_copy_attendee_chk[' . $registration->reg_url_link() . ']',
-						'html_id' 					=> $registration->reg_url_link(),
-						'html_class' 			=> 'spco-copy-attendee-chk'
+						'name' 					=> 'spco_copy_attendee_chk',
+						'html_name' 			=> 'spco_copy_attendee_chk',
+						'html_id' 					=> 'spco-copy-attendee-chk',
+						'html_class' 			=> 'spco-copy-attendee-chk',
+						'html_label_id' 		=> 'spco_copy_attendee_chk',
+						'html_label_text' 	=> ''
 					)
 				);
 			}
