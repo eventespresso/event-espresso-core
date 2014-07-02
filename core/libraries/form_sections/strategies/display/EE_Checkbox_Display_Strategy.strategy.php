@@ -20,7 +20,7 @@ class EE_Checkbox_Display_Strategy extends EE_Select_Display_Strategy{
 			}
 			$value_slug = sanitize_key( $value );
 			$value_inside_attribute = esc_attr( $value );
-			$html .= '<label for="' . $this->_input->html_name() . '-' . $value_slug . '"><input id="' . $this->_input->html_id() . '-' . $value_slug . '" name="' . $this->_input->html_name() . '[]" class="' . $this->_input->html_class() . '" style="' . $this->_input->html_style() . '" type="checkbox" value="' . $value_inside_attribute . '"' . $selected_attr . '>' . $display_text . '</label>';
+			$html .= '<label for="' . $this->_input->html_id() . '-' . $value_slug . '" class="ee-checkbox-label-after"><input id="' . $this->_input->html_id() . '-' . $value_slug . '" name="' . $this->_input->html_name() . '[]" class="' . $this->_input->html_class() . '" style="' . $this->_input->html_style() . '" type="checkbox" value="' . $value_inside_attribute . '"' . $selected_attr . '>&nbsp;' . $display_text . '</label>';
 		}
 		return $html;
 	}
