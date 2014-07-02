@@ -164,15 +164,6 @@ class EE_Html_messenger extends EE_messenger  {
 				),
 			'content' => '', //left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
 			'extra' => array(
-				'subject' => array(
-					'input' => 'text',
-					'label' => __('Page Title', 'event_espresso'),
-					'type' => 'string',
-					'required' => TRUE,
-					'validation' => TRUE,
-					'css_class' => 'large-text',
-					'format' => '%s'
-					),
 				'content' => array(
 					'main' => array(
 						'input' => 'wp_editor',
