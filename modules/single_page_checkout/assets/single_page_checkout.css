@@ -3,9 +3,7 @@
 #single-page-checkout {
 	position: relative;
 }
-#single-page-checkout label {
-	display: block;
-}
+
 
 
 /*** STEPS DISPLAY HEADER ***/
@@ -180,20 +178,12 @@
 	line-height:1.1em;
 }
 #spco-copy-attendee-dv .spco-copy-attendee-pg {
-	margin:0;
+	margin:0 0 1em;
 	font-size:.8em;
 	letter-spacing:1px;
 }
 #spco-copy-attendee-dv .spco-copy-all-attendee-pg {
 	margin:0 0 .75em;
-}
-#spco-copy-attendee-dv label {
-	display: block;
-	padding: 0.5em 10px 0.5em 0;
-	cursor: pointer;
-	font-size: .9em;
-	line-height: 1em;
-	vertical-align: middle;
 }
 #spco-copy-attendee-dv .spco-copy-attendee-pg span {
 	margin:0 0 1em;
@@ -210,10 +200,21 @@
 	color:#444;
 }
 #spco-copy-attendee-dv .spco-copy-attendee-chk, #spco-copy-all-attendee-chk {
-	position:relative;
-	top:2px;
-	left:5px;
-	margin:0 5px;
+}
+.spco-copy-attendee-chk-pg {
+	display:inline-block;
+	float:left;
+	clear:none!important;
+	width:32%;
+	margin: 0!important;
+}
+.spco-copy-attendee-hr {
+	clear:both;
+	margin:1em 0 0;
+	background:none;
+	border:none;
+	border-top:1px solid rgba( 0, 0, 0, .05);
+	border-bottom:1px solid rgba( 255, 255, 255, .9);
 }
 #more-attendee-copy-options-dv {
 	position:relative;
@@ -225,8 +226,38 @@
 
 /*** INPUTS ***/
 
-input:not([type=checkbox]):not([type=submit]):not([type=file]) {
+#single-page-checkout label {
+	display: block;
+}
+#single-page-checkout input:not([type=checkbox]):not([type=submit]):not([type=file]) {
 	max-width: 100%;
 	min-width: 50%;
 	width:100%;
+}
+#single-page-checkout input[type=checkbox] {
+	position: relative;
+	top: -1px;
+	width: 13px;
+	height: 13px;
+	padding: 0;
+	margin:0 .5em;
+	vertical-align: bottom;
+	*overflow: hidden;
+}
+.ee-checkbox-label-after {
+	display: inline-block;
+	padding-left: 20px;
+	text-indent: -20px;
+	cursor: pointer;
+	font-size: .9em;
+	line-height: 1em;
+}
+.ee-checkbox-label-before {
+	display: inline-block;
+	cursor: pointer;
+	font-size: .9em;
+	line-height: 1em;
+}
+.ee-checkbox-label-wide {
+	width:auto !important;
 }
