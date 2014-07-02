@@ -298,7 +298,7 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	public function email_default_field_content( $default_field_content, EE_Email_messenger $messenger ) {
-		$default_field_content['content']['question_list'] = __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'evnt_espresso');
+		$default_field_content['content']['question_list'] = __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'event_espresso');
 		return $default_field_content;
 	}
 
