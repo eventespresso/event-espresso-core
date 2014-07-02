@@ -143,9 +143,7 @@ abstract class EE_Form_Section_Layout_Base{
 		if($input->required()){
 			$class = 'required-label '.$class;
 		}
-		return "<label id='{$input->html_label_id()}' class='$class' style='{$input->html_label_style()}' for='{$input->html_id()}'>".
-				$input->html_label_text().
-				"</label>";
+		return "<label id='{$input->html_label_id()}' class='$class' style='{$input->html_label_style()}' for='{$input->html_name()}'>" .  $input->html_label_text() . "</label>";
 	}
 
 
@@ -156,9 +154,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function display_errors($input){
-		return "<label id='{$input->html_id()}-errors' class='ee-validation-error' for='{$input->html_id()}'>".
-				$input->get_validation_error_string().
-				"</label>";
+		return "<label id='{$input->html_id()}-errors' class='ee-validation-error' for='{$input->html_id()}' style='display:none;'>" . $input->get_validation_error_string() . "</label>";
 	}
 
 
@@ -169,9 +165,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function display_help_text($input){
-		return "<span id='{$input->html_id()}-help' class='{$input->html_help_class()}' style='{$input->html_help_style()}'>".
-				$input->html_help_text().
-				"</span>";
+		return "<span id='{$input->html_id()}-help' class='{$input->html_help_class()}' style='{$input->html_help_style()}'>" . $input->html_help_text() . "</span>";
 	}
 
 
