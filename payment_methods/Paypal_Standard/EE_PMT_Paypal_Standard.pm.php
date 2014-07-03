@@ -29,19 +29,19 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 				'image_url'=>new EE_Admin_File_Uploader_Input(array(
 					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso')
 				)),
+				'paypal_taxes' => new EE_Yes_No_Input(array(
+					'html_label_text' => sprintf( __( 'Paypal Calculates Taxes %s', 'event_espresso' ), EEH_Template::get_help_tab_link( self::help_tab_name ) ),
+					'html_help_text' => __('Whether Paypal should calculate order taxes', 'event_espresso')
+				)),
+				'paypal_shipping' => new EE_Yes_No_Input(array(
+					'html_label_text' => sprintf( __( 'Paypal Calculates Shipping %s', 'event_espresso' ), EEH_Template::get_help_tab_link( self::help_tab_name ) ),
+					'html_help_text' => __('Wether Paypal should add shipping surcharges', 'event_espresso')
+				)),
 				'shipping_details'=>new EE_Select_Input(array(
 					EE_PMT_Paypal_Standard::shipping_info_none => __("Do not prompt for an address", 'event_espresso'),
 					EE_PMT_Paypal_Standard::shipping_info_optional => __("Prompt for an address, but do not require it", 'event_espresso'),
 					EE_PMT_Paypal_Standard::shipping_info_required => __("Prompt for an address, and require it", 'event_espresso')
 				)),
-				'tax_override' => new EE_Yes_No_Input(array(
-					'html_label_text' => sprintf( __( 'Override Paypal Taxes %s', 'event_espresso' ), EEH_Template::get_help_tab_link( self::help_tab_name ) ),
-					'html_help_text' => __('Whether to prevent Paypal from adding taxes or not', 'event_espresso')
-				)),
-				'shipping_override' => new EE_Yes_No_Input(array(
-					'html_label_text' => sprintf( __( 'Override Paypal Shipping %s', 'event_espresso' ), EEH_Template::get_help_tab_link( self::help_tab_name ) ),
-					'html_help_text' => __('Whether to prevent Paypal from adding shipping charges or not', 'event_espresso')
-				))
 				),
 			'before_form_content_template'=>$this->file_folder().DS.'templates'.DS.'paypal_standard_settings_before_form.template.php',
 			)

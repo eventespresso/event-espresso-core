@@ -409,6 +409,12 @@ interface EEI_Line_Item{
 	 * @return EEI_Line_Item[]
 	 */
 	function tax_descendants();
+
+	/**
+	 * Gets the total amount of the tax sub-line items
+	 * @return float
+	 */
+	function get_total_tax();
 }
 
 interface EEI_Registration{
