@@ -11,8 +11,9 @@ jQuery(document).ready(function($){
         //make sure the form tag has an id
         var id = html_form.attr('id');
         if ( typeof ( id ) === 'undefined' || id == '' ) {
-            html_form.attr('id',Date.now());
-            id = html_form.attr('id');
+			var new_id = Date.now();
+            html_form.attr('id', new_id);
+            id = new_id;
         }
         if ( typeof(validation_rules_per_html_form[id]) == 'undefined'){
             validation_rules_per_html_form[id] = form_data.validation_rules;

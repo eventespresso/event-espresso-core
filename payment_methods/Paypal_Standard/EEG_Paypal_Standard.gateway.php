@@ -29,8 +29,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	protected $_paypal_id = NULL;
 	protected $_image_url = NULL;
 	protected $_shipping_details = NULL;
-	protected $_shipping_override = NULL;
-	protected $_tax_override = NULL;
+	protected $_paypal_shipping = NULL;
+	protected $_paypal_taxes = NULL;
 	protected $_gateway_url = NULL;
 	protected $_currencies_supported = array(
 					'USD',
@@ -95,19 +95,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$redirect_args['item_name_' . $item_num] = substr($line_item->name(),0,127);
 				$redirect_args['amount_' . $item_num] = $line_item->unit_price();
 				$redirect_args['quantity_' . $item_num] = $line_item->quantity();
-				if( $this->_shipping_override ){
+				if( $this->_paypal_shipping ){
 					$redirect_args['shipping_' . $item_num ] = '0.00';
 				}
-				if( $this->_tax_override ){
-					$redirect_args[ 'tax_' . $item_num ] = '0.00';
-				}
-				$item_num++;
-			}
-			//and show all the taxes
-			foreach($total_line_item->tax_descendants() as $tax_line_item){
-				$redirect_args['item_name_' . $item_num] = substr($tax_line_item->name(),0,127);
-				$redirect_args['amount_' . $item_num] = $tax_line_item->total();
-				$redirect_args['quantity_' . $item_num] = '1';
 				$item_num++;
 			}
 		}else{
@@ -122,6 +112,10 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			$redirect_args['amount_' . $item_num] = 0;
 			$redirect_args['on0_'.$item_num] = 'NOTIFY URL';
 			$redirect_args['os0_' . $item_num] = $notify_url;
+		}
+		//add our taxes to the order if we're NOT using paypal's
+		if( ! $this->_paypal_taxes ){
+			$redirect_args['tax'] = $total_line_item->get_total_tax();
 		}
 
 		$redirect_args['business'] = $this->_paypal_id;
@@ -186,6 +180,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 //		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
 		//check if we've already processed this payment
 
+		if( floatval( $update_info[ 'tax' ] ) ){
+			//@todo: possibly update the line items with a new tax
+		}
 		if( ! empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->status() == $status && $payment->amount() == $update_info['mc_gross']){
