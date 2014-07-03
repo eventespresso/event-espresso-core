@@ -154,6 +154,16 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$form_args['subsections'][ 'additional_attendee_reg_info_' . $registration->reg_url_link() ] = $this->additional_attendee_reg_info_input( $registration );
 			}
 		}
+		if ( $registration->is_primary_registrant() ) {
+			if ( ! is_admin() ) {
+				// TODO: add admin option for toggling copy attendee info, then use that value here
+				$print_copy_info = TRUE;
+				// generate hidden input
+				$form_args['subsections']['copy_attendee_info'] = $print_copy_info ? $this->copy_attendee_info_form() : $this->auto_copy_attendee_info();
+			}
+			// generate hidden input
+			$form_args['subsections']['reg_form_primary_registrant'] = $this->additional_primary_registrant_inputs();
+		}
 		$attendee_nmbr++;
 		return new EE_Form_Section_Proper( $form_args );
 	}
@@ -220,16 +230,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			if( $question instanceof EE_Question ){
 				$form_args['subsections'][ 'reg_form_question_' . $question->ID() ] = $this->reg_form_question( $registration, $question );
 			}
-		}
-		if ( $registration->is_primary_registrant() ) {
-			if ( ! is_admin() ) {
-				// TODO: add admin option for toggling copy attendee info, then use that value here
-				$print_copy_info = TRUE;
-				// generate hidden input
-				$form_args['subsections']['copy_attendee_info'] = $print_copy_info ? $this->copy_attendee_info_form() : $this->auto_copy_attendee_info();
-			}
-			// generate hidden input
-			$form_args['subsections']['reg_form_primary_registrant'] = $this->additional_primary_registrant_inputs();
 		}
 		// filter for additional content after questions
 		$form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML( apply_filters( 'FHEE__EEH_Form_Fields__generate_question_groups_html__after_question_group_questions', '' ));
