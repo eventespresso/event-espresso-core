@@ -322,13 +322,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$item_name .= $registration->ticket()->description() != '' ? ' - ' . $registration->ticket()->description() : '';
 					$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->ticket()->ID() . ']' ] = new EE_Form_Section_HTML( '<h6 class="spco-copy-attendee-event-hdr">' . $item_name . '</h6>' );
 					$prev_ticket = $registration->ticket()->ID();
-				} else {
-					$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->ticket()->ID() . ']' ] = new EE_Form_Section_HTML( '
-			<div class="clear-float"></div>
-		<hr class="spco-copy-attendee-hr" />'
-					);
 				}
-
+				
 				$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->reg_url_link() . ']' ] = new EE_Checkbox_Multi_Input(
 					array( $registration->reg_url_link() => sprintf( __('Attendee #%s', 'event_espresso'), $registration->count() )),
 					array(
