@@ -19,6 +19,7 @@
 <head>
 <title><?php echo $page_title; ?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<?php wp_head(); ?>
 <!-- Base Stylesheet do not change or remove -->
 <link rel="stylesheet" type="text/css" href="<?php echo $base_css; ?>" media="screen" />
 <!-- Print Style Sheet -->
@@ -34,4 +35,5 @@
 <body>
 	<?php echo $main_body; ?>
 </body>
+<?php wp_footer(); ?>
 </html>
