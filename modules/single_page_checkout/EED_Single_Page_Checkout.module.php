@@ -588,7 +588,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public function set_templates() {
 //		$this->_templates['registration_page_wrapper'] = SPCO_TEMPLATES_PATH . 'registration_page_wrapper.template.php';
-//		$this->_templates['registration_page_attendee_information'] = SPCO_TEMPLATES_PATH . 'attendee_information_master.template.php';
+//		$this->_templates['registration_page_attendee_information'] = SPCO_TEMPLATES_PATH . 'attendee_info_main.template.php';
 //		$this->_templates['registration_page_payment_options'] = SPCO_TEMPLATES_PATH . 'registration_page_payment_options.template.php';
 //		$this->_templates['registration_page_confirmation'] = SPCO_TEMPLATES_PATH . 'registration_page_confirmation.template.php';
 //		$this->_templates['confirmation_page'] = SPCO_TEMPLATES_PATH . 'confirmation_page.template.php';

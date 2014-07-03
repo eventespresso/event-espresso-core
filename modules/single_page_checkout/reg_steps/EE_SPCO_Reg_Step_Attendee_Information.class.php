@@ -26,7 +26,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 //		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		$this->_slug = 'attendee_information';
 		$this->_name = __('Attendee Information', 'event_espresso');
-		$this->_template = SPCO_TEMPLATES_PATH . 'attendee_information_master.template.php';
+		$this->_template = SPCO_TEMPLATES_PATH . 'attendee_info_main.template.php';
 		$this->_reg_form_name = 'EE_Attendee_Information_Reg_Form';
 		$this->checkout = $checkout;
 	}
@@ -90,7 +90,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			'layout_strategy'		=> is_admin() ?
 					new EE_Div_Per_Section_Layout() :
 					new EE_Template_Layout( array(
-							'layout_template_file' 		=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'attendee_information_master.template.php', // layout_template
+							'layout_template_file' 		=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'attendee_info_main.template.php', // layout_template
 							'begin_template_file' 		=> NULL,
 							'input_template_file' 			=> NULL,
 							'subsection_template_file' => NULL,
