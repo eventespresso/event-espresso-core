@@ -98,4 +98,10 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 	}
 
 
+
+	public function get_ticket_set() {
+		return $this->_ticket;
+	}
+
+
 } //end EE_Ticket_Shortcodes class
