@@ -351,7 +351,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		d( $this->checkout );
 		// add some style and make it dance
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_css' ), 10 );
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
+//		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
 
 		$this->registration_checkout();
 
