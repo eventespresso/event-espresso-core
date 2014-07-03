@@ -195,9 +195,9 @@ class EE_messages {
 				//no messenger sent so let's just loop through active messengers (this method is only acceptable for primary messengers)
 				foreach ( $this->_active_messengers as $active_messenger ) {
 
-					//we ONLY continue if the given messenger is a primary messenger and is an active messenger for the given message type.  Otherwise we get out.
+					//we ONLY continue if the given messenger is a primary messenger and is an active messenger for the given message type.  Otherwise we skip.
 					if ( ! $this->_is_generating_messenger_and_active( $active_messenger, $this->_installed_message_types[$type] ) ) {
-						return false;
+						continue;
 					}
 
 					$success = $this->_send_message( $active_messenger, $this->_installed_message_types[$type], $vars, $active_messenger );
@@ -277,6 +277,7 @@ class EE_messages {
 	private function _send_message( EE_messenger $generating_messenger, EE_message_type $message_type, $data, EE_messenger $sending_messenger, $context = FALSE ) {
 		$messages = $message_type;
 		$success = FALSE;
+		$error = FALSE;
 		$exit = $messages->set_messages( $data, $generating_messenger, $context );
 
 		if ( is_wp_error($messages) || $messages === FALSE || $exit === FALSE ) {
@@ -297,9 +298,13 @@ class EE_messages {
 		foreach ( $messages->messages as $message ) {
 			//todo: should we do some reporting on messages gone out at some point?  I think we could have the $active_messenger object return bool for whether message was sent or not and we can compile a report based on that.
 			$success = $sending_messenger->send_message( $message );
+			if ( $success === FALSE  ) {
+				$error = TRUE;
+			}
 		}
 		unset($messages);
-		return $success;
+		//error is a global flag for the loop.  If there is NO error then everything is a success (true) otherwise it wasn't a success (false)
+		return $error ? FALSE : TRUE;
 	}
 
 
