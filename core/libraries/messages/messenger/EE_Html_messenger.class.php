@@ -148,6 +148,18 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 	/**
+	 * Takes care of enqueuing any necessary scripts or styles for the page.  A do_action() so message types using this messenger can add their own js.
+	 *
+	 * @return void.
+	 */
+	public  function enqueue_scripts_styles() {
+		do_action( 'AHEE__EE_Html_messenger__enqueue_scripts_styles', '' );
+	}
+
+
+
+
+	/**
 	 * _set_template_fields
 	 * This sets up the fields that a messenger requires for the message to go out.
 	 *
@@ -305,9 +317,27 @@ class EE_Html_messenger extends EE_messenger  {
 			'main_css' => $this->get_inline_css_template(TRUE),
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
+		$this->_deregister_wp_hooks();
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		echo $this->_get_main_template();
 		exit();
 	}
+
+
+
+
+	/**
+	 * The purpose of this function is to de register all actions hooked into wp_head and wp_footer so that it doesn't interfere with our templates.  If users want to add any custom styles or scripts they must use the AHEE__EE_Html_messenger__enqueue_scripts_styles hook.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	protected function _deregister_wp_hooks() {
+		remove_all_actions('wp_head');
+		remove_all_actions('wp_footer');
+	}
+
 
 
 
