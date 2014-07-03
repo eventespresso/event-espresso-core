@@ -1,4 +1,4 @@
-<div id="single-page-checkout" class="">
+<div id="ee-single-page-checkout-dv" class="">
 <?php
 if ( ! $empty_cart ) {
 	if ( ! $revisit && apply_filters( 'FHEE__registration_page_wrapper_template__steps_display', TRUE )) {
