@@ -49,7 +49,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 	 * @param EE_Form_Section_Proper $form_section
 	 * @return string
 	 */
-	public function layout_subsection( $form_section = NULL ){
+	public function layout_subsection( $form_section ){
 //		d( $form_section );
 		return EEH_Formatter::nl(1) . $form_section->get_html_and_js() . EEH_Formatter::nl(-1);
 	}

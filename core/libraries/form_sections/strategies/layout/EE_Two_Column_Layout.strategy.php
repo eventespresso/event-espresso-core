@@ -51,7 +51,7 @@ class EE_Two_Column_Layout extends EE_Form_Section_Layout_Base{
 	 * @param array $additional_args
 	 * @return string
 	 */
-	public function layout_subsection( $form_section, $additional_args = array() ){
+	public function layout_subsection( $form_section ){
 		$html = EEH_Formatter::nl(1) . '<tr>';
 		$html .= EEH_Formatter::nl(1) . '<td colspan=2>';
 		$html .= EEH_Formatter::nl(1) . $form_section->get_html_and_js();

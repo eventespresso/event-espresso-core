@@ -116,7 +116,7 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	 * @param EE_Form_Section_Proper $form_section
 	 * @return string
 	 */
-	public function layout_subsection( $form_section = NULL ) {
+	public function layout_subsection( $form_section ) {
 		if($this->_subsection_template_file){
 			EE_Registry::instance()->load_helper('Template');
 			return EEH_Template::locate_template( $this->_subsection_template_file, $this->template_args(), TRUE, TRUE );
