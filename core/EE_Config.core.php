@@ -183,29 +183,88 @@ final class EE_Config {
 	 * 		@return void
 	 */
 	private function _load_core_config() {
+		$update = FALSE;
+		$this->_load_calendar_config();
 		$convert_from_array = array( 'addons' );
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
 			// in case old settings were saved as an array
-			if ( is_array( $settings ) && in_array( $settings, $convert_from_array )) {
-				// convert them to an object
-				$config_array = $settings;
-				$settings = new stdClass();
-				foreach ( $config_array as $key => $value ){
-					if ( $key == 'calendar' ) {
-						// save calendar settings using new methods
-						$this->set_config( 'addons', 'EE_Calendar_Config', $value );
-					}
-					$settings->$key = $value;
-				}
+			if ( is_array( $settings ) && in_array( $config, $convert_from_array )) {
+				$settings = $this->_migrate_old_config_data( $settings );
+				$update = TRUE;
 			}
 			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : '';
 			if ( ! empty( $settings ) && $settings instanceof $config_class ) {
 				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
 			}
 		}
+		if ( $update ) {
+			$this->update_espresso_config();
+		}
 		// construct__end hook
 		do_action( 'AHEE__EE_Config___load_core_config__end', $this );
+	}
+
+
+
+	/**
+	 *    _load_calendar_config
+	 *
+	 * @access    public
+	 * @return    stdClass
+	 */
+	private function _load_calendar_config() {
+		// grab array of all plugin folders and loop thru it
+		$plugins = glob( WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR );
+		foreach ( $plugins as $plugin_path ) {
+			// grab plugin folder name from path
+			$plugin = basename( $plugin_path );
+			// drill down to Espresso plugins
+			if ( strpos( $plugin, 'espresso' ) !== FALSE || strpos( $plugin, 'Espresso' ) !== FALSE || strpos( $plugin, 'ee4' ) !== FALSE || strpos( $plugin, 'EE4' ) !== FALSE ) {
+				// then to calendar related plugins
+				if ( strpos( $plugin, 'calendar' ) !== FALSE ) {
+					// this is what we are looking for
+					$calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
+					// does it exist in this folder ?
+					if ( is_readable( $calendar_config )) {
+						// YEAH! let's load it
+						require_once( $calendar_config );
+					}
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 *    _migrate_old_config_data
+	 *
+	 * @access    public
+	 * @param array  $settings
+	 * @return    stdClass
+	 */
+	private function _migrate_old_config_data( $settings = array() ) {
+		// convert existing settings to an object
+		$config_array = $settings;
+		$settings = new stdClass();
+		foreach ( $config_array as $key => $value ){
+			if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
+				$this->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
+//				$config_option_name = $this->_generate_config_option_name( 'addons', 'EE_Calendar' );
+//				delete_option( $config_option_name );
+//				// save calendar settings using new methods
+//				add_option( $config_option_name, $value, '', 'no' );
+//				// if the config option name hasn't been added yet to the list of option names we're tracking, then do so now
+//				if ( ! in_array( $config_option_name, $this->_config_option_names )) {
+//					$this->_config_option_names[] = $config_option_name;
+//				}
+//				$this->addons->EE_Calendar = $value;
+			} else {
+				$settings->$key = $value;
+			}
+		}
+		return $settings;
 	}
 
 
