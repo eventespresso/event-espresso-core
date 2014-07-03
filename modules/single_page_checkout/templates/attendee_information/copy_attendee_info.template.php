@@ -14,7 +14,7 @@
 	<div id="more-attendee-copy-options-dv" class="" style="display: none;">
 
 		<p class="spco-copy-attendee-pg">
-			<?php _e('The following checkboxes allow you to use the above information for only the selected additional tickets/attendees.', 'event_espresso'); ?>
+			<?php _e('Only copy the above information to the following selected additional attendees.', 'event_espresso'); ?>
 		</p>
 
 		<?php
