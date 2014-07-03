@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Venue_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Venue_Shortcodes lists all shortcodes related to venue specific info. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Venue_Shortcodes lists all shortcodes related to venue specific info.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Venue_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -32,12 +32,20 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 class EE_Venue_Shortcodes extends EE_Shortcodes {
 
 
+	/**
+	 * Will hold the EE_Event if available
+	 *
+	 * @var EE_Event
+	 */
+	protected $_event;
+
 
 	protected function _init_props() {
 		$this->label = __('Venue Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes specific to venue related data', 'event_espresso');
 		$this->_shortcodes = array(
 			'[VENUE_TITLE]' => __('The title for the event venue', 'event_espresso'),
+			'[VENUE_DESCRIPTION]' => __('The description for the event venue', 'event_espresso'),
 			'[VENUE_URL]' => __('A url to a webpage for the venue', 'event_espresso'),
 			'[VENUE_IMAGE]' => __('An image representing the event venue', 'event_espresso'),
 			'[VENUE_PHONE]' => __('The phone number for the venue', 'event_espresso'),
@@ -54,11 +62,15 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-		
+
 		switch ( $shortcode ) {
-			
+
 			case '[VENUE_TITLE]' :
 				return $this->_venue('title');
+				break;
+
+			case '[VENUE_DESCRIPTION]' :
+				return $this->_venue('description');
 				break;
 
 			case '[VENUE_URL]' :
@@ -101,10 +113,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 				return $this->_venue('gmap_link');
 				break;
 
-			case '[GOOGLE_MAP_IMAGE]' : 
+			case '[GOOGLE_MAP_IMAGE]' :
 				return $this->_venue('gmap_link_img');
 				break;
-				
+
 		}
 	}
 
@@ -117,10 +129,24 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _venue( $db_ref ) {
 
-		if ( ! $this->_data instanceof EE_Event )
-			return ''; //we need the event in order to get a venue!
+		//we need the EE_Event object to get the venue.
 
-		$venue = $this->_data->get_first_related('Venue');
+		$this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
+
+		//if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the reg_obj instead.
+		if ( empty( $this->_event ) ) {
+			$aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
+			$aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
+
+			$this->_event = $aee instanceof EE_Messages_Addressee && $aee->reg_obj instanceof EE_Registration ? $aee->reg_obj->event() : NULL;
+		}
+
+
+		//If there is no event objecdt by now then get out.
+		if ( ! $this->_event instanceof EE_Event )
+			return '';
+
+		$venue = $this->_event->get_first_related('Venue');
 
 		if ( empty( $venue ) )
 			return ''; //no venue so get out.
@@ -128,6 +154,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 		switch ( $db_ref ) {
 			case 'title':
 				return $venue->get('VNU_name');
+				break;
+
+			case 'description' :
+				return $venue->get('VNU_desc');
 				break;
 
 			case 'url':
