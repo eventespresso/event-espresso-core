@@ -129,7 +129,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @param EE_Form_Section_Base $subsection
 	 * @return string html
 	 */
-	abstract function layout_subsection( $subsection = NULL );
+	abstract function layout_subsection( $subsection );
 
 
 
