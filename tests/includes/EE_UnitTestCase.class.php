@@ -308,7 +308,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		//set any other fields which haven't yet been set
 		foreach($model->field_settings() as $field_name => $field){
 			$value = NULL;
-			if($field_name == 'EVT_timezone_string'){
+			if(in_array( $field_name, array(
+				'EVT_timezone_string',
+				'PAY_redirect_url',
+				'PAY_redirect_args') ) ){
 				$value = NULL;
 			}elseif($field instanceof EE_Enum_Integer_Field ||
 					$field instanceof EE_Enum_Text_Field ||
@@ -409,6 +412,29 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		unset($wp_actions['AHEE__EE_System__load_espresso_addons']);
 	}
 
+	/**
+	 * Makes a complete transaction record with all associated data (ie, its line items,
+	 * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
+	 * Resets EE_Cart in the process though, FYI
+	 * @param type $options
+	 * @return EE_Transaction
+	 */
+	protected function new_typical_transaction($options = array()){
+		$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> 10.00, 'TKT_taxable' => TRUE ) );
+
+		$cart = EE_Cart::reset();
+		$this->assertTrue( $cart->add_ticket_to_cart( $ticket ) );
+		$cart->get_applied_taxes();
+		$cart_total_line_item = $cart->get_grand_total();
+
+		$txn = $this->new_model_obj_with_dependencies( 'Transaction', array('TXN_total' => $cart_total_line_item->total() ) );
+		$r = $this->new_model_obj_with_dependencies( 'Registration', array('TXN_ID' => $txn->ID(), 'TKT_ID' => $ticket, 'REG_count'=>1, 'REG_group_size'=>1, 'REG_final_price' => $cart_total_line_item->total() ) );
 
 
+		$cart_total_line_item->save_this_and_descendants_to_txn( $txn->ID() );
+
+
+
+		return $txn;
+	}
 }
