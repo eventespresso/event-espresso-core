@@ -17,7 +17,7 @@ jQuery(document).ready(function($){
         }
 		//remove the non-js-generated server-side validation errors
 		//because we will alow jquery validatew to populate them
-		$('#'+form_data.form_section_id+' '+'.error').remove();
+		$(form_data.form_section_id+' '+'.error').remove();
         if ( typeof(validation_rules_per_html_form[id]) == 'undefined'){
 			validation_rules_per_html_form[id] = {
 				'rules':form_data.validation_rules,
