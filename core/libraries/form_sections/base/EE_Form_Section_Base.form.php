@@ -239,7 +239,7 @@ abstract class EE_Form_Section_Base {
 	 * @return string
 	 */
 	public function form_open( $action = NULL, $method = 'POST', $other_attributes = '' ) {
-		return EEH_Formatter::nl(1) . '<form id="ee-' . $this->html_id() . '-form" action="' . $action . '" method="' . $method . '"' . $other_attributes . '>';
+		return EEH_Formatter::nl(1) . '<form id="' . $this->html_id() . '" action="' . $action . '" method="' . $method . '"' . $other_attributes . '>';
 	}
 
 
