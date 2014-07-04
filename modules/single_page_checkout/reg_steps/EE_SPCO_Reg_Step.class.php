@@ -193,8 +193,8 @@ abstract class EE_SPCO_Reg_Step {
 			$inputs[ $input['name'] ] = new EE_Hidden_Input( $input_constructor_args );
 		}
 		$form_args = array(
-			'name' 			=> 'hidden-inputs',
-			'html_id' 			=> 'hidden-inputs',
+			'name' 			=> 'ee-' . $this->slug() . '-hidden-inputs',
+			'html_id' 			=> 'ee-' . $this->slug() . '-hidden-inputs',
 			'subsections' 	=> $inputs,
 			'exclude' 	=> array(),
 			'layout_strategy'	=> new EE_Div_Per_Section_Layout()
