@@ -14,7 +14,7 @@
  * @subpackage messages
  */
 ?>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<!doctype html>
 <html>
 <head>
 <title><?php echo $page_title; ?></title>
