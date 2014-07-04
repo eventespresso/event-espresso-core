@@ -147,15 +147,20 @@ abstract class EE_Form_Section_Layout_Base{
 
 
 	/**
-	 * returns the HTML for the errors for the specified input
+	 * returns the HTML for the server-side validation errors for the specified input
+	 * Note that if JS is enabled, it should remove these and instead
+	 * populate the form's errors in the jquery validate fashion
+	 * using the localizated data provided to the JS
 	 * @param EE_Form_Input_Base $input
 	 * @return string
 	 */
 	public function display_errors($input){
-		return '<label id="' . $input->html_id() . '-errors" class="ee-validation-error" for="' . $input->html_id() . '" style="display:none;">' . $input->get_validation_error_string() . '</label>';
+		if( $input->get_validation_errors() ){
+			return  "<label  id='" . $input->html_id() . "'-errors' class='error' for='{$input->html_name()}'>" . $input->get_validation_error_string() . "</label>";
+		}else{
+			return '';
+		}
 	}
-
-
 
 	/**
 	 * Displays the help span for the specified input
