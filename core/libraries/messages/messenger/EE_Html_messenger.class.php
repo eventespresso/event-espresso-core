@@ -81,7 +81,7 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _set_validator_config() {
 		$this->_validator_config = array(
 			'subject' => array(
-				'shortcodes' => array('organization', 'primary_registration_details', 'event_author', 'primary_registration_details', 'recipient_details')
+				'shortcodes' => array('recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
 				),
 			'content' => array(
 				'shortcodes' => array( 'recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
