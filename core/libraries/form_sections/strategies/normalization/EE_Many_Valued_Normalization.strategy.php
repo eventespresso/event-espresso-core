@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Many_Valued_Normalization
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -28,7 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base{
 	protected $_individual_item_normalization_strategy = array();
 	/**
-	 * 
+	 *
 	 * @param EE_Normalization_Strategy_Base $individual_item_normalization_strategy
 	 */
 	public function __construct($individual_item_normalization_strategy) {
@@ -36,7 +36,7 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base{
 		parent::__construct();
 	}
 	/**
-	 * Normalizes the input into an array, and normalizes each item according to its 
+	 * Normalizes the input into an array, and normalizes each item according to its
 	 * individual item normalizaiton strategy
 	 * @param type $value_to_normalize
 	 * @return array
@@ -55,6 +55,22 @@ class EE_Many_Valued_Normalization extends EE_Normalization_Strategy_Base{
 			$normalized_array_value[$key] = $this->_individual_item_normalization_strategy->normalize($individual_item);
 		}
 		return $normalized_array_value;
+	}
+
+	/**
+	 * Converts the array of normalized things to an array of raw html values.
+	 * @param array $normalized_values
+	 * @return string[]
+	 */
+	public function unnormalize( $normalized_values ) {
+		if( ! is_array( $normalized_values ) ){
+			$normalized_values = array( $normalized_values );
+		}
+		$nonnormal_values = array();
+		foreach( $normalized_values as $key => $value ) {
+			$nonnormal_values[ $key ] = $this->_individual_item_normalization_strategy->unnormalize( $value );
+		}
+		return $nonnormal_values;
 	}
 }
 

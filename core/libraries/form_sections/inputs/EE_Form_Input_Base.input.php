@@ -83,7 +83,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 	/**
 	 * The normalization strategy for this field
-	 * @var EE_Validation_Strategy_Base
+	 * @var EE_Normalization_Strategy_Base
 	 */
 	private $_normalization_strategy;
 
@@ -113,7 +113,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 *	@type string @html_help_text text to put in help element
 	 *	@type string $html_help_style style attribute to give to teh help element
 	 *	@type string $html_help_class class attribute to give to the help element
-	 *	@type string $default default value UNnormalized (ie, the value it should have in the form. Usually a string)
+	 *	@type string $default default value NORMALIZED (eg, if providing the default for a Yes_No_Input, you should provide TRUE or FALSE, not '1' or '0')
 	 *	@type EE_Display_Strategy_Base $display strategy
 	 *	@type EE_Normalization_Strategy_Base $normalization_strategy
 	 *	@type EE_Validation_Strategy_Base[] $validation_strategies
@@ -148,9 +148,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$this->_html_help_style = $options_array['html_help_style'];
 		}
 
-		if(isset($options_array['default'])){
-			$this->_raw_value = $options_array['default'];
-		}
 		if(isset($options_array['required']) && in_array($options_array['required'], array('true',true))){
 			$this->set_required(true);
 		}
@@ -201,6 +198,11 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			$this->_normalization_strategy = new EE_Text_Normalization();
 		}
 		$this->_normalization_strategy->_construct_finalize($this);
+		//at least we can use the normalization strategy to populate the default
+		if( isset( $options_array[ 'default' ] ) ) {
+			$this->set_default( $options_array[ 'default' ] );
+		}
+
 		if( ! $this->_sensitive_data_removal_strategy){
 			$this->_sensitive_data_removal_strategy = new EE_No_Sensitive_Data_Removal();
 		}
@@ -511,13 +513,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	}
 
 	/**
-	 * Sets the input's default value for use in displaying in the form (note: does NOT
-	 * perform sanitization or normalization on this value, as the programmer should be providing it)
+	 * Sets the input's default value for use in displaying in the form. Note: value should be
+	 * normalized (Eg, if providing a default of ra Yes_NO_Input you would provide TRUE or FALSE, not '1' or '0')
 	 * @param mixed $value
 	 * @return void
 	 */
 	function set_default($value){
-		$this->_raw_value = $value;
+		$this->_normalized_value = $value;
+		$this->_raw_value = $this->_normalization_strategy->unnormalize( $value );;
 	}
 
 	/**

@@ -18,10 +18,10 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  *
  * EE_Form_Input_With_Options_Base
- * For form inputs which are meant to only have a 
+ * For form inputs which are meant to only have a
  * limit set of options that can be used (like for checkboxes or select dropdowns, etc; as opposed to more open-ended textboxes etc)
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -39,7 +39,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 		parent::__construct($options_array);
 	}
 	/**
-	 * Sets the allowed options for this input. Also has the side-effect of 
+	 * Sets the allowed options for this input. Also has the side-effect of
 	 * updating the normalization strategy to match the keys provided in the array
 	 * @param array $select_options
 	 * @return null just has the side-effect of setting the options for this input
@@ -51,9 +51,11 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			$flat_select_options = $this->_flatten_select_options($select_options);
 			$select_option_keys = array_keys($flat_select_options);
 			$first_key = reset($select_option_keys);
-			if(is_int($first_key)){
+			if( count($flat_select_options) ==2 && in_array(TRUE, $select_option_keys) && in_array(FALSE,$select_option_keys)){
+				$normalization = new EE_Boolean_Normalization();
+			}elseif(is_int($first_key)){
 				$normalization = new EE_Int_Normalization();
-			}elseif(is_string($first_key)){
+			}else{
 				$normalization = new EE_Text_Normalization();
 			}
 			if($this->_multiple_selections){
@@ -61,7 +63,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			}else{
 				$this->_set_normalization_strategy($normalization);
 			}
-			
+
 		}
 	}
 	public function options(){
