@@ -101,6 +101,24 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	protected $_required;
 
+	/**
+	 *
+	 * @param array $options_array {
+	 *	@type string $html_name the html name for the input
+	 *	@type string $html_label_id the id attribute to give to the html label tag
+	 *	@type string $html_label_class the class attribut eto give to the html label tag
+	 *	@type string $html_label_style the style attribute to give ot teh label tag
+	 *	@type string $html_label_text the text to put in the label tag
+	 *	@type string $html_label the full html label. If used, all other html_label_* args are invalid
+	 *	@type string @html_help_text text to put in help element
+	 *	@type string $html_help_style style attribute to give to teh help element
+	 *	@type string $html_help_class class attribute to give to the help element
+	 *	@type string $default default value UNnormalized (ie, the value it should have in the form. Usually a string)
+	 *	@type EE_Display_Strategy_Base $display strategy
+	 *	@type EE_Normalization_Strategy_Base $normalization_strategy
+	 *	@type EE_Validation_Strategy_Base[] $validation_strategies
+	 * }
+	 */
 	public function __construct($options_array = array()){
 		if(isset($options_array['html_name'])){
 			$this->_html_name = $options_array['html_name'];

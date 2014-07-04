@@ -368,6 +368,78 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
+	 * Gets a flat array of inputs for this form section and its subsections.
+	 * Keys are their form names, and values are the inputs themselves
+	 * @return EE_Form_Input_Base
+	 */
+	public function inputs_in_subsections(){
+		$inputs = array();
+		foreach($this->subsections() as $subsection){
+			if( $subsection instanceof EE_Form_Input_Base ){
+				$inputs[ $subsection->html_name() ] = $subsection;
+			}elseif($subsection instanceof EE_Form_Section_Proper ){
+				$inputs += $subsection->get_all_inputs_in_subsections();
+			}
+		}
+		return $inputs;
+	}
+
+	/**
+	 * Gets a flat array of all the validation errors.
+	 * Keys are html names (because those should be unique)
+	 * and values are a string of all their validation errors
+	 * @return string[]
+	 */
+	public function subsection_validation_errors_by_html_name(){
+		$inputs = $this->inputs();
+		$errors = array();
+		foreach( $inputs as $form_input ){
+			if( $form_input->get_validation_errors() ){
+				$errors[ $form_input->html_name() ] = $form_input->get_validation_error_string();
+			}
+		}
+		return $errors;
+	}
+
+
+
+	/**
+	 * Gets a flat array of inputs for this form section and its subsections.
+	 * Keys are their form names, and values are the inputs themselves
+	 * @return EE_Form_Input_Base
+	 */
+	public function inputs_in_subsections(){
+		$inputs = array();
+		foreach($this->subsections() as $subsection){
+			if( $subsection instanceof EE_Form_Input_Base ){
+				$inputs[ $subsection->html_name() ] = $subsection;
+			}elseif($subsection instanceof EE_Form_Section_Proper ){
+				$inputs += $subsection->get_all_inputs_in_subsections();
+			}
+		}
+		return $inputs;
+	}
+
+	/**
+	 * Gets a flat array of all the validation errors.
+	 * Keys are html names (because those should be unique)
+	 * and values are a string of all their validation errors
+	 * @return string[]
+	 */
+	public function subsection_validation_errors_by_html_name(){
+		$inputs = $this->inputs();
+		$errors = array();
+		foreach( $inputs as $form_input ){
+			if( $form_input->get_validation_errors() ){
+				$errors[ $form_input->html_name() ] = $form_input->get_validation_error_string();
+			}
+		}
+		return $errors;
+	}
+
+
+
+	/**
 	 * passes all the form data required by the JS to the JS, and enqueues the few required JS files.
 	 * Should be setup by each form during the _enqueues_and_localize_form_js
 	 */

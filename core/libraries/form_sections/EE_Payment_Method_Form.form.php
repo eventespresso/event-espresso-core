@@ -23,7 +23,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	 */
 	protected $_payment_method_type;
 	/**
-	 * 
+	 *
 	 * @param array $options_array {
 	 *	@type string $extra_meta_inputs should be EE_Form_Section_Validatable[] which
 	 *		will be _subsections and will be saved as extra meta on the payment method object;
@@ -110,5 +110,12 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			$default_name = str_replace("EEM_", "", get_class($this->_model)) . "_Model_Form";
 			$this->_name =  $default_name;
 		}
+	}
+	/**
+	 * Gets all the extra meta inputs in this form
+	 * @return EE_Form_Input_Base[]
+	 */
+	public function extra_meta_inputs(){
+		return $this->_extra_meta_inputs;
 	}
 }

@@ -396,6 +396,11 @@ class Payments_Admin_Page extends EE_Admin_Page {
 					foreach($payment_method->get_all_usable_currencies() as $currency_obj){
 						$payment_method->_add_relation_to($currency_obj, 'Currency');
 					}
+					//now add setup its default extra meta properties
+					$extra_metas = $payment_method->type_obj()->settings_form()->extra_meta_inputs();
+					foreach( $extra_metas as $meta_name => $input ){
+						$payment_method->update_extra_meta($meta_name, $input->raw_value() );
+					}
 				}
 
 			}else{

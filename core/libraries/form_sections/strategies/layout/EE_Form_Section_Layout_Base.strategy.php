@@ -110,7 +110,7 @@ abstract class EE_Form_Section_Layout_Base{
 	 */
 	public function display_errors($input){
 		if( $input->get_validation_errors() ){
-			return  "<label class='error' for='{$input->html_name()}'>" . $input->get_validation_error_string() . "</label>";
+			return  "<label  id='" . $input->html_id() . "-errors' class='error' for='{$input->html_name()}'>" . $input->get_validation_error_string() . "</label>";
 		}else{
 			return '';
 		}
