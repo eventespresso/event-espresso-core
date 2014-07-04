@@ -120,6 +120,9 @@ class EED_Messages  extends EED_Module {
 
 		$data = $this->_get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context );
 
+		//make sure we drop generating messenger if both sending and generating are the same.
+		$generating_messenger = $sending_messenger != $generating_messenger ? $generating_messenger : NULL;
+
 		//now we can trigger the actual sending of the message via the message type.
 		self::$_EEMSG->send_message( $message_type, $data, $sending_messenger, $generating_messenger, $context );
 	}
