@@ -336,6 +336,12 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _deregister_wp_hooks() {
 		remove_all_actions('wp_head');
 		remove_all_actions('wp_footer');
+		remove_all_actions('wp_footer_scripts');
+		remove_all_actions('wp_enqueue_scripts');
+
+		//just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
+		add_action('wp_head', 'wp_enqueue_scripts');
+		add_action( 'wp_footer', 'wp_print_footer_scripts' );
 	}
 
 
