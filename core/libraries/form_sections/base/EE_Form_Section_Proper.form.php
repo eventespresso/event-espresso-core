@@ -349,14 +349,52 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		wp_enqueue_script('ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'), '1', true);
 		$validation_rules = $this->get_jquery_validation_rules();
 		$form_section_id = $this->html_id();
+		$form_errors = $this->subsection_validation_errors_by_html_name();
 		//actually, we don't want to localize jsut yet. There may be other forms on the page.
 		//so we need to add our form section data to a static variable accessible by all form sections
 		//and localize it just before the footer
 		EE_Form_Section_Proper::$_js_localization['form_data'][] =array(
 			'form_section_id'=>'#'.$form_section_id,
-			'validation_rules'=>$validation_rules);
+			'validation_rules'=>$validation_rules,
+			'errors'=> $form_errors);
 		add_action('get_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
 		add_action('admin_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
+	}
+
+
+
+	/**
+	 * Gets a flat array of inputs for this form section and its subsections.
+	 * Keys are their form names, and values are the inputs themselves
+	 * @return EE_Form_Input_Base
+	 */
+	public function inputs_in_subsections(){
+		$inputs = array();
+		foreach($this->subsections() as $subsection){
+			if( $subsection instanceof EE_Form_Input_Base ){
+				$inputs[ $subsection->html_name() ] = $subsection;
+			}elseif($subsection instanceof EE_Form_Section_Proper ){
+				$inputs += $subsection->get_all_inputs_in_subsections();
+			}
+		}
+		return $inputs;
+	}
+
+	/**
+	 * Gets a flat array of all the validation errors.
+	 * Keys are html names (because those should be unique)
+	 * and values are a string of all their validation errors
+	 * @return string[]
+	 */
+	public function subsection_validation_errors_by_html_name(){
+		$inputs = $this->inputs();
+		$errors = array();
+		foreach( $inputs as $form_input ){
+			if( $form_input->get_validation_errors() ){
+				$errors[ $form_input->html_name() ] = $form_input->get_validation_error_string();
+			}
+		}
+		return $errors;
 	}
 
 
