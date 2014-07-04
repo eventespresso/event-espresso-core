@@ -88,7 +88,7 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 	protected function _get_id_for_msg_url( $context, EE_Registration $registration ) {
 		if ( $context == 'admin' ) {
 			//there should be a transaction and payment object in the incoming data.
-			if ( $this->_data instanceof EE_Messages_incoming_data  ) {
+			if ( $this->_data instanceof EE_Messages_incoming_data && ! $this->_data instanceof EE_Messages_Preview_incoming_data ) {
 				$payment = $this->_data->payment;
 
 				if ( $payment instanceof EE_Payment ) {
@@ -130,7 +130,7 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 
 		//remove unwanted transaction shortcode
 		foreach ( $this->_valid_shortcodes as $context => $shortcodes ) {
-			if( ($key = array_search('transaction', $shortcodes) ) !== false) {
+			if( ($key = array_search('transaction', $shortcodes) ) !== false && $this->name != 'pending_approval' ) {
 			    unset($this->_valid_shortcodes[$context][$key]);
 			}
 		}
