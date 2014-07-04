@@ -325,4 +325,17 @@ abstract class EE_Shortcodes extends EE_Base {
 	}
 
 
+
+	/**
+	 * This returns whatever the set context string is on this shortcode parser.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	public function get_set_context() {
+		return $this->_context;
+	}
+
+
 } //end EE_Shortcodes
