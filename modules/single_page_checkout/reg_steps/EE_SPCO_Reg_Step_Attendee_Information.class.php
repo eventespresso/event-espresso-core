@@ -83,8 +83,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		}
 		// build array of form options
 		$form_args = array(
-			'name' 					=> $this->slug(),
-			'html_id' 					=> $this->slug() . '-reg-step',
+			'name' 					=> 'ee-' . $this->slug() . '-reg-step-form',
+			'html_id' 					=> 'ee-' . $this->slug() . '-reg-step-form',
 			'subsections' 			=> $subsections,
 			'exclude' 					=> array(),
 			'layout_strategy'		=> is_admin() ?
@@ -267,7 +267,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		// array of params to pass to parent constructor
 		$form_args = array(
 			'name' 					=> 'spco_copy_attendee_chk',
-			'html_id' 					=> 'spco-copy-attendee-chk-',
+			'html_id' 					=> 'spco-copy-attendee-chk',
 			'subsections' 			=> $this->copy_attendee_info_inputs(),
 			'layout_strategy' 	=> new EE_Template_Layout( array(
 						'layout_template_file' 			=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'copy_attendee_info.template.php', // layout_template
@@ -323,7 +323,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->ticket()->ID() . ']' ] = new EE_Form_Section_HTML( '<h6 class="spco-copy-attendee-event-hdr">' . $item_name . '</h6>' );
 					$prev_ticket = $registration->ticket()->ID();
 				}
-				
+
 				$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->reg_url_link() . ']' ] = new EE_Checkbox_Multi_Input(
 					array( $registration->reg_url_link() => sprintf( __('Attendee #%s', 'event_espresso'), $registration->count() )),
 					array(
