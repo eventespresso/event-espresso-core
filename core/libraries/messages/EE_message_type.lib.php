@@ -838,15 +838,18 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 			$mtpg = $mtpg instanceof EE_Message_Template_Group && ! $global_mtpg->get( 'MTP_is_override' ) ? $mtpg : $global_mtpg;
 		}
+
 		$this->_GRP_ID = $mtpg->ID();
 
 		$templates = $mtpg->context_templates();
+
 
 		foreach ( $templates as $context => $template_fields ) {
 			foreach( $template_fields as $template_field=> $template_obj ) {
 				$this->_templates[$template_field][$context] = $template_obj->get('MTP_content');
 			}
 		}
+
 	}
 
 	/**
@@ -880,7 +883,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
 		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off) EXCEPT if we're previewing
-		if ( empty( $this->_templates['to'][$context] ) && !$this->_preview )
+		if ( ( isset( $this->_templates['to'][$context] ) && empty( $this->_templates['to'][$context] ) ) && !$this->_preview )
 			return false;
 
 		foreach ( $this->_templates as $field => $ctxt ) {
