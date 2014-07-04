@@ -24,7 +24,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * a select or checkbox, is because they hacked the form
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -33,6 +33,19 @@ class EE_Boolean_Normalization extends EE_Normalization_Strategy_Base{
 	public function normalize($value_to_normalize) {
 		return (boolean)intval($value_to_normalize);
 	}
+	/**
+	 *
+	 * @param type $normalized_value
+	 * @return string
+	 */
+	public function unnormalize( $normalized_value ) {
+		if( $normalized_value ){
+			return '1';
+		}else{
+			return '0';
+		}
+	}
+
 }
 
 // End of file EE_Boolean_Normalization.strategy.php

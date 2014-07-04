@@ -113,4 +113,11 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			$this->_name =  $default_name;
 		}
 	}
+	/**
+	 * Gets all the extra meta inputs in this form
+	 * @return EE_Form_Input_Base[]
+	 */
+	public function extra_meta_inputs(){
+		return $this->_extra_meta_inputs;
+	}
 }

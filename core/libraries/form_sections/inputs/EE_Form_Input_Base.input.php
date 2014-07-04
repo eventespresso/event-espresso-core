@@ -97,7 +97,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 	/**
 	 * The normalization strategy for this field
-	 * @var EE_Validation_Strategy_Base
+	 * @var EE_Normalization_Strategy_Base
 	 */
 	private $_normalization_strategy;
 
@@ -137,9 +137,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 				} else {
 					$this->$_key = $value;
 				}
-			// this property uses a different name than expected
-			} else if ( $key === 'default' ) {
-				$this->_raw_value =  $value;
 			}
 		}
 		// ensure that "required" is set correctly
@@ -148,22 +145,31 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 			case 'true' :
 			case 'TRUE' :
 			case TRUE :
-				$this->_required = TRUE;
+				$this->set_required( TRUE );
 				break;
 			default :
-				$this->_required = FALSE;
+				$this->set_required( FALSE );
 		}
 
+		
 		$this->_display_strategy->_construct_finalize($this);
-		if($this->_validation_strategies){
-			foreach($this->_validation_strategies as $validation_strategy){
+
+		if ( $this->_validation_strategies ){
+			foreach( $this->_validation_strategies as $validation_strategy ){
 				$validation_strategy->_construct_finalize($this);
 			}
 		}
+
 		if( ! $this->_normalization_strategy){
 			$this->_normalization_strategy = new EE_Text_Normalization();
 		}
 		$this->_normalization_strategy->_construct_finalize($this);
+
+		//at least we can use the normalization strategy to populate the default
+		if( isset( $input_args[ 'default' ] ) ) {
+			$this->set_default( $input_args[ 'default' ] );
+		}
+
 		if( ! $this->_sensitive_data_removal_strategy){
 			$this->_sensitive_data_removal_strategy = new EE_No_Sensitive_Data_Removal();
 		}
@@ -532,13 +538,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	}
 
 	/**
-	 * Sets the input's default value for use in displaying in the form (note: does NOT
-	 * perform sanitization or normalization on this value, as the programmer should be providing it)
+	 * Sets the input's default value for use in displaying in the form. Note: value should be
+	 * normalized (Eg, if providing a default of ra Yes_NO_Input you would provide TRUE or FALSE, not '1' or '0')
 	 * @param mixed $value
 	 * @return void
 	 */
 	function set_default($value){
-		$this->_raw_value = $value;
+		$this->_normalized_value = $value;
+		$this->_raw_value = $this->_normalization_strategy->unnormalize( $value );;
 	}
 
 	/**

@@ -58,10 +58,11 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 			$flat_select_options = $this->_flatten_select_options($select_options);
 			$select_option_keys = array_keys($flat_select_options);
 			$first_key = reset($select_option_keys);
-			if(is_int($first_key)){
+			if( count($flat_select_options) ==2 && in_array(TRUE, $select_option_keys) && in_array(FALSE,$select_option_keys)){
+				$normalization = new EE_Boolean_Normalization();
+			}elseif(is_int($first_key)){
 				$normalization = new EE_Int_Normalization();
-//			}elseif(is_string($first_key)){
-			} else {
+			}else{
 				$normalization = new EE_Text_Normalization();
 			}
 			if($this->_multiple_selections){

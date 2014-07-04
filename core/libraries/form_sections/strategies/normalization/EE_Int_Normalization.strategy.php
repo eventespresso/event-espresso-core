@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * Casts the string to an int. If the user inputs anything but numbers, we growl at them
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -33,6 +33,19 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base{
 			throw new EE_Validation_Error(sprintf(__("Only numeric characters, please!", "event_espresso")), 'numeric_only');
 		}else{
 			return intval($value_string_with_only_numbers);
+		}
+	}
+
+	/**
+	 * Converst the int into a string for use in teh html form
+	 * @param int $normalized_value
+	 * @return string
+	 */
+	public function unnormalize( $normalized_value ) {
+		if( empty( $normalized_value ) ){
+			return '0';
+		}else{
+			return "$normalized_value";
 		}
 	}
 }

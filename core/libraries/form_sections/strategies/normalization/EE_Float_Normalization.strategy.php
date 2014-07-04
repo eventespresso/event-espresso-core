@@ -21,7 +21,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * Casts to float, and allows spaces, commas, and periods in the inputted string
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -42,6 +42,19 @@ class EE_Float_Normalization extends EE_Normalization_Strategy_Base{
 			throw new EE_Validation_Error(sprintf(__("Only numeric characters, commas, periods, and spaces, please!", "event_espresso")), 'float_only');
 		}else{
 			return floatval($normalized_value);
+		}
+	}
+
+	/**
+	 * Converts a float into a string
+	 * @param float $normalized_value
+	 * @return string
+	 */
+	public function unnormalize($normalized_value) {
+		if( empty( $normalized_value ) ){
+			return '0.00';
+		}else{
+			return "$normalized_value";
 		}
 	}
 }

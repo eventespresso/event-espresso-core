@@ -5,11 +5,11 @@
  */
 class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	/**
-	 * 
+	 *
 	 * @return string of html to display the field
 	 */
 	function display(){
-		$input = $this->_input;		
+		$input = $this->_input;
 		if( ! $input instanceof EE_Form_Input_With_Options_Base){
 			throw new EE_Error(sprintf(__("Cannot use Select Display Strategy with an input that doesn't ahve options", "event_espresso")));
 		}
@@ -25,7 +25,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		}else{
 			$html.=$this->_display_options($input->options());
 		}
-		
+
 		$html.= EEH_Formatter::nl(-1) . "</select>";
 		return $html;
 	}
@@ -45,8 +45,8 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 				$selected_attr ='';
 			}
 			$tabs = $cntr == 0 ? 1 : 0;
-			$value = esc_attr($value);
-			$html.= EEH_Formatter::nl($tabs) . "<option value='$value' $selected_attr>$display_text</option>";
+			$value_in_form = esc_attr( $this->_input->get_normalization_strategy()->unnormalize( $value ) );
+			$html.= EEH_Formatter::nl($tabs) . "<option value='$value_in_form' $selected_attr>$display_text</option>";
 			$cntr++;
 		}
 		return $html;
@@ -57,7 +57,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 	 * @return boolean
 	 */
 	protected function _check_if_option_selected($value){
-		$equality = ($this->_input->raw_value() == "$value");
+		$equality = ($this->_input->normalized_value() == $value);
 		return $equality;
 	}
 }
