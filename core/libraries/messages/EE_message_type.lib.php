@@ -858,6 +858,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @access protected
 	 */
 	protected function _assemble_messages() {
+		//make sure any set messages object is cleared
+		$this->messages = array();
 		foreach ( $this->_addressees as $context => $addressees ) {
 			foreach ( $addressees as $addressee ) {
 				$message = $this->_setup_message_object($context, $addressee);

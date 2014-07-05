@@ -357,7 +357,7 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _get_main_template( $preview = FALSE ) {
 		$relative_path =  '/core/libraries/messages/messenger/assets/' . $this->name . '/';
 
-		$wrapper_template_file = $this->name . '-messenger-main-wrapper.template.php';
+		$wrapper_template_file = apply_filters( 'FHEE__EE_Html_messenger___get_main_template__wrapper_template_file', $this->name . '-messenger-main-wrapper.template.php' );
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
