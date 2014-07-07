@@ -66,11 +66,11 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 				'required'=>TRUE
 			)
 		);
+		parent::__construct($options_array);
 		//set the name of this form based on the payment method type
 		if( ! $this->_name){
 			$this->_name = str_replace(" ","_",ucwords(str_replace("_"," ",($this->_payment_method_type->system_name()))))."_Settings_Form";
 		}
-		parent::__construct($options_array);
 	}
 	/**
 	 * extends the model form section's save method to also save the extra meta field values

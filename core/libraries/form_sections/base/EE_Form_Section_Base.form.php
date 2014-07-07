@@ -99,6 +99,7 @@ abstract class EE_Form_Section_Base {
 	 * @param $name
 	 */
 	protected function _construct_finalize( $parent_form_section, $name ){
+		$this->_construction_finalized = TRUE;
 		$this->_parent_section = $parent_form_section;
 		$this->_name = $name;
 		$this->_set_id_if_empty();
@@ -226,8 +227,22 @@ abstract class EE_Form_Section_Base {
 	 * @return string
 	 */
 	function name(){
+		if( ! $this->_construction_finalized ){
+			throw new EE_Error(sprintf( __( 'You cannot use the form section\s name until _construct_finalize has been called on it (when we set the name). It was called on a form section of type \'s\'', 'event_espresso' ), get_class($this) ) );
+		}
 		return $this->_name;
 	}
+
+
+
+	/**
+	 * Gets the parent section
+	 * @return EE_Form_Section_Proper
+	 */
+	function parent_section(){
+		return $this->_parent_section;
+	}
+}
 
 
 

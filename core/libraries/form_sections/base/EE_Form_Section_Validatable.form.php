@@ -149,8 +149,8 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 * @return mixed whatever the raw value of this form section is in the request data
 	 */
 	public function find_form_data_for_this_section($req_data){
-		if( $this->_parent_section ){
-			$array_of_parent = $this->_parent_section->find_form_data_for_this_section($req_data);
+		if( $this->parent_section() ){
+			$array_of_parent = $this->parent_section()->find_form_data_for_this_section($req_data);
 		}else{
 			$array_of_parent = $req_data;
 		}
