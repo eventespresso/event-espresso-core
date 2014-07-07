@@ -182,8 +182,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		return new EE_Hidden_Input(
 			array(
 				'layout_strategy' => new EE_Div_Per_Section_Layout(),
-				'name' 				=> 'additional-attendee-reg-info-' . $registration->reg_url_link(),
-				'html_name' 		=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][additional_attendee_reg_info]',
+				'name' 				=> 'additional-attendee-reg-info',
 				'html_id' 				=> 'additional-attendee-reg-info-' . $registration->reg_url_link(),
 				'default'				=> FALSE
 			)
@@ -327,11 +326,11 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$copy_attendee_info_inputs[ 'spco_copy_attendee_chk[' . $registration->reg_url_link() . ']' ] = new EE_Checkbox_Multi_Input(
 					array( $registration->reg_url_link() => sprintf( __('Attendee #%s', 'event_espresso'), $registration->count() )),
 					array(
-						'name' 					=> 'spco_copy_attendee_chk',
-						'html_name' 			=> 'spco_copy_attendee_chk',
-						'html_id' 					=> 'spco-copy-attendee-chk',
+						'name' 					=> $registration->reg_url_link(),
+//						'html_name' 			=> $registration->reg_url_link(),
+						'html_id' 					=> 'spco-copy-attendee-chk-' . $registration->reg_url_link(),
 						'html_class' 			=> 'spco-copy-attendee-chk',
-						'html_label_id' 		=> 'spco_copy_attendee_chk',
+						'html_label_id' 		=> 'spco_copy_attendee_chk-' . $registration->reg_url_link(),
 						'html_label_text' 	=> ''
 					)
 				);
@@ -354,7 +353,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			array(
 				'layout_strategy' => new EE_Div_Per_Section_Layout(),
 				'name' 				=> 'primary_registrant',
-				'html_name' 		=> 'primary_registrant',
+//				'html_name' 		=> 'primary_registrant',
 				'html_id' 				=> 'primary_registrant',
 				'default'				=> TRUE
 			)
@@ -426,8 +425,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$identifier = $question->is_system_question() ? $question->system_ID() : $question->ID();
 		$input_constructor_args = array(
 //			'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
-			'name' 					=> $registration->reg_url_link() . '-' . $identifier,
-			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
+			'name' 					=> $identifier,
+//			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
 			'html_id' 					=> 'ee-reg-qstn-' . $registration->reg_url_link() . '-' . $identifier,
 			'html_class' 			=> 'ee-reg-qstn',
 			'required' 				=> $question->required(),
@@ -437,7 +436,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		);
 
 		if ( $answer instanceof EE_Answer && $answer->ID() ) {
-			$input_constructor_args['html_name'] .= '[' . $answer->ID() . ']';
+			$input_constructor_args['html_name'] = '[' . $identifier . '][' . $answer->ID() . ']';
 			$input_constructor_args['default'] = $answer->value();
 		}
 
