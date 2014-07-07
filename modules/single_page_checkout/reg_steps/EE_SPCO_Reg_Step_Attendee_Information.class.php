@@ -425,7 +425,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		//		raw_value;
 		$identifier = $question->is_system_question() ? $question->system_ID() : $question->ID();
 		$input_constructor_args = array(
-			'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
+//			'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
 			'name' 					=> $registration->reg_url_link() . '-' . $identifier,
 			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
 			'html_id' 					=> 'ee-reg-qstn-' . $registration->reg_url_link() . '-' . $identifier,
@@ -436,8 +436,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			'html_label_text'		=> $question->display_text()
 		);
 
-		if ( $answer instanceof EE_Answer ) {
-			$input_constructor_args['html_name'] = '[' . $answer->ID() . ']';
+		if ( $answer instanceof EE_Answer && $answer->ID() ) {
+			$input_constructor_args['html_name'] .= '[' . $answer->ID() . ']';
 			$input_constructor_args['default'] = $answer->value();
 		}
 
@@ -872,6 +872,9 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function process_reg_step() {
+
+		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		die();
 
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
