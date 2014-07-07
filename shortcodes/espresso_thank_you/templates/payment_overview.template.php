@@ -31,7 +31,7 @@ $event_name = '';
 	</div>
 	<br/>
 
-	<h3 class="section-title"><?php _e('Registration  Details:', 'event_espreso'); ?></h3>
+	<h3 class="section-title"><?php _e('Registration  Details:', 'event_espresso'); ?></h3>
 
 	<div class="reg-gen-details">
 	<?php

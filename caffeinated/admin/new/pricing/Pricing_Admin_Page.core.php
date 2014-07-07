@@ -348,7 +348,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 					'slug' => 'all',
-					'label' => __('View All Default Pricing', 'event_espreso'),
+					'label' => __('View All Default Pricing', 'event_espresso'),
 					'count' => 0,
 					'bulk_action' => array(
 							'trash_price' => __('Move to Trash', 'event_espresso')
@@ -356,7 +356,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				),
 			'trashed' => array(
 					'slug' => 'trashed',
-					'label' => __('Trash', 'event_espreso'),
+					'label' => __('Trash', 'event_espresso'),
 					'count' => 0,
 					'bulk_action' => array(
 							'restore_price' => __('Restore from Trash', 'event_espresso'),
@@ -375,7 +375,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_views = array(
 			'all' => array(
 					'slug' => 'all',
-					'label' => __('All', 'event_espreso'),
+					'label' => __('All', 'event_espresso'),
 					'count' => 0,
 					'bulk_action' => array(
 							'trash_price_type' => __('Move to Trash', 'event_espresso')
@@ -383,7 +383,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				),
 			'trashed' => array(
 					'slug' => 'trashed',
-					'label' => __('Trash', 'event_espreso'),
+					'label' => __('Trash', 'event_espresso'),
 					'count' => 0,
 					'bulk_action' => array(
 							'restore_price_type' => __('Restore from Trash', 'event_espresso'),

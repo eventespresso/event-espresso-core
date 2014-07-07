@@ -121,7 +121,7 @@ class Pricing_Price_Types_Default_Help_Tour extends EE_Help_Tour {
 	}
 
 	protected function _order_column_stop() {
-		return '<p>' . __('View the order in which each discount, surcharge, or tax will be applied to the base ticket cost. Zero (0) means it will be applied first.', 'event_espreso') . '</p>';
+		return '<p>' . __('View the order in which each discount, surcharge, or tax will be applied to the base ticket cost. Zero (0) means it will be applied first.', 'event_espresso') . '</p>';
 	}
 
 	protected function _bulk_actions_stop() {

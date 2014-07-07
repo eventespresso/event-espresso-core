@@ -43,7 +43,7 @@ $tax_total_line_item;
 		</table>
 		<div class="events">
 		<?php foreach($events_for_txn as $event_id => $event){
-			?><h3 class="scetion-title event-name"><img class="icon" src="<?php echo EE_IMAGES_URL.'calendar_year-24x24.png';?>"><?php _e("Event Name:","event_espresso")?> <span class="plain-text"><?php echo $event->name();?></span> <span class="small-text link">[ <a href='<?php echo $event->get_permalink()?>'><?php _e('view', 'event_espresso'); ?></a> ]</span></h3>
+			?><h3 class="section-title event-name"><img class="icon" src="<?php echo EE_IMAGES_URL.'calendar_year-24x24.png';?>"><?php _e("Event Name:","event_espresso")?> <span class="plain-text"><?php echo $event->name();?></span> <span class="small-text link">[ <a href='<?php echo $event->get_permalink()?>'><?php _e('view', 'event_espresso'); ?></a> ]</span></h3>
 			<?php if (strlen($event->description()>1)){?><p class="event-description"><?php $event->description()?></p><?php }?>
 			<ul class="tickets-per-event">
 			<?php foreach($ticket_line_items_per_event[$event_id] as $line_item_id => $line_item){
