@@ -49,8 +49,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		EE_Registry::instance()->load_helper('Formatter');
 		//call parent first, as it may be setting the name
 		parent::__construct($options_array);
-		$this->_set_default_name_if_empty();
-		$this->_set_default_html_id_if_empty();
 		//if they've included subsections in the constructor, add them now
 		if(isset($options_array['subsections'])){
 			$this->_subsections = array_merge($this->_subsections,$options_array['subsections']);
@@ -71,9 +69,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$exclude = $options_array['exclude'];
 			$this->_subsections = array_diff_key($this->_subsections, array_flip($exclude));
 		}
-		foreach($this->_subsections as $name => $subsection){
-			$subsection->_construct_finalize($this, $name);
-		}
 		if(isset($options_array['layout_strategy'])){
 			$this->_layout_strategy = $options_array['layout_strategy'];
 		}
@@ -82,6 +77,19 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		}
 		$this->_layout_strategy->_construct_finalize($this);
 		$this->_enqueue_jquery_validate_script();
+	}
+	/**
+	 * Finishes construction given the parent form section and this form section's name
+	 * @param EE_Form_Section_Proper $parent_form_section
+	 * @param string $name
+	 */
+	public function _construct_finalize($parent_form_section, $name) {
+		parent::_construct_finalize($parent_form_section, $name);
+		$this->_set_default_name_if_empty();
+		$this->_set_default_html_id_if_empty();
+		foreach($this->_subsections as $name => $subsection){
+			$subsection->_construct_finalize($this, $name);
+		}
 	}
 	/**
 	 * Gets the layotu strategy for this form section
@@ -160,6 +168,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return EE_Form_Section_Base
 	 */
 	public function get_subsection($name){
+		$this->ensure_construct_finalized_called();
 		return isset($this->_subsections[$name]) ? $this->_subsections[$name] : NULL;
 	}
 	/**
@@ -168,7 +177,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public function get_validatable_subsections(){
 		$validatable_subsections = array();
-		foreach($this->_subsections as $name=>$obj){
+		foreach($this->subsections() as $name=>$obj){
 			if($obj instanceof EE_Form_Section_Validatable){
 				$validatable_subsections[$name] = $obj;
 			}
@@ -277,6 +286,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return string
 	 */
 	public function get_html(){
+		$this->ensure_construct_finalized_called();
 		return $this->_layout_strategy->layout_form();
 	}
 
@@ -315,6 +325,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * but before the wordpress hook wp_loaded
 	 */
 	public function _enqueue_and_localize_form_js(){
+		$this->ensure_construct_finalized_called();
 		wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);
 		wp_enqueue_script('ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'), '1', true);
 		$validation_rules = $this->get_jquery_validation_rules();
@@ -434,7 +445,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public function inputs(){
 		$inputs = array();
-		foreach($this->_subsections as $name=>$obj){
+		foreach($this->subsections() as $name=>$obj){
 			if($obj instanceof EE_Form_Input_Base){
 				$inputs[$name] = $obj;
 			}
@@ -447,7 +458,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 */
 	public function subforms(){
 		$form_sections = array();
-		foreach($this->_subsections as $name=>$obj){
+		foreach($this->subsections() as $name=>$obj){
 			if($obj instanceof EE_Form_Section_Proper){
 				$form_sections[$name] = $obj;
 			}
@@ -461,6 +472,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return EE_Form_Section[]
 	 */
 	public function subsections(){
+		$this->ensure_construct_finalized_called();
 		return $this->_subsections;
 	}
 	/**
@@ -481,6 +493,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return boolean
 	 */
 	public function has_received_submission(){
+		$this->ensure_construct_finalized_called();
 		return $this->_received_submission;
 	}
 	/**
@@ -511,6 +524,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @return void
 	 */
 	public function add_subsections($subsections,$subsection_name_to_add_before = NULL){
+		$this->ensure_construct_finalized_called();
 		foreach($subsections as $subsection_name => $subsection){
 			if( ! $subsection instanceof EE_Form_Section_Base){
 				EE_Error::add_error(sprintf(__("Trying to add a %s as a subsection (it was named '%s') to the form section '%s'. It was removed.", "event_espresso"),get_class($subsection),$subsection_name,$this->name()));
@@ -539,6 +553,50 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	public function clean_sensitive_data(){
 		foreach($this->get_validatable_subsections() as $subsection){
 			$subsection->clean_sensitive_data();
+		}
+	}
+	/**
+	 * Returns the prefix that should be used on child of this form section for
+	 * their html names. If this form section itself has a parent, prepends ITS
+	 * prefix onto this form section's prefix. Used primarily by
+	 * EE_Form_Input_Base::_set_default_html_name_if_empty
+	 * @return string
+	 */
+	public function html_name_prefix(){
+		if( $this->parent_section() instanceof EE_Form_Section_Proper ){
+			return $this->parent_section()->html_name_prefix() . '[' . $this->name() . ']';
+		}else{
+			return $this->name();
+		}
+	}
+
+	/**
+	 * Gets the name, but first checks _construct_finalize has been called. If not,
+	 * calls it (assumes there is no parent and that we want the name to be whatever
+	 * was set, which is probably nothing, or the classname)
+	 * @return sting
+	 */
+	public function name(){
+		$this->ensure_construct_finalized_called();
+		return parent::name();
+	}
+
+	/**
+	 *
+	 * @return EE_Form_Section_Proper
+	 */
+	public function parent_section(){
+		$this->ensure_construct_finalized_called();
+		return parent::parent_section();
+	}
+
+	/**
+	 * make sure construction finalized was called, otherwise children might not be ready
+	 * @return void
+	 */
+	public function ensure_construct_finalized_called(){
+		if( ! $this->_construction_finalized ){
+			$this->_construct_finalize($this->_parent_section, $this->_name );
 		}
 	}
 }

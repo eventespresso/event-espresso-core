@@ -22,7 +22,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * sections for receiving form input etc.
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -36,7 +36,7 @@ abstract class EE_Form_Section_Base {
 	 * @var string
 	 */
 	protected $_name;
-	
+
 	/**
 	 * The form section of which this form section is a part
 	 * @var EE_Form_Section_Proper
@@ -50,7 +50,7 @@ abstract class EE_Form_Section_Base {
 	 */
 	protected $_construction_finalized;
 	/**
-	 * 
+	 *
 	 * @param array $options_array {
 	 *	@type $name string the name for this form section, if you want to explicitly define it
 	 * }
@@ -61,21 +61,22 @@ abstract class EE_Form_Section_Base {
 		}
 	}
 	protected function _construct_finalize( $parent_form_section, $name ){
+		$this->_construction_finalized = TRUE;
 		$this->_parent_section = $parent_form_section;
 		$this->_name = $name;
 		$this->_set_default_html_id_if_empty();
 	}
 	/**
-	 * Sets the html_id to its default value, if none was specified in the constructor. 
+	 * Sets the html_id to its default value, if none was specified in the constructor.
 	 * Calculation involves using the name and the parent's html id
 	 * return void
 	 */
 	protected function _set_default_html_id_if_empty(){
 		if( ! $this->_html_id ){
 			if( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper ){
-				$this->_html_id = $this->_parent_section->html_id() . '-' . strtolower( str_replace( '_', '-', $this->_name ));
+				$this->_html_id = $this->_parent_section->html_id() . '-' . strtolower( str_replace( '_', '-', $this->name() ));
 			}else{
-				$this->_html_id = strtolower( str_replace( '_', '-', $this->_name ));
+				$this->_html_id = strtolower( str_replace( '_', '-', $this->name() ));
 			}
 		}
 	}
@@ -98,7 +99,17 @@ abstract class EE_Form_Section_Base {
 	 * @return string
 	 */
 	function name(){
+		if( ! $this->_construction_finalized ){
+			throw new EE_Error(sprintf( __( 'You cannot use the form section\s name until _construct_finalize has been called on it (when we set the name). It was called on a form section of type \'s\'', 'event_espresso' ), get_class($this) ) );
+		}
 		return $this->_name;
+	}
+	/**
+	 * Gets the parent section
+	 * @return EE_Form_Section_Proper
+	 */
+	function parent_section(){
+		return $this->_parent_section;
 	}
 }
 

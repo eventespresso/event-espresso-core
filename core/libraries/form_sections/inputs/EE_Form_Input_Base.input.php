@@ -102,6 +102,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected $_required;
 
 	/**
+	 * Indicates a specific html name was provided
+	 * @var boolean
+	 */
+	protected $_html_name_specified = FALSE;
+
+	/**
 	 *
 	 * @param array $options_array {
 	 *	@type string $html_name the html name for the input
@@ -217,9 +223,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected function _set_default_html_name_if_empty(){
 		if( ! $this->_html_name){
 			if( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper){
-				$this->_html_name = $this->_parent_section->name() . "[{$this->_name}]";
+				$this->_html_name = $this->_parent_section->html_name_prefix() . "[{$this->name()}]";
 			}else{
-				$this->_html_name = $this->_name;
+				$this->_html_name = $this->name;
 			}
 		}
 	}
@@ -573,5 +579,39 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}
 		//and clean the normalized value according tothe appropriate strategy
 		$this->_normalized_value = $this->get_sensitive_data_removal_strategy()->remove_sensitive_data($this->_normalized_value);
+	}
+
+	/**
+	 * using this section's name and its parents, finds the value of the form data that corresponds to it.
+	 * For example, if this form section's HTML name is my_form[subform][form_input_1], then it's value should be in $_REQUEST
+	 * at $_REQUEST['my_form']['subform']['form_input_1']. (If that doesn't exist, we also check for this subsection's name
+	 * at the TOP LEVEL of the request data. Eg $_REQUEST['form_input_1'].)
+	 * This function finds its value in the form.
+	 * @return mixed whatever the raw value of this form section is in the request data
+	 */
+	public function find_form_data_for_this_section($req_data){
+//		if( $this->_html_name_specified ){
+//			//break up the html name by "[]"
+//			$name_parts = preg_match_all('\[([^]]*)\]',$this->html_name());
+//
+//		}
+		if( $this->_parent_section ){
+			$array_of_parent = $this->_parent_section->find_form_data_for_this_section($req_data);
+		}else{
+			$array_of_parent = $req_data;
+		}
+		if( isset( $array_of_parent[ $this->name() ] ) ){
+			return $array_of_parent[ $this->name() ];
+		}elseif( isset( $req_data[ $this->name() ] ) ){
+			//maybe its data is at the top level of the request data?
+			return $req_data[ $this->name() ];
+
+		}else{
+			return NULL;
+		}
+	}
+
+	public function _find_custom_html_name_form_data($html_name_parts, $req_data){
+
 	}
 }
