@@ -277,7 +277,7 @@ class Invoice {
 				$EE->CFG->organization->zip,
 				$EE->CFG->organization->email,
 				$EE->CFG->organization->vat,
-				$this->registration->date(),
+				date_i18n( get_option( 'date_format' ), strtotime( $this->registration->date() )),
 				$this->invoice_settings['pdf_instructions']
 		);
 
