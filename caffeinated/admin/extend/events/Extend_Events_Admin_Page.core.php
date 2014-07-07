@@ -759,7 +759,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	 */
 	public function  active_status_dropdown( $current_value = '' ) {
 		$select_name = 'active_status';
-		$values = array('none' => __('Show Active/Inactive', 'event_espresso'), 'active' => __('Active', 'event_epsresso'), 'upcoming' => __('Upcoming', 'event_espresso'), 'expired' => __('Expired', 'event_espresso'), 'inactive' => __('Inactive', 'event_espresso') );
+		$values = array('none' => __('Show Active/Inactive', 'event_espresso'), 'active' => __('Active', 'event_espresso'), 'upcoming' => __('Upcoming', 'event_espresso'), 'expired' => __('Expired', 'event_espresso'), 'inactive' => __('Inactive', 'event_espresso') );
 		$id = 'id="espresso-active-status-dropdown-filter"';
 		$class = 'wide';
 		echo EEH_Form_Fields::select_input( $select_name, $values, $current_value, $id, $class );
