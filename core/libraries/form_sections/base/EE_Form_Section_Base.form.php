@@ -116,9 +116,9 @@ abstract class EE_Form_Section_Base {
 	protected function _set_id_if_empty(){
 		if ( ! $this->_ID ) {
 			if ( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper ) {
-				$this->_ID = $this->_parent_section->ID() . '-' . sanitize_key( str_replace( array( '&nbsp;', ' ', '-' ), '_', $this->_name ));
+				$this->_ID = $this->_parent_section->ID() . '-' . sanitize_key( str_replace( array( '&nbsp;', ' ', '-' ), '_', $this->name() ));
 			} else {
-				$this->_ID = sanitize_key( str_replace( array( '&nbsp;', ' ', '-' ), '_', $this->_name ));
+				$this->_ID = sanitize_key( str_replace( array( '&nbsp;', ' ', '-' ), '_', $this->name() ));
 			}
 		}
 	}
@@ -133,9 +133,9 @@ abstract class EE_Form_Section_Base {
 	protected function _set_default_html_id_if_empty(){
 		if( ! $this->_html_id ){
 			if( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper ){
-				$this->_html_id = $this->_parent_section->html_id() . '-' . $this->_prep_name_for_html_id( $this->_name );
+				$this->_html_id = $this->_parent_section->html_id() . '-' . $this->_prep_name_for_html_id( $this->name() );
 			}else{
-				$this->_html_id = $this->_prep_name_for_html_id( $this->_name );
+				$this->_html_id = $this->_prep_name_for_html_id( $this->name() );
 			}
 		}
 	}
@@ -242,7 +242,6 @@ abstract class EE_Form_Section_Base {
 	function parent_section(){
 		return $this->_parent_section;
 	}
-}
 
 
 
