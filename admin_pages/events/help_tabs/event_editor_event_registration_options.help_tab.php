@@ -42,7 +42,7 @@
 <?php _e('Control how many tickets can be purchased in a single order.', 'event_espresso'); ?>
 </li>
 <li>
-<strong><?php _e('Alternate Registration Page', 'event_espresso'); ?></strong><br />
+<strong><?php _e('Alternative Registration Page', 'event_espresso'); ?></strong><br />
 <?php _e('Enter another registration URL (website address). This field is optional.', 'event_espresso'); ?>
 </li>
 <li>
