@@ -72,7 +72,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 */
 	private $_allowed_question_types;
 	/**
-	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','SINGLE','DROPDOWN','MULTIPLE','DATE'
+	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO BUTTONS','DROPDOWN','CHECKBOXES','DATE'
 	 * but they can be extended
 	 * @return string[]
 	 */
@@ -87,9 +87,9 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 			array(
 				EEM_Question::QST_type_text =>__('Text','event_espresso'),
 				EEM_Question::QST_type_textarea =>__('Textarea','event_espresso'),
-				EEM_Question::QST_type_single =>__('Single','event_espresso'),
+				EEM_Question::QST_type_single =>__('Radio Buttons','event_espresso'),
 				EEM_Question::QST_type_dropdown =>__('Dropdown','event_espresso'),
-				EEM_Question::QST_type_multiple =>__('Multiple Choice','event_espresso'),
+				EEM_Question::QST_type_multiple =>__('Checkboxes','event_espresso'),
 				EEM_Question::QST_type_date =>__('Date','event_espresso')
 			)
 		);
