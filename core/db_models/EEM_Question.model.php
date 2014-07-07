@@ -72,7 +72,7 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 	 */
 	private $_allowed_question_types;
 	/**
-	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','RADIO BUTTONS','DROPDOWN','CHECKBOXES','DATE'
+	 * Returns the list of allowed question types, which are normally: 'TEXT','TEXTAREA','SINGLE','DROPDOWN','MULTIPLE','DATE'
 	 * but they can be extended
 	 * @return string[]
 	 */
