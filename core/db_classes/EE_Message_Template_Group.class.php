@@ -323,5 +323,31 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 		}
 		return $sc_objs;
 	}
+
+
+
+	/**
+	 * This just gets the template pack name assigned to this message template group.  If it's not set, then we just use the default template pack.
+	 *
+	 * @since %VER%
+	 *
+	 * @return string
+	 */
+	public function get_template_pack_name() {
+		return $this->get_extra_meta( 'MTP_template_pack', TRUE, 'default' );
+	}
+
+
+
+	/**
+	 * This retrieves the template variation assigned to this message template group.  If it's not set, then we just use the default template variation.
+	 *
+	 * @since %VER%
+	 *
+	 * @return string
+	 */
+	public function get_template_pack_variation() {
+		return $this->get_extra_meta( 'MTP_variation', TRUE, 'default' );
+	}
 }
 //end EE_Message_Template_Group class
