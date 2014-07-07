@@ -272,10 +272,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	_initialize - initial module setup
+	 *    _initialize - initial module setup
 	 *
-	 *  @access 	private
-	 *  @return 	void
+	 * @access    private
+	 * @throws EE_Error
+	 * @return    void
 	 */
 	private function _initialize() {
 		// load classes
@@ -313,12 +314,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			} catch( Exception $e ) {
 				throw new EE_Error( $e->getMessage() );
 			}
+//			d( $this->checkout->current_step->reg_form );
 			// check for form submission
 			if ( $this->checkout->current_step->reg_form->was_submitted() ) {
+//				echo '<h2 style="color:#E76700;">$this->checkout->current_step->reg_form->was_submitted()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 				// capture form data
 				$this->checkout->current_step->reg_form->receive_form_submission();
 				// validate form data
 				if ( $this->checkout->current_step->reg_form->is_valid() ) {
+//					echo '<h2 style="color:#E76700;">$this->checkout->current_step->reg_form->is_valid()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 					// good registrant, you get to proceed
 					EE_Error::add_success( $this->checkout->current_step->reg_form->submission_success_message() );
 					d( $this->checkout->current_step->reg_form->input_values() );
@@ -329,6 +333,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				} else {
 					// bad, bad, bad registrant
 					EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+					$this->_action = 'display_reg_step';
 				}
 			}
 			// initialize each reg step, which gives them the chance to potentially alter the process
@@ -339,6 +344,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$this->_process_finalize_registration();
 				do_action( "AHEE__Single_Page_Checkout__after_finalize_registration", $this->checkout->current_step );
 			} else {
+//				echo '<h5 style="color:#2EA2CC;">$this->_action : <span style="color:#E76700">' . $this->_action . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 				// meh... do one of those other steps first
 				if ( method_exists( $this->checkout->current_step, $this->_action )) {
 					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
