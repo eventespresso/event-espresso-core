@@ -467,11 +467,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Performs validation on thsi form section and its subsections. For each subsection,
+	 * Performs validation on this form section and its subsections. For each subsection,
 	 * calls _validate_{subsection_name} on THIS form (if the function exists) and passes it the subsection, then calls _validate on that subsection.
 	 * If you need to perform validation on the form as a whole (considering multiple) you would be best to override this _validate method,
 	 * calling parent::_validate() first.
-	 * @param type $req_data
 	 */
 	protected function _validate() {
 		foreach($this->get_validatable_subsections() as $subsection_name => $subsection){
@@ -595,7 +594,14 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		$this->ensure_construct_finalized_called();
 		foreach($subsections as $subsection_name => $subsection){
 			if( ! $subsection instanceof EE_Form_Section_Base){
-				EE_Error::add_error(sprintf(__("Trying to add a %s as a subsection (it was named '%s') to the form section '%s'. It was removed.", "event_espresso"),get_class($subsection),$subsection_name,$this->name()));
+				EE_Error::add_error(
+					sprintf(
+						__("Trying to add a %s as a subsection (it was named '%s') to the form section '%s'. It was removed.", "event_espresso"),
+						get_class( $subsection ),
+						$subsection_name,
+						$this->name()
+					)
+				);
 				unset($subsections[$subsection_name]);
 			}
 		}
