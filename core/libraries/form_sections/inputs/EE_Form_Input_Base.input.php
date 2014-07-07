@@ -102,12 +102,6 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	protected $_required;
 
 	/**
-	 * Indicates a specific html name was provided
-	 * @var boolean
-	 */
-	protected $_html_name_specified = FALSE;
-
-	/**
 	 *
 	 * @param array $options_array {
 	 *	@type string $html_name the html name for the input
@@ -127,6 +121,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 */
 	public function __construct($options_array = array()){
 		if(isset($options_array['html_name'])){
+			$this->_html_name_specified = TRUE;
 			$this->_html_name = $options_array['html_name'];
 		}
 		if(isset($options_array['html_label_id'])){
@@ -590,28 +585,50 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return mixed whatever the raw value of this form section is in the request data
 	 */
 	public function find_form_data_for_this_section($req_data){
-//		if( $this->_html_name_specified ){
-//			//break up the html name by "[]"
-//			$name_parts = preg_match_all('\[([^]]*)\]',$this->html_name());
-//
-//		}
-		if( $this->_parent_section ){
-			$array_of_parent = $this->_parent_section->find_form_data_for_this_section($req_data);
-		}else{
-			$array_of_parent = $req_data;
-		}
-		if( isset( $array_of_parent[ $this->name() ] ) ){
-			return $array_of_parent[ $this->name() ];
-		}elseif( isset( $req_data[ $this->name() ] ) ){
-			//maybe its data is at the top level of the request data?
-			return $req_data[ $this->name() ];
+		//break up the html name by "[]"
+		$before_any_brackets = substr( $this->html_name(), 0, strpos($this->html_name(), '[') );
+		$success = preg_match_all('~\[([^]]*)\]~',$this->html_name(), $matches);
 
+		if( isset( $matches[ 1 ] ) && is_array( $matches[ 1 ] ) ){
+			$name_parts = $matches[ 1 ];
+			array_unshift($name_parts, $before_any_brackets);
+		}else{
+			$name_parts = array( $before_any_brackets );
+		}
+		return $this->_find_form_data_for_this_section_using_name_parts($name_parts, $req_data);
+	}
+
+	/**
+	 *
+	 * @param type $html_name_parts
+	 * @param type $req_data
+	 * @return boolean
+	 */
+	public function _find_form_data_for_this_section_using_name_parts($html_name_parts, $req_data){
+		$first_part_to_consider = array_shift( $html_name_parts );
+		if( isset( $req_data[ $first_part_to_consider ] ) ){
+			if( empty($html_name_parts ) ){
+				return $req_data[ $first_part_to_consider ];
+			}else{
+				return $this->_find_form_data_for_this_section_using_name_parts($html_name_parts, $req_data[ $first_part_to_consider ] );
+			}
 		}else{
 			return NULL;
 		}
 	}
-
-	public function _find_custom_html_name_form_data($html_name_parts, $req_data){
-
+	/**
+	 * Checks if this form input's data is in the request data
+	 * @param array $req_data like $_POST
+	 * @return boolean
+	 */
+	public function form_data_present_in($req_data = NULL){
+		if( $req_data === NULL ){
+			$req_data = $_POST;
+		}
+		if( $this->find_form_data_for_this_section( $req_data ) ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
 	}
 }

@@ -599,5 +599,28 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$this->_construct_finalize($this->_parent_section, $this->_name );
 		}
 	}
+	/**
+	 * Checks if any of this form section's inputs, or any of its children's inputs,
+	 * are in teh form data. If any are found, returns true. Else false
+	 * @param array $req_data
+	 * @return boolean
+	 */
+	public function form_data_present_in( $req_data = NULL ) {
+		if( $req_data === NULL){
+			$req_data = $_POST;
+		}
+		foreach( $this->subsections() as $subsection ) {
+			if($subsection instanceof EE_Form_Input_Base ) {
+				if( $subsection->form_data_present_in( $req_data ) ) {
+					return TRUE;
+				}
+			}elseif( $subsection instanceof EE_Form_Section_Proper ) {
+				if( $subsection->form_data_present_in( $req_data ) ) {
+					return TRUE;
+				}
+			}
+		}
+		return FALSE;
+	}
 }
 
