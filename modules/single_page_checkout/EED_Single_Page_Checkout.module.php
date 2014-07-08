@@ -63,6 +63,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
+	/**
+	 * @return EED_Single_Page_Checkout
+	 */
+	public static function instance() {
+		return parent::instance( __CLASS__ );
+	}
+
+
+
 
 
 	/**

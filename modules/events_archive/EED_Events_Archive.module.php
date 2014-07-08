@@ -70,6 +70,15 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
+	 * @return EED_Events_Archive
+	 */
+	public static function instance() {
+		return parent::instance( __CLASS__ );
+	}
+
+
+
+	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
 	 *
 	 *  @access 	public
@@ -124,10 +133,11 @@ class EED_Events_Archive  extends EED_Module {
 
 
 	/**
-	 * 	run - initial module setup
+	 *    run - initial module setup
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param    WP $WP
+	 * @return    void
 	 */
 	public function run( $WP ) {
 		do_action( 'AHEE__EED_Events_Archive__before_run' );
