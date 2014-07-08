@@ -241,16 +241,19 @@ abstract class  EE_Messages_Template_Pack {
 
 
 		foreach ( $contexts as $context => $details ) {
-			foreach ( $fields as $field => $field_type ) {
-				if ( $field == 'extra' )
+			foreach ( $fields as $field => $field_details ) {
+				if ( empty( $field_details ) )
 					continue;
-
 				/**
 				 * is this a field array (linked to a main field)?
 				 */
-				if ( is_array( $field ) ) {
-					foreach ( $field as $subfield ) {
-						$templates[$context][$field][$subfield] = $this->_get_specific_template( $default_pack, $messenger, $message_type, $subfield, $context );
+				if ( $field == 'extra'  ) {
+					foreach ( $field_details as $mainfield => $subfields ) {
+						foreach ( $subfields as $subfield => $subfield_details ) {
+							//make sure that the template_field_ref matches what the main template field is for this template group.
+							$template_field_ref = $subfield == 'main' ? $mainfield : $subfield;
+							$templates[$context][$mainfield][$subfield] = $this->_get_specific_template( $default_pack, $messenger, $message_type, $template_field_ref, $context );
+						}
 					}
 				} else {
 					$templates[$context][$field] = $this->_get_specific_template( $default_pack, $messenger, $message_type, $field, $context );
