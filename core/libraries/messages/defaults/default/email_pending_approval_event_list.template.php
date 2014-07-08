@@ -4,7 +4,7 @@
 <tbody>
 <tr>
 <td><!-- Callout Panel -->
-<p class="callout"><strong>Event: [EVENT_LINK]</strong></p>
+<p class="callout"><strong><?php _e('Event:', 'event_espresso'); ?> [EVENT_LINK]</strong></p>
 <!-- /Callout Panel --></td>
 </tr>
 </tbody>
@@ -17,7 +17,7 @@
 <tbody>
 <tr>
 <td>
-<h3>Registrant(s):</h3>
+<h3><?php _e('Registrant(s):', 'event_espresso'); ?></h3>
 [ATTENDEE_LIST]</td>
 </tr>
 </tbody>

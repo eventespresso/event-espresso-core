@@ -32,13 +32,13 @@
 <tbody>
 <tr>
 <td>
-<h1>Hello [PRIMARY_REGISTRANT_FNAME],</h1>
-Your registration(s) is/are pending payment for the following events:
+<h1><?php printf( __('Hello, %s:', 'event_espresso'),  '[PRIMARY_REGISTRANT_FNAME]' ); ?></h1>
+<?php _e('Your registration(s) is/are pending payment for the following events:', 'event_espresso'); ?>
 <div>
     [EVENT_LIST]
 </div>
 <!-- Callout Panel -->
-<p class="callout">You can <a href="[PAYMENT_URL]">make a payment here »</a>.</p>
+<p class="callout"><?php printf( __('You can %make a payment here »%s', 'event_espresso'), '<a href="[PAYMENT_URL]">', '</a>' ); ?>.</p>
 <!-- /Callout Panel --></td>
 </tr>
 </tbody>
@@ -65,8 +65,8 @@ Your registration(s) is/are pending payment for the following events:
 <tbody>
 <tr>
 <td>
-<h5>Connect with Us:</h5>
-<a class="soc-btn fb" href="[CO_FACEBOOK_URL]">Facebook</a> <a class="soc-btn tw" href="[CO_TWITTER_URL]">Twitter</a> <a class="soc-btn gp" href="[CO_GOOGLE_URL]">Google+</a></td>
+<h5><?php _e('Connect with Us:', 'event_espresso'); ?></h5>
+<a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php _e('Facebook', 'event_espresso'); ?></a> <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php _e('Twitter', 'event_espresso'); ?></a> <a class="soc-btn gp" href="[CO_GOOGLE_URL]"><?php _e('Google+', 'event_espresso'); ?></a></td>
 </tr>
 </tbody>
 </table>
@@ -77,10 +77,10 @@ Your registration(s) is/are pending payment for the following events:
 <tbody>
 <tr>
 <td>
-<h5>Contact Info:</h5>
-Phone: <strong>[CO_PHONE]</strong>
+<h5><?php _e('Contact Info:', 'event_espresso'); ?></h5>
+<?php _e('Phone:', 'event_espresso'); ?> <strong>[CO_PHONE]</strong>
 
-Email: <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
+<?php _e('Email:', 'event_espresso'); ?> <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
 </tr>
 </tbody>
 </table>

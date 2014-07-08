@@ -4,7 +4,7 @@
 <tbody>
 <tr>
 <td>
-<h2>Event: [EVENT]</h2>
+<h2><?php _e('Event: [EVENT]', 'event_espresso'); ?></h2>
 </td>
 </tr>
 </tbody>
@@ -17,7 +17,7 @@
 <tbody>
 <tr>
 <td>
-<h2>Registrant(s):</h2>
+<h2><?php _e('Registrant(s):', 'event_espresso'); ?></h2>
 [ATTENDEE_LIST]</td>
 </tr>
 </tbody>

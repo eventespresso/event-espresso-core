@@ -33,16 +33,16 @@
 <tbody>
 <tr>
 <td>
-<h2>Hello, [PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]:</h2>
-<p class="lead">We're just notifying you of a successful payment made for the following transaction and tickets:</p>
+<h2><?php printf( __('Hello, %s:', 'event_espresso'),  '[PRIMARY_REGISTRANT_FNAME] [PRIMARY_REGISTRANT_LNAME]' ); ?></h2>
+<p class="lead"><?php _e("We're just notifying you of a successful payment made for the following transaction and tickets:", 'event_espresso'); ?></p>
 
-<h3>Payment Details:</h3>
+<h3><?php _e('Payment Details:', 'event_espresso'); ?></h3>
 <ul>
-	<li><strong>Payment Status:</strong> [PAYMENT_STATUS]</li>
-	<li><strong>Transaction ID:</strong> [TXN_ID]</li>
-	<li><strong>Total Cost:</strong> [TOTAL_COST]</li>
-	<li><strong>Payment Amount:</strong> [AMOUNT_PAID]</li>
-	<li><strong>Amount Due:</strong> [TOTAL_OWING]</li>
+	<li><strong><?php _e('Payment Status:', 'event_espresso'); ?></strong> [PAYMENT_STATUS]</li>
+	<li><strong><?php _e('Transaction ID:', 'event_espresso'); ?></strong> [TXN_ID]</li>
+	<li><strong><?php _e('Total Cost:', 'event_espresso'); ?></strong> [TOTAL_COST]</li>
+	<li><strong><?php _e('Payment Amount:', 'event_espresso'); ?></strong> [AMOUNT_PAID]</li>
+	<li><strong><?php _e('Amount Due:', 'event_espresso'); ?></strong> [TOTAL_OWING]</li>
 </ul>
 [EVENT_LIST]
 </td>
@@ -69,8 +69,8 @@
 <tbody>
 <tr>
 <td>
-<h3>Connect with Us:</h3>
-<a class="soc-btn fb" href="[CO_FACEBOOK_URL]">Facebook</a> <a class="soc-btn tw" href="[CO_TWITTER_URL]">Twitter</a> <a class="soc-btn gp" href="[CO_GOOGLE_URL]">Google+</a></td>
+<h3><?php _e('Connect with Us:', 'event_espresso'); ?></h3>
+<a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php _e('Facebook', 'event_espresso'); ?></a> <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php _e('Twitter', 'event_espresso'); ?></a> <a class="soc-btn gp" href="[CO_GOOGLE_URL]"><?php _e('Google+', 'event_espresso'); ?></a></td>
 </tr>
 </tbody>
 </table>
@@ -81,10 +81,10 @@
 <tbody>
 <tr>
 <td>
-<h3>Contact Info:</h3>
-Phone: <strong>[CO_PHONE]</strong>
+<h3><?php _e('Contact Info:', 'event_espresso'); ?></h3>
+<?php _e('Phone:', 'event_espresso'); ?> <strong>[CO_PHONE]</strong>
 
-Email: <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
+<?php _e('Email:', 'event_espresso'); ?> <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
 </tr>
 </tbody>
 </table>

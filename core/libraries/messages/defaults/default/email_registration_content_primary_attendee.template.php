@@ -33,8 +33,8 @@
                         <tbody>
                             <tr>
                                 <td>
-                                    <h2>Hello, [PRIMARY_REGISTRANT_FNAME]:</h2>
-                                    <p class="lead">This is a copy of your registration details!</p>
+                                    <h2><?php printf( __('Hello, %s:', 'event_espresso'),  '[PRIMARY_REGISTRANT_FNAME]' ); ?></h2>
+                                    <p class="lead"><?php _e('This is a copy of your registration details!', 'event_espresso'); ?></p>
                                 </td>
                             </tr>
                         </tbody>
@@ -64,9 +64,8 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <h5>Connect with Us:</h5>
-                                                <a class="soc-btn fb" href="[CO_FACEBOOK_URL]">Facebook</a> <a class="soc-btn tw" href="[CO_TWITTER_URL]">Twitter</a> <a class="soc-btn gp" href="[CO_GOOGLE_URL]">Google+</a>
-                                            </td>
+                                                <h5><?php _e('Connect with Us:', 'event_espresso'); ?></h5>
+<a class="soc-btn fb" href="[CO_FACEBOOK_URL]"><?php _e('Facebook', 'event_espresso'); ?></a> <a class="soc-btn tw" href="[CO_TWITTER_URL]"><?php _e('Twitter', 'event_espresso'); ?></a> <a class="soc-btn gp" href="[CO_GOOGLE_URL]"><?php _e('Google+', 'event_espresso'); ?></a></td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -77,10 +76,10 @@
                                     <tbody>
                                         <tr>
                                             <td>
-                                                <h5>Contact Info:</h5>
-                                                Phone: <strong>[CO_PHONE]</strong>
-                                                Email: <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong>
-                                            </td>
+                                                <h5><?php _e('Contact Info:', 'event_espresso'); ?></h5>
+<?php _e('Phone:', 'event_espresso'); ?> <strong>[CO_PHONE]</strong>
+
+<?php _e('Email:', 'event_espresso'); ?> <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
                                         </tr>
                                     </tbody>
                                 </table>

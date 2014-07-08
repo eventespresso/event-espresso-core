@@ -1,1 +1,1 @@
-Event Refund Details
+<?php _e('Event Refund Details', 'event_espresso'); ?>

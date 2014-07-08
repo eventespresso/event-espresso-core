@@ -14,7 +14,7 @@
         </td>
         <td></td>
     </tr>
-</table>  
+</table>
 <!-- END HEADER -->
 <!-- BODY -->
 <table class="body-wrap">
@@ -23,8 +23,8 @@
         <td class="container" bgcolor="#FFFFFF">
             <!-- content -->
             <div class="content">
-                <h1>Registration(s) Pending Payment</h1>
-                <p>The following registration(s) are awaiting payment for the following event(s).</p>
+                <h1><?php _e('Registration(s) Pending Payment', 'event_espresso'); ?></h1>
+                <p><?php _e('The following registration(s) are awaiting payment for the following event(s).', 'event_espresso'); ?></p>
                 <table>
                     <tr>
                         <td>

@@ -1,1 +1,1 @@
-Event Payment Details
+<?php _e('Event Payment Details', 'event_espresso'); ?>

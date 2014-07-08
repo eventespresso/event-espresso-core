@@ -1,3 +1,3 @@
 <!-- Callout Panel -->
-<p class="callout"><strong>Event Name:</strong> <a href="[EVENT_URL]">[EVENT]</a></p>
+<p class="callout"><strong><?php _e('Event Name:', 'event_espresso'); ?></strong> <a href="[EVENT_URL]">[EVENT]</a></p>
 <!-- /Callout Panel -->

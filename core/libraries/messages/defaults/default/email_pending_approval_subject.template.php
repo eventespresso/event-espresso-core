@@ -1,1 +1,1 @@
-Registration Pending Payment
+<?php _e('Registration Pending Payment', 'event_espresso'); ?>
