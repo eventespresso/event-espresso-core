@@ -231,7 +231,7 @@ abstract class EE_PMT_Base{
 			}
 		}else{//no gateway provided
 			//so create no payment. The payment processor will know how to handle this
-			$payment = NULL; // <<<<<  added by brent as interm solution so that $payment is defined for return below
+			$payment = NULL;
 		}
 		//if there is billing info, clean it and save it now
 		if( $billing_info instanceof EE_Billing_Info_Form ){

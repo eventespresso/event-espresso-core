@@ -18,6 +18,19 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  */
 class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 
+	public function test_input_values(){
+		$form = new EE_Form_Section_Proper(array(
+
+			'subsections'=>array(
+				'first_name' => new EE_Text_Input(),
+				'last_name' => new EE_Text_Input(),
+			)
+
+		));
+		$data = array('first_name'=>'brent','last_name'=>'possum');
+		$form->receive_form_submission( $data );
+		$this->assertEquals( $data, $form->input_values() );
+	}
 	public function test_add_subsection__weird_subsection_names(){
 		$grandparent_form = new EE_Form_Section_Proper(array(
 			'name'=>'grandparent',

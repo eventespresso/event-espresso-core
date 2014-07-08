@@ -595,7 +595,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 		}else{
 			$name_parts = array( $before_any_brackets );
 		}
-		return $this->_find_form_data_for_this_section_using_name_parts($name_parts, $req_data);
+		$value = $this->_find_form_data_for_this_section_using_name_parts($name_parts, $req_data);
+		if( $value === NULL ){
+			//check if this thing's name is at the TOP level of the request data
+			if( isset( $req_data[ $this->name() ] ) ){
+				$value = $req_data[ $this->name() ];
+			}
+		}
+		return $value;
 	}
 
 	/**
