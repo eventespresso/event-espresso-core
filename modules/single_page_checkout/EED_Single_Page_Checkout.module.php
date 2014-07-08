@@ -320,30 +320,30 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			);
 			try {
 				$this->checkout->current_step->generate_reg_form();
-			} catch( Exception $e ) {
-				throw new EE_Error( $e->getMessage() );
-			}
-//			d( $this->checkout->current_step->reg_form );
-			// check for form submission
-			if ( $this->checkout->current_step->reg_form->was_submitted() ) {
-//				echo '<h2 style="color:#E76700;">$this->checkout->current_step->reg_form->was_submitted()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
-				// capture form data
-				$this->checkout->current_step->reg_form->receive_form_submission();
-				// validate form data
-				if ( $this->checkout->current_step->reg_form->is_valid() ) {
-//					echo '<h2 style="color:#E76700;">$this->checkout->current_step->reg_form->is_valid()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
-					// good registrant, you get to proceed
-					EE_Error::add_success( $this->checkout->current_step->reg_form->submission_success_message() );
-					d( $this->checkout->current_step->reg_form->input_values() );
-					// advance to the next step! If you pass GO, collect $200
-					next( $this->checkout->reg_steps );
-					// and advance the next step as well
-					$this->_set_next_step();
-				} else {
-					// bad, bad, bad registrant
-					EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
-					$this->_action = 'display_reg_step';
+//				d( $this->checkout->current_step->reg_form );
+				// check for form submission
+				if ( $this->checkout->current_step->reg_form->was_submitted() ) {
+//					echo '<h2 style="color:#E76700;">$this->checkout->current_step->reg_form->was_submitted()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+					// capture form data
+					$this->checkout->current_step->reg_form->receive_form_submission();
+					// validate form data
+					if ( $this->checkout->current_step->reg_form->is_valid() ) {
+//						echo '<h2 style="color:#E76700;">$this->checkout->current_step->reg_form->is_valid()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
+						// good registrant, you get to proceed
+						EE_Error::add_success( $this->checkout->current_step->reg_form->submission_success_message() );
+						d( $this->checkout->current_step->reg_form->input_values() );
+						// advance to the next step! If you pass GO, collect $200
+						next( $this->checkout->reg_steps );
+						// and advance the next step as well
+						$this->_set_next_step();
+					} else {
+						// bad, bad, bad registrant
+						EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+						$this->_action = 'display_reg_step';
+					}
 				}
+			} catch( EE_Error $e ) {
+				$e->get_error();
 			}
 			// initialize each reg step, which gives them the chance to potentially alter the process
 			$this->_initialize_reg_steps();
