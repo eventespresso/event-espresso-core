@@ -344,7 +344,16 @@ interface EEMI_Payment {
 }
 
 interface EEI_Base{
+	/**
+	 * gets the unique ID of the model object. If it hasn't been saved yet
+	 * to the database, this should be 0 or NULL
+	 */
 	function ID();
+	/**
+	 * Returns an array where keys are field names and values are their values
+	 * @return array
+	 */
+	function model_field_array();
 }
 interface EEI_Transaction extends EEI_Base{
 	/**
@@ -415,6 +424,17 @@ interface EEI_Line_Item{
 	 * @return float
 	 */
 	function get_total_tax();
+
+	/**
+	 * Finds the tax subtotal child of this line item, removes all its children taxes
+	 * and makes this the only new tax. Used to update taxes in cases
+	 * where an offsite payment processor calculates taxes so we can update our
+	 * records accordingly
+	 * @param type $amount
+	 * @param type $name
+	 * @param type $description
+	 */
+	function set_tax_to( $amount, $name, $description );
 }
 
 interface EEI_Registration{

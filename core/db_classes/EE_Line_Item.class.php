@@ -732,6 +732,34 @@ class EE_Line_Item extends EE_Base_Class {
 		return $total;
 	}
 
+	/**
+	 * Sets the total tax paid on this, by removing all previous taxes
+	 * and replacing them with a single tax and updating the tax sub-total
+	 * @param float $amount
+	 * @param string $name
+	 * @param string $description
+	 * @return EE_Line_Item the new tax created
+	 */
+	public function set_tax_to($amount, $name = NULL, $description = NULL ){
+		//first: remove all tax descendants
+		//add this as a new tax descendant
+		$tax_subtotal = $this->get_nearest_descendant_of_type( EEM_Line_Item::type_tax_sub_total );
+		$tax_subtotal->delete_children_line_items();
+
+		$new_tax = EE_Line_Item::new_instance(array(
+			'TXN_ID' => $this->TXN_ID(),
+			'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
+			'LIN_desc' => $description ? $description : '',
+			'LIN_percent' => $amount / $this->get_items_total() * 100,
+			'LIN_total' => $amount,
+			'LIN_parent' => $tax_subtotal->ID(),
+			'LIN_type' => EEM_Line_Item::type_tax
+		));
+		$new_tax->save();
+		$tax_subtotal->set_total( $amount );
+		$tax_subtotal->save();
+		return $new_tax;
+	}
 
 
 	/**
@@ -787,6 +815,27 @@ class EE_Line_Item extends EE_Base_Class {
 			}
 		}
 		return $line_items_of_type;
+	}
+
+	/**
+	 * Uses a breadth-first-search in order to find the nearest descendant of
+	 * the specified type and returns it, else NULL
+	 * @param string $type like one of the EEM_Line_Item::type_*
+	 * @return EE_Line_Item
+	 */
+	public function get_nearest_descendant_of_type( $type ) {
+		foreach( $this->children() as $child ){
+			if( $child->type() == $type ){
+				return $child;
+			}
+		}
+		foreach($this->children() as $child ){
+			$descendant_found = $child->get_nearest_descendant_of_type( $type );
+			if( $descendant_found ){
+				return $descendant_found;
+			}
+		}
+		return NULL;
 	}
 
 

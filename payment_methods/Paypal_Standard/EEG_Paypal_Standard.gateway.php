@@ -143,16 +143,15 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @param EEI_Transaction $transaction
 	 * @return EE_Payment updated
 	 */
-	public function handle_payment_update($update_info,$transaction){
+	public function handle_payment_update( $update_info, $transaction ){
 		//verify there's payment data that's been sent
-		$this->log('paypal standards handle payment update called with '.print_r($update_info,true).', on transaction '.print_r($transaction,true),$transaction);
 		if(empty($update_info['payment_status']) || empty($update_info['txn_id'])){
 			return NULL;
 		}
 		$payment =  $this->_pay_model->get_payment_by_txn_id_chq_nmbr($update_info['txn_id']);
-			if ( ! $payment ){
-				$payment = $transaction->last_payment();
-			}
+		if ( ! $payment ){
+			$payment = $transaction->last_payment();
+		}
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if( ! $this->validate_ipn($update_info,$payment)){
 			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
@@ -180,7 +179,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 //		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
 		//check if we've already processed this payment
 
-		if( floatval( $update_info[ 'tax' ] ) ){
+		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $transaction->total_line_item()->get_total_tax() ){
+			echo "taxes didnt mathc";
+			$transaction->total_line_item()->set_tax_to(floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
 			//@todo: possibly update the line items with a new tax
 		}
 		if( ! empty($payment)){
@@ -196,6 +197,11 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 				$payment->set_details($update_info);
 			}
 		}
+		$this->log( array(
+			'IPN Data' => $update_info,
+			'transaction (not yet updated)' => $transaction->model_field_array(),
+			'payment (updated)' => $payment->model_field_array()),
+				$payment);
 		return $payment;
 	}
 	/**
@@ -206,6 +212,10 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 	 * @return boolean
 	 */
 	public function validate_ipn($update_info,$payment) {
+		//allow us to skip validating IPNs with paypal (useful for testing)
+		if( apply_filters( 'FHEE__EEG_Paypal_Standard__validate_ipn__skip', FALSE ) ){
+			return TRUE;
+		}
 		$update_info_from_post_only = array_diff_key($update_info, $_GET);
 		$response_post_data=$update_info_from_post_only + array('cmd'=>'_notify-validate');
 		$result= wp_remote_post($this->_gateway_url, array('body' => $response_post_data, 'sslverify' => false, 'timeout' => 60));
