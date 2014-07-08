@@ -377,6 +377,17 @@ jQuery(document).ready(function($) {
 			});
 
 
+			//toggle all tickets on the datetime (created datetimes automatically have all tickets applied)
+			this.context = 'ticket';
+			var rowcount = this.getrowcount() + 1;
+			this.context = 'datetime';
+			for( i=1; i<rowcount; i++ ) {
+				tktHelper.setticketRow(i);
+				tktHelper.toggleActiveDTTorTicket('ticket');
+			}
+
+
+
 			//on brand new events the ticket-container is hidden (making sure a datetime gets created first).  let's show that now
 			if ( $('.event-tickets-container').is(':hidden') )
 				$('.event-tickets-container').fadeIn();
@@ -1907,7 +1918,7 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime-create' :
-				tktHelper.newDTTrow().setcontext('datetime-create').DateTimeEditToggle(true).setcontext('ticket').DateTimeEditToggle().scrollTo();
+				tktHelper.newDTTrow().setcontext('datetime-create').DateTimeEditToggle(true).setcontext('datetime').DateTimeEditToggle().scrollTo();
 				break;
 			case 'datetime' :
 				tktHelper.setcontext('datetime-create').DateTimeEditToggle();
