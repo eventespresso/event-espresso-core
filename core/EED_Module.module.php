@@ -99,7 +99,7 @@ abstract class EED_Module extends EE_Configurable {
 	protected static function instance( $module_name = '' ) {
 		$module_name = ! empty( $module_name ) ? $module_name : get_called_class();
 		if ( ! isset(  EE_Registry::instance()->modules->{$module_name} ) || ! EE_Registry::instance()->modules->{$module_name} instanceof EED_Module ) {
-			EE_Registry::instance()->modules->{$module_name} = $module_name !== 'EED_Module' ? EE_Module_Request_Router::module_factory( $module_name ) : NULL;
+			EE_Registry::instance()->modules->{$module_name} = EE_Module_Request_Router::module_factory( $module_name );
 		}
 		return EE_Registry::instance()->modules->$module_name;
 	}
