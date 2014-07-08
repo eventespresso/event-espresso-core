@@ -233,8 +233,8 @@ abstract class  EE_Messages_Template_Pack {
 		$filtered_base_path = apply_filters( 'FHEE__EE_Template_Pack__get_templates__filtered_base_path', $this->_base_path, $this );
 
 		//we get all the templates for the DEFAULT template pack to have fallbacks in case this template pack does not have templates for this messenger and message type.
-		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : $this;
-		$default_templates = $default_pack->get_templates();
+		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : null;
+		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates() : array();
 
 		$fields = $messenger->get_template_fields();
 		$contexts = $this->message_type->get_contexts();
@@ -335,7 +335,7 @@ abstract class  EE_Messages_Template_Pack {
 	 */
 	public function get_variation( $messenger, $type, $variation, $file_extension = 'css', $path = true ) {
 		$base = $path ? $this->_base_path : $this->_base_url;
-		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : $this;
+		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : null;
 
 		$path_string = 'variations/' . $messenger . '_' . $type . '_' . $variation . '.css';
 
@@ -343,11 +343,39 @@ abstract class  EE_Messages_Template_Pack {
 		if ( is_readable( $this->_base_path . $path_string ) ) {
 			$variation = $base . $path_string;
 		} else {
-			$variation = $default_pack->get_variation( $messenger, $type, $variation, $file_extension, $path );
+			$variation = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, $variation, $file_extension, $path ) : '';
 		}
 
 		//filter result
 		$variation = apply_filters( 'FHEE__' . get_class( $this ) . '__get_variation', $variation, $messenger, $type, $variation, $file_extension, $path );
 		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_variation', $variation, $messenger, $type, $variation, $file_extension, $path, $this );
+	}
+
+
+
+
+
+	/**
+	 * This method is used to return the wrapper template for the given template pack.  If the given template pack does not include any wrapper templates then the default is used.
+	 *
+	 * @param string $messenger What messenger the wrapper is for.
+	 * @param string $type           What type of wrapper is being returned ( for messengers that may have more than one wrapper )
+	 *
+	 * @return string returns the path for the requested wrapper template.
+	 */
+	public function get_wrapper( $messenger, $type = 'main' ) {
+		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : NULL;
+
+		$path_string = $this->_base_path . $messenger . '_' . $type . '_wrapper.template.php';
+
+		if ( is_readable( $path_string ) ) {
+			$template = $path_string;
+		} else {
+			$template = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_wrapper( $messenger, $type ) : '';
+		}
+
+		//filter
+		$template = apply_filters( 'FHEE__' . get_class( $this ) . '__get_wrapper', $template, $messenger, $type );
+		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_wrapper', $template, $messenger, $type, $this );
 	}
 }
