@@ -17,11 +17,22 @@
  *
  * @package			Event Espresso
  * @subpackage	/modules/csv/
- * @author				Brent Christensen 
+ * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EED_Csv  extends EED_Module {
+
+
+
+	/**
+	 * @return EED_Csv
+	 */
+	public static function instance() {
+		return parent::instance( __CLASS__ );
+	}
+
+
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
