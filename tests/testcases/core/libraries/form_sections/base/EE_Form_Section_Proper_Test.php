@@ -17,6 +17,29 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  * @group forms
  */
 class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
+
+	public function test_add_subsection__weird_subsection_names(){
+		$grandparent_form = new EE_Form_Section_Proper(array(
+			'name'=>'grandparent',
+			'subsections'=>array(
+				'123-reg-money'=> new EE_Form_Section_Proper(array(
+					'subsections'=>array(
+						'!0!a77y-bad`string' => new EE_Text_Input()
+					)
+				))
+			)
+		));
+		$grandparent_form->add_subsections(array('new_one'=>new EE_Text_Input()));
+		$added_input = $grandparent_form->get_input('new_one');
+		$this->assertInstanceOf('EE_Text_Input', $added_input);
+		$this->assertEquals( 'new_one', $added_input->name() );
+		$this->assertEquals( 'grandparent[new_one]', $added_input->html_name() );
+
+		$grandparent_form->add_subsections(array(12=>new EE_Text_Input()));
+		$other_added_input = $grandparent_form->get_input( 12 );
+		$this->assertInstanceOf('EE_Text_Input', $other_added_input);
+
+	}
 	public function test_form_data_present_in__normal(){
 		$granparent_form = new EE_Form_Section_Proper(array(
 			'name'=>'grandparent',

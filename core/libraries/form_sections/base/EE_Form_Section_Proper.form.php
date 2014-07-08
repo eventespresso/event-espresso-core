@@ -541,7 +541,10 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$subsections_after = array_diff_key($this->_subsections, $subsections_before);
 			$this->_subsections = array_merge($subsections_before,$subsections,$subsections_after);
 		}else{
-			$this->_subsections = array_merge($this->_subsections,$subsections);
+			//don't use array_merge because keys might be numeric and we want to preserve their keys
+			foreach( $subsections as $key => $subsection ){
+				$this->_subsections[ $key ] = $subsection;
+			}
 		}
 		foreach($this->_subsections as $name => $subsection){
 			$subsection->_construct_finalize($this, $name);
