@@ -175,6 +175,9 @@ abstract class  EE_Messages_Template_Pack {
 			throw new EE_Error( sprintf( __('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), get_class( $this ) ) );
 		}
 
+		//load template helper
+		EE_Registry::instance()->load_helper( 'Template' );
+
 	}
 
 
@@ -310,7 +313,7 @@ abstract class  EE_Messages_Template_Pack {
 		if ( empty( $actual_path ) ) {
 			$contents = isset( $default_templates[$context][$field] ) ? $default_templates[$context][$field] : '';
 		} else {
-			$contents = file_get_contents( $actual_path, true );
+			$contents = EEH_Template::display_template( $actual_path, array(), TRUE );
 		}
 
 		return $contents;
