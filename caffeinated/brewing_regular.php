@@ -362,6 +362,11 @@ class EE_Brewing_Regular extends EE_Base {
 					$path = $base_path . $msg_prefix . 'newsletter_content.template.php';
 					$contents = EEH_Template::display_template( $path, array(), true );
 					break;
+
+				case 'newsletter_subject_attendee' :
+					$path = $base_path . $msg_prefix . 'subject.template.php';
+					$contents = EEH_Template::display_template( $path, array(), true );
+					break;
 			}
 		}
 
