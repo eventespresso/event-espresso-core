@@ -238,48 +238,79 @@ abstract class  EE_Messages_Template_Pack {
 
 		$fields = $messenger->get_template_fields();
 		$contexts = $this->message_type->get_contexts();
-		$master_templates = $this->message_type->get_master_templates();
-		$master_templates_mt = isset( $master_templates[$messenger->name] ) ? $master_templates[$messenger->name] : $message_type->name();
+
 
 		foreach ( $contexts as $context => $details ) {
 			foreach ( $fields as $field => $field_type ) {
-				$full_path = $this->_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '_' . $context . '.template.php';
-				$fallback_path = $this->_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '.template.php';
-				$mt_defined_full_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '_' . $context . '.template.php';
-				$mt_defined_fallback_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '.template.php';
+				if ( $field == 'extra' )
+					continue;
 
 				/**
-				 * Template checks are done heirarchically in the following order:
-				 *
-				 * - a match for the full messenger name, message type, context and field in the full path for the given template pack.
-				 * - a match for the full messenger name, message type, field in the full path for the given template pack.
-				 * - a match for the full messenger name, message type, field, context in the path grabbed for the related message type defined in the _master_templates property for the message type (i.e. all registration message types share the same template as the main registration message type).
-				 * - match for the full messenger name, message type, field for the related message type.
-				 * - a match for a default template matching the messenger, name, context, field (as set by the default template packs).
-				 * - empty string.
+				 * is this a field array (linked to a main field)?
 				 */
-
-
-				if ( is_readable( $full_path ) ) {
-					$actual_path = $full_path;
-				} elseif ( is_readable( $fallback_path ) ) {
-					$actual_path = $fallback_path;
-				} elseif ( is_readable( $mt_defined_full_path ) ) {
-					$actual_path = $mt_defined_full_path;
-				} elseif ( is_readable( $mt_defined_fallback_path ) ) {
-					$actual_path = $mt_defined_fallback_path;
-				} else  {
-					$actual_path = '';
-				}
-				if ( empty( $actual_path ) ) {
-					$templates[$context][$field] = isset( $default_templates[$context][$field] ) ? $default_templates[$context][$field] : '';
+				if ( is_array( $field ) ) {
+					foreach ( $field as $subfield ) {
+						$templates[$context][$field][$subfield] = $this->_get_specific_template( $default_pack, $messenger, $message_type, $subfield, $context );
+					}
 				} else {
-					$templates[$context][$field] = file_get_contents( $actual_path, true );
+					$templates[$context][$field] = $this->_get_specific_template( $default_pack, $messenger, $message_type, $field, $context );
 				}
 			}
 		}
 		$this->_templates[$messenger->name][$message_type->name] = $templates;
 		return $templates;
+	}
+
+
+	/**
+	 * Utility method for retrieving a specific template matching the given parameters
+	 *
+	 * @param mixed (null|EE_Messages_Template_Pack_Default)          $default_pack either the default template pack or null
+	 * @param EE_messenger    $messenger
+	 * @param EE_message_type $message_type
+	 * @param string          $field          The field reference for the specific template being looked up.
+	 * @param string          $context      The context reference for the specific template being looked up
+	 *
+	 * @return string          The template contents.
+	 */
+	protected function _get_specific_template( $default_pack, EE_messenger $messenger, EE_message_type $message_type, $field, $context ) {
+		$master_templates = $this->message_type->get_master_templates();
+		$master_templates_mt = isset( $master_templates[$messenger->name] ) ? $master_templates[$messenger->name] : $message_type->name();
+		$full_path = $this->_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '_' . $context . '.template.php';
+		$fallback_path = $this->_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '.template.php';
+		$mt_defined_full_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '_' . $context . '.template.php';
+		$mt_defined_fallback_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '.template.php';
+
+		/**
+		 * Template checks are done heirarchically in the following order:
+		 *
+		 * - a match for the full messenger name, message type, context and field in the full path for the given template pack.
+		 * - a match for the full messenger name, message type, field in the full path for the given template pack.
+		 * - a match for the full messenger name, message type, field, context in the path grabbed for the related message type defined in the _master_templates property for the message type (i.e. all registration message types share the same template as the main registration message type).
+		 * - match for the full messenger name, message type, field for the related message type.
+		 * - a match for a default template matching the messenger, name, context, field (as set by the default template packs).
+		 * - empty string.
+		 */
+
+
+		if ( is_readable( $full_path ) ) {
+			$actual_path = $full_path;
+		} elseif ( is_readable( $fallback_path ) ) {
+			$actual_path = $fallback_path;
+		} elseif ( is_readable( $mt_defined_full_path ) ) {
+			$actual_path = $mt_defined_full_path;
+		} elseif ( is_readable( $mt_defined_fallback_path ) ) {
+			$actual_path = $mt_defined_fallback_path;
+		} else  {
+			$actual_path = '';
+		}
+		if ( empty( $actual_path ) ) {
+			$contents = isset( $default_templates[$context][$field] ) ? $default_templates[$context][$field] : '';
+		} else {
+			$contents = file_get_contents( $actual_path, true );
+		}
+
+		return $contents;
 	}
 
 
