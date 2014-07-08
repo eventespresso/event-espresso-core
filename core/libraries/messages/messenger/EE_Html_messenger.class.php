@@ -253,28 +253,6 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 
-	/**
-	 * _set_default_field_content
-	 * set the _default_field_content property (what gets added in the default templates).
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function _set_default_field_content() {
-		$this->_default_field_content = array(
-			'subject' => '',
-			'content' => array(
-				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),
-				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
-				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
-				'ticket_list' => __('This contains the formatting for each ticket in a ticket list.', 'event_espresso'),
-				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso'),
-				'question_list' => __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'event_espresso')
-				)
-			);
-	}
-
-
 
 
 	/**
