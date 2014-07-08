@@ -165,11 +165,7 @@ final class EE_Module_Request_Router {
 			return FALSE;
 		}
 		// instantiate module and call route method
-		$module = $this->_module_router( $module_name, $method );
-		if ( $module instanceof EED_Module ) {
-			return $module;
-		}
-		return FALSE;
+		return $this->_module_router( $module_name, $method );
 	}
 
 
@@ -181,16 +177,19 @@ final class EE_Module_Request_Router {
 	 *
 	 * @access    public
 	 * @param   string  $module_name
-	 * @return    EED_Module | boolean
+	 * @return    EED_Module | NULL
 	 */
 	public static function module_factory( $module_name ) {
+		if ( $module_name == 'EED_Module' ) {
+			EE_Error::add_error( sprintf( __( 'EED_Module is an abstract parent class an can not be instantiated. Please provide a proper module name.', 'event_espresso' ), $module_name ), __FILE__, __FUNCTION__, __LINE__ );
+			return NULL;
+		}
 		// let's pause to reflect on this...
 		$mod_reflector = new ReflectionClass( $module_name );
 		// ensure that class is actually a module
 		if ( ! $mod_reflector->isSubclassOf( 'EED_Module' )) {
-			$msg = sprintf( __( 'The requested %s module is not of the class EED_Module.', 'event_espresso' ), $module_name );
-			EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			EE_Error::add_error( sprintf( __( 'The requested %s module is not of the class EED_Module.', 'event_espresso' ), $module_name ), __FILE__, __FUNCTION__, __LINE__ );
+			return NULL;
 		}
 		// instantiate and return module class
 		return $mod_reflector->newInstance();
@@ -205,13 +204,15 @@ final class EE_Module_Request_Router {
 	 * @access    private
 	 * @param   string  $module_name
 	 * @param   string  $method
-	 * @return    EED_Module | boolean
+	 * @return    EED_Module | NULL
 	 */
 	private function _module_router( $module_name, $method ) {
 		// instantiate module class
 		$module = EE_Module_Request_Router::module_factory( $module_name );
-		// and call whatever action the route was for
-		call_user_func( array( $module, $method ), $this->WP_Query );
+		if ( $module instanceof EED_Module ) {
+			// and call whatever action the route was for
+			call_user_func( array( $module, $method ), $this->WP_Query );
+		}
 		return $module;
 	}
 
