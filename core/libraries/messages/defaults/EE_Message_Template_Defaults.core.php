@@ -19,16 +19,15 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Message_Template_Defaults class
  *
- * This class is the parent class for default message template contents.  Children classes follow a certain naming format (i.e. /email/EE_Messages_Email_Payment_Defaults.class.php) and they simply serve the function of defining defaults for that messenger/message_type combination when global templates are generated.
+ * This class is the parent class for default message template contents.  Children classes follow a certain naming format (i.e. /email/EE_Messages_Email_Payment_Defaults.class.php) and they simply serve the function of defining defaults for that messenger/message_type combination when global templates are generated.  Child classes should follow the naming schema for their templates:  EE_Message_Template_Defaults_{template_pack_slug}
  *
- * @abstract
  * @package		Event Espresso
  * @subpackage	includes/core/messages/defaults
  * @author		Darren Ethier
  *
  * ------------------------------------------------------------------------
  */
-abstract class EE_Message_Template_Defaults extends EE_Base {
+class EE_Message_Template_Defaults extends EE_Base {
 
 
 	/**
@@ -97,21 +96,6 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 
 	/**
-	 * This will be an array of defaults in the format:
-	 *
-	 * array(
-	 * 		'm' => array(), //array of messenger defaults
-	 * 		'mt' => array(), //array of messagetype defaults.
-	 * )
-	 * @var array
-	 */
-	protected $_defaults;
-
-
-
-
-
-	/**
 	 * This holds the EE_Messages object
 	 * @var object
 	 */
@@ -131,21 +115,24 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	/**
 	 * constructor
 	 * @param EE_Messages $messages the EE_Messages object.
+	 * @param $messenger_name	should be the name of a valid active messenger
+	 * @param $message_type_name  should be the name of a valid active message type
 	 * @param int $GRP_ID Optional.  If included then we're just regenerating the template
 	 *                    		 fields for the given group not the message template group itself
 	 *
 	 * @access public
 	 * @return void
 	 */
-	public function __construct( EE_Messages $messages, $GRP_ID = 0 ) {
+	public function __construct( EE_Messages $messages, $messenger_name, $message_type_name, $GRP_ID = 0 ) {
 		$this->_EE_MSG = $messages;
 
 		//set the model object
 		$this->_EEM_data = EEM_Message_Template_Group::instance();
 
-		$this->_set_props();
-
 		$this->_GRP_ID = $GRP_ID;
+
+		$this->_m_name = $messenger_name;
+		$this->_mt_name = $message_type_name;
 
 		//make sure required props have been set
 		if ( empty( $this->_m_name) || empty( $this->_mt_name ) ) {
@@ -158,48 +145,29 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 	}
 
 
-	/**
-	 * Child classes define the following properties:
-	 * $m_name: messenger name
-	 * $mt_name: message type name
-	 *
-	 * @abstract
-	 * @access protected
-	 * @return void
-	 */
-	abstract protected function _set_props();
-
 
 
 	/**
-	 * Child classes can make modifications to the _templates property using this method.  If no changes are necessary then child classes can just set an empty method.
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	abstract protected function _change_templates();
-
-
-
-
-	/**
-	 *	Setup the _template_data property.
-	 *
+	 * Setup the _template_data property.
 	 * This method sets the _templates property array before templates are created.
 	 *
-	 * @access protected
+	 * @param string $template_pack This corresponds to a template pack class reference which will contain information about where to obtain the templates.
 	 * @return void
 	 */
-	final function _set_templates() {
+	final private function _set_templates( $template_pack ) {
 
-		//first  get defaults from the messenger
-		//setup templates array
-		foreach ( $this->_contexts as $context => $details ) {
-			foreach ( $this->_fields as $field => $field_type ) {
-				if ( $field !== 'extra' )
-					$this->_templates[$context][$field] = ( !empty( $this->_defaults['mt'][$field]) && is_array($this->_defaults['mt'][$field]) && isset($this->_defaults['mt'][$field][$context]) ? $this->_defaults['mt'][$field][$context] : $this->_defaults['m'][$field] );
-			}
+		//get the corresponding template pack object (if present.  If not then we just load the default and add a notice).  The class name should be something like 'EE_Messages_Template_Pack_Default' where "default' would be the incoming template pack reference.
+		$class_name = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $template_pack ) ) );
+
+		if ( ! class_exists( $class_name ) ) {
+			EE_Error::add_error( sprintf( __('The template pack represented by a class corresponding to "%s" does not exist.  Likely the autoloader for this class has the wrong path.  The default template pack  been used to generate the templates instead.', 'event_espresso'), $class_name ) );
+			$class_name = 'EE_Messages_Template_Pack_Default';
 		}
+
+		$template_pack = new $class_name;
+
+		//get all the templates from the template pack.
+		$this->_templates = $template_pack->get_templates( $this->_messenger, $this->_message_type );
 	}
 
 
@@ -234,11 +202,6 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 		$this->_message_type = $active_message_types[$this->_mt_name];
 		$this->_fields = $this->_messenger->get_template_fields();
 		$this->_contexts = $this->_message_type->get_contexts();
-		$this->_valid_shortcodes = $this->_get_valid_shortcodes();
-		$this->_defaults = array(
-			'm' => $this->_messenger->get_default_field_content(),
-			'mt' => $this->_message_type->get_default_field_content()
-			);
 	}
 
 
@@ -251,31 +214,16 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 
 
-	/**
-	 * This just gets the list of valid shortcodes from the messenger and message type and returns them
-	 *
-	 * @access private
-	 * @return array an array of valid shortcodes => $labels
-	 */
-	private function _get_valid_shortcodes() {
-		$m_shortcodes = $this->_messenger->get_valid_shortcodes();
-		$mt_shortcodes = $this->_message_type->get_valid_shortcodes();
-
-		//we don't need the actual shortcodes here.  We just need the array of valid shortcodes for each context and field.
-		$valid_shortcodes = array_merge( $m_shortcodes, $mt_shortcodes );
-
-		return $valid_shortcodes;
-	}
-
-
 
 	/**
 	 * public facing create new templates method
 	 * @access public
+	 *
+	 * @param string $template_pack This corresponds to a template pack class reference which will contain information about where to obtain the templates.
 	 * @return mixed (array|bool)            success array or false.
 	 */
-	public function create_new_templates() {
-		return $this->_create_new_templates();
+	public function create_new_templates( $template_pack = 'default' ) {
+		return $this->_create_new_templates( $template_pack );
 	}
 
 
@@ -284,17 +232,13 @@ abstract class EE_Message_Template_Defaults extends EE_Base {
 
 	/**
 	 * private method that handles creating new default templates
+	 *
+	 * @param string $template_pack This corresponds to a template pack class reference which will contain information about where to obtain the templates.
 	 * @return mixed (array|bool)            success array or false.
 	 */
-	private function _create_new_templates() {
+	private function _create_new_templates( $template_pack ) {
 
-		$this->_set_templates();
-
-		//allow for child classes to override.
-		$this->_change_templates();
-
-		$this->_templates = apply_filters( 'FHEE__' . get_class($this) . '___create_new_templates___templates', $this->_templates, $this );
-		$this->_templates = apply_filters( 'FHEE__EE_Message_Template_Defaults___create_new_templates___templates', $this->_templates, $this );
+		$this->_set_templates( $template_pack );
 
 		//necessary properties are set, let's save the default templates
 
