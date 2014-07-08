@@ -37,6 +37,9 @@ class EE_Declined_Registration_message_type extends EE_Registration_Base_message
 			'singular' => __('registration declined', 'event_espresso'),
 			'plural' => __('registrations declined', 'event_espresso')
 			);
+		$this->_master_templates = array(
+			'email' => 'not_approved_registration'
+			);
 
 		parent::__construct();
 	}

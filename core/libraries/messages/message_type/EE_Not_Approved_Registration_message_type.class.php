@@ -38,6 +38,10 @@ class EE_Not_Approved_Registration_message_type extends EE_Registration_Base_mes
 			'plural' => __('not approved registrations', 'event_espresso')
 			);
 
+		$this->_master_templates = array(
+			'email' => 'registration'
+			);
+
 		parent::__construct();
 	}
 

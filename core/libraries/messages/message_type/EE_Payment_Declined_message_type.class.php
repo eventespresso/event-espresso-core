@@ -40,6 +40,10 @@ class EE_Payment_Declined_message_type extends EE_Payment_Base_message_type {
 			'plural' => __('payments declined', 'event_espresso')
 			);
 
+		$this->_master_templates = array(
+			'email' => 'payment'
+			);
+
 		parent::__construct();
 
 	}

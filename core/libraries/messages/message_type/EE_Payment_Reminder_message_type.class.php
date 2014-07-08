@@ -39,6 +39,9 @@ class EE_Payment_Reminder_message_type extends EE_Payment_Base_message_type {
 			'singular' => __('payment reminder', 'event_espresso'),
 			'plural' => __('payment reminders', 'event_espresso')
 			);
+		$this->_master_templates = array(
+			'email' => 'payment'
+			);
 
 		parent::__construct();
 

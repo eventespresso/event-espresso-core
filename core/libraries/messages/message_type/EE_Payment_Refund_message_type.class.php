@@ -40,6 +40,10 @@ class EE_Payment_Refund_message_type extends EE_Payment_Base_message_type {
 			'plural' => __('refunds issued', 'event_espresso')
 			);
 
+		$this->_master_templates = array(
+			'email' => 'payment'
+			);
+
 		parent::__construct();
 
 	}
