@@ -101,8 +101,7 @@ final class EE_Front_Controller {
 		add_action('loop_start', array( $this, 'display_errors' ), 2 );
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-		//exclude EE critical pages from wp_list_pages
-		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+
 		//exclude our private cpt comments
 		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 1 );
 		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
@@ -133,18 +132,6 @@ final class EE_Front_Controller {
 	}
 
 
-
-
-	/**
-	 * simply hooks into "wp_list_pages_exclude" filter (for wp_list_pages method) and makes sure EE critical pages are never returned with the function.
-	 *
-	 *
-	 * @param  array  $exclude_array any existing pages being excluded are in this array.
-	 * @return array
-	 */
-	public function remove_pages_from_wp_list_pages( $exclude_array ) {
-		return  array_merge( $exclude_array, EE_Registry::instance()->CFG->core->get_critical_pages_array() );
-	}
 
 
 
