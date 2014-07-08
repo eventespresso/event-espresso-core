@@ -181,7 +181,7 @@ final class EE_Module_Request_Router {
 	 */
 	public static function module_factory( $module_name ) {
 		if ( $module_name == 'EED_Module' ) {
-			EE_Error::add_error( sprintf( __( 'Can not instantiate EED_Module. Please provide a proper module name.', 'event_espresso' ), $module_name ), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_error( sprintf( __( 'EED_Module is an abstract parent class an can not be instantiated. Please provide a proper module name.', 'event_espresso' ), $module_name ), __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// let's pause to reflect on this...
