@@ -398,6 +398,43 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		unset($wp_actions['AHEE__EE_System__load_espresso_addons']);
 	}
 
+	/**
+	 * Makes a complete transaction record with all associated data (ie, its line items,
+	 * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
+	 * Resets EE_Cart in the process though, FYI
+	 * @param type $options
+	 * @return EE_Transaction
+	 */
+	protected function new_typical_transaction($options = array()){
+		$cart = EE_Cart::reset();
+		$txn = $this->new_model_obj_with_dependencies( 'Transaction' );
+		if( isset( $options[ 'ticket_types' ] ) ){
+			$ticket_types = $options[ 'ticket_types' ];
+		}else{
+			$ticket_types = 1;
+		}
+		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
+		for( $i = 1; $i <= $ticket_types; $i++ ){
+			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => TRUE ) );
+			$this->assertTrue( $cart->add_ticket_to_cart( $ticket ) );
+			$reg_final_price = $ticket->price();
+			foreach($taxes as $priority => $taxes_at_priority){
+				foreach($taxes_at_priority as $tax){
+					$reg_final_price += $reg_final_price * $tax->amount() / 100;
+				}
+			}
+			$this->new_model_obj_with_dependencies( 'Registration', array('TXN_ID' => $txn->ID(), 'TKT_ID' => $ticket->ID(), 'REG_count'=>1, 'REG_group_size'=>1, 'REG_final_price' => $reg_final_price ) );
+		}
+		$txn->set_total( $cart->get_cart_grand_total() );
+		$txn->save();
 
 
+		$cart->get_applied_taxes();
+		$cart_total_line_item = $cart->get_grand_total();
+		$cart_total_line_item->save_this_and_descendants_to_txn( $txn->ID() );
+
+
+
+		return $txn;
+	}
 }
