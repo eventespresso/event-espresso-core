@@ -316,7 +316,7 @@ abstract class  EE_Messages_Template_Pack {
 			$contents = EEH_Template::display_template( $actual_path, array(), TRUE );
 		}
 
-		return $contents;
+		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_specific_template__contents', $contents, $actual_path, $messenger, $message_type, $field, $context, $this );
 	}
 
 
