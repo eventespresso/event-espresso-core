@@ -173,7 +173,6 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		if( $validate ){
 			$this->_validate();
 		}
-		$this->_received_submission = TRUE;
 	}
 
 
@@ -459,6 +458,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @param array $req_data like $_POST
 	 */
 	protected function _normalize($req_data) {
+		$this->_received_submission = TRUE;
 		foreach($this->get_validatable_subsections() as $subsection){
 			$subsection->_normalize($req_data);
 		}

@@ -114,6 +114,25 @@ class EE_Form_Section_Proper_Test extends EE_UnitTestCase{
 		$this->assertFalse( $form->form_data_present_in( $req_data_bad ) );
 
 	}
+
+	public function test_is_valid(){
+		$form = new EE_Form_Section_Proper( array(
+			'name'=>'form',
+			'subsections' => array(
+				'subform1' => new EE_Form_Section_Proper( array(
+					'subsections' => array(
+						'input1' => new EE_Text_Input()
+					)
+				))
+			)
+		));
+		$req_data_bad = array();
+		$req_data_good = array('form' => array( 'subform1' => array( 'input1' => 'value' ) ) );
+		$this->assertTrue( $form->was_submitted( $req_data_good ) );
+		$form->receive_form_submission( $req_data_good );
+		$this->assertTrue( $form->is_valid() );
+
+	}
 }
 
 // End of file EE_Form_Section_Proper_Test.php
