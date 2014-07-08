@@ -205,6 +205,21 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+
+	/**
+	 * This allows each message type to set what alternate messenger&message type combination can be used for fallback default templates if there are no specific ones defined for this messenger and message type.  Should be in the format:
+	 *
+	 * array( 'messenger' => 'message_type', 'another_messenger' => another_message_type );
+	 *
+	 * This is set in the message type constructor.
+	 *
+	 * @var array
+	 */
+	protected $_master_templates = array();
+
+
+
+
 	public function __construct() {
 		$this->_messages_item_type = 'message_type';
 		$this->_set_contexts();
@@ -520,6 +535,20 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	public function get_context_label() {
 		return $this->_context_label;
+	}
+
+
+
+	/**
+	 * This just returns the (filtered) _master_templates property.
+	 * @see property definition for documentation.
+	 *
+	 * @return array
+	 */
+	public function get_master_templates() {
+		//first class specific filter then filter that by the global filter.
+		$master_templates = apply_filters( 'FHEE__' . get_class( $this ) . '__get_master_templates', $this->_master_templates );
+		return apply_filters( 'FHEE__EE_message_type__get_master_templates', $master_templates, $this );
 	}
 
 
