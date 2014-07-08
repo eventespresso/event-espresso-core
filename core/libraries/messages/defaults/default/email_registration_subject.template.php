@@ -1,0 +1,1 @@
+Event Registration Details
