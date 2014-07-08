@@ -65,7 +65,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		// check if class object is instantiated
 		if ( ! self::$_instance instanceof EE_Cart ) {
 			//try getting the cart out of the session
-			$saved_cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
+			$saved_cart = empty( $grand_total ) ? EE_Registry::instance()->SSN->get_session_data( 'cart' ) : NULL;
 			self::$_instance = $saved_cart instanceof EE_Cart ? $saved_cart : new self( $grand_total );
 			unset( $saved_cart );
 		}

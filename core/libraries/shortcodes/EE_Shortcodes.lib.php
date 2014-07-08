@@ -300,4 +300,42 @@ abstract class EE_Shortcodes extends EE_Base {
 	}
 
 
+	/**
+	 * This returns whatever the set message type object is that was set on this shortcode parser.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_message_type
+	 */
+	public function get_set_message_type() {
+		return $this->_message_type;
+	}
+
+
+
+	/**
+	 * This returns whatever the set messenger object is that was set on this shortcode parser
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_messenger
+	 */
+	public function get_set_messenger() {
+		return $this->_messenger;
+	}
+
+
+
+	/**
+	 * This returns whatever the set context string is on this shortcode parser.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	public function get_set_context() {
+		return $this->_context;
+	}
+
+
 } //end EE_Shortcodes

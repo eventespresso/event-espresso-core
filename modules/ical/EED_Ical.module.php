@@ -26,6 +26,17 @@ class EED_Ical  extends EED_Module {
 
 	const iCal_datetime_format = 'Ymd\THis\Z';
 
+
+
+	/**
+	 * @return EED_Ical
+	 */
+	public static function instance() {
+		return parent::instance( __CLASS__ );
+	}
+
+
+
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
 	 *

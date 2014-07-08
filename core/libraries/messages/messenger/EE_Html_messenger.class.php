@@ -81,10 +81,10 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _set_validator_config() {
 		$this->_validator_config = array(
 			'subject' => array(
-				'shortcodes' => array('organization', 'primary_registration_details', 'event_author', 'primary_registration_details', 'recipient_details')
+				'shortcodes' => array('recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
 				),
 			'content' => array(
-				'shortcodes' => array('event_list','attendee_list', 'ticket_list', 'organization', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list', 'transaction')
+				'shortcodes' => array( 'recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
 				),
 			'attendee_list' => array(
 				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
@@ -101,6 +101,10 @@ class EE_Html_messenger extends EE_messenger  {
 			'datetime_list' => array(
 				'shortcodes' => array('datetime'),
 				'required' => array('[DATETIME_LIST]')
+				),
+			'question_list' => array(
+				'shortcodes' => array('question'),
+				'required' => array('[QUESTION_LIST]')
 				)
 			);
 	}
@@ -137,7 +141,19 @@ class EE_Html_messenger extends EE_messenger  {
 				break;
 		}
 
-		return $url ? apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $type )  : apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $type );
+		return $url ? apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $url, $type )  : apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $url, $type );
+	}
+
+
+
+
+	/**
+	 * Takes care of enqueuing any necessary scripts or styles for the page.  A do_action() so message types using this messenger can add their own js.
+	 *
+	 * @return void.
+	 */
+	public  function enqueue_scripts_styles() {
+		do_action( 'AHEE__EE_Html_messenger__enqueue_scripts_styles', '' );
 	}
 
 
@@ -153,17 +169,17 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _set_template_fields() {
 		// any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  Also, notice that the "values" are equal to the field type that messages admin will use to know what kind of field to display. The values ALSO have one index labeled "shortcode".  the values in that array indicate which ACTUAL SHORTCODE (i.e. [SHORTCODE]) is required in order for this extra field to be displayed.  If the required shortcode isn't part of the shortcodes array then the field is not needed and will not be displayed/parsed.
 		$this->_template_fields = array(
+			'subject' => array(
+				'input' => 'text',
+				'label' => __('Page Title', 'event_espresso'),
+				'type' => 'string',
+				'required' => TRUE,
+				'validation' => TRUE,
+				'css_class' => 'large-text',
+				'format' => '%s'
+				),
 			'content' => '', //left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
 			'extra' => array(
-				'subject' => array(
-					'input' => 'text',
-					'label' => __('Page Title', 'event_espresso'),
-					'type' => 'string',
-					'required' => TRUE,
-					'validation' => TRUE,
-					'css_class' => 'large-text',
-					'format' => '%s'
-					),
 				'content' => array(
 					'main' => array(
 						'input' => 'wp_editor',
@@ -216,7 +232,18 @@ class EE_Html_messenger extends EE_messenger  {
 						'css_class' => 'large-text',
 						'rows' => '10',
 						'shortcodes_required' => array('[DATETIME_LIST]')
-						)
+						),
+					'question_list' => array(
+						'input' => 'textarea',
+						'label' => '[QUESTION_LIST]',
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[QUESTION_LIST]')
+					)
 				)
 			)
 		);
@@ -241,7 +268,8 @@ class EE_Html_messenger extends EE_messenger  {
 				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
 				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
 				'ticket_list' => __('This contains the formatting for each ticket in a ticket list.', 'event_espresso'),
-				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso')
+				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso'),
+				'question_list' => __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'event_espresso')
 				)
 			);
 	}
@@ -289,9 +317,33 @@ class EE_Html_messenger extends EE_messenger  {
 			'main_css' => $this->get_inline_css_template(TRUE),
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
+		$this->_deregister_wp_hooks();
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts_styles' ) );
 		echo $this->_get_main_template();
 		exit();
 	}
+
+
+
+
+	/**
+	 * The purpose of this function is to de register all actions hooked into wp_head and wp_footer so that it doesn't interfere with our templates.  If users want to add any custom styles or scripts they must use the AHEE__EE_Html_messenger__enqueue_scripts_styles hook.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return void
+	 */
+	protected function _deregister_wp_hooks() {
+		remove_all_actions('wp_head');
+		remove_all_actions('wp_footer');
+		remove_all_actions('wp_footer_scripts');
+		remove_all_actions('wp_enqueue_scripts');
+
+		//just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
+		add_action('wp_head', 'wp_enqueue_scripts');
+		add_action( 'wp_footer', 'wp_print_footer_scripts' );
+	}
+
 
 
 
@@ -305,7 +357,7 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _get_main_template( $preview = FALSE ) {
 		$relative_path =  '/core/libraries/messages/messenger/assets/' . $this->name . '/';
 
-		$wrapper_template_file = $this->name . '-messenger-main-wrapper.template.php';
+		$wrapper_template_file = apply_filters( 'FHEE__EE_Html_messenger___get_main_template__wrapper_template_file', $this->name . '-messenger-main-wrapper.template.php' );
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );

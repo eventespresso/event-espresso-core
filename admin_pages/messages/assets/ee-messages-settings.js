@@ -4,15 +4,15 @@ jQuery(document).ready(function($) {
 
 		/**
 		 * This function toggles message boxes active and inactive setting the correct selectors for other js used on this page
-		 * @param  {string} messenger What messenger is being toggled
+		 * @param  {string} incoming_messenger What messenger is being toggled
 		 * @param  {string} type      'active' or 'inactive'? (default: active)
 		 * @return {void}
 		 */
-		toggle: function( messenger, type ) {
+		toggle: function( incoming_messenger, type ) {
 			if ( typeof(type) === 'undefined' ) type = 'active';
 
 			//makes sure we strip out any '#'
-			messenger = messenger.replace('#','');
+			messenger = incoming_messenger.replace('#','');
 
 			//set refs
 			var active_main = '#espresso_' + messenger + '_settings';
@@ -32,6 +32,41 @@ jQuery(document).ready(function($) {
 			//make sure we grab any changed containers
 			$active_mts = $( '#active-message-types' );
 			$inactive_mts = $( '#inactive-message-types' );
+
+			//set draggables and droppables!
+			$( "li", $active_mts ).draggable({
+				cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
+				revert: "invalid", //when not dropped the item will revert back to its initial location
+				containment: "document",
+				helper: "clone",
+				cursor: "move"
+			});
+
+			//make sure inactives are draggable too
+			$( "li", $inactive_mts ).draggable({
+				cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
+				revert: "invalid", //when not dropped the item will revert back to its initial location
+				containment: "document",
+				helper: "clone",
+				cursor: "move"
+			});/**/
+
+			$inactive_mts.droppable({
+				accept: "#active-message-types li",
+				activeClass: "ui-state-highlight",
+				drop: function( event, ui ) {
+					MSG_helper.inactivate( ui.draggable );
+				}
+			});
+
+
+			$active_mts.droppable({
+				accept: "#inactive-message-types li",
+				activeClass: "custom-state-active",
+				drop: function( event, ui ) {
+					MSG_helper.activate( ui.draggable );
+				}
+			});
 
 			return this; //make chainable
 		},
@@ -354,21 +389,9 @@ jQuery(document).ready(function($) {
 
 	//on page load do init and toggle
 	var messenger = $('.item_display a').attr('href');
-	MSG_helper.init().toggle(messenger);
-
-	//defined the global active and inactive message type containers
-	var $active_mts = $( '#active-message-types' ),
-	$inactive_mts = $( '#inactive-message-types' );
+	MSG_helper.init().toggle('email');
 
 
-	//set draggables and droppables!
-	$( "li", $active_mts ).draggable({
-		cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
-		revert: "invalid", //when not dropped the item will revert back to its initial location
-		containment: "document",
-		helper: "clone",
-		cursor: "move"
-	});
 
 	//toggle slide
 	$( document ).on('click', '#active-message-types .mt-handlediv', function() {
@@ -377,32 +400,6 @@ jQuery(document).ready(function($) {
 
 	$( document ).on('click', '#inactive-message-types .mt-handlediv', function() {
 		MSG_helper.slide(this);
-	});
-
-	//make sure inactives are draggable too
-	$( "li", $inactive_mts ).draggable({
-		cancel: ".no-drag", //clicking .no-drag class element won't initiate dragging
-		revert: "invalid", //when not dropped the item will revert back to its initial location
-		containment: "document",
-		helper: "clone",
-		cursor: "move"
-	});/**/
-
-	$inactive_mts.droppable({
-		accept: "#active-message-types li",
-		activeClass: "ui-state-highlight",
-		drop: function( event, ui ) {
-			MSG_helper.inactivate( ui.draggable );
-		}
-	});
-
-
-	$active_mts.droppable({
-		accept: "#inactive-message-types li",
-		activeClass: "custom-state-active",
-		drop: function( event, ui ) {
-			MSG_helper.activate( ui.draggable );
-		}
 	});
 
 	/**

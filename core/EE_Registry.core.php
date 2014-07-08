@@ -213,6 +213,33 @@ final class EE_Registry {
 
 
 	/**
+	 * @param mixed string | EED_Module $module
+	 */
+	public function add_module( $module ) {
+		if ( $module instanceof EED_Module ) {
+			$module_class = get_class( $module );
+			$this->modules->{$module_class} = $module;
+		} else {
+			if ( ! class_exists( 'EE_Module_Request_Router' )) {
+				$this->load_core( 'Module_Request_Router' );
+			}
+			$this->modules->{$module} = EE_Module_Request_Router::module_factory( $module );
+		}
+	}
+
+
+
+	/**
+	 * @param string $module_name
+	 * @return mixed EED_Module | NULL
+	 */
+	public function get_module( $module_name = '' ) {
+		return isset( $this->modules->{$module_name} ) ? $this->modules->{$module_name} : NULL;
+	}
+
+
+
+	/**
 	 *    loads core classes - must be singletons
 	 *
 	 * @access    public
