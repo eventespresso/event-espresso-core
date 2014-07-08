@@ -985,20 +985,19 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['PRT_ID'] = $PRT_ID;
 		$this->_template_args['price_type'] = $price_type;
 
-		// set base type
-		$values = array(
-				array('id' => 'Discount', 'text' 	=> __('Discount', 'event_espresso') . '&nbsp;&nbsp;' ),
-				array('id' => 'Surcharge', 'text' 	=> __('Surcharge', 'event_espresso') . '&nbsp;&nbsp;' ),
-				array('id' => 'Tax', 'text' 		=> __('Tax', 'event_espresso') . '&nbsp;&nbsp;' )
-			);
-		$set_value = 'Price';
-		foreach ( $values as $value ) {
-			if ( strpos( $price_type->name(), $value['id'] ) !== FALSE ) {
-				$set_value = $value['id'];
+
+		$base_types = EEM_Price_Type::instance()->get_base_types();
+		$select_values = array();
+		foreach ( $base_types as $ref => $text ) {
+			if ( $ref == EEM_Price_Type::base_type_base_price ) {
+				//do not allow creation of base_type_base_prices because that's a system only base type.
+				continue;
 			}
+			$values[] = array( 'id' => $ref, 'text' => $text );
 		}
 
-		$this->_template_args['base_type_select'] = EEH_Form_Fields::select_input('base_type', $values, $set_value, 'id="price-type-base-type-slct"');
+
+		$this->_template_args['base_type_select'] = EEH_Form_Fields::select_input('base_type', $values, $price_type->base_type(), 'id="price-type-base-type-slct"');
 		$this->_template_args['learn_more_about_pricing_link'] = $this->_learn_more_about_pricing_link();
 		$redirect_URL = add_query_arg( array( 'action' => 'price_types'), $this->_admin_base_url );
 		$this->_set_publish_post_box_vars( 'id', $PRT_ID, FALSE, $redirect_URL );
@@ -1046,26 +1045,26 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
-		$base_type = $this->_req_data['base_type'];
+		$base_type = !empty( $this->_req_data['base_type'] ) ? $this->_req_data['base_type'] : EEM_Price_Type::base_type_base_price;
 
 		switch ($base_type) {
 
-			case 'Price' :
-				$this->_req_data['PBT_ID'] = 1;
+			case EEM_Price_Type::base_type_base_price :
+				$this->_req_data['PBT_ID'] = EEM_Price_Type::base_type_base_price;
 				$this->_req_data['PRT_is_percent'] = 0;
 				$this->_req_data['PRT_order'] = 0;
 				break;
 
-			case 'Discount' :
-				$this->_req_data['PBT_ID'] = 2;
+			case EEM_Price_Type::base_type_discount :
+				$this->_req_data['PBT_ID'] = EEM_Price_Type::base_type_discount;
 				break;
 
-			case 'Surcharge' :
-				$this->_req_data['PBT_ID'] = 3;
+			case EEM_Price_Type::base_type_surcharge :
+				$this->_req_data['PBT_ID'] = EEM_Price_Type::base_type_surcharge;
 				break;
 
-			case 'Tax' :
-				$this->_req_data['PBT_ID'] = 4;
+			case EEM_Price_Type::base_type_tax :
+				$this->_req_data['PBT_ID'] = EEM_Price_Type::base_type_tax;
 				$this->_req_data['PRT_is_percent'] = 1;
 				break;
 		}/**/

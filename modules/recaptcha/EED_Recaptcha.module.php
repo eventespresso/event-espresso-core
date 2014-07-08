@@ -17,11 +17,20 @@
  *
  * @package		Event Espresso
  * @subpackage	/modules/recaptcha/
- * @author		Brent Christensen 
+ * @author		Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EED_Recaptcha  extends EED_Module {
+
+
+
+	/**
+	 * @return EED_Recaptcha
+	 */
+	public static function instance() {
+		return parent::instance( __CLASS__ );
+	}
 
 
 
@@ -33,7 +42,7 @@ class EED_Recaptcha  extends EED_Module {
 	 */
 	public static function set_hooks() {
 		if ( EE_Registry::instance()->CFG->registration->use_captcha ) {
-			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 2 );	
+			add_action( 'AHEE__before_spco_whats_next_buttons', array( 'EED_Recaptcha', 'display_recaptcha' ), 10, 2 );
 			add_filter( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', array( 'EED_Recaptcha', 'recaptcha_passed' ), 10 );
 			add_filter( 'FHEE__EE_Single_Page_Checkout__JSON_response', array( 'EED_Recaptcha', 'recaptcha_response' ), 10, 1 );
 		}
@@ -146,7 +155,7 @@ var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->regis
 
 
 
-	
+
 	/**
 	 * 	process_recaptcha
 	 *
@@ -154,15 +163,15 @@ var RecaptchaOptions = { theme : "<?php echo EE_Registry::instance()->CFG->regis
 	 * 	@return 	void
 	 */
 	private static function _process_recaptcha_response() {
-		
-		$response_data = array( 'error' => FALSE );		
+
+		$response_data = array( 'error' => FALSE );
 		// check recaptcha
 		if ( EE_Registry::instance()->CFG->registration->use_captcha && ! is_user_logged_in() ) {
 			if ( ! function_exists( 'recaptcha_check_answer' )) {
 				require_once( EE_THIRD_PARTY . 'recaptchalib.php' );
 			}
 			$response = recaptcha_check_answer(
-				EE_Registry::instance()->CFG->registration->recaptcha_privatekey, 
+				EE_Registry::instance()->CFG->registration->recaptcha_privatekey,
 				$_SERVER["REMOTE_ADDR"],
 				EE_Registry::instance()->REQ->is_set( 'recaptcha_challenge_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_challenge_field' ) : '',
 				EE_Registry::instance()->REQ->is_set( 'recaptcha_response_field' ) ? EE_Registry::instance()->REQ->get( 'recaptcha_response_field' ) : ''

@@ -139,42 +139,12 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 	 */
 	abstract function get_jquery_validation_rules();
 
-
-	/**
-	 * using this section's name and its parents, finds the value of the form data that corresponds to it.
-	 * For example, if this form section's HTML name is my_form[subform][form_input_1], then it's value should be in $_REQUEST
-	 * at $_REQUEST['my_form']['subform']['form_input_1']. (If that doesn't exist, we also check for this subsection's name
-	 * at the TOP LEVEL of the request data. Eg $_REQUEST['form_input_1'].)
-	 * This function finds its value in the form.
-	 * @return mixed whatever the raw value of this form section is in the request data
-	 */
-	public function find_form_data_for_this_section($req_data){
-		if( $this->parent_section() ){
-			$array_of_parent = $this->parent_section()->find_form_data_for_this_section($req_data);
-		}else{
-			$array_of_parent = $req_data;
-		}
-		if( isset( $array_of_parent[ $this->name() ] ) ){
-			return $array_of_parent[ $this->name() ];
-		}elseif( isset( $req_data[ $this->name() ] ) ){
-			//maybe its data is at the top level of the request data?
-			return $req_data[ $this->name() ];
-
-		}else{
-			return NULL;
-		}
-	}
 	/**
 	 * Checks if this form section's data is present in the req data specified
 	 * @param array $req_data usually $_POST, if null that's what's used
 	 * @return boolean
 	 */
-	public function form_data_present_in($req_data = NULL){
-		if($req_data === NULL){
-			$req_data = $_REQUEST;
-		}
-		return $this->find_form_data_for_this_section($req_data) !== NULL;
-	}
+	public abstract function form_data_present_in($req_data = NULL);
 	/**
 	 * Removes teh sensitive data from this form section (usually done after
 	 * utilizing the data business function, but before saving it somewhere. Eg,

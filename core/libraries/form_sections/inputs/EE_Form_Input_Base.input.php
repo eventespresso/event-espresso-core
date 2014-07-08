@@ -110,16 +110,21 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 
 
 	/**
-	 * Indicates a specific html name was provided
-	 * @var boolean
-	 */
-	protected $_html_name_specified = FALSE;
-
-	/**
-	 *
-	 * @param array $input_args {
-	 *		@type $name string the name for this form section, if you want to explicitly define it
-	 * 	}
+	 * @param array $options_array {
+	 *		@type string $html_name the html name for the input
+	 *		@type string $html_label_id the id attribute to give to the html label tag
+	 *		@type string $html_label_class the class attribut eto give to the html label tag
+	 *		@type string $html_label_style the style attribute to give ot teh label tag
+	 *		@type string $html_label_text the text to put in the label tag
+	 *		@type string $html_label the full html label. If used, all other html_label_* args are invalid
+	 *		@type string @html_help_text text to put in help element
+	 *		@type string $html_help_style style attribute to give to teh help element
+	 *		@type string $html_help_class class attribute to give to the help element
+	 *		@type string $default default value NORMALIZED (eg, if providing the default for a Yes_No_Input, you should provide TRUE or FALSE, not '1' or '0')
+	 *		@type EE_Display_Strategy_Base $display strategy
+	 *		@type EE_Normalization_Strategy_Base $normalization_strategy
+	 *		@type EE_Validation_Strategy_Base[] $validation_strategies
+	 * }
 	 */
 	public function __construct( $input_args = array() ){
 		// the following properties must be cast as arrays
@@ -157,6 +162,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 				$this->set_required( FALSE );
 		}
 
+		$this->_html_name_specified = isset( $input_args['html_name'] ) ? TRUE : FALSE;
 		
 		$this->_display_strategy->_construct_finalize($this);
 
@@ -663,29 +669,58 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable{
 	 * @return mixed whatever the raw value of this form section is in the request data
 	 */
 	public function find_form_data_for_this_section($req_data){
-//		if( $this->_html_name_specified ){
-//			//break up the html name by "[]"
-//			$name_parts = preg_match_all('\[([^]]*)\]',$this->html_name());
-//
-//		}
-		if( $this->_parent_section ){
-			$array_of_parent = $this->_parent_section->find_form_data_for_this_section($req_data);
-		}else{
-			$array_of_parent = $req_data;
-		}
-		if( isset( $array_of_parent[ $this->name() ] ) ){
-			return $array_of_parent[ $this->name() ];
-		}elseif( isset( $req_data[ $this->name() ] ) ){
-			//maybe its data is at the top level of the request data?
-			return $req_data[ $this->name() ];
+		//break up the html name by "[]"
+		$before_any_brackets = substr( $this->html_name(), 0, strpos($this->html_name(), '[') );
+		$success = preg_match_all('~\[([^]]*)\]~',$this->html_name(), $matches);
 
+		if( isset( $matches[ 1 ] ) && is_array( $matches[ 1 ] ) ){
+			$name_parts = $matches[ 1 ];
+			array_unshift($name_parts, $before_any_brackets);
+		}else{
+			$name_parts = array( $before_any_brackets );
+		}
+		$value = $this->_find_form_data_for_this_section_using_name_parts($name_parts, $req_data);
+		if( $value === NULL ){
+			//check if this thing's name is at the TOP level of the request data
+			if( isset( $req_data[ $this->name() ] ) ){
+				$value = $req_data[ $this->name() ];
+			}
+		}
+		return $value;
+	}
+
+	/**
+	 *
+	 * @param type $html_name_parts
+	 * @param type $req_data
+	 * @return boolean
+	 */
+	public function _find_form_data_for_this_section_using_name_parts($html_name_parts, $req_data){
+		$first_part_to_consider = array_shift( $html_name_parts );
+		if( isset( $req_data[ $first_part_to_consider ] ) ){
+			if( empty($html_name_parts ) ){
+				return $req_data[ $first_part_to_consider ];
+			}else{
+				return $this->_find_form_data_for_this_section_using_name_parts($html_name_parts, $req_data[ $first_part_to_consider ] );
+			}
 		}else{
 			return NULL;
 		}
 	}
-
-	public function _find_custom_html_name_form_data($html_name_parts, $req_data){
-
+	/**
+	 * Checks if this form input's data is in the request data
+	 * @param array $req_data like $_POST
+	 * @return boolean
+	 */
+	public function form_data_present_in($req_data = NULL){
+		if( $req_data === NULL ){
+			$req_data = $_POST;
+		}
+		if( $this->find_form_data_for_this_section( $req_data ) ){
+			return TRUE;
+		}else{
+			return FALSE;
+		}
 	}
 
 

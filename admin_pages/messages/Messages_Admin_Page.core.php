@@ -192,6 +192,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				'preview_message' => array(
 					'func' => '_preview_message',
 					'capability' => 'read_message',
+					'obj_id' => $grp_id,
+					'noheader' => true,
+					'headers_sent_route' => 'display_preview_message'
+					),
+				'display_preview_message' => array(
+					'func' => '_display_preview_message',
+					'capability' => 'read_message',
 					'obj_id' => $grp_id
 					),
 				'insert_message_template' => array(
@@ -374,7 +381,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'require_nonce' => FALSE
 				),
-			'preview_message' => array(
+			'display_preview_message' => array(
 				'nav' => array(
 					'label' => __('Message Preview', 'event_espresso'),
 					'order' => 5,
@@ -579,7 +586,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
-	public function load_scripts_styles_preview_message() {
+	public function load_scripts_styles_display_preview_message() {
 		if ( isset( $this->_req_data['messenger'] ) )
 			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
 		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_inline_css_template(TRUE, TRUE) );
@@ -1353,7 +1360,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_admin_page_title = $preview_title;
 		$this->_template_args['admin_page_content'] = $preview_button . '<br />' .stripslashes($preview);
 		$this->_template_args['data']['force_json'] = TRUE;
+	}
 
+
+
+
+	/**
+	 * The initial _preview_message is on a no headers route.  It will optionally call this if necessary otherwise it gets called automatically.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	protected function _display_preview_message() {
 		$this->display_admin_page_with_no_sidebar();
 	}
 

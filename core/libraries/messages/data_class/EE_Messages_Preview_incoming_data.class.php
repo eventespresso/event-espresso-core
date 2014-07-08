@@ -406,7 +406,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'REG_final_price' => $ticket->get('TKT_price'),
 						'REG_session' => 'dummy_session_id',
 						'REG_code' => $regid . '-dummy_generated_reg_code',
-						'REG_url_link' => '#',
+						'REG_url_link' => $regcnt . '-daafpapasdlfakasdfpqasdfasdf',
 						'REG_count' => $regcnt,
 						'REG_group_size' => $this->_events[$evtid]['total_attendees'],
 						'REG_att_is_going' => TRUE,
@@ -438,18 +438,23 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->attendees = $this->_attendees;
 		$this->registrations = $this->_registrations;
 
+		$attendees_to_shift = $this->_attendees;
+
 		//setup primary attendee property
 		$this->primary_attendee_data = array(
 			'fname' => $this->_attendees[999999991]['att_obj']->fname(),
 			'lname' => $this->_attendees[999999991]['att_obj']->lname(),
 			'email' => $this->_attendees[999999991]['att_obj']->email(),
 			'att_obj' => $this->_attendees[999999991]['att_obj'],
-			'reg_obj' => array_shift($this->_attendees[999999991]['reg_objs'])
+			'reg_obj' => array_shift($attendees_to_shift[999999991]['reg_objs'])
 			);
 
 		//reg_info property
 		//note this isn't referenced by any shortcode parsers so we'll ignore for now.
 		$this->reg_info = array();
+
+		//let's set a reg_obj for messengers expecting one.
+		$this->reg_obj = array_pop( $this->_attendees[999999991]['reg_objs'] );
 
 
 		//the below are just dummy items.

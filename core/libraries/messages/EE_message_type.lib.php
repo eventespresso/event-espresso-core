@@ -263,6 +263,9 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
+
+		//this will do any hooks that the message type sets for a specific messenger it may need to modify.
+		$this->_do_messenger_hooks();
 	}
 
 
@@ -325,6 +328,21 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	protected function _get_id_for_msg_url( $context, EE_Registration $registration ) {
 		return 0;
+	}
+
+
+
+
+
+	/**
+	* This sets up any action/filter hooks this message type puts in place for a specific messenger.  It's called from the set_messages() method.  Note that by default this does nothing.  Child classes will need to override if they want to add specific hooks for a messenger.
+	*
+	* @since 1.0.0
+	*
+	* @return void
+	*/
+	protected function _do_messenger_hooks() {
+		return;
 	}
 
 
@@ -818,15 +836,18 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 			$mtpg = $mtpg instanceof EE_Message_Template_Group && ! $global_mtpg->get( 'MTP_is_override' ) ? $mtpg : $global_mtpg;
 		}
+
 		$this->_GRP_ID = $mtpg->ID();
 
 		$templates = $mtpg->context_templates();
+
 
 		foreach ( $templates as $context => $template_fields ) {
 			foreach( $template_fields as $template_field=> $template_obj ) {
 				$this->_templates[$template_field][$context] = $template_obj->get('MTP_content');
 			}
 		}
+
 	}
 
 	/**
@@ -835,6 +856,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @access protected
 	 */
 	protected function _assemble_messages() {
+		//make sure any set messages object is cleared
+		$this->messages = array();
 		foreach ( $this->_addressees as $context => $addressees ) {
 			foreach ( $addressees as $addressee ) {
 				$message = $this->_setup_message_object($context, $addressee);
@@ -860,7 +883,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
 		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off) EXCEPT if we're previewing
-		if ( empty( $this->_templates['to'][$context] ) && !$this->_preview )
+		if ( ( isset( $this->_templates['to'][$context] ) && empty( $this->_templates['to'][$context] ) ) && !$this->_preview )
 			return false;
 
 		foreach ( $this->_templates as $field => $ctxt ) {
