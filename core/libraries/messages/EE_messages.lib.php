@@ -428,23 +428,7 @@ class EE_messages {
 		if ( ! $is_global )
 			return $this->_create_custom_template_group( $GRP_ID );
 
-		//assemble class name
-		$messenger = ucwords( str_replace( '_', ' ', $this->_messenger->name ) );
-		$messenger = str_replace( ' ', '_', $messenger );
-		$message_type = ucwords( str_replace( '_', ' ', $this->_message_type->name ) );
-		$message_type = str_replace( ' ', '_', $message_type );
-		$classname = 'EE_Messages_' . $messenger . '_' . $message_type . '_Defaults';
-
-		//next we need to see if the defaults class exists
-		if ( !class_exists( $classname ) ) {
-			$msg[] = __('Something went wrong with creating a new template', 'event_espresso');
-			$msg[] = sprintf( __('The defaults class being checked for is <strong>%s</strong>. Please doublecheck the spelling and make sure you have a class for this messenger/message_type combo setup. Also verify that the autoloaders are setup correctly for the class', 'event_espresso'), $classname );
-			throw new EE_Error( implode('||', $msg ) );
-		}
-
-		//if we've made it this far we have the class so let's instantiate
-		$a = new ReflectionClass( $classname );
-		$DFLT = $a->newInstance( $this, $GRP_ID );
+		$DFLT = new EE_Message_Template_Defaults( $this, $messenger, $message_type, $GRP_ID );
 
 		//generate templates
 		$success = $DFLT->create_new_templates();

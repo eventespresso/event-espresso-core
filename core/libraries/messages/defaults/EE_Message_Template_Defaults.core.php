@@ -160,7 +160,7 @@ class EE_Message_Template_Defaults extends EE_Base {
 		$class_name = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $template_pack ) ) );
 
 		if ( ! class_exists( $class_name ) ) {
-			EE_Error::add_error( sprintf( __('The template pack represented by a class corresponding to "%s" does not exist.  Likely the autoloader for this class has the wrong path.  The default template pack  been used to generate the templates instead.', 'event_espresso'), $class_name ) );
+			EE_Error::add_error( sprintf( __('The template pack represented by a class corresponding to "%s" does not exist.  Likely the autoloader for this class has the wrong path or the incoming reference is mispelled.  The default template pack  been used to generate the templates instead.', 'event_espresso'), $class_name ) );
 			$class_name = 'EE_Messages_Template_Pack_Default';
 		}
 
@@ -219,10 +219,14 @@ class EE_Message_Template_Defaults extends EE_Base {
 	 * public facing create new templates method
 	 * @access public
 	 *
-	 * @param string $template_pack This corresponds to a template pack class reference which will contain information about where to obtain the templates.
 	 * @return mixed (array|bool)            success array or false.
 	 */
-	public function create_new_templates( $template_pack = 'default' ) {
+	public function create_new_templates() {
+		//if we have the GRP_ID then let's use that to see if there is a set template pack and use that for the new templates.
+		if ( !empty( $this->_GRP_ID ) ) {
+			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_GRP_ID );
+			$template_pack = $mtpg instanceof EE_Message_Template_Group ? $mtpg->get_template_pack_name() : 'default';
+		}
 		return $this->_create_new_templates( $template_pack );
 	}
 
