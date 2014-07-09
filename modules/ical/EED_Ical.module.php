@@ -31,8 +31,8 @@ class EED_Ical  extends EED_Module {
 	/**
 	 * @return EED_Ical
 	 */
-	public static function instance( $module_name = '' ) {
-		return parent::instance( __CLASS__ );
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
 	}
 
 
