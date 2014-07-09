@@ -428,7 +428,7 @@ class EE_messages {
 		if ( ! $is_global )
 			return $this->_create_custom_template_group( $GRP_ID );
 
-		$DFLT = new EE_Message_Template_Defaults( $this, $messenger, $message_type, $GRP_ID );
+		$DFLT = new EE_Message_Template_Defaults( $this, $this->_messenger->name, $this->_message_type->name, $GRP_ID );
 
 		//generate templates
 		$success = $DFLT->create_new_templates();

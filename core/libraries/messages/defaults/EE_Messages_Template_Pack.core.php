@@ -240,7 +240,7 @@ abstract class  EE_Messages_Template_Pack {
 		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates() : array();
 
 		$fields = $messenger->get_template_fields();
-		$contexts = $this->message_type->get_contexts();
+		$contexts = $message_type->get_contexts();
 
 
 		foreach ( $contexts as $context => $details ) {
@@ -280,8 +280,8 @@ abstract class  EE_Messages_Template_Pack {
 	 * @return string          The template contents.
 	 */
 	protected function _get_specific_template( $default_pack, EE_messenger $messenger, EE_message_type $message_type, $field, $context ) {
-		$master_templates = $this->message_type->get_master_templates();
-		$master_templates_mt = isset( $master_templates[$messenger->name] ) ? $master_templates[$messenger->name] : $message_type->name();
+		$master_templates = $message_type->get_master_templates();
+		$master_templates_mt = isset( $master_templates[$messenger->name] ) ? $master_templates[$messenger->name] : $message_type->name;
 		$full_path = $this->_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '_' . $context . '.template.php';
 		$fallback_path = $this->_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '.template.php';
 		$mt_defined_full_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '_' . $context . '.template.php';
