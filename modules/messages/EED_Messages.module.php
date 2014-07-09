@@ -187,6 +187,41 @@ class EED_Messages  extends EED_Module {
 
 
 
+	/**
+	 * Retrieves an array of all template packs.
+	 * Array is in the format array( 'dbref' => EE_Messages_Template_Pack )
+	 *
+	 * @return EE_Messages_Template_Pack[]
+	 */
+	public static function get_template_packs() {
+		//glob the defaults directory for messages
+		$templates = glob( EE_LIBRARIES . 'messages/defaults/*', GLOB_ONLYDIR );
+		$template_packs = array();
+		foreach( $templates as $template_path ) {
+			//grab folder name
+			$template = basename( $template_path );
+
+			//is this already set?
+			if ( isset( self::$_TMP_PACKS[$template] ) )
+				continue;
+
+			//setup classname.
+			$pack_class = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_' , ' ', $template_pack_name ) ) );
+
+			if ( ! class_exists( $pack_class ) )
+				continue;
+
+			$template_packs[$template] = new $pack_class;
+		}
+
+		$template_packs = apply_filters( 'FHEE__EED_Messages__get_template_packs__template_packs', $template_packs );
+		self::$_TMP_PACKS = array_merge( self::$_TMP_PACKS, $template_packs );
+		return self::$_TMP_PACKS;
+	}
+
+
+
+
 
 	/**
 	 * Given the token (reg_url_link) and (optionally) the $data_id, this returns the appropriate data object(s) for the given message_type.
