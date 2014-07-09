@@ -219,6 +219,28 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+	/**
+	 * This holds whatever the set template pack is for a message template group when generating messages.
+	 *
+	 * @since %VER%
+	 *
+	 * @var EE_Messages_Template_Pack
+	 */
+	protected $_template_pack;
+
+
+
+	/**
+	 * This holds whatever the set variation is for a message template group when generating messages.
+	 *
+	 * @since %VER%
+	 *
+	 * @var string
+	 */
+	protected $_variation;
+
+
+
 
 	public function __construct() {
 		$this->_messages_item_type = 'message_type';
@@ -872,6 +894,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 		$templates = $mtpg->context_templates();
 
+		//set the template pack and the variation for the given message template group.
+		$this->_template_pack = $mtpg->get_template_pack();
+		$this->_variation = $mtpg->get_template_pack_variation();
+
+
 
 		foreach ( $templates as $context => $template_fields ) {
 			foreach( $template_fields as $template_field=> $template_obj ) {
@@ -893,8 +920,11 @@ abstract class EE_message_type extends EE_Messages_Base {
 			foreach ( $addressees as $addressee ) {
 				$message = $this->_setup_message_object($context, $addressee);
 				//only assign message if everything went okay
-				if ( $message )
+				if ( $message ) {
+					$message->template_pack = $this->_template_pack;
+					$message->variation = $this->_variation;
 					$this->messages[] = $message;
+				}
 			}
 		}
 	}
