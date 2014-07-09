@@ -122,4 +122,17 @@ class EEM_Line_Item extends EEM_Base {
 		);
 		parent::__construct( $timezone );
 	}
+	/**
+	 * Gets all the line items for this transaction of the given type
+	 * @param string $line_item_type like one of EEM_Line_Item::type_*
+	 * @param EE_Transaction|int $transaction
+	 * @return EE_Line_Item[]
+	 */
+	public function get_all_of_type_for_transaction( $line_item_type, $transaction ){
+		$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
+		return $this->get_all( array( array(
+			'LIN_type' => $line_item_type,
+			'TXN_ID' => $transaction
+		)));
+	}
 }
