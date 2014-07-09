@@ -63,12 +63,15 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	public static function instance( EE_Line_Item $grand_total = NULL ) {
 
 		// check if class object is instantiated
-		if ( ! self::$_instance instanceof EE_Cart ) {
+		if( ! empty( $grand_total ) ){
+			self::$_instance = new self( $grand_total );
+		}elseif ( ! self::$_instance instanceof EE_Cart) {
 			//try getting the cart out of the session
-			$saved_cart = empty( $grand_total ) ? EE_Registry::instance()->SSN->get_session_data( 'cart' ) : NULL;
+			$saved_cart = EE_Registry::instance()->SSN->get_session_data( 'cart' );
 			self::$_instance = $saved_cart instanceof EE_Cart ? $saved_cart : new self( $grand_total );
 			unset( $saved_cart );
 		}
+
 		// once everything is all said and done, save the cart to the EE_Session
 		add_action( 'shutdown', array( self::$_instance, 'save_cart' ), 90 );
 		return self::$_instance;
@@ -322,27 +325,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	}
 
 
-
-	/**
-	 *	update_item - change an item already in the cart
-	 *	@access public
-	 *	@param EE_Line_Item $item
-	 *	@return TRUE on success, FALSE on fail
-	 */
-	//
-	public function update_item( EE_Line_Item $item ) {
-		// check if item exists
-		$ticket_items = $this->get_ticket_items();
-		if($ticket_items && $ticket_items->get_child_line_item($item->code())){
-			$ticket_items->add_child_line_item($item);
-			return true;
-		}else{
-			return false;
-		}
-	}
-
-
-
 	/**
 	 *	calculate_cart_total_before_tax
 	 *	@access private
@@ -454,14 +436,14 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@param mixed - string or array - line_item_ids
 	 *	@return int on success, FALSE on fail
 	 */
-	public function delete_items( $line_item_ids = FALSE ) {
+	public function delete_items( $line_item_codes = FALSE ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		// check if only a single line_item_id was passed
-		if ( ! empty( $line_item_ids ) && ! is_array( $line_item_ids )) {
+		if ( ! empty( $line_item_codes ) && ! is_array( $line_item_codes )) {
 			// place single line_item_id in an array to appear as multiple line_item_ids
-			$line_item_ids = array ( $line_item_ids );
+			$line_item_codes = array ( $line_item_codes );
 		}
 
 		$items_line_item = $this->get_ticket_items();
@@ -470,7 +452,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		}
 		$removals = 0;
 		// cycle thru line_item_ids
-		foreach ( $line_item_ids as $line_item_id ) {
+		foreach ( $line_item_codes as $line_item_id ) {
 			$removals += $items_line_item->delete_child_line_item($line_item_id);
 		}
 

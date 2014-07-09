@@ -29,7 +29,7 @@ class EED_Event_Single  extends EED_Module {
 	 * @return EED_Event_Single
 	 */
 	public static function instance() {
-		return parent::instance( __CLASS__ );
+		return parent::get_instance( __CLASS__ );
 	}
 
 

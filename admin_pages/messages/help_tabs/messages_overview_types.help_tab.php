@@ -3,12 +3,12 @@
 <p>
 <ul>
 <li>
-<strong><?php _e('Registration Confirmation', 'event_espresso'); ?><strong><br />
-<strong><?php _e('Triggered by frontend event registrations', 'event_espresso'); ?>
+<strong><?php _e('Registration Confirmation', 'event_espresso'); ?></strong><br />
+<?php _e('Triggered by frontend event registrations', 'event_espresso'); ?>
 </li>
 <li>
-<strong><?php _e('Payment Confirmation', 'event_espresso'); ?><strong><br />
-<strong><?php _e('Triggered by frontend payments', 'event_espresso'); ?>
+<strong><?php _e('Payment Confirmation', 'event_espresso'); ?></strong><br />
+<?php _e('Triggered by frontend payments', 'event_espresso'); ?>
 </li>
 </ul>
 </p>
