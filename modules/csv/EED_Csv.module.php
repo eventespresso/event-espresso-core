@@ -29,7 +29,7 @@ class EED_Csv  extends EED_Module {
 	 * @return EED_Csv
 	 */
 	public static function instance() {
-		return parent::instance( __CLASS__ );
+		return parent::get_instance( __CLASS__ );
 	}
 
 
