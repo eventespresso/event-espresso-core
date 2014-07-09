@@ -84,7 +84,7 @@ abstract class  EE_Messages_Template_Pack {
 	 *
 	 * @var array.
 	 */
-	public $supports = array();
+	protected $_supports = array();
 
 
 
@@ -171,7 +171,7 @@ abstract class  EE_Messages_Template_Pack {
 
 
 		//if $supports is not set then throw an error because that effectively means this template_pack does not have any templates!
-		if ( empty( $this->supports ) ) {
+		if ( empty( $this->_supports ) ) {
 			throw new EE_Error( sprintf( __('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), get_class( $this ) ) );
 		}
 
