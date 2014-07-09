@@ -28,7 +28,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	/**
 	 * @return EED_Events_Archive_Filters
 	 */
-	public static function instance() {
+	public static function instance( $module_name = '' ) {
 		return parent::instance( __CLASS__ );
 	}
 
