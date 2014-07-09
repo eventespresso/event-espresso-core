@@ -41,6 +41,28 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected $_m_mt_settings = array();
 
 
+	/**
+	 * This is set via the _set_message_template_group method and holds whatever the template pack for the group is.  IF there is no group then it gets automatically set to the Default template pack.
+	 *
+	 * @since %VER%
+	 *
+	 * @var EE_Messages_Template_Pack
+	 */
+	protected $_template_pack;
+
+
+
+
+	/**
+	 * This is set via the _set_message_template_group method and holds whatever the template pack variation for the group is.  If there is no group then it automatically gets set to default.
+	 *
+	 * @since %VER%
+	 *
+	 * @var string
+	 */
+	protected $_variation;
+
+
 
 
 
@@ -556,9 +578,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	public function wp_editor_css( $mce_css ) {
 		//if we're on the edit_message_template route
 		if ( $this->_req_action == 'edit_message_template' && !empty( $this->_active_messenger ) ) {
+
 			//we're going to REPLACE the existing mce css
 			//we need to get the css file location from the active messenger
-			$mce_css = $this->_active_messenger->get_inline_css_template(TRUE, 'wpeditor');
+			$mce_css = $this->_active_messenger->get_variation($this->_template_pack, TRUE, 'wpeditor', $this->_variation );
 		}
 
 		return $mce_css;
@@ -587,9 +610,11 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 	public function load_scripts_styles_display_preview_message() {
+		$this->_set_message_template_group();
 		if ( isset( $this->_req_data['messenger'] ) )
 			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
-		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_inline_css_template(TRUE, TRUE) );
+
+		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_variation( $this->_template_pack, TRUE, 'preview', $this->_variation ) );
 	}
 
 
@@ -1559,6 +1584,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$this->_message_template_group = $MTP->create_default_object();
 		else
 			$this->_message_template_group = $MTP->get_one_by_ID( $GRP_ID );
+
+		$this->_template_pack = $this->_message_template_group->get_template_pack();
+		$this->_variation = $this->_message_template_group->get_template_pack_variation();
 
 	}
 

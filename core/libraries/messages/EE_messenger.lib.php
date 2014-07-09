@@ -220,20 +220,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
-	/**
-	 * messengers must define the location of the inline css template to use in final assembled templates.
-	 *
-	 * This method is also used in the admin backend to set the css for the tinymce editor.
-	 *
-	 * @access public
-	 * @param bool $url if true we return the url to the css, if false, we return the path.
-	 * @return string the location of the css file to use for inline css.
-	 */
-	abstract public function get_inline_css_template( $url = FALSE );
-
-
-
-
 
 
 	/**

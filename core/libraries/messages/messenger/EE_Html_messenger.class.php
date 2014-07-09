@@ -111,41 +111,6 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 
-	/**
-	 * get css file
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param bool $url  return url or path
-	 * @param mixed (string|bool) $type wpeditor|print|base|FALSE (default is the main css for html)
-	 *
-	 * @return string path to css file.
-	 */
-	public function get_inline_css_template( $url = TRUE, $type = FALSE ) {
-		switch ( $type ) {
-
-			case 'base' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-base-css.template.css';
-				break;
-
-			case 'print' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-print-css.template.css';
-				break;
-
-			case 'wpeditor' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-wpeditor-css.template.css';
-				break;
-
-			default :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-css.template.css';
-				break;
-		}
-
-		return $url ? apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $url, $type )  : apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $url, $type );
-	}
-
-
-
 
 	/**
 	 * Takes care of enqueuing any necessary scripts or styles for the page.  A do_action() so message types using this messenger can add their own js.
