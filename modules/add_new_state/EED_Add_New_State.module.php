@@ -28,8 +28,8 @@ class EED_Add_New_State  extends EED_Module {
 	/**
 	 * @return EED_Add_New_State
 	 */
-	public static function instance( $module_name = '' ) {
-		return parent::instance( __CLASS__ );
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
 	}
 
 
