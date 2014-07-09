@@ -43,12 +43,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$cart = EE_Cart::get_cart_from_txn( $transaction );
 		$this->assertEquals( 1, $cart->all_ticket_quantity_count() );
 	}
-	public function test_get_ticket_items(){
-		$transaction = $this->new_typical_transaction();
-		$items_subtotal = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_sub_total, $transaction );
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
-		$this->assertEquals( array_shift( $items_subtotal ), $cart->get_ticket_items() );
-	}
+	
 	public function test_get_taxes_line_item(){
 		$transaction = $this->new_typical_transaction();
 		$items_subtotal = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_tax_sub_total, $transaction );

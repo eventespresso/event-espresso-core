@@ -113,7 +113,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
   	private function __construct( EE_Line_Item $grand_total = NULL ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
+		EE_Registry::instance()->load_helper('Line_Item');
 		if ( ! defined( 'ESPRESSO_CART' )) {
 			define( 'ESPRESSO_CART', TRUE );
 		}
@@ -131,50 +131,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 * @return EE_Line_Item
 	 */
 	private function _create_grand_total(){
-		$this->_grand_total = EE_Line_Item::new_instance(array(
-			'LIN_code'=>'total',
-			'LIN_name'=>  __('Grand Total', 'event_espresso'),
-			'LIN_type'=>  EEM_Line_Item::type_total,
-			'OBJ_type'=>'Transaction'
-		));
-		$this->_get_subtotal_for_tickets();
-		$this->_get_subtotal_for_taxes();
+		$this->_grand_total = EEH_Line_Item::create_default_total_line_item();
 		return $this->_grand_total;
 	}
 
 
 
-	/**
-	 * gets the line item which comprises all the items (ie, registrations, producst, etc)
-	 * Has a side effect of adding this to the total line item
-	 * @return EE_Line_Item
-	 */
-	private function _get_subtotal_for_tickets(){
-		$items_line_item = EE_Line_Item::new_instance(array(
-			'LIN_code'=>'tickets',
-			'LIN_name'=>  __('Tickets', 'event_espresso'),
-			'LIN_type'=>  EEM_Line_Item::type_sub_total
-		));
-		$this->_grand_total->add_child_line_item($items_line_item);
-		return $items_line_item;
-	}
-
-
-
-	/**
-	 * gets the line item which comprises all the transaction-wide taxes.
-	 * Has a side effect of adding this to the total line item
-	 * @return EE_Line_Item
-	 */
-	private function _get_subtotal_for_taxes(){
-		$tax_line_item = EE_Line_Item::new_instance(array(
-			'LIN_code'=>'taxes',
-			'LIN_name'=> __('Taxes', 'event_espresso'),
-			'LIN_type'=>  EEM_Line_Item::type_tax_sub_total
-		));
-		$this->_grand_total->add_child_line_item($tax_line_item);
-		return $tax_line_item;
-	}
 
 
 
@@ -184,7 +146,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return EE_Line_Item[]
 	 */
 	public function get_tickets() {
-		return $this->get_ticket_items()->children();
+		return EEH_Line_Item::get_items_subtotal( $this->_grand_total )->children();
 	}
 
 
@@ -208,24 +170,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-	/**
-	 * Gets the line item which comprises all the items as children of it (ie, NOT taxes or promotions)
-	 * @return EE_Line_Item
-	 */
-	public function get_ticket_items(){
-		$tickets = $this->_grand_total->get_child_line_item('tickets');
-		return $tickets ? $tickets : $this->_get_subtotal_for_tickets();
-	}
-
-
 
 	/**
 	 * Gets the line item which comprises all the taxes as children of it (ie, NOT registrations or products)
 	 * @return EE_Line_Item
 	 */
 	public function get_taxes_line_item(){
-		$taxes = $this->_grand_total->get_child_line_item('taxes');
-		return $taxes ? $taxes : $this->_get_subtotal_for_taxes();
+		return EEH_Line_Item::get_taxes_subtotal( $this->_grand_total );
 	}
 
 
@@ -248,100 +199,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return TRUE on success, FALSE on fail
 	 */
 	public function add_ticket_to_cart( EE_Ticket $ticket, $qty = 1 ) {
-		$datetimes = $ticket->datetimes();
-		$event_names = array();
-		foreach($datetimes as $datetime){
-			$event = $datetime->event();
-			$event_names[$event->ID()] = $event->name();
-		}
-		$description_addition = " (For ".implode(", ",$event_names).")";
-		$full_description = $ticket->description().$description_addition;
-		// add $ticket to cart
-		$line_item = EE_Line_Item::new_instance(array(
-			'LIN_name'=>$ticket->name(),
-			'LIN_desc'=>$full_description,
-			'LIN_unit_price'=>$ticket->price(),
-			'LIN_quantity'=>$qty,
-			'LIN_is_taxable'=>$ticket->taxable(),
-			'LIN_order'=>count($this->_grand_total->children()),
-			'LIN_total'=>$ticket->price() * $qty,
-			'LIN_type'=>  EEM_Line_Item::type_line_item,
-			'OBJ_ID'=>$ticket->ID(),
-			'OBJ_type'=>'Ticket'
-		));
-		//now add the sub-line items
-		$running_total_for_ticket = 0;
-		foreach($ticket->prices(array('order_by'=>array('PRC_order'=>'ASC'))) as $price){
-			$sign = $price->is_discount() ? -1 : 1;
-			$price_total = $price->is_percent() ? $running_total_for_ticket * $price->amount() / 100 : $price->amount() * $qty;
-
-			$sub_line_item = EE_Line_Item::new_instance(array(
-				'LIN_name'=>$price->name(),
-				'LIN_desc'=>$price->desc(),
-				'LIN_quantity'=>$price->is_percent() ? null : $qty,
-				'LIN_is_taxable'=> false,
-				'LIN_order'=>$price->order(),
-				'LIN_total'=>$sign * $price_total,
-				'LIN_type'=>  EEM_Line_Item::type_sub_line_item,
-				'OBJ_ID'=>$price->ID(),
-				'OBJ_type'=>'Price'
-			));
-			if($price->is_percent()){
-				$sub_line_item->set_percent($sign * $price->amount());
-			}else{
-				$sub_line_item->set_unit_price($sign * $price->amount());
-			}
-			$running_total_for_ticket += $price_total;
-			$line_item->add_child_line_item($sub_line_item);
-		}
-
-		$this->_add_item( $line_item );
+		EEH_Line_Item::add_ticket_purchase( $this->_grand_total, $ticket, $qty );
 		return $this->save_cart() ? TRUE : FALSE;
 	}
-
-
-
-	/**
-	 *	@adds items to cart
-	 *	@access private
-	 *	@param EE_Line_Item $item
-	 *	@return TRUE on success, FALSE on fail
-	 */
-	private function _add_item(EE_Line_Item $item ) {
-		// add item to cart
-		$ticket_items = $this->get_ticket_items();
-		if($ticket_items){
-			$ticket_items->add_child_line_item($item);
-		}else{
-			return false;
-		}
-		// recalculate cart totals based on new items
-		if ( $this->_calculate_cart_total_before_tax() ) {
-			return TRUE;
-		} else {
-			return FALSE;
-		}
-	}
-
-
-	/**
-	 *	calculate_cart_total_before_tax
-	 *	@access private
-	 *	@return float
-	 */
-	private function _calculate_cart_total_before_tax() {
-		return $this->get_ticket_items()->recalculate_pre_tax_total();
-	}
-
-	/**
-	 * Gets the total amoutn taxable amongst the line
-	 * @return float
-	 */
-	private function _calculate_cart_taxable_total(){
-		return $this->get_grand_total()->recalculate_pre_tax_total(true);
-	}
-
-
 
 	/**
 	 *	get_cart_total_before_tax
@@ -349,7 +209,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return float
 	 */
 	public function get_cart_total_before_tax() {
-		return $this->_calculate_cart_total_before_tax();
+		return $this->get_grand_total()->recalculate_pre_tax_total();
 	}
 
 
@@ -445,7 +305,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 			$line_item_codes = array ( $line_item_codes );
 		}
 
-		$items_line_item = $this->get_ticket_items();
+		$items_line_item = EEH_Line_Item::get_items_subtotal( $this->_grand_total );
 		if( ! $items_line_item){
 			return 0;
 		}
@@ -456,7 +316,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		}
 
 		if ( $removals > 0 ) {
-			$this->_calculate_cart_total_before_tax();
+			$this->get_grand_total()->recalculate_taxes_and_total();
 			return $removals;
 		} else {
 			return FALSE;
