@@ -28,7 +28,7 @@ class EED_Invoice  extends EED_Module {
 	/**
 	 * @return EED_Invoice
 	 */
-	public static function instance() {
+	public static function instance( $module_name = '' ) {
 		return parent::instance( __CLASS__ );
 	}
 

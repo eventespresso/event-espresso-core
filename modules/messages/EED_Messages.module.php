@@ -38,6 +38,12 @@ class EED_Messages  extends EED_Module {
 	protected static $_MSG_PATHS;
 
 
+	/**
+	 * @return EED_Module
+	 */
+	public static function instance( $module_name = '' ) {
+		return parent::instance( __CLASS__ );
+	}
 
 
 	/**
