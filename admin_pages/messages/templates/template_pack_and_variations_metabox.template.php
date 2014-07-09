@@ -11,8 +11,8 @@
  */
 ?>
 <div id="template-variations-selectors">
-	<p><?php _e('This section allows you to change the layout of this message template using any registered messages template packs.  Note, that when you select a new template pack you will lose any customizations on your existing message template.', 'event_espresso'); ?><p>
-	<label for="MTP_template_pack"><?php _e('Template Pack:', 'event-espresso'); ?></label> <?php echo $template_packs_selector; ?><br>
-	<p><?php _e('Here are all the variations available for the selected template pack.  Whereas template packs affect the entire layout of the template, variations are different styles for the selected template.  You can change a variation and not lose any customizations.', 'event_espresso' ); ?></p>
-	<label for="MTP_template_variation"><?php _e("Template_Variation", 'event_espresso'); ?></label><?php echo $variations_selector; ?>
+	<label for="MTP_template_pack"><?php _e('Template Pack:', 'event-espresso'); ?></label> <?php echo $template_packs_selector; ?>
+	<p class="description"><?php _e('Template packs are entire new layouts for a message template.', 'event_espresso'); ?><p>
+	<label for="MTP_template_variation"><?php _e("Template Variation", 'event_espresso'); ?></label><?php echo $variations_selector; ?>
+	<p class="description"><?php _e('Variations are different styles available for the selected template pack.', 'event_espresso' ); ?></p>
 </div>
