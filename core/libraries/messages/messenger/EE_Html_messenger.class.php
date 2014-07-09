@@ -290,9 +290,9 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _send_message() {
 		$this->_template_args = array(
 			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
-			'base_css' => $this->get_inline_css_template(TRUE, 'base'),
-			'print_css' => $this->get_inline_css_template(TRUE, 'print'),
-			'main_css' => $this->get_inline_css_template(TRUE),
+			'base_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'base', $this->_variation ),
+			'print_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'print', $this->_variation ),
+			'main_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'main', $this->_variation ),
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
 		$this->_deregister_wp_hooks();
@@ -333,13 +333,11 @@ class EE_Html_messenger extends EE_messenger  {
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
-		$relative_path =  '/core/libraries/messages/messenger/assets/' . $this->name . '/';
-
-		$wrapper_template_file = apply_filters( 'FHEE__EE_Html_messenger___get_main_template__wrapper_template_file', $this->name . '-messenger-main-wrapper.template.php' );
+		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, 'main' );
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
-		return EEH_Template::locate_template( array( $relative_path . $wrapper_template_file, $wrapper_template_file ), $this->_template_args );
+		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 
 
