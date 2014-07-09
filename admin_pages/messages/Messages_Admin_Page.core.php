@@ -1413,6 +1413,57 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	protected function _register_edit_meta_boxes() {
 		add_meta_box( 'mtp_valid_shortcodes', __('Valid Shortcodes', 'event_espresso'), array( $this, 'shortcode_meta_box' ), $this->_current_screen->id, 'side', 'default' );
 		add_meta_box( 'mtp_extra_actions', __('Extra Actions', 'event_espresso'), array( $this, 'extra_actions_meta_box' ), $this->_current_screen->id, 'side', 'high' );
+		add_meta_box( 'mtp_templates', __('Template Styles', 'event_espresso'), array( $this, 'template_pack_meta_box' ), $this->_current_screen->id, 'side', 'high' );
+	}
+
+
+
+	/**
+	 * metabox content for all template pack and variation selection.
+	 *
+	 * @since %VER%
+	 *
+	 * @return string
+	 */
+	public function template_pack_meta_box() {
+		$this->_set_message_template_group();
+
+
+		//setup template pack select values.
+		$template_packs = EED_Messages::get_template_packs();
+
+		$tp_select_values = array();
+
+		foreach ( $template_packs as $tp ) {
+			//only include template packs that support this messenger and message type!
+			$supports = $tp->get_supports();
+			if ( ! isset( $supports[$this->_message_template_group->messenger()] ) || ! in_array( $this->_message_template_group->message_type(), $supports[$this->_message_template_group->messenger()] ) ) {
+				//not supported
+				continue;
+			}
+
+			$tp_select_values[] = array(
+				'text' => $tp->label,
+				'id' => $tp->dbref
+				);
+		}
+
+		//setup variation select values for the currently selected template.
+		$variations = $this->_message_template_group->get_template_pack()->get_variations( $this->_message_template_group->messenger() );
+		$variations_select_values = array();
+		foreach ( $variations as $variation => $label ) {
+			$variations_select_values[] = array(
+				'text' => $label,
+				'id' => $variation
+				);
+		}
+
+		$template_args['template_packs_selector'] = EEH_Form_Fields::select_input( 'MTP_template_pack', $tp_select_values, $this->_message_template_group->get_template_pack_name() );
+		$template_args['variations_selector'] = EEH_Form_Fields::select_input( 'MTP_template_variation', $variations_select_values, $this->_message_template_group->get_template_pack_variation() );
+
+		$template = EE_MSG_TEMPLATE_PATH . 'template_pack_and_variations_metabox.template.php';
+
+		EEH_Template::display_template( $template, $template_args );
 	}
 
 
