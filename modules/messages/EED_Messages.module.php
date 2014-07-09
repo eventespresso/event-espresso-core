@@ -38,13 +38,6 @@ class EED_Messages  extends EED_Module {
 	protected static $_MSG_PATHS;
 
 
-	/**
-	 * @return EED_Module
-	 */
-	public static function instance( $module_name = '' ) {
-		return parent::instance( __CLASS__ );
-	}
-
 
 	/**
 	 * This will hold an array of messages template packs that are registered in the messages system.
@@ -56,6 +49,20 @@ class EED_Messages  extends EED_Module {
 	 * @var EE_Messages_Template_Pack[]
 	 */
 	protected static $_TMP_PACKS = array();
+
+
+
+
+
+	/**
+	 * @return EED_Module
+	 */
+	public static function instance( $module_name = '' ) {
+		return parent::instance( __CLASS__ );
+	}
+
+
+
 
 	/**
 	 *  set_hooks - for hooking into EE Core, other modules, etc
@@ -160,7 +167,7 @@ class EED_Messages  extends EED_Module {
 	 */
 	public static function get_template_pack( $template_pack_name ) {
 		if ( isset( self::$_TMP_PACKS[$template_pack_name] ) ) {
-			return $_TMP_PACKS[$template_pack_name];
+			return self::$_TMP_PACKS[$template_pack_name];
 		}
 
 		//not set yet so let's attempt to get it.
