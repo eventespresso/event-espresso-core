@@ -23,13 +23,11 @@
  */
 class EED_Venue_Single  extends EED_Module {
 
-
-
 	/**
 	 * @return EED_Venue_Single
 	 */
-	public static function instance( $module_name = '' ) {
-		return parent::instance( __CLASS__ );
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
 	}
 
 	/**
