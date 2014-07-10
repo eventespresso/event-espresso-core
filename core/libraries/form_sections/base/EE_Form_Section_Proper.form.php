@@ -93,7 +93,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$this->_layout_strategy = new EE_Two_Column_Layout();
 		}
 		$this->_layout_strategy->_construct_finalize($this);
-		$this->_enqueue_jquery_validate_script();
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'wp_enqueue_scripts' ));
+
 
 	}
 
@@ -289,25 +291,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//ok so no errors general to this entire form section. so let's check the subsections
 		foreach($this->get_validatable_subsections() as $subsection){
 			if( ! $subsection->is_valid()){
+				$this->set_submission_error_message( $subsection->get_validation_errors() );
 				return false;
 			}
 		}
 		return true;
-	}
-
-
-
-	/**
-	 * adds a filter so that jquery validate gets enqueued in EE_System::wp_enqueue_scripts().
-	 * This must be done BEFORE wp_enqueue_scripts() gets called, which is on
-	 * the wp_enqueue_scripts hook.
-	 * However, registering the form js and localizing it can happen when we
-	 * actually output the form (which is preferred, seeing how teh form's fields
-	 * could change until it's actually outputted)
-	 * @return void
-	 */
-	protected function _enqueue_jquery_validate_script(){
-		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 	}
 
 
@@ -350,26 +338,41 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
+	 * adds a filter so that jquery validate gets enqueued in EE_System::wp_enqueue_scripts().
+	 * This must be done BEFORE wp_enqueue_scripts() gets called, which is on
+	 * the wp_enqueue_scripts hook.
+	 * However, registering the form js and localizing it can happen when we
+	 * actually output the form (which is preferred, seeing how teh form's fields
+	 * could change until it's actually outputted)
+	 * @return void
+	 */
+	public function wp_enqueue_scripts(){
+		add_filter( 'FHEE_load_jquery_validate', '__return_true' );
+		wp_register_script( 'ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'), EVENT_ESPRESSO_VERSION, TRUE );
+	}
+
+
+
+	/**
 	 * gets the variables used by form_section_validation.js.
 	 * This needs to be called AFTER we've called $this->_enqueue_jquery_validate_script,
 	 * but before the wordpress hook wp_loaded
 	 */
 	public function _enqueue_and_localize_form_js(){
 		$this->ensure_construct_finalized_called();
-		wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);
-		wp_enqueue_script('ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'), '1', true);
 		$validation_rules = $this->get_jquery_validation_rules();
 		$form_section_id = $this->html_id();
 		$form_errors = $this->subsection_validation_errors_by_html_name();
 		//actually, we don't want to localize jsut yet. There may be other forms on the page.
 		//so we need to add our form section data to a static variable accessible by all form sections
 		//and localize it just before the footer
-		EE_Form_Section_Proper::$_js_localization['form_data'][] =array(
+		EE_Form_Section_Proper::$_js_localization['form_data'][] = array(
 			'form_section_id'=>'#'.$form_section_id,
 			'validation_rules'=>$validation_rules,
-			'errors'=> $form_errors);
-		add_action('get_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
-		add_action('admin_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
+			'errors'=> $form_errors
+		);
+		add_action( 'get_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
+		add_action( 'admin_footer', array('EE_Form_Section_Proper','localize_script_for_all_forms'));
 	}
 
 
@@ -401,7 +404,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		$inputs = $this->inputs();
 		$errors = array();
 		foreach( $inputs as $form_input ){
-			if( $form_input->get_validation_errors() ){
+			if ( $form_input instanceof EE_Form_Input_Base && $form_input->get_validation_errors() ){
 				$errors[ $form_input->html_name() ] = $form_input->get_validation_error_string();
 			}
 		}
@@ -418,10 +421,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 		//allow inputs and stuff to hook in their JS and stuff here
 		do_action('AHEE__EE_Form_Section_Proper__localize_script_for_all_forms__begin');
 		EE_Form_Section_Proper::$_js_localization['localized_error_messages'] = EE_Form_Section_Proper::_get_localized_error_messages();
-		wp_register_script('jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE);
-		wp_enqueue_script('ee_form_section_validation', EE_GLOBAL_ASSETS_URL.'scripts/form_section_validation.js', array('jquery-validate'),
-				'1',true);
-		wp_localize_script('ee_form_section_validation','ee_form_section_vars', EE_Form_Section_Proper::$_js_localization);
+		wp_enqueue_script( 'ee_form_section_validation' );
+		wp_localize_script( 'ee_form_section_validation', 'ee_form_section_vars', EE_Form_Section_Proper::$_js_localization );
 	}
 
 
@@ -484,14 +485,32 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 
 
 	/**
+	 * Gets all the validated inputs for the form section
+	 * @return array
+	 */
+	public function valid_data(){
+		$inputs = array();
+		foreach( $this->subsections() as $subsection_name =>$subsection ){
+			if ( $subsection instanceof EE_Form_Section_Proper ) {
+				$inputs[ $subsection_name ] = $subsection->valid_data();
+			} else if ( $subsection instanceof EE_Form_Input_Base ){
+				$inputs[ $subsection_name ] = $subsection->normalized_value();
+			}
+		}
+		return $inputs;
+	}
+
+
+
+	/**
 	 * Gets all the inputs on this form section
 	 * @return EE_Form_Input_Base[]
 	 */
 	public function inputs(){
 		$inputs = array();
-		foreach($this->subsections() as $name=>$obj){
-			if($obj instanceof EE_Form_Input_Base){
-				$inputs[$name] = $obj;
+		foreach( $this->subsections() as $subsection_name =>$subsection ){
+			if ( $subsection instanceof EE_Form_Input_Base ){
+				$inputs[ $subsection_name ] = $subsection;
 			}
 		}
 		return $inputs;
@@ -642,7 +661,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @param string $form_submission_error_message
 	 */
 	public function set_submission_error_message( $form_submission_error_message = '' ) {
-		$this->_form_submission_error_message = ! empty( $form_submission_error_message ) ? $form_submission_error_message : __( 'Form submission failed due to errors', 'event_espresso' );
+		$this->_form_submission_error_message .= ! empty( $form_submission_error_message ) ? $form_submission_error_message : __( 'Form submission failed due to errors', 'event_espresso' );
 	}
 
 
@@ -660,7 +679,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 	 * @param string $form_submission_success_message
 	 */
 	public function set_submission_success_message( $form_submission_success_message ) {
-		$this->_form_submission_success_message = ! empty( $form_submission_success_message ) ? $form_submission_success_message : __( 'Form submitted successfully', 'event_espresso' );
+		$this->_form_submission_success_message .= ! empty( $form_submission_success_message ) ? $form_submission_success_message : __( 'Form submitted successfully', 'event_espresso' );
 	}
 
 
