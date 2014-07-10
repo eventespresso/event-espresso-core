@@ -299,7 +299,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// and the next step
 		$this->_set_next_step();
 		// and what we're doing on the current step
-		$this->_action = EE_Registry::instance()->REQ->get( 'action', 'display_reg_step' );
+		$this->_action = EE_Registry::instance()->REQ->get( 'action', 'registration_checkout' );
 		// returning from the thank you page ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
 		// get transaction from db or session
@@ -310,28 +310,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->set_templates();
 		// verify transaction one last time
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
-			// load reg form for the current step
-//			$this->checkout->current_step->reg_form = EE_Registry::instance()->load_file(
-//				SPCO_REG_STEPS_PATH,
-//				$this->checkout->current_step->reg_form_name(),
-//				'form',
-//				$this->checkout->current_step,
-//				FALSE
-//			);
+			// ever heard that song by Blue Rodeo ?
 			try {
 				$this->checkout->current_step->generate_reg_form();
-//				d( $this->checkout->current_step->reg_form );
 				// check for form submission
 				if ( $this->checkout->current_step->reg_form->was_submitted() ) {
-//					echo '<h2 style="color:#E76700;">$this->checkout->current_step->reg_form->was_submitted()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 					// capture form data
 					$this->checkout->current_step->reg_form->receive_form_submission();
 					// validate form data
 					if ( $this->checkout->current_step->reg_form->is_valid() ) {
-//						echo '<h2 style="color:#E76700;">$this->checkout->current_step->reg_form->is_valid()<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 						// good registrant, you get to proceed
-						EE_Error::add_success( $this->checkout->current_step->reg_form->submission_success_message() );
-						d( $this->checkout->current_step->reg_form->input_values() );
+						EE_Error::add_success( $this->checkout->current_step->success_message() );
 						// advance to the next step! If you pass GO, collect $200
 						next( $this->checkout->reg_steps );
 						// and advance the next step as well
@@ -339,7 +328,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					} else {
 						// bad, bad, bad registrant
 						EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
-						$this->_action = 'display_reg_step';
+						$this->_action = 'registration_checkout';
 					}
 				}
 			} catch( EE_Error $e ) {
@@ -347,26 +336,28 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			}
 			// initialize each reg step, which gives them the chance to potentially alter the process
 			$this->_initialize_reg_steps();
-			// IT'S THE FI-NAL COUNT-DOWN... err.. I mean... final reg step
+			// add some style and make it dance
+			add_action( 'wp_enqueue_scripts', array( $this, 'load_css' ), 10 );
+			//		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
+
+			// IT'S THE FI-NAL COUNT-DOWN... err... uhh...  I mean... final reg step
 			if ( $this->checkout->current_step == 'finalize_registration' ) {
 				do_action( "AHEE__Single_Page_Checkout__before_finalize_registration", $this->checkout->current_step );
 				$this->_process_finalize_registration();
 				do_action( "AHEE__Single_Page_Checkout__after_finalize_registration", $this->checkout->current_step );
-			} else {
-//				echo '<h5 style="color:#2EA2CC;">$this->_action : <span style="color:#E76700">' . $this->_action . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+			} else if ( $this->_action != 'registration_checkout' ) {
 				// meh... do one of those other steps first
-				if ( method_exists( $this->checkout->current_step, $this->_action )) {
+				if ( ! empty( $this->_action ) && method_exists( $this->checkout->current_step, $this->_action )) {
 					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
 					call_user_func( array( $this->checkout->current_step, $this->_action ));
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
+				} else {
+					EE_Error::add_error( sprintf( __( 'The requested form action "%s" does not exist for the current registration step.', 'event_espresso' ), $this->_action ), __FILE__, __FUNCTION__, __LINE__ );
 				}
 			}
 
 		}
 //		d( $this->checkout );
-		// add some style and make it dance
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_css' ), 10 );
-//		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
 
 		$this->registration_checkout();
 
