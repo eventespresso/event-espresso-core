@@ -56,6 +56,20 @@ abstract class EE_SPCO_Reg_Step {
 	protected $_reg_form_name = NULL;
 
 	/**
+	 * 	$_success_message - text to display upon successful form submission
+	 * 	@access protected
+	 *	@var string $_success_message
+	 */
+	protected $_success_message = NULL;
+
+	/**
+	 * 	$_valid_data - the normalized and validated data for this step
+	 * 	@access public
+	 *	@var array $_valid_data
+	 */
+	protected $_valid_data = array();
+
+	/**
 	 * 	$reg_form - the registration form for this step
 	 * 	@access public
 	 *	@var EE_Form_Section_Proper $reg_form
@@ -139,6 +153,26 @@ abstract class EE_SPCO_Reg_Step {
 	/**
 	 * @return string
 	 */
+	public function success_message() {
+		return ! empty( $this->_success_message ) ? $this->_success_message : sprintf( __('%s has been successfully submitted', 'event_espresso'), $this->_name );
+	}
+
+
+
+	/**
+	 * @return array
+	 */
+	public function valid_data() {
+		if ( empty( $this->_valid_data )) {
+			$this->_valid_data = $this->reg_form->valid_data();
+		}
+		return $this->_valid_data;
+	}
+
+
+	/**
+	 * @return string
+	 */
 	public function reg_form_name() {
 		return $this->_reg_form_name;
 	}
@@ -153,28 +187,30 @@ abstract class EE_SPCO_Reg_Step {
 		$input_details = array(
 			array(
 				'id' => 'spco-' . $this->slug() . '-action',
-				'name' => 'ajax_action',
+				'html_name' => 'ajax_action',
 				'value' => 'espresso_process_reg_step'
 			),
 			array(
 				'id' => 'spco-' . $this->slug() . '-noheader',
-				'name' => 'noheader',
-				'value' => ''
+				'html_name' => 'noheader',
+				'value' => '',
+				'normalization_strategy' => new EE_Boolean_Normalization()
 			),
 			array(
 				'id' => 'spco-' . $this->slug() . '-next-step',
-				'name' => 'next_step',
+				'html_name' => 'next_step',
 				'value' => $this->checkout->next_step->slug()
 			),
 			array(
 				'id' => 'spco-reg_url_link',
-				'name' => 'e_reg_url_link',
+				'html_name' => 'e_reg_url_link',
 				'value' => $this->checkout->reg_url_link
 			),
 			array(
 				'id' => 'spco-revisit',
-				'name' => 'revisit',
-				'value' => $this->checkout->revisit
+				'html_name' => 'revisit',
+				'value' => $this->checkout->revisit,
+				'normalization_strategy' => new EE_Boolean_Normalization()
 			)
 		);
 		// array to hold generated inputs
@@ -183,17 +219,17 @@ abstract class EE_SPCO_Reg_Step {
 		foreach ( $input_details as $input ) {
 			// set array of args
 			$input_constructor_args = array(
-				'layout_strategy' => new EE_Div_Per_Section_Layout(),
-				'name' 				=> $input['name'],
-				'html_name' 		=> $input['name'],
-				'html_id' 				=> $input['id'],
-				'default'				=> $input['value']
+				'normalization_strategy' 	=> isset( $input['normalization_strategy'] ) ? $input['normalization_strategy'] : NULL,
+				'layout_strategy' 				=> new EE_Div_Per_Section_Layout(),
+				'html_name' 						=> $input['html_name'],
+				'html_id' 								=> $input['id'],
+				'default'								=> $input['value']
 			);
 			// generate input
-			$inputs[ $input['name'] ] = new EE_Hidden_Input( $input_constructor_args );
+			$inputs[ $input['html_name'] ] = new EE_Hidden_Input( $input_constructor_args );
 		}
+		// now set arguments for the entire hidden inputs section
 		$form_args = array(
-			'name' 			=> 'ee-' . $this->slug() . '-hidden-inputs',
 			'html_id' 			=> 'ee-' . $this->slug() . '-hidden-inputs',
 			'subsections' 	=> $inputs,
 			'exclude' 	=> array(),
@@ -227,7 +263,6 @@ abstract class EE_SPCO_Reg_Step {
 	public function reg_step_submit_button() {
 		$sbmt_btn = new EE_Submit_Input( array(
 			'layout_strategy' => new EE_Div_Per_Section_Layout(),
-			'name' 				=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_name' 		=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_id' 				=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_class' 		=> 'spco-next-step-btn',
