@@ -29,7 +29,7 @@ class EED_Recaptcha  extends EED_Module {
 	 * @return EED_Recaptcha
 	 */
 	public static function instance() {
-		return parent::instance( __CLASS__ );
+		return parent::get_instance( __CLASS__ );
 	}
 
 

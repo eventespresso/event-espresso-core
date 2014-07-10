@@ -33,7 +33,7 @@ class EED_Events_Archive  extends EED_Module {
 	 * @return EED_Events_Archive
 	 */
 	public static function instance() {
-		return parent::instance( __CLASS__ );
+		return parent::get_instance( __CLASS__ );
 	}
 
 

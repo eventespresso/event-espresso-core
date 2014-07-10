@@ -37,6 +37,16 @@ class EED_Messages  extends EED_Module {
 	 */
 	protected static $_MSG_PATHS;
 
+
+	/**
+	 * @return EED_Module
+	 */
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
+	}
+
+
+
 	/**
 	 *  set_hooks - for hooking into EE Core, other modules, etc
 	 *
