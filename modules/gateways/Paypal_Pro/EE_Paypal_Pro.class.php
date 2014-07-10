@@ -1,7 +1,4 @@
-<?php
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * Event Espresso
  *
@@ -351,7 +348,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 				$item_num = 1;
 				/* @var $transaction EE_Transaction */
-				foreach ($total_line_item->get_items() as $line_item) {	
+				foreach ($total_line_item->get_items() as $line_item) {
 					$Item = array(
 							// Item Name.  127 char max.
 							'l_name' => substr($line_item->name(),0,127),
@@ -401,7 +398,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 							// Item quantity.  Must be any positive integer.
 							'l_qty' => 1,
 				));
-				
+
 			}
 
 			// Populate data arrays with order data.
@@ -754,7 +751,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				elseif ($CurrentErrorVar == 'L_SHORTMESSAGE')
 					$CurrentVarName = 'Short Message';
 				elseif ($CurrentErrorVar == 'L_LONGMESSAGE')
-					$CurrentVarName == 'Long Message';
+					$CurrentVarName = 'Long Message';
 				elseif ($CurrentErrorVar == 'L_SEVERITYCODE')
 					$CurrentVarName = 'Severity Code';
 
