@@ -61,7 +61,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return class instance
 	 */
 	public static function instance( EE_Line_Item $grand_total = NULL ) {
-
+		EE_Registry::instance()->load_helper('Line_Item');
 		// check if class object is instantiated
 		if( ! empty( $grand_total ) ){
 			self::$_instance = new self( $grand_total );
@@ -113,7 +113,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
   	private function __construct( EE_Line_Item $grand_total = NULL ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		EE_Registry::instance()->load_helper('Line_Item');
 		if ( ! defined( 'ESPRESSO_CART' )) {
 			define( 'ESPRESSO_CART', TRUE );
 		}
@@ -248,29 +247,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	public function delete_items( $line_item_codes = FALSE ) {
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		// check if only a single line_item_id was passed
-		if ( ! empty( $line_item_codes ) && ! is_array( $line_item_codes )) {
-			// place single line_item_id in an array to appear as multiple line_item_ids
-			$line_item_codes = array ( $line_item_codes );
-		}
-
-		$items_line_item = EEH_Line_Item::get_items_subtotal( $this->_grand_total );
-		if( ! $items_line_item){
-			return 0;
-		}
-		$removals = 0;
-		// cycle thru line_item_ids
-		foreach ( $line_item_codes as $line_item_id ) {
-			$removals += $items_line_item->delete_child_line_item($line_item_id);
-		}
-
-		if ( $removals > 0 ) {
-			$this->get_grand_total()->recalculate_taxes_and_total();
-			return $removals;
-		} else {
-			return FALSE;
-		}
+		return EEH_Line_Item::delete_items($this->get_grand_total(), $line_item_codes );
 
 	}
 
