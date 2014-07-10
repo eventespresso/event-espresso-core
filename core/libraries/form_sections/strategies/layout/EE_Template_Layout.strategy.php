@@ -67,11 +67,7 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	public function layout_form() {
 		if ( $this->_layout_template_file ) {
 			EE_Registry::instance()->load_helper( 'Template' );
-			$args = '';
-//			ob_start();
-//			d( $this->_template_args );
-//			$args = ob_get_clean();
-			return $args . EEH_Template::locate_template( $this->_layout_template_file, $this->template_args(), TRUE, TRUE );
+			return EEH_Template::locate_template( $this->_layout_template_file, $this->template_args(), TRUE, TRUE );
 		} else {
 			return parent::layout_form();
 		}
@@ -163,9 +159,8 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 	 * @return array
 	 */
 	public function template_args() {
-//		d( $this->form_section() );
 		foreach ( $this->form_section()->subsections() as $subsection_name => $subsection ) {
-//			d( $subsection_name );
+			$subsection_name = self::prep_form_subsection_key_name( $subsection_name );
 			if ( strpos( $subsection_name, '[' ) !== FALSE ) {
 				$sub_name = explode( '[', $subsection_name );
 				$this->_template_args[ $sub_name[0] ][ rtrim( $sub_name[1], ']' ) ] = $this->layout_subsection( $subsection );
@@ -175,6 +170,33 @@ class EE_Template_Layout extends EE_Div_Per_Section_Layout{
 		}
 //		d( $this->_template_args );
 		return $this->_template_args;
+	}
+
+
+
+	/**
+	 * prep_form_section_key_name
+	 *
+	 * @access public
+	 * @param string $subsection_name
+	 * @return string
+	 */
+	public static function prep_form_subsection_key_name( $subsection_name = '' ) {
+		$subsection_name = str_replace( array( '-', ' ' ), array( '', '_' ), $subsection_name );
+		return is_numeric( substr( $subsection_name, 0, 1 )) ? 'form_' . $subsection_name : $subsection_name;
+	}
+
+
+
+	/**
+	 * get_subform - just a wrapper for the above method
+	 *
+	 * @access public
+	 * @param string $subsection_name
+	 * @return string
+	 */
+	public static function get_subform_name( $subsection_name = '' ) {
+		return EE_Template_Layout::prep_form_subsection_key_name( $subsection_name );
 	}
 
 
