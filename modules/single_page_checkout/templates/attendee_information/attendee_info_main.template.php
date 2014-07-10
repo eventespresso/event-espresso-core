@@ -49,7 +49,7 @@ if ( count( $registrations ) > 0 ) {
 
 			<?php
 			// ATTENDEE QUESTIONS
-			$reg_form = 'reg_form_' . str_replace( '-', '', $registration->reg_url_link() );
+			$reg_form = EE_Template_Layout::get_subform_name( $registration->reg_url_link() );
 			echo ${$reg_form};
 			?>
 
