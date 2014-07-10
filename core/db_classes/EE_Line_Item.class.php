@@ -473,14 +473,18 @@ class EE_Line_Item extends EE_Base_Class {
 	/**
 	 * Adds the line item as a child to this line item
 	 * @param EE_Line_Item $line_item
-	 * @return void
+	 * @return boolean success
 	 */
 	function add_child_line_item( EE_Line_Item $line_item ) {
 		if ( $this->ID() ) {
 			$line_item->set_parent_ID( $this->ID() );
-			$line_item->save();
+			if( $this->TXN_ID() ){
+				$line_item->set_TXN_ID( $this->TXN_ID() );
+			}
+			return $line_item->save();
 		} else {
 			$this->_Line_Item[ $line_item->code() ] = $line_item;
+			return TRUE;
 		}
 	}
 

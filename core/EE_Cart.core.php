@@ -168,17 +168,13 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		return $count;
 	}
 
-
-
-
 	/**
-	 * Gets the line item which comprises all the taxes as children of it (ie, NOT registrations or products)
-	 * @return EE_Line_Item
+	 *  Gets all tha tax line items
+	 * @return EE_Line_Item[]
 	 */
-	public function get_taxes_line_item(){
-		return EEH_Line_Item::get_taxes_subtotal( $this->_grand_total );
+	public function get_taxes(){
+		return EEH_Line_Item::get_taxes_subtotal( $this->_grand_total )->children();
 	}
-
 
 
 	/**
@@ -214,55 +210,9 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-	/**
-	 * Simply adds global taxes to the cart's taxes (if they were already in there, updates them).
-	 * Doesn't calculate the totals for each tax or add the tax totals to the total line item
-	 * @return void
-	 */
-	private function _add_taxes_to_cart(){
-		// start with empty array
-		$this->_taxes = array();
-		// get array of taxes via Price Model
-		$ordered_taxes = EE_Registry::instance()->load_model( 'Price' )->get_all_prices_that_are_taxes();
-		ksort( $ordered_taxes );
-		$taxes_line_item = $this->get_taxes_line_item();
-		//just to be safe, remove its old tax line items
-		$taxes_line_item->delete_children_line_items();
-		//loop thru taxes
-		foreach ( $ordered_taxes as $order => $taxes ) {
-			foreach ( $taxes as $tax ) {
-				if ( $tax instanceof EE_Price ) {
-					$taxes_line_item->add_child_line_item(EE_Line_Item::new_instance(array(
-						'LIN_name'=>$tax->name(),
-						'LIN_desc'=>$tax->desc(),
-						'LIN_percent'=>$tax->amount(),
-						'LIN_is_taxable'=>false,
-						'LIN_order'=>$order,
-						'LIN_total'=>0,
-						'LIN_type'=>  EEM_Line_Item::type_tax,
-						'OBJ_type'=>'Price',
-						'OBJ_ID'=>$tax->ID()
-					)));
-				}
-			}
-		}
-	}
 
 
 
-	/**
-	 *	Applies taxes to the grand total line itemand recalculates it, and returns the grant total
-	 *	@access private
-	 *	@return float
-	 */
-	private function _apply_taxes_to_total() {
-
-		if( ! $this->get_taxes_line_item()->children()){
-			$this->_add_taxes_to_cart();
-		}
-		$this->get_grand_total()->recalculate_total_including_taxes();
-		return $this->get_taxes_line_item()->total();
-	}
 
 
 
@@ -272,7 +222,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return float
 	 */
 	public function get_applied_taxes() {
-		return $this->_apply_taxes_to_total();
+		return EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
 	}
 
 
@@ -283,7 +233,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return float
 	 */
 	public function get_cart_grand_total() {
-		$this->_apply_taxes_to_total();
+		EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
 		return $this->get_grand_total()->total();
 	}
 
@@ -356,8 +306,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 *	@return TRUE on success, FALSE on fail
 	 */
 	public function save_cart() {
-		self::$_instance->_apply_taxes_to_total();
-		return EE_Registry::instance()->SSN->set_session_data( array( 'cart'=> self::$_instance ));
+		EEH_Line_Item::ensure_taxes_applied( $this->_grand_total );
+		return EE_Registry::instance()->SSN->set_session_data( array( 'cart'=> $this ));
 	}
 
 

@@ -23,6 +23,13 @@ if (!defined('EVENT_ESPRESSO_VERSION')) {
  *
  */
 class EEH_Line_Item {
+	/**
+	 * Returns the new line item created by adding a purchase of the ticket
+	 * @param type $total_line_item
+	 * @param type $ticket
+	 * @param type $qty
+	 * @return EE_Line_Item
+	 */
 	public static function add_ticket_purchase($total_line_item, $ticket, $qty = 1 ){
 		$datetimes = $ticket->datetimes();
 		$event_names = array();
@@ -72,6 +79,7 @@ class EEH_Line_Item {
 		}
 
 		self::add_item( $total_line_item, $line_item );
+		return $line_item;
 	}
 	/**
 	 *
@@ -83,16 +91,14 @@ class EEH_Line_Item {
 		// add item to cart
 		$ticket_items = self::get_items_subtotal( $total_line_item );
 		if($ticket_items){
-			$ticket_items->add_child_line_item($item);
+			$success = $ticket_items->add_child_line_item($item);
 		}else{
-			return false;
-		}
-		// recalculate cart totals based on new items
-		if ( $total_line_item->recalculate_pre_tax_total() ) {
-			return TRUE;
-		} else {
 			return FALSE;
 		}
+		// recalculate cart totals based on new items
+		$total_line_item->recalculate_total_including_taxes();
+		return $success;
+
 	}
 	public static function get_items_subtotal( $total_line_item ){
 		$tickets = $total_line_item->get_child_line_item('tickets');
@@ -106,39 +112,101 @@ class EEH_Line_Item {
 		return $taxes ? $taxes : self::create_default_taxes_subtotal( $total_line_item );
 	}
 
-
-	public static function create_default_total_line_item(){
+	/**
+	 *
+	 * @param type $transaction
+	 * @return EE_Line_Item of type total
+	 */
+	public static function create_default_total_line_item( $transaction = NULL){
 		$line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'total',
 			'LIN_name'=>  __('Grand Total', 'event_espresso'),
 			'LIN_type'=>  EEM_Line_Item::type_total,
 			'OBJ_type'=>'Transaction'
 		));
-		self::create_default_items_subtotal( $line_item );
-		self::create_default_taxes_subtotal( $line_item );
+		if( $transaction ){
+			$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
+			$line_item->set_TXN_ID( $transaction );
+		}
+		self::create_default_items_subtotal( $line_item, $transaction );
+		self::create_default_taxes_subtotal( $line_item, $transaction );
 		return $line_item;
 	}
-	public static function create_default_items_subtotal( $total_line_item ){
+	public static function create_default_items_subtotal( $total_line_item, $transaction = NULL ){
 		$items_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'tickets',
 			'LIN_name'=>  __('Tickets', 'event_espresso'),
 			'LIN_type'=>  EEM_Line_Item::type_sub_total
 		));
+		if( $transaction ){
+			$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
+			$total_line_item->set_TXN_ID( $transaction );
+		}
 		$total_line_item->add_child_line_item($items_line_item);
 		return $items_line_item;
 	}
-	public static function create_default_taxes_subtotal( $total_line_item ){
+	public static function create_default_taxes_subtotal( $total_line_item, $transaction = NULL ){
 		$tax_line_item = EE_Line_Item::new_instance(array(
 			'LIN_code'=>'taxes',
 			'LIN_name'=> __('Taxes', 'event_espresso'),
 			'LIN_type'=>  EEM_Line_Item::type_tax_sub_total
 		));
+		if( $transaction ){
+			$transaction = EEM_Transaction::instance()->ensure_is_ID( $transaction );
+			$total_line_item->set_TXN_ID( $transaction );
+		}
 		$total_line_item->add_child_line_item($tax_line_item);
+		//and lastly, add the actual taxes
+		self::apply_taxes( $total_line_item );
 		return $tax_line_item;
 	}
-	//add item
-	//create line item from ticket (and quantity)
-	//create line item from price (and quantity)
+
+	/**
+	 * Finds what taxes should apply, adds them as tax line items under the taxes sub-total,
+	 * and recalculates the taxes sub-total and the grand total
+	 * @param EE_Line_Item $total_line_item
+	 */
+	public static function apply_taxes( $total_line_item ){
+		// get array of taxes via Price Model
+		$ordered_taxes = EE_Registry::instance()->load_model( 'Price' )->get_all_prices_that_are_taxes();
+		ksort( $ordered_taxes );
+		$taxes_line_item = self::get_taxes_subtotal( $total_line_item );
+		//just to be safe, remove its old tax line items
+		$taxes_line_item->delete_children_line_items();
+		//loop thru taxes
+		foreach ( $ordered_taxes as $order => $taxes ) {
+			foreach ( $taxes as $tax ) {
+				if ( $tax instanceof EE_Price ) {
+					$taxes_line_item->add_child_line_item(EE_Line_Item::new_instance(array(
+						'LIN_name'=>$tax->name(),
+						'LIN_desc'=>$tax->desc(),
+						'LIN_percent'=>$tax->amount(),
+						'LIN_is_taxable'=>false,
+						'LIN_order'=>$order,
+						'LIN_total'=>0,
+						'LIN_type'=>  EEM_Line_Item::type_tax,
+						'OBJ_type'=>'Price',
+						'OBJ_ID'=>$tax->ID()
+					)));
+				}
+			}
+		}
+		$total_line_item->recalculate_taxes_and_total();
+	}
+
+	/**
+	 * Ensures that taxes have been applied to the order, if not applies them.
+	 * Returns the total amount of tax
+	 * @param EE_Line_Item $total_line_item
+	 * @return float
+	 */
+	public static function ensure_taxes_applied( $total_line_item ){
+		$taxes_subtotal = self::get_taxes_subtotal( $total_line_item );
+		if( ! $taxes_subtotal->children()){
+			self::apply_taxes( $total_line_item );
+		}
+		return $taxes_subtotal->total();
+	}
 
 }
 
