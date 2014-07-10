@@ -280,6 +280,7 @@
 
 /***  VALIDATION  ***/
 #ee-single-page-checkout-dv .ee-asterisk,
+#ee-single-page-checkout-dv .ee-input-error,
 #ee-single-page-checkout-dv .ee-required-text {
 	font-weight:bold;
 	color:#E34064 !important;
