@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Hidden_Input
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -29,8 +29,12 @@ class EE_Hidden_Input extends EE_Form_Input_Base{
 	function __construct($options = array()){
 		//require_once('strategies/display_strategies/EE_Text_Input_Display_Strategy.strategy.php');
 		$this->_set_display_strategy(new EE_Hidden_Display_Strategy());
-		$this->_set_normalization_strategy(new EE_Text_Normalization());
-		parent::__construct($options);
+		if ( isset( $options['normalization_strategy'] ) && $options['normalization_strategy'] instanceof EE_Normalization_Strategy_Base ) {
+			$this->_set_normalization_strategy( $options['normalization_strategy'] );
+		} else {
+			$this->_set_normalization_strategy( new EE_Text_Normalization() );
+		}
+		parent::__construct( $options );
 	}
 	public function get_html_for_label() {
 		return '';
