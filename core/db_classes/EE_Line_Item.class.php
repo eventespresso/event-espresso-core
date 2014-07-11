@@ -339,7 +339,7 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Gets ALL the children of this line item (ie, all the parts that contribute towards this total).
-	 * @return EE_Line_Item[]
+	 * @return array
 	 */
 	public function children() {
 		if ( $this->ID() ) {
@@ -665,11 +665,13 @@ class EE_Line_Item extends EE_Base_Class {
 		} elseif ( $this->is_sub_total() || $this->is_total() ) {
 			//get the total of all its children
 			foreach ( $this->children() as $child_line_item ) {
-				//only recalculate sub-totals for NON-taxes
-				if ( $child_line_item->is_percent() ) {
-					$total += $total * $child_line_item->percent() / 100;
-				} else {
-					$total += $child_line_item->recalculate_pre_tax_total( $include_taxable_items_only );
+				if ( $child_line_item instanceof EE_Line_Item ) {
+					//only recalculate sub-totals for NON-taxes
+					if ( $child_line_item->is_percent() ) {
+						$total += $total * $child_line_item->percent() / 100;
+					} else {
+						$total += $child_line_item->recalculate_pre_tax_total( $include_taxable_items_only );
+					}
 				}
 			}
 		}
@@ -711,12 +713,16 @@ class EE_Line_Item extends EE_Base_Class {
 			$total = 0;
 			//simply loop through all its children (which should be taxes) and sum their total
 			foreach ( $this->children() as $child_tax ) {
-				$total += $child_tax->total();
+				if ( $child_tax instanceof EE_Line_Item ) {
+					$total += $child_tax->total();
+				}
 			}
 			$this->set_total( $total );
 		} elseif ( $this->is_total() ) {
 			foreach ( $this->children() as $maybe_tax_subtotal ) {
-				$maybe_tax_subtotal->_recalculate_tax_sub_total();
+				if ( $maybe_tax_subtotal instanceof EE_Line_Item ) {
+					$maybe_tax_subtotal->_recalculate_tax_sub_total();
+				}
 			}
 		}
 	}
@@ -783,11 +789,13 @@ class EE_Line_Item extends EE_Base_Class {
 	protected function _get_descendants_of_type( $type ) {
 		$line_items_of_type = array();
 		foreach ( $this->children() as $child_line_item ) {
-			if ( $child_line_item->type() == $type ) {
-				$line_items_of_type[ ] = $child_line_item;
-			} else {
-				//go-through-all-its children looking for taxes
-				$line_items_of_type = array_merge( $line_items_of_type, $child_line_item->_get_descendants_of_type( $type ) );
+			if ( $child_line_item instanceof EE_Line_Item ) {
+				if ( $child_line_item->type() == $type ) {
+					$line_items_of_type[ ] = $child_line_item;
+				} else {
+					//go-through-all-its children looking for taxes
+					$line_items_of_type = array_merge( $line_items_of_type, $child_line_item->_get_descendants_of_type( $type ) );
+				}
 			}
 		}
 		return $line_items_of_type;
@@ -804,10 +812,12 @@ class EE_Line_Item extends EE_Base_Class {
 		if ( $this->children() ) {
 			$total = 0;
 			foreach ( $this->children() as $child_line_item ) {
-				if ( $child_line_item->is_percent() && $this->is_taxable() ) {
-					$total += $total * $child_line_item->percent() / 100;
-				} elseif ( $child_line_item->is_taxable() ) {
-					$total += $child_line_item->recalculate_pre_tax_total();
+				if ( $child_line_item instanceof EE_Line_Item ) {
+					if ( $child_line_item->is_percent() && $this->is_taxable() ) {
+						$total += $total * $child_line_item->percent() / 100;
+					} elseif ( $child_line_item->is_taxable() ) {
+						$total += $child_line_item->recalculate_pre_tax_total();
+					}
 				}
 			}
 		} else {
@@ -845,15 +855,17 @@ class EE_Line_Item extends EE_Base_Class {
 	 * @return int count of items saved
 	 */
 	public function save_this_and_descendants_to_txn( $txn_id = NULL ) {
-		if ( !$txn_id ) {
+		if ( ! $txn_id ) {
 			$txn_id = $this->TXN_ID();
 		}
 		$this->set_TXN_ID( $txn_id );
 		$children = $this->children();
 		$this->save();
 		foreach ( $children as $child_line_item ) {
-			$child_line_item->set_parent_ID( $this->ID() );
-			$child_line_item->save_this_and_descendants_to_txn( $txn_id );
+			if ( $child_line_item instanceof EE_Line_Item ) {
+				$child_line_item->set_parent_ID( $this->ID() );
+				$child_line_item->save_this_and_descendants_to_txn( $txn_id );
+			}
 		}
 	}
 
