@@ -25,6 +25,7 @@ class EE_UnitTestCase_Test extends EE_UnitTestCase{
 		//make transaction
 		$txn = $this->new_typical_transaction();
 
+		$this->assertEquals( 1.5, $taxable = $txn->tax_total() );
 		//verify everything
 		$regs = $txn->registrations();
 		$this->assertEquals(1, count( $regs ) );
