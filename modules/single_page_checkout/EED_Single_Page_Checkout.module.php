@@ -88,6 +88,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 
+	/**
+	 * @return EED_Single_Page_Checkout
+	 */
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
+	}
+
+
+
 
 
 	/**
@@ -857,7 +866,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		}
 
 		$template_args['sub_total'] = $cart_total_before_tax;
-		$template_args['taxes'] = $this->_cart->get_taxes_line_item()->children();
+		$template_args['taxes'] = $this->_cart->get_taxes();
 
 		// what's left to pay?
 		$amount_owing = $grand_total - $total_payments;

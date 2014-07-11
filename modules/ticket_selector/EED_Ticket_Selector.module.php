@@ -44,6 +44,14 @@ class EED_Ticket_Selector extends  EED_Module {
 
 
 
+	/**
+	 * @return EED_Ticket_Selector
+	 */
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
+	}
+
+
 
 
 

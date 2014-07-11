@@ -155,7 +155,7 @@ class EE_Email_messenger extends EE_messenger  {
 				break;
 		}
 
-		return $url ? apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $type )  : apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $type );
+		return $url ? apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $url, $type )  : apply_filters( 'FHEE__EE_Email_Messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $url, $type );
 	}
 
 
@@ -167,15 +167,15 @@ class EE_Email_messenger extends EE_messenger  {
 	 */
 	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
 		if ( $sending_messenger_name = 'html' ) {
-			add_filter( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', array( $this, 'add_email_css' ), 10, 2 );
+			add_filter( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', array( $this, 'add_email_css' ), 10, 3 );
 		}
 	}
 
 
 
 
-	public function add_email_css( $url, $type ) {
-		return $this->get_inline_css_template( true );
+	public function add_email_css( $url, $path_or_url, $type ) {
+		return $this->get_inline_css_template( $path_or_url );
 	}
 
 

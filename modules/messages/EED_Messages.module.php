@@ -26,7 +26,7 @@ class EED_Messages  extends EED_Module {
 	 *
 	 * @var EE_messages
 	 */
-	private  static $_EEMSG;
+	protected  static $_EEMSG;
 
 
 	/**
@@ -35,7 +35,17 @@ class EED_Messages  extends EED_Module {
 	 *
 	 * @var array
 	 */
-	private static $_MSG_PATHS;
+	protected static $_MSG_PATHS;
+
+
+	/**
+	 * @return EED_Module
+	 */
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
+	}
+
+
 
 	/**
 	 *  set_hooks - for hooking into EE Core, other modules, etc
@@ -83,7 +93,7 @@ class EED_Messages  extends EED_Module {
 	 *
 	 * @return void
 	 */
-	private static function _register_routes() {
+	protected static function _register_routes() {
 		EE_Config::register_route( __('msg_url_trigger', 'event_espresso'), 'Messages', 'run' );
 		do_action( 'AHEE__EED_Messages___register_routes' );
 	}
@@ -120,6 +130,9 @@ class EED_Messages  extends EED_Module {
 
 		$data = $this->_get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context );
 
+		//make sure we drop generating messenger if both sending and generating are the same.
+		$generating_messenger = $sending_messenger != $generating_messenger ? $generating_messenger : NULL;
+
 		//now we can trigger the actual sending of the message via the message type.
 		self::$_EEMSG->send_message( $message_type, $data, $sending_messenger, $generating_messenger, $context );
 	}
@@ -143,7 +156,7 @@ class EED_Messages  extends EED_Module {
 	 *
 	 * @return mixed  (EE_Base_Class||EE_Base_Class[])
 	 */
-	private function _get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context ) {
+	protected function _get_messages_data_from_url( $generating_messenger, $message_type, $token, $data_id, $context ) {
 
 		//get the registration.
 		$registration = EEM_Registration::instance()->get_one( array( array( 'REG_url_link' => $token ) ) );
@@ -196,7 +209,7 @@ class EED_Messages  extends EED_Module {
 	 *
 	 * @return void.
 	 */
-	private static function _set_messages_paths() {
+	protected static function _set_messages_paths() {
 		$dir_ref = array(
 			'messages',
 			'messages/message_type',
@@ -223,7 +236,7 @@ class EED_Messages  extends EED_Module {
 	 *
 	 * @return void
 	 */
-	private static function _load_controller() {
+	protected static function _load_controller() {
 		if ( ! self::$_EEMSG instanceof EE_messages ) {
 			self::set_autoloaders();
 			self::$_EEMSG = new EE_messages();
@@ -310,7 +323,7 @@ class EED_Messages  extends EED_Module {
 	 * Simply returns an array indexed by Registration Status ID and the related message_type name assoicated with that status id.
 	 * @return array
 	 */
-	private static function _get_reg_status_array() {
+	protected static function _get_reg_status_array() {
 
 		$status_match_array = array(
 			EEM_Registration::status_id_approved => 'registration',

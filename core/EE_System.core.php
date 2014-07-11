@@ -142,6 +142,11 @@ final class EE_System {
 		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
+
+		//other housekeeping
+		//exclude EE critical pages from wp_list_pages
+		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
@@ -1181,6 +1186,21 @@ final class EE_System {
 
 
 
+	/**
+	 * simply hooks into "wp_list_pages_exclude" filter (for wp_list_pages method) and makes sure EE critical pages are never returned with the function.
+	 *
+	 *
+	 * @param  array  $exclude_array any existing pages being excluded are in this array.
+	 * @return array
+	 */
+	public function remove_pages_from_wp_list_pages( $exclude_array ) {
+		return  array_merge( $exclude_array, EE_Registry::instance()->CFG->core->get_critical_pages_array() );
+	}
+
+
+
+
+
 
 	/*********************************************** 		WP_ENQUEUE_SCRIPTS HOOK		 ***********************************************/
 
@@ -1197,9 +1217,8 @@ final class EE_System {
 		if ( apply_filters( 'FHEE_load_EE_System_scripts', TRUE ) ) {
 			// jquery_validate loading is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via:  add_filter( 'FHEE_load_jquery_validate', '__return_true' );
 			if ( apply_filters( 'FHEE_load_jquery_validate', FALSE ) ) {
-				$jquery_validate_url = EE_PLUGIN_DIR_URL . 'scripts/jquery.validate.min.js';
 				// register jQuery Validate
-				wp_register_script('jquery-validate', $jquery_validate_url, array('jquery'), '1.11.1', TRUE);
+				wp_register_script( 'jquery-validate', EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js', array('jquery'), '1.11.1', TRUE );
 			}
 		}
 	}
