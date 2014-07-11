@@ -420,8 +420,10 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	 * @return EE_Transaction
 	 */
 	protected function new_typical_transaction($options = array()){
-		$cart = EE_Cart::reset();
+		EE_Registry::instance()->load_helper( 'Line_Item' );
 		$txn = $this->new_model_obj_with_dependencies( 'Transaction' );
+		$total_line_item = EEH_Line_Item::create_default_total_line_item( $txn->ID() );
+		$total_line_item->save_this_and_descendants_to_txn( $txn->ID() );
 		if( isset( $options[ 'ticket_types' ] ) ){
 			$ticket_types = $options[ 'ticket_types' ];
 		}else{
@@ -430,7 +432,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
 		for( $i = 1; $i <= $ticket_types; $i++ ){
 			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => TRUE ) );
-			$this->assertTrue( $cart->add_ticket_to_cart( $ticket ) );
+			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
 			$reg_final_price = $ticket->price();
 			foreach($taxes as $priority => $taxes_at_priority){
 				foreach($taxes_at_priority as $tax){
@@ -439,16 +441,55 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 			}
 			$this->new_model_obj_with_dependencies( 'Registration', array('TXN_ID' => $txn->ID(), 'TKT_ID' => $ticket->ID(), 'REG_count'=>1, 'REG_group_size'=>1, 'REG_final_price' => $reg_final_price ) );
 		}
-		$txn->set_total( $cart->get_cart_grand_total() );
+		$txn->set_total( $total_line_item->total() );
 		$txn->save();
 
-
-		$cart->get_applied_taxes();
-		$cart_total_line_item = $cart->get_grand_total();
-		$cart_total_line_item->save_this_and_descendants_to_txn( $txn->ID() );
-
-
-
 		return $txn;
+	}
+
+	/**
+	 * Creates an interesting ticket, with a base price, dollar surcharge, and a percent surcharge,
+	 * which is for 2 different datetimes.
+	 * @param array $options {
+	 *	@type int $dollar_surcharge the dollar surcharge to add to thsi ticket
+	 *	@type int $percent_surcharge teh percent surcharge to add to this ticket (value in percent, not in decimal. Eg if it's a 10% surcharge, enter 10.00, not 0.10
+	 *	@type int $datetimes the number of datetimes for this ticket
+	 * }
+	 * @return EE_Ticket
+	 */
+	public function new_ticket( $options = array() ) {
+		$ticket = $this->new_model_obj_with_dependencies('Ticket', array( 'TKT_price' => '16.5', 'TKT_taxable' => TRUE ) );
+		$base_price_type = EEM_Price_Type::instance()->get_one( array( array('PRT_name' => 'Base Price' ) ) );
+		$this->assertInstanceOf( 'EE_Price_Type', $base_price_type );
+		$base_price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => 10, 'PRT_ID' => $base_price_type->ID() ) );
+		$ticket->_add_relation_to( $base_price, 'Price' );
+		$this->assertArrayContains( $base_price, $ticket->prices() );
+		if( isset( $options[ 'dollar_surcharge'] ) ){
+			$dollar_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Dollar Surcharge' ) ) );
+			$this->assertInstanceOf( 'EE_Price_Type', $dollar_surcharge_price_type );
+			$dollar_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'dollar_surcharge'], 'PRT_ID' => $dollar_surcharge_price_type->ID() ) );
+			$ticket->_add_relation_to( $dollar_surcharge, 'Price' );
+			$this->assertArrayContains( $dollar_surcharge, $ticket->prices() );
+		}
+		if( isset( $options[ 'percent_surcharge' ] ) ){
+			$percent_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Percent Surcharge' ) ) );
+			$this->assertInstanceOf( 'EE_Price_Type', $percent_surcharge_price_type );
+			$percent_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'percent_surcharge' ], 'PRT_ID' => $percent_surcharge_price_type->ID() ) );
+			$ticket->_add_relation_to( $percent_surcharge, 'Price' );
+			$this->assertArrayContains( $percent_surcharge, $ticket->prices() );
+		}
+		if( isset( $options[ 'datetimes'] ) ){
+			$datetimes = $options[ 'datetimes' ];
+		}else{
+			$datetimes = 1;
+		}
+
+		$event = $this->new_model_obj_with_dependencies( 'Event' );
+		for( $i = 0; $i <= $datetimes; $i++ ){
+			$ddt = $this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID'=> $event->ID() ) );
+			$ticket->_add_relation_to( $ddt, 'Datetime' );
+			$this->assertArrayContains( $ddt, $ticket->datetimes() );
+		}
+		return $ticket;
 	}
 }
