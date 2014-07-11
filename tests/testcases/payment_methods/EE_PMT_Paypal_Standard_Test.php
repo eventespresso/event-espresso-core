@@ -27,6 +27,13 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 	const return_url = 'http://mysite.com/return';
 	const notify_url = 'http://mysite.com/notify';
 	const cancel_url = 'http://mysite.com/cancel';
+
+	public function setUp(){
+		EEM_Payment::reset();
+		EEM_Transaction::reset();
+//		EEM_Payment_Method::reset();
+		parent::setUp();
+	}
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
 		parent::__construct($name, $data, $dataName);
 		$this->_paypal_id = 'sell_1359059457_biz@eventespresso.com';
@@ -78,7 +85,8 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 		));
 		$t = $this->new_typical_transaction();
 		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
-
+		$p_in_map = EE_Registry::instance()->load_model('Payment')->get_from_entity_map( $p->ID() );
+		$this->assertInstanceOf( 'EE_Payment', $p_in_map );
 		//skip IPN validation with paypal
 		add_filter( 'FHEE__EEG_Paypal_Standard__validate_ipn__skip', '__return_true' );
 
@@ -140,7 +148,6 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
   'payment_gross' => '60.00',
   'auth' => 'Abp7Rv87UBZqp18HlystBhVYkr5U-wOEufLDnbUuLIli4sta-Jr-4G1kw4uwGLNlopOjLer38dL3Zp-rBnaT3wg',
 ), $t );
-
 		$this->assertEquals( EEM_Payment::status_id_approved, $p->status() );
 		$this->assertEquals( $t->total(), $p->amount() );
 	}

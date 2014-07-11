@@ -986,8 +986,8 @@ abstract class EE_Base_Class{
 						$pk_field_name =self::_get_primary_key_name( get_class($this));
 						$this->_fields[$pk_field_name] = $results;
 						$this->_clear_cached_property($pk_field_name);
+						$this->get_model()->add_to_entity_map( $this );
 					}
-					$this->get_model()->add_to_entity_map($this);
 				}
 			}else{//PK is NOT auto-increment
 				//so check if one like it already exists in the db
@@ -995,6 +995,7 @@ abstract class EE_Base_Class{
 					$results = $this->get_model()->update_by_ID($save_cols_n_values, $this->ID());
 				}else{
 					$results = $this->get_model()->insert($save_cols_n_values);
+					$this->get_model()->add_to_entity_map( $this );
 				}
 			}
 		}else{//there is NO primary key
@@ -1010,6 +1011,7 @@ abstract class EE_Base_Class{
 				$results = $this->get_model()->update($save_cols_n_values,$combined_pk_fields_n_values);
 			}else{
 				$results = $this->get_model()->insert($save_cols_n_values);
+				//@todo we'd love to store this in the entity map, but it doesn't yet support that
 			}
 		}
 		//restore the old assumption about values being prepared by the model object

@@ -48,7 +48,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 		//factor
 		$this->factory = new EE_UnitTest_Factory;
-
+		EE_Registry::reset();
 	}
 
 	public function tearDown(){
