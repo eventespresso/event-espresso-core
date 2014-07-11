@@ -318,12 +318,14 @@ final class EE_Front_Controller {
 				while ( $route = $Module_Request_Router->get_route( $WP_Query )) {
 					// determine module and method for route
 					$module = $Module_Request_Router->resolve_route( $route );
-					// get registered view for route
-					$this->_template_path = $Module_Request_Router->get_view( $route );
-					// grab module name
-					$module_name = $module->module_name();
-					// map the module to the module objects
-					EE_Registry::instance()->modules->$module_name = $module;
+					if( $module instanceof EED_Module ) {
+						// get registered view for route
+						$this->_template_path = $Module_Request_Router->get_view( $route );
+						// grab module name
+						$module_name = $module->module_name();
+						// map the module to the module objects
+						EE_Registry::instance()->modules->$module_name = $module;
+					}
 				}
 			}
 			//d( EE_Registry::instance()->modules );
