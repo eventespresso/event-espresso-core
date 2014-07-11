@@ -13,7 +13,7 @@
  *
  * ------------------------------------------------------------------------
  *
- * Line Item Model. MOstly used for storing a snapshot of all the items in a transaction
+ * Line Item Model. Mostly used for storing a snapshot of all the items in a transaction
  * as they were recorded at the time of being added to the cart.
  * There are different 'types' of line items: item, sub-item, tax, sub-total, and total.
  * Note that line items can be nested. For example, a total line item should have one-or-more
@@ -46,7 +46,8 @@ class EEM_Line_Item extends EEM_Base {
 	const type_sub_line_item = 'sub-item';
 	const type_sub_total = 'sub-total';
 	const type_total = 'total';
-	// private instance of the EEM_Checkin object
+
+	// private instance of the EEM_Line_Item object
 	private static $_instance = NULL;
 
 
@@ -122,6 +123,9 @@ class EEM_Line_Item extends EEM_Base {
 		);
 		parent::__construct( $timezone );
 	}
+
+
+
 	/**
 	 * Gets all the line items for this transaction of the given type
 	 * @param string $line_item_type like one of EEM_Line_Item::type_*
@@ -135,4 +139,7 @@ class EEM_Line_Item extends EEM_Base {
 			'TXN_ID' => $transaction
 		)));
 	}
+
+
+
 }
