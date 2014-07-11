@@ -22,7 +22,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
  *
  * @ version		2.0
  * @subpackage	includes/core/EE_Cart.core.php
- * @ author		Brent Christensen
+ * @ author		Mike Nelson, Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -53,13 +53,12 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-
-
-	/**
-	 *	@singleton method used to instantiate class object
-	 *	@access public
-	 *	@return class instance
-	 */
+	 /**
+	  * @singleton method used to instantiate class object
+	  * @access    public
+	  * @param EE_Line_Item $grand_total
+	  * @return \EE_Cart
+	  */
 	public static function instance( EE_Line_Item $grand_total = NULL ) {
 		EE_Registry::instance()->load_helper('Line_Item');
 		// check if class object is instantiated
@@ -77,7 +76,29 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		return self::$_instance;
 	}
 
-/**
+
+
+	 /**
+	  *    private constructor to prevent direct creation
+	  * @Constructor
+	  * @access private
+	  * @param EE_Line_Item $grand_total
+	  * @return \EE_Cart
+	  */
+	 private function __construct( EE_Line_Item $grand_total = NULL ) {
+		 do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
+		 if ( ! defined( 'ESPRESSO_CART' )) {
+			 define( 'ESPRESSO_CART', TRUE );
+		 }
+		 if ( $grand_total instanceof EE_Line_Item ) {
+			 $this->set_grand_total_line_item( $grand_total );
+		 }
+		 $this->get_grand_total();
+	 }
+
+
+
+	/**
 	 * Resets the cart completely (whereas empty_cart
 	 * @param EE_Line_Item $grand_total
 	 * @return EE_Cart
@@ -90,37 +111,18 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	}
 
 
-	/**
-	 *	get_cart_from_reg_url_link
-	 *	@access public
-	 *	@return class instance
-	 */
+
+	 /**
+	  *    get_cart_from_reg_url_link
+	  * @access public
+	  * @param EE_Transaction $transaction
+	  * @return \EE_Cart
+	  */
 	public static function get_cart_from_txn( EE_Transaction $transaction ) {
 		$grand_total = $transaction->total_line_item();
 		$grand_total->get_items();
 		$grand_total->tax_descendants();
 		return EE_Cart::instance( $grand_total );
-	}
-
-
-
-	/**
-	 *	private constructor to prevent direct creation
-	 *	@Constructor
-	 *	@access private
-	 *	@return void
-	 */
-  	private function __construct( EE_Line_Item $grand_total = NULL ) {
-
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-		if ( ! defined( 'ESPRESSO_CART' )) {
-			define( 'ESPRESSO_CART', TRUE );
-		}
-		if ( $grand_total instanceof EE_Line_Item ) {
-			$this->set_grand_total_line_item( $grand_total );
-		}
-		$this->get_grand_total();
-
 	}
 
 
@@ -136,13 +138,10 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-
-
-
 	/**
 	 *	Gets all the item line items (ie, all line items for registrations, products, etc. NOT taxes or promotions)
 	 *	@access public
-	 *	@return EE_Line_Item[]
+	 *	@return \EE_Line_Item[]
 	 */
 	public function get_tickets() {
 		return EEH_Line_Item::get_items_subtotal( $this->_grand_total )->children();
@@ -167,13 +166,16 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		return $count;
 	}
 
+
+
 	/**
 	 *  Gets all tha tax line items
-	 * @return EE_Line_Item[]
+	 * @return \EE_Line_Item[]
 	 */
 	public function get_taxes(){
 		return EEH_Line_Item::get_taxes_subtotal( $this->_grand_total )->children();
 	}
+
 
 
 	/**
@@ -198,6 +200,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		return $this->save_cart() ? TRUE : FALSE;
 	}
 
+
+
 	/**
 	 *	get_cart_total_before_tax
 	 *	@access public
@@ -209,14 +213,8 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-
-
-
-
-
-
 	/**
-	 *	gets the total amoutn of tax paid for items in this cart
+	 *	gets the total amount of tax paid for items in this cart
 	 *	@access public
 	 *	@return float
 	 */
@@ -267,7 +265,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 	/**
-	 * Sets the cart to match the line item. Especialy handy for loading an old cart where you
+	 * Sets the cart to match the line item. Especially handy for loading an old cart where you
 	 *  know the grand total line item on it
 	 * @param EE_Line_Item $line_item
 	 */
