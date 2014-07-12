@@ -1185,7 +1185,7 @@ jQuery(document).ready(function($) {
 						if ( $(this).val() === '' ) {
 							curval = $('.event-datetime-DTT_EVT_start', '#event-datetime-' + tktHelper.dateTimeRow).val();
 						}
-					}
+					}/**/
 
 					if ( $(this).hasClass('add-new-ticket-TKT_qty') )
 						idref = 'add-new-ticket-TKT_qty';
@@ -1212,7 +1212,13 @@ jQuery(document).ready(function($) {
 				if ( $('.ticket-row', '.event-tickets-container').length > 1 )
 					$('.trash-icon', '.event-tickets-container .ticket-row' ).show();
 
+			} else {
+				//make sure tkt sell until date matches the date-time start date for the first date.
+				var tkt_end_date = tktHelper.eemoment($('.event-datetime-DTT_EVT_start').first().val()).startOf('day').format('YYYY-MM-DD h:mm a');
+				newTKTrow.find('.edit-ticket-TKT_end_date').val(tkt_end_date);
 			}
+
+
 
 			//now let's setup the display row!
 			if( incomingcontext != 'short-ticket' ) {
