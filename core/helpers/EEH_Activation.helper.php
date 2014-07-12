@@ -301,6 +301,9 @@ class EEH_Activation {
 		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ] )) {
 			unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ][ $critical_page['code'] ] );
 		}
+		if ( $posts_page != 'posts' && isset( EE_Registry::instance()->CFG->core->post_shortcodes['posts'] )) {
+			unset( EE_Registry::instance()->CFG->core->post_shortcodes['posts'][ $critical_page['code'] ] );
+		}
 		// update post_shortcode CFG
 		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE )) {
 			$msg = sprintf(
