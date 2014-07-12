@@ -126,8 +126,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	 */
 	private function _set_default_dates( $tickets ) {
 		foreach ( $tickets as $ticket ) {
-			$ticket->set('TKT_start_date', time('timestamp') );
-			$ticket->set('TKT_end_date', time('timestamp') + (60 * 60 * 24 * 30 ) );
+			$ticket->set('TKT_start_date', current_time('timestamp') );
+			$ticket->set('TKT_end_date', current_time('timestamp') + (60 * 60 * 24 * 30 ) );
 		}
 
 		return $tickets;
