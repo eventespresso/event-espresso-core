@@ -894,10 +894,12 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			//get the earliest datetime (if present);
 			$earliest_dtt = $this->_adminpage_obj->get_cpt_model_obj()->ID() > 0 ? $this->_adminpage_obj->get_cpt_model_obj()->get_first_related('Datetime', array('order_by'=> array('DTT_EVT_start' => 'ASC' ) ) ) : NULL;
 
-			if ( !empty( $earliest_dtt ) )
+			if ( !empty( $earliest_dtt ) ) {
 				$template_args['TKT_end_date'] = $earliest_dtt->get_datetime('DTT_EVT_start', 'Y-m-d', 'h:i a');
-			else
-				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(0, 0, 0, date("m"), date("d")+7, date("Y") ) );
+			} else {
+				//default so let's just use what's been set for the default date-time which is 30 days from now.
+				$template_args['TKT_end_date'] = date('Y-m-d h:i a', mktime(24, 0, 0, date("m"), date("d") + 29, date("Y") )  );
+			}
 			$template_args['tkt_status_class'] = ' tkt-status-' . EE_Ticket::onsale;
 		}
 
