@@ -1841,6 +1841,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 						$msg = sprintf( __('The Message Template Group (%d) was NOT updated for some reason', 'event_espresso'), $set_column_values['GRP_ID'] );
 						EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__ );
 					} else {
+						//k now we need to ensure the template_pack and template_variation fields are set.
+						$template_pack = ! empty( $this->_req_data['MTP_template_pack' ] ) ? $this->_req_data['MTP_template_pack'] : 'default';
+						$template_variation = ! empty( $this->_req_data['MTP_template_variation'] ) ? $this->_req_data['MTP_template_variation'] : 'default';
+						$mtpg_obj = $MTPG->get_one_by_ID( $set_column_values['GRP_ID'] );
+						if ( $mtpg_obj instanceof EE_Message_Template_Group ) {
+							$mtpg_obj->set_template_pack_name( $template_pack );
+							$mtpg_obj->set_template_pack_variation( $template_variation );
+						}
 						$success = 1;
 					}
 				}
