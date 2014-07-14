@@ -50,7 +50,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 		$primary_attendee = $primary_registrant->attendee();
 		$items = array();
 		//if we're are charging for the full amount, show the normal line items
-		if( $payment->amount() != $transaction->total()){//client code specified an amount
+		if( $this->_can_easily_itemize_transaction_for( $payment )){
 			$total_line_item = $transaction->total_line_item();
 			$tax_total = $total_line_item->get_total_tax();
 			foreach($total_line_item->get_items() as $line_item){

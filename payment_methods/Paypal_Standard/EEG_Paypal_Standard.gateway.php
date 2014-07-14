@@ -87,7 +87,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
 		$item_num = 1;
-		if($payment->amount() == $transaction->total()){
+		if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 			$total_line_item = $transaction->total_line_item();
 			//this payment is for the entire transaction,
 			//so let's show all the line items
