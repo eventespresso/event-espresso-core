@@ -52,14 +52,44 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * @return string
+	 * @return bool
 	 */
 	public function generate_reg_form() {
 
+		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		d($this->checkout);
 
-		EE_Registry::instance()->REQ->add_output(
-			'<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>'
+		// build array of form options
+		$form_args = array(
+			'name' 					=> 'ee-' . $this->slug() . '-reg-step-form',
+			'html_id' 					=> 'ee-' . $this->slug() . '-reg-step-form',
+			'subsections' 			=> array(),
+			'exclude' 					=> array(),
+			'layout_strategy'		=> is_admin() ?
+					new EE_Div_Per_Section_Layout() :
+					new EE_Template_Layout( array(
+							'layout_template_file' 		=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php', // layout_template
+							'begin_template_file' 		=> NULL,
+							'input_template_file' 			=> NULL,
+							'subsection_template_file' => NULL,
+							'end_template_file' 			=> NULL,
+							'template_args' 					=> array()
+						)
+					),
 		);
+		$this->reg_form = new EE_Form_Section_Proper( $form_args );
+
+
+	}
+
+
+
+	/**
+	 * @return string
+	 */
+	public function sdffffffffffffffffffffffffffffffffffffffffffffffff() {
+
+		die();
 		$from_admin = is_admin();
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
@@ -91,7 +121,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$event_queue['title'] = __('Registrations', 'event_espresso');
 		$additional_attendee_forms = FALSE;
 
-		d($this->checkout);
 
 		$registrations  =  $this->checkout->transaction->registrations( array(), TRUE );
 		// grab the saved registrations from the transaction
