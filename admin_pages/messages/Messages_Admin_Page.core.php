@@ -1311,21 +1311,20 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//let's first determine if the incoming template is a global template, if it isn't then we need to get the global template matching messenger and message type.
 			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 
-			$success = $this->_delete_mtp_permanently( $GRP_ID, FALSE );
+			//if successfully deleted, lets generate the new ones.  Note. We set GLOBAL to true, because resets on ANY template will use the related global template defaults for regeneration.  This means that if a custom template is reset it resets to whatever the related global template is.  HOWEVER, we DO keep the template pack and template variation set for the current custom template when resetting.
+			$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, TRUE );
 
-			//if successfully deleted, lets generate the new ones.  Note. We set GLOBAL to true, because resets on ANY template will use the related global template defaults for regeneration.  This means that if a custom template is reset, it does NOT reset to whatever the related GLOBAL is in the db but rather what the related
-			if ( $success ) {
-				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, TRUE );
+			//if new templates got generated okay then we delete permanently the existing one.
+			if ( ! empty( $templates ) ) {
+				$success = $this->_delete_mtp_permanently( $GRP_ID, FALSE );
 			}
+
+
 		}
 
 		//any error messages?
 		if ( !$success ) {
 			EE_Error::add_error( __('Something went wrong with deleting existing templates. Unable to reset to default', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-		}
-
-		if ( $success && empty( $templates ) ) {
-			EE_Error::add_error( __('Successfully deleted existing templates but unable to regenerate default templates. You can try regenerating by deactivating and reactivating the messenger in the messenger settings page, if that doesn\'t work please contact support', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		//all good, let's add a success message!
