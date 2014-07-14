@@ -610,5 +610,21 @@ abstract class EE_Gateway {
 	protected function _get_cancel_url(){
 		return get_permalink(EE_Registry::instance()->CFG->core->cancel_page_id);
 	}
+
+	/**
+	 * Sums the total of all the items and taxes
+	 * @param type $total_line_item
+	 * @return float
+	 */
+	protected function _sum_items_and_taxes( $total_line_item ){
+		$total = 0;
+		foreach ($total_line_item->get_items() as $line_item) {
+			$total += $line_item->total();
+		}
+		foreach($total_line_item->tax_descendants() as $tax_line_item){
+			$total += $tax_line_item->total();
+		}
+		return $total;
+	}
 }
 

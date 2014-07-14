@@ -191,8 +191,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			}
 			$order_description = '';
 			$primary_registrant = $transaction->primary_registration();
-			//if we're are charging for the full amount, show the normal line items
-			if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount
+			//if the items total and taxes total equal the transaction total and the didn't specify how much to pay and it's NOT partially paid
+			if( ( $this->_sum_items_and_taxes( $total_line_item ) == $transaction->total() ) &&
+					($total_to_charge === NULL && ! $transaction->paid())){//we can make an itemized total
 				foreach ($total_line_item->get_items() as $line_item) {
 					$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');
 					$order_description .= $line_item->desc().', ';
@@ -201,15 +202,15 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				foreach($total_line_item->tax_descendants() as $tax_line_item){
 					$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax_line_item->total(), 'N');
 				}
-			}else{//partial payment
+			}else{//partial payment or the items dont add up to the total etc
 				if( ! $total_to_charge){//they didn't set the total to charge, so it must have a balance
 					$total_to_charge = $transaction->remaining();
 				}
 				$order_description = sprintf(__("Partial payment of %s for %s", "event_espresso"),$total_to_charge,$primary_registrant->reg_code());
 			}
 
-			
-			
+
+
 
 			//start transaction
 			$this->setField('amount', $total_to_charge);
