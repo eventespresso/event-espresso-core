@@ -1086,10 +1086,24 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 		$this->_template_args['post_ID'] = $this->_template_args['post']->ID;
 		$template = WP_ADMIN_PATH . 'edit-form-advanced.php';
 
+		add_action( 'admin_print_styles', array( $this, 'add_new_admin_page_global' ) );
+
 		//modify the default editor title field with default title.
 		add_filter('enter_title_here', array( $this, 'add_custom_editor_default_title' ), 10 );
 
 		EEH_Template::display_template( $template, $this->_template_args );
+	}
+
+
+
+
+	public function add_new_admin_page_global() {
+		$adminpage = !empty( $this->_req_data['post'] ) ? 'post-php' : 'post-new-php';
+		?>
+		<script type="text/javascript">
+			adminpage = '<?php echo $adminpage; ?>';
+		</script>
+		<?php
 	}
 
 
@@ -1144,6 +1158,8 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page {
 			wp_enqueue_script('admin-comments');
 			enqueue_comment_hotkeys_js();
 		}
+
+		add_action( 'admin_print_styles', array( $this, 'add_new_admin_page_global' ) );
 
 		$template = WP_ADMIN_PATH . 'edit-form-advanced.php';
 		EEH_Template::display_template( $template, $this->_template_args );

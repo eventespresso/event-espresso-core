@@ -43,17 +43,12 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$cart = EE_Cart::get_cart_from_txn( $transaction );
 		$this->assertEquals( 1, $cart->all_ticket_quantity_count() );
 	}
-	public function test_get_ticket_items(){
+
+	public function test_get_taxes(){
 		$transaction = $this->new_typical_transaction();
-		$items_subtotal = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_sub_total, $transaction );
+		$taxes = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_tax, $transaction );
 		$cart = EE_Cart::get_cart_from_txn( $transaction );
-		$this->assertEquals( array_shift( $items_subtotal ), $cart->get_ticket_items() );
-	}
-	public function test_get_taxes_line_item(){
-		$transaction = $this->new_typical_transaction();
-		$items_subtotal = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_tax_sub_total, $transaction );
-		$cart = EE_Cart::get_cart_from_txn( $transaction );
-		$this->assertEquals( array_shift( $items_subtotal ), $cart->get_taxes_line_item() );
+		$this->assertEquals( $taxes, $cart->get_taxes() );
 	}
 	public function test_get_grand_total(){
 		$transaction = $this->new_typical_transaction();
@@ -89,7 +84,6 @@ class EE_Cart_Test extends EE_UnitTestCase{
 
 		EE_Cart::reset()->add_ticket_to_cart( $ticket, $quantity_purchased );
 
-		$this->assertEquals($ticket->price() * $quantity_purchased, EE_Cart::instance()->get_cart_grand_total() );
 		$total_line_item = EE_Cart::instance()->get_grand_total();
 		$subtotals = $total_line_item->children();
 		$this->assertNotEmpty( $subtotals );
@@ -109,6 +103,8 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$percent_surcharge_sli = array_shift( $sub_line_items );
 		$this->assertEquals( $percent_surcharge->amount(), $percent_surcharge_sli->percent() );
 		$this->assertEquals( ($base_price->amount()  + $dollar_surcharge->amount() )* $percent_surcharge->amount() / 100 * $quantity_purchased, $percent_surcharge_sli->total() );
+		$this->assertEquals($ticket->price() * $quantity_purchased, EE_Cart::instance()->get_cart_grand_total() );
+
 	}
 
 	public function test_get_cart_total_before_tax(){
