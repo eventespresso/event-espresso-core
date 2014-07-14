@@ -77,7 +77,7 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 */
 	public function process_shortcode( $attributes = array() ) {
 		// make sure EED_Events_Archive is setup properly
-		if ( $this->using_fallback() ) {
+		if ( apply_filters( 'FHEE__fallback_shortcode_processor__EES_Espresso_Events', FALSE )) {
 			EED_Events_Archive::instance()->event_list();
 		}
 		// merge in any attributes passed via fallback shortcode processor
