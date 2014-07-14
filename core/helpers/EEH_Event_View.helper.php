@@ -270,7 +270,13 @@ class EEH_Event_View extends EEH_Base {
 	public static function get_primary_date_obj( $EVT_ID = FALSE ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
-			$datetimes = $event->get_many_related('Datetime');
+			$datetimes = $event->get_many_related(
+				'Datetime',
+				array(
+					'limit' => 1,
+					'order_by' => array( 'DTT_EVT_start' => 'ASC' )
+				)
+			);
 			return reset( $datetimes );
 		} else {
 			 return FALSE;
@@ -288,7 +294,13 @@ class EEH_Event_View extends EEH_Base {
 	public static function get_last_date_obj( $EVT_ID = FALSE ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
-			$datetimes = $event->get_many_related('Datetime');
+			$datetimes = $event->get_many_related(
+				'Datetime',
+				array(
+					'limit' => 1,
+					'order_by' => array( 'DTT_EVT_start' => 'DESC' )
+				)
+			);
 			return end( $datetimes );
 		} else {
 			 return FALSE;
