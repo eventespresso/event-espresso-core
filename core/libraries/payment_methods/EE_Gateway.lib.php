@@ -66,6 +66,12 @@ abstract class EE_Gateway{
 	protected $_template = NULL;
 
 	/**
+	 * Used for manipulating the line item tree
+	 * @var EEHI_Line_Item
+	 */
+	protected $_line_item;
+
+	/**
 	 * The ID of the payment method using this gateway
 	 * @var int
 	 */
@@ -168,6 +174,14 @@ abstract class EE_Gateway{
 	 */
 	public function set_template_helper($template_helper){
 		$this->_template = $template_helper;
+	}
+
+	/**
+	 * 
+	 * @param EEHI_Line_Item $line_item_helper
+	 */
+	public function set_line_item_helper( $line_item_helper ){
+		$this->_line_item = $line_item_helper;
 	}
 
 	public function log($message,$payment){

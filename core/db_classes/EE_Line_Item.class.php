@@ -632,7 +632,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 */
 	function recalculate_total_including_taxes() {
 		$pre_tax_total = $this->recalculate_pre_tax_total();
-		$tax_total = $this->recalculate_taxes_and_total();
+		$tax_total = $this->recalculate_taxes_and_tax_total();
 		$total = $pre_tax_total + $tax_total;
 		$this->set_total( $total );
 		return $total;
@@ -686,7 +686,7 @@ class EE_Line_Item extends EE_Base_Class {
 	 * the totals on each tax calculated, and returns the final tax total
 	 * @return float
 	 */
-	function recalculate_taxes_and_total() {
+	function recalculate_taxes_and_tax_total() {
 		//get all taxes
 		$taxes = $this->tax_descendants();
 		//calculate the pretax total
@@ -740,35 +740,6 @@ class EE_Line_Item extends EE_Base_Class {
 			$total += $tax_line_item->total();
 		}
 		return $total;
-	}
-
-	/**
-	 * Sets the total tax paid on this, by removing all previous taxes
-	 * and replacing them with a single tax and updating the tax sub-total
-	 * @param float $amount
-	 * @param string $name
-	 * @param string $description
-	 * @return EE_Line_Item the new tax created
-	 */
-	public function set_tax_to($amount, $name = NULL, $description = NULL ){
-		//first: remove all tax descendants
-		//add this as a new tax descendant
-		$tax_subtotal = $this->get_nearest_descendant_of_type( EEM_Line_Item::type_tax_sub_total );
-		$tax_subtotal->delete_children_line_items();
-
-		$new_tax = EE_Line_Item::new_instance(array(
-			'TXN_ID' => $this->TXN_ID(),
-			'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
-			'LIN_desc' => $description ? $description : '',
-			'LIN_percent' => $amount / $this->get_items_total() * 100,
-			'LIN_total' => $amount,
-			'LIN_parent' => $tax_subtotal->ID(),
-			'LIN_type' => EEM_Line_Item::type_tax
-		));
-		$new_tax->save();
-		$tax_subtotal->set_total( $amount );
-		$tax_subtotal->save();
-		return $new_tax;
 	}
 
 

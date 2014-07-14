@@ -424,17 +424,6 @@ interface EEI_Line_Item{
 	 * @return float
 	 */
 	function get_total_tax();
-
-	/**
-	 * Finds the tax subtotal child of this line item, removes all its children taxes
-	 * and makes this the only new tax. Used to update taxes in cases
-	 * where an offsite payment processor calculates taxes so we can update our
-	 * records accordingly
-	 * @param type $amount
-	 * @param type $name
-	 * @param type $description
-	 */
-	function set_tax_to( $amount, $name, $description );
 }
 
 interface EEI_Registration{
@@ -456,6 +445,24 @@ interface EEMI_Payment_Log{
 	 * @return EEI_Log
 	 */
 	function gateway_log($message,$id,$model_name);
+}
+interface EEHI_Line_Item{
+	/**
+	 * Adds an item to the purchase in the right spot
+	 * @param EE_Line_Item $total_line_item
+	 * @param EE_Line_Item $line_item
+	 */
+	public function add_item( EE_line_Item $total_line_item, EE_Line_Item $line_item );
+	/**
+	 * Overwrites the previous tax by clearing out the old taxes, and creates a new
+	 * tax and updates the total line item accordingly
+	 * @param EE_Line_Item $total_line_item
+	 * @param float $amount
+	 * @param string $name
+	 * @param string $description
+	 * @return EE_Line_Item the new tax created
+	 */
+	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL );
 }
 
 interface EEHI_Template{

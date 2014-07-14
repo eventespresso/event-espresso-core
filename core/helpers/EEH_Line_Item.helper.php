@@ -232,7 +232,7 @@ class EEH_Line_Item {
 				}
 			}
 		}
-		$total_line_item->recalculate_taxes_and_total();
+		$total_line_item->recalculate_taxes_and_tax_total();
 	}
 
 
@@ -280,11 +280,42 @@ class EEH_Line_Item {
 		}
 
 		if ( $removals > 0 ) {
-			$total_line_item->recalculate_taxes_and_total();
+			$total_line_item->recalculate_taxes_and_tax_total();
 			return $removals;
 		} else {
 			return FALSE;
 		}
+	}
+
+	/**
+	 * Overwrites the previous tax by clearing out the old taxes, and creates a new
+	 * tax and updates the total line item accordingly
+	 * @param EE_Line_Item $total_line_item
+	 * @param float $amount
+	 * @param string $name
+	 * @param string $description
+	 * @return EE_Line_Item the new tax line item created
+	 */
+	public static function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name = NULL, $description = NULL ){
+		//first: remove all tax descendants
+		//add this as a new tax descendant
+		$tax_subtotal = self::get_taxes_subtotal( $total_line_item );
+		$tax_subtotal->delete_children_line_items();
+
+		$new_tax = EE_Line_Item::new_instance(array(
+			'TXN_ID' => $total_line_item->TXN_ID(),
+			'LIN_name' => $name ? $name : __('Tax', 'event_espresso'),
+			'LIN_desc' => $description ? $description : '',
+			'LIN_percent' => $amount / self::get_items_subtotal( $total_line_item )->total() * 100,
+			'LIN_total' => $amount,
+			'LIN_parent' => $tax_subtotal->ID(),
+			'LIN_type' => EEM_Line_Item::type_tax
+		));
+		$new_tax->save();
+		$tax_subtotal->set_total( $amount );
+		$tax_subtotal->save();
+		$total_line_item->recalculate_total_including_taxes();
+		return $new_tax;
 	}
 
 

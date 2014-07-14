@@ -181,7 +181,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $transaction->total_line_item()->get_total_tax() ){
 			echo "taxes didnt mathc";
-			$transaction->total_line_item()->set_tax_to(floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
+
+			$this->_line_item->set_total_tax_to( $transaction->total_line_item, floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
 			//@todo: possibly update the line items with a new tax
 		}
 		if( ! empty($payment)){
