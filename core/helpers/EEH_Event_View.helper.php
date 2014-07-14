@@ -214,7 +214,7 @@ class EEH_Event_View extends EEH_Base {
 
 
 	/**
-	 * 	the_event_date
+	 * 	the_event_date - first date by date order
 	 *
 	 *  @access 	public
 	 *  @return 	string
@@ -228,12 +228,41 @@ class EEH_Event_View extends EEH_Base {
 
 
 	/**
-	 * 	the_event_end_date
+	 * 	the_event_end_date - last date by date order
 	 *
 	 *  @access 	public
 	 *  @return 	string
 	 */
 	public static function the_event_end_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
+		if ( $datetime = EEH_Event_View::get_last_date_obj( $EVT_ID )) {
+			return $datetime->end_date_and_time( $dt_frmt, $tm_frmt );
+		}
+	}
+
+
+
+
+	/**
+	 * 	the_earliest_event_date - first date chronologically
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function the_earliest_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
+		if ( $datetime = EEH_Event_View::get_earliest_date_obj( $EVT_ID )) {
+			return $datetime->start_date_and_time( $dt_frmt, $tm_frmt );
+		}
+	}
+
+
+
+	/**
+	 * 	the_latest_event_date - latest date chronologically
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function the_latest_event_date( $dt_frmt = 'D M jS', $tm_frmt = 'g:i a', $EVT_ID = FALSE ) {
 		if ( $datetime = EEH_Event_View::get_last_date_obj( $EVT_ID )) {
 			return $datetime->end_date_and_time( $dt_frmt, $tm_frmt );
 		}
@@ -260,14 +289,64 @@ class EEH_Event_View extends EEH_Base {
 
 
 
+	/**
+	 *    get_primary_date_obj - orders date by DTT_order
+	 *
+	 * @access    public
+	 * @param int $EVT_ID
+	 * @return    string
+	 */
+	public static function get_primary_date_obj( $EVT_ID = 0 ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( $event instanceof EE_Event ) {
+			$datetimes = $event->get_many_related(
+				'Datetime',
+				array(
+					'limit' => 1,
+					'order_by' => array( 'DTT_order' => 'ASC' )
+				)
+			);
+			return reset( $datetimes );
+		} else {
+			 return FALSE;
+		}
+	}
+
+
 
 	/**
-	 * 	get_primary_date_obj
+	 *    get_last_date_obj - orders date by DTT_order
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param int $EVT_ID
+	 * @return    string
 	 */
-	public static function get_primary_date_obj( $EVT_ID = FALSE ) {
+	public static function get_last_date_obj( $EVT_ID = 0 ) {
+		$event = EEH_Event_View::get_event( $EVT_ID );
+		if ( $event instanceof EE_Event ) {
+			$datetimes = $event->get_many_related(
+				'Datetime',
+				array(
+					'limit' => 1,
+					'order_by' => array( 'DTT_order' => 'DESC' )
+				)
+			);
+			return end( $datetimes );
+		} else {
+			return FALSE;
+		}
+	}
+
+
+
+	/**
+	 *    get_earliest_date_obj - orders date chronologically
+	 *
+	 * @access    public
+	 * @param int $EVT_ID
+	 * @return    string
+	 */
+	public static function get_earliest_date_obj( $EVT_ID = 0 ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
 			$datetimes = $event->get_many_related(
@@ -286,12 +365,13 @@ class EEH_Event_View extends EEH_Base {
 
 
 	/**
-	 * 	get_last_date_obj
+	 *    get_latest_date_obj - orders date chronologically
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param int $EVT_ID
+	 * @return    string
 	 */
-	public static function get_last_date_obj( $EVT_ID = FALSE ) {
+	public static function get_latest_date_obj( $EVT_ID = 0 ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
 		if ( $event instanceof EE_Event ) {
 			$datetimes = $event->get_many_related(
@@ -303,7 +383,7 @@ class EEH_Event_View extends EEH_Base {
 			);
 			return end( $datetimes );
 		} else {
-			 return FALSE;
+			return FALSE;
 		}
 	}
 
