@@ -51,6 +51,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		"relay_response" => "FALSE",
 		"encap_char" => "|",
 	);
+	private $_additional_line_items = array();
 	/**
 	 * A list of all fields in the AIM API.
 	 * Used to warn user if they try to set a field not offered in the API.
