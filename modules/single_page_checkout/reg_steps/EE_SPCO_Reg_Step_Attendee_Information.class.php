@@ -13,6 +13,7 @@
  */
 class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 
+	private $_attendee_data = array();
 
 
 	/**
@@ -91,7 +92,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			'layout_strategy'		=> is_admin() ?
 					new EE_Div_Per_Section_Layout() :
 					new EE_Template_Layout( array(
-							'layout_template_file' 		=> SPCO_TEMPLATES_PATH . 'attendee_information' . DS . 'attendee_info_main.template.php', // layout_template
+							'layout_template_file' 		=> SPCO_TEMPLATES_PATH . $this->slug() . DS . 'attendee_info_main.template.php', // layout_template
 							'begin_template_file' 		=> NULL,
 							'input_template_file' 			=> NULL,
 							'subsection_template_file' => NULL,
@@ -491,7 +492,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		}
 		// grab validated data from form
 		$valid_data = $this->checkout->current_step->valid_data();
-		d( $valid_data );
+		//d( $valid_data );
 		// if we don't have any $valid_data then something went TERRIBLY WRONG !!! AHHHHHHHH!!!!!!!
 		if ( empty( $valid_data ))  {
 			EE_Error::add_error( __('No valid question responses were received.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
@@ -578,7 +579,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					// grab related answer objects
 					$answers = $registration->answers();
 					// printr( $answers, '$answers  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-					$attendee_data = array();
+					$this->_attendee_data[ $reg_url_link ] = array();
 					// unset( $valid_data[ $reg_url_link ]['additional_attendee_reg_info'] );
 					if ( isset( $valid_data[ $reg_url_link ] )) {
 						// do we need to copy basic info from primary attendee ?
@@ -613,21 +614,21 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 							}
 						}  // end of foreach ( $valid_data[ $reg_url_link ] as $form_section => $form_inputs )
 					}
-					// printr( $attendee_data, '$attendee_data  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+					// printr( $this->_attendee_data[ $reg_url_link ], '$this->_attendee_data[ $reg_url_link ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					// this registration does not require additional attendee information ?
 					if ( $copy_primary && $att_nmbr > 1 && $this->checkout->primary_attendee_obj instanceof EE_Attendee ) {
 						// add relation to new attendee
 						$this->_associate_attendee_with_registration( $registration, $this->checkout->primary_attendee_obj );
 					} else {
 						// have we met before?
-						$attendee = $this->_find_existing_attendee( $registration, $attendee_data );
+						$attendee = $this->_find_existing_attendee( $registration, $this->_attendee_data[ $reg_url_link ] );
 						// did we find an already existing record for this attendee ?
 						if ( $attendee instanceof EE_Attendee ) {
-							$attendee = $this->_update_existing_attendee_data( $attendee, $attendee_data );
+							$attendee = $this->_update_existing_attendee_data( $attendee, $this->_attendee_data[ $reg_url_link ] );
 						} else {
 							// ensure critical details are set for additional attendees
-							$attendee_data = $att_nmbr > 1 ? $this->_copy_critical_attendee_details_from_primary_registrant( $attendee_data ) : $attendee_data;
-							$attendee = $this->_create_new_attendee( $registration, $attendee_data );
+							$this->_attendee_data[ $reg_url_link ] = $att_nmbr > 1 ? $this->_copy_critical_attendee_details_from_primary_registrant( $this->_attendee_data[ $reg_url_link ] ) : $this->_attendee_data[ $reg_url_link ];
+							$attendee = $this->_create_new_attendee( $registration, $this->_attendee_data[ $reg_url_link ] );
 						}
 						// add relation to registration, set attendee ID, and cache attendee
 						$this->_associate_attendee_with_registration( $registration, $attendee );
@@ -651,8 +652,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				unset( $valid_data[ $reg_url_link ] );
 				return FALSE;
 			}
-
-			printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//			printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		} // end of foreach ( $this->checkout->transaction->registrations()  as $registration )
 		return TRUE;
@@ -700,7 +700,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		//echo '<h4>' . $form_input . ': ' . ( is_array( $input_value ) ? implode( ', ', $input_value ) : $input_value ) . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 		// if this form input has a corresponding attendee property
 		if ( $attendee_property ) {
-			$attendee_data[ $form_input ] = $input_value; // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< TODO : set as class property so that it's accessible
+			$this->_attendee_data[ $registration->reg_url_link() ][ $form_input ] = $input_value;
 			if (  $answer_is_obj ) {
 				// and delete the corresponding answer since we won't be storing this data in that object
 				$registration->_remove_relation_to( $answers[ $answer_cache_id ], 'Answer' );
