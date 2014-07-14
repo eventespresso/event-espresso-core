@@ -14,11 +14,11 @@
  * ------------------------------------------------------------------------
  *
  * EE_Primary_Registration_List_Shortcodes
- * 
+ *
  * this is a child class for the EE_Shortcodes library.  The EE_Primary_Registration_List_Shortcodes lists all list type shortcodes related to primary registration specific info.  Meaning, that when this is parsed, this only parses for Primary Registrants.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Primary_Registration_List_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -103,14 +103,14 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes {
 
 		$tktparsed = '';
 		foreach ( $tkts as $ticket ) {
-			$tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template( $template, $ticket, $valid_shortcodes, $data );
+			$tktparsed .= $this->_shortcode_helper->parse_ticket_list_template( $template, $ticket, $valid_shortcodes, $data );
 		}
 		return $tktparsed;
 	}
 
 
 	private function _get_tickets_from_event( EE_Event $event, $reg = NULL ) {
-		$evt_tkts = isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['tkt_objs'] : array(); 
+		$evt_tkts = isset($this->_extra_data['data']->events) ? $this->_extra_data['data']->events[$event->ID()]['tkt_objs'] : array();
 
 		if ( $reg instanceof EE_Registration && $this->_extra_data['data'] instanceof EE_Messages_Addressee ) {
 			$adj_tkts = array();
@@ -170,7 +170,7 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes {
 
 		$dtt_parsed = '';
 		foreach ( $dtts as $datetime ) {
-			$dtt_parsed .= $this->_shortcode_helper->parse_datetime_list_template( $template, $datetime, $valid_shortcodes, $data );
+			$dtt_parsed .= $this->_shortcode_helper->parse_datetime_list_template( $template, $datetime, $valid_shortcodes, $this->_extra_data );
 		}
 		return $dtt_parsed;
 	}
@@ -192,5 +192,5 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes {
 		return $evt_dtts;
 	}
 
-	
+
 } // end EE_Primary_Registration_List_Shortcodes class

@@ -1,7 +1,4 @@
-<?php
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
+<?php if (!defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
  * Event Espresso
  *
@@ -69,7 +66,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				'type' => 'on-site',
 				'display_name' => 'PayPal Pro',
 				'current_path' => '',
-				'button_url' => $this->_btn_img	
+				'button_url' => $this->_btn_img
 		);
 	}
 
@@ -264,7 +261,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				</label>
 			</th>
 			<td>
-				<?php echo EEH_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>						
+				<?php echo EEH_Form_Fields::select_input('use_sandbox', $this->_yes_no_options, $this->_payment_settings['use_sandbox']); ?>
 				<span class="description">
 					<?php _e('Make sure you enter the sandbox credentials above.', 'event_espresso'); ?>
 				</span>
@@ -351,7 +348,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 				$item_num = 1;
 				/* @var $transaction EE_Transaction */
-				foreach ($total_line_item->get_items() as $line_item) {	
+				foreach ($total_line_item->get_items() as $line_item) {
 					$Item = array(
 							// Item Name.  127 char max.
 							'l_name' => substr($line_item->name(),0,127),
@@ -401,13 +398,13 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 							// Item quantity.  Must be any positive integer.
 							'l_qty' => 1,
 				));
-				
+
 			}
 
 			// Populate data arrays with order data.
 			$DPFields = array(
-					// How you want to obtain payment ?  
-					// Authorization indidicates the payment is a basic auth subject to settlement with Auth & Capture.  
+					// How you want to obtain payment ?
+					// Authorization indidicates the payment is a basic auth subject to settlement with Auth & Capture.
 					// Sale indicates that this is a final sale for which you are requesting payment.  Default is Sale.
 					'paymentaction' => 'Sale',
 					// Required.  IP address of the payer's browser.
@@ -418,7 +415,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 
 
 			$CCDetails = array(
-					// Required. Type of credit card.  Visa, MasterCard, Discover, Amex, Maestro, Solo.  
+					// Required. Type of credit card.  Visa, MasterCard, Discover, Amex, Maestro, Solo.
 					// If Maestro or Solo, the currency code must be GBP.  In addition, either start date or issue number must be specified.
 					'creditcardtype' => $billing_info['_reg-page-billing-card-type-' . $this->_gateway_name ]['value'],
 					// Required.  Credit card number.  No spaces or punctuation.
@@ -467,7 +464,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 					// Required. Name of State or Province.
 					'state' => $billing_info['_reg-page-billing-state-' . $this->_gateway_name ]['value'],
 					// Required.  Country code.
-					'countrycode' => 'US', //$billing_info['_reg-page-billing-country-' . $this->_gateway ]['value'], 
+					'countrycode' => 'US', //$billing_info['_reg-page-billing-country-' . $this->_gateway ]['value'],
 					// Required.  Postal code of payer.
 					'zip' => $billing_info['_reg-page-billing-zip-' . $this->_gateway_name ]['value'],
 					// Phone Number of payer.  20 char max.
@@ -520,13 +517,13 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				unset($PayPalResult['RAWREQUEST']);
 				$message = isset($PayPalResult['L_LONGMESSAGE0']) ? $PayPalResult['L_LONGMESSAGE0'] : $PayPalResult['ACK'];
 				$approved = $this->_APICallSuccessful($PayPalResult);
-				
+
 				$primary_registration_code = $primary_registrant instanceof EE_Registration ? $primary_registrant->reg_code() : '';
 
 				$payment = EE_Payment::new_instance(array(
 								'TXN_ID' => $transaction->ID(),
 								'STS_ID' => $approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined,
-								'PAY_timestamp' => current_time('mysql',false),
+								'PAY_timestamp' => current_time( 'mysql', FALSE ),
 								'PAY_method' => 'CART',
 								'PAY_amount' => isset($PayPalResult['AMT']) ? $PayPalResult['AMT'] : 0,
 								'PAY_gateway' => $this->_gateway_name,
@@ -557,7 +554,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				$payment = EE_Payment::new_instance(array(
 								'TXN_ID' => $transaction->ID(),
 								'STS_ID' => EEM_Payment::status_id_failed,
-								'PAY_timestamp' => current_time('mysql',false),
+								'PAY_timestamp' => current_time( 'mysql', FALSE ),
 								'PAY_method' => 'CART',
 								'PAY_amount' => 0,
 								'PAY_gateway' => $this->_gateway_name,
@@ -570,7 +567,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				$payment->save();
 				$this->update_transaction_with_payment($transaction, $payment);
 				EE_Registry::instance()->SSN->set_session_data( array( 'txn_results' => $txn_results ));
-				
+
 				$return = array('error'=>$e->getMessage());
 			}
 		}else{ // end if ($billing_info != 'no payment required')
@@ -670,7 +667,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
 		curl_setopt($curl, CURLOPT_POSTFIELDS, $Request);
 
-		//execute the curl POST		
+		//execute the curl POST
 		$Response = curl_exec($curl);
 
 		curl_close($curl);
@@ -754,7 +751,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				elseif ($CurrentErrorVar == 'L_SHORTMESSAGE')
 					$CurrentVarName = 'Short Message';
 				elseif ($CurrentErrorVar == 'L_LONGMESSAGE')
-					$CurrentVarName == 'Long Message';
+					$CurrentVarName = 'Long Message';
 				elseif ($CurrentErrorVar == 'L_SEVERITYCODE')
 					$CurrentVarName = 'Severity Code';
 
@@ -782,7 +779,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 			<?php
 			// check for sandbox mode
 			if ($this->_payment_settings['use_sandbox'] || $this->_payment_settings['test_transactions']) :
-				?>			
+				?>
 				<div class="sandbox-panel">
 					<h2 class="section-title"><?php _e('PayPal Sandbox Mode', 'event_espresso'); ?></h2>
 					<h3 style="color:#ff0000;"><?php _e('Debug Mode Is Turned On. Payments will not be processed', 'event_espresso'); ?></h3>
@@ -807,7 +804,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 								<tr>
 									<td style="width:40%;"><?php _e('Test Card Type', 'event_espresso'); ?></td>
 									<td><?php _e('Test Card Numbers', 'event_espresso'); ?></td>
-								</tr>				
+								</tr>
 							</thead>
 							<tbody>
 								<tr>
@@ -815,13 +812,13 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 									<td>5424180818927383</td>
 								</tr>
 							</tbody>
-						</table>	
+						</table>
 					</div><br/>
 
 					<p class="test-credit-cards-info-pg">
 						<strong><?php _e('Testing Result Code Responses', 'event_espresso'); ?></strong><br/>
 						<span class="small-text"><?php printf(__('You can use the amount of the transaction to generate a particular result code (see %s Paypal\'s documentation%s). The table below lists the general guidelines for specifying amounts. IMPORTANT: before you attempt any of these, ensure your sandbox paypal account has %s "Negative Testing" set to on%s. Also be aware that you can generate AVS errors by using certain strings in your address field, and CVV errors using certain CVV values. See %s this paypal doc %s', 'event_espresso'),"<a href='https://developer.paypal.com/docs/classic/api/errorcodes/#id09C3GA00GR1'>","</a>", "<a href='https://docs.google.com/a/eventespresso.com/file/d/0B5P8GXTvZgfMNXNkZ2s5VUlHTUk/edit?usp=drivesdk'>","</a>","<a href='https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=developer/e_howto_testing_SBTestErrorConditions'>","</a>"); ?></span>
-					</p>			
+					</p>
 
 					<div class="tbl-wrap">
 						<table id="paypal-test-credit-cards" class="test-credit-card-data-tbl">
@@ -829,13 +826,13 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 								<tr>
 									<td style="width:30%;"><?php _e('Amount', 'event_espresso'); ?></td>
 									<td><?php _e('Response', 'event_espresso'); ?></td>
-								</tr>				
+								</tr>
 							</thead>
 							<tbody>
 								<tr>
 									<td>$0 - $103.99</td>
 									<td><?php _e('Approved', 'event_espresso'); ?></td>
-								</tr>				
+								</tr>
 								<tr>
 									<td>$104.00</td>
 									<td><?php _e('Invalid amount', 'event_espresso'); ?></td>
@@ -869,8 +866,8 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 									<td><?php _e('Invalid account number', 'event_espresso'); ?></td>
 								</tr>
 							</tbody>
-						</table>	
-					</div>			
+						</table>
+					</div>
 				</div>
 			<?php endif; ?>
 

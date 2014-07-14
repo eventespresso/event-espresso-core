@@ -217,7 +217,7 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 			);
 			$unique_properties = array(
 				'PAY_txn_id_chq_nmbr' => $response_body->order_number,
-				'PAY_timestamp' => $transaction->datetime(),
+				'PAY_timestamp' => current_time( 'mysql', FALSE ),
 				'PAY_details' => (array)$response_body
 			);
 			$properties = array_merge($unique_properties,$duplicate_properties);

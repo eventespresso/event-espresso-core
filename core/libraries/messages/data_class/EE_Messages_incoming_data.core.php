@@ -195,7 +195,7 @@ abstract class EE_Messages_incoming_data {
 	public function __construct( $data ) {
 		$this->_data = $data;
 		$this->_setup_data();
-		
+
 	}
 
 
@@ -209,7 +209,7 @@ abstract class EE_Messages_incoming_data {
 
 
 	/**
-	 * only purpose is to return the data 
+	 * only purpose is to return the data
 	 *
 	 * @access public
 	 * @return object the formatted data object!
@@ -235,9 +235,9 @@ abstract class EE_Messages_incoming_data {
 		$attendees = array();
 		$total_ticket_count = 0;
 
-		
+
 		if ( !empty( $this->reg_objs ) ) {
-			$event_attendee_count = array(); 
+			$event_attendee_count = array();
 			foreach ( $this->reg_objs as $reg ) {
 				$evt_id = $reg->event_ID();
 				$ticket = $reg->get_first_related('Ticket');
@@ -256,12 +256,12 @@ abstract class EE_Messages_incoming_data {
 				$event_attendee_count[$evt_id] = isset( $event_attendee_count[$evt_id] ) ? $event_attendee_count[$evt_id] + 1 : 0;
 				$attendees[$reg->attendee_ID()]['line_ref'][] = $evt_id;
 				$attendees[$reg->attendee_ID()]['att_obj'] = $reg->attendee();
-				$attendees[$reg->attendee_ID()]['reg_obj'][$reg->ID()] = $reg;
+				$attendees[$reg->attendee_ID()]['reg_objs'][$reg->ID()] = $reg;
 				//$attendees[$reg->attendee_ID()]['registration_id'] = $reg->ID();
 				$attendees[$reg->attendee_ID()]['attendee_email'] = $reg->attendee() instanceof EE_Attendee ? $reg->attendee()->email() : '';
 				$attendees[$reg->attendee_ID()]['tkt_objs'][$ticket->ID()] = $ticket;
 				$attendees[$reg->attendee_ID()]['evt_objs'][$evt_id] = $event;
-				
+
 				//registrations
 				$registrations[$reg->ID()]['tkt_obj'] = $ticket;
 				$registrations[$reg->ID()]['evt_obj'] = $event;
@@ -282,7 +282,7 @@ abstract class EE_Messages_incoming_data {
 				foreach ( $relateddatetime as $dtt_id => $datetime ) {
 					$eventsetup[$evt_id]['dtt_objs'][$dtt_id] = $datetime;
 					$registrations[$reg->ID()]['dtt_objs'][$dtt_id] = $datetime;
-					
+
 					if ( isset( $datetimes[$dtt_id] ) )
 						continue; //already have this info in the datetimes array.
 
@@ -309,7 +309,7 @@ abstract class EE_Messages_incoming_data {
 						'dtt_objs' => $items['dtt_objs']
 					);
 				}
-			}	
+			}
 		}
 
 		//lets set the attendees and events properties
@@ -342,7 +342,7 @@ abstract class EE_Messages_incoming_data {
 					'primary_reg_obj' => $primary_reg,
 				);
 
-			} else {				
+			} else {
 				EE_Error::add_error( __('Incoming data does not have a valid Attendee object for the primary registrant.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			}
 

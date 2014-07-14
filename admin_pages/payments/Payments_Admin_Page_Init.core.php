@@ -55,7 +55,7 @@ class Payments_Admin_Page_Init extends EE_Admin_Page_Init {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => EE_PAYMENTS_PG_SLUG,
 			'menu_label' => __('Payment Methods', 'event_espresso'),
-			'capability' => 'administrator',
+			'capability' => 'manage_gateways',
 			'admin_init_page' => $this
 			));
 	}

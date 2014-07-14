@@ -194,25 +194,88 @@ final class EE_Config {
 	 * 		@return void
 	 */
 	private function _load_core_config() {
+		$update = FALSE;
+		$this->_load_calendar_config();
 		$convert_from_array = array( 'addons' );
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
 			// in case old settings were saved as an array
-			if ( is_array( $settings ) && in_array( $settings, $convert_from_array )) {
-				// convert them to an object
-				$config_array = $settings;
-				$settings = new stdClass();
-				foreach ( $config_array as $key => $value ){
-					$settings->$key = $value;
-				}
+			if ( is_array( $settings ) && in_array( $config, $convert_from_array )) {
+				$settings = $this->_migrate_old_config_data( $settings );
+				$update = TRUE;
 			}
 			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : '';
 			if ( ! empty( $settings ) && $settings instanceof $config_class ) {
 				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
 			}
 		}
+		if ( $update ) {
+			$this->update_espresso_config();
+		}
 		// construct__end hook
 		do_action( 'AHEE__EE_Config___load_core_config__end', $this );
+	}
+
+
+
+	/**
+	 *    _load_calendar_config
+	 *
+	 * @access    public
+	 * @return    stdClass
+	 */
+	private function _load_calendar_config() {
+		// grab array of all plugin folders and loop thru it
+		$plugins = glob( WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR );
+		foreach ( $plugins as $plugin_path ) {
+			// grab plugin folder name from path
+			$plugin = basename( $plugin_path );
+			// drill down to Espresso plugins
+			if ( strpos( $plugin, 'espresso' ) !== FALSE || strpos( $plugin, 'Espresso' ) !== FALSE || strpos( $plugin, 'ee4' ) !== FALSE || strpos( $plugin, 'EE4' ) !== FALSE ) {
+				// then to calendar related plugins
+				if ( strpos( $plugin, 'calendar' ) !== FALSE ) {
+					// this is what we are looking for
+					$calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
+					// does it exist in this folder ?
+					if ( is_readable( $calendar_config )) {
+						// YEAH! let's load it
+						require_once( $calendar_config );
+					}
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 *    _migrate_old_config_data
+	 *
+	 * @access    public
+	 * @param array  $settings
+	 * @return    stdClass
+	 */
+	private function _migrate_old_config_data( $settings = array() ) {
+		// convert existing settings to an object
+		$config_array = $settings;
+		$settings = new stdClass();
+		foreach ( $config_array as $key => $value ){
+			if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
+				$this->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
+//				$config_option_name = $this->_generate_config_option_name( 'addons', 'EE_Calendar' );
+//				delete_option( $config_option_name );
+//				// save calendar settings using new methods
+//				add_option( $config_option_name, $value, '', 'no' );
+//				// if the config option name hasn't been added yet to the list of option names we're tracking, then do so now
+//				if ( ! in_array( $config_option_name, $this->_config_option_names )) {
+//					$this->_config_option_names[] = $config_option_name;
+//				}
+//				$this->addons->EE_Calendar = $value;
+			} else {
+				$settings->$key = $value;
+			}
+		}
+		return $settings;
 	}
 
 
@@ -764,10 +827,10 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__register_shortcode__begin',$shortcode_path );
 		$shortcode_ext = '.shortcode.php';
 		// make all separators match
-		$shortcode_path = rtrim( str_replace( '/\\', DS, $shortcode_path ), DS );
+		$shortcode_path = str_replace( array( '\\', '/' ), DS, $shortcode_path );
 		// does the file path INCLUDE the actual file name as part of the path ?
 		if ( strpos( $shortcode_path, $shortcode_ext ) !== FALSE ) {
-			// grab and shortcode file name from directory name and break apart at dots
+			// grab shortcode file name from directory name and break apart at dots
 			$shortcode_file = explode( '.', basename( $shortcode_path ));
 			// take first segment from file name pieces and remove class prefix if it exists
 			$shortcode = strpos( $shortcode_file[0], 'EES_' ) === 0 ? substr( $shortcode_file[0], 4 ) : $shortcode_file[0];
@@ -778,28 +841,23 @@ final class EE_Config {
 			// remove last segment
 			array_pop( $shortcode_path );
 			// glue it back together
-			$shortcode_path = implode( DS, $shortcode_path );
+			$shortcode_path = implode( DS, $shortcode_path ) . DS;
 		} else {
 			// we need to generate the filename based off of the folder name
 			// grab and sanitize shortcode directory name
 			$shortcode = sanitize_key( basename( $shortcode_path ));
+			$shortcode_path = rtrim( $shortcode_path, DS ) . DS;
 		}
 		// create classname from shortcode directory or file name
 		$shortcode = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode )));
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		if ( ! is_readable( $shortcode_path . DS . $shortcode_class . $shortcode_ext )) {
-			$msg = sprintf(
-				__( 'The requested %s shortcode file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso' ),
-				$shortcode_class,
-				$shortcode_path . DS . $shortcode_class . $shortcode_ext
-			);
-			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' )) {
 			return FALSE;
 		}
 		// load the shortcode class file
-		require_once( $shortcode_path . DS . $shortcode_class . $shortcode_ext );
+		require_once( $shortcode_path . $shortcode_class . $shortcode_ext );
 		// verify that class exists
 		if ( ! class_exists( $shortcode_class )) {
 			$msg = sprintf( __( 'The requested %s shortcode class does not exist.', 'event_espresso' ), $shortcode_class );
@@ -808,7 +866,7 @@ final class EE_Config {
 		}
 		$shortcode = strtoupper( $shortcode );
 		// add to array of registered shortcodes
-		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
+		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . $shortcode_class . $shortcode_ext;
 		return TRUE;
 	}
 
@@ -851,7 +909,7 @@ final class EE_Config {
 		do_action( 'AHEE__EE_Config__register_module__begin', $module_path );
 		$module_ext = '.module.php';
 		// make all separators match
-		$module_path = rtrim( str_replace( '/\\', DS, $module_path ), DS );
+		$module_path = str_replace( array( '\\', '/' ), DS, $module_path );
 		// does the file path INCLUDE the actual file name as part of the path ?
 		if ( strpos( $module_path, $module_ext ) !== FALSE ) {
 			// grab and shortcode file name from directory name and break apart at dots
@@ -865,29 +923,24 @@ final class EE_Config {
 			// remove last segment
 			array_pop( $module_path );
 			// glue it back together
-			$module_path = implode( DS, $module_path );
+			$module_path = implode( DS, $module_path ) . DS;
 		} else {
 			// we need to generate the filename based off of the folder name
 			// grab and sanitize module name
 			$module = basename( $module_path );
+			$module_path = rtrim( $module_path, DS ) . DS;
 		}
 		// create classname from module directory name
 		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module )));
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
-			$msg = sprintf(
-				__( 'The requested %s module file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso' ),
-				$module,
-				$module_path . DS . $module_class . $module_ext
-			);
-			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' )) {
 			return FALSE;
 		}
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
 		// load the module class file
-		require_once( $module_path . DS . $module_class . $module_ext );
+		require_once( $module_path . $module_class . $module_ext );
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->stop_timer("Requiring module $module_class"); }
 		// verify that class exists
 		if ( ! class_exists( $module_class )) {
@@ -896,10 +949,11 @@ final class EE_Config {
 			return FALSE;
 		}
 		// add to array of registered modules
-		EE_Registry::instance()->modules->$module_class = $module_path . DS . $module_class . $module_ext;
+		EE_Registry::instance()->modules->$module_class = $module_path . $module_class . $module_ext;
 		do_action( 'AHEE__EE_Config__register_module__complete', $module_class, EE_Registry::instance()->modules->$module_class );
 		return TRUE;
 	}
+
 
 
 

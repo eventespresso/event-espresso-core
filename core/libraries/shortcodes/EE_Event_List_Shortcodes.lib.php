@@ -18,13 +18,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Event_List_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Event_List_Shortcodes lists all shortcodes related to Event Lists. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Event_List_Shortcodes lists all shortcodes related to Event Lists.
  *
  * This is a special shortcode parser in that it will actually LOAD other parsers and receive a template to parse via the Shortcode Parser.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Event_List_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -91,8 +91,8 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 		$events = '';
 
 		//now we need to loop through the events array in EE_Messages_Addressee and send data to the EE_Parser helper.
-		foreach ( $data->events as $event ) {	
-			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event['event'], $valid_shortcodes, $this->_data);
+		foreach ( $data->events as $event ) {
+			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event['event'], $valid_shortcodes, $this->_extra_data);
 		}
 		return $events;
 
@@ -106,7 +106,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_event_list_for_registration() {
-		$valid_shortcodes = array('event', 'ticket_list', 'datetime_list', 'attendee', 'event_author');
+		$valid_shortcodes = array('event', 'ticket_list', 'datetime_list', 'attendee', 'event_author', 'recipient_details', 'recipient_list', 'venue');
 		$template = is_array( $this->_data['template'] ) && isset($this->_data['template']['event_list']) ? $this->_data['template']['event_list'] : $this->_extra_data['template']['event_list'];
 		$registration = $this->_data['data'];
 
@@ -115,12 +115,12 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 
 		//here we're setting up the events for the event_list template for THIS registration.
 		$evt_result = '';
-		$events = $this->_get_events_from_registration($registration);
+		$all_events = $this->_get_events_from_registration($registration);
 
 		//we're NOT going to prepare a list of attendees this time around
 		$events = '';
 
-		foreach ( $events as $event ) {
+		foreach ( (array) $all_events as $event ) {
 			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event, $valid_shortcodes, $this->_extra_data);
 		}
 
@@ -134,5 +134,5 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 	}
 
 
-	
+
 } // end EE_Event_List_Shortcodes class

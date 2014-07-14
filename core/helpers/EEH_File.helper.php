@@ -28,6 +28,62 @@ require_once( EE_HELPERS . 'EEH_Base.helper.php' );
 class EEH_File extends EEH_Base {
 
 	/**
+	 *    verify_filepath_and_permissions
+	 *    checks that a file is readable and has sufficient file permissions set to access
+	 *
+	 * @access public
+	 * @param string $full_file_path - full server path to the folder or file
+	 * @param string $file_name - name of file if checking a file
+	 * @param string $file_ext - file extension (ie: "php") if checking a file
+	 * @param string $type_of_file - general type of file (ie: "module"), this is only used to improve error messages
+	 * @return bool
+	 */
+	public static function verify_filepath_and_permissions( $full_file_path = '', $file_name = '', $file_ext = '', $type_of_file = '' ) {
+		if ( ! is_readable( $full_file_path )) {
+			$file_name = ! empty( $type_of_file ) ? $file_name . ' ' . $type_of_file : $file_name;
+			$file_name .= ! empty( $file_ext ) ? ' file' : ' folder';
+			$msg = sprintf(
+				__( 'The requested %s could not be found or is not readable, possibly due to an incorrect filepath, or incorrect file permissions.', 'event_espresso' ),
+				$file_name
+			);
+			if ( file_exists( $full_file_path )) {
+				// check file permissions
+				$perms = substr( fileperms( $full_file_path ), 2 );
+				if ( $perms ) {
+					// file permissions exist, but way be set incorrectly
+					$type_of_file = ! empty( $type_of_file ) ? $type_of_file . ' ' : '';
+					$type_of_file .= ! empty( $type_of_file ) ? 'file' : 'folder';
+					$msg .= sprintf(
+						__( '%sFile permissions for the requested %s are currently set at "%s". The recommended permissions are 644 for files and 755 for folders.', 'event_espresso' ),
+						'<br />',
+						$type_of_file,
+						$perms
+					);
+				} else {
+					// file exists but file permissions could not be read ?!?!
+					$msg .= sprintf(
+						__( '%sPlease ensure that the server and/or PHP configuration allows the current process to access the following file: "%s".', 'event_espresso' ),
+						'<br />',
+						$full_file_path
+					);
+				}
+			} else {
+				// no file permissions means the file was not found
+				$msg .= sprintf(
+					__( '%sPlease ensure the following path is correct: "%s".', 'event_espresso' ),
+					'<br />',
+					$full_file_path
+				);
+			}
+			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+
+
+	/**
 	 * Given that the file in $file_path has the normal name, (ie, CLASSNAME.whatever.php),
 	 * extract that classname.
 	 * @param string $file_path

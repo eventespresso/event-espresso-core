@@ -18,13 +18,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Shortcodes
- * 
+ *
  * This is the parent class for the shortcodes libraries.  All common methods, properties are defined in here.
  *
- * The way this library works is a child class would be for defining a logical "grouping" of shortcodes (i.e. 'payment', 'address', 'attendee', 'event' etc.).  The child class extends this parent and then that grouping of shortcodes can be retrieved wherever they are needed. 
+ * The way this library works is a child class would be for defining a logical "grouping" of shortcodes (i.e. 'payment', 'address', 'attendee', 'event' etc.).  The child class extends this parent and then that grouping of shortcodes can be retrieved wherever they are needed.
  *
  * This library takes care of defining shortcodes and their descriptions and also the parsers for those shortcodes.
- * 
+ *
  * @abstract
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Shortcodes.lib.php
@@ -85,6 +85,49 @@ abstract class EE_Shortcodes extends EE_Base {
 
 
 	/**
+	 * EE_messenger used to generate the template being parsed.
+	 *
+	 * @since 4.5.0
+	 * @var EE_messenger
+	 */
+	protected $_messenger;
+
+
+
+	/**
+	 * message type used to generate the template being parsed.
+	 *
+	 * @since 4.5.0
+	 * @var EE_message_type
+	 */
+	protected $_message_type;
+
+
+
+
+	/**
+	 * context used for the template being parsed
+	 *
+	 * @since 4.5.0
+	 * @var string
+	 */
+	protected $_context;
+
+
+
+
+	/**
+	 * Specific Message Template Group ID
+	 *
+	 * @since 4.5.0
+	 * @var int
+	 */
+	protected $_GRP_ID;
+
+
+
+
+	/**
 	 * This will hold an instance of the EEH_Parse_Shortcodes helper that will be used when handling list type shortcodes
 	 * @var object
 	 */
@@ -112,7 +155,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	/**
 	 * loads an instance of the EE_Shortcode_Parser helper when requested
 	 */
-	protected function _set_shortcode_helper() {	
+	protected function _set_shortcode_helper() {
 		//shortcode helper
 		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
 		//get shortcode_replace instance- set when _get_messages is called in child...
@@ -149,6 +192,7 @@ abstract class EE_Shortcodes extends EE_Base {
 			return false; //get out, this parser doesn't handle the incoming shortcode.
 		$this->_data = $data;
 		$this->_extra_data = $extra_data;
+		$this->_set_messages_properties();
 		$parsed = apply_filters( 'FHEE__' . get_class($this) . '__parser_after', $this->_parser($shortcode), $shortcode, $data, $extra_data, $this );
 
 		//note the below filter applies to ALL shortcode parsers... be careful!
@@ -172,7 +216,7 @@ abstract class EE_Shortcodes extends EE_Base {
 
 		//note the below filter applies to ALL shortcode parsers... be careful!
 		$this->_shortcodes = apply_filters( 'FHEE__EE_Shortcodes__shortcodes', $this->_shortcodes, $this );
-		
+
 		return $this->_shortcodes;
 	}
 
@@ -185,7 +229,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	 *
 	 * @abstract
 	 * @access protected
-	 * @return void 
+	 * @return void
 	 */
 	abstract protected function _init_props();
 
@@ -211,7 +255,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	 * @return mixed (void|exception) If validation fails we'll throw an exception.
 	 */
 	protected function _validate_list_requirements() {
-		
+
 		//first test to make sure we've got an array!
 		if ( !is_array($this->_data) ) {
 			throw new EE_Error( sprintf( __('Expecting an array for the data sent to %s', 'event_espresso'), get_class($this) ) );
@@ -219,20 +263,78 @@ abstract class EE_Shortcodes extends EE_Base {
 
 		//next test to make sure we've got the required template in the index!
 		if ( !isset( $this->_data['template'] ) ) {
-			throw new EE_Error( sprintf( __('The incoming data does not have the required template (%s) in its array', 'event_espresso'), $req_template ) );
+			throw new EE_Error( sprintf( __('The incoming data does not have the required template index in its array', 'event_espresso') ) );
 		}
 
 		//next test to make sure we've got got a data index in the incoming data array
 		if ( !isset( $this->_data['data'] ) )
 			throw new EE_Error( __('The incoming data does not have the required data index in its array', 'event_espresso') );
 
-		//all is well let's just reformat the _extra_data() array if present
+		//all is well let's make sure _extra_data always has the values needed.
 		//let's make sure that extra_data includes all templates (for later parsing if necessary)
-		if ( !empty( $this->_extra_data ) && is_object($this->_extra_data ) ) {
-			$this->_extra_data['data'] = $this->_extra_data;
-			$this->_extra_data['templates'] = $this->_data['template'];
+		if ( empty( $this->_extra_data ) || ( empty( $this->_extra_data['data'] ) && empty( $this->_extra_data['template'] ) ) ) {
+			$this->_extra_data['data'] = $this->_data['data'];
+			$this->_extra_data['template'] = $this->_data['template'];
 		}
 
+	}
+
+
+
+	/**
+	 * This sets the properties related to the messages system
+	 *
+	 * @since 4.5.0
+	 *
+	 *
+	 * @return void
+	 */
+	protected function _set_messages_properties() {
+		//should be in _extra_data
+		if ( isset( $this->_extra_data['messenger'] ) ) {
+			$this->_messenger = $this->_extra_data['messenger'];
+			$this->_message_type = $this->_extra_data['message_type'];
+			$this->_context = $this->_extra_data['context'];
+			$this->_GRP_ID = $this->_extra_data['GRP_ID'];
+		}
+	}
+
+
+	/**
+	 * This returns whatever the set message type object is that was set on this shortcode parser.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_message_type
+	 */
+	public function get_set_message_type() {
+		return $this->_message_type;
+	}
+
+
+
+	/**
+	 * This returns whatever the set messenger object is that was set on this shortcode parser
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_messenger
+	 */
+	public function get_set_messenger() {
+		return $this->_messenger;
+	}
+
+
+
+	/**
+	 * This returns whatever the set context string is on this shortcode parser.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	public function get_set_context() {
+		return $this->_context;
 	}
 
 

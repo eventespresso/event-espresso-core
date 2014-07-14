@@ -101,8 +101,7 @@ final class EE_Front_Controller {
 		add_action('loop_start', array( $this, 'display_errors' ), 2 );
 		// the content
 		add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
-		//exclude EE critical pages from wp_list_pages
-		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+
 		//exclude our private cpt comments
 		add_filter( 'comments_clauses', array( $this, 'filter_wp_comments'), 10, 1 );
 		//make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
@@ -133,18 +132,6 @@ final class EE_Front_Controller {
 	}
 
 
-
-
-	/**
-	 * simply hooks into "wp_list_pages_exclude" filter (for wp_list_pages method) and makes sure EE critical pages are never returned with the function.
-	 *
-	 *
-	 * @param  array  $exclude_array any existing pages being excluded are in this array.
-	 * @return array
-	 */
-	public function remove_pages_from_wp_list_pages( $exclude_array ) {
-		return  array_merge( $exclude_array, EE_Registry::instance()->CFG->core->get_critical_pages_array() );
-	}
 
 
 
@@ -280,10 +267,10 @@ final class EE_Front_Controller {
 				// now cycle thru shortcodes
 				foreach ( $post_shortcodes as $shortcode_class => $post_id ) {
 					// are we on this page, or on the blog page, or an EE CPT category page ?
-					if ( current_user_can( 'edit_post', $post_id ) && $current_post == $post_name || $term_exists ) {
+					if ( $current_post == $post_name || $term_exists ) {
 						// verify shortcode is in list of registered shortcodes
 						if ( ! isset( EE_Registry::instance()->shortcodes->$shortcode_class )) {
-							if ( $current_post != $page_for_posts ) {
+							if ( $current_post != $page_for_posts && current_user_can( 'edit_post', $post_id )) {
 								$msg = sprintf( __( 'The [%s] shortcode has not been properly registered or the corresponding addon/module is not active for some reason. Either fix/remove the shortcode from the post, or activate the addon/module the shortcode is associated with.', 'event_espresso' ), $shortcode_class );
 								EE_Error::add_error( $msg, __FILE__, __FUNCTION__, __LINE__ );
 								add_filter( 'FHEE_run_EE_the_content', '__return_true' );
@@ -341,12 +328,14 @@ final class EE_Front_Controller {
 				while ( $route = $Module_Request_Router->get_route( $WP_Query )) {
 					// determine module and method for route
 					$module = $Module_Request_Router->resolve_route( $route );
-					// get registered view for route
-					$this->_template_path = $Module_Request_Router->get_view( $route );
-					// grab module name
-					$module_name = $module->module_name();
-					// map the module to the module objects
-					EE_Registry::instance()->modules->$module_name = $module;
+					if( $module instanceof EED_Module ) {
+						// get registered view for route
+						$this->_template_path = $Module_Request_Router->get_view( $route );
+						// grab module name
+						$module_name = $module->module_name();
+						// map the module to the module objects
+						EE_Registry::instance()->modules->$module_name = $module;
+					}
 				}
 			}
 			//d( EE_Registry::instance()->modules );
@@ -436,7 +425,7 @@ final class EE_Front_Controller {
 
 		}
 
-		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtips', '__return_true' );
+		//qtip is turned OFF by default, but prior to the wp_enqueue_scripts hook, can be turned back on again via: add_filter('FHEE_load_qtip', '__return_true' );
 		if ( apply_filters( 'FHEE_load_qtip', FALSE ) ) {
 			EE_Registry::instance()->load_helper('Qtip_Loader');
 			EEH_Qtip_Loader::instance()->register_and_enqueue();

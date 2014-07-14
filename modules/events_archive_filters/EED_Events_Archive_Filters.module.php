@@ -17,11 +17,21 @@
  *
  * @package		Event Espresso
  * @subpackage	/modules/events_archive/
- * @author		Brent Christensen 
+ * @author		Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
 class EED_Events_Archive_Filters  extends EED_Module {
+
+
+
+	/**
+	 * @return EED_Events_Archive_Filters
+	 */
+	public static function instance() {
+		return parent::get_instance( __CLASS__ );
+	}
+
 
 
 	/**
@@ -67,7 +77,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 //	public static $espresso_event_list_ID = 0;
 //	public static $espresso_grid_event_lists = array();
 
-	
+
 
 	/**
 	 * 	set_hooks - for hooking into EE Core, other modules, etc
@@ -124,7 +134,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 //		// grid, text or dates ?
 //		EED_Events_Archive_Filters::set_type();
 //		// filter the WP posts_join, posts_where, and posts_orderby SQL clauses
-//		$this->_filter_query_parts();		
+//		$this->_filter_query_parts();
 //		// load other required components
 //		$this->_load_assests();
 //		if (  isset( EE_Registry::instance()->CFG->template_settings->use_espresso_templates ) && EE_Registry::instance()->CFG->template_settings->use_espresso_templates == TRUE ) {
@@ -141,7 +151,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  @access 	public
 	 *  @return 	void
 	 */
-	public function event_list() {	
+	public function event_list() {
 		// load other required components
 		$this->_load_assests();
 	}
@@ -180,7 +190,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		$view = apply_filters( 'EED_Events_Archive_Filters__set_type__type', $view );
 		if ( ! empty( $view ) && in_array( $view, EED_Events_Archive_Filters::$_types )) {
 			self::$_type = $view;
-		} 
+		}
 	}
 
 	/**
@@ -190,8 +200,8 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  @param	boolean	$req_only if TRUE, then ignore defaults and only return $_POST value
 	 *  @return 	boolean
 	 */
-	private static function _show_expired( $req_only = FALSE ) {	
-		// get default value for "display_expired_events" as set in the EE General Settings > Templates > Event Listings 
+	private static function _show_expired( $req_only = FALSE ) {
+		// get default value for "display_expired_events" as set in the EE General Settings > Templates > Event Listings
 		$show_expired = ! $req_only && isset( EE_Registry::instance()->CFG->EED_Events_Archive_Filters['display_expired_events'] ) ? EE_Registry::instance()->CFG->EED_Events_Archive_Filters['display_expired_events'] : FALSE;
 		// override default expired option if set via filter
 		$show_expired = EE_Registry::instance()->REQ->is_set( 'elf_expired_chk' ) ? absint( EE_Registry::instance()->REQ->get( 'elf_expired_chk' )) : $show_expired;
@@ -204,7 +214,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  @access 	private
 	 *  @return 	string
 	 */
-	private static function _event_category_slug() {			
+	private static function _event_category_slug() {
 		return EE_Registry::instance()->REQ->is_set( 'elf_category_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_category_dd' )) : '';
 	}
 
@@ -214,7 +224,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  @access 	private
 	 *  @return 	string
 	 */
-	private static function _display_month() {			
+	private static function _display_month() {
 		return EE_Registry::instance()->REQ->is_set( 'elf_month_dd' ) ? sanitize_text_field( EE_Registry::instance()->REQ->get( 'elf_month_dd' )) : '';
 	}
 
@@ -280,7 +290,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 * 	usage:  $SQL .= EED_Events_Archive_Filters::posts_join_for_orderby( $orderby_params );
 	 *
 	 *  @access 	public
-	 *  @param	array	$orderby_params 
+	 *  @param	array	$orderby_params
 	 *  @return 	string
 	 */
 	public static function posts_join_for_orderby( $orderby_params = array() ) {
@@ -288,26 +298,26 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		$orderby_params = is_array( $orderby_params ) ? $orderby_params : array( $orderby_params );
 		foreach( $orderby_params as $orderby ) {
 			switch ( $orderby ) {
-				
+
 				case 'ticket_start' :
 				case 'ticket_end' :
 					$SQL .= ' LEFT JOIN ' . EEM_Datetime_Ticket::instance()->table() . ' ON (' . EEM_Datetime::instance()->table() . '.DTT_ID = ' . EEM_Datetime_Ticket::instance()->table() . '.DTT_ID )';
 					$SQL .= ' LEFT JOIN ' . EEM_Ticket::instance()->table() . ' ON (' . EEM_Datetime_Ticket::instance()->table() . '.TKT_ID = ' . EEM_Ticket::instance()->table() . '.TKT_ID )';
 					break;
-				
+
 				case 'venue_title' :
 				case 'city' :
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
 					$SQL .= ' LEFT JOIN ' . EEM_Venue::instance()->table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Venue::instance()->table() . '.VNU_ID )';
 					break;
-				
+
 				case 'state' :
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->table() . ' ON (' . $wpdb->posts . '.ID = ' . EEM_Event_Venue::instance()->table() . '.EVT_ID )';
 					$SQL .= ' LEFT JOIN ' . EEM_Event_Venue::instance()->second_table() . ' ON (' . EEM_Event_Venue::instance()->table() . '.VNU_ID = ' . EEM_Event_Venue::instance()->second_table() . '.VNU_ID )';
 					break;
-				
+
 				break;
-				
+
 			}
 		}
 		return  $SQL;
@@ -321,7 +331,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function posts_where( $SQL, WP_Query $wp_query ) {
-		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events'  ) {			
+		if ( isset( $wp_query->query_vars ) && isset( $wp_query->query_vars['post_type'] ) && $wp_query->query_vars['post_type'] == 'espresso_events'  ) {
 			// Show Expired ?
 			$SQL .= EED_Events_Archive_Filters::posts_where_sql_for_show_expired( EED_Events_Archive_Filters::_show_expired() );
 			// Category
@@ -385,7 +395,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function posts_orderby( $SQL, WP_Query $wp_query ) {
-		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {			
+		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
 			$SQL = EED_Events_Archive_Filters::posts_orderby_sql( array( 'start_date' ));
 		}
 		return $SQL;
@@ -394,7 +404,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 
 	/**
 	 * 	posts_orderby_sql
-	 * 
+	 *
 	 * 	possible parameters:
 	 * 	ID
 	 * 	start_date
@@ -403,11 +413,11 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 * 	category_slug
 	 * 	ticket_start
 	 * 	ticket_end
-	 * 	venue_title 
+	 * 	venue_title
 	 * 	city
 	 * 	state
-	 * 
-	 * 	**IMPORTANT**  
+	 *
+	 * 	**IMPORTANT**
 	 * 	make sure to also send the $orderby_params array to the posts_join_for_orderby() method
 	 * 	or else some of the table references below will result in MySQL errors
 	 *
@@ -423,48 +433,48 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		foreach( $orderby_params as $orderby ) {
 			$glue = $cntr == 1 || $cntr == count( $orderby_params ) ? ' ' : ', ';
 			switch ( $orderby ) {
-				
+
 				case 'id' :
 				case 'ID' :
 					$SQL .= $glue . $wpdb->posts . '.ID ' . $sort;
 					break;
-				
+
 				case 'start_date' :
 					$SQL .= $glue . EEM_Datetime::instance()->table() . '.DTT_EVT_start ' . $sort;
 					break;
-				
+
 				case 'end_date' :
 					$SQL .= $glue . EEM_Datetime::instance()->table() . '.DTT_EVT_end ' . $sort;
 					break;
-				
+
 				case 'event_name' :
 					$SQL .= $glue . $wpdb->posts . '.post_title ' . $sort;
 					break;
-				
+
 				case 'category_slug' :
 					$SQL .= $glue . $wpdb->terms . '.slug ' . $sort;
 					break;
-				
+
 				case 'ticket_start' :
 					$SQL .= $glue . EEM_Ticket::instance()->table() . '.TKT_start_date ' . $sort;
 					break;
-				
+
 				case 'ticket_end' :
 					$SQL .= $glue . EEM_Ticket::instance()->table() . '.TKT_end_date ' . $sort;
 					break;
-				
+
 				case 'venue_title' :
 					$SQL .= $glue . 'venue_title ' . $sort;
 					break;
-				
+
 				case 'city' :
 					$SQL .= $glue . EEM_Venue::instance()->second_table() . '.VNU_city ' . $sort;
 				break;
-				
+
 				case 'state' :
 					$SQL .= $glue . EEM_State::instance()->table() . '.STA_name ' . $sort;
 				break;
-				
+
 			}
 			$cntr++;
 		}
@@ -501,7 +511,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		} else {
 			remove_all_filters( 'excerpt_length' );
 			add_filter( 'excerpt_length', array( $this, 'excerpt_length' ), 10 );
-			add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );			
+			add_filter( 'excerpt_more', array( $this, 'excerpt_more' ), 10 );
 		}
 	}
 
@@ -598,7 +608,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  @return 	string
 	 */
 	private function _get_template( $which = 'part' ) {
-		return EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';		
+		return EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php';
 	}
 
 
@@ -610,11 +620,11 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 *  @return 	void
 	 */
 	public function excerpt_length( $length ) {
-		
+
 		if ( self::$_type == 'grid' ) {
 			return 36;
 		}
-		
+
 		switch ( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive_Filters->event_list_grid_size ) {
 			case 'tiny' :
 				return 12;
@@ -628,7 +638,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 			case 'medium' :
 			default :
 				return 36;
-		}		
+		}
 	}
 
 
@@ -654,7 +664,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 */
 //	public function the_excerpt( $the_excerpt ) {
 //		$display_address = isset( EE_Registry::instance()->CFG->template_settings->EED_Events_Archive_Filters['display_description'] ) ? EE_Registry::instance()->CFG->template_settings->EED_Events_Archive_Filters['display_description'] : TRUE;
-//		return $display_address ? $the_excerpt : '';			
+//		return $display_address ? $the_excerpt : '';
 //	}
 
 
@@ -777,7 +787,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 		$CFG->EED_Events_Archive_Filters->templates = array(
 				'full'  => EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events.php'
 			);
-		
+
 		switch ( $CFG->EED_Events_Archive_Filters->default_type ) {
 			case 'dates' :
 					$CFG->EED_Events_Archive_Filters->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-dates-view.php';
@@ -788,7 +798,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 			default :
 					$CFG->EED_Events_Archive_Filters->templates['part'] = EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-grid-view.php';
 		}
-		
+
 		$CFG->EED_Events_Archive_Filters = isset( $REQ['reset_event_list_settings'] ) && absint( $REQ['reset_event_list_settings'] ) == 1 ? new EE_Events_Archive_Config() : $CFG->EED_Events_Archive_Filters;
 		return $CFG;
 	}
@@ -814,7 +824,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 			default :
 					return 'archive-espresso_events-grid-view.php';
 		}
-		
+
 //		return EE_Registry::instance()->CFG->EED_Events_Archive_Filters['templates']['part'];
 	}
 
@@ -834,7 +844,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 			'elf_show_expired' => EED_Events_Archive_Filters::_show_expired(),
 			'elf_type' => self::$_type
 		);
-		EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-filters.php', $args );		
+		EEH_Template::display_template( EE_TEMPLATES . EE_Config::get_current_theme() . DS . 'archive-espresso_events-filters.php', $args );
 	}
 
 
@@ -960,7 +970,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 	 */
 	public static function event_list_title() {
 		return apply_filters( 'EED_Events_Archive_Filters__event_list_title__event_list_title', __( 'Upcoming Events', 'event_espresso' ));
-	}	
+	}
 
 
 }
@@ -969,7 +979,7 @@ class EED_Events_Archive_Filters  extends EED_Module {
 /*
 function espresso_get_event_list_ID() {
 	EED_Events_Archive_Filters::$espresso_event_list_ID++;
-	EED_Events_Archive_Filters::$espresso_grid_event_lists[] = EED_Events_Archive_Filters::$espresso_event_list_ID;	
+	EED_Events_Archive_Filters::$espresso_grid_event_lists[] = EED_Events_Archive_Filters::$espresso_event_list_ID;
 	return EED_Events_Archive_Filters::$espresso_event_list_ID;
 }
 
@@ -980,11 +990,11 @@ function espresso_event_list_title() {
 function espresso_event_list_css( $extra_class = '' ) {
 	return EED_Events_Archive_Filters::event_list_css( $extra_class );
 }
- 
+
 function espresso_get_event_categories() {
 	return EED_Events_Archive_Filters::event_categories();
 }
- 
+
 function espresso_display_full_description_in_event_list() {
 	return EED_Events_Archive_Filters::display_description( 2 );
 }

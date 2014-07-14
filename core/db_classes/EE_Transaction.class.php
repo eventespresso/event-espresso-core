@@ -435,9 +435,11 @@ class EE_Transaction extends EE_Base_Class {
 	 */
 	public function selected_gateway( $most_recent = FALSE ) {
 		$payment_methods = $this->get_extra_meta( 'gateway' );
-		if ( is_array( $payment_methods )) {
+		if ( is_array( $payment_methods ) ) {
 			ksort( $payment_methods );
 			return $most_recent ? array_pop( $payment_methods ) : array_shift( $payment_methods );
+		} else {
+			return NULL;
 		}
 		return NULL;
 	}
@@ -539,7 +541,12 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return EE_Line_Item
 	 */
 	public function total_line_item() {
-		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
+		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
+		if( ! $item ){
+			EE_Registry::instance()->load_helper( 'Line_Item' );
+			$item = EEH_Line_Item::create_default_total_line_item();
+		}
+		return $item;
 	}
 
 
@@ -565,7 +572,12 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return EE_Line_Item
 	 */
 	public function tax_total_line_item() {
-		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_tax_sub_total ) ) );
+		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_tax_sub_total ) ) );
+		if( ! $item ){
+			EE_Registry::instance()->load_helper( 'Line_Item' );
+			$item = EEH_Line_Item::create_default_total_line_item();
+		}
+		return $item;
 	}
 
 

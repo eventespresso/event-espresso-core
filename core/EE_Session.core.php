@@ -570,26 +570,24 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 
 
 
-
-
-	/**
-	 *			@resets all non-default session vars
-	 *		  @access public
-	 *			@return TRUE on success, FALSE on fail
-	 */
-	public function reset_data( $data_to_reset = FALSE, $show_all_notices = FALSE ) {
-		// nothing ??? go home!
-		if ( ! $data_to_reset ) {
-			EE_Error::add_error( __( 'No session data could be reset, because no session var name was provided.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
-		}
+	 /**
+	  * @resets all non-default session vars
+	  * @access public
+	  * @param array $data_to_reset
+	  * @param bool  $show_all_notices
+	  * @return bool
+	  */
+	public function reset_data( $data_to_reset = array(), $show_all_notices = FALSE ) {
 		// if $data_to_reset is not in an array, then put it in one
 		if ( ! is_array( $data_to_reset ) ) {
 			$data_to_reset = array ( $data_to_reset );
 		}
-
+		// nothing ??? go home!
+		if ( empty( $data_to_reset )) {
+			EE_Error::add_error( __( 'No session data could be reset, because no session var name was provided.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
 		$return_value = TRUE;
-
 		// since $data_to_reset is an array, cycle through the values
 		foreach ( $data_to_reset as $reset ) {
 

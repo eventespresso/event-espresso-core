@@ -156,12 +156,12 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				'Skywalker',
 				'farfaraway@galaxy.sp',
 				'804 Bantha Dr.',
-				'',
+				'Complex 8',
 				'Mos Eisley',
 				32,
 				'US',
 				'f0r3e',
-				'',
+				'222-333-4763',
 				FALSE,
 				'999999991'
 				),
@@ -170,12 +170,12 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				'Leia',
 				'buns@fcn.al',
 				'1456 Valley Way Boulevard',
-				'',
+				'Suite 9',
 				'Alderaan',
 				15,
 				'US',
 				'c1h2c',
-				'',
+				'78-123-111-1111',
 				FALSE,
 				'999999992'
 				),
@@ -184,12 +184,12 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				'I Am',
 				'arrivenot@emailbad.fr',
 				'4th Tree',
-				'',
+				'5th Knot',
 				'Marsh',
 				22,
 				'US',
 				'l18n',
-				'',
+				'999-999-9999',
 				FALSE,
 				'999999993'
 				),
@@ -428,14 +428,14 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 						'REG_final_price' => $ticket->get('TKT_price'),
 						'REG_session' => 'dummy_session_id',
 						'REG_code' => $regid . '-dummy_generated_reg_code',
-						'REG_url_link' => '#',
+						'REG_url_link' => $regcnt . '-daafpapasdlfakasdfpqasdfasdf',
 						'REG_count' => $regcnt,
 						'REG_group_size' => $this->_events[$evtid]['total_attendees'],
 						'REG_att_is_going' => TRUE,
 						'REG_ID' => $regid
 						);
 					$REG_OBJ =  EE_Registration::new_instance( $reg_array );
-					$this->_attendees[$key]['reg_obj'][$regid] = $REG_OBJ;
+					$this->_attendees[$key]['reg_objs'][$regid] = $REG_OBJ;
 					$this->_events[$evtid]['reg_objs'][] = $REG_OBJ;
 					$this->reg_objs[] = $REG_OBJ;
 					$regcnt++;
@@ -460,18 +460,23 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->attendees = $this->_attendees;
 		$this->registrations = $this->_registrations;
 
+		$attendees_to_shift = $this->_attendees;
+
 		//setup primary attendee property
 		$this->primary_attendee_data = array(
 			'fname' => $this->_attendees[999999991]['att_obj']->fname(),
 			'lname' => $this->_attendees[999999991]['att_obj']->lname(),
 			'email' => $this->_attendees[999999991]['att_obj']->email(),
 			'att_obj' => $this->_attendees[999999991]['att_obj'],
-			'reg_obj' => $this->_attendees[999999991]['reg_obj']
+			'reg_obj' => array_shift($attendees_to_shift[999999991]['reg_objs'])
 			);
 
 		//reg_info property
 		//note this isn't referenced by any shortcode parsers so we'll ignore for now.
 		$this->reg_info = array();
+
+		//let's set a reg_obj for messengers expecting one.
+		$this->reg_obj = array_pop( $this->_attendees[999999991]['reg_objs'] );
 
 
 		//the below are just dummy items.

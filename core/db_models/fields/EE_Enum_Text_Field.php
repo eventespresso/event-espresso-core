@@ -2,13 +2,13 @@
 require_once( EE_MODELS . 'fields/EE_Text_Field_Base.php' );
 class EE_Enum_Text_Field extends EE_Text_Field_Base{
 	var $_allowed_enum_values;
-	
+
 	/**
-	 * 
-	 * @param type $table_column
-	 * @param type $nicename
-	 * @param type $nullable
-	 * @param type $default_value
+	 *
+	 * @param string $table_column
+	 * @param string $nicename
+	 * @param bool $nullable
+	 * @param string $default_value
 	 * @param array $allowed_enum_values  keys are values to be used in the DB, values are how they should be displayed
 	 */
 	function __construct($table_column, $nicename, $nullable, $default_value, $allowed_enum_values){
@@ -34,7 +34,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base{
 		}
 		return $value_inputted_for_field_on_model_object;
 	}
-	
+
 	/**
 	 * Gets the pretty version of the enum's value.
 	 * @param int/string $value_on_field_to_be_outputted

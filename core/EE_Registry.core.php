@@ -79,6 +79,17 @@ final class EE_Registry {
 	public $SSN = NULL;
 
 
+
+	/**
+	 * holds the ee capabilities object.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var EE_Capabilities
+	 */
+	public $CAP = NULL;
+
+
 	/**
 	 * 	$addons - StdClass object for holding addons which have registered themselves to work with EE core
 	 * 	@access 	public
@@ -197,6 +208,33 @@ final class EE_Registry {
 		// Output admin-ajax.php URL with same protocol as current page
 		self::$i18n_js_strings['ajax_url'] = admin_url( 'admin-ajax.php', $protocol );
 		self::$i18n_js_strings['wp_debug'] = WP_DEBUG;
+	}
+
+
+
+	/**
+	 * @param mixed string | EED_Module $module
+	 */
+	public function add_module( $module ) {
+		if ( $module instanceof EED_Module ) {
+			$module_class = get_class( $module );
+			$this->modules->{$module_class} = $module;
+		} else {
+			if ( ! class_exists( 'EE_Module_Request_Router' )) {
+				$this->load_core( 'Module_Request_Router' );
+			}
+			$this->modules->{$module} = EE_Module_Request_Router::module_factory( $module );
+		}
+	}
+
+
+
+	/**
+	 * @param string $module_name
+	 * @return mixed EED_Module | NULL
+	 */
+	public function get_module( $module_name = '' ) {
+		return isset( $this->modules->{$module_name} ) ? $this->modules->{$module_name} : NULL;
 	}
 
 
@@ -415,7 +453,8 @@ final class EE_Registry {
 			'EE_Config' => 'CFG',
 			'EE_Network_Config' => 'NET_CFG',
 			'EE_Request_Handler' => 'REQ',
-			'EE_Session' => 'SSN'
+			'EE_Session' => 'SSN',
+			'EE_Capabilities' => 'CAP'
 		);
 
 		// check if class has already been loaded, and return it if it has been

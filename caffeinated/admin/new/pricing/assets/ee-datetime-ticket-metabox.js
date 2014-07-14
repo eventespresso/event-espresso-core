@@ -377,6 +377,17 @@ jQuery(document).ready(function($) {
 			});
 
 
+			//toggle all tickets on the datetime (created datetimes automatically have all tickets applied)
+			this.context = 'ticket';
+			var rowcount = this.getrowcount() + 1;
+			this.context = 'datetime';
+			for( i=1; i<rowcount; i++ ) {
+				tktHelper.setticketRow(i);
+				tktHelper.toggleActiveDTTorTicket('ticket');
+			}
+
+
+
 			//on brand new events the ticket-container is hidden (making sure a datetime gets created first).  let's show that now
 			if ( $('.event-tickets-container').is(':hidden') )
 				$('.event-tickets-container').fadeIn();
@@ -1174,7 +1185,7 @@ jQuery(document).ready(function($) {
 						if ( $(this).val() === '' ) {
 							curval = $('.event-datetime-DTT_EVT_start', '#event-datetime-' + tktHelper.dateTimeRow).val();
 						}
-					}
+					}/**/
 
 					if ( $(this).hasClass('add-new-ticket-TKT_qty') )
 						idref = 'add-new-ticket-TKT_qty';
@@ -1201,7 +1212,13 @@ jQuery(document).ready(function($) {
 				if ( $('.ticket-row', '.event-tickets-container').length > 1 )
 					$('.trash-icon', '.event-tickets-container .ticket-row' ).show();
 
+			} else {
+				//make sure tkt sell until date matches the date-time start date for the first date.
+				var tkt_end_date = tktHelper.eemoment($('.event-datetime-DTT_EVT_start').first().val()).startOf('day').format('YYYY-MM-DD h:mm a');
+				newTKTrow.find('.edit-ticket-TKT_end_date').val(tkt_end_date);
 			}
+
+
 
 			//now let's setup the display row!
 			if( incomingcontext != 'short-ticket' ) {
@@ -1907,7 +1924,7 @@ jQuery(document).ready(function($) {
 		var data = $(this).data();
 		switch ( data.context ) {
 			case 'datetime-create' :
-				tktHelper.newDTTrow().setcontext('datetime-create').DateTimeEditToggle(true).setcontext('ticket').DateTimeEditToggle().scrollTo();
+				tktHelper.newDTTrow().setcontext('datetime-create').DateTimeEditToggle(true).setcontext('datetime').DateTimeEditToggle().scrollTo();
 				break;
 			case 'datetime' :
 				tktHelper.setcontext('datetime-create').DateTimeEditToggle();

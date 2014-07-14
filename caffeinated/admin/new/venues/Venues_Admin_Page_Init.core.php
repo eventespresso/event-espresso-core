@@ -56,7 +56,7 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => EE_VENUES_PG_SLUG,
 			'menu_label' => __('Venues', 'event_espresso'),
-			'capability' => 'administrator',
+			'capability' => 'read_venues',
 			'admin_init_page' => $this
 			));
 	}

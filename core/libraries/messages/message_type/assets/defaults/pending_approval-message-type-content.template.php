@@ -80,7 +80,7 @@ Your registration(s) is/are pending payment for the following events:
 <h5>Contact Info:</h5>
 Phone: <strong>[CO_PHONE]</strong>
 
-Email: <strong><a href="[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
+Email: <strong><a href="mailto:[CO_EMAIL]" target="_blank">[CO_EMAIL]</a></strong></td>
 </tr>
 </tbody>
 </table>
