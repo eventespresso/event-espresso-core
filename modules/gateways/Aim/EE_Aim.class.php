@@ -206,7 +206,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				if( ! $total_to_charge){//they didn't set the total to charge, so it must have a balance
 					$total_to_charge = $transaction->remaining();
 				}
-				$order_description = sprintf(__("Partial payment of %s for %s", "event_espresso"),$total_to_charge,$primary_registrant->reg_code());
+				$order_description = sprintf(__("Payment of %s for %s", "event_espresso"),$total_to_charge,$primary_registrant->reg_code());
 			}
 
 

@@ -341,7 +341,7 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 		if ($billing_info != 'no payment required') {
 			$this->_save_billing_info_to_attendee($billing_info, $transaction);
 			$OrderItems = array();
-			if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount and nothing has been paid yet
+			if( $this->_sum_items_and_taxes( $total_line_item )  == $transaction->total() && $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount and nothing has been paid yet
 				$grand_total = $total_line_item->total();
 				$description = 'Event Registrations from ' . get_bloginfo('name');
 
@@ -375,15 +375,11 @@ Class EE_Paypal_Pro extends EE_Onsite_Gateway {
 				$item_amount = $total_line_item->get_items_total();
 				$tax_amount = $total_line_item->get_total_tax();
 			}else{
-				if($total_to_charge){
-					$grand_total = $total_to_charge;
-					$description = sprintf(__("Partial payment of %s", "event_espresso"),$total_to_charge);
-				}elseif($transaction->paid()){//transaction is partially paid
-					$grand_total = $transaction->remaining();
-					$description = sprintf(__("Total paid to date: %s, and this charge is for the balance.", "event_espresso"),$transaction->get_pretty('TXN_paid'));
-				}else{
-					throw new EE_Error(sprintf(__("An unexpected error has occurred. Amount to charge passed to PayPal was invalid'%s'", "event_espresso"),$total_line_item));
+				if( ! $total_to_charge){//they didn't set the total to charge, so it must have a balance
+					$total_to_charge = $transaction->remaining();
 				}
+				$description = sprintf(__("Payment of %s for %s", "event_espresso"),$total_to_charge,$primary_registrant->reg_code());
+				$grand_total = $total_to_charge;
 				$item_amount = $grand_total;
 				$tax_amount = 0;
 				array_push($OrderItems,array(
