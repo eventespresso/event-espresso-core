@@ -595,7 +595,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		;
 		$this->_set_shortcodes();
 		EE_Registry::$i18n_js_strings['confirm_default_reset'] = sprintf( __('Are you sure you want to reset the %s %s message templates?  Remember continuing will reset the templates for all contexts in this messenger and message type group.', 'event_espresso'), $this->_message_template_group->messenger_obj()->label['singular'], $this->_message_template_group->message_type_obj()->label['singular'] );
-		EE_Registry::$i18n_js_strings['confirm_switch_template_pack'] = __('Switch the template pack for a messages template will reset the content for the template so the new layout is loaded.  Any custom content in the existing template will be lost. Are you sure you wish to do this?', 'event_espresso' );
+		EE_Registry::$i18n_js_strings['confirm_switch_template_pack'] = __('Switching the template pack for a messages template will reset the content for the template so the new layout is loaded.  Any custom content in the existing template will be lost. Are you sure you wish to do this?', 'event_espresso' );
 
 
 		wp_register_script('ee_msgs_edit_js', EE_MSG_ASSETS_URL . 'ee_message_editor.js', array('jquery'), EVENT_ESPRESSO_VERSION );
