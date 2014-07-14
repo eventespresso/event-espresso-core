@@ -159,6 +159,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		add_action('wp_ajax_activate_mt', array( $this, 'activate_mt_toggle') );
 		add_action('wp_ajax_ee_msgs_save_settings', array( $this, 'save_settings') );
 		add_action('wp_ajax_ee_msgs_update_mt_form', array( $this, 'update_mt_form' ) );
+		add_action('wp_ajax_switch_template_pack', array( $this, 'switch_template_pack' ) );
 	}
 
 
@@ -594,6 +595,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		;
 		$this->_set_shortcodes();
 		EE_Registry::$i18n_js_strings['confirm_default_reset'] = sprintf( __('Are you sure you want to reset the %s %s message templates?  Remember continuing will reset the templates for all contexts in this messenger and message type group.', 'event_espresso'), $this->_message_template_group->messenger_obj()->label['singular'], $this->_message_template_group->message_type_obj()->label['singular'] );
+		EE_Registry::$i18n_js_strings['confirm_switch_template_pack'] = __('Switch the template pack for a messages template will reset the content for the template so the new layout is loaded.  Any custom content in the existing template will be lost. Are you sure you wish to do this?', 'event_espresso' );
 
 
 		wp_register_script('ee_msgs_edit_js', EE_MSG_ASSETS_URL . 'ee_message_editor.js', array('jquery'), EVENT_ESPRESSO_VERSION );
@@ -1287,6 +1289,48 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 
 
+
+	/**
+	 * This executes switching the template pack for a message template.
+	 *
+	 * @since %VER%
+	 *
+	 * @return json json object
+	 */
+	public function switch_template_pack() {
+		$GRP_ID = ! empty( $this->_req_data['GRP_ID'] ) ? $this->_req_data['GRP_ID'] : 0;
+		$template_pack = ! empty( $this->_req_data['template_pack'] ) ? $this->_req_data['template_pack'] : '';
+
+		//verify we have needed values.
+		if ( empty( $GRP_ID ) || empty( $template_pack ) ) {
+			$this->_template_args['error'] = TRUE;
+			EE_Error::add_error( __('The required date for switching templates is not available.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__  );
+		} else {
+			//get template, set the new template_pack and then reset to default
+			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
+			$mtpg->set_template_pack_name( $template_pack );
+
+			$query_args = $this->_reset_to_default_template();
+
+			if ( empty( $query_args['id'] ) ) {
+				EE_Error::add_error( __('Something went wrong with switching the template pack. Please try again or contact EE support', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
+				$this->_template_args['error'] = TRUE;
+			} else {
+				$template_label =$mtpg->get_template_pack()->label;
+				EE_Error::add_success( sprintf( __('This message template has been successfully switched to use the %s.', 'event_espresso'), $template_label ) );
+				//generate the redirect url for js.
+				$url = self::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
+				$this->_template_args['data']['redirect_url'] = $url;
+				$this->_template_args['data']['success'] = true;
+			}
+
+			$this->_return_json();
+
+		}
+	}
+
+
+
 	/**
 	 * This handles resetting the template for the given messenger/message_type so that users can start from scratch if they want.
 	 *
@@ -1333,13 +1377,19 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			EE_Error::add_success( __('Templates have been reset to defaults.', 'event_espresso') );
 		}
 
-		$query_args = array(
-			'id' => isset( $templates['GRP_ID'] ) ? $templates['GRP_ID'] : NULL,
-			'context' => isset( $templates['MTP_context'] ) ? $templates['MTP_context'] : NULL,
-			'action' => isset( $templates['GRP_ID'] ) ? 'edit_message_template' : 'default'
-			);
+		//if called via ajax then we return query args otherwise redirect
+		if ( defined('DOING_AJAX') && DOING_AJAX ) {
+			return $query_args;
+		} else {
+			$query_args = array(
+				'id' => isset( $templates['GRP_ID'] ) ? $templates['GRP_ID'] : NULL,
+				'context' => isset( $templates['MTP_context'] ) ? $templates['MTP_context'] : NULL,
+				'action' => isset( $templates['GRP_ID'] ) ? 'edit_message_template' : 'default'
+				);
 
-		$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+			$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
+		}
+
 	}
 
 
