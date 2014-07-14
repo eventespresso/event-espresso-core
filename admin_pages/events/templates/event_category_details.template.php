@@ -20,6 +20,15 @@
 			</td>
 		</tr>
 		<tr>
+			<th><label for="category_parent">
+					<?php _e('Category Parent', 'event_espresso'); ?>
+				</label></th>
+			<td><?php echo $category_select; ?>
+					<br />
+					<p class="description"><?php _e('Event Categories are heirarchical.  You can change the parent for this category here.', 'event_espresso'); ?></p>
+			</td>
+		</tr>
+		<tr>
 			<td colspan="2"><h4>
 				<?php _e('Category Description', 'event_espresso'); ?>
 			</h4></td>
