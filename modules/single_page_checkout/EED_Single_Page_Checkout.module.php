@@ -349,7 +349,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// meh... do one of those other steps first
 				if ( ! empty( $this->_action ) && method_exists( $this->checkout->current_step, $this->_action )) {
 					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
-					call_user_func( array( $this->checkout->current_step, $this->_action ));
+					if ( call_user_func( array( $this->checkout->current_step, $this->_action )) ) {
+						$this->go_to_next_step( $this->_action );
+					}
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
 				} else {
 					EE_Error::add_error( sprintf( __( 'The requested form action "%s" does not exist for the current registration step.', 'event_espresso' ), $this->_action ), __FILE__, __FUNCTION__, __LINE__ );
@@ -678,6 +680,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 							'empty_cart' 		=> count( $this->checkout->transaction->registrations() ) < 1 ? TRUE : FALSE,
 							'revisit' 				=> $this->checkout->revisit,
 							'reg_steps' 			=> $this->checkout->reg_steps,
+							'next_step' 			=>  $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : '',
 							'empty_msg' 		=> apply_filters(
 								'FHEE__Single_Page_Checkout__registration_checkout__empty_msg',
 								sprintf(
@@ -892,7 +895,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['use_groupon_codes'] = FALSE;
 
 
-		$template_args['spco_reg_page_ajax_coupons_url'] = add_query_arg( array( 'ee' => 'apply_coupon' ), $this->_reg_page_base_url );
+		$template_args['spco_reg_page_ajax_coupons_url'] = add_query_arg( array( 'ee' => 'apply_coupon' ), $this->checkout->reg_page_base_url );
 //		$template_args['print_copy_info'] = $additional_attendee_forms || $total_items > 2 ? TRUE : FALSE;
 		$template_args['total_items'] = $total_items;
 		$template_args['ticket_count'] = $ticket_count;
@@ -942,10 +945,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$template_args['images_dir_url'] = EE_GLOBAL_ASSETS_URL . 'images/';
 		$template_args['reg_url_link'] = $this->checkout->reg_url_link;
 
-		$template_args['return_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
-		$template_args['update_url'] = add_query_arg( array('ee' => 'update_event_queue'), $this->_reg_page_base_url );
-		$template_args['register_url'] = add_query_arg( array('ee' => '_register'), $this->_reg_page_base_url );
-		$template_args['event_queue_url'] = add_query_arg( array('ee' => 'event_queue'), $this->_reg_page_base_url );
+		$template_args['return_url'] = add_query_arg( array('ee' => 'event_queue'), $this->checkout->reg_page_base_url );
+		$template_args['update_url'] = add_query_arg( array('ee' => 'update_event_queue'), $this->checkout->reg_page_base_url );
+		$template_args['register_url'] = add_query_arg( array('ee' => '_register'), $this->checkout->reg_page_base_url );
+		$template_args['event_queue_url'] = add_query_arg( array('ee' => 'event_queue'), $this->checkout->reg_page_base_url );
 
 		$template_args['confirmation_data'] = $this->checkout->current_step == 'registration_confirmation' ? $this->_registration_confirmation() : '';
 
@@ -1002,9 +1005,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			echo '<br/><h4>$reg_step : ' . $reg_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			echo '<h4>$this->checkout->current_step : ' . $this->checkout->current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			$edit_lnk_class = $this->checkout->current_step == $reg_step ? ' hidden' : '';
-			$edit_lnk_url = add_query_arg( array( 'ee' => '_register', 'step' => $reg_step_details['display_func'] ), $this->_reg_page_base_url );
+			$edit_lnk_url = add_query_arg( array( 'ee' => '_register', 'step' => $reg_step_details['display_func'] ), $this->checkout->reg_page_base_url );
 			$step_dv_class = $this->checkout->current_step == $reg_step ? '' : ' hidden';
-			$reg_step_form_url = add_query_arg( array( 'ee' => '_register', 'step' => $reg_step_details['process_func'] ), $this->_reg_page_base_url );
+			$reg_step_form_url = add_query_arg( array( 'ee' => '_register', 'step' => $reg_step_details['process_func'] ), $this->checkout->reg_page_base_url );
 			$next = $this->_get_next_reg_step();
 			//d( $next );
 			$next_step = $next ? $next['display_func'] : 'finalize_registration';
@@ -1016,7 +1019,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					'step' => $reg_step,
 					'step_nmbr' => $this->_revisit !== FALSE ? $step_or_revisit : $step_or_revisit . $step_nmbr . ' - ',
 					'edit_lnk_class' => $edit_lnk_class,
-					'edit_lnk_url' => add_query_arg( array( 'ee' => '_register', 'step' => $reg_step_details['display_func'] ), $this->_reg_page_base_url ),
+					'edit_lnk_url' => add_query_arg( array( 'ee' => '_register', 'step' => $reg_step_details['display_func'] ), $this->checkout->reg_page_base_url ),
 					'step_dv_class' => $step_dv_class,
 					'reg_step_form_url' => $reg_step_form_url,
 					'reg_step_ajax_action' => $reg_step_details['process_func'],
@@ -1758,7 +1761,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$this->_transaction->set_status( EEM_Transaction::complete_status_code );
 				$this->_transaction->save();
 				$this->_transaction->finalize();
-				$this->_redirect_to_thank_you_page = TRUE;
+				$this->checkout->redirect_to_thank_you_page = TRUE;
 			}
 
 		}
@@ -1827,7 +1830,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$callback = '_go_to_registration_confirmation_ajax_response';
 			break;
 			case 'finalize_registration' :
-				$callback = $this->_revisit ? '_finalize_' . $this->checkout->current_step : '_process_finalize_registration';
+				$callback = $this->checkout->revisit ? '_finalize_' . $this->checkout->current_step : '_process_finalize_registration';
 			break;
 		}
 		// check for valid callback function
@@ -1843,39 +1846,41 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
 		$attention_msg = isset( $notices['attention'] ) ? $notices['attention'] : FALSE;
 		// setup URL for redirect
-		if ( $this->_redirect_to_thank_you_page ) {
-			$this->_thank_you_page_url = add_query_arg(
+		if ( $this->checkout->redirect_to_thank_you_page ) {
+			$this->checkout->thank_you_page_url = add_query_arg(
 				array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ),
-				$this->_thank_you_page_url
+				$this->checkout->thank_you_page_url
 			);
-			$this->_json_response['return_data'] = array( 'redirect-to-thank-you-page' => $this->_thank_you_page_url );
+			$this->checkout->json_response['return_data'] = array( 'redirect-to-thank-you-page' => $this->checkout->thank_you_page_url );
 		}
 		// set JSON response and merge in notices
-		$this->_json_response = array_merge( $this->_json_response, $notices );
+		$this->checkout->json_response = array_merge( $this->checkout->json_response, $notices );
 
-if ( $this->checkout->current_step != 'attendee_information' ) {
-//		echo '<h4>$prev_step : ' . $prev_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->checkout->current_step : ' . $this->checkout->current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->checkout->next_step : ' . $this->checkout->next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$this->_revisit : ' . $this->_revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>EE_Registry::instance()->REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( $this->_json_response, '$this->_json_response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-}
+//		if ( $this->checkout->current_step != 'attendee_information' ) {
+//			echo '<h4>$prev_step : ' . $prev_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			d( $this->checkout->current_step );
+//			d( $this->checkout->next_step );
+//			echo '<h4>$this->checkout->current_step : ' . $this->checkout->current_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			echo '<h4>$this->checkout->next_step : ' . $this->checkout->next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			echo '<h4>$this->checkout->revisit : ' . $this->checkout->revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			echo '<h4>REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			printr( $this->checkout->json_response, '$this->checkout->json_response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//		}
 
 
 		// all good ?
 		if ( $success_msg && ! ( $error_msg || $attention_msg )) {
-			unset( $this->_json_response['error'] );
-			unset( $this->_json_response['attention'] );
+			unset( $this->checkout->json_response['error'] );
+			unset( $this->checkout->json_response['attention'] );
 			// if not ajax, then return TRUE to advance to next step
 			$no_errors = TRUE;
 		// DERP!!!
 		} elseif ( $error_msg || $attention_msg ) {
-			unset( $this->_json_response['success'] );
+			unset( $this->checkout->json_response['success'] );
 			// if not ajax, then return FALSE to repeat the current step while displaying the error notice
 			$no_errors = FALSE;
 		}
@@ -1885,23 +1890,23 @@ if ( $this->checkout->current_step != 'attendee_information' ) {
 			$this->$callback( $callback_param, $success_msg );
 		} else if ( EE_Registry::instance()->REQ->ajax ) {
 			// just send the ajax
-			$this->_json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->_json_response );
-			echo json_encode( $this->_json_response );
+			$this->checkout->json_response = apply_filters( 'FHEE__EE_Single_Page_Checkout__JSON_response', $this->checkout->json_response );
+			echo json_encode( $this->checkout->json_response );
 			die();
 		}
 
 		// store notices in a transient
 		EE_Error::get_notices( FALSE, TRUE, TRUE );
 		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from
-		$next_step = $no_errors ? $this->checkout->next_step : str_replace( 'process_', '', $this->checkout->current_step );
-		if ( $next_step ) {
-			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => '_register', 'step' => $next_step ));
-			$redirect = add_query_arg( $args, $this->_reg_page_base_url );
+//		$next_step = $no_errors ? $this->checkout->next_step : str_replace( 'process_', '', $this->checkout->current_step );
+		if ( $no_errors && $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
+			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => '_register', 'step' => $this->checkout->next_step->slug() ));
+			$redirect = add_query_arg( $args, $this->checkout->reg_page_base_url );
 		} else {
-			$redirect = $this->_thank_you_page_url;
+			$redirect = $this->checkout->thank_you_page_url;
 		}
 //		echo '<h4>$no_errors : ' . $no_errors . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$next_step : ' . $next_step . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$next_step : ' . $this->checkout->next_step->slug() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$redirect : ' . $redirect . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		wp_safe_redirect( $redirect );
