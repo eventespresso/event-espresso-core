@@ -364,7 +364,7 @@ final class EE_Config {
 			// TEST #1 : check that section was set
 			if ( in_array( 1, $tests_to_run ) && empty( $section )) {
 				if ( $display_errors ) {
-					throw new EE_Error( sprintf( __( 'No configuration section has been provided.', 'event_espresso' ), $section ));
+					throw new EE_Error( sprintf( __( 'No configuration section has been provided while attempting to save "%s".', 'event_espresso' ), $config_class ));
 				}
 				return FALSE;
 			}
