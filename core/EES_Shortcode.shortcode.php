@@ -23,6 +23,8 @@
  */
 abstract class EES_Shortcode extends EE_Base {
 
+	private $_using_fallback = FALSE;
+
 	/**
 	 * @protected 	public
 	 * @var 	array $_attributes
@@ -90,6 +92,7 @@ abstract class EES_Shortcode extends EE_Base {
 		$shortcode_obj = self::instance( $shortcode_class );
 		// verify class
 		if ( $shortcode_obj instanceof EES_Shortcode ) {
+			$shortcode_obj->_using_fallback = TRUE;
 			// set attributes and run the shortcode
 			$shortcode_obj->_attributes = (array)$attributes;
 			return $shortcode_obj->process_shortcode( $shortcode_obj->_attributes );
@@ -125,6 +128,15 @@ abstract class EES_Shortcode extends EE_Base {
 		$shortcode = strtoupper( str_replace( 'EES_', '', get_class( $this )));
 		// assign shortcode to the preferred callback, which overwrites the "fallback shortcode processor" assigned earlier
 		add_shortcode( $shortcode, array( $this, 'process_shortcode' ));
+	}
+
+
+
+	/**
+	 * @return boolean
+	 */
+	public function using_fallback() {
+		return $this->_using_fallback;
 	}
 
 

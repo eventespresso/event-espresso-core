@@ -76,6 +76,10 @@ class EES_Espresso_Events  extends EES_Shortcode {
 	 *  @return 	string
 	 */
 	public function process_shortcode( $attributes = array() ) {
+		// make sure EED_Events_Archive is setup properly
+		if ( $this->using_fallback() ) {
+			EED_Events_Archive::instance()->event_list();
+		}
 		// merge in any attributes passed via fallback shortcode processor
 		$attributes = array_merge( (array)$attributes, (array)$this->_attributes );
 		//set default attributes
