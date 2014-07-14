@@ -49,7 +49,7 @@ if ( ! $empty_cart ) {
 			<?php do_action( 'AHEE__registration_page_registration_questions__template__after_spco_' . $slug . '_header' )?>
 		<div id="spco-<?php echo $slug; ?>-dv" class="spco-step-dv <?php echo $reg_step->div_class(); ?>">
 			<?php echo $reg_step->display_reg_form(); ?>
-			<?php do_action( 'AHEE__SPCO_after_reg_step_form', $slug, $reg_step->checkout->next_step->slug() ); ?>
+			<?php do_action( 'AHEE__SPCO_after_reg_step_form', $slug, $next_step ); ?>
 		</div>
 			<?php $step_nmbr++;
 		}
