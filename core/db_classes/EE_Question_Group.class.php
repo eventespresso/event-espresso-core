@@ -131,6 +131,19 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * get the author of the question group.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return int
+	 */
+	public function wp_user() {
+		return $this->get('QSG_wp_user');
+	}
+
+
+
+	/**
 	 * Returns whether this question group has
 	 * been deleted
 	 * @access public
@@ -178,6 +191,7 @@ class EE_Question_Group extends EE_Soft_Delete_Base_Class {
 			$question_IDS_in_group = ! empty( $questions ) ? array_keys( $questions ) : array();
 		}
 		$_where = ! empty( $question_IDS_in_group ) ? array( 'QST_ID' => array( 'not_in', $question_IDS_in_group ) ) : array();
+
 		return EEM_Question::instance()->get_all( array( $_where, 'order_by' => array( 'QST_ID' => 'ASC' ) ) );
 	}
 

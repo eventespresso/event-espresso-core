@@ -469,11 +469,12 @@ if ( ! function_exists( 'espresso_list_of_event_dates' )) {
 	 * @param bool   $add_breaks
 	 * @return string
 	 */
-	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = 'l F jS, Y', $time_format = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE ) {
+	function espresso_list_of_event_dates( $EVT_ID = 0, $date_format = 'l F jS, Y', $time_format = 'g:i a', $echo = TRUE, $show_expired = NULL, $format = TRUE, $add_breaks = TRUE, $limit = NULL ) {
+
 		$date_format = apply_filters( 'FHEE__espresso_list_of_event_dates__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_list_of_event_dates__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
-		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID ,$show_expired );
+		$datetimes = EEH_Event_View::get_all_date_obj( $EVT_ID, $show_expired, FALSE, $limit );
 		//d( $datetimes );
 		if ( is_array( $datetimes ) && ! empty( $datetimes )) {
 			global $post;
@@ -532,7 +533,7 @@ if ( ! function_exists( 'espresso_event_end_date' )) {
 if ( ! function_exists( 'espresso_event_date_range' )) {
 	/**
 	 * espresso_event_date_range
-	 * returns the first and last dates for an event (if different)
+	 * returns the first and last chronologically ordered dates for an event (if different)
 	 *
 	 * @param string $date_format
 	 * @param string $time_format
@@ -545,12 +546,12 @@ if ( ! function_exists( 'espresso_event_date_range' )) {
 		$date_format = apply_filters( 'FHEE__espresso_event_date_range__date_format', $date_format );
 		$time_format = apply_filters( 'FHEE__espresso_event_date_range__time_format', $time_format );
 		EE_Registry::instance()->load_helper( 'Event_View' );
-		$the_event_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_event_date( $date_format, $time_format, $EVT_ID )));
-		$the_event_end_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_event_end_date( $date_format, $time_format, $EVT_ID )));
+		$the_event_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_earliest_event_date( $date_format, $time_format, $EVT_ID )));
+		$the_event_end_date = date_i18n( $date_format . ' ' . $time_format, strtotime( EEH_Event_View::the_latest_event_date( $date_format, $time_format, $EVT_ID )));
 		if ( $the_event_date != $the_event_end_date ) {
-			echo $the_event_date . __( ' - ', 'event_espresso' ) . date_i18n( $date_format . ', Y' . ' ' . $time_format, strtotime( EEH_Event_View::the_event_end_date( $date_format . ', Y', $time_format, $EVT_ID )));
+			echo $the_event_date . __( ' - ', 'event_espresso' ) . date_i18n( $date_format . ', Y' . ' ' . $time_format, strtotime( EEH_Event_View::the_latest_event_date( $date_format . ', Y', $time_format, $EVT_ID )));
 		} else {
-			echo date_i18n( $single_dt_frmt . ' ' . $single_tm_frmt, strtotime( EEH_Event_View::the_event_date( $single_dt_frmt, $single_tm_frmt, $EVT_ID )));
+			echo date_i18n( $single_dt_frmt . ' ' . $single_tm_frmt, strtotime( EEH_Event_View::the_earliest_event_date( $single_dt_frmt, $single_tm_frmt, $EVT_ID )));
 		}
 	}
 }

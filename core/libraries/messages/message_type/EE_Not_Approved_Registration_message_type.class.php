@@ -28,7 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 
-class EE_Not_Approved_Registration_message_type extends EE_message_type {
+class EE_Not_Approved_Registration_message_type extends EE_Registration_Base_message_type {
 
 	public function __construct() {
 		$this->name = 'not_approved_registration';
@@ -40,50 +40,6 @@ class EE_Not_Approved_Registration_message_type extends EE_message_type {
 
 		parent::__construct();
 	}
-
-
-
-	protected function _set_admin_pages() {
-		$this->admin_registered_pages = array(
-			'events_edit' => TRUE
-			);
-	}
-
-
-	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
-		//this is just a test
-		return $this->name . ' Message Type for ' . $messenger->name . ' Messenger ';
-	}
-
-
-
-
-	protected function _set_data_handler() {
-		$this->_data_handler = $this->_data instanceof EE_Registration ? 'REG' : 'Gateways';
-		$this->_single_message = $this->_data instanceof EE_Registration ? TRUE : FALSE;
-	}
-
-
-
-	/**
-	 * Setup admin settings for this message type.
-	 */
-	protected function _set_admin_settings_fields() {
-		$this->_admin_settings_fields = array();
-	}
-
-
-
-
-
-	protected function _set_default_field_content() {
-
-		$this->_default_field_content = array(
-			'subject' => $this->_default_template_field_subject(),
-			'content' => $this->_default_template_field_content(),
-		);
-	}
-
 
 
 
@@ -148,28 +104,13 @@ class EE_Not_Approved_Registration_message_type extends EE_message_type {
 	}
 
 
-	protected function _set_valid_shortcodes() {
-		parent::_set_valid_shortcodes();
 
-		//remove unwanted transaction shortcode
-		foreach ( $this->_valid_shortcodes as $context => $shortcodes ) {
-			if( ($key = array_search('transaction', $shortcodes) ) !== false) {
-			    unset($this->_valid_shortcodes[$context][$key]);
-			}
-		}
-	}
-
-
-	/**
-	 * returns an array of addressee objects for event_admins
-	 *
-	 * @access protected
-	 * @return array array of EE_Messages_Addressee objects
-	 */
-	protected function _admin_addressees() {
-		if ( $this->_single_message )
-			return array();
-		return parent::_admin_addressees();
+	protected function _primary_attendee_addressees() {
+		$cached = $this->_single_message;
+		$this->_single_message = FALSE;
+		$addressees = parent::_primary_attendee_addressees();
+		$this->_single_message = $cached;
+		return $addressees;
 	}
 
 } //end EE_Not_Approved_Registration_message_type class

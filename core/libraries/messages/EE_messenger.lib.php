@@ -41,6 +41,17 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+
+	/**
+	 * This property holds the message types that are valid for use with this messenger.
+	 * It gets set by the _set_valid_message_types() method.
+	 *
+	 * @var array
+	 */
+	protected $_valid_message_types = array();
+
+
+
 	/**
 	 * Holds the configuration for the EE_Messages_Validator class to know how to validated the different fields. Note that the Validator will match each field here with the allowed shortcodes set in the "valid_shortcodes" array for the matched message type context.  So message types don't need to set a $_validator_config property.
 	 *
@@ -114,6 +125,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$this->_set_test_settings_fields();
 		$this->_set_template_fields();
 		$this->_set_default_message_types();
+		$this->_set_valid_message_types();
 		$this->_set_validator_config();
 	}
 
@@ -151,6 +163,18 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+
+
+
+	/**
+	 * Sets the _valid_message_types property (see definition in cods attached to property)
+	 *
+	 * @since 4.5.0
+	 *
+	 * @abstract
+	 * @return void
+	 */
+	abstract protected function _set_valid_message_types();
 
 
 
@@ -227,6 +251,28 @@ abstract class EE_messenger extends EE_Messages_Base {
 		//all messengers filter
 		$default_types = apply_filters( 'FHEE__EE_messenger__get_default_message_types__default_types', $default_types, $this );
 		return $default_types;
+	}
+
+
+
+
+	/**
+	 * Returns the valid message types associated with this messenger.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return array
+	 */
+	public function get_valid_message_types() {
+		$class = get_class( $this );
+
+		//messenger specific filter
+		//messenger specific filter
+		$valid_types = apply_filters( 'FHEE__' . $class . '__get_valid_message_types__valid_types', $this->_valid_message_types, $this );
+
+		//all messengers filter
+		$valid_types = apply_filters( 'FHEE__EE_messenger__get_valid_message_types__valid_types', $valid_types, $this );
+		return $valid_types;
 	}
 
 
@@ -338,7 +384,8 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 			//note that  message template group that has override_all_custom set will remove the ability to set a custom message template based off of the global (and that also in turn overrides any other custom templates).
 			$st_args['create_button'] =  $mtpg->get('MTP_is_override') ? '' : '<a data-messenger="' . $this->name . '" data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $create_url . '" class="button button-small create-mtpg-button">' . __('Create New Custom', 'event_espresso') . '</a>';
-			$st_args['edit_button'] = '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __('Edit', 'event_espresso') . '</a>';
+			$st_args['create_button'] = EE_Registry::instance()->CAP->current_user_can( 'edit_messages', 'espresso_messsages_add_new_message_template' ) ? $st_args['create_button'] : '';
+			$st_args['edit_button'] = EE_Registry::instance()->CAP->current_user_can( 'edit_message', 'espresso_messages_edit_message_template', $mtpgID ) ?  '<a data-messagetype="' . $mtpg->message_type() . '" data-grpid="' . $default_value . '" target="_blank" href="' . $edit_url . '" class="button button-small edit-mtpg-button">' . __('Edit', 'event_espresso') . '</a>' : '';
 			$selector_rows .= EEH_Template::display_template( $template_row_path, $st_args, TRUE );
 		}
 
@@ -543,6 +590,20 @@ abstract class EE_messenger extends EE_Messages_Base {
 	}
 
 
+
+
+	/**
+	 * This is a method called from EE_messages when this messenger is a generating messenger and the sending messenger is a different messenger.  Child messengers can set hooks for the sending messenger to callback on if necessary (i.e. swap out css files or something else).
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $sending_messenger_name the name of the sending messenger so we only set the hooks needed.
+	 *
+	 * @return void
+	 */
+	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
+		return;
+	}
 
 
 }

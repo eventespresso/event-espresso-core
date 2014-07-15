@@ -19,12 +19,29 @@ require_once EE_TESTS_DIR . 'includes/factory.php';
  * @subpackage 	tests
  */
 class EE_UnitTestCase extends WP_UnitTestCase {
+	/**
+	 * Should be used to store the global $wp_actions during a test
+	 * so that it can be restored afterwards to keep tests from interfere with each other
+	 * @var array
+	 */
+	protected $wp_filters_saved = NULL;
 	const error_code_undefined_property = 8;
 	protected $_cached_SERVER_NAME = NULL;
 
 	public function setUp() {
+		//save the hooks state before WP_UnitTestCase actually gets its hands on it...
+		//as it immediately adds a few hooks we might not want to backup
+		global $auto_made_thing_seed, $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
+		$this->wp_filters_saved = array(
+			'wp_filter'=>$wp_filter,
+			'wp_actions'=>$wp_actions,
+			'merged_filters'=>$merged_filters,
+			'wp_current_filter'=>$wp_current_filter
+		);
 		parent::setUp();
+		$auto_made_thing_seed = 1;
 
+//		$this->wp_actions_saved = $wp_actions;
 		// Fake WP mail globals, to avoid errors
 		add_filter( 'wp_mail', array( $this, 'setUp_wp_mail' ) );
 		add_filter( 'wp_mail_from', array( $this, 'tearDown_wp_mail' ) );
@@ -34,6 +51,14 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 
 	}
 
+	public function tearDown(){
+		parent::tearDown();
+		global $wp_filter, $wp_actions, $merged_filters, $wp_current_filter;
+		$wp_filter = $this->wp_filters_saved[ 'wp_filter' ];
+		$wp_actions = $this->wp_filters_saved[ 'wp_actions' ];
+		$merged_filters = $this->wp_filters_saved[ 'merged_filters' ];
+		$wp_current_filter = $this->wp_filters_saved[ 'wp_current_filter' ];
+	}
 
 	/**
 	 *  Use this to clean up any global scope singletons etc that we may have being used by EE so
@@ -313,6 +338,11 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	/**
 	 * We really should implement this function in the proper PHPunit style
 	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+	 * !NOTE! This ONLY checks for non-temporary tables! And WP_UnitTestCase changes all queries that use
+	 * 'CREATE TABLE' to 'CREATE TEMPORARY TABLE'. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
+	 * So you need to remove that filter BEFORE the table is created if you subsequently want to check
+	 * whether the table exists or not; or alternatively somehow improve this to check for temporary tables...
+	 * but that's unfortunately very difficult with MYSQL
 	 * @global WPDB $wpdb
 	 * @param string $table_name with or without $wpdb->prefix
 	 * @param string $model_name the model's name (only used for error reporting)
@@ -325,6 +355,24 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$exists =  $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
 		if( !$exists ){
 			$this->assertTrue($exists,  sprintf(__("Table like %s does not exist as it was defined on the model %s", 'event_espresso'),$table_name,$model_name));
+		}
+	}
+
+	/**
+	 * We really should implement this function in the proper PHPunit style
+	 * @see http://php-and-symfony.matthiasnoback.nl/2012/02/phpunit-writing-a-custom-assertion/
+	 * @global WPDB $wpdb
+	 * @param string $table_name with or without $wpdb->prefix
+	 * @param string $model_name the model's name (only used for error reporting)
+	 */
+	function assertTableDoesNotExist($table_name, $model_name = 'Unknown' ){
+		global $wpdb;
+		if(strpos($table_name, $wpdb->prefix) !== 0){
+			$table_name = $wpdb->prefix.$table_name;
+		}
+		$exists =  $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
+		if( $exists ){
+			$this->assertFalse($exists,  sprintf(__("Table like %s SHOULD NOT exist. It was apparently defined on the model '%s'", 'event_espresso'),$table_name,$model_name));
 		}
 	}
 
@@ -350,6 +398,84 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		unset($wp_actions['AHEE__EE_System__load_espresso_addons']);
 	}
 
+	/**
+	 * Makes a complete transaction record with all associated data (ie, its line items,
+	 * registrations, tickets, datetimes, events, attendees, questions, answers, etc).
+	 * Resets EE_Cart in the process though, FYI
+	 * @param type $options
+	 * @return EE_Transaction
+	 */
+	protected function new_typical_transaction($options = array()){
+		EE_Registry::instance()->load_helper( 'Line_Item' );
+		$txn = $this->new_model_obj_with_dependencies( 'Transaction' );
+		$total_line_item = EEH_Line_Item::create_default_total_line_item( $txn->ID() );
+		$total_line_item->save_this_and_descendants_to_txn( $txn->ID() );
+		if( isset( $options[ 'ticket_types' ] ) ){
+			$ticket_types = $options[ 'ticket_types' ];
+		}else{
+			$ticket_types = 1;
+		}
+		$taxes = EEM_Price::instance()->get_all_prices_that_are_taxes();
+		for( $i = 1; $i <= $ticket_types; $i++ ){
+			$ticket = $this->new_model_obj_with_dependencies( 'Ticket', array( 'TKT_price'=> $i * 10 , 'TKT_taxable' => TRUE ) );
+			$this->assertInstanceOf( 'EE_Line_Item', EEH_Line_Item::add_ticket_purchase($total_line_item, $ticket) );
+			$reg_final_price = $ticket->price();
+			foreach($taxes as $priority => $taxes_at_priority){
+				foreach($taxes_at_priority as $tax){
+					$reg_final_price += $reg_final_price * $tax->amount() / 100;
+				}
+			}
+			$this->new_model_obj_with_dependencies( 'Registration', array('TXN_ID' => $txn->ID(), 'TKT_ID' => $ticket->ID(), 'REG_count'=>1, 'REG_group_size'=>1, 'REG_final_price' => $reg_final_price ) );
+		}
+		$txn->set_total( $total_line_item->total() );
+		$txn->save();
 
+		return $txn;
+	}
 
+	/**
+	 * Creates an interesting ticket, with a base price, dollar surcharge, and a percent surcharge,
+	 * which is for 2 different datetimes.
+	 * @param array $options {
+	 *	@type int $dollar_surcharge the dollar surcharge to add to thsi ticket
+	 *	@type int $percent_surcharge teh percent surcharge to add to this ticket (value in percent, not in decimal. Eg if it's a 10% surcharge, enter 10.00, not 0.10
+	 *	@type int $datetimes the number of datetimes for this ticket
+	 * }
+	 * @return EE_Ticket
+	 */
+	public function new_ticket( $options = array() ) {
+		$ticket = $this->new_model_obj_with_dependencies('Ticket', array( 'TKT_price' => '16.5', 'TKT_taxable' => TRUE ) );
+		$base_price_type = EEM_Price_Type::instance()->get_one( array( array('PRT_name' => 'Base Price' ) ) );
+		$this->assertInstanceOf( 'EE_Price_Type', $base_price_type );
+		$base_price = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => 10, 'PRT_ID' => $base_price_type->ID() ) );
+		$ticket->_add_relation_to( $base_price, 'Price' );
+		$this->assertArrayContains( $base_price, $ticket->prices() );
+		if( isset( $options[ 'dollar_surcharge'] ) ){
+			$dollar_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Dollar Surcharge' ) ) );
+			$this->assertInstanceOf( 'EE_Price_Type', $dollar_surcharge_price_type );
+			$dollar_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'dollar_surcharge'], 'PRT_ID' => $dollar_surcharge_price_type->ID() ) );
+			$ticket->_add_relation_to( $dollar_surcharge, 'Price' );
+			$this->assertArrayContains( $dollar_surcharge, $ticket->prices() );
+		}
+		if( isset( $options[ 'percent_surcharge' ] ) ){
+			$percent_surcharge_price_type = EEM_Price_Type::instance()->get_one( array( array( 'PRT_name' => 'Percent Surcharge' ) ) );
+			$this->assertInstanceOf( 'EE_Price_Type', $percent_surcharge_price_type );
+			$percent_surcharge = $this->new_model_obj_with_dependencies( 'Price', array( 'PRC_amount' => $options[ 'percent_surcharge' ], 'PRT_ID' => $percent_surcharge_price_type->ID() ) );
+			$ticket->_add_relation_to( $percent_surcharge, 'Price' );
+			$this->assertArrayContains( $percent_surcharge, $ticket->prices() );
+		}
+		if( isset( $options[ 'datetimes'] ) ){
+			$datetimes = $options[ 'datetimes' ];
+		}else{
+			$datetimes = 1;
+		}
+
+		$event = $this->new_model_obj_with_dependencies( 'Event' );
+		for( $i = 0; $i <= $datetimes; $i++ ){
+			$ddt = $this->new_model_obj_with_dependencies( 'Datetime', array( 'EVT_ID'=> $event->ID() ) );
+			$ticket->_add_relation_to( $ddt, 'Datetime' );
+			$this->assertArrayContains( $ddt, $ticket->datetimes() );
+		}
+		return $ticket;
+	}
 }

@@ -66,8 +66,8 @@ class EE_Brewing_Regular extends EE_Base {
 	/**
 	 * Upon brand-new activation, if this is a new activation of CAF, we want to add
 	 * some global prices that will show off EE4's capabilities. However, if they're upgrading
-	 * from 3.1, or simply 4.1 decaf, we assume they don't want us to suddenly introduce these extra prices.
-	 * This action should only be called when EE 4.1.0P is initially activated.
+	 * from 3.1, or simply EE4.x decaf, we assume they don't want us to suddenly introduce these extra prices.
+	 * This action should only be called when EE 4.x.0.P is initially activated.
 	 * Right now the only CAF content are these global prices. If there's more in the future, then
 	 * we should probably create a caf file to contain it all instead just a function like this.
 	 * Right now, we ASSUME the only price types in the system are default ones
@@ -76,6 +76,9 @@ class EE_Brewing_Regular extends EE_Base {
 	function initialize_caf_db_content(){
 //		echo "initialize caf db content!";
 		global $wpdb;
+
+		//use same method of getting creator id as the version introducing the change
+		$default_creator_id = apply_filters('FHEE__EE_DMS_Core_4_5_0__get_default_creator_id',get_current_user_id());
 
 		$price_type_table = $wpdb->prefix."esp_price_type";
 		$price_table = $wpdb->prefix."esp_price";
@@ -92,7 +95,8 @@ class EE_Brewing_Regular extends EE_Base {
 							'PBT_ID'=>4,
 							'PRT_is_percent'=>true,
 							'PRT_order'=>60,
-							'PRT_deleted'=>false
+							'PRT_deleted'=>false,
+							'PRT_wp_user' => $default_creator_id
 						),
 						array(
 							'%s',//PRT_name
@@ -100,6 +104,7 @@ class EE_Brewing_Regular extends EE_Base {
 							'%d',//PRT_is_percent
 							'%d',//PRT_order
 							'%d',//PRT_deleted
+							'%d', //PRT_wp_user
 						));
 				//federal tax
 				$result = $wpdb->insert($price_type_table,
@@ -108,7 +113,8 @@ class EE_Brewing_Regular extends EE_Base {
 							'PBT_ID'=>4,
 							'PRT_is_percent'=>true,
 							'PRT_order'=>70,
-							'PRT_deleted'=>false
+							'PRT_deleted'=>false,
+							'PRT_wp_user' => $default_creator_id,
 						),
 						array(
 							'%s',//PRT_name
@@ -116,6 +122,7 @@ class EE_Brewing_Regular extends EE_Base {
 							'%d',//PRT_is_percent
 							'%d',//PRT_order
 							'%d',//PRT_deleted
+							'%d' //PRT_wp_user
 						));
 				if( $result){
 					$wpdb->insert($price_table,
@@ -128,7 +135,8 @@ class EE_Brewing_Regular extends EE_Base {
 								'PRC_overrides'=>NULL,
 								'PRC_deleted'=>false,
 								'PRC_order'=>50,
-								'PRC_parent'=>null
+								'PRC_parent'=>null,
+								'PRC_wp_user' => $default_creator_id
 							),
 							array(
 								'%d',//PRT_id
@@ -140,6 +148,7 @@ class EE_Brewing_Regular extends EE_Base {
 								'%d',//PRC_deleted
 								'%d',//PRC_order
 								'%d',//PRC_parent
+								'%d' //PRC_wp_user
 							));
 				}
 
@@ -222,7 +231,7 @@ class EE_Brewing_Regular extends EE_Base {
 	 */
 
 	private function _messages_caf() {
-		add_filter('FHEE__EE_Messages_Init__autoload_messages__dir_ref', array( $this, 'messages_autoload_paths'), 5 );
+		add_filter('FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( $this, 'messages_autoload_paths'), 5 );
 		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 5, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 5, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_default_field_content', array( $this, 'email_default_field_content'), 5, 2 );
@@ -254,12 +263,12 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 	/**
-	 * This just allows us to add additional paths to the autoloader (EE_Messages_Init::autoload_messages()) for the messages system.
+	 * This just allows us to add additional paths to the autoloader (EED_Messages::autoload_messages()) for the messages system.
 	 * @param  array  $dir_ref original array of paths
 	 * @return array           appended paths
 	 */
 	public function messages_autoload_paths( $dir_ref ) {
-		$dir_ref[EE_CAF_LIBRARIES . 'shortcodes/'] = 'lib';
+		$dir_ref[] = EE_CAF_LIBRARIES . 'shortcodes';
 		return $dir_ref;
 	}
 
@@ -543,9 +552,10 @@ class EE_Brewing_Regular extends EE_Base {
 		$setup_args = array(
 			'mtfilename' => 'EE_Newsletter_message_type.class.php',
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/' => array('class')
+				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
 				),
-			'messengers_to_activate_with' => array( 'email' )
+			'messengers_to_activate_with' => array( 'email' ),
+			'messengers_to_validate_with' => array( 'email' )
 			);
 		EE_Register_Message_Type::register( 'newsletter', $setup_args );
 	}
@@ -563,7 +573,7 @@ class EE_Brewing_Regular extends EE_Base {
 	public function register_newsletter_shortcodes() {
 		$setup_args = array(
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'shortcodes/' => array( 'lib' )
+				EE_CAF_LIBRARIES . 'shortcodes/'
 				),
 			'msgr_validator_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_validator_config' ),
 			'msgr_template_fields_callback' => array( 'EE_Newsletter_Shortcodes', 'messenger_template_fields' ),

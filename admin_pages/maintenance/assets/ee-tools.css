@@ -1,0 +1,30 @@
+.ee-tools-container {
+	width: 100%;
+}
+
+.ee-tool {
+	display: inline-block;
+	float: left;
+	width: 250px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	-ms-border-radius: 2px;
+	-o-border-radius: 2px;
+	border-radius: 2px;
+	border: 1px solid #88b5c5;
+}
+
+.ee-tool h3 {
+	background-color: #88b5c5;
+	color: #fff;
+}
+
+.ee-tool p {
+	padding: 10px;
+}
+
+.ee-tool .button {
+	float: right;
+	margin-right: 10px;
+	margin-bottom: 10px;
+}

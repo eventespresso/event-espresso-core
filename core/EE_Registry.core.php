@@ -79,6 +79,17 @@ final class EE_Registry {
 	public $SSN = NULL;
 
 
+
+	/**
+	 * holds the ee capabilities object.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var EE_Capabilities
+	 */
+	public $CAP = NULL;
+
+
 	/**
 	 * 	$addons - StdClass object for holding addons which have registered themselves to work with EE core
 	 * 	@access 	public
@@ -442,7 +453,8 @@ final class EE_Registry {
 			'EE_Config' => 'CFG',
 			'EE_Network_Config' => 'NET_CFG',
 			'EE_Request_Handler' => 'REQ',
-			'EE_Session' => 'SSN'
+			'EE_Session' => 'SSN',
+			'EE_Capabilities' => 'CAP'
 		);
 
 		// check if class has already been loaded, and return it if it has been
