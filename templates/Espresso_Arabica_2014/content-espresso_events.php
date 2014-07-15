@@ -26,9 +26,9 @@ $event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $eve
 	</div>
 
 	<div class="espresso-event-wrapper-dv">
-		<?php espresso_get_template_part( 'content', 'espresso_events-tickets' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_events-datetimes' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_events-details' ); ?>
+		<?php espresso_get_template_part( 'content', 'espresso_events-tickets' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_events-venues' ); ?>
 		<footer class="event-meta">
 			<?php do_action( 'AHEE_event_details_footer_top', $post ); ?>
@@ -44,9 +44,9 @@ $event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $eve
 	</div>
 
 	<div class="espresso-event-list-wrapper-dv">
-		<?php espresso_get_template_part( 'content', 'espresso_events-tickets' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_events-datetimes' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_events-details' ); ?>
+		<?php espresso_get_template_part( 'content', 'espresso_events-tickets' ); ?>
 		<?php espresso_get_template_part( 'content', 'espresso_events-venues' ); ?>
 	</div>
 
