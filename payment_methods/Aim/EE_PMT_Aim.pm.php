@@ -20,14 +20,13 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_PMT_Aim
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Aim extends EE_PMT_Base{
-	const help_tab_link = 'ee_aim_help';
-	
+
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Aim.gateway.php');
 		$this->_gateway = new EEG_AIM();
@@ -75,13 +74,13 @@ class EE_PMT_Aim extends EE_PMT_Base{
 		$form = new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'login_id'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Authorize.net API Login ID %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_link))
+					'html_label_text'=>  sprintf(__("Authorize.net API Login ID %s", "event_espresso"),  $this->get_help_tab_link())
 				)),
 				'transaction_key'=>new EE_Text_Input(array(
-					'html_label_text'=> sprintf(__("Authorize.net Transaction Key %s", "event_espresso"), EEH_Template::get_help_tab_link(self::help_tab_link))
+					'html_label_text'=> sprintf(__("Authorize.net Transaction Key %s", "event_espresso"), $this->get_help_tab_link())
 				)),
 				'test_transactions'=>new EE_Yes_No_Input(array(
-					'html_label_text'=>  sprintf(__("Send test transactions? %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_link)),
+					'html_label_text'=>  sprintf(__("Send test transactions? %s", 'event_espresso'),  $this->get_help_tab_link()),
 					'html_help_text'=>  __("Send test transactions, even to live server", 'event_espresso')
 				)),
 			)
@@ -93,11 +92,11 @@ class EE_PMT_Aim extends EE_PMT_Base{
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
-	 * @return array 
+	 * @return array
 	 */
 	public function help_tabs_config(){
 		return array(
-			self::help_tab_link => array(
+			$this->get_help_tab_name() => array(
 						'title' => __('Authorize.net AIM Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_aim'
 						),

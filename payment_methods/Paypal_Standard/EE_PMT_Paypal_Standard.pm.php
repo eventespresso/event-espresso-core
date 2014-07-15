@@ -8,7 +8,6 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	const shipping_info_none = 1;
 	const shipping_info_optional = 0;
 	const shipping_info_required = 2;
-	const help_tab_name = 'ee_paypal_standard_help';
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Paypal_Standard.gateway.php');
 		$this->_gateway = new EEG_Paypal_Standard();
@@ -23,19 +22,19 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 		$form =  new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'paypal_id'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Paypal Email %s", 'event_espresso'), EEH_Template::get_help_tab_link( self::help_tab_name )),
+					'html_label_text'=>  sprintf(__("Paypal Email %s", 'event_espresso'), $this->get_help_tab_link()),
 					'html_help_text'=>  __("Typically payment@yourdomain.com", 'event_espresso'),
 				)),
 				'image_url'=>new EE_Admin_File_Uploader_Input(array(
 					'html_help_text'=>  __("Used for your business/personal logo on the PayPal page", 'event_espresso')
 				)),
 				'paypal_taxes' => new EE_Yes_No_Input(array(
-					'html_label_text' => sprintf( __( 'Paypal Calculates Taxes %s', 'event_espresso' ), EEH_Template::get_help_tab_link( self::help_tab_name ) ),
+					'html_label_text' => sprintf( __( 'Paypal Calculates Taxes %s', 'event_espresso' ), $this->get_help_tab_link() ),
 					'html_help_text' => __('Whether Paypal should calculate order taxes', 'event_espresso'),
 					'default' => FALSE
 				)),
 				'paypal_shipping' => new EE_Yes_No_Input(array(
-					'html_label_text' => sprintf( __( 'Paypal Calculates Shipping %s', 'event_espresso' ), EEH_Template::get_help_tab_link( self::help_tab_name ) ),
+					'html_label_text' => sprintf( __( 'Paypal Calculates Shipping %s', 'event_espresso' ), $this->get_help_tab_link() ),
 					'html_help_text' => __('Wether Paypal should add shipping surcharges', 'event_espresso'),
 					'default' => FALSE
 				)),
@@ -48,8 +47,8 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 			'before_form_content_template'=>$this->file_folder().DS.'templates'.DS.'paypal_standard_settings_before_form.template.php',
 			)
 		);
-		$form->get_input('PMD_debug_mode')->set_html_label_text(sprintf(__("Use Paypal Sandbox %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_name)));
-		$form->get_input('shipping_details')->set_html_label_text(sprintf(__("Shipping Address Options %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)));
+		$form->get_input('PMD_debug_mode')->set_html_label_text(sprintf(__("Use Paypal Sandbox %s", 'event_espresso'),  $this->get_help_tab_link()));
+		$form->get_input('shipping_details')->set_html_label_text(sprintf(__("Shipping Address Options %s", "event_espresso"),  $this->get_help_tab_link()));
 		return $form;
 	}
 	/**
@@ -59,7 +58,7 @@ class EE_PMT_Paypal_Standard extends EE_PMT_Base{
 	 */
 	public function help_tabs_config(){
 		return array(
-			self::help_tab_name => array(
+			$this->get_help_tab_name() => array(
 				'title'=>  __("Paypal Standard Settings", 'event_espresso'),
 				'filename'=>'payment_methods_overview_paypalstandard'
 			)
