@@ -260,7 +260,7 @@ class EED_Event_Single  extends EED_Module {
 	 *  	@return 		void
 	 */
 	public static function event_tickets( $content ) {
-		return $content . EEH_Template::locate_template( 'content-espresso_events-tickets.php' );
+		return EEH_Template::locate_template( 'content-espresso_events-tickets.php' ) . $content;
 	}
 
 	/**
