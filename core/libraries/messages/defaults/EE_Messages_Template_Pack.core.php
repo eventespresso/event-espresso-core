@@ -293,7 +293,7 @@ abstract class  EE_Messages_Template_Pack {
 		 * - a match for the full messenger name, message type, context and field in the full path for the given template pack.
 		 * - a match for the full messenger name, message type, field in the full path for the given template pack.
 		 * - a match for the full messenger name, message type, field, context in the path grabbed for the related message type defined in the _master_templates property for the message type (i.e. all registration message types share the same template as the main registration message type).
-		 * - match for the full messenger name, message type, field for the related message type.
+		 * - match for the full messenger name, message type, field for the related message type defined in the _master templates property for the message type
 		 * - a match for a default template matching the messenger, name, context, field (as set by the default template packs).
 		 * - empty string.
 		 */
@@ -370,11 +370,11 @@ abstract class  EE_Messages_Template_Pack {
 	 *
 	 * @return string The variation path or url (typically css reference)
 	 */
-	public function get_variation( $messenger, $type, $variation, $url = true, $file_extension = 'css' ) {
+	public function get_variation( $messenger, $type, $variation, $url = true, $file_extension = '.css' ) {
 		$base = $url ? $this->_base_url : $this->_base_path;
 		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : null;
 
-		$path_string = 'variations/' . $messenger . '_' . $type . '_' . $variation . '.css';
+		$path_string = 'variations/' . $messenger . '_' . $type . '_' . $variation . $file_extension;
 
 		//first see if the file exists.
 		if ( is_readable( $this->_base_path . $path_string ) ) {
