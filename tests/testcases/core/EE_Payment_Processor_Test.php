@@ -102,6 +102,18 @@ class EE_Payment_Processor_Test extends EE_UnitTestCase{
 		$this->assertEquals( $successful_payment_actions + 1, EEH_Array::is_set($wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful', 0 ) );
 	}
 
+	public function test_process_payment__offline(){
+		$pm = $this->new_model_obj_with_dependencies('Payment_Method', array('PMD_type' => 'Admin_Only' ) );
+		$transaction = $this->_new_typical_transaction();
+		global $wp_actions;
+		EE_Registry::instance()->load_helper( 'Array' );
+		$successful_payment_actions = EEH_Array::is_set( $wp_actions, 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made', 0 );
+		$payment = EE_Payment_Processor::instance()->process_payment( $pm, $transaction, NULL, NULL, 'success', 'CART', TRUE, TRUE );
+		$this->assertNull( $payment );
+		$this->assertEquals( EEM_Transaction::incomplete_status_code, $transaction->status_ID() );
+		$this->assertEquals( $successful_payment_actions + 1, $wp_actions[ 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made' ] );
+	}
+
 	public function setUp(){
 		parent::setUp();
 		$this->_pretend_addon_hook_time();

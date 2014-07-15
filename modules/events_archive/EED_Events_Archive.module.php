@@ -215,7 +215,7 @@ class EED_Events_Archive  extends EED_Module {
 	public static function event_details( $content ) {
 
 		global $post;
-		if (( $post->post_type == 'espresso_events' && ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) || apply_filters( 'FHEE__fallback_shortcode_processor__EES_Espresso_Events', FALSE ) ) {
+		if ( $post->post_type == 'espresso_events' && ! apply_filters( 'FHEE__EES_Espresso_Events__process_shortcode__true', FALSE )) {
 			// we need to first remove this callback from being applied to the_content() (otherwise it will recurse and blow up the interweb)
 			remove_filter( 'the_excerpt', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );
 			remove_filter( 'the_content', array( 'EED_Events_Archive', 'event_details' ), 100, 1 );

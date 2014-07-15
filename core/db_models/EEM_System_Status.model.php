@@ -43,6 +43,8 @@ class EEM_System_Status{
 			'active_plugins'=>$this->get_active_plugins(),
 			'wp_settings'=>$this->get_wp_settings(),
 			'https_enabled'=>$this->get_https_enabled(),
+			'logging_enabled' => $this->get_logging_enabled(),
+			'remote_posting' => $this->get_remote_posting(),
 			'php_version'=>$this->php_version(),
 			'php.ini_settings'=>$this->get_php_ini_all(),
 			'php_info'=>$this->get_php_info(),
@@ -96,7 +98,12 @@ class EEM_System_Status{
 	 * @return array with keys 'home_url' and 'site_url'
 	 */
 	function get_wp_settings(){
-
+		$wp_memory_int = $this->let_to_num( WP_MEMORY_LIMIT );
+		if ( $wp_memory_int < 67108864 ) {
+			$wp_memory_to_display = '<mark class="error">' . sprintf( __('%s - We recommend setting memory to at least 64MB. See: %s Increasing memory allocated to PHP %s', 'event_espresso'), WP_MEMORY_LIMIT, '<a href="http://codex.wordpress.org/Editing_wp-config.php#Increasing_memory_allocated_to_PHP">', '</a>"' ) . '</mark>';
+		} else {
+			$wp_memory_to_display = '<mark class="yes">' . size_format( $wp_memory_int ) . '</mark>';
+		}
 		return array(
 			'name'=>get_bloginfo('name','display'),
 			'is_multisite'=>is_multisite(),
@@ -109,7 +116,9 @@ class EEM_System_Status{
 			'gmt_offset'=>get_option('gmt_offset'),
 			'timezone_string'=>get_option('timezone_string'),
 			'admin_email'=>  get_bloginfo('admin_email', 'display'),
-			'language'=>get_bloginfo('language','display')
+			'language'=>get_bloginfo('language','display'),
+			'wp_max_upload_size' => size_format( wp_max_upload_size() ),
+			'wp_memory' => $wp_memory_to_display
 			);
 	}
 
@@ -193,7 +202,7 @@ class EEM_System_Status{
 	function get_https_enabled(){
 		$home = str_replace("http://", "https://", home_url());
 		$response = wp_remote_get($home);
-		if($response instanceof WP_Error){ 
+		if($response instanceof WP_Error){
 			$error_string = '';
 			foreach($response->errors as $short_name => $description_array){
 				$error_string .= "<b>$short_name</b>: ".implode(", ",$description_array);
@@ -203,10 +212,60 @@ class EEM_System_Status{
 		return "ok!";
 	}
 	/**
+	 * Whether or not logging is enabled
+	 * @return string descripting logging's status
+	 */
+	function get_logging_enabled(){
+		$opened = @fopen( EVENT_ESPRESSO_UPLOAD_DIR . '/logs/espresso_log.txt', 'a' );
+		return $opened ? __('Log Directory is writable', 'event_espresso') : sprintf( __('%sLog directory is NOT writable%s', 'event_espresso'), '<mark class="error"','</mark>' ) ;
+	}
+	/**
+	 *  Whether curl ro fsock works
+	 * @return string describing posting's status
+	 */
+	function get_remote_posting(){
+		$fsock_works = function_exists( 'fsockopen' );
+		$curl_works = function_exists( 'curl_init' );
+		if ( $fsock_works && $curl_works ) {
+			$status = __('Your server has fsockopen and cURL enabled.', 'event_espresso');
+		} elseif ( $fsock_works ) {
+			$status = __('Your server has fsockopen enabled, cURL is disabled.', 'event_espresso');
+		} elseif( $curl_works ) {
+			$status = __('Your server has cURL enabled, fsockopen is disabled.', 'event_espresso');
+		}else{
+			$status = __('Your server does not have fsockopen or cURL enabled - PayPal IPN and other scripts which communicate with other servers will not work. Contact your hosting provider.', 'event_espresso'). '</mark>';
+		}
+		return $status;
+
+	}
+	/**
 	 * Gets all the php.ini settings
 	 * @return array
 	 */
 	function get_php_ini_all(){
 		return ini_get_all();
-	}	
+	}
+	/**
+	 * Transforms the php.ini notation for numbers (like '2M') to an integer.
+	 *
+	 * @param type $size
+	 * @return int
+	 */
+	function let_to_num( $size ) {
+		$l 		= substr( $size, -1 );
+		$ret 	= substr( $size, 0, -1 );
+		switch( strtoupper( $l ) ) {
+			case 'P':
+				$ret *= 1024;
+			case 'T':
+				$ret *= 1024;
+			case 'G':
+				$ret *= 1024;
+			case 'M':
+				$ret *= 1024;
+			case 'K':
+				$ret *= 1024;
+		}
+		return $ret;
+	}
 }

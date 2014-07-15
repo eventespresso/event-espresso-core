@@ -416,4 +416,17 @@ abstract class EE_PMT_Base{
 	public function get_gateway(){
 		return $this->_gateway;
 	}
+	/**
+	 * @return string html for the link to a help tab
+	 */
+	public function get_help_tab_link(){
+		return EEH_Template::get_help_tab_link( $this->get_help_tab_name() );
+	}
+	/**
+	 * Returns the name of the help tab for this PMT
+	 * @return string
+	 */
+	public function get_help_tab_name(){
+		return 'ee_' . strtolower( $this->system_name() ) . '_help_tab';
+	}
 }

@@ -87,8 +87,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
 		$item_num = 1;
-		if($payment->amount() == $transaction->total()){
-			$total_line_item = $transaction->total_line_item();
+		$total_line_item = $transaction->total_line_item();
+		if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 			//this payment is for the entire transaction,
 			//so let's show all the line items
 			foreach($total_line_item->get_items() as $line_item){
@@ -102,7 +102,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			}
 		}else{
 			//this is a partial payment, so we can't really show all the line items
-			$redirect_args['item_name_' . $item_num] = substr(sprintf(__("Amoutn owing for registration %s", "event_espresso"),$primary_registrant->reg_code()));
+			$redirect_args['item_name_' . $item_num] = substr( sprintf(__("Payment for registration %s", "event_espresso"),$primary_registrant->reg_code()), 0, 127 );
 			$redirect_args['amount_' . $item_num] = $payment->amount();
 			$item_num++;
 
@@ -181,7 +181,6 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 
 		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $transaction->total_line_item()->get_total_tax() ){
 			echo "taxes didnt mathc";
-
 			$this->_line_item->set_total_tax_to( $transaction->total_line_item, floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
 			//@todo: possibly update the line items with a new tax
 		}

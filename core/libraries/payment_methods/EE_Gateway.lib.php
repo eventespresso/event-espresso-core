@@ -211,4 +211,35 @@ abstract class EE_Gateway{
 	public function currencies_supported(){
 		return $this->_currencies_supported;
 	}
+
+	/**
+	 * Returns what a simpl summing of items and taxes for this transaction. This
+	 * can be used to determine if some more complex line items, like promotions,
+	 * surcharges, or cancellations occurred (in which case we might want to forget
+	 * about creating an itemized list of purchases and instead only send the total due)
+	 * @param EE_Line_Item $total_line_item
+	 * @return float
+	 */
+	protected function _sum_items_and_taxes( EE_Transaction  $transaction){
+		$total_line_item = $transaction->total_line_item();
+		$total = 0;
+		foreach($total_line_item->get_items() as $item_line_item ){
+			$total += $item_line_item->total();
+		}
+		foreach($total_line_item->tax_descendants() as $tax_line_item ){
+			$total += $tax_line_item->total();
+		}
+		return $total;
+	}
+
+	/**
+	 * Determines whether or not we can easily itemize the transaction using only
+	 * items and taxes (ie, no promotions or surcharges or cancellations needed)
+	 * @param EEI_Payment $payment
+	 * @return boolean
+	 */
+	protected function _can_easily_itemize_transaction_for( EEI_Payment $payment ){
+		return  $this->_sum_items_and_taxes( $payment->transaction() ) == $payment->transaction()->total() &&
+					$payment->amount() == $payment->transaction()->total();
+	}
 }

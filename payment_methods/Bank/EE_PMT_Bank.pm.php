@@ -20,13 +20,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEPMT_Bank
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Bank extends EE_PMT_Base{
-	const help_tab_name = 'ee_bank_help';
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Bank", 'event_espresso');
 		parent::__construct($pm_instance);
@@ -39,24 +38,24 @@ class EE_PMT_Bank extends EE_PMT_Base{
 		return new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'page_title'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Title %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Title %s", "event_espresso"),  $this->get_help_tab_link()),
 					'default'=>  __("Electronic Funds Transfers", 'event_espresso')
 				)),
 				'payment_instructions'=>new EE_Text_Area_Input(array(
-					'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
 					'default'=>  __("Please initiate an electronic payment using the bank information below. Payment must be received within 48 hours of event date.", 'event_espresso')
 				)),
 				'name_on_bank_account'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Name on Bank Account %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Name on Bank Account %s", "event_espresso"),  $this->get_help_tab_link()),
 				)),
 				'bank_account_number'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Bank Account # %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Bank Account # %s", "event_espresso"),  $this->get_help_tab_link()),
 				)),
 				'bank_name'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Bank Name %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Bank Name %s", "event_espresso"),  $this->get_help_tab_link()),
 				)),
 				'bank_address'=>new EE_Text_Area_Input(array(
-					'html_label_text'=>  sprintf(__("Bank Address %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Bank Address %s", "event_espresso"),  $this->get_help_tab_link()),
 				))
 			),
 			'exclude'=>array('PMD_debug_mode')
@@ -65,17 +64,17 @@ class EE_PMT_Bank extends EE_PMT_Base{
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
-	 * @return array 
+	 * @return array
 	 */
 	public function help_tabs_config(){
 		return array(
-			self::help_tab_name => array(
+			$this->get_help_tab_name() => array(
 						'title' => __('Bank Draft Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_bank_draft'
 						),
 		);
 	}
-	
+
 	/**
 	 * For adding any html output ab ove the payment overview.
 	 * Many gateways won't want ot display anything, so this function just returns an empty string.
@@ -97,7 +96,7 @@ class EE_PMT_Bank extends EE_PMT_Base{
 							'bank_address'=>''
 							),
 						$extra_meta_for_payment_method);
-		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'bank_payment_details_content.template.php', 
+		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'bank_payment_details_content.template.php',
 				$template_vars,
 				true);
 	}

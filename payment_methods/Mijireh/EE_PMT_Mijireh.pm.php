@@ -26,7 +26,6 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Mijireh extends EE_PMT_Base{
-	const help_tab_name = 'ee_mijireh_help';
 	public function __construct($pm_instance = NULL) {
 		require_once($this->file_folder().'EEG_Mijireh.gateway.php');
 		$this->_gateway = new EEG_Mijireh();
@@ -41,7 +40,7 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 	 */
 	public function help_tabs_config(){
 		return array(
-			self::help_tab_name => array(
+			$this->get_help_tab_name() => array(
 						'title' => __('Mijireh Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_mijireh'
 						),
@@ -51,7 +50,7 @@ class EE_PMT_Mijireh extends EE_PMT_Base{
 		$form = new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'access_key'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Mijireh Access Key %s", 'event_espresso'),  EEH_Template::get_help_tab_link(self::help_tab_name))
+					'html_label_text'=>  sprintf(__("Mijireh Access Key %s", 'event_espresso'),  $this->get_help_tab_link())
 				)),
 			),
 //			'after_form_content_template'=>$this->file_folder().DS.'templates'.DS.'mijireh_settings_after_form.template.php',

@@ -20,13 +20,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_PMT_Invoice
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Invoice extends EE_PMT_Base{
-	const help_tab_name = 'ee_invoice_help';
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Invoice", 'event_espresso');
 		parent::__construct($pm_instance);
@@ -57,16 +56,16 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 		$form =  new EE_Payment_Method_Form(array(
 				'extra_meta_inputs'=>array(
 					$pdf_stylesheet_input_name=>new EE_Select_Input(array('simple.css'), array(
-						'html_label_text'=>  sprintf(__("PDF Stylesheet %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
-						'html_help_text'=>  __("Load a custom/pre-made style sheet 
+						'html_label_text'=>  sprintf(__("PDF Stylesheet %s", "event_espresso"),  $this->get_help_tab_link()),
+						'html_help_text'=>  __("Load a custom/pre-made style sheet
 	to change the look of your invoices.", 'event_espresso'),
 					)),
 					'pdf_instructions'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("PDF Instructions %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+						'html_label_text'=>  sprintf(__("PDF Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  __("Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of event date.", 'event_espresso')
 					)),
 					'pdf_logo_image'=>new EE_Admin_File_Uploader_Input(array(
-						'html_label_text'=>  sprintf(__("PDF Logo Image %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+						'html_label_text'=>  sprintf(__("PDF Logo Image %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  EE_Config::instance()->organization->logo_url,
 						'html_help_text'=>  __("(Logo for the top left of the invoice)", 'event_espresso'),
 					)),
@@ -74,19 +73,19 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 						'html_help_text'=>  __("Show as an option on your payment page?", 'event_espresso'),
 					)),
 					'page_title'=>new EE_Text_Input(array(
-						'html_label_text'=>  sprintf(__("Payment Page Title %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+						'html_label_text'=>  sprintf(__("Payment Page Title %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  __("Invoice Payments", 'event_espresso')
 					)),
 					'page_instructions'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+						'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=>  __("Please send Invoice to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
 					)),
 					'page_payable_to'=>new EE_Text_Input(array(
-						'html_label_text'=>  sprintf(__("Payable To %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+						'html_label_text'=>  sprintf(__("Payable To %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=> $organization_name
 					)),
 					'page_address_payable'=>new EE_Text_Area_Input(array(
-						'html_label_text'=>  sprintf(__("Address Payable %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+						'html_label_text'=>  sprintf(__("Address Payable %s", "event_espresso"),  $this->get_help_tab_link()),
 						'default'=> $default_address,
 					)),
 				),
@@ -99,14 +98,14 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 		$form->add_subsections(array('header2'=>new EE_Form_Section_HTML_From_Template('payment_methods/Invoice/templates/invoice_settings_header_gateway.template.php')),$show_on_page_name);
 		return $form;
 	}
-	/**	
+	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
-	 * @return array 
+	 * @return array
 	 */
 	public function help_tabs_config(){
 		return array(
-			self::help_tab_name => array(
+			$this->get_help_tab_name() => array(
 						'title' => __('Invoice Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_invoice'
 						),
@@ -133,7 +132,7 @@ class EE_PMT_Invoice extends EE_PMT_Base{
 							'page_address_payable'=>'',
 							),
 						$extra_meta_for_payment_method);
-		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'invoice_payment_details_content.template.php', 
+		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'invoice_payment_details_content.template.php',
 				$template_vars,
 				true);
 	}
