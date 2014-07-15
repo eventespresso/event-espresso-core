@@ -56,7 +56,7 @@ class EEG_Mijireh extends EE_Offsite_Gateway{
 			foreach($total_line_item->get_items() as $line_item){
 				$items[] = array(
 					'name'=>$line_item->name(),
-					'price'=>$this->format_currency($line_item->total()),
+					'price'=>$this->format_currency($line_item->unit_price()),
 					'sku'=>$line_item->code(),
 					'quantity'=>$line_item->quantity()
 				);

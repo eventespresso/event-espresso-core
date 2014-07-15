@@ -62,7 +62,9 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 
 	public function setUp(){
 		$return_value = parent::setUp();
+		//EEG_Paypal_Pro uses $_SERVER at some point, so we need to pretend this is a regular request
 		$this->go_to( 'http://localhost/' );
+		//just set a random address
 		$_SERVER[ 'REMOTE_ADDR' ] = '192.0.0.1';
 		add_filter('FHEE__EEG_Paypal_Pro__CurlRequest__CURLOPT_VERBOSE', '__return_false' );
 		return $return_value;
