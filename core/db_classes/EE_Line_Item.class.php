@@ -627,7 +627,9 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Gets the final total on this item, taking taxes into account.
-	 * Has the side-effect of saving the total as it was just calculated
+	 * Has the side-effect of setting the sub-total as it was just calculated.
+	 * If this is used on a grand-total line item, also updates the trasnaction's
+	 * TXN_total
 	 * @return float
 	 */
 	function recalculate_total_including_taxes() {
@@ -635,6 +637,9 @@ class EE_Line_Item extends EE_Base_Class {
 		$tax_total = $this->recalculate_taxes_and_tax_total();
 		$total = $pre_tax_total + $tax_total;
 		$this->set_total( $total );
+		if( $this->type() == EEM_Line_Item::type_total && $this->transaction() instanceof EE_Transaction ){
+			$this->transaction()->set_total( $total );
+		}
 		return $total;
 	}
 

@@ -424,6 +424,14 @@ interface EEI_Line_Item{
 	 * @return float
 	 */
 	function get_total_tax();
+
+	/**
+	 * Saves this line item to the DB, and recursively saves its descendants.
+	 * Also sets the transaction on this line item and all its descendants before saving
+	 * @param int $txn_id if none is provided, assumes $this->TXN_ID()
+	 * @return int count of items saved
+	 */
+	public function save_this_and_descendants_to_txn( $txn_id = NULL );
 }
 
 interface EEI_Registration{
