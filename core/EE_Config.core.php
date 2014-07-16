@@ -375,7 +375,7 @@ final class EE_Config {
 			// TEST #1 : check that section was set
 			if ( in_array( 1, $tests_to_run ) && empty( $section )) {
 				if ( $display_errors ) {
-					throw new EE_Error( sprintf( __( 'No configuration section has been provided.', 'event_espresso' ), $section ));
+					throw new EE_Error( sprintf( __( 'No configuration section has been provided while attempting to save "%s".', 'event_espresso' ), $config_class ));
 				}
 				return FALSE;
 			}
@@ -525,17 +525,31 @@ final class EE_Config {
 		if ( ! $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 1, 2, 3, 4, 5, 9 ))) {
 			return FALSE;
 		}
+		$config_option_name = $this->_generate_config_option_name( $section, $name );
 		// check if config object has been added to db by seeing if config option name is in $this->_config_option_names array
-		if ( ! in_array( $this->_generate_config_option_name( $section, $name ), $this->_config_option_names  )) {
+		if ( ! in_array( $config_option_name, $this->_config_option_names  )) {
 			// save new config to db
 			return $this->set_config( $section, $name, $config_class, $config_obj );
 		} else {
-			// update wp-option for this config class.
-			if ( update_option( $this->_generate_config_option_name( $section, $name ), $config_obj )) {
+			// first check if the record already exists
+			$existing_config = get_option( $config_option_name );
+			// just return if db record is already up to date
+			if ( $existing_config == $config_obj ) {
+				$this->{$section}->{$name} = $config_obj;
+				return TRUE;
+			} else if ( update_option( $config_option_name, $config_obj )) {
+				// update wp-option for this config class
 				$this->{$section}->{$name} = $config_obj;
 				return $this->update_espresso_config();
 			} else {
-				EE_Error::add_error( sprintf( __( 'The "%s" was not updated in the database.', 'event_espresso' ), $config_class ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					sprintf(
+						__( 'The "%s" object stored at"%s" was not successfully updated in the database.', 'event_espresso' ),
+						$config_class,
+						'EE_Config->' . $section . '->' . $name
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 				return FALSE;
 			}
 		}

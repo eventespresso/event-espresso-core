@@ -977,6 +977,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			$this->_category->category_identifier = $term->slug;
 			$this->_category->category_desc = $term->description;
 			$this->_category->id = $term->term_id;
+			$this->_category->parent = $term->parent;
 		}
 	}
 
@@ -985,7 +986,8 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	private function _set_empty_category_object() {
 		$this->_category = new stdClass();
-		$this->_category->id = $this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc = '';
+		$this->_category->category_name = $this->_category->category_identifier = $this->_category->category_desc  = '';
+		$this->_category->id = $this->_category->parent = 0;
 	}
 
 
@@ -1011,7 +1013,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_set_category_object();
 		$id = !empty($this->_category->id) ? $this->_category->id : '';
 
-		$delete_action = $this->_category->category_identifier == 'uncategorized' ? FALSE : 'delete_category';
+		$delete_action = 'delete_category';
 
 		$redirect = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'category_list' ), $this->_admin_base_url );
 
@@ -1031,12 +1033,29 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'class' => 'my_editor_custom'
 		);
 		$_wp_editor = $this->_generate_admin_form_fields( $editor_args, 'array' );
+
+		$all_terms = get_terms( array('espresso_venue_categories' ), array( 'hide_empty' => 0, 'exclude' => array( $this->_category->id ) ) );
+
+		//setup category select for term parents.
+		$category_select_values[] = array(
+			'text' => __('No Parent', 'event_espresso'),
+			'id' => 0
+			);
+		foreach ( $all_terms as $term ) {
+			$category_select_values[] = array(
+				'text' => $term->name,
+				'id' => $term->term_id
+				);
+		}
+
+		$category_select = EEH_Form_Fields::select_input( 'category_parent', $category_select_values, $this->_category->parent );
 		$template_args = array(
 			'category' => $this->_category,
+			'category_select' => $category_select,
 			'unique_id_info_help_link' => $this->_get_help_tab_link('unique_id_info'),
 			'category_desc_editor' =>  $_wp_editor['category_desc']['field'],
-			'disable' => $this->_category->category_identifier == 'uncategorized' ? ' disabled' : '',
-			'disabled_message' => $this->_category->category_identifier == 'uncategorized' ? TRUE : FALSE
+			'disable' => '',
+			'disabled_message' =>FALSE
 			);
 		$template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
 		return EEH_Template::display_template($template, $template_args, TRUE );
@@ -1085,17 +1104,14 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 	private function _insert_category( $update = FALSE ) {
 		$cat_id = $update ? $this->_req_data['VEN_CAT_ID'] : '';
-		$category_name= $this->_req_data['category_name'];
-		$category_identifier = $this->_req_data['category_identifier'];
-		$category_desc= $this->_req_data['category_desc'];
-
-
+		$category_name= isset( $this->_req_data['category_name'] ) ? $this->_req_data['category_name'] : '';
+		$category_desc= isset( $this->_req_data['category_desc'] ) ? $this->_req_data['category_desc'] : '';
+		$category_parent = isset( $this->_req_data['category_parent'] ) ? $this->_req_data['category_parent'] : 0;
 
 		$term_args=array(
 			'name'=>$category_name,
-			'slug'=>$category_identifier,
 			'description'=>$category_desc,
-			//'parent'=>$espresso_wp_user //eventually this will be added.
+			'parent'=>$category_parent
 		);
 
 		$insert_ids = $update ? wp_update_term( $cat_id, 'espresso_venue_categories', $term_args ) :wp_insert_term( $category_name, 'espresso_venue_categories', $term_args );

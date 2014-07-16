@@ -52,7 +52,7 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 			'singular' => __('event category', 'event_espresso' ),
 			'plural' => __('event categories', 'event_espresso' ),
 			'ajax' => TRUE, //for now,
-			'screen' => $this->_admin_page->get_current_screen()->id 
+			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
 		$this->_columns = array(
@@ -139,8 +139,8 @@ class Event_Categories_Admin_List_Table extends EE_Admin_List_Table {
 			'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Category', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
 
-		if ( $item->get_first_related('Term')->get('slug') !== 'uncategorized' )
-			$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Category', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
+
+		$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Category', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
 
 		$content = '<strong><a class="row-title" href="' . $edit_link . '">' . $item->get_first_related('Term')->get('name') . '</a></strong>';
 		$content .= $this->row_actions($actions);
