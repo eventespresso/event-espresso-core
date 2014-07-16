@@ -51,6 +51,7 @@ class EEG_Aim extends EE_Onsite_Gateway{
 		"relay_response" => "FALSE",
 		"encap_char" => "|",
 	);
+	private $_additional_line_items = array();
 	/**
 	 * A list of all fields in the AIM API.
 	 * Used to warn user if they try to set a field not offered in the API.
@@ -95,7 +96,8 @@ class EEG_Aim extends EE_Onsite_Gateway{
 			$order_description = '';
 			$primary_registrant = $transaction->primary_registration();
 			//if we're are charging for the full amount, show the normal line items
-			if( $transaction->total() == $payment->amount()){//client code specified an amount
+			//and the itemized total adds up properly
+			if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 				$total_line_item = $transaction->total_line_item();
 				foreach ($total_line_item->get_items() as $line_item) {
 					$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');

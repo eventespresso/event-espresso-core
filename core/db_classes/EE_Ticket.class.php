@@ -577,6 +577,19 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class {
 
 
 	/**
+	 * Sets sell until time
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $time a string representation of the sell until time (ex 9am or 7:30pm)
+	 */
+	function set_end_time( $time ) {
+		$this->_set_time_for( $time, 'TKT_end_date' );
+	}
+
+
+
+	/**
 	 * Sets min
 	 * @param int $min
 	 * @return boolean

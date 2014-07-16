@@ -27,6 +27,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 class EEH_Formatter {
+	/**
+	 * Used by EEH_Formatter::nl() and EEH_Formatter::increase_indent()
+	 * @var int
+	 */
+	static $tab_level = 0;
 
 	/**
 	 * _admin_format_content
@@ -123,21 +128,27 @@ class EEH_Formatter {
 		}
 	}
 
-
-
 	/**
 	 * return a newline and tabs ("nl" stands for "new line")
-	 * @param int $indent
-	 * @return string - newline character plus # of indents passed (can be + or -)
-	 */
+	 * @param int $indent the number of tabs to ADD to the current indent (can be negative or zero)
+	* @return string - newline character plus # of indents passed (can be + or -)
+	*/
    public static function nl( $indent = 0 ) {
-	   static $tabs = 0;
-	   $tabs += $indent;
+	   self::$tab_level += $indent;
 	   $html = EENL;
-	   for ( $x = 0; $x <= $tabs; $x++ ) {
+	   for ( $x = 0; $x < self::$tab_level; $x++ ) {
 		   $html .= "\t";
 	   }
 	   return $html;
+   }
+   /**
+    * Changes the indents used in EEH_Formatter::nl. Often its convenient to change
+    * the indentation level without actually creating a new line
+    * @param int $ident_change can be negative to decrease the identation level
+    * @return void
+    */
+   public static function increase_indent( $ident_change ){
+	   self::$tab_level += $ident_change;
    }
 
 

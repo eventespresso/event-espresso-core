@@ -20,13 +20,12 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EEPMT_Check
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
  */
 class EE_PMT_Check extends EE_PMT_Base{
-	const help_tab_name = 'ee_check_help';
 	public function __construct($pm_instance = NULL) {
 		$this->_pretty_name = __("Check", 'event_espresso');
 		parent::__construct($pm_instance);
@@ -59,19 +58,19 @@ class EE_PMT_Check extends EE_PMT_Base{
 			return new EE_Payment_Method_Form(array(
 			'extra_meta_inputs'=>array(
 				'check_title'=> new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Title %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Title %s", "event_espresso"),  $this->get_help_tab_link()),
 					'default'=>  __("Check/Money Order Payments", 'event_espresso'),
 				)),
 				'payment_instructions'=>new EE_Text_Area_Input(array(
-					'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Instructions %s", "event_espresso"),  $this->get_help_tab_link()),
 					'default'=> __("Please send Check/Money Order to the address below. Payment must be received within 48 hours of event date.", 'event_espresso')
 				)),
 				'payable_to'=>new EE_Text_Input(array(
-					'html_label_text'=>  sprintf(__("Payable To %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Payable To %s", "event_espresso"),  $this->get_help_tab_link()),
 					'default'=>$organization_name
 				)),
 				'address_to_send_payment'=>new EE_Text_Area_Input(array(
-					'html_label_text'=>  sprintf(__("Address Payable %s", "event_espresso"),  EEH_Template::get_help_tab_link(self::help_tab_name)),
+					'html_label_text'=>  sprintf(__("Address Payable %s", "event_espresso"),  $this->get_help_tab_link()),
 					'default'=>$default_address
 				)),
 			),
@@ -82,17 +81,17 @@ class EE_PMT_Check extends EE_PMT_Base{
 	/**
 	 * Adds the help tab
 	 * @see EE_PMT_Base::help_tabs_config()
-	 * @return array 
+	 * @return array
 	 */
 	public function help_tabs_config(){
 		return array(
-			self::help_tab_name => array(
+			$this->get_help_tab_name() => array(
 						'title' => __('Check Settings', 'event_espresso'),
 						'filename' => 'payment_methods_overview_check'
 						),
 		);
 	}
-	
+
 	/**
 	 * For adding any html output ab ove the payment overview.
 	 * Many gateways won't want ot display anything, so this function just returns an empty string.
@@ -112,7 +111,7 @@ class EE_PMT_Check extends EE_PMT_Base{
 							'address_to_send_payment'=>'',
 							),
 						$extra_meta_for_payment_method);
-		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'check_payment_details_content.template.php', 
+		return EEH_Template::display_template($this->_file_folder.'templates'.DS.'check_payment_details_content.template.php',
 				$template_vars,
 				true);
 	}

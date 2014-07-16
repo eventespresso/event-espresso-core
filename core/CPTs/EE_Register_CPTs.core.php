@@ -59,15 +59,13 @@ class EE_Register_CPTs {
 		// setup default terms in any of our taxonomies (but only if we're in admin).
 		// Why not added via register_actvation_hook?
 		// Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
+		// Keep in mind that this will READD these terms if they are deleted by the user.  Hence MUST use terms.
 		if ( is_admin() ) {
-			$this->set_initial_event_categories();
-			$this->set_initial_venue_categories();
-			$this->set_initial_event_types();
+			$this->set_must_use_event_types();
 		}
 		//set default terms
-		$this->set_default_term( 'espresso_event_categories', 'uncategorized', array('espresso_events') );
 		$this->set_default_term( 'espresso_event_type', 'single-event', array('espresso_events') );
-		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
+
 		// flush_rewrite_rules ?
 		if ( get_option( 'ee_flush_rewrite_rules', TRUE )) {
 			flush_rewrite_rules();
@@ -368,26 +366,7 @@ class EE_Register_CPTs {
 
 
 
-	function set_initial_event_categories() {
-		$term_details = array(
-			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized events', 'event_espresso') )
-			);
-		$this->set_initial_terms( 'espresso_event_categories', $term_details );
-	}
-
-
-
-	function set_initial_venue_categories() {
-		$term_details = array(
-			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized venues', 'event_espresso') )
-			);
-		$this->set_initial_terms( 'espresso_venue_categories', $term_details );
-	}
-
-
-
-
-	function set_initial_event_types() {
+	function set_must_use_event_types() {
 		$term_details = array(
 			'single-event' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: a party or two-day long workshop
 
@@ -405,19 +384,21 @@ class EE_Register_CPTs {
 			//'appointment' => array( __('Appointments', 'event_espresso'), __('Time slotted events where datetimes are generally in hours or minutes. For example, attendees can register for a single 15 minute or 1 hour time slot and this type of availability frequently reoccurs.', 'event_espresso') )
 
 			);
-		$this->set_initial_terms( 'espresso_event_type', $term_details );
+		$this->set_must_use_terms( 'espresso_event_type', $term_details );
 	}
 
 
 
 	/**
-	 * wrapper method for handling the setting up of initial terms in the db (if they don't already exist)
+	 * wrapper method for handling the setting up of initial terms in the db (if they don't already exist).
+	 *
+	 * Note this should ONLY be used for terms that always must be present.  Be aware that if an initial term is deleted then it WILL be recreated.
 	 * @param string $taxonomy     The name of the taxonomy
 	 * @param array  $term_details An aray of term details indexed by slug and containing Name of term, and description as the elements in the array
 	 *
 	 * @return void
 	 */
-	function set_initial_terms( $taxonomy, $term_details ) {
+	function set_must_use_terms( $taxonomy, $term_details ) {
 		$term_details = (array) $term_details;
 
 		foreach ( $term_details as $slug => $deets ) {

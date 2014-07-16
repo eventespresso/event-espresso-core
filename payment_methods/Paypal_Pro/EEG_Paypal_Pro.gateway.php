@@ -88,7 +88,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
 		$order_description  = sprintf(__("'Event Registrations from %s", "event_espresso"),get_bloginfo('name'));
-		if($transaction->total() == $payment->amount()){//charge for teh full amount. Show itemized list
+		if( $this->_can_easily_itemize_transaction_for( $payment ) ){//charge for teh full amount. Show itemized list
 			$total_to_pay = $transaction->total();
 			$item_num = 1;
 			$total_line_item = $transaction->total_line_item();
@@ -120,7 +120,9 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 			$item_amount = $total_line_item->get_items_total();
 			$tax_amount = $total_line_item->get_total_tax();
 		}else{
+			$order_items = array();
 			$total_to_pay = $payment->amount();
+			$item_amount = $total_to_pay;
 			$single_item_desc = sprintf(__("Partial payment of %s. Total paid to date: %s", "event_espresso"),$total_to_pay,$transaction->remaining());
 				$tax_amount = 0;
 				array_push($order_items,array(
@@ -365,7 +367,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 	private function _CURLRequest($Request) {
 		$EndPointURL = $this->_debug_mode ? 'https://api-3t.sandbox.paypal.com/nvp' : 'https://api-3t.paypal.com/nvp';
 		$curl = curl_init();
-		curl_setopt($curl, CURLOPT_VERBOSE, 1);
+		curl_setopt($curl, CURLOPT_VERBOSE, apply_filters('FHEE__EEG_Paypal_Pro__CurlRequest__CURLOPT_VERBOSE', TRUE ) );
 		curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($curl, CURLOPT_TIMEOUT, 60);
 		curl_setopt($curl, CURLOPT_URL, $EndPointURL);
