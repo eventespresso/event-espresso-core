@@ -263,8 +263,11 @@ abstract class  EE_Messages_Template_Pack {
 				}
 			}
 		}
+
+		$templates = apply_filters( 'FHEE__EE_Template_Pack___get_templates__templates', $templates, $messenger, $message_type, $this );
+
 		$this->_templates[$messenger->name][$message_type->name] = $templates;
-		return $templates;
+		 return $templates;
 	}
 
 
