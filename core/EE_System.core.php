@@ -129,7 +129,7 @@ final class EE_System {
 		// load a few helper files
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
-		EE_Registry::instance()->load_file( EE_CORE, 'EE_Deprecated.core.php' );
+		require_once EE_CORE . 'EE_Deprecated.core.php';
 
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
