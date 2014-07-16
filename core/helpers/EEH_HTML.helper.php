@@ -18,15 +18,6 @@ class EEH_HTML {
 	private static $_indent = 1;
 
 
-	/**
-	 * @param int    $indent
-	 * @return int
-	 */
-	public static function indent( $indent = 0 ) {
-		return EEH_HTML::$_indent += $indent;
-	}
-
-
 
 	/**
 	 * Generates an opening HTML <XX> tag and adds any passed attributes
@@ -41,12 +32,12 @@ class EEH_HTML {
 	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
 	 * @return string
 	 */
-	private static function _open_tag( $tag = 'div', $id = '', $class = '', $style = '', $content = '', $other_attributes = '' ) {
-		$attributes = ! empty( $id ) ? ' id="' . $id . '"' : '';
+	private static function _open_tag( $tag = 'div', $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		$attributes = ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
 		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
 		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
 		$attributes .= ! empty( $other_attributes ) ? ' ' . $other_attributes : '';
-		$html = EEH_Formatter::nl( EEH_HTML::indent( 0 )) . '<' . $tag . $attributes . '>' . EEH_Formatter::nl( EEH_HTML::indent( 1 ));
+		$html = EEH_HTML::nl() . '<' . $tag . $attributes . '>' . EEH_HTML::nl( 1 );
 		if ( ! empty( $content ) || $tag === 'p' ) {
 			$html .= $content;
 			$html .= EEH_HTML::_close_tag( $tag, $id, $class );
@@ -72,7 +63,7 @@ class EEH_HTML {
 		} else {
 			$comment = '';
 		}
-		return EEH_Formatter::nl( EEH_HTML::indent( -1 )) . '</' . $tag . '>' . $comment . EEH_Formatter::nl( EEH_HTML::indent( 0 ));
+		return EEH_HTML::nl( -1 ) . '</' . $tag . '>' . $comment . EEH_HTML::nl();
 	}
 
 
@@ -139,7 +130,7 @@ class EEH_HTML {
 	 * @return string
 	 */
 	public static function span( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
-		$attributes = ! empty( $id ) ? ' id="' . $id . '"' : '';
+		$attributes = ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
 		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
 		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
 		$attributes .= ! empty( $other_attributes ) ? ' ' . $other_attributes : '';
@@ -338,7 +329,7 @@ class EEH_HTML {
 	 * @return string
 	 */
 	public static function comment( $comment = '' ) {
-		return ! empty( $comment ) ? EEH_Formatter::nl(EEH_HTML::indent( 0 )) . '<!-- ' . $comment . ' -->' : '';
+		return ! empty( $comment ) ? EEH_HTML::nl() . '<!-- ' . $comment . ' -->' : '';
 	}
 
 
@@ -351,6 +342,34 @@ class EEH_HTML {
 	 */
 	public static function nbsp( $nmbr = 1 ) {
 		return str_repeat( "&nbsp;", $nmbr );
+	}
+
+
+
+	/**
+	 * sanitize_id
+	 * @param string $id
+	 * @return string
+	 */
+	public static function sanitize_id( $id = '' ) {
+		return sanitize_key( str_replace( ' ', '-', trim( $id )));
+
+	}
+
+
+
+	/**
+	 * return a newline and tabs ("nl" stands for "new line")
+	 * @param int $indent the number of tabs to ADD to the current indent (can be negative or zero)
+	 * @return string - newline character plus # of indents passed (can be + or -)
+	 */
+	public static function nl( $indent = 0 ) {
+		EEH_HTML::$_indent += $indent;
+		$html = EENL;
+		for ( $x = 0; $x < EEH_HTML::$_indent; $x++ ) {
+			$html .= "\t";
+		}
+		return $html;
 	}
 
 
