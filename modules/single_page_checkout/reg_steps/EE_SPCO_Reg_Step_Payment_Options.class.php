@@ -61,8 +61,10 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$payment_required = FALSE;
 		$sold_out_events = array();
 		$events_requiring_pre_approval = array();
+		$reg_count = 0;
 		// loop thru registrations to gather info
 		foreach ( $this->checkout->transaction->registrations() as $registration ) {
+			$reg_count++;
 			/** @var $registration EE_Registration */
 			if ( $registration->event()->is_sold_out() || $registration->event()->is_sold_out( TRUE )) {
 				// add event to list of events that are sold out
@@ -86,7 +88,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		} else if ( ! empty( $events_requiring_pre_approval )) {
 			$this->_events_requiring_pre_approval( $events_requiring_pre_approval );
 		} else if ( $payment_required ) {
-			$this->_display_payment_options();
+			$this->_display_payment_options( $reg_count );
 		} else {
 			$this->_no_payment_required();
 		}
@@ -175,16 +177,18 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 	/**
 	 * _display_payment_options
+	 * @param int $reg_count
 	 * @return string
 	 */
-	private function _display_payment_options() {
+	private function _display_payment_options( $reg_count = 0 ) {
 
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		EEH_Autoloader::register_line_item_display_autoloaders();
+		$Line_Item_Display = new EE_Line_Item_Display( 'spco' );
 
 		$template_args = array(
-			'revisit' 			=> $this->checkout->revisit,
-			'registrations' =>array(),
-			'ticket_count' 	=>array(),
+			'reg_count' 	=> $reg_count,
+			'transaction_details' 	=> $Line_Item_Display->display_line_item( $this->checkout->cart->get_grand_total() ),
+			'available_payment_methods' => array()
 		);
 
 		// build array of form options
@@ -244,11 +248,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * _default_hidden_inputs
 	 * @param string $selected_method_of_payment
 	 * @param bool   $no_payment_required
-	 * @return \EE_Hidden_Input[] array
+	 * @return \EE_Form_Section_Proper
 	 */
 	private function _default_hidden_inputs( $selected_method_of_payment = 'payments_closed', $no_payment_required = TRUE ) {
-
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 
 		//	<input id="reg-page-selected-method-of-payment" type="hidden" value="payments_closed" name="selected_method_of_payment">
 		//	<input type="hidden" id="reg-page-no-payment-required-payment_options" name="_reg-page-no-payment-required" value="1" />
@@ -281,6 +283,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		);
 
 	}
+
 
 
 
