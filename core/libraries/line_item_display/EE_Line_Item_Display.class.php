@@ -21,15 +21,17 @@ class EE_Line_Item_Display {
 	public function __construct( $context ) {
 		$context = strtolower( $context );
 		switch ( $context ) {
-			case 'spco':
-				$this->strategy = new EE_SPCO_Line_Item_Display_Strategy();
-				break;
-			case 'invoice':
+			case 'invoice' :
 				$this->strategy = new EE_Invoice_Line_Item_Display_Strategy();
 				break;
-			case 'receipt':
+			case 'receipt' :
 				$this->strategy = new EE_Receipt_Line_Item_Display_Strategy();
 				break;
+			case 'spco' :
+				$this->strategy = new EE_SPCO_Line_Item_Display_Strategy();
+				break;
+			default :
+				$this->strategy = new EE_Invoice_Line_Item_Display_Strategy();
 		}
 	}
 
