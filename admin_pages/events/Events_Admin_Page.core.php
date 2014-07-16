@@ -1909,7 +1909,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_set_category_object();
 		$id = !empty($this->_category->id) ? $this->_category->id : '';
 
-		$delete_action = $this->_category->category_identifier == 'uncategorized' ? FALSE : 'delete_category';
+		$delete_action = 'delete_category';
 
 		//custom redirect
 		$redirect = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'category_list'), $this->_admin_base_url );
@@ -1934,8 +1934,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'category' => $this->_category,
 			'unique_id_info_help_link' => $this->_get_help_tab_link('unique_id_info'),
 			'category_desc_editor' =>  $_wp_editor['category_desc']['field'],
-			'disable' => $this->_category->category_identifier == 'uncategorized' ? ' disabled' : '',
-			'disabled_message' => $this->_category->category_identifier == 'uncategorized' ? TRUE : FALSE
+			'disable' => '',
+			'disabled_message' => FALSE
 			);
 		$template = EVENTS_TEMPLATE_PATH . 'event_category_details.template.php';
 		return EEH_Template::display_template($template, $template_args, TRUE );
