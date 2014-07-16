@@ -1,6 +1,6 @@
 
 	<h4 id="reg-page-totals-hdr" class="">
-		<span class="drk-grey-text"><?php _e('Billable Registrations:', 'event_espresso'); ?></span> <?php echo $total_items;?>
+		<span class="drk-grey-text"><?php _e('Billable Registrations:', 'event_espresso'); ?></span> <?php echo $reg_count;?>
 	</h4>
 
 	<div class="spco-payment-info-dv">
@@ -15,6 +15,7 @@
 				</tr>
 			</thead>
 			<tbody>
+			<?php echo $transaction_details;?>
 <?php
 /*	$prev_ticket = NULL;
 	foreach ( $event_queue['items'] as $line_item => $item ) {
@@ -91,7 +92,7 @@
 		</table>
 	</div>
 
-	<input id="reg-page-selected-method-of-payment" type="hidden" value="<?php echo $selected_method_of_payment; ?>" name="selected_method_of_payment">
+	<?php echo $hidden_inputs; ?>
 	<div id="methods-of-payment">
 		<h3 id="select-method-of-payment-hdr"><?php echo apply_filters( 'FHEE__registration_page_payment_options__select_method_of_payment_hdr', __( 'Please select your method of payment:', 'event_espresso' )); ?></h3>
 		<?php
