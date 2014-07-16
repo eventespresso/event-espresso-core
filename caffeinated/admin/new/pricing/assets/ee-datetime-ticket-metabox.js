@@ -2330,8 +2330,8 @@ jQuery(document).ready(function($) {
 				return;
 
 		//if no space left then let's show a dialog with the message.
-		if ( ! data['max_input_vars_check']['has_space'] ) {
-			dialogHelper.displayModal().addContent( data['max_input_vars_check']['msg'] );
+		if ( ! data['max_input_vars_check'] !== '' ) {
+			dialogHelper.displayModal().addContent( data['max_input_vars_check'] );
 		}
 		return;
 	});
