@@ -178,12 +178,13 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 //		$this->_debug_log( "<hr>Payment is interpreted as $status, and the gateway's response set to '$gateway_response'");
 		//check if we've already processed this payment
-
-		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $transaction->total_line_item()->get_total_tax() ){
-			echo "taxes didnt mathc";
-			$this->_line_item->set_total_tax_to( $transaction->total_line_item, floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
-			//@todo: possibly update the line items with a new tax
+		if( $this->_paypal_shipping && floatval( $update_info[ 'mc_shipping' ] ) != 0 ){
+			$this->_line_item->add_unrelated_item( $transaction->total_line_item(), __('Shipping', 'event_espresso'), floatval( $update_info[ 'mc_shipping' ] ), __('Shipping charges calculated by Paypal', 'event_espresso') );
 		}
+		if( $this->_paypal_taxes && floatval( $update_info[ 'tax' ] ) != $transaction->total_line_item()->get_total_tax() ){
+			$this->_line_item->set_total_tax_to( $transaction->total_line_item(), floatval( $update_info['tax'] ), __( 'Taxes', 'event_espresso' ), __( 'Calculated by Paypal', 'event_espresso' ) );
+		}
+
 		if( ! empty($payment)){
 			//payment exists. if this has the exact same status and amount, don't bother updating. just return
 			if($payment->status() == $status && $payment->amount() == $update_info['mc_gross']){

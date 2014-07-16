@@ -463,6 +463,19 @@ interface EEHI_Line_Item{
 	 * @return EE_Line_Item the new tax created
 	 */
 	public function set_total_tax_to( EE_Line_Item $total_line_item, $amount, $name  = NULL, $description = NULL );
+
+	/**
+	 * Adds a simple item ( unrelated to any other model object) to the total line item,
+	 * in the correct spot in the line item tree.
+	 * @param EE_Line_Item $total_line_item
+	 * @param string $name
+	 * @param float $unit_price
+	 * @param string $description
+	 * @param int $quantity
+	 * @param boolean $taxable
+	 * @return boolean success
+	 */
+	public function add_unrelated_item( EE_Line_Item $total_line_item, $name, $unit_price, $description = '', $quantity = 1, $taxable = FALSE );
 }
 
 interface EEHI_Template{

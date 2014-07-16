@@ -163,16 +163,18 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 			'paypal_taxes' => TRUE,
 			'paypal_shipping' => TRUE
 		));
-		$t = $this->new_typical_transaction( array('TKT_price'=>20.00));
+		$t = $this->new_typical_transaction();
 		$p = $this->new_model_obj_with_dependencies( 'Payment', array('TXN_ID'=>$t->ID(), 'PMD_ID' => $ppm->ID(), 'PAY_amount' => $t->total() ) );
-		$total_line_item = $t->total_line_item();
+		$old_pretax_total = EEH_Line_Item::get_items_subtotal( $t->total_line_item() )->total();
+		$old_taxable_total = $t->total_line_item()->taxable_total();
+		$this->assertNotEmpty( $old_taxable_total );
 		$old_tax_total = $t->tax_total();
 		$this->assertNotEmpty( $old_tax_total );
 		//skip IPN validation with paypal
 		add_filter( 'FHEE__EEG_Paypal_Standard__validate_ipn__skip', '__return_true' );
 		$ipn_args = array (
 			'e_reg_url_link' => '1-203446311152995f326e9ca81b64c95b',
-			'mc_gross' => '30.80',
+			'mc_gross' => $t->total(),
 			'protection_eligibility' => 'Eligible',
 			'address_status' => 'confirmed',
 			'item_number1' => '',
@@ -233,10 +235,25 @@ class EE_PMT_Paypal_Standard_Test extends EE_UnitTestCase{
 			'auth' => 'A7v0XCv0MTRMLTC3ib4B4zYtTI7Wt-pU5StpnoQBIGsiMj5pXBoOr8z8kiKzYdNkeTmwiWW3xlus4rZhBUOqj6g',
 		  );
 		$ppg->handle_payment_update( $ipn_args, $t );
+		//check the new tax is correct
 		$this->assertNotEquals( $old_tax_total, $t->tax_total(), 'Its not necessarily wrong for the old tax to match the new tax; but if they match we can\'t be very sure the tax total was updated' );
 		$this->assertEquals( floatval( $ipn_args[ 'tax' ] ), $t->tax_total() );
+		$tax_line_items = EEH_Line_Item::get_taxes_subtotal( $t->total_line_item() )->children();
+		$this->assertEquals( 1, count( $tax_line_items ) );
+		$only_tax = array_shift( $tax_line_items );
+		$this->assertEquals( __( 'Taxes', 'event_espresso' ), $only_tax->name() );
 		$this->assertEquals( EEM_Payment::status_id_approved, $p->status() );
 		$this->assertEquals( $t->total(), $p->amount() );
+		//check that the shipping surcharge is correct
+		$items_subtotal = EEH_Line_Item::get_items_subtotal( $t->total_line_item() );
+		$items = $items_subtotal->children();
+		$first_item = array_shift( $items );
+		$this->assertEquals( 10, $first_item->total() );
+		$second_item = array_shift( $items);
+		$this->assertEquals( 8, $second_item->total() );
+		//EEH_Line_Item::visualize($t->total_line_item());
+		$this->assertEquals( $old_pretax_total + 8, $items_subtotal->total() );
+		//check that if we re-calculate all the prices everything is still the same
 	}
 
 

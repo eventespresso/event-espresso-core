@@ -339,7 +339,7 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Gets ALL the children of this line item (ie, all the parts that contribute towards this total).
-	 * @return array
+	 * @return EE_Line_Item[]
 	 */
 	public function children() {
 		if ( $this->ID() ) {
@@ -644,11 +644,10 @@ class EE_Line_Item extends EE_Base_Class {
 	 * Recursively goes through all the children and recalculates sub-totals EXCEPT for
 	 * tax-sub-totals (they're a an odd beast). Updates the 'total' on each line item according to either its
 	 * unit price * quantity or the total of all its children.
-	 * @param bool $include_taxable_items_only
 	 * @throws EE_Error
 	 * @return float
 	 */
-	function recalculate_pre_tax_total( $include_taxable_items_only = FALSE ) {
+	function recalculate_pre_tax_total( ) {
 		$total = 0;
 		//completely ignore tax sub-totals when calculating the pre-tax-total
 		if ( $this->is_tax_sub_total() ) {
@@ -657,11 +656,7 @@ class EE_Line_Item extends EE_Base_Class {
 			throw new EE_Error( sprintf( __( "Calculating the pretax-total on subline items doesn't make sense right now. You were trying to calculate it on %s", "event_espresso" ), d( $this ) ) );
 		} elseif ( $this->is_line_item() ) {
 			//we'll want to attach promotions here too. So maybe, if the line item has children, we'll need to take them into account too
-			if ( $include_taxable_items_only && !$this->is_taxable() ) { //if the item isn't taxable and we care, then don't include it
-				return 0;
-			} else {
-				$total = $this->unit_price() * $this->quantity();
-			}
+			$total = $this->unit_price() * $this->quantity();
 		} elseif ( $this->is_sub_total() || $this->is_total() ) {
 			//get the total of all its children
 			foreach ( $this->children() as $child_line_item ) {
@@ -670,7 +665,7 @@ class EE_Line_Item extends EE_Base_Class {
 					if ( $child_line_item->is_percent() ) {
 						$total += $total * $child_line_item->percent() / 100;
 					} else {
-						$total += $child_line_item->recalculate_pre_tax_total( $include_taxable_items_only );
+						$total += $child_line_item->recalculate_pre_tax_total();
 					}
 				}
 			}
@@ -690,7 +685,7 @@ class EE_Line_Item extends EE_Base_Class {
 		//get all taxes
 		$taxes = $this->tax_descendants();
 		//calculate the pretax total
-		$taxable_total = $this->recalculate_pre_tax_total( TRUE );
+		$taxable_total = $this->taxable_total();
 		$tax_total = 0;
 		foreach ( $taxes as $tax ) {
 			$total_on_this_tax = $taxable_total * $tax->percent() / 100;
@@ -825,30 +820,19 @@ class EE_Line_Item extends EE_Base_Class {
 
 	/**
 	 * Returns the amount taxable among this line item's children (or if it has no children,
-	 * how much of it is taxable)
+	 * how much of it is taxable). Does not recalculate totals or subtotals
 	 * @return float
 	 */
 	function taxable_total() {
+		$total = 0;
 		if ( $this->children() ) {
-			$total = 0;
 			foreach ( $this->children() as $child_line_item ) {
-				if ( $child_line_item instanceof EE_Line_Item ) {
-					if ( $child_line_item->is_percent() && $this->is_taxable() ) {
-						$total += $total * $child_line_item->percent() / 100;
-					} elseif ( $child_line_item->is_taxable() ) {
-						$total += $child_line_item->recalculate_pre_tax_total();
-					}
+
+				if ( $child_line_item->type() == EEM_Line_Item::type_line_item && $child_line_item->is_taxable()) {
+					$total += $child_line_item->total();
+				}elseif( $child_line_item->type() == EEM_Line_Item::type_sub_total ){
+					$total += $child_line_item->taxable_total();
 				}
-			}
-		} else {
-			if ( $this->is_taxable() ) {
-				if ( $this->is_percent() ) {
-					$total = $this->total();
-				} else {
-					$total = $this->unit_price() * $this->quantity();
-				}
-			} else {
-				$total = 0;
 			}
 		}
 		return $total;
@@ -888,7 +872,6 @@ class EE_Line_Item extends EE_Base_Class {
 			}
 		}
 	}
-
 
 
 }
