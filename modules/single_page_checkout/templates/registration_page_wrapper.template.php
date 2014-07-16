@@ -8,9 +8,9 @@ if ( ! $empty_cart ) {
 	<div id="spco-steps-display-dv">
 	<?php
 		$step_nmbr = 1;
-		$total_steps = count( $reg_steps );
+		$total_steps = count( $reg_steps ) - 1;
 		foreach ( $reg_steps as $reg_step ) {
-			if ( $reg_step instanceof EE_SPCO_Reg_Step ) {
+			if ( $reg_step instanceof EE_SPCO_Reg_Step && $reg_step->slug() != 'finalize_registration' ) {
 				$slug = $reg_step->slug();
 				$step_display_dv_class = $reg_step->is_current_step() ? 'active-step' : 'inactive-step';
 		?>
@@ -36,7 +36,7 @@ if ( ! $empty_cart ) {
 	do_action( 'AHEE__SPCO__before_registration_steps' );
 	$step_nmbr = 1;
 	foreach ( $reg_steps as $reg_step ) {
-		if ( $reg_step instanceof EE_SPCO_Reg_Step ) {
+		if ( $reg_step instanceof EE_SPCO_Reg_Step && $reg_step->slug() != 'finalize_registration' ) {
 			$slug = $reg_step->slug();
 			echo '<!--***************  ' . strtoupper( $reg_step->name() ) . ' STEP 	***************-->';
 			echo do_action( 'AHEE__' . $slug . '__reg_step_start', $reg_step );
