@@ -56,18 +56,13 @@ class EE_Register_CPTs {
 		foreach ( $CPTs as $CPT_name =>  $CPT ) {
 			$this->register_CPT( $CPT_name, $CPT['singular_name'], $CPT['plural_name'], $CPT['args'] );
 		}
-		// setup default terms in any of our taxonomies (but only if we're in admin). 
-		// Why not added via register_actvation_hook?  
-		// Because it's possible that in future iterations of EE we may add new defaults for specialized taxonomies (think event_types) and regsiter_activation_hook only reliably runs when a user manually activates the plugin.
+		// setup must have terms in any of our taxonomies (but only if we're in admin).  Keep in mind that this will READD these terms if they are deleted by the user.  Hence MUST use terms.
 		if ( is_admin() ) {
-			$this->set_initial_event_categories();
-			$this->set_initial_venue_categories();
-			$this->set_initial_event_types();
+			$this->set_must_use_event_types();
 		}
 		//set default terms
-		$this->set_default_term( 'espresso_event_categories', 'uncategorized', array('espresso_events') );
 		$this->set_default_term( 'espresso_event_type', 'single-event', array('espresso_events') );
-		$this->set_default_term( 'espresso_venue_categories', 'uncategorized', array('espresso_venues') );
+
 		// flush_rewrite_rules ?
 		if ( get_option( 'ee_flush_rewrite_rules', TRUE )) {
 			flush_rewrite_rules();
@@ -75,7 +70,7 @@ class EE_Register_CPTs {
 		}
 		//hook into save_post so that we can make sure that the default terms get saved on publish of registered cpts IF they don't have a term for that taxonomy set.
 		add_action('save_post', array( $this, 'save_default_term' ), 100, 2 );
-		
+
 	}
 
 
@@ -88,7 +83,7 @@ class EE_Register_CPTs {
 	 *  @access 	public
 	 *  @return 	array
 	 */
-	public static function get_taxonomies(){		
+	public static function get_taxonomies(){
 		// define taxonomies
 		return array(
 			'espresso_event_categories' => array(
@@ -116,7 +111,7 @@ class EE_Register_CPTs {
 					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
 					'hierarchical'=>true
 				))
-			);		
+			);
 	}
 
 
@@ -129,7 +124,7 @@ class EE_Register_CPTs {
 	 *  @access 	public
 	 *  @return 	array
 	 */
-	public static function get_CPTs(){		
+	public static function get_CPTs(){
 		// define CPTs
 		return array(
 			'espresso_events' => array(
@@ -189,7 +184,7 @@ class EE_Register_CPTs {
 
 
 	/**
-	 * This basically goes through the CPT array and returns only CPT's that have the ['args']['public'] option set as false 
+	 * This basically goes through the CPT array and returns only CPT's that have the ['args']['public'] option set as false
 	 * @return array
 	 */
 	public static function get_private_CPTs() {
@@ -209,14 +204,14 @@ class EE_Register_CPTs {
 	/**
 	 * Registers a custom taxonomy. Should be called before registering custom post types,
 	 * otherwise you should link the taxonomy to the custom post type using 'register_taxonomy_for_object_type'.
-	 * 
+	 *
 	 * @param string $taxonomy_name, eg 'books'
 	 * @param string $singular_name internationalized singular name
 	 * @param type $plural_name internationalized plural name
 	 * @param type $override_args like $args on http://codex.wordpress.org/Function_Reference/register_taxonomy
 	 */
 	function register_taxonomy($taxonomy_name, $singular_name, $plural_name, $override_args = array()){
-		
+
 		$args = array(
 		'hierarchical'      => true,
 		'labels'            => array(
@@ -229,19 +224,19 @@ class EE_Register_CPTs {
 		'show_in_nav_menus' => false
 		//'rewrite'           => array( 'slug' => 'genre' ),
 	);
-		
+
 	  if($override_args){
 		  if(isset($override_args['labels'])){
 			  $labels = array_merge($args['labels'],$override_args['labels']);
 			  $args['labels'] = $labels;
 		  }
 		  $args = array_merge($args,$override_args);
-		  
+
 	  }
 		register_taxonomy($taxonomy_name,null, $args);
 	}
-	
-	
+
+
 	/**
 	 * Registers a new custom post type. Sets default settings given only the following params.
 	 *
@@ -274,18 +269,18 @@ class EE_Register_CPTs {
 		'labels' => $labels,
 		'public' => true,
 		'publicly_queryable' => true,
-		'show_ui' => false, 
-		'show_in_menu' => false, 
+		'show_ui' => false,
+		'show_in_menu' => false,
 		'show_in_nav_menus' => false,
 		'query_var' => true,
 		'rewrite' => apply_filters( 'FHEE__EE_Register_CPTs__register_CPT__rewrite', array( 'slug' => sanitize_title($plural_name) ), $post_type ),
 		'capability_type' => 'post',
-		'has_archive' => true, 
+		'has_archive' => true,
 		'hierarchical' => true,
 		'menu_position' => null,
 		'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'custom-fields', 'comments' )
-	  ); 
-	  
+	  );
+
 	  if($override_args){
 		  if(isset($override_args['labels'])){
 			  $labels = array_merge($args['labels'],$override_args['labels']);
@@ -300,26 +295,7 @@ class EE_Register_CPTs {
 
 
 
-	function set_initial_event_categories() {
-		$term_details = array(
-			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized events', 'event_espresso') )
-			);
-		$this->set_initial_terms( 'espresso_event_categories', $term_details );
-	}
-
-
-
-	function set_initial_venue_categories() {
-		$term_details = array(
-			'uncategorized' => array( __('Uncategorized', 'event_espresso'), __('All uncategorized venues', 'event_espresso') )
-			);
-		$this->set_initial_terms( 'espresso_venue_categories', $term_details );
-	}
-
-
-
-
-	function set_initial_event_types() {
+	function set_must_use_event_types() {
 		$term_details = array(
 			'single-event' => array( __('Single Event', 'event_espresso'), __('A single event that spans one or more consecutive days. Attendee\'s register for the first date-time only', 'event_espresso') ), //example: a party or two-day long workshop
 
@@ -337,19 +313,21 @@ class EE_Register_CPTs {
 			//'appointment' => array( __('Appointments', 'event_espresso'), __('Time slotted events where datetimes are generally in hours or minutes. For example, attendees can register for a single 15 minute or 1 hour time slot and this type of availability frequently reoccurs.', 'event_espresso') )
 
 			);
-		$this->set_initial_terms( 'espresso_event_type', $term_details );
+		$this->set_must_use_terms( 'espresso_event_type', $term_details );
 	}
 
 
 
 	/**
-	 * wrapper method for handling the setting up of initial terms in the db (if they don't already exist)
+	 * wrapper method for handling the setting up of initial terms in the db (if they don't already exist).
+	 *
+	 * Note this should ONLY be used for terms that always must be present.  Be aware that if an initial term is deleted then it WILL be recreated.
 	 * @param string $taxonomy     The name of the taxonomy
 	 * @param array  $term_details An aray of term details indexed by slug and containing Name of term, and description as the elements in the array
 	 *
 	 * @return void
 	 */
-	function set_initial_terms( $taxonomy, $term_details ) {
+	function set_must_use_terms( $taxonomy, $term_details ) {
 		$term_details = (array) $term_details;
 
 		foreach ( $term_details as $slug => $deets ) {
@@ -383,7 +361,7 @@ class EE_Register_CPTs {
 	 * hooked into the wp 'save_post' action hook for setting our default terms found in the $_default_terms property
 	 * @param  int    $post_id ID of CPT being saved
 	 * @param  object $post    Post object
-	 * @return void          
+	 * @return void
 	 */
 	function save_default_term( $post_id, $post ) {
 		if ( empty( $this->_default_terms ) )
@@ -406,9 +384,9 @@ class EE_Register_CPTs {
 		}
 	}
 
-	
-	
-	
+
+
+
 
 }
 
