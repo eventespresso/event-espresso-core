@@ -57,10 +57,10 @@ abstract class EE_SPCO_Reg_Step {
 
 	/**
 	 * 	$_success_message - text to display upon successful form submission
-	 * 	@access protected
+	 * 	@access private
 	 *	@var string $_success_message
 	 */
-	protected $_success_message = NULL;
+	private $_success_message = NULL;
 
 	/**
 	 * 	$_valid_data - the normalized and validated data for this step
@@ -82,7 +82,6 @@ abstract class EE_SPCO_Reg_Step {
 	 *	@var EE_Checkout $checkout
 	 */
 	public $checkout = NULL;
-
 
 
 
@@ -154,7 +153,28 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function success_message() {
-		return ! empty( $this->_success_message ) ? $this->_success_message : sprintf( __('%s has been successfully submitted', 'event_espresso'), $this->_name );
+//		return ! empty( $this->_success_message ) ? $this->_success_message : sprintf( __('%s successfully submitted', 'event_espresso'), $this->_name );
+		return $this->_success_message;
+	}
+
+
+
+	/**
+	 * _set_success_message
+	 * @param string $success_message
+	 */
+	protected function _set_success_message( $success_message ) {
+		$this->_success_message = $success_message;
+	}
+
+
+
+	/**
+	 * _reset_success_message
+	 * @return void
+	 */
+	protected function _reset_success_message() {
+		$this->_success_message = '';
 	}
 
 
