@@ -613,8 +613,9 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_display_preview_message() {
 		$this->_set_message_template_group();
-		if ( isset( $this->_req_data['messenger'] ) )
+		if ( isset( $this->_req_data['messenger'] ) ) {
 			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
+		}
 
 		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_variation( $this->_template_pack, TRUE, 'preview', $this->_variation ) );
 	}
@@ -1675,7 +1676,8 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		if ( !empty( $this->_message_template_group ) )
 			return; //get out if this is already set.
 
-		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
+		$GRP_ID =  ! empty( $this->_req_data['GRP_ID'] ) ? absint( $this->_req_data['GRP_ID'] ) : FALSE;
+		$GRP_ID = empty( $GRP_ID ) && ! empty( $this->_req_data['id'] ) ? $this->_req_data['id'] : $GRP_ID;
 
 		//let's get the message templates
 		$MTP = EEM_Message_Template_Group::instance();

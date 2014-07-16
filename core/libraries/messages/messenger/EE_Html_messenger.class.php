@@ -257,7 +257,7 @@ class EE_Html_messenger extends EE_messenger  {
 			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
 			'base_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'base', $this->_variation ),
 			'print_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'print', $this->_variation ),
-			'main_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'main', $this->_variation ),
+			'main_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'default', $this->_variation ),
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
 		$this->_deregister_wp_hooks();

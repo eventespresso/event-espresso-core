@@ -101,10 +101,10 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 
 
 		//check that no reserved variation names are in use and also checks if there are already existing variation names for a given template pack.  The former will throw an error.  The latter will remove the conflicting variation name but still register the others and will add EE_Error notice.
-		$this->_verify_variations( $variation_ref, $validated );
+		$validated = self::_verify_variations( $variation_ref, $validated );
 		self::$_registry[$variation_ref] = $validated;
 
-		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variations', array( 'EE_Register_Messages_Template_Variations', 'get_variations' ), 10, 2 );
+		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variations', array( 'EE_Register_Messages_Template_Variations', 'get_variations' ), 10, 3 );
 		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( 'EE_Register_Messages_Template_Variations', 'get_variation' ), 10, 7 );
 	}
 
@@ -122,7 +122,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	 * @throws EE_Error
 	 * @return bool
 	 */
-	private function _verify_variations( $variation_ref, $validated_variations ) {
+	private static function _verify_variations( $variation_ref, $validated_variations ) {
 		foreach ( self::$_registry as $variation_ref => $settings ) {
 			if ( isset( $settings['variations']['default']['default'] ) ) {
 				throw new EE_Error(
@@ -131,12 +131,12 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 			}
 
 			//is there already a variation registered with a given variation slug?
-			foreach ( $settings['variations'] as $messenger => $template_packs  ) {
+			foreach ( $validated_variations['variations'] as $messenger => $template_packs  ) {
 				foreach ( $template_packs as $template_pack => $variations ) {
 					foreach( $variations as $slug => $label ) {
 						foreach ( self::$_registry as $registered_var => $reg_settings ) {
 							if ( isset( $reg_settings['variations'][$messenger][$template_pack][$slug] ) ) {
-								unset( $settings['variations'][$messenger][$template_pack][$slug] );
+								unset( $validated_variations['variations'][$messenger][$template_pack][$slug] );
 								EE_Error::add_error( sprintf( __('Unable to register the %s variation for the %s template pack with the %s messenger because a variation with this slug was already registered for this template pack and messenger by an addon using this key %s.', 'event_espresso' ), $label, $template_pack, $messenger, $registered_var  ) );
 							}
 						}
@@ -144,6 +144,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 				}
 			}
 		}
+		return $validated_variations;
 	}
 
 
@@ -165,16 +166,16 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	 *
 	 * @return string                    The path to the requested variation.
 	 */
-	public function get_variation( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
+	public static function get_variation( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
 
 		//so let's loop through our registered variations and then pull any details matching the request.
 		foreach ( self::$_registry as $registry_slug => $registry_settings ) {
-			foreach ( $registry_settings['variations'] as $mssgr => $vrtion_items ) {
+			foreach ( $registry_settings['variations'] as $mssgr => $variation_items ) {
 				if ( $mssgr !=  $messenger ) {
 					continue;
 				}
 
-				foreach ( $vrtion_items as $template_pack_name => $vrtions ) {
+				foreach ( $variation_items as $template_pack_name => $vrtions ) {
 					if ( $template_pack_name !== $template_pack->dbref ) {
 						continue;
 					}
@@ -211,25 +212,24 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	 * @since %VER%
 	 *
 	 * @param array                   $variations    The original contents for the template pack variations property.  @see $_variation property definition in EE_Messages_Template_Pack
+	 * @param string $messenger The messenger requesting the variations.
 	 * @param EE_Messages_Template_Pack $template_pack
 	 *
 	 * @return array                   new variations array (or existing one if nothing registered)
 	 */
-	public function get_variations( $variations, EE_Messages_Template_Pack $template_pack ) {
+	public static function get_variations( $variations, $messenger,  EE_Messages_Template_Pack $template_pack ) {
 		//first let's check if we even have registered variations and get out early.
 		if ( empty( self::$_registry ) ) {
 			return $variations;
 		}
 
-		//loop through incoming variations and see if there's anything to add.
-		foreach ( $variations as $messenger => $variations ) {
-			foreach ( self::$_registry as $registry_slug => $registry_settings ) {
-				if ( ! isset( $registry_settings['variations'][$messenger][$template_pack->dbref] ) ) {
-					continue;
-				}
-
-				$variations[$messenger] = array_merge( $registry_settings['variations'][$messenger][$template_pack->dbref], $variations[$messenger] );
+		//do we have any new variations for the given messenger and template packs
+		foreach ( self::$_registry as $registry_slug => $registry_settings ) {
+			if ( ! isset( $registry_settings['variations'][$messenger][$template_pack->dbref] ) ) {
+				continue;
 			}
+
+			$variations = array_merge( $registry_settings['variations'][$messenger][$template_pack->dbref], $variations );
 		}
 		return $variations;
 	}

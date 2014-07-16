@@ -148,7 +148,7 @@ class EE_Email_messenger extends EE_messenger  {
 
 
 	public function add_email_css( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
-		return $this->get_variation( $template_pack, $url, 'main', $variation  );
+		return $this->get_variation( $template_pack, $url, 'default', $variation  );
 	}
 
 
@@ -417,7 +417,7 @@ class EE_Email_messenger extends EE_messenger  {
 			$body = ltrim( $CSS->convert(), ">\n" ); //for some reason the library has a bracket and new line at the beginning.  This takes care of that.
 		} else if ( $preview && defined('DOING_AJAX' ) ) {
 			require_once EE_LIBRARIES . 'messages/messenger/assets/email/CssToInlineStyles.php';
-			$style = file_get_contents( $this->get_variation( $this->_tmp_pack,  FALSE, 'main', $this->_variation ) );
+			$style = file_get_contents( $this->get_variation( $this->_tmp_pack,  FALSE, 'default', $this->_variation ) );
 			$CSS = new CssToInlineStyles( utf8_decode($body), $style );
 			$body = ltrim( $CSS->convert(), ">\n" );
 

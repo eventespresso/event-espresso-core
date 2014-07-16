@@ -57,15 +57,13 @@ function ee_new_variations_test_register_new_variation() {
 		'base_url' => EE_NEW_VARIATIONS_URL,
 		'variations' => array(
 			'email' => array(
-				array(
 					'default' => array(
 						'new_variation_test_blue_lagoon' => __('Blue Lagoon', 'ee-new-variations-test' ),
 						'new_variation_test_sunset_red' => __('Sunset Red', 'ee-new-variations-test' )
 						)
 					)
-				)
 			)
 		);
-	EE_Register_Messages_Template_Variations( 'ee_new_variations_test', $variations_setup );
+	EE_Register_Messages_Template_Variations::register( 'ee_new_variations_test', $variations_setup );
 }
-add_action( 'EE_Brewing_Regular__messages_caf',  'ee_new_variations_test_register_new_variation' );
+add_action( 'EE_Brewing_Regular___messages_caf',  'ee_new_variations_test_register_new_variation' );

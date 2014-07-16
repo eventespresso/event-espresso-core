@@ -529,7 +529,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
-		$type = $preview ? 'preview' : 'main';
+		$type = $preview ? 'preview' : 'default';
 
 		//first get inline css (will be empty if the messenger doesn't use it)
 		$this->_template_args['inline_style'] = file_get_contents( $this->get_variation( $this->_tmp_pack, FALSE, $type, $this->_variation ), TRUE );

@@ -350,8 +350,9 @@ abstract class  EE_Messages_Template_Pack {
 	public function get_variations( $messenger = '' ) {
 		$variations = ! empty( $messenger ) && isset( $this->_variations[$messenger] ) ? $this->_variations[$messenger] : $this->_variations;
 		//filter per template pack and globally.
-		$variations = apply_filters( 'FHEE__' . get_class( $this ) . '__get_variations', empty( $variations ) ? array( 'default' => __('Default', 'event_espresso' ) ) : $variations );
-		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_variations', $variations, $this );
+		$variations = apply_filters( 'FHEE__' . get_class( $this ) . '__get_variations', $variations, $messenger );
+		$variations = empty( $variations ) ? array( 'default' => __('Default', 'event_espresso' ) ) : $variations;
+		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_variations', $variations, $messenger, $this );
 	}
 
 
@@ -367,12 +368,14 @@ abstract class  EE_Messages_Template_Pack {
 	 * @param string $variation    this should match one of the defined variations in the _variations property on this class.
 	 * @param string $file_extension  What type of file the variation file is (defaults to css)
 	 * @param bool   $url          if true then return the url otherwise path.
+	 * @param bool   $skip_filters This should not be set directly, its used internally to skip filters when the default template pack is called internally as the fallback.
 	 *
 	 * @return string The variation path or url (typically css reference)
 	 */
-	public function get_variation( $messenger, $type, $variation, $url = true, $file_extension = '.css' ) {
+	public function get_variation( $messenger, $type, $variation, $url = true, $file_extension = '.css', $skip_filters = FALSE ) {
+
 		$base = $url ? $this->_base_url : $this->_base_path;
-		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : null;
+		$default_pack = get_class( $this ) != 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : $this;
 
 		$path_string = 'variations/' . $messenger . '_' . $type . '_' . $variation . $file_extension;
 
@@ -380,7 +383,11 @@ abstract class  EE_Messages_Template_Pack {
 		if ( is_readable( $this->_base_path . $path_string ) ) {
 			$variation_path = $base . $path_string;
 		} else {
-			$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, $variation, $file_extension, $url ) : '';
+			$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, 'default', $url, $file_extension, TRUE ) : '';
+		}
+
+		if ( $skip_filters ) {
+			return $variation_path;
 		}
 
 		//filter result
