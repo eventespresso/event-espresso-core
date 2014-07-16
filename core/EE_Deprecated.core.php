@@ -93,3 +93,46 @@ function ee_deprecated_get_default_field_content( $contents, $actual_path, EE_me
 	return $contents;
 }
 add_filter( 'FHEE__EE_Messages_Template_Pack__get_specific_template__contents', 'ee_deprecated_get_default_field_content', 10, 7 );
+
+
+
+
+
+/**
+ * wrapper for the now deprecated *__get_inline_css_template__css_url and path filters.
+ * Filters deprecated are:
+ * 	- FHEE__EE_Email_Messenger__get_inline_css_template__css_url
+ * 	- FHEE__EE_Email_Messenger__get_inline_css_template__css_path
+ * 	- FHEE__EE_Html_messenger__get_inline_css_template__css_url
+ * 	- FHEE__EE_Html_messenger__get_inline_css_template__css_path
+ *
+ * @deprecated %VER%
+ * @deprecated Use the new FHEE__EE_Messages_Template_Pack__get_variation filter instead.
+ *
+ * @param string                    $variation_path The current css path.
+ * @param string                    $messenger      EE_messenger slug.
+ * @param string                    $type                The type of css file being returned (wpeditor, default etc.)
+ * @param string                    $variation         Introduced by the new template pack system. The variation slug.
+ * @param string                    $file_extension Defaults to css.  The file extension for the file being retreived.
+ * @param bool                      $url            Whether this is a directory path or url path.
+ * @param EE_Messages_Template_Pack $template_pack
+ *
+ * @return string                    The path to the file being used.
+ */
+function ee_deprecated_get_inline_css_template_filters( $variation_path, $messenger, $type, $variation, $file_extension, $url,  EE_Messages_Template_Pack $template_pack ) {
+
+	if ( $messenger == 'email' ) {
+		$filter_ref = $url ? 'FHEE__EE_Email_Messenger__get_inline_css_template__css_url' : 'FHEE__EE_Email_Messenger__get_inline_css_template__css_path';
+	} elseif ( $messenger == 'html' ) {
+		$filter_ref = $url ? 'FHEE__EE_Html_messenger__get_inline_css_template__css_url' : 'FHEE__EE_Html_messenger__get_inline_css_template__css_path';
+	} else {
+		return $variation_path;
+	}
+
+	if ( has_filter( $filter_ref ) ) {
+		EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_variation" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '%VER%' );
+	}
+
+	return apply_filters( $filter_ref, $variation_path, $url, $type );
+}
+add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', 'ee_deprecated_get_inline_css_template_filters', 10, 7 );
