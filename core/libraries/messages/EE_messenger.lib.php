@@ -140,6 +140,22 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+	/**
+	 * This property is a stdClass that holds labels for all the various supporting properties for this messenger.  These labels are set via the _set_supports_labels() method in children classes. Initially this will include the label for:
+	 *
+	 * 	- template pack
+	 * 	- template variation
+	 *
+	 * @since %VER%
+	 *
+	 * @var stdClass
+	 */
+	protected $_supports_labels;
+
+
+
+
+
 	public function __construct() {
 		$this->_EEM_data = EEM_Message_Template_Group::instance();
 		$this->_messages_item_type = 'messenger';
@@ -151,6 +167,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$this->_set_default_message_types();
 		$this->_set_valid_message_types();
 		$this->_set_validator_config();
+
+
+		$this->_supports_labels = new stdClass();
+		$this->_set_supports_labels();
 	}
 
 
@@ -239,6 +259,58 @@ abstract class EE_messenger extends EE_Messages_Base {
 	abstract protected function _preview();
 
 
+
+
+
+	/**
+	 * Sets the defaults for the _supports_labels property.  Can be overridden by child classes.
+	 * @see property definition for info on how its formatted.
+	 *
+	 * @since %VER%;
+	 * @return void
+	 */
+	protected function _set_supports_labels() {
+		$this->_set_supports_labels_defaults();
+	}
+
+
+
+
+
+	/**
+	 * Sets the defaults for the _supports_labels property.
+	 *
+	 * @since %VER%
+	 *
+	 * @return void
+	 */
+	private function _set_supports_labels_defaults() {
+		$this->_supports_labels->template_pack = __('Template Structure', 'event_espresso');
+		$this->_supports_labels->template_variation = __('Template Styles', 'event_espresso');
+		$this->_supports_labels->template_pack_description = __('Template Structure options are bundeled structural changes for templates.', 'event_espresso');
+
+		$this->_supports_labels->template_variation_description = __('These are different styles to choose from for the selected template structure.  Usually these affect things like font style, color, borders etc.  In some cases the styles will also make minor layout changes.');
+
+		$this->_supports_labels = apply_filters( 'FHEE__EE_messenger___set_supports_labels_defaults___supports_labels', $this->_supports_labels, $this );
+	}
+
+
+
+
+
+	/**
+	 * This returns the _supports_labels property.
+	 *
+	 * @since %VER%
+	 *
+	 * @return stdClass
+	 */
+	public function get_supports_labels() {
+		if ( empty( $this->_supports_labels->template_pack ) || empty( $this->_supports_labels->template_variation) ) {
+			$this->_set_supports_labels_defaults();
+		}
+		return apply_filters( 'FHEE__EE_messenger__get_supports_labels', $this->_supports_labels, $this );
+	}
 
 
 

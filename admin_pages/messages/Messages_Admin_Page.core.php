@@ -1508,8 +1508,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				);
 		}
 
+		$template_pack_labels= $this->_message_template_group->messenger_obj()->get_supports_labels();
+
 		$template_args['template_packs_selector'] = EEH_Form_Fields::select_input( 'MTP_template_pack', $tp_select_values, $this->_message_template_group->get_template_pack_name() );
 		$template_args['variations_selector'] = EEH_Form_Fields::select_input( 'MTP_template_variation', $variations_select_values, $this->_message_template_group->get_template_pack_variation() );
+		$template_args['template_pack_label'] = $template_pack_labels->template_pack;
+		$template_args['template_variation_label'] = $template_pack_labels->template_variation;
+		$template_args['template_pack_description'] = $template_pack_labels->template_pack_description;
+		$template_args['template_variation_description'] = $template_pack_labels->template_variation_description;
 
 		$template = EE_MSG_TEMPLATE_PATH . 'template_pack_and_variations_metabox.template.php';
 
