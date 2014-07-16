@@ -2118,14 +2118,11 @@ class EE_Environment_Config extends EE_Config_Base {
 	 * }
 	 */
 	public function max_input_vars_limit_check( $input_count = 0 ) {
-		if ( ( $input_count >= $this->php->max_input_vars ) && version_compare( $this->php->version, '5.3' ) ) {
-			$response['has_space'] = FALSE;
-			$response['msg'] = __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
+		if ( ( $input_count >= $this->php->max_input_vars ) && version_compare( $this->php->version, '5.3', '>=' ) ) {
+			return  __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
 		} else {
-			$response['has_space'] = TRUE;
-			$response['msg'] = '';
+			return '';
 		}
-		return $response;
 	}
 }
 
