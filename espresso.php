@@ -43,7 +43,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.3.0.beta.026;
+		return '4.3.0.beta.026';
 	}
 } else {
 	unset( $_GET['activate'] );
