@@ -310,3 +310,78 @@
 	-moz-box-shadow: 0px 0px 3px 0 rgba(112, 204, 80, .8) !important;
 	box-shadow: 0px 0px 3px 0 rgba(112, 204, 80, .8) !important;
 }
+
+
+
+/***  PAYMENT METHOD OPTIONS  ***/
+
+/***  payment method link  ***/
+
+.spco-payment-method-dv {
+	display: inline-block;
+	position: relative;
+	max-width:180px;
+	padding:20px;
+	margin:0 1em 1em 0;
+	border:1px solid #ddd;
+	border-radius: 2px;
+	background:#fff;
+	text-align: center;
+	line-height:1em;
+	vertical-align: middle;
+	cursor:pointer;
+}
+
+.spco-payment-method-dv img {
+	vertical-align:middle;
+	max-width:140px !important;
+	padding:0;
+	margin:auto;
+	box-shadow: none !important;
+	box-radius: 0 !important;
+}
+.spco-payment-method-dv:hover {
+	top:-1px;
+	border-color:#d5d5d5;
+	text-decoration:none;
+	-webkit-box-shadow: 4px 10px 15px -3px rgba(0, 0, 0, .05), 1px 2px 4px -1px rgba(0, 0, 0, .1), -2px -1px 5px rgba(0, 0, 0, .025);
+	-moz-box-shadow:4px 10px 15px -3px rgba(0, 0, 0, .05), 1px 2px 4px -1px rgba(0, 0, 0, .1), -2px -1px 5px rgba(0, 0, 0, .025);
+	box-shadow:4px 10px 15px -3px rgba(0, 0, 0, .05), 1px 2px 4px -1px rgba(0, 0, 0, .1), -2px -1px 5px rgba(0, 0, 0, .025);
+}
+.spco-payment-method-dv .algn-vrt {
+	display: table !important;
+	height:30px;
+}
+.spco-payment-method-dv .vrt-cell {
+	display: table-cell !important;
+	vertical-align: middle;
+}
+
+/***  payment method info  ***/
+.spco-payment-method-info-dv {
+	position: relative;
+	padding:1.5em 2em 2em;
+	margin: 0 0 2em;
+	border:1px solid #eee;
+	border-radius: 2px;
+	line-height:1em;
+}
+.spco-payment-method-hdr {
+	float:right;
+	clear: none;
+	margin: .5em 0 2em;
+	text-align:right;
+	color:#ccc;
+}
+.spco-payment-method-img {
+	float:left;
+	margin: 0 1em 2em 0;
+}
+.spco-payment-method-desc {
+	margin:2em 0;
+}
+#reg-page-select-other-gateway-lnk {
+	float:right;
+	margin:2em 0 0;
+	cursor:pointer;
+}
