@@ -30,12 +30,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public $checkout = NULL;
 
-	/**
-	 * the action being performed on the current step
-	 * @type string
-	 */
-	private $_action = '';
-
 
 
 
@@ -244,6 +238,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
+		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE );
 		// load the reg steps array
 		$this->load_reg_steps();
 		// set the current step
@@ -252,7 +247,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->set_next_step();
 		// d( $this->checkout );
 		// and what we're doing on the current step
-		$this->_action = EE_Registry::instance()->REQ->get( 'action', 'registration_checkout' );
+		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'registration_checkout' );
 		// returning from the thank you page ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
 		// get transaction from db or session
@@ -273,13 +268,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					// capture form data
 					$this->checkout->current_step->reg_form->receive_form_submission();
 					// validate form data
-					if ( $this->checkout->current_step->reg_form->is_valid() ) {
+					if ( $this->checkout->current_step->reg_form->is_valid() && $this->checkout->continue_reg ) {
 						// good registrant, you get to proceed
 						EE_Error::add_success( $this->checkout->current_step->success_message() );
 					} else {
 						// bad, bad, bad registrant
 						EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
-						$this->_action = 'registration_checkout';
+						$this->checkout->action = 'registration_checkout';
 					}
 				}
 			} catch( EE_Error $e ) {
@@ -289,7 +284,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_css' ), 10 );
 			//	add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
 
-			switch( $this->_action ) {
+			switch( $this->checkout->action ) {
 
 				case 'registration_checkout' :
 					$this->_registration_checkout();
@@ -297,17 +292,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 				default :
 					// meh... do one of those other steps first
-					if ( ! empty( $this->_action ) && method_exists( $this->checkout->current_step, $this->_action )) {
-						do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
-						if ( call_user_func( array( $this->checkout->current_step, $this->_action )) ) {
-							$this->go_to_next_step_or_action( $this->_action );
+					if ( ! empty( $this->checkout->action ) && method_exists( $this->checkout->current_step, $this->checkout->action )) {
+						do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
+						if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
+							$this->go_to_next_step_or_action( $this->checkout->action );
 						}
-						do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
+						do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
 					} else {
 						EE_Error::add_error(
 							sprintf(
 								__( 'The requested form action "%s" does not exist for the current "%s" registration step.', 'event_espresso' ),
-								$this->_action,
+								$this->checkout->action,
 								$this->checkout->current_step->name()
 							),
 							__FILE__, __FUNCTION__, __LINE__
