@@ -469,16 +469,18 @@ final class EE_Admin {
 			$joyride_js = EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js';
 			$joyride_modenizr_js = EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js';
 			$joyride_css = EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css';
+			$ee_joyride_css = EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css';
 
 			//joyride style
 			wp_register_style('joyride-css', $joyride_css, array(), '2.1');
+			wp_register_style('ee-joyride-css', $ee_joyride_css, array('joyride-css'), EVENT_ESPRESSO_VERSION );
 
 			wp_register_script('joyride-modenizr', $joyride_modenizr_js, array(), '2.1', TRUE );
 
 			//joyride
 			wp_register_script('jquery-joyride', $joyride_js, array('jquery-cookie', 'joyride-modenizr'), '2.1', TRUE );
 
-			wp_enqueue_style('joyride-css');
+			wp_enqueue_style('ee-joyride-css');
 			wp_enqueue_script('jquery-joyride');
 		}
 
