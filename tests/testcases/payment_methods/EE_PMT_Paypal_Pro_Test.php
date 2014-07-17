@@ -138,6 +138,11 @@ class EE_PMT_Paypal_Pro_Test extends EE_UnitTestCase{
 		$this->assertEquals( EEM_Payment::status_id_approved, $p_processed->status() );
 		$this->assertEquals( $t->total(), $p_processed->amount() );
 	}
+
+	public function test_generate_new_billing_form(){
+		$ppm = $this->new_model_obj_with_dependencies( 'Payment_Method', array( 'PMD_type' => 'Paypal_Pro', 'PMD_debug_mode' => TRUE ) );
+		$form = $ppm->type_obj()->generate_new_billing_form();
+	}
 }
 
 // End of file EE_PMT_Paypal_Pro_Test.php

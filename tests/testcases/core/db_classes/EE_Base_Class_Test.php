@@ -71,7 +71,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$t2 = EEM_Transaction::instance()->get_one_by_ID($id);
 		$this->assertEquals($id,$t2->ID());
 	}
-
+	
 //	function test_save_no_pk(){
 		//@todo: make this test work
 		//the following is known to not work for the time-being (the models
@@ -228,7 +228,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		//test that clear cache for an item that ISN'T cached doesn't produce an error.
 		$response = $t->clear_cache('Registration');
 		$this->assertNull( $response );
-		
+
 		$r = EE_Registration::new_instance(array('REG_code'=>'monkey1'));
 		$r2 = EE_Registration::new_instance(array('REG_code'=>'monkey2'));
 		$t->cache('Registration', $r);
@@ -236,7 +236,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$rs_cached = $t->get_all_from_cache('Registration');
 		$this->assertArrayContains($r, $rs_cached);
 		$this->assertArrayContains($r2,$rs_cached);
-		//ok but if we call clear cache again without specifying what we want, 
+		//ok but if we call clear cache again without specifying what we want,
 		//we should actually do nothing
 		$r_null = $t->clear_cache('Registration');
 		$this->assertNull($r_null);
@@ -247,9 +247,9 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$this->assertTrue($success);
 		$cached_regs = $t->get_all_from_cache('Registration');
 		$this->assertEmpty($cached_regs);
-		
+
 	}
-	
+
 	/**
 	 * test that after we've cached something, we can remove it specifically
 	 * by only knowing the object
@@ -271,13 +271,13 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r3 = EE_Registration::new_instance(array('REG_code'=>'mystery monkey'));
 		$r_null = $t->clear_cache('Registration', $r3);
 		$this->assertNull($r_null);
-		
+
 	}
-	
+
 	/**
 	 * test that after we've cached something using a specific index,
 	 * we can remove it using a specific index
-	 * 
+	 *
 	 */
 	function test_clear_cache__specific_index(){
 		$t = EE_Transaction::new_instance();
@@ -295,7 +295,7 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 		$r_null = $t->clear_cache('Registration','mystery monkey');
 		$this->assertNull($r_null);
 	}
-	
+
 	/**
 	 * tests that clearing the cache on a belongsTo relation works
 	 */
