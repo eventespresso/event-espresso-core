@@ -24,7 +24,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return    \EE_SPCO_Reg_Step_Attendee_Information
 	 */
 	public function __construct( EE_Checkout $checkout ) {
-//		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		$this->_slug = 'attendee_information';
 		$this->_name = __('Attendee Information', 'event_espresso');
 		$this->_template = SPCO_TEMPLATES_PATH . 'attendee_info_main.template.php';
@@ -59,7 +58,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	 * @return EE_Form_Section_Proper
 	 */
 	public function generate_reg_form() {
-//		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		$subsections = array();
 		$template_args = array(
 			'revisit' 			=> $this->checkout->revisit,
@@ -112,7 +110,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		static $attendee_nmbr = 1;
 		// array of params to pass to parent constructor
 		$form_args = array(
-//			'name' 				=> $registration->reg_url_link(),
 			'html_id' 				=> 'ee-registration-' . $registration->reg_url_link(),
 			'html_class' 		=> 'ee-reg-form-attendee-dv',
 			'subsections' 		=> array(),
@@ -200,7 +197,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function question_group_reg_form( EE_Registration $registration, EE_Question_Group $question_group ){
 		// array of params to pass to parent constructor
 		$form_args = array(
-//			'name' 					=> $question_group->identifier(),
 			'html_id' 					=> 'ee-reg-form-qstn-grp-' . $question_group->identifier(),
 			'html_class' 			=> 'ee-reg-form-qstn-grp-dv',
 			'html_label_id' 		=> 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-lbl',
@@ -267,7 +263,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 	public function copy_attendee_info_form(){
 		// array of params to pass to parent constructor
 		$form_args = array(
-//			'name' 					=> 'spco_copy_attendee_chk',
 			'html_id' 					=> 'spco-copy-attendee-chk',
 			'subsections' 			=> $this->copy_attendee_info_inputs(),
 			'layout_strategy' 	=> new EE_Template_Layout( array(
@@ -328,8 +323,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 				$copy_attendee_info_inputs[$registration->reg_url_link() ] = new EE_Checkbox_Multi_Input(
 					array( $registration->reg_url_link() => sprintf( __('Attendee #%s', 'event_espresso'), $registration->count() )),
 					array(
-//						'name' 					=> $registration->reg_url_link(),
-//						'html_name' 			=> $registration->reg_url_link(),
 						'html_id' 					=> 'spco-copy-attendee-chk-' . $registration->reg_url_link(),
 						'html_class' 			=> 'spco-copy-attendee-chk',
 						'html_label_id' 		=> 'spco_copy_attendee_chk-' . $registration->reg_url_link(),
@@ -354,8 +347,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		return new EE_Hidden_Input(
 			array(
 				'layout_strategy' => new EE_Div_Per_Section_Layout(),
-//				'name' 				=> 'primary_registrant',
-//				'html_name' 		=> 'primary_registrant',
 				'html_id' 				=> 'primary_registrant',
 				'default'				=> TRUE
 			)
