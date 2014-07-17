@@ -123,7 +123,17 @@ abstract class EE_Admin_Page_Menu_Map  {
 	 */
 	public $show_on_menu = TRUE;
 
+	const BLOG_ADMIN_ONLY = 1;
+	const BLOG_AND_NETWORK_ADMIN = 2;
+	const NETWORK_ADMIN_ONLY = 3;
 
+	/**
+	 * Whether this admin menu item is for blog admin only, network-admin only,
+	 * or both
+	 * @since %VER%
+	 * @var INT
+	 */
+	public $display_on = self::BLOG_ADMIN_ONLY;
 
 
 
