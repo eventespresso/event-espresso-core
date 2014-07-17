@@ -263,6 +263,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->set_templates();
 		// verify transaction one last time
 		if ( $this->checkout->transaction instanceof EE_Transaction ) {
+			// initialize each reg step, which gives them the chance to potentially alter the process
+			$this->_initialize_reg_steps();
 			// ever heard that song by Blue Rodeo ?
 			try {
 				$this->checkout->current_step->generate_reg_form();
@@ -283,32 +285,34 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			} catch( EE_Error $e ) {
 				$e->get_error();
 			}
-			// initialize each reg step, which gives them the chance to potentially alter the process
-			$this->_initialize_reg_steps();
 			// add some style and make it dance
 			add_action( 'wp_enqueue_scripts', array( $this, 'load_css' ), 10 );
-			//		add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
+			//	add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
 
-			if ( $this->_action == 'registration_checkout' ) {
-				$this->_registration_checkout();
-			} else {
-				// meh... do one of those other steps first
-				if ( ! empty( $this->_action ) && method_exists( $this->checkout->current_step, $this->_action )) {
-					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
-					if ( call_user_func( array( $this->checkout->current_step, $this->_action )) ) {
-						$this->go_to_next_step_or_action( $this->_action );
+			switch( $this->_action ) {
+
+				case 'registration_checkout' :
+					$this->_registration_checkout();
+					break;
+
+				default :
+					// meh... do one of those other steps first
+					if ( ! empty( $this->_action ) && method_exists( $this->checkout->current_step, $this->_action )) {
+						do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
+						if ( call_user_func( array( $this->checkout->current_step, $this->_action )) ) {
+							$this->go_to_next_step_or_action( $this->_action );
+						}
+						do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
+					} else {
+						EE_Error::add_error(
+							sprintf(
+								__( 'The requested form action "%s" does not exist for the current "%s" registration step.', 'event_espresso' ),
+								$this->_action,
+								$this->checkout->current_step->name()
+							),
+							__FILE__, __FUNCTION__, __LINE__
+						);
 					}
-					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->_action}", $this->checkout->current_step );
-				} else {
-					EE_Error::add_error(
-						sprintf(
-							__( 'The requested form action "%s" does not exist for the current "%s" registration step.', 'event_espresso' ),
-							$this->_action,
-							$this->checkout->current_step->name()
-						),
-						__FILE__, __FUNCTION__, __LINE__
-					);
-				}
 			}
 		}
 		// d( $this->checkout );
