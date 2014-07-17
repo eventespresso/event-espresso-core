@@ -102,6 +102,38 @@ class EEH_HTML {
 
 
 	/**
+	 * Generates HTML <h1></h1> tags, inserts content, and adds any passed attributes
+	 * usage: echo EEH_HTML::h1( 'this is a paragraph' );
+	 *
+	 * @param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @param string $id - html id attribute
+	 * @param string $class - html class attribute
+	 * @param string $style - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @return string
+	 */
+	public static function h1( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		return EEH_HTML::_open_tag( 'h1', $content, $id, $class, $style, $other_attributes );
+	}
+	public static function h2( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		return EEH_HTML::_open_tag( 'h2', $content, $id, $class, $style, $other_attributes );
+	}
+	public static function h3( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		return EEH_HTML::_open_tag( 'h4', $content, $id, $class, $style, $other_attributes );
+	}
+	public static function h4( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		return EEH_HTML::_open_tag( 'h4', $content, $id, $class, $style, $other_attributes );
+	}
+	public static function h5( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		return EEH_HTML::_open_tag( 'h5', $content, $id, $class, $style, $other_attributes );
+	}
+	public static function h6( $content = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		return EEH_HTML::_open_tag( 'h6', $content, $id, $class, $style, $other_attributes );
+	}
+
+
+
+	/**
 	 * Generates HTML <p></p> tags, inserts content, and adds any passed attributes
 	 * usage: echo EEH_HTML::p( 'this is a paragraph' );
 	 *
@@ -320,6 +352,31 @@ class EEH_HTML {
 	}
 
 
+
+	/**
+	 *    img - generates an HTML <img> tag and adds any passed attributes
+	 *    usage: echo EEH_HTML::img();
+	 *
+	 * @param string $src - html src attribute ie: the path or URL to the image
+	 * @param string $alt - html alt attribute
+	 * @param string $id - html id attribute
+	 * @param string $class - html class attribute
+	 * @param string $style - html style attribute for applying inline styles
+	 * @param string $other_attributes - additional attributes like "colspan", inline JS, "rel" tags, etc
+	 * @internal param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
+	 * @return string
+	 */
+	public static function img( $src = '', $alt = '', $id = '', $class = '', $style = '', $other_attributes = '' ) {
+		$attributes = ! empty( $src ) ? ' src="' . esc_url_raw( $src ) . '"' : '';
+		$attributes .= ! empty( $alt ) ? ' alt="' . esc_attr( $alt ) . '"' : '';
+		$attributes .= ! empty( $id ) ? ' id="' . EEH_HTML::sanitize_id( $id ) . '"' : '';
+		$attributes .= ! empty( $class ) ? ' class="' . $class . '"' : '';
+		$attributes .= ! empty( $style ) ? ' style="' . $style . '"' : '';
+		$attributes .= ! empty( $other_attributes ) ? ' ' . $other_attributes : '';
+		return '<img' . $attributes  . '/>';
+	}
+
+// <img alt="Pay using Invoice" src="http://localhost/4.1-DEV/wp-content/plugins/EE-4.1/modules/gateways/Invoice/lib/invoice-logo.png">
 
 	/**
 	 * Generates an html <--  comment --> tag
