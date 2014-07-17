@@ -60,12 +60,26 @@
 	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3</h2>
 	<p>Many of the changes in this version have been related to fixing the EE4 core features, and much more:</p>
 	<ul>
-		<li>Added support for "Ticket Bundles"</li>
+		<li>Added support for "Ticket Bundles"<br />
+			<ul>
+				<li><a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">How to set graduated ticket pricing</a></li>
+				<li><a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">How to create a ticket bundle</a></li>				
+			</ul>
+		</li>
 		<li>Messages System Changes/Fixes<br />
 			<ul>
 				<li>Messages Admin - Updated to implement a new Custom Template creation/edit process</li>
 				<li>Event Editor - Modify Messages metabox in event editor to use new custom template system</li>
 				<li>Messages System - Default 'From' Email shortcode changed to [CO_FORMATTED_EMAIL]</li>
+			</ul>
+		</li>
+		<li>Advanced Custom Fields Integration<br />
+			<ul>
+				<li><a href="http://eventespresso.com/?p=96627" target="_blank">Developers Corner: Using Advanced Custom Fields to Quickly Extend EE4</a></li>
+				<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96889" target="_blank">Add a Course Curriculum Section to the "Thank You" Page Using Advanced Custom Fields</a></li>
+				<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96892" target="_blank">Add a Sponsors Section to Events Using Advanced Custom Fields</a></li>
+				<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96650" target="_blank">EE4 "Thank You" Page Actions & Filters</a></li>
+				<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96904" target="_blank">EE4 "Single Page Checkout" Page Actions & Filters</a></li>	
 			</ul>
 		</li>
 		<li>Payment Gateway Fixes<br />
@@ -77,26 +91,16 @@
 				<li>Send address fields to Mijireh</li>
 			</ul>
 		</li>
+		<li>iCal Integration</li>
+		<li>Added logic to event templates so the single event content can be marked up differently than the event archive</li>
+		<li>Fixed migration issues</li>
 	</ul>
 	<hr>
-	<h2 class="about-headline-callout">New Hooks, Filters, and Stuff for Developers</h2>
+	<?php 
+	/*<h2 class="about-headline-callout">New Hooks, Filters, and Stuff for Developers</h2>
 	<p>Here are a few more of the new features and cool stuff for developers available in 4.3:</p>
 	<ul>
-		<li>Advanced Custom Fields Integration
-			<ul>
-				<li><a href="http://eventespresso.com/?p=96627" target="_blank">Developers Corner: Using Advanced Custom Fields to Quickly Extend EE4</a>
-					</li>
-					<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96889" target="_blank">Add a Course Curriculum Section to the "Thank You" Page Using Advanced Custom Fields</a>
-						</li>
-					<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96892" target="_blank">Add a Sponsors Section to Events Using Advanced Custom Fields</a>
-						</li>
-					<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96650" target="_blank">EE4 "Thank You" Page Actions & Filters</a>
-						</li>
-					<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96904" target="_blank">EE4 "Single Page Checkout" Page Actions & Filters</a>
-						</li>
-				</li>
-			</ul>
-		</li>
-		
+		<li></li>
 	</ul>
-	<hr>
+	<hr> */ 
+	?>
