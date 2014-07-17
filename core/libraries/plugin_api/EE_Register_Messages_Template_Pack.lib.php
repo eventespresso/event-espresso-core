@@ -37,6 +37,10 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 	 *
 	 * This registry also verifies that there isn't already a template pack registered with the same name and if there is then it will add an EE_Error notice.
 	 *
+	 * Note that this only handles registering the your Template Pack class with the message template pack system.  However, there is also a naming schema you must follow for templates you are providing with your template pack.
+	 * @see EE_Messages_Template_Pack_Default for an example class
+	 * @see core/libraries/messages/defaults/default/* for all the example templates the default template pack supports.
+	 *
 	 *
 	 * @since  %VER%
 	 * @throws EE_Error
