@@ -154,4 +154,19 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 
 
 
+
+	/**
+	 * This deregisters a variation set that was previously registered with the given slug.
+	 *
+	 * @since %VER%
+	 *
+	 * @param string $variation_ref The name for the variation set that was previously registered.
+	 *
+	 * @return void
+	 */
+	public static function deregister( $variation_ref = NULL ) {
+		if ( !empty( self::$_registry[$variation_ref] ) ) {
+    			unset( self::$_registry[$variation_ref] );
+    		}
+	}
 }
