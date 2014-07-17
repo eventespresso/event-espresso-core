@@ -52,7 +52,7 @@ class Venues_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
 			'menu_group' => 'management',
 			'menu_order' => 40,
-			'show_on_menu' => TRUE,
+			'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => EE_VENUES_PG_SLUG,
 			'menu_label' => __('Venues', 'event_espresso'),
