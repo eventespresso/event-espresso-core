@@ -266,7 +266,8 @@ abstract class EE_SPCO_Reg_Step {
 	public function display_reg_form() {
 		$html = '';
 		if ( $this->reg_form instanceof EE_Form_Section_Proper ) {
-			$html .= $this->reg_form->form_open( add_query_arg( array( 'ee' => '_register', 'step' => $this->slug(), 'action' => 'process_reg_step' ), $this->checkout->reg_page_base_url ));
+			$action = empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step';
+			$html .= $this->reg_form->form_open( add_query_arg( array( 'ee' => '_register', 'step' => $this->slug(), 'action' => $action ), $this->checkout->reg_page_base_url ));
 			$html .= $this->reg_form->get_html_and_js();
 			$html .= $this->reg_step_submit_button();
 			$html .= $this->reg_form->form_close();
