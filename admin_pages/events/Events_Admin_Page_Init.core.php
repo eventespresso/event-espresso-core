@@ -47,13 +47,12 @@ class Events_Admin_Page_Init extends EE_Admin_Page_CPT_Init {
 		$this->_menu_map = new EE_Admin_Page_Main_Menu( array(
 			'menu_group' => 'main',
 			'menu_order' => 10,
-			'show_on_menu' => TRUE,
+			'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN,
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => 'espresso_events',
 			'menu_label' => EVENTS_LABEL,
 			'capability' => 'read_events',
-			'admin_init_page' => $this,
-			'display_on' => EE_Admin_Page_Menu_Map::BLOG_AND_NETWORK_ADMIN
+			'admin_init_page' => $this
 			));
 	}
 
