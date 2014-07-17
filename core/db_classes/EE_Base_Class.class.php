@@ -1003,7 +1003,7 @@ abstract class EE_Base_Class{
 				}
 			}
 			if( $already_in_db ){
-				$combined_pk_fields_n_values = array_insersect_key($save_cols_n_values,$this->get_model()->get_combined_primary_key_fields());
+				$combined_pk_fields_n_values = array_intersect_key($save_cols_n_values,$this->get_model()->get_combined_primary_key_fields());
 				$results = $this->get_model()->update($save_cols_n_values,$combined_pk_fields_n_values);
 			}else{
 				$results = $this->get_model()->insert($save_cols_n_values);

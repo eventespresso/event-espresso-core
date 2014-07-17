@@ -493,9 +493,15 @@ final class EE_Admin {
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
 		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
 			wp_register_style('joyride-css', EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css', array(), '2.1');
+			$ee_joyride_css = EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css';
+
+			//joyride style
+			wp_register_style('joyride-css', $joyride_css, array(), '2.1');
+			wp_register_style('ee-joyride-css', $ee_joyride_css, array('joyride-css'), EVENT_ESPRESSO_VERSION );
+
 			wp_register_script('joyride-modernizr', EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js', array(), '2.1', TRUE );
 			wp_register_script('jquery-joyride', EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js', array('jquery-cookie', 'joyride-modernizr'), '2.1', TRUE );
-			wp_enqueue_style('joyride-css');
+			wp_enqueue_style('ee-joyride-css');
 			wp_enqueue_script('jquery-joyride');
 		}
 
