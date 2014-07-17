@@ -98,10 +98,6 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 		add_filter( 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( 'EE_Register_Messages_Template_Pack', 'set_template_pack_path'), 10 );
 		add_filter( 'FHEE__EED_Messages__get_template_packs__template_packs', array( 'EE_Register_Messages_Template_Pack', 'set_template_pack' ), 10 );
 
-		$filters = array(
-			'FHEE__EED_Messages___set_messages_paths___MSG_PATHS' => $paths,
-			'FHEE__EED_Messages__get_template_packs__template_packs' => array( 'template_dbref', $new_template_pack )
-			);
 	}
 
 
