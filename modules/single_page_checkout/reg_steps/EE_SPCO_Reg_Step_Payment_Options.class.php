@@ -263,15 +263,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Form_Section_Proper
 	 */
 	private function _display_payment_options( $reg_count = 0 ) {
-
+		// reset in case someone changes their mind
+		$this->_reset_selected_method_of_payment();
+		// has method_of_payment been set by no-js user?
+		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment();
+		// autoload Line_Item_Display classes
 		EEH_Autoloader::register_line_item_display_autoloaders();
 		$Line_Item_Display = new EE_Line_Item_Display( 'spco' );
+		// build payment options form
 		return new EE_Form_Section_Proper(
 			array(
-				'name' 					=> 'ee-' . $this->slug() . '-reg-step-form',
-				'html_id' 					=> 'ee-' . $this->slug() . '-reg-step-form',
-				'subsections' 			=> array(
-					'payment_options' => $this->_payment_options(),
+				'name' 			=> 'ee-' . $this->slug() . '-reg-step-form',
+				'html_id' 			=> 'ee-' . $this->slug() . '-reg-step-form',
+				'subsections' 	=> array(
+					'payment_options' => $this->_setup_payment_options(),
 					'hidden_inputs' 		=> $this->_default_hidden_inputs( FALSE )
 				),
 				'layout_strategy'		=> new EE_Template_Layout( array(
@@ -292,39 +297,168 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 
+	/**
+	 * 	_reset_selected_method_of_payment
+	 *
+	 * 	@access 		private
+	 * 	@return 		void
+	 */
+	private function _reset_selected_method_of_payment() {
+		$reset_payment_method = sanitize_text_field( EE_Registry::instance()->REQ->get( 'reset_payment_method', FALSE ));
+		if ( $reset_payment_method ) {
+			$this->checkout->selected_method_of_payment = NULL;
+			$this->_save_selected_method_of_payment();
+		}
+	}
+
+
 
 	/**
-	 * _payment_options
-	 * @return string
+	 *    _save_selected_method_of_payment
+	 *
+	 * 		stores the selected_method_of_payment in the session so that it's available for all subsequent requests including AJAX
+	 *
+	 * 	@access 		private
+	 * 	@return 		EE_Billing_Info_Form
 	 */
-	public function _payment_options() {
-		EE_Registry::instance()->load_model( 'Payment_Method' );
-		// has method_of_payment been set by no-js user?
-		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment();
-		$this->checkout->billing_form = $this->_get_billing_form_for_selected_method_of_payment();
+	private function _save_selected_method_of_payment() {
+		EE_Registry::instance()->SSN->set_session_data( array( 'selected_method_of_payment' => $this->checkout->selected_method_of_payment ));
+	}
 
-		$available_payment_methods = EE_Registry::instance()->LIB->EEM_Payment_Method->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
-		$available_pm = array();
-		foreach( $available_payment_methods as $pm ) {
-			//					d( $pm );
-			if ( $pm instanceof EE_Payment_Method ) {
-				$available_pm[ $pm->slug() ]['button_html'] = $pm->button_html( $pm->button_url() );
-				$pm_css_class = $pm->open_by_default() ? '' : 'hidden';
-				$available_pm[ $pm->slug() ]['divo'] = '<div id="reg-page-billing-info-' . $pm->slug() . '-dv" class="reg-page-billing-info-dv ' . $pm_css_class . '">';
-				$available_pm[ $pm->slug() ]['name'] = apply_filters(
-					'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
-					sprintf( __('You have selected "%s" as your method of payment', 'event_espresso' ), $pm->name() )
-				);
-				$available_pm[ $pm->slug() ]['description'] = $pm->description();
-				if ( $billing_form = $pm->type_obj()->billing_form() ) {
-					$available_pm[ $pm->slug() ]['billing_form'] = $billing_form->get_html_and_js();
+
+
+	/**
+	 * _setup_payment_options
+	 * @return \EE_Form_Section_Proper
+	 */
+	public function _setup_payment_options() {
+		$payment_methods = EE_Registry::instance()->load_model( 'Payment_Method' )->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
+		$available_payment_methods = array();
+		$selected_payment_method = array();
+		foreach( $payment_methods as $payment_method ) {
+			if ( $payment_method instanceof EE_Payment_Method ) {
+				// if payment method is already selected OR nothing is selected and this payment method should be open_by_default
+				if (( $this->checkout->selected_method_of_payment == $payment_method->slug() ) || ( ! $this->checkout->selected_method_of_payment && $payment_method->open_by_default() )) {
+					$this->checkout->selected_method_of_payment = $payment_method->slug();
+					$this->_save_selected_method_of_payment();
+					// set this payment method aside for a moment
+//					$selected_payment_method[ $payment_method->slug() . '-link' ] = $this->_payment_method_link( $payment_method );
+					$selected_payment_method[ $payment_method->slug() . '-info' ] = $this->_payment_method_billing_info( $payment_method );
 				} else {
-					$available_pm[ $pm->slug() ]['billing_form'] = '';
+					// just slap dem suckers on the back of the $available_payment_methods array
+					$available_payment_methods[ $payment_method->slug() . '-link' ] = $this->_payment_method_link( $payment_method );
+					$available_payment_methods[ $payment_method->slug() . '-info' ] = $this->_payment_method_billing_info( $payment_method );
 				}
-				$available_pm[ $pm->slug() ]['divx'] = '</div>';
 			}
 		}
-		$step_args['available_payment_methods'] = $available_pm;
+		// add note to the beginning of the $available_payment_methods array while maintaining associative keys
+		$available_payment_methods = array(
+			'select_other_method_of_payment' => new EE_Form_Section_HTML(
+				EEH_HTML::p ( apply_filters( 'FHEE__registration_page_payment_options__select_other_method_of_payment', __( 'select a different method of payment:', 'event_espresso' )), '', 'smaller-text' )
+			)
+		) + $available_payment_methods;
+		// perform a php union to prepend $selected_payment_method to the beginning of the $available_payment_methods array while maintaining associative keys
+		$available_payment_methods = $selected_payment_method + $available_payment_methods;
+		$available_payment_methods = $selected_payment_method + $available_payment_methods;
+		return new EE_Form_Section_Proper(
+			array(
+				'html_id' 					=> 'spco-available-methods-of-payment-dv',
+				'subsections' 			=> $available_payment_methods,
+				'layout_strategy'		=> new EE_Div_Per_Section_Layout()
+			)
+		);
+	}
+
+
+
+	/**
+	 *    _payment_method_link
+	 *
+	 * @access 	private
+	 * @param 	EE_Payment_Method $payment_method
+	 * @return 	\EE_Form_Section_Proper
+	 */
+	private function _payment_method_link( EE_Payment_Method $payment_method ) {
+		return new EE_Form_Section_Proper(
+			array(
+				'html_id' 					=> 'spco-payment-method-' . $payment_method->slug(),
+				'html_class' 			=> 'spco-payment-method-dv',
+				'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
+				'subsections' 			=> array(
+					'button_html' 		=> new EE_Form_Section_HTML(
+						$payment_method->button_html(
+							add_query_arg(
+								array(
+									'ee' 		=> '_register',
+									'step' 	=> $this->slug(),
+									'payment_method' 	=> $payment_method->slug()
+								),
+								$this->checkout->reg_page_base_url
+							)
+						)
+					)
+				)
+			)
+		);
+	}
+
+
+
+	/**
+	 *    _payment_method_billing_info
+	 *
+	 * @access 	private
+	 * @param 	EE_Payment_Method $payment_method
+	 * @return 	\EE_Form_Section_Proper
+	 */
+	private function _payment_method_billing_info( EE_Payment_Method $payment_method ) {
+		// setup billing form
+		if ( $this->checkout->selected_method_of_payment == $payment_method->slug() ) {
+			$this->checkout->billing_form = $this->_get_billing_form_for_payment_method( $payment_method );
+			$billing_form = $this->checkout->billing_form;
+			$pm_style = '';
+		} else {
+			$billing_form = new EE_Form_Section_HTML();
+			$pm_style = 'display:none;';
+		}
+		$info_html = EEH_HTML::img( $payment_method->button_url(), $payment_method->name(), 'spco-payment-method-info-' . $payment_method->slug() . '-img', 'spco-payment-method-img' );
+		$info_html .= EEH_HTML::h3 ( $payment_method->name(), '', 'spco-payment-method-hdr' );
+		$info_html .= EEH_HTML::div ( ' ', '', '', 'clear:both;' );
+		$info_html .= EEH_HTML::div (
+			apply_filters(
+				'FHEE__Single_Page_Checkout__registration_checkout__selected_payment_method',
+				sprintf( __( 'You have selected "%s" as your method of payment', 'event_espresso' ), $payment_method->name() )
+			)
+		);
+		$info_html .= $payment_method->description() ? EEH_HTML::p ( $payment_method->description(), '', 'spco-payment-method-desc ee-attention' ) : '';
+
+		//d( $payment_method );
+		return new EE_Form_Section_Proper(
+			array(
+				'html_id' 					=> 'spco-payment-method-info-' . $payment_method->slug(),
+				'html_class' 			=> 'spco-payment-method-info-dv',
+				'html_style' 			=> $pm_style,
+				'layout_strategy'		=> new EE_Div_Per_Section_Layout(),
+				'subsections' 			=> array(
+					'info' 					=> new EE_Form_Section_HTML( $info_html ),
+					'billing_form' 		=> $billing_form,
+				)
+			)
+		);
+	}
+
+
+
+	/**
+	 * _get_billing_form_for_payment_method
+	 *
+	 * @access private
+	 * @param EE_Payment_Method $payment_method
+	 * @return \EE_Billing_Info_Form
+	 */
+	private function _get_billing_form_for_payment_method( EE_Payment_Method $payment_method ) {
+		// get billing form for the selected payment method
+		return $payment_method->type_obj()->billing_form() instanceof EE_Billing_Info_Form ? $payment_method->type_obj()->billing_form() : new EE_Form_Section_HTML();
 	}
 
 
@@ -338,11 +472,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	private function _get_selected_method_of_payment( $required = FALSE ) {
 		// is selected_method_of_payment set in the request ?
-		if ( EE_Registry::instance()->REQ->is_set( 'selected_method_of_payment' )) {
+		if ( EE_Registry::instance()->REQ->is_set( 'payment_method' )) {
 			// grab it and sanitize it
-			$selected_method_of_payment = sanitize_text_field( EE_Registry::instance()->REQ->get( 'selected_method_of_payment' ));
+			$selected_method_of_payment = sanitize_text_field( EE_Registry::instance()->REQ->get( 'payment_method' ));
 			// store it in the session so that it's available for all subsequent requests including AJAX
-			EE_Registry::instance()->SSN->set_session_data( array( 'selected_method_of_payment' => $this->checkout->selected_method_of_payment ));
+			$this->_save_selected_method_of_payment();
 			// or is is set in the session ?
 		} else {
 			$selected_method_of_payment = EE_Registry::instance()->SSN->get_session_data( 'selected_method_of_payment' );
@@ -366,83 +500,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
-	 * 	_get_payment_method_billing_form
-	 *
-	 * 	@access 		private
-	 * 	@return 		EE_Billing_Info_Form
-	 */
-	private function _get_billing_form_for_selected_method_of_payment() {
-		if ( $this->checkout->selected_method_of_payment ) {
-			// get EE_Payment_Method object
-			$this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
-			if ( $this->checkout->payment_method ) {
-				return $this->_get_billing_form();
-			}
-		}
-		return NULL;
-	}
-
-
-
-	/**
-	 * _get_payment_method_for_selected_method_of_payment
-	 * retrieves a valid payment method
-	 *
-	 * @access public
-	 * @return \EE_Payment_Method
-	 */
-	private function _get_payment_method_for_selected_method_of_payment() {
-		// get EE_Payment_Method object
-		$payment_method = EE_Registry::instance()->load_model( 'Payment_Method' )->get_one_by_slug( $this->checkout->selected_method_of_payment );
-		// verify $payment_method
-		if ( ! $payment_method instanceof EE_Payment_Method ) {
-			// not a payment
-			EE_Error::add_error(
-				sprintf(
-					__( 'The selected method of payment could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
-					'<br/>',
-					EE_Registry::instance()->CFG->organization->email
-				), __FILE__, __FUNCTION__, __LINE__
-			);
-			return NULL;
-		}
-		// and verify it has a valid Payment_Method Type object
-		if ( ! $payment_method->type_obj() instanceof EE_PMT_Base ) {
-			// not a payment
-			EE_Error::add_error(
-				sprintf(
-					__( 'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
-					'<br/>',
-					EE_Registry::instance()->CFG->organization->email
-				), __FILE__, __FUNCTION__, __LINE__
-			);
-			return NULL;
-		}
-		return $payment_method;
-	}
-
-
-
-
-	/**
-	 * _get_billing_form
-	 *
-	 * @access private
-	 * @return \EE_Billing_Info_Form
-	 */
-	private function _get_billing_form() {
-		// get billing form for the selected payment method
-		$billing_form = $this->checkout->payment_method->type_obj()->billing_form();
-		if ( $billing_form instanceof EE_Billing_Info_Form ) {
-			return $billing_form;
-		}
-		return NULL;
-	}
-
-
-
-
-	/**
 	 * _billing_form_is_valid
 	 *
 	 * @access private
@@ -460,6 +517,64 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		return TRUE;
 	}
+
+
+
+	/**
+	 * 	_get_payment_method_billing_form
+	 *
+	 * 	@access 		private
+	 * 	@return 		EE_Billing_Info_Form
+	 */
+//	private function _get_billing_form_for_payment_method( EE_Payment_Method ) {
+//		if ( $this->checkout->selected_method_of_payment ) {
+//			// get EE_Payment_Method object
+//			$this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
+//			if ( $this->checkout->payment_method ) {
+//				return $this->_get_billing_form();
+//			}
+//		}
+//		return NULL;
+//	}
+
+
+
+	/**
+	 * _get_payment_method_for_selected_method_of_payment
+	 * retrieves a valid payment method
+	 *
+	 * @access public
+	 * @return \EE_Payment_Method
+	 */
+//	private function _get_payment_method_for_selected_method_of_payment() {
+//		// get EE_Payment_Method object
+//		$payment_method = EE_Registry::instance()->load_model( 'Payment_Method' )->get_one_by_slug( $this->checkout->selected_method_of_payment );
+//		// verify $payment_method
+//		if ( ! $payment_method instanceof EE_Payment_Method ) {
+//			// not a payment
+//			EE_Error::add_error(
+//				sprintf(
+//					__( 'The selected method of payment could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+//					'<br/>',
+//					EE_Registry::instance()->CFG->organization->email
+//				), __FILE__, __FUNCTION__, __LINE__
+//			);
+//			return NULL;
+//		}
+//		// and verify it has a valid Payment_Method Type object
+//		if ( ! $payment_method->type_obj() instanceof EE_PMT_Base ) {
+//			// not a payment
+//			EE_Error::add_error(
+//				sprintf(
+//					__( 'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+//					'<br/>',
+//					EE_Registry::instance()->CFG->organization->email
+//				), __FILE__, __FUNCTION__, __LINE__
+//			);
+//			return NULL;
+//		}
+//		return $payment_method;
+//	}
 
 
 
