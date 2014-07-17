@@ -8,7 +8,7 @@
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
 /**
- * Use this to register or deregister a new message tempalte pack variation for the EE messages system.
+ * Use this to register or deregister a new message template pack variation for the EE messages system.
  *
  * @package        Event Espresso
  * @subpackage  plugin api, messages
@@ -44,7 +44,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	 *
 	 * @see /core/libraries/messages/defaults/default/variations/* for example variation files for the email and html messengers.
 	 *
-	 * @param string $variation_ref unique reference used to describe this variation registry
+	 * @param string $variation_ref unique reference used to describe this variation registry. If this ISN'T unique then this method will make it unique (and it becomes harder to deregister).
 	 * @param array  $setup_args    {
 	 *                              an array of required values for registering the variations.
 	 *                              @type array $variations 	{
@@ -80,12 +80,18 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 		}
 
 
+		//make sure variation ref is unique.
+		if ( isset( self::$_registry[$variation_ref] ) ) {
+			$variation_ref = uniqid() . '_' . $variation_ref;
+		}
+
+
 		//make sure this was called in the right place!
 		 if ( ! did_action( 'EE_Brewing_Regular___messages_caf' ) || did_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations' )) {
 			EE_Error::doing_it_wrong(
 				__METHOD__,
 				sprintf(
-					__('A EE_Messages_Template_Pack variations given the reference "%s" has been attempted to be registered with the EE Messages Template Pack System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'),
+					__('Messages Templates Variations given the reference "%s" has been attempted to be registered with the EE Messages Template Pack System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'),
 					$variation_ref
 				),
 				'%VER%'
