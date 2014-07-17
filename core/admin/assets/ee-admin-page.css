@@ -9,7 +9,7 @@
 #espresso_major_buttons_wrapper{
     border-top: medium none;
     clear: both;
-    padding: 0 0 8px;	
+    padding: 0 0 8px;
 }
 #save-event-floating-btns-spacer {
 	height:45px;
@@ -215,7 +215,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 	display: inline-block;
     	font-style: normal;
     	font-weight: normal;
-    	line-height: 1;	
+    	line-height: 1;
 	vertical-align: middle;
 }
 
@@ -266,7 +266,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 	100% {
 		transform: rotate(359deg);
 	}
-} 
+}
 
 
 
@@ -298,7 +298,7 @@ table .espresso-radio-btn-options-ul .big-lbl,
 /* Nicolas Gallagher's micro clearfix */
 .clearfix:before, .clearfix:after { content:""; display:table; }
 .clearfix:after { clear: both; }
-.clearfix { zoom: 1; } 
+.clearfix { zoom: 1; }
 
 #adminmenuwrap { z-index:100; }
 
@@ -335,7 +335,7 @@ label.error  { display: block; color: #FE2A00 !important; }
     background-image: linear-gradient(to bottom, #3AA012, #2F7F0F) !important;
     border-color: #2F7F0F #2F7F0F #286A0C !important;
 	box-shadow: 0 1px 0 rgba(110, 193, 75, 0.5) inset !important;
-} 
+}
 .espresso-button-green:hover {
     background-color: #399811 !important;
     background-image: linear-gradient(to bottom, #42AF14, #2f7f0f) !important;
@@ -462,7 +462,7 @@ label.error  { display: block; color: #FE2A00 !important; }
 /** LIST-TABLE-LEGEND **/
 .ee-list-table-legend {
     margin-top: 0;
-    padding: 5px;   
+    padding: 5px;
     margin-right: 20px;
 }
 
@@ -477,11 +477,11 @@ label.error  { display: block; color: #FE2A00 !important; }
 
 .qtip-content .ee-list-table-legend {
 	 padding:0 0 .5em;
-	 margin: 0;   
+	 margin: 0;
 }
 .qtip-content .ee-list-table-legend dt {
-	padding:.25em .5em;   
-	 margin: 0;  
+	padding:.25em .5em;
+	 margin: 0;
 	 line-height: 1em;
 }
 .qtip-content .ee-list-table-legend .ee-is-active-status {
@@ -725,7 +725,7 @@ label.error  { display: block; color: #FE2A00 !important; }
     border-spacing: 0;
     width: 100%;
 }
-.ee-table-wrap table th, 
+.ee-table-wrap table th,
 .ee-table-wrap table td {
     background: none repeat scroll 0 0 #FCFCFC;
     border: 1px solid #DFDFDF;
@@ -744,4 +744,3 @@ label.error  { display: block; color: #FE2A00 !important; }
 	float: right;
 	cursor: pointer;
 }
-
