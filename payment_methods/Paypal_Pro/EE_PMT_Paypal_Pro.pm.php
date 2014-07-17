@@ -57,7 +57,8 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		}
 		$form_name = 'Paypal_Pro_Billing_Form';
 		$form_args = array(
-			'name'=>$form_name,
+			'name'=> $form_name,
+			'html_class'=> 'ee-billing-form',
 			'subsections'=>array(
 				'credit_card'=>new EE_Credit_Card_Input(array(
 					'required'=>true
