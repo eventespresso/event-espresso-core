@@ -40,7 +40,7 @@ class EE_Register_Capabilities implements EEI_Plugin_API {
 	 *
 	 * @return void
 	 */
-	public static function register( $cap_reference, $setup_args = array() ) {
+	public static function register( $cap_reference = NULL, $setup_args = array() ) {
 		//required fields MUST be present, so let's make sure they are.
 		if ( ! isset( $cap_reference ) || ! is_array( $setup_args ) || empty( $setup_args['capabilities'] ) ) {
 			throw new EE_Error(
