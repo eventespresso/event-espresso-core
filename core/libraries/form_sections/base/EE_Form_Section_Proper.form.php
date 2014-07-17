@@ -624,8 +624,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 				unset($subsections[$subsection_name]);
 			}
 		}
+		$subsections_before = array();
 		if( $subsection_name_to_add_before ){
-				foreach( $this->_subsections as $subsection_name => $subsection ) {
+			foreach( $this->_subsections as $subsection_name => $subsection ) {
 				if ( $subsection_name == $subsection_name_to_add_before ) {
 					break;
 				}
