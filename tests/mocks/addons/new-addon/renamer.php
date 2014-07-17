@@ -48,19 +48,25 @@ function replace_in_path( $old_string, $new_string, $file_or_folder_path ){
 	//check for lower-case replacement too
 	$new_file_name = replace_variations( $old_string, $new_string, basename( $file_or_folder_path ) );
 	$new_file_path = dirname( $file_or_folder_path ) . "/" . $new_file_name;
-	$success = rename( $file_or_folder_path, $new_file_path );
-	if( $success ){
-		echo "<br>successfully renamed $file_or_folder_path to $new_file_path";
+	if( $file_or_folder_path != $new_file_path ){
+		$success = rename( $file_or_folder_path, $new_file_path );
+		if( $success ){
+			echo "<hr>successfully renamed <br>$file_or_folder_path to <br>$new_file_path";
+		}else{
+			echo "<hr><mark>ERROR</mark>could not rename <br>$file_or_folder_path to <br>$new_file_path. Permissions issue?";
+		}
 	}
 	//if it's a file, open its contents and replace them too
 	if( is_file( $new_file_path ) ){
 		$old_content = file_get_contents( $new_file_path );
 		$new_content = replace_variations($old_string, $new_string, $old_content );
-		$bytes_written = file_put_contents($new_file_path, $new_content );
-		if( $bytes_written ){
-			echo " and replaced its content too";
-		}else{
-			echo " but COULD NOT update its content";
+		if( $old_content != $new_content ){
+			$bytes_written = file_put_contents($new_file_path, $new_content );
+			if( $bytes_written ){
+				echo " <hr>successfully replaced $old_string with $new_string in $new_file_path";
+			}else{
+				echo " <hr> <mark>ERROR</mark> replacing $old_string with $new_string in $new_file_path";
+			}
 		}
 	}
 
