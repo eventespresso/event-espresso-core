@@ -364,24 +364,18 @@
 	margin: 0 0 2em;
 	border:1px solid #eee;
 	border-radius: 2px;
-	line-height:1em;
 }
 .spco-payment-method-hdr {
 	float:right;
 	clear: none;
-	margin: .5em 0 2em;
+	margin: .5em 0 0;
 	text-align:right;
 	color:#ccc;
 }
 .spco-payment-method-img {
 	float:left;
-	margin: 0 1em 2em 0;
+	margin: 0 1em 0 0;
 }
 .spco-payment-method-desc {
 	margin:2em 0;
-}
-#reg-page-select-other-gateway-lnk {
-	float:right;
-	margin:2em 0 0;
-	cursor:pointer;
 }
