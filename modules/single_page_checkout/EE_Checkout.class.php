@@ -32,6 +32,12 @@ class EE_Checkout {
 	public $next_step = '';
 
 	/**
+	 * the action being performed on the current step
+	 * @type string
+	 */
+	public $action = '';
+
+	/**
 	 * base url for the site's registration checkout page - additional url params will be added to this
 	 * @type string
 	 */
