@@ -188,6 +188,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	private function _no_payment_required() {
 
 		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		// set some defaults
+		$this->checkout->selected_method_of_payment = 'no_payment_required';
 
 		return new EE_Form_Section_Proper(
 			array(
@@ -344,6 +346,15 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					// set this payment method aside for a moment
 //					$selected_payment_method[ $payment_method->slug() . '-link' ] = $this->_payment_method_link( $payment_method );
 					$selected_payment_method[ $payment_method->slug() . '-info' ] = $this->_payment_method_billing_info( $payment_method );
+					$selected_payment_method[ 'selected_method_of_payment' ] = new EE_Hidden_Input(
+						array(
+							'normalization_strategy' 	=> NULL,
+							'layout_strategy' 				=> new EE_Div_Per_Section_Layout(),
+							'html_name' 						=> 'selected_method_of_payment',
+							'html_id' 								=> 'reg-page-selected-method-of-payment',
+							'default'								=> $this->checkout->selected_method_of_payment
+						)
+					);
 				} else {
 					// just slap dem suckers on the back of the $available_payment_methods array
 					$available_payment_methods[ $payment_method->slug() . '-link' ] = $this->_payment_method_link( $payment_method );
@@ -500,6 +511,111 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 
 	/**
+	 * @return boolean
+	 */
+	public function process_reg_step() {
+		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+//		die();
+		if ( $this->_billing_form_is_valid() ) {
+
+			// has method_of_payment been set by no-js user?
+			$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment();
+
+			switch(  $this->checkout->selected_method_of_payment ) {
+
+				case 'payments_closed' :
+					EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+					break;
+
+				case 'no_payment_required' :
+					EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+					break;
+
+			}
+			// event requires pre-approval
+//			if ( $this->checkout->selected_method_of_payment == 'payments_closed' ) {
+//				EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+//			} else if ( $this->checkout->transaction->total() == 0 || ! $this->checkout->reg_url_link ) {
+//				EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+//			}
+			return TRUE;
+		}
+		return FALSE;
+	}
+
+
+
+	/**
+	 *    update_reg_step
+	 *    this is the final step after a user  revisits the site to retry a payment
+	 *
+	 * @return boolean
+	 */
+	public function update_reg_step() {
+		if ( $this->checkout->continue_reg ) {
+			$this->checkout->transaction->save();
+			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
+			do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->checkout->transaction );
+			// set return URL
+			$this->checkout->thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->checkout->reg_url_link ), $this->checkout->thank_you_page_url );
+			// if payment required
+			if ( $this->checkout->transaction->total() > 0 ) {
+				// attempt payment via payment method
+				$this->_process_payment();
+			}
+		}
+		$this->_next_step = FALSE;
+		$this->go_to_next_step( __FUNCTION__ );
+	}
+
+
+
+
+
+
+	/**
+	 * 	_process_payment
+	 *
+	 * 	@access private
+	 * 	@return 	bool
+	 */
+	private function _process_payment() {
+		// clear any previous errors related to not selecting a payment method
+		EE_Error::overwrite_errors();
+		// how have they chosen to pay?
+		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );  // : 'no_payment_required';
+		// ya gotta make a choice man
+		if ( empty( $this->checkout->selected_method_of_payment )) {
+			$this->checkout->json_response['return_data'] = array( 'plz-select-method-of-payment' => FALSE );
+			return FALSE;
+		}
+		// get EE_Payment_Method object
+		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->checkout->selected_method_of_payment ) ) {
+			return FALSE;
+		}
+
+		//setup the thank you page properly
+		$this->checkout->thank_you_page_url = add_query_arg(
+			array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
+			$this->checkout->thank_you_page_url
+		);
+		//attempt payment (offline payment methods will just NOT make a payment, but instead
+		//just mark itself as teh PMD_ID on the transaction
+		$payment = $this->_attempt_payment( $this->checkout->payment_method );
+		//if a payment object was made and it specifies a redirect url...
+		//then we'll setup SPCO to do that redirect
+		if ( $payment instanceof EE_Payment && $payment->redirect_url()){
+			$this->checkout->json_response['return_data'] = array( 'off-site-redirect' => $payment->redirect_form() );
+			$this->_redirect_to_thank_you_page = FALSE;
+		} else {
+			$this->_redirect_to_thank_you_page = TRUE;
+		}
+		return TRUE;
+	}
+
+
+
+	/**
 	 * _billing_form_is_valid
 	 *
 	 * @access private
@@ -516,6 +632,95 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 		}
 		return TRUE;
+	}
+
+
+
+
+
+	/**
+	 * 	_attempt_payment
+	 *
+	 * 	@access 	private
+	 * 	@type 	EE_Payment_Method $payment_method
+	 * 	@return 	mixed	object | boolean
+	 */
+	private function _attempt_payment( EE_Payment_Method $payment_method ) {
+		// generate payment object
+		$payment = EE_Registry::instance()->load_core( 'Payment_Processor' )->process_payment(
+			$payment_method,
+			$this->checkout->transaction,
+			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ),
+			$this->_billing_form,
+			$this->checkout->thank_you_page_url
+		);
+		// verify payment object
+		if ( ! $payment instanceof EE_Payment ) {
+			// not a payment
+			EE_Error::add_error(
+				sprintf(
+					__( 'A valid payment was not generated due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+					'<br/>',
+					EE_Registry::instance()->CFG->organization->email
+				), __FILE__, __FUNCTION__, __LINE__
+			);
+			return FALSE;
+		}
+		return $payment;
+	}
+
+
+
+
+
+
+	/**
+	 * 	_onsite_payment_success
+	 *
+	 * 	@access private
+	 * 	@type 	EE_Payment $payment
+	 * 	@return 	boolean
+	 */
+	private function _onsite_payment_success( $payment ) {
+		// check results
+		switch ( $payment->status() ) {
+
+			// good payment
+			case EEM_Payment::status_id_approved :
+				EE_Error::add_success( __( 'Your payment was processed successfully.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return TRUE;
+				break;
+
+			// slow payment
+			case EEM_Payment::status_id_pending :
+				EE_Error::add_success( __( 'Your payment appears to have been processed successfully, but the Instant Payment Notification has not yet been received. It should arrive shortly.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				return TRUE;
+				break;
+
+			// don't wanna payment
+			case EEM_Payment::status_id_cancelled :
+				EE_Error::add_attention( __( 'Your payment was cancelled, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				break;
+
+			// bad payment
+			case EEM_Payment::status_id_declined :
+				EE_Error::add_attention( __( 'We\'re sorry but your payment was declined, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				break;
+
+			// brokked payment
+			case EEM_Payment::status_id_failed :
+				EE_Error::add_error(
+					sprintf(
+						__( 'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+						'<br/>',
+						EE_Registry::instance()->CFG->organization->email
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+				break;
+
+		}
+		return FALSE;
 	}
 
 
@@ -966,190 +1171,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 
 		return '';
 
-	}
-
-
-
-
-
-
-	/**
-	 * @return boolean
-	 */
-	public function process_reg_step() {
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		die();
-		if ( $this->_continue_reg ) {
-			// event requires pre-approval
-			if ( $this->checkout->selected_method_of_payment == 'payments_closed' ) {
-				EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			} else if ( $this->_transaction->total() == 0 || ! $this->_reg_url_link ) {
-				EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-			}
-		}
-		$this->go_to_next_step( __FUNCTION__ );
-	}
-
-
-
-	/**
-	 *    update_reg_step
-	 *    this is the final step after a user  revisits the site to retry a payment
-	 *
-	 * @return boolean
-	 */
-	public function update_reg_step() {
-		if ( $this->_continue_reg ) {
-			$this->_transaction->save();
-			$this->_cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
-			do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
-			// set return URL
-			$this->_thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->_reg_url_link ), $this->_thank_you_page_url );
-			// if payment required
-			if ( $this->_transaction->total() > 0 ) {
-				// attempt payment via payment method
-				$this->_process_payment();
-			}
-		}
-		$this->_next_step = FALSE;
-		$this->go_to_next_step( __FUNCTION__ );
-	 }
-
-
-
-
-
-
-	/**
-	 * 	_process_payment
-	 *
-	 * 	@access private
-	 * 	@return 	bool
-	 */
-	private function _process_payment() {
-		// clear any previous errors related to not selecting a payment method
-		EE_Error::overwrite_errors();
-		// how have they choosen to pay?
-		$this->checkout->selected_method_of_payment = $this->_get_selected_method_of_payment( TRUE );  // : 'no_payment_required';
-		// ya gotta make a choice man
-		if ( empty( $this->checkout->selected_method_of_payment )) {
-			$this->_json_response['return_data'] = array( 'plz-select-method-of-payment' => FALSE );
-			return FALSE;
-		}
-		// get EE_Payment_Method object
-		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->checkout->selected_method_of_payment ) ) {
-			return FALSE;
-		}
-
-		$this->_get_billing_form();
-
-		//setup the thank you page properly
-		$this->_thank_you_page_url = add_query_arg(
-			array( 'e_reg_url_link' => $this->_transaction->primary_registration()->reg_url_link() ),
-			$this->_thank_you_page_url
-		);
-		//attempt payment (offline paymetn methods will just NOT make a payment, but instead
-		//just mark itself as teh PMD_ID on the transaction
-		$payment = $this->_attempt_payment( $this->checkout->payment_method );
-		//if a payment object was made and it specifies a redirect url...
-		//then we'll setup SPCO to do that redirect
-		if ( $payment instanceof EE_Payment && $payment->redirect_url()){
-			$this->_json_response['return_data'] = array( 'off-site-redirect' => $payment->redirect_form() );
-			$this->_redirect_to_thank_you_page = FALSE;
-		} else {
-			$this->_redirect_to_thank_you_page = TRUE;
-		}
-		return TRUE;
-	}
-
-
-
-
-
-
-	/**
-	 * 	_attempt_payment
-	 *
-	 * 	@access 	private
-	 * 	@type 	EE_Payment_Method $payment_method
-	 * 	@return 	mixed	object | boolean
-	 */
-	private function _attempt_payment( EE_Payment_Method $payment_method ) {
-		// generate payment object
-		$payment = EE_Registry::instance()->load_core( 'Payment_Processor' )->process_payment(
-			$payment_method,
-			$this->_transaction,
-			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ),
-			$this->_billing_form,
-			$this->_thank_you_page_url
-		);
-		// verify payment object
-		if ( ! $payment instanceof EE_Payment ) {
-			// not a payment
-			EE_Error::add_error(
-				sprintf(
-					__( 'A valid payment was not generated due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
-					'<br/>',
-					EE_Registry::instance()->CFG->organization->email
-				), __FILE__, __FUNCTION__, __LINE__
-			);
-			return FALSE;
-		}
-		return $payment;
-	}
-
-
-
-
-
-
-	/**
-	 * 	_onsite_payment_successfull
-	 *
-	 * 	@access private
-	 * 	@type 	EE_Payment $payment
-	 * 	@return 	boolean
-	 */
-	private function _onsite_payment_successfull( $payment ) {
-		// check results
-		switch ( $payment->status() ) {
-
-			// good payment
-			case EEM_Payment::status_id_approved :
-				EE_Error::add_success( __( 'Your payment was processed successfully.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-				return TRUE;
-				break;
-
-			// slow payment
-			case EEM_Payment::status_id_pending :
-				EE_Error::add_success( __( 'Your payment appears to have been processed successfully, but the Instant Payment Notification has not yet been received. It should arrive shortly.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-				return TRUE;
-				break;
-
-			// don't wanna payment
-			case EEM_Payment::status_id_cancelled :
-				EE_Error::add_attention( __( 'Your payment was cancelled, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-				break;
-
-			// bad payment
-			case EEM_Payment::status_id_declined :
-				EE_Error::add_attention( __( 'We\'re sorry but your payment was declined, do you wish to try again?', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-				break;
-
-			// brokked payment
-			case EEM_Payment::status_id_failed :
-				EE_Error::add_error(
-					sprintf(
-						__( 'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
-						'<br/>',
-						EE_Registry::instance()->CFG->organization->email
-					),
-					__FILE__, __FUNCTION__, __LINE__
-				);
-				break;
-
-		}
-		return FALSE;
 	}
 
 
