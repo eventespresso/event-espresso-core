@@ -704,7 +704,6 @@ abstract class EEM_Base extends EE_Base{
 		if( $this->has_primary_key_field() ){
 			foreach($items_for_deletion as $item_for_deletion_row ){
 				$pk_value = $item_for_deletion_row[ $this->get_primary_key_field()->get_qualified_column() ];
-				echo "\r\nremoving $pk_value from the entity map of ".get_class( $this );
 				if( isset( $this->_entity_map[ $pk_value ] ) ){
 					unset( $this->_entity_map[ $pk_value ] );
 				}
