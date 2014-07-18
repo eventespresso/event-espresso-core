@@ -98,6 +98,71 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
+	 * 	ajax_process_registration_steps
+	 */
+	public static function process_reg_step() {
+		EED_Single_Page_Checkout::instance()->_initialize();
+	}
+
+
+
+	/**
+	 *    run
+	 *
+	 * @access    public
+	 * @param WP $WP
+	 * @return    void
+	 */
+	public function run( $WP ) {
+		$this->_initialize();
+	}
+
+
+
+	/**
+	 *    _initialize - initial module setup
+	 *
+	 * @access    private
+	 * @throws EE_Error
+	 * @return    void
+	 */
+	private function _initialize() {
+		// load classes
+		if ( ! isset( EE_Registry::instance()->REQ )) {
+			EE_Registry::instance()->load_core( 'Request_Handler' );
+		}
+		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE );
+		// load the reg steps array
+		$this->load_reg_steps();
+		// set the current step
+		$this->checkout->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
+		// and the next step
+		$this->checkout->set_next_step();
+		// and what we're doing on the current step
+		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_form' );
+//		echo '<h5 style="color:#2EA2CC;">$this->checkout->action : <span style="color:#E76700">' . $this->checkout->action . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		// returning from the thank you page ?
+		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
+		// get transaction from db or session
+		$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_transaction_and_cart_for_current_session();
+		// and the registrations for the transaction
+		$this->_get_registrations( $this->checkout->transaction );
+		// verify transaction one last time
+		//		if ( $this->checkout->transaction instanceof EE_Transaction ) {
+		// initialize each reg step, which gives them the chance to potentially alter the process
+		$this->_initialize_reg_steps();
+		// get reg form
+		$this->_check_form_submission();
+		// checkout the action!!!
+		$this->_process_form_action();
+		//		}
+		// add some style and make it dance
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_and_scripts' ), 10 );
+	}
+
+
+
+	/**
 	 *    load_reg_steps
 	 * loads and instantiates each reg step based on the EE_Registry::instance()->CFG->registration->reg_steps array
 	 *
@@ -203,74 +268,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	ajax_process_registration_steps
-	 */
-	public static function process_reg_step() {
-		EED_Single_Page_Checkout::instance()->_initialize();
-	}
-
-
-
-	/**
-	 *    run
-	 *
-	 * @access    public
-	 *
-	 * @param WP $WP
-	 *
-	 * @return    void
-	 */
-	public function run( $WP ) {
-		$this->_initialize();
-	}
-
-
-
-	/**
-	 *    _initialize - initial module setup
-	 *
-	 * @access    private
-	 * @throws EE_Error
-	 * @return    void
-	 */
-	private function _initialize() {
-		// load classes
-		if ( ! isset( EE_Registry::instance()->REQ )) {
-			EE_Registry::instance()->load_core( 'Request_Handler' );
-		}
-		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE );
-		// load the reg steps array
-		$this->load_reg_steps();
-		// set the current step
-		$this->checkout->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
-		// and the next step
-		$this->checkout->set_next_step();
-		// d( $this->checkout );
-		// and what we're doing on the current step
-		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_form' );
-		// returning from the thank you page ?
-		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
-		// get transaction from db or session
-		$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_transaction_and_cart_for_current_session();
-		// and the registrations for the transaction
-		$this->_get_registrations( $this->checkout->transaction );
-		// verify transaction one last time
-//		if ( $this->checkout->transaction instanceof EE_Transaction ) {
-			// initialize each reg step, which gives them the chance to potentially alter the process
-			$this->_initialize_reg_steps();
-			// get reg form
-			$this->_check_form_submission();
-			// checkout the action!!!
-			$this->_process_form_action();
-//		}
-		// add some style and make it dance
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_css' ), 10 );
-		//	add_action( 'wp_enqueue_scripts', array( $this, 'load_js' ), 10 );
-	}
-
-
-
-	/**
 	 * _check_form_submission
 	 *
 	 * @access private
@@ -284,11 +281,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( $this->checkout->current_step->reg_form->was_submitted() ) {
 				// capture form data
 				$this->checkout->current_step->reg_form->receive_form_submission();
+//				echo '<h5 style="color:#2EA2CC;">$this->checkout->current_step->reg_form->is_valid() : <span style="color:#E76700">' . $this->checkout->current_step->reg_form->is_valid() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+//				echo '<h5 style="color:#2EA2CC;">$this->checkout->continue_reg : <span style="color:#E76700">' . $this->checkout->continue_reg . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 				// validate form data
 				if ( $this->checkout->current_step->reg_form->is_valid() && $this->checkout->continue_reg ) {
+//					echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 					// good registrant, you get to proceed
 					EE_Error::add_success( $this->checkout->current_step->success_message() );
 				} else {
+//					echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 					// bad, bad, bad registrant
 					EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
 					$this->checkout->action = 'display_spco_reg_form';
@@ -565,7 +566,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 		@access 		public
 	 * 		@return 		void
 	 */
-	public static function translate_js_strings() {
+	public function translate_js_strings() {
 		EE_Registry::$i18n_js_strings['invalid_coupon'] = __('We\'re sorry but that coupon code does not appear to be valid. If this is incorrect, please contact the site administrator.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['required_field'] = __(' is a required question.', 'event_espresso');
 		EE_Registry::$i18n_js_strings['required_multi_field'] = __(' is a required question. Please enter a value for at least one of the options.', 'event_espresso');
@@ -583,30 +584,25 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 * 	load_css
+	 * 	enqueue_styles_and_scripts
 	 *
 	 * 	@access 		public
 	 * 	@return 		void
 	 */
-	public function load_css() {
+	public function enqueue_styles_and_scripts() {
+		// load css
 		wp_register_style( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style( 'single_page_checkout' );
-	}
-
-
-
-	/**
-	 * 	load_js
-	 *
-	 * 	@access 		public
-	 * 	@return 		void
-	 */
-	public function load_js() {
-		EED_Single_Page_Checkout::translate_js_strings();
-		wp_enqueue_script( 'underscore' );
-		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
-		wp_enqueue_script( 'single_page_checkout' );
-		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
+		// i18n
+		$this->translate_js_strings();
+		$this->checkout->current_step->translate_js_strings();
+		// load JS
+//		wp_enqueue_script( 'underscore' );
+//		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
+//		wp_enqueue_script( 'single_page_checkout' );
+//		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
+		// add css and JS for current step
+		$this->checkout->current_step->enqueue_styles_and_scripts();
 	}
 
 
@@ -698,12 +694,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return 	array
 	 */
 	private function _process_return_to_reg_step_query_args( $args ) {
-//		$ignore = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn', 'step', 'next_step' );
-//		foreach ( $_POST as $key => $value ) {
-//			if ( ! in_array( $key, $ignore )) {
-//				$args[ $key ] = isset( $value ) ? $value : '';
-//			}
-//		}
+		$ignore = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn', 'step', 'next_step' );
+		foreach ( $_POST as $key => $value ) {
+			if ( ! in_array( $key, $ignore )) {
+				$args[ $key ] = isset( $value ) ? $value : '';
+			}
+		}
 		return $args;
 	}
 
@@ -750,8 +746,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$attention_msg = isset( $notices['attention'] ) ? $notices['attention'] : FALSE;
 		// setup URL for redirect
 		if ( $this->checkout->redirect_to_thank_you_page ) {
-			d( $this->checkout->transaction->primary_registration() );
-			die();
+//			d( $this->checkout->transaction->primary_registration() );
+//			die();
 			$this->checkout->thank_you_page_url = add_query_arg(
 				array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
 				$this->checkout->thank_you_page_url
@@ -761,12 +757,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// set JSON response and merge in notices
 		$this->checkout->json_response = array_merge( $this->checkout->json_response, $notices );
 
-//		d( $this->checkout->transaction );
 //		if ( $this->checkout->current_step != 'attendee_information' ) {
 //		if ( $this->checkout->action != 'process_reg_step' ) {
-//			echo '<h4>$this->checkout->action : ' . $this->checkout->action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//			d( $this->checkout->transaction );
 //			d( $this->checkout->current_step );
 //			d( $this->checkout->next_step );
+//			echo '<h4>$this->checkout->action : ' . $this->checkout->action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
