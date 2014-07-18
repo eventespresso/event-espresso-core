@@ -31,17 +31,17 @@ class EE_Register_Model implements EEI_Plugin_API {
 	/**
 	 * @param string $model_id unique id for it
 	 * @param array  $config   {
-	 * @throws EE_Error
-	 * @internal param array $ model_paths array of folders containing DB models, where each file follows the models naming convention,
+	 *		@type array $model_paths array of folders containing DB models, where each file follows the models naming convention,
 	 *                         which is: EEM_{model_name}.model.php which contains a single class called EEM_{model_name}. Eg. you could pass
 	 *                         "public_html/wp-content/plugins/my_addon/db_models" (with or without trailing slash) and in that folder put
 	 *                         each of your model files, like "EEM_Food.model.php" which contains the class "EEM_Food" and
 	 *                         "EEM_Monkey.model.php" which contains the class "EEM_Monkey". These will be autoloaded and added to
 	 *                         the EE registry so they can be used like ordinary models. The class contained in each file should extend EEM_Base.
-	 * @internal param array $ class_paths array of folders containing DB classes, where each file follows the model class naming convention,
+	 *		@type array $class_paths array of folders containing DB classes, where each file follows the model class naming convention,
 	 *                         which is EE_{model_name}.class.php. The class contained in each file should extend EE_Base_Class
 	 *
 	 * }
+	 * @throws EE_Error
 	 */
 	public static function register( $model_id = NULL, $config = array() ){
 
