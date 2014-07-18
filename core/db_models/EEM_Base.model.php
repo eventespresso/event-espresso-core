@@ -596,9 +596,8 @@ abstract class EEM_Base extends EE_Base{
 		//need to verify that, for any entry we want to update, there are entries in each secondary table.
 		//to do that, for each table, verify that it's PK isn't null.
 		$tables= $this->get_tables();
-		//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
-		//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
-		if(count($tables) > 1){
+
+
 			//we want to make sure the default_where strategy is ignored
 			$this->_ignore_where_strategy = TRUE;
 			$wpdb_select_results = $this->_get_all_wpdb_results($query_params);
@@ -606,20 +605,33 @@ abstract class EEM_Base extends EE_Base{
 				//get the model object's PK, as we'll want this if we need to insert a row into secondary tables
 				$main_table_pk_column = $this->get_primary_key_field()->get_qualified_column();
 				$main_table_pk_value = $wpdb_result[ $main_table_pk_column ];
-				//foreach matching row in the DB, ensure that each table's PK isn't null. If so, there must not be an entry
-				//in that table, and so we'll want to insert one
-				foreach($tables as $table_obj){
-					$this_table_pk_column = $table_obj->get_fully_qualified_pk_column();
-					//if there is no private key for this table on the results, it means there's no entry
-					//in this table, right? so insert a row in the current table, using any fields available
-					if( ! (array_key_exists($this_table_pk_column, $wpdb_result)  &&  $wpdb_result[ $this_table_pk_column ]) ){
-						$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+				//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
+				//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
+				if(count($tables) > 1){
+					//foreach matching row in the DB, ensure that each table's PK isn't null. If so, there must not be an entry
+					//in that table, and so we'll want to insert one
+					foreach($tables as $table_obj){
+						$this_table_pk_column = $table_obj->get_fully_qualified_pk_column();
+						//if there is no private key for this table on the results, it means there's no entry
+						//in this table, right? so insert a row in the current table, using any fields available
+						if( ! (array_key_exists($this_table_pk_column, $wpdb_result)  &&  $wpdb_result[ $this_table_pk_column ]) ){
+							$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+						}
+					}
+				}
+
+				//and now check that if we have cached any models by that ID on the model, that
+				//they also get updated properly
+				if( $this->get_from_entity_map( $main_table_pk_value ) ){
+					$model_object = $this->get_from_entity_map( $main_table_pk_value );
+					foreach( $fields_n_values as $field => $value ){
+						$model_object->set($field, $value);
 					}
 				}
 			}
 			//let's make sure default_where strategy is followed now
 			$this->_ignore_where_strategy = FALSE;
-		}
+
 
 
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
