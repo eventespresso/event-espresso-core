@@ -22,7 +22,7 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	private $_reg_args;
 	private $_addon_name;
 	public function __construct($name = NULL, array $data = array(), $dataName = '') {
-		$this->_mock_addon_path = EE_TESTS_DIR.'mocks/addons/new-addon/';
+		$this->_mock_addon_path = EE_MOCKS_DIR.'addons/new-addon/';
 		$this->_reg_args = array(
 			'version'=>'1.0.0',
 			'min_core_version'=>'4.0.0',
