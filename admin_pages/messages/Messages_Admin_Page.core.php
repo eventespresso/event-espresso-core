@@ -1309,7 +1309,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		} else {
 			//get template, set the new template_pack and then reset to default
 			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
+
 			$mtpg->set_template_pack_name( $template_pack );
+			$this->_req_data['msgr'] = $mtpg->messenger();
+			$this->_req_data['mt'] = $mtpg->message_type();
 
 			$query_args = $this->_reset_to_default_template();
 
@@ -1318,11 +1321,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				$this->_template_args['error'] = TRUE;
 			} else {
 				$template_label =$mtpg->get_template_pack()->label;
-				EE_Error::add_success( sprintf( __('This message template has been successfully switched to use the %s.', 'event_espresso'), $template_label ) );
+				$template_pack_labels = $mtpg->messenger_obj()->get_supports_labels();
+				EE_Error::add_success( sprintf( __('This message template has been successfully switched to use the %s %s.', 'event_espresso'), $template_label, $template_pack_labels->template_pack ) );
 				//generate the redirect url for js.
 				$url = self::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 				$this->_template_args['data']['redirect_url'] = $url;
-				$this->_template_args['data']['success'] = true;
+				$this->_template_args['success'] = true;
 			}
 
 			$this->_return_json();
@@ -1356,14 +1360,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			//let's first determine if the incoming template is a global template, if it isn't then we need to get the global template matching messenger and message type.
 			$MTPG = EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
 
-			//if successfully deleted, lets generate the new ones.  Note. We set GLOBAL to true, because resets on ANY template will use the related global template defaults for regeneration.  This means that if a custom template is reset it resets to whatever the related global template is.  HOWEVER, we DO keep the template pack and template variation set for the current custom template when resetting.
-			$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, TRUE );
 
-			//if new templates got generated okay then we delete permanently the existing one.
-			if ( ! empty( $templates ) ) {
-				$success = $this->_delete_mtp_permanently( $GRP_ID, FALSE );
+			//note this is ONLY deleteing the template fields (Message Template rows) NOT the message template group.
+			$success = $this->_delete_mtp_permanently( $GRP_ID, FALSE );
+
+			if ( $success ) {
+				//if successfully deleted, lets generate the new ones.  Note. We set GLOBAL to true, because resets on ANY template will use the related global template defaults for regeneration.  This means that if a custom template is reset it resets to whatever the related global template is.  HOWEVER, we DO keep the template pack and template variation set for the current custom template when resetting.
+				$templates = $this->_generate_new_templates( $this->_req_data['msgr'], $this->_req_data['mt'], $GRP_ID, TRUE );
 			}
-
 
 		}
 
@@ -1373,21 +1377,23 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		//all good, let's add a success message!
-		if ( $success && !empty( $templates ) ) {
+		if ( $success && ! empty( $templates ) ) {
+			$templates = $templates[0]; //the info for the template we generated is the first element in the returned array.
 			EE_Error::overwrite_success();
 			EE_Error::add_success( __('Templates have been reset to defaults.', 'event_espresso') );
 		}
+
+
+		$query_args = array(
+			'id' => isset( $templates['GRP_ID'] ) ? $templates['GRP_ID'] : NULL,
+			'context' => isset( $templates['MTP_context'] ) ? $templates['MTP_context'] : NULL,
+			'action' => isset( $templates['GRP_ID'] ) ? 'edit_message_template' : 'default'
+			);
 
 		//if called via ajax then we return query args otherwise redirect
 		if ( defined('DOING_AJAX') && DOING_AJAX ) {
 			return $query_args;
 		} else {
-			$query_args = array(
-				'id' => isset( $templates['GRP_ID'] ) ? $templates['GRP_ID'] : NULL,
-				'context' => isset( $templates['MTP_context'] ) ? $templates['MTP_context'] : NULL,
-				'action' => isset( $templates['GRP_ID'] ) ? 'edit_message_template' : 'default'
-				);
-
 			$this->_redirect_after_action( FALSE, '', '', $query_args, TRUE );
 		}
 

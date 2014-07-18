@@ -160,7 +160,7 @@ class EE_Message_Template_Defaults extends EE_Base {
 		$class_name = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $template_pack ) ) );
 
 		if ( ! class_exists( $class_name ) ) {
-			EE_Error::add_error( sprintf( __('The template pack represented by a class corresponding to "%s" does not exist.  Likely the autoloader for this class has the wrong path or the incoming reference is mispelled.  The default template pack  been used to generate the templates instead.', 'event_espresso'), $class_name ) );
+			EE_Error::add_error( sprintf( __('The template pack represented by a class corresponding to "%s" does not exist.  Likely the autoloader for this class has the wrong path or the incoming reference is mispelled.  The default template pack  been used to generate the templates instead.', 'event_espresso'), $class_name ), __FILE__, __FUNCTION__, __LINE__ );
 			$class_name = 'EE_Messages_Template_Pack_Default';
 		}
 
@@ -200,6 +200,17 @@ class EE_Message_Template_Defaults extends EE_Base {
 
 		$this->_messenger = $active_messengers[$this->_m_name];
 		$this->_message_type = $active_message_types[$this->_mt_name];
+
+		//verify we have the messenger and message type objects
+		if ( ! $this->_messenger instanceof EE_messenger ) {
+			throw new EE_Error( sprintf( __('The _messenger property must be an instance of EE_messenger by this point.  It isn\'t. Something has gone wrong. Here is the value it holds:<br /> %s', 'event_espresso' ), print_r( $this->_messenger, TRUE ) ) );
+		}
+
+		if ( ! $this->_message_type instanceof EE_message_type ) {
+			throw new EE_Error( sprintf( __('The _message_type property must be an instance of EE_message_type by this point.  It isn\'t. Something has gone wrong. Here is the value it holds:<br /> %s', 'event_espresso' ), print_r( $this->_message_type, TRUE ) ) );
+		}
+
+
 		$this->_fields = $this->_messenger->get_template_fields();
 		$this->_contexts = $this->_message_type->get_contexts();
 	}

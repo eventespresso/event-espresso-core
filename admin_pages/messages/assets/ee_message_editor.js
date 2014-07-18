@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
 		switchTemplatePack : function( selected ) {
 			var data = {
 				GRP_ID : $('#ee-msg-grp-id').val(),
-				template_pack : $('#MTP_template_pack').val(),
+				template_pack : selected,
 				action : 'switch_template_pack',
 				ee_admin_ajax : true,
 				page : 'espresso_messages'
@@ -18,18 +18,26 @@ jQuery(document).ready(function($) {
 				success: function(response, status, xhr) {
 					var ct = xhr.getResponseHeader("content-type") || "";
 					if (ct.indexOf('html') > -1) {
-						$('#ajax-notices-container').text(response);
+						$('#ajax-notices-container').html(response);
 					}
 
 					if (ct.indexOf('json') > -1 ) {
-						$('#ajax-notices-container').text(resp.notices);
-						if ( resp.success ) {
-							window.location.replace( resp.redirect_url );
+						MessageEditorHelper.display_notices(response.notices);
+						if ( response.success ) {
+							window.location.replace( response.data.redirect_url );
+							return true;
 						}
 					}
 				}
 			});
 			return false;
+		},
+
+
+		display_notices: function(content) {
+			$('.ajax-loader-grey').hide();
+			$('#ajax-notices-container').html(content);
+			$('.espresso-notices').show();
 		}
 	};
 
@@ -42,10 +50,12 @@ jQuery(document).ready(function($) {
 
 
 	$('#mtp_templates').on('change', '#MTP_template_pack', function(e) {
+		var selected_item = $(this).val();
 		var original_val = $('option[selected="selected"]', this).val();
 		var reset = confirm( eei18n.confirm_switch_template_pack );
 		if ( reset ) {
-			MessageEditorHelper.switchTemplatePack(this);
+			MessageEditorHelper.switchTemplatePack(selected_item);
+			return true;
 		} else {
 			e.preventDefault();
 			$(this).val(original_val);

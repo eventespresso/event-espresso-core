@@ -10,6 +10,8 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 /**
  * EE_Template_Packs are classes that contain all the information related to messages templates for a given "template pack".
  *
+ * Child classes extending this class must have "EE_Messages_Template_Pack" as the prefix for the class name, and the sentence_case must be used in the classname.  So if the dbref is "full_width", then the full class name must be "EE_Messages_Template_Pack_Full_Width"
+ *
  * @package        Event Espresso
  * @subpackage  messages
  * @since            %VER%
@@ -144,35 +146,45 @@ abstract class  EE_Messages_Template_Pack {
 	 */
 	public function __construct() {
 		$this->_set_props();
-
+		//make sure classname is correct
+		$classname = get_class( $this );
 		//make sure required props have been set
 
 		//if label is empty then throw an error because we should have it defined by now.
 		if ( ! isset( $this->label )  ) {
-			throw new EE_Error( sprintf( __('The label property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), get_class( $this ) ) );
+			throw new EE_Error( sprintf( __('The label property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), $classname ) );
 		}
 
 
 		//the reference for this template pack
 		if ( ! isset( $this->dbref )  ) {
-			throw new EE_Error( sprintf( __('The dbref property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), get_class( $this ) ) );
+			throw new EE_Error( sprintf( __('The dbref property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), $classname ) );
+		}
+
+		//make sure dbref is safe
+		$this->dbref = str_replace( '-', '_', sanitize_key( $this->dbref ) );
+
+		$should_be = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $this->dbref ) ) );
+
+		if ( $should_be !== $classname ) {
+			throw new EE_Error( sprintf( __('The name of the template pack instantiated class is "%s".  It should be "%s".  Make sure that the name of the temlpate pack class matches is prepended with "EE_Messages_Template_Pack_" and appended with a sentence case iteration of the value for your template pack\'s dbref property.', 'event_espresso' ), $classname, $should_be ) );
 		}
 
 		//if _base_path is not set then throw an error because a base path string is needed.
 		if ( empty( $this->_base_path ) ) {
-			throw new EE_Error( sprintf( __('The _base_path property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), get_class( $this ) ) );
+			throw new EE_Error( sprintf( __('The _base_path property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), $classname ) );
 		}
 
 
 		//if _base_url is not set then throw an error because a  string is needed for variations.
 		if ( empty( $this->_base_url ) ) {
-			throw new EE_Error( sprintf( __('The _base_url property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), get_class( $this ) ) );
+			throw new EE_Error( sprintf( __('The _base_url property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), $classname ) );
 		}
 
 
 		//if $supports is not set then throw an error because that effectively means this template_pack does not have any templates!
 		if ( empty( $this->_supports ) ) {
-			throw new EE_Error( sprintf( __('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), get_class( $this ) ) );
+			throw new EE_Error( sprintf( __('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), $classname ) );
 		}
 
 		//load template helper
@@ -229,7 +241,7 @@ abstract class  EE_Messages_Template_Pack {
 	 * @return array          Returns an multi-level associative array indexed by template context and field in the format:
 	 *                                array( 'context' => array( 'field' => 'value', 'another-field', 'value' ) );
 	 */
-	protected function _get_templates( EE_Messenger $messenger, EE_message_type $message_type ) {
+	protected function _get_templates( EE_messenger $messenger, EE_message_type $message_type ) {
 		$templates = array();
 
 		//first we allow for the $_base_path to be filtered.  However, we assign this to a new variable so that we have the original base_path as a fallback.
@@ -237,7 +249,7 @@ abstract class  EE_Messages_Template_Pack {
 
 		//we get all the templates for the DEFAULT template pack to have fallbacks in case this template pack does not have templates for this messenger and message type.
 		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : null;
-		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates() : array();
+		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates( $messenger, $message_type ) : array();
 
 		$fields = $messenger->get_template_fields();
 		$contexts = $message_type->get_contexts();

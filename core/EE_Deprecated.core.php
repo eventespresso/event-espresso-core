@@ -45,7 +45,7 @@ function ee_deprecated_get_templates( $templates, EE_messenger $messenger, EE_me
 		if ( has_filter( $filter_ref ) ) {
 			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt was to build in backward compat.  However, it is recommended to use the new filter provided which is "FHEE__EE_Template_Pack___get_templates__templates" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '%VER%' );
 		}
-		$templates = apply_filters( $filter_ref, $templates, $old_class );
+		$templates = apply_filters( $filter_ref, $templates, $old_class_instance );
 	}
 
 	return $templates;
@@ -79,8 +79,6 @@ function ee_deprecated_get_default_field_content( $contents, $actual_path, EE_me
 		get_class( $message_type ) => $message_type,
 		'EE_Messages_Base' => $message_type
 		);
-
-
 
 	foreach ( $classnames_to_try as $classname => $obj ) {
 		$filter_ref = 'FHEE__' . $classname . '__get_default_field_content';

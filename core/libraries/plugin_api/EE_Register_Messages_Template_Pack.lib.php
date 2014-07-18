@@ -82,17 +82,12 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 			);
 		}
 
-		//verify that the classname given for this registration isn't already in use.
-		EED_Messages::set_autoloaders();
-		if ( class_exists( (string) $setup_args['classname'] ) ) {
-			EE_Error::add_error( sprintf( __('The %s template pack that you just activated cannot be registered with the messages system because there is already a template pack active using the same classname.  Contact the author of this template pack to let them know of the conflict.  To stop seeing this message you will need to deactivate this template pack.', 'event_espresso' ), (string) $setup_args['classname'] ), __FILE__, __LINE__, __FUNCTION__ );
+		if ( self::_verify_class_not_exist( $setup_args['classname'] ) ) {
+			self::$_registry[$ref] = array(
+				'path' => (string) $setup_args['path'],
+				'classname' => (string) $setup_args['classname']
+				);
 		}
-
-
-		self::$_registry[$ref] = array(
-			'path' => (string) $setup_args['path'],
-			'classname' => (string) $setup_args['classname']
-			);
 
 		//hook into the system
 		add_filter( 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( 'EE_Register_Messages_Template_Pack', 'set_template_pack_path'), 10 );
@@ -146,6 +141,30 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 		}
 
 		return $template_packs;
+	}
+
+
+
+
+
+
+	/**
+	 * This verifies that the classes for each registered template pack are unique  names.
+	 *
+	 * @param string $classname The classname being checked
+	 *
+	 * @return bool
+	 */
+	private static function _verify_class_not_exist( $classname ) {
+
+		//loop through the existing registry and see if the classname is already present.
+		foreach ( self::$_registry as $ref => $args ) {
+			if ( $args['classname'] == $classname ) {
+				EE_Error::add_error( sprintf( __('The %s template pack that you just activated cannot be registered with the messages system because there is already a template pack active using the same classname.  Contact the author of this template pack to let them know of the conflict.  To stop seeing this message you will need to deactivate this template pack.', 'event_espresso' ), (string) $setup_args['classname'] ), __FILE__, __LINE__, __FUNCTION__ );
+				return false;
+			}
+		}
+		return true;
 	}
 
 

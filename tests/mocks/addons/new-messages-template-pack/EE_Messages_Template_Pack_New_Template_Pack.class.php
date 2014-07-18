@@ -15,11 +15,11 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  * @since            %VER%
  * @author          Darren Ethier
  */
-class  EE_New_Template_Pack extends EE_Messages_Template_Pack {
+class  EE_Messages_Template_Pack_New_Template_Pack extends EE_Messages_Template_Pack {
 
 	public function _set_props() {
 		$this->label = __('Test Pack', 'event_espresso');
-		$this->dbref = 'new-template-pack';
+		$this->dbref = 'new_template_pack';
 		$this->description = __('This is a new template pack included as part of an example template pack for demonstration purposes.', 'event_espresso');
 		$this->_base_url = EE_NEW_TP_URL . 'templates/';
 		$this->_base_path = EE_NEW_TP_PATH . 'templates/';

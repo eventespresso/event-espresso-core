@@ -54,7 +54,7 @@ function ee_new_template_pack_test_register_new_variation() {
 
 	$setup = array(
 		'path' => rtrim(EE_NEW_TP_PATH, '/'),
-		'classname' => 'EE_New_Template_Pack',
+		'classname' => 'EE_Messages_Template_Pack_New_Template_Pack',
 		);
 	EE_Register_Messages_Template_Pack::register( 'ee_new_template_pack', $setup );
 }

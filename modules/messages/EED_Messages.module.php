@@ -206,7 +206,7 @@ class EED_Messages  extends EED_Module {
 				continue;
 
 			//setup classname.
-			$pack_class = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_' , ' ', $template_pack_name ) ) );
+			$pack_class = 'EE_Messages_Template_Pack_' . str_replace( ' ', '_', ucwords( str_replace( '_' , ' ', $template ) ) );
 
 			if ( ! class_exists( $pack_class ) )
 				continue;

@@ -588,7 +588,7 @@ class EE_Brewing_Regular extends EE_Base {
 		$setup_args = array(
 			'mtfilename' => 'EE_Newsletter_message_type.class.php',
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
+				EE_CAF_LIBRARIES . 'messages/message_type/newsletter'
 				),
 			'messengers_to_activate_with' => array( 'email' ),
 			'messengers_to_validate_with' => array( 'email' )
