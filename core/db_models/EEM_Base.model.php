@@ -523,8 +523,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	function get_one_by_ID($id){
-		$primary_key_name = $this->get_primary_key_field()->get_name();
-		return $this->get_one(array(array($primary_key_name => $id)));
+		if( $this->get_from_entity_map( $id ) ){
+			return $this->get_from_entity_map( $id );
+		}else{
+			$primary_key_name = $this->get_primary_key_field()->get_name();
+			return $this->get_one(array(array($primary_key_name => $id)));
+		}
 	}
 	/**
 	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
@@ -677,7 +681,8 @@ abstract class EEM_Base extends EE_Base{
 		//deletion if there is no KEY column used in the WHERE statement of a deletion.
 		//to get around this, we first do a SELECT, get all the IDs, and then run another query
 		//to delete them
-		$deletion_where = $this->_setup_ids_for_delete( $this->_get_all_wpdb_results($query_params), $allow_blocking);
+		$items_for_deletion = $this->_get_all_wpdb_results($query_params);
+		$deletion_where = $this->_setup_ids_for_delete( $items_for_deletion, $allow_blocking);
 		if($deletion_where){
 			//echo "objects for deletion:";var_dump($objects_for_deletion);
 			$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -695,7 +700,17 @@ abstract class EEM_Base extends EE_Base{
 			$rows_deleted = 0;
 		}
 
-		return $rows_deleted;//how many supposedly got updated
+		//and lastly make sure those items are removed from the entity map; if they could be put into it at all
+		if( $this->has_primary_key_field() ){
+			foreach($items_for_deletion as $item_for_deletion_row ){
+				$pk_value = $item_for_deletion_row[ $this->get_primary_key_field()->get_qualified_column() ];
+				echo "\r\nremoving $pk_value from the entity map of ".get_class( $this );
+				if( isset( $this->_entity_map[ $pk_value ] ) ){
+					unset( $this->_entity_map[ $pk_value ] );
+				}
+			}
+		}
+		return $rows_deleted;//how many supposedly got deleted
 	}
 
 
@@ -1123,7 +1138,14 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * Inserts a new entry into the database, for each table
+	 * Inserts a new entry into the database, for each table.
+	 *
+	 * Note: does not add the item to the entity map because that is done by EE_Base_Class::save() right after this.
+	 * If client code uses EEM_Base::insert() directly, then although the item isn't in the entity map,
+	 * we also know there is no model object with the newly inserted item's ID at the moment (because
+	 * if there were, then they would already be in the DB and this would fail); and in the future if someone
+	 * creates a model object with this ID (or grabs it from the DB) then it will be added to the
+	 * entity map at that time anyways. SO, no need for EEM_Base::insert ot add to the entity map
 	 * @global $wpdb
 	 * @param array $field_n_values keys are field names, values are their values (in the client code's domain if $values_already_prepared_by_model_object is false,
 	 * in the model object's domain if $values_already_prepared_by_model_object is true. See comment about this at the top of EEM_Base)
