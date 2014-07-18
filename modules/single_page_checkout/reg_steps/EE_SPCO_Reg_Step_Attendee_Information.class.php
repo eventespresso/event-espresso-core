@@ -419,7 +419,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		$input_constructor_args = array(
 //			'layout_strategy' 	=> new EE_Div_Per_Section_Layout(),
 //			'name' 					=> $identifier,
-//			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
+			'html_name' 			=> 'ee_reg_qstn[' . $registration->reg_url_link() . '][' . $identifier . ']',
 			'html_id' 					=> 'ee-reg-qstn-' . $registration->reg_url_link() . '-' . $identifier,
 			'html_class' 			=> 'ee-reg-qstn',
 			'required' 				=> $question->required() ? TRUE : FALSE,
@@ -429,7 +429,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		);
 
 		if ( $answer instanceof EE_Answer && $answer->ID() ) {
-			$input_constructor_args['html_name'] = '[' . $identifier . '][' . $answer->ID() . ']';
+			$input_constructor_args['html_name'] .= '[' . $answer->ID() . ']';
 			$input_constructor_args['default'] = $answer->value();
 		}
 
