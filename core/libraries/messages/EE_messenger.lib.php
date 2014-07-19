@@ -323,13 +323,14 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @param EE_Messages_Template_Pack $pack   The template pack used for retrieving the variation.
 	 * @param bool                      $url   Whether to return url (true) or path (false). Default is false.
 	 * @param string                    $type What variation type to return. Default is 'main'.
-	 * @param string 	          $variation What variation for the template pack
+	 * @param string 	           $variation What variation for the template pack
+	 * @param bool 	           $skip_filters This allows messengers to add a filter for another messengers get_variation but call skip filters on the callback so there is no recursion on apply_filters.
 	 *
 	 * @return string                    path or url for the requested variation.
 	 */
-	public function get_variation( EE_Messages_Template_Pack $pack, $url = FALSE, $type = 'main', $variation = 'default' ) {
+	public function get_variation( EE_Messages_Template_Pack $pack, $url = FALSE, $type = 'main', $variation = 'default', $skip_filters = FALSE ) {
 		$this->_tmp_pack = $pack;
-		return $this->_tmp_pack->get_variation( $this->name, $type, $variation, $url );
+		return $this->_tmp_pack->get_variation( $this->name, $type, $variation, $url, '.css', $skip_filters );
 	}
 
 

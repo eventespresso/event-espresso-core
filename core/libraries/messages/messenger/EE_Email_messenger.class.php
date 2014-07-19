@@ -148,7 +148,7 @@ class EE_Email_messenger extends EE_messenger  {
 
 
 	public function add_email_css( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
-		return $this->get_variation( $template_pack, $url, 'default', $variation  );
+		return $this->get_variation( $template_pack, $url, 'main', $variation, TRUE  );
 	}
 
 
