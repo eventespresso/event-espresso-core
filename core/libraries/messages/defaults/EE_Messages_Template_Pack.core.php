@@ -393,13 +393,14 @@ abstract class  EE_Messages_Template_Pack {
 		$default_pack = get_class( $this ) != 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : $this;
 
 		$path_string = 'variations/' . $messenger . '_' . $type . '_' . $variation . $file_extension;
-
 		//first see if the file exists.
 		if ( is_readable( $this->_base_path . $path_string ) ) {
 			$variation_path = $base . $path_string;
 		} else {
 			$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, 'default', $url, $file_extension, TRUE ) : '';
 		}
+
+
 
 		if ( $skip_filters ) {
 			return $variation_path;

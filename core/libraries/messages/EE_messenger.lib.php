@@ -601,7 +601,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
-		$type = $preview ? 'preview' : 'default';
+		$type = $preview ? 'preview' : 'main';
 
 		//first get inline css (will be empty if the messenger doesn't use it)
 		$this->_template_args['inline_style'] = file_get_contents( $this->get_variation( $this->_tmp_pack, FALSE, $type, $this->_variation ), TRUE );
@@ -610,7 +610,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 		//check file exists and is readable
 		if ( !is_readable( $wrapper_template ) )
-			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular'])), $wrapper_template );
+			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular']) , $wrapper_template ) );
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
