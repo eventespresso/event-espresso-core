@@ -286,7 +286,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 */
 	private function _set_supports_labels_defaults() {
 		$this->_supports_labels->template_pack = __('Template Structure', 'event_espresso');
-		$this->_supports_labels->template_variation = __('Template Styles', 'event_espresso');
+		$this->_supports_labels->template_variation = __('Template Style', 'event_espresso');
 		$this->_supports_labels->template_pack_description = __('Template Structure options are bundeled structural changes for templates.', 'event_espresso');
 
 		$this->_supports_labels->template_variation_description = __('These are different styles to choose from for the selected template structure.  Usually these affect things like font style, color, borders etc.  In some cases the styles will also make minor layout changes.');
