@@ -44,7 +44,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This is set via the _set_message_template_group method and holds whatever the template pack for the group is.  IF there is no group then it gets automatically set to the Default template pack.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var EE_Messages_Template_Pack
 	 */
@@ -56,7 +56,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This is set via the _set_message_template_group method and holds whatever the template pack variation for the group is.  If there is no group then it automatically gets set to default.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var string
 	 */
@@ -1294,7 +1294,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * This executes switching the template pack for a message template.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return json json object
 	 */
@@ -1477,7 +1477,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	/**
 	 * metabox content for all template pack and variation selection.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return string
 	 */

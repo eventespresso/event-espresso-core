@@ -118,7 +118,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	/**
 	 * This will hold the EE_Messages_Template_Pack object when set on the messenger.  This is set via the validate and setup method which grabs the template pack from the incoming messages object.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var EE_Messages_Template_Pack
 	 */
@@ -130,7 +130,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	/**
 	 * This will hold the variation to use when performing a send.  It is set via the validate and setup method which grabs the variation from the incoming messages object on the send method.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var string
 	 */
@@ -146,7 +146,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * 	- template pack
 	 * 	- template variation
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var stdClass
 	 */
@@ -266,7 +266,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * Sets the defaults for the _supports_labels property.  Can be overridden by child classes.
 	 * @see property definition for info on how its formatted.
 	 *
-	 * @since %VER%;
+	 * @since 4.5.0;
 	 * @return void
 	 */
 	protected function _set_supports_labels() {
@@ -280,7 +280,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	/**
 	 * Sets the defaults for the _supports_labels property.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return void
 	 */
@@ -301,7 +301,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	/**
 	 * This returns the _supports_labels property.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return stdClass
 	 */
@@ -318,7 +318,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	/**
 	 * Used to retrieve a variation (typically the path/url to a css file)
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param EE_Messages_Template_Pack $pack   The template pack used for retrieving the variation.
 	 * @param bool                      $url   Whether to return url (true) or path (false). Default is false.

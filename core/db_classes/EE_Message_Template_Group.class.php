@@ -329,7 +329,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * This just gets the template pack name assigned to this message template group.  If it's not set, then we just use the default template pack.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return string
 	 */
@@ -343,7 +343,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * This returns the specific template pack object referenced by the template pack name attached to this message template group.  If no template pack is assigned then the default template pack is retreived.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return EE_Messages_Template_Pack
 	 */
@@ -358,7 +358,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * This retrieves the template variation assigned to this message template group.  If it's not set, then we just use the default template variation.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return string
 	 */
@@ -372,7 +372,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * This just sets the template pack name attached to this message template group.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $template_pack_name What message template pack is assigned.
 	 */
@@ -386,7 +386,7 @@ class EE_Message_Template_Group extends EE_Soft_Delete_Base_Class {
 	/**
 	 * This just sets the template pack variation attached to this message template group.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $variation What variation is being set on the message template group.
 	 */

@@ -3,7 +3,7 @@
  * This file contains the EE_Register_Messages_Template_Pack class that implements EEI_Plugin_API
  * @package      Event Espresso
  * @subpackage plugin api, messages
- * @since           %VER%
+ * @since           4.5.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -12,7 +12,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  plugin api, messages
- * @since            %VER%
+ * @since            4.5.0
  * @author          Darren Ethier
  */
 class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
@@ -21,7 +21,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 	/**
 	 * Holds values for registered template pack
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var array
 	 */
@@ -42,7 +42,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 	 * @see core/libraries/messages/defaults/default/* for all the example templates the default template pack supports.
 	 *
 	 *
-	 * @since  %VER%
+	 * @since  4.5.0
 	 * @throws EE_Error
 	 *
 	 * @param string $ref             The internal reference used to refer to this template pack.  Note, this is first come, first serve.  If there is already a template pack registered with this name then the registry will assign a unique reference for it so it can still be activated (but this makes it harder to deregister as it will be unique per load - so its best to try to make this a unique string!)
@@ -78,7 +78,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 					__('A EE Messages Template Pack given the reference "%s" has been attempted to be registered with the EE Messages System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'),
 					$ref
 				),
-				'%VER%'
+				'4.5.0'
 			);
 		}
 
@@ -102,7 +102,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 	/**
 	 * Callback for the FHEE__EED_Messages___set_messages_paths___MSG_PATHS filter.  This adds this template packs path to the messages autoloader paths.
 	 *
-	 * @since  %VER%
+	 * @since  4.5.0
 	 *
 	 * @param array $paths Array of paths already registered with the messages autoloader
 	 *
@@ -121,7 +121,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 	/**
 	 * Callback for the FHEE__EED_Messages__get_template_packs__template_packs filter. This adds the instantiated, registered template pack to the template packs array when requested by client code.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param EE_Messages_Template_Pack[] $template_packs
 	 * @return EE_Messages_Template_Pack[]
@@ -173,7 +173,7 @@ class EE_Register_Messages_Template_Pack implements EEI_Plugin_API {
 	/**
 	 * This deregisters a variation set that was previously registered with the given slug.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $variation_ref The name for the variation set that was previously registered.
 	 *
