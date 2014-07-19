@@ -3,7 +3,7 @@
  * This file contains the EE_Messages_Template_ Pack_Default
  * @package      Event Espresso
  * @subpackage messages
- * @since           %VER%
+ * @since           4.5.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -12,7 +12,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  messages
- * @since            %VER%
+ * @since            4.5.0
  * @author          Darren Ethier
  */
 class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {

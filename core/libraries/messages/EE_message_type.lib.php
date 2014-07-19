@@ -222,7 +222,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * This holds whatever the set template pack is for a message template group when generating messages.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var EE_Messages_Template_Pack
 	 */
@@ -233,7 +233,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	/**
 	 * This holds whatever the set variation is for a message template group when generating messages.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var string
 	 */

@@ -3,7 +3,7 @@
  * This file contains the EE_Messages_Template_ Pack abstract class.
  * @package      Event Espresso
  * @subpackage messages
- * @since           %VER%
+ * @since           4.5.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -14,7 +14,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  messages
- * @since            %VER%
+ * @since            4.5.0
  * @author          Darren Ethier
  */
 abstract class  EE_Messages_Template_Pack {
@@ -23,7 +23,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * This defines the base_path where the templates are located.
 	 *
-	 * @since            %VER%
+	 * @since            4.5.0
 	 *
 	 * @var string
 	 */
@@ -35,7 +35,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * This defines the base_url where things are found for this template pack (possibly variations).
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var string
 	 */
@@ -46,7 +46,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * localized label for this template pack
 	 *
-	 * @since            %VER%
+	 * @since            4.5.0
 	 *
 	 * @var string
 	 */
@@ -58,7 +58,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * used to contain a description for the template pack.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var string
 	 */
@@ -70,7 +70,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * How this template is referenced in the db
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var string
 	 */
@@ -82,7 +82,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * This is an array indexed by messenger and with an array of message types as values that indicate what messenger and message type this template pack supports by default.  It is possible for this to be modified by plugins via filters, but out of the box, this is what the template pack supports.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var array.
 	 */
@@ -118,7 +118,7 @@ abstract class  EE_Messages_Template_Pack {
 	 * 	)
 	 * )
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var array
 	 */
@@ -130,7 +130,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * This is an array of css variations for message templates indexed by messenger with the values as an array with variation slug and label.  If EMPTY then that means that there is only one variation (default) for this template pack.  Note that there is ALWAYs a default variation (i.e. doesn't need to be included in this array).
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var array
 	 */
@@ -142,7 +142,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * Template pack constructor
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 */
 	public function __construct() {
 		$this->_set_props();
@@ -204,7 +204,7 @@ abstract class  EE_Messages_Template_Pack {
 	 * - supports
 	 * - variations
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 * @return void.
 	 * @abstract
 	 */
@@ -216,7 +216,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * Wrapper for get_templates() ( @see get_templates() for documentation)
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param EE_messenger    $messenger
 	 * @param EE_message_type $message_type
@@ -233,7 +233,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * This takes the incoming messenger and message type objects, uses them to get the set fields and contexts, then attempts to retreive the templates matching those for this given template pack.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param EE_messenger      $messenger
 	 * @param EE_message_type $message_type
@@ -341,7 +341,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * Return filtered _supports property.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return array
 	 */
@@ -357,7 +357,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * This simply returns the _variations property.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $messenger if included then css variations matching the messenger are returned.  Otherwise, all variations for all messengers are returned.
 	 * @return array
@@ -376,7 +376,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * This is typically called by EE_messenger objects to get the specific css variation defined for the messenger and type (i.e. inline, wpeditor, preview etc.)
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $messenger messenger slug
 	 * @param string $type           variation type (i.e. inline, base, wpeditor, preview etc. //this varies per messenger).

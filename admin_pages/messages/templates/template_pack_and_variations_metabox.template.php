@@ -2,7 +2,7 @@
 /**
  * This template is responsible for the template pack and variations metabox that appears on the Message Templates editor.
  *
- * @since %VER%
+ * @since 4.5.0
  *
  * Template args are:
  *

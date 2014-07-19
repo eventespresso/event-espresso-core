@@ -3,7 +3,7 @@
  * This file contains the EE_Register_Messages_Template_Variations class that implements EEI_Plugin_API
  * @package      Event Espresso
  * @subpackage plugin api, messages
- * @since           %VER%
+ * @since           4.5.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -12,7 +12,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  plugin api, messages
- * @since            %VER%
+ * @since            4.5.0
  * @author          Darren Ethier
  */
 class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
@@ -20,7 +20,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	/**
 	 * Holds values for registered variations
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var array
 	 */
@@ -94,7 +94,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 					__('Messages Templates Variations given the reference "%s" has been attempted to be registered with the EE Messages Template Pack System.  It may or may not work because it should be only called on the "EE_Brewing_Regular__messages_caf" hook.','event_espresso'),
 					$variation_ref
 				),
-				'%VER%'
+				'4.5.0'
 			);
 		}
 
@@ -121,7 +121,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	/**
 	 * Cycles through the variations registered and makes sure there are no reserved variations being registered which throws an error.  Also checks if there is already a
 	 *
-	 * @since  %VER%
+	 * @since  4.5.0
 	 *
 	 * @param string $variation_ref the reference for the variations being registered
 	 * @param array  $validated_variations The variations setup array that's being registered (and verified).
@@ -160,7 +160,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	/**
 	 * Callback for the FHEE__EE_Messages_Template_Pack__get_variation filter to ensure registered variations are used.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string                    $variation_path The path generated for the current variation
 	 * @param string                    $messenger      The messenger the variation is for
@@ -215,7 +215,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	 * callback for the FHEE__EE_Messages_Template_Pack__get_variations filter.
 	 *
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param array                   $variations    The original contents for the template pack variations property.  @see $_variation property definition in EE_Messages_Template_Pack
 	 * @param string $messenger The messenger requesting the variations.
@@ -247,7 +247,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	/**
 	 * This deregisters a variation set that was previously registered with the given slug.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $variation_ref The name for the variation set that was previously registered.
 	 *

@@ -14,7 +14,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
 /**
  * wrapper for deprecated FHEE__*___create_new_templates__templates filter.  Note depending on how this was used, it may or may not degrade gracefully for clients using the existing filter because the old Default classes are NOT present anymore.
  *
- * @deprecated %VER%
+ * @deprecated 4.5.0
  * @deprecated Use FHEE__EE_Template_Pack___get_templates__templates filter instead.
  *
  * @param array                            $templates      array of generated templates
@@ -43,7 +43,7 @@ function ee_deprecated_get_templates( $templates, EE_messenger $messenger, EE_me
 	foreach ( $old_default_classnames as $classname ) {
 		$filter_ref = 'FHEE__' . $classname . '___create_new_templates___templates';
 		if ( has_filter( $filter_ref ) ) {
-			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt was to build in backward compat.  However, it is recommended to use the new filter provided which is "FHEE__EE_Template_Pack___get_templates__templates" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '%VER%' );
+			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt was to build in backward compat.  However, it is recommended to use the new filter provided which is "FHEE__EE_Template_Pack___get_templates__templates" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
 		}
 		$templates = apply_filters( $filter_ref, $templates, $old_class_instance );
 	}
@@ -59,7 +59,7 @@ add_filter( 'FHEE__EE_Template_Pack___get_templates__templates', 'ee_deprecated_
 /**
  * wrapper for the now deprecated FHEE__*__get_default_field_content filter.  Note depending on how this was used, it may or may not degrade gracefully for clients using the  filter format that is "FHEE__EE_Messages_Base__get_default_field_content" as that format might have had either a EE_messenger or EE_message_type object as a param.  The backward_compat implementation assumed EE_message_type.
  *
- * @deprecated %VER%
+ * @deprecated 4.5.0
  * @deprecated Use FHEE__EE_Messages_Template_Pack__get_specific_template__contents filter instead.
  *
  * @param string                    $contents        The template contents being used.
@@ -83,7 +83,7 @@ function ee_deprecated_get_default_field_content( $contents, $actual_path, EE_me
 	foreach ( $classnames_to_try as $classname => $obj ) {
 		$filter_ref = 'FHEE__' . $classname . '__get_default_field_content';
 		if ( has_filter( $filter_ref ) ) {
-			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt was to build in backward compat.  However, it is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_specific_template__contents" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '%VER%' );
+			EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It *may* work as an attempt was to build in backward compat.  However, it is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_specific_template__contents" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
 		}
 		$contents = apply_filters( $filter_ref, $contents, $obj );
 	}
@@ -104,7 +104,7 @@ add_filter( 'FHEE__EE_Messages_Template_Pack__get_specific_template__contents', 
  * 	- FHEE__EE_Html_messenger__get_inline_css_template__css_url
  * 	- FHEE__EE_Html_messenger__get_inline_css_template__css_path
  *
- * @deprecated %VER%
+ * @deprecated 4.5.0
  * @deprecated Use the new FHEE__EE_Messages_Template_Pack__get_variation filter instead.
  *
  * @param string                    $variation_path The current css path.
@@ -128,7 +128,7 @@ function ee_deprecated_get_inline_css_template_filters( $variation_path, $messen
 	}
 
 	if ( has_filter( $filter_ref ) ) {
-		EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_variation" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '%VER%' );
+		EE_Error::doing_it_wrong( $filter_ref, __('This filter is deprecated.  It is recommended to use the new filter provided which is "FHEE__EE_Messages_Template_Pack__get_variation" found in the EE_Messages_Template_Pack class.', 'event_espresso'), '4.5.0' );
 	}
 
 	return apply_filters( $filter_ref, $variation_path, $url, $type );
