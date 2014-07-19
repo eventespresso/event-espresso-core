@@ -19,10 +19,12 @@ jQuery(document).ready(function($) {
 					var ct = xhr.getResponseHeader("content-type") || "";
 					if (ct.indexOf('html') > -1) {
 						$('#ajax-notices-container').html(response);
+						$('.spinner').hide();
 					}
 
 					if (ct.indexOf('json') > -1 ) {
 						MessageEditorHelper.display_notices(response.notices);
+						window.scrollTo(0,0);
 						if ( response.success ) {
 							window.location.replace( response.data.redirect_url );
 							return true;
@@ -54,6 +56,7 @@ jQuery(document).ready(function($) {
 		var original_val = $('option[selected="selected"]', this).val();
 		var reset = confirm( eei18n.confirm_switch_template_pack );
 		if ( reset ) {
+			$('.spinner'). show();
 			MessageEditorHelper.switchTemplatePack(selected_item);
 			return true;
 		} else {

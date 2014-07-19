@@ -1322,7 +1322,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			} else {
 				$template_label =$mtpg->get_template_pack()->label;
 				$template_pack_labels = $mtpg->messenger_obj()->get_supports_labels();
-				EE_Error::add_success( sprintf( __('This message template has been successfully switched to use the %s %s.', 'event_espresso'), $template_label, $template_pack_labels->template_pack ) );
+				EE_Error::add_success( sprintf( __('This message template has been successfully switched to use the %s %s.  Please wait while the page reloads with your new template.', 'event_espresso'), $template_label, $template_pack_labels->template_pack ) );
 				//generate the redirect url for js.
 				$url = self::add_query_args_and_nonce( $query_args, $this->_admin_base_url );
 				$this->_template_args['data']['redirect_url'] = $url;

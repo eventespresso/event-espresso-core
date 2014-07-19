@@ -15,7 +15,7 @@
  */
 ?>
 <div id="template-variations-selectors">
-	<label for="MTP_template_pack"><?php echo $template_pack_label; ?>:</label> <?php echo $template_packs_selector; ?>
+	<label for="MTP_template_pack"><?php echo $template_pack_label; ?>:</label> <?php echo $template_packs_selector; ?> <span class="spinner"></span>
 	<p class="description"><?php echo $template_pack_description; ?><p>
 	<label for="MTP_template_variation"><?php echo $template_variation_label; ?>:</label> <?php echo $variations_selector; ?>
 	<p class="description"><?php echo $template_variation_description; ?></p>
