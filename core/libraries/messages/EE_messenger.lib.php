@@ -115,6 +115,46 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+	/**
+	 * This will hold the EE_Messages_Template_Pack object when set on the messenger.  This is set via the validate and setup method which grabs the template pack from the incoming messages object.
+	 *
+	 * @since %VER%
+	 *
+	 * @var EE_Messages_Template_Pack
+	 */
+	protected $_tmp_pack;
+
+
+
+
+	/**
+	 * This will hold the variation to use when performing a send.  It is set via the validate and setup method which grabs the variation from the incoming messages object on the send method.
+	 *
+	 * @since %VER%
+	 *
+	 * @var string
+	 */
+	protected $_variation;
+
+
+
+
+
+	/**
+	 * This property is a stdClass that holds labels for all the various supporting properties for this messenger.  These labels are set via the _set_supports_labels() method in children classes. Initially this will include the label for:
+	 *
+	 * 	- template pack
+	 * 	- template variation
+	 *
+	 * @since %VER%
+	 *
+	 * @var stdClass
+	 */
+	protected $_supports_labels;
+
+
+
+
 
 	public function __construct() {
 		$this->_EEM_data = EEM_Message_Template_Group::instance();
@@ -127,6 +167,10 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$this->_set_default_message_types();
 		$this->_set_valid_message_types();
 		$this->_set_validator_config();
+
+
+		$this->_supports_labels = new stdClass();
+		$this->_set_supports_labels();
 	}
 
 
@@ -196,20 +240,6 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
-	/**
-	 * messengers must define the location of the inline css template to use in final assembled templates.
-	 *
-	 * This method is also used in the admin backend to set the css for the tinymce editor.
-	 *
-	 * @access public
-	 * @param bool $url if true we return the url to the css, if false, we return the path.
-	 * @return string the location of the css file to use for inline css.
-	 */
-	abstract public function get_inline_css_template( $url = FALSE );
-
-
-
-
 
 
 	/**
@@ -229,6 +259,79 @@ abstract class EE_messenger extends EE_Messages_Base {
 	abstract protected function _preview();
 
 
+
+
+
+	/**
+	 * Sets the defaults for the _supports_labels property.  Can be overridden by child classes.
+	 * @see property definition for info on how its formatted.
+	 *
+	 * @since %VER%;
+	 * @return void
+	 */
+	protected function _set_supports_labels() {
+		$this->_set_supports_labels_defaults();
+	}
+
+
+
+
+
+	/**
+	 * Sets the defaults for the _supports_labels property.
+	 *
+	 * @since %VER%
+	 *
+	 * @return void
+	 */
+	private function _set_supports_labels_defaults() {
+		$this->_supports_labels->template_pack = __('Template Structure', 'event_espresso');
+		$this->_supports_labels->template_variation = __('Template Style', 'event_espresso');
+		$this->_supports_labels->template_pack_description = __('Template Structure options are bundeled structural changes for templates.', 'event_espresso');
+
+		$this->_supports_labels->template_variation_description = __('These are different styles to choose from for the selected template structure.  Usually these affect things like font style, color, borders etc.  In some cases the styles will also make minor layout changes.');
+
+		$this->_supports_labels = apply_filters( 'FHEE__EE_messenger___set_supports_labels_defaults___supports_labels', $this->_supports_labels, $this );
+	}
+
+
+
+
+
+	/**
+	 * This returns the _supports_labels property.
+	 *
+	 * @since %VER%
+	 *
+	 * @return stdClass
+	 */
+	public function get_supports_labels() {
+		if ( empty( $this->_supports_labels->template_pack ) || empty( $this->_supports_labels->template_variation) ) {
+			$this->_set_supports_labels_defaults();
+		}
+		return apply_filters( 'FHEE__EE_messenger__get_supports_labels', $this->_supports_labels, $this );
+	}
+
+
+
+
+	/**
+	 * Used to retrieve a variation (typically the path/url to a css file)
+	 *
+	 * @since %VER%
+	 *
+	 * @param EE_Messages_Template_Pack $pack   The template pack used for retrieving the variation.
+	 * @param bool                      $url   Whether to return url (true) or path (false). Default is false.
+	 * @param string                    $type What variation type to return. Default is 'main'.
+	 * @param string 	           $variation What variation for the template pack
+	 * @param bool 	           $skip_filters This allows messengers to add a filter for another messengers get_variation but call skip filters on the callback so there is no recursion on apply_filters.
+	 *
+	 * @return string                    path or url for the requested variation.
+	 */
+	public function get_variation( EE_Messages_Template_Pack $pack, $url = FALSE, $type = 'main', $variation = 'default', $skip_filters = FALSE ) {
+		$this->_tmp_pack = $pack;
+		return $this->_tmp_pack->get_variation( $this->name, $type, $variation, $url, '.css', $skip_filters );
+	}
 
 
 
@@ -470,6 +573,15 @@ abstract class EE_messenger extends EE_Messages_Base {
 		if ( !is_object( $message ) )
 			throw new EE_Error( __('Incoming "$message" must be an object', 'event_espresso' ) );
 
+		//verify we have the required template pack value on the $message object.
+		if ( empty( $message->template_pack ) || ! $message->template_pack instanceof EE_Messages_Template_Pack ) {
+			throw new EE_Error( __('Incoming $message object must have a EE_Messages_Template_Pack object assigned to the template_pack property', 'event_espresso' ) );
+		}
+
+		$this->_tmp_pack = $message->template_pack;
+
+		$this->_variation = !empty ( $message->variation ) ? $message->variation : 'default';
+
 		$template_fields = $this->get_template_fields();
 
 		foreach ( $template_fields as $template => $value ) {
@@ -490,16 +602,16 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
+		$type = $preview ? 'preview' : 'main';
 
 		//first get inline css (will be empty if the messenger doesn't use it)
-		$this->_template_args['inline_style'] = file_get_contents( $this->get_inline_css_template(FALSE, $preview), TRUE );
-		$base_path = EE_LIBRARIES . 'messages/messenger/assets/' . $this->name . '/';
+		$this->_template_args['inline_style'] = file_get_contents( $this->get_variation( $this->_tmp_pack, FALSE, $type, $this->_variation ), TRUE );
 
-		//figure out main template path
-		$wrapper_template = !$preview ? $base_path . $this->name . '-messenger-main-wrapper.template.php' : $base_path . $this->name . '-messenger-preview-wrapper.template.php';
+		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, $type );
+
 		//check file exists and is readable
 		if ( !is_readable( $wrapper_template ) )
-			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular'])), $wrapper_template );
+			throw new EE_Error( sprintf( __('Unable to access the template file for the %s messenger main content wrapper.  The location being attempted is %s.', 'event_espresso' ), ucwords($this->label['singular']) , $wrapper_template ) );
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );

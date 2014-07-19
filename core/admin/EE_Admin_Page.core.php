@@ -2393,6 +2393,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	/**
 	 * this is used whenever we're DOING_AJAX to return a formatted json array that our calling javascript can expect
 	 *
+	 * @param bool $sticky_notices Used to indicate whether you want to ensure notices are added to a transient instead of displayed.
+	 *
 	 * The returned json object is created from an array in the following format:
 	 * array(
 	 * 	'error' => FALSE, //(default FALSE), contains any errors and/or exceptions (exceptions return json early),
@@ -2406,10 +2408,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @return json object
 	 */
-	protected function _return_json() {
+	protected function _return_json( $sticky_notices = FALSE ) {
 
 		//make sure any EE_Error notices have been handled.
-		$this->_process_notices();
+		$this->_process_notices( array(), TRUE, $sticky_notices );
 
 
 		$data = isset( $this->_template_args['data'] ) ? $this->_template_args['data'] : array();
@@ -2743,14 +2745,15 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 *
 	 * @param  array  $query_args any query args that need to be used for notice transient ('action')
 	 * @param bool    $skip_route_verify This is typically used when we are processing notices REALLY early and page_routes haven't been defined yet.
+	 * @param bool    $sticky_notices      This is used to flag that regardless of whether this is doing_ajax or not, we still save a transient for the notice.
 	 * @return void
 	 */
-	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE ) {
+	protected function _process_notices( $query_args = array(), $skip_route_verify = FALSE , $sticky_notices = TRUE ) {
 
 		$this->_template_args['notices'] = EE_Error::get_notices();
 
-		//IF this isn't ajax we need to create a transient for the notices using the route.
-		if ( ! defined( 'DOING_AJAX' ) ) {
+		//IF this isn't ajax we need to create a transient for the notices using the route (however, overridden if $sticky_notices == true)
+		if ( ! defined( 'DOING_AJAX' ) || $sticky_notices ) {
 			$route = isset( $query_args['action'] ) ? $query_args['action'] : 'default';
 			$this->_add_transient( $route, $this->_template_args['notices'], TRUE, $skip_route_verify );
 		}
