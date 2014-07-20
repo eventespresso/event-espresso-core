@@ -391,12 +391,19 @@ abstract class  EE_Messages_Template_Pack {
 	public function get_variation( $messenger, $type, $variation, $url = true, $file_extension = '.css', $skip_filters = FALSE ) {
 
 		$base = $url ? $this->_base_url : $this->_base_path;
+		$base_path = $this->_base_path;
+
+		if ( ! $skip_filters ) {
+			$base =  apply_filters( 'FHEE__EE_Messages_Template_Pack_Default__get_variation__base_path_or_url', $base, $messenger, $type, $variation, $url, $file_extension, $this );
+			$base_path = apply_filters( 'FHEE__EE_Messages_Template_Pack_Default__get_variation__base_path_or_url', $base_path, $messenger, $type, $variation, FALSE, $file_extension, $this );
+		}
+
 		$default_pack = get_class( $this ) != 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : $this;
 
 		$path_string = 'variations/' . $messenger . '_' . $type . '_' . $variation . $file_extension;
 
 		//first see if the file exists.
-		if ( is_readable( $this->_base_path . $path_string ) ) {
+		if ( is_readable( $base_path . $path_string ) ) {
 			$variation_path = $base . $path_string;
 		} else {
 			$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, 'default', $url, $file_extension, TRUE ) : '';
