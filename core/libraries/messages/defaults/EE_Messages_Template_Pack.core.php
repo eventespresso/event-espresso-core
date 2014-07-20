@@ -348,7 +348,7 @@ abstract class  EE_Messages_Template_Pack {
 	 */
 	public function get_supports() {
 		$supports = apply_filters( 'FHEE__' . get_class( $this ) . '__get_supports', $this->_supports );
-		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_supports', $this->_supports, $this );
+		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_supports', $supports, $this );
 	}
 
 
@@ -408,8 +408,6 @@ abstract class  EE_Messages_Template_Pack {
 		} else {
 			$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, 'default', $url, $file_extension, TRUE ) : '';
 		}
-
-
 
 		if ( $skip_filters ) {
 			return $variation_path;
