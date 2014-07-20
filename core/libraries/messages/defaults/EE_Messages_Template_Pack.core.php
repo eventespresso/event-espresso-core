@@ -244,9 +244,6 @@ abstract class  EE_Messages_Template_Pack {
 	protected function _get_templates( EE_messenger $messenger, EE_message_type $message_type ) {
 		$templates = array();
 
-		//first we allow for the $_base_path to be filtered.  However, we assign this to a new variable so that we have the original base_path as a fallback.
-		$filtered_base_path = apply_filters( 'FHEE__EE_Template_Pack__get_templates__filtered_base_path', $this->_base_path, $this );
-
 		//we get all the templates for the DEFAULT template pack to have fallbacks in case this template pack does not have templates for this messenger and message type.
 		$default_pack = get_class( $this ) !== 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : null;
 		$default_templates = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_templates( $messenger, $message_type ) : array();
@@ -295,12 +292,16 @@ abstract class  EE_Messages_Template_Pack {
 	 * @return string          The template contents.
 	 */
 	protected function _get_specific_template( $default_pack, EE_messenger $messenger, EE_message_type $message_type, $field, $context ) {
+
+		//first we allow for the $_base_path to be filtered.  However, we assign this to a new variable so that we have the original base_path as a fallback.
+		$filtered_base_path = apply_filters( 'FHEE__EE_Template_Pack___get_specific_template__filtered_base_path', $this->_base_path, $messenger, $message_type, $field, $context, $this );
+
 		$master_templates = $message_type->get_master_templates();
 		$master_templates_mt = isset( $master_templates[$messenger->name] ) ? $master_templates[$messenger->name] : $message_type->name;
-		$full_path = $this->_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '_' . $context . '.template.php';
-		$fallback_path = $this->_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '.template.php';
-		$mt_defined_full_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '_' . $context . '.template.php';
-		$mt_defined_fallback_path = $this->_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '.template.php';
+		$full_path = $filtered_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '_' . $context . '.template.php';
+		$fallback_path = $filtered_base_path . $messenger->name . '_' . $message_type->name . '_' . $field . '.template.php';
+		$mt_defined_full_path = $filtered_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '_' . $context . '.template.php';
+		$mt_defined_fallback_path = $filtered_base_path . $messenger->name . '_' . $master_templates_mt . '_' . $field . '.template.php';
 
 		/**
 		 * Template checks are done heirarchically in the following order:
@@ -347,7 +348,7 @@ abstract class  EE_Messages_Template_Pack {
 	 */
 	public function get_supports() {
 		$supports = apply_filters( 'FHEE__' . get_class( $this ) . '__get_supports', $this->_supports );
-		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_supports', $this->_supports, $this );
+		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_supports', $supports, $this );
 	}
 
 
@@ -390,18 +391,23 @@ abstract class  EE_Messages_Template_Pack {
 	public function get_variation( $messenger, $type, $variation, $url = true, $file_extension = '.css', $skip_filters = FALSE ) {
 
 		$base = $url ? $this->_base_url : $this->_base_path;
+		$base_path = $this->_base_path;
+
+		if ( ! $skip_filters ) {
+			$base =  apply_filters( 'FHEE__EE_Messages_Template_Pack_Default__get_variation__base_path_or_url', $base, $messenger, $type, $variation, $url, $file_extension, $this );
+			$base_path = apply_filters( 'FHEE__EE_Messages_Template_Pack_Default__get_variation__base_path_or_url', $base_path, $messenger, $type, $variation, FALSE, $file_extension, $this );
+		}
+
 		$default_pack = get_class( $this ) != 'EE_Messages_Template_Pack_Default' ? new EE_Messages_Template_Pack_Default() : $this;
 
 		$path_string = 'variations/' . $messenger . '_' . $type . '_' . $variation . $file_extension;
 
 		//first see if the file exists.
-		if ( is_readable( $this->_base_path . $path_string ) ) {
+		if ( is_readable( $base_path . $path_string ) ) {
 			$variation_path = $base . $path_string;
 		} else {
 			$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, 'default', $url, $file_extension, TRUE ) : '';
 		}
-
-
 
 		if ( $skip_filters ) {
 			return $variation_path;
