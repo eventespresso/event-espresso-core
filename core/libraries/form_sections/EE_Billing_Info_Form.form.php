@@ -109,6 +109,24 @@ class EE_Billing_Info_Form extends EE_Form_Section_Proper{
 	public function payment_method(){
 		return $this->_pm_instance;
 	}
-}
 
+
+	/**
+	 * payment_fields_autofilled_notice_html
+	 * @return string
+	 */
+	public function payment_fields_autofilled_notice_html(){
+		EE_Registry::instance()->load_helper( 'HTML' );
+		return  new EE_Form_Section_HTML(
+			EEH_HTML::p(
+				apply_filters( 'FHEE__EE_Billing_Info_Form__payment_fields_autofilled_notice_html_text', __( 'Payment fields have been autofilled because you are in debug mode', 'event_espresso' )),
+				'',
+				'important-notice'
+			)
+		);
+	}
+
+
+
+}
 // End of file EE_Billing_Info_Form.form.php
