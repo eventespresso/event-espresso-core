@@ -455,7 +455,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 				elseif ($CurrentErrorVar == 'L_SHORTMESSAGE')
 					$CurrentVarName = 'Short Message';
 				elseif ($CurrentErrorVar == 'L_LONGMESSAGE')
-					$CurrentVarName == 'Long Message';
+					$CurrentVarName = 'Long Message';
 				elseif ($CurrentErrorVar == 'L_SEVERITYCODE')
 					$CurrentVarName = 'Severity Code';
 
