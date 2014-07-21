@@ -501,18 +501,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		if ( ! $this->_process_registrations( $registrations, $valid_data )) {
 			return FALSE;
 		}
-
-		if ( ! $this->checkout->reg_url_link ) {
-			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this->checkout->transaction ));
-		}
-
 		$this->_set_success_message( __('Attendee information has TOTALLY been submitted successfully.', 'event_espresso' ));
-
-		//this might be called while in admin and if it is then we don't want to do our normal steps.
-		//		if ( is_admin() && ! EE_Registry::instance()->REQ->front_ajax ) {
-		//			return $success;
-		//		}
-
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
@@ -604,8 +593,8 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 					// printr( $this->_attendee_data[ $reg_url_link ], '$this->_attendee_data[ $reg_url_link ]  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 					// this registration does not require additional attendee information ?
 					if ( $copy_primary && $att_nmbr > 1 && $this->checkout->primary_attendee_obj instanceof EE_Attendee ) {
-						// add relation to new attendee
-						$this->_associate_attendee_with_registration( $registration, $this->checkout->primary_attendee_obj );
+						// just copy the primary registrant
+						$attendee = $this->checkout->primary_attendee_obj;
 					} else {
 						// have we met before?
 						$attendee = $this->_find_existing_attendee( $registration, $this->_attendee_data[ $reg_url_link ] );
@@ -617,16 +606,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 							$this->_attendee_data[ $reg_url_link ] = $att_nmbr > 1 ? $this->_copy_critical_attendee_details_from_primary_registrant( $this->_attendee_data[ $reg_url_link ] ) : $this->_attendee_data[ $reg_url_link ];
 							$attendee = $this->_create_new_attendee( $registration, $this->_attendee_data[ $reg_url_link ] );
 						}
-						// add relation to registration, set attendee ID, and cache attendee
-						$this->_associate_attendee_with_registration( $registration, $attendee );
-						// who's the man ?
+						// who's #1 ?
 						if ( $att_nmbr == 1 ) {
 							$this->checkout->primary_attendee_obj = $attendee;
 						}
 					}
+					// add relation to registration, set attendee ID, and cache attendee
+					$this->_associate_attendee_with_registration( $registration, $attendee );
 
 				} // end of if ( ! $this->checkout->revisit || $this->checkout->primary_revisit || ( $this->checkout->revisit && $this->checkout->reg_url_link == $reg_url_link )) {
 
+//				d( $attendee );
 				if ( ! $registration->attendee() instanceof EE_Attendee ) {
 					EE_Error::add_error( sprintf( __( 'Registration %s has an invalid or missing Attendee object.', 'event_espresso' ), $reg_url_link ), __FILE__, __FUNCTION__, __LINE__ );
 					return FALSE;
