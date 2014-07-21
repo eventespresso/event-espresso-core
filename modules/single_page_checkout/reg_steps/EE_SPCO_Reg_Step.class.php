@@ -86,6 +86,38 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * @return void
+	 */
+	abstract public function translate_js_strings();
+
+	/**
+	 * @return void
+	 */
+	abstract public function enqueue_styles_and_scripts();
+
+	/**
+	 * @return boolean
+	 */
+	abstract public function initialize_reg_step();
+
+	/**
+	 * @return string
+	 */
+	abstract public function generate_reg_form();
+
+	/**
+	 * @return boolean
+	 */
+	abstract public function process_reg_step();
+
+	/**
+	 * @return boolean
+	 */
+	abstract public function update_reg_step();
+
+
+
+	/**
 	 * @return string
 	 */
 	public function name() {
@@ -327,38 +359,6 @@ abstract class EE_SPCO_Reg_Step {
 	public function edit_link_class() {
 		return $this->is_current_step() ? ' hidden' : '';
 	}
-
-
-
-	/**
-	 * @return void
-	 */
-	abstract public function translate_js_strings();
-
-	/**
-	 * @return void
-	 */
-	abstract public function enqueue_styles_and_scripts();
-
-	/**
-	 * @return boolean
-	 */
-	abstract public function initialize_reg_step();
-
-	/**
-	 * @return string
-	 */
-	abstract public function generate_reg_form();
-
-	/**
-	 * @return boolean
-	 */
-	abstract public function process_reg_step();
-
-	/**
-	 * @return boolean
-	 */
-	abstract public function update_reg_step();
 
 
 
