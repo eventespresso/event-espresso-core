@@ -16,7 +16,7 @@
  *
  * EEM_Message_Template
  *
- * 
+ *
  *
  * @package		Event Espresso
  * @subpackage	includes/models/EEM_Message_Template.model.php
@@ -45,8 +45,17 @@ class EEM_Message_Template extends EEM_Base {
 		// EEM_Price object
 		return self::$_instance;
 	}
-	
-	
+
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Message_Template
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
+
 
 	/**
 	 * 		private constructor to prevent direct creation
@@ -56,8 +65,8 @@ class EEM_Message_Template extends EEM_Base {
 	 */
 	protected function __construct() {
 		$this->singular_item = __('Message Template','event_espresso');
-		$this->plural_item = __('Message Templates','event_espresso');		
-		
+		$this->plural_item = __('Message Templates','event_espresso');
+
 		$this->_tables = array(
 			'Message_Template' => new EE_Primary_Table('esp_message_template', 'MTP_ID' )
 		);

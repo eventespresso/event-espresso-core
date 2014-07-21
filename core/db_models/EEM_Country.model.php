@@ -37,23 +37,32 @@ class EEM_Country extends EEM_Base {
 	 *
 	 *		@access public
 	 *		@return EEM_Country instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Country already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Country object
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Country
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 	protected function __construct(){
 		$this->singular_item = __('Country','event_espresso');
 		$this->plural_item = __('Countries','event_espresso');
-		
-		
+
+
 		$this->_tables = array(
 			'Country'=> new EE_Primary_Table('esp_country', 'CNT_ISO')
 		);
@@ -80,7 +89,7 @@ class EEM_Country extends EEM_Base {
 			'State'=>new EE_Has_Many_Relation(),
 			'Venue'=>new EE_Has_Many_Relation(),
 		);
-		
+
 		parent::__construct();
 	}
 
@@ -89,10 +98,10 @@ class EEM_Country extends EEM_Base {
 
 	/**
 	*		_get_countries
-	* 
+	*
 	* 		@access		private
 	*		@return 		void
-	*/	
+	*/
 	public function get_all_countries() {
 		if ( ! self::$_all_countries ) {
 			self::$_all_countries = $this->get_all( array( 'order_by'=>array('CNT_name'=>'ASC'), 'limit'=> array( 0,99999 )));
@@ -102,17 +111,17 @@ class EEM_Country extends EEM_Base {
 
 	/**
 	*		_get_countries
-	* 
+	*
 	* 		@access		private
 	*		@return 		void
-	*/	
+	*/
 	public function get_all_active_countries() {
 		if ( ! self::$_active_countries ) {
 			self::$_active_countries =  $this->get_all( array( array( 'CNT_active' => TRUE ), 'order_by'=>array('CNT_name'=>'ASC'), 'limit'=>array( 0, 99999 )));
 		}
 		return self::$_active_countries;
 	}
-	
+
 }
 // End of file EEM_Country.model.php
 // Location: /includes/models/EEM_Country.model.php

@@ -65,6 +65,16 @@ class EEM_Question extends EEM_Soft_Delete_Base {
 		// EEM_Attendee object
 		return self::$_instance;
 	}
+
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Question
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 	/**
 	 * lists all the question types which should be allowed. Ideally, this will be extensible.
 	 * @access private

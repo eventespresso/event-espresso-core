@@ -20,7 +20,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit('NO direct script access allo
 class EE_Register_Model_Extensions implements EEI_Plugin_API {
 
 	protected static $_registry;
-
+	protected static $_extensions = array();
 
 	/**
 	 * register method for setting up model extensions
@@ -53,6 +53,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 		}
 
 		self::$_registry[$model_id] = $config;
+		self::$_extensions[$model_id] = array();
 		EE_Registry::instance()->load_helper('File');
 
 		if(isset($config['model_extension_paths'])){
@@ -60,7 +61,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 			$class_to_filepath_map = EEH_File::get_contents_of_folders($config['model_extension_paths']);
 			EEH_Autoloader::register_autoloader($class_to_filepath_map);
 			foreach(array_keys($class_to_filepath_map) as $classname){
-				new $classname;
+				self::$_extensions[$model_id]['models'][$classname] = new $classname;
 			}
 			unset($config['model_extension_paths']);
 		}
@@ -69,7 +70,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 			$class_to_filepath_map = EEH_File::get_contents_of_folders($config['class_extension_paths']);
 			EEH_Autoloader::register_autoloader($class_to_filepath_map);
 			foreach(array_keys($class_to_filepath_map) as $classname){
-				new $classname;
+				self::$_extensions[$model_id]['classes'][$classname] = new $classname;
 			}
 			unset($config['class_extension_paths']);
 		}
@@ -86,6 +87,11 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 	public static function deregister( $model_id = NULL ){
 		if(isset(self::$_registry[$model_id])){
 			unset(self::$_registry[$model_id]);
+			foreach(self::$_extensions[$model_id] as $extension_of_type){
+				foreach($extension_of_type as $extension ){
+					$extension->deregister();
+				}
+			}
 		}
 	}
 }
