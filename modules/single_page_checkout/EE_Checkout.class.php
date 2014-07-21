@@ -289,9 +289,121 @@ class EE_Checkout {
 
 
 
+	/**
+	 * 	stash_transaction
+	 *
+	 * 	@access public
+	 * 	@return 	bool
+	 */
+	public function stash_transaction() {
+		if ( ! $this->reg_url_link ) {
+			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this->transaction ));
+		}
+	}
+
+
+
+	/**
+	 * 	save_all_data
+	 * 	simply loops through the current transaction and saves all data for each registration
+	 *
+	 * 	@access public
+	 * 	@return 	bool
+	 */
+	public function save_all_data() {
+		echo '<br/><h5 style="color:#2EA2CC;">'. __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		// verify the transaction
+		if ( $this->transaction instanceof EE_Transaction ) {
+			$this->transaction->save();
+			// grab the saved registrations from the transaction
+			foreach ( $this->transaction->registrations( array(), TRUE ) as $line_item_id => $registration ) {  //
+//				printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+				d( $registration );
+				// verify object
+				if ( $registration instanceof EE_Registration ) {
+					// EITHER a) first time thru SPCO so process ALL registrations
+					// OR b) primary registrant is editing info, so process ALL registrations
+					// OR b) another registrant is editing info, so ONLY process their registration
+					if ( ! $this->revisit || $this->primary_revisit || ( $this->revisit && $this->reg_url_link == $registration->reg_url_link() )) {
+						//set TXN ID
+						if ( ! $registration->transaction_ID() ) {
+							$registration->set_transaction_id( $this->transaction->ID() );
+						}
+						// verify and save the attendee
+						$attendee = $registration->attendee();
+						if ( $attendee ) {
+							if ( $attendee instanceof EE_Attendee ) {
+								d( $attendee );
+//								printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+								$attendee->save();
+								$registration->set_attendee_id( $attendee->ID() );
+								if ( ! $registration->update_cache_after_object_save( 'Attendee', $attendee )) {
+									EE_Error::add_error(
+										__( 'The newly saved Attendee object could not be cached on the registration.', 'event_espresso' ),
+										__FILE__, __FUNCTION__, __LINE__
+									);
+									return FALSE;
+								}
+							} else {
+								EE_Error::add_error(
+									__( 'An invalid Attendee object was discovered when attempting to save your registration information.', 'event_espresso' ),
+									__FILE__, __FUNCTION__, __LINE__
+								);
+								return FALSE;
+							}
+						} else {
+							EE_Error::add_error(
+								__( 'No Attendee object was found when attempting to save your registration information.', 'event_espresso' ),
+								__FILE__, __FUNCTION__, __LINE__
+							);
+							return FALSE;
+						}
+						// save so that REG has ID
+						$registration->save();
+						// now save the answers
+						foreach ( $registration->answers() as $cache_key => $answer ) {
+							// verify object
+							if ( $answer instanceof EE_Answer ) {
+								printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+								$answer->set_registration( $registration->ID() );
+								$answer->save();
+								if ( ! $registration->update_cache_after_object_save( 'Answer', $answer, $cache_key )) {
+									EE_Error::add_error(
+										__( 'The newly saved Answer object could not be cached on the registration.', 'event_espresso' ),
+										__FILE__, __FUNCTION__, __LINE__
+									);
+									return FALSE;
+								}
+							} else {
+								EE_Error::add_error(
+									__( 'An invalid Answer object was discovered when attempting to save your registration information.', 'event_espresso' ),
+									__FILE__, __FUNCTION__, __LINE__
+								);
+								return FALSE;
+							}
+						}
+						if ( ! $this->transaction->update_cache_after_object_save( 'Registration', $registration, $line_item_id )) {
+							EE_Error::add_error( __( 'The newly saved Registration object could not be cached on the Transaction.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+							return FALSE;
+						}
+					}
+				} else {
+					EE_Error::add_error(
+						__( 'An invalid Registration object was discovered when attempting to save your registration information.', 'event_espresso' ),
+						__FILE__, __FUNCTION__, __LINE__
+					);
+					return FALSE;
+				}
+			}
+		} else {
+			EE_Error::add_error( __( 'A valid Transaction was not found when attempting to save your registration information.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+
+
 }
-
-
-
 // End of file EE_Checkout.class.php
 // Location: /EE_Checkout.class.php
