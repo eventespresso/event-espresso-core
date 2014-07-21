@@ -50,8 +50,8 @@ class EE_Pdf_messenger extends EE_messenger  {
 		$this->name = 'pdf';
 		$this->description = __('This messenger is used for generating a pdf version of the message.', 'event_espresso');
 		$this->label = array(
-			'singular' => __('pdf', 'event_espresso'),
-			'plural' => __('pdfs', 'event_espresso')
+			'singular' => __('PDF', 'event_espresso'),
+			'plural' => __('PDFs', 'event_espresso')
 			);
 
 		parent::__construct();
