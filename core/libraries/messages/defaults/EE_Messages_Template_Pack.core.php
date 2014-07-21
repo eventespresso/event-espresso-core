@@ -406,7 +406,12 @@ abstract class  EE_Messages_Template_Pack {
 		if ( is_readable( $base_path . $path_string ) ) {
 			$variation_path = $base . $path_string;
 		} else {
-			$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, 'default', $url, $file_extension, TRUE ) : '';
+			//prevent recursion.
+			if ( $skip_filters ) {
+				$variation_path = '';
+			} else {
+				$variation_path = $default_pack instanceof EE_Messages_Template_Pack_Default ? $default_pack->get_variation( $messenger, $type, 'default', $url, $file_extension, TRUE ) : '';
+			}
 		}
 
 		if ( $skip_filters ) {
