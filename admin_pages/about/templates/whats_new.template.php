@@ -58,46 +58,50 @@
 	*/
 	?>
 	<h2>Updates &amp; Fixes in EE 4.3</h2>
-	<p>Many of the changes in this version have been related to fixing the EE4 core features, and much more:</p>
-	<ul>
-		<li>Duplicate Events feature added</li>
-		<li>Added iCal Integration</li>
-		<li>Order Questions by Question Group</li>
-		<li>Drag-n-drop Answer Values</li>
-		<li>Question Editor Style Changes</li>
-		<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
-		<li>Fixed Migration Issues</li>
-		<li>Fixed Miscellaneous Spelling Errors</li>
-		<li>Moved the Ticket Selector Above the Event Dates and Description</li>
-	</ul>
-	<strong>Added support for "Ticket Bundles"</strong>
-			<ul>
-				<li><a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">How to set graduated ticket pricing</a></li>
-				<li><a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">How to create a ticket bundle</a></li>				
-			</ul>
-	<strong>Messages System Changes/Fixes</strong>
-			<ul>
-				<li>Messages Admin - Updated to implement a new Custom Template creation/edit process</li>
-				<li>Event Editor - Modify Messages metabox in event editor to use new custom template system</li>
-				<li>Messages System - Default 'From' Email shortcode changed to [CO_FORMATTED_EMAIL]</li>
-				<li>Message Type - Newsletter message type added</li>
-			</ul>
-	<strong>Advanced Custom Fields Integration</strong>
-			<ul>
-				<li><a href="http://eventespresso.com/?p=96627" target="_blank">Developers Corner: Using Advanced Custom Fields to Quickly Extend EE4</a></li>
-				<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96889" target="_blank">Add a Course Curriculum Section to the "Thank You" Page Using Advanced Custom Fields</a></li>
-				<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96892" target="_blank">Add a Sponsors Section to Events Using Advanced Custom Fields</a></li>
-				<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96650" target="_blank">EE4 "Thank You" Page Actions & Filters</a></li>
-				<li><a href="http://eventespresso.com/?post_type=wpwtds_article&p=96904" target="_blank">EE4 "Single Page Checkout" Page Actions & Filters</a></li>	
-			</ul>
-	<strong>Payment Gateway Fixes</strong>
-			<ul>
-				<li>Thank You page now uses the WordPress Heartbeat API to automatically display payment status updates</li>
-				<li>Restored the download invoice link in the payment overview page</li>
-				<li>Show failed payments in payment response</li>
-				<li>Added support for partial payments in Single Page Checkout</li>
-				<li>Send address fields to Mijireh</li>
-			</ul>
+	<p>Many of the changes in this version have been related to improving the EE4 core features.</p>
+<p><strong>New Features</strong></p>
+<ul>
+<li>Duplicate Event</li>
+<li>Ticket Required Option</li>
+<li>Order Questions by Question Group</li>
+<li>Drag-n-drop Answer Values</li>
+<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
+<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
+<li>Added iCal Integration</li>
+<li>Fixed Migration Issues</li>
+<li>Fixed Miscellaneous Spelling Errors</li>
+<li>Moved the Ticket Selector Above the Event Dates and Description</li>
+</ul>
+<p><a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png"><img class="alignright" src="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png" alt="Image" height="161" width="154"></a><strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong><br>
+Ticket bundles allow you to sell ticket packages that include several tickets to the same event or multiple different events.</p>
+<ul>
+<li><a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">How to create a Ticket Bundle</a></li>
+<li><a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">How to set Graduated Ticket Pricing</a></li>
+</ul>
+<p><strong>Messages System Changes/Fixes</strong></p>
+<ul>
+<li>Messages Admin – Updated to implement a new Custom Template creation/edit process</li>
+<li>Event Editor – Modify Messages metabox in event editor to use new custom template system</li>
+<li>Messages System – Default ‘From’ Email shortcode changed to [CO_FORMATTED_EMAIL]</li>
+<li>Message Type – Newsletter message type</li>
+</ul>
+<p><a class="thickbox" href="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields.png"><img class="alignright wp-image-96900 " src="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields-300x261.png" alt="acf-home-panel-fields" height="149" width="171"></a><strong>Advanced Custom Fields Integration</strong><br>
+Fully customize WordPress edit screens with powerful custom fields.</p>
+<ul>
+<li><a href="http://eventespresso.com/2014/05/developers-corner-using-advanced-custom-fields-extend-ee4/" target="_blank">Developers Corner: Using Advanced Custom Fields to Quickly Extend EE4</a></li>
+<li><a href="http://eventespresso.com/wiki/add-course-curriculum-events-using-advanced-custom-fields/" target="_blank">Add a Course Curriculum Section to the “Thank You” Page Using Advanced Custom Fields</a></li>
+<li><a href="http://eventespresso.com/wiki/add-sponsors-section-events-using-advanced-custom-fields/" target="_blank">Add a Sponsors Section to Events Using Advanced Custom Fields</a></li>
+<li><a href="http://eventespresso.com/wiki/ee4-thank-page-actions-filters-hooks/" target="_blank">EE4 “Thank You” Page Actions &amp; Filters</a></li>
+<li><a href="http://eventespresso.com/wiki/ee4-single-page-checkout-page-actions-filters/" target="_blank">EE4 “Single Page Checkout” Page Actions &amp; Filters</a></li>
+</ul>
+<p><strong>Payment Gateway Fixes</strong></p>
+<ul>
+<li>Thank You page now uses the WordPress Heartbeat API to automatically display payment status updates</li>
+<li>Restored the download invoice link in the payment overview page</li>
+<li>Show failed payments in payment response</li>
+<li>Added support for partial payments in Single Page Checkout</li>
+<li>Send address fields to Mijireh</li>
+</ul>
 
 	<hr>
 
