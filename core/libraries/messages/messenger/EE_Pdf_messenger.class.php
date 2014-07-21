@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @subpackage		messages
  * @author			Darren Ethier
  */
-class EE_Pdf_messenger extends EE_Html_messenger  {
+class EE_Pdf_messenger extends EE_messenger  {
 
 
 	/**
@@ -301,7 +301,7 @@ class EE_Pdf_messenger extends EE_Html_messenger  {
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
-		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, 'main' );
+		$wrapper_template = $this->_tmp_pack->get_wrapper( 'html', 'main' );
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
