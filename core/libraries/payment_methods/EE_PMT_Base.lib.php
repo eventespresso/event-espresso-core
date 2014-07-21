@@ -99,7 +99,7 @@ abstract class EE_PMT_Base{
 	}
 	/**
 	 * Sets the payment method instance this payment method type is for.
-	 * Its important teh paymetn method instance is set before
+	 * Its important teh payment method instance is set before
 	 * @param EE_Payment_Method $payment_method_instance
 	 */
 	function set_instance($payment_method_instance){
@@ -160,7 +160,7 @@ abstract class EE_PMT_Base{
 	 */
 	abstract function generate_new_billing_form();
 	/**
-	 * Sets the billing form for this paymetn method type. You may want to use this
+	 * Sets the billing form for this payment method type. You may want to use this
 	 * if you have form
 	 * @param EE_Payment_Method $form
 	 */
@@ -177,17 +177,18 @@ abstract class EE_PMT_Base{
 	/**
 	 *
 	 * @param EE_Transaction $transaction
-	 * @param type $amount
+	 * @param float $amount
 	 * @param EE_Billing_Info_Form $billing_info
-	 * @param type $return_url
-	 * @param type $method
+	 * @param string $return_url
+	 * @param string $method
 	 * @param type $by_admin
 	 * @throws EE_Error
 	 */
-	function process_payment( $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){		//@todo: add surcharge for the payment method, if any
+	function process_payment( $transaction, $amount = NULL, $billing_info = NULL, $return_url = NULL,$fail_url = NULL, $method = 'CART', $by_admin = FALSE ){
+		//@todo: add surcharge for the payment method, if any
 		if($this->_gateway){
-			//there is a gateway, so we're going to make a paymetn object
-			//but wait! do they already have a paymetn in progress that we thougth was failed?
+			//there is a gateway, so we're going to make a payment object
+			//but wait! do they already have a payment in progress that we thougth was failed?
 			$duplicate_properties = array(
 				'TXN_ID' => $transaction->ID(),
 				'STS_ID' => EEM_Payment::status_id_failed,
@@ -196,16 +197,22 @@ abstract class EE_PMT_Base{
 				'PMD_ID' => $this->_pm_instance->ID(),
 				'PAY_gateway_response'=>NULL,
 			);
-			$payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
-			//if we didn't already have a paymetn in progress for the same thing,
+			$payment = EEM_Payment::instance()->get_one( array( $duplicate_properties ));
+			//if we didn't already have a payment in progress for the same thing,
 			//then we actually want to make a new payment
-			if( ! $payment){
-				$payment = EE_Payment::new_instance(array_merge($duplicate_properties,array(
-					'PAY_timestamp' => current_time('mysql',false),
-					'PAY_txn_id_chq_nmbr' => NULL,
-					'PAY_po_number' => NULL,
-					'PAY_extra_accntng' => NULL,
-					'PAY_details' => NULL)));
+			if ( ! $payment){
+				$payment = EE_Payment::new_instance(
+					array_merge(
+						$duplicate_properties,
+						array(
+							'PAY_timestamp' => current_time('mysql',false),
+							'PAY_txn_id_chq_nmbr' => NULL,
+							'PAY_po_number' => NULL,
+							'PAY_extra_accntng' => NULL,
+							'PAY_details' => NULL
+						)
+					)
+				);
 			}
 			//make sure the payment has been saved to show we started it, and so it has an ID
 			//should the gateway try to log it
@@ -293,14 +300,14 @@ abstract class EE_PMT_Base{
 		return $transaction->last_payment();
 	}
 	/**
-	 * In case generic code cannot provide the paymetn processor with a specific payment method
+	 * In case generic code cannot provide the payment processor with a specific payment method
 	 * and transaction, it will try calling this method on each activate payment method.
 	 * If the payment method is able to identify the request as being for it, it should fetch
 	 * the payment its for and return it. If not, it should throw an EE_Error to indicate it cannot
 	 * handle the IPN
 	 * @param array $req_data
 	 * @return EE_Payment only if this payment method can find the info its needs from $req_data
-	 * and identifies the IPN as being for this paymetn method (not just fo ra paymetn method of this type)
+	 * and identifies the IPN as being for this payment method (not just fo ra payment method of this type)
 	 * @throws EE_Error
 	 */
 	public function handle_unclaimed_ipn($req_data){
@@ -334,13 +341,13 @@ abstract class EE_PMT_Base{
 	}
 	/**
 	 *
-	 * @param type $payment
-	 * @param type $refund_info
+	 * @param EE_Payment $payment
+	 * @param array $refund_info
 	 * @return EE_Payment
 	 */
 	public function process_refund($payment, $refund_info = array()){
 		if($this->_gateway && $this->_gateway instanceof EE_Gateway){
-			return $this->_gateway->do_direct_refund();
+			return $this->_gateway->do_direct_refund( $payment );
 		}else{
 			throw new EE_Error(sprintf(__("Payment Method Type '%s' does not support sending refund requests", "event_espresso"),get_class($this)));
 		}
@@ -401,14 +408,14 @@ abstract class EE_PMT_Base{
 		return $this->_pretty_name;
 	}
 	/**
-	 * Gets the default absolute URL to the paymetn method type's button
+	 * Gets the default absolute URL to the payment method type's button
 	 * @return string
 	 */
 	public function default_button_url(){
 		return $this->_default_button_url;
 	}
 	/**
-	 * Gets the gateway used by this paymetn method (if any)
+	 * Gets the gateway used by this payment method (if any)
 	 * @return EE_Gateway
 	 */
 	public function get_gateway(){
