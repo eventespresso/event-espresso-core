@@ -175,7 +175,10 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-
+		// ensure this shortcode doesn't trigger on anything BUT the thank you page
+		if ( ! isset( $WP->request ) || $WP->request != basename( EE_Registry::instance()->CFG->core->thank_you_page_url() )) {
+			return;
+		}
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
 			EE_Error::add_error(
