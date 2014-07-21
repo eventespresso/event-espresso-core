@@ -140,7 +140,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->set_next_step();
 		// and what we're doing on the current step
 		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_form' );
-//		echo '<h5 style="color:#2EA2CC;">$this->checkout->action : <span style="color:#E76700">' . $this->checkout->action . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// returning from the thank you page ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
 		// get transaction from db or session
@@ -320,7 +319,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				// meh... do one of those other steps first
 				if ( ! empty( $this->checkout->action ) && method_exists( $this->checkout->current_step, $this->checkout->action )) {
 					do_action( "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
+					// call action on current step
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
+						// store our progress so far
+						$this->checkout->stash_transaction();
 						$this->go_to_next_step_or_action();
 					}
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
@@ -390,13 +392,17 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _get_transaction_and_cart_for_current_session() {
 		// first check in the session
 		$transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
+		d( $transaction );
 		// verify transaction
 		if ( $transaction instanceof EE_Transaction ) {
+			echo '<h2 style="color:#E76700;">transaction_and_cart_for_current_session<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			// check if the TXN has an ID, which means it has already been saved to the db
 			$TXN_ID = $transaction->ID();
+			echo '<h5 style="color:#2EA2CC;">$TXN_ID : <span style="color:#E76700">' . $TXN_ID . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 			if ( $TXN_ID ) {
 				// so this transaction has already been saved to the db earlier in the same session (ie: it's not a revisit)... so let's pull that
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
+				d( $transaction );
 				// verify transaction
 				if ( ! $transaction instanceof EE_Transaction ) {
 					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
@@ -410,6 +416,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout->cart = EE_Registry::instance()->load_core( 'Cart' );
 			// and then create a new transaction
 			$transaction = $this->_initialize_transaction();
+			d( $transaction );
 		}
 		return $transaction;
 	}
@@ -423,6 +430,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return mixed EE_Transaction|NULL
 	 */
 	private function _initialize_transaction() {
+		echo '<h2 style="color:#E76700;">_initialize_transaction<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 		try {
 			// create new TXN
 			return EE_Transaction::new_instance( array(
@@ -744,10 +752,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
 		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
 		$attention_msg = isset( $notices['attention'] ) ? $notices['attention'] : FALSE;
+
 		// setup URL for redirect
 		if ( $this->checkout->redirect_to_thank_you_page ) {
 //			d( $this->checkout->transaction->primary_registration() );
 //			die();
+			// setup the thank you page properly
 			$this->checkout->thank_you_page_url = add_query_arg(
 				array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
 				$this->checkout->thank_you_page_url
