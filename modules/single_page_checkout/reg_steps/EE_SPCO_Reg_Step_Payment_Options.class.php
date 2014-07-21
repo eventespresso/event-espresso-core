@@ -56,7 +56,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return bool
 	 */
 	public function generate_reg_form() {
-
 		EE_Registry::instance()->load_helper( 'HTML' );
 		// set some defaults
 		$this->checkout->selected_method_of_payment = 'payments_closed';
@@ -519,8 +518,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	public function process_reg_step() {
 		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		d( $this->checkout->transaction );
-//		die();
+
 		if ( ! $this->_billing_form_is_valid() ) {
 			return FALSE;
 		}
@@ -624,23 +622,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->checkout->selected_method_of_payment ) ) {
 			return FALSE;
 		}
-		//setup the thank you page properly
-		$this->checkout->thank_you_page_url = add_query_arg(
-			array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
-			$this->checkout->thank_you_page_url
-		);
-		//attempt payment (offline payment methods will just NOT make a payment, but instead
-		//just mark itself as teh PMD_ID on the transaction
-		$payment = $this->_attempt_payment( $this->checkout->payment_method );
-		//if a payment object was made and it specifies a redirect url...
-		//then we'll setup SPCO to do that redirect
-		if ( $payment instanceof EE_Payment && $payment->redirect_url()){
-			$this->checkout->json_response['return_data'] = array( 'off-site-redirect' => $payment->redirect_form() );
-			$this->checkout->redirect_to_thank_you_page = FALSE;
-		} else {
-			$this->checkout->redirect_to_thank_you_page = TRUE;
+		// need to save checkout data before attempting payment
+		if ( $this->checkout->save_all_data() ) {
+			// attempt payment
+			// please note that offline payment methods will NOT make a payment,
+			// but instead just mark themselves as the PMD_ID on the transaction
+			return $this->_attempt_payment( $this->checkout->payment_method );
 		}
-		return TRUE;
+		d( EE_Error::get_notices( FALSE ) );
+		return FALSE;
+//		if ( $payment instanceof EE_Payment ){
+//			$this->checkout->redirect_to_thank_you_page = FALSE;
+//		} else {
+//			$this->checkout->redirect_to_thank_you_page = TRUE;
+//		}
 	}
 
 
@@ -713,6 +708,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				), __FILE__, __FUNCTION__, __LINE__
 			);
 			return FALSE;
+		}
+		// if a payment object was made and it specifies a redirect url...
+		// then we'll set that redirect info
+		if ( $payment->redirect_url()){
+			$this->checkout->json_response['return_data'] = array( 'off-site-redirect' => $payment->redirect_form() );
 		}
 		return $payment;
 	}
