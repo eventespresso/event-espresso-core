@@ -58,27 +58,37 @@
 	*/
 	?>
 	<h2>Updates &amp; Fixes in EE 4.3</h2>
-	<p>Many of the changes in this version have been related to improving the EE4 core features.</p>
+	<p>This release brings many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
 <p><strong>New Features</strong></p>
 <ul>
-<li>Duplicate Event</li>
-<li>Ticket Required Option</li>
-<li>Order Questions by Question Group</li>
-<li>Drag-n-drop Answer Values</li>
-<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
-<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
-<li>Added iCal Integration</li>
-<li>Fixed Migration Issues</li>
-<li>Fixed Miscellaneous Spelling Errors</li>
-<li>Moved the Ticket Selector Above the Event Dates and Description</li>
+	<li>Duplicate Event</li>
+	<li>Ticket Required Option</li>
+	<li>Added iCal Integration</li>
+	<li>Drag-n-drop Answer Values</li>
+	<li>Order Questions by Question Group</li>
+	<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
+	<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
+	<li>Moved the Ticket Selector Above the Event Dates and Description</li>
+	<li>New Hooks and Filters for Developers Added to the Registration Process</li>
 </ul>
+<strong>Fixes</strong>
+<ul>
+	<li>Gateways</li>
+	<li>Messages System</li>
+	<li>Migration Issues</li>
+	<li>Miscellaneous Spelling Errors</li>
+</ul>
+
 <p><a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png"><img class="alignright" src="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png" alt="Image" height="161" width="154"></a><strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong><br>
 Ticket bundles allow you to sell ticket packages that include several tickets to the same event or multiple different events.</p>
 <ul>
-<li><a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">How to create a Ticket Bundle</a></li>
-<li><a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">How to set Graduated Ticket Pricing</a></li>
+	<li><a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">Ticket Bundles</a>
+Starting with Event Espresso 4.3 you can offer discount pricing based on ticket quantities. <a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">This article</a> shows how to create a ticket bundle where you can set a lower price per ticket when purchased in a bundle.</li>
+	<li><a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">Graduated Ticket Pricing</a>
+Starting with Event Espresso 4.3 you can offer graduated pricing based on ticket quantities. <a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">This article</a> shows how to set graduated ticket pricing where you can set a lower price per ticket for larger quantity ticket purchases.</li>
 </ul>
-<p><strong>Messages System Changes/Fixes</strong></p>
+<p><strong>Messages System Changes/Fixes</strong><br />
+	We’ve improved the Custom Template System, added a “Newsletter” Message Type for sending batch emails, and made a couple of minor updates.</p>
 <ul>
 <li>Messages Admin – Updated to implement a new Custom Template creation/edit process</li>
 <li>Event Editor – Modify Messages metabox in event editor to use new custom template system</li>
