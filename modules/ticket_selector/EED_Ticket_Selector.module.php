@@ -372,7 +372,7 @@ class EED_Ticket_Selector extends  EED_Module {
 					}
 				}
 //				d( EE_Registry::instance()->CART );
-//				die();
+//				die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL REDIRECT HERE
 
 				if ( $tckts_slctd ) {
 					if ( $success ) {
@@ -744,17 +744,13 @@ class EED_Ticket_Selector extends  EED_Module {
 			// now loop thru all of the datetimes
 			foreach ( $datetimes as $datetime  ) {
 				if ( $datetime instanceof EE_Datetime ) {
-					// the initial total available spaces is the ticket qty minus the number of tickets sold
-					$total = $ticket->qty() - $ticket->sold();
-					// get the number of remaining spaces available for this datetime, but ignore ticket quantities
-					$remaining = $datetime->spaces_remaining();
-					// reset total available spaces, but only if it has decreased
-					$total = min( $total, $remaining );
-					// save the total available spaces to this ticket using the datetime ID as the key
-					self::$_available_spaces['tickets'][ $ticket->ID() ][ $datetime->ID() ] = $total;
-					// if the remaining spaces for this datetime is already set, then compare that against the above, and take the lowest number,
-					// else just take the total from above, and assign to the datetimes array
-					self::$_available_spaces['datetimes'][ $datetime->ID() ] = isset( self::$_available_spaces['datetimes'][ $datetime->ID() ] ) ? min( self::$_available_spaces['datetimes'][ $datetime->ID() ], $total ) : $total;
+					// the number of spaces available for the datetime without considering individual ticket quantities
+					$spaces_remaining = $datetime->spaces_remaining();
+					// save the total available spaces ( the lesser of the ticket qty minus the number of tickets sold or the datetime spaces remaining) to this ticket using the datetime ID as the key
+					self::$_available_spaces['tickets'][ $ticket->ID() ][ $datetime->ID() ] = min(( $ticket->qty() - $ticket->sold() ), $spaces_remaining );
+					// if the remaining spaces for this datetime is already set, then compare that against the datetime spaces remaining, and take the lowest number,
+					// else just take the datetime spaces remaining, and assign to the datetimes array
+					self::$_available_spaces['datetimes'][ $datetime->ID() ] = isset( self::$_available_spaces['datetimes'][ $datetime->ID() ] ) ? min( self::$_available_spaces['datetimes'][ $datetime->ID() ], $spaces_remaining ) : $spaces_remaining;
 				}
 			}
 		}
