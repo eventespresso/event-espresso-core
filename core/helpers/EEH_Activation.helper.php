@@ -399,8 +399,7 @@ class EEH_Activation {
 			if ($columns !== FALSE) {
 				$field_array = array();
 				foreach($columns as $column ){
-					$fieldname = $column->Field;
-					$field_array[] = $fieldname;
+					$field_array[] = $column->Field;;
 				}
 				return $field_array;
 			}

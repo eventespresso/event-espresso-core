@@ -62,6 +62,10 @@ class EE_Register_Model implements EEI_Plugin_API {
 		self::$_model_registry[$model_id] = $config;
 
 		EE_Registry::instance()->load_helper('File');
+		if( ( isset( $config['model_paths'] ) && ! isset( $config['class_paths'] ) ) ||
+				( ! isset( $config['model_paths'] ) && isset( $config['class_paths'] ) ) ){
+			throw new EE_Error( sprintf( __( 'You must register both "model_paths" AND "class_paths", not just one or the other You provided %s', 'event_espresso' ), implode(", ", array_keys( $config ) ) ) );
+		}
 		if(isset($config['model_paths'])){
 			//make sure they passed in an array
 			if( ! is_array( $config['model_paths'] ) ){
