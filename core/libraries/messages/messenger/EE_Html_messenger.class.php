@@ -81,30 +81,46 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _set_validator_config() {
 		$this->_validator_config = array(
 			'subject' => array(
-				'shortcodes' => array('recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
+				'shortcodes' => array('organization', 'primary_registration_details', 'email', 'transaction' )
 				),
 			'content' => array(
-				'shortcodes' => array( 'recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
-				),
-			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
-				'required' => array('[ATTENDEE_LIST]')
+				'shortcodes' => array( 'organization',  'primary_registration_list', 'primary_registration_details',  'email', 'transaction', 'event_list', 'line_item_list', 'payment_list')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list'),
+				'shortcodes' => array( 'event', 'ticket_list', 'venue',  'primary_registration_details', 'primary_registration_list', 'event_author' ),
 				'required' => array('[EVENT_LIST]')
 				),
 			'ticket_list' => array(
-				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'recipient_details'),
+				'shortcodes' => array( 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'line_item_list'),
 				'required' => array('[TICKET_LIST]')
+				),
+			'ticket_line_item_no_pms' => array(
+				'shortcodes' => array( 'line_item' ),
+				'required' => array('[TICKET_LINE_ITEM_LIST]')
+				),
+			'ticket_line_item_pms' => array(
+				'shortcodes' => array( 'line_item' ),
+				'required' => array('[TICKET_LINE_ITEM_LIST]'),
+				),
+			'price_modifier_line_item_list' => array(
+				'shortcodes' => array( 'line_item' ),
+				'required' => array('[PRICE_MODIFIER_LINE_ITEM_LIST]')
 				),
 			'datetime_list' => array(
 				'shortcodes' => array('datetime'),
 				'required' => array('[DATETIME_LIST]')
 				),
-			'question_list' => array(
-				'shortcodes' => array('question'),
-				'required' => array('[QUESTION_LIST]')
+			'attendee_list' => array(
+				'shortcodes' => array('attendee'),
+				'required' => array('[ATTENDEE_LIST]')
+				),
+			'tax_line_item_list' => array(
+				'shortcodes' => array('line_item'),
+				'required' => array('[TAX_LINE_ITEM_LIST]')
+				),
+			'payment_list' => array(
+				'shortcodes' => array('payment'),
+				'required' => array('[PAYMENT_LIST]')
 				)
 			);
 	}
@@ -165,17 +181,6 @@ class EE_Html_messenger extends EE_messenger  {
 						'rows' => '15',
 						'shortcodes_required' => array('[EVENT_LIST]')
 						),
-					'attendee_list' => array(
-						'input' => 'textarea',
-						'label' => '[ATTENDEE_LIST]',
-						'type' => 'string',
-						'required' => TRUE,
-						'validation' => TRUE,
-						'format' => '%s',
-						'css_class' => 'large-text',
-						'rows' => '5',
-						'shortcodes_required' => array('[ATTENDEE_LIST]')
-					),
 					'ticket_list' => array(
 						'input' => 'textarea',
 						'label' => '[TICKET_LIST]',
@@ -187,6 +192,39 @@ class EE_Html_messenger extends EE_messenger  {
 						'rows' => '10',
 						'shortcodes_required' => array('[TICKET_LIST]')
 						),
+					'ticket_line_item_no_pms' => array(
+						'input' => 'textarea',
+						'label' => '[TICKET_LINE_ITEM_LIST] <br>' . __('Ticket Line Item List with no Price Modifiers', 'event_espresso'),
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[TICKET_LINE_ITEM_LIST]')
+						),
+					'ticket_line_item_pms' => array(
+						'input' => 'textarea',
+						'label' => '[TICKET_LINE_ITEM_LIST] <br>' . __('Ticket Line Item List with Price Modifiers', 'event_espresso'),
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[TICKET_LINE_ITEM_LIST]')
+						),
+					'price_modifer_line_item_list' => array(
+						'input' => 'textarea',
+						'label' => '[PRICE_MODIFIER_LINE_ITEM_LIST]',
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[PRICE_MODIFIER_LINE_ITEM_LIST]')
+						),
 					'datetime_list' => array(
 						'input' => 'textarea',
 						'label' => '[DATETIME_LIST]',
@@ -195,19 +233,41 @@ class EE_Html_messenger extends EE_messenger  {
 						'validation' => TRUE,
 						'format' => '%s',
 						'css_class' => 'large-text',
-						'rows' => '10',
+						'rows' => '5',
 						'shortcodes_required' => array('[DATETIME_LIST]')
 						),
-					'question_list' => array(
+					'attendee_list' => array(
 						'input' => 'textarea',
-						'label' => '[QUESTION_LIST]',
+						'label' => '[ATTENDEE_LIST]',
 						'type' => 'string',
 						'required' => TRUE,
 						'validation' => TRUE,
 						'format' => '%s',
 						'css_class' => 'large-text',
 						'rows' => '5',
-						'shortcodes_required' => array('[QUESTION_LIST]')
+						'shortcodes_required' => array('[ATTENDEE_LIST]')
+					),
+					'tax_line_item_list' => array(
+						'input' => 'textarea',
+						'label' => '[TAX_LINE_ITEM_LIST]',
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[TAX_LINE_ITEM_LIST]')
+						),
+					'payment_list' => array(
+						'input' => 'textarea',
+						'label' => '[PAYMENT_LIST]',
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[PAYMENT_LIST]')
 					)
 				)
 			)
