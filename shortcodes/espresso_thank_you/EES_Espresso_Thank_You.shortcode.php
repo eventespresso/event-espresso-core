@@ -199,6 +199,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 			);
 			return;
 		}
+		$this->_current_txn = do_action( 'AHEE__EES_Espresso_Thank_You__run', $this->_current_txn );
 		// soon to be derprecated
 		EE_Registry::instance()->load_model( 'Gateways' )->thank_you_page_logic( $this->_current_txn );
 		EE_Registry::instance()->LIB->EEM_Gateways->reset_session_data();
