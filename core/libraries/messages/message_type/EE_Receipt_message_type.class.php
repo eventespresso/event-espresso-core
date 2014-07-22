@@ -43,6 +43,14 @@ class EE_Receipt_message_type extends EE_message_type {
 
 
 
+	protected function _set_with_messengers() {
+		$this->_with_messengers = array(
+			'html' => array( 'pdf' )
+			);
+	}
+
+
+
 	protected function _get_data_for_context( $context, EE_Registration $registration, $id ) {
 		//receipt message type data handler is 'Gateways' and it expects a transaction object.
 		$transaction = $registration->transaction();
