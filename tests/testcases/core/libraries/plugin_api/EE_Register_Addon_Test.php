@@ -27,7 +27,11 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 			'version'=>'1.0.0',
 			'min_core_version'=>'4.0.0',
 			'main_file_path'=>$this->_mock_addon_path . 'espresso-new-addon.php',
-			'dms_paths'=>$this->_mock_addon_path . 'core/data_migration_scripts'
+			'dms_paths'=>$this->_mock_addon_path . 'core/data_migration_scripts',
+			'model_paths' => EE_MOCKS_DIR . 'core/db_models',
+			'class_paths' => EE_MOCKS_DIR . 'core/db_classes',
+			'class_extension_paths' => EE_MOCKS_DIR . 'core/db_class_extensions',
+			'model_extension_paths' => EE_MOCKS_DIR . 'core/db_model_exntesions',
 
 		);
 		$this->_addon_name = 'New_Addon';
