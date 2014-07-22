@@ -561,7 +561,7 @@ class EEH_Form_Fields {
 		$required_text = $QST_required ? "\n\t\t\t" . '<div class="required-text hidden">' . self::prep_answer( $required_text, $use_html_entities ) . '</div>' : '';
 		$label_class = 'espresso-form-input-lbl';
 		$QST_options = $QFI->options(true,$answer);
-		$options = $QST_options ? self::prep_answer_options( $QST_options ) : array();
+		$options = is_array( $QST_options ) ? self::prep_answer_options( $QST_options ) : array();
 		$system_ID = $QFI->get('QST_system');
 		switch ( $QFI->get('QST_type') ){
 
