@@ -301,11 +301,36 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _update_espresso_page_settings() {
-
-		EE_Registry::instance()->CFG->core->reg_page_id = isset( $this->_req_data['reg_page_id'] ) ? absint( $this->_req_data['reg_page_id'] ) : EE_Registry::instance()->CFG->core->reg_page_id;
-		EE_Registry::instance()->CFG->core->txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : EE_Registry::instance()->CFG->core->txn_page_id;
-		EE_Registry::instance()->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : EE_Registry::instance()->CFG->core->thank_you_page_id;
-		EE_Registry::instance()->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : EE_Registry::instance()->CFG->core->cancel_page_id;
+		// capture incoming request data
+		$reg_page_id = isset( $this->_req_data['reg_page_id'] ) ? absint( $this->_req_data['reg_page_id'] ) : EE_Registry::instance()->CFG->core->reg_page_id;
+		$txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : EE_Registry::instance()->CFG->core->txn_page_id;
+		$thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : EE_Registry::instance()->CFG->core->thank_you_page_id;
+		$cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : EE_Registry::instance()->CFG->core->cancel_page_id;
+		// pack critical_pages into an array
+		$critical_pages = array(
+			'reg_page_id' 				=> $reg_page_id,
+			'txn_page_id' 				=> $txn_page_id,
+			'thank_you_page_id' 	=> $thank_you_page_id,
+			'cancel_page_id' 		=> $cancel_page_id
+		);
+		foreach ( $critical_pages as $critical_page_name => $critical_page_id ) {
+			// has the page changed ?
+			if ( EE_Registry::instance()->CFG->core->$critical_page_name != $critical_page_id ) {
+				// grab post object for old page
+				$post = get_post( EE_Registry::instance()->CFG->core->$critical_page_name );
+				// update post shortcodes for old page
+				EE_Admin::parse_post_content_on_save( $critical_page_id, $post );
+				// grab post object for new page
+				$post = get_post( $critical_page_id );
+				// update post shortcodes for new page
+				EE_Admin::parse_post_content_on_save( $critical_page_id, $post );
+			}
+		}
+		// set page IDs
+		EE_Registry::instance()->CFG->core->reg_page_id = $reg_page_id;
+		EE_Registry::instance()->CFG->core->txn_page_id = $txn_page_id;
+		EE_Registry::instance()->CFG->core->thank_you_page_id = $thank_you_page_id;
+		EE_Registry::instance()->CFG->core->cancel_page_id = $cancel_page_id;
 
 		EE_Registry::instance()->CFG->core = apply_filters( 'FHEE__General_Settings_Admin_Page___update_espresso_page_settings__CFG_core', EE_Registry::instance()->CFG->core, $this->_req_data );
 
