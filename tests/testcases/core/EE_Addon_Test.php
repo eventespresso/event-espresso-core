@@ -28,6 +28,7 @@ class EE_Addon_Test extends EE_UnitTestCase{
 		parent::__construct($name, $data, $dataName);
 	}
 	public function setUp(){
+		parent::setUp();
 		//let's just make a generic addon, but not bother registering it
 		$this->_addon = EE_Registry::instance()->load_addon( dirname( $this->_main_file_path ), 'EE_New_Addon' );
 		$this->_addon->set_name( 'New_Addon' );
@@ -37,7 +38,7 @@ class EE_Addon_Test extends EE_UnitTestCase{
 //		$addon->set_config_section( self::$_settings[ $addon_name ]['config_section'] );
 //		$addon->set_config_class( self::$_settings[ $addon_name ]['config_class'] );
 //		$addon->set_config_name( self::$_settings[ $addon_name ]['config_name'] );
-		return parent::setUp();
+
 	}
 
 	public function test_update_list_of_installed_versions(){
