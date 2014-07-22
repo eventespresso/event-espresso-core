@@ -233,6 +233,7 @@ class EE_Message_Template_Defaults extends EE_Base {
 	 * @return mixed (array|bool)            success array or false.
 	 */
 	public function create_new_templates() {
+		$template_pack = 'default';
 		//if we have the GRP_ID then let's use that to see if there is a set template pack and use that for the new templates.
 		if ( !empty( $this->_GRP_ID ) ) {
 			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $this->_GRP_ID );
