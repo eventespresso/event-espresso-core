@@ -28,7 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 class EE_messages {
- 
+
 	private $_active_messengers = array();
 	private $_active_message_types = array();
 	private $_installed_message_types = array();
@@ -42,11 +42,11 @@ class EE_messages {
 	private $_EEM_data;
 	// main controller
 	function __construct() {
-		
+
 		// get list of active messengers and active message types
 		$this->_EEM_data = EEM_Message_Template::instance();
 		$this->_set_active_messengers_and_message_types();
-		$this->_set_installed_message_types();	
+		$this->_set_installed_message_types();
 	}
 
 	/**
@@ -80,7 +80,7 @@ class EE_messages {
 
 	/**
 	 * get active types from db and load the related files.  They don't get instantiated till $this->send_message.
-	 * 
+	 *
 	 */
 	private function _set_installed_message_types() {
 		//get installed
@@ -93,8 +93,8 @@ class EE_messages {
 
 	/**
 	 * load the active files needed (key word... NEEDED)
-	 * @param string $kind indicates what kind of files we are loading. 
-	 * @param array $actives indicates what active types of the $kind are actually to be loaded. 
+	 * @param string $kind indicates what kind of files we are loading.
+	 * @param array $actives indicates what active types of the $kind are actually to be loaded.
 	 */
 	private function _load_files($kind, $actives) {
 		$active_names = array();
@@ -117,10 +117,10 @@ class EE_messages {
 				return EE_Error::add_error( sprintf( __("missing messenger file set as active: (%s) %s \nMessenger has been made inactive.", 'event_espresso'), $load_file), __FILE__, __FUNCTION__, __LINE__ );
 			}
 		}
-		return $active_names; 
+		return $active_names;
 	}
 
-	
+
 
 
 	/**
@@ -129,7 +129,7 @@ class EE_messages {
 	 * @access private
 	 * @param  string $active_name name of messenger or message type
 	 * @param  string $kind        messenger or message_type?
-	 * @return void              
+	 * @return void
 	 */
 	private function _unset_active( $active_name, $kind ) {
 		global $espresso_wp_user;
@@ -146,7 +146,7 @@ class EE_messages {
 	 * delegates message sending to messengers
 	 * @param  string  $type    What type of message are we sending (corresponds to message types)
 	 * @param  array  $vars    Data being sent for parsing in the message
-	 * @return void           
+	 * @return void
 	 */
 	public function send_message( $type, $vars ) {
 		$success = FALSE;
@@ -192,7 +192,7 @@ class EE_messages {
 		if ( ! $error ) {
 			EE_Error::add_success( sprintf( __( 'The %s message has been succesfully sent.', 'event_espresso'), $this->_installed_message_types[$type]->label['singular'] ), __FILE__, __FUNCTION__, __LINE__ );
 		}
-		
+
 		return $error ? FALSE : TRUE; //yeah backwards eh?  Really what we're returning is if there is a total success for all the messages or not.  We'll modify this once we get message recording in place.
 	}
 
@@ -269,14 +269,13 @@ class EE_messages {
 		//do we have the necessary objects loaded?
 		if ( empty( $this->_messenger) || empty($this->_message_type) )
 			throw new EE_Error( sprintf( __(' The %s messenger or the %s message_type are not active. Are you sure they exist?', 'event_espresso'), $messenger, $message_type ) );
-		
+
 		//is given message_type valid for given messenger (if this is not a global save)
 		$types_to_check = array();
 		if ( !$is_global ) {
-			foreach ( $this->_messenger->active_templates as $template ) {
-				$types_to_check[] = $template->message_type();
-			}
-			if ( !in_array($message_type, $types_to_check ) ) {
+			$has_active = EEM_Message_Template_Group::instance()->count( array( array( 'MTP_is_active' => TRUE, 'MTP_messenger' => $this->_messenger->name, 'MTP_message_type' => $message_type ) ) );
+
+			if ( $has_active == 0 ) {
 				EE_Error::add_error( sprintf(__(' The %s message type is not registered with the %s messenger. Please visit the Messenger activation page to assign this message type first if you want to use it.', 'event_espresso'), $message_type, $messenger), __FILE__, __FUNCTION__, __LINE__ );
 				return false;
 			}
@@ -288,14 +287,13 @@ class EE_messages {
 	/**
 	 * This is a wrapper for the protected _create_new_templates function
 	 * @param  string $message_type message type that the templates are being created for
-	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned. 
+	 * @return array|object               if creation is succesful then we return an array of info, otherwise an error_object is returned.
 	 */
-	public function create_new_templates( $messenger, $message_type, $evt_id, $is_global = false ) {
+	public function create_new_templates( $messenger, $message_type, $GRP_ID = 0, $is_global = false ) {
 		$valid_mt = false;
-		$evt_id = absint($evt_id);
 
 		$valid_mt = $this->_validate_setup($messenger, $message_type, $is_global);
-		
+
 		if ( is_wp_error($valid_mt) && $is_global ) {
 			//we're setting up a brand new global templates (with messenger activation) so we're assuming that the message types sent in are valid.
 			$valid_mt = true;
@@ -306,16 +304,15 @@ class EE_messages {
 			return $valid_mt;
 		}
 
-		if ( !$is_global && empty($evt_id) ) {
-			EE_Error::add_error( __('This template is not being created by messenger activation and is a custom template that requires event id (which is missing)', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
-			return false;
-		}
-
 		//whew made it this far!  Okay, let's go ahead and create the templates then
-		return $this->_create_new_templates($evt_id, $is_global);
+		return $this->_create_new_templates($GRP_ID, $is_global);
 	}
 
-	protected function _create_new_templates($evt_id, $is_global) {
+	protected function _create_new_templates($GRP_ID, $is_global) {
+
+		//if we're creating a custom template then we don't need to use the defaults class
+		if ( ! $is_global )
+			return $this->_create_custom_template_group( $GRP_ID );
 
 		//assemble class name
 		$messenger = ucwords( str_replace( '_', ' ', $this->_messenger->name ) );
@@ -333,12 +330,83 @@ class EE_messages {
 
 		//if we've made it this far we have the class so let's instantiate
 		$a = new ReflectionClass( $classname );
-		$DFLT = $a->newInstance( $this );
+		$DFLT = $a->newInstance( $this, $GRP_ID );
 
 		//generate templates
-		$success = $DFLT->create_new_templates($evt_id, $is_global);
+		$success = $DFLT->create_new_templates();
+
+		/**
+		 * $success is in an array in the following format
+		 * array(
+		 * 	'GRP_ID' => $new_grp_id,
+		 * 	'MTP_context' => $first_context_in_new_templates,
+		 * )
+		 */
 		return $success;
 	}
+
+
+
+	/**
+	 * This creates a custom template using the incoming GRP_ID
+	 *
+	 * @param  int     $GRP_ID GRP_ID for the template_group being used as the base
+	 * @return  array $success             This will be an array in the format:
+	 *                                     			array(
+	 *                                     				'GRP_ID' => $new_grp_id,
+	 *                                     				'MTP_context' => $first_context_in_created_template
+	 *                                     			)
+	 * @access private
+	 */
+	private function _create_custom_template_group( $GRP_ID ) {
+		//defaults
+		$success = array( 'GRP_ID' => NULL, 'MTP_context' => '' );
+
+		//get the template group to use as a template from the db.  If $GRP_ID is empty then we'll assume the base will be the global template matching the messenger and message type.
+		$mtg = empty( $GRP_ID ) ? EEM_Message_Template_Group::instance()->get_one( array( array( 'MTP_messenger' => $this->_messenger->name, 'MTP_message_type' => $this->_message_type->name, 'MTP_is_global' => TRUE ) ) ) : EEM_Message_Template_Group::instance()->get_one_by_ID( $GRP_ID );
+
+		//if we don't have a mtg at this point then we need to bail.
+		if ( ! $mtg instanceof EE_Message_Template_Group ) {
+			EE_Error::add_error( sprintf( __('Something went wrong with generating the custom template from this group id: %s.  This usually happens when there is no matching message template group in the db.', 'event_espresso'), $GRP_ID ), __FILE__, __FUNCTION__, __LINE__ );
+			return $success;
+		}
+
+		//let's get all the related message_template objects for this group.
+		$mtts = $mtg->message_templates();
+
+		//now we have what we need to setup the new template
+		$new_mtg = clone $mtg;
+		$new_mtg->set('GRP_ID', 0);
+		$new_mtg->set('MTP_is_global', FALSE);
+
+		$template_name = defined('DOING_AJAX') && !empty( $_POST['templateName'] ) ? $_POST['templateName'] : __('New Custom Template', 'event_espresso');
+		$template_description = defined("DOING_AJAX") && !empty( $_POST['templateDescription'] ) ? $_POST['templateDescription'] : sprintf( __('This is a custom template that was created for the %s messenger and %s message type.', 'event_espresso' ), $new_mtg->messenger_obj()->label['singular'], $new_mtg->message_type_obj()->label['singular'] );
+
+
+		$new_mtg->set('MTP_name', $template_name );
+		$new_mtg->set('MTP_description', $template_description );
+		$new_mtg->save();
+		$success['GRP_ID'] = $new_mtg->ID();
+		$success['template_name'] = $template_name;
+
+		//add new message templates and add relation to.
+		foreach ( $mtts as $mtt ) {
+			if ( ! $mtt instanceof EE_Message_Template )
+				continue;
+			$nmtt = clone $mtt;
+			$nmtt->set('MTP_ID', 0);
+			$nmtt->set( 'GRP_ID', $new_mtg->ID() ); //relation
+			$nmtt->save();
+			if ( empty( $success['MTP_context'] ) )
+				$success['MTP_context'] = $nmtt->get('MTP_context');
+		}
+
+		return $success;
+
+	}
+
+
+
 
 	/**
 	 * get_fields
@@ -357,7 +425,7 @@ class EE_messages {
 		foreach ( $this->_message_type->get_contexts() as $context => $details ) {
 			foreach ( $this->_messenger->get_template_fields() as $field => $value ) {
 				$template_fields[$context][$field] = $value;
-			} 
+			}
 		}
 
 		if ( empty($template_fields) ) {
@@ -370,7 +438,7 @@ class EE_messages {
 
 	/**
 	 * gets an array of installed messengers and message types objects.
-	 * 
+	 *
 	 * @access public
 	 * @param string $type we can indicate just returning installed message types or messengers (or both) via this parameter.
 	 * @return array multidimensional array of messenger and message_type objects (messengers index, and message_type index);
@@ -382,6 +450,10 @@ class EE_messages {
 
 		$messenger_files = $type == 'all' || $type == 'messengers' ? scandir( $message_base . "messenger", 1) : NULL;
 		$messagetype_files = $type == 'all' || $type == 'message_types' ? scandir( $message_base . "message_type", 1) : NULL;
+
+		//allow plugins to filter in their messenger/message_type files
+		$messenger_files = apply_filters('FHEE__EE_messages__get_installed__messenger_files', $messenger_files, $type );
+		$messagetype_files = apply_filters('FHEE__EE_messages__get_installed__messagetype_files', $messagetype_files, $type );
 
 		$installed['messengers'] = !empty($messenger_files ) ? $this->_get_installed($messenger_files) : '';
 		$installed['message_types'] = !empty($messagetype_files) ? $this->_get_installed($messagetype_files) : '';
@@ -395,7 +467,7 @@ class EE_messages {
 
 	/**
 	 * _get_installed
-	 * takes an array of filenames and returns an array of objects instantiated from the class name found in the filename. 	
+	 * takes an array of filenames and returns an array of objects instantiated from the class name found in the filename.
 	 * @param  array $filenames and array of filenames
 	 * @return array       array of objects
 	 */
@@ -406,7 +478,7 @@ class EE_messages {
 		$replace = ".class.php";
 		foreach ( $filenames as $filename ) {
 			$classname = preg_match("/" . $replace . "/", $filename ) ? str_replace($replace, "", $filename) : false;
-			
+
 			//no classname? no match? move along, nothing to see here. note, the stripos is checking to make sure the filename (classname) begins with EE.
 			if ( !$classname || 0 !== stripos($classname, 'EE') ) continue;
 
@@ -443,7 +515,7 @@ class EE_messages {
 	public function get_installed_message_types() {
 		return $this->_installed_message_types;
 	}
-} 
+}
 //end EE_messages class
 
 // end of file:	includes/core/messages/EE_messages.core.php

@@ -7,7 +7,7 @@ Originally this was just foreign keys, but EE_Any_Foreign_Model_name_Field (whic
  */
 abstract class EE_Field_With_Model_Name extends EE_Model_Field_Base{
 	/**
-	 * Usually the name of a single model. However, as in teh case for custom post types,
+	 * Usually the name of a single model. However, as in the case for custom post types,
 	 * it can actually be an array of models
 	 * @var string or array
 	 */

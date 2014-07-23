@@ -180,9 +180,21 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'noheader' => TRUE
 					),
 
+				'approve_and_notify_registration' => array(
+					'func' => 'approve_registration',
+					'noheader' => TRUE,
+					'args' => array(TRUE)
+					),
+
 				'decline_registration'	=> array(
 						'func' => 'decline_registration',
 						'noheader' => TRUE
+					),
+
+				'decline_and_notify_registration' => array(
+					'func' => 'decline_registration',
+					'noheader' => TRUE,
+					'args' => array(TRUE)
 					),
 
 				'pending_registration'	=> array(
@@ -190,14 +202,32 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'noheader' => TRUE
 					),
 
+				'pending_and_notify_registration' => array(
+					'func' => 'pending_registration',
+					'noheader' => TRUE,
+					'args' => array(TRUE)
+					),
+
 				'no_approve_registration' => array(
 					'func' => 'not_approve_registration',
 					'noheader' => TRUE
 					),
 
+				'no_approve_and_notify_registration' => array(
+					'func' => 'not_approve_registration',
+					'noheader' => TRUE,
+					'args' => array(TRUE)
+					),
+
 				'cancel_registration'	=> array(
 						'func' => 'cancel_registration',
 						'noheader' => TRUE
+					),
+
+				'cancel_and_notify_registration' => array(
+					'func' => 'cancel_registration',
+					'noheader' => TRUE,
+					'args' => array(TRUE)
 					),
 
 				'contact_list'	=> '_attendee_contact_list_table',
@@ -515,45 +545,61 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _set_list_table_views_default() {
+
+		//for notification related bulk actions we need to make sure only active messengers have an option.
+		EE_Messages_Init::set_autoloaders();
+		$EEMSG = EE_Registry::instance()->load_lib('messages');
+		$active_mts = $EEMSG->get_active_message_types();
+		//key= bulk_action_slug, value= message type.
+		$match_array = array(
+			'approve_registration' => 'registration',
+			'decline_registration' => 'declined_registration',
+			'pending_registration' => 'pending_approval',
+			'no_approve_registration' => 'not_approved_registration',
+			'cancel_registration' => 'cancelled_registration'
+			);
+
+		/** setup reg status bulk actions **/
+		$def_reg_status_actions['approve_registration'] = __('Approve Registrations', 'event_espresso');
+		if ( in_array( $match_array['approve_registration'], $active_mts ) )
+			$def_reg_status_actions['approve_and_notify_registration'] = __('Approve and Notify Registrations', 'event_espresso');
+		$def_reg_status_actions['decline_registration'] = __('Decline Registrations', 'event_espresso');
+		if ( in_array( $match_array['decline_registration'], $active_mts ) )
+			$def_reg_status_actions['decline_and_notify_registration'] = __('Decline and Notify Registrations', 'event_espresso');
+		$def_reg_status_actions['pending_registration'] = __('Set Registrations to Pending Payment', 'event_espresso');
+		if ( in_array( $match_array['pending_registration'], $active_mts ) )
+			$def_reg_status_actions['pending_and_notify_registration'] = __('Set Registrations to Pending Payment and Notify', 'event_espresso');
+		$def_reg_status_actions['no_approve_registration'] = __('Set Registrations to Not Approved', 'event_espresso');
+		if ( in_array( $match_array['no_approve_registration'], $active_mts ) )
+			$def_reg_status_actions['no_approve_and_notify_registration'] = __('Set Registrations to Not Approved and Notify', 'event_espresso');
+		$def_reg_status_actions['cancel_registration'] = __('Cancel Registrations', 'event_espresso');
+		if ( in_array( $match_array['cancel_registration'], $active_mts ) )
+			$def_reg_status_actions['cancel_and_notify_registration'] = __('Cancel Registrations and Notify', 'event_espresso');
+
 		$this->_views = array(
 			'all' => array(
 				'slug' => 'all',
 				'label' => __('View All Registrations', 'event_espresso'),
 				'count' => 0,
-				'bulk_action' => array(
-					'approve_registration' => __('Approve Registrations', 'event_espresso'),
-					'decline_registration' => __('Decline Registrations', 'event_espresso'),
-					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
-					'no_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
-					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
+				'bulk_action' => array_merge( $def_reg_status_actions, array(
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
-					)
+					) )
 				),
 			'month' => array(
 				'slug' => 'month',
 				'label' => __('This Month', 'event_espresso'),
 				'count' => 0,
-				'bulk_action' => array(
-					'approve_registration' => __('Approve Registrations', 'event_espresso'),
-					'decline_registration' => __('Decline Registrations', 'event_espresso'),
-					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
-					'no_approve_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
-					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
+				'bulk_action' => array_merge( $def_reg_status_actions, array(
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
-					)
+					))
 				),
 			'today' => array(
 				'slug' => 'today',
 				'label' => sprintf( __('Today - %s', 'event_espresso'), date('M d, Y', current_time('timestamp', 0) ) ),
 				'count' => 0,
-				'bulk_action' => array(
-					'approve_registration' => __('Approve Registrations', 'event_espresso'),
-					'decline_registration' => __('Decline Registrations', 'event_espresso'),
-					'pending_registration' => __('Set Registrations to Pending Payment', 'event_espresso'),
-					'no_approved_registration' => __('Set Registrations to Not Approved', 'event_espresso'),
-					'cancel_registration' => __('Cancel Registrations', 'event_espresso'),
+				'bulk_action' => array_merge( $def_reg_status_actions,  array(
 					'trash_registrations' => __('Trash Registrations', 'event_espresso')
-					)
+					))
 				),
 			'trash' => array(
 				'slug' => 'trash',
@@ -1009,9 +1055,10 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * 		_set_registration_status
 	*		@access private
+	*		@param $bool $notify Whether or not to notify the registrant(s) about the status change.
 	*		@return void
 	*/
-	private function _set_registration_status( $REG_ID = FALSE, $status = FALSE ) {
+	private function _set_registration_status( $REG_ID = FALSE, $status = FALSE, $notify = FALSE ) {
 		$success = FALSE;
 		// set default status if none is passed
 		$status = $status ? $status : EEM_Registration::status_id_pending_payment;
@@ -1027,7 +1074,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = TRUE;
 			// loop thru REG_IDs and set each reg status separately
 			foreach ( $REG_IDs as $REG_ID ) {
-				$result = $this->_set_registration_status( $REG_ID, $status );
+				$result = $this->_set_registration_status( $REG_ID, $status, $notify );
 				$success = isset( $result['success'] ) && $result['success'] ? $success : FALSE;
 			}
 			$REG_ID = FALSE;
@@ -1038,6 +1085,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			$success = $registration->save();
 			//make sure we don't just get 0 updated
 			$success = $success === FALSE ? FALSE : TRUE;
+
+			if ( $success && $notify ) {
+				$this->_req_data['_REG_ID'] = $REG_ID;
+				$this->_process_resend_registration();
+			}
 		}
 		return array( 'REG_ID' => $REG_ID, 'success' => $success );
 	}
@@ -1116,10 +1168,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * 		approve_registration
 	*		@access protected
+	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function approve_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_approved );
+	protected function approve_registration( $notify = FALSE ) {
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_approved, $notify );
 		$this->_reg_status_change_return( EEM_Registration::status_id_approved, $result );
 	}
 
@@ -1128,10 +1181,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * 		decline_registration
 	*		@access protected
+	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function decline_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_declined );
+	protected function decline_registration( $notify = FALSE ) {
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_declined, $notify );
 		$this->_reg_status_change_return( EEM_Registration::status_id_declined, $result );
 	}
 
@@ -1141,10 +1195,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * 		cancel_registration
 	*		@access protected
+	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function cancel_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_cancelled );
+	protected function cancel_registration( $notify = FALSE ) {
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_cancelled, $notify );
 		$this->_reg_status_change_return( EEM_Registration::status_id_cancelled, $result );
 	}
 
@@ -1155,10 +1210,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * 		not_approve_registration
 	*		@access protected
+	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function not_approve_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_not_approved );
+	protected function not_approve_registration( $notify = FALSE ) {
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_not_approved, $notify );
 		$this->_reg_status_change_return( EEM_Registration::status_id_not_approved, $result );
 	}
 
@@ -1167,10 +1223,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * 		decline_registration
 	*		@access protected
+	*		@param bool $notify whether or not to notify the registrant about their approval.
 	*		@return void
 	*/
-	protected function pending_registration() {
-		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending_payment );
+	protected function pending_registration( $notify = FALSE ) {
+		$result = $this->_set_registration_status( FALSE, EEM_Registration::status_id_pending_payment, $notify );
 		$this->_reg_status_change_return( EEM_Registration::status_id_pending_payment, $result );
 	}
 
@@ -1721,6 +1778,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		$REGM = EEM_Registration::instance();
 
 		$success = 1;
+		$error = 0;
 
 		$tickets = array();
 		$dtts = array();
@@ -1740,6 +1798,14 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 			while (list( $ind, $REG_ID ) = each($this->_req_data['_REG_ID'])) {
 
 				$REG = $REGM->get_one_by_ID($REG_ID);
+				$payment_count = $REG->get_first_related('Transaction')->count_related('Payment');
+				if ( $payment_count > 0 ) {
+					$name = $REG->attendee()->full_name();
+					$error = 1;
+					$success = 0;
+					EE_Error::add_error( sprintf( __('The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.', 'event_espresso'), $name ), __FILE__, __FUNCTION__, __LINE__ );
+					continue; //can't trash this registration because it has payments.
+				}
 				$ticket = $REG->get_first_related('Ticket');
 				$tickets[$ticket->ID()] = $ticket;
 				$dtt = $ticket->get_many_related('Datetime');
@@ -1748,6 +1814,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				$updated = $trash ? $REG->delete() : $REG->restore();
 				if ( !$updated ) {
 					$success = 0;
+				} else {
+					$success = 2;
 				}/**/
 			}
 
@@ -1771,7 +1839,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		$what = $success > 1 ? __( 'Registrations', 'event_espresso' ) : __( 'Registration', 'event_espresso' );
 		$action_desc = $trash ? __( 'moved to the trash', 'event_espresso' ) : __( 'restored', 'event_espresso' );
-		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ) );
+		$overwrite_msgs = $error ? TRUE : FALSE;
+		$this->_redirect_after_action( $success, $what, $action_desc, array( 'action' => 'default' ), $overwrite_msgs );
 	}
 
 
@@ -1885,7 +1954,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 		//we need to remove all the relationships on the transaction
 		$TXN->delete_related_permanently('Payment');
-		$TXN->_remove_relations('Promotion_Object');
 		$TXN->delete_related_permanently('Extra_Meta');
 
 		//now we can delete this REG permanently (and the transaction of course)
@@ -2390,7 +2458,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 	/**
 	 * Metabox for attendee details
 	 * @param  WP_Post $post wp post object
-	 * @return string        attendee address detials (and form)
+	 * @return string        attendee address details (and form)
 	 */
 	public function attendee_address_details($post) {
 		//get attendee object (should already have it)

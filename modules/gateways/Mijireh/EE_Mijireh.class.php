@@ -96,14 +96,14 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		return number_format($float, 2);
 	}
 	/**
-	 * Sends a direct request to mijireh, informing them of the order, and they return the URL to send teh user to.
+	 * Sends a direct request to mijireh, informing them of the order, and they return the URL to send the user to.
 	 * Also, in order to later be able to find the status of the gateway's transaction, we immediately create an ee payment
 	 * on this function and give it the mijireh's transaction ID.
 	 * @param EE_Line_Item $total_line_item
 	 * @param string $transaction
 	 * @throws EE_Error
 	 */
-	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction = null, $total_to_charge = null) {
 		$mijireh_settings = $this->_payment_settings;
 		$access_key = $mijireh_settings['access_key'];
 
@@ -114,24 +114,68 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		//get any of the current registrations,
 		$primary_registrant = $transaction->primary_registration();
 		$primary_attendee = $primary_registrant->attendee();
+		$items = array();
+		//if we're are charging for the full amount, show the normal line items
+		if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount
+			$total_to_charge = $transaction->total();
+			$tax_total = $total_line_item->get_total_tax();
+			foreach($total_line_item->get_items() as $line_item){
+				$items[] = array(
+					'name'=>$line_item->name(),
+					'price'=>$this->_format_float($line_item->unit_price()),
+					'sku'=>$line_item->code(),
+					'quantity'=>$line_item->quantity()
+				);
+			}
+		}else{//its a partial payment
+			if( ! $total_to_charge ){//they didn't set the total to charge, so it must have a balance
+				$total_to_charge = $transaction->remaining();
+			}
+			$tax_total = 0;
+			//partial payment, so just add 1 item
+			$items[] = array(
+				'name'=>  sprintf(__("Partial payment for registration %s", 'event_espresso'),$primary_registrant->reg_code()),
+				'price'=> $this->_format_float($total_to_charge),
+				'sku'=>$primary_registrant->reg_code(),
+				'quantity'=>1
+			);
+		}
 		$order = array(
-			'total'=>$this->_format_float($transaction->total()),
+			'total'=>$this->_format_float($total_to_charge),
 			'return_url'=>$this->_get_return_url($primary_registrant),
-			'items'=>array(),
+			'items'=>$items,
 			'email'=>$primary_attendee->email(),
 			'first_name'=>$primary_attendee->fname(),
 			'last_name'=>$primary_attendee->lname(),
-			'tax'=>$this->_format_float($total_line_item->get_total_tax()),
-			'partner_id'=>'ee');
-		foreach($total_line_item->get_items() as $line_item){
-			$order['items'][] = array(
-				'name'=>$line_item->name(),
-				'price'=>$this->_format_float($line_item->unit_price()),
-				'sku'=>$line_item->code(),
-				'quantity'=>$line_item->quantity()
-			);
-		}
+			'tax'=>$this->_format_float($tax_total),
+			'partner_id'=>'ee'
+		);
 
+		//setup address?
+		if(		$primary_attendee->address()  &&
+				$primary_attendee->city()  &&
+				$primary_attendee->state_ID()  &&
+				$primary_attendee->country_ID()  &&
+				$primary_attendee->zip()  ){
+
+			$shipping_address = array(
+				'first_name'=>$primary_attendee->fname(),
+				'last_name'=>$primary_attendee->lname(),
+				'street' => $primary_attendee->address(),
+				'city' => $primary_attendee->city(),
+				'state_province' => $primary_attendee->state_obj() ? $primary_attendee->state_obj()->abbrev() : '',
+				'zip_code' => $primary_attendee->zip(),
+				'country' => $primary_attendee->country_ID()
+			);
+			if( $primary_attendee->address2() ){
+				$shipping_address[ 'apt_suite' ] = $primary_attendee->address2();
+			}
+			if( $primary_attendee->phone() ){
+				$shipping_address[ 'phone' ] = $primary_attendee->phone();
+			}
+			$order[ 'billing_address' ] = $shipping_address;
+			$order[ 'shipping_address' ] = $shipping_address;
+		}
 
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, serialize(get_object_vars($this)) );
 				$args = array(
@@ -144,55 +188,53 @@ Class EE_Mijireh extends EE_Offsite_Gateway {
 		$response = wp_remote_post( 'https://secure.mijireh.com/api/1/orders', $args );
 		if(! $response instanceof WP_Error ){
 			$response_body = json_decode($response['body']);
-			if($response['response']['code'] == 201 || $response['response']['code'] == 200){
-
-				$this->_gatewayUrl = $response_body->checkout_url;
-				$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
-				//check if we already have an identical payment
-				$duplicate_properties = array(
-					'TXN_ID' => $transaction->ID(),
-					'STS_ID' => EEM_Payment::status_id_failed,
-					'PAY_method' => 'CART',
-					'PAY_amount' => $transaction->total(),
-					'PAY_gateway' => $this->_gateway_name,
-					'PAY_gateway_response' => null,
-					'PAY_po_number' => NULL,
-					'PAY_extra_accntng'=>$primary_registrant->reg_code(),
-					'PAY_via_admin' => false,
-				);
-				$unique_properties = array(
-					'PAY_txn_id_chq_nmbr' => $response_body->order_number,
-					'PAY_timestamp' => current_time( 'mysql', FALSE ),
-					'PAY_details' => (array)$response_body
-				);
-				$properties = array_merge($unique_properties,$duplicate_properties);
-				$duplicate_payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
-				if($duplicate_payment){
-					$payment = $duplicate_payment;
-				}else{
-					$payment = EE_Payment::new_instance();
-				}
-				$payment->save($properties);
-			}else{
-				if($response_body){
-					$mijireh_error = '';
-					foreach($response_body as $error_field => $errors){
-						$mijireh_error.=$error_field.":".implode(",",$errors);
+			if($response_body == NULL || ! isset($response_body->checkout_url)){
+				if( is_array( $response_body ) || is_object( $response_body)){
+					$response_body_as_array = (array)$response_body;
+					$problems_string = '';
+					foreach($response_body_as_array as $problem_parameter => $problems){
+						$problems_string.= sprintf(__('\nProblems with %s: %s','event_espresso'),$problem_parameter,implode(", ",$problems));
 					}
 				}else{
-					$mijireh_error = $response['body'];
+					$problems_string = $response['body'];
 				}
-				$error_message = sprintf(__("Error response from Mijireh: %s", 'event_espresso'),$mijireh_error);
 
-				EE_Error::add_error($error_message);
-				throw new EE_Error($error_message);
+				throw new EE_Error(sprintf(__('Errors occurred communicating with Mijireh: %s.','event_espresso'),$problems_string));
 			}
+			$this->_gatewayUrl = $response_body->checkout_url;
+			$this->_EEM_Gateways->set_off_site_form($this->submitPayment());
+			//chek if we already have an identical payment
+			$duplicate_properties = array(
+				'TXN_ID' => $transaction->ID(),
+				'STS_ID' => EEM_Payment::status_id_failed,
+				'PAY_method' => 'CART',
+				'PAY_amount' => $total_to_charge,
+				'PAY_gateway' => $this->_gateway_name,
+				'PAY_gateway_response' => null,
+				'PAY_po_number' => NULL,
+				'PAY_extra_accntng'=>$primary_registrant->reg_code(),
+				'PAY_via_admin' => false,
+			);
+			$unique_properties = array(
+				'PAY_txn_id_chq_nmbr' => $response_body->order_number,
+				'PAY_timestamp' => current_time( 'mysql', FALSE ),
+				'PAY_details' => (array)$response_body
+			);
+			$properties = array_merge($unique_properties,$duplicate_properties);
+			$duplicate_payment = EEM_Payment::instance()->get_one(array($duplicate_properties));
+			if($duplicate_payment){
+				$payment = $duplicate_payment;
+			}else{
+				$payment = EE_Payment::new_instance();
+			}
+			$payment->save($properties);
 		}else{
 			$error_message = sprintf(__("Errors communicating with Mijireh: %s", 'event_espresso'),implode(",",$response->get_error_messages()));
 			EE_Error::add_error($error_message);
 			throw new EE_Error($error_message);
+
 		}
-		$this->redirect_after_reg_step_3();
+	$this->redirect_after_reg_step_3();
 	}
 
 	/**

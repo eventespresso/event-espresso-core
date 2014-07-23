@@ -29,6 +29,13 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
+	/**
+	 * This property is just used to hold the status of whether an event is currently being created (true) or edited (false)
+	 * @access protected
+	 * @var bool
+	 */
+	protected $_is_creating_event;
+
 	protected function _set_hooks_properties() {
 		$this->_name = 'pricing';
 		//if we were going to add our own metaboxes we'd use the below.
@@ -147,7 +154,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'DTT_EVT_start' => $dtt['DTT_EVT_start'],
 				'DTT_EVT_end' => $dtt['DTT_EVT_end'],
 				'DTT_reg_limit' => empty( $dtt['DTT_reg_limit'] ) ? INF : $dtt['DTT_reg_limit'],
-				'DTT_order' => $row,
+				'DTT_order' => !isset( $dtt['DTT_order'] ) ? $row : $dtt['DTT_order'],
 				);
 
 			//if we have an id then let's get existing object first and then set the new values.  Otherwise we instantiate a new object for save.
@@ -178,7 +185,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$datetimes_start_times[$DTT->start_date_and_time('Y-m-d','H:i:s')] = $DTT->ID();
 			//now we got to make sure we add the new DTT_ID to the $saved_dtts array  because it is possible there was a new one created for the autosave.
 			$saved_dtts[$DTT->ID()] = $DTT;
-			$saved_dtt_objs[$DTT->get('DTT_order')] = $DTT;
+			$saved_dtt_objs[$row] = $DTT;
 
 			$success = !$success ? $success : $DTT; //if ANY of these updates fail then we want the appropriate global error message. //todod this is actually sucky we need a better error message but this is what it is for now.
 		}
@@ -261,7 +268,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'TKT_max' => empty( $tkt['TKT_max'] ) ? INF : $tkt['TKT_max'],
 				'TKT_row' => $row,
 				'TKT_order' => isset( $tkt['TKT_order'] ) ? $tkt['TKT_order'] : 0,
-				'TKT_taxable' => !empty( $tkt['TKT_taxable'] ) ? 1 : 0
+				'TKT_taxable' => !empty( $tkt['TKT_taxable'] ) ? 1 : 0,
+				'TKT_required' => !empty( $tkt['TKT_required'] ) ? 1 : 0
 				);
 
 
@@ -596,6 +604,10 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		$evtobj = $this->_adminpage_obj->get_cpt_model_obj();
 
+		//set is_creating_event property.
+		$evtID = $evtobj->ID();
+		$this->_is_creating_event = absint($evtID) != 0 ? TRUE : FALSE;
+
 		//default main template args
 		$main_template_args = array(
 			'event_datetime_help_link' => EEH_Template::get_help_tab_link('event_editor_event_datetimes_help_tab', $this->_adminpage_obj->page_slug, $this->_adminpage_obj->get_req_action(), FALSE, FALSE ), //todo need to add a filter to the template for the help text in the Events_Admin_Page core file so we can add further help
@@ -705,6 +717,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 
 	private function _get_dtt_edit_row( $dttrow, $dtt, $default, $all_dtts ) {
+
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
@@ -715,6 +728,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'DTT_EVT_start' => $default ? '' : $dtt->start_date( 'Y-m-d h:i a'),
 			'DTT_EVT_end' => $default ? '' : $dtt->end_date( 'Y-m-d h:i a'),
 			'DTT_reg_limit' => $default ? '' : $dtt->get_pretty('DTT_reg_limit','input'),
+			'DTT_order' => $default ? 'DTTNUM' : $dttrow,
 			'dtt_sold' => $default ? '0' : $dtt->get('DTT_sold'),
 			'clone_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0 ? '' : 'clone-icon ee-icon ee-icon-clone clickable',
 			'trash_icon' => !empty( $dtt ) && $dtt->get('DTT_sold') > 0  ? 'ee-lock-icon' : 'trash-icon dashicons dashicons-post-trash clickable'
@@ -722,12 +736,16 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 
 		$template_args['show_trash'] = count( $all_dtts ) === 1 && $template_args['trash_icon'] !== 'ee-lock-icon' ? ' style="display:none"' : '';
 
+		//allow filtering of template args at this point.
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_dtt_edit_row__template_args', $template_args, $dttrow, $dtt, $default, $all_dtts, $this->_is_creating_event );
+
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_edit_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
 
 
 	private function _get_dtt_attached_tickets_row( $dttrow, $dtt, $datetime_tickets, $all_tickets, $default ) {
+
 		$template_args = array(
 			'dtt_row' => $default ? 'DTTNUM' : $dttrow,
 			'event_datetimes_name' => $default ? 'DTTNAMEATTR' : 'edit_event_datetimes',
@@ -745,6 +763,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				$tktrow++;
 			}
 		}
+
+		//filter template args at this point
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_dtt_attached_ticket_row__template_args', $template_args, $dttrow, $dtt, $datetime_tickets, $all_tickets, $default, $this->_is_creating_event );
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_attached_tickets_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
@@ -764,6 +785,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_name' => $default && empty( $ticket ) ? 'TKTNAME' : $ticket->get('TKT_name'),
 			'tkt_status_class' => $default && empty( $ticket ) ? ' tkt-status-' . EE_Ticket::onsale : ' tkt-status-' . $ticket->ticket_status(),
 			);
+
+		//filter template args
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_datetime_tickets_list_item__template_args', $template_args, $dttrow, $tktrow, $dtt, $ticket, $datetime_tickets, $default, $this->_is_creating_event );
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_dtt_tickets_list.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
@@ -796,7 +820,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_start_date' => $default ? '' : $ticket->get_date('TKT_start_date', 'Y-m-d h:i a'),
 			'TKT_end_date' => $default ? '' : $ticket->get_date('TKT_end_date', 'Y-m-d h:i a' ),
 			'TKT_status' => $default ? EEH_Template::pretty_status(EE_Ticket::onsale, FALSE, 'sentence') : $ticket->ticket_status(TRUE),
-			'TKT_price' => $default ? '' : EEH_Template::format_currency($ticket->get_ticket_total_with_taxes()),
+			'TKT_price' => $default ? '' : EEH_Template::format_currency($ticket->get_ticket_total_with_taxes(), FALSE, FALSE),
+			'TKT_price_code' => EE_Registry::instance()->CFG->currency->code,
 			'TKT_price_amount' => $default ? 0 : $ticket_subtotal,
 			'TKT_qty' => $default ? '' : $ticket->get_pretty('TKT_qty','symbol'),
 			'TKT_qty_for_input'=> $default ? '' : $ticket->get_pretty('TKT_qty','input'),
@@ -808,6 +833,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'TKT_ID' => $default ? 0 : $ticket->get('TKT_ID'),
 			'TKT_description' => $default ? '' : $ticket->get('TKT_description'),
 			'TKT_is_default' => $default ? 0 : $ticket->get('TKT_is_default'),
+			'TKT_required' => $default ? 0 : $ticket->required(),
 			'TKT_is_default_selector' => '',
 			'ticket_price_rows' => '',
 			'TKT_base_price' => $default || ! $base_price instanceof EE_Price ? '' : $base_price->get_pretty('PRC_amount', 'localized_float'),
@@ -873,6 +899,9 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$prcrow++;
 		}
 
+		//filter $template_args
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_ticket_row__template_args', $template_args, $tktrow, $ticket, $ticket_datetimes, $all_dtts, $default, $all_tickets, $this->_is_creating_event );
+
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -898,6 +927,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				);
 			$tax_rows .= EEH_Template::display_template( $template, $template_args, TRUE );
 		}
+
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_tax_rows__template_args', $template_args, $tktrow, $ticket, $this->_is_creating_event  );
 
 		return $tax_rows;
 	}
@@ -934,6 +965,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'disabled' => !empty( $ticket ) && $ticket->get('TKT_deleted') ? TRUE : FALSE
 			);
 
+	$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_ticket_price_row__template_args', $template_args, $tktrow, $prcrow, $price, $default, $ticket, $show_trash, $show_create, $this->_is_creating_event );
+
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_price_row.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -959,6 +992,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 				'price_selected_is_percent' => 0
 			);
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_type_base.template.php';
+
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_base_price_template__template_args', $template_args, $tktrow, $prcrow, $price, $default, $this->_is_creating_event );
 
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -1004,6 +1039,8 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'disabled' => $disabled
 			);
 
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_price_modifier_template__template_args', $template_args, $tktrow, $prcrow, $price, $default, $disabled, $this->_is_creating_event );
+
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_price_modifier_selector.template.php';
 
 		return EEH_Template::display_template( $template, $template_args, TRUE );
@@ -1024,6 +1061,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			'tkt_status_class' => '',
 			);
 
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_ticket_datetime_list_item__template_args', $template_args, $dttrow, $tktrow, $dtt, $ticket, $ticket_datetimes, $default, $this->_is_creating_event );
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_datetimes_list_item.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );
 	}
@@ -1076,6 +1114,7 @@ class espresso_events_Pricing_Hooks extends EE_Admin_Hooks {
 			$prcrow++;
 		}
 
+		$template_args = apply_filters( 'FHEE__espresso_events_Pricing_Hooks___get_ticket_js_structure__template_args', $template_args, $all_dtts, $all_tickets, $this->_is_creating_event );
 
 		$template = PRICING_TEMPLATE_PATH . 'event_tickets_datetime_ticket_js_structure.template.php';
 		return EEH_Template::display_template( $template, $template_args, TRUE );

@@ -28,7 +28,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 
 	// private instance of the EEM_Ticket object
 	private static $_instance = NULL;
-	
+
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -57,6 +57,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 				'TKT_sold' => new EE_Integer_Field('TKT_sold', __('Number of this ticket sold', 'event_espresso'), false, 0),
 				'TKT_qty'=>new EE_Infinite_Integer_Field('TKT_qty', __('Quantity of this ticket that is available','event_espresso'), false, INF),
 				'TKT_uses'=>new EE_Infinite_Integer_Field('TKT_uses', __('Number of datetimes this ticket can be used at', 'event_espresso'), false, INF ),
+				'TKT_required'=>new EE_Boolean_Field('TKT_required', __("Flag indicating whether this ticket must be purchased with a transaction", "event_espresso"), false, false ),
 				'TKT_taxable'=>new EE_Boolean_Field('TKT_taxable', __("Flag indicating whether there is tax applied on this ticket", "event_espresso"), false,false),
 				'TKT_is_default'=>new EE_Boolean_Field('TKT_is_default', __('Flag indicating that this ticket is a default ticket', 'event_espresso'), false, false ),
 				'TKT_order' => new EE_Integer_Field('TKT_order', __('The order in which the Ticket is displayed in the editor (used for autosaves when the form doesn\'t have the ticket ID yet)', 'event_espresso'), false, 0),
@@ -70,7 +71,6 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			'Price'=>new EE_HABTM_Relation('Ticket_Price'),
 			'Ticket_Template'=>new EE_Belongs_To_Relation(),
 			'Registration' => new EE_Has_Many_Relation(),
-			'Promotion_Object' => new EE_Has_Many_Any_Relation()
 		);
 
 		parent::__construct( $timezone );
@@ -98,7 +98,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 		//set timezone if we have in incoming string
 		if ( !empty( $timezone ) )
 			self::$_instance->set_timezone( $timezone );
-		
+
 		// Espresso_model object
 		return self::$_instance;
 	}
@@ -133,7 +133,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 	}
 
 	/**
-	 * Gets the total number of tickets available at a particular datetime (does 
+	 * Gets the total number of tickets available at a particular datetime (does
 	 * NOT take int account the datetime's spaces available)
 	 * @param int $DTT_ID
 	 * @param array $query_params
@@ -143,8 +143,8 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 		$sum = 0;
 		$query_params[0]['Datetime.DTT_ID'] = $DTT_ID;
 		$remaining_per_ticket = $this->_get_all_wpdb_results(
-				$query_params, 
-				ARRAY_A, 
+				$query_params,
+				ARRAY_A,
 				array(
 					'tickets_remaining'=>array('Ticket.TKT_qty-Ticket.TKT_sold','%d'),//note! calculations based on TKT_qty are dangerous because -1 means infinity in the db!
 					'initially_available'=>array('Ticket.TKT_qty','%d')));
@@ -159,10 +159,10 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 			}
 			$sum+=intval($remaining['tickets_remaining']);
 		}
-		
+
 		return $sum;
 	}
-	
+
 	/**
 	 * Updates the TKT_sold quantity on all the tickets matching $query_params
 	 * @param EE_Ticket[] $tickets
@@ -175,5 +175,5 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 		}
 	}
 
-} 
+}
 //end EEM_Ticket model

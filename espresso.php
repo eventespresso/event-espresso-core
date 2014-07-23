@@ -1,13 +1,13 @@
 <?php if ( ! defined('ABSPATH')) exit('No direct script access allowed');
 /*
-  Plugin Name: Event Espresso
-  Plugin URI:  	http://wordpress.org/plugins/event-espresso-free/
-  Description: 	Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
-  Version: 			4.2.9.p
+  Plugin Name: 	Event Espresso
+  Plugin URI: 		http://wordpress.org/plugins/event-espresso-free/
+  Description: 		Manage your events from your WordPress dashboard. Reduce your admin, reduce your costs, make your life easier! | <a href="admin.php?page=espresso_support&action=contact_support">Support</a>
+  Version: 			4.3.0.p
   Author: 				Event Espresso
   Author URI: 		http://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: 			GPLv2
-  TextDomain:		event_espresso
+  TextDomain: 	event_espresso
 
   Copyright 			(c) 2008-2014 Event Espresso  All Rights Reserved.
 
@@ -33,7 +33,7 @@
  *
  * @package 		Event Espresso
  * @author 			Seth Shoultes
- * @copyright 	(c) 2008-2011 Event Espresso  All Rights Reserved.
+ * @copyright	 	(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @license 		{@link http://eventespresso.com/support/terms-conditions/}   * see Plugin Licensing *
  * @link 				{@link http://www.eventespresso.com}
  * @since 			4.0
@@ -43,7 +43,7 @@
 //Returns the plugin version
 if ( ! function_exists( 'espresso_version' )) {
 	function espresso_version() {
-		return '4.2.9.p';
+		return '4.3.0.p';
 	}
 } else {
 	unset( $_GET['activate'] );
@@ -53,7 +53,7 @@ if ( ! function_exists( 'espresso_version' )) {
 define( 'EVENT_ESPRESSO_VERSION', espresso_version());
 define( 'EE_MIN_WP_VER_REQUIRED', '3.6' );
 define( 'EE_MIN_WP_VER_RECOMMENDED', '3.8.1' );
-define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.3' );
+define( 'EE_MIN_PHP_VER_RECOMMENDED', '5.3.28' );
 define( 'EVENT_ESPRESSO_POWERED_BY', 'Event Espresso - ' . EVENT_ESPRESSO_VERSION );
 define( 'EVENT_ESPRESSO_MAIN_FILE', __FILE__ );
 
@@ -185,7 +185,7 @@ function espresso_load_error_handling() {
 
 /**
  * 	espresso_load_required
- * 	given a classname and path, this function will load that file or throw an exception
+ * 	given a class name and path, this function will load that file or throw an exception
  */
 function espresso_load_required( $classname, $full_path_to_file ) {
 	espresso_load_error_handling();

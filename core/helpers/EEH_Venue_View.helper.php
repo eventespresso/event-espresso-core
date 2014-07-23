@@ -130,6 +130,24 @@
 
 
 	/**
+	 * espresso_venue_address
+	 * returns an UN-formatted string containing a venue's address
+	 *
+	 * @param 	string 	'inline' or 'multiline'
+	 * @return string
+	 */
+	if ( ! function_exists( 'espresso_venue_raw_address' )) {
+		function espresso_venue_raw_address( $type = 'multiline', $VNU_ID = FALSE, $echo = TRUE ) {
+			if ( $echo ) {
+				echo EEH_Venue_View::venue_address( $type, $VNU_ID, FALSE, FALSE );
+			} else {
+				return EEH_Venue_View::venue_address( $type, $VNU_ID, FALSE, FALSE );
+			}
+		}		
+	}
+
+
+	/**
 	 * espresso_venue_has_address
 	 * returns TRUE or FALSE if a Venue has address information
 	 *
@@ -240,50 +258,53 @@ class EEH_Venue_View extends EEH_Base {
 		}
 		// international newspaper?
 		global $post;
-		switch ( $post->post_type ) {
-			// if this is being called from an EE_Venue post,
-			// and the EE_Venue post corresponds to the EE_Venue that is being asked for,
-			// then we can try to just grab the attached EE_Venue object
-			case 'espresso_venues':
-				// the post already contains the related EE_Venue object AND one of the following is TRUE:
-				// the requested Venue ID matches the post ID OR...
-				// there was no specific Venue ID requested
-				if ( isset( $post->EE_Venue ) && ( $VNU_ID == $post->ID || ! $VNU_ID )) {
-					// use existing related EE_Venue object
-					EEH_Venue_View::$_venue =  $post->EE_Venue;
-				} else if ( $VNU_ID ) {
-					// there WAS a specific Venue ID requested, but it's NOT the current post object
-					EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
-				} else {
-					// no specific Venue ID requested, so use post ID to generate EE_Venue object
-					EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $post->ID );
-				}				
+		if ( $post instanceof WP_Post ) {
+			switch ( $post->post_type ) {
+				// if this is being called from an EE_Venue post,
+				// and the EE_Venue post corresponds to the EE_Venue that is being asked for,
+				// then we can try to just grab the attached EE_Venue object
+				case 'espresso_venues':
+					// the post already contains the related EE_Venue object AND one of the following is TRUE:
+					// the requested Venue ID matches the post ID OR...
+					// there was no specific Venue ID requested
+					if ( isset( $post->EE_Venue ) && ( $VNU_ID == $post->ID || ! $VNU_ID )) {
+						// use existing related EE_Venue object
+						EEH_Venue_View::$_venue =  $post->EE_Venue;
+					} else if ( $VNU_ID ) {
+						// there WAS a specific Venue ID requested, but it's NOT the current post object
+						EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $VNU_ID );
+					} else {
+						// no specific Venue ID requested, so use post ID to generate EE_Venue object
+						EEH_Venue_View::$_venue = EEM_Venue::instance()->get_one_by_ID( $post->ID );
+					}				
 				break;
-			case 'espresso_events':
-				// grab the events related venues
-				$venues = EEH_Venue_View::get_event_venues();
-				// make sure the result is an array
-				$venues = is_array( $venues ) ? $venues : array();
-				// do we have an ID for a specific venue?
-				if ( $VNU_ID ) {
-					// loop thru the related venues
-					foreach( $venues as $venue ) {
-						// untill we find the venue we're looking for
-						if ( $venue->ID() == $VNU_ID ) {
-							EEH_Venue_View::$_venue = $venue;
-							break;
+				
+				case 'espresso_events':
+					// grab the events related venues
+					$venues = EEH_Venue_View::get_event_venues();
+					// make sure the result is an array
+					$venues = is_array( $venues ) ? $venues : array();
+					// do we have an ID for a specific venue?
+					if ( $VNU_ID ) {
+						// loop thru the related venues
+						foreach( $venues as $venue ) {
+							// untill we find the venue we're looking for
+							if ( $venue->ID() == $VNU_ID ) {
+								EEH_Venue_View::$_venue = $venue;
+								break;
+							}
+							// if the venue being asked for is not related to the global event post,
+							// still return the venue being asked for
 						}
-						// if the venue being asked for is not related to the global event post,
-						// still return the venue being asked for
+					// no venue ID ?
+					// then the global post is an events post and this function was called with no argument
+					} else {
+						// just grab the first related event venue
+						EEH_Venue_View::$_venue = reset( $venues );		
 					}
-				// no venue ID ?
-				// then the global post is an events post and this function was called with no argument
-				} else {
-					// just grab the first related event venue
-					EEH_Venue_View::$_venue = reset( $venues );		
-				}
 				break;
-			
+				
+			}
 		}
 		// now if we STILL do NOT have an EE_Venue model object, BUT we have a Venue ID...
 		if ( ! EEH_Venue_View::$_venue instanceof EE_Venue && $VNU_ID ) {
@@ -384,11 +405,11 @@ class EEH_Venue_View extends EEH_Base {
 	 *  @access 	public
 	 *  @return 	string
 	 */
-	public static function venue_address( $type = 'multiline', $VNU_ID = FALSE ) {
+	public static function venue_address( $type = 'multiline', $VNU_ID = FALSE, $use_schema = TRUE, $add_wrapper = TRUE ) {
 		$venue = EEH_Venue_View::get_venue( $VNU_ID );
 		if ( $venue instanceof EE_Venue ) {
 			EE_Registry::instance()->load_helper( 'Formatter' );
-			return EEH_Address::format( $venue, $type );
+			return EEH_Address::format( $venue, $type, $use_schema, $add_wrapper );
 		}
 		return NULL;
 	}

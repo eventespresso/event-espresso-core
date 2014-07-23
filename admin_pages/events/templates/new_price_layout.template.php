@@ -403,7 +403,7 @@
 					<thead>
 						<tr valign="top">
 							<td>Ticket Name</td>
-							<td>Goes On Sale</td>
+							<td>Sale Starts</td>
 							<td>Sell Until</td>
 							<td>Price</td>
 							<td>Qty</td>

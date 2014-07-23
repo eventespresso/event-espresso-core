@@ -6,7 +6,7 @@
 */
 
 function ee_resurse_into_array($data) {
-	if (is_object($data)) {
+	if (is_object($data) || $data instanceof __PHP_Incomplete_Class) {//is_object($incomplete_class) actually returns false, hence why we check for it
 		$data = (array)$data;
 	}
 	if (is_array($data)) {
@@ -41,8 +41,7 @@ function ee_resurse_into_array($data) {
 			</ul>
 			<?php
 		}
-	}
-	else {
+	}else {
 		//simple value
 		echo $data;
 	}

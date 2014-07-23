@@ -1,5 +1,5 @@
 jQuery(document).ready(function($) {
-	
+
 	window.onbeforeunload = function(){
 		if ( UNSAVED_DATA_MSG.inputChanged === 1 )
 			return UNSAVED_DATA_MSG.eventmsg;

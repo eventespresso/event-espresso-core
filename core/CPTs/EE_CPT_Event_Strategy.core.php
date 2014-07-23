@@ -76,7 +76,7 @@ class EE_CPT_Event_Strategy {
 	/**
 	 * Should eb called when the last filter or hook is fired for thiss CPT strategy.
 	 * This is to avoid applying this CPT strategy for other posts or CPTs (eg,
-	 * we don't want to join to teh datetime table when querying for venues, do we!?)
+	 * we don't want to join to the datetime table when querying for venues, do we!?)
 	 */
 	protected function _remove_filters(){
 		remove_filter( 'posts_fields', array( $this, 'posts_fields' ), 10, 1 );

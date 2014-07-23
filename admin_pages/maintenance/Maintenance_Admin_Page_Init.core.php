@@ -18,9 +18,9 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * Maintenance_Admin_page_INit
  *
- * This is for when we're in maintenance mode. If we're in level 2 of mainteannce
- * mode, this is all users can see (because everything else is broken). If we're jsut
- * in level 1, they can see most of htis and the other admin pages.
+ * This is for when we're in maintenance mode. If we're in level 2 of maintenance
+ * mode, this is all users can see (because everything else is broken). If we're just
+ * in level 1, they can see most of this and the other admin pages.
  *
  *
  * @package		Payments_Admin_Page_Init
@@ -40,7 +40,7 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 		define( 'EE_MAINTENANCE_ADMIN', EE_ADMIN_PAGES . 'maintenance' . DS );	
 		define( 'EE_MAINTENANCE_TEMPLATE_PATH', EE_MAINTENANCE_ADMIN . 'templates' . DS );	
 		define( 'EE_MAINTENANCE_ASSETS_URL', EE_ADMIN_PAGES_URL . 'maintenance/assets/' );
-		//check that if we're in maintenance mode that we tell the admin taht
+		//check that if we're in maintenance mode that we tell the admin that
 		add_action('admin_notices',array($this,'check_maintenance_mode'));
 		parent::__construct();
 	}

@@ -33,7 +33,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		This funtion is a singleton method used to instantiate the EEM_Attendee object
+	 * 		This function is a singleton method used to instantiate the EEM_Attendee object
 	 *
 	 * 		@access public
 	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
@@ -112,20 +112,20 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive  ALL prices from db
+	 * 		retrieve  ALL prices from db
 	 *
 	 * 		@access		public
 	 * 		@return		EE_PRice[]
 	 */
 	public function get_all_prices() {
-		// retreive all prices
+		// retrieve all prices
 		return $this->get_all(array('order_by'=>array('PRC_amount'=>'ASC')));
 	}
 
 
 
 	/**
-	 * 		retreive all active prices for a particular event
+	 * 		retrieve all active prices for a particular event
 	 *
 	 * 		@access		public
 	 * 		@return 		array				on success
@@ -143,7 +143,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive all active global prices for a particular event
+	 * 		retrieve all active global prices for a particular event
 	 *
 	 * 		@access		public
 	 * 		@param 			boolean $count  return count
@@ -173,7 +173,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive all prices that are taxes
+	 * 		retrieve all prices that are taxes
 	 *
 	 * 		@access		public
 	 * 		@return 		array				on success
@@ -200,7 +200,7 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 
 
 	/**
-	 * 		retreive all prices for an ticket plus default global prices, but not taxes
+	 * 		retrieve all prices for an ticket plus default global prices, but not taxes
 	 *
 	 * 		@access		public
 	 * 		@param int     $TKT          the id of the event.  If not included then we assume that this is a new ticket.

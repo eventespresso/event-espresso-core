@@ -223,12 +223,12 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	public function load_scripts_styles_add_question() {
 		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'espresso_registration_form_single' );
 	}
 	public function load_scripts_styles_edit_question() {
 		$this->load_scripts_styles_forms();
-		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery'), EVENT_ESPRESSO_VERSION, TRUE );
+		wp_register_script( 'espresso_registration_form_single', REGISTRATION_FORM_ASSETS_URL . 'espresso_registration_form_admin.js', array('jquery-ui-sortable'), EVENT_ESPRESSO_VERSION, TRUE );
 		wp_enqueue_script( 'espresso_registration_form_single' );
 	}
 
@@ -322,7 +322,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			}
 
 
-			//only add a property to the array if it's not null (otherwise the model should just use the defautl value)
+			//only add a property to the array if it's not null (otherwise the model should just use the default value)
 			else if(isset($this->_req_data[$fieldName])){
 				$set_column_values[$fieldName]=$this->_req_data[$fieldName];
 			}
@@ -428,7 +428,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 					if(empty($option_req_data['QSO_value']) && $option_req_data['QSO_value'] !== '0' ){
 						$option_req_data['QSO_value']=$option_req_data['QSO_desc'];
 					}
-					$new_option=EE_Question_Option::new_instance( array( 'QSO_value' => $option_req_data['QSO_value'], 'QSO_desc' => $option_req_data['QSO_desc'], 'QST_ID' => $question->ID()));
+					$new_option=EE_Question_Option::new_instance( array( 'QSO_value' => $option_req_data['QSO_value'], 'QSO_desc' => $option_req_data['QSO_desc'], 'QSO_order' => $option_req_data['QSO_order'], 'QST_ID' => $question->ID()));
 					$new_option->save();
 				}
 			}
@@ -473,7 +473,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 	/**
 	 * For internal use in getting all the query parameters (because it's pretty well the same between question, question groups, and
-	 * for both when searchign for trahsed and untrahse dones)
+	 * for both when searching for trashed and untrashed dones)
 	 * @param EEM_Base $model either EEM_Question or EEM_Question_Group
 	 * @return array lik EEM_Base::get_all's $query_params parameter
 	 */

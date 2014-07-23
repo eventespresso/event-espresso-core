@@ -37,7 +37,7 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes {
 		$this->description = __('All shortcodes specific to registrant recipients list type data.', 'event_espresso');
 		$this->_shortcodes = array(
 			'[RECIPIENT_TICKET_LIST]' => __('Will output a list of tickets for the recipient of the email. Note, if the recipient is the Event Author, then this is blank.', 'event_espresso'),
-			'[RECIPIENT_DATETIME_LIST]' => __('Will output a list of datetimes that the person recieving this message has been registered for.', 'event_espresso')
+			'[RECIPIENT_DATETIME_LIST]' => __('Will output a list of datetimes that the person receiving this message has been registered for.', 'event_espresso')
 			);
 	}
 

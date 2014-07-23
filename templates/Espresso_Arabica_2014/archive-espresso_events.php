@@ -16,7 +16,7 @@ get_header();
 
 	<section id="primary" class="content-area">
 		<div id="content" class="site-content" role="main">
-			<?php get_template_part( 'loop', 'espresso_events' ); ?>			
+			<?php espresso_get_template_part( 'loop', 'espresso_events' ); ?>			
 		</div><!-- #content -->
 	</section><!-- #primary -->
 

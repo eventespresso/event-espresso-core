@@ -9,7 +9,7 @@ class EE_Has_Many_Revision_Relation extends EE_Has_Many_Relation{
 
 
 	/**
-	 * The Foriegn key on the model that acts as the PRIMARY KEY used in special autosave handling where we query for autosaves (or the Foriegn key on other models in relations pointing to this models primary key which is this value).  The _primary_cpt_field is what is equivalent to the post_id field on a cpt join.
+	 * The Foreign key on the model that acts as the PRIMARY KEY used in special autosave handling where we query for autosaves (or the Foreign key on other models in relations pointing to this models primary key which is this value).  The _primary_cpt_field is what is equivalent to the post_id field on a cpt join.
 	 * @var string
 	 */
 	private $_primary_cpt_field;

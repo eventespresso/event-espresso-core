@@ -22,10 +22,10 @@
  * ------------------------------------------------------------------------
  */
 class EEH_Class_Tools {
-	
+
 	static $i = 0;
 	static $file_line = null;
-	
+
 	/**
 	 * 	get_called_class - for PHP versions < 5.3
 	 *
@@ -35,7 +35,11 @@ class EEH_Class_Tools {
 	 */
 	public static function get_called_class() {
 		$backtrace = debug_backtrace();
-		if ( isset( $backtrace[2] ) && is_array( $backtrace[2] ) && isset( $backtrace[2]['file'] ) && isset( $backtrace[2]['line'] )) {
+		if ( isset( $backtrace[2] ) && is_array( $backtrace[2] ) && isset( $backtrace[2]['class'] ) && ! isset( $backtrace[2]['file'] )) {
+			return $backtrace[2]['class'];
+		} else if ( isset( $backtrace[3] ) && is_array( $backtrace[3] ) && isset( $backtrace[3]['class'] ) && ! isset( $backtrace[3]['file'] )) {
+			return $backtrace[3]['class'];
+		} else if ( isset( $backtrace[2] ) && is_array( $backtrace[2] ) && isset( $backtrace[2]['file'] ) && isset( $backtrace[2]['line'] )) {
 			if ( self::$file_line == $backtrace[2]['file'] . $backtrace[2]['line'] ) {
 				self::$i++;
 			} else {
@@ -54,16 +58,52 @@ class EEH_Class_Tools {
 						$classname = $prefix . str_replace( ' ', '_', ucwords( strtolower( str_replace( '_', ' ', $classname  ))));
 						return $classname;
 					}
-				}				
+				}
 			} else {
 				$lines = file( $backtrace[2]['file'] );
 				preg_match_all( '/([a-zA-Z0-9\_]+)::' . $backtrace[2]['function'] . '/', $lines[$backtrace[2]['line']-1], $matches );
 				if ( isset( $matches[1] ) && isset( $matches[1][ self::$i ] )) {
 					return $matches[1][ self::$i ];
 				}
-			}			
+			}
 		}
 		return FALSE;
+	}
+
+
+
+
+	/**
+	 * 	get_class_names_for_all_callbacks_on_hook
+	 * returns an array of names for all classes that have methods registered as callbacks for the given action or filter hook
+	 * 	@access 	public
+	 * 	@param 	string 	$hook
+	 * 	@return 	array
+	 */
+	public static function get_class_names_for_all_callbacks_on_hook( $hook = NULL ) {
+		global $wp_filter;
+		$class_names = array();
+		// are any callbacks registered for this hook ?
+		if ( isset( $wp_filter[ $hook ] )) {
+			// loop thru all of the callbacks attached to the deprecated hookpoint
+			foreach( $wp_filter[ $hook ] as $priority ) {
+				foreach( $priority as $callback ) {
+					// is the callback a non-static class method ?
+					if ( isset( $callback['function'] ) && is_array( $callback['function'] )) {
+						if ( isset( $callback['function'][0] ) && is_object( $callback['function'][0] )) {
+							$class_names[] = get_class( $callback['function'][0] );
+						}
+					// test for static method
+					} else if ( strpos( $callback['function'], '::' ) !== FALSE ) {
+						$class = explode( '::', $callback['function'] );
+						$class_names[] = $class[0];
+					} else {
+						// just a function
+					}
+				}
+			}
+		}
+		return $class_names;
 	}
 
 
@@ -88,7 +128,7 @@ class EEH_Class_Tools {
 		}
 	}
 
-	
+
 }
 // if PHP version < 5.3
 if ( ! function_exists( 'get_called_class' )) {

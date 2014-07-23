@@ -39,8 +39,8 @@ class EE_CPT_Strategy extends EE_BASE {
 	protected $CPT = NULL;
 
 	/**
-	 * 	@var 	array 	$_CPTs
-	 *  @access 	protected
+	 * @var 	array 	$_CPTs
+	 * @access 	protected
 	 */
 	protected $_CPTs = array();
 
@@ -96,8 +96,10 @@ class EE_CPT_Strategy extends EE_BASE {
 		// get CPT data
 		$this->_CPTs = EE_Register_CPTs::get_CPTs();
 		$this->_CPT_endpoints = $this->_set_CPT_endpoints();
+		$this->_CPT_taxonomies = EE_Register_CPTs::get_taxonomies();
 //		d( $this->_CPTs );
 //		d( $this->_CPT_endpoints );
+//		d( $this->_CPT_taxonomies );
 		// load EE_Request_Handler
 		add_action( 'pre_get_posts', array( $this, 'pre_get_posts' ), 5 );
 	}
@@ -182,7 +184,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @param $WP_Query
 	 * @return void
 	 */
-	private function _set_post_type_for_terms( $WP_Query ) {
+	private function _set_post_type_for_terms( WP_Query $WP_Query ) {
 		// is a tag set ?
 		if ( isset( $WP_Query->query['tag'] )) {
 			// set post_tags
@@ -222,7 +224,7 @@ class EE_CPT_Strategy extends EE_BASE {
 	 * @return void
 	 */
 	public function _possibly_set_ee_request_var(){
-
+		// check if ee action var has been set
 		if ( ! EE_Registry::instance()->REQ->is_set( 'ee' )) {
 			// check that route exists for CPT archive slug
 			if ( is_archive() && EE_Config::get_route( $this->CPT['plural_slug'] )) {
@@ -243,78 +245,107 @@ class EE_CPT_Strategy extends EE_BASE {
 	 *
 	 * If this query (not just "main" queries (ie, for WP's infamous "loop")) is for an EE CPT, then we want to supercharge the get_posts query
 	 * to add our EE stuff (like joining to our tables, selecting extra columns, and adding
-	 * EE objects to teh post to facilitate further querying of related data etc)
+	 * EE objects to the post to facilitate further querying of related data etc)
 	 *
 	 * @access public
 	 * @param WP_Query $WP_Query
 	 * @return void
 	 */
 	public function pre_get_posts( $WP_Query ) {
-		// verify WP_Query
-		if ( $WP_Query instanceof WP_Query ) {
-			// check for terms
-			$this->_set_post_type_for_terms( $WP_Query );
-			// check that post_type is set
-			if ( isset( $WP_Query->query_vars['post_type'] )) {
-				// loop thru post_types as array
-				foreach ( (array)$WP_Query->query_vars['post_type'] as $post_type ) {
-					// is current query for an EE CPT ?
-					if ( isset( $this->_CPTs[ $post_type ] )) {
-						// is EE on or off ?
-						if ( EE_Maintenance_Mode::instance()->level() ) {
-							// reroute CPT template view to maintenance_mode.template.php
-							if( ! has_filter('template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
-								add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
-							}
-							return;
-						}
-						// grab details for the CPT the current query is for
-						$this->CPT = $this->_CPTs[ $post_type ];
-						// set post type
-						$this->CPT['post_type'] = $post_type;
-						// set taxonomies
-						$this->_set_CPT_taxonomies();
-						// the post or category or term that is triggering EE
-						$this->CPT['espresso_page'] = EE_Registry::instance()->REQ->is_espresso_page();
-						// requested post name
-						$this->CPT['post_name'] = EE_Registry::instance()->REQ->get( 'post_name' );
-						//d( $this->CPT );
-						// add support for viewing 'private', 'draft', or 'pending' posts
-						if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {
-							// we can just inject directly into the WP_Query object
-							$WP_Query->query['post_status'] = array( 'publish', 'private', 'draft', 'pending' );
-							// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
-							EE_Registry::instance()->REQ->set( 'ee', $this->CPT['singular_slug'] );
-						}
-						$this->_possibly_set_ee_request_var( $post_type );
-						// convert post_type to model name
-						$model_name = str_replace( 'EE_', '', $this->CPT['class_name'] );
-						// get CPT table data via CPT Model
-						$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
-						$this->CPT['tables'] = $this->CPT_model->get_tables();
-						// is there a Meta Table for this CPT?
-						$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $model_name . '_Meta' ] ) ? $this->CPT['tables'][ $model_name . '_Meta' ] : FALSE;
-						// creates classname like:  CPT_Event_Strategy
-						$CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
-						// load and instantiate
-						$CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));
+		// check that postz-type is set
+		if ( ! $WP_Query instanceof WP_Query ) {
+			return;
+		}
 
-						// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
-						// here's the list of available filters in the WP_Query object
-						// 'posts_where_paged'
-						// 'posts_groupby'
-						// 'posts_join_paged'
-						// 'posts_orderby'
-						// 'posts_distinct'
-						// 'post_limits'
-						// 'posts_fields'
-						// 'posts_join'
-						add_filter( 'posts_fields', array( $this, 'posts_fields' ));
-						add_filter( 'posts_join',	array( $this, 'posts_join' ));
-						add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
-						add_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
-						add_filter( 'get_edit_post_link', array( $this, 'get_edit_post_link' ), 10, 2 );
+		// check for terms
+		$this->_set_post_type_for_terms( $WP_Query );
+
+		// is a taxonomy set ?
+		if ( $WP_Query->is_tax ) {
+			// loop thru our taxonomies
+			foreach ( $this->_CPT_taxonomies as $CPT_taxonomy => $CPT_taxonomy_details ) {
+				// check if one of our taxonomies is set as a query var
+				if ( isset( $WP_Query->query[ $CPT_taxonomy ] )) {
+					// but which CPT does that correspond to??? hmmm... guess we gotta go looping
+					foreach ( $this->_CPTs as $post_type => $CPT ) {
+						// verify our CPT has args, is public and has taxonomies set
+						if ( isset( $CPT['args'] ) && $CPT['args']['public'] && ! empty( $CPT['args']['taxonomies'] )) {
+							// does the captured taxonomy belong to this CPT ?
+							if ( in_array( $CPT_taxonomy, $CPT['args']['taxonomies'] )) {
+								// if so, then add this CPT post_type to the current query's array of post_types'
+								$WP_Query->query_vars['post_type'] = isset( $WP_Query->query_vars['post_type'] ) ? (array)$WP_Query->query_vars['post_type'] : array();
+								$WP_Query->query_vars['post_type'][] = $post_type;
+							}
+						}
 					}
+				}
+			}
+		}
+
+
+//		d( $this->_CPTs );
+//		d( $CPT_taxonomy );
+//		d( $WP_Query );
+
+		if ( isset( $WP_Query->query_vars['post_type'] )) {
+			// loop thru post_types as array
+			foreach ( (array)$WP_Query->query_vars['post_type'] as $post_type ) {
+				// is current query for an EE CPT ?
+				if ( isset( $this->_CPTs[ $post_type ] )) {
+					// is EE on or off ?
+					if ( EE_Maintenance_Mode::instance()->level() ) {
+						// reroute CPT template view to maintenance_mode.template.php
+						if( ! has_filter( 'template_include',array( 'EE_Maintenance_Mode', 'template_include' ))){
+							add_filter( 'template_include', array( 'EE_Maintenance_Mode', 'template_include' ), 99999 );
+						}
+						return;
+					}
+					// grab details for the CPT the current query is for
+					$this->CPT = $this->_CPTs[ $post_type ];
+					// set post type
+					$this->CPT['post_type'] = $post_type;
+					// set taxonomies
+					$this->_set_CPT_taxonomies();
+					// the post or category or term that is triggering EE
+					$this->CPT['espresso_page'] = EE_Registry::instance()->REQ->is_espresso_page();
+					// requested post name
+					$this->CPT['post_name'] = EE_Registry::instance()->REQ->get( 'post_name' );
+					//d( $this->CPT );
+					// add support for viewing 'private', 'draft', or 'pending' posts
+					if ( is_user_logged_in() && isset( $WP_Query->query_vars['p'] ) && $WP_Query->query_vars['p'] != 0 && current_user_can( 'edit_post', $WP_Query->query_vars['p'] )) {
+						// we can just inject directly into the WP_Query object
+						$WP_Query->query['post_status'] = array( 'publish', 'private', 'draft', 'pending' );
+						// now set the main 'ee' request var so that the appropriate module can load the appropriate template(s)
+						EE_Registry::instance()->REQ->set( 'ee', $this->CPT['singular_slug'] );
+					}
+					$this->_possibly_set_ee_request_var( $post_type );
+					// convert post_type to model name
+					$model_name = str_replace( 'EE_', '', $this->CPT['class_name'] );
+					// get CPT table data via CPT Model
+					$this->CPT_model = EE_Registry::instance()->load_model( $model_name );
+					$this->CPT['tables'] = $this->CPT_model->get_tables();
+					// is there a Meta Table for this CPT?
+					$this->CPT['meta_table'] = isset( $this->CPT['tables'][ $model_name . '_Meta' ] ) ? $this->CPT['tables'][ $model_name . '_Meta' ] : FALSE;
+					// creates classname like:  CPT_Event_Strategy
+					$CPT_Strategy_class_name = 'CPT_' . $model_name . '_Strategy';
+					// load and instantiate
+					 $CPT_Strategy = EE_Registry::instance()->load_core ( $CPT_Strategy_class_name, array( 'CPT' =>$this->CPT ));
+
+					// !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
+					// here's the list of available filters in the WP_Query object
+					// 'posts_where_paged'
+					// 'posts_groupby'
+					// 'posts_join_paged'
+					// 'posts_orderby'
+					// 'posts_distinct'
+					// 'post_limits'
+					// 'posts_fields'
+					// 'posts_join'
+					add_filter( 'posts_fields', array( $this, 'posts_fields' ));
+					add_filter( 'posts_join',	array( $this, 'posts_join' ));
+					add_filter( 'get_' . $this->CPT['post_type'] . '_metadata', array( $CPT_Strategy, 'get_EE_post_type_metadata' ), 1, 4 );
+					add_filter( 'the_posts',	array( $this, 'the_posts' ), 1, 2 );
+					add_filter( 'get_edit_post_link', array( $this, 'get_edit_post_link' ), 10, 2 );
 				}
 			}
 		}

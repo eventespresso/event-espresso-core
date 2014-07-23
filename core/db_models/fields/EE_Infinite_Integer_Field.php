@@ -2,7 +2,7 @@
 
 /**
  * For storing integers which can assume the value of INFINITY. They're stored in the DB as -1, 
- * but in teh code they're delivered as INF (the constant representing Infinity).
+ * but in the code they're delivered as INF (the constant representing Infinity).
  * Note: this field isn't a good choice if it can acquire the value of -1 through means
  * other than explicitly setting it to INF.
  * Makes use of constant EE_INF_IN_DB set in espresso.php, and INF, which is a PHP constant definedin the ether

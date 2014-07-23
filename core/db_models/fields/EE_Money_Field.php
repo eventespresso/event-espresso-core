@@ -34,7 +34,7 @@ class EE_Money_Field extends EE_Float_Field{
 	
 	/**
 	 * If provided witha string, strips out money-related formatting to turn it into a proper float.
-	 * Rounds teh float to teh correct number of decimal places for this country's currency.
+	 * Rounds the float to the correct number of decimal places for this country's currency.
 	 * @param type $value_inputted_for_field_on_model_object
 	 * @return float
 	 */

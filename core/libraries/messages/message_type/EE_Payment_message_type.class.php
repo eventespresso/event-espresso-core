@@ -34,24 +34,24 @@ class EE_Payment_message_type extends EE_message_type {
 
 		//setup type details for reference
 		$this->name = 'payment';
-		$this->description = __('This message type is used for all payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso'); 
+		$this->description = __('This message type is used for all payment notification messages that go out including any manual payments entered by an event administrator.', 'event_espresso');
 		$this->label = array(
 			'singular' => __('payment received', 'event_espresso'),
 			'plural' => __('payments received', 'event_espresso')
 			);
 
 		parent::__construct();
-	
+
 	}
 
-	
+
 	/**
 	 * see abstract declaration in parent class for details.
 	 */
 	protected function _set_admin_pages() {
 		$this->admin_registered_pages = array(
 			'events_edit' => true
-			); 
+			);
 	}
 
 
@@ -107,7 +107,7 @@ class EE_Payment_message_type extends EE_message_type {
 	/**
 	 * _set_contexts
 	 * This sets up the contexts associated with the message_type
-	 * 
+	 *
 	 * @access  protected
 	 * @return  void
 	 */
@@ -128,11 +128,8 @@ class EE_Payment_message_type extends EE_message_type {
 				'description' => __('This template is what the primary registrant (the person who made the main registration) will receive on successful payment', 'event_espresso')
 				)
 			);
-
-		$this->_contexts = apply_filters( 'FHEE_set_contexts_'. $this->name, $this->_contexts );
-		$this->_contexts = apply_filters( 'FHEE_set_contexts_all', $this->_contexts );
 	}
-	
+
 }
 
 // end of file:	includes/core/messages/types/EE_Onsite Payment_message.class.php

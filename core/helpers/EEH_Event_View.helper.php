@@ -200,9 +200,11 @@
 							$datetime_description = $datetime->description();
 							$html .= ! empty( $datetime_description )  && $add_breaks ? '<br />' : '';
 							$html .= ! empty( $datetime_description ) ? ' - ' . $datetime_description : '';
+							$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
 							$html .= '</li>';
 						} else {
 							$html .= $datetime;
+							$html = apply_filters( 'FHEE__espresso_list_of_event_dates__datetime_html', $html, $datetime );
 						}
 					}
 				}
@@ -238,7 +240,7 @@
 	 * @return string
 	 */
 	if ( ! function_exists( 'espresso_event_date_range' )) {
-		function espresso_event_date_range( $dt_frmt = 'M jS', $tm_frmt = ' ', $single_dt_frmt = 'D M jS @ ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
+		function espresso_event_date_range( $dt_frmt = 'M jS', $tm_frmt = ' ', $single_dt_frmt = 'D M jS, ', $single_tm_frmt = ' g:i a', $EVT_ID = FALSE ) {
 			$the_event_date = date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_date( $dt_frmt, $tm_frmt, $EVT_ID )));
 			$the_event_end_date = date_i18n( $dt_frmt . ' ' . $tm_frmt, strtotime( EEH_Event_View::the_event_end_date( $dt_frmt, $tm_frmt, $EVT_ID )));
 			if ( $the_event_date != $the_event_end_date ) {
@@ -535,7 +537,7 @@ class EEH_Event_View extends EEH_Base {
 	 */
 	public static function event_status( $EVT_ID = FALSE ) {
 		$event = EEH_Event_View::get_event( $EVT_ID );
-		return $event instanceof EE_Event ? $event->pretty_active_status( FALSE, FALSE ) : '';
+		return $event instanceof EE_Event ? $event->pretty_active_status( FALSE ) : '';
 	}
 
 

@@ -13,7 +13,7 @@ class EE_CPT_Where_Conditions extends EE_Default_Where_Conditions{
 	}
 	/**
 	 * Gets the field with the specified column. Note, this function might not work
-	 * properly if two fields refer to columns with teh same name on different tables
+	 * properly if two fields refer to columns with the same name on different tables
 	 * @param string $column column name
 	 * @return EE_Model_Field_Base
 	 */

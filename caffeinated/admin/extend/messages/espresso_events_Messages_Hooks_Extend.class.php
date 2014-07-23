@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * espresso_events_Messages_Hooks_Extend
  * Hooks various messages logic so that it runs on indicated Events Admin Pages.
  * Commenting/docs common to all children classes is found in the EE_Admin_Hooks parent.
- * 
+ *
  *
  * @package		espresso_events_Messages_Hooks_Extend
  * @subpackage	caffeinated/admin/extend/messages/espresso_events_Messages_Hooks_Extend.class.php
@@ -29,26 +29,32 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hooks {
 
+
+	public function __construct( EE_Admin_Page $adminpage ) {
+		add_filter('FHEE__Events_Admin_Page___insert_update_cpt_item__event_update_callbacks', array( $this, 'caf_updates' ), 10 );
+		parent::__construct( $adminpage );
+	}
+
 	/**
 	 * extending the properties set in espresso_events_Messages_Hooks
 	 *
 	 * @access protected
-	 * @return void 
+	 * @return void
 	 */
 	protected function _extend_properties() {
 		define( 'EE_MSGS_EXTEND_ASSETS_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'messages/assets/' );
 		$this->_ajax_func = array(
-			'ee_msgs_switch_template' => 'switch_template'
+			'ee_msgs_create_new_custom' => 'create_new_custom'
 			);
 		$this->_metaboxes = array(
 			0 => array(
-				'page_route' => array('edit','create_event'),
+				'page_route' => array('edit','create_new'),
 				'func' => 'messages_metabox',
 				'label' => __('Notifications', 'event_espresso'),
 				'priority' => 'high'
 				)
 			);
-		
+
 		//see explanation for layout in EE_Admin_Hooks
 		$this->_scripts_styles = array(
 			'registers' => array(
@@ -62,11 +68,40 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 					)
 				),
 			'enqueues' => array(
-				'events_msg_admin' => array('edit'),
-				'events_msg_admin_css' => array('edit')
+				'events_msg_admin' => array('edit', 'create_new'),
+				'events_msg_admin_css' => array('edit', 'create_new')
 				)
 			); /**/
 	}
+
+
+	public function caf_updates( $update_callbacks ) {
+		$update_callbacks[] = array( $this, 'attach_evt_message_templates' );
+		return $update_callbacks;
+	}
+
+
+
+
+	/**
+	 * Handles attaching Message Templates to the Event on save.
+	 * @param  EE_Event $evtobj EE event object
+	 * @param  array       $data   The request data from the form
+	 * @return bool         success or fail
+	 */
+	public function attach_evt_message_templates( $evtobj, $data ) {
+		//first we remove all existing relations on the Event for message types.
+		$evtobj->_remove_relations('Message_Template_Group');
+
+		//now let's just loop throught the selected templates and add relations!
+		foreach( $data['event_message_templates_relation'] as $grp_ID ) {
+			$evtobj->_add_relation_to( $grp_ID, 'Message_Template_Group' );
+		}
+
+		//now save
+		return $evtobj->save();
+	}
+
 
 
 	public function messages_metabox($event, $callback_args) {
@@ -78,47 +113,36 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 
 		$this->_req_data['EVT_ID'] = empty($this->_req_data['EVT_ID'] ) && isset($this->_req_data['evt_id'] ) ? $this->_req_data['evt_id'] : $this->_req_data['EVT_ID'];
 
-		//set flag for whether we are adding or editing an event.
-		$add_event = empty($this->_req_data['EVT_ID']) ? TRUE : FALSE;
 
-		if ( !$add_event ) {
+		$EEM_controller = new EE_messages;
+		$active_messengers = $EEM_controller->get_active_messengers();
+		$tabs = array();
 
-			$EEM_controller = new EE_messages;
-			$active_messengers = $EEM_controller->get_active_messengers();
-			$tabs = array();
+		//empty messengers?
+		//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
+		if ( empty( $active_messengers ) ) {
+			$msg_activate_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'activate', 'activate_view' => 'messengers'), EE_MSG_ADMIN_URL );
+			$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
+			$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
+			$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
 
-			//empty messengers?
-			//Note message types will always have at least one available because every messenger has a default message type associated with it (payment) if no other message types are selected.
-			if ( empty( $active_messengers ) ) {
-				$msg_activate_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'activate', 'activate_view' => 'messengers'), EE_MSG_ADMIN_URL );
-				$error_msg = sprintf( __('There are no active messengers. So no notifications will NOT go out for <strong>any</strong> events.  You will want to %sActivate a Messenger%s.', 'event_espresso'), '<a href="' . $msg_activate_url . '">', '</a>');
-				$error_content = '<div class="error"><p>' . $error_msg . '</p></div>';
-				$internal_content = '<div id="messages-error"><p>' . $error_msg . '</p></div>';
+			echo $error_content;
+			echo $internal_content;
+			return;
+		}
 
-				if ( defined('DOING_AJAX') )
-					return $error_content . $intenral_content;
-
-				echo $error_content;
-				echo $internal_content;
-				return;
-			}
-			
-			
-			//get content for active messengers
-			foreach ( $active_messengers as $name => $messenger ) {
-				$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
-				$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
-			}
+		$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
+		//get content for active messengers
+		foreach ( $active_messengers as $name => $messenger ) {
+			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
+		}
 
 
-			EE_Registry::instance()->load_helper( 'Tabbed_Content' );
-			//we want this to be tabbed content so let's use the EEH_Tabbed_Content::display helper.
-			$tabbed_content = EEH_Tabbed_Content::display($tabs);
-			if ( is_wp_error($tabbed_content) ) {
-				$tabbed_content = $tabbed_content->get_error_message();
-			}
-		} else {
-			$tabbed_content = '<p>' . __( 'You will see notifications options after you add the initial details for your event and save it', 'event_espresso' ) . '</p>';
+		EE_Registry::instance()->load_helper( 'Tabbed_Content' );
+		//we want this to be tabbed content so let's use the EEH_Tabbed_Content::display helper.
+		$tabbed_content = EEH_Tabbed_Content::display($tabs);
+		if ( is_wp_error($tabbed_content) ) {
+			$tabbed_content = $tabbed_content->get_error_message();
 		}
 
 		$notices = '<div id="espresso-ajax-loading" class="ajax-loader-grey">
@@ -129,25 +153,36 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 			return $tabbed_content;
 
 		echo $notices . '<div class="messages-tabs-content">' . $tabbed_content . '</div>';
-		
+
 	}
 
 
 	/**
-	 * This takes the incoming ajax request to switch an events template from whatever it is currently using to global.  If the request is to switch to a custom event template that hasn't been created yet, then we need to walk through the process of setting up the custom event template.
+	 * Ajax callback for ee_msgs_create_new_custom ajax request.
+	 * Takes incoming GRP_ID and name and description values from ajax request to create a new custom template based off of the incoming GRP_ID.
 	 *
 	 * @access public
 	 * @return string either an html string will be returned or a success message
 	 */
-	public function switch_template() {
+	public function create_new_custom() {
+
+		//let's clean up the _POST global a bit for downstream usage of name and description.
+		$_POST['templateName'] = !empty( $this->_req_data['custom_template_args']['MTP_name'] ) ? $this->_req_data['custom_template_args']['MTP_name'] : '';
+		$_POST['templateDescription'] = !empty( $this->_req_data['custom_template_args']['MTP_description'] ) ? $this->_req_data['custom_template_args']['MTP_description'] : '';
+
+
 		//set EE_Admin_Page object (see method details in EE_Admin_Hooks parent
 		$this->_set_page_object();
 
 		//is this a template switch if so EE_Admin_Page child needs this object
 		$this->_page_object->set_hook_object( $this );
 
-		//let's route according to the sent page route
-		$this->_page_object->route_admin_request();
+		$this->_page_object->add_message_template( $this->_req_data['messageType'], $this->_req_data['messenger'], $this->_req_data['group_ID'] );
+	}
+
+
+	public function create_new_admin_footer() {
+		$this->edit_admin_footer();
 	}
 
 
@@ -157,14 +192,8 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 	 * @return string (admin_footer contents)
 	 */
 	public function edit_admin_footer() {
-		//dialog container
-		$d_cont = '<div id="messages-change-edit-templates-dv" class="messages-change-edit-templates-option auto-hide hidden">' . "\n";
-		// $d_cont .= '<div class="ajax-loader-grey"></div>';	
-		$d_cont .= '<div class="messages-change-edit-templates-content"></div>';		
-		$d_cont .= '</div>';
-
-		$notices = '<div class="ee-notices"></div>';
-		echo $notices . $d_cont;
+		$template_path = EE_CORE_CAF_ADMIN_EXTEND . 'messages/templates/create_custom_template_form.template.php';
+		EEH_Template::display_template($template_path, array());
 	}
 
 } //end class espresso_events_Messages_Hooks_Extend

@@ -17,11 +17,11 @@ class EEH_URL{
 	 *
 	 * @access public
 	 * @param array       $args
-	 * @param bool|string $url
+	 * @param string $url
 	 * @return string
 	 */
-	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
-		if ( ! $url ) {
+	public static function add_query_args_and_nonce( $args = array(), $url = '' ) {
+		if ( empty( $url )) {
 			$user_msg = __('An error occurred. A URL is a required parameter for the add_query_args_and_nonce method.', 'event_espresso' );
 			$dev_msg = $user_msg . "\n" . sprintf(
 					__('In order to dynamically generate nonces for your actions, you need to supply a valid URL as a second parameter for the %s::add_query_args_and_nonce method.', 'event_espresso' ),
@@ -121,4 +121,3 @@ class EEH_URL{
 
 }
 // End of file EEH_URL.helper.php
-// Location: /core/helpers/EEH_URL.helper.php

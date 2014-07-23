@@ -115,7 +115,8 @@ class EE_Email_messenger extends EE_messenger  {
 				'required' => array('[ATTENDEE_LIST]')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list')
+				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list'),
+				'required' => array('[EVENT_LIST]')
 				),
 			'ticket_list' => array(
 				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'recipient_details'),
@@ -314,7 +315,7 @@ class EE_Email_messenger extends EE_messenger  {
 	protected function _set_default_field_content() {
 		$this->_default_field_content = array(
 			'to' => '[RECIPIENT_EMAIL]',
-			'from' => '[EVENT_AUTHOR_FORMATTED_EMAIL]',
+			'from' => '[CO_FORMATTED_EMAIL]',
 			'subject' => '',
 			'content' => array(
 				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),
@@ -341,7 +342,8 @@ class EE_Email_messenger extends EE_messenger  {
 			//'cancelled_registration',
 			'pending_approval',
 			'payment_reminder',
-			'payment_declined'
+			'payment_declined',
+			'payment_refund'
 			);
 	}
 

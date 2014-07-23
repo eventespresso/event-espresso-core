@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Messages_Validator class
  *
- * This class is the parent class for handling validation of message template fields.  Children classes follow a certain naming format (i.e. /email/EE_Messages_Email_Payment_Validator.class.php) and they simply serve the function of defining any special validation rules for the context->field for that messenger/message_type combination when templates are edited.  
+ * This class is the parent class for handling validation of message template fields.  Children classes follow a certain naming format (i.e. /email/EE_Messages_Email_Payment_Validator.class.php) and they simply serve the function of defining any special validation rules for the context->field for that messenger/message_type combination when templates are edited.
  *
  * @abstract
  * @package		Event Espresso
@@ -102,13 +102,24 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 
 
+	/**
+	 * There may be times where a message type wants to include a shortcode group but exclude specific
+	 * shortcodes.  If that's the case then it can set this property as an array of shortcodes to exclude and
+	 * they will not be allowed.
+	 * Array should be indexed by field and values are an array of specific shortcodes to exclude.
+	 * @var array
+	 */
+	protected $_specific_shortcode_excludes = array();
+
+
+
 
 
 
 	/**
 	 * Runs the validator using the incoming fields array as the fields/values to check.
 	 *
-	 * 
+	 *
 	 * @param array $fields The fields sent by the EEM object.
 	 * @return void
 	 */
@@ -135,10 +146,10 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 
 	/**
-	 * Child classes instantiate this and use it to modify the _validator_config array property for the messenger using messengers set_validate_config() method.  This is so we can specify specific validation instructions for a messenger/message_type combo that aren't handled by the defaults setup in the messenger.	
+	 * Child classes instantiate this and use it to modify the _validator_config array property for the messenger using messengers set_validate_config() method.  This is so we can specify specific validation instructions for a messenger/message_type combo that aren't handled by the defaults setup in the messenger.
 	 * @abstract
 	 * @access protected
-	 * @return void 
+	 * @return void
 	 */
 	abstract protected function _modify_validator();
 
@@ -173,7 +184,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		$a = new ReflectionClass( $message_type );
 		$this->_MSGTYP = $a->newInstance();
-		
+
 	}
 
 
@@ -192,7 +203,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		//get messenger validator_config
 		$msgr_validator = $this->_MSGR->get_validator_config();
 
-		
+
 		//we only want the valid shortcodes for the given context!
 		$context = $this->_context;
 		$mt_codes = $mt_codes[$context];
@@ -200,7 +211,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		//in this first loop we're just getting all shortcode group indexes from the msgr_validator into a single array (so we can get the appropriate shortcode objects for the groups)
 		$shrtcode_grps = $mt_codes;
 		$groups_per_field = array();
-		
+
 		foreach ( $msgr_validator as $field => $config ) {
 			if ( empty($config) || !isset($config['shortcodes']) )
 				continue;  //Nothing to see here.
@@ -268,6 +279,14 @@ abstract class EE_Messages_Validator extends EE_Base {
 				}
 			}
 
+			//now let's just make sure that any excluded specific shortcodes are removed.
+			if ( isset( $this->_specific_shortcode_excludes[$field] ) ) {
+				foreach( $this->_specific_shortcode_excludes[$field] as $sex ) {
+					if ( isset( $this->_validators[$field]['shortcodes'][$sex] ) )
+						unset( $this->_validators[$field]['shortcodes'][$sex] );
+				}
+			}
+
 			//hey! don't forget to include the type if present!
 			$this->_validators[$field]['type'] = isset( $config['type'] ) ? $config['type'] : NULL;
 		}
@@ -277,7 +296,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 	/**
 	 * This just returns the validators property that contains information about the various shortcodes and their availablility with each field
 	 *
-	 * 
+	 *
 	 * @return array
 	 */
 	public function get_validators() {
@@ -289,7 +308,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 	/**
 	 * This is the main method that handles validation
 	 *
-	 * What it does is loop through the _fields (the ones that get validated) and checks them against the shortcodes array for the field and the 'type' indicated by the 
+	 * What it does is loop through the _fields (the ones that get validated) and checks them against the shortcodes array for the field and the 'type' indicated by the
 	 *
 	 * @access public
 	 * @return mixed (bool|array)  if errors present we return the array otherwise true
@@ -313,11 +332,11 @@ abstract class EE_Messages_Validator extends EE_Base {
 			//get the translated field label!
 			//first check if it's in the main fields list
 			if ( isset( $template_fields[$field] ) ) {
-				if ( empty( $template_fields[$field] ) ) 
+				if ( empty( $template_fields[$field] ) )
 					$field_label = $field; //most likely the field is found in the 'extra' array.
 				else
 					$field_label = $template_fields[$field]['label'];
-			} 
+			}
 
 			//if field label is empty OR is equal to the current field then we need to loop through the 'extra' fields in the template_fields config (if present)
 			if ( isset( $template_fields['extra'] ) && ( empty($field_label) ) || $field_label == $field ) {
@@ -328,11 +347,11 @@ abstract class EE_Messages_Validator extends EE_Base {
 						}
 
 						//if we've got a 'main' secondary field, let's see if that matches what field we're on which means it contains the label for this field.
-						if ( $name == 'main' && $main_field == $field_label ) 
+						if ( $name == 'main' && $main_field == $field_label )
 							$field_label = $values['label'];
 					}
 				}
-			} 
+			}
 
 			//field is present. Let's validate shortcodes first (but only if shortcodes present).
 			if ( isset( $this->_validators[$field]['shortcodes'] ) && !empty( $this->_validators[$field]['shortcodes'] ) ) {
@@ -384,7 +403,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 
 	/**
-	 * Reassembles and returns an array of valid shortcodes given the array of groups and array of shortcodes indexed by group.	
+	 * Reassembles and returns an array of valid shortcodes given the array of groups and array of shortcodes indexed by group.
 	 * @param  array  $groups          array of shortcode groups that we want shortcodes for
 	 * @param  array  $codes_from_objs All the codes available.
 	 * @return array                   an array of actual shortcodes (that will be used for validation).
@@ -403,7 +422,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 	 * Validates a string against a list of accepted shortcodes
 	 *
 	 * This function takes in an array of shortcodes and makes sure that the given string ONLY contains shortcodes in that array.
-	 * 	
+	 *
 	 * @param  string $value      string to evaluate
 	 * @param  array  $valid_shortcodes array of shortcodes that are acceptable.
 	 * @return mixed (bool|string)  return either a list of invalid shortcodes OR false if the shortcodes validate.
@@ -454,7 +473,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		$value = preg_replace('/(\[.+?\])/', '', $value);
 
 		//if original value is not empty and new value is, then we've parsed out a shortcode and we now have an empty string which DOES validate. We also validate complete empty field for email because its possible that this message is being "turned off" for a particular context
-		
+
 
 		if ( !empty($or_val) && empty($value) )
 			return $validate;
@@ -490,7 +509,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 		}
 
 		$validate = $empty && !$has_shortcodes ? FALSE : $validate;
-		
+
 		return $validate;
 
 	}

@@ -231,6 +231,11 @@ span.ui-icon {
 .big-event-title-hdr + .spco-ticket-info-dv {
 	margin-top: 2em!important;
 }
+#single-page-checkout .spco-payment-info-dv {
+	margin:2em 1em .25em;
+	font-size: .9em;
+}
+
 .spco-steps-pg {
 	margin:0 0 2em;
 }

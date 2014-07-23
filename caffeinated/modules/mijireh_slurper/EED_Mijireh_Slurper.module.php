@@ -101,7 +101,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	}
 
 	/**
-	 * Gets teh post id which has the {{mj-checkout-form}} "shortcode" in it, otherwise null
+	 * Gets the post id which has the {{mj-checkout-form}} "shortcode" in it, otherwise null
 	 * @return int
 	 */
 	public static function find_slurp_page(){
@@ -169,7 +169,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 	}
 
 	/**
-	* decides whether to slurp the post indicated by teh $post global or not, based entirely
+	* decides whether to slurp the post indicated by the $post global or not, based entirely
 	* on a special arg being in the querystring
 	* @return void
 	*/
@@ -182,7 +182,7 @@ class EED_Mijireh_Slurper  extends EED_Module {
 
 	/**
 	* Sends a request to mijireh to slurp the current $post, and then redirects the user back to the current page without the
-	* special querystring arg indicating to slurp. Also, should temporarily make teh current post published, then revert it to its previous status
+	* special querystring arg indicating to slurp. Also, should temporarily make the current post published, then revert it to its previous status
 	*/
 	public static function slurp_now(){
 		global $post;

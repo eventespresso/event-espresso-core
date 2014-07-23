@@ -274,13 +274,14 @@ class EEH_Activation {
 
 
 	/**
-	 * 	This function adds a critical page's shortcode to the post_shortcodes array
+	 *    This function adds a critical page's shortcode to the post_shortcodes array
 	 *
-	 * 	@access private
-	 * 	@static
-	 * 	@return void
+	 * @access private
+	 * @static
+	 * @param array $critical_page
+	 * @return void
 	 */
-	private static function _track_critical_page_post_shortcodes( $critical_page ) {
+	private static function _track_critical_page_post_shortcodes( $critical_page = array() ) {
 		// check the goods
 		if ( ! $critical_page['post'] instanceof WP_Post ) {
 			$msg = sprintf(
@@ -292,9 +293,15 @@ class EEH_Activation {
 		}
 		// map shortcode to post
 		EE_Registry::instance()->CFG->core->post_shortcodes[ $critical_page['post']->post_name ][ $critical_page['code'] ] = $critical_page['post']->ID;
-		// and to frontpage in case it's displaying latest posts
-		$show_on_front = get_option('show_on_front');
-		EE_Registry::instance()->CFG->core->post_shortcodes[ $show_on_front ][ $critical_page['code'] ] = $critical_page['post']->ID;
+		// and make sure it's NOT added to the WP "Posts Page"
+		// name of the WP Posts Page
+		$posts_page = EE_Registry::instance()->CFG->get_page_for_posts();
+		if ( isset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ] )) {
+			unset( EE_Registry::instance()->CFG->core->post_shortcodes[ $posts_page ][ $critical_page['code'] ] );
+		}
+		if ( $posts_page != 'posts' && isset( EE_Registry::instance()->CFG->core->post_shortcodes['posts'] )) {
+			unset( EE_Registry::instance()->CFG->core->post_shortcodes['posts'][ $critical_page['code'] ] );
+		}
 		// update post_shortcode CFG
 		if ( ! EE_Config::instance()->update_espresso_config( FALSE, FALSE )) {
 			$msg = sprintf(
@@ -424,8 +431,12 @@ class EEH_Activation {
 	 */
 	public static function drop_index( $table_name, $index_name ) {
 		global $wpdb;
-		if ( $wpdb->get_var( "SHOW TABLES LIKE '" . $wpdb->prefix . $table_name . "'" ) == $wpdb->prefix . $table_name ) {
-			return $wpdb->query( 'ALTER TABLE '.$wpdb->prefix . $table_name . ' DROP INDEX ' . $index_name );
+		$table_name_with_prefix = $wpdb->prefix . $table_name ;
+		$index_exists_query = "SHOW INDEX FROM $table_name_with_prefix WHERE Key_name = '$index_name'";
+		if ( $wpdb->get_var( "SHOW TABLES LIKE '$table_name_with_prefix'" ) == $wpdb->prefix . $table_name &&
+				$wpdb->get_var( $index_exists_query ) == $table_name_with_prefix //using get_var with the $index_exists_query returns the table's name
+				) {
+			return $wpdb->query( "ALTER TABLE $table_name_with_prefix DROP INDEX $index_name" );
 		}
 	}
 
@@ -442,14 +453,16 @@ class EEH_Activation {
 	 * 	@return void
 	 */
 	public static function create_database_tables() {
-		//simply use teh data migration script's schema code
-		//in order to avoid duplicate. When a new version is released (eg 4.2), use that version's data migration code.
-		//if 4.2 doesn't need to migrate anything, and only needs to add a column, you should still create a migration script for it,
-		//but just define the schema changes methods
-		$current_data_migration_script = EE_Registry::instance()->load_dms( 'Core_4_2_0' );
-		$current_data_migration_script->schema_changes_before_migration();
-		$current_data_migration_script->schema_changes_after_migration();
-		EE_Data_Migration_Manager::instance()->update_current_database_state_to();
+		//find the migration script that sets the database to be compatible with the code
+		$dms_name = EE_Data_Migration_Manager::instance()->get_most_up_to_date_dms();
+		if( $dms_name ){
+			$current_data_migration_script = EE_Registry::instance()->load_dms( $dms_name );
+			$current_data_migration_script->schema_changes_before_migration();
+			$current_data_migration_script->schema_changes_after_migration();
+			EE_Data_Migration_Manager::instance()->update_current_database_state_to();
+		}else{
+			throw new EE_Error( sprintf( __( 'Could not determine most up-to-date data migration script from which to pull database schema structure. So database is probably not setup properly', 'event_espresso' ) ) );
+		}
 	}
 
 

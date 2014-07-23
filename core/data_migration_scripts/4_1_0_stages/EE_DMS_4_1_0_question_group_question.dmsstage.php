@@ -20,8 +20,8 @@ CREATE TABLE `wp_events_qst_group_rel` (
 		);
 		$this->_fields = array(
 			'Question_Group_Question'=>array(
-				'QGQ_ID'=>new EE_Primary_Key_Int_Field('QGQ_ID', __('Question Gruop to Question Link ID','event_espresso')),
-				'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('Question Gruop ID','event_espresso'), false, 0, 'Question_Group'),
+				'QGQ_ID'=>new EE_Primary_Key_Int_Field('QGQ_ID', __('Question Group to Question Link ID','event_espresso')),
+				'QSG_ID'=>new EE_Foreign_Key_Int_Field('QSG_ID', __('Question Group ID','event_espresso'), false, 0, 'Question_Group'),
 				'QST_ID'=>new EE_Foreign_Key_Int_Field('QST_ID', __('Question Id','event_espresso'), false, 0, 'Question')
 			)
 		);

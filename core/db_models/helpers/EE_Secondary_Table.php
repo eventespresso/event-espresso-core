@@ -52,7 +52,7 @@ class EE_Secondary_Table extends EE_Table_Base{
 	
 	/**
 	 * Produces join SQL like get_join_sql, except instead of joining the primary table to the
-	 * secondary table, joins the secondary table to teh primary one. (Eg, isntead of 
+	 * secondary table, joins the secondary table to the primary one. (Eg, isntead of 
 	 * " LEFT JOIN secondary_table_table AS Secondary ON ..." like get_join_sql, this function returns
 	 * " LEFT JOIN primary_table AS Primary ON ...". 
 	 * This is useful if the secondary table is already included in the SQL, but the primary table is not yet.

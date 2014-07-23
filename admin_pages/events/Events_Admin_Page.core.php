@@ -603,7 +603,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				'label' => __('Trash', 'event_espresso'),
 				'count' => 0,
 				'bulk_action' => array(
-					'delete_events' => __('Delete Permanently', 'event_espresso'),
+					'restore_events' => __('Restore From Trash', 'evnet_espresso'),
+					'delete_events' => __('Delete Permanently', 'event_espresso')
 					)
 				)
 		);
@@ -1721,13 +1722,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 
-		//any promotion objects
-		$promotion_objects = $this->_cpt_model_obj->get_many_related('Promotion_Object');
-		if ( !empty( $promotion_objects ) ) {
-			foreach ( $promotion_objects as $promotion_object ) {
-				$this->_cpt_model_obj->_remove_relation_to($promotion_object, 'Promotion_Object');
-			}
-		}
 
 
 		//Message Template Groups

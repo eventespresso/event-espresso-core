@@ -2988,7 +2988,7 @@ EOT;
    */
   function newPage($insert =  0, $id =  0, $pos =  'after') {
 	// if there is a state saved, then go up the stack closing them
-	// then on the new page, re-open them with the right setings
+	// then on the new page, re-open them with the right settings
 
 	if  ($this->nStateStack) {
 	  for  ($i =  $this->nStateStack;$i >=  1;$i--) {
@@ -4009,7 +4009,7 @@ EOT;
    */
   function stopObject($id) {
 	// if an object has been appearing on pages up to now, then stop it, this page will
-	// be the last one that could contian it.
+	// be the last one that could contain it.
 	if  (isset($this->addLooseObjects[$id])) {
 	  $this->addLooseObjects[$id] =  '';
 	}
@@ -4761,7 +4761,7 @@ EOT;
    */
   function openHere($style, $a =  0, $b =  0, $c =  0) {
 	// this function will open the document at a specified page, in a specified style
-	// the values for style, and the required paramters are:
+	// the values for style, and the required parameters are:
 	// 'XYZ'  left, top, zoom
 	// 'Fit'
 	// 'FitH' top

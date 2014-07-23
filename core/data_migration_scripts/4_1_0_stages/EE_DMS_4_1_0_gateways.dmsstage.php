@@ -5,11 +5,11 @@
  * At the time of writing this, however, the only gateways created for 4.1 were
  * Authorize.net AIM, Bank, Check, Invoice, Paypal Pro and Paypal Standard.
  * NOTE: this is dependent on the current definition of the EE_Config class. Specifically,
- * it requires the class to be defined (or available from autoloader), and that it have teh following atttributes and fucntions:
+ * it requires the class to be defined (or available from autoloader), and that it have the following atttributes and fucntions:
  * -static function instance() which returns the instance of EE_Config
  * -that the instance of EE_Config have an property named 'gateway' which is a class with properties '-'payment_settings' and 'active_gateways'
  * which are both arrays
- * -a function named update_espresso_config() which saves the EE_Config object to teh database
+ * -a function named update_espresso_config() which saves the EE_Config object to the database
  */
 class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage{
 
@@ -29,7 +29,7 @@ function _migration_step($num_items=50){
 			//determine the old option's name
 			$old_gateway_settings = $this->_get_old_gateway_option($new_gateway_slug);
 			if( ! $old_gateway_settings){
-				//no setings existed for this gateway anyways... weird...
+				//no settings existed for this gateway anyways... weird...
 				$items_actually_migrated++;
 				continue;
 			}
@@ -42,7 +42,7 @@ function _migration_step($num_items=50){
 		}else{//it must be one of the ones we mostly leave alone
 			global $wpdb;
 			//yeah we could do this all in one query... and if you're reading this and would liek to, go ahead. Although you'll
-			//only be saving users 50 milliseconds teh one time this runs...
+			//only be saving users 50 milliseconds the one time this runs...
 			$wpdb->query($wpdb->prepare("UPDATE ".$wpdb->options." SET autoload='no' WHERE option_name=%s",$old_gateway_wp_option_name));
 		}
 		

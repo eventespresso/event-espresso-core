@@ -1,15 +1,15 @@
 <?php
 
 /**
- * Converts 3.1 $org_options to the 4.1 EE_Config class (which maybe should be included at teh bottom of this file, in case
+ * Converts 3.1 $org_options to the 4.1 EE_Config class (which maybe should be included at the bottom of this file, in case
  * EE_Config ever gets dropped)
- * 
+ *
  * 3.1 org options looked like:
  * array (size=60)
   'organization' => string 'EE3.1 to EE4.1' (length=14)
   'organization_street1' => string '123 West Somewhere' (length=18)
   'organization_street2' => string '' (length=0)
-  'organization_city' => string 'Some City' (length=9)
+  'organization_city' => string 'Some City' (length=9ƒ)
   'organization_state' => string 'AZ' (length=2)
   'organization_zip' => string '84128' (length=5)
   'contact_email' => string 'michael@eventespresso.com' (length=25)
@@ -65,10 +65,10 @@ Cli'... (length=607)
   'use_custom_post_types' => string 'N' (length=1)
   'display_ical_download' => string 'Y' (length=1)
   'display_featured_image' => string 'N' (length=1)
-  'themeroller' => 
+  'themeroller' =>
     array (size=1)
       'themeroller_style' => string 'smoothness' (length=10)
-  'style_settings' => 
+  'style_settings' =>
     array (size=3)
       'disable_legacy_styles' => string 'Y' (length=1)
       'enable_default_style' => string 'Y' (length=1)
@@ -78,7 +78,7 @@ Cli'... (length=607)
   'return_url' => string '10' (length=2)
   'cancel_return' => string '12' (length=2)
   'notify_url' => string '14' (length=2)
-  'events_in_dasboard' => string '<br /><font size=\'1\'><table class=\'xdebug-error xe-notice\' dir=\'ltr\' border=\'1\' cellspacing=\'0\' cellpadding=\'1\'><tr><th align=\'left\' bgcolor=\'#f57900\' colspan=' (length=175)
+  'events_in_dashboard' => string '<br /><font size=\'1\'><table class=\'xdebug-error xe-notice\' dir=\'ltr\' border=\'1\' cellspacing=\'0\' cellpadding=\'1\'><tr><th align=\'left\' bgcolor=\'#f57900\' colspan=' (length=175)
   'use_captcha' => string 'N' (length=1)
   'recaptcha_publickey' => string '' (length=0)
   'recaptcha_privatekey' => string '' (length=0)
@@ -95,9 +95,9 @@ Cli'... (length=607)
   'surcharge_text' => string 'Surcharge' (length=9)
   'affiliate_id' => string '' (length=0)
   'site_license_key' => string '' (length=0)
- * 
- * 
- * 
+ *
+ *
+ *
  * @todo: inform clients that messages have COMPLETELY changed in 4.1; themeroller isn't in there; event list page is no more;
  */
 class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
@@ -117,9 +117,15 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			$items_actually_migrated++;
 		}
 
-		EE_Config::instance()->update_espresso_config(false,false);
+		$success = EE_Config::instance()->update_espresso_config(FALSE,TRUE);
+		if( ! $success ) {
+			$this->add_error( sprintf( __( 'Could not save EE Config during org options stage. Reason: %s', 'event_espresso' ),  EE_Error::get_notices( FALSE )) );
+			EE_Error::overwrite_errors();
+		}
 		EE_Network_Config::instance()->update_config(FALSE,FALSE);
 		if($this->count_records_migrated() + $items_actually_migrated >= $this->count_records_to_migrate()){
+			//we may have added new pages and this might be necessary
+			flush_rewrite_rules();
 			$this->set_completed();
 		}
 		return $items_actually_migrated;
@@ -138,13 +144,13 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		$c = EE_Config::instance();
 		$cn = EE_Network_Config::instance();
 		switch($option_name){
-		  case 'organization':  
+		  case 'organization':
 			  $c->organization->name = $value;break;
-		  case 'organization_street1': 
+		  case 'organization_street1':
 			  $c->organization->address_1 = $value;break;
-		  case 'organization_street2': 
+		  case 'organization_street2':
 			  $c->organization->address_2 = $value;break;
-		  case 'organization_city': 
+		  case 'organization_city':
 			  $c->organization->city = $value;break;
 		  case 'organization_state':
 			  try{
@@ -152,13 +158,13 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			  $state_id = $state['STA_ID'];
 			  $c->organization->STA_ID = $state_id;
 			  }catch(EE_Error $e){}break;
-		  case 'organization_zip': 
+		  case 'organization_zip':
 			  $c->organization->zip = $value;break;
-		  case 'contact_email': 
+		  case 'contact_email':
 			  $c->organization->email = $value;break;
-		  case 'default_payment_status': 
+		  case 'default_payment_status':
 			  $c->registration->default_STS_ID =  $this->get_migration_script()->convert_3_1_payment_status_to_4_1_STS_ID($value);break;
-		  case 'organization_country': 
+		  case 'organization_country':
 			  $iso =$this->get_migration_script()->get_iso_from_3_1_country_id($value);
 			  $c->organization->CNT_ISO = $iso;
 			  $country_row = $this->get_migration_script()->get_or_create_country($iso);
@@ -177,72 +183,72 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 //			  $c->currency = new EE_Currency_Config($c->organization->CNT_ISO);break;
 //		  case 'currency_symbol': ignore the currency symbol. we'll just go by their country.
 //			  $c->currency->sign = $value;break;
-		  case 'show_pending_payment_options': 
+		  case 'show_pending_payment_options':
 			  $c->registration->show_pending_payment_options = ($value == 'Y');break;
-		  case 'display_address_in_regform': 
+		  case 'display_address_in_regform':
 			  $c->template_settings->display_address_in_regform = ($value == 'Y');break;
-		  case 'default_logo_url': 
+		  case 'default_logo_url':
 			  $c->organization->logo_url = $value;break;
 		  case 'event_page_id':
-			  
-			    //also, find that post, and changes teh shortcode in it from ESPRESSO_PAYMENTS
+
+			    //also, find that post, and changes the shortcode in it from ESPRESSO_PAYMENTS
 			  //to ESPRESSO_THANK_YOU
 			  $reg_page_post = get_post($value);
 			  $reg_page_post->post_content = str_replace("[ESPRESSO_EVENTS]","[ESPRESSO_CHECKOUT]",$reg_page_post->post_content);
 			  wp_update_post($reg_page_post);
 			  $c->core->reg_page_id = $value;
 			  break;
-		  case 'return_url': 
-			  //also, find that post, and changes teh shortcode in it from ESPRESSO_PAYMENTS
+		  case 'return_url':
+			  //also, find that post, and changes the shortcode in it from ESPRESSO_PAYMENTS
 			  //to ESPRESSO_THANK_YOU
 			  $thank_you_page_post = get_post($value);
 			  $thank_you_page_post->post_content = str_replace("[ESPRESSO_PAYMENTS]","[ESPRESSO_THANK_YOU]",$thank_you_page_post->post_content);
 			  wp_update_post($thank_you_page_post);
 			  $c->core->thank_you_page_id = $value;
 			   break;
-		  case 'cancel_return': 
+		  case 'cancel_return':
 			  $c->core->cancel_page_id = $value;
-			  
+
 			  break;
 		  case 'notify_url':
 			  $c->core->txn_page_id = $value;
 			  break;
-		  case 'use_captcha': 
+		  case 'use_captcha':
 			  $c->registration->use_captcha = ($value == 'Y'); break;
-		  case 'recaptcha_publickey': 
+		  case 'recaptcha_publickey':
 			  $c->registration->recaptcha_publickey = $value;break;
-		  case 'recaptcha_privatekey': 
+		  case 'recaptcha_privatekey':
 			  $c->registration->recaptcha_privatekey = $value;break;
-		  case 'recaptcha_theme': 
+		  case 'recaptcha_theme':
 			  $c->registration->recaptcha_theme = $value;break;
-		  case 'recaptcha_width': 
+		  case 'recaptcha_width':
 			  $c->registration->recaptcha_width = $value;break;
-		  case 'recaptcha_language': 
+		  case 'recaptcha_language':
 			  $c->registration->recaptcha_language = $value;break;
-		  case 'espresso_dashboard_widget': 
+		  case 'espresso_dashboard_widget':
 			  $c->admin->use_dashboard_widget = ($value == 'Y'); break;
-		  case 'use_personnel_manager': 
+		  case 'use_personnel_manager':
 			  $c->admin->use_personnel_manager = ($value == 'Y'); break;
-		  case 'use_event_timezones': 
+		  case 'use_event_timezones':
 			  $c->admin->use_event_timezones = ($value == 'Y'); break;
-		  case 'full_logging': 
+		  case 'full_logging':
 			  $c->admin->use_full_logging = ($value == 'Y');break;
-		  case 'affiliate_id': 
+		  case 'affiliate_id':
 			  $c->admin->affiliate_id = $value;break;
-		  case 'site_license_key': 
+		  case 'site_license_key':
 			  $cn->core->site_license_key = $value;break;
 		  default:
 			  do_action( 'AHEE__EE_DMS_4_1_0__handle_org_option',$option_name,$value );
 		}
 	}
-	
+
 	/**
 	 * Creates a 4.1 member price discount
 	 * @global type $wpdb
 	 * @param type $old_price
 	 * @return int
 	 */
-	private function _insert_new_global_surcharge_price($org_options){	
+	private function _insert_new_global_surcharge_price($org_options){
 		$amount = floatval($org_options['surcharge']);
 		//dont createa a price if the surcharge is 0
 		if($amount <=.01){
@@ -263,7 +269,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 			'PRC_order'=>100,
 			'PRC_deleted'=>false,
 			'PRC_parent'=>null
-		
+
 		);
 		$datatypes = array(
 			'%d',//PRT_ID
@@ -278,7 +284,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		$price_table = $wpdb->prefix."esp_price";
 		$success = $wpdb->insert($price_table,$cols_n_values,$datatypes);
 		if ( ! $success){
-			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion('org_options', 
+			$this->add_error($this->get_migration_script()->_create_error_message_for_db_insertion('org_options',
 					array(
 						'surcharge'=>$org_options['surcharge'],
 						'surcharge_type'=>$org_options['surcharge_type'],
@@ -288,7 +294,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 		$new_id = $wpdb->insert_id;
 		return $new_id;
 	}
-	
+
 	protected $_org_options_we_know_how_to_migrate = array(
 	  'organization',
 	  'organization_street1',
@@ -330,7 +336,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 	  'return_url',
 	  'cancel_return',
 	  'notify_url',
-	  'events_in_dasboard',
+	  'events_in_dashboard',
 	  'use_captcha',
 	  'recaptcha_publickey',
 	  'recaptcha_privatekey',
@@ -339,7 +345,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage{
 	  'recaptcha_language',
 	  'espresso_dashboard_widget',
 	  'time_reg_limit',
-//	  'use_attendee_pre_approval', removed in 4.1- instead this is factored into the defautl reg status
+//	  'use_attendee_pre_approval', removed in 4.1- instead this is factored into the default reg status
 	  'use_personnel_manager',//no equiv
 	  'use_event_timezones',
 	  'full_logging',

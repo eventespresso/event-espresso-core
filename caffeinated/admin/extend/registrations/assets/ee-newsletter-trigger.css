@@ -1,0 +1,35 @@
+/**newsletter send css**/
+.ee-batch-message-send-form h3 {
+	font-size: 2em;
+}
+
+.ee-batch-message-send-form .batch-message-edit-fields {
+	background-color: #e3e3e3;
+	padding: 10px;
+	margin-top: 20px;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+}
+
+.ee-batch-message-send-form .batch-message-input, .ee-batch-message-send-form .batch-message-textarea {
+	width: 100%;
+}
+
+.ee-batch-message-send-form .batch-message-textarea {
+	height: 200px;
+}
+
+.ee-batch-message-send-form .shortcodes-info-container {
+	padding: 5px 20px 5px 20px;;
+	margin-bottom: 10px;
+	background-color: #f5f5f5;
+	-webkit-border-radius: 4px;
+	-moz-border-radius: 4px;
+	border-radius: 4px;
+
+}
+
+#selected-batch-send-trigger {
+	margin-left: 10px;
+}

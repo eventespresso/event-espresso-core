@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * extends EE_Admin_List_Table class
  *
- * @package		Evetn Espresso
+ * @package		Event Espresso
  * @subpackage	/includes/core/admin/messages
  * @author		Darren Ethier
  *
@@ -28,14 +28,6 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  */
 
 class Messages_Template_List_Table extends EE_Admin_List_Table {
-	
-	
-	public function __construct( $admin_page ) {
-		//Set parent defaults
-		parent::__construct($admin_page);
-	}
-
-
 
 
 	protected function _setup_data() {
@@ -52,20 +44,19 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			'singular' => __('Message Template Group', 'event_espresso' ),
 			'plural' => __('Message Template', 'event_espresso' ),
 			'ajax' => TRUE, //for now,
-			'screen' => $this->_admin_page->get_current_screen()->id 
+			'screen' => $this->_admin_page->get_current_screen()->id
 			);
 
 		$this->_columns = array(
-			'cb' => '<input type="checkbox" />',
-			'event' => __( 'Event', 'event_espresso'),
+			//'cb' => '<input type="checkbox" />', //no deleting default (global) templates!
 			'message_type' => __('Message Type', 'event_espresso'),
 			'messenger' => __( 'Messenger', 'event_espresso'),
-			'description' => __( 'Description', 'event_espresso' )
+			'description' => __( 'Description', 'event_espresso' ),
+			'actions' => ''
 			//'messages_sent' => __( 'Total Sent', 'event_espresso' ) //todo this will come later when we've got message tracking in place.
 			);
 
 		$this->_sortable_columns = array(
-			'event' => array( 'EVT_ID' => FALSE ), //true means it's already sorted.
 			'messenger' => array( 'MTP_messenger' => TRUE ),
 			//'message_type' => array( 'MTP_message_type' => FALSE )
 			);
@@ -78,7 +69,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 
-	
+
 	protected function _get_table_filters() {
 		$filters = array();
 		EE_Registry::instance()->load_helper( 'Form_Fields' );
@@ -93,7 +84,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			$m_values[$i]['text'] = ucwords($args['obj']->label['singular']);
 			$i++;
 		}
-		
+
 		//lets do the same for message types
 		$i=1;
 		foreach ( $message_types as $message_type => $args ) {
@@ -113,7 +104,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			);
 
 		$msgr_filters = !empty($m_values) ? array_merge( $msgr_default, $m_values ) : array();
-		$mt_filters = !empty($mt_values) ? array_merge( $mt_default, $mt_values ) : array(); 
+		$mt_filters = !empty($mt_values) ? array_merge( $mt_default, $mt_values ) : array();
 
 		if ( empty( $m_values ) )
 			$msgr_filters[0] = array(
@@ -131,7 +122,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 			unset( $msgr_filters[0] );
 			$msgr_filters = array_values( $msgr_filters ); //reindex keys
 		}
-		
+
 		$filters[] = EEH_Form_Fields::select_input('ee_messenger_filter_by', $msgr_filters, isset($this->_req_data['ee_messenger_filter_by']) ? sanitize_key( $this->_req_data['ee_messenger_filter_by']) : '' );
 		$filters[] = EEH_Form_Fields::select_input('ee_message_type_filter_by', $mt_filters, isset($this->_req_data['ee_message_type_filter_by']) ? sanitize_key( $this->_req_data['ee_message_type_filter_by']) : '');
 		return $filters;
@@ -155,10 +146,9 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 
 
 	public function column_cb( $item ) {
-		$event_id = $item->event();
-		return !empty( $event_id ) ? sprintf( '<input type="checkbox" name="checkbox[%s] value="1" />', $item->GRP_ID() ) : '';
+		return '';
 	}
-	
+
 
 
 	/**
@@ -168,12 +158,7 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	 * @return string              column_name for default column
 	 */
 	function column_default($item, $column_name) {
-		switch( $column_name ) {
-			case 'event' :
-				return $item[$column_name];
-			default:
-				return ( isset( $item->$column_name ) ) ? $item->column_name : '';
-		}
+		return ( isset( $item->$column_name ) ) ? $item->column_name : '';
 	}
 
 
@@ -183,51 +168,35 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		return '<p>' . $item->message_type_obj()->description . '</p>';
 	}
 
-	
+
 
 	/*function column_cb($item) {
 		return sprintf( '<input type="checkbox" name="checkbox[%1$s]" />', $item->GRP_ID() );
 	}/**/
 
 	function column_messenger($item) {
-		
+
 		//Build row actions
 		$actions = array();
-		
+
 		// edit link but only if item isn't trashed.
 		if ( !$item->get('MTP_deleted') ) {
-			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'evt_id' => $item->event() ), EE_MSG_ADMIN_URL );
+			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_message_template', 'id'=>$item->GRP_ID() ), EE_MSG_ADMIN_URL );
 			$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 		}
-		
-		$name_link = ! $item->get('MTP_deleted') ? '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>' : ucwords( $item->messenger_obj()->label['singular'] );
-		$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
-		// restore link
-		$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
-		// delete price link
-		$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 
-		if ( !$item->is_global() ) {
-			if ( !$item->get('MTP_deleted') ) {
-				$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Template Group to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
-			} else {
-				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Message Template', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
-				
-				if ( $this->_view == 'trashed' )
-					$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Template Group Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
-			}
-		}
+		$name_link = ! $item->get('MTP_deleted') ? '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Template Group', 'event_espresso' ) . '">' . ucwords( $item->messenger_obj()->label['singular'] ) . '</a>' : ucwords( $item->messenger_obj()->label['singular'] );
 
 		//we want to display the contexts in here so we need to set them up
 		$c_label = $item->context_label();
-		$c_configs = $item->contexts_config(); 
+		$c_configs = $item->contexts_config();
 		$ctxt = array();
 		$context_templates = $item->context_templates();
 		foreach ( $context_templates as $context => $template_fields ) {
 			$mtp_to = $context_templates[$context]['to'] instanceof EE_Message_Template ? $context_templates[$context]['to']->get('MTP_content') : NULL;
 			$inactive = empty( $mtp_to ) ? ' class="mtp-inactive"' : '';
 			$context_title = ucwords($c_configs[$context]['label']);
-			$edit_link = EE_Admin_Page::add_query_args_and_nonce( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'evt_id' => $item->event(), 'context' => $context), EE_MSG_ADMIN_URL );
+			$edit_link = EE_Admin_Page::add_query_args_and_nonce( array('action'=>'edit_message_template', 'id'=>$item->GRP_ID(), 'context' => $context), EE_MSG_ADMIN_URL );
 			$ctxt[] = '<a' . $inactive . ' href="'. $edit_link . '" title="' . __('Edit Context', 'event_espresso') . '">' . $context_title . '</a>';
 		}
 
@@ -244,31 +213,6 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 	}
 
 	/**
-	 * [column_event description]
-	 * 
-	 * @todo: right now we're not using a nonce because legacy EE doesn't look for it.. but it should be added when the new Event management is in place.
-	 * @param  array $item message_template group data
-	 * @return string       column output
-	 */
-	function column_event($item) {
-		$event_id = $item->event();
-		if ( empty( $event_id ) ) 
-			return __('All Events', 'event_espresso');
-
-		$get_event_name = $item->event_name();
-		$event_name = empty($get_event_name) ? __('Cannot find Event', 'event_espresso') : $get_event_name;
-
-		$base_event_admin_url = admin_url( 'admin.php?page=espresso_events' );
-		$query_args = array(
-			'action' => 'edit',
-			'post' => $item->event()
-			);
-		$edit_event_url = EE_Admin_Page::add_query_args_and_nonce( $query_args, $base_event_admin_url );
-		$event_link = '<a href="'.$edit_event_url.'" title="' . __('Edit Event', 'event_espresso') . '">' . $event_name . '</a>';
-		return $event_link;
-	}
-
-	/**
 	 * column_message_type
 	 * @param  object $item message info for the row
 	 * @return string       message_type name
@@ -277,11 +221,28 @@ class Messages_Template_List_Table extends EE_Admin_List_Table {
 		return ucwords($item->message_type_obj()->label['singular'] );
 	}
 
-	
+
 
 	function column_messages_sent($item) {
 		//todo: we need to obtain the messages sent and the link to the messages report table and output
 		return __('feature in progress', 'event_espresso');
+	}
+
+	function column_actions( $item ) {
+
+		//first we consider whether this template has override set.  If it does then that means no custom templates can be created from this template as a base.  So let's just skip the button creation.
+		if ( $item->get('MTP_is_override' ) )
+			return '';
+
+
+		$create_args = array(
+			'GRP_ID' => $item->ID(),
+			'messenger' => $item->messenger(),
+			'message_type' => $item->message_type(),
+			'action' => 'add_new_message_template'
+			);
+		$create_link = EE_Admin_Page::add_query_args_and_nonce( $create_args, EE_MSG_ADMIN_URL );
+		return sprintf( '<a href="%s" class="button button-small">%s</a>', $create_link, __('Create Custom', 'event_espresso') );
 	}
 
 }

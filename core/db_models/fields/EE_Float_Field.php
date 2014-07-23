@@ -8,14 +8,14 @@ class EE_Float_Field extends EE_Model_Field_Base{
 	}
 	/**
 	 * If provided a string, strips out number-related formatting, like commas, periods, spaces, other junk, etc. 
-	 * However, treats commas and periods as thousand-seperators ro decimal marks, as indicate by the config's currency.
+	 * However, treats commas and periods as thousand-separators ro decimal marks, as indicate by the config's currency.
 	 * Returns a float
 	 * @param type $value_inputted_for_field_on_model_object
 	 * @return float
 	 */
 	function prepare_for_set($value_inputted_for_field_on_model_object) {
 //		echo __LINE__."$value_inputted_for_field_on_model_object<br>";
-		//remove whitespaces and thousands seperators
+		//remove whitespaces and thousands separators
 		if(is_string($value_inputted_for_field_on_model_object)){
 			$value_inputted_for_field_on_model_object = str_replace(array(" ",EE_Config::instance()->currency->thsnds),"",$value_inputted_for_field_on_model_object);
 //echo __LINE__."$value_inputted_for_field_on_model_object<br>";			
@@ -29,7 +29,7 @@ class EE_Float_Field extends EE_Model_Field_Base{
 		return floatval( $value_inputted_for_field_on_model_object );
 	}
 	/**
-	 * Returns the number formatted according to local custom (set by teh country of the blog).
+	 * Returns the number formatted according to local custom (set by the country of the blog).
 	 * @param float $value_on_field_to_be_outputted
 	 * @return string
 	 */

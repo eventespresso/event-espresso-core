@@ -254,9 +254,9 @@
 	
 	
 	/**
-	 *	Given an array of data (usually from a CSV import) attempts to save that data to teh db.
+	 *	Given an array of data (usually from a CSV import) attempts to save that data to the db.
 	 *	If $model_name ISN'T provided, assumes that this is a 3d array, with toplevel keys being model names,
-	 *	next level being numeric indexes adn each value representing a model object, and teh last layer down
+	 *	next level being numeric indexes adn each value representing a model object, and the last layer down
 	 *	being keys of model fields and their proposed values.
 	 *	If $model_name IS provided, assumes a 2d array of the bottom two layers previously mentioned.
 	 *	If the CSV data says (in the metadata row) that it's from the SAME database,
@@ -266,7 +266,7 @@
 	 *	with a temporary ID gets inserted, we record its mapping from temporary
 	 *	ID to real ID, and use the real ID in place of the temporary ID 
 	 *	when that temporary ID was used as a foreign key.
-	 *	If the CSV data says (in the metadata again) taht it's from a DIFFERENT database,
+	 *	If the CSV data says (in the metadata again) that it's from a DIFFERENT database,
 	 *	we treat all the IDs in the CSV as temporary ID- eg, if the CSV specifies an event with
 	 *	ID 1, and the database already has an event with ID 1, we assume that's just a coincidence,
 	 *	and insert a new event, and map it's temporary ID of 1 over to its new real ID.
@@ -275,7 +275,7 @@
 	 *	the same item, and instead update the item in the DB with that same ID.
 	 *	Also note, we remember the mappings permanently. So the 2nd, 3rd, and 10000th
 	 *	time you import a CSV from a different site, we remember their mappings, and 
-	 * will try to update the item in teh DB instead of inserting another item (eg
+	 * will try to update the item in the DB instead of inserting another item (eg
 	 * if we previously imported an event with temporary ID 1, and then it got a 
 	 * real ID of 123, we remember that. So the next time we import an event with
 	 * temporary ID, from the same site, we know that it's real ID is 123, and will
@@ -377,14 +377,14 @@
 							//remember the mapping
 							$old_db_to_new_db_mapping[$model_name][$id_in_csv] = $copy_in_db->ID();
 							//and don't bother trying to update or insert, beceause 
-							//we JUST asserted that it's the exact same as what's in teh DB
+							//we JUST asserted that it's the exact same as what's in the DB
 							continue;
 						}else{
 							$do_insert = true;
 						}
 					}
 					//loop through all its related models, and see if we can swap their OLD foreign keys
-					//(ie, idsin teh OLD db) for  new foreign key (ie ids in the NEW db)
+					//(ie, idsin the OLD db) for  new foreign key (ie ids in the NEW db)
 					
 					foreach($model->field_settings() as $field_name => $fk_field){
 						if($fk_field instanceof EE_Foreign_Key_Field_Base){
@@ -414,7 +414,7 @@
 						}
 					}
 				}else{//this is just a re-import
-					//in this case, check if this thing ACTUALLY exists in teh database
+					//in this case, check if this thing ACTUALLY exists in the database
 					if(($model->has_primary_key_field() && $model->get_one_by_ID($id_in_csv)) || 
 						( ! $model->has_primary_key_field() && $model->get_one(array($model_object_data)))){
 						$do_insert = false;
@@ -507,7 +507,7 @@
 				}
 			}
 		}
-		//save the mapping from old db to new db in case they try re-importing teh same data from teh same website again
+		//save the mapping from old db to new db in case they try re-importing the same data from the same website again
 		update_option('ee_id_mapping_from'.sanitize_title($old_site_url),$old_db_to_new_db_mapping);
 
 		if ( $total_updates > 0 ) {
@@ -544,7 +544,7 @@
 	
 	/**
 	 * Sends HTTP headers to indicate that the browser should download a file,
-	 * and starts writing the file to PHP's output. Returns teh file handle so other functions can 
+	 * and starts writing the file to PHP's output. Returns the file handle so other functions can 
 	 * also write to it
 	 * @param string $new_filename the name of the file that the user will download
 	 * @return resource, like the results of fopen(), which can be used for fwrite, fputcsv2, etc.
@@ -569,11 +569,12 @@
 		header("Expires: 0");
 		header("Pragma: no-cache");
 		header("Cache-Control: no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
-		header("Content-Type: application/force-download");
-		header("Content-Type: application/octet-stream");
-		header("Content-Type: application/download");
+//		header("Content-Type: application/force-download");
+//		header("Content-Type: application/octet-stream");
+//		header("Content-Type: application/download");
 		header('Content-disposition: attachment; filename='.$filename);
-		header("Content-Type: text/csv");
+		header("Content-Type: text/html; charset=utf-8");
+		echo "\xEF\xBB\xBF"; // makes excel open it as UTF-8. UTF-8 BOM, see http://stackoverflow.com/a/4440143/2773835
 		$fh = fopen('php://output', 'w');		
 		return $fh;
 	}
@@ -601,7 +602,7 @@
 	/**
 	 * Writes $data to the csv file open in $filehandle. uses the array indices of $data for column headers
 	 * @param array $data 2D array, first numerically-indexed, and next-level-down preferably indexed by string 
-	 * @param boolean $add_csv_column_names whether or not we should add the keys in the bottom-most array as a row for headers in teh CSV.
+	 * @param boolean $add_csv_column_names whether or not we should add the keys in the bottom-most array as a row for headers in the CSV.
 	 * Eg, if $data looked like array(0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...), 1=>array(...),...)) 
 	 * then the first row we'd write to the CSV would be "EVT_ID,EVT_name,..."
 	 * @return boolean if we successfully wrote to the CSV or not. If there's no $data, we consider that a success (because we wrote everything there was...nothing)
@@ -679,7 +680,7 @@
 		exit(0);
 	}
 	/**
-	 * Given an open file, writes all teh model data to it in the format the importer expects.
+	 * Given an open file, writes all the model data to it in the format the importer expects.
 	 * Usually preceded by begin_sending_csv($filename), and followed by end_sending_csv($filehandle).
 	 * @param resource $filehandle
 	 * @param array $model_data_array is assumed to be a 3d array: 1st layer has keys of model names (eg 'Event'),
@@ -697,8 +698,8 @@
 			if( ! empty($model_instance_arrays) ){
 				$this->write_data_array_to_csv($filehandle, $model_instance_arrays);
 			}else{
-//				echo "no data to write... so jsut write the headers";
-				//so there's actually NO model objects for taht model.
+//				echo "no data to write... so just write the headers";
+				//so there's actually NO model objects for that model.
 				//probably still want to show the columns
 				$model = EE_Registry::instance()->load_model($model_name);
 				$column_names = array();

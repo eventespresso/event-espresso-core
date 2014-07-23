@@ -11,7 +11,7 @@
 		eeCenter : function( position ) {
 			position = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
 			var element_top = (( $( window ).height() / 2 ) - this.outerHeight() ) / 2;
-			element_top = position == 'fixed' ? element_top : element_top + $( window ).scrollTop();
+			element_top = position == 'fixed' ? element_top + $( window ).height() / 8 : element_top + $( window ).scrollTop();
 			element_top = Math.max( 0, element_top );
 			var element_left = ( $( window ).width() - this.outerWidth() ) / 2;
 			element_left = position == 'fixed' ? element_left : element_left + $( window ).scrollLeft();
@@ -60,11 +60,12 @@
 		 * adds a scrollTo action for jQuery
 		 * @return {jQuery}
 		 */
-		eeScrollTo : function() {
+		eeScrollTo : function( speed ) {
 			var selector = this;
+			speed = typeof(speed) === 'undefined' ? 2000 : speed;
 			$("html,body").animate({
 				scrollTop: selector.offset().top - 80
-			}, 2000);
+			}, speed);
 			return this;
 		},
 
@@ -97,6 +98,28 @@
 				urlParams[ qs[ i ][0] ] = decodeURIComponent( qs[ i ][1] );
 			}
 			return urlParams;
+		},
+
+
+		/**
+		 * Set element visibility to hidden
+		 *
+		 */
+		eeInvisible: function() {
+			return this.each( function() {
+				$(this).css("visibility", "hidden");
+			});
+		},
+
+
+		/**
+		 * Set element visibility to visible
+		 *
+		 */
+		eeVisible: function() {
+			return this.each( function() {
+				$(this).css("visibility", "visible");
+			});
 		}
 
 

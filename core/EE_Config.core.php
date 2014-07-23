@@ -5,7 +5,7 @@
  * Event Registration and Management Plugin for WordPress
  *
  * @ package			Event Espresso
- * @ author			Seth Shoultes
+ * @ author				Event Espresso
  * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
  * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
  * @ link					http://www.eventespresso.com
@@ -16,7 +16,7 @@
  * EE_Config
  *
  * @package			Event Espresso
- * @subpackage	core/
+ * @subpackage		core/
  * @author				Brent Christensen
  *
  * ------------------------------------------------------------------------
@@ -26,14 +26,15 @@ final class EE_Config {
 
 	/**
 	 * 	instance of the EE_Config object
-	 *	@var 	$_instance
+	 *	@var 	EE_Config $_instance
 	 * 	@access 	private
 	 */
 	private static $_instance = NULL;
 
 	/**
-	 *
-	 * @var EE_Config_Base[]
+	 * An StdClass whose property names are addon slugs,
+	 * and values are their config classes
+	 * @var StdClass
 	 */
 	public $addons;
 
@@ -80,21 +81,24 @@ final class EE_Config {
 	public $template_settings;
 
 	/**
-	 * 	_module_route_map
+	 *	@var 	array	$_config_option_names
+	 * 	@access 	private
+	 */
+	private $_config_option_names = array();
+
+	/**
 	 *	@var 	array	$_module_route_map
 	 * 	@access 	private
 	 */
 	private static $_module_route_map = array();
 
 	/**
-	 * 	_module_forward_map
 	 *	@var 	array	$_module_forward_map
 	 * 	@access 	private
 	 */
 	private static $_module_forward_map = array();
 
 	/**
-	 * 	_module_view_map
 	 *	@var 	array	$_module_view_map
 	 * 	@access 	private
 	 */
@@ -109,7 +113,7 @@ final class EE_Config {
 	 */
 	public static function instance() {
 		// check if class object is instantiated, and instantiated properly
-		if ( self::$_instance === NULL  or ! is_object( self::$_instance ) or ! ( self::$_instance instanceof EE_Config )) {
+		if ( ! self::$_instance instanceof EE_Config ) {
 			self::$_instance = new self();
 		}
 		return self::$_instance;
@@ -117,16 +121,16 @@ final class EE_Config {
 
 
 
-
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	private
-	 *  @return 	void
+	 * @access    private
+	 * @return \EE_Config
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Config__construct__begin',$this );
 		//set defaults
+		$this->_config_option_names = get_option( 'ee_config_option_names', array() );
 		$this->core = new EE_Core_Config();
 		$this->organization = new EE_Organization_Config();
 		$this->currency = new EE_Currency_Config();
@@ -135,7 +139,7 @@ final class EE_Config {
 		$this->template_settings = new EE_Template_Config();
 		$this->map_settings = new EE_Map_Config();
 		$this->gateway = new EE_Gateway_Config();
-		$this->addons = array();
+		$this->addons = new stdClass();
 		// set _module_route_map
 		EE_Config::$_module_route_map = array();
 		// set _module_forward_map
@@ -143,15 +147,18 @@ final class EE_Config {
 		// set _module_view_map
 		EE_Config::$_module_view_map = array();
 		// load existing EE site settings
-		$this->_load_config();
+		$this->_load_core_config();
 		//  register shortcodes and modules
-		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_addons', array( $this, 'register_shortcodes_and_modules' ), 999 );
+		add_action( 'AHEE__EE_System__register_shortcodes_modules_and_widgets', array( $this, 'register_shortcodes_and_modules' ), 999 );
 		//  initialize shortcodes and modules
 		add_action( 'AHEE__EE_System__core_loaded_and_ready', array( $this, 'initialize_shortcodes_and_modules' ));
 		// register widgets
 		add_action( 'widgets_init', array( $this, 'widgets_init' ), 10 );
+		// shutdown
+		add_action( 'shutdown', array( $this, 'shutdown' ), 10 );
 		// construct__end hook
 		do_action( 'AHEE__EE_Config__construct__end',$this );
+		// hardcoded hack
 		$this->template_settings->current_espresso_theme = 'Espresso_Arabica_2014';
 	}
 
@@ -170,21 +177,95 @@ final class EE_Config {
 
 
 	/**
-	 * 		load EE organization options
+	 * 		load core plugin configuration
 	 *
 	 * 		@access private
 	 * 		@return void
 	 */
-	private function _load_config() {
+	private function _load_core_config() {
+		$update = FALSE;
+		$this->_load_calendar_config();
+		$convert_from_array = array( 'addons' );
 		$espresso_config = $this->get_espresso_config();
 		foreach ( $espresso_config as $config => $settings ) {
-			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : FALSE;
-			if ( ! empty( $settings ) && ( ! $config_class || ( $settings instanceof $config_class ))) {
-				$this->$config = $settings;
+			// in case old settings were saved as an array
+			if ( is_array( $settings ) && in_array( $config, $convert_from_array )) {
+				$settings = $this->_migrate_old_config_data( $settings );
+				$update = TRUE;
+			}
+			$config_class = is_object( $settings ) && is_object( $this->$config ) ? get_class( $this->$config ) : '';
+			if ( ! empty( $settings ) && $settings instanceof $config_class ) {
+				$this->$config = apply_filters( 'FHEE__EE_Config___load_core_config__' . $config, $settings );
+			}
+		}
+		if ( $update ) {
+			$this->update_espresso_config();
+		}
+		// construct__end hook
+		do_action( 'AHEE__EE_Config___load_core_config__end', $this );
+	}
+
+
+
+	/**
+	 *    _load_calendar_config
+	 *
+	 * @access    public
+	 * @return    stdClass
+	 */
+	private function _load_calendar_config() {
+		// grab array of all plugin folders and loop thru it
+		$plugins = glob( WP_PLUGIN_DIR . DS . '*', GLOB_ONLYDIR );
+		foreach ( $plugins as $plugin_path ) {
+			// grab plugin folder name from path
+			$plugin = basename( $plugin_path );
+			// drill down to Espresso plugins
+			if ( strpos( $plugin, 'espresso' ) !== FALSE || strpos( $plugin, 'Espresso' ) !== FALSE || strpos( $plugin, 'ee4' ) !== FALSE || strpos( $plugin, 'EE4' ) !== FALSE ) {
+				// then to calendar related plugins
+				if ( strpos( $plugin, 'calendar' ) !== FALSE ) {
+					// this is what we are looking for
+					$calendar_config = $plugin_path . DS . 'EE_Calendar_Config.php';
+					// does it exist in this folder ?
+					if ( is_readable( $calendar_config )) {
+						// YEAH! let's load it
+						require_once( $calendar_config );
+					}
+				}
 			}
 		}
 	}
 
+
+
+	/**
+	 *    _migrate_old_config_data
+	 *
+	 * @access    public
+	 * @param array  $settings
+	 * @return    stdClass
+	 */
+	private function _migrate_old_config_data( $settings = array() ) {
+		// convert existing settings to an object
+		$config_array = $settings;
+		$settings = new stdClass();
+		foreach ( $config_array as $key => $value ){
+			if ( $key == 'calendar' && class_exists( 'EE_Calendar_Config' )) {
+				$this->set_config( 'addons', 'EE_Calendar', 'EE_Calendar_Config', $value );
+//				$config_option_name = $this->_generate_config_option_name( 'addons', 'EE_Calendar' );
+//				delete_option( $config_option_name );
+//				// save calendar settings using new methods
+//				add_option( $config_option_name, $value, '', 'no' );
+//				// if the config option name hasn't been added yet to the list of option names we're tracking, then do so now
+//				if ( ! in_array( $config_option_name, $this->_config_option_names )) {
+//					$this->_config_option_names[] = $config_option_name;
+//				}
+//				$this->addons->EE_Calendar = $value;
+			} else {
+				$settings->$key = $value;
+			}
+		}
+		return $settings;
+	}
 
 
 
@@ -196,26 +277,61 @@ final class EE_Config {
 	 */
 	public function get_espresso_config() {
 		// grab espresso configuration
-		$CFG = get_option( 'ee_config', array() );
-		$CFG = apply_filters( 'FHEE__Config__get_espresso_config__CFG', $CFG );
-		return $CFG;
+		return apply_filters( 'FHEE__EE_Config__get_espresso_config__CFG', get_option( 'ee_config', array() ));
+	}
+
+
+	/**
+	 * 	double_check_config_comparison
+	 *
+	 *  @access 	public
+	 */
+	public function double_check_config_comparison( $option = '', $old_value, $value ) {
+		// make sure we're checking the ee config
+		if ( $option == 'ee_config' ) {
+			// run a loose comparison of the old value against the new value for type and properties, but NOT exact instance like WP update_option does
+			if ( $value != $old_value ) {
+				// if they are NOT the same, then remove the hook, which means the subsequent update results will be based solely on the update query results
+				// the reason we do this is because, as stated above, WP update_option performs an exact instance comparison (===) on any update values passed to it
+				// this happens PRIOR to serialization and any subsequent update. If values are found to match their previous old value, then WP bails before performing any update.
+				// Since we are passing the EE_Config object, it is comparing the EXACT instance of the saved version it just pulled from the db, with the one being passed to it (which will not match).
+				// HOWEVER, once the object is serialized and passed off to MySQL to update,
+				// MySQL MAY ALSO NOT perform the update because the string it sees in the db looks the same as the new one it has been passed!!!
+				// This results in the query returning an "affected rows" value of ZERO, which gets returned immediately by WP update_option and looks like an error.
+				remove_action( 'update_option', array( $this, 'check_config_updated' ));
+			}
+		}
 	}
 
 
 
 	/**
-	 * 	update_espresso_config'
+	 *    update_espresso_config
 	 *
-	 *  @access 	public
-	 *  @return 	boolean success
+	 * @access   public
+	 * @param   bool $add_success
+	 * @param   bool $add_error
+	 * @return   bool
 	 */
 	public function update_espresso_config( $add_success = FALSE, $add_error = TRUE ) {
+		$instance = self::$_instance;
+		self::$_instance = NULL;
 		do_action( 'AHEE__EE_Config__update_espresso_config__begin',$this );
-		// compare existing settings with what's already saved'
-		$saved_config = $this->get_espresso_config();
-		// update
-		$saved = $saved_config == $this ? TRUE : update_option( 'ee_config', $this );
+		// hook into update_option because that happens AFTER the ( $value === $old_value ) conditional but BEFORE the actual update occurs
+		add_action( 'update_option', array( $this, 'double_check_config_comparison' ), 1, 3 );
+		// now update "ee_config"
+		$saved = update_option( 'ee_config', $this );
+		// if not saved... check if the hook we just added still exists; if it does, it means one of two things:
+		// that update_option bailed at the ( $value === $old_value ) conditional, or...
+		// the db update query returned 0 rows affected (probably because the data  value was the same from it's perspective)
+		// so the existence of the hook means that a negative result from update_option is NOT an error, but just means no update occurred, so don't display an error to the user.
+		// BUT... if update_option returns FALSE, AND the hook is missing, then it means that something truly went wrong
+		$saved = ! $saved ? has_action( 'update_option', array( $this, 'double_check_config_comparison' )) : $saved;
+		// remove our action since we don't want it in the system anymore
+		remove_action( 'update_option', array( $this, 'double_check_config_comparison' ), 1 );
 		do_action( 'AHEE__EE_Config__update_espresso_config__end', $this, $saved );
+		self::$_instance = $instance;
+		unset( $instance );
 		// if config remains the same or was updated successfully
 		if ( $saved ) {
 			if ( $add_success ) {
@@ -231,36 +347,332 @@ final class EE_Config {
 	}
 
 
+	/**
+	 *    _verify_config_params
+	 *
+	 * @access    private
+	 * @param    string                $section
+	 * @param    string                $name
+	 * @param    string                $config_class
+	 * @param    EE_Config_Base 	$config_obj
+	 * @param    array                 $tests_to_run
+	 * @param    bool                  $display_errors
+	 * @return    bool    TRUE on success, FALSE on fail
+	 */
+	private function _verify_config_params( $section = '', $name = '', $config_class = '', $config_obj = NULL, $tests_to_run = array( 1, 2, 3, 4, 5, 6, 7, 8 ), $display_errors = TRUE ) {
+		try {
+			// TEST #1 : check that section was set
+			if ( in_array( 1, $tests_to_run ) && empty( $section )) {
+				if ( $display_errors ) {
+					throw new EE_Error( sprintf( __( 'No configuration section has been provided while attempting to save "%s".', 'event_espresso' ), $config_class ));
+				}
+				return FALSE;
+			}
+			// TEST #2 : check that settings section exists
+			if ( in_array( 2, $tests_to_run ) && ! isset( $this->{$section} )) {
+				if ( $display_errors ) {
+					throw new EE_Error( sprintf( __( 'The "%s" configuration section does not exist.', 'event_espresso' ), $section ));
+				}
+				return FALSE;
+			}
+			// TEST #3 : check that section is the proper format
+			if ( in_array( 3, $tests_to_run ) && ! ( $this->{$section} instanceof EE_Config_Base || $this->{$section} instanceof stdClass )) {
+				if ( $display_errors ) {
+					throw new EE_Error( sprintf( __( 'The "%s" configuration settings have not been formatted correctly.', 'event_espresso' ), $section ));
+				}
+				return FALSE;
+			}
+			// TEST #4 : check that config section name has been set
+			if ( in_array( 4, $tests_to_run ) && empty( $name )) {
+				if ( $display_errors ) {
+					throw new EE_Error( __( 'No name has been provided for the specific configuration section.', 'event_espresso' ));
+				}
+				return FALSE;
+			}
+			// TEST #5 : check that config has even been set
+			if ( in_array( 5, $tests_to_run ) && ! isset( $this->{$section}->{$name} )) {
+				if ( $display_errors ) {
+					throw new EE_Error( sprintf( __( 'No configuration has been set for "%s->%s".', 'event_espresso' ), $section, $name ));
+				}
+				return FALSE;
+			}
+			// TEST #6 : check that a config class name has been set
+			if ( in_array( 6, $tests_to_run ) && empty( $config_class )) {
+				if ( $display_errors ) {
+					throw new EE_Error( __( 'No class name has been provided for the specific configuration section.', 'event_espresso' ));
+				}
+				return FALSE;
+			}
+			// TEST #7 : verify config class is accessible
+			if ( in_array( 7, $tests_to_run ) && ! class_exists( $config_class )) {
+				if ( $display_errors ) {
+					throw new EE_Error( sprintf( __( 'The "%s" class does not exist. Please ensure that an autoloader has been set for it.', 'event_espresso' ), $config_class ));
+				}
+				return FALSE;
+			}
+			// TEST #8 : check that config is the requested type
+			if ( in_array( 8, $tests_to_run ) && ! $this->{$section}->{$name} instanceof $config_class ) {
+				if ( $display_errors ) {
+					throw new EE_Error( sprintf( __( 'The configuration for "%s->%s" is not of the "%s" class.', 'event_espresso' ), $section, $name, $config_class ));
+				}
+				return FALSE;
+			}
+			// TEST #9 : verify config object
+			if ( in_array( 9, $tests_to_run ) && ! $config_obj instanceof EE_Config_Base ) {				//			d( $config_obj );
+				if ( $display_errors ) {
+					throw new EE_Error( sprintf( __( 'The "%s" class is not an instance of EE_Config_Base.', 'event_espresso' ), print_r( $config_obj, TRUE )));
+				}
+				return FALSE;
+			}
+		} catch( EE_Error $e ) {
+			$e->get_error();
+		}
+		// you have successfully run the gauntlet
+		return TRUE;
+	}
+
+
 
 	/**
-	 * 	update_post_shortcodes
+	 *    _generate_config_option_name
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access        protected
+	 * @param        string          $section
+	 * @param        string          $name
+	 * @return        string
 	 */
-	public function update_post_shortcodes() {
-		do_action( 'AHEE__EE_Config__update_post_shortcodes',$this->core->post_shortcodes );
+	private function _generate_config_option_name( $section = '', $name = '' ) {
+		return 'ee_config-' . $section . '-' . $name;
+	}
+
+
+
+	/**
+	 *    _set_config_class
+	 * ensures that a config class is set, either from a passed config class or one generated from the config name
+	 *
+	 * @access 	private
+	 * @param 	string $config_class
+	 * @param 	string $name
+	 * @return 	string
+	 */
+	private function _set_config_class( $config_class = '', $name = '' ) {
+		return ! empty( $config_class ) ? $config_class : str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $name ))) . '_Config';
+	}
+
+
+	/**
+	 *    set_config
+	 *
+	 * @access        protected
+	 * @param        string  $section
+	 * @param        string  $name
+	 * @param        string  $config_class
+	 * @param        \EE_Config_Base $config_obj
+	 * @return        \EE_Config_Base|bool
+	 */
+	public function set_config( $section = '', $name = '', $config_class = '', EE_Config_Base $config_obj = NULL ) {
+		// ensure config class is set to something
+		$config_class = $this->_set_config_class( $config_class, $name );
+		// run tests 1-4, 6, and 7 to verify all config params are set and valid
+		if ( ! $this->_verify_config_params( $section, $name, $config_class, NULL, array( 1, 2, 3, 4, 6, 7 ))) {
+			return FALSE;
+		}
+		// if the config option name hasn't been added yet to the list of option names we're tracking, then do so now
+		if ( ! in_array( $this->_generate_config_option_name( $section, $name ), $this->_config_option_names )) {
+			$this->_config_option_names[] = $this->_generate_config_option_name( $section, $name );
+		}
+		// verify the incoming config object but suppress errors
+		if ( ! $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 9 ), FALSE )) {
+			$config_obj = new $config_class();
+		}
+		// create a wp-option for this config
+		if ( add_option( $this->_generate_config_option_name( $section, $name ), $config_obj, '', 'no' )) {
+			$this->{$section}->{$name} = $config_obj;
+			return $this->{$section}->{$name};
+		} else {
+			EE_Error::add_error( sprintf( __( 'The "%s" could not be saved to the database.', 'event_espresso' ), $config_class ), __FILE__, __FUNCTION__, __LINE__ );
+			return FALSE;
+		}
+	}
+
+
+
+	/**
+	 *    update_config
+	 *
+	 * @access 	public
+	 * @param 	string 		$section
+	 * @param 	string 		$name
+	 * @param 	\EE_Config_Base|string $config_obj
+	 * @return  bool
+	 */
+	public function update_config( $section = '', $name = '', $config_obj = '' ) {
+		// get class name of the incoming object
+		$config_class = get_class( $config_obj );
+		// run tests 1-5 and 9 to verify config
+		if ( ! $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 1, 2, 3, 4, 5, 9 ))) {
+			return FALSE;
+		}
+		$config_option_name = $this->_generate_config_option_name( $section, $name );
+		// check if config object has been added to db by seeing if config option name is in $this->_config_option_names array
+		if ( ! in_array( $config_option_name, $this->_config_option_names  )) {
+			// save new config to db
+			return $this->set_config( $section, $name, $config_class, $config_obj );
+		} else {
+			// first check if the record already exists
+			$existing_config = get_option( $config_option_name );
+			// just return if db record is already up to date
+			if ( $existing_config == $config_obj ) {
+				$this->{$section}->{$name} = $config_obj;
+				return TRUE;
+			} else if ( update_option( $config_option_name, $config_obj )) {
+				// update wp-option for this config class
+				$this->{$section}->{$name} = $config_obj;
+				return $this->update_espresso_config();
+			} else {
+				EE_Error::add_error(
+					sprintf(
+						__( 'The "%s" object stored at"%s" was not successfully updated in the database.', 'event_espresso' ),
+						$config_class,
+						'EE_Config->' . $section . '->' . $name
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
+				return FALSE;
+			}
+		}
+	}
+
+
+
+	/**
+	 *    get_config
+	 *
+	 * @access 	public
+	 * @param 	string 	$section
+	 * @param 	string 	$name
+	 * @param 	string 	$config_class
+	 * @return 	mixed EE_Config_Base | NULL
+	 */
+	public function get_config( $section = '', $name = '', $config_class = '' ) {
+		// ensure config class is set to something
+		$config_class = $this->_set_config_class( $config_class, $name );
+		// run tests 1-4, 6 and 7 to verify that all params have been set
+		if ( ! $this->_verify_config_params( $section, $name, $config_class, NULL, array( 1, 2, 3, 4, 6, 7 ))) {
+			return NULL;
+		}
+		// now test if the requested config object exists, but suppress errors
+		if ( $this->_verify_config_params( $section, $name, $config_class, NULL, array( 5, 8 ), FALSE )) {
+			// config already exists, so pass it back
+			return $this->{$section}->{$name};
+		}
+		// load config option from db if it exists
+		$config_obj = $this->get_config_option( $this->_generate_config_option_name( $section, $name ));
+		// verify the newly retrieved config object, but suppress errors
+		if ( $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 9 ), FALSE )) {
+			// config is good, so set it and pass it back
+			$this->{$section}->{$name} = $config_obj;
+			return $this->{$section}->{$name};
+		}
+		// oops! $config_obj is not already set and does not exist in the db, so create a new one
+		$config_obj =$this->set_config( $section, $name, $config_class );
+		// verify the newly created config object
+		if ( $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 9 ))) {
+			return $this->{$section}->{$name};
+		} else {
+			EE_Error::add_error( sprintf( __( 'The "%s" could not be retrieved from the database.', 'event_espresso' ), $config_class ), __FILE__, __FUNCTION__, __LINE__ );
+		}
+		return NULL;
+	}
+
+
+	/**
+	 *    get_config_option
+	 *
+	 * @access 	public
+	 * @param 	string 	$config_option_name
+	 * @return 	mixed EE_Config_Base | FALSE
+	 */
+	public function get_config_option( $config_option_name = '' ) {
+		// retrieve the wp-option for this config class.
+		return get_option( $config_option_name );
+	}
+
+
+
+
+	/**
+	 *    update_post_shortcodes
+	 *
+	 * @access    public
+	 * @param $page_for_posts
+	 * @return    void
+	 */
+	public function update_post_shortcodes( $page_for_posts = '' ) {
+		// make sure page_for_posts is set
+		$page_for_posts = ! empty( $page_for_posts ) ? $page_for_posts : EE_Config::get_page_for_posts();
+		// critical page shortcodes that we do NOT want added to the Posts page (blog)
+		$critical_shortcodes = $this->core->get_critical_pages_shortcodes_array();
+		// allow others to mess stuff up :D
+		do_action( 'AHEE__EE_Config__update_post_shortcodes', $this->core->post_shortcodes, $page_for_posts );
+		// verify that post_shortcodes is set
 		$this->core->post_shortcodes = isset( $this->core->post_shortcodes ) && is_array( $this->core->post_shortcodes ) ? $this->core->post_shortcodes : array();
 		// cycle thru post_shortcodes
 		foreach( $this->core->post_shortcodes as $post_name => $shortcodes ){
-			// skip the posts page, because we want all shortcodes registered for it
-			if ( $post_name != 'posts' ) {
-				foreach( $shortcodes as $shortcode => $post_id ){
+			// are there any shortcodes to track ?
+			if ( ! empty( $shortcodes )) {
+				// loop thru list of tracked shortcodes
+				foreach( $shortcodes as $shortcode => $post_id ) {
+					// if shortcode is for a critical page, BUT this is NOT the corresponding critical page for that shortcode
+					if ( isset( $critical_shortcodes[ $post_id ] ) && $post_name == $page_for_posts ) {
+						// then remove this shortcode, because we don't want critical page shortcodes like ESPRESSO_TXN_PAGE running on the "Posts Page" (blog)
+						unset( $this->core->post_shortcodes[ $post_name ][ $shortcode ] );
+					}
+					// skip the posts page, because we want all shortcodes registered for it
+					if ( $post_name == $page_for_posts ) {
+						continue;
+					}
 					// make sure post still exists
-					if ( $post = get_post( $post_id )) {
+					$post = get_post( $post_id );
+					if ( $post ) {
 						// check that the post name matches what we have saved
 						if ( $post->post_name == $post_name ) {
 							// if so, then break before hitting the unset below
-							break;
+							continue;
 						}
 					}
 					// we don't like missing posts around here >:(
 					unset( $this->core->post_shortcodes[ $post_name ] );
 				}
+			} else {
+				// you got no shortcodes to keep track of !
+				unset( $this->core->post_shortcodes[ $post_name ] );
 			}
 		}
 		//only show errors
 		$this->update_espresso_config();
+	}
+
+
+
+	/**
+	 * 	get_page_for_posts
+	 *
+	 * 	if the wp-option "show_on_front" is set to "page", then this is the post_name for the post set in the wp-option "page_for_posts", or "posts" if no page is selected
+	 *
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public static function get_page_for_posts() {
+		$page_for_posts = get_option( 'page_for_posts' );
+		if ( ! $page_for_posts ) {
+			return 'posts';
+		}
+		global $wpdb;
+		$SQL = 'SELECT post_name from ' . $wpdb->posts . ' WHERE post_type="posts" OR post_type="page" AND post_status="publish" AND ID=%s';
+		return $wpdb->get_var( $wpdb->prepare( $SQL, $page_for_posts ));
 	}
 
 
@@ -309,8 +721,7 @@ final class EE_Config {
 	public function widgets_init() {
 		//only init widgets on admin pages when not in complete maintenance, and
 		//on frontend when not in any maintenance mode
-		if( (is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  ||
-				! EE_Maintenance_Mode::instance()->level()){
+		if (( is_admin() && EE_Maintenance_Mode::instance()->level() != EE_Maintenance_Mode::level_2_complete_maintenance)  || ! EE_Maintenance_Mode::instance()->level() ) {
 			// grab list of installed widgets
 			$widgets_to_register = glob( EE_WIDGETS . '*', GLOB_ONLYDIR );
 			// filter list of modules to register
@@ -339,33 +750,49 @@ final class EE_Config {
 		$widget_ext = '.widget.php';
 		// make all separators match
 		$widget_path = rtrim( str_replace( '/\\', DS, $widget_path ), DS );
-		// grab and sanitize widget directory name
-		$widget_dir = sanitize_key( basename( $widget_path ));
+		// does the file path INCLUDE the actual file name as part of the path ?
+		if ( strpos( $widget_path, $widget_ext ) !== FALSE ) {
+			// grab and shortcode file name from directory name and break apart at dots
+			$file_name = explode( '.', basename( $widget_path ));
+			// take first segment from file name pieces and remove class prefix if it exists
+			$widget = strpos( $file_name[0], 'EEW_' ) === 0 ? substr( $file_name[0], 4 ) : $file_name[0];
+			// sanitize shortcode directory name
+			$widget = sanitize_key( $widget );
+			// now we need to rebuild the shortcode path
+			$widget_path = explode( DS, $widget_path );
+			// remove last segment
+			array_pop( $widget_path );
+			// glue it back together
+			$widget_path = implode( DS, $widget_path );
+		} else {
+			// grab and sanitize widget directory name
+			$widget = sanitize_key( basename( $widget_path ));
+		}
 		// create classname from widget directory name
-		$widget = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $widget_dir )));
+		$widget = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $widget )));
 		// add class prefix
 		$widget_class = 'EEW_' . $widget;
 		// does the widget exist ?
 		if ( ! is_readable( $widget_path . DS . $widget_class . $widget_ext )) {
-			$msg = sprintf( __( 'The requested %s widget file could not be found or is not readable due to file permissions.', 'event_espresso' ), $widget_class );
+			$msg = sprintf(
+				__( 'The requested %s widget file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s', 'event_espresso' ),
+				$widget_class,
+				$widget_path . DS . $widget_class . $widget_ext
+			);
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			return;
 		}
 		// load the widget class file
 		require_once( $widget_path . DS . $widget_class . $widget_ext );
-		// verfiy that class exists
+		// verify that class exists
 		if ( ! class_exists( $widget_class )) {
 			$msg = sprintf( __( 'The requested %s widget class does not exist.', 'event_espresso' ), $widget_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
-			return FALSE;
+			return;
 		}
-		if ( register_widget( $widget_class )) {
-			// add to array of registered widgets
-			EE_Registry::instance()->widgets[ $widget_class ] = $widget_path . DS . $widget_class . $widget_ext;
-			return TRUE;
-		} else {
-			return FALSE;
-		}
+		register_widget( $widget_class );
+		// add to array of registered widgets
+		EE_Registry::instance()->widgets->$widget_class = $widget_path . DS . $widget_class . $widget_ext;
 	}
 
 
@@ -374,11 +801,9 @@ final class EE_Config {
 	 * 		_register_shortcodes
 	 *
 	 * 		@access private
-	 * 		@return void
+	 * 		@return array
 	 */
 	private function _register_shortcodes() {
-		// load base class
-		require_once( EE_SHORTCODES . 'EES_Shortcode.shortcode.php' );
 		// grab list of installed shortcodes
 		$shortcodes_to_register = glob( EE_SHORTCODES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
@@ -399,35 +824,52 @@ final class EE_Config {
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$shortcode_path - full path up to and including shortcode folder
-	 *  @return 	void
+	 *  @return 	bool
 	 */
 	public static function register_shortcode( $shortcode_path = NULL ) {
 		do_action( 'AHEE__EE_Config__register_shortcode__begin',$shortcode_path );
 		$shortcode_ext = '.shortcode.php';
 		// make all separators match
-		$shortcode_path = rtrim( str_replace( '/\\', DS, $shortcode_path ), DS );
-		// grab and sanitize shortcode directory name
-		$shortcode_dir = sanitize_key( basename( $shortcode_path ));
-		// create classname from shortcode directory name
-		$shortcode = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode_dir )));
+		$shortcode_path = str_replace( array( '\\', '/' ), DS, $shortcode_path );
+		// does the file path INCLUDE the actual file name as part of the path ?
+		if ( strpos( $shortcode_path, $shortcode_ext ) !== FALSE ) {
+			// grab shortcode file name from directory name and break apart at dots
+			$shortcode_file = explode( '.', basename( $shortcode_path ));
+			// take first segment from file name pieces and remove class prefix if it exists
+			$shortcode = strpos( $shortcode_file[0], 'EES_' ) === 0 ? substr( $shortcode_file[0], 4 ) : $shortcode_file[0];
+			// sanitize shortcode directory name
+			$shortcode = sanitize_key( $shortcode );
+			// now we need to rebuild the shortcode path
+			$shortcode_path = explode( DS, $shortcode_path );
+			// remove last segment
+			array_pop( $shortcode_path );
+			// glue it back together
+			$shortcode_path = implode( DS, $shortcode_path ) . DS;
+		} else {
+			// we need to generate the filename based off of the folder name
+			// grab and sanitize shortcode directory name
+			$shortcode = sanitize_key( basename( $shortcode_path ));
+			$shortcode_path = rtrim( $shortcode_path, DS ) . DS;
+		}
+		// create classname from shortcode directory or file name
+		$shortcode = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $shortcode )));
 		// add class prefix
 		$shortcode_class = 'EES_' . $shortcode;
 		// does the shortcode exist ?
-		if ( ! is_readable( $shortcode_path . DS . $shortcode_class . $shortcode_ext )) {
-			$msg = sprintf( __( 'The requested %s shortcode file could not be found or is not readable due to file permissions. It should be in %s', 'event_espresso' ), $shortcode_class,$shortcode_path . DS . $shortcode_class . $shortcode_ext );
-			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! EEH_File::verify_filepath_and_permissions( $shortcode_path . $shortcode_class . $shortcode_ext, $shortcode_class, $shortcode_ext, 'shortcode' )) {
 			return FALSE;
 		}
 		// load the shortcode class file
-		require_once( $shortcode_path . DS . $shortcode_class . $shortcode_ext );
-		// verfiy that class exists
+		require_once( $shortcode_path . $shortcode_class . $shortcode_ext );
+		// verify that class exists
 		if ( ! class_exists( $shortcode_class )) {
 			$msg = sprintf( __( 'The requested %s shortcode class does not exist.', 'event_espresso' ), $shortcode_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
+		$shortcode = strtoupper( $shortcode );
 		// add to array of registered shortcodes
-		EE_Registry::instance()->shortcodes[ strtoupper( $shortcode ) ] = $shortcode_path . DS . $shortcode_class . $shortcode_ext;
+		EE_Registry::instance()->shortcodes->$shortcode = $shortcode_path . $shortcode_class . $shortcode_ext;
 		return TRUE;
 	}
 
@@ -438,11 +880,9 @@ final class EE_Config {
 	 * 		_register_modules
 	 *
 	 * 		@access private
-	 * 		@return void
+	 * 		@return array
 	 */
 	private function _register_modules() {
-		// load base class
-		require_once( EE_MODULES . 'EED_Module.module.php' );
 		// grab list of installed modules
 		$modules_to_register = glob( EE_MODULES . '*', GLOB_ONLYDIR );
 		// filter list of modules to register
@@ -466,40 +906,57 @@ final class EE_Config {
 	 *
 	 *  @access 	public
 	 *  @param 	string 		$module_path - full path up to and including module folder
-	 *  @return 	void
+	 *  @return 	bool
 	 */
 	public static function register_module( $module_path = NULL ) {
 		do_action( 'AHEE__EE_Config__register_module__begin', $module_path );
 		$module_ext = '.module.php';
 		// make all separators match
-		$module_path = rtrim( str_replace( '/\\', DS, $module_path ), DS );
-		// grab and sanitize module name
-		$module_dir = basename( $module_path );
+		$module_path = str_replace( array( '\\', '/' ), DS, $module_path );
+		// does the file path INCLUDE the actual file name as part of the path ?
+		if ( strpos( $module_path, $module_ext ) !== FALSE ) {
+			// grab and shortcode file name from directory name and break apart at dots
+			$module_file = explode( '.', basename( $module_path ));
+			// take first segment from file name pieces and remove class prefix if it exists
+			$module = strpos( $module_file[0], 'EED_' ) === 0 ? substr( $module_file[0], 4 ) : $module_file[0];
+			// sanitize shortcode directory name
+			$module = sanitize_key( $module );
+			// now we need to rebuild the shortcode path
+			$module_path = explode( DS, $module_path );
+			// remove last segment
+			array_pop( $module_path );
+			// glue it back together
+			$module_path = implode( DS, $module_path ) . DS;
+		} else {
+			// we need to generate the filename based off of the folder name
+			// grab and sanitize module name
+			$module = basename( $module_path );
+			$module_path = rtrim( $module_path, DS ) . DS;
+		}
 		// create classname from module directory name
-		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module_dir )));
+		$module = str_replace( ' ', '_', ucwords( str_replace( '_', ' ', $module )));
 		// add class prefix
 		$module_class = 'EED_' . $module;
 		// does the module exist ?
-		if ( ! is_readable( $module_path . DS . $module_class . $module_ext )) {
-			$msg = sprintf( __( 'The requested %s module file could not be found or is not readable due to file permissions.', 'event_espresso' ), $module );
-			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
+		if ( ! EEH_File::verify_filepath_and_permissions( $module_path . $module_class . $module_ext, $module_class, $module_ext, 'module' )) {
 			return FALSE;
 		}
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->start_timer(); }
 		// load the module class file
-		require_once( $module_path . DS . $module_class . $module_ext );
+		require_once( $module_path . $module_class . $module_ext );
 		if ( WP_DEBUG === TRUE ) { EEH_Debug_Tools::instance()->stop_timer("Requiring module $module_class"); }
-		// verfiy that class exists
+		// verify that class exists
 		if ( ! class_exists( $module_class )) {
 			$msg = sprintf( __( 'The requested %s module class does not exist.', 'event_espresso' ), $module_class );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
 		}
 		// add to array of registered modules
-		EE_Registry::instance()->modules[ $module ] = $module_path . DS . $module_class . $module_ext;
-		do_action( 'AHEE__EE_Config__register_module__complete', $module, EE_Registry::instance()->modules[ $module ] );
+		EE_Registry::instance()->modules->$module_class = $module_path . $module_class . $module_ext;
+		do_action( 'AHEE__EE_Config__register_module__complete', $module_class, EE_Registry::instance()->modules->$module_class );
 		return TRUE;
 	}
+
 
 
 
@@ -513,7 +970,6 @@ final class EE_Config {
 	private function _initialize_shortcodes() {
 		// cycle thru shortcode folders
 		foreach ( EE_Registry::instance()->shortcodes as $shortcode => $shortcode_path ) {
-			//echo '<h4>' . $shortcode . ' : ' . $shortcode_path . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 			// add class prefix
 			$shortcode_class = 'EES_' . $shortcode;
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
@@ -525,8 +981,12 @@ final class EE_Config {
 				// delay until other systems are online
 				add_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons', array( $shortcode_class,'set_hooks' ));
 				// convert classname to UPPERCASE and create WP shortcode.
-				// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
-				add_shortcode( strtoupper( $shortcode ), array( $shortcode_class, 'fallback_shortcode_processor' ));
+				$shortcode_tag = strtoupper( $shortcode );
+				// but first check if the shortcode has already been added before assigning 'fallback_shortcode_processor'
+				if ( ! shortcode_exists( $shortcode_tag )) {
+					// NOTE: this shortcode declaration will get overridden if the shortcode is successfully detected in the post content in EE_Front_Controller->_initialize_shortcodes()
+					add_shortcode( $shortcode_tag, array( $shortcode_class, 'fallback_shortcode_processor' ));
+				}
 			}
 		}
 	}
@@ -541,11 +1001,8 @@ final class EE_Config {
 	 * 	@return void
 	 */
 	private function _initialize_modules() {
-		//printr( EE_Registry::instance()->modules, 'EE_Registry::instance()->modules  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		// cycle thru shortcode folders
-		foreach ( EE_Registry::instance()->modules as $module => $module_path ) {
-			// add class prefix
-			$module_class = 'EED_' . $module;
+		foreach ( EE_Registry::instance()->modules as $module_class => $module_path ) {
 			// fire the shortcode class's set_hooks methods in case it needs to hook into other parts of the system
 			// which set hooks ?
 			if ( is_admin() ) {
@@ -568,12 +1025,13 @@ final class EE_Config {
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	string 		$module - module name (classname without EED_ prefix)
 	 *  @param 	string 		$method_name - the actual module method to be routed to
-	 *  @return 	void
+	 *  @return 	bool
 	 */
 	public static function register_route( $route = NULL, $module = NULL, $method_name = NULL ) {
-		do_action( 'AHEE__EE_Config__register_route__begin',$route,$module,$method_name );
+		do_action( 'AHEE__EE_Config__register_route__begin', $route, $module, $method_name );
 		$module = str_replace( 'EED_', '', $module );
-		if ( ! isset( EE_Registry::instance()->modules[ $module ] )) {
+		$module_class = 'EED_' . $module;
+		if ( ! isset( EE_Registry::instance()->modules->$module_class )) {
 			$msg = sprintf( __( 'The module %s has not been registered.', 'event_espresso' ), $module );
 			EE_Error::add_error( $msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__ );
 			return FALSE;
@@ -589,6 +1047,7 @@ final class EE_Config {
 			return FALSE;
 		}
 		EE_Config::$_module_route_map[ $route ] = array( 'EED_' . $module, $method_name );
+		return TRUE;
 	}
 
 
@@ -596,9 +1055,9 @@ final class EE_Config {
 	/**
 	 *    get_route - get module method route
 	 *
-	 * @access 	public
-	 * @param 	string $route - "pretty" public alias for module method
-	 * @return  mixed string | NULL
+	 *  @access 	public
+	 *  @param 	string 		$route - "pretty" public alias for module method
+	 *  @return 	string
 	 */
 	public static function get_route( $route = NULL ) {
 		do_action( 'AHEE__EE_Config__get_route__begin',$route );
@@ -619,7 +1078,7 @@ final class EE_Config {
 	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
 	 * @param null       $forward
 	 * @internal  param array|string $mixed $forward - function name or array( class, method )
-	 * @return    mixed string | bool
+	 * @return    bool
 	 */
 	public static function register_forward( $route = NULL, $status = 0, $forward = NULL ) {
 		do_action( 'AHEE__EE_Config__register_forward',$route,$status,$forward );
@@ -650,7 +1109,7 @@ final class EE_Config {
 			return FALSE;
 		}
 		EE_Config::$_module_forward_map[ $route ][ absint( $status ) ] = $forward;
-//		printr( EE_Config::$_module_forward_map, 'EE_Config::$_module_forward_map  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+		return TRUE;
 	}
 
 
@@ -661,7 +1120,7 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different forwards to be served based on status
-	 *  @return 	mixed string | NULL
+	 *  @return 	string
 	 */
 	public static function get_forward( $route = NULL, $status = 0 ) {
 		do_action( 'AHEE__EE_Config__get_forward__begin',$route,$status );
@@ -676,12 +1135,12 @@ final class EE_Config {
 	/**
 	 *    register_forward - allows modules to specify different view templates for different method routes and status results
 	 *
-	 * @access    	public
-	 * @param    	string  $route  - "pretty" public alias for module method
-	 * @param    	integer $status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
-	 * @param 		string       $view
-	 * @internal  	param array|string $mixed $forward - function name or array( class, method )
-	 * @return    	mixed string | bool
+	 * @access    public
+	 * @param    string  $route  - "pretty" public alias for module method
+	 * @param    integer $status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
+	 * @param    string   $view
+	 * @internal  param array|string $mixed $forward - function name or array( class, method )
+	 * @return    bool
 	 */
 	public static function register_view( $route = NULL, $status = 0, $view = NULL ) {
 		do_action( 'AHEE__EE_Config__register_view__begin',$route,$status,$view );
@@ -696,6 +1155,7 @@ final class EE_Config {
 			return FALSE;
 		}
 		EE_Config::$_module_view_map[ $route ][ absint( $status ) ] = $view;
+		return TRUE;
 	}
 
 
@@ -708,7 +1168,7 @@ final class EE_Config {
 	 *  @access 	public
 	 *  @param 	string 		$route - "pretty" public alias for module method
 	 *  @param 	integer	$status - integer value corresponding  to status constant strings set in module parent class, allows different views to be served based on status
-	 *  @return 	mixed string | NULL
+	 *  @return 	string
 	 */
 	public static function get_view( $route = NULL, $status = 0 ) {
 		do_action( 'AHEE__EE_Config__get_view__begin',$route,$status );
@@ -720,25 +1180,8 @@ final class EE_Config {
 
 
 
-
-	/**
-	 * 	__sleep
-	 *
-	 *  @access 	public
-	 *  @return 	array
-	 */
-	public function __sleep() {
-		return apply_filters( 'FHEE__EE_Config__sleep',array(
-			'core',
-			'organization',
-			'currency',
-			'registration',
-			'admin',
-			'template_settings',
-			'map_settings',
-			'gateway',
-			'addons'
-		) );
+	public function shutdown() {
+		update_option( 'ee_config_option_names', $this->_config_option_names );
 	}
 
 
@@ -761,10 +1204,25 @@ class EE_Config_Base{
 	 */
 //	public function __get($a) { return apply_filters('FHEE__'.get_class($this).'__get__'.$a,$this->$a); }
 //	public function __set($a,$b) { return apply_filters('FHEE__'.get_class($this).'__set__'.$a, $this->$a = $b ); }
+	/**
+	 * 		__isset
+	 */
 	public function __isset($a) { return FALSE; }
+	/**
+	 * 		__unset
+	 */
 	public function __unset($a) { return FALSE; }
+	/**
+	 * 		__clone
+	 */
 	public function __clone() { return FALSE; }
+	/**
+	 * 		__wakeup
+	 */
 	public function __wakeup() { return FALSE; }
+	/**
+	 * 		__destruct
+	 */
 	public function __destruct() { return FALSE; }
 }
 
@@ -798,12 +1256,22 @@ class EE_Core_Config extends EE_Config_Base {
 	public $txn_page_id;
 	public $thank_you_page_id;
 	public $cancel_page_id;
+	/**
+	 * The next 4 vars are the URLs of critical EE pages.
+	 * @var int
+	 */
+	public $reg_page_url;
+	public $txn_page_url;
+	public $thank_you_page_url;
+	public $cancel_page_url;
+
+
 
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Core_Config
 	 */
 	public function __construct() {
 		$current_network_main_site = is_multisite() ? get_current_site() : NULL;
@@ -817,12 +1285,23 @@ class EE_Core_Config extends EE_Config_Base {
 		$this->module_route_map = array();
 		$this->module_forward_map = array();
 		$this->module_view_map = array();
+		// critical EE page IDs
 		$this->reg_page_id = FALSE;
 		$this->txn_page_id = FALSE;
 		$this->thank_you_page_id = FALSE;
 		$this->cancel_page_id = FALSE;
+		// critical EE page URLs
+		$this->reg_page_url = FALSE;
+		$this->txn_page_url = FALSE;
+		$this->thank_you_page_url = FALSE;
+		$this->cancel_page_url = FALSE;
 	}
 
+
+
+	/**
+	 * @return array
+	 */
 	public function get_critical_pages_array() {
 		return array(
 			$this->reg_page_id,
@@ -831,6 +1310,70 @@ class EE_Core_Config extends EE_Config_Base {
 			$this->cancel_page_id
 		);
 	}
+
+
+	/**
+	 * @return array
+	 */
+	public function get_critical_pages_shortcodes_array() {
+		return array(
+			$this->reg_page_id => 'ESPRESSO_CHECKOUT',
+			$this->txn_page_id => 'ESPRESSO_TXN_PAGE',
+			$this->thank_you_page_id => 'ESPRESSO_THANK_YOU',
+			$this->cancel_page_id => 'ESPRESSO_CANCELLED'
+		);
+	}
+
+	/**
+	 *  gets/returns URL for EE reg_page
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function reg_page_url() {
+		if ( ! $this->reg_page_url ) {
+			$this->reg_page_url = get_permalink( $this->reg_page_id );
+		}
+		return $this->reg_page_url;
+	}
+	/**
+	 *  gets/returns URL for EE txn_page
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function txn_page_url() {
+		if ( ! $this->txn_page_url ) {
+			$this->txn_page_url = get_permalink( $this->txn_page_id );
+		}
+		return $this->txn_page_url;
+	}
+	/**
+	 *  gets/returns URL for EE thank_you_page
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function thank_you_page_url() {
+		if ( ! $this->thank_you_page_url ) {
+			$this->thank_you_page_url = get_permalink( $this->thank_you_page_id );
+		}
+		return $this->thank_you_page_url;
+	}
+	/**
+	 *  gets/returns URL for EE cancel_page
+	 *
+	 *  @access 	public
+	 *  @return 	string
+	 */
+	public function cancel_page_url() {
+		if ( ! $this->cancel_page_url ) {
+			$this->cancel_page_url = get_permalink( $this->cancel_page_id );
+		}
+		return $this->cancel_page_url;
+	}
+
+
 
 }
 
@@ -961,11 +1504,13 @@ class EE_Organization_Config extends EE_Config_Base {
 	 */
 	public $instagram;
 
+
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Organization_Config
 	 */
 	public function __construct() {
 		// set default organization settings
@@ -1051,31 +1596,33 @@ class EE_Currency_Config extends EE_Config_Base {
 	public $thsnds;
 
 
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param null $CNT_ISO
+	 * @return \EE_Currency_Config
 	 */
 	public function __construct( $CNT_ISO = NULL ) {
+
 		// get country code from organization settings or use default
-		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : 'US';
+		$ORG_CNT = isset( EE_Registry::instance()->CFG->organization ) && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config ? EE_Registry::instance()->CFG->organization->CNT_ISO : NULL;
 		// but override if requested
 		$CNT_ISO = ! empty( $CNT_ISO ) ? $CNT_ISO : $ORG_CNT;
-		// so if we have a country code and EE core is ready to go...
-		if ( ! empty( $CNT_ISO ) && EE_Maintenance_Mode::instance()->models_can_query() && ! get_option( 'ee_espresso_activation' )) {
-			// retreive the country settings from the db, just in case they have been customized
-			if ( $country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO )) {
-				if ( $country instanceof EE_Country ) {
-					$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR
-					$this->name = $country->currency_name_single();	// Dollar
-					$this->plural = $country->currency_name_plural(); 	// Dollars
-					$this->sign =  $country->currency_sign(); 			// currency sign: $
-					$this->sign_b4 = $country->currency_sign_before(); 		// currency sign before or after: $TRUE  or  FALSE$
-					$this->dec_plc = $country->currency_decimal_places();	// decimal places: 2 = 0.00  3 = 0.000
-					$this->dec_mrk = $country->currency_decimal_mark();	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
-					$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
-				}
+		// so if that all went well, and we are not in M-Mode (cuz you can't query the db in M-Mode)
+		if ( ! empty( $CNT_ISO ) && ! EE_Maintenance_Mode::instance()->level() && ! get_option( 'ee_espresso_activation' )) {
+			// retrieve the country settings from the db, just in case they have been customized
+			$country = EE_Registry::instance()->load_model( 'Country' )->get_one_by_ID( $CNT_ISO );
+			if ( $country instanceof EE_Country ) {
+				$this->code = $country->currency_code(); 	// currency code: USD, CAD, EUR
+				$this->name = $country->currency_name_single();	// Dollar
+				$this->plural = $country->currency_name_plural(); 	// Dollars
+				$this->sign =  $country->currency_sign(); 			// currency sign: $
+				$this->sign_b4 = $country->currency_sign_before(); 		// currency sign before or after: $TRUE  or  FALSE$
+				$this->dec_plc = $country->currency_decimal_places();	// decimal places: 2 = 0.00  3 = 0.000
+				$this->dec_mrk = $country->currency_decimal_mark();	// decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
+				$this->thsnds = $country->currency_thousands_separator();	// thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
 			}
 		}
 		// fallback to hardcoded defaults, in case the above failed
@@ -1165,11 +1712,12 @@ class EE_Registration_Config extends EE_Config_Base {
       public $recaptcha_privatekey;
 
 
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Registration_Config
 	 */
 	public function __construct() {
 		// set default registration settings
@@ -1247,11 +1795,12 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $help_tour_activation;
 
 
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Admin_Config
 	 */
 	public function __construct() {
 		// set default general admin settings
@@ -1282,6 +1831,11 @@ class EE_Template_Config extends EE_Config_Base {
 	public $enable_default_style;
 
 	/**
+	* @var string $custom_style_sheet
+	*/
+	public $custom_style_sheet;
+
+	/**
 	* @var boolean $display_address_in_regform
 	*/
 	public $display_address_in_regform;
@@ -1302,15 +1856,17 @@ class EE_Template_Config extends EE_Config_Base {
 	public $current_espresso_theme;
 
 
+
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Template_Config
 	 */
 	public function __construct() {
 		// set default template settings
 		$this->enable_default_style = TRUE;
+		$this->custom_style_sheet = NULL;
 		$this->display_address_in_regform = TRUE;
 		$this->display_description_on_multi_reg_page = FALSE;
 		$this->use_custom_templates = FALSE;
@@ -1404,10 +1960,10 @@ class EE_Map_Config extends EE_Config_Base {
 
 
 	/**
-	 * 	class constructor
+	 *    class constructor
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @return \EE_Map_Config
 	 */
 	public function __construct() {
 		// set default map settings
@@ -1449,6 +2005,11 @@ class EE_Gateway_Config extends EE_Config_Base{
 	 */
 	public $active_gateways;
 
+
+
+	/**
+	 *	class constructor
+	 */
 	public function __construct(){
 		$this->payment_settings = array();
 		$this->active_gateways = array('Invoice'=>false);
@@ -1470,6 +2031,11 @@ class EE_Events_Archive_Config extends EE_Config_Base{
 	public $display_venue;
 	public $display_expired_events;
 
+
+
+	/**
+	 *	class constructor
+	 */
 	public function __construct(){
 		$this->display_status_banner = 0;
 		$this->display_description = 1;
@@ -1489,6 +2055,9 @@ class EE_Event_Single_Config extends EE_Config_Base{
 	public $display_status_banner_single;
 	public $display_venue;
 
+	/**
+	 *	class constructor
+	 */
 	public function __construct() {
 		$this->display_status_banner_single = 0;
 		$this->display_venue = 1;

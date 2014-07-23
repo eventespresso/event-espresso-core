@@ -38,7 +38,7 @@ abstract class EE_Model_Field_Base{
 		if($this->_name){
 			return $this->_name;
 		}else{
-			throw new EE_Error(sprintf(__("Model field '%s' has no name set. Did you make a model and forget to call teh parent model constructor?", "event_espresso"),get_class($this)));
+			throw new EE_Error(sprintf(__("Model field '%s' has no name set. Did you make a model and forget to call the parent model constructor?", "event_espresso"),get_class($this)));
 		}
 	}
 	function get_nicename(){
@@ -57,7 +57,7 @@ abstract class EE_Model_Field_Base{
 	}
 	/**
 	 * The default value in the model object's value domain. See lengthy comment about
-	 * value domains at teh top of EEM_Base
+	 * value domains at the top of EEM_Base
 	 * @return mixed
 	 */
 	function get_default_value(){

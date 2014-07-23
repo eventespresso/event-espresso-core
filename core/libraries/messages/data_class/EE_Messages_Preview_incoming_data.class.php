@@ -90,7 +90,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			$tkts = array();
 			foreach ( $tickets as $ticket ) {
 				$tkts[$ticket->ID()]['ticket'] = $ticket;
-				$reldatetime = $ticket->get_many_related('Datetime');
+				$reldatetime = $ticket->datetimes();
 				$tkts[$ticket->ID()]['dtt_objs'] = $reldatetime;
 				$tkts[$ticket->ID()]['att_objs'] = $attendees;
 				$tkts[$ticket->ID()]['count'] = count($attendees);
@@ -408,7 +408,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		);
 
 		//setup reg_objects
-		//note we're seting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
+		//note we're setting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
 		$this->reg_objs = array();
 		$regid = 9999990;
 		foreach ( $this->_attendees as $key => $attendee ) {

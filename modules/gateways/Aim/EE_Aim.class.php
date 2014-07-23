@@ -169,7 +169,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 	 * @param EE_Line_Item $line_item
 	 * @return boolean
 	 */
-	public function process_payment_start(EE_Line_Item $total_line_item, $transaction=null) {
+	public function process_payment_start(EE_Line_Item $total_line_item, $transaction=null, $total_to_charge = null) {
 		$session_data = EE_Registry::instance()->SSN->get_session_data();
 		$billing_info = $session_data['billing_info'];
 
@@ -191,24 +191,28 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			}
 			$order_description = '';
 			$primary_registrant = $transaction->primary_registration();
-			foreach ($total_line_item->get_items() as $line_item) {
-				$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');
-				$order_description .= $line_item->desc().', ';
-//				$attendee = $registration->attendee();
-//				$attendee_full_name = $attendee ? $attendee->full_name() : '';
-//				$ticket = $registration->ticket();
-//				$this->addLineItem(
-//						$item_num++, substr($attendee_full_name, 0, 31), substr($attendee_full_name . " attending " . $registration->event_name() . " with ticket " . $ticket->name_and_info(), 0, 255), 1, $registration->price_paid(), 'N');
+			//if we're are charging for the full amount, show the normal line items
+			if( $total_to_charge === NULL && ! $transaction->paid()){//client code specified an amount
+				foreach ($total_line_item->get_items() as $line_item) {
+					$this->addLineItem($item_num++, $line_item->name(), $line_item->desc(), $line_item->quantity(), $line_item->unit_price(), 'N');
+					$order_description .= $line_item->desc().', ';
+				}
+				$total_to_charge = $total_line_item->total();//$session_data['_cart_grand_total_amount'];
+				foreach($total_line_item->tax_descendants() as $tax_line_item){
+					$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax_line_item->total(), 'N');
+				}
+			}else{//partial payment
+				if( ! $total_to_charge){//they didn't set the total to charge, so it must have a balance
+					$total_to_charge = $transaction->remaining();
+				}
+				$order_description = sprintf(__("Partial payment of %s for %s", "event_espresso"),$total_to_charge,$primary_registrant->reg_code());
 			}
 
-			$grand_total = $total_line_item->total();//$session_data['_cart_grand_total_amount'];
-			foreach($total_line_item->tax_descendants() as $tax_line_item){
-				$this->addLineItem($item_num++, $tax_line_item->name(), $tax_line_item->desc(), 1, $tax_line_item->total(), 'N');
-			}
-
+			
+			
 
 			//start transaction
-			$this->setField('amount', $grand_total);
+			$this->setField('amount', $total_to_charge);
 			$this->setField('description',substr(rtrim($order_description, ', '), 0, 255));
 			$this->setField('card_num', $billing_info['_reg-page-billing-card-nmbr-' . $this->_gateway_name]['value']);
 			$this->setField('exp_date', $billing_info['_reg-page-billing-card-exp-date-mnth-' . $this->_gateway_name]['value'] . $billing_info['_reg-page-billing-card-exp-date-year-' . $this->_gateway_name]['value']);
@@ -221,9 +225,9 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			$this->setField('state', $billing_info['_reg-page-billing-state-' . $this->_gateway_name]['value']);
 			$this->setField('zip', $billing_info['_reg-page-billing-zip-' . $this->_gateway_name]['value']);
 			$this->setField('cust_id', $primary_registrant->ID());
-			//invoice_num would be nice to have itbe unique per SPCO page-load, taht way if users
-			//press back, they don't submit a duplicate. However, we may be keepin gthe user on teh same spco page
-			//in which case, we need to generate teh invoice num per request right here...
+			//invoice_num would be nice to have itbe unique per SPCO page-load, that way if users
+			//press back, they don't submit a duplicate. However, we may be keepin g the user on the same spco page
+			//in which case, we need to generate the invoice num per request right here...
 			$this->setField('invoice_num', wp_generate_password(12,false));//$billing_info['_reg-page-billing-invoice-'.$this->_gateway_name]['value']);
 
 
@@ -261,7 +265,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				$success = $payment->save();
 				$successful_update_of_transaction = $this->update_transaction_with_payment($transaction, $payment);
 				//we successfully got a response from AIM. the payment might not necessarily have gone through
-				//but we did our job, so return sucess
+				//but we did our job, so return success
 				$return = array('success' => true);
 
 			} else {

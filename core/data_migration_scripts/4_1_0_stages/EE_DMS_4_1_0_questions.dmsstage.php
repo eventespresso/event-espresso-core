@@ -140,7 +140,7 @@ class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage{
 		return $new_id;
 	}
 	/**
-	 * Adds a question option to teh db
+	 * Adds a question option to the db
 	 * @global type $wpdb
 	 * @param string $option
 	 * @param int $question_id

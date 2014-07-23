@@ -301,11 +301,36 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	}
 
 	protected function _update_espresso_page_settings() {
-
-		EE_Registry::instance()->CFG->core->reg_page_id = isset( $this->_req_data['reg_page_id'] ) ? absint( $this->_req_data['reg_page_id'] ) : EE_Registry::instance()->CFG->core->reg_page_id;
-		EE_Registry::instance()->CFG->core->txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : EE_Registry::instance()->CFG->core->txn_page_id;
-		EE_Registry::instance()->CFG->core->thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : EE_Registry::instance()->CFG->core->thank_you_page_id;
-		EE_Registry::instance()->CFG->core->cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : EE_Registry::instance()->CFG->core->cancel_page_id;
+		// capture incoming request data
+		$reg_page_id = isset( $this->_req_data['reg_page_id'] ) ? absint( $this->_req_data['reg_page_id'] ) : EE_Registry::instance()->CFG->core->reg_page_id;
+		$txn_page_id = isset( $this->_req_data['txn_page_id'] ) ? absint( $this->_req_data['txn_page_id'] ) : EE_Registry::instance()->CFG->core->txn_page_id;
+		$thank_you_page_id = isset( $this->_req_data['thank_you_page_id'] ) ? absint( $this->_req_data['thank_you_page_id'] ) : EE_Registry::instance()->CFG->core->thank_you_page_id;
+		$cancel_page_id = isset( $this->_req_data['cancel_page_id'] ) ? absint( $this->_req_data['cancel_page_id'] ) : EE_Registry::instance()->CFG->core->cancel_page_id;
+		// pack critical_pages into an array
+		$critical_pages = array(
+			'reg_page_id' 				=> $reg_page_id,
+			'txn_page_id' 				=> $txn_page_id,
+			'thank_you_page_id' 	=> $thank_you_page_id,
+			'cancel_page_id' 		=> $cancel_page_id
+		);
+		foreach ( $critical_pages as $critical_page_name => $critical_page_id ) {
+			// has the page changed ?
+			if ( EE_Registry::instance()->CFG->core->$critical_page_name != $critical_page_id ) {
+				// grab post object for old page
+				$post = get_post( EE_Registry::instance()->CFG->core->$critical_page_name );
+				// update post shortcodes for old page
+				EE_Admin::parse_post_content_on_save( $critical_page_id, $post );
+				// grab post object for new page
+				$post = get_post( $critical_page_id );
+				// update post shortcodes for new page
+				EE_Admin::parse_post_content_on_save( $critical_page_id, $post );
+			}
+		}
+		// set page IDs
+		EE_Registry::instance()->CFG->core->reg_page_id = $reg_page_id;
+		EE_Registry::instance()->CFG->core->txn_page_id = $txn_page_id;
+		EE_Registry::instance()->CFG->core->thank_you_page_id = $thank_you_page_id;
+		EE_Registry::instance()->CFG->core->cancel_page_id = $cancel_page_id;
 
 		EE_Registry::instance()->CFG->core = apply_filters( 'FHEE__General_Settings_Admin_Page___update_espresso_page_settings__CFG_core', EE_Registry::instance()->CFG->core, $this->_req_data );
 
@@ -486,7 +511,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 		$this->_template_args['values'] = $this->_yes_no_values;
 		$this->_template_args['use_personnel_manager'] = isset( EE_Registry::instance()->CFG->admin->use_personnel_manager ) ? absint( EE_Registry::instance()->CFG->admin->use_personnel_manager ) : FALSE;
 		$this->_template_args['use_dashboard_widget'] = isset( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) ? absint( EE_Registry::instance()->CFG->admin->use_dashboard_widget ) : TRUE;
-		$this->_template_args['events_in_dasboard'] = isset( EE_Registry::instance()->CFG->admin->events_in_dasboard ) ? absint( EE_Registry::instance()->CFG->admin->events_in_dasboard ) : 30;
+		$this->_template_args['events_in_dashboard'] = isset( EE_Registry::instance()->CFG->admin->events_in_dashboard ) ? absint( EE_Registry::instance()->CFG->admin->events_in_dashboard ) : 30;
 		$this->_template_args['use_event_timezones'] = isset( EE_Registry::instance()->CFG->admin->use_event_timezones ) ? absint( EE_Registry::instance()->CFG->admin->use_event_timezones ) : FALSE;
 		$this->_template_args['use_full_logging'] = isset( EE_Registry::instance()->CFG->admin->use_full_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_full_logging ) : FALSE;
 		$this->_template_args['use_remote_logging'] = isset( EE_Registry::instance()->CFG->admin->use_remote_logging ) ? absint( EE_Registry::instance()->CFG->admin->use_remote_logging ) : FALSE;
@@ -505,7 +530,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page {
 	protected function _update_admin_option_settings() {
 		EE_Registry::instance()->CFG->admin->use_personnel_manager = isset( $this->_req_data['use_personnel_manager'] ) ? absint( $this->_req_data['use_personnel_manager'] ) : EE_Registry::instance()->CFG->admin->use_personnel_manager;
 		EE_Registry::instance()->CFG->admin->use_dashboard_widget = isset( $this->_req_data['use_dashboard_widget'] ) ? absint( $this->_req_data['use_dashboard_widget'] ) : EE_Registry::instance()->CFG->admin->use_dashboard_widget;
-		EE_Registry::instance()->CFG->admin->events_in_dasboard = isset( $this->_req_data['events_in_dasboard'] ) ? absint( $this->_req_data['events_in_dasboard'] ) : EE_Registry::instance()->CFG->admin->events_in_dasboard;
+		EE_Registry::instance()->CFG->admin->events_in_dashboard = isset( $this->_req_data['events_in_dashboard'] ) ? absint( $this->_req_data['events_in_dashboard'] ) : EE_Registry::instance()->CFG->admin->events_in_dashboard;
 		EE_Registry::instance()->CFG->admin->use_event_timezones = isset( $this->_req_data['use_event_timezones'] ) ? absint( $this->_req_data['use_event_timezones'] ) : EE_Registry::instance()->CFG->admin->use_event_timezones;
 		EE_Registry::instance()->CFG->admin->use_full_logging = isset( $this->_req_data['use_full_logging'] ) ? absint( $this->_req_data['use_full_logging'] ) : EE_Registry::instance()->CFG->admin->use_full_logging;
 		EE_Registry::instance()->CFG->admin->use_remote_logging = isset( $this->_req_data['use_remote_logging'] ) ? absint( $this->_req_data['use_remote_logging'] ) : EE_Registry::instance()->CFG->admin->use_remote_logging;

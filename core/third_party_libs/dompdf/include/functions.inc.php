@@ -171,7 +171,7 @@ function build_url($protocol, $host, $base_path, $url) {
 	//not known in php app code, treat as abs path
 	//($url[1] !== ':' || ($url[2]!=='\\' && $url[2]!=='/'))
 	if ($url[0] !== '/' && (strtoupper(substr(PHP_OS, 0, 3)) !== 'WIN' || ($url[0] !== '\\' && $url[1] !== ':'))) {
-	  // For rel path and local acess we ignore the host, and run the path through realpath()
+	  // For real path and local access we ignore the host, and run the path through realpath()
 	  $ret .= realpath($base_path).'/';
 	}
 	$ret .= $url;

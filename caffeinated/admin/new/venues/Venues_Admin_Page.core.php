@@ -880,7 +880,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function get_venues( $per_page = 10, $count = FALSE ) {
-		global $wpdb;
 
 		$_orderby = !empty( $this->_req_data['orderby'] ) ? $this->_req_data['orderby'] : '';
 
@@ -1083,7 +1082,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	protected function _delete_category($cat_id) {
-		global $wpdb;
 		$cat_id = absint( $cat_id );
 		wp_delete_term( $cat_id, 'espresso_venue_categories' );
 	}
@@ -1169,7 +1167,6 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 
 
 	public function get_categories( $per_page = 10, $current_page = 1, $count = FALSE ) {
-		global $wpdb;
 
 		//testing term stuff
 		$orderby = isset( $this->_req_data['orderby'] ) ? $this->_req_data['orderby'] : 'Term.term_id';

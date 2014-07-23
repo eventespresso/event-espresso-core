@@ -2,7 +2,7 @@
 /**
  * meant to convert DBs between 4.1.x to 4.2.0
  * mostly just 
- * -adds QGQ_order to teh question-group_question table;
+ * -adds QGQ_order to the question-group_question table;
  * -adds DTT_name and DTT_description to the datetime table;
  */
 //make sure we have all the stages loaded too

@@ -61,7 +61,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	protected $_list_table_object;
 
 	//bools
-	protected $_is_UI_request;
+	protected $_is_UI_request = NULL; //this starts at null so we can have no header routes progress through two states.
 	protected $_routing;
 
 	//list table args
@@ -234,8 +234,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * $this->_page_routes = array(
 	 * 		'default' => array(
 	 * 			'func' => '_default_method_handling_route',
-	 * 			'args' => array('array','of','args')
-	 * 			'noheader' => true //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
+	 * 			'args' => array('array','of','args'),
+	 * 			'noheader' => true, //add this in if this page route is processed before any headers are loaded (i.e. ajax request, backend processing)
+	 *			'headers_sent_route'=>'headers_route_reference'//add this if noheader=>true, and you want to load a headers route after.  The string you enter here should match the defined route reference for a headers sent route.
 	 * 		),
 	 * 		'insert_item' => '_method_for_handling_insert_item' //this can be used if all we need to have is a handling method.
 	 * 		)
@@ -726,10 +727,9 @@ abstract class EE_Admin_Page extends EE_BASE {
 			// user error msg
 			$error_msg = sprintf( __('No page routes have been set for the %s admin page.', 'event_espresso'), $this->_admin_page_title );
 			// developer error msg
-			$error_msg .=  '||' . $error_msg . __( ' Make sure the "set_page_routes()" method exists, and is seting the "_page_routes" array properly.', 'event_espresso' );
+			$error_msg .=  '||' . $error_msg . __( ' Make sure the "set_page_routes()" method exists, and is setting the "_page_routes" array properly.', 'event_espresso' );
 			throw new EE_Error( $error_msg );
 		}
-
 
 		// and that the requested page route exists
 		if ( array_key_exists( $this->_req_action, $this->_page_routes )) {
@@ -752,12 +752,16 @@ abstract class EE_Admin_Page extends EE_BASE {
 			throw new EE_Error( $error_msg );
 		}
 
-		//lets set if this is a UI request or not.
-		$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] != 'true' ) ? TRUE : FALSE;
+
+		//first lets' catch if the UI request has EVER been set.
+		if ( $this->_is_UI_request === NULL ) {
+			//lets set if this is a UI request or not.
+			$this->_is_UI_request = ( ! isset( $this->_req_data['noheader'] ) || $this->_req_data['noheader'] !== TRUE ) ? TRUE : FALSE;
 
 
-		//wait a minute... we might have a noheader in the route array
-		$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
+			//wait a minute... we might have a noheader in the route array
+			$this->_is_UI_request = is_array($this->_route) && isset($this->_route['noheader'] ) && $this->_route['noheader'] ? FALSE : $this->_is_UI_request;
+		}
 
 		$this->_set_current_labels();
 
@@ -822,7 +826,8 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * @return void
 	 */
 	protected function _route_admin_request() {
-		$this->_verify_routes();
+		if (  ! $this->_is_UI_request )
+			$this->_verify_routes();
 
 		$nonce_check = isset( $this->_route_config['require_nonce'] ) ? $this->_route_config['require_nonce'] : TRUE;
 
@@ -831,10 +836,13 @@ abstract class EE_Admin_Page extends EE_BASE {
 			$nonce = isset($this->_req_data[ $this->_req_nonce  ]) ? sanitize_text_field( $this->_req_data[ $this->_req_nonce  ] ) : '';
 			$this->_verify_nonce( $nonce, $this->_req_nonce );
 		}
-		//set the nav_tabs array
-		$this->_set_nav_tabs();
+		//set the nav_tabs array but ONLY if this is  UI_request
+		if ( $this->_is_UI_request )
+			$this->_set_nav_tabs();
+
 		// grab callback function
 		$func = is_array( $this->_route ) ? $this->_route['func'] : $this->_route;
+
 		// check if callback has args
 		$args = is_array( $this->_route ) && isset( $this->_route['args'] ) ? $this->_route['args'] : array();
 
@@ -865,6 +873,32 @@ abstract class EE_Admin_Page extends EE_BASE {
 			if ( !empty( $error_msg ) )
 				throw new EE_Error( $error_msg );
 		}
+
+		//if we've routed and this route has a no headers route AND a sent_headers_route, then we need to reset the routing properties to the new route.
+		//now if UI request is FALSE and noheader is true AND we have a headers_sent_route in the route array then let's set UI_request to true because the no header route has a second func after headers have been sent.
+		if ( $this->_is_UI_request === FALSE && ! empty( $this->_route['headers_sent_route'] ) ) {
+			$this->_reset_routing_properties( $this->_route['headers_sent_route'] );
+		}
+	}
+
+
+
+
+	/**
+	 * This method just allows the resetting of page properties in the case where a no headers
+	 * route redirects to a headers route in its route config.
+	 *
+	 * @since   4.3.0
+	 *
+	 * @param  string    $new_route   New (non header) route to redirect to.
+	 * @return   void
+	 */
+	protected function _reset_routing_properties( $new_route ) {
+		$this->_is_UI_request = TRUE;
+		//now we set the current route to whatever the headers_sent_route is set at
+		$this->_req_data['action'] = $new_route;
+		//rerun page setup
+		$this->_page_setup();
 	}
 
 
@@ -877,7 +911,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 	 * 	@access public
 	 *	@param array $args
 	 *	@param string $url
-	 * 	@return void
+	 * 	@return string
 	 */
 	public static function add_query_args_and_nonce( $args = array(), $url = FALSE ) {
 		EE_Registry::instance()->load_helper('URL');
@@ -920,6 +954,7 @@ abstract class EE_Admin_Page extends EE_BASE {
 
 			//is there a help tour for the current route?  if there is let's setup the tour buttons
 			if ( isset( $this->_help_tour[$this->_req_action]) ) {
+				$tb = array();
 				$tour_buttons = '<div class="ee-abs-container"><div class="ee-help-tour-restart-buttons">';
 				foreach ( $this->_help_tour['tours'] as $tour ) {
 					//if this is the end tour then we don't need to setup a button
@@ -2610,10 +2645,10 @@ abstract class EE_Admin_Page extends EE_BASE {
 		// how many records affected ? more than one record ? or just one ?
 		if ( $success > 1 ) {
 			// set plural msg
-			EE_Error::add_success( sprintf( __('The %s have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
+			EE_Error::add_success( sprintf( __('The "%s" have been successfully %s.', 'event_espresso'), $what, $action_desc ), __FILE__, __FUNCTION__, __LINE__);
 		} else if ( $success == 1 ) {
 			// set singular msg
-			EE_Error::add_success( sprintf( __('The %s has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
+			EE_Error::add_success( sprintf( __('The "%s" has been successfully %s.', 'event_espresso'), $what, $action_desc), __FILE__, __FUNCTION__, __LINE__ );
 		}
 
 		// check that $query_args isn't something crazy
@@ -3009,15 +3044,14 @@ abstract class EE_Admin_Page extends EE_BASE {
 		}
 		// and save it (note we're also doing the network save here)
 		$net_saved = is_main_site() ? EE_Network_Config::instance()->update_config( FALSE, FALSE ) : TRUE;
-		if ( EE_Config::instance()->update_espresso_config( FALSE, FALSE ) && $net_saved ) {
-			EE_Error::add_success( sprintf( __('%s have been successfully updated.', 'event_espresso'), $tab ));
+		$config_saved = EE_Config::instance()->update_espresso_config( FALSE, FALSE );
+		if ( $config_saved && $net_saved ) {
+			EE_Error::add_success( sprintf( __('"%s" have been successfully updated.', 'event_espresso'), $tab ));
 			return TRUE;
 		} else {
-			$user_msg = sprintf( __('An error occurred. The %s were not updated.', 'event_espresso'), $tab );
-			EE_Error::add_error( $user_msg, $file, $func, $line  );
+			EE_Error::add_error( sprintf( __('The "%s" were not updated.', 'event_espresso'), $tab ), $file, $func, $line  );
 			return FALSE;
 		}
-
 	}
 
 
