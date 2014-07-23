@@ -41,8 +41,6 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-		$this->_validate_list_requirements();
-		$this->_set_shortcode_helper();
 
 		switch ( $shortcode ) {
 			case '[TICKET_LINE_ITEM_LIST]' :
@@ -75,13 +73,15 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_ticket_line_item_list() {
 
-		if ( ! $this->_data['data'] instanceof EE_Ticket ) {
+		$this->_set_shortcode_helper();
+
+		if ( ! $this->_data instanceof EE_Ticket ) {
 			return '';
 		}
 
 		$valid_shortcodes = array( 'line_item', 'line_item_list' );
 
-		$ticket = $this->_data['data'];
+		$ticket = $this->_data;
 		$templates = $this->_extra_data['template'];
 		$addressee_obj = $this->_extra_data['data'];
 
@@ -106,6 +106,9 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 	 * @return string  parsed tax line item list.
 	 */
 	private function _get_tax_line_item_list() {
+
+		$this->_validate_list_requirements();
+		$this->_set_shortcode_helper();
 
 		if ( ! $this->_data['data'] instanceof EE_Messages_Addressee ) {
 			return '';
@@ -139,12 +142,14 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_price_mod_line_item_list() {
 
-		if ( ! $this->_data['data'] instanceof EE_Line_Item ) {
+		$this->_set_shortcode_helper();
+
+		if ( ! $this->_data instanceof EE_Line_Item ) {
 			return '';
 		}
 
 		//made it here so we're good to go.
-		$main_line_item = $this->_data['data'];
+		$main_line_item = $this->_data;
 		$templates = $this->_extra_data['template'];
 		$addressee_obj = $this->_extra_data['data'];
 
