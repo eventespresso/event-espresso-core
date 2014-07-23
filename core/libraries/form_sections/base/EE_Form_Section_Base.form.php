@@ -36,12 +36,6 @@ abstract class EE_Form_Section_Base {
 	protected $_name;
 
 	/**
-	 * a unique identifier for this form that can be called programmatically
-	 * @var string
-	 */
-	protected $_ID;
-
-	/**
 	 * $_html_id
 	 * @var string
 	 */
@@ -102,26 +96,9 @@ abstract class EE_Form_Section_Base {
 		$this->_construction_finalized = TRUE;
 		$this->_parent_section = $parent_form_section;
 		$this->_name = $name;
-		$this->_set_id_if_empty();
 		$this->_set_default_html_id_if_empty();
 	}
 
-
-
-	/**
-	 * Sets the id to its default value, if none was specified in the constructor.
-	 * Calculation involves using the name
-	 * return void
-	 */
-	protected function _set_id_if_empty(){
-		if ( ! $this->_ID ) {
-			if ( $this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper ) {
-				$this->_ID = $this->_parent_section->ID() . '-' . sanitize_key( str_replace( array( '&nbsp;', ' ', '-' ), '_', $this->name() ));
-			} else {
-				$this->_ID = sanitize_key( str_replace( array( '&nbsp;', ' ', '-' ), '_', $this->name() ));
-			}
-		}
-	}
 
 
 
@@ -159,14 +136,6 @@ abstract class EE_Form_Section_Base {
 	 */
 	abstract public function get_html_and_js();
 
-
-
-	/**
-	 * @return string
-	 */
-	public function ID(){
-		return $this->_ID;
-	}
 
 
 	/**
@@ -222,8 +191,10 @@ abstract class EE_Form_Section_Base {
 	}
 
 
+
 	/**
 	 * Gets the name of the form section. This is not the same as the HTML name.
+	 * @throws EE_Error
 	 * @return string
 	 */
 	function name(){
@@ -265,21 +236,6 @@ abstract class EE_Form_Section_Base {
 	public function form_close() {
 		return EEH_Formatter::nl(-1) . '</form>' . EEH_Formatter::nl() . '<!-- end of ee-' . $this->html_id() . '-form -->' . EEH_Formatter::nl();
 	}
-
-
-
-	/**
-	 * returns HTML for generating an HTML form submit button
-	 * @param string $value
-	 * @param bool   $primary
-	 * @param string $btn_size
-	 * @param string $other_attributes
-	 * @return string
-	 */
-	//	public function form_submit_button( $value = 'Update', $primary = TRUE, $btn_size = 'large', $other_attributes = '', $extra_class = '') {
-	//		$primary = $primary === TRUE ? 'primary' : 'secondary';
-	//		return EEH_Formatter::nl() . '<input id="ee-' . $this->html_id() . '-submit" class="button button-' . $primary . ' button-' . $btn_size . ' ' . $extra_class . '" type="submit" value="' . $value . '" name="ee_' . $this->html_id() . '_submit" ' . $other_attributes . '/>';
-	//	}
 
 
 
