@@ -692,8 +692,8 @@ final class EE_Registry {
 		$model = $this->load_model( $model_name );
 		$model_class_name = get_class( $model );
 		//get that model reset it and make sure we nuke the old reference to it
-		$this->LIB->$model_class_name = $model->reset();
-		return $model;
+		$this->LIB->$model_class_name = $model::reset();
+		return $this->LIB->$model_class_name;
 	}
 
 

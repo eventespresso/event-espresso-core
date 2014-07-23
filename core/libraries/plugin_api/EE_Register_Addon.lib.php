@@ -327,7 +327,7 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			if ( ! empty( self::$_settings[ $addon_name ]['model_extension_paths'] ) ||
 					! empty( self::$_settings[ $addon_name ]['class_extension_paths'] )) {
 				// add to list of shortcodes to be registered
-				EE_Register_Model::deregister( $addon_name );
+				EE_Register_Model_Extensions::deregister( $addon_name );
 			}
 			remove_action('deactivate_'.EE_Registry::instance()->addons->$class_name->get_main_plugin_file_basename(),  array( EE_Registry::instance()->addons->$class_name, 'deactivation' ) );
 			unset(EE_Registry::instance()->addons->$class_name);

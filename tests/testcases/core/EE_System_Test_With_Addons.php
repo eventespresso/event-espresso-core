@@ -75,7 +75,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//that it needed upon new activation (and so we call the function that does it, which
 		//is normally called a little later in the request)
 		EE_System::instance()->perform_activations_upgrades_and_migrations();
-		$this->assertTableExists('new_addon');
+		$this->assertTableExists('esp_new_addon_thing');
 	}
 
 	public function test_detect_activations_or_upgrades__upgrade_on_activation(){
@@ -211,11 +211,29 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		EE_System::instance()->perform_activations_upgrades_and_migrations();
 		$this->assertTableExists('new_addon');
 	}
+
+	private function get_real_option( $option){
+		global $wpdb;
+
+		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $option ) );
+		if( $row ){
+			return $row->option_value;
+		}else{
+			return NULL;
+		}
+	}
 	/**
 	 * Registers the mock addon so it can be used for testing
 	 */
 	public function setUp(){
+		global $show_queries;
+		$show_queries = 1;
+		echo "setUp before calling parent db state is:";
+		var_dump( $this->get_real_option( EE_Data_Migration_Manager::current_database_state ));
 		parent::setUp();
+		echo "setUp after calling parent. db state is:";
+		var_dump( $this->get_real_option( EE_Data_Migration_Manager::current_database_state ));
+
 		$this->_pretend_addon_hook_time();
 		$mock_addon_path = EE_TESTS_DIR.'mocks/addons/new-addon/';
 		EE_Register_Addon::register($this->_addon_name, array(
@@ -261,6 +279,8 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 			$this->_stop_pretending_addon_hook_time();
 		}
 		parent::tearDown();
+		echo "rela db state:".
+		$this->get_real_option( EE_Data_Migration_Manager::current_database_state );
 	}
 
 }

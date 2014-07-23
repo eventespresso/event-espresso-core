@@ -28,10 +28,10 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 			'min_core_version'=>'4.0.0',
 			'main_file_path'=>$this->_mock_addon_path . 'espresso-new-addon.php',
 			'dms_paths'=>$this->_mock_addon_path . 'core/data_migration_scripts',
-			'model_paths' => EE_MOCKS_DIR . 'core/db_models',
-			'class_paths' => EE_MOCKS_DIR . 'core/db_classes',
-			'class_extension_paths' => EE_MOCKS_DIR . 'core/db_class_extensions',
-			'model_extension_paths' => EE_MOCKS_DIR . 'core/db_model_exntesions',
+			'model_paths' => $this->_mock_addon_path . 'core/db_models',
+			'class_paths' => $this->_mock_addon_path . 'core/db_classes',
+			'class_extension_paths' => $this->_mock_addon_path . 'core/db_class_extensions',
+			'model_extension_paths' => $this->_mock_addon_path . 'core/db_model_extensions',
 
 		);
 		$this->_addon_name = 'New_Addon';
@@ -96,12 +96,19 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 	}
 
 	function test_register_mock_addon_success(){
+		//ensure model and class extensions weren't setup beforehand
+		$this->assertFalse( $this->_class_has_been_extended() );
+		$this->assertFalse( $this->_model_has_been_extended() );
+
 		$this->_pretend_addon_hook_time();
 		if( did_action( 'activate_plugin' ) ){
 			$this->assertTrue( FALSE );
 		}
 		$this->assertFalse(property_exists(EE_Registry::instance()->addons, 'EE_New_Addon'));
+
+
 		EE_Register_Addon::register($this->_addon_name, $this->_reg_args);
+
 		$this->assertAttributeNotEmpty('EE_New_Addon',EE_Registry::instance()->addons);
 		//check DMSs were setup properly too
 		$DMSs_available = EE_Data_Migration_Manager::reset()->get_all_data_migration_scripts_available();
@@ -109,6 +116,25 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 		//and check the deactivation hook was setup properly
 		$this->assertTrue( has_action( 'deactivate_' .  EE_Registry::instance()->addons->EE_New_Addon->get_main_plugin_file_basename() ) );
+
+		//check that the model was registered properly
+		EE_System::instance()->load_core_configuration();
+		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->non_abstract_db_models);
+		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->models);
+
+		//ok we know EE_DMS_New_Addon_0_0_2 has been registered, now just run it so we can run a query on the table it adds
+		//we want to create real tables, not just 'temporary' tables, plz. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
+		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
+		$dms = EE_Registry::instance()->load_dms('New_Addon_0_0_2');
+		$this->assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
+		echo "registe raddon success:";
+		var_dump( get_option( EE_Data_Migration_Manager::current_database_state ));
+		$dms->schema_changes_before_migration();
+		$dms->schema_changes_after_migration();
+		$this->assertTableExists( 'esp_new_addon_thing', 'New_Addon_Thing' );
+		//check that the model extension was registerd properly
+		$this->assertTrue( $this->_class_has_been_extended( TRUE ) );
+		$this->assertTrue( $this->_model_has_been_extended( TRUE ) );
 	}
 
 	/**
@@ -156,6 +182,14 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 			}
 			//verify the deactvation hook was removed
 			$this->assertFalse( has_action( 'deactivate_' . $main_file_path_before_deregistration ) );
+			//verify the models were deregistered
+			EE_System::instance()->load_core_configuration();
+			$this->assertArrayDoesNotContain('EEM_New_Addon_Thing', EE_Registry::instance()->non_abstract_db_models);
+			$this->assertArrayDoesNotContain('EEM_New_Addon_Thing', EE_Registry::instance()->models);
+			EE_Registry::instance()->reset_model( 'Attendee' );
+			//verify that the model and class extensions have been removed
+			$this->assertFalse( $this->_class_has_been_extended() );
+			$this->assertFalse( $this->_model_has_been_extended() );
 		}
 
 		//verify DMSs deregistered
@@ -189,6 +223,58 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 
 	protected function _pretend_after_plugin_activation(){
 		do_action('activate_plugin');
+	}
+
+	protected function _pretend_addon_hook_time() {
+		global $wp_actions;
+		unset( $wp_actions['AHEE__EEM_Attendee__construct__end'] );
+		parent::_pretend_addon_hook_time();
+	}
+	/**
+	 * Determines if the attendee class has been extended by teh mock extension
+	 * @return boolean
+	 */
+	private function _class_has_been_extended( $throw_error = FALSE){
+		try{
+			$a = EE_Attendee::new_instance();
+			$a->foobar();
+			return TRUE;
+		}catch(EE_Error $e){
+			if( $throw_error ){
+				throw $e;
+			}
+			return FALSE;
+		}
+	}
+
+
+	/**
+	 * Determines if the Attendee model has been extended by the mock extension
+	 * @return boolean
+	 */
+	private function _model_has_been_extended( $throw_error = FALSE){
+		try{
+			$att = EE_Registry::instance()->reset_model('Attendee');
+			if( ! $att->has_field('ATT_foobar')){
+				if( $throw_error ){
+					throw new EE_Error(sprintf( __( 'The field ATT_foobar is not on EEM_Attendee, but the extension should have added it. fields are: %s', 'event_espresso' ), implode(",",array_keys(EEM_Attendee::instance()->field_settings()))));
+				}
+				return FALSE;
+			}
+			if( ! $att->has_relation('New_Addon_Thing')){
+				if( $throw_error ){
+					throw new EE_Error(sprintf( __( 'The relation of type New_Addon_Thing on EEM_Attendee, but the extension should have added it. fields are: %s', 'event_espresso' ), implode(",",array_keys(EEM_Attendee::instance()->field_settings()))));
+				}
+				return FALSE;
+			}
+			$att->get_all_new_things();
+			return TRUE;
+		}catch(EE_Error $e){
+			if( $throw_error ){
+				throw $e;
+			}
+			return FALSE;
+		}
 	}
 }
 
