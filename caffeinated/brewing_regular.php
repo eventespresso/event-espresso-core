@@ -234,8 +234,7 @@ class EE_Brewing_Regular extends EE_Base {
 		add_filter('FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( $this, 'messages_autoload_paths'), 5 );
 		add_filter('FHEE__EE_Email_messenger__get_validator_config', array( $this, 'email_messenger_validator_config'), 5, 2 );
 		add_filter('FHEE__EE_Email_messenger__get_template_fields', array( $this, 'email_messenger_template_fields'), 5, 2 );
-		add_filter('FHEE__EE_Email_messenger__get_default_field_content', array( $this, 'email_default_field_content'), 5, 2 );
-		add_filter('FHEE__EE_Message_Template_Defaults___create_new_templates___templates', array( $this, 'message_types_default_field_content'), 5, 4 );
+		add_filter('FHEE__EE_Messages_Template_Pack__get_specific_template__contents', array( $this, 'new_default_templates'), 5, 7 );
 		add_filter('FHEE__EE_Messages_Base__get_valid_shortcodes', array( $this, 'message_types_valid_shortcodes'), 5, 2 );
 
 		//shortcode parsers
@@ -306,35 +305,72 @@ class EE_Brewing_Regular extends EE_Base {
 
 
 
-	public function email_default_field_content( $default_field_content, EE_Email_messenger $messenger ) {
-		$default_field_content['content']['question_list'] = __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'event_espresso');
-		return $default_field_content;
-	}
 
+	public function new_default_templates( $contents, $actual_path, EE_messenger $messenger, EE_message_type $message_type, $field, $context, EE_Messages_Template_Pack $template_pack  ) {
 
-
-	public function message_types_default_field_content( $default_field_content,  EE_Message_Template_Defaults $msg ) {
-
-		switch ( get_class( $msg ) ) {
-
-			case 'EE_Messages_Email_Registration_Defaults' :
-			case 'EE_Messages_Resend_Registration_Defaults' :
-				$contexts = $msg->get_contexts();
-				foreach ( $contexts as $context => $details ) {
-					$default_field_content[$context]['content']['question_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-question-list.template.php', TRUE );
-					$default_field_content[$context]['content']['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/registration-message-type-attendee-list.template.php', TRUE );
-				}
-				$default_field_content['attendee']['content']['event_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/attendee/registration-message-type-attendee-event-list.template.php', TRUE );
-				$default_field_content['admin']['content']['attendee_list'] = file_get_contents( EE_CAF_LIBRARIES . 'messages/message_type/assets/defaults/admin/registration-message-type-admin-attendee-list.template.php', TRUE );
-				$default_field_content['attendee']['content']['attendee_list'] = '';
-				break;
-
-			default :
-				return $default_field_content;
-				break;
+		//we're only modifying templates for the default template pack
+		if ( ! $template_pack instanceof EE_Messages_Template_Pack_Default ) {
+			return $contents;
 		}
 
-		return $default_field_content;
+		//the template file name we're replacing contents for.
+		$template_file_prefix = $field . '_' . $context;
+		$msg_prefix = $messenger->name . '_' . $message_type->name . '_' ;
+
+		$base_path = EE_CAF_LIBRARIES . 'messages/defaults/default/';
+
+		if ( $messenger->name == 'email' && $message_type->name == 'registration' ) {
+
+			switch ( $template_file_prefix ) {
+
+				case 'question_list_admin' :
+				case 'question_list_attendee' :
+				case 'question_list_primary_attendee' :
+					$path = $base_path . $msg_prefix . 'question_list.template.php';
+					$contents = EEH_Template::display_template( $path, array(), true );
+					break;
+
+				case 'attendee_list_primary_attendee' :
+					$path = $base_path . $msg_prefix . 'attendee_list.template.php';
+					$contents = EEH_Template::display_template( $path, array(), true );
+					break;
+
+				case 'attendee_list_admin' :
+					$path = $base_path . $msg_prefix . 'attendee_list_admin.template.php';
+					$contents = EEH_Template::display_template( $path,
+						array(), true );
+					break;
+
+				case 'attendee_list_attendee' :
+					$contents = '';
+					break;
+
+				case 'event_list_attendee' :
+					$path = $base_path . $msg_prefix . 'event_list_attendee.template.php';
+					$contents = EEH_Template::display_template( $path, array(), true );
+					break;
+			}
+		} elseif ( $messenger->name == 'email' && $message_type->name == 'newsletter' ) {
+			switch( $template_file_prefix ) {
+
+				case 'content_attendee' :
+					$path = $base_path . $msg_prefix . 'content.template.php';
+					$contents = EEH_Template::display_template( $path, array(), true );
+					break;
+
+				case 'newsletter_content_attendee' :
+					$path = $base_path . $msg_prefix . 'newsletter_content.template.php';
+					$contents = EEH_Template::display_template( $path, array(), true );
+					break;
+
+				case 'newsletter_subject_attendee' :
+					$path = $base_path . $msg_prefix . 'subject.template.php';
+					$contents = EEH_Template::display_template( $path, array(), true );
+					break;
+			}
+		}
+
+		return $contents;
 
 	}
 
@@ -552,7 +588,7 @@ class EE_Brewing_Regular extends EE_Base {
 		$setup_args = array(
 			'mtfilename' => 'EE_Newsletter_message_type.class.php',
 			'autoloadpaths' => array(
-				EE_CAF_LIBRARIES . 'messages/message_type/newsletter/'
+				EE_CAF_LIBRARIES . 'messages/message_type/newsletter'
 				),
 			'messengers_to_activate_with' => array( 'email' ),
 			'messengers_to_validate_with' => array( 'email' )

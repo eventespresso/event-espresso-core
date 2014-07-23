@@ -39,32 +39,15 @@ class EE_Payment_Reminder_message_type extends EE_Payment_Base_message_type {
 			'singular' => __('payment reminder', 'event_espresso'),
 			'plural' => __('payment reminders', 'event_espresso')
 			);
+		$this->_master_templates = array(
+			'email' => 'payment'
+			);
 
 		parent::__construct();
 
 	}
 
 
-
-
-	protected function _default_template_field_subject() {
-		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Payment Reminder';
-		};
-		return $content;
-	}
-
-	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-reminder-message-type-content.template.php');
-
-		foreach ( $this->_contexts as $context => $details ) {
-			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-reminder-message-type-event-list.template.php');
-			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-ticket-list.template.php');
-		}
-
-		return $tcontent;
-	}
 
 	/**
 	 * _set_contexts

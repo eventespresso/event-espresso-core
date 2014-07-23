@@ -40,32 +40,15 @@ class EE_Payment_Refund_message_type extends EE_Payment_Base_message_type {
 			'plural' => __('refunds issued', 'event_espresso')
 			);
 
+		$this->_master_templates = array(
+			'email' => 'payment'
+			);
+
 		parent::__construct();
 
 	}
 
 
-
-
-
-	protected function _default_template_field_subject() {
-		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Event Refund Details';
-		};
-		return $content;
-	}
-
-	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-refund-message-type-content.template.php');
-
-		foreach ( $this->_contexts as $context => $details ) {
-			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-event-list.template.php');
-			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/payment-message-type-ticket-list.template.php');
-		}
-
-		return $tcontent;
-	}
 
 	/**
 	 * _set_contexts
