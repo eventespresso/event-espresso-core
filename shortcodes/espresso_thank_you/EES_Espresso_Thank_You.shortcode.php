@@ -296,6 +296,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 		EE_Registry::instance()->load_helper( 'Template' );
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
+
+		do_action( 'AHEE__EES_Espresso_Thank_You__init_end', $this->_current_txn );
+
 	}
 
 
