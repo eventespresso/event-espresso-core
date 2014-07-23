@@ -23,7 +23,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @subpackage		messages
  * @author			Darren Ethier
  */
-class EE_Event_List_Shortcodes extends EE_Shortcodes {
+class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 
 
 
