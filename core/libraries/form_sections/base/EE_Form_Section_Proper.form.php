@@ -71,8 +71,8 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable{
 			$this->_subsections = array_merge($this->_subsections,$options_array['subsections']);
 		}
 
-		if(isset($options_array['include'])){
-			//we are going to make sure we ONLY have those those subsections to include
+		if( isset( $options_array['include'] )){
+			//we are going to make sure we ONLY have those subsections to include
 			//AND we are going to make sure they're in that specified order
 			$reordered_subsections = array();
 			foreach($options_array['include'] as $input_name){
