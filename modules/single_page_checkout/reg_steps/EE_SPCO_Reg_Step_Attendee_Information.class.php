@@ -428,8 +428,10 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 			'html_label_text'		=> $question->display_text()
 		);
 
-		if ( $answer instanceof EE_Answer && $answer->ID() ) {
-			$input_constructor_args['html_name'] .= '[' . $answer->ID() . ']';
+		if ( $answer instanceof EE_Answer ) {
+			if ( $answer->ID() ) {
+				$input_constructor_args['html_name'] .= '[' . $answer->ID() . ']';
+			}
 			$input_constructor_args['default'] = $answer->value();
 		}
 
@@ -505,7 +507,6 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step {
 		//do action in case a plugin wants to do something with the data submitted in step 1.
 		//passes EE_Single_Page_Checkout, and it's posted data
 		do_action( 'AHEE__EE_Single_Page_Checkout__process_attendee_information__end', $this, $valid_data );
-
 		return TRUE;
 
 	}
