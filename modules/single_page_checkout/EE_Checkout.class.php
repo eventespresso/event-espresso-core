@@ -221,7 +221,7 @@ class EE_Checkout {
 		// set pointer to start of array
 		reset( $this->reg_steps );
 		// if there is more than one step
-		if ( count( $this->reg_steps ) > 1 && $this->current_step->slug() != 'finalize_registration' ) {
+		if ( count( $this->reg_steps ) > 1 ) { //  && $this->current_step->slug() != 'finalize_registration'
 			// advance to the current step and set pointer
 			while ( key( $this->reg_steps ) != $this->current_step->slug() && key( $this->reg_steps ) != '' ) {
 				next( $this->reg_steps );
@@ -230,7 +230,7 @@ class EE_Checkout {
 		// advance one more spot ( if it exists )
 		$this->next_step = next( $this->reg_steps );
 		// verify instance
-		$this->next_step = $this->next_step instanceof EE_SPCO_Reg_Step ? $this->next_step  : 'finalize_registration';
+		$this->next_step = $this->next_step instanceof EE_SPCO_Reg_Step && $this->current_step->slug() != 'finalize_registration' ? $this->next_step  : NULL;
 		// then back to current step to reset
 		prev( $this->reg_steps );
 	}
@@ -304,6 +304,30 @@ class EE_Checkout {
 
 
 	/**
+	 * 	toggle_transaction_status
+	 * 	changes TXN status based on monies owing
+	 *
+	 * 	@access public
+	 * 	@return 	void
+	 */
+	public function toggle_transaction_status() {
+		// if TXN status has not been updated already due to a payment, and is still set as "failed"...
+		if ( $this->transaction->status_ID() == EEM_Transaction::failed_status_code ) {
+			//but monies are still owing...
+			if ( $this->transaction->total() > 0 ) {
+				// then update to incomplete
+				$this->transaction->set_status( EEM_Transaction::incomplete_status_code );
+			} else {
+				// or update to complete
+				$this->transaction->set_status( EEM_Transaction::complete_status_code );
+			}
+		}
+		$this->transaction->save();
+	}
+
+
+
+	/**
 	 * 	save_all_data
 	 * 	simply loops through the current transaction and saves all data for each registration
 	 *
@@ -311,14 +335,13 @@ class EE_Checkout {
 	 * 	@return 	bool
 	 */
 	public function save_all_data() {
-		echo '<br/><h5 style="color:#2EA2CC;">'. __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// verify the transaction
 		if ( $this->transaction instanceof EE_Transaction ) {
 			$this->transaction->save();
 			// grab the saved registrations from the transaction
 			foreach ( $this->transaction->registrations( array(), TRUE ) as $line_item_id => $registration ) {  //
 //				printr( $registration, '$registration  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
-				d( $registration );
+//				d( $registration );
 				// verify object
 				if ( $registration instanceof EE_Registration ) {
 					// EITHER a) first time thru SPCO so process ALL registrations
@@ -333,7 +356,7 @@ class EE_Checkout {
 						$attendee = $registration->attendee();
 						if ( $attendee ) {
 							if ( $attendee instanceof EE_Attendee ) {
-								d( $attendee );
+//								d( $attendee );
 //								printr( $attendee, '$attendee  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$attendee->save();
 								$registration->set_attendee_id( $attendee->ID() );
@@ -364,7 +387,7 @@ class EE_Checkout {
 						foreach ( $registration->answers() as $cache_key => $answer ) {
 							// verify object
 							if ( $answer instanceof EE_Answer ) {
-								printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//								printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 								$answer->set_registration( $registration->ID() );
 								$answer->save();
 								if ( ! $registration->update_cache_after_object_save( 'Answer', $answer, $cache_key )) {
