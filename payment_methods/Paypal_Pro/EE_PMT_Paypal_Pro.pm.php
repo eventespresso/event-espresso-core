@@ -51,24 +51,21 @@ class EE_PMT_Paypal_Pro extends EE_PMT_Base{
 		);
 	}
 	public function generate_new_billing_form() {
-		$allowed_types = $this->_pm_instance->get_extra_meta('credit_card_types',true);
+		$allowed_types = $this->_pm_instance->get_extra_meta( 'credit_card_types', TRUE );
 		if( ! $allowed_types){//if allowed types is a string or empty array or null...
 			$allowed_types = array();
 		}
 		$form_name = 'Paypal_Pro_Billing_Form';
 		$form_args = array(
 			'name'=> $form_name,
+			'html_id'=> 'ee-Paypal_Pro-billing-form',
 			'html_class'=> 'ee-billing-form',
 			'subsections'=>array(
-				'credit_card'=>new EE_Credit_Card_Input(array(
-					'required'=>true
-				)),
-				'credit_card_type'=>new EE_Select_Input(array_intersect_key(EE_PMT_Paypal_Pro::card_types_supported(),array_flip($allowed_types))),//the options are set dynamically
-				'exp_month'=>new EE_Month_Input(true),
-				'exp_year'=>new EE_Year_Input(true),
-				'cvv'=>new EE_CVV_Input(array(
-					'required'=>true
-				)),
+				'credit_card'=>new EE_Credit_Card_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
+				'credit_card_type'=>new EE_Select_Input( array_intersect_key( EE_PMT_Paypal_Pro::card_types_supported(), array_flip( $allowed_types ))),//the options are set dynamically
+				'exp_month'=>new EE_Month_Input( TRUE, array( 'html_class' => 'ee-billing-qstn' )),
+				'exp_year'=>new EE_Year_Input( TRUE, 1, 15, array( 'html_class' => 'ee-billing-qstn' )),
+				'cvv'=>new EE_CVV_Input( array( 'required'=>TRUE, 'html_class' => 'ee-billing-qstn' )),
 			));
 		//tweak the form (in the template we check for debug mode and whether ot add any content or not)
 		add_filter('FHEE__EE_Form_Section_Layout_Base__layout_form__start__for_'.$form_name, array('EE_PMT_Paypal_Pro','generate_billing_form_debug_content'),10,2);
