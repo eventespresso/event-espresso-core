@@ -85,6 +85,17 @@ abstract class EE_Messages_incoming_data {
 
 
 	/**
+	 * holds an array with a key of parent line item and values are an array of children of that line item.
+	 *
+	 * @since %VER%
+	 *
+	 * @var EE_Line_Item[]
+	 */
+	public $line_items_with_children;
+
+
+
+	/**
 	 * will hold an array of attendees assembled from the $reg_info
 	 * @var EE_Attendee[]
 	 */
@@ -134,6 +145,16 @@ abstract class EE_Messages_incoming_data {
 	public $taxes;
 
 
+	/**
+	 * Holds the line items related to taxes
+	 *
+	 * @since %VER%
+	 *
+	 * @var EE_Line_Item[]
+	 */
+	public $tax_line_items;
+
+
 
 	/**
 	 * holds the grand total price object
@@ -149,6 +170,17 @@ abstract class EE_Messages_incoming_data {
 	 * @var EE_Transaction;
 	 */
 	public $txn;
+
+
+
+	/**
+	 * Holds the payments related to a transaction
+	 *
+	 * @since %VER%
+	 *
+	 * @var EE_Payment[]
+	 */
+	public $payments;
 
 
 
@@ -268,8 +300,7 @@ abstract class EE_Messages_incoming_data {
 				$registrations[$reg->ID()]['reg_obj'] = $reg;
 				$registrations[$reg->ID()]['att_obj'] = $reg->attendee();
 
-
-				//setup up answer objects
+				//set up answer objects
 				$rel_ans = $reg->get_many_related('Answer');
 				foreach ( $rel_ans as $ansid => $answer ) {
 					if ( !isset( $questions[$ansid] ) ) {
@@ -298,6 +329,7 @@ abstract class EE_Messages_incoming_data {
 
 			if ( !empty( $eventsetup) ) {
 				foreach ( $eventsetup as $eid => $items ) {
+					$ticket_line_items_for_event = EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>$evt_id,'TXN_ID'=>$this->txn->ID())));
 					$events[$eid] = array(
 						'ID' => $eid,
 						'event' => $evtcache[$eid],
@@ -306,8 +338,18 @@ abstract class EE_Messages_incoming_data {
 						'reg_objs' => $items['reg_objs'],
 						'tkt_objs' => $items['tkt_objs'],
 						'att_objs' => $items['att_objs'],
-						'dtt_objs' => $items['dtt_objs']
+						'dtt_objs' => $items['dtt_objs'],
+						'line_items' => $ticket_line_items_for_event
 					);
+
+					//make sure the tickets have the line items setup for them.
+					$line_items = array();
+					foreach ( $ticket_line_items_for_event as $line_id => $line_item ) {
+						$tickets[$line_item->ticket()->ID()]['line_item'] = $line_item;
+						$tickets[$line_item->ticket()->ID()]['sub_line_items'] = $line_item->children();
+						$line_items[$line_item->ID()]['children'] = $line_item->children();
+
+					}
 				}
 			}
 		}
@@ -316,11 +358,15 @@ abstract class EE_Messages_incoming_data {
 		$this->attendees = $attendees;
 		$this->events = $events;
 		$this->tickets = $tickets;
+		$this->line_items_with_children = $line_items;
 		$this->datetimes = $datetimes;
 		$this->questions = $questions;
 		$this->answers = $answers;
 		$this->total_ticket_count = $total_ticket_count;
 		$this->registrations = $registrations;
+
+		$this->tax_line_items = $this->txn->tax_items();
+		$this->payments = $this->txn->payments();
 
 
 		//setup primary registration
