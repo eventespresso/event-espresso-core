@@ -1,8 +1,8 @@
 <div class="changelog point-releases">
-	<h3><?php echo _n( 'Minor Release Information', 'Minor Releases', 1 ); ?></h3>
-	<!-- <h3><?php echo _n( 'Major Release Information', 'Major Releases', 1 ); ?></h3>-->
-	<?php $type = 'minor'; ?>
-	<?php //$type = 'major'; ?>
+	<!-- <h3><?php echo _n( 'Minor Release Information', 'Minor Releases', 1 ); ?></h3>-->
+	<h3><?php echo _n( 'Major Release Information', 'Major Releases', 1 ); ?></h3>
+	<?php //$type = 'minor'; ?>
+	<?php $type = 'major'; ?>
 	<p><?php printf( __( '<strong>Version %1$s</strong> is a %2$s bug fix/enhancement release.', 'event_espresso'), EVENT_ESPRESSO_VERSION, $type ); ?>
 		<?php
 			$ver = explode( '.', EVENT_ESPRESSO_VERSION );
@@ -33,8 +33,10 @@
 		<?php
 	}
 	?>
-	<h2 class="about-headline-callout">Two New Major Features Added</h2>
-	<h3>Support for Mijireh Checkout</h3>
+	<?php 
+	/*
+	<h2 class="about-headline-callout">New Add-on Available</h2>
+	<h3>Mailchimp Add-on Released</h3>
 	<img class="alignright " alt="mijireh-checkout-large" src="http://ee-screenshots.s3.amazonaws.com/ee4/mijireh-checkout-large.png" width="131" height="147" /><p>Announcing the ability to integrate Event Espresso with <strong>over 90 different gateways and payment providers</strong>, using the Mijireh Checkout system! <a href="http://www.mijireh.com/" target="_blank">Mijireh Checkout</a> is a PCI compliant checkout page that looks exactly like your site, with support for over 90 gateways and payment providers to use on Mijireh's <a href="http://www.mijireh.com/docs/payment-gateways/" target="_blank">secure PCI compliant servers</a>.</p>
 	<p>Mijireh Checkout helps increase your conversion rates by using your existing website design. Your checkout process remains seamless to your customers while Mijireh Checkout securely handles collecting and transmitting of the credit card data for you.</p>
 	<h3>Support for the Calendar Add-on in EE 4.2+</h3>
@@ -53,36 +55,63 @@
 		<li>and much more</li>
 	</ul>
 	<hr>
-	<h2 class="about-headline-callout">Additional Features &amp; Enhancements in EE 4.2</h2>
-	<p>In addition to better out of the box support for themes and plugins, we have added an array of new features such as drag and drop ordering of tickets in the event editor, ordering of questions within question groups, datetime names and descriptions, and the option to turn off the ticket selector in the event details page, and much more:</p>
-	<ul>
-		<li>Added support for Mijireh Checkout</li>
-		<li>Added support for the Calendar add-on</li>
-		<li>Added drag and drop ordering of tickets in the event editor</li>
-		<li>Order Questions by Question Group (replaces ordering questions by question order)</li>
-		<li>Added option to turn off the Ticket Selector in the Event Details page for events without tickets/registrations</li>
-		<li>Ability to add/Edit Event Datetime Names</li>
-		<li>Ability to add/Edit Event Datetime Descriptions</li>
-		<li>Added Event Datetime Name messages shortcode</li>
-		<li>Event Datetime Description messages shortcode</li>
-		<li>Added datetime titles and descriptions to the order confirmation</li>
-		<li>Added front-end "Maintenance Mode" option</li>
-		<li>Added "Register Now" or "View Details" button in the event list when the Ticket Selector is turned off</li>
-	</ul>
+	*/
+	?>
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3</h2>
+	<p>This release brings many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
+<p><strong>New Features</strong></p>
+<ul>
+	<li>Duplicate Event</li>
+	<li>Ticket Required Option</li>
+	<li>Added iCal Integration</li>
+	<li>Drag-n-drop Answer Values</li>
+	<li>Order Questions by Question Group</li>
+	<li>Question Editor Style Changes (thanks to <a href="https://github.com/Veraxus">Matt Van Andel</a>)</li>
+	<li>Re-order Datetimes in Ticket Editor and Single Page Checkout</li>
+	<li>Moved the Ticket Selector Above the Event Dates and Description</li>
+	<li>New Hooks and Filters for Developers Added to the Registration Process</li>
+</ul>
+<strong>Fixes</strong>
+<ul>
+	<li>Gateways</li>
+	<li>Messages System</li>
+	<li>Migration Issues</li>
+	<li>Miscellaneous Spelling Errors</li>
+</ul>
+
+<p><a class="thickbox" href="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png"><img class="alignright" src="http://ee-screenshots.s3.amazonaws.com/2014/05/ticket-bundles.png" alt="Image" height="161" width="154"></a><strong>Support for “Ticket Bundles” &amp; “Graduated Pricing”</strong><br>
+Ticket bundles allow you to sell ticket packages that include several tickets to the same event or multiple different events.</p>
+<ul>
+	<li><a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">Ticket Bundles</a>
+Starting with Event Espresso 4.3 you can offer discount pricing based on ticket quantities. <a href="http://eventespresso.com/wiki/create-ticket-bundle/" target="_blank">This article</a> shows how to create a ticket bundle where you can set a lower price per ticket when purchased in a bundle.</li>
+	<li><a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">Graduated Ticket Pricing</a>
+Starting with Event Espresso 4.3 you can offer graduated pricing based on ticket quantities. <a href="http://eventespresso.com/wiki/set-graduated-ticket-pricing/" target="_blank">This article</a> shows how to set graduated ticket pricing where you can set a lower price per ticket for larger quantity ticket purchases.</li>
+</ul>
+<p><strong>Messages System Changes/Fixes</strong><br />
+	We’ve improved the Custom Template System, added a “Newsletter” Message Type for sending batch emails, and made a couple of minor updates.</p>
+<ul>
+<li>Messages Admin – Updated to implement a new Custom Template creation/edit process</li>
+<li>Event Editor – Modify Messages metabox in event editor to use new custom template system</li>
+<li>Messages System – Default ‘From’ Email shortcode changed to [CO_FORMATTED_EMAIL]</li>
+<li>Message Type – Newsletter message type</li>
+</ul>
+<p><a class="thickbox" href="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields.png"><img class="alignright wp-image-96900 " src="http://eventespresso.com/wp-content/uploads/2014/05/acf-home-panel-fields-300x261.png" alt="acf-home-panel-fields" height="149" width="171"></a><strong>Advanced Custom Fields Integration</strong><br>
+Fully customize WordPress edit screens with powerful custom fields.</p>
+<ul>
+<li><a href="http://eventespresso.com/2014/05/developers-corner-using-advanced-custom-fields-extend-ee4/" target="_blank">Developers Corner: Using Advanced Custom Fields to Quickly Extend EE4</a></li>
+<li><a href="http://eventespresso.com/wiki/add-course-curriculum-events-using-advanced-custom-fields/" target="_blank">Add a Course Curriculum Section to the “Thank You” Page Using Advanced Custom Fields</a></li>
+<li><a href="http://eventespresso.com/wiki/add-sponsors-section-events-using-advanced-custom-fields/" target="_blank">Add a Sponsors Section to Events Using Advanced Custom Fields</a></li>
+<li><a href="http://eventespresso.com/wiki/ee4-thank-page-actions-filters-hooks/" target="_blank">EE4 “Thank You” Page Actions &amp; Filters</a></li>
+<li><a href="http://eventespresso.com/wiki/ee4-single-page-checkout-page-actions-filters/" target="_blank">EE4 “Single Page Checkout” Page Actions &amp; Filters</a></li>
+</ul>
+<p><strong>Payment Gateway Fixes</strong></p>
+<ul>
+<li>Thank You page now uses the WordPress Heartbeat API to automatically display payment status updates</li>
+<li>Restored the download invoice link in the payment overview page</li>
+<li>Show failed payments in payment response</li>
+<li>Added support for partial payments in Single Page Checkout</li>
+<li>Send address fields to Mijireh</li>
+</ul>
+
 	<hr>
-	<h2 class="about-headline-callout">New Hooks, Filters, and Stuff for Developers</h2>
-	<p>Here are a few more of the new features and cool stuff for developers available in 4.2 and we'd like to invite you to take a look and offer feedback (praises, report bugs, etc.):</p>
-	<ul>
-		<li>Hook/Filter to Set No-cost events as "Free"</li>
-		<li>Add filter so the email messenger CSS file can be swapped out by developers for another CSS file</li>
-		<li>Added a hook in the Admin panel after each ticket row description</li>
-		<li>Added a hook in the Admin panel after each ticket create and update model</li>
-		<li>Added hook in the Front-end after each ticket date on a single event</li>
-		<li>Made Single Page Check Out (SPCO) button text filterable</li>
-		<li>Models make acceptance of empty strings more consistent</li>
-		<li>Simplified the EE_System Constructor and Hook point's to allow for external module/add-on/plugin development</li>
-		<li>EEH_Template::locate_template() to accept full paths as well as relatives paths (from plugin root)</li>
-		<li>Filter for adding caffeinated modules to EE_Config $modules_to_register array</li>
-		<li>Make Single Page Check Out (SPCO) button text filterable</li>
-	</ul>
-	<hr>
+

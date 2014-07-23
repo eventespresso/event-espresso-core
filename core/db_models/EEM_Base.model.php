@@ -523,8 +523,12 @@ abstract class EEM_Base extends EE_Base{
 	 * @return EE_Base_Class
 	 */
 	function get_one_by_ID($id){
-		$primary_key_name = $this->get_primary_key_field()->get_name();
-		return $this->get_one(array(array($primary_key_name => $id)));
+		if( $this->get_from_entity_map( $id ) ){
+			return $this->get_from_entity_map( $id );
+		}else{
+			$primary_key_name = $this->get_primary_key_field()->get_name();
+			return $this->get_one(array(array($primary_key_name => $id)));
+		}
 	}
 	/**
 	 * Gets a single item for this model from the DB, given the $query_params. Only returns a single class, not an array. If no item is found,
@@ -596,9 +600,8 @@ abstract class EEM_Base extends EE_Base{
 		//need to verify that, for any entry we want to update, there are entries in each secondary table.
 		//to do that, for each table, verify that it's PK isn't null.
 		$tables= $this->get_tables();
-		//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
-		//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
-		if(count($tables) > 1){
+
+
 			//we want to make sure the default_where strategy is ignored
 			$this->_ignore_where_strategy = TRUE;
 			$wpdb_select_results = $this->_get_all_wpdb_results($query_params);
@@ -606,20 +609,33 @@ abstract class EEM_Base extends EE_Base{
 				//get the model object's PK, as we'll want this if we need to insert a row into secondary tables
 				$main_table_pk_column = $this->get_primary_key_field()->get_qualified_column();
 				$main_table_pk_value = $wpdb_result[ $main_table_pk_column ];
-				//foreach matching row in the DB, ensure that each table's PK isn't null. If so, there must not be an entry
-				//in that table, and so we'll want to insert one
-				foreach($tables as $table_obj){
-					$this_table_pk_column = $table_obj->get_fully_qualified_pk_column();
-					//if there is no private key for this table on the results, it means there's no entry
-					//in this table, right? so insert a row in the current table, using any fields available
-					if( ! (array_key_exists($this_table_pk_column, $wpdb_result)  &&  $wpdb_result[ $this_table_pk_column ]) ){
-						$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+				//if there are more than 1 tables, we'll want to verify that each table for this model has an entry in the other tables
+				//and if the other tables don't have a row for each table-to-be-updated, we'll insert one with whatever values available in the current update query
+				if(count($tables) > 1){
+					//foreach matching row in the DB, ensure that each table's PK isn't null. If so, there must not be an entry
+					//in that table, and so we'll want to insert one
+					foreach($tables as $table_obj){
+						$this_table_pk_column = $table_obj->get_fully_qualified_pk_column();
+						//if there is no private key for this table on the results, it means there's no entry
+						//in this table, right? so insert a row in the current table, using any fields available
+						if( ! (array_key_exists($this_table_pk_column, $wpdb_result)  &&  $wpdb_result[ $this_table_pk_column ]) ){
+							$this->_insert_into_specific_table($table_obj, $fields_n_values, $main_table_pk_value);
+						}
+					}
+				}
+
+				//and now check that if we have cached any models by that ID on the model, that
+				//they also get updated properly
+				if( $this->get_from_entity_map( $main_table_pk_value ) ){
+					$model_object = $this->get_from_entity_map( $main_table_pk_value );
+					foreach( $fields_n_values as $field => $value ){
+						$model_object->set($field, $value);
 					}
 				}
 			}
 			//let's make sure default_where strategy is followed now
 			$this->_ignore_where_strategy = FALSE;
-		}
+
 
 
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -668,7 +684,8 @@ abstract class EEM_Base extends EE_Base{
 		//deletion if there is no KEY column used in the WHERE statement of a deletion.
 		//to get around this, we first do a SELECT, get all the IDs, and then run another query
 		//to delete them
-		$deletion_where = $this->_setup_ids_for_delete( $this->_get_all_wpdb_results($query_params), $allow_blocking);
+		$items_for_deletion = $this->_get_all_wpdb_results($query_params);
+		$deletion_where = $this->_setup_ids_for_delete( $items_for_deletion, $allow_blocking);
 		if($deletion_where){
 			//echo "objects for deletion:";var_dump($objects_for_deletion);
 			$model_query_info = $this->_create_model_query_info_carrier($query_params);
@@ -686,7 +703,16 @@ abstract class EEM_Base extends EE_Base{
 			$rows_deleted = 0;
 		}
 
-		return $rows_deleted;//how many supposedly got updated
+		//and lastly make sure those items are removed from the entity map; if they could be put into it at all
+		if( $this->has_primary_key_field() ){
+			foreach($items_for_deletion as $item_for_deletion_row ){
+				$pk_value = $item_for_deletion_row[ $this->get_primary_key_field()->get_qualified_column() ];
+				if( isset( $this->_entity_map[ $pk_value ] ) ){
+					unset( $this->_entity_map[ $pk_value ] );
+				}
+			}
+		}
+		return $rows_deleted;//how many supposedly got deleted
 	}
 
 
@@ -1114,7 +1140,14 @@ abstract class EEM_Base extends EE_Base{
 
 
 	/**
-	 * Inserts a new entry into the database, for each table
+	 * Inserts a new entry into the database, for each table.
+	 *
+	 * Note: does not add the item to the entity map because that is done by EE_Base_Class::save() right after this.
+	 * If client code uses EEM_Base::insert() directly, then although the item isn't in the entity map,
+	 * we also know there is no model object with the newly inserted item's ID at the moment (because
+	 * if there were, then they would already be in the DB and this would fail); and in the future if someone
+	 * creates a model object with this ID (or grabs it from the DB) then it will be added to the
+	 * entity map at that time anyways. SO, no need for EEM_Base::insert ot add to the entity map
 	 * @global $wpdb
 	 * @param array $field_n_values keys are field names, values are their values (in the client code's domain if $values_already_prepared_by_model_object is false,
 	 * in the model object's domain if $values_already_prepared_by_model_object is true. See comment about this at the top of EEM_Base)

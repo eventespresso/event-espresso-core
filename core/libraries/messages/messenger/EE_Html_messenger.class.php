@@ -111,41 +111,6 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 
-	/**
-	 * get css file
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param bool $url  return url or path
-	 * @param mixed (string|bool) $type wpeditor|print|base|FALSE (default is the main css for html)
-	 *
-	 * @return string path to css file.
-	 */
-	public function get_inline_css_template( $url = TRUE, $type = FALSE ) {
-		switch ( $type ) {
-
-			case 'base' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-base-css.template.css';
-				break;
-
-			case 'print' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-print-css.template.css';
-				break;
-
-			case 'wpeditor' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-wpeditor-css.template.css';
-				break;
-
-			default :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-css.template.css';
-				break;
-		}
-
-		return $url ? apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $url, $type )  : apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $url, $type );
-	}
-
-
-
 
 	/**
 	 * Takes care of enqueuing any necessary scripts or styles for the page.  A do_action() so message types using this messenger can add their own js.
@@ -253,28 +218,6 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 
-	/**
-	 * _set_default_field_content
-	 * set the _default_field_content property (what gets added in the default templates).
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function _set_default_field_content() {
-		$this->_default_field_content = array(
-			'subject' => '',
-			'content' => array(
-				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),
-				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
-				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
-				'ticket_list' => __('This contains the formatting for each ticket in a ticket list.', 'event_espresso'),
-				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso'),
-				'question_list' => __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'event_espresso')
-				)
-			);
-	}
-
-
 
 
 	/**
@@ -312,9 +255,9 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _send_message() {
 		$this->_template_args = array(
 			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
-			'base_css' => $this->get_inline_css_template(TRUE, 'base'),
-			'print_css' => $this->get_inline_css_template(TRUE, 'print'),
-			'main_css' => $this->get_inline_css_template(TRUE),
+			'base_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'base', $this->_variation ),
+			'print_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'print', $this->_variation ),
+			'main_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'main', $this->_variation ),
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
 		$this->_deregister_wp_hooks();
@@ -355,13 +298,11 @@ class EE_Html_messenger extends EE_messenger  {
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
-		$relative_path =  '/core/libraries/messages/messenger/assets/' . $this->name . '/';
-
-		$wrapper_template_file = apply_filters( 'FHEE__EE_Html_messenger___get_main_template__wrapper_template_file', $this->name . '-messenger-main-wrapper.template.php' );
+		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, 'main' );
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
-		return EEH_Template::locate_template( array( $relative_path . $wrapper_template_file, $wrapper_template_file ), $this->_template_args );
+		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 
 

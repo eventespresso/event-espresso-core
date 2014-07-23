@@ -178,7 +178,7 @@ final class EE_Admin {
 		} else {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
-			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
+			add_action( 'save_post', array( 'EE_Admin', 'parse_post_content_on_save' ), 100, 2 );
 			add_action( 'update_option', array( $this, 'reset_page_for_posts_on_change' ), 100, 3 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
@@ -492,10 +492,21 @@ final class EE_Admin {
 
 		//joyride is turned OFF by default, but prior to the admin_enqueue_scripts hook, can be turned back on again vai: add_filter('FHEE_load_joyride', '__return_true' );
 		if ( apply_filters( 'FHEE_load_joyride', FALSE ) ) {
-			wp_register_style('joyride-css', EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css', array(), '2.1');
-			wp_register_script('joyride-modernizr', EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js', array(), '2.1', TRUE );
-			wp_register_script('jquery-joyride', EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js', array('jquery-cookie', 'joyride-modernizr'), '2.1', TRUE );
-			wp_enqueue_style('joyride-css');
+			$joyride_js = EE_THIRD_PARTY_URL . 'joyride/jquery.joyride-2.1.js';
+			$joyride_modenizr_js = EE_THIRD_PARTY_URL . 'joyride/modernizr.mq.js';
+			$joyride_css = EE_THIRD_PARTY_URL . 'joyride/joyride-2.1.css';
+			$ee_joyride_css = EE_GLOBAL_ASSETS_URL . 'css/ee-joyride-styles.css';
+
+			//joyride style
+			wp_register_style('joyride-css', $joyride_css, array(), '2.1');
+			wp_register_style('ee-joyride-css', $ee_joyride_css, array('joyride-css'), EVENT_ESPRESSO_VERSION );
+
+			wp_register_script('joyride-modenizr', $joyride_modenizr_js, array(), '2.1', TRUE );
+
+			//joyride
+			wp_register_script('jquery-joyride', $joyride_js, array('jquery-cookie', 'joyride-modenizr'), '2.1', TRUE );
+
+			wp_enqueue_style('ee-joyride-css');
 			wp_enqueue_script('jquery-joyride');
 		}
 
@@ -616,7 +627,7 @@ final class EE_Admin {
 	 * @param $post
 	 * @return    void
 	 */
-	public function parse_post_content_on_save( $post_ID, $post ) {
+	public static function parse_post_content_on_save( $post_ID, $post ) {
 		// default post types
 		$post_types = array( 'post' => 0, 'page' => 1 );
 		// add CPTs
