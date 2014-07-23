@@ -57,7 +57,7 @@
 	<hr>
 	*/
 	?>
-	<h2>Updates &amp; Fixes in EE 4.3</h2>
+	<h2 class="about-headline-callout">Updates &amp; Fixes in EE 4.3</h2>
 	<p>This release brings many improvements to existing core features and a few new features, such as duplicate events, iCal integration, batch email/newsletter system, and registration form optimizations.</p>
 <p><strong>New Features</strong></p>
 <ul>
