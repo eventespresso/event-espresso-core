@@ -28,6 +28,13 @@ abstract class EE_SPCO_Reg_Step {
 	protected $_name = NULL;
 
 	/**
+	 * 	$_submit_button_text - translatable string that appears on this step's submit button
+	 * 	@access protected
+	 *	@type string $_slug
+	 */
+	protected $_submit_button_text = NULL;
+
+	/**
 	 * 	$_order - when the reg step should be run relative to other steps
 	 * 	@access protected
 	 *	@type int $_template
@@ -251,7 +258,7 @@ abstract class EE_SPCO_Reg_Step {
 			array(
 				'id' => 'spco-' . $this->slug() . '-next-step',
 				'html_name' => 'next_step',
-				'value' => $this->checkout->next_step->slug()
+				'value' => $this->checkout->next_step instanceof EE_SPCO_Reg_Step ? $this->checkout->next_step->slug() : ''
 			),
 			array(
 				'id' => 'spco-reg_url_link',
@@ -319,7 +326,7 @@ abstract class EE_SPCO_Reg_Step {
 			'html_name' 		=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_id' 				=> 'spco-go-to-step-' . $this->checkout->next_step->slug(),
 			'html_class' 		=> 'spco-next-step-btn',
-			'default'				=> 'Proceed to ' . $this->checkout->next_step->name()
+			'default'				=> ! empty( $this->checkout->next_step->_submit_button_text ) ? $this->checkout->next_step->_submit_button_text : 'Proceed to ' . $this->checkout->next_step->name()
 		));
 		$sbmt_btn->set_button_css_attributes( TRUE, 'large', 'rel="' . $this->slug() . '"' );
 		ob_start();
