@@ -146,7 +146,7 @@ abstract class EE_PMT_Base{
 	/**
 	 * Gets the form for displaying to attendees where they can enter their billing info
 	 * which will be sent to teh gateway (can be null)
-	 * @return EE_Form_Section_Proper
+	 * @return EE_Billing_Info_Form
 	 */
 	public function billing_form(){
 		if( ! $this->_billing_form){
@@ -155,8 +155,8 @@ abstract class EE_PMT_Base{
 		return $this->_billing_form;
 	}
 	/**
-	 * Creates the billing form fo rthis payment method type
-	 * @return EE_Form_Section_Proper
+	 * Creates the billing form for this payment method type
+	 * @return EE_Billing_Info_Form
 	 */
 	abstract function generate_new_billing_form();
 	/**
