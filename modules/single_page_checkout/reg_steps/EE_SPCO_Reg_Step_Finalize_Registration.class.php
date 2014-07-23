@@ -23,9 +23,11 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	public function __construct( EE_Checkout $checkout ) {
 		$this->_slug = 'finalize_registration';
 		$this->_name = __('Finalize Registration', 'event_espresso');
+		$this->_submit_button_text = $this->_name;
 		$this->_template = '';
 //		$this->_template = SPCO_TEMPLATES_PATH . 'finalize_registration_main.template.php';
 		$this->checkout = $checkout;
+
 	}
 
 
@@ -44,7 +46,10 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function initialize_reg_step() {
-
+		// there's actually no reg form to process if this is the final step
+		if ( $this->checkout->current_step instanceof EE_SPCO_Reg_Step_Finalize_Registration ) {
+			$this->checkout->action = 'process_reg_step';
+		}
 	}
 
 
@@ -53,9 +58,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function generate_reg_form() {
-		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-		die();
-
+		// create empty form so that things don't break
+		$this->reg_form = new EE_Form_Section_Proper();
 	}
 
 
@@ -64,7 +68,13 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function process_reg_step() {
-
+		if ( $this->checkout->save_all_data() ) {
+			$this->checkout->transaction->finalize();
+			$this->checkout->redirect_to_thank_you_page = TRUE;
+			return TRUE;
+		}
+		$this->checkout->redirect_to_thank_you_page = FALSE;
+		return FALSE;
 	}
 
 
@@ -73,7 +83,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function update_reg_step() {
-
+		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		die();
 	 }
 
 
@@ -126,6 +137,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 */
 	private function _process_finalize_registration() {
 
+		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+		die();
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
 
 		// save everything
