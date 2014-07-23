@@ -659,12 +659,17 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 	 public function garbage_collection() {
 		 if ( ! defined( 'DOING_AJAX') || ! DOING_AJAX ) {
 			 global $wpdb;
-			 $expiration = $this->_time - $this->_expiration;
-			 $SQL = "DELETE FROM t1, t3 USING $wpdb->options AS t1 JOIN $wpdb->options AS t2 ON t1.option_name = replace( t2.option_name, '_timeout', '' ) JOIN $wpdb->options AS t3 ON t3.option_name = t2.option_name WHERE t2.option_value < $expiration AND t1.option_name LIKE '%ee_ssn%' OR t3.option_name LIKE '%_transient_timeout_ee_ssn%'";
-			 $wpdb->query( $SQL );
+			 $expiration = current_time( 'timestamp' );
+			$SQL = "
+				DELETE FROM t1, t2
+				USING {$wpdb->options} t1
+				JOIN {$wpdb->options} t2 ON t2.option_name = replace( t1.option_name, '_timeout', '' )
+				WHERE t1.option_name LIKE '\_transient\_timeout\_ee\_ssn\_%'
+				AND t1.option_value < $expiration;
+			";
+			$wpdb->query( $SQL );
 		 }
 	 }
-
 
 
 }
