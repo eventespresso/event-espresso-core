@@ -77,65 +77,65 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 		//attendee obj for this registration
 		$attendee = $this->_xtra->registrations[$registration->ID()]['att_obj'];
+		if ( $attendee instanceof EE_Attendee ) {
+			switch ( $shortcode ) {
 
-		switch ( $shortcode ) {
+				case '[FNAME]' :
+					return $attendee->fname();
+					break;
 
-			case '[FNAME]' :
-				return $attendee->fname();
-				break;
+				case '[LNAME]' :
+					return $attendee->lname();
+					break;
 
-			case '[LNAME]' :
-				return $attendee->lname();
-				break;
+				case '[ATTENDEE_EMAIL]' :
+					return $attendee->email();
+					break;
 
-			case '[ATTENDEE_EMAIL]' :
-				return $attendee->email();
-				break;
+				case '[EDIT_ATTENDEE_LINK]' :
+					return $registration->get_admin_edit_url();
+					break;
 
-			case '[EDIT_ATTENDEE_LINK]' :
-				return $registration->get_admin_edit_url();
-				break;
+				case '[REGISTRATION_CODE]' :
+					return $registration->reg_code();
+					break;
 
-			case '[REGISTRATION_CODE]' :
-				return $registration->reg_code();
-				break;
+				case '[FRONTEND_EDIT_REG_LINK]' :
+					return $registration->edit_attendee_information_url();
+					break;
 
-			case '[FRONTEND_EDIT_REG_LINK]' :
-				return $registration->edit_attendee_information_url();
-				break;
+				case '[PHONE_NUMBER]' :
+					return $attendee->phone();
+					break;
 
-			case '[PHONE_NUMBER]' :
-				return $attendee->phone();
-				break;
+				case '[ADDRESS]' :
+					return $attendee->address();
+					break;
 
-			case '[ADDRESS]' :
-				return $attendee->address();
-				break;
+				case '[ADDRESS2]' :
+					return $attendee->address2();
+					break;
 
-			case '[ADDRESS2]' :
-				return $attendee->address2();
-				break;
+				case '[CITY]' :
+					return $attendee->city();
+					break;
 
-			case '[CITY]' :
-				return $attendee->city();
-				break;
+				case '[ZIP_PC]' :
+					return $attendee->zip();
+					break;
 
-			case '[ZIP_PC]' :
-				return $attendee->zip();
-				break;
+				case '[ADDRESS_STATE]' :
+					$state_obj = $attendee->state_obj();
+					return $state_obj instanceof EE_State ? $state_obj->name() : '';
+					break;
 
-			case '[ADDRESS_STATE]' :
-				$state_obj = $attendee->state_obj();
-				return $state_obj instanceof EE_State ? $state_obj->name() : '';
-				break;
+				case '[COUNTRY]' :
+					$country_obj = $attendee->country_obj();
+					return $country_obj instanceof EE_Country ? $country_obj->name() : '';
+					break;
 
-			case '[COUNTRY]' :
-				$country_obj = $attendee->country_obj();
-				return $country_obj instanceof EE_Country ? $country_obj->name() : '';
-				break;
-
+			}
 		}
-
 		return '';
 	}
 
