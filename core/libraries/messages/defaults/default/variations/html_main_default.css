@@ -26,7 +26,7 @@ Created by Ed Molyneux
 #invoice-info{ text-align:right; line-height:1.5em;}
 #invoice-info span { margin-left:20px;}
 
-#bill-to-ship-to, #invoice-amount { margin:20px 0; }
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
 
 #invoice-other {text-align: right; }
 #invoice #payment-details{}
