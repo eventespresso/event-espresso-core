@@ -146,15 +146,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_transaction_and_cart_for_current_session();
 		// and the registrations for the transaction
 		$this->_get_registrations( $this->checkout->transaction );
-		// verify transaction one last time
-		//		if ( $this->checkout->transaction instanceof EE_Transaction ) {
 		// initialize each reg step, which gives them the chance to potentially alter the process
 		$this->_initialize_reg_steps();
 		// get reg form
 		$this->_check_form_submission();
 		// checkout the action!!!
 		$this->_process_form_action();
-		//		}
 		// add some style and make it dance
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_and_scripts' ), 10 );
 	}
@@ -280,15 +277,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			if ( $this->checkout->current_step->reg_form->was_submitted() ) {
 				// capture form data
 				$this->checkout->current_step->reg_form->receive_form_submission();
-//				echo '<h5 style="color:#2EA2CC;">$this->checkout->current_step->reg_form->is_valid() : <span style="color:#E76700">' . $this->checkout->current_step->reg_form->is_valid() . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
-//				echo '<h5 style="color:#2EA2CC;">$this->checkout->continue_reg : <span style="color:#E76700">' . $this->checkout->continue_reg . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 				// validate form data
 				if ( $this->checkout->current_step->reg_form->is_valid() && $this->checkout->continue_reg ) {
-//					echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 					// good registrant, you get to proceed
 					EE_Error::add_success( $this->checkout->current_step->success_message() );
 				} else {
-//					echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 					// bad, bad, bad registrant
 					EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
 					$this->checkout->action = 'display_spco_reg_form';
@@ -323,7 +316,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
 						// store our progress so far
 						$this->checkout->stash_transaction();
-						$this->go_to_next_step_or_action();
+						// advance to the next step! If you pass GO, collect $200
+						$this->go_to_next_step();
+					} else {
+//						d( EE_Error::get_notices( FALSE ));
+						$this->checkout->action = 'display_spco_reg_form';
+						$this->_display_spco_reg_form();
 					}
 					do_action( "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}_{$this->checkout->action}", $this->checkout->current_step );
 				} else {
@@ -336,6 +334,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 						__FILE__, __FUNCTION__, __LINE__
 					);
 				}
+			// end default
 		}
 	}
 
@@ -392,17 +391,13 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	private function _get_transaction_and_cart_for_current_session() {
 		// first check in the session
 		$transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
-		d( $transaction );
 		// verify transaction
 		if ( $transaction instanceof EE_Transaction ) {
-			echo '<h2 style="color:#E76700;">transaction_and_cart_for_current_session<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 			// check if the TXN has an ID, which means it has already been saved to the db
 			$TXN_ID = $transaction->ID();
-			echo '<h5 style="color:#2EA2CC;">$TXN_ID : <span style="color:#E76700">' . $TXN_ID . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 			if ( $TXN_ID ) {
 				// so this transaction has already been saved to the db earlier in the same session (ie: it's not a revisit)... so let's pull that
 				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
-				d( $transaction );
 				// verify transaction
 				if ( ! $transaction instanceof EE_Transaction ) {
 					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
@@ -416,7 +411,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout->cart = EE_Registry::instance()->load_core( 'Cart' );
 			// and then create a new transaction
 			$transaction = $this->_initialize_transaction();
-			d( $transaction );
 		}
 		return $transaction;
 	}
@@ -430,11 +424,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * 	@return mixed EE_Transaction|NULL
 	 */
 	private function _initialize_transaction() {
-		echo '<h2 style="color:#E76700;">_initialize_transaction<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
 		try {
 			// create new TXN
 			return EE_Transaction::new_instance( array(
-				'TXN_timestamp' => current_time('mysql'),
+				'TXN_timestamp' => current_time( 'timestamp' ),
 				'TXN_total' => $this->checkout->cart->get_cart_grand_total(),
 				'TXN_paid' => 0,
 				'STS_ID' => EEM_Transaction::failed_status_code,
@@ -721,7 +714,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @param bool   $callback_param
 	 * @return void
 	 */
-	public function go_to_next_step_or_action( $callback = FALSE, $callback_param = FALSE ) {
+	public function go_to_next_step( $callback = FALSE, $callback_param = FALSE ) {
 //		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 
 //		// advance to the next step! If you pass GO, collect $200
@@ -731,15 +724,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->json_response = array();
 
 		$no_errors = TRUE;
-		// where to boss?
-		switch ( $this->checkout->next_step ) {
-			case 'registration_confirmation' :
-				$callback = '_go_to_registration_confirmation_ajax_response';
-			break;
-			case 'finalize_registration' :
-				$callback = $this->checkout->revisit ? '_finalize_' . $this->checkout->current_step : '_process_finalize_registration';
-			break;
-		}
 		// check for valid callback function
 		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
 		// check for recursion
@@ -747,16 +731,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			EE_Error::add_error( __('A recursive loop was detected and the registration process was halted.', 'event_espresso'), __FILE__, __FUNCTION__, __LINE__ );
 			$valid_callback = FALSE;
 		}
-		// grab notices
-		$notices = EE_Error::get_notices( FALSE );
-		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
-		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
-		$attention_msg = isset( $notices['attention'] ) ? $notices['attention'] : FALSE;
-
 		// setup URL for redirect
 		if ( $this->checkout->redirect_to_thank_you_page ) {
-//			d( $this->checkout->transaction->primary_registration() );
-//			die();
 			// setup the thank you page properly
 			$this->checkout->thank_you_page_url = add_query_arg(
 				array( 'e_reg_url_link' => $this->checkout->transaction->primary_registration()->reg_url_link() ),
@@ -764,6 +740,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			);
 			$this->checkout->json_response['return_data'] = array( 'redirect-to-thank-you-page' => $this->checkout->thank_you_page_url );
 		}
+		// grab notices
+		$notices = EE_Error::get_notices( FALSE );
 		// set JSON response and merge in notices
 		$this->checkout->json_response = array_merge( $this->checkout->json_response, $notices );
 
@@ -782,7 +760,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			printr( $this->checkout->json_response, '$this->checkout->json_response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 //		}
 
-
+		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
+		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
+		$attention_msg = isset( $notices['attention'] ) ? $notices['attention'] : FALSE;
 		// all good ?
 		if ( $success_msg && ! ( $error_msg || $attention_msg )) {
 			unset( $this->checkout->json_response['error'] );
