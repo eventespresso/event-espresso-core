@@ -139,6 +139,10 @@ class EE_Venue_Shortcodes extends EE_Shortcodes {
 			$aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
 
 			$this->_event = $aee instanceof EE_Messages_Addressee && $aee->reg_obj instanceof EE_Registration ? $aee->reg_obj->event() : NULL;
+
+			//if STILL empty event, let's try to get the first event in the list of events and use that.
+			$event = $aee instanceof EE_Messages_Addressee ? reset( $aee->events ) : array();
+			$this->_event = empty( $this->_event ) && !empty( $events ) ? $event : $this->_event;
 		}
 
 
