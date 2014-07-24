@@ -212,21 +212,10 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->assertTableExists('esp_new_addon_thing');
 	}
 
-	private function get_real_option( $option){
-		global $wpdb;
-
-		$row = $wpdb->get_row( $wpdb->prepare( "SELECT option_value FROM $wpdb->options WHERE option_name = %s LIMIT 1", $option ) );
-		if( $row ){
-			return $row->option_value;
-		}else{
-			return NULL;
-		}
-	}
 	/**
 	 * Registers the mock addon so it can be used for testing
 	 */
 	public function setUp(){
-
 		parent::setUp();
 
 		$this->_pretend_addon_hook_time();
@@ -251,8 +240,6 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->_current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
 		delete_option(EE_Data_Migration_Manager::current_database_state);
 		update_option(EE_Data_Migration_Manager::current_database_state, array('Core' => espresso_version() ) );
-		//we want to create real tables, not just 'temporary' tables, plz. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
-		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
 	}
 
 
