@@ -135,6 +135,7 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		add_action( 'AHEE__EE_Request_Handler__construct__complete', array( $this, 'wp_loaded' ));
 		// once everything is all said and done,
 		add_action( 'shutdown', array( $this, 'update' ), 100 );
+		add_action( 'shutdown', array( $this, 'garbage_collection' ), 999 );
 
 	}
 
@@ -546,7 +547,6 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		// if I need to explain the following lines of code, then you shouldn't be looking at this!
 		$user = wp_get_current_user();
 		$this->_wp_user_id = isset( $user->data->ID ) ? $user->data->ID : NULL;
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, ' wp_user_id = ' . $this->_wp_user_id );
 		return $this->_wp_user_id;
 	}
 
@@ -650,7 +650,28 @@ do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );/**
 		self::$_instance = NULL;
 	}
 
-}
 
+
+	 /**
+	  * garbage_collection
+	  * @since 4.3.0
+	  */
+	 public function garbage_collection() {
+		 if ( ! defined( 'DOING_AJAX') || ! DOING_AJAX ) {
+			 global $wpdb;
+			 $expiration = current_time( 'timestamp' );
+			$SQL = "
+				DELETE FROM t1, t2
+				USING {$wpdb->options} t1
+				JOIN {$wpdb->options} t2 ON t2.option_name = replace( t1.option_name, '_timeout', '' )
+				WHERE t1.option_name LIKE '\_transient\_timeout\_ee\_ssn\_%'
+				AND t1.option_value < $expiration;
+			";
+			$wpdb->query( $SQL );
+		 }
+	 }
+
+
+}
 /* End of file EE_Session.class.php */
 /* Location: /includes/classes/EE_Session.class.php */
