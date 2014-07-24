@@ -88,7 +88,8 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway{
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
 		$order_description  = sprintf(__("'Event Registrations from %s", "event_espresso"),get_bloginfo('name'));
-		if( $this->_can_easily_itemize_transaction_for( $payment ) ){//charge for teh full amount. Show itemized list
+		//charge for the full amount. Show itemized list
+		if( $this->_can_easily_itemize_transaction_for( $payment ) ){
 			$total_to_pay = $transaction->total();
 			$item_num = 1;
 			$total_line_item = $transaction->total_line_item();
