@@ -143,8 +143,7 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 			}
 
 			//see if there are any attributes.
-			$shortcode_to_parse = str_replace( '[', '', str_replace( ']', '', $shortcode ) );
-			$attrs = shortcode_parse_atts( $shortcode_to_parse );
+			$attrs = $this->_get_shortcode_attrs( $shortcode );
 
 			//set custom attrs if present (or default)
 			$prefix = isset( $attrs['prefix'] ) ? $attrs['prefix'] : __('VAT/Tax Number: ', 'event_espresso');
