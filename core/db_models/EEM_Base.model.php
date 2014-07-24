@@ -626,8 +626,7 @@ abstract class EEM_Base extends EE_Base{
 
 				//and now check that if we have cached any models by that ID on the model, that
 				//they also get updated properly
-				if( $this->get_from_entity_map( $main_table_pk_value ) ){
-					$model_object = $this->get_from_entity_map( $main_table_pk_value );
+				if( $model_object = $this->get_from_entity_map( $main_table_pk_value ) ){
 					foreach( $fields_n_values as $field => $value ){
 						$model_object->set($field, $value);
 					}
