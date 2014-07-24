@@ -30,7 +30,7 @@ class EEM_Ticket_Template extends EEM_Base {
 
 	// private instance of the EEM_Ticket_Template object
 	private static $_instance = NULL;
-	
+
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -40,7 +40,7 @@ class EEM_Ticket_Template extends EEM_Base {
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Ticket Template','event_espresso');
-		$this->plural_item = __('Ticket Templates','event_espresso');		
+		$this->plural_item = __('Ticket Templates','event_espresso');
 
 		$this->_tables = array(
 			'Ticket_Template'=> new EE_Primary_Table('esp_ticket_template', 'TTM_ID')
@@ -81,8 +81,16 @@ class EEM_Ticket_Template extends EEM_Base {
 		//set timezone if we have in incoming string
 		if ( !empty( $timezone ) )
 			self::$_instance->set_timezone( $timezone );
-		
+
 		// Espresso_model object
 		return self::$_instance;
+	}
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Ticke_Template
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 } //end EEM_Ticket_Template class

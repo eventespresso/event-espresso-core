@@ -38,17 +38,26 @@ class EEM_Question_Group_Question extends EEM_Base {
 	 *
 	 *		@access public
 	 *		@return EEM_Question instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Attendee object
 		return self::$_instance;
 	}
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Question_Group_Question
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 	protected function __construct(){
 		$this->singular_item = __('Question Group to Question Link','event_espresso');
 		$this->plural_item = __('Question Group to Question Links','event_espresso');

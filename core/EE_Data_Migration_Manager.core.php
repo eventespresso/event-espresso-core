@@ -803,4 +803,24 @@ class EE_Data_Migration_Manager{
 		}
 		return $most_up_to_date_dms_classname;
 	}
+
+	/**
+	 * Gets the migration script specified but ONLY if it has already ran.
+	 *
+	 * Eg, if you wanted to see if 'EE_DMS_Core_4_1_0' has ran, you would run the following code:
+	 * <code> $core_4_1_0_dmran = EE_Data_Migration_Manager::instance()->get_migration_ran( '4.1.0', 'Core' ) !== NULL;</code>
+	 * This is especially useful in addons' data migration scripts, this way they can tell if a core (or other addon) DMS has ran,
+	 * in case the current DMS depends on it.
+	 * @param string $version the version the DMS searched for migrates to. Usually just the content before the 3rd period. Eg '4.1.0'
+	 * @param string $plugin_slug like 'Core', 'Mailchimp', 'Calendar', etc
+	 * @return EE_Data_Migration_Script_Base
+	 */
+	public function get_migration_ran( $version, $plugin_slug = 'Core' ) {
+		$migrations_ran = $this->get_data_migrations_ran();
+		if( isset( $migrations_ran[ $plugin_slug ] ) && isset( $migrations_ran[ $plugin_slug ][ $version ] ) ){
+			return $migrations_ran[ $plugin_slug ][ $version ];
+		}else{
+			return NULL;
+		}
+	}
 }

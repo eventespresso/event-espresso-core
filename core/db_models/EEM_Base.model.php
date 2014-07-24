@@ -2706,7 +2706,7 @@ abstract class EEM_Base extends EE_Base{
 		$className = $this->_get_class_name();
 
 		if( ! $object instanceof $className ){
-			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),get_class($object),$className));
+			throw new EE_Error(sprintf(__("You tried adding a %s to a mapping of %ss", "event_espresso"),is_object( $object ) ? get_class( $object ) : $object, $className ) );
 		}
 		if ( ! $object->ID() ){
 			throw new EE_Error(sprintf(__("You tried storing a model object with NO ID in the %s entity mapper.", "event_espresso"),get_class($this)));

@@ -49,6 +49,15 @@ class EEM_Country extends EEM_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Country
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 	protected function __construct(){
 		$this->singular_item = __('Country','event_espresso');
 		$this->plural_item = __('Countries','event_espresso');
