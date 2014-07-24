@@ -142,6 +142,15 @@ class EEH_Parse_Shortcodes {
 	}
 
 
+	public function parse_payment_item_list_template( $template, EE_Payment $payment_item, $valid_shortcodes, $extra_data = array() ) {
+		$this->_init_data( $template, $payment_item, $valid_shortcodes, $extra_data );
+		$this->_template = is_array( $template ) ? $template['payment_list'] : $template;
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
+	}
+
+
 	public function parse_datetime_list_template( $template, EE_Datetime $datetime, $valid_shortcodes, $extra_data = array() ) {
 		$this->_init_data( $template, $datetime, $valid_shortcodes, $extra_data );
 
