@@ -233,6 +233,13 @@
 
 /*** INPUTS ***/
 
+.ee-reg-qstn-input-dv,
+.ee-billing-qstn-input-dv {
+	margin:0 0 1em;
+}
+#ee-single-page-checkout-dv .important-notice {
+	margin:2em 0;
+}
 #ee-single-page-checkout-dv label {
 	display: block;
 }
@@ -368,7 +375,7 @@
 .spco-payment-method-hdr {
 	float:right;
 	clear: none;
-	margin: .5em 0 0;
+	margin:0;
 	text-align:right;
 	color:#ccc;
 }
