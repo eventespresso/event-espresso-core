@@ -289,14 +289,14 @@ $tax_total_line_item;
 							<?php } ?>
 						</tr>
 					<?php }?>
-				</tr>
+				</table>
 				<?php } ?>
-			</table>
 
-			<?php if($shameless_plug){?>
-			<div class='aln-cntr'><?php
-				printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>");
-			?></div>
-			<?php } ?>
+				<?php if($shameless_plug){?>
+				<div class='aln-cntr'><?php
+					printf(__("Powered by %sEvent Espresso %s", "event_espresso"),"<a href='http://eventespresso.com'>","</a>");
+				?></div>
+				<?php } ?>
+			</div>
 		</div>
 	</div>
