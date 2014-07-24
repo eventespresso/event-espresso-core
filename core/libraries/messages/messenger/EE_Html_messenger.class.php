@@ -120,7 +120,7 @@ class EE_Html_messenger extends EE_messenger  {
 				),
 			'payment_list' => array(
 				'shortcodes' => array('payment'),
-				'required' => array('[PAYMENT_LIST]')
+				'required' => array('[PAYMENT_LIST_*]')
 				)
 			);
 	}
@@ -267,7 +267,7 @@ class EE_Html_messenger extends EE_messenger  {
 						'format' => '%s',
 						'css_class' => 'large-text',
 						'rows' => '5',
-						'shortcodes_required' => array('[PAYMENT_LIST]')
+						'shortcodes_required' => array('[PAYMENT_LIST_*]')
 					)
 				)
 			)

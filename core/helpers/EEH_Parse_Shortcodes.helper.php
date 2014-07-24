@@ -217,6 +217,7 @@ class EEH_Parse_Shortcodes {
 			'[TICKET_LINE_ITEM_LIST]',
 			'[TAX_LINE_ITEM_LIST]',
 			'[PRICE_MODIFIER_LINE_ITEM_LIST]',
+			'[PAYMENT_LIST_*]'
 			);
 
 		$list_type_shortcodes = apply_filters( 'FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes', $list_type_shortcodes );
@@ -239,7 +240,7 @@ class EEH_Parse_Shortcodes {
 
 
 				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
-				if ( ! in_array( $shortcode, $list_type_shortcodes ) ) {
+				if ( ! in_array( $sc_to_verify, $list_type_shortcodes ) ) {
 					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
 				} else {
 					$data_send = $this->_data;
