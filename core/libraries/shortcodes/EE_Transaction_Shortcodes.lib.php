@@ -44,6 +44,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_URL]' => __('This is a link to make a payment for the event', 'event_espresso'),
 			'[INVOICE_LINK]' => __('This is a full html link to the invoice', 'event_espresso'),
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
+			'[INVOICE_LOGO_URL]' => __('This returns the url for the logo uploaded via the invoice settings page.', 'event_espresso'),
+			'[INVOICE_LOGO]' => __('This returns the logo uploaded via the invoice settings page wrapped in img_tags and with a "logo screen" classes. The image size is also set in the img tags automatically to match the uploaded logo.', 'event_espresso'),
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
 			'[TXN_STATUS]' => __('The transaction status for the transaction.', 'event_espresso'),
 			'[TXN_STATUS_ID]' => __('The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresos'),
@@ -83,6 +85,14 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			case '[INVOICE_URL]' :
 				$invoice_url = $this->_data->txn->invoice_url();
 				return empty( $invoice_url ) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
+				break;
+
+			case '[INVOICE_LOGO_URL]' :
+				return $this->_get_invoice_logo();
+				break;
+
+			case '[INVOICE_LOGO]' :
+				return $this->_get_invoice_logo( TRUE );
 				break;
 
 
@@ -141,6 +151,40 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		if ( !is_object( $this->_data->txn ) )
 			return '';
 		return $this->_data->txn->selected_gateway();
+	}
+
+
+
+	/**
+	 * This retrieves a logo to be used for the invoice from whatever is set on the invoice logo settings page.  If its not present then the organization logo is used if its found (set on the organzation settings page).
+	 *
+	 * @since %VER%
+	 *
+	 * @param bool $img_tags TRUE means to return with the img tag wrappers.  False just returns the url to the image.
+	 *
+	 * @return string url or html
+	 */
+	private function _get_invoice_logo( $img_tags = FALSE ) {
+		$payment_settings = EE_Config::instance()->gateway->payment_settings;
+		$invoice_settings = $payment_settings['invoice'];
+
+		if ( ! empty( $invoice_settings['invoice_logo_url'] ) ) {
+			$invoice_logo_url = $invoice_setttings['invoice_logo_url'];
+		} else {
+			$invoice_logo_url = EE_Registry::instance()->CFG->organization->logo_url;
+		}
+
+		if ( empty( $invoice_logo_url ) ) {
+			return '';
+		}
+
+		if ( ! $img_tags ) {
+			return $invoice_logo_url;
+		}
+
+		//image tags have been requested.
+		$image_size = getimagesize( $image_size );
+		return '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" />';
 	}
 
 } //end EE_Transaction Shortcodes library
