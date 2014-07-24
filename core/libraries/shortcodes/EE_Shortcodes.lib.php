@@ -280,6 +280,28 @@ abstract class EE_Shortcodes extends EE_Base {
 	}
 
 
+	/**
+	 * This returns any attributes that may be existing on an EE_Shortcode
+	 *
+	 * @since %VER%
+	 *
+	 * @param string $shortcode incoming shortcode
+	 *
+	 * @return array An array with the attributes
+	 */
+	protected function get_shortcode_attrs( $shortcode ) {
+		//make sure the required wp helper function is present
+		//require the shortcode file if necessary
+		if ( ! function_exists( 'shortcode_parse_atts' ) ) {
+			require_once( ABSPATH . WPINC . '/shortcodes.php');
+		}
+
+		//let's get any attributes that may be present and set the defaults.
+		$shortcode_to_parse = str_replace( '[', '', str_replace( ']', '', $shortcode ) );
+		return shortcode_parse_atts( $shortcode_to_parse );
+	}
+
+
 
 	/**
 	 * This sets the properties related to the messages system
