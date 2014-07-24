@@ -54,7 +54,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
 			'[TOTAL_OWING]' => __('The total owing on a transaction with no attributes.', 'event_espresso'),
 			'[TOTAL_OWING_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
-				'<li><strong>still_oweing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL" class="noPrint">', '</a>' ) . '</li></ul></p>',
+				'<li><strong>still_owing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL" class="noPrint">', '</a>' ) . '</li>' .
+				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
 			'[TRANSACTION_ADMIN_URL]' => __('The url to the admin page for this transaction', 'event_espresso')
 			);
@@ -172,14 +173,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		$total_owing = ! empty( $addressee ) ? $addressee->txn->remaining() : 0;
 
 		if ( $total_owing > 0 ) {
-			$owing_content = ! empty( $attrs['still_oweing'] ) ? $attrs['still_oweing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL" class="noPrint">', '</a>' );
+			$owing_content = ! empty( $attrs['still_owing'] ) ? $attrs['still_oweing'] : sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL" class="noPrint">', '</a>' );
 
 			//we need to re run this string through the parser to catch any shortcodes that are in it.
 			$this->_set_shortcode_helper();
 			$owing_content = $this->_shortcode_helper->parse_message_template( $owing_content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_context, $this->_GRP_ID );
 		} else {
-
-			$owing_content = EEH_Template::format_currency( $total_owing );
+			$owing_content = !empty( $attrs['none_owing']) ? $attrs['none_owing'] : EEH_Template::format_currency( $total_owing );
 		}
 
 		return $owing_content;
