@@ -627,8 +627,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				return FALSE;
 			}
 		}
+		$this->checkout->transaction->primary_registration()->save();
 		$this->checkout->transaction->save();
-//		$this->checkout->transaction->primary_registration()->save();
 		// has registration been finalized ?
 		if ( ! $this->checkout->transaction->primary_registration()->reg_code() ) {
 			$this->checkout->transaction->primary_registration()->finalize();
@@ -679,10 +679,34 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		private function _capture_primary_registration_data_from_billing_form() {
 			$primary_attendee = $this->checkout->billing_form->create_attendee_from_billing_form_data();
 			if ( ! $primary_attendee instanceof EE_Attendee ) {
+				EE_Error::add_error(
+					sprintf(
+						__( 'The billing form details could not be used for attendee details due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+						'<br/>',
+						EE_Registry::instance()->CFG->organization->email
+					), __FILE__, __FUNCTION__, __LINE__
+				);
 				return FALSE;
 			}
-			$primary_registration = $this->checkout->transaction->get_first_related( 'Registration' );
+			$primary_registration = $this->checkout->transaction->primary_registration();
+			if ( ! $primary_registration instanceof EE_Registration ) {
+				EE_Error::add_error(
+					sprintf(
+						__( 'The primary registrant for this transaction could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+						'<br/>',
+						EE_Registry::instance()->CFG->organization->email
+					), __FILE__, __FUNCTION__, __LINE__
+				);
+				return FALSE;
+			}
 			if ( ! $primary_registration->_add_relation_to( $primary_attendee, 'Attendee' ) instanceof EE_Attendee ) {
+				EE_Error::add_error(
+					sprintf(
+						__( 'The primary registrant could not be associated with this transaction due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+						'<br/>',
+						EE_Registry::instance()->CFG->organization->email
+					), __FILE__, __FUNCTION__, __LINE__
+				);
 				return FALSE;
 			}
 			$primary_registration->save();
