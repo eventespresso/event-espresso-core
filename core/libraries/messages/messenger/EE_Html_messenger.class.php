@@ -84,7 +84,7 @@ class EE_Html_messenger extends EE_messenger  {
 				'shortcodes' => array('organization', 'primary_registration_details', 'email', 'transaction' )
 				),
 			'content' => array(
-				'shortcodes' => array( 'organization',  'primary_registration_list', 'primary_registration_details',  'email', 'transaction', 'event_list', 'payment_list')
+				'shortcodes' => array( 'organization',  'primary_registration_list', 'primary_registration_details',  'email', 'transaction', 'event_list', 'payment_list', 'venue')
 				),
 			'event_list' => array(
 				'shortcodes' => array( 'event', 'ticket_list', 'venue',  'primary_registration_details', 'primary_registration_list', 'event_author' ),
