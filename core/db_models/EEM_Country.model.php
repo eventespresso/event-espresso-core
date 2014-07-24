@@ -101,7 +101,7 @@ class EEM_Country extends EEM_Base {
 	/**
 	*		_get_countries
 	*
-	* 		@access		private
+	* 		@access		public
 	*		@return 		array
 	*/
 	public function get_all_countries() {
@@ -115,7 +115,7 @@ class EEM_Country extends EEM_Base {
 	*		_get_countries
 	*		Gets and caches the list of active countries. If you know the list of active countries
 	*		has changed during this request, first use EEM_Country::reset() to flush the cache
-	* 		@access		private
+	* 		@access		public
 	*		@return 		array
 	*/
 	public function get_all_active_countries() {
