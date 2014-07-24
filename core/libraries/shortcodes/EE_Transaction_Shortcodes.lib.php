@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Transaction_Shortcodes
- * 
+ *
  * this is a child class for the EE_Shortcodes library.  The EE_Transaction_Shortcodes lists all shortcodes related to transaction specific info.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Transaction_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -45,7 +45,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[INVOICE_LINK]' => __('This is a full html link to the invoice', 'event_espresso'),
 			'[INVOICE_URL]' => __('This is just the url for the invoice', 'event_espresso'),
 			'[TOTAL_COST]' => __('The total cost for the transaction', 'event_espresso'),
-			'[PAYMENT_STATUS]' => __('The payment status for the transaction', 'event_espresso'),
+			'[TXN_STATUS]' => __('The transaction status for the transaction.', 'event_espresso'),
+			'[TXN_STATUS_ID]' => __('The ID representing the transaction status as saved in the db.  This tends to be useful for including with css classes for styling certain statuses differently from others.', 'event_espresos'),
+			'[PAYMENT_STATUS]' => __('The transaction status for the transaction. This parses to the same value as the [TXN_STATUS] shortcode and still remains here for legacy support.', 'event_espresso'),
 			'[PAYMENT_GATEWAY]' => __('The payment gateway used for the transaction', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
 			'[TOTAL_OWING]' => __('The total owing on a transaction', 'event_espresso'),
@@ -56,7 +58,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 
 	protected function _parser( $shortcode ) {
-		
+
 		EE_Registry::instance()->load_helper( 'Template' );
 
 		if ( !$this->_data->txn instanceof EE_Transaction )
@@ -93,6 +95,16 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				$status = $this->_data->txn->pretty_status();
 				return !empty($status) ? $status : __('Unknown', 'event_espresso');
 				break; /**/
+
+			// note the [payment_status] shortcode is kind of misleading because payment status might be different from txn status so I'm adding this here for clarity.
+			case "[TXN_STATUS]" :
+				$status = $this->_data->txn->pretty_status();
+				return !empty( $status ) ? $status : __('Unknown', 'event_espresso');
+				break;
+
+			case "[TXN_STATUS_ID]" :
+				return $this->_data->txn->status_ID();
+				break;
 
 			case "[PAYMENT_GATEWAY]" :
 				return $this->_get_payment_gateway();
