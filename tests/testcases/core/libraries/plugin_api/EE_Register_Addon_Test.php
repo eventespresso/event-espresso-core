@@ -122,13 +122,8 @@ class EE_Register_Addon_Test extends EE_UnitTestCase{
 		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->non_abstract_db_models);
 		$this->assertArrayContains('EEM_New_Addon_Thing', EE_Registry::instance()->models);
 
-		//ok we know EE_DMS_New_Addon_0_0_2 has been registered, now just run it so we can run a query on the table it adds
-		//we want to create real tables, not just 'temporary' tables, plz. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
-		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
 		$dms = EE_Registry::instance()->load_dms('New_Addon_0_0_2');
 		$this->assertInstanceOf( 'EE_Data_Migration_Script_Base', $dms );
-		echo "registe raddon success:";
-		var_dump( get_option( EE_Data_Migration_Manager::current_database_state ));
 		$dms->schema_changes_before_migration();
 		$dms->schema_changes_after_migration();
 		$this->assertTableExists( 'esp_new_addon_thing', 'New_Addon_Thing' );
