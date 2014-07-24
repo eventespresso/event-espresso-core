@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Organization_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Organization_Shortcodes lists all shortcodes related to organization specific info. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Organization_Shortcodes lists all shortcodes related to organization specific info.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Organization_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -57,7 +57,8 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 			'[CO_PINTEREST_URL]' => __('Link to organization Pinterest page', 'event_espresso'),
 			'[CO_GOOGLE_URL]' => __('Link to organization Google page', 'event_espresso'),
 			'[CO_LINKEDIN_URL]' => __('Link to organization Linkedin page', 'event_espresso'),
-			'[CO_INSTAGRAM_URL]' => __('Link to organization Instagram page', 'event_espresso')
+			'[CO_INSTAGRAM_URL]' => __('Link to organization Instagram page', 'event_espresso'),
+			'[CO_TAX_NUMBER_*]' => __('This is the shortcode used for displaying any tax number for the company.  <strong>Note: This is a special dynamic shortcode.</strong> You can use the "prefix" parameter to indicate what the prefix for this tax number is.  It defaults to "VAT/Tax Number:".  To change this prefix you do the following format for this shortcode:  [CO_TAX_NUMBER_* prefix="GST: "] and that will output: GST: 12345t56.  Also take note that if you have NO number in your settings, the prefix is not output either.', 'event_espresso')
 			);
 	}
 
@@ -65,7 +66,7 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 	protected function _parser( $shortcode ) {
 
 		switch ( $shortcode ) {
-			
+
 			case '[COMPANY]' :
 				return EE_Registry::instance()->CFG->organization->name;
 				break;
@@ -103,7 +104,7 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 				return '<img src="' . EE_Registry::instance()->CFG->organization->logo_url . '" id="headerImage" />';
 				break;
 
-			case '[CO_LOGO_URL]' : 
+			case '[CO_LOGO_URL]' :
 				return EE_Registry::instance()->CFG->organization->logo_url;
 				break;
 
@@ -131,6 +132,23 @@ class EE_Organization_Shortcodes extends EE_Shortcodes {
 				return EE_Registry::instance()->CFG->organization->instagram;
 				break;
 
+		}
+
+		//also allow for parameter shortcode
+		if ( strpos( $shortcode, '[CO_TAX_NUMBER_*' ) !== FALSE ) {
+			//first see if there is any company tax number set and bail early if not
+			$tax_number = EE_Registry::instance()->CFG->organization->vat;
+			if ( empty( $tax_number ) ) {
+				return '';
+			}
+
+			//see if there are any attributes.
+			$shortcode_to_parse = str_replace( '[', '', str_replace( ']', '', $shortcode ) );
+			$attrs = shortcode_parse_atts( $shortcode_to_parse );
+
+			//set custom attrs if present (or default)
+			$prefix = isset( $attrs['prefix'] ) ? $attrs['prefix'] : __('VAT/Tax Number: ', 'event_espresso');
+			return $prefix . $tax_number;
 		}
 
 		return '';
