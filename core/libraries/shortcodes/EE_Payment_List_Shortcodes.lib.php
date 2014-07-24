@@ -32,7 +32,9 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Payment List Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes specific to payment lists', 'event_espresso');
 		$this->_shortcodes = array(
-			'[PAYMENT_LIST]' => __('Outputs a list of payment items.', 'event_espresso')
+			'[PAYMENT_LIST_*]' => __('Outputs a list of payment items. Note, this is a dynamic shortcode in that it accepts some attributes for setting certain defaults.  Attributes that are available are:', 'event_espresso') . '<p><ul>' .
+				'<li><strong>no_payments</strong>:' . sprintf( __('Indicate with this attribute what will be used if there are no payments present.  Default is: "%sNo approved payments have been received.%s"', 'event_espresso'),  htmlspecialchars('<td class="aln-cntr" colspan="6">'), htmlspecialchars('</td>') ) . '</li>' .
+				'</ul></p>'
 			);
 	}
 
@@ -40,15 +42,10 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 
 	protected function _parser( $shortcode ) {
 
-		switch ( $shortcode ) {
-			case '[PAYMENT_LIST]' :
-				return $this->_get_payment_list();
-				break;
-
-			default :
-				return '';
-				break;
+		if ( strpos( $shortcode, '[PAYMENT_LIST_*' !== FALSE ) ) {
+			return $this->_get_payment_list( $shortcode );
 		}
+		return '';
 	}
 
 
@@ -59,9 +56,11 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 	 *
 	 * @since %VER%
 	 *
+	 * @param string $shortcode The incoming shortcode.
+	 *
 	 * @return string parsed ticket line item list.
 	 */
-	private function _get_payment_list() {
+	private function _get_payment_list( $shortcode ) {
 		$this->_validate_list_requirements();
 		$this->_set_shortcode_helper();
 
@@ -75,8 +74,13 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 		$templates = $this->_extra_data['template'];
 		$payments = $addressee_obj->payments;
 
+		//let's get any attributes that may be present and set the defaults.
+		$atts = $this->_get_shortcode_attrs( $shortcode );
+
+		$no_payments_msg = empty( $atts['no_payments'] ) ?  '<td class="aln-cntr" colspan="6">' . __('No approved payments have been received.','event_espresso') . '</td>' : $atts['no_payments'];
+
 		//made it here so we have an array of paymnets, so we should have what we need.
-		$payment_content = '';
+		$payment_content = ! empty( $payments ) ? $no_payments_msg : '';
 		foreach ( $payments as $payment ) {
 			$payment_content .= $this->_shortcode_helper->parse_payment_list_template( $template['payment_list'], $payment, $valid_shortcodes, $this->_extra_data );
 		}
