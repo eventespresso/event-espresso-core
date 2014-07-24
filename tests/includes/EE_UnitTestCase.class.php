@@ -380,7 +380,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$wpdb->last_error = NULL;
 		$wpdb->show_errors( FALSE );
 		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
-		$wpdb->show_error( $old_show_errors_value );
+		$wpdb->show_errors( $old_show_errors_value );
 		if( ! is_null( $wpdb->last_error) && $wpdb->last_error != '' ){
 			$this->fail( $wpdb->last_error);
 		}
@@ -402,7 +402,7 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		$wpdb->last_error = NULL;
 		$wpdb->show_errors( FALSE );
 		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
-		$wpdb->show_error( $old_show_errors_value );
+		$wpdb->show_errors( $old_show_errors_value );
 		if( is_null( $wpdb->last_error) || $wpdb->last_error == '' ){
 			$this->fail( sprintf(__("Table like %s SHOULD NOT exist. It was apparently defined on the model '%s'", 'event_espresso'),$table_name,$model_name));
 		}
