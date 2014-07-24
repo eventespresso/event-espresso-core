@@ -100,7 +100,7 @@ class EEM_Country extends EEM_Base {
 	*		_get_countries
 	*
 	* 		@access		private
-	*		@return 		void
+	*		@return 		array
 	*/
 	public function get_all_countries() {
 		if ( ! self::$_all_countries ) {
@@ -113,7 +113,7 @@ class EEM_Country extends EEM_Base {
 	*		_get_countries
 	*
 	* 		@access		private
-	*		@return 		void
+	*		@return 		array
 	*/
 	public function get_all_active_countries() {
 		if ( ! self::$_active_countries ) {

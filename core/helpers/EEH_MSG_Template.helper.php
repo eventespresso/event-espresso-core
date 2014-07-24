@@ -43,7 +43,7 @@ class EEH_MSG_Template {
 	 * @param  string  $messenger the messenger we are generating templates for
 	 * @param array $message_types array of message types that the templates are generated for.
 	 * @param int $GRP_ID If a non global template is being generated then it is expected we'll have a GRP_ID to use as the base for the new generated template.
-	 * @param bool $global true indicates generating templates on messenger activation. false requires evt_id for event specific template generation.
+	 * @param bool $global true indicates generating templates on messenger activation. false requires GRP_ID for event specific template generation.
 	 * @return array|error_object array of data required for the redirect to the correct edit page or error object if encountering problems.
 	 */
 	public static function generate_new_templates($messenger, $message_types, $GRP_ID = 0,  $global = FALSE) {

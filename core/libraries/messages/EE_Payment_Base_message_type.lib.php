@@ -22,28 +22,6 @@ abstract class EE_Payment_Base_message_type extends EE_message_type {
 
 
 	/**
-	 * returns the default template field content for the various contexts and fields (called by $this->_set_default_field_content() ).
-	 *
-	 * @since 4.5.0
-	 *
-	 * @return array
-	 */
-	abstract protected function _default_template_field_content();
-
-
-
-	/**
-	 * returns the default template field content for the subject field in the various contexts ( called by $this->_set_default_field_content() )
-	 *
-	 * @since 4.5.0
-	 *
-	 * @return array
-	 */
-	abstract protected function _default_template_field_subject();
-
-
-
-	/**
 	 * see abstract declaration in parent class for details.
 	 */
 	protected function _set_admin_pages() {
@@ -104,14 +82,6 @@ abstract class EE_Payment_Base_message_type extends EE_message_type {
 	 */
 	protected function _set_admin_settings_fields() {
 		$this->_admin_settings_fields = array();
-	}
-
-	protected function _set_default_field_content() {
-
-		$this->_default_field_content = array(
-			'subject' => $this->_default_template_field_subject(),
-			'content' => $this->_default_template_field_content(),
-		);
 	}
 
 

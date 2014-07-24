@@ -30,11 +30,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
      *
      * Note:  All message types must have the following files in order to work:
      *
-     * - EE_Message_Template_Defaults extended class(es). (see /core/libraries/messages/defaults
-     *     for examples).  Note, how there is a default class for each messenger/messagetype combo.
-     *     This class is used for defining how the default templates get setup.
-     * - Template files for default templates getting setup (or you can define it all in the above
-     *      Default class).  See /core/libraries/messages/message_type/assets/defaults/ for examples.
+     * - Template files for default templates getting setup.  See /core/libraries/messages/defaults/default/ for examples (note that template files match a specific naming schema).  These templates will need to be registered with the default template pack.
      * - EE_Messages_Validator extended class(es).  See /core/libraries/messages/validators/email/
      *      for examples.  Note for any new message types, there will need to be a validator for each
      *      messenger combo this message type can activate with.

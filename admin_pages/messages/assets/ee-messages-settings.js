@@ -194,7 +194,7 @@ jQuery(document).ready(function($) {
 				action: 'activate_messenger',
 				page: 'espresso_messages',
 				ee_admin_ajax: true,
-				activate_nonce: $('#on-off-nonce').text()
+				activate_nonce: $('#on-off-nonce-' + messenger).text()
 			};
 
 			$('.ajax-loader-grey').toggle();

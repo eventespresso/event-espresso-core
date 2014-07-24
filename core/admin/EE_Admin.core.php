@@ -178,7 +178,7 @@ final class EE_Admin {
 		} else {
 			//ok so we want to enable the entire admin
 			add_action( 'wp_ajax_dismiss_ee_nag_notice', array( $this, 'dismiss_ee_nag_notice_callback' ));
-			add_action( 'save_post', array( $this, 'parse_post_content_on_save' ), 100, 2 );
+			add_action( 'save_post', array( 'EE_Admin', 'parse_post_content_on_save' ), 100, 2 );
 			add_action( 'update_option', array( $this, 'reset_page_for_posts_on_change' ), 100, 3 );
 			add_filter( 'content_save_pre', array( $this, 'its_eSpresso' ), 10, 1 );
 			add_action( 'admin_notices', array( $this, 'get_persistent_admin_notices' ), 9 );
@@ -627,7 +627,7 @@ final class EE_Admin {
 	 * @param $post
 	 * @return    void
 	 */
-	public function parse_post_content_on_save( $post_ID, $post ) {
+	public static function parse_post_content_on_save( $post_ID, $post ) {
 		// default post types
 		$post_types = array( 'post' => 0, 'page' => 1 );
 		// add CPTs

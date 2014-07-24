@@ -328,7 +328,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class {
 	 */
 	public function options( $notDeletedOptionsOnly = TRUE, $selected_value_to_always_include = NULL ) {
 		if ( ! $this->ID() ) {
-			return FALSE;
+			return array();
 		}
 		$query_params = array();
 		if ( $selected_value_to_always_include ) {

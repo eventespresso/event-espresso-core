@@ -121,7 +121,7 @@ abstract class EE_Admin_Page_Menu_Map  {
 	 * @since 4.4.0
 	 * @var int
 	 */
-	public $show_on_menu = TRUE;
+	public $show_on_menu = self::BLOG_ADMIN_ONLY;
 
 	const NONE = 0;
 	const BLOG_ADMIN_ONLY = 1;
@@ -156,7 +156,7 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 			switch ( $prop ) {
 				case 'show_on_menu' :
-					$value = (bool) $value;
+					$value = (int) $value;
 					break;
 				case 'admin_init_page' :
 					if ( in_array( 'admin_init_page', $required ) && ! $value instanceof EE_Admin_Page_Init ) {
@@ -201,9 +201,11 @@ abstract class EE_Admin_Page_Menu_Map  {
 	 * @since  4.4.0
 	 */
 	public function add_menu_page( $network_admin = FALSE ) {
-		if( ( $network_admin && in_array( $this->show_on_menu, array( self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY ) ) )
+
+		$show_on_menu_int = (int) $this->show_on_menu;
+		if( ( $network_admin && in_array( $show_on_menu_int, array( self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY ), TRUE ) )
 				||
-			( ! $network_admin && in_array( $this->show_on_menu, array( self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY ) )) ){
+			( ! $network_admin && in_array( $show_on_menu_int, array( self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY ), TRUE )) ){
 			$wp_page_slug = $this->_add_menu_page();
 		}else{
 			$wp_page_slug = '';
