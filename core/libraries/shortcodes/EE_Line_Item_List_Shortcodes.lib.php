@@ -79,7 +79,7 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 			return '';
 		}
 
-		$valid_shortcodes = array( 'line_item', 'line_item_list' );
+		$valid_shortcodes = array( 'line_item', 'line_item_list', 'ticket' );
 
 		$ticket = $this->_data;
 		$templates = $this->_extra_data['template'];
