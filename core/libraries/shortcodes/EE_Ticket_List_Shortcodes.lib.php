@@ -112,7 +112,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes {
 	 * @return string
 	 */
 	private function _get_ticket_list_for_event() {
-		$valid_shortcodes = array('ticket', 'attendee_list', 'datetime_list', 'attendee');
+		$valid_shortcodes = array('ticket', 'attendee_list', 'datetime_list', 'attendee', 'venue', 'line_item_list');
 		$template = is_array($this->_data['template'] ) && isset($this->_data['template']['ticket_list']) ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
 		$event = $this->_data['data'];
 
