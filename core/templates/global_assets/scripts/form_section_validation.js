@@ -10,16 +10,16 @@ jQuery(document).ready(function($){
         var html_form = $(form_data.form_section_id).closest('form');
         //make sure the form tag has an id
         var id = html_form.attr('id');
-        if ( typeof ( id ) === 'undefined' || id == '' ) {
+        if ( typeof ( id ) === 'undefined' || id === '' ) {
 			var new_id = ee_rand_string(15);
             html_form.attr('id', new_id);
             id = new_id;
         }
 		//remove the non-js-generated server-side validation errors
-		//because we will alow jquery validatew to populate them
+		//because we will allow jquery validate to populate them
 		$(form_data.form_section_id+' '+'.error').remove();
 
-        if ( typeof(validation_rules_per_html_form[id]) == 'undefined'){
+        if ( typeof(validation_rules_per_html_form[id]) === 'undefined'){
 			validation_rules_per_html_form[id] = {
 				'rules':form_data.validation_rules,
 				'errors':form_data.errors
@@ -31,10 +31,12 @@ jQuery(document).ready(function($){
     });
 
     //now apply those validation rules to each html form, and show the server-side errors properly
-    $.each(validation_rules_per_html_form,function(index,validation_rules_per_form){
-        var validator = $('#'+index).validate({
+    $.each(validation_rules_per_html_form,function( index, validation_rules_per_form ){
+//		console.log( JSON.stringify( 'index: ' + index, null, 4 ));
+		var validator = $('#'+index).validate({
             rules : validation_rules_per_form['rules']
         });
+//		console.log( JSON.stringify( 'validator: ' + validator, null, 4 ));
 		validator.showErrors(validation_rules_per_form['errors'] );
     });
 

@@ -109,6 +109,7 @@ abstract class EE_Base_Class{
 	 * @param boolean 	$bydb 			a flag for setting if the class is instantiated by the corresponding db model or not.
 	 * @param string 		$timezone 	indicate what timezone you want any datetime fields to be in when instantiating a EE_Base_Class object.
 	 * @throws EE_Error
+	 * @return \EE_Base_Class
 	 */
 	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = '' ){
 
@@ -163,6 +164,13 @@ abstract class EE_Base_Class{
 			}
 		}
 	}
+
+
+
+	/**
+	 * @param EE_Base_Class $obj
+	 * @return string
+	 */
 	public function get_class($obj){
 		return get_class($obj);
 	}
@@ -850,12 +858,12 @@ abstract class EE_Base_Class{
 	/**
 	 * This takes care of setting a date or time independently on a given model object property. This method also verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
 	 *
-	 * @access private
+	 * @access protected
 	 * @param string $what          "T" for time, 'B' for both, 'D' for Date.
 	 * @param string $datetime_value A valid Date or Time string
 	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
 	 */
-	private function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {
+	protected function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {
 		$field = $this->_get_dtt_field_settings( $fieldname );
 		$field->set_timezone( $this->_timezone );
 
@@ -1001,17 +1009,17 @@ abstract class EE_Base_Class{
 			}
 		}else{//there is NO primary key
 			$already_in_db = false;
-			foreach($this->get_model()->unique_indexes() as $index_name => $index){
+			foreach($this->get_model()->unique_indexes() as $index){
 				$uniqueness_where_params = array_intersect_key($save_cols_n_values, $index->fields());
 				if($this->get_model()->exists(array($uniqueness_where_params))){
 					$already_in_db = true;
 				}
 			}
 			if( $already_in_db ){
-				$combined_pk_fields_n_values = array_intersect_key($save_cols_n_values,$this->get_model()->get_combined_primary_key_fields());
-				$results = $this->get_model()->update($save_cols_n_values,$combined_pk_fields_n_values);
+				$combined_pk_fields_n_values = array_intersect_key( $save_cols_n_values, $this->get_model()->get_combined_primary_key_fields() );
+				$results = $this->get_model()->update( $save_cols_n_values,$combined_pk_fields_n_values );
 			}else{
-				$results = $this->get_model()->insert($save_cols_n_values);
+				$results = $this->get_model()->insert( $save_cols_n_values );
 			}
 		}
 		//restore the old assumption about values being prepared by the model object
@@ -1685,7 +1693,7 @@ abstract class EE_Base_Class{
 			$first_few_properties = $this->model_field_array();
 			$first_few_properties = array_slice($first_few_properties,0,3);
 			$name_parts = array();
-			foreach($field_we_can_use as $name=> $value){
+			foreach( $first_few_properties as $name=> $value ){
 				$name_parts[] = "$name:$value";
 			}
 			return implode(",",$name_parts);

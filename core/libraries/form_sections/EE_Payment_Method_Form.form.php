@@ -18,7 +18,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	 */
 	protected $_options_array = array();
 	/**
-	 * The paymetn method type for this form
+	 * The payment method type for this form
 	 * @var EE_PMT_Base
 	 */
 	protected $_payment_method_type;
@@ -27,14 +27,14 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 	 * @param array $options_array {
 	 *	@type string $extra_meta_inputs should be EE_Form_Section_Validatable[] which
 	 *		will be _subsections and will be saved as extra meta on the payment method object;
-	 *	@type EE_PMT_Base $payment_method_type the paymetn method type this form is for
+	 *	@type EE_PMT_Base $payment_method_type the payment method type this form is for
 	 *	@see EE_Model_Form_Section::__construct() for more
 	 * }
 	 */
 	public function __construct($options_array = array()){
 		$this->_model = EEM_Payment_Method::instance();
 		$this->_options_array = $options_array;
-		//determine the paymetn method type corresponding to this payment method form
+		//determine the payment method type corresponding to this payment method form
 		$caller = debug_backtrace(DEBUG_BACKTRACE_PROVIDE_OBJECT,2);
 		if( ! isset($options_array['payment_method_type'])){
 			$caller_we_hope_is_pm = $caller[1]['object'];
@@ -59,11 +59,13 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section{
 			'html_label_text'=>$this->_model->field_settings_for('PMD_scope')->get_nicename()
 		));
 		//setup the currency options
-		$this->_subsections['Currency'] = new EE_Select_Multi_Model_Input(EEM_Currency::instance()->get_all_currencies_usable_by($this->_payment_method_type),
-				array(
-			'html_label_text'=>  __("Currencies Supported", 'event_espresso'),
-			'required'=>TRUE
-		));
+		$this->_subsections['Currency'] = new EE_Select_Multi_Model_Input(
+			EEM_Currency::instance()->get_all_currencies_usable_by( $this->_payment_method_type ),
+			array(
+				'html_label_text'=>  __("Currencies Supported", 'event_espresso'),
+				'required'=>TRUE
+			)
+		);
 		parent::__construct($options_array);
 		//set the name of this form based on the payment method type
 		if( ! $this->_name){

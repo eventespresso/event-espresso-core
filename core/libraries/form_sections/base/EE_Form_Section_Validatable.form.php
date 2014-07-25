@@ -60,10 +60,11 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base{
 		$validation_error_messages = array();
 		if($this->get_validation_errors()){
 			foreach($this->get_validation_errors() as $validation_error){
-				$validation_error_messages[] =$validation_error->getMessage();
+				if ( $validation_error instanceof EE_Validation_Error ) {
+					$validation_error_messages[] =$validation_error->getMessage();
+				}
 			}
 		}
-
 		return implode(", ",$validation_error_messages);
 	}
 

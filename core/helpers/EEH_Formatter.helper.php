@@ -153,7 +153,8 @@ class EEH_Formatter {
 
 
 
-}//end class EEH_Form_Fields
+}
+//end class EEH_Formatter
 
 
 

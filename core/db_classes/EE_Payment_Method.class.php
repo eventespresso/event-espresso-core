@@ -355,4 +355,37 @@ class EE_Payment_Method extends EE_Base_Class{
 	public function get_all_usable_currencies(){
 		return EEM_Currency::instance()->get_all_currencies_usable_by($this->type_obj());
 	}
+
+
+
+	/**
+	 * Returns TRUE if this payment method's gateway is an instance of EE_Onsite_Gateway
+	 * @return bool
+	 */
+	public function is_on_site(){
+		return $this->type_obj()->payment_occurs() == EE_PMT_Base::onsite;
+	}
+
+
+
+	/**
+	 * Returns TRUE if this payment method's gateway is an instance of EE_Offsite_Gateway
+	 * @return bool
+	 */
+	public function is_off_site(){
+		return $this->type_obj()->payment_occurs() == EE_PMT_Base::offsite;
+	}
+
+
+
+	/**
+	 * Returns TRUE if this payment method does not utilize a gateway
+	 * @return bool
+	 */
+	public function is_off_line(){
+		return $this->type_obj()->payment_occurs() == EE_PMT_Base::offline;
+	}
+
+
+
 }

@@ -14,7 +14,8 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base{
 		if( ! $input instanceof EE_Form_Input_With_Options_Base){
 			throw new EE_Error(sprintf(__("Cannot use Select Display Strategy with an input that doesn't ahve options", "event_espresso")));
 		}
-		$html= EEH_Formatter::nl() . "<select id='{$input->html_id()}' name='{$input->html_name()}' class='{$input->html_class()}' style='{$input->html_style()}'/>" ;
+		$class = $this->_input->required() ? 'ee-needs-value ' . $input->html_class() : $input->html_class();
+		$html= EEH_Formatter::nl() . "<select id='{$input->html_id()}' name='{$input->html_name()}' class='{$class}' style='{$input->html_style()}'/>" ;
 		EE_Registry::instance()->load_helper('Array');
 		EEH_Formatter::increase_indent( 1 );
 		if(EEH_Array::is_multi_dimensional_array($input->options())){

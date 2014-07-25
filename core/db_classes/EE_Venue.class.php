@@ -269,15 +269,22 @@ class EE_Venue extends EE_CPT_Base implements EEI_Has_Address {
 
 
 
-
-
 	/**
 	 * Gets all events happening at this venue. Query parameters can be added to
 	 * fetch a subset of those events.
 	 * @param array $query_params like EEM_Base::get_all's $query_params
+	 * @param bool  $upcoming
 	 * @return EE_Event[]
 	 */
-	function events( $query_params = array() ) {
+	function events( $query_params = array(), $upcoming = FALSE ) {
+		if ( $upcoming ) {
+			$query_params = array(
+				array(
+					'status' => 'publish',
+					'Datetime.DTT_EVT_start' => array( '>', current_time( 'mysql' ))
+				)
+			);
+		}
 		return $this->get_many_related( 'Event', $query_params );
 	}
 

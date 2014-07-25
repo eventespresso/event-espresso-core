@@ -19,7 +19,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  *
  * EE_Form_Input_With_Options_Base
  * For form inputs which are meant to only have a
- * limit set of options that can be used (like for checkboxes or select dropdowns, etc; as opposed to more open-ended textboxes etc)
+ * limit set of options that can be used (like for checkboxes or select dropdowns, etc; as opposed to more open-ended text boxes etc)
  * @package			Event Espresso
  * @subpackage
  * @author				Mike Nelson
@@ -29,11 +29,18 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
 class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 	protected $_options = array();
 	/**
-	 * whether ot allow mutliple selections (ie, the value of this input should be an arrray)
+	 * whether ot allow multiple selections (ie, the value of this input should be an array)
 	 * or not (ie, the value should be a simple int, string, etc)
 	 * @var boolean
 	 */
 	protected $_multiple_selections = false;
+
+
+
+	/**
+	 * @param array $select_options
+	 * @param array $options_array
+	 */
 	public function __construct($select_options = array(), $options_array = array()) {
 		$this->set_select_options($select_options);
 		parent::__construct($options_array);
@@ -66,6 +73,12 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 
 		}
 	}
+
+
+
+	/**
+	 * @return array
+	 */
 	public function options(){
 		return $this->_options;
 	}
@@ -77,7 +90,7 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 		return $this->_flatten_select_options($this->options());
 	}
 	/**
-	 * Makes sure $arr is a flat array, not a multidiemnsional one
+	 * Makes sure $arr is a flat array, not a multidimensional one
 	 * @param array $arr
 	 * @return array
 	 */
@@ -85,8 +98,8 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base{
 		EE_Registry::instance()->load_helper('Array');
 		if(EEH_Array::is_multi_dimensional_array($arr)){
 			$flat_array = array();
-			foreach($arr as $subarray){
-				foreach($subarray as $key => $value){
+			foreach($arr as $sub_array){
+				foreach($sub_array as $key => $value){
 					$flat_array[$key] = $value;
 				}
 			}

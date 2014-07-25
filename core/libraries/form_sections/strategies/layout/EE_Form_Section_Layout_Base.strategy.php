@@ -9,15 +9,23 @@
  * their own headers and footers etc).
  */
 abstract class EE_Form_Section_Layout_Base{
+
 	/**
 	 * Form form section to lay out
 	 * @var EE_Form_Section_Proper
 	 */
 	protected $_form_section;
 
+
+
+	/**
+	 * 	__construct
+	 */
 	function __construct(){
 		EE_Registry::instance()->load_helper('Formatter');
 	}
+
+
 
 	/**
 	 * The form section on which this strategy is to perform
@@ -26,6 +34,17 @@ abstract class EE_Form_Section_Layout_Base{
 	function _construct_finalize(EE_Form_Section_Proper $form){
 		$this->_form_section = $form;
 	}
+
+
+
+	/**
+	 * @return \EE_Form_Section_Proper
+	 */
+	public function form_section() {
+		return $this->_form_section;
+	}
+
+
 
 	/**
 	 * Also has teh side effect of enqueuing any needed JS and CSS for
@@ -43,28 +62,52 @@ abstract class EE_Form_Section_Layout_Base{
 		$html = $this->add_form_section_hooks_and_filters( $html );
 		return $html;
 	}
+
+
+
+	/**
+	 * @return string
+	 */
 	function layout_form_loop(){
 		$html = '';
-		foreach( $this->_form_section->subsections() as $name=>$subsection ){
+		foreach( $this->_form_section->subsections() as $name => $subsection ){
 			if ( $subsection instanceof EE_Form_Input_Base ){
-				$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_input_'.$name.'__in_'.$this->_form_section->name(),$this->layout_input( $subsection ),$this->_form_section,$subsection) ;
+				$html .= apply_filters(
+					'FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_input_' . $name . '__in_' . $this->_form_section->name(),
+					$this->layout_input( $subsection ),
+					$this->_form_section,
+					$subsection
+				);
 			} elseif ( $subsection instanceof EE_Form_Section_Base ){
-				$html .= apply_filters('FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_non_input_'.$name.'__in_'.$this->_form_section->name(),$this->layout_subsection( $subsection ),$this->_form_section,$subsection);
+				$html .= apply_filters(
+					'FHEE__EE_Form_Section_Layout_Base__layout_form__loop_for_non_input_' . $name . '__in_' . $this->_form_section->name(),
+					$this->layout_subsection( $subsection ),
+					$this->_form_section,
+					$subsection
+				);
 			}
 		}
 		return $html;
 	}
+
+
+
 	/**
 	 * Should be used to start teh form section (Eg a table tag, or a div tag, etc.)
 	 * @return string
 	 */
 	abstract function layout_form_begin();
 
+
+
 	/**
 	 * Should be used to end the form section (eg a /table tag, or a /div tag, etc)
 	 * @return string
 	 */
 	abstract function layout_form_end();
+
+
+
 	/**
 	 * Should be used internally by layout_form() to layout each input (eg, if this layout
 	 * is putting each input in a row of its own, this should probably be called by a
@@ -76,15 +119,19 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @return string html
 	 */
 	abstract function layout_input($input);
+
+
+
 	/**
 	 * Similar to layout_input(), should be used internally by layout_form() within a
 	 * loop to layout each proper subsection. Unlike layout_input(), however, it is assumed
 	 * that the proper subsection will layout its container, label, etc on its own.
-	 * @param EE_Form_Section_Proper $subsection
-	 * @param EE_Form_Input_Base $input
+	 * @param EE_Form_Section_Base $subsection
 	 * @return string html
 	 */
-	abstract function layout_subsection($subsection);
+	abstract function layout_subsection( $subsection );
+
+
 
 	/**
 	 * Gets the HTML for the label tag and its contents for the input
@@ -92,25 +139,24 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function display_label($input){
-		$class = $input->html_label_class();
-		if($input->required()){
-			$class = 'required-label '.$class;
-		}
-		return "<label id='{$input->html_label_id()}' class='$class' style='{$input->html_label_style()}' for='{$input->html_id()}'>".
-				$input->html_label_text().
-				"</label>";
+		$class = $input->required() ? 'ee-required-label ' . $input->html_label_class() : $input->html_label_class();
+		$label_text = $input->required() ? $input->html_label_text() . '<span class="ee-asterisk">*</span>' : $input->html_label_text();
+		return '<label id="' . $input->html_label_id() . '" class="' . $class . '" style="' . $input->html_label_style() . '" for="' . $input->html_name() . '">' .  $label_text . '</label>';
 	}
+
+
+
 	/**
 	 * returns the HTML for the server-side validation errors for the specified input
 	 * Note that if JS is enabled, it should remove these and instead
 	 * populate the form's errors in the jquery validate fashion
-	 * using the localizated data provided to the JS
+	 * using the localized data provided to the JS
 	 * @param EE_Form_Input_Base $input
 	 * @return string
 	 */
 	public function display_errors($input){
 		if( $input->get_validation_errors() ){
-			return  "<label  id='" . $input->html_id() . "-errors' class='error' for='{$input->html_name()}'>" . $input->get_validation_error_string() . "</label>";
+			return  "<span  id='" . $input->html_id() . "-error' class='ee-input-error small-text' for='{$input->html_name()}'>" . $input->get_validation_error_string() . "</span>";
 		}else{
 			return '';
 		}
@@ -122,10 +168,10 @@ abstract class EE_Form_Section_Layout_Base{
 	 * @return string
 	 */
 	public function display_help_text($input){
-		return "<span id='{$input->html_id()}-help' class='{$input->html_help_class()}' style='{$input->html_help_style()}'>".
-				$input->html_help_text().
-				"</span>";
+		return '<span id="' . $input->html_id() . '-help" class="' . $input->html_help_class() . '" style="' . $input->html_help_style() . '">' . $input->html_help_text() . '</span>';
 	}
+
+
 
 	/**
 	 * Does an action and hook onto the end of teh form
@@ -141,4 +187,7 @@ abstract class EE_Form_Section_Layout_Base{
 		return $html;
 
 	}
+
+
+
 }
