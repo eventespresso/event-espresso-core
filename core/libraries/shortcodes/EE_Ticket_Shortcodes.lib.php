@@ -48,7 +48,13 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 			'[TICKET_NAME]' => __('The name of the ticket', 'event_espresso'),
 			'[TICKET_DESCRIPTION]' => __('The description of the ticket', 'event_espresso'),
 			'[TICKET_PRICE]' => __('The price of the ticket', 'event_espresso'),
-			'[TKT_QTY_PURCHASED]' => __('The total quantity of the current ticket in the list that has been purchased in this transaction', 'event_espresso')
+			'[TKT_QTY_PURCHASED]' => __('The total quantity of the current ticket in the list that has been purchased in this transaction', 'event_espresso'),
+			'[TKT_USES_*]' => __( 'This attribute based shortcode parses to show the number of uses the ticket has.  The optional "schema" attribute can be used to indicate what schema is used when the uses is infinite.  Options are:', 'event_espresso' ) .
+				'<p><ul>' .
+				'<li><strong>symbol</strong>:' . __('This returns the &infin; symbol.', 'event_espresso') . '</li>' .
+				'<li><strong>text</strong>:' . __('This returns the word, "Unlimited". This is also the default if the "schema" attribute is not used.', 'event_espresso' ) . '</li>' .
+				'<li><strong>{custom}</strong>:' . __('You can put anything you want as a string instead and that will be used.  So you could have the world "any" and whenever uses for a ticket is infinity, this shortcode will parse to "any".', 'event_espresso' ) . '</li>' .
+				'</ul></p>'
 			);
 	}
 
@@ -97,6 +103,14 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 				return $this->_extra_data['data']->tickets[$this->_ticket->ID()]['count'];
 				break;
 		}
+
+
+		if ( strpos( $shortcode, '[TKT_USES_*' !== FALSE ) ) {
+			$attrs = $this->_get_shortcode_attrs( $shortcode );
+			$schema = empty( $attrs['schema'] ) ? null : $attrs['schema'];
+			return $this->_ticket->get_pretty( 'TKT_uses', $schema );
+		}
+		return '';
 
 	}
 
