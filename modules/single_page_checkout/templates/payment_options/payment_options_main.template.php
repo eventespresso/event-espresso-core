@@ -53,13 +53,7 @@
 	<?php  echo $hidden_inputs;  ?>
 
 	<div id="methods-of-payment">
-		<h3 id="select-method-of-payment-hdr"><?php echo apply_filters( 'FHEE__registration_page_payment_options__select_method_of_payment_hdr', __( 'Please select your method of payment:', 'event_espresso' )); ?></h3>
-		<?php
-
-		echo $payment_options;
-//		d( $payment_options );
-
-		?>
+		<?php echo $payment_options; ?>
 		<a id="reg-page-select-other-method-of-payment-lnk" class="hidden smaller-text right" rel=""><?php echo apply_filters( 'FHEE__registration_page_payment_options__select_other_method_of_payment_lnk', __( 'select a different method of payment:', 'event_espresso' )); ?></a>
 	</div>
 	<!-- end #methods-of-payment -->
