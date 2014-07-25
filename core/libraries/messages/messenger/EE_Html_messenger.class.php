@@ -111,8 +111,12 @@ class EE_Html_messenger extends EE_messenger  {
 				'required' => array('[DATETIME_LIST]')
 				),
 			'attendee_list' => array(
-				'shortcodes' => array('attendee'),
+				'shortcodes' => array('attendee', 'question_list'),
 				'required' => array('[ATTENDEE_LIST]')
+				),
+			'question_list' => array(
+				'shortcodes' => array('question'),
+				'required' => array('[QUESTION_LIST]')
 				),
 			'tax_line_item_list' => array(
 				'shortcodes' => array('line_item'),
@@ -246,6 +250,17 @@ class EE_Html_messenger extends EE_messenger  {
 						'css_class' => 'large-text',
 						'rows' => '5',
 						'shortcodes_required' => array('[ATTENDEE_LIST]')
+					),
+					'question_list' => array(
+						'input' => 'textarea',
+						'label' => '[QUESTION_LIST]',
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[QUESTION_LIST]')
 					),
 					'tax_line_item_list' => array(
 						'input' => 'textarea',
