@@ -393,16 +393,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$transaction = EE_Registry::instance()->SSN->get_session_data( 'transaction' );
 		// verify transaction
 		if ( $transaction instanceof EE_Transaction ) {
-			// check if the TXN has an ID, which means it has already been saved to the db
-			$TXN_ID = $transaction->ID();
-			if ( $TXN_ID ) {
-				// so this transaction has already been saved to the db earlier in the same session (ie: it's not a revisit)... so let's pull that
-				$transaction = EEM_Transaction::instance()->get_one_by_ID( $TXN_ID );
-				// verify transaction
-				if ( ! $transaction instanceof EE_Transaction ) {
-					EE_Error::add_error( __( 'The Transaction could not be retrieved from the db when attempting to process your registration information', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__);
-				}
-			}
 			// and get the cart that was used for that transaction
 			$this->checkout->cart = $this->_get_cart_for_transaction( $transaction, TRUE );
 		} else {
