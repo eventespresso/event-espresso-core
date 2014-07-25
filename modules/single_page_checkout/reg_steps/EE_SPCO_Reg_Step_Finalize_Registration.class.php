@@ -68,7 +68,11 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return boolean
 	 */
 	public function process_reg_step() {
+		// ensure all data gets saved to the db and all model object relations get updated
 		if ( $this->checkout->save_all_data() ) {
+			// save TXN data to the cart
+			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
+			// finalize the TXN, which will in turn, finalize all of it's registrations
 			$this->checkout->transaction->finalize();
 			$this->checkout->redirect_to_thank_you_page = TRUE;
 			return TRUE;
@@ -99,80 +103,34 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	 * @return mixed bool|int (either false on fail OR TXN id on success)
 	 */
 	public function process_registration_from_admin() {
-		//nonce check was done in admin so no need to do here.
-		//first lets validate the registration form
-		$this->init_for_admin();
-		//if failure in processing attendee info then let's get out early
-		if ( ! $this->_process_attendee_information() ) {
-			return FALSE;
-		}
-		// same deal when saving everything
-		if ( ! $this->_save_all_registration_information() ) {
-			return FALSE;
-		}
-		//all is good so let's continue with finalizing the registration.
-		EE_Registry::instance()->SSN->set_session_data( array( 'transaction', NULL ));
-		$this->_transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data() );
-		$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
-		//is this free event?
-		if ( $this->checkout->cart->get_grand_total()->total() == EEH_Template::format_currency( 0, TRUE ) ) {
-			$this->_transaction->set_status( EEM_Transaction::complete_status_code );
-		} else {
-			$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
-		}
-		$this->_transaction->finalize( TRUE );
-		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
-		return $this->_transaction->ID();
-	}
-
-
-
-
-
-	/**
-	 * 	_process_finalize_registration
-	 *
-	 * 	@access private
-	 * 	@return 	void
-	 */
-	private function _process_finalize_registration() {
-
 		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		die();
-		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '' );
-
-		// save everything
-		if ( $this->_continue_reg && $this->_save_all_registration_information() ) {
-			//			echo '<h2 style="color:#E76700;">_process_finalize_registration<br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h2>';
-			// save TXN data to the cart
-			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
-
-			do_action( 'AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->_transaction );
-			$this->_selected_method_of_payment = $this->_get_selected_method_of_payment();
-			// if Default REG Status is set to REQUIRES APPROVAL... then payments are NOT allowed
-			if ( $this->_selected_method_of_payment == 'payments_closed' ) {
-				// set TXN Status to Open
-				$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
-				$this->_transaction->save();
-				$this->_transaction->finalize();
-
-				// Default REG Status is set to PENDING PAYMENT OR APPROVED, and payments are allowed
-			} else if ( $this->_transaction->total() > 0 ) {
-				// attempt payment via payment method
-				$this->_process_payment();
-			} else {
-				// set TXN Status to Open
-				$this->_transaction->set_status( EEM_Transaction::complete_status_code );
-				$this->_transaction->save();
-				$this->_transaction->finalize();
-				$this->checkout->redirect_to_thank_you_page = TRUE;
-			}
-
-		}
-		$this->checkout->next_step = FALSE;
-		$this->go_to_next_step( __FUNCTION__ );
-
+//		//nonce check was done in admin so no need to do here.
+//		//first lets validate the registration form
+//		$this->init_for_admin();
+//		//if failure in processing attendee info then let's get out early
+//		if ( ! $this->_process_attendee_information() ) {
+//			return FALSE;
+//		}
+//		// same deal when saving everything
+//		if ( ! $this->_save_all_registration_information() ) {
+//			return FALSE;
+//		}
+//		//all is good so let's continue with finalizing the registration.
+//		EE_Registry::instance()->SSN->set_session_data( array( 'transaction', NULL ));
+//		$this->_transaction->set_txn_session_data( EE_Registry::instance()->SSN->get_session_data() );
+//		$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->_transaction->ID() );
+//		//is this free event?
+//		if ( $this->checkout->cart->get_grand_total()->total() == EEH_Template::format_currency( 0, TRUE ) ) {
+//			$this->_transaction->set_status( EEM_Transaction::complete_status_code );
+//		} else {
+//			$this->_transaction->set_status( EEM_Transaction::incomplete_status_code );
+//		}
+//		$this->_transaction->finalize( TRUE );
+//		EE_Registry::instance()->SSN->clear_session( __CLASS__, __FUNCTION__ );
+//		return $this->_transaction->ID();
 	}
+
 
 
 
