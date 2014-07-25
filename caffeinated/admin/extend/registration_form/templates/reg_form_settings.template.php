@@ -17,17 +17,17 @@
 				<td>
 					<p><?php echo EEH_Form_Fields::select_input( 'use_captcha', $values, $use_captcha, 'id="admin-recaptcha-settings-slct"' ); ?></p>
 					<p class="description">
-						<?php 
-							echo sprintf( 
+						<?php
+							echo sprintf(
 								__( 'Used to block spam registrations. Sign up %shere%s to receive your Public and Private keys.', 'event_espresso' ),
-								'<a href="http://www.google.com/recaptcha/whyrecaptcha">',
+								'<a href="https://www.google.com/recaptcha">',
 								'</a>'
-							); 
+							);
 						?>
 					</p>
 				</td>
 			</tr>
-			
+
 			<tr class="admin-recaptcha-settings-tr" <?php echo $show_captcha_settings; ?>>
 				<th>
 					<label for="recaptcha_publickey">
@@ -41,7 +41,7 @@
 					<input type="text" name="recaptcha_publickey" class="maybe-required widefat" value="<?php echo $recaptcha_publickey; ?>" />
 				</td>
 			</tr>
-			
+
 			<tr class="admin-recaptcha-settings-tr" <?php echo $show_captcha_settings; ?>>
 				<th>
 					<label for="recaptcha_privatekey">
@@ -61,7 +61,7 @@
 	<h4 class="ee-admin-settings-hdr admin-recaptcha-settings-hdr">
 		<?php _e('reCAPTCHA Appearance', 'event_espresso'); ?>
 	</h4>
-				
+
 	<table class="form-table">
 		<tbody>
 
@@ -75,7 +75,7 @@
 					<?php echo EEH_Form_Fields::select_input( 'recaptcha_theme', $recaptcha_theme_options, $recaptcha_theme ); ?>
 				</td>
 			</tr>
-			
+
 			<tr class="admin-recaptcha-settings-tr" <?php echo $show_captcha_settings; ?>>
 				<th>
 					<label for="recaptcha_language">
@@ -86,7 +86,7 @@
 					<?php echo EEH_Form_Fields::select_input( 'recaptcha_language', $recaptcha_language_options, $recaptcha_language ); ?>
 				</td>
 			</tr>
-			
+
 			<tr class="admin-recaptcha-settings-tr" <?php echo $show_captcha_settings; ?>>
 				<th>
 					<label for="recaptcha_width">
@@ -97,7 +97,7 @@
 					<input name="recaptcha_width" type="text" class="small-text" value="<?php echo $recaptcha_width; ?>" size="5" maxlength="6" />
 				</td>
 			</tr>
-			
+
 		</tbody>
 	</table>
 
@@ -115,7 +115,7 @@
 					<?php echo $recaptcha_example; ?>
 				</td>
 			</tr>
-			
+
 		</tbody>
 	</table>
 	<?php } ?>
