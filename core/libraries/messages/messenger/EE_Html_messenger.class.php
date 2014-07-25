@@ -91,7 +91,7 @@ class EE_Html_messenger extends EE_messenger  {
 				'required' => array('[EVENT_LIST]')
 				),
 			'ticket_list' => array(
-				'shortcodes' => array( 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'line_item_list'),
+				'shortcodes' => array( 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'line_item_list', 'venue'),
 				'required' => array('[TICKET_LIST]')
 				),
 			'ticket_line_item_no_pms' => array(
