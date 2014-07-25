@@ -59,7 +59,10 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 
 		$this->_ticket = $this->_data instanceof EE_Ticket ? $this->_data : null;
 
-		//if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the reg_obj instead.
+		//possible EE_Line_Item may be incoming data
+		$this->_ticket = empty( $this->_ticket ) && $this->_data instanceof EE_Line_Item && $this->_extra_data['data'] instanceof EE_Messages_Addressee && ! empty( $this->_extra_data->line_items_with_children[$this->_data->ID()]['EE_Ticket'] ) && $this->_extra_data->line_items_with_children[$this->_data->ID()]['EE_Ticket'] instanceof EE_Ticket ? $this->_extra_data->line_items_with_children[$this->_data->ID()]['EE_Ticket'] : $this->_ticket;
+
+		//if still no ticket, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the ticket from the reg_obj instead.
 		if ( empty( $this->_ticket ) ) {
 			$aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
 			$aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
