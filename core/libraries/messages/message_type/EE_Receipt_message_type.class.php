@@ -95,7 +95,7 @@ class EE_Receipt_message_type extends EE_message_type {
 	*/
 	protected function _set_valid_shortcodes() {
 		$this->_valid_shortcodes['purchaser'] = array(
-			'attendee_list', 'attendee', 'datetime_list', 'datetime', 'event_list', 'event', 'event_meta', 'messenger', 'organization', 'primary_registration_list', 'primary_registration_details', 'ticket_list', 'ticket', 'transaction', 'venue', 'line_item_list', 'payment_list', 'line_item', 'payment'
+			'attendee_list', 'attendee', 'datetime_list', 'datetime', 'event_list', 'event', 'event_meta', 'messenger', 'organization', 'primary_registration_list', 'primary_registration_details', 'ticket_list', 'ticket', 'transaction', 'venue', 'line_item_list', 'payment_list', 'line_item', 'payment', 'question_list', 'question'
 		);
 	}
 
