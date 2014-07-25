@@ -1,6 +1,6 @@
 <?php
 /**
- * This is the template for the html messenger and receipt message type.
+ * This is the template for the html messenger and receipt message type main content field.
  */
 
 //figure out what to use for payment instructions that is dependent on whether the corresponding value is existent in invoice settings from an old install.
