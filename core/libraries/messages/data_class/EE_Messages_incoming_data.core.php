@@ -349,6 +349,7 @@ abstract class EE_Messages_incoming_data {
 						$tickets[$line_item->ticket()->ID()]['line_item'] = $line_item;
 						$tickets[$line_item->ticket()->ID()]['sub_line_items'] = $line_item->children();
 						$line_items[$line_item->ID()]['children'] = $line_item->children();
+						$line_items[$line_item->ID()]['EE_Ticket'] = $line_item->ticket();
 
 					}
 				}
