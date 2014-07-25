@@ -42,12 +42,12 @@ class EE_DMS_New_Addon_0_0_2 extends EE_Data_Migration_Script_Base{
 	}
 
 	public function schema_changes_before_migration() {
-		$this->_table_is_new_in_this_version('new_addon', '
+		$this->_table_is_new_in_this_version('esp_new_addon_thing', '
 			NEW_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 			NEW_name VARCHAR(10) NOT NULL,
-			EVT_ID int(10) unsigned NOT NULL,
 			PRIMARY KEY  (NEW_ID)'
 				);
+		EEH_Activation::add_column_if_it_doesnt_exist('esp_attendee_meta', 'ATT_foobar');
 	}
 }
 

@@ -238,6 +238,9 @@ class EE_Error extends Exception {
 	*/
     public function get_error() {
 
+		if( apply_filters( 'FHEE__EE_Error__get_error__show_normal_exceptions', FALSE ) ){
+			throw $this;
+		}
 		// get separate user and developer messages if they exist
 		$msg = explode( '||', $this->getMessage() );
 		$user_msg = $msg[0];

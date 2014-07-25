@@ -39,8 +39,9 @@ class EE_Register_Data_Migration_Scripts implements EEI_Plugin_API {
 	 *
 	 * @since    4.3.0
 	 * @param string $dms_id		a unique identifier for this set of data migration scripts
-	 * @param  array $setup_args  						An array of arguments provided for registering the data migration scripts
-	 * @internal param string dms_paths 				an array of full server paths to folders that contain data migration scripts
+	 * @param  array $setup_args {
+	 *		@type string $dms_paths 				an array of full server paths to folders that contain data migration scripts
+	 * }
 	 * @throws EE_Error
 	 * @return void
 	 */
