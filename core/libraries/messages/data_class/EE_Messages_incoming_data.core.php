@@ -281,6 +281,7 @@ abstract class EE_Messages_incoming_data {
 				$tickets[$ticket->ID()]['dtt_objs'] = $relateddatetime;
 				$tickets[$ticket->ID()]['reg_objs'][$reg->ID()] = $reg;
 				$event = $reg->event();
+				$tickets[$ticket->ID()]['EE_Event'] = $event;
 				$evtcache[$evt_id] = $event;
 				$eventsetup[$evt_id]['reg_objs'][$reg->ID()] = $reg;
 				$eventsetup[$evt_id]['tkt_objs'][$ticket->ID()] = $ticket;
