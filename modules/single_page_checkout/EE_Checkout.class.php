@@ -337,6 +337,7 @@ class EE_Checkout {
 	public function save_all_data() {
 		// verify the transaction
 		if ( $this->transaction instanceof EE_Transaction ) {
+//			d( $this->transaction );
 			$this->transaction->save();
 			// grab the saved registrations from the transaction
 			foreach ( $this->transaction->registrations( array(), TRUE ) as $line_item_id => $registration ) {  //
@@ -388,6 +389,7 @@ class EE_Checkout {
 							// verify object
 							if ( $answer instanceof EE_Answer ) {
 //								printr( $answer, '$answer  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
+//								d( $answer );
 								$answer->set_registration( $registration->ID() );
 								$answer->save();
 								if ( ! $registration->update_cache_after_object_save( 'Answer', $answer, $cache_key )) {
