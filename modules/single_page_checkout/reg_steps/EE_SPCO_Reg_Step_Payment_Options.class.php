@@ -338,15 +338,18 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	public function _setup_payment_options() {
 		$payment_methods = EE_Registry::instance()->load_model( 'Payment_Method' )->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
 		$available_payment_methods = array();
+		$default_payment_method_set = FALSE;
+		// if there is more than one payment method, display a header
 		$selected_payment_method = array();
 		foreach( $payment_methods as $payment_method ) {
 			if ( $payment_method instanceof EE_Payment_Method ) {
+				// check if any payment methods are set as default
+				$default_payment_method_set = $payment_method->open_by_default() ? TRUE : $default_payment_method_set;
 				// if payment method is already selected OR nothing is selected and this payment method should be open_by_default
 				if (( $this->checkout->selected_method_of_payment == $payment_method->slug() ) || ( ! $this->checkout->selected_method_of_payment && $payment_method->open_by_default() )) {
 					$this->checkout->selected_method_of_payment = $payment_method->slug();
 					$this->_save_selected_method_of_payment();
 					// set this payment method aside for a moment
-//					$selected_payment_method[ $payment_method->slug() . '-link' ] = $this->_payment_method_link( $payment_method );
 					$selected_payment_method[ $payment_method->slug() . '-info' ] = $this->_payment_method_billing_info( $payment_method );
 					$selected_payment_method[ 'selected_method_of_payment' ] = new EE_Hidden_Input(
 						array(
@@ -364,12 +367,27 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				}
 			}
 		}
-		// add note to the beginning of the $available_payment_methods array while maintaining associative keys
-		$available_payment_methods = array(
-			'select_other_method_of_payment' => new EE_Form_Section_HTML(
-				EEH_HTML::p ( apply_filters( 'FHEE__registration_page_payment_options__select_other_method_of_payment', __( 'select a different method of payment:', 'event_espresso' )), '', 'smaller-text' )
-			)
-		) + $available_payment_methods;
+		// if there is more than one payment method...
+		if ( count( $payment_methods ) > 1 ) {
+			// if there are no default payment methods set...
+			if ( ! $default_payment_method_set ) {
+				// display the "Please select your method of payment" header
+				$selected_payment_method = array(
+						'select_method_of_payment_hdr' => new EE_Form_Section_HTML(
+								EEH_HTML::h4 (
+									apply_filters( 'FHEE__registration_page_payment_options__select_method_of_payment_hdr', __( 'Please select your method of payment:', 'event_espresso' )),
+									'select-method-of-payment-hdr'
+								)
+							)
+					) + $selected_payment_method;
+			}
+			// add note to the beginning of the $available_payment_methods array while maintaining associative keys
+			$available_payment_methods = array(
+					'select_other_method_of_payment' => new EE_Form_Section_HTML(
+							EEH_HTML::p ( apply_filters( 'FHEE__registration_page_payment_options__select_other_method_of_payment', __( 'select a different method of payment:', 'event_espresso' )), '', 'smaller-text' )
+						)
+				) + $available_payment_methods;
+		}
 		// perform a php union to prepend $selected_payment_method to the beginning of the $available_payment_methods array while maintaining associative keys
 		$available_payment_methods = $selected_payment_method + $available_payment_methods;
 		$available_payment_methods = $selected_payment_method + $available_payment_methods;
@@ -560,12 +578,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				return $this->_process_payment();
 
 		}
-		// event requires pre-approval
-//			if ( $this->checkout->selected_method_of_payment == 'payments_closed' ) {
-//				EE_Error::add_success( __( 'no payment required at this time.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-//			} else if ( $this->checkout->transaction->total() == 0 || ! $this->checkout->reg_url_link ) {
-//				EE_Error::add_success( __( 'no payment required.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
-//			}
 	}
 
 
@@ -620,18 +632,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->checkout->selected_method_of_payment ) ) {
 			return FALSE;
 		}
-		// check if transaction has a primary registrant and that it has a related Attendee object
-		if ( ! $this->_transaction_has_primary_registrant() ) {
-			// need to at least gather some primary registrant data before attempting payment
-			if ( ! $this->_capture_primary_registration_data_from_billing_form() ) {
-				return FALSE;
-			}
-		}
-		$this->checkout->transaction->primary_registration()->save();
-		$this->checkout->transaction->save();
-		// has registration been finalized ?
-		if ( ! $this->checkout->transaction->primary_registration()->reg_code() ) {
-			$this->checkout->transaction->primary_registration()->finalize();
+		// ensure primary registrant has been fully processed
+		if ( ! $this->_finalize_primary_registrant_prior_to_payment() ) {
+			return FALSE;
 		}
 		// attempt payment
 		$payment = $this->_attempt_payment( $this->checkout->payment_method );
@@ -659,14 +662,47 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		if ( $this->checkout->billing_form instanceof EE_Billing_Info_Form ) {
 			if ( $this->checkout->billing_form->was_submitted() ) {
 				$this->checkout->billing_form->receive_form_submission();
-				if ( ! $this->checkout->billing_form->is_valid() ) {
-					EE_Error::add_error( __( 'One or more billing form inputs are invalid and require correction before proceeding.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+				if ( $this->checkout->billing_form->is_valid() ) {
+					return TRUE;
+				}
+				EE_Error::add_error( __( 'One or more billing form inputs are invalid and require correction before proceeding.', 'event_espresso' ), __FILE__, __FUNCTION__, __LINE__ );
+			}
+		}
+		return FALSE;
+	}
+
+
+
+	/**
+	 * _finalize_primary_registrant_prior_to_payment
+	 * ensures that the primary registrant has a valid attendee object created with the critical details populated (first & last name & email)
+	 * and that both the transaction object and primary registration object have been saved
+	 * plz note that any other registrations will NOT be saved at this point (because they may not have any details yet)
+	 *
+	 * @access private
+	 * @return bool
+	 */
+		private function _finalize_primary_registrant_prior_to_payment() {
+			// check if transaction has a primary registrant and that it has a related Attendee object
+			if ( ! $this->_transaction_has_primary_registrant() ) {
+				// need to at least gather some primary registrant data before attempting payment
+				if ( ! $this->_capture_primary_registration_data_from_billing_form() ) {
 					return FALSE;
 				}
 			}
+			// because saving an object clears it's cache, we need to do the chevy shuffle
+			// grab the primary_registration object
+			$primary_registration = $this->checkout->transaction->primary_registration();
+			// save the TXN ( which clears cached copy of primary_registration)
+			$this->checkout->transaction->save();
+			// grab TXN ID and save it to the primary_registration
+			$primary_registration->set_transaction_id( $this->checkout->transaction->ID() );
+			// save what we have so far
+			$primary_registration->save();
+			// ensure primary registration been finalized
+			$primary_registration->finalize();
+			return TRUE;
 		}
-		return TRUE;
-	}
 
 
 
@@ -709,7 +745,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				);
 				return FALSE;
 			}
-			$primary_registration->save();
 			return TRUE;
 		}
 
@@ -850,24 +885,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		return FALSE;
 	}
 
-
-
-	/**
-	 * 	_get_payment_method_billing_form
-	 *
-	 * 	@access 		private
-	 * 	@return 		EE_Billing_Info_Form
-	 */
-//	private function _get_billing_form_for_payment_method( EE_Payment_Method ) {
-//		if ( $this->checkout->selected_method_of_payment ) {
-//			// get EE_Payment_Method object
-//			$this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment();
-//			if ( $this->checkout->payment_method ) {
-//				return $this->_get_billing_form();
-//			}
-//		}
-//		return NULL;
-//	}
 
 
 
