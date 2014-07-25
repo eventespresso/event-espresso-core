@@ -590,8 +590,7 @@ class EE_Transaction extends EE_Base_Class {
 	public function finalize( $from_admin = FALSE, $flip_reg_status = TRUE ) {
 		$new_reg = FALSE;
 		$reg_to_approved = FALSE;
-		$registrations = $this->get_many_related( 'Registration' );
-		foreach ( $registrations as $registration ) {
+		foreach ( $this->registrations( array(  'order_by' => array( 'REG_count' => 'ASC' ))) as $registration ) {
 			if ( $registration instanceof EE_Registration ) {
 				$reg_msg = $registration->finalize( $from_admin, $flip_reg_status );
 				$new_reg = $reg_msg[ 'new_reg' ] ? TRUE : $new_reg;
