@@ -54,6 +54,14 @@ class EEM_Price extends EEM_Soft_Delete_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Price
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
 
 
 	/**

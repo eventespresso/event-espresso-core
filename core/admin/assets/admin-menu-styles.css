@@ -120,9 +120,9 @@ div.TB-ee-frame a {
 	position: relative;
 	top: -2px;
 	font-size: inherit;
-   	height: auto;
+	height: auto;
 	margin-right: .5em;
-    vertical-align: middle;
+	vertical-align: middle;
 	width: auto;
 }
 
@@ -134,8 +134,8 @@ div.TB-ee-frame a {
 	font-variant: normal;
 	line-height: 1;
 	speak: none;
-    text-align: center;
-    text-decoration: inherit;
+	text-align: center;
+	text-decoration: inherit;
 	text-transform: none;
 	/* Better Font Rendering =========== */
 	-webkit-font-smoothing: antialiased;
@@ -338,4 +338,18 @@ div.TB-ee-frame a {
 
 .espresso-admin .wp-list-table .ee-lock-icon:before {
 	margin-left: 8px;
+}
+
+
+/**
+ * Fixes for some weird WP styling issues encountered on ee menu items
+ */
+#toplevel_page_espresso_events .wp-submenu li.toplevel_page_espresso_events {
+	min-height: inherit;
+}
+
+#toplevel_page_espresso_events .wp-submenu li.current a.toplevel_page_espresso_events {
+	background-color: transparent;
+	font-size: 13px;
+
 }

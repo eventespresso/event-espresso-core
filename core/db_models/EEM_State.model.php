@@ -51,6 +51,15 @@ class EEM_State extends EEM_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_State
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 	protected function __construct(){
 		$this->singular_item = __('State/Province','event_espresso');
 		$this->plural_item = __('States/Provinces','event_espresso');

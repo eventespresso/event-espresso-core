@@ -72,6 +72,15 @@ class EEM_Event_Message_Template extends EEM_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Event_Message_Template
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 
 
 
