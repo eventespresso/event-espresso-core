@@ -34,7 +34,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$plain_line_items = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_line_item, $transaction );
 		$cart = EE_Cart::get_cart_from_txn( $transaction );
 		$this->assertNotEmpty( $cart->get_tickets() );
-		$this->assertEquals( $plain_line_items, $cart->get_tickets() );
+		$this->assertEEModelObjectsEquals( $plain_line_items, $cart->get_tickets() );
 	}
 
 	public function test_all_ticket_quantity_count(){
@@ -48,12 +48,12 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$transaction = $this->new_typical_transaction();
 		$taxes = EEM_Line_Item::instance()->get_all_of_type_for_transaction( EEM_Line_Item::type_tax, $transaction );
 		$cart = EE_Cart::get_cart_from_txn( $transaction );
-		$this->assertEquals( $taxes, $cart->get_taxes() );
+		$this->assertEEModelObjectsEquals( $taxes, $cart->get_taxes() );
 	}
 	public function test_get_grand_total(){
 		$transaction = $this->new_typical_transaction();
 		$cart = EE_Cart::get_cart_from_txn( $transaction );
-		$this->assertEquals( $transaction->total_line_item(), $cart->get_grand_total() );
+		$this->assertEEModelObjectsEquals( $transaction->total_line_item(), $cart->get_grand_total() );
 	}
 	public function test_add_ticket_to_cart(){
 		//let's make an interesting ticket, with multiple datetimes, multiple prices etc
@@ -145,7 +145,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 	public function test_empty_cart(){
 		$transaction = $this->new_typical_transaction();
 		$cart = EE_Cart::get_cart_from_txn( $transaction );
-		$this->assertEquals( $transaction->total_line_item(), $cart->get_grand_total() );
+		$this->assertEEModelObjectsEquals( $transaction->total_line_item(), $cart->get_grand_total() );
 
 		$cart->empty_cart();
 		$this->assertNotEquals( $transaction->total_line_item(), $cart->get_grand_total() );
@@ -158,7 +158,7 @@ class EE_Cart_Test extends EE_UnitTestCase{
 		$cart = EE_Cart::get_cart_from_txn( $t2 );
 		$this->assertNotEquals( $t1_line_item, $cart->get_grand_total() );
 		EE_Cart::instance()->set_grand_total_line_item( $t1_line_item );
-		$this->assertEquals( $t1_line_item, $cart->get_grand_total() );
+		$this->assertEEModelObjectsEquals( $t1_line_item, $cart->get_grand_total() );
 	}
 
 	public function test_save_cart(){

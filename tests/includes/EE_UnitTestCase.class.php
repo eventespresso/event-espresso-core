@@ -265,6 +265,30 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		}
 	}
 
+	/**
+	 * COmpares two EE model objects by just looking at their field's values. If you want strict comparison just use ordinary '==='.
+	 * If you pass it two arrays of EE objects, that works too
+	 * @param EE_Base_Class|EE_Base_Class[] $expected_object
+	 * @param EE_Base_Class|EE_Base_Class[] $actual_object
+	 */
+	public function assertEEModelObjectsEquals( $expected_object, $actual_object){
+		if( is_array( $expected_object ) ){
+			$this->assertTrue( is_array( $actual_object ) );
+			foreach( $expected_object as $single_expected_object ){
+				$this->assertEEModelObjectsEquals( $single_expected_object, array_shift( $actual_object ) );
+			}
+		}else{
+			$this->assertInstanceOf( 'EE_Base_Class', $expected_object);
+			$this->assertInstanceOf( 'EE_Base_Class', $actual_object);
+			$this->assertEquals( get_class( $expected_object ), get_class( $actual_object ) );
+			foreach( $expected_object->model_field_array() as $field_name => $expected_value ){
+				$actual_value = $actual_object->get( $field_name );
+				if( $expected_value != $actual_value ){
+					$this->fail( sprintf( __( 'EE objects of class "%s" did not match. They were: \r\n%s and \r\n%s', 'event_espresso' ), json_encode( $expected_object->model_field_array() ), json_encode( $actual_object->model_field_array() ) ) );
+				}
+			}
+		}
+	}
 
 
 	/**
@@ -365,9 +389,13 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if(strpos($table_name, $wpdb->prefix) !== 0){
 			$table_name = $wpdb->prefix.$table_name;
 		}
-		$exists =  $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
-		if( !$exists ){
-			$this->assertTrue($exists,  sprintf(__("Table like %s does not exist as it was defined on the model %s", 'event_espresso'),$table_name,$model_name));
+		$old_show_errors_value = $wpdb->show_errors;
+		$wpdb->last_error = NULL;
+		$wpdb->show_errors( FALSE );
+		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
+		$wpdb->show_errors( $old_show_errors_value );
+		if( ! is_null( $wpdb->last_error) && $wpdb->last_error != '' ){
+			$this->fail( $wpdb->last_error);
 		}
 	}
 
@@ -383,9 +411,13 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 		if(strpos($table_name, $wpdb->prefix) !== 0){
 			$table_name = $wpdb->prefix.$table_name;
 		}
-		$exists =  $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) == $table_name;
-		if( $exists ){
-			$this->assertFalse($exists,  sprintf(__("Table like %s SHOULD NOT exist. It was apparently defined on the model '%s'", 'event_espresso'),$table_name,$model_name));
+		$old_show_errors_value = $wpdb->show_errors;
+		$wpdb->last_error = NULL;
+		$wpdb->show_errors( FALSE );
+		$wpdb->get_col( "SELECT * from $table_name LIMIT 1");
+		$wpdb->show_errors( $old_show_errors_value );
+		if( is_null( $wpdb->last_error) || $wpdb->last_error == '' ){
+			$this->fail( sprintf(__("Table like %s SHOULD NOT exist. It was apparently defined on the model '%s'", 'event_espresso'),$table_name,$model_name));
 		}
 	}
 
@@ -398,6 +430,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	protected function _pretend_addon_hook_time(){
 		global $wp_actions;
 		unset($wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin']);
+		unset($wp_actions['FHEE__EE_System__parse_model_names']);
+		unset($wp_actions['FHEE__EE_System__parse_implemented_model_names']);
 		$wp_actions['AHEE__EE_System__load_espresso_addons'] = 1;
 		unset($wp_actions[ 'AHEE__EE_System__register_shortcodes_modules_and_widgets' ] );
 	}
@@ -409,6 +443,8 @@ class EE_UnitTestCase extends WP_UnitTestCase {
 	protected function _stop_pretending_addon_hook_time(){
 		global $wp_actions;
 		$wp_actions['AHEE__EE_System___detect_if_activation_or_upgrade__begin'] = 1;
+		$wp_actions['FHEE__EE_System__parse_model_names'] = 1;
+		$wp_actions['FHEE__EE_System__parse_implemented_model_names'] = 1;
 		unset($wp_actions['AHEE__EE_System__load_espresso_addons']);
 	}
 

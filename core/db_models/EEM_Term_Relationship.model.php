@@ -45,6 +45,15 @@ class EEM_Term_Relationship extends EEM_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Term_Relationship
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 	protected function __construct(){
 		$this->singular_item = __('Term Relationship','event_espresso');
 		$this->plural_item = __('Term Relationships','event_espresso');
@@ -78,7 +87,7 @@ class EEM_Term_Relationship extends EEM_Base {
 	 */
 	public function update_term_taxonomy_counts($term_taxonomy_id = NULL){
 		//because this uses a subquery and sometimes assigning to column to be another column's
-		//value, we just write the SQL directly. 
+		//value, we just write the SQL directly.
 		global $wpdb;
 		if( $term_taxonomy_id ){
 			$second_operand = $wpdb->prepare('%d',$term_taxonomy_id);

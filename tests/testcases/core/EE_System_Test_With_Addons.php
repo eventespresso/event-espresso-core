@@ -75,7 +75,7 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//that it needed upon new activation (and so we call the function that does it, which
 		//is normally called a little later in the request)
 		EE_System::instance()->perform_activations_upgrades_and_migrations();
-		$this->assertTableExists('new_addon');
+		$this->assertTableExists('esp_new_addon_thing');
 	}
 
 	public function test_detect_activations_or_upgrades__upgrade_on_activation(){
@@ -209,13 +209,15 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		//that it needed upon new activation (and so we call the function that does it, which
 		//is normally called a little later in the request)
 		EE_System::instance()->perform_activations_upgrades_and_migrations();
-		$this->assertTableExists('new_addon');
+		$this->assertTableExists('esp_new_addon_thing');
 	}
+
 	/**
 	 * Registers the mock addon so it can be used for testing
 	 */
 	public function setUp(){
 		parent::setUp();
+
 		$this->_pretend_addon_hook_time();
 		$mock_addon_path = EE_TESTS_DIR.'mocks/addons/new-addon/';
 		EE_Register_Addon::register($this->_addon_name, array(
@@ -238,8 +240,6 @@ class EE_System_Test_With_Addons extends EE_UnitTestCase{
 		$this->_current_db_state = get_option(EE_Data_Migration_Manager::current_database_state);
 		delete_option(EE_Data_Migration_Manager::current_database_state);
 		update_option(EE_Data_Migration_Manager::current_database_state, array('Core' => espresso_version() ) );
-		//we want to create real tables, not just 'temporary' tables, plz. See http://wordpress.stackexchange.com/questions/94954/plugin-development-with-unit-tests
-		remove_filter( 'query', array( $this, '_create_temporary_tables' ) );
 	}
 
 

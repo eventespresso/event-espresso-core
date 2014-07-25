@@ -9,21 +9,47 @@
  * @author				Mike Nelson
  *
  */
+?>
+<h1>EE4 Addon Renamer</h1>
+<p>And general renamer in file and folder names, and file content.</p>
+<p>The original usage of this script is to place the script in the ROOT of a copy of  "new-addon" (found in event-espresso-core/tests/mocks/addons), and then access the script directly using your browser to rename the addon and its files etc.</p
+<h4>GET parameters accepted:</h4>
+<ul>
+	<li>replace: REQUIRED string, the new name of the addon, or the string to be replaced</li>
+	<li>search: OPTIONAL string, default is "New_Addon"</li>
+	<li>rename_parent_directory: OPTIONAL int, 1 (default) or 0. Whether to rename the parent directory (the directory that contains this script) in the normal ee4-addon-fashion.</li>
+	<li>folder_path: OPTIONAL string, by default uses the current folder, but if you want you can provide the FULL path to a specific folder you want to rename. Do not provide a trailing slash.</li>
+	<li>delete_script_when_finished: OPTIONAL int, 1 (default) or 0. Whether or not to delete this script when finished renaming
+</ul>
+
+<?php
 //go into each subfolder
 //find all the files
 //rename the files; and the content of the files
-if( ! isset( $_GET['addon_name' ] ) ){
-	echo "You must pass in the name of your addon using the GET parameter 'addon_name'. This name should have the first letter of each word capitalized and use underscores instead of spaces. Eg 'Calendar' or 'Monkey' instead of 'calendar' or 'monkey'.";
-}else{
-
-
-	recursively_rename( dirname( __FILE__  ). "/*", 'New_Addon', $_GET[ 'addon_name' ] );
-	unlink( __FILE__ );
-	replace_in_path( 'New_Addon', 'ee4-'.$_GET[ 'addon_name' ], dirname( __FILE__ ) );
-	echo "<br><hr>ok folders renamed! and this renamer.php file has been deleted for security reasons";
-
-
+if( ! isset( $_GET['replace' ] ) ){
+	echo "You must pass in the name of your addon using the GET parameter 'replace'. This name should have the first letter of each word capitalized and use underscores instead of spaces. Eg 'Calendar' or 'Monkey_Power' instead of 'calendar' or 'monkey power'.";
+	die;
 }
+$replace = $_GET['replace' ];
+$search = isset( $_GET['search'] ) ? $_GET['search'] : 'New_Addon';
+$rename_parent_directory = isset( $_GET['rename_parent_directory'] ) ? intval( $_GET['rename_parent_directory'] ) : 1;
+$folder_path = isset( $_GET['folder_path'] ) ? $_GET['folder_path'] : dirname( __FILE__ );
+$delete_script_when_finished = isset( $_GET['delete_script_when_finished'] ) ? intval( $_GET['delete_script_when_finished'] ) : 1;
+
+recursively_rename( $folder_path . "/*", $search, $replace );
+if( $delete_script_when_finished ){
+	unlink( __FILE__ );
+}
+if( $rename_parent_directory ){
+	replace_in_path( 'New_Addon', 'ee4-'.$_GET[ 'replace' ], $folder_path );
+}
+echo "<br><hr>ok folders renamed!";
+if( $delete_script_when_finished ){
+	echo "and this renamer.php file has been deleted for security reasons";
+}
+
+
+
 function recursively_rename( $folder_path, $old_string, $new_string ){
 	echo "<br>recursively rename: looking in ".$folder_path;
 	//recurse into subfolders and rename them
@@ -48,7 +74,7 @@ function replace_in_path( $old_string, $new_string, $file_or_folder_path ){
 	//check for lower-case replacement too
 	$new_file_name = replace_variations( $old_string, $new_string, basename( $file_or_folder_path ) );
 	$new_file_path = dirname( $file_or_folder_path ) . "/" . $new_file_name;
-	if( $file_or_folder_path != $new_file_path ){
+	if( $file_or_folder_path != $new_file_path && $file_or_folder_path != __FILE__ ){
 		$success = rename( $file_or_folder_path, $new_file_path );
 		if( $success ){
 			echo "<hr>successfully renamed <br>$file_or_folder_path to <br>$new_file_path";

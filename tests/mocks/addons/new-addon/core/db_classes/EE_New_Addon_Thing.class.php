@@ -12,7 +12,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * @author				Mike Nelson
  *
  */
-class EE_Mock extends EE_Base_Class{
+class EE_New_Addon_Thing extends EE_Base_Class{
 	/**
 	 *
 	 * @param type $props_n_values
