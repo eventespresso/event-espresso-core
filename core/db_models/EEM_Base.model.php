@@ -906,8 +906,8 @@ abstract class EEM_Base extends EE_Base{
 		$wpdb->show_errors( FALSE );
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
 		$wpdb->show_errors( $old_show_errors_value );
-		if( $wpdb->last_error !== NULL ){
-			throw new EE_Error( sprintf( __( 'WPDB Error: %s', 'event_espresso' ), $wpdb->last_error ) );
+		if( $wpdb->last_error !== NULL && $wpdb->last_error != ''){
+			throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
 		}
 		$this->show_db_query_if_previously_requested( $wpdb->last_query );
 		return $result;
