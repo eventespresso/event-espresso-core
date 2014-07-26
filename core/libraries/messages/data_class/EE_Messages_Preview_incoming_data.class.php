@@ -94,6 +94,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 				$tkts[$ticket->ID()]['dtt_objs'] = $reldatetime;
 				$tkts[$ticket->ID()]['att_objs'] = $attendees;
 				$tkts[$ticket->ID()]['count'] = count($attendees);
+				$tkts[$ticket->ID()]['EE_Event'] = $event;
 				foreach ( $reldatetime as $datetime ) {
 					if ( !isset( $dtts[$datetime->ID()] ) ) {
 						$this->_events[$id]['dtt_objs'][$datetime->ID()] = $datetime;
@@ -407,6 +408,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			)
 		);
 
+
 		//setup reg_objects
 		//note we're setting up a reg object for each attendee in each event but ALSO adding to the reg_object array.
 		$this->reg_objs = array();
@@ -438,11 +440,43 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 					$this->_attendees[$key]['reg_objs'][$regid] = $REG_OBJ;
 					$this->_events[$evtid]['reg_objs'][] = $REG_OBJ;
 					$this->reg_objs[] = $REG_OBJ;
+					$this->tickets[$ticket->ID()]['reg_objs'][$regid] = $REG_OBJ;
+
 					$regcnt++;
 					$regid++;
 				}
 			}
 		}
+
+
+
+		//setup line items!
+		EE_Registry::instance()->load_helper('Line_Item');
+		$line_item_total = EEH_Line_Item::create_default_total_line_item( $this->txn );
+
+		//add tickets
+		foreach ( $this->tickets as $tktid => $item ) {
+			$qty = $item['count'];
+			$ticket = $item['ticket'];
+			EEH_Line_Item::add_ticket_purchase( $line_item_total, $ticket, $qty );
+		}
+
+		//now let's add taxes
+		EEH_Line_Item::apply_taxes( $line_item_total );
+
+		//now we should be able to get the items we need from this object
+		$ticket_line_items = EEH_Line_Item::get_items_subtotal( $line_item_total )->children();
+
+		foreach ( $ticket_line_items as $line_id => $line_item ) {
+			$this->_tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
+			$this->_tickets[$line_item->OBJ_ID()]['sub_line_Items'] = $line_item->children();
+			$line_items[$line_item->ID()]['children'] = $line_item->children();
+			$line_items[$line_item->ID()]['EE_Ticket'] = $this->tickets[$line_item->OBJ_ID()]['ticket'];
+		}
+
+		$this->line_items_with_children = $line_items;
+		$this->tax_line_items = $line_item_total->tax_descendants();
+
 
 		//add additional details for each registration
 		foreach ( $this->reg_objs as $reg ) {
@@ -485,7 +519,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->user_agent = '';
 		$this->init_access = current_time('mysql');
 		$this->last_access = current_time('mysql');
-
 	}
 
 } //end EE_Messages_Preview_incoming_data class

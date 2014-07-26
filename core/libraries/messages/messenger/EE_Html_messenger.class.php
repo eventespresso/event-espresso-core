@@ -218,7 +218,7 @@ class EE_Html_messenger extends EE_messenger  {
 						'rows' => '5',
 						'shortcodes_required' => array('[TICKET_LINE_ITEM_LIST]')
 						),
-					'price_modifer_line_item_list' => array(
+					'price_modifier_line_item_list' => array(
 						'input' => 'textarea',
 						'label' => '[PRICE_MODIFIER_LINE_ITEM_LIST]',
 						'type' => 'string',

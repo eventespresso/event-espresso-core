@@ -289,7 +289,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	 *
 	 * @return array An array with the attributes
 	 */
-	protected function get_shortcode_attrs( $shortcode ) {
+	protected function _get_shortcode_attrs( $shortcode ) {
 		//make sure the required wp helper function is present
 		//require the shortcode file if necessary
 		if ( ! function_exists( 'shortcode_parse_atts' ) ) {

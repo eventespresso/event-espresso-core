@@ -626,6 +626,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	protected function _process_data() {
 		//at a minimum, we NEED EE_Attendee objects.
+
 		if ( empty( $this->_data->attendees ) )
 			return TRUE;  //EXIT!
 

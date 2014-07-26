@@ -103,6 +103,6 @@ class EE_Receipt_message_type extends EE_message_type {
 
 
 	protected function _purchaser_addressees() {
-		parent::__primary_attendee_addressees();
+		return parent::_primary_attendee_addressees();
 	}
 }

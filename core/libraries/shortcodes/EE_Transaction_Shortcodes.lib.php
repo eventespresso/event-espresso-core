@@ -206,7 +206,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	 */
 	private function _get_invoice_logo( $img_tags = FALSE ) {
 		$payment_settings = EE_Config::instance()->gateway->payment_settings;
-		$invoice_settings = $payment_settings['invoice'];
+		$invoice_settings = ! empty( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
 
 		if ( ! empty( $invoice_settings['invoice_logo_url'] ) ) {
 			$invoice_logo_url = $invoice_setttings['invoice_logo_url'];
