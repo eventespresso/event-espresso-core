@@ -61,7 +61,7 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 	</div> <!-- end .taxes -->
 
 	<div class="grand-total-dv">
-		<h2 class="grand-total"><?php printf( __("Grand Total: %s", "event_espresso"),'[TOTAL_OWEING]' );?></h2>
+		<h2 class="grand-total"><?php printf( __("Grand Total: %s", "event_espresso"),'[TOTAL_OWING]' );?></h2>
 	</div> <!-- end .grand-total-dv -->
 
 	<div class="payment-dv">
@@ -80,7 +80,7 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 			</thead>
 			<tbody>
 				[PAYMENT_LIST_*]
-				<tr class="item"><td class='aln-cntr' colspan="6">[TOTAL_OWEING_*]</td></tr>
+				<tr class="item"><td class='aln-cntr' colspan="6">[TOTAL_OWING_*]</td></tr>
 			</tbody>
 			<tfoot>
 				<tr class='total_tr'><td colspan="4">&nbsp;</td>
@@ -90,7 +90,7 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 				<tr class="total_tr odd">
 					<td colspan="4">&nbsp;</td>
 					<td class="total" id="total_currency"><?php _e('Amount Owed:', 'event_espresso'); ?></td>
-					<td class="total">[TOTAL_OWEING]</td>
+					<td class="total">[TOTAL_OWING]</td>
 				</tr>
 			</tfoot>
 		</table> <!-- end .invoice-amount table -->

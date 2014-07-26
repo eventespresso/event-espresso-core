@@ -84,7 +84,7 @@ class EE_Html_messenger extends EE_messenger  {
 				'shortcodes' => array('organization', 'primary_registration_details', 'email', 'transaction' )
 				),
 			'content' => array(
-				'shortcodes' => array( 'organization',  'primary_registration_list', 'primary_registration_details',  'email', 'transaction', 'event_list', 'payment_list', 'venue')
+				'shortcodes' => array( 'organization',  'primary_registration_list', 'primary_registration_details',  'email', 'transaction', 'event_list', 'payment_list', 'venue', 'line_item_list')
 				),
 			'event_list' => array(
 				'shortcodes' => array( 'event', 'ticket_list', 'venue',  'primary_registration_details', 'primary_registration_list', 'event_author' ),
@@ -95,11 +95,11 @@ class EE_Html_messenger extends EE_messenger  {
 				'required' => array('[TICKET_LIST]')
 				),
 			'ticket_line_item_no_pms' => array(
-				'shortcodes' => array( 'line_item' ),
+				'shortcodes' => array( 'line_item', 'ticket' ),
 				'required' => array('[TICKET_LINE_ITEM_LIST]')
 				),
 			'ticket_line_item_pms' => array(
-				'shortcodes' => array( 'line_item' ),
+				'shortcodes' => array( 'line_item', 'ticket', 'line_item_list' ),
 				'required' => array('[TICKET_LINE_ITEM_LIST]'),
 				),
 			'price_modifier_line_item_list' => array(

@@ -30,12 +30,12 @@
 			<div class="ticket-place-details">
 				<h4 class="sub-section-title no-bottom-margin"><img class="icon" src="<?php echo EE_IMAGES_URL.'location-pin-16x16.png';?>"><?php _e('Venue', 'event-espresso'); ?></h4>
 				<ul class="event-venues">
-					<li>[VENUE_TITLE] <span class="small-text">[ <a href="[VENUE_URL]"><?php _e('view', 'event_espresso'); ?></a> ]</span></li>
+					<li>[VENUE_TITLE] <span class="small-text">( <a href="[VENUE_URL]"><?php _e('view', 'event_espresso'); ?></a> )</span></li>
 				</ul>
 			</div>
 		</div> <!-- end .ticket-time-and-place-details -->
 		<div class="ticket-registrations-area">
-			<h4 class="sub-section-title"><img class="icon" src="<?php echo EE_IMAGES_URL.'users-16x16.png';?>"><?php  _e("Registration Details", "event_espresso");?> <span class="small-text link">[ <a class="print_button noPrint" href="[PRIMARY_REGISTRANT_FRONTEND_EDIT_REG_LINK]"><?php _e('edit', 'event_espresso'); ?></a> ]</span></h4>
+			<h4 class="sub-section-title"><img class="icon" src="<?php echo EE_IMAGES_URL.'users-16x16.png';?>"><?php  _e("Registration Details", "event_espresso");?> <span class="small-text link">( <a class="print_button noPrint" href="[PRIMARY_REGISTRANT_FRONTEND_EDIT_REG_LINK]"><?php _e('edit', 'event_espresso'); ?></a> )</span></h4>
 			<ul class="ticket-registrations-list">
 				[ATTENDEE_LIST]
 			</ul> <!-- end .ticket-registrations-list -->
