@@ -4,7 +4,7 @@
  */
 
 //figure out what to use for payment instructions that is dependent on whether the corresponding value is existent in invoice settings from an old install.
-$invoice_settings = EE_Registry::instance()->CFG->gateway->payment_settings;
+$payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;
 $invoice_settings = $payment_settings['invoice'];
 $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoice_settings['pdf_instructions'] : __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of the event date.', 'event_espresso' );
 ?>
