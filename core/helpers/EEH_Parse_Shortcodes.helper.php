@@ -225,12 +225,11 @@ class EEH_Parse_Shortcodes {
 		//now lets go ahead and loop through our parsers for each shortcode and setup the values
 		foreach ( $shortcodes as $shortcode ) {
 
-
 			foreach ( $this->_shortcode_objs as $sc_obj ) {
 				$data_send = '';
 
 				//we need to setup any dynamic shortcodes so that they work with the array_key_exists
-				$sc = preg_match_all( '/(\[[A-Za-z0-9]+_\*)/', $shortcode, $matches );
+				$sc = preg_match_all( '/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches );
 				$sc_to_verify = !empty($matches[0] ) ? $matches[0][0] . ']' : $shortcode;
 
 				if ( !array_key_exists( $sc_to_verify, $sc_obj->get_shortcodes() ) ) {

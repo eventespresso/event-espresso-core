@@ -146,7 +146,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 
 		}
 
-		if ( strpos( $shortcode, '[TOTAL_OWING_*' !== FALSE ) ) {
+		if ( strpos( $shortcode, '[TOTAL_OWING_*' ) !== FALSE ) {
 			return $this->_get_custom_total_oweing( $shortcode );
 		}
 

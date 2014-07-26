@@ -72,7 +72,7 @@ class EE_Line_Item_Shortcodes extends EE_Shortcodes {
 				break;
 		}
 
-		if ( strpos( $shortcode, '[LINE_ITEM_TAXABLE_*' !== FALSE ) ) {
+		if ( strpos( $shortcode, '[LINE_ITEM_TAXABLE_*' ) !== FALSE ) {
 			$attrs = $this->_get_shortcode_attrs( $shortcode );
 			if ( $line_item->is_taxable() ) {
 				return !empty( $attrs['symbol'] ) ? $attrs['symbol'] : '*';

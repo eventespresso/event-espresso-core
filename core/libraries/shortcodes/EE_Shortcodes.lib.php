@@ -184,7 +184,7 @@ abstract class EE_Shortcodes extends EE_Base {
 		$this->_shortcodes = $this->get_shortcodes();
 
 		//we need to setup any dynamic shortcodes so that they work with the array_key_exists
-		$sc = preg_match_all( '/(\[[A-Za-z0-9]+_\*)/', $shortcode, $matches );
+		$sc = preg_match_all( '/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches );
 		$sc_to_verify = !empty($matches[0] ) ? $matches[0][0] . ']' : $shortcode;
 
 		//first we want to make sure this is a valid shortcode
