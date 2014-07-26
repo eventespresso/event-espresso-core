@@ -179,7 +179,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			$this->_set_shortcode_helper();
 			$owing_content = $this->_shortcode_helper->parse_message_template( $owing_content, $addressee, $valid_shortcodes, $this->_message_type, $this->_messenger, $this->_context, $this->_GRP_ID );
 		} else {
-			$owing_content = !empty( $attrs['none_owing']) ? $attrs['none_owing'] : EEH_Template::format_currency( $total_owing );
+			$owing_content = !empty( $attrs['none_owing']) ? $attrs['none_owing'] : '';
 		}
 
 		return $owing_content;

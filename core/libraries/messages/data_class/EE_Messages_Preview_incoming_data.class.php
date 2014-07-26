@@ -400,7 +400,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 			array(
 				'TXN_timestamp' => current_time('mysql'), //unix timestamp
 				'TXN_total' => $grand_total, //txn_total
-				'TXN_paid' => $grand_total, //txn_paid
+				'TXN_paid' => 0, //txn_paid
 				'STS_ID' => EEM_Transaction::incomplete_status_code, //sts_id
 				'TXN_session_data' => NULL, //dump of txn session object (we're just going to leave blank here)
 				'TXN_hash_salt' => NULL, //hash salt blank as well
@@ -480,8 +480,6 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		//add proper total to transaction object.
 		$grand_total = $line_item_total->recalculate_total_including_taxes();
 		$this->txn->set_total( $grand_total );
-
-		var_dump($this->txn->total());
 
 
 		//add additional details for each registration

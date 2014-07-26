@@ -61,7 +61,7 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 	</div> <!-- end .taxes -->
 
 	<div class="grand-total-dv">
-		<h2 class="grand-total"><?php printf( __("Grand Total: %s", "event_espresso"),'[TOTAL_OWING]' );?></h2>
+		<h2 class="grand-total"><?php printf( __("Grand Total: %s", "event_espresso"),'[TOTAL_COST]' );?></h2>
 	</div> <!-- end .grand-total-dv -->
 
 	<div class="payment-dv">
