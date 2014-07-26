@@ -16,6 +16,7 @@
 				</tr>
 			</thead>
 			<tbody>
+			[TICKET_LINE_ITEM_LIST]
 			</tbody>
 		</table> <!-- end #invoice-amount -->
 	</div> <!-- end .ticket-details -->

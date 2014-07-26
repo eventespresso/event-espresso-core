@@ -3,6 +3,7 @@
  * This is the template for the html messenger and receipt message type payment_list field.
  */
 ?>
+<table>
 <tr class='item'>
 	<td>[PAYMENT_GATEWAY]</td>
 	<td>[PAYMENT_TIMESTAMP]</td>
@@ -11,3 +12,4 @@
 	<td>[PAYMENT_STATUS]</td>
 	<td class='item_r'>[PAYMENT_AMOUNT]</td>
 </tr>
+</table>

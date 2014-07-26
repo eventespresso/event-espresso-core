@@ -23,7 +23,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * @subpackage		messages
  * @author			Darren Ethier
  */
-class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
+class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 
 
 
@@ -72,16 +72,16 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 	 * @return string parsed ticket line item list.
 	 */
 	private function _get_ticket_line_item_list() {
-
+		$this->_validate_list_requirements();
 		$this->_set_shortcode_helper();
 
-		if ( ! $this->_data instanceof EE_Ticket ) {
+		if ( ! $this->_data['data'] instanceof EE_Ticket ) {
 			return '';
 		}
 
 		$valid_shortcodes = array( 'line_item', 'line_item_list', 'ticket' );
 
-		$ticket = $this->_data;
+		$ticket = $this->_data['data'];
 		$templates = $this->_extra_data['template'];
 		$addressee_obj = $this->_extra_data['data'];
 
@@ -89,7 +89,7 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 		$ticket_line_item = $addressee_obj->tickets[$ticket->ID()]['line_item'];
 		$sub_line_items = $addressee_obj->tickets[$ticket->ID()]['sub_line_items'];
 
-		$template = count( $sub_line_items < 2 ) ? $templates['ticket_line_item_no_pms'] : $templates['ticket_line_item_pms'];
+		$template = count( $sub_line_items ) < 2 ? $templates['ticket_line_item_no_pms'] : $templates['ticket_line_item_pms'];
 
 		//now we just return the appropriate template parsed for each ticket.
 		return $this->_shortcode_helper->parse_line_item_list_template( $template, $ticket_line_item, $valid_shortcodes, $this->_extra_data );
@@ -119,6 +119,7 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 		$templates = $this->_data['template'];
 
 		$tax_line_items = $this->_data['data']->tax_line_items;
+		var_dump($tax_line_items);
 
 		$line_item_list = '';
 		foreach ( $tax_line_items as $line_item ) {
@@ -141,15 +142,15 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 	 * @return string parsed price modifier line item list.
 	 */
 	private function _get_price_mod_line_item_list() {
-
+		$this->_validate_list_requirements();
 		$this->_set_shortcode_helper();
 
-		if ( ! $this->_data instanceof EE_Line_Item ) {
+		if ( ! $this->_data['data'] instanceof EE_Line_Item ) {
 			return '';
 		}
 
 		//made it here so we're good to go.
-		$main_line_item = $this->_data;
+		$main_line_item = $this->_data['data'];
 		$templates = $this->_extra_data['template'];
 		$addressee_obj = $this->_extra_data['data'];
 
@@ -157,7 +158,7 @@ class EE_Line_Item_list_Shortcodes extends EE_Shortcodes {
 
 		$main_line_item_id = $main_line_item->ID();
 
-		$price_mod_line_items = ! empty( $addressee_obj->line_items_with_children[$main_line_item_id]['sub_line_items'] ) ? $addressee_obj->line_items_with_children[$main_line_item_id]['sub_line_items'] : array();
+		$price_mod_line_items = ! empty( $addressee_obj->line_items_with_children[$main_line_item_id]['children'] ) ? $addressee_obj->line_items_with_children[$main_line_item_id]['children'] : array();
 
 		$line_item_list = '';
 

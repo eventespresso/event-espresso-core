@@ -55,7 +55,7 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 				</tr>
 			</thead>
 			<tbody>
-				[TAX_LINE_ITEM_LIST]
+				<tr colspan="4">[TAX_LINE_ITEM_LIST]</tr>
 			</tbody>
 		</table> <!-- end .invoice-amount table -->
 	</div> <!-- end .taxes -->
@@ -79,7 +79,7 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 				</tr>
 			</thead>
 			<tbody>
-				[PAYMENT_LIST_*]
+				<tr colspan="4">[PAYMENT_LIST_*]</tr>
 				<tr class="item"><td class='aln-cntr' colspan="6">[TOTAL_OWING_*]</td></tr>
 			</tbody>
 			<tfoot>

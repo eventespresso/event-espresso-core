@@ -468,8 +468,8 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$ticket_line_items = EEH_Line_Item::get_items_subtotal( $line_item_total )->children();
 
 		foreach ( $ticket_line_items as $line_id => $line_item ) {
-			$this->_tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
-			$this->_tickets[$line_item->OBJ_ID()]['sub_line_Items'] = $line_item->children();
+			$this->tickets[$line_item->OBJ_ID()]['line_item'] = $line_item;
+			$this->tickets[$line_item->OBJ_ID()]['sub_line_items'] = $line_item->children();
 			$line_items[$line_item->ID()]['children'] = $line_item->children();
 			$line_items[$line_item->ID()]['EE_Ticket'] = $this->tickets[$line_item->OBJ_ID()]['ticket'];
 		}

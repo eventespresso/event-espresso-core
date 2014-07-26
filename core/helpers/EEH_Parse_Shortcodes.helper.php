@@ -237,8 +237,6 @@ class EEH_Parse_Shortcodes {
 					continue; //the given shortcode isn't in this object
 				}
 
-
-
 				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
 				if ( ! in_array( $sc_to_verify, $list_type_shortcodes ) ) {
 					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;

@@ -77,7 +77,7 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes {
 		}
 
 
-		//If there is no event objecdt by now then get out.
+		//If there is no event object by now then get out.
 		if ( ! $this->_ticket instanceof EE_Ticket )
 			return '';
 
