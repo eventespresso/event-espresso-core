@@ -477,6 +477,12 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 		$this->line_items_with_children = $line_items;
 		$this->tax_line_items = $line_item_total->tax_descendants();
 
+		//add proper total to transaction object.
+		$grand_total = $line_item_total->recalculate_total_including_taxes();
+		$this->txn->set_total( $grand_total );
+
+		var_dump($this->txn->total());
+
 
 		//add additional details for each registration
 		foreach ( $this->reg_objs as $reg ) {
