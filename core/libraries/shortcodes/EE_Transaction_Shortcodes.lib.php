@@ -151,7 +151,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case "[RECEIPT_URL]" :
-				return $this->_get_receipt_url( $this->_data->txn );
+				//get primary_registration
+				$reg = $this->_data->primary_reg_obj;
+
+				if ( ! $reg instanceof EE_Registration ) {
+					return '';
+				}
+				return $reg->receipt_url();
 				break;
 
 		}
@@ -258,33 +264,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			return '';
 		}
 
-		//because the current _GRP_ID does not necessarily correspond to the message template group for the receipt, we need to get the event for the primary_reg and get whatever template is assigned to it.
-		$regID = $reg->ID();
-		$event = ! empty( $this->_data->registrations[$regID]['evt_obj'] ) ? $this->_data->registrations[$regID]['evt_obj'] : null;
-
-		$template_qa = array(
-			'MTP_is_active' => TRUE,
-			'MTP_messenger' => 'html',
-			'MTP_message_type' => 'receipt',
-			);
-
-		//get global template first as the fallback
-		$mtpg_global = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-
-		if ( $event instanceof EE_Event ) {
-			$template_qa['Event.EVT_ID'] = $event->ID();
-		}
-
-		//get the message template group.
-		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-		$mtpg = empty( $mtpg ) ? $mtpg_global : $mtpg;
-
-		if ( ! $mtpg instanceof EE_Message_Template_Group ) {
-			return '';
-		}
-
-		EE_Registry::instance()->load_helper('MSG_Template');
-		return EEH_MSG_Template::generate_url_trigger( 'html', 'html', 'purchaser', 'receipt', $reg, $mtpg->ID(), $transaction->ID() );
+		return $reg->receipt_url();
 	}
 
 } //end EE_Transaction Shortcodes library

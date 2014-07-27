@@ -451,13 +451,54 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 
 
 	/**
-	 * Gets the string which represents the URL for the 'receipt' PDF, which is currently
-	 * just a variant of the invoice
-	 * @param string $type 'download','launch', or 'html' (default is 'launch')
+	 * Gets the string which represents the URL trigger for the receipt template in the message template system.
+	 * @param string $type 'pdf' or 'html'.  Default 'html'.
 	 * @return string
 	 */
-	public function receipt_url( $type = 'launch' ) {
-		return add_query_arg( array( 'receipt' => 'true' ), $this->invoice_url( $type ) );
+	public function receipt_url( $type = 'html' ) {
+
+		/**
+		 * The below will be deprecated one version after this.  We check first if there is a custom receipt template already in use on old system.  If there is then we just return the standard url for it.
+		 *
+		 * @since %VER%
+		 */
+		EE_Registry::instance()->load_helper('Template');
+		$template_relative_path = '/modules/gateways/Invoice/lib/templates/receipt_body.template.php';
+		$has_custom = EEH_Template::locate_template( $template_relative_path , array(), TRUE, TRUE, TRUE );
+
+		if ( $has_custom ) {
+			return add_query_arg( array( 'receipt' => 'true' ), $this->invoice_url( $type ) );
+		}
+
+
+		EE_Registry::instance()->load_helper('MSG_Template');
+
+		//need to get the correct message template group for this (i.e. is there a custom receipt for the event this registration is registered for?)
+		$template_qa = array(
+			'MTP_is_active' => TRUE,
+			'MTP_messenger' => 'html',
+			'MTP_message_type' => 'receipt',
+			);
+
+		//get global template first as the fallback
+		$mtpg_global = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+
+		//get evt_id from this registration obj
+		$template_qa['Event.EVT_ID'] = $this->event_ID();
+
+		//get the message template group.
+		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+		$mtpg = empty( $mtpg ) ? $mtpg_global : $mtpg;
+
+		//if we don't have a $mtpg then return
+		if ( ! $mtpg instanceof EE_Message_Template_Group ) {
+			return '';
+		}
+
+		//validate $type
+		$type = $type == 'pdf' ? $type : 'html';
+
+		return EEH_MSG_Template::generate_url_trigger( $type, 'html', 'purchaser', 'receipt', $this, $mtpg->ID(), $this->transaction_ID() );
 	}
 
 
