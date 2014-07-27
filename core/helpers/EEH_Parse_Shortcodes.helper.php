@@ -142,7 +142,7 @@ class EEH_Parse_Shortcodes {
 	}
 
 
-	public function parse_payment_item_list_template( $template, EE_Payment $payment_item, $valid_shortcodes, $extra_data = array() ) {
+	public function parse_payment_list_template( $template, EE_Payment $payment_item, $valid_shortcodes, $extra_data = array() ) {
 		$this->_init_data( $template, $payment_item, $valid_shortcodes, $extra_data );
 		$this->_template = is_array( $template ) ? $template['payment_list'] : $template;
 

@@ -85,6 +85,7 @@ class EE_Messages_Addressee extends EE_Base {
 	public $tax_line_items;
 	public $txn;
 	public $payment;
+	public $payments;
 	public $txn_objs;
 	public $reg_objs;
 	public $total_ticket_count; //total of ALL tickets purchased for the txn.

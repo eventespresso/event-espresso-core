@@ -64,13 +64,14 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 		$this->_validate_list_requirements();
 		$this->_set_shortcode_helper();
 
-		if ( ! $this->_data instanceof EE_Messages_Addressee ) {
+
+		if ( ! $this->_data['data'] instanceof EE_Messages_Addressee ) {
 			return '';
 		}
 
 		$valid_shortcodes = array( 'payment' );
 
-		$addressee_obj = $this->_data;
+		$addressee_obj = $this->_data['data'];
 		$templates = $this->_extra_data['template'];
 		$payments = $addressee_obj->payments;
 
@@ -80,9 +81,10 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 		$no_payments_msg = empty( $atts['no_payments'] ) ?  '<td class="aln-cntr" colspan="6">' . __('No approved payments have been received.','event_espresso') . '</td>' : $atts['no_payments'];
 
 		//made it here so we have an array of paymnets, so we should have what we need.
-		$payment_content = ! empty( $payments ) ? $no_payments_msg : '';
+		$payment_content = empty( $payments ) ? $no_payments_msg : '';
+
 		foreach ( $payments as $payment ) {
-			$payment_content .= $this->_shortcode_helper->parse_payment_list_template( $template['payment_list'], $payment, $valid_shortcodes, $this->_extra_data );
+			$payment_content .= $this->_shortcode_helper->parse_payment_list_template( $templates['payment_list'], $payment, $valid_shortcodes, $this->_extra_data );
 		}
 
 		return $payment_content;

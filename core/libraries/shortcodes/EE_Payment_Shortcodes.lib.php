@@ -76,7 +76,7 @@ class EE_Payment_Shortcodes extends EE_Shortcodes {
 				break;
 
 			case '[PAYMENT_GATEWAY_TXN_ID]' :
-				return $payment->txn_id_chq_number();
+				return $payment->txn_id_chq_nmbr();
 				break;
 
 			case '[PAYMENT_PO_NUMBER]' :
