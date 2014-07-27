@@ -35,7 +35,7 @@ class  EE_Messages_Template_Pack_New_Template_Pack extends EE_Messages_Template_
 		//Remember that ALL variations for your template pack must be in a folder located at $this->_base_path '/variations'.  The variation file names should match what each messenger expects.  So you may need to look at the messenger classes for the messengers you support to see what possible variations might be requested by the messenger.
 		$this->_variations = array();
 
-		//all template packs must define the default variation.  You may want to override the label that describes this default, however the key index must always be "default" (and will be verified by the parent)
-		$this->_default_variation = array( 'default' => __('Default', 'event_espresso' ) );
+		//all template packs can define the default variation.  You may want to override the label that describes this default, and you do so via this property.  Indexes are the messenger you wish to override the default label for and values are the new label.
+		$this->_default_variation_labels = array( 'email' => __('New Pack Default', 'event_espresso' ) );
 	}
 }

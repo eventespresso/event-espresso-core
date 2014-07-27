@@ -130,13 +130,13 @@ abstract class  EE_Messages_Template_Pack {
 
 
 	/**
-	 * Template Packs must ALWAYS have a default variation defined.  This is simply an array with 'default' as the slug and whatever label is used for this variation.
+	 * Template Packs must ALWAYS have a default variation defined.  This property allow one to override the default variation labels per messenger.
 	 * example:
-	 * $this->_default_variation = array( 'default' => __('Default', 'event_espresso' ) );
+	 * $this->_default_variation_labels = array( 'emal' =>  __('Default', 'event_espresso' ) );
 	 *
 	 * @var array
 	 */
-	protected $_default_variation = array();
+	protected $_default_variation_labels = array();
 
 
 
@@ -205,12 +205,6 @@ abstract class  EE_Messages_Template_Pack {
 		//if $supports is not set then throw an error because that effectively means this template_pack does not have any templates!
 		if ( empty( $this->_supports ) ) {
 			throw new EE_Error( sprintf( __('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), $classname ) );
-		}
-
-
-		//if $_default_variation is empty or is missing the 'default' index then throw an error because EVERY template pack MUST define the _default_variation property properly.
-		if ( ! is_array( $this->_default_variation ) || empty( $this->_default_variation['default'] ) ) {
-			throw new EE_Error( sprintf( __('The $_default_variation property is not set correctly for the %s template pack.  All template packs must define what the default variation label is.  The property should be an array with "default" as the key, and a string representing the label for the default variation as the value.  This template pack provided: %s', 'event_espresso'), $this->label, printr( $this->_default_variation, TRUE ) ) );
 		}
 
 		//load template helper
@@ -381,14 +375,19 @@ abstract class  EE_Messages_Template_Pack {
 
 
 	/**
-	 * This simply returns the $_default_variation property value.
+	 * This simply returns the $_default_variation_labels property value.
 	 *
 	 * @sinc %VER%
 	 *
-	 * @return array
+	 * @param string $messenger if the messenger slug is returned then the default lable for the specific messenger is retrieved.  If it doesn't exist then the __('Default', 'event_espresso') is returned.  If NO value is provided then whatever is set on the _default_variation_labels property is returned.
+	 *
+	 * @return array|string
 	 */
-	public function get_default_variation() {
-		return $this->_default_variation;
+	public function get_default_variation_labels( $messenger = '' ) {
+		$label = empty( $messenger ) ? $this->_default_variation_labels : array();
+		$label = empty( $label ) && ! empty( $this->_default_variation_labels[$messenger] ) ? $this->_default_variation_labels[$messenger] : __('Default', 'event_espresso');
+
+		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_default_variation_labels', $label, $this->_default_variation_labels, $messenger );
 	}
 
 
@@ -416,10 +415,10 @@ abstract class  EE_Messages_Template_Pack {
 
 		//prepend the _default_variation, but ONLY if we're returning the fully validated array.
 		if ( !empty( $messenger ) && !empty( $message_type ) && ! empty( $variations ) ) {
-			$variations = $this->_default_variation + $variations;
+			$variations = array( 'default' => $this->get_default_variation_labels( $messenger ) ) + $variations;
 		}
 
-		return empty( $variations ) ? $this->_default_variation : $variations;
+		return empty( $variations ) ? array( 'default', $this->_get_default_variation_labels('dft') ) : $variations;
 	}
 
 
