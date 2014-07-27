@@ -12,7 +12,7 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 	<form>
 		<input class="print_button noPrint" type="button" value="<?php _e('Print', 'event_espresso'); ?>" onClick="window.print();return false;" />
 	</form>
-	<form method="post" action="[PDF_URL]" >
+	<form method="post" action="[DISPLAY_PDF_URL]" >
 		<input class="print_button noPrint" type="submit" value="<?php _e('Download PDF', 'event_espresso'); ?>" />
 	</form>
 	<div class="clear"></div>
@@ -130,7 +130,7 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 	<form>
 		<input class="print_button noPrint" type="button" value="<?php _e('Print', 'event_espresso'); ?>" onclick="window.print();return false;" />
 	</form>
-	<form method="post" action="[PDF_URL]" >
+	<form method="post" action="[DISPLAY_PDF_URL]" >
 		<input class="print_button noPrint" type="submit" value="<?php _e('Download PDF', 'event_espresso'); ?>" />
 	</form>
 	<div class="clear"></div>
