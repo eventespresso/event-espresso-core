@@ -416,28 +416,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 			throw new EE_Error( sprintf( __('The given sending messenger string (%s) does not match a valid sending messenger with the %s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.', 'event_espresso'), $sending_messenger, get_class( $this ) ) );
 		}
 
-		$base_url = get_site_url();
-
-		//add on common params
-		$query_args = array(
-			'ee' => 'msg_url_trigger',
-			'snd_msgr' => $sending_messenger,
-			'gen_msgr' => $this->_active_messenger->name,
-			'message_type' => $this->name,
-			'context' => $context,
-			'token' => $registration->reg_url_link(),
-			'GRP_ID' => $this->_GRP_ID,
-			'id' => $this->_get_id_for_msg_url( $context, $registration )
-			);
-
-		$url = add_query_arg( $query_args, $base_url );
-
-
-		//made it here so now we can just get the url and filter it.  Filtered globally and by message type.
-		$url = apply_filters( 'FHEE__EE_message_type__get_url_trigger__url', $url, $this );
-		$url = apply_filters( 'FHEE__' . get_class( $this ) . '__get_url_trigger__url', $url, $this );
-
-		return $url;
+		EE_Registry::instance()->load_helper('MSG_Template');
+		return EEH_MSG_Template::generate_url_trigger( $sending_messenger, $this->_active_messenger->name, $context, $this->name, $registration, $this->_GRP_ID, $this->_get_id_for_msg_url( $context, $registration ) );
 	}
 
 

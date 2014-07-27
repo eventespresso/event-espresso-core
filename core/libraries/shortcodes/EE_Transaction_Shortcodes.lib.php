@@ -57,7 +57,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				'<li><strong>still_owing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL" class="noPrint">', '</a>' ) . '</li>' .
 				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
 			'[TKT_QTY_PURCHASED]' => __('The total number of all tickets purchased in a transaction', 'event_espresso'),
-			'[TRANSACTION_ADMIN_URL]' => __('The url to the admin page for this transaction', 'event_espresso')
+			'[TRANSACTION_ADMIN_URL]' => __('The url to the admin page for this transaction', 'event_espresso'),
+			'[RECEIPT_URL]' => __('This parses to the generated url for retrieving the receipt for the transaction', 'event_espresso')
 			);
 	}
 
@@ -144,6 +145,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 				return $url;
 				break;
 
+			case "[RECEIPT_URL]" :
+				return $this->_get_receipt_url( $this->_data->txn );
+				break;
+
 		}
 
 		if ( strpos( $shortcode, '[TOTAL_OWING_*' ) !== FALSE ) {
@@ -225,6 +230,56 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		//image tags have been requested.
 		$image_size = getimagesize( $image_size );
 		return '<img class="logo screen" src="' . $invoice_logo_url . '" ' . $image_size[3] . ' alt="logo" />';
+	}
+
+
+
+
+
+	/**
+	 * Retrieves the url for generating the receipt associated with this transaction.
+	 *
+	 * @since %VER%
+	 *
+	 * @param EE_Transaction $transaction
+	 *
+	 * @return string
+	 */
+	private function _get_receipt_url( EE_Transaction $transaction ) {
+		//get primary_registration
+		$reg = $this->_data->primary_reg_obj;
+
+		if ( ! $reg instanceof EE_Registration ) {
+			return '';
+		}
+
+		//because the current _GRP_ID does not necessarily correspond to the message template group for the receipt, we need to get the event for the primary_reg and get whatever template is assigned to it.
+		$regID = $reg->ID();
+		$event = ! empty( $this->_data->registrations[$regID]['evt_obj'] ) ? $this->_data->registrations[$regID]['evt_obj'] : null;
+
+		$template_qa = array(
+			'MTP_is_active' => TRUE,
+			'MTP_messenger' => 'html',
+			'MTP_message_type' => 'receipt',
+			);
+
+		//get global template first as the fallback
+		$mtpg_global = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+
+		if ( $event instanceof EE_Event ) {
+			$template_qa['Event.EVT_ID'] = $event->ID();
+		}
+
+		//get the message template group.
+		$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+		$mtpg = empty( $mtpg ) ? $mtpg_global : $mtpg;
+
+		if ( ! $mtpg instanceof EE_Message_Template_Group ) {
+			return '';
+		}
+
+		EE_Registry::instance()->load_helper('MSG_Template');
+		return EEH_MSG_Template::generate_url_trigger( 'html', 'html', 'purchaser', 'receipt', $reg, $mtpg->ID(), $transaction->ID() );
 	}
 
 } //end EE_Transaction Shortcodes library
