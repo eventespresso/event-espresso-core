@@ -32,7 +32,19 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 				'receipt'
 				)
 			);
-		$this->_default_variation = array( 'default' => __('Default', 'event_espresso' ) );
-		$this->_variations = array();
+		$this->_default_variation = array( 'default' => __('Simple', 'event_espresso' ) );
+		$this->_variations = array(
+			'html' => array(
+				'receipt' =>
+					array(
+					'bauhaus' => __('Bauhaus', 'event_espresso'),
+					'ejs' => __('Elliot Jay Stocks', 'event_espresso'),
+					'horizon' => __('Horizon', 'event_espresso'),
+					'lola' => __('Lola', 'event_espresso'),
+					'tranquility' => __('Tranquility', 'event_espresso'),
+					'union' => __('Union', 'event_espresso')
+					)
+				)
+			);
 	}
 }
