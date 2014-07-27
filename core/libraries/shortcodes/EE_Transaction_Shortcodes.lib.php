@@ -52,6 +52,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[PAYMENT_STATUS]' => __('The transaction status for the transaction. This parses to the same value as the [TXN_STATUS] shortcode and still remains here for legacy support.', 'event_espresso'),
 			'[PAYMENT_GATEWAY]' => __('The payment gateway used for the transaction', 'event_espresso'),
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
+			'[TOTAL_AMOUNT_PAID]' => __('This parses to the total amount paid over all payments', 'event_espresso'),
 			'[TOTAL_OWING]' => __('The total owing on a transaction with no attributes.', 'event_espresso'),
 			'[TOTAL_OWING_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
 				'<li><strong>still_owing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL" class="noPrint">', '</a>' ) . '</li>' .
@@ -127,6 +128,10 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			case "[AMOUNT_PAID]" :
 				$amount = isset( $this->_data->payment ) && is_object( $this->_data->payment ) ? $this->_data->payment->amount() : 0;
 				return EEH_Template::format_currency( $amount );
+				break;
+
+			case "[TOTAL_AMOUNT_PAID]" :
+				return EEH_Template::format_currency( $this->_data->txn->paid() );
 				break;
 
 			case "[TOTAL_OWING]" :
