@@ -140,7 +140,11 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 	public function add_html_css( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
-		return $this->get_variation( $template_pack, $url, $type, $variation, TRUE  );
+		//prevent recursion on this callback.
+		remove_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10 );
+		$variation = $this->get_variation( $template_pack, $url, $type, $variation, TRUE  );
+		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 7 );
+		return $variation;
 	}
 
 
