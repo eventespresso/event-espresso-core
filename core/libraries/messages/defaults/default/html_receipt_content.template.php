@@ -8,6 +8,15 @@ $payment_settings = EE_Registry::instance()->CFG->gateway->payment_settings;
 $invoice_settings = isset( $payment_settings['Invoice'] ) ? $payment_settings['Invoice'] : array();
 $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoice_settings['pdf_instructions'] : __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of the event date.', 'event_espresso' );
 ?>
+<div class="print_button_div">
+	<form>
+		<input class="print_button noPrint" type="button" value="<?php _e('Print', 'event_espresso'); ?>" onClick="window.print();return false;" />
+	</form>
+	<form method="post" action="[PDF_URL]" >
+		<input class="print_button noPrint" type="submit" value="<?php _e('Download PDF', 'event_espresso'); ?>" />
+	</form>
+	<div class="clear"></div>
+</div>
 <div id="invoice">
 
 	<table id="invoice-header" class="not-really-a-table">
@@ -117,3 +126,12 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 			</div>
 	</div>
 </div> <!-- end #invoice -->
+<div class="print_button_div">
+	<form>
+		<input class="print_button noPrint" type="button" value="<?php _e('Print', 'event_espresso'); ?>" onclick="window.print();return false;" />
+	</form>
+	<form method="post" action="[PDF_URL]" >
+		<input class="print_button noPrint" type="submit" value="<?php _e('Download PDF', 'event_espresso'); ?>" />
+	</form>
+	<div class="clear"></div>
+</div>
