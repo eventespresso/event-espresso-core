@@ -127,8 +127,28 @@ abstract class  EE_Messages_Template_Pack {
 
 
 
+
+
 	/**
-	 * This is an array of css variations for message templates indexed by messenger with the values as an array with variation slug and label.  If EMPTY then that means that there is only one variation (default) for this template pack.  Note that there is ALWAYs a default variation (i.e. doesn't need to be included in this array).
+	 * Template Packs must ALWAYS have a default variation defined.  This is simply an array with 'default' as the slug and whatever label is used for this variation.
+	 * example:
+	 * $this->_default_variation = array( 'default' => __('Default', 'event_espresso' ) );
+	 *
+	 * @var array
+	 */
+	protected $_default_variation = array();
+
+
+
+
+	/**
+	 * This is an array of extra css variations for message templates indexed by messenger with the values as an array or message types the variations apply to as the key  and then values are an array with variation slugs as the key and label as the value. Note the default variation is not included in this array.  So the structure is:
+	 * array(
+	 * 	'email' => array(
+	 * 	)
+	 * )
+	 *
+	 * Keep in mind that this property is used both for indicating valid variations for a given message type and messenger but the varition files themselves are ONLY unique to the messenger.  So if you have a variation for the html messenger referenced by the slug "sunset_red" Then the variation file for the main type will be html_main_sunset_red.css.  All the array in this property allows you to do, is indicate that with certain message types the sunset_red variation is available but for other message types its not.  But you could NOT have a sunset_red variation file for one messenger/message_type and a different one for another messenger/message_type.  If you want different css looks then you can define a different structural layout for the template , messenger, message type combination and in the same sunset_red.css variation file just add css specific to that layout.
 	 *
 	 * @since 4.5.0
 	 *
@@ -185,6 +205,12 @@ abstract class  EE_Messages_Template_Pack {
 		//if $supports is not set then throw an error because that effectively means this template_pack does not have any templates!
 		if ( empty( $this->_supports ) ) {
 			throw new EE_Error( sprintf( __('The supports property is not set for %s.  Please ensure that is set for the class.', 'event_espresso' ), $classname ) );
+		}
+
+
+		//if $_default_variation is empty or is missing the 'default' index then throw an error because EVERY template pack MUST define the _default_variation property properly.
+		if ( ! is_array( $this->_default_variation ) || empty( $this->_default_variation['default'] ) ) {
+			throw new EE_Error( sprintf( __('The $_default_variation property is not set correctly for the %s template pack.  All template packs must define what the default variation label is.  The property should be an array with "default" as the key, and a string representing the label for the default variation as the value.  This template pack provided: %s', 'event_espresso'), $this->label, printr( $this->_default_variation, TRUE ) ) );
 		}
 
 		//load template helper
@@ -354,6 +380,20 @@ abstract class  EE_Messages_Template_Pack {
 
 
 
+	/**
+	 * This simply returns the $_default_variation property value.
+	 *
+	 * @sinc %VER%
+	 *
+	 * @return array
+	 */
+	public function get_default_variation() {
+		return $this->_default_variation;
+	}
+
+
+
+
 
 	/**
 	 * This simply returns the _variations property.
@@ -361,14 +401,25 @@ abstract class  EE_Messages_Template_Pack {
 	 * @since 4.5.0
 	 *
 	 * @param string $messenger if included then css variations matching the messenger are returned.  Otherwise, all variations for all messengers are returned.
+	 * @param string $message_type if included then css variations matching the message_type are returned (must have $messenger set).  Otherwise the array of variations per message type are returned.  If message_type is provided but NOT the messenger, then just all variations for all messengers are returned.
 	 * @return array
 	 */
-	public function get_variations( $messenger = '' ) {
+	public function get_variations( $messenger = '', $message_type = '' ) {
 		$variations = ! empty( $messenger ) && isset( $this->_variations[$messenger] ) ? $this->_variations[$messenger] : $this->_variations;
+
+		//message_type provided?
+		$variations = !empty( $messenger ) && !empty( $message_type ) && isset( $variations[$message_type] ) ? $variations[$message_type] : $variations;
+
 		//filter per template pack and globally.
-		$variations = apply_filters( 'FHEE__' . get_class( $this ) . '__get_variations', $variations, $messenger );
-		$variations = empty( $variations ) ? array( 'default' => __('Default', 'event_espresso' ) ) : $variations;
-		return apply_filters( 'FHEE__EE_Messages_Template_Pack__get_variations', $variations, $messenger, $this );
+		$variations = apply_filters( 'FHEE__' . get_class( $this ) . '__get_variations', $variations, $messenger, $message_type );
+		$variations = apply_filters( 'FHEE__EE_Messages_Template_Pack__get_variations', $variations, $messenger, $message_type, $this );
+
+		//prepend the _default_variation, but ONLY if we're returning the fully validated array.
+		if ( !empty( $messenger ) && !empty( $message_type ) && ! empty( $variations ) ) {
+			$variations = $this->_default_variation + $variations;
+		}
+
+		return empty( $variations ) ? $this->_default_variation : $variations;
 	}
 
 

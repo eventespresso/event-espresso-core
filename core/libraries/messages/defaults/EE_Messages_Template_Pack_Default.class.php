@@ -32,9 +32,7 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 				'receipt'
 				)
 			);
-		$this->_variations = array(
-			'email' => array( 'default' => __( 'Default', 'event_espresso' ) ),
-			'html' => array( 'default' => __('Default', 'event_espresso' ) )
-			);
+		$this->_default_variation = array( 'default' => __('Default', 'event_espresso' ) );
+		$this->_variations = array();
 	}
 }

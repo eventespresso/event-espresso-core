@@ -1505,7 +1505,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		}
 
 		//setup variation select values for the currently selected template.
-		$variations = $this->_message_template_group->get_template_pack()->get_variations( $this->_message_template_group->messenger() );
+		$variations = $this->_message_template_group->get_template_pack()->get_variations( $this->_message_template_group->messenger(), $this->_message_template_group->message_type() );
 		$variations_select_values = array();
 		foreach ( $variations as $variation => $label ) {
 			$variations_select_values[] = array(
