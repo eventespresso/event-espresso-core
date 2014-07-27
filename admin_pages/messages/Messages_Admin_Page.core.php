@@ -879,6 +879,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 	 */
 	protected function _edit_message_template() {
 		do_action( 'AHEE_log', __FILE__, __FUNCTION__, '');
+
+		//we filter the tinyMCE settings to remove the validation since message templates by their nature will not have valid html in the templates.
+		add_filter( 'tiny_mce_before_init', array( $this, 'filter_tinymce_init'), 10, 2 );
+
 		$GRP_ID = isset( $this->_req_data['id'] ) && !empty( $this->_req_data['id'] ) ? absint( $this->_req_data['id'] ) : FALSE;
 
 		$this->_set_shortcodes(); //this also sets the _message_template property.
@@ -1275,6 +1279,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//final template wrapper
 		$this->display_admin_page_with_sidebar();
 	}
+
+
+	public function filter_tinymce_init( $mceInit, $editor_id ) {
+		return $mceInit;
+	}
+
+
 
 	public function add_context_switcher() {
 		return $this->_context_switcher;
