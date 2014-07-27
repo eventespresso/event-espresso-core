@@ -131,6 +131,19 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 
+	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
+		if ( $sending_messenger_name = 'pdf' ) {
+			add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 7 );
+		}
+	}
+
+
+
+	public function add_html_css( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
+		return $this->get_variation( $template_pack, $url, $type, $variation, TRUE  );
+	}
+
+
 
 	/**
 	 * Takes care of enqueuing any necessary scripts or styles for the page.  A do_action() so message types using this messenger can add their own js.
