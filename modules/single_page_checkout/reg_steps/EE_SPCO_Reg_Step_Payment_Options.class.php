@@ -811,13 +811,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 */
 	private function _attempt_payment( EE_Payment_Method $payment_method ) {
 		$this->checkout->transaction->save();
+		$payment_processor = EE_Registry::instance()->load_core( 'Payment_Processor' );
+		if ( ! $payment_processor instanceof EE_Payment_Processor ) {
+			return FALSE;
+		}
 		// generate payment object
-		$payment = EE_Registry::instance()->load_core( 'Payment_Processor' )->process_payment(
+		$payment = $payment_processor->process_payment(
 			$payment_method,
 			$this->checkout->transaction,
 			EE_Registry::instance()->SSN->get_session_data( 'payment_amount' ),
 			$this->checkout->billing_form,
-			$this->checkout->thank_you_page_url
+			$this->checkout->next_step->reg_step_url()
 		);
 		if ( $this->checkout->payment_method->is_off_line() ) {
 			return TRUE;
