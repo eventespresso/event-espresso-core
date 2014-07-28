@@ -416,28 +416,8 @@ abstract class EE_message_type extends EE_Messages_Base {
 			throw new EE_Error( sprintf( __('The given sending messenger string (%s) does not match a valid sending messenger with the %s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.', 'event_espresso'), $sending_messenger, get_class( $this ) ) );
 		}
 
-		$base_url = get_site_url();
-
-		//add on common params
-		$query_args = array(
-			'ee' => 'msg_url_trigger',
-			'snd_msgr' => $sending_messenger,
-			'gen_msgr' => $this->_active_messenger->name,
-			'message_type' => $this->name,
-			'context' => $context,
-			'token' => $registration->reg_url_link(),
-			'GRP_ID' => $this->_GRP_ID,
-			'id' => $this->_get_id_for_msg_url( $context, $registration )
-			);
-
-		$url = add_query_arg( $query_args, $base_url );
-
-
-		//made it here so now we can just get the url and filter it.  Filtered globally and by message type.
-		$url = apply_filters( 'FHEE__EE_message_type__get_url_trigger__url', $url, $this );
-		$url = apply_filters( 'FHEE__' . get_class( $this ) . '__get_url_trigger__url', $url, $this );
-
-		return $url;
+		EE_Registry::instance()->load_helper('MSG_Template');
+		return EEH_MSG_Template::generate_url_trigger( $sending_messenger, $this->_active_messenger->name, $context, $this->name, $registration, $this->_GRP_ID, $this->_get_id_for_msg_url( $context, $registration ) );
 	}
 
 
@@ -626,6 +606,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	protected function _process_data() {
 		//at a minimum, we NEED EE_Attendee objects.
+
 		if ( empty( $this->_data->attendees ) )
 			return TRUE;  //EXIT!
 
@@ -650,12 +631,18 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	private function _set_default_addressee_data() {
 		$this->_default_addressee_data = array(
+			'billing' => $this->_data->billing,
+			'taxes' => $this->_data->taxes,
+			'tax_line_items' => $this->_data->tax_line_items,
+			'grand_total_line_item' => $this->_data->grand_total_line_item,
 			'txn' => $this->_data->txn,
+			'payments' => $this->_data->payments,
 			'payment' => isset($this->_data->payment) ? $this->_data->payment : NULL,
 			'reg_objs' => $this->_data->reg_objs,
 			'registrations' => $this->_data->registrations,
 			'datetimes' => $this->_data->datetimes,
 			'tickets' => $this->_data->tickets,
+			'line_items_with_children' => $this->_data->line_items_with_children,
 			'questions' => $this->_data->questions,
 			'answers' => $this->_data->answers,
 			'txn_status' => $this->_data->txn_status,

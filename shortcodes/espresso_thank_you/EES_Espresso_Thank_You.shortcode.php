@@ -177,7 +177,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 */
 	public function run( WP $WP ) {
 		// ensure this shortcode doesn't trigger on anything BUT the thank you page
-		if ( ! isset( $WP->request ) || $WP->request != basename( EE_Registry::instance()->CFG->core->thank_you_page_url() )) {
+		if ( isset( $WP->request ) && basename( $WP->request ) != basename( EE_Registry::instance()->CFG->core->thank_you_page_url() )) {
+			return;
+		} else if ( isset( $WP->query_vars['page_id'] ) && $WP->query_vars['page_id'] != EE_Registry::instance()->CFG->core->thank_you_page_id ) {
 			return;
 		}
 		// only do thank you page stuff if we have a REG_url_link in the url
@@ -322,6 +324,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		}
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
+		$template_args['transaction'] = $this->_current_txn;
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
  		if ( $this->_is_primary && ! $this->_current_txn->is_free() ) {

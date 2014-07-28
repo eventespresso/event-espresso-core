@@ -52,6 +52,8 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 			'[ATTENDEE_EMAIL]' => __('Email address for the attendee.', 'event_espresso'),
 			'[EDIT_ATTENDEE_LINK]' => __('Edit Registration Link (typically you\'d only use this for messages going to event administrators)', 'event_espresso'),
 			'[REGISTRATION_CODE]' => __('Unique Registration Code for the registration', 'event_espresso'),
+			'[REGISTRATION_STATUS_ID]' => __('Parses to the registration status for the attendee', 'event_espresso'),
+			'[REGISTRATION_STATUS_LABEL]' => __('Parses to the status label for the registrant', 'event_espresso'),
 			'[FRONTEND_EDIT_REG_LINK]' => __('Generates a link for the given registration to edit this registration details on the frontend.', 'event_espresso'),
 			'[PHONE_NUMBER]' => __('The Phone Number for the Registration.', 'event_espresso'),
 			'[ADDRESS]' => __('The Address for the Registration', 'event_espresso'),
@@ -77,65 +79,73 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes {
 
 		//attendee obj for this registration
 		$attendee = $this->_xtra->registrations[$registration->ID()]['att_obj'];
-		if ( $attendee instanceof EE_Attendee ) {
-			switch ( $shortcode ) {
 
-				case '[FNAME]' :
-					return $attendee->fname();
-					break;
+		switch ( $shortcode ) {
 
-				case '[LNAME]' :
-					return $attendee->lname();
-					break;
+			case '[FNAME]' :
+				return $attendee->fname();
+				break;
 
-				case '[ATTENDEE_EMAIL]' :
-					return $attendee->email();
-					break;
+			case '[LNAME]' :
+				return $attendee->lname();
+				break;
 
-				case '[EDIT_ATTENDEE_LINK]' :
-					return $registration->get_admin_edit_url();
-					break;
+			case '[ATTENDEE_EMAIL]' :
+				return $attendee->email();
+				break;
 
-				case '[REGISTRATION_CODE]' :
-					return $registration->reg_code();
-					break;
+			case '[EDIT_ATTENDEE_LINK]' :
+				return $registration->get_admin_edit_url();
+				break;
 
-				case '[FRONTEND_EDIT_REG_LINK]' :
-					return $registration->edit_attendee_information_url();
-					break;
+			case '[REGISTRATION_CODE]' :
+				return $registration->reg_code();
+				break;
 
-				case '[PHONE_NUMBER]' :
-					return $attendee->phone();
-					break;
+			case '[FRONTEND_EDIT_REG_LINK]' :
+				return $registration->edit_attendee_information_url();
+				break;
 
-				case '[ADDRESS]' :
-					return $attendee->address();
-					break;
+			case '[PHONE_NUMBER]' :
+				return $attendee->phone();
+				break;
 
-				case '[ADDRESS2]' :
-					return $attendee->address2();
-					break;
+			case '[ADDRESS]' :
+				return $attendee->address();
+				break;
 
-				case '[CITY]' :
-					return $attendee->city();
-					break;
+			case '[ADDRESS2]' :
+				return $attendee->address2();
+				break;
 
-				case '[ZIP_PC]' :
-					return $attendee->zip();
-					break;
+			case '[CITY]' :
+				return $attendee->city();
+				break;
 
-				case '[ADDRESS_STATE]' :
-					$state_obj = $attendee->state_obj();
-					return $state_obj instanceof EE_State ? $state_obj->name() : '';
-					break;
+			case '[ZIP_PC]' :
+				return $attendee->zip();
+				break;
 
-				case '[COUNTRY]' :
-					$country_obj = $attendee->country_obj();
-					return $country_obj instanceof EE_Country ? $country_obj->name() : '';
-					break;
+			case '[ADDRESS_STATE]' :
+				$state_obj = $attendee->state_obj();
+				return $state_obj instanceof EE_State ? $state_obj->name() : '';
+				break;
 
-			}
+			case '[COUNTRY]' :
+				$country_obj = $attendee->country_obj();
+				return $country_obj instanceof EE_Country ? $country_obj->name() : '';
+				break;
+
+			case '[REGISTRATION_STATUS_ID]' :
+				return $registration->status_ID();
+				break;
+
+			case '[REGISTRATION_STATUS_LABEL]' :
+				return $registration->pretty_status();
+				break;
+
 		}
+
 		return '';
 	}
 

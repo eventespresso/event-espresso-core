@@ -300,6 +300,7 @@ class EED_Messages  extends EED_Module {
 			'messages/data_class',
 			'messages/validators',
 			'messages/validators/email',
+			'messages/validators/html',
 			'shortcodes'
 			);
 		$paths = array();
