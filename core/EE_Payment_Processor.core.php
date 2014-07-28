@@ -49,7 +49,7 @@ class EE_Payment_Processor{
 	 *private constructor to prevent direct creation
 	 *@Constructor
 	 *@access private
-	 *@return void
+	 *@return EE_Payment_Processor
 	 */
 	private function __construct() {
 		do_action( 'AHEE__EE_Payment_Processor__construct' );
@@ -59,16 +59,16 @@ class EE_Payment_Processor{
 
 	/**
 	 * Using the selected gateway, processes the payment for that transaction.
-	 * @param int $payment_method ID of the payment method to use
-	 * @param EE_Transaction $transaction
-	 * @param float $amount if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
-	 * @param EE_Billing_Info_Form $billing_form (or probably null, if it's an offline or offsite payment method). receive_form_submission() should
-	 * have already been called on the billing form (ie, its inputs should have their normalized values set).
-	 * @param string $success_url string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
-	 * @param string $method like 'CART', indicates who the client who called this was
-	 * @param boolean $save_txn whether or not to save the transaction as part of this function call
-	 * @return EE_Payment
-	 * @throws EE_Error (espeically if the specified payment method's type is no longer defined)
+	 * @param EE_Payment_Method 	$payment_method
+	 * @param EE_Transaction 				$transaction
+	 * @param float                					$amount 		if only part of the transaction is to be paid for, how much. Leave null if payment is for the full amount owing
+	 * @param EE_Billing_Info_Form 		$billing_form 	(or probably null, if it's an offline or offsite payment method). receive_form_submission() should
+	 *                                             										have already been called on the billing form (ie, its inputs should have their normalized values set).
+	 * @param string               				$success_url 	string used mostly by offsite gateways to specify where to go AFTER the offsite gateway
+	 * @param string               				$method 		like 'CART', indicates who the client who called this was
+	 * @param bool                 				$by_admin
+	 * @param boolean              				$save_txn 		whether or not to save the transaction as part of this function call
+	 * @return EE_Payment | NULL
 	 */
 	public function process_payment( $payment_method, $transaction, $amount = NULL, $billing_form = NULL, $success_url = NULL, $method = 'CART', $by_admin = FALSE, $save_txn = true ) {
 		//overwrite billing info for testing
@@ -102,26 +102,30 @@ class EE_Payment_Processor{
 				$payment->save();
 			}
 			$this->update_txn_based_on_payment( $transaction, $payment, $save_txn );
-		}else{
+			return $payment;
+		} else {
 			EE_Error::add_error(
-					sprintf(
-						__( 'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
-						'<br/>',
-						EE_Registry::instance()->CFG->organization->email
-					), __FILE__, __FUNCTION__, __LINE__
-				);
+				sprintf(
+					__( 'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.', 'event_espresso' ),
+					'<br/>',
+					EE_Registry::instance()->CFG->organization->email
+				), __FILE__, __FUNCTION__, __LINE__
+			);
+			return NULL;
 		}
-
-		return $payment;
 	}
+
+
 
 	/**
 	 *
 	 * @param EE_Transaction $transaction
-	 * @param type $payment_method
+	 * @param EE_Payment_Method 	$payment_method
+	 * @throws EE_Error
+	 * @return string
 	 */
-	public function get_ipn_url_for_payment_method($transaction, $payment_method){
-		$transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
+	public function get_ipn_url_for_payment_method( $transaction, $payment_method ){
+		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$primary_reg = $transaction->primary_registration();
 		if( ! $primary_reg ){
 			throw new EE_Error(sprintf(__("Cannot get IPN URL for transaction with ID %d because it has no primary registration", "event_espresso"),$transaction->ID()));
@@ -137,15 +141,19 @@ class EE_Payment_Processor{
 		return $url;
 	}
 
+
+
 	/**
 	 * Process the IPN. Firstly, we'll hope we put the standard args into the IPN URL so
-	 * we can easily find what registration the IPN is for and what paymetn method.
+	 * we can easily find what registration the IPN is for and what payment method.
 	 * However, if not, we'll give all payment methods a chance to claim it and process it.
-	 * @param EE_Transaction $transaction optional (or a transactions id)
-	 * @param EE_Payment_Method $payment_method (or a slug or id of one)
-	 * @param boolean $save_txn whether to save the associated transaction or not
-	 * @return EE_Payment
+	 * @param 	$_req_data
+	 * @param EE_Transaction    			$transaction    optional (or a transactions id)
+	 * @param EE_Payment_Method 	$payment_method (or a slug or id of one)
+	 * @param boolean           				$save_txn       whether to save the associated transaction or not
 	 * @throws EE_Error
+	 * @throws Exception
+	 * @return EE_Payment
 	 */
 	public function process_ipn( $_req_data, $transaction = NULL, $payment_method = NULL, $save_txn = true ){
 		//do_action('AHEE__log',__FILE__,__FUNCTION__,  sprintf("Logged IPN for payment method %s, registration_url_link '%s'", ))
