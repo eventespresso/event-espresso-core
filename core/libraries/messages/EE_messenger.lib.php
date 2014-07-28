@@ -492,6 +492,11 @@ abstract class EE_messenger extends EE_Messages_Base {
 			$selector_rows .= EEH_Template::display_template( $template_row_path, $st_args, TRUE );
 		}
 
+		//if no selectors present then get out.
+		if ( empty( $selector_rows ) ) {
+			return '';
+		}
+
 		$template_args['selector_rows'] = $selector_rows;
 		return EEH_Template::display_template( $template_wrapper_path, $template_args, TRUE );
 	}
