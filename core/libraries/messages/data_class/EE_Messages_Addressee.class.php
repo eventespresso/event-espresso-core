@@ -83,6 +83,7 @@ class EE_Messages_Addressee extends EE_Base {
 	 */
 	public $taxes;
 	public $tax_line_items;
+	public $grand_total_line_item;
 	public $txn;
 	public $payment;
 	public $payments;

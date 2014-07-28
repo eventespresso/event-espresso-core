@@ -479,6 +479,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data {
 
 		//add proper total to transaction object.
 		$grand_total = $line_item_total->recalculate_total_including_taxes();
+		$this->grand_total_line_item = $line_item_total;
 		$this->txn->set_total( $grand_total );
 
 

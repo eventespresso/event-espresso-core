@@ -157,6 +157,15 @@ abstract class EE_Messages_incoming_data {
 
 
 	/**
+	 * Holds the grand total EE_Line_Item
+	 *
+	 * @var EE_Line_Item
+	 */
+	public $grand_total_line_item;
+
+
+
+	/**
 	 * holds the grand total price object
 	 * @var obj
 	 */
@@ -354,6 +363,8 @@ abstract class EE_Messages_incoming_data {
 					}
 				}
 			}
+
+			$this->grand_total_line_item = $this->txn->total_line_item();
 		}
 
 		//lets set the attendees and events properties
