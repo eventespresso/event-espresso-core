@@ -324,6 +324,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		}
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
+		$template_args['transaction'] = $this->_current_txn;
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
  		if ( $this->_is_primary && ! $this->_current_txn->is_free() ) {
