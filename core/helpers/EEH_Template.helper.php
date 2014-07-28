@@ -149,12 +149,17 @@ class EEH_Template {
 	 * @param  array   $template_args an array of arguments to be extracted for use in the template
 	 * @param  boolean $load          whether to pass the located template path on to the EEH_Template::display_template() method or simply return it
 	 * @param  boolean $return_string whether to send output immediately to screen, or capture and return as a string
+	 * @param boolean $check_if_custom If TRUE, this flags this method to return boolean for whether this will generate a custom template or not.  Used in places where you don't actually load the template, you just want to know if there's a custom version of it.
 	 * @internal param array|string $mixed $templates  the template file name including extension
 	 * @return mixed
 	 */
-	public static function locate_template( $templates = array(), $template_args = array(), $load = TRUE, $return_string = TRUE ) {
+	public static function locate_template( $templates = array(), $template_args = array(), $load = TRUE, $return_string = TRUE, $check_if_custom = FALSE ) {
 		// first use WP locate_template to check for template in the current theme folder
 		$template_path = locate_template( $templates );
+
+		if ( $check_if_custom and !empty( $template_path ) )
+			return TRUE;
+
 		// not in the theme
 		if ( empty( $template_path )) {
 			// not even a template to look for ?
@@ -172,19 +177,28 @@ class EEH_Template {
 			}
 			// currently active EE template theme
 			$current_theme = EE_Config::get_current_theme();
+
 			// array of paths to folders that may contain templates
 			$template_folder_paths = array(
 				// first check the /wp-content/uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
 				EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme,
 				// then in the root of the /wp-content/uploads/espresso/templates/ folder
-				EVENT_ESPRESSO_TEMPLATE_DIR,
-				// in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
-				EE_PUBLIC . $current_theme,
-				// in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
-				EE_TEMPLATES . $current_theme,
-				// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
-				EE_PLUGIN_DIR_PATH
+				EVENT_ESPRESSO_TEMPLATE_DIR
 			);
+
+			//add core plugin folders for checking only if we're not $check_if_custom
+			if ( ! $check_if_custom ) {
+				$core_paths = array(
+					// in the  /wp-content/plugins/(EE4 folder)/public/(current EE theme)/ folder within the plugin
+					EE_PUBLIC . $current_theme,
+					// in the  /wp-content/plugins/(EE4 folder)/core/templates/(current EE theme)/ folder within the plugin
+					EE_TEMPLATES . $current_theme,
+					// or maybe relative from the plugin root: /wp-content/plugins/(EE4 folder)/
+					EE_PLUGIN_DIR_PATH
+					);
+				$template_folder_paths = array_merge($core_paths, $template_folder_paths );
+			}
+
 			// now filter that array
 			$template_folder_paths = apply_filters( 'FHEE__EEH_Template__locate_template__template_folder_paths', $template_folder_paths );
 			// array to hold all possible template paths
@@ -210,14 +224,14 @@ class EEH_Template {
 			}
 		}
 		// if we got it and you want to see it...
-		if ( $template_path && $load ) {
+		if ( $template_path && $load && ! $check_if_custom  ) {
 			if ( $return_string ) {
 				return EEH_Template::display_template( $template_path, $template_args, TRUE );
 			} else {
 				EEH_Template::display_template( $template_path, $template_args, FALSE );
 			}
 		}
-		return $template_path;
+		return $check_if_custom && ! empty( $template_path ) ? TRUE : $template_path;
 	}
 
 

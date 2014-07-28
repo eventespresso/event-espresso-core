@@ -100,7 +100,7 @@ h3{
 /*=========================== TABLES =========================*/
 
 table th {text-align:left;padding: 6px 5px 6px 5px;}
-.ticket-details table th, .taxes table th, #invoice-amount th {border-bottom:1px solid #666;}
+.ticket-details table th, .taxes table th, .invoice-amount th {border-bottom:1px solid #666;}
 td.action{border-bottom:0}
 tr.odd td, tr.odd th, tr.header_row{background-color:#F4F4F4}
 .total_tr td{border-bottom:0}

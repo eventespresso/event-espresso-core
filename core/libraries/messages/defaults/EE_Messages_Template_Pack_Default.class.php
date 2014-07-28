@@ -27,11 +27,36 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 			'email' => array(
 				'cancelled_registration', 'declined_registration', 'not_approved_registration', 'pending_approval', 'registration',
 				'payment_declined', 'payment', 'payment_refund', 'payment_reminder'
+				),
+			'html' => array(
+				'receipt', 'invoice'
 				)
 			);
+		$this->_default_variation_labels= array(
+			'email' => __('Default', 'event_espresso' ),
+			'html' =>  __('Simple', 'event_espresso' )
+			 );
 		$this->_variations = array(
-			'email' => array( 'default' => __( 'Default', 'event_espresso' ) ),
-			'html' => array( 'default' => __('Default', 'event_espresso' ) )
+			'html' => array(
+				'receipt' =>
+					array(
+					'bauhaus' => __('Bauhaus', 'event_espresso'),
+					'ejs' => __('Elliot Jay Stocks', 'event_espresso'),
+					'horizon' => __('Horizon', 'event_espresso'),
+					'lola' => __('Lola', 'event_espresso'),
+					'tranquility' => __('Tranquility', 'event_espresso'),
+					'union' => __('Union', 'event_espresso')
+					),
+				'invoice' =>
+					array(
+					'bauhaus' => __('Bauhaus', 'event_espresso'),
+					'ejs' => __('Elliot Jay Stocks', 'event_espresso'),
+					'horizon' => __('Horizon', 'event_espresso'),
+					'lola' => __('Lola', 'event_espresso'),
+					'tranquility' => __('Tranquility', 'event_espresso'),
+					'union' => __('Union', 'event_espresso')
+					)
+				)
 			);
 	}
 }

@@ -172,7 +172,7 @@
 			?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr hidden">
 					<td class=" jst-rght" colspan="11">
-						<span class="red-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
+						<span class="red-text smaller-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
 					</td>
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr<?php echo $pay_totals_class;?>">
@@ -182,7 +182,7 @@
 		<?php else : ?>
 				<tr id="txn-admin-no-payments-tr" class="admin-primary-mbox-total-tr">
 					<td class=" jst-rght" colspan="11">
-						<span class="red-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
+						<span class="red-text smaller-text"><?php _e( 'No payments have been applied to this transaction yet. Click "Apply Payment" below to make a payment.', 'event_espresso' ); ?></span>
 					</td>
 				</tr>
 				<tr id="txn-admin-payments-total-tr" class="admin-primary-mbox-total-tr hidden">
