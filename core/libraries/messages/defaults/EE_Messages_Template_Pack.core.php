@@ -399,12 +399,12 @@ abstract class  EE_Messages_Template_Pack {
 	 *
 	 * @since 4.5.0
 	 *
-	 * @param string $messenger if included then css variations matching the messenger are returned.  Otherwise, all variations for all messengers are returned.
+	 * @param string $messenger if included then css variations matching the messenger are returned.  Otherwise, just the default variation is included.  If both message type AND messenger are empty then all variations are returned.
 	 * @param string $message_type if included then css variations matching the message_type are returned (must have $messenger set).  Otherwise the array of variations per message type are returned.  If message_type is provided but NOT the messenger, then just all variations for all messengers are returned.
 	 * @return array
 	 */
 	public function get_variations( $messenger = '', $message_type = '' ) {
-		$variations = ! empty( $messenger ) && isset( $this->_variations[$messenger] ) ? $this->_variations[$messenger] : $this->_variations;
+		$variations = ! empty( $messenger ) && isset( $this->_variations[$messenger] ) ? $this->_variations[$messenger] : array();
 
 		//message_type provided?
 		$variations = !empty( $messenger ) && !empty( $message_type ) && isset( $variations[$message_type] ) ? $variations[$message_type] : $variations;
@@ -418,7 +418,7 @@ abstract class  EE_Messages_Template_Pack {
 			$variations = array( 'default' => $this->get_default_variation_labels( $messenger ) ) + $variations;
 		}
 
-		return empty( $variations ) ? array( 'default', $this->_get_default_variation_labels('dft') ) : $variations;
+		return empty( $variations ) ? array( 'default' => $this->get_default_variation_labels('dft') ): $variations;
 	}
 
 
