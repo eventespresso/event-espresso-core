@@ -54,6 +54,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			'[AMOUNT_PAID]' => __('The amount paid with a payment', 'event_espresso'),
 			'[TOTAL_AMOUNT_PAID]' => __('This parses to the total amount paid over all payments', 'event_espresso'),
 			'[TOTAL_OWING]' => __('The total owing on a transaction with no attributes.', 'event_espresso'),
+			'[TXN_SUBTOTAL]' => __('The subtotal for all txn line items.', 'event_espresso'),
+			'[TXN_TAX_SUBTOTAL]' => __('The subtotal for all tax line items.', 'event_espresso'),
 			'[TOTAL_OWING_*]' => __('A dynamic shortcode for adjusting how total oweing gets shown. The acceptable attributes on the shortcode are:', 'event_espresso') . '<p></ul>' .
 				'<li><strong>still_owing</strong>:' . __('If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount oweing). The default is:', 'event_espresso' ) . sprintf( __( '%sPlease make a payment.%s', 'event_espresso'),  '<a href="[PAYMENT_URL]" class="noPrint">', '</a>' ) . '</li>' .
 				'<li><strong>none_owing</strong>:' . __('If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total oweing.', 'event_espresso') . '</li></ul></p>',
@@ -137,6 +139,14 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 			case "[TOTAL_OWING]" :
 				$total_owing = isset( $this->_data->txn ) && is_object($this->_data->txn) ? $this->_data->txn->remaining() : $this->_data->txn->total();
 				return EEH_Template::format_currency( $total_owing );
+				break;
+
+			case "[TXN_SUBTOTAL]" :
+				return EEH_Template::format_currency($this->_get_subtotal());
+				break;
+
+			case "[TXN_TAX_SUBTOTAL]" :
+				return EEH_Template::format_currency($this->_get_subtotal( TRUE ));
 				break;
 
 			case "[TKT_QTY_PURCHASED]" :
@@ -265,6 +275,25 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 		}
 
 		return $reg->receipt_url();
+	}
+
+
+
+	/**
+	 * This returns a subtotal.
+	 *
+	 * @param bool $tax if true then return the subtotal for tax otherwise return subtotal.
+	 *
+	 * @return int
+	 */
+	private function _get_subtotal( $tax = FALSE ) {
+		$grand_total = isset( $this->_data->grand_total_line_item ) ? $this->_data->grand_total_line_item : NULL;
+
+		if ( ! $grand_total instanceof EE_Line_Item ) {
+			return 0;
+		}
+
+		return $tax ? $grand_total->get_total_tax() : $grand_total->get_items_total();
 	}
 
 } //end EE_Transaction Shortcodes library
