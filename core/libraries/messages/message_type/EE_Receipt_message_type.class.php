@@ -32,7 +32,7 @@ class EE_Receipt_message_type extends EE_message_type {
 
 
 	protected function _set_admin_pages() {
-		$this->admin_registered_pages = array(); //no admin pages to register this with.
+		$this->admin_registered_pages = array( 'events_edit' => TRUE );
 	}
 
 
