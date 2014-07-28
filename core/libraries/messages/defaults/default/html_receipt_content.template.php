@@ -9,9 +9,6 @@ $invoice_settings = isset( $payment_settings['Invoice'] ) ? $payment_settings['I
 $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoice_settings['pdf_instructions'] : __('Please send this invoice with payment attached to the address above, or use the payment link below. Payment must be received within 48 hours of the event date.', 'event_espresso' );
 ?>
 <div class="print_button_div">
-	<form>
-		<input class="print_button noPrint" type="button" value="<?php _e('Print', 'event_espresso'); ?>" onClick="window.print();return false;" />
-	</form>
 	<form method="post" action="[DISPLAY_PDF_URL]" >
 		<input class="print_button noPrint" type="submit" value="<?php _e('Download PDF', 'event_espresso'); ?>" />
 	</form>
@@ -127,9 +124,6 @@ $payment_instructions = !empty( $invoice_settings['pdf_instructions'] ) ? $invoi
 	</div>
 </div> <!-- end #invoice -->
 <div class="print_button_div">
-	<form>
-		<input class="print_button noPrint" type="button" value="<?php _e('Print', 'event_espresso'); ?>" onclick="window.print();return false;" />
-	</form>
 	<form method="post" action="[DISPLAY_PDF_URL]" >
 		<input class="print_button noPrint" type="submit" value="<?php _e('Download PDF', 'event_espresso'); ?>" />
 	</form>
