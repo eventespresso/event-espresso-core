@@ -52,16 +52,25 @@ function ee_new_variations_test_register_new_variation() {
 		return;
 	}
 
+	//setup variations array for all known message types.
+	$message_types = array(
+		'cancelled_registration', 'declined_registration', 'not_approved_registration', 'pending_approval', 'registration', 'payment_declined', 'payment', 'payment_refund', 'payment_reminder'
+		);
+	$vtions = array();
+	foreach ( $message_types as $message_type ) {
+		$vtions[$message_type] = array(
+						'new_variation_test_blue_lagoon' => __('Blue Lagoon', 'ee-new-variations-test' ),
+						'new_variation_test_sunset_red' => __('Sunset Red', 'ee-new-variations-test' )
+						);
+	}
+
 	$variations_setup = array(
 		'base_path' => EE_NEW_VARIATIONS_PATH,
 		'base_url' => EE_NEW_VARIATIONS_URL,
 		'variations' => array(
-			'email' => array(
-					'default' => array(
-						'new_variation_test_blue_lagoon' => __('Blue Lagoon', 'ee-new-variations-test' ),
-						'new_variation_test_sunset_red' => __('Sunset Red', 'ee-new-variations-test' )
-						)
-					)
+			'default' => array(
+				'email' => $vtions
+				)
 			)
 		);
 	EE_Register_Messages_Template_Variations::register( 'ee_new_variations_test', $variations_setup );

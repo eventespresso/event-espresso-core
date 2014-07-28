@@ -75,7 +75,7 @@ class EE_Newsletter_message_type extends EE_message_type {
         $this->_contexts = array(
             'attendee' => array(
                 'label' => __('Registrant', 'event_espresso'),
-                'description' => __('This template goes to selected registrants.')
+                'description' => __('This template goes to selected registrants.', 'event_espresso')
                 )
             );
     }

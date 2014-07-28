@@ -347,4 +347,39 @@ class EEH_MSG_Template {
 		return in_array( $messenger, $active_messengers );
 	}
 
+
+
+
+	/**
+	 * This generates a url trigger for the msg_url_trigger route using the given arguments
+	 *
+	 * @param string          $sending_messenger    The sending messenger slug.
+	 * @param string          $generating_messenger The generating messenger slug.
+	 * @param string          $context              The context for the template.
+	 * @param string          $message_type         The message type slug
+	 * @param EE_Registration $registration
+	 * @param integer          $mtpg_id              The EE_Message_Template_Group ID for the template.
+	 * @param integer          $data_id              The id to the EE_Base_Class for getting the data used by the trigger.
+	 *
+	 * @return string          The generated url.
+	 */
+	public static function generate_url_trigger( $sending_messenger, $generating_messenger, $context, $message_type, EE_Registration $registration, $mtpg_id, $data_id ) {
+		$query_args = array(
+			'ee' => 'msg_url_trigger',
+			'snd_msgr' => $sending_messenger,
+			'gen_msgr' => $generating_messenger,
+			'message_type' => $message_type,
+			'context' => $context,
+			'token' => $registration->reg_url_link(),
+			'GRP_ID' => $mtpg_id,
+			'id' => $data_id
+			);
+		$url = add_query_arg( $query_args, get_site_url() );
+
+		//made it here so now we can just get the url and filter it.  Filtered globally and by message type.
+		$url = apply_filters( 'FHEE__EEH_MSG_Template__generate_url_trigger', $url, $sending_messenger, $generating_messenger, $context, $message_type, $registration, $mtpg_id, $data_id );
+
+		return $url;
+	}
+
 }
