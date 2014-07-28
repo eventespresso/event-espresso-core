@@ -730,6 +730,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			);
 			$this->checkout->json_response['return_data'] = array( 'redirect-to-thank-you-page' => $this->checkout->thank_you_page_url );
 		}
+
 		// grab notices
 		$notices = EE_Error::get_notices( FALSE );
 		// set JSON response and merge in notices
@@ -743,8 +744,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //			echo '<h4>$this->checkout->action : ' . $this->checkout->action . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			echo '<h4>$callback : ' . $callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			echo '<h4>$valid_callback : ' . $valid_callback . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//			echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//			echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			echo '<h4>$this->checkout->revisit : ' . $this->checkout->revisit . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			echo '<h4>REQ->ajax : ' . EE_Registry::instance()->REQ->ajax . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //			printr( $this->checkout->json_response, '$this->checkout->json_response  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
@@ -753,6 +752,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$success_msg = isset( $notices['success'] ) ? $notices['success'] : FALSE;
 		$error_msg = isset( $notices['errors'] ) ? $notices['errors'] : FALSE;
 		$attention_msg = isset( $notices['attention'] ) ? $notices['attention'] : FALSE;
+//		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$attention_msg : ' . $attention_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+
 		// all good ?
 		if ( $success_msg && ! ( $error_msg || $attention_msg )) {
 			unset( $this->checkout->json_response['error'] );

@@ -70,14 +70,22 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step {
 	public function process_reg_step() {
 		// ensure all data gets saved to the db and all model object relations get updated
 		if ( $this->checkout->save_all_data() ) {
+			// at this point we'll consider a TXN to not have failed
+			$this->checkout->toggle_transaction_status();
 			// save TXN data to the cart
 			$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
 			// finalize the TXN, which will in turn, finalize all of it's registrations
 			$this->checkout->transaction->finalize();
 			$this->checkout->redirect_to_thank_you_page = TRUE;
+//			echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+//			d( $this->checkout );
+//			die();
 			return TRUE;
 		}
 		$this->checkout->redirect_to_thank_you_page = FALSE;
+//		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+//		d( $this->checkout );
+//		die();
 		return FALSE;
 	}
 

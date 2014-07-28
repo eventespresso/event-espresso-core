@@ -283,7 +283,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else {
 			$this->_show_try_pay_again_link = FALSE;
 		}
-		$this->_is_offline_payment_method = $this->_current_txn->payment_method() && $this->_current_txn->payment_method()->type_obj() && $this->_current_txn->payment_method()->type_obj()->get_gateway() ? TRUE : FALSE;
+		$this->_is_offline_payment_method = $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
 			array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>$this->_reg_url_link ),
