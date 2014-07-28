@@ -78,10 +78,12 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 		//let's get any attributes that may be present and set the defaults.
 		$atts = $this->_get_shortcode_attrs( $shortcode );
 
-		$no_payments_msg = empty( $atts['no_payments'] ) ?  '<td class="aln-cntr" colspan="6">' . __('No approved payments have been received.','event_espresso') . '</td>' : $atts['no_payments'];
+		$no_payments_msg = empty( $atts['no_payments'] ) ?  __('No approved payments have been received.','event_espresso') : $atts['no_payments'];
 
 		//made it here so we have an array of paymnets, so we should have what we need.
 		$payment_content = empty( $payments ) ? $no_payments_msg : '';
+
+		$payments = (array) $payments;
 
 		foreach ( $payments as $payment ) {
 			$payment_content .= $this->_shortcode_helper->parse_payment_list_template( $templates['payment_list'], $payment, $valid_shortcodes, $this->_extra_data );

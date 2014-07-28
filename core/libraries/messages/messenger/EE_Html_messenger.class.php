@@ -84,7 +84,7 @@ class EE_Html_messenger extends EE_messenger  {
 				'shortcodes' => array('organization', 'primary_registration_details', 'email', 'transaction' )
 				),
 			'content' => array(
-				'shortcodes' => array( 'organization',  'primary_registration_list', 'primary_registration_details',  'email', 'transaction', 'event_list', 'payment_list', 'venue', 'line_item_list', 'messenger')
+				'shortcodes' => array( 'organization',  'primary_registration_list', 'primary_registration_details',  'email', 'transaction', 'event_list', 'payment_list', 'venue', 'line_item_list', 'messenger', 'ticket_list')
 				),
 			'event_list' => array(
 				'shortcodes' => array( 'event', 'ticket_list', 'venue',  'primary_registration_details', 'primary_registration_list', 'event_author' ),
@@ -319,7 +319,7 @@ class EE_Html_messenger extends EE_messenger  {
 	 *
 	 */
 	protected function _set_default_message_types() {
-		$this->_default_message_types = array( 'receipt' );
+		$this->_default_message_types = array( 'receipt', 'invoice' );
 	}
 
 
@@ -330,7 +330,7 @@ class EE_Html_messenger extends EE_messenger  {
 	 * @since 4.5.0
 	 */
 	protected function _set_valid_message_types() {
-		$this->_valid_message_types = array( 'receipt' );
+		$this->_valid_message_types = array( 'receipt', 'invoice' );
 	}
 
 

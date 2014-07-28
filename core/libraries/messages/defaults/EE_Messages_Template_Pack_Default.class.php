@@ -29,7 +29,7 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 				'payment_declined', 'payment', 'payment_refund', 'payment_reminder'
 				),
 			'html' => array(
-				'receipt'
+				'receipt', 'invoice'
 				)
 			);
 		$this->_default_variation_labels= array(
@@ -39,6 +39,15 @@ class  EE_Messages_Template_Pack_Default extends EE_Messages_Template_Pack {
 		$this->_variations = array(
 			'html' => array(
 				'receipt' =>
+					array(
+					'bauhaus' => __('Bauhaus', 'event_espresso'),
+					'ejs' => __('Elliot Jay Stocks', 'event_espresso'),
+					'horizon' => __('Horizon', 'event_espresso'),
+					'lola' => __('Lola', 'event_espresso'),
+					'tranquility' => __('Tranquility', 'event_espresso'),
+					'union' => __('Union', 'event_espresso')
+					),
+				'invoice' =>
 					array(
 					'bauhaus' => __('Bauhaus', 'event_espresso'),
 					'ejs' => __('Elliot Jay Stocks', 'event_espresso'),
