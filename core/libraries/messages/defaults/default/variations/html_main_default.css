@@ -8,7 +8,7 @@ Created by Ed Molyneux
 #Main  #invoice h1 {margin: 0;color: #555;font-size: 24px;text-transform: uppercase;}
 #Main #invoice h2, #Main #invoice h3 {color:#000; text-transform: none;font-family: Helvetica, Arial, Verdana, sans-serif !important}
 #invoice h2 {margin: 10px 0;font-size: 14pt;}
-#invoice-amount td, th {font-size: 9pt;}
+.invoice-amount td, th {font-size: 9pt;}
 #invoice-header #company-address {text-align: left; font-size: 11pt; line-height: 13pt;}
 #bill-to-ship-to, #invoice-info  p, #invoice #invoice-other, #invoice #payment-details {font-size: 9pt; line-height: 12pt;}
 #invoice-info h2{ margin:18px 0; text-transform:uppercase}
@@ -26,7 +26,7 @@ Created by Ed Molyneux
 #invoice-info{ text-align:right; line-height:1.5em;}
 #invoice-info span { margin-left:20px;}
 
-#bill-to-ship-to, #invoice-amount { margin:20px 0; }
+#bill-to-ship-to, .invoice-amount { margin:20px 0; }
 
 #invoice-other {text-align: right; }
 #invoice #payment-details{}

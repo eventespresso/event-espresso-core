@@ -45,6 +45,15 @@ class EEM_Venue extends EEM_CPT_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Venue
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 
 	protected function __construct(){
 		$this->singular_item = __('Venue','event_espresso');
