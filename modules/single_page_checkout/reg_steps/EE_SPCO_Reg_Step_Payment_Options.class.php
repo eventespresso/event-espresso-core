@@ -370,37 +370,39 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		// if there is more than one payment method...
 		if ( count( $payment_methods ) > 1 ) {
 			// if there are no default payment methods set...
-			if ( $default_payment_method_set ) {
+			if ( $default_payment_method_set || $this->checkout->selected_method_of_payment ) {
+
 				// display the "Method of Payment" header
 				$selected_payment_method = array(
-						'method_of_payment_hdr' => new EE_Form_Section_HTML(
-								EEH_HTML::h4 (
-									apply_filters( 'FHEE__registration_page_payment_options__method_of_payment_hdr', __( 'Method of Payment', 'event_espresso' )),
-									'method-of-payment-hdr'
-								)
-							)
-					) + $selected_payment_method;
-			} else {
-				// display the "Please select your method of payment" header
-				$selected_payment_method = array(
-						'select_method_of_payment_hdr' => new EE_Form_Section_HTML(
-								EEH_HTML::h4 (
-									apply_filters( 'FHEE__registration_page_payment_options__select_method_of_payment_hdr', __( 'Please select your method of payment:', 'event_espresso' )),
-									'select-method-of-payment-hdr'
-								)
-							)
-					) + $selected_payment_method;
-			}
-			// add note to the beginning of the $available_payment_methods array while maintaining associative keys
-			$available_payment_methods = array(
+					'method_of_payment_hdr' => new EE_Form_Section_HTML(
+						EEH_HTML::h4 (
+							apply_filters( 'FHEE__registration_page_payment_options__method_of_payment_hdr', __( 'Method of Payment', 'event_espresso' )),
+							'method-of-payment-hdr'
+						)
+					)
+				) + $selected_payment_method;
+				// add note to the beginning of the $available_payment_methods array while maintaining associative keys
+				$available_payment_methods = array(
 					'select_other_method_of_payment' => new EE_Form_Section_HTML(
 							EEH_HTML::p ( apply_filters( 'FHEE__registration_page_payment_options__select_other_method_of_payment', __( 'select a different method of payment:', 'event_espresso' )), '', 'smaller-text' )
 						)
 				) + $available_payment_methods;
+
+			} else {
+				// display the "Please select your method of payment" header
+				$selected_payment_method = array(
+					'select_method_of_payment_hdr' => new EE_Form_Section_HTML(
+						EEH_HTML::h4 (
+							apply_filters( 'FHEE__registration_page_payment_options__select_method_of_payment_hdr', __( 'Please select your method of payment:', 'event_espresso' )),
+							'select-method-of-payment-hdr'
+						)
+					)
+				) + $selected_payment_method;
+			}
 		}
 		// perform a php union to prepend $selected_payment_method to the beginning of the $available_payment_methods array while maintaining associative keys
 		$available_payment_methods = $selected_payment_method + $available_payment_methods;
-		$available_payment_methods = $selected_payment_method + $available_payment_methods;
+		// build the available payment methods form
 		return new EE_Form_Section_Proper(
 			array(
 				'html_id' 					=> 'spco-available-methods-of-payment-dv',
