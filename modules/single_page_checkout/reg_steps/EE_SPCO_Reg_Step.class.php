@@ -239,6 +239,21 @@ abstract class EE_SPCO_Reg_Step {
 
 
 	/**
+	 * reg_step_url
+	 * @param string $action
+	 * @return string
+	 */
+	public function reg_step_url( $action = '' ) {
+		$query_args = array( 'ee' => '_register', 'step' => $this->slug() );
+		if( ! empty( $action )) {
+			$query_args['action'] = $action;
+		}
+		return add_query_arg( $query_args, $this->checkout->reg_page_base_url );
+	}
+
+
+
+	/**
 	 * @return EE_Form_Input_Base[]
 	 */
 	public function reg_step_hidden_inputs() {
@@ -306,7 +321,7 @@ abstract class EE_SPCO_Reg_Step {
 		$html = '';
 		if ( $this->reg_form instanceof EE_Form_Section_Proper ) {
 			$action = empty( $this->checkout->reg_url_link ) ? 'process_reg_step' : 'update_reg_step';
-			$html .= $this->reg_form->form_open( add_query_arg( array( 'ee' => '_register', 'step' => $this->slug(), 'action' => $action ), $this->checkout->reg_page_base_url ));
+			$html .= $this->reg_form->form_open( $this->reg_step_url( $action ));
 			$html .= $this->reg_form->get_html_and_js();
 			$html .= $this->reg_step_submit_button();
 			$html .= $this->reg_form->form_close();
