@@ -364,11 +364,11 @@ class EE_Transaction extends EE_Base_Class {
 
 	/**
 	 * This returns the url for the invoice of this transaction
-	 * @param string $type 'download','launch', or 'html' (default is 'launch')
+	 * @param string $type 'html' or 'pdf' (default is pdf)
 	 * @access public
 	 * @return string
 	 */
-	public function invoice_url( $type = 'launch' ) {
+	public function invoice_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
 		if ( empty( $REG ) ) {
 			return FALSE;
@@ -389,11 +389,11 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * Gets the URL for viewing the
-	 * @param string $type 'download','launch', or 'html' (default is 'launch')
+	 * Gets the URL for viewing the reciept
+	 * @param string $type 'pdf' or 'html' (default is 'html')
 	 * @return string
 	 */
-	public function receipt_url( $type = 'launch' ) {
+	public function receipt_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
 		if ( empty( $REG ) ) {
 			return FALSE;
