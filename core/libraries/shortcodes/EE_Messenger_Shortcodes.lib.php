@@ -28,7 +28,8 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 		$this->label = __('Messenger Shortcodes', 'event_espresso');
 		$this->description = __('All shortcodes that are messenger specific.', 'event_espresso');
 		$this->_shortcodes = array(
-			'[DISPLAY_HTML_URL]' => __('This will return a link to view the template in a browser.', 'event_espresso')
+			'[DISPLAY_HTML_URL]' => __('This will return a link to view the template in a browser.', 'event_espresso'),
+			'[DISPLAY_PDF_URL]' => __('This will return a link to generate a pdf for the template.', 'event_espresso' )
 			);
 	}
 
@@ -45,7 +46,10 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 
 		switch ( $shortcode ) {
 			case '[DISPLAY_HTML_URL]' :
-				return $this->_get_display_url($recipient);
+				return $this->_get_url( $recipient, 'html' );
+				break;
+			case '[DISPLAY_PDF_URL]' :
+				return $this->_get_url( $recipient, 'pdf' );
 				break;
 		}
 		return '';
@@ -61,7 +65,7 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 	 *
 	 * @return string The generated url for displaying the link.
 	 */
-	private function _get_display_url( EE_Messages_Addressee $recipient ) {
+	private function _get_url( EE_Messages_Addressee $recipient, $type ) {
 		$reg = $recipient->reg_obj;
 		$reg = ! $reg instanceof EE_Registration ? $recipient->primary_reg_obj : $reg;
 
@@ -71,7 +75,7 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes {
 		}
 
 		if ( $this->_message_type instanceof EE_message_type ) {
-			return $this->_message_type->get_url_trigger( $this->_context, 'html', $reg );
+			return $this->_message_type->get_url_trigger( $this->_context, $type, $reg );
 		}
 
 		return '';

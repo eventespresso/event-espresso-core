@@ -134,7 +134,17 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
 		$event_id = isset($this->_req_data['EVT_ID']) ? $this->_req_data['EVT_ID'] : NULL;
 		//get content for active messengers
 		foreach ( $active_messengers as $name => $messenger ) {
-			$tabs[$name] = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
+			//first check if there are any active message types for this messenger.
+			$active_mts = $EEM_controller->get_active_message_types_per_messenger( $name );
+			if ( empty( $active_mts ) ) {
+				continue;
+			}
+
+			$tcont = $messenger->get_messenger_admin_page_content('events', 'edit', array('event' => $event_id) );
+
+			if ( ! empty( $tcont ) ) {
+				$tabs[$name] = $tcont;
+			}
 		}
 
 

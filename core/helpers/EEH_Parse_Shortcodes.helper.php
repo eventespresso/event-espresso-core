@@ -132,6 +132,25 @@ class EEH_Parse_Shortcodes {
 	}
 
 
+
+	public function parse_line_item_list_template( $template, EE_Line_Item $line_item, $valid_shortcodes, $extra_data = array() ) {
+		$this->_init_data( $template, $line_item, $valid_shortcodes, $extra_data );
+		$this->_template = is_array( $template ) ? $template['ticket_line_item_no_pms'] : $template;
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
+	}
+
+
+	public function parse_payment_list_template( $template, EE_Payment $payment_item, $valid_shortcodes, $extra_data = array() ) {
+		$this->_init_data( $template, $payment_item, $valid_shortcodes, $extra_data );
+		$this->_template = is_array( $template ) ? $template['payment_list'] : $template;
+
+		$parsed = $this->_parse_message_template();
+		return $parsed;
+	}
+
+
 	public function parse_datetime_list_template( $template, EE_Datetime $datetime, $valid_shortcodes, $extra_data = array() ) {
 		$this->_init_data( $template, $datetime, $valid_shortcodes, $extra_data );
 
@@ -194,7 +213,11 @@ class EEH_Parse_Shortcodes {
 			'[RECIPIENT_TICKET_LIST]',
 			'[PRIMARY_REGISTRANT_TICKET_LIST]',
 			'[RECIPIENT_DATETIME_LIST]',
-			'[PRIMARY_REGISTRANT_DATETIME_LIST]'
+			'[PRIMARY_REGISTRANT_DATETIME_LIST]',
+			'[TICKET_LINE_ITEM_LIST]',
+			'[TAX_LINE_ITEM_LIST]',
+			'[PRICE_MODIFIER_LINE_ITEM_LIST]',
+			'[PAYMENT_LIST_*]'
 			);
 
 		$list_type_shortcodes = apply_filters( 'FHEE__EEH_Parse_Shortcodes___parse_message_template__list_type_shortcodes', $list_type_shortcodes );
@@ -202,22 +225,19 @@ class EEH_Parse_Shortcodes {
 		//now lets go ahead and loop through our parsers for each shortcode and setup the values
 		foreach ( $shortcodes as $shortcode ) {
 
-
 			foreach ( $this->_shortcode_objs as $sc_obj ) {
 				$data_send = '';
 
 				//we need to setup any dynamic shortcodes so that they work with the array_key_exists
-				$sc = preg_match_all( '/(\[[A-Za-z0-9]+_\*)/', $shortcode, $matches );
+				$sc = preg_match_all( '/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches );
 				$sc_to_verify = !empty($matches[0] ) ? $matches[0][0] . ']' : $shortcode;
 
 				if ( !array_key_exists( $sc_to_verify, $sc_obj->get_shortcodes() ) ) {
 					continue; //the given shortcode isn't in this object
 				}
 
-
-
 				//if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
-				if ( ! in_array( $shortcode, $list_type_shortcodes ) ) {
+				if ( ! in_array( $sc_to_verify, $list_type_shortcodes ) ) {
 					$data_send = !is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
 				} else {
 					$data_send = $this->_data;
