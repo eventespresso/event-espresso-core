@@ -972,10 +972,9 @@ abstract class EE_Base_Class{
 		 * @param array $set_cols_n_values keys are field names values are their new values, if
 		 * provided during the save() method (often client code will change the fields'
 		 * values before calling save)
-		 * @param string $classname (eg 'EE_Event')
 		 * @param EE_Base_Class $model_object
 		 */
-		$set_cols_n_values = apply_filters( 'FHEE__EE_Base_Class__save__set_cols_n_values', $set_cols_n_values, get_class($this), $this  );
+		$set_cols_n_values = apply_filters( 'FHEE__EE_Base_Class__save__set_cols_n_values', $set_cols_n_values, $this  );
 		//set attributes as provided in $set_cols_n_values
 		foreach($set_cols_n_values as $column=>$value){
 			$this->set($column,$value);
@@ -984,10 +983,9 @@ abstract class EE_Base_Class{
 		 * Saving a model object.
 		 *
 		 * Before we perform a save, this action is fired.
-		 * @param string $classname the name of the class's classname (eg 'EE_Event')
 		 * @param EE_Base_Class $model_object the model object about to be saved.
 		 */
-		do_action( 'AHEE__EE_Base_Class__save__begin', get_class($this), $this );
+		do_action( 'AHEE__EE_Base_Class__save__begin', $this );
 		//now get current attribute values
 		$save_cols_n_values = $this->_fields;
 		//if the object already has an ID, update it. Otherwise, insert it
@@ -1019,12 +1017,11 @@ abstract class EE_Base_Class{
 		/**
 		 * After saving the model object this action is called
 		 *
-		 * @param string $classname (eg 'EE_Event')
 		 * @param EE_Base_Class $model_object which was just saved
 		 * @param boolean|int $results if it were updated, TRUE or FALSE; if it were newly inserted
 		 * the new ID (or 0 if an error occurred and it wasn't updated)
 		 */
-		do_action( 'AHEE__EE_Base_Class__save__end', get_class($this), $this, $results );
+		do_action( 'AHEE__EE_Base_Class__save__end', $this, $results );
 		return $results;
 	}
 
