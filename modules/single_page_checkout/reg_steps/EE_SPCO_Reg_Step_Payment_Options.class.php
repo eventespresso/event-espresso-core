@@ -612,7 +612,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		$this->checkout->cart->get_grand_total()->save_this_and_descendants_to_txn( $this->checkout->transaction->ID() );
 		do_action ('AHEE__EE_Single_Page_Checkout__process_finalize_registration__before_gateway', $this->checkout->transaction );
 		// set return URL
-		$this->checkout->thank_you_page_url = add_query_arg( array( 'e_reg_url_link' => $this->checkout->reg_url_link ), $this->checkout->thank_you_page_url );
+		$this->checkout->redirect_url = add_query_arg( array( 'e_reg_url_link' => $this->checkout->reg_url_link ), $this->checkout->thank_you_page_url );
 		// if payment required
 		if ( $this->checkout->transaction->total() > 0 ) {
 			// attempt payment via payment method
@@ -645,7 +645,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			return FALSE;
 		}
 		// bad billing form ?
-		if ( ! $this->_billing_form_is_valid() && ! $this->checkout->payment_method->is_off_line() ) {
+		if ( ! $this->_billing_form_is_valid() && $this->checkout->payment_method->is_on_site() ) {
 			return FALSE;
 		}
 		// ensure primary registrant has been fully processed
@@ -654,6 +654,20 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 		}
 		// attempt payment
 		$payment = $this->_attempt_payment( $this->checkout->payment_method );
+		// onsite payment?
+		if ( $this->checkout->payment_method->is_on_site() ) {
+			$this->_onsite_payment_success( $payment );
+		} else if ( $this->checkout->payment_method->is_off_site() ) {
+			// if a payment object was made and it specifies a redirect url...
+			// then we'll set that redirect info
+			if ( $payment->redirect_url() ){
+				$this->checkout->redirect = TRUE;
+				// setup URL for redirect
+				$this->checkout->redirect_url = $payment->redirect_url();
+				$this->checkout->json_response['return_data'] = array( 'off-site-redirect' => $payment->redirect_form() );
+			}
+		}
+
 		// please note that offline payment methods will NOT make a payment,
 		// but instead just mark themselves as the PMD_ID on the transaction
 		// so for either on-site / off-site payments OR off-line payment methods
@@ -837,14 +851,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				), __FILE__, __FUNCTION__, __LINE__
 			);
 			return FALSE;
-		}
-		if ( $payment_method->is_on_site() ) {
-			$this->_onsite_payment_success( $payment );
-		}
-		// if a payment object was made and it specifies a redirect url...
-		// then we'll set that redirect info
-		if ( $payment->redirect_url()){
-			$this->checkout->json_response['return_data'] = array( 'off-site-redirect' => $payment->redirect_form() );
 		}
 		return $payment;
 	}
