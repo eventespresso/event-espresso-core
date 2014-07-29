@@ -901,12 +901,15 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	private function _do_wpdb_query( $wpdb_method, $arguments_to_provide ){
 		global $wpdb;
+		if( ! method_exists( $wpdb, $wpdb_method ) ){
+			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
+		}
 		$wpdb->last_error = NULL;
 		$old_show_errors_value = $wpdb->show_errors;
 		$wpdb->show_errors( FALSE );
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
 		$wpdb->show_errors( $old_show_errors_value );
-		if( $wpdb->last_error !== NULL && $wpdb->last_error != ''){
+		if( ! empty( $wpdb->last_error ) ){
 			throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
 		}
 		$this->show_db_query_if_previously_requested( $wpdb->last_query );
