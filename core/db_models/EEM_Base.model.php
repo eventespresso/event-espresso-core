@@ -593,6 +593,14 @@ abstract class EEM_Base extends EE_Base{
 	 * @return int how many rows got updated or FALSE if something went wrong with the query (wp returns FALSE or num rows affected which *could* include 0 which DOES NOT mean the query was bad)
 	 */
 	function update($fields_n_values, $query_params){
+		/**
+		 * Filters the fields about to be updated given the query parameters. You can provide the
+		 * $query_params to $this->get_all() to find exactly which records will be updated
+		 * @param array $fields_n_values fields and their new values
+		 * @param EEM_Base $model the model being queried
+		 * @param array $query_params see EEM_Base::get_all()
+		 */
+		$fields_n_values = apply_filters( 'FHEE__EEM_Base__update__fields_n_values', $fields_n_values, $this, $query_params );
 		global $wpdb;
 		//need to verify that, for any entry we want to update, there are entries in each secondary table.
 		//to do that, for each table, verify that it's PK isn't null.
@@ -662,6 +670,15 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function delete($query_params,$allow_blocking = true){
 		global $wpdb;
+		/**
+		 * Action called just before performing a real deletion query. You can use the
+		 * model and its $query_params to find exactly which items will be deleted
+		 * @param EEM_Base $model
+		 * @param array $query_params @see EEM_Base::get_all()
+		 * @param boolean $allow_blocking whether or not to allow related model objects
+		 * to block (prevent) this deletion
+		 */
+		do_action( 'AHEE__EEM_Base__delete__begin', $this, $query_params, $allow_blocking );
 		//some MySQL databases may be running safe mode, which may restrict
 		//deletion if there is no KEY column used in the WHERE statement of a deletion.
 		//to get around this, we first do a SELECT, get all the IDs, and then run another query
@@ -1120,12 +1137,26 @@ abstract class EEM_Base extends EE_Base{
 	 * @throws EE_Error
 	 */
 	function insert($field_n_values){
+		/**
+		 * Filters the fields and their values before inserting an item using the models
+		 * @param array $fields_n_values keys are the fields and values are their new values
+		 * @param EEM_Base $model the model used
+		 */
+		$field_n_values = apply_filters( 'FHEE__EEM_Base__insert__fields_n_values', $field_n_values, $this );
 		if($this->_satisfies_unique_indexes($field_n_values)){
 			$main_table = $this->_get_main_table();
 			$new_id = $this->_insert_into_specific_table($main_table, $field_n_values, false);
 			foreach($this->_get_other_tables() as $other_table){
 				$this->_insert_into_specific_table($other_table, $field_n_values,$new_id);
 			}
+			/**
+			 * Done just after attempting to insert a new model object
+			 *
+			 * @param EEM_Base $model used
+			 * @param array $fields_n_values fields and their values
+			 * @param int|string the ID of the newly-inseretd model object
+			 */
+			do_action( 'AHEE__EEM_Base__insert__end', $this, $field_n_values, $new_id );
 			return $new_id;
 		}else{
 			return FALSE;
