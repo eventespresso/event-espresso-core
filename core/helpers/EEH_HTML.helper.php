@@ -3,7 +3,12 @@
  *
  * Class EEH_HTML
  *
- * Description
+  * Sometimes when writing PHP you need to generate some standard HTML,
+  * but either not enough to warrant creating a template file,
+  * or the amount of PHP conditionals and/or loops peppered throughout the HTML
+  * just make it really ugly and difficult to read.
+  * This class simply adds a bunch of methods for generating basic HTML tags.
+  * Most of the methods have the same name as the HTML tag they generate, and most have the same set of parameters.
  *
  * @package         Event Espresso
  * @subpackage    core
@@ -70,9 +75,9 @@ class EEH_HTML {
 
 	/**
 	 * 	div - generates HTML opening <div> tag and adds any passed attributes
-	 * 	to add an id use: 		echo EEH_HTML::divo( 'footer' );
-	 *  to add a class use: 	echo EEH_HTML::divo( '', 'float_left' );
-	 * 	to add a both an id and a class use: 	echo EEH_HTML::divo( 'footer', 'float_left' );
+	 * 	to add an id use: 		echo EEH_HTML::div( 'this is some content', 'footer' );
+	 *  to add a class use: 	echo EEH_HTML::div( 'this is some content', '', 'float_left' );
+	 * 	to add a both an id and a class use: 	echo EEH_HTML::div( 'this is some content', 'footer', 'float_left' );
 	 *
 	 * @param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
 	 * @param string $id - html id attribute
@@ -103,7 +108,7 @@ class EEH_HTML {
 
 	/**
 	 * Generates HTML <h1></h1> tags, inserts content, and adds any passed attributes
-	 * usage: echo EEH_HTML::h1( 'this is a paragraph' );
+	 * usage: echo EEH_HTML::h1( 'This is a Heading' );
 	 *
 	 * @param string $content - inserted after opening tag, and appends closing tag, otherwise tag is left open
 	 * @param string $id - html id attribute
