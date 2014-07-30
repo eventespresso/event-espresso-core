@@ -70,7 +70,7 @@ add_filter( 'FHEE__EE_Template_Pack___get_templates__templates', 'ee_deprecated_
  * @param string                    $context       The context the contents are for.
  * @param EE_Messages_Template_Pack $template_pack
  *
- * @return string                    The default cotents for the messenger, message type, context and field.
+ * @return string                    The default contents for the messenger, message type, context and field.
  */
 function ee_deprecated_get_default_field_content( $contents, $actual_path, EE_messenger $messenger, EE_message_type $message_type, $field, $context, EE_Messages_Template_Pack $template_pack ) {
 
@@ -111,7 +111,7 @@ add_filter( 'FHEE__EE_Messages_Template_Pack__get_specific_template__contents', 
  * @param string                    $messenger      EE_messenger slug.
  * @param string                    $type                The type of css file being returned (wpeditor, default etc.)
  * @param string                    $variation         Introduced by the new template pack system. The variation slug.
- * @param string                    $file_extension Defaults to css.  The file extension for the file being retreived.
+ * @param string                    $file_extension Defaults to css.  The file extension for the file being retrieved.
  * @param bool                      $url            Whether this is a directory path or url path.
  * @param EE_Messages_Template_Pack $template_pack
  *
