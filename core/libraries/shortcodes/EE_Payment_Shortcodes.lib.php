@@ -2,7 +2,7 @@
 /**
  * This contains the class for the Payment messages shortcode library.
  *
- * @since %VER%
+ * @since 4.5.0
  * @package Event Espresso
  * @subpackage messages
  */
@@ -16,7 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * This is a child class for the EE_Shortcodes library. The EE_Payment_Shortcodes lists all shortcodes related to payments.
  *
  *
- * @since %VER%
+ * @since 4.5.0
  *
  * @package			Event Espresso
  * @subpackage		messages

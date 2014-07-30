@@ -87,7 +87,7 @@ abstract class EE_Messages_incoming_data {
 	/**
 	 * holds an array with a key of parent line item and values are an array of children of that line item.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var EE_Line_Item[]
 	 */
@@ -148,7 +148,7 @@ abstract class EE_Messages_incoming_data {
 	/**
 	 * Holds the line items related to taxes
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var EE_Line_Item[]
 	 */
@@ -185,7 +185,7 @@ abstract class EE_Messages_incoming_data {
 	/**
 	 * Holds the payments related to a transaction
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @var EE_Payment[]
 	 */
