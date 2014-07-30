@@ -3,7 +3,7 @@
  * This file contains the EE_Receipt_message_type class.
  * @package      Event Espresso
  * @subpackage messages
- * @since           %VER%
+ * @since           4.5.0
  */
 if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed');
 
@@ -14,7 +14,7 @@ if ( ! defined('EVENT_ESPRESSO_VERSION')) exit('No direct script access allowed'
  *
  * @package        Event Espresso
  * @subpackage  messages
- * @since            %VER%
+ * @since            4.5.0
  * @author          Darren Ethier
  */
 class EE_Receipt_message_type extends EE_message_type {
@@ -89,7 +89,7 @@ class EE_Receipt_message_type extends EE_message_type {
 	/**
 	* used to set the valid shortcodes for the receipt message type
 	*
-	* @since   %VER%
+	* @since   4.5.0
 	*
 	* @return  void
 	*/

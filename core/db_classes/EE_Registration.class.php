@@ -460,7 +460,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		/**
 		 * The below will be deprecated one version after this.  We check first if there is a custom receipt template already in use on old system.  If there is then we just return the standard url for it.
 		 *
-		 * @since %VER%
+		 * @since 4.5.0
 		 */
 		EE_Registry::instance()->load_helper('Template');
 		$template_relative_path = '/modules/gateways/Invoice/lib/templates/receipt_body.template.php';
@@ -513,7 +513,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class {
 		/**
 		 * The below will be deprecated one version after this.  We check first if there is a custom invoice template already in use on old system.  If there is then we just return the standard url for it.
 		 *
-		 * @since %VER%
+		 * @since 4.5.0
 		 */
 		EE_Registry::instance()->load_helper('Template');
 		$template_relative_path = '/modules/gateways/Invoice/lib/templates/invoice_body.template.php';
