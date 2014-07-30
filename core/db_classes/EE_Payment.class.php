@@ -550,6 +550,9 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		}
 
 	}
+
+
+
 	/**
 	 * Changes all the name-value pairs of
 	 * @return string
@@ -564,6 +567,9 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment{
 		}
 		return $html;
 	}
+
+
+
 	/**
 	 * Returns the currency of the payment.
 	 * (At the time of writing, this will always be the currency in the configuration;
