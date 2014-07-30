@@ -1,4 +1,4 @@
-<?php 
+<?php
 if (!defined('EVENT_ESPRESSO_VERSION') )
 	exit('NO direct script access allowed');
 
@@ -18,7 +18,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * EE_Messages_Base class
  *
- * Abstract class for setting up messengers and message types parents. 
+ * Abstract class for setting up messengers and message types parents.
  *
  * @package			Event Espresso
  * @subpackage		includes/core/messages/EE_Messages_Base.core.php
@@ -29,7 +29,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
 abstract class EE_Messages_Base extends EE_Base {
 
 	/** DETAILS PROPERTIES **/
-	/** 
+	/**
 	 * The following are used to hold details on the type for reference (i.e. on admin screens) and also used by the EE_message_type object to figure out where to get template data.
 	 */
 	public $name;
@@ -44,7 +44,7 @@ abstract class EE_Messages_Base extends EE_Base {
 	 * 	'singular' => __('something'),
 	 * 	'plural' => __('somethings')
 	 * )
-	 * 
+	 *
 	 * @var array
 	 */
 	public $label;
@@ -64,13 +64,6 @@ abstract class EE_Messages_Base extends EE_Base {
 	public $admin_registered_pages = array();
 
 
-
-
-	/**
-	 * there are certain template fields that are global across all messengers.  This will hold the default content for those global template fields that will be added 
-	 * @var array
-	 */
-	protected $_default_field_content = array();
 
 
 
@@ -98,7 +91,7 @@ abstract class EE_Messages_Base extends EE_Base {
 
 
 	/**
-	 * this property will hold an array of valid shortcodes for this message type and messengers.  
+	 * this property will hold an array of valid shortcodes for this message type and messengers.
 	 * #For Message Types:
 	 * This is an array of strings that correspond to defined EE_Shortcode libraries and per context.  For example:
 	 * array( 'admin' => array('transaction', 'event', 'attendee') )corresponds to 'EE_Transaction_Shortcodes.lib.php, EE_Event_Shortcodes.lib.php, EE_Attendee_Shortcodes.lib.php' fo the admin context;
@@ -123,7 +116,6 @@ abstract class EE_Messages_Base extends EE_Base {
 		$this->_set_existing_admin_settings();
 		$this->_set_valid_shortcodes();
 		$this->_set_admin_pages();
-		$this->_set_default_field_content();
 	}
 
 
@@ -158,7 +150,7 @@ abstract class EE_Messages_Base extends EE_Base {
 	/**
 	 * sets any properties on whether a message type or messenger interface shows up on a ee administration page.  Child classes have to define this method but don't necessarily have to set the flags as they will be set to false by default.
 	 *
-	 * Child classes use this method to set the `_admin_registered_page` property.  That property is to indicate what EE admin pages we have a corresponding callback for in the child class so Message Type/messenger fields/content is included on that admin page. 
+	 * Child classes use this method to set the `_admin_registered_page` property.  That property is to indicate what EE admin pages we have a corresponding callback for in the child class so Message Type/messenger fields/content is included on that admin page.
 	 *
 	 * @abstract
 	 * @access protected
@@ -183,19 +175,6 @@ abstract class EE_Messages_Base extends EE_Base {
 
 
 
-	/**
-	 * This sets the _default_field_content property which needs to be defined by child classes.
-	 * 
-	 * @abstract
-	 * @access  protected
-	 * @return void
-	 */
-	abstract protected function _set_default_field_content();
-
-
-
-
-
 
 
 	/**
@@ -204,7 +183,7 @@ abstract class EE_Messages_Base extends EE_Base {
 	 * @access protected
 	 * @return void
 	 */
-	protected function _set_existing_admin_settings( $messenger = NULL ) {		
+	protected function _set_existing_admin_settings( $messenger = NULL ) {
 		$active_messengers = get_option('ee_active_messengers', true);
 		$active_message_types = !empty( $messenger ) ? $active_messengers[$messenger]['settings'][$messenger . '-message_types'] : array();
 
@@ -256,7 +235,7 @@ abstract class EE_Messages_Base extends EE_Base {
 
 	/**
 	 * getter that returns the protected admin_settings_fields property
-	 * 
+	 *
 	 * @access public
 	 * @return array admin settings fields
 	 */
@@ -266,27 +245,11 @@ abstract class EE_Messages_Base extends EE_Base {
 
 
 
-	/**
-	 * return the default_field_content property
-	 *
-	 * @access public
-	 * @return array
-	 */
-	public function get_default_field_content() {
-		$default = apply_filters( 'FHEE__' . get_class($this) . '__get_default_field_content', $this->_default_field_content, $this );
-		//note the below filter will apply to all messengers AND message types.  Use with care.
-		$default = apply_filters( 'FHEE__EE_Messages_Base__get_default_field_content', $default, $this );
-
-		return $default;
-	}
-
-
-
 
 
 	/**
 	 * this public method accepts a page slug (for an EE_admin page) and will return the response from the child class callback function if that page is registered via the `_admin_registered_page` property set by the child class.
-	 * 
+	 *
 	 * @param string $page the slug of the EE admin page
 	 * @param array $actives an array of active message type (or messenger) objects.
 	 * @param string $action the page action (to allow for more specific handling - i.e. edit vs. add pages)
@@ -306,7 +269,7 @@ abstract class EE_Messages_Base extends EE_Base {
 		//k made it here so let's call the method
 		if ( FALSE === ( $content = call_user_func_array( array( $this, '_get_admin_content_' . $page), array($actives, $extra) ) ) ) {
 			return false; //todo this needs to be an exception once we've got exceptions in place.
-		}		
+		}
 		return $content;
 	}
 

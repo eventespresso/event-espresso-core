@@ -79,6 +79,17 @@ final class EE_Registry {
 	public $SSN = NULL;
 
 
+
+	/**
+	 * holds the ee capabilities object.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var EE_Capabilities
+	 */
+	public $CAP = NULL;
+
+
 	/**
 	 * 	$addons - StdClass object for holding addons which have registered themselves to work with EE core
 	 * 	@access 	public
@@ -442,7 +453,8 @@ final class EE_Registry {
 			'EE_Config' => 'CFG',
 			'EE_Network_Config' => 'NET_CFG',
 			'EE_Request_Handler' => 'REQ',
-			'EE_Session' => 'SSN'
+			'EE_Session' => 'SSN',
+			'EE_Capabilities' => 'CAP'
 		);
 
 		// check if class has already been loaded, and return it if it has been
@@ -668,6 +680,20 @@ final class EE_Registry {
 			$addons[ $addon->name() ] = $addon;
 		}
 		return $addons;
+	}
+
+	/**
+	 * Resets that specified model's instance AND makes sure EE_Registry doesn't keep
+	 * a stale copy of it around
+	 * @param string $model_name
+	 * @return EEM_Base
+	 */
+	public function reset_model( $model_name ){
+		$model = $this->load_model( $model_name );
+		$model_class_name = get_class( $model );
+		//get that model reset it and make sure we nuke the old reference to it
+		$this->LIB->$model_class_name = $model::reset();
+		return $this->LIB->$model_class_name;
 	}
 
 

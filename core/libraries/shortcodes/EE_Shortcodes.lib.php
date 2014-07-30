@@ -85,6 +85,49 @@ abstract class EE_Shortcodes extends EE_Base {
 
 
 	/**
+	 * EE_messenger used to generate the template being parsed.
+	 *
+	 * @since 4.5.0
+	 * @var EE_messenger
+	 */
+	protected $_messenger;
+
+
+
+	/**
+	 * message type used to generate the template being parsed.
+	 *
+	 * @since 4.5.0
+	 * @var EE_message_type
+	 */
+	protected $_message_type;
+
+
+
+
+	/**
+	 * context used for the template being parsed
+	 *
+	 * @since 4.5.0
+	 * @var string
+	 */
+	protected $_context;
+
+
+
+
+	/**
+	 * Specific Message Template Group ID
+	 *
+	 * @since 4.5.0
+	 * @var int
+	 */
+	protected $_GRP_ID;
+
+
+
+
+	/**
 	 * This will hold an instance of the EEH_Parse_Shortcodes helper that will be used when handling list type shortcodes
 	 * @var object
 	 */
@@ -141,7 +184,7 @@ abstract class EE_Shortcodes extends EE_Base {
 		$this->_shortcodes = $this->get_shortcodes();
 
 		//we need to setup any dynamic shortcodes so that they work with the array_key_exists
-		$sc = preg_match_all( '/(\[[A-Za-z0-9]+_\*)/', $shortcode, $matches );
+		$sc = preg_match_all( '/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches );
 		$sc_to_verify = !empty($matches[0] ) ? $matches[0][0] . ']' : $shortcode;
 
 		//first we want to make sure this is a valid shortcode
@@ -149,6 +192,7 @@ abstract class EE_Shortcodes extends EE_Base {
 			return false; //get out, this parser doesn't handle the incoming shortcode.
 		$this->_data = $data;
 		$this->_extra_data = $extra_data;
+		$this->_set_messages_properties();
 		$parsed = apply_filters( 'FHEE__' . get_class($this) . '__parser_after', $this->_parser($shortcode), $shortcode, $data, $extra_data, $this );
 
 		//note the below filter applies to ALL shortcode parsers... be careful!
@@ -226,13 +270,93 @@ abstract class EE_Shortcodes extends EE_Base {
 		if ( !isset( $this->_data['data'] ) )
 			throw new EE_Error( __('The incoming data does not have the required data index in its array', 'event_espresso') );
 
-		//all is well let's just reformat the _extra_data() array if present
+		//all is well let's make sure _extra_data always has the values needed.
 		//let's make sure that extra_data includes all templates (for later parsing if necessary)
-		if ( !empty( $this->_extra_data ) && is_object($this->_extra_data ) ) {
-			$this->_extra_data['data'] = $this->_extra_data;
-			$this->_extra_data['templates'] = $this->_data['template'];
+		if ( empty( $this->_extra_data ) || ( empty( $this->_extra_data['data'] ) && empty( $this->_extra_data['template'] ) ) ) {
+			$this->_extra_data['data'] = $this->_data['data'];
+			$this->_extra_data['template'] = $this->_data['template'];
 		}
 
+	}
+
+
+	/**
+	 * This returns any attributes that may be existing on an EE_Shortcode
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $shortcode incoming shortcode
+	 *
+	 * @return array An array with the attributes
+	 */
+	protected function _get_shortcode_attrs( $shortcode ) {
+		//make sure the required wp helper function is present
+		//require the shortcode file if necessary
+		if ( ! function_exists( 'shortcode_parse_atts' ) ) {
+			require_once( ABSPATH . WPINC . '/shortcodes.php');
+		}
+
+		//let's get any attributes that may be present and set the defaults.
+		$shortcode_to_parse = str_replace( '[', '', str_replace( ']', '', $shortcode ) );
+		return shortcode_parse_atts( $shortcode_to_parse );
+	}
+
+
+
+	/**
+	 * This sets the properties related to the messages system
+	 *
+	 * @since 4.5.0
+	 *
+	 *
+	 * @return void
+	 */
+	protected function _set_messages_properties() {
+		//should be in _extra_data
+		if ( isset( $this->_extra_data['messenger'] ) ) {
+			$this->_messenger = $this->_extra_data['messenger'];
+			$this->_message_type = $this->_extra_data['message_type'];
+			$this->_context = $this->_extra_data['context'];
+			$this->_GRP_ID = $this->_extra_data['GRP_ID'];
+		}
+	}
+
+
+	/**
+	 * This returns whatever the set message type object is that was set on this shortcode parser.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_message_type
+	 */
+	public function get_set_message_type() {
+		return $this->_message_type;
+	}
+
+
+
+	/**
+	 * This returns whatever the set messenger object is that was set on this shortcode parser
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return EE_messenger
+	 */
+	public function get_set_messenger() {
+		return $this->_messenger;
+	}
+
+
+
+	/**
+	 * This returns whatever the set context string is on this shortcode parser.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return string
+	 */
+	public function get_set_context() {
+		return $this->_context;
 	}
 
 

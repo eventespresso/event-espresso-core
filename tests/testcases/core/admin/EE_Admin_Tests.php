@@ -38,10 +38,6 @@ class EE_Admin_Tests extends EE_UnitTestCase {
 		$this->assertEquals( has_action('admin_enqueue_scripts', array($admin_instance, 'enqueue_admin_scripts') ), 20 );
 		$this->assertEquals( has_action('admin_notices', array($admin_instance, 'display_admin_notices') ), 10 );
 		$this->assertEquals( has_filter('admin_footer_text', array($admin_instance, 'espresso_admin_footer') ), 10 );
-
-		//messages init is loaded in EE_System, however we want to make sure its available to admin
-		//make sure that Messages Init loaded
-		$this->assertTrue( class_exists( 'EE_Messages_Init' ) );
 	}
 
 	/**

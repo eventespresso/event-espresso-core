@@ -28,7 +28,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 
-class EE_Pending_Approval_message_type extends EE_message_type {
+class EE_Pending_Approval_message_type extends EE_Registration_Base_message_type {
 
 	public function __construct() {
 		$this->name = 'pending_approval';
@@ -40,80 +40,6 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 		parent::__construct();
 	}
-
-
-
-	protected function _set_admin_pages() {
-		$this->admin_registered_pages = array(
-			'events_edit' => TRUE
-			);
-	}
-
-	/**
-	 * This message type doesn't need any settings so we are just setting to empty array.
-	 */
-	protected function _set_admin_settings_fields() {
-		$this->_admin_settings_fields = array();
-	}
-
-
-	protected function _get_admin_content_events_edit_for_messenger( EE_Messenger $messenger ) {
-		//this is just a test
-		return $this->label['singular'] . ' Message Type for ' . $messenger->name . ' Messenger ';
-	}
-
-
-
-
-	protected function _set_data_handler() {
-		$this->_data_handler = $this->_data instanceof EE_Registration ? 'REG' : 'Gateways';
-		$this->_single_message = $this->_data instanceof EE_Registration ? TRUE : FALSE;
-	}
-
-
-
-	protected function _set_default_field_content() {
-
-		$this->_default_field_content = array(
-			'subject' => $this->_default_template_field_subject(),
-			'content' => $this->_default_template_field_content(),
-		);
-	}
-
-
-
-
-
-
-	protected function _default_template_field_subject() {
-		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Registration Pending Payment';
-		};
-		return $content;
-	}
-
-
-
-
-
-
-	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/pending_approval-message-type-content.template.php', TRUE );
-
-		foreach ( $this->_contexts as $context => $details ) {
-			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-attendee-list.template.php', TRUE );
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-event-list.template.php', TRUE );
-			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-ticket-list.template.php', TRUE );
-			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-datetime-list.template.php', TRUE );
-		}
-
-
-		return $tcontent;
-	}
-
-
-
 
 
 
@@ -146,16 +72,12 @@ class EE_Pending_Approval_message_type extends EE_message_type {
 
 
 
-	/**
-	 * returns an array of addressee objects for event_admins
-	 *
-	 * @access protected
-	 * @return array array of EE_Messages_Addressee objects
-	 */
-	protected function _admin_addressees() {
-		if ( $this->_single_message )
-			return array();
-		return parent::_admin_addressees();
+	protected function _primary_attendee_addressees() {
+		$cached = $this->_single_message;
+		$this->_single_message = FALSE;
+		$addressees = parent::_primary_attendee_addressees();
+		$this->_single_message = $cached;
+		return $addressees;
 	}
 
 } //end EE_Pending_Approval_message_type class

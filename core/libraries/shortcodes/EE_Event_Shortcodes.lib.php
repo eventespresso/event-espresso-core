@@ -18,11 +18,11 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  *
  * EE_Event_Shortcodes
- * 
- * this is a child class for the EE_Shortcodes library.  The EE_Event_Shortcodes lists all shortcodes related to event specific info. 
+ *
+ * this is a child class for the EE_Shortcodes library.  The EE_Event_Shortcodes lists all shortcodes related to event specific info.
  *
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes parent class.
- * 
+ *
  * @package		Event Espresso
  * @subpackage	libraries/shortcodes/EE_Event_Shortcodes.lib.php
  * @author		Darren Ethier
@@ -30,6 +30,14 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * ------------------------------------------------------------------------
  */
 class EE_Event_Shortcodes extends EE_Shortcodes {
+
+
+	/**
+	 * Will hold the EE_Event if available
+	 *
+	 * @var EE_Event
+	 */
+	protected $_event;
 
 
 	public function __construct() {
@@ -63,14 +71,25 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 		EE_Registry::instance()->load_helper( 'Formatter' );
 
-		$event = $this->_data instanceof EE_Event ? $this->_data : null;
-		if ( empty( $event ) )
+		$this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
+
+		//if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the reg_obj instead.
+		if ( empty( $this->_event ) ) {
+			$aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : NULL;
+			$aee = $this->_extra_data instanceof EE_Messages_Addressee ? $this->_extra_data : $aee;
+
+			$this->_event = $aee instanceof EE_Messages_Addressee && $aee->reg_obj instanceof EE_Registration ? $aee->reg_obj->event() : NULL;
+		}
+
+
+		//If there is no event objecdt by now then get out.
+		if ( ! $this->_event instanceof EE_Event )
 			return '';
 
 		switch ( $shortcode ) {
-			
+
 			case '[EVENT_ID]' :
-				return $event->ID();
+				return $this->_event->ID();
 				break;
 
 			case '[EVENT_IDENTIFIER]' :
@@ -79,54 +98,54 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 
 			case '[EVENT]' :
 			case '[EVENT_NAME]' :
-				return $event->get('EVT_name');
+				return $this->_event->get('EVT_name');
 				break;
 
 			case '[EVENT_PHONE]' :
-				return $event->get('EVT_phone');
+				return $this->_event->get('EVT_phone');
 				break;
 
 			case '[EVENT_DESCRIPTION]' :
-				return $event->get('EVT_desc');
+				return $this->_event->get('EVT_desc');
 				break;
 
 			case '[EVENT_LINK]' :
-				return $this->_get_event_link($event);
+				return $this->_get_event_link($this->_event);
 				break;
 
 			case '[EVENT_URL]' :
-				return $this->_get_event_link($event, FALSE);
+				return $this->_get_event_link($this->_event, FALSE);
 				break;
 
 			case '[VIRTUAL_URL]' :
-				$venue = $this->_data->get_first_related('Venue');
+				$venue = $this->_event->get_first_related('Venue');
 				if ( empty( $venue ) )
 					return '';
 				return $venue->get('VNU_virtual_url');
 
 			case '[VIRTUAL_PHONE]' :
-				$venue = $this->_data->get_first_related('Venue');
+				$venue = $this->_event->get_first_related('Venue');
 				if ( empty( $venue ) )
 					return '';
 				return $venue->get('VNU_virtual_phone');
 				break;
 
 			case '[EVENT_IMAGE]' :
-				$image = $this->_data->feature_image_url(array(600,300) );
+				$image = $this->_event->feature_image_url(array(600,300) );
 				// @todo: eventually we should make this an attribute shortcode so that em can send along what size they want returned.
-				return !empty( $image ) ? '<img src="' . $image . '" alt="' . $this->_data->get('EVT_name') . ' Feature Image" />' : '';
+				return !empty( $image ) ? '<img src="' . $image . '" alt="' . $this->_event->get('EVT_name') . ' Feature Image" />' : '';
 				break;
 
 			case '[EVENT_FACEBOOK_URL]' :
-				return $this->_data->get_post_meta('event_facebook', true );
+				return $this->_event->get_post_meta('event_facebook', true );
 				break;
 
 			case '[EVENT_TWITTER_URL]' :
-				return $this->_data->get_post_meta('event_twitter', true);
+				return $this->_event->get_post_meta('event_twitter', true);
 				break;
 
 			case '[EVENT_AUTHOR_EMAIL]' :
-				$author_id = $this->_data->get('EVT_wp_user');
+				$author_id = $this->_event->get('EVT_wp_user');
 				$user_data = get_userdata( (int) $author_id );
 				return $user_data->user_email;
 				break;
@@ -140,7 +159,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes {
 	/**
 	 * returns the link to the event
 	 * @param  boolean $full_link if TRUE (default) we return the html for the name of the event linked to the event.  Otherwise we just return the url of the event.
-	 * @return string             
+	 * @return string
 	 */
 	private function _get_event_link( $event, $full_link = TRUE ) {
 		$url = get_permalink($event->ID());

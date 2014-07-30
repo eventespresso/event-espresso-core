@@ -56,11 +56,11 @@ class Registration_Form_Admin_Page_Init extends EE_Admin_Page_Init {
 		$this->_menu_map = new EE_Admin_Page_Sub_Menu( array(
 			'menu_group' => 'management',
 			'menu_order' => 30,
-			'show_on_menu' => TRUE,
+			'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => REGISTRATION_FORM_PG_SLUG,
 			'menu_label' => __('Registration Form', 'event_espresso'),
-			'capability' => 'administrator',
+			'capability' => 'read_questions',
 			'admin_init_page' => $this
 			));
 	}

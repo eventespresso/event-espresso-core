@@ -1,0 +1,5 @@
+body { background: #fff url(/images/gallery/red-bg.gif) top left repeat-y; }
+#invoice { width:740px!important; padding-bottom:0; background-image: none;}
+#invoice + #invoice { margin-top:0 !important;}
+#Main {text-align: left;background-color: transparent;border-top: none;}
+table.invoice-amount td, table.invoice-amount th, div{border-width:0.05mm !important}

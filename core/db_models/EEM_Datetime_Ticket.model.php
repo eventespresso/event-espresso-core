@@ -29,7 +29,7 @@ class EEM_Datetime_Ticket extends EEM_Base {
 
 	// private instance of the EEM_Datetime_Ticket object
 	private static $_instance = NULL;
-	
+
 	/**
 	 *		private constructor to prevent direct creation
 	 *		@Constructor
@@ -39,7 +39,7 @@ class EEM_Datetime_Ticket extends EEM_Base {
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Datetime Ticket','event_espresso');
-		$this->plural_item = __('Datetime Tickets','event_espresso');		
+		$this->plural_item = __('Datetime Tickets','event_espresso');
 
 		$this->_tables = array(
 			'Datetime_Ticket'=> new EE_Primary_Table('esp_datetime_ticket', 'DTK_ID')
@@ -80,10 +80,19 @@ class EEM_Datetime_Ticket extends EEM_Base {
 		//set timezone if we have in incoming string
 		if ( !empty( $timezone ) )
 			self::$_instance->set_timezone( $timezone );
-		
+
 		// Espresso_model object
 		return self::$_instance;
 	}
 
+
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Datetime_Ticket
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
 
 } //end EEM_Datetime_Ticket class

@@ -1,0 +1,175 @@
+/**
+ * base css overwrite for wpeditor-css
+ */
+.mceContentBody body { margin: 0!important;padding: 0!important;font:82.5%/1.5 Helvetica, Arial, Verdana, sans-serif; background-color:#eee; }
+.mceContentBody ul, .mceContentBody ul li, .mceContentBody p, .mceContentBody div, .mceContentBody ol {margin:0;padding:0;list-style:none;}
+
+.mceContentBody  #invoice { width:740px; min-height:21.5cm; padding:0; margin:0 auto; overflow:hidden; background-color:#fff; }
+.mceContentBody #invoice + #invoice { margin-top:5em;}
+
+.mceContentBody .print_button_div{
+	margin: 0 12pt;
+	width:660px;
+	padding: 10px;
+	margin:1em auto;
+}
+
+.mceContentBody .print_button_div form{
+	font-size:14px;
+	float:right;
+	margin:0 0 0 1em;
+}
+
+.mceContentBody table { border-collapse:collapse!important; width:100%!important; }
+.mceContentBody td { vertical-align:top!important; }
+.mceContentBody .not-really-a-table  { border:none!important; }
+
+.mceContentBody #invoice-hdr { font-size:24pt!important; font-weight:bold!important; opacity:.1; }
+.mceContentBody #logo-dv img { max-width:200px!important; border: none; }
+
+.mceContentBody #comments{padding-top:1cm; line-height:1.2em; }
+
+.mceContentBody .aln-left { text-align:left; }
+.mceContentBody .aln-cntr { text-align:center; }
+.mceContentBody .aln-rght { text-align:right; }
+
+.mceContentBody  .small-text { font-size:.8em; }
+.mceContentBody  .small-text.link { font-weight:normal; }
+.mceContentBody .plain-text { font-weight:normal; }
+.mceContentBody .float-left { float:left; }
+.mceContentBody .float-right { float:right; }
+.mceContentBody .clear { clear:both; }
+.mceContentBody #invoice>div{
+	margin-bottom:5em;
+	/*border:1px dotted gray;*/
+}
+.mceContentBody .tickets-per-event>li{
+	margin-bottom:3em;
+	/*margin-left:1em;
+	margin-right:1em;*/
+	/*border:1px dotted gray;*/
+}
+.mceContentBody th.number-column{
+	width:5em;
+}
+.mceContentBody th.name-column{
+	width:15em;
+}
+.mceContentBody td{
+	/*text-align:center;*//*Seth*/
+}
+.mceContentBody .ticket-time-details{
+	width:70%;
+	display:inline-block;
+}
+.mceContentBody .ticket-place-details{
+	width:29%;
+	display:inline-block;
+}
+.mceContentBody .no-bottom-margin{
+	margin-bottom:0px;
+}
+.mceContentBody .ticket-registrations-list>li{
+	margin-top:1em;
+	margin-bottom:1em;
+}
+/* classes from registration and transaction stati */
+.mceContentBody .RNA, .mceContentBody .RCN, .mceContentBody .RPP, .mceContentBody .TPN, .mceContentBody .TIN{
+	color:red;
+}
+.mceContentBody .TCM {
+	color: green;
+}
+
+.mceContentBody .reg-details-for-ticket{
+	/*margin-left:4em;*//*Seth*/
+}
+.mceContentBody .grand-total{
+	text-align:right;
+}
+
+.mceContentBody h3{
+	font-size:12pt;
+}
+.mceContentBody .subitem{
+	padding-left:1.8em;
+	text-align:left;
+}
+.mceContentBody .ticket-note {
+	font-style:italic;
+}
+/*=========================== TABLES =========================*/
+
+.mceContentBody table th {text-align:left;padding: 6px 5px 6px 5px;}
+.mceContentBody .ticket-details table th, .mceContentBody .taxes table th, .mceContentBody .invoice-amount th {border-bottom:1px solid #666;}
+.mceContentBody td.action{border-bottom:0}
+.mceContentBody tr.odd td, .mceContentBody tr.odd th, .mceContentBody tr.header_row{background-color:#F4F4F4}
+.mceContentBody .total_tr td{border-bottom:0}
+.mceContentBody #vat_tr td{border-bottom:1px solid #000}
+.mceContentBody td, .mceContentBody .registration-details tr th {margin: 0;vertical-align: center; border-bottom:1px solid #ddd}
+.mceContentBody td {margin: 0;padding: 8px 5px 8px 5px; vertical-align: top; }
+.mceContentBody .item_r{text-align: right;}
+.mceContentBody .item_c{text-align: center;}
+.mceContentBody .item_l{text-align: left;white-space: normal; }
+.mceContentBody .total {text-align: right;font-weight: bold; }
+.mceContentBody tr.tax-total td {border-top:1px solid #000;}
+.mceContentBody .subitem-row {
+	color: #666;
+}
+
+.mceContentBody img.icon{
+	margin-left:1em;
+	margin-right:1em;
+}
+
+/*
+Lola Invoice Template
+Created by Olly Headey
+18/02/08
+*/
+
+
+/*=========================== INVOICE LOLA =========================*/
+.mceContentBody #invoice a.add {color: #fff;}
+
+.mceContentBody #invoice img { border: none; }
+
+/*=========================== TYPOGRAPHY =========================*/
+
+.mceContentBody #invoice {font-family: "Gill Sans", "Gill Sans MT", Helvetica, Arial, Verdana, sans-serif; color:#000; text-transform: none; color: #699}
+.mceContentBody #invoice h2 {margin: 10px 0;font-size: 14pt; }
+.mceContentBody .invoice-amount td, .mceContentBody th {font-size: 11pt;}
+.mceContentBody #invoice-header #company-address { text-align: left; font-size: 11pt; line-height: 14pt; padding-top: 2em;}
+.mceContentBody #invoice-header #company-address div.org {font-size: 13pt}
+.mceContentBody #invoice #client-details, .mceContentBody #invoice-info  p, .mceContentBody #invoice #invoice-other, .mceContentBody #invoice #payment-details {font-size: 11pt; line-height: 14pt;}
+.mceContentBody h1,.mceContentBody h2,.mceContentBody h3,.mceContentBody h4,.mceContentBody h5,.mceContentBody h6  {color: #699}
+.mceContentBody #invoice-info h2, .mceContentBody #invoice-info h3 {margin: 0; font-weight: normal; }
+.mceContentBody #invoice-info h3 em { font-style: normal; font-size: 16pt; font-weight: normal; color: #699}
+.mceContentBody #invoice-info h2 {font-weight: normal; font-size:24pt; text-transform: lowercase; color: #699}
+.mceContentBody #invoice-info h3 {font-size:15pt;}
+.mceContentBody #invoice-info #payment-total{display:none}
+.mceContentBody #invoice #invoice-info p {text-align:right;margin-top:0; color: #B8B885}
+.mceContentBody #invoice-info p#payment-terms {display:none}
+.mceContentBody #payment-details h2, .mceContentBody #invoice-other h2 {color: #699; font-weight: bold}
+.mceContentBody #payment-details {color: #699}
+.mceContentBody #payment-details strong {font-weight: normal; width: 10em;}
+.mceContentBody #invoice-other #company-reg-number, .mceContentBody #invoice-other #vat-reg-number, .mceContentBody #invoice-other #contract-number {color: #699;}
+.mceContentBody #invoice-other strong {font-weight: normal; width: 15em; }
+.mceContentBody #comments { font-weight: bold; font-size:10pt}
+.mceContentBody #invoice-other #contract-number{margin-bottom:3em}
+
+/*=========================== LAYOUT =========================*/
+
+.mceContentBody #invoice{padding:0 1cm 1cm 1cm; }
+.mceContentBody #logo-dv { padding:0 20px 0 0;}
+.mceContentBody #invoice-header{margin:1em 0 0 0; padding-bottom:10px}
+.mceContentBody #invoice-info{ margin: 0em 0 20px 0; text-align:right; }
+.mceContentBody #company-address {margin: 0; padding: 0;}
+
+.mceContentBody #bill-to-ship-to, .mceContentBody .invoice-amount { margin:20px 0; }
+
+.mceContentBody .invoice-amount {margin: 2em 0; clear: both; }
+.mceContentBody #invoice #payment-details{width:50%; margin-top:0;}
+.mceContentBody #invoice-other {text-align: right;width:50%; }
+
+.mceContentBody #comments{ padding-top:20px}
