@@ -635,6 +635,15 @@ abstract class EEM_Base extends EE_Base{
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
 		$rows_affected = $wpdb->query($SQL);
 		$this->show_db_query_if_previously_requested($SQL);
+		/**
+		 * Action called after a model update call has been made.
+		 *
+		 * @param EEM_Base $model
+		 * @param array $fields_n_values the updated fields and their new values
+		 * @param array $query_params @see EEM_Base::get_all()
+		 * @param int $rows_affected
+		 */
+		do_action( 'AHEE__EEM_Base__update__end',$this, $fields_n_values, $query_params, $rows_affected );
 		return $rows_affected;//how many supposedly got updated
 	}
 
