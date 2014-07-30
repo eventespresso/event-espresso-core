@@ -377,7 +377,7 @@ abstract class  EE_Messages_Template_Pack {
 	/**
 	 * This simply returns the $_default_variation_labels property value.
 	 *
-	 * @sinc %VER%
+	 * @sinc 4.5.0
 	 *
 	 * @param string $messenger if the messenger slug is returned then the default lable for the specific messenger is retrieved.  If it doesn't exist then the __('Default', 'event_espresso') is returned.  If NO value is provided then whatever is set on the _default_variation_labels property is returned.
 	 *

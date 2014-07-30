@@ -2,7 +2,7 @@
 /**
  * This contains the class for the Payment List messages shortcode library.
  *
- * @since %VER%
+ * @since 4.5.0
  * @package Event Espresso
  * @subpackage messages
  */
@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * This is a special shortcode parser in that it will actually load other parsers and receive a template to parse via the shortcode parser.
  *
- * @since %VER%
+ * @since 4.5.0
  *
  * @package			Event Espresso
  * @subpackage		messages
@@ -54,7 +54,7 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes {
 	/**
 	 * verify incoming data contains what is needed for retrieving and parsing each payment for transaction.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $shortcode The incoming shortcode.
 	 *

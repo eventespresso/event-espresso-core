@@ -2,7 +2,7 @@
 /**
  * This contains the class for the Html+Receipt Message Template Validator.
  *
- * @since %VER%
+ * @since 4.5.0
  * @package Event Espresso
  * @subpackage messages
  */
@@ -16,7 +16,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * This is a child class for the EE_Messages_Validator. Holds any special validation rules for template fields with Html Messenger and Receipt Message Type.
  *
  *
- * @since %VER%
+ * @since 4.5.0
  *
  * @package			Event Espresso
  * @subpackage		messages
