@@ -56,16 +56,22 @@ class EE_Checkout {
 	public $thank_you_page_url = '';
 
 	/**
+	 * redirect to thank you page ?
+	 * @type bool
+	 */
+	public $redirect = FALSE;
+
+	/**
 	 * base url for any redirects - additional url params will be added to this
 	 * @type string
 	 */
 	public $redirect_url = '';
 
 	/**
-	 * redirect to thank you page ?
-	 * @type bool
+	 * form of POST data for use with off-site gateways
+	 * @type string
 	 */
-	public $redirect = FALSE;
+	public $redirect_form = '';
 
 	/**
 	 * array of data to be passed back to the client during AJAX requests
