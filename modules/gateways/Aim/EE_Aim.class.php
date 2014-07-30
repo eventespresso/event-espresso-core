@@ -191,6 +191,7 @@ Class EE_Aim extends EE_Onsite_Gateway {
 			}
 			$order_description = '';
 			$primary_registrant = $transaction->primary_registration();
+			$primary_registration_code = ! empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 			//if the items total and taxes total equal the transaction total and the didn't specify how much to pay and it's NOT partially paid
 			if( ( $this->_sum_items_and_taxes( $total_line_item ) == $transaction->total() ) &&
 					($total_to_charge === NULL && ! $transaction->paid())){//we can make an itemized total
@@ -247,7 +248,6 @@ Class EE_Aim extends EE_Onsite_Gateway {
 				$payment_status = $response->approved ? EEM_Payment::status_id_approved : EEM_Payment::status_id_declined;
 				$this->_debug_log("<hr>No Previous IPN payment received. Create a new one");
 				//no previous payment exists, create one
-				$primary_registration_code = !empty($primary_registrant) ? $primary_registrant->reg_code() : '';
 
 				$payment = EE_Payment::new_instance(array(
 							'TXN_ID' => $transaction->ID(),

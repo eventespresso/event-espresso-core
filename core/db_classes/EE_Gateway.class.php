@@ -424,7 +424,6 @@ abstract class EE_Gateway {
 
 			</form>
 		<?php
-		$this->_display_settings_help();
 	}
 
 	public function set_form_url( $base_url = FALSE ) {
