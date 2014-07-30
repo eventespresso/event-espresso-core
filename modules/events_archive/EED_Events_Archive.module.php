@@ -533,6 +533,119 @@ class EED_Events_Archive  extends EED_Module {
 	}
 
 
+	// GRAVEYARD
+
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public function get_post_data() {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::get_post_data();
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public function posts_fields( $SQL, WP_Query $wp_query ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_fields( $SQL, $wp_query );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public static function posts_fields_sql_for_orderby( $orderby_params = array() ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_fields_sql_for_orderby( $orderby_params );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public function posts_join( $SQL, WP_Query $wp_query ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_join( $SQL, $wp_query );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public static function posts_join_sql_for_terms( $join_terms = NULL ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_join_sql_for_terms( $join_terms );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public static function posts_join_for_orderby( $orderby_params = array() ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_join_for_orderby( $orderby_params );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public function posts_where( $SQL, WP_Query $wp_query ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_where( $SQL, $wp_query );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public static function posts_where_sql_for_show_expired( $show_expired = FALSE ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_where_sql_for_show_expired( $show_expired );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public static function posts_where_sql_for_event_category_slug( $event_category_slug = NULL ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_where_sql_for_event_category_slug( $event_category_slug );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public static function posts_where_sql_for_event_list_month( $month = NULL ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_where_sql_for_event_list_month( $month );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public function posts_orderby( $SQL, WP_Query $wp_query ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_orderby( $SQL, $wp_query );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+	/**
+	 * 	@deprecated
+	 * 	@since 4.4.0
+	 */
+	public static function posts_orderby_sql( $orderby_params = array(), $sort = 'ASC' ) {
+		EE_Registry::instance()->load_helper( 'Event_Query' );
+		EEH_Event_Query::posts_orderby_sql( $orderby_params, $sort );
+		EE_Error::doing_it_wrong( __FUNCTION__, sprintf( __( 'EED_Events_Archive::%1$s was moved to EEH_Event_Query::%1$s', 'event_espresso' ), __FUNCTION__ ), '4.4.0' );
+	}
+
+
+
 }
 
 
