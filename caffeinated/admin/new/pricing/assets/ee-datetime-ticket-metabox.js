@@ -1938,6 +1938,8 @@ jQuery(document).ready(function($) {
 				tktHelper.setcontext('price-create').setitemdata(data).newPriceRow();
 				break;
 		}
+		//trigger heartbeat ping
+		window.wp.heartbeat.connectNow();
 		return false;
 	});
 
@@ -2095,6 +2097,8 @@ jQuery(document).ready(function($) {
 				break;
 		}
 		UNSAVED_DATA_MSG.inputChanged=1;
+		//trigger heartbeat.
+		window.wp.heartbeat.connectNow();
 		return false;
 	});
 
@@ -2301,5 +2305,28 @@ jQuery(document).ready(function($) {
 		var id = e.dttinst.id.replace('edit-ticket-TKT_start_date-', '');
 		id = id.replace('edit-ticket-TKT_end_date-', '');
 		tktHelper.setticketRow(id).setTicketStatus();
+	});
+
+
+	/**  HEARTBEAT HOOKS **/
+
+	//hooking into the heartbeat send.
+	$(document).on('heartbeat-send', function(e, data) {
+		//get a count of all inputs on the page.
+		var input_count = $('input').length + $('select').length + $('textarea').length;
+		data['input_count'] = input_count;
+		data['ee_admin_ajax'] = true;
+	});
+
+	//Listen for the custom event "heartbeat-tick" on $(document).
+	$(document).on( 'heartbeat-tick', function(e, data) {
+		if ( ! data['max_input_vars_check'] )
+				return;
+
+		//if no space left then let's show a dialog with the message.
+		if ( ! data['max_input_vars_check'] !== '' ) {
+			dialogHelper.displayModal().addContent( data['max_input_vars_check'] );
+		}
+		return;
 	});
 });

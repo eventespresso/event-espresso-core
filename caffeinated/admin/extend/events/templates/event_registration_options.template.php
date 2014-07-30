@@ -21,7 +21,7 @@
 </p> 
 
 <p>
-	<label><?php _e('Alternate Registration Page', 'event_espresso'); ?></label>
+	<label><?php _e('Alternative Registration Page', 'event_espresso'); ?></label>
 	<input name="externalURL" size="20" type="text" value="<?php echo $_event->external_url(); ?>">
 </p>
 

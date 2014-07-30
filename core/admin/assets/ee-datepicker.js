@@ -39,6 +39,12 @@ var dttPickerHelper = {
 	startDate: {},
 	endDate: {},
 
+	//range defaults
+	defaultRange: {
+		type: 'hours',
+		duration: 1
+	},
+
 
 	timeZone: false, //will hold the timezone string for the set timezone.
 
@@ -53,6 +59,21 @@ var dttPickerHelper = {
 	setmaxDateTime: function(date, format) {
 		format = typeof(format) === 'undefined' ? 'YYYY-MM-DD h:mm a' : format;
 		this.dttOptions.maxDateTime = moment(date, format);
+		return this;
+	},
+
+
+
+	/**
+	 * This is used to set the range between start and end date by default when datepicker initialized with blank end date/time.
+	 *
+	 * @param {string} type   	Acceptable values are 'minutes', 'hours', 'days', 'months',
+	 *                         		'years'
+	 * @param {integer} amount 	duration
+	 */
+	setDefaultDateRange: function( type, amount ) {
+		this.defaultRange.type = typeof( type ) !== 'undefined' || type !== '' ? type : this.defaultRange.type;
+		this.defaultRange.duration = typeof( amount ) !== 'undefined' || amount !== '' ? amount : this.defaultRange.duration;
 		return this;
 	},
 
@@ -86,7 +107,7 @@ var dttPickerHelper = {
 
 		this.startobj = start;
 		this.endobj = end;
-		
+
 		this.pickerobj = doingstart ? this.startobj : this.endobj;
 
 		this.nextobj = next;
@@ -95,7 +116,7 @@ var dttPickerHelper = {
 
 		this.endDate = this.endobj instanceof jQuery ? this.endobj.val() : '';
 
-		this.endDate = this.endDate === '' ? this.startDate.clone().add('hours', 1) : moment(this.endDate, 'YYYY-MM-DD h:mm a');
+		this.endDate = this.endDate === '' ? this.startDate.clone().add(this.defaultRange.type, this.defaultRange.duration) : moment(this.endDate, 'YYYY-MM-DD h:mm a');
 
 		this.dttOptions.hour = doingstart ? this.startDate.hours() : this.endDate.hours();
 		this.dttOptions.minute = doingstart ? this.startDate.minutes() : this.endDate.minutes();

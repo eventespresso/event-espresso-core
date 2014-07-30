@@ -139,37 +139,25 @@ $tax_total_line_item;
 											<th><?php echo 	_e("Registration Code:", "event_espresso");?></th>
 											<td><?php echo $registration->reg_code();?> - <span class="<?php echo $registration->status_ID()?>"><?php echo $registration->pretty_status()?></span></td>
 										</tr>
-										<tr>
-											<th><?php _e("Attendee:", "event_espresso");?></th>
-											<td><?php echo $attendee->full_name();?> (<?php echo $attendee->email();?>)</td>
-										</tr>
-
-										<?php foreach($attendee_columns_to_show as $field_name){
-												if( ! $attendee->get($field_name)){
+										<?php
+										foreach($event->question_groups() as $question_group){
+											?><tr><th><?php $question_group->e('QSG_name');?></th><td></td></tr><?php
+											$has_personal_info = false;
+											foreach($question_group->questions() as $question){
+												if( in_array($question->ID(),$questions_to_skip)){
+													$has_personal_info = true;
 													continue;
 												}
-											$field_info = EEM_Attendee::instance()->field_settings_for($field_name);
-											if($field_info->get_name() == 'STA_ID'){
-												$state_obj = $attendee->state_obj();
-												$value = $state_obj ? $state_obj->name() : '';
-											}elseif($field_info->get_name() == 'CNT_ISO'){
-												$country_obj  = $attendee->country_obj();
-												$value = $country_obj ? $country_obj->name() : '';
-											}else{
-												$value = $attendee->get($field_name);
-											 }?>
-											<tr>
-												<th><?php echo $field_info->get_nicename()?>: </th>
-												<td><?php echo $value;?></td>
-											</tr>
-										 <?php }
-										 foreach($answers as $ans_id => $answer){
-											$question = $answer->question();?>
-											<tr>
-												<th><?php echo $question ? $question->display_text() : '{Question Deleted}'?>: </th>
-												<td><?php echo $answer->e_value()?></td>
-											</tr>
-										<?php }?>
+												?><tr>
+														<th><?php echo $question->display_text()?></th>
+														<td><?php echo $registration->answer_value_to_question($question);?></td>
+												</tr><?php
+											}
+											if($has_personal_info){
+												?><tr><th><?php	_e('Attendee', 'event_espresso');?></th><td><?php echo sprintf(__('%s (%s)', "event_espresso"),$attendee->full_name(),$attendee->email())?></td></tr><?php
+											}
+										}
+										?>
 									</table>
 								</li>
 								<?php } ?>

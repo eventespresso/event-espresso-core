@@ -1451,8 +1451,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				);
 		}
 
-
-		$query_params = array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' );
+		$where = apply_filters( 'FHEE__Events_Admin_Page__get_events__where', $where, $this->_req_data );
+		$query_params = apply_filters( 'FHEE__Events_Admin_Page__get_events__query_params', array($where, 'limit' => $limit, 'order_by' => $orderby, 'order' => $order, 'group_by' => 'EVT_ID' ), $this->_req_data );
 
 		$events = $count ? $EEME->count( array( $where ), 'EVT_ID' ) : $EEME->get_all( $query_params );
 

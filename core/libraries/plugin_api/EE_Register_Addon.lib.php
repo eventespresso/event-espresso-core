@@ -44,16 +44,17 @@ class EE_Register_Addon implements EEI_Plugin_API {
 	 * (so that we can detect that the addon has activated on the subsequent request)
 	 *
 	 * @since    4.3.0
+	 * @param array $setup_args
 	 * @throws EE_Error
-	 * @param string $addon_name 		the EE_Addon's name. Required.
+	 * @internal param string $addon_name 		the EE_Addon's name. Required.
 	 * @param  array $setup_args { 			An array of arguments provided for registering the message type.
-	 * @internal param string admin_path            full server path to the folder where the addon\'s admin files reside
+	 * @internal param string admin_path 			full server path to the folder where the addon\'s admin files reside
 	 * @internal param string main_file_path the full server path to the main file loaded directly by WP
-	 * @internal param string autoloader_paths    an array of class names and the full server paths to those files. Required.
-	 * @internal param string dms_paths                an array of full server paths to folders that contain data migration scripts. Required.
-	 * @internal param string module_paths        an array of full server paths to any EED_Modules used by the addon
-	 * @internal param string shortcode_paths    an array of full server paths to folders that contain EES_Shortcodes
-	 * @internal param string widgets                    an array of full server paths to folders that contain WP_Widgets
+	 * @internal param string autoloader_paths 	an array of class names and the full server paths to those files. Required.
+	 * @internal param string dms_paths 				an array of full server paths to folders that contain data migration scripts. Required.
+	 * @internal param string module_paths 		an array of full server paths to any EED_Modules used by the addon
+	 * @internal param string shortcode_paths 	an array of full server paths to folders that contain EES_Shortcodes
+	 * @internal param string widgets 					an array of full server paths to folders that contain WP_Widgets
 	 * 	}
 	 * @return void
 	 */
@@ -70,6 +71,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 		if ( isset( self::$_settings[ $addon_name ] ) && ! did_action( 'activate_plugin' ) ) {
 			throw new EE_Error( sprintf( __( 'An EE_Addon with the name "%s" has already been registered and each EE_Addon requires a unique name.', 'event_espresso' ), $addon_name ));
 		}
+
+
 		// no class name for addon?
 		if ( empty( $setup_args['class_name'] )) {
 			// generate one by first separating name with spaces
@@ -110,6 +113,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			'shortcode_paths' 	=> isset( $setup_args['shortcode_paths'] ) ? (array)$setup_args['shortcode_paths'] : array(),
 			// array of full server paths to any WP_Widgets used by the addon
 			'widget_paths' 		=> isset( $setup_args['widget_paths'] ) ? (array)$setup_args['widget_paths'] : array(),
+			// array of PUE options used by the addon
+			'pue_options' 			=> isset( $setup_args['pue_options'] ) ? (array)$setup_args['pue_options'] : array(),
 		);
 
 		//this is an activation request
@@ -291,6 +296,8 @@ class EE_Register_Addon implements EEI_Plugin_API {
 			unset( self::$_settings[ $addon_name ] );
 		}
 	}
+
+
 
 }
 // End of file EE_Register_Addon.lib.php
