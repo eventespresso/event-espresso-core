@@ -51,9 +51,18 @@ class EEM_Checkin extends EEM_Base {
 		//set timezone if we have in incoming string
 		if ( !empty( $timezone ) )
 			self::$_instance->set_timezone( $timezone );
-		
+
 		// EEM_Checkin object
 		return self::$_instance;
+	}
+
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Checkin
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 
 
@@ -67,7 +76,7 @@ class EEM_Checkin extends EEM_Base {
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Check-In','event_espresso');
-		$this->plural_item = __('Check-Ins','event_espresso');		
+		$this->plural_item = __('Check-Ins','event_espresso');
 
 		$this->_tables = array(
 			'Checkin'=>new EE_Primary_Table('esp_checkin','CHK_ID')

@@ -60,7 +60,9 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			'show_expired' => FALSE,
 			'show_desc' => TRUE,
 			'show_dates' => TRUE,
+			'date_limit' => 2,
 			'limit' => 10,
+			'date_range' => FALSE,
 			'image_size' => 'medium'
 		);
 
@@ -178,7 +180,27 @@ class EEW_Upcoming_Events  extends WP_Widget {
 			);
 			?>
 		</p>
-
+		<p>
+			<label for="<?php echo $this->get_field_id('date_limit'); ?>">
+				<?php _e('Number of Dates to Display:', 'event_espresso'); ?>
+			</label>
+			<input id="<?php echo $this->get_field_id('date_limit'); ?>" name="<?php echo $this->get_field_name('date_limit'); ?>" value="<?php echo esc_attr( $instance['date_limit'] ); ?>" size="3" type="text" />
+		</p>
+		<p>
+			<label for="<?php echo $this->get_field_id('date_range'); ?>">
+				<?php _e('Show Date Range:', 'event_espresso'); ?>
+			</label>
+			<?php
+			echo EEH_Form_Fields::select(
+				 __('Show Date Range:', 'event_espresso'),
+				$instance['date_range'],
+				$yes_no_values,
+				$this->get_field_name('date_range'),
+				$this->get_field_id('date_range')
+			);
+			?><span class="description"><br /><?php _e('This setting will replace the list of dates in the widget.', 'event_espresso'); ?></span>
+		</p>
+		
 		<?php
 	}
 
@@ -203,6 +225,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 		$instance['image_size'] = $new_instance['image_size'];
 		$instance['show_desc'] = $new_instance['show_desc'];
 		$instance['show_dates'] = $new_instance['show_dates'];
+		$instance['date_limit'] = $new_instance['date_limit'];
+		$instance['date_range'] = $new_instance['date_range'];
 		return $instance;
 	}
 
@@ -241,6 +265,8 @@ class EEW_Upcoming_Events  extends WP_Widget {
 				$image_size = isset( $instance['image_size'] ) && ! empty( $instance['image_size'] ) ? $instance['image_size'] : 'medium';
 				$show_desc = isset( $instance['show_desc'] ) ? (bool) absint( $instance['show_desc'] ) : TRUE;
 				$show_dates = isset( $instance['show_dates'] ) ? (bool) absint( $instance['show_dates'] ) : TRUE;
+				$date_limit = isset( $instance['date_limit'] ) && ! empty( $instance['date_limit'] ) ? $instance['date_limit'] : NULL;
+				$date_range = isset( $instance['date_range'] ) && ! empty( $instance['date_range'] ) ? $instance['date_range'] : FALSE;
 				// start to build our where clause
 				$where = array(
 //					'Datetime.DTT_is_primary' => 1,
@@ -287,7 +313,13 @@ class EEW_Upcoming_Events  extends WP_Widget {
 								echo '<a class="ee-upcoming-events-widget-img" href="' . get_permalink( $event->ID() ) . '">' . get_the_post_thumbnail( $event->ID(), $image_size ) . '</a>';
 							}
 							if ( $show_dates ) {
-								echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', 'g:i a', FALSE, NULL, TRUE, TRUE );
+								if ( $date_range == TRUE ) {
+									ob_start();
+									espresso_event_date_range( 'M jS', ' ', 'D M jS @ ', ' g:i a', $event->ID() );
+									echo '<p>' . ob_get_clean() . '</p>';
+								}else{
+									echo espresso_list_of_event_dates( $event->ID(), 'D M jS, Y', 'g:i a', FALSE, NULL, TRUE, TRUE, $date_limit );
+								}
 							}
 							if ( $show_desc && $desc = $event->short_description( 25 )) {
 								echo  '<p>' . $desc . '</p>';

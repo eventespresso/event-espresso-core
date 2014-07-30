@@ -193,16 +193,22 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * 	datetime
-	 * 	Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted string including the UTC (timezone) offset.
-	 * 	Formatting options, including the UTC offset, are set via the WP General Settings page
+	 *    datetime
+	 *    Returns the transaction datetime in either UTC+0 unix timestamp format (default) or a formatted date string including the UTC (timezone) offset.
+	 *    Formatting options, including the UTC offset, are set via the WP General Settings page.
+	 *    A second boolean param will apply the UTF timezone offset to the unix timestamp
 	 *
-	 * @access 	public
-	 * @param 	boolean $format - whether to format date  - defaults to FALSE (return timestamp)
-	 * @return mixed
+	 * @access    public
+	 * @param    boolean $format - whether to format date  - FALSE (default) returns RAW timestamp in UTC+0, TRUE returns formatted date string including the UTC offset
+	 * @param    bool       $GMT - if BOTH $format && $GMT are set to FALSE, then return a unix timestamp with the UTC offset applied
+	 * @return    mixed
 	 */
-	public function datetime( $format = FALSE ) {
-		return $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
+	public function datetime( $format = FALSE, $GMT = TRUE ) {
+		// grab either the formatted datetime (which INCLUDES the UTC offset ) OR the UTC+0 unix timestamp
+		$datetime = $format ? $this->get_pretty( 'TXN_timestamp' ) : $this->get_raw( 'TXN_timestamp' );
+		// if either the formatted datetime or the UTC+0 unix timestamp is requested, then return that
+		// but if BOTH $format && $GMT are set to FALSE, then return a unix timestamp with the UTC offset applied
+		return $GMT || $format ? $datetime : $this->get_raw( 'TXN_timestamp' ) + ( get_option( 'gmt_offset' ) * HOUR_IN_SECONDS );
 	}
 
 
@@ -358,11 +364,11 @@ class EE_Transaction extends EE_Base_Class {
 
 	/**
 	 * This returns the url for the invoice of this transaction
-	 * @param string $type 'download','launch', or 'html' (default is 'launch')
+	 * @param string $type 'html' or 'pdf' (default is pdf)
 	 * @access public
 	 * @return string
 	 */
-	public function invoice_url( $type = 'launch' ) {
+	public function invoice_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
 		if ( empty( $REG ) ) {
 			return FALSE;
@@ -383,11 +389,11 @@ class EE_Transaction extends EE_Base_Class {
 
 
 	/**
-	 * Gets the URL for viewing the
-	 * @param string $type 'download','launch', or 'html' (default is 'launch')
+	 * Gets the URL for viewing the reciept
+	 * @param string $type 'pdf' or 'html' (default is 'html')
 	 * @return string
 	 */
-	public function receipt_url( $type = 'launch' ) {
+	public function receipt_url( $type = 'html' ) {
 		$REG = $this->primary_registration();
 		if ( empty( $REG ) ) {
 			return FALSE;
@@ -535,7 +541,12 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return EE_Line_Item
 	 */
 	public function total_line_item() {
-		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
+		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_total ) ) );
+		if( ! $item ){
+			EE_Registry::instance()->load_helper( 'Line_Item' );
+			$item = EEH_Line_Item::create_default_total_line_item();
+		}
+		return $item;
 	}
 
 
@@ -561,7 +572,12 @@ class EE_Transaction extends EE_Base_Class {
 	 * @return EE_Line_Item
 	 */
 	public function tax_total_line_item() {
-		return $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_tax_sub_total ) ) );
+		$item =  $this->get_first_related( 'Line_Item', array( array( 'LIN_type' => EEM_Line_Item::type_tax_sub_total ) ) );
+		if( ! $item ){
+			EE_Registry::instance()->load_helper( 'Line_Item' );
+			$item = EEH_Line_Item::create_default_total_line_item();
+		}
+		return $item;
 	}
 
 

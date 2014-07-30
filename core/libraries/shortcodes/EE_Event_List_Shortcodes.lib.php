@@ -92,7 +92,7 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes {
 
 		//now we need to loop through the events array in EE_Messages_Addressee and send data to the EE_Parser helper.
 		foreach ( $data->events as $event ) {
-			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event['event'], $valid_shortcodes, $this->_data);
+			$events .= $this->_shortcode_helper->parse_event_list_template($template, $event['event'], $valid_shortcodes, $this->_extra_data);
 		}
 		return $events;
 

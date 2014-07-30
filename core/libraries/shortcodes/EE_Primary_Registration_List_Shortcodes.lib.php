@@ -170,7 +170,7 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes {
 
 		$dtt_parsed = '';
 		foreach ( $dtts as $datetime ) {
-			$dtt_parsed .= $this->_shortcode_helper->parse_datetime_list_template( $template, $datetime, $valid_shortcodes, $data );
+			$dtt_parsed .= $this->_shortcode_helper->parse_datetime_list_template( $template, $datetime, $valid_shortcodes, $this->_extra_data );
 		}
 		return $dtt_parsed;
 	}

@@ -50,11 +50,19 @@ class EEM_Ticket_Price extends EEM_Base {
 		//set timezone if we have in incoming string
 		if ( !empty( $timezone ) )
 			self::$_instance->set_timezone( $timezone );
-		
+
 		// EEM_Ticket_Price object
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Ticket_Price
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
 
 
 	/**
@@ -66,7 +74,7 @@ class EEM_Ticket_Price extends EEM_Base {
 	 */
 	protected function __construct( $timezone ) {
 		$this->singular_item = __('Ticket Price','event_espresso');
-		$this->plural_item = __('Ticket Prices','event_espresso');		
+		$this->plural_item = __('Ticket Prices','event_espresso');
 
 		$this->_tables = array(
 			'Ticket_Price'=>new EE_Primary_Table('esp_ticket_price','TKP_ID')
@@ -87,5 +95,5 @@ class EEM_Ticket_Price extends EEM_Base {
 	}
 
 
-} 
+}
 //end EEM_Ticket_Price class

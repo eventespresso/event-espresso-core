@@ -42,8 +42,13 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 
 	protected function _extend_page_config() {
 		$this->_admin_base_path = EE_CORE_CAF_ADMIN_EXTEND . 'transactions';
+		$txn_id = ! empty( $this->_req_data['TXN_ID'] ) && ! is_array( $this->_req_data['TXN_ID'] ) ? $this->_req_data['TXN_ID'] : 0;
+
 		$new_page_routes = array(
-			'reports' => '_transaction_reports'
+			'reports' => array(
+				'func' => '_transaction_reports',
+				'capability' => 'edit_transactions'
+				)
 			);
 
 		$this->_page_routes = array_merge( $this->_page_routes, $new_page_routes );
@@ -54,7 +59,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 					'label' => __('Reports', 'event_espresso'),
 					'order' => 20
 					),
-                'help_tabs' => array(
+				'help_tabs' => array(
 					'transactions_reports_help_tab' => array(
 						'title' => __('Transaction Reports', 'event_espresso'),
 						'filename' => 'transactions_reports'
@@ -86,21 +91,21 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 	*		@return void
 	*/
 	protected function _transaction_reports() {
-	
+
 		$page_args = array();
-		
+
 		$page_args['admin_reports'][] = $this->_revenue_per_day_report( '-1 month' );  //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 		$page_args['admin_reports'][] = $this->_revenue_per_event_report( '-1 month' ); //  option: '-1 week', '-2 weeks' defaults to '-1 month'
 //		$page_args['admin_reports'][] = 'chart1';
-		
+
 		$template_path = EE_ADMIN_TEMPLATE . 'admin_reports.template.php';
 		$this->_admin_page_title = __('Transactions', 'event_espresso');
 		$this->_template_args['admin_page_content'] = EEH_Template::display_template( $template_path, $page_args, TRUE );
-		
-		
+
+
 		// the final template wrapper
 		$this->display_admin_page_with_no_sidebar();
-		
+
 	}
 
 
@@ -114,15 +119,15 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 	*		@return void
 	*/
 	private function _revenue_per_day_report( $period = '-1 month' ) {
-	
+
 		$report_ID = 'txn-admin-revenue-per-day-report-dv';
 		$report_JS = 'espresso_txn_admin_revenue_per_day';
-		
+
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-	    $TXN = EEM_Transaction::instance();
+		$TXN = EEM_Transaction::instance();
 
-	    $results = $TXN->get_revenue_per_day_report( $period );	
+		$results = $TXN->get_revenue_per_day_report( $period );
 		//printr( $results, '$registrations_per_day' );
 		$revenue = array();
 		$xmin = date( 'Y-m-d', strtotime( '+1 year' ));
@@ -137,27 +142,27 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 			$xmax = strtotime( $result->txnDate ) > strtotime( $xmax ) ? $result->txnDate : $xmax;
 			$ymax = $result->revenue > $ymax ? $result->revenue : $ymax;
 		}
-		
-		$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));			
+
+		$xmin = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmin)) . ' -1 day' ));
 		$xmax = date( 'Y-m-d', strtotime( date( 'Y-m-d', strtotime($xmax)) . ' +1 day' ));
-		// calculate # days between our min and max dates				
+		// calculate # days between our min and max dates
 		$span = floor( (strtotime($xmax) - strtotime($xmin)) / (60*60*24)) + 1;
 
 		$report_title = __( 'Total Revenue per Day' );
-		
+
 		$report_params = array(
 			'title' 		=> $report_title,
 			'id' 			=> $report_ID,
-			'revenue' => $revenue,												
+			'revenue' => $revenue,
 			'xmin' 		=> $xmin,
 			'xmax' 		=> $xmax,
 			'ymax' 		=> ceil($ymax * 1.25),
 			'span' 		=> $span,
 			'width'		=> ceil(900 / $span),
-			'noTxnMsg'	=> sprintf( __('<h2>%s</h2><p>There are currently no transaction records in the last month for this report.</p>', 'event_espresso'), $report_title )											
+			'noTxnMsg'	=> sprintf( __('<h2>%s</h2><p>There are currently no transaction records in the last month for this report.</p>', 'event_espresso'), $report_title )
 		);
 		wp_localize_script( $report_JS, 'txnRevPerDay', $report_params );
-											
+
 		return $report_ID;
 	}
 
@@ -172,24 +177,24 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 	*		@return void
 	*/
 	private function _revenue_per_event_report( $period = '-1 month' ) {
-	
+
 		$report_ID = 'txn-admin-revenue-per-event-report-dv';
 		$report_JS = 'espresso_txn_admin_revenue_per_event';
-		
+
 		wp_enqueue_script( $report_JS, TXN_CAF_ASSETS_URL . $report_JS . '_report.js', array('jqplot-all'), '1.0', TRUE);
 
-	    $TXN = EEM_Transaction::instance();
+		$TXN = EEM_Transaction::instance();
 
-	    $results = $TXN->get_revenue_per_event_report( $period );
-	 	
+		$results = $TXN->get_revenue_per_event_report( $period );
+
 		//printr( $results, '$registrations_per_event' );
 		$revenue = array();
 		$results = (array) $results;
 		foreach ( $results as $result ) {
 			$event_name = stripslashes( html_entity_decode( $result->event_name, ENT_QUOTES, 'UTF-8' ));
-			$event_name = wp_trim_words( $event_name, 5, '...' );				
+			$event_name = wp_trim_words( $event_name, 5, '...' );
 			$revenue[] = array( $event_name, (float)$result->revenue );
-		}	
+		}
 
 		$span = $period == 'week' ? 9 : 33;
 
@@ -198,10 +203,10 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page {
 		$report_params = array(
 			'title' 		=> $report_title,
 			'id' 			=> $report_ID,
-			'revenue'	=> $revenue,												
+			'revenue'	=> $revenue,
 			'span' 		=> $span,
 			'width'		=> ceil(900 / $span),
-			'noTxnMsg'	=> sprintf( __('<h2>%s</h2><p>There are currently no transaction records in the last month for this report.</p>', 'event_espresso'), $report_title )							
+			'noTxnMsg'	=> sprintf( __('<h2>%s</h2><p>There are currently no transaction records in the last month for this report.</p>', 'event_espresso'), $report_title )
 		);
 		wp_localize_script( $report_JS, 'revenuePerEvent', $report_params );
 

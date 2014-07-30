@@ -59,11 +59,11 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init {
 		$map = array(
 			'menu_group' => 'extras',
 			'menu_order' => 30,
-			'show_on_menu' => TRUE,
+			'show_on_menu' => EE_Admin_Page_Menu_Map::BLOG_ADMIN_ONLY,
 			'parent_slug' => 'espresso_events',
 			'menu_slug' => EE_MAINTENANCE_PG_SLUG,
 			'menu_label' => EE_MAINTENANCE_LABEL,
-			'capability' => 'administrator',
+			'capability' => 'manage_options',
 			'admin_init_page' => $this
 		);
 		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ){

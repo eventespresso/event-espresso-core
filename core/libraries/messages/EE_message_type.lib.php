@@ -69,6 +69,15 @@ abstract class EE_message_type extends EE_Messages_Base {
 	protected $_templates;
 
 
+
+	/**
+	 * If a specific template is being parsed, this will hold the message template group GRP_ID for that template.
+	 *
+	 * @var int.
+	 */
+	protected $_GRP_ID;
+
+
 	/** OTHER INFO PROPERTIES **/
 	/**
 	 * This will hold the count of the message objects in the messages array. This could be used for determining if batching/queueing is needed.
@@ -76,11 +85,19 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	public $count = 0;
 
+
+
+
+
 	/**
 	 * This will hold the active messenger object that is passed to the type so the message_type knows what template files to process.  IT is possible that the active_messenger sent along actually doesn't HAVE a template (or maybe turned off) for the given message_type.
-	 * @var object
+	 * @var EE_Messenger
 	 */
 	protected $_active_messenger;
+
+
+
+
 
 	/**
 	 * This will hold the shortcode_replace instance for handling replacement of shortcodes in the various templates
@@ -99,10 +116,15 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
-	 * This holds the data passed to this class from the controller
+	 * This holds the data passed to this class from the controller and also the final processed data.
 	 * @var object
 	 */
 	protected $_data;
+
+
+
+
+
 
 
 
@@ -146,6 +168,31 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+	/**
+	 * This is used to designate the generating and alternative sending messengers for a message type.  It is set via set_with_messengers() on construct.
+	 *
+	 * Note, generating messenger also acts as a sending messenger for this message type.  However ONLY the generating messengers are used for creating templates for this message type.
+	 *
+	 * Should be in this format: {
+	 * 	@type string $generating_messenger  	the name of the generating messenger.  Generating
+	 * 	      					messengers are used for generating templates,
+	 * 	      					doing validation and defining valid shortcodes. {
+	 * 	      	@type string $sending_messenger 	values are the name(s) for the sending
+	 * 	      	      					messengers.  sending messengers are
+	 * 	      	      					just valid delivery vehicles that will utilize
+	 * 	      	      					the templates (and generated EE_message
+	 * 	      	      					objects from the generating messengers).
+	 * 	      	}
+	 * }
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var array
+	 */
+	protected $_with_messengers = array();
+
+
+
 
 	/**
 	 * This holds the addressees in an array indexed by context for later retrieval when assembling the message objects.
@@ -158,9 +205,47 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+
+	/**
+	 * This allows each message type to set what alternate messenger&message type combination can be used for fallback default templates if there are no specific ones defined for this messenger and message type.  Should be in the format:
+	 *
+	 * array( 'messenger' => 'message_type', 'another_messenger' => another_message_type );
+	 *
+	 * This is set in the message type constructor.
+	 *
+	 * @var array
+	 */
+	protected $_master_templates = array();
+
+
+
+	/**
+	 * This holds whatever the set template pack is for a message template group when generating messages.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var EE_Messages_Template_Pack
+	 */
+	protected $_template_pack;
+
+
+
+	/**
+	 * This holds whatever the set variation is for a message template group when generating messages.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @var string
+	 */
+	protected $_variation;
+
+
+
+
 	public function __construct() {
 		$this->_messages_item_type = 'message_type';
 		$this->_set_contexts();
+		$this->_set_with_messengers();
 		parent::__construct();
 	}
 
@@ -171,18 +256,21 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 *
 	 * @access public
 	 * @param  array|object $data       Data to be parsed for messenger/message_type
-	 * @param  string $active_messenger The active messenger being used
-	 * @param  mixed (bool|string) $context if present then this is a preview being generated, so we'll make sure we ONLY do the preview for the given context and set up the message
+	 * @param  EE_messenger $active_messenger The active messenger being used
+	 * @param  string $context if present then a message is only being generated for a specific context
+	 * @param  bool   $preview indicate whether a preview is being generated or not.
 	 * @return void
 	 */
-	public function set_messages($data, $active_messenger, $context = FALSE ) {
+	public function set_messages($data, EE_messenger $active_messenger, $context = '', $preview = FALSE ) {
 
 		$this->_active_messenger = $active_messenger;
+
 		$this->_data = $data;
+		$this->_preview = $preview;
 
 		//this is a special method that allows child message types to trigger an exit from generating messages early (in cases where there may be a delay on send).
 		$exit = $this->_trigger_exit();
-		if ( $exit && !$context ) return FALSE;
+		if ( $exit && ! $this->_preview ) return FALSE;
 
 		//todo: need to move require into registration hook but for now we'll require here.
 		EE_Registry::instance()->load_helper( 'Parse_Shortcodes' );
@@ -193,15 +281,15 @@ abstract class EE_message_type extends EE_Messages_Base {
 		//if there is a context available then we're going to reset the datahandler to the Preview_incoming_data handler
 		$this->_set_data_handler();
 
-		$this->_data_handler = !$context ? $this->_data_handler : 'Preview';
-		$this->_set_contexts;
+		$this->_data_handler = ! $this->_preview ? $this->_data_handler : 'Preview';
 
 		//if there is an incoming context then this is a preview so let's ONLY show the given context!
-		if ( $context ) {
-			$this->_preview = TRUE;
-			$cntxt = $this->_contexts[$context];
-			$this->_contexts = array();
-			$this->_contexts[$context] = $cntxt;
+		if ( !empty( $context ) ) {
+			$cntxt = ! empty( $this->_contexts[$context] ) ? $this->_contexts[$context] : '';
+			if ( ! empty( $cntxt )  ) {
+				$this->_contexts = array();
+				$this->_contexts[$context] = $cntxt;
+			}
 		}
 
 		$exit = $this->_init_data();
@@ -212,11 +300,10 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$this->_get_templates(); //get the templates that have been set with this type and for the given messenger that have been saved in the database.
 		$this->_assemble_messages();
 		$this->count = count($this->messages);
+
+		//this will do any hooks that the message type sets for a specific messenger it may need to modify.
+		$this->_do_messenger_hooks();
 	}
-
-
-
-
 
 
 
@@ -235,6 +322,22 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 	/**
+	 * This method should return a EE_Base_Class object (or array of EE_Base_Class objects) for the given context and ID (which should be the primary key id for the base class).  Client code doesn't have to know what a message type's data handler is.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $context 	This should be a string matching a valid context for the message type.
+	 * @param EE_Registration $registration 	Need a registration to ensure that the data is valid (prevents people guessing a url).
+	 * @param int      $id 		Optional. Integer corresponding to the value for the primary key of a EE_Base_Class_Object
+	 * @return mixed ( EE_Base_Class||EE_Base_Class[] )
+	 */
+	abstract protected function _get_data_for_context( $context, EE_Registration $registration, $id );
+
+
+
+
+
+	/**
 	 * _set_contexts
 	 * This sets up the contexts associated with the message_type
 	 *
@@ -246,6 +349,144 @@ abstract class EE_message_type extends EE_Messages_Base {
 
 
 
+
+
+
+	/**
+	 * This is used to get the "id" value fo the msg_trigger_url generated by get_url_trigger().
+	 * In most cases, child classes don't need anything, (hence the default of 0), however if there is a specific
+	 * EE_Base_Class that is required in generating a message for a message type recipient then the message
+	 * type should override this method and use the given params to generate the correct ID.
+	 *
+	 * @param string          $context              The message type context.
+	 * @param EE_Registration $registration         Registration object
+	 *
+	 * @return int
+	 */
+	protected function _get_id_for_msg_url( $context, EE_Registration $registration ) {
+		return 0;
+	}
+
+
+
+
+
+	/**
+	* This sets up any action/filter hooks this message type puts in place for a specific messenger.  It's called from the set_messages() method.  Note that by default this does nothing.  Child classes will need to override if they want to add specific hooks for a messenger.
+	*
+	* @since 1.0.0
+	*
+	* @return void
+	*/
+	protected function _do_messenger_hooks() {
+		return;
+	}
+
+
+
+
+
+
+	/**
+	 * This does some validation of incoming params gets the url trigger from the defined method in the specific child class and then filters the results.
+	 *
+	 * @param string          $context           The message type context
+	 * @param string          $sending_messenger The sending messenger
+	 * @param EE_Registration $registration      Registration object
+	 *
+	 * @return string          generated url
+	 */
+	public function get_url_trigger( $context, $sending_messenger, EE_Registration $registration ) {
+
+		//validate context
+		//valid context?
+		if ( !isset( $this->_contexts[$context] ) ) {
+			throw new EE_Error( sprintf( __('The context %s is not a valid context for %s.', 'event_espresso'), $context, get_class( $this ) ) );
+		}
+
+		//valid sending_messenger?
+		$not_valid_msgr = FALSE;
+		foreach ( $this->_with_messengers as $generating => $sendings ) {
+			if ( empty( $sendings ) || array_search( $sending_messenger, $sendings ) === FALSE ) {
+				$not_valid_msgr = TRUE;
+			}
+		}
+
+		if ( $not_valid_msgr ) {
+			throw new EE_Error( sprintf( __('The given sending messenger string (%s) does not match a valid sending messenger with the %s.  If this is incorrect, make sure that the message type has defined this messenger as a sending messenger in its $_with_messengers array.', 'event_espresso'), $sending_messenger, get_class( $this ) ) );
+		}
+
+		EE_Registry::instance()->load_helper('MSG_Template');
+		return EEH_MSG_Template::generate_url_trigger( $sending_messenger, $this->_active_messenger->name, $context, $this->name, $registration, $this->_GRP_ID, $this->_get_id_for_msg_url( $context, $registration ) );
+	}
+
+
+
+
+	/**
+	 * Wrapper for _get_data_for_context() that handles some validation before calling the main class and also allows for filtering.
+	 *
+	 * This is (curently) called by the EED_Messages module.
+	 *
+	 * @since 4.5.0
+	 * @throws EE_Error
+	 *
+	 * @param string $context 	This should be a string matching a valid context for the message type.
+	 * @param EE_Registration $registration 	Need a registration to ensure that the data is valid (prevents people guessing a url).
+	 * @param int      $id 		Optional. Integer corresponding to the value for the primary key of a EE_Base_Class_Object
+	 *
+	 *
+	 * @return mixed (EE_Base_Class||EE_Base_Class[])
+	 */
+	public function get_data_for_context( $context, EE_Registration $registration, $id = 0 ) {
+		//valid context?
+		if ( !isset( $this->_contexts[$context] ) ) {
+			throw new EE_Error( sprintf( __('The context %s is not a valid context for %s.', 'event_espresso'), $context, get_class( $this ) ) );
+		}
+
+		//get data and apply global and class specific filters on it.
+		$data = apply_filters( 'FHEE__EE_message_type__get_data_for_context__data', $this->_get_data_for_context( $context, $registration, $id ), $this );
+		$data = apply_filters( 'FHEE__' . get_class( $this ) . '__get_data_for_context__data', $data, $this );
+
+		//if empty then something went wrong!
+		if ( empty( $data ) ) {
+			throw new EE_Error( sprintf(  __('There is no data retrieved, it\'s possible that the id given (%d) does not match any value in the database for the corresponding EE_Base_Class used by the data handler for the %s message type.', 'event_espresso'), $id, $this->name ) );
+		}
+
+		return $data;
+	}
+
+
+
+	/**
+	 * used to set the $_with_messengers property. (this is a default, child classes SHOULD override)
+	 * @see property definition for description of setup.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @abstract
+	 * @return void
+	 */
+	protected function _set_with_messengers() {
+		$this->_with_messengers = array(
+			'email' => array('html')
+			);
+	}
+
+
+
+
+	/**
+	 * Return the value of the _with_messengers property
+	 *
+	 * @since 4.5.0
+	 *
+	 * @return array
+	 */
+	public function with_messengers() {
+
+		return apply_filters( 'FHEE__EE_message_type__get_with_messengers__with_messengers__' . get_class( $this ), $this->_with_messengers);
+	}
 
 
 
@@ -296,6 +537,20 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	public function get_context_label() {
 		return $this->_context_label;
+	}
+
+
+
+	/**
+	 * This just returns the (filtered) _master_templates property.
+	 * @see property definition for documentation.
+	 *
+	 * @return array
+	 */
+	public function get_master_templates() {
+		//first class specific filter then filter that by the global filter.
+		$master_templates = apply_filters( 'FHEE__' . get_class( $this ) . '__get_master_templates', $this->_master_templates );
+		return apply_filters( 'FHEE__EE_message_type__get_master_templates', $master_templates, $this );
 	}
 
 
@@ -351,6 +606,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 */
 	protected function _process_data() {
 		//at a minimum, we NEED EE_Attendee objects.
+
 		if ( empty( $this->_data->attendees ) )
 			return TRUE;  //EXIT!
 
@@ -377,12 +633,16 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$this->_default_addressee_data = array(
 			'billing' => $this->_data->billing,
 			'taxes' => $this->_data->taxes,
+			'tax_line_items' => $this->_data->tax_line_items,
+			'grand_total_line_item' => $this->_data->grand_total_line_item,
 			'txn' => $this->_data->txn,
+			'payments' => $this->_data->payments,
 			'payment' => isset($this->_data->payment) ? $this->_data->payment : NULL,
 			'reg_objs' => $this->_data->reg_objs,
 			'registrations' => $this->_data->registrations,
 			'datetimes' => $this->_data->datetimes,
 			'tickets' => $this->_data->tickets,
+			'line_items_with_children' => $this->_data->line_items_with_children,
 			'questions' => $this->_data->questions,
 			'answers' => $this->_data->answers,
 			'txn_status' => $this->_data->txn_status,
@@ -408,7 +668,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * see abstract declaration in parent class for details, children message types can override these valid shortcodes if desired (we include all for all contexts by default).
 	 */
 	protected function _set_valid_shortcodes() {
-		$all_shortcodes = array( 'attendee_list', 'attendee', 'datetime_list', 'datetime', 'event_list', 'event_meta', 'event', 'organization', 'recipient_details', 'recipient_list', 'ticket_list', 'ticket', 'transaction', 'venue', 'primary_registration_details', 'primary_registration_list', 'event_author', 'email' );
+		$all_shortcodes = array( 'attendee_list', 'attendee', 'datetime_list', 'datetime', 'event_list', 'event_meta', 'event', 'organization', 'recipient_details', 'recipient_list', 'ticket_list', 'ticket', 'transaction', 'venue', 'primary_registration_details', 'primary_registration_list', 'event_author', 'email', 'messenger' );
 		$contexts = $this->get_contexts();
 		foreach ( $contexts as $context => $details ) {
 			$this->_valid_shortcodes[$context] = $all_shortcodes;
@@ -547,7 +807,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			}
 
 			//note the FIRST reg object in this array is the one we'll use for this attendee as the primary registration for this attendee.
-			$aee['reg_obj'] = array_shift($this->_data->attendees[$att_id]['reg_obj']);
+			$aee['reg_obj'] = array_shift($this->_data->attendees[$att_id]['reg_objs']);
 
 			$aee['attendees'] = $this->_data->attendees;
 
@@ -572,6 +832,12 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$EVT_ID = $mtpg = $global_mtpg = NULL;
 		$templates = array();
 
+		$template_qa = array(
+			'MTP_is_active' => TRUE,
+			'MTP_messenger' => $this->_active_messenger->name,
+			'MTP_message_type' => $this->name
+		);
+
 		//in vanilla EE we're assuming there's only one event.  However, if there are multiple events then we'll just use the default templates instead of different templates per event (which could create problems).
 		if ( count($this->_data->events) === 1 ) {
 			foreach ( $this->_data->events as $event ) {
@@ -580,46 +846,51 @@ abstract class EE_message_type extends EE_Messages_Base {
 		}
 
 		//if this is a preview then we just get whatever message group is for the preview and skip this part!
-		if ( $this->_preview && !empty( $_POST['msg_id'] )  ) {
-			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['msg_id'] );
+		if ( $this->_preview && EE_Registry::instance()->REQ->is_set('GRP_ID')  ) {
+			$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( EE_Registry::instance()->REQ->get('GRP_ID') );
 		} else {
 			//not a preview or test send so lets continue on our way!
-			$template_qa = array(
-				'MTP_is_active' => TRUE,
-				'MTP_messenger' => $this->_active_messenger->name,
-				'MTP_message_type' => $this->name,
-				'MTP_is_global' => TRUE
-				);
-
-			//this gets the current global template (message template group) for the active messenger and message type.
-			$global_mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
-
-			//If the global template is NOT an override, then we'll use whatever is attached to the event (if there is an evt_ID.  If it IS an override then we just use the global_mtpg
-
-			if ( !empty( $EVT_ID ) && ! $global_mtpg->get('MTP_is_override') ) {
+			//is there an evt_id?  If so let's get that. template.
+			if ( !empty( $EVT_ID )  ) {
 				$evt_qa = array(
 					'Event.EVT_ID' => $EVT_ID
 				);
-				unset( $template_qa['MTP_is_global'] );
 				$qa = array_merge( $template_qa, $evt_qa );
 				$mtpg = EEM_Message_Template_Group::instance()->get_one( array( $qa ) );
 			}
 
-			//if global template is NOT an override, and there is a 'MTP_ID' in the post global, then we'll assume a specific template has ben requested.
-			if ( !empty( $_POST['MTP_ID'] ) && !$global_mtpg->get('MTP_is_override') ) {
-				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( $_POST['MTP_ID'] );
+			//is there a 'GRP_ID' ? if so let's get that.
+
+			//if global template is NOT an override, and there is a 'GRP_ID' in the request, then we'll assume a specific template has ben requested.
+			if ( EE_Registry::instance()->REQ->is_set('GRP_ID') ) {
+				$mtpg = EEM_Message_Template_Group::instance()->get_one_by_ID( EE_Registry::instance()->REQ->get('GRP_ID') );
 			}
 
-			$mtpg = $mtpg instanceof EE_Message_Template_Group ? $mtpg : $global_mtpg;
+
+			$template_qa['MTP_is_global'] = TRUE;
+
+			//this gets the current global template (message template group) for the active messenger and message type.
+			$global_mtpg = EEM_Message_Template_Group::instance()->get_one( array( $template_qa ) );
+
+			$mtpg = $mtpg instanceof EE_Message_Template_Group && ! $global_mtpg->get( 'MTP_is_override' ) ? $mtpg : $global_mtpg;
 		}
 
+		$this->_GRP_ID = $mtpg->ID();
+
 		$templates = $mtpg->context_templates();
+
+		//set the template pack and the variation for the given message template group.
+		$this->_template_pack = $mtpg->get_template_pack();
+		$this->_variation = $mtpg->get_template_pack_variation();
+
+
 
 		foreach ( $templates as $context => $template_fields ) {
 			foreach( $template_fields as $template_field=> $template_obj ) {
 				$this->_templates[$template_field][$context] = $template_obj->get('MTP_content');
 			}
 		}
+
 	}
 
 	/**
@@ -628,12 +899,17 @@ abstract class EE_message_type extends EE_Messages_Base {
 	 * @access protected
 	 */
 	protected function _assemble_messages() {
+		//make sure any set messages object is cleared
+		$this->messages = array();
 		foreach ( $this->_addressees as $context => $addressees ) {
 			foreach ( $addressees as $addressee ) {
 				$message = $this->_setup_message_object($context, $addressee);
 				//only assign message if everything went okay
-				if ( $message )
+				if ( $message ) {
+					$message->template_pack = $this->_template_pack;
+					$message->variation = $this->_variation;
 					$this->messages[] = $message;
+				}
 			}
 		}
 	}
@@ -653,7 +929,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 		$m_shortcodes = $this->_active_messenger->get_valid_shortcodes();
 
 		//if the 'to' field is empty (messages will ALWAYS have a "to" field, then we get out because this context is turned off) EXCEPT if we're previewing
-		if ( empty( $this->_templates['to'][$context] ) && !$this->_preview )
+		if ( ( isset( $this->_templates['to'][$context] ) && empty( $this->_templates['to'][$context] ) ) && !$this->_preview )
 			return false;
 
 		foreach ( $this->_templates as $field => $ctxt ) {
@@ -662,7 +938,7 @@ abstract class EE_message_type extends EE_Messages_Base {
 			//merge in valid shortcodes for the field.
 			$shortcodes = isset($m_shortcodes[$field]) ? $m_shortcodes[$field] : $valid_shortcodes;
 			if ( isset( $this->_templates[$field][$context] ) ) {
-				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes);
+				$message->$field = $this->_shortcode_replace->parse_message_template($this->_templates[$field][$context], $addressee, $shortcodes, $this, $this->_active_messenger, $context, $this->_GRP_ID );
 			}
 		}
 		return $message;

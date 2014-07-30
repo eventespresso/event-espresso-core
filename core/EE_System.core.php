@@ -129,6 +129,8 @@ final class EE_System {
 		// load a few helper files
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		require_once EE_CORE . 'EE_Deprecated.core.php';
+
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
 		// when an ee addon is activated, we want to call the core hook(s) again
@@ -142,6 +144,11 @@ final class EE_System {
 		add_action( 'plugins_loaded', array( $this, 'register_shortcodes_modules_and_widgets' ), 7 );
 		// you wanna get going? I wanna get going... let's get going!
 		add_action( 'plugins_loaded', array( $this, 'brew_espresso' ), 9 );
+
+		//other housekeeping
+		//exclude EE critical pages from wp_list_pages
+		add_filter('wp_list_pages_excludes', array( $this, 'remove_pages_from_wp_list_pages'), 10 );
+
 		// ALL EE Addons should use the following hook point to attach their initial setup too
 		// it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
 		do_action( 'AHEE__EE_System__construct__complete', $this );
@@ -321,6 +328,8 @@ final class EE_System {
 		// set autoloaders for all of the classes implementing EEI_Plugin_API
 		// which provide helpers for EE plugin authors to more easily register certain components with EE.
 		EEH_Autoloader::instance()->register_autoloaders_for_each_file_in_folder( EE_LIBRARIES . 'plugin_api' );
+		//load and setup EE_Capabilities
+		EE_Registry::instance()->load_core( 'Capabilities' );
 		do_action( 'AHEE__EE_System__load_espresso_addons' );
 	}
 
@@ -622,8 +631,7 @@ final class EE_System {
 		}
 		// get model names
 		$this->_parse_model_names();
-		//load_messages controller
-		EE_Registry::instance()->load_lib( 'Messages_Init' );
+
 		//load caf stuff a chance to play during the activation process too.
 		$this->_maybe_brew_regular();
 		do_action( 'AHEE__EE_System__load_core_configuration__complete', $this );
@@ -1149,6 +1157,21 @@ final class EE_System {
 						'class' => $menu_class
 				),
 		));
+	}
+
+
+
+
+
+	/**
+	 * simply hooks into "wp_list_pages_exclude" filter (for wp_list_pages method) and makes sure EE critical pages are never returned with the function.
+	 *
+	 *
+	 * @param  array  $exclude_array any existing pages being excluded are in this array.
+	 * @return array
+	 */
+	public function remove_pages_from_wp_list_pages( $exclude_array ) {
+		return  array_merge( $exclude_array, EE_Registry::instance()->CFG->core->get_critical_pages_array() );
 	}
 
 

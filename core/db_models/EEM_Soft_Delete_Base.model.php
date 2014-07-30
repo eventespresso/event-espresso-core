@@ -40,7 +40,7 @@
  */
 require_once( EE_MODELS . 'EEM_Base.model.php');
 abstract class EEM_Soft_Delete_Base extends EEM_Base{
-	
+
 	protected function __construct($timezone = NULL) {
 		require_once( EE_MODELS . 'strategies/EE_Soft_Delete_Where_Conditions.strategy.php');
 		if( ! $this->_default_where_conditions_strategy){
@@ -62,18 +62,18 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 			throw new EE_Error(sprintf(__('We are trying to find the deleted flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?','event_espresso'),get_class($this),get_class($this)));
 		}
 	}
-	
+
 	/**
 	 * Overrides parent's 'get_all' to only get undeleted ones. If you REALLY
 	 * want to fetch both deleted and undeleted ones, call get_all_deleted_and_undeleted()
 	 * For 'soft deletable' models, gets all whicha re not yet deleted.
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Soft_Delete_Base_Class[]
-	 */	
+	 */
 	public function get_all($query_params = array()){
 		return parent::get_all($query_params);
 	}
-	
+
 	/**
 	 *  Gets one item, so long as it's not soft-deleted. If you want to get soft-deleted
 	 * items, consider using get_one_deleted() or get_one_deleted_or_undeleted()
@@ -92,7 +92,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
 		return parent::get_one($query_params);
 	}
-	
+
 	/**
 	 * Gets one item from the DB, regardless of whether it's been soft-deleted or not
 	 * @param array $query_params like EEM_base::get_all's $query_params
@@ -102,7 +102,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		return parent::get_one($query_params);
 	}
-	
+
 	/**
 	 * Unlike many other soft delete functions, get_one_by_ID returns the one item requested, regardless
 	 * of whether it's been flagged as deleted or not.
@@ -113,7 +113,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params[0] = array($this->get_primary_key_field()->get_name() => $id);
 		return $this->get_one_deleted_or_undeleted($query_params);
 	}
-	
+
 	/**
 	 * Gets the item indicated by its ID. But if it's soft-deleted, pretends it doesn't exist.
 	 * @param int|string $id
@@ -146,7 +146,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
 		return parent::count($query_params, $field_to_count, $distinct);
 	}
-	
+
 	/**
 	 * Alters the query params so that only trashed/soft-deleted items are considered
 	 * @param array $query_params like EEM_Base::get_all's $query_params
@@ -157,7 +157,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params[0][$deletedFlagFieldName]=true;
 		return $query_params;
 	}
-	
+
 	/**
 	 * Alters the query params so each item's deleted status is ignored.
 	 * @param array $query_params
@@ -167,7 +167,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params['default_where_conditions'] = 'other_models_only';
 		return $query_params;
 	}
-	
+
 	/**
 	 * Counts all deleeted and undeleted items
 	 * @param array $query_params like EEM_Base::get_all
@@ -179,7 +179,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		return parent::count($query_params,$field_to_count, $distinct);
 	}
-	
+
 	/**
 	 * Sums all NON-SOFT-DELETED objects that meet the criteria in $query_params.
 	 * @param array $query_params like EEM_Base::get_all's $query_params
@@ -190,8 +190,8 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		//just calls parent, but changes PHP doc
 		return parent::sum($query_params,$field_to_sum);
 	}
-	
-	
+
+
 	/**
 	 * Sum all the deleted items.
 	 * @param array $query_params like EEM_Base::get_all
@@ -202,7 +202,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
 		return parent::sum($query_params, $field_to_sum);
 	}
-	
+
 	/**
 	 * Sums all the deleted and undeleted items.
 	 * @param array $query_params lik eEEM_Base::get_all
@@ -214,7 +214,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		parent::sum($query_params, $field_to_sum);
 	}
 	/**
-	 * Gets all deleted and undeleted mode objects from the db that meet the criteria, regardless of 
+	 * Gets all deleted and undeleted mode objects from the db that meet the criteria, regardless of
 	 * whether they've been soft-deleted or not
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return EE_Soft_Delete_Base_Class[]
@@ -223,7 +223,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		return parent::get_all($query_params);
 	}
-	
+
 	/**
 	 * For 'soft deletable' models, gets all which ARE deleted, according to conditions specified in $query_params.
 	 * @param array $query_params like EEM_Base::get_all
@@ -233,8 +233,8 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
 		return parent::get_all($query_params);
 	}
-	
-	
+
+
 	/**
 	 * Permanently deletes the selected rows. When selecting rows for deletion, ignores
 	 * whether they've been soft-deleted or not. (ie, you don't have to soft-delete objects
@@ -251,10 +251,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		return parent::delete($query_params, $allow_blocking);
 	}
-	
+
 	/**
 	 * Permanently deletes the object given its ID. Ignores whether the item has been soft-deleted or not
-	 * @param mixed $ID int or string, depending on the table's primary key type. Because this will 
+	 * @param mixed $ID int or string, depending on the table's primary key type. Because this will
 	 * cause a real deletion, related models may block this deletion (ie, add an error
 	 * and abort the delete)
 	 * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
@@ -268,10 +268,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params['limit'] = 1;
 		return $this->delete_permanently($query_params, $allow_blocking);
 	}
-	
+
 	/**
 	 * Handles special logic for deleting a single item. Ignores whether the item
-	 * has been soft-deletd or not. Note: because this item will be soft-deleted only, 
+	 * has been soft-deletd or not. Note: because this item will be soft-deleted only,
 	 * doesn't block because of model dependencies
 	 * @param mixed $ID value of the primary_key or primary_text_key
 	 * @return boolean success
@@ -310,9 +310,9 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		}
 	}
 	/**
-	 * Overrides parent's 'delete' method to instead do a soft delete on all rows that 
+	 * Overrides parent's 'delete' method to instead do a soft delete on all rows that
 	 * meet the criteria in $where_col_n_values. This particular function ignores whether the items have been soft-deleted or not.
-	 * Note: because this item will be soft-deleted only, 
+	 * Note: because this item will be soft-deleted only,
 	 * doesn't block because of model dependencies
 	 * @param array $query_params like EEM_Base::get_all
 	 * @return boolean success
@@ -321,7 +321,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		//no matter what, we WON'T block soft deletes.
 		return $this->delete_or_restore(true, $query_params);
 	}
-	
+
 	/**
 	 * 'Undeletes' the chosen items. Note that this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
 	 * items are ignored in queries. However, this particular function ignores whether the items have been soft-deleted or not.
@@ -349,7 +349,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 			return FALSE;
 		}
 	}
-	
+
 	/**
 	 * Updates all the items of this model which match the $query params, regardless of whether
 	 * they've been soft-deleted or not
@@ -361,7 +361,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		$query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
 		return $this->update($fields_n_values, $query_params);
 	}
-	
+
 	/**
 	 * Note that this model is a SOFT-DELETABLE model! That means that, by default, trashed/soft-deleted
 	 * items are ignored in queries. So for this update, soft-deleted items will be ignroed.
@@ -374,6 +374,6 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base{
 		return parent::update($fields_n_values,$query_params);
 	}
 
-	
-	
+
+
 }

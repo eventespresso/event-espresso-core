@@ -70,6 +70,8 @@ class EEH_Activation {
 		//also initialize payment settings, which is a side-effect of calling
 		//EEM_Gateway::load_all_gateways()
 		EEM_Gateways::instance(true)->load_all_gateways();
+
+		EE_Registry::instance()->CAP->init_caps();
 		//also, check for CAF default db content
 		do_action( 'AHEE__EEH_Activation__initialize_db_content' );
 		//also: EEM_Gateways::load_all_gateways() outputs a lot of success messages
@@ -372,7 +374,7 @@ class EEH_Activation {
 		if (!in_array($column_name, $fields)){
 			$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
 			//echo "alter query:$alter_query";
-			return mysql_query($alter_query);
+			return $wpdb->query($alter_query);
 		}
 		return true;
 	}
@@ -393,12 +395,11 @@ class EEH_Activation {
 		global $wpdb;
 		$table_name=$wpdb->prefix.$table_name;
 		if ( ! empty( $table_name )) {
-			if (($tablefields = mysql_list_fields(DB_NAME, $table_name, $wpdb -> dbh)) !== FALSE) {
-				$columns = mysql_num_fields($tablefields);
+			$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name ");
+			if ($columns !== FALSE) {
 				$field_array = array();
-				for ($i = 0; $i < $columns; $i++) {
-					$fieldname = mysql_field_name($tablefields, $i);
-					$field_array[] = $fieldname;
+				foreach($columns as $column ){
+					$field_array[] = $column->Field;;
 				}
 				return $field_array;
 			}
@@ -924,8 +925,12 @@ class EEH_Activation {
 			update_option( 'ee_active_messengers', $active_messengers );
 
 
-			//let's generate all the templates
-			$templates = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+			//let's generate all the templates but ONLY if there are default message types for the messenger.  It is entirely possible that activating the messenger just exposes new shortcodes (because it acts as a secondary messenger), in which case no default templates are created
+			if ( ! empty( $default_mts ) ) {
+				$templates = EEH_MSG_Template::generate_new_templates( $messenger, $default_mts, '', TRUE );
+			} else {
+				$templates = TRUE;
+			}
 
 		}
 
