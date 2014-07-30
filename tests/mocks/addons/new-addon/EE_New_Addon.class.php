@@ -12,6 +12,7 @@
  * ------------------------------------------------------------------------
  */
 // define the plugin directory path and URL
+define( 'EE_NEW_ADDON_BASENAME', plugin_basename( EE_NEW_ADDON_PLUGIN_FILE ));
 define( 'EE_NEW_ADDON_PATH', plugin_dir_path( __FILE__ ));
 define( 'EE_NEW_ADDON_URL', plugin_dir_url( __FILE__ ));
 define( 'EE_NEW_ADDON_ADMIN', EE_NEW_ADDON_PATH . 'admin' . DS . 'new_addon' . DS );
@@ -82,7 +83,7 @@ Class  EE_New_Addon extends EE_Addon {
 	 * @return array
 	 */
 	public function plugin_actions( $links, $file ) {
-		if ( $file == EE_NEW_ADDON_PLUGIN_FILE ) {
+		if ( $file == EE_NEW_ADDON_BASENAME ) {
 			// before other links
 			array_unshift( $links, '<a href="admin.php?page=espresso_new_addon">' . __('Settings') . '</a>' );
 		}
