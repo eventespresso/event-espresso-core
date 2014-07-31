@@ -362,7 +362,7 @@ interface EEI_Transaction extends EEI_Base{
 	 */
 	function last_payment();
 	/**
-	 * Gets the toal that should eb paid for this transaction
+	 * Gets the total that should eb paid for this transaction
 	 * @return float
 	 */
 	function total();
