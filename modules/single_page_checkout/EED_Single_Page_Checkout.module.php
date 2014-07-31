@@ -279,12 +279,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 				$this->checkout->current_step->reg_form->receive_form_submission();
 				// validate form data
 				if ( $this->checkout->current_step->reg_form->is_valid() && $this->checkout->continue_reg ) {
-					// good registrant, you get to proceed
-					EE_Error::add_success( $this->checkout->current_step->success_message() );
+					if ( $this->checkout->current_step->success_message() != '' ) {
+						// good registrant, you get to proceed
+						EE_Error::add_success( $this->checkout->current_step->success_message() );
+					}
 				} else {
-					// bad, bad, bad registrant
-					EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
-					$this->checkout->action = 'display_spco_reg_form';
+					if ( $this->checkout->current_step->reg_form->submission_error_message() != '' ) {
+						// bad, bad, bad registrant
+						EE_Error::add_error( $this->checkout->current_step->reg_form->submission_error_message(), __FILE__, __FUNCTION__, __LINE__ );
+						$this->checkout->action = 'display_spco_reg_form';
+					}
 				}
 			}
 		} catch( EE_Error $e ) {
