@@ -562,11 +562,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				break;
 
 			default:
-				return $this->_process_payment();
-//				$result = $this->_process_payment();
-//				echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
+//				return $this->_process_payment();
+				$result = $this->_process_payment();
+//				d( $result );
 //				die();
-//				return $result;
+				return $result;
 
 		}
 	}
@@ -616,7 +616,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			return FALSE;
 		}
 		// get EE_Payment_Method object
-		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->checkout->selected_method_of_payment ) ) {
+		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment() ) {
 			return FALSE;
 		}
 		// bad billing form ?
@@ -659,11 +659,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * redirect_form
 	 *
 	 * @access public
-	 * @return string
+	 * @return bool
 	 */
 	public function redirect_form() {
-		echo $this->checkout->redirect_form;
-		exit();
+		$payment_method_billing_info = $this->_payment_method_billing_info( $this->_get_payment_method_for_selected_method_of_payment() );
+		$html = $payment_method_billing_info->get_html_and_js();
+		$html .= $this->checkout->redirect_form;
+		EE_Registry::instance()->REQ->add_output( $html );
+		return TRUE;
 	}
 
 
