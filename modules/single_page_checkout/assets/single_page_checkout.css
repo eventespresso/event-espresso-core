@@ -322,6 +322,10 @@
 
 /***  PAYMENT METHOD OPTIONS  ***/
 
+#method-of-payment-hdr {
+	margin:1.25em 0 .25em;
+}
+
 /***  payment method link  ***/
 
 .spco-payment-method-dv {
@@ -336,6 +340,16 @@
 	text-align: center;
 	line-height:1em;
 	vertical-align: middle;
+	cursor:pointer;
+}
+
+.spco-payment-method-btn-img {
+	vertical-align:middle;
+	max-width:140px !important;
+	padding:0;
+	margin:auto;
+	box-shadow: none !important;
+	box-radius: 0 !important;
 	cursor:pointer;
 }
 
@@ -373,10 +387,10 @@
 	border-radius: 2px;
 }
 .spco-payment-method-hdr {
-	float:right;
+	/*float:right;*/
 	clear: none;
 	margin:0;
-	text-align:right;
+	/*text-align:right;*/
 	color:#ccc;
 }
 .spco-payment-method-img {
@@ -384,5 +398,5 @@
 	margin: 0 1em 0 0;
 }
 .spco-payment-method-desc {
-	margin:2em 0;
+	margin:1em 0;
 }
