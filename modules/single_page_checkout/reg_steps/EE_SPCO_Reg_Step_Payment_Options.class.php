@@ -336,7 +336,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 	 * @return \EE_Form_Section_Proper
 	 */
 	public function _setup_payment_options() {
+		// get all active payment methods
 		$payment_methods = EE_Registry::instance()->load_model( 'Payment_Method' )->get_all_for_transaction( $this->checkout->transaction, EEM_Payment_Method::scope_cart );
+		// switch up header depending on number of available payment methods
 		$payment_method_header = count( $payment_methods ) > 1
 			? apply_filters( 'FHEE__registration_page_payment_options__method_of_payment_hdr', __( 'Available Methods of Payment', 'event_espresso' ))
 			: apply_filters( 'FHEE__registration_page_payment_options__method_of_payment_hdr', __( 'Method of Payment', 'event_espresso' ));
@@ -346,9 +348,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 				EEH_HTML::h4 ( $payment_method_header, 'method-of-payment-hdr' )
 			)
 		);
+		// the list of actual payment methods ( invoice, paypal, etc ) in a  ( slug => HTML )  format
 		$available_payment_method_options = array();
-		$payment_methods_billing_info = array();
-
+		// additional instructions to be displayed and hidden below payment methods
+		$payment_methods_billing_info = array( new EE_Form_Section_HTML( EEH_HTML::div ( '<br />', '', '', 'clear:both;' )));
+		// loop through payment methods
 		foreach( $payment_methods as $payment_method ) {
 			if ( $payment_method instanceof EE_Payment_Method ) {
 				// check if any payment methods are set as default
@@ -358,7 +362,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 					$this->_save_selected_method_of_payment();
 				}
 				$info_html = EEH_HTML::img( $payment_method->button_url(), $payment_method->name(), 'spco-payment-method-' . $payment_method->slug() . '-btn-img', 'spco-payment-method-btn-img' );
-				$info_html .= EEH_HTML::div ( '<br />', '', '', 'clear:both;' );
 				$available_payment_method_options[ $payment_method->slug() ] =  $info_html;
 				$payment_methods_billing_info[ $payment_method->slug() . '-info' ] = $this->_payment_method_billing_info( $payment_method );
 			}
