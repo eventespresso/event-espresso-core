@@ -28,22 +28,24 @@
  */
 
 class EEM_Payment_Method extends EEM_Base {
+
 	const scope_cart = 'CART';
 	const scope_admin = 'ADMIN';
 	const scope_api = 'API';
+
 	/**
 	 *
-	 * @var EEM_Payment_Method
+	 * @type EEM_Payment_Method
 	 */
 	private static $_instance = NULL;
 
 
 
 	/**
-	 * 		This funtion is a singleton method used to instantiate the EEM_Payment_Method object
+	 * 		This function is a singleton method used to instantiate the EEM_Payment_Method object
 	 *
 	 * 		@access public
-	 * 		@return EEM_Payment_Method instance
+	 * 		@return EEM_Payment_Method
 	 */
 	public static function instance() {
 
@@ -66,12 +68,12 @@ class EEM_Payment_Method extends EEM_Base {
 	}
 
 
+
 	/**
-	 * 		private constructor to prevent direct creation
-	 * 		@Constructor
-	 * 		@access protected
-	 * 		@param string $timezone string representing the timezone we want to set for returned Date Time Strings (and any incoming timezone data that gets saved).  Note this just sends the timezone info to the date time model field objects.  Default is NULL (and will be assumed using the set timezone in the 'timezone_string' wp option)
-	 * 		@return void
+	 * 	private constructor to prevent direct creation
+	 * @Constructor
+	 * @access   protected
+	 * @return \EEM_Payment_Method
 	 */
 	protected function __construct() {
 		$this->singlular_item = __('Payment Method','event_espresso');
@@ -136,9 +138,14 @@ class EEM_Payment_Method extends EEM_Base {
 			return false;
 		}
 	}
+
+
+
 	/**
 	 * Gets all active gateways
 	 * @param string $scope one of
+	 * @param array  $query_params
+	 * @throws EE_Error
 	 * @return EE_Payment_Method[]
 	 */
 	public function get_all_active($scope = NULL,$query_params = array()){
@@ -158,7 +165,7 @@ class EEM_Payment_Method extends EEM_Base {
 		}
 	}
 	/**
-	 * Gets one active paymetn method. see @get_all_active for documentation
+	 * Gets one active payment method. see @get_all_active for documentation
 	 * @param string $scope
 	 * @param array $query_params
 	 * @return EE_Payment_Method

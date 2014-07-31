@@ -31,7 +31,7 @@ class EE_Radio_Button_Display_Strategy extends EE_Display_Strategy_Base{
 			$html .= 'type="radio"';
 			$html .= 'value="' . esc_attr( $value ) . '"';
 			$html .= $selected_attr;
-			$html .= '>&nbsp;' . $display_text . '</label>';
+			$html .= '>' . $display_text . '</label>';
 		}
 		return $html;
 	}

@@ -127,7 +127,7 @@ class EE_Payment_Processor{
 	public function get_ipn_url_for_payment_method( $transaction, $payment_method ){
 		$transaction = EEM_Transaction::instance()->ensure_is_obj( $transaction );
 		$primary_reg = $transaction->primary_registration();
-		if( ! $primary_reg ){
+		if( ! $primary_reg instanceof EE_Registration ){
 			throw new EE_Error(sprintf(__("Cannot get IPN URL for transaction with ID %d because it has no primary registration", "event_espresso"),$transaction->ID()));
 		}
 		$payment_method = EEM_Payment_Method::instance()->ensure_is_obj($payment_method,true);
@@ -245,11 +245,15 @@ class EE_Payment_Processor{
 			return NULL;
 		}
 	}
+
+
+
 	/**
 	 *
 	 * @param EE_Payment_Method $payment_method
-	 * @param EE_Payment $payment_to_refund
-	 * @param float $amount
+	 * @param EE_Payment        $payment_to_refund
+	 * @param array             $refund_info
+	 * @internal param float $amount
 	 * @return EE_Payment
 	 */
 	public function process_refund($payment_method,$payment_to_refund,$refund_info = array()){
@@ -261,6 +265,8 @@ class EE_Payment_Processor{
 		return $payment_to_refund;
 	}
 
+
+
 	/**
 	 * This should be called each time there may have been an update to a payment
 	 * on a transaction (ie, we asked for a payment to process a payment for a transaction,
@@ -268,7 +274,7 @@ class EE_Payment_Processor{
 	 * "finalize_payment_for" (a transaction), or we told a payment method to
 	 * process a refund. This should handle firing the correct hooks to indicate
 	 * what exactly happened and updating the transaction appropriately). This could be integrated
-	 * directly into EE_Transaction upon save, but we want this logic to be seperate
+	 * directly into EE_Transaction upon save, but we want this logic to be separate
 	 * from 'normal' plain-jane saving and updating of transactions and payments, and to be
 	 * tied to payment processing
 	 * @param EE_Transaction $txn
@@ -282,7 +288,7 @@ class EE_Payment_Processor{
 			//there is no payment. Must be an offline gateway
 			//but have we already triggered pending payment notification?
 			if( $txn->status_ID() !== EEM_Transaction::incomplete_status_code ){
-				//createa hackey payment object, but dont save it
+				//create a hacky payment object, but dont save it
 				$payment = EE_Payment::new_instance( array(
 					'TXN_ID' => $txn->ID(),
 					'STS_ID' => EEM_Payment::status_id_pending,
