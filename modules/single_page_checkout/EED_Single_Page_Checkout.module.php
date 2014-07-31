@@ -93,6 +93,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		define( 'SPCO_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
 		define( 'SPCO_REG_STEPS_PATH', SPCO_BASE_PATH . 'reg_steps' . DS );
 		define( 'SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates' . DS );
+		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( SPCO_BASE_PATH, TRUE );
 	}
 
 
@@ -131,11 +132,9 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
-		// instantiate EE_Checkout object for handling the properties of the current checkout process
-		$this->checkout = EE_Registry::instance()->load_file( SPCO_BASE_PATH, 'EE_Checkout', 'class', array(), FALSE  );
-		if ( ! $this->checkout instanceof EE_Checkout ) {
-			throw new EE_Error( __( 'The EE_Checkout class could not be loaded.', 'event_espresso' ) );
-		}
+		// setup the EE_Checkout object
+		$this->checkout = $this->_initialize_checkout();
+		// filter continue_reg
 		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE );
 		// load the reg steps array
 		$this->load_reg_steps();
@@ -147,8 +146,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->action = EE_Registry::instance()->REQ->get( 'action', 'display_spco_reg_form' );
 		// returning from the thank you page ?
 		$this->checkout->reg_url_link = EE_Registry::instance()->REQ->get( 'e_reg_url_link', FALSE );
-		// get transaction from db or session
-		$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_transaction_and_cart_for_current_session();
+		// was there already a valid transaction in the checkout from the session ?
+		if ( ! $this->checkout->transaction instanceof EE_Transaction ) {
+			// get transaction from db or session
+			$this->checkout->transaction = $this->checkout->reg_url_link && ! is_admin() ? $this->_get_transaction_and_cart_for_previous_visit() : $this->_get_transaction_and_cart_for_current_session();
+		}
 		// and the registrations for the transaction
 		$this->_get_registrations( $this->checkout->transaction );
 		// initialize each reg step, which gives them the chance to potentially alter the process
@@ -159,6 +161,31 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->_process_form_action();
 		// add some style and make it dance
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles_and_scripts' ), 10 );
+	}
+
+
+
+	/**
+	 *    _initialize_checkout
+	 * loads and instantiates EE_Checkout
+	 *
+	 * @access    private
+	 * @throws EE_Error
+	 * @return EE_Checkout
+	 */
+	private function _initialize_checkout() {
+		// look in session for existing checkout
+		$checkout = EE_Registry::instance()->SSN->get_session_data( 'checkout' );
+		// verify
+		if ( ! $checkout instanceof EE_Checkout ) {
+			// instantiate EE_Checkout object for handling the properties of the current checkout process
+			$checkout = EE_Registry::instance()->load_file( SPCO_BASE_PATH, 'EE_Checkout', 'class', array(), FALSE  );
+			// verify again
+			if ( ! $checkout instanceof EE_Checkout ) {
+				throw new EE_Error( __( 'The EE_Checkout class could not be loaded.', 'event_espresso' ) );
+			}
+		}
+		return $checkout;
 	}
 
 
@@ -319,7 +346,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 					// call action on current step
 					if ( call_user_func( array( $this->checkout->current_step, $this->checkout->action )) ) {
 						// store our progress so far
-						$this->checkout->stash_transaction();
+						$this->checkout->stash_transaction_and_checkout();
 						// advance to the next step! If you pass GO, collect $200
 						$this->go_to_next_step();
 					} else {
@@ -709,15 +736,12 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return void
 	 */
 	public function go_to_next_step( $callback = FALSE, $callback_param = FALSE ) {
-//		echo '<br/><h5 style="color:#2EA2CC;">' . __CLASS__ . '<span style="font-weight:normal;color:#0074A2"> -> </span>' . __FUNCTION__ . '() <br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 
-//		// advance to the next step! If you pass GO, collect $200
-//		$this->_set_current_step( $this->checkout->next_step->slug() );
-//		// and advance the next step as well
-//		$this->_set_next_step();
-		$this->checkout->json_response = array();
-
+		if ( $this->checkout->action == 'redirect_form' ) {
+			return;
+		}
 		$errors = FALSE;
+		$this->checkout->json_response = array();
 		// check for valid callback function
 		$valid_callback = $callback !== FALSE && $callback != '' && method_exists( $this, $callback ) ? TRUE : FALSE;
 		// check for recursion
@@ -785,6 +809,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout->redirect_url = add_query_arg( $args, $this->checkout->reg_page_base_url );
 			$this->checkout->redirect = TRUE;
 		}
+//		d( $this->checkout );
+//		die();
 		if ( $this->checkout->redirect ) {
 			wp_safe_redirect( $this->checkout->redirect_url );
 			exit();

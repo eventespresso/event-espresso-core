@@ -302,14 +302,19 @@ class EE_Checkout {
 
 
 	/**
-	 * 	stash_transaction
+	 * 	stash_transaction_and_checkout
 	 *
 	 * 	@access public
 	 * 	@return 	bool
 	 */
-	public function stash_transaction() {
+	public function stash_transaction_and_checkout() {
 		if ( ! $this->reg_url_link ) {
-			EE_Registry::instance()->SSN->set_session_data( array( 'transaction' => $this->transaction ));
+			EE_Registry::instance()->SSN->set_session_data(
+				array(
+					'checkout' => $this,
+					'transaction' => $this->transaction
+				)
+			);
 		}
 	}
 
