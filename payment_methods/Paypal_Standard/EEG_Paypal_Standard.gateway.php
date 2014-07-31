@@ -1,65 +1,60 @@
 <?php
-
-if (!defined('EVENT_ESPRESSO_VERSION'))
-	exit('No direct script access allowed');
-
+if ( ! defined('EVENT_ESPRESSO_VERSION')) { exit('No direct script access allowed'); }
 /**
- * Event Espresso
- *
- * Event Registration and Management Plugin for WordPress
- *
- * @ package			Event Espresso
- * @ author			Seth Shoultes
- * @ copyright		(c) 2008-2011 Event Espresso  All Rights Reserved.
- * @ license			http://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link					http://www.eventespresso.com
- * @ version		 	4.3
- *
- * ------------------------------------------------------------------------
- *
  * EEG_Paypal_Standard
  *
- * @package			Event Espresso
- * @subpackage
- * @author				Mike Nelson
+ * @package 			Event Espresso
+ * @subpackage 	core
+ * @author 				Mike Nelson
+ * @since 				$VID:$
  *
- * ------------------------------------------------------------------------
  */
 class EEG_Paypal_Standard extends EE_Offsite_Gateway {
+
 	protected $_paypal_id = NULL;
+
 	protected $_image_url = NULL;
+
 	protected $_shipping_details = NULL;
+
 	protected $_paypal_shipping = NULL;
+
 	protected $_paypal_taxes = NULL;
+
 	protected $_gateway_url = NULL;
+
 	protected $_currencies_supported = array(
-					'USD',
-					'GBP',
-					'CAD',
-					'AUD',
-					'BRL',
-					'CHF',
-					'CZK',
-					'DKK',
-					'EUR',
-					'HKD',
-					'HUF',
-					'ILS',
-					'JPY',
-					'MXN',
-					'MYR',
-					'NOK',
-					'NZD',
-					'PHP',
-					'PLN',
-					'SEK',
-					'SGD',
-					'THB',
-					'TRY',
-					'TWD');
+		'USD',
+		'GBP',
+		'CAD',
+		'AUD',
+		'BRL',
+		'CHF',
+		'CZK',
+		'DKK',
+		'EUR',
+		'HKD',
+		'HUF',
+		'ILS',
+		'JPY',
+		'MXN',
+		'MYR',
+		'NOK',
+		'NZD',
+		'PHP',
+		'PLN',
+		'SEK',
+		'SGD',
+		'THB',
+		'TRY',
+		'TWD'
+	);
+
+
+
 	/**
 	 * Also sets the gateway url class variable based o nwhether debug mode is enabled o rnot
-	 * @param type $settings_array
+	 * @param array $settings_array
 	 */
 	public function set_settings($settings_array){
 		parent::set_settings($settings_array);
@@ -70,19 +65,17 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 	}
 
+
+
 	/**
-	 * @param EEI_Payment $payment to process
-	 * @param array $billing_info but should be empty for this gateway
-	 * @param string $return_url URL to send the user to after payment on the payment provider's website
-	 * @param string $notify_url URL to send the instant payment notification
-	 * @param string $cancel_url URL to send the user to after a cancelled payment attempt on teh payment provider's website
-	 * @param boolean $send_full_itemized_list whether or not to try itemizing all the items purchased when
-	 * informing the payment provider of the purchase or not. If charging for the entire transaction, this is usually
-	 * set to TRUE; however if we are just charing for a part, it's harder to nail down exactly what the payment is for,
-	 * so its usually set to FALSE in that case
+	 * @param EEI_Payment $payment      to process
+	 * @param array       $billing_info but should be empty for this gateway
+	 * @param string      $return_url   URL to send the user to after payment on the payment provider's website
+	 * @param string      $notify_url   URL to send the instant payment notification
+	 * @param string      $cancel_url   URL to send the user to after a cancelled payment attempt on teh payment provider's website
 	 * @return EEI_Payment
 	 */
-	public function set_redirection_info($payment,$billing_info = array(),$return_url = NULL, $notify_url = NULL, $cancel_url = NULL){
+	public function set_redirection_info( $payment, $billing_info = array(), $return_url = NULL, $notify_url = NULL, $cancel_url = NULL ){
 		$redirect_args = array();
 		$transaction = $payment->transaction();
 		$primary_registrant = $transaction->primary_registration();
@@ -135,6 +128,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		$payment->set_redirect_args($redirect_args);
 		return $payment;
 	}
+
+
+
 	/**
 	 * Often used for IPNs. But applies the info in $update_info to the payment.
 	 * What is $update_info? Often the contents of $_REQUEST, but not necessarily. Whatever
@@ -154,8 +150,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		//ok, then validate the IPN. Even if we've already processed this payment, let paypal know we don't want to hear from them anymore!
 		if( ! $this->validate_ipn($update_info,$payment)){
-			//huh, something's wack... the IPN didn't validate. We must have replied to teh IPN incorrectly,
-			//or their API must ahve changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
+			//huh, something's wack... the IPN didn't validate. We must have replied to the IPN incorrectly,
+			//or their API must have changed: http://www.paypalobjects.com/en_US/ebook/PP_OrderManagement_IntegrationGuide/ipn.html
 			$this->log(sprintf(__("IPN failed validation", "event_espresso")), $transaction);
 			return $payment;
 		}
@@ -212,6 +208,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 		}
 		return $payment;
 	}
+
+
+
 	/**
 	 * Validate the IPN notification
 	 *
@@ -237,6 +236,8 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway {
 			return false;
 		}
 	}
-}
 
+
+
+}
 // End of file EEG_Paypal_Standard.gateway.php
