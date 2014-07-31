@@ -24,7 +24,7 @@ class EE_Div_Per_Section_Layout extends EE_Form_Section_Layout_Base{
 			$html .= EEH_Formatter::nl() . '<div id="' . $input->html_id() . '-submit-dv" class="' . $input->html_class() . '-submit-dv">';
 			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
 			$html .= EEH_Formatter::nl(-1) . '</div>';
-		} else if ( $input instanceof EE_Checkbox_Multi_Input  ) {
+		} else if ( $input instanceof EE_Form_Input_With_Options_Base  ) {
 			$html .= EEH_Formatter::nl() . '<div id="' . $input->html_id() . '-input-dv" class="' . $input->html_class() . '-input-dv">';
 			$html .= EEH_Formatter::nl() . $input->get_html_for_errors();
 			$html .= EEH_Formatter::nl() . $input->get_html_for_input();
