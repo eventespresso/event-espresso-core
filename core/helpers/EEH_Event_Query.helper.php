@@ -130,6 +130,66 @@ class EEH_Event_Query {
 
 
 	/**
+	 *    posts_fields
+	 *
+	 * @access    public
+	 * @param          $SQL
+	 * @param WP_Query $wp_query
+	 * @return    string
+	 */
+	public static function posts_fields( $SQL, WP_Query $wp_query ) {
+		if ( isset( $wp_query->query ) && isset( $wp_query->query['post_type'] ) && $wp_query->query['post_type'] == 'espresso_events' ) {
+			// adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
+			$SQL .= EEH_Event_Query::posts_fields_sql_for_orderby( array( 'start_date' ));
+		}
+		return $SQL;
+	}
+
+
+
+	/**
+	 *    posts_join_sql_for_terms
+	 *
+	 * @access    public
+	 * @param array $orderby_params
+	 * @internal  param bool|string $mixed $join_terms pass TRUE or term string, doesn't really matter since this value doesn't really get used for anything yet
+	 * @return    string
+	 */
+	public static function posts_fields_sql_for_orderby( $orderby_params = array() ) {
+		$SQL= '';
+		foreach( (array)$orderby_params as $orderby ) {
+			switch ( $orderby ) {
+
+				case 'ticket_start' :
+					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_start_date' ;
+					break;
+
+				case 'ticket_end' :
+					$SQL .= ', ' . EEM_Ticket::instance()->table() . '.TKT_end_date' ;
+					break;
+
+				case 'venue_title' :
+					$SQL .= ', EE_Venue_TBL.post_title AS venue_title' ;
+					break;
+
+				case 'city' :
+					$SQL .= ', ' . EEM_Venue::instance()->second_table() . '.VNU_city' ;
+					break;
+
+				case 'state' :
+					$SQL .= ', ' . EEM_State::instance()->table() . '.STA_name' ;
+					break;
+
+					break;
+
+			}
+		}
+		return  $SQL;
+	}
+
+
+
+	/**
 	 *    posts_join
 	 *
 	 * @access    public
@@ -142,7 +202,6 @@ class EEH_Event_Query {
 			// Category
 			$SQL .= EEH_Event_Query::posts_join_sql_for_terms( EEH_Event_Query::_event_category_slug() );
 		}
-//		echo '<h5 style="color:#2EA2CC;">$SQL : <span style="color:#E76700">' . $SQL . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		return $SQL;
 	}
 
