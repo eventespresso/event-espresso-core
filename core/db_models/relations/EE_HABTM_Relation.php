@@ -8,7 +8,9 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	 * @var EEMerimental_Base
 	 */
 	private $_joining_model_name;
-	
+
+	private $_model_relation_chain_to_join_model = NULL;
+
 	/**
 	 * Object representing the relationship between two models. HasAndBelongsToMany relations always use a join-table
 	 * (and an ee joining-model.) This knows how to join the models,
@@ -36,16 +38,18 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 		//create sql like
 		//LEFT JOIN join_table AS join_table_alias ON this_table_alias.this_table_pk = join_table_alias.join_table_fk_to_this
 		//LEFT JOIN other_table AS other_table_alias ON join_table_alias.join_table_fk_to_other = other_table_alias.other_table_pk
-		
+		//remember the model relation chain to the JOIN model, because we'll
+		//need it for get_join_statement()
+		$this->_model_relation_chain_to_join_model = $model_relation_chain;
 		$this_table_pk_field = $this->get_this_model()->get_primary_key_field();//get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		$join_table_fk_field_to_this_table = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
 		$this_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_this_model()->get_this_model_name()) . $this_table_pk_field->get_table_alias();
-		
+
 		$join_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_join_model()->get_this_model_name()) . $join_table_fk_field_to_this_table->get_table_alias();
-		$join_table = $this->get_join_model()->get_table_for_alias($join_table_alias);	
+		$join_table = $this->get_join_model()->get_table_for_alias($join_table_alias);
 		//phew! ok, we have all the info we need, now we can create the SQL join string
 		$SQL = $this->_left_join($join_table, $join_table_alias, $join_table_fk_field_to_this_table->get_table_column(), $this_table_alias, $this_table_pk_field->get_table_column()) . $this->get_join_model()->_construct_internal_join_to_table_with_alias($join_table_alias);
-				
+
 		return $SQL;
 	}
 	/**
@@ -57,18 +61,20 @@ class EE_HABTM_Relation extends EE_Model_Relation_Base{
 	 * @return string of SQL
 	 */
 	function get_join_statement($model_relation_chain){
+		if( $this->_model_relation_chain_to_join_model === NULL ){
+			throw new EE_Error( sprintf( __( 'When using EE_HABTM_Relation to create a join, you must call get_join_to_intermediate_model_statement BEFORE get_join_statement', 'event_espresso' )));
+		}
 		$join_table_fk_field_to_this_table = $this->get_join_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
-		$join_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_join_model()->get_this_model_name()) . $join_table_fk_field_to_this_table->get_table_alias();
-		
+		$join_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($this->_model_relation_chain_to_join_model, $this->get_join_model()->get_this_model_name()) . $join_table_fk_field_to_this_table->get_table_alias();
 		$other_table_pk_field = $this->get_other_model()->get_primary_key_field();
 		$join_table_fk_field_to_other_table = $this->get_join_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
 		$other_table_alias = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix($model_relation_chain, $this->get_other_model()->get_this_model_name()) . $other_table_pk_field->get_table_alias();
 		$other_table = $this->get_other_model()->get_table_for_alias($other_table_alias);
-		
+
 		$SQL = $this->_left_join($other_table, $other_table_alias, $other_table_pk_field->get_table_column(), $join_table_alias, $join_table_fk_field_to_other_table->get_table_column()) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
 		return $SQL;
 	}
-	
+
 	/**
 	 * Ensures there is an entry in the join table between these two models. Feel free to do this manually if you like.
 	 * If the join table has additional columns (eg, the Event_Question_Group table has a is_primary column), then you'll

@@ -912,10 +912,10 @@ abstract class EEM_Base extends EE_Base{
 		$wpdb->show_errors( FALSE );
 		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
 		$wpdb->show_errors( $old_show_errors_value );
+		$this->show_db_query_if_previously_requested( $wpdb->last_query );
 		if( ! empty( $wpdb->last_error ) ){
 			throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
 		}
-		$this->show_db_query_if_previously_requested( $wpdb->last_query );
 		return $result;
 	}
 
@@ -1903,13 +1903,13 @@ abstract class EEM_Base extends EE_Base{
 			//replace the model specified with the join model for this relation chain, whi
 			$relation_chain_to_join_model = $this->_replace_model_name_with_join_model_name_in_model_relation_chain($model_name, $join_model_obj->get_this_model_name(), $model_relation_chain);
 			$new_query_info = new EE_Model_Query_Info_Carrier(
-					array($relation_chain_to_join_model => $join_model_obj->get_this_model_name()), 
+					array($relation_chain_to_join_model => $join_model_obj->get_this_model_name()),
 					$relation_obj->get_join_to_intermediate_model_statement($relation_chain_to_join_model));
 			$passed_in_query_info->merge( $new_query_info  );
 		}
 		//now just join to the other table pointed to by the relation object, and add its data types
 		$new_query_info = new EE_Model_Query_Info_Carrier(
-				array($model_relation_chain=>$model_name), 
+				array($model_relation_chain=>$model_name),
 				$relation_obj->get_join_statement($model_relation_chain));
 		$passed_in_query_info->merge( $new_query_info  );
 	}
@@ -1934,8 +1934,8 @@ abstract class EEM_Base extends EE_Base{
 		$model_relation_chain = substr($original_query_param, 0,$pos_of_model_string+strlen($model_name));
 		return EE_Model_Parser::trim_periods($model_relation_chain);
 	}
-	
-	
+
+
 	/**
 	 * Replaces the specified model in teh model relation chain with teh join model
 	 * @param type $model_name
@@ -2034,7 +2034,7 @@ abstract class EEM_Base extends EE_Base{
 				}
 			}else{
 				$field_obj = $this->_deduce_field_from_query_param($query_param);
-				
+
 				//if it's not a normal field, mayeb it's a custom selection?
 				if( ! $field_obj){
 					if(isset( $this->_custom_selections[$query_param][1])){
@@ -2260,9 +2260,9 @@ abstract class EEM_Base extends EE_Base{
 			return null;
 		}
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Givena field's name (ie, a key in $this->field_settings()), uses the EE_Model_Field object to get the table's alias and column
 	 * which corresponds to it
@@ -2297,7 +2297,7 @@ abstract class EEM_Base extends EE_Base{
 			if ( $table_obj instanceof EE_Primary_Table ) {
 				$SQL .= $table_alias == $table_obj->get_table_alias() ? $table_obj->get_select_join_limit( $limit ) : SP.$table_obj->get_table_name()." AS ".$table_obj->get_table_alias().SP;
 			} elseif ( $table_obj instanceof EE_Secondary_Table ) {
-				$SQL .= $table_alias == $table_obj->get_table_alias() ? $table_obj->get_select_join_limit_join($limit) : SP . $table_obj->get_join_sql().SP;
+				$SQL .= $table_alias == $table_obj->get_table_alias() ? $table_obj->get_select_join_limit_join($limit) : SP . $table_obj->get_join_sql( $table_alias ).SP;
 			}
 		}
 		return $SQL;
@@ -2337,7 +2337,7 @@ abstract class EEM_Base extends EE_Base{
 		foreach($this->_tables as $table_obj){
 			if($table_obj instanceof EE_Secondary_Table){//table is secondary table
 				if($alias_sans_prefix == $table_obj->get_table_alias()){
-					//so we're joining to this table, meaning the table is already in 
+					//so we're joining to this table, meaning the table is already in
 					//the FROM statement, BUT the primary table isn't. So we want
 					//to add the inverse join sql
 					$SQL .= $table_obj->get_inverse_join_sql($alias_prefixed);
@@ -2688,8 +2688,8 @@ abstract class EEM_Base extends EE_Base{
 			foreach( $this->field_settings() as $field_name => $field_obj ){
 				//if there is a model relation chain prefix, remove it
 				$field_name = EE_Model_Parser::remove_table_alias_model_relation_chain_prefix($field_name);
-				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"				
-				//does the field on the model relate to this column retrieved from the db? 
+				//ask the field what it think it's table_name.column_name should be, and call it the "qualified column"
+				//does the field on the model relate to this column retrieved from the db?
 				//or is it a db-only field? (not relating to the model)
 				if (( $field_obj->get_qualified_column() == $column_with_model_relation_chain_prefix || $field_obj->get_table_column() == $column_with_model_relation_chain_prefix ) && ! $field_obj->is_db_only_field() ) {
 					//OK, this field apparently relates to this model.
@@ -3032,10 +3032,10 @@ abstract class EEM_Base extends EE_Base{
 			throw new EE_Error(sprintf(__("The operator '%s' is not in the list of valid operators: %s", "event_espresso"),$operator_supplied,implode(",",array_keys($this->_valid_operators))));
 		}
 	}
-	
+
 	/**
 	 * Gets an array where keys are the primary keys and values are their 'names'
-	 * (as determined by the model object's name() function, which is oftne overridden) 
+	 * (as determined by the model object's name() function, which is oftne overridden)
 	 * @param array $query_params like get_all's
 	 * @return string[]
 	 */

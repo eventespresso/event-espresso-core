@@ -107,6 +107,19 @@ class EEM_Base_Test extends EE_UnitTestCase{
 		$this->assertEmpty( EEM_Event::instance()->get_from_entity_map( $e2->ID() ) );
 		$this->assertEquals( EEM_Event::instance()->get_from_entity_map( $e3->ID() ), $e3 );
 	}
+
+	/**
+	 *
+	 * @throws EE_Error
+	 */
+	public function test_distanced_HABTM_join(){
+		try{
+			EEM_Line_Item::instance()->get_all(array(array('Ticket.Datetime.EVT_ID'=>1,'TXN_ID'=>1)));
+			$this->assertTrue( TRUE );
+		}catch( EE_Error $e){
+			throw $e;
+		}
+	}
 }
 
 // End of file EEM_Base_Test.php
