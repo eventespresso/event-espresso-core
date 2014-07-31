@@ -70,11 +70,11 @@ class EES_New_Addon  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-		// this will trigger the EED_Espresso_New_Addon module's run() method during the pre_get_posts hook point,
+		// this will trigger the EED_New_Addon module's run() method during the pre_get_posts hook point,
 		// this allows us to initialize things, enqueue assets, etc,
 		// as well, this saves an instantiation of the module in an array, using 'new_addon' as the key, so that we can retrieve it
 		EE_Registry::instance()->REQ->set( 'ee', 'new_addon' );
-		EED_Espresso_New_Addon::$shortcode_active = TRUE;
+		EED_New_Addon::$shortcode_active = TRUE;
 	}
 
 

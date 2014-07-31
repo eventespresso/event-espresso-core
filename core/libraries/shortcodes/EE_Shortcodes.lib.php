@@ -283,7 +283,7 @@ abstract class EE_Shortcodes extends EE_Base {
 	/**
 	 * This returns any attributes that may be existing on an EE_Shortcode
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $shortcode incoming shortcode
 	 *

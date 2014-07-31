@@ -2,7 +2,7 @@
 /**
  * This contains the class for the EE PDF messenger.
  *
- * @since %VER%
+ * @since 4.5.0
  * @package Event Espresso
  * @subpackage messages
  */
@@ -14,7 +14,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  * EE_Pdf_messenger class
  *
  *
- * @since %VER%
+ * @since 4.5.0
  *
  * @package			Event Espresso
  * @subpackage		messages
@@ -224,7 +224,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 	/**
 	 * @see definition of this method in parent
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 */
 	protected function _set_default_message_types() {
@@ -237,7 +237,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 	/**
 	 * @see definition of this method in parent
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 */
 	protected function _set_valid_message_types() {
 		$this->_valid_message_types = array();
@@ -250,7 +250,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 	 * Generates html verison of the message content and then sends it to the pdf generator.
 	 *
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return string.
 	 */
@@ -275,7 +275,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 	/**
 	 * The purpose of this function is to de register all actions hooked into wp_head and wp_footer so that it doesn't interfere with our templates.  If users want to add any custom styles or scripts they must use the AHEE__EE_Pdf_messenger__enqueue_scripts_styles hook.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return void
 	 */
@@ -296,7 +296,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 	/**
 	 * Overwrite parent _get_main_template for pdf purposes.
 	 *
-	 * @since  %VER%
+	 * @since  4.5.0
 	 *
 	 * @return string
 	 */

@@ -2,7 +2,7 @@
 /**
  * This contains the class for the Line Item List messages shortcode library.
  *
- * @since %VER%
+ * @since 4.5.0
  * @package Event Espresso
  * @subpackage messages
  */
@@ -17,7 +17,7 @@ if (!defined('EVENT_ESPRESSO_VERSION') )
  *
  * This is a special shortcode parser in that it will actually load other parsers and receive a template to parse via the shortcode parser.
  *
- * @since %VER%
+ * @since 4.5.0
  *
  * @package			Event Espresso
  * @subpackage		messages
@@ -67,7 +67,7 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 	/**
 	 * verify incoming data contains what is needed for retrieving and parsing each ticket line item for an event.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return string parsed ticket line item list.
 	 */
@@ -101,7 +101,7 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 	/**
 	 * Verify incoming data contains what is needed for retrieving and parsing each tax line item for a transaction.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return string  parsed tax line item list.
 	 */
@@ -136,7 +136,7 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes {
 	/**
 	 * Verify incoming data contains what is needed for retrieving and parsing each price modifier line item for a parent ticket line item.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @return string parsed price modifier line item list.
 	 */

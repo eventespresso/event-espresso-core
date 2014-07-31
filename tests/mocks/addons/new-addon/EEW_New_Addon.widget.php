@@ -131,7 +131,7 @@ class EEW_New_Addon extends WP_Widget {
 		if ( isset( $post->post_content )) {
 			 // check the post content for the short code
 			 if ( strpos( $post->post_content, '[ESPRESSO_NEW_ADDON') === FALSE ) {
-				 EED_Espresso_New_Addon::$shortcode_active = TRUE;
+				 EED_New_Addon::$shortcode_active = TRUE;
 				// Before widget (defined by themes).
 				echo $args['before_widget'];
 				// Title of widget (before and after defined by themes).
