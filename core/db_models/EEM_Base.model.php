@@ -474,8 +474,8 @@ abstract class EEM_Base extends EE_Base{
 		$select_expressions = $columns_to_select ? $this->_construct_select_from_input($columns_to_select) : $this->_construct_default_select_sql($model_query_info);
 		$SQL ="SELECT $select_expressions ".$this->_construct_2nd_half_of_select_query($model_query_info);
 //		echo "sql:$SQL";
-		$results =  $wpdb->get_results($SQL, $output);
-		$this->show_db_query_if_previously_requested($SQL);
+
+		$results =  $this->_do_wpdb_query( 'get_results', array($SQL, $output ) );// $wpdb->get_results($SQL, $output);
 		return $results;
 	}
 
@@ -639,8 +639,7 @@ abstract class EEM_Base extends EE_Base{
 
 		$model_query_info = $this->_create_model_query_info_carrier($query_params);
 		$SQL = "UPDATE ".$model_query_info->get_full_join_sql()." SET ".$this->_construct_update_sql($fields_n_values).$model_query_info->get_where_sql();//note: doesn't use _construct_2nd_half_of_select_query() because doesn't accept LIMIT, ORDER BY, etc.
-		$rows_affected = $wpdb->query($SQL);
-		$this->show_db_query_if_previously_requested($SQL);
+		$rows_affected = $this->_do_wpdb_query( 'query', array( $SQL ) );
 		return $rows_affected;//how many supposedly got updated
 	}
 
@@ -695,8 +694,7 @@ abstract class EEM_Base extends EE_Base{
 			$SQL = "DELETE ".implode(", ",$table_aliases)." FROM ".$model_query_info->get_full_join_sql()." WHERE ".$deletion_where;
 
 			//		/echo "delete sql:$SQL";
-			$rows_deleted = $wpdb->query($SQL);
-			$this->show_db_query_if_previously_requested($SQL);
+			$rows_deleted = $this->_do_wpdb_query( 'query', array( $SQL ) );
 			//$wpdb->print_error();
 		}else{
 			$rows_deleted = 0;
@@ -865,8 +863,7 @@ abstract class EEM_Base extends EE_Base{
 
 		$column_to_count = $distinct ? "DISTINCT (" . $column_to_count . " )" : $column_to_count;
 		$SQL ="SELECT COUNT(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
-		$this->show_db_query_if_previously_requested($SQL);
-		return (int)$wpdb->get_var($SQL);
+		return (int)$this->_do_wpdb_query( 'get_var', array( $SQL) );
 	}
 
 	/**
@@ -889,13 +886,37 @@ abstract class EEM_Base extends EE_Base{
 		$column_to_count = $field_obj->get_qualified_column();
 
 		$SQL ="SELECT SUM(".$column_to_count.")" . $this->_construct_2nd_half_of_select_query($model_query_info);
-		$this->show_db_query_if_previously_requested($SQL);
-		$return_value = $wpdb->get_var($SQL);
+		$return_value = $this->_do_wpdb_query('get_var',array( $SQL ) );
 		if($field_obj->get_wpdb_data_type() == '%d' || $field_obj->get_wpdb_data_type() == '%s' ){
 			return (int)$return_value;
 		}else{//must be %f
 			return (float)$return_value;
 		}
+	}
+
+	/**
+	 * Just calls the specified method on $wpdb with the given arguments
+	 * Consolidates a little extra error handling code
+	 * @global $wpdb $wpdb
+	 * @param string $wpdb_method
+	 * @param array $arguments_to_provide
+	 * @return mixed
+	 */
+	private function _do_wpdb_query( $wpdb_method, $arguments_to_provide ){
+		global $wpdb;
+		if( ! method_exists( $wpdb, $wpdb_method ) ){
+			throw new EE_Error( sprintf( __( 'There is no method named "%s" on Wordpress\' $wpdb object','event_espresso' ), $wpdb_method ) );
+		}
+		$wpdb->last_error = NULL;
+		$old_show_errors_value = $wpdb->show_errors;
+		$wpdb->show_errors( FALSE );
+		$result = call_user_func_array( array( $wpdb, $wpdb_method ) , $arguments_to_provide );
+		$wpdb->show_errors( $old_show_errors_value );
+		if( ! empty( $wpdb->last_error ) ){
+			throw new EE_Error( sprintf( __( 'WPDB Error: "%s"', 'event_espresso' ), $wpdb->last_error ) );
+		}
+		$this->show_db_query_if_previously_requested( $wpdb->last_query );
+		return $result;
 	}
 
 	/**
@@ -1278,20 +1299,7 @@ abstract class EEM_Base extends EE_Base{
 			$format_for_insertion[]='%d';//yes right now we're only allowing these foreign keys to be INTs
 		}
 		//insert the new entry
-		$old_show_errors_value = $wpdb->show_errors;
-		$wpdb->show_errors(false);
-		$result = $wpdb->insert($table->get_table_name(),$insertion_col_n_values,$format_for_insertion);
-		$wpdb->show_errors($old_show_errors_value);
-		$this->show_db_query_if_previously_requested($wpdb->last_query);
-		if(!$result){
-			throw new EE_Error(sprintf(__("Error inserting values %s for columns %s, using data types %s, into table %s. Error was %s",'event_espresso'),
-					implode(",",$insertion_col_n_values),
-					implode(",",array_keys($insertion_col_n_values)),
-					implode(",",$format_for_insertion),
-					$table->get_table_name(),
-					$wpdb->last_error
-					));
-		}
+		$result = $this->_do_wpdb_query( 'insert', array( $table->get_table_name(), $insertion_col_n_values, $format_for_insertion ) );
 		//ok, now what do we return for the ID of the newly-inserted thing?
 		if($this->has_primary_key_field()){
 			if($this->get_primary_key_field()->is_auto_increment()){

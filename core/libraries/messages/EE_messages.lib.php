@@ -616,7 +616,7 @@ class EE_messages {
 	/**
 	 * This checks the _active_message_types property for any active message types that are present for the given messenger and returns them.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $messenger The messenger being checked
 	 *

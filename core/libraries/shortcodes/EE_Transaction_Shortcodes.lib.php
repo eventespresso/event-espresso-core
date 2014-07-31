@@ -184,7 +184,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	/**
 	 * parser for the [TOTAL_OWING_*] attribute type shortcode
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param string $shortcode the incoming shortcode
 	 *
@@ -224,7 +224,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	/**
 	 * This retrieves a logo to be used for the invoice from whatever is set on the invoice logo settings page.  If its not present then the organization logo is used if its found (set on the organzation settings page).
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param bool $img_tags TRUE means to return with the img tag wrappers.  False just returns the url to the image.
 	 *
@@ -260,7 +260,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes {
 	/**
 	 * Retrieves the url for generating the receipt associated with this transaction.
 	 *
-	 * @since %VER%
+	 * @since 4.5.0
 	 *
 	 * @param EE_Transaction $transaction
 	 *
