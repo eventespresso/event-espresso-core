@@ -131,6 +131,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( ! isset( EE_Registry::instance()->REQ )) {
 			EE_Registry::instance()->load_core( 'Request_Handler' );
 		}
+		// instantiate EE_Checkout object for handling the properties of the current checkout process
+		$this->checkout = EE_Registry::instance()->load_file( SPCO_BASE_PATH, 'EE_Checkout', 'class', array(), FALSE  );
+		if ( ! $this->checkout instanceof EE_Checkout ) {
+			throw new EE_Error( __( 'The EE_Checkout class could not be loaded.', 'event_espresso' ) );
+		}
 		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE );
 		// load the reg steps array
 		$this->load_reg_steps();
@@ -167,11 +172,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @return    array
 	 */
 	private function load_reg_steps() {
-		// instantiate EE_Checkout object for handling the properties of the current checkout process
-		$this->checkout = EE_Registry::instance()->load_file( SPCO_BASE_PATH, 'EE_Checkout', 'class', array(), FALSE  );
-		if ( ! $this->checkout instanceof EE_Checkout ) {
-			throw new EE_Error( __( 'The EE_Checkout class could not be loaded.', 'event_espresso' ) );
-		}
 		// load EE_SPCO_Reg_Step base class
 		EE_Registry::instance()->load_file( SPCO_REG_STEPS_PATH, 'EE_SPCO_Reg_Step', 'class'  );
 		// filter list of reg_steps
@@ -745,6 +745,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 //		echo '<h4>$success_msg : ' . $success_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$error_msg : ' . $error_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
 //		echo '<h4>$attention_msg : ' . $attention_msg . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$errors : ' . $errors . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>$next_step : ' . $this->checkout->next_step->slug() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		echo '<h4>redirect_url : ' . $this->checkout->redirect_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
+//		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 
 		// all good ?
 		if ( $success_msg && ! ( $error_msg || $attention_msg )) {
@@ -772,20 +776,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// store notices in a transient
 		EE_Error::get_notices( FALSE, TRUE, TRUE );
 		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from
-		if ( $this->checkout->redirect ) {
-			wp_redirect( $this->checkout->redirect_url );
-			exit();
-		} else if ( ! $this->checkout->redirect && $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
+		if ( ! $errors && ! $this->checkout->redirect && $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
 			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => '_register', 'step' => $this->checkout->next_step->slug() ));
-//			d( $args );
 			$this->checkout->redirect_url = add_query_arg( $args, $this->checkout->reg_page_base_url );
+			$this->checkout->redirect = TRUE;
+		}
+		if ( $this->checkout->redirect ) {
 			wp_safe_redirect( $this->checkout->redirect_url );
 			exit();
 		}
-//		echo '<h4>$errors : ' . $errors . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>$next_step : ' . $this->checkout->next_step->slug() . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		echo '<h4>redirect_url : ' . $this->checkout->redirect_url . '  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span></h4>';
-//		printr( EE_Registry::instance()->REQ, 'EE_Registry::instance()->REQ  <br /><span style="font-size:10px;font-weight:normal;">' . __FILE__ . '<br />line no: ' . __LINE__ . '</span>', 'auto' );
 		$this->_display_spco_reg_form();
 	}
 
