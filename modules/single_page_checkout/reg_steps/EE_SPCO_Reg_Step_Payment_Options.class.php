@@ -615,7 +615,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			$this->checkout->json_response['return_data'] = array( 'plz-select-method-of-payment' => FALSE );
 			return FALSE;
 		}
-		echo '<h5 style="color:#2EA2CC;">$this->checkout->selected_method_of_payment : <span style="color:#E76700">' . $this->checkout->selected_method_of_payment . '</span><br/><span style="font-size:9px;font-weight:normal;color:#666">' . __FILE__ . '</span>    <b style="font-size:10px;color:#333">  ' . __LINE__ . ' </b></h5>';
 		// get EE_Payment_Method object
 		if ( ! $this->checkout->payment_method = $this->_get_payment_method_for_selected_method_of_payment( $this->checkout->selected_method_of_payment ) ) {
 			return FALSE;
@@ -647,7 +646,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			}
 
 		}
-
 		// please note that offline payment methods will NOT make a payment,
 		// but instead just mark themselves as the PMD_ID on the transaction
 		// so for either on-site / off-site payments OR off-line payment methods
