@@ -89,9 +89,11 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 *  @return 	void
 	 */
 	public static function set_definitions() {
-		define( 'SPCO_ASSETS_URL', plugin_dir_url( __FILE__ ) . 'assets' . DS );
 		define( 'SPCO_BASE_PATH', rtrim( str_replace( array( '\\', '/' ), DS, plugin_dir_path( __FILE__ )), DS ) . DS );
-		define( 'SPCO_REG_STEPS_PATH', SPCO_BASE_PATH . 'reg_steps' . DS );
+		define( 'SPCO_CSS_URL', plugin_dir_url( __FILE__ ) . 'css' . DS );
+		define( 'SPCO_IMG_URL', plugin_dir_url( __FILE__ ) . 'img' . DS );
+		define( 'SPCO_JS_URL', plugin_dir_url( __FILE__ ) . 'js' . DS );
+		define( 'SPCO_INC_PATH', SPCO_BASE_PATH . 'inc' . DS );
 		define( 'SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates' . DS );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( SPCO_BASE_PATH, TRUE );
 	}
@@ -179,7 +181,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// verify
 		if ( ! $checkout instanceof EE_Checkout ) {
 			// instantiate EE_Checkout object for handling the properties of the current checkout process
-			$checkout = EE_Registry::instance()->load_file( SPCO_BASE_PATH, 'EE_Checkout', 'class', array(), FALSE  );
+			$checkout = EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_Checkout', 'class', array(), FALSE  );
 			// verify again
 			if ( ! $checkout instanceof EE_Checkout ) {
 				throw new EE_Error( __( 'The EE_Checkout class could not be loaded.', 'event_espresso' ) );
@@ -200,7 +202,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	private function load_reg_steps() {
 		// load EE_SPCO_Reg_Step base class
-		EE_Registry::instance()->load_file( SPCO_REG_STEPS_PATH, 'EE_SPCO_Reg_Step', 'class'  );
+		EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_SPCO_Reg_Step', 'class'  );
 		// filter list of reg_steps
 		$reg_steps_to_load = apply_filters( 'AHEE__SPCO__load_reg_steps__reg_steps_to_load', $this->get_reg_steps() );
 		// sort by key (order)
@@ -249,22 +251,22 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		if ( empty( $reg_steps )) {
 			$reg_steps = array(
 				10 => array(
-					'file_path' => EE_MODULES . DS . 'single_page_checkout' . DS . 'reg_steps' . DS,
+					'file_path' => SPCO_INC_PATH,
 					'class_name' => 'EE_SPCO_Reg_Step_Attendee_Information',
 					'slug' => 'attendee_information'
 				),
 				20 => array(
-					'file_path' => EE_MODULES . DS . 'single_page_checkout' . DS . 'reg_steps' . DS,
+					'file_path' => SPCO_INC_PATH,
 					'class_name' => 'EE_SPCO_Reg_Step_Registration_Confirmation',
 					'slug' => 'registration_confirmation'
 				),
 				30 => array(
-					'file_path' => EE_MODULES . DS . 'single_page_checkout' . DS . 'reg_steps' . DS,
+					'file_path' => SPCO_INC_PATH,
 					'class_name' => 'EE_SPCO_Reg_Step_Payment_Options',
 					'slug' => 'payment_options'
 				),
 				999 => array(
-					'file_path' => EE_MODULES . DS . 'single_page_checkout' . DS . 'reg_steps' . DS,
+					'file_path' => SPCO_INC_PATH,
 					'class_name' => 'EE_SPCO_Reg_Step_Finalize_Registration',
 					'slug' => 'finalize_registration'
 				)
@@ -613,14 +615,14 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public function enqueue_styles_and_scripts() {
 		// load css
-		wp_register_style( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.css', array(), EVENT_ESPRESSO_VERSION );
+		wp_register_style( 'single_page_checkout', SPCO_CSS_URL . 'single_page_checkout.css', array(), EVENT_ESPRESSO_VERSION );
 		wp_enqueue_style( 'single_page_checkout' );
 		// i18n
 		$this->translate_js_strings();
 		$this->checkout->current_step->translate_js_strings();
 		// load JS
 //		wp_enqueue_script( 'underscore' );
-//		wp_register_script( 'single_page_checkout', SPCO_ASSETS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
+//		wp_register_script( 'single_page_checkout', SPCO_JS_URL . 'single_page_checkout.js', array('espresso_core', 'underscore'), EVENT_ESPRESSO_VERSION, TRUE );
 //		wp_enqueue_script( 'single_page_checkout' );
 //		wp_localize_script( 'single_page_checkout', 'eei18n', EE_Registry::$i18n_js_strings );
 		// add css and JS for current step
@@ -805,7 +807,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EE_Error::get_notices( FALSE, TRUE, TRUE );
 		// no errors, means progress to next step, but if next step is empty, then redirect to thank you page. errors means return to page we came from
 		if ( ! $errors && ! $this->checkout->redirect && $this->checkout->next_step instanceof EE_SPCO_Reg_Step ) {
-			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => '_register', 'step' => $this->checkout->next_step->slug() ));
+//			$args = $this->_process_return_to_reg_step_query_args( array( 'ee' => '_register', 'step' => $this->checkout->next_step->slug() ));
+			$args = array( 'step' => $this->checkout->next_step->slug() );
 			$this->checkout->redirect_url = add_query_arg( $args, $this->checkout->reg_page_base_url );
 			$this->checkout->redirect = TRUE;
 		}

@@ -637,7 +637,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step {
 			if ( $payment->redirect_url() ){
 				$this->checkout->redirect = TRUE;
 				$this->checkout->redirect_form = $payment->redirect_form();
-				$this->checkout->redirect_url = add_query_arg(  array( 'ee' => '_register', 'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
+				$this->checkout->redirect_url = add_query_arg(  array( /*'ee' => '_register', */'step' => $this->slug(), 'action' => 'redirect_form' ), $this->checkout->reg_page_base_url );
 				// setup URL for redirect
 				$this->checkout->json_response['return_data'] = array( 'off-site-redirect' => $this->checkout->redirect_form );
 //				d( $payment );

@@ -244,7 +244,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function reg_step_url( $action = '' ) {
-		$query_args = array( 'ee' => '_register', 'step' => $this->slug() );
+		$query_args = array( 'step' => $this->slug() );
 		if( ! empty( $action )) {
 			$query_args['action'] = $action;
 		}
@@ -369,7 +369,7 @@ abstract class EE_SPCO_Reg_Step {
 	 * @return string
 	 */
 	public function edit_lnk_url() {
-		return 	add_query_arg( array( 'ee' => '_register', 'step' => $this->slug() ), $this->checkout->reg_page_base_url );
+		return 	add_query_arg( array( /*'ee' => '_register', */'step' => $this->slug() ), $this->checkout->reg_page_base_url );
 
 	}
 
