@@ -41,12 +41,15 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 	public static function set_hooks_admin() {
 	}
 
+
+
 	/**
-	 * 	run - initial shortcode module setup called during "wp_loaded" hook
-	 * 	this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
+	 *    run - initial shortcode module setup called during "wp_loaded" hook
+	 *    this method is primarily used for loading resources that will be required by the shortcode when it is actually processed
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param WP $WP
+	 * @return    void
 	 */
 	public function run( WP $WP ) {
 		// SPCO is large and resource intensive, so it's better to do a double check before loading it up, so let's grab the post_content for the requested post
@@ -55,10 +58,14 @@ class EES_Espresso_Checkout  extends EES_Shortcode {
 		if( $post_content = $wpdb->get_var( $wpdb->prepare( $SQL, EE_Registry::instance()->REQ->get( 'post_name' )))) {
 			// now check for this shortcode
 			if ( strpos( $post_content, '[ESPRESSO_CHECKOUT' ) !== FALSE ) {
-				EE_Registry::instance()->REQ->set( 'ee', '_register' );
+				if ( ! EE_Registry::instance()->REQ->get( 'step' )) {
+					EE_Registry::instance()->REQ->set( 'step', '1' );
+				}
 			}
 		}
 	}
+
+
 
 	/**
 	 * 	process_shortcode - ESPRESSO_CHECKOUT

@@ -53,7 +53,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	public static function set_hooks() {
 		EED_Single_Page_Checkout::set_definitions();
 		// set routing
-		EE_Config::register_route( '_register', 'EED_Single_Page_Checkout', 'run' );
+		EE_Config::register_route( '1', 'EED_Single_Page_Checkout', 'run', 'step' );
 //		EE_Config::register_route( 'process_reg_step', 'EED_Single_Page_Checkout', 'process_reg_step' );
 //		EE_Config::register_route( 'finalize_registration', 'EED_Single_Page_Checkout', 'finalize_registration' );
 		// add powered by EE msg
@@ -70,7 +70,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		EED_Single_Page_Checkout::set_definitions();
-		EE_Config::register_route( '_register', 'EED_Single_Page_Checkout', 'run' );
+		EE_Config::register_route( '1', 'EED_Single_Page_Checkout', 'run', 'step' );
 //		EE_Config::register_route( 'process_reg_step', 'EED_Single_Page_Checkout', 'process_reg_step' );
 //		EE_Config::register_route( 'finalize_registration', 'EED_Single_Page_Checkout', 'finalize_registration' );
 		// set ajax hooks
@@ -812,8 +812,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 			$this->checkout->redirect_url = add_query_arg( $args, $this->checkout->reg_page_base_url );
 			$this->checkout->redirect = TRUE;
 		}
-//		d( $this->checkout );
-//		die();
 		if ( $this->checkout->redirect ) {
 			wp_safe_redirect( $this->checkout->redirect_url );
 			exit();
