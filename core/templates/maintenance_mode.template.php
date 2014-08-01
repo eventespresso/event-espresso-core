@@ -15,10 +15,10 @@
  */
 get_header();
 ?>
-<div class="maxwidth max-width row">
+<div class="maxwidth max-width row" style="padding:2em; ">
 	<div id="ee-maintenance-mode-wrap-dv" class="site-content left">
 		<div id="ee-maintenance-mode-dv" class="" role="main">
-			<article id="ee-maintenance-mode">				
+			<article id="ee-maintenance-mode">
 				<header class="event-header">
 					<h1  id="ee-maintenance-mode-h1"><?php _e( 'Maintenance Mode', 'event_espresso' ); ?></h1>
 				</header>
