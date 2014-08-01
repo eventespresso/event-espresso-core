@@ -1521,6 +1521,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 				);
 		}
 
+		//if empty $tp_select_values then we make sure default is set because EVERY message type should be supported by the default template pack.  This still allows for the odd template pack to override.
+		if ( empty( $tp_select_values ) ) {
+			$tp_select_values[] = array(
+				'text' => __('Default', 'event_espresso'),
+				'id' => 'default'
+				);
+		}
+
 		//setup variation select values for the currently selected template.
 		$variations = $this->_message_template_group->get_template_pack()->get_variations( $this->_message_template_group->messenger(), $this->_message_template_group->message_type() );
 		$variations_select_values = array();
