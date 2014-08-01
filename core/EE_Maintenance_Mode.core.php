@@ -44,7 +44,7 @@ class EE_Maintenance_Mode {
 	const level_2_complete_maintenance = 2;
 
 	/**
-	 * the nameof the option which stores the current level of maintenance mode
+	 * the name of the option which stores the current level of maintenance mode
 	 */
 	const option_name_maintenance_mode = 'ee_maintenance_mode';
    /**
@@ -69,7 +69,7 @@ class EE_Maintenance_Mode {
 	/**
 	 *@singleton method used to instantiate class object
 	 *@access public
-	 *@return EE_Maintenance_Mode instance
+	 *@return EE_Maintenance_Mode
 	 */
 	public static function instance() {
 		// check if class object is instantiated
@@ -85,10 +85,10 @@ class EE_Maintenance_Mode {
 	 *private constructor to prevent direct creation
 	 *@Constructor
 	 *@access private
-	 *@return void
+	 *@return EE_Maintenance_Mode
 	 */
 	private function __construct() {
-		// if M-Mode level 2 is engaged, we still need basic assests loaded
+		// if M-Mode level 2 is engaged, we still need basic assets loaded
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_assets_required_for_m_mode' ));
 		// shut 'er down down for maintenance ?
 		add_filter( 'the_content', array( $this, 'the_content' ), 999 );
@@ -118,8 +118,8 @@ class EE_Maintenance_Mode {
 
 	/**
 	 * Determines whether or not we're in maintenance mode and what level. However, while the site
-	 * is in level 1 maintenance, and an admin visits the frontend, this fucntion makes it appear
-	 * to them as if teh site isn't in mainteance mode.
+	 * is in level 1 maintenance, and an admin visits the frontend, this function makes it appear
+	 * to them as if teh site isn't in maintenance mode.
 	 * EE_Maintenance_Mode::level_0_not_in_maintenance => not in maintenance mode (in normal mode)
 	 * EE_Maintenance_Mode::level_1_frontend_only_maintenance=> frontend-only maintenance mode
 	 * EE_Maintenance_Mode::level_2_complete_maintenance => frontend and backend maintenance mode
@@ -185,30 +185,29 @@ class EE_Maintenance_Mode {
 
 
 	/**
-	 * 	template_include
+	 *    template_include
 	 *
-	 * 	replacement EE CPT template that displays message notifying site visitors that EE has been temporarily placed into maintenance mode
+	 *    replacement EE CPT template that displays message notifying site visitors that EE has been temporarily placed into maintenance mode
 	 *
-	 *  @access 	public
-	 *  @return 	string
+	 * @access    public
+	 * @param    string $template_path
+	 * @return    string
 	 */
-	public static function template_include() {
-		if ( file_exists( EVENT_ESPRESSO_TEMPLATE_DIR . 'maintenance_mode.template.php' )) {
-			return EVENT_ESPRESSO_TEMPLATE_DIR . 'maintenance_mode.template.php';
-		} else if ( file_exists( EE_PLUGIN_DIR_PATH . 'templates/maintenance_mode.template.php' )) {
-			return EE_PLUGIN_DIR_PATH . 'templates/maintenance_mode.template.php';
-		}
+	public static function template_include( $template_path ) {
+		$template_located = EEH_Template::locate_template( EE_TEMPLATES . 'maintenance_mode.template.php', FALSE, FALSE );
+		return $template_located ? $template_located : $template_path;
 	}
 
 
 
 	/**
-	 * 	the_content
+	 *    the_content
 	 *
-	 * 	displays message notifying site visitors that EE has been temporarily placed into maintenance mode when post_type != EE CPT
+	 *    displays message notifying site visitors that EE has been temporarily placed into maintenance mode when post_type != EE CPT
 	 *
-	 *  @access 	public
-	 *  @return 	void
+	 * @access    public
+	 * @param    string $the_content
+	 * @return    string
 	 */
 	public function the_content( $the_content ) {
 		// check if M-mode is engaged and for EE shortcode
@@ -269,7 +268,7 @@ class EE_Maintenance_Mode {
 		return array();
 	}
 	final function __wakeup() {}
-	final function __toString() {}
+//	final function __toString() {}
 	final function __invoke() {}
 	final function __set_state() {}
 	final function __clone() {}

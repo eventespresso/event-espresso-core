@@ -30,6 +30,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	protected $_active_messengers = array();
 	protected $_active_message_types = array();
+	protected $_active_message_type_name = '';
 	protected $_active_messenger;
 	protected $_activate_state;
 	protected $_activate_meta_box_type;
@@ -578,11 +579,12 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 	public function wp_editor_css( $mce_css ) {
 		//if we're on the edit_message_template route
-		if ( $this->_req_action == 'edit_message_template' && !empty( $this->_active_messenger ) ) {
+		if ( $this->_req_action == 'edit_message_template' && $this->_active_messenger instanceof EE_messenger  ) {
+			$message_type_name = $this->_active_message_type_name;
 
 			//we're going to REPLACE the existing mce css
 			//we need to get the css file location from the active messenger
-			$mce_css = $this->_active_messenger->get_variation($this->_template_pack, TRUE, 'wpeditor', $this->_variation );
+			$mce_css = $this->_active_messenger->get_variation($this->_template_pack, $message_type_name, TRUE, 'wpeditor', $this->_variation );
 		}
 
 		return $mce_css;
@@ -617,7 +619,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			$this->_active_messenger = $this->_active_messengers[$this->_req_data['messenger']]['obj'];
 		}
 
-		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_variation( $this->_template_pack, TRUE, 'preview', $this->_variation ) );
+		$message_type_name = isset( $this->_req_data['message_type'] ) ? $this->_req_data['message_type'] : '';
+
+
+		wp_enqueue_style('espresso_preview_css', $this->_active_messenger->get_variation( $this->_template_pack, $message_type_name, TRUE, 'preview', $this->_variation ) );
 	}
 
 
@@ -912,6 +917,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		//set active messenger for this view
 		$this->_active_messenger = $this->_active_messengers[$message_template_group->messenger()]['obj'];
+		$this->_active_message_type_name = $message_template_group->message_type();
 
 
 		//Do we have any validation errors?
