@@ -1569,6 +1569,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		//test button
 		//first we need to see if there are any fields
 		$fields = $this->_message_template_group->messenger_obj()->get_test_settings_fields();
+
 		if ( !empty( $fields ) ) {
 			//yup there be fields
 			foreach ( $fields as $field => $config ) {
@@ -1599,13 +1600,15 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 		$test_settings_fields = !empty( $template_form_fields) ? $this->_generate_admin_form_fields( $template_form_fields, 'string', 'ee_tst_settings_flds' ) : '';
 
+		$test_settings_html = '';
 		//print out $test_settings_fields
 		if ( !empty( $test_settings_fields ) ) {
 			echo $test_settings_fields;
+			$test_settings_html = '<input type="submit" class="button-primary mtp-test-button alignright" name="test_button" value="' . __('Test Send', 'event_espresso') . '" />';
 		}
 
 		//and button
-		echo '<input type="submit" class="button-primary mtp-test-button alignright" name="test_button" value="' . __('Test Send', 'event_espresso') . '" /><div class="publishing-action alignright resetbutton">' . $button . '</div><div style="clear:both"></div>';
+		echo $test_settings_html . '<div class="publishing-action alignright resetbutton">' . $button . '</div><div style="clear:both"></div>';
 	}
 
 
