@@ -594,6 +594,14 @@ abstract class EEM_Base extends EE_Base{
 	 */
 	function update($fields_n_values, $query_params){
 		/**
+		 * Action called befpre a model update call has been made.
+		 *
+		 * @param EEM_Base $model
+		 * @param array $fields_n_values the updated fields and their new values
+		 * @param array $query_params @see EEM_Base::get_all()
+		 */
+		do_action( 'AHEE__EEM_Base__update__begin',$this, $fields_n_values, $query_params );
+		/**
 		 * Filters the fields about to be updated given the query parameters. You can provide the
 		 * $query_params to $this->get_all() to find exactly which records will be updated
 		 * @param array $fields_n_values fields and their new values

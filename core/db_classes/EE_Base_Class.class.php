@@ -164,6 +164,19 @@ abstract class EE_Base_Class{
 		}
 	}
 
+	/**
+	 * Gets the field's original value when this object was constructed during this request.
+	 * This can be helpful when determining if a model object has changed or not
+	 * @param string $field_name
+	 */
+	public function get_original( $field_name ){
+		if( isset( $this->_props_n_values_provided_in_constructor[ $field_name ] ) &&
+				$field_settings = $this->get_Model()->field_settings_for( $field_name )){
+			return $field_settings->prepare_for_get( $this->_props_n_values_provided_in_constructor[ $field_name ] );
+		}else{
+			return NULL;
+		}
+	}
 
 
 	/**
