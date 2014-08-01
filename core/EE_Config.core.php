@@ -375,7 +375,7 @@ final class EE_Config {
 			// TEST #1 : check that section was set
 			if ( in_array( 1, $tests_to_run ) && empty( $section )) {
 				if ( $display_errors ) {
-					throw new EE_Error( sprintf( __( 'No configuration section has been provided.', 'event_espresso' ), $section ));
+					throw new EE_Error( sprintf( __( 'No configuration section has been provided while attempting to save "%s".', 'event_espresso' ), $config_class ));
 				}
 				return FALSE;
 			}
@@ -525,17 +525,31 @@ final class EE_Config {
 		if ( ! $this->_verify_config_params( $section, $name, $config_class, $config_obj, array( 1, 2, 3, 4, 5, 9 ))) {
 			return FALSE;
 		}
+		$config_option_name = $this->_generate_config_option_name( $section, $name );
 		// check if config object has been added to db by seeing if config option name is in $this->_config_option_names array
-		if ( ! in_array( $this->_generate_config_option_name( $section, $name ), $this->_config_option_names  )) {
+		if ( ! in_array( $config_option_name, $this->_config_option_names  )) {
 			// save new config to db
 			return $this->set_config( $section, $name, $config_class, $config_obj );
 		} else {
-			// update wp-option for this config class.
-			if ( update_option( $this->_generate_config_option_name( $section, $name ), $config_obj )) {
+			// first check if the record already exists
+			$existing_config = get_option( $config_option_name );
+			// just return if db record is already up to date
+			if ( $existing_config == $config_obj ) {
+				$this->{$section}->{$name} = $config_obj;
+				return TRUE;
+			} else if ( update_option( $config_option_name, $config_obj )) {
+				// update wp-option for this config class
 				$this->{$section}->{$name} = $config_obj;
 				return $this->update_espresso_config();
 			} else {
-				EE_Error::add_error( sprintf( __( 'The "%s" was not updated in the database.', 'event_espresso' ), $config_class ), __FILE__, __FUNCTION__, __LINE__ );
+				EE_Error::add_error(
+					sprintf(
+						__( 'The "%s" object stored at"%s" was not successfully updated in the database.', 'event_espresso' ),
+						$config_class,
+						'EE_Config->' . $section . '->' . $name
+					),
+					__FILE__, __FUNCTION__, __LINE__
+				);
 				return FALSE;
 			}
 		}
@@ -1676,6 +1690,17 @@ class EE_Registration_Config extends EE_Config_Base {
       public $skip_reg_confirmation;
 
 	/**
+	 * an array of SPCO reg steps where:
+	 * 		the keys denotes the reg step order
+	 * 		each element consists of an array with the following elements:
+	 * 			"file_path" => the file path to the EE_SPCO_Reg_Step class
+	 * 			"class_name" => the specific EE_SPCO_Reg_Step child class name
+	 * 			"slug" => the URL param used to trigger the reg step
+	 * @var array $reg_steps
+	 */
+      public $reg_steps;
+
+	/**
 	 * Whether registration confirmation should be the last page of SPCO
 	 * @var boolean $reg_confirmation_last
 	 */
@@ -1732,6 +1757,7 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->default_STS_ID = EEM_Registration::status_id_pending_payment;
 		$this->show_pending_payment_options = FALSE;
 		$this->skip_reg_confirmation = FALSE;
+		$this->reg_steps = array();
 		$this->reg_confirmation_last = FALSE;
 		$this->use_captcha = FALSE;
 		$this->recaptcha_theme = 'clean';
@@ -1740,6 +1766,9 @@ class EE_Registration_Config extends EE_Config_Base {
 		$this->recaptcha_publickey = NULL;
 		$this->recaptcha_privatekey = NULL;
 	}
+
+
+
 
 }
 
@@ -2133,14 +2162,11 @@ class EE_Environment_Config extends EE_Config_Base {
 	 * }
 	 */
 	public function max_input_vars_limit_check( $input_count = 0 ) {
-		if ( ( $input_count >= $this->php->max_input_vars ) && version_compare( $this->php->version, '5.3' ) ) {
-			$response['has_space'] = FALSE;
-			$response['msg'] = __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
+		if ( ( $input_count >= $this->php->max_input_vars ) && version_compare( $this->php->version, '5.3', '>=' ) ) {
+			return  __('The number of inputs on this page has been exceeded.  You cannot add anymore items (i.e. tickets, datetimes, custom fields) on this page because of your servers PHP "max_input_vars" setting.', 'event_espresso');
 		} else {
-			$response['has_space'] = TRUE;
-			$response['msg'] = '';
+			return '';
 		}
-		return $response;
 	}
 }
 

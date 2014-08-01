@@ -373,7 +373,7 @@ class EEH_Activation {
 		if (!in_array($column_name, $fields)){
 			$alter_query="ALTER TABLE $full_table_name ADD $column_name $column_info";
 			//echo "alter query:$alter_query";
-			return mysql_query($alter_query);
+			return $wpdb->query($alter_query);
 		}
 		return true;
 	}
@@ -394,12 +394,11 @@ class EEH_Activation {
 		global $wpdb;
 		$table_name=$wpdb->prefix.$table_name;
 		if ( ! empty( $table_name )) {
-			if (($tablefields = mysql_list_fields(DB_NAME, $table_name, $wpdb -> dbh)) !== FALSE) {
-				$columns = mysql_num_fields($tablefields);
+			$columns = $wpdb->get_results("SHOW COLUMNS FROM $table_name ");
+			if ($columns !== FALSE) {
 				$field_array = array();
-				for ($i = 0; $i < $columns; $i++) {
-					$fieldname = mysql_field_name($tablefields, $i);
-					$field_array[] = $fieldname;
+				foreach($columns as $column ){
+					$field_array[] = $column->Field;;
 				}
 				return $field_array;
 			}

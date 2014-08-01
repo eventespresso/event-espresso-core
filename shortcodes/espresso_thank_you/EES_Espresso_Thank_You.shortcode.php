@@ -176,7 +176,12 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 	 *  @return 	void
 	 */
 	public function run( WP $WP ) {
-
+		// ensure this shortcode doesn't trigger on anything BUT the thank you page
+		if ( isset( $WP->request ) && basename( $WP->request ) != basename( EE_Registry::instance()->CFG->core->thank_you_page_url() )) {
+			return;
+		} else if ( isset( $WP->query_vars['page_id'] ) && $WP->query_vars['page_id'] != EE_Registry::instance()->CFG->core->thank_you_page_id ) {
+			return;
+		}
 		// only do thank you page stuff if we have a REG_url_link in the url
 		if ( ! EE_Registry::instance()->REQ->is_set( 'e_reg_url_link' )) {
 			EE_Error::add_error(
@@ -278,7 +283,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		} else {
 			$this->_show_try_pay_again_link = FALSE;
 		}
-		$this->_is_offline_payment_method = $this->_current_txn->payment_method() && $this->_current_txn->payment_method()->type_obj() && $this->_current_txn->payment_method()->type_obj()->get_gateway() ? TRUE : FALSE;
+		$this->_is_offline_payment_method = $this->_current_txn->payment_method()->is_off_line() ? TRUE : FALSE;
 		// link to SPCO
 		$revisit_spco_url = add_query_arg(
 			array( 'ee'=>'_register', 'revisit'=>TRUE, 'e_reg_url_link'=>$this->_reg_url_link ),
@@ -291,6 +296,9 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 
 		EE_Registry::instance()->load_helper( 'Template' );
 		EE_Registry::instance()->load_helper( 'Template_Validator' );
+
+		do_action( 'AHEE__EES_Espresso_Thank_You__init_end', $this->_current_txn );
+
 	}
 
 
@@ -316,6 +324,7 @@ class EES_Espresso_Thank_You  extends EES_Shortcode {
 		}
 		// link to receipt
 		$template_args['TXN_receipt_url'] = $this->_current_txn->receipt_url( 'html' );
+		$template_args['transaction'] = $this->_current_txn;
 
  		add_action( 'AHEE__thank_you_page_overview_template__content', array( $this, 'get_registration_details' ));
  		if ( $this->_is_primary && ! $this->_current_txn->is_free() ) {

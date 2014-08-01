@@ -119,11 +119,14 @@ abstract class EE_Admin_Page_Menu_Map  {
 	 * admin menu.
 	 *
 	 * @since 4.4.0
-	 * @var boolean
+	 * @var int
 	 */
-	public $show_on_menu = TRUE;
+	public $show_on_menu = self::BLOG_ADMIN_ONLY;
 
-
+	const NONE = 0;
+	const BLOG_ADMIN_ONLY = 1;
+	const BLOG_AND_NETWORK_ADMIN = 2;
+	const NETWORK_ADMIN_ONLY = 3;
 
 
 
@@ -153,7 +156,7 @@ abstract class EE_Admin_Page_Menu_Map  {
 
 			switch ( $prop ) {
 				case 'show_on_menu' :
-					$value = (bool) $value;
+					$value = (int) $value;
 					break;
 				case 'admin_init_page' :
 					if ( in_array( 'admin_init_page', $required ) && ! $value instanceof EE_Admin_Page_Init ) {
@@ -194,10 +197,20 @@ abstract class EE_Admin_Page_Menu_Map  {
 	/**
 	 * Called by client code to use this menu map for registering a WordPress admin page
 	 *
+	 * @param boolean $network_admin whether this is being added to the network admin page or not
 	 * @since  4.4.0
 	 */
-	public function add_menu_page() {
-		$wp_page_slug = $this->_add_menu_page();
+	public function add_menu_page( $network_admin = FALSE ) {
+
+		$show_on_menu_int = (int) $this->show_on_menu;
+		if( ( $network_admin && in_array( $show_on_menu_int, array( self::BLOG_AND_NETWORK_ADMIN, self::NETWORK_ADMIN_ONLY ), TRUE ) )
+				||
+			( ! $network_admin && in_array( $show_on_menu_int, array( self::BLOG_AND_NETWORK_ADMIN, self::BLOG_ADMIN_ONLY ), TRUE )) ){
+			$wp_page_slug = $this->_add_menu_page();
+		}else{
+			$wp_page_slug = '';
+		}
+
 		if ( !empty( $wp_page_slug ) && $this->admin_init_page instanceof EE_Admin_Page_Init ) {
 			try {
 				$this->admin_init_page->set_page_dependencies( $wp_page_slug );
@@ -257,7 +270,7 @@ class EE_Admin_Page_Main_Menu extends EE_Admin_Page_Menu_Map {
 	 * Uses the proper WP utility for registering a menu page for the main WP pages.
 	 */
 	protected function _add_menu_page() {
-		return $this->show_on_menu ? add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback ) : '';
+		return add_menu_page( $this->title, $this->menu_label, $this->capability, $this->parent_slug, $this->menu_callback );
 	}
 } //end EE_Admin_Page_Main_Menu
 
@@ -278,7 +291,7 @@ class EE_Admin_Page_Sub_Menu extends EE_Admin_Page_Main_Menu {
 
 
 	protected function _add_menu_page() {
-		return $this->show_on_menu ? add_submenu_page( $this->parent_slug, $this->title, $this->menu_label, $this->capability, $this->menu_slug, $this->menu_callback ) : '';
+		return add_submenu_page( $this->parent_slug, $this->title, $this->menu_label, $this->capability, $this->menu_slug, $this->menu_callback );
 	}
 
 } //end class EE_Admin_Page_Menu_Map
@@ -306,7 +319,7 @@ class EE_Admin_Page_Menu_Group extends EE_Admin_Page_Menu_Map {
 
 
 	protected function _add_menu_page() {
-		return $this->show_on_menu ? add_submenu_page( $this->parent_slug, $this->menu_label, $this->_group_link(), $this->capability, $this->menu_slug, '__return_false' ): '';
+		return add_submenu_page( $this->parent_slug, $this->menu_label, $this->_group_link(), $this->capability, $this->menu_slug, '__return_false' );
 	}
 
 

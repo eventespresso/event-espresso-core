@@ -16,16 +16,25 @@ class EEM_Event_Question_Group extends EEM_Base{
 	 *
 	 *		@access public
 	 *		@return EEM_Question_Group instance
-	 */	
+	 */
 	public static function instance(){
-	
+
 		// check if instance of EEM_Attendee already exists
 		if ( self::$_instance === NULL ) {
-			// instantiate Espresso_model 
+			// instantiate Espresso_model
 			self::$_instance = new self();
 		}
 		// EEM_Attendee object
 		return self::$_instance;
+	}
+
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Event_Question_Group
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
 	}
 
 	protected function __construct(){

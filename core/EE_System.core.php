@@ -129,6 +129,8 @@ final class EE_System {
 		// load a few helper files
 		EE_Registry::instance()->load_helper( 'File' );
 		EE_Registry::instance()->load_helper( 'Autoloader', array(), FALSE );
+		require_once EE_CORE . 'EE_Deprecated.core.php';
+
 		// allow addons to load first so that they can register autoloaders, set hooks for running DMS's, etc
 		add_action( 'plugins_loaded', array( $this, 'load_espresso_addons' ), 1 );
 		// when an ee addon is activated, we want to call the core hook(s) again
@@ -812,7 +814,7 @@ final class EE_System {
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__start' );
 		// register Custom Post Types
 		EE_Registry::instance()->load_core( 'Register_CPTs' );
-		EE_Registry::instance()->load_core( 'Session' );
+//		EE_Registry::instance()->load_core( 'Session' );
 		do_action( 'AHEE__EE_System__load_CPTs_and_session__complete' );
 	}
 
@@ -852,7 +854,9 @@ final class EE_System {
 	*/
 	public function core_loaded_and_ready() {
 		do_action( 'AHEE__EE_System__core_loaded_and_ready' );
-		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
+		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+//		add_action( 'wp_loaded', array( $this, 'set_hooks_for_shortcodes_modules_and_addons' ), 1 );
+		EE_Registry::instance()->load_core( 'Session' );
 	}
 
 
@@ -875,18 +879,18 @@ final class EE_System {
 //		),'limit'=>10));
 //		d($logs);
 //		EEM_Log::instance()->get_all(array('force_join'=>array('Payment.Payment_Method','Payment_Method')));
-		
-		
+
+
 //		EEM_Answer::instance()->show_next_x_db_queries();
 //		EEM_Answer::instance()->get_all(array(array(
 //			'Question.Question_Group.QSG_ID'=>1
 //		)));
-		
-		
+
+
 //		EEM_Event::instance()->show_next_x_db_queries();
 //		EEM_Event::instance()->get_all();
 		//should produce no errors
-		
+
 //		EEM_Venue::instance()->get_all(array('force_join'=>array('Event')));
 		//should produce no error
 //		die;
@@ -921,7 +925,7 @@ final class EE_System {
 	* @return void
 	*/
 	public function set_hooks_for_shortcodes_modules_and_addons() {
-		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
+//		do_action( 'AHEE__EE_System__set_hooks_for_shortcodes_modules_and_addons' );
 	}
 
 

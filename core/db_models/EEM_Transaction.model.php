@@ -124,7 +124,13 @@ class EEM_Transaction extends EEM_Base {
 		return self::$_instance;
 	}
 
-	public static function reset( $timezone = null){
+
+
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Transaction
+	 */
+	public static function reset( $timezone = NULL ){
 		self::$_instance = NULL;
 		return self::instance( $timezone );
 	}

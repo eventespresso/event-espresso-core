@@ -22,28 +22,6 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 
 
 
-	/**
-	 * returns the default template field content for the various contexts and fields (called by $this->_set_default_field_content() ).
-	 *
-	 * @since 4.5.0
-	 *
-	 * @return array
-	 */
-	abstract protected function _default_template_field_content();
-
-
-
-	/**
-	 * returns the default template field content for the subject field in the various contexts ( called by $this->_set_default_field_content() )
-	 *
-	 * @since 4.5.0
-	 *
-	 * @return array
-	 */
-	abstract protected function _default_template_field_subject();
-
-
-
 	protected function _set_admin_pages() {
 		$this->admin_registered_pages = array(
 			'events_edit' => TRUE
@@ -109,32 +87,6 @@ abstract class EE_Registration_Base_message_type extends EE_message_type {
 	}
 
 
-
-
-
-	protected function _set_default_field_content() {
-
-		$this->_default_field_content = array(
-			'subject' => $this->_default_template_field_subject(),
-			'content' => $this->_default_template_field_content(),
-		);
-	}
-
-
-
-
-
-
-	protected function _set_valid_shortcodes() {
-		parent::_set_valid_shortcodes();
-
-		//remove unwanted transaction shortcode
-		foreach ( $this->_valid_shortcodes as $context => $shortcodes ) {
-			if( ($key = array_search('transaction', $shortcodes) ) !== false && $this->name != 'pending_approval' ) {
-			    unset($this->_valid_shortcodes[$context][$key]);
-			}
-		}
-	}
 
 
 

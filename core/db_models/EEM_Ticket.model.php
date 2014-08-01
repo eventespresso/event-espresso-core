@@ -104,6 +104,15 @@ class EEM_Ticket extends EEM_Soft_Delete_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Ticket
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 
 
 	/**

@@ -109,6 +109,7 @@ abstract class EE_Base_Class{
 	 * @param boolean 	$bydb 			a flag for setting if the class is instantiated by the corresponding db model or not.
 	 * @param string 		$timezone 	indicate what timezone you want any datetime fields to be in when instantiating a EE_Base_Class object.
 	 * @throws EE_Error
+	 * @return \EE_Base_Class
 	 */
 	protected function __construct( $fieldValues = array(), $bydb = FALSE, $timezone = '' ){
 
@@ -163,6 +164,13 @@ abstract class EE_Base_Class{
 			}
 		}
 	}
+
+
+
+	/**
+	 * @param EE_Base_Class $obj
+	 * @return string
+	 */
 	public function get_class($obj){
 		return get_class($obj);
 	}
@@ -850,12 +858,12 @@ abstract class EE_Base_Class{
 	/**
 	 * This takes care of setting a date or time independently on a given model object property. This method also verifies that the given fieldname matches a model object property and is for a EE_Datetime_Field field
 	 *
-	 * @access private
+	 * @access protected
 	 * @param string $what          "T" for time, 'B' for both, 'D' for Date.
 	 * @param string $datetime_value A valid Date or Time string
 	 * @param string $fieldname     the name of the field the date OR time is being set on (must match a EE_Datetime_Field property)
 	 */
-	private function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {
+	protected function _set_date_time( $what = 'T', $datetime_value, $fieldname ) {
 		$field = $this->_get_dtt_field_settings( $fieldname );
 		$field->set_timezone( $this->_timezone );
 
@@ -986,7 +994,7 @@ abstract class EE_Base_Class{
 						$pk_field_name =self::_get_primary_key_name( get_class($this));
 						$this->_fields[$pk_field_name] = $results;
 						$this->_clear_cached_property($pk_field_name);
-						$this->get_model()->add_to_entity_map( $this );
+						$this->_update_cached_related_model_objs_fks();
 					}
 				}
 			}else{//PK is NOT auto-increment
@@ -995,23 +1003,22 @@ abstract class EE_Base_Class{
 					$results = $this->get_model()->update_by_ID($save_cols_n_values, $this->ID());
 				}else{
 					$results = $this->get_model()->insert($save_cols_n_values);
-					$this->get_model()->add_to_entity_map( $this );
+					$this->_update_cached_related_model_objs_fks();
 				}
 			}
 		}else{//there is NO primary key
 			$already_in_db = false;
-			foreach($this->get_model()->unique_indexes() as $index_name => $index){
+			foreach($this->get_model()->unique_indexes() as $index){
 				$uniqueness_where_params = array_intersect_key($save_cols_n_values, $index->fields());
 				if($this->get_model()->exists(array($uniqueness_where_params))){
 					$already_in_db = true;
 				}
 			}
 			if( $already_in_db ){
-				$combined_pk_fields_n_values = array_insersect_key($save_cols_n_values,$this->get_model()->get_combined_primary_key_fields());
-				$results = $this->get_model()->update($save_cols_n_values,$combined_pk_fields_n_values);
+				$combined_pk_fields_n_values = array_intersect_key( $save_cols_n_values, $this->get_model()->get_combined_primary_key_fields() );
+				$results = $this->get_model()->update( $save_cols_n_values,$combined_pk_fields_n_values );
 			}else{
-				$results = $this->get_model()->insert($save_cols_n_values);
-				//@todo we'd love to store this in the entity map, but it doesn't yet support that
+				$results = $this->get_model()->insert( $save_cols_n_values );
 			}
 		}
 		//restore the old assumption about values being prepared by the model object
@@ -1020,6 +1027,27 @@ abstract class EE_Base_Class{
 		return $results;
 	}
 
+	/**
+	 * Updates the foreign key on related models objects pointing to this to have this model object's ID
+	 * as their foreign key.  If the cached related model objects already exist in the db, saves them (so that the DB is consistent)
+	 *
+	 * Especially useful in case we JUST added this model object ot the database
+	 * and we want to let its cached relations with foreign keys to it know about that change. Eg: we've created a trasnaction but haven't saved it to the db. We also create a registration and don't save it to the DB, but we DO cache it on the transaction. Now, when we save the transaction, the registration's TXN_ID will be automatically updated, wether or not they exist in the DB (if they do, their DB records will be automatially updated)
+	 * @return void
+	 */
+	protected function _update_cached_related_model_objs_fks(){
+		foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ){
+			if( $relation_obj instanceof EE_Has_Many_Relation ){
+				foreach( $this->get_all_from_cache( $relation_name ) as $related_model_obj_in_cache) {
+					$fk_to_this = $related_model_obj_in_cache->get_model()->get_foreign_key_to( $this->get_model()->get_this_model_name() );
+					$related_model_obj_in_cache->set($fk_to_this->get_name(), $this->ID() );
+					if( $related_model_obj_in_cache->ID() ){
+						$related_model_obj_in_cache->save();
+					}
+				}
+			}
+		}
+	}
 	/**
 	 * Saves this model object and its NEW cached relations to the database.
 	 * (Meaning, for now, IT DOES NOT WORK if the cached items already exist in the DB.
@@ -1664,7 +1692,7 @@ abstract class EE_Base_Class{
 			$first_few_properties = $this->model_field_array();
 			$first_few_properties = array_slice($first_few_properties,0,3);
 			$name_parts = array();
-			foreach($field_we_can_use as $name=> $value){
+			foreach( $first_few_properties as $name=> $value ){
 				$name_parts[] = "$name:$value";
 			}
 			return implode(",",$name_parts);

@@ -17,15 +17,25 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			'skillz'=>new EE_Checkbox_Multi_Input(array('php'=>'PHP','mysql'=>'MYSQL'),array('default'=>array('php'))),
 			'float'=>new EE_Float_Input(),
 			'essay'=>new EE_Text_Area_Input(),
-			'amenities'=>new EE_Select_Multiple_Input(array('hottub'=>'Hot Tub','balcony'=>"Balcony",'skylight'=>'SkyLight','no_axe'=>'No Axe Murderers'),array(
-				'default'=>array('hottub','no_axe'),
-			)),
+			'amenities'=>new EE_Select_Multiple_Input(
+				array(
+					'hottub'=>'Hot Tub',
+					'balcony'=>"Balcony",
+					'skylight'=>'SkyLight',
+					'no_axe'=>'No Axe Murderers'
+				),
+				array(
+					'default'=>array(
+						'hottub',
+						'no_axe' ),
+				)
+			),
 			'payment_methods'=>new EE_Select_Multi_Model_Input(EEM_Payment_Method::instance()->get_all()),
 			);
 		$this->_layout_strategy = new EE_Div_Per_Section_Layout();
 		parent::__construct();
 	}
-	
+
 	/**
 	 * Extra validation for the 'name' input.
 	 * @param EE_Text_Input $form_input
@@ -35,7 +45,7 @@ class EE_Sample_Form extends EE_Form_Section_Proper{
 			$form_input->add_validation_error(__("You are not mike. You must be brent or darren. Thats ok, I guess", 'event_espresso'), 'not-mike');
 		}
 	}
-	
+
 	function _validate(){
 		parent::_validate();
 		if($this->_subsections['shirt_size']->normalized_value() =='s'

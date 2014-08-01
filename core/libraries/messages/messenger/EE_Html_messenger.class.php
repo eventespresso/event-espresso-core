@@ -81,69 +81,71 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _set_validator_config() {
 		$this->_validator_config = array(
 			'subject' => array(
-				'shortcodes' => array('recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
+				'shortcodes' => array('organization', 'primary_registration_details', 'email', 'transaction' )
 				),
 			'content' => array(
-				'shortcodes' => array( 'recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email','event_meta', 'recipient_list', 'transaction', 'datetime_list', 'question_list', 'datetime', 'question')
-				),
-			'attendee_list' => array(
-				'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
-				'required' => array('[ATTENDEE_LIST]')
+				'shortcodes' => array( 'organization',  'primary_registration_list', 'primary_registration_details',  'email', 'transaction', 'event_list', 'payment_list', 'venue', 'line_item_list', 'messenger', 'ticket_list')
 				),
 			'event_list' => array(
-				'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list'),
+				'shortcodes' => array( 'event', 'ticket_list', 'venue',  'primary_registration_details', 'primary_registration_list', 'event_author' ),
 				'required' => array('[EVENT_LIST]')
 				),
 			'ticket_list' => array(
-				'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'recipient_details'),
+				'shortcodes' => array( 'attendee_list', 'ticket', 'datetime_list','primary_registration_details', 'line_item_list', 'venue'),
 				'required' => array('[TICKET_LIST]')
+				),
+			'ticket_line_item_no_pms' => array(
+				'shortcodes' => array( 'line_item', 'ticket' ),
+				'required' => array('[TICKET_LINE_ITEM_LIST]')
+				),
+			'ticket_line_item_pms' => array(
+				'shortcodes' => array( 'line_item', 'ticket', 'line_item_list' ),
+				'required' => array('[TICKET_LINE_ITEM_LIST]'),
+				),
+			'price_modifier_line_item_list' => array(
+				'shortcodes' => array( 'line_item' ),
+				'required' => array('[PRICE_MODIFIER_LINE_ITEM_LIST]')
 				),
 			'datetime_list' => array(
 				'shortcodes' => array('datetime'),
 				'required' => array('[DATETIME_LIST]')
 				),
+			'attendee_list' => array(
+				'shortcodes' => array('attendee', 'question_list'),
+				'required' => array('[ATTENDEE_LIST]')
+				),
 			'question_list' => array(
 				'shortcodes' => array('question'),
 				'required' => array('[QUESTION_LIST]')
+				),
+			'tax_line_item_list' => array(
+				'shortcodes' => array('line_item'),
+				'required' => array('[TAX_LINE_ITEM_LIST]')
+				),
+			'payment_list' => array(
+				'shortcodes' => array('payment'),
+				'required' => array('[PAYMENT_LIST_*]')
 				)
 			);
 	}
 
 
 
-	/**
-	 * get css file
-	 *
-	 * @since 4.5.0
-	 *
-	 * @param bool $url  return url or path
-	 * @param mixed (string|bool) $type wpeditor|print|base|FALSE (default is the main css for html)
-	 *
-	 * @return string path to css file.
-	 */
-	public function get_inline_css_template( $url = TRUE, $type = FALSE ) {
-		switch ( $type ) {
-
-			case 'base' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-base-css.template.css';
-				break;
-
-			case 'print' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-print-css.template.css';
-				break;
-
-			case 'wpeditor' :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-wpeditor-css.template.css';
-				break;
-
-			default :
-				$base = 'messages/messenger/assets/html/html-messenger-inline-css.template.css';
-				break;
+	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
+		if ( $sending_messenger_name = 'pdf' ) {
+			add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 7 );
 		}
-
-		return $url ? apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_url', EE_PLUGIN_DIR_URL . 'core/libraries/' . $base, $url, $type )  : apply_filters( 'FHEE__EE_Html_messenger__get_inline_css_template__css_path',EE_LIBRARIES . $base, $url, $type );
 	}
 
+
+
+	public function add_html_css( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
+		//prevent recursion on this callback.
+		remove_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10 );
+		$variation = $this->get_variation( $template_pack, $url, $type, $variation, TRUE  );
+		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 7 );
+		return $variation;
+	}
 
 
 
@@ -200,17 +202,6 @@ class EE_Html_messenger extends EE_messenger  {
 						'rows' => '15',
 						'shortcodes_required' => array('[EVENT_LIST]')
 						),
-					'attendee_list' => array(
-						'input' => 'textarea',
-						'label' => '[ATTENDEE_LIST]',
-						'type' => 'string',
-						'required' => TRUE,
-						'validation' => TRUE,
-						'format' => '%s',
-						'css_class' => 'large-text',
-						'rows' => '5',
-						'shortcodes_required' => array('[ATTENDEE_LIST]')
-					),
 					'ticket_list' => array(
 						'input' => 'textarea',
 						'label' => '[TICKET_LIST]',
@@ -222,6 +213,39 @@ class EE_Html_messenger extends EE_messenger  {
 						'rows' => '10',
 						'shortcodes_required' => array('[TICKET_LIST]')
 						),
+					'ticket_line_item_no_pms' => array(
+						'input' => 'textarea',
+						'label' => '[TICKET_LINE_ITEM_LIST] <br>' . __('Ticket Line Item List with no Price Modifiers', 'event_espresso'),
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[TICKET_LINE_ITEM_LIST]')
+						),
+					'ticket_line_item_pms' => array(
+						'input' => 'textarea',
+						'label' => '[TICKET_LINE_ITEM_LIST] <br>' . __('Ticket Line Item List with Price Modifiers', 'event_espresso'),
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[TICKET_LINE_ITEM_LIST]')
+						),
+					'price_modifier_line_item_list' => array(
+						'input' => 'textarea',
+						'label' => '[PRICE_MODIFIER_LINE_ITEM_LIST]',
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[PRICE_MODIFIER_LINE_ITEM_LIST]')
+						),
 					'datetime_list' => array(
 						'input' => 'textarea',
 						'label' => '[DATETIME_LIST]',
@@ -230,9 +254,20 @@ class EE_Html_messenger extends EE_messenger  {
 						'validation' => TRUE,
 						'format' => '%s',
 						'css_class' => 'large-text',
-						'rows' => '10',
+						'rows' => '5',
 						'shortcodes_required' => array('[DATETIME_LIST]')
 						),
+					'attendee_list' => array(
+						'input' => 'textarea',
+						'label' => '[ATTENDEE_LIST]',
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[ATTENDEE_LIST]')
+					),
 					'question_list' => array(
 						'input' => 'textarea',
 						'label' => '[QUESTION_LIST]',
@@ -243,6 +278,28 @@ class EE_Html_messenger extends EE_messenger  {
 						'css_class' => 'large-text',
 						'rows' => '5',
 						'shortcodes_required' => array('[QUESTION_LIST]')
+					),
+					'tax_line_item_list' => array(
+						'input' => 'textarea',
+						'label' => '[TAX_LINE_ITEM_LIST]',
+						'type' => 'string',
+						'required' => FALSE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[TAX_LINE_ITEM_LIST]')
+						),
+					'payment_list' => array(
+						'input' => 'textarea',
+						'label' => '[PAYMENT_LIST]',
+						'type' => 'string',
+						'required' => TRUE,
+						'validation' => TRUE,
+						'format' => '%s',
+						'css_class' => 'large-text',
+						'rows' => '5',
+						'shortcodes_required' => array('[PAYMENT_LIST_*]')
 					)
 				)
 			)
@@ -251,28 +308,6 @@ class EE_Html_messenger extends EE_messenger  {
 
 
 
-
-
-	/**
-	 * _set_default_field_content
-	 * set the _default_field_content property (what gets added in the default templates).
-	 *
-	 * @access protected
-	 * @return void
-	 */
-	protected function _set_default_field_content() {
-		$this->_default_field_content = array(
-			'subject' => '',
-			'content' => array(
-				'main' => __('This contains the main content for the message going out.  It\'s specific to message type so you will want to replace this in the template', 'event_espresso'),
-				'attendee_list' => __('This contains the formatting for each attendee in a attendee list', 'event_espresso'),
-				'event_list' => __('This contains the formatting for each event in an event list', 'event_espresso'),
-				'ticket_list' => __('This contains the formatting for each ticket in a ticket list.', 'event_espresso'),
-				'datetime_list' => __('This contains the formatting for each datetime in a datetime list.', 'event_espresso'),
-				'question_list' => __('This contains the formatting for each question and answer in a list of questions and answers for a registrant', 'event_espresso')
-				)
-			);
-	}
 
 
 
@@ -284,8 +319,7 @@ class EE_Html_messenger extends EE_messenger  {
 	 *
 	 */
 	protected function _set_default_message_types() {
-		//@todo this is where order_confirmation and invoice will go.
-		$this->_default_message_types = array();
+		$this->_default_message_types = array( 'receipt', 'invoice' );
 	}
 
 
@@ -296,7 +330,7 @@ class EE_Html_messenger extends EE_messenger  {
 	 * @since 4.5.0
 	 */
 	protected function _set_valid_message_types() {
-		$this->_valid_message_types = array();
+		$this->_valid_message_types = array( 'receipt', 'invoice' );
 	}
 
 
@@ -312,9 +346,9 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _send_message() {
 		$this->_template_args = array(
 			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
-			'base_css' => $this->get_inline_css_template(TRUE, 'base'),
-			'print_css' => $this->get_inline_css_template(TRUE, 'print'),
-			'main_css' => $this->get_inline_css_template(TRUE),
+			'base_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'base', $this->_variation ),
+			'print_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'print', $this->_variation ),
+			'main_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'main', $this->_variation ),
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
 		$this->_deregister_wp_hooks();
@@ -355,13 +389,11 @@ class EE_Html_messenger extends EE_messenger  {
 	 * @return string
 	 */
 	protected function _get_main_template( $preview = FALSE ) {
-		$relative_path =  '/core/libraries/messages/messenger/assets/' . $this->name . '/';
-
-		$wrapper_template_file = apply_filters( 'FHEE__EE_Html_messenger___get_main_template__wrapper_template_file', $this->name . '-messenger-main-wrapper.template.php' );
+		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, 'main' );
 
 		//require template helper
 		EE_Registry::instance()->load_helper( 'Template' );
-		return EEH_Template::locate_template( array( $relative_path . $wrapper_template_file, $wrapper_template_file ), $this->_template_args );
+		return EEH_Template::display_template( $wrapper_template, $this->_template_args, TRUE );
 	}
 
 

@@ -20,7 +20,7 @@ if (!defined('EVENT_ESPRESSO_VERSION'))
  * EE_Model_Parser
  *
  * @package			Event Espresso
- * @subpackage		
+ * @subpackage
  * @author				Mike Nelson
  *
  * ------------------------------------------------------------------------
@@ -31,7 +31,7 @@ class EE_Model_Parser {
 	/**
 	 * Adds a period onto the front and end of the string. This often helps in searching.
 	 * For example, if we want to find the model name "Event", it can be tricky when the following are possible
-	 * "","Event.EVT_ID","Event","Event_Venue.Venue.VNU_ID",etc. It's easier to look for ".Event." in 
+	 * "","Event.EVT_ID","Event","Event_Venue.Venue.VNU_ID",etc. It's easier to look for ".Event." in
 	 * "..",".Event.EVT_ID.", ".Event.", and ".Event_Venue.Venue.VNU_ID", especially when the last example should NOT
 	 * be found because the "Event" model isn't mentioned- it's just a string that has a model name that conicidentally
 	 * has it as a substring
@@ -49,9 +49,9 @@ class EE_Model_Parser {
 	public static function trim_periods($string_to_trim){
 		return trim($string_to_trim,'.');
 	}
-	
+
 	/**
-	 * Gets the calculatd table's alias 
+	 * Gets the calculatd table's alias
 	 * @param string $model_relation_chain or query param
 	 * @return string which can be added onto table aliases to make them unique
 	 */
@@ -126,7 +126,7 @@ class EE_Model_Parser {
 		if($prefix){
 			return str_replace(".",self::table_alias_model_relation_chain_seperator,$prefix).self::table_alias_model_relation_chain_prefix_end;
 		}
-		
+
 	}
 }
 

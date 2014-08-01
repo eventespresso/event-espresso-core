@@ -428,23 +428,7 @@ class EE_messages {
 		if ( ! $is_global )
 			return $this->_create_custom_template_group( $GRP_ID );
 
-		//assemble class name
-		$messenger = ucwords( str_replace( '_', ' ', $this->_messenger->name ) );
-		$messenger = str_replace( ' ', '_', $messenger );
-		$message_type = ucwords( str_replace( '_', ' ', $this->_message_type->name ) );
-		$message_type = str_replace( ' ', '_', $message_type );
-		$classname = 'EE_Messages_' . $messenger . '_' . $message_type . '_Defaults';
-
-		//next we need to see if the defaults class exists
-		if ( !class_exists( $classname ) ) {
-			$msg[] = __('Something went wrong with creating a new template', 'event_espresso');
-			$msg[] = sprintf( __('The defaults class being checked for is <strong>%s</strong>. Please doublecheck the spelling and make sure you have a class for this messenger/message_type combo setup. Also verify that the autoloaders are setup correctly for the class', 'event_espresso'), $classname );
-			throw new EE_Error( implode('||', $msg ) );
-		}
-
-		//if we've made it this far we have the class so let's instantiate
-		$a = new ReflectionClass( $classname );
-		$DFLT = $a->newInstance( $this, $GRP_ID );
+		$DFLT = new EE_Message_Template_Defaults( $this, $this->_messenger->name, $this->_message_type->name, $GRP_ID );
 
 		//generate templates
 		$success = $DFLT->create_new_templates();
@@ -624,6 +608,34 @@ class EE_messages {
 		}
 
 		return $message_types;
+	}
+
+
+
+
+	/**
+	 * This checks the _active_message_types property for any active message types that are present for the given messenger and returns them.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $messenger The messenger being checked
+	 *
+	 * @return EE_message_type[]    (or empty array if none present)
+	 */
+	public function get_active_message_types_per_messenger( $messenger ) {
+		$messenger = (string) $messenger;
+		if ( empty( $this->_active_message_types[$messenger] ) ) {
+			return array();
+		}
+
+		$mts = array();
+		$message_types = $this->_active_message_types[$messenger];
+		foreach ( $message_types as $mt => $settings ) {
+			if ( ! empty( $this->_installed_message_types[$mt] ) )  {
+				$mts[] = $this->_installed_message_types[$mt];
+			}
+		}
+		return $mts;
 	}
 
 

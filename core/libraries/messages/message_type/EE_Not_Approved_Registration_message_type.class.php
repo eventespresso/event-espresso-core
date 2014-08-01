@@ -38,41 +38,12 @@ class EE_Not_Approved_Registration_message_type extends EE_Registration_Base_mes
 			'plural' => __('not approved registrations', 'event_espresso')
 			);
 
+		$this->_master_templates = array(
+			'email' => 'registration'
+			);
+
 		parent::__construct();
 	}
-
-
-
-
-
-	protected function _default_template_field_subject() {
-		foreach ( $this->_contexts as $context => $details ) {
-			$content[$context] = 'Registration Pending Approval';
-		};
-		return $content;
-	}
-
-
-
-
-
-
-	protected function _default_template_field_content() {
-		$content = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-content.template.php', TRUE );
-
-		foreach ( $this->_contexts as $context => $details ) {
-			$tcontent[$context]['main'] = $content;
-			$tcontent[$context]['attendee_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-attendee-list.template.php', TRUE );
-			$tcontent[$context]['event_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-event-list.template.php', TRUE );
-			$tcontent[$context]['ticket_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-ticket-list.template.php', TRUE );
-			$tcontent[$context]['datetime_list'] = file_get_contents( EE_LIBRARIES . 'messages/message_type/assets/defaults/not-approved-registration-message-type-datetime-list.template.php', TRUE );
-		}
-
-
-		return $tcontent;
-	}
-
-
 
 
 

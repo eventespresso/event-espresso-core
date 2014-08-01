@@ -46,6 +46,15 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Question_Group
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
+
 	protected function __construct(){
 		$this->singular_item = __('Question Group','event_espresso');
 		$this->plural_item = __('Question Groups','event_espresso');

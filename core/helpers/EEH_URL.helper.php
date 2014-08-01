@@ -42,11 +42,14 @@ class EEH_URL{
 		return add_query_arg( $args, $url );
 
 	}
+
+
+
 	/**
 	 * Returns whether not the remote file exists.
 	 * (Sends a HEAD curl request. It would probably be better to use wp_remote_get,
 	 * but its nice
-	 * @param strong $url
+	 * @param string $url
 	 * @return boolean
 	 */
 	public static function remote_file_exists($url){
@@ -139,6 +142,27 @@ class EEH_URL{
 
 
 
+	/**
+	 * prevent_prefetching
+	 * @return void
+	 */
+	public static function prevent_prefetching(){
+		// prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
+		remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
+	}
+
+
+
+	/**
+	 * add_nocache_headers
+	 * @return void
+	 */
+	public static function add_nocache_headers(){
+		// add no cache headers
+//		add_action( 'wp_head' , array( 'EED_Single_Page_Checkout', 'nocache_headers' ), 10 );
+		// plus a little extra for nginx
+//		add_filter( 'nocache_headers' , array( 'EED_Single_Page_Checkout', 'nocache_headers_nginx' ), 10, 1 );
+	}
 
 }
 // End of file EEH_URL.helper.php
