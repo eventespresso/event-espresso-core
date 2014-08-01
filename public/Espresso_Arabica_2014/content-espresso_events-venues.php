@@ -23,14 +23,24 @@ if (( is_single() && espresso_display_venue_in_event_details() ) || is_archive()
 	<div class="clear"><br/></div>
 <?php endif;  ?>
 
+	<?php $VNU_ID = espresso_venue_id( $post->ID ); ?>
+	<?php if ( is_single() ) : ?>
+		<?php $venue_description = espresso_venue_description( $VNU_ID, FALSE ); ?>
+		<?php if ( $venue_description ) : ?>
 	<p>
 		<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
-		<?php  if ( has_excerpt() ) : ?>
-			<?php echo espresso_venue_excerpt( $post->ID ); ?>
-		<?php elseif ( is_single() ) : ?>
-			<?php echo espresso_venue_description( $post->ID ); ?>
-		<?php endif;  ?>
+		<?php echo $venue_description; ?>
 	</p>
+		<?php endif;  ?>
+	<?php else : ?>
+		<?php $venue_excerpt = espresso_venue_excerpt( $VNU_ID, FALSE ); ?>
+		<?php if ( $venue_excerpt ) : ?>
+	<p>
+		<strong><?php _e( 'Description:', 'event_espresso' ); ?></strong><br/>
+		<?php echo $venue_excerpt; ?>
+	</p>
+		<?php endif;  ?>
+	<?php endif;  ?>
 
 </div>
 <!-- .espresso-venue-dv -->
