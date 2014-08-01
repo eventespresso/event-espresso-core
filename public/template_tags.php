@@ -805,6 +805,24 @@ if ( ! function_exists( 'espresso_event_venues' )) {
 
 
 
+if ( ! function_exists( 'espresso_venue_id' )) {
+	/**
+	 *    espresso_venue_name
+	 *
+	 * @access    public
+	 * @param     int $EVT_ID
+	 * @return    string
+	 */
+	function espresso_venue_id( $EVT_ID = 0 ) {
+		EE_Registry::instance()->load_helper( 'Venue_View' );
+		$venue = EEH_Venue_View::get_venue( $EVT_ID );
+		return $venue instanceof EE_Venue ? $venue->ID() : 0;
+	}
+}
+
+
+
+
 if ( ! function_exists( 'espresso_venue_name' )) {
 	/**
 	 *    espresso_venue_name
