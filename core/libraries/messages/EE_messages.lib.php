@@ -259,7 +259,7 @@ class EE_messages {
 				$message->set_messages( array(), $messenger, $context, TRUE );
 
 				//let's GET the message body from the messenger (instead of the normal send_message)
-				return $messenger->get_preview( $message->messages[0], $send );
+				return $messenger->get_preview( $message->messages[0], $message, $send );
 
 			} else {
 				EE_Error::add_error( sprintf( __('Messenger: %s does not exist', 'event_espresso'), $messenger ), __FILE__, __FUNCTION__, __LINE__ );
@@ -317,7 +317,7 @@ class EE_messages {
 		//else...
 		foreach ( $messages->messages as $message ) {
 			//todo: should we do some reporting on messages gone out at some point?  I think we could have the $active_messenger object return bool for whether message was sent or not and we can compile a report based on that.
-			$success = $sending_messenger->send_message( $message );
+			$success = $sending_messenger->send_message( $message, $message_type );
 			if ( $success === FALSE  ) {
 				$error = TRUE;
 			}
@@ -337,11 +337,12 @@ class EE_messages {
 	 * @since 4.5.0
 	 *
 	 * @param string       $messenger a string matching a valid active messenger in the system
+	 * @param string       $message_type   Although it seems contrary to the name of the method, a message type name is still required to send along the message type to the messenger because this is used for determining what specific variations might be loaded for the generated message.
 	 * @param stdClass $messages  a stdClass object in the format expected by the messenger.
 	 *
 	 * @return bool          success or fail.
 	 */
-	public function send_message_with_messenger_only( $messenger, $message ) {
+	public function send_message_with_messenger_only( $messenger, $message_type, $message ) {
 
 		//get EE_messenger object (which also checks if its active)
 		$msgr =  !empty( $messenger ) && !empty( $this->_active_messengers[$messenger] ) ? $this->_active_messengers[$messenger]: NULL;
@@ -350,7 +351,14 @@ class EE_messages {
 			return false; //can't do anything without a valid messenger.
 		}
 
-		return $msgr->send_message( $message );
+		//check valid message type
+		$mtype = isset(  $this->_installed_message_types[$message_type] ) ? $this->_installed_message_types[$message_type] : NULL;
+
+		if( ! $mtype instanceof EE_message_type ) {
+			return false; //can't do anything without a valid message type.
+		}
+
+		return $msgr->send_message( $message, $mtype );
 	}
 
 

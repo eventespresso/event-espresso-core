@@ -133,17 +133,17 @@ class EE_Html_messenger extends EE_messenger  {
 
 	public function do_secondary_messenger_hooks( $sending_messenger_name ) {
 		if ( $sending_messenger_name = 'pdf' ) {
-			add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 7 );
+			add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 8 );
 		}
 	}
 
 
 
-	public function add_html_css( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
+	public function add_html_css( $variation_path, $messenger, $message_type, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
 		//prevent recursion on this callback.
 		remove_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10 );
-		$variation = $this->get_variation( $template_pack, $url, $type, $variation, TRUE  );
-		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 7 );
+		$variation = $this->get_variation( $template_pack, $this->_incoming_message_type->name, $url, $type, $variation, TRUE  );
+		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( $this, 'add_html_css' ), 10, 8 );
 		return $variation;
 	}
 
@@ -346,9 +346,9 @@ class EE_Html_messenger extends EE_messenger  {
 	protected function _send_message() {
 		$this->_template_args = array(
 			'page_title' => html_entity_decode( $this->_subject, ENT_QUOTES, "UTF-8"),
-			'base_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'base', $this->_variation ),
-			'print_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'print', $this->_variation ),
-			'main_css' => $this->get_variation( $this->_tmp_pack, TRUE, 'main', $this->_variation ),
+			'base_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'base', $this->_variation ),
+			'print_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'print', $this->_variation ),
+			'main_css' => $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, TRUE, 'main', $this->_variation ),
 			'main_body' => apply_filters( 'FHEE__EE_Html_messenger___send_message__main_body', wpautop(stripslashes_deep( html_entity_decode($this->_content,  ENT_QUOTES,"UTF-8" ) )), $this->_content )
 			);
 		$this->_deregister_wp_hooks();

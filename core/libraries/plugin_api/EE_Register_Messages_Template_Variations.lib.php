@@ -115,7 +115,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 		self::$_registry[$variation_ref] = $validated;
 
 		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variations', array( 'EE_Register_Messages_Template_Variations', 'get_variations' ), 10, 4 );
-		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( 'EE_Register_Messages_Template_Variations', 'get_variation' ), 10, 7 );
+		add_filter( 'FHEE__EE_Messages_Template_Pack__get_variation', array( 'EE_Register_Messages_Template_Variations', 'get_variation' ), 10, 8 );
 	}
 
 
@@ -172,6 +172,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	 *
 	 * @param string                    $variation_path The path generated for the current variation
 	 * @param string                    $messenger      The messenger the variation is for
+	 * @param string                    $message_type  EE_message_type->name
 	 * @param string                    $type           The type of variation being requested
 	 * @param string                    $variation      The slug for the variation being requested
 	 * @param string                    $file_extension What the file extension is for the variation
@@ -180,7 +181,7 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 	 *
 	 * @return string                    The path to the requested variation.
 	 */
-	public static function get_variation( $variation_path, $messenger, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
+	public static function get_variation( $variation_path, $messenger, $message_type, $type, $variation, $file_extension, $url, EE_Messages_Template_Pack $template_pack ) {
 
 		//so let's loop through our registered variations and then pull any details matching the request.
 		foreach ( self::$_registry as $registry_slug => $registry_settings ) {
@@ -190,35 +191,6 @@ class EE_Register_Messages_Template_Variations implements EEI_Plugin_API {
 			if ( is_readable( $registry_settings['base_path'] . $file_string ) ) {
 				return $base . $file_string;
 			}
-
-			/*foreach ( $registry_settings['variations'] as $template_pack_name => $variation_items ) {
-				if ( $template_pack_name !== $template_pack->dbref ) {
-						continue;
-					}
-
-				foreach ( $variation_items as $messenger => $all_vrtions ) {
-					if ( $mssgr !=  $messenger ) {
-						continue;
-					}
-
-					foreach ( $all_vrtions as $message_type => $vrtions ) {
-
-						if ( ! in_array( $variation, array_keys( $vrtions ) ) ) {
-							continue;
-						}
-
-						//made it here so that means this variation exists in the registered variations.
-						$base = $url ? self::$_registry[$registry_slug]['base_url'] : self::$_registry[$registry_slug]['base_path'];
-						$file_string = $messenger. '_' . $type . '_' . $variation . $file_extension;
-						//see if this file exists
-						if ( is_readable( self::$_registry[$registry_slug]['base_path'] . $file_string ) ) {
-							return $base . $file_string;
-						} else {
-							return $variation_path; //fallback to original variation requested.
-						}
-					}
-				}
-			}/**/
 		}
 
 		//no match
