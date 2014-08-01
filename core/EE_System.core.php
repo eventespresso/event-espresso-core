@@ -536,8 +536,16 @@ final class EE_System {
 	 * @return int one of the consts on EE_System::req_type_*
 	 */
 	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
+		//there are some exceptions if we're in maintenance mode. So are we in MM?
 		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
 			$req_type = EE_System::req_type_normal;
+			//ok check if this is a new install while in MM...
+			if( get_option( $activation_indicator_option_name, FALSE ) ){
+				//so this should have been a "new install" request, but we're in MM
+				//so set things up so that when we exit MM, we will consider it a delayed install
+				delete_option( $activation_indicator_option_name );
+				update_option( $activation_indicator_option_name . '_delayed', TRUE );
+			}
 		}else{
 			if( $activation_history_for_addon ){
 				//it exists, so this isn't a completely new install
@@ -557,9 +565,23 @@ final class EE_System {
 					}
 				}
 			} else {
-				//it doesn't exist. It's a completely new install
-				$req_type = EE_System::req_type_new_activation;
-				delete_option( $activation_indicator_option_name );
+				//now is this a REAL new install, or a delayed install? (because
+				//we originally installed while in MM)
+				if( get_option( $activation_indicator_option_name . '_delayed' ) ){
+					//looks like this was a delayed install (ie, plugin was activated
+					//while in MM, and now we've just exited MM
+					//so let's tell everyone this is a reactivation. Why not a new install?
+					//Because we want to make sure this addon gets setup properly
+					//but we could have migrated over some data while in MM ourselves
+					//and we don't want to give anyone the impression that it shouldn't
+					//exist by saying this is currently a "new install"
+					$req_type = EE_System::req_type_reactivation;
+					delete_option( $activation_indicator_option_name . '_delayed' );
+				}else{
+					//it doesn't exist. It's a completely new install
+					$req_type = EE_System::req_type_new_activation;
+					delete_option( $activation_indicator_option_name );
+				}
 			}
 		}
 //		echo "req type for ".$activation_indicator_option_name." was $req_type";
