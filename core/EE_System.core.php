@@ -33,18 +33,18 @@ final class EE_System {
 
 	/**
 	 * indicates this is a 'normal' request. Ie, not activation, nor upgrade, nor activation.
-	 * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc.
-	 * Also, if an addon is activated while the site is in maintenance mode, that is ALSO considered a
-	 * 'normal' request (because it shouldn't setup its default data because its tables might not exist).
-	 * Instead, the first request once EE is out of maintenance mode will be considered the addon's activation request
+	 * So examples of this would be a normal GET request on the frontend or backend, or a POST, etc
 	 */
 	const req_type_normal = 0;
 	/**
-	 * Indicates this is a brand new installation of EE, and we'll probably want to create db tables etc.
+	 * Indicates this is a brand new installation of EE so we should install
+	 * tables and default data etc
 	 */
 	const req_type_new_activation = 1;
 	/**
-	 * normal request except the activation hook was called... probably want to recheck database is ok
+	 * we've detected that EE has been reactivated (or EE was activated during maintenance mode,
+	 * and we just exited maintenance mode). We MUST check the database is setup properly
+	 * and that default data is setup too
 	 */
 	const req_type_reactivation = 2;
 	/**
@@ -56,6 +56,14 @@ final class EE_System {
 	 * TODO  will detect that EE has been DOWNGRADED. We probably don't want to run in this case...
 	 */
 	const req_type_downgrade = 4;
+
+	/**
+	 * Indicates a new activation, but we couldn't install eveyrthing properly because
+	 * EE was in maintenance mode. So when we exit maintenance mode, we will
+	 * consider the next request to be a reactivation and will verify default data
+	 * is in place and tables are setup
+	 */
+	const req_type_activation_but_not_installed = 5;
 
 	/**
 	 * option prefix for recordin ghte activation history (like core's "espresso_db_update") of addons
@@ -373,6 +381,11 @@ final class EE_System {
 //				echo "done activation";die;
 				$this->update_list_of_installed_versions( $espresso_db_update );
 				break;
+			case EE_System::req_type_activation_but_not_installed:
+				//just record that it was activated, but don't install anything
+				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__new_activation_but_not_installed' );
+				$this->update_list_of_installed_versions( $espresso_db_update );
+				break;
 			case EE_System::req_type_reactivation:
 				do_action( 'AHEE__EE_System__detect_if_activation_or_upgrade__reactivation' );
 				add_action( 'AHEE__EE_System__perform_activations_upgrades_and_migrations', array( $this, 'initialize_db_if_no_migrations_required' ));
@@ -538,13 +551,14 @@ final class EE_System {
 	public static function detect_req_type_given_activation_history($activation_history_for_addon, $activation_indicator_option_name,$version_to_upgrade_to){
 		//there are some exceptions if we're in maintenance mode. So are we in MM?
 		if( EE_Maintenance_Mode::instance()->level() == EE_Maintenance_Mode::level_2_complete_maintenance ) {
-			$req_type = EE_System::req_type_normal;
 			//ok check if this is a new install while in MM...
-			if( get_option( $activation_indicator_option_name, FALSE ) ){
+			if( $activation_history_for_addon ){
+				$req_type = EE_System::req_type_normal;
+			}else{
 				//so this should have been a "new install" request, but we're in MM
 				//so set things up so that when we exit MM, we will consider it a delayed install
-				delete_option( $activation_indicator_option_name );
-				update_option( $activation_indicator_option_name . '_delayed', TRUE );
+				//for that, WE LEAVE THE activation indicator option in place
+				$req_type = EE_System::req_type_activation_but_not_installed;
 			}
 		}else{
 			if( $activation_history_for_addon ){
@@ -556,7 +570,7 @@ final class EE_System {
 					delete_option( $activation_indicator_option_name );
 				} else {
 					// its not an update. maybe a reactivation?
-					if( get_option( $activation_indicator_option_name, FALSE )){
+					if( get_option( $activation_indicator_option_name, FALSE ) ){
 						$req_type = EE_System::req_type_reactivation;
 						delete_option( $activation_indicator_option_name );
 					} else {
@@ -565,23 +579,10 @@ final class EE_System {
 					}
 				}
 			} else {
-				//now is this a REAL new install, or a delayed install? (because
-				//we originally installed while in MM)
-				if( get_option( $activation_indicator_option_name . '_delayed' ) ){
-					//looks like this was a delayed install (ie, plugin was activated
-					//while in MM, and now we've just exited MM
-					//so let's tell everyone this is a reactivation. Why not a new install?
-					//Because we want to make sure this addon gets setup properly
-					//but we could have migrated over some data while in MM ourselves
-					//and we don't want to give anyone the impression that it shouldn't
-					//exist by saying this is currently a "new install"
-					$req_type = EE_System::req_type_reactivation;
-					delete_option( $activation_indicator_option_name . '_delayed' );
-				}else{
-					//it doesn't exist. It's a completely new install
-					$req_type = EE_System::req_type_new_activation;
-					delete_option( $activation_indicator_option_name );
-				}
+				//brand new install and we're not in MM
+				$req_type = EE_System::req_type_new_activation;
+				delete_option( $activation_indicator_option_name );
+
 			}
 		}
 //		echo "req type for ".$activation_indicator_option_name." was $req_type";
