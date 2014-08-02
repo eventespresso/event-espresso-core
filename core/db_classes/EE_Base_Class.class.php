@@ -983,6 +983,7 @@ abstract class EE_Base_Class{
 						$pk_field_name =self::_get_primary_key_name( get_class($this));
 						$this->_fields[$pk_field_name] = $results;
 						$this->_clear_cached_property($pk_field_name);
+						$this->_update_cached_related_model_objs_fks();
 					}
 					$this->get_model()->add_to_entity_map($this);
 				}
@@ -992,6 +993,7 @@ abstract class EE_Base_Class{
 					$results = $this->get_model()->update_by_ID($save_cols_n_values, $this->ID());
 				}else{
 					$results = $this->get_model()->insert($save_cols_n_values);
+					$this->_update_cached_related_model_objs_fks();
 				}
 			}
 		}else{//there is NO primary key
@@ -1015,6 +1017,27 @@ abstract class EE_Base_Class{
 		return $results;
 	}
 
+	/**
+	 * Updates the foreign key on related models objects pointing to this to have this model object's ID
+	 * as their foreign key.  If the cached related model objects already exist in the db, saves them (so that the DB is consistent)
+	 *
+	 * Especially useful in case we JUST added this model object ot the database
+	 * and we want to let its cached relations with foreign keys to it know about that change. Eg: we've created a trasnaction but haven't saved it to the db. We also create a registration and don't save it to the DB, but we DO cache it on the transaction. Now, when we save the transaction, the registration's TXN_ID will be automatically updated, wether or not they exist in the DB (if they do, their DB records will be automatially updated)
+	 * @return void
+	 */
+	protected function _update_cached_related_model_objs_fks(){
+		foreach( $this->get_model()->relation_settings() as $relation_name => $relation_obj ){
+			if( $relation_obj instanceof EE_Has_Many_Relation ){
+				foreach( $this->get_all_from_cache( $relation_name ) as $related_model_obj_in_cache) {
+					$fk_to_this = $related_model_obj_in_cache->get_model()->get_foreign_key_to( $this->get_model()->get_this_model_name() );
+					$related_model_obj_in_cache->set($fk_to_this->get_name(), $this->ID() );
+					if( $related_model_obj_in_cache->ID() ){
+						$related_model_obj_in_cache->save();
+					}
+				}
+			}
+		}
+	}
 	/**
 	 * Saves this model object and its NEW cached relations to the database.
 	 * (Meaning, for now, IT DOES NOT WORK if the cached items already exist in the DB.

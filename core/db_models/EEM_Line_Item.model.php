@@ -73,6 +73,14 @@ class EEM_Line_Item extends EEM_Base {
 		return self::$_instance;
 	}
 
+	/**
+	 * resets the model and returns it
+	 * @return EEM_Line_Item
+	 */
+	public static function reset(){
+		self::$_instance = NULL;
+		return self::instance();
+	}
 
 
 	/**

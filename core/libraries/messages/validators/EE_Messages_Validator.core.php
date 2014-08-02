@@ -454,7 +454,7 @@ abstract class EE_Messages_Validator extends EE_Base {
 
 		//we need to account for custom codes so let's loop through the diff and remove any of those type of codes
 		foreach ( $diff as $ind => $code ) {
-			if ( preg_match('/(\[[A-Za-z0-9]+_\*)/', $code ) )
+			if ( preg_match('/(\[[A-Za-z0-9\_]+_\*)/', $code ) )
 				unset( $diff[$ind] );
 		}
 

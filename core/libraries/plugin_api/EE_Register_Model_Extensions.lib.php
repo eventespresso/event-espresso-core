@@ -20,7 +20,7 @@ if ( ! defined( 'EVENT_ESPRESSO_VERSION' )) { exit('NO direct script access allo
 class EE_Register_Model_Extensions implements EEI_Plugin_API {
 
 	protected static $_registry;
-
+	protected static $_extensions = array();
 
 	/**
 	 * register method for setting up model extensions
@@ -28,8 +28,8 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 	 * @param string $model_id unique id for the extensions being setup
 	 * @param array   $config   {
 	 *               @throws EE_Error
-	 *               @type  array $ model_extension_paths array of folders containing DB model extensions, where each file follows the models naming convention, which is: EEME_{your_plugin_slug}_model_name_extended}.model_ext.php. Where your_plugin_slug} is really anything you want (but something having to do with your addon, like 'Calendar' or '3D_View') and model_name_extended} is the model extended. The class contained in teh file should extend EEME_Base_{model_name_extended}.model_ext.php. Where {your_plugin_slug} is really anything you want (but something having to do with your addon, like 'Calendar' or '3D_View') and {model_name_extended} is the model extended. The class contained in teh file should extend EEME_Base
-	 *               @type array $ class_extension_paths array of folders containing DB class extensions, where each file follows the model class extension naming convention, which is: EEE_{your_plugin_slug}_model_name_extended}.class_ext.php. Where your_plugin_slug} is something like 'Calendar','MailChimp',etc, and model_name_extended} is the name of the model extended, eg 'Attendee','Event',etc. The class contained in the file should extend EEE_Base_Class._{model_name_extended}.class_ext.php. Where {your_plugin_slug} is something like 'Calendar','MailChimp',etc, and {model_name_extended} is the name of the model extended, eg 'Attendee','Event',etc. The class contained in the file should extend EEE_Base_Class.
+	 *               @type  array $model_extension_paths array of folders containing DB model extensions, where each file follows the models naming convention, which is: EEME_{your_plugin_slug}_model_name_extended}.model_ext.php. Where your_plugin_slug} is really anything you want (but something having to do with your addon, like 'Calendar' or '3D_View') and model_name_extended} is the model extended. The class contained in teh file should extend EEME_Base_{model_name_extended}.model_ext.php. Where {your_plugin_slug} is really anything you want (but something having to do with your addon, like 'Calendar' or '3D_View') and {model_name_extended} is the model extended. The class contained in teh file should extend EEME_Base
+	 *               @type array $class_extension_paths array of folders containing DB class extensions, where each file follows the model class extension naming convention, which is: EEE_{your_plugin_slug}_model_name_extended}.class_ext.php. Where your_plugin_slug} is something like 'Calendar','MailChimp',etc, and model_name_extended} is the name of the model extended, eg 'Attendee','Event',etc. The class contained in the file should extend EEE_Base_Class._{model_name_extended}.class_ext.php. Where {your_plugin_slug} is something like 'Calendar','MailChimp',etc, and {model_name_extended} is the name of the model extended, eg 'Attendee','Event',etc. The class contained in the file should extend EEE_Base_Class.
 	 * }
 	 *
 	 * @return void
@@ -53,6 +53,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 		}
 
 		self::$_registry[$model_id] = $config;
+		self::$_extensions[$model_id] = array();
 		EE_Registry::instance()->load_helper('File');
 
 		if(isset($config['model_extension_paths'])){
@@ -60,7 +61,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 			$class_to_filepath_map = EEH_File::get_contents_of_folders($config['model_extension_paths']);
 			EEH_Autoloader::register_autoloader($class_to_filepath_map);
 			foreach(array_keys($class_to_filepath_map) as $classname){
-				new $classname;
+				self::$_extensions[$model_id]['models'][$classname] = new $classname;
 			}
 			unset($config['model_extension_paths']);
 		}
@@ -69,7 +70,7 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 			$class_to_filepath_map = EEH_File::get_contents_of_folders($config['class_extension_paths']);
 			EEH_Autoloader::register_autoloader($class_to_filepath_map);
 			foreach(array_keys($class_to_filepath_map) as $classname){
-				new $classname;
+				self::$_extensions[$model_id]['classes'][$classname] = new $classname;
 			}
 			unset($config['class_extension_paths']);
 		}
@@ -86,6 +87,11 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API {
 	public static function deregister( $model_id = NULL ){
 		if(isset(self::$_registry[$model_id])){
 			unset(self::$_registry[$model_id]);
+			foreach(self::$_extensions[$model_id] as $extension_of_type){
+				foreach($extension_of_type as $extension ){
+					$extension->deregister();
+				}
+			}
 		}
 	}
 }

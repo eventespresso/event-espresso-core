@@ -611,6 +611,34 @@ class EE_messages {
 	}
 
 
+
+
+	/**
+	 * This checks the _active_message_types property for any active message types that are present for the given messenger and returns them.
+	 *
+	 * @since 4.5.0
+	 *
+	 * @param string $messenger The messenger being checked
+	 *
+	 * @return EE_message_type[]    (or empty array if none present)
+	 */
+	public function get_active_message_types_per_messenger( $messenger ) {
+		$messenger = (string) $messenger;
+		if ( empty( $this->_active_message_types[$messenger] ) ) {
+			return array();
+		}
+
+		$mts = array();
+		$message_types = $this->_active_message_types[$messenger];
+		foreach ( $message_types as $mt => $settings ) {
+			if ( ! empty( $this->_installed_message_types[$mt] ) )  {
+				$mts[] = $this->_installed_message_types[$mt];
+			}
+		}
+		return $mts;
+	}
+
+
 	/**
 	 * This returns the EE_message_type from the active message types array ( if present );
 	 *
