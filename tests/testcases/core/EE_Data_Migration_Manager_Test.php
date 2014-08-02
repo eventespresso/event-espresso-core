@@ -164,6 +164,13 @@ class EE_Data_Migration_Manager_Test extends EE_UnitTestCase{
 		$dms_not_found = EE_Data_Migration_Manager::instance()->get_migration_ran( '4.2.0', 'Core' );
 		$this->assertNull( $dms_not_found );
 	}
+
+	public function test_migration_has_run(){
+		$dms41 = new EE_DMS_Core_4_1_0();
+		$this->_pretend_ran_dms( $dms41 );
+		$this->assertTrue( EE_Data_Migration_Manager::reset()->migration_has_ran( '4.1.0', 'Core' ) );
+		$this->assertFalse( EE_Data_Migration_Manager::instance()->migration_has_ran( '4.2.0', 'Core' ) );
+	}
 }
 
 // End of file EE_Data_Migration_Manager_Test.php
