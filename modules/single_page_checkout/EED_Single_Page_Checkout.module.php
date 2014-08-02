@@ -23,6 +23,14 @@
  */
 class EED_Single_Page_Checkout  extends EED_Module {
 
+
+	/**
+	 * 	$_reg_steps_array - holds initial array of reg steps
+	 * 	@access private
+	 *	@var array $_reg_steps_array
+	 */
+	private static $_reg_steps_array = array();
+
 	/**
 	 * 	$checkout - EE_Checkout object for handling the properties of the current checkout process
 	 * 	@access public
@@ -54,6 +62,8 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		EED_Single_Page_Checkout::set_definitions();
 		// set routing
 		EE_Config::register_route( '1', 'EED_Single_Page_Checkout', 'run', 'step' );
+		// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
+		add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
 //		EE_Config::register_route( 'process_reg_step', 'EED_Single_Page_Checkout', 'process_reg_step' );
 //		EE_Config::register_route( 'finalize_registration', 'EED_Single_Page_Checkout', 'finalize_registration' );
 		// add powered by EE msg
@@ -70,7 +80,10 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 */
 	public static function set_hooks_admin() {
 		EED_Single_Page_Checkout::set_definitions();
+		// set routing
 		EE_Config::register_route( '1', 'EED_Single_Page_Checkout', 'run', 'step' );
+		// hook into the top of pre_get_posts to set the reg step routing, which gives other modules or plugins a chance to modify the reg steps, but just before the routes get called
+		add_action( 'pre_get_posts', array( 'EED_Single_Page_Checkout', 'load_reg_steps' ), 1 );
 //		EE_Config::register_route( 'process_reg_step', 'EED_Single_Page_Checkout', 'process_reg_step' );
 //		EE_Config::register_route( 'finalize_registration', 'EED_Single_Page_Checkout', 'finalize_registration' );
 		// set ajax hooks
@@ -97,6 +110,73 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		define( 'SPCO_TEMPLATES_PATH', SPCO_BASE_PATH . 'templates' . DS );
 		EEH_Autoloader::register_autoloaders_for_each_file_in_folder( SPCO_BASE_PATH, TRUE );
 	}
+
+
+
+	/**
+	 * load_reg_steps
+	 * loads and instantiates each reg step based on the EE_Registry::instance()->CFG->registration->reg_steps array
+	 *
+	 * @access    private
+	 * @throws EE_Error
+	 * @return    array
+	 */
+	public static function load_reg_steps() {
+		// load EE_SPCO_Reg_Step base class
+		EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_SPCO_Reg_Step', 'class'  );
+		// filter list of reg_steps
+		$reg_steps_to_load = apply_filters( 'AHEE__SPCO__load_reg_steps__reg_steps_to_load', EED_Single_Page_Checkout::get_reg_steps() );
+		// sort by key (order)
+		ksort( $reg_steps_to_load );
+		// loop through folders
+		foreach ( $reg_steps_to_load as $order => $reg_step ) {
+			// we need a
+			if ( isset( $reg_step['file_path'] ) && isset( $reg_step['class_name'] ) && isset( $reg_step['slug'] )) {
+				// copy over to the reg_steps_array
+				EED_Single_Page_Checkout::$_reg_steps_array[ $order ] = $reg_step;
+				// register custom key route for each reg step ( ie: step=>"slug" - this is the entire reason we load the reg steps array now )
+				EE_Config::register_route( $reg_step['slug'], 'EED_Single_Page_Checkout', 'run', 'step' );
+			}
+		}
+	}
+
+
+
+	/**
+	 *    get_reg_steps
+	 *
+	 * @access 	public
+	 * @return 	array
+	 */
+	public static function get_reg_steps() {
+		$reg_steps = EE_Registry::instance()->CFG->registration->reg_steps;
+		if ( empty( $reg_steps )) {
+			$reg_steps = array(
+				10 => array(
+					'file_path' => SPCO_INC_PATH,
+					'class_name' => 'EE_SPCO_Reg_Step_Attendee_Information',
+					'slug' => 'attendee_information'
+				),
+				20 => array(
+					'file_path' => SPCO_INC_PATH,
+					'class_name' => 'EE_SPCO_Reg_Step_Registration_Confirmation',
+					'slug' => 'registration_confirmation'
+				),
+				30 => array(
+					'file_path' => SPCO_INC_PATH,
+					'class_name' => 'EE_SPCO_Reg_Step_Payment_Options',
+					'slug' => 'payment_options'
+				),
+				999 => array(
+					'file_path' => SPCO_INC_PATH,
+					'class_name' => 'EE_SPCO_Reg_Step_Finalize_Registration',
+					'slug' => 'finalize_registration'
+				)
+			);
+		}
+		return $reg_steps;
+	}
+
 
 
 
@@ -139,7 +219,7 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		// filter continue_reg
 		$this->checkout->continue_reg = apply_filters( 'FHEE__EED_Single_Page_Checkout__init___continue_reg', TRUE );
 		// load the reg steps array
-		$this->load_reg_steps();
+		$this->_instantiate_reg_steps();
 		// set the current step
 		$this->checkout->set_current_step( EE_Registry::instance()->REQ->get( 'step' ));
 		// and the next step
@@ -195,22 +275,16 @@ class EED_Single_Page_Checkout  extends EED_Module {
 
 
 	/**
-	 *    load_reg_steps
-	 * loads and instantiates each reg step based on the EE_Registry::instance()->CFG->registration->reg_steps array
+	 *    _instantiate_reg_steps
+	 *  instantiates each reg step based on the loaded reg_steps array
 	 *
 	 * @access    private
 	 * @throws EE_Error
 	 * @return    array
 	 */
-	private function load_reg_steps() {
-		// load EE_SPCO_Reg_Step base class
-		EE_Registry::instance()->load_file( SPCO_INC_PATH, 'EE_SPCO_Reg_Step', 'class'  );
-		// filter list of reg_steps
-		$reg_steps_to_load = apply_filters( 'AHEE__SPCO__load_reg_steps__reg_steps_to_load', $this->get_reg_steps() );
-		// sort by key (order)
-		ksort( $reg_steps_to_load );
+	private function _instantiate_reg_steps() {
 		// loop through folders
-		foreach ( $reg_steps_to_load as $order => $reg_step ) {
+		foreach ( EED_Single_Page_Checkout::$_reg_steps_array as $order => $reg_step ) {
 			// we need a
 			if ( isset( $reg_step['file_path'] ) && isset( $reg_step['class_name'] ) && isset( $reg_step['slug'] )) {
 				// instantiate step class using file path and class name
@@ -238,43 +312,6 @@ class EED_Single_Page_Checkout  extends EED_Module {
 		$this->checkout->reg_steps = apply_filters( 'FHEE__Single_Page_Checkout__load_reg_steps__reg_steps', $this->checkout->reg_steps );
 		// finally re-sort based on the reg step class order properties
 		$this->checkout->sort_reg_steps();
-	}
-
-
-
-	/**
-	 *    get_reg_steps
-	 *
-	 * @access 	public
-	 * @return 	array
-	 */
-	public function get_reg_steps() {
-		$reg_steps = EE_Registry::instance()->CFG->registration->reg_steps;
-		if ( empty( $reg_steps )) {
-			$reg_steps = array(
-				10 => array(
-					'file_path' => SPCO_INC_PATH,
-					'class_name' => 'EE_SPCO_Reg_Step_Attendee_Information',
-					'slug' => 'attendee_information'
-				),
-				20 => array(
-					'file_path' => SPCO_INC_PATH,
-					'class_name' => 'EE_SPCO_Reg_Step_Registration_Confirmation',
-					'slug' => 'registration_confirmation'
-				),
-				30 => array(
-					'file_path' => SPCO_INC_PATH,
-					'class_name' => 'EE_SPCO_Reg_Step_Payment_Options',
-					'slug' => 'payment_options'
-				),
-				999 => array(
-					'file_path' => SPCO_INC_PATH,
-					'class_name' => 'EE_SPCO_Reg_Step_Finalize_Registration',
-					'slug' => 'finalize_registration'
-				)
-			);
-		}
-		return $reg_steps;
 	}
 
 
@@ -719,15 +756,15 @@ class EED_Single_Page_Checkout  extends EED_Module {
 	 * @param 	$args
 	 * @return 	array
 	 */
-	private function _process_return_to_reg_step_query_args( $args ) {
-		$ignore = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn', 'step', 'next_step' );
-		foreach ( $_POST as $key => $value ) {
-			if ( ! in_array( $key, $ignore )) {
-				$args[ $key ] = isset( $value ) ? $value : '';
-			}
-		}
-		return $args;
-	}
+//	private function _process_return_to_reg_step_query_args( $args ) {
+//		$ignore = array( 'ajax_action', 'espresso_ajax', 'noheader', 'spco-go-to-next-step-sbmt-btn', 'step', 'next_step' );
+//		foreach ( $_POST as $key => $value ) {
+//			if ( ! in_array( $key, $ignore )) {
+//				$args[ $key ] = isset( $value ) ? $value : '';
+//			}
+//		}
+//		return $args;
+//	}
 
 
 
