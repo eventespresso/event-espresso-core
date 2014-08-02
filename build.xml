@@ -63,6 +63,7 @@
 	  <arg value="-uroot" />
   </exec>
   <exec executable="${basedir}/build/copy_to_plugins.sh">
+	  <arg value="${basedir}" />
   </exec>
  </target>
 
