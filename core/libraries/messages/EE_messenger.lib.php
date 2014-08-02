@@ -156,6 +156,17 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+	/**
+	 * This property is set when the send_message() method is called and holds the Message Type used to generate templates with this messenger for the messages.
+	 *
+	 * @var EE_message_type
+	 */
+	protected $_incoming_message_type;
+
+
+
+
+
 	public function __construct() {
 		$this->_EEM_data = EEM_Message_Template_Group::instance();
 		$this->_messages_item_type = 'messenger';
@@ -321,6 +332,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 * @since 4.5.0
 	 *
 	 * @param EE_Messages_Template_Pack $pack   The template pack used for retrieving the variation.
+	 * @param string                    $message_type_name The name property of the message type that we need the variation for.
 	 * @param bool                      $url   Whether to return url (true) or path (false). Default is false.
 	 * @param string                    $type What variation type to return. Default is 'main'.
 	 * @param string 	           $variation What variation for the template pack
@@ -328,9 +340,9 @@ abstract class EE_messenger extends EE_Messages_Base {
 	 *
 	 * @return string                    path or url for the requested variation.
 	 */
-	public function get_variation( EE_Messages_Template_Pack $pack, $url = FALSE, $type = 'main', $variation = 'default', $skip_filters = FALSE ) {
+	public function get_variation( EE_Messages_Template_Pack $pack, $message_type_name, $url = FALSE, $type = 'main', $variation = 'default', $skip_filters = FALSE ) {
 		$this->_tmp_pack = $pack;
-		return $this->_tmp_pack->get_variation( $this->name, $type, $variation, $url, '.css', $skip_filters );
+		return $this->_tmp_pack->get_variation( $this->name, $message_type_name, $type, $variation, $url, '.css', $skip_filters );
 	}
 
 
@@ -535,10 +547,12 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 	/**
 	 * Sets up the message for sending.
-	 * @param  EE_message_type $message the message object that contains details about the message.
+	 * @param  stdClass $message the message object that contains details about the message.
+	 * @param EE_message_type $message_type The message type object used in combination with this messenger to generate the provided message.
 	 */
-	public function send_message( $message ) {
+	public function send_message( $message, EE_message_type $message_type ) {
 		$this->_validate_and_setup( $message );
+		$this->_incoming_message_type = $message_type;
 		$this->_send_message();
 	}
 
@@ -547,11 +561,14 @@ abstract class EE_messenger extends EE_Messages_Base {
 	/**
 	 * Sets up and returns message preview
 	 * @param  object $message incoming message object
+	 * @param EE_message_type $message_type This is whatever message type was used in combination with this messenger to generate the message.
 	 * @param  bool   $send    true we will actually use the _send method (for test sends). FALSE we just return preview
 	 * @return string          return the message html content
 	 */
-	public function get_preview( $message, $send = FALSE ) {
+	public function get_preview( $message, EE_message_type $message_type, $send = FALSE ) {
 		$this->_validate_and_setup( $message );
+
+		$this->_incoming_message_type = $message_type;
 
 		if ( $send ) {
 			//are we overriding any existing template fields?
@@ -610,7 +627,7 @@ abstract class EE_messenger extends EE_Messages_Base {
 		$type = $preview ? 'preview' : 'main';
 
 		//first get inline css (will be empty if the messenger doesn't use it)
-		$this->_template_args['inline_style'] = file_get_contents( $this->get_variation( $this->_tmp_pack, FALSE, $type, $this->_variation ), TRUE );
+		$this->_template_args['inline_style'] = file_get_contents( $this->get_variation( $this->_tmp_pack, $this->_incoming_message_type->name, FALSE, $type, $this->_variation ), TRUE );
 
 		$wrapper_template = $this->_tmp_pack->get_wrapper( $this->name, $type );
 
