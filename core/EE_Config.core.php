@@ -1753,9 +1753,9 @@ class EE_Admin_Config extends EE_Config_Base {
 	public $use_dashboard_widget;
 
 	/**
-	* @var int $events_in_dasboard
+	* @var int $events_in_dashboard
 	*/
-	public $events_in_dasboard;
+	public $events_in_dashboard;
 
 	/**
 	* @var boolean $use_event_timezones
@@ -1806,7 +1806,7 @@ class EE_Admin_Config extends EE_Config_Base {
 		// set default general admin settings
 		$this->use_personnel_manager = TRUE;
 		$this->use_dashboard_widget = TRUE;
-		$this->events_in_dasboard = 30;
+		$this->events_in_dashboard = 30;
 		$this->use_event_timezones = FALSE;
 		$this->use_full_logging = FALSE;
 		$this->use_remote_logging = FALSE;
