@@ -4,8 +4,8 @@
    depends="prepare,phpunit"/>
 
  <target name="build-parallel"
-   depends="prepare,lint,tools-parallel,phpunit"/>
-
+   depends="prepare,phpunit"/>
+<?ignore
  <target name="tools-parallel" description="Run tools in parallel">
   <parallel threadCount="2">
    <sequential>
@@ -18,7 +18,7 @@
    <antcall target="phpdox"/>
   </parallel>
  </target>
-
+?>
  <target name="clean" description="Cleanup build artifacts">
   <delete dir="${basedir}/build/api"/>
   <delete dir="${basedir}/build/coverage"/>
