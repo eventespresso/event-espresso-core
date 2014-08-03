@@ -218,7 +218,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'category_list' => array(
 				'func' => '_category_list_table',
-				'capability' => 'manage_event_categories'
+				'capability' => 'ee_manage_event_categories'
 				)
 		);
 	}

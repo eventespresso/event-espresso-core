@@ -177,7 +177,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_events',
 				'ee_delete_others_events',
 			//event categories
-				'manage_event_categories',
+				'ee_manage_event_categories',
 				'ee_edit_event_category',
 				'ee_delete_event_category',
 				'assign_event_category',

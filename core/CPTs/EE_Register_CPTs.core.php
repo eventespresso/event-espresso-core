@@ -96,7 +96,7 @@ class EE_Register_CPTs {
 					'public'=>true,
 					'show_in_nav_menus' => true,
 					'capabilities' => array(
-						'manage_terms' => 'manage_event_categories',
+						'manage_terms' => 'ee_manage_event_categories',
 						'edit_terms' => 'ee_edit_event_category',
 						'delete_terms' => 'ee_delete_event_category',
 						'assign_terms' => 'assign_event_category'
