@@ -325,7 +325,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'trash' => TRUE
 					),
 					'noheader' => TRUE,
-					'capability' => 'delete_contacts',
+					'capability' => 'ee_delete_contacts',
 					'obj_id' => $att_id
 				),
 
@@ -335,7 +335,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 						'trash' => FALSE
 					),
 					'noheader' => TRUE,
-					'capability' => 'delete_contacts',
+					'capability' => 'ee_delete_contacts',
 					'obj_id' => $att_id
 				),
 				'resend_registration' => array(
@@ -697,7 +697,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				)
 			);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_contacts', 'espresso_registrations_trash_attendees' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_contacts', 'espresso_registrations_trash_attendees' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => 'Trash',
