@@ -161,7 +161,7 @@ final class EE_Capabilities extends EE_Base {
 			//gateways
 				'ee_manage_gateways',
 			//events
-				'publish_events',
+				'ee_publish_events',
 				'read_private_events',
 				'read_others_events',
 				'read_event',
