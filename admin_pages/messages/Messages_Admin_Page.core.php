@@ -227,13 +227,13 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'insert_message_template' => array(
 					'func' => '_insert_or_update_message_template',
-					'capability' => 'edit_messages',
+					'capability' => 'ee_edit_messages',
 					'args' => array( 'new_template' => TRUE ),
 					'noheader' => TRUE
 					 ),
 				'update_message_template' => array(
 					'func' => '_insert_or_update_message_template',
-					'capability' => 'edit_message',
+					'capability' => 'ee_edit_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'new_template' => FALSE ),
 					'noheader' => TRUE
@@ -274,7 +274,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'reset_to_default' => array(
 					'func' => '_reset_to_default_template',
-					'capability' => 'edit_message',
+					'capability' => 'ee_edit_message',
 					'obj_id' => $grp_id,
 					'noheader' => TRUE
 					),
