@@ -135,7 +135,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 				);
 		}
 
-		if ( $item->count_related('Event') === 0 && EE_Registry::instance()->CAP->current_user_can( 'delete_venue', 'espresso_venues_delete_venue', $item->ID() ) ) {
+		if ( $item->count_related('Event') === 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_venue', 'espresso_venues_delete_venue', $item->ID() ) ) {
 			$actions['delete'] = '<a href="' . $delete_link . '" title="' . __('Delete Venue', 'event_espresso') . '">' . __('Delete', 'event_espresso') . '</a>';
 		}
 

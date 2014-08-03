@@ -136,37 +136,37 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_trash_or_restore_venue',
 				'args' => array( 'venue_status' => 'trash' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venue',
+				'capability' => 'ee_delete_venue',
 				'obj_id' => $vnu_id
 				),
 			'trash_venues' => array(
 				'func' => '_trash_or_restore_venues',
 				'args' => array( 'venue_status' => 'trash' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venues'
+				'capability' => 'ee_delete_venues'
 				),
 			'restore_venue' => array(
 				'func' => '_trash_or_restore_venue',
 				'args' => array( 'venue_status' => 'draft' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venue',
+				'capability' => 'ee_delete_venue',
 				'obj_id' => $vnu_id
 				),
 			'restore_venues' => array(
 				'func' => '_trash_or_restore_venues',
 				'args' => array( 'venue_status' => 'draft' ),
 				'noheader' => TRUE,
-				'capability' => 'delete_venues'
+				'capability' => 'ee_delete_venues'
 				),
 			'delete_venues' => array(
 				'func' => '_delete_venues',
 				'noheader' => TRUE,
-				'capability' => 'delete_venues'
+				'capability' => 'ee_delete_venues'
 				),
 			'delete_venue' => array(
 				'func' => '_delete_venue',
 				'noheader' => TRUE,
-				'capability' => 'delete_venue',
+				'capability' => 'ee_delete_venue',
 				'obj_id' => $vnu_id
 				),
 			//venue category tab related
@@ -183,13 +183,13 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'delete_categories' => array(
 				'func' => '_delete_categories',
 				'noheader' => TRUE,
-				'capability' => 'delete_venue_category'
+				'capability' => 'ee_delete_venue_category'
 				),
 
 			'delete_category' => array(
 				'func' => '_delete_categories',
 				'noheader' => TRUE,
-				'capability' => 'delete_venue_category'
+				'capability' => 'ee_delete_venue_category'
 				),
 
 			'insert_category' => array(

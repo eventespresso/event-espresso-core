@@ -131,7 +131,7 @@ final class EE_Capabilities extends EE_Base {
 
 			//deletes
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_event', array( EEM_Event::instance(), 'ee_delete_published_events', 'ee_delete_others_events', 'ee_delete_private_events' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_venue', array( EEM_Venue::instance(), 'delete_published_venues', 'delete_others_venues', 'delete_private_venues' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_venue', array( EEM_Venue::instance(), 'delete_published_venues', 'delete_others_venues', 'delete_private_venues' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_registration', array( EEM_Registration::instance(), '', 'edit_others_registrations', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_checkin', array( EEM_Registration::instance(), '', 'delete_others_checkins', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'delete_others_messages', 'delete_global_messages' ) ),
@@ -192,15 +192,15 @@ final class EE_Capabilities extends EE_Base {
 				'ee_edit_others_venues',
 				'ee_edit_published_venues',
 				'ee_edit_private_venues',
-				'delete_venue',
-				'delete_venues',
+				'ee_delete_venue',
+				'ee_delete_venues',
 				'delete_others_venues',
 				'delete_private_venues',
 				'delete_published_venues',
 			//venue categories
 				'manage_venue_categories',
 				'ee_edit_venue_category',
-				'delete_venue_category',
+				'ee_delete_venue_category',
 				'assign_venue_category',
 			//contacts
 				'read_contact',

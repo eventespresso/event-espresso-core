@@ -112,7 +112,7 @@ class EE_Register_CPTs {
 					'capabilities' => array(
 						'manage_terms' => 'manage_venue_categories',
 						'edit_terms' => 'ee_edit_venue_category',
-						'delete_terms' => 'delete_venue_category',
+						'delete_terms' => 'ee_delete_venue_category',
 						'assign_terms' => 'assign_venue_category'
 						),
 					'rewrite' => array( 'slug' => __( 'venue-category', 'event_espresso' ))
@@ -192,12 +192,12 @@ class EE_Register_CPTs {
 					'capabilities' => array(
 						'edit_post' => 'ee_edit_venue',
 						'read_post' => 'ee_read_venue',
-						'delete_post' => 'delete_venue',
+						'delete_post' => 'ee_delete_venue',
 						'edit_posts' => 'ee_edit_venues',
 						'edit_others_posts' => 'ee_edit_others_venues',
 						'publish_posts' => 'ee_publish_venues',
 						'read_private_posts' => 'ee_read_private_venues',
-						'delete_posts' => 'delete_venues',
+						'delete_posts' => 'ee_delete_venues',
 						'delete_private_posts' => 'delete_private_venues',
 						'delete_published_posts' => 'delete_published_venues',
 						'delete_others_posts' => 'ee_edit_others_venues',
