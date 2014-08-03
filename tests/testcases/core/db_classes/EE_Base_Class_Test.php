@@ -323,6 +323,13 @@ class EE_Base_Class_Test extends EE_UnitTestCase{
 
 
 
+
+	/**
+	 * Created to attempt to reproduce a bug found when fixing https://events.codebasehq.com/projects/event-espresso/tickets/6373
+	 *
+	 * @since 4.5.0
+	 *
+	 */
 	function test_set_primary_key_clear_relations() {
 		$event = $this->factory->event->create();
 		$datetime = $this->factory->datetime->create();
