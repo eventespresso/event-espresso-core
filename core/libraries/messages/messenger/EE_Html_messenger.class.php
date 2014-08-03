@@ -52,6 +52,7 @@ class EE_Html_messenger extends EE_messenger  {
 			'singular' => __('html', 'event_espresso'),
 			'plural' => __('html', 'event_espresso')
 			);
+		$this->activate_on_install = TRUE;
 
 		parent::__construct();
 	}

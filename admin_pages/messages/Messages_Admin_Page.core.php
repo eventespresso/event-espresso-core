@@ -2633,10 +2633,18 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_set_m_mt_settings();
 
 		if ( !$deactivate ) {
-			//we are activating.  we can use $this->_m_mt_settings to get all the installed messengers.
 
+
+			//we are activating.  we can use $this->_m_mt_settings to get all the installed messengers
 			$this->_active_messengers[$messenger]['settings'] = !isset($this->_active_messengers[$messenger]['settings']) ? array() : $this->_active_messengers[$messenger]['settings'];
 			$this->_active_messengers[$messenger]['obj'] = $this->_m_mt_settings['messenger_tabs'][$messenger]['obj'];
+
+			//get has_active so we can sure its kept up to date.
+			$has_activated = get_option( 'ee_has_activated_messages' );
+
+			if ( empty( $has_activated[$messenger] ) ) {
+				$has_activated[$messenger] = array();
+			}
 
 			//k we need to get what default message types are to be associated with the messenger that's been activated.
 			$default_types = $message_type ? (array) $message_type : $this->_active_messengers[$messenger]['obj']->get_default_message_types();
@@ -2654,6 +2662,10 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					$settings = array();
 				}
 				$this->_active_messengers[$messenger]['settings'][$messenger . '-message_types'][$type]['settings'] =  $settings;
+
+				if ( ! in_array( $type, $has_activated[$messenger] ) ) {
+					$has_activated[$messenger][] = $type;
+				}
 			}
 
 			//any default settings for the messenger?
@@ -2667,6 +2679,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 
 			//update settings in database
 			update_option( 'ee_active_messengers', $this->_active_messengers );
+			update_option( 'ee_has_activated_messages', $has_activated );
 
 
 			//generate new templates (if necessary)

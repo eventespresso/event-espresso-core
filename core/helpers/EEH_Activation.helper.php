@@ -854,22 +854,17 @@ class EEH_Activation {
 
 		$templates = FALSE;
 		$settings = $installed_messengers = array();
-
-		//let's first setup an array of what we consider to be the default messengers.
-		$default_messengers = array( 'email' );
-
-		//let's determine if we've already got an active messengers option
-		$active_messengers = get_option('ee_active_messengers');
-
-		//do an initial loop to determine if we need to continue
 		$def_ms = array();
-		foreach ( $default_messengers as $msgr ) {
-			if ( isset($active_messengers[$msgr] ) ) continue;
-			$def_ms[] = $msgr;
-		}
 
-		//continue?
-		if ( empty( $def_ms ) ) return false;
+		//let's determine if we've already got an active messengers option cause this will be used to determine whether to activate something or not.
+		$active_messengers = get_option('ee_active_messengers');
+		$has_activated = get_option('ee_has_activated_messages');
+
+		//if has_activated is empty, let's just quickly add it without autoload because it doesn't need to be autoloaded
+		if ( empty( $has_activated ) ) {
+			$has_activated = array();
+			add_option( 'ee_has_activated_messages', $has_activated, '',  'no' );
+		}
 
 		//include our helper
 		EE_Registry::instance()->load_helper( 'MSG_Template' );
@@ -877,13 +872,20 @@ class EEH_Activation {
 		//get all installed messenger objects
 		$installed = EEH_MSG_Template::get_installed_message_objects();
 
+
 		$inst_msgrs = $installed['messengers'];
 		$inst_mts = $installed['message_types'];
 
 		//let's setup the $installed messengers in an array
 		foreach ( $inst_msgrs as $msgr ) {
 			$installed_messengers[$msgr->name] = $msgr;
+			if ( $msgr->activate_on_install  ) {
+				$def_ms[] = $msgr->name;
+			}
 		}
+
+		//continue? (no sense if there are no messengers activated by default!)
+		if ( empty( $def_ms ) ) return false;
 
 		//setup the $installed_mts in an array
 		foreach ( $inst_mts as $imt ) {
@@ -892,13 +894,18 @@ class EEH_Activation {
 
 		//loop through default array
 		foreach ( $def_ms as $messenger ) {
-			//all is good so let's setup the default stuff. We need to use the given messenger object (if exists) to get the default message type for the messenger.
-			if ( !isset( $installed_messengers[$messenger] ) ) continue;
+			//all is good so let's setup the default stuff. But only if it has never been activated.
 
 			$default_mts = $installed_messengers[$messenger]->get_default_message_types();
 
-			$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
-			foreach ( $default_mts as $mt ) {
+			$has_activated_mts = ! empty( $has_activated[$messenger] ) ? $has_activated[$messenger] : array();
+
+			foreach ( $default_mts as $key => $mt ) {
+				//if this $default_mt was already setup then we need to skip.
+				if ( in_array( $mt, $has_activated_mts ) ) {
+					unset( $default_mts[$key] );
+					continue;
+				}
 				//we need to setup any initial settings for message types
 				$settings_fields = $installed_mts[$mt]->get_admin_settings_fields();
 				if ( !empty( $settings_fields ) ) {
@@ -910,7 +917,18 @@ class EEH_Activation {
 				}
 
 				$active_messengers[$messenger]['settings'][$messenger . '-message_types'][$mt]['settings'] = $settings;
+
+				$has_activated_mts[] = $mt;
 			}
+
+			//if default_mts is empty and this messenger has already been activated at some point, then we can just skip the rest
+			if ( empty( $default_mts ) && !empty( $has_activated[$messenger] ) ) {
+				continue;
+			}
+
+			$has_activated[$messenger] = $has_activated_mts;
+
+			$active_messengers[$messenger]['obj'] = $installed_messengers[$messenger];
 
 			//setup any initial settings for the messenger
 			$msgr_settings = $installed_messengers[$messenger]->get_admin_settings_fields();
@@ -921,9 +939,8 @@ class EEH_Activation {
 				}
 			}
 
-			//now let's save the settings for this messenger!
+			//now let's update the settings for this active_messengers and the has_activated!
 			update_option( 'ee_active_messengers', $active_messengers );
-
 
 			//let's generate all the templates but ONLY if there are default message types for the messenger.  It is entirely possible that activating the messenger just exposes new shortcodes (because it acts as a secondary messenger), in which case no default templates are created
 			if ( ! empty( $default_mts ) ) {
@@ -933,6 +950,8 @@ class EEH_Activation {
 			}
 
 		}
+
+		update_option( 'ee_has_activated_messages', $has_activated );
 
 		//that's it!  //maybe we'll return $templates for possible display of error or help message later?
 		return $templates;
@@ -1033,6 +1052,7 @@ class EEH_Activation {
 		$wp_options_to_delete = array(
 			'ee_no_ticket_prices' => TRUE,
 			'ee_active_messengers' => TRUE,
+			'ee_has_activated_messages' => TRUE,
 			'ee_flush_rewrite_rules' => TRUE,
 			'ee_config' => TRUE,
 			'ee_data_migration_current_db_state' => TRUE,
