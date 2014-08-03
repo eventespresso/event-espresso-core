@@ -101,7 +101,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_questions_overview_list_table',
-				'capability' => 'read_questions'
+				'capability' => 'ee_read_questions'
 				),
 
 			'edit_question' => array(
