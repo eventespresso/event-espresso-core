@@ -132,6 +132,15 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_overview_list_table',
 				'capability' => 'ee_read_venues'
 				),
+			'create_new' => array(
+				'func' => '_create_new_cpt_item',
+				'capability' => 'ee_edit_venues'
+				),
+			'edit' => array(
+				'func' => '_edit_cpt_item',
+				'capability' => 'ee_edit_venue',
+				'obj_id' => $vnu_id
+				),
 			'trash_venue' => array(
 				'func' => '_trash_or_restore_venue',
 				'args' => array( 'venue_status' => 'trash' ),
