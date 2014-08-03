@@ -158,7 +158,7 @@ jQuery(document).ready(function($) {
 		init: function() {
 			$('#postbox-container-2 .postbox').hide();
 			$('#postbox-container-1 .postbox').hide();
-			$('.mt-settings-content').toggle();
+			$('.mt-settings-content').hide();
 
 			return this; //make chainable
 		},
