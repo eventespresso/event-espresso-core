@@ -52,7 +52,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 		$new_page_routes = array(
 			'question_groups' => array(
 				'func' => '_question_groups_overview_list_table',
-				'capability' => 'read_question_groups'
+				'capability' => 'ee_read_question_groups'
 				),
 			'add_question' => array(
 				'func' => '_edit_question',

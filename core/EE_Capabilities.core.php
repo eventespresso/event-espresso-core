@@ -277,7 +277,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_questions',
 				'ee_edit_question_group',
 				'ee_edit_question_groups',
-				'read_question_groups',
+				'ee_read_question_groups',
 				'edit_system_question_groups',
 				'ee_delete_question_group',
 				'ee_delete_question_groups',
