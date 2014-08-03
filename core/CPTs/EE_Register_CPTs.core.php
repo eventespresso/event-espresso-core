@@ -198,7 +198,7 @@ class EE_Register_CPTs {
 						'publish_posts' => 'ee_publish_venues',
 						'read_private_posts' => 'ee_read_private_venues',
 						'delete_posts' => 'ee_delete_venues',
-						'delete_private_posts' => 'delete_private_venues',
+						'delete_private_posts' => 'ee_delete_private_venues',
 						'delete_published_posts' => 'delete_published_venues',
 						'delete_others_posts' => 'ee_edit_others_venues',
 						'edit_private_posts' => 'ee_edit_private_venues',
