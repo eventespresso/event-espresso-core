@@ -133,38 +133,38 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'trash_event' => array(
 				'func' => '_trash_or_restore_event',
 				'args' => array('event_status' => 'trash'),
-				'capability' => 'delete_event',
+				'capability' => 'ee_delete_event',
 				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'trash_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('event_status' => 'trash'),
-				'capability' => 'delete_events',
+				'capability' => 'ee_delete_events',
 				'noheader' => true
 			),
 			'restore_event' => array(
 				'func' => '_trash_or_restore_event',
 				'args' => array('event_status' => 'draft'),
-				'capability' => 'delete_event',
+				'capability' => 'ee_delete_event',
 				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'restore_events' => array(
 				'func' => '_trash_or_restore_events',
 				'args' => array('event_status' => 'draft'),
-				'capability' => 'delete_events',
+				'capability' => 'ee_delete_events',
 				'noheader' => true
 			),
 			'delete_event' => array(
 				'func' => '_delete_event',
-				'capability' => 'delete_event',
+				'capability' => 'ee_delete_event',
 				'obj_id' => $evt_id,
 				'noheader' => true
 			),
 			'delete_events' => array(
 				'func' => '_delete_events',
-				'capability' => 'delete_events',
+				'capability' => 'ee_delete_events',
 				'noheader' => true
 			),
 			'view_report' => array(
@@ -193,13 +193,13 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'delete_categories' => array(
 				'func' => '_delete_categories',
-				'capability' => 'delete_event_category',
+				'capability' => 'ee_delete_event_category',
 				'noheader' => TRUE
 				),
 
 			'delete_category' => array(
 				'func' => '_delete_categories',
-				'capability' => 'delete_event_category',
+				'capability' => 'ee_delete_event_category',
 				'noheader' => TRUE
 				),
 
@@ -642,7 +642,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_events', 'espresso_events_trash_events' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),

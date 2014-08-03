@@ -98,7 +98,7 @@ class EE_Register_CPTs {
 					'capabilities' => array(
 						'manage_terms' => 'manage_event_categories',
 						'edit_terms' => 'ee_edit_event_category',
-						'delete_terms' => 'delete_event_category',
+						'delete_terms' => 'ee_delete_event_category',
 						'assign_terms' => 'assign_event_category'
 						),
 					'rewrite' => array( 'slug' => __( 'event-category', 'event_espresso' ))
@@ -126,7 +126,7 @@ class EE_Register_CPTs {
 					'capabilities' => array(
 						'manage_terms' => 'ee_read_event_type',
 						'edit_terms' => 'ee_edit_event_type',
-						'delete_terms' => 'delete_event_type',
+						'delete_terms' => 'ee_delete_event_type',
 						'assign_terms' => 'assign_event_type'
 						),
 					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
@@ -161,12 +161,12 @@ class EE_Register_CPTs {
 					'capabilities' => array(
 						'edit_post' => 'ee_edit_event',
 						'read_post' => 'ee_read_event',
-						'delete_post' => 'delete_event',
+						'delete_post' => 'ee_delete_event',
 						'edit_posts' => 'ee_edit_events',
 						'edit_others_posts' => 'ee_edit_others_events',
 						'publish_posts' => 'ee_publish_events',
 						'read_private_posts' => 'ee_read_private_events',
-						'delete_posts' => 'delete_events',
+						'delete_posts' => 'ee_delete_events',
 						'delete_private_posts' => 'ee_delete_private_events',
 						'delete_published_posts' => 'ee_delete_published_events',
 						'delete_others_posts' => 'delete_others_events',

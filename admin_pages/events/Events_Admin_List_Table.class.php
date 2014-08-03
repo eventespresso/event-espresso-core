@@ -160,7 +160,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			$actions['export'] = '<a href="' . $export_event_link . '" title="' . __('Export Event', 'event_espresso') . '">' . __('Export', 'event_espresso') . '</a>';
 		}
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'espresso_events_trash_event', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_trash_event', $item->ID() ) ) {
 			$trash_event_query_args = array(
 					'action' => 'trash_event',
 					'EVT_ID' => $item->ID()
@@ -168,7 +168,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			$trash_event_link = EE_Admin_Page::add_query_args_and_nonce( $trash_event_query_args, EVENTS_ADMIN_URL );
 		}
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'espresso_events_restore_event', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_restore_event', $item->ID() ) ) {
 			$restore_event_query_args = array(
 					'action' => 'restore_event',
 					'EVT_ID' => $item->ID()
@@ -176,7 +176,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			$restore_event_link = EE_Admin_Page::add_query_args_and_nonce( $restore_event_query_args, EVENTS_ADMIN_URL );
 		}
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'espresso-events_delete_event', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_delete_event', $item->ID() ) ) {
 			$delete_event_query_args = array(
 					'action' => 'delete_event',
 					'EVT_ID' => $item->ID()
@@ -190,15 +190,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		switch ( $item->get( 'status' ) ) {
 			case 'trash' :
-					if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'espresso_events_restore_event', $item->ID() ) ) {
+					if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_restore_event', $item->ID() ) ) {
 						$actions['restore_from_trash'] = '<a href="' . $restore_event_link . '" title="' . __('Restore from Trash', 'event_espresso') . '">' . __('Restore from Trash', 'event_espresso') . '</a>';
 					}
-					if ( $item->count_related('Registration') === 0 && EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'espresso_events_delete_event', $item->ID() ) ) {
+					if ( $item->count_related('Registration') === 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_delete_event', $item->ID() ) ) {
 						$actions['delete permanently'] = '<a href="' . $delete_event_link . '" title="' . __('Delete Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 					}
 				break;
 			default :
-					if ( EE_Registry::instance()->CAP->current_user_can( 'delete_event', 'espresso_events_trash_event', $item->ID() ) ) {
+					if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_event', 'espresso_events_trash_event', $item->ID() ) ) {
 						$actions['move to trash'] = '<a href="' . $trash_event_link . '" title="' . __('Trash Event', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 					}
 		}
