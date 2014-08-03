@@ -1490,7 +1490,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//possible conditions for capability checks
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_private_events', 'get_events') ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_events', 'get_events') ) {
 			$where['status**'] = array( '!=', 'private' );
 		}
 

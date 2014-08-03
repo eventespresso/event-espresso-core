@@ -96,7 +96,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		if ( empty( $this->_dtts_for_event ) ) {
 			//this means we don't have an event so let's setup a filter dropdown for all the events to select
 			//note possible capability restrictions
-			if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_private_events', 'get_events') ) {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_private_events', 'get_events') ) {
 				$where['status**'] =  array( '!=', 'private' );
 			}
 
