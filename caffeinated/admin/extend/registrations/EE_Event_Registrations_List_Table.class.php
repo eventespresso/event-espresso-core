@@ -59,7 +59,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 
 		$this->_columns = array_merge( $columns, $this->_columns);
 
-		if ( !empty( $evt_id ) && EE_Registry::instance()->CAP->current_user_can( 'read_registrations', 'espresso_registrations_registrations_reports', $evt_id )  ) {
+		if ( !empty( $evt_id ) && EE_Registry::instance()->CAP->current_user_can( 'ee_read_registrations', 'espresso_registrations_registrations_reports', $evt_id )  ) {
 			$this->_bottom_buttons = array(
 				'report'=> array(
 					'route' => 'registrations_report',
@@ -244,7 +244,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	 */
 	function column__REG_code(EE_Registration $item){
 		$link = EE_Admin_Page::add_query_args_and_nonce( array( 'action' => 'view_registration', '_REG_ID' => $item->ID() ), REG_ADMIN_URL );
-		return EE_Registry::instance()->instance()->CAP->current_user_can('read_registration', 'view_registration', $item->ID() ) ? '<a href="' . $link . '" title="' . __('View Registration Details', 'event_espresso') .'">' . $item->get('REG_code') . '</a>' : $item->get('REG_code');
+		return EE_Registry::instance()->instance()->CAP->current_user_can('ee_read_registration', 'view_registration', $item->ID() ) ? '<a href="' . $link . '" title="' . __('View Registration Details', 'event_espresso') .'">' . $item->get('REG_code') . '</a>' : $item->get('REG_code');
 	}
 
 

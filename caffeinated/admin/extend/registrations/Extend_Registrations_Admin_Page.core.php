@@ -51,7 +51,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 		$new_page_routes = array(
 			'reports' => array(
 				'func' => '_registration_reports',
-				'capability' => 'read_registrations'
+				'capability' => 'ee_read_registrations'
 				),
 			'registration_checkins' => array(
 				'func' => '_registration_checkin_list_table',
@@ -81,7 +81,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			'event_registrations'=> array(
 				'func' => '_event_registrations_list_table',
-				'capability' => 'read_registrations',
+				'capability' => 'ee_read_registrations',
 				)
 			);
 

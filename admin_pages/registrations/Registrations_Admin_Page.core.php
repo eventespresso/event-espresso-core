@@ -136,12 +136,12 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 				'default'	=> array(
 					'func' => '_registrations_overview_list_table',
-					'capability' => 'read_registrations'
+					'capability' => 'ee_read_registrations'
 					),
 
 				'view_registration'	=> array(
 					'func' => '_registration_details',
-					'capability' => 'read_registration',
+					'capability' => 'ee_read_registration',
 					'obj_id' => $reg_id
 					),
 
@@ -346,7 +346,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				'registrations_report'=>array(
 					'func'=>'_registrations_report',
 					'noheader'=> TRUE,
-					'capability' => 'read_registrations'
+					'capability' => 'ee_read_registrations'
 				),
 				'contact_list_export'=>array(
 					'func'=>'_contact_list_export',

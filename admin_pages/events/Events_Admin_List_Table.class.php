@@ -142,7 +142,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		}
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'read_registration', 'espresso_registrations_view_registration', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $item->ID() ) ) {
 			$attendees_query_args = array(
 					'action' => 'default',
 					'event_id' => $item->ID()
@@ -258,7 +258,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			);
 		$attendees_link = EE_Admin_Page::add_query_args_and_nonce( $attendees_query_args, REG_ADMIN_URL );
 		$registered_attendees = EEM_Registration::instance()->get_event_registration_count( $item->ID() );
-		return  EE_Registry::instance()->CAP->current_user_can( 'read_registration', 'espresso_registrations_view_registration', $item->ID() ) ? '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>' : $registered_attendees;
+		return  EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $item->ID() ) ? '<a href="' . $attendees_link . '">' . $registered_attendees . '</a>' : $registered_attendees;
 	}
 
 
@@ -284,7 +284,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			$actionlinks[] = '<a href="' . $edit_link . '" title="' . __('Edit Event', 'event_espresso') . '"><div class="ee-icon ee-icon-calendar-edit"></div></a>';
 		}
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'read_registration', 'espresso_registrations_view_registration', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_read_registration', 'espresso_registrations_view_registration', $item->ID() ) ) {
 			$attendees_query_args = array(
 				'action' => 'default',
 				'event_id' => $item->ID()
