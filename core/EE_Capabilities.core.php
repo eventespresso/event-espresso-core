@@ -113,7 +113,7 @@ final class EE_Capabilities extends EE_Base {
 	private function _set_meta_caps() {
 		$this->_meta_caps =  array (
 			//edits
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_event', array( EEM_Event::instance(), 'ee_edit_published_events', 'edit_others_events', 'edit_private_events' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_event', array( EEM_Event::instance(), 'ee_edit_published_events', 'ee_edit_others_events', 'edit_private_events' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_venue', array( EEM_Venue::instance(), 'edit_published_venues', 'edit_others_venues', 'edit_private_venues' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_registration', array( EEM_Registration::instance(), '', 'edit_others_registrations', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Registration::instance(), '', 'edit_others_checkins', '' ) ),
@@ -169,7 +169,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_edit_event',
 				'ee_edit_events',
 				'ee_edit_published_events',
-				'edit_others_events',
+				'ee_edit_others_events',
 				'edit_private_events',
 				'delete_published_events',
 				'delete_private_events',
@@ -513,7 +513,7 @@ abstract class EE_Meta_Capability_Map {
 
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -545,7 +545,7 @@ abstract class EE_Meta_Capability_Map {
 class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -625,7 +625,7 @@ class EE_Meta_Capability_Map_Edit extends EE_Meta_Capability_Map {
 class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -658,7 +658,7 @@ class EE_Meta_Capability_Map_Delete extends EE_Meta_Capability_Map_Edit {
 class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -733,7 +733,7 @@ class EE_Meta_Capability_Map_Read extends EE_Meta_Capability_Map {
 class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
@@ -794,7 +794,7 @@ class EE_Meta_Capability_Map_Messages_Cap extends EE_Meta_Capability_Map {
 class EE_Meta_Capability_Map_Registration_Form_Cap extends EE_Meta_Capability_Map {
 
 	/**
-	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for edit_others_events ) work as expected.
+	 * This is the callback for the wp map_meta_caps() function which allows for ensuring certain caps that act as a "meta" for other caps ( i.e. ee_edit_event is a meta for ee_edit_others_events ) work as expected.
 	 *
 	 * @since 4.5.0
 	 * @see  wp-includes/capabilities.php
