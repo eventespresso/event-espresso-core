@@ -68,7 +68,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 		$restore_link = EE_Admin_Page::add_query_args_and_nonce( $restore_query_args, EE_FORMS_ADMIN_URL );
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_FORMS_ADMIN_URL );
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_question', 'espresso_registration_form_edit_question', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_question', 'espresso_registration_form_edit_question', $item->ID() ) ) {
 			$actions = array(
 				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Question', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
@@ -87,7 +87,7 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 			}
 		}
 
-		$content = EE_Registry::instance()->CAP->current_user_can( 'edit_question', 'espresso_registration_form_edit_question', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>' : $item->display_text();
+		$content = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_question', 'espresso_registration_form_edit_question', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->display_text() . '</a></strong>' : $item->display_text();
 		$content .= $this->row_actions($actions);
 		return $content;
 	}

@@ -106,7 +106,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 
 			'edit_question' => array(
 				'func' => '_edit_question',
-				'capability' => 'edit_question',
+				'capability' => 'ee_edit_question',
 				'obj_id' => $qst_id,
 				'args' => array('edit')
 				),
@@ -119,7 +119,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 			'update_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => FALSE ),
-				'capability' => 'edit_question',
+				'capability' => 'ee_edit_question',
 				'obj_id' => $qst_id,
 				'noheader' => TRUE,
 				),

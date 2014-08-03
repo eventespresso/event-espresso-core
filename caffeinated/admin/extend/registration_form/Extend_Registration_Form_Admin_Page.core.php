@@ -56,12 +56,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				),
 			'add_question' => array(
 				'func' => '_edit_question',
-				'capability' => 'edit_questions'
+				'capability' => 'ee_edit_questions'
 				),
 			'insert_question' => array(
 				'func' => '_insert_or_update_question',
 				'args' => array('new_question' => TRUE),
-				'capability' => 'edit_questions',
+				'capability' => 'ee_edit_questions',
 				'noheader' => TRUE
 				),
 
@@ -110,12 +110,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'add_question_group' => array(
 				'func' => '_edit_question_group',
-				'capability' => 'edit_question_groups'
+				'capability' => 'ee_edit_question_groups'
 				),
 
 			'edit_question_group' => array(
 				'func' => '_edit_question_group',
-				'capability' => 'edit_question_group',
+				'capability' => 'ee_edit_question_group',
 				'obj_id' => $qsg_id,
 				'args' => array('edit')
 				),
@@ -152,14 +152,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			'insert_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => TRUE),
-				'capability' => 'edit_question_groups',
+				'capability' => 'ee_edit_question_groups',
 				'noheader' => TRUE
 				),
 
 			'update_question_group' => array(
 				'func' => '_insert_or_update_question_group',
 				'args' => array('new_question_group' => FALSE ),
-				'capability' => 'edit_question_group',
+				'capability' => 'ee_edit_question_group',
 				'obj_id' => $qsg_id,
 				'noheader' => TRUE,
 				),
@@ -181,7 +181,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'espresso_update_question_group_order' => array(
 				'func' => 'update_question_group_order',
-				'capability' => 'edit_question_groups',
+				'capability' => 'ee_edit_question_groups',
 				'noheader' => TRUE
 				),
 

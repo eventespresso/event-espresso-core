@@ -163,7 +163,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 		$restore_link = EE_Admin_Page::add_query_args_and_nonce( $restore_query_args, EE_FORMS_ADMIN_URL );
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_FORMS_ADMIN_URL );
 
-		if (  EE_Registry::instance()->CAP->current_user_can( 'edit_question_group', 'espresso_registration_form_edit_question_group', $item->ID() ) ) {
+		if (  EE_Registry::instance()->CAP->current_user_can( 'ee_edit_question_group', 'espresso_registration_form_edit_question_group', $item->ID() ) ) {
 			$actions = array(
 				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Question Group', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 			);
@@ -183,7 +183,7 @@ class Registration_Form_Question_Groups_Admin_List_Table extends EE_Admin_List_T
 			}
 		}
 
-		$content =  EE_Registry::instance()->CAP->current_user_can( 'edit_question_group', 'espresso_registration_form_edit_question_group', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' : $item->name();
+		$content =  EE_Registry::instance()->CAP->current_user_can( 'ee_edit_question_group', 'espresso_registration_form_edit_question_group', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' : $item->name();
 		$content .= $this->row_actions($actions);
 		return $content;
 	}
