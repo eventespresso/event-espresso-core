@@ -65,12 +65,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'delete_checkin_rows' => array(
 					'func' => '_delete_checkin_rows',
 					'noheader' => TRUE,
-					'capability' => 'delete_checkins'
+					'capability' => 'ee_delete_checkins'
 				),
 			'delete_checkin_row' => array(
 					'func' => '_delete_checkin_row',
 					'noheader' => TRUE,
-					'capability' => 'delete_checkin',
+					'capability' => 'ee_delete_checkin',
 					'obj_id' => $reg_id
 				),
 			'toggle_checkin_status'	=> array(
