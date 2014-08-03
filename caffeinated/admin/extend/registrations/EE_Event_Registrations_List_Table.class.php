@@ -214,7 +214,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 		$DTT_ID = !empty( $this->_req_data['DTT_ID'] ) ? $this->_req_data['DTT_ID'] : NULL;
 		$DTT_ID = empty( $DTT_ID ) && !empty( $this->_req_data['event_id'] ) ? EEM_Event::instance()->get_one_by_ID( $this->_req_data['event_id'] )->primary_datetime()->ID() : $DTT_ID;
 
-		if ( !empty($DTT_ID) && EE_Registry::instance()->CAP->current_user_can( 'read_checkins', 'espresso_registrations_registration_checkins' ) ) {
+		if ( !empty($DTT_ID) && EE_Registry::instance()->CAP->current_user_can( 'ee_read_checkins', 'espresso_registrations_registration_checkins' ) ) {
 			$checkin_list_url = EE_Admin_Page::add_query_args_and_nonce( array('action' => 'registration_checkins', '_REGID' => $item->ID(), 'DTT_ID' => $DTT_ID));
 			$actions['checkin'] = '<a href="' . $checkin_list_url . '" title="' . __('View all the check-ins/checkouts for this registrant', 'event_espresso' ) . '">' . __('View', 'event_espresso') . '</a>';
 		}
@@ -254,7 +254,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_Event(EE_Registration $item) {
 		$event = $this->_evt instanceof EE_Event ? $this->_evt : $item->event();
 		$chkin_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'event_registrations', 'event_id'=>$event->ID() ), REG_ADMIN_URL );
-		$event_label = EE_Registry::instance()->CAP->current_user_can( 'read_checkins', 'espresso_registrations_registration_checkins' ) ?  '<a href="'.$chkin_lnk_url.'" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>' : $event->name();
+		$event_label = EE_Registry::instance()->CAP->current_user_can( 'ee_read_checkins', 'espresso_registrations_registration_checkins' ) ?  '<a href="'.$chkin_lnk_url.'" title="' . __( 'View Checkins for this Event', 'event_espresso' ) . '">' . $event->name() . '</a>' : $event->name();
 		return $event_label;
 	}
 

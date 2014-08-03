@@ -55,7 +55,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 				),
 			'registration_checkins' => array(
 				'func' => '_registration_checkin_list_table',
-				'capability' => 'read_checkins'
+				'capability' => 'ee_read_checkins'
 				),
 			'newsletter_selected_send' => array(
 				'func' => '_newsletter_selected_send',
