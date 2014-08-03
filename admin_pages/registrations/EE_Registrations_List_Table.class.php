@@ -240,7 +240,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
         //Build row actions
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->get_first_related('Transaction')->ID() ), TXN_ADMIN_URL );
-		$REG_date = EE_Registry::instance()->CAP->current_user_can('read_transaction', 'espresso_transactions_view_transaction') ? '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>' : $item->reg_date();
+		$REG_date = EE_Registry::instance()->CAP->current_user_can('ee_read_transaction', 'espresso_transactions_view_transaction') ? '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>' : $item->reg_date();
 
 		return $REG_date;
 
@@ -413,7 +413,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 	function column_TXN_total(EE_Registration $item){
 		if($item->transaction()){
 			$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
-			return EE_Registry::instance()->CAP->current_user_can( 'read_transaction', 'espresso_transactions_view_transaction', $item->transaction_ID() ) ? '<span class="reg-pad-rght"><a class="status-'. $item->transaction()->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">'  . $item->transaction()->pretty_total() . '</a></span>' : '<span class="reg-pad-rght">' . $item->transaction()->pretty_total() . '</span>';
+			return EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction', $item->transaction_ID() ) ? '<span class="reg-pad-rght"><a class="status-'. $item->transaction()->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">'  . $item->transaction()->pretty_total() . '</a></span>' : '<span class="reg-pad-rght">' . $item->transaction()->pretty_total() . '</span>';
 		}else{
 			__("None", "event_espresso");
 		}
@@ -434,7 +434,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 				return '<span class="reg-pad-rght"><div class="dashicons dashicons-yes green-icon"></div></span>';
 			} else {
 				$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
-				return EE_Registry::instance()->CAP->current_user_can('read_transaction', 'espresso_transactions_view_transaction', $item->transaction_ID() ) ? '<span class="reg-pad-rght"><a class="status-'. $transaction->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $item->transaction()->pretty_paid() . '</a><span>' : '<span class="reg-pad-rght">' . $item->transaction()->pretty_paid() . '</span>';
+				return EE_Registry::instance()->CAP->current_user_can('ee_read_transaction', 'espresso_transactions_view_transaction', $item->transaction_ID() ) ? '<span class="reg-pad-rght"><a class="status-'. $transaction->status_ID() .'" href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '">' . $item->transaction()->pretty_paid() . '</a><span>' : '<span class="reg-pad-rght">' . $item->transaction()->pretty_paid() . '</span>';
 			}
 		}
 
@@ -486,7 +486,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 			// page=transactions&action=view_transaction&txn=256&_wpnonce=6414da4dbb
 		$view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction_ID() ), TXN_ADMIN_URL );
-		$view_txn_lnk = EE_Registry::instance()->CAP->current_user_can( 'read_transaction', 'espresso_transactions_view_transaction', $item->transaction_ID() ) ? '
+		$view_txn_lnk = EE_Registry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction', $item->transaction_ID() ) ? '
 		<li>
 			<a href="'.$view_txn_lnk_url.'"  title="' . __( 'View Transaction', 'event_espresso' ) . '" class="tiny-text">
 				<div class="dashicons dashicons-cart"></div>

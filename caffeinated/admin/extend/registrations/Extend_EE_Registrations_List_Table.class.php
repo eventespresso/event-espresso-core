@@ -42,7 +42,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table {
 			<a href="'.$check_in_url.'" title="' . __( 'The Check-In List allows you to easily toggle check-in status for this event', 'event_espresso' ) . '">' . __( 'View Check-ins', 'event_espresso' ) . '</a>' : __( 'View Check-ins', 'event_espresso' );
 
 		$view_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'view_transaction', 'TXN_ID'=>$item->transaction()->ID() ), TXN_ADMIN_URL );
-		$REG_date = EE_Regisry::instance()->CAP->current_user_can( 'read_transaction', 'espresso_transactions_view_transaction' ) ?  '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>' : $item->reg_date();
+		$REG_date = EE_Regisry::instance()->CAP->current_user_can( 'ee_read_transaction', 'espresso_transactions_view_transaction' ) ?  '<a href="'.$view_lnk_url.'" title="' . __( 'View Transaction Details', 'event_espresso' ) . '">' . $item->reg_date() . '</a>' : $item->reg_date();
 
 		return sprintf('%1$s %2$s', $REG_date, $this->row_actions($actions) );
 

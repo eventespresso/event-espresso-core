@@ -229,8 +229,8 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_checkins',
 				'ee_delete_others_checkins',
 			//transactions && payments
-				'read_transaction',
-				'read_transactions',
+				'ee_read_transaction',
+				'ee_read_transactions',
 				'edit_payments',
 				'delete_payments',
 			//messages
