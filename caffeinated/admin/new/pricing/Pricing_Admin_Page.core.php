@@ -85,7 +85,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 					'func' => '_price_overview_list_table',
-					'capability' => 'read_default_prices'
+					'capability' => 'ee_read_default_prices'
 				),
 			'add_new_price'	=> array(
 					'func' => '_edit_price_details',
