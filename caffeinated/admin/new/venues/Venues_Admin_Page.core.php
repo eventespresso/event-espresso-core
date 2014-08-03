@@ -130,7 +130,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_overview_list_table',
-				'capability' => 'read_venues'
+				'capability' => 'ee_read_venues'
 				),
 			'trash_venue' => array(
 				'func' => '_trash_or_restore_venue',

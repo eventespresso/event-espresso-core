@@ -191,7 +191,7 @@ class EE_Register_CPTs {
 					'capability_type' => 'venue',
 					'capabilities' => array(
 						'edit_post' => 'edit_venue',
-						'read_post' => 'read_venue',
+						'read_post' => 'ee_read_venue',
 						'delete_post' => 'delete_venue',
 						'edit_posts' => 'edit_venues',
 						'edit_others_posts' => 'edit_others_venues',
