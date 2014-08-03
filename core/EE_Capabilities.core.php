@@ -260,12 +260,12 @@ final class EE_Capabilities extends EE_Base {
 			//prices
 				'ee_edit_default_price',
 				'ee_edit_default_prices',
-				'delete_default_price',
-				'delete_default_prices',
+				'ee_delete_default_price',
+				'ee_delete_default_prices',
 				'ee_edit_default_price_type',
 				'ee_edit_default_price_types',
-				'delete_default_price_type',
-				'delete_default_price_types',
+				'ee_delete_default_price_type',
+				'ee_delete_default_price_types',
 				'read_default_prices',
 				'read_default_price_types',
 			//registration form

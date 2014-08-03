@@ -98,7 +98,7 @@ class Prices_List_Table extends EE_Admin_List_Table {
 
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_all_data_count;
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_prices', 'pricing_trash_price') ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_prices', 'pricing_trash_price') ) {
 			$this->_views['trashed']['count'] = $this->_trashed_count;
 		}
 	}
@@ -162,19 +162,19 @@ class Prices_List_Table extends EE_Admin_List_Table {
 		if ( $item->type_obj()->base_type() !== 1 ) {
 			if ($this->_view == 'all') {
 				// trash price link
-				if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price', 'pricing_trash_price', $item->ID() ) ) {
+				if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_price', 'pricing_trash_price', $item->ID() ) ) {
 					$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
 					$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Price to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
 				}
 			} else {
-				if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price', 'pricing_restore_price', $item->ID() ) ) {
+				if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_price', 'pricing_restore_price', $item->ID() ) ) {
 					// restore price link
 					$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
 					$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Price', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 				}
 
 				// delete price link
-				if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price', 'pricing_delete_price', $item->ID() ) ) {
+				if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_price', 'pricing_delete_price', $item->ID() ) ) {
 					$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_price', 'id'=>$item->ID(), 'noheader' => TRUE ), PRICING_ADMIN_URL );
 					$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Price Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 				}

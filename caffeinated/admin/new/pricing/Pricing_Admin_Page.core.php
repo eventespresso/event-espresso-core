@@ -115,20 +115,20 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'func' => '_trash_or_restore_price',
 					'args' => array( 'trash' => TRUE ),
 					'noheader' => TRUE,
-					'capability' => 'delete_default_price',
+					'capability' => 'ee_delete_default_price',
 					'obj_id' => $prc_id
 				),
 			'restore_price'	=> array(
 					'func' => '_trash_or_restore_price',
 					'args' => array( 'trash' => FALSE ),
 					'noheader' => TRUE,
-					'capability' => 'delete_default_price',
+					'capability' => 'ee_delete_default_price',
 					'obj_id' => $prc_id
 				),
 			'delete_price'	=> array(
 					'func' => '_delete_price',
 					'noheader' => TRUE,
-					'capability' => 'delete_default_price',
+					'capability' => 'ee_delete_default_price',
 					'obj_id' => $prc_id
 				),
 			'espresso_update_price_order' => array(
@@ -167,20 +167,20 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 					'func' => '_trash_or_restore_price_type',
 					'args' => array( 'trash' => TRUE ),
 					'noheader' => TRUE,
-					'capability' => 'delete_default_price_type',
+					'capability' => 'ee_delete_default_price_type',
 					'obj_id' => $prt_id
 				),
 			'restore_price_type'	=> array(
 					'func' => '_trash_or_restore_price_type',
 					'args' => array( 'trash' => FALSE ),
 					'noheader' => TRUE,
-					'capability' => 'delete_default_price_type',
+					'capability' => 'ee_delete_default_price_type',
 					'obj_id' => $prt_id
 				),
 			'delete_price_type'	=> array(
 					'func' => '_delete_price_type',
 					'noheader' => TRUE,
-					'capability' => 'delete_default_price_type',
+					'capability' => 'ee_delete_default_price_type',
 					'obj_id' => $prt_id
 				)
 		);
@@ -385,7 +385,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_prices', 'pricing_trash_price' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_prices', 'pricing_trash_price' ) ) {
 			$this->_views['trashed'] = array(
 					'slug' => 'trashed',
 					'label' => __('Trash', 'event_espresso'),
@@ -415,7 +415,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_default_price_types', 'pricing_trash_price_type' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_default_price_types', 'pricing_trash_price_type' ) ) {
 			 $this->_views['trashed'] = array(
 					'slug' => 'trashed',
 					'label' => __('Trash', 'event_espresso'),
