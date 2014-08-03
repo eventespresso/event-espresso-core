@@ -201,7 +201,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_manage_venue_categories',
 				'ee_edit_venue_category',
 				'ee_delete_venue_category',
-				'assign_venue_category',
+				'ee_assign_venue_category',
 			//contacts
 				'read_contact',
 				'read_contacts',

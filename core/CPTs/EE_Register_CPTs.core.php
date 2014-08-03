@@ -113,7 +113,7 @@ class EE_Register_CPTs {
 						'manage_terms' => 'ee_manage_venue_categories',
 						'edit_terms' => 'ee_edit_venue_category',
 						'delete_terms' => 'ee_delete_venue_category',
-						'assign_terms' => 'assign_venue_category'
+						'assign_terms' => 'ee_assign_venue_category'
 						),
 					'rewrite' => array( 'slug' => __( 'venue-category', 'event_espresso' ))
 				)),
