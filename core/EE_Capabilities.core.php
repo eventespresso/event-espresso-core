@@ -114,7 +114,7 @@ final class EE_Capabilities extends EE_Base {
 		$this->_meta_caps =  array (
 			//edits
 			new EE_Meta_Capability_Map_Edit( 'ee_edit_event', array( EEM_Event::instance(), 'ee_edit_published_events', 'ee_edit_others_events', 'ee_edit_private_events' ) ),
-			new EE_Meta_Capability_Map_Edit( 'ee_edit_venue', array( EEM_Venue::instance(), 'edit_published_venues', 'edit_others_venues', 'edit_private_venues' ) ),
+			new EE_Meta_Capability_Map_Edit( 'ee_edit_venue', array( EEM_Venue::instance(), 'edit_published_venues', 'ee_edit_others_venues', 'edit_private_venues' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_registration', array( EEM_Registration::instance(), '', 'edit_others_registrations', '' ) ),
 			new EE_Meta_Capability_Map_Edit( 'edit_checkin', array( EEM_Registration::instance(), '', 'edit_others_checkins', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'edit_message', array( EEM_Message_Template_Group::instance(), '', 'edit_others_messages', 'edit_global_messages' ) ),
@@ -189,7 +189,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_read_private_venues',
 				'ee_edit_venue',
 				'ee_edit_venues',
-				'edit_others_venues',
+				'ee_edit_others_venues',
 				'edit_published_venues',
 				'edit_private_venues',
 				'delete_venue',
