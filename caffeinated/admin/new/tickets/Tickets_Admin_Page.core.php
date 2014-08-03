@@ -57,7 +57,7 @@ class Tickets_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_tickets_overview_list_table',
-				'capability' => 'read_default_tickets'
+				'capability' => 'ee_read_default_tickets'
 				),
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',

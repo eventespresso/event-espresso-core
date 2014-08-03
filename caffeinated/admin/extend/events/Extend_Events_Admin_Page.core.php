@@ -59,7 +59,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 				),
 			'ticket_list_table' => array(
 				'func' => '_tickets_overview_list_table',
-				'capability' => 'read_default_tickets'
+				'capability' => 'ee_read_default_tickets'
 				),
 			'trash_ticket' => array(
 				'func' => '_trash_or_restore_ticket',
