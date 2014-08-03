@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project name="EE4" default="build">
  <target name="build"
-   depends="prepare,phpunit"/>
+   depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit"/>
 
  <target name="build-parallel"
-   depends="prepare,phpunit"/>
-<?ignore
+   depends="prepare,lint,tools-parallel,phpunit"/>
+
  <target name="tools-parallel" description="Run tools in parallel">
   <parallel threadCount="2">
    <sequential>
@@ -18,13 +18,18 @@
    <antcall target="phpdox"/>
   </parallel>
  </target>
-?>
+
  <target name="clean" description="Cleanup build artifacts">
   <delete dir="${basedir}/build/api"/>
   <delete dir="${basedir}/build/coverage"/>
   <delete dir="${basedir}/build/logs"/>
   <delete dir="${basedir}/build/pdepend"/>
   <delete dir="${basedir}/wordpress-develop" />
+  <exec executable="mysql">
+	  <arg value="-e" />
+	  <arg value='DROP DATABASE `wordpress_test`;' />
+	  <arg value="-uroot" />
+  </exec>
  </target>
 
  <target name="prepare" depends="clean" description="Prepare for build">
@@ -66,7 +71,7 @@
 	  <arg value="${basedir}" />
   </exec>
  </target>
-<?ignore
+
  <target name="lint" description="Perform syntax check of sourcecode files">
   <apply executable="php" failonerror="true">
    <arg value="-l" />
@@ -146,7 +151,7 @@
       <arg value="${basedir}/build/phpdox.xml" />
   </exec>
  </target>
-?>
+
  <target name="phpunit" description="Run unit tests with PHPUnit">
   <exec executable="phpunit" failonerror="true">
     <arg value="--configuration" />
