@@ -198,7 +198,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 	public function get_all_custom_message_templates($orderby = 'GRP_ID', $order = 'ASC', $limit = NULL, $count = FALSE, $user_check = FALSE ) {
 		$_where = $this->_maybe_mtp_filters( array( 'MTP_is_global' => FALSE  ) );
 
-		if  ( $user_check && ! EE_Registry::instance()->CAP->current_user_can( 'edit_others_messages', 'get_all_custom_message_templates' )  ) {
+		if  ( $user_check && ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_others_messages', 'get_all_custom_message_templates' )  ) {
 			$_where['MTP_user_id'] = get_current_user_id();
 		}
 
