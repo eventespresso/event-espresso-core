@@ -157,7 +157,7 @@ final class EE_Capabilities extends EE_Base {
 		return array(
 			'administrator' => array(
 			//basic access
-				'read_ee',
+				'ee_read_ee',
 			//gateways
 				'manage_gateways',
 			//events

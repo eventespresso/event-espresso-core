@@ -44,15 +44,15 @@ class About_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_whats_new',
-				'capability' => 'read_ee'
+				'capability' => 'ee_read_ee'
 				),
 			'overview' => array(
 				'func' => '_overview',
-				'capability' => 'read_ee'
+				'capability' => 'ee_read_ee'
 				),
 			'credits' => array(
 				'func' => '_credits',
-				'capability' => 'read_ee'
+				'capability' => 'ee_read_ee'
 				),
 			);
 	}
