@@ -197,7 +197,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 		$this->_page_routes = array(
 				'default'=> array(
 					'func' => '_ee_default_messages_overview_list_table',
-					'capability' => 'read_global_messages'
+					'capability' => 'ee_read_global_messages'
 					),
 				'custom_mtps' => array(
 					'func' => '_ee_custom_messages_overview_list_table',
