@@ -143,7 +143,7 @@ class EEM_Message_Template_Group extends EEM_Soft_Delete_Base {
 		$_where['MTP_is_active'] = TRUE;
 		$_where = $this->_maybe_mtp_filters($_where);
 
-		if  ( $user_check && ! $global && ! EE_Registry::instance()->CAP->current_user_can( 'read_others_messages', 'get_all_active_message_templates' )  ) {
+		if  ( $user_check && ! $global && ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_messages', 'get_all_active_message_templates' )  ) {
 			$_where['MTP_user_id'] = get_current_user_id();
 		}
 
