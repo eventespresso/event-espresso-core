@@ -283,7 +283,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_question_groups',
 			//event_type taxonomy
 				'ee_assign_event_type',
-				'manage_event_types',
+				'ee_manage_event_types',
 				'ee_edit_event_type',
 				'ee_delete_event_type',
 				)
