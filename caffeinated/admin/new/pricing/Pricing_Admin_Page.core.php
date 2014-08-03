@@ -139,7 +139,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			// price types
 			'price_types'	=> array(
 					'func' => '_price_types_overview_list_table',
-					'capability' => 'read_default_price_types'
+					'capability' => 'ee_read_default_price_types'
 				),
 			'add_new_price_type'	=> array(
 					'func' => '_edit_price_type_details',
