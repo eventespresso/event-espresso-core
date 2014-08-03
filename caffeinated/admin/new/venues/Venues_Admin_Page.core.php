@@ -173,12 +173,12 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 			'add_category' => array(
 				'func' => '_category_details',
 				'args' => array('add'),
-				'capability' => 'edit_venue_category'
+				'capability' => 'ee_edit_venue_category'
 				),
 			'edit_category' => array(
 				'func' => '_category_details',
 				'args' => array('edit'),
-				'capability' => 'edit_venue_category'
+				'capability' => 'ee_edit_venue_category'
 				),
 			'delete_categories' => array(
 				'func' => '_delete_categories',
@@ -196,14 +196,14 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => TRUE),
 				'noheader' => TRUE,
-				'capability' => 'edit_venue_category'
+				'capability' => 'ee_edit_venue_category'
 				),
 
 			'update_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => FALSE),
 				'noheader' => TRUE,
-				'capability' => 'edit_venue_category'
+				'capability' => 'ee_edit_venue_category'
 				),
 			'export_categories' => array(
 				'func' => '_categories_export',
@@ -319,7 +319,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT {
 						'filename' => 'venues_editor_other'
 					)
 				),
-                'help_tour' => array( 'Venues_Edit_Venue_Help_Tour' ),
+                'help_tour' => array( 'Venues_ee_edit_venue_Help_Tour' ),
 				'metaboxes' => array('_venue_editor_metaboxes'),
 				'require_nonce' => FALSE
 			),

@@ -129,7 +129,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 		$edit_link = EE_Admin_Page::add_query_args_and_nonce( $edit_query_args, EE_VENUES_ADMIN_URL );
 		$delete_link = EE_Admin_Page::add_query_args_and_nonce( $delete_query_args, EE_VENUES_ADMIN_URL );
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_venue', 'espresso_venues_edit', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_venue', 'espresso_venues_edit', $item->ID() ) ) {
 			$actions = array(
 				'edit' => '<a href="' . $edit_link . '" title="' . __('Edit Venue', 'event_espresso') . '">' . __('Edit', 'event_espresso') . '</a>'
 				);
@@ -141,7 +141,7 @@ class Venues_Admin_List_Table extends EE_Admin_List_Table {
 
 		$statuses = EEM_Venue::instance()->get_status_array();
 
-		$content = EE_Registry::instance()->CAP->current_user_can( 'edit_venue', 'espresso_venues_edit', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name()) . '</a></strong>' : $item->name();
+		$content = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_venue', 'espresso_venues_edit', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . stripslashes_deep($item->name()) . '</a></strong>' : $item->name();
 		$content .= $item->status() == 'draft' ? ' - <span class="post-state">' . $statuses['draft'] . '</span>' : '';
 		$content .= $this->row_actions($actions);
 		return $content;

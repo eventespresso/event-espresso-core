@@ -111,7 +111,7 @@ class EE_Register_CPTs {
 					'show_in_nav_menus' => false, //by default this doesn't show for decaf
 					'capabilities' => array(
 						'manage_terms' => 'manage_venue_categories',
-						'edit_terms' => 'edit_venue_category',
+						'edit_terms' => 'ee_edit_venue_category',
 						'delete_terms' => 'delete_venue_category',
 						'assign_terms' => 'assign_venue_category'
 						),
@@ -190,10 +190,10 @@ class EE_Register_CPTs {
 					'show_in_nav_menus' => FALSE, //by default this doesn't show for decaf,
 					'capability_type' => 'venue',
 					'capabilities' => array(
-						'edit_post' => 'edit_venue',
+						'edit_post' => 'ee_edit_venue',
 						'read_post' => 'ee_read_venue',
 						'delete_post' => 'delete_venue',
-						'edit_posts' => 'edit_venues',
+						'edit_posts' => 'ee_edit_venues',
 						'edit_others_posts' => 'edit_others_venues',
 						'publish_posts' => 'ee_publish_venues',
 						'read_private_posts' => 'ee_read_private_venues',
