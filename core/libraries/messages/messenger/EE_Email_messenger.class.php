@@ -52,6 +52,7 @@ class EE_Email_messenger extends EE_messenger  {
 			'singular' => __('email', 'event_espresso'),
 			'plural' => __('emails', 'event_espresso')
 			);
+		$this->activate_on_install = TRUE;
 
 		//we're using defaults so let's call parent constructor that will take care of setting up all the other properties
 		parent::__construct();

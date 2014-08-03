@@ -165,6 +165,15 @@ abstract class EE_messenger extends EE_Messages_Base {
 
 
 
+	/**
+	 * This flag sets whether a messenger is activated by default  on installation (or reactivation) of EE core or not.
+	 *
+	 * @var bool
+	 */
+	public $activate_on_install = FALSE;
+
+
+
 
 
 	public function __construct() {
