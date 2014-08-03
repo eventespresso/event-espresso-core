@@ -125,7 +125,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Read( 'ee_read_event', array( EEM_Event::instance(), '', 'ee_read_others_events', 'ee_read_private_events' ) ),
 			new EE_Meta_Capability_Map_Read( 'ee_read_venue', array( EEM_Venue::instance(), '', 'ee_read_others_venues', 'ee_read_private_venues' ) ),
 			new EE_Meta_Capability_Map_Read( 'ee_read_registration', array( EEM_Registration::instance(), '', '', 'ee_edit_others_registrations' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_checkin', array( EEM_Registration::instance(), '', '', 'read_others_checkins' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_checkin', array( EEM_Registration::instance(), '', '', 'ee_read_others_checkins' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'read_message', array( EEM_Message_Template_Group::instance(), '', 'read_others_messages', 'read_global_messages' ) ),
 			new EE_Meta_Capability_Map_Read( 'read_default_ticket', array( EEM_Ticket::instance(), '', '', 'read_others_default_tickets' ) ),
 
@@ -220,7 +220,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_registrations',
 			//checkins
 				'ee_read_checkin',
-				'read_others_checkins',
+				'ee_read_others_checkins',
 				'ee_read_checkins',
 				'edit_checkin',
 				'edit_checkins',
