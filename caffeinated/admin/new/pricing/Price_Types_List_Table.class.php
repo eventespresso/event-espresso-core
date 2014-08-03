@@ -106,12 +106,12 @@ class Price_Types_List_Table extends EE_Admin_List_Table {
 		//Build row actions
 		$actions = array();
 		// edit price link
-		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_default_price_type', 'pricing_edit_price_type', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_default_price_type', 'pricing_edit_price_type', $item->ID() ) ) {
 			$edit_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'edit_price_type', 'id'=>$item->ID() ), PRICING_ADMIN_URL );
 			$actions['edit'] = '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Price Type', 'event_espresso' ) . '">' . __( 'Edit', 'event_espresso' ) . '</a>';
 		}
 
-		$name_link = EE_Registry::instance()->CAP->current_user_can( 'edit_default_price_type', 'pricing_edit_price_type', $item->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Price Type', 'event_espresso' ) . '">' . stripslashes( $item->name() ) . '</a>' : $item->name();
+		$name_link = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_default_price_type', 'pricing_edit_price_type', $item->ID() ) ? '<a href="'.$edit_lnk_url.'" title="' . __( 'Edit Price Type', 'event_espresso' ) . '">' . stripslashes( $item->name() ) . '</a>' : $item->name();
 
 		if ( $item->base_type() !== 1 ) {
 			if ( $this->_view == 'all' ) {

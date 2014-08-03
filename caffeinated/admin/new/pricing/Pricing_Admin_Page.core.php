@@ -90,25 +90,25 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			'add_new_price'	=> array(
 					'func' => '_edit_price_details',
 					'args' => array( 'new_price' => TRUE ),
-					'capability' => 'edit_default_prices'
+					'capability' => 'ee_edit_default_prices'
 				),
 			'edit_price'	=> array(
 					'func' => '_edit_price_details',
 					'args' => array( 'new_price' => FALSE ),
-					'capability' => 'edit_default_price',
+					'capability' => 'ee_edit_default_price',
 					'obj_id' => $prc_id
 				),
 			'insert_price'	=> array(
 					'func' => '_insert_or_update_price',
 					'args' => array( 'new_price' => TRUE ),
 					'noheader' => TRUE,
-					'capability' => 'edit_default_prices',
+					'capability' => 'ee_edit_default_prices',
 				),
 			'update_price'	=> array(
 					'func' => '_insert_or_update_price',
 					'args' => array( 'new_price' => FALSE ),
 					'noheader' => TRUE,
-					'capability' => 'edit_default_price',
+					'capability' => 'ee_edit_default_price',
 					'obj_id' => $prc_id
 				),
 			'trash_price'	=> array(
@@ -134,7 +134,7 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 			'espresso_update_price_order' => array(
 				'func' => 'update_price_order',
 				'noheader' => TRUE,
-				'capability' => 'edit_default_prices'
+				'capability' => 'ee_edit_default_prices'
 				),
 			// price types
 			'price_types'	=> array(
@@ -143,24 +143,24 @@ class Pricing_Admin_Page extends EE_Admin_Page {
 				),
 			'add_new_price_type'	=> array(
 					'func' => '_edit_price_type_details',
-					'capability' => 'edit_default_price_types'
+					'capability' => 'ee_edit_default_price_types'
 				),
 			'edit_price_type'	=> array(
 					'func' => '_edit_price_type_details',
-					'capability' => 'edit_default_price_type',
+					'capability' => 'ee_edit_default_price_type',
 					'obj_id' => $prt_id
 				),
 			'insert_price_type'	=> array(
 					'func' => '_insert_or_update_price_type',
 					'args' => array( 'new_price_type' => TRUE ),
 					'noheader' => TRUE,
-					'capability' => 'edit_default_price_types'
+					'capability' => 'ee_edit_default_price_types'
 				),
 			'update_price_type' => array(
 					'func' => '_insert_or_update_price_type',
 					'args' => array( 'new_price_type' => FALSE ),
 					'noheader' => TRUE,
-					'capability' => 'edit_default_price_type',
+					'capability' => 'ee_edit_default_price_type',
 					'obj_id' => $prt_id
 				),
 			'trash_price_type'	=> array(
