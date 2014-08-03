@@ -74,15 +74,15 @@ class Extend_Registration_Form_Questions_Admin_List_Table extends Registration_F
 			);
 		}
 
-		if ( ! $system_question && $this->_view != 'trash' && EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'espresso_registration_form_trash_question', $item->ID() ) ) {
+		if ( ! $system_question && $this->_view != 'trash' && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question', 'espresso_registration_form_trash_question', $item->ID() ) ) {
 			$actions['delete'] = '<a href="' . $trash_link . '" title="' . __('Trash Question', 'event_espresso') . '">' . __('Trash', 'event_espresso') . '</a>';
 		}
 
 		if ( $this->_view == 'trash' ) {
-			if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'espresso_registration_form_restore_question', $item->ID() ) ) {
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question', 'espresso_registration_form_restore_question', $item->ID() ) ) {
 				$actions['restore'] = '<a href="' . $restore_link . '" title="' . __('Restore Question', 'event_espresso') . '">' . __('Restore', 'event_espresso') . '</a>';
 			}
-			if ( $item->count_related('Answer') === 0 && EE_Registry::instance()->CAP->current_user_can( 'delete_question', 'espresso_registration_form_delete_questions', $item->ID() ) ) {
+			if ( $item->count_related('Answer') === 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question', 'espresso_registration_form_delete_questions', $item->ID() ) ) {
 				$actions['delete_permanently'] = '<a href="' . $delete_link . '" title="' . __('Delete Question Permanently', 'event_espresso') . '">' . __('Delete Permanently', 'event_espresso') . '</a>';
 			}
 		}

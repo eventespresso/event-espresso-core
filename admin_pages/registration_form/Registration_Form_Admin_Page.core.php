@@ -278,7 +278,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_questions', 'espresso_registration_form_trash_questions' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_questions', 'espresso_registration_form_trash_questions' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),

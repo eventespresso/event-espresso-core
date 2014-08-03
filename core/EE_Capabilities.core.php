@@ -136,8 +136,8 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_checkin', array( EEM_Registration::instance(), '', 'ee_delete_others_checkins', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'ee_delete_message', array( EEM_Message_Template_Group::instance(), '', 'ee_delete_others_messages', 'ee_delete_global_messages' ) ),
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_default_ticket', array( EEM_Ticket::instance(), '', 'ee_delete_others_default_tickets', '' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question', array( EEM_Question::instance(), '', '', 'delete_system_questions' ) ),
-			new EE_Meta_Capability_Map_Registration_Form_Cap( 'delete_question_group', array( EEM_Question_Group::instance(), '', '', 'delete_system_question_groups' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question', array( EEM_Question::instance(), '', '', 'delete_system_questions' ) ),
+			new EE_Meta_Capability_Map_Registration_Form_Cap( 'ee_delete_question_group', array( EEM_Question_Group::instance(), '', '', 'delete_system_question_groups' ) ),
 		);
 
 		$this->_meta_caps = apply_filters( 'FHEE__EE_Capabilities___set_meta_caps__meta_caps', $this->_meta_caps );
@@ -273,14 +273,14 @@ final class EE_Capabilities extends EE_Base {
 				'ee_edit_questions',
 				'ee_edit_system_questions',
 				'ee_read_questions',
-				'delete_question',
-				'delete_questions',
+				'ee_delete_question',
+				'ee_delete_questions',
 				'ee_edit_question_group',
 				'ee_edit_question_groups',
 				'read_question_groups',
 				'edit_system_question_groups',
-				'delete_question_group',
-				'delete_question_groups',
+				'ee_delete_question_group',
+				'ee_delete_question_groups',
 			//event_type taxonomy
 				'assign_event_type',
 				'manage_event_types',

@@ -67,14 +67,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'trash_question' => array(
 				'func' => '_trash_question',
-				'capability' => 'delete_question',
+				'capability' => 'ee_delete_question',
 				'obj_id' => $qst_id,
 				'noheader' => TRUE
 				),
 
 			'restore_question' => array(
 				'func' => '_trash_or_restore_questions',
-				'capability' => 'delete_question',
+				'capability' => 'ee_delete_question',
 				'obj_id' => $qst_id,
 				'args' => array( 'trash' => FALSE ),
 				'noheader' => TRUE
@@ -82,21 +82,21 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'delete_question' => array(
 				'func' => '_delete_question',
-				'capability' => 'delete_question',
+				'capability' => 'ee_delete_question',
 				'obj_id' => $qst_id,
 				'noheader' => TRUE
 				),
 
 			'trash_questions' => array(
 				'func' => '_trash_or_restore_questions',
-				'capability' => 'delete_questions',
+				'capability' => 'ee_delete_questions',
 				'args' => array('trash' => TRUE),
 				'noheader' => TRUE
 				),
 
 			'restore_questions' => array(
 				'func' => '_trash_or_restore_questions',
-				'capability' => 'delete_questions',
+				'capability' => 'ee_delete_questions',
 				'args' => array('trash' => FALSE),
 				'noheader' => TRUE
 				),
@@ -104,7 +104,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			'delete_questions'=>array(
 				'func'=>'_delete_questions',
 				'args'=>array(),
-				'capability' => 'delete_questions',
+				'capability' => 'ee_delete_questions',
 				'noheader'=>TRUE
 			),
 
@@ -122,13 +122,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 
 			'delete_question_groups' => array(
 				'func' => '_delete_question_groups',
-				'capability' => 'delete_question_groups',
+				'capability' => 'ee_delete_question_groups',
 				'noheader' => TRUE
 				),
 
 			'delete_question_group' => array(
 				'func' => '_delete_question_groups',
-				'capability' => 'delete_question_group',
+				'capability' => 'ee_delete_question_group',
 				'obj_id' => $qsg_id,
 				'noheader' => TRUE
 				),
@@ -136,7 +136,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			'trash_question_group' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array( 'trash' => TRUE ),
-				'capability' => 'delete_question_group',
+				'capability' => 'ee_delete_question_group',
 				'obj_id' => $qsg_id,
 				'noheader' => TRUE
 				),
@@ -144,7 +144,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			'restore_question_group' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array( 'trash' => FALSE ),
-				'capability' => 'delete_question_group',
+				'capability' => 'ee_delete_question_group',
 				'obj_id' => $qsg_id,
 				'noheader' => TRUE
 				),
@@ -167,14 +167,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 			'trash_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => TRUE),
-				'capability' => 'delete_question_groups',
+				'capability' => 'ee_delete_question_groups',
 				'noheader' => array('trash' => FALSE)
 				),
 
 			'restore_question_groups' => array(
 				'func' => '_trash_or_restore_question_groups',
 				'args' => array('trash' => FALSE),
-				'capability' => 'delete_question_groups',
+				'capability' => 'ee_delete_question_groups',
 				'noheader' => TRUE
 				),
 
@@ -370,7 +370,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can('delete_questions', 'espresso_registration_form_trash_questions' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can('ee_delete_questions', 'espresso_registration_form_trash_questions' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
@@ -400,7 +400,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page {
 				)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_question_groups', 'espresso_registration_form_trash_question_groups' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_question_groups', 'espresso_registration_form_trash_question_groups' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
