@@ -127,7 +127,7 @@ final class EE_Capabilities extends EE_Base {
 			new EE_Meta_Capability_Map_Read( 'ee_read_registration', array( EEM_Registration::instance(), '', '', 'ee_edit_others_registrations' ) ),
 			new EE_Meta_Capability_Map_Read( 'ee_read_checkin', array( EEM_Registration::instance(), '', '', 'ee_read_others_checkins' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'ee_read_message', array( EEM_Message_Template_Group::instance(), '', 'ee_read_others_messages', 'ee_read_global_messages' ) ),
-			new EE_Meta_Capability_Map_Read( 'ee_read_default_ticket', array( EEM_Ticket::instance(), '', '', 'read_others_default_tickets' ) ),
+			new EE_Meta_Capability_Map_Read( 'ee_read_default_ticket', array( EEM_Ticket::instance(), '', '', 'ee_read_others_default_tickets' ) ),
 
 			//deletes
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_event', array( EEM_Event::instance(), 'ee_delete_published_events', 'ee_delete_others_events', 'ee_delete_private_events' ) ),
@@ -250,7 +250,7 @@ final class EE_Capabilities extends EE_Base {
 			//tickets
 				'ee_read_default_ticket',
 				'ee_read_default_tickets',
-				'read_others_default_tickets',
+				'ee_read_others_default_tickets',
 				'edit_default_ticket',
 				'edit_default_tickets',
 				'edit_others_default_tickets',
