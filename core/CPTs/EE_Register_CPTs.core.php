@@ -167,7 +167,7 @@ class EE_Register_CPTs {
 						'publish_posts' => 'ee_publish_events',
 						'read_private_posts' => 'ee_read_private_events',
 						'delete_posts' => 'delete_events',
-						'delete_private_posts' => 'delete_private_events',
+						'delete_private_posts' => 'ee_delete_private_events',
 						'delete_published_posts' => 'ee_delete_published_events',
 						'delete_others_posts' => 'delete_others_events',
 						'edit_private_posts' => 'ee_edit_private_events',
