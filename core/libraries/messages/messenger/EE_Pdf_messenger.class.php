@@ -53,6 +53,7 @@ class EE_Pdf_messenger extends EE_messenger  {
 			'singular' => __('PDF', 'event_espresso'),
 			'plural' => __('PDFs', 'event_espresso')
 			);
+		$this->activate_on_install = TRUE;
 
 		parent::__construct();
 	}
