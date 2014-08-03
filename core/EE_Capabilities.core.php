@@ -159,7 +159,7 @@ final class EE_Capabilities extends EE_Base {
 			//basic access
 				'ee_read_ee',
 			//gateways
-				'manage_gateways',
+				'ee_manage_gateways',
 			//events
 				'publish_events',
 				'read_private_events',

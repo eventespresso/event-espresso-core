@@ -134,7 +134,7 @@ class About_Admin_Page extends EE_Admin_Page {
 			unset( $steps['organization'] );
 		}
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'manage_gateways', 'espresso_payment_settings_default' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_manage_gateways', 'espresso_payment_settings_default' ) ) {
 			unset( $steps['gateways'] );
 		}
 
