@@ -237,14 +237,14 @@ class Custom_Messages_Template_List_Table extends EE_Admin_List_Table {
 		// delete price link
 		$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_message_template', 'id'=>$item->GRP_ID(), 'noheader' => TRUE ), EE_MSG_ADMIN_URL );
 
-		if ( !$item->get('MTP_deleted') && EE_Registry::instance()->CAP->current_user_can( 'delete_message', 'espresso_messages_trash_message_template', $item->ID() ) ) {
+		if ( !$item->get('MTP_deleted') && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_message', 'espresso_messages_trash_message_template', $item->ID() ) ) {
 			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Move Template Group to Trash', 'event_espresso' ) . '">' . __( 'Move to Trash', 'event_espresso' ) . '</a>';
 		} else {
-			if ( EE_Registry::instance()->CAP->current_user_can( 'delete_message', 'espresso_messages_restore_message_template', $item->ID() ) ) {
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_message', 'espresso_messages_restore_message_template', $item->ID() ) ) {
 				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Message Template', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 			}
 
-			if ( $this->_view == 'trashed' && EE_Registry::instance()->CAP->current_user_can( 'delete_message', 'espresso_messages_delete_message_template', $item->ID() ) ) {
+			if ( $this->_view == 'trashed' && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_message', 'espresso_messages_delete_message_template', $item->ID() ) ) {
 				$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Template Group Permanently', 'event_espresso' ) . '">' . __( 'Delete Permanently', 'event_espresso' ) . '</a>';
 			}
 		}

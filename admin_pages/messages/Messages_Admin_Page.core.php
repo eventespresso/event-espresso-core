@@ -240,35 +240,35 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'trash_message_template' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'trash' => TRUE, 'all' => TRUE ),
 					'noheader' => TRUE
 					),
 				'trash_message_template_context' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'trash' => TRUE ),
 					'noheader' => TRUE
 					),
 				'restore_message_template' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array( 'trash' => FALSE, 'all' => TRUE ),
 					'noheader' => TRUE
 					),
 				'restore_message_template_context' => array(
 					'func' => '_trash_or_restore_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'args' => array('trash' => FALSE),
 					'noheader' => TRUE
 					),
 				'delete_message_template' => array(
 					'func' => '_delete_message_template',
-					'capability' => 'delete_message',
+					'capability' => 'ee_delete_message',
 					'obj_id' => $grp_id,
 					'noheader' => TRUE
 					),
@@ -691,7 +691,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 			)
 		);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_messages', 'espresso_messages_trash_message_template' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_messages', 'espresso_messages_trash_message_template' ) ) {
 			$this->_views['trashed'] = array(
 				'slug' => 'trashed',
 				'label' => __('Trash', 'event_espresso'),
