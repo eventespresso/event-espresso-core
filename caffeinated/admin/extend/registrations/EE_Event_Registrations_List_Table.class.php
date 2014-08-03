@@ -100,7 +100,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table {
 				$where['status**'] =  array( '!=', 'private' );
 			}
 
-			if ( ! EE_Registry::instance()->CAP->current_user_can( 'read_others_events', 'get_events' ) ) {
+			if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_read_others_events', 'get_events' ) ) {
 				$where['EVT_wp_user'] =  get_current_user_id();
 			}
 
