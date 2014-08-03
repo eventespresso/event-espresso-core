@@ -201,7 +201,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'custom_mtps' => array(
 					'func' => '_ee_custom_messages_overview_list_table',
-					'capability' => 'read_messages'
+					'capability' => 'ee_read_messages'
 					),
 				'add_new_message_template'	=>array(
 					 'func' => '_add_message_template',
@@ -215,14 +215,14 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'preview_message' => array(
 					'func' => '_preview_message',
-					'capability' => 'read_message',
+					'capability' => 'ee_read_message',
 					'obj_id' => $grp_id,
 					'noheader' => true,
 					'headers_sent_route' => 'display_preview_message'
 					),
 				'display_preview_message' => array(
 					'func' => '_display_preview_message',
-					'capability' => 'read_message',
+					'capability' => 'ee_read_message',
 					'obj_id' => $grp_id
 					),
 				'insert_message_template' => array(
@@ -284,7 +284,7 @@ class Messages_Admin_Page extends EE_Admin_Page {
 					),
 				'reports' => array(
 					'func' => '_messages_reports',
-					'capability' => 'read_messages'
+					'capability' => 'ee_read_messages'
 					),
 		);
 	}
