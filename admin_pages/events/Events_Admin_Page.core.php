@@ -113,7 +113,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 		$this->_page_routes = array(
 			'default' => array(
 				'func' => '_events_overview_list_table',
-				'capability' => 'read_events'
+				'capability' => 'ee_read_events'
 				),
 			'create_new' => array(
 				'func' => '_create_new_cpt_item',

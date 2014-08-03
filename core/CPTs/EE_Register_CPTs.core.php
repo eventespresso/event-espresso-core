@@ -124,7 +124,7 @@ class EE_Register_CPTs {
 					'public'=>true,
 					'show_ui'=>false,
 					'capabilities' => array(
-						'manage_terms' => 'read_event_type',
+						'manage_terms' => 'ee_read_event_type',
 						'edit_terms' => 'edit_event_type',
 						'delete_terms' => 'delete_event_type',
 						'assign_terms' => 'assign_event_type'
@@ -160,7 +160,7 @@ class EE_Register_CPTs {
 					'capability_type' => 'event',
 					'capabilities' => array(
 						'edit_post' => 'edit_event',
-						'read_post' => 'read_event',
+						'read_post' => 'ee_read_event',
 						'delete_post' => 'delete_event',
 						'edit_posts' => 'edit_events',
 						'edit_others_posts' => 'edit_others_events',
