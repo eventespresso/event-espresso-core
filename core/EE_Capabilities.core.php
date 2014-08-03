@@ -212,7 +212,7 @@ final class EE_Capabilities extends EE_Base {
 			//registrations
 				'ee_read_registration',
 				'ee_read_registrations',
-				'read_others_registrations',
+				'ee_read_others_registrations',
 				'edit_registration',
 				'edit_registrations',
 				'edit_others_registrations',

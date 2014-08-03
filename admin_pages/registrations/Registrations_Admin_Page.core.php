@@ -938,7 +938,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 		}
 
 		//capability checks
-		if ( ! EE_Registry::instance()->CAP->current_user_can('read_others_registrations', 'get_registrations' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'get_registrations' ) ) {
 			$_where['AND'] = array(
 				'Event.EVT_wp_user' => get_current_user_id()
 				);
