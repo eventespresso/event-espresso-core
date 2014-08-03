@@ -150,7 +150,7 @@
  <target name="phpunit" description="Run unit tests with PHPUnit">
   <exec executable="phpunit" failonerror="true">
     <arg value="--configuration" />
-    <arg value="${basedir}/tests/phpunit.xml" />
+    <arg value="${basedir}/wordpress-develop/src/wp-content/plugins/tests/phpunit.xml" />
 	<arg value="${basedir}/wordpress-develop/src/wp-content/plugins/tests" />
   </exec>
  </target>
