@@ -231,7 +231,7 @@ final class EE_Capabilities extends EE_Base {
 			//transactions && payments
 				'ee_read_transaction',
 				'ee_read_transactions',
-				'edit_payments',
+				'ee_edit_payments',
 				'delete_payments',
 			//messages
 				'read_message',

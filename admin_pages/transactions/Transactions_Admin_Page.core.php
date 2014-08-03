@@ -128,13 +128,13 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'espresso_apply_payment' => array(
 				 	'func' => 'apply_payments_or_refunds',
 				 	'noheader' => TRUE,
-				 	'capability' => 'edit_payments'
+				 	'capability' => 'ee_edit_payments'
 				 	),
 
 				'espresso_apply_refund'	=> array(
 					'func' => 'apply_payments_or_refunds',
 					'noheader' => TRUE,
-					'capability' => 'edit_payments'
+					'capability' => 'ee_edit_payments'
 					),
 
 				'espresso_delete_payment' => array(
