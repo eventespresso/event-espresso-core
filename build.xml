@@ -153,8 +153,7 @@
  </target>
 
  <target name="phpunit" description="Run unit tests with PHPUnit">
-  <exec executable="/opt/phpfarm/inst/bin/php-5.4.21" failonerror="true">
-    <arg value="phpunit" />
+  <exec executable="phpunit5.4.21" failonerror="true">
 	<arg value="--configuration" />
     <arg value="${basedir}/wordpress-develop/src/wp-content/plugins/EE4/tests/phpunit.xml" />
 	<arg value="${basedir}/wordpress-develop/src/wp-content/plugins/EE4/tests" />
