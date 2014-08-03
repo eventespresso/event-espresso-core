@@ -132,7 +132,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 
 		$actions = array();
 
-		if ( EE_Registry::instance()->CAP->current_user_can('edit_event', 'espresso_events_edit', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can('ee_edit_event', 'espresso_events_edit', $item->ID() ) ) {
 			$edit_query_args = array(
 					'action' => 'edit',
 					'post' => $item->ID()
@@ -204,7 +204,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 		}
 
 		$status = ''; //$item->status() !== 'publish' ? ' (' . $item->status() . ')' : '';
-		$content = EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'espresso_events_edit', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status : '<strong>' . $item->name() . '</strong>';
+		$content = EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $item->ID() ) ? '<strong><a class="row-title" href="' . $edit_link . '">' . $item->name() . '</a></strong>' . $status : '<strong>' . $item->name() . '</strong>';
 		$content .= $this->row_actions($actions);
 		return $content;
 
@@ -275,7 +275,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 			define('REG_ADMIN_URL', EVENTS_ADMIN_URL);
 		$actionlinks = array();
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'espresso_events_edit', $item->ID() ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $item->ID() ) ) {
 			$edit_query_args = array(
 					'action' => 'edit',
 					'post' => $item->ID()

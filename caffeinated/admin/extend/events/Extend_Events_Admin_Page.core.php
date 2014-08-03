@@ -53,7 +53,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 		$new_page_routes = array(
 			'duplicate_event' => array(
 				'func' => '_duplicate_event',
-				'capability' => 'edit_event',
+				'capability' => 'ee_edit_event',
 				'obj_id' => $evt_id,
 				'noheader' => TRUE
 				),

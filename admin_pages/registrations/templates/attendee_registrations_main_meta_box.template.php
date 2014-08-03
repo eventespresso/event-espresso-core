@@ -18,7 +18,7 @@
 					<td class="jst-left">
 					<?php
 						$event_url = add_query_arg( array( 'action' => 'edit', 'post' => $registration->event_ID() ), admin_url( 'admin.php?page=espresso_events' ));
-						echo EE_Registry::instance()->CAP->current_user_can( 'edit_event', 'espresso_events_edit', $registration->event_ID() ) ?  '<a href="'. $event_url .'"  title="'. __( 'Edit Event', 'event_espresso' ) .'">' . $registration->event_name() . '</a>' : $registration->event_name();
+						echo EE_Registry::instance()->CAP->current_user_can( 'ee_edit_event', 'espresso_events_edit', $registration->event_ID() ) ?  '<a href="'. $event_url .'"  title="'. __( 'Edit Event', 'event_espresso' ) .'">' . $registration->event_name() . '</a>' : $registration->event_name();
 					?>
 					</td>
 					<td class="jst-left">

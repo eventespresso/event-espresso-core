@@ -139,7 +139,7 @@ class About_Admin_Page extends EE_Admin_Page {
 		}
 
 
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'edit_events', 'espresso_events_create_new' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_edit_events', 'espresso_events_create_new' ) ) {
 			unset( $steps['event'] );
 		}
 

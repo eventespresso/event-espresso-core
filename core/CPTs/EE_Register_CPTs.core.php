@@ -97,7 +97,7 @@ class EE_Register_CPTs {
 					'show_in_nav_menus' => true,
 					'capabilities' => array(
 						'manage_terms' => 'manage_event_categories',
-						'edit_terms' => 'edit_event_category',
+						'edit_terms' => 'ee_edit_event_category',
 						'delete_terms' => 'delete_event_category',
 						'assign_terms' => 'assign_event_category'
 						),
@@ -125,7 +125,7 @@ class EE_Register_CPTs {
 					'show_ui'=>false,
 					'capabilities' => array(
 						'manage_terms' => 'ee_read_event_type',
-						'edit_terms' => 'edit_event_type',
+						'edit_terms' => 'ee_edit_event_type',
 						'delete_terms' => 'delete_event_type',
 						'assign_terms' => 'assign_event_type'
 						),
@@ -159,10 +159,10 @@ class EE_Register_CPTs {
 					'show_in_nav_menus' => TRUE,
 					'capability_type' => 'event',
 					'capabilities' => array(
-						'edit_post' => 'edit_event',
+						'edit_post' => 'ee_edit_event',
 						'read_post' => 'ee_read_event',
 						'delete_post' => 'delete_event',
-						'edit_posts' => 'edit_events',
+						'edit_posts' => 'ee_edit_events',
 						'edit_others_posts' => 'edit_others_events',
 						'publish_posts' => 'ee_publish_events',
 						'read_private_posts' => 'ee_read_private_events',

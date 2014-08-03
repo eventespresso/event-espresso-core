@@ -117,16 +117,16 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 				),
 			'create_new' => array(
 				'func' => '_create_new_cpt_item',
-				'capability' => 'edit_events'
+				'capability' => 'ee_edit_events'
 				),
 			'edit' => array(
 				'func' => '_edit_cpt_item',
-				'capability' => 'edit_event',
+				'capability' => 'ee_edit_event',
 				'obj_id' => $evt_id
 				),
 			'copy_event' => array(
 				'func' => '_copy_events',
-				'capability' => 'edit_event',
+				'capability' => 'ee_edit_event',
 				'obj_id' => $evt_id,
 				'noheader' => true
 			),
@@ -169,7 +169,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			),
 			'view_report' => array(
 				'func' => '_view_report',
-				'capablity' => 'edit_events'
+				'capablity' => 'ee_edit_events'
 				),
 			'default_event_settings' => array(
 				'func' => '_default_event_settings',
@@ -183,12 +183,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			//event category tab related
 			'add_category' => array(
 				'func' => '_category_details',
-				'capability' => 'edit_event_category',
+				'capability' => 'ee_edit_event_category',
 				'args' => array('add'),
 				),
 			'edit_category' => array(
 				'func' => '_category_details',
-				'capability' => 'edit_event_category',
+				'capability' => 'ee_edit_event_category',
 				'args' => array('edit')
 				),
 			'delete_categories' => array(
@@ -206,14 +206,14 @@ class Events_Admin_Page extends EE_Admin_Page_CPT {
 			'insert_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => TRUE),
-				'capability' => 'edit_event_category',
+				'capability' => 'ee_edit_event_category',
 				'noheader' => TRUE
 				),
 
 			'update_category' => array(
 				'func' => '_insert_or_update_category',
 				'args' => array('new_category' => FALSE),
-				'capability' => 'edit_event_category',
+				'capability' => 'ee_edit_event_category',
 				'noheader' => TRUE
 				),
 			'category_list' => array(
