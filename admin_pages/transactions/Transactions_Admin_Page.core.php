@@ -140,7 +140,7 @@ class Transactions_Admin_Page extends EE_Admin_Page {
 				'espresso_delete_payment' => array(
 					'func' => 'delete_payment',
 					'noheader' => TRUE,
-					'capability' => 'delete_payments'
+					'capability' => 'ee_delete_payments'
 					),
 
 		);

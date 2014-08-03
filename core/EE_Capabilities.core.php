@@ -232,7 +232,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_read_transaction',
 				'ee_read_transactions',
 				'ee_edit_payments',
-				'delete_payments',
+				'ee_delete_payments',
 			//messages
 				'read_message',
 				'read_messages',
