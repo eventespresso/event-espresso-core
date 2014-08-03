@@ -99,7 +99,7 @@ class EE_Register_CPTs {
 						'manage_terms' => 'ee_manage_event_categories',
 						'edit_terms' => 'ee_edit_event_category',
 						'delete_terms' => 'ee_delete_event_category',
-						'assign_terms' => 'assign_event_category'
+						'assign_terms' => 'ee_assign_event_category'
 						),
 					'rewrite' => array( 'slug' => __( 'event-category', 'event_espresso' ))
 				)),

@@ -180,7 +180,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_manage_event_categories',
 				'ee_edit_event_category',
 				'ee_delete_event_category',
-				'assign_event_category',
+				'ee_assign_event_category',
 			//venues
 				'publish_venues',
 				'read_venue',
