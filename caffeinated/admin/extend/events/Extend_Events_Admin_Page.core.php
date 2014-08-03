@@ -280,9 +280,14 @@ class Extend_Events_Admin_Page extends Events_Admin_Page {
 	protected function _set_list_table_views_default() {
 		parent::_set_list_table_views_default();
 		$export_label = __('Export Events', 'event_espresso');
-		$this->_views['all']['bulk_action']['export_events'] = $export_label;
-		$this->_views['draft']['bulk_action']['export_events'] = $export_label;
-		$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+		if ( EE_Registry::instance()->CAP->current_user_can( 'export', 'espresso_events_export' ) ) {
+			$this->_views['all']['bulk_action']['export_events'] = $export_label;
+			$this->_views['draft']['bulk_action']['export_events'] = $export_label;
+
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
+				$this->_views['trash']['bulk_action']['export_events'] = $export_label;
+			}
+		}
 
 		$new_views = array(
 			'today' => array(

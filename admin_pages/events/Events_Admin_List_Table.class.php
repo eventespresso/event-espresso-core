@@ -89,7 +89,9 @@ class Events_Admin_List_Table extends EE_Admin_List_Table {
 	protected function _add_view_counts() {
 		$this->_views['all']['count'] = $this->_admin_page->total_events();
 		$this->_views['draft']['count'] = $this->_admin_page->total_events_draft();
-		$this->_views['trash']['count'] = $this->_admin_page->total_trashed_events();
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_events', 'espresso_events_trash_events' ) ) {
+			$this->_views['trash']['count'] = $this->_admin_page->total_trashed_events();
+		}
 	}
 
 
