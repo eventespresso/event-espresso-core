@@ -170,7 +170,7 @@ class EE_Register_CPTs {
 						'delete_private_posts' => 'delete_private_events',
 						'delete_published_posts' => 'delete_published_events',
 						'delete_others_posts' => 'delete_others_events',
-						'edit_private_posts' => 'edit_private_events',
+						'edit_private_posts' => 'ee_edit_private_events',
 						'edit_published_posts' => 'ee_edit_published_events'
 						),
 					'taxonomies'=> array(
