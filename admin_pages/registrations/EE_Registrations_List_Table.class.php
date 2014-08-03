@@ -148,7 +148,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 		$this->_views['all']['count'] = $this->_total_registrations();
 		$this->_views['month']['count'] = $this->_total_registrations_this_month();
 		$this->_views['today']['count'] = $this->_total_registrations_today();
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registrations', 'espresso_registrations_trash_registrations' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registrations', 'espresso_registrations_trash_registrations' ) ) {
 			$this->_views['trash']['count'] = $this->_total_registrations(TRUE);
 		}
 	}
@@ -305,17 +305,17 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table {
 
 		//trash/restore/delete actions
 		$actions = array();
-		if ( $this->_view != 'trash' && $payment_count === 0 && EE_Registry::instance()->CAP->current_user_can( 'delete_registration', 'espresso_registrations_trash_registrations', $item->ID() ) ) {
+		if ( $this->_view != 'trash' && $payment_count === 0 && EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registration', 'espresso_registrations_trash_registrations', $item->ID() ) ) {
 			$trash_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'trash_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 			$actions['trash'] = '<a href="'.$trash_lnk_url.'" title="' . __( 'Trash Registration', 'event_espresso' ) . '">' . __( 'Trash', 'event_espresso' ) . '</a>';
 		} elseif ( $this->_view == 'trash' ) {
 			// restore registration link
-			if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registration', 'espresso_registrations_restore_registrations', $item->ID() ) ) {
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registration', 'espresso_registrations_restore_registrations', $item->ID() ) ) {
 				$restore_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'restore_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 				$actions['restore'] = '<a href="'.$restore_lnk_url.'" title="' . __( 'Restore Registration', 'event_espresso' ) . '">' . __( 'Restore', 'event_espresso' ) . '</a>';
 			}
-			if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registration', 'espresso_registrations_delete_registrations', $item->ID() ) ) {
-				$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'delete_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
+			if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registration', 'espresso_registrations_ee_delete_registrations', $item->ID() ) ) {
+				$delete_lnk_url = EE_Admin_Page::add_query_args_and_nonce( array( 'action'=>'ee_delete_registrations', '_REG_ID'=>$item->ID() ), REG_ADMIN_URL );
 
 				$actions['delete'] = '<a href="'.$delete_lnk_url.'" title="' . __( 'Delete Registration Permanently', 'event_espresso' ). '">' . __( 'Delete', 'event_espresso' ) . '</a>';
 			}

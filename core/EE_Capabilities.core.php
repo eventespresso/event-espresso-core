@@ -132,7 +132,7 @@ final class EE_Capabilities extends EE_Base {
 			//deletes
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_event', array( EEM_Event::instance(), 'ee_delete_published_events', 'ee_delete_others_events', 'ee_delete_private_events' ) ),
 			new EE_Meta_Capability_Map_Delete( 'ee_delete_venue', array( EEM_Venue::instance(), 'ee_delete_published_venues', 'ee_delete_others_venues', 'ee_delete_private_venues' ) ),
-			new EE_Meta_Capability_Map_Delete( 'delete_registration', array( EEM_Registration::instance(), '', 'ee_edit_others_registrations', '' ) ),
+			new EE_Meta_Capability_Map_Delete( 'ee_delete_registration', array( EEM_Registration::instance(), '', 'ee_edit_others_registrations', '' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_checkin', array( EEM_Registration::instance(), '', 'delete_others_checkins', '' ) ),
 			new EE_Meta_Capability_Map_Messages_Cap( 'delete_message', array( EEM_Message_Template_Group::instance(), '', 'delete_others_messages', 'delete_global_messages' ) ),
 			new EE_Meta_Capability_Map_Delete( 'delete_default_ticket', array( EEM_Ticket::instance(), '', 'delete_others_default_tickets', '' ) ),
@@ -216,8 +216,8 @@ final class EE_Capabilities extends EE_Base {
 				'ee_edit_registration',
 				'ee_edit_registrations',
 				'ee_edit_others_registrations',
-				'delete_registration',
-				'delete_registrations',
+				'ee_delete_registration',
+				'ee_delete_registrations',
 			//checkins
 				'read_checkin',
 				'read_others_checkins',

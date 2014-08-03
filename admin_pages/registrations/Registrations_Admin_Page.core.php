@@ -157,20 +157,20 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 					'func' => '_trash_or_restore_registrations',
 					'args' => array('trash' => TRUE),
 					'noheader' => TRUE,
-					'capability' => 'delete_registrations'
+					'capability' => 'ee_delete_registrations'
 					),
 
 				'restore_registrations' => array(
 					'func' => '_trash_or_restore_registrations',
 					'args' => array( 'trash' => FALSE ),
 					'noheader' => TRUE,
-					'capability' => 'delete_registrations'
+					'capability' => 'ee_delete_registrations'
 					),
 
 				'delete_registrations' => array(
 					'func' => '_delete_registrations',
 					'noheader' => TRUE,
-					'capability' => 'delete_registrations'
+					'capability' => 'ee_delete_registrations'
 					),
 
 				'update_attendee_registration_form'	=> array(
@@ -669,7 +669,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 				)
 			);
 
-		if ( EE_Registry::instance()->CAP->current_user_can( 'delete_registrations', 'espresso_registrations_delete_registration' ) ) {
+		if ( EE_Registry::instance()->CAP->current_user_can( 'ee_delete_registrations', 'espresso_registrations_delete_registration' ) ) {
 			$this->_views['trash'] = array(
 				'slug' => 'trash',
 				'label' => __('Trash', 'event_espresso'),
