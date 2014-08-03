@@ -231,7 +231,7 @@ class EE_Register_CPTs {
 					'capability_type' => 'contact',
 					'capabilities' => array(
 						'edit_post' => 'edit_contact',
-						'read_post' => 'read_contact',
+						'read_post' => 'ee_read_contact',
 						'delete_post' => 'delete_contact',
 						'edit_posts' => 'edit_contacts',
 						'edit_others_posts' => 'edit_contacts',

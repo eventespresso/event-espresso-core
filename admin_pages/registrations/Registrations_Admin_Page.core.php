@@ -275,7 +275,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT {
 
 				'contact_list'	=> array(
 					'func' => '_attendee_contact_list_table',
-					'capability' => 'read_contacts'
+					'capability' => 'ee_read_contacts'
 					),
 
 
