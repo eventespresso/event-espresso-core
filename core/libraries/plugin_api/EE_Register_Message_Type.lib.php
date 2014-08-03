@@ -91,11 +91,11 @@ class EE_Register_Message_Type implements EEI_Plugin_API {
                         'messengers_to_validate_with' => ! empty( $setup_args['messengers_to_validate_with'] ) ? (array) $setup_args['messengers_to_validate_with'] : array()
 	);
 
-        //add filters
-		add_filter( 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( 'EE_Register_Message_Type', 'register_msgs_autoload_paths'), 10 );
-		add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EE_Register_Message_Type', 'register_messagetype_files'), 10, 1 );
-		add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EE_Register_Message_Type', 'register_messengers_to_activate_mt_with'), 10, 2 );
-                        add_filter( 'FHEE__EE_messenger__get_valid_message_types__valid_types', array( 'EE_Register_Message_Type', 'register_messengers_to_validate_mt_with'), 10, 2 );
+	//add filters
+	add_filter( 'FHEE__EED_Messages___set_messages_paths___MSG_PATHS', array( 'EE_Register_Message_Type', 'register_msgs_autoload_paths'), 10 );
+	add_filter('FHEE__EE_messages__get_installed__messagetype_files', array( 'EE_Register_Message_Type', 'register_messagetype_files'), 10, 1 );
+	add_filter( 'FHEE__EE_messenger__get_default_message_types__default_types', array( 'EE_Register_Message_Type', 'register_messengers_to_activate_mt_with'), 10, 2 );
+	add_filter( 'FHEE__EE_messenger__get_valid_message_types__valid_types', array( 'EE_Register_Message_Type', 'register_messengers_to_validate_mt_with'), 10, 2 );
 
     }
 
