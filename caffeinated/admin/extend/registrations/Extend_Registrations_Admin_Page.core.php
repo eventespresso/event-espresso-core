@@ -60,7 +60,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 			'newsletter_selected_send' => array(
 				'func' => '_newsletter_selected_send',
 				'noheader' => TRUE,
-				'capability' => 'send_message'
+				'capability' => 'ee_send_message'
 				),
 			'delete_checkin_rows' => array(
 					'func' => '_delete_checkin_rows',
@@ -314,7 +314,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page {
 	 * @return string html string for extra buttons
 	 */
 	public function add_newsletter_action_buttons( EE_Admin_List_Table $list_table ) {
-		if ( ! EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_registrations_newsletter_selected_send' ) ) {
+		if ( ! EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_registrations_newsletter_selected_send' ) ) {
 			return '';
 		}
 

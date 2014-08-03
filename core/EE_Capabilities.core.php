@@ -246,7 +246,7 @@ final class EE_Capabilities extends EE_Base {
 				'ee_delete_messages',
 				'ee_delete_others_messages',
 				'ee_delete_global_messages',
-				'send_message',
+				'ee_send_message',
 			//tickets
 				'read_default_ticket',
 				'read_default_tickets',

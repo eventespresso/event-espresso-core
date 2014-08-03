@@ -301,7 +301,7 @@ class EE_Admin_Transactions_List_Table extends EE_Admin_List_Table {
 			</a>
 		</li>';
 
-	$send_pay_lnk = EE_Registry::instance()->CAP->current_user_can( 'send_message', 'espresso_transactions_send_payment_reminder' ) ? '
+	$send_pay_lnk = EE_Registry::instance()->CAP->current_user_can( 'ee_send_message', 'espresso_transactions_send_payment_reminder' ) ? '
 		<li>
 			<a href="'.$send_pay_lnk_url.'" title="' . __( 'Send Payment Reminder', 'event_espresso' ) . '" class="tiny-text">
 				<span class="dashicons dashicons-email-alt"></span>
