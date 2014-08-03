@@ -127,7 +127,7 @@ class EE_Register_CPTs {
 						'manage_terms' => 'ee_read_event_type',
 						'edit_terms' => 'ee_edit_event_type',
 						'delete_terms' => 'ee_delete_event_type',
-						'assign_terms' => 'assign_event_type'
+						'assign_terms' => 'ee_assign_event_type'
 						),
 					'rewrite' => array( 'slug' => __( 'event-type', 'event_espresso' )),
 					'hierarchical'=>true
